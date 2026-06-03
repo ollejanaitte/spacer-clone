@@ -1,33 +1,42 @@
-# Report Specification
+# 10 Report Specification
 
-## Purpose
+## 1. 目的
 
-MVP reporting exports analysis inputs and results in simple machine-readable and human-readable formats. Template editing and publication-grade reports are out of scope.
+MVPにおける解析結果のJSON/CSV出力と最小限のHTML帳票仕様を定義する。JIP-SPACERの帳票ビューア概念は参考にするが、MVPではテンプレート編集や独自拡張子互換は扱わない。
 
-## Required Outputs
+## 2. 対象範囲
 
-- Result JSON.
-- Displacements CSV.
-- Reactions CSV.
-- Member end forces CSV.
-- Minimal printable HTML report.
+- 結果JSON出力。
+- 変位CSV。
+- 反力CSV。
+- 部材端力CSV。
+- 最小限のHTML帳票。
+- 解析概要、警告、エラーの出力。
 
-## JSON Report
+## 3. 非対象範囲
 
-The JSON report is the result schema defined in `docs/06_result_schema.md`.
+- 帳票テンプレート編集。
+- PDF必須出力。
+- DXF出力。
+- JIP-SPACER帳票拡張子互換。
+- 影響線、移動荷重、固有値、応答スペクトル専用帳票。
+- 温度荷重、プレストレス専用帳票。
 
-Rules:
+## 4. 帳票仕様
 
-- Preserve numeric values as numbers.
-- Include warnings and errors.
-- Include analysis summary.
-- Do not format numbers as strings.
+### JSON出力
 
-## CSV Reports
+`docs/06_result_schema.md` の結果JSONをそのまま出力する。
+
+ルール:
+
+- 数値はJSON number。
+- 表示用丸めを行わない。
+- `warnings` と `errors` を含める。
 
 ### displacements.csv
 
-Header:
+ヘッダー:
 
 ```text
 loadCaseId,nodeId,ux,uy,uz,rx,ry,rz
@@ -35,7 +44,7 @@ loadCaseId,nodeId,ux,uy,uz,rx,ry,rz
 
 ### reactions.csv
 
-Header:
+ヘッダー:
 
 ```text
 loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs
@@ -43,63 +52,54 @@ loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs
 
 ### member_end_forces.csv
 
-Header:
+ヘッダー:
 
 ```text
 loadCaseId,memberId,end,fx,fy,fz,mx,my,mz
 ```
 
-Rows:
+`end` は `I` または `J`。
 
-- Each member produces one `I` row and one `J` row per load case.
+### HTML帳票
 
-## Minimal HTML Report
+最小構成:
 
-Sections:
+- プロジェクト情報。
+- 単位系。
+- 解析設定。
+- モデル規模。
+- 荷重ケース一覧。
+- 解析概要。
+- 警告一覧。
+- エラー一覧。
+- 変位表。
+- 反力表。
+- 部材端力表。
 
-- Project summary.
-- Units.
-- Analysis settings.
-- Model counts.
-- Load cases.
-- Analysis summary.
-- Warnings.
-- Errors.
-- Displacement table.
-- Reaction table.
-- Member end force table.
+数値表示:
 
-Formatting:
+- UI/HTMLでは桁丸め可。
+- JSONでは丸めない。
+- 単位を列見出しまたは表タイトルに表示する。
 
-- Use clear units in headings.
-- Use scientific notation for very small or very large values.
-- Include generation timestamp.
+## 5. エラー処理
 
-## Number Formatting
+- 解析失敗時もエラー帳票を出力できる。
+- 結果配列が空でもCSVヘッダーは出力できる。
+- 非有限値があれば帳票生成を失敗させ、`REPORT_ERROR` を返す。
+- ファイル書込失敗はUI/APIに表示する。
 
-UI and HTML may format numbers. JSON must not.
+## 6. テスト観点
 
-Recommended defaults:
+- 成功結果JSONから3種CSVを生成できる。
+- CSVヘッダーが仕様通りである。
+- 部材端力はI端、J端の2行に展開される。
+- エラー結果でもHTML帳票にエラー一覧が表示される。
+- JSON数値が文字列化されない。
 
-- Displacements: 6 significant digits.
-- Rotations: 6 significant digits.
-- Forces: 6 significant digits.
-- Moments: 6 significant digits.
+## 7. 完了条件
 
-## Export Controls
-
-UI must provide:
-
-- Export all JSON.
-- Export displacement CSV.
-- Export reaction CSV.
-- Export member end force CSV.
-- Export all CSV as separate files or zip in a later phase.
-
-## Out of Scope
-
-- Report template editing.
-- Complex page layout.
-- PDF generation as a hard MVP requirement.
-- DXF output.
-- JIP-SPACER report format compatibility.
+- UIまたはAPIからJSON/CSVを出力できる。
+- `docs/06_result_schema.md` と矛盾しない。
+- 帳票がMVP対象結果に限定されている。
+- `docs/12_quality_gate.md` のJSON SchemaとAPIテスト基準を満たす。

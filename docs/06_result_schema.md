@@ -1,14 +1,34 @@
-# Result Schema
+# 06 Result Schema
 
-## Purpose
+## 1. 目的
 
-Analysis result JSON is the canonical output from `POST /api/analysis/run`. It must be stable enough for UI display, CSV export, and regression tests.
+解析エンジンおよびAPIが返す結果JSONの構造を定義する。UI、帳票、CSV出力、回帰テストはこの結果形式に依存する。
 
-## Top-Level Structure
+## 2. 対象範囲
+
+- 線形静的解析の概要。
+- 節点変位。
+- 支点反力。
+- 部材端力。
+- 警告。
+- エラー。
+
+## 3. 非対象範囲
+
+- 影響線結果。
+- 移動荷重結果。
+- 固有値、固有モード。
+- 応答スペクトル結果。
+- 温度荷重、プレストレス、初期張力由来の専用結果。
+- DXF、図面ファイル、帳票テンプレート。
+
+## 4. データ構造
+
+### トップレベル
 
 ```json
 {
-  "projectId": "example",
+  "projectId": "project-001",
   "schemaVersion": "1.0.0",
   "analysisSummary": {},
   "displacements": [],
@@ -19,177 +39,141 @@ Analysis result JSON is the canonical output from `POST /api/analysis/run`. It m
 }
 ```
 
-If `errors` is non-empty, numerical result arrays may be empty.
+### analysisSummary
 
-## analysisSummary
+```json
+{
+  "analysisType": "linear_static",
+  "status": "success",
+  "startedAt": "2026-01-01T00:00:00Z",
+  "finishedAt": "2026-01-01T00:00:01Z",
+  "durationMs": 1000.0,
+  "nodeCount": 2,
+  "memberCount": 1,
+  "loadCaseCount": 1,
+  "totalDof": 12,
+  "freeDof": 6,
+  "constrainedDof": 6,
+  "solver": "scipy_sparse"
+}
+```
 
-Required fields:
+`status` は `success`、`warning`、`failed` のいずれか。
 
-- `analysisType`: `linear_static`.
-- `status`: `success`, `warning`, or `failed`.
-- `startedAt`: ISO 8601 string.
-- `finishedAt`: ISO 8601 string.
-- `nodeCount`: integer.
-- `memberCount`: integer.
-- `loadCaseCount`: integer.
-- `totalDof`: integer.
-- `freeDof`: integer.
-- `constrainedDof`: integer.
-- `solver`: string.
-- `durationMs`: number.
-
-Optional fields:
-
-- `maxDisplacement`: object.
-- `maxReaction`: object.
-- `maxMemberEndForce`: object.
-
-## displacements
-
-One record per load case and node.
-
-Required fields:
-
-- `loadCaseId`: string.
-- `nodeId`: string.
-- `ux`: number.
-- `uy`: number.
-- `uz`: number.
-- `rx`: number.
-- `ry`: number.
-- `rz`: number.
-
-Units:
-
-- Translational displacement: `m`.
-- Rotational displacement: `rad`.
-
-Example:
+### displacements
 
 ```json
 {
   "loadCaseId": "LC1",
   "nodeId": "N2",
   "ux": 0.0,
-  "uy": -0.0012,
+  "uy": -0.001,
   "uz": 0.0,
   "rx": 0.0,
   "ry": 0.0,
-  "rz": -0.0008
+  "rz": -0.0001
 }
 ```
 
-## reactions
+- 並進変位はm。
+- 回転変位はrad。
+- 全節点、全荷重ケースについて出力する。
 
-One record per load case and supported node.
+### reactions
 
-Required fields:
-
-- `loadCaseId`: string.
-- `nodeId`: string.
-- `fx`: number.
-- `fy`: number.
-- `fz`: number.
-- `mx`: number.
-- `my`: number.
-- `mz`: number.
-- `constrainedDofs`: array of strings.
-
-Units:
-
-- Force: `kN`.
-- Moment: `kN_m`.
-
-Unconstrained DOF reaction components should be `0.0`.
-
-## memberEndForces
-
-One record per load case and member.
-
-Required fields:
-
-- `loadCaseId`: string.
-- `memberId`: string.
-- `coordinateSystem`: must be `local`.
-- `i`: object.
-- `j`: object.
-
-End force object fields:
-
-- `fx`: number.
-- `fy`: number.
-- `fz`: number.
-- `mx`: number.
-- `my`: number.
-- `mz`: number.
-
-Units:
-
-- Force: `kN`.
-- Moment: `kN_m`.
-
-Sign convention:
-
-- Forces are local member end forces.
-- Positive directions follow the member local axes.
-- The exact finite element sign convention must match `docs/05_analysis_engine_spec.md` and verification tests.
-
-## warnings
-
-Warning object fields:
-
-- `code`: string.
-- `message`: string.
-- `path`: string, optional.
-- `entityType`: string, optional.
-- `entityId`: string, optional.
-
-Warnings do not block result generation.
-
-## errors
-
-Error object fields:
-
-- `code`: string.
-- `message`: string.
-- `path`: string, optional.
-- `entityType`: string, optional.
-- `entityId`: string, optional.
-- `details`: object, optional.
-
-Errors block successful analysis. API responses may still use HTTP 200 for validation-style failures if the response has `status: failed`, but unexpected server failures must use 5xx.
-
-## CSV Export Mapping
-
-MVP exports three CSV tables:
-
-- `displacements.csv`
-- `reactions.csv`
-- `member_end_forces.csv`
-
-CSV headers must match JSON field names where possible.
-
-Displacements header:
-
-```text
-loadCaseId,nodeId,ux,uy,uz,rx,ry,rz
+```json
+{
+  "loadCaseId": "LC1",
+  "nodeId": "N1",
+  "fx": 0.0,
+  "fy": 10.0,
+  "fz": 0.0,
+  "mx": 0.0,
+  "my": 0.0,
+  "mz": 20.0,
+  "constrainedDofs": ["ux", "uy", "uz", "rx", "ry", "rz"]
+}
 ```
 
-Reactions header:
+- 力はkN。
+- モーメントはkN_m。
+- 支点定義がある節点ごとに出力する。
 
-```text
-loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs
+### memberEndForces
+
+```json
+{
+  "loadCaseId": "LC1",
+  "memberId": "M1",
+  "coordinateSystem": "local",
+  "i": {
+    "fx": 0.0,
+    "fy": 10.0,
+    "fz": 0.0,
+    "mx": 0.0,
+    "my": 0.0,
+    "mz": 20.0
+  },
+  "j": {
+    "fx": 0.0,
+    "fy": -10.0,
+    "fz": 0.0,
+    "mx": 0.0,
+    "my": 0.0,
+    "mz": 0.0
+  }
+}
 ```
 
-Member end forces header:
+- 部材端力は局所座標系。
+- I端、J端を分けて保持する。
+- 符号規約は解析エンジン仕様とテストに従う。
 
-```text
-loadCaseId,memberId,end,fx,fy,fz,mx,my,mz
+### warnings
+
+```json
+{
+  "code": "DISCONNECTED_NODE",
+  "message": "Node N9 is not connected to any member.",
+  "path": "/nodes/8",
+  "entityType": "node",
+  "entityId": "N9"
+}
 ```
 
-## Stability Requirements
+警告は解析成功を妨げない。
 
-- Numeric values must be JSON numbers, not formatted strings.
-- UI formatting is separate from result JSON.
-- Missing results must not be represented as `NaN` or `Infinity`.
-- If a value cannot be computed, analysis must fail with an error.
+### errors
+
+```json
+{
+  "code": "MODEL_UNSTABLE",
+  "message": "The model has insufficient support constraints.",
+  "path": "/supports",
+  "entityType": "support",
+  "entityId": null
+}
+```
+
+エラーがある場合、`analysisSummary.status` は `failed`。
+
+## 5. エラー処理
+
+- `errors` が空でない結果を成功として扱ってはならない。
+- APIはエラー時も可能な限り同じ結果構造を返す。
+- 数値に `NaN`、`Infinity`、文字列数値を入れてはならない。
+- 後処理中に欠損した値が発生した場合は `POSTPROCESS_ERROR` とする。
+
+## 6. テスト観点
+
+- 成功結果がJSON Schemaに適合する。
+- 失敗結果が `errors` を含み、結果配列を空にできる。
+- 変位、反力、部材端力の全成分が数値である。
+- CSV出力へ変換できる。
+- UIがloadCaseId、nodeId、memberIdでフィルタできる。
+
+## 7. 完了条件
+
+- API、UI、Report担当がこの文書だけで結果データを扱える。
+- 必須項目 `displacements`、`reactions`、`memberEndForces`、`analysisSummary`、`warnings`、`errors` が定義済み。
+- `docs/10_report_spec.md` のCSV仕様と矛盾しない。

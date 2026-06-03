@@ -1,253 +1,162 @@
-# Analysis Engine Specification
+# 05 Analysis Engine Specification
 
-## Purpose
+## 1. 目的
 
-The Python analysis engine performs MVP linear static 3D frame analysis. It accepts validated `project.json` data and returns result JSON.
+Python解析エンジンが実装すべきMVPの線形静的3次元骨組解析処理を定義する。数値解析の責務を明確化し、FastAPIやReactに解析ロジックが混入しないようにする。
 
-## Responsibilities
+## 2. 対象範囲
 
-- Build internal model arrays.
-- Assign global DOF numbers.
-- Define member local coordinate systems.
-- Compute each member 12x12 local stiffness matrix.
-- Transform local matrices to global coordinates.
-- Assemble the global stiffness matrix.
-- Build global load vectors.
-- Apply boundary conditions.
-- Solve with SciPy sparse solver.
-- Recover displacements, reactions, and member end forces.
-- Emit structured warnings and errors.
+- 1節点6自由度の自由度番号付け。
+- 3D Euler-Bernoulli梁要素。
+- 12x12局所剛性マトリクス。
+- 部材局所座標系。
+- 座標変換。
+- 全体剛性マトリクス組立。
+- 支点境界条件処理。
+- 節点集中荷重と部材等分布荷重の荷重ベクトル作成。
+- SciPy sparse solverによる連立一次方程式解法。
+- 変位、反力、部材端力の算出。
 
-## Degrees of Freedom
+## 3. 非対象範囲
 
-Each node has six DOFs in this fixed order:
+- 幾何学的非線形、材料非線形。
+- Timoshenko梁、せん断変形。
+- 部材端リリース。
+- 部材バネ、節点間バネ。
+- 温度荷重、プレストレス、初期張力。
+- 影響線解析、移動荷重、活荷重自動載荷。
+- 固有値解析、応答スペクトル解析。
+- 荷重組合せの高度処理。
 
-1. `UX`
-2. `UY`
-3. `UZ`
-4. `RX`
-5. `RY`
-6. `RZ`
+## 4. 処理仕様
 
-For node index `i`, global DOF indices are:
+### 自由度番号付け
 
-- `UX = 6*i + 0`
-- `UY = 6*i + 1`
-- `UZ = 6*i + 2`
-- `RX = 6*i + 3`
-- `RY = 6*i + 4`
-- `RZ = 6*i + 5`
-
-The engine must keep a mapping from node ID to node index and DOF indices.
-
-## Local Coordinate System
-
-For each member:
-
-- Local `x` axis points from `nodeI` to `nodeJ`.
-- Local `y` and `z` axes must form a right-handed orthonormal basis.
-
-Priority:
-
-1. If `orientationVector` is provided, project it onto the plane normal to local `x` and use it as local `y`.
-2. If `orientationNode` is provided, use vector from `nodeI` to that node and project it onto the plane normal to local `x`.
-3. Otherwise, use a default global reference vector.
-
-Default reference rule:
-
-- Try global `Z = (0, 0, 1)` as reference.
-- If member local `x` is nearly parallel to global `Z`, use global `Y = (0, 1, 0)`.
-- Project the reference vector onto the plane perpendicular to local `x`.
-- Normalize as local `y`.
-- Compute local `z = x cross y`.
-
-Validation/error conditions:
-
-- Orientation vector must not be zero.
-- Orientation vector must not be parallel to local `x`.
-- Resulting transform must be orthonormal within tolerance.
-
-## 12x12 Beam Element Stiffness Matrix
-
-Use a prismatic Euler-Bernoulli 3D beam element.
-
-Element DOF order in local coordinates:
-
-1. `uix`
-2. `uiy`
-3. `uiz`
-4. `rix`
-5. `riy`
-6. `riz`
-7. `ujx`
-8. `ujy`
-9. `ujz`
-10. `rjx`
-11. `rjy`
-12. `rjz`
-
-Inputs:
-
-- `E`: elastic modulus.
-- `G`: shear modulus.
-- `A`: area.
-- `Iy`: second moment about local y.
-- `Iz`: second moment about local z.
-- `J`: torsional constant.
-- `L`: member length.
-
-Required stiffness terms:
-
-- Axial: `EA/L`.
-- Torsion: `GJ/L`.
-- Bending about local z using `EIz`.
-- Bending about local y using `EIy`.
-
-Shear deformation is not included in MVP.
-
-## Coordinate Transformation
-
-Build a 3x3 direction cosine matrix `R` whose rows or columns are consistently defined as local axes in global coordinates. The convention must be documented in code and tests.
-
-Build a 12x12 transformation matrix `T` by placing `R` blocks for translations and rotations at node I and node J.
-
-Required operations:
-
-- `k_global = T.T @ k_local @ T` if `u_local = T @ u_global`.
-- Equivalent nodal loads must use the same convention.
-- Member end force recovery must transform global member displacements back to local coordinates.
-
-## Global Stiffness Matrix Assembly
-
-Use sparse assembly:
-
-- Precompute row indices, column indices, and values.
-- Assemble into SciPy `coo_matrix`.
-- Convert to `csr_matrix` before solving.
-
-Rules:
-
-- Total DOF count is `6 * node_count`.
-- Each member contributes a 12x12 matrix to the DOFs of `nodeI` and `nodeJ`.
-- Matrix symmetry should be preserved within numerical tolerance.
-
-## Boundary Conditions
-
-MVP uses elimination of constrained DOFs:
-
-- Build full `K` and `F`.
-- Identify constrained DOFs from `supports`.
-- Free DOFs are all others.
-- Solve `Kff * Uf = Ff`.
-- Fill constrained displacements as zero.
-
-Support settlements are out of scope.
-
-## Load Vector Creation
-
-### Nodal Loads
-
-Add `fx`, `fy`, `fz`, `mx`, `my`, `mz` directly to the global load vector at the node DOFs.
-
-### Member Uniform Loads
-
-For each full-length uniform member load:
-
-- Convert load components to local coordinates when `coordinateSystem` is `global`.
-- Keep components as-is when `coordinateSystem` is `local`.
-- Generate consistent fixed-end equivalent nodal loads in local coordinates.
-- Transform equivalent nodal loads to global coordinates.
-- Add to global load vector.
-
-The sign convention must be tested with simple beam examples.
-
-## SciPy Sparse Solver
-
-Use SciPy sparse direct solver:
-
-- Preferred: `scipy.sparse.linalg.spsolve`.
-- Input matrix: `Kff` in CSR or CSC format.
-- Detect singular or ill-conditioned systems where possible.
-
-If solve fails, return `SOLVER_ERROR`.
-
-## Displacement Recovery
-
-For each load case:
-
-- Store global nodal displacement components for every node.
-- Use component names `ux`, `uy`, `uz`, `rx`, `ry`, `rz`.
-
-## Reaction Recovery
-
-Compute full reaction vector:
+各節点は以下の順で6自由度を持つ。
 
 ```text
-R = K_full @ U_full - F_full
+UX, UY, UZ, RX, RY, RZ
 ```
 
-Return reaction components only for constrained DOFs, grouped by support node.
-
-## Member End Force Recovery
-
-For each member and load case:
-
-1. Extract global member displacement vector.
-2. Transform to local displacement vector.
-3. Compute local member end force:
+節点内部indexを `i` とすると、全体自由度番号は以下。
 
 ```text
-f_local = k_local @ u_local - f_equiv_local
+UX = 6*i + 0
+UY = 6*i + 1
+UZ = 6*i + 2
+RX = 6*i + 3
+RY = 6*i + 4
+RZ = 6*i + 5
 ```
 
-4. Return end forces at I and J ends in local member axes.
+### 局所座標系
 
-Output components:
+- 局所x軸は `nodeI` から `nodeJ` へ向かう。
+- `orientationVector` があれば局所y軸候補として使う。
+- `orientationNode` があれば `nodeI` からその節点へのベクトルを局所y軸候補として使う。
+- どちらもなければ、グローバルZ軸を基準候補にする。
+- 部材x軸がグローバルZ軸とほぼ平行なら、グローバルY軸を基準候補にする。
+- 候補ベクトルを局所x軸直交平面へ射影し正規化して局所y軸とする。
+- 局所z軸は `x cross y` とする。
 
-- `fx`
-- `fy`
-- `fz`
-- `mx`
-- `my`
-- `mz`
+### 12x12梁要素剛性マトリクス
 
-## Analysis Errors
+要素自由度順は以下。
 
-The engine must return structured errors for:
+```text
+uix, uiy, uiz, rix, riy, riz, ujx, ujy, ujz, rjx, rjy, rjz
+```
 
-- Missing referenced node/material/section/load case.
-- Zero-length member.
-- Invalid orientation.
-- No supports.
-- Rigid body mode or singular stiffness matrix.
-- Empty load case list.
-- Non-finite numeric input.
-- Solver failure.
+使用する断面・材料値:
 
-## Warnings
+- `E`: ヤング係数。
+- `G`: せん断弾性係数。
+- `A`: 断面積。
+- `Iy`: 局所y軸まわり断面2次モーメント。
+- `Iz`: 局所z軸まわり断面2次モーメント。
+- `J`: ねじり定数。
+- `L`: 部材長。
 
-Warnings do not block analysis. Examples:
+必須剛性:
 
-- Load case has no loads.
-- Node is disconnected.
-- Very short member.
-- Very large displacement relative to member length.
-- High estimated condition number if available.
+- 軸剛性 `EA/L`。
+- ねじり剛性 `GJ/L`。
+- 局所z方向曲げに対応する `E Iy`。
+- 局所y方向曲げに対応する `E Iz`。
 
-## Numerical Tolerances
+符号規約はテストで固定し、部材端力出力と一致させる。
 
-Initial defaults:
+### 座標変換
 
-- Coordinate tolerance: `1e-9 m`.
-- Matrix symmetry tolerance: `1e-8`.
-- Verification relative error target: `1e-5` unless test spec states otherwise.
+- 局所軸から方向余弦行列 `R` を作成する。
+- 並進・回転の各ブロックに `R` を配置し、12x12変換行列 `T` を作る。
+- 実装では `u_local = T @ u_global` を採用する。
+- この場合、`k_global = T.T @ k_local @ T` とする。
+- 等価節点荷重と部材端力回復も同じ規約を使う。
 
-## Out of Scope
+### 全体剛性マトリクス組立
 
-- Geometric nonlinearity.
-- Material nonlinearity.
-- Shear deformation.
-- End releases.
-- Springs.
-- Thermal, prestress, initial tension.
-- Dynamic analysis.
+- 全自由度数は `6 * 節点数`。
+- 各部材の12自由度を全体自由度へマッピングする。
+- SciPy sparse形式で組み立てる。
+- 推奨は `coo_matrix` へ集約し、解法前に `csr_matrix` または `csc_matrix` へ変換する。
+
+### 境界条件処理
+
+MVPでは拘束自由度を消去する。
+
+1. 全体剛性 `K` と荷重 `F` を作成する。
+2. supportから拘束自由度集合を作る。
+3. 自由自由度 `freeDofs` を抽出する。
+4. `Kff * Uf = Ff` を解く。
+5. 拘束自由度変位は0とする。
+
+支点沈下は扱わない。
+
+### 荷重ベクトル作成
+
+- 節点集中荷重は、該当節点の6自由度へ直接加算する。
+- 部材等分布荷重は、局所座標の等価節点荷重へ変換してから全体座標へ戻し、全体荷重へ加算する。
+- `coordinateSystem = global` の部材荷重は、先に部材局所座標へ変換する。
+- MVPでは部材全長一様荷重のみ扱う。
+
+### SciPy sparse solver
+
+- `scipy.sparse.linalg.spsolve` を標準とする。
+- 入力行列はCSRまたはCSC。
+- 特異行列、ゼロピボット、非有限解は解析失敗とする。
+
+### 結果算出
+
+- 変位: 全節点の `ux, uy, uz, rx, ry, rz`。
+- 反力: `R = K_full @ U_full - F_full` で算出する。
+- 部材端力: `f_local = k_local @ u_local - f_equiv_local` で算出する。
+- 部材端力は局所座標系でI端、J端を出力する。
+
+## 5. エラー処理
+
+- 参照不正は解析前に `INVALID_REFERENCE`。
+- 部材長ゼロは `ZERO_LENGTH_MEMBER`。
+- 局所座標系を定義できない場合は `INVALID_ORIENTATION`。
+- 拘束不足または特異行列は `MODEL_UNSTABLE` または `SOLVER_ERROR`。
+- solver例外は `SOLVER_ERROR`。
+- 後処理失敗は `POSTPROCESS_ERROR`。
+- 解析失敗時は部分結果を成功扱いで返してはならない。
+
+## 6. テスト観点
+
+- 片持梁先端集中荷重の変位、回転、反力。
+- 単純梁中央集中荷重の中央変位、反力。
+- 単純梁等分布荷重の中央変位、反力。
+- 3D片持梁ねじりの回転角、反力モーメント。
+- 支点不足モデルの失敗。
+- 不正参照モデルの失敗。
+- 局所座標系が直交正規化されること。
+- 全体剛性が対称であること。
+
+## 7. 完了条件
+
+- `docs/11_test_spec.md` の必須検証ケースが通る。
+- `docs/12_quality_gate.md` の数値許容誤差を満たす。
+- エンジン単体でAPIやUIなしに解析できる。
+- 結果が `docs/06_result_schema.md` に変換可能である。

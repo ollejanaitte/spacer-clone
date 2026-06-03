@@ -1,261 +1,190 @@
-# UI Specification
+# 08 UI Specification
 
-## Purpose
+## 1. 目的
 
-The MVP UI is a minimal React application for editing `project.json`, running analysis, viewing results, and coordinating with the Three.js model view.
+React UIのMVP画面構成と操作仕様を定義する。JIP-SPACERの入力画面、描画画面、実行画面、帳票確認の分離思想を参考にするが、MVPでは最小限のWeb UIに限定する。
 
-## Layout
+## 2. 対象範囲
 
-The final UI uses five persistent regions:
+- 上部ツールバー。
+- 左側モデルツリー。
+- 中央3Dビュー。
+- 右側プロパティパネル。
+- 下部結果・エラー・ログパネル。
+- 節点表、部材表、材料表、断面表、支点表、荷重表。
+- 解析実行画面。
+- 結果表示画面。
+- JSON/CSV出力操作。
 
-- Top toolbar.
-- Left model tree.
-- Center 3D view.
-- Right property panel.
-- Bottom result, error, and log panel.
+## 3. 非対象範囲
 
-## Top Toolbar
+- CADライクな図面編集。
+- ドラッグによる部材作成。
+- 複数ウィンドウUI。
+- 帳票テンプレート編集。
+- DXF出力操作。
+- 影響線、移動荷重、固有値、応答スペクトル等のMVP外機能画面。
+- ライセンス管理画面。
 
-Required actions:
+## 4. 画面仕様
 
-- New project.
-- Open project.
-- Save project.
-- Validate.
-- Run analysis.
-- Export JSON.
-- Export CSV.
-- Load example.
+### 全体レイアウト
 
-Toolbar must show:
+```text
+┌──────────────────────── 上部ツールバー ────────────────────────┐
+│ 左モデルツリー │ 中央3Dビュー │ 右プロパティパネル              │
+├───────────────┴──────────────┴───────────────────────────────┤
+│ 下部 結果 / エラー / 警告 / ログ パネル                         │
+└────────────────────────────────────────────────────────────────┘
+```
 
-- Project name.
-- Validation status.
-- Analysis status.
-- Unsaved changes indicator.
+### 上部ツールバー
 
-## Left Model Tree
+操作:
 
-Tree sections:
+- 新規。
+- 開く。
+- 保存。
+- 検証。
+- 解析実行。
+- JSON出力。
+- CSV出力。
+- サンプル読込。
 
-- Project.
-- Nodes.
-- Members.
-- Materials.
-- Sections.
-- Supports.
-- Load cases.
-- Nodal loads.
-- Member loads.
-- Analysis settings.
-- Results.
+表示:
 
-Behavior:
+- プロジェクト名。
+- 未保存状態。
+- 検証状態。
+- 解析状態。
 
-- Selecting a tree item opens the relevant table or property panel.
-- Selecting an entity highlights it in the 3D view where applicable.
-- Errors link to tree items when possible.
+### 左側モデルツリー
 
-## Center 3D View
+項目:
 
-The center region hosts the Three.js viewer defined in `docs/09_3d_view_spec.md`.
+- Project。
+- Nodes。
+- Members。
+- Materials。
+- Sections。
+- Supports。
+- Load Cases。
+- Nodal Loads。
+- Member Loads。
+- Analysis Settings。
+- Results。
 
-Required behavior:
+選択時の動作:
 
-- Display current model.
-- Display selected load case.
-- Display deformed shape when result data exists.
-- Click selection updates right property panel.
+- 中央または右側に対応する表・詳細を表示する。
+- エンティティを選択した場合、3Dビューでハイライトする。
 
-## Right Property Panel
+### 中央3Dビュー
 
-Responsibilities:
+`docs/09_3d_view_spec.md` に従う。
 
-- Show selected entity fields.
-- Allow editing scalar properties.
-- Show validation errors for selected entity.
-- Show read-only computed details where useful, such as member length.
+### 右側プロパティパネル
 
-MVP may use table row editing as the primary editor and property panel as a detail editor.
+- 選択中エンティティの詳細を表示する。
+- 表で編集しにくい項目を編集できる。
+- 検証エラーを項目単位で表示する。
+- 部材長などの算出値は読み取り専用で表示してよい。
 
-## Bottom Result, Error, and Log Panel
+### 下部パネル
 
-Tabs:
+タブ:
 
-- Results.
-- Errors.
-- Warnings.
-- Logs.
+- Results。
+- Errors。
+- Warnings。
+- Logs。
 
-Behavior:
+Errors:
 
-- Validation and analysis errors appear in Errors tab.
-- Warnings appear separately and do not block result viewing.
-- Logs show validation and analysis lifecycle events.
-- Clicking an error navigates to the entity or field when possible.
+- API/Validation/Engineの構造化エラーを表示する。
+- クリックで関連テーブル行へ移動する。
 
-## Data Tables
+Results:
 
-All tables must support:
+- 変位表。
+- 反力表。
+- 部材端力表。
+- 解析概要。
 
-- Add row.
-- Delete row.
-- Edit cell.
-- Copy/paste basic tabular values.
-- Row validation state.
-- Entity ID uniqueness feedback.
+### 入力表
 
-### Node Table
+共通機能:
 
-Columns:
-
-- `id`
-- `x`
-- `y`
-- `z`
-- `label`
+- 行追加。
+- 行削除。
+- セル編集。
+- ID重複表示。
+- 参照候補の選択。
+- 単位表示。
 
-### Member Table
+節点表:
 
-Columns:
+- `id`, `x`, `y`, `z`, `label`
 
-- `id`
-- `nodeI`
-- `nodeJ`
-- `materialId`
-- `sectionId`
-- `orientationNode`
-- `orientationVector`
-- `label`
+部材表:
 
-### Material Table
+- `id`, `nodeI`, `nodeJ`, `materialId`, `sectionId`, `orientationVector`, `orientationNode`, `label`
 
-Columns:
+材料表:
 
-- `id`
-- `name`
-- `elasticModulus`
-- `shearModulus`
-- `poissonRatio`
-- `density`
+- `id`, `name`, `elasticModulus`, `shearModulus`, `poissonRatio`, `density`
 
-### Section Table
+断面表:
 
-Columns:
+- `id`, `name`, `area`, `iy`, `iz`, `j`
 
-- `id`
-- `name`
-- `area`
-- `iy`
-- `iz`
-- `j`
+支点表:
 
-### Support Table
+- `nodeId`, `ux`, `uy`, `uz`, `rx`, `ry`, `rz`
 
-Columns:
+荷重表:
 
-- `nodeId`
-- `ux`
-- `uy`
-- `uz`
-- `rx`
-- `ry`
-- `rz`
+- Load Cases。
+- Nodal Loads。
+- Member Loads。
 
-### Load Table
+### 解析実行画面
 
-MVP can split load editing into three tables:
+- 検証状態を表示する。
+- エラーがある場合は実行をブロックする。
+- 解析対象荷重ケースを表示する。
+- 実行中状態を表示する。
+- 完了後に結果概要へ移動できる。
 
-- Load cases.
-- Nodal loads.
-- Member loads.
+### 結果表示画面
 
-Load case columns:
+- 荷重ケースでフィルタできる。
+- 節点ID、部材IDでフィルタできる。
+- 変形図表示のON/OFFを切り替えられる。
+- CSV/JSON出力できる。
 
-- `id`
-- `name`
-- `type`
+## 5. エラー処理
 
-Nodal load columns:
+- 入力中の軽微な未入力は警告表示し、保存は許可してよい。
+- 解析実行前の検証エラーは実行をブロックする。
+- API通信失敗は下部ログとエラーパネルに表示する。
+- エラーはブラウザconsoleだけに出してはならない。
+- `NaN` や空文字を数値としてAPIへ送らない。
 
-- `id`
-- `loadCaseId`
-- `nodeId`
-- `fx`
-- `fy`
-- `fz`
-- `mx`
-- `my`
-- `mz`
+## 6. テスト観点
 
-Member load columns:
+- UIビルドが成功する。
+- 各入力表が表示される。
+- 行追加、編集、削除ができる。
+- 不正参照が画面に表示される。
+- 解析実行ボタンが検証エラー時に無効または失敗表示になる。
+- 成功結果の変位、反力、部材端力表が表示される。
+- 3Dビュー選択とプロパティパネルが連動する。
 
-- `id`
-- `loadCaseId`
-- `memberId`
-- `coordinateSystem`
-- `type`
-- `wx`
-- `wy`
-- `wz`
+## 7. 完了条件
 
-## Analysis Run Screen
-
-The analysis run screen must show:
-
-- Current validation status.
-- Load cases to be analyzed.
-- Run button.
-- Solver name.
-- Analysis progress state.
-- Summary after completion.
-- Warnings and errors.
-
-Analysis must be blocked when validation has hard errors.
-
-## Result Display Screen
-
-Required result tables:
-
-- Displacements.
-- Reactions.
-- Member end forces.
-- Analysis summary.
-
-Filtering:
-
-- Load case.
-- Node.
-- Member.
-- Component.
-
-Sorting:
-
-- By entity ID.
-- By absolute component value.
-
-## State Management
-
-MVP state source of truth:
-
-- Editable project state in React.
-- Last validation result.
-- Last analysis result.
-- UI selection state.
-
-Do not duplicate model logic in multiple stores.
-
-## Accessibility and Usability
-
-- Numeric inputs must clearly show units.
-- Destructive actions require confirmation.
-- Validation messages must be visible without opening browser console.
-- Keyboard navigation in tables is preferred but not mandatory for MVP.
-
-## Out of Scope
-
-- Full CAD-like editing.
-- Drag-to-create members.
-- Multi-window layout.
-- Report template designer.
-- Authentication.
+- MVPの全入力項目をUIから作成・編集できる。
+- API検証と解析実行に接続できる。
+- 結果表を表示できる。
+- MVP外機能の操作入口が有効状態で存在しない。
+- `docs/12_quality_gate.md` のUIビルド基準を満たす。

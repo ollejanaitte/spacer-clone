@@ -1,155 +1,102 @@
-# Architecture
+# 03 Architecture
 
-## System Overview
+## 1. 目的
 
-The MVP is split into four layers:
+JIP-SPACERの「入力、実行、結果表示、帳票、描画」を分ける考え方を参考にしつつ、MVPに限定した独自3次元骨組解析システムの構成を定義する。後続のCodex実装エージェントが、責務境界を誤らずに実装できることを目的とする。
 
-- Python analysis core.
-- FastAPI backend.
-- React frontend.
-- Three.js viewer.
+## 2. 対象範囲
 
-The canonical data exchange format is `project.json`. Analysis results are returned as result JSON and can be exported to CSV.
+- 3次元骨組モデルの入力、検証、線形静的解析、結果表示、CSV/JSON出力。
+- Python解析エンジン。
+- FastAPIバックエンド。
+- React入力UI。
+- Three.js線モデル表示。
+- `project.json` と解析結果JSONを中心にしたデータ連携。
 
-## Component Boundaries
+## 3. 非対象範囲
 
-### Analysis Core
+MVPでは以下を実装しない。
 
-Responsibilities:
+- 影響線解析、移動荷重、活荷重自動載荷。
+- 固有値解析、応答スペクトル解析。
+- 温度荷重、プレストレス、初期張力。
+- 部材バネ、節点間バネ。
+- 高度な荷重組合せ処理。
+- DXF出力、外部解析ソフト連携。
+- ライセンス管理。
+- JIP-SPACER完全互換。
 
-- Parse validated project data.
-- Build model objects.
-- Number global DOFs.
-- Build element stiffness matrices.
-- Assemble global sparse matrices.
-- Apply support constraints.
-- Solve linear static systems.
-- Compute displacements, reactions, and member end forces.
-- Return structured warnings and errors.
+## 4. 処理仕様
 
-The core must not depend on FastAPI, React, or Three.js.
+### 全体レイヤ
 
-### API Backend
+- `frontend`: React UI。モデル入力、検証実行、解析実行、結果表示を担当する。
+- `viewer`: Three.js表示。節点、部材、支点、荷重、変形図を表示する。
+- `backend/app`: FastAPI。API契約、保存読込、解析エンジン呼び出しを担当する。
+- `backend/engine`: Python解析エンジン。数値解析と結果算出のみを担当する。
+- `schemas`: JSON Schema。`project.json` と結果JSONを検証する。
+- `examples`: MVP検証用のサンプルモデル。
+- `docs`: 設計書のみ。実装コードを置かない。
 
-Responsibilities:
+### データフロー
 
-- Validate project JSON.
-- Execute analysis through the core.
-- Save and load project JSON.
-- Serve example projects.
-- Convert engine exceptions into stable API errors.
+1. React UIで `project.json` 互換データを編集する。
+2. UIが `POST /api/projects/validate` へ送信する。
+3. FastAPIがJSON Schemaと参照整合性を検証する。
+4. UIが `POST /api/analysis/run` へ送信する。
+5. FastAPIがPython解析エンジンを呼び出す。
+6. 解析エンジンが変位、反力、部材端力を計算する。
+7. FastAPIが結果JSONを返す。
+8. UIが結果表、Three.js変形図、CSV/JSON出力に利用する。
 
-The backend must not implement numerical methods directly.
+### 依存方向
 
-### React UI
+- UIはAPI契約にのみ依存する。
+- Three.js表示は `project.json` と結果JSONにのみ依存する。
+- FastAPIは解析エンジンに依存する。
+- 解析エンジンはFastAPI、React、Three.jsに依存しない。
+- 解析エンジンはファイル保存やHTTPを知らない。
 
-Responsibilities:
+### 推奨ディレクトリ
 
-- Maintain editable project state.
-- Render model tables and property forms.
-- Call validation and analysis APIs.
-- Display result tables, warnings, errors, and logs.
-- Trigger JSON and CSV exports.
+```text
+backend/
+  app/
+  engine/
+  tests/
+frontend/
+  src/
+    viewer/
+schemas/
+examples/
+docs/
+```
 
-The UI must not implement structural analysis logic.
+## 5. エラー処理
 
-### Three.js Viewer
+- UI入力エラーは、該当テーブル行・項目に紐付けて表示する。
+- APIは構造化エラーを返す。
+- 解析エンジンは例外を外へ漏らさず、エラーコード付きの失敗結果へ変換できるようにする。
+- 主なエラーコードは以下とする。
+  - `SCHEMA_ERROR`
+  - `INVALID_REFERENCE`
+  - `MODEL_UNSTABLE`
+  - `SOLVER_ERROR`
+  - `POSTPROCESS_ERROR`
+  - `INTERNAL_ERROR`
+- JSONに `NaN`、`Infinity` を出力してはならない。
 
-Responsibilities:
+## 6. テスト観点
 
-- Draw nodes, members, supports, loads, labels, selected entities, and deformed shape.
-- Convert project/result data into render primitives.
-- Report selected entity IDs back to the React UI.
+- レイヤ間の責務が混ざっていないこと。
+- UIが解析ロジックを持たないこと。
+- APIが数値解析を直接実装しないこと。
+- 解析エンジンがHTTPやUIに依存しないこと。
+- `project.json` から結果JSONまで再現可能であること。
+- `docs/12_quality_gate.md` の品質基準に反しないこと。
 
-The viewer must be a visualization component, not a model editor, unless a later task explicitly expands scope.
+## 7. 完了条件
 
-## Data Flow
-
-1. User edits model in React tables/forms.
-2. React stores model as `project.json` compatible state.
-3. User runs validation.
-4. React sends project to `POST /api/projects/validate`.
-5. User runs analysis.
-6. React sends project to `POST /api/analysis/run`.
-7. FastAPI calls analysis core.
-8. Analysis core returns result JSON.
-9. React displays result tables and deformed Three.js view.
-10. User exports JSON or CSV.
-
-## Directory Guidance
-
-Recommended implementation layout:
-
-- `backend/app/`: FastAPI application.
-- `backend/engine/`: analysis core.
-- `backend/tests/`: Python and API tests.
-- `frontend/src/`: React application.
-- `frontend/src/viewer/`: Three.js components.
-- `schemas/`: JSON Schema files.
-- `examples/`: example `project.json` files.
-- `docs/`: specifications only.
-
-## Internal Domain Model
-
-Core entities:
-
-- `Project`
-- `Units`
-- `Node`
-- `Material`
-- `Section`
-- `Member`
-- `Support`
-- `LoadCase`
-- `NodalLoad`
-- `MemberLoad`
-- `AnalysisSettings`
-- `AnalysisResult`
-
-IDs are strings in JSON. The engine may map them to dense integer indices internally.
-
-## Units
-
-MVP uses SI base conventions:
-
-- Length: `m`
-- Force: `kN`
-- Moment: `kN_m`
-- Stress/modulus: `kN_per_m2`
-- Area: `m2`
-- Second moment of area: `m4`
-
-The engine must not silently convert unknown units. Unsupported units are validation errors.
-
-## Error Strategy
-
-Use structured errors:
-
-- `VALIDATION_ERROR`: invalid project schema or references.
-- `MODEL_ERROR`: model is structurally invalid after schema validation.
-- `SOLVER_ERROR`: numerical solve failed.
-- `POSTPROCESS_ERROR`: displacement solved but result recovery failed.
-- `INTERNAL_ERROR`: unexpected bug.
-
-All errors must include:
-
-- `code`
-- `message`
-- `path` when applicable
-- `entityType` when applicable
-- `entityId` when applicable
-
-## Extensibility Rules
-
-- Add new analysis features behind explicit schema fields and feature flags.
-- Keep MVP fields stable once implementation starts.
-- Do not overload existing fields for advanced features.
-- Preserve backward compatibility through `project.schemaVersion`.
-
-## Non-Goals
-
-- Desktop application architecture.
-- JIP-SPACER binary/file compatibility.
-- Multiple solver backends in MVP.
-- Multi-user project management.
-- Cloud persistence.
+- 後続実装で必要な主要レイヤと責務境界が明確である。
+- MVP外機能がアーキテクチャ上も実装対象外として明記されている。
+- `docs/04_input_schema.md`、`docs/05_analysis_engine_spec.md`、`docs/06_result_schema.md`、`docs/07_api_spec.md` と矛盾しない。

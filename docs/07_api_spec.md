@@ -1,22 +1,40 @@
-# API Specification
+# 07 API Specification
 
-## Purpose
+## 1. 目的
 
-The FastAPI backend exposes validation, analysis, persistence, and example project operations for the MVP.
+FastAPIバックエンドのMVP API契約を定義する。UI担当、API担当、Engine担当が同じ入出力仕様で実装できることを目的とする。
 
-## General Rules
+## 2. 対象範囲
 
-- Request and response bodies use JSON.
-- API must be stateless except explicit save/load operations.
-- Analysis must not mutate submitted project JSON.
-- Validation errors must use structured error objects.
-- All endpoints return UTF-8 JSON.
+MVP APIは以下に限定する。
 
-## GET /health
+- ヘルスチェック。
+- `project.json` 検証。
+- 線形静的解析実行。
+- プロジェクト保存。
+- プロジェクト読込。
+- サンプルプロジェクト一覧取得。
 
-Returns service health.
+## 3. 非対象範囲
 
-Response `200`:
+- ユーザー認証、権限管理、ライセンス管理。
+- クラウド永続化、共同編集。
+- 影響線解析、移動荷重、固有値解析、応答スペクトル解析のAPI。
+- DXF出力API。
+- 外部解析ソフト連携API。
+
+## 4. API仕様
+
+### 共通
+
+- Request/ResponseはJSON。
+- 文字コードはUTF-8。
+- エラーは `code` と `message` を含む構造化形式。
+- APIは送信された `project` を暗黙に変更しない。
+
+### GET /health
+
+レスポンス:
 
 ```json
 {
@@ -25,11 +43,9 @@ Response `200`:
 }
 ```
 
-## POST /api/projects/validate
+### POST /api/projects/validate
 
-Validates `project.json` without running analysis.
-
-Request:
+リクエスト:
 
 ```json
 {
@@ -37,9 +53,7 @@ Request:
 }
 ```
 
-The `project` value is the full `project.json` object defined in `docs/04_input_schema.md`.
-
-Response `200`:
+レスポンス:
 
 ```json
 {
@@ -49,7 +63,7 @@ Response `200`:
 }
 ```
 
-Response with validation failure:
+不正時:
 
 ```json
 {
@@ -58,7 +72,7 @@ Response with validation failure:
   "errors": [
     {
       "code": "INVALID_REFERENCE",
-      "message": "Member M1 references missing node N99.",
+      "message": "Member M1 references missing node N9.",
       "path": "/members/0/nodeJ",
       "entityType": "member",
       "entityId": "M1"
@@ -67,11 +81,9 @@ Response with validation failure:
 }
 ```
 
-## POST /api/analysis/run
+### POST /api/analysis/run
 
-Runs linear static analysis.
-
-Request:
+リクエスト:
 
 ```json
 {
@@ -82,7 +94,7 @@ Request:
 }
 ```
 
-Response `200` success:
+成功レスポンス:
 
 ```json
 {
@@ -100,17 +112,7 @@ Response `200` success:
 }
 ```
 
-If `returnCsv` is true, `csv` may contain:
-
-```json
-{
-  "displacements": "loadCaseId,nodeId,ux,uy,uz,rx,ry,rz\n",
-  "reactions": "loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs\n",
-  "memberEndForces": "loadCaseId,memberId,end,fx,fy,fz,mx,my,mz\n"
-}
-```
-
-Response `200` analysis failed:
+解析失敗時:
 
 ```json
 {
@@ -124,8 +126,8 @@ Response `200` analysis failed:
     "warnings": [],
     "errors": [
       {
-        "code": "SOLVER_ERROR",
-        "message": "Global stiffness matrix is singular."
+        "code": "MODEL_UNSTABLE",
+        "message": "The model has insufficient support constraints."
       }
     ]
   },
@@ -133,51 +135,37 @@ Response `200` analysis failed:
 }
 ```
 
-Unexpected server errors use `500`.
+### POST /api/projects/save
 
-## POST /api/projects/save
-
-Saves a project JSON payload.
-
-MVP persistence may be local filesystem storage under a configured workspace path.
-
-Request:
+リクエスト:
 
 ```json
 {
-  "project": {},
-  "fileName": "example.project.json"
+  "fileName": "sample.project.json",
+  "project": {}
 }
 ```
 
-Response `200`:
+レスポンス:
 
 ```json
 {
   "saved": true,
-  "fileName": "example.project.json"
+  "fileName": "sample.project.json"
 }
 ```
 
-Rules:
+### POST /api/projects/load
 
-- File names must be sanitized.
-- Directory traversal is forbidden.
-- Project must validate before save unless `allowInvalid` is explicitly added in a later phase.
-
-## POST /api/projects/load
-
-Loads a saved project.
-
-Request:
+リクエスト:
 
 ```json
 {
-  "fileName": "example.project.json"
+  "fileName": "sample.project.json"
 }
 ```
 
-Response `200`:
+レスポンス:
 
 ```json
 {
@@ -185,17 +173,9 @@ Response `200`:
 }
 ```
 
-Rules:
+### GET /api/examples
 
-- Directory traversal is forbidden.
-- Loaded content must be parsed as JSON.
-- Invalid saved projects return validation errors.
-
-## GET /api/examples
-
-Returns bundled examples.
-
-Response `200`:
+レスポンス:
 
 ```json
 {
@@ -203,23 +183,42 @@ Response `200`:
     {
       "id": "cantilever_tip_load",
       "name": "Cantilever Tip Load",
-      "description": "Verification model for a fixed-free beam.",
+      "description": "Fixed-free beam verification model.",
       "project": {}
     }
   ]
 }
 ```
 
-Minimum examples:
+最低限含める例:
 
-- Cantilever tip load.
-- Simply supported center point load.
-- Simply supported uniform load.
-- 3D cantilever torsion.
+- 片持梁の先端集中荷重。
+- 単純梁の中央集中荷重。
+- 単純梁の等分布荷重。
+- 3D片持梁のねじり。
 
-## API Testing Requirements
+## 5. エラー処理
 
-- Every endpoint has success and failure tests.
-- `/api/analysis/run` tests include at least one known result case.
-- Save/load tests must verify path traversal rejection.
-- Error response shape must be stable.
+- JSON parse失敗はHTTP 400。
+- スキーマ不正はHTTP 200で `valid: false`、またはHTTP 422。実装時に統一する。
+- 解析入力不正は解析を実行せず、構造化エラーを返す。
+- save/loadのパストラバーサルはHTTP 400。
+- 予期しないサーバー例外はHTTP 500。
+- HTTP 500でも内部スタックトレースをレスポンスに出してはならない。
+
+## 6. テスト観点
+
+- `GET /health` が成功する。
+- validな `project.json` が検証成功する。
+- 不正参照が検証失敗する。
+- 片持梁サンプルを解析できる。
+- 支点不足モデルが失敗レスポンスを返す。
+- save/loadで `../` を拒否する。
+- `GET /api/examples` が必須例を返す。
+
+## 7. 完了条件
+
+- すべてのMVP APIがOpenAPIに表示される。
+- APIテストが `docs/12_quality_gate.md` を満たす。
+- APIが解析ロジックを直接持たず、Engineを呼び出す。
+- UI担当がこの文書だけでAPI接続できる。

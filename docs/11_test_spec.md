@@ -1,154 +1,153 @@
-# Test Specification
+# 11 Test Specification
 
-## Purpose
+## 1. 目的
 
-This document defines minimum verification and regression tests for the MVP. Numerical tests must be automated with `pytest`.
+MVPの解析精度、API契約、UI表示、エラー処理を検証するための最低限のテスト仕様を定義する。後続実装ではこの文書の検証ケースを自動テスト化する。
 
-## General Test Rules
+## 2. 対象範囲
 
-- Tests use SI units.
-- Tests must compare against closed-form theory where practical.
-- Relative tolerance target is `1e-5`.
-- Absolute tolerance may be used near zero values.
-- Every expected sign must be documented in the test.
-- Validation error tests must assert structured error codes, not only message text.
+- Python解析エンジンの理論値比較。
+- 入力スキーマ検証。
+- 結果スキーマ検証。
+- FastAPIエンドポイント。
+- React UIビルドと基本表示。
+- Three.js表示の基本動作。
 
-## Required Verification Cases
+## 3. 非対象範囲
 
-### 1. Cantilever Beam with Tip Concentrated Load
+- 影響線解析、移動荷重、活荷重自動載荷の検証。
+- 固有値解析、応答スペクトル解析の検証。
+- 温度荷重、プレストレス、初期張力の検証。
+- DXF、PDF帳票テンプレート、ライセンス管理の検証。
+- 外部解析ソフトとの互換検証。
 
-Model:
+## 4. テスト仕様
 
-- One horizontal member of length `L`.
-- Node I fixed.
-- Node J free.
-- Vertical point load `P` at free end.
+### 共通基準
 
-Expected theory:
+- 単位はSI。
+- 理論値比較の標準相対誤差は `1e-5`。
+- 0近傍では絶対誤差を明示する。
+- 符号規約はテスト内コメントに明記する。
+- `NaN`、`Infinity` は失敗とする。
 
-- Tip displacement: `delta = P L^3 / (3 E I)`.
-- Tip rotation: `theta = P L^2 / (2 E I)`.
-- Fixed end shear reaction: `P`.
-- Fixed end moment reaction: `P L`.
+### 必須解析検証ケース
 
-Assertions:
+#### 1. 片持梁の先端集中荷重
 
-- Free end displacement matches theory.
-- Free end rotation matches theory.
-- Support reactions match equilibrium.
-- Member end forces match support equilibrium.
+モデル:
 
-### 2. Simply Supported Beam with Center Concentrated Load
+- 1部材。
+- I端固定、J端自由。
+- J端に鉛直集中荷重 `P`。
 
-Model:
+理論値:
 
-- Beam length `L`, split into two equal members or one member with center node.
-- End supports restrain vertical displacement; one end also restrains axial displacement for stability.
-- Point load `P` at center node.
+- 先端変位 `delta = P L^3 / (3 E I)`。
+- 先端回転 `theta = P L^2 / (2 E I)`。
+- 固定端反力 `P`。
+- 固定端モーメント `P L`。
 
-Expected theory:
+#### 2. 単純梁の中央集中荷重
 
-- Midspan displacement: `delta = P L^3 / (48 E I)`.
-- End reactions: `P / 2` each.
-- Maximum moment: `P L / 4`.
+モデル:
 
-Assertions:
+- 中央節点を持つ単純梁。
+- 両端鉛直支持。一方に軸方向拘束を加えて剛体変位を防ぐ。
+- 中央節点に集中荷重 `P`。
 
-- Center displacement matches theory.
-- Reactions sum to `P`.
-- Reaction distribution is symmetric.
+理論値:
 
-### 3. Simply Supported Beam with Uniform Distributed Load
+- 中央変位 `delta = P L^3 / (48 E I)`。
+- 反力 `P / 2`。
+- 最大曲げ `P L / 4`。
 
-Model:
+#### 3. 単純梁の等分布荷重
 
-- Beam length `L`.
-- Uniform load `w` over full span.
-- End supports as above.
+モデル:
 
-Expected theory:
+- 中央節点を持つ単純梁。
+- 全長に等分布荷重 `w`。
 
-- Midspan displacement: `delta = 5 w L^4 / (384 E I)`.
-- End reactions: `w L / 2` each.
-- Maximum moment: `w L^2 / 8`.
+理論値:
 
-Assertions:
+- 中央変位 `delta = 5 w L^4 / (384 E I)`。
+- 反力 `w L / 2`。
+- 最大曲げ `w L^2 / 8`。
 
-- Midspan displacement matches theory when model has a center node.
-- Reactions match theory.
-- Member end forces are consistent with equivalent nodal load convention.
+#### 4. 3D片持梁のねじり
 
-### 4. 3D Cantilever Torsion
+モデル:
 
-Model:
+- X方向の片持梁。
+- 自由端に局所X軸まわりのねじりモーメント `T`。
 
-- One member along global X.
-- Node I fixed.
-- Node J free.
-- Torsional moment `T` about member local X at free end.
+理論値:
 
-Expected theory:
+- ねじり角 `phi = T L / (G J)`。
+- 固定端ねじり反力 `T`。
 
-- Twist angle: `phi = T L / (G J)`.
-- Fixed torsional reaction: `T`.
+#### 5. 支点不足エラー
 
-Assertions:
+モデル:
 
-- Free end `RX` matches theory.
-- Fixed support `MX` matches equilibrium.
-- No unintended transverse displacement above tolerance.
+- 節点、部材、材料、断面は妥当。
+- 支点なし、または剛体運動を拘束できない。
 
-### 5. Insufficient Support Error
+期待:
 
-Model:
+- `MODEL_UNSTABLE` または `SOLVER_ERROR`。
+- 成功結果として扱わない。
 
-- Valid nodes, member, material, section.
-- No supports or insufficient restraints causing rigid body motion.
+#### 6. 不正な部材参照エラー
 
-Expected:
+モデル:
 
-- Validation or analysis fails.
-- Error code is `MODEL_UNSTABLE` or `SOLVER_ERROR` according to implementation boundary.
-- No displacement results are returned.
+- 部材が存在しない節点IDを参照する。
 
-### 6. Invalid Member Reference Error
+期待:
 
-Model:
+- 解析前検証で `INVALID_REFERENCE`。
+- `path` が不正フィールドを指す。
 
-- Member references a missing node.
+### APIテスト
 
-Expected:
+- `GET /health` が成功する。
+- `POST /api/projects/validate` が正常モデルをvalidにする。
+- `POST /api/projects/validate` が不正参照を検出する。
+- `POST /api/analysis/run` が片持梁結果を返す。
+- `POST /api/projects/save` がパストラバーサルを拒否する。
+- `POST /api/projects/load` が存在しないファイルを適切に扱う。
+- `GET /api/examples` が必須サンプルを返す。
 
-- Validation fails before analysis.
-- Error code is `INVALID_REFERENCE`.
-- Error path points to the invalid member field.
+### UI/3Dテスト
 
-## API Tests
+- UIビルドが成功する。
+- 節点、部材、材料、断面、支点、荷重の表が表示される。
+- 検証エラーが画面に表示される。
+- 成功結果の表が表示される。
+- Three.jsビューが空モデルでクラッシュしない。
+- 節点、部材、支点、荷重、変形図を表示できる。
 
-Required:
+## 5. エラー処理
 
-- `GET /health` returns `ok`.
-- `POST /api/projects/validate` accepts valid cantilever example.
-- `POST /api/projects/validate` rejects invalid member reference.
-- `POST /api/analysis/run` returns expected cantilever result.
-- `POST /api/projects/save` rejects path traversal.
-- `POST /api/projects/load` rejects missing file.
-- `GET /api/examples` returns required examples.
+- テストはエラー文言全文ではなく、エラーコードを検証する。
+- 解析失敗時に部分結果が成功扱いで返らないことを検証する。
+- API 500を返すケースは、予期しない内部例外に限定する。
 
-## UI Tests
+## 6. テスト観点
 
-Minimum:
+- 解析理論値との一致。
+- 支点反力のつり合い。
+- 部材端力と反力の整合。
+- スキーマ検証の厳密性。
+- API契約の安定性。
+- UIがMVP外機能を表示しないこと。
 
-- UI builds successfully.
-- Tables render for nodes, members, materials, sections, supports, and loads.
-- Run analysis button is disabled or reports error when validation fails.
-- Result tables render after successful analysis.
+## 7. 完了条件
 
-## Regression Data
-
-Every verification case should have:
-
-- Example `project.json`.
-- Expected result values.
-- Tolerance values.
-- Notes on sign convention.
+- 6つの必須検証ケースが自動テスト化されている。
+- `pytest` が通る。
+- APIテストが通る。
+- UIビルドが通る。
+- `docs/12_quality_gate.md` の受入基準を満たす。

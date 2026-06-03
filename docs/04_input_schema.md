@@ -1,10 +1,37 @@
-# Input Schema: project.json
+# 04 Input Schema
 
-## Purpose
+## 1. 目的
 
-`project.json` is the canonical MVP input format. It must contain all data needed to validate, run, and reproduce a linear static 3D frame analysis.
+MVPの入力データである `project.json` の構造を定義する。後続実装では、この文書をもとにJSON Schema、APIバリデーション、UI入力フォーム、解析エンジン入力モデルを作成する。
 
-## Top-Level Structure
+## 2. 対象範囲
+
+MVPで扱う入力は以下に限定する。
+
+- 3次元節点座標。
+- 材料定義。
+- 断面定義。
+- 3D梁部材定義。
+- 6自由度支点条件。
+- 荷重ケース。
+- 節点集中荷重。
+- 部材等分布荷重。
+- 線形静的解析設定。
+
+## 3. 非対象範囲
+
+以下の入力項目はMVPで定義しない。
+
+- 影響線載荷点、格子形状、ライン、移動荷重、活荷重自動載荷。
+- 固有値解析、応答スペクトル解析の入力。
+- 温度荷重、プレストレス、初期張力。
+- 部材バネ、節点間バネ、連成バネ。
+- 部材端リリース、高度な荷重組合せ。
+- DXF、外部ソフト連携、ライセンス情報。
+
+## 4. データ構造
+
+### トップレベル
 
 ```json
 {
@@ -22,149 +49,114 @@
 }
 ```
 
-All top-level fields are required.
+すべて必須とする。
 
-## project
-
-Required fields:
-
-- `id`: string, unique project identifier.
-- `name`: string.
-- `schemaVersion`: string, initially `1.0.0`.
-- `description`: string, may be empty.
-- `createdAt`: ISO 8601 string.
-- `updatedAt`: ISO 8601 string.
-
-Example:
+### project
 
 ```json
 {
-  "id": "example-cantilever",
-  "name": "Cantilever Beam",
+  "id": "project-001",
+  "name": "MVP Frame Model",
   "schemaVersion": "1.0.0",
-  "description": "MVP verification model",
+  "description": "",
   "createdAt": "2026-01-01T00:00:00Z",
   "updatedAt": "2026-01-01T00:00:00Z"
 }
 ```
 
-## units
+- `id`: 文字列、必須。
+- `name`: 文字列、必須。
+- `schemaVersion`: MVPでは `1.0.0`。
+- `description`: 文字列、空文字可。
+- `createdAt`, `updatedAt`: ISO 8601文字列。
 
-Required fields:
-
-- `length`: must be `m`.
-- `force`: must be `kN`.
-- `moment`: must be `kN_m`.
-- `modulus`: must be `kN_per_m2`.
-- `area`: must be `m2`.
-- `inertia`: must be `m4`.
-
-MVP rejects unsupported unit values.
-
-## nodes
-
-Each node requires:
-
-- `id`: string.
-- `x`: number.
-- `y`: number.
-- `z`: number.
-
-Optional:
-
-- `label`: string.
-
-Rules:
-
-- `id` must be unique.
-- Coordinates are global coordinates in meters.
-- Duplicate coordinates are allowed.
-
-Example:
+### units
 
 ```json
-{ "id": "N1", "x": 0.0, "y": 0.0, "z": 0.0 }
+{
+  "length": "m",
+  "force": "kN",
+  "moment": "kN_m",
+  "modulus": "kN_per_m2",
+  "area": "m2",
+  "inertia": "m4"
+}
 ```
 
-## materials
+MVPではSI単位のみを許可する。単位変換は実装しない。
 
-Each material requires:
+### nodes
 
-- `id`: string.
-- `name`: string.
-- `elasticModulus`: number, `kN/m2`.
-- `shearModulus`: number, `kN/m2`.
+```json
+{
+  "id": "N1",
+  "x": 0.0,
+  "y": 0.0,
+  "z": 0.0,
+  "label": "optional"
+}
+```
 
-Optional:
+- `id`: 一意。
+- `x`, `y`, `z`: グローバル座標、単位m。
+- `label`: 任意。
 
-- `poissonRatio`: number.
-- `density`: number.
+### materials
 
-Rules:
+```json
+{
+  "id": "MAT1",
+  "name": "Steel",
+  "elasticModulus": 205000000.0,
+  "shearModulus": 79000000.0,
+  "poissonRatio": 0.3,
+  "density": 0.0
+}
+```
 
-- `elasticModulus` must be greater than 0.
-- `shearModulus` must be greater than 0.
-- MVP does not derive `shearModulus` from `poissonRatio`; provide explicit `shearModulus`.
+- `elasticModulus`: `kN/m2`、正数。
+- `shearModulus`: `kN/m2`、正数。
+- `poissonRatio`, `density`: MVP解析では任意情報。
 
-## sections
+### sections
 
-Each section requires:
+```json
+{
+  "id": "SEC1",
+  "name": "Box Section",
+  "area": 0.02,
+  "iy": 0.0001,
+  "iz": 0.0001,
+  "j": 0.00005
+}
+```
 
-- `id`: string.
-- `name`: string.
-- `area`: number, `m2`.
-- `iy`: number, local y-axis second moment of area, `m4`.
-- `iz`: number, local z-axis second moment of area, `m4`.
-- `j`: number, torsional constant, `m4`.
+- `area`: 断面積、`m2`。
+- `iy`: 部材局所y軸まわり断面2次モーメント、`m4`。
+- `iz`: 部材局所z軸まわり断面2次モーメント、`m4`。
+- `j`: ねじり定数、`m4`。
 
-Rules:
+### members
 
-- All numeric section properties must be greater than 0.
-- Shear deformation is out of MVP; no shear area fields are required.
+```json
+{
+  "id": "M1",
+  "nodeI": "N1",
+  "nodeJ": "N2",
+  "materialId": "MAT1",
+  "sectionId": "SEC1",
+  "orientationVector": { "x": 0.0, "y": 0.0, "z": 1.0 },
+  "label": ""
+}
+```
 
-## members
+- `nodeI`, `nodeJ`: 既存節点ID。
+- `materialId`: 既存材料ID。
+- `sectionId`: 既存断面ID。
+- `orientationVector`: 任意。省略時は解析エンジンの既定局所座標則を使う。
+- `orientationNode`: 任意。`orientationVector` と同時指定不可。
 
-Each member requires:
-
-- `id`: string.
-- `nodeI`: node id.
-- `nodeJ`: node id.
-- `materialId`: material id.
-- `sectionId`: section id.
-
-Optional:
-
-- `orientationNode`: node id used to define local y direction.
-- `orientationVector`: object with `x`, `y`, `z` numbers.
-- `label`: string.
-
-Rules:
-
-- `nodeI` and `nodeJ` must reference existing nodes.
-- `nodeI` and `nodeJ` must not be identical.
-- Member length must be greater than zero.
-- If both `orientationNode` and `orientationVector` are omitted, the engine must use the default local axis rule in `docs/05_analysis_engine_spec.md`.
-- If both are present, validation fails.
-
-## supports
-
-Each support requires:
-
-- `nodeId`: node id.
-- `ux`: boolean.
-- `uy`: boolean.
-- `uz`: boolean.
-- `rx`: boolean.
-- `ry`: boolean.
-- `rz`: boolean.
-
-Rules:
-
-- `nodeId` must reference an existing node.
-- At least one DOF must be constrained.
-- Multiple support entries for the same node are invalid.
-
-Example fixed support:
+### supports
 
 ```json
 {
@@ -178,90 +170,98 @@ Example fixed support:
 }
 ```
 
-## loadCases
+- 各booleanは該当自由度を拘束することを示す。
+- 同一節点に複数supportを定義してはならない。
 
-Each load case requires:
+### loadCases
 
-- `id`: string.
-- `name`: string.
-- `type`: string, MVP allows `static`.
+```json
+{
+  "id": "LC1",
+  "name": "Dead Load",
+  "type": "static"
+}
+```
 
-Rules:
+MVPでは `type` は `static` のみ。
 
-- `id` must be unique.
-- MVP solves each load case independently.
-- Advanced load combinations are out of scope.
+### nodalLoads
 
-## nodalLoads
+```json
+{
+  "id": "NL1",
+  "loadCaseId": "LC1",
+  "nodeId": "N2",
+  "fx": 0.0,
+  "fy": -10.0,
+  "fz": 0.0,
+  "mx": 0.0,
+  "my": 0.0,
+  "mz": 0.0
+}
+```
 
-Each nodal load requires:
+- 力は `kN`。
+- モーメントは `kN_m`。
+- 未使用成分も `0.0` として明示する。
 
-- `id`: string.
-- `loadCaseId`: load case id.
-- `nodeId`: node id.
-- `fx`: number.
-- `fy`: number.
-- `fz`: number.
-- `mx`: number.
-- `my`: number.
-- `mz`: number.
+### memberLoads
 
-Rules:
+```json
+{
+  "id": "ML1",
+  "loadCaseId": "LC1",
+  "memberId": "M1",
+  "coordinateSystem": "local",
+  "type": "uniform",
+  "wx": 0.0,
+  "wy": -2.0,
+  "wz": 0.0
+}
+```
 
-- Force components are in `kN`.
-- Moment components are in `kN_m`.
-- All six components are required; use `0.0` for unused components.
+- `type`: MVPでは `uniform` のみ。
+- `coordinateSystem`: `local` または `global`。
+- 荷重強度は `kN/m`。
+- 部材全長に作用する等分布荷重のみ扱う。
 
-## memberLoads
+### analysisSettings
 
-Each member load requires:
+```json
+{
+  "analysisType": "linear_static",
+  "solver": "scipy_sparse",
+  "includeShearDeformation": false,
+  "largeDisplacement": false,
+  "tolerance": 1e-9
+}
+```
 
-- `id`: string.
-- `loadCaseId`: load case id.
-- `memberId`: member id.
-- `coordinateSystem`: `local` or `global`.
-- `type`: MVP allows `uniform`.
-- `wx`: number.
-- `wy`: number.
-- `wz`: number.
+MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
 
-Rules:
+## 5. エラー処理
 
-- Load intensity is `kN/m`.
-- Uniform loads act over the full member length in MVP.
-- Partial distributed loads are out of scope.
-- Member moments distributed along the element are out of scope.
+- 必須フィールド欠落は `SCHEMA_ERROR`。
+- ID重複は `DUPLICATE_ID`。
+- 存在しない参照は `INVALID_REFERENCE`。
+- 非有限値、負またはゼロの剛性値は `INVALID_VALUE`。
+- 部材長ゼロは `ZERO_LENGTH_MEMBER`。
+- 支点不足は検証または解析で `MODEL_UNSTABLE`。
+- エラーには `path`、`entityType`、`entityId` を可能な限り含める。
 
-## analysisSettings
+## 6. テスト観点
 
-Required fields:
+- 正常な片持梁モデルがスキーマ検証を通る。
+- 必須トップレベル項目欠落を検出する。
+- 節点、材料、断面、荷重ケースの不正参照を検出する。
+- 重複IDを検出する。
+- `NaN`、`Infinity`、文字列数値を拒否する。
+- MVP外フィールドを追加した場合の扱いがJSON Schemaで明確である。
 
-- `analysisType`: must be `linear_static`.
-- `solver`: must be `scipy_sparse`.
-- `includeShearDeformation`: boolean, must be `false` in MVP.
-- `largeDisplacement`: boolean, must be `false`.
+## 7. 完了条件
 
-Optional:
-
-- `tolerance`: number, default `1e-9`.
-- `maxConditionWarning`: number.
-
-## Validation Rules
-
-Validation must check:
-
-- Required top-level fields exist.
-- IDs are unique per entity type.
-- References point to existing entities.
-- Numeric values are finite.
-- Material and section stiffness values are positive.
-- Members have nonzero length.
-- At least one load case exists before analysis.
-- At least one support exists.
-- The model has enough constraints to avoid rigid body motion.
-
-## Extension Fields
-
-Objects may include `metadata` for non-analysis UI data. The engine must ignore `metadata`.
-
-No other unknown fields should be accepted in MVP unless explicitly allowed by the JSON Schema.
+- `project.json` の全必須項目が定義されている。
+- JSON Schema実装者がこの文書だけでスキーマを作成できる。
+- UI担当が入力表を作成できる。
+- Engine担当が解析入力モデルを作成できる。
+- MVP外機能の入力が非対象として明記されている。

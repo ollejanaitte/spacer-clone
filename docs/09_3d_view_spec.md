@@ -1,144 +1,130 @@
-# Three.js 3D View Specification
+# 09 3D View Specification
 
-## Purpose
+## 1. 目的
 
-The Three.js viewer provides minimal visual confirmation of model geometry, supports, loads, labels, selection, and deformed shape.
+Three.jsを用いたMVPの3D線モデル表示仕様を定義する。解析入力と結果を視覚確認できることを目的とし、CAD編集機能は持たせない。
 
-## Inputs
+## 2. 対象範囲
 
-Viewer inputs:
+- 節点表示。
+- 部材線表示。
+- 支点記号。
+- 荷重矢印。
+- 部材番号・節点番号ラベル。
+- 変形図。
+- 表示倍率。
+- カメラ操作。
+- 選択ハイライト。
 
-- `project.json` compatible model object.
-- Selected load case ID.
-- Optional analysis result JSON.
-- Selected entity state.
-- Viewer settings.
+## 3. 非対象範囲
 
-Viewer output events:
+- 断面形状の3Dソリッド表示。
+- CAD編集、スナップ、ドラッグ作成。
+- DXF表示・出力。
+- 影響線図、モード図、応答スペクトル結果図。
+- 温度荷重やプレストレス専用表示。
+- 高度な帳票図面作成。
 
-- Entity selected.
-- Empty space selected.
-- Camera changed.
+## 4. 表示仕様
 
-## Node Display
+### 入力データ
 
-Requirements:
+- `project.json` 互換モデル。
+- 選択中荷重ケースID。
+- 任意の解析結果JSON。
+- UIの選択状態。
+- 表示設定。
 
-- Draw each node as a small point or sphere.
-- Default node color must be visually distinct from members.
-- Selected node uses highlight color.
-- Nodes with supports may use an additional support symbol.
+### 節点表示
 
-MVP does not require editable node dragging.
+- 各節点を点または小球で表示する。
+- 選択節点はハイライト色にする。
+- 支点がある節点は支点記号を重ねる。
 
-## Member Line Display
+### 部材線表示
 
-Requirements:
+- `nodeI` から `nodeJ` へ直線を描画する。
+- 選択部材は色と線幅を変える。
+- 部材IDラベル表示を切り替え可能にする。
 
-- Draw each member as a straight line from `nodeI` to `nodeJ`.
-- Selected member uses highlight color and thicker line.
-- Invalid member references must not crash the viewer; show warning state if possible.
-- Member color may be uniform in MVP.
+### 支点記号
 
-## Support Symbols
+- 拘束節点に簡易記号を表示する。
+- 完全固定はブロックまたは三角記号でよい。
+- 部分拘束の詳細DOFはプロパティパネルで確認する。
 
-Requirements:
+### 荷重矢印
 
-- Draw support symbols at constrained nodes.
-- Fixed support can be represented by a simple triad, block, or cone glyph.
-- Partial restraints should be visible in property panel; detailed DOF glyphs are optional for MVP.
+- 選択中荷重ケースの節点集中荷重を矢印表示する。
+- 部材等分布荷重を複数矢印または帯状記号で表示する。
+- 相対値が分かるように自動スケールする。
+- 力の向きは必ず実ベクトル方向と一致させる。
 
-## Load Arrows
+### ラベル
 
-Requirements:
+- 節点番号ラベルON/OFF。
+- 部材番号ラベルON/OFF。
+- ラベルはカメラ方向を向く。
+- モデルが密な場合はラベル非表示にできる。
 
-- Draw nodal load force arrows for selected load case.
-- Draw nodal moment glyphs as curved arrows or circular markers if practical.
-- Draw uniform member loads as repeated arrows or a simplified distributed load glyph.
-- Use scale normalization so arrows are visible for small and large loads.
+### 変形図
 
-MVP must at least show direction and relative magnitude for force and distributed load vectors.
+- 解析結果がある場合、選択荷重ケースの変位を用いて変形後形状を表示する。
+- MVPでは部材を変形後節点間の直線で描いてよい。
+- 変形前形状は薄色で残す。
+- 変形倍率は手動または自動。
 
-## Member and Node Labels
+### 表示倍率
 
-Requirements:
+設定:
 
-- Toggle node labels.
-- Toggle member labels.
-- Labels show entity IDs.
-- Labels should face camera where possible.
-- Labels may be hidden automatically when too dense.
+- `deformationScale`
+- `loadScale`
+- `nodeSize`
+- `labelSize`
 
-## Deformed Shape
+自動変形倍率:
 
-Requirements:
+1. モデルのバウンディングボックス対角長を計算する。
+2. 最大並進変位を計算する。
+3. 最大変位が対角長の一定割合になるよう倍率を決める。
+4. 最大変位が0の場合、変形図を表示しない。
 
-- Display deformed member lines when displacement results exist.
-- Use selected load case result.
-- Deformation scale can be auto or manual.
-- Undeformed model remains visible as faint reference.
+### カメラ操作
 
-MVP can draw deformed members as straight lines between displaced end nodes. Curved beam deformation is optional.
+- Orbit。
+- Pan。
+- Zoom。
+- Fit to model。
+- XY、XZ、YZ、Isometric。
 
-## Display Scale
+### 選択ハイライト
 
-Viewer settings:
+- 節点クリックで節点選択。
+- 部材クリックで部材選択。
+- 選択状態はReactへ通知する。
+- React側の選択変更も3Dビューへ反映する。
 
-- `loadScale`: number.
-- `deformationScale`: number or `auto`.
-- `nodeSize`: number.
-- `labelSize`: number.
+## 5. エラー処理
 
-Auto deformation scale:
+- 不正参照部材があってもビュー全体をクラッシュさせない。
+- 描画不能エンティティは警告としてUIへ返す。
+- 結果JSONがない場合、変形図を非表示にする。
+- 変位に非有限値がある場合、変形図を表示せずエラー表示する。
 
-- Compute model bounding box diagonal.
-- Compute maximum translational displacement.
-- Scale maximum displacement to a visible fraction of the diagonal.
-- If max displacement is zero, do not show deformed shape.
+## 6. テスト観点
 
-## Camera Controls
+- 空モデルでクラッシュしない。
+- 節点・部材を表示できる。
+- 支点、荷重矢印、ラベルON/OFFが動作する。
+- 選択ハイライトがReact状態と同期する。
+- 変形図が結果JSONから描画される。
+- 1,500節点、2,500部材程度で操作可能な設計になっている。
 
-Required:
+## 7. 完了条件
 
-- Orbit.
-- Pan.
-- Zoom.
-- Fit to model.
-- Standard views: XY, XZ, YZ, isometric.
-
-Use `OrbitControls` or equivalent.
-
-## Selection Highlight
-
-Requirements:
-
-- Click node to select node.
-- Click member to select member.
-- Selected entity updates React state.
-- React state can also select an entity and update viewer highlight.
-- Multiple selection is out of MVP.
-
-## Scene Helpers
-
-Recommended:
-
-- Global axes helper.
-- Grid helper toggle.
-- Bounding box fit.
-
-## Performance
-
-MVP target:
-
-- Smooth interaction for at least 1,500 nodes and 2,500 members.
-- Avoid one React component per rendered primitive if it harms performance.
-- Use batched geometry where practical.
-
-## Out of Scope
-
-- Mesh rendering.
-- Section shape rendering.
-- CAD snapping.
-- In-view editing.
-- Animation timeline.
-- DXF rendering.
+- MVPモデルを線表示できる。
+- 支点と荷重の概略確認ができる。
+- 解析結果の変形図を表示できる。
+- UI担当がコンポーネントとして組み込める。
+- MVP外の高度図面機能を含まない。
