@@ -28,10 +28,24 @@ export function ThreeViewport(props: ThreeViewportProps) {
     const host = hostRef.current;
     if (!host) return undefined;
 
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: document.createElement("canvas"),
+        antialias: false,
+        alpha: false,
+        powerPreference: "default",
+        preserveDrawingBuffer: false,
+        failIfMajorPerformanceCaveat: false,
+      });
+    } catch (error) {
+      propsRef.current.onInitializationError(error);
+      return undefined;
+    }
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#f7fafc");
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 10000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     host.appendChild(renderer.domElement);

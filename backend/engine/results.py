@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import numpy as np
@@ -15,7 +15,7 @@ from .model import Model
 
 
 def iso_now() -> str:
-    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def clean(value: float) -> float:
@@ -49,7 +49,7 @@ def build_success_result(
             values = u_full[dofs]
             displacements.append(
                 {"loadCaseId": case.id, "nodeId": node.id}
-                | dict(zip(DOF_NAMES, map(clean, values), strict=True))
+                | dict(zip(DOF_NAMES, map(clean, values)))
             )
         for support in model.supports:
             dofs = dof_map.node_dofs(support.nodeId)

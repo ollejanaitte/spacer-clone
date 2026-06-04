@@ -44,6 +44,9 @@ def assemble_stiffness(model: Model, dof_map: DofMap) -> Assembly:
             nodes[member.nodeJ],
             materials[member.materialId],
             sections[member.sectionId],
+            nodes[member.orientationNode]
+            if member.orientationNode is not None
+            else None,
         )
         dofs = member_dofs(dof_map, member.nodeI, member.nodeJ)
         for local_row, global_row in enumerate(dofs):

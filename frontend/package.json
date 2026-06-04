@@ -6,6 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
+    "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
+    "electron:build": "npm run build && npm run electron:compile",
+    "electron:test": "vitest run --root .. desktop/electron",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,7 +24,13 @@
     "vite": "^7.0.0"
   },
   "devDependencies": {
+    "@types/node": "^25.9.1",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^10.0.3",
+    "electron": "^42.3.3",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.8",
+    "wait-on": "^9.0.10"
   }
 }

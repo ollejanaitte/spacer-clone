@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES2022"],
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "../../frontend",
+    "paths": {
+      "electron": ["node_modules/electron"]
+    },
+    "rootDir": ".",
+    "outDir": "dist",
+    "types": ["node"],
+    "typeRoots": ["../../frontend/node_modules/@types"]
+  },
+  "include": ["*.ts"],
+  "exclude": ["*.test.ts", "dist"]
+}

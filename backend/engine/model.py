@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Any
 
 from .errors import AnalysisError
@@ -30,12 +31,9 @@ class Material:
     id: str
     name: str
     elasticModulus: float
-    poissonRatio: float
+    shearModulus: float
+    poissonRatio: float = 0.0
     density: float = 0.0
-
-    @property
-    def shear_modulus(self) -> float:
-        return self.elasticModulus / (2.0 * (1.0 + self.poissonRatio))
 
 
 @dataclass(frozen=True)
@@ -63,6 +61,7 @@ class Member:
     materialId: str
     sectionId: str
     orientationVector: OrientationVector | None = None
+    orientationNode: str | None = None
     label: str = ""
 
 
@@ -112,6 +111,7 @@ class MemberLoad:
 @dataclass(frozen=True)
 class AnalysisSettings:
     analysisType: str = "linear_static"
+    solver: str = "scipy_sparse"
     includeShearDeformation: bool = False
     largeDisplacement: bool = False
     tolerance: float = 1e-9
@@ -148,13 +148,9 @@ class Model:
 
 
 def parse_model(data: dict[str, Any]) -> Model:
-    reject_mvp_extras(data)
     project = ProjectInfo(**require_mapping(data, "project"))
     nodes = [Node(**item) for item in require_list(data, "nodes")]
-    materials = [
-        parse_material(item, idx)
-        for idx, item in enumerate(require_list(data, "materials"))
-    ]
+    materials = [Material(**item) for item in require_list(data, "materials")]
     sections = [Section(**item) for item in require_list(data, "sections")]
     members = [
         parse_member(item, idx)
@@ -181,31 +177,15 @@ def parse_model(data: dict[str, Any]) -> Model:
     return model
 
 
-def reject_mvp_extras(data: dict[str, Any]) -> None:
-    if "units" in data:
-        raise AnalysisError(
-            "SCHEMA_ERROR", "units is not part of the MVP engine input.", path="/units"
-        )
-
-
-def parse_material(item: dict[str, Any], index: int) -> Material:
-    if "shearModulus" in item:
-        raise AnalysisError(
-            "SCHEMA_ERROR",
-            "shearModulus must be computed from elasticModulus and poissonRatio.",
-            path=f"/materials/{index}/shearModulus",
-            entity_type="material",
-            entity_id=item.get("id"),
-        )
-    return Material(**item)
-
-
 def parse_member(item: dict[str, Any], index: int) -> Member:
-    if "orientationNode" in item:
+    if (
+        item.get("orientationVector") is not None
+        and item.get("orientationNode") is not None
+    ):
         raise AnalysisError(
             "SCHEMA_ERROR",
-            "orientationNode is not supported in the MVP engine.",
-            path=f"/members/{index}/orientationNode",
+            "orientationVector and orientationNode cannot be specified together.",
+            path=f"/members/{index}",
             entity_type="member",
             entity_id=item.get("id"),
         )
@@ -220,6 +200,7 @@ def parse_member(item: dict[str, Any], index: int) -> Member:
         materialId=item["materialId"],
         sectionId=item["sectionId"],
         orientationVector=orientation,
+        orientationNode=item.get("orientationNode"),
         label=item.get("label", ""),
     )
 
@@ -246,6 +227,8 @@ def validate_model(model: Model) -> None:
     ensure_unique([section.id for section in model.sections], "section", "/sections")
     ensure_unique([member.id for member in model.members], "member", "/members")
     ensure_unique([case.id for case in model.loadCases], "loadCase", "/loadCases")
+    ensure_unique([load.id for load in model.nodalLoads], "nodalLoad", "/nodalLoads")
+    ensure_unique([load.id for load in model.memberLoads], "memberLoad", "/memberLoads")
     ensure_unique(
         [support.nodeId for support in model.supports], "support", "/supports"
     )
@@ -254,10 +237,19 @@ def validate_model(model: Model) -> None:
     sections = model.section_by_id
     load_cases = {case.id for case in model.loadCases}
     members = model.member_by_id
+    for idx, node in enumerate(model.nodes):
+        for key in ("x", "y", "z"):
+            finite(getattr(node, key), f"/nodes/{idx}/{key}", "node", node.id)
     for idx, material in enumerate(model.materials):
         positive(
             material.elasticModulus,
             f"/materials/{idx}/elasticModulus",
+            "material",
+            material.id,
+        )
+        positive(
+            material.shearModulus,
+            f"/materials/{idx}/shearModulus",
             "material",
             material.id,
         )
@@ -287,6 +279,38 @@ def validate_model(model: Model) -> None:
         ref(
             member.sectionId, sections, f"/members/{idx}/sectionId", "member", member.id
         )
+        if member.orientationNode is not None:
+            ref(
+                member.orientationNode,
+                nodes,
+                f"/members/{idx}/orientationNode",
+                "member",
+                member.id,
+            )
+        if member.nodeI in nodes and member.nodeJ in nodes:
+            node_i = nodes[member.nodeI]
+            node_j = nodes[member.nodeJ]
+            length_sq = (
+                (node_j.x - node_i.x) ** 2
+                + (node_j.y - node_i.y) ** 2
+                + (node_j.z - node_i.z) ** 2
+            )
+            if not math.isfinite(length_sq) or length_sq <= 0.0:
+                raise AnalysisError(
+                    "ZERO_LENGTH_MEMBER",
+                    "Member length is zero.",
+                    path=f"/members/{idx}",
+                    entity_type="member",
+                    entity_id=member.id,
+                )
+        if member.orientationVector is not None:
+            for key in ("x", "y", "z"):
+                finite(
+                    getattr(member.orientationVector, key),
+                    f"/members/{idx}/orientationVector/{key}",
+                    "member",
+                    member.id,
+                )
     for idx, support in enumerate(model.supports):
         ref(support.nodeId, nodes, f"/supports/{idx}/nodeId", "support", support.nodeId)
     for idx, load in enumerate(model.nodalLoads):
@@ -298,6 +322,8 @@ def validate_model(model: Model) -> None:
             load.id,
         )
         ref(load.nodeId, nodes, f"/nodalLoads/{idx}/nodeId", "nodalLoad", load.id)
+        for key in ("fx", "fy", "fz", "mx", "my", "mz"):
+            finite(getattr(load, key), f"/nodalLoads/{idx}/{key}", "nodalLoad", load.id)
     for idx, load in enumerate(model.memberLoads):
         ref(
             load.loadCaseId,
@@ -325,11 +351,21 @@ def validate_model(model: Model) -> None:
                 "coordinateSystem must be local or global.",
                 path=f"/memberLoads/{idx}/coordinateSystem",
             )
+        for key in ("wx", "wy", "wz"):
+            finite(
+                getattr(load, key), f"/memberLoads/{idx}/{key}", "memberLoad", load.id
+            )
     if model.analysisSettings.analysisType != "linear_static":
         raise AnalysisError(
             "SCHEMA_ERROR",
             "Only linear_static analysis is supported.",
             path="/analysisSettings/analysisType",
+        )
+    if model.analysisSettings.solver != "scipy_sparse":
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "Only scipy_sparse solver is supported.",
+            path="/analysisSettings/solver",
         )
     if (
         model.analysisSettings.includeShearDeformation
@@ -340,6 +376,12 @@ def validate_model(model: Model) -> None:
             "Nonlinear and shear deformation analysis are out of MVP scope.",
             path="/analysisSettings",
         )
+    positive(
+        model.analysisSettings.tolerance,
+        "/analysisSettings/tolerance",
+        "analysisSettings",
+        "analysisSettings",
+    )
 
 
 def ensure_unique(values: list[str], entity_type: str, path: str) -> None:
@@ -357,10 +399,21 @@ def ensure_unique(values: list[str], entity_type: str, path: str) -> None:
 
 
 def positive(value: float, path: str, entity_type: str, entity_id: str) -> None:
-    if value <= 0.0:
+    if not math.isfinite(value) or value <= 0.0:
         raise AnalysisError(
             "INVALID_VALUE",
-            "Value must be positive.",
+            "Value must be finite and positive.",
+            path=path,
+            entity_type=entity_type,
+            entity_id=entity_id,
+        )
+
+
+def finite(value: float, path: str, entity_type: str, entity_id: str) -> None:
+    if not math.isfinite(value):
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "Value must be finite.",
             path=path,
             entity_type=entity_type,
             entity_id=entity_id,

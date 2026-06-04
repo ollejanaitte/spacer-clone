@@ -12,6 +12,8 @@ MVPの解析精度、API契約、UI表示、エラー処理を検証するため
 - FastAPIエンドポイント。
 - React UIビルドと基本表示。
 - Three.js表示の基本動作。
+- Three.js初期化失敗時の2D簡易フォールバック。
+- Electron desktop main processのGPU互換モード選択ロジック。
 
 ## 3. 非対象範囲
 
@@ -20,6 +22,7 @@ MVPの解析精度、API契約、UI表示、エラー処理を検証するため
 - 温度荷重、プレストレス、初期張力の検証。
 - DXF、PDF帳票テンプレート、ライセンス管理の検証。
 - 外部解析ソフトとの互換検証。
+- GPU互換設定を `project.json`、API、解析結果JSONへ含めるためのスキーマ/API拡張テスト。
 
 ## 4. テスト仕様
 
@@ -128,6 +131,24 @@ MVPの解析精度、API契約、UI表示、エラー処理を検証するため
 - 成功結果の表が表示される。
 - Three.jsビューが空モデルでクラッシュしない。
 - 節点、部材、支点、荷重、変形図を表示できる。
+- Three.js初期化失敗時にUI全体がクラッシュしない。
+- WebGLRenderer生成失敗をmockして2D簡易表示へ切り替わる。
+- 2D簡易表示で節点、部材、支点概略、節点荷重概略、選択ハイライト、Fit to modelを確認できる。
+- WebGL初期化失敗エラーが下部パネルに表示され、consoleだけに閉じない。
+- WebGL初期化失敗時に「互換描画モードで再起動してください」という案内が表示される。
+
+### Desktop/Electronテスト
+
+- Electron main processのGPUフラグ選択ロジックを単体テストできる。
+- GPU互換モード設定値が保存・読込できる。
+- 標準設定が `normal` である。
+- `legacy-desktop-gl` が標準設定ではない。
+- `compat-gpu-blocklist` が `--ignore-gpu-blocklist` を選択する。
+- `compat-angle-gl` が `--ignore-gpu-blocklist` と `--use-angle=gl` を選択する。
+- `legacy-desktop-gl` が `--ignore-gpu-blocklist` と `--use-gl=desktop` を選択する。
+- GPUフラグ適用処理が `app.whenReady()` より前に呼び出される設計になっている。
+- 開発時は `http://localhost:5173`、本番時は `frontend/dist/index.html` を読み込む分岐を検証する。
+- Electron側のGPU互換設定が `project.json`、API request、解析結果JSONへ混入しないことを検証する。
 
 ## 5. エラー処理
 
@@ -143,6 +164,8 @@ MVPの解析精度、API契約、UI表示、エラー処理を検証するため
 - スキーマ検証の厳密性。
 - API契約の安定性。
 - UIがMVP外機能を表示しないこと。
+- WebGL失敗時に白画面にならないこと。
+- GPU互換モードが標準モードを壊さないこと。
 
 ## 7. 完了条件
 
@@ -150,4 +173,6 @@ MVPの解析精度、API契約、UI表示、エラー処理を検証するため
 - `pytest` が通る。
 - APIテストが通る。
 - UIビルドが通る。
+- Three.js初期化失敗時の2Dフォールバックテストが通る。
+- Electron main processテストまたはElectronビルドが通る。
 - `docs/12_quality_gate.md` の受入基準を満たす。

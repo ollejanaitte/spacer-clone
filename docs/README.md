@@ -28,7 +28,7 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
    - 実装前に必ず読む。
 3. `docs/12_quality_gate.md`
    - PR受入基準。
-   - テスト、Ruff、型ヒント、JSON Schema、数値誤差、API、UIビルド基準を定義する。
+   - テスト、Ruff、型ヒント、JSON Schema、数値誤差、API、UIビルド、Electron/GPU互換表示基準を定義する。
 4. `docs/03_architecture.md`
    - システム全体構成、責務境界、データフロー。
 5. `docs/04_input_schema.md`
@@ -42,7 +42,7 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 9. `docs/08_ui_spec.md`
    - React UI画面構成。
 10. `docs/09_3d_view_spec.md`
-    - Three.js表示仕様。
+    - Three.js表示仕様と2D簡易フォールバック仕様。
 11. `docs/10_report_spec.md`
     - JSON/CSV/HTML帳票仕様。
 12. `docs/11_test_spec.md`
@@ -72,6 +72,8 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 - 実装を進める前に該当設計書を更新する。
 - MVP外機能が混入しそうな場合は `docs/02_mvp_scope.md` を優先する。
 - 品質基準に関わる判断は `docs/12_quality_gate.md` を優先する。
+- Electron/GPU互換設定はアプリ設定またはdesktop設定として扱い、`project.json`、API、解析結果JSONへ混ぜない。
+- `legacy-desktop-gl` は最後の非常用互換モードであり、標準モードにしない。
 - 影響線解析、移動荷重、固有値解析、応答スペクトル解析、温度荷重、プレストレス、DXF、ライセンス管理がMVPに混入しそうな場合は、実装せず設計を確認する。
 
 ## 6. テスト観点
@@ -81,6 +83,8 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 - `docs/11_test_spec.md` の必須検証ケースに対応している。
 - `docs/12_quality_gate.md` のPR受入基準を満たしている。
 - 入力・結果・API・UIが各設計書と整合している。
+- WebGL初期化失敗時にUIが白画面にならず、2D簡易表示または明示的な案内に切り替わる。
+- Electron main processに解析ロジックが入っていない。
 - MVP外機能を実装していない。
 
 ## 7. 完了条件

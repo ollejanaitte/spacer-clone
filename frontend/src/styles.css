@@ -233,6 +233,115 @@ button:disabled {
   overflow: hidden;
 }
 
+.viewer-viewport-stack {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+}
+
+.viewer-error-banner {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  max-width: min(620px, calc(100% - 24px));
+  padding: 10px 12px;
+  border: 1px solid #d98b2b;
+  border-radius: 6px;
+  background: rgba(255, 247, 237, 0.96);
+  color: #7c3f00;
+  font-size: 12px;
+  line-height: 1.45;
+  box-shadow: 0 4px 16px rgba(31, 41, 51, 0.12);
+}
+
+.fallback2d-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
+  background: #f7fafc;
+}
+
+.fallback2d-viewport svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fallback-grid line {
+  stroke: #dce5ee;
+  stroke-width: 1;
+}
+
+.fallback-axes line {
+  stroke: #586b7f;
+  stroke-width: 2;
+}
+
+.fallback-axes text,
+.fallback-member text,
+.fallback-node text {
+  fill: #475569;
+  font-size: 22px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.fallback-member line {
+  stroke: #2f6f9f;
+  stroke-linecap: round;
+  stroke-width: 5;
+  cursor: pointer;
+}
+
+.fallback-member.selected line {
+  stroke: #f2c94c;
+  stroke-width: 8;
+}
+
+.fallback-node circle {
+  fill: #d45d50;
+  stroke: #f8fafc;
+  stroke-width: 3;
+  cursor: pointer;
+}
+
+.fallback-node.selected circle {
+  fill: #f2c94c;
+  stroke: #243447;
+}
+
+.fallback-support {
+  fill: #6b7f93;
+  stroke: #334155;
+  stroke-width: 2;
+}
+
+.fallback-support.fixed {
+  fill: #46596c;
+}
+
+.fallback-load {
+  stroke: #c94f4f;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+#fallback-force-arrow path {
+  fill: #c94f4f;
+}
+
+.fallback-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #66788a;
+  font-weight: 700;
+}
+
 .three-viewport canvas {
   display: block;
   width: 100%;

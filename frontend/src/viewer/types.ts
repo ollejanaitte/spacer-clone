@@ -1,6 +1,8 @@
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type * as THREE from "three";
 
+export type ViewerMode = "three" | "fallback2d";
+
 export type ViewerVisibility = {
   nodes: boolean;
   members: boolean;
@@ -34,6 +36,7 @@ export type Viewer3DProps = {
   activeLoadCase: string;
   onSelectionChange: (selection: ViewerSelection) => void;
   onActiveLoadCaseChange: (loadCaseId: string) => void;
+  onViewerError?: (message: string) => void;
 };
 
 export type ThreeViewportProps = Viewer3DProps & {
@@ -42,6 +45,7 @@ export type ThreeViewportProps = Viewer3DProps & {
   selectedLoadCaseId: string;
   fitRequest: number;
   cameraRequest: CameraPreset | null;
+  onInitializationError: (error: unknown) => void;
 };
 
 export type CameraPreset = "iso" | "xy" | "yz" | "xz";

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiClientError, apiClient } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
@@ -33,6 +33,7 @@ export function App() {
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [apiErrors, setApiErrors] = useState<StructuredMessage[]>([]);
+  const [viewerErrors, setViewerErrors] = useState<StructuredMessage[]>([]);
   const [examples, setExamples] = useState<ExampleProject[]>([]);
   const [selectedExampleId, setSelectedExampleId] = useState("");
   const [logs, setLogs] = useState<string[]>(["UI ready."]);
@@ -48,7 +49,7 @@ export function App() {
     () => new Set((validation?.errors ?? []).map((error) => error.path).filter(Boolean) as string[]),
     [validation],
   );
-  const errors = [...(validation?.errors ?? []), ...(result?.errors ?? []), ...apiErrors];
+  const errors = [...(validation?.errors ?? []), ...(result?.errors ?? []), ...apiErrors, ...viewerErrors];
   const warnings = [...(validation?.warnings ?? []), ...(result?.warnings ?? [])];
   const canRun = !running && validation?.valid !== false;
 
@@ -58,6 +59,7 @@ export function App() {
     setValidation(null);
     setResult(null);
     setApiErrors([]);
+    setViewerErrors([]);
     setSelectedNode(null);
     setSelectedMember(null);
     setActiveLoadCase(nextProject.loadCases[0]?.id ?? "");
@@ -192,6 +194,20 @@ export function App() {
     setSelectedMember(nextSelection?.type === "member" ? nextSelection.id : null);
   };
 
+  const handleViewerError = useCallback((message: string) => {
+    setViewerErrors([
+      {
+        code: "WEBGL_INIT_FAILED",
+        message,
+        path: null,
+        entityType: "viewer",
+        entityId: null,
+      },
+    ]);
+    setBottomTab("errors");
+    log("WebGL initialization failed; switched to 2D fallback.");
+  }, []);
+
   return (
     <div className="app-shell">
       <Toolbar
@@ -225,6 +241,7 @@ export function App() {
           activeLoadCase={activeLoadCase}
           onSelectionChange={handleViewerSelection}
           onActiveLoadCaseChange={setActiveLoadCase}
+          onViewerError={handleViewerError}
         />
         <PropertyPanel
           project={project}

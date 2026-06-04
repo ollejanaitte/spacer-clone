@@ -13,6 +13,7 @@
 - API担当。
 - UI担当。
 - 3D担当。
+- Desktop/Electron担当。
 - Report担当。
 - Review担当。
 
@@ -32,6 +33,7 @@
 - MVP外機能を追加しない。
 - 実装が設計と異なる場合は、同じPRで設計書を更新する。
 - `SPACER操作マニュアル.pdf` は参考資料であり、MVP外機能を追加する根拠にしない。
+- GPU互換設定はアプリ設定またはdesktop設定として扱い、`project.json`、API契約、解析結果JSONへ混ぜない。
 
 ### Engine担当
 
@@ -282,6 +284,7 @@ PR作成時のチェックリスト:
 - 荷重矢印。
 - ラベル。
 - 変形図。
+- Three.js初期化失敗時の2D簡易フォールバック表示。
 - カメラ操作。
 - 選択ハイライト。
 
@@ -290,18 +293,84 @@ PR作成時のチェックリスト:
 - CAD編集を実装しない。
 - viewer内でprojectを変更しない。
 - DXF対応を実装しない。
+- WebGL初期化失敗をconsoleだけに出して終わらせない。
+- GPU互換設定を `project.json` や結果JSONに混ぜない。
 
 完了条件:
 
 - サンプルモデルを表示できる。
 - 選択がUI状態と同期する。
 - 結果JSONから変形図を表示できる。
+- WebGLRenderer生成失敗時に2D簡易表示へ切り替わる。
 
 PR作成時のチェックリスト:
 
 - 空モデルでクラッシュしない。
 - 結果なしでも表示可能。
 - 表示倍率が機能する。
+- WebGL初期化失敗時に白画面にならない。
+
+### Desktop/Electron担当
+
+目的:
+
+- 既存React UIをElectronデスクトップアプリとして起動し、古いGPU環境向けのGPU互換モードを実装する。
+
+読むべき設計書:
+
+- `docs/02_mvp_scope.md`
+- `docs/03_architecture.md`
+- `docs/08_ui_spec.md`
+- `docs/09_3d_view_spec.md`
+- `docs/11_test_spec.md`
+- `docs/12_quality_gate.md`
+
+変更してよいファイル:
+
+- `desktop/**`
+- Electron設定ファイル。
+- 必要なfrontend起動設定。
+
+変更してはいけないファイル:
+
+- `backend/engine/**`
+- `backend/app/**`。ただし明示指示がある場合を除く。
+- `schemas/**`。GPU互換設定のために変更しない。
+- `docs/requirements_extraction.md`
+
+成果物:
+
+- Electron起動。
+- 開発時localhost読込。
+- 本番時dist読込。
+- GPU互換モード切替。
+- WebGL失敗時の案内。
+
+禁止事項:
+
+- Electron main processに解析ロジックを入れない。
+- API仕様を勝手に変えない。
+- `legacy-desktop-gl` を標準モードにしない。
+- GPUフラグを無条件に全ユーザーへ強制しない。
+- `project.json` の解析スキーマにGPU設定を混ぜない。
+- 解析結果JSONにGPU情報を入れない。
+
+完了条件:
+
+- Electronが既存React UIを表示できる。
+- 開発時は `http://localhost:5173` を読み込む。
+- 本番時は `frontend/dist/index.html` を読み込む。
+- `normal`、`compat-gpu-blocklist`、`compat-angle-gl`、`legacy-desktop-gl` を切り替えられる。
+- `app.commandLine.appendSwitch()` が `app.whenReady()` より前に実行される。
+- WebGL失敗時にユーザーへ互換描画モードでの再起動を案内できる。
+
+PR作成時のチェックリスト:
+
+- Electron main processテストまたはElectronビルド通過。
+- GPUフラグ選択ロジックの単体テストあり。
+- 標準モードが `normal`。
+- `legacy-desktop-gl` は最後の非常用互換モード。
+- 解析エンジン、API、スキーマ、結果仕様を拡張していない。
 
 ### Report担当
 

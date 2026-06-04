@@ -6,6 +6,7 @@
   "additionalProperties": false,
   "required": [
     "project",
+    "units",
     "nodes",
     "materials",
     "sections",
@@ -50,6 +51,38 @@
         "updatedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "units": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "length",
+        "force",
+        "moment",
+        "modulus",
+        "area",
+        "inertia"
+      ],
+      "properties": {
+        "length": {
+          "const": "m"
+        },
+        "force": {
+          "const": "kN"
+        },
+        "moment": {
+          "const": "kN_m"
+        },
+        "modulus": {
+          "const": "kN_per_m2"
+        },
+        "area": {
+          "const": "m2"
+        },
+        "inertia": {
+          "const": "m4"
         }
       }
     },
@@ -110,6 +143,7 @@
       "additionalProperties": false,
       "required": [
         "analysisType",
+        "solver",
         "includeShearDeformation",
         "largeDisplacement",
         "tolerance"
@@ -117,6 +151,9 @@
       "properties": {
         "analysisType": {
           "const": "linear_static"
+        },
+        "solver": {
+          "const": "scipy_sparse"
         },
         "includeShearDeformation": {
           "const": false
@@ -167,8 +204,7 @@
         "id",
         "name",
         "elasticModulus",
-        "poissonRatio",
-        "density"
+        "shearModulus"
       ],
       "properties": {
         "id": {
@@ -180,6 +216,10 @@
           "minLength": 1
         },
         "elasticModulus": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "shearModulus": {
           "type": "number",
           "exclusiveMinimum": 0
         },

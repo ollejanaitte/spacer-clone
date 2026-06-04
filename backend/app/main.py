@@ -226,12 +226,21 @@ def base_project(project_id: str, name: str, description: str) -> dict[str, Any]
             "createdAt": "2026-01-01T00:00:00Z",
             "updatedAt": "2026-01-01T00:00:00Z",
         },
+        "units": {
+            "length": "m",
+            "force": "kN",
+            "moment": "kN_m",
+            "modulus": "kN_per_m2",
+            "area": "m2",
+            "inertia": "m4",
+        },
         "nodes": [],
         "materials": [
             {
                 "id": "MAT1",
                 "name": "Steel",
                 "elasticModulus": 205000000.0,
+                "shearModulus": 205000000.0 / (2.0 * (1.0 + 0.3)),
                 "poissonRatio": 0.3,
                 "density": 0.0,
             }
@@ -253,6 +262,7 @@ def base_project(project_id: str, name: str, description: str) -> dict[str, Any]
         "memberLoads": [],
         "analysisSettings": {
             "analysisType": "linear_static",
+            "solver": "scipy_sparse",
             "includeShearDeformation": False,
             "largeDisplacement": False,
             "tolerance": 1e-9,

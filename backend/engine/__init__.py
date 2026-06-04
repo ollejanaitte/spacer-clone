@@ -4,7 +4,7 @@ from typing import Any
 
 from .errors import AnalysisError
 from .model import Model, parse_model
-from .solver import run_analysis, solve_model
+from .solver import run_analysis, run_linear_static_analysis, solve_model
 
 
 def validate_project(project_data: dict[str, Any]) -> dict[str, Any]:
@@ -15,4 +15,11 @@ def validate_project(project_data: dict[str, Any]) -> dict[str, Any]:
     return {"valid": True, "errors": []}
 
 
-__all__ = ["Model", "parse_model", "run_analysis", "solve_model", "validate_project"]
+__all__ = [
+    "Model",
+    "parse_model",
+    "run_analysis",
+    "run_linear_static_analysis",
+    "solve_model",
+    "validate_project",
+]

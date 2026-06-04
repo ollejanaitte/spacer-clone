@@ -37,6 +37,10 @@ def run_analysis(project_data: dict[str, Any]) -> dict[str, Any]:
         )
 
 
+def run_linear_static_analysis(project: dict[str, Any]) -> dict[str, Any]:
+    return run_analysis(project)
+
+
 def solve_model(model: Model, started_at: str | None = None) -> dict[str, Any]:
     started = started_at or iso_now()
     dof_map = build_dof_map(model)

@@ -8,7 +8,10 @@ from .model import Material, Member, Node, OrientationVector, Section
 
 
 def length_and_rotation(
-    node_i: Node, node_j: Node, orientation: OrientationVector | None
+    node_i: Node,
+    node_j: Node,
+    orientation: OrientationVector | None,
+    orientation_node: Node | None = None,
 ) -> tuple[float, NDArray[np.float64]]:
     p_i = np.array([node_i.x, node_i.y, node_i.z], dtype=float)
     p_j = np.array([node_j.x, node_j.y, node_j.z], dtype=float)
@@ -19,7 +22,7 @@ def length_and_rotation(
             "ZERO_LENGTH_MEMBER", "Member length is zero.", entity_type="member"
         )
     x_axis = axis / length
-    candidate = orientation_array(orientation, x_axis)
+    candidate = orientation_array(orientation, orientation_node, node_i, x_axis)
     y_axis = candidate - float(np.dot(candidate, x_axis)) * x_axis
     y_norm = float(np.linalg.norm(y_axis))
     if y_norm < 1e-12:
@@ -35,7 +38,10 @@ def length_and_rotation(
 
 
 def orientation_array(
-    orientation: OrientationVector | None, x_axis: NDArray[np.float64]
+    orientation: OrientationVector | None,
+    orientation_node: Node | None,
+    node_i: Node,
+    x_axis: NDArray[np.float64],
 ) -> NDArray[np.float64]:
     if orientation is not None:
         vector = np.array([orientation.x, orientation.y, orientation.z], dtype=float)
@@ -43,6 +49,21 @@ def orientation_array(
         if norm < 1e-12:
             raise AnalysisError(
                 "INVALID_ORIENTATION", "orientationVector must not be zero."
+            )
+        return vector / norm
+    if orientation_node is not None:
+        vector = np.array(
+            [
+                orientation_node.x - node_i.x,
+                orientation_node.y - node_i.y,
+                orientation_node.z - node_i.z,
+            ],
+            dtype=float,
+        )
+        norm = float(np.linalg.norm(vector))
+        if norm < 1e-12:
+            raise AnalysisError(
+                "INVALID_ORIENTATION", "orientationNode must not coincide with nodeI."
             )
         return vector / norm
     global_z = np.array([0.0, 0.0, 1.0])
@@ -55,7 +76,7 @@ def local_stiffness(
     length: float, material: Material, section: Section
 ) -> NDArray[np.float64]:
     e = material.elasticModulus
-    g = material.shear_modulus
+    g = material.shearModulus
     a = section.area
     iy = section.iy
     iz = section.iz
@@ -117,8 +138,11 @@ def element_matrices(
     node_j: Node,
     material: Material,
     section: Section,
+    orientation_node: Node | None = None,
 ) -> tuple[float, NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
-    length, rotation = length_and_rotation(node_i, node_j, member.orientationVector)
+    length, rotation = length_and_rotation(
+        node_i, node_j, member.orientationVector, orientation_node
+    )
     k_local = local_stiffness(length, material, section)
     transform = transformation(rotation)
     k_global = transform.T @ k_local @ transform

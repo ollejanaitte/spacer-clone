@@ -7,6 +7,14 @@
     "createdAt": "2026-06-04T00:00:00Z",
     "updatedAt": "2026-06-04T00:00:00Z"
   },
+  "units": {
+    "length": "m",
+    "force": "kN",
+    "moment": "kN_m",
+    "modulus": "kN_per_m2",
+    "area": "m2",
+    "inertia": "m4"
+  },
   "nodes": [
     {
       "id": "N1",
@@ -26,6 +34,7 @@
       "id": "MAT1",
       "name": "Steel",
       "elasticModulus": 200000000.0,
+      "shearModulus": 80000000.0,
       "poissonRatio": 0.25,
       "density": 0.0
     }
@@ -88,6 +97,7 @@
   "memberLoads": [],
   "analysisSettings": {
     "analysisType": "linear_static",
+    "solver": "scipy_sparse",
     "includeShearDeformation": false,
     "largeDisplacement": false,
     "tolerance": 1e-09

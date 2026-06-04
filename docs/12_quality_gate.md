@@ -47,6 +47,17 @@ Every pull request must satisfy these acceptance criteria unless the PR explicit
 - Frontend build succeeds when frontend exists.
 - TypeScript checks pass when TypeScript is configured.
 - UI must not introduce analysis logic that duplicates engine behavior.
+- WebGL initialization failure must not make the whole app a blank screen.
+- A minimal 2D fallback view must display nodes, members, support outline, nodal load outline, selection highlight, and Fit to model when Three.js cannot initialize.
+
+### Desktop/Electron
+
+- Electron build passes when Electron packaging exists, or at minimum Electron main process tests pass.
+- Electron main process must not contain analysis logic.
+- GPU compatibility mode changes must not alter `project.json`, API contracts, JSON Schema, or result JSON.
+- Adding a GPU compatibility mode must not break the standard `normal` mode.
+- `legacy-desktop-gl` must not be the default mode.
+- `app.commandLine.appendSwitch()` usage for GPU flags must occur before `app.whenReady()`.
 
 ### Documentation Consistency
 
@@ -67,6 +78,8 @@ Every pull request must satisfy these acceptance criteria unless the PR explicit
 - New examples are documented.
 - New errors use structured error format.
 - New UI fields map to schema fields.
+- New desktop GPU settings stay in app/desktop settings and do not map to `project.json`.
+- WebGL failure path shows a visible UI error and fallback view.
 
 ## Blockers
 
@@ -77,4 +90,8 @@ A PR must not be accepted if:
 - It returns `NaN` or `Infinity` in JSON.
 - It catches solver errors and reports success.
 - It implements out-of-scope advanced features in MVP paths.
+- It makes `legacy-desktop-gl` the default GPU mode.
+- It forces GPU compatibility flags unconditionally for all users.
+- It stores GPU compatibility settings in `project.json` or analysis result JSON.
+- It allows WebGL initialization failure to white-screen the app.
 - It modifies `docs/requirements_extraction.md` without a clear documentation reason.
