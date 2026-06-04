@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/result.schema.json",
+  "title": "SPACER Clone MVP Analysis Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "schemaVersion", "analysisSummary", "displacements", "reactions", "memberEndForces", "warnings", "errors"],
+  "properties": {
+    "projectId": { "type": "string" },
+    "schemaVersion": { "const": "1.0.0" },
+    "analysisSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysisType", "status", "startedAt", "finishedAt", "durationMs", "nodeCount", "memberCount", "loadCaseCount", "totalDof", "freeDof", "constrainedDof", "solver"],
+      "properties": {
+        "analysisType": { "const": "linear_static" },
+        "status": { "enum": ["success", "warning", "failed"] },
+        "startedAt": { "type": "string" },
+        "finishedAt": { "type": "string" },
+        "durationMs": { "type": "number" },
+        "nodeCount": { "type": "integer", "minimum": 0 },
+        "memberCount": { "type": "integer", "minimum": 0 },
+        "loadCaseCount": { "type": "integer", "minimum": 0 },
+        "totalDof": { "type": "integer", "minimum": 0 },
+        "freeDof": { "type": "integer", "minimum": 0 },
+        "constrainedDof": { "type": "integer", "minimum": 0 },
+        "solver": { "const": "scipy_sparse" }
+      }
+    },
+    "displacements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["loadCaseId", "nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+        "properties": {
+          "loadCaseId": { "type": "string" },
+          "nodeId": { "type": "string" },
+          "ux": { "type": "number" },
+          "uy": { "type": "number" },
+          "uz": { "type": "number" },
+          "rx": { "type": "number" },
+          "ry": { "type": "number" },
+          "rz": { "type": "number" }
+        }
+      }
+    },
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["loadCaseId", "nodeId", "fx", "fy", "fz", "mx", "my", "mz", "constrainedDofs"],
+        "properties": {
+          "loadCaseId": { "type": "string" },
+          "nodeId": { "type": "string" },
+          "fx": { "type": "number" },
+          "fy": { "type": "number" },
+          "fz": { "type": "number" },
+          "mx": { "type": "number" },
+          "my": { "type": "number" },
+          "mz": { "type": "number" },
+          "constrainedDofs": { "type": "array", "items": { "enum": ["ux", "uy", "uz", "rx", "ry", "rz"] } }
+        }
+      }
+    },
+    "memberEndForces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["loadCaseId", "memberId", "coordinateSystem", "i", "j"],
+        "properties": {
+          "loadCaseId": { "type": "string" },
+          "memberId": { "type": "string" },
+          "coordinateSystem": { "const": "local" },
+          "i": { "$ref": "#/$defs/endForce" },
+          "j": { "$ref": "#/$defs/endForce" }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/message" } },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/message" } }
+  },
+  "$defs": {
+    "endForce": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fx", "fy", "fz", "mx", "my", "mz"],
+      "properties": {
+        "fx": { "type": "number" },
+        "fy": { "type": "number" },
+        "fz": { "type": "number" },
+        "mx": { "type": "number" },
+        "my": { "type": "number" },
+        "mz": { "type": "number" }
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "path", "entityType", "entityId"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "path": { "type": ["string", "null"] },
+        "entityType": { "type": ["string", "null"] },
+        "entityId": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
