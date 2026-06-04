@@ -5,6 +5,9 @@ type ResultsPanelProps = {
   result: AnalysisResult | null;
   errors: StructuredMessage[];
   warnings: StructuredMessage[];
+  activeLoadCase: string;
+  selectedNode: string | null;
+  selectedMember: string | null;
   logs: string[];
   onTabChange: (tab: BottomTab) => void;
 };
@@ -21,6 +24,9 @@ export function ResultsPanel({
   result,
   errors,
   warnings,
+  activeLoadCase,
+  selectedNode,
+  selectedMember,
   logs,
   onTabChange,
 }: ResultsPanelProps) {
@@ -39,7 +45,14 @@ export function ResultsPanel({
         ))}
       </div>
       <div className="tab-body">
-        {activeTab === "results" && <ResultTables result={result} />}
+        {activeTab === "results" && (
+          <ResultTables
+            result={result}
+            activeLoadCase={activeLoadCase}
+            selectedNode={selectedNode}
+            selectedMember={selectedMember}
+          />
+        )}
         {activeTab === "errors" && <MessageTable messages={errors} empty="No errors." />}
         {activeTab === "warnings" && <MessageTable messages={warnings} empty="No warnings." />}
         {activeTab === "logs" && (
@@ -54,9 +67,34 @@ export function ResultsPanel({
   );
 }
 
-function ResultTables({ result }: { result: AnalysisResult | null }) {
+function ResultTables({
+  result,
+  activeLoadCase,
+  selectedNode,
+  selectedMember,
+}: {
+  result: AnalysisResult | null;
+  activeLoadCase: string;
+  selectedNode: string | null;
+  selectedMember: string | null;
+}) {
   if (!result) return <div className="empty-state">No analysis result.</div>;
   const summary = result.analysisSummary;
+  const displacements = result.displacements.filter(
+    (row) =>
+      (!activeLoadCase || row.loadCaseId === activeLoadCase) &&
+      (!selectedNode || row.nodeId === selectedNode),
+  );
+  const reactions = result.reactions.filter(
+    (row) =>
+      (!activeLoadCase || row.loadCaseId === activeLoadCase) &&
+      (!selectedNode || row.nodeId === selectedNode),
+  );
+  const memberEndForces = result.memberEndForces.filter(
+    (row) =>
+      (!activeLoadCase || row.loadCaseId === activeLoadCase) &&
+      (!selectedMember || row.memberId === selectedMember),
+  );
 
   return (
     <div className="results-grid">
@@ -65,30 +103,53 @@ function ResultTables({ result }: { result: AnalysisResult | null }) {
         <span>Solver: {summary.solver}</span>
         <span>Duration: {formatNumber(summary.durationMs)} ms</span>
         <span>DOF: {summary.freeDof}/{summary.totalDof} free</span>
+        <span>Load case: {activeLoadCase || "all"}</span>
+        <span>Selection: {selectedNode ?? selectedMember ?? "all"}</span>
       </div>
       <CompactTable
-        title="Displacements"
-        rows={result.displacements}
+        title="Node Displacements"
+        rows={displacements}
         columns={["loadCaseId", "nodeId", "ux", "uy", "uz", "rx", "ry", "rz"]}
       />
       <CompactTable
         title="Reactions"
-        rows={result.reactions}
+        rows={reactions}
         columns={["loadCaseId", "nodeId", "fx", "fy", "fz", "mx", "my", "mz"]}
       />
       <CompactTable
         title="Member End Forces"
-        rows={result.memberEndForces.map((row) => ({
+        rows={memberEndForces.map((row) => ({
           loadCaseId: row.loadCaseId,
           memberId: row.memberId,
           iFx: row.i.fx,
           iFy: row.i.fy,
           iFz: row.i.fz,
+          iMx: row.i.mx,
+          iMy: row.i.my,
+          iMz: row.i.mz,
           jFx: row.j.fx,
           jFy: row.j.fy,
           jFz: row.j.fz,
+          jMx: row.j.mx,
+          jMy: row.j.my,
+          jMz: row.j.mz,
         }))}
-        columns={["loadCaseId", "memberId", "iFx", "iFy", "iFz", "jFx", "jFy", "jFz"]}
+        columns={[
+          "loadCaseId",
+          "memberId",
+          "iFx",
+          "iFy",
+          "iFz",
+          "iMx",
+          "iMy",
+          "iMz",
+          "jFx",
+          "jFy",
+          "jFz",
+          "jMx",
+          "jMy",
+          "jMz",
+        ]}
       />
     </div>
   );

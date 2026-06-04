@@ -17,10 +17,13 @@ type ToolbarProps = {
   onNew: () => void;
   onOpen: (file: File) => void;
   onSave: () => void;
+  onLoad: () => void;
   onValidate: () => void;
   onRun: () => void;
   onExportJson: () => void;
-  onLoadSample: () => void;
+  examples: Array<{ id: string; name: string }>;
+  selectedExampleId: string;
+  onLoadExample: (exampleId: string) => void;
 };
 
 export function Toolbar({
@@ -32,10 +35,13 @@ export function Toolbar({
   onNew,
   onOpen,
   onSave,
+  onLoad,
   onValidate,
   onRun,
   onExportJson,
-  onLoadSample,
+  examples,
+  selectedExampleId,
+  onLoadExample,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -68,6 +74,10 @@ export function Toolbar({
           <Save size={16} />
           Save
         </button>
+        <button type="button" onClick={onLoad} title="Load project from API storage">
+          <FolderOpen size={16} />
+          Load
+        </button>
         <button type="button" onClick={onValidate} title="Validate project">
           <ShieldCheck size={16} />
           Validate
@@ -80,10 +90,20 @@ export function Toolbar({
           <Download size={16} />
           JSON
         </button>
-        <button type="button" onClick={onLoadSample} title="Load backend sample">
+        <label className="example-picker" title="Load backend example">
           <FileJson size={16} />
-          Sample
-        </button>
+          <select
+            value={selectedExampleId}
+            onChange={(event) => onLoadExample(event.currentTarget.value)}
+          >
+            {examples.length === 0 && <option value="">Examples</option>}
+            {examples.map((example) => (
+              <option key={example.id} value={example.id}>
+                {example.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
     </header>
   );

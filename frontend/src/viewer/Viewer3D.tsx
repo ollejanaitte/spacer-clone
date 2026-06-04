@@ -23,24 +23,31 @@ const defaultScales: ViewerScales = {
   labelSize: 0.26,
 };
 
-export function Viewer3D({ project, result, selectedSection }: Viewer3DProps) {
+export function Viewer3D({
+  project,
+  result,
+  selectedSection,
+  selection,
+  activeLoadCase,
+  onSelectionChange,
+  onActiveLoadCaseChange,
+}: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
-  const [selection, setSelection] = useState<ViewerSelection>(null);
   const [fitRequest, setFitRequest] = useState(0);
   const [cameraRequest, setCameraRequest] = useState<CameraPreset | null>(null);
   const loadCaseIds = useMemo(
     () => project.loadCases.map((loadCase) => loadCase.id).filter(Boolean),
     [project.loadCases],
   );
-  const [selectedLoadCaseId, setSelectedLoadCaseId] = useState(loadCaseIds[0] ?? "");
+  const selectedLoadCaseId = activeLoadCase || loadCaseIds[0] || "";
   const hasResult = Boolean(result && result.errors.length === 0 && result.displacements.length > 0);
 
   useEffect(() => {
     if (!loadCaseIds.includes(selectedLoadCaseId)) {
-      setSelectedLoadCaseId(loadCaseIds[0] ?? "");
+      onActiveLoadCaseChange(loadCaseIds[0] ?? "");
     }
-  }, [loadCaseIds, selectedLoadCaseId]);
+  }, [loadCaseIds, selectedLoadCaseId, onActiveLoadCaseChange]);
 
   useEffect(() => {
     if (!hasResult && visibility.deformedShape) {
@@ -72,13 +79,15 @@ export function Viewer3D({ project, result, selectedSection }: Viewer3DProps) {
           project={project}
           result={result}
           selectedSection={selectedSection}
+          selection={selection}
+          activeLoadCase={activeLoadCase}
+          onSelectionChange={onSelectionChange}
+          onActiveLoadCaseChange={onActiveLoadCaseChange}
           visibility={visibility}
           scales={scales}
           selectedLoadCaseId={selectedLoadCaseId}
-          selection={selection}
           fitRequest={fitRequest}
           cameraRequest={cameraRequest}
-          onSelectionChange={setSelection}
         />
         <ViewerControls
           visibility={visibility}
@@ -88,7 +97,7 @@ export function Viewer3D({ project, result, selectedSection }: Viewer3DProps) {
           hasResult={hasResult}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
-          onLoadCaseChange={setSelectedLoadCaseId}
+          onLoadCaseChange={onActiveLoadCaseChange}
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
         />

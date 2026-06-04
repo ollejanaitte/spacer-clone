@@ -96,7 +96,8 @@ button:disabled {
 }
 
 .toolbar button,
-.button-like {
+.button-like,
+.example-picker {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -109,12 +110,26 @@ button:disabled {
 }
 
 .toolbar button:hover,
-.button-like:hover {
+.button-like:hover,
+.example-picker:hover {
   background: #3d5872;
 }
 
 .button-like input {
   display: none;
+}
+
+.example-picker select {
+  max-width: 180px;
+  height: 28px;
+  border: 0;
+  color: #f8fafc;
+  background: transparent;
+}
+
+.example-picker option {
+  color: #1f2933;
+  background: white;
 }
 
 .workspace {

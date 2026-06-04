@@ -30,16 +30,18 @@ export type Viewer3DProps = {
   project: ProjectModel;
   result: AnalysisResult | null;
   selectedSection: SectionKey;
+  selection: ViewerSelection;
+  activeLoadCase: string;
+  onSelectionChange: (selection: ViewerSelection) => void;
+  onActiveLoadCaseChange: (loadCaseId: string) => void;
 };
 
 export type ThreeViewportProps = Viewer3DProps & {
   visibility: ViewerVisibility;
   scales: ViewerScales;
   selectedLoadCaseId: string;
-  selection: ViewerSelection;
   fitRequest: number;
   cameraRequest: CameraPreset | null;
-  onSelectionChange: (selection: ViewerSelection) => void;
 };
 
 export type CameraPreset = "iso" | "xy" | "yz" | "xz";
