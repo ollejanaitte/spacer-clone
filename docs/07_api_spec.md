@@ -20,19 +20,29 @@ MVP APIは以下に限定する。
 - ユーザー認証、権限管理、ライセンス管理。
 - クラウド永続化、共同編集。
 - 影響線解析、移動荷重、固有値解析、応答スペクトル解析のAPI。
+- CSV出力専用API。
 - DXF出力API。
 - 外部解析ソフト連携API。
 
-## 4. API仕様
-
-### 共通
+## 4. 共通仕様
 
 - Request/ResponseはJSON。
 - 文字コードはUTF-8。
 - エラーは `code` と `message` を含む構造化形式。
 - APIは送信された `project` を暗黙に変更しない。
+- project検証エラーはUIの通常フローとして扱うため、HTTP 200で構造化エラーを返す。
 
-### GET /health
+### HTTPステータス方針
+
+| ケース | HTTP | レスポンス方針 |
+|---|---:|---|
+| JSON parse失敗 | 400 | 構造化エラー |
+| APIリクエスト形式不正 | 422 | FastAPI標準または構造化エラー |
+| `project.json` のスキーマ不正・参照不正 | 200 | `valid: false` |
+| 解析入力不正 | 200 | `analysisSummary.status: "failed"` |
+| 予期しないサーバー例外 | 500 | 内部詳細を伏せた構造化エラー |
+
+## 5. GET /health
 
 レスポンス:
 
@@ -43,7 +53,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-### POST /api/projects/validate
+## 6. POST /api/projects/validate
 
 リクエスト:
 
@@ -53,7 +63,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-レスポンス:
+正常レスポンス:
 
 ```json
 {
@@ -63,7 +73,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-不正時:
+project不正時もHTTP 200で返す。
 
 ```json
 {
@@ -81,16 +91,15 @@ MVP APIは以下に限定する。
 }
 ```
 
-### POST /api/analysis/run
+## 7. POST /api/analysis/run
+
+解析APIは結果JSONのみ返す。CSV出力はReport/Export層の責務とし、MVPではUIが結果JSONからCSVを生成してよい。将来は別Report APIで扱ってよいが、この仕様では新APIを定義しない。
 
 リクエスト:
 
 ```json
 {
-  "project": {},
-  "options": {
-    "returnCsv": false
-  }
+  "project": {}
 }
 ```
 
@@ -98,44 +107,82 @@ MVP APIは以下に限定する。
 
 ```json
 {
-  "result": {
-    "analysisSummary": {
-      "status": "success"
-    },
-    "displacements": [],
-    "reactions": [],
-    "memberEndForces": [],
-    "warnings": [],
-    "errors": []
+  "projectId": "project-001",
+  "schemaVersion": "1.0.0",
+  "analysisSummary": {
+    "analysisType": "linear_static",
+    "analysisVersion": "0.1.0",
+    "status": "success",
+    "startedAt": "2026-01-01T00:00:00Z",
+    "finishedAt": "2026-01-01T00:00:01Z",
+    "durationMs": 1000.0,
+    "nodeCount": 2,
+    "memberCount": 1,
+    "loadCaseCount": 1,
+    "totalDof": 12,
+    "freeDof": 6,
+    "constrainedDof": 6
   },
-  "csv": null
+  "displacements": [
+    {
+      "resultCaseId": "LC1",
+      "nodeId": "N2",
+      "ux": 0.0,
+      "uy": -0.001,
+      "uz": 0.0,
+      "rx": 0.0,
+      "ry": 0.0,
+      "rz": -0.0001
+    }
+  ],
+  "reactions": [],
+  "memberEndForces": [],
+  "warnings": [],
+  "errors": []
 }
 ```
 
-解析失敗時:
+解析失敗時もHTTP 200で結果JSONを返す。
 
 ```json
 {
-  "result": {
-    "analysisSummary": {
-      "status": "failed"
-    },
-    "displacements": [],
-    "reactions": [],
-    "memberEndForces": [],
-    "warnings": [],
-    "errors": [
-      {
-        "code": "MODEL_UNSTABLE",
-        "message": "The model has insufficient support constraints."
-      }
-    ]
+  "projectId": "project-001",
+  "schemaVersion": "1.0.0",
+  "analysisSummary": {
+    "analysisType": "linear_static",
+    "analysisVersion": "0.1.0",
+    "status": "failed",
+    "startedAt": "2026-01-01T00:00:00Z",
+    "finishedAt": "2026-01-01T00:00:00Z",
+    "durationMs": 0.0,
+    "nodeCount": 2,
+    "memberCount": 1,
+    "loadCaseCount": 1,
+    "totalDof": 12,
+    "freeDof": 12,
+    "constrainedDof": 0
   },
-  "csv": null
+  "displacements": [],
+  "reactions": [],
+  "memberEndForces": [],
+  "warnings": [],
+  "errors": [
+    {
+      "code": "MODEL_UNSTABLE",
+      "message": "The model has insufficient support constraints.",
+      "path": "/supports",
+      "entityType": "support",
+      "entityId": null
+    }
+  ]
 }
 ```
 
-### POST /api/projects/save
+結果配列のケース識別子は `loadCaseId` ではなく `resultCaseId` を使う。MVPでは `resultCaseId = loadCaseId` とする。
+
+## 8. POST /api/projects/save
+
+MVPではクラウド保存ではなく、ローカルWebアプリ向けのアプリ管理下保存を想定する。保存対象は `project.json` である。
 
 リクエスト:
 
@@ -155,7 +202,15 @@ MVP APIは以下に限定する。
 }
 ```
 
-### POST /api/projects/load
+保存ルール:
+
+- 保存可能なディレクトリはアプリ管理下のみ。
+- `../` を含むパスは禁止。
+- 絶対パスは禁止。
+- ファイル名は英数字、ハイフン、アンダースコア、ドットなどの安全な文字のみ許可する。
+- 拡張子は `.json` または `.project.json` を推奨する。
+
+## 9. POST /api/projects/load
 
 リクエスト:
 
@@ -173,7 +228,9 @@ MVP APIは以下に限定する。
 }
 ```
 
-### GET /api/examples
+読込ルールは保存ルールと同じとする。アプリ管理下以外のファイル、`../` を含むパス、絶対パスは禁止する。
+
+## 10. GET /api/examples
 
 レスポンス:
 
@@ -197,28 +254,31 @@ MVP APIは以下に限定する。
 - 単純梁の等分布荷重。
 - 3D片持梁のねじり。
 
-## 5. エラー処理
+## 11. エラー処理
 
 - JSON parse失敗はHTTP 400。
-- スキーマ不正はHTTP 200で `valid: false`、またはHTTP 422。実装時に統一する。
-- 解析入力不正は解析を実行せず、構造化エラーを返す。
-- save/loadのパストラバーサルはHTTP 400。
+- APIリクエスト形式不正はHTTP 422。
+- `project.json` のスキーマ不正・参照不正はHTTP 200 + `valid: false`。
+- 解析入力不正はHTTP 200 + `analysisSummary.status: "failed"`。
+- save/loadのパストラバーサル、絶対パス、不正ファイル名はHTTP 400。
 - 予期しないサーバー例外はHTTP 500。
 - HTTP 500でも内部スタックトレースをレスポンスに出してはならない。
 
-## 6. テスト観点
+## 12. テスト観点
 
 - `GET /health` が成功する。
 - validな `project.json` が検証成功する。
-- 不正参照が検証失敗する。
+- 不正参照がHTTP 200 + `valid: false` で返る。
 - 片持梁サンプルを解析できる。
-- 支点不足モデルが失敗レスポンスを返す。
-- save/loadで `../` を拒否する。
+- 支点不足モデルがHTTP 200 + `status: "failed"` を返す。
+- 解析結果が `docs/06_result_schema.md` と一致する。
+- save/loadで `../` と絶対パスを拒否する。
 - `GET /api/examples` が必須例を返す。
 
-## 7. 完了条件
+## 13. 完了条件
 
 - すべてのMVP APIがOpenAPIに表示される。
 - APIテストが `docs/12_quality_gate.md` を満たす。
 - APIが解析ロジックを直接持たず、Engineを呼び出す。
 - UI担当がこの文書だけでAPI接続できる。
+- `docs/06_result_schema.md` と矛盾しない。

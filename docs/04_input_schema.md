@@ -2,41 +2,34 @@
 
 ## 1. 目的
 
-MVPの入力データである `project.json` の構造を定義する。後続実装では、この文書をもとにJSON Schema、APIバリデーション、UI入力フォーム、解析エンジン入力モデルを作成する。
+MVPで扱う `project.json` の入力データ構造を定義する。後続実装では、この文書をもとにJSON Schema、APIバリデーション、UI入力表、解析エンジン入力モデルを作成する。
 
-## 2. 対象範囲
+## 2. 基本方針
 
-MVPで扱う入力は以下に限定する。
+- MVPは線形静的解析のみを対象とする。
+- 単位は全システムでSI系に固定し、入力に `units` は持たない。
+- 単位変換機能は実装しない。
+- 材料は `elasticModulus` と `poissonRatio` を保持する。
+- せん断弾性係数 `G` は入力に保持せず、解析エンジンが `G = E / (2(1+ν))` で計算する。
+- 部材局所座標系は `orientationVector` のみで定義する。
+- solverはMVPで固定し、入力で選択しない。
 
-- 3次元節点座標。
-- 材料定義。
-- 断面定義。
-- 3D梁部材定義。
-- 6自由度支点条件。
-- 荷重ケース。
-- 節点集中荷重。
-- 部材等分布荷重。
-- 線形静的解析設定。
+### 固定単位
 
-## 3. 非対象範囲
+| 種別 | 単位 |
+|---|---|
+| 長さ | m |
+| 力 | kN |
+| モーメント | kN·m |
+| 応力・弾性係数 | kN/m² |
+| 断面積 | m² |
+| 断面2次モーメント | m⁴ |
 
-以下の入力項目はMVPで定義しない。
-
-- 影響線載荷点、格子形状、ライン、移動荷重、活荷重自動載荷。
-- 固有値解析、応答スペクトル解析の入力。
-- 温度荷重、プレストレス、初期張力。
-- 部材バネ、節点間バネ、連成バネ。
-- 部材端リリース、高度な荷重組合せ。
-- DXF、外部ソフト連携、ライセンス情報。
-
-## 4. データ構造
-
-### トップレベル
+## 3. トップレベル構造
 
 ```json
 {
   "project": {},
-  "units": {},
   "nodes": [],
   "materials": [],
   "sections": [],
@@ -49,9 +42,9 @@ MVPで扱う入力は以下に限定する。
 }
 ```
 
-すべて必須とする。
+すべて必須項目とする。空配列は許可するが、解析実行時には成立条件を満たす必要がある。
 
-### project
+## 4. project
 
 ```json
 {
@@ -64,28 +57,13 @@ MVPで扱う入力は以下に限定する。
 }
 ```
 
-- `id`: 文字列、必須。
-- `name`: 文字列、必須。
+- `id`: プロジェクトID。必須、一意。
+- `name`: 表示名。必須。
 - `schemaVersion`: MVPでは `1.0.0`。
-- `description`: 文字列、空文字可。
+- `description`: 任意の説明。空文字可。
 - `createdAt`, `updatedAt`: ISO 8601文字列。
 
-### units
-
-```json
-{
-  "length": "m",
-  "force": "kN",
-  "moment": "kN_m",
-  "modulus": "kN_per_m2",
-  "area": "m2",
-  "inertia": "m4"
-}
-```
-
-MVPではSI単位のみを許可する。単位変換は実装しない。
-
-### nodes
+## 5. nodes
 
 ```json
 {
@@ -97,28 +75,35 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `id`: 一意。
-- `x`, `y`, `z`: グローバル座標、単位m。
-- `label`: 任意。
+- `id`: 節点ID。必須、一意。
+- `x`, `y`, `z`: グローバル座標。単位はm。
+- `label`: 任意の表示名。
 
-### materials
+## 6. materials
 
 ```json
 {
   "id": "MAT1",
   "name": "Steel",
   "elasticModulus": 205000000.0,
-  "shearModulus": 79000000.0,
   "poissonRatio": 0.3,
   "density": 0.0
 }
 ```
 
-- `elasticModulus`: `kN/m2`、正数。
-- `shearModulus`: `kN/m2`、正数。
-- `poissonRatio`, `density`: MVP解析では任意情報。
+- `id`: 材料ID。必須、一意。
+- `name`: 表示名。必須。
+- `elasticModulus`: ヤング係数 `E`。単位はkN/m²、正の数。
+- `poissonRatio`: ポアソン比 `ν`。MVPでは `-1 < ν < 0.5` を有効範囲とする。
+- `density`: MVP解析では使用しない任意情報。保持してよいが自重計算には使わない。
 
-### sections
+`shearModulus` は保持しない。解析エンジンは `elasticModulus` と `poissonRatio` から、次式でせん断弾性係数を内部計算する。
+
+```text
+G = E / (2(1 + ν))
+```
+
+## 7. sections
 
 ```json
 {
@@ -131,12 +116,14 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `area`: 断面積、`m2`。
-- `iy`: 部材局所y軸まわり断面2次モーメント、`m4`。
-- `iz`: 部材局所z軸まわり断面2次モーメント、`m4`。
-- `j`: ねじり定数、`m4`。
+- `id`: 断面ID。必須、一意。
+- `name`: 表示名。必須。
+- `area`: 断面積。単位はm²、正の数。
+- `iy`: 部材局所y軸まわり断面2次モーメント。単位はm⁴、正の数。
+- `iz`: 部材局所z軸まわり断面2次モーメント。単位はm⁴、正の数。
+- `j`: ねじり定数。単位はm⁴、正の数。
 
-### members
+## 8. members
 
 ```json
 {
@@ -150,13 +137,16 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `nodeI`, `nodeJ`: 既存節点ID。
+- `id`: 部材ID。必須、一意。
+- `nodeI`, `nodeJ`: 既存節点ID。I端とJ端は異なる節点でなければならない。
 - `materialId`: 既存材料ID。
 - `sectionId`: 既存断面ID。
-- `orientationVector`: 任意。省略時は解析エンジンの既定局所座標則を使う。
-- `orientationNode`: 任意。`orientationVector` と同時指定不可。
+- `orientationVector`: 部材局所y軸の候補方向を与えるグローバルベクトル。
+- `label`: 任意の表示名。
 
-### supports
+`orientationVector` はゼロベクトル不可で、部材軸方向と平行であってはならない。省略時の既定方向は解析エンジン仕様に従う。
+
+## 9. supports
 
 ```json
 {
@@ -170,10 +160,13 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- 各booleanは該当自由度を拘束することを示す。
-- 同一節点に複数supportを定義してはならない。
+- `nodeId`: 既存節点ID。
+- `ux`, `uy`, `uz`: 並進自由度の拘束有無。
+- `rx`, `ry`, `rz`: 回転自由度の拘束有無。
+- `true` は該当自由度を拘束することを示す。
+- 同一節点に複数のsupportを定義してはならない。
 
-### loadCases
+## 10. loadCases
 
 ```json
 {
@@ -183,9 +176,9 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-MVPでは `type` は `static` のみ。
+MVPでは `type` は `static` のみとする。
 
-### nodalLoads
+## 11. nodalLoads
 
 ```json
 {
@@ -201,11 +194,13 @@ MVPでは `type` は `static` のみ。
 }
 ```
 
-- 力は `kN`。
-- モーメントは `kN_m`。
-- 未使用成分も `0.0` として明示する。
+- `loadCaseId`: 既存荷重ケースID。
+- `nodeId`: 既存節点ID。
+- `fx`, `fy`, `fz`: 節点集中力。単位はkN。
+- `mx`, `my`, `mz`: 節点集中モーメント。単位はkN·m。
+- 未使用成分は `0.0` として明示する。
 
-### memberLoads
+## 12. memberLoads
 
 ```json
 {
@@ -220,48 +215,42 @@ MVPでは `type` は `static` のみ。
 }
 ```
 
-- `type`: MVPでは `uniform` のみ。
+- `loadCaseId`: 既存荷重ケースID。
+- `memberId`: 既存部材ID。
 - `coordinateSystem`: `local` または `global`。
-- 荷重強度は `kN/m`。
-- 部材全長に作用する等分布荷重のみ扱う。
+- `type`: MVPでは `uniform` のみ。
+- `wx`, `wy`, `wz`: 部材全長に作用する等分布荷重。単位はkN/m。
 
-### analysisSettings
+## 13. analysisSettings
 
 ```json
 {
   "analysisType": "linear_static",
-  "solver": "scipy_sparse",
   "includeShearDeformation": false,
-  "largeDisplacement": false,
-  "tolerance": 1e-9
+  "largeDisplacement": false
 }
 ```
 
-MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
+- `analysisType`: MVPでは `linear_static` 固定。
+- `includeShearDeformation`: MVPでは `false` 固定。Timoshenko梁は扱わない。
+- `largeDisplacement`: MVPでは `false` 固定。
 
-## 5. エラー処理
+`solver` と `tolerance` は入力に持たない。solverは `scipy.sparse.linalg.spsolve` 固定とし、許容誤差は品質基準とテスト仕様で管理する。
+
+## 14. エラー処理
 
 - 必須フィールド欠落は `SCHEMA_ERROR`。
 - ID重複は `DUPLICATE_ID`。
 - 存在しない参照は `INVALID_REFERENCE`。
-- 非有限値、負またはゼロの剛性値は `INVALID_VALUE`。
+- 非有限値、負またはゼロの剛性関連値は `INVALID_VALUE`。
 - 部材長ゼロは `ZERO_LENGTH_MEMBER`。
+- `orientationVector` が無効な場合は `INVALID_ORIENTATION`。
 - 支点不足は検証または解析で `MODEL_UNSTABLE`。
-- エラーには `path`、`entityType`、`entityId` を可能な限り含める。
+- エラーには可能な限り `path`, `entityType`, `entityId` を含める。
 
-## 6. テスト観点
+## 15. 完了条件
 
-- 正常な片持梁モデルがスキーマ検証を通る。
-- 必須トップレベル項目欠落を検出する。
-- 節点、材料、断面、荷重ケースの不正参照を検出する。
-- 重複IDを検出する。
-- `NaN`、`Infinity`、文字列数値を拒否する。
-- MVP外フィールドを追加した場合の扱いがJSON Schemaで明確である。
-
-## 7. 完了条件
-
-- `project.json` の全必須項目が定義されている。
-- JSON Schema実装者がこの文書だけでスキーマを作成できる。
-- UI担当が入力表を作成できる。
-- Engine担当が解析入力モデルを作成できる。
-- MVP外機能の入力が非対象として明記されている。
+- `project.json` の全必須項目が定義済み。
+- `units`, `shearModulus`, `orientationNode`, `solver`, `tolerance` がMVP入力に含まれていない。
+- UI、API、Engine担当がこの文書だけで入力モデルを作成できる。
+- `docs/05_analysis_engine_spec.md` と矛盾しない。

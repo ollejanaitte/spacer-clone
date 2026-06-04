@@ -2,29 +2,28 @@
 
 ## 1. 目的
 
-解析エンジンおよびAPIが返す結果JSONの構造を定義する。UI、帳票、CSV出力、回帰テストはこの結果形式に依存する。
+解析エンジンおよびAPIが返す結果JSONの構造を定義する。UI、CSV出力、回帰テストはこの結果形式に依存する。
 
-## 2. 対象範囲
+## 2. 基本方針
 
-- 線形静的解析の概要。
-- 節点変位。
-- 支点反力。
-- 部材端力。
-- 警告。
-- エラー。
+- 結果JSON内に単位フィールドは追加しない。
+- 単位は仕様書本文で固定定義する。
+- solverはMVPで `scipy.sparse.linalg.spsolve` 固定だが、結果JSONには出力しない。
+- 結果側のケース識別子は `resultCaseId` とする。
+- MVPでは `resultCaseId` は既存の `loadCases[].id` と同じ値でよい。
 
-## 3. 非対象範囲
+## 3. 固定単位
 
-- 影響線結果。
-- 移動荷重結果。
-- 固有値、固有モード。
-- 応答スペクトル結果。
-- 温度荷重、プレストレス、初期張力由来の専用結果。
-- DXF、図面ファイル、帳票テンプレート。
+| 種別 | 単位 |
+|---|---|
+| 並進変位 | m |
+| 回転変位 | rad |
+| 力 | kN |
+| モーメント | kN*m |
 
-## 4. データ構造
+## 4. トップレベル構造
 
-### トップレベル
+必須トップレベル項目:
 
 ```json
 {
@@ -39,11 +38,12 @@
 }
 ```
 
-### analysisSummary
+## 5. analysisSummary
 
 ```json
 {
   "analysisType": "linear_static",
+  "analysisVersion": "0.1.0",
   "status": "success",
   "startedAt": "2026-01-01T00:00:00Z",
   "finishedAt": "2026-01-01T00:00:01Z",
@@ -53,18 +53,27 @@
   "loadCaseCount": 1,
   "totalDof": 12,
   "freeDof": 6,
-  "constrainedDof": 6,
-  "solver": "scipy_sparse"
+  "constrainedDof": 6
 }
 ```
 
-`status` は `success`、`warning`、`failed` のいずれか。
+- `analysisType`: MVPでは `linear_static`。
+- `analysisVersion`: 解析エンジン仕様変更時の結果比較・回帰テストに利用する。
+- `status`: `success`、`warning`、`failed` の3値のみ許可する。
+- `startedAt`, `finishedAt`: ISO 8601文字列。
+- `durationMs`: 解析処理時間。単位はms。
 
-### displacements
+状態判定ルール:
+
+- `errors.length > 0` の場合は `failed`。
+- `errors.length === 0` かつ `warnings.length > 0` の場合は `warning`。
+- `errors.length === 0` かつ `warnings.length === 0` の場合は `success`。
+
+## 6. displacements
 
 ```json
 {
-  "loadCaseId": "LC1",
+  "resultCaseId": "LC1",
   "nodeId": "N2",
   "ux": 0.0,
   "uy": -0.001,
@@ -75,15 +84,17 @@
 }
 ```
 
-- 並進変位はm。
-- 回転変位はrad。
-- 全節点、全荷重ケースについて出力する。
+- `resultCaseId`: 結果ケースID。MVPでは `loadCases[].id` と同じ値。
+- `nodeId`: 節点ID。
+- `ux`, `uy`, `uz`: 並進変位。単位はm。
+- `rx`, `ry`, `rz`: 回転変位。単位はrad。
+- 全節点、全結果ケースについて出力する。
 
-### reactions
+## 7. reactions
 
 ```json
 {
-  "loadCaseId": "LC1",
+  "resultCaseId": "LC1",
   "nodeId": "N1",
   "fx": 0.0,
   "fy": 10.0,
@@ -95,15 +106,18 @@
 }
 ```
 
-- 力はkN。
-- モーメントはkN_m。
+- `resultCaseId`: 結果ケースID。MVPでは `loadCases[].id` と同じ値。
+- `nodeId`: 支点節点ID。
+- `fx`, `fy`, `fz`: 反力。単位はkN。
+- `mx`, `my`, `mz`: 反モーメント。単位はkN*m。
+- `constrainedDofs`: 拘束されている自由度名。
 - 支点定義がある節点ごとに出力する。
 
-### memberEndForces
+## 8. memberEndForces
 
 ```json
 {
-  "loadCaseId": "LC1",
+  "resultCaseId": "LC1",
   "memberId": "M1",
   "coordinateSystem": "local",
   "i": {
@@ -125,15 +139,21 @@
 }
 ```
 
-- 部材端力は局所座標系。
-- I端、J端を分けて保持する。
+- `resultCaseId`: 結果ケースID。MVPでは `loadCases[].id` と同じ値。
+- `memberId`: 部材ID。
+- `coordinateSystem`: MVPでは `local` 固定。
+- `i`: I端の部材端力。
+- `j`: J端の部材端力。
+- `fx`, `fy`, `fz`: 局所座標系の力。単位はkN。
+- `mx`, `my`, `mz`: 局所座標系のモーメント。単位はkN*m。
 - 符号規約は解析エンジン仕様とテストに従う。
 
-### warnings
+## 9. warnings
 
 ```json
 {
   "code": "DISCONNECTED_NODE",
+  "severity": "warning",
   "message": "Node N9 is not connected to any member.",
   "path": "/nodes/8",
   "entityType": "node",
@@ -141,9 +161,10 @@
 }
 ```
 
-警告は解析成功を妨げない。
+- `severity`: MVPでは `warning` 固定。将来 `info` 等に拡張可能。
+- 警告は解析成功を妨げないが、`analysisSummary.status` を `warning` にする。
 
-### errors
+## 10. errors
 
 ```json
 {
@@ -155,25 +176,28 @@
 }
 ```
 
-エラーがある場合、`analysisSummary.status` は `failed`。
+- エラーが1件以上ある場合、`analysisSummary.status` は必ず `failed`。
+- エラー結果を成功結果として扱ってはならない。
 
-## 5. エラー処理
+## 11. エラー処理
 
-- `errors` が空でない結果を成功として扱ってはならない。
 - APIはエラー時も可能な限り同じ結果構造を返す。
 - 数値に `NaN`、`Infinity`、文字列数値を入れてはならない。
 - 後処理中に欠損した値が発生した場合は `POSTPROCESS_ERROR` とする。
+- 解析失敗時は、変位、反力、部材端力を成功データとして返してはならない。
 
-## 6. テスト観点
+## 12. テスト観点
 
 - 成功結果がJSON Schemaに適合する。
+- `status` が `errors` と `warnings` の件数から一意に決まる。
 - 失敗結果が `errors` を含み、結果配列を空にできる。
 - 変位、反力、部材端力の全成分が数値である。
 - CSV出力へ変換できる。
-- UIがloadCaseId、nodeId、memberIdでフィルタできる。
+- UIが `resultCaseId`、`nodeId`、`memberId` でフィルタできる。
 
-## 7. 完了条件
+## 13. 完了条件
 
 - API、UI、Report担当がこの文書だけで結果データを扱える。
-- 必須項目 `displacements`、`reactions`、`memberEndForces`、`analysisSummary`、`warnings`、`errors` が定義済み。
-- `docs/10_report_spec.md` のCSV仕様と矛盾しない。
+- 必須項目 `analysisSummary`、`displacements`、`reactions`、`memberEndForces`、`warnings`、`errors` が定義済み。
+- 結果配列のケース識別子が `resultCaseId` に統一されている。
+- `docs/05_analysis_engine_spec.md` と `docs/07_api_spec.md` と矛盾しない。
