@@ -46,7 +46,7 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 10. `docs/09_3d_view_spec.md`
     - Three.js表示仕様。
 11. `docs/10_report_spec.md`
-    - JSON/CSV/HTML帳票仕様。
+    - JSON/CSV出力仕様。
 12. `docs/11_test_spec.md`
     - 必須検証ケースとテスト観点。
 13. `docs/20_agent_instructions.md`

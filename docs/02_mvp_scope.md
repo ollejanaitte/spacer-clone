@@ -98,11 +98,10 @@ Build a minimal, verifiable 3D frame analysis application that can:
 - Render nodes, members, supports, loads, labels, selection, and deformed shape.
 - Keep viewer read-only in MVP unless explicitly assigned later.
 
-### Phase 6: Result Tables, Graphs, Reports
+### Phase 6: Result Tables and Exports
 
 - Implement displacement, reaction, and member force result tables.
 - Export JSON and CSV.
-- Add minimal printable report page.
 
 ### Phase 7: Distribution and Quality Improvement
 
@@ -124,7 +123,7 @@ Build a minimal, verifiable 3D frame analysis application that can:
 MVP is complete only when:
 
 - All required schema files are implemented and validated.
-- The six required verification cases in `docs/11_test_spec.md` pass.
+- The seven required verification cases in `docs/11_test_spec.md` pass.
 - API endpoints in `docs/07_api_spec.md` pass tests.
 - React UI builds and can edit all MVP model entities.
 - Three.js viewer renders model, supports, loads, labels, and deformed shape.
