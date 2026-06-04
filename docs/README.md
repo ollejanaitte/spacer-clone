@@ -23,6 +23,8 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 1. `docs/requirements_extraction.md`
    - SPACER操作マニュアルから抽出した広範な要求。
    - MVP外機能も含む参考資料。
+   - この文書は実装指示書ではない。
+   - この文書の記載だけを根拠にMVP外機能を実装してはならない。
 2. `docs/02_mvp_scope.md`
    - MVP範囲の最上位判断基準。
    - 実装前に必ず読む。
@@ -44,7 +46,7 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 10. `docs/09_3d_view_spec.md`
     - Three.js表示仕様。
 11. `docs/10_report_spec.md`
-    - JSON/CSV/HTML帳票仕様。
+    - JSON/CSV出力仕様。
 12. `docs/11_test_spec.md`
     - 必須検証ケースとテスト観点。
 13. `docs/20_agent_instructions.md`
@@ -64,6 +66,8 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 8. `docs/requirements_extraction.md`
 
 `docs/requirements_extraction.md` は参考資料であり、MVP範囲を拡張する根拠にはしない。
+
+`docs/requirements_extraction.md` に機能が記載されていても、MVP判断では `docs/02_mvp_scope.md` を優先する。`docs/02_mvp_scope.md` でMVP外とされた機能は実装しない。
 
 ## 5. エラー処理
 
