@@ -4,8 +4,8 @@ import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
-import { ViewerPlaceholder } from "./components/ViewerPlaceholder";
 import { createDefaultProject } from "./data/defaultProject";
+import { Viewer3D } from "./viewer/Viewer3D";
 import type {
   AnalysisResult,
   BottomTab,
@@ -149,7 +149,7 @@ export function App() {
       />
       <div className="workspace">
         <ProjectTree project={project} selected={selectedSection} onSelect={setSelectedSection} />
-        <ViewerPlaceholder project={project} selected={selectedSection} />
+        <Viewer3D project={project} result={result} selectedSection={selectedSection} />
         <PropertyPanel
           project={project}
           selected={selectedSection}
