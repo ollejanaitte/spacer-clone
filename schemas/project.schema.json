@@ -32,42 +32,14 @@
         "inertia": { "const": "m4" }
       }
     },
-    "nodes": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/node" }
-    },
-    "materials": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/material" }
-    },
-    "sections": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/section" }
-    },
-    "members": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/member" }
-    },
-    "supports": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/support" }
-    },
-    "loadCases": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/loadCase" }
-    },
-    "nodalLoads": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/nodalLoad" }
-    },
-    "memberLoads": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/memberLoad" }
-    },
+    "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/node" } },
+    "materials": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/material" } },
+    "sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } },
+    "members": { "type": "array", "items": { "$ref": "#/$defs/member" } },
+    "supports": { "type": "array", "items": { "$ref": "#/$defs/support" } },
+    "loadCases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/loadCase" } },
+    "nodalLoads": { "type": "array", "items": { "$ref": "#/$defs/nodalLoad" } },
+    "memberLoads": { "type": "array", "items": { "$ref": "#/$defs/memberLoad" } },
     "analysisSettings": {
       "type": "object",
       "additionalProperties": false,
