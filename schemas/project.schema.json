@@ -4,52 +4,130 @@
   "title": "MVP project.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["project", "units", "nodes", "materials", "sections", "members", "supports", "loadCases", "nodalLoads", "memberLoads", "analysisSettings"],
+  "required": [
+    "project",
+    "nodes",
+    "materials",
+    "sections",
+    "members",
+    "supports",
+    "loadCases",
+    "nodalLoads",
+    "memberLoads",
+    "analysisSettings"
+  ],
   "properties": {
     "project": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "schemaVersion", "description", "createdAt", "updatedAt"],
+      "required": [
+        "id",
+        "name",
+        "schemaVersion",
+        "description",
+        "createdAt",
+        "updatedAt"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "schemaVersion": { "const": "1.0.0" },
-        "description": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     },
-    "units": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["length", "force", "moment", "modulus", "area", "inertia"],
-      "properties": {
-        "length": { "const": "m" },
-        "force": { "const": "kN" },
-        "moment": { "const": "kN_m" },
-        "modulus": { "const": "kN_per_m2" },
-        "area": { "const": "m2" },
-        "inertia": { "const": "m4" }
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
       }
     },
-    "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/node" } },
-    "materials": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/material" } },
-    "sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } },
-    "members": { "type": "array", "items": { "$ref": "#/$defs/member" } },
-    "supports": { "type": "array", "items": { "$ref": "#/$defs/support" } },
-    "loadCases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/loadCase" } },
-    "nodalLoads": { "type": "array", "items": { "$ref": "#/$defs/nodalLoad" } },
-    "memberLoads": { "type": "array", "items": { "$ref": "#/$defs/memberLoad" } },
+    "materials": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/material"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/member"
+      }
+    },
+    "supports": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/support"
+      }
+    },
+    "loadCases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/loadCase"
+      }
+    },
+    "nodalLoads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nodalLoad"
+      }
+    },
+    "memberLoads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/memberLoad"
+      }
+    },
     "analysisSettings": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["analysisType", "solver", "includeShearDeformation", "largeDisplacement", "tolerance"],
+      "required": [
+        "analysisType",
+        "includeShearDeformation",
+        "largeDisplacement",
+        "tolerance"
+      ],
       "properties": {
-        "analysisType": { "const": "linear_static" },
-        "solver": { "const": "scipy_sparse" },
-        "includeShearDeformation": { "const": false },
-        "largeDisplacement": { "const": false },
-        "tolerance": { "type": "number", "exclusiveMinimum": 0 }
+        "analysisType": {
+          "const": "linear_static"
+        },
+        "includeShearDeformation": {
+          "const": false
+        },
+        "largeDisplacement": {
+          "const": false
+        },
+        "tolerance": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     }
   },
@@ -57,119 +135,316 @@
     "node": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "x", "y", "z"],
+      "required": [
+        "id",
+        "x",
+        "y",
+        "z"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "x": { "type": "number" },
-        "y": { "type": "number" },
-        "z": { "type": "number" },
-        "label": { "type": "string" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "label": {
+          "type": "string"
+        }
       }
     },
     "material": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "elasticModulus", "shearModulus", "poissonRatio", "density"],
+      "required": [
+        "id",
+        "name",
+        "elasticModulus",
+        "poissonRatio",
+        "density"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "elasticModulus": { "type": "number", "exclusiveMinimum": 0 },
-        "shearModulus": { "type": "number", "exclusiveMinimum": 0 },
-        "poissonRatio": { "type": "number" },
-        "density": { "type": "number" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elasticModulus": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "poissonRatio": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        }
       }
     },
     "section": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "area", "iy", "iz", "j"],
+      "required": [
+        "id",
+        "name",
+        "area",
+        "iy",
+        "iz",
+        "j"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "area": { "type": "number", "exclusiveMinimum": 0 },
-        "iy": { "type": "number", "exclusiveMinimum": 0 },
-        "iz": { "type": "number", "exclusiveMinimum": 0 },
-        "j": { "type": "number", "exclusiveMinimum": 0 }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "area": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "iy": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "iz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "j": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     },
     "member": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "nodeI", "nodeJ", "materialId", "sectionId"],
-      "not": { "required": ["orientationVector", "orientationNode"] },
+      "required": [
+        "id",
+        "nodeI",
+        "nodeJ",
+        "materialId",
+        "sectionId"
+      ],
+      "not": {
+        "required": [
+          "orientationVector",
+          "orientationNode"
+        ]
+      },
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "nodeI": { "type": "string", "minLength": 1 },
-        "nodeJ": { "type": "string", "minLength": 1 },
-        "materialId": { "type": "string", "minLength": 1 },
-        "sectionId": { "type": "string", "minLength": 1 },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodeI": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodeJ": {
+          "type": "string",
+          "minLength": 1
+        },
+        "materialId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sectionId": {
+          "type": "string",
+          "minLength": 1
+        },
         "orientationVector": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["x", "y", "z"],
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
           "properties": {
-            "x": { "type": "number" },
-            "y": { "type": "number" },
-            "z": { "type": "number" }
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
           }
         },
-        "orientationNode": { "type": "string", "minLength": 1 },
-        "label": { "type": "string" }
+        "orientationNode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string"
+        }
       }
     },
     "support": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+      "required": [
+        "nodeId",
+        "ux",
+        "uy",
+        "uz",
+        "rx",
+        "ry",
+        "rz"
+      ],
       "properties": {
-        "nodeId": { "type": "string", "minLength": 1 },
-        "ux": { "type": "boolean" },
-        "uy": { "type": "boolean" },
-        "uz": { "type": "boolean" },
-        "rx": { "type": "boolean" },
-        "ry": { "type": "boolean" },
-        "rz": { "type": "boolean" }
+        "nodeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ux": {
+          "type": "boolean"
+        },
+        "uy": {
+          "type": "boolean"
+        },
+        "uz": {
+          "type": "boolean"
+        },
+        "rx": {
+          "type": "boolean"
+        },
+        "ry": {
+          "type": "boolean"
+        },
+        "rz": {
+          "type": "boolean"
+        }
       }
     },
     "loadCase": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "type"],
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "type": { "const": "static" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "const": "static"
+        }
       }
     },
     "nodalLoad": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "loadCaseId", "nodeId", "fx", "fy", "fz", "mx", "my", "mz"],
+      "required": [
+        "id",
+        "loadCaseId",
+        "nodeId",
+        "fx",
+        "fy",
+        "fz",
+        "mx",
+        "my",
+        "mz"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "loadCaseId": { "type": "string", "minLength": 1 },
-        "nodeId": { "type": "string", "minLength": 1 },
-        "fx": { "type": "number" },
-        "fy": { "type": "number" },
-        "fz": { "type": "number" },
-        "mx": { "type": "number" },
-        "my": { "type": "number" },
-        "mz": { "type": "number" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "loadCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fx": {
+          "type": "number"
+        },
+        "fy": {
+          "type": "number"
+        },
+        "fz": {
+          "type": "number"
+        },
+        "mx": {
+          "type": "number"
+        },
+        "my": {
+          "type": "number"
+        },
+        "mz": {
+          "type": "number"
+        }
       }
     },
     "memberLoad": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "loadCaseId", "memberId", "coordinateSystem", "type", "wx", "wy", "wz"],
+      "required": [
+        "id",
+        "loadCaseId",
+        "memberId",
+        "coordinateSystem",
+        "type",
+        "wx",
+        "wy",
+        "wz"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "loadCaseId": { "type": "string", "minLength": 1 },
-        "memberId": { "type": "string", "minLength": 1 },
-        "coordinateSystem": { "enum": ["local", "global"] },
-        "type": { "const": "uniform" },
-        "wx": { "type": "number" },
-        "wy": { "type": "number" },
-        "wz": { "type": "number" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "loadCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memberId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinateSystem": {
+          "enum": [
+            "local",
+            "global"
+          ]
+        },
+        "type": {
+          "const": "uniform"
+        },
+        "wx": {
+          "type": "number"
+        },
+        "wy": {
+          "type": "number"
+        },
+        "wz": {
+          "type": "number"
+        }
       }
     }
   }
