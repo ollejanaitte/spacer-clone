@@ -1,12 +1,4 @@
-import {
-  Download,
-  FileJson,
-  FolderOpen,
-  Play,
-  RotateCcw,
-  Save,
-  ShieldCheck,
-} from "lucide-react";
+import { Download, FolderOpen, Play, RotateCcw, Save, ShieldCheck } from "lucide-react";
 
 type ToolbarProps = {
   projectName: string;
@@ -14,16 +6,15 @@ type ToolbarProps = {
   validationStatus: string;
   analysisStatus: string;
   canRun: boolean;
+  canExportResults: boolean;
+  canExportCsv: boolean;
   onNew: () => void;
   onOpen: (file: File) => void;
   onSave: () => void;
-  onLoad: () => void;
   onValidate: () => void;
   onRun: () => void;
-  onExportJson: () => void;
-  examples: Array<{ id: string; name: string }>;
-  selectedExampleId: string;
-  onLoadExample: (exampleId: string) => void;
+  onExportResultJson: () => void;
+  onExportResultCsv: () => void;
 };
 
 export function Toolbar({
@@ -32,16 +23,15 @@ export function Toolbar({
   validationStatus,
   analysisStatus,
   canRun,
+  canExportResults,
+  canExportCsv,
   onNew,
   onOpen,
   onSave,
-  onLoad,
   onValidate,
   onRun,
-  onExportJson,
-  examples,
-  selectedExampleId,
-  onLoadExample,
+  onExportResultJson,
+  onExportResultCsv,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -49,17 +39,19 @@ export function Toolbar({
         <span className="app-mark">SC</span>
         <div>
           <h1>{projectName}</h1>
-          <p>{dirty ? "Unsaved changes" : "Saved"} · {validationStatus} · {analysisStatus}</p>
+          <p>
+            {dirty ? "未保存の変更あり" : "保存済み"} / {validationStatus} / {analysisStatus}
+          </p>
         </div>
       </div>
       <div className="toolbar-actions">
-        <button type="button" onClick={onNew} title="New project">
+        <button type="button" onClick={onNew} title="新しいモデルを作成します">
           <RotateCcw size={16} />
-          New
+          新規
         </button>
-        <label className="button-like" title="Open project JSON">
+        <label className="button-like" title="ローカルPC上の project.json を開きます">
           <FolderOpen size={16} />
-          Open
+          開く
           <input
             type="file"
             accept="application/json,.json"
@@ -70,40 +62,36 @@ export function Toolbar({
             }}
           />
         </label>
-        <button type="button" onClick={onSave} title="Mark project as saved">
+        <button type="button" onClick={onSave} title="現在のモデルを project.json として保存します">
           <Save size={16} />
-          Save
+          保存
         </button>
-        <button type="button" onClick={onLoad} title="Load project from API storage">
-          <FolderOpen size={16} />
-          Load
-        </button>
-        <button type="button" onClick={onValidate} title="Validate project">
+        <button type="button" onClick={onValidate} title="入力データに不足や誤りがないか確認します">
           <ShieldCheck size={16} />
-          Validate
+          入力チェック
         </button>
-        <button type="button" onClick={onRun} disabled={!canRun} title="Run analysis">
+        <button type="button" onClick={onRun} disabled={!canRun} title="線形静的解析を実行します">
           <Play size={16} />
-          Run
+          解析実行
         </button>
-        <button type="button" onClick={onExportJson} title="Export project JSON">
+        <button
+          type="button"
+          onClick={onExportResultCsv}
+          disabled={!canExportCsv}
+          title="解析結果をCSVで保存します"
+        >
           <Download size={16} />
-          JSON
+          結果CSV出力
         </button>
-        <label className="example-picker" title="Load backend example">
-          <FileJson size={16} />
-          <select
-            value={selectedExampleId}
-            onChange={(event) => onLoadExample(event.currentTarget.value)}
-          >
-            {examples.length === 0 && <option value="">Examples</option>}
-            {examples.map((example) => (
-              <option key={example.id} value={example.id}>
-                {example.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <button
+          type="button"
+          onClick={onExportResultJson}
+          disabled={!canExportResults}
+          title="解析結果をJSONで保存します"
+        >
+          <Download size={16} />
+          結果JSON出力
+        </button>
       </div>
     </header>
   );

@@ -3,9 +3,9 @@ import type { ProjectModel } from "../types";
 export const createDefaultProject = (): ProjectModel => ({
   project: {
     id: "project-001",
-    name: "MVP Example Project",
+    name: "MVPサンプルプロジェクト",
     schemaVersion: "1.0.0",
-    description: "Default MVP cantilever example.",
+    description: "MVPの片持ち梁サンプルです。",
     createdAt: "2026-06-04T00:00:00Z",
     updatedAt: "2026-06-04T00:00:00Z",
   },
@@ -16,8 +16,9 @@ export const createDefaultProject = (): ProjectModel => ({
   materials: [
     {
       id: "MAT1",
-      name: "Steel",
+      name: "鋼材",
       elasticModulus: 200000000,
+      shearModulus: 200000000 / (2 * (1 + 0.25)),
       poissonRatio: 0.25,
       density: 0,
     },
@@ -25,7 +26,7 @@ export const createDefaultProject = (): ProjectModel => ({
   sections: [
     {
       id: "SEC1",
-      name: "Rectangular equivalent",
+      name: "矩形相当断面",
       area: 0.02,
       iy: 0.00008,
       iz: 0.00006,
@@ -53,7 +54,7 @@ export const createDefaultProject = (): ProjectModel => ({
       rz: true,
     },
   ],
-  loadCases: [{ id: "LC1", name: "Tip Load", type: "static" }],
+  loadCases: [{ id: "LC1", name: "先端荷重", type: "static" }],
   nodalLoads: [
     {
       id: "NL1",

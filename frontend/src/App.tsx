@@ -10,17 +10,16 @@ import type {
   AnalysisResult,
   BottomTab,
   ProjectModel,
+  ResultExports,
   SectionKey,
   StructuredMessage,
   ValidationResponse,
 } from "./types";
 import type { ViewerSelection } from "./viewer/types";
 
-type ExampleProject = {
-  id: string;
-  name: string;
-  description: string;
-  project: ProjectModel;
+type ValidationNotice = {
+  kind: "ok" | "ng";
+  text: string;
 };
 
 export function App() {
@@ -31,12 +30,14 @@ export function App() {
   const [activeLoadCase, setActiveLoadCase] = useState<string>(() => createDefaultProject().loadCases[0]?.id ?? "");
   const [bottomTab, setBottomTab] = useState<BottomTab>("results");
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
+  const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [resultExports, setResultExports] = useState<ResultExports | null>(null);
   const [apiErrors, setApiErrors] = useState<StructuredMessage[]>([]);
   const [viewerErrors, setViewerErrors] = useState<StructuredMessage[]>([]);
-  const [examples, setExamples] = useState<ExampleProject[]>([]);
-  const [selectedExampleId, setSelectedExampleId] = useState("");
-  const [logs, setLogs] = useState<string[]>(["UI ready."]);
+  const [autosaveCandidate, setAutosaveCandidate] = useState<ProjectModel | null>(null);
+  const [autosaveStatus, setAutosaveStatus] = useState<string | null>(null);
+  const [logs, setLogs] = useState<string[]>(["UIを起動しました。"]);
   const [dirty, setDirty] = useState(false);
   const [running, setRunning] = useState(false);
 
@@ -57,7 +58,9 @@ export function App() {
     setProject(nextProject);
     setDirty(true);
     setValidation(null);
+    setValidationNotice(null);
     setResult(null);
+    setResultExports(null);
     setApiErrors([]);
     setViewerErrors([]);
     setSelectedNode(null);
@@ -70,34 +73,58 @@ export function App() {
   };
 
   useEffect(() => {
-    void refreshExamples();
+    void apiClient
+      .loadAutosaveCandidate()
+      .then((response) => {
+        if (response.exists && response.project) {
+          setAutosaveCandidate(response.project);
+        }
+      })
+      .catch(() => {
+        setAutosaveStatus("自動保存の確認に失敗しました。通常の操作は継続できます。");
+      });
   }, []);
 
-  const refreshExamples = async () => {
-    try {
-      const loadedExamples = await apiClient.loadExamples();
-      setExamples(loadedExamples);
-      setSelectedExampleId((current) => current || loadedExamples[0]?.id || "");
-      log(`Loaded ${loadedExamples.length} examples.`);
-    } catch (error) {
-      pushApiError(error, "Examples API", setApiErrors);
-      setBottomTab("errors");
-      log("Examples request failed.");
-    }
-  };
+  useEffect(() => {
+    if (!dirty) return undefined;
+    const timer = window.setTimeout(() => {
+      void apiClient
+        .autosaveProject(project)
+        .then(() => setAutosaveStatus("自動保存済み"))
+        .catch(() => setAutosaveStatus("自動保存に失敗しました。"));
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [dirty, project]);
 
   const validate = async (): Promise<ValidationResponse | null> => {
     setApiErrors([]);
     try {
       const response = await apiClient.validateProject(project);
       setValidation(response);
-      setBottomTab(response.valid ? "results" : "errors");
-      log(response.valid ? "Validation passed." : "Validation failed.");
+      if (response.valid) {
+        setValidationNotice({
+          kind: "ok",
+          text: "入力チェックOK：解析を実行できます。",
+        });
+        setBottomTab("results");
+        log("入力チェックOK：解析を実行できます。");
+      } else {
+        setValidationNotice({
+          kind: "ng",
+          text: "入力チェックNG：不足または誤りがあります。下部のエラー一覧を確認してください。",
+        });
+        setBottomTab("errors");
+        log("入力チェックNG：不足または誤りがあります。");
+      }
       return response;
     } catch (error) {
-      pushApiError(error, "Validation Error", setApiErrors);
+      pushApiError(error, "VALIDATION_API_ERROR", setApiErrors);
+      setValidationNotice({
+        kind: "ng",
+        text: "入力チェックNG：APIとの通信に失敗しました。下部のエラー一覧を確認してください。",
+      });
       setBottomTab("errors");
-      log("Validation request failed.");
+      log("入力チェックのリクエストに失敗しました。");
       return null;
     }
   };
@@ -109,18 +136,23 @@ export function App() {
       const validationResponse = validation ?? (await apiClient.validateProject(project));
       setValidation(validationResponse);
       if (!validationResponse.valid) {
+        setValidationNotice({
+          kind: "ng",
+          text: "入力チェックNG：不足または誤りがあります。下部のエラー一覧を確認してください。",
+        });
         setBottomTab("errors");
-        log("Analysis blocked by validation errors.");
+        log("入力チェックNGのため解析を実行できません。");
         return;
       }
-      const response = await apiClient.runAnalysis(project);
+      const response = await apiClient.runAnalysis(project, true);
       setResult(response.result);
+      setResultExports(response.csv);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
-      log(`Analysis finished with status ${response.result.analysisSummary.status}.`);
+      log(`解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
     } catch (error) {
-      pushApiError(error, "Analysis Error", setApiErrors);
+      pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("Analysis request failed.");
+      log("解析実行のリクエストに失敗しました。");
     } finally {
       setRunning(false);
     }
@@ -131,62 +163,32 @@ export function App() {
       const loaded = JSON.parse(await file.text()) as ProjectModel;
       commitProject(loaded);
       setDirty(false);
-      log(`Opened ${file.name}.`);
+      log(`${file.name} を開きました。`);
     } catch (error) {
-      pushApiError(error, "Validation Error", setApiErrors);
+      pushApiError(error, "PROJECT_OPEN_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("Open failed.");
+      log("project.json を開けませんでした。");
     }
   };
 
-  const saveToApi = async () => {
-    setApiErrors([]);
-    try {
-      const fileName = projectFileName(project);
-      await apiClient.saveProject(fileName, project);
-      setDirty(false);
-      log(`Saved ${fileName} through API.`);
-    } catch (error) {
-      pushApiError(error, "Save Error", setApiErrors);
-      setBottomTab("errors");
-      log("Save request failed.");
-    }
+  const saveProject = () => {
+    downloadText("project.json", `${JSON.stringify(project, null, 2)}\n`, "application/json");
+    setDirty(false);
+    log("現在のモデルを project.json として保存しました。");
   };
 
-  const loadFromApi = async () => {
-    setApiErrors([]);
-    try {
-      const fileName = projectFileName(project);
-      const loaded = await apiClient.loadProject(fileName);
-      commitProject(loaded);
-      setDirty(false);
-      log(`Loaded ${fileName} through API.`);
-    } catch (error) {
-      pushApiError(error, "Load Error", setApiErrors);
-      setBottomTab("errors");
-      log("Load request failed.");
-    }
+  const exportResultJson = () => {
+    if (!result) return;
+    downloadText("result.json", resultExports?.["result.json"] ?? `${JSON.stringify(result, null, 2)}\n`, "application/json");
+    log("解析結果JSONを出力しました。");
   };
 
-  const exportJson = () => {
-    const blob = new Blob([`${JSON.stringify(project, null, 2)}\n`], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${project.project.id || "project"}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    log("Project JSON exported.");
-  };
-
-  const loadExample = (exampleId: string) => {
-    const example = examples.find((item) => item.id === exampleId);
-    if (example) {
-      setSelectedExampleId(example.id);
-      commitProject(example.project);
-      setDirty(false);
-      log(`Loaded example ${example.name}.`);
-    }
+  const exportResultCsv = () => {
+    if (!resultExports) return;
+    downloadText("displacements.csv", resultExports["displacements.csv"], "text/csv");
+    downloadText("reactions.csv", resultExports["reactions.csv"], "text/csv");
+    downloadText("member_end_forces.csv", resultExports["member_end_forces.csv"], "text/csv");
+    log("解析結果CSVを出力しました。");
   };
 
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
@@ -205,7 +207,7 @@ export function App() {
       },
     ]);
     setBottomTab("errors");
-    log("WebGL initialization failed; switched to 2D fallback.");
+    log("3D表示の初期化に失敗したため、2D簡易表示に切り替えました。");
   }, []);
 
   return (
@@ -213,24 +215,50 @@ export function App() {
       <Toolbar
         projectName={project.project.name}
         dirty={dirty}
-        validationStatus={validation ? (validation.valid ? "valid" : "invalid") : "not validated"}
-        analysisStatus={running ? "running" : result?.analysisSummary.status ?? "not run"}
+        validationStatus={validation ? (validation.valid ? "チェックOK" : "エラーあり") : "未チェック"}
+        analysisStatus={running ? "解析中" : result ? analysisStatusLabel(result.analysisSummary.status) : "未実行"}
         canRun={canRun}
         onNew={() => {
           commitProject(createDefaultProject());
           setDirty(false);
-          log("New project created.");
+          log("新規モデルを作成しました。");
         }}
         onOpen={openFile}
-        onSave={() => void saveToApi()}
-        onLoad={() => void loadFromApi()}
+        onSave={saveProject}
         onValidate={() => void validate()}
         onRun={() => void runAnalysis()}
-        onExportJson={exportJson}
-        examples={examples}
-        selectedExampleId={selectedExampleId}
-        onLoadExample={loadExample}
+        onExportResultJson={exportResultJson}
+        onExportResultCsv={exportResultCsv}
+        canExportResults={Boolean(result)}
+        canExportCsv={Boolean(resultExports)}
       />
+      {validationNotice && (
+        <div className={`validation-notice ${validationNotice.kind}`}>
+          {validationNotice.text}
+        </div>
+      )}
+      {autosaveCandidate && (
+        <div className="autosave-notice">
+          <span>自動保存されたモデルがあります。</span>
+          <button
+            type="button"
+            onClick={() => {
+              commitProject(autosaveCandidate);
+              setAutosaveCandidate(null);
+              setDirty(true);
+              log("autosave.json から復元しました。");
+            }}
+          >
+            復元する
+          </button>
+          <button type="button" onClick={() => setAutosaveCandidate(null)}>
+            閉じる
+          </button>
+        </div>
+      )}
+      {autosaveStatus && !autosaveCandidate && (
+        <div className="autosave-status">{autosaveStatus}</div>
+      )}
       <div className="workspace">
         <ProjectTree project={project} selected={selectedSection} onSelect={setSelectedSection} />
         <Viewer3D
@@ -273,13 +301,13 @@ function pushApiError(
   const code =
     error instanceof ApiClientError
       ? error.code === "NETWORK_ERROR"
-        ? "Network Error"
+        ? "NETWORK_ERROR"
         : fallbackCode
       : fallbackCode;
   setApiErrors([
     {
       code,
-      message: error instanceof Error ? error.message : "Unexpected API error.",
+      message: error instanceof Error ? error.message : "予期しないAPIエラーです。",
       path: null,
       entityType: null,
       entityId: null,
@@ -287,7 +315,21 @@ function pushApiError(
   ]);
 }
 
-function projectFileName(project: ProjectModel): string {
-  const safeId = (project.project.id || "project").replace(/[^a-zA-Z0-9_-]/g, "_");
-  return `${safeId}.project.json`;
+function analysisStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    success: "成功",
+    warning: "警告あり",
+    failed: "失敗",
+  };
+  return labels[status] ?? status;
+}
+
+function downloadText(fileName: string, text: string, type: string) {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
 }

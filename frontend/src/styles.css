@@ -33,7 +33,7 @@ button:disabled {
 
 .app-shell {
   display: grid;
-  grid-template-rows: 64px minmax(0, 1fr) 260px;
+  grid-template-rows: auto auto auto minmax(0, 1fr) 260px;
   min-height: 100vh;
 }
 
@@ -117,6 +117,45 @@ button:disabled {
 
 .button-like input {
   display: none;
+}
+
+.validation-notice {
+  min-height: 38px;
+  padding: 9px 16px;
+  border-bottom: 1px solid #cbd5df;
+  font-weight: 700;
+}
+
+.validation-notice.ok {
+  background: #e8f6ee;
+  color: #1f6b3f;
+}
+
+.validation-notice.ng {
+  background: #fff1f1;
+  color: #9d2f2f;
+}
+
+.autosave-notice,
+.autosave-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 7px 16px;
+  border-bottom: 1px solid #cbd5df;
+  background: #eef5fb;
+  color: #27425f;
+  font-size: 13px;
+}
+
+.autosave-notice button {
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid #9fb5cb;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #243447;
 }
 
 .example-picker select {
@@ -527,14 +566,22 @@ button:disabled {
 
 .panel-title {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
   min-height: 34px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 10px;
 }
 
 .panel-title h2 {
   font-size: 16px;
+}
+
+.panel-title p {
+  margin: 0;
+  color: #5f6f82;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .field-stack {
@@ -625,6 +672,17 @@ button:disabled {
   background: #f1f5f9;
   color: #526173;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.message-table td strong,
+.message-table td span {
+  display: block;
+}
+
+.message-table td strong {
+  margin-bottom: 3px;
+  color: #27384a;
 }
 
 .icon-button {

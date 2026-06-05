@@ -48,6 +48,30 @@ def test_validate_endpoint_rejects_invalid_reference(client) -> None:
         assert any(error["code"] == "INVALID_REFERENCE" for error in body["errors"])
 
 
+def test_validate_endpoint_accepts_material_without_shear_modulus(client) -> None:
+    project = cantilever_tip_load()
+    del project["materials"][0]["shearModulus"]
+
+    response = client.post("/api/projects/validate", json={"project": project})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["valid"] is True
+    assert body["errors"] == []
+
+
+def test_validate_endpoint_returns_400_for_unexpected_schema_error(client) -> None:
+    project = cantilever_tip_load()
+    del project["materials"][0]["id"]
+
+    response = client.post("/api/projects/validate", json={"project": project})
+
+    assert response.status_code == 400
+    body = response.json()
+    assert body["valid"] is False
+    assert body["errors"][0]["code"] == "SCHEMA_ERROR"
+
+
 def test_analysis_run_endpoint_returns_structured_result(client) -> None:
     response = client.post(
         "/api/analysis/run",
@@ -98,12 +122,127 @@ def test_save_endpoint_rejects_path_traversal(client) -> None:
     assert response.status_code in {400, 422}
 
 
+def test_save_load_then_analysis_run_succeeds(client, tmp_path, monkeypatch) -> None:
+    from backend.app import main
+
+    monkeypatch.setattr(main, "PROJECT_STORAGE_DIR", tmp_path)
+    project = cantilever_tip_load()
+
+    save_response = client.post(
+        "/api/projects/save",
+        json={"fileName": "project.json", "project": project},
+    )
+    assert save_response.status_code == 200
+    assert save_response.json() == {"saved": True, "fileName": "project.json"}
+
+    load_response = client.post(
+        "/api/projects/load", json={"fileName": "project.json"}
+    )
+    assert load_response.status_code == 200
+    loaded = load_response.json()["project"]
+    assert loaded == project
+
+    analysis_response = client.post(
+        "/api/analysis/run",
+        json={"project": loaded, "options": {"returnCsv": False}},
+    )
+    assert analysis_response.status_code == 200
+    assert analysis_response.json()["result"]["analysisSummary"]["status"] == "success"
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        "",
+        "../escape.project.json",
+        "..\\escape.project.json",
+        "C:\\temp\\escape.project.json",
+        "/tmp/escape.project.json",
+        "project.exe",
+        "project.json.bak",
+    ],
+)
+def test_save_endpoint_rejects_unsafe_file_names(client, file_name) -> None:
+    response = client.post(
+        "/api/projects/save",
+        json={"fileName": file_name, "project": cantilever_tip_load()},
+    )
+
+    assert response.status_code in {400, 422}
+
+
 def test_load_endpoint_handles_missing_file(client) -> None:
     response = client.post(
         "/api/projects/load", json={"fileName": "missing.project.json"}
     )
 
     assert response.status_code in {400, 404, 422}
+
+
+def test_analysis_run_can_return_csv_headers_for_empty_results(client) -> None:
+    project = cantilever_tip_load()
+    project["supports"] = []
+
+    response = client.post(
+        "/api/analysis/run",
+        json={"project": project, "options": {"returnCsv": True}},
+    )
+
+    assert response.status_code == 200
+    csv_exports = response.json()["csv"]
+    assert csv_exports["displacements.csv"].splitlines() == [
+        "loadCaseId,nodeId,ux,uy,uz,rx,ry,rz"
+    ]
+    assert csv_exports["reactions.csv"].splitlines() == [
+        "loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs"
+    ]
+    assert csv_exports["member_end_forces.csv"].splitlines() == [
+        "loadCaseId,memberId,end,fx,fy,fz,mx,my,mz"
+    ]
+
+
+def test_member_end_force_csv_expands_i_and_j_rows(client) -> None:
+    response = client.post(
+        "/api/analysis/run",
+        json={"project": cantilever_tip_load(), "options": {"returnCsv": True}},
+    )
+
+    assert response.status_code == 200
+    lines = response.json()["csv"]["member_end_forces.csv"].splitlines()
+    assert lines[0] == "loadCaseId,memberId,end,fx,fy,fz,mx,my,mz"
+    assert len(lines) == 3
+    assert lines[1].split(",")[2] == "I"
+    assert lines[2].split(",")[2] == "J"
+
+
+def test_autosave_endpoint_is_separate_from_project_save(client, tmp_path, monkeypatch) -> None:
+    from backend.app import main
+
+    monkeypatch.setattr(main, "PROJECT_STORAGE_DIR", tmp_path)
+    project = cantilever_tip_load()
+
+    missing_response = client.get("/api/projects/autosave")
+    assert missing_response.status_code == 200
+    assert missing_response.json() == {
+        "exists": False,
+        "fileName": "autosave.json",
+        "project": None,
+    }
+
+    save_response = client.post(
+        "/api/projects/autosave",
+        json={"project": project},
+    )
+    assert save_response.status_code == 200
+    assert save_response.json() == {"saved": True, "fileName": "autosave.json"}
+    assert (tmp_path / "autosave.json").exists()
+
+    load_response = client.get("/api/projects/autosave")
+    assert load_response.status_code == 200
+    body = load_response.json()
+    assert body["exists"] is True
+    assert body["fileName"] == "autosave.json"
+    assert body["project"] == project
 
 
 def test_examples_endpoint_returns_required_examples(client) -> None:

@@ -25,6 +25,7 @@ type FieldType = "text" | "number" | "boolean" | "static" | "linear_static" | "c
 type Column<T> = {
   key: string;
   label: string;
+  help?: string;
   type: FieldType;
   get: (item: T) => string | number | boolean;
   set: (item: T, value: string | number | boolean) => T;
@@ -41,9 +42,10 @@ export function PropertyPanel({
   };
 
   return (
-    <aside className="property-panel" aria-label="Property panel">
+    <aside className="property-panel" aria-label="プロパティ">
       <div className="panel-title">
         <h2>{titleFor(selected)}</h2>
+        <p>{descriptionFor(selected)}</p>
       </div>
       {selected === "project" && (
         <ObjectEditor
@@ -89,8 +91,9 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={() => ({
             id: nextId("MAT", project.materials.length),
-            name: "Material",
+            name: "材料",
             elasticModulus: 200000000,
+            shearModulus: 200000000 / (2 * (1 + 0.3)),
             poissonRatio: 0.3,
             density: 0,
           })}
@@ -105,7 +108,7 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={() => ({
             id: nextId("SEC", project.sections.length),
-            name: "Section",
+            name: "断面",
             area: 0.01,
             iy: 0.00001,
             iz: 0.00001,
@@ -140,7 +143,7 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={(): LoadCase => ({
             id: nextId("LC", project.loadCases.length),
-            name: "Load Case",
+            name: "荷重ケース",
             type: "static",
           })}
           onChange={(items) => update("loadCases", items)}
@@ -195,7 +198,7 @@ export function PropertyPanel({
         />
       )}
       {selected === "results" && (
-        <div className="empty-state">Run analysis to populate the results panel.</div>
+        <div className="empty-state">解析を実行すると、下部の解析結果パネルに結果が表示されます。</div>
       )}
     </aside>
   );
@@ -221,7 +224,7 @@ function ObjectEditor<T>({
           key={column.key}
           className={validationPaths.has(`${pathPrefix}/${column.key}`) ? "field invalid" : "field"}
         >
-          <span>{column.label}</span>
+          <span title={column.help}>{column.label}</span>
           <FieldInput
             column={column}
             value={column.get(value)}
@@ -256,7 +259,7 @@ function ArrayEditor<T>({
     <div className="table-wrap">
       <button className="add-row" type="button" onClick={() => onChange([...items, createItem()])}>
         <Plus size={16} />
-        Add row
+        行を追加
       </button>
       <table className="edit-table">
         <thead>
@@ -264,7 +267,7 @@ function ArrayEditor<T>({
             {columns.map((column) => (
               <th key={column.key}>{column.label}</th>
             ))}
-            <th aria-label="Actions" />
+            <th aria-label="操作" />
           </tr>
         </thead>
         <tbody>
@@ -290,7 +293,7 @@ function ArrayEditor<T>({
                 <button
                   className="icon-button"
                   type="button"
-                  title="Delete row"
+                  title="行を削除"
                   onClick={() => onChange(items.filter((_, index) => index !== rowIndex))}
                 >
                   <Trash2 size={15} />
@@ -300,7 +303,7 @@ function ArrayEditor<T>({
           ))}
         </tbody>
       </table>
-      {items.length === 0 && <div className="empty-state">No rows.</div>}
+      {items.length === 0 && <div className="empty-state">行がありません。</div>}
     </div>
   );
 }
@@ -324,13 +327,13 @@ function FieldInput<T>({
     );
   }
   if (column.type === "static" || column.type === "linear_static") {
-    return <input type="text" value={String(value)} readOnly />;
+    return <input type="text" value={displayReadOnlyValue(String(value))} readOnly />;
   }
   if (column.type === "coord") {
     return (
       <select value={String(value)} onChange={(event) => onChange(event.currentTarget.value)}>
-        <option value="local">local</option>
-        <option value="global">global</option>
+        <option value="local">部材ローカル座標</option>
+        <option value="global">全体座標</option>
       </select>
     );
   }
@@ -358,19 +361,45 @@ function FieldInput<T>({
 
 function titleFor(section: SectionKey): string {
   const titles: Record<SectionKey, string> = {
-    project: "Project",
-    nodes: "Nodes",
-    members: "Members",
-    materials: "Materials",
-    sections: "Sections",
-    supports: "Supports",
-    loadCases: "Load Cases",
-    nodalLoads: "Nodal Loads",
-    memberLoads: "Member Loads",
-    analysisSettings: "Analysis Settings",
-    results: "Results",
+    project: "プロジェクト",
+    nodes: "節点",
+    members: "部材",
+    materials: "材料",
+    sections: "断面",
+    supports: "支点条件",
+    loadCases: "荷重ケース",
+    nodalLoads: "節点荷重",
+    memberLoads: "部材荷重",
+    analysisSettings: "解析設定",
+    results: "解析結果",
   };
   return titles[section];
+}
+
+function displayReadOnlyValue(value: string): string {
+  const labels: Record<string, string> = {
+    static: "静的",
+    uniform: "等分布",
+    linear_static: "線形静的解析",
+  };
+  return labels[value] ?? value;
+}
+
+function descriptionFor(section: SectionKey): string {
+  const descriptions: Record<SectionKey, string> = {
+    project: "プロジェクト名や説明など、保存ファイル全体の基本情報です。",
+    nodes: "節点は骨組みの接続点です。座標X/Y/Zをm単位で入力します。",
+    members: "部材は2つの節点をつなぐ梁要素です。材料IDと断面IDを指定します。",
+    materials: "材料はヤング係数E、せん断弾性係数G、ポアソン比などを設定します。",
+    sections: "断面は断面積A、断面二次モーメントIy/Iz、ねじり定数Jを設定します。",
+    supports: "支点条件は固定・ピンなどの拘束条件を6自由度で指定します。チェックありは拘束を表します。",
+    loadCases: "荷重ケースは死荷重、活荷重など、荷重のまとまりです。MVPでは静的荷重のみ扱います。",
+    nodalLoads: "節点荷重は節点に直接作用する力やモーメントです。力はkN、モーメントはkN_mです。",
+    memberLoads: "部材荷重は部材に沿って作用する等分布荷重です。荷重強度はkN/mです。",
+    analysisSettings: "解析実行の設定です。MVPでは線形静的解析を対象にします。",
+    results: "解析実行後の変位、反力、部材端力を確認します。",
+  };
+  return descriptions[section];
 }
 
 function nextId(prefix: string, length: number): string {
@@ -379,89 +408,90 @@ function nextId(prefix: string, length: number): string {
 
 const projectColumns: Column<ProjectInfo>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "name", label: "Name", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "schemaVersion", label: "Schema", type: "static", get: (x) => x.schemaVersion, set: (x) => x },
-  { key: "description", label: "Description", type: "text", get: (x) => x.description, set: (x, v) => ({ ...x, description: String(v) }) },
-  { key: "createdAt", label: "Created", type: "text", get: (x) => x.createdAt, set: (x, v) => ({ ...x, createdAt: String(v) }) },
-  { key: "updatedAt", label: "Updated", type: "text", get: (x) => x.updatedAt, set: (x, v) => ({ ...x, updatedAt: String(v) }) },
+  { key: "name", label: "プロジェクト名", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
+  { key: "schemaVersion", label: "スキーマ", type: "static", get: (x) => x.schemaVersion, set: (x) => x },
+  { key: "description", label: "説明", type: "text", get: (x) => x.description, set: (x, v) => ({ ...x, description: String(v) }) },
+  { key: "createdAt", label: "作成日時", type: "text", get: (x) => x.createdAt, set: (x, v) => ({ ...x, createdAt: String(v) }) },
+  { key: "updatedAt", label: "更新日時", type: "text", get: (x) => x.updatedAt, set: (x, v) => ({ ...x, updatedAt: String(v) }) },
 ];
 
 const nodeColumns: Column<NodeItem>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "x", label: "X", type: "number", get: (x) => x.x, set: (x, v) => ({ ...x, x: Number(v) }) },
-  { key: "y", label: "Y", type: "number", get: (x) => x.y, set: (x, v) => ({ ...x, y: Number(v) }) },
-  { key: "z", label: "Z", type: "number", get: (x) => x.z, set: (x, v) => ({ ...x, z: Number(v) }) },
-  { key: "label", label: "Label", type: "text", get: (x) => x.label ?? "", set: (x, v) => ({ ...x, label: String(v) }) },
+  { key: "x", label: "X座標 [m]", type: "number", get: (x) => x.x, set: (x, v) => ({ ...x, x: Number(v) }) },
+  { key: "y", label: "Y座標 [m]", type: "number", get: (x) => x.y, set: (x, v) => ({ ...x, y: Number(v) }) },
+  { key: "z", label: "Z座標 [m]", type: "number", get: (x) => x.z, set: (x, v) => ({ ...x, z: Number(v) }) },
+  { key: "label", label: "表示名", type: "text", get: (x) => x.label ?? "", set: (x, v) => ({ ...x, label: String(v) }) },
 ];
 
 const memberColumns: Column<Member>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "nodeI", label: "Node I", type: "text", get: (x) => x.nodeI, set: (x, v) => ({ ...x, nodeI: String(v) }) },
-  { key: "nodeJ", label: "Node J", type: "text", get: (x) => x.nodeJ, set: (x, v) => ({ ...x, nodeJ: String(v) }) },
-  { key: "materialId", label: "Material", type: "text", get: (x) => x.materialId, set: (x, v) => ({ ...x, materialId: String(v) }) },
-  { key: "sectionId", label: "Section", type: "text", get: (x) => x.sectionId, set: (x, v) => ({ ...x, sectionId: String(v) }) },
-  { key: "orientationVector", label: "Orient Y", type: "number", get: (x) => x.orientationVector?.y ?? 0, set: (x, v) => ({ ...x, orientationVector: { x: x.orientationVector?.x ?? 0, y: Number(v), z: x.orientationVector?.z ?? 1 } }) },
+  { key: "nodeI", label: "始点節点 nodeI", type: "text", get: (x) => x.nodeI, set: (x, v) => ({ ...x, nodeI: String(v) }) },
+  { key: "nodeJ", label: "終点節点 nodeJ", type: "text", get: (x) => x.nodeJ, set: (x, v) => ({ ...x, nodeJ: String(v) }) },
+  { key: "materialId", label: "材料ID", type: "text", get: (x) => x.materialId, set: (x, v) => ({ ...x, materialId: String(v) }) },
+  { key: "sectionId", label: "断面ID", type: "text", get: (x) => x.sectionId, set: (x, v) => ({ ...x, sectionId: String(v) }) },
+  { key: "orientationVector", label: "向きベクトルY", type: "number", help: "部材の局所軸の向きを決める補助値です。", get: (x) => x.orientationVector?.y ?? 0, set: (x, v) => ({ ...x, orientationVector: { x: x.orientationVector?.x ?? 0, y: Number(v), z: x.orientationVector?.z ?? 1 } }) },
 ];
 
 const materialColumns: Column<Material>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "name", label: "Name", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "elasticModulus", label: "E", type: "number", get: (x) => x.elasticModulus, set: (x, v) => ({ ...x, elasticModulus: Number(v) }) },
-  { key: "poissonRatio", label: "Poisson", type: "number", get: (x) => x.poissonRatio, set: (x, v) => ({ ...x, poissonRatio: Number(v) }) },
-  { key: "density", label: "Density", type: "number", get: (x) => x.density, set: (x, v) => ({ ...x, density: Number(v) }) },
+  { key: "name", label: "材料名", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
+  { key: "elasticModulus", label: "ヤング係数 E", type: "number", help: "単位は kN/m2 です。", get: (x) => x.elasticModulus, set: (x, v) => ({ ...x, elasticModulus: Number(v) }) },
+  { key: "shearModulus", label: "せん断弾性係数 G", type: "number", help: "単位は kN/m2 です。", get: (x) => x.shearModulus, set: (x, v) => ({ ...x, shearModulus: Number(v) }) },
+  { key: "poissonRatio", label: "ポアソン比 ν", type: "number", get: (x) => x.poissonRatio, set: (x, v) => ({ ...x, poissonRatio: Number(v) }) },
+  { key: "density", label: "密度", type: "number", get: (x) => x.density, set: (x, v) => ({ ...x, density: Number(v) }) },
 ];
 
 const sectionColumns: Column<Section>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "name", label: "Name", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "area", label: "Area", type: "number", get: (x) => x.area, set: (x, v) => ({ ...x, area: Number(v) }) },
-  { key: "iy", label: "Iy", type: "number", get: (x) => x.iy, set: (x, v) => ({ ...x, iy: Number(v) }) },
-  { key: "iz", label: "Iz", type: "number", get: (x) => x.iz, set: (x, v) => ({ ...x, iz: Number(v) }) },
-  { key: "j", label: "J", type: "number", get: (x) => x.j, set: (x, v) => ({ ...x, j: Number(v) }) },
+  { key: "name", label: "断面名", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
+  { key: "area", label: "断面積 A", type: "number", help: "単位は m2 です。", get: (x) => x.area, set: (x, v) => ({ ...x, area: Number(v) }) },
+  { key: "iy", label: "断面二次モーメント Iy", type: "number", help: "単位は m4 です。", get: (x) => x.iy, set: (x, v) => ({ ...x, iy: Number(v) }) },
+  { key: "iz", label: "断面二次モーメント Iz", type: "number", help: "単位は m4 です。", get: (x) => x.iz, set: (x, v) => ({ ...x, iz: Number(v) }) },
+  { key: "j", label: "ねじり定数 J", type: "number", help: "単位は m4 です。", get: (x) => x.j, set: (x, v) => ({ ...x, j: Number(v) }) },
 ];
 
 const supportColumns: Column<Support>[] = [
-  { key: "nodeId", label: "Node", type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
-  { key: "ux", label: "Ux", type: "boolean", get: (x) => x.ux, set: (x, v) => ({ ...x, ux: Boolean(v) }) },
-  { key: "uy", label: "Uy", type: "boolean", get: (x) => x.uy, set: (x, v) => ({ ...x, uy: Boolean(v) }) },
-  { key: "uz", label: "Uz", type: "boolean", get: (x) => x.uz, set: (x, v) => ({ ...x, uz: Boolean(v) }) },
-  { key: "rx", label: "Rx", type: "boolean", get: (x) => x.rx, set: (x, v) => ({ ...x, rx: Boolean(v) }) },
-  { key: "ry", label: "Ry", type: "boolean", get: (x) => x.ry, set: (x, v) => ({ ...x, ry: Boolean(v) }) },
-  { key: "rz", label: "Rz", type: "boolean", get: (x) => x.rz, set: (x, v) => ({ ...x, rz: Boolean(v) }) },
+  { key: "nodeId", label: "節点ID", type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
+  { key: "ux", label: "X方向変位 UX", type: "boolean", get: (x) => x.ux, set: (x, v) => ({ ...x, ux: Boolean(v) }) },
+  { key: "uy", label: "Y方向変位 UY", type: "boolean", get: (x) => x.uy, set: (x, v) => ({ ...x, uy: Boolean(v) }) },
+  { key: "uz", label: "Z方向変位 UZ", type: "boolean", get: (x) => x.uz, set: (x, v) => ({ ...x, uz: Boolean(v) }) },
+  { key: "rx", label: "X軸回り回転 RX", type: "boolean", get: (x) => x.rx, set: (x, v) => ({ ...x, rx: Boolean(v) }) },
+  { key: "ry", label: "Y軸回り回転 RY", type: "boolean", get: (x) => x.ry, set: (x, v) => ({ ...x, ry: Boolean(v) }) },
+  { key: "rz", label: "Z軸回り回転 RZ", type: "boolean", get: (x) => x.rz, set: (x, v) => ({ ...x, rz: Boolean(v) }) },
 ];
 
 const loadCaseColumns: Column<LoadCase>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "name", label: "Name", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "type", label: "Type", type: "static", get: (x) => x.type, set: (x) => x },
+  { key: "name", label: "荷重ケース名", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
+  { key: "type", label: "種類", type: "static", get: (x) => x.type, set: (x) => x },
 ];
 
 const nodalLoadColumns: Column<NodalLoad>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "loadCaseId", label: "Case", type: "text", get: (x) => x.loadCaseId, set: (x, v) => ({ ...x, loadCaseId: String(v) }) },
-  { key: "nodeId", label: "Node", type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
-  { key: "fx", label: "Fx", type: "number", get: (x) => x.fx, set: (x, v) => ({ ...x, fx: Number(v) }) },
-  { key: "fy", label: "Fy", type: "number", get: (x) => x.fy, set: (x, v) => ({ ...x, fy: Number(v) }) },
-  { key: "fz", label: "Fz", type: "number", get: (x) => x.fz, set: (x, v) => ({ ...x, fz: Number(v) }) },
-  { key: "mx", label: "Mx", type: "number", get: (x) => x.mx, set: (x, v) => ({ ...x, mx: Number(v) }) },
-  { key: "my", label: "My", type: "number", get: (x) => x.my, set: (x, v) => ({ ...x, my: Number(v) }) },
-  { key: "mz", label: "Mz", type: "number", get: (x) => x.mz, set: (x, v) => ({ ...x, mz: Number(v) }) },
+  { key: "loadCaseId", label: "荷重ケースID", type: "text", get: (x) => x.loadCaseId, set: (x, v) => ({ ...x, loadCaseId: String(v) }) },
+  { key: "nodeId", label: "節点ID", type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
+  { key: "fx", label: "X方向力 Fx", type: "number", help: "単位は kN です。", get: (x) => x.fx, set: (x, v) => ({ ...x, fx: Number(v) }) },
+  { key: "fy", label: "Y方向力 Fy", type: "number", help: "単位は kN です。", get: (x) => x.fy, set: (x, v) => ({ ...x, fy: Number(v) }) },
+  { key: "fz", label: "Z方向力 Fz", type: "number", help: "単位は kN です。", get: (x) => x.fz, set: (x, v) => ({ ...x, fz: Number(v) }) },
+  { key: "mx", label: "X軸回りモーメント Mx", type: "number", help: "単位は kN_m です。", get: (x) => x.mx, set: (x, v) => ({ ...x, mx: Number(v) }) },
+  { key: "my", label: "Y軸回りモーメント My", type: "number", help: "単位は kN_m です。", get: (x) => x.my, set: (x, v) => ({ ...x, my: Number(v) }) },
+  { key: "mz", label: "Z軸回りモーメント Mz", type: "number", help: "単位は kN_m です。", get: (x) => x.mz, set: (x, v) => ({ ...x, mz: Number(v) }) },
 ];
 
 const memberLoadColumns: Column<MemberLoad>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "loadCaseId", label: "Case", type: "text", get: (x) => x.loadCaseId, set: (x, v) => ({ ...x, loadCaseId: String(v) }) },
-  { key: "memberId", label: "Member", type: "text", get: (x) => x.memberId, set: (x, v) => ({ ...x, memberId: String(v) }) },
-  { key: "coordinateSystem", label: "Coord", type: "coord", get: (x) => x.coordinateSystem, set: (x, v) => ({ ...x, coordinateSystem: String(v) === "global" ? "global" : "local" }) },
-  { key: "type", label: "Type", type: "static", get: (x) => x.type, set: (x) => x },
-  { key: "wx", label: "Wx", type: "number", get: (x) => x.wx, set: (x, v) => ({ ...x, wx: Number(v) }) },
-  { key: "wy", label: "Wy", type: "number", get: (x) => x.wy, set: (x, v) => ({ ...x, wy: Number(v) }) },
-  { key: "wz", label: "Wz", type: "number", get: (x) => x.wz, set: (x, v) => ({ ...x, wz: Number(v) }) },
+  { key: "loadCaseId", label: "荷重ケースID", type: "text", get: (x) => x.loadCaseId, set: (x, v) => ({ ...x, loadCaseId: String(v) }) },
+  { key: "memberId", label: "部材ID", type: "text", get: (x) => x.memberId, set: (x, v) => ({ ...x, memberId: String(v) }) },
+  { key: "coordinateSystem", label: "座標系", type: "coord", get: (x) => x.coordinateSystem, set: (x, v) => ({ ...x, coordinateSystem: String(v) === "global" ? "global" : "local" }) },
+  { key: "type", label: "種類", type: "static", get: (x) => x.type, set: (x) => x },
+  { key: "wx", label: "部材分布荷重 wx", type: "number", help: "単位は kN/m です。", get: (x) => x.wx, set: (x, v) => ({ ...x, wx: Number(v) }) },
+  { key: "wy", label: "部材分布荷重 wy", type: "number", help: "単位は kN/m です。", get: (x) => x.wy, set: (x, v) => ({ ...x, wy: Number(v) }) },
+  { key: "wz", label: "部材分布荷重 wz", type: "number", help: "単位は kN/m です。", get: (x) => x.wz, set: (x, v) => ({ ...x, wz: Number(v) }) },
 ];
 
 const analysisColumns: Column<AnalysisSettings>[] = [
-  { key: "analysisType", label: "Type", type: "linear_static", get: (x) => x.analysisType, set: (x) => x },
-  { key: "includeShearDeformation", label: "Shear", type: "boolean", get: (x) => x.includeShearDeformation, set: (x) => x },
-  { key: "largeDisplacement", label: "Large disp.", type: "boolean", get: (x) => x.largeDisplacement, set: (x) => x },
-  { key: "tolerance", label: "Tolerance", type: "number", get: (x) => x.tolerance, set: (x, v) => ({ ...x, tolerance: Number(v) }) },
+  { key: "analysisType", label: "解析種類", type: "linear_static", get: (x) => x.analysisType, set: (x) => x },
+  { key: "includeShearDeformation", label: "せん断変形", type: "boolean", help: "MVPでは変更できません。", get: (x) => x.includeShearDeformation, set: (x) => x },
+  { key: "largeDisplacement", label: "大変位解析", type: "boolean", help: "MVPでは変更できません。", get: (x) => x.largeDisplacement, set: (x) => x },
+  { key: "tolerance", label: "収束許容値", type: "number", get: (x) => x.tolerance, set: (x, v) => ({ ...x, tolerance: Number(v) }) },
 ];

@@ -35,28 +35,28 @@ export function ViewerControls({
   };
 
   return (
-    <div className="viewer-controls" aria-label="Viewer controls">
+    <div className="viewer-controls" aria-label="表示操作">
       <div className="viewer-control-row icon-row">
-        <button type="button" title="Fit to model" onClick={onFit}>
+        <button type="button" title="モデル全体を表示" onClick={onFit}>
           <LocateFixed size={16} />
         </button>
-        <button type="button" title="Isometric view" onClick={() => onCameraPreset("iso")}>
+        <button type="button" title="アイソメ表示" onClick={() => onCameraPreset("iso")}>
           <Box size={16} />
         </button>
-        <button type="button" title="XY view" onClick={() => onCameraPreset("xy")}>
+        <button type="button" title="XY平面表示" onClick={() => onCameraPreset("xy")}>
           XY
         </button>
-        <button type="button" title="YZ view" onClick={() => onCameraPreset("yz")}>
+        <button type="button" title="YZ平面表示" onClick={() => onCameraPreset("yz")}>
           YZ
         </button>
-        <button type="button" title="XZ view" onClick={() => onCameraPreset("xz")}>
+        <button type="button" title="XZ平面表示" onClick={() => onCameraPreset("xz")}>
           XZ
         </button>
       </div>
       <div className="viewer-control-row">
         <label>
           <Target size={14} />
-          <span>Load case</span>
+          <span>荷重ケース</span>
           <select value={selectedLoadCaseId} onChange={(event) => onLoadCaseChange(event.target.value)}>
             {loadCaseIds.map((id) => (
               <option key={id} value={id}>
@@ -67,15 +67,15 @@ export function ViewerControls({
         </label>
       </div>
       <div className="viewer-toggle-grid">
-        <Toggle label="Nodes" checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
-        <Toggle label="Members" checked={visibility.members} onChange={(value) => setFlag("members", value)} />
-        <Toggle label="Supports" checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
-        <Toggle label="Loads" checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
-        <Toggle label="Labels" checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
-        <Toggle label="Grid" checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
-        <Toggle label="Axes" checked={visibility.axes} onChange={(value) => setFlag("axes", value)} icon={<Move3D size={14} />} />
+        <Toggle label="節点" checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
+        <Toggle label="部材" checked={visibility.members} onChange={(value) => setFlag("members", value)} />
+        <Toggle label="支点" checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
+        <Toggle label="荷重" checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
+        <Toggle label="ラベル" checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
+        <Toggle label="グリッド" checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
+        <Toggle label="軸" checked={visibility.axes} onChange={(value) => setFlag("axes", value)} icon={<Move3D size={14} />} />
         <Toggle
-          label="Deformed"
+          label="変形図"
           checked={visibility.deformedShape}
           disabled={!hasResult}
           onChange={(value) => setFlag("deformedShape", value)}
@@ -83,12 +83,12 @@ export function ViewerControls({
         />
       </div>
       <div className="viewer-toggle-grid compact">
-        <Toggle label="Node IDs" checked={visibility.nodeLabels} onChange={(value) => setFlag("nodeLabels", value)} icon={<Tag size={14} />} />
-        <Toggle label="Member IDs" checked={visibility.memberLabels} onChange={(value) => setFlag("memberLabels", value)} icon={<Tag size={14} />} />
+        <Toggle label="節点ID" checked={visibility.nodeLabels} onChange={(value) => setFlag("nodeLabels", value)} icon={<Tag size={14} />} />
+        <Toggle label="部材ID" checked={visibility.memberLabels} onChange={(value) => setFlag("memberLabels", value)} icon={<Tag size={14} />} />
       </div>
       <div className="scale-grid">
         <ScaleInput
-          label="Load scale"
+          label="荷重表示倍率"
           min={0.2}
           max={4}
           step={0.1}
@@ -96,7 +96,7 @@ export function ViewerControls({
           onChange={(value) => setScale("loadScale", value)}
         />
         <ScaleInput
-          label="Def scale"
+          label="変形表示倍率"
           min={1}
           max={1000}
           step={1}

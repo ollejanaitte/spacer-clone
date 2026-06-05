@@ -9,11 +9,13 @@ from typing import Any
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
+from backend.app.reports import build_result_exports
 from backend.engine import run_analysis, validate_project
 
 APP_VERSION = "0.1.0"
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PROJECT_STORAGE_DIR = REPO_ROOT / ".local_projects"
+PROJECT_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "projects"
+AUTOSAVE_FILE_NAME = "autosave.json"
 
 app = FastAPI(title="spacer-clone MVP API", version=APP_VERSION)
 
@@ -44,7 +46,19 @@ def validate_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
             }
         )
 
-    validation = validate_project(copy.deepcopy(project))
+    try:
+        validation = validate_project(copy.deepcopy(project))
+    except Exception as exc:
+        return validation_error_response(
+            {
+                "code": "SCHEMA_ERROR",
+                "message": f"Project validation failed: {exc}",
+                "path": None,
+                "entityType": None,
+                "entityId": None,
+            },
+            status_code=400,
+        )
     return safe_json_response(
         {
             "valid": bool(validation.get("valid")),
@@ -57,6 +71,8 @@ def validate_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
 @app.post("/api/analysis/run")
 def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     project = extract_project(payload)
+    options = payload.get("options", {})
+    return_csv = bool(options.get("returnCsv")) if isinstance(options, dict) else False
     finite_error = find_non_finite(project)
     if finite_error is not None:
         result = failed_result(
@@ -72,7 +88,22 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     else:
         result = run_analysis(copy.deepcopy(project))
 
-    return safe_json_response({"result": result, "csv": None})
+    try:
+        csv_exports = build_result_exports(result) if return_csv else None
+    except ValueError as exc:
+        result = failed_result(
+            project,
+            {
+                "code": "REPORT_ERROR",
+                "message": str(exc),
+                "path": None,
+                "entityType": None,
+                "entityId": None,
+            },
+        )
+        csv_exports = None
+
+    return safe_json_response({"result": result, "csv": csv_exports})
 
 
 @app.post("/api/projects/save")
@@ -90,7 +121,7 @@ def save_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
             },
         )
 
-    PROJECT_STORAGE_DIR.mkdir(exist_ok=True)
+    PROJECT_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     path = PROJECT_STORAGE_DIR / file_name
     with path.open("w", encoding="utf-8") as file:
         json.dump(project, file, ensure_ascii=False, allow_nan=False, indent=2)
@@ -114,8 +145,67 @@ def load_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
 
     with path.open(encoding="utf-8") as file:
         project = json.load(file)
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_VALUE",
+                "message": "Stored project contains NaN or Infinity.",
+                "path": finite_error,
+            },
+        )
 
     return safe_json_response({"project": project})
+
+
+@app.post("/api/projects/autosave")
+def autosave_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+            },
+        )
+
+    PROJECT_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    path = PROJECT_STORAGE_DIR / AUTOSAVE_FILE_NAME
+    with path.open("w", encoding="utf-8") as file:
+        json.dump(project, file, ensure_ascii=False, allow_nan=False, indent=2)
+        file.write("\n")
+
+    return safe_json_response({"saved": True, "fileName": AUTOSAVE_FILE_NAME})
+
+
+@app.get("/api/projects/autosave")
+def get_autosave_project_endpoint() -> JSONResponse:
+    path = PROJECT_STORAGE_DIR / AUTOSAVE_FILE_NAME
+    if not path.exists():
+        return safe_json_response(
+            {"exists": False, "fileName": AUTOSAVE_FILE_NAME, "project": None}
+        )
+
+    with path.open(encoding="utf-8") as file:
+        project = json.load(file)
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_VALUE",
+                "message": "Stored autosave contains NaN or Infinity.",
+                "path": finite_error,
+            },
+        )
+
+    return safe_json_response(
+        {"exists": True, "fileName": AUTOSAVE_FILE_NAME, "project": project}
+    )
 
 
 @app.get("/api/examples")
@@ -135,10 +225,20 @@ def extract_project(payload: dict[str, Any]) -> dict[str, Any]:
 
 def extract_file_name(payload: dict[str, Any]) -> str:
     file_name = payload.get("fileName")
-    if not isinstance(file_name, str) or not file_name:
+    if not isinstance(file_name, str) or not file_name.strip():
         raise HTTPException(
             status_code=422,
             detail={"code": "SCHEMA_ERROR", "message": "fileName is required."},
+        )
+    file_name = file_name.strip()
+    path = Path(file_name)
+    if path.is_absolute() or ".." in path.parts:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_PATH",
+                "message": "fileName must stay inside the project storage directory.",
+            },
         )
     if Path(file_name).name != file_name or "\\" in file_name or "/" in file_name:
         raise HTTPException(
@@ -148,12 +248,12 @@ def extract_file_name(payload: dict[str, Any]) -> str:
                 "message": "fileName must not contain path separators.",
             },
         )
-    if not file_name.endswith(".project.json"):
+    if file_name != "project.json" and not file_name.endswith(".project.json"):
         raise HTTPException(
             status_code=400,
             detail={
                 "code": "INVALID_PATH",
-                "message": "fileName must end with .project.json.",
+                "message": "fileName must be project.json or end with .project.json.",
             },
         )
     return file_name
@@ -170,6 +270,13 @@ def safe_json_response(content: dict[str, Any], status_code: int = 200) -> JSONR
             },
         )
     return JSONResponse(content=content, status_code=status_code)
+
+
+def validation_error_response(error: dict[str, Any], status_code: int = 400) -> JSONResponse:
+    return safe_json_response(
+        {"valid": False, "warnings": [], "errors": [error]},
+        status_code=status_code,
+    )
 
 
 def find_non_finite(value: Any, path: str = "") -> str | None:

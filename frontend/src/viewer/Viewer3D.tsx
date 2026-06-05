@@ -102,16 +102,16 @@ export function Viewer3D({
     <main className="viewer-shell">
       <div className="viewer-header">
         <div>
-          <h2>3D Viewer</h2>
+          <h2>3D表示</h2>
           <p>{statusText(selection, hasResult)}</p>
         </div>
         <div className="viewer-stats">
-          <span>mode: {mode}</span>
-          <span>gpu: {gpuMode}</span>
-          <span>{project.nodes.length} nodes</span>
-          <span>{project.members.length} members</span>
-          <span>{project.supports.length} supports</span>
-          <span>{project.nodalLoads.length + project.memberLoads.length} loads</span>
+          <span>表示: {mode === "three" ? "3D" : "2D簡易"}</span>
+          <span>GPU: {gpuMode}</span>
+          <span>節点 {project.nodes.length}</span>
+          <span>部材 {project.members.length}</span>
+          <span>支点 {project.supports.length}</span>
+          <span>荷重 {project.nodalLoads.length + project.memberLoads.length}</span>
         </div>
       </div>
       <section className="viewer-body">
@@ -143,8 +143,8 @@ export function Viewer3D({
 }
 
 function statusText(selection: ViewerSelection, hasResult: boolean): string {
-  const selected = selection ? `${selection.type} ${selection.id}` : "no selection";
-  return `${selected} | ${hasResult ? "result deformation available" : "input model view"}`;
+  const selected = selection ? `${selection.type === "node" ? "節点" : "部材"} ${selection.id}` : "未選択";
+  return `${selected} / ${hasResult ? "変形図を表示できます" : "入力モデルを表示中"}`;
 }
 
 function getGpuModeLabel(): string {

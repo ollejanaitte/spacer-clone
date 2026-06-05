@@ -9,6 +9,9 @@
     "test": "vitest run",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
+    "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",
+    "app:dev": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev\"",
+    "app:dev:compat": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev:compat\"",
     "electron:build": "npm run build && npm run electron:compile",
     "electron:test": "vitest run --root .. desktop/electron",
     "preview": "vite preview"

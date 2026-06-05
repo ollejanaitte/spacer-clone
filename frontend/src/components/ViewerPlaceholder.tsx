@@ -10,16 +10,16 @@ export function ViewerPlaceholder({ project, selected }: ViewerPlaceholderProps)
     <main className="viewer-shell">
       <div className="viewer-header">
         <div>
-          <h2>3D Viewer</h2>
-          <p>Placeholder · selected: {selected}</p>
+          <h2>3D表示</h2>
+          <p>選択中: {selected}</p>
         </div>
         <div className="viewer-stats">
-          <span>{project.nodes.length} nodes</span>
-          <span>{project.members.length} members</span>
-          <span>{project.loadCases.length} load cases</span>
+          <span>節点 {project.nodes.length}</span>
+          <span>部材 {project.members.length}</span>
+          <span>荷重ケース {project.loadCases.length}</span>
         </div>
       </div>
-      <div className="model-placeholder" role="img" aria-label="Model overview placeholder">
+      <div className="model-placeholder" role="img" aria-label="モデル概要">
         <div className="axis x-axis">X</div>
         <div className="axis y-axis">Y</div>
         <div className="axis z-axis">Z</div>

@@ -19,6 +19,7 @@ export type Material = {
   id: string;
   name: string;
   elasticModulus: number;
+  shearModulus: number;
   poissonRatio: number;
   density: number;
 };
@@ -163,6 +164,13 @@ export type AnalysisResult = {
   }>;
   warnings: StructuredMessage[];
   errors: StructuredMessage[];
+};
+
+export type ResultExports = {
+  "result.json": string;
+  "displacements.csv": string;
+  "reactions.csv": string;
+  "member_end_forces.csv": string;
 };
 
 export type EndForce = {

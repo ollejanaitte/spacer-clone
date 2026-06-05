@@ -13,10 +13,10 @@ type ResultsPanelProps = {
 };
 
 const tabs: Array<{ key: BottomTab; label: string }> = [
-  { key: "results", label: "Results" },
-  { key: "errors", label: "Errors" },
-  { key: "warnings", label: "Warnings" },
-  { key: "logs", label: "Logs" },
+  { key: "results", label: "解析結果" },
+  { key: "errors", label: "エラー" },
+  { key: "warnings", label: "警告" },
+  { key: "logs", label: "ログ" },
 ];
 
 export function ResultsPanel({
@@ -53,8 +53,8 @@ export function ResultsPanel({
             selectedMember={selectedMember}
           />
         )}
-        {activeTab === "errors" && <MessageTable messages={errors} empty="No errors." />}
-        {activeTab === "warnings" && <MessageTable messages={warnings} empty="No warnings." />}
+        {activeTab === "errors" && <MessageTable messages={errors} empty="エラーはありません。" />}
+        {activeTab === "warnings" && <MessageTable messages={warnings} empty="警告はありません。" />}
         {activeTab === "logs" && (
           <div className="log-list">
             {logs.map((line, index) => (
@@ -78,7 +78,7 @@ function ResultTables({
   selectedNode: string | null;
   selectedMember: string | null;
 }) {
-  if (!result) return <div className="empty-state">No analysis result.</div>;
+  if (!result) return <div className="empty-state">解析結果はまだありません。</div>;
   const summary = result.analysisSummary;
   const displacements = result.displacements.filter(
     (row) =>
@@ -99,25 +99,25 @@ function ResultTables({
   return (
     <div className="results-grid">
       <div className="summary-list">
-        <span>Status: {summary.status}</span>
-        <span>Solver: {summary.solver}</span>
-        <span>Duration: {formatNumber(summary.durationMs)} ms</span>
-        <span>DOF: {summary.freeDof}/{summary.totalDof} free</span>
-        <span>Load case: {activeLoadCase || "all"}</span>
-        <span>Selection: {selectedNode ?? selectedMember ?? "all"}</span>
+        <span>状態: {statusLabel(summary.status)}</span>
+        <span>ソルバー: {summary.solver}</span>
+        <span>計算時間: {formatNumber(summary.durationMs)} ms</span>
+        <span>自由度: {summary.freeDof}/{summary.totalDof} free</span>
+        <span>荷重ケース: {activeLoadCase || "すべて"}</span>
+        <span>選択: {selectedNode ?? selectedMember ?? "すべて"}</span>
       </div>
       <CompactTable
-        title="Node Displacements"
+        title="節点変位"
         rows={displacements}
         columns={["loadCaseId", "nodeId", "ux", "uy", "uz", "rx", "ry", "rz"]}
       />
       <CompactTable
-        title="Reactions"
+        title="支点反力"
         rows={reactions}
         columns={["loadCaseId", "nodeId", "fx", "fy", "fz", "mx", "my", "mz"]}
       />
       <CompactTable
-        title="Member End Forces"
+        title="部材端力"
         rows={memberEndForces.map((row) => ({
           loadCaseId: row.loadCaseId,
           memberId: row.memberId,
@@ -168,13 +168,13 @@ function CompactTable({
     <div className="result-table">
       <h3>{title}</h3>
       {rows.length === 0 ? (
-        <div className="empty-state">No rows.</div>
+        <div className="empty-state">行がありません。</div>
       ) : (
         <table>
           <thead>
             <tr>
               {columns.map((column) => (
-                <th key={column}>{column}</th>
+                <th key={column}>{columnLabel(column)}</th>
               ))}
             </tr>
           </thead>
@@ -199,15 +199,19 @@ function MessageTable({ messages, empty }: { messages: StructuredMessage[]; empt
     <table className="message-table">
       <thead>
         <tr>
-          <th>Code</th>
-          <th>Path</th>
-          <th>Entity</th>
-          <th>Message</th>
+          <th>説明</th>
+          <th>コード</th>
+          <th>場所</th>
+          <th>対象</th>
+          <th>詳細</th>
         </tr>
       </thead>
       <tbody>
         {messages.map((message, index) => (
           <tr key={`${message.code}-${index}`}>
+            <td>
+              <strong>{errorDescription(message.code)}</strong>
+            </td>
             <td>{message.code}</td>
             <td>{message.path ?? "-"}</td>
             <td>{message.entityId ?? message.entityType ?? "-"}</td>
@@ -223,6 +227,68 @@ function formatCell(value: unknown): string {
   if (typeof value === "number") return formatNumber(value);
   if (Array.isArray(value)) return value.join(", ");
   return String(value ?? "");
+}
+
+function columnLabel(column: string): string {
+  const labels: Record<string, string> = {
+    loadCaseId: "荷重ケースID",
+    nodeId: "節点ID",
+    memberId: "部材ID",
+    ux: "UX",
+    uy: "UY",
+    uz: "UZ",
+    rx: "RX",
+    ry: "RY",
+    rz: "RZ",
+    fx: "Fx",
+    fy: "Fy",
+    fz: "Fz",
+    mx: "Mx",
+    my: "My",
+    mz: "Mz",
+    iFx: "I端 Fx",
+    iFy: "I端 Fy",
+    iFz: "I端 Fz",
+    iMx: "I端 Mx",
+    iMy: "I端 My",
+    iMz: "I端 Mz",
+    jFx: "J端 Fx",
+    jFy: "J端 Fy",
+    jFz: "J端 Fz",
+    jMx: "J端 Mx",
+    jMy: "J端 My",
+    jMz: "J端 Mz",
+  };
+  return labels[column] ?? column;
+}
+
+function statusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    success: "成功",
+    warning: "警告あり",
+    failed: "失敗",
+  };
+  return labels[status] ?? status;
+}
+
+function errorDescription(code: string): string {
+  const descriptions: Record<string, string> = {
+    INVALID_REFERENCE: "存在しない節点、部材、材料、断面などを参照しています。",
+    MODEL_UNSTABLE: "支点条件が不足しています。",
+    SOLVER_ERROR: "支点条件またはモデル条件が不足している可能性があります。",
+    SCHEMA_ERROR: "入力データの形式に誤りがあります。",
+    DUPLICATE_ID: "同じIDが複数使われています。",
+    INVALID_VALUE: "数値が未設定、範囲外、または不正です。",
+    ZERO_LENGTH_MEMBER: "部材のI端とJ端が同じ位置です。",
+    POSTPROCESS_ERROR: "解析結果の整理中にエラーが発生しました。",
+    DISCONNECTED_NODE: "部材に接続されていない節点があります。",
+    WEBGL_INIT_FAILED: "3D表示を初期化できませんでした。",
+    NETWORK_ERROR: "APIサーバーに接続できません。",
+    VALIDATION_API_ERROR: "入力チェックAPIでエラーが発生しました。",
+    ANALYSIS_API_ERROR: "解析実行APIでエラーが発生しました。",
+    PROJECT_OPEN_ERROR: "project.jsonを開けませんでした。",
+  };
+  return descriptions[code] ?? "入力内容を確認してください。";
 }
 
 function formatNumber(value: number): string {

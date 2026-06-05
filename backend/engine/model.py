@@ -150,7 +150,10 @@ class Model:
 def parse_model(data: dict[str, Any]) -> Model:
     project = ProjectInfo(**require_mapping(data, "project"))
     nodes = [Node(**item) for item in require_list(data, "nodes")]
-    materials = [Material(**item) for item in require_list(data, "materials")]
+    materials = [
+        parse_material(item, idx)
+        for idx, item in enumerate(require_list(data, "materials"))
+    ]
     sections = [Section(**item) for item in require_list(data, "sections")]
     members = [
         parse_member(item, idx)
@@ -175,6 +178,33 @@ def parse_model(data: dict[str, Any]) -> Model:
     )
     validate_model(model)
     return model
+
+
+def parse_material(item: dict[str, Any], index: int) -> Material:
+    values = dict(item)
+    if "shearModulus" not in values:
+        elastic_modulus = values.get("elasticModulus")
+        poisson_ratio = values.get("poissonRatio", 0.0)
+        if not isinstance(elastic_modulus, int | float) or not isinstance(
+            poisson_ratio, int | float
+        ):
+            raise AnalysisError(
+                "SCHEMA_ERROR",
+                "shearModulus is required unless elasticModulus and poissonRatio are numeric.",
+                path=f"/materials/{index}/shearModulus",
+                entity_type="material",
+                entity_id=values.get("id"),
+            )
+        if poisson_ratio == -1.0:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "poissonRatio must be greater than -1.0 and less than 0.5.",
+                path=f"/materials/{index}/poissonRatio",
+                entity_type="material",
+                entity_id=values.get("id"),
+            )
+        values["shearModulus"] = elastic_modulus / (2.0 * (1.0 + poisson_ratio))
+    return Material(**values)
 
 
 def parse_member(item: dict[str, Any], index: int) -> Member:

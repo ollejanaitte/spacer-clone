@@ -1,8 +1,8 @@
-import type { AnalysisResult, ProjectModel, ValidationResponse } from "../types";
+import type { AnalysisResult, ProjectModel, ResultExports, ValidationResponse } from "../types";
 
 type AnalysisRunResponse = {
   result: AnalysisResult;
-  csv: string | null;
+  csv: ResultExports | null;
 };
 
 type ExampleResponse = {
@@ -21,6 +21,17 @@ type SaveProjectResponse = {
 
 type LoadProjectResponse = {
   project: ProjectModel;
+};
+
+type AutosaveProjectResponse = {
+  saved: boolean;
+  fileName: "autosave.json";
+};
+
+type AutosaveCandidateResponse = {
+  exists: boolean;
+  fileName: "autosave.json";
+  project: ProjectModel | null;
 };
 
 export class ApiClientError extends Error {
@@ -74,10 +85,10 @@ export const apiClient = {
     return postJson<ValidationResponse>("/api/projects/validate", { project });
   },
 
-  runAnalysis(project: ProjectModel): Promise<AnalysisRunResponse> {
+  runAnalysis(project: ProjectModel, returnCsv = false): Promise<AnalysisRunResponse> {
     return postJson<AnalysisRunResponse>("/api/analysis/run", {
       project,
-      options: { returnCsv: false },
+      options: { returnCsv },
     });
   },
 
@@ -88,6 +99,15 @@ export const apiClient = {
   async loadProject(fileName: string): Promise<ProjectModel> {
     const response = await postJson<LoadProjectResponse>("/api/projects/load", { fileName });
     return response.project;
+  },
+
+  autosaveProject(project: ProjectModel): Promise<AutosaveProjectResponse> {
+    return postJson<AutosaveProjectResponse>("/api/projects/autosave", { project });
+  },
+
+  async loadAutosaveCandidate(): Promise<AutosaveCandidateResponse> {
+    const response = await fetchJson("/api/projects/autosave");
+    return parseJsonResponse<AutosaveCandidateResponse>(response);
   },
 
   async loadExamples(): Promise<ExampleResponse["examples"]> {

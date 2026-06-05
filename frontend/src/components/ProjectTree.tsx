@@ -1,17 +1,17 @@
 import type { ProjectModel, SectionKey } from "../types";
 
 const treeItems: Array<{ key: SectionKey; label: string }> = [
-  { key: "project", label: "Project" },
-  { key: "nodes", label: "Nodes" },
-  { key: "members", label: "Members" },
-  { key: "materials", label: "Materials" },
-  { key: "sections", label: "Sections" },
-  { key: "supports", label: "Supports" },
-  { key: "loadCases", label: "Load Cases" },
-  { key: "nodalLoads", label: "Nodal Loads" },
-  { key: "memberLoads", label: "Member Loads" },
-  { key: "analysisSettings", label: "Analysis Settings" },
-  { key: "results", label: "Results" },
+  { key: "project", label: "プロジェクト" },
+  { key: "nodes", label: "節点" },
+  { key: "members", label: "部材" },
+  { key: "materials", label: "材料" },
+  { key: "sections", label: "断面" },
+  { key: "supports", label: "支点条件" },
+  { key: "loadCases", label: "荷重ケース" },
+  { key: "nodalLoads", label: "節点荷重" },
+  { key: "memberLoads", label: "部材荷重" },
+  { key: "analysisSettings", label: "解析設定" },
+  { key: "results", label: "解析結果" },
 ];
 
 type ProjectTreeProps = {
@@ -33,7 +33,7 @@ export function ProjectTree({ project, selected, onSelect }: ProjectTreeProps) {
   };
 
   return (
-    <aside className="project-tree" aria-label="Project tree">
+    <aside className="project-tree" aria-label="プロジェクトツリー">
       {treeItems.map((item) => (
         <button
           key={item.key}

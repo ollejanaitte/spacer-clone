@@ -109,7 +109,14 @@ export function replaceGroupContents(group: THREE.Group, children: THREE.Object3
     group.remove(child);
     disposeObject(child);
   }
-  group.add(...children);
+  const objects = children.filter(isObject3D);
+  if (objects.length > 0) {
+    group.add(...objects);
+  }
+}
+
+function isObject3D(value: unknown): value is THREE.Object3D {
+  return Boolean(value && typeof value === "object" && (value as THREE.Object3D).isObject3D);
 }
 
 export function computeModelBox(
