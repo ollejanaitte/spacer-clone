@@ -13,11 +13,12 @@ export function renderDeformedShape(
   project: ProjectModel,
   result: AnalysisResult | null,
   selectedLoadCaseId: string,
+  selectedEigenMode: number,
   scales: ViewerScales,
 ): THREE.Object3D[] {
   if (!result || result.errors.length > 0 || !isFiniteNumber(scales.deformationScale)) return [];
   const nodeMap = createNodeMap(project);
-  const displacementMap = createDisplacementMap(result, selectedLoadCaseId);
+  const displacementMap = createDisplacementMap(result, selectedLoadCaseId, selectedEigenMode);
   if (displacementMap.size === 0) return [];
 
   const objects: THREE.Object3D[] = [];

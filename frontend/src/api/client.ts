@@ -5,6 +5,10 @@ type AnalysisRunResponse = {
   csv: ResultExports | null;
 };
 
+type EigenRunResponse = {
+  result: AnalysisResult;
+};
+
 type ExampleResponse = {
   examples: Array<{
     id: string;
@@ -89,6 +93,15 @@ export const apiClient = {
     return postJson<AnalysisRunResponse>("/api/analysis/run", {
       project,
       options: { returnCsv },
+    });
+  },
+
+  runEigenAnalysis(project: ProjectModel, massCaseId: string, modeCount: number): Promise<EigenRunResponse> {
+    return postJson<EigenRunResponse>("/api/analysis/eigen", {
+      project,
+      massCaseId,
+      modeCount,
+      normalization: "mass",
     });
   },
 

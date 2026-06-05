@@ -14,11 +14,16 @@ export type ViewerVisibility = {
   grid: boolean;
   axes: boolean;
   deformedShape: boolean;
+  reactions: boolean;
+  axialForce: boolean;
+  momentMy: boolean;
+  momentMz: boolean;
 };
 
 export type ViewerScales = {
   loadScale: number;
   deformationScale: number;
+  resultScale: number;
   nodeSize: number;
   labelSize: number;
 };
@@ -34,8 +39,10 @@ export type Viewer3DProps = {
   selectedSection: SectionKey;
   selection: ViewerSelection;
   activeLoadCase: string;
+  selectedEigenMode?: number;
   onSelectionChange: (selection: ViewerSelection) => void;
   onActiveLoadCaseChange: (loadCaseId: string) => void;
+  onSelectedEigenModeChange?: (modeNo: number) => void;
   onViewerError?: (message: string) => void;
 };
 
@@ -56,6 +63,7 @@ export type SceneGroups = {
   members: THREE.Group;
   supports: THREE.Group;
   loads: THREE.Group;
+  resultDiagrams: THREE.Group;
   labels: THREE.Group;
   deformed: THREE.Group;
 };

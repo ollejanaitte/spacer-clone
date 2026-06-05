@@ -75,7 +75,7 @@ describe("Viewer3D WebGL fallback", () => {
 
     await act(async () => undefined);
 
-    expect(document.body.textContent).toContain("gpu: browser");
+    expect(document.body.textContent).toContain("GPU: browser");
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
   });
 });
@@ -85,7 +85,7 @@ describe("Fallback2DViewport", () => {
     render(<Fallback2DViewport {...fallbackProps(emptyProject())} />);
 
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
-    expect(document.body.textContent).toContain("No model geometry.");
+    expect(document.body.textContent).toContain("表示できる節点・部材がありません。");
   });
 
   it("generates drawing elements for nodes and members", () => {
@@ -127,10 +127,15 @@ function fallbackProps(project: ProjectModel): ThreeViewportProps {
       grid: true,
       axes: true,
       deformedShape: false,
+      reactions: false,
+      axialForce: false,
+      momentMy: false,
+      momentMz: false,
     },
     scales: {
       loadScale: 1,
       deformationScale: 1,
+      resultScale: 1,
       nodeSize: 1,
       labelSize: 1,
     },

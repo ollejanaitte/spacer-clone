@@ -83,6 +83,24 @@ export type MemberLoad = {
   wz: number;
 };
 
+export type MassItem = {
+  nodeId: string;
+  mx: number;
+  my: number;
+  mz: number;
+  irx: number;
+  iry: number;
+  irz: number;
+};
+
+export type MassCase = {
+  id: string;
+  name: string;
+  method: "lumped";
+  source: "manual";
+  items: MassItem[];
+};
+
 export type AnalysisSettings = {
   analysisType: "linear_static";
   includeShearDeformation: false;
@@ -100,6 +118,7 @@ export type ProjectModel = {
   loadCases: LoadCase[];
   nodalLoads: NodalLoad[];
   memberLoads: MemberLoad[];
+  massCases?: MassCase[];
   analysisSettings: AnalysisSettings;
 };
 
@@ -121,7 +140,7 @@ export type AnalysisResult = {
   projectId: string;
   schemaVersion: "1.0.0";
   analysisSummary: {
-    analysisType: "linear_static";
+    analysisType: "linear_static" | "eigen";
     status: "success" | "warning" | "failed";
     startedAt: string;
     finishedAt: string;
@@ -132,7 +151,7 @@ export type AnalysisResult = {
     totalDof: number;
     freeDof: number;
     constrainedDof: number;
-    solver: "scipy_sparse";
+    solver: "scipy_sparse" | "scipy_eigh";
   };
   displacements: Array<{
     loadCaseId: string;
@@ -162,8 +181,42 @@ export type AnalysisResult = {
     i: EndForce;
     j: EndForce;
   }>;
+  eigenResult?: EigenResult;
   warnings: StructuredMessage[];
   errors: StructuredMessage[];
+};
+
+export type DirectionalValue = {
+  direction: string;
+  value: number;
+};
+
+export type EigenModeShape = {
+  nodeId: string;
+  ux: number;
+  uy: number;
+  uz: number;
+  rx: number;
+  ry: number;
+  rz: number;
+};
+
+export type EigenModeResult = {
+  modeNo: number;
+  eigenvalue: number;
+  circularFrequency: number;
+  frequency: number;
+  period: number;
+  modalMass: number;
+  participationFactors: DirectionalValue[];
+  effectiveMassRatios: DirectionalValue[];
+  shape: EigenModeShape[];
+};
+
+export type EigenResult = {
+  massCaseId: string;
+  normalization: "mass";
+  modes: EigenModeResult[];
 };
 
 export type ResultExports = {
@@ -192,6 +245,7 @@ export type SectionKey =
   | "loadCases"
   | "nodalLoads"
   | "memberLoads"
+  | "massCases"
   | "analysisSettings"
   | "results";
 

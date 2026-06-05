@@ -1,4 +1,4 @@
-import { Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target } from "lucide-react";
+import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
 import type React from "react";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
 
@@ -7,10 +7,13 @@ type ViewerControlsProps = {
   scales: ViewerScales;
   loadCaseIds: string[];
   selectedLoadCaseId: string;
+  eigenModeNos: number[];
+  selectedEigenMode: number;
   hasResult: boolean;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onLoadCaseChange: (loadCaseId: string) => void;
+  onEigenModeChange: (modeNo: number) => void;
   onFit: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
 };
@@ -20,10 +23,13 @@ export function ViewerControls({
   scales,
   loadCaseIds,
   selectedLoadCaseId,
+  eigenModeNos,
+  selectedEigenMode,
   hasResult,
   onVisibilityChange,
   onScalesChange,
   onLoadCaseChange,
+  onEigenModeChange,
   onFit,
   onCameraPreset,
 }: ViewerControlsProps) {
@@ -66,6 +72,21 @@ export function ViewerControls({
           </select>
         </label>
       </div>
+      {eigenModeNos.length > 0 && (
+        <div className="viewer-control-row">
+          <label>
+            <Waves size={14} />
+            <span>固有モード</span>
+            <select value={selectedEigenMode} onChange={(event) => onEigenModeChange(Number(event.target.value))}>
+              {eigenModeNos.map((modeNo) => (
+                <option key={modeNo} value={modeNo}>
+                  Mode {modeNo}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
       <div className="viewer-toggle-grid">
         <Toggle label="節点" checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
         <Toggle label="部材" checked={visibility.members} onChange={(value) => setFlag("members", value)} />
@@ -80,6 +101,32 @@ export function ViewerControls({
           disabled={!hasResult}
           onChange={(value) => setFlag("deformedShape", value)}
           icon={<Rotate3D size={14} />}
+        />
+        <Toggle
+          label="反力図"
+          checked={visibility.reactions}
+          disabled={!hasResult}
+          onChange={(value) => setFlag("reactions", value)}
+          icon={<Activity size={14} />}
+        />
+        <Toggle
+          label="軸力図"
+          checked={visibility.axialForce}
+          disabled={!hasResult}
+          onChange={(value) => setFlag("axialForce", value)}
+          icon={<Waves size={14} />}
+        />
+        <Toggle
+          label="My図"
+          checked={visibility.momentMy}
+          disabled={!hasResult}
+          onChange={(value) => setFlag("momentMy", value)}
+        />
+        <Toggle
+          label="Mz図"
+          checked={visibility.momentMz}
+          disabled={!hasResult}
+          onChange={(value) => setFlag("momentMz", value)}
         />
       </div>
       <div className="viewer-toggle-grid compact">
@@ -102,6 +149,14 @@ export function ViewerControls({
           step={1}
           value={scales.deformationScale}
           onChange={(value) => setScale("deformationScale", value)}
+        />
+        <ScaleInput
+          label="結果図倍率"
+          min={0.1}
+          max={8}
+          step={0.1}
+          value={scales.resultScale}
+          onChange={(value) => setScale("resultScale", value)}
         />
       </div>
     </div>

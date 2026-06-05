@@ -15,11 +15,16 @@ const defaultVisibility: ViewerVisibility = {
   grid: true,
   axes: true,
   deformedShape: false,
+  reactions: false,
+  axialForce: false,
+  momentMy: false,
+  momentMz: false,
 };
 
 const defaultScales: ViewerScales = {
   loadScale: 1,
   deformationScale: 120,
+  resultScale: 1,
   nodeSize: 0.075,
   labelSize: 0.26,
 };
@@ -36,8 +41,10 @@ export function Viewer3D({
   selectedSection,
   selection,
   activeLoadCase,
+  selectedEigenMode = 1,
   onSelectionChange,
   onActiveLoadCaseChange,
+  onSelectedEigenModeChange = () => undefined,
   onViewerError,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
@@ -51,7 +58,13 @@ export function Viewer3D({
     [project.loadCases],
   );
   const selectedLoadCaseId = activeLoadCase || loadCaseIds[0] || "";
-  const hasResult = Boolean(result && result.errors.length === 0 && result.displacements.length > 0);
+  const eigenModeNos = useMemo(
+    () => result?.eigenResult?.modes.map((mode) => mode.modeNo) ?? [],
+    [result],
+  );
+  const hasResult = Boolean(
+    result && result.errors.length === 0 && (result.displacements.length > 0 || eigenModeNos.length > 0),
+  );
 
   useEffect(() => {
     if (!loadCaseIds.includes(selectedLoadCaseId)) {
@@ -64,6 +77,12 @@ export function Viewer3D({
       setVisibility((current) => ({ ...current, deformedShape: false }));
     }
   }, [hasResult, visibility.deformedShape]);
+
+  useEffect(() => {
+    if (eigenModeNos.length > 0 && !eigenModeNos.includes(selectedEigenMode)) {
+      onSelectedEigenModeChange(eigenModeNos[0]);
+    }
+  }, [eigenModeNos, selectedEigenMode, onSelectedEigenModeChange]);
 
   const runCameraPreset = (preset: CameraPreset) => {
     setCameraRequest(preset);
@@ -92,6 +111,7 @@ export function Viewer3D({
     visibility,
     scales,
     selectedLoadCaseId,
+    selectedEigenMode,
     fitRequest,
     cameraRequest,
     onInitializationError: handleInitializationError,
@@ -130,10 +150,13 @@ export function Viewer3D({
           scales={scales}
           loadCaseIds={loadCaseIds.length > 0 ? loadCaseIds : [""]}
           selectedLoadCaseId={selectedLoadCaseId}
+          eigenModeNos={eigenModeNos}
+          selectedEigenMode={selectedEigenMode}
           hasResult={hasResult}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
           onLoadCaseChange={onActiveLoadCaseChange}
+          onEigenModeChange={onSelectedEigenModeChange}
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
         />

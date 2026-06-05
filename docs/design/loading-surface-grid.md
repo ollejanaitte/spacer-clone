@@ -12,7 +12,6 @@
 {
   "id": "surface-1",
   "name": "Deck",
-  "coordinateSystem": "global",
   "description": "",
   "grids": [],
   "lines": [],
@@ -124,25 +123,45 @@ MVPでは直線2点と固定間隔を扱う。
 
 MVPでは未使用。
 
-## 8. 荷重分配
+## 8. DistributionRule
 
-荷重分配は、載荷点から構造モデルのDOFへ荷重を変換する規則である。
+`DistributionRule` は、載荷点から構造モデルの等価節点荷重へ変換する独立した設計対象である。単なる設定値ではなく、影響線精度と移動荷重の連続性を左右する責務を持つ。
 
-方式:
+MVP標準:
 
-- `nearestNode`: 最も近い構造節点へ載荷する。MVP候補。
-- `explicitNode`: ユーザーが指定した構造節点へ載荷する。MVP候補。
-- `memberInterpolation`: 部材上の位置へ載荷し、等価節点荷重へ変換する。将来。
-- `gridInterpolation`: 格子点と構造節点の対応から補間する。将来。
+- `memberInterpolation`: 部材上の任意位置へ載荷し、Euler-Bernoulli梁要素の等価節点荷重としてI端/J端へ分配する。
 
-```json
-{
-  "id": "dist-1",
-  "type": "nearestNode",
-  "searchTolerance": 0.1,
-  "targetDof": "UZ"
+```ts
+type DistributionRule = MemberInterpolationRule
+
+type MemberInterpolationRule = {
+  id: string
+  type: "memberInterpolation"
+  searchTolerance: number
+  targetMembers?: string[]
+  allowOutOfRange: false
 }
 ```
+
+処理方針:
+
+```text
+LoadingLine上のstation位置
+  -> 対象部材を検索
+  -> 部材局所座標上の位置 a/L を算出
+  -> 等価節点荷重としてI端/J端へ分配
+  -> 既存解析エンジンへ荷重ベクトルとして渡す
+```
+
+`nearestNode` と `explicitNode` はMVP候補から外す。載荷位置を節点へ吸着させる方式は影響線が階段状になり、移動荷重解析の位置依存性を損なうためである。
+
+将来拡張:
+
+- `gridInterpolation`
+- `surfaceInterpolation`
+- `laneDistribution`
+
+これらはMVPでは未実装とする。
 
 分配結果:
 
@@ -154,7 +173,7 @@ MVPでは未使用。
 
 ## 9. 格子補間
 
-格子補間は将来拡張とする。
+格子補間はPhase 2以降の将来拡張とする。`LoadingGrid` もMVPでは保存設計の枠にとどめ、解析標準にはしない。
 
 候補:
 
@@ -211,14 +230,14 @@ MVPではユーザーが単一ラインを直接定義する。
 ### Phase 1
 
 - `LoadingLine` 直接入力。
-- `explicitNode` または `nearestNode` 分配。
 - station生成。
+- `memberInterpolation` 分配。
 - 単一集中荷重の影響線。
 
 ### Phase 2
 
 - `LoadingGrid` 保存。
-- `memberInterpolation`。
+- 格子補間。
 - 影響線精度のためのstation自動分割。
 
 ### Phase 3
@@ -232,4 +251,3 @@ MVPではユーザーが単一ラインを直接定義する。
 - 格子補間。
 - 複数車線同時載荷。
 - 載荷領域のThree.js編集。
-

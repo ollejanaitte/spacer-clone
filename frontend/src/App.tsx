@@ -33,6 +33,7 @@ export function App() {
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [resultExports, setResultExports] = useState<ResultExports | null>(null);
+  const [selectedEigenMode, setSelectedEigenMode] = useState<number>(1);
   const [apiErrors, setApiErrors] = useState<StructuredMessage[]>([]);
   const [viewerErrors, setViewerErrors] = useState<StructuredMessage[]>([]);
   const [autosaveCandidate, setAutosaveCandidate] = useState<ProjectModel | null>(null);
@@ -61,6 +62,7 @@ export function App() {
     setValidationNotice(null);
     setResult(null);
     setResultExports(null);
+    setSelectedEigenMode(1);
     setApiErrors([]);
     setViewerErrors([]);
     setSelectedNode(null);
@@ -158,6 +160,37 @@ export function App() {
     }
   };
 
+  const runEigenAnalysis = async () => {
+    setRunning(true);
+    setApiErrors([]);
+    try {
+      const validationResponse = validation ?? (await apiClient.validateProject(project));
+      setValidation(validationResponse);
+      if (!validationResponse.valid) {
+        setValidationNotice({
+          kind: "ng",
+          text: "入力チェックNG。不足または誤りがあります。下部のエラー一覧を確認してください。",
+        });
+        setBottomTab("errors");
+        log("入力チェックNGのため固有値解析を実行できません。");
+        return;
+      }
+      const massCaseId = project.massCases?.[0]?.id ?? "";
+      const response = await apiClient.runEigenAnalysis(project, massCaseId, 3);
+      setResult(response.result);
+      setResultExports(null);
+      setSelectedEigenMode(response.result.eigenResult?.modes[0]?.modeNo ?? 1);
+      setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
+      log(`固有値解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
+    } catch (error) {
+      pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("固有値解析APIのリクエストに失敗しました。");
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const openFile = async (file: File) => {
     try {
       const loaded = JSON.parse(await file.text()) as ProjectModel;
@@ -227,6 +260,7 @@ export function App() {
         onSave={saveProject}
         onValidate={() => void validate()}
         onRun={() => void runAnalysis()}
+        onRunEigen={() => void runEigenAnalysis()}
         onExportResultJson={exportResultJson}
         onExportResultCsv={exportResultCsv}
         canExportResults={Boolean(result)}
@@ -267,8 +301,10 @@ export function App() {
           selectedSection={selectedSection}
           selection={selection}
           activeLoadCase={activeLoadCase}
+          selectedEigenMode={selectedEigenMode}
           onSelectionChange={handleViewerSelection}
           onActiveLoadCaseChange={setActiveLoadCase}
+          onSelectedEigenModeChange={setSelectedEigenMode}
           onViewerError={handleViewerError}
         />
         <PropertyPanel
@@ -284,10 +320,12 @@ export function App() {
         errors={errors}
         warnings={warnings}
         activeLoadCase={activeLoadCase}
+        selectedEigenMode={selectedEigenMode}
         selectedNode={selectedNode}
         selectedMember={selectedMember}
         logs={logs}
         onTabChange={setBottomTab}
+        onSelectedEigenModeChange={setSelectedEigenMode}
       />
     </div>
   );

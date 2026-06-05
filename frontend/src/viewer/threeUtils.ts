@@ -124,11 +124,12 @@ export function computeModelBox(
   result: AnalysisResult | null,
   deformationScale: number,
   loadCaseId: string,
+  selectedEigenMode: number,
 ): THREE.Box3 {
   const box = new THREE.Box3();
   const nodeMap = createNodeMap(project);
   for (const position of nodeMap.values()) box.expandByPoint(position);
-  const displacements = createDisplacementMap(result, loadCaseId);
+  const displacements = createDisplacementMap(result, loadCaseId, selectedEigenMode);
   if (displacements.size > 0 && Number.isFinite(deformationScale)) {
     for (const [nodeId, base] of nodeMap) {
       const displacement = displacements.get(nodeId);
@@ -166,9 +167,18 @@ export function fitCameraToBox(
 export function createDisplacementMap(
   result: AnalysisResult | null,
   loadCaseId: string,
+  selectedEigenMode = 1,
 ): Map<string, THREE.Vector3> {
   const map = new Map<string, THREE.Vector3>();
   if (!result || result.errors.length > 0) return map;
+  const eigenMode = result.eigenResult?.modes.find((mode) => mode.modeNo === selectedEigenMode);
+  if (eigenMode) {
+    for (const item of eigenMode.shape) {
+      if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
+      map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
+    }
+    return map;
+  }
   for (const item of result.displacements) {
     if (item.loadCaseId !== loadCaseId) continue;
     if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;

@@ -1,4 +1,4 @@
-import { Download, FolderOpen, Play, RotateCcw, Save, ShieldCheck } from "lucide-react";
+import { Download, FolderOpen, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 
 type ToolbarProps = {
   projectName: string;
@@ -13,6 +13,7 @@ type ToolbarProps = {
   onSave: () => void;
   onValidate: () => void;
   onRun: () => void;
+  onRunEigen: () => void;
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
 };
@@ -30,6 +31,7 @@ export function Toolbar({
   onSave,
   onValidate,
   onRun,
+  onRunEigen,
   onExportResultJson,
   onExportResultCsv,
 }: ToolbarProps) {
@@ -73,6 +75,10 @@ export function Toolbar({
         <button type="button" onClick={onRun} disabled={!canRun} title="線形静的解析を実行します">
           <Play size={16} />
           解析実行
+        </button>
+        <button type="button" onClick={onRunEigen} disabled={!canRun} title="固有値解析を実行します">
+          <Waves size={16} />
+          固有値
         </button>
         <button
           type="button"

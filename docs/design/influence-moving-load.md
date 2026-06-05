@@ -46,7 +46,7 @@ MVPで実装する範囲:
 
 - `LoadingGrid`、`LoadingLine`、`Carriageway`、`Sidewalk`、`Track` を束ねる。
 - 構造モデルとの紐付け方針を保持する。
-- 単位系と座標系を保持する。
+- 載荷面に属する点群、格子、ラインの管理単位となる。
 
 保持項目:
 
@@ -54,7 +54,6 @@ MVPで実装する範囲:
 {
   "id": "surface-1",
   "name": "Main deck",
-  "coordinateSystem": "global",
   "grids": [],
   "lines": [],
   "carriageways": [],
@@ -83,7 +82,7 @@ MVPでは直接使わず、`LoadingLine.stations` が一次元格子として機
 
 - station列を保持する。
 - stationごとの三次元座標を提供する。
-- 荷重方向と分配規則を定義する。
+- 移動荷重の経路幾何とstation生成規則を定義する。
 
 MVP構造:
 
@@ -100,12 +99,11 @@ MVP構造:
     "type": "fixedInterval",
     "interval": 0.5
   },
-  "loadDirection": { "x": 0.0, "y": 0.0, "z": -1.0 },
-  "distribution": {
-    "type": "nearestNode"
-  }
+  "distributionRuleId": "dist-1"
 }
 ```
+
+`LoadingLine` は経路だけを持つ。荷重方向は `LiveLoadModel` または `MovingLoadCase` が保持し、構造モデルへの荷重分配は独立した `DistributionRule` が担当する。
 
 ### Carriageway
 
@@ -140,27 +138,57 @@ MVPでは解析対象外。
 
 MVPでは解析対象外。
 
-### InfluenceLoadPoint
+### StationPoint
 
-影響線生成時に単位荷重を置く点。
+`StationPoint` は `StationGenerator` が `LoadingLine` から生成する派生データである。永続ドメインエンティティではなく、影響線解析時の入力スナップショットとして扱う。
 
 責務:
 
-- station、座標、荷重方向、構造モデルへの分配結果を保持する。
-- 影響線計算の再現性を担保する。
+- station、正規化位置、三次元座標、折れ線区間を保持する。
+- `DistributionRule` へ渡す載荷位置を表す。
+- 影響線結果では `lineId + station` を基本キーとして同定する。
 
-```json
-{
-  "lineId": "line-1",
-  "station": 4.5,
-  "position": { "x": 4.5, "y": 0.0, "z": 0.0 },
-  "direction": { "x": 0.0, "y": 0.0, "z": -1.0 },
-  "unitLoad": 1.0,
-  "distribution": [
-    { "targetType": "node", "targetId": "N3", "dof": "UZ", "factor": -1.0 }
-  ]
+```ts
+type StationPoint = {
+  lineId: string
+  station: number
+  ratio?: number
+  position: Point3D
+  segmentIndex?: number
+  isEnd?: boolean
 }
 ```
+
+処理の流れ:
+
+```text
+LoadingLine
+  -> StationGenerator
+  -> StationPoint[]
+  -> DistributionRule
+  -> InfluenceSolver
+  -> InfluenceResult
+```
+
+### DistributionRule
+
+`DistributionRule` は載荷位置から構造モデルの等価節点荷重を生成する独立した設計対象である。
+
+MVPでは `memberInterpolation` を標準とする。
+
+```ts
+type DistributionRule = MemberInterpolationRule
+
+type MemberInterpolationRule = {
+  id: string
+  type: "memberInterpolation"
+  searchTolerance: number
+  targetMembers?: string[]
+  allowOutOfRange: false
+}
+```
+
+`memberInterpolation` は `StationPoint.position` から対象部材を検索し、部材局所座標上の位置 `a/L` を算出して、Euler-Bernoulli梁要素の等価節点荷重としてI端/J端へ分配する。`nearestNode` と `explicitNode` は載荷位置を節点へ吸着させ、影響線を階段状にしやすいため、MVP候補から外す。
 
 ### MovingLoadCase
 
@@ -178,12 +206,12 @@ MVPでは解析対象外。
   "name": "Single vertical point load",
   "lineId": "line-1",
   "liveLoadModelId": "llm-1",
+  "distributionRuleId": "dist-1",
   "targets": [
     { "type": "memberEndForce", "memberId": "M1", "component": "MzI" }
   ],
   "options": {
-    "includeHistory": true,
-    "includeConcurrentResults": true
+    "includeHistory": true
   }
 }
 ```
@@ -207,7 +235,8 @@ MVP:
     "source": "userInput",
     "value": 1.0,
     "unit": "kN"
-  }
+  },
+  "direction": { "x": 0.0, "y": 0.0, "z": -1.0 }
 }
 ```
 
@@ -300,7 +329,7 @@ Response:
     "caseId": "influence-line-1",
     "stations": [],
     "targets": [],
-    "values": [],
+    "targetResults": [],
     "warnings": [],
     "errors": []
   }
@@ -349,7 +378,8 @@ Response:
 
 - `LoadingLine` 入力。
 - station生成。
-- 鉛直単位荷重をstationごとに構造モデルへ分配。
+- `memberInterpolation` による部材上任意位置の集中荷重分配。
+- 鉛直単位荷重をstationごとに等価節点荷重へ変換。
 - K行列再利用による影響線生成。
 - 単一集中荷重の移動解析。
 - 最大最小包絡と最不利載荷位置。
@@ -376,4 +406,3 @@ Response:
 - 衝撃係数。
 - 載荷組合せ。
 - 同時性断面力と同時性反力の詳細出力。
-

@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from backend.app.reports import build_result_exports
-from backend.engine import run_analysis, validate_project
+from backend.engine import run_analysis, run_eigen_analysis, validate_project
 
 APP_VERSION = "0.1.0"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -104,6 +104,43 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
         csv_exports = None
 
     return safe_json_response({"result": result, "csv": csv_exports})
+
+
+@app.post("/api/analysis/eigen")
+def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    mode_count = payload.get("modeCount", 6)
+    if not isinstance(mode_count, int):
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCHEMA_ERROR", "message": "modeCount must be an integer."},
+        )
+    mass_case_id = payload.get("massCaseId")
+    if mass_case_id is not None and not isinstance(mass_case_id, str):
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCHEMA_ERROR", "message": "massCaseId must be a string."},
+        )
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        result = failed_result(
+            project,
+            {
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="eigen",
+        )
+    else:
+        result = run_eigen_analysis(
+            copy.deepcopy(project),
+            mass_case_id=mass_case_id,
+            mode_count=mode_count,
+        )
+    return safe_json_response({"result": result})
 
 
 @app.post("/api/projects/save")
@@ -295,14 +332,18 @@ def find_non_finite(value: Any, path: str = "") -> str | None:
     return None
 
 
-def failed_result(project: dict[str, Any], error: dict[str, Any]) -> dict[str, Any]:
+def failed_result(
+    project: dict[str, Any],
+    error: dict[str, Any],
+    analysis_type: str = "linear_static",
+) -> dict[str, Any]:
     project_info = project.get("project", {})
     project_id = project_info.get("id", "") if isinstance(project_info, dict) else ""
     return {
         "projectId": project_id,
         "schemaVersion": "1.0.0",
         "analysisSummary": {
-            "analysisType": "linear_static",
+            "analysisType": analysis_type,
             "status": "failed",
             "startedAt": "",
             "finishedAt": "",

@@ -2,6 +2,7 @@ import { Plus, Trash2 } from "lucide-react";
 import type {
   AnalysisSettings,
   LoadCase,
+  MassItem,
   Material,
   Member,
   MemberLoad,
@@ -188,6 +189,13 @@ export function PropertyPanel({
           onChange={(items) => update("memberLoads", items)}
         />
       )}
+      {selected === "massCases" && (
+        <MassCaseEditor
+          project={project}
+          validationPaths={validationPaths}
+          onChange={(massCases) => update("massCases", massCases)}
+        />
+      )}
       {selected === "analysisSettings" && (
         <ObjectEditor
           value={project.analysisSettings}
@@ -308,6 +316,54 @@ function ArrayEditor<T>({
   );
 }
 
+function MassCaseEditor({
+  project,
+  validationPaths,
+  onChange,
+}: {
+  project: ProjectModel;
+  validationPaths: Set<string>;
+  onChange: (massCases: ProjectModel["massCases"]) => void;
+}) {
+  const massCase = project.massCases?.[0] ?? {
+    id: "mass-1",
+    name: "Eigen Mass",
+    method: "lumped" as const,
+    source: "manual" as const,
+    items: [],
+  };
+  const updateItems = (items: MassItem[]) => {
+    onChange([{ ...massCase, items }]);
+  };
+  return (
+    <div className="field-stack">
+      <ObjectEditor
+        value={massCase}
+        columns={massCaseColumns}
+        pathPrefix="/massCases/0"
+        validationPaths={validationPaths}
+        onChange={(value) => onChange([{ ...value, items: massCase.items }])}
+      />
+      <ArrayEditor
+        items={massCase.items}
+        columns={massItemColumns}
+        pathPrefix="/massCases/0/items"
+        validationPaths={validationPaths}
+        createItem={() => ({
+          nodeId: project.nodes[0]?.id ?? "",
+          mx: 1,
+          my: 1,
+          mz: 1,
+          irx: 0,
+          iry: 0,
+          irz: 0,
+        })}
+        onChange={updateItems}
+      />
+    </div>
+  );
+}
+
 function FieldInput<T>({
   column,
   value,
@@ -370,6 +426,7 @@ function titleFor(section: SectionKey): string {
     loadCases: "荷重ケース",
     nodalLoads: "節点荷重",
     memberLoads: "部材荷重",
+    massCases: "質量",
     analysisSettings: "解析設定",
     results: "解析結果",
   };
@@ -396,6 +453,7 @@ function descriptionFor(section: SectionKey): string {
     loadCases: "荷重ケースは死荷重、活荷重など、荷重のまとまりです。MVPでは静的荷重のみ扱います。",
     nodalLoads: "節点荷重は節点に直接作用する力やモーメントです。力はkN、モーメントはkN_mです。",
     memberLoads: "部材荷重は部材に沿って作用する等分布荷重です。荷重強度はkN/mです。",
+    massCases: "固有値解析用の集中質量です。MVPでは kN*s^2/m を節点のUX/UY/UZに直接入力します。",
     analysisSettings: "解析実行の設定です。MVPでは線形静的解析を対象にします。",
     results: "解析実行後の変位、反力、部材端力を確認します。",
   };
@@ -487,6 +545,23 @@ const memberLoadColumns: Column<MemberLoad>[] = [
   { key: "wx", label: "部材分布荷重 wx", type: "number", help: "単位は kN/m です。", get: (x) => x.wx, set: (x, v) => ({ ...x, wx: Number(v) }) },
   { key: "wy", label: "部材分布荷重 wy", type: "number", help: "単位は kN/m です。", get: (x) => x.wy, set: (x, v) => ({ ...x, wy: Number(v) }) },
   { key: "wz", label: "部材分布荷重 wz", type: "number", help: "単位は kN/m です。", get: (x) => x.wz, set: (x, v) => ({ ...x, wz: Number(v) }) },
+];
+
+const massCaseColumns: Column<NonNullable<ProjectModel["massCases"]>[number]>[] = [
+  { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
+  { key: "name", label: "質量ケース名", type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
+  { key: "method", label: "方式", type: "static", get: (x) => x.method, set: (x) => x },
+  { key: "source", label: "入力元", type: "static", get: (x) => x.source, set: (x) => x },
+];
+
+const massItemColumns: Column<MassItem>[] = [
+  { key: "nodeId", label: "節点ID", type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
+  { key: "mx", label: "Mx質量 UX", type: "number", help: "単位は kN*s^2/m です。", get: (x) => x.mx, set: (x, v) => ({ ...x, mx: Number(v) }) },
+  { key: "my", label: "My質量 UY", type: "number", help: "単位は kN*s^2/m です。", get: (x) => x.my, set: (x, v) => ({ ...x, my: Number(v) }) },
+  { key: "mz", label: "Mz質量 UZ", type: "number", help: "単位は kN*s^2/m です。", get: (x) => x.mz, set: (x, v) => ({ ...x, mz: Number(v) }) },
+  { key: "irx", label: "IRX", type: "number", help: "MVPでは0のまま使用します。", get: (x) => x.irx, set: (x, v) => ({ ...x, irx: Number(v) }) },
+  { key: "iry", label: "IRY", type: "number", help: "MVPでは0のまま使用します。", get: (x) => x.iry, set: (x, v) => ({ ...x, iry: Number(v) }) },
+  { key: "irz", label: "IRZ", type: "number", help: "MVPでは0のまま使用します。", get: (x) => x.irz, set: (x, v) => ({ ...x, irz: Number(v) }) },
 ];
 
 const analysisColumns: Column<AnalysisSettings>[] = [

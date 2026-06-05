@@ -109,6 +109,26 @@ class MemberLoad:
 
 
 @dataclass(frozen=True)
+class MassItem:
+    nodeId: str
+    mx: float = 0.0
+    my: float = 0.0
+    mz: float = 0.0
+    irx: float = 0.0
+    iry: float = 0.0
+    irz: float = 0.0
+
+
+@dataclass(frozen=True)
+class MassCase:
+    id: str
+    name: str
+    method: str = "lumped"
+    source: str = "manual"
+    items: list[MassItem] | None = None
+
+
+@dataclass(frozen=True)
 class AnalysisSettings:
     analysisType: str = "linear_static"
     solver: str = "scipy_sparse"
@@ -128,6 +148,7 @@ class Model:
     loadCases: list[LoadCase]
     nodalLoads: list[NodalLoad]
     memberLoads: list[MemberLoad]
+    massCases: list[MassCase]
     analysisSettings: AnalysisSettings
 
     @property
@@ -163,6 +184,7 @@ def parse_model(data: dict[str, Any]) -> Model:
     load_cases = [LoadCase(**item) for item in require_list(data, "loadCases")]
     nodal_loads = [NodalLoad(**item) for item in data.get("nodalLoads", [])]
     member_loads = [MemberLoad(**item) for item in data.get("memberLoads", [])]
+    mass_cases = [parse_mass_case(item) for item in data.get("massCases", [])]
     settings = AnalysisSettings(**data.get("analysisSettings", {}))
     model = Model(
         project=project,
@@ -174,6 +196,7 @@ def parse_model(data: dict[str, Any]) -> Model:
         loadCases=load_cases,
         nodalLoads=nodal_loads,
         memberLoads=member_loads,
+        massCases=mass_cases,
         analysisSettings=settings,
     )
     validate_model(model)
@@ -235,6 +258,12 @@ def parse_member(item: dict[str, Any], index: int) -> Member:
     )
 
 
+def parse_mass_case(item: dict[str, Any]) -> MassCase:
+    values = dict(item)
+    values["items"] = [MassItem(**mass) for mass in values.get("items", [])]
+    return MassCase(**values)
+
+
 def require_mapping(data: dict[str, Any], key: str) -> dict[str, Any]:
     value = data.get(key)
     if not isinstance(value, dict):
@@ -259,6 +288,7 @@ def validate_model(model: Model) -> None:
     ensure_unique([case.id for case in model.loadCases], "loadCase", "/loadCases")
     ensure_unique([load.id for load in model.nodalLoads], "nodalLoad", "/nodalLoads")
     ensure_unique([load.id for load in model.memberLoads], "memberLoad", "/memberLoads")
+    ensure_unique([case.id for case in model.massCases], "massCase", "/massCases")
     ensure_unique(
         [support.nodeId for support in model.supports], "support", "/supports"
     )
@@ -385,6 +415,38 @@ def validate_model(model: Model) -> None:
             finite(
                 getattr(load, key), f"/memberLoads/{idx}/{key}", "memberLoad", load.id
             )
+    for case_idx, mass_case in enumerate(model.massCases):
+        if mass_case.method != "lumped":
+            raise AnalysisError(
+                "SCHEMA_ERROR",
+                "Only lumped mass cases are supported.",
+                path=f"/massCases/{case_idx}/method",
+                entity_type="massCase",
+                entity_id=mass_case.id,
+            )
+        if mass_case.source != "manual":
+            raise AnalysisError(
+                "SCHEMA_ERROR",
+                "Only manual mass cases are supported.",
+                path=f"/massCases/{case_idx}/source",
+                entity_type="massCase",
+                entity_id=mass_case.id,
+            )
+        for item_idx, item in enumerate(mass_case.items or []):
+            ref(
+                item.nodeId,
+                nodes,
+                f"/massCases/{case_idx}/items/{item_idx}/nodeId",
+                "massCase",
+                mass_case.id,
+            )
+            for key in ("mx", "my", "mz", "irx", "iry", "irz"):
+                nonnegative(
+                    getattr(item, key),
+                    f"/massCases/{case_idx}/items/{item_idx}/{key}",
+                    "massCase",
+                    mass_case.id,
+                )
     if model.analysisSettings.analysisType != "linear_static":
         raise AnalysisError(
             "SCHEMA_ERROR",
@@ -444,6 +506,17 @@ def finite(value: float, path: str, entity_type: str, entity_id: str) -> None:
         raise AnalysisError(
             "INVALID_VALUE",
             "Value must be finite.",
+            path=path,
+            entity_type=entity_type,
+            entity_id=entity_id,
+        )
+
+
+def nonnegative(value: float, path: str, entity_type: str, entity_id: str) -> None:
+    if not math.isfinite(value) or value < 0.0:
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "Value must be finite and non-negative.",
             path=path,
             entity_type=entity_type,
             entity_id=entity_id,

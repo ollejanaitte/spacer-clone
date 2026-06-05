@@ -151,6 +151,7 @@ export function ThreeViewport(props: ThreeViewportProps) {
     props.scales,
     props.selection,
     props.selectedLoadCaseId,
+    props.selectedEigenMode,
   ]);
 
   useEffect(() => {
@@ -178,6 +179,7 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
     props.result,
     props.scales.deformationScale,
     props.selectedLoadCaseId,
+    props.selectedEigenMode ?? 1,
   );
   fitCameraToBox(context.camera, context.controls, box, direction);
 }

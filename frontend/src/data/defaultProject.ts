@@ -69,6 +69,25 @@ export const createDefaultProject = (): ProjectModel => ({
     },
   ],
   memberLoads: [],
+  massCases: [
+    {
+      id: "mass-1",
+      name: "Eigen Mass",
+      method: "lumped",
+      source: "manual",
+      items: [
+        {
+          nodeId: "N2",
+          mx: 1,
+          my: 1,
+          mz: 1,
+          irx: 0,
+          iry: 0,
+          irz: 0,
+        },
+      ],
+    },
+  ],
   analysisSettings: {
     analysisType: "linear_static",
     includeShearDeformation: false,

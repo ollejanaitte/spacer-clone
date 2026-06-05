@@ -138,6 +138,12 @@
         "$ref": "#/$defs/memberLoad"
       }
     },
+    "massCases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/massCase"
+      }
+    },
     "analysisSettings": {
       "type": "object",
       "additionalProperties": false,
@@ -484,6 +490,82 @@
         },
         "wz": {
           "type": "number"
+        }
+      }
+    },
+    "massCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "method",
+        "source",
+        "items"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "const": "lumped"
+        },
+        "source": {
+          "const": "manual"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/massItem"
+          }
+        }
+      }
+    },
+    "massItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "mx",
+        "my",
+        "mz",
+        "irx",
+        "iry",
+        "irz"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mx": {
+          "type": "number",
+          "minimum": 0
+        },
+        "my": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mz": {
+          "type": "number",
+          "minimum": 0
+        },
+        "irx": {
+          "type": "number",
+          "minimum": 0
+        },
+        "iry": {
+          "type": "number",
+          "minimum": 0
+        },
+        "irz": {
+          "type": "number",
+          "minimum": 0
         }
       }
     }

@@ -13,7 +13,7 @@
       "additionalProperties": false,
       "required": ["analysisType", "status", "startedAt", "finishedAt", "durationMs", "nodeCount", "memberCount", "loadCaseCount", "totalDof", "freeDof", "constrainedDof", "solver"],
       "properties": {
-        "analysisType": { "const": "linear_static" },
+        "analysisType": { "enum": ["linear_static", "eigen"] },
         "status": { "enum": ["success", "warning", "failed"] },
         "startedAt": { "type": "string" },
         "finishedAt": { "type": "string" },
@@ -24,7 +24,7 @@
         "totalDof": { "type": "integer", "minimum": 0 },
         "freeDof": { "type": "integer", "minimum": 0 },
         "constrainedDof": { "type": "integer", "minimum": 0 },
-        "solver": { "const": "scipy_sparse" }
+        "solver": { "enum": ["scipy_sparse", "scipy_eigh"] }
       }
     },
     "displacements": {
@@ -79,6 +79,19 @@
         }
       }
     },
+    "eigenResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["massCaseId", "normalization", "modes"],
+      "properties": {
+        "massCaseId": { "type": "string" },
+        "normalization": { "const": "mass" },
+        "modes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/eigenMode" }
+        }
+      }
+    },
     "warnings": { "type": "array", "items": { "$ref": "#/$defs/message" } },
     "errors": { "type": "array", "items": { "$ref": "#/$defs/message" } }
   },
@@ -106,6 +119,64 @@
         "path": { "type": ["string", "null"] },
         "entityType": { "type": ["string", "null"] },
         "entityId": { "type": ["string", "null"] }
+      }
+    },
+    "directionalValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["direction", "value"],
+      "properties": {
+        "direction": { "type": "string" },
+        "value": { "type": "number" }
+      }
+    },
+    "modeShape": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+      "properties": {
+        "nodeId": { "type": "string" },
+        "ux": { "type": "number" },
+        "uy": { "type": "number" },
+        "uz": { "type": "number" },
+        "rx": { "type": "number" },
+        "ry": { "type": "number" },
+        "rz": { "type": "number" }
+      }
+    },
+    "eigenMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modeNo",
+        "eigenvalue",
+        "circularFrequency",
+        "frequency",
+        "period",
+        "modalMass",
+        "participationFactors",
+        "effectiveMassRatios",
+        "shape"
+      ],
+      "properties": {
+        "modeNo": { "type": "integer", "minimum": 1 },
+        "eigenvalue": { "type": "number" },
+        "circularFrequency": { "type": "number" },
+        "frequency": { "type": "number" },
+        "period": { "type": "number" },
+        "modalMass": { "type": "number" },
+        "participationFactors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/directionalValue" }
+        },
+        "effectiveMassRatios": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/directionalValue" }
+        },
+        "shape": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/modeShape" }
+        }
       }
     }
   }
