@@ -9,6 +9,10 @@ type EigenRunResponse = {
   result: AnalysisResult;
 };
 
+type InfluenceRunResponse = {
+  result: AnalysisResult;
+};
+
 type ExampleResponse = {
   examples: Array<{
     id: string;
@@ -102,6 +106,19 @@ export const apiClient = {
       massCaseId,
       modeCount,
       normalization: "mass",
+    });
+  },
+
+  runInfluenceAnalysis(project: ProjectModel, memberId: string, stationCount = 21): Promise<InfluenceRunResponse> {
+    return postJson<InfluenceRunResponse>("/api/influence/run", {
+      project,
+      line: {
+        id: `line-${memberId || "member"}`,
+        memberId,
+        stationCount,
+        direction: { x: 0, y: -1, z: 0 },
+        magnitude: 1,
+      },
     });
   },
 

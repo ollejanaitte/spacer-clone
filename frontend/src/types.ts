@@ -110,6 +110,14 @@ export type AnalysisSettings = {
 
 export type ProjectModel = {
   project: ProjectInfo;
+  units: {
+    length: string;
+    force: string;
+    moment: string;
+    modulus: string;
+    area: string;
+    inertia: string;
+  };
   nodes: NodeItem[];
   materials: Material[];
   sections: Section[];
@@ -140,7 +148,7 @@ export type AnalysisResult = {
   projectId: string;
   schemaVersion: "1.0.0";
   analysisSummary: {
-    analysisType: "linear_static" | "eigen";
+    analysisType: "linear_static" | "eigen" | "response_spectrum" | "responseSpectrum" | "influence_line";
     status: "success" | "warning" | "failed";
     startedAt: string;
     finishedAt: string;
@@ -182,6 +190,8 @@ export type AnalysisResult = {
     j: EndForce;
   }>;
   eigenResult?: EigenResult;
+  responseSpectrumResult?: ResponseSpectrumResult;
+  influenceResult?: InfluenceResult;
   warnings: StructuredMessage[];
   errors: StructuredMessage[];
 };
@@ -219,11 +229,98 @@ export type EigenResult = {
   modes: EigenModeResult[];
 };
 
+export type ResponseSpectrumCombinationMethod = "SRSS" | "CQC";
+
+export type MemberSectionForceComponent = "N" | "Qy" | "Qz" | "Mx" | "My" | "Mz";
+
+export type NodeDisplacementResult = {
+  nodeId: string;
+  ux: number;
+  uy: number;
+  uz: number;
+  rx: number;
+  ry: number;
+  rz: number;
+};
+
+export type NodeReactionResult = {
+  nodeId: string;
+  fx: number;
+  fy: number;
+  fz: number;
+  mx: number;
+  my: number;
+  mz: number;
+  constrainedDofs?: string[];
+};
+
+export type MemberSectionForceResult = {
+  memberId: string;
+  station: number;
+  component: MemberSectionForceComponent;
+  value: number;
+};
+
+export type ResponseSpectrumModalResult = {
+  modeNo: number;
+  spectralAcceleration: number;
+  displacements: NodeDisplacementResult[];
+  reactions?: NodeReactionResult[];
+  memberSectionForces?: MemberSectionForceResult[];
+};
+
+export type ResponseSpectrumCombinedResult = {
+  method: ResponseSpectrumCombinationMethod;
+  displacements: NodeDisplacementResult[];
+  reactions?: NodeReactionResult[];
+  memberSectionForces?: MemberSectionForceResult[];
+};
+
+export type ResponseSpectrumResult = {
+  spectrumCaseId: string;
+  direction: string;
+  dampingRatio: number;
+  combinationMethod: ResponseSpectrumCombinationMethod;
+  modalResults: ResponseSpectrumModalResult[];
+  combinedResult: ResponseSpectrumCombinedResult;
+};
+
+export type InfluenceTarget = {
+  id: string;
+  type: "displacement" | "reaction" | "memberEndForce";
+  nodeId?: string;
+  memberId?: string;
+  component: string;
+  end?: "i" | "j";
+};
+
+export type InfluenceResult = {
+  caseId: string;
+  line: {
+    id: string;
+    memberId: string;
+    stationCount: number;
+    loadDirection: { x: number; y: number; z: number };
+    loadMagnitude: number;
+  };
+  stations: Array<{
+    station: number;
+    ratio: number;
+    position: { x: number; y: number; z: number };
+    stationIndex: number;
+  }>;
+  targets: InfluenceTarget[];
+  targetResults: Array<{
+    targetId: string;
+    values: number[];
+  }>;
+};
+
 export type ResultExports = {
   "result.json": string;
   "displacements.csv": string;
   "reactions.csv": string;
-  "member_end_forces.csv": string;
+  "member_section_forces.csv": string;
 };
 
 export type EndForce = {

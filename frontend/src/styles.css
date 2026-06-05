@@ -95,6 +95,29 @@ button:disabled {
   gap: 8px;
 }
 
+.toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 8px;
+  border-left: 1px solid rgba(207, 232, 255, 0.22);
+}
+
+.toolbar-group:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.toolbar-group-label {
+  color: #bdd0e3;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.output-group button {
+  min-width: 64px;
+}
+
 .toolbar button,
 .button-like,
 .example-picker {
@@ -390,12 +413,29 @@ button:disabled {
 .viewer-controls {
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   overflow: auto;
   padding: 10px;
   border-left: 1px solid #d8e0e8;
   background: #f8fafc;
+}
+
+.viewer-control-group {
+  display: grid;
+  gap: 7px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8ef;
+}
+
+.viewer-control-group:last-child {
+  border-bottom: 0;
+}
+
+.viewer-control-group h3 {
+  margin: 0;
+  color: #526173;
+  font-size: 12px;
 }
 
 .viewer-control-row {
@@ -746,6 +786,132 @@ button:disabled {
   margin-bottom: 6px;
   color: #334155;
   font-size: 13px;
+}
+
+.result-overview {
+  display: grid;
+  gap: 9px;
+}
+
+.result-view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.result-view-tab {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid #b7c5d3;
+  border-radius: 5px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.result-view-tab.active {
+  border-color: #2f6f9f;
+  background: #2f6f9f;
+  color: #ffffff;
+}
+
+.result-toolbar {
+  align-items: center;
+}
+
+.result-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.result-select select {
+  height: 29px;
+  border: 1px solid #c4ced8;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #1f2933;
+}
+
+.influence-chart svg {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  border: 1px solid #dce3ea;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.influence-chart text {
+  fill: #526173;
+  font-size: 11px;
+}
+
+.influence-chart line {
+  stroke: #8a9bae;
+  stroke-width: 1;
+}
+
+.influence-chart .zero-line {
+  stroke: #cbd5df;
+  stroke-dasharray: 4 4;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 8px;
+  color: #415568;
+  font-size: 12px;
+}
+
+.series-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.series-picker label {
+  display: inline-flex;
+  align-items: center;
+  max-width: 260px;
+  min-height: 28px;
+  gap: 5px;
+  padding: 0 8px;
+  border: 1px solid #d2dbe4;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+}
+
+.series-picker span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compact-empty {
+  min-height: 34px;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+}
+
+.chart-legend i {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
 }
 
 .empty-state {

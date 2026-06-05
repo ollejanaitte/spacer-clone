@@ -13,7 +13,7 @@
       "additionalProperties": false,
       "required": ["analysisType", "status", "startedAt", "finishedAt", "durationMs", "nodeCount", "memberCount", "loadCaseCount", "totalDof", "freeDof", "constrainedDof", "solver"],
       "properties": {
-        "analysisType": { "enum": ["linear_static", "eigen"] },
+        "analysisType": { "enum": ["linear_static", "eigen", "response_spectrum", "responseSpectrum", "influence_line"] },
         "status": { "enum": ["success", "warning", "failed"] },
         "startedAt": { "type": "string" },
         "finishedAt": { "type": "string" },
@@ -92,6 +92,38 @@
         }
       }
     },
+    "influenceResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "line", "stations", "targets", "targetResults"],
+      "properties": {
+        "caseId": { "type": "string" },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "memberId", "stationCount", "loadDirection", "loadMagnitude"],
+          "properties": {
+            "id": { "type": "string" },
+            "memberId": { "type": "string" },
+            "stationCount": { "type": "integer", "minimum": 0 },
+            "loadDirection": { "$ref": "#/$defs/vector3" },
+            "loadMagnitude": { "type": "number" }
+          }
+        },
+        "stations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/influenceStation" }
+        },
+        "targets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/influenceTarget" }
+        },
+        "targetResults": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/influenceTargetResult" }
+        }
+      }
+    },
     "warnings": { "type": "array", "items": { "$ref": "#/$defs/message" } },
     "errors": { "type": "array", "items": { "$ref": "#/$defs/message" } }
   },
@@ -128,6 +160,49 @@
       "properties": {
         "direction": { "type": "string" },
         "value": { "type": "number" }
+      }
+    },
+    "vector3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "influenceStation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["station", "ratio", "position", "stationIndex"],
+      "properties": {
+        "station": { "type": "number" },
+        "ratio": { "type": "number" },
+        "position": { "$ref": "#/$defs/vector3" },
+        "stationIndex": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "influenceTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "component"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["displacement", "reaction", "memberEndForce"] },
+        "nodeId": { "type": "string" },
+        "memberId": { "type": "string" },
+        "component": { "type": "string" },
+        "end": { "enum": ["i", "j"] }
+      }
+    },
+    "influenceTargetResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetId", "values"],
+      "properties": {
+        "targetId": { "type": "string" },
+        "values": { "type": "array", "items": { "type": "number" } }
       }
     },
     "modeShape": {

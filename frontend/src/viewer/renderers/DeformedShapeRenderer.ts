@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { ResponseSpectrumSelection } from "../../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../../types";
 import type { ViewerScales } from "../types";
 import {
@@ -14,11 +15,19 @@ export function renderDeformedShape(
   result: AnalysisResult | null,
   selectedLoadCaseId: string,
   selectedEigenMode: number,
+  selectedResponseSpectrumResult: ResponseSpectrumSelection,
   scales: ViewerScales,
 ): THREE.Object3D[] {
-  if (!result || result.errors.length > 0 || !isFiniteNumber(scales.deformationScale)) return [];
+  const displacementScale =
+    result?.eigenResult && !result.responseSpectrumResult ? scales.modeScale : scales.deformationScale;
+  if (!result || result.errors.length > 0 || !isFiniteNumber(displacementScale)) return [];
   const nodeMap = createNodeMap(project);
-  const displacementMap = createDisplacementMap(result, selectedLoadCaseId, selectedEigenMode);
+  const displacementMap = createDisplacementMap(
+    result,
+    selectedLoadCaseId,
+    selectedEigenMode,
+    selectedResponseSpectrumResult,
+  );
   if (displacementMap.size === 0) return [];
 
   const objects: THREE.Object3D[] = [];
@@ -33,7 +42,7 @@ export function renderDeformedShape(
     const displacement = displacementMap.get(nodeId);
     if (!displacement) continue;
     const node = new THREE.Mesh(nodeGeometry.clone(), material.clone());
-    node.position.copy(base).addScaledVector(displacement, scales.deformationScale);
+    node.position.copy(base).addScaledVector(displacement, displacementScale);
     objects.push(node);
   }
 
@@ -45,8 +54,8 @@ export function renderDeformedShape(
     if (!startDisp && !endDisp) continue;
     const start = ends.start.clone();
     const end = ends.end.clone();
-    if (startDisp) start.addScaledVector(startDisp, scales.deformationScale);
-    if (endDisp) end.addScaledVector(endDisp, scales.deformationScale);
+    if (startDisp) start.addScaledVector(startDisp, displacementScale);
+    if (endDisp) end.addScaledVector(endDisp, displacementScale);
     objects.push(createLine([start, end], "#e3a51a"));
   }
 

@@ -152,6 +152,7 @@ export function ThreeViewport(props: ThreeViewportProps) {
     props.selection,
     props.selectedLoadCaseId,
     props.selectedEigenMode,
+    props.selectedResponseSpectrumResult,
   ]);
 
   useEffect(() => {
@@ -177,9 +178,12 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
   const box = computeModelBox(
     props.project,
     props.result,
-    props.scales.deformationScale,
+    props.result?.eigenResult && !props.result.responseSpectrumResult
+      ? props.scales.modeScale
+      : props.scales.deformationScale,
     props.selectedLoadCaseId,
     props.selectedEigenMode ?? 1,
+    props.selectedResponseSpectrumResult ?? "SRSS",
   );
   fitCameraToBox(context.camera, context.controls, box, direction);
 }

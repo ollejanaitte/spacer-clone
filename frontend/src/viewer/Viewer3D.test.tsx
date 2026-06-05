@@ -135,6 +135,7 @@ function fallbackProps(project: ProjectModel): ThreeViewportProps {
     scales: {
       loadScale: 1,
       deformationScale: 1,
+      modeScale: 1,
       resultScale: 1,
       nodeSize: 1,
       labelSize: 1,

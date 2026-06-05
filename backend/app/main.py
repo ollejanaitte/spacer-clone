@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from backend.app.reports import build_result_exports
-from backend.engine import run_analysis, run_eigen_analysis, validate_project
+from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, validate_project
 
 APP_VERSION = "0.1.0"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -140,6 +140,27 @@ def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
             mass_case_id=mass_case_id,
             mode_count=mode_count,
         )
+    return safe_json_response({"result": result})
+
+
+@app.post("/api/influence/run")
+def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        result = failed_result(
+            project,
+            {
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="influence_line",
+        )
+    else:
+        result = run_influence_analysis(copy.deepcopy(project), payload)
     return safe_json_response({"result": result})
 
 

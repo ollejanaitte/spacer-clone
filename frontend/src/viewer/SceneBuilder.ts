@@ -32,7 +32,17 @@ export function createSceneGroups(): SceneGroups {
 }
 
 export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps): void {
-  const { project, result, selectedSection, visibility, scales, selection, selectedLoadCaseId, selectedEigenMode } = props;
+  const {
+    project,
+    result,
+    selectedSection,
+    visibility,
+    scales,
+    selection,
+    selectedLoadCaseId,
+    selectedEigenMode,
+    selectedResponseSpectrumResult = "SRSS",
+  } = props;
   replaceGroupContents(
     groups.nodes,
     visibility.nodes ? renderNodes(project, selectedSection, selection, scales) : [],
@@ -48,11 +58,20 @@ export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps
   );
   replaceGroupContents(
     groups.deformed,
-    visibility.deformedShape ? renderDeformedShape(project, result, selectedLoadCaseId, selectedEigenMode ?? 1, scales) : [],
+    visibility.deformedShape
+      ? renderDeformedShape(
+          project,
+          result,
+          selectedLoadCaseId,
+          selectedEigenMode ?? 1,
+          selectedResponseSpectrumResult,
+          scales,
+        )
+      : [],
   );
   replaceGroupContents(
     groups.resultDiagrams,
-    renderResultDiagrams(project, result, selectedLoadCaseId, visibility, scales),
+    renderResultDiagrams(project, result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility, scales),
   );
   replaceGroupContents(
     groups.labels,

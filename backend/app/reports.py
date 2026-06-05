@@ -8,25 +8,25 @@ from typing import Any
 
 
 CSV_HEADERS = {
-    "displacements.csv": ["loadCaseId", "nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+    "displacements.csv": ["case_id", "node_id", "ux", "uy", "uz", "rx", "ry", "rz"],
     "reactions.csv": [
-        "loadCaseId",
-        "nodeId",
+        "case_id",
+        "node_id",
         "fx",
         "fy",
         "fz",
         "mx",
         "my",
         "mz",
-        "constrainedDofs",
     ],
-    "member_end_forces.csv": [
-        "loadCaseId",
-        "memberId",
-        "end",
-        "fx",
-        "fy",
-        "fz",
+    "member_section_forces.csv": [
+        "case_id",
+        "member_id",
+        "station_x",
+        "station_ratio",
+        "n",
+        "qy",
+        "qz",
         "mx",
         "my",
         "mz",
@@ -39,50 +39,165 @@ def build_result_exports(result: dict[str, Any]) -> dict[str, str]:
     return {
         "result.json": json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2)
         + "\n",
-        "displacements.csv": displacements_csv(result.get("displacements", [])),
-        "reactions.csv": reactions_csv(result.get("reactions", [])),
-        "member_end_forces.csv": member_end_forces_csv(
-            result.get("memberEndForces", [])
-        ),
+        "displacements.csv": displacements_csv(result),
+        "reactions.csv": reactions_csv(result),
+        "member_section_forces.csv": member_section_forces_csv(result),
     }
 
 
-def displacements_csv(rows: list[dict[str, Any]]) -> str:
+def displacements_csv(result: dict[str, Any]) -> str:
+    rows = [
+        displacement_row(row.get("loadCaseId", ""), row)
+        for row in result.get("displacements", [])
+    ]
+    for mode in result.get("eigenResult", {}).get("modes", []):
+        rows.extend(
+            displacement_row(f"Mode {mode.get('modeNo', '')}", row)
+            for row in mode.get("shape", [])
+        )
+    response = result.get("responseSpectrumResult")
+    if isinstance(response, dict):
+        for mode in response.get("modalResults", []):
+            rows.extend(
+                displacement_row(f"Mode {mode.get('modeNo', '')}", row)
+                for row in mode.get("displacements", [])
+            )
+        combined = response.get("combinedResult", {})
+        rows.extend(
+            displacement_row(combined.get("method", "SRSS"), row)
+            for row in combined.get("displacements", [])
+        )
     return write_csv(CSV_HEADERS["displacements.csv"], rows)
 
 
-def reactions_csv(rows: list[dict[str, Any]]) -> str:
-    output_rows = [
-        row
-        | {
-            "constrainedDofs": ";".join(
-                str(item) for item in row.get("constrainedDofs", [])
-            )
-        }
-        for row in rows
+def reactions_csv(result: dict[str, Any]) -> str:
+    rows = [
+        reaction_row(row.get("loadCaseId", ""), row)
+        for row in result.get("reactions", [])
     ]
-    return write_csv(CSV_HEADERS["reactions.csv"], output_rows)
-
-
-def member_end_forces_csv(rows: list[dict[str, Any]]) -> str:
-    output_rows: list[dict[str, Any]] = []
-    for row in rows:
-        for end_key, end_label in (("i", "I"), ("j", "J")):
-            forces = row.get(end_key, {})
-            output_rows.append(
-                {
-                    "loadCaseId": row.get("loadCaseId", ""),
-                    "memberId": row.get("memberId", ""),
-                    "end": end_label,
-                    "fx": forces.get("fx", 0.0),
-                    "fy": forces.get("fy", 0.0),
-                    "fz": forces.get("fz", 0.0),
-                    "mx": forces.get("mx", 0.0),
-                    "my": forces.get("my", 0.0),
-                    "mz": forces.get("mz", 0.0),
-                }
+    response = result.get("responseSpectrumResult")
+    if isinstance(response, dict):
+        for mode in response.get("modalResults", []):
+            rows.extend(
+                reaction_row(f"Mode {mode.get('modeNo', '')}", row)
+                for row in mode.get("reactions", [])
             )
-    return write_csv(CSV_HEADERS["member_end_forces.csv"], output_rows)
+        combined = response.get("combinedResult", {})
+        rows.extend(
+            reaction_row(combined.get("method", "SRSS"), row)
+            for row in combined.get("reactions", [])
+        )
+    return write_csv(CSV_HEADERS["reactions.csv"], rows)
+
+
+def member_section_forces_csv(result: dict[str, Any]) -> str:
+    output_rows: list[dict[str, Any]] = []
+    for row in result.get("memberEndForces", []):
+        output_rows.extend(
+            [
+                member_end_force_row(row.get("loadCaseId", ""), row.get("memberId", ""), 0, row.get("i", {})),
+                member_end_force_row(row.get("loadCaseId", ""), row.get("memberId", ""), 1, row.get("j", {})),
+            ]
+        )
+    response = result.get("responseSpectrumResult")
+    if isinstance(response, dict):
+        for mode in response.get("modalResults", []):
+            output_rows.extend(
+                member_section_force_rows(
+                    f"Mode {mode.get('modeNo', '')}",
+                    mode.get("memberSectionForces", []),
+                )
+            )
+        combined = response.get("combinedResult", {})
+        output_rows.extend(
+            member_section_force_rows(
+                combined.get("method", "SRSS"),
+                combined.get("memberSectionForces", []),
+            )
+        )
+    return write_csv(CSV_HEADERS["member_section_forces.csv"], output_rows)
+
+
+def displacement_row(case_id: str, row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "case_id": case_id,
+        "node_id": row.get("nodeId", ""),
+        "ux": row.get("ux", 0.0),
+        "uy": row.get("uy", 0.0),
+        "uz": row.get("uz", 0.0),
+        "rx": row.get("rx", 0.0),
+        "ry": row.get("ry", 0.0),
+        "rz": row.get("rz", 0.0),
+    }
+
+
+def reaction_row(case_id: str, row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "case_id": case_id,
+        "node_id": row.get("nodeId", ""),
+        "fx": row.get("fx", 0.0),
+        "fy": row.get("fy", 0.0),
+        "fz": row.get("fz", 0.0),
+        "mx": row.get("mx", 0.0),
+        "my": row.get("my", 0.0),
+        "mz": row.get("mz", 0.0),
+    }
+
+
+def member_end_force_row(
+    case_id: str,
+    member_id: str,
+    station: float,
+    forces: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "case_id": case_id,
+        "member_id": member_id,
+        "station_x": station,
+        "station_ratio": station,
+        "n": forces.get("fx", 0.0),
+        "qy": forces.get("fy", 0.0),
+        "qz": forces.get("fz", 0.0),
+        "mx": forces.get("mx", 0.0),
+        "my": forces.get("my", 0.0),
+        "mz": forces.get("mz", 0.0),
+    }
+
+
+def member_section_force_rows(case_id: str, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, Any], dict[str, Any]] = {}
+    for row in rows:
+        key = (str(row.get("memberId", "")), row.get("station", 0.0))
+        output_row = grouped.setdefault(
+            key,
+            {
+                "case_id": case_id,
+                "member_id": key[0],
+                "station_x": key[1],
+                "station_ratio": key[1],
+                "n": "",
+                "qy": "",
+                "qz": "",
+                "mx": "",
+                "my": "",
+                "mz": "",
+            },
+        )
+        column = component_column(str(row.get("component", "")))
+        if column:
+            output_row[column] = row.get("value", 0.0)
+    return list(grouped.values())
+
+
+def component_column(component: str) -> str | None:
+    return {
+        "N": "n",
+        "Qy": "qy",
+        "Qz": "qz",
+        "Mx": "mx",
+        "My": "my",
+        "Mz": "mz",
+    }.get(component)
 
 
 def write_csv(headers: list[str], rows: list[dict[str, Any]]) -> str:

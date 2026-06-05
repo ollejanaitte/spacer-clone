@@ -1,5 +1,10 @@
 import * as THREE from "three";
-import { buildResultViewModel, type MemberSectionForceComponent } from "../../results/resultViewModel";
+import {
+  buildResponseSpectrumViewModel,
+  buildResultViewModel,
+  type MemberSectionForceComponent,
+  type ResponseSpectrumSelection,
+} from "../../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../../types";
 import type { ViewerScales, ViewerVisibility } from "../types";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
@@ -13,10 +18,12 @@ export function renderResultDiagrams(
   project: ProjectModel,
   result: AnalysisResult | null,
   selectedLoadCaseId: string,
+  selectedResponseSpectrumResult: ResponseSpectrumSelection,
   visibility: ViewerVisibility,
   scales: ViewerScales,
 ): THREE.Object3D[] {
-  const viewModel = buildResultViewModel(result, selectedLoadCaseId);
+  const responseSpectrumViewModel = buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult);
+  const viewModel = responseSpectrumViewModel ?? buildResultViewModel(result, selectedLoadCaseId);
   if (!viewModel || !isFiniteNumber(scales.resultScale)) return [];
 
   const objects: THREE.Object3D[] = [];

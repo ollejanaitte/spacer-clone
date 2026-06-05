@@ -9,6 +9,14 @@ export const createDefaultProject = (): ProjectModel => ({
     createdAt: "2026-06-04T00:00:00Z",
     updatedAt: "2026-06-04T00:00:00Z",
   },
+  units: {
+    length: "m",
+    force: "kN",
+    moment: "kN_m",
+    modulus: "kN_per_m2",
+    area: "m2",
+    inertia: "m4",
+  },
   nodes: [
     { id: "N1", x: 0, y: 0, z: 0 },
     { id: "N2", x: 4, y: 0, z: 0 },

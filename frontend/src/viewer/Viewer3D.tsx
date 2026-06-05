@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import type { CameraPreset, Viewer3DProps, ViewerMode, ViewerScales, ViewerSelection, ViewerVisibility } from "./types";
 import { ThreeViewport } from "./ThreeViewport";
@@ -24,6 +25,7 @@ const defaultVisibility: ViewerVisibility = {
 const defaultScales: ViewerScales = {
   loadScale: 1,
   deformationScale: 120,
+  modeScale: 1,
   resultScale: 1,
   nodeSize: 0.075,
   labelSize: 0.26,
@@ -42,9 +44,11 @@ export function Viewer3D({
   selection,
   activeLoadCase,
   selectedEigenMode = 1,
+  selectedResponseSpectrumResult = "SRSS",
   onSelectionChange,
   onActiveLoadCaseChange,
   onSelectedEigenModeChange = () => undefined,
+  onSelectedResponseSpectrumResultChange = () => undefined,
   onViewerError,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
@@ -62,8 +66,15 @@ export function Viewer3D({
     () => result?.eigenResult?.modes.map((mode) => mode.modeNo) ?? [],
     [result],
   );
+  const responseSpectrumViewModel = useMemo(
+    () => buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult),
+    [result, selectedResponseSpectrumResult],
+  );
+  const responseSpectrumOptions = responseSpectrumViewModel?.modeOptions ?? [];
   const hasResult = Boolean(
-    result && result.errors.length === 0 && (result.displacements.length > 0 || eigenModeNos.length > 0),
+    result &&
+      result.errors.length === 0 &&
+      (result.displacements.length > 0 || eigenModeNos.length > 0 || hasResponseSpectrumResult(result)),
   );
 
   useEffect(() => {
@@ -83,6 +94,15 @@ export function Viewer3D({
       onSelectedEigenModeChange(eigenModeNos[0]);
     }
   }, [eigenModeNos, selectedEigenMode, onSelectedEigenModeChange]);
+
+  useEffect(() => {
+    if (
+      responseSpectrumOptions.length > 0 &&
+      !responseSpectrumOptions.some((option) => option.key === selectedResponseSpectrumResult)
+    ) {
+      onSelectedResponseSpectrumResultChange("SRSS");
+    }
+  }, [responseSpectrumOptions, selectedResponseSpectrumResult, onSelectedResponseSpectrumResultChange]);
 
   const runCameraPreset = (preset: CameraPreset) => {
     setCameraRequest(preset);
@@ -112,6 +132,7 @@ export function Viewer3D({
     scales,
     selectedLoadCaseId,
     selectedEigenMode,
+    selectedResponseSpectrumResult,
     fitRequest,
     cameraRequest,
     onInitializationError: handleInitializationError,
@@ -152,11 +173,16 @@ export function Viewer3D({
           selectedLoadCaseId={selectedLoadCaseId}
           eigenModeNos={eigenModeNos}
           selectedEigenMode={selectedEigenMode}
+          responseSpectrumOptions={responseSpectrumOptions}
+          selectedResponseSpectrumResult={selectedResponseSpectrumResult}
           hasResult={hasResult}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
           onLoadCaseChange={onActiveLoadCaseChange}
           onEigenModeChange={onSelectedEigenModeChange}
+          onResponseSpectrumResultChange={(value: ResponseSpectrumSelection) =>
+            onSelectedResponseSpectrumResultChange(value)
+          }
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
         />

@@ -5,6 +5,9 @@ import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
 import { createDefaultProject } from "./data/defaultProject";
+import { buildResultCsvExports } from "./exports/resultCsvExport";
+import { openResultPdfReport } from "./exports/resultPdfReport";
+import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
 import type {
   AnalysisResult,
@@ -34,6 +37,8 @@ export function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [resultExports, setResultExports] = useState<ResultExports | null>(null);
   const [selectedEigenMode, setSelectedEigenMode] = useState<number>(1);
+  const [selectedResponseSpectrumResult, setSelectedResponseSpectrumResult] =
+    useState<ResponseSpectrumSelection>("SRSS");
   const [apiErrors, setApiErrors] = useState<StructuredMessage[]>([]);
   const [viewerErrors, setViewerErrors] = useState<StructuredMessage[]>([]);
   const [autosaveCandidate, setAutosaveCandidate] = useState<ProjectModel | null>(null);
@@ -63,6 +68,7 @@ export function App() {
     setResult(null);
     setResultExports(null);
     setSelectedEigenMode(1);
+    setSelectedResponseSpectrumResult("SRSS");
     setApiErrors([]);
     setViewerErrors([]);
     setSelectedNode(null);
@@ -191,6 +197,36 @@ export function App() {
     }
   };
 
+  const runInfluenceAnalysis = async () => {
+    setRunning(true);
+    setApiErrors([]);
+    try {
+      const validationResponse = validation ?? (await apiClient.validateProject(project));
+      setValidation(validationResponse);
+      if (!validationResponse.valid) {
+        setValidationNotice({
+          kind: "ng",
+          text: "入力チェックNGです。下部のエラー一覧を確認してください。",
+        });
+        setBottomTab("errors");
+        log("入力チェックNGのため影響線解析を実行できません。");
+        return;
+      }
+      const memberId = selectedMember ?? project.members[0]?.id ?? "";
+      const response = await apiClient.runInfluenceAnalysis(project, memberId, 21);
+      setResult(response.result);
+      setResultExports(null);
+      setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
+      log(`影響線解析が完了しました。対象部材: ${memberId || "未指定"}`);
+    } catch (error) {
+      pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("影響線解析APIのリクエストに失敗しました。");
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const openFile = async (file: File) => {
     try {
       const loaded = JSON.parse(await file.text()) as ProjectModel;
@@ -217,11 +253,24 @@ export function App() {
   };
 
   const exportResultCsv = () => {
-    if (!resultExports) return;
-    downloadText("displacements.csv", resultExports["displacements.csv"], "text/csv");
-    downloadText("reactions.csv", resultExports["reactions.csv"], "text/csv");
-    downloadText("member_end_forces.csv", resultExports["member_end_forces.csv"], "text/csv");
+    if (!result) return;
+    const csvExports = resultExports ?? buildResultCsvExports(result);
+    downloadText("displacements.csv", csvExports["displacements.csv"], "text/csv");
+    downloadText("reactions.csv", csvExports["reactions.csv"], "text/csv");
+    downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
     log("解析結果CSVを出力しました。");
+  };
+
+  const exportResultPdf = () => {
+    if (!result) return;
+    try {
+      openResultPdfReport(project, result, activeLoadCase);
+      log("解析結果PDF帳票を開きました。");
+    } catch (error) {
+      pushApiError(error, "REPORT_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("解析結果PDF帳票の出力に失敗しました。");
+    }
   };
 
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
@@ -261,10 +310,13 @@ export function App() {
         onValidate={() => void validate()}
         onRun={() => void runAnalysis()}
         onRunEigen={() => void runEigenAnalysis()}
+        onRunInfluence={() => void runInfluenceAnalysis()}
         onExportResultJson={exportResultJson}
         onExportResultCsv={exportResultCsv}
+        onExportResultPdf={exportResultPdf}
         canExportResults={Boolean(result)}
-        canExportCsv={Boolean(resultExports)}
+        canExportCsv={Boolean(result)}
+        canExportPdf={Boolean(result)}
       />
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>
@@ -302,9 +354,11 @@ export function App() {
           selection={selection}
           activeLoadCase={activeLoadCase}
           selectedEigenMode={selectedEigenMode}
+          selectedResponseSpectrumResult={selectedResponseSpectrumResult}
           onSelectionChange={handleViewerSelection}
           onActiveLoadCaseChange={setActiveLoadCase}
           onSelectedEigenModeChange={setSelectedEigenMode}
+          onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
           onViewerError={handleViewerError}
         />
         <PropertyPanel
@@ -321,11 +375,13 @@ export function App() {
         warnings={warnings}
         activeLoadCase={activeLoadCase}
         selectedEigenMode={selectedEigenMode}
+        selectedResponseSpectrumResult={selectedResponseSpectrumResult}
         selectedNode={selectedNode}
         selectedMember={selectedMember}
         logs={logs}
         onTabChange={setBottomTab}
         onSelectedEigenModeChange={setSelectedEigenMode}
+        onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
       />
     </div>
   );

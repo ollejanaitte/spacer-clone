@@ -5,6 +5,7 @@ from typing import Any
 from .errors import AnalysisError
 from .model import Model, parse_model
 from .eigen import run_eigen_analysis, solve_eigen_model
+from .influence import run_influence_analysis, solve_influence_model
 from .solver import run_analysis, run_linear_static_analysis, solve_model
 
 
@@ -21,8 +22,10 @@ __all__ = [
     "parse_model",
     "run_analysis",
     "run_eigen_analysis",
+    "run_influence_analysis",
     "run_linear_static_analysis",
     "solve_eigen_model",
+    "solve_influence_model",
     "solve_model",
     "validate_project",
 ]

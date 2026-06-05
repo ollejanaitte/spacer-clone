@@ -1,4 +1,5 @@
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
+import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
 
 export type ViewerMode = "three" | "fallback2d";
@@ -23,6 +24,7 @@ export type ViewerVisibility = {
 export type ViewerScales = {
   loadScale: number;
   deformationScale: number;
+  modeScale: number;
   resultScale: number;
   nodeSize: number;
   labelSize: number;
@@ -40,9 +42,11 @@ export type Viewer3DProps = {
   selection: ViewerSelection;
   activeLoadCase: string;
   selectedEigenMode?: number;
+  selectedResponseSpectrumResult?: ResponseSpectrumSelection;
   onSelectionChange: (selection: ViewerSelection) => void;
   onActiveLoadCaseChange: (loadCaseId: string) => void;
   onSelectedEigenModeChange?: (modeNo: number) => void;
+  onSelectedResponseSpectrumResultChange?: (resultKey: ResponseSpectrumSelection) => void;
   onViewerError?: (message: string) => void;
 };
 
