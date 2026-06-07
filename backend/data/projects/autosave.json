@@ -17,20 +17,20 @@
     {
       "id": "N2",
       "x": 4,
-      "y": 0,
-      "z": 0
+      "y": 0.5,
+      "z": -0.5
     },
     {
       "id": "N3",
-      "x": 0,
-      "y": 0,
-      "z": 0
+      "x": 8,
+      "y": 1.5,
+      "z": -1.5
     },
     {
       "id": "N4",
-      "x": 0,
-      "y": 0,
-      "z": 0
+      "x": 12,
+      "y": 2.5,
+      "z": -4
     }
   ],
   "materials": [
@@ -65,6 +65,30 @@
         "y": 0,
         "z": 1
       }
+    },
+    {
+      "id": "M2",
+      "nodeI": "N2",
+      "nodeJ": "N3",
+      "materialId": "MAT1",
+      "sectionId": "SEC1",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M3",
+      "nodeI": "N3",
+      "nodeJ": "N4",
+      "materialId": "MAT1",
+      "sectionId": "SEC1",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
     }
   ],
   "supports": [
@@ -74,8 +98,17 @@
       "uy": true,
       "uz": true,
       "rx": true,
-      "ry": true,
-      "rz": true
+      "ry": false,
+      "rz": false
+    },
+    {
+      "nodeId": "N4",
+      "ux": false,
+      "uy": true,
+      "uz": false,
+      "rx": false,
+      "ry": false,
+      "rz": false
     }
   ],
   "loadCases": [

@@ -135,6 +135,8 @@ class AnalysisSettings:
     includeShearDeformation: bool = False
     largeDisplacement: bool = False
     tolerance: float = 1e-9
+    eigen: dict[str, Any] | None = None
+    influence: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -474,6 +476,104 @@ def validate_model(model: Model) -> None:
         "analysisSettings",
         "analysisSettings",
     )
+    validate_saved_analysis_settings(model)
+
+
+def validate_saved_analysis_settings(model: Model) -> None:
+    eigen = model.analysisSettings.eigen
+    if eigen is not None:
+        mass_case_id = eigen.get("massCaseId")
+        ref(
+            mass_case_id,
+            {case.id for case in model.massCases},
+            "/analysisSettings/eigen/massCaseId",
+            "massCase",
+            str(mass_case_id or ""),
+        )
+        mode_count = eigen.get("modeCount")
+        if not isinstance(mode_count, int) or isinstance(mode_count, bool) or mode_count <= 0:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "modeCount must be a positive integer.",
+                path="/analysisSettings/eigen/modeCount",
+            )
+
+    influence = model.analysisSettings.influence
+    if influence is None:
+        return
+    line = influence.get("line")
+    if not isinstance(line, dict):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "Influence line settings are required.",
+            path="/analysisSettings/influence/line",
+        )
+    member_id = line.get("memberId")
+    ref(
+        member_id,
+        model.member_by_id,
+        "/analysisSettings/influence/line/memberId",
+        "member",
+        str(member_id or ""),
+    )
+    station_count = line.get("stationCount")
+    if (
+        not isinstance(station_count, int)
+        or isinstance(station_count, bool)
+        or not 2 <= station_count <= 201
+    ):
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "stationCount must be an integer from 2 through 201.",
+            path="/analysisSettings/influence/line/stationCount",
+        )
+    magnitude = line.get("magnitude")
+    if not isinstance(magnitude, int | float) or not math.isfinite(magnitude):
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "Influence load magnitude must be finite.",
+            path="/analysisSettings/influence/line/magnitude",
+        )
+    direction = line.get("direction")
+    if not isinstance(direction, dict):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "Influence load direction is required.",
+            path="/analysisSettings/influence/line/direction",
+        )
+    direction_values = []
+    for axis in ("x", "y", "z"):
+        value = direction.get(axis)
+        if not isinstance(value, int | float) or not math.isfinite(value):
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "Influence load direction must contain finite components.",
+                path=f"/analysisSettings/influence/line/direction/{axis}",
+            )
+        direction_values.append(float(value))
+    if math.sqrt(sum(value * value for value in direction_values)) <= 1e-12:
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "Influence load direction must not be zero.",
+            path="/analysisSettings/influence/line/direction",
+        )
+    for index, target in enumerate(influence.get("targets", [])):
+        if target.get("type") in {"displacement", "reaction"}:
+            ref(
+                target.get("nodeId"),
+                model.node_by_id,
+                f"/analysisSettings/influence/targets/{index}/nodeId",
+                "node",
+                str(target.get("nodeId") or ""),
+            )
+        elif target.get("type") == "memberEndForce":
+            ref(
+                target.get("memberId"),
+                model.member_by_id,
+                f"/analysisSettings/influence/targets/{index}/memberId",
+                "member",
+                str(target.get("memberId") or ""),
+            )
 
 
 def ensure_unique(values: list[str], entity_type: str, path: str) -> None:

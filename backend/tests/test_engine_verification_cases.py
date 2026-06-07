@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 from .assertions import assert_close, by_id, error_codes
@@ -91,6 +92,93 @@ def test_case_3_simply_supported_uniform_distributed_load(engine_runner) -> None
     assert_close(center_node["uy"], -(5.0 * W * L**4) / (384.0 * E * I))
     assert_close(left_reaction["fy"], W * L / 2.0)
     assert_close(right_reaction["fy"], W * L / 2.0)
+    assert_close(max_abs_mz, W * L**2 / 8.0)
+
+
+def _global_uniform_load_project(axis: str) -> dict[str, Any]:
+    project = deepcopy(case_2())
+    project["nodalLoads"] = []
+    for member in project["members"]:
+        member["orientationVector"] = {"x": 0.0, "y": 0.0, "z": 1.0}
+    project["supports"] = [
+        {
+            "nodeId": "N1",
+            "ux": True,
+            "uy": True,
+            "uz": True,
+            "rx": True,
+            "ry": False,
+            "rz": False,
+        },
+        {
+            "nodeId": "N3",
+            "ux": False,
+            "uy": True,
+            "uz": True,
+            "rx": False,
+            "ry": False,
+            "rz": False,
+        },
+    ]
+    project["memberLoads"] = [
+        {
+            "id": f"ML{index}",
+            "loadCaseId": "LC1",
+            "memberId": member["id"],
+            "coordinateSystem": "global",
+            "type": "uniform",
+            "wx": 0.0,
+            "wy": -W if axis == "y" else 0.0,
+            "wz": -W if axis == "z" else 0.0,
+        }
+        for index, member in enumerate(project["members"], start=1)
+    ]
+    return project
+
+
+def test_global_fy_uniform_load_uses_y_displacement_and_local_my(
+    engine_runner,
+) -> None:
+    result = _run_success(engine_runner, _global_uniform_load_project("y"))
+
+    center_node = by_id(result["displacements"], "nodeId", "N2")
+    max_abs_my = max(
+        abs(force[end]["my"])
+        for force in result["memberEndForces"]
+        for end in ("i", "j")
+    )
+    max_abs_mz = max(
+        abs(force[end]["mz"])
+        for force in result["memberEndForces"]
+        for end in ("i", "j")
+    )
+
+    assert_close(center_node["uy"], -(5.0 * W * L**4) / (384.0 * E * I))
+    assert_close(center_node["uz"], 0.0)
+    assert_close(max_abs_my, W * L**2 / 8.0)
+    assert_close(max_abs_mz, 0.0)
+
+
+def test_global_fz_uniform_load_uses_z_displacement_and_local_mz(
+    engine_runner,
+) -> None:
+    result = _run_success(engine_runner, _global_uniform_load_project("z"))
+
+    center_node = by_id(result["displacements"], "nodeId", "N2")
+    max_abs_my = max(
+        abs(force[end]["my"])
+        for force in result["memberEndForces"]
+        for end in ("i", "j")
+    )
+    max_abs_mz = max(
+        abs(force[end]["mz"])
+        for force in result["memberEndForces"]
+        for end in ("i", "j")
+    )
+
+    assert_close(center_node["uy"], 0.0)
+    assert_close(center_node["uz"], -(5.0 * W * L**4) / (384.0 * E * I))
+    assert_close(max_abs_my, 0.0)
     assert_close(max_abs_mz, W * L**2 / 8.0)
 
 

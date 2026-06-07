@@ -31,6 +31,23 @@ CSV_HEADERS = {
         "my",
         "mz",
     ],
+    "influence_lines.csv": [
+        "case_id",
+        "line_id",
+        "target_id",
+        "target_type",
+        "node_id",
+        "member_id",
+        "component",
+        "end",
+        "station_index",
+        "station",
+        "ratio",
+        "x",
+        "y",
+        "z",
+        "value",
+    ],
 }
 
 
@@ -42,6 +59,7 @@ def build_result_exports(result: dict[str, Any]) -> dict[str, str]:
         "displacements.csv": displacements_csv(result),
         "reactions.csv": reactions_csv(result),
         "member_section_forces.csv": member_section_forces_csv(result),
+        "influence_lines.csv": influence_lines_csv(result),
     }
 
 
@@ -116,6 +134,53 @@ def member_section_forces_csv(result: dict[str, Any]) -> str:
             )
         )
     return write_csv(CSV_HEADERS["member_section_forces.csv"], output_rows)
+
+
+def influence_lines_csv(result: dict[str, Any]) -> str:
+    influence = result.get("influenceResult")
+    if not isinstance(influence, dict):
+        return write_csv(CSV_HEADERS["influence_lines.csv"], [])
+
+    stations = influence.get("stations", [])
+    targets = {
+        str(target.get("id", "")): target
+        for target in influence.get("targets", [])
+        if isinstance(target, dict)
+    }
+    line = influence.get("line", {})
+    rows: list[dict[str, Any]] = []
+
+    for target_result in influence.get("targetResults", []):
+        values = target_result.get("values", [])
+        if len(values) != len(stations):
+            raise ValueError(
+                "Influence target result values length must match stations length."
+            )
+        target_id = str(target_result.get("targetId", ""))
+        target = targets.get(target_id, {})
+        for station, value in zip(stations, values, strict=True):
+            position = station.get("position", {})
+            rows.append(
+                {
+                    "case_id": influence.get("caseId", ""),
+                    "line_id": line.get("id", ""),
+                    "target_id": target_id,
+                    "target_type": target.get("type", ""),
+                    "node_id": target.get("nodeId", ""),
+                    "member_id": target.get("memberId", ""),
+                    "component": target.get("component", ""),
+                    "end": target.get("end", ""),
+                    "station_index": station.get("stationIndex", ""),
+                    "station": station.get("station", ""),
+                    "ratio": station.get("ratio", ""),
+                    "x": position.get("x", ""),
+                    "y": position.get("y", ""),
+                    "z": position.get("z", ""),
+                    "value": value,
+                }
+            )
+
+    return write_csv(CSV_HEADERS["influence_lines.csv"], rows)
 
 
 def displacement_row(case_id: str, row: dict[str, Any]) -> dict[str, Any]:

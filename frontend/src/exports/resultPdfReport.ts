@@ -28,6 +28,20 @@ export function buildResultPdfReport(
   generatedAt = new Date().toISOString(),
 ): ResultPdfReport {
   const viewModel = buildResultViewModel(result, activeLoadCase);
+  const memberForceRows = result.memberEndForces
+    .filter((item) => !activeLoadCase || item.loadCaseId === activeLoadCase)
+    .flatMap((item) =>
+      ([
+        ["N", "fx"],
+        ["My", "my"],
+        ["Mz", "mz"],
+      ] as const).map(([component, key]) => [
+        item.memberId,
+        component,
+        item.i[key],
+        item.j[key],
+      ]),
+    );
   const selectedLoadCase = project.loadCases.find((item) => item.id === activeLoadCase);
   const summary = result.analysisSummary;
 
@@ -136,13 +150,7 @@ export function buildResultPdfReport(
           {
             title: "Member Force Table",
             columns: ["Member", "Component", "I End", "J End"],
-            rows:
-              viewModel?.memberForces.items.map((item) => [
-                item.memberId,
-                item.component,
-                item.i,
-                item.j,
-              ]) ?? [],
+            rows: memberForceRows,
           },
         ],
       },

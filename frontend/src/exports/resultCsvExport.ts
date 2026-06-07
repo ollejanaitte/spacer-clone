@@ -22,6 +22,23 @@ const memberForceHeaders = [
   "my",
   "mz",
 ] as const;
+const influenceLineHeaders = [
+  "case_id",
+  "line_id",
+  "target_id",
+  "target_type",
+  "node_id",
+  "member_id",
+  "component",
+  "end",
+  "station_index",
+  "station",
+  "ratio",
+  "x",
+  "y",
+  "z",
+  "value",
+] as const;
 
 type CsvRow = Record<string, string | number>;
 
@@ -31,6 +48,7 @@ export function buildResultCsvExports(result: AnalysisResult): ResultExports {
     "displacements.csv": writeCsv(displacementHeaders, collectDisplacements(result)),
     "reactions.csv": writeCsv(reactionHeaders, collectReactions(result)),
     "member_section_forces.csv": writeCsv(memberForceHeaders, collectMemberSectionForces(result)),
+    "influence_lines.csv": writeCsv(influenceLineHeaders, collectInfluenceLines(result)),
   };
 }
 
@@ -74,6 +92,36 @@ function collectMemberSectionForces(result: AnalysisResult): CsvRow[] {
     rows.push(...sectionForceRows(response.combinedResult.method, response.combinedResult.memberSectionForces ?? []));
   }
   return rows;
+}
+
+function collectInfluenceLines(result: AnalysisResult): CsvRow[] {
+  const influence = result.influenceResult;
+  if (!influence) return [];
+
+  const targets = new Map(influence.targets.map((target) => [target.id, target]));
+  return influence.targetResults.flatMap((targetResult) => {
+    if (targetResult.values.length !== influence.stations.length) {
+      throw new Error("Influence target result values length must match stations length.");
+    }
+    const target = targets.get(targetResult.targetId);
+    return influence.stations.map((station, index) => ({
+      case_id: influence.caseId,
+      line_id: influence.line.id,
+      target_id: targetResult.targetId,
+      target_type: target?.type ?? "",
+      node_id: target?.nodeId ?? "",
+      member_id: target?.memberId ?? "",
+      component: target?.component ?? "",
+      end: target?.end ?? "",
+      station_index: station.stationIndex,
+      station: station.station,
+      ratio: station.ratio,
+      x: station.position.x,
+      y: station.position.y,
+      z: station.position.z,
+      value: targetResult.values[index],
+    }));
+  });
 }
 
 function displacementRow(caseId: string, item: NodeDisplacementResult): CsvRow {

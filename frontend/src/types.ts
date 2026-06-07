@@ -103,9 +103,25 @@ export type MassCase = {
 
 export type AnalysisSettings = {
   analysisType: "linear_static";
+  solver?: "scipy_sparse";
   includeShearDeformation: false;
   largeDisplacement: false;
   tolerance: number;
+  eigen?: {
+    massCaseId: string;
+    modeCount: number;
+  };
+  influence?: {
+    caseId: string;
+    line: {
+      id: string;
+      memberId: string;
+      stationCount: number;
+      direction: { x: number; y: number; z: number };
+      magnitude: number;
+    };
+    targets: InfluenceTarget[];
+  };
 };
 
 export type ProjectModel = {
@@ -321,6 +337,7 @@ export type ResultExports = {
   "displacements.csv": string;
   "reactions.csv": string;
   "member_section_forces.csv": string;
+  "influence_lines.csv": string;
 };
 
 export type EndForce = {

@@ -78,12 +78,19 @@ function renderReactions(
 
 function renderMemberForce(
   project: ProjectModel,
-  forces: Array<{ memberId: string; component: MemberSectionForceComponent; i: number; j: number }>,
+  forces: Array<{
+    memberId: string;
+    component: MemberSectionForceComponent;
+    stations: Array<{ station: number; value: number }>;
+  }>,
   component: MemberSectionForceComponent,
   baseScale: number,
 ): THREE.Object3D[] {
   const componentForces = forces.filter((force) => force.component === component);
-  const maxAbs = Math.max(...componentForces.flatMap((force) => [Math.abs(force.i), Math.abs(force.j)]), 1);
+  const maxAbs = Math.max(
+    ...componentForces.flatMap((force) => force.stations.map((station) => Math.abs(station.value))),
+    1,
+  );
   const nodeMap = createNodeMap(project);
   const objects: THREE.Object3D[] = [];
 
@@ -92,16 +99,40 @@ function renderMemberForce(
     if (!member) continue;
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
+    const stations = [...force.stations].sort((a, b) => a.station - b.station);
+    if (stations.length === 0) continue;
+    // TODO: My/Mz are local-axis components; derive this normal from the member local axes.
     const normal = diagramNormal(ends.direction, component);
-    const iOffset = normal.clone().multiplyScalar((force.i / maxAbs) * baseScale);
-    const jOffset = normal.clone().multiplyScalar((force.j / maxAbs) * baseScale);
-    const iPoint = ends.start.clone().add(iOffset);
-    const jPoint = ends.end.clone().add(jOffset);
-    const color = colorFor(force.i + force.j);
+    const memberVector = new THREE.Vector3().subVectors(ends.end, ends.start);
+    const diagramPoints = stations.map(({ station, value }) => {
+      const basePoint = ends.start.clone().addScaledVector(memberVector, station);
+      const diagramPoint = basePoint.clone().addScaledVector(normal, (value / maxAbs) * baseScale);
+      return { basePoint, diagramPoint, value };
+    });
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      console.debug(
+        "[ResultDiagram]",
+        JSON.stringify({
+          component,
+          memberId: force.memberId,
+          normal: normal.toArray(),
+          points: diagramPoints.map(({ basePoint, diagramPoint, value }, index) => ({
+            station: stations[index].station,
+            value,
+            basePoint: basePoint.toArray(),
+            diagramPoint: diagramPoint.toArray(),
+          })),
+        }),
+      );
+    }
+    const color = colorFor(diagramPoints.reduce((sum, point) => sum + point.value, 0));
 
-    objects.push(createLine([ends.start, iPoint, jPoint, ends.end], color));
-    objects.push(createLine([iPoint, jPoint], color));
-    objects.push(createLine([ends.start, ends.end], zeroColor));
+    objects.push(createLine(diagramPoints.map((point) => point.diagramPoint), color));
+    for (const point of diagramPoints) {
+      if (Math.abs(point.value) > 1e-12) {
+        objects.push(createLine([point.basePoint, point.diagramPoint], color));
+      }
+    }
   }
 
   return objects;

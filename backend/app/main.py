@@ -109,13 +109,19 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
 @app.post("/api/analysis/eigen")
 def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     project = extract_project(payload)
-    mode_count = payload.get("modeCount", 6)
+    analysis_settings = project.get("analysisSettings", {})
+    saved_eigen = (
+        analysis_settings.get("eigen", {})
+        if isinstance(analysis_settings, dict)
+        else {}
+    )
+    mode_count = payload.get("modeCount", saved_eigen.get("modeCount", 6))
     if not isinstance(mode_count, int):
         raise HTTPException(
             status_code=422,
             detail={"code": "SCHEMA_ERROR", "message": "modeCount must be an integer."},
         )
-    mass_case_id = payload.get("massCaseId")
+    mass_case_id = payload.get("massCaseId", saved_eigen.get("massCaseId"))
     if mass_case_id is not None and not isinstance(mass_case_id, str):
         raise HTTPException(
             status_code=422,
@@ -146,6 +152,13 @@ def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
 @app.post("/api/influence/run")
 def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     project = extract_project(payload)
+    analysis_settings = project.get("analysisSettings", {})
+    saved_influence = (
+        analysis_settings.get("influence", {})
+        if isinstance(analysis_settings, dict)
+        else {}
+    )
+    request = {**saved_influence, **payload}
     finite_error = find_non_finite(project)
     if finite_error is not None:
         result = failed_result(
@@ -160,7 +173,7 @@ def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
             analysis_type="influence_line",
         )
     else:
-        result = run_influence_analysis(copy.deepcopy(project), payload)
+        result = run_influence_analysis(copy.deepcopy(project), request)
     return safe_json_response({"result": result})
 
 

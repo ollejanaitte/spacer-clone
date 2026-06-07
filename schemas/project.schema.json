@@ -170,6 +170,12 @@
         "tolerance": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "eigen": {
+          "$ref": "#/$defs/eigenAnalysisSettings"
+        },
+        "influence": {
+          "$ref": "#/$defs/influenceAnalysisSettings"
         }
       }
     }
@@ -524,6 +530,107 @@
             "$ref": "#/$defs/massItem"
           }
         }
+      }
+    },
+    "eigenAnalysisSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["massCaseId", "modeCount"],
+      "properties": {
+        "massCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modeCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "influenceAnalysisSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "line", "targets"],
+      "properties": {
+        "caseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "$ref": "#/$defs/influenceLineSettings"
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/influenceTarget"
+          }
+        }
+      }
+    },
+    "influenceLineSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "memberId", "stationCount", "direction", "magnitude"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memberId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stationCount": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 201
+        },
+        "direction": {
+          "$ref": "#/$defs/vector3"
+        },
+        "magnitude": {
+          "type": "number"
+        }
+      }
+    },
+    "influenceTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "component"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": ["displacement", "reaction", "memberEndForce"]
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memberId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "end": {
+          "enum": ["i", "j"]
+        }
+      }
+    },
+    "vector3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"},
+        "z": {"type": "number"}
       }
     },
     "massItem": {

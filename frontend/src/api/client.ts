@@ -42,6 +42,33 @@ type AutosaveCandidateResponse = {
   project: ProjectModel | null;
 };
 
+export function buildEigenAnalysisRequest(project: ProjectModel) {
+  const settings = project.analysisSettings.eigen;
+  return {
+    project,
+    massCaseId: settings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
+    modeCount: settings?.modeCount ?? 3,
+    normalization: "mass" as const,
+  };
+}
+
+export function buildInfluenceAnalysisRequest(project: ProjectModel) {
+  const settings = project.analysisSettings.influence;
+  const memberId = settings?.line.memberId ?? project.members[0]?.id ?? "";
+  return {
+    project,
+    caseId: settings?.caseId ?? "influence-line-1",
+    line: settings?.line ?? {
+      id: `line-${memberId || "member"}`,
+      memberId,
+      stationCount: 21,
+      direction: { x: 0, y: -1, z: 0 },
+      magnitude: 1,
+    },
+    targets: settings?.targets,
+  };
+}
+
 export class ApiClientError extends Error {
   readonly status: number | null;
   readonly code: string;
@@ -100,26 +127,12 @@ export const apiClient = {
     });
   },
 
-  runEigenAnalysis(project: ProjectModel, massCaseId: string, modeCount: number): Promise<EigenRunResponse> {
-    return postJson<EigenRunResponse>("/api/analysis/eigen", {
-      project,
-      massCaseId,
-      modeCount,
-      normalization: "mass",
-    });
+  runEigenAnalysis(project: ProjectModel): Promise<EigenRunResponse> {
+    return postJson<EigenRunResponse>("/api/analysis/eigen", buildEigenAnalysisRequest(project));
   },
 
-  runInfluenceAnalysis(project: ProjectModel, memberId: string, stationCount = 21): Promise<InfluenceRunResponse> {
-    return postJson<InfluenceRunResponse>("/api/influence/run", {
-      project,
-      line: {
-        id: `line-${memberId || "member"}`,
-        memberId,
-        stationCount,
-        direction: { x: 0, y: -1, z: 0 },
-        magnitude: 1,
-      },
-    });
+  runInfluenceAnalysis(project: ProjectModel): Promise<InfluenceRunResponse> {
+    return postJson<InfluenceRunResponse>("/api/influence/run", buildInfluenceAnalysisRequest(project));
   },
 
   saveProject(fileName: string, project: ProjectModel): Promise<SaveProjectResponse> {

@@ -101,5 +101,30 @@ export const createDefaultProject = (): ProjectModel => ({
     includeShearDeformation: false,
     largeDisplacement: false,
     tolerance: 1e-9,
+    eigen: {
+      massCaseId: "mass-1",
+      modeCount: 3,
+    },
+    influence: {
+      caseId: "influence-line-1",
+      line: {
+        id: "line-M1",
+        memberId: "M1",
+        stationCount: 21,
+        direction: { x: 0, y: -1, z: 0 },
+        magnitude: 1,
+      },
+      targets: [
+        { id: "disp-N2-uy", type: "displacement", nodeId: "N2", component: "uy" },
+        { id: "react-N1-fy", type: "reaction", nodeId: "N1", component: "fy" },
+        {
+          id: "member-M1-Mz-i",
+          type: "memberEndForce",
+          memberId: "M1",
+          component: "Mz",
+          end: "i",
+        },
+      ],
+    },
   },
 });

@@ -181,8 +181,7 @@ export function App() {
         log("入力チェックNGのため固有値解析を実行できません。");
         return;
       }
-      const massCaseId = project.massCases?.[0]?.id ?? "";
-      const response = await apiClient.runEigenAnalysis(project, massCaseId, 3);
+      const response = await apiClient.runEigenAnalysis(project);
       setResult(response.result);
       setResultExports(null);
       setSelectedEigenMode(response.result.eigenResult?.modes[0]?.modeNo ?? 1);
@@ -212,8 +211,20 @@ export function App() {
         log("入力チェックNGのため影響線解析を実行できません。");
         return;
       }
-      const memberId = selectedMember ?? project.members[0]?.id ?? "";
-      const response = await apiClient.runInfluenceAnalysis(project, memberId, 21);
+      const memberId =
+        selectedMember ??
+        project.analysisSettings.influence?.line.memberId ??
+        project.members[0]?.id ??
+        "";
+      const analysisProject =
+        memberId && memberId !== project.analysisSettings.influence?.line.memberId
+          ? withInfluenceMember(project, memberId)
+          : project;
+      if (analysisProject !== project) {
+        setProject(analysisProject);
+        setDirty(true);
+      }
+      const response = await apiClient.runInfluenceAnalysis(analysisProject);
       setResult(response.result);
       setResultExports(null);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
@@ -258,6 +269,7 @@ export function App() {
     downloadText("displacements.csv", csvExports["displacements.csv"], "text/csv");
     downloadText("reactions.csv", csvExports["reactions.csv"], "text/csv");
     downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
+    downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
     log("解析結果CSVを出力しました。");
   };
 
@@ -426,4 +438,25 @@ function downloadText(fileName: string, text: string, type: string) {
   link.download = fileName;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function withInfluenceMember(project: ProjectModel, memberId: string): ProjectModel {
+  const current = project.analysisSettings.influence;
+  return {
+    ...project,
+    analysisSettings: {
+      ...project.analysisSettings,
+      influence: {
+        caseId: current?.caseId ?? "influence-line-1",
+        line: {
+          id: current?.line.id ?? `line-${memberId}`,
+          memberId,
+          stationCount: current?.line.stationCount ?? 21,
+          direction: current?.line.direction ?? { x: 0, y: -1, z: 0 },
+          magnitude: current?.line.magnitude ?? 1,
+        },
+        targets: current?.targets ?? [],
+      },
+    },
+  };
 }

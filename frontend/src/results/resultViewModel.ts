@@ -50,6 +50,10 @@ export type MemberForceViewModel = {
     component: MemberSectionForceComponent;
     i: number;
     j: number;
+    stations: Array<{
+      station: number;
+      value: number;
+    }>;
   }>;
 };
 
@@ -168,12 +172,22 @@ export function buildResultViewModel(
   const memberForces = result.memberEndForces
     .filter((row) => !loadCaseId || row.loadCaseId === loadCaseId)
     .flatMap((row) =>
-      phase2MemberForceComponents.map((component) => ({
-        memberId: row.memberId,
-        component,
-        i: row.i[componentMap[component]],
-        j: row.j[componentMap[component]],
-      })),
+      phase2MemberForceComponents.map((component) => {
+        // Element end forces act on the nodes; diagrams use the internal section-force convention.
+        const rawI = row.i[componentMap[component]];
+        const i = rawI === 0 ? 0 : -rawI;
+        const j = row.j[componentMap[component]];
+        return {
+          memberId: row.memberId,
+          component,
+          i,
+          j,
+          stations: [
+            { station: 0, value: i },
+            { station: 1, value: j },
+          ],
+        };
+      }),
     );
 
   return {
@@ -404,6 +418,10 @@ function toMemberEndForceItems(
       component: first.component,
       i: first.value,
       j: last.value,
+      stations: sorted.map((item) => ({
+        station: item.station,
+        value: item.value,
+      })),
     };
   });
 }

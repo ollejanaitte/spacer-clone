@@ -69,3 +69,54 @@ def test_project_schema_rejects_member_with_both_orientation_methods(
     assert errors, (
         "orientationVector and orientationNode must not be accepted together."
     )
+
+
+def test_project_schema_accepts_saved_eigen_and_influence_settings(
+    project_schema: dict, example_project: dict
+) -> None:
+    project = copy.deepcopy(example_project)
+    project["massCases"] = [
+        {
+            "id": "mass-1",
+            "name": "Manual Mass",
+            "method": "lumped",
+            "source": "manual",
+            "items": [
+                {
+                    "nodeId": "N2",
+                    "mx": 1.0,
+                    "my": 1.0,
+                    "mz": 1.0,
+                    "irx": 0.0,
+                    "iry": 0.0,
+                    "irz": 0.0,
+                }
+            ],
+        }
+    ]
+    project["analysisSettings"]["eigen"] = {
+        "massCaseId": "mass-1",
+        "modeCount": 2,
+    }
+    project["analysisSettings"]["influence"] = {
+        "caseId": "influence-1",
+        "line": {
+            "id": "line-1",
+            "memberId": "M1",
+            "stationCount": 11,
+            "direction": {"x": 0.0, "y": -1.0, "z": 0.0},
+            "magnitude": 1.0,
+        },
+        "targets": [
+            {
+                "id": "reaction-1",
+                "type": "reaction",
+                "nodeId": "N1",
+                "component": "fy",
+            }
+        ],
+    }
+
+    validator = jsonschema.Draft202012Validator(project_schema)
+
+    assert list(validator.iter_errors(project)) == []

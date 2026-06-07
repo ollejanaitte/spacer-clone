@@ -62,7 +62,14 @@ def solve_influence_model(model: Model, request: dict[str, Any], started_at: str
     station_rows: list[dict[str, Any]] = []
 
     for index, station in enumerate(stations):
-        load = unit_load_vector(dof_map, assembly, line["memberId"], station, line["direction"], line["magnitude"])
+        load, equivalent_local = unit_load_vector(
+            dof_map,
+            assembly,
+            line["memberId"],
+            station,
+            line["direction"],
+            line["magnitude"],
+        )
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("error", MatrixRankWarning)
@@ -77,7 +84,12 @@ def solve_influence_model(model: Model, request: dict[str, Any], started_at: str
         u_full = np.zeros(dof_map.total_dof, dtype=float)
         u_full[free] = free_u
         reaction_full = assembly.stiffness @ u_full - load
-        member_forces = member_end_forces(assembly, u_full)
+        member_forces = member_end_forces(
+            assembly,
+            u_full,
+            loaded_member_id=line["memberId"],
+            equivalent_local=equivalent_local,
+        )
         for target in targets:
             target_values[target["id"]].append(clean(extract_target_value(target, dof_map, u_full, reaction_full, member_forces)))
         station_rows.append(
@@ -156,13 +168,22 @@ def parse_line_request(model: Model, assembly: Assembly, request: dict[str, Any]
     norm = float(np.linalg.norm(direction))
     if norm < 1e-12:
         raise AnalysisError("INVALID_VALUE", "Influence load direction must not be zero.", path="/line/direction")
+    magnitude_input = (
+        line["magnitude"]
+        if "magnitude" in line
+        else request["magnitude"]
+        if "magnitude" in request
+        else 1.0
+    )
     return {
         "id": str(line.get("id") or "line-1"),
         "memberId": member_id,
+        "nodeI": model.node_by_id[state.member.nodeI],
+        "nodeJ": model.node_by_id[state.member.nodeJ],
         "length": state.length,
         "stationCount": station_count,
         "direction": direction / norm,
-        "magnitude": float(line.get("magnitude") or request.get("magnitude") or 1.0),
+        "magnitude": float(magnitude_input),
     }
 
 
@@ -216,7 +237,7 @@ def unit_load_vector(
     station: float,
     direction: NDArray[np.float64],
     magnitude: float,
-) -> NDArray[np.float64]:
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     state = element_state_by_member(assembly, member_id)
     if state is None:
         raise AnalysisError("INVALID_REFERENCE", f"Loading member does not exist: {member_id}", path="/line/memberId", entity_type="member", entity_id=member_id)
@@ -225,7 +246,7 @@ def unit_load_vector(
     local = equivalent_point_load_local(state.length, station, local_force)
     vector = np.zeros(dof_map.total_dof, dtype=float)
     vector[state.dofs] += transformation(state.rotation).T @ local
-    return vector
+    return vector, local
 
 
 def equivalent_point_load_local(length: float, station: float, force: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -251,12 +272,20 @@ def equivalent_point_load_local(length: float, station: float, force: NDArray[np
     return load
 
 
-def member_end_forces(assembly: Assembly, u_full: NDArray[np.float64]) -> dict[str, dict[str, dict[str, float]]]:
+def member_end_forces(
+    assembly: Assembly,
+    u_full: NDArray[np.float64],
+    *,
+    loaded_member_id: str,
+    equivalent_local: NDArray[np.float64],
+) -> dict[str, dict[str, dict[str, float]]]:
     values: dict[str, dict[str, dict[str, float]]] = {}
     for state in assembly.element_states:
         transform = transformation(state.rotation)
         u_local = transform @ u_full[state.dofs]
         forces = state.k_local @ u_local
+        if state.member.id == loaded_member_id:
+            forces = forces - equivalent_local
         values[state.member.id] = {"i": force_dict(forces[:6]), "j": force_dict(forces[6:])}
     return values
 
@@ -290,8 +319,13 @@ def extract_target_value(
 
 
 def station_position(line: dict[str, Any], station: float) -> dict[str, float]:
-    # MVP loading lines are member-aligned; frontend uses station and ratio for display.
-    return {"x": clean(station), "y": 0.0, "z": 0.0}
+    ratio = station / line["length"] if line["length"] else 0.0
+    node_i = line["nodeI"]
+    node_j = line["nodeJ"]
+    return {
+        axis: clean(getattr(node_i, axis) + ratio * (getattr(node_j, axis) - getattr(node_i, axis)))
+        for axis in ("x", "y", "z")
+    }
 
 
 def element_state_by_member(assembly: Assembly, member_id: str) -> ElementState | None:
