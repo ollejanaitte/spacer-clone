@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import math
+import warnings
 from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.linalg import LinAlgError, eigh
+from scipy.linalg import LinAlgError, LinAlgWarning, eigh, solve
 
 from .assembly import assemble_stiffness
 from .dof import DOF_NAMES, build_dof_map, constrained_dofs
@@ -46,7 +47,11 @@ def solve_eigen_model(
     mode_count: int,
 ) -> dict[str, Any]:
     if mode_count <= 0:
-        raise AnalysisError("INVALID_VALUE", "modeCount must be greater than zero.", path="/modeCount")
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "modeCount must be greater than zero.",
+            path="/modeCount",
+        )
 
     mass_case = select_mass_case(model, mass_case_id)
     dof_map = build_dof_map(model)
@@ -54,7 +59,7 @@ def solve_eigen_model(
     constrained = constrained_dofs(model, dof_map)
     constrained_set = set(constrained)
     mass_diag = lumped_mass_vector(model, mass_case, dof_map)
-    mass_dofs = np.array(
+    master_dofs = np.array(
         [
             dof
             for dof in range(dof_map.total_dof)
@@ -62,7 +67,15 @@ def solve_eigen_model(
         ],
         dtype=int,
     )
-    if mass_dofs.size == 0:
+    slave_dofs = np.array(
+        [
+            dof
+            for dof in range(dof_map.total_dof)
+            if dof not in constrained_set and mass_diag[dof] == 0.0
+        ],
+        dtype=int,
+    )
+    if master_dofs.size == 0:
         raise AnalysisError(
             "MODEL_UNSTABLE",
             "No unconstrained positive-mass degrees of freedom remain.",
@@ -70,7 +83,7 @@ def solve_eigen_model(
             entity_type="massCase",
             entity_id=mass_case.id,
         )
-    if mode_count > mass_dofs.size:
+    if mode_count > master_dofs.size:
         raise AnalysisError(
             "INVALID_VALUE",
             "modeCount exceeds the number of positive-mass degrees of freedom.",
@@ -79,8 +92,29 @@ def solve_eigen_model(
             entity_id=mass_case.id,
         )
 
-    kmm = assembly.stiffness[mass_dofs, :][:, mass_dofs].toarray()
-    m_diag = mass_diag[mass_dofs]
+    kmm = assembly.stiffness[master_dofs, :][:, master_dofs].toarray()
+    recovery = slave_recovery_matrix(
+        assembly.stiffness,
+        master_dofs,
+        slave_dofs,
+        mass_case,
+    )
+    if slave_dofs.size > 0:
+        kms = assembly.stiffness[master_dofs, :][:, slave_dofs].toarray()
+        reduced_stiffness = kmm + kms @ recovery
+    else:
+        reduced_stiffness = kmm
+    reduced_stiffness = 0.5 * (reduced_stiffness + reduced_stiffness.T)
+    if np.any(~np.isfinite(reduced_stiffness)):
+        raise AnalysisError(
+            "MODEL_UNSTABLE",
+            "Static condensation produced a non-finite reduced stiffness matrix.",
+            path="/massCases",
+            entity_type="massCase",
+            entity_id=mass_case.id,
+        )
+
+    m_diag = mass_diag[master_dofs]
     if np.any(m_diag <= 0.0) or np.any(~np.isfinite(m_diag)):
         raise AnalysisError(
             "MODEL_UNSTABLE",
@@ -92,7 +126,7 @@ def solve_eigen_model(
     mmm = np.diag(m_diag)
 
     try:
-        eigenvalues, eigenvectors = eigh(kmm, mmm, check_finite=True)
+        eigenvalues, eigenvectors = eigh(reduced_stiffness, mmm, check_finite=True)
     except LinAlgError as exc:
         raise AnalysisError(
             "MODEL_UNSTABLE",
@@ -117,7 +151,9 @@ def solve_eigen_model(
             float(eigenvalues[index]),
             eigenvectors[:, index],
             mmm,
-            mass_dofs,
+            master_dofs,
+            slave_dofs,
+            recovery,
             dof_map,
             model,
         )
@@ -171,7 +207,9 @@ def select_mass_case(model: Model, mass_case_id: str | None) -> MassCase:
     )
 
 
-def lumped_mass_vector(model: Model, mass_case: MassCase, dof_map: Any) -> NDArray[np.float64]:
+def lumped_mass_vector(
+    model: Model, mass_case: MassCase, dof_map: Any
+) -> NDArray[np.float64]:
     mass = np.zeros(dof_map.total_dof, dtype=float)
     for item in mass_case.items or []:
         dofs = dof_map.node_dofs(item.nodeId)
@@ -181,12 +219,59 @@ def lumped_mass_vector(model: Model, mass_case: MassCase, dof_map: Any) -> NDArr
     return mass
 
 
+def slave_recovery_matrix(
+    stiffness: Any,
+    master_dofs: NDArray[np.int_],
+    slave_dofs: NDArray[np.int_],
+    mass_case: MassCase,
+) -> NDArray[np.float64]:
+    if slave_dofs.size == 0:
+        return np.zeros((0, master_dofs.size), dtype=float)
+
+    kss = stiffness[slave_dofs, :][:, slave_dofs].toarray()
+    ksm = stiffness[slave_dofs, :][:, master_dofs].toarray()
+    if np.any(~np.isfinite(kss)) or np.any(~np.isfinite(ksm)):
+        raise AnalysisError(
+            "MODEL_UNSTABLE",
+            "The zero-mass slave stiffness partition contains non-finite values.",
+            path="/massCases",
+            entity_type="massCase",
+            entity_id=mass_case.id,
+        )
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", LinAlgWarning)
+            recovery = -solve(kss, ksm, assume_a="sym", check_finite=False)
+    except (LinAlgError, LinAlgWarning, ValueError) as exc:
+        raise AnalysisError(
+            "MODEL_UNSTABLE",
+            (
+                "The zero-mass slave stiffness matrix Kss is singular "
+                "or numerically singular."
+            ),
+            path="/supports",
+            entity_type="massCase",
+            entity_id=mass_case.id,
+        ) from exc
+    if np.any(~np.isfinite(recovery)):
+        raise AnalysisError(
+            "MODEL_UNSTABLE",
+            "Static condensation produced non-finite zero-mass slave recovery coefficients.",
+            path="/massCases",
+            entity_type="massCase",
+            entity_id=mass_case.id,
+        )
+    return recovery
+
+
 def build_mode_result(
     mode_no: int,
     eigenvalue: float,
     vector: NDArray[np.float64],
     mass_matrix: NDArray[np.float64],
-    mass_dofs: NDArray[np.int_],
+    master_dofs: NDArray[np.int_],
+    slave_dofs: NDArray[np.int_],
+    recovery: NDArray[np.float64],
     dof_map: Any,
     model: Model,
 ) -> dict[str, Any]:
@@ -197,7 +282,9 @@ def build_mode_result(
     modal_mass = float(normalized.T @ mass_matrix @ normalized)
     omega = math.sqrt(eigenvalue)
     full = np.zeros(dof_map.total_dof, dtype=float)
-    full[mass_dofs] = normalized
+    full[master_dofs] = normalized
+    if slave_dofs.size > 0:
+        full[slave_dofs] = recovery @ normalized
     return {
         "modeNo": mode_no,
         "eigenvalue": clean(eigenvalue),
@@ -205,11 +292,20 @@ def build_mode_result(
         "frequency": clean(omega / (2.0 * math.pi)),
         "period": clean((2.0 * math.pi) / omega),
         "modalMass": clean(modal_mass),
-        "participationFactors": participation_values(normalized, mass_matrix, mass_dofs),
-        "effectiveMassRatios": effective_mass_ratios(normalized, mass_matrix, mass_dofs),
+        "participationFactors": participation_values(
+            normalized, mass_matrix, master_dofs
+        ),
+        "effectiveMassRatios": effective_mass_ratios(
+            normalized, mass_matrix, master_dofs
+        ),
         "shape": [
             {"nodeId": node.id}
-            | dict(zip(DOF_NAMES, [clean(value) for value in full[dof_map.node_dofs(node.id)]]))
+            | dict(
+                zip(
+                    DOF_NAMES,
+                    [clean(value) for value in full[dof_map.node_dofs(node.id)]],
+                )
+            )
             for node in model.nodes
         ],
     }
