@@ -876,6 +876,27 @@ button:disabled {
   margin-bottom: 8px;
 }
 
+.series-picker-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.series-picker-actions button {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid #c4ced8;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+}
+
+.series-picker-actions button:disabled {
+  color: #94a3b8;
+  background: #f4f6f8;
+}
+
 .series-picker label {
   display: inline-flex;
   align-items: center;

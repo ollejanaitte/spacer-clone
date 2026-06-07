@@ -373,17 +373,16 @@ function InfluenceChart({
     points: Array<{ station: number; ratio: number; value: number }>;
   }>;
 }) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const defaultIds = useMemo(() => series.slice(0, 3).map((item) => item.targetId), [series]);
+  const seriesKey = series.map((item) => item.targetId).join("\u0000");
+  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+    series.map((item) => item.targetId),
+  );
 
   useEffect(() => {
-    setSelectedIds((current) => {
-      const currentValid = current.filter((id) => series.some((item) => item.targetId === id));
-      return currentValid.length > 0 ? currentValid : defaultIds;
-    });
-  }, [defaultIds, series]);
+    setSelectedIds(series.map((item) => item.targetId));
+  }, [seriesKey]);
 
-  const visibleSeries = series.filter((item) => selectedIds.includes(item.targetId)).slice(0, 6);
+  const visibleSeries = series.filter((item) => selectedIds.includes(item.targetId));
   const values = visibleSeries.flatMap((item) => item.points.map((point) => point.value));
   const min = Math.min(...values, 0);
   const max = Math.max(...values, 0);
@@ -400,15 +399,33 @@ function InfluenceChart({
         <div className="empty-state">影響線系列がありません。</div>
       ) : (
         <>
+          <div className="series-picker-actions">
+            <button
+              type="button"
+              onClick={() => setSelectedIds(series.map((item) => item.targetId))}
+              disabled={selectedIds.length === series.length}
+            >
+              全選択
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedIds([])}
+              disabled={selectedIds.length === 0}
+            >
+              全解除
+            </button>
+          </div>
           <div className="series-picker" aria-label="影響線系列選択">
             {series.map((item) => (
               <label key={item.targetId}>
                 <input
                   type="checkbox"
+                  data-target-id={item.targetId}
                   checked={selectedIds.includes(item.targetId)}
                   onChange={(event) => {
+                    const checked = event.currentTarget.checked;
                     setSelectedIds((current) =>
-                      event.currentTarget.checked
+                      checked
                         ? [...current, item.targetId]
                         : current.filter((id) => id !== item.targetId),
                     );
@@ -449,6 +466,7 @@ function InfluenceChart({
             {visibleSeries.map((item, index) => (
               <polyline
                 key={item.targetId}
+                data-target-id={item.targetId}
                 points={item.points
                   .map((point) => {
                     const x = padding + point.ratio * (width - 2 * padding);
