@@ -7,7 +7,7 @@ import pytest
 
 from backend.engine import run_eigen_analysis
 
-from .assertions import assert_close
+from .assertions import assert_close, assert_no_non_finite_numbers
 from .sample_models import E, I, L, base_project
 
 
@@ -198,6 +198,10 @@ def directional_value(items: list[dict[str, Any]], direction: str) -> float:
     return next(item["value"] for item in items if item["direction"] == direction)
 
 
+def directional_values(items: list[dict[str, Any]]) -> dict[str, float]:
+    return {str(item["direction"]): float(item["value"]) for item in items}
+
+
 def test_effective_mass_outputs_are_reported_by_direction() -> None:
     project = eigen_cantilever("effective-mass-output", mass_y=TIP_MASS)
 
@@ -211,3 +215,88 @@ def test_effective_mass_outputs_are_reported_by_direction() -> None:
     assert_close(directional_value(mode["cumulativeEffectiveMassRatios"], "Y"), 1.0)
     assert_close(directional_value(mode["effectiveMasses"], "X"), 0.0)
     assert_close(directional_value(mode["cumulativeEffectiveMassRatios"], "X"), 0.0)
+
+
+def test_effective_mass_outputs_are_consistent_across_xyz_directions() -> None:
+    project = eigen_cantilever(
+        "effective-mass-xyz-consistency",
+        mass_x=TIP_MASS,
+        mass_y=TIP_MASS * 2.0,
+        mass_z=TIP_MASS * 3.0,
+    )
+    project["analysisSettings"]["eigen"]["modeCount"] = 3
+
+    result = run_eigen_analysis(project, mass_case_id="mass-1", mode_count=3)
+
+    assert result["analysisSummary"]["status"] == "success"
+    assert_no_non_finite_numbers(result)
+    eigen = result["eigenResult"]
+    totals = directional_values(eigen["totalMassByDirection"])
+    assert list(totals) == ["X", "Y", "Z"]
+    for mode in eigen["modes"]:
+        ratios = directional_values(mode["effectiveMassRatios"])
+        masses = directional_values(mode["effectiveMasses"])
+        for direction in ("X", "Y", "Z"):
+            assert_close(masses[direction], ratios[direction] * totals[direction])
+
+
+def test_cumulative_effective_mass_ratios_are_mode_order_accumulations() -> None:
+    project = eigen_cantilever(
+        "cumulative-effective-mass-order",
+        mass_x=TIP_MASS,
+        mass_y=TIP_MASS,
+        mass_z=TIP_MASS,
+    )
+    project["analysisSettings"]["eigen"]["modeCount"] = 3
+
+    result = run_eigen_analysis(project, mass_case_id="mass-1", mode_count=3)
+
+    assert result["analysisSummary"]["status"] == "success"
+    running = {"X": 0.0, "Y": 0.0, "Z": 0.0}
+    for mode in result["eigenResult"]["modes"]:
+        ratios = directional_values(mode["effectiveMassRatios"])
+        cumulative = directional_values(mode["cumulativeEffectiveMassRatios"])
+        assert list(cumulative) == ["X", "Y", "Z"]
+        for direction in ("X", "Y", "Z"):
+            running[direction] += ratios[direction]
+            assert_close(cumulative[direction], running[direction])
+
+
+def test_zero_total_mass_directions_report_zero_effective_mass_without_non_finite_values() -> None:
+    project = eigen_cantilever("zero-total-mass-directions", mass_y=TIP_MASS)
+
+    result = run_eigen_analysis(project, mass_case_id="mass-1", mode_count=1)
+
+    assert result["analysisSummary"]["status"] == "success"
+    assert_no_non_finite_numbers(result)
+    eigen = result["eigenResult"]
+    mode = eigen["modes"][0]
+    for direction in ("X", "Z"):
+        assert_close(directional_value(eigen["totalMassByDirection"], direction), 0.0)
+        assert_close(directional_value(mode["effectiveMassRatios"], direction), 0.0)
+        assert_close(directional_value(mode["effectiveMasses"], direction), 0.0)
+        assert_close(
+            directional_value(mode["cumulativeEffectiveMassRatios"], direction),
+            0.0,
+        )
+
+
+def test_backend_eigen_modes_csv_keeps_e1b_column_order() -> None:
+    from backend.app.reports import build_result_exports
+
+    result = run_eigen_analysis(
+        eigen_cantilever("backend-eigen-csv-header", mass_y=TIP_MASS),
+        mass_case_id="mass-1",
+        mode_count=1,
+    )
+
+    header = build_result_exports(result)["eigen_modes.csv"].splitlines()[0]
+
+    assert header == (
+        "mode_no,eigenvalue,circular_frequency,frequency,period,modal_mass,"
+        "participation_factor_x,participation_factor_y,participation_factor_z,"
+        "effective_mass_x,effective_mass_y,effective_mass_z,"
+        "effective_mass_ratio_x,effective_mass_ratio_y,effective_mass_ratio_z,"
+        "cumulative_effective_mass_ratio_x,cumulative_effective_mass_ratio_y,"
+        "cumulative_effective_mass_ratio_z,total_mass_x,total_mass_y,total_mass_z"
+    )

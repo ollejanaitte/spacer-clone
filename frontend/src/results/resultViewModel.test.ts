@@ -33,6 +33,27 @@ describe("buildResultViewModel member-force diagrams", () => {
   });
 });
 
+describe("buildResultViewModel eigen result compatibility", () => {
+  it("keeps old eigen results usable when E-1b optional fields are absent", () => {
+    const viewModel = buildResultViewModel(oldEigenResult(), "")?.eigenModes;
+
+    expect(viewModel?.totalMassX).toBeNull();
+    expect(viewModel?.totalMassY).toBeNull();
+    expect(viewModel?.totalMassZ).toBeNull();
+    expect(viewModel?.modes[0]).toMatchObject({
+      effectiveMassRatioX: 0.25,
+      effectiveMassRatioY: 0,
+      effectiveMassRatioZ: 0,
+      effectiveMassX: null,
+      effectiveMassY: null,
+      effectiveMassZ: null,
+      cumulativeEffectiveMassRatioX: null,
+      cumulativeEffectiveMassRatioY: null,
+      cumulativeEffectiveMassRatioZ: null,
+    });
+  });
+});
+
 function endForce(values: Partial<EndForce>): EndForce {
   return {
     fx: 0,
@@ -66,6 +87,67 @@ function staticResult(memberEndForces: AnalysisResult["memberEndForces"]): Analy
     displacements: [],
     reactions: [],
     memberEndForces,
+    warnings: [],
+    errors: [],
+  };
+}
+
+function oldEigenResult(): AnalysisResult {
+  return {
+    projectId: "old-eigen",
+    schemaVersion: "1.0.0",
+    analysisSummary: {
+      analysisType: "eigen",
+      status: "success",
+      startedAt: "2026-06-06T00:00:00Z",
+      finishedAt: "2026-06-06T00:00:00Z",
+      durationMs: 0,
+      nodeCount: 1,
+      memberCount: 0,
+      loadCaseCount: 0,
+      totalDof: 6,
+      freeDof: 3,
+      constrainedDof: 3,
+      solver: "scipy_eigh",
+    },
+    displacements: [],
+    reactions: [],
+    memberEndForces: [],
+    eigenResult: {
+      massCaseId: "mass-1",
+      normalization: "mass",
+      modes: [
+        {
+          modeNo: 1,
+          eigenvalue: 4,
+          circularFrequency: 2,
+          frequency: 3,
+          period: 4,
+          modalMass: 1,
+          participationFactors: [
+            { direction: "X", value: 0.5 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          effectiveMassRatios: [
+            { direction: "X", value: 0.25 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          shape: [
+            {
+              nodeId: "N1",
+              ux: 1,
+              uy: 0,
+              uz: 0,
+              rx: 0,
+              ry: 0,
+              rz: 0,
+            },
+          ],
+        },
+      ],
+    },
     warnings: [],
     errors: [],
   };

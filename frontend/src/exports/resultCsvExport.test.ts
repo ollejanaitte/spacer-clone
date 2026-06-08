@@ -4,6 +4,8 @@ import { buildResultCsvExports } from "./resultCsvExport";
 
 const influenceHeader =
   "case_id,line_id,target_id,target_type,node_id,member_id,component,end,station_index,station,ratio,x,y,z,value";
+const eigenHeader =
+  "mode_no,eigenvalue,circular_frequency,frequency,period,modal_mass,participation_factor_x,participation_factor_y,participation_factor_z,effective_mass_x,effective_mass_y,effective_mass_z,effective_mass_ratio_x,effective_mass_ratio_y,effective_mass_ratio_z,cumulative_effective_mass_ratio_x,cumulative_effective_mass_ratio_y,cumulative_effective_mass_ratio_z,total_mass_x,total_mass_y,total_mass_z";
 
 describe("result CSV influence line export", () => {
   it("exports targets in targetResults order and stations in station order", () => {
@@ -49,6 +51,39 @@ describe("result CSV influence line export", () => {
     expect(exports["member_section_forces.csv"]).toBe(
       "case_id,member_id,station_x,station_ratio,n,qy,qz,mx,my,mz\r\n",
     );
+  });
+});
+
+describe("result CSV eigen mode export", () => {
+  it("keeps the E-1b eigen header order and leaves absent optional values blank", () => {
+    const lines = buildResultCsvExports(oldEigenResult())["eigen_modes.csv"]
+      .split(/\r?\n/)
+      .filter(Boolean);
+
+    expect(lines[0]).toBe(eigenHeader);
+    expect(lines[1].split(",")).toEqual([
+      "1",
+      "4",
+      "2",
+      "3",
+      "4",
+      "1",
+      "0.5",
+      "0",
+      "0",
+      "",
+      "",
+      "",
+      "0.25",
+      "0",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]);
   });
 });
 
@@ -114,6 +149,57 @@ function influenceResult(): AnalysisResult {
       targetResults: [
         { targetId: "reaction-1", values: [1, 0] },
         { targetId: "moment-1", values: [0, 5] },
+      ],
+    },
+    warnings: [],
+    errors: [],
+  };
+}
+
+function oldEigenResult(): AnalysisResult {
+  return {
+    projectId: "old-eigen",
+    schemaVersion: "1.0.0",
+    analysisSummary: {
+      analysisType: "eigen",
+      status: "success",
+      startedAt: "2026-06-07T00:00:00Z",
+      finishedAt: "2026-06-07T00:00:00Z",
+      durationMs: 0,
+      nodeCount: 1,
+      memberCount: 0,
+      loadCaseCount: 0,
+      totalDof: 6,
+      freeDof: 3,
+      constrainedDof: 3,
+      solver: "scipy_eigh",
+    },
+    displacements: [],
+    reactions: [],
+    memberEndForces: [],
+    eigenResult: {
+      massCaseId: "mass-1",
+      normalization: "mass",
+      modes: [
+        {
+          modeNo: 1,
+          eigenvalue: 4,
+          circularFrequency: 2,
+          frequency: 3,
+          period: 4,
+          modalMass: 1,
+          participationFactors: [
+            { direction: "X", value: 0.5 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          effectiveMassRatios: [
+            { direction: "X", value: 0.25 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          shape: [],
+        },
       ],
     },
     warnings: [],
