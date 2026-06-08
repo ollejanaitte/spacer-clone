@@ -4,27 +4,96 @@
   "title": "SPACER Clone MVP Analysis Result",
   "type": "object",
   "additionalProperties": false,
-  "required": ["projectId", "schemaVersion", "analysisSummary", "displacements", "reactions", "memberEndForces", "warnings", "errors"],
+  "required": [
+    "projectId",
+    "schemaVersion",
+    "analysisSummary",
+    "displacements",
+    "reactions",
+    "memberEndForces",
+    "warnings",
+    "errors"
+  ],
   "properties": {
-    "projectId": { "type": "string" },
-    "schemaVersion": { "const": "1.0.0" },
+    "projectId": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
     "analysisSummary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["analysisType", "status", "startedAt", "finishedAt", "durationMs", "nodeCount", "memberCount", "loadCaseCount", "totalDof", "freeDof", "constrainedDof", "solver"],
+      "required": [
+        "analysisType",
+        "status",
+        "startedAt",
+        "finishedAt",
+        "durationMs",
+        "nodeCount",
+        "memberCount",
+        "loadCaseCount",
+        "totalDof",
+        "freeDof",
+        "constrainedDof",
+        "solver"
+      ],
       "properties": {
-        "analysisType": { "enum": ["linear_static", "eigen", "response_spectrum", "responseSpectrum", "influence_line"] },
-        "status": { "enum": ["success", "warning", "failed"] },
-        "startedAt": { "type": "string" },
-        "finishedAt": { "type": "string" },
-        "durationMs": { "type": "number" },
-        "nodeCount": { "type": "integer", "minimum": 0 },
-        "memberCount": { "type": "integer", "minimum": 0 },
-        "loadCaseCount": { "type": "integer", "minimum": 0 },
-        "totalDof": { "type": "integer", "minimum": 0 },
-        "freeDof": { "type": "integer", "minimum": 0 },
-        "constrainedDof": { "type": "integer", "minimum": 0 },
-        "solver": { "enum": ["scipy_sparse", "scipy_eigh"] }
+        "analysisType": {
+          "enum": [
+            "linear_static",
+            "eigen",
+            "response_spectrum",
+            "responseSpectrum",
+            "influence_line"
+          ]
+        },
+        "status": {
+          "enum": [
+            "success",
+            "warning",
+            "failed"
+          ]
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "finishedAt": {
+          "type": "string"
+        },
+        "durationMs": {
+          "type": "number"
+        },
+        "nodeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memberCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "loadCaseCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalDof": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "freeDof": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "constrainedDof": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "solver": {
+          "enum": [
+            "scipy_sparse",
+            "scipy_eigh"
+          ]
+        }
       }
     },
     "displacements": {
@@ -32,16 +101,41 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["loadCaseId", "nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+        "required": [
+          "loadCaseId",
+          "nodeId",
+          "ux",
+          "uy",
+          "uz",
+          "rx",
+          "ry",
+          "rz"
+        ],
         "properties": {
-          "loadCaseId": { "type": "string" },
-          "nodeId": { "type": "string" },
-          "ux": { "type": "number" },
-          "uy": { "type": "number" },
-          "uz": { "type": "number" },
-          "rx": { "type": "number" },
-          "ry": { "type": "number" },
-          "rz": { "type": "number" }
+          "loadCaseId": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "ux": {
+            "type": "number"
+          },
+          "uy": {
+            "type": "number"
+          },
+          "uz": {
+            "type": "number"
+          },
+          "rx": {
+            "type": "number"
+          },
+          "ry": {
+            "type": "number"
+          },
+          "rz": {
+            "type": "number"
+          }
         }
       }
     },
@@ -50,17 +144,55 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["loadCaseId", "nodeId", "fx", "fy", "fz", "mx", "my", "mz", "constrainedDofs"],
+        "required": [
+          "loadCaseId",
+          "nodeId",
+          "fx",
+          "fy",
+          "fz",
+          "mx",
+          "my",
+          "mz",
+          "constrainedDofs"
+        ],
         "properties": {
-          "loadCaseId": { "type": "string" },
-          "nodeId": { "type": "string" },
-          "fx": { "type": "number" },
-          "fy": { "type": "number" },
-          "fz": { "type": "number" },
-          "mx": { "type": "number" },
-          "my": { "type": "number" },
-          "mz": { "type": "number" },
-          "constrainedDofs": { "type": "array", "items": { "enum": ["ux", "uy", "uz", "rx", "ry", "rz"] } }
+          "loadCaseId": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "fx": {
+            "type": "number"
+          },
+          "fy": {
+            "type": "number"
+          },
+          "fz": {
+            "type": "number"
+          },
+          "mx": {
+            "type": "number"
+          },
+          "my": {
+            "type": "number"
+          },
+          "mz": {
+            "type": "number"
+          },
+          "constrainedDofs": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ux",
+                "uy",
+                "uz",
+                "rx",
+                "ry",
+                "rz"
+              ]
+            }
+          }
         }
       }
     },
@@ -69,158 +201,409 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["loadCaseId", "memberId", "coordinateSystem", "i", "j"],
+        "required": [
+          "loadCaseId",
+          "memberId",
+          "coordinateSystem",
+          "i",
+          "j"
+        ],
         "properties": {
-          "loadCaseId": { "type": "string" },
-          "memberId": { "type": "string" },
-          "coordinateSystem": { "const": "local" },
-          "i": { "$ref": "#/$defs/endForce" },
-          "j": { "$ref": "#/$defs/endForce" }
+          "loadCaseId": {
+            "type": "string"
+          },
+          "memberId": {
+            "type": "string"
+          },
+          "coordinateSystem": {
+            "const": "local"
+          },
+          "i": {
+            "$ref": "#/$defs/endForce"
+          },
+          "j": {
+            "$ref": "#/$defs/endForce"
+          }
         }
       }
     },
     "eigenResult": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["massCaseId", "normalization", "modes"],
+      "required": [
+        "massCaseId",
+        "normalization",
+        "modes"
+      ],
       "properties": {
-        "massCaseId": { "type": "string" },
-        "normalization": { "const": "mass" },
+        "massCaseId": {
+          "type": "string"
+        },
+        "normalization": {
+          "const": "mass"
+        },
         "totalMassByDirection": {
           "type": "array",
-          "items": { "$ref": "#/$defs/directionalValue" }
+          "items": {
+            "$ref": "#/$defs/directionalValue"
+          }
         },
         "modes": {
           "type": "array",
-          "items": { "$ref": "#/$defs/eigenMode" }
+          "items": {
+            "$ref": "#/$defs/eigenMode"
+          }
         }
       }
     },
     "influenceResult": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["caseId", "line", "stations", "targets", "targetResults"],
+      "required": [
+        "caseId",
+        "line",
+        "stations",
+        "targets",
+        "targetResults"
+      ],
       "properties": {
-        "caseId": { "type": "string" },
+        "caseId": {
+          "type": "string"
+        },
         "line": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "memberId", "stationCount", "loadDirection", "loadMagnitude"],
+          "required": [
+            "id",
+            "memberId",
+            "stationCount",
+            "loadDirection",
+            "loadMagnitude"
+          ],
           "properties": {
-            "id": { "type": "string" },
-            "memberId": { "type": "string" },
-            "stationCount": { "type": "integer", "minimum": 0 },
-            "loadDirection": { "$ref": "#/$defs/vector3" },
-            "loadMagnitude": { "type": "number" }
+            "id": {
+              "type": "string"
+            },
+            "memberId": {
+              "type": "string"
+            },
+            "stationCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "loadDirection": {
+              "$ref": "#/$defs/vector3"
+            },
+            "loadMagnitude": {
+              "type": "number"
+            }
           }
         },
         "stations": {
           "type": "array",
-          "items": { "$ref": "#/$defs/influenceStation" }
+          "items": {
+            "$ref": "#/$defs/influenceStation"
+          }
         },
         "targets": {
           "type": "array",
-          "items": { "$ref": "#/$defs/influenceTarget" }
+          "items": {
+            "$ref": "#/$defs/influenceTarget"
+          }
         },
         "targetResults": {
           "type": "array",
-          "items": { "$ref": "#/$defs/influenceTargetResult" }
+          "items": {
+            "$ref": "#/$defs/influenceTargetResult"
+          }
         }
       }
     },
-    "warnings": { "type": "array", "items": { "$ref": "#/$defs/message" } },
-    "errors": { "type": "array", "items": { "$ref": "#/$defs/message" } }
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "responseSpectrumResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spectrumCaseId",
+        "direction",
+        "dampingRatio",
+        "combinationMethod",
+        "modalResults",
+        "combinedResult"
+      ],
+      "properties": {
+        "spectrumCaseId": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "dampingRatio": {
+          "type": "number"
+        },
+        "combinationMethod": {
+          "enum": [
+            "SRSS",
+            "CQC"
+          ]
+        },
+        "targetCumulativeMassRatio": {
+          "type": "number"
+        },
+        "usedModes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "modalResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumModalResult"
+          }
+        },
+        "combinedResult": {
+          "$ref": "#/$defs/responseSpectrumCombinedResult"
+        }
+      }
+    }
   },
   "$defs": {
     "endForce": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["fx", "fy", "fz", "mx", "my", "mz"],
+      "required": [
+        "fx",
+        "fy",
+        "fz",
+        "mx",
+        "my",
+        "mz"
+      ],
       "properties": {
-        "fx": { "type": "number" },
-        "fy": { "type": "number" },
-        "fz": { "type": "number" },
-        "mx": { "type": "number" },
-        "my": { "type": "number" },
-        "mz": { "type": "number" }
+        "fx": {
+          "type": "number"
+        },
+        "fy": {
+          "type": "number"
+        },
+        "fz": {
+          "type": "number"
+        },
+        "mx": {
+          "type": "number"
+        },
+        "my": {
+          "type": "number"
+        },
+        "mz": {
+          "type": "number"
+        }
       }
     },
     "message": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["code", "message", "path", "entityType", "entityId"],
+      "required": [
+        "code",
+        "message",
+        "path",
+        "entityType",
+        "entityId"
+      ],
       "properties": {
-        "code": { "type": "string" },
-        "message": { "type": "string" },
-        "path": { "type": ["string", "null"] },
-        "entityType": { "type": ["string", "null"] },
-        "entityId": { "type": ["string", "null"] }
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "entityType": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "entityId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "directionalValue": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["direction", "value"],
+      "required": [
+        "direction",
+        "value"
+      ],
       "properties": {
-        "direction": { "type": "string" },
-        "value": { "type": "number" }
+        "direction": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
       }
     },
     "vector3": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["x", "y", "z"],
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
       "properties": {
-        "x": { "type": "number" },
-        "y": { "type": "number" },
-        "z": { "type": "number" }
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
       }
     },
     "influenceStation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["station", "ratio", "position", "stationIndex"],
+      "required": [
+        "station",
+        "ratio",
+        "position",
+        "stationIndex"
+      ],
       "properties": {
-        "station": { "type": "number" },
-        "ratio": { "type": "number" },
-        "position": { "$ref": "#/$defs/vector3" },
-        "stationIndex": { "type": "integer", "minimum": 0 }
+        "station": {
+          "type": "number"
+        },
+        "ratio": {
+          "type": "number"
+        },
+        "position": {
+          "$ref": "#/$defs/vector3"
+        },
+        "stationIndex": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "influenceTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "type", "component"],
+      "required": [
+        "id",
+        "type",
+        "component"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "type": { "enum": ["displacement", "reaction", "memberEndForce"] },
-        "nodeId": { "type": "string" },
-        "memberId": { "type": "string" },
-        "component": { "type": "string" },
-        "end": { "enum": ["i", "j"] }
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "displacement",
+            "reaction",
+            "memberEndForce"
+          ]
+        },
+        "nodeId": {
+          "type": "string"
+        },
+        "memberId": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        },
+        "end": {
+          "enum": [
+            "i",
+            "j"
+          ]
+        }
       }
     },
     "influenceTargetResult": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["targetId", "values"],
+      "required": [
+        "targetId",
+        "values"
+      ],
       "properties": {
-        "targetId": { "type": "string" },
-        "values": { "type": "array", "items": { "type": "number" } }
+        "targetId": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
       }
     },
     "modeShape": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nodeId", "ux", "uy", "uz", "rx", "ry", "rz"],
+      "required": [
+        "nodeId",
+        "ux",
+        "uy",
+        "uz",
+        "rx",
+        "ry",
+        "rz"
+      ],
       "properties": {
-        "nodeId": { "type": "string" },
-        "ux": { "type": "number" },
-        "uy": { "type": "number" },
-        "uz": { "type": "number" },
-        "rx": { "type": "number" },
-        "ry": { "type": "number" },
-        "rz": { "type": "number" }
+        "nodeId": {
+          "type": "string"
+        },
+        "ux": {
+          "type": "number"
+        },
+        "uy": {
+          "type": "number"
+        },
+        "uz": {
+          "type": "number"
+        },
+        "rx": {
+          "type": "number"
+        },
+        "ry": {
+          "type": "number"
+        },
+        "rz": {
+          "type": "number"
+        }
       }
     },
     "eigenMode": {
@@ -238,31 +621,246 @@
         "shape"
       ],
       "properties": {
-        "modeNo": { "type": "integer", "minimum": 1 },
-        "eigenvalue": { "type": "number" },
-        "circularFrequency": { "type": "number" },
-        "frequency": { "type": "number" },
-        "period": { "type": "number" },
-        "modalMass": { "type": "number" },
+        "modeNo": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "eigenvalue": {
+          "type": "number"
+        },
+        "circularFrequency": {
+          "type": "number"
+        },
+        "frequency": {
+          "type": "number"
+        },
+        "period": {
+          "type": "number"
+        },
+        "modalMass": {
+          "type": "number"
+        },
         "participationFactors": {
           "type": "array",
-          "items": { "$ref": "#/$defs/directionalValue" }
+          "items": {
+            "$ref": "#/$defs/directionalValue"
+          }
         },
         "effectiveMassRatios": {
           "type": "array",
-          "items": { "$ref": "#/$defs/directionalValue" }
+          "items": {
+            "$ref": "#/$defs/directionalValue"
+          }
         },
         "effectiveMasses": {
           "type": "array",
-          "items": { "$ref": "#/$defs/directionalValue" }
+          "items": {
+            "$ref": "#/$defs/directionalValue"
+          }
         },
         "cumulativeEffectiveMassRatios": {
           "type": "array",
-          "items": { "$ref": "#/$defs/directionalValue" }
+          "items": {
+            "$ref": "#/$defs/directionalValue"
+          }
         },
         "shape": {
           "type": "array",
-          "items": { "$ref": "#/$defs/modeShape" }
+          "items": {
+            "$ref": "#/$defs/modeShape"
+          }
+        }
+      }
+    },
+    "responseSpectrumModalResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modeNo",
+        "spectralAcceleration",
+        "displacements"
+      ],
+      "properties": {
+        "modeNo": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "spectralAcceleration": {
+          "type": "number"
+        },
+        "participationFactor": {
+          "type": "number"
+        },
+        "modalCoordinate": {
+          "type": "number"
+        },
+        "displacements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumDisplacement"
+          }
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumReaction"
+          }
+        },
+        "memberSectionForces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memberSectionForce"
+          }
+        }
+      }
+    },
+    "responseSpectrumCombinedResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "displacements"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "SRSS",
+            "CQC"
+          ]
+        },
+        "displacements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumDisplacement"
+          }
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumReaction"
+          }
+        },
+        "memberSectionForces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memberSectionForce"
+          }
+        }
+      }
+    },
+    "responseSpectrumDisplacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "ux",
+        "uy",
+        "uz",
+        "rx",
+        "ry",
+        "rz"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "ux": {
+          "type": "number"
+        },
+        "uy": {
+          "type": "number"
+        },
+        "uz": {
+          "type": "number"
+        },
+        "rx": {
+          "type": "number"
+        },
+        "ry": {
+          "type": "number"
+        },
+        "rz": {
+          "type": "number"
+        }
+      }
+    },
+    "responseSpectrumReaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "fx",
+        "fy",
+        "fz",
+        "mx",
+        "my",
+        "mz"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "fx": {
+          "type": "number"
+        },
+        "fy": {
+          "type": "number"
+        },
+        "fz": {
+          "type": "number"
+        },
+        "mx": {
+          "type": "number"
+        },
+        "my": {
+          "type": "number"
+        },
+        "mz": {
+          "type": "number"
+        },
+        "constrainedDofs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ux",
+              "uy",
+              "uz",
+              "rx",
+              "ry",
+              "rz"
+            ]
+          }
+        }
+      }
+    },
+    "memberSectionForce": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberId",
+        "station",
+        "component",
+        "value"
+      ],
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "station": {
+          "type": "number"
+        },
+        "component": {
+          "enum": [
+            "N",
+            "Qy",
+            "Qz",
+            "Mx",
+            "My",
+            "Mz"
+          ]
+        },
+        "value": {
+          "type": "number"
         }
       }
     }

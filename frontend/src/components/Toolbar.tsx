@@ -1,4 +1,4 @@
-import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
+import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves, Activity } from "lucide-react";
 
 type ToolbarProps = {
   projectName: string;
@@ -16,6 +16,7 @@ type ToolbarProps = {
   onRun: () => void;
   onRunEigen: () => void;
   onRunInfluence: () => void;
+  onRunResponseSpectrum: () => void;
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
@@ -37,6 +38,7 @@ export function Toolbar({
   onRun,
   onRunEigen,
   onRunInfluence,
+  onRunResponseSpectrum,
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
@@ -88,6 +90,10 @@ export function Toolbar({
           <button type="button" onClick={onRunEigen} disabled={!canRun} title="固有値解析を実行します。">
             <Waves size={16} />
             固有値
+          </button>
+          <button type="button" onClick={onRunResponseSpectrum} disabled={!canRun} title="応答スペクトル解析を実行します。">
+            <Activity size={16} />
+            応答
           </button>
           <button type="button" onClick={onRunInfluence} disabled={!canRun} title="選択部材の影響線解析を実行します。">
             <LineChart size={16} />

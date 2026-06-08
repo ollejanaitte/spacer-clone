@@ -196,6 +196,36 @@ export function App() {
     }
   };
 
+  const runResponseSpectrumAnalysis = async () => {
+    setRunning(true);
+    setApiErrors([]);
+    try {
+      const validationResponse = validation ?? (await apiClient.validateProject(project));
+      setValidation(validationResponse);
+      if (!validationResponse.valid) {
+        setValidationNotice({
+          kind: "ng",
+          text: "入力チェックNGです。下部のエラー一覧を確認してください。",
+        });
+        setBottomTab("errors");
+        log("入力チェックNGのため応答スペクトル解析を実行できません。");
+        return;
+      }
+      const response = await apiClient.runResponseSpectrumAnalysis(project);
+      setResult(response.result);
+      setResultExports(null);
+      setSelectedResponseSpectrumResult("SRSS");
+      setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
+      log(`応答スペクトル解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
+    } catch (error) {
+      pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("応答スペクトル解析APIのリクエストに失敗しました。");
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const runInfluenceAnalysis = async () => {
     setRunning(true);
     setApiErrors([]);
@@ -324,6 +354,7 @@ export function App() {
         onRun={() => void runAnalysis()}
         onRunEigen={() => void runEigenAnalysis()}
         onRunInfluence={() => void runInfluenceAnalysis()}
+        onRunResponseSpectrum={() => void runResponseSpectrumAnalysis()}
         onExportResultJson={exportResultJson}
         onExportResultCsv={exportResultCsv}
         onExportResultPdf={exportResultPdf}

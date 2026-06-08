@@ -111,6 +111,15 @@ export type AnalysisSettings = {
     massCaseId: string;
     modeCount: number;
   };
+  responseSpectrum?: {
+    massCaseId?: string;
+    modeCount: number;
+    spectrumCaseId: string;
+    direction: "X" | "Y" | "Z";
+    dampingRatio: number;
+    targetCumulativeMassRatio: number;
+    spectrumPoints: Array<{ period: number; value: number }>;
+  };
   influence?: {
     caseId: string;
     line: {
@@ -300,6 +309,8 @@ export type ResponseSpectrumResult = {
   direction: string;
   dampingRatio: number;
   combinationMethod: ResponseSpectrumCombinationMethod;
+  targetCumulativeMassRatio?: number;
+  usedModes?: number[];
   modalResults: ResponseSpectrumModalResult[];
   combinedResult: ResponseSpectrumCombinedResult;
 };

@@ -13,6 +13,10 @@ type InfluenceRunResponse = {
   result: AnalysisResult;
 };
 
+type ResponseSpectrumRunResponse = {
+  result: AnalysisResult;
+};
+
 type ExampleResponse = {
   examples: Array<{
     id: string;
@@ -49,6 +53,25 @@ export function buildEigenAnalysisRequest(project: ProjectModel) {
     massCaseId: settings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
     modeCount: settings?.modeCount ?? 3,
     normalization: "mass" as const,
+  };
+}
+
+export function buildResponseSpectrumAnalysisRequest(project: ProjectModel) {
+  const settings = project.analysisSettings.responseSpectrum;
+  const eigenSettings = project.analysisSettings.eigen;
+  return {
+    project,
+    massCaseId: settings?.massCaseId ?? eigenSettings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
+    modeCount: settings?.modeCount ?? eigenSettings?.modeCount ?? 3,
+    spectrumCaseId: settings?.spectrumCaseId ?? "spec-1",
+    direction: settings?.direction ?? "X",
+    dampingRatio: settings?.dampingRatio ?? 0.05,
+    targetCumulativeMassRatio: settings?.targetCumulativeMassRatio ?? 0.9,
+    spectrumPoints: settings?.spectrumPoints ?? [
+      { period: 0, value: 1 },
+      { period: 0.1, value: 1 },
+      { period: 1, value: 1 },
+    ],
   };
 }
 
@@ -129,6 +152,13 @@ export const apiClient = {
 
   runEigenAnalysis(project: ProjectModel): Promise<EigenRunResponse> {
     return postJson<EigenRunResponse>("/api/analysis/eigen", buildEigenAnalysisRequest(project));
+  },
+
+  runResponseSpectrumAnalysis(project: ProjectModel): Promise<ResponseSpectrumRunResponse> {
+    return postJson<ResponseSpectrumRunResponse>(
+      "/api/analysis/response-spectrum",
+      buildResponseSpectrumAnalysisRequest(project),
+    );
   },
 
   runInfluenceAnalysis(project: ProjectModel): Promise<InfluenceRunResponse> {

@@ -176,6 +176,9 @@
         },
         "influence": {
           "$ref": "#/$defs/influenceAnalysisSettings"
+        },
+        "responseSpectrum": {
+          "$ref": "#/$defs/responseSpectrumAnalysisSettings"
         }
       }
     }
@@ -535,7 +538,10 @@
     "eigenAnalysisSettings": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["massCaseId", "modeCount"],
+      "required": [
+        "massCaseId",
+        "modeCount"
+      ],
       "properties": {
         "massCaseId": {
           "type": "string",
@@ -550,7 +556,11 @@
     "influenceAnalysisSettings": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["caseId", "line", "targets"],
+      "required": [
+        "caseId",
+        "line",
+        "targets"
+      ],
       "properties": {
         "caseId": {
           "type": "string",
@@ -571,7 +581,13 @@
     "influenceLineSettings": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "memberId", "stationCount", "direction", "magnitude"],
+      "required": [
+        "id",
+        "memberId",
+        "stationCount",
+        "direction",
+        "magnitude"
+      ],
       "properties": {
         "id": {
           "type": "string",
@@ -597,14 +613,22 @@
     "influenceTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "type", "component"],
+      "required": [
+        "id",
+        "type",
+        "component"
+      ],
       "properties": {
         "id": {
           "type": "string",
           "minLength": 1
         },
         "type": {
-          "enum": ["displacement", "reaction", "memberEndForce"]
+          "enum": [
+            "displacement",
+            "reaction",
+            "memberEndForce"
+          ]
         },
         "nodeId": {
           "type": "string",
@@ -619,18 +643,31 @@
           "minLength": 1
         },
         "end": {
-          "enum": ["i", "j"]
+          "enum": [
+            "i",
+            "j"
+          ]
         }
       }
     },
     "vector3": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["x", "y", "z"],
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
       "properties": {
-        "x": {"type": "number"},
-        "y": {"type": "number"},
-        "z": {"type": "number"}
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
       }
     },
     "massItem": {
@@ -671,6 +708,73 @@
           "minimum": 0
         },
         "irz": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "responseSpectrumAnalysisSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modeCount",
+        "spectrumCaseId",
+        "direction",
+        "dampingRatio",
+        "targetCumulativeMassRatio",
+        "spectrumPoints"
+      ],
+      "properties": {
+        "massCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modeCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "spectrumCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "dampingRatio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "targetCumulativeMassRatio": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "spectrumPoints": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/responseSpectrumPoint"
+          }
+        }
+      }
+    },
+    "responseSpectrumPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period",
+        "value"
+      ],
+      "properties": {
+        "period": {
+          "type": "number",
+          "minimum": 0
+        },
+        "value": {
           "type": "number",
           "minimum": 0
         }

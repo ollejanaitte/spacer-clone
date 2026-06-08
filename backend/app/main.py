@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from backend.app.reports import build_result_exports
-from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, validate_project
+from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, run_response_spectrum_analysis, validate_project
 
 APP_VERSION = "0.1.0"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -146,6 +146,34 @@ def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
             mass_case_id=mass_case_id,
             mode_count=mode_count,
         )
+    return safe_json_response({"result": result})
+
+
+@app.post("/api/analysis/response-spectrum")
+def run_response_spectrum_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    analysis_settings = project.get("analysisSettings", {})
+    saved_response = (
+        analysis_settings.get("responseSpectrum", {})
+        if isinstance(analysis_settings, dict)
+        else {}
+    )
+    request = {**saved_response, **payload}
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        result = failed_result(
+            project,
+            {
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="response_spectrum",
+        )
+    else:
+        result = run_response_spectrum_analysis(copy.deepcopy(project), request)
     return safe_json_response({"result": result})
 
 

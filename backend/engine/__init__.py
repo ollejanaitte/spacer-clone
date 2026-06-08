@@ -6,6 +6,7 @@ from .errors import AnalysisError
 from .model import Model, parse_model
 from .eigen import run_eigen_analysis, solve_eigen_model
 from .influence import run_influence_analysis, solve_influence_model
+from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
 
 
@@ -24,6 +25,7 @@ __all__ = [
     "run_eigen_analysis",
     "run_influence_analysis",
     "run_linear_static_analysis",
+    "run_response_spectrum_analysis",
     "solve_eigen_model",
     "solve_influence_model",
     "solve_model",
