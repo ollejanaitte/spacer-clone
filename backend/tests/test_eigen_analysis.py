@@ -196,3 +196,18 @@ def mode_shape(mode: dict[str, Any], node_id: str) -> dict[str, Any]:
 
 def directional_value(items: list[dict[str, Any]], direction: str) -> float:
     return next(item["value"] for item in items if item["direction"] == direction)
+
+
+def test_effective_mass_outputs_are_reported_by_direction() -> None:
+    project = eigen_cantilever("effective-mass-output", mass_y=TIP_MASS)
+
+    result = run_eigen_analysis(project, mass_case_id="mass-1", mode_count=1)
+
+    eigen = result["eigenResult"]
+    mode = eigen["modes"][0]
+    assert_close(directional_value(eigen["totalMassByDirection"], "Y"), TIP_MASS)
+    assert_close(directional_value(mode["effectiveMasses"], "Y"), TIP_MASS)
+    assert_close(directional_value(mode["effectiveMassRatios"], "Y"), 1.0)
+    assert_close(directional_value(mode["cumulativeEffectiveMassRatios"], "Y"), 1.0)
+    assert_close(directional_value(mode["effectiveMasses"], "X"), 0.0)
+    assert_close(directional_value(mode["cumulativeEffectiveMassRatios"], "X"), 0.0)

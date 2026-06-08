@@ -145,6 +145,7 @@ def solve_eigen_model(
         )
 
     order = np.argsort(eigenvalues)[:mode_count]
+    total_mass_by_direction = total_mass_values(mmm, master_dofs)
     modes = [
         build_mode_result(
             int(index) + 1,
@@ -156,9 +157,11 @@ def solve_eigen_model(
             recovery,
             dof_map,
             model,
+            total_mass_by_direction,
         )
         for index in order
     ]
+    apply_cumulative_effective_mass_ratios(modes)
     finished_at = iso_now()
     return {
         "projectId": model.project.id,
@@ -183,6 +186,7 @@ def solve_eigen_model(
         "eigenResult": {
             "massCaseId": mass_case.id,
             "normalization": "mass",
+            "totalMassByDirection": total_mass_by_direction,
             "modes": modes,
         },
         "warnings": [],
@@ -274,6 +278,7 @@ def build_mode_result(
     recovery: NDArray[np.float64],
     dof_map: Any,
     model: Model,
+    total_mass_by_direction: list[dict[str, float | str]],
 ) -> dict[str, Any]:
     modal_mass = float(vector.T @ mass_matrix @ vector)
     if modal_mass <= 0.0 or not math.isfinite(modal_mass):
@@ -298,6 +303,10 @@ def build_mode_result(
         "effectiveMassRatios": effective_mass_ratios(
             normalized, mass_matrix, master_dofs
         ),
+        "effectiveMasses": effective_masses(
+            normalized, mass_matrix, master_dofs, total_mass_by_direction
+        ),
+        "cumulativeEffectiveMassRatios": [],
         "shape": [
             {"nodeId": node.id}
             | dict(
@@ -309,6 +318,50 @@ def build_mode_result(
             for node in model.nodes
         ],
     }
+
+
+def total_mass_values(
+    mass_matrix: NDArray[np.float64],
+    mass_dofs: NDArray[np.int_],
+) -> list[dict[str, float | str]]:
+    result: list[dict[str, float | str]] = []
+    for direction, offset in (("X", 0), ("Y", 1), ("Z", 2)):
+        r = direction_vector(mass_dofs, offset)
+        total_mass = float(r.T @ mass_matrix @ r)
+        result.append({"direction": direction, "value": clean(total_mass)})
+    return result
+
+
+def effective_masses(
+    vector: NDArray[np.float64],
+    mass_matrix: NDArray[np.float64],
+    mass_dofs: NDArray[np.int_],
+    total_mass_by_direction: list[dict[str, float | str]],
+) -> list[dict[str, float | str]]:
+    totals = {str(item["direction"]): float(item["value"]) for item in total_mass_by_direction}
+    ratios = effective_mass_ratios(vector, mass_matrix, mass_dofs)
+    return [
+        {
+            "direction": item["direction"],
+            "value": clean(float(item["value"]) * totals.get(str(item["direction"]), 0.0)),
+        }
+        for item in ratios
+    ]
+
+
+def apply_cumulative_effective_mass_ratios(modes: list[dict[str, Any]]) -> None:
+    cumulative = {"X": 0.0, "Y": 0.0, "Z": 0.0}
+    for mode in modes:
+        values: list[dict[str, float | str]] = []
+        ratios = {
+            str(item.get("direction", "")): float(item.get("value", 0.0))
+            for item in mode.get("effectiveMassRatios", [])
+            if isinstance(item, dict)
+        }
+        for direction in ("X", "Y", "Z"):
+            cumulative[direction] += ratios.get(direction, 0.0)
+            values.append({"direction": direction, "value": clean(cumulative[direction])})
+        mode["cumulativeEffectiveMassRatios"] = values
 
 
 def participation_values(

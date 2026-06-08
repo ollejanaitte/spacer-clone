@@ -269,6 +269,7 @@ export function App() {
     downloadText("displacements.csv", csvExports["displacements.csv"], "text/csv");
     downloadText("reactions.csv", csvExports["reactions.csv"], "text/csv");
     downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
+    downloadText("eigen_modes.csv", csvExports["eigen_modes.csv"], "text/csv");
     downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
     log("解析結果CSVを出力しました。");
   };

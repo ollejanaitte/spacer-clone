@@ -31,6 +31,29 @@ CSV_HEADERS = {
         "my",
         "mz",
     ],
+    "eigen_modes.csv": [
+        "mode_no",
+        "eigenvalue",
+        "circular_frequency",
+        "frequency",
+        "period",
+        "modal_mass",
+        "participation_factor_x",
+        "participation_factor_y",
+        "participation_factor_z",
+        "effective_mass_x",
+        "effective_mass_y",
+        "effective_mass_z",
+        "effective_mass_ratio_x",
+        "effective_mass_ratio_y",
+        "effective_mass_ratio_z",
+        "cumulative_effective_mass_ratio_x",
+        "cumulative_effective_mass_ratio_y",
+        "cumulative_effective_mass_ratio_z",
+        "total_mass_x",
+        "total_mass_y",
+        "total_mass_z",
+    ],
     "influence_lines.csv": [
         "case_id",
         "line_id",
@@ -59,6 +82,7 @@ def build_result_exports(result: dict[str, Any]) -> dict[str, str]:
         "displacements.csv": displacements_csv(result),
         "reactions.csv": reactions_csv(result),
         "member_section_forces.csv": member_section_forces_csv(result),
+        "eigen_modes.csv": eigen_modes_csv(result),
         "influence_lines.csv": influence_lines_csv(result),
     }
 
@@ -134,6 +158,49 @@ def member_section_forces_csv(result: dict[str, Any]) -> str:
             )
         )
     return write_csv(CSV_HEADERS["member_section_forces.csv"], output_rows)
+
+
+def eigen_modes_csv(result: dict[str, Any]) -> str:
+    eigen = result.get("eigenResult")
+    if not isinstance(eigen, dict):
+        return write_csv(CSV_HEADERS["eigen_modes.csv"], [])
+    totals = directional_map(eigen.get("totalMassByDirection", []))
+    rows = []
+    for mode in eigen.get("modes", []):
+        participation = directional_map(mode.get("participationFactors", []))
+        ratios = directional_map(mode.get("effectiveMassRatios", []))
+        masses = directional_map(mode.get("effectiveMasses", []))
+        cumulative = directional_map(mode.get("cumulativeEffectiveMassRatios", []))
+        rows.append({
+            "mode_no": mode.get("modeNo", ""),
+            "eigenvalue": mode.get("eigenvalue", ""),
+            "circular_frequency": mode.get("circularFrequency", ""),
+            "frequency": mode.get("frequency", ""),
+            "period": mode.get("period", ""),
+            "modal_mass": mode.get("modalMass", ""),
+            "participation_factor_x": participation.get("X", ""),
+            "participation_factor_y": participation.get("Y", ""),
+            "participation_factor_z": participation.get("Z", ""),
+            "effective_mass_x": masses.get("X", ""),
+            "effective_mass_y": masses.get("Y", ""),
+            "effective_mass_z": masses.get("Z", ""),
+            "effective_mass_ratio_x": ratios.get("X", ""),
+            "effective_mass_ratio_y": ratios.get("Y", ""),
+            "effective_mass_ratio_z": ratios.get("Z", ""),
+            "cumulative_effective_mass_ratio_x": cumulative.get("X", ""),
+            "cumulative_effective_mass_ratio_y": cumulative.get("Y", ""),
+            "cumulative_effective_mass_ratio_z": cumulative.get("Z", ""),
+            "total_mass_x": totals.get("X", ""),
+            "total_mass_y": totals.get("Y", ""),
+            "total_mass_z": totals.get("Z", ""),
+        })
+    return write_csv(CSV_HEADERS["eigen_modes.csv"], rows)
+
+
+def directional_map(items: Any) -> dict[str, Any]:
+    if not isinstance(items, list):
+        return {}
+    return {str(item.get("direction", "")): item.get("value", "") for item in items if isinstance(item, dict)}
 
 
 def influence_lines_csv(result: dict[str, Any]) -> str:

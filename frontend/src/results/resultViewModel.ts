@@ -73,6 +73,9 @@ export type ResultViewModel = {
 export type EigenModeViewModel = {
   resultId: string;
   selectedModeNo: number;
+  totalMassX: number | null;
+  totalMassY: number | null;
+  totalMassZ: number | null;
   modes: Array<{
     modeNo: number;
     eigenvalue: number;
@@ -86,6 +89,12 @@ export type EigenModeViewModel = {
     effectiveMassRatioX: number;
     effectiveMassRatioY: number;
     effectiveMassRatioZ: number;
+    effectiveMassX: number | null;
+    effectiveMassY: number | null;
+    effectiveMassZ: number | null;
+    cumulativeEffectiveMassRatioX: number | null;
+    cumulativeEffectiveMassRatioY: number | null;
+    cumulativeEffectiveMassRatioZ: number | null;
     shape: EigenModeShape[];
   }>;
 };
@@ -275,6 +284,9 @@ export function buildEigenModeViewModel(
   return {
     resultId: `${result.projectId}:eigen`,
     selectedModeNo: normalizedModeNo,
+    totalMassX: optionalDirectionalValue(result.eigenResult?.totalMassByDirection, "X"),
+    totalMassY: optionalDirectionalValue(result.eigenResult?.totalMassByDirection, "Y"),
+    totalMassZ: optionalDirectionalValue(result.eigenResult?.totalMassByDirection, "Z"),
     modes: modes.map((mode) => ({
       modeNo: mode.modeNo,
       eigenvalue: mode.eigenvalue,
@@ -288,6 +300,12 @@ export function buildEigenModeViewModel(
       effectiveMassRatioX: directionalValue(mode.effectiveMassRatios, "X"),
       effectiveMassRatioY: directionalValue(mode.effectiveMassRatios, "Y"),
       effectiveMassRatioZ: directionalValue(mode.effectiveMassRatios, "Z"),
+      effectiveMassX: optionalDirectionalValue(mode.effectiveMasses, "X"),
+      effectiveMassY: optionalDirectionalValue(mode.effectiveMasses, "Y"),
+      effectiveMassZ: optionalDirectionalValue(mode.effectiveMasses, "Z"),
+      cumulativeEffectiveMassRatioX: optionalDirectionalValue(mode.cumulativeEffectiveMassRatios, "X"),
+      cumulativeEffectiveMassRatioY: optionalDirectionalValue(mode.cumulativeEffectiveMassRatios, "Y"),
+      cumulativeEffectiveMassRatioZ: optionalDirectionalValue(mode.cumulativeEffectiveMassRatios, "Z"),
       shape: mode.shape,
     })),
   };
@@ -295,6 +313,10 @@ export function buildEigenModeViewModel(
 
 function directionalValue(items: DirectionalValue[], direction: string): number {
   return items.find((item) => item.direction === direction)?.value ?? 0;
+}
+
+function optionalDirectionalValue(items: DirectionalValue[] | undefined, direction: string): number | null {
+  return items?.find((item) => item.direction === direction)?.value ?? null;
 }
 
 export function buildResponseSpectrumViewModel(

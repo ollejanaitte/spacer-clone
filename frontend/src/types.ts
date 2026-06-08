@@ -236,12 +236,15 @@ export type EigenModeResult = {
   modalMass: number;
   participationFactors: DirectionalValue[];
   effectiveMassRatios: DirectionalValue[];
+  effectiveMasses?: DirectionalValue[];
+  cumulativeEffectiveMassRatios?: DirectionalValue[];
   shape: EigenModeShape[];
 };
 
 export type EigenResult = {
   massCaseId: string;
   normalization: "mass";
+  totalMassByDirection?: DirectionalValue[];
   modes: EigenModeResult[];
 };
 
@@ -337,6 +340,7 @@ export type ResultExports = {
   "displacements.csv": string;
   "reactions.csv": string;
   "member_section_forces.csv": string;
+  "eigen_modes.csv": string;
   "influence_lines.csv": string;
 };
 

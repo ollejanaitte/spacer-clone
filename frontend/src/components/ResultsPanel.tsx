@@ -302,6 +302,15 @@ function ResultTablesContent({
       {activeView === "eigen" && eigenModes.length > 0 && (
         <>
           <CompactTable
+            title="方向別総質量（kN·s²/m）"
+            rows={[
+              { direction: "X", totalMass: eigenViewModel?.totalMassX ?? null },
+              { direction: "Y", totalMass: eigenViewModel?.totalMassY ?? null },
+              { direction: "Z", totalMass: eigenViewModel?.totalMassZ ?? null },
+            ]}
+            columns={["direction", "totalMass"]}
+          />
+          <CompactTable
             title="固有モード一覧"
             rows={eigenModes.map((mode) => ({
               modeNo: mode.modeNo,
@@ -316,6 +325,12 @@ function ResultTablesContent({
               effectiveMassRatioX: mode.effectiveMassRatioX,
               effectiveMassRatioY: mode.effectiveMassRatioY,
               effectiveMassRatioZ: mode.effectiveMassRatioZ,
+              effectiveMassX: mode.effectiveMassX,
+              effectiveMassY: mode.effectiveMassY,
+              effectiveMassZ: mode.effectiveMassZ,
+              cumulativeEffectiveMassRatioX: mode.cumulativeEffectiveMassRatioX,
+              cumulativeEffectiveMassRatioY: mode.cumulativeEffectiveMassRatioY,
+              cumulativeEffectiveMassRatioZ: mode.cumulativeEffectiveMassRatioZ,
             }))}
             columns={[
               "modeNo",
@@ -330,6 +345,12 @@ function ResultTablesContent({
               "effectiveMassRatioX",
               "effectiveMassRatioY",
               "effectiveMassRatioZ",
+              "effectiveMassX",
+              "effectiveMassY",
+              "effectiveMassZ",
+              "cumulativeEffectiveMassRatioX",
+              "cumulativeEffectiveMassRatioY",
+              "cumulativeEffectiveMassRatioZ",
             ]}
             onRowClick={(row) => onSelectedEigenModeChange(Number(row.modeNo))}
           />
@@ -591,7 +612,7 @@ function MessageTable({ messages, empty }: { messages: StructuredMessage[]; empt
 function formatCell(value: unknown): string {
   if (typeof value === "number") return formatNumber(value);
   if (Array.isArray(value)) return value.join(", ");
-  return String(value ?? "");
+  return value == null ? "-" : String(value);
 }
 
 function columnLabel(column: string): string {
@@ -609,6 +630,8 @@ function columnLabel(column: string): string {
     min: "最小",
     max: "最大",
     value: "値",
+    direction: "方向",
+    totalMass: "総質量",
     method: "方法",
     ux: "UX",
     uy: "UY",
@@ -640,6 +663,12 @@ function columnLabel(column: string): string {
     effectiveMassRatioX: "有効質量比 X",
     effectiveMassRatioY: "有効質量比 Y",
     effectiveMassRatioZ: "有効質量比 Z",
+    effectiveMassX: "有効質量 X",
+    effectiveMassY: "有効質量 Y",
+    effectiveMassZ: "有効質量 Z",
+    cumulativeEffectiveMassRatioX: "累積参加率 X",
+    cumulativeEffectiveMassRatioY: "累積参加率 Y",
+    cumulativeEffectiveMassRatioZ: "累積参加率 Z",
   };
   return labels[column] ?? column;
 }

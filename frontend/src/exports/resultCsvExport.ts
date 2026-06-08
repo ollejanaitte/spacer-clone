@@ -22,6 +22,29 @@ const memberForceHeaders = [
   "my",
   "mz",
 ] as const;
+const eigenModeHeaders = [
+  "mode_no",
+  "eigenvalue",
+  "circular_frequency",
+  "frequency",
+  "period",
+  "modal_mass",
+  "participation_factor_x",
+  "participation_factor_y",
+  "participation_factor_z",
+  "effective_mass_x",
+  "effective_mass_y",
+  "effective_mass_z",
+  "effective_mass_ratio_x",
+  "effective_mass_ratio_y",
+  "effective_mass_ratio_z",
+  "cumulative_effective_mass_ratio_x",
+  "cumulative_effective_mass_ratio_y",
+  "cumulative_effective_mass_ratio_z",
+  "total_mass_x",
+  "total_mass_y",
+  "total_mass_z",
+] as const;
 const influenceLineHeaders = [
   "case_id",
   "line_id",
@@ -48,6 +71,7 @@ export function buildResultCsvExports(result: AnalysisResult): ResultExports {
     "displacements.csv": writeCsv(displacementHeaders, collectDisplacements(result)),
     "reactions.csv": writeCsv(reactionHeaders, collectReactions(result)),
     "member_section_forces.csv": writeCsv(memberForceHeaders, collectMemberSectionForces(result)),
+    "eigen_modes.csv": writeCsv(eigenModeHeaders, collectEigenModes(result)),
     "influence_lines.csv": writeCsv(influenceLineHeaders, collectInfluenceLines(result)),
   };
 }
@@ -92,6 +116,45 @@ function collectMemberSectionForces(result: AnalysisResult): CsvRow[] {
     rows.push(...sectionForceRows(response.combinedResult.method, response.combinedResult.memberSectionForces ?? []));
   }
   return rows;
+}
+
+function collectEigenModes(result: AnalysisResult): CsvRow[] {
+  const eigen = result.eigenResult;
+  if (!eigen) return [];
+  const totals = directionalMap(eigen.totalMassByDirection);
+  return eigen.modes.map((mode) => {
+    const participation = directionalMap(mode.participationFactors);
+    const ratios = directionalMap(mode.effectiveMassRatios);
+    const masses = directionalMap(mode.effectiveMasses);
+    const cumulative = directionalMap(mode.cumulativeEffectiveMassRatios);
+    return {
+      mode_no: mode.modeNo,
+      eigenvalue: mode.eigenvalue,
+      circular_frequency: mode.circularFrequency,
+      frequency: mode.frequency,
+      period: mode.period,
+      modal_mass: mode.modalMass,
+      participation_factor_x: participation.X ?? "",
+      participation_factor_y: participation.Y ?? "",
+      participation_factor_z: participation.Z ?? "",
+      effective_mass_x: masses.X ?? "",
+      effective_mass_y: masses.Y ?? "",
+      effective_mass_z: masses.Z ?? "",
+      effective_mass_ratio_x: ratios.X ?? "",
+      effective_mass_ratio_y: ratios.Y ?? "",
+      effective_mass_ratio_z: ratios.Z ?? "",
+      cumulative_effective_mass_ratio_x: cumulative.X ?? "",
+      cumulative_effective_mass_ratio_y: cumulative.Y ?? "",
+      cumulative_effective_mass_ratio_z: cumulative.Z ?? "",
+      total_mass_x: totals.X ?? "",
+      total_mass_y: totals.Y ?? "",
+      total_mass_z: totals.Z ?? "",
+    };
+  });
+}
+
+function directionalMap(items: Array<{ direction: string; value: number }> | undefined): Record<string, number> {
+  return Object.fromEntries((items ?? []).map((item) => [item.direction, item.value]));
 }
 
 function collectInfluenceLines(result: AnalysisResult): CsvRow[] {

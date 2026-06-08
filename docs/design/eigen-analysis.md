@@ -307,3 +307,13 @@ M_eff = Γ^2
 * 整合質量
 * 減衰モデル拡張
 * 時刻歴解析の準備
+
+## Phase E-1b: 有効質量・累積参加率の出力
+
+固有値解析結果には、既存の `participationFactors`、`effectiveMassRatios`、`modalMass` を維持したうえで、実務確認用に以下を追加する。
+
+- `totalMassByDirection`: X/Y/Z 方向別の解析対象質量。拘束自由度を除いた現在の有効質量比分母 `rᵀMr` と同じ値とする。単位は UI/docs 上で `kN·s²/m` と表記する。
+- `effectiveMasses`: 各モード・各方向の絶対有効質量。
+- `cumulativeEffectiveMassRatios`: モード順に加算した累積有効質量比。強制的に 1.0 へ丸めない。
+
+方向は X/Y/Z 固定とし、回転慣性 `irx/iry/irz` は本フェーズでは使用しない。`totalMass` が 0 の方向では、有効質量、有効質量比、累積有効質量比を 0 とする。応答スペクトル解析、CQC は本フェーズの対象外とする。

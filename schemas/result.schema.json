@@ -86,6 +86,10 @@
       "properties": {
         "massCaseId": { "type": "string" },
         "normalization": { "const": "mass" },
+        "totalMassByDirection": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/directionalValue" }
+        },
         "modes": {
           "type": "array",
           "items": { "$ref": "#/$defs/eigenMode" }
@@ -245,6 +249,14 @@
           "items": { "$ref": "#/$defs/directionalValue" }
         },
         "effectiveMassRatios": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/directionalValue" }
+        },
+        "effectiveMasses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/directionalValue" }
+        },
+        "cumulativeEffectiveMassRatios": {
           "type": "array",
           "items": { "$ref": "#/$defs/directionalValue" }
         },
