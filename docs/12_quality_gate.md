@@ -67,7 +67,21 @@ Every pull request must satisfy these acceptance criteria unless the PR explicit
   - `docs/05_analysis_engine_spec.md`
   - `docs/06_result_schema.md`
   - `docs/07_api_spec.md`
+  - `docs/design/eigen-analysis.md`
+  - `docs/design/response-spectrum-analysis.md`
+  - `docs/design/result-schema.md`
 - If implementation intentionally differs, update the relevant spec in the same PR.
+
+### Dynamic Analysis (Phase E)
+
+When eigen or response spectrum code changes:
+
+- Eigen results must validate against `schemas/result.schema.json`.
+- Response spectrum results must include both `eigenResult` and `responseSpectrumResult` on success.
+- `effectiveMasses`, `effectiveMassRatios`, and `cumulativeEffectiveMassRatios` must not produce `NaN` or `Infinity`.
+- `cumulativeEffectiveMassRatios` must not be forced to `1.0`.
+- SRSS MVP must keep `combinationMethod: "SRSS"` and must not enable CQC in MVP paths.
+- `eigen_modes.csv` column order must stay aligned with `docs/design/eigen-analysis.md`.
 
 ## PR Acceptance Checklist
 
@@ -94,4 +108,6 @@ A PR must not be accepted if:
 - It forces GPU compatibility flags unconditionally for all users.
 - It stores GPU compatibility settings in `project.json` or analysis result JSON.
 - It allows WebGL initialization failure to white-screen the app.
+- It changes eigen or response spectrum result field names without updating design docs and schema references.
+- It returns non-empty static result arrays for eigen or response spectrum success paths when design docs require empty arrays.
 - It modifies `docs/requirements_extraction.md` without a clear documentation reason.

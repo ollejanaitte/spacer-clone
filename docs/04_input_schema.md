@@ -20,14 +20,15 @@ MVPで扱う入力は以下に限定する。
 
 ## 3. 非対象範囲
 
-以下の入力項目はMVPで定義しない。
+以下の入力項目は MVP 初期版では定義しない。
 
 - 影響線載荷点、格子形状、ライン、移動荷重、活荷重自動載荷。
-- 固有値解析、応答スペクトル解析の入力。
 - 温度荷重、プレストレス、初期張力。
 - 部材バネ、節点間バネ、連成バネ。
 - 部材端リリース、高度な荷重組合せ。
 - DXF、外部ソフト連携、ライセンス情報。
+
+固有値解析・応答スペクトル解析の入力は、Phase E 拡張として `schemas/project.schema.json` および [eigen-analysis.md](design/eigen-analysis.md)、[response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。本書第 4 節は線形静的 MVP 基準を示す。
 
 ## 4. データ構造
 
@@ -239,7 +240,63 @@ MVPでは `type` は `static` のみ。
 
 MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
 
-## 5. エラー処理
+## 5. Phase E 拡張（固有値・応答スペクトル）
+
+線形静的 MVP 完了後、以下を `project.json` へ追加する。正本は `schemas/project.schema.json` である。
+
+### massCases（任意配列）
+
+```json
+{
+  "id": "mass-1",
+  "name": "固有値解析用質量",
+  "method": "lumped",
+  "source": "manual",
+  "items": [
+    {
+      "nodeId": "N1",
+      "mx": 10.0,
+      "my": 10.0,
+      "mz": 10.0,
+      "irx": 0.0,
+      "iry": 0.0,
+      "irz": 0.0
+    }
+  ]
+}
+```
+
+MVP では `method: "lumped"`、`source: "manual"` のみ。`mx/my/mz` を主対象とし、`irx/iry/irz` は 0 固定。
+
+### analysisSettings.eigen（任意）
+
+```json
+{
+  "massCaseId": "mass-1",
+  "modeCount": 10
+}
+```
+
+### analysisSettings.responseSpectrum（任意）
+
+```json
+{
+  "modeCount": 10,
+  "massCaseId": "mass-1",
+  "spectrumCaseId": "spec-1",
+  "direction": "X",
+  "dampingRatio": 0.05,
+  "targetCumulativeMassRatio": 0.9,
+  "spectrumPoints": [
+    { "period": 0.1, "value": 1.0 },
+    { "period": 1.0, "value": 0.5 }
+  ]
+}
+```
+
+スペクトルはトップレベル `spectrumCases` ではなく、`spectrumPoints` 点列で保持する。補間は **線形補間**、周期範囲外は **端値固定** とする。詳細は [response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。
+
+## 6. エラー処理
 
 - 必須フィールド欠落は `SCHEMA_ERROR`。
 - ID重複は `DUPLICATE_ID`。
@@ -249,7 +306,7 @@ MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
 - 支点不足は検証または解析で `MODEL_UNSTABLE`。
 - エラーには `path`、`entityType`、`entityId` を可能な限り含める。
 
-## 6. テスト観点
+## 7. テスト観点
 
 - 正常な片持梁モデルがスキーマ検証を通る。
 - 必須トップレベル項目欠落を検出する。
@@ -258,10 +315,11 @@ MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
 - `NaN`、`Infinity`、文字列数値を拒否する。
 - MVP外フィールドを追加した場合の扱いがJSON Schemaで明確である。
 
-## 7. 完了条件
+## 8. 完了条件
 
 - `project.json` の全必須項目が定義されている。
 - JSON Schema実装者がこの文書だけでスキーマを作成できる。
 - UI担当が入力表を作成できる。
 - Engine担当が解析入力モデルを作成できる。
 - MVP外機能の入力が非対象として明記されている。
+- Phase E 拡張入力は設計書および `schemas/project.schema.json` と矛盾しない。

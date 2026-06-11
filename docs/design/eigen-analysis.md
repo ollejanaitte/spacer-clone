@@ -73,7 +73,8 @@ MVPでは `rx, ry, rz` の回転慣性は扱わない。
 {
   "id": "mass-1",
   "name": "固有値用質量",
-  "type": "lumped",
+  "method": "lumped",
+  "source": "manual",
   "items": [
     {
       "nodeId": "N1",
@@ -90,20 +91,27 @@ MVPでは `rx, ry, rz` の回転慣性は扱わない。
 
 MVPでは `mx, my, mz` を主対象とする。
 
-ゼロ質量 DOF は固有値解析対象から除外する。
+自由度の縮約は次の2段階とする。
 
-拘束自由度を除去した後、さらに正の質量を持つ DOF だけを抽出して、以下を構成する。
+1. 拘束自由度を除去し、自由自由度系 `Kff` を得る。
+2. 自由自由度のうち、正の集中質量を持つ DOF を master、質量ゼロ DOF を slave として分離する。
+
+slave DOF がある場合は、静的条件付き（Guyan 縮約）で master 系へ縮約する。
 
 ```text
-Kmm
-Mmm
+K_reduced = Kmm + Kms * R
+R = -Kss^-1 * Ksm
 ```
+
+`Kmm`, `Mmm` は master DOF に対応する縮約後剛性・質量である。slave がない場合は `K_reduced = Kmm` とする。
 
 固有値解析では、以下を解く。
 
 ```text
-Kmm φ = λ Mmm φ
+K_reduced φ = λ Mmm φ
 ```
+
+正規化・刺激係数・有効質量の計算は master DOF 上で行い、slave DOF のモード成分は `R` から復元する。
 
 ## 5. 整合質量将来対応
 
@@ -159,16 +167,15 @@ scipy.linalg.eigh
 
 初期は小規模モデルでは密行列 `eigh`、中規模以上では疎行列 `eigsh` を検討する。
 
-MVPでは、まず自由自由度に縮約した `Kff`, `Mff` に対して解く。
-
-ただし、ゼロ質量 DOF を除外した後の `Kmm`, `Mmm` を実際の固有値解析対象とする。
+MVP では master DOF 数に対して `scipy.linalg.eigh` を用いる。
 
 検証項目は以下とする。
 
 * `Mmm` が正定値であること
-* `Kmm` が固有値解析対象として特異でないこと
+* 縮約後剛性 `K_reduced` が固有値解析対象として特異でないこと
+* `Kss` が特異な slave 構成を検出すること
 * ゼロまたは負の固有値を検出すること
-* 要求モード数が解析可能な自由度数を超えないこと
+* 要求モード数が master DOF 数を超えないこと
 
 モード正規化は、MVPでは質量正規化に固定する。
 
@@ -176,58 +183,81 @@ MVPでは、まず自由自由度に縮約した `Kff`, `Mff` に対して解く
 φ^T M φ = 1
 ```
 
-## 8. API案
+## 8. API
 
-新規 API 案。
+エンドポイント。
 
 ```text
 POST /api/analysis/eigen
 ```
 
-入力。
+リクエスト。`project` は必須。`massCaseId` と `modeCount` はリクエストまたは `analysisSettings.eigen` から読む。
 
 ```json
 {
   "project": {},
   "massCaseId": "mass-1",
-  "modeCount": 10,
-  "normalization": "mass"
+  "modeCount": 10
 }
 ```
 
-出力。
+MVP では `normalization` は `"mass"` 固定とし、リクエスト入力は受け付けない。
+
+レスポンスは `docs/06_result_schema.md` および `schemas/result.schema.json` に従う。固有値固有データは `eigenResult` に格納する。
 
 ```json
 {
-  "analysisType": "eigen",
-  "modes": [
-    {
-      "mode": 1,
-      "eigenvalue": 0.0,
-      "circularFrequency": 0.0,
-      "frequency": 0.0,
-      "period": 0.0,
-      "modalMass": 0.0,
-      "shape": []
-    }
-  ]
+  "analysisSummary": {
+    "analysisType": "eigen",
+    "status": "success"
+  },
+  "displacements": [],
+  "reactions": [],
+  "memberEndForces": [],
+  "eigenResult": {
+    "massCaseId": "mass-1",
+    "normalization": "mass",
+    "totalMassByDirection": [],
+    "modes": [
+      {
+        "modeNo": 1,
+        "eigenvalue": 0.0,
+        "circularFrequency": 0.0,
+        "frequency": 0.0,
+        "period": 0.0,
+        "modalMass": 0.0,
+        "participationFactors": [],
+        "effectiveMassRatios": [],
+        "effectiveMasses": [],
+        "cumulativeEffectiveMassRatios": [],
+        "shape": []
+      }
+    ]
+  },
+  "warnings": [],
+  "errors": []
 }
 ```
 
+詳細型定義は [result-schema.md](result-schema.md) を参照する。
+
 ## 9. 出力データ構造
 
-モードごとに以下を出力する。
+モードごとに以下を出力する。フィールド名は `schemas/result.schema.json` の `eigenMode` に合わせる。
 
-* 次数
-* 固有値
-* 固有円振動数
-* 固有振動数
-* 固有周期
-* モード形
-* モード質量
-* 刺激係数
-* 有効質量
-* 有効質量比
+* `modeNo`: 次数
+* `eigenvalue`: 固有値
+* `circularFrequency`: 固有円振動数
+* `frequency`: 固有振動数
+* `period`: 固有周期
+* `shape`: モード形
+* `modalMass`: モード質量
+* `participationFactors`: 刺激係数
+* `effectiveMasses`: 有効質量（絶対値）
+* `effectiveMassRatios`: 有効質量比
+* `cumulativeEffectiveMassRatios`: 累積有効質量比
+
+結果全体には `eigenResult.totalMassByDirection` を方向別総質量として付与する。
 
 刺激係数、有効質量、有効質量比は以下で定義する。
 
@@ -317,3 +347,35 @@ M_eff = Γ^2
 - `cumulativeEffectiveMassRatios`: モード順に加算した累積有効質量比。強制的に 1.0 へ丸めない。
 
 方向は X/Y/Z 固定とし、回転慣性 `irx/iry/irz` は本フェーズでは使用しない。`totalMass` が 0 の方向では、有効質量、有効質量比、累積有効質量比を 0 とする。応答スペクトル解析、CQC は本フェーズの対象外とする。
+
+## Phase E-1c: 品質確認（完了）
+
+Phase E-1b 追加項目について、自動テストと手動確認を完了した。
+
+- `effectiveMasses = effectiveMassRatios * totalMassByDirection` の方向別整合
+- `totalMassByDirection` が 0 の方向で NaN/inf が出ないこと
+- `eigen_modes.csv` 列順の維持
+- 旧 result への後方互換（optional 欠落を許容）
+
+検証記録は `docs/verification/eigen-analysis-phase-e1c-verification.md` を参照する。
+
+## 13. 設計レビュー反映
+
+### 採用
+
+- 集中質量 MVP、`method: "lumped"` / `source: "manual"` の入力形式
+- 質量正規化 `φ^T M φ = 1` の固定
+- ゼロ質量 DOF への静的条件付き（Guyan 縮約）
+- `eigenResult` を Result Schema 上の独立ブロックとして保持
+- Phase E-1b の有効質量・累積参加率出力
+
+### 保留
+
+- 整合質量、回転慣性、モード別減衰
+- `normalization: "max"` の UI/API 公開
+- 大規模モデル向け疎固有値ソルバ（`eigsh`）への切替基準
+
+### 要再検討
+
+- `massCases` をトップレベル必須にするか、解析実行時のみ必須にするか
+- 固有値結果 CSV と result JSON の列・フィールド完全同期方針

@@ -17,10 +17,10 @@
 
 - 影響線結果。
 - 移動荷重結果。
-- 固有値、固有モード。
-- 応答スペクトル結果。
 - 温度荷重、プレストレス、初期張力由来の専用結果。
 - DXF、図面ファイル、帳票テンプレート。
+
+固有値・応答スペクトル結果は Phase E 拡張として第 8 節、`schemas/result.schema.json`、[eigen-analysis.md](design/eigen-analysis.md)、[response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。本書第 4 節は線形静的 MVP 基準を示す。
 
 ## 4. データ構造
 
@@ -177,3 +177,67 @@
 - API、UI、Report担当がこの文書だけで結果データを扱える。
 - 必須項目 `displacements`、`reactions`、`memberEndForces`、`analysisSummary`、`warnings`、`errors` が定義済み。
 - `docs/10_report_spec.md` のCSV仕様と矛盾しない。
+
+## 8. Phase E 拡張（固有値・応答スペクトル）
+
+正本は `schemas/result.schema.json` である。固有値結果の意味付けは [eigen-analysis.md](design/eigen-analysis.md)、応答スペクトル結果は [response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。
+
+### 共通
+
+- トップレベルの `displacements`、`reactions`、`memberEndForces` は空配列とする。
+- `analysisSummary.analysisType` は `"eigen"` または `"response_spectrum"` とする。
+
+### eigenResult
+
+固有値解析成功時に付与する。
+
+```json
+{
+  "massCaseId": "mass-1",
+  "normalization": "mass",
+  "totalMassByDirection": [
+    { "direction": "X", "value": 0.0 }
+  ],
+  "modes": [
+    {
+      "modeNo": 1,
+      "eigenvalue": 0.0,
+      "circularFrequency": 0.0,
+      "frequency": 0.0,
+      "period": 0.0,
+      "modalMass": 0.0,
+      "participationFactors": [],
+      "effectiveMassRatios": [],
+      "effectiveMasses": [],
+      "cumulativeEffectiveMassRatios": [],
+      "shape": []
+    }
+  ]
+}
+```
+
+`totalMassByDirection`、`effectiveMasses`、`cumulativeEffectiveMassRatios` は Phase E-1b 以降の optional 拡張である。
+
+### responseSpectrumResult
+
+応答スペクトル解析成功時に付与する。同一 result に `eigenResult` も含める。
+
+```json
+{
+  "spectrumCaseId": "spec-1",
+  "direction": "X",
+  "dampingRatio": 0.05,
+  "combinationMethod": "SRSS",
+  "targetCumulativeMassRatio": 0.9,
+  "usedModes": [1],
+  "modalResults": [],
+  "combinedResult": {
+    "method": "SRSS",
+    "displacements": [],
+    "reactions": [],
+    "memberSectionForces": []
+  }
+}
+```
+
+MVP では `combinedResult.reactions` と `combinedResult.memberSectionForces` は空配列とする。
