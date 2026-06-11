@@ -2,7 +2,7 @@
   "name": "spacer-clone-frontend",
   "private": true,
   "version": "0.1.0",
-  "type": "module",
+  "main": "electron-dist/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -12,8 +12,10 @@
     "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",
     "app:dev": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev\"",
     "app:dev:compat": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev:compat\"",
-    "electron:build": "npm run build && npm run electron:compile",
+    "electron:build": "npm run build && npm run electron:compile && powershell -Command \"Remove-Item -Recurse -Force electron-dist -ErrorAction SilentlyContinue; Copy-Item -Recurse ../desktop/electron/dist electron-dist\"",
     "electron:test": "vitest run --root .. desktop/electron",
+    "pack:win": "npm run electron:build && electron-builder --win --dir",
+    "dist:win": "npm run electron:build && electron-builder --win",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -32,8 +34,34 @@
     "@types/react-dom": "^19.0.0",
     "concurrently": "^10.0.3",
     "electron": "^42.3.3",
+    "electron-builder": "^26.15.2",
     "jsdom": "^29.1.1",
     "vitest": "^4.1.8",
     "wait-on": "^9.0.10"
+  },
+  "build": {
+    "appId": "local.spacer.clone",
+    "productName": "Spacer Clone",
+    "directories": {
+      "output": "../release"
+    },
+    "files": [
+      "electron-dist/**/*",
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist/spacer-backend.exe",
+        "to": "backend/spacer-backend.exe"
+      },
+      {
+        "from": "dist",
+        "to": "frontend"
+      }
+    ],
+    "win": {
+      "target": "dir"
+    }
   }
 }

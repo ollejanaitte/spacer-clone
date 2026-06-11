@@ -1,6 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../data/defaultProject";
-import { buildEigenAnalysisRequest, buildInfluenceAnalysisRequest } from "./client";
+import {
+  buildEigenAnalysisRequest,
+  buildInfluenceAnalysisRequest,
+  resolveApiUrl,
+} from "./client";
+
+describe("API URL resolution", () => {
+  it("uses the packaged backend for file protocol pages", () => {
+    expect(resolveApiUrl("/api/examples", "file:")).toBe(
+      "http://127.0.0.1:8000/api/examples",
+    );
+  });
+
+  it("keeps relative API paths for the Vite development proxy", () => {
+    expect(resolveApiUrl("/api/examples", "http:")).toBe("/api/examples");
+  });
+});
 
 describe("saved analysis request builders", () => {
   it("reconstructs eigen analysis options from analysisSettings", () => {

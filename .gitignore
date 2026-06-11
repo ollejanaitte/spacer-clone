@@ -9,3 +9,12 @@ frontend/dist/
 .venv/
 __pycache__/
 *.pyc
+
+# Build artifacts
+build/
+dist/
+release/
+frontend/electron-dist/
+*.spec
+.local_projects/
+backend/data/projects/autosave.json

@@ -46,6 +46,18 @@ type AutosaveCandidateResponse = {
   project: ProjectModel | null;
 };
 
+const PACKAGED_BACKEND_ORIGIN = "http://127.0.0.1:8000";
+
+export function resolveApiUrl(
+  url: string,
+  protocol = globalThis.location?.protocol,
+): string {
+  if (protocol === "file:" && url.startsWith("/")) {
+    return `${PACKAGED_BACKEND_ORIGIN}${url}`;
+  }
+  return url;
+}
+
 export function buildEigenAnalysisRequest(project: ProjectModel) {
   const settings = project.analysisSettings.eigen;
   return {
@@ -115,7 +127,7 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 
 async function fetchJson(url: string, init?: RequestInit): Promise<Response> {
   try {
-    return await fetch(url, init);
+    return await fetch(resolveApiUrl(url), init);
   } catch (error) {
     throw new ApiClientError(
       error instanceof Error ? error.message : "Network request failed.",
