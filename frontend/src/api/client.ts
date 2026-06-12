@@ -48,6 +48,15 @@ type AutosaveCandidateResponse = {
 
 const PACKAGED_BACKEND_ORIGIN = "http://127.0.0.1:8000";
 
+export function buildBackendProject(project: ProjectModel): ProjectModel {
+  const { responseSpectrum: _responseSpectrum, ...analysisSettings } =
+    project.analysisSettings;
+  return {
+    ...project,
+    analysisSettings,
+  };
+}
+
 export function resolveApiUrl(
   url: string,
   protocol = globalThis.location?.protocol,
@@ -61,8 +70,8 @@ export function resolveApiUrl(
 export function buildEigenAnalysisRequest(project: ProjectModel) {
   const settings = project.analysisSettings.eigen;
   return {
-    project,
-    massCaseId: settings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
+    project: buildBackendProject(project),
+    massCaseId: settings?.massCaseId.trim() || project.massCases?.[0]?.id || "",
     modeCount: settings?.modeCount ?? 3,
     normalization: "mass" as const,
   };
@@ -72,10 +81,14 @@ export function buildResponseSpectrumAnalysisRequest(project: ProjectModel) {
   const settings = project.analysisSettings.responseSpectrum;
   const eigenSettings = project.analysisSettings.eigen;
   return {
-    project,
-    massCaseId: settings?.massCaseId ?? eigenSettings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
+    project: buildBackendProject(project),
+    massCaseId:
+      settings?.massCaseId?.trim() ||
+      eigenSettings?.massCaseId.trim() ||
+      project.massCases?.[0]?.id ||
+      "",
     modeCount: settings?.modeCount ?? eigenSettings?.modeCount ?? 3,
-    spectrumCaseId: settings?.spectrumCaseId ?? "spec-1",
+    spectrumCaseId: settings?.spectrumCaseId.trim() || "spec-1",
     direction: settings?.direction ?? "X",
     dampingRatio: settings?.dampingRatio ?? 0.05,
     targetCumulativeMassRatio: settings?.targetCumulativeMassRatio ?? 0.9,
@@ -91,7 +104,7 @@ export function buildInfluenceAnalysisRequest(project: ProjectModel) {
   const settings = project.analysisSettings.influence;
   const memberId = settings?.line.memberId ?? project.members[0]?.id ?? "";
   return {
-    project,
+    project: buildBackendProject(project),
     caseId: settings?.caseId ?? "influence-line-1",
     line: settings?.line ?? {
       id: `line-${memberId || "member"}`,
@@ -152,12 +165,14 @@ async function parseJsonResponse<T>(response: Response): Promise<T> {
 
 export const apiClient = {
   validateProject(project: ProjectModel): Promise<ValidationResponse> {
-    return postJson<ValidationResponse>("/api/projects/validate", { project });
+    return postJson<ValidationResponse>("/api/projects/validate", {
+      project: buildBackendProject(project),
+    });
   },
 
   runAnalysis(project: ProjectModel, returnCsv = false): Promise<AnalysisRunResponse> {
     return postJson<AnalysisRunResponse>("/api/analysis/run", {
-      project,
+      project: buildBackendProject(project),
       options: { returnCsv },
     });
   },

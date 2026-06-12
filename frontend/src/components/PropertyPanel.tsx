@@ -15,6 +15,22 @@ import type {
   Support,
 } from "../types";
 
+const DEFAULT_RESPONSE_SPECTRUM_SETTINGS: NonNullable<
+  AnalysisSettings["responseSpectrum"]
+> = {
+  massCaseId: "",
+  modeCount: 3,
+  spectrumCaseId: "spec-1",
+  direction: "X",
+  dampingRatio: 0.05,
+  targetCumulativeMassRatio: 0.9,
+  spectrumPoints: [
+    { period: 0, value: 1 },
+    { period: 0.1, value: 1 },
+    { period: 1, value: 1 },
+  ],
+};
+
 type PropertyPanelProps = {
   project: ProjectModel;
   selected: SectionKey;
@@ -197,13 +213,20 @@ export function PropertyPanel({
         />
       )}
       {selected === "analysisSettings" && (
-        <ObjectEditor
-          value={project.analysisSettings}
-          columns={analysisColumns}
-          pathPrefix="/analysisSettings"
-          validationPaths={validationPaths}
-          onChange={(value) => update("analysisSettings", value)}
-        />
+        <>
+          <ObjectEditor
+            value={project.analysisSettings}
+            columns={analysisColumns}
+            pathPrefix="/analysisSettings"
+            validationPaths={validationPaths}
+            onChange={(value) => update("analysisSettings", value)}
+          />
+          <ResponseSpectrumEditor
+            project={project}
+            validationPaths={validationPaths}
+            onChange={(analysisSettings) => update("analysisSettings", analysisSettings)}
+          />
+        </>
       )}
       {selected === "results" && (
         <div className="empty-state">解析を実行すると、下部の解析結果パネルに結果が表示されます。</div>
@@ -250,6 +273,7 @@ function ArrayEditor<T>({
   pathPrefix,
   validationPaths,
   createItem,
+  minimumItems = 0,
   onChange,
 }: {
   items: T[];
@@ -257,6 +281,7 @@ function ArrayEditor<T>({
   pathPrefix: string;
   validationPaths: Set<string>;
   createItem: () => T;
+  minimumItems?: number;
   onChange: (items: T[]) => void;
 }) {
   const setCell = (rowIndex: number, column: Column<T>, value: string | number | boolean) => {
@@ -302,6 +327,7 @@ function ArrayEditor<T>({
                   className="icon-button"
                   type="button"
                   title="行を削除"
+                  disabled={items.length <= minimumItems}
                   onClick={() => onChange(items.filter((_, index) => index !== rowIndex))}
                 >
                   <Trash2 size={15} />
@@ -361,6 +387,158 @@ function MassCaseEditor({
         onChange={updateItems}
       />
     </div>
+  );
+}
+
+function ResponseSpectrumEditor({
+  project,
+  validationPaths,
+  onChange,
+}: {
+  project: ProjectModel;
+  validationPaths: Set<string>;
+  onChange: (analysisSettings: AnalysisSettings) => void;
+}) {
+  const massCases = project.massCases ?? [];
+  const settings = {
+    ...DEFAULT_RESPONSE_SPECTRUM_SETTINGS,
+    massCaseId:
+      project.analysisSettings.responseSpectrum?.massCaseId ??
+      project.analysisSettings.eigen?.massCaseId ??
+      massCases[0]?.id ??
+      "",
+    ...project.analysisSettings.responseSpectrum,
+    spectrumPoints:
+      project.analysisSettings.responseSpectrum?.spectrumPoints ??
+      DEFAULT_RESPONSE_SPECTRUM_SETTINGS.spectrumPoints,
+  };
+  const updateSettings = (
+    next: Partial<NonNullable<AnalysisSettings["responseSpectrum"]>>,
+  ) => {
+    onChange({
+      ...project.analysisSettings,
+      responseSpectrum: {
+        ...settings,
+        ...next,
+      },
+    });
+  };
+
+  return (
+    <section className="field-stack response-spectrum-settings">
+      <h3>応答スペクトル解析設定</h3>
+      <label
+        className={
+          validationPaths.has("/analysisSettings/responseSpectrum/massCaseId")
+            ? "field invalid"
+            : "field"
+        }
+      >
+        <span>質量ケース</span>
+        <select
+          aria-label="質量ケース"
+          value={settings.massCaseId}
+          disabled={massCases.length === 0}
+          onChange={(event) => updateSettings({ massCaseId: event.currentTarget.value })}
+        >
+          {massCases.length === 0 && <option value="">質量ケースなし</option>}
+          {massCases.map((massCase) => (
+            <option key={massCase.id} value={massCase.id}>
+              {massCase.name} ({massCase.id})
+            </option>
+          ))}
+        </select>
+      </label>
+      {massCases.length === 0 && (
+        <p className="empty-state">先に質量ケースを登録してください。</p>
+      )}
+      <label className="field">
+        <span>モード数</span>
+        <input
+          aria-label="モード数"
+          type="number"
+          min="1"
+          step="1"
+          value={settings.modeCount}
+          onChange={(event) => {
+            const value = Number(event.currentTarget.value);
+            if (Number.isInteger(value) && value >= 1) updateSettings({ modeCount: value });
+          }}
+        />
+      </label>
+      <label className="field">
+        <span>方向</span>
+        <select
+          aria-label="方向"
+          value={settings.direction}
+          onChange={(event) =>
+            updateSettings({ direction: event.currentTarget.value as "X" | "Y" | "Z" })
+          }
+        >
+          <option value="X">X</option>
+          <option value="Y">Y</option>
+          <option value="Z">Z</option>
+        </select>
+      </label>
+      <label className="field">
+        <span>減衰比</span>
+        <input
+          aria-label="減衰比"
+          type="number"
+          min="0"
+          step="any"
+          value={settings.dampingRatio}
+          onChange={(event) => {
+            const value = Number(event.currentTarget.value);
+            if (Number.isFinite(value) && value >= 0) updateSettings({ dampingRatio: value });
+          }}
+        />
+      </label>
+      <label className="field">
+        <span>目標累積有効質量比</span>
+        <input
+          aria-label="目標累積有効質量比"
+          type="number"
+          min="0"
+          max="1"
+          step="any"
+          value={settings.targetCumulativeMassRatio}
+          onChange={(event) => {
+            const value = Number(event.currentTarget.value);
+            if (Number.isFinite(value) && value > 0 && value <= 1) {
+              updateSettings({ targetCumulativeMassRatio: value });
+            }
+          }}
+        />
+      </label>
+      <label className="field">
+        <span>スペクトルケースID</span>
+        <input
+          aria-label="スペクトルケースID"
+          type="text"
+          value={settings.spectrumCaseId}
+          onChange={(event) => updateSettings({ spectrumCaseId: event.currentTarget.value })}
+        />
+      </label>
+      <div>
+        <h3>スペクトル点（線形補間）</h3>
+        <ArrayEditor
+          items={settings.spectrumPoints}
+          columns={spectrumPointColumns}
+          pathPrefix="/analysisSettings/responseSpectrum/spectrumPoints"
+          validationPaths={validationPaths}
+          minimumItems={2}
+          createItem={() => {
+            const last = settings.spectrumPoints.at(-1);
+            return {
+              period: last ? last.period + 0.1 : 0,
+              value: last?.value ?? 0,
+            };
+          }}
+          onChange={(spectrumPoints) => updateSettings({ spectrumPoints })}
+        />
+      </div>
+    </section>
   );
 }
 
@@ -569,4 +747,23 @@ const analysisColumns: Column<AnalysisSettings>[] = [
   { key: "includeShearDeformation", label: "せん断変形", type: "boolean", help: "MVPでは変更できません。", get: (x) => x.includeShearDeformation, set: (x) => x },
   { key: "largeDisplacement", label: "大変位解析", type: "boolean", help: "MVPでは変更できません。", get: (x) => x.largeDisplacement, set: (x) => x },
   { key: "tolerance", label: "収束許容値", type: "number", get: (x) => x.tolerance, set: (x, v) => ({ ...x, tolerance: Number(v) }) },
+];
+
+const spectrumPointColumns: Column<{ period: number; value: number }>[] = [
+  {
+    key: "period",
+    label: "周期",
+    type: "number",
+    help: "区間内は線形補間、範囲外は端値固定です。負値は使用できません。",
+    get: (x) => x.period,
+    set: (x, v) => ({ ...x, period: Math.max(0, Number(v)) }),
+  },
+  {
+    key: "value",
+    label: "スペクトル値",
+    type: "number",
+    help: "負値は使用できません。",
+    get: (x) => x.value,
+    set: (x, v) => ({ ...x, value: Math.max(0, Number(v)) }),
+  },
 ];
