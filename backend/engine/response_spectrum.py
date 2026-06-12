@@ -35,15 +35,41 @@ def run_response_spectrum_analysis(
     try:
         mass_case_id = read_mass_case_id(project_data, request)
         mode_count = read_int(request, "modeCount", default_mode_count(project_data))
-        direction = read_direction(request.get("direction", default_direction(project_data)))
-        damping_ratio = read_float(request, "dampingRatio", default_damping_ratio(project_data))
+        if mode_count < 1:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "modeCount must be at least 1.",
+                path="/modeCount",
+            )
+        direction = read_direction(
+            request.get("direction", default_direction(project_data))
+        )
+        damping_ratio = read_float(
+            request, "dampingRatio", default_damping_ratio(project_data)
+        )
+        if damping_ratio < 0.0:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "dampingRatio must be non-negative.",
+                path="/dampingRatio",
+            )
         spectrum_case_id = str(request.get("spectrumCaseId") or "spec-1")
-        spectrum_points = read_spectrum_points(request.get("spectrumPoints") or DEFAULT_SPECTRUM)
+        spectrum_points = read_spectrum_points(
+            request["spectrumPoints"]
+            if "spectrumPoints" in request
+            else DEFAULT_SPECTRUM
+        )
         target_cumulative_mass_ratio = read_float(
             request,
             "targetCumulativeMassRatio",
             0.9,
         )
+        if not 0.0 < target_cumulative_mass_ratio <= 1.0:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "targetCumulativeMassRatio must be greater than 0 and at most 1.",
+                path="/targetCumulativeMassRatio",
+            )
 
         eigen_result = run_eigen_analysis(
             project_data,
@@ -66,7 +92,9 @@ def run_response_spectrum_analysis(
         eigen_result["analysisSummary"]["analysisType"] = "response_spectrum"
         eigen_result["analysisSummary"]["startedAt"] = started_at
         eigen_result["analysisSummary"]["finishedAt"] = finished_at
-        eigen_result["analysisSummary"]["durationMs"] = clean(duration_ms(started_at, finished_at))
+        eigen_result["analysisSummary"]["durationMs"] = clean(
+            duration_ms(started_at, finished_at)
+        )
         eigen_result["responseSpectrumResult"] = response
         return eigen_result
     except AnalysisError as exc:
@@ -98,14 +126,40 @@ def build_response_spectrum_result(
 ) -> dict[str, Any]:
     eigen = result.get("eigenResult")
     if not isinstance(eigen, dict):
-        raise AnalysisError("SOLVER_ERROR", "Eigen result is required for response spectrum analysis.")
+        raise AnalysisError(
+            "SOLVER_ERROR", "Eigen result is required for response spectrum analysis."
+        )
     modes = eigen.get("modes")
     if not isinstance(modes, list) or not modes:
-        raise AnalysisError("SOLVER_ERROR", "Eigen modes are required for response spectrum analysis.")
+        raise AnalysisError(
+            "SOLVER_ERROR", "Eigen modes are required for response spectrum analysis."
+        )
 
     used_modes = select_used_modes(modes, direction, target_cumulative_mass_ratio)
-    modal_results = [modal_response(mode, direction, spectrum_points) for mode in used_modes]
+    modal_results = [
+        modal_response(mode, direction, spectrum_points) for mode in used_modes
+    ]
     combined = combine_srss(modal_results)
+    reached_cumulative_mass_ratio = directional_value(
+        used_modes[-1].get("cumulativeEffectiveMassRatios", []),
+        direction,
+    )
+    if reached_cumulative_mass_ratio < target_cumulative_mass_ratio:
+        result["analysisSummary"]["status"] = "warning"
+        result.setdefault("warnings", []).append(
+            {
+                "code": "INSUFFICIENT_MODES",
+                "message": (
+                    "INSUFFICIENT_MODES: cumulative effective mass ratio "
+                    f"{reached_cumulative_mass_ratio:.6g} did not reach target "
+                    f"{target_cumulative_mass_ratio:.6g}; used {len(used_modes)} "
+                    f"mode(s) for direction {direction}."
+                ),
+                "path": "/modeCount",
+                "entityType": None,
+                "entityId": None,
+            }
+        )
     return {
         "spectrumCaseId": spectrum_case_id,
         "direction": direction,
@@ -174,7 +228,9 @@ def select_used_modes(
     selected: list[dict[str, Any]] = []
     for mode in modes:
         selected.append(mode)
-        cumulative = directional_value(mode.get("cumulativeEffectiveMassRatios", []), direction)
+        cumulative = directional_value(
+            mode.get("cumulativeEffectiveMassRatios", []), direction
+        )
         if cumulative >= target_cumulative_mass_ratio:
             break
     return selected
@@ -217,26 +273,54 @@ def directional_value(items: Any, direction: str) -> float:
 
 def read_spectrum_points(raw: Any) -> list[dict[str, float]]:
     if not isinstance(raw, list) or len(raw) < 2:
-        raise AnalysisError("INVALID_VALUE", "spectrumPoints must contain at least two points.", path="/spectrumPoints")
+        raise AnalysisError(
+            "INVALID_VALUE",
+            "spectrumPoints must contain at least two points.",
+            path="/spectrumPoints",
+        )
     points: list[dict[str, float]] = []
     for index, item in enumerate(raw):
         if not isinstance(item, dict):
-            raise AnalysisError("INVALID_VALUE", "Each spectrum point must be an object.", path=f"/spectrumPoints/{index}")
-        period = float(item.get("period"))
-        value = float(item.get("value", item.get("sa", 0.0)))
-        if period < 0.0 or value < 0.0 or not math.isfinite(period) or not math.isfinite(value):
-            raise AnalysisError("INVALID_VALUE", "Spectrum period and value must be finite non-negative numbers.", path=f"/spectrumPoints/{index}")
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "Each spectrum point must be an object.",
+                path=f"/spectrumPoints/{index}",
+            )
+        try:
+            period = float(item.get("period"))
+            value = float(item.get("value", item.get("sa", 0.0)))
+        except (TypeError, ValueError) as exc:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "Spectrum period and value must be numbers.",
+                path=f"/spectrumPoints/{index}",
+            ) from exc
+        if (
+            period < 0.0
+            or value < 0.0
+            or not math.isfinite(period)
+            or not math.isfinite(value)
+        ):
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "Spectrum period and value must be finite non-negative numbers.",
+                path=f"/spectrumPoints/{index}",
+            )
+        if points and period <= points[-1]["period"]:
+            raise AnalysisError(
+                "INVALID_VALUE",
+                "Spectrum periods must be in strictly ascending order.",
+                path=f"/spectrumPoints/{index}/period",
+            )
         points.append({"period": period, "value": value})
-    points.sort(key=lambda point: point["period"])
-    for left, right in zip(points, points[1:]):
-        if right["period"] <= left["period"]:
-            raise AnalysisError("INVALID_VALUE", "Spectrum periods must be unique.", path="/spectrumPoints")
     return points
 
 
 def read_direction(value: Any) -> Direction:
     if value not in ("X", "Y", "Z"):
-        raise AnalysisError("INVALID_VALUE", "direction must be one of X, Y, or Z.", path="/direction")
+        raise AnalysisError(
+            "INVALID_VALUE", "direction must be one of X, Y, or Z.", path="/direction"
+        )
     return value
 
 
@@ -249,8 +333,10 @@ def read_float(request: dict[str, Any], key: str, default: float) -> float:
 
 def read_int(request: dict[str, Any], key: str, default: int) -> int:
     value = request.get(key, default)
-    if not isinstance(value, int):
-        raise AnalysisError("INVALID_VALUE", f"{key} must be an integer.", path=f"/{key}")
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise AnalysisError(
+            "INVALID_VALUE", f"{key} must be an integer.", path=f"/{key}"
+        )
     return value
 
 
@@ -260,7 +346,9 @@ def default_mode_count(project_data: dict[str, Any]) -> int:
     return int(eigen.get("modeCount", 6)) if isinstance(eigen, dict) else 6
 
 
-def read_mass_case_id(project_data: dict[str, Any], request: dict[str, Any]) -> str | None:
+def read_mass_case_id(
+    project_data: dict[str, Any], request: dict[str, Any]
+) -> str | None:
     if "massCaseId" in request:
         value = request.get("massCaseId")
         return str(value) if value is not None else None
@@ -273,14 +361,22 @@ def read_mass_case_id(project_data: dict[str, Any], request: dict[str, Any]) -> 
 
 def default_direction(project_data: dict[str, Any]) -> str:
     settings = project_data.get("analysisSettings", {})
-    response = settings.get("responseSpectrum", {}) if isinstance(settings, dict) else {}
+    response = (
+        settings.get("responseSpectrum", {}) if isinstance(settings, dict) else {}
+    )
     return str(response.get("direction", "X")) if isinstance(response, dict) else "X"
 
 
 def default_damping_ratio(project_data: dict[str, Any]) -> float:
     settings = project_data.get("analysisSettings", {})
-    response = settings.get("responseSpectrum", {}) if isinstance(settings, dict) else {}
-    return float(response.get("dampingRatio", 0.05)) if isinstance(response, dict) else 0.05
+    response = (
+        settings.get("responseSpectrum", {}) if isinstance(settings, dict) else {}
+    )
+    return (
+        float(response.get("dampingRatio", 0.05))
+        if isinstance(response, dict)
+        else 0.05
+    )
 
 
 def duration_ms(started_at: str, finished_at: str) -> float:
