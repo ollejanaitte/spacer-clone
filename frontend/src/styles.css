@@ -1367,6 +1367,71 @@ button:disabled {
 }
 .bw-alignment-summary p { margin: 4px 0; }
 .bw-alignment-svg { width: 100%; height: auto; max-height: 240px; background: #f7fafc; border-radius: 4px; }
+
+/* ===== Step1 道路条件: 2 ペイン (フォーム + 3D ビュー) ===== */
+.bw-road-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 16px;
+  align-items: stretch;
+}
+@media (max-width: 1100px) {
+  .bw-road-split { grid-template-columns: 1fr; }
+}
+.bw-road-form { display: grid; gap: 14px; min-width: 0; }
+.bw-road-viewer { display: grid; grid-template-rows: auto 1fr; gap: 8px; min-width: 0; }
+.bw-road-viewer-header { display: flex; flex-direction: column; gap: 2px; }
+.bw-road-viewer-header h3 { margin: 0; color: #243447; font-size: 14px; }
+.bw-road-viewer-header .bw-hint { margin: 0; font-size: 11px; }
+.bw-form-card {
+  background: #f7fafc;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+.bw-form-card h3 { margin: 0; color: #243447; font-size: 14px; }
+.bw-field-help {
+  display: block;
+  color: #5b6b80;
+  font-size: 11px;
+  margin: 2px 0 4px;
+  line-height: 1.4;
+}
+.bw-align-viewer {
+  position: relative;
+  background: #eef5fb;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 360px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+.bw-align-viewer-canvas { width: 100%; min-height: 320px; }
+.bw-align-info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px 10px;
+  padding: 8px 12px;
+  background: rgba(36, 52, 71, 0.95);
+  color: #f8fafc;
+  font-size: 11px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  min-width: 280px;
+  max-width: 360px;
+}
+.bw-align-info > div { display: flex; flex-direction: column; gap: 1px; }
+.bw-align-info span { color: #b6c5d8; font-size: 10px; }
+.bw-align-info strong { color: #f8fafc; font-size: 12px; font-weight: 700; }
+@media (max-width: 1100px) {
+  .bw-align-info { position: static; max-width: none; border-radius: 0; box-shadow: none; }
+}
 .bw-topview.active {
   background: #2f6f9f;
   color: #f8fafc;

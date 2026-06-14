@@ -207,22 +207,34 @@ describe("BridgeWizard", () => {
       await Promise.resolve();
       await Promise.resolve();
     });
-    // Step1 中心線形セクション
-    expect(document.querySelector(".bw-alignment")).not.toBeNull();
+    // 2 ペイン構成 (左フォーム + 右 3D ビュー)
+    expect(document.querySelector(".bw-road-split")).not.toBeNull();
+    expect(document.querySelector(".bw-road-viewer")).not.toBeNull();
+    // 道路条件 + 中心線形 のフォームカード
+    const formCards = document.querySelectorAll(".bw-form-card");
+    expect(formCards.length).toBeGreaterThanOrEqual(2);
     // simple/csv 切替タブ
-    const tabBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-alignment [role=tab]"));
+    const tabBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-form-card [role=tab]"));
     expect(tabBtns.find((b) => b.textContent === "簡易入力")).toBeDefined();
     expect(tabBtns.find((b) => b.textContent === "座標入力")).toBeDefined();
     // CSV ダウンロードボタン
-    const dlBtn = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-alignment button")).find(
+    const dlBtn = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-form-card button")).find(
       (b) => b.textContent === "中心線CSV様式ダウンロード",
     );
     expect(dlBtn).toBeDefined();
     // CSV 読込ラベル
-    const fileLabel = Array.from(document.querySelectorAll<HTMLLabelElement>(".bw-alignment .bw-file")).find(
+    const fileLabel = Array.from(document.querySelectorAll<HTMLLabelElement>(".bw-form-card .bw-file")).find(
       (l) => l.textContent === "中心線CSV読込",
     );
     expect(fileLabel).toBeDefined();
+    // 3D ビューに情報パネル
+    expect(document.querySelector(".bw-align-info")).not.toBeNull();
+    expect(document.querySelector(".bw-align-info")?.textContent).toContain("中心線長");
+    // 入力ガイド (description) が含まれる
+    const help = Array.from(document.querySelectorAll<HTMLElement>(".bw-field-help")).map((el) => el.textContent);
+    expect(help.some((t) => t && t.includes("片側ではなく全体の車線数"))).toBe(true);
+    expect(help.some((t) => t && t.includes("片側歩道の幅員"))).toBe(true);
+    expect(help.some((t) => t && t.includes("外側高欄"))).toBe(true);
     vi.unstubAllGlobals();
     cleanup();
   });
@@ -244,10 +256,11 @@ describe("BridgeWizard", () => {
       await Promise.resolve();
     });
     // 座標入力タブへ切替
-    const tabBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-alignment [role=tab]"));
-    const csvTab = tabBtns.find((b) => b.textContent === "座標入力")!;
+    const tabBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-form-card [role=tab]"));
+    const csvTab = tabBtns.find((b) => b.textContent === "座標入力");
+    expect(csvTab).toBeDefined();
     await act(async () => {
-      csvTab.click();
+      csvTab!.click();
     });
     // 直接 setRoadAlignment を dispatch して、状態を CSV モードにする
     const csv = "station,x,y,z\n0,0,0,0\n10,10,0,0\n20,20,1,0\n30,30,2,0\n";
