@@ -1380,9 +1380,11 @@ button:disabled {
 }
 .bw-road-form { display: grid; gap: 14px; min-width: 0; }
 .bw-road-viewer { display: grid; grid-template-rows: auto 1fr; gap: 8px; min-width: 0; }
-.bw-road-viewer-header { display: flex; flex-direction: column; gap: 2px; }
+.bw-road-viewer-header { display: flex; flex-direction: column; gap: 4px; }
 .bw-road-viewer-header h3 { margin: 0; color: #243447; font-size: 14px; }
 .bw-road-viewer-header .bw-hint { margin: 0; font-size: 11px; }
+.bw-road-viewer-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.bw-road-viewer-title-row h3 { margin: 0; }
 .bw-form-card {
   background: #f7fafc;
   border: 1px solid #cbd5df;
@@ -1410,6 +1412,45 @@ button:disabled {
   grid-template-rows: 1fr auto;
 }
 .bw-align-viewer-canvas { width: 100%; min-height: 320px; }
+.bw-align-legend {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(36, 52, 71, 0.92);
+  color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  font-size: 11px;
+  display: grid;
+  gap: 4px;
+  max-width: 280px;
+  z-index: 2;
+}
+.bw-align-legend-title { font-weight: 700; color: #f8fafc; }
+.bw-align-legend-rows { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.bw-align-legend-rows span { display: inline-flex; align-items: center; gap: 4px; color: #d6e1ee; }
+.bw-align-legend-rows i { display: inline-block; width: 10px; height: 4px; border-radius: 2px; }
+.bw-align-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid #9fb5cb;
+  background: #ffffff;
+  color: #243447;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.bw-align-toggle:hover { border-color: #2f6f9f; }
+.bw-align-toggle.active {
+  background: #2f6f9f;
+  color: #f8fafc;
+  border-color: #2f6f9f;
+}
 .bw-align-info {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1431,6 +1472,7 @@ button:disabled {
 .bw-align-info strong { color: #f8fafc; font-size: 12px; font-weight: 700; }
 @media (max-width: 1100px) {
   .bw-align-info { position: static; max-width: none; border-radius: 0; box-shadow: none; }
+  .bw-align-legend { position: static; max-width: none; border-radius: 0; box-shadow: none; }
 }
 .bw-topview.active {
   background: #2f6f9f;

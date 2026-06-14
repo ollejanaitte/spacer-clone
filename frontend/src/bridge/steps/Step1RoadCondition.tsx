@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { BridgeProject, CrossSection, RoadAlignmentInputMode } from "../types";
 import { yPositionsFor } from "../BridgeWizardState";
 import {
@@ -12,6 +12,11 @@ import {
   totalAlignmentLength,
 } from "../roadAlignment";
 import { BridgeAlignmentViewer } from "../../components/viewer/BridgeAlignmentViewer";
+import {
+  loadAlignmentCoordinateMode,
+  saveAlignmentCoordinateMode,
+  type AlignmentCoordinateMode,
+} from "../../components/viewer/alignmentCoordinateTransform";
 import { AlignmentPreview } from "../viewer/AlignmentPreview";
 
 type Props = {
@@ -81,6 +86,16 @@ export function Step1RoadCondition({ project, onChange }: Props) {
   const end = alignmentEnd(alignment);
   const isCsv = inputMode === "csv";
   const [fitRequest, setFitRequest] = useState(0);
+  // SPACER 座標系表示トグル (Step1 3D プレビュー専用)。初期値は localStorage から。
+  const [coordMode, setCoordMode] = useState<AlignmentCoordinateMode>(() => loadAlignmentCoordinateMode());
+  useEffect(() => {
+    saveAlignmentCoordinateMode(coordMode);
+  }, [coordMode]);
+  const handleCoordModeChange = (next: AlignmentCoordinateMode) => {
+    setCoordMode(next);
+    // モード切替時に 3D ビューを再フィットさせる
+    setFitRequest((v) => v + 1);
+  };
 
   const setMode = (mode: RoadAlignmentInputMode) => {
     if (mode === "simple") {
@@ -265,7 +280,18 @@ export function Step1RoadCondition({ project, onChange }: Props) {
         {/* 右ペイン: 3D プレビュー */}
         <div className="bw-road-viewer">
           <div className="bw-road-viewer-header">
-            <h3>3D プレビュー</h3>
+            <div className="bw-road-viewer-title-row">
+              <h3>3D プレビュー</h3>
+              <button
+                type="button"
+                className={coordMode === "spacer" ? "bw-align-toggle active" : "bw-align-toggle"}
+                aria-pressed={coordMode === "spacer"}
+                onClick={() => handleCoordModeChange(coordMode === "spacer" ? "world" : "spacer")}
+                title="表示のみ Y/Z を入れ替えます。解析データは変更されません。"
+              >
+                SPACER座標系表示 {coordMode === "spacer" ? "ON" : "OFF"}
+              </button>
+            </div>
             <p className="bw-hint">
               マウス左ドラッグ: 回転 / 右ドラッグ: パン / ホイール: ズーム
             </p>
@@ -274,6 +300,8 @@ export function Step1RoadCondition({ project, onChange }: Props) {
             alignment={alignment}
             height={520}
             fitRequest={fitRequest}
+            mode={coordMode}
+            onModeChange={handleCoordModeChange}
           />
         </div>
       </div>

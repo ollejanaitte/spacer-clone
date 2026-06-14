@@ -379,6 +379,81 @@ describe("BridgeWizard", () => {
     cleanup();
   });
 
+  it("Step1: SPACER座標系表示トグルが初期ONでON/OFFできlocalStorageに保存される", async () => {
+    const mockBridge: BridgeProject = makeInitialBridgeProject("X", "bridge-step1-toggle");
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (typeof url === "string" && url.includes("/api/bridge/template")) {
+        return Promise.resolve(new Response(JSON.stringify({ project: mockBridge }), { status: 200 }));
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    }));
+    // テスト用に localStorage を空にしておく
+    window.localStorage.removeItem("spacerClone.alignmentViewerCoordinateMode");
+    await act(async () => {
+      root = createRoot(host!);
+      root.render(<BridgeWizard open={true} onClose={() => {}} onCommit={() => {}} />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    // トグルボタンが viewer header 内に存在
+    const toggle = document.querySelector<HTMLButtonElement>(".bw-road-viewer-header .bw-align-toggle");
+    expect(toggle).not.toBeNull();
+    // 初期値は SPACER モード (spacer)
+    expect(toggle?.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle?.textContent).toContain("SPACER座標系表示 ON");
+    // localStorage に保存されている
+    expect(window.localStorage.getItem("spacerClone.alignmentViewerCoordinateMode")).toBe("spacer");
+    // クリックで OFF へ
+    await act(async () => {
+      toggle!.click();
+    });
+    expect(toggle?.getAttribute("aria-pressed")).toBe("false");
+    expect(toggle?.textContent).toContain("SPACER座標系表示 OFF");
+    expect(window.localStorage.getItem("spacerClone.alignmentViewerCoordinateMode")).toBe("world");
+    // もう一度クリックで ON へ戻る
+    await act(async () => {
+      toggle!.click();
+    });
+    expect(toggle?.getAttribute("aria-pressed")).toBe("true");
+    expect(window.localStorage.getItem("spacerClone.alignmentViewerCoordinateMode")).toBe("spacer");
+    // 凡例パネル (bw-align-legend) も表示される
+    expect(document.querySelector(".bw-align-legend")).not.toBeNull();
+    expect(document.querySelector(".bw-align-legend")?.textContent).toContain("SPACER座標系");
+    // 元のモードに戻る (テスト間独立のため)
+    window.localStorage.removeItem("spacerClone.alignmentViewerCoordinateMode");
+    vi.unstubAllGlobals();
+    cleanup();
+  });
+
+  it("Step1: localStorageにworldが保存されていればトグルはOFFで開始する", async () => {
+    const mockBridge: BridgeProject = makeInitialBridgeProject("X", "bridge-step1-world");
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (typeof url === "string" && url.includes("/api/bridge/template")) {
+        return Promise.resolve(new Response(JSON.stringify({ project: mockBridge }), { status: 200 }));
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    }));
+    window.localStorage.setItem("spacerClone.alignmentViewerCoordinateMode", "world");
+    await act(async () => {
+      root = createRoot(host!);
+      root.render(<BridgeWizard open={true} onClose={() => {}} onCommit={() => {}} />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    const toggle = document.querySelector<HTMLButtonElement>(".bw-road-viewer-header .bw-align-toggle");
+    expect(toggle?.getAttribute("aria-pressed")).toBe("false");
+    expect(toggle?.textContent).toContain("SPACER座標系表示 OFF");
+    // 凡例も "通常" 表記
+    expect(document.querySelector(".bw-align-legend")?.textContent).toContain("通常");
+    window.localStorage.removeItem("spacerClone.alignmentViewerCoordinateMode");
+    vi.unstubAllGlobals();
+    cleanup();
+  });
+
   it("export bridgeProjectToProjectModel is re-exported", async () => {
     const mod = await import("./BridgeWizard");
     expect(typeof mod.bridgeProjectToProjectModel).toBe("function");
