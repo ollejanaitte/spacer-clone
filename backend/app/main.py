@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 from backend.app.reports import build_result_exports
 from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, run_response_spectrum_analysis, validate_project
 
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.2.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "projects"
 AUTOSAVE_FILE_NAME = "autosave.json"
