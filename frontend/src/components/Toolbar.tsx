@@ -21,6 +21,7 @@ type ToolbarProps = {
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
+  onOpenBridgeWizard: () => void;
 };
 
 export function Toolbar({
@@ -44,6 +45,7 @@ export function Toolbar({
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
+  onOpenBridgeWizard,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -76,6 +78,15 @@ export function Toolbar({
               }}
             />
           </label>
+          <button
+            type="button"
+            onClick={onOpenBridgeWizard}
+            title="橋梁3D骨組モデルをウィザード形式で作成します。"
+            data-testid="open-bridge-wizard"
+          >
+            <LineChart size={16} />
+            橋梁モデル作成
+          </button>
           <button type="button" onClick={onSave} title="現在のモデルを project.json として保存します。">
             <Save size={16} />
             保存

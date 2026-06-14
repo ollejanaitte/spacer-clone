@@ -1,0 +1,39 @@
+{
+  "id": "bridge-load-line",
+  "name": "Single span with distributed load line",
+  "schemaVersion": "0.1.0",
+  "description": "単径間・2車線・荷重ライン 1 本・分布荷重 12 kN/m のサンプル。",
+  "crossSection": {
+    "lane_count": 2,
+    "lane_width": 3.5,
+    "median_width": 0.0,
+    "sidewalk_width": 1.5,
+    "barrier_width": 0.5
+  },
+  "spans": [
+    { "index": 1, "length": 30.0, "offset": 0.0 }
+  ],
+  "impactFactor": { "value": 0.0, "auto": true },
+  "lines": [
+    {
+      "id": "line-traffic-1",
+      "type": "traffic",
+      "name": "走行ライン1",
+      "points": [[2.0, 0.0, 0.0], [28.0, 0.0, 0.0]]
+    }
+  ],
+  "loads": [
+    {
+      "id": "load-dist-1",
+      "type": "distributed",
+      "name": "分布荷重 q=12kN/m",
+      "magnitude": 12.0,
+      "direction": "-Y",
+      "line_id": "line-traffic-1"
+    }
+  ],
+  "generationSettings": {
+    "mesh_division": 10,
+    "mesh_density": "standard"
+  }
+}

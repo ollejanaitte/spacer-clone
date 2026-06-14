@@ -16,6 +16,9 @@ jsonschema = pytest.importorskip(
 def test_all_examples_match_project_json_schema(project_schema: dict) -> None:
     validator = jsonschema.Draft202012Validator(project_schema)
     for path in sorted(Path(EXAMPLES_DIR).glob("*.json")):
+        # Skip bridge domain model samples (they use a separate schema)
+        if path.name.startswith("bridge-"):
+            continue
         errors = sorted(
             validator.iter_errors(load_json(path)), key=lambda error: error.path
         )

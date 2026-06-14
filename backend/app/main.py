@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import re
 from pathlib import Path
 from typing import Any, Callable
 
@@ -11,10 +12,13 @@ from fastapi.responses import JSONResponse
 
 from backend.app.reports import build_result_exports
 from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, run_response_spectrum_analysis, validate_project
+from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
+from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
 
-APP_VERSION = "0.2.0-preview"
+APP_VERSION = "0.3.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "projects"
+BRIDGE_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "bridges"
 AUTOSAVE_FILE_NAME = "autosave.json"
 
 app = FastAPI(title="spacer-clone MVP API", version=APP_VERSION)
@@ -798,6 +802,222 @@ def examples() -> list[dict[str, Any]]:
         }
         for project in projects
     ]
+
+
+
+
+# ---------------------------------------------------------------------------
+# Bridge domain model API (v0.3.0-preview)
+# ---------------------------------------------------------------------------
+
+BRIDGE_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+
+
+def _bridge_path(bridge_id: str) -> Path:
+    return BRIDGE_STORAGE_DIR / f"{bridge_id}.json"
+
+
+def _validate_bridge_id(bridge_id: str) -> str:
+    if not isinstance(bridge_id, str) or not BRIDGE_ID_PATTERN.match(bridge_id):
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "INVALID_ID", "message": "bridge id must be alphanumeric/_/- (1..64)."},
+        )
+    return bridge_id
+
+
+@app.post("/api/bridge")
+def create_bridge_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    bridge_id = _validate_bridge_id(str(payload.get("id", "")))
+    project_payload = payload.get("project")
+    if not isinstance(project_payload, dict):
+        project_payload = dict(payload)
+    try:
+        project = parse_bridge_project(project_payload)
+    except BridgeDomainError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
+        )
+    BRIDGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    path = _bridge_path(bridge_id)
+    if path.exists():
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "ALREADY_EXISTS", "message": f"bridge {bridge_id} already exists."},
+        )
+    with path.open("w", encoding="utf-8") as file:
+        json.dump(project.to_dict(), file, ensure_ascii=False, allow_nan=False, indent=2)
+        file.write("\n")
+    return safe_json_response({"id": bridge_id, "project": project.to_dict()})
+
+
+@app.get("/api/bridge/template")
+def bridge_template_endpoint() -> JSONResponse:
+    return safe_json_response({"project": bridge_default().to_dict()})
+
+@app.get("/api/bridge/{bridge_id}")
+def get_bridge_endpoint(bridge_id: str) -> JSONResponse:
+    bridge_id = _validate_bridge_id(bridge_id)
+    path = _bridge_path(bridge_id)
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NOT_FOUND", "message": f"bridge {bridge_id} not found."},
+        )
+    with path.open(encoding="utf-8") as file:
+        data = json.load(file)
+    return safe_json_response({"id": bridge_id, "project": data})
+
+
+@app.put("/api/bridge/{bridge_id}")
+def update_bridge_endpoint(bridge_id: str, payload: dict[str, Any]) -> JSONResponse:
+    bridge_id = _validate_bridge_id(bridge_id)
+    project_payload = payload.get("project")
+    if not isinstance(project_payload, dict):
+        project_payload = dict(payload)
+    try:
+        project = parse_bridge_project(project_payload)
+    except BridgeDomainError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
+        )
+    BRIDGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    path = _bridge_path(bridge_id)
+    with path.open("w", encoding="utf-8") as file:
+        json.dump(project.to_dict(), file, ensure_ascii=False, allow_nan=False, indent=2)
+        file.write("\n")
+    return safe_json_response({"id": bridge_id, "project": project.to_dict()})
+
+
+@app.delete("/api/bridge/{bridge_id}")
+def delete_bridge_endpoint(bridge_id: str) -> JSONResponse:
+    bridge_id = _validate_bridge_id(bridge_id)
+    path = _bridge_path(bridge_id)
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NOT_FOUND", "message": f"bridge {bridge_id} not found."},
+        )
+    path.unlink()
+    return safe_json_response({"deleted": True, "id": bridge_id})
+
+
+@app.get("/api/bridge")
+def list_bridges_endpoint() -> JSONResponse:
+    BRIDGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    items = []
+    for path in sorted(BRIDGE_STORAGE_DIR.glob("*.json")):
+        bridge_id = path.stem
+        try:
+            with path.open(encoding="utf-8") as file:
+                data = json.load(file)
+        except Exception:
+            continue
+        items.append({"id": bridge_id, "name": data.get("name", bridge_id)})
+    return safe_json_response({"bridges": items})
+
+
+@app.post("/api/fem/generate")
+def fem_generate_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    bridge_payload = payload.get("bridge") if isinstance(payload, dict) else None
+    if bridge_payload is None:
+        bridge_id = str(payload.get("bridge_id", "")) if isinstance(payload, dict) else ""
+        if not bridge_id:
+            raise HTTPException(
+                status_code=400,
+                detail={"code": "BRIDGE_REQUIRED", "message": "bridge or bridge_id is required."},
+            )
+        path = _bridge_path(bridge_id)
+        if not path.exists():
+            raise HTTPException(
+                status_code=404,
+                detail={"code": "NOT_FOUND", "message": f"bridge {bridge_id} not found."},
+            )
+        with path.open(encoding="utf-8") as file:
+            bridge_payload = json.load(file)
+    try:
+        project = parse_bridge_project(bridge_payload)
+    except BridgeDomainError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
+        )
+    try:
+        result = generate_fem_model(project)
+    except BridgeFemGenerationError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "FEM_GENERATION_ERROR", "message": str(exc)},
+        )
+    run_analysis_flag = bool(payload.get("runAnalysis", False)) if isinstance(payload, dict) else False
+    analysis = None
+    if run_analysis_flag:
+        try:
+            analysis = analyze_generation(result)
+        except Exception as exc:  # pragma: no cover - defensive
+            analysis = {"error": str(exc)}
+    return safe_json_response(
+        {
+            "summary": result.summary,
+            "fem": result.project,
+            "analysis": analysis,
+        }
+    )
+
+
+@app.get("/api/viewer/bridge/{bridge_id}")
+def viewer_bridge_endpoint(bridge_id: str) -> JSONResponse:
+    bridge_id = _validate_bridge_id(bridge_id)
+    path = _bridge_path(bridge_id)
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NOT_FOUND", "message": f"bridge {bridge_id} not found."},
+        )
+    with path.open(encoding="utf-8") as file:
+        data = json.load(file)
+    try:
+        project = parse_bridge_project(data)
+    except BridgeDomainError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
+        )
+    try:
+        result = generate_fem_model(project)
+    except BridgeFemGenerationError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "FEM_GENERATION_ERROR", "message": str(exc)},
+        )
+    fem = result.project
+    nodes_arr = [[n["x"], n["y"], n["z"]] for n in fem["nodes"]]
+    node_id_to_index = {n["id"]: i for i, n in enumerate(fem["nodes"])}
+    edges = [[node_id_to_index[m["nodeI"]], node_id_to_index[m["nodeJ"]]] for m in fem["members"]]
+    lines = []
+    for ln in data.get("lines", []):
+        if len(ln.get("points", [])) >= 2:
+            lines.append([list(ln["points"][0]), list(ln["points"][1])])
+    loads = []
+    for nl in fem.get("nodalLoads", []):
+        idx = node_id_to_index.get(nl["nodeId"], 0)
+        loads.append({
+            "nodeIndex": idx,
+            "fx": nl.get("fx", 0.0),
+            "fy": nl.get("fy", 0.0),
+            "fz": nl.get("fz", 0.0),
+        })
+    return safe_json_response({
+        "bridge": data,
+        "summary": result.summary,
+        "nodes": nodes_arr,
+        "edges": edges,
+        "lines": lines,
+        "loads": loads,
+    })
+
 
 
 if __name__ == "__main__":

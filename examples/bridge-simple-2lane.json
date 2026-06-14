@@ -1,0 +1,23 @@
+{
+  "id": "bridge-simple-2lane",
+  "name": "Simple 2-lane single span",
+  "schemaVersion": "0.1.0",
+  "description": "単径間・2車線・支間30m の最小橋梁サンプル。",
+  "crossSection": {
+    "lane_count": 2,
+    "lane_width": 3.5,
+    "median_width": 0.0,
+    "sidewalk_width": 1.5,
+    "barrier_width": 0.5
+  },
+  "spans": [
+    { "index": 1, "length": 30.0, "offset": 0.0 }
+  ],
+  "impactFactor": { "value": 0.0, "auto": true },
+  "lines": [],
+  "loads": [],
+  "generationSettings": {
+    "mesh_division": 10,
+    "mesh_density": "standard"
+  }
+}

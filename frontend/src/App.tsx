@@ -9,6 +9,9 @@ import { buildResultCsvExports } from "./exports/resultCsvExport";
 import { openResultPdfReport } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
+import { BridgeWizard } from "./bridge/BridgeWizard";
+import type { BridgeFemResponse } from "./bridge/types";
+import { bridgeProjectToProjectModel } from "./bridge/conversion";
 import type {
   AnalysisResult,
   BottomTab,
@@ -341,6 +344,15 @@ export function App() {
     setSelectedMember(nextSelection?.type === "member" ? nextSelection.id : null);
   };
 
+  const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
+
+  const handleBridgeGenerated = useCallback((fem: BridgeFemResponse) => {
+    const converted = bridgeProjectToProjectModel(fem.fem);
+    commitProject(converted);
+    log("橋梁ウィザードから FEM モデルを取り込みました。");
+    setBottomTab("results");
+  }, [commitProject, log]);
+
   const handleViewerError = useCallback((message: string) => {
     setViewerErrors([
       {
@@ -382,6 +394,7 @@ export function App() {
         canExportResults={Boolean(result)}
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
+        onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
       />
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>
@@ -433,6 +446,11 @@ export function App() {
           onChange={commitProject}
         />
       </div>
+      <BridgeWizard
+        open={bridgeWizardOpen}
+        onClose={() => setBridgeWizardOpen(false)}
+        onCommit={handleBridgeGenerated}
+      />
       <ResultsPanel
         activeTab={bottomTab}
         result={result}

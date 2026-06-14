@@ -1,0 +1,24 @@
+{
+  "id": "bridge-2span-3girder",
+  "name": "2-span 3-girder bridge",
+  "schemaVersion": "0.1.0",
+  "description": "2径間・3主桁相当・30m+40m の中規模橋梁サンプル。",
+  "crossSection": {
+    "lane_count": 2,
+    "lane_width": 3.5,
+    "median_width": 0.0,
+    "sidewalk_width": 1.5,
+    "barrier_width": 0.5
+  },
+  "spans": [
+    { "index": 1, "length": 30.0, "offset": 0.0 },
+    { "index": 2, "length": 40.0, "offset": 0.0 }
+  ],
+  "impactFactor": { "value": 0.0, "auto": true },
+  "lines": [],
+  "loads": [],
+  "generationSettings": {
+    "mesh_division": 10,
+    "mesh_density": "standard"
+  }
+}

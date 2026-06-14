@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/generated-fem.schema.json",
+  "title": "Generated FEM model summary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_bridge_id",
+    "generatedAt",
+    "xCount",
+    "yCount",
+    "nodeCount",
+    "memberCount",
+    "supportCount",
+    "loadCount",
+    "summary"
+  ],
+  "properties": {
+    "source_bridge_id": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "xCount": { "type": "integer", "minimum": 1 },
+    "yCount": { "type": "integer", "minimum": 1 },
+    "nodeCount": { "type": "integer", "minimum": 1 },
+    "memberCount": { "type": "integer", "minimum": 0 },
+    "supportCount": { "type": "integer", "minimum": 1 },
+    "loadCount": { "type": "integer", "minimum": 0 },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["totalLength", "girderPositions", "supports"],
+      "properties": {
+        "totalLength": { "type": "number", "minimum": 0 },
+        "girderPositions": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "supports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["x", "y", "nodeId"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "nodeId": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
