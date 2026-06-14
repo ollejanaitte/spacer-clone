@@ -362,6 +362,12 @@
             "CQC"
           ]
         },
+        "interpolationMethod": {
+          "enum": [
+            "linear",
+            "logLog"
+          ]
+        },
         "targetCumulativeMassRatio": {
           "type": "number"
         },
@@ -380,6 +386,12 @@
         },
         "combinedResult": {
           "$ref": "#/$defs/responseSpectrumCombinedResult"
+        },
+        "directionResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumDirectionResult"
+          }
         }
       }
     }
@@ -711,6 +723,56 @@
           "items": {
             "$ref": "#/$defs/memberSectionForce"
           }
+        }
+      }
+    },
+    "responseSpectrumDirectionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direction",
+        "combinationMethod",
+        "modalResults",
+        "combinedResult"
+      ],
+      "properties": {
+        "direction": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "combinationMethod": {
+          "enum": [
+            "SRSS",
+            "CQC"
+          ]
+        },
+        "interpolationMethod": {
+          "enum": [
+            "linear",
+            "logLog"
+          ]
+        },
+        "dampingRatio": {
+          "type": "number"
+        },
+        "usedModes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "modalResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseSpectrumModalResult"
+          }
+        },
+        "combinedResult": {
+          "$ref": "#/$defs/responseSpectrumCombinedResult"
         }
       }
     },

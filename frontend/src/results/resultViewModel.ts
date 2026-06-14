@@ -107,6 +107,15 @@ export type ResponseSpectrumViewModel = {
   direction: string;
   dampingRatio: number;
   combinationMethod: "SRSS" | "CQC";
+  interpolationMethod: "linear" | "logLog";
+  directionResults: Array<{
+    direction: "X" | "Y" | "Z";
+    combinationMethod: "SRSS" | "CQC";
+    interpolationMethod?: "linear" | "logLog";
+    usedModes?: number[];
+    modalResults: number;
+    combinedDisplacementCount: number;
+  }>;
   modeOptions: Array<{ key: ResponseSpectrumSelection; label: string; modeNo?: number }>;
   modalRows: Array<{
     modeNo: number;
@@ -350,6 +359,15 @@ export function buildResponseSpectrumViewModel(
     direction: response.direction,
     dampingRatio: response.dampingRatio,
     combinationMethod: response.combinationMethod,
+    interpolationMethod: response.interpolationMethod ?? "linear",
+    directionResults: (response.directionResults ?? []).map((d) => ({
+      direction: d.direction,
+      combinationMethod: d.combinationMethod,
+      interpolationMethod: d.interpolationMethod,
+      usedModes: d.usedModes,
+      modalResults: d.modalResults.length,
+      combinedDisplacementCount: d.combinedResult.displacements.length,
+    })),
     modeOptions: [
       ...response.modalResults.map((mode) => ({
         key: `mode:${mode.modeNo}` as const,

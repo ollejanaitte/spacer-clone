@@ -33,6 +33,26 @@ describe("buildResultViewModel member-force diagrams", () => {
   });
 });
 
+describe("buildResultViewModel response spectrum view model", () => {
+  it("surfaces directionResults summary with combination and interpolation methods", () => {
+    const result = responseSpectrumWithDirectionResults();
+    const viewModel = buildResultViewModel(result, "")?.responseSpectrum;
+    expect(viewModel).not.toBeNull();
+    expect(viewModel?.combinationMethod).toBe("CQC");
+    expect(viewModel?.interpolationMethod).toBe("logLog");
+    expect(viewModel?.directionResults).toEqual([
+      {
+        direction: "X",
+        combinationMethod: "CQC",
+        interpolationMethod: "logLog",
+        usedModes: [1],
+        modalResults: 1,
+        combinedDisplacementCount: 1,
+      },
+    ]);
+  });
+});
+
 describe("buildResultViewModel eigen result compatibility", () => {
   it("keeps old eigen results usable when E-1b optional fields are absent", () => {
     const viewModel = buildResultViewModel(oldEigenResult(), "")?.eigenModes;
@@ -145,6 +165,104 @@ function oldEigenResult(): AnalysisResult {
               rz: 0,
             },
           ],
+        },
+      ],
+    },
+    warnings: [],
+    errors: [],
+  };
+}
+
+function responseSpectrumWithDirectionResults(): AnalysisResult {
+  return {
+    projectId: "test-rs-dir",
+    schemaVersion: "1.0.0",
+    analysisSummary: {
+      analysisType: "response_spectrum",
+      status: "success",
+      startedAt: "2026-01-01T00:00:00Z",
+      finishedAt: "2026-01-01T00:00:01Z",
+      durationMs: 1000,
+      nodeCount: 1,
+      memberCount: 0,
+      loadCaseCount: 0,
+      totalDof: 6,
+      freeDof: 3,
+      constrainedDof: 3,
+      solver: "scipy_eigh",
+    },
+    displacements: [],
+    reactions: [],
+    memberEndForces: [],
+    eigenResult: {
+      massCaseId: "mass-1",
+      normalization: "mass",
+      modes: [
+        {
+          modeNo: 1,
+          eigenvalue: 4,
+          circularFrequency: 2,
+          frequency: 3,
+          period: 4,
+          modalMass: 1,
+          participationFactors: [
+            { direction: "X", value: 0.5 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          effectiveMassRatios: [
+            { direction: "X", value: 0.25 },
+            { direction: "Y", value: 0 },
+            { direction: "Z", value: 0 },
+          ],
+          shape: [{ nodeId: "N1", ux: 1, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+        },
+      ],
+    },
+    responseSpectrumResult: {
+      spectrumCaseId: "spec-1",
+      direction: "X",
+      dampingRatio: 0.05,
+      combinationMethod: "CQC",
+      interpolationMethod: "logLog",
+      targetCumulativeMassRatio: 0.9,
+      usedModes: [1],
+      modalResults: [
+        {
+          modeNo: 1,
+          spectralAcceleration: 1,
+          displacements: [{ nodeId: "N1", ux: 0.001, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+          reactions: [],
+          memberSectionForces: [],
+        },
+      ],
+      combinedResult: {
+        method: "CQC",
+        displacements: [{ nodeId: "N1", ux: 0.001, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+        reactions: [],
+        memberSectionForces: [],
+      },
+      directionResults: [
+        {
+          direction: "X",
+          combinationMethod: "CQC",
+          interpolationMethod: "logLog",
+          usedModes: [1],
+          modalResults: [
+            {
+              modeNo: 1,
+              spectralAcceleration: 1,
+              displacements: [{ nodeId: "N1", ux: 0.001, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+              reactions: [],
+              memberSectionForces: [],
+            },
+          ],
+          combinedResult: {
+            method: "CQC",
+            displacements: [{ nodeId: "N1", ux: 0.001, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+            reactions: [],
+            memberSectionForces: [],
+          },
         },
       ],
     },

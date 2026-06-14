@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 
 from typing import Any
 
@@ -393,3 +394,218 @@ def displacement_by_node(items: list[dict[str, Any]], node_id: str) -> dict[str,
         if item["nodeId"] == node_id:
             return item
     raise AssertionError(f"Missing displacement for node {node_id}")
+
+
+def test_cqc_combination_matches_srss_when_damping_is_zero_and_frequencies_differ() -> None:
+    # Build a small set of modal displacements with two modes. CQC and SRSS
+    # are both square-root-of-sum-of-squares when cross-correlation terms
+    # are zero. The CQC implementation must therefore produce the same
+    # envelope as SRSS for the trivial case.
+    from backend.engine.response_spectrum import (
+        combine_cqc,
+        combine_srss,
+        cqc_cross_correlation_matrix,
+    )
+
+    modal_results = [
+        {"displacements": [{"nodeId": "N1", "ux": 3.0, "uy": 4.0, "uz": 0.0, "rx": 0.0, "ry": 0.0, "rz": 0.0}]},
+        {"displacements": [{"nodeId": "N1", "ux": 0.0, "uy": 0.0, "uz": 5.0, "rx": 0.0, "ry": 0.0, "rz": 0.0}]},
+    ]
+    modes = [
+        {"circularFrequency": 10.0},
+        {"circularFrequency": 20.0},
+    ]
+    srss = combine_srss(modal_results)
+    cqc = combine_cqc(modal_results, 0.0, modes, key="displacements")
+    assert isinstance(cqc, list)
+    # With h=0, all cross terms are zero, so CQC == SRSS.
+    assert_close(cqc[0]["ux"], srss["displacements"][0]["ux"])
+    assert_close(cqc[0]["uy"], srss["displacements"][0]["uy"])
+    assert_close(cqc[0]["uz"], srss["displacements"][0]["uz"])
+
+
+def test_cqc_diagonal_equals_one_and_is_symmetric() -> None:
+    from backend.engine.response_spectrum import cqc_cross_correlation_matrix
+
+    omegas = [1.0, 2.0, 3.5]
+    matrix = cqc_cross_correlation_matrix(omegas, 0.05)
+    for i, row in enumerate(matrix):
+        assert_close(row[i], 1.0, abs_tol=1e-9)
+        for j, value in enumerate(row):
+            assert_close(matrix[i][j], matrix[j][i], abs_tol=1e-9)
+
+
+def test_cqc_cross_correlation_handles_coincident_frequencies_without_nan() -> None:
+    from backend.engine.response_spectrum import cqc_cross_correlation_matrix
+
+    omegas = [5.0, 5.0, 5.0]
+    matrix = cqc_cross_correlation_matrix(omegas, 0.05)
+    for row in matrix:
+        for value in row:
+            assert math.isfinite(value)
+            assert -1e-9 <= value <= 1.0 + 1e-9
+
+
+def test_cqc_default_returns_matching_envelope_for_separated_frequencies() -> None:
+    project = axial_cantilever_mass("response-spectrum-cqc")
+    result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "combinationMethod": "CQC",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    assert result["analysisSummary"]["status"] == "success"
+    response = result["responseSpectrumResult"]
+    assert response["combinationMethod"] == "CQC"
+    # With a single mode SRSS and CQC coincide.
+    srss_result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    srss_tip = displacement_by_node(
+        srss_result["responseSpectrumResult"]["combinedResult"]["displacements"], "N2"
+    )
+    cqc_tip = displacement_by_node(
+        response["combinedResult"]["displacements"], "N2"
+    )
+    assert_close(srss_tip["ux"], cqc_tip["ux"])
+
+
+def test_log_log_interpolation_matches_linear_at_positive_values() -> None:
+    points = [
+        {"period": 0.1, "value": 1.0},
+        {"period": 1.0, "value": 10.0},
+        {"period": 10.0, "value": 100.0},
+    ]
+    # A pure power-law spectrum has identical linear-in-period and log-log
+    # interpolation at endpoints.
+    for t in (0.1, 1.0, 10.0):
+        assert_close(
+            response_spectrum.interpolate_spectrum(t, points, "logLog"),
+            response_spectrum.interpolate_spectrum(t, points, "linear"),
+        )
+
+
+def test_log_log_interpolation_falls_back_to_linear_for_zero_values() -> None:
+    points = [
+        {"period": 0.0, "value": 0.0},
+        {"period": 1.0, "value": 1.0},
+    ]
+    # Zero-value entry must not blow up log interpolation.
+    value = response_spectrum.interpolate_spectrum(0.5, points, "logLog")
+    assert math.isfinite(value)
+    assert value >= 0.0
+
+
+def test_log_log_interpolation_between_positive_endpoints() -> None:
+    points = [
+        {"period": 0.1, "value": 1.0},
+        {"period": 10.0, "value": 100.0},
+    ]
+    # Geometric mean at the midpoint period should produce the geometric
+    # mean of the two values for a power-law spectrum.
+    value = response_spectrum.interpolate_spectrum(1.0, points, "logLog")
+    assert_close(value, 10.0)
+
+
+def test_response_spectrum_result_includes_direction_results() -> None:
+    project = axial_cantilever_mass("response-spectrum-direction-results")
+    result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    response = result["responseSpectrumResult"]
+    assert "directionResults" in response
+    assert len(response["directionResults"]) == 1
+    entry = response["directionResults"][0]
+    assert entry["direction"] == "X"
+    assert entry["combinationMethod"] == "SRSS"
+    assert entry["interpolationMethod"] == "linear"
+    assert len(entry["modalResults"]) == 1
+    assert "combinedResult" in entry
+
+
+def test_modal_reactions_and_member_section_forces_are_populated() -> None:
+    project = axial_cantilever_mass("response-spectrum-reactions-and-forces")
+    result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    response = result["responseSpectrumResult"]
+    modal = response["modalResults"][0]
+    assert modal["reactions"], "modal reactions should be populated"
+    assert modal["memberSectionForces"], "modal member section forces should be populated"
+    combined = response["combinedResult"]
+    assert combined["reactions"], "combined reactions should be populated"
+    assert combined["memberSectionForces"], "combined member section forces should be populated"
+    # combined.result.method should reflect the requested combination.
+    assert combined["method"] == "SRSS"
+
+
+def test_invalid_combination_method_returns_path_error() -> None:
+    project = axial_cantilever_mass("response-spectrum-invalid-combination")
+    result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "combinationMethod": "ABCD",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    assert result["analysisSummary"]["status"] == "failed"
+    assert any(err.get("path") == "/combinationMethod" for err in result["errors"])
+
+
+def test_invalid_interpolation_method_returns_path_error() -> None:
+    project = axial_cantilever_mass("response-spectrum-invalid-interpolation")
+    result = run_response_spectrum_analysis(
+        project,
+        {
+            "massCaseId": "mass-1",
+            "modeCount": 1,
+            "direction": "X",
+            "interpolationMethod": "spline",
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 10.0, "value": 1.0},
+            ],
+        },
+    )
+    assert result["analysisSummary"]["status"] == "failed"
+    assert any(err.get("path") == "/interpolationMethod" for err in result["errors"])

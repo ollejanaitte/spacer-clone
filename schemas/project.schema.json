@@ -748,6 +748,18 @@
           "type": "number",
           "minimum": 0
         },
+        "combinationMethod": {
+          "enum": [
+            "SRSS",
+            "CQC"
+          ]
+        },
+        "interpolationMethod": {
+          "enum": [
+            "linear",
+            "logLog"
+          ]
+        },
         "targetCumulativeMassRatio": {
           "type": "number",
           "exclusiveMinimum": 0,

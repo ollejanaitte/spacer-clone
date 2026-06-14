@@ -672,6 +672,8 @@ def _wrap_dynamic_example(
     geometry_loader: Callable[[dict[str, Any]], None],
     *,
     include_response_spectrum: bool,
+    combination_method: str | None = None,
+    interpolation_method: str | None = None,
 ) -> dict[str, Any]:
     project = base_project(base_id, base_name, base_description)
     geometry_loader(project)
@@ -690,7 +692,7 @@ def _wrap_dynamic_example(
         },
     }
     if include_response_spectrum:
-        settings["responseSpectrum"] = {
+        rs: dict[str, Any] = {
             "massCaseId": "mass-1",
             "modeCount": 2 if base_id.startswith("cantilever") else 3,
             "spectrumCaseId": "spec-1",
@@ -703,6 +705,11 @@ def _wrap_dynamic_example(
                 {"period": 1.0, "value": 1.0},
             ],
         }
+        if combination_method is not None:
+            rs["combinationMethod"] = combination_method
+        if interpolation_method is not None:
+            rs["interpolationMethod"] = interpolation_method
+        settings["responseSpectrum"] = rs
     project["analysisSettings"] = settings
     return project
 
@@ -747,6 +754,28 @@ def simple_beam_response_spectrum() -> dict[str, Any]:
     )
 
 
+def response_spectrum_cqc() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "response-spectrum-cqc",
+        "Response Spectrum CQC",
+        "Cantilever response spectrum analysis with CQC (Complete Quadratic Combination) and linear interpolation.",
+        add_cantilever_geometry,
+        include_response_spectrum=True,
+        combination_method="CQC",
+    )
+
+
+def response_spectrum_loglog() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "response-spectrum-loglog",
+        "Response Spectrum log-log",
+        "Cantilever response spectrum analysis with log-log spectrum interpolation and a descending Sa curve.",
+        add_cantilever_geometry,
+        include_response_spectrum=True,
+        interpolation_method="logLog",
+    )
+
+
 def examples() -> list[dict[str, Any]]:
     projects = [
         cantilever_tip_load(),
@@ -757,6 +786,8 @@ def examples() -> list[dict[str, Any]]:
         simple_beam_eigen(),
         cantilever_response_spectrum(),
         simple_beam_response_spectrum(),
+        response_spectrum_cqc(),
+        response_spectrum_loglog(),
     ]
     return [
         {

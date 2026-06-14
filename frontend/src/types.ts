@@ -117,6 +117,8 @@ export type AnalysisSettings = {
     spectrumCaseId: string;
     direction: "X" | "Y" | "Z";
     dampingRatio: number;
+    combinationMethod?: ResponseSpectrumCombinationMethod;
+    interpolationMethod?: ResponseSpectrumInterpolationMethod;
     targetCumulativeMassRatio: number;
     spectrumPoints: Array<{ period: number; value: number }>;
   };
@@ -258,6 +260,7 @@ export type EigenResult = {
 };
 
 export type ResponseSpectrumCombinationMethod = "SRSS" | "CQC";
+export type ResponseSpectrumInterpolationMethod = "linear" | "logLog";
 
 export type MemberSectionForceComponent = "N" | "Qy" | "Qz" | "Mx" | "My" | "Mz";
 
@@ -309,7 +312,19 @@ export type ResponseSpectrumResult = {
   direction: string;
   dampingRatio: number;
   combinationMethod: ResponseSpectrumCombinationMethod;
+  interpolationMethod?: ResponseSpectrumInterpolationMethod;
   targetCumulativeMassRatio?: number;
+  usedModes?: number[];
+  modalResults: ResponseSpectrumModalResult[];
+  combinedResult: ResponseSpectrumCombinedResult;
+  directionResults?: ResponseSpectrumDirectionResult[];
+};
+
+export type ResponseSpectrumDirectionResult = {
+  direction: "X" | "Y" | "Z";
+  combinationMethod: ResponseSpectrumCombinationMethod;
+  interpolationMethod?: ResponseSpectrumInterpolationMethod;
+  dampingRatio?: number;
   usedModes?: number[];
   modalResults: ResponseSpectrumModalResult[];
   combinedResult: ResponseSpectrumCombinedResult;
