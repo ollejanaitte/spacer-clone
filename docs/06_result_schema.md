@@ -228,6 +228,7 @@
   "direction": "X",
   "dampingRatio": 0.05,
   "combinationMethod": "SRSS",
+  "interpolationMethod": "linear",
   "targetCumulativeMassRatio": 0.9,
   "usedModes": [1],
   "modalResults": [],
@@ -236,8 +237,15 @@
     "displacements": [],
     "reactions": [],
     "memberSectionForces": []
-  }
+  },
+  "directionResults": []
 }
 ```
 
-MVP では `combinedResult.reactions` と `combinedResult.memberSectionForces` は空配列とする。
+各フィールドの意味:
+
+- `combinationMethod`: `SRSS` または `CQC`。MVP の既定は `SRSS`。
+- `interpolationMethod`: `linear` または `logLog`。既定は `linear`。
+- `usedModes`: 解析に使用されたモード番号の配列。
+- `combinedResult.reactions` / `combinedResult.memberSectionForces`: 合成された動的反力 / 動的部材力。
+- `directionResults`: 方向別の解析結果。単一方向実行でも 1 要素を返す。

@@ -143,14 +143,17 @@ HTML 帳票には、解析タイプが `eigen` または `response_spectrum` の
 | スペクトルケースID | `spectrumCaseId` |
 | 起震方向 | `direction` |
 | 減衰定数 | `dampingRatio` |
-| モード合成方法 | `combinationMethod` |
+| モード合成方法 | `combinationMethod` (`SRSS` / `CQC`) |
+| 補間方法 | `interpolationMethod` (`linear` / `logLog`) |
 | 目標累積有効質量比 | `targetCumulativeMassRatio` |
 | 使用モード | `usedModes` |
 | スペクトル点数 | `project.analysisSettings.responseSpectrum.spectrumPoints.length` |
+| 方向別結果数 | `responseSpectrumResult.directionResults.length` |
 
-### 8.4 SRSS変位表
+### 8.4 変位表
 
 `responseSpectrumResult.combinedResult.displacements` を一覧する。
+セクション名は `SRSS Displacements` または `CQC Displacements` のように、選択されたモード合成方法を反映する。
 
 | 列 | 意味 |
 | --- | --- |
@@ -158,9 +161,50 @@ HTML 帳票には、解析タイプが `eigen` または `response_spectrum` の
 | DX / DY / DZ | `ux` / `uy` / `uz` (m) |
 | RX / RY / RZ | `rx` / `ry` / `rz` (rad) |
 
-### 8.5 注意事項
+### 8.5 動的反力表
 
-- 現時点のモード合成は **SRSS** のみ対応する。`CQC` は本セクションの対象外。
-- 応答スペクトル点列の補間は線形補間（周期方向）。`log-log` 補間や基準スペクトル自動生成は未対応。
-- `directionResults`、動的反力、動的部材力の正式帳票化は本セクションでは行わない（今後対応）。
+`responseSpectrumResult.combinedResult.reactions` を一覧する。データが存在しない場合、本セクションは帳票に出力されない。
+
+| 列 | 意味 |
+| --- | --- |
+| 節点番号 | `nodeId` |
+| Fx / Fy / Fz | `fx` / `fy` / `fz` (kN) |
+| Mx / My / Mz | `mx` / `my` / `mz` (kN·m) |
+
+### 8.6 動的部材力表
+
+`responseSpectrumResult.combinedResult.memberSectionForces` を一覧する。
+データが存在しない場合、本セクションは帳票に出力されない。
+
+| 列 | 意味 |
+| --- | --- |
+| 部材番号 | `memberId` |
+| ステーション | `station` (0 〜 1) |
+| 成分 | `N` / `Qy` / `Qz` / `Mx` / `My` / `Mz` |
+| 値 | `value` (N, Q は kN / M は kN·m) |
+
+### 8.7 方向別結果サマリ
+
+`responseSpectrumResult.directionResults[]` を一覧する。`directionResults` が空の場合は帳票に出力されない。
+
+| 列 | 意味 |
+| --- | --- |
+| 方向 | `direction` (`X` / `Y` / `Z`) |
+| 合成方法 | `combinationMethod` |
+| 補間方法 | `interpolationMethod` |
+| モード応答数 | `modalResults.length` |
+| 合成変位数 | `combinedResult.displacements.length` |
+| 使用モード | `usedModes` |
+
+### 8.8 CQC 注意事項
+
+`combinationMethod` が `CQC` の場合、動的解析セクションの末尾に「CQC Note」セクションを追加する。
+このセクションは、減衰定数を含む実行条件と CQC の標準的な rho_ij 補間式を用いた合成である旨を明記する。
+
+### 8.9 注意事項
+
+- モード合成は `SRSS` / `CQC` の両方をサポートする。MVP の既定は `SRSS`。
+- 補間方式は `linear` / `logLog` の両方をサポートする。`logLog` 選択時、入力データに 0 以下が含まれると linear に安全フォールバックする。
+- 動的反力および動的部材力は、現時点では `combinedResult` 側のみ正式対応する。
 - データが存在しないセクションは帳票に出力されない（壊れない）。
+- CQC における複数方向の同時合成（`directionResults` を SRSS 合成する機能）は未対応。

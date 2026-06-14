@@ -80,6 +80,21 @@ PYTHON_BIN=python ./start-mac.sh
 
 バックエンドを起動できない場合は `Version 0.0.0` が表示されます。
 
+## About と更新確認（デスクトップ版）
+
+デスクトップ版（Electron）では、メニュー「ヘルプ」から以下を利用できます。
+
+- **`このアプリについて`**: アプリ名 / バージョン / リポジトリ URL を表示するダイアログを開きます。
+- **`更新を確認`**: GitHub Releases ページへのリンクを案内するダイアログを開きます。現時点では自動ダウンロード / 自動再起動は行いません（`electron-updater` 等の自動更新基盤は未導入）。
+
+## アイコン
+
+`build/icon.png` / `build/icon.ico` はプレースホルダーのアプリアイコンです。
+
+- Windows 配布時は `build/icon.ico` が `electron-builder` の `build.win.icon` から参照されます（`frontend/package.json` 参照）。
+- 再生成スクリプト: `scripts/build_icons.py`（Pure Python、外部ライブラリ不要）。
+- `electron:build` 実行時に自動的にこのスクリプトが走るため、`build/icon.*` を直接編集する必要はありません。
+
 ## サンプルJSON（動的解析）
 
 動的解析を試したい方は、まず次のサンプルを開いてください。`examples/` フォルダにあります。
@@ -88,6 +103,8 @@ PYTHON_BIN=python ./start-mac.sh
 - `examples/simple_beam_eigen.json` — 単純梁 固有値解析
 - `examples/cantilever_response_spectrum.json` — 片持ち梁 応答スペクトル解析（SRSS）
 - `examples/simple_beam_response_spectrum.json` — 単純梁 応答スペクトル解析（SRSS）
+- `examples/response_spectrum_cqc.json` — 応答スペクトル解析（CQC、片持ち梁）
+- `examples/response_spectrum_loglog.json` — 応答スペクトル解析（log-log 補間、片持ち梁）
 
 使い方:
 
@@ -106,10 +123,14 @@ PYTHON_BIN=python ./start-mac.sh
 
 - 固有値表（モード番号 / 固有値 / 固有円振動数 / 固有振動数 / 固有周期 / 刺激係数 X Y Z / 有効質量比 X Y Z / 累積有効質量比 X Y Z）
 - 有効質量比サマリ（方向 / 総質量 / 最終累積有効質量比 / 使用モード数）
-- 応答スペクトル条件（スペクトルケースID / 起震方向 / 減衰定数 / モード合成方法 / 目標累積有効質量比 / 使用モード / スペクトル点数）
-- SRSS変位表（節点番号 / DX DY DZ / RX RY RZ）
+- 応答スペクトル条件（スペクトルケースID / 起震方向 / 減衰定数 / モード合成方法 / 補間方法 / 目標累積有効質量比 / 使用モード / スペクトル点数 / 方向別結果数）
+- 変位表（SRSS / CQC のモード合成方法を反映。節点番号 / DX DY DZ / RX RY RZ）
+- 動的反力表（節点番号 / Fx Fy Fz / Mx My Mz）
+- 動的部材力表（部材番号 / ステーション / 成分 / 値）
+- 方向別結果サマリ（複数方向実行時の各方向の合成情報）
+- CQC 使用時の注記（減衰定数と rho_ij 補間式に言及）
 
-データが存在しない場合（線形静的解析のみの実行時など）は、対応するセクションは帳票に出力されません。
+データが存在しないセクションは帳票に出力されません（壊れない）。
 
 ## トラブル時の確認方法
 
