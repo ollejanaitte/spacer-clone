@@ -57,6 +57,38 @@ Pythonコマンド名を変えたい場合は `PYTHON_BIN` を指定できます
 PYTHON_BIN=python ./start-mac.sh
 ```
 
+## Linux (Ubuntu / WSL) での起動
+
+Ubuntu 20.04 以降 / WSL2 (Ubuntu) では `start-ubuntu.sh` を使います。
+
+```bash
+./start-ubuntu.sh
+```
+
+必要に応じて Python venv・`fastapi/uvicorn`・`npm` 依存・Electron ビルドを自動で行います。終了は `Ctrl+C` で、バックエンド・Electron・関連プロセスグループをすべて停止します。
+
+GPU 互換モードの指定:
+
+```bash
+./start-ubuntu.sh --safe-gpu        # ANGLE GL fallback
+./start-ubuntu.sh --legacy-gl       # legacy desktop GL
+./start-ubuntu.sh --normal          # 通常 GPU
+```
+
+Electron をスキップして Vite dev のみ使う:
+
+```bash
+./start-ubuntu.sh --web
+```
+
+バックエンドのみ (curl などで API 検証する用途):
+
+```bash
+./start-ubuntu.sh --backend-only
+```
+
+詳細・トラブルシューティングは `docs/run-ubuntu.md` を参照してください。
+
 ## exe 配布版での起動
 
 ビルド済みの配布物を使う場合、フォルダに同梱された `Spacer Clone.exe` を実行します。
