@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from "electron";
+import { app, BrowserWindow, dialog, Menu, MenuItemConstructorOptions, shell } from "electron";
 import path from "node:path";
 import {
   spawn,
@@ -6,6 +6,13 @@ import {
   type ChildProcessWithoutNullStreams,
 } from "node:child_process";
 import { getGpuSwitches, resolveGpuModeFromArgs } from "./gpuMode";
+import {
+  APP_NAME_FALLBACK,
+  REPO_URL,
+  RELEASES_URL,
+  buildAboutDetail,
+  describeReleaseCheckStatus,
+} from "./aboutConfig";
 
 const gpuMode = resolveGpuModeFromArgs(process.argv, process.env.GPU_MODE);
 let backendProcess: ChildProcessWithoutNullStreams | undefined;
@@ -24,12 +31,143 @@ function getProductionIndexPath(): string {
   return path.join(process.resourcesPath, "frontend", "index.html");
 }
 
+function getAppIconPath(): string | undefined {
+  // In dev, the source icon is at the repo root build/. In packaged builds,
+  // electron-builder will copy build/icon.png into the application resources
+  // under extraResources when configured.
+  const candidates = [
+    path.join(__dirname, "..", "..", "build", "icon.png"),
+    path.join(__dirname, "..", "..", "build", "icon.ico"),
+    path.join(process.resourcesPath ?? "", "build", "icon.png"),
+    path.join(process.resourcesPath ?? "", "build", "icon.ico"),
+  ];
+  for (const candidate of candidates) {
+    if (candidate && require("node:fs").existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return undefined;
+}
+
 function getAppVersion(): string {
   try {
     return app.getVersion();
   } catch {
     return "0.0.0";
   }
+}
+
+function getAppName(): string {
+  try {
+    return app.getName();
+  } catch {
+    return APP_NAME_FALLBACK;
+  }
+}
+
+async function showAboutDialog(parent: BrowserWindow | undefined): Promise<void> {
+  const version = getAppVersion();
+  const detail = buildAboutDetail(version, getAppName(), REPO_URL);
+  const options: Electron.MessageBoxOptions = {
+    type: "info",
+    title: "このアプリについて",
+    message: `${getAppName()} について`,
+    detail,
+    buttons: ["OK", "更新を確認", "GitHub を開く"],
+    defaultId: 0,
+    cancelId: 0,
+  };
+  try {
+    const result = parent
+      ? await dialog.showMessageBox(parent, options)
+      : await dialog.showMessageBox(options);
+    if (result.response === 1) {
+      void checkForUpdates(parent);
+    } else if (result.response === 2) {
+      void shell.openExternal(REPO_URL);
+    }
+  } catch {
+    // dialog might be unavailable in test contexts
+  }
+}
+
+async function checkForUpdates(parent: BrowserWindow | undefined): Promise<void> {
+  // 現時点では自動更新は無効。GitHub の Releases ページへ誘導する。
+  // 自動更新を有効化する場合、electron-updater の導入と配布 URL / 署名検証の設定が必要。
+  let message = "最新リリース情報を確認します。GitHub の Releases ページを開きますか?";
+  try {
+    const response = await fetch(RELEASES_URL, { method: "HEAD", redirect: "follow" });
+    message = describeReleaseCheckStatus(response.ok, response.status, null, RELEASES_URL);
+  } catch (error) {
+    message = describeReleaseCheckStatus(false, 0, error instanceof Error ? error.message : String(error), RELEASES_URL);
+  }
+  const options: Electron.MessageBoxOptions = {
+    type: "info",
+    title: "更新の確認",
+    message: "更新の確認",
+    detail: message,
+    buttons: ["GitHub を開く", "OK"],
+    defaultId: 0,
+    cancelId: 1,
+  };
+  try {
+    const result = parent
+      ? await dialog.showMessageBox(parent, options)
+      : await dialog.showMessageBox(options);
+    if (result.response === 0) {
+      void shell.openExternal(RELEASES_URL);
+    }
+  } catch {
+    // dialog might be unavailable in test contexts
+  }
+}
+
+function buildAppMenu(): void {
+  const isMac = process.platform === "darwin";
+  const template: MenuItemConstructorOptions[] = [
+    ...(isMac
+      ? [
+          {
+            label: getAppName(),
+            submenu: [
+              { role: "about" as const, label: `${getAppName()} について` },
+              { type: "separator" as const },
+              { role: "hide" as const },
+              { role: "hideOthers" as const },
+              { role: "unhide" as const },
+              { type: "separator" as const },
+              { role: "quit" as const },
+            ],
+          },
+        ]
+      : []),
+    {
+      label: "ファイル",
+      submenu: [
+        isMac ? { role: "close" as const } : { role: "quit" as const, label: "終了" },
+      ],
+    },
+    {
+      label: "ヘルプ",
+      submenu: [
+        {
+          label: "更新を確認",
+          click: () => {
+            const focused = BrowserWindow.getFocusedWindow() ?? mainWindow;
+            void checkForUpdates(focused);
+          },
+        },
+        {
+          label: `${getAppName()} について`,
+          click: () => {
+            const focused = BrowserWindow.getFocusedWindow() ?? mainWindow;
+            void showAboutDialog(focused);
+          },
+        },
+      ],
+    },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 async function waitForBackend(): Promise<void> {
@@ -109,6 +247,19 @@ function renderSplashHtml(status: "starting" | "backend" | "ui" | "error", messa
           ? "バックエンドを起動しています"
           : "Spacer Clone を起動しています";
   const color = status === "error" ? "#b00020" : "#273746";
+  const stage = status;
+  const stages = [
+    { key: "starting", label: "起動準備" },
+    { key: "backend", label: "バックエンド" },
+    { key: "ui", label: "UI" },
+  ];
+  const stageHtml = stages
+    .map((s) => {
+      const reached = (stage === s.key) || (stage === "ui" && s.key !== "ui") || (stage === "error");
+      const cls = s.key === stage ? "active" : reached ? "done" : "pending";
+      return `<div class="stage ${cls}">${s.label}</div>`;
+    })
+    .join('<div class="stage-sep">›</div>');
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -119,38 +270,59 @@ function renderSplashHtml(status: "starting" | "backend" | "ui" | "error", messa
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       color: ${color};
-      background: #f4f6f9;
+      background: linear-gradient(135deg, #f4f6f9 0%, #e6edf5 100%);
       margin: 0;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      border-top: 4px solid #3a6fa5;
     }
     .mark {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 700;
       letter-spacing: 1px;
+      color: #1f3b5a;
     }
-    .status { font-size: 16px; }
-    .message { color: #526273; font-size: 12px; max-width: 360px; text-align: center; }
-    .version { color: #6b7785; font-size: 11px; margin-top: 16px; }
+    .title { font-size: 14px; color: #526273; margin-top: -6px; }
+    .status { font-size: 17px; font-weight: 600; }
+    .message { color: #526273; font-size: 12px; max-width: 360px; text-align: center; line-height: 1.5; }
+    .version { color: #6b7785; font-size: 11px; margin-top: 8px; }
     .spinner {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: 3px solid #cad4df;
       border-top-color: #3a6fa5;
       animation: spin 0.9s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .stages {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+    .stage {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #dde4ec;
+      color: #6b7785;
+    }
+    .stage.active { background: #3a6fa5; color: #fff; font-weight: 600; }
+    .stage.done { background: #b8d4b8; color: #2e5d2e; }
+    .stage-sep { color: #8fa1b3; }
   </style>
 </head>
 <body>
   <div class="mark">SC</div>
+  <div class="title">Spacer Clone</div>
   <div class="status">${heading}</div>
   <div class="spinner"></div>
+  <div class="stages">${stageHtml}</div>
   <div class="message">${message}</div>
   <div class="version">Version ${version}</div>
 </body>
@@ -197,6 +369,7 @@ function closeSplash(): void {
 }
 
 async function createMainWindow(version: string): Promise<void> {
+  const iconPath = getAppIconPath();
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 820,
@@ -204,6 +377,7 @@ async function createMainWindow(version: string): Promise<void> {
     minHeight: 680,
     title: `Spacer Clone v${version}`,
     show: false,
+    ...(iconPath ? { icon: iconPath } : {}),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -269,6 +443,7 @@ async function runWithSplash(): Promise<void> {
 }
 
 app.whenReady().then(() => {
+  buildAppMenu();
   void runWithSplash();
 
   app.on("activate", () => {

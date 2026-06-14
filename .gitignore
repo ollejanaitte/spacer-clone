@@ -10,8 +10,11 @@ frontend/dist/
 __pycache__/
 *.pyc
 
-# Build artifacts
+# Build artifacts (keep checked-in app icons)
 build/
+!build/icon.png
+!build/icon.ico
+!build/README.md
 dist/
 release/
 frontend/electron-dist/

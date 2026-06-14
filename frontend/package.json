@@ -12,11 +12,12 @@
     "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",
     "app:dev": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev\"",
     "app:dev:compat": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev:compat\"",
-    "electron:build": "npm run build && npm run electron:compile && powershell -Command \"Remove-Item -Recurse -Force electron-dist -ErrorAction SilentlyContinue; Copy-Item -Recurse ../desktop/electron/dist electron-dist\"",
+    "electron:build": "npm run build && npm run icons:build && npm run electron:compile && powershell -Command \"Remove-Item -Recurse -Force electron-dist -ErrorAction SilentlyContinue; Copy-Item -Recurse ../desktop/electron/dist electron-dist\"",
     "electron:test": "vitest run --root .. desktop/electron",
     "pack:win": "npm run electron:build && electron-builder --win --dir",
     "dist:win": "npm run electron:build && electron-builder --win",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "icons:build": "python ../scripts/build_icons.py"
   },
   "dependencies": {
     "@types/three": "^0.184.1",
@@ -61,7 +62,8 @@
       }
     ],
     "win": {
-      "target": "dir"
+      "target": "dir",
+      "icon": "../build/icon.ico"
     }
   }
 }
