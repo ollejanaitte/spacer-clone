@@ -512,6 +512,36 @@ function ResponseSpectrumEditor({
         />
       </label>
       <label className="field">
+        <span>モード合成方法</span>
+        <select
+          aria-label="モード合成方法"
+          value={settings.combinationMethod ?? "SRSS"}
+          onChange={(event) =>
+            updateSettings({
+              combinationMethod: event.currentTarget.value as "SRSS" | "CQC",
+            })
+          }
+        >
+          <option value="SRSS">SRSS（既定）</option>
+          <option value="CQC">CQC</option>
+        </select>
+      </label>
+      <label className="field">
+        <span>スペクトル補間</span>
+        <select
+          aria-label="スペクトル補間"
+          value={settings.interpolationMethod ?? "linear"}
+          onChange={(event) =>
+            updateSettings({
+              interpolationMethod: event.currentTarget.value as "linear" | "logLog",
+            })
+          }
+        >
+          <option value="linear">線形補間（既定）</option>
+          <option value="logLog">log-log 補間</option>
+        </select>
+      </label>
+      <label className="field">
         <span>スペクトルケースID</span>
         <input
           aria-label="スペクトルケースID"

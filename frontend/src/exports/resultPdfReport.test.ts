@@ -60,6 +60,8 @@ describe("result PDF report export", () => {
     expect(titles).toContain("Effective Mass Summary");
     expect(titles).toContain("Response Spectrum Conditions");
     expect(titles).toContain("SRSS Displacements");
+    expect(titles).not.toContain("CQC Note");
+    expect(titles).not.toContain("Direction Result Summary");
 
     const eigenTable = report.sections.find((section) => section.title === "Eigen Modes")?.blocks[0];
     expect(eigenTable?.title).toBe("Eigen Modes Table");
@@ -116,12 +118,154 @@ describe("result PDF report export", () => {
     expect(html).toContain("SRSS Displacement Table");
   });
 
+  it("adds CQC, log-log interpolation, direction result summary, dynamic reactions, and dynamic member forces when present", () => {
+    const project = createDefaultProject();
+    project.analysisSettings.responseSpectrum = {
+      massCaseId: "mass-1",
+      modeCount: 2,
+      spectrumCaseId: "spec-1",
+      direction: "X",
+      dampingRatio: 0.05,
+      combinationMethod: "CQC",
+      interpolationMethod: "logLog",
+      targetCumulativeMassRatio: 0.9,
+      spectrumPoints: [
+        { period: 0.05, value: 1.0 },
+        { period: 0.5, value: 1.0 },
+        { period: 1.0, value: 1.0 },
+      ],
+    };
+
+    const baseResult = dynamicSampleResult();
+    const result: AnalysisResult = {
+      ...baseResult,
+      responseSpectrumResult: {
+        ...(baseResult.responseSpectrumResult as NonNullable<typeof baseResult.responseSpectrumResult>),
+        combinationMethod: "CQC",
+        interpolationMethod: "logLog",
+        usedModes: [1, 2],
+        directionResults: [
+          {
+            direction: "X",
+            combinationMethod: "CQC",
+            interpolationMethod: "logLog",
+            usedModes: [1, 2],
+            modalResults: [
+              {
+                modeNo: 1,
+                spectralAcceleration: 1.0,
+                displacements: [
+                  { nodeId: "N2", ux: 0.00123, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+                ],
+                reactions: [
+                  { nodeId: "N1", fx: 0, fy: 5, fz: 0, mx: 0, my: 0, mz: 1 },
+                ],
+                memberSectionForces: [
+                  { memberId: "M1", station: 0, component: "N", value: 0.5 },
+                ],
+              },
+            ],
+            combinedResult: {
+              method: "CQC",
+              displacements: [
+                { nodeId: "N1", ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+                { nodeId: "N2", ux: 0.0015, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+              ],
+              reactions: [
+                { nodeId: "N1", fx: 0, fy: 5, fz: 0, mx: 0, my: 0, mz: 1 },
+              ],
+              memberSectionForces: [
+                { memberId: "M1", station: 0, component: "N", value: 0.5 },
+              ],
+            },
+          },
+        ],
+        combinedResult: {
+          method: "CQC",
+          displacements: [
+            { nodeId: "N1", ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+            { nodeId: "N2", ux: 0.0015, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+          ],
+          reactions: [
+            { nodeId: "N1", fx: 0, fy: 5, fz: 0, mx: 0, my: 0, mz: 1 },
+          ],
+          memberSectionForces: [
+            { memberId: "M1", station: 0, component: "N", value: 0.5 },
+          ],
+        },
+      },
+    };
+
+    const report = buildResultPdfReport(project, result, "", "2026-06-06T00:00:00.000Z");
+    const titles = report.sections.map((section) => section.title);
+    expect(titles).toContain("CQC Displacements");
+    expect(titles).toContain("CQC Support Reactions (Dynamic)");
+    expect(titles).toContain("CQC Member Section Forces (Dynamic)");
+    expect(titles).toContain("Direction Result Summary");
+    expect(titles).toContain("CQC Note");
+
+    const conditionsTable = report.sections.find((section) => section.title === "Response Spectrum Conditions")?.blocks[0];
+    const conditionRows = Object.fromEntries(
+      (conditionsTable?.rows ?? []).map((row) => [String(row[0]), row[1]]),
+    );
+    expect(conditionRows["Combination method"]).toBe("CQC");
+    expect(conditionRows["Interpolation method"]).toBe("logLog");
+    expect(conditionRows["Direction result count"]).toBe("1");
+
+    const directionTable = report.sections.find((section) => section.title === "Direction Result Summary")?.blocks[0];
+    expect(directionTable?.rows[0]?.[0]).toBe("X");
+    expect(directionTable?.rows[0]?.[1]).toBe("CQC");
+    expect(directionTable?.rows[0]?.[2]).toBe("logLog");
+
+    const reactionTable = report.sections.find((section) => section.title === "CQC Support Reactions (Dynamic)")?.blocks[0];
+    expect(reactionTable?.rows[0]?.[0]).toBe("N1");
+    expect(reactionTable?.rows[0]?.[1]).toBe(0);
+    expect(reactionTable?.rows[0]?.[2]).toBe(5);
+    expect(reactionTable?.rows[0]?.[3]).toBe(0);
+
+    const memberTable = report.sections.find((section) => section.title === "CQC Member Section Forces (Dynamic)")?.blocks[0];
+    expect(memberTable?.rows[0]?.[0]).toBe("M1");
+    expect(memberTable?.rows[0]?.[2]).toBe("N");
+    expect(memberTable?.rows[0]?.[3]).toBe(0.5);
+
+    const html = buildResultPdfReportHtml(report);
+    expect(html).toContain("CQC Displacements");
+    expect(html).toContain("Direction Result Summary");
+    expect(html).toContain("CQC Note");
+    expect(html).toContain("Dynamic Support Reaction Table");
+    expect(html).toContain("Dynamic Member Section Force Table");
+  });
+
+  it("renders an empty-state marker instead of crashing when dynamic reactions are missing", () => {
+    const project = createDefaultProject();
+    project.analysisSettings.responseSpectrum = {
+      massCaseId: "mass-1",
+      modeCount: 1,
+      spectrumCaseId: "spec-1",
+      direction: "X",
+      dampingRatio: 0.05,
+      targetCumulativeMassRatio: 0.9,
+      spectrumPoints: [
+        { period: 0, value: 1 },
+        { period: 1, value: 1 },
+      ],
+    };
+
+    const html = buildResultPdfReportHtml(
+      buildResultPdfReport(project, dynamicSampleResult(), "", "2026-06-06T00:00:00.000Z"),
+    );
+    // The PDF should still render the static SRSS sections
+    expect(html).toContain("SRSS Displacements");
+    expect(html).not.toContain("CQC Support Reactions (Dynamic)");
+  });
+
   it("does not add dynamic sections when the result is purely static", () => {
     const report = buildResultPdfReport(createDefaultProject(), sampleResult(), "LC1", "2026-06-06T00:00:00.000Z");
     const titles = report.sections.map((section) => section.title);
     expect(titles).not.toContain("Eigen Modes");
     expect(titles).not.toContain("Response Spectrum Conditions");
     expect(titles).not.toContain("SRSS Displacements");
+    expect(titles).not.toContain("CQC Note");
   });
 });
 

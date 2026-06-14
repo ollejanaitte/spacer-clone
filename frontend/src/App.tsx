@@ -463,10 +463,23 @@ function pushApiError(
         ? "NETWORK_ERROR"
         : fallbackCode
       : fallbackCode;
+  // ユーザー向けには短い説明。生の例外メッセージはログや詳細欄で確認できる。
+  let userMessage: string;
+  if (error instanceof ApiClientError) {
+    userMessage = error.message;
+  } else if (error instanceof Error) {
+    if (code === "NETWORK_ERROR") {
+      userMessage = "バックエンドに接続できません。サーバーが起動しているか確認してください。";
+    } else {
+      userMessage = `${fallbackCode}: 詳細はログを確認してください。`;
+    }
+  } else {
+    userMessage = "予期しないAPIエラーです。";
+  }
   setApiErrors([
     {
       code,
-      message: error instanceof Error ? error.message : "予期しないAPIエラーです。",
+      message: userMessage,
       path: null,
       entityType: null,
       entityId: null,

@@ -248,7 +248,7 @@ function ResultTablesContent({
             onRowClick={(row) => onSelectedResponseSpectrumResultChange(`mode:${Number(row.modeNo)}`)}
           />
           <CompactTable
-            title="SRSS合成結果"
+            title={`${responseSpectrumViewModel.combinationMethod}合成結果`}
             rows={responseSpectrumViewModel.srssRows}
             columns={["method", "maxDisplacement", "maxReaction", "maxMemberForce"]}
             onRowClick={() => onSelectedResponseSpectrumResultChange("SRSS")}
@@ -268,6 +268,21 @@ function ResultTablesContent({
             rows={responseMemberSectionForces}
             columns={["memberId", "station", "component", "value"]}
           />
+          {responseSpectrumViewModel.directionResults.length > 0 && (
+            <CompactTable
+              title="方向別結果サマリ"
+              rows={responseSpectrumViewModel.directionResults.map((d) => ({
+                direction: d.direction,
+                combinationMethod: d.combinationMethod,
+                interpolationMethod: d.interpolationMethod ?? "-",
+                modalCount: d.modalResults,
+                combinedCount: d.combinedDisplacementCount,
+                usedModes: Array.isArray(d.usedModes) && d.usedModes.length > 0 ? d.usedModes.join(",") : "-",
+              }))}
+              columns={["direction", "combinationMethod", "interpolationMethod", "modalCount", "combinedCount", "usedModes"]}
+              emptyMessage="方向別結果はありません"
+            />
+          )}
         </>
       )}
       {activeView === "influence" && influenceViewModel && (
@@ -544,17 +559,19 @@ function CompactTable({
   rows,
   columns,
   onRowClick,
+  emptyMessage = "行がありません。",
 }: {
   title: string;
   rows: Array<Record<string, unknown>>;
   columns: string[];
   onRowClick?: (row: Record<string, unknown>) => void;
+  emptyMessage?: string;
 }) {
   return (
     <div className="result-table">
       <h3>{title}</h3>
       {rows.length === 0 ? (
-        <div className="empty-state">行がありません。</div>
+        <div className="empty-state">{emptyMessage}</div>
       ) : (
         <table>
           <thead>
@@ -654,9 +671,9 @@ function columnLabel(column: string): string {
     period: "T",
     modalMass: "モード質量",
     spectralAcceleration: "Sa",
-    maxDisplacement: "最大変位",
-    maxReaction: "最大反力",
-    maxMemberForce: "最大断面力",
+    maxDisplacement: "最大変位 (m/rad)",
+    maxReaction: "最大反力 (kN, kN·m)",
+    maxMemberForce: "最大断面力 (kN, kN·m)",
     participationFactorX: "刺激係数 X",
     participationFactorY: "刺激係数 Y",
     participationFactorZ: "刺激係数 Z",

@@ -260,7 +260,15 @@ function buildDynamicAnalysisSections(project: ProjectModel, result: AnalysisRes
             ],
             ["Modal result count", String(pointCount)],
             ["Spectrum point count", String(spectrumPointCount)],
-            ["Notes", "SRSS combination is used for displacement envelope."],
+            ["Interpolation method", response.interpolationMethod ?? "linear"],
+            [
+              "Direction result count",
+              String(response.directionResults?.length ?? (response.direction ? 1 : 0)),
+            ],
+            [
+              "Notes",
+              `${response.combinationMethod} combination is used for the displacement envelope.`,
+            ],
           ],
         },
       ],
@@ -269,10 +277,10 @@ function buildDynamicAnalysisSections(project: ProjectModel, result: AnalysisRes
     const displacements = response.combinedResult?.displacements ?? [];
     if (displacements.length > 0) {
       sections.push({
-        title: "SRSS Displacements",
+        title: `${response.combinationMethod} Displacements`,
         blocks: [
           {
-            title: "SRSS Displacement Table",
+            title: `${response.combinationMethod} Displacement Table`,
             columns: ["Node", "DX", "DY", "DZ", "RX", "RY", "RZ"],
             rows: displacements.map((item) => [
               item.nodeId,
@@ -283,6 +291,97 @@ function buildDynamicAnalysisSections(project: ProjectModel, result: AnalysisRes
               item.ry,
               item.rz,
             ]),
+          },
+        ],
+      });
+    }
+
+    const dynamicReactions = response.combinedResult?.reactions ?? [];
+    if (dynamicReactions.length > 0) {
+      sections.push({
+        title: `${response.combinationMethod} Support Reactions (Dynamic)`,
+        blocks: [
+          {
+            title: "Dynamic Support Reaction Table",
+            columns: ["Node", "Fx", "Fy", "Fz", "Mx", "My", "Mz"],
+            rows: dynamicReactions.map((item) => [
+              item.nodeId,
+              item.fx,
+              item.fy,
+              item.fz,
+              item.mx,
+              item.my,
+              item.mz,
+            ]),
+          },
+        ],
+      });
+    }
+
+    const dynamicMemberForces = response.combinedResult?.memberSectionForces ?? [];
+    if (dynamicMemberForces.length > 0) {
+      sections.push({
+        title: `${response.combinationMethod} Member Section Forces (Dynamic)`,
+        blocks: [
+          {
+            title: "Dynamic Member Section Force Table",
+            columns: ["Member", "Station", "Component", "Value"],
+            rows: dynamicMemberForces.map((item) => [
+              item.memberId,
+              item.station,
+              item.component,
+              item.value,
+            ]),
+          },
+        ],
+      });
+    }
+
+    const directionResults = response.directionResults ?? [];
+    if (directionResults.length > 0) {
+      sections.push({
+        title: "Direction Result Summary",
+        blocks: [
+          {
+            title: "Direction Result Summary Table",
+            columns: [
+              "Direction",
+              "Combination Method",
+              "Interpolation Method",
+              "Modal Result Count",
+              "Combined Displacement Count",
+              "Used Modes",
+            ],
+            rows: directionResults.map((d) => [
+              d.direction,
+              d.combinationMethod,
+              d.interpolationMethod ?? "-",
+              String(d.modalResults?.length ?? 0),
+              String(d.combinedResult?.displacements?.length ?? 0),
+              Array.isArray(d.usedModes) && d.usedModes.length > 0
+                ? d.usedModes.join(", ")
+                : "-",
+            ]),
+          },
+        ],
+      });
+    }
+
+    if (response.combinationMethod === "CQC") {
+      sections.push({
+        title: "CQC Note",
+        blocks: [
+          {
+            title: "CQC Note Table",
+            columns: ["Item", "Value"],
+            rows: [
+              ["Combination method", "CQC (Complete Quadratic Combination)"],
+              ["Damping ratio used", String(response.dampingRatio)],
+              [
+                "Note",
+                "CQC was used for the envelope. Modal cross-correlations follow the standard rho_ij formula.",
+              ],
+            ],
           },
         ],
       });

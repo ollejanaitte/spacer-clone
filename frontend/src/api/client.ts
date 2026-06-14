@@ -91,6 +91,8 @@ export function buildResponseSpectrumAnalysisRequest(project: ProjectModel) {
     spectrumCaseId: settings?.spectrumCaseId.trim() || "spec-1",
     direction: settings?.direction ?? "X",
     dampingRatio: settings?.dampingRatio ?? 0.05,
+    combinationMethod: settings?.combinationMethod,
+    interpolationMethod: settings?.interpolationMethod,
     targetCumulativeMassRatio: settings?.targetCumulativeMassRatio ?? 0.9,
     spectrumPoints: settings?.spectrumPoints ?? [
       { period: 0, value: 1 },
