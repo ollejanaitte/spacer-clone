@@ -18,7 +18,13 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [lineType, setLineType] = useState<BridgeLineType>("traffic");
   const [lineName, setLineName] = useState("");
-  const [topView, setTopView] = useState(false);
+  const [topView, setTopView] = useState(true);
+
+
+  // 種別やモードを切り替えたら、Viewer 内部の 1点目選択状態を解除する
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("bw:reset-pending"));
+  }, [lineType, mode]);
 
   // Listen for delete requests from inside the viewer
   useEffect(() => {
@@ -42,6 +48,8 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
     const id = `line-${project.lines.length + 1}-${Date.now().toString(36)}`;
     onChange(appendLine(project, { id, ...final }));
     setLineName("");
+    // 成功時はトーストをクリア
+    window.dispatchEvent(new CustomEvent("bw:pick-message", { detail: { text: null } }));
   };
 
   const selected = project.lines.find((l) => l.id === selectedId) || null;
@@ -52,11 +60,11 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
       <div className="bw-explain" role="note">
         <p>
           主桁上に活荷重が走行するラインを設定します。
-          <strong>draw_line</strong> を押し、始点と終点をクリックしてください。
+          <strong>draw_line</strong> を押し、橋面上の格子点を 1点目・2点目の順にクリックしてください。
         </p>
         <p className="bw-explain-sub">
-          走行ライン=緑(活荷重が走るライン) / 荷重ライン=赤(任意の位置の追加荷重) /
-          参照ライン=灰(寸法・位置確認用)
+          走行ライン=緑(活荷重が走るライン。主桁上に設定) / 荷重ライン=赤(任意の位置の追加荷重) /
+          参照ライン=灰(寸法・位置確認用)。1点目は黄色でハイライトされます。
         </p>
       </div>
       <div className="bw-line-toolbar">

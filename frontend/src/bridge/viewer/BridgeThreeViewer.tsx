@@ -8,6 +8,15 @@ import type {
   ViewerModelPayload,
 } from "../types";
 import { xPositionsFor, yPositionsFor } from "../BridgeWizardState";
+import {
+  buildFemGridPoints,
+  buildGridPoints,
+  computeTopViewBox,
+  fitTopViewToBox,
+  GRID_PICK_RADIUS_DEFAULT,
+  pickNearestGridPoint,
+  type Step4GridPoint,
+} from "./step4View";
 
 export type ViewerMode = "view" | "draw_line" | "select" | "delete";
 
@@ -20,7 +29,8 @@ type Props = {
   femModel?: ViewerModelPayload | null;
   /**
    * 上面図モード。true の間はカメラを XY 平面真上視点に固定し、
-   * 回転とパンを無効化、ズームのみ許可する。
+   * 回転とパンを無効化、ズームのみ許可する。SPACER 座標系表示トグルとは
+   * 独立で、Step4 内部のローカル表現。モデルデータには影響しない。
    */
   topView?: boolean;
 };
@@ -34,6 +44,9 @@ const TYPE_COLOR: Record<BridgeLineType, number> = {
 const Z_UP = new THREE.Vector3(0, 0, 1);
 const X_AXIS = new THREE.Vector3(1, 0, 0);
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
+const PENDING_START_COLOR = 0xf1c40f;
+const GRID_NODE_COLOR = 0x6f7c8c;
+const GRID_NODE_SELECTED_COLOR = 0xf1c40f;
 
 export function BridgeThreeViewer({
   project,
@@ -42,13 +55,13 @@ export function BridgeThreeViewer({
   onSelectLine,
   onCreateLine,
   femModel,
-  topView = false,
+  topView = true,
 }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const topViewRef = useRef<((enabled: boolean) => void) | null>(null);
   const [pendingStart, setPendingStart] = useState<[number, number, number] | null>(null);
+  const [pickMessage, setPickMessage] = useState<string | null>(null);
 
-  // Refs to keep current props/state accessible inside the long-lived handlers
   const stateRef = useRef({
     project,
     mode,
@@ -68,7 +81,7 @@ export function BridgeThreeViewer({
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#eef5fb");
     const camera = new THREE.PerspectiveCamera(45, host.clientWidth / host.clientHeight || 1, 0.01, 10000);
-    camera.position.set(20, 25, 30);
+    camera.position.set(20, 0, 30);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -79,26 +92,6 @@ export function BridgeThreeViewer({
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.target.set(15, 0, 0);
-    // 上面図モード初期反映(親 useEffect で topView 変化時にも再適用される)
-    const applyTopView = (enabled: boolean) => {
-      controls.enableRotate = !enabled;
-      controls.enablePan = !enabled;
-      controls.enableZoom = true;
-      controls.minPolarAngle = enabled ? 0 : 0;
-      controls.maxPolarAngle = enabled ? 0.0001 : Math.PI;
-      if (enabled) {
-        const center = controls.target.clone();
-        const offset = camera.position.clone().sub(center);
-        const flat = new THREE.Vector3(offset.x, 0, offset.z);
-        const dist = Math.max(flat.length(), 1);
-        // 真上 (Z+) から XY 平面を見下ろす視点
-        camera.position.set(center.x, center.y, center.z + dist);
-        camera.up.set(0, 1, 0);
-      }
-      controls.update();
-    };
-    applyTopView(stateRef.current.topView);
-    topViewRef.current = applyTopView;
 
     const ambient = new THREE.HemisphereLight(0xffffff, 0xb6c2cc, 2.0);
     scene.add(ambient);
@@ -130,20 +123,76 @@ export function BridgeThreeViewer({
     const nodesGroup = new THREE.Group();
     const elementsGroup = new THREE.Group();
     const linesGroup = new THREE.Group();
-    const interactionGroup = new THREE.Group();
-    scene.add(nodesGroup, elementsGroup, linesGroup, interactionGroup);
+    const gridPointsGroup = new THREE.Group();
+    const pendingStartGroup = new THREE.Group();
+    scene.add(nodesGroup, elementsGroup, linesGroup, gridPointsGroup, pendingStartGroup);
 
-    // Plane raycaster plane (z=0)
-    const raycastPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
-    const intersectionPoint = new THREE.Vector3();
 
-    function snap(point: THREE.Vector3): THREE.Vector3 {
-      // snap to grid in 1m increments
-      const sx = Math.round(point.x);
-      const sy = Math.round(point.y);
-      return new THREE.Vector3(sx, sy, 0);
+    const applyTopView = (enabled: boolean) => {
+      controls.enableRotate = !enabled;
+      controls.enablePan = !enabled;
+      controls.enableZoom = true;
+      controls.minPolarAngle = enabled ? 0 : 0;
+      controls.maxPolarAngle = enabled ? 0.0001 : Math.PI;
+      if (enabled) {
+        const center = controls.target.clone();
+        const offset = camera.position.clone().sub(center);
+        const flat = new THREE.Vector3(offset.x, 0, offset.z);
+        const dist = Math.max(flat.length(), 1);
+        camera.position.set(center.x, center.y, center.z + dist);
+        camera.up.set(0, 1, 0);
+      }
+      controls.update();
+    };
+    applyTopView(stateRef.current.topView);
+    topViewRef.current = applyTopView;
+
+    function buildGridPointMeshes(points: Step4GridPoint[]): THREE.Object3D[] {
+      const geo = new THREE.SphereGeometry(0.18, 12, 8);
+      const mat = new THREE.MeshStandardMaterial({
+        color: GRID_NODE_COLOR,
+        emissive: 0x000000,
+        transparent: true,
+        opacity: 0.85,
+      });
+      return points.map((pt) => {
+        const mesh = new THREE.Mesh(geo, mat.clone());
+        mesh.position.set(pt.position[0], pt.position[1], pt.position[2]);
+        mesh.userData = { type: "grid", id: pt.id, source: pt.source, position: pt.position };
+        return mesh;
+      });
+    }
+
+    function refreshGridPoints() {
+      gridPointsGroup.clear();
+      const fem = stateRef.current.femModel;
+      const proj = stateRef.current.project;
+      const localXs = xPositionsFor(proj.spans, proj.generationSettings.mesh_division);
+      const localYs = yPositionsFor(proj.crossSection);
+      let candidates: Step4GridPoint[];
+      if (fem && fem.nodes && fem.nodes.length > 0) {
+        candidates = buildFemGridPoints(fem.nodes as unknown as ReadonlyArray<readonly [number, number, number]>);
+      } else {
+        candidates = buildGridPoints(localXs, localYs, 0);
+      }
+      const meshes = buildGridPointMeshes(candidates);
+      meshes.forEach((m) => gridPointsGroup.add(m));
+    }
+
+    function refreshPendingStartMarker() {
+      pendingStartGroup.clear();
+      const current = stateRef.current.pendingStart;
+      if (!current) return;
+      const geo = new THREE.SphereGeometry(0.28, 14, 10);
+      const mat = new THREE.MeshStandardMaterial({
+        color: PENDING_START_COLOR,
+        emissive: 0x553a00,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(current[0], current[1], current[2] + 0.05);
+      pendingStartGroup.add(mesh);
     }
 
     function redrawFEM() {
@@ -151,42 +200,24 @@ export function BridgeThreeViewer({
       elementsGroup.clear();
       const fem = stateRef.current.femModel;
       if (!fem) {
-        // 将来拡張ポイント: femModel 未生成のときは、crossSection / spans から
-        // 主桁格子(xPositionsFor × yPositionsFor)を薄いプレビューとして描画する。
-        // Step6 で FEM を生成すると本フォールバックは消え、実モデルに置き換わる。
+        // femModel 未生成のときの主桁格子プレビュー
         const proj = stateRef.current.project;
         const xsPreview = xPositionsFor(proj.spans, proj.generationSettings.mesh_division);
         const ysPreview = yPositionsFor(proj.crossSection);
         if (xsPreview.length < 2 || ysPreview.length < 1) return;
         const previewMat = new THREE.LineBasicMaterial({ color: 0x9aa7b3, transparent: true, opacity: 0.45 });
-        const previewNodeMat = new THREE.MeshStandardMaterial({ color: 0x6f7c8c, transparent: true, opacity: 0.55 });
-        // 橋軸方向(主桁)ライン
         for (const y of ysPreview) {
           const pts = xsPreview.map((x) => new THREE.Vector3(x, y, 0));
           const geo = new THREE.BufferGeometry().setFromPoints(pts);
-          const ln = new THREE.Line(geo, previewMat);
-          elementsGroup.add(ln);
+          elementsGroup.add(new THREE.Line(geo, previewMat));
         }
-        // 横断方向(橋軸方向をまたぐ)ライン
         for (const x of xsPreview) {
           const pts = ysPreview.map((y) => new THREE.Vector3(x, y, 0));
           const geo = new THREE.BufferGeometry().setFromPoints(pts);
-          const ln = new THREE.Line(geo, previewMat);
-          elementsGroup.add(ln);
-        }
-        // 節点プレビュー
-        const previewGeo = new THREE.SphereGeometry(0.12, 8, 6);
-        for (const x of xsPreview) {
-          for (const y of ysPreview) {
-            const mesh = new THREE.Mesh(previewGeo, previewNodeMat);
-            mesh.position.set(x, y, 0);
-            nodesGroup.add(mesh);
-          }
+          elementsGroup.add(new THREE.Line(geo, previewMat));
         }
         return;
       }
-      const nodeMap = new Map<string, [number, number, number]>();
-      fem.nodes.forEach((n, i) => nodeMap.set(`N${i + 1}`, n as [number, number, number]));
       const nodeGeo = new THREE.SphereGeometry(0.18, 12, 8);
       const nodeMat = new THREE.MeshStandardMaterial({ color: 0xd45d50 });
       fem.nodes.forEach((n) => {
@@ -205,8 +236,7 @@ export function BridgeThreeViewer({
       const lineGeo = new THREE.BufferGeometry();
       lineGeo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
       const lineMat = new THREE.LineBasicMaterial({ color: 0x1f3a55 });
-      const lines = new THREE.LineSegments(lineGeo, lineMat);
-      elementsGroup.add(lines);
+      elementsGroup.add(new THREE.LineSegments(lineGeo, lineMat));
     }
 
     function redrawBridgeLines() {
@@ -220,19 +250,45 @@ export function BridgeThreeViewer({
         const obj = new THREE.Line(geo, mat);
         obj.userData = { type: "line", id: line.id };
         linesGroup.add(obj);
-        // Add small sphere at start
-        const sphere = new THREE.Mesh(
-          new THREE.SphereGeometry(0.18, 10, 6),
-          new THREE.MeshStandardMaterial({ color, emissive: 0x000000 }),
-        );
-        sphere.position.copy(pts[0]);
-        sphere.userData = { type: "line", id: line.id };
-        linesGroup.add(sphere);
+        // endpoints
+        pts.forEach((p, idx) => {
+          const sphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.18, 10, 6),
+            new THREE.MeshStandardMaterial({ color, emissive: 0x000000 }),
+          );
+          sphere.position.copy(p);
+          sphere.userData = { type: "line", id: line.id, endIndex: idx };
+          linesGroup.add(sphere);
+        });
       });
+    }
+
+    function fitIfTopView() {
+      if (!stateRef.current.topView) return;
+      const xsNow = xPositionsFor(stateRef.current.project.spans, stateRef.current.project.generationSettings.mesh_division);
+      const ysNow = yPositionsFor(stateRef.current.project.crossSection);
+      const box = computeTopViewBox(xsNow, ysNow, 0);
+      fitTopViewToBox(camera, controls, box);
     }
 
     redrawFEM();
     redrawBridgeLines();
+    refreshGridPoints();
+    refreshPendingStartMarker();
+    fitIfTopView();
+
+    function setMessage(text: string | null) {
+      // schedule via microtask to avoid setState during render
+      queueMicrotask(() => {
+        // we cannot call setPickMessage directly inside Three.js handlers
+        // that run synchronously without coupling to React; use a window event
+        if (text == null) {
+          window.dispatchEvent(new CustomEvent("bw:pick-message", { detail: { text: null } }));
+        } else {
+          window.dispatchEvent(new CustomEvent("bw:pick-message", { detail: { text } }));
+        }
+      });
+    }
 
     function onPointerMove(e: PointerEvent) {
       const rect = renderer.domElement.getBoundingClientRect();
@@ -246,13 +302,15 @@ export function BridgeThreeViewer({
       pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
       const m = stateRef.current.mode;
-      // Try line intersection first
+
+      // 既存ライン(交差する 3D オブジェクト)→ select / delete
       const lineHits = raycaster.intersectObjects(linesGroup.children, true);
       if (m === "select" && lineHits.length > 0) {
         const obj = lineHits[0].object;
         const id = obj.userData?.id;
         if (typeof id === "string") {
           stateRef.current.onSelectLine(id);
+          setMessage(null);
           return;
         }
       }
@@ -261,33 +319,50 @@ export function BridgeThreeViewer({
         const id = obj.userData?.id;
         if (typeof id === "string") {
           stateRef.current.onSelectLine(null);
-          // remove via project state
-          const evt = new CustomEvent("bw:delete-line", { detail: { id } });
-          window.dispatchEvent(evt);
+          window.dispatchEvent(new CustomEvent("bw:delete-line", { detail: { id } }));
+          setMessage(null);
           return;
         }
       }
-      // ground plane
+
+      // draw_line: 格子点だけをピックする
       if (m === "draw_line") {
-        const hit = raycaster.ray.intersectPlane(raycastPlane, intersectionPoint);
-        if (hit) {
-          const snapped = snap(intersectionPoint);
-          const current = stateRef.current.pendingStart;
-          if (current == null) {
-            setPendingStart([snapped.x, snapped.y, snapped.z]);
-          } else {
-            const start: [number, number, number] = current;
-            const end: [number, number, number] = [snapped.x, snapped.y, snapped.z];
-            if (start[0] !== end[0] || start[1] !== end[1]) {
-              const defaultType: BridgeLineType = "traffic";
-              stateRef.current.onCreateLine({
-                type: defaultType,
-                name: `ライン ${stateRef.current.project.lines.length + 1}`,
-                points: [start, end],
-              });
-            }
-            setPendingStart(null);
+        const candidates: Step4GridPoint[] = gridPointsGroup.children
+          .map((obj) => {
+            const u = obj.userData as { id?: string; position?: [number, number, number]; source?: Step4GridPoint["source"] } | undefined;
+            if (!u || !u.id || !u.position || !u.source) return null;
+            return { id: u.id, position: u.position, source: u.source };
+          })
+          .filter((v): v is Step4GridPoint => v != null);
+        const picked = pickNearestGridPoint(
+          candidates,
+          raycaster,
+          pointer,
+          camera,
+          rect.width,
+          rect.height,
+          GRID_PICK_RADIUS_DEFAULT * 50,
+        );
+        if (!picked) {
+          setMessage("格子点をクリックしてください");
+          return;
+        }
+        setMessage(null);
+        const current = stateRef.current.pendingStart;
+        if (current == null) {
+          setPendingStart([picked.position[0], picked.position[1], picked.position[2]]);
+        } else {
+          const start: [number, number, number] = current;
+          const end: [number, number, number] = [picked.position[0], picked.position[1], picked.position[2]];
+          if (start[0] !== end[0] || start[1] !== end[1]) {
+            const defaultType: BridgeLineType = "traffic";
+            stateRef.current.onCreateLine({
+              type: defaultType,
+              name: `ライン ${stateRef.current.project.lines.length + 1}`,
+              points: [start, end],
+            });
           }
+          setPendingStart(null);
         }
       }
     }
@@ -314,16 +389,24 @@ export function BridgeThreeViewer({
     };
     tick();
 
-    // Helper: redraw when project lines change (we attach window event)
     const onRedraw = () => redrawBridgeLines();
     window.addEventListener("bw:redraw", onRedraw);
     const onFemChange = () => redrawFEM();
     window.addEventListener("bw:redraw-fem", onFemChange);
+    const onPendingStart = () => refreshPendingStartMarker();
+    window.addEventListener("bw:refresh-pending", onPendingStart);
+    const onGridRefresh = () => refreshGridPoints();
+    window.addEventListener("bw:refresh-grid", onGridRefresh);
+    const onFitTopView = () => fitIfTopView();
+    window.addEventListener("bw:fit-top-view", onFitTopView);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("bw:redraw", onRedraw);
       window.removeEventListener("bw:redraw-fem", onFemChange);
+      window.removeEventListener("bw:refresh-pending", onPendingStart);
+      window.removeEventListener("bw:refresh-grid", onGridRefresh);
+      window.removeEventListener("bw:fit-top-view", onFitTopView);
       ro.disconnect();
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("click", onClick);
@@ -342,28 +425,58 @@ export function BridgeThreeViewer({
     };
   }, []);
 
-
   // topView 切替時にカメラとコントロールを再適用
   useEffect(() => {
     topViewRef.current?.(topView);
+    if (topView) {
+      window.dispatchEvent(new CustomEvent("bw:fit-top-view"));
+    }
   }, [topView]);
 
-  // Redraw on project/fem changes
+  // pendingStart が変わったら 3D 側のマーカーを更新
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("bw:refresh-pending"));
+  }, [pendingStart]);
+
+  // femModel 変更時は gridPoints と fem 表示を再構築
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("bw:redraw-fem"));
+    window.dispatchEvent(new CustomEvent("bw:refresh-grid"));
+    if (topView) {
+      window.dispatchEvent(new CustomEvent("bw:fit-top-view"));
+    }
+  }, [femModel, topView]);
+
+  // bridge line 変更時の redraw
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("bw:redraw"));
   }, [project.lines, selectedLineId]);
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent("bw:redraw-fem"));
-  }, [femModel]);
 
-  // Listen for delete events from inside the viewer
+
+  // 種別・モード切替時に親からリセット指示
+  useEffect(() => {
+    const handler = () => setPendingStart(null);
+    window.addEventListener("bw:reset-pending", handler);
+    return () => window.removeEventListener("bw:reset-pending", handler);
+  }, []);
+
+  // bw:pick-message listener
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ text: string | null }>).detail;
+      setPickMessage(detail?.text ?? null);
+    };
+    window.addEventListener("bw:pick-message", handler);
+    return () => window.removeEventListener("bw:pick-message", handler);
+  }, []);
+
+  // bw:delete-line listener
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent<{ id: string }>).detail;
       const id = detail?.id;
       if (typeof id === "string") {
-        const evt = new CustomEvent("bw:request-delete-line", { detail: { id } });
-        window.dispatchEvent(evt);
+        window.dispatchEvent(new CustomEvent("bw:request-delete-line", { detail: { id } }));
       }
     };
     window.addEventListener("bw:delete-line", handler);
@@ -375,9 +488,19 @@ export function BridgeThreeViewer({
       <div ref={hostRef} className="bw-viewer-canvas" />
       <div className="bw-viewer-hint">
         <span>モード: <strong>{mode}</strong></span>
-        {pendingStart && <span>始点: {pendingStart.map((v) => v.toFixed(2)).join(", ")} — 終点クリックで確定</span>}
-        {!pendingStart && mode === "draw_line" && <span>始点クリックで開始</span>}
+        {pendingStart && (
+          <span>
+            1点目選択中: {pendingStart.map((v) => v.toFixed(2)).join(", ")} — 2点目の格子点をクリック
+          </span>
+        )}
+        {!pendingStart && mode === "draw_line" && <span>格子点をクリックして 1点目を選択</span>}
+        {mode === "view" && <span>閲覧モード: ラインと格子点を確認できます</span>}
+        {mode === "select" && <span>ラインをクリックして選択</span>}
+        {mode === "delete" && <span>ラインをクリックして削除</span>}
       </div>
+      {pickMessage && (
+        <div className="bw-viewer-toast" role="status">{pickMessage}</div>
+      )}
     </div>
   );
 }

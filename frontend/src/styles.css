@@ -1301,6 +1301,20 @@ button:disabled {
   font-size: 12px;
   font-weight: 600;
 }
+
+.bw-viewer-toast {
+  position: absolute;
+  right: 12px;
+  bottom: 40px;
+  background: rgba(36, 52, 71, 0.92);
+  color: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 .bw-topview.active {
   background: #2f6f9f;
   color: #f8fafc;
@@ -1343,6 +1357,7 @@ button:disabled {
   grid-template-rows: 1fr auto;
   height: 100%;
   background: #eef5fb;
+  position: relative;
 }
 .bw-viewer-canvas {
   width: 100%;

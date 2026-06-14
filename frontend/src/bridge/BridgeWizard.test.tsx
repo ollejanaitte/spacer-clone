@@ -111,6 +111,81 @@ describe("BridgeWizard", () => {
     });
     expect(document.querySelector(".bw-step-counter")?.textContent).toContain("Step 4 / 6");
     expect(document.querySelector(".bw-step-line")).not.toBeNull();
+    // 初期は上面図 ON
+    const topview = document.querySelector<HTMLButtonElement>(".bw-topview");
+    expect(topview).not.toBeNull();
+    expect(topview?.getAttribute("aria-pressed")).toBe("true");
+    expect(topview?.textContent).toContain("上面図 ON");
+    // 説明文ボックス
+    expect(document.querySelector(".bw-explain")).not.toBeNull();
+    expect(document.querySelector(".bw-explain")?.textContent).toContain("格子点");
+    // draw_line に切替
+    const drawLineBtn = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-mode")).find(
+      (b) => b.textContent === "draw_line",
+    );
+    expect(drawLineBtn).toBeDefined();
+    await act(async () => {
+      drawLineBtn!.click();
+    });
+    expect(drawLineBtn?.getAttribute("aria-pressed")).toBe("true");
+    // bw:pick-message を「格子点をクリックしてください」で発火
+    await act(async () => {
+      window.dispatchEvent(new CustomEvent("bw:pick-message", { detail: { text: "格子点をクリックしてください" } }));
+    });
+    expect(document.querySelector(".bw-viewer-toast")?.textContent).toContain("格子点をクリックしてください");
+    vi.unstubAllGlobals();
+    cleanup();
+  });
+
+  it("Step4 survives SPACER-coordinate-mode toggle (display-only)", async () => {
+    // 既存 Viewer3D の SPACER 座標系表示トグル(localStorage) が ON でも
+    // Step4 のレンダリングが例外を出さず、ヘッダ・説明文・上面図ボタンが
+    // 存在することを保証する(モデルデータは触らない)。
+    const STORAGE_KEY = "spacerClone.viewerCoordinateMode";
+    window.localStorage.setItem(STORAGE_KEY, "spacer");
+    const mockBridge: BridgeProject = {
+      ...makeInitialBridgeProject("X", "bridge-spacer"),
+      lines: [
+        {
+          id: "line-pre-1",
+          type: "traffic",
+          name: "既存走行ライン",
+          points: [
+            [0, 0, 0],
+            [10, 0, 0],
+          ],
+        },
+      ],
+    };
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (typeof url === "string" && url.includes("/api/bridge/template")) {
+        return Promise.resolve(new Response(JSON.stringify({ project: mockBridge }), { status: 200 }));
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    }));
+    await act(async () => {
+      root = createRoot(host!);
+      root.render(<BridgeWizard open={true} onClose={() => {}} onCommit={() => {}} />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    const step4 = Array.from(document.querySelectorAll<HTMLButtonElement>(".bw-sidebar ol li button")).find(
+      (b) => b.textContent?.includes("活荷重走行ライン設定"),
+    );
+    await act(async () => {
+      step4!.click();
+    });
+    // ライン一覧に既存ラインが復元される
+    const rows = document.querySelectorAll(".bw-line-row");
+    expect(rows.length).toBe(1);
+    expect(rows[0].textContent).toContain("走行ライン");
+    expect(rows[0].textContent).toContain("既存走行ライン");
+    // 上面図ボタンは引き続き ON
+    const topview = document.querySelector<HTMLButtonElement>(".bw-topview");
+    expect(topview?.getAttribute("aria-pressed")).toBe("true");
+    window.localStorage.removeItem(STORAGE_KEY);
     vi.unstubAllGlobals();
     cleanup();
   });
