@@ -5,6 +5,8 @@ import type {
   BridgeLine,
   BridgeLineType,
   BridgeProject,
+  RoadAlignment,
+  SupportPoint,
   ViewerModelPayload,
 } from "../types";
 import { xPositionsFor, yPositionsFor } from "../BridgeWizardState";
@@ -27,6 +29,10 @@ type Props = {
   onSelectLine: (id: string | null) => void;
   onCreateLine: (line: Omit<BridgeLine, "id">) => void;
   femModel?: ViewerModelPayload | null;
+  /** Step1 で入力された道路中心線形 (任意)。 */
+  alignment?: RoadAlignment | null;
+  /** Step2 で入力された支点列 (任意)。 */
+  supportPoints?: SupportPoint[] | null;
   /**
    * 上面図モード。true の間はカメラを XY 平面真上視点に固定し、
    * 回転とパンを無効化、ズームのみ許可する。SPACER 座標系表示トグルとは
@@ -55,6 +61,8 @@ export function BridgeThreeViewer({
   onSelectLine,
   onCreateLine,
   femModel,
+  alignment = null,
+  supportPoints = null,
   topView = true,
 }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -71,8 +79,10 @@ export function BridgeThreeViewer({
     onSelectLine,
     femModel,
     topView,
+    alignment,
+    supportPoints,
   });
-  stateRef.current = { project, mode, selectedLineId, pendingStart, onCreateLine, onSelectLine, femModel, topView };
+  stateRef.current = { project, mode, selectedLineId, pendingStart, onCreateLine, onSelectLine, femModel, topView, alignment, supportPoints };
 
   useEffect(() => {
     const host = hostRef.current;
@@ -125,7 +135,9 @@ export function BridgeThreeViewer({
     const linesGroup = new THREE.Group();
     const gridPointsGroup = new THREE.Group();
     const pendingStartGroup = new THREE.Group();
-    scene.add(nodesGroup, elementsGroup, linesGroup, gridPointsGroup, pendingStartGroup);
+    const contextGroup = new THREE.Group();
+    contextGroup.name = "ContextLayer";
+    scene.add(nodesGroup, elementsGroup, linesGroup, gridPointsGroup, pendingStartGroup, contextGroup);
 
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -193,6 +205,68 @@ export function BridgeThreeViewer({
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(current[0], current[1], current[2] + 0.05);
       pendingStartGroup.add(mesh);
+    }
+
+    function redrawContext() {
+      contextGroup.clear();
+      const a = stateRef.current.alignment;
+      const sps = stateRef.current.supportPoints;
+      // 道路中心線形 (折れ線)
+      if (a && a.points.length >= 2) {
+        const mat = new THREE.LineBasicMaterial({ color: 0x1f3a55, linewidth: 3 });
+        const geo = new THREE.BufferGeometry().setFromPoints(
+          a.points.map((p) => new THREE.Vector3(p.x, p.y, p.z)),
+        );
+        const ln = new THREE.Line(geo, mat);
+        contextGroup.add(ln);
+        // 接頭点スフィア
+        const headMat = new THREE.MeshStandardMaterial({ color: 0x1f3a55 });
+        a.points.forEach((p, i) => {
+          const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 6), headMat);
+          sphere.position.set(p.x, p.y, p.z);
+          sphere.userData = { type: "alignment", index: i };
+          contextGroup.add(sphere);
+        });
+      }
+      // 支点列 (abutment=橙 / pier=緑)
+      if (sps && sps.length > 0) {
+        sps.forEach((sp) => {
+          const pos = a ? interpolateAlignmentPoint(a, sp.station) : null;
+          if (!pos) return;
+          const color = sp.type === "abutment" ? 0xe67e22 : 0x27ae60;
+          const sphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.32, 14, 10),
+            new THREE.MeshStandardMaterial({ color, emissive: 0x000000 }),
+          );
+          sphere.position.set(pos[0], pos[1], pos[2] + 0.05);
+          sphere.userData = { type: "support", name: sp.name, kind: sp.type };
+          contextGroup.add(sphere);
+        });
+      }
+    }
+
+    function interpolateAlignmentPoint(
+      a: { points: ReadonlyArray<{ station: number; x: number; y: number; z: number }> },
+      s: number,
+    ): [number, number, number] | null {
+      const pts = a.points;
+      if (pts.length === 0) return null;
+      if (pts.length === 1) return [pts[0].x, pts[0].y, pts[0].z];
+      if (s <= pts[0].station) return [pts[0].x, pts[0].y, pts[0].z];
+      if (s >= pts[pts.length - 1].station) {
+        const last = pts[pts.length - 1];
+        return [last.x, last.y, last.z];
+      }
+      for (let i = 1; i < pts.length; i += 1) {
+        const a0 = pts[i - 1];
+        const a1 = pts[i];
+        if (s >= a0.station && s <= a1.station) {
+          const span = a1.station - a0.station;
+          const t = span <= 0 ? 0 : (s - a0.station) / span;
+          return [a0.x + (a1.x - a0.x) * t, a0.y + (a1.y - a0.y) * t, a0.z + (a1.z - a0.z) * t];
+        }
+      }
+      return null;
     }
 
     function redrawFEM() {
@@ -265,14 +339,35 @@ export function BridgeThreeViewer({
 
     function fitIfTopView() {
       if (!stateRef.current.topView) return;
-      const xsNow = xPositionsFor(stateRef.current.project.spans, stateRef.current.project.generationSettings.mesh_division);
-      const ysNow = yPositionsFor(stateRef.current.project.crossSection);
-      const box = computeTopViewBox(xsNow, ysNow, 0);
+      const proj = stateRef.current.project;
+      const a = stateRef.current.alignment;
+      const sps = stateRef.current.supportPoints;
+      // xs (橋軸距離) および alignment の world x/y を含む bbox を構成
+      const box = new THREE.Box3();
+      const xsNow = xPositionsFor(proj.spans, proj.generationSettings.mesh_division);
+      const ysNow = yPositionsFor(proj.crossSection);
+      for (const x of xsNow) {
+        for (const y of ysNow) box.expandByPoint(new THREE.Vector3(x, y, 0));
+      }
+      if (a) {
+        for (const p of a.points) box.expandByPoint(new THREE.Vector3(p.x, p.y, p.z));
+      }
+      if (sps) {
+        for (const sp of sps) {
+          const pos = a ? interpolateAlignmentPoint(a, sp.station) : null;
+          if (pos) box.expandByPoint(new THREE.Vector3(pos[0], pos[1], pos[2]));
+        }
+      }
+      if (box.isEmpty()) {
+        box.expandByPoint(new THREE.Vector3(-1, -1, 0));
+        box.expandByPoint(new THREE.Vector3(1, 1, 0));
+      }
       fitTopViewToBox(camera, controls, box);
     }
 
     redrawFEM();
     redrawBridgeLines();
+    redrawContext();
     refreshGridPoints();
     refreshPendingStartMarker();
     fitIfTopView();
@@ -393,6 +488,8 @@ export function BridgeThreeViewer({
     window.addEventListener("bw:redraw", onRedraw);
     const onFemChange = () => redrawFEM();
     window.addEventListener("bw:redraw-fem", onFemChange);
+    const onContextChange = () => redrawContext();
+    window.addEventListener("bw:redraw-context", onContextChange);
     const onPendingStart = () => refreshPendingStartMarker();
     window.addEventListener("bw:refresh-pending", onPendingStart);
     const onGridRefresh = () => refreshGridPoints();
@@ -404,6 +501,7 @@ export function BridgeThreeViewer({
       cancelAnimationFrame(frame);
       window.removeEventListener("bw:redraw", onRedraw);
       window.removeEventListener("bw:redraw-fem", onFemChange);
+      window.removeEventListener("bw:redraw-context", onContextChange);
       window.removeEventListener("bw:refresh-pending", onPendingStart);
       window.removeEventListener("bw:refresh-grid", onGridRefresh);
       window.removeEventListener("bw:fit-top-view", onFitTopView);

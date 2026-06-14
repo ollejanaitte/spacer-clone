@@ -218,3 +218,81 @@ def test_generation_fem_runs_through_existing_parser():
     model = parse_model(result.project)
     assert len(model.nodes) == result.summary["nodeCount"]
     assert len(model.members) == result.summary["memberCount"]
+
+
+# ----- roadAlignment csv モード -----
+
+def test_csv_alignment_generates_world_coordinates():
+    """roadAlignment.csv モードで world 座標の node が生成される (後方互換)。"""
+    from backend.engine.bridge_model import (
+        BridgeProject,
+        CrossSection,
+        Span,
+        ImpactFactor,
+        BridgeGenerationSettings,
+        RoadAlignment,
+        RoadAlignmentPoint,
+        SpanLayout,
+        SupportPoint,
+    )
+
+    p = BridgeProject(
+        id="bridge-csv",
+        name="csv",
+        schemaVersion="0.1.0",
+        crossSection=CrossSection(
+            lane_count=2,
+            lane_width=3.5,
+            median_width=0.0,
+            sidewalk_width=1.5,
+            barrier_width=0.5,
+        ),
+        spans=(Span(index=1, length=30.0, offset=0.0),),
+        impactFactor=ImpactFactor(value=0.0, auto=True),
+        generationSettings=BridgeGenerationSettings(mesh_division=10, mesh_density="standard"),
+        roadAlignment=RoadAlignment(
+            inputMode="csv",
+            bridgeLength=30.0,
+            points=(
+                RoadAlignmentPoint(station=0, x=0, y=0, z=0),
+                RoadAlignmentPoint(station=15, x=15, y=0, z=0),
+                RoadAlignmentPoint(station=30, x=30, y=0, z=0),
+            ),
+        ),
+        spanLayout=SpanLayout(
+            inputMode="station",
+            supports=(
+                SupportPoint(name="A1", type="abutment", station=0),
+                SupportPoint(name="A2", type="abutment", station=30),
+            ),
+            spans=(),
+        ),
+    )
+    res = generate_fem_model(p)
+    nodes = res.project["nodes"]
+    members = res.project["members"]
+    supports = res.project["supports"]
+    assert len(nodes) >= 4  # 11 x >=3
+    assert len(members) >= 4
+    # 始点 (0,0,0) と 終点 (30,0,0) が存在
+    has_origin = any(abs(n["x"]) < 1e-6 and abs(n["y"]) < 1e-6 and abs(n["z"]) < 1e-6 for n in nodes)
+    has_end = any(abs(n["x"] - 30) < 1e-6 and abs(n["y"]) < 1e-6 and abs(n["z"]) < 1e-6 for n in nodes)
+    assert has_origin
+    assert has_end
+    # 支点: spanLayout によって 2 つの station に支点が配置される
+    assert len(supports) >= 2
+
+
+def test_csv_alignment_back_compat_legacy_project_still_runs():
+    """roadAlignment 未設定の従来プロジェクトは従来通り X 方向の node が生成される。"""
+    from backend.engine.bridge_model import bridge_default
+    p = bridge_default("legacy")
+    res = generate_fem_model(p)
+    nodes = res.project["nodes"]
+    # 既存挙動: x = 0..30, y は横断
+    xs = sorted({round(n["x"], 6) for n in nodes})
+    assert xs[0] == 0.0
+    assert xs[-1] == 30.0
+    # 0..30 を 11 等分した xs を含む
+    for v in [0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0]:
+        assert v in xs

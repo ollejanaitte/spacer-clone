@@ -59,6 +59,52 @@ export type BridgeGenerationSettings = {
   sectionId?: string;
 };
 
+
+
+/**
+ * Step1: 道路中心線形 (optional、後方互換)。
+ *  - inputMode = 'simple' : 橋長一本の直線。
+ *  - inputMode = 'csv'    : CSV から読み込んだ折れ線中心線。
+ * points は station, x, y, z を持つ。station は累加距離で自動計算してもよい。
+ */
+export type RoadAlignmentPoint = {
+  station: number;
+  x: number;
+  y: number;
+  z: number;
+};
+export type RoadAlignmentInputMode = "simple" | "csv";
+export type RoadAlignment = {
+  inputMode: RoadAlignmentInputMode;
+  bridgeLength: number;
+  points: RoadAlignmentPoint[];
+};
+
+/**
+ * Step2: 支点・橋脚位置 (optional、後方互換)。
+ *  - inputMode = 'simple'  : 支間長から A1 / P1.. / A2 を自動生成。
+ *  - inputMode = 'station' : 中心線形 station 位置で A1 / P1.. / A2 を指定。
+ * supports は station 昇順。
+ * spans は supports から自動算出(length は隣接 station 差)。
+ */
+export type SupportPointKind = "abutment" | "pier";
+export type SupportPoint = {
+  name: string;
+  type: SupportPointKind;
+  station: number;
+};
+export type SpanLayoutSegment = {
+  from: string;
+  to: string;
+  length: number;
+};
+export type SpanLayoutInputMode = "simple" | "station";
+export type SpanLayout = {
+  inputMode: SpanLayoutInputMode;
+  supports: SupportPoint[];
+  spans: SpanLayoutSegment[];
+};
+
 export type BridgeProject = {
   id: string;
   name: string;
@@ -73,6 +119,10 @@ export type BridgeProject = {
   loads: BridgeLoad[];
   generationSettings: BridgeGenerationSettings;
   generatedFem?: GeneratedFemModel;
+  /** Step1 道路中心線形 (optional, 既存データの後方互換) */
+  roadAlignment?: RoadAlignment;
+  /** Step2 支点・橋脚位置 (optional, 既存データの後方互換) */
+  spanLayout?: SpanLayout;
 };
 
 export type GeneratedFemModel = {

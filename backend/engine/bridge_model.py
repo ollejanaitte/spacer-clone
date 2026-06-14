@@ -82,6 +82,66 @@ class BridgeLoad:
         return d
 
 
+
+
+@dataclass(frozen=True)
+class RoadAlignmentPoint:
+    station: float
+    x: float
+    y: float
+    z: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"station": self.station, "x": self.x, "y": self.y, "z": self.z}
+
+
+@dataclass(frozen=True)
+class RoadAlignment:
+    inputMode: str = "simple"  # "simple" | "csv"
+    bridgeLength: float = 0.0
+    points: tuple[RoadAlignmentPoint, ...] = field(default_factory=tuple)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "inputMode": self.inputMode,
+            "bridgeLength": self.bridgeLength,
+            "points": [p.to_dict() for p in self.points],
+        }
+
+
+@dataclass(frozen=True)
+class SupportPoint:
+    name: str
+    type: str  # "abutment" | "pier"
+    station: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"name": self.name, "type": self.type, "station": self.station}
+
+
+@dataclass(frozen=True)
+class SpanLayoutSegment:
+    from_: str
+    to: str
+    length: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"from": self.from_, "to": self.to, "length": self.length}
+
+
+@dataclass(frozen=True)
+class SpanLayout:
+    inputMode: str = "simple"  # "simple" | "station"
+    supports: tuple[SupportPoint, ...] = field(default_factory=tuple)
+    spans: tuple[SpanLayoutSegment, ...] = field(default_factory=tuple)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "inputMode": self.inputMode,
+            "supports": [s.to_dict() for s in self.supports],
+            "spans": [s.to_dict() for s in self.spans],
+        }
+
 @dataclass(frozen=True)
 class BridgeGenerationSettings:
     mesh_division: int
@@ -116,9 +176,13 @@ class BridgeProject:
     generationSettings: BridgeGenerationSettings = field(
         default_factory=lambda: BridgeGenerationSettings(mesh_division=10)
     )
+    # 任意: 道路中心線形 (Step1)
+    roadAlignment: RoadAlignment | None = None
+    # 任意: 支点・橋脚位置 (Step2)
+    spanLayout: SpanLayout | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        d: dict[str, Any] = {
             "id": self.id,
             "name": self.name,
             "schemaVersion": self.schemaVersion,
@@ -132,6 +196,11 @@ class BridgeProject:
             "loads": [l.to_dict() for l in self.loads],
             "generationSettings": self.generationSettings.to_dict(),
         }
+        if self.roadAlignment is not None:
+            d["roadAlignment"] = self.roadAlignment.to_dict()
+        if self.spanLayout is not None:
+            d["spanLayout"] = self.spanLayout.to_dict()
+        return d
 
 
 # -----------------------------
@@ -304,6 +373,8 @@ def parse_bridge_project(payload: Any) -> BridgeProject:
         lines=parse_lines(payload.get("lines", [])),
         loads=parse_loads(payload.get("loads", [])),
         generationSettings=parse_generation_settings(payload.get("generationSettings", {})),
+        roadAlignment=parse_road_alignment(payload.get("roadAlignment")),
+        spanLayout=parse_span_layout(payload.get("spanLayout")),
     )
     _validate_load_line_refs(project)
     return project
@@ -343,6 +414,90 @@ def bridge_default(name: str = "新規橋梁") -> BridgeProject:
     )
 
 
+
+
+# -----------------------------
+# RoadAlignment / SpanLayout parsers (optional, backward compatible)
+# -----------------------------
+
+
+def parse_road_alignment(payload: Any) -> "RoadAlignment | None":
+    if payload is None:
+        return None
+    if not isinstance(payload, dict):
+        raise BridgeDomainError("roadAlignment must be an object.")
+    input_mode = str(payload.get("inputMode", "simple"))
+    if input_mode not in ("simple", "csv"):
+        raise BridgeDomainError("roadAlignment.inputMode must be simple|csv.")
+    bridge_length = 0.0
+    if "bridgeLength" in payload:
+        bridge_length = _as_number(payload["bridgeLength"], "roadAlignment.bridgeLength")
+    points_payload = payload.get("points", [])
+    if not isinstance(points_payload, list):
+        raise BridgeDomainError("roadAlignment.points must be a list.")
+    points: list[RoadAlignmentPoint] = []
+    for i, pp in enumerate(points_payload):
+        if not isinstance(pp, dict):
+            raise BridgeDomainError(f"roadAlignment.points[{i}] must be an object.")
+        try:
+            station = float(pp.get("station", 0.0))
+            x = _as_number(pp.get("x", 0.0), f"roadAlignment.points[{i}].x")
+            y = _as_number(pp.get("y", 0.0), f"roadAlignment.points[{i}].y")
+            z = _as_number(pp.get("z", 0.0), f"roadAlignment.points[{i}].z")
+        except BridgeDomainError:
+            raise
+        points.append(RoadAlignmentPoint(station=station, x=x, y=y, z=z))
+    return RoadAlignment(inputMode=input_mode, bridgeLength=bridge_length, points=tuple(points))
+
+
+def parse_span_layout(payload: Any) -> "SpanLayout | None":
+    if payload is None:
+        return None
+    if not isinstance(payload, dict):
+        raise BridgeDomainError("spanLayout must be an object.")
+    input_mode = str(payload.get("inputMode", "simple"))
+    if input_mode not in ("simple", "station"):
+        raise BridgeDomainError("spanLayout.inputMode must be simple|station.")
+    supports_payload = payload.get("supports", [])
+    spans_payload = payload.get("spans", [])
+    if not isinstance(supports_payload, list):
+        raise BridgeDomainError("spanLayout.supports must be a list.")
+    if not isinstance(spans_payload, list):
+        raise BridgeDomainError("spanLayout.spans must be a list.")
+    supports: list[SupportPoint] = []
+    for i, sp in enumerate(supports_payload):
+        if not isinstance(sp, dict):
+            raise BridgeDomainError(f"spanLayout.supports[{i}] must be an object.")
+        kind = str(sp.get("type", ""))
+        if kind not in ("abutment", "pier"):
+            raise BridgeDomainError(
+                f"spanLayout.supports[{i}].type must be abutment|pier."
+            )
+        supports.append(
+            SupportPoint(
+                name=str(sp.get("name", "")),
+                type=kind,
+                station=_as_number(sp.get("station", 0.0), f"spanLayout.supports[{i}].station"),
+            )
+        )
+    segments: list[SpanLayoutSegment] = []
+    for i, seg in enumerate(spans_payload):
+        if not isinstance(seg, dict):
+            raise BridgeDomainError(f"spanLayout.spans[{i}] must be an object.")
+        from_key = "from" if "from" in seg else "from_"
+        segments.append(
+            SpanLayoutSegment(
+                from_=str(seg.get(from_key, "")),
+                to=str(seg.get("to", "")),
+                length=_as_number(seg.get("length", 0.0), f"spanLayout.spans[{i}].length"),
+            )
+        )
+    return SpanLayout(
+        inputMode=input_mode,
+        supports=tuple(supports),
+        spans=tuple(segments),
+    )
+
 __all__ = [
     "BridgeProject",
     "CrossSection",
@@ -351,6 +506,11 @@ __all__ = [
     "BridgeLine",
     "BridgeLoad",
     "BridgeGenerationSettings",
+    "RoadAlignment",
+    "RoadAlignmentPoint",
+    "SupportPoint",
+    "SpanLayout",
+    "SpanLayoutSegment",
     "BridgeDomainError",
     "parse_bridge_project",
     "parse_cross_section",
@@ -359,6 +519,8 @@ __all__ = [
     "parse_lines",
     "parse_loads",
     "parse_generation_settings",
+    "parse_road_alignment",
+    "parse_span_layout",
     "compute_impact_factor",
     "bridge_default",
 ]

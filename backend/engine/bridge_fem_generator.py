@@ -17,6 +17,9 @@ from .bridge_model import (
     Span,
     BridgeLine,
     BridgeLoad,
+    RoadAlignment,
+    RoadAlignmentPoint,
+    SpanLayout,
     compute_impact_factor,
 )
 from .errors import AnalysisError
@@ -87,6 +90,7 @@ def _y_positions(cross: CrossSection, override: float | None) -> list[float]:
 
 
 def _x_positions(spans: Iterable[Span], mesh_division: int) -> list[float]:
+    """simple モード用: 橋軸方向 (X) のスカラ距離。"""
     positions: list[float] = [0.0]
     cursor = 0.0
     for sp in spans:
@@ -94,6 +98,59 @@ def _x_positions(spans: Iterable[Span], mesh_division: int) -> list[float]:
             positions.append(round(cursor + sp.length * i / mesh_division, 6))
         cursor += sp.length
     return positions
+
+
+def _interpolate_alignment(
+    alignment: RoadAlignment,
+    s: float,
+) -> RoadAlignmentPoint | None:
+    pts = alignment.points
+    if not pts:
+        return None
+    if len(pts) == 1:
+        return pts[0]
+    if s <= pts[0].station:
+        return pts[0]
+    if s >= pts[-1].station:
+        return pts[-1]
+    for i in range(1, len(pts)):
+        a = pts[i - 1]
+        b = pts[i]
+        if s >= a.station and s <= b.station:
+            span = b.station - a.station
+            t = 0.0 if span <= 0 else (s - a.station) / span
+            return RoadAlignmentPoint(
+                station=s,
+                x=a.x + (b.x - a.x) * t,
+                y=a.y + (b.y - a.y) * t,
+                z=a.z + (b.z - a.z) * t,
+            )
+    return pts[-1]
+
+
+def _alignment_total_length(alignment: RoadAlignment) -> float:
+    if not alignment.points:
+        return 0.0
+    return alignment.points[-1].station - alignment.points[0].station
+
+
+def _x_positions_from_alignment(alignment: RoadAlignment, mesh_division: int) -> list[RoadAlignmentPoint]:
+    """CSV モード用: 中心線上の station 補間による 3D 点を返す。"""
+    total = _alignment_total_length(alignment)
+    if total <= 0:
+        return [alignment.points[0]]
+    n_segments = max(1, len([sp for sp in [1] * max(1, mesh_division)]))
+    # mesh_division を「スパン分割数」として扱い、合計スパン数 * mesh_division 個の点を生成
+    span_count = max(1, len(alignment.points) - 1)
+    total_div = max(1, span_count * mesh_division)
+    out: list[RoadAlignmentPoint] = []
+    for i in range(total_div + 1):
+        s = total * i / total_div
+        p = _interpolate_alignment(alignment, s)
+        if p is not None:
+            out.append(p)
+    # span_count * mesh_division + 1 件にならない場合は調整
+    return out if out else alignment.points
 
 
 def _validate_basic(project: BridgeProject) -> None:
@@ -140,7 +197,23 @@ def generate_fem_model(project: BridgeProject) -> GenerationResult:
     spans = project.spans
 
     y_positions = _y_positions(cross, settings.girder_spacing_override)
-    x_positions = _x_positions(spans, settings.mesh_division)
+    use_alignment = bool(
+        project.roadAlignment is not None
+        and project.roadAlignment.inputMode == "csv"
+        and len(project.roadAlignment.points) >= 2
+    )
+    if use_alignment:
+        x_path_points: list[RoadAlignmentPoint] = _x_positions_from_alignment(
+            project.roadAlignment, settings.mesh_division
+        )
+        # X 方向のスカラ距離は station を採用 (dx = station 差分)
+        x_positions = [p.station for p in x_path_points]
+        # ノード world (x, y, z) は x_path_points の x,y と alignment.z + y_positions (横) を使う
+        z_at_station: dict[float, float] = {round(p.station, 6): p.z for p in x_path_points}
+    else:
+        x_positions = _x_positions(spans, settings.mesh_division)
+        x_path_points = None
+        z_at_station = {}
 
     x_count = len(x_positions)
     y_count = len(y_positions)
@@ -158,13 +231,29 @@ def generate_fem_model(project: BridgeProject) -> GenerationResult:
     seen_ids: set[str] = set()
     counter = 1
     for xi, x in enumerate(x_positions):
+        world_xy: tuple[float, float] | None = None
+        if x_path_points is not None and xi < len(x_path_points):
+            world_xy = (x_path_points[xi].x, x_path_points[xi].y)
+        z_at_x = z_at_station.get(round(x, 6), 0.0)
         for yi, y in enumerate(y_positions):
             nid = f"N{counter}"
             while nid in seen_ids:
                 counter += 1
                 nid = f"N{counter}"
             seen_ids.add(nid)
-            nodes.append({"id": nid, "x": float(x), "y": float(y), "z": 0.0, "label": nid})
+            if world_xy is not None:
+                wx, wy = world_xy
+            else:
+                wx, wy = float(x), 0.0
+            nodes.append(
+                {
+                    "id": nid,
+                    "x": float(wx),
+                    "y": float(wy) + float(y),  # 横断は中心線 world y + 横断 y
+                    "z": float(z_at_x),
+                    "label": nid,
+                }
+            )
             node_id_at[xi][yi] = nid
             counter += 1
 
@@ -218,15 +307,20 @@ def generate_fem_model(project: BridgeProject) -> GenerationResult:
     # rollers at intermediate span ends
     supports: list[dict[str, Any]] = []
     support_xs: list[float] = []
-    cum = 0.0
-    for i, sp in enumerate(spans):
-        if i == 0:
-            support_xs.append(0.0)
-        cum += sp.length
-        if i < len(spans) - 1:
+    if project.spanLayout is not None and project.spanLayout.supports:
+        # station 入力モード: 支点 station を使う (各 support の両端 y に支持)
+        for sp in project.spanLayout.supports:
+            support_xs.append(round(sp.station, 6))
+    else:
+        cum = 0.0
+        for i, sp in enumerate(spans):
+            if i == 0:
+                support_xs.append(0.0)
+            cum += sp.length
+            if i < len(spans) - 1:
+                support_xs.append(round(cum, 6))
+        if not support_xs or support_xs[-1] != round(cum, 6):
             support_xs.append(round(cum, 6))
-    if not support_xs or support_xs[-1] != round(cum, 6):
-        support_xs.append(round(cum, 6))
 
     def nearest_x_index(x: float) -> int:
         # find index with closest x

@@ -3,6 +3,8 @@ import type { BridgeLine, BridgeLineType, BridgeProject } from "../types";
 import { BRIDGE_LINE_TYPE_LABELS } from "../types";
 import { BridgeThreeViewer, type ViewerMode } from "../viewer/BridgeThreeViewer";
 import { appendLine, removeLine } from "../BridgeWizardState";
+import { ensureRoadAlignment } from "../roadAlignment";
+import { ensureSpanLayout } from "../spanLayout";
 import type { ViewerModelPayload } from "../types";
 
 type Props = {
@@ -20,6 +22,20 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
   const [lineName, setLineName] = useState("");
   const [topView, setTopView] = useState(true);
 
+
+
+  // Step1 / Step2 の中心線・支点変更時に Viewer の contextLayer を再描画
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("bw:redraw-context"));
+    if (topView) {
+      window.dispatchEvent(new CustomEvent("bw:fit-top-view"));
+    }
+  }, [
+    JSON.stringify(project.roadAlignment?.points ?? null),
+    JSON.stringify(project.spanLayout?.supports ?? null),
+    project.spans,
+    topView,
+  ]);
 
   // 種別やモードを切り替えたら、Viewer 内部の 1点目選択状態を解除する
   useEffect(() => {
@@ -117,7 +133,18 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
           onCreateLine={handleCreate}
           femModel={femModel || null}
           topView={topView}
+          alignment={ensureRoadAlignment(project)}
+          supportPoints={ensureSpanLayout(project).supports}
         />
+      </div>
+      <div className="bw-legend" role="list" aria-label="凡例">
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-alignment" />中心線</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-abutment" />橋台</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-pier" />橋脚</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-gridpoint" />格子点</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-traffic" />走行ライン</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-load" />荷重ライン</span>
+        <span role="listitem"><i className="bw-legend-swatch bw-legend-reference" />参照ライン</span>
       </div>
       <div className="bw-line-list">
         <h3>ライン一覧 ({project.lines.length})</h3>
