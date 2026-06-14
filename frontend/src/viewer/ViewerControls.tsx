@@ -2,6 +2,7 @@ import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Wav
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
+import type { ViewerCoordinateMode } from "./coordinateTransform";
 
 type ViewerControlsProps = {
   visibility: ViewerVisibility;
@@ -20,6 +21,9 @@ type ViewerControlsProps = {
   onResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
   onFit: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
+  coordinateMode: ViewerCoordinateMode;
+  onCoordinateModeChange: (mode: ViewerCoordinateMode) => void;
+  onCoordinateModeToggle: () => void;
 };
 
 export function ViewerControls({
@@ -39,6 +43,9 @@ export function ViewerControls({
   onResponseSpectrumResultChange,
   onFit,
   onCameraPreset,
+  coordinateMode,
+  onCoordinateModeChange,
+  onCoordinateModeToggle,
 }: ViewerControlsProps) {
   const setFlag = (key: keyof ViewerVisibility, value: boolean) => {
     onVisibilityChange({ ...visibility, [key]: value });
@@ -67,6 +74,18 @@ export function ViewerControls({
             XZ
           </button>
         </div>
+      </ControlGroup>
+      <ControlGroup title="座標系">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="SPACER座標系表示"
+            checked={coordinateMode === "spacer"}
+            onChange={(checked) => onCoordinateModeChange(checked ? "spacer" : "normal")}
+          />
+        </div>
+        <p className="viewer-control-hint">
+          表示のみY/Zを入れ替えます。解析データ・保存JSON・Backend送信値は変更されません。
+        </p>
       </ControlGroup>
       <ControlGroup title="解析結果">
         <div className="viewer-control-row">

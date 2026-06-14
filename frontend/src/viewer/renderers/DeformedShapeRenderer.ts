@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { ResponseSpectrumSelection } from "../../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../../types";
+import type { ViewerCoordinateMode } from "../coordinateTransform";
 import type { ViewerScales } from "../types";
 import {
   createDisplacementMap,
@@ -17,16 +18,18 @@ export function renderDeformedShape(
   selectedEigenMode: number,
   selectedResponseSpectrumResult: ResponseSpectrumSelection,
   scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
 ): THREE.Object3D[] {
   const displacementScale =
     result?.eigenResult && !result.responseSpectrumResult ? scales.modeScale : scales.deformationScale;
   if (!result || result.errors.length > 0 || !isFiniteNumber(displacementScale)) return [];
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, mode);
   const displacementMap = createDisplacementMap(
     result,
     selectedLoadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult,
+    mode,
   );
   if (displacementMap.size === 0) return [];
 
@@ -42,6 +45,8 @@ export function renderDeformedShape(
     const displacement = displacementMap.get(nodeId);
     if (!displacement) continue;
     const node = new THREE.Mesh(nodeGeometry.clone(), material.clone());
+    // base には既に viewer 座標系の節点位置が入っている。
+    // displacementMap も viewer 座標系の (ux', uy', uz') になっているため、そのまま足せる。
     node.position.copy(base).addScaledVector(displacement, displacementScale);
     objects.push(node);
   }

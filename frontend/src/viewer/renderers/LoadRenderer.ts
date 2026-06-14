@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import type { MemberLoad, ProjectModel } from "../../types";
+import type { ViewerCoordinateMode } from "../coordinateTransform";
+import { toViewerVector } from "../coordinateTransform";
 import type { ViewerScales } from "../types";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
 
@@ -11,9 +13,13 @@ export function renderLoads(
   project: ProjectModel,
   selectedLoadCaseId: string,
   scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  // NodeMap は viewer 座標系で作る。force/moment ベクトルも同じ座標系に揃えるため mode を渡す。
+  const nodeMap = createNodeMap(project, mode);
   const objects: THREE.Object3D[] = [];
+  // 荷重の「大きさ」は component 別の絶対量で正規化したいので、viewer 変換後の成分でも
+  // 大きさは変わらない(toViewerVector は軸入替だけ)ことを利用して元の成分で計算して OK。
   const forceMax = Math.max(
     ...project.nodalLoads
       .filter((load) => load.loadCaseId === selectedLoadCaseId)
@@ -33,7 +39,7 @@ export function renderLoads(
     if (load.loadCaseId !== selectedLoadCaseId) continue;
     const position = nodeMap.get(load.nodeId);
     if (!position) continue;
-    const forceVector = vectorFrom(load.fx, load.fy, load.fz);
+    const forceVector = vectorFromViewer(load.fx, load.fy, load.fz, mode);
     if (forceVector) {
       const ratio = clamp(forceVector.length() / forceMax, 0.18, 1);
       objects.push(
@@ -47,7 +53,7 @@ export function renderLoads(
         ),
       );
     }
-    const momentVector = vectorFrom(load.mx, load.my, load.mz);
+    const momentVector = vectorFromViewer(load.mx, load.my, load.mz, mode);
     if (momentVector) {
       const ratio = clamp(momentVector.length() / momentMax, 0.2, 1);
       objects.push(createMomentGlyph(position, momentVector.normalize(), baseLength * 0.32 * ratio));
@@ -56,19 +62,24 @@ export function renderLoads(
 
   for (const load of project.memberLoads) {
     if (load.loadCaseId !== selectedLoadCaseId) continue;
-    objects.push(...renderMemberLoad(load, project, baseLength));
+    objects.push(...renderMemberLoad(load, project, baseLength, mode));
   }
 
   return objects;
 }
 
-function renderMemberLoad(load: MemberLoad, project: ProjectModel, baseLength: number): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+function renderMemberLoad(
+  load: MemberLoad,
+  project: ProjectModel,
+  baseLength: number,
+  mode: ViewerCoordinateMode,
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, mode);
   const member = project.members.find((item) => item.id === load.memberId);
   if (!member) return [];
   const ends = getMemberEnds(member, nodeMap);
   if (!ends) return [];
-  const direction = vectorFrom(load.wx, load.wy, load.wz);
+  const direction = vectorFromViewer(load.wx, load.wy, load.wz, mode);
   if (!direction) return [];
   const objects: THREE.Object3D[] = [];
   const length = ends.start.distanceTo(ends.end);
@@ -115,9 +126,15 @@ function createMomentGlyph(origin: THREE.Vector3, axis: THREE.Vector3, radius: n
   return group;
 }
 
-function vectorFrom(x: number, y: number, z: number): THREE.Vector3 | null {
+function vectorFromViewer(
+  x: number,
+  y: number,
+  z: number,
+  mode: ViewerCoordinateMode,
+): THREE.Vector3 | null {
   if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(z)) return null;
-  const vector = new THREE.Vector3(x, y, z);
+  const v = toViewerVector({ x, y, z }, mode);
+  const vector = new THREE.Vector3(v.x, v.y, v.z);
   if (vector.lengthSq() <= 1e-16) return null;
   return vector;
 }

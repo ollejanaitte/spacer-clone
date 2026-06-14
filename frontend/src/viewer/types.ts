@@ -1,5 +1,6 @@
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
+import type { ViewerCoordinateMode } from "./coordinateTransform";
 import type * as THREE from "three";
 
 export type ViewerMode = "three" | "fallback2d";
@@ -48,6 +49,11 @@ export type Viewer3DProps = {
   onSelectedEigenModeChange?: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange?: (resultKey: ResponseSpectrumSelection) => void;
   onViewerError?: (message: string) => void;
+  /**
+   * 表示専用の座標モード。Viewer 描画時にだけ Y/Z を入れ替える。
+   * モデルデータ・解析結果・保存 JSON には一切影響しない。
+   */
+  coordinateMode?: ViewerCoordinateMode;
 };
 
 export type ThreeViewportProps = Viewer3DProps & {
@@ -57,6 +63,7 @@ export type ThreeViewportProps = Viewer3DProps & {
   fitRequest: number;
   cameraRequest: CameraPreset | null;
   onInitializationError: (error: unknown) => void;
+  coordinateMode: ViewerCoordinateMode;
 };
 
 export type CameraPreset = "iso" | "xy" | "yz" | "xz";

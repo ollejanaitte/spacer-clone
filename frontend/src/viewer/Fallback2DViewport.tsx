@@ -1,4 +1,5 @@
 import type { NodalLoad, NodeItem, ProjectModel } from "../types";
+import type { ViewerCoordinateMode } from "./coordinateTransform";
 import type { ThreeViewportProps, ViewerSelection } from "./types";
 
 const WIDTH = 1000;
@@ -20,8 +21,9 @@ export function Fallback2DViewport({
   selectedLoadCaseId,
   fitRequest,
   onSelectionChange,
+  coordinateMode = "normal",
 }: ThreeViewportProps) {
-  const projected = projectNodes(project);
+  const projected = projectNodes(project, coordinateMode);
   const nodeMap = new Map(projected.nodes.map((node) => [node.id, node]));
   const forceMax = Math.max(
     ...project.nodalLoads
@@ -169,8 +171,8 @@ function NodalLoadGlyph({
   );
 }
 
-function projectNodes(project: ProjectModel): { nodes: ProjectedNode[]; axis: ProjectionAxis } {
-  const axis = chooseVerticalAxis(project.nodes);
+function projectNodes(project: ProjectModel, mode: ViewerCoordinateMode = "normal"): { nodes: ProjectedNode[]; axis: ProjectionAxis } {
+  const axis = chooseVerticalAxis(project.nodes, mode);
   const raw = project.nodes
     .filter((node) => isFiniteNumber(node.x) && isFiniteNumber(node.y) && isFiniteNumber(node.z))
     .map((node) => ({ node, px: node.x, py: axis === "z" ? node.z : node.y }));
@@ -198,11 +200,13 @@ function projectNodes(project: ProjectModel): { nodes: ProjectedNode[]; axis: Pr
   };
 }
 
-function chooseVerticalAxis(nodes: NodeItem[]): ProjectionAxis {
+function chooseVerticalAxis(nodes: NodeItem[], mode: ViewerCoordinateMode = "normal"): ProjectionAxis {
   const finiteNodes = nodes.filter((node) => isFiniteNumber(node.y) && isFiniteNumber(node.z));
   if (finiteNodes.length === 0) return "y";
   const ySpan = Math.max(...finiteNodes.map((node) => node.y)) - Math.min(...finiteNodes.map((node) => node.y));
   const zSpan = Math.max(...finiteNodes.map((node) => node.z)) - Math.min(...finiteNodes.map((node) => node.z));
+  // SPACER モードでは Y/Z を視覚的に入れ替えて表示するため、縦軸は z 側を選ぶ。
+  if (mode === "spacer") return "z";
   return ySpan <= 1e-9 && zSpan > ySpan ? "z" : "y";
 }
 

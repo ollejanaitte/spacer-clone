@@ -440,6 +440,13 @@ button:disabled {
   border-bottom: 0;
 }
 
+.viewer-control-hint {
+  margin: 2px 0 0;
+  color: #6b7a8c;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .viewer-control-group h3 {
   margin: 0;
   color: #526173;

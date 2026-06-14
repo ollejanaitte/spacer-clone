@@ -3,6 +3,7 @@ import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type Respons
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import type { CameraPreset, Viewer3DProps, ViewerMode, ViewerScales, ViewerSelection, ViewerVisibility } from "./types";
 import { ThreeViewport } from "./ThreeViewport";
+import { useViewerCoordinateMode } from "./useViewerCoordinateMode";
 import { ViewerControls } from "./ViewerControls";
 
 const defaultVisibility: ViewerVisibility = {
@@ -56,6 +57,7 @@ export function Viewer3D({
   const [mode, setMode] = useState<ViewerMode>("three");
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [fitRequest, setFitRequest] = useState(0);
+  const [coordinateMode, setCoordinateMode, toggleCoordinateMode] = useViewerCoordinateMode();
   const [cameraRequest, setCameraRequest] = useState<CameraPreset | null>(null);
   const loadCaseIds = useMemo(
     () => project.loadCases.map((loadCase) => loadCase.id).filter(Boolean),
@@ -136,6 +138,7 @@ export function Viewer3D({
     fitRequest,
     cameraRequest,
     onInitializationError: handleInitializationError,
+    coordinateMode,
   };
   const gpuMode = getGpuModeLabel();
 
@@ -185,6 +188,9 @@ export function Viewer3D({
           }
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
+          coordinateMode={coordinateMode}
+          onCoordinateModeChange={setCoordinateMode}
+          onCoordinateModeToggle={toggleCoordinateMode}
         />
       </section>
     </main>

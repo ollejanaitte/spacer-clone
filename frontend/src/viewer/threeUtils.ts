@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
+import { toViewerPoint, toViewerVector, type ViewerCoordinateMode } from "./coordinateTransform";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
 
@@ -8,17 +9,24 @@ export function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-export function nodeToVector(node: NodeItem | undefined): THREE.Vector3 | null {
+export function nodeToVector(
+  node: NodeItem | undefined,
+  mode: ViewerCoordinateMode = "normal",
+): THREE.Vector3 | null {
   if (!node || !isFiniteNumber(node.x) || !isFiniteNumber(node.y) || !isFiniteNumber(node.z)) {
     return null;
   }
-  return new THREE.Vector3(node.x, node.y, node.z);
+  const v = toViewerPoint({ x: node.x, y: node.y, z: node.z }, mode);
+  return new THREE.Vector3(v.x, v.y, v.z);
 }
 
-export function createNodeMap(project: ProjectModel): Map<string, THREE.Vector3> {
+export function createNodeMap(
+  project: ProjectModel,
+  mode: ViewerCoordinateMode = "normal",
+): Map<string, THREE.Vector3> {
   const nodes = new Map<string, THREE.Vector3>();
   for (const node of project.nodes) {
-    const position = nodeToVector(node);
+    const position = nodeToVector(node, mode);
     if (position) nodes.set(node.id, position);
   }
   return nodes;
@@ -40,6 +48,18 @@ export function getMemberEnds(
     mid: new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5),
     direction: delta.normalize(),
   };
+}
+
+/**
+ * 変位ベクトル (ux, uy, uz) を viewer 座標系へ変換する。
+ * 値は変位そのままで、表示側で (y, z) 成分を入れ替えるだけ。
+ */
+export function displacementToViewerVector(
+  displacement: { ux: number; uy: number; uz: number },
+  mode: ViewerCoordinateMode,
+): THREE.Vector3 {
+  const v = toViewerVector({ x: displacement.ux, y: displacement.uy, z: displacement.uz }, mode);
+  return new THREE.Vector3(v.x, v.y, v.z);
 }
 
 export function createLine(
@@ -127,15 +147,17 @@ export function computeModelBox(
   loadCaseId: string,
   selectedEigenMode: number,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
+  mode: ViewerCoordinateMode = "normal",
 ): THREE.Box3 {
   const box = new THREE.Box3();
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, mode);
   for (const position of nodeMap.values()) box.expandByPoint(position);
   const displacements = createDisplacementMap(
     result,
     loadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult,
+    mode,
   );
   if (displacements.size > 0 && Number.isFinite(deformationScale)) {
     for (const [nodeId, base] of nodeMap) {
@@ -176,6 +198,7 @@ export function createDisplacementMap(
   loadCaseId: string,
   selectedEigenMode = 1,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
+  mode: ViewerCoordinateMode = "normal",
 ): Map<string, THREE.Vector3> {
   const map = new Map<string, THREE.Vector3>();
   if (!result || result.errors.length > 0) return map;
@@ -183,22 +206,22 @@ export function createDisplacementMap(
   if (responseSpectrumDisplacements.length > 0) {
     for (const item of responseSpectrumDisplacements) {
       if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-      map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
+      map.set(item.nodeId, displacementToViewerVector(item, mode));
     }
     return map;
   }
-  const eigenMode = result.eigenResult?.modes.find((mode) => mode.modeNo === selectedEigenMode);
+  const eigenMode = result.eigenResult?.modes.find((m) => m.modeNo === selectedEigenMode);
   if (eigenMode) {
     for (const item of eigenMode.shape) {
       if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-      map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
+      map.set(item.nodeId, displacementToViewerVector(item, mode));
     }
     return map;
   }
   for (const item of result.displacements) {
     if (item.loadCaseId !== loadCaseId) continue;
     if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-    map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
+    map.set(item.nodeId, displacementToViewerVector(item, mode));
   }
   return map;
 }

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { ProjectModel, Support } from "../../types";
+import type { ViewerCoordinateMode } from "../coordinateTransform";
 import type { ViewerScales } from "../types";
 import { createNodeMap } from "../threeUtils";
 
@@ -7,8 +8,12 @@ const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#4f5f70", roughne
 const pinnedMaterial = new THREE.MeshStandardMaterial({ color: "#3b8b6d", roughness: 0.7 });
 const rollerMaterial = new THREE.MeshStandardMaterial({ color: "#7a6fb3", roughness: 0.7 });
 
-export function renderSupports(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderSupports(
+  project: ProjectModel,
+  scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, mode);
   const objects: THREE.Object3D[] = [];
   const size = Math.max(scales.nodeSize * 2.4, 0.16);
 
@@ -17,6 +22,7 @@ export function renderSupports(project: ProjectModel, scales: ViewerScales): THR
     if (!position) continue;
     const kind = classifySupport(support);
     const group = new THREE.Group();
+    // 「下」方向は Viewer 座標の -Y。SPACER モードでも viewer 上で「下」に出したいので -Y を使う。
     group.position.copy(position).add(new THREE.Vector3(0, -size * 1.8, 0));
 
     if (kind === "fixed") {

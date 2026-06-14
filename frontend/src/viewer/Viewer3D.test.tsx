@@ -144,6 +144,7 @@ function fallbackProps(project: ProjectModel): ThreeViewportProps {
     fitRequest: 1,
     cameraRequest: null,
     onInitializationError: () => undefined,
+    coordinateMode: "normal",
   };
 }
 

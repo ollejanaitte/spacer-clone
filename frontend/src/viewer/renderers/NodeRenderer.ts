@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
+import type { ViewerCoordinateMode } from "../coordinateTransform";
 import type { ViewerScales, ViewerSelection } from "../types";
 import { createLabelSprite, createNodeMap } from "../threeUtils";
 
@@ -11,8 +12,9 @@ export function renderNodes(
   selectedSection: SectionKey,
   selection: ViewerSelection,
   scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, mode);
   const radius = Math.max(scales.nodeSize, 0.02);
   const geometry = new THREE.SphereGeometry(radius, 18, 12);
   const objects: THREE.Object3D[] = [];
@@ -32,14 +34,21 @@ export function renderNodes(
   return objects;
 }
 
-export function renderNodeLabels(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderNodeLabels(
+  project: ProjectModel,
+  scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, mode);
   const objects: THREE.Object3D[] = [];
+  // ラベルは「node の少し上」に置く。Viewer 座標系での「上」は Y 軸方向なので
+  // 同じ Y 方向ベクトルを SPACER モードでも使う(座標変換後のYは model の Z に相当する)。
+  const labelOffset = new THREE.Vector3(0, scales.nodeSize * 2.8 + 0.08, 0);
   for (const node of project.nodes) {
     const position = nodeMap.get(node.id);
     if (!position) continue;
     const label = createLabelSprite(node.label || node.id, "#7b3440", scales.labelSize);
-    label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 2.8 + 0.08, 0));
+    label.position.copy(position).add(labelOffset);
     objects.push(label);
   }
   return objects;

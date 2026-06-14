@@ -153,17 +153,18 @@ export function ThreeViewport(props: ThreeViewportProps) {
     props.selectedLoadCaseId,
     props.selectedEigenMode,
     props.selectedResponseSpectrumResult,
+    props.coordinateMode,
   ]);
 
   useEffect(() => {
     const context = contextRef.current;
     if (context) fitCamera(context, props, props.cameraRequest ?? "iso");
-  }, [props.fitRequest]);
+  }, [props.fitRequest, props.coordinateMode]);
 
   useEffect(() => {
     const context = contextRef.current;
     if (context && props.cameraRequest) fitCamera(context, props, props.cameraRequest);
-  }, [props.cameraRequest]);
+  }, [props.cameraRequest, props.coordinateMode]);
 
   return <div ref={hostRef} className="three-viewport" aria-label="3D model viewport" />;
 }
@@ -184,6 +185,7 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
     props.selectedLoadCaseId,
     props.selectedEigenMode ?? 1,
     props.selectedResponseSpectrumResult ?? "SRSS",
+    props.coordinateMode,
   );
   fitCameraToBox(context.camera, context.controls, box, direction);
 }

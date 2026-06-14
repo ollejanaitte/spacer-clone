@@ -42,19 +42,23 @@ export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps
     selectedLoadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult = "SRSS",
+    coordinateMode,
   } = props;
   replaceGroupContents(
     groups.nodes,
-    visibility.nodes ? renderNodes(project, selectedSection, selection, scales) : [],
+    visibility.nodes ? renderNodes(project, selectedSection, selection, scales, coordinateMode) : [],
   );
   replaceGroupContents(
     groups.members,
-    visibility.members ? renderMembers(project, selectedSection, selection) : [],
+    visibility.members ? renderMembers(project, selectedSection, selection, coordinateMode) : [],
   );
-  replaceGroupContents(groups.supports, visibility.supports ? renderSupports(project, scales) : []);
+  replaceGroupContents(
+    groups.supports,
+    visibility.supports ? renderSupports(project, scales, coordinateMode) : [],
+  );
   replaceGroupContents(
     groups.loads,
-    visibility.loads ? renderLoads(project, selectedLoadCaseId, scales) : [],
+    visibility.loads ? renderLoads(project, selectedLoadCaseId, scales, coordinateMode) : [],
   );
   replaceGroupContents(
     groups.deformed,
@@ -66,19 +70,28 @@ export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps
           selectedEigenMode ?? 1,
           selectedResponseSpectrumResult,
           scales,
+          coordinateMode,
         )
       : [],
   );
   replaceGroupContents(
     groups.resultDiagrams,
-    renderResultDiagrams(project, result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility, scales),
+    renderResultDiagrams(
+      project,
+      result,
+      selectedLoadCaseId,
+      selectedResponseSpectrumResult,
+      visibility,
+      scales,
+      coordinateMode,
+    ),
   );
   replaceGroupContents(
     groups.labels,
     visibility.labels
       ? [
-          ...(visibility.nodeLabels ? renderNodeLabels(project, scales) : []),
-          ...(visibility.memberLabels ? renderMemberLabels(project, scales) : []),
+          ...(visibility.nodeLabels ? renderNodeLabels(project, scales, coordinateMode) : []),
+          ...(visibility.memberLabels ? renderMemberLabels(project, scales, coordinateMode) : []),
         ]
       : [],
   );

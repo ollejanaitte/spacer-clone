@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
+import type { ViewerCoordinateMode } from "../coordinateTransform";
 import type { ViewerScales, ViewerSelection } from "../types";
 import { createLabelSprite, createLine, createNodeMap, getMemberEnds } from "../threeUtils";
 
@@ -7,8 +8,9 @@ export function renderMembers(
   project: ProjectModel,
   selectedSection: SectionKey,
   selection: ViewerSelection,
+  mode: ViewerCoordinateMode = "normal",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, mode);
   const objects: THREE.Object3D[] = [];
 
   for (const member of project.members) {
@@ -35,14 +37,19 @@ export function renderMembers(
   return objects;
 }
 
-export function renderMemberLabels(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderMemberLabels(
+  project: ProjectModel,
+  scales: ViewerScales,
+  mode: ViewerCoordinateMode = "normal",
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, mode);
   const objects: THREE.Object3D[] = [];
+  const labelOffset = new THREE.Vector3(0, scales.nodeSize * 2.2 + 0.08, 0);
   for (const member of project.members) {
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
     const label = createLabelSprite(member.label || member.id, "#23527a", scales.labelSize);
-    label.position.copy(ends.mid).add(new THREE.Vector3(0, scales.nodeSize * 2.2 + 0.08, 0));
+    label.position.copy(ends.mid).add(labelOffset);
     objects.push(label);
   }
   return objects;
