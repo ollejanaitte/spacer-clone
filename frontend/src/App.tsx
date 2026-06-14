@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ApiClientError, apiClient } from "./api/client";
+import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
@@ -26,6 +26,7 @@ type ValidationNotice = {
 };
 
 export function App() {
+  const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
   const [selectedSection, setSelectedSection] = useState<SectionKey>("nodes");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -91,6 +92,25 @@ export function App() {
       .catch(() => {
         setAutosaveStatus("自動保存の確認に失敗しました。通常の操作は継続できます。");
       });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchVersion = () =>
+      fetch(resolveApiUrl("/health"))
+        .then((response) => (response.ok ? response.json() : null))
+        .then((payload) => {
+          if (cancelled) return;
+          const version = typeof payload?.version === "string" ? payload.version : null;
+          if (version) setAppVersion(version);
+        })
+        .catch(() => {
+          /* ignore network errors; fallback version is shown */
+        });
+    void fetchVersion();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -339,6 +359,7 @@ export function App() {
     <div className="app-shell">
       <Toolbar
         projectName={project.project.name}
+        appVersion={appVersion}
         dirty={dirty}
         validationStatus={validation ? (validation.valid ? "チェックOK" : "エラーあり") : "未チェック"}
         analysisStatus={running ? "解析中" : result ? analysisStatusLabel(result.analysisSummary.status) : "未実行"}

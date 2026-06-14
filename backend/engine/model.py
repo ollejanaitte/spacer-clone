@@ -137,6 +137,7 @@ class AnalysisSettings:
     tolerance: float = 1e-9
     eigen: dict[str, Any] | None = None
     influence: dict[str, Any] | None = None
+    responseSpectrum: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

@@ -88,6 +88,14 @@ button:disabled {
   font-size: 12px;
 }
 
+.project-strip .app-version {
+  color: #93a8be;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
 .toolbar-actions {
   display: flex;
   flex-wrap: wrap;

@@ -2,6 +2,7 @@ import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, Shiel
 
 type ToolbarProps = {
   projectName: string;
+  appVersion: string;
   dirty: boolean;
   validationStatus: string;
   analysisStatus: string;
@@ -24,6 +25,7 @@ type ToolbarProps = {
 
 export function Toolbar({
   projectName,
+  appVersion,
   dirty,
   validationStatus,
   analysisStatus,
@@ -52,6 +54,7 @@ export function Toolbar({
           <p>
             {dirty ? "未保存の変更あり" : "保存済み"} / {validationStatus} / {analysisStatus}
           </p>
+          <p className="app-version" aria-label="app-version">Version {appVersion}</p>
         </div>
       </div>
       <div className="toolbar-actions">

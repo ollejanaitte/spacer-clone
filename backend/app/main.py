@@ -4,7 +4,7 @@ import copy
 import json
 import math
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
@@ -655,12 +655,108 @@ def add_simple_beam_geometry(project: dict[str, Any]) -> None:
     ]
 
 
+
+def _load_mass_cases_from_examples_dir(name: str) -> list[dict[str, Any]]:
+    from pathlib import Path
+
+    import json
+
+    payload = json.loads((Path(__file__).resolve().parents[2] / "examples" / name).read_text(encoding="utf-8"))
+    return payload.get("massCases", []) or []
+
+
+def _wrap_dynamic_example(
+    base_id: str,
+    base_name: str,
+    base_description: str,
+    geometry_loader: Callable[[dict[str, Any]], None],
+    *,
+    include_response_spectrum: bool,
+) -> dict[str, Any]:
+    project = base_project(base_id, base_name, base_description)
+    geometry_loader(project)
+    project["massCases"] = _load_mass_cases_from_examples_dir(
+        f"{base_id.replace(chr(45), chr(95))}.json"
+    )
+    settings: dict[str, Any] = {
+        "analysisType": "linear_static",
+        "solver": "scipy_sparse",
+        "includeShearDeformation": False,
+        "largeDisplacement": False,
+        "tolerance": 1e-9,
+        "eigen": {
+            "massCaseId": "mass-1",
+            "modeCount": 2 if base_id.startswith("cantilever") else 3,
+        },
+    }
+    if include_response_spectrum:
+        settings["responseSpectrum"] = {
+            "massCaseId": "mass-1",
+            "modeCount": 2 if base_id.startswith("cantilever") else 3,
+            "spectrumCaseId": "spec-1",
+            "direction": "X",
+            "dampingRatio": 0.05,
+            "targetCumulativeMassRatio": 0.9,
+            "spectrumPoints": [
+                {"period": 0.0, "value": 1.0},
+                {"period": 0.1, "value": 1.0},
+                {"period": 1.0, "value": 1.0},
+            ],
+        }
+    project["analysisSettings"] = settings
+    return project
+
+
+def cantilever_eigen() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "cantilever-eigen",
+        "Cantilever Eigen Analysis",
+        "Fixed-free beam eigen analysis verification model with lumped tip mass.",
+        add_cantilever_geometry,
+        include_response_spectrum=False,
+    )
+
+
+def simple_beam_eigen() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "simple-beam-eigen",
+        "Simple Beam Eigen Analysis",
+        "Simply supported beam eigen analysis verification model with lumped mid-span mass.",
+        add_simple_beam_geometry,
+        include_response_spectrum=False,
+    )
+
+
+def cantilever_response_spectrum() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "cantilever-response-spectrum",
+        "Cantilever Response Spectrum",
+        "Fixed-free beam response spectrum analysis with SRSS combination and a flat pseudo-acceleration input.",
+        add_cantilever_geometry,
+        include_response_spectrum=True,
+    )
+
+
+def simple_beam_response_spectrum() -> dict[str, Any]:
+    return _wrap_dynamic_example(
+        "simple-beam-response-spectrum",
+        "Simple Beam Response Spectrum",
+        "Simply supported beam response spectrum analysis with SRSS combination and a flat pseudo-acceleration input.",
+        add_simple_beam_geometry,
+        include_response_spectrum=True,
+    )
+
+
 def examples() -> list[dict[str, Any]]:
     projects = [
         cantilever_tip_load(),
         simple_beam_center_load(),
         simple_beam_uniform_load(),
         cantilever_torsion(),
+        cantilever_eigen(),
+        simple_beam_eigen(),
+        cantilever_response_spectrum(),
+        simple_beam_response_spectrum(),
     ]
     return [
         {

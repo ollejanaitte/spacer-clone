@@ -44,6 +44,7 @@ export function buildResultPdfReport(
     );
   const selectedLoadCase = project.loadCases.find((item) => item.id === activeLoadCase);
   const summary = result.analysisSummary;
+  const dynamicSections = buildDynamicAnalysisSections(project, result);
 
   return {
     title: `${project.project.name} Analysis Report`,
@@ -154,8 +155,150 @@ export function buildResultPdfReport(
           },
         ],
       },
+      ...dynamicSections,
     ],
   };
+}
+
+function buildDynamicAnalysisSections(project: ProjectModel, result: AnalysisResult): ReportSection[] {
+  const sections: ReportSection[] = [];
+
+  const eigenModes = result.eigenResult?.modes ?? [];
+  if (eigenModes.length > 0) {
+    sections.push({
+      title: "Eigen Modes",
+      blocks: [
+        {
+          title: "Eigen Modes Table",
+          columns: [
+            "Mode",
+            "Eigenvalue",
+            "ω (rad/s)",
+            "f (Hz)",
+            "T (s)",
+            "γX",
+            "γY",
+            "γZ",
+            "EMR X",
+            "EMR Y",
+            "EMR Z",
+            "ΣEMR X",
+            "ΣEMR Y",
+            "ΣEMR Z",
+          ],
+          rows: eigenModes.map((mode) => [
+            mode.modeNo,
+            mode.eigenvalue,
+            mode.circularFrequency,
+            mode.frequency,
+            mode.period,
+            directionalValueOf(mode.participationFactors, "X"),
+            directionalValueOf(mode.participationFactors, "Y"),
+            directionalValueOf(mode.participationFactors, "Z"),
+            directionalValueOf(mode.effectiveMassRatios, "X"),
+            directionalValueOf(mode.effectiveMassRatios, "Y"),
+            directionalValueOf(mode.effectiveMassRatios, "Z"),
+            directionalValueOf(mode.cumulativeEffectiveMassRatios, "X"),
+            directionalValueOf(mode.cumulativeEffectiveMassRatios, "Y"),
+            directionalValueOf(mode.cumulativeEffectiveMassRatios, "Z"),
+          ]),
+        },
+      ],
+    });
+
+    const totals = result.eigenResult?.totalMassByDirection;
+    if (Array.isArray(totals) && totals.length > 0) {
+      const finalMode = eigenModes[eigenModes.length - 1];
+      const finalCumulative = finalMode?.cumulativeEffectiveMassRatios ?? [];
+      sections.push({
+        title: "Effective Mass Summary",
+        blocks: [
+          {
+            title: "Effective Mass Summary Table",
+            columns: [
+              "Direction",
+              "Total Mass",
+              "Cumulative Effective Mass Ratio (final mode)",
+              "Used Mode Count",
+            ],
+            rows: totals.map((item) => [
+              item.direction,
+              item.value,
+              directionalValueOf(finalCumulative, item.direction),
+              eigenModes.length,
+            ]),
+          },
+        ],
+      });
+    }
+  }
+
+  const response = result.responseSpectrumResult;
+  if (response) {
+    const pointCount = response.modalResults.length;
+    const spectrumPointCount = project.analysisSettings.responseSpectrum?.spectrumPoints?.length ?? 0;
+    sections.push({
+      title: "Response Spectrum Conditions",
+      blocks: [
+        {
+          title: "Response Spectrum Conditions Table",
+          columns: ["Item", "Value"],
+          rows: [
+            ["Spectrum case id", response.spectrumCaseId],
+            ["Direction", response.direction],
+            ["Damping ratio (h)", response.dampingRatio],
+            ["Combination method", response.combinationMethod],
+            [
+              "Target cumulative effective mass ratio",
+              response.targetCumulativeMassRatio ?? "-",
+            ],
+            [
+              "Used modes",
+              Array.isArray(response.usedModes) && response.usedModes.length > 0
+                ? response.usedModes.join(", ")
+                : "-",
+            ],
+            ["Modal result count", String(pointCount)],
+            ["Spectrum point count", String(spectrumPointCount)],
+            ["Notes", "SRSS combination is used for displacement envelope."],
+          ],
+        },
+      ],
+    });
+
+    const displacements = response.combinedResult?.displacements ?? [];
+    if (displacements.length > 0) {
+      sections.push({
+        title: "SRSS Displacements",
+        blocks: [
+          {
+            title: "SRSS Displacement Table",
+            columns: ["Node", "DX", "DY", "DZ", "RX", "RY", "RZ"],
+            rows: displacements.map((item) => [
+              item.nodeId,
+              item.ux,
+              item.uy,
+              item.uz,
+              item.rx,
+              item.ry,
+              item.rz,
+            ]),
+          },
+        ],
+      });
+    }
+  }
+
+  return sections;
+}
+
+function directionalValueOf(
+  items: Array<{ direction: string; value: number }> | undefined,
+  direction: string,
+): number | string {
+  if (!Array.isArray(items)) return "-";
+  const match = items.find((item) => item.direction === direction);
+  return match ? match.value : "-";
 }
 
 export function buildResultPdfReportHtml(report: ResultPdfReport): string {
