@@ -15,7 +15,7 @@ export const STEP_TITLES: Record<WizardStepNumber, string> = {
   1: "道路条件",
   2: "支間設定",
   3: "衝撃係数",
-  4: "ライン設定 3D",
+  4: "活荷重走行ライン設定",
   5: "荷重設定",
   6: "FEMモデル生成",
 };
@@ -190,4 +190,28 @@ export function removeLoad(project: BridgeProject, id: string): BridgeProject {
 export function setStep<T>(step: number, next: T, setStep: (n: number) => void) {
   setStep(step + 1);
   return next;
+}
+
+
+/**
+ * 将来拡張: 部材(主桁)を選択すると、その主桁上に走行ライン候補を自動生成する。
+ * 現状は memberIndex に対応する y 座標(横断位置)を返し、呼び出し側が BridgeLine ペイロードに整形する素地だけ用意する。
+ * 次フェーズで femModel.members を受け取り、両端の x 座標(橋長範囲)から線分を生成する実装に差し替える。
+ */
+export function suggestGirderLineEndpoints(
+  spans: Span[],
+  meshDivision: number,
+  girderYPositions: number[],
+  memberIndex: number,
+): { start: [number, number, number]; end: [number, number, number] } | null {
+  if (!Array.isArray(girderYPositions) || girderYPositions.length === 0) return null;
+  const safeIndex = Math.max(0, Math.min(girderYPositions.length - 1, memberIndex));
+  const y = girderYPositions[safeIndex];
+  if (typeof y !== "number" || !Number.isFinite(y)) return null;
+  const xs = xPositionsFor(spans, Math.max(1, meshDivision));
+  if (xs.length < 2) return null;
+  return {
+    start: [xs[0], y, 0],
+    end: [xs[xs.length - 1], y, 0],
+  };
 }

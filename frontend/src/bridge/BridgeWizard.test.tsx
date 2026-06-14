@@ -104,7 +104,7 @@ describe("BridgeWizard", () => {
     });
     const stepButtons = document.querySelectorAll<HTMLButtonElement>(".bw-sidebar ol li button");
     expect(stepButtons.length).toBe(6);
-    const step4 = Array.from(stepButtons).find((b) => b.textContent?.includes("ライン設定 3D"));
+    const step4 = Array.from(stepButtons).find((b) => b.textContent?.includes("活荷重走行ライン設定"));
     expect(step4).toBeDefined();
     await act(async () => {
       step4!.click();

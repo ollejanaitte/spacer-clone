@@ -21,6 +21,19 @@ export type ImpactFactor = {
 
 export type BridgeLineType = "traffic" | "load" | "reference";
 
+
+/**
+ * Step4 で UI に表示する名称。
+ *  - traffic  : 走行ライン(活荷重が実際に走るライン。主桁上に設定する)
+ *  - load     : 荷重ライン(任意の位置に追加荷重を置くためのライン)
+ *  - reference: 参照ライン(寸法・位置確認用の補助ライン)
+ */
+export const BRIDGE_LINE_TYPE_LABELS: Record<BridgeLineType, string> = {
+  traffic: "走行ライン",
+  load: "荷重ライン",
+  reference: "参照ライン",
+};
+
 export type BridgeLine = {
   id: string;
   type: BridgeLineType;

@@ -18,6 +18,11 @@ type Props = {
   onSelectLine: (id: string | null) => void;
   onCreateLine: (line: Omit<BridgeLine, "id">) => void;
   femModel?: ViewerModelPayload | null;
+  /**
+   * 上面図モード。true の間はカメラを XY 平面真上視点に固定し、
+   * 回転とパンを無効化、ズームのみ許可する。
+   */
+  topView?: boolean;
 };
 
 const TYPE_COLOR: Record<BridgeLineType, number> = {
@@ -37,8 +42,10 @@ export function BridgeThreeViewer({
   onSelectLine,
   onCreateLine,
   femModel,
+  topView = false,
 }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
+  const topViewRef = useRef<((enabled: boolean) => void) | null>(null);
   const [pendingStart, setPendingStart] = useState<[number, number, number] | null>(null);
 
   // Refs to keep current props/state accessible inside the long-lived handlers
@@ -50,8 +57,9 @@ export function BridgeThreeViewer({
     onCreateLine,
     onSelectLine,
     femModel,
+    topView,
   });
-  stateRef.current = { project, mode, selectedLineId, pendingStart, onCreateLine, onSelectLine, femModel };
+  stateRef.current = { project, mode, selectedLineId, pendingStart, onCreateLine, onSelectLine, femModel, topView };
 
   useEffect(() => {
     const host = hostRef.current;
@@ -71,6 +79,26 @@ export function BridgeThreeViewer({
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.target.set(15, 0, 0);
+    // 上面図モード初期反映(親 useEffect で topView 変化時にも再適用される)
+    const applyTopView = (enabled: boolean) => {
+      controls.enableRotate = !enabled;
+      controls.enablePan = !enabled;
+      controls.enableZoom = true;
+      controls.minPolarAngle = enabled ? 0 : 0;
+      controls.maxPolarAngle = enabled ? 0.0001 : Math.PI;
+      if (enabled) {
+        const center = controls.target.clone();
+        const offset = camera.position.clone().sub(center);
+        const flat = new THREE.Vector3(offset.x, 0, offset.z);
+        const dist = Math.max(flat.length(), 1);
+        // 真上 (Z+) から XY 平面を見下ろす視点
+        camera.position.set(center.x, center.y, center.z + dist);
+        camera.up.set(0, 1, 0);
+      }
+      controls.update();
+    };
+    applyTopView(stateRef.current.topView);
+    topViewRef.current = applyTopView;
 
     const ambient = new THREE.HemisphereLight(0xffffff, 0xb6c2cc, 2.0);
     scene.add(ambient);
@@ -122,7 +150,41 @@ export function BridgeThreeViewer({
       nodesGroup.clear();
       elementsGroup.clear();
       const fem = stateRef.current.femModel;
-      if (!fem) return;
+      if (!fem) {
+        // 将来拡張ポイント: femModel 未生成のときは、crossSection / spans から
+        // 主桁格子(xPositionsFor × yPositionsFor)を薄いプレビューとして描画する。
+        // Step6 で FEM を生成すると本フォールバックは消え、実モデルに置き換わる。
+        const proj = stateRef.current.project;
+        const xsPreview = xPositionsFor(proj.spans, proj.generationSettings.mesh_division);
+        const ysPreview = yPositionsFor(proj.crossSection);
+        if (xsPreview.length < 2 || ysPreview.length < 1) return;
+        const previewMat = new THREE.LineBasicMaterial({ color: 0x9aa7b3, transparent: true, opacity: 0.45 });
+        const previewNodeMat = new THREE.MeshStandardMaterial({ color: 0x6f7c8c, transparent: true, opacity: 0.55 });
+        // 橋軸方向(主桁)ライン
+        for (const y of ysPreview) {
+          const pts = xsPreview.map((x) => new THREE.Vector3(x, y, 0));
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          const ln = new THREE.Line(geo, previewMat);
+          elementsGroup.add(ln);
+        }
+        // 横断方向(橋軸方向をまたぐ)ライン
+        for (const x of xsPreview) {
+          const pts = ysPreview.map((y) => new THREE.Vector3(x, y, 0));
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          const ln = new THREE.Line(geo, previewMat);
+          elementsGroup.add(ln);
+        }
+        // 節点プレビュー
+        const previewGeo = new THREE.SphereGeometry(0.12, 8, 6);
+        for (const x of xsPreview) {
+          for (const y of ysPreview) {
+            const mesh = new THREE.Mesh(previewGeo, previewNodeMat);
+            mesh.position.set(x, y, 0);
+            nodesGroup.add(mesh);
+          }
+        }
+        return;
+      }
       const nodeMap = new Map<string, [number, number, number]>();
       fem.nodes.forEach((n, i) => nodeMap.set(`N${i + 1}`, n as [number, number, number]));
       const nodeGeo = new THREE.SphereGeometry(0.18, 12, 8);
@@ -279,6 +341,12 @@ export function BridgeThreeViewer({
       });
     };
   }, []);
+
+
+  // topView 切替時にカメラとコントロールを再適用
+  useEffect(() => {
+    topViewRef.current?.(topView);
+  }, [topView]);
 
   // Redraw on project/fem changes
   useEffect(() => {

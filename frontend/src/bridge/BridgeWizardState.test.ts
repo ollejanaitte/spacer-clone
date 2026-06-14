@@ -11,6 +11,7 @@ import {
   removeSpan,
   totalLength,
   xPositionsFor,
+  suggestGirderLineEndpoints,
   yPositionsFor,
 } from "./BridgeWizardState";
 import type { BridgeLine, BridgeProject } from "./types";
@@ -99,5 +100,38 @@ describe("BridgeWizardState", () => {
       points: [[0, 0, 0], [10, 0, 0]],
     });
     expect(updated.lines).toHaveLength(1);
+  });
+
+  describe("suggestGirderLineEndpoints", () => {
+    it("returns start/end along the requested girder y", () => {
+      const spans = [
+        { index: 1, length: 30, offset: 0 },
+      ];
+      const ys = [-3, 0, 3];
+      const r = suggestGirderLineEndpoints(spans, 10, ys, 0);
+      expect(r).not.toBeNull();
+      expect(r?.start[1]).toBe(-3);
+      expect(r?.end[1]).toBe(-3);
+      expect(r?.start[0]).toBe(0);
+      expect(r?.end[0]).toBe(30);
+      expect(r?.start[2]).toBe(0);
+      expect(r?.end[2]).toBe(0);
+    });
+
+    it("clamps member index when out of range", () => {
+      const spans = [{ index: 1, length: 20, offset: 0 }];
+      const ys = [-2, 2];
+      const r = suggestGirderLineEndpoints(spans, 5, ys, 99);
+      expect(r).not.toBeNull();
+      expect(r?.start[1]).toBe(2);
+      expect(r?.end[1]).toBe(2);
+    });
+
+    it("returns null when there is no usable girder", () => {
+      expect(suggestGirderLineEndpoints([], 1, [], 0)).toBeNull();
+      expect(
+        suggestGirderLineEndpoints([{ index: 1, length: 10, offset: 0 }], 1, [Number.NaN], 0),
+      ).toBeNull();
+    });
   });
 });

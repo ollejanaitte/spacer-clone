@@ -1271,6 +1271,40 @@ button:disabled {
   margin: 0;
   padding-left: 18px;
 }
+
+.bw-explain {
+  background: #eef5fb;
+  border: 1px solid #c4d4e3;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+  color: #243447;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.bw-explain p {
+  margin: 0;
+}
+.bw-explain-sub {
+  margin-top: 4px !important;
+  color: #5b6b80;
+  font-size: 12px;
+}
+.bw-topview {
+  margin-left: 8px;
+  padding: 4px 10px;
+  border: 1px solid #2f6f9f;
+  background: #ffffff;
+  color: #2f6f9f;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+.bw-topview.active {
+  background: #2f6f9f;
+  color: #f8fafc;
+}
 .bw-line-toolbar {
   display: flex;
   flex-wrap: wrap;

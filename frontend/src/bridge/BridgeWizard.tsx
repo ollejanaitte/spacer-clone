@@ -253,7 +253,7 @@ function sidebarHintFor(step: WizardStepNumber): string {
     case 3:
       return "衝撃係数は自動計算が推奨です。L_max から簡略式 i = min(0.3, 20 / (50 + L)) で算出します。";
     case 4:
-      return "3D ビューで走行ラインや参照ラインを引きます。種別 traffic/load/reference を選んで描画してください。";
+      return "主桁上に活荷重が走行するラインを設定します。「draw_line」を押して始点・終点をクリックしてください。";
     case 5:
       return "荷重（自重 / 分布 / 車両）を追加します。ラインに紐づけることで FEM 生成時にマッピングされます。";
     case 6:
