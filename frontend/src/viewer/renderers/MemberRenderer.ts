@@ -7,8 +7,9 @@ export function renderMembers(
   project: ProjectModel,
   selectedSection: SectionKey,
   selection: ViewerSelection,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const objects: THREE.Object3D[] = [];
 
   for (const member of project.members) {
@@ -35,8 +36,12 @@ export function renderMembers(
   return objects;
 }
 
-export function renderMemberLabels(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderMemberLabels(
+  project: ProjectModel,
+  scales: ViewerScales,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   for (const member of project.members) {
     const ends = getMemberEnds(member, nodeMap);

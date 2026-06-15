@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
+import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
 import { computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
 
@@ -30,6 +31,37 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
   const propsRef = useRef(props);
   propsRef.current = props;
 
+  // Local animation clock. CompareShell drives the clock from above via
+  // `externalAnimationClockSeconds`; otherwise we tick our own clock
+  // locally so the standalone ThreeViewport can animate on its own.
+  const [localClockSeconds, setLocalClockSeconds] = useState<number | null>(null);
+  const animationEnabled = Boolean(props.animationOptions?.enabled);
+  const usesExternalClock = props.externalAnimationClockSeconds !== undefined && props.externalAnimationClockSeconds !== null;
+  const effectiveClockSeconds = usesExternalClock
+    ? props.externalAnimationClockSeconds ?? null
+    : localClockSeconds;
+
+  useEffect(() => {
+    if (usesExternalClock) return undefined;
+    if (!animationEnabled) {
+      setLocalClockSeconds(null);
+      return undefined;
+    }
+    let frame = 0;
+    const start = performance.now();
+    const tick = () => {
+      const elapsed = (performance.now() - start) / 1000;
+      setLocalClockSeconds(elapsed);
+      frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, [animationEnabled, usesExternalClock]);
+
+  // Build (or rebuild) the renderer, scene, controls, and the model
+  // geometry. This effect only runs once per mount.
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return undefined;
@@ -144,10 +176,12 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     };
   }, []);
 
+  // Rebuild the model scene whenever a non-animation prop changes.
   useEffect(() => {
     const context = contextRef.current;
     if (!context) return;
-    rebuildModelScene(context.groups, props);
+    const override = animationOverrideFor(props, effectiveClockSeconds);
+    rebuildModelScene(context.groups, props, override);
     applyVisibility(context, props);
   }, [
     props.project,
@@ -161,6 +195,16 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     props.selectedResponseSpectrumResult,
   ]);
 
+  // Rebuild the model scene on every animation clock tick so the model
+  // visibly animates. We rebuild via the same path used for static
+  // property changes; the renderer is cheap relative to the rAF loop.
+  useEffect(() => {
+    const context = contextRef.current;
+    if (!context) return;
+    const override = animationOverrideFor(props, effectiveClockSeconds);
+    rebuildModelScene(context.groups, props, override);
+  }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo]);
+
   useEffect(() => {
     const context = contextRef.current;
     if (context) fitCamera(context, props, props.cameraRequest ?? "iso");
@@ -172,6 +216,16 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
   }, [props.cameraRequest]);
 
   return <div ref={hostRef} className="three-viewport" aria-label="3D model viewport" />;
+}
+
+function animationOverrideFor(
+  props: ThreeViewportProps,
+  clockSeconds: number | null,
+): Map<string, { x: number; y: number; z: number }> | null {
+  if (!props.animationOptions) return null;
+  if (!props.animationOptions.enabled) return null;
+  if (clockSeconds === null || clockSeconds === undefined) return null;
+  return withNodeDisplacement(props.project, props.animationOptions, clockSeconds);
 }
 
 function applyVisibility(context: ThreeContext, props: ThreeViewportProps): void {

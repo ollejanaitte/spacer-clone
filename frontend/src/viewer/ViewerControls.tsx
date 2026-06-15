@@ -1,4 +1,4 @@
-import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
+﻿﻿﻿﻿﻿import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
@@ -64,26 +64,183 @@ export function ViewerControls({
   const setScale = (key: keyof ViewerScales, value: number) => {
     if (Number.isFinite(value)) onScalesChange({ ...scales, [key]: value });
   };
+  const updateAnimation = (patch: Partial<AnimationOptions>) => {
+    onAnimationOptionsChange({ ...animationOptions, ...patch });
+  };
+  const availableModeNumbers = eigenModeNos.length > 0 ? eigenModeNos : [1, 2, 3];
 
   return (
     <div className="viewer-controls" aria-label="表示操作">
-      <ControlGroup title="視点">
+      <ControlGroup title="View">
         <div className="viewer-control-row icon-row">
-          <button type="button" title="モデル全体を表示" onClick={onFit}>
+          <button type="button" title="モデル全体を表示" data-testid="view-fit" onClick={onFit}>
             <LocateFixed size={16} />
           </button>
-          <button type="button" title="アイソメ表示" onClick={() => onCameraPreset("iso")}>
+          <button type="button" title="アイソメ表示" data-testid="view-iso" onClick={() => onCameraPreset("iso")}>
             <Box size={16} />
           </button>
-          <button type="button" title="XY平面表示" onClick={() => onCameraPreset("xy")}>
+          <button type="button" title="XY平面表示" data-testid="view-xy" onClick={() => onCameraPreset("xy")}>
             XY
           </button>
-          <button type="button" title="YZ平面表示" onClick={() => onCameraPreset("yz")}>
+          <button type="button" title="YZ平面表示" data-testid="view-yz" onClick={() => onCameraPreset("yz")}>
             YZ
           </button>
-          <button type="button" title="XZ平面表示" onClick={() => onCameraPreset("xz")}>
+          <button type="button" title="XZ平面表示" data-testid="view-xz" onClick={() => onCameraPreset("xz")}>
             XZ
           </button>
+        </div>
+      </ControlGroup>
+      <ControlGroup title="Compare">
+        <div className="viewer-control-row">
+          <label className="viewer-toggle">
+            <input
+              type="checkbox"
+              data-testid="compare-view-toggle"
+              checked={compareMode}
+              onChange={(event) => onCompareModeChange(event.currentTarget.checked)}
+            />
+            <span>Compare View</span>
+          </label>
+        </div>
+        <div className="viewer-control-row">
+          <label className="viewer-toggle">
+            <input
+              type="checkbox"
+              data-testid="camera-sync-toggle"
+              checked={cameraSync}
+              onChange={(event) => onCameraSyncChange(event.currentTarget.checked)}
+            />
+            <span>Camera Sync</span>
+          </label>
+        </div>
+      </ControlGroup>
+      <ControlGroup title="Animation">
+        <div className="viewer-control-row">
+          <label className="viewer-toggle">
+            <input
+              type="checkbox"
+              data-testid="animation-toggle"
+              checked={animationOptions.enabled}
+              onChange={(event) => updateAnimation({ enabled: event.currentTarget.checked })}
+            />
+            <span>Animation</span>
+          </label>
+          <label className="viewer-toggle">
+            <input
+              type="checkbox"
+              data-testid="animation-demo-toggle"
+              checked={animationOptions.useDemo}
+              onChange={(event) => updateAnimation({ useDemo: event.currentTarget.checked })}
+            />
+            <span>Demo Shape</span>
+          </label>
+        </div>
+        <div className="viewer-control-row">
+          <label>
+            <Waves size={14} />
+            <span>Mode</span>
+            <select
+              data-testid="animation-mode"
+              value={String(animationOptions.modeNo)}
+              onChange={(event) => {
+                const next = Number(event.target.value);
+                if (Number.isFinite(next)) updateAnimation({ modeNo: next });
+              }}
+            >
+              {availableModeNumbers.map((modeNo) => (
+                <option key={modeNo} value={modeNo}>
+                  Mode {modeNo}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="viewer-control-row">
+          <label>
+            <span>Direction</span>
+            <select
+              data-testid="animation-direction"
+              value={animationOptions.demoDirection}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value === "longitudinal" || value === "transverse") {
+                  updateAnimation({ demoDirection: value });
+                }
+              }}
+            >
+              <option value="longitudinal">X (longitudinal)</option>
+              <option value="transverse">Z (transverse)</option>
+            </select>
+          </label>
+        </div>
+        <div className="viewer-control-row">
+          <label className="scale-input">
+            <span>Deformation Scale</span>
+            <input
+              type="range"
+              data-testid="animation-scale"
+              min={0.1}
+              max={10}
+              step={0.1}
+              value={animationOptions.scale}
+              onChange={(event) => {
+                const next = Number(event.currentTarget.value);
+                if (Number.isFinite(next)) updateAnimation({ scale: next });
+              }}
+            />
+            <input
+              type="number"
+              min={0.1}
+              max={10}
+              step={0.1}
+              value={animationOptions.scale}
+              onChange={(event) => {
+                const next = Number(event.currentTarget.value);
+                if (Number.isFinite(next)) updateAnimation({ scale: next });
+              }}
+            />
+          </label>
+        </div>
+        <div className="viewer-control-row">
+          <label className="scale-input">
+            <span>Speed</span>
+            <input
+              type="range"
+              data-testid="animation-speed"
+              min={0.1}
+              max={5}
+              step={0.1}
+              value={animationOptions.speed}
+              onChange={(event) => {
+                const next = Number(event.currentTarget.value);
+                if (Number.isFinite(next)) updateAnimation({ speed: next });
+              }}
+            />
+            <input
+              type="number"
+              min={0.1}
+              max={5}
+              step={0.1}
+              value={animationOptions.speed}
+              onChange={(event) => {
+                const next = Number(event.currentTarget.value);
+                if (Number.isFinite(next)) updateAnimation({ speed: next });
+              }}
+            />
+          </label>
+        </div>
+      </ControlGroup>
+      <ControlGroup title="Coordinate">
+        <div className="viewer-control-row">
+          <label className="viewer-toggle">
+            <input
+              type="checkbox"
+              data-testid="spacer-axis-swap-toggle"
+              checked={spacerAxisSwap === "on"}
+              onChange={(event) => onSpacerAxisSwapChange(event.currentTarget.checked ? "on" : "off")}
+            />
+            <span>SPACER Axis Swap</span>
+          </label>
         </div>
       </ControlGroup>
       <ControlGroup title="解析結果">

@@ -11,8 +11,9 @@ export function renderLoads(
   project: ProjectModel,
   selectedLoadCaseId: string,
   scales: ViewerScales,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   const forceMax = Math.max(
     ...project.nodalLoads
@@ -56,14 +57,19 @@ export function renderLoads(
 
   for (const load of project.memberLoads) {
     if (load.loadCaseId !== selectedLoadCaseId) continue;
-    objects.push(...renderMemberLoad(load, project, baseLength));
+    objects.push(...renderMemberLoad(load, project, baseLength, nodePositionOverride));
   }
 
   return objects;
 }
 
-function renderMemberLoad(load: MemberLoad, project: ProjectModel, baseLength: number): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+function renderMemberLoad(
+  load: MemberLoad,
+  project: ProjectModel,
+  baseLength: number,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const member = project.members.find((item) => item.id === load.memberId);
   if (!member) return [];
   const ends = getMemberEnds(member, nodeMap);

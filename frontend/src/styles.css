@@ -1351,3 +1351,152 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Compare shell layout (minimal) */
+.compare-shell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-height: 0;
+  min-width: 0;
+}
+
+.compare-slots {
+  display: contents;
+}
+
+.compare-slot {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  min-width: 0;
+  border: 1px solid #cbd5df;
+  border-radius: 6px;
+  background: #f7fafc;
+  overflow: hidden;
+}
+
+.compare-slot-header {
+  padding: 6px 10px;
+  border-bottom: 1px solid #e2e8ef;
+  background: #eef5fb;
+}
+
+.compare-slot-header h3 {
+  margin: 0;
+  font-size: 13px;
+  color: #243447;
+}
+
+.compare-slot-header p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #526173;
+}
+
+.compare-slot-body {
+  position: relative;
+  min-height: 240px;
+  overflow: hidden;
+}
+
+.compare-slot-summary {
+  padding: 6px 10px;
+  border-top: 1px solid #e2e8ef;
+  background: #f8fafc;
+  font-size: 11px;
+  color: #334155;
+}
+
+.compare-slot-summary dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+  margin: 0;
+}
+
+.compare-slot-summary dt {
+  color: #526173;
+  font-weight: 600;
+}
+
+.compare-slot-summary dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.comparison-panel {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 6px;
+  background: #f8fafc;
+  font-size: 12px;
+  color: #243447;
+}
+
+.comparison-panel-header h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.comparison-panel-hint {
+  margin: 2px 0 8px;
+  font-size: 11px;
+  color: #526173;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border-bottom: 1px solid #e2e8ef;
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 600;
+}
+
+.comparison-reduction {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.comparison-reduction-positive { color: #1f6b3f; }
+.comparison-reduction-negative { color: #9d2f2f; }
+.comparison-reduction-neutral { color: #526173; }
+
+.comparison-model-summary {
+  margin: 6px 0 8px;
+  border: 1px solid #cbd5df;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.comparison-model-summary table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.comparison-model-summary th,
+.comparison-model-summary td {
+  border-bottom: 1px solid #e2e8ef;
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.comparison-comment {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #334155;
+}

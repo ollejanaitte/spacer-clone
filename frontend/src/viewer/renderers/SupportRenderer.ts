@@ -7,8 +7,12 @@ const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#4f5f70", roughne
 const pinnedMaterial = new THREE.MeshStandardMaterial({ color: "#3b8b6d", roughness: 0.7 });
 const rollerMaterial = new THREE.MeshStandardMaterial({ color: "#7a6fb3", roughness: 0.7 });
 
-export function renderSupports(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderSupports(
+  project: ProjectModel,
+  scales: ViewerScales,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   const size = Math.max(scales.nodeSize * 2.4, 0.16);
 

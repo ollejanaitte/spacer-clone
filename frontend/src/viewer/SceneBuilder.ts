@@ -31,7 +31,21 @@ export function createSceneGroups(): SceneGroups {
   return groups;
 }
 
-export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps): void {
+/**
+ * Rebuild the model scene from the current props.
+ *
+ * `nodePositionOverride` is an optional map of nodeId -> animated
+ * position. The viewer supplies it to apply the per-frame animation
+ * displacement on top of the original model coordinates. Renderers
+ * pick it up through `createNodeMap` and never see the raw model
+ * coordinates when an override is present, so the underlying
+ * `project.nodes` is not mutated.
+ */
+export function rebuildModelScene(
+  groups: SceneGroups,
+  props: ThreeViewportProps,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+): void {
   const {
     project,
     result,
@@ -45,16 +59,19 @@ export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps
   } = props;
   replaceGroupContents(
     groups.nodes,
-    visibility.nodes ? renderNodes(project, selectedSection, selection, scales) : [],
+    visibility.nodes ? renderNodes(project, selectedSection, selection, scales, nodePositionOverride) : [],
   );
   replaceGroupContents(
     groups.members,
-    visibility.members ? renderMembers(project, selectedSection, selection) : [],
+    visibility.members ? renderMembers(project, selectedSection, selection, nodePositionOverride) : [],
   );
-  replaceGroupContents(groups.supports, visibility.supports ? renderSupports(project, scales) : []);
+  replaceGroupContents(
+    groups.supports,
+    visibility.supports ? renderSupports(project, scales, nodePositionOverride) : [],
+  );
   replaceGroupContents(
     groups.loads,
-    visibility.loads ? renderLoads(project, selectedLoadCaseId, scales) : [],
+    visibility.loads ? renderLoads(project, selectedLoadCaseId, scales, nodePositionOverride) : [],
   );
   replaceGroupContents(
     groups.deformed,
@@ -77,8 +94,8 @@ export function rebuildModelScene(groups: SceneGroups, props: ThreeViewportProps
     groups.labels,
     visibility.labels
       ? [
-          ...(visibility.nodeLabels ? renderNodeLabels(project, scales) : []),
-          ...(visibility.memberLabels ? renderMemberLabels(project, scales) : []),
+          ...(visibility.nodeLabels ? renderNodeLabels(project, scales, nodePositionOverride) : []),
+          ...(visibility.memberLabels ? renderMemberLabels(project, scales, nodePositionOverride) : []),
         ]
       : [],
   );

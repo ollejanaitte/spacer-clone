@@ -11,8 +11,9 @@ export function renderNodes(
   selectedSection: SectionKey,
   selection: ViewerSelection,
   scales: ViewerScales,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const radius = Math.max(scales.nodeSize, 0.02);
   const geometry = new THREE.SphereGeometry(radius, 18, 12);
   const objects: THREE.Object3D[] = [];
@@ -32,8 +33,12 @@ export function renderNodes(
   return objects;
 }
 
-export function renderNodeLabels(project: ProjectModel, scales: ViewerScales): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project);
+export function renderNodeLabels(
+  project: ProjectModel,
+  scales: ViewerScales,
+  nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+): THREE.Object3D[] {
+  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   for (const node of project.nodes) {
     const position = nodeMap.get(node.id);

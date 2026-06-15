@@ -16,11 +16,30 @@ export function nodeToVector(node: NodeItem | undefined): THREE.Vector3 | null {
   return new THREE.Vector3(node.x, node.y, node.z);
 }
 
-export function createNodeMap(project: ProjectModel, swap: SpacerAxisSwap = "off"): Map<string, THREE.Vector3> {
+/**
+ * Build the per-node position map used by the renderers.
+ *
+ * When `override` is supplied (e.g. an animation-time displacement map),
+ * the override is applied on top of the model coordinates for any node
+ * whose id is present. The viewer uses this hook to apply display-only
+ * animation displacement without mutating the underlying project.
+ *
+ * The original model coordinates are still used as the source of truth
+ * so `override` is always additive, never destructive.
+ */
+export function createNodeMap(
+  project: ProjectModel,
+  swap: SpacerAxisSwap = "off",
+  override?: Map<string, { x: number; y: number; z: number }> | null,
+): Map<string, THREE.Vector3> {
   const nodes = new Map<string, THREE.Vector3>();
   for (const node of project.nodes) {
     if (!isFiniteNumber(node.x) || !isFiniteNumber(node.y) || !isFiniteNumber(node.z)) continue;
-    const t = applySpacerAxisSwap(node.x, node.y, node.z, swap);
+    const o = override?.get(node.id);
+    const srcX = o && isFiniteNumber(o.x) ? o.x : node.x;
+    const srcY = o && isFiniteNumber(o.y) ? o.y : node.y;
+    const srcZ = o && isFiniteNumber(o.z) ? o.z : node.z;
+    const t = applySpacerAxisSwap(srcX, srcY, srcZ, swap);
     nodes.set(node.id, new THREE.Vector3(t.x, t.y, t.z));
   }
   return nodes;
@@ -129,9 +148,10 @@ export function computeModelBox(
   loadCaseId: string,
   selectedEigenMode: number,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
+  override?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Box3 {
   const box = new THREE.Box3();
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, "off", override);
   for (const position of nodeMap.values()) box.expandByPoint(position);
   const displacements = createDisplacementMap(
     result,
