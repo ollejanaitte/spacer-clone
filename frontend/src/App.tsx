@@ -4,7 +4,7 @@ import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
-import { createDefaultProject } from "./data/defaultProject";
+import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
 import { buildResultCsvExports } from "./exports/resultCsvExport";
 import { openResultPdfReport } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
@@ -31,6 +31,7 @@ type ValidationNotice = {
 export function App() {
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
+  const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
   const [selectedSection, setSelectedSection] = useState<SectionKey>("nodes");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export function App() {
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [rightResult, setRightResult] = useState<AnalysisResult | null>(null);
   const [resultExports, setResultExports] = useState<ResultExports | null>(null);
   const [selectedEigenMode, setSelectedEigenMode] = useState<number>(1);
   const [selectedResponseSpectrumResult, setSelectedResponseSpectrumResult] =
@@ -47,8 +49,9 @@ export function App() {
   const [viewerErrors, setViewerErrors] = useState<StructuredMessage[]>([]);
   const [autosaveCandidate, setAutosaveCandidate] = useState<ProjectModel | null>(null);
   const [autosaveStatus, setAutosaveStatus] = useState<string | null>(null);
-  const [logs, setLogs] = useState<string[]>(["UIを起動しました。"]);
+  const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
+  const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
   const [running, setRunning] = useState(false);
 
   const selection: ViewerSelection = selectedNode
@@ -70,6 +73,7 @@ export function App() {
     setValidation(null);
     setValidationNotice(null);
     setResult(null);
+    setRightResult(null);
     setResultExports(null);
     setSelectedEigenMode(1);
     setSelectedResponseSpectrumResult("SRSS");
@@ -92,9 +96,7 @@ export function App() {
           setAutosaveCandidate(response.project);
         }
       })
-      .catch(() => {
-        setAutosaveStatus("自動保存の確認に失敗しました。通常の操作は継続できます。");
-      });
+      .catch(() => setAutosaveStatus("Autosave check failed. You can continue normal operation."));
   }, []);
 
   useEffect(() => {
@@ -121,8 +123,8 @@ export function App() {
     const timer = window.setTimeout(() => {
       void apiClient
         .autosaveProject(project)
-        .then(() => setAutosaveStatus("自動保存済み"))
-        .catch(() => setAutosaveStatus("自動保存に失敗しました。"));
+        .then(() => setAutosaveStatus("[U+81EA][U+52D5][U+4FDD][U+5B58][U+6E08][U+307F]"))
+        .catch(() => setAutosaveStatus("Autosave failed."));
     }, 3000);
     return () => window.clearTimeout(timer);
   }, [dirty, project]);
@@ -135,27 +137,27 @@ export function App() {
       if (response.valid) {
         setValidationNotice({
           kind: "ok",
-          text: "入力チェックOK：解析を実行できます。",
+          text: "Input check OK. You can run analysis.",
         });
         setBottomTab("results");
-        log("入力チェックOK：解析を実行できます。");
+        log("Input check OK. You can run analysis.");
       } else {
         setValidationNotice({
           kind: "ng",
-          text: "入力チェックNG：不足または誤りがあります。下部のエラー一覧を確認してください。",
+          text: "Input check NG. Please review the error list below.",
         });
         setBottomTab("errors");
-        log("入力チェックNG：不足または誤りがあります。");
+        log("Input check NG.");
       }
       return response;
     } catch (error) {
       pushApiError(error, "VALIDATION_API_ERROR", setApiErrors);
       setValidationNotice({
         kind: "ng",
-        text: "入力チェックNG：APIとの通信に失敗しました。下部のエラー一覧を確認してください。",
+          text: "Input check NG (API failure). Please review the error list below.",
       });
       setBottomTab("errors");
-      log("入力チェックのリクエストに失敗しました。");
+        log("Input check request failed.");
       return null;
     }
   };
@@ -169,21 +171,21 @@ export function App() {
       if (!validationResponse.valid) {
         setValidationNotice({
           kind: "ng",
-          text: "入力チェックNG：不足または誤りがあります。下部のエラー一覧を確認してください。",
+          text: "Input check NG. Please review the error list below.",
         });
         setBottomTab("errors");
-        log("入力チェックNGのため解析を実行できません。");
+        log("Input check NG. Analysis cannot be run.");
         return;
       }
       const response = await apiClient.runAnalysis(project, true);
       setResult(response.result);
       setResultExports(response.csv);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
-      log(`解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
+      log(`Analysis complete. Status: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
     } catch (error) {
       pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("解析実行のリクエストに失敗しました。");
+      log("Analysis request failed.");
     } finally {
       setRunning(false);
     }
@@ -198,22 +200,29 @@ export function App() {
       if (!validationResponse.valid) {
         setValidationNotice({
           kind: "ng",
-          text: "入力チェックNG。不足または誤りがあります。下部のエラー一覧を確認してください。",
+          text: "Input check NG. Please review the error list below.",
         });
         setBottomTab("errors");
-        log("入力チェックNGのため固有値解析を実行できません。");
+        log("Input check NG. Eigenvalue analysis cannot be run.");
         return;
       }
-      const response = await apiClient.runEigenAnalysis(project);
+      const [response, suspendedResponse] = await Promise.all([
+        apiClient.runEigenAnalysis(project),
+        apiClient.runEigenAnalysis(suspendedDeckProject).catch((error) => {
+          log(`B-plan (suspended deck) eigen analysis failed: ${error instanceof Error ? error.message : String(error)}`);
+          return null;
+        }),
+      ]);
       setResult(response.result);
+      setRightResult(suspendedResponse?.result ?? null);
       setResultExports(null);
       setSelectedEigenMode(response.result.eigenResult?.modes[0]?.modeNo ?? 1);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
-      log(`固有値解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
+      log(`Eigen analysis complete. Plan A: ${analysisStatusLabel(response.result.analysisSummary.status)}${suspendedResponse ? ` / Plan B: ${analysisStatusLabel(suspendedResponse.result.analysisSummary.status)}` : ""}`);
     } catch (error) {
       pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("固有値解析APIのリクエストに失敗しました。");
+      log("Eigenvalue analysis API request failed.");
     } finally {
       setRunning(false);
     }
@@ -228,10 +237,10 @@ export function App() {
       if (!validationResponse.valid) {
         setValidationNotice({
           kind: "ng",
-          text: "入力チェックNGです。下部のエラー一覧を確認してください。",
+          text: "Input check NG. Please review the error list below.",
         });
         setBottomTab("errors");
-        log("入力チェックNGのため応答スペクトル解析を実行できません。");
+        log("Input check NG. Response spectrum analysis cannot be run.");
         return;
       }
       const response = await apiClient.runResponseSpectrumAnalysis(project);
@@ -239,11 +248,11 @@ export function App() {
       setResultExports(null);
       setSelectedResponseSpectrumResult("SRSS");
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
-      log(`応答スペクトル解析が完了しました。状態: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
+      log(`Response spectrum analysis complete. Status: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
     } catch (error) {
       pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("応答スペクトル解析APIのリクエストに失敗しました。");
+      log("Response spectrum analysis API request failed.");
     } finally {
       setRunning(false);
     }
@@ -258,10 +267,10 @@ export function App() {
       if (!validationResponse.valid) {
         setValidationNotice({
           kind: "ng",
-          text: "入力チェックNGです。下部のエラー一覧を確認してください。",
+          text: "Input check NG. Please review the error list below.",
         });
         setBottomTab("errors");
-        log("入力チェックNGのため影響線解析を実行できません。");
+        log("Input check NG. Influence line analysis cannot be run.");
         return;
       }
       const memberId =
@@ -281,11 +290,11 @@ export function App() {
       setResult(response.result);
       setResultExports(null);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
-      log(`影響線解析が完了しました。対象部材: ${memberId || "未指定"}`);
+      log(`Influence line analysis complete. Member: ${memberId || "n/a"}`);
     } catch (error) {
       pushApiError(error, "ANALYSIS_API_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("影響線解析APIのリクエストに失敗しました。");
+      log("Influence line analysis API request failed.");
     } finally {
       setRunning(false);
     }
@@ -296,24 +305,24 @@ export function App() {
       const loaded = JSON.parse(await file.text()) as ProjectModel;
       commitProject(loaded);
       setDirty(false);
-      log(`${file.name} を開きました。`);
+      log(`${file.name} opened.`);
     } catch (error) {
       pushApiError(error, "PROJECT_OPEN_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("project.json を開けませんでした。");
+      log("Failed to open project.json.");
     }
   };
 
   const saveProject = () => {
     downloadText("project.json", `${JSON.stringify(project, null, 2)}\n`, "application/json");
     setDirty(false);
-    log("現在のモデルを project.json として保存しました。");
+    log("Current model saved to project.json.");
   };
 
   const exportResultJson = () => {
     if (!result) return;
     downloadText("result.json", resultExports?.["result.json"] ?? `${JSON.stringify(result, null, 2)}\n`, "application/json");
-    log("解析結果JSONを出力しました。");
+    log("Result JSON downloaded.");
   };
 
   const exportResultCsv = () => {
@@ -324,18 +333,18 @@ export function App() {
     downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
     downloadText("eigen_modes.csv", csvExports["eigen_modes.csv"], "text/csv");
     downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
-    log("解析結果CSVを出力しました。");
+    log("Result CSV downloaded.");
   };
 
   const exportResultPdf = () => {
     if (!result) return;
     try {
       openResultPdfReport(project, result, activeLoadCase);
-      log("解析結果PDF帳票を開きました。");
+      log("Result PDF report opened.");
     } catch (error) {
       pushApiError(error, "REPORT_ERROR", setApiErrors);
       setBottomTab("errors");
-      log("解析結果PDF帳票の出力に失敗しました。");
+      log("Failed to open result PDF report.");
     }
   };
 
@@ -344,12 +353,11 @@ export function App() {
     setSelectedMember(nextSelection?.type === "member" ? nextSelection.id : null);
   };
 
-  const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
 
   const handleBridgeGenerated = useCallback((fem: BridgeFemResponse) => {
     const converted = bridgeProjectToProjectModel(fem.fem);
     commitProject(converted);
-    log("橋梁ウィザードから FEM モデルを取り込みました。");
+    log("Imported model from bridge wizard FEM.");
     setBottomTab("results");
   }, [commitProject, log]);
 
@@ -364,7 +372,7 @@ export function App() {
       },
     ]);
     setBottomTab("errors");
-    log("3D表示の初期化に失敗したため、2D簡易表示に切り替えました。");
+    log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
 
   return (
@@ -373,13 +381,13 @@ export function App() {
         projectName={project.project.name}
         appVersion={appVersion}
         dirty={dirty}
-        validationStatus={validation ? (validation.valid ? "チェックOK" : "エラーあり") : "未チェック"}
-        analysisStatus={running ? "解析中" : result ? analysisStatusLabel(result.analysisSummary.status) : "未実行"}
+        validationStatus={validation ? (validation.valid ? "OK" : "Has errors") : "Not validated"}
+        analysisStatus={running ? "Running" : result ? analysisStatusLabel(result.analysisSummary.status) : "Not run"}
         canRun={canRun}
         onNew={() => {
           commitProject(createDefaultProject());
           setDirty(false);
-          log("新規モデルを作成しました。");
+          log("New model created.");
         }}
         onOpen={openFile}
         onSave={saveProject}
@@ -403,20 +411,20 @@ export function App() {
       )}
       {autosaveCandidate && (
         <div className="autosave-notice">
-          <span>自動保存されたモデルがあります。</span>
+          <span>An autosaved model is available.</span>
           <button
             type="button"
             onClick={() => {
               commitProject(autosaveCandidate);
               setAutosaveCandidate(null);
               setDirty(true);
-              log("autosave.json から復元しました。");
+              log("Recovered from autosave.json.");
             }}
           >
-            復元する
+            Recover
           </button>
           <button type="button" onClick={() => setAutosaveCandidate(null)}>
-            閉じる
+            Close
           </button>
         </div>
       )}
@@ -428,6 +436,7 @@ export function App() {
         <Viewer3D
           project={project}
           result={result}
+          rightResult={rightResult}
           selectedSection={selectedSection}
           selection={selection}
           activeLoadCase={activeLoadCase}
@@ -481,18 +490,18 @@ function pushApiError(
         ? "NETWORK_ERROR"
         : fallbackCode
       : fallbackCode;
-  // ユーザー向けには短い説明。生の例外メッセージはログや詳細欄で確認できる。
+  // Short message for the user; raw exception details can be checked in the log.
   let userMessage: string;
   if (error instanceof ApiClientError) {
     userMessage = error.message;
   } else if (error instanceof Error) {
     if (code === "NETWORK_ERROR") {
-      userMessage = "バックエンドに接続できません。サーバーが起動しているか確認してください。";
+      userMessage = "Cannot reach the backend. Please make sure the server is running.";
     } else {
-      userMessage = `${fallbackCode}: 詳細はログを確認してください。`;
+      userMessage = `${fallbackCode}: See logs for details.`;
     }
   } else {
-    userMessage = "予期しないAPIエラーです。";
+    userMessage = "Unexpected API error.";
   }
   setApiErrors([
     {
@@ -507,9 +516,9 @@ function pushApiError(
 
 function analysisStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    success: "成功",
-    warning: "警告あり",
-    failed: "失敗",
+    success: "Success",
+    warning: "Warning",
+    failed: "Failed",
   };
   return labels[status] ?? status;
 }

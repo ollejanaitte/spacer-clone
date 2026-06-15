@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
@@ -18,7 +18,13 @@ type ThreeContext = {
   pointer: THREE.Vector2;
 };
 
-export function ThreeViewport(props: ThreeViewportProps) {
+type ImperativeHandle = {
+  getCameraState: () => { position: { x: number; y: number; z: number }; target: { x: number; y: number; z: number }; zoom: number; fov: number } | null;
+  applyCameraState: (state: { position: { x: number; y: number; z: number }; target: { x: number; y: number; z: number }; zoom: number; fov: number }) => void;
+  fitToProject: () => void;
+};
+
+const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<ImperativeHandle>) => {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const contextRef = useRef<ThreeContext | null>(null);
   const propsRef = useRef(props);
@@ -194,3 +200,6 @@ function directionForPreset(preset: CameraPreset): THREE.Vector3 {
   if (preset === "xz") return new THREE.Vector3(0, 1, 0);
   return new THREE.Vector3(1, 0.75, 1);
 }
+
+export const ThreeViewport = forwardRef<ImperativeHandle, ThreeViewportProps>(ThreeViewportInner);
+export type { ImperativeHandle };

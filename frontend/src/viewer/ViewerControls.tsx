@@ -2,6 +2,8 @@ import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Wav
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
+import type { SpacerAxisSwap } from "./coordinateTransform";
+import type { AnimationOptions } from "./animation";
 
 type ViewerControlsProps = {
   visibility: ViewerVisibility;
@@ -13,11 +15,19 @@ type ViewerControlsProps = {
   responseSpectrumOptions: Array<{ key: ResponseSpectrumSelection; label: string }>;
   selectedResponseSpectrumResult: ResponseSpectrumSelection;
   hasResult: boolean;
+  spacerAxisSwap: SpacerAxisSwap;
+  animationOptions: AnimationOptions;
+  compareMode: boolean;
+  cameraSync: boolean;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onLoadCaseChange: (loadCaseId: string) => void;
   onEigenModeChange: (modeNo: number) => void;
   onResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
+  onSpacerAxisSwapChange: (swap: SpacerAxisSwap) => void;
+  onAnimationOptionsChange: (options: AnimationOptions) => void;
+  onCompareModeChange: (next: boolean) => void;
+  onCameraSyncChange: (next: boolean) => void;
   onFit: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
 };
@@ -32,11 +42,19 @@ export function ViewerControls({
   responseSpectrumOptions,
   selectedResponseSpectrumResult,
   hasResult,
+  spacerAxisSwap,
+  animationOptions,
+  compareMode,
+  cameraSync,
   onVisibilityChange,
   onScalesChange,
   onLoadCaseChange,
   onEigenModeChange,
   onResponseSpectrumResultChange,
+  onSpacerAxisSwapChange,
+  onAnimationOptionsChange,
+  onCompareModeChange,
+  onCameraSyncChange,
   onFit,
   onCameraPreset,
 }: ViewerControlsProps) {

@@ -1,35 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
+import type { ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
-import type { CameraPreset, Viewer3DProps, ViewerMode, ViewerScales, ViewerSelection, ViewerVisibility } from "./types";
+import { createSuspendedDeckProject } from "../data/defaultProject";
+import { createSpacerAxisSwap, loadSpacerAxisSwap, persistSpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
+import { DEFAULT_ANIMATION_OPTIONS, type AnimationOptions } from "./animation";
+import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps, type ViewerMode, type ViewerScales, type ViewerSelection, type ViewerVisibility } from "./types";
+import { CompareShell, defaultCompareAnimationOptions, type CompareSlotDescriptor } from "./CompareShell";
 import { ThreeViewport } from "./ThreeViewport";
 import { ViewerControls } from "./ViewerControls";
-
-const defaultVisibility: ViewerVisibility = {
-  nodes: true,
-  members: true,
-  supports: true,
-  loads: true,
-  labels: true,
-  nodeLabels: true,
-  memberLabels: true,
-  grid: true,
-  axes: true,
-  deformedShape: false,
-  reactions: false,
-  axialForce: false,
-  momentMy: false,
-  momentMz: false,
-};
-
-const defaultScales: ViewerScales = {
-  loadScale: 1,
-  deformationScale: 120,
-  modeScale: 1,
-  resultScale: 1,
-  nodeSize: 0.075,
-  labelSize: 0.26,
-};
 
 export const webglFallbackMessage =
   "3D表示の初期化に失敗しました。\n" +
@@ -50,6 +29,10 @@ export function Viewer3D({
   onSelectedEigenModeChange = () => undefined,
   onSelectedResponseSpectrumResultChange = () => undefined,
   onViewerError,
+  compareProject,
+  rightResult = null,
+  initialCompareMode = false,
+  defaultCameraSync = true,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
@@ -57,6 +40,11 @@ export function Viewer3D({
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [fitRequest, setFitRequest] = useState(0);
   const [cameraRequest, setCameraRequest] = useState<CameraPreset | null>(null);
+  const [spacerAxisSwap, setSpacerAxisSwap] = useState<SpacerAxisSwap>(() => createSpacerAxisSwap(loadSpacerAxisSwap()));
+  const [animationOptions, setAnimationOptions] = useState<AnimationOptions>(DEFAULT_ANIMATION_OPTIONS);
+  const [compareMode, setCompareMode] = useState<boolean>(initialCompareMode);
+  const [cameraSync, setCameraSync] = useState<boolean>(defaultCameraSync);
+  const [compareProjectState] = useState<ProjectModel | null>(() => compareProject ?? createSuspendedDeckProject());
   const loadCaseIds = useMemo(
     () => project.loadCases.map((loadCase) => loadCase.id).filter(Boolean),
     [project.loadCases],
@@ -76,6 +64,10 @@ export function Viewer3D({
       result.errors.length === 0 &&
       (result.displacements.length > 0 || eigenModeNos.length > 0 || hasResponseSpectrumResult(result)),
   );
+
+  useEffect(() => {
+    persistSpacerAxisSwap(spacerAxisSwap);
+  }, [spacerAxisSwap]);
 
   useEffect(() => {
     if (!loadCaseIds.includes(selectedLoadCaseId)) {
@@ -120,6 +112,50 @@ export function Viewer3D({
     [onViewerError],
   );
 
+  const handleSpacerAxisSwapChange = useCallback((next: SpacerAxisSwap) => {
+    setSpacerAxisSwap(next);
+    setFitRequest((value) => value + 1);
+  }, []);
+
+  const handleAnimationOptionsChange = useCallback((next: AnimationOptions) => {
+    setAnimationOptions(next);
+  }, []);
+
+  const handleCompareModeChange = useCallback((next: boolean) => {
+    setCompareMode(next);
+    if (next) {
+      // When entering compare mode, default-enable animation so the user
+      // can see the difference between the two plans immediately.
+      setAnimationOptions((current) => (current.enabled ? current : { ...current, enabled: true }));
+    }
+    setFitRequest((value) => value + 1);
+  }, []);
+
+  const handleCameraSyncChange = useCallback((next: boolean) => {
+    setCameraSync(next);
+  }, []);
+
+  const suspendedProject = compareProjectState;
+  const compareSlots: CompareSlotDescriptor[] = useMemo(() => {
+    if (!compareMode || !suspendedProject) return [];
+    return [
+      {
+        id: "plan-a",
+        label: "Plan A / Continuous Deck",
+        caption: "5-span continuous viaduct with shared deck nodes",
+        project,
+      },
+      {
+        id: "plan-b",
+        label: "Plan B / Suspended Deck",
+        caption: "5-span with deck split at P3 (G3L z=-0.5 / G3R z=+0.5)",
+        project: suspendedProject,
+      },
+    ];
+  }, [compareMode, project, suspendedProject]);
+
+  const rightAnalysisResult = rightResult;
+
   const viewportProps = {
     project,
     result,
@@ -135,9 +171,41 @@ export function Viewer3D({
     selectedResponseSpectrumResult,
     fitRequest,
     cameraRequest,
+    spacerAxisSwap,
+    animationOptions,
     onInitializationError: handleInitializationError,
   };
   const gpuMode = getGpuModeLabel();
+
+  const renderViewport = () => {
+    if (compareMode) {
+      return (
+        <CompareShell
+          slots={compareSlots}
+          leftResult={result}
+          rightResult={rightAnalysisResult}
+          selectedSection={selectedSection}
+          selection={selection}
+          activeLoadCase={activeLoadCase}
+          eigenModeNos={eigenModeNos}
+          selectedEigenMode={selectedEigenMode}
+          selectedResponseSpectrumResult={selectedResponseSpectrumResult}
+          spacerAxisSwap={spacerAxisSwap}
+          animationOptions={animationOptions}
+          cameraSync={cameraSync}
+          onSelectionChange={(_slotId, next) => onSelectionChange(next)}
+          onActiveLoadCaseChange={onActiveLoadCaseChange}
+          onSelectedEigenModeChange={onSelectedEigenModeChange}
+          onSelectedResponseSpectrumResultChange={(value) => onSelectedResponseSpectrumResultChange(value ?? "SRSS")}
+          onSpacerAxisSwapChange={setSpacerAxisSwap}
+          onAnimationOptionsChange={setAnimationOptions}
+          onInitializationError={() => undefined}
+        />
+      );
+    }
+    if (mode === "three") return <ThreeViewport {...viewportProps} />;
+    return <Fallback2DViewport {...viewportProps} />;
+  };
 
   return (
     <main className="viewer-shell">
@@ -153,6 +221,7 @@ export function Viewer3D({
           <span>部材 {project.members.length}</span>
           <span>支点 {project.supports.length}</span>
           <span>荷重 {project.nodalLoads.length + project.memberLoads.length}</span>
+          {animationOptions.enabled ? <span>アニメ: ON</span> : null}
         </div>
       </div>
       <section className="viewer-body">
@@ -164,7 +233,7 @@ export function Viewer3D({
               ))}
             </div>
           )}
-          {mode === "three" ? <ThreeViewport {...viewportProps} /> : <Fallback2DViewport {...viewportProps} />}
+          {renderViewport()}
         </div>
         <ViewerControls
           visibility={visibility}
@@ -176,6 +245,10 @@ export function Viewer3D({
           responseSpectrumOptions={responseSpectrumOptions}
           selectedResponseSpectrumResult={selectedResponseSpectrumResult}
           hasResult={hasResult}
+          spacerAxisSwap={spacerAxisSwap}
+          animationOptions={animationOptions}
+          compareMode={compareMode}
+          cameraSync={cameraSync}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
           onLoadCaseChange={onActiveLoadCaseChange}
@@ -183,6 +256,10 @@ export function Viewer3D({
           onResponseSpectrumResultChange={(value: ResponseSpectrumSelection) =>
             onSelectedResponseSpectrumResultChange(value)
           }
+          onSpacerAxisSwapChange={handleSpacerAxisSwapChange}
+          onAnimationOptionsChange={handleAnimationOptionsChange}
+          onCompareModeChange={handleCompareModeChange}
+          onCameraSyncChange={handleCameraSyncChange}
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
         />

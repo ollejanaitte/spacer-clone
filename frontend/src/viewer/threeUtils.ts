@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
+import { applySpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
@@ -15,11 +16,12 @@ export function nodeToVector(node: NodeItem | undefined): THREE.Vector3 | null {
   return new THREE.Vector3(node.x, node.y, node.z);
 }
 
-export function createNodeMap(project: ProjectModel): Map<string, THREE.Vector3> {
+export function createNodeMap(project: ProjectModel, swap: SpacerAxisSwap = "off"): Map<string, THREE.Vector3> {
   const nodes = new Map<string, THREE.Vector3>();
   for (const node of project.nodes) {
-    const position = nodeToVector(node);
-    if (position) nodes.set(node.id, position);
+    if (!isFiniteNumber(node.x) || !isFiniteNumber(node.y) || !isFiniteNumber(node.z)) continue;
+    const t = applySpacerAxisSwap(node.x, node.y, node.z, swap);
+    nodes.set(node.id, new THREE.Vector3(t.x, t.y, t.z));
   }
   return nodes;
 }
@@ -176,29 +178,28 @@ export function createDisplacementMap(
   loadCaseId: string,
   selectedEigenMode = 1,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
+  swap: SpacerAxisSwap = "off",
 ): Map<string, THREE.Vector3> {
   const map = new Map<string, THREE.Vector3>();
   if (!result || result.errors.length > 0) return map;
+  const recordSample = (nodeId: string, ux: number, uy: number, uz: number) => {
+    if (!isFiniteNumber(ux) || !isFiniteNumber(uy) || !isFiniteNumber(uz)) return;
+    const transformed = applySpacerAxisSwap(ux, uy, uz, swap);
+    map.set(nodeId, new THREE.Vector3(transformed.x, transformed.y, transformed.z));
+  };
   const responseSpectrumDisplacements = getResponseSpectrumDisplacements(result, selectedResponseSpectrumResult);
   if (responseSpectrumDisplacements.length > 0) {
-    for (const item of responseSpectrumDisplacements) {
-      if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-      map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
-    }
+    for (const item of responseSpectrumDisplacements) recordSample(item.nodeId, item.ux, item.uy, item.uz);
     return map;
   }
   const eigenMode = result.eigenResult?.modes.find((mode) => mode.modeNo === selectedEigenMode);
   if (eigenMode) {
-    for (const item of eigenMode.shape) {
-      if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-      map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
-    }
+    for (const item of eigenMode.shape) recordSample(item.nodeId, item.ux, item.uy, item.uz);
     return map;
   }
   for (const item of result.displacements) {
     if (item.loadCaseId !== loadCaseId) continue;
-    if (!isFiniteNumber(item.ux) || !isFiniteNumber(item.uy) || !isFiniteNumber(item.uz)) continue;
-    map.set(item.nodeId, new THREE.Vector3(item.ux, item.uy, item.uz));
+    recordSample(item.nodeId, item.ux, item.uy, item.uz);
   }
   return map;
 }

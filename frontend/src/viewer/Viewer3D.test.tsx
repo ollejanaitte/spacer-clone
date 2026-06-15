@@ -91,10 +91,11 @@ describe("Fallback2DViewport", () => {
   it("generates drawing elements for nodes and members", () => {
     render(<Fallback2DViewport {...fallbackProps(createDefaultProject())} />);
 
-    expect(document.querySelectorAll('[data-testid="fallback-node"]')).toHaveLength(2);
-    expect(document.querySelectorAll('[data-testid="fallback-member"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-testid="fallback-support"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-testid="fallback-nodal-load"]')).toHaveLength(1);
+    // default createDefaultProject now ships the 5-span Plan A continuous deck
+    expect(document.querySelectorAll('[data-testid="fallback-node"]')).toHaveLength(10);
+    expect(document.querySelectorAll('[data-testid="fallback-member"]')).toHaveLength(9);
+    expect(document.querySelectorAll('[data-testid="fallback-support"]')).toHaveLength(6);
+    expect(document.querySelectorAll('[data-testid="fallback-nodal-load"]')).toHaveLength(6);
   });
 });
 
@@ -113,7 +114,7 @@ function fallbackProps(project: ProjectModel): ThreeViewportProps {
     result: null,
     selectedSection: "nodes",
     selection: null,
-    activeLoadCase: "LC1",
+    activeLoadCase: "LC_DEAD",
     onSelectionChange: () => undefined,
     onActiveLoadCaseChange: () => undefined,
     visibility: {
@@ -140,7 +141,7 @@ function fallbackProps(project: ProjectModel): ThreeViewportProps {
       nodeSize: 1,
       labelSize: 1,
     },
-    selectedLoadCaseId: "LC1",
+    selectedLoadCaseId: "LC_DEAD",
     fitRequest: 1,
     cameraRequest: null,
     onInitializationError: () => undefined,

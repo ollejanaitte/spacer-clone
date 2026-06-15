@@ -1,3 +1,5 @@
+import type { SpacerAxisSwap } from "./coordinateTransform";
+import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
@@ -48,15 +50,93 @@ export type Viewer3DProps = {
   onSelectedEigenModeChange?: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange?: (resultKey: ResponseSpectrumSelection) => void;
   onViewerError?: (message: string) => void;
+  /**
+   * Optional second bridge project shown side-by-side in Compare mode.
+   * The default CompareShell uses it to render the B-plan (suspended
+   * deck) alongside the primary project.
+   */
+  compareProject?: ProjectModel | null;
+  /**
+   * Optional right-side (Plan B) analysis result, used by Compare View to
+   * display independent metrics. When omitted, the right slot renders
+   * its model only with placeholder values.
+   */
+  rightResult?: AnalysisResult | null;
+  /** Initial state for the compare-mode toggle. */
+  initialCompareMode?: boolean;
+  /** When false, the camera-sync checkbox defaults to off. */
+  defaultCameraSync?: boolean;
 };
 
-export type ThreeViewportProps = Viewer3DProps & {
+export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {
   visibility: ViewerVisibility;
   scales: ViewerScales;
   selectedLoadCaseId: string;
   fitRequest: number;
   cameraRequest: CameraPreset | null;
+  spacerAxisSwap?: SpacerAxisSwap;
+  animationOptions?: AnimationOptions;
+  /**
+   * When set, the viewport uses this value (in seconds) as the animation
+   * clock instead of performance.now(). Two viewports can be driven by
+   * the same clock from a parent (e.g. CompareView) for synced animation.
+   */
+  externalAnimationClockSeconds?: number | null;
+  /** Available eigen mode numbers. When present, the renderer can show
+   *  the mode picker and prefers real shapes over the demo pseudo-mode. */
+  eigenModeNos?: number[];
+  /** Display color mode for nodes/members. Default: "auto". */
+  memberColorMode?: import("./colorCoding").MemberColorMode;
+  onSpacerAxisSwapChange?: (swap: SpacerAxisSwap) => void;
+  onAnimationOptionsChange?: (options: import("./animation").AnimationOptions) => void;
   onInitializationError: (error: unknown) => void;
+};
+
+export const defaultVisibility: ViewerVisibility = {
+  nodes: true,
+  members: true,
+  supports: true,
+  loads: true,
+  labels: true,
+  nodeLabels: true,
+  memberLabels: true,
+  grid: true,
+  axes: true,
+  deformedShape: false,
+  reactions: false,
+  axialForce: false,
+  momentMy: false,
+  momentMz: false,
+};
+
+export const defaultScales: ViewerScales = {
+  loadScale: 1,
+  deformationScale: 120,
+  modeScale: 1,
+  resultScale: 1,
+  nodeSize: 0.075,
+  labelSize: 0.26,
+};
+
+/**
+ * Snapshot of the current camera state, used to keep multiple
+ * ThreeViewport instances in sync (left drives right in CompareView).
+ */
+export type CameraStateSnapshot = {
+  position: { x: number; y: number; z: number };
+  target: { x: number; y: number; z: number };
+  zoom: number;
+  fov: number;
+};
+
+/**
+ * Imperative handle exposed by ThreeViewport so the parent (CompareView)
+ * can read/write the camera state without going through React state.
+ */
+export type ThreeViewportHandle = {
+  getCameraState: () => CameraStateSnapshot | null;
+  applyCameraState: (state: CameraStateSnapshot) => void;
+  fitToProject: () => void;
 };
 
 export type CameraPreset = "iso" | "xy" | "yz" | "xz";
