@@ -14,6 +14,10 @@ from .time_history_models import (
     parse_ground_motions,
     parse_time_history_settings,
 )
+from .time_history_mass import (
+    LumpedMassMatrix,
+    assemble_lumped_mass_matrix,
+)
 from .influence import run_influence_analysis, solve_influence_model
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
@@ -47,6 +51,8 @@ __all__ = [
     "parse_ground_motions",
     "parse_time_history_settings",
     "GroundMotion",
+    "LumpedMassMatrix",
+    "assemble_lumped_mass_matrix",
 ]
 
 from .bridge_model import (
