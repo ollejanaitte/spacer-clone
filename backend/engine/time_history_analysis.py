@@ -71,6 +71,7 @@ from .time_history_models import (
     GroundMotion,
     parse_ground_motions,
     parse_time_history_settings,
+    TimeHistoryModelError,
 )
 from .time_history_newmark import solve_newmark_average_acceleration
 from .time_history_result import (
@@ -115,7 +116,19 @@ def _select_ground_motion(
     """
 
     ground_motions_raw = project_data.get("groundMotions", [])
-    ground_motions = parse_ground_motions(ground_motions_raw)
+    try:
+        ground_motions = parse_ground_motions(ground_motions_raw)
+    except TimeHistoryModelError as exc:
+        # Surface the schema-level failure with a JSON-pointer path so
+        # that the API layer can convert it into a structured
+        # failed envelope. ``groundMotions[0]`` is the only record
+        # the MVP ever inspects, so any field-level error maps to
+        # the same prefix.
+        raise AnalysisError(
+            "TIME_HISTORY_GROUND_MOTION_INVALID",
+            str(exc),
+            path="/groundMotions/0",
+        ) from exc
     if len(ground_motions) == 0:
         raise AnalysisError(
             "TIME_HISTORY_GROUND_MOTION_MISSING",

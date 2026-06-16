@@ -441,3 +441,222 @@ def test_existing_eigen_analysis_is_unchanged() -> None:
     result = run_eigen_analysis(project, mass_case_id="m-1", mode_count=1)
     assert result["analysisSummary"]["status"] == "success"
     assert result["analysisSummary"]["analysisType"] == "eigen"
+
+# ---------------------------------------------------------------------------
+# TH-5b hardening: direction coverage, sample/dt guards, unsupported unit,
+# no-active-DOF failed envelopes, and the API timeHistoryResult <-> TH-4
+# persisted shape equivalence.
+# ---------------------------------------------------------------------------
+
+
+def _sdof_cantilever_project_with_mass(
+    *,
+    project_id: str,
+    mass_components: dict[str, float] | None = None,
+    direction: str = "X",
+    unit: str = "m/s2",
+    samples: list[float] | None = None,
+    time_step: float = 0.05,
+    duration: float = 0.5,
+    damping: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Variant of the SDOF fixture that lets the caller choose mass components.
+
+    The default assigns a 1.0 kg X-direction mass to N2 (matching
+    :func:`_sdof_cantilever_project`). For Y/Z coverage, callers can
+    pass ``{"my": 1.0}`` or ``{"mz": 1.0}`` instead so the active
+    DOF set is non-empty in the corresponding direction.
+    """
+
+    mass_components = mass_components or {"mx": 1.0}
+    project = _sdof_cantilever_project(
+        project_id=project_id,
+        direction=direction,
+        unit=unit,
+        samples=samples,
+        time_step=time_step,
+        duration=duration,
+        damping=damping,
+    )
+    project["massCases"][0]["items"] = [
+        {"nodeId": "N2", **mass_components},
+    ]
+    return project
+
+
+def test_time_history_direction_x_succeeds() -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id="th-5b-dir-x", mass_components={"mx": 1.0}, direction="X"
+    )
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "success"
+    assert result["analysisSummary"]["analysisType"] == "time_history"
+    meta = result["timeHistoryResult"]["meta"]
+    assert meta["groundMotions"][0]["direction"] == "X"
+
+
+def test_time_history_direction_y_succeeds() -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id="th-5b-dir-y", mass_components={"my": 1.0}, direction="Y"
+    )
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "success"
+    meta = result["timeHistoryResult"]["meta"]
+    assert meta["groundMotions"][0]["direction"] == "Y"
+    assert "N2" in result["timeHistoryResult"]["displacements"]
+
+
+def test_time_history_direction_z_succeeds() -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id="th-5b-dir-z", mass_components={"mz": 1.0}, direction="Z"
+    )
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "success"
+    meta = result["timeHistoryResult"]["meta"]
+    assert meta["groundMotions"][0]["direction"] == "Z"
+    assert "N2" in result["timeHistoryResult"]["displacements"]
+
+
+def test_samples_too_short_raises_failed_envelope() -> None:
+    # One sample is below the engine's minimum (n >= 2).
+    project = _sdof_cantilever_project(samples=[1.0])
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert result["errors"][0]["code"] == "TIME_HISTORY_GROUND_MOTION_INVALID"
+    assert result["errors"][0]["path"] == "/groundMotions/0/samples"
+
+
+def test_samples_too_long_raises_failed_envelope() -> None:
+    # duration=0.5, timeStep=0.05 -> expected 11 samples. Provide 14
+    # (off by more than the 1-sample tolerance).
+    project = _sdof_cantilever_project(
+        samples=[0.1] * 14, time_step=0.05, duration=0.5
+    )
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert (
+        result["errors"][0]["code"]
+        == "TIME_HISTORY_GROUND_MOTION_DURATION_MISMATCH"
+    )
+    assert result["errors"][0]["path"] == "/groundMotions/0/samples"
+
+
+def test_duration_mismatch_with_dt_and_sample_count_raises_failed_envelope() -> None:
+    # The analysis settings say duration=0.6 s with timeStep=0.05
+    # (expected 13 samples) but the ground motion supplies 11. The
+    # 2-sample gap is outside the 1-sample tolerance, so the engine
+    # must surface TIME_HISTORY_GROUND_MOTION_DURATION_MISMATCH
+    # without entering the solver.
+    samples = [0.1] * 11
+    project = _sdof_cantilever_project(
+        samples=samples, time_step=0.05, duration=0.6
+    )
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert (
+        result["errors"][0]["code"]
+        == "TIME_HISTORY_GROUND_MOTION_DURATION_MISMATCH"
+    )
+    assert result["errors"][0]["path"] == "/groundMotions/0/samples"
+
+
+def test_analysis_dt_mismatch_with_ground_motion_dt_raises_failed_envelope() -> None:
+    # The ground motion dt differs from the analysis dt. The engine
+    # must report TIME_HISTORY_GROUND_MOTION_DT_MISMATCH regardless
+    # of whether the sample count happens to match.
+    samples = [0.1] * 11  # matches analysis duration 0.5 s @ 0.05 s
+    project = _sdof_cantilever_project(
+        samples=samples, time_step=0.05, duration=0.5
+    )
+    project["groundMotions"][0]["timeStep"] = 0.025
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert (
+        result["errors"][0]["code"]
+        == "TIME_HISTORY_GROUND_MOTION_DT_MISMATCH"
+    )
+    assert result["errors"][0]["path"] == "/groundMotions/0/timeStep"
+
+
+def test_unsupported_ground_motion_unit_raises_failed_envelope() -> None:
+    # 'g' is not in the MVP unit set (m/s2 / gal). The project
+    # validation path converts the schema-level TimeHistoryModelError
+    # into a structured AnalysisError with code INVALID_VALUE and a
+    # JSON-pointer path pointing at the offending field.
+    project = _sdof_cantilever_project(unit="m/s2")
+    project["groundMotions"][0]["unit"] = "g"
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert result["errors"][0]["code"] == "INVALID_VALUE"
+    assert result["errors"][0]["path"] == "/groundMotions/*/unit"
+
+
+def test_no_active_dof_raises_failed_envelope() -> None:
+    # A single-node model that is fully supported in every DOF and
+    # carries a non-zero mass has no unconstrained positive-mass
+    # DOFs. The mass matrix assembly path raises MODEL_UNSTABLE and
+    # the engine surfaces it as a structured failed envelope.
+    project = _sdof_cantilever_project(project_id="th-5b-no-active-dof")
+    project["nodes"] = [
+        {"id": "N1", "x": 0.0, "y": 0.0, "z": 0.0},
+    ]
+    project["supports"] = [
+        {
+            "nodeId": "N1",
+            "ux": True,
+            "uy": True,
+            "uz": True,
+            "rx": True,
+            "ry": True,
+            "rz": True,
+        }
+    ]
+    project["members"] = []
+    project["massCases"] = [
+        {
+            "id": "m-1",
+            "name": "Single-node mass",
+            "method": "lumped",
+            "source": "manual",
+            "items": [{"nodeId": "N1", "mx": 1.0}],
+        }
+    ]
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert result["errors"][0]["code"] == "MODEL_UNSTABLE"
+    assert result["errors"][0]["path"] == "/massCases"
+
+
+def test_empty_mass_case_raises_failed_envelope() -> None:
+    # An empty mass case has no items. The mass matrix assembly
+    # path raises MASS_EMPTY and the engine surfaces it as a
+    # structured failed envelope.
+    project = _sdof_cantilever_project(project_id="th-5b-empty-mass")
+    project["massCases"] = [
+        {
+            "id": "m-empty",
+            "name": "Empty mass case",
+            "method": "lumped",
+            "source": "manual",
+            "items": [],
+        }
+    ]
+    result = run_time_history_analysis(project)
+    assert result["analysisSummary"]["status"] == "failed"
+    assert result["errors"][0]["code"] == "MASS_EMPTY"
+    assert result["errors"][0]["path"] == "/massCases/m-empty/items"
+
+
+def test_api_time_history_result_matches_th4_persisted_block_shape() -> None:
+    # The API envelope's ``timeHistoryResult`` must be accepted by
+    # ``parse_time_history_result`` (the TH-4 loader) without
+    # modification, and must round-trip through ``to_dict()``.
+    from backend.engine import parse_time_history_result
+
+    project = _sdof_cantilever_project(project_id="th-5b-shape")
+    result = run_time_history_analysis(project)
+    block = result["timeHistoryResult"]
+    parsed = parse_time_history_result(block)
+    assert parsed.meta.analysisId == block["meta"]["analysisId"]
+    assert parsed.meta.sampleCount == block["meta"]["sampleCount"]
+    assert parsed.to_dict() == block
