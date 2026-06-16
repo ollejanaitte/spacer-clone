@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from .errors import AnalysisError
-from .model import Model, parse_model
+from .model import Model, model_to_project_dict, parse_model
 from .eigen import run_eigen_analysis, solve_eigen_model
 from .time_history_models import (
     GroundMotion,
@@ -29,6 +29,7 @@ def validate_project(project_data: dict[str, Any]) -> dict[str, Any]:
 
 __all__ = [
     "Model",
+    "model_to_project_dict",
     "parse_model",
     "run_analysis",
     "run_eigen_analysis",
@@ -70,6 +71,7 @@ from .bridge_fem_generator import (
 
 __all__ = [
     "Model",
+    "model_to_project_dict",
     "parse_model",
     "run_analysis",
     "run_eigen_analysis",

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field, field
+from dataclasses import asdict, dataclass, field
+import copy
 import math
 from typing import Any
 
@@ -650,3 +651,116 @@ def ref(
             entity_type=entity_type,
             entity_id=entity_id,
         )
+
+# ---------------------------------------------------------------------------
+# Project saver.
+# 
+# The functions in this section serialize an in-memory Model back into a
+# project dict. The saver preserves the time history analysis fields added
+# by TH-1a (analysisSettings.timeHistory) and TH-1b (groundMotions).
+# 
+# The MVP saver is a Model-driven serializer. It does not attempt to
+# preserve unknown top-level keys that were not modeled in TH-1a; those
+# are handled by the API save endpoint, which dumps the input project
+# dict directly to JSON. The function below is intended for the future
+# TH-2 solver pipeline, where the in-memory model is the source of
+# truth.
+# ---------------------------------------------------------------------------
+
+
+def _model_to_project_payload(model: "Model") -> dict[str, Any]:
+    """Build the canonical project dict from a Model.
+
+    The output is deterministic: top-level keys are emitted in a fixed
+    order so that the same Model always produces the same JSON.
+    """
+
+    payload: dict[str, Any] = {}
+    payload["project"] = asdict(model.project)
+    payload["nodes"] = [asdict(node) for node in model.nodes]
+    payload["materials"] = [asdict(material) for material in model.materials]
+    payload["sections"] = [asdict(section) for section in model.sections]
+    payload["members"] = [_member_to_dict(member) for member in model.members]
+    payload["supports"] = [asdict(support) for support in model.supports]
+    payload["loadCases"] = [asdict(case) for case in model.loadCases]
+    payload["nodalLoads"] = [asdict(load) for load in model.nodalLoads]
+    payload["memberLoads"] = [asdict(load) for load in model.memberLoads]
+    payload["massCases"] = [_mass_case_to_dict(case) for case in model.massCases]
+    payload["analysisSettings"] = _analysis_settings_to_dict(model.analysisSettings)
+    # groundMotions is preserved as-is. The loader keeps the entries as
+    # dicts so any future-compatible keys are retained through the round
+    # trip.
+    payload["groundMotions"] = copy.deepcopy(model.groundMotions)
+    return payload
+
+
+def model_to_project_dict(model: "Model") -> dict[str, Any]:
+    """Convert a Model back into a project dict for project saving.
+
+    The returned dict can be passed to :func:`parse_model` to obtain an
+    equivalent Model. The round trip preserves the time history fields
+    (analysisSettings.timeHistory and groundMotions).
+
+    The function does not mutate ``model``; the in-memory Model is left
+    untouched.
+    """
+
+    return _model_to_project_payload(model)
+
+
+def _member_to_dict(member: "Member") -> dict[str, Any]:
+    """Serialize a Member dataclass to a dict with a stable key order.
+
+    The Member dataclass uses ``field(default=None)`` for the two
+    orientation fields, but the project schema disallows passing them
+    together. The loader already rejects that case, so the saver only
+    needs to omit the keys when they are ``None`` to keep the output
+    compact and avoid spurious ``None`` values.
+    """
+
+    payload = asdict(member)
+    if payload.get("orientationVector") is None:
+        payload.pop("orientationVector", None)
+    if payload.get("orientationNode") is None:
+        payload.pop("orientationNode", None)
+    return payload
+
+
+def _mass_case_to_dict(case: "MassCase") -> dict[str, Any]:
+    """Serialize a MassCase to a dict.
+
+    ``items`` is normalized to an empty list when ``None`` so the saved
+    payload is deterministic.
+    """
+
+    payload = asdict(case)
+    if payload.get("items") is None:
+        payload["items"] = []
+    return payload
+
+
+def _analysis_settings_to_dict(settings: "AnalysisSettings") -> dict[str, Any]:
+    """Serialize AnalysisSettings to a dict with a stable key order.
+
+    The MVP keeps the time history block as an opaque dict so that any
+    future-compatible keys are retained. The other optional sub-blocks
+    (``eigen``, ``influence``, ``responseSpectrum``) follow the same
+    convention.
+    """
+
+    payload: dict[str, Any] = {}
+    payload["analysisType"] = settings.analysisType
+    payload["solver"] = settings.solver
+    payload["includeShearDeformation"] = settings.includeShearDeformation
+    payload["largeDisplacement"] = settings.largeDisplacement
+    payload["tolerance"] = settings.tolerance
+    if settings.eigen is not None:
+        payload["eigen"] = copy.deepcopy(settings.eigen)
+    if settings.influence is not None:
+        payload["influence"] = copy.deepcopy(settings.influence)
+    if settings.responseSpectrum is not None:
+        payload["responseSpectrum"] = copy.deepcopy(settings.responseSpectrum)
+    if settings.timeHistory is not None:
+        payload["timeHistory"] = copy.deepcopy(settings.timeHistory)
+    return payload
+
