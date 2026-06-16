@@ -38,6 +38,33 @@ INITIAL_CONDITION_VALUES_MVP = (INITIAL_CONDITION_ZERO,)
 INITIAL_CONDITION_VALUES_RESERVED = (INITIAL_CONDITION_ZERO, "fromStatic")
 
 
+class TimeHistoryModelError(ValueError):
+    """Raised when a project payload violates the time history schema.
+
+    The error message is structured so that the loader can wrap it
+    in an AnalysisError with a path that points at the offending field.
+    The error is intentionally a ValueError subclass so that the
+    dataclass ``__post_init__`` path stays consistent with the
+    Python data-model convention.
+    """
+
+
+def _require_mapping(value: Any, path: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise TimeHistoryModelError(
+            f"{path} must be an object."
+        )
+    return value
+
+
+def _require_number(value: Any, path: str) -> float:
+    if not isinstance(value, int | float) or isinstance(value, bool):
+        raise TimeHistoryModelError(
+            f"{path} must be a number."
+        )
+    return float(value)
+
+
 @dataclass(frozen=True)
 class TimeHistoryInitialConditions:
     """Initial conditions for the time history analysis.
@@ -67,21 +94,24 @@ class TimeHistoryDamping:
 
     def __post_init__(self) -> None:
         if self.type not in DAMPING_TYPES_RESERVED:
-            raise ValueError(
-                f"Unsupported damping type: {self.type!r}. "
-                f"Allowed values: {DAMPING_TYPES_RESERVED}."
+            raise TimeHistoryModelError(
+                f"timeHistory.damping.type must be one of {list(DAMPING_TYPES_RESERVED)}; got {self.type!r}."
             )
         if self.mode1Frequency is not None and self.mode1Frequency <= 0:
-            raise ValueError("mode1Frequency must be positive when provided.")
+            raise TimeHistoryModelError(
+                "timeHistory.damping.mode1Frequency must be positive when provided."
+            )
         if self.mode2Frequency is not None and self.mode2Frequency <= 0:
-            raise ValueError("mode2Frequency must be positive when provided.")
+            raise TimeHistoryModelError(
+                "timeHistory.damping.mode2Frequency must be positive when provided."
+            )
         if not (0.0 <= self.targetDampingRatio1 < 1.0):
-            raise ValueError(
-                "targetDampingRatio1 must be in [0, 1)."
+            raise TimeHistoryModelError(
+                "timeHistory.damping.targetDampingRatio1 must be in [0, 1)."
             )
         if not (0.0 <= self.targetDampingRatio2 < 1.0):
-            raise ValueError(
-                "targetDampingRatio2 must be in [0, 1)."
+            raise TimeHistoryModelError(
+                "timeHistory.damping.targetDampingRatio2 must be in [0, 1)."
             )
 
 
@@ -112,18 +142,17 @@ class TimeHistorySettings:
             # Only the MVP-supported method is accepted. The MVP keeps
             # the enum narrow to avoid the "method reserved but not
             # implemented" trap. Future versions will widen the enum.
-            raise ValueError(
-                f"Unsupported time history method: {self.method!r}. "
-                f"Allowed values: {TIME_HISTORY_METHODS_MVP}."
+            raise TimeHistoryModelError(
+                f"timeHistory.method must be one of {list(TIME_HISTORY_METHODS_MVP)}; got {self.method!r}."
             )
         if self.timeStep <= 0:
-            raise ValueError("timeStep must be positive.")
+            raise TimeHistoryModelError("timeHistory.timeStep must be positive.")
         if self.duration < 0:
-            raise ValueError("duration must be non-negative.")
+            raise TimeHistoryModelError("timeHistory.duration must be non-negative.")
         if self.beta <= 0:
-            raise ValueError("beta must be positive.")
+            raise TimeHistoryModelError("timeHistory.beta must be positive.")
         if self.gamma <= 0:
-            raise ValueError("gamma must be positive.")
+            raise TimeHistoryModelError("timeHistory.gamma must be positive.")
 
 
 @dataclass(frozen=True)
@@ -145,23 +174,21 @@ class GroundMotion:
 
     def __post_init__(self) -> None:
         if not self.id:
-            raise ValueError("Ground motion id must be non-empty.")
+            raise TimeHistoryModelError("groundMotions[].id must be non-empty.")
         if not self.name:
-            raise ValueError("Ground motion name must be non-empty.")
+            raise TimeHistoryModelError("groundMotions[].name must be non-empty.")
         if self.direction not in GROUND_MOTION_DIRECTIONS:
-            raise ValueError(
-                f"Unsupported ground motion direction: {self.direction!r}. "
-                f"Allowed values: {GROUND_MOTION_DIRECTIONS}."
+            raise TimeHistoryModelError(
+                f"groundMotions[].direction must be one of {list(GROUND_MOTION_DIRECTIONS)}; got {self.direction!r}."
             )
         if self.unit not in GROUND_MOTION_UNITS:
-            raise ValueError(
-                f"Unsupported ground motion unit: {self.unit!r}. "
-                f"Allowed values: {GROUND_MOTION_UNITS}."
+            raise TimeHistoryModelError(
+                f"groundMotions[].unit must be one of {list(GROUND_MOTION_UNITS)}; got {self.unit!r}."
             )
         if self.timeStep <= 0:
-            raise ValueError("Ground motion timeStep must be positive.")
+            raise TimeHistoryModelError("groundMotions[].timeStep must be positive.")
         if self.duration <= 0:
-            raise ValueError("Ground motion duration must be positive.")
+            raise TimeHistoryModelError("groundMotions[].duration must be positive.")
 
 
 @dataclass(frozen=True)
@@ -223,12 +250,11 @@ class TimeHistoryResultMeta:
 
     def __post_init__(self) -> None:
         if self.status not in ("success", "warning", "failed"):
-            raise ValueError(
-                f"Unsupported result status: {self.status!r}. "
-                f"Allowed values: success, warning, failed."
+            raise TimeHistoryModelError(
+                f"timeHistoryResult.meta.status must be one of success, warning, failed; got {self.status!r}."
             )
         if self.sampleCount < 0:
-            raise ValueError("sampleCount must be non-negative.")
+            raise TimeHistoryModelError("timeHistoryResult.meta.sampleCount must be non-negative.")
 
 
 @dataclass(frozen=True)
@@ -280,6 +306,164 @@ def time_history_result_to_dict(result: TimeHistoryResult) -> dict[str, Any]:
     return asdict(result)
 
 
+# ---------------------------------------------------------------------------
+# Loader helpers.
+#
+# The helpers below convert a raw dict (read from a project JSON file)
+# into a strongly-typed model. They are designed to be the single entry
+# point for the project loader, so the loader does not need to know
+# about the internal dataclass shape.
+#
+# The helpers raise TimeHistoryModelError on validation failure. The
+# caller is expected to wrap the call in an AnalysisError-aware code
+# path; the error message is structured for that conversion.
+# ---------------------------------------------------------------------------
+
+
+def _parse_initial_conditions(payload: dict[str, Any]) -> TimeHistoryInitialConditions:
+    displacement = payload.get("displacement", INITIAL_CONDITION_ZERO)
+    velocity = payload.get("velocity", INITIAL_CONDITION_ZERO)
+    if displacement not in INITIAL_CONDITION_VALUES_RESERVED:
+        raise TimeHistoryModelError(
+            f"timeHistory.initialConditions.displacement must be one of {list(INITIAL_CONDITION_VALUES_RESERVED)}; got {displacement!r}."
+        )
+    if velocity not in INITIAL_CONDITION_VALUES_RESERVED:
+        raise TimeHistoryModelError(
+            f"timeHistory.initialConditions.velocity must be one of {list(INITIAL_CONDITION_VALUES_RESERVED)}; got {velocity!r}."
+        )
+    return TimeHistoryInitialConditions(
+        displacement=displacement,
+        velocity=velocity,
+    )
+
+
+def _parse_damping(payload: dict[str, Any]) -> TimeHistoryDamping:
+    damping_type = payload.get("type", "rayleigh")
+    mode1 = payload.get("mode1Frequency")
+    mode2 = payload.get("mode2Frequency")
+    ratio1 = payload.get("targetDampingRatio1", DEFAULT_DAMPING_RATIO)
+    ratio2 = payload.get("targetDampingRatio2", DEFAULT_DAMPING_RATIO)
+
+    mode1_value: float | None = None
+    if mode1 is not None:
+        mode1_value = _require_number(mode1, "timeHistory.damping.mode1Frequency")
+    mode2_value: float | None = None
+    if mode2 is not None:
+        mode2_value = _require_number(mode2, "timeHistory.damping.mode2Frequency")
+
+    return TimeHistoryDamping(
+        type=damping_type,
+        mode1Frequency=mode1_value,
+        mode2Frequency=mode2_value,
+        targetDampingRatio1=_require_number(ratio1, "timeHistory.damping.targetDampingRatio1"),
+        targetDampingRatio2=_require_number(ratio2, "timeHistory.damping.targetDampingRatio2"),
+    )
+
+
+def parse_time_history_settings(payload: Any) -> TimeHistorySettings | None:
+    """Convert the analysisSettings.timeHistory block into a TimeHistorySettings.
+
+    Returns None when the payload is missing or empty. A non-dict payload
+    other than None is treated as a missing block for backward
+    compatibility with old callers that may have used a sentinel.
+    """
+
+    if payload is None or payload == {}:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    # The MVP loader treats "enabled" the same as "present". When the
+    # block is present in the JSON, the settings exist; the "enabled"
+    # flag controls the analysis run separately.
+    settings_payload = dict(payload)
+    method = settings_payload.get("method", TIME_HISTORY_METHOD_NEWMARK_BETA)
+    time_step = settings_payload.get("timeStep", DEFAULT_TIME_STEP_SECONDS)
+    duration = settings_payload.get("duration", DEFAULT_DURATION_SECONDS)
+    beta = settings_payload.get("beta", DEFAULT_NEWMARK_BETA)
+    gamma = settings_payload.get("gamma", DEFAULT_NEWMARK_GAMMA)
+    damping_payload = settings_payload.get("damping") or {}
+    if damping_payload and not isinstance(damping_payload, dict):
+        raise TimeHistoryModelError(
+            "timeHistory.damping must be an object when present."
+        )
+    initial_conditions_payload = settings_payload.get("initialConditions") or {}
+    if initial_conditions_payload and not isinstance(initial_conditions_payload, dict):
+        raise TimeHistoryModelError(
+            "timeHistory.initialConditions must be an object when present."
+        )
+    enabled_raw = settings_payload.get("enabled", False)
+    if not isinstance(enabled_raw, bool):
+        raise TimeHistoryModelError(
+            "timeHistory.enabled must be a boolean when present."
+        )
+
+    return TimeHistorySettings(
+        enabled=enabled_raw,
+        method=method,
+        timeStep=_require_number(time_step, "timeHistory.timeStep"),
+        duration=_require_number(duration, "timeHistory.duration"),
+        beta=_require_number(beta, "timeHistory.beta"),
+        gamma=_require_number(gamma, "timeHistory.gamma"),
+        damping=_parse_damping(damping_payload or {}),
+        initialConditions=_parse_initial_conditions(initial_conditions_payload or {}),
+    )
+
+
+def parse_ground_motions(payload: Any) -> list[GroundMotion]:
+    """Convert the project.groundMotions list into a list of GroundMotion.
+
+    Returns an empty list when the payload is missing or empty. A
+    non-list payload other than None is treated as a missing block.
+    """
+
+    if payload is None:
+        return []
+    if not isinstance(payload, list):
+        return []
+    records: list[GroundMotion] = []
+    for index, item in enumerate(payload):
+        if not isinstance(item, dict):
+            raise TimeHistoryModelError(
+                f"groundMotions[{index}] must be an object."
+            )
+        item_mapping = _require_mapping(item, f"groundMotions[{index}]")
+        samples_payload = item_mapping.get("samples", [])
+        if not isinstance(samples_payload, list):
+            raise TimeHistoryModelError(
+                f"groundMotions[{index}].samples must be an array."
+            )
+        samples: list[float] = []
+        for sample_index, sample in enumerate(samples_payload):
+            samples.append(
+                _require_number(
+                    sample, f"groundMotions[{index}].samples[{sample_index}]"
+                )
+            )
+        try:
+            record = GroundMotion(
+                id=item_mapping.get("id", ""),
+                name=item_mapping.get("name", ""),
+                direction=item_mapping.get("direction", "X"),
+                timeStep=_require_number(
+                    item_mapping.get("timeStep", 0.0),
+                    f"groundMotions[{index}].timeStep",
+                ),
+                duration=_require_number(
+                    item_mapping.get("duration", 0.0),
+                    f"groundMotions[{index}].duration",
+                ),
+                unit=item_mapping.get("unit", "m/s2"),
+                samples=samples,
+            )
+        except TypeError as exc:
+            # Defensive: dataclass field type mismatch becomes TypeError.
+            raise TimeHistoryModelError(
+                f"groundMotions[{index}] has an invalid field: {exc}."
+            ) from exc
+        records.append(record)
+    return records
+
+
 __all__ = [
     "DEFAULT_TIME_STEP_SECONDS",
     "DEFAULT_DURATION_SECONDS",
@@ -304,6 +488,9 @@ __all__ = [
     "TimeHistoryResultMemberForces",
     "TimeHistoryResultMeta",
     "TimeHistoryResult",
+    "TimeHistoryModelError",
+    "parse_time_history_settings",
+    "parse_ground_motions",
     "time_history_settings_to_dict",
     "ground_motion_to_dict",
     "time_history_result_to_dict",

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, field
 import math
 from typing import Any
 
@@ -138,6 +138,7 @@ class AnalysisSettings:
     eigen: dict[str, Any] | None = None
     influence: dict[str, Any] | None = None
     responseSpectrum: dict[str, Any] | None = None
+    timeHistory: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -153,6 +154,7 @@ class Model:
     memberLoads: list[MemberLoad]
     massCases: list[MassCase]
     analysisSettings: AnalysisSettings
+    groundMotions: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def node_by_id(self) -> dict[str, Node]:
@@ -188,7 +190,15 @@ def parse_model(data: dict[str, Any]) -> Model:
     nodal_loads = [NodalLoad(**item) for item in data.get("nodalLoads", [])]
     member_loads = [MemberLoad(**item) for item in data.get("memberLoads", [])]
     mass_cases = [parse_mass_case(item) for item in data.get("massCases", [])]
-    settings = AnalysisSettings(**data.get("analysisSettings", {}))
+    settings_payload = data.get("analysisSettings", {})
+    settings = AnalysisSettings(**settings_payload)
+    ground_motions_payload = data.get("groundMotions", [])
+    if not isinstance(ground_motions_payload, list):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "groundMotions must be an array.",
+            path="/groundMotions",
+        )
     model = Model(
         project=project,
         nodes=nodes,
@@ -201,6 +211,7 @@ def parse_model(data: dict[str, Any]) -> Model:
         memberLoads=member_loads,
         massCases=mass_cases,
         analysisSettings=settings,
+        groundMotions=ground_motions_payload,
     )
     validate_model(model)
     return model

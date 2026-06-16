@@ -5,6 +5,15 @@ from typing import Any
 from .errors import AnalysisError
 from .model import Model, parse_model
 from .eigen import run_eigen_analysis, solve_eigen_model
+from .time_history_models import (
+    GroundMotion,
+    TimeHistoryDamping,
+    TimeHistoryInitialConditions,
+    TimeHistoryModelError,
+    TimeHistorySettings,
+    parse_ground_motions,
+    parse_time_history_settings,
+)
 from .influence import run_influence_analysis, solve_influence_model
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
@@ -30,6 +39,13 @@ __all__ = [
     "solve_influence_model",
     "solve_model",
     "validate_project",
+    "TimeHistoryDamping",
+    "TimeHistoryInitialConditions",
+    "TimeHistoryModelError",
+    "TimeHistorySettings",
+    "parse_ground_motions",
+    "parse_time_history_settings",
+    "GroundMotion",
 ]
 
 from .bridge_model import (

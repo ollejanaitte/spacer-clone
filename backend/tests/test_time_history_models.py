@@ -62,7 +62,7 @@ def test_time_history_settings_accepts_mvp_values() -> None:
 
 
 def test_time_history_settings_rejects_invalid_method() -> None:
-    with pytest.raises(ValueError, match="Unsupported time history method"):
+    with pytest.raises(ValueError, match="timeHistory.method must be one of"):
         TimeHistorySettings(
             method="central-difference",
             timeStep=0.01,
@@ -73,7 +73,7 @@ def test_time_history_settings_rejects_invalid_method() -> None:
 
 
 def test_time_history_settings_rejects_non_positive_time_step() -> None:
-    with pytest.raises(ValueError, match="timeStep must be positive"):
+    with pytest.raises(ValueError, match="timeHistory.timeStep must be positive"):
         TimeHistorySettings(
             method="newmark-beta",
             timeStep=0.0,
@@ -84,7 +84,7 @@ def test_time_history_settings_rejects_non_positive_time_step() -> None:
 
 
 def test_time_history_settings_rejects_non_positive_beta() -> None:
-    with pytest.raises(ValueError, match="beta must be positive"):
+    with pytest.raises(ValueError, match="timeHistory.beta must be positive"):
         TimeHistorySettings(
             method="newmark-beta",
             timeStep=0.01,
@@ -95,7 +95,7 @@ def test_time_history_settings_rejects_non_positive_beta() -> None:
 
 
 def test_time_history_settings_rejects_non_positive_gamma() -> None:
-    with pytest.raises(ValueError, match="gamma must be positive"):
+    with pytest.raises(ValueError, match="timeHistory.gamma must be positive"):
         TimeHistorySettings(
             method="newmark-beta",
             timeStep=0.01,
@@ -106,7 +106,7 @@ def test_time_history_settings_rejects_non_positive_gamma() -> None:
 
 
 def test_time_history_settings_rejects_negative_duration() -> None:
-    with pytest.raises(ValueError, match="duration must be non-negative"):
+    with pytest.raises(ValueError, match="timeHistory.duration must be non-negative"):
         TimeHistorySettings(
             method="newmark-beta",
             timeStep=0.01,
@@ -125,17 +125,17 @@ def test_time_history_damping_accepts_reserved_enum_values() -> None:
 
 
 def test_time_history_damping_rejects_unknown_type() -> None:
-    with pytest.raises(ValueError, match="Unsupported damping type"):
+    with pytest.raises(ValueError, match="timeHistory.damping.type must be one of"):
         TimeHistoryDamping(type="viscous-fluid")  # type: ignore[arg-type]
 
 
 def test_time_history_damping_rejects_damping_ratio_at_or_above_one() -> None:
-    with pytest.raises(ValueError, match="targetDampingRatio1 must be in"):
+    with pytest.raises(ValueError, match="timeHistory.damping.targetDampingRatio1 must be in"):
         TimeHistoryDamping(
             type="rayleigh",
             targetDampingRatio1=1.0,
         )
-    with pytest.raises(ValueError, match="targetDampingRatio2 must be in"):
+    with pytest.raises(ValueError, match="timeHistory.damping.targetDampingRatio2 must be in"):
         TimeHistoryDamping(
             type="rayleigh",
             targetDampingRatio2=1.0,
@@ -171,7 +171,7 @@ def test_ground_motion_accepts_gal_unit() -> None:
 
 
 def test_ground_motion_rejects_invalid_direction() -> None:
-    with pytest.raises(ValueError, match="Unsupported ground motion direction"):
+    with pytest.raises(ValueError, match="groundMotions\[\]\.direction must be one of"):
         GroundMotion(
             id="gm-001",
             name="Invalid direction",
@@ -184,7 +184,7 @@ def test_ground_motion_rejects_invalid_direction() -> None:
 
 
 def test_ground_motion_rejects_invalid_unit() -> None:
-    with pytest.raises(ValueError, match="Unsupported ground motion unit"):
+    with pytest.raises(ValueError, match="groundMotions\[\]\.unit must be one of"):
         GroundMotion(
             id="gm-001",
             name="Invalid unit",
@@ -197,7 +197,7 @@ def test_ground_motion_rejects_invalid_unit() -> None:
 
 
 def test_ground_motion_rejects_empty_id() -> None:
-    with pytest.raises(ValueError, match="Ground motion id must be non-empty"):
+    with pytest.raises(ValueError, match="groundMotions\[\]\.id must be non-empty"):
         GroundMotion(
             id="",
             name="No id",
@@ -210,7 +210,7 @@ def test_ground_motion_rejects_empty_id() -> None:
 
 
 def test_ground_motion_rejects_non_positive_time_step() -> None:
-    with pytest.raises(ValueError, match="Ground motion timeStep must be positive"):
+    with pytest.raises(ValueError, match="groundMotions\[\]\.timeStep must be positive"):
         GroundMotion(
             id="gm-001",
             name="Bad step",
@@ -256,12 +256,12 @@ def test_time_history_result_meta_default_values() -> None:
 
 
 def test_time_history_result_meta_rejects_invalid_status() -> None:
-    with pytest.raises(ValueError, match="Unsupported result status"):
+    with pytest.raises(ValueError, match="timeHistoryResult.meta.status must be one of"):
         TimeHistoryResultMeta(status="unknown")  # type: ignore[arg-type]
 
 
 def test_time_history_result_meta_rejects_negative_sample_count() -> None:
-    with pytest.raises(ValueError, match="sampleCount must be non-negative"):
+    with pytest.raises(ValueError, match="timeHistoryResult.meta.sampleCount must be non-negative"):
         TimeHistoryResultMeta(sampleCount=-1)
 
 
