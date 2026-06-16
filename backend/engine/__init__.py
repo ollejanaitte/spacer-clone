@@ -30,6 +30,7 @@ from .time_history_newmark import (
     NewmarkTimeHistoryResult,
     solve_newmark_average_acceleration,
 )
+from .time_history_analysis import run_time_history_analysis
 from .time_history_result import (
     TimeHistoryResult,
     TimeHistoryResultMeta,
@@ -78,6 +79,7 @@ __all__ = [
     "NewmarkTimeHistoryResult",
     "solve_newmark_average_acceleration",
     "TimeHistoryResult",
+    "run_time_history_analysis",
     "TimeHistoryResultMeta",
     "build_time_history_result_from_newmark",
     "parse_time_history_result",
