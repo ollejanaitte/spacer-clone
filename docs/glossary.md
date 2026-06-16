@@ -43,6 +43,22 @@ This glossary maps the Japanese domain terms used in this project to the English
 | 減衰定数 | damping ratio | Fraction of critical damping. |
 | 補間 | interpolation | Log-log or linear interpolation of spectrum points. |
 
+| 時系列応答解析 | time history analysis | Direct-integration dynamic analysis that produces time-domain response. |
+| 直接時間積分 | direct integration | Time-stepping method that solves the equation of motion step by step. |
+| Newmark-β法 | Newmark-beta method | Implicit time-stepping integration. Average acceleration variant uses beta=1/4, gamma=1/2. |
+| 初期値問題 | initial value problem | Time history problem defined by u(t0), u_dot(t0), u_ddot(t0). |
+| 時間刻み | time step | Integration step `dt` for direct time integration. |
+| レイリー減衰 | Rayleigh damping | Damping model C = alpha * M + beta * K. |
+| 地動加速度 | ground acceleration | Time-varying base acceleration input for seismic analysis. |
+| 地震波 | ground motion | Time history record of ground acceleration. |
+| 工学的基盤 | engineering bedrock | Reference level where the ground motion is input. |
+| 絶対加速度応答 | absolute acceleration response | Total acceleration of a node, including base motion. |
+| 相対変位応答 | relative displacement response | Displacement of a node relative to the base. |
+| 履歴 | history / time history | Time-domain sequence of a response quantity. |
+| 包絡値 | envelope value | Maximum or minimum of a quantity over the analysis duration. |
+| 直接積分法の安定性 | stability of direct integration | Property of the time-stepping method with respect to numerical error growth. |
+| エネルギー釣合 | energy balance | Sum of kinetic, potential, and dissipated energy compared with input energy. |
+
 ## Results and reporting
 
 | Japanese | English (canonical) | Notes |
