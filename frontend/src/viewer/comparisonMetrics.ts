@@ -1,4 +1,5 @@
-﻿import type { AnalysisResult, EigenModeResult, ProjectModel } from "../types";
+﻿import { ja } from "../i18n/ja";
+import type { AnalysisResult, EigenModeResult, ProjectModel } from "../types";
 
 /**
  * Pure helpers for building the Phase-2 comparison panel shown when
@@ -65,8 +66,8 @@ const DISPLAY_DISPLACEMENT_PRECISION = 1;
 const DISPLAY_REACTION_PRECISION = 0;
 const REDUCTION_PERCENT_PRECISION = 0;
 
-const NUMERIC_NULL_LABEL = "-";
-const REACTION_NOT_COMPUTED_LABEL = "未計算";
+const NUMERIC_NULL_LABEL = ja.comparison.dash;
+const REACTION_NOT_COMPUTED_LABEL = ja.comparison.notComputed;
 
 /**
  * Compute the percent change of `right` relative to `left`:
@@ -130,7 +131,7 @@ export function maxHorizontalModeComponent(
  * uses a 3-component force vector per constrained node; the magnitude is
  * sqrt(fx^2 + fy^2 + fz^2). Returns null when no reaction is available.
  *
- * The spec notes that the table focuses on "橋脚反力" (pier reaction)
+ * The spec notes that the table focuses on "pier reaction"
  * which is dominantly vertical. We therefore report the vertical
  * (Y-direction) component when present, falling back to the 3D magnitude
  * so any direction is still surfaced.
@@ -221,7 +222,7 @@ function formatHorizontal(value: number | null): string {
   if (value == null) return NUMERIC_NULL_LABEL;
   if (!Number.isFinite(value)) return NUMERIC_NULL_LABEL;
   // Eigen mode shapes are unitless / not physical displacements. We
-  // therefore label the row as "指標" (indicator) and display the raw
+  // therefore label the row as "indicator" and display the raw
   // value to 4 decimals. A future response-spectrum pipeline can rescale
   // the same metric into millimetres and switch the label.
   return value.toFixed(4);
@@ -239,8 +240,8 @@ function formatReduction(percent: number | null): string {
   if (!Number.isFinite(percent)) return NUMERIC_NULL_LABEL;
   const abs = Math.abs(percent);
   const rounded = abs.toFixed(REDUCTION_PERCENT_PRECISION);
-  if (percent > 0) return `${rounded}%低減`;
-  if (percent < 0) return `${rounded}%増加`;
+  if (percent > 0) return ja.comparison.decrease(rounded);
+  if (percent < 0) return ja.comparison.increase(rounded);
   return "0%";
 }
 
@@ -298,7 +299,7 @@ export function buildComparisonMetrics(
   const rows: ComparisonMetricRow[] = [
     {
       key: "period-1",
-      label: "1次周期",
+      label: ja.comparison.periodLabel(1),
       left: periods.mode1.left,
       right: periods.mode1.right,
       unit: "s",
@@ -310,7 +311,7 @@ export function buildComparisonMetrics(
     },
     {
       key: "period-2",
-      label: "2次周期",
+      label: ja.comparison.periodLabel(2),
       left: periods.mode2.left,
       right: periods.mode2.right,
       unit: "s",
@@ -322,7 +323,7 @@ export function buildComparisonMetrics(
     },
     {
       key: "period-3",
-      label: "3次周期",
+      label: ja.comparison.periodLabel(3),
       left: periods.mode3.left,
       right: periods.mode3.right,
       unit: "s",
@@ -334,7 +335,7 @@ export function buildComparisonMetrics(
     },
     {
       key: "horizontal-mode",
-      label: "最大水平モード成分 (指標)",
+      label: ja.comparison.horizontalModeLabel,
       left: maxHorizontalModeComponentMetric.left,
       right: maxHorizontalModeComponentMetric.right,
       unit: "-",
@@ -346,7 +347,7 @@ export function buildComparisonMetrics(
     },
     {
       key: "max-reaction",
-      label: "最大橋脚反力",
+      label: ja.comparison.pierReactionLabel,
       left: maxReactionMetric.left,
       right: maxReactionMetric.right,
       unit: "kN",
@@ -386,7 +387,7 @@ function buildAutoComment(params: {
     params.reaction.left != null && params.reaction.right != null;
 
   if (!hasPeriods && !hasHorizontal && !hasReaction) {
-    return "固有値解析を実行すると、周期およびモード変形指標を比較できます。";
+    return ja.comparison.notRun;
   }
 
   const segments: string[] = [];
@@ -397,44 +398,44 @@ function buildAutoComment(params: {
     );
     if (periodTrend === "shorter") {
       segments.push(
-        "B案は1次周期が短くなる傾向があり、軟弱地盤側への変形集中が相対的に緩和される可能性があります。",
+        ja.comparison.planShorter,
       );
     } else if (periodTrend === "longer") {
       segments.push(
-        "B案は1次周期が長くなる傾向があり、軟弱地盤側への変形集中が相対的に大きくなる可能性があります。",
+        ja.comparison.planLonger,
       );
     } else {
-      segments.push("B案は1次周期がA案と同程度です。");
+      segments.push(ja.comparison.planSimilar);
     }
   }
   if (hasHorizontal) {
     const percent = params.horizontal.reductionPercent;
     if (percent != null && percent > 5) {
       segments.push(
-        "B案ではA案に比べて最大水平モード成分が小さく、軟弱地盤側への変形集中が緩和される傾向があります。",
+        ja.comparison.planLessDeform,
       );
     } else if (percent != null && percent < -5) {
       segments.push(
-        "B案ではA案に比べて最大水平モード成分がやや大きく、軟弱地盤側への変形集中が増える可能性があります。",
+        ja.comparison.planMoreDeform,
       );
     } else {
-      segments.push("B案の最大水平モード成分はA案とほぼ同程度です。");
+      segments.push(ja.comparison.planSimilarDeform);
     }
   }
   if (hasReaction) {
     const percent = params.reaction.reductionPercent;
     if (percent != null && percent > 5) {
       segments.push(
-        "最大橋脚反力はB案で小さくなり、支点設計上有利となる傾向があります。",
+        ja.comparison.planLessReaction,
       );
     } else if (percent != null && percent < -5) {
       segments.push(
-        "最大橋脚反力はB案で大きくなるため、支点・基礎の照査が必要です。",
+        ja.comparison.planMoreReaction,
       );
     }
   }
   if (segments.length === 0) {
-    return "固有値解析を実行すると、周期およびモード変形指標を比較できます。";
+    return ja.comparison.notRun;
   }
   return segments.join(" ");
 }

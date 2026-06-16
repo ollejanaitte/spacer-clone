@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import {
   buildEigenModeViewModel,
   buildInfluenceLineViewModel,
@@ -6,6 +6,7 @@ import {
   buildResultViewModel,
   type ResponseSpectrumSelection,
 } from "../results/resultViewModel";
+import { ja } from "../i18n/ja";
 import type { AnalysisResult, BottomTab, StructuredMessage } from "../types";
 
 type ResultsPanelProps = {
@@ -36,19 +37,19 @@ type ResultTablesProps = {
 };
 
 const tabs: Array<{ key: BottomTab; label: string }> = [
-  { key: "results", label: "解析結果" },
-  { key: "errors", label: "エラー" },
-  { key: "warnings", label: "警告" },
-  { key: "logs", label: "ログ" },
+  { key: "results", label: ja.resultsPanel.tabs.results },
+  { key: "errors", label: ja.resultsPanel.tabs.errors },
+  { key: "warnings", label: ja.resultsPanel.tabs.warnings },
+  { key: "logs", label: ja.resultsPanel.tabs.logs },
 ];
 
 type ResultViewKey = "static" | "eigen" | "response" | "influence";
 
 const resultViewLabels: Record<ResultViewKey, string> = {
-  static: "静的",
-  eigen: "固有値",
-  response: "応答スペクトル",
-  influence: "影響線",
+  static: ja.resultsPanel.resultView.static,
+  eigen: ja.resultsPanel.resultView.eigen,
+  response: ja.resultsPanel.resultView.response,
+  influence: ja.resultsPanel.resultView.influence,
 };
 
 export function ResultsPanel({
@@ -93,8 +94,8 @@ export function ResultsPanel({
             onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
           />
         )}
-        {activeTab === "errors" && <MessageTable messages={errors} empty="エラーはありません。" />}
-        {activeTab === "warnings" && <MessageTable messages={warnings} empty="警告はありません。" />}
+        {activeTab === "errors" && <MessageTable messages={errors} empty={ja.resultsPanel.errorsEmpty} />}
+        {activeTab === "warnings" && <MessageTable messages={warnings} empty={ja.resultsPanel.warningsEmpty} />}
         {activeTab === "logs" && (
           <div className="log-list">
             {logs.map((line, index) => (
@@ -108,7 +109,7 @@ export function ResultsPanel({
 }
 
 function ResultTables(props: ResultTablesProps) {
-  if (!props.result) return <div className="empty-state">解析結果はまだありません。</div>;
+  if (!props.result) return <div className="empty-state">{ja.resultsPanel.empty}</div>;
   return <ResultTablesContent {...props} result={props.result} />;
 }
 
@@ -192,17 +193,17 @@ function ResultTablesContent({
     <div className="results-grid">
       <div className="result-overview">
         <div className="summary-list">
-          <span>状態: {statusLabel(summary.status)}</span>
-          <span>ソルバ: {summary.solver}</span>
-          <span>計算時間: {formatNumber(summary.durationMs)} ms</span>
-          <span>自由度: {summary.freeDof}/{summary.totalDof} free</span>
-          <span>解析種別: {analysisTypeLabel(summary.analysisType)}</span>
-          <span>荷重ケース: {activeLoadCase || "すべて"}</span>
-          {selectedMode && <span>Mode: {selectedMode.modeNo}</span>}
-          {responseSpectrumViewModel && <span>応答: {responseSpectrumViewModel.selectedResultLabel}</span>}
-          <span>選択: {selectedNode ?? selectedMember ?? "すべて"}</span>
+          <span>{ja.resultsPanel.summary.status}: {statusLabel(summary.status)}</span>
+          <span>{ja.resultsPanel.summary.solver}: {summary.solver}</span>
+          <span>{ja.resultsPanel.summary.duration}: {formatNumber(summary.durationMs)} ms</span>
+          <span>{ja.resultsPanel.summary.freeDof}: {summary.freeDof}/{summary.totalDof} free</span>
+          <span>{ja.resultsPanel.summary.analysisType}: {analysisTypeLabel(summary.analysisType)}</span>
+          <span>{ja.resultsPanel.summary.loadCase}: {activeLoadCase || ja.resultsPanel.summary.loadCaseAll}</span>
+          {selectedMode && <span>{ja.resultsPanel.summary.mode(selectedMode.modeNo)}</span>}
+          {responseSpectrumViewModel && <span>{ja.resultsPanel.summary.responseSpectrum}: {responseSpectrumViewModel.selectedResultLabel}</span>}
+          <span>{ja.resultsPanel.summary.selection}: {selectedNode ?? selectedMember ?? ja.resultsPanel.summary.selectionAll}</span>
         </div>
-        <div className="result-view-tabs" aria-label="結果表示切替">
+        <div className="result-view-tabs" aria-label={ja.resultsPanel.viewTabsAriaLabel}>
           {availableViews.map((view) => (
             <button
               key={view}
@@ -218,14 +219,14 @@ function ResultTablesContent({
       {activeView === "response" && responseSpectrumViewModel && (
         <>
           <div className="result-table">
-            <h3>応答スペクトル結果</h3>
+            <h3>{ja.resultsPanel.tabs.results}</h3>
             <div className="summary-list result-toolbar">
-              <span>スペクトル: {responseSpectrumViewModel.spectrumCaseId}</span>
-              <span>方向: {responseSpectrumViewModel.direction}</span>
-              <span>減衰: {formatNumber(responseSpectrumViewModel.dampingRatio)}</span>
-              <span>合成: {responseSpectrumViewModel.combinationMethod}</span>
+              <span>{ja.resultsPanel.overview.spectrumCaseId}: {responseSpectrumViewModel.spectrumCaseId}</span>
+              <span>{ja.resultsPanel.overview.direction}: {responseSpectrumViewModel.direction}</span>
+              <span>{ja.resultsPanel.overview.damping}: {formatNumber(responseSpectrumViewModel.dampingRatio)}</span>
+              <span>{ja.resultsPanel.overview.combination}: {responseSpectrumViewModel.combinationMethod}</span>
               <label className="result-select">
-                <span>表示</span>
+                <span>{ja.resultsPanel.overview.show}</span>
                 <select
                   value={responseSpectrumViewModel.selectedResultKey}
                   onChange={(event) =>
@@ -242,35 +243,35 @@ function ResultTablesContent({
             </div>
           </div>
           <CompactTable
-            title="モード別応答"
+            title={ja.resultsPanel.tables.modalResponse}
             rows={responseSpectrumViewModel.modalRows}
             columns={["modeNo", "spectralAcceleration", "maxDisplacement", "maxReaction", "maxMemberForce"]}
             onRowClick={(row) => onSelectedResponseSpectrumResultChange(`mode:${Number(row.modeNo)}`)}
           />
           <CompactTable
-            title={`${responseSpectrumViewModel.combinationMethod}合成結果`}
+            title={ja.resultsPanel.tables.combinationResult(responseSpectrumViewModel.combinationMethod)}
             rows={responseSpectrumViewModel.srssRows}
             columns={["method", "maxDisplacement", "maxReaction", "maxMemberForce"]}
             onRowClick={() => onSelectedResponseSpectrumResultChange("SRSS")}
           />
           <CompactTable
-            title="最大変位"
+            title={ja.resultsPanel.tables.maxDisplacement}
             rows={responseDisplacements}
             columns={["nodeId", "ux", "uy", "uz", "rx", "ry", "rz", "magnitude"]}
           />
           <CompactTable
-            title="最大反力"
+            title={ja.resultsPanel.tables.maxReaction}
             rows={responseReactions}
             columns={["nodeId", "fx", "fy", "fz", "mx", "my", "mz"]}
           />
           <CompactTable
-            title="最大断面力"
+            title={ja.resultsPanel.tables.maxMemberForce}
             rows={responseMemberSectionForces}
             columns={["memberId", "station", "component", "value"]}
           />
           {responseSpectrumViewModel.directionResults.length > 0 && (
             <CompactTable
-              title="方向別結果サマリ"
+              title={ja.resultsPanel.tables.directionSummary}
               rows={responseSpectrumViewModel.directionResults.map((d) => ({
                 direction: d.direction,
                 combinationMethod: d.combinationMethod,
@@ -280,7 +281,7 @@ function ResultTablesContent({
                 usedModes: Array.isArray(d.usedModes) && d.usedModes.length > 0 ? d.usedModes.join(",") : "-",
               }))}
               columns={["direction", "combinationMethod", "interpolationMethod", "modalCount", "combinedCount", "usedModes"]}
-              emptyMessage="方向別結果はありません"
+              emptyMessage={ja.resultsPanel.tables.directionSummaryEmpty}
             />
           )}
         </>
@@ -288,14 +289,13 @@ function ResultTablesContent({
       {activeView === "influence" && influenceViewModel && (
         <>
           <div className="result-table">
-            <h3>影響線結果</h3>
+            <h3>{ja.resultsPanel.tables.influenceResults}</h3>
             <div className="summary-list">
-              <span>ケース: {influenceViewModel.caseId}</span>
-              <span>走行部材: {influenceViewModel.lineMemberId}</span>
-              <span>分割数: {influenceViewModel.stationCount}</span>
-              <span>単位荷重: {formatNumber(influenceViewModel.loadMagnitude)}</span>
-              <span>
-                荷重方向: {formatNumber(influenceViewModel.loadDirection.x)},{" "}
+              <span>{ja.resultsPanel.fileScope.case}: {influenceViewModel.caseId}</span>
+              <span>{ja.resultsPanel.fileScope.travelMember}: {influenceViewModel.lineMemberId}</span>
+              <span>{ja.resultsPanel.fileScope.stationCount}: {influenceViewModel.stationCount}</span>
+              <span>{ja.resultsPanel.fileScope.unitLoad}: {formatNumber(influenceViewModel.loadMagnitude)}</span>
+              <span>\n                {ja.resultsPanel.fileScope.loadDirection}: {formatNumber(influenceViewModel.loadDirection.x)},{" "}
                 {formatNumber(influenceViewModel.loadDirection.y)},{" "}
                 {formatNumber(influenceViewModel.loadDirection.z)}
               </span>
@@ -303,12 +303,12 @@ function ResultTablesContent({
           </div>
           <InfluenceChart series={filteredInfluenceSeries} />
           <CompactTable
-            title="影響線系列"
+            title={ja.resultsPanel.tables.influenceSeries}
             rows={filteredInfluenceTargets}
             columns={["label", "type", "component", "maxAbs", "min", "max"]}
           />
           <CompactTable
-            title="影響線値"
+            title={ja.resultsPanel.tables.influenceValues}
             rows={influenceRows(filteredInfluenceSeries)}
             columns={["target", "station", "ratio", "value"]}
           />
@@ -317,7 +317,7 @@ function ResultTablesContent({
       {activeView === "eigen" && eigenModes.length > 0 && (
         <>
           <CompactTable
-            title="方向別総質量（kN·s²/m）"
+            title={ja.resultsPanel.tables.massPerDirection}
             rows={[
               { direction: "X", totalMass: eigenViewModel?.totalMassX ?? null },
               { direction: "Y", totalMass: eigenViewModel?.totalMassY ?? null },
@@ -326,7 +326,7 @@ function ResultTablesContent({
             columns={["direction", "totalMass"]}
           />
           <CompactTable
-            title="固有モード一覧"
+            title={ja.resultsPanel.tables.eigenModes}
             rows={eigenModes.map((mode) => ({
               modeNo: mode.modeNo,
               eigenvalue: mode.eigenvalue,
@@ -370,7 +370,7 @@ function ResultTablesContent({
             onRowClick={(row) => onSelectedEigenModeChange(Number(row.modeNo))}
           />
           <CompactTable
-            title="選択モード形"
+            title={ja.resultsPanel.tables.selectedModeShape}
             rows={(selectedMode?.shape ?? []).filter((row) => !selectedNode || row.nodeId === selectedNode)}
             columns={["nodeId", "ux", "uy", "uz", "rx", "ry", "rz"]}
           />
@@ -379,17 +379,17 @@ function ResultTablesContent({
       {activeView === "static" && (
         <>
           <CompactTable
-            title="節点変位表"
+            title={ja.resultsPanel.tables.nodeDisplacement}
             rows={displacements}
             columns={["nodeId", "ux", "uy", "uz", "rx", "ry", "rz", "magnitude"]}
           />
           <CompactTable
-            title="支点反力表"
+            title={ja.resultsPanel.tables.supportReaction}
             rows={reactions}
             columns={["nodeId", "fx", "fy", "fz", "mx", "my", "mz"]}
           />
           <CompactTable
-            title="部材断面力表"
+            title={ja.resultsPanel.tables.memberSectionForce}
             rows={memberForces}
             columns={["memberId", "component", "i", "j"]}
           />
@@ -430,9 +430,9 @@ function InfluenceChart({
 
   return (
     <div className="result-table influence-chart">
-      <h3>影響線グラフ</h3>
+      <h3>{ja.resultsPanel.tables.influenceChart}</h3>
       {series.length === 0 ? (
-        <div className="empty-state">影響線系列がありません。</div>
+        <div className="empty-state">{ja.resultsPanel.tables.influenceChartEmpty}</div>
       ) : (
         <>
           <div className="series-picker-actions">
@@ -441,17 +441,17 @@ function InfluenceChart({
               onClick={() => setSelectedIds(series.map((item) => item.targetId))}
               disabled={selectedIds.length === series.length}
             >
-              全選択
+              {ja.resultsPanel.tables.influenceSelectAll}
             </button>
             <button
               type="button"
               onClick={() => setSelectedIds([])}
               disabled={selectedIds.length === 0}
             >
-              全解除
+              {ja.resultsPanel.tables.influenceClearAll}
             </button>
           </div>
-          <div className="series-picker" aria-label="影響線系列選択">
+          <div className="series-picker" aria-label={ja.resultsPanel.tables.influencePickerAriaLabel}>
             {series.map((item) => (
               <label key={item.targetId}>
                 <input
@@ -482,16 +482,16 @@ function InfluenceChart({
               y2={scaleY(0, min, span, height, padding)}
             />
             <text x={width / 2} y={height - 6} textAnchor="middle">
-              走行位置比
+              {ja.resultsPanel.tables.influenceAxis.x}
             </text>
             <text x={12} y={height / 2} textAnchor="middle" transform={`rotate(-90 12 ${height / 2})`}>
-              影響値
+              {ja.resultsPanel.tables.influenceAxis.y}
             </text>
             <text x={padding} y={height - padding + 14} textAnchor="middle">
-              0
+              {ja.resultsPanel.tables.influenceAxis.origin}
             </text>
             <text x={width - padding} y={height - padding + 14} textAnchor="middle">
-              1
+              {ja.resultsPanel.tables.influenceAxis.unit}
             </text>
             <text x={padding - 6} y={scaleY(max, min, span, height, padding) + 4} textAnchor="end">
               {formatNumber(max)}
@@ -517,7 +517,7 @@ function InfluenceChart({
             ))}
           </svg>
           {visibleSeries.length === 0 ? (
-            <div className="empty-state compact-empty">表示する系列を選択してください。</div>
+            <div className="empty-state compact-empty">{ja.resultsPanel.tables.influenceNoSeriesSelected}</div>
           ) : (
             <div className="chart-legend">
               {visibleSeries.map((item, index) => (
@@ -559,7 +559,8 @@ function CompactTable({
   rows,
   columns,
   onRowClick,
-  emptyMessage = "行がありません。",
+  emptyMessage = ja.resultsPanel.empty,
+  // Default text shown when rows is empty; callers may pass a more specific message.
 }: {
   title: string;
   rows: Array<Record<string, unknown>>;
@@ -602,11 +603,11 @@ function MessageTable({ messages, empty }: { messages: StructuredMessage[]; empt
     <table className="message-table">
       <thead>
         <tr>
-          <th>説明</th>
-          <th>コード</th>
-          <th>場所</th>
-          <th>対象</th>
-          <th>詳細</th>
+          <th>{ja.resultsPanel.messageTable.description}</th>
+          <th>{ja.resultsPanel.messageTable.code}</th>
+          <th>{ja.resultsPanel.messageTable.path}</th>
+          <th>{ja.resultsPanel.messageTable.target}</th>
+          <th>{ja.resultsPanel.messageTable.detail}</th>
         </tr>
       </thead>
       <tbody>
@@ -633,61 +634,7 @@ function formatCell(value: unknown): string {
 }
 
 function columnLabel(column: string): string {
-  const labels: Record<string, string> = {
-    nodeId: "節点ID",
-    memberId: "部材ID",
-    component: "成分",
-    magnitude: "並進合成",
-    station: "位置",
-    ratio: "位置比",
-    target: "系列",
-    type: "種別",
-    label: "系列名",
-    maxAbs: "最大絶対値",
-    min: "最小",
-    max: "最大",
-    value: "値",
-    direction: "方向",
-    totalMass: "総質量",
-    method: "方法",
-    ux: "UX",
-    uy: "UY",
-    uz: "UZ",
-    rx: "RX",
-    ry: "RY",
-    rz: "RZ",
-    fx: "Fx",
-    fy: "Fy",
-    fz: "Fz",
-    mx: "Mx",
-    my: "My",
-    mz: "Mz",
-    i: "I端",
-    j: "J端",
-    modeNo: "Mode",
-    eigenvalue: "λ",
-    circularFrequency: "ω",
-    frequency: "f",
-    period: "T",
-    modalMass: "モード質量",
-    spectralAcceleration: "Sa",
-    maxDisplacement: "最大変位 (m/rad)",
-    maxReaction: "最大反力 (kN, kN·m)",
-    maxMemberForce: "最大断面力 (kN, kN·m)",
-    participationFactorX: "刺激係数 X",
-    participationFactorY: "刺激係数 Y",
-    participationFactorZ: "刺激係数 Z",
-    effectiveMassRatioX: "有効質量比 X",
-    effectiveMassRatioY: "有効質量比 Y",
-    effectiveMassRatioZ: "有効質量比 Z",
-    effectiveMassX: "有効質量 X",
-    effectiveMassY: "有効質量 Y",
-    effectiveMassZ: "有効質量 Z",
-    cumulativeEffectiveMassRatioX: "累積参加率 X",
-    cumulativeEffectiveMassRatioY: "累積参加率 Y",
-    cumulativeEffectiveMassRatioZ: "累積参加率 Z",
-  };
-  return labels[column] ?? column;
+  return ja.resultsPanel.columns[column] ?? column;
 }
 
 function preferredResultView(analysisType: string, availableViews: ResultViewKey[]): ResultViewKey {
@@ -703,43 +650,15 @@ function preferredResultView(analysisType: string, availableViews: ResultViewKey
 }
 
 function analysisTypeLabel(analysisType: string): string {
-  const labels: Record<string, string> = {
-    linear_static: "線形静的",
-    eigen: "固有値",
-    response_spectrum: "応答スペクトル",
-    responseSpectrum: "応答スペクトル",
-    influence_line: "影響線",
-  };
-  return labels[analysisType] ?? analysisType;
+  return ja.resultsPanel.analysisType[analysisType] ?? analysisType;
 }
 
 function statusLabel(status: string): string {
-  const labels: Record<string, string> = {
-    success: "成功",
-    warning: "警告あり",
-    failed: "失敗",
-  };
-  return labels[status] ?? status;
+  return ja.resultsPanel.statusLabel[status] ?? status;
 }
 
 function errorDescription(code: string): string {
-  const descriptions: Record<string, string> = {
-    INVALID_REFERENCE: "存在しない節点、部材、材料、断面などを参照しています。",
-    MODEL_UNSTABLE: "支点条件が不足しています。",
-    SOLVER_ERROR: "解析ソルバでエラーが発生しました。",
-    SCHEMA_ERROR: "入力データの形式に誤りがあります。",
-    DUPLICATE_ID: "同じIDが複数使用されています。",
-    INVALID_VALUE: "数値が未設定、範囲外、または不正です。",
-    ZERO_LENGTH_MEMBER: "部材のI端とJ端が同じ位置です。",
-    POSTPROCESS_ERROR: "解析結果の整理中にエラーが発生しました。",
-    DISCONNECTED_NODE: "部材に接続されていない節点があります。",
-    WEBGL_INIT_FAILED: "3D表示を初期化できませんでした。",
-    NETWORK_ERROR: "APIサーバーに接続できません。",
-    VALIDATION_API_ERROR: "入力チェックAPIでエラーが発生しました。",
-    ANALYSIS_API_ERROR: "解析実行APIでエラーが発生しました。",
-    PROJECT_OPEN_ERROR: "project.jsonを開けませんでした。",
-  };
-  return descriptions[code] ?? "入力内容を確認してください。";
+  return ja.resultsPanel.errorDescriptions[code] ?? ja.common.pleaseCheckInput;
 }
 
 function formatNumber(value: number): string {

@@ -1,3 +1,4 @@
+﻿import { ja } from "../../i18n/ja";
 import type { BridgeProject, Span } from "../types";
 import { addSpan, removeSpan, totalLength } from "../BridgeWizardState";
 
@@ -19,14 +20,14 @@ export function Step2SpanSetting({ project, onChange }: Props) {
   const total = totalLength(project.spans);
   return (
     <div className="bw-step bw-step-span">
-      <h2>Step 2 / 6 支間設定</h2>
-      <p className="bw-hint">橋軸方向の支間長さを設定してください。支間の追加・削除ができます。</p>
+      <h2>{ja.bridgeSteps.step2.title}</h2>
+      <p className="bw-hint">{ja.bridgeSteps.step2.hint}</p>
       <table className="bw-table">
         <thead>
           <tr>
-            <th>支間</th>
-            <th>支間長 (m)</th>
-            <th>オフセット (m)</th>
+            <th>{ja.bridgeSteps.step2.headerIndex}</th>
+            <th>{ja.bridgeSteps.step2.headerLength}</th>
+            <th>{ja.bridgeSteps.step2.headerOffset}</th>
             <th />
           </tr>
         </thead>
@@ -72,7 +73,7 @@ export function Step2SpanSetting({ project, onChange }: Props) {
                     type="button"
                     onClick={() => onChange({ ...project, spans: removeSpan(project.spans, sp.index) })}
                   >
-                    削除
+                    {ja.common.remove}
                   </button>
                 )}
               </td>
@@ -85,11 +86,11 @@ export function Step2SpanSetting({ project, onChange }: Props) {
         className="bw-button-primary"
         onClick={() => onChange({ ...project, spans: addSpan(project.spans) })}
       >
-        + 支間追加
+        {ja.bridgeSteps.step2.addSpan}
       </button>
       <div className="bw-summary">
-        <strong>合計橋長: {total.toFixed(3)} m</strong>
-        <span>（{project.spans.length} 支間）</span>
+        <strong>{ja.bridgeSteps.step2.totalBridgeLength(total.toFixed(3))}</strong>
+        <span>{ja.bridgeSteps.step2.totalSpans(project.spans.length)}</span>
       </div>
     </div>
   );

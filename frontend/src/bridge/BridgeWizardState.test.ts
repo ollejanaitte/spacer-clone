@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import {
   WIZARD_STEPS,
-  STEP_TITLES,
+  stepTitle,
   addSpan,
   appendLine,
   computeImpactFactor,
@@ -18,7 +18,7 @@ import type { BridgeLine, BridgeProject } from "./types";
 describe("BridgeWizardState", () => {
   it("exposes 6 wizard steps", () => {
     expect(WIZARD_STEPS).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(Object.keys(STEP_TITLES)).toHaveLength(6);
+    expect(Array.from(WIZARD_STEPS)).toHaveLength(6);
   });
 
   it("creates a sensible default bridge project", () => {

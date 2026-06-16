@@ -1,10 +1,11 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import { createDefaultProject } from "../data/defaultProject";
 import type { ProjectModel } from "../types";
+import { ja } from "../i18n/ja";
 import { PropertyPanel } from "./PropertyPanel";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT =
@@ -27,11 +28,11 @@ describe("PropertyPanel response spectrum settings", () => {
 
     renderPanel(project, (next) => changes.push(next));
 
-    expect(input("モード数").value).toBe("3");
-    expect(select("方向").value).toBe("X");
-    expect(input("減衰比").value).toBe("0.05");
-    expect(input("目標累積有効質量比").value).toBe("0.9");
-    expect(input("スペクトルケースID").value).toBe("spec-1");
+    expect(input(ja.propertyPanel.modeCountAriaLabel).value).toBe("3");
+    expect(select(ja.propertyPanel.directionAriaLabel).value).toBe("X");
+    expect(input(ja.propertyPanel.dampingRatioAriaLabel).value).toBe("0.05");
+    expect(input(ja.propertyPanel.targetCumulativeMassRatioAriaLabel).value).toBe("0.9");
+    expect(input(ja.propertyPanel.spectrumCaseIdAriaLabel).value).toBe("spec-1");
     expect(spectrumRows()).toHaveLength(3);
     expect(project.analysisSettings.responseSpectrum).toBeUndefined();
     expect(changes).toEqual([]);
@@ -56,17 +57,17 @@ describe("PropertyPanel response spectrum settings", () => {
 
     renderPanel(current, onChange);
 
-    change(input("モード数"), "5");
+    change(input(ja.propertyPanel.modeCountAriaLabel), "5");
     renderPanel(current, onChange);
-    change(select("方向"), "Z");
+    change(select(ja.propertyPanel.directionAriaLabel), "Z");
     renderPanel(current, onChange);
-    change(input("減衰比"), "0.03");
+    change(input(ja.propertyPanel.dampingRatioAriaLabel), "0.03");
     renderPanel(current, onChange);
-    change(input("目標累積有効質量比"), "0.95");
+    change(input(ja.propertyPanel.targetCumulativeMassRatioAriaLabel), "0.95");
     renderPanel(current, onChange);
-    change(input("スペクトルケースID"), "design-spectrum");
+    change(input(ja.propertyPanel.spectrumCaseIdAriaLabel), "design-spectrum");
     renderPanel(current, onChange);
-    change(select("質量ケース"), "mass-2");
+    change(select(ja.propertyPanel.massCaseAriaLabel), "mass-2");
 
     expect(current.analysisSettings.responseSpectrum).toMatchObject({
       massCaseId: "mass-2",
@@ -86,7 +87,7 @@ describe("PropertyPanel response spectrum settings", () => {
     };
     renderPanel(current, onChange);
 
-    click(button("行を追加"));
+    click(button(ja.propertyPanel.rowAdd));
     renderPanel(current, onChange);
     expect(spectrumRows()).toHaveLength(4);
 
@@ -102,7 +103,7 @@ describe("PropertyPanel response spectrum settings", () => {
     renderPanel(current, onChange);
 
     const deleteButtons = document.querySelectorAll<HTMLButtonElement>(
-      '.response-spectrum-settings button[title="行を削除"]',
+      `button[title="${ja.propertyPanel.rowDeleteTitle}"]`,
     );
     click(deleteButtons[1]);
 
@@ -119,8 +120,8 @@ describe("PropertyPanel response spectrum settings", () => {
 
     renderPanel(project, () => undefined);
 
-    expect(select("質量ケース").disabled).toBe(true);
-    expect(document.body.textContent).toContain("先に質量ケースを登録してください。");
+    expect(select(ja.propertyPanel.massCaseAriaLabel).disabled).toBe(true);
+    expect(document.body.textContent).toContain(ja.propertyPanel.emptyState);
   });
 });
 

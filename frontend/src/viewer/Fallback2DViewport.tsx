@@ -1,3 +1,4 @@
+﻿import { ja } from "../i18n/ja";
 import type { NodalLoad, NodeItem, ProjectModel } from "../types";
 import type { ThreeViewportProps, ViewerSelection } from "./types";
 
@@ -31,7 +32,7 @@ export function Fallback2DViewport({
   );
 
   return (
-    <div className="fallback2d-viewport" aria-label="2D簡易モデル表示">
+    <div className="fallback2d-viewport" aria-label={ja.viewer.controlPanelTitle + " (2D)"}>
       <svg
         role="img"
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -104,7 +105,7 @@ export function Fallback2DViewport({
             );
           })}
       </svg>
-      {project.nodes.length === 0 && <div className="fallback-empty">表示できる節点・部材がありません。</div>}
+      {project.nodes.length === 0 && <div className="fallback-empty">{ja.viewer.messages.emptyNodesMembers}</div>}
     </div>
   );
 }

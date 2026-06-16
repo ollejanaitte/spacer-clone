@@ -1,4 +1,5 @@
-import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves, Activity } from "lucide-react";
+﻿import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves, Activity } from "lucide-react";
+import { ja } from "../i18n/ja";
 
 type ToolbarProps = {
   projectName: string;
@@ -23,6 +24,8 @@ type ToolbarProps = {
   onExportResultPdf: () => void;
   onOpenBridgeWizard: () => void;
 };
+
+const t = ja.toolbar;
 
 export function Toolbar({
   projectName,
@@ -50,24 +53,24 @@ export function Toolbar({
   return (
     <header className="toolbar">
       <div className="project-strip">
-        <span className="app-mark">SC</span>
+        <span className="app-mark">{ja.app.appMark}</span>
         <div>
           <h1>{projectName}</h1>
           <p>
-            {dirty ? "未保存の変更あり" : "保存済み"} / {validationStatus} / {analysisStatus}
+            {dirty ? t.unsavedChanges : t.saved} / {validationStatus} / {analysisStatus}
           </p>
-          <p className="app-version" aria-label="app-version">Version {appVersion}</p>
+          <p className="app-version" aria-label="app-version">{ja.app.versionPrefix} {appVersion}</p>
         </div>
       </div>
       <div className="toolbar-actions">
         <div className="toolbar-group">
-          <button type="button" onClick={onNew} title="新しいモデルを作成します。">
+          <button type="button" onClick={onNew} title={t.newTitle}>
             <RotateCcw size={16} />
-            新規
+            {t.newButton}
           </button>
-          <label className="button-like" title="ローカルPC上の project.json を開きます。">
+          <label className="button-like" title={t.openTitle}>
             <FolderOpen size={16} />
-            開く
+            {t.openButton}
             <input
               type="file"
               accept="application/json,.json"
@@ -81,52 +84,52 @@ export function Toolbar({
           <button
             type="button"
             onClick={onOpenBridgeWizard}
-            title="橋梁3D骨組モデルをウィザード形式で作成します。"
+            title={t.bridgeWizardTitle}
             data-testid="open-bridge-wizard"
           >
             <LineChart size={16} />
-            橋梁モデル作成
+            {t.bridgeWizardButton}
           </button>
-          <button type="button" onClick={onSave} title="現在のモデルを project.json として保存します。">
+          <button type="button" onClick={onSave} title={t.saveTitle}>
             <Save size={16} />
-            保存
+            {t.saveButton}
           </button>
         </div>
         <div className="toolbar-group">
-          <button type="button" onClick={onValidate} title="入力データに不足や誤りがないか確認します。">
+          <button type="button" onClick={onValidate} title={t.validateTitle}>
             <ShieldCheck size={16} />
-            入力チェック
+            {t.validateButton}
           </button>
-          <button type="button" onClick={onRun} disabled={!canRun} title="線形静的解析を実行します。">
+          <button type="button" onClick={onRun} disabled={!canRun} title={t.runStaticTitle}>
             <Play size={16} />
-            静的解析
+            {t.runStaticButton}
           </button>
-          <button type="button" onClick={onRunEigen} disabled={!canRun} title="固有値解析を実行します。">
+          <button type="button" onClick={onRunEigen} disabled={!canRun} title={t.runEigenTitle}>
             <Waves size={16} />
-            固有値
+            {t.runEigenButton}
           </button>
-          <button type="button" onClick={onRunResponseSpectrum} disabled={!canRun} title="応答スペクトル解析を実行します。">
+          <button type="button" onClick={onRunResponseSpectrum} disabled={!canRun} title={t.runResponseTitle}>
             <Activity size={16} />
-            応答
+            {t.runResponseButton}
           </button>
-          <button type="button" onClick={onRunInfluence} disabled={!canRun} title="選択部材の影響線解析を実行します。">
+          <button type="button" onClick={onRunInfluence} disabled={!canRun} title={t.runInfluenceTitle}>
             <LineChart size={16} />
-            影響線
+            {t.runInfluenceButton}
           </button>
         </div>
-        <div className="toolbar-group output-group" aria-label="結果出力">
-          <span className="toolbar-group-label">出力</span>
-          <button type="button" onClick={onExportResultCsv} disabled={!canExportCsv} title="解析結果をCSVで保存します。">
+        <div className="toolbar-group output-group" aria-label={t.outputGroupAriaLabel}>
+          <span className="toolbar-group-label">{t.outputGroupLabel}</span>
+          <button type="button" onClick={onExportResultCsv} disabled={!canExportCsv} title={t.exportCsvTitle}>
             <Download size={16} />
-            CSV
+            {t.exportCsvButton}
           </button>
-          <button type="button" onClick={onExportResultPdf} disabled={!canExportPdf} title="解析結果をPDF帳票として出力します。">
+          <button type="button" onClick={onExportResultPdf} disabled={!canExportPdf} title={t.exportPdfTitle}>
             <FileText size={16} />
-            PDF帳票
+            {t.exportPdfButton}
           </button>
-          <button type="button" onClick={onExportResultJson} disabled={!canExportResults} title="解析結果をJSONで保存します。">
+          <button type="button" onClick={onExportResultJson} disabled={!canExportResults} title={t.exportJsonTitle}>
             <Download size={16} />
-            JSON
+            {t.exportJsonButton}
           </button>
         </div>
       </div>

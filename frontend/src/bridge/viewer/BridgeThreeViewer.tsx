@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
+import { ja } from "../../i18n/ja";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type {
@@ -220,7 +221,7 @@ export function BridgeThreeViewer({
               const defaultType: BridgeLineType = "traffic";
               stateRef.current.onCreateLine({
                 type: defaultType,
-                name: `ライン ${stateRef.current.project.lines.length + 1}`,
+                name: ja.bridgeViewer.defaultLineName(stateRef.current.project.lines.length + 1),
                 points: [start, end],
               });
             }
@@ -306,9 +307,9 @@ export function BridgeThreeViewer({
     <div className="bw-viewer">
       <div ref={hostRef} className="bw-viewer-canvas" />
       <div className="bw-viewer-hint">
-        <span>モード: <strong>{mode}</strong></span>
-        {pendingStart && <span>始点: {pendingStart.map((v) => v.toFixed(2)).join(", ")} — 終点クリックで確定</span>}
-        {!pendingStart && mode === "draw_line" && <span>始点クリックで開始</span>}
+        <span>{ja.bridgeViewer.hintMode}: <strong>{mode}</strong></span>
+        {pendingStart && <span>{ja.bridgeViewer.hintStart}: {pendingStart.map((v) => v.toFixed(2)).join(", ")} — {ja.bridgeViewer.hintClickEnd}</span>}
+        {!pendingStart && mode === "draw_line" && <span>{ja.bridgeViewer.hintClickStart}</span>}
       </div>
     </div>
   );
