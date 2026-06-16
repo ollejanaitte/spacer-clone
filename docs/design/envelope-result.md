@@ -1,12 +1,12 @@
-# 包絡結果設計
+﻿# Envelope Result Design
 
-## 1. 目的
+## 1. Purpose
 
-影響線解析と移動荷重解析から得られる結果を、影響線結果、移動履歴、包絡結果、最不利載荷位置として保存・表示・出力するためのデータ構造を定義する。同時性断面力と同時性反力はPhase 2で扱う。
+This document defines the data structures used to save, display, and output the results obtained from influence line analysis and moving load analysis: the influence line result, the moving load history, the envelope result, and the worst-case loading position. Concurrent section forces and concurrent reactions are handled in Phase 2.
 
-## 2. 影響線結果
+## 2. Influence Line Result
 
-影響線結果は、単位荷重を各stationに置いたときの対象レスポンス値である。
+The influence line result is the target response value when a unit load is placed at each station.
 
 ```json
 {
@@ -24,7 +24,7 @@
 }
 ```
 
-`targetResults` はtargetごとにstation順の値配列を保持する。
+`targetResults` holds the per-target value arrays in station order.
 
 ```json
 {
@@ -33,13 +33,13 @@
 }
 ```
 
-この形式はグラフ表示、CSV出力、包絡処理を単純にし、targetごとの履歴管理を明確にする。`stationIndex` は配列アクセス用の補助情報であり、結果同定の基本キーは `lineId + station` とする。
+This format keeps the graph display, CSV output, and envelope processing simple, and clarifies the per-target history management. `stationIndex` is auxiliary information for array access. The basic key for identifying a result is `lineId + station`.
 
-## 3. 移動履歴
+## 3. Moving Load History
 
-移動履歴は、実荷重を各位置へ移動させたときのレスポンス列である。
+The moving load history is the response sequence when a real load is moved to each position.
 
-MVPでは単一集中荷重のため、荷重位置はstationと一致する。
+In the MVP, with a single concentrated load, the load position coincides with the station.
 
 ```json
 {
@@ -66,11 +66,11 @@ MVPでは単一集中荷重のため、荷重位置はstationと一致する。
 }
 ```
 
-履歴は出力サイズが大きくなるため、APIオプションで省略可能にする。
+The history is large, so it is made optional through an API option.
 
-## 4. 包絡結果
+## 4. Envelope Result
 
-包絡結果は、対象レスポンスごとの最大値、最小値、その発生位置を持つ。
+The envelope result holds the maximum and minimum value of each target response and the station at which it occurs.
 
 ```json
 {
@@ -93,38 +93,38 @@ MVPでは単一集中荷重のため、荷重位置はstationと一致する。
 }
 ```
 
-最大最小は符号付き値で判定する。絶対値最大は別フィールドとして将来追加できる。
+Max and min are determined on signed values. The absolute-value max can be added later as a separate field.
 
-## 5. 最不利載荷位置
+## 5. Worst-case Loading Position
 
-最不利載荷位置は、対象レスポンスに対して最大または最小を発生させる荷重配置である。
+The worst-case loading position is the load configuration that produces the maximum or minimum of a target response.
 
-保持項目:
+Fields kept:
 
 - `targetId`
-- `criterion`: `max` または `min`
+- `criterion`: `max` or `min`
 - `value`
 - `station`
 - `loadPositions`
 - `influenceValues`
 
-将来の複数軸、複数車線では、最不利位置は単一stationではなく荷重配置全体になる。
+For future multi-axle and multi-lane cases, the worst-case position is the entire load configuration rather than a single station.
 
-## 6. 同時性断面力
+## 6. Concurrent Section Forces
 
-同時性断面力はPhase 2で扱う。MVPの結果構造には含めない。
+Concurrent section forces are handled in Phase 2. They are not included in the MVP result structure.
 
-## 7. 同時性反力
+## 7. Concurrent Reactions
 
-同時性反力はPhase 2で扱う。MVPの結果構造には含めない。
+Concurrent reactions are handled in Phase 2. They are not included in the MVP result structure.
 
-## 8. 結果API
+## 8. Result API
 
 ### POST /api/moving-load/run
 
-移動荷重解析を実行し、影響線、履歴、包絡を返す。
+Runs moving load analysis and returns the influence line, the history, and the envelope.
 
-オプション:
+Options:
 
 ```json
 {
@@ -134,15 +134,15 @@ MVPでは単一集中荷重のため、荷重位置はstationと一致する。
 }
 ```
 
-履歴は大きくなるため、デフォルトはMVP実装時に性能を見て決める。同時性結果のオプションはPhase 2で追加する。
+The history is large, so the default is decided at MVP implementation time based on performance. The option for concurrent results is added in Phase 2.
 
 ### GET /api/moving-load/results/{resultId}
 
-将来の保存済み結果取得API。MVPでは未実装でもよい。
+Future API for retrieving a saved result. May remain unimplemented in the MVP.
 
-## 9. CSV出力
+## 9. CSV Output
 
-CSVは以下の複数セクション構成とする。
+The CSV has multiple sections.
 
 ```text
 [InfluenceLine]
@@ -155,9 +155,9 @@ caseId,station,targetId,value
 caseId,targetId,criterion,value,station
 ```
 
-CSV出力時の原則:
+CSV output rules:
 
-- `NaN` と `Infinity` は出力しない。
-- 単位はヘッダまたはメタ情報に含める。
-- プリセットを使用した場合は `presetId`、`edition`、`revision` をメタ情報へ出す。
-- MVPではInfluenceLine、MovingLoadHistory、Envelopeを優先する。
+- `NaN` and `Infinity` are not emitted.
+- Units are included in the header or the metadata.
+- When a preset is used, `presetId`, `edition`, and `revision` are emitted in the metadata.
+- In the MVP, InfluenceLine, MovingLoadHistory, and Envelope are prioritized.

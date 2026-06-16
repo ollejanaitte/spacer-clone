@@ -1,14 +1,14 @@
-# mvp-implementation-roadmap.md
+﻿# mvp-implementation-roadmap.md
 
-# MVP統合実装ロードマップ
+# MVP Integrated Implementation Roadmap
 
-## 1. 目的
+## 1. Purpose
 
-本書は、三次元立体骨組解析ソフトのMVP実装順序を定義する統合ロードマップである。
+This document is the integrated roadmap that defines the implementation order of the 3D frame analysis software MVP.
 
-各設計書は作成済みであるため、本書では「何を、どの順番で、どの担当が実装するか」を明確化する。
+Each design document has already been written, so this document clarifies *what* is implemented, *in which order*, and *by which owner*.
 
-## 2. 参照設計書
+## 2. Reference Documents
 
 * `docs/design/result-schema.md`
 * `docs/design/result-visualization.md`
@@ -16,371 +16,369 @@
 * `docs/investigation/visualization-study.md`
 * `docs/design/eigen-analysis.md`
 * `docs/design/response-spectrum-analysis.md`
-* 影響線・移動荷重関連設計書
-* 保存・プロジェクト管理関連設計書
+* Influence line / moving load design documents
+* Save / project management design documents
 
-## 3. 基本方針
+## 3. Basic Policy
 
-MVPでは以下を優先する。
+In the MVP the following priority applies.
 
-1. 壊れない保存・読込
-2. 静的解析結果の安定表示
-3. 結果スキーマの統一
-4. 固有値解析
-5. 応答スペクトル解析
-6. 影響線解析
-7. PDF/CSV帳票
-8. DXFはMVP外
+1. Stable save / load
+2. Stable display of static analysis results
+3. Unified result schema
+4. Eigenvalue analysis
+5. Response spectrum analysis
+6. Influence line analysis
+7. PDF / CSV report
+8. DXF is out of scope for the MVP
 
-## 4. 実装順序
+## 4. Implementation Order
 
-## Phase 0: 現状固定
+## Phase 0: Lock the Current State
 
-### 担当
+### Owner
 
-MVP安定化・保存担当
+MVP stability / save owner.
 
-### 目的
+### Purpose
 
-現在動作している静的解析・保存・起動状態を壊さない。
+Do not regress the currently working static analysis, save, and startup behavior.
 
-### 作業
+### Tasks
 
-* 現在の動作確認
-* `npm run build` 確認
-* backendテスト確認
-* 保存・読込の既存仕様確認
-* 既存未コミット変更の確認
+* Verify the current behavior.
+* Confirm `npm run build`.
+* Confirm backend tests.
+* Confirm the existing save / load specification.
+* Confirm any uncommitted local changes.
 
-### 完了条件
+### Definition of Done
 
-* 既存の片持ち梁解析が動く
-* 保存・読込が動く
-* Electron起動が動く
-* 既存機能に回帰がない
+* The existing cantilever analysis still works.
+* Save / load still works.
+* Electron startup still works.
+* No regression in existing features.
 
-## Phase 1: Result Schema反映
+## Phase 1: Apply the Result Schema
 
-### 担当
+### Owner
 
-MVP安定化・保存担当
+MVP stability / save owner.
 
-### 目的
+### Purpose
 
-解析結果の共通データ構造を固定する。
+Fix the common data structure for analysis results.
 
-### 参照
+### Reference
 
 * `docs/design/result-schema.md`
 
-### 作業
+### Tasks
 
-* backendの解析結果レスポンスを確認
-* frontend型定義と照合
-* `AnalysisResult` 相当の型を整理
-* 既存API互換性を維持
+* Check the analysis result responses in the backend.
+* Cross-check with the frontend type definitions.
+* Organize the equivalent of `AnalysisResult`.
+* Preserve the existing API compatibility.
 
-### 禁止
+### Prohibited
 
-* 大規模API変更
-* 解析ロジック変更
-* UI全面変更
+* Large-scale API changes.
+* Changes to the analysis logic.
+* Wholesale UI changes.
 
-### 完了条件
+### Definition of Done
 
-* 静的解析結果がResult Schemaに近い形式で扱える
-* frontend/backendで型の意味が一致している
+* The static analysis result is handled in a form close to the result schema.
+* The frontend and the backend agree on the meaning of the types.
 
-## Phase 2: 静的解析結果表示MVP
+## Phase 2: Static Analysis Result Display MVP
 
-### 担当
+### Owner
 
-結果・図化・帳票アーキテクト
+Results / drawing / report architect.
 
-### 目的
+### Purpose
 
-既存の静的解析結果を画面上で確認可能にする。
+Allow the existing static analysis results to be reviewed in the UI.
 
-### 参照
+### Reference
 
 * `docs/design/result-visualization.md`
 * `docs/design/result-schema.md`
 
-### 実装対象
+### Targets
 
-* 変位表
-* 反力表
-* 部材力表
-* 変形図
-* 反力図
-* 軸力図
-* 曲げモーメント図
+* Displacement table.
+* Reaction table.
+* Member force table.
+* Deformed shape.
+* Reaction diagram.
+* Axial force diagram.
+* Bending moment diagram.
 
-### MVP対象断面力
+### Section Forces in Scope for the MVP
 
 * `N`
 * `My`
 * `Mz`
 
-### 完了条件
+### Definition of Done
 
-* 荷重ケースを選択できる
-* 結果表と図が同じケースを参照する
-* 変形倍率を変更できる
-* 主要結果が目視確認できる
+* The user can select a load case.
+* The result tables and the diagrams reference the same case.
+* The deformation scale is changeable.
+* The main results can be visually confirmed.
 
-## Phase 3: 固有値解析MVP
+## Phase 3: Eigenvalue Analysis MVP
 
-### 担当
+### Owner
 
-動的解析アーキテクト
+Dynamic analysis architect.
 
-### 目的
+### Purpose
 
-固有値・固有モードを計算し、表示できるようにする。
+Compute eigenvalues and mode shapes and display them.
 
-### 参照
+### Reference
 
 * `docs/design/eigen-analysis.md`
 * `docs/design/result-schema.md`
 
-### 実装対象
+### Targets
 
-* 質量入力
-* 固有値解析
-* 固有周期
-* 固有振動数
-* モードベクトル
-* 有効質量比
-* モード図表示
+* Mass input.
+* Eigenvalue analysis.
+* Natural period.
+* Natural frequency.
+* Mode vectors.
+* Effective mass ratio.
+* Mode shape display.
 
-### 完了条件
+### Definition of Done
 
-* 固有モード一覧を表示できる
-* モード図を静止表示できる
-* 質量ゼロDOFを適切に扱える
+* The list of eigen modes can be displayed.
+* Mode shapes can be displayed as a still image.
+* Mass-zero DOFs are handled appropriately.
 
-## Phase 4: 応答スペクトル解析MVP
+## Phase 4: Response Spectrum Analysis MVP
 
-### 担当
+### Owner
 
-動的解析アーキテクト
+Dynamic analysis architect.
 
-### 目的
+### Purpose
 
-固有値解析結果を用いて応答スペクトル解析を行う。
+Use the eigenvalue analysis results to perform a response spectrum analysis.
 
-### 参照
+### Reference
 
 * `docs/design/response-spectrum-analysis.md`
 * `docs/design/result-schema.md`
 
-### 実装対象
+### Targets
 
-* スペクトル入力
-* 周期補間
-* モード別応答
-* SRSS合成
-* 最大応答値
-* 変位・反力・断面力の結果出力
+* Spectrum input.
+* Period interpolation.
+* Per-mode response.
+* SRSS combination.
+* Maximum response.
+* Displacement, reaction, and section force output.
 
-### MVP対象外
+### Out of Scope for the MVP
 
 * CQC
-* 減衰行列
-* 時刻歴解析
+* Damping matrix
+* Time history analysis
 
-### 完了条件
+### Definition of Done
 
-* SRSS結果を表示できる
-* 静的結果と同じResult Schema系列で扱える
+* SRSS results can be displayed.
+* The results can be handled in the same Result Schema lineage as the static results.
 
-## Phase 5: 影響線解析MVP
+## Phase 5: Influence Line Analysis MVP
 
-### 担当
+### Owner
 
-荷重・影響線アーキテクト
+Load / influence line architect.
 
-### 目的
+### Purpose
 
-橋梁活荷重検討の基礎となる影響線を作成する。
+Build the influence lines that form the basis of bridge live load studies.
 
-### 実装対象
+### Targets
 
-* 載荷点定義
-* 単位荷重移動
-* 節点変位影響線
-* 反力影響線
-* 部材力影響線
-* 2Dグラフ表示
+* Loading point definition.
+* Unit load movement.
+* Nodal displacement influence line.
+* Reaction influence line.
+* Member force influence line.
+* 2D graph display.
 
-### MVP対象外
+### Out of Scope for the MVP
 
-* 複雑な道路橋活荷重自動載荷
-* 包絡図
-* 同時性断面力
+* Complex road-bridge live load automation.
+* Envelope diagrams.
+* Concurrent section forces.
 
-### 完了条件
+### Definition of Done
 
-* 任意部材・任意成分の影響線を表示できる
+* Influence lines for any member and any component can be displayed.
 
-## Phase 6: 帳票・CSV出力MVP
+## Phase 6: Report / CSV Output MVP
 
-### 担当
+### Owner
 
-結果・図化・帳票アーキテクト
+Results / drawing / report architect.
 
-### 目的
+### Purpose
 
-解析結果を外部確認可能な形式で出力する。
+Output analysis results in a form that can be reviewed externally.
 
-### 参照
+### Reference
 
 * `docs/design/report-drawing-output.md`
 * `docs/design/result-schema.md`
 
-### 実装対象
+### Targets
 
-* 変位CSV
-* 反力CSV
-* 部材力CSV
-* 簡易PDF帳票
+* Displacement CSV.
+* Reaction CSV.
+* Member force CSV.
+* Simple PDF report.
 
-### MVP対象外
+### Out of Scope for the MVP
 
 * DXF
 * Word
 * Excel
-* 設計計算書
+* Design calculation sheets
 
-### 完了条件
+### Definition of Done
 
-* 静的解析結果をCSV出力できる
-* 簡易PDFを生成できる
+* Static analysis results can be exported to CSV.
+* A simple PDF can be generated.
 
-## Phase 7: UI整理
+## Phase 7: UI Cleanup
 
-### 担当
+### Owner
 
-UI/UX・全体構造アーキテクト
+UI / UX and overall structure architect.
 
-### 目的
+### Purpose
 
-実装済み機能を整理し、操作しやすくする。
+Organize the implemented features to make the product easier to operate.
 
-### 作業
+### Tasks
 
-* 結果ツリー整理
-* 右プロパティパネル整理
-* 表示設定整理
-* メニュー整理
+* Clean up the result tree.
+* Clean up the right property panel.
+* Clean up the display settings.
+* Clean up the menu.
 
-### 注意
+### Note
 
-UI整理は最後に行う。
+UI cleanup is the last step. Do not make large UI changes before the analysis, save, and result schema are stable.
 
-解析・保存・結果スキーマが固まる前にUIを大きく変更しない。
+## 5. Agent Start Order
 
-## 5. エージェント起動順序
-
-推奨順序は以下とする。
+The recommended order is:
 
 ```text
-1. MVP安定化・保存担当
-2. 結果・図化・帳票アーキテクト
-3. 動的解析アーキテクト
-4. 荷重・影響線アーキテクト
-5. UI/UX・全体構造アーキテクト
+1. MVP stability / save owner
+2. Results / drawing / report architect
+3. Dynamic analysis architect
+4. Load / influence line architect
+5. UI / UX and overall structure architect
 ```
 
-## 6. 理由
+## 6. Rationale
 
-### MVP安定化・保存担当を最初にする理由
+### Why the MVP stability / save owner goes first
 
-* 保存形式が不安定だと全機能が手戻りになる
-* Result Schema反映の土台になる
-* 既存の静的解析を壊さないことが最優先
+* If the save format is unstable, every other feature has to be redone.
+* It becomes the foundation for the Result Schema adoption.
+* Not regressing the existing static analysis is the top priority.
 
-### 結果・図化・帳票を次にする理由
+### Why results / drawing / report go next
 
-* 静的解析結果が見えないと後続機能の検証が難しい
-* 固有値・応答スペクトル・影響線も最終的に結果表示へ接続する
-* Result Schemaの妥当性を早期検証できる
+* Without a visible static analysis result, subsequent features are hard to verify.
+* Eigenvalue, response spectrum, and influence line analyses all connect to the result display in the end.
+* The Result Schema can be validated early.
 
-### 動的解析をその次にする理由
+### Why dynamic analysis goes after that
 
-* 固有値解析は応答スペクトル解析の前提
-* 結果表示基盤ができてからの方が検証しやすい
+* Eigenvalue analysis is the prerequisite of response spectrum analysis.
+* It is easier to verify once the result display infrastructure is in place.
 
-### 影響線を後にする理由
+### Why influence lines come later
 
-* 入力・表示・グラフ化が複雑
-* まず静的解析結果表示を固める方が安全
+* The input, the display, and the graph are all complex.
+* It is safer to stabilize the static analysis result display first.
 
-### UI/UXを最後にする理由
+### Why UI / UX is the last step
 
-* 機能構成が固まる前にUIを作り込むと手戻りが大きい
-* MVPでは見た目より計算・保存・結果確認を優先する
+* If the UI is polished before the features stabilize, rework is large.
+* In the MVP, calculation, save, and result inspection take priority over appearance.
 
-## 7. MVP完了条件
+## 7. MVP Definition of Done
 
-MVP完了は以下を満たす状態とする。
+The MVP is complete when the following are satisfied:
 
-* 3D骨組モデルを作成できる
-* 保存・読込できる
-* 静的解析を実行できる
-* 変位・反力・断面力を確認できる
-* 変形図・反力図・断面力図を表示できる
-* 固有値解析を実行できる
-* 固有モード図を表示できる
-* 応答スペクトル解析のSRSS結果を確認できる
-* 主要結果をCSV出力できる
-* 簡易PDF帳票を出力できる
+* A 3D frame model can be created.
+* It can be saved and loaded.
+* Static analysis can be run.
+* Displacements, reactions, and section forces can be reviewed.
+* The deformed shape, reaction diagram, and section force diagram can be displayed.
+* Eigenvalue analysis can be run.
+* The eigen mode shapes can be displayed.
+* The SRSS result of the response spectrum analysis can be reviewed.
+* The main results can be exported to CSV.
+* A simple PDF report can be generated.
 
-## 8. MVP対象外
+## 8. Out of Scope for the MVP
 
-以下はMVP対象外とする。
+The following are out of scope for the MVP:
 
-* DXF出力
-* 設計計算書自動生成
-* Word出力
-* Excel出力
+* DXF output
+* Automatic design calculation sheet generation
+* Word output
+* Excel output
 * CQC
-* 時刻歴応答解析
-* 高度な橋梁活荷重自動載荷
-* 包絡図
-* モードアニメーション
-* 高度なUIテーマ切替
+* Time history response analysis
+* Advanced bridge live load automation
+* Envelope diagrams
+* Mode animation
+* Advanced UI theme switching
 
-## 9. 実装時の共通禁止事項
+## 9. Common Prohibitions During Implementation
 
-* 設計書と矛盾する独自実装をしない
-* Result Schemaを無断で変更しない
-* 解析エンジンと表示処理を密結合しない
-* UI都合で解析結果形式を変えない
-* 大規模リファクタリングを同時に行わない
-* package追加は事前確認なしに行わない
+* Do not make custom implementations that contradict the design documents.
+* Do not change the Result Schema without authorization.
+* Do not tightly couple the analysis engine to the display layer.
+* Do not change the analysis result format for UI reasons.
+* Do not perform a large refactor at the same time.
+* Do not add a package without prior confirmation.
 
-## 10. 結論
+## 10. Conclusion
 
-MVP実装は、以下の順序で進める。
+The MVP is implemented in the following order.
 
 ```text
-保存安定化
+Save stability
 ↓
-Result Schema反映
+Result Schema adoption
 ↓
-静的解析結果表示
+Static analysis result display
 ↓
-固有値解析
+Eigenvalue analysis
 ↓
-応答スペクトル解析
+Response spectrum analysis
 ↓
-影響線解析
+Influence line analysis
 ↓
-CSV/PDF出力
+CSV / PDF output
 ↓
-UI整理
+UI cleanup
 ```
 
-本書を各Codexエージェントに渡し、担当範囲外の実装を避けるための統合方針として使用する。
+This document is handed to each Codex agent to keep each owner within scope.

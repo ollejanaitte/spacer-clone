@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
+import { ja } from "../../i18n/ja";
 import type { BridgeLine, BridgeLineType, BridgeProject } from "../types";
 import { BridgeThreeViewer, type ViewerMode } from "../viewer/BridgeThreeViewer";
 import { appendLine, removeLine } from "../BridgeWizardState";
@@ -46,15 +47,15 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
 
   return (
     <div className="bw-step bw-step-line">
-      <h2>Step 4 / 6 ライン設定 3D</h2>
+      <h2>{ja.bridgeSteps.step4.title}</h2>
       <p className="bw-hint">
-        3D ビューでラインを引き、荷重・走行・参照ラインを設定します。
+        {ja.bridgeSteps.step4.hint}
         <br />
-        <small>種別: traffic=緑, load=赤, reference=灰, selected=黄</small>
+        <small>{ja.bridgeSteps.step4.typeHint}</small>
       </p>
       <div className="bw-line-toolbar">
         <label>
-          種別:
+          {ja.bridgeSteps.step4.typeLabel}
           <select value={lineType} onChange={(e) => setLineType(e.target.value as BridgeLineType)}>
             {TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -62,12 +63,12 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
           </select>
         </label>
         <label>
-          名前:
+          {ja.bridgeSteps.step4.nameLabel}
           <input
             type="text"
             value={lineName}
             onChange={(e) => setLineName(e.target.value)}
-            placeholder="ライン名（任意）"
+            placeholder={ja.bridgeSteps.step4.namePlaceholder}
           />
         </label>
         <div className="bw-mode-buttons">
@@ -94,8 +95,8 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
         />
       </div>
       <div className="bw-line-list">
-        <h3>ライン一覧 ({project.lines.length})</h3>
-        {project.lines.length === 0 && <p className="bw-empty">ラインはまだありません。</p>}
+        <h3>{ja.bridgeSteps.step4.listHeading(project.lines.length)}</h3>
+        {project.lines.length === 0 && <p className="bw-empty">{ja.bridgeSteps.step4.empty}</p>}
         {project.lines.map((ln) => (
           <div
             key={ln.id}
@@ -115,18 +116,18 @@ export function Step4LineSetting({ project, onChange, femModel }: Props) {
                 if (selectedId === ln.id) setSelectedId(null);
               }}
             >
-              削除
+              {ja.common.remove}
             </button>
           </div>
         ))}
       </div>
       {selected && (
         <div className="bw-line-detail">
-          <h4>選択中ライン</h4>
+          <h4>{ja.bridgeSteps.step4.selectedHeading}</h4>
           <p>ID: {selected.id}</p>
-          <p>種別: {selected.type}</p>
-          <p>始点: {selected.points[0].join(", ")}</p>
-          <p>終点: {selected.points[1].join(", ")}</p>
+          <p>{ja.bridgeSteps.step4.typeValue(selected.type)}</p>
+          <p>{ja.bridgeSteps.step4.startPoint(selected.points[0].join(", "))}</p>
+          <p>{ja.bridgeSteps.step4.endPoint(selected.points[1].join(", "))}</p>
         </div>
       )}
     </div>

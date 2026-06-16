@@ -3,15 +3,15 @@ import type { NodeItem, NodalLoad, MemberLoad } from "../types";
 import { isFiniteNumber } from "./threeUtils";
 
 /**
- * SPACER 由来のモデルでは、設計図面上の Y 軸と解析エンジン上の Y 軸の
- * 意味が逆になっているケースがあります。本関数は Viewer 表示時のみ
- * 表示座標を入れ替えるための純粋関数群です。
+ * SPACER-derived models sometimes have the Y axis inverted between
+ * the design drawing and the analysis engine. This module is a collection of
+ * pure functions that swap the display coordinates only at the Viewer stage.
  *
  *   OFF: model(x, y, z) -> viewer(x, y, z)
  *   ON : model(x, y, z) -> viewer(x, z, y)
  *
- * JSON に保存される nodes.x/y/z、解析 API への入力、解析結果
- * (ux/uy/uz, rx/ry/rz, 断面力成分) には一切影響を与えません。
+ * It does not affect the nodes.x/y/z persisted in JSON, the analysis API
+ * input, or the analysis result (ux/uy/uz, rx/ry/rz, section force components).
  */
 export type SpacerAxisSwap = "off" | "on";
 

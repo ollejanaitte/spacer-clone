@@ -1,39 +1,42 @@
-# 帳票・図面出力設計
+﻿# Report and Drawing Output Design
 
-## 1. 目的
+## 1. Purpose
 
-解析結果を帳票、図面、CSV、将来のPDF/DXF等へ展開するための責務分離を定義する。
+This document defines the responsibility split for expanding the analysis result into reports, drawings, CSV, and future PDF / DXF output.
 
-本設計は出力アーキテクチャの定義であり、実装、UI変更、API変更、ライブラリ追加は行わない。
+This design defines the output architecture. It does not perform implementation, UI changes, API changes, or library additions.
 
-## 2. 基本構成
+## 2. Basic Structure
 
-帳票・図面出力は以下の流れとする。
+Report and drawing output follows the flow below.
 
 ```text
 Result
-↓
+  |
+  v
 Drawing Model
-↓
+  |
+  v
 Report Model
-↓
+  |
+  v
 Export
 ```
 
-`Result` は [result-schema.md](result-schema.md) で定義する解析結果である。`Drawing Model` は図面化のための派生モデル、`Report Model` は帳票構成のための派生モデル、`Export` は出力形式への変換を担当する。
+`Result` is the analysis result defined in [result-schema.md](result-schema.md). `Drawing Model` is the derived model for drawing, `Report Model` is the derived model for the report layout, and `Export` is the conversion to the output format.
 
-## 3. 責務分担
+## 3. Responsibility Split
 
-| 層 | 責務 | 例 |
+| Layer | Responsibility | Examples |
 | --- | --- | --- |
-| Result | 解析結果の事実を保持する。 | 変位、反力、部材断面力、固有値解析結果、応答スペクトル結果、影響線結果 |
-| Drawing Model | 図面上の幾何、注記、図化系列を保持する。 | 変形図、断面力図、モード図、影響線図 |
-| Report Model | 帳票の章、表、図、注記を保持する。 | 結果一覧表、断面力表、固有値表、応答スペクトル表 |
-| Export | 出力形式へ変換する。 | CSV、PDF、DXF、画像、印刷用データ |
+| Result | Holds the fact of the analysis result. | Displacement, reaction, member section force, eigenvalue analysis result, response spectrum analysis result, influence line result |
+| Drawing Model | Holds the drawing geometry, annotations, and plotting series. | Deformed shape, section force diagram, mode shape, influence line diagram |
+| Report Model | Holds the report chapters, tables, figures, and notes. | Result list table, section force table, eigenvalue table, response spectrum table |
+| Export | Converts to the output format. | CSV, PDF, DXF, image, print-ready data |
 
 ## 4. Drawing Model
 
-Drawing Modelは、解析結果から図面要素へ変換した派生モデルである。線幅、色、フォントサイズなどの出力スタイルはDrawing ModelまたはExport設定に属し、Result Schemaには含めない。
+The Drawing Model is a derived model that converts the analysis result into drawing elements. Output style such as line width, color, and font size belongs to the Drawing Model or to the Export settings. It is not included in the Result Schema.
 
 ```ts
 export type DrawingModel = {
@@ -94,7 +97,7 @@ export type InfluenceLineDrawing = {
 
 ## 5. Report Model
 
-Report Modelは、帳票の章立て、表、図、注記を表す派生モデルである。帳票の見た目やページ割りはReport ModelまたはExport設定で扱い、Result Schemaには含めない。
+The Report Model is a derived model that represents the report chapters, tables, figures, and notes. The report appearance and page layout belong to the Report Model or to the Export settings. They are not included in the Result Schema.
 
 ```ts
 export type ReportModel = {
@@ -118,7 +121,7 @@ export type ReportBlock =
 
 ## 6. Export
 
-ExportはReport ModelまたはDrawing Modelを出力形式へ変換する責務を持つ。
+Export has the responsibility of converting the Report Model or the Drawing Model into the output format.
 
 ```ts
 export type ExportRequest = {
@@ -135,18 +138,18 @@ export type ExportResult = {
 };
 ```
 
-## 7. 出力対象
+## 7. Output Targets
 
-帳票・図面出力では以下を扱う。
+Report and drawing output covers:
 
-- 節点変位
-- 反力
-- 部材断面力 `N`, `Qy`, `Qz`, `Mx`, `My`, `Mz`
-- 固有値解析結果
-- 応答スペクトル解析結果
-- 影響線結果
+- Nodal displacement
+- Reaction
+- Member section force `N`, `Qy`, `Qz`, `Mx`, `My`, `Mz`
+- Eigenvalue analysis result
+- Response spectrum analysis result
+- Influence line result
 
-## 8. 関連文書
+## 8. Related Documents
 
 - [result-schema.md](result-schema.md)
 - [result-visualization.md](result-visualization.md)

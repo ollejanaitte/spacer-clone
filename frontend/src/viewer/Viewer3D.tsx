@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { ja } from "../i18n/ja";
 import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
@@ -11,10 +12,10 @@ import { ThreeViewport } from "./ThreeViewport";
 import { ViewerControls } from "./ViewerControls";
 
 export const webglFallbackMessage =
-  "3D表示の初期化に失敗しました。\n" +
-  "2D簡易表示に切り替えました。\n" +
-  "Electron版では GPU_MODE=compat-gpu-blocklist または compat-angle-gl を試してください。\n" +
-  "legacy-desktop-gl は最後の手段です。";
+  ja.viewer.messages.webglInitFailed + "\n" +
+  ja.viewer.messages.fallback2DSwitched + "\n" +
+  ja.viewer.messages.electronGpuHint + "\n" +
+  ja.viewer.messages.electronGpuLastResort;
 
 export function Viewer3D({
   project,
@@ -211,17 +212,17 @@ export function Viewer3D({
     <main className="viewer-shell">
       <div className="viewer-header">
         <div>
-          <h2>3D表示</h2>
+          <h2>{ja.viewer.controlPanelTitle}</h2>
           <p>{statusText(selection, hasResult)}</p>
         </div>
         <div className="viewer-stats">
-          <span>表示: {mode === "three" ? "3D" : "2D簡易"}</span>
+          <span>{ja.viewer.messages.displayMode(mode === "three" ? "3D" : ja.viewer.messages.fallback)}</span>
           <span>GPU: {gpuMode}</span>
-          <span>節点 {project.nodes.length}</span>
-          <span>部材 {project.members.length}</span>
-          <span>支点 {project.supports.length}</span>
-          <span>荷重 {project.nodalLoads.length + project.memberLoads.length}</span>
-          {animationOptions.enabled ? <span>アニメ: ON</span> : null}
+          <span>{ja.viewer.messages.nodeCount(project.nodes.length)}</span>
+          <span>{ja.viewer.messages.memberCount(project.members.length)}</span>
+          <span>{ja.viewer.messages.supportCount(project.supports.length)}</span>
+          <span>{ja.viewer.messages.loadCount(project.nodalLoads.length + project.memberLoads.length)}</span>
+          {animationOptions.enabled ? <span>{ja.viewer.messages.animationOn}</span> : null}
         </div>
       </div>
       <section className="viewer-body">
@@ -269,8 +270,16 @@ export function Viewer3D({
 }
 
 function statusText(selection: ViewerSelection, hasResult: boolean): string {
-  const selected = selection ? `${selection.type === "node" ? "節点" : "部材"} ${selection.id}` : "未選択";
-  return `${selected} / ${hasResult ? "変形図を表示できます" : "入力モデルを表示中"}`;
+  const typeLabel = selection
+    ? selection.type === "node"
+      ? ja.viewer.messages.nodeLabel
+      : ja.viewer.messages.memberLabel
+    : "";
+  const selected = selection ? `${typeLabel} ${selection.id}` : ja.viewer.messages.unselected;
+  const suffix = hasResult
+    ? ja.viewer.messages.deformedShapeAvailable
+    : ja.viewer.messages.inputModelShown;
+  return `${selected} / ${suffix}`;
 }
 
 function getGpuModeLabel(): string {

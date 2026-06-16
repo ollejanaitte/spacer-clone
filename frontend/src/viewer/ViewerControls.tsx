@@ -1,4 +1,5 @@
 ﻿﻿﻿﻿﻿import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
+import { ja } from "../i18n/ja";
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
@@ -70,27 +71,27 @@ export function ViewerControls({
   const availableModeNumbers = eigenModeNos.length > 0 ? eigenModeNos : [1, 2, 3];
 
   return (
-    <div className="viewer-controls" aria-label="表示操作">
-      <ControlGroup title="View">
+    <div className="viewer-controls" aria-label={ja.viewer.controls.ariaLabel}>
+      <ControlGroup title={ja.viewer.controls.view}>
         <div className="viewer-control-row icon-row">
-          <button type="button" title="モデル全体を表示" data-testid="view-fit" onClick={onFit}>
+          <button type="button" title={ja.viewer.controls.viewFit} data-testid="view-fit" onClick={onFit}>
             <LocateFixed size={16} />
           </button>
-          <button type="button" title="アイソメ表示" data-testid="view-iso" onClick={() => onCameraPreset("iso")}>
+          <button type="button" title={ja.viewer.controls.viewIso} data-testid="view-iso" onClick={() => onCameraPreset("iso")}>
             <Box size={16} />
           </button>
-          <button type="button" title="XY平面表示" data-testid="view-xy" onClick={() => onCameraPreset("xy")}>
+          <button type="button" title={ja.viewer.controls.viewXy} data-testid="view-xy" onClick={() => onCameraPreset("xy")}>
             XY
           </button>
-          <button type="button" title="YZ平面表示" data-testid="view-yz" onClick={() => onCameraPreset("yz")}>
+          <button type="button" title={ja.viewer.controls.viewYz} data-testid="view-yz" onClick={() => onCameraPreset("yz")}>
             YZ
           </button>
-          <button type="button" title="XZ平面表示" data-testid="view-xz" onClick={() => onCameraPreset("xz")}>
+          <button type="button" title={ja.viewer.controls.viewXz} data-testid="view-xz" onClick={() => onCameraPreset("xz")}>
             XZ
           </button>
         </div>
       </ControlGroup>
-      <ControlGroup title="Compare">
+      <ControlGroup title={ja.viewer.controls.compare}>
         <div className="viewer-control-row">
           <label className="viewer-toggle">
             <input
@@ -99,7 +100,7 @@ export function ViewerControls({
               checked={compareMode}
               onChange={(event) => onCompareModeChange(event.currentTarget.checked)}
             />
-            <span>Compare View</span>
+            <span>{ja.viewer.controls.compareView}</span>
           </label>
         </div>
         <div className="viewer-control-row">
@@ -110,11 +111,11 @@ export function ViewerControls({
               checked={cameraSync}
               onChange={(event) => onCameraSyncChange(event.currentTarget.checked)}
             />
-            <span>Camera Sync</span>
+            <span>{ja.viewer.controls.cameraSync}</span>
           </label>
         </div>
       </ControlGroup>
-      <ControlGroup title="Animation">
+      <ControlGroup title={ja.viewer.controls.animation}>
         <div className="viewer-control-row">
           <label className="viewer-toggle">
             <input
@@ -123,7 +124,7 @@ export function ViewerControls({
               checked={animationOptions.enabled}
               onChange={(event) => updateAnimation({ enabled: event.currentTarget.checked })}
             />
-            <span>Animation</span>
+            <span>{ja.viewer.controls.animationLabel}</span>
           </label>
           <label className="viewer-toggle">
             <input
@@ -132,13 +133,13 @@ export function ViewerControls({
               checked={animationOptions.useDemo}
               onChange={(event) => updateAnimation({ useDemo: event.currentTarget.checked })}
             />
-            <span>Demo Shape</span>
+            <span>{ja.viewer.controls.animationDemo}</span>
           </label>
         </div>
         <div className="viewer-control-row">
           <label>
             <Waves size={14} />
-            <span>Mode</span>
+            <span>{ja.viewer.controls.animationMode}</span>
             <select
               data-testid="animation-mode"
               value={String(animationOptions.modeNo)}
@@ -157,7 +158,7 @@ export function ViewerControls({
         </div>
         <div className="viewer-control-row">
           <label>
-            <span>Direction</span>
+            <span>{ja.viewer.controls.animationDirection}</span>
             <select
               data-testid="animation-direction"
               value={animationOptions.demoDirection}
@@ -168,14 +169,14 @@ export function ViewerControls({
                 }
               }}
             >
-              <option value="longitudinal">X (longitudinal)</option>
-              <option value="transverse">Z (transverse)</option>
+              <option value="longitudinal">{ja.viewer.controls.animationDirectionX}</option>
+              <option value="transverse">{ja.viewer.controls.animationDirectionZ}</option>
             </select>
           </label>
         </div>
         <div className="viewer-control-row">
           <label className="scale-input">
-            <span>Deformation Scale</span>
+            <span>{ja.viewer.controls.animationDeformationScale}</span>
             <input
               type="range"
               data-testid="animation-scale"
@@ -203,7 +204,7 @@ export function ViewerControls({
         </div>
         <div className="viewer-control-row">
           <label className="scale-input">
-            <span>Speed</span>
+            <span>{ja.viewer.controls.animationSpeed}</span>
             <input
               type="range"
               data-testid="animation-speed"
@@ -230,7 +231,7 @@ export function ViewerControls({
           </label>
         </div>
       </ControlGroup>
-      <ControlGroup title="Coordinate">
+      <ControlGroup title={ja.viewer.controls.coordinate}>
         <div className="viewer-control-row">
           <label className="viewer-toggle">
             <input
@@ -239,19 +240,19 @@ export function ViewerControls({
               checked={spacerAxisSwap === "on"}
               onChange={(event) => onSpacerAxisSwapChange(event.currentTarget.checked ? "on" : "off")}
             />
-            <span>SPACER Axis Swap</span>
+            <span>{ja.viewer.controls.spacerAxisSwap}</span>
           </label>
         </div>
       </ControlGroup>
-      <ControlGroup title="解析結果">
+      <ControlGroup title={ja.viewer.controls.analysisResults}>
         <div className="viewer-control-row">
           <label>
             <Target size={14} />
-            <span>荷重ケース</span>
+            <span>{ja.viewer.controls.loadCaseLabel}</span>
             <select value={selectedLoadCaseId} onChange={(event) => onLoadCaseChange(event.target.value)}>
               {loadCaseIds.map((id) => (
                 <option key={id} value={id}>
-                  {id || "すべて"}
+                  {id || ja.viewer.controls.loadCaseAll}
                 </option>
               ))}
             </select>
@@ -261,7 +262,7 @@ export function ViewerControls({
           <div className="viewer-control-row">
             <label>
               <Waves size={14} />
-              <span>固有モード</span>
+              <span>{ja.viewer.controls.eigenMode}</span>
               <select value={selectedEigenMode} onChange={(event) => onEigenModeChange(Number(event.target.value))}>
                 {eigenModeNos.map((modeNo) => (
                   <option key={modeNo} value={modeNo}>
@@ -276,7 +277,7 @@ export function ViewerControls({
           <div className="viewer-control-row">
             <label>
               <Waves size={14} />
-              <span>応答表示</span>
+              <span>{ja.viewer.controls.responseDisplay}</span>
               <select
                 value={selectedResponseSpectrumResult}
                 onChange={(event) => onResponseSpectrumResultChange(event.target.value as ResponseSpectrumSelection)}
@@ -291,62 +292,62 @@ export function ViewerControls({
           </div>
         )}
       </ControlGroup>
-      <ControlGroup title="表示要素">
+      <ControlGroup title={ja.viewer.controls.visibility}>
         <div className="viewer-toggle-grid">
-          <Toggle label="節点" checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
-          <Toggle label="部材" checked={visibility.members} onChange={(value) => setFlag("members", value)} />
-          <Toggle label="支点" checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
-          <Toggle label="荷重" checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
-          <Toggle label="ラベル" checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
-          <Toggle label="グリッド" checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
-          <Toggle label="軸" checked={visibility.axes} onChange={(value) => setFlag("axes", value)} icon={<Move3D size={14} />} />
+          <Toggle label={ja.viewer.controls.node} checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
+          <Toggle label={ja.viewer.controls.member} checked={visibility.members} onChange={(value) => setFlag("members", value)} />
+          <Toggle label={ja.viewer.controls.support} checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
+          <Toggle label={ja.viewer.controls.load} checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
+          <Toggle label={ja.viewer.controls.label} checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
+          <Toggle label={ja.viewer.controls.grid} checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
+          <Toggle label={ja.viewer.controls.axis} checked={visibility.axes} onChange={(value) => setFlag("axes", value)} icon={<Move3D size={14} />} />
         </div>
         <div className="viewer-toggle-grid compact">
-          <Toggle label="節点ID" checked={visibility.nodeLabels} onChange={(value) => setFlag("nodeLabels", value)} icon={<Tag size={14} />} />
-          <Toggle label="部材ID" checked={visibility.memberLabels} onChange={(value) => setFlag("memberLabels", value)} icon={<Tag size={14} />} />
+          <Toggle label={ja.viewer.controls.nodeId} checked={visibility.nodeLabels} onChange={(value) => setFlag("nodeLabels", value)} icon={<Tag size={14} />} />
+          <Toggle label={ja.viewer.controls.memberId} checked={visibility.memberLabels} onChange={(value) => setFlag("memberLabels", value)} icon={<Tag size={14} />} />
         </div>
       </ControlGroup>
-      <ControlGroup title="結果図">
+      <ControlGroup title={ja.viewer.controls.resultDiagrams}>
         <div className="viewer-toggle-grid">
           <Toggle
-            label="変形図"
+            label={ja.viewer.controls.deformedShape}
             checked={visibility.deformedShape}
             disabled={!hasResult}
             onChange={(value) => setFlag("deformedShape", value)}
             icon={<Rotate3D size={14} />}
           />
           <Toggle
-            label="反力図"
+            label={ja.viewer.controls.reaction}
             checked={visibility.reactions}
             disabled={!hasResult}
             onChange={(value) => setFlag("reactions", value)}
             icon={<Activity size={14} />}
           />
           <Toggle
-            label="軸力図"
+            label={ja.viewer.controls.axialForce}
             checked={visibility.axialForce}
             disabled={!hasResult}
             onChange={(value) => setFlag("axialForce", value)}
             icon={<Waves size={14} />}
           />
           <Toggle
-            label="My図"
+            label={ja.viewer.controls.my}
             checked={visibility.momentMy}
             disabled={!hasResult}
             onChange={(value) => setFlag("momentMy", value)}
           />
           <Toggle
-            label="Mz図"
+            label={ja.viewer.controls.mz}
             checked={visibility.momentMz}
             disabled={!hasResult}
             onChange={(value) => setFlag("momentMz", value)}
           />
         </div>
       </ControlGroup>
-      <ControlGroup title="倍率">
+      <ControlGroup title={ja.viewer.controls.scales}>
         <div className="scale-grid">
           <ScaleInput
-            label="荷重表示"
+            label={ja.viewer.controls.loadScale}
             min={0.2}
             max={4}
             step={0.1}
@@ -354,7 +355,7 @@ export function ViewerControls({
             onChange={(value) => setScale("loadScale", value)}
           />
           <ScaleInput
-            label="変形表示"
+            label={ja.viewer.controls.deformationScale}
             min={1}
             max={1000}
             step={1}
@@ -363,7 +364,7 @@ export function ViewerControls({
           />
           {eigenModeNos.length > 0 && (
             <ScaleInput
-              label="Mode"
+              label={ja.viewer.controls.modeScale}
               min={0.05}
               max={20}
               step={0.05}
@@ -372,7 +373,7 @@ export function ViewerControls({
             />
           )}
           <ScaleInput
-            label="結果図"
+            label={ja.viewer.controls.resultScale}
             min={0.1}
             max={8}
             step={0.1}

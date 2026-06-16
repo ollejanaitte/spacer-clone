@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDefaultProject } from "../data/defaultProject";
 import type { ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
+import { ja } from "../i18n/ja";
 import { Viewer3D, webglFallbackMessage } from "./Viewer3D";
 import type { ThreeViewportProps } from "./types";
 
@@ -53,10 +54,10 @@ describe("Viewer3D WebGL fallback", () => {
     await act(async () => undefined);
 
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
-    expect(document.body.textContent).toContain("3D表示の初期化に失敗しました。");
-    expect(document.body.textContent).toContain("2D簡易表示に切り替えました。");
-    expect(document.body.textContent).toContain("GPU_MODE=compat-gpu-blocklist または compat-angle-gl");
-    expect(document.body.textContent).toContain("legacy-desktop-gl は最後の手段です。");
+    expect(document.body.textContent).toContain(ja.viewer.messages.webglInitFailed);
+    expect(document.body.textContent).toContain(ja.viewer.messages.fallback2DSwitched);
+    expect(document.body.textContent).toMatch(/GPU_MODE=compat-gpu-blocklist\s*または\s*compat-angle-gl/);
+    expect(document.body.textContent).toContain(ja.viewer.messages.electronGpuLastResort);
     expect(onViewerError).toHaveBeenCalledWith(expect.stringContaining(webglFallbackMessage));
   });
 
@@ -85,7 +86,7 @@ describe("Fallback2DViewport", () => {
     render(<Fallback2DViewport {...fallbackProps(emptyProject())} />);
 
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
-    expect(document.body.textContent).toContain("表示できる節点・部材がありません。");
+    expect(document.body.textContent).toContain(ja.viewer.messages.emptyNodesMembers);
   });
 
   it("generates drawing elements for nodes and members", () => {

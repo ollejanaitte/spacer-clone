@@ -1,3 +1,4 @@
+﻿import { ja } from "../i18n/ja";
 import type {
   BridgeProject,
   CrossSection,
@@ -11,14 +12,9 @@ import type {
 export const WIZARD_STEPS = [1, 2, 3, 4, 5, 6] as const;
 export type WizardStepNumber = (typeof WIZARD_STEPS)[number];
 
-export const STEP_TITLES: Record<WizardStepNumber, string> = {
-  1: "道路条件",
-  2: "支間設定",
-  3: "衝撃係数",
-  4: "ライン設定 3D",
-  5: "荷重設定",
-  6: "FEMモデル生成",
-};
+export function stepTitle(step: WizardStepNumber): string {
+  return ja.bridgeSteps.stepTitles[step];
+}
 
 export const defaultCrossSection = (): CrossSection => ({
   lane_count: 2,

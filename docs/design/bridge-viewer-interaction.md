@@ -1,36 +1,36 @@
-# bridge-viewer-interaction.md
+﻿# bridge-viewer-interaction.md
 
-橋梁ウィザードの Step 4「ライン設定 3D」で用いる Three.js ビューアの仕様。
+Specification of the Three.js viewer used in Step 4 "Line Setting 3D" of the bridge wizard.
 
-## 1. レイヤ構造
+## 1. Layer Structure
 
-```
+```text
 Scene
- ├ NodeLayer        (FEM 節点, SphereGeometry)
- ├ ElementLayer     (FEM 部材, LineSegments)
- ├ LineLayer        (BridgeLine, 3D ライン)
+ ├ NodeLayer        (FEM nodes, SphereGeometry)
+ ├ ElementLayer     (FEM members, LineSegments)
+ ├ LineLayer        (BridgeLine, 3D line)
  ├ LoadLayer        (ArrowHelper)
- ├ InteractionLayer (クリック当たり判定用 invisible mesh)
+ ├ InteractionLayer (invisible mesh for click hit testing)
  └ Grid + Axes
 ```
 
-すべて `THREE.Group` でまとめ、Step6 で生成された FEM モデル節点・部材を再表示する用途にも共用する。
+All layers are grouped as `THREE.Group` and are also reused to redisplay the FEM model nodes and members generated in Step 6.
 
-## 2. 描画モード
+## 2. Drawing Modes
 
-- `view`: 視点操作のみ（OrbitControls）
-- `draw_line`: クリック 1 回目で始点、2 回目で終点 → `BridgeLine` 追加
-- `select`: 既存ライン／節点を選択（ハイライト）
-- `delete`: 選択対象を削除
+- `view`: camera operation only (OrbitControls).
+- `draw_line`: first click sets the start, second click sets the end, and a `BridgeLine` is added.
+- `select`: select an existing line or node (highlight).
+- `delete`: delete the selected target.
 
-## 3. ライン種別カラー
+## 3. Line Type Colors
 
-| type | color | hex |
-|------|------|-----|
-| traffic | 緑 | `#22a06b` |
-| load | 赤 | `#c0392b` |
-| reference | 灰 | `#7f8c8d` |
-| selected | 黄 | `#f1c40f` |
+| Type | Color | Hex |
+| --- | --- | --- |
+| traffic | green | `#22a06b` |
+| load | red | `#c0392b` |
+| reference | gray | `#7f8c8d` |
+| selected | yellow | `#f1c40f` |
 
 ## 4. Snap
 
@@ -45,23 +45,22 @@ for p in candidates:
         break
 ```
 
-FEM 節点がまだ生成されていない Step 4 では、グリッド点
-`(x_grid, 0, z_grid)` を候補とする（5m ピッチ）。
+In Step 4 where the FEM nodes are not yet generated, grid points `(x_grid, 0, z_grid)` (5 m pitch) are used as candidates.
 
-## 5. Camera / Controls
+## 5. Camera and Controls
 
 - `PerspectiveCamera(fov=45, near=0.01, far=10000)`
 - `OrbitControls`: `enableDamping=true`, `dampingFactor=0.08`
-- フィット: 全節点を包む Box を compute して `fitCameraToBox`
+- Fit: compute a box enclosing all nodes and call `fitCameraToBox`.
 
 ## 6. Raycaster
 
-- `pointermove` で `pointer.x/y` を更新
-- `click` で `raycaster.intersectObjects([LineLayer, NodeLayer])`
-- ヒットしたオブジェクトの `userData.lineId` / `userData.nodeId` を返す
+- Update `pointer.x/y` on `pointermove`.
+- On `click`, call `raycaster.intersectObjects([LineLayer, NodeLayer])`.
+- Return the `userData.lineId` / `userData.nodeId` of the hit object.
 
-## 7. Step 6 での FEM 描画
+## 7. FEM Drawing in Step 6
 
-- 生成された `nodes / members / supports` を `NodeLayer / ElementLayer / SupportLayer` に表示
-- LineLayer に既存の BridgeLine を再描画
-- カメラフィットと凡例を表示
+- Display the generated `nodes / members / supports` in `NodeLayer / ElementLayer / SupportLayer`.
+- Redraw the existing `BridgeLine`s in `LineLayer`.
+- Show the camera fit and the legend.

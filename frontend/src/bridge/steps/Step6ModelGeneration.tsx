@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import { ja } from "../../i18n/ja";
 import type { BridgeFemResponse, BridgeProject } from "../types";
 import { generateFem } from "../api";
 import { xPositionsFor } from "../BridgeWizardState";
@@ -46,11 +47,11 @@ export function Step6ModelGeneration({
   const summary = lastResult?.summary;
   return (
     <div className="bw-step bw-step-gen">
-      <h2>Step 6 / 6 FEMモデル生成</h2>
-      <p className="bw-hint">メッシュ分割と密度を指定して、FEM モデルを生成します。</p>
+      <h2>{ja.bridgeSteps.step6.title}</h2>
+      <p className="bw-hint">{ja.bridgeSteps.step6.hint}</p>
       <div className="bw-grid">
         <label className="bw-field">
-          <span>メッシュ分割数（支間あたり）</span>
+          <span>{ja.bridgeSteps.step6.meshDivision}</span>
           <input
             type="number"
             min={1}
@@ -64,7 +65,7 @@ export function Step6ModelGeneration({
           />
         </label>
         <label className="bw-field">
-          <span>メッシュ密度</span>
+          <span>{ja.bridgeSteps.step6.meshDensity}</span>
           <select
             value={project.generationSettings.mesh_density}
             onChange={(e) =>
@@ -79,7 +80,7 @@ export function Step6ModelGeneration({
           </select>
         </label>
         <label className="bw-field">
-          <span>生成と同時に解析も実行</span>
+          <span>{ja.bridgeSteps.step6.runAnalysisAfterGen}</span>
           <input
             type="checkbox"
             checked={runAnalysis}
@@ -88,8 +89,8 @@ export function Step6ModelGeneration({
         </label>
       </div>
       <div className="bw-info">
-        <p>x 方向節点数: <strong>{xs.length}</strong></p>
-        <p>橋長: <strong>{xs.length > 0 ? xs[xs.length - 1].toFixed(3) : "0.000"} m</strong></p>
+        <p>{ja.bridgeSteps.step6.xNodeCount}: <strong>{xs.length}</strong></p>
+        <p>{ja.bridgeSteps.step6.bridgeLength}: <strong>{ja.bridgeSteps.step6.bridgeLengthValue(xs.length > 0 ? xs[xs.length - 1].toFixed(3) : "0.000")}</strong></p>
       </div>
       <div className="bw-actions">
         <button
@@ -98,7 +99,7 @@ export function Step6ModelGeneration({
           disabled={running}
           onClick={handleGenerate}
         >
-          {running ? "生成中..." : "モデル生成"}
+          {running ? ja.bridgeSteps.step6.generating : ja.bridgeSteps.step6.generate}
         </button>
         {lastResult && (
           <button
@@ -106,20 +107,20 @@ export function Step6ModelGeneration({
             className="bw-button-secondary"
             onClick={() => onSendToAnalysis(lastResult)}
           >
-            解析へ送る
+            {ja.bridgeSteps.step6.sendToAnalysis}
           </button>
         )}
       </div>
-      {error && <div className="bw-error">{error}</div>}
+      {error && <div className="bw-error">{ja.bridgeSteps.step6.error}: {error}</div>}
       {summary && (
         <div className="bw-result">
-          <h3>生成結果</h3>
+          <h3>{ja.bridgeSteps.step6.generationResult}</h3>
           <ul>
-            <li>節点数: <strong>{summary.nodeCount}</strong></li>
-            <li>部材数: <strong>{summary.memberCount}</strong></li>
-            <li>支点数: <strong>{summary.supportCount}</strong></li>
-            <li>荷重数: <strong>{summary.loadCount}</strong></li>
-            <li>検証ステータス: <strong>{lastResult?.analysis ? lastResult.analysis.analysisSummary.status : "未解析"}</strong></li>
+            <li>{ja.bridgeSteps.step6.resultNodeCount}: <strong>{summary.nodeCount}</strong></li>
+            <li>{ja.bridgeSteps.step6.resultMemberCount}: <strong>{summary.memberCount}</strong></li>
+            <li>{ja.bridgeSteps.step6.resultSupportCount}: <strong>{summary.supportCount}</strong></li>
+            <li>{ja.bridgeSteps.step6.resultLoadCount}: <strong>{summary.loadCount}</strong></li>
+            <li>{ja.bridgeSteps.step6.validationStatus}: <strong>{lastResult?.analysis ? lastResult.analysis.analysisSummary.status : ja.bridgeSteps.step6.notAnalyzed}</strong></li>
           </ul>
         </div>
       )}

@@ -6,6 +6,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import { createDefaultProject, createSuspendedDeckProject } from "../data/defaultProject";
 import type { AnalysisResult } from "../types";
+import { ja } from "../i18n/ja";
 import { ComparisonPanel } from "./ComparisonPanel";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -130,10 +131,10 @@ describe("ComparisonPanel", () => {
     expect(panel?.textContent).toContain("比較サマリー");
     expect(panel?.textContent).toContain("1次周期");
     expect(panel?.textContent).toContain("2次周期");
-    expect(panel?.textContent).toContain("3次周期");
+    expect(panel?.textContent).toContain(ja.comparison.periodLabel(3));
   });
 
-  it("falls back to 未計算 when reactions are missing", () => {
+  it(`falls back to ${ja.comparison.notComputed} when reactions are missing`, () => {
     render(
       <ComparisonPanel
         leftProject={createDefaultProject()}
@@ -143,7 +144,7 @@ describe("ComparisonPanel", () => {
       />,
     );
     const row = document.querySelector("[data-testid=comparison-row-max-reaction]");
-    expect(row?.textContent).toContain("未計算");
+    expect(row?.textContent).toContain(ja.comparison.notComputed);
   });
 
   it("shows a positive reduction pill when right is smaller", () => {
@@ -174,7 +175,7 @@ describe("ComparisonPanel", () => {
       "[data-testid=comparison-reduction-horizontal-mode]",
     );
     expect(reduction?.getAttribute("data-direction")).toBe("positive");
-    expect(reduction?.textContent).toMatch(/低減/);
+    expect(reduction?.textContent).toMatch(new RegExp(ja.comparison.decrease("0").replace(/[0]+/g, "[0\\d.]+")));
   });
 
   it("shows a dash placeholder when no eigen result is available", () => {
@@ -212,7 +213,7 @@ describe("ComparisonPanel", () => {
       />,
     );
     const comment = document.querySelector("[data-testid=comparison-comment]");
-    expect(comment?.textContent).toMatch(/B案/);
+    expect(comment?.textContent).toMatch(/B\u6848/);
   });
 
   it("uses the Y reaction component for the max-reaction row", () => {

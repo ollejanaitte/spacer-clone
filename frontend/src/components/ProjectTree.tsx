@@ -1,18 +1,19 @@
+﻿import { ja } from "../i18n/ja";
 import type { ProjectModel, SectionKey } from "../types";
 
 const treeItems: Array<{ key: SectionKey; label: string }> = [
-  { key: "project", label: "プロジェクト" },
-  { key: "nodes", label: "節点" },
-  { key: "members", label: "部材" },
-  { key: "materials", label: "材料" },
-  { key: "sections", label: "断面" },
-  { key: "supports", label: "支点条件" },
-  { key: "loadCases", label: "荷重ケース" },
-  { key: "nodalLoads", label: "節点荷重" },
-  { key: "memberLoads", label: "部材荷重" },
-  { key: "massCases", label: "質量" },
-  { key: "analysisSettings", label: "解析設定" },
-  { key: "results", label: "解析結果" },
+  { key: "project", label: ja.propertyPanel.sectionTitles.project },
+  { key: "nodes", label: ja.propertyPanel.sectionTitles.nodes },
+  { key: "members", label: ja.propertyPanel.sectionTitles.members },
+  { key: "materials", label: ja.propertyPanel.sectionTitles.materials },
+  { key: "sections", label: ja.propertyPanel.sectionTitles.sections },
+  { key: "supports", label: ja.propertyPanel.sectionTitles.supports },
+  { key: "loadCases", label: ja.propertyPanel.sectionTitles.loadCases },
+  { key: "nodalLoads", label: ja.propertyPanel.sectionTitles.nodalLoads },
+  { key: "memberLoads", label: ja.propertyPanel.sectionTitles.memberLoads },
+  { key: "massCases", label: ja.propertyPanel.sectionTitles.massCases },
+  { key: "analysisSettings", label: ja.propertyPanel.sectionTitles.analysisSettings },
+  { key: "results", label: ja.propertyPanel.sectionTitles.results },
 ];
 
 type ProjectTreeProps = {
@@ -35,7 +36,7 @@ export function ProjectTree({ project, selected, onSelect }: ProjectTreeProps) {
   };
 
   return (
-    <aside className="project-tree" aria-label="プロジェクトツリー">
+    <aside className="project-tree" aria-label={ja.propertyPanel.treeAriaLabel}>
       {treeItems.map((item) => (
         <button
           key={item.key}

@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
+import { ja } from "../i18n/ja";
 import type { AnalysisResult, ProjectModel } from "../types";
 import {
   buildComparisonMetrics,
@@ -33,7 +34,7 @@ function reductionDirection(percent: number | null): Direction {
 
 /**
  * Comparison table shown beneath the two viewports in Compare mode.
- * Always renders; missing values fall back to "-" or "未計算". The
+ * Always renders; missing values fall back to "-" or ja.comparison.notComputed. The
  * component is display-only — all of the math lives in
  * `comparisonMetrics.ts` and is covered by unit tests.
  */
@@ -72,22 +73,22 @@ export function ComparisonPanel({
     <section
       className="comparison-panel"
       data-testid="comparison-panel"
-      aria-label="A案B案比較サマリー"
+      aria-label={ja.comparisonPanel.ariaLabel}
     >
       <header className="comparison-panel-header">
-        <h3>比較サマリー</h3>
+        <h3>{ja.comparisonPanel.heading}</h3>
         <p className="comparison-panel-hint">
-          数値は解析実行後のみ表示されます。未取得の値は「-」または「未計算」と表示されます。
+          {ja.comparisonPanel.hint}
         </p>
       </header>
       <ModelSummary leftInfo={leftInfo} rightInfo={rightInfo} />
       <table className="comparison-table" data-testid="comparison-table">
         <thead>
           <tr>
-            <th scope="col">項目</th>
+            <th scope="col">{ja.comparisonPanel.columns.item}</th>
             <th scope="col" data-testid="comparison-table-left-header">{leftHeader}</th>
             <th scope="col" data-testid="comparison-table-right-header">{rightHeader}</th>
-            <th scope="col">評価</th>
+            <th scope="col">{ja.comparisonPanel.columns.evaluation}</th>
           </tr>
         </thead>
         <tbody>
@@ -132,8 +133,8 @@ function parseReductionPercent(display: string): number | null {
   const match = display.match(/(-?\d+(?:\.\d+)?)%/);
   if (!match) return null;
   const value = Number(match[1]);
-  if (display.endsWith("増加")) return -Math.abs(value);
-  if (display.endsWith("低減")) return Math.abs(value);
+  if (display.endsWith(ja.comparison.increase("%"))) return -Math.abs(value);
+  if (display.endsWith(ja.comparison.decrease("%"))) return Math.abs(value);
   return value;
 }
 
@@ -150,11 +151,11 @@ function ModelSummary({
       <table>
         <thead>
           <tr>
-            <th scope="col">モデル</th>
-            <th scope="col">節点数</th>
-            <th scope="col">部材数</th>
-            <th scope="col">掛け違い節点</th>
-            <th scope="col">支間数</th>
+            <th scope="col">{ja.comparisonPanel.summary.model}</th>
+            <th scope="col">{ja.comparisonPanel.summary.nodeCount}</th>
+            <th scope="col">{ja.comparisonPanel.summary.memberCount}</th>
+            <th scope="col">{ja.comparisonPanel.summary.suspendedJunction}</th>
+            <th scope="col">{ja.comparisonPanel.summary.spanCount}</th>
           </tr>
         </thead>
         <tbody>

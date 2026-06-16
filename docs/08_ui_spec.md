@@ -1,226 +1,226 @@
-# 08 UI Specification
+﻿# 08 UI Specification
 
-## 1. 目的
+## 1. Purpose
 
-React UIのMVP画面構成と操作仕様を定義する。JIP-SPACERの入力画面、描画画面、実行画面、帳票確認の分離思想を参考にするが、MVPでは最小限のWeb UIに限定する。
+This document defines the MVP screen composition and operation specification of the React UI. It follows the JIP-SPACER idea of separating input, rendering, execution, and report viewing, but is limited to the minimum Web UI required by the MVP.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 上部ツールバー。
-- 左側モデルツリー。
-- 中央3Dビュー。
-- 2D簡易フォールバックビュー。
-- 右側プロパティパネル。
-- 下部結果・エラー・ログパネル。
-- 節点表、部材表、材料表、断面表、支点表、荷重表。
-- 解析実行画面。
-- 結果表示画面。
-- JSON/CSV出力操作。
+- Top toolbar.
+- Left model tree.
+- Center 3D view.
+- 2D fallback view.
+- Right property panel.
+- Bottom result / error / log panel.
+- Tables for nodes, members, materials, sections, supports, and loads.
+- Analysis execution screen.
+- Result display screen.
+- JSON / CSV export operations.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- CADライクな図面編集。
-- ドラッグによる部材作成。
-- 複数ウィンドウUI。
-- 帳票テンプレート編集。
-- DXF出力操作。
-- 影響線、移動荷重、固有値、応答スペクトル等のMVP外機能画面。
-- ライセンス管理画面。
+- CAD-like drawing editing.
+- Drag-and-drop member creation.
+- Multi-window UI.
+- Report template editing.
+- DXF export operations.
+- Screens for features outside the MVP such as influence lines, moving loads, eigenvalue, and response spectrum.
+- License management screens.
 
-## 4. 画面仕様
+## 4. Screen Specification
 
-### 全体レイアウト
+### Overall Layout
 
 ```text
-┌──────────────────────── 上部ツールバー ────────────────────────┐
-│ 左モデルツリー │ 中央3Dビュー │ 右プロパティパネル              │
-├───────────────┴──────────────┴───────────────────────────────┤
-│ 下部 結果 / エラー / 警告 / ログ パネル                         │
-└────────────────────────────────────────────────────────────────┘
++----------------------- Top Toolbar --------------------------+
+| Left model tree | Center 3D view | Right property panel    |
++-----------------+----------------+--------------------------+
+| Bottom: Results / Errors / Warnings / Logs panel            |
++--------------------------------------------------------------+
 ```
 
-### 上部ツールバー
+### Top Toolbar
 
-操作:
+Operations:
 
-- 新規。
-- 開く。
-- 保存。
-- 検証。
-- 解析実行。
-- JSON出力。
-- CSV出力。
-- サンプル読込。
+- New.
+- Open.
+- Save.
+- Validate.
+- Run analysis.
+- Export JSON.
+- Export CSV.
+- Load sample.
 
-表示:
+Display:
 
-- プロジェクト名。
-- 未保存状態。
-- 検証状態。
-- 解析状態。
+- Project name.
+- Unsaved state.
+- Validation state.
+- Analysis state.
 
-### 左側モデルツリー
+### Left Model Tree
 
-項目:
+Items:
 
-- Project。
-- Nodes。
-- Members。
-- Materials。
-- Sections。
-- Supports。
-- Load Cases。
-- Nodal Loads。
-- Member Loads。
-- Analysis Settings。
-- Results。
+- Project.
+- Nodes.
+- Members.
+- Materials.
+- Sections.
+- Supports.
+- Load cases.
+- Nodal loads.
+- Member loads.
+- Analysis settings.
+- Results.
 
-選択時の動作:
+Selection behavior:
 
-- 中央または右側に対応する表・詳細を表示する。
-- エンティティを選択した場合、3Dビューでハイライトする。
+- The corresponding table or details are shown in the center or right side.
+- Selecting an entity highlights it in the 3D view.
 
-### 中央3Dビュー
+### Center 3D View
 
-`docs/09_3d_view_spec.md` に従う。
+Follows `docs/09_3d_view_spec.md`.
 
-表示モード:
+Display modes:
 
-- `3D View`: Three.js/WebGLを使う通常表示。
-- `2D Fallback View`: Three.js初期化失敗時、またはユーザー選択時の簡易2D表示。
+- `3D View`: the normal Three.js / WebGL view.
+- `2D Fallback View`: a minimal 2D view used when Three.js initialization fails or when the user selects it.
 
-2D簡易表示の最低限対象:
+Minimum scope of the 2D fallback:
 
-- 節点。
-- 部材。
-- 支点の概略。
-- 節点荷重の概略。
-- 選択ハイライト。
-- Fit to model。
+- Nodes.
+- Members.
+- Rough representation of supports.
+- Rough representation of nodal loads.
+- Selection highlight.
+- Fit to model.
 
-2D簡易表示でMVP必須にしないもの:
+The 2D fallback does not need to support:
 
-- 高度な3Dカメラ操作。
-- 変形図の詳細表示。
-- 荷重矢印の完全な3D表現。
-- 断面力図。
-- CAD編集。
+- Advanced 3D camera controls.
+- Detailed deformed shape.
+- Full 3D load arrows.
+- Member force diagrams.
+- CAD editing.
 
-### 表示互換設定
+### Display Compatibility Settings
 
-- 現在の表示モードを表示する。
-- Electron版では現在のGPU互換モードを表示する。
-- GPU互換モードはアプリ設定またはdesktop設定として扱い、`project.json` へ保存しない。
-- WebGL初期化失敗時は下部ErrorsまたはLogsにエラーを表示し、中央ビューを2D簡易表示へ切り替える。
-- エラーメッセージには「互換描画モードで再起動してください」という案内を含める。
-- `legacy-desktop-gl` は最後の非常用互換モードであり、標準として案内しない。
+- The current display mode is shown.
+- The Electron build shows the current GPU compatibility mode.
+- GPU compatibility modes are treated as app settings or desktop settings and are not stored in `project.json`.
+- When WebGL initialization fails, the error is reported in the bottom Errors or Logs panel, and the center view switches to the 2D fallback.
+- The error message includes the guidance "Please restart in compatibility rendering mode."
+- `legacy-desktop-gl` is the last-resort compatibility mode and must not be advertised as the standard option.
 
-### 右側プロパティパネル
+### Right Property Panel
 
-- 選択中エンティティの詳細を表示する。
-- 表で編集しにくい項目を編集できる。
-- 検証エラーを項目単位で表示する。
-- 部材長などの算出値は読み取り専用で表示してよい。
+- Shows the details of the selected entity.
+- Allows editing of fields that are awkward to edit in the table.
+- Shows validation errors per field.
+- Computed values such as member length may be shown read-only.
 
-### 下部パネル
+### Bottom Panel
 
-タブ:
+Tabs:
 
-- Results。
-- Errors。
-- Warnings。
-- Logs。
+- Results.
+- Errors.
+- Warnings.
+- Logs.
 
 Errors:
 
-- API/Validation/Engineの構造化エラーを表示する。
-- クリックで関連テーブル行へ移動する。
+- Structured errors from the API, validation, and the engine.
+- Clicking an error jumps to the relevant table row.
 
 Results:
 
-- 変位表。
-- 反力表。
-- 部材端力表。
-- 解析概要。
+- Displacement table.
+- Reaction table.
+- Member end force table.
+- Analysis summary.
 
-### 入力表
+### Input Tables
 
-共通機能:
+Common features:
 
-- 行追加。
-- 行削除。
-- セル編集。
-- ID重複表示。
-- 参照候補の選択。
-- 単位表示。
+- Add row.
+- Delete row.
+- Cell editing.
+- Duplicate ID indicator.
+- Reference picker.
+- Unit display.
 
-節点表:
+Node table:
 
 - `id`, `x`, `y`, `z`, `label`
 
-部材表:
+Member table:
 
 - `id`, `nodeI`, `nodeJ`, `materialId`, `sectionId`, `orientationVector`, `orientationNode`, `label`
 
-材料表:
+Material table:
 
 - `id`, `name`, `elasticModulus`, `shearModulus`, `poissonRatio`, `density`
 
-断面表:
+Section table:
 
 - `id`, `name`, `area`, `iy`, `iz`, `j`
 
-支点表:
+Support table:
 
 - `nodeId`, `ux`, `uy`, `uz`, `rx`, `ry`, `rz`
 
-荷重表:
+Load tables:
 
-- Load Cases。
-- Nodal Loads。
-- Member Loads。
+- Load cases.
+- Nodal loads.
+- Member loads.
 
-### 解析実行画面
+### Analysis Execution Screen
 
-- 検証状態を表示する。
-- エラーがある場合は実行をブロックする。
-- 解析対象荷重ケースを表示する。
-- 実行中状態を表示する。
-- 完了後に結果概要へ移動できる。
+- Shows the validation state.
+- Blocks execution when errors exist.
+- Shows the target load case.
+- Shows the running state.
+- After completion, navigates to the result summary.
 
-### 結果表示画面
+### Result Display Screen
 
-- 荷重ケースでフィルタできる。
-- 節点ID、部材IDでフィルタできる。
-- 変形図表示のON/OFFを切り替えられる。
-- CSV/JSON出力できる。
+- Filterable by load case.
+- Filterable by node ID and member ID.
+- Toggleable deformed shape.
+- JSON / CSV export.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- 入力中の軽微な未入力は警告表示し、保存は許可してよい。
-- 解析実行前の検証エラーは実行をブロックする。
-- API通信失敗は下部ログとエラーパネルに表示する。
-- エラーはブラウザconsoleだけに出してはならない。
-- WebGL初期化失敗はconsoleだけに出さず、下部パネルと中央ビューの状態に反映する。
-- WebGL初期化失敗でUI全体をクラッシュまたは白画面化してはならない。
-- `NaN` や空文字を数値としてAPIへ送らない。
+- Minor missing inputs may show a warning but still allow saving.
+- Validation errors block analysis execution.
+- API communication failures are shown in the bottom Logs and Errors panels.
+- Errors must not be reported only in the browser console.
+- WebGL initialization failures must not be reported only in the console; they must be reflected in the bottom panel and in the center view state.
+- WebGL initialization failure must not crash the UI or show a blank screen.
+- `NaN` and empty strings must not be sent to the API as numeric values.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- UIビルドが成功する。
-- 各入力表が表示される。
-- 行追加、編集、削除ができる。
-- 不正参照が画面に表示される。
-- 解析実行ボタンが検証エラー時に無効または失敗表示になる。
-- 成功結果の変位、反力、部材端力表が表示される。
-- 3Dビュー選択とプロパティパネルが連動する。
-- Three.js初期化失敗時に2D簡易表示へ切り替わる。
-- GPU互換モード表示がアプリ設定またはdesktop設定と一致する。
+- The UI build succeeds.
+- Each input table is displayed.
+- Rows can be added, edited, and deleted.
+- Invalid references are surfaced in the UI.
+- The analysis run button is disabled or shows a failure when validation has errors.
+- The displacement, reaction, and member end force tables are shown for a successful result.
+- 3D view selection is coupled with the property panel.
+- Three.js initialization failure switches to the 2D fallback.
+- The displayed GPU compatibility mode matches the app or desktop setting.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- MVPの全入力項目をUIから作成・編集できる。
-- API検証と解析実行に接続できる。
-- 結果表を表示できる。
-- MVP外機能の操作入口が有効状態で存在しない。
-- `docs/12_quality_gate.md` のUIビルド基準を満たす。
+- Every MVP input item can be created and edited from the UI.
+- The UI can connect to API validation and analysis execution.
+- Result tables are displayed.
+- No live entry point exists for features outside the MVP.
+- The UI build standards in `docs/12_quality_gate.md` are satisfied.

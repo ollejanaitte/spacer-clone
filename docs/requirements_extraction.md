@@ -1,329 +1,329 @@
-# JIP-SPACER 操作マニュアルからの要件抽出
+﻿# Requirements Extracted from the JIP-SPACER Operation Manual
 
-## 目的
+## Purpose
 
-JIP-SPACERを参考にした独自の任意形立体骨組解析システムを開発するため、操作マニュアルから実装対象機能を抽出し、優先度を `Must` / `Should` / `Could` に分類する。
+To develop an in-house arbitrary-shape 3D frame analysis system with reference to JIP-SPACER, the implementation-target features are extracted from the operation manual and classified into the priorities `Must` / `Should` / `Could`.
 
-本書は実装前の設計書および今後の指示書であり、現時点では実装を行わない。
+This document is a pre-implementation design and a future instruction. Implementation is not done at this point.
 
-## 参照範囲
+## Reference Scope
 
-参照資料: `SPACER操作マニュアル.pdf`
+Reference material: `SPACER Operation Manual.pdf`
 
-主な章構成:
+Main chapter structure:
 
-- 画面構成: 入力画面、描画画面、実行画面、TV、PV
-- メニュー・ツールバー: ファイル、編集、表示、計算、描画、ウィンドウ、ヘルプ
-- データ作成: CONTROL、STATICS、INFLOAD、R-SPECTRUM、PRINT、DRAFT
-- 描画: 構造図、荷重図、検索、視準点変更、コピー、印刷
-- 実行: 実行時エラーの対処
+- Screen composition: input screen, drawing screen, execution screen, TV, PV
+- Menu / toolbar: file, edit, view, calculation, drawing, window, help
+- Data creation: CONTROL, STATICS, INFLOAD, R-SPECTRUM, PRINT, DRAFT
+- Drawing: structural drawing, load drawing, search, line-of-sight change, copy, print
+- Execution: handling of execution-time errors
 
-## 基本方針
+## Basic Policy
 
-独自システムでは、JIP-SPACERの画面構成やデータ分類を参考にしつつ、内部設計は独自に行う。既存製品のファイル形式、帳票形式、画面文言、UIレイアウトをそのまま複製するのではなく、同等の業務目的を満たす構造化データ、解析ワークフロー、結果確認、帳票出力を設計する。
+The in-house system uses the JIP-SPACER screen composition and data classification as a reference, but the internal design is its own. Rather than copying the file format, report format, screen text, and UI layout of the existing product as is, the system designs structured data, analysis workflow, result review, and report output that satisfy the same engineering purpose.
 
-初期実装は「静的な3次元骨組モデルを入力し、固定荷重を解析し、変位・断面力・反力を確認・帳票出力できる」ことをMVPとする。影響線解析、応答スペクトル解析、図面作成、連携ファイル、詳細な橋梁荷重規定は段階的に拡張する。
+The initial implementation is the MVP: "Enter a static 3D frame model, analyze fixed loads, and review displacements, member forces, and reactions with report output." Influence line analysis, response spectrum analysis, drawing creation, integration files, and detailed bridge load specifications are extended in stages.
 
-## 想定アーキテクチャ
+## Assumed Architecture
 
-- `Model` は節点、部材、材質、断面、支点、バネ、座標系、荷重ケースを保持する。
-- `AnalysisJob` は実行対象、実行順序、参照する解析結果、保存方針を保持する。
-- `AnalysisResult` は荷重ケースごとの変位、断面力、反力、固有値、モード、組合せ結果を保持する。
-- `ReportDefinition` は帳票に出力するケース、節点、部材、支点、グループ、出力形式を保持する。
-- `DrawingDefinition` は構造図、荷重図、変形図、断面力図などの表示条件を保持する。
-- UIは入力、解析実行、結果表示、帳票、描画を明確に分離する。
+- `Model` holds nodes, members, materials, sections, supports, springs, coordinate systems, and load cases.
+- `AnalysisJob` holds the execution target, the execution order, the referenced analysis result, and the save policy.
+- `AnalysisResult` holds the displacement, member force, reaction, eigenvalue, mode, and combination result per load case.
+- `ReportDefinition` holds the case, node, member, support, group, and output format to be written into the report.
+- `DrawingDefinition` holds the display conditions for structural drawings, load drawings, deformed shape, member force diagrams, and so on.
+- The UI clearly separates input, analysis execution, result display, report, and drawing.
 
-## 1. モデル作成機能
-
-### Must
-
-- 解析モデル種別を選択できること。
-  - 立体モデルを初期必須とする。
-  - 平面格子モデル、面内フレーム、面外フレームは後続対応でもよいが、データモデル上は自由度制限を表現できるようにする。
-- 節点座標を入力・編集できること。
-  - 節点番号、座標 X/Y/Z、無効フラグを扱う。
-  - 節点数の整合性チェックを行う。
-- 材質を入力・編集できること。
-  - ヤング係数、せん断弾性係数、ポアソン比、線膨張係数、単位体積重量を扱う。
-  - `G` と `ν` の相互補完ルールを設計する。
-- 一般部材を入力・編集できること。
-  - 部材番号、I端節点、J端節点、材質番号、断面諸量 `AX/IX/IY/IZ` を扱う。
-  - 部材数の整合性チェックを行う。
-- 支点条件を入力・編集できること。
-  - 6自由度の拘束を扱う。
-  - 支点、節点バネ、連成バネの少なくとも一つが必要であることを検証する。
-- 節点バネを入力・編集できること。
-  - 対角バネを初期必須とする。
-  - 連成バネはデータ構造を用意し、初期では入力制限または未対応でもよい。
-- 部材座標系の基本決定ロジックを持つこと。
-  - I端/J端、部材軸、鉛直部材、二重節点部材の扱いを明示する。
-  - 断面力の符号規約を仕様化する。
-- 固定荷重ケースを入力・編集できること。
-  - 荷重ケース番号、ケース名、荷重種別、荷重値を保持する。
-  - 初期必須荷重種は `FORCE`、`MOMENT`、`LBAR`、`CBAR`、`DISP` とする。
-- 入力データの保存・読込ができること。
-  - 独自のJSONまたはSQLite等の構造化形式を採用する。
-  - 将来のバージョン差分に備えてスキーマバージョンを持つ。
-- 入力チェックとエラー位置への誘導を行うこと。
-  - 存在しない節点・部材参照、重複番号、未定義材質、剛性ゼロ、拘束不足、荷重ケース不整合を検出する。
-
-### Should
-
-- 局部座標系を入力できること。
-  - 節点単位で `θ1/θ2/θ3` を指定し、支点・節点バネ・反力・変位出力へ反映できるようにする。
-- 部材表を定義できること。
-  - 一般部材の断面諸量を再利用できる。
-  - せん断有効面積 `AY/AZ` を扱える。
-- 節点間バネ部材を扱えること。
-  - 支承や二重節点モデルに対応する。
-- 部材結合条件を入力できること。
-  - I端/J端ごとの6自由度リリースを扱う。
-- 部材剛性を断面長で入力できること。
-  - 断面長、断面諸量、グループ、節点列、部材列を扱う。
-- 初期張力を入力できること。
-  - 幾何剛性への反映方針と、せん断力を0にするオプションを仕様化する。
-- 部材分布バネを入力できること。
-- 大部材を定義できること。
-  - 複数部材をまとめて荷重入力や描画対象に指定できる。
-- 活荷重扱い、初期張力加算、荷重ケースごとの構造系変更を扱えること。
-- 入力補助を提供すること。
-  - 連番作成、増分展開、選択範囲一括入力、連続値入力、フリーフォーマット入力を提供する。
-
-### Could
-
-- JIP-LINER等の連動ファイル相当の外部ファイル読込を提供すること。
-- 道路橋示方書等の標準材質・標準荷重値プリセットを提供すること。
-- TDAP連動ファイル相当のエクスポートを提供すること。
-- 平面格子、面内フレーム、面外フレームの入力制限をUI上で自動適用すること。
-- 任意入力モードを提供すること。
-  - GUIを介さず、テキスト形式でデータブロックを編集する上級者向け機能とする。
-
-## 2. 解析機能
+## 1. Model Creation Features
 
 ### Must
 
-- 実行制御を持つこと。
-  - 解析ジョブに実行対象、実行順序、再実行範囲を指定できる。
-  - 初期実装では `STATICS` 相当の固定載荷解析を対象とする。
-- 3次元骨組の線形静的解析を実行できること。
-  - 全体剛性マトリクスを組み立て、節点変位、部材断面力、支点反力を算出する。
-  - 荷重ケース単位で結果を保持する。
-- 解析結果の保存領域を持つこと。
-  - JIP-SPACERのマスターファイルに相当する内部データストアを用意する。
-  - 構造、荷重名、変位、断面力、反力をケース単位で保存する。
-- `NEW` / `OLD` 相当の再実行方針を設計すること。
-  - 構造条件変更時は全結果を無効化する。
-  - 荷重のみ変更時は該当荷重ケースだけ再解析できる。
-- 解析前エラーと解析中エラーを区別すること。
-  - 解析前エラーはUI上でエラー箇所へ誘導する。
-  - 解析中エラーはログと帳票相当の出力に記録する。
-- 不安定構造の検出を行うこと。
-  - 拘束不足、特異剛性、ゼロ剛性部材、孤立節点を検出する。
+- Allow the analysis model type to be selected.
+  - The 3D model is mandatory at the beginning.
+  - Plane grid, in-plane frame, and out-of-plane frame may be supported later, but the data model must be able to express the DOF restriction.
+- Allow the node coordinates to be entered and edited.
+  - Node number, X/Y/Z coordinates, and invalid flag are handled.
+  - Consistency check on the node count.
+- Allow the material to be entered and edited.
+  - Young''s modulus, shear modulus, Poisson''s ratio, coefficient of thermal expansion, and unit weight are handled.
+  - Mutual complement rule between `G` and `nu` is designed.
+- Allow the general member to be entered and edited.
+  - Member number, I-end node, J-end node, material number, and section quantities `AX/IX/IY/IZ` are handled.
+  - Consistency check on the member count.
+- Allow the support conditions to be entered and edited.
+  - The 6-DOF restraints are handled.
+  - Validate that at least one of support, node spring, and coupling spring is present.
+- Allow the node spring to be entered and edited.
+  - A diagonal spring is mandatory at the beginning.
+  - A coupling spring data structure is prepared, but the input may be restricted or unsupported at the start.
+- Provide the basic decision logic of the member coordinate system.
+  - The handling of the I/J end, member axis, vertical member, and double-node member is made explicit.
+  - The sign convention of the section force is specified.
+- Allow the fixed load case to be entered and edited.
+  - Load case number, case name, load type, and load value are held.
+  - The initial mandatory load types are `FORCE`, `MOMENT`, `LBAR`, `CBAR`, and `DISP`.
+- Save and load the input data.
+  - Use a structured format such as an in-house JSON or SQLite.
+  - Have a schema version to support future version differences.
+- Perform input checks and guide to the error position.
+  - Detect non-existent node or member reference, duplicate number, undefined material, zero stiffness, insufficient restraint, and load case inconsistency.
 
 ### Should
 
-- 影響線作成を実装すること。
-  - 鉛直方向影響線と任意方向影響線を扱う。
-  - 影響線載荷点、影響値出力対象の節点・部材・支点を指定できる。
-- 影響線解析を実装すること。
-  - 格子形状、支間長、ライン、車道・歩道、死荷重、活荷重を扱う。
-  - 死荷重、L荷重、T荷重、レーン載荷荷重、集中活荷重を段階的に対応する。
-- 荷重ケースの組合せ・抽出を実装すること。
-  - 加算、減算、係数、除算、ケース名、抽出ケースを扱う。
-  - `PICK1`、`PICK2`、`PICK3` 相当の最大・最小抽出を設計する。
-- 組合せ結果を解析結果ストアに保存できること。
-  - 保存対象ケースを選択できる。
-  - 図面作成や結果表示で再利用できる。
-- 節点・部材別係数を扱えること。
-  - 変位、断面力、反力に個別係数を適用できる。
-- 局部座標系・部材座標系を出力時に変換できること。
-- 同時性断面力、同時性反力の算出を検討すること。
-  - 最大・最小時の他部材断面力、他支点反力を保存・出力できるようにする。
+- Allow the local coordinate system to be entered.
+  - Specify `theta1/theta2/theta3` per node and reflect them in the support, node spring, reaction, and displacement output.
+- Allow the member table to be defined.
+  - Reuse the section quantities of the general member.
+  - Handle the effective shear area `AY/AZ`.
+- Handle a node-to-node spring member.
+  - Supports bearing and double-node models.
+- Allow the member joint condition to be entered.
+  - Handle the 6-DOF release per I end and J end.
+- Allow the member stiffness to be entered by section length.
+  - Handle section length, section quantities, group, node list, and member list.
+- Allow the initial tension to be entered.
+  - Specify the policy for reflection in the geometric stiffness and the option to set the shear force to 0.
+- Allow the member distributed spring to be entered.
+- Allow a large member to be defined.
+  - Multiple members can be grouped together for load input and drawing.
+- Handle the live load treatment, initial tension addition, and the structural system change per load case.
+- Provide input assistance.
+  - Provide serial number creation, increment expansion, batch input of selection, continuous value input, and free-format input.
 
 ### Could
 
-- 固有値解析を実装すること。
-  - 固有値、固有周期、固有モード、刺激係数、有効質量を算出する。
-- 応答スペクトル解析を実装すること。
-  - 起震方向、使用スペクトル、減衰定数、SRSS/CQC、地域補正係数を扱う。
-- 任意スペクトル作成・外部スペクトルファイル読込を提供すること。
-- 活荷重の詳細規定を拡張すること。
-  - L-25、T-25、LANE、鉄道橋連行活荷重、群集荷重、衝撃係数自動計算を扱う。
-- 構造系変更を荷重ケースごとに扱うこと。
-  - 支点、バネ、剛性、結合条件、部材バネをケース別に変更する。
+- Provide external file input equivalent to a linked file such as JIP-LINER.
+- Provide standard material and standard load presets such as the Road Bridge Specification.
+- Provide export equivalent to a TDAP linked file.
+- Automatically apply the input restriction of plane grid, in-plane frame, and out-of-plane frame in the UI.
+- Provide a free input mode.
+  - An advanced function for editing data blocks in text form without going through the GUI.
 
-## 3. 結果表示機能
+## 2. Analysis Features
 
 ### Must
 
-- 解析結果を表形式で表示できること。
-  - 変位、断面力、反力を荷重ケース単位で確認できる。
-  - 節点番号、部材番号、支点番号でフィルタできる。
-- 構造図を表示できること。
-  - 節点、部材、節点番号、部材番号を表示できる。
-  - 基本構造系を確認できる。
-- 荷重図を表示できること。
-  - 荷重ケース単位で荷重種と載荷位置を確認できる。
-  - `FORCE`、`MOMENT`、`LBAR`、`CBAR`、`DISP` の表示を初期対象とする。
-- 結果表示と入力データの参照を連携すること。
-  - 図上で選択した節点・部材の番号を確認し、結果表を絞り込める。
-- 拡大、原図復帰、表示範囲移動を提供すること。
+- Have execution control.
+  - Specify the execution target, execution order, and re-execution range of the analysis job.
+  - The initial implementation targets the fixed-load analysis equivalent to `STATICS`.
+- Run the 3D frame linear static analysis.
+  - Assemble the global stiffness matrix, and compute the nodal displacement, member section force, and support reaction.
+  - Hold the result per load case.
+- Have a save area for analysis results.
+  - Prepare an internal data store equivalent to the JIP-SPACER master file.
+  - Save the structure, load name, displacement, member force, and reaction per case.
+- Design a re-execution policy equivalent to `NEW` / `OLD`.
+  - Invalidate all results when the structural condition changes.
+  - Re-analyze only the affected load case when only the load changes.
+- Distinguish pre-analysis errors from in-analysis errors.
+  - Pre-analysis errors guide the user to the error location in the UI.
+  - In-analysis errors are recorded in the log and the report-equivalent output.
+- Detect an unstable structure.
+  - Detect insufficient restraints, singular stiffness, zero-stiffness members, and isolated nodes.
 
 ### Should
 
-- 確認図を表示できること。
-  - 支点条件、節点バネ、部材結合条件、部材バネ、仮想部材、影響線載荷点、大部材、部材座標系を視覚化する。
-- 確認図検索を提供すること。
-  - 図上で節点・部材を選択し、設定条件や値をダイアログまたはサイドパネルに表示する。
-- 荷重図検索を提供すること。
-  - 図上で節点・部材を選択し、載荷されている荷重種と値を表示する。
-- 変形図を表示できること。
-  - 荷重ケースごとの変形前後形状、変形倍率、自動スケールを扱う。
-- 断面力図を表示できること。
-  - `FX/FY/FZ/MX/MY/MZ`、面内・面外、全成分、スケール指定を扱う。
-- ケース切替を提供すること。
-  - 先頭、前、次、最終、任意ジャンプで荷重ケースや構造系を切り替える。
-- 視準点変更を提供すること。
-  - XY、XZ、YZ相当の標準ビューと任意視点を扱う。
+- Implement influence line generation.
+  - Handle vertical and arbitrary-direction influence lines.
+  - Allow specifying the influence line loading point and the node, member, and support as the influence value output target.
+- Implement influence line analysis.
+  - Handle grid shape, span length, line, carriageway, sidewalk, dead load, and live load.
+  - Support dead load, L load, T load, lane load, and concentrated live load in stages.
+- Implement load case combination and extraction.
+  - Handle addition, subtraction, coefficient, division, case name, and extracted case.
+  - Design `PICK1`, `PICK2`, and `PICK3` equivalent max / min extraction.
+- Save the combination result in the analysis result store.
+  - Select the cases to save.
+  - Reuse it in drawing creation and result display.
+- Handle per-node and per-member coefficients.
+  - Apply individual coefficients to displacement, member force, and reaction.
+- Convert the local coordinate system and the member coordinate system at output time.
+- Study the calculation of concurrent section forces and concurrent reactions.
+  - Save and output the section forces and reactions of other members and other supports at the max and min positions.
 
 ### Could
 
-- シュリンケージ図、モード図、影響線図、ライン図を表示できること。
-- 複数ケースの断面力図を重ね描きできること。
-- 図上選択した節点番号・部材番号をクリップボードへコピーできること。
-  - フリーフォーマット形式と表形式を選択できる。
-- 白地モノクロ表示モードを提供すること。
-- PV相当のプロットファイルビューアやDXF表示・変換を提供すること。
+- Implement eigenvalue analysis.
+  - Compute the eigenvalue, natural period, eigen mode, modal participation factor, and effective mass.
+- Implement response spectrum analysis.
+  - Handle excitation direction, used spectrum, damping ratio, SRSS / CQC, and regional correction factor.
+- Provide arbitrary spectrum creation and external spectrum file input.
+- Extend the detailed live load specification.
+  - Handle L-25, T-25, LANE, railway train live load, crowd load, and automatic impact factor calculation.
+- Handle the structural system change per load case.
+  - Change the support, spring, stiffness, joint condition, and member spring per case.
 
-## 4. 帳票機能
+## 3. Result Display Features
 
 ### Must
 
-- 解析結果帳票を出力できること。
-  - 変位、断面力、反力をケース、節点、部材、支点単位で出力する。
-  - 初期形式はMarkdown、CSV、HTML、PDFのいずれかを選定する。
-- 出力対象を指定できること。
-  - 全節点、任意節点、全部材、任意部材、全支点、任意支点、全ケース、任意ケースを扱う。
-- 解析ログとエラーを帳票またはログビューで確認できること。
-  - 解析開始前エラーと解析中エラーを区別する。
-- 荷重組合せ表を出力できること。
-  - 組合せケース番号、ケース名、係数、演算種別、備考を表示する。
-  - CSV保存に対応する。
-- サイズデータ一覧を表示・出力できること。
-  - 節点数、部材数、材質数、支点数、荷重ケース数等を確認できる。
+- Display the analysis result in table form.
+  - Confirm the displacement, member force, and reaction per load case.
+  - Filter by node number, member number, and support number.
+- Display the structural drawing.
+  - Display the node, member, node number, and member number.
+  - Confirm the basic structural system.
+- Display the load drawing.
+  - Confirm the load type and loading position per load case.
+  - The initial targets are the display of `FORCE`, `MOMENT`, `LBAR`, `CBAR`, and `DISP`.
+- Link the result display and the input data reference.
+  - Confirm the node and member numbers selected on the drawing and filter the result table.
+- Provide zoom, original view restoration, and view range move.
 
 ### Should
 
-- モジュール別帳票を出力できること。
-  - `STATICS` 相当、`INFLOAD` 相当、`PRINT` 相当、`DRAFT` 相当で出力範囲を分ける。
-- 帳票ビューアを提供すること。
-  - インデックス付きで章・ケース・結果種別へ移動できる。
-  - 検索、ページ移動、印刷、エクスポートを提供する。
-- 桁編集出力を提供すること。
-  - 主桁、横桁、支承線などのグループ単位で変位、断面力、反力を出力する。
-- 出力形式を制御できること。
-  - 最大最小のみ、軸力着目、3自由度/6自由度、改ページ、入力順出力を扱う。
-- モード、加速度、速度の出力指定を設計すること。
+- Display the confirmation drawing.
+  - Visualize the support condition, node spring, member joint condition, member spring, virtual member, influence line loading point, large member, and member coordinate system.
+- Provide confirmation drawing search.
+  - Select a node or member on the drawing and display the condition and value in a dialog or side panel.
+- Provide load drawing search.
+  - Select a node or member on the drawing and display the load type and value applied.
+- Display the deformed shape.
+  - Handle the pre- and post-deformation shape, the deformation scale, and the auto scale per load case.
+- Display the member force diagram.
+  - Handle `FX/FY/FZ/MX/MY/MZ`, in-plane and out-of-plane, all components, and scale specification.
+- Provide case switching.
+  - Switch load cases and structural systems by first, previous, next, last, and arbitrary jump.
+- Provide line-of-sight change.
+  - Handle the standard views equivalent to XY, XZ, YZ, and arbitrary viewpoints.
 
 ### Could
 
-- 図面帳票を出力できること。
-  - 形状図、変形図、断面力図、モード図、影響線図、ライン図を帳票または図面ファイルとして出力する。
-- 用紙サイズ、向き、文字高、スケール、分割数を細かく設定できること。
-- DXF、SVG、PDF、PNG等の図面エクスポートを提供すること。
-- 既存SPACER風の拡張子別帳票ビューを提供すること。
-  - ただし内部形式・画面表現は独自仕様とする。
+- Display shrinkage diagram, mode diagram, influence line diagram, and line diagram.
+- Overlay member force diagrams of multiple cases.
+- Copy the selected node number and member number on the drawing to the clipboard.
+  - Choose between free format and table format.
+- Provide a white-background monochrome display mode.
+- Provide a PV-equivalent plot file viewer and DXF display / conversion.
 
-## 5. UI機能
+## 4. Report Features
 
 ### Must
 
-- 入力画面、描画画面、実行画面を分離すること。
-  - 入力画面ではモデルと解析条件を編集する。
-  - 描画画面では構造図・荷重図・結果図を確認する。
-  - 実行画面では解析進捗、ログ、エラーを表示する。
-- モジュール切替を提供すること。
-  - `CONTROL`、`STATICS`、`INFLOAD`、`R-SPECTRUM`、`PRINT`、`DRAFT` 相当の概念をナビゲーションに持たせる。
-  - 初期実装では未対応モジュールを非表示または無効表示にする。
-- ツリーメニューまたはサイドナビを提供すること。
-  - 入力項目へ直接移動できる。
-  - エラー発生時に該当画面へジャンプできる。
-- 表入力を提供すること。
-  - 行追加、行削除、行移動、コピー、貼り付け、範囲選択を扱う。
-- ファイル操作を提供すること。
-  - 新規作成、開く、保存、名前を付けて保存、閉じるを扱う。
-- 計算実行ボタンを提供すること。
-  - 実行前に保存確認と入力検証を行う。
-- 入力補助と検証結果を同一画面で確認できること。
+- Output the analysis result report.
+  - Output the displacement, member force, and reaction per case, node, member, and support.
+  - The initial format is one of Markdown, CSV, HTML, and PDF.
+- Specify the output target.
+  - Handle all nodes, arbitrary nodes, all members, arbitrary members, all supports, arbitrary supports, all cases, and arbitrary cases.
+- Confirm the analysis log and errors in the report or the log view.
+  - Distinguish pre-analysis errors and in-analysis errors.
+- Output the load combination table.
+  - Display the combination case number, case name, coefficient, operation type, and note.
+  - Support CSV save.
+- Display and output the size data list.
+  - Confirm the node count, member count, material count, support count, load case count, and so on.
 
 ### Should
 
-- 便利な表編集機能を提供すること。
-  - 常時編集モード、指定範囲一括入力、指定範囲連続値入力、連番展開を扱う。
-- フリーフォーマット入力を提供すること。
-  - `1,2,3;`、`101-110;` のような列挙・範囲指定を内部配列に変換する。
-  - 表形式にも貼り付け可能にする。
-- メニューとツールバーを整備すること。
-  - ファイル、編集、表示、計算、描画、ウィンドウ、ヘルプを整理する。
-- 描画画面のコンテキストメニューを提供すること。
-  - 構造図、荷重図、設定、検索、視点変更、拡大、復帰、原図を呼び出せる。
-- 確認表示を提供すること。
-  - 入力表上で、支点、節点バネ、局部座標、影響線載荷点など該当行を強調表示する。
-- 実行時エラーのダブルクリックジャンプを提供すること。
-- 未保存変更の警告と自動保存を設計すること。
+- Output per-module reports.
+  - Separate the output range by `STATICS`, `INFLOAD`, `PRINT`, and `DRAFT` equivalents.
+- Provide a report viewer.
+  - Move to the chapter, case, and result type with an index.
+  - Provide search, page move, print, and export.
+- Provide digit-formatted output.
+  - Output displacement, member force, and reaction per group such as main girder, cross beam, and bearing line.
+- Control the output format.
+  - Handle max and min only, axial force focus, 3-DOF / 6-DOF, page break, and input order output.
+- Design the output specification of mode, acceleration, and velocity.
 
 ### Could
 
-- 複数ウィンドウ表示を提供すること。
-  - 入力、描画、実行を重ねる、並べる、切り替える。
-- ヘルプを画面単位で提供すること。
-  - 現在画面の説明、入力項目の説明、例を表示する。
-- 最近開いたファイル履歴を提供すること。
-- プリンタ設定、印刷プレビュー、まとめて印刷を提供すること。
-- 外部ビューア相当のTV/PVを独立画面として提供すること。
-- キーボードショートカットを整備すること。
+- Output drawing reports.
+  - Output the geometry drawing, deformed shape, member force diagram, mode diagram, influence line diagram, and line diagram as a report or drawing file.
+- Configure paper size, orientation, character height, scale, and split count in detail.
+- Provide drawing export such as DXF, SVG, PDF, and PNG.
+- Provide an existing SPACER-style extension-based report view.
+  - The internal format and screen expression remain in-house.
 
-## 実装順序の指示
+## 5. UI Features
+
+### Must
+
+- Separate the input screen, drawing screen, and execution screen.
+  - The input screen edits the model and analysis conditions.
+  - The drawing screen confirms the structural drawing, load drawing, and result diagram.
+  - The execution screen displays the analysis progress, log, and errors.
+- Provide module switching.
+  - Have the concept of `CONTROL`, `STATICS`, `INFLOAD`, `R-SPECTRUM`, `PRINT`, and `DRAFT` in navigation.
+  - Hide or disable unsupported modules in the initial implementation.
+- Provide a tree menu or side navigation.
+  - Jump directly to the input items.
+  - Jump to the relevant screen when an error occurs.
+- Provide table input.
+  - Handle add row, delete row, move row, copy, paste, and range selection.
+- Provide file operations.
+  - Handle new, open, save, save as, and close.
+- Provide a calculation execution button.
+  - Confirm the save and validate the input before execution.
+- Allow the input assistance and the validation result to be confirmed on the same screen.
+
+### Should
+
+- Provide useful table editing features.
+  - Handle constant edit mode, batch input of the specified range, continuous value input of the specified range, and serial expansion.
+- Provide free-format input.
+  - Convert enumeration and range specifications such as `1,2,3;` and `101-110;` into an internal array.
+  - Allow pasting into a table.
+- Organize the menu and the toolbar.
+  - Organize file, edit, view, calculation, drawing, window, and help.
+- Provide the context menu of the drawing screen.
+  - Call up the structural drawing, load drawing, settings, search, viewpoint change, zoom, restoration, and original view.
+- Provide confirmation display.
+  - Highlight the support, node spring, local coordinate, influence line loading point, and similar rows on the input table.
+- Provide double-click jump to the execution-time error.
+- Design a warning for unsaved changes and an automatic save.
+
+### Could
+
+- Provide multi-window display.
+  - Stack, tile, and switch input, drawing, and execution.
+- Provide help per screen.
+  - Display the current screen description, the input items description, and examples.
+- Provide a recent file history.
+- Provide printer settings, print preview, and batch print.
+- Provide external viewer equivalents TV / PV as independent screens.
+- Organize keyboard shortcuts.
+
+## Implementation Order Directive
 
 ### Phase 1: MVP
 
-1. データスキーマを定義する。
-2. 入力UIの最小構成を作る。
-3. 節点、材質、部材、支点、固定荷重ケースを入力できるようにする。
-4. 入力検証を実装する。
-5. 3次元線形静的解析を実装する。
-6. 変位、断面力、反力を表表示する。
-7. 構造図と荷重図を表示する。
-8. CSVまたはHTMLで帳票出力する。
+1. Define the data schema.
+2. Build the minimum input UI.
+3. Allow the node, material, member, support, and fixed load case to be entered.
+4. Implement input validation.
+5. Implement the 3D linear static analysis.
+6. Display the displacement, member force, and reaction in a table.
+7. Display the structural drawing and the load drawing.
+8. Output the report in CSV or HTML.
 
-### Phase 2: 業務利用拡張
+### Phase 2: Business-use Extension
 
-1. 部材表、局部座標系、部材座標系、節点バネ、部材結合条件を拡張する。
-2. 荷重種を増やす。
-3. 組合せ・抽出とマスターファイル相当の結果保存を実装する。
-4. 出力指定、荷重組合せ表、サイズ一覧を実装する。
-5. 変形図、断面力図、確認図検索を実装する。
+1. Extend the member table, local coordinate system, member coordinate system, node spring, and member joint condition.
+2. Add more load types.
+3. Implement combination / extraction and save of the result equivalent to the master file.
+4. Implement the output specification, load combination table, and size list.
+5. Implement the deformed shape, member force diagram, and confirmation drawing search.
 
-### Phase 3: 高度解析・図面
+### Phase 3: Advanced Analysis and Drawing
 
-1. 影響線作成と影響線解析を実装する。
-2. 活荷重規定、ライン、格子形状、支間長、衝撃係数を実装する。
-3. 固有値解析、応答スペクトル解析を実装する。
-4. DRAFT相当の図面定義、モード図、影響線図、ライン図を実装する。
-5. PDF/DXF/SVG等の図面・帳票出力を拡張する。
+1. Implement influence line generation and influence line analysis.
+2. Implement the live load specification, line, grid shape, span length, and impact factor.
+3. Implement eigenvalue analysis and response spectrum analysis.
+4. Implement the drawing definition equivalent to DRAFT, mode diagram, influence line diagram, and line diagram.
+5. Extend the drawing and report output to PDF, DXF, SVG, and so on.
 
-## 非対象または注意事項
+## Out of Scope or Cautions
 
-- プロテクトキー、ライセンスディスク、Windows 2000/XP/Vista固有要件は独自システムでは採用しない。
-- JIP-SPACERの独自ファイル拡張子や帳票拡張子をそのまま互換対象にするかは別途判断する。
-- 道路橋示方書等の規定値は、法令・基準の版を明示して実装する必要がある。
-- 解析エンジンは検証が重要であるため、各機能に単体テスト、既知解、比較モデルを用意する。
-- UI実装より先に、データスキーマ、座標系規約、符号規約、単位系、荷重ケース規約を確定する。
+- Protection keys, license disks, and Windows 2000 / XP / Vista specific requirements are not adopted in the in-house system.
+- Whether the JIP-SPACER proprietary file extensions and report extensions are made compatible targets is decided separately.
+- Specification values such as the Road Bridge Specification must be implemented with the version of the law or standard clearly stated.
+- Because verification of the analysis engine is important, prepare unit tests, known solutions, and comparison models for each feature.
+- Before the UI implementation, fix the data schema, the coordinate system convention, the sign convention, the unit system, and the load case convention.
 
-## 次に作成すべき設計資料
+## Design Documents to Create Next
 
-- `docs/domain_model.md`: 節点、部材、材質、支点、荷重、結果のデータモデル
-- `docs/analysis_engine_design.md`: 静的解析、境界条件、荷重等価節点力、断面力算出
-- `docs/ui_flow.md`: 入力、実行、結果、帳票、描画の画面遷移
-- `docs/report_design.md`: 帳票テンプレート、出力対象、CSV/PDF/HTML方針
-- `docs/validation_rules.md`: 入力検証、解析前検証、エラーコード体系
+- `docs/domain_model.md`: data model of nodes, members, materials, supports, loads, and results
+- `docs/analysis_engine_design.md`: static analysis, boundary condition, equivalent nodal load of load, section force calculation
+- `docs/ui_flow.md`: screen transitions of input, execution, result, report, and drawing
+- `docs/report_design.md`: report template, output target, CSV / PDF / HTML policy
+- `docs/validation_rules.md`: input validation, pre-analysis validation, error code system

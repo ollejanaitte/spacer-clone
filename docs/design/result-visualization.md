@@ -1,38 +1,40 @@
-# 結果表示設計
+﻿# Result Display Design
 
-## 1. 目的
+## 1. Purpose
 
-解析結果を3Dビュー、表、グラフ、結果確認画面へ表示するための責務分離を定義する。
+This document defines the responsibility split for displaying analysis results in the 3D view, tables, graphs, and the result review screen.
 
-本設計は表示アーキテクチャの定義であり、実装、UI変更、API変更は行わない。
+This design defines the display architecture. It does not perform implementation, UI changes, or API changes.
 
-## 2. 基本構成
+## 2. Basic Structure
 
-結果表示は以下の流れとする。
+Result display follows the flow below.
 
 ```text
 Result
-↓
+  |
+  v
 ViewModel
-↓
+  |
+  v
 Viewer
 ```
 
-`Result` は [result-schema.md](result-schema.md) で定義する解析結果である。`ViewModel` は表示対象に合わせて結果を整形した派生データであり、`Viewer` は画面表示を担当する。
+`Result` is the analysis result defined in [result-schema.md](result-schema.md). `ViewModel` is derived data shaped for the display target. `Viewer` is responsible for rendering on the screen.
 
-## 3. 責務分担
+## 3. Responsibility Split
 
-| 層 | 責務 | 含めるもの | 含めないもの |
+| Layer | Responsibility | Includes | Excludes |
 | --- | --- | --- | --- |
-| Result | 解析結果の事実 | 変位、反力、部材断面力、固有値解析結果、応答スペクトル結果、影響線結果 | 表示倍率、表示色、線幅、フォントサイズ、カメラ状態、UI状態 |
-| ViewModel | 表示用の派生データ | 表示対象、フィルタ済み値、図化用系列、凡例用ラベル、正規化値 | ソルバ固有の計算処理 |
-| Viewer | 画面描画と操作 | 3D表示、表、グラフ、選択状態、カメラ、表示設定 | 解析結果の永続スキーマ |
+| Result | The fact of the analysis result | Displacements, reactions, member section forces, eigenvalue analysis result, response spectrum result, influence line result | Display scale, display colors, line width, font size, camera state, UI state |
+| ViewModel | Derived data for display | Display target, filtered values, plotting series, legend labels, normalized values | Solver-specific calculation |
+| Viewer | Screen rendering and interaction | 3D display, tables, graphs, selection state, camera, display settings | Persistent schema of the analysis result |
 
-## 4. ViewModelの種類
+## 4. ViewModel Types
 
-### 4.1 変位ViewModel
+### 4.1 Displacement ViewModel
 
-節点変位を表、変形図、変位グラフへ渡すための派生モデルである。
+Derived model that hands nodal displacements to the table, deformed shape, and displacement graph.
 
 ```ts
 export type DisplacementViewModel = {
@@ -51,9 +53,9 @@ export type DisplacementViewModel = {
 };
 ```
 
-### 4.2 反力ViewModel
+### 4.2 Reaction ViewModel
 
-支点反力を表、反力図、帳票プレビューへ渡すための派生モデルである。
+Derived model that hands support reactions to the table, reaction diagram, and report preview.
 
 ```ts
 export type ReactionViewModel = {
@@ -71,9 +73,9 @@ export type ReactionViewModel = {
 };
 ```
 
-### 4.3 部材断面力ViewModel
+### 4.3 Member Section Force ViewModel
 
-部材断面力は `N`, `Qy`, `Qz`, `Mx`, `My`, `Mz` に統一する。
+Member section forces are unified into `N`, `Qy`, `Qz`, `Mx`, `My`, `Mz`.
 
 ```ts
 export type MemberSectionForceComponent = "N" | "Qy" | "Qz" | "Mx" | "My" | "Mz";
@@ -90,9 +92,9 @@ export type MemberSectionForceViewModel = {
 };
 ```
 
-### 4.4 固有値解析ViewModel
+### 4.4 Eigenvalue Analysis ViewModel
 
-固有値解析結果は、モード一覧、モード図、動的解析結果表へ渡す。
+The eigenvalue analysis result is handed to the mode list, mode shape, and dynamic analysis result table.
 
 ```ts
 export type EigenModeViewModel = {
@@ -108,9 +110,9 @@ export type EigenModeViewModel = {
 };
 ```
 
-### 4.5 応答スペクトル解析ViewModel
+### 4.5 Response Spectrum Analysis ViewModel
 
-応答スペクトル解析結果は、モード別結果と合成結果を分けて表示する。
+The response spectrum analysis result is shown by separating the per-mode results from the combined result.
 
 ```ts
 export type ResponseSpectrumViewModel = {
@@ -128,9 +130,9 @@ export type ResponseSpectrumViewModel = {
 };
 ```
 
-### 4.6 影響線ViewModel
+### 4.6 Influence Line ViewModel
 
-影響線対象は節点変位、反力、断面力とする。
+Influence line targets are nodal displacement, reaction, and section force.
 
 ```ts
 export type InfluenceTargetViewModel =
@@ -149,11 +151,11 @@ export type InfluenceLineViewModel = {
 };
 ```
 
-## 5. Viewerとの関係
+## 5. Relationship with the Viewer
 
-ViewerはViewModelを受け取り、画面の状態と描画を管理する。表示倍率、表示色、線幅、フォントサイズ、カメラ状態、UI状態はViewer側またはViewer用設定として扱い、`Result Schema` には戻さない。
+The Viewer receives the ViewModel and manages the screen state and rendering. Display scale, display colors, line width, font size, camera state, and UI state live on the Viewer side or in Viewer-side settings. They are not written back to the `Result Schema`.
 
-## 6. 関連文書
+## 6. Related Documents
 
 - [result-schema.md](result-schema.md)
 - [report-drawing-output.md](report-drawing-output.md)

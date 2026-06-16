@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { ja } from "../i18n/ja";
 import { Step1RoadCondition } from "./steps/Step1RoadCondition";
 import { Step2SpanSetting } from "./steps/Step2SpanSetting";
 import { Step3ImpactFactor } from "./steps/Step3ImpactFactor";
@@ -6,7 +7,7 @@ import { Step4LineSetting } from "./steps/Step4LineSetting";
 import { Step5LoadSetting } from "./steps/Step5LoadSetting";
 import { Step6ModelGeneration } from "./steps/Step6ModelGeneration";
 import {
-  STEP_TITLES,
+  stepTitle,
   WIZARD_STEPS,
   makeInitialBridgeProject,
   type WizardStepNumber,
@@ -62,9 +63,9 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
       } else {
         await createBridge(project);
       }
-      setSaveMessage(`保存しました: ${project.id}`);
+      setSaveMessage(ja.bridgeWizard.saveSuccess(project.id));
     } catch (e) {
-      setSaveMessage(`保存に失敗: ${e instanceof Error ? e.message : String(e)}`);
+      setSaveMessage(ja.bridgeWizard.saveFailed(e instanceof Error ? e.message : String(e)));
     } finally {
       setSaving(false);
     }
@@ -76,9 +77,9 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
     try {
       const p = await getBridge(id);
       setProject(p);
-      setSaveMessage(`読み込みました: ${id}`);
+      setSaveMessage(ja.bridgeWizard.loadSuccess(id));
     } catch (e) {
-      setSaveMessage(`読み込みに失敗: ${e instanceof Error ? e.message : String(e)}`);
+      setSaveMessage(ja.bridgeWizard.loadFailed(e instanceof Error ? e.message : String(e)));
     } finally {
       setSaving(false);
     }
@@ -92,9 +93,9 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
       const data = JSON.parse(text);
       const p = loadJsonFileAsBridge(data);
       setProject(p);
-      setSaveMessage(`ファイルから読み込みました: ${file.name}`);
+      setSaveMessage(ja.bridgeWizard.fileLoadSuccess(file.name));
     } catch (e) {
-      setSaveMessage(`ファイル読み込みに失敗: ${e instanceof Error ? e.message : String(e)}`);
+      setSaveMessage(ja.bridgeWizard.fileLoadFailed(e instanceof Error ? e.message : String(e)));
     } finally {
       setSaving(false);
     }
@@ -108,7 +109,7 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
     link.download = `${project.id}.bridge.json`;
     link.click();
     URL.revokeObjectURL(url);
-    setSaveMessage(`ダウンロード: ${project.id}.bridge.json`);
+    setSaveMessage(ja.bridgeWizard.downloadStarted(`${project.id}.bridge.json`));
   }, [project]);
 
   const handleSendToAnalysis = useCallback(
@@ -122,20 +123,20 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
   if (!open) return null;
 
   return (
-    <div className="bw-modal" role="dialog" aria-modal="true" aria-label="橋梁モデル作成ウィザード">
+    <div className="bw-modal" role="dialog" aria-modal="true" aria-label={ja.bridgeWizard.ariaLabel}>
       <div className="bw-modal-header">
         <div className="bw-progress">
           <span className="bw-step-counter">Step {step} / 6</span>
-          <span className="bw-step-title">{STEP_TITLES[step]}</span>
+          <span className="bw-step-title">{ja.bridgeSteps.stepTitles[step]}</span>
           <div className="bw-progress-bar">
             <div className="bw-progress-fill" style={{ width: `${(step / 6) * 100}%` }} />
           </div>
         </div>
-        <button type="button" className="bw-close" onClick={onClose}>閉じる</button>
+        <button type="button" className="bw-close" onClick={onClose}>{ja.common.close}</button>
       </div>
       <div className="bw-modal-body">
         <aside className="bw-sidebar">
-          <h3>橋梁モデル作成</h3>
+          <h3>{ja.bridgeWizard.title}</h3>
           <ol>
             {WIZARD_STEPS.map((n) => (
               <li key={n} className={n === step ? "active" : ""}>
@@ -144,20 +145,20 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
                   onClick={() => setStep(n)}
                   className={n === step ? "active" : ""}
                 >
-                  {n}. {STEP_TITLES[n]}
+                  {n}. {stepTitle(n)}
                 </button>
               </li>
             ))}
           </ol>
           <div className="bw-sidebar-info">
-            <h4>{STEP_TITLES[step]}</h4>
+            <h4>{stepTitle(step)}</h4>
             <p>{sidebarHintFor(step)}</p>
-            {loadError && <p className="bw-error">テンプレート取得失敗: {loadError}。既定値で開始しています。</p>}
+            {loadError && <p className="bw-error">{ja.bridgeWizard.templateLoadError(loadError)}</p>}
             {saveMessage && <p className="bw-info">{saveMessage}</p>}
           </div>
           <div className="bw-sidebar-tools">
             <label>
-              既存の bridge_id:
+              {ja.bridgeWizard.existingBridgeId}
               <input
                 type="text"
                 value={loadBridgeId}
@@ -166,10 +167,10 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
               />
             </label>
             <button type="button" onClick={() => loadBridgeId && handleLoad(loadBridgeId)}>
-              サーバーから読込
+              {ja.bridgeWizard.loadFromServer}
             </button>
             <label className="bw-file">
-              JSON ファイル読込
+              {ja.bridgeWizard.loadFromJsonFile}
               <input
                 type="file"
                 accept="application/json,.json"
@@ -181,9 +182,9 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
               />
             </label>
             <button type="button" onClick={handleSave} disabled={saving}>
-              {saving ? "保存中..." : "保存"}
+              {saving ? ja.bridgeWizard.savingLabel : ja.bridgeWizard.saveButton}
             </button>
-            <button type="button" onClick={handleDownload}>JSON ダウンロード</button>
+            <button type="button" onClick={handleDownload}>{ja.bridgeWizard.downloadJsonButton}</button>
           </div>
         </aside>
         <main className="bw-main">
@@ -214,7 +215,7 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
           onClick={() => setStep((s) => (Math.max(1, (s as number) - 1) as WizardStepNumber))}
           disabled={step === 1}
         >
-          ← 戻る
+          {ja.bridgeWizard.backLabel}
         </button>
         {step < 6 ? (
           <button
@@ -223,11 +224,11 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
             disabled={!stepValidation.ok}
             onClick={() => setStep((s) => (Math.min(6, (s as number) + 1) as WizardStepNumber))}
           >
-            次へ →
+            {ja.bridgeWizard.nextLabel}
           </button>
         ) : (
           <button type="button" onClick={onClose}>
-            完了
+            {ja.bridgeWizard.finishLabel}
           </button>
         )}
         {step === 6 && lastFem && (
@@ -236,7 +237,7 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
             className="bw-button-secondary"
             onClick={() => handleSendToAnalysis(lastFem)}
           >
-            解析へ送る
+            {ja.bridgeWizard.sendToAnalysis}
           </button>
         )}
       </div>
@@ -247,17 +248,17 @@ export function BridgeWizard({ open, onClose, onCommit }: Props) {
 function sidebarHintFor(step: WizardStepNumber): string {
   switch (step) {
     case 1:
-      return "道路の横断構成を入力すると、主桁候補 y 座標が自動で計算されます。";
+      return ja.bridgeWizard.hints.step1;
     case 2:
-      return "橋軸方向の支間長さを設定します。支間追加・削除で構造を変えてください。";
+      return ja.bridgeWizard.hints.step2;
     case 3:
-      return "衝撃係数は自動計算が推奨です。L_max から簡略式 i = min(0.3, 20 / (50 + L)) で算出します。";
+      return ja.bridgeWizard.hints.step3;
     case 4:
-      return "3D ビューで走行ラインや参照ラインを引きます。種別 traffic/load/reference を選んで描画してください。";
+      return ja.bridgeWizard.hints.step4;
     case 5:
-      return "荷重（自重 / 分布 / 車両）を追加します。ラインに紐づけることで FEM 生成時にマッピングされます。";
+      return ja.bridgeWizard.hints.step5;
     case 6:
-      return "メッシュ分割と密度を指定して FEM モデルを生成します。生成後は解析へ送れます。";
+      return ja.bridgeWizard.hints.step6;
     default:
       return "";
   }
@@ -266,26 +267,26 @@ function sidebarHintFor(step: WizardStepNumber): string {
 function validateStep(step: WizardStepNumber, project: BridgeProject): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
   if (step === 1) {
-    if (project.crossSection.lane_count < 1) errors.push("車線数は 1 以上");
-    if (project.crossSection.lane_width <= 0) errors.push("車線幅は 0 より大きい");
-    if (project.crossSection.lane_width * project.crossSection.lane_count <= 0) errors.push("車線合計幅は 0 より大きい");
+    if (project.crossSection.lane_count < 1) errors.push(ja.bridgeWizard.errors.laneCountMin);
+    if (project.crossSection.lane_width <= 0) errors.push(ja.bridgeWizard.errors.laneWidthPositive);
+    if (project.crossSection.lane_width * project.crossSection.lane_count <= 0) errors.push(ja.bridgeWizard.errors.laneTotalWidthPositive);
   } else if (step === 2) {
-    if (project.spans.length === 0) errors.push("支間が未設定");
+    if (project.spans.length === 0) errors.push(ja.bridgeWizard.errors.spanUnset);
     for (const sp of project.spans) {
-      if (sp.length <= 0) errors.push(`支間 ${sp.index} の長さは 0 より大きい`);
+      if (sp.length <= 0) errors.push(ja.bridgeWizard.errors.spanLengthPositive(sp.index));
     }
   } else if (step === 3) {
     if (project.impactFactor.value < 0 || project.impactFactor.value > 1) {
-      errors.push("衝撃係数は 0..1");
+      errors.push(ja.bridgeWizard.errors.impactFactorRange);
     }
   } else if (step === 5) {
     for (const ld of project.loads) {
       if (ld.line_id && !project.lines.find((l) => l.id === ld.line_id)) {
-        errors.push(`荷重 ${ld.id} の line_id が未定義`);
+        errors.push(ja.bridgeWizard.errors.loadLineUndefined(ld.id));
       }
     }
   } else if (step === 6) {
-    if (project.generationSettings.mesh_division < 1) errors.push("mesh_division は 1 以上");
+    if (project.generationSettings.mesh_division < 1) errors.push(ja.bridgeWizard.errors.meshDivisionMin);
   }
   return { ok: errors.length === 0, errors };
 }

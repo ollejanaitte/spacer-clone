@@ -1,3 +1,4 @@
+﻿import { ja } from "../../i18n/ja";
 import type { BridgeProject, BridgeLoad } from "../types";
 import { addLoad, appendLoad, nextLoadId, removeLoad } from "../BridgeWizardState";
 
@@ -12,10 +13,10 @@ const TYPES: BridgeLoad["type"][] = ["self_weight", "distributed", "vehicle"];
 export function Step5LoadSetting({ project, onChange }: Props) {
   return (
     <div className="bw-step bw-step-load">
-      <h2>Step 5 / 6 荷重設定</h2>
-      <p className="bw-hint">荷重を追加して、対象ラインと方向、値を設定してください。</p>
+      <h2>{ja.bridgeSteps.step5.title}</h2>
+      <p className="bw-hint">{ja.bridgeSteps.step5.hint}</p>
       <div className="bw-load-list">
-        {project.loads.length === 0 && <p className="bw-empty">荷重はまだありません。</p>}
+        {project.loads.length === 0 && <p className="bw-empty">{ja.bridgeSteps.step5.empty}</p>}
         {project.loads.map((ld) => (
           <div className="bw-load-row" key={ld.id}>
             <span className="bw-pill">{ld.type}</span>
@@ -76,7 +77,7 @@ export function Step5LoadSetting({ project, onChange }: Props) {
                 onChange({ ...project, loads: next });
               }}
             >
-              <option value="">-- ラインなし --</option>
+              <option value="">{ja.bridgeSteps.step5.noLine}</option>
               {project.lines.map((l) => (
                 <option key={l.id} value={l.id}>
                   {l.name} ({l.type})
@@ -87,7 +88,7 @@ export function Step5LoadSetting({ project, onChange }: Props) {
               type="button"
               onClick={() => onChange(removeLoad(project, ld.id))}
             >
-              削除
+              {ja.common.remove}
             </button>
           </div>
         ))}
@@ -99,7 +100,7 @@ export function Step5LoadSetting({ project, onChange }: Props) {
           const firstLine = project.lines[0]?.id || "";
           const load = addLoad(project, {
             type: "distributed",
-            name: "新しい荷重",
+            name: ja.bridgeSteps.step5.newLoadName,
             magnitude: 10.0,
             direction: "-Y",
             line_id: firstLine,
@@ -107,14 +108,14 @@ export function Step5LoadSetting({ project, onChange }: Props) {
           onChange(appendLoad(project, load));
         }}
       >
-        + 荷重追加
+        {ja.bridgeSteps.step5.addLoad}
       </button>
       <div className="bw-info">
-        <p>種類別の意味:</p>
+        <p>{ja.bridgeSteps.step5.typeNotesHeading}:</p>
         <ul>
-          <li><strong>self_weight</strong>: 自重。全節点に magnitude / nodeCount を分散。</li>
-          <li><strong>distributed</strong>: 分布荷重。対象 line_id の x 範囲の部材に kN/m として割当。</li>
-          <li><strong>vehicle</strong>: 車両荷重。対象 line_id 上の代表節点に kN として作用。</li>
+          <li>{ja.bridgeSteps.step5.typeNotes.selfWeight}</li>
+          <li>{ja.bridgeSteps.step5.typeNotes.distributed}</li>
+          <li>{ja.bridgeSteps.step5.typeNotes.vehicle}</li>
         </ul>
       </div>
     </div>

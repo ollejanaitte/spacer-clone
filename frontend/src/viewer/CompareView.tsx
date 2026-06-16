@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
+import { ja } from "../i18n/ja";
 
 /**
  * Display-only side-by-side container for two (or more) viewer instances
@@ -28,7 +29,7 @@ export function CompareView({ slots, sideBySide }: CompareViewProps) {
   if (slots.length === 0) {
     return (
       <div className="compare-view empty" data-testid="compare-view">
-        <p>比較表示するビューがありません。</p>
+        <p>{ja.viewer.messages.compareEmpty}</p>
       </div>
     );
   }

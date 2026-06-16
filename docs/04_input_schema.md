@@ -1,38 +1,38 @@
-# 04 Input Schema
+﻿# 04 Input Schema
 
-## 1. 目的
+## 1. Purpose
 
-MVPの入力データである `project.json` の構造を定義する。後続実装では、この文書をもとにJSON Schema、APIバリデーション、UI入力フォーム、解析エンジン入力モデルを作成する。
+This document defines the structure of `project.json`, the input data of the MVP. Subsequent implementations will use this document as the basis for the JSON Schema, API validation, UI input forms, and the analysis engine input model.
 
-## 2. 対象範囲
+## 2. Scope
 
-MVPで扱う入力は以下に限定する。
+The MVP input is limited to the following:
 
-- 3次元節点座標。
-- 材料定義。
-- 断面定義。
-- 3D梁部材定義。
-- 6自由度支点条件。
-- 荷重ケース。
-- 節点集中荷重。
-- 部材等分布荷重。
-- 線形静的解析設定。
+- 3D node coordinates.
+- Material definitions.
+- Section definitions.
+- 3D beam member definitions.
+- Six-DOF support conditions.
+- Load cases.
+- Nodal concentrated loads.
+- Member uniform distributed loads.
+- Linear static analysis settings.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-以下の入力項目は MVP 初期版では定義しない。
+The following input items are not defined in the initial MVP:
 
-- 影響線載荷点、格子形状、ライン、移動荷重、活荷重自動載荷。
-- 温度荷重、プレストレス、初期張力。
-- 部材バネ、節点間バネ、連成バネ。
-- 部材端リリース、高度な荷重組合せ。
-- DXF、外部ソフト連携、ライセンス情報。
+- Influence line loading points, grid shapes, lines, moving loads, automatic live load placement.
+- Temperature loads, prestress, initial tension.
+- Member springs, node-to-node springs, coupling springs.
+- Member end releases, advanced load combinations.
+- DXF, integration with external software, license information.
 
-固有値解析・応答スペクトル解析の入力は、Phase E 拡張として `schemas/project.schema.json` および [eigen-analysis.md](design/eigen-analysis.md)、[response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。本書第 4 節は線形静的 MVP 基準を示す。
+The inputs for eigenvalue analysis and response spectrum analysis are added later as the Phase E extension. See `schemas/project.schema.json`, [eigen-analysis.md](design/eigen-analysis.md), and [response-spectrum-analysis.md](design/response-spectrum-analysis.md). Section 4 of this document covers the linear static MVP.
 
-## 4. データ構造
+## 4. Data Structure
 
-### トップレベル
+### Top Level
 
 ```json
 {
@@ -50,7 +50,7 @@ MVPで扱う入力は以下に限定する。
 }
 ```
 
-すべて必須とする。
+All top-level keys are required.
 
 ### project
 
@@ -65,11 +65,11 @@ MVPで扱う入力は以下に限定する。
 }
 ```
 
-- `id`: 文字列、必須。
-- `name`: 文字列、必須。
-- `schemaVersion`: MVPでは `1.0.0`。
-- `description`: 文字列、空文字可。
-- `createdAt`, `updatedAt`: ISO 8601文字列。
+- `id`: string, required.
+- `name`: string, required.
+- `schemaVersion`: for the MVP this is `1.0.0`.
+- `description`: string, empty string allowed.
+- `createdAt`, `updatedAt`: ISO 8601 strings.
 
 ### units
 
@@ -84,7 +84,7 @@ MVPで扱う入力は以下に限定する。
 }
 ```
 
-MVPではSI単位のみを許可する。単位変換は実装しない。
+Only SI units are allowed in the MVP. Unit conversion is not implemented.
 
 ### nodes
 
@@ -98,9 +98,9 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `id`: 一意。
-- `x`, `y`, `z`: グローバル座標、単位m。
-- `label`: 任意。
+- `id`: unique.
+- `x`, `y`, `z`: global coordinates, in meters.
+- `label`: optional.
 
 ### materials
 
@@ -115,9 +115,9 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `elasticModulus`: `kN/m2`、正数。
-- `shearModulus`: `kN/m2`、正数。
-- `poissonRatio`, `density`: MVP解析では任意情報。
+- `elasticModulus`: `kN/m2`, positive.
+- `shearModulus`: `kN/m2`, positive.
+- `poissonRatio`, `density`: informational for the MVP analysis.
 
 ### sections
 
@@ -132,10 +132,10 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `area`: 断面積、`m2`。
-- `iy`: 部材局所y軸まわり断面2次モーメント、`m4`。
-- `iz`: 部材局所z軸まわり断面2次モーメント、`m4`。
-- `j`: ねじり定数、`m4`。
+- `area`: cross-section area, `m2`.
+- `iy`: second moment of area about the local y-axis, `m4`.
+- `iz`: second moment of area about the local z-axis, `m4`.
+- `j`: torsional constant, `m4`.
 
 ### members
 
@@ -151,11 +151,11 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- `nodeI`, `nodeJ`: 既存節点ID。
-- `materialId`: 既存材料ID。
-- `sectionId`: 既存断面ID。
-- `orientationVector`: 任意。省略時は解析エンジンの既定局所座標則を使う。
-- `orientationNode`: 任意。`orientationVector` と同時指定不可。
+- `nodeI`, `nodeJ`: existing node IDs.
+- `materialId`: existing material ID.
+- `sectionId`: existing section ID.
+- `orientationVector`: optional. If omitted, the analysis engine uses the default local coordinate rule.
+- `orientationNode`: optional. Cannot be specified together with `orientationVector`.
 
 ### supports
 
@@ -171,8 +171,8 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-- 各booleanは該当自由度を拘束することを示す。
-- 同一節点に複数supportを定義してはならない。
+- Each boolean indicates that the corresponding DOF is restrained.
+- A node must not have more than one support entry.
 
 ### loadCases
 
@@ -184,7 +184,7 @@ MVPではSI単位のみを許可する。単位変換は実装しない。
 }
 ```
 
-MVPでは `type` は `static` のみ。
+In the MVP, `type` is always `static`.
 
 ### nodalLoads
 
@@ -202,9 +202,9 @@ MVPでは `type` は `static` のみ。
 }
 ```
 
-- 力は `kN`。
-- モーメントは `kN_m`。
-- 未使用成分も `0.0` として明示する。
+- Forces are in `kN`.
+- Moments are in `kN_m`.
+- Unused components must be written explicitly as `0.0`.
 
 ### memberLoads
 
@@ -221,10 +221,10 @@ MVPでは `type` は `static` のみ。
 }
 ```
 
-- `type`: MVPでは `uniform` のみ。
-- `coordinateSystem`: `local` または `global`。
-- 荷重強度は `kN/m`。
-- 部材全長に作用する等分布荷重のみ扱う。
+- `type`: in the MVP this is always `uniform`.
+- `coordinateSystem`: `local` or `global`.
+- Load intensity is `kN/m`.
+- Only uniform distributed loads over the full member length are supported.
 
 ### analysisSettings
 
@@ -238,18 +238,18 @@ MVPでは `type` は `static` のみ。
 }
 ```
 
-MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
+In the MVP, `includeShearDeformation` and `largeDisplacement` must be `false`.
 
-## 5. Phase E 拡張（固有値・応答スペクトル）
+## 5. Phase E Extension (Eigenvalue and Response Spectrum)
 
-線形静的 MVP 完了後、以下を `project.json` へ追加する。正本は `schemas/project.schema.json` である。
+After the linear static MVP is complete, the following are added to `project.json`. The authoritative reference is `schemas/project.schema.json`.
 
-### massCases（任意配列）
+### massCases (optional array)
 
 ```json
 {
   "id": "mass-1",
-  "name": "固有値解析用質量",
+  "name": "Mass case for eigenvalue analysis",
   "method": "lumped",
   "source": "manual",
   "items": [
@@ -266,9 +266,9 @@ MVPでは `includeShearDeformation` と `largeDisplacement` は必ず `false`。
 }
 ```
 
-MVP では `method: "lumped"`、`source: "manual"` のみ。`mx/my/mz` を主対象とし、`irx/iry/irz` は 0 固定。
+In the MVP, only `method: "lumped"` and `source: "manual"` are allowed. `mx/my/mz` are the primary fields. `irx/iry/irz` are fixed to 0.
 
-### analysisSettings.eigen（任意）
+### analysisSettings.eigen (optional)
 
 ```json
 {
@@ -277,7 +277,7 @@ MVP では `method: "lumped"`、`source: "manual"` のみ。`mx/my/mz` を主対
 }
 ```
 
-### analysisSettings.responseSpectrum（任意）
+### analysisSettings.responseSpectrum (optional)
 
 ```json
 {
@@ -294,32 +294,32 @@ MVP では `method: "lumped"`、`source: "manual"` のみ。`mx/my/mz` を主対
 }
 ```
 
-スペクトルはトップレベル `spectrumCases` ではなく、`spectrumPoints` 点列で保持する。補間は **線形補間**、周期範囲外は **端値固定** とする。詳細は [response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。
+The spectrum is stored as a point list inside `spectrumPoints` rather than as a top-level `spectrumCases` array. Interpolation is **linear**, and values outside the period range use the **end values**. For details, see [response-spectrum-analysis.md](design/response-spectrum-analysis.md).
 
-## 6. エラー処理
+## 6. Error Handling
 
-- 必須フィールド欠落は `SCHEMA_ERROR`。
-- ID重複は `DUPLICATE_ID`。
-- 存在しない参照は `INVALID_REFERENCE`。
-- 非有限値、負またはゼロの剛性値は `INVALID_VALUE`。
-- 部材長ゼロは `ZERO_LENGTH_MEMBER`。
-- 支点不足は検証または解析で `MODEL_UNSTABLE`。
-- エラーには `path`、`entityType`、`entityId` を可能な限り含める。
+- Missing required fields: `SCHEMA_ERROR`.
+- Duplicate IDs: `DUPLICATE_ID`.
+- Non-existent references: `INVALID_REFERENCE`.
+- Non-finite values, non-positive stiffness values: `INVALID_VALUE`.
+- Zero-length member: `ZERO_LENGTH_MEMBER`.
+- Insufficient supports: `MODEL_UNSTABLE` (returned by validation or analysis).
+- Errors should include `path`, `entityType`, and `entityId` whenever possible.
 
-## 7. テスト観点
+## 7. Test Viewpoints
 
-- 正常な片持梁モデルがスキーマ検証を通る。
-- 必須トップレベル項目欠落を検出する。
-- 節点、材料、断面、荷重ケースの不正参照を検出する。
-- 重複IDを検出する。
-- `NaN`、`Infinity`、文字列数値を拒否する。
-- MVP外フィールドを追加した場合の扱いがJSON Schemaで明確である。
+- A valid cantilever model passes schema validation.
+- Missing required top-level fields are detected.
+- Invalid references to nodes, materials, sections, and load cases are detected.
+- Duplicate IDs are detected.
+- `NaN`, `Infinity`, and string-encoded numbers are rejected.
+- Adding out-of-MVP fields is handled explicitly by the JSON Schema.
 
-## 8. 完了条件
+## 8. Definition of Done
 
-- `project.json` の全必須項目が定義されている。
-- JSON Schema実装者がこの文書だけでスキーマを作成できる。
-- UI担当が入力表を作成できる。
-- Engine担当が解析入力モデルを作成できる。
-- MVP外機能の入力が非対象として明記されている。
-- Phase E 拡張入力は設計書および `schemas/project.schema.json` と矛盾しない。
+- All required items of `project.json` are defined.
+- A JSON Schema implementer can create the schema from this document alone.
+- The UI owner can build the input tables.
+- The engine owner can build the analysis input model.
+- Inputs for features outside the MVP are explicitly listed as out of scope.
+- The Phase E extension inputs do not contradict the design documents or `schemas/project.schema.json`.

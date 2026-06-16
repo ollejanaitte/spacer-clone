@@ -1,178 +1,178 @@
-# 11 Test Specification
+﻿# 11 Test Specification
 
-## 1. 目的
+## 1. Purpose
 
-MVPの解析精度、API契約、UI表示、エラー処理を検証するための最低限のテスト仕様を定義する。後続実装ではこの文書の検証ケースを自動テスト化する。
+This document defines the minimum test specification used to verify the MVP''s analysis accuracy, API contract, UI display, and error handling. Subsequent implementations will automate the verification cases in this document.
 
-## 2. 対象範囲
+## 2. Scope
 
-- Python解析エンジンの理論値比較。
-- 入力スキーマ検証。
-- 結果スキーマ検証。
-- FastAPIエンドポイント。
-- React UIビルドと基本表示。
-- Three.js表示の基本動作。
-- Three.js初期化失敗時の2D簡易フォールバック。
-- Electron desktop main processのGPU互換モード選択ロジック。
+- Theoretical value comparison of the Python analysis engine.
+- Input schema validation.
+- Result schema validation.
+- FastAPI endpoints.
+- React UI build and basic display.
+- Basic Three.js display.
+- 2D fallback when Three.js initialization fails.
+- GPU compatibility mode selection logic of the Electron desktop main process.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 影響線解析、移動荷重、活荷重自動載荷の検証。
-- 固有値解析、応答スペクトル解析の検証。
-- 温度荷重、プレストレス、初期張力の検証。
-- DXF、PDF帳票テンプレート、ライセンス管理の検証。
-- 外部解析ソフトとの互換検証。
-- GPU互換設定を `project.json`、API、解析結果JSONへ含めるためのスキーマ/API拡張テスト。
+- Verification of influence line analysis, moving loads, and automatic live load placement.
+- Verification of eigenvalue analysis and response spectrum analysis.
+- Verification of temperature loads, prestress, and initial tension.
+- Verification of DXF, PDF report templates, and license management.
+- Compatibility verification with external analysis software.
+- Schema / API extension tests for storing GPU compatibility settings in `project.json`, the API, or the analysis result JSON.
 
-## 4. テスト仕様
+## 4. Test Specification
 
-### 共通基準
+### Common Criteria
 
-- 単位はSI。
-- 理論値比較の標準相対誤差は `1e-5`。
-- 0近傍では絶対誤差を明示する。
-- 符号規約はテスト内コメントに明記する。
-- `NaN`、`Infinity` は失敗とする。
+- Units are SI.
+- The standard relative tolerance for theoretical value comparison is `1e-5`.
+- Near zero, an absolute tolerance is stated explicitly.
+- The sign convention is recorded in test comments.
+- `NaN` and `Infinity` are treated as failure.
 
-### 必須解析検証ケース
+### Required Analysis Verification Cases
 
-#### 1. 片持梁の先端集中荷重
+#### 1. Cantilever beam with tip load
 
-モデル:
+Model:
 
-- 1部材。
-- I端固定、J端自由。
-- J端に鉛直集中荷重 `P`。
+- One member.
+- I end fixed, J end free.
+- A vertical concentrated load `P` applied at the J end.
 
-理論値:
+Theoretical values:
 
-- 先端変位 `delta = P L^3 / (3 E I)`。
-- 先端回転 `theta = P L^2 / (2 E I)`。
-- 固定端反力 `P`。
-- 固定端モーメント `P L`。
+- Tip displacement `delta = P L^3 / (3 E I)`.
+- Tip rotation `theta = P L^2 / (2 E I)`.
+- Reaction at the fixed end `P`.
+- Moment at the fixed end `P L`.
 
-#### 2. 単純梁の中央集中荷重
+#### 2. Simple beam with center load
 
-モデル:
+Model:
 
-- 中央節点を持つ単純梁。
-- 両端鉛直支持。一方に軸方向拘束を加えて剛体変位を防ぐ。
-- 中央節点に集中荷重 `P`。
+- A simple beam with a center node.
+- Vertical support at both ends, with an axial restraint at one end to prevent rigid body motion.
+- A concentrated load `P` applied at the center node.
 
-理論値:
+Theoretical values:
 
-- 中央変位 `delta = P L^3 / (48 E I)`。
-- 反力 `P / 2`。
-- 最大曲げ `P L / 4`。
+- Center displacement `delta = P L^3 / (48 E I)`.
+- Reaction `P / 2`.
+- Maximum bending moment `P L / 4`.
 
-#### 3. 単純梁の等分布荷重
+#### 3. Simple beam with uniform load
 
-モデル:
+Model:
 
-- 中央節点を持つ単純梁。
-- 全長に等分布荷重 `w`。
+- A simple beam with a center node.
+- A uniform load `w` over the full length.
 
-理論値:
+Theoretical values:
 
-- 中央変位 `delta = 5 w L^4 / (384 E I)`。
-- 反力 `w L / 2`。
-- 最大曲げ `w L^2 / 8`。
+- Center displacement `delta = 5 w L^4 / (384 E I)`.
+- Reaction `w L / 2`.
+- Maximum bending moment `w L^2 / 8`.
 
-#### 4. 3D片持梁のねじり
+#### 4. 3D cantilever beam under torsion
 
-モデル:
+Model:
 
-- X方向の片持梁。
-- 自由端に局所X軸まわりのねじりモーメント `T`。
+- A cantilever along the X axis.
+- A torsional moment `T` about the local X axis at the free end.
 
-理論値:
+Theoretical values:
 
-- ねじり角 `phi = T L / (G J)`。
-- 固定端ねじり反力 `T`。
+- Twist angle `phi = T L / (G J)`.
+- Reaction moment at the fixed end `T`.
 
-#### 5. 支点不足エラー
+#### 5. Insufficient supports error
 
-モデル:
+Model:
 
-- 節点、部材、材料、断面は妥当。
-- 支点なし、または剛体運動を拘束できない。
+- Valid nodes, members, materials, and sections.
+- No supports, or insufficient restraints to prevent rigid body motion.
 
-期待:
+Expectation:
 
-- `MODEL_UNSTABLE` または `SOLVER_ERROR`。
-- 成功結果として扱わない。
+- `MODEL_UNSTABLE` or `SOLVER_ERROR`.
+- The result must not be treated as a success.
 
-#### 6. 不正な部材参照エラー
+#### 6. Invalid member reference error
 
-モデル:
+Model:
 
-- 部材が存在しない節点IDを参照する。
+- A member references a non-existent node ID.
 
-期待:
+Expectation:
 
-- 解析前検証で `INVALID_REFERENCE`。
-- `path` が不正フィールドを指す。
+- Pre-analysis validation returns `INVALID_REFERENCE`.
+- The `path` points at the offending field.
 
-### APIテスト
+### API Tests
 
-- `GET /health` が成功する。
-- `POST /api/projects/validate` が正常モデルをvalidにする。
-- `POST /api/projects/validate` が不正参照を検出する。
-- `POST /api/analysis/run` が片持梁結果を返す。
-- `POST /api/projects/save` がパストラバーサルを拒否する。
-- `POST /api/projects/load` が存在しないファイルを適切に扱う。
-- `GET /api/examples` が必須サンプルを返す。
+- `GET /health` succeeds.
+- `POST /api/projects/validate` reports a valid model as valid.
+- `POST /api/projects/validate` detects invalid references.
+- `POST /api/analysis/run` returns a cantilever result.
+- `POST /api/projects/save` rejects path traversal.
+- `POST /api/projects/load` handles missing files appropriately.
+- `GET /api/examples` returns the required examples.
 
-### UI/3Dテスト
+### UI / 3D Tests
 
-- UIビルドが成功する。
-- 節点、部材、材料、断面、支点、荷重の表が表示される。
-- 検証エラーが画面に表示される。
-- 成功結果の表が表示される。
-- Three.jsビューが空モデルでクラッシュしない。
-- 節点、部材、支点、荷重、変形図を表示できる。
-- Three.js初期化失敗時にUI全体がクラッシュしない。
-- WebGLRenderer生成失敗をmockして2D簡易表示へ切り替わる。
-- 2D簡易表示で節点、部材、支点概略、節点荷重概略、選択ハイライト、Fit to modelを確認できる。
-- WebGL初期化失敗エラーが下部パネルに表示され、consoleだけに閉じない。
-- WebGL初期化失敗時に「互換描画モードで再起動してください」という案内が表示される。
+- The UI build succeeds.
+- The tables for nodes, members, materials, sections, supports, and loads are displayed.
+- Validation errors are shown in the UI.
+- The tables for a successful result are shown.
+- The Three.js view does not crash on an empty model.
+- Nodes, members, supports, loads, and the deformed shape are displayed.
+- Three.js initialization failure does not crash the whole UI.
+- Mocking `WebGLRenderer` construction failure switches to the 2D fallback.
+- In the 2D fallback, nodes, members, rough supports, rough nodal loads, selection highlight, and fit to model are visible.
+- The WebGL initialization failure is shown in the bottom panel, not only in the console.
+- A guidance message such as "Please restart in compatibility rendering mode" is shown on WebGL initialization failure.
 
-### Desktop/Electronテスト
+### Desktop / Electron Tests
 
-- Electron main processのGPUフラグ選択ロジックを単体テストできる。
-- GPU互換モード設定値が保存・読込できる。
-- 標準設定が `normal` である。
-- `legacy-desktop-gl` が標準設定ではない。
-- `compat-gpu-blocklist` が `--ignore-gpu-blocklist` を選択する。
-- `compat-angle-gl` が `--ignore-gpu-blocklist` と `--use-angle=gl` を選択する。
-- `legacy-desktop-gl` が `--ignore-gpu-blocklist` と `--use-gl=desktop` を選択する。
-- GPUフラグ適用処理が `app.whenReady()` より前に呼び出される設計になっている。
-- 開発時は `http://localhost:5173`、本番時は `frontend/dist/index.html` を読み込む分岐を検証する。
-- Electron側のGPU互換設定が `project.json`、API request、解析結果JSONへ混入しないことを検証する。
+- The GPU flag selection logic of the Electron main process is unit-testable.
+- GPU compatibility mode setting values can be saved and loaded.
+- The default setting is `normal`.
+- `legacy-desktop-gl` is not the default setting.
+- `compat-gpu-blocklist` selects `--ignore-gpu-blocklist`.
+- `compat-angle-gl` selects `--ignore-gpu-blocklist` and `--use-angle=gl`.
+- `legacy-desktop-gl` selects `--ignore-gpu-blocklist` and `--use-gl=desktop`.
+- The design applies GPU flags before `app.whenReady()`.
+- The development path `http://localhost:5173` and the production path `frontend/dist/index.html` are both verified.
+- The Electron-side GPU compatibility setting must not leak into `project.json`, the API request, or the analysis result JSON.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- テストはエラー文言全文ではなく、エラーコードを検証する。
-- 解析失敗時に部分結果が成功扱いで返らないことを検証する。
-- API 500を返すケースは、予期しない内部例外に限定する。
+- Tests verify error codes, not the full error message text.
+- Partial results must not be returned as success on analysis failure.
+- The API returns 500 only for unexpected internal exceptions.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 解析理論値との一致。
-- 支点反力のつり合い。
-- 部材端力と反力の整合。
-- スキーマ検証の厳密性。
-- API契約の安定性。
-- UIがMVP外機能を表示しないこと。
-- WebGL失敗時に白画面にならないこと。
-- GPU互換モードが標準モードを壊さないこと。
+- Agreement with theoretical analysis values.
+- Equilibrium of support reactions.
+- Consistency between member end forces and reactions.
+- Strictness of schema validation.
+- Stability of the API contract.
+- The UI does not expose features outside the MVP.
+- WebGL failure does not produce a blank screen.
+- GPU compatibility modes do not break the default mode.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- 6つの必須検証ケースが自動テスト化されている。
-- `pytest` が通る。
-- APIテストが通る。
-- UIビルドが通る。
-- Three.js初期化失敗時の2Dフォールバックテストが通る。
-- Electron main processテストまたはElectronビルドが通る。
-- `docs/12_quality_gate.md` の受入基準を満たす。
+- The six required verification cases are automated.
+- `pytest` passes.
+- The API tests pass.
+- The UI build passes.
+- The 2D fallback test for Three.js initialization failure passes.
+- The Electron main process test or the Electron build passes.
+- The acceptance criteria in `docs/12_quality_gate.md` are satisfied.

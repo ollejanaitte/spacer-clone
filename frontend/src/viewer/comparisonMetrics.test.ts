@@ -1,4 +1,5 @@
-﻿import { describe, expect, it } from "vitest";
+﻿import { ja } from "../i18n/ja";
+import { describe, expect, it } from "vitest";
 import {
   createDefaultProject,
   createSuspendedDeckProject,
@@ -297,7 +298,7 @@ describe("buildComparisonMetrics", () => {
     expect(metrics.maxReaction.reductionPercent).toBeCloseTo(56.923, 2);
   });
 
-  it("marks missing reactions as 未計算", () => {
+  it(`marks missing reactions as ${ja.comparison.notComputed}`, () => {
     const metrics = buildComparisonMetrics({
       leftProject: createDefaultProject(),
       rightProject: createSuspendedDeckProject(),
@@ -323,7 +324,7 @@ describe("buildComparisonMetrics", () => {
       leftResult: left,
       rightResult: right,
     });
-    expect(metrics.comment).toMatch(/B案/);
+    expect(metrics.comment).toMatch(/B\u6848/);
   });
 
   it("falls back to a placeholder comment when nothing is computed", () => {
@@ -346,7 +347,7 @@ describe("buildComparisonMetrics", () => {
       rightResult: right,
     });
     const periodRow = metrics.rows.find((row) => row.key === "period-1");
-    expect(periodRow?.reductionDisplay).toBe("50%低減");
+    expect(periodRow?.reductionDisplay).toBe(ja.comparison.decrease("50"));
   });
 });
 

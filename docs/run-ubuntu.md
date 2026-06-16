@@ -1,115 +1,114 @@
-# Ubuntu / WSL での起動手順
+﻿# Ubuntu / WSL Startup Guide
 
-`spacer-clone` を Ubuntu 20.04 以降 / WSL2 (Ubuntu) で 1 コマンドで起動する手順です。
-`start-windows.ps1` / `start-mac.sh` と同等の位置付けで、Python venv・npm 依存・Electron まで自動で揃えます。
+This is a one-command startup guide for `spacer-clone` on Ubuntu 20.04 or later / WSL2 (Ubuntu).
+It is positioned as the equivalent of `start-windows.ps1` / `start-mac.sh` and automatically sets up the Python venv, npm dependencies, and Electron.
 
-## 必要環境
+## Requirements
 
-| 項目 | 推奨 |
-|------|------|
+| Item | Recommended |
+| --- | --- |
 | OS | Ubuntu 20.04+ / WSL2 (Ubuntu) |
-| Python | 3.10 以上 |
-| Node.js | 18 以上 (LTS 推奨) |
-| npm | 9 以上 |
+| Python | 3.10 or later |
+| Node.js | 18 or later (LTS recommended) |
+| npm | 9 or later |
 
-足りない場合は:
+If anything is missing:
 
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip nodejs npm
 ```
 
-> すでに `python3` / `node` / `npm` が `PATH` にあるなら、venv や `frontend/node_modules` を
-> スクリプトが自動作成するため事前準備は不要です。
+> When `python3` and `node` / `npm` are already on `PATH`, no manual preparation is required because the script creates the venv and `frontend/node_modules` automatically.
 
-## クイックスタート
+## Quick Start
 
 ```bash
 cd ~/Projects/spacer-clone
 ./start-ubuntu.sh
 ```
 
-実行内容:
+What it does:
 
-1. リポジトリルートへ移動
-2. `.venv` を作成 (なければ)
-3. `fastapi`, `uvicorn`, `numpy`, `scipy` などの Python 依存を自動インストール
-4. `frontend/node_modules` を `npm install` で作成 (なければ)
-5. `desktop/electron/dist/main.js` を `tsc` でビルド (なければ)
-6. `build/icon.png` を `scripts/build_icons.py` で生成 (なければ)
-7. FastAPI バックエンドを `http://127.0.0.1:8000` で起動
-8. Electron 開発環境を `compat-gpu-blocklist` で起動
+1. Moves to the repository root.
+2. Creates `.venv` if missing.
+3. Auto-installs Python dependencies such as `fastapi`, `uvicorn`, `numpy`, and `scipy`.
+4. Creates `frontend/node_modules` via `npm install` if missing.
+5. Builds `desktop/electron/dist/main.js` with `tsc` if missing.
+6. Generates `build/icon.png` with `scripts/build_icons.py` if missing.
+7. Starts the FastAPI backend on `http://127.0.0.1:8000`.
+8. Starts the Electron development environment in `compat-gpu-blocklist` mode.
 
-終了は **Ctrl+C**。バックエンド・Electron・関連プロセスグループをすべて停止します。
+Stop with **Ctrl+C**. The backend, Electron, and related process groups are all stopped.
 
-## 起動オプション
+## Launch Options
 
 ```bash
-./start-ubuntu.sh                   # 既定: Electron + compat-gpu-blocklist
-./start-ubuntu.sh --safe-gpu        # ANGLE GL フォールバック
-./start-ubuntu.sh --legacy-gl       # legacy desktop GL
-./start-ubuntu.sh --normal          # 通常 GPU (Linux 標準ドライバ向け)
-./start-ubuntu.sh --web             # Electron なし・Vite dev のみ (ブラウザで http://127.0.0.1:5173 を開く)
-./start-ubuntu.sh --backend-only    # FastAPI のみ (curl などで検証する用途)
-./start-ubuntu.sh --help            # ヘルプ
+./start-ubuntu.sh                   # Default: Electron + compat-gpu-blocklist
+./start-ubuntu.sh --safe-gpu        # ANGLE GL fallback
+./start-ubuntu.sh --legacy-gl       # Legacy desktop GL
+./start-ubuntu.sh --normal          # Normal GPU (for Linux standard drivers)
+./start-ubuntu.sh --web             # No Electron, Vite dev only (open http://127.0.0.1:5173 in a browser)
+./start-ubuntu.sh --backend-only    # FastAPI only (useful for curl-based verification)
+./start-ubuntu.sh --help            # Help
 ```
 
-GPU モードは `desktop/electron/gpuMode.ts` の `GPU_MODES` と一致します。
+The GPU mode values match `GPU_MODES` in `desktop/electron/gpuMode.ts`.
 
-## 環境変数
+## Environment Variables
 
-| 変数 | 既定値 | 説明 |
-|------|--------|------|
-| `PYTHON_BIN` | `.venv/bin/python` | Python 実行ファイル |
-| `HOST` | `127.0.0.1` | バックエンド待受ホスト |
-| `PORT` | `8000` | バックエンド待受ポート |
-| `GPU_MODE` | (`--safe-gpu` 等の選択に従う) | Electron へそのまま渡される |
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PYTHON_BIN` | `.venv/bin/python` | Python executable |
+| `HOST` | `127.0.0.1` | Backend host |
+| `PORT` | `8000` | Backend port |
+| `GPU_MODE` | (follows `--safe-gpu` and similar) | Passed through to Electron |
 
-例:
+Example:
 
 ```bash
 PORT=8765 ./start-ubuntu.sh --web
 ```
 
-## ログ
+## Logs
 
-| ファイル | 内容 |
-|----------|------|
-| `.local_projects/backend-start.out.log` | FastAPI の stdout |
-| `.local_projects/backend-start.err.log` | FastAPI の stderr |
+| File | Contents |
+| --- | --- |
+| `.local_projects/backend-start.out.log` | FastAPI stdout |
+| `.local_projects/backend-start.err.log` | FastAPI stderr |
 
-## トラブルシューティング
+## Troubleshooting
 
-### Electron が真っ黒 / 起動しない
+### Electron is black / does not start
 
-GPU モードを変えて再実行:
+Switch the GPU mode and retry:
 
 ```bash
-./start-ubuntu.sh --legacy-gl    # もしくは --safe-gpu
+./start-ubuntu.sh --legacy-gl    # or --safe-gpu
 ```
 
-### Wayland で起動したい
+### Use Wayland
 
 ```bash
-./start-ubuntu.sh --normal        # 標準 GPU モードで Wayland を優先
+./start-ubuntu.sh --normal        # Prefer Wayland with the normal GPU mode
 ```
 
-### Wayland が動かない / クラッシュする
+### Wayland does not work / crashes
 
-X11 セッションに切り替えるか、`--safe-gpu` を使ってください。
+Switch to an X11 session, or use `--safe-gpu`.
 
-### 「ポート 8000 は別のプロセスが使用しています」
+### "Port 8000 is in use"
 
 ```bash
-# 確認
+# Check
 ss -ltn | grep 8000
-# 解放
+# Free
 fuser -k 8000/tcp
 ```
 
-### 「frontend/node_modules が見つかりません」が出る
+### "frontend/node_modules not found"
 
-オフライン環境などで自動 `npm install` に失敗したケースです。手動で:
+This happens when the automatic `npm install` fails, for example in an offline environment. Run it manually:
 
 ```bash
 cd frontend
@@ -118,9 +117,9 @@ cd ..
 ./start-ubuntu.sh
 ```
 
-### Ctrl+C でプロセスが残る
+### Processes remain after Ctrl+C
 
-`backend` / `vite` / `electron` のいずれかがプロセスグループ外に張り付くケースです。cleanup が `pkill -f` でフォールバックしますが、強制的に掃除するには:
+One of `backend`, `vite`, or `electron` is sticking outside of its process group. The cleanup script falls back to `pkill -f`, but you can also clean up manually:
 
 ```bash
 pkill -f "uvicorn backend.app.main:app"
@@ -128,23 +127,23 @@ pkill -f "frontend/node_modules/.bin/vite"
 pkill -f "node_modules/electron/dist/electron"
 ```
 
-### X サーバが無く GUI が立ち上がらない (CI / WSLg 無し)
+### No X server (CI / WSLg unavailable)
 
-Electron をスキップして Web (Vite) モードで:
+Skip Electron and use the Web (Vite) mode:
 
 ```bash
 ./start-ubuntu.sh --web
 ```
 
-もしくはバックエンドのみ:
+Or the backend-only mode:
 
 ```bash
 ./start-ubuntu.sh --backend-only
 ```
 
-## 開発 Tips
+## Development Tips
 
-- 依存を明示的に更新したいとき:
+- To update dependencies explicitly:
 
   ```bash
   # Python
@@ -153,13 +152,13 @@ Electron をスキップして Web (Vite) モードで:
   cd frontend && npm install <pkg>
   ```
 
-- バックエンドログを別ターミナルで追いたい:
+- To watch the backend log in another terminal:
 
   ```bash
   tail -f .local_projects/backend-start.err.log
   ```
 
-- テスト:
+- Tests:
 
   ```bash
   .venv/bin/pytest backend/ -q

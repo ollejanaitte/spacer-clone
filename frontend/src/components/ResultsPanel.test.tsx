@@ -1,10 +1,11 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AnalysisResult } from "../types";
+import { ja } from "../i18n/ja";
 import { ResultsPanel } from "./ResultsPanel";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -49,13 +50,13 @@ describe("ResultsPanel influence series selection", () => {
   it("clears and selects all series", () => {
     renderPanel(influenceResult(["reaction-1", "moment-1"]));
 
-    click(button("全解除"));
+    click(button(ja.resultsPanel.tables.influenceClearAll));
 
     expect(checkedSeries()).toEqual([]);
     expect(visibleSeries()).toEqual([]);
-    expect(document.body.textContent).toContain("表示する系列を選択してください");
+    expect(document.body.textContent).toContain(ja.resultsPanel.tables.influenceNoSeriesSelected);
 
-    click(button("全選択"));
+    click(button(ja.resultsPanel.tables.influenceSelectAll));
 
     expect(checkedSeries()).toEqual(["reaction-1", "moment-1"]);
     expect(visibleSeries()).toEqual(["reaction-1", "moment-1"]);

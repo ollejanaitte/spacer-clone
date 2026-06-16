@@ -1,42 +1,42 @@
-# 10 Report Specification
+﻿# 10 Report Specification
 
-## 1. 目的
+## 1. Purpose
 
-MVPにおける解析結果のJSON/CSV出力と最小限のHTML帳票仕様を定義する。JIP-SPACERの帳票ビューア概念は参考にするが、MVPではテンプレート編集や独自拡張子互換は扱わない。
+This document defines the JSON / CSV output and the minimal HTML report specification of analysis results for the MVP. The JIP-SPACER report viewer concept is used as a reference, but template editing and proprietary extension compatibility are not handled in the MVP.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 結果JSON出力。
-- 変位CSV。
-- 反力CSV。
-- 部材端力CSV。
-- 最小限のHTML帳票。
-- 解析概要、警告、エラーの出力。
+- Result JSON output.
+- Displacement CSV.
+- Reaction CSV.
+- Member end force CSV.
+- Minimal HTML report.
+- Analysis summary, warning, and error output.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 帳票テンプレート編集。
-- PDF必須出力。
-- DXF出力。
-- JIP-SPACER帳票拡張子互換。
-- 影響線、移動荷重、固有値、応答スペクトル専用帳票。
-- 温度荷重、プレストレス専用帳票。
+- Report template editing.
+- Required PDF output.
+- DXF output.
+- JIP-SPACER report extension compatibility.
+- Reports dedicated to influence lines, moving loads, eigenvalue, and response spectrum.
+- Reports dedicated to temperature loads and prestress.
 
-## 4. 帳票仕様
+## 4. Report Specification
 
-### JSON出力
+### JSON Output
 
-`docs/06_result_schema.md` の結果JSONをそのまま出力する。
+The result JSON from `docs/06_result_schema.md` is emitted as is.
 
-ルール:
+Rules:
 
-- 数値はJSON number。
-- 表示用丸めを行わない。
-- `warnings` と `errors` を含める。
+- Numbers are JSON numbers.
+- No display rounding.
+- `warnings` and `errors` are included.
 
 ### displacements.csv
 
-ヘッダー:
+Header:
 
 ```text
 loadCaseId,nodeId,ux,uy,uz,rx,ry,rz
@@ -44,7 +44,7 @@ loadCaseId,nodeId,ux,uy,uz,rx,ry,rz
 
 ### reactions.csv
 
-ヘッダー:
+Header:
 
 ```text
 loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs
@@ -52,159 +52,157 @@ loadCaseId,nodeId,fx,fy,fz,mx,my,mz,constrainedDofs
 
 ### member_end_forces.csv
 
-ヘッダー:
+Header:
 
 ```text
 loadCaseId,memberId,end,fx,fy,fz,mx,my,mz
 ```
 
-`end` は `I` または `J`。
+`end` is `I` or `J`.
 
-### HTML帳票
+### HTML Report
 
-最小構成:
+Minimum sections:
 
-- プロジェクト情報。
-- 単位系。
-- 解析設定。
-- モデル規模。
-- 荷重ケース一覧。
-- 解析概要。
-- 警告一覧。
-- エラー一覧。
-- 変位表。
-- 反力表。
-- 部材端力表。
+- Project information.
+- Unit system.
+- Analysis settings.
+- Model size.
+- Load case list.
+- Analysis summary.
+- Warning list.
+- Error list.
+- Displacement table.
+- Reaction table.
+- Member end force table.
 
-数値表示:
+Number display:
 
-- UI/HTMLでは桁丸め可。
-- JSONでは丸めない。
-- 単位を列見出しまたは表タイトルに表示する。
+- Numbers may be rounded in the UI / HTML.
+- Numbers are not rounded in the JSON.
+- Units are shown in column headers or table titles.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- 解析失敗時もエラー帳票を出力できる。
-- 結果配列が空でもCSVヘッダーは出力できる。
-- 非有限値があれば帳票生成を失敗させ、`REPORT_ERROR` を返す。
-- ファイル書込失敗はUI/APIに表示する。
+- An error report can be generated even on analysis failure.
+- CSV headers can be emitted even when the result arrays are empty.
+- Non-finite values cause report generation to fail with a `REPORT_ERROR`.
+- File write failures are shown in the UI / API.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 成功結果JSONから3種CSVを生成できる。
-- CSVヘッダーが仕様通りである。
-- 部材端力はI端、J端の2行に展開される。
-- エラー結果でもHTML帳票にエラー一覧が表示される。
-- JSON数値が文字列化されない。
+- The three CSVs can be generated from a successful result JSON.
+- The CSV headers match the specification.
+- Member end forces are expanded into two rows, one for I and one for J.
+- Error results show the error list in the HTML report.
+- JSON numbers are not serialized as strings.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- UIまたはAPIからJSON/CSVを出力できる。
-- `docs/06_result_schema.md` と矛盾しない。
-- 帳票がMVP対象結果に限定されている。
-- `docs/12_quality_gate.md` のJSON SchemaとAPIテスト基準を満たす。
+- JSON / CSV output is available from the UI or the API.
+- The specification does not contradict `docs/06_result_schema.md`.
+- Reports are limited to the MVP result scope.
+- The JSON Schema and API test standards in `docs/12_quality_gate.md` are satisfied.
 
-## 8. 動的解析帳票セクション
+## 8. Dynamic Analysis Report Sections
 
-HTML 帳票には、解析タイプが `eigen` または `response_spectrum` の場合に次のセクションを追加する。データが存在しないセクションは出力しない。
+The HTML report adds the following sections when the analysis type is `eigen` or `response_spectrum`. Sections with no data are omitted.
 
-### 8.1 固有値表
+### 8.1 Eigenvalue Table
 
-`eigenResult.modes[]` を一覧する。
+Lists `eigenResult.modes[]`.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| モード番号 | `modeNo` |
-| 固有値 | `eigenvalue` |
-| 固有円振動数 | `circularFrequency` |
-| 固有振動数 | `frequency` |
-| 固有周期 | `period` |
-| 刺激係数 | `participationFactors` の X / Y / Z |
-| 有効質量比 | `effectiveMassRatios` の X / Y / Z |
-| 累積有効質量比 | `cumulativeEffectiveMassRatios` の X / Y / Z |
+| Mode number | `modeNo` |
+| Eigenvalue | `eigenvalue` |
+| Circular frequency | `circularFrequency` |
+| Frequency | `frequency` |
+| Period | `period` |
+| Participation factor | X / Y / Z of `participationFactors` |
+| Effective mass ratio | X / Y / Z of `effectiveMassRatios` |
+| Cumulative effective mass ratio | X / Y / Z of `cumulativeEffectiveMassRatios` |
 
-### 8.2 有効質量比サマリ
+### 8.2 Effective Mass Ratio Summary
 
-`eigenResult.totalMassByDirection` の方向ごとに、最終累積有効質量比と使用モード数を一覧する。
+For each direction in `eigenResult.totalMassByDirection`, lists the final cumulative effective mass ratio and the number of used modes.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| 方向 | `X` / `Y` / `Z` |
-| 総質量 | `totalMassByDirection[].value` |
-| 最終累積有効質量比 | 最終モードの `cumulativeEffectiveMassRatios` |
-| 使用モード数 | `eigenResult.modes.length` |
+| Direction | `X` / `Y` / `Z` |
+| Total mass | `totalMassByDirection[].value` |
+| Final cumulative effective mass ratio | `cumulativeEffectiveMassRatios` of the last mode |
+| Number of used modes | `eigenResult.modes.length` |
 
-### 8.3 応答スペクトル条件
+### 8.3 Response Spectrum Conditions
 
-`responseSpectrumResult` から解析条件を確認する。
+Reads the analysis conditions from `responseSpectrumResult`.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| スペクトルケースID | `spectrumCaseId` |
-| 起震方向 | `direction` |
-| 減衰定数 | `dampingRatio` |
-| モード合成方法 | `combinationMethod` (`SRSS` / `CQC`) |
-| 補間方法 | `interpolationMethod` (`linear` / `logLog`) |
-| 目標累積有効質量比 | `targetCumulativeMassRatio` |
-| 使用モード | `usedModes` |
-| スペクトル点数 | `project.analysisSettings.responseSpectrum.spectrumPoints.length` |
-| 方向別結果数 | `responseSpectrumResult.directionResults.length` |
+| Spectrum case ID | `spectrumCaseId` |
+| Excitation direction | `direction` |
+| Damping ratio | `dampingRatio` |
+| Modal combination method | `combinationMethod` (`SRSS` / `CQC`) |
+| Interpolation method | `interpolationMethod` (`linear` / `logLog`) |
+| Target cumulative mass ratio | `targetCumulativeMassRatio` |
+| Used modes | `usedModes` |
+| Number of spectrum points | `project.analysisSettings.responseSpectrum.spectrumPoints.length` |
+| Number of direction results | `responseSpectrumResult.directionResults.length` |
 
-### 8.4 変位表
+### 8.4 Displacement Table
 
-`responseSpectrumResult.combinedResult.displacements` を一覧する。
-セクション名は `SRSS Displacements` または `CQC Displacements` のように、選択されたモード合成方法を反映する。
+Lists `responseSpectrumResult.combinedResult.displacements`.
+The section name reflects the selected modal combination, e.g. `SRSS Displacements` or `CQC Displacements`.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| 節点番号 | `nodeId` |
+| Node ID | `nodeId` |
 | DX / DY / DZ | `ux` / `uy` / `uz` (m) |
 | RX / RY / RZ | `rx` / `ry` / `rz` (rad) |
 
-### 8.5 動的反力表
+### 8.5 Dynamic Reaction Table
 
-`responseSpectrumResult.combinedResult.reactions` を一覧する。データが存在しない場合、本セクションは帳票に出力されない。
+Lists `responseSpectrumResult.combinedResult.reactions`. When the data is not present, this section is omitted from the report.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| 節点番号 | `nodeId` |
+| Node ID | `nodeId` |
 | Fx / Fy / Fz | `fx` / `fy` / `fz` (kN) |
-| Mx / My / Mz | `mx` / `my` / `mz` (kN·m) |
+| Mx / My / Mz | `mx` / `my` / `mz` (kN m) |
 
-### 8.6 動的部材力表
+### 8.6 Dynamic Member Force Table
 
-`responseSpectrumResult.combinedResult.memberSectionForces` を一覧する。
-データが存在しない場合、本セクションは帳票に出力されない。
+Lists `responseSpectrumResult.combinedResult.memberSectionForces`. When the data is not present, this section is omitted from the report.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| 部材番号 | `memberId` |
-| ステーション | `station` (0 〜 1) |
-| 成分 | `N` / `Qy` / `Qz` / `Mx` / `My` / `Mz` |
-| 値 | `value` (N, Q は kN / M は kN·m) |
+| Member ID | `memberId` |
+| Station | `station` (0 to 1) |
+| Component | `N` / `Qy` / `Qz` / `Mx` / `My` / `Mz` |
+| Value | `value` (N, Q in kN / M in kN m) |
 
-### 8.7 方向別結果サマリ
+### 8.7 Direction Result Summary
 
-`responseSpectrumResult.directionResults[]` を一覧する。`directionResults` が空の場合は帳票に出力されない。
+Lists `responseSpectrumResult.directionResults[]`. When `directionResults` is empty, the section is omitted from the report.
 
-| 列 | 意味 |
+| Column | Meaning |
 | --- | --- |
-| 方向 | `direction` (`X` / `Y` / `Z`) |
-| 合成方法 | `combinationMethod` |
-| 補間方法 | `interpolationMethod` |
-| モード応答数 | `modalResults.length` |
-| 合成変位数 | `combinedResult.displacements.length` |
-| 使用モード | `usedModes` |
+| Direction | `direction` (`X` / `Y` / `Z`) |
+| Combination method | `combinationMethod` |
+| Interpolation method | `interpolationMethod` |
+| Number of modal responses | `modalResults.length` |
+| Number of combined displacements | `combinedResult.displacements.length` |
+| Used modes | `usedModes` |
 
-### 8.8 CQC 注意事項
+### 8.8 CQC Note
 
-`combinationMethod` が `CQC` の場合、動的解析セクションの末尾に「CQC Note」セクションを追加する。
-このセクションは、減衰定数を含む実行条件と CQC の標準的な rho_ij 補間式を用いた合成である旨を明記する。
+When `combinationMethod` is `CQC`, a `CQC Note` section is appended to the end of the dynamic analysis sections. This section states that the analysis uses the damping ratio of the run conditions and the standard CQC rho_ij interpolation formula.
 
-### 8.9 注意事項
+### 8.9 Notes
 
-- モード合成は `SRSS` / `CQC` の両方をサポートする。MVP の既定は `SRSS`。
-- 補間方式は `linear` / `logLog` の両方をサポートする。`logLog` 選択時、入力データに 0 以下が含まれると linear に安全フォールバックする。
-- 動的反力および動的部材力は、現時点では `combinedResult` 側のみ正式対応する。
-- データが存在しないセクションは帳票に出力されない（壊れない）。
-- CQC における複数方向の同時合成（`directionResults` を SRSS 合成する機能）は未対応。
+- Both `SRSS` and `CQC` are supported. The MVP default is `SRSS`.
+- Both `linear` and `logLog` interpolation are supported. When `logLog` is selected and the input data contains values less than or equal to 0, the analysis safely falls back to linear.
+- Dynamic reactions and dynamic member forces are formally supported only on the `combinedResult` side at this time.
+- Sections with no data are omitted from the report (they do not break the layout).
+- Simultaneous combination of multiple directions in CQC (combining `directionResults` with SRSS) is not supported.

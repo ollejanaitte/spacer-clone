@@ -1,3 +1,4 @@
+﻿import { ja } from "../i18n/ja";
 import type { ProjectModel, SectionKey } from "../types";
 
 type ViewerPlaceholderProps = {
@@ -10,16 +11,16 @@ export function ViewerPlaceholder({ project, selected }: ViewerPlaceholderProps)
     <main className="viewer-shell">
       <div className="viewer-header">
         <div>
-          <h2>3D表示</h2>
-          <p>選択中: {selected}</p>
+          <h2>{ja.viewer.controlPanelTitle}</h2>
+          <p>{ja.viewer.placeholder.selected(selected)}</p>
         </div>
         <div className="viewer-stats">
-          <span>節点 {project.nodes.length}</span>
-          <span>部材 {project.members.length}</span>
-          <span>荷重ケース {project.loadCases.length}</span>
+          <span>{ja.viewer.messages.nodeCount(project.nodes.length)}</span>
+          <span>{ja.viewer.messages.memberCount(project.members.length)}</span>
+          <span>{ja.viewer.placeholder.loadCaseCount(project.loadCases.length)}</span>
         </div>
       </div>
-      <div className="model-placeholder" role="img" aria-label="モデル概要">
+      <div className="model-placeholder" role="img" aria-label={ja.viewer.placeholder.ariaLabel}>
         <div className="axis x-axis">X</div>
         <div className="axis y-axis">Y</div>
         <div className="axis z-axis">Z</div>

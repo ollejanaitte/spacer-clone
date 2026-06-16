@@ -1,10 +1,10 @@
-# 影響線・移動荷重設計
+﻿# Influence Line and Moving Load Design
 
-## 1. 目的
+## 1. Purpose
 
-三次元立体骨組解析ソフトに、影響線生成と移動荷重解析を追加するためのドメイン、UI、API、実装フェーズを定義する。今回は設計のみであり、既存コード変更は行わない。
+This document defines the domain, UI, API, and implementation phases for adding influence line generation and moving load analysis to the 3D frame analysis software. This round is design only, and no existing code is changed.
 
-基本思想:
+Basic idea:
 
 ```text
 StructuralModel
@@ -12,43 +12,43 @@ StructuralModel
 LoadingSurfaceModel
 ```
 
-`StructuralModel` は節点、部材、支点、材料、断面、固定荷重を扱う。`LoadingSurfaceModel` は載荷面、格子、ライン、車道、歩道、軌道、活荷重、移動荷重ケースを扱う。
+`StructuralModel` handles nodes, members, supports, materials, sections, and fixed loads. `LoadingSurfaceModel` handles the loading surface, grid, line, carriageway, sidewalk, track, live load, and moving load case.
 
-## 2. MVP範囲
+## 2. MVP Scope
 
-MVPで実装する範囲:
+Scope implemented in the MVP:
 
-- 単一 `LoadingLine`
-- グローバル鉛直方向
-- 単一集中荷重
-- 影響線生成
-- 移動荷重解析
-- 包絡結果
+- Single `LoadingLine`
+- Global vertical direction
+- Single concentrated load
+- Influence line generation
+- Moving load analysis
+- Envelope result
 
-対象外:
+Out of scope:
 
-- T荷重
-- L荷重
-- 群集荷重
-- A活荷重
-- B活荷重
-- 鉄道連行荷重
-- 衝撃係数
-- 複数車線
+- T load
+- L load
+- Crowd load
+- A-live
+- B-live
+- Train load
+- Impact factor
+- Multiple lanes
 
-## 3. ドメイン設計
+## 3. Domain Design
 
 ### LoadingSurface
 
-載荷対象となる面または領域のルートエンティティ。
+The root entity of the load model, representing the surface or region on which the load is applied.
 
-責務:
+Responsibilities:
 
-- `LoadingGrid`、`LoadingLine`、`Carriageway`、`Sidewalk`、`Track` を束ねる。
-- 構造モデルとの紐付け方針を保持する。
-- 載荷面に属する点群、格子、ラインの管理単位となる。
+- Group `LoadingGrid`, `LoadingLine`, `Carriageway`, `Sidewalk`, and `Track`.
+- Hold the policy for linking to the structural model.
+- Serve as the management unit for the points, grids, and lines belonging to the loading surface.
 
-保持項目:
+Held items:
 
 ```json
 {
@@ -64,27 +64,27 @@ MVPで実装する範囲:
 
 ### LoadingGrid
 
-載荷用格子。構造節点とは独立した荷重配置用の格子点集合。
+A load-only grid. A set of grid points for load placement that is independent of structural nodes.
 
-責務:
+Responsibilities:
 
-- 載荷点候補を保持する。
-- 格子点間の補間関係を保持する。
-- 荷重を構造モデルへ分配するための参照を保持する。
+- Hold the loading point candidates.
+- Hold the interpolation relations between grid points.
+- Hold the reference for distributing the load to the structural model.
 
-MVPでは直接使わず、`LoadingLine.stations` が一次元格子として機能する。
+In the MVP, it is not used directly. `LoadingLine.stations` acts as a 1D grid.
 
 ### LoadingLine
 
-移動荷重が進行するライン。
+The line along which a moving load travels.
 
-責務:
+Responsibilities:
 
-- station列を保持する。
-- stationごとの三次元座標を提供する。
-- 移動荷重の経路幾何とstation生成規則を定義する。
+- Hold the station sequence.
+- Provide the 3D coordinates of each station.
+- Define the path geometry of the moving load and the station generation rule.
 
-MVP構造:
+MVP structure:
 
 ```json
 {
@@ -103,50 +103,50 @@ MVP構造:
 }
 ```
 
-`LoadingLine` は経路だけを持つ。荷重方向は `LiveLoadModel` または `MovingLoadCase` が保持し、構造モデルへの荷重分配は独立した `DistributionRule` が担当する。
+`LoadingLine` holds the path only. The load direction is held by `LiveLoadModel` or `MovingLoadCase`, and the load distribution to the structural model is handled by an independent `DistributionRule`.
 
 ### Carriageway
 
-車道を表す将来拡張エンティティ。
+A future-extension entity that represents a carriageway.
 
-責務:
+Responsibilities:
 
-- 車道範囲、車線、幅員、適用活荷重種別を保持する。
-- 複数 `LoadingLine` を生成するルールを保持する。
+- Hold the carriageway range, lanes, widths, and applicable live load category.
+- Hold the rules that generate multiple `LoadingLine`s.
 
-MVPでは保存可能な設計枠のみで、解析対象外。
+In the MVP, only the save-slot design is kept and analysis is not supported.
 
 ### Sidewalk
 
-歩道を表す将来拡張エンティティ。
+A future-extension entity that represents a sidewalk.
 
-責務:
+Responsibilities:
 
-- 歩道領域を保持する。
-- 群集荷重などの面荷重適用範囲を保持する。
+- Hold the sidewalk region.
+- Hold the area-load application range such as crowd load.
 
-MVPでは解析対象外。
+Not supported in the MVP analysis.
 
 ### Track
 
-鉄道軌道を表す将来拡張エンティティ。
+A future-extension entity that represents a railway track.
 
-責務:
+Responsibilities:
 
-- 軌道中心線、軌間、連行荷重プリセット参照を保持する。
-- 軸列を `LoadingLine` 上へ展開する。
+- Hold the track centerline, gauge, and train-load preset reference.
+- Expand the axle sequence onto a `LoadingLine`.
 
-MVPでは解析対象外。
+Not supported in the MVP analysis.
 
 ### StationPoint
 
-`StationPoint` は `StationGenerator` が `LoadingLine` から生成する派生データである。永続ドメインエンティティではなく、影響線解析時の入力スナップショットとして扱う。
+`StationPoint` is derived data generated from `LoadingLine` by `StationGenerator`. It is not a persistent domain entity. It is treated as the input snapshot at influence line analysis time.
 
-責務:
+Responsibilities:
 
-- station、正規化位置、三次元座標、折れ線区間を保持する。
-- `DistributionRule` へ渡す載荷位置を表す。
-- 影響線結果では `lineId + station` を基本キーとして同定する。
+- Hold the station, the normalized position, the 3D coordinates, and the polyline segment.
+- Represent the loading position passed to `DistributionRule`.
+- Identify the result in the influence line result by the basic key `lineId + station`.
 
 ```ts
 type StationPoint = {
@@ -159,7 +159,7 @@ type StationPoint = {
 }
 ```
 
-処理の流れ:
+Processing flow:
 
 ```text
 LoadingLine
@@ -172,9 +172,9 @@ LoadingLine
 
 ### DistributionRule
 
-`DistributionRule` は載荷位置から構造モデルの等価節点荷重を生成する独立した設計対象である。
+`DistributionRule` is a standalone design target that generates the equivalent nodal loads on the structural model from the loading position.
 
-MVPでは `memberInterpolation` を標準とする。
+In the MVP, `memberInterpolation` is the default.
 
 ```ts
 type DistributionRule = MemberInterpolationRule
@@ -188,17 +188,17 @@ type MemberInterpolationRule = {
 }
 ```
 
-`memberInterpolation` は `StationPoint.position` から対象部材を検索し、部材局所座標上の位置 `a/L` を算出して、Euler-Bernoulli梁要素の等価節点荷重としてI端/J端へ分配する。`nearestNode` と `explicitNode` は載荷位置を節点へ吸着させ、影響線を階段状にしやすいため、MVP候補から外す。
+`memberInterpolation` searches the target member from `StationPoint.position`, computes the position `a/L` on the member''s local coordinate system, and distributes it to the I and J ends as the equivalent nodal load of the Euler-Bernoulli beam element. `nearestNode` and `explicitNode` are removed from the MVP candidates because they snap the loading position to a node and tend to make the influence line stair-stepped.
 
 ### MovingLoadCase
 
-移動荷重解析ケース。
+A moving load analysis case.
 
-責務:
+Responsibilities:
 
-- 使用する `LoadingLine` と `LiveLoadModel` を指定する。
-- 解析対象レスポンスを指定する。
-- 影響線生成結果を使って移動履歴と包絡結果を作る。
+- Specify the `LoadingLine` and `LiveLoadModel` to use.
+- Specify the analysis target responses.
+- Use the influence line generation result to produce the moving history and the envelope result.
 
 ```json
 {
@@ -218,12 +218,12 @@ type MemberInterpolationRule = {
 
 ### LiveLoadModel
 
-解析ケースで使用する活荷重インスタンス。
+A live load instance used in an analysis case.
 
-責務:
+Responsibilities:
 
-- `LiveLoadPreset` またはユーザー定義荷重を参照する。
-- 倍率、方向、載荷範囲、軸列を保持する。
+- Reference a `LiveLoadPreset` or a user-defined load.
+- Hold the multiplier, direction, loading range, and axle sequence.
 
 MVP:
 
@@ -240,11 +240,11 @@ MVP:
 }
 ```
 
-将来は `presetId` を必須化できるが、MVPの検証用単一集中荷重はユーザー入力値を許可する。
+In the future, `presetId` can be made mandatory. The MVP''s single concentrated load for verification allows a user-input value.
 
-## 4. 依存関係
+## 4. Dependency Relations
 
-許可する参照:
+Permitted references:
 
 ```text
 MovingLoadCase -> LoadingLine
@@ -254,7 +254,7 @@ LoadingSurfaceModel -> StructuralModel adapter setting
 InfluenceResult -> StructuralModel result target
 ```
 
-禁止する参照:
+Prohibited references:
 
 ```text
 StructuralModel -> LoadingSurfaceModel
@@ -263,11 +263,11 @@ Member -> LoadingLine
 LiveLoadPreset -> Project specific entity
 ```
 
-構造モデルは移動荷重モデルの存在を知らない。移動荷重エンジンが既存解析エンジンを呼び出す。
+The structural model does not know about the moving load model. The moving load engine calls the existing analysis engine.
 
-## 5. UIツリー
+## 5. UI Tree
 
-UIは統合するが、内部ツリーでは固定載荷と移動荷重を分ける。
+The UI is unified, but the internal tree separates fixed loads from moving loads.
 
 ```text
 Project
@@ -295,18 +295,18 @@ Project
 
 MVP UI:
 
-- `Loading Lines`: 単一ラインの始点、終点、station間隔、荷重方向。
-- `Live Load Models`: 単一集中荷重の名称と大きさ。
-- `Moving Load Cases`: 対象ライン、対象荷重、出力対象。
-- `Results`: 影響線グラフ、移動履歴、最大最小包絡。
+- `Loading Lines`: start, end, station interval, load direction of a single line.
+- `Live Load Models`: name and magnitude of a single concentrated load.
+- `Moving Load Cases`: target line, target load, output target.
+- `Results`: influence line graph, moving history, max / min envelope.
 
-## 6. API設計
+## 6. API Design
 
-既存解析APIとは分離する。
+The API is separated from the existing analysis API.
 
 ### POST /api/influence/run
 
-影響線を生成する。
+Generates the influence line.
 
 Request:
 
@@ -338,7 +338,7 @@ Response:
 
 ### POST /api/moving-load/run
 
-影響線生成と移動荷重解析をまとめて実行する。MVPではこのAPIから内部で影響線を作成してもよいが、結果構造では影響線と移動荷重を分離する。
+Runs the influence line generation and the moving load analysis together. In the MVP this API may create the influence line internally, but the result structure keeps the influence line and the moving load separated.
 
 Request:
 
@@ -370,39 +370,39 @@ Response:
 
 ### GET /api/live-load-presets
 
-将来のプリセット取得API。MVPでは未実装でもよい。
+A future API to retrieve presets. May remain unimplemented in the MVP.
 
-## 7. 実装フェーズ
+## 7. Implementation Phases
 
 ### Phase 1: MVP
 
-- `LoadingLine` 入力。
-- station生成。
-- `memberInterpolation` による部材上任意位置の集中荷重分配。
-- 鉛直単位荷重をstationごとに等価節点荷重へ変換。
-- K行列再利用による影響線生成。
-- 単一集中荷重の移動解析。
-- 最大最小包絡と最不利載荷位置。
-- CSV出力。
+- `LoadingLine` input.
+- Station generation.
+- Distribution of a concentrated load at an arbitrary position on a member by `memberInterpolation`.
+- Conversion of a vertical unit load at each station to an equivalent nodal load.
+- Influence line generation with K matrix reuse.
+- Moving analysis for a single concentrated load.
+- Max / min envelope and worst-case loading position.
+- CSV output.
 
-### Phase 2: 載荷モデル拡張
+### Phase 2: Load Model Extension
 
-- `LoadingGrid`。
-- 格子補間。
-- 複数 `LoadingLine`。
-- 車道、歩道の保存。
+- `LoadingGrid`.
+- Grid interpolation.
+- Multiple `LoadingLine`.
+- Save of carriageways and sidewalks.
 
-### Phase 3: 活荷重プリセット
+### Phase 3: Live Load Preset
 
-- R7道路橋示方書対応プリセット。
-- T荷重、L荷重、群集荷重。
-- A活、B活の適用条件。
-- 出典情報、版管理、監査ログ。
+- R7 Road Bridge Specification preset.
+- T load, L load, crowd load.
+- A-live, B-live applicability conditions.
+- Source information, version management, audit log.
 
-### Phase 4: 高度な移動荷重
+### Phase 4: Advanced Moving Load
 
-- 複数車線。
-- 連行荷重。
-- 衝撃係数。
-- 載荷組合せ。
-- 同時性断面力と同時性反力の詳細出力。
+- Multiple lanes.
+- Train load.
+- Impact factor.
+- Load combination.
+- Detailed output of concurrent section forces and concurrent reactions.

@@ -1,31 +1,29 @@
-# dynamic-analysis-current-state.md
+﻿# dynamic-analysis-current-state.md
 
-## 1. 現在の解析エンジン構造
+## 1. Current Analysis Engine Structure
 
-現在の解析エンジンは、線形静的解析を対象としている。
+The current analysis engine targets linear static analysis.
 
-主な流れは以下である。
+The main flow is:
 
-1. 節点・部材・材料・断面・支持条件・荷重をモデルとして受け取る
-2. 節点6自由度の DOF map を作成する
-3. 各部材の 12x12 要素剛性マトリクスを作成する
-4. 要素剛性を全体剛性マトリクスへ組み立てる
-5. 荷重ベクトルを作成する
-6. 拘束自由度を除いた自由自由度系を解く
-7. 全自由度変位へ復元する
-8. 反力・部材端力を計算する
+1. Receive the model: nodes, members, materials, sections, supports, loads.
+2. Build a 6-DOF per node DOF map.
+3. Build a 12x12 element stiffness matrix for each member.
+4. Assemble the element stiffness into the global stiffness matrix.
+5. Build the load vector.
+6. Solve the free-DOF system obtained by removing the restrained DOFs.
+7. Restore the displacement to the full DOF vector.
+8. Compute reactions and member end forces.
 
-## 2. 節点自由度の整理
+## 2. Node DOF Organization
 
-1節点6自由度である。
-
-自由度順序は以下。
+Each node has 6 DOFs. The order is:
 
 ```text
 ux, uy, uz, rx, ry, rz
 ```
 
-節点 index `i` に対して、全体自由度番号は以下。
+For a node with internal index `i`, the global DOF indices are:
 
 ```text
 6*i + 0: ux
@@ -36,39 +34,39 @@ ux, uy, uz, rx, ry, rz
 6*i + 5: rz
 ```
 
-動的解析でもこの DOF map をそのまま使用する。
+The dynamic analysis reuses this DOF map as is.
 
-## 3. 要素剛性マトリクスの整理
+## 3. Element Stiffness Matrix
 
-現在は 3D Euler-Bernoulli 梁要素を使用している。
+Currently, a 3D Euler-Bernoulli beam element is used.
 
-* 局所剛性マトリクス: 12x12
-* 座標変換: `k_global = T.T @ k_local @ T`
-* せん断変形は未考慮
-* 部材端リリース、幾何剛性、非線形は未実装
-* 質量マトリクスは未実装
+- Local stiffness matrix: 12x12.
+- Coordinate transformation: `k_global = T.T @ k_local @ T`.
+- Shear deformation is not considered.
+- Member end release, geometric stiffness, and nonlinearity are not implemented.
+- The mass matrix is not implemented.
 
-## 4. 全体剛性マトリクス構築処理
+## 4. Global Stiffness Matrix Assembly
 
-各部材の全体座標系剛性 `k_global` を、部材の12自由度に対応する全体 DOF へ加算している。
+The global-coordinate stiffness `k_global` of each member is added into the global DOFs corresponding to the 12 member DOFs.
 
-疎行列形式は `coo_matrix(...).tocsr()`。
+The sparse matrix format is `coo_matrix(...).tocsr()`.
 
-動的解析では、この既存の `assemble_stiffness` を再利用して全体剛性マトリクス `K` を作成する。
+In the dynamic analysis, the existing `assemble_stiffness` is reused to build the global stiffness matrix `K`.
 
-## 5. 拘束条件処理
+## 5. Boundary Condition Processing
 
-現在は支持条件で true になっている自由度を拘束自由度として扱う。
+Currently, the DOFs whose support flag is `true` are treated as restrained DOFs.
 
-静的解析では以下の縮約系を解いている。
+The static analysis solves the reduced system:
 
 ```text
 Kff * Uf = Ff
 ```
 
-拘束自由度の変位は 0 とする。
+Restrained DOF displacements are set to 0.
 
-動的解析でも初期段階では同じ方針で、自由自由度だけを対象に以下を構成する。
+In the initial stage of the dynamic analysis, the same approach is used. The free-DOF-only matrices are formed as:
 
 ```text
 Kff
@@ -76,50 +74,50 @@ Mff
 Cff
 ```
 
-## 6. 既存コードで再利用できる部分
+## 6. Parts Reusable from the Existing Code
 
-再利用可能なもの。
+Reusable parts:
 
-* DOF map
-* 節点6自由度の順序
-* 節点・部材・材料・断面データ構造
-* 座標変換
-* 局所剛性マトリクス
-* 全体剛性マトリクス組立
-* 拘束自由度抽出
-* 変位復元処理
-* 反力計算の骨格
-* 部材端力計算の骨格
-* FastAPI の API 構成
-* save/load/validate の流れ
+- DOF map
+- 6-DOF per node ordering
+- Node, member, material, section data structures
+- Coordinate transformation
+- Local stiffness matrix
+- Global stiffness matrix assembly
+- Restrained DOF extraction
+- Displacement restoration
+- Skeleton of reaction calculation
+- Skeleton of member end force calculation
+- FastAPI endpoint layout
+- Save / load / validate flow
 
-## 7. 固有値解析に足りない部分
+## 7. Missing Pieces for Eigenvalue Analysis
 
-現時点で未実装のもの。
+Currently unimplemented:
 
-* 質量ケース
-* 集中質量
-* 整合質量
-* 追加質量
-* 全体質量マトリクス
-* 拘束後質量マトリクス
-* 固有値解析ソルバ
-* 固有周期
-* 固有振動数
-* モード形
-* モード正規化
-* 刺激係数
-* 有効質量
-* 応答スペクトル入力
-* 減衰定数
-* 起震方向
-* SRSS/CQC などのモード合成
-* 動的解析結果スキーマ
-* UI 入力画面
-* モード図表示
+- Mass case
+- Lumped mass
+- Consistent mass
+- Added mass
+- Global mass matrix
+- Restrained mass matrix
+- Eigenvalue solver
+- Natural period
+- Natural frequency
+- Mode shape
+- Mode normalization
+- Modal participation factor
+- Effective mass
+- Response spectrum input
+- Damping ratio
+- Excitation direction
+- Modal combination (SRSS / CQC)
+- Dynamic analysis result schema
+- UI input screen
+- Mode shape display
 
-## 方針
+## Policy
 
-最初の実装対象は、集中質量による固有値解析とする。
+The first implementation target is eigenvalue analysis with lumped mass.
 
-整合質量、時刻歴解析、基準スペクトル自動生成は将来対応とする。
+Consistent mass, time history analysis, and standard spectrum auto-generation are deferred to later phases.

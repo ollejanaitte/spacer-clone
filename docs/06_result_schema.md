@@ -1,30 +1,30 @@
-# 06 Result Schema
+﻿# 06 Result Schema
 
-## 1. 目的
+## 1. Purpose
 
-解析エンジンおよびAPIが返す結果JSONの構造を定義する。UI、帳票、CSV出力、回帰テストはこの結果形式に依存する。
+This document defines the structure of the result JSON returned by the analysis engine and the API. The UI, reports, CSV export, and regression tests depend on this format.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 線形静的解析の概要。
-- 節点変位。
-- 支点反力。
-- 部材端力。
-- 警告。
-- エラー。
+- Linear static analysis summary.
+- Nodal displacements.
+- Support reactions.
+- Member end forces.
+- Warnings.
+- Errors.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 影響線結果。
-- 移動荷重結果。
-- 温度荷重、プレストレス、初期張力由来の専用結果。
-- DXF、図面ファイル、帳票テンプレート。
+- Influence line results.
+- Moving load results.
+- Specialized results from temperature loads, prestress, and initial tension.
+- DXF, drawing files, and report templates.
 
-固有値・応答スペクトル結果は Phase E 拡張として第 8 節、`schemas/result.schema.json`、[eigen-analysis.md](design/eigen-analysis.md)、[response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。本書第 4 節は線形静的 MVP 基準を示す。
+Eigenvalue and response spectrum results are added later as the Phase E extension. See section 8 of this document, `schemas/result.schema.json`, [eigen-analysis.md](design/eigen-analysis.md), and [response-spectrum-analysis.md](design/response-spectrum-analysis.md). Section 4 of this document covers the linear static MVP.
 
-## 4. データ構造
+## 4. Data Structure
 
-### トップレベル
+### Top Level
 
 ```json
 {
@@ -58,7 +58,7 @@
 }
 ```
 
-`status` は `success`、`warning`、`failed` のいずれか。
+`status` is one of `success`, `warning`, or `failed`.
 
 ### displacements
 
@@ -75,9 +75,9 @@
 }
 ```
 
-- 並進変位はm。
-- 回転変位はrad。
-- 全節点、全荷重ケースについて出力する。
+- Translational displacements are in meters.
+- Rotational displacements are in radians.
+- Output covers all nodes and all load cases.
 
 ### reactions
 
@@ -95,9 +95,9 @@
 }
 ```
 
-- 力はkN。
-- モーメントはkN_m。
-- 支点定義がある節点ごとに出力する。
+- Forces are in kN.
+- Moments are in kN_m.
+- One entry per support-defined node.
 
 ### memberEndForces
 
@@ -125,9 +125,9 @@
 }
 ```
 
-- 部材端力は局所座標系。
-- I端、J端を分けて保持する。
-- 符号規約は解析エンジン仕様とテストに従う。
+- Member end forces are in the local coordinate system.
+- The I end and J end are stored separately.
+- The sign convention follows the analysis engine specification and the tests.
 
 ### warnings
 
@@ -141,7 +141,7 @@
 }
 ```
 
-警告は解析成功を妨げない。
+Warnings do not prevent a successful analysis.
 
 ### errors
 
@@ -155,41 +155,41 @@
 }
 ```
 
-エラーがある場合、`analysisSummary.status` は `failed`。
+If `errors` is non-empty, `analysisSummary.status` is `failed`.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- `errors` が空でない結果を成功として扱ってはならない。
-- APIはエラー時も可能な限り同じ結果構造を返す。
-- 数値に `NaN`、`Infinity`、文字列数値を入れてはならない。
-- 後処理中に欠損した値が発生した場合は `POSTPROCESS_ERROR` とする。
+- A result with a non-empty `errors` array must not be treated as success.
+- The API should return the same result structure even on failure when possible.
+- Values must not be `NaN`, `Infinity`, or string-encoded numbers.
+- Missing values generated during postprocessing are reported as `POSTPROCESS_ERROR`.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 成功結果がJSON Schemaに適合する。
-- 失敗結果が `errors` を含み、結果配列を空にできる。
-- 変位、反力、部材端力の全成分が数値である。
-- CSV出力へ変換できる。
-- UIがloadCaseId、nodeId、memberIdでフィルタできる。
+- A successful result conforms to the JSON Schema.
+- A failed result contains `errors` and may have empty result arrays.
+- All components of displacement, reaction, and member end force are numeric.
+- The result is convertible to CSV output.
+- The UI can filter by `loadCaseId`, `nodeId`, and `memberId`.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- API、UI、Report担当がこの文書だけで結果データを扱える。
-- 必須項目 `displacements`、`reactions`、`memberEndForces`、`analysisSummary`、`warnings`、`errors` が定義済み。
-- `docs/10_report_spec.md` のCSV仕様と矛盾しない。
+- The API, UI, and report owners can handle the result data using this document alone.
+- The required items `displacements`, `reactions`, `memberEndForces`, `analysisSummary`, `warnings`, and `errors` are defined.
+- The CSV specification in `docs/10_report_spec.md` does not contradict this document.
 
-## 8. Phase E 拡張（固有値・応答スペクトル）
+## 8. Phase E Extension (Eigenvalue and Response Spectrum)
 
-正本は `schemas/result.schema.json` である。固有値結果の意味付けは [eigen-analysis.md](design/eigen-analysis.md)、応答スペクトル結果は [response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。
+The authoritative reference is `schemas/result.schema.json`. For the meaning of eigenvalue results, see [eigen-analysis.md](design/eigen-analysis.md). For the meaning of response spectrum results, see [response-spectrum-analysis.md](design/response-spectrum-analysis.md).
 
-### 共通
+### Common
 
-- トップレベルの `displacements`、`reactions`、`memberEndForces` は空配列とする。
-- `analysisSummary.analysisType` は `"eigen"` または `"response_spectrum"` とする。
+- The top-level `displacements`, `reactions`, and `memberEndForces` are empty arrays.
+- `analysisSummary.analysisType` is `"eigen"` or `"response_spectrum"`.
 
 ### eigenResult
 
-固有値解析成功時に付与する。
+Attached when the eigenvalue analysis succeeds.
 
 ```json
 {
@@ -216,11 +216,11 @@
 }
 ```
 
-`totalMassByDirection`、`effectiveMasses`、`cumulativeEffectiveMassRatios` は Phase E-1b 以降の optional 拡張である。
+`totalMassByDirection`, `effectiveMasses`, and `cumulativeEffectiveMassRatios` are optional extensions starting from Phase E-1b.
 
 ### responseSpectrumResult
 
-応答スペクトル解析成功時に付与する。同一 result に `eigenResult` も含める。
+Attached when the response spectrum analysis succeeds. The same result also contains `eigenResult`.
 
 ```json
 {
@@ -242,10 +242,10 @@
 }
 ```
 
-各フィールドの意味:
+The meaning of each field:
 
-- `combinationMethod`: `SRSS` または `CQC`。MVP の既定は `SRSS`。
-- `interpolationMethod`: `linear` または `logLog`。既定は `linear`。
-- `usedModes`: 解析に使用されたモード番号の配列。
-- `combinedResult.reactions` / `combinedResult.memberSectionForces`: 合成された動的反力 / 動的部材力。
-- `directionResults`: 方向別の解析結果。単一方向実行でも 1 要素を返す。
+- `combinationMethod`: `SRSS` or `CQC`. The MVP default is `SRSS`.
+- `interpolationMethod`: `linear` or `logLog`. The default is `linear`.
+- `usedModes`: the list of mode numbers used in the analysis.
+- `combinedResult.reactions` / `combinedResult.memberSectionForces`: the combined dynamic reactions and member section forces.
+- `directionResults`: per-direction results. Even for a single direction run, this array contains one element.

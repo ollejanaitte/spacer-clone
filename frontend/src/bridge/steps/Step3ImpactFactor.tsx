@@ -1,3 +1,4 @@
+﻿import { ja } from "../../i18n/ja";
 import type { BridgeProject, ImpactFactor } from "../types";
 import { computeImpactFactor } from "../BridgeWizardState";
 
@@ -19,13 +20,13 @@ export function Step3ImpactFactor({ project, onChange }: Props) {
   const impact = project.impactFactor;
   return (
     <div className="bw-step bw-step-impact">
-      <h2>Step 3 / 6 衝撃係数</h2>
+      <h2>{ja.bridgeSteps.step3.title}</h2>
       <p className="bw-hint">
-        衝撃係数は自動計算が推奨です。自動 ON の場合、橋長に応じて下式で自動算出されます（MVP 簡略式）。
+        {ja.bridgeSteps.step3.hint}
       </p>
       <div className="bw-grid">
         <label className="bw-field">
-          <span>自動計算</span>
+          <span>{ja.bridgeSteps.step3.autoCompute}</span>
           <input
             type="checkbox"
             checked={impact.auto}
@@ -41,9 +42,7 @@ export function Step3ImpactFactor({ project, onChange }: Props) {
           />
         </label>
         <label className="bw-field">
-          <span>
-            衝撃係数 i <small>(-)</small>
-          </span>
+          <span>{ja.bridgeSteps.step3.impactFactor} <small>(-)</small></span>
           <input
             type="number"
             step={0.01}
@@ -63,10 +62,10 @@ export function Step3ImpactFactor({ project, onChange }: Props) {
         </label>
       </div>
       <div className="bw-info">
-        <p>式（MVP）: <code>i = min(0.3, 20 / (50 + L_max))</code></p>
-        <p>現在の L_max: {Math.max(0, ...project.spans.map((s) => s.length)).toFixed(2)} m</p>
-        <p>算出値: <strong>{autoValue.toFixed(3)}</strong></p>
-        <small>※ 道路橋示方書の正式式とは断定しません。MVP 簡略式として設計書に明記し、後続で正式式に差し替え可能。</small>
+        <p>{ja.bridgeSteps.step3.formula}</p>
+        <p>{ja.bridgeSteps.step3.currentLmax(Math.max(0, ...project.spans.map((s) => s.length)).toFixed(2))}</p>
+        <p>{ja.bridgeSteps.step3.computedValue(autoValue.toFixed(3))}</p>
+        <small>{ja.bridgeSteps.step3.note}</small>
       </div>
     </div>
   );

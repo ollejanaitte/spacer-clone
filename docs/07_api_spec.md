@@ -1,40 +1,40 @@
-# 07 API Specification
+﻿# 07 API Specification
 
-## 1. 目的
+## 1. Purpose
 
-FastAPIバックエンドのMVP API契約を定義する。UI担当、API担当、Engine担当が同じ入出力仕様で実装できることを目的とする。
+This document defines the MVP API contract of the FastAPI backend. It allows the UI owner, the API owner, and the engine owner to implement against the same input / output specification.
 
-## 2. 対象範囲
+## 2. Scope
 
-MVP APIは以下に限定する。
+The MVP API is limited to:
 
-- ヘルスチェック。
-- `project.json` 検証。
-- 線形静的解析実行。
-- プロジェクト保存。
-- プロジェクト読込。
-- サンプルプロジェクト一覧取得。
+- Health check.
+- `project.json` validation.
+- Linear static analysis execution.
+- Project save.
+- Project load.
+- Listing sample projects.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- ユーザー認証、権限管理、ライセンス管理。
-- クラウド永続化、共同編集。
-- 影響線解析、移動荷重、固有値解析、応答スペクトル解析のAPI。
-- DXF出力API。
-- 外部解析ソフト連携API。
+- User authentication, authorization, license management.
+- Cloud persistence, collaborative editing.
+- APIs for influence line analysis, moving loads, eigenvalue analysis, and response spectrum analysis.
+- DXF output API.
+- APIs for integration with external analysis software.
 
-## 4. API仕様
+## 4. API Specification
 
-### 共通
+### Common
 
-- Request/ResponseはJSON。
-- 文字コードはUTF-8。
-- エラーは `code` と `message` を含む構造化形式。
-- APIは送信された `project` を暗黙に変更しない。
+- Request and response bodies are JSON.
+- The character encoding is UTF-8.
+- Errors use a structured format that includes `code` and `message`.
+- The API does not silently modify the submitted `project`.
 
 ### GET /health
 
-レスポンス:
+Response:
 
 ```json
 {
@@ -45,7 +45,7 @@ MVP APIは以下に限定する。
 
 ### POST /api/projects/validate
 
-リクエスト:
+Request:
 
 ```json
 {
@@ -53,7 +53,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-レスポンス:
+Response:
 
 ```json
 {
@@ -63,7 +63,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-不正時:
+On failure:
 
 ```json
 {
@@ -83,7 +83,7 @@ MVP APIは以下に限定する。
 
 ### POST /api/analysis/run
 
-リクエスト:
+Request:
 
 ```json
 {
@@ -94,7 +94,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-成功レスポンス:
+Success response:
 
 ```json
 {
@@ -112,7 +112,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-解析失敗時:
+Analysis failure response:
 
 ```json
 {
@@ -137,7 +137,7 @@ MVP APIは以下に限定する。
 
 ### POST /api/projects/save
 
-リクエスト:
+Request:
 
 ```json
 {
@@ -146,7 +146,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-レスポンス:
+Response:
 
 ```json
 {
@@ -157,7 +157,7 @@ MVP APIは以下に限定する。
 
 ### POST /api/projects/load
 
-リクエスト:
+Request:
 
 ```json
 {
@@ -165,7 +165,7 @@ MVP APIは以下に限定する。
 }
 ```
 
-レスポンス:
+Response:
 
 ```json
 {
@@ -175,7 +175,7 @@ MVP APIは以下に限定する。
 
 ### GET /api/examples
 
-レスポンス:
+Response:
 
 ```json
 {
@@ -190,35 +190,35 @@ MVP APIは以下に限定する。
 }
 ```
 
-最低限含める例:
+Minimum required examples:
 
-- 片持梁の先端集中荷重。
-- 単純梁の中央集中荷重。
-- 単純梁の等分布荷重。
-- 3D片持梁のねじり。
+- Cantilever beam with a tip load.
+- Simple beam with a center load.
+- Simple beam with a uniform load.
+- 3D cantilever beam under torsion.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- JSON parse失敗はHTTP 400。
-- スキーマ不正はHTTP 200で `valid: false`、またはHTTP 422。実装時に統一する。
-- 解析入力不正は解析を実行せず、構造化エラーを返す。
-- save/loadのパストラバーサルはHTTP 400。
-- 予期しないサーバー例外はHTTP 500。
-- HTTP 500でも内部スタックトレースをレスポンスに出してはならない。
+- JSON parse failure: HTTP 400.
+- Schema failure: HTTP 200 with `valid: false`, or HTTP 422. The behavior is unified at implementation time.
+- Invalid analysis input: do not run the analysis; return a structured error.
+- Path traversal in save / load: HTTP 400.
+- Unexpected server exception: HTTP 500.
+- HTTP 500 responses must not include the internal stack trace.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- `GET /health` が成功する。
-- validな `project.json` が検証成功する。
-- 不正参照が検証失敗する。
-- 片持梁サンプルを解析できる。
-- 支点不足モデルが失敗レスポンスを返す。
-- save/loadで `../` を拒否する。
-- `GET /api/examples` が必須例を返す。
+- `GET /health` succeeds.
+- A valid `project.json` passes validation.
+- Invalid references cause validation to fail.
+- A cantilever sample can be analyzed.
+- An under-constrained model returns a failure response.
+- Save / load rejects `../` paths.
+- `GET /api/examples` returns the required examples.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- すべてのMVP APIがOpenAPIに表示される。
-- APIテストが `docs/12_quality_gate.md` を満たす。
-- APIが解析ロジックを直接持たず、Engineを呼び出す。
-- UI担当がこの文書だけでAPI接続できる。
+- All MVP endpoints are visible in the OpenAPI schema.
+- The API tests satisfy `docs/12_quality_gate.md`.
+- The API does not contain analysis logic directly; it calls the engine.
+- The UI owner can connect to the API using this document alone.

@@ -1,24 +1,24 @@
-# bridge-domain-model.md
+﻿# bridge-domain-model.md
 
-橋梁ウィザードで扱う意味的データモデル。UI と FEM 生成エンジンの間の共通語彙となる。
-既存の `project.schema.json` (FEMモデル) とは独立に管理し、Step6 で変換する。
+Semantic data model handled by the bridge wizard. This is the shared vocabulary between the UI and the FEM generation engine.
+It is managed independently of the existing `project.schema.json` (FEM model) and is converted in Step 6.
 
-## 1. 型定義 (TypeScript / Python マッピング)
+## 1. Type Definitions (TypeScript / Python mapping)
 
-### 1.1 BridgeProject (橋梁プロジェクト全体)
+### 1.1 BridgeProject (the whole bridge project)
 
 ```ts
 type BridgeProject = {
   id: string;                  // "bridge-001"
-  name: string;                // 表示名
-  schemaVersion: "0.1.0";      // 橋梁ドメインモデルのスキーマバージョン
-  crossSection: CrossSection;  // 横断構成 (Step 1)
-  spans: Span[];               // 支間情報 (Step 2)
-  impactFactor: ImpactFactor;  // 衝撃係数 (Step 3)
-  lines: BridgeLine[];         // 3D ライン (Step 4)
-  loads: BridgeLoad[];         // 荷重ケース (Step 5)
+  name: string;                // display name
+  schemaVersion: "0.1.0";      // schema version of the bridge domain model
+  crossSection: CrossSection;  // cross-section composition (Step 1)
+  spans: Span[];               // span information (Step 2)
+  impactFactor: ImpactFactor;  // impact factor (Step 3)
+  lines: BridgeLine[];         // 3D lines (Step 4)
+  loads: BridgeLoad[];         // load cases (Step 5)
   generationSettings: BridgeGenerationSettings; // Step 6
-  generatedFem?: GeneratedFemModel;              // 生成結果
+  generatedFem?: GeneratedFemModel;              // generation result
 };
 ```
 
@@ -40,7 +40,7 @@ type CrossSection = {
 type Span = {
   index: number;   // 1..N
   length: number;  // m, >0
-  offset: number;  // m, >=0 (将来拡張用、MVPでは 0 を許容)
+  offset: number;  // m, >=0 (reserved for future extension; 0 is allowed in the MVP)
 };
 ```
 
@@ -49,8 +49,8 @@ type Span = {
 ```ts
 type ImpactFactor = {
   value: number;       // 0.0..1.0
-  auto: boolean;       // true で自動計算
-  formula?: string;    // 表示用（自動時の式）
+  auto: boolean;       // true = automatic calculation
+  formula?: string;    // for display (the formula used in automatic mode)
 };
 ```
 
@@ -61,7 +61,7 @@ type BridgeLine = {
   id: string;          // "line-001"
   type: "traffic" | "load" | "reference";
   name: string;
-  points: [number, number, number][]; // MVP: 2 点
+  points: [number, number, number][]; // MVP: 2 points
 };
 ```
 
@@ -72,10 +72,10 @@ type BridgeLoad = {
   id: string;
   type: "self_weight" | "distributed" | "vehicle";
   name: string;
-  magnitude: number;                          // kN/m または kN
+  magnitude: number;                          // kN/m or kN
   direction: "X" | "Y" | "Z" | "-X" | "-Y" | "-Z";
-  line_id?: string;                            // 対象ライン
-  loadCaseId?: string;                         // 任意
+  line_id?: string;                            // target line
+  loadCaseId?: string;                         // optional
 };
 ```
 
@@ -85,9 +85,9 @@ type BridgeLoad = {
 type BridgeGenerationSettings = {
   mesh_division: number;                            // 1..50
   mesh_density: "coarse" | "standard" | "fine";
-  girder_spacing_override?: number;                 // 主桁間隔の手動指定
-  materialId?: string;                              // 既定 MAT1
-  sectionId?: string;                               // 既定 SEC1
+  girder_spacing_override?: number;                 // manual main girder spacing
+  materialId?: string;                              // default MAT1
+  sectionId?: string;                               // default SEC1
 };
 ```
 
@@ -97,8 +97,8 @@ type BridgeGenerationSettings = {
 type GeneratedFemModel = {
   source_bridge_id: string;
   generatedAt: string; // ISO
-  xCount: number;      // x 方向節点数
-  yCount: number;      // y 方向節点数
+  xCount: number;      // node count in x direction
+  yCount: number;      // node count in y direction
   nodeCount: number;
   memberCount: number;
   supportCount: number;
@@ -111,23 +111,22 @@ type GeneratedFemModel = {
 };
 ```
 
-## 2. バリデーションルール
+## 2. Validation Rules
 
 - `lane_count >= 1`
 - `lane_width > 0`
 - `spans.length >= 1`
-- すべての `span.length > 0`
-- `impactFactor.value` は 0..1
+- Every `span.length > 0`
+- `impactFactor.value` is between 0 and 1
 - `mesh_division >= 1`
-- `line_id` 参照整合: BridgeLoad が参照する line_id は BridgeLine に存在
-- line の `points.length >= 2`
+- `line_id` reference integrity: every `line_id` referenced by a `BridgeLoad` exists in `BridgeLine`
+- `line.points.length >= 2`
 
-## 3. Python マッピング
+## 3. Python Mapping
 
-Python では `dataclass(frozen=True)` で実装し、JSON との相互変換は
-`backend/engine/bridge_model.py` に集約する。
+In Python, this is implemented as `dataclass(frozen=True)`. JSON conversion is centralized in `backend/engine/bridge_model.py`.
 
-## 4. スキーマファイル
+## 4. Schema Files
 
 - `schemas/bridge.schema.json`
 - `schemas/generated-fem.schema.json`
