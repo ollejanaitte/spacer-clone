@@ -26,6 +26,10 @@ from .time_history_load import (
     EffectiveLoadHistory,
     assemble_effective_seismic_load_history,
 )
+from .time_history_newmark import (
+    NewmarkTimeHistoryResult,
+    solve_newmark_average_acceleration,
+)
 from .influence import run_influence_analysis, solve_influence_model
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
@@ -65,6 +69,8 @@ __all__ = [
     "assemble_rayleigh_damping_matrix",
     "EffectiveLoadHistory",
     "assemble_effective_seismic_load_history",
+    "NewmarkTimeHistoryResult",
+    "solve_newmark_average_acceleration",
 ]
 
 from .bridge_model import (
