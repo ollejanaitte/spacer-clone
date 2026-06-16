@@ -30,6 +30,12 @@ from .time_history_newmark import (
     NewmarkTimeHistoryResult,
     solve_newmark_average_acceleration,
 )
+from .time_history_result import (
+    TimeHistoryResult,
+    TimeHistoryResultMeta,
+    build_time_history_result_from_newmark,
+    parse_time_history_result,
+)
 from .influence import run_influence_analysis, solve_influence_model
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
@@ -71,6 +77,10 @@ __all__ = [
     "assemble_effective_seismic_load_history",
     "NewmarkTimeHistoryResult",
     "solve_newmark_average_acceleration",
+    "TimeHistoryResult",
+    "TimeHistoryResultMeta",
+    "build_time_history_result_from_newmark",
+    "parse_time_history_result",
 ]
 
 from .bridge_model import (

@@ -11,6 +11,7 @@ from .time_history_models import (
     parse_ground_motions,
     parse_time_history_settings,
 )
+from .time_history_result import parse_time_history_result
 
 
 @dataclass(frozen=True)
@@ -161,6 +162,7 @@ class Model:
     massCases: list[MassCase]
     analysisSettings: AnalysisSettings
     groundMotions: list[dict[str, Any]] = field(default_factory=list)
+    analysisResults: dict[str, Any] | None = None
 
     @property
     def node_by_id(self) -> dict[str, Node]:
@@ -205,6 +207,15 @@ def parse_model(data: dict[str, Any]) -> Model:
             "groundMotions must be an array.",
             path="/groundMotions",
         )
+    analysis_results_payload = data.get("analysisResults")
+    if analysis_results_payload is not None and not isinstance(
+        analysis_results_payload, dict
+    ):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "analysisResults must be an object.",
+            path="/analysisResults",
+        )
     model = Model(
         project=project,
         nodes=nodes,
@@ -218,6 +229,11 @@ def parse_model(data: dict[str, Any]) -> Model:
         massCases=mass_cases,
         analysisSettings=settings,
         groundMotions=ground_motions_payload,
+        analysisResults=(
+            copy.deepcopy(analysis_results_payload)
+            if analysis_results_payload is not None
+            else None
+        ),
     )
     validate_model(model)
     return model
@@ -524,6 +540,15 @@ def validate_saved_time_history_settings(model: "Model") -> None:
     except TimeHistoryModelError as exc:
         raise _to_analysis_error(exc, prefix="/groundMotions") from exc
 
+    # TH-4: validate the persisted result block, if any. The MVP keeps
+    # the result block as an opaque dict; full structural validation
+    # delegates to parse_time_history_result which raises AnalysisError
+    # with a JSON-pointer path.
+    if model.analysisResults is not None:
+        time_history_result = model.analysisResults.get("timeHistory")
+        if time_history_result is not None:
+            parse_time_history_result(time_history_result)
+
 
 def _to_analysis_error(exc: TimeHistoryModelError, *, prefix: str) -> AnalysisError:
     """Translate a TimeHistoryModelError into a project AnalysisError.
@@ -789,6 +814,12 @@ def _model_to_project_payload(model: "Model") -> dict[str, Any]:
     # dicts so any future-compatible keys are retained through the round
     # trip.
     payload["groundMotions"] = copy.deepcopy(model.groundMotions)
+    # analysisResults is preserved as an opaque dict. The MVP keeps the
+    # entire block untouched so that any future-compatible result
+    # fields (e.g. nonlinear dynamic results) are retained through the
+    # round trip without requiring per-result-type handling here.
+    if model.analysisResults is not None:
+        payload["analysisResults"] = copy.deepcopy(model.analysisResults)
     return payload
 
 
