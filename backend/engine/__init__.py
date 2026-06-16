@@ -18,6 +18,10 @@ from .time_history_mass import (
     LumpedMassMatrix,
     assemble_lumped_mass_matrix,
 )
+from .time_history_damping import (
+    RayleighDampingMatrix,
+    assemble_rayleigh_damping_matrix,
+)
 from .influence import run_influence_analysis, solve_influence_model
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
@@ -53,6 +57,8 @@ __all__ = [
     "GroundMotion",
     "LumpedMassMatrix",
     "assemble_lumped_mass_matrix",
+    "RayleighDampingMatrix",
+    "assemble_rayleigh_damping_matrix",
 ]
 
 from .bridge_model import (
