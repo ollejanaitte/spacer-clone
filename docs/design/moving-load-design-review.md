@@ -1,8 +1,8 @@
-# 移動荷重・影響線設計レビュー報告書
+﻿# Moving Load and Influence Line Design Review Report
 
-## 1. レビュー対象
+## 1. Review Scope
 
-対象文書:
+Target documents:
 
 - `docs/investigation/spacer-moving-load.md`
 - `docs/design/influence-moving-load.md`
@@ -11,350 +11,350 @@
 - `docs/design/envelope-result.md`
 - `docs/design/loading-surface-grid.md`
 
-レビュー観点:
+Review viewpoints:
 
-- ドメイン矛盾
-- 循環参照
-- データ構造重複
-- 責務重複
-- 将来拡張性
-- MVP実現性
-- 性能リスク
+- Domain conflicts
+- Circular references
+- Data structure duplication
+- Responsibility duplication
+- Future extensibility
+- MVP feasibility
+- Performance risk
 
-## 2. 採用推奨
+## 2. Recommended Adoptions
 
-### StructuralModelとLoadingSurfaceModelの分離
+### Separation of StructuralModel and LoadingSurfaceModel
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- 固定載荷解析と移動荷重解析の責務が明確になる。
-- 構造節点と載荷格子を独立に扱える。
-- SPACERのSTATICSとINFLOADを分ける思想と整合する。
-- 既存解析エンジンを汚さず、上位の影響線エンジンとして追加しやすい。
+- The responsibilities of fixed-load analysis and moving load analysis become clear.
+- Structural nodes and load grids can be handled independently.
+- This is consistent with the SPACER idea of separating STATICS and INFLOAD.
+- It is easy to add it as an upper-layer influence line engine without polluting the existing analysis engine.
 
-### 影響線作成と移動荷重解析の段階分離
+### Phased Separation of Influence Line Generation and Moving Load Analysis
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- 単位荷重法の結果を再利用できる。
-- 単一集中荷重、複数軸、分布荷重へ自然に拡張できる。
-- 影響線グラフと包絡結果を別々に検証できる。
+- The unit load method result is reusable.
+- It naturally extends to a single concentrated load, multiple axles, and distributed loads.
+- The influence line graph and the envelope result can be verified independently.
 
-### LiveLoadPresetによる荷重値管理
+### Load Value Management by LiveLoadPreset
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- 道路橋示方書R7の荷重値をソースへ埋め込まない方針と整合する。
-- 版、出典、改訂番号を結果へ残せる。
-- A活、B活、T荷重、L荷重、群集荷重の将来拡張に対応できる。
+- Consistent with the policy of not embedding the Road Bridge Specification R7 load values directly in the source.
+- The version, source, and revision number can be kept on the result.
+- It supports future additions of A-live, B-live, T load, L load, and crowd load.
 
-### MVPの単一LoadingLine限定
+### MVP Restriction to a Single LoadingLine
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- station生成、単位荷重、K行列再利用、包絡処理を最小単位で検証できる。
-- 複数車線や規準荷重を後回しにできる。
-- 既存解析エンジンとの接続リスクを抑えられる。
+- Station generation, unit load, K matrix reuse, and envelope processing can be verified at the minimum unit.
+- Multiple lanes and standard loads can be deferred.
+- The integration risk with the existing analysis engine is contained.
 
-### K行列再利用
+### K Matrix Reuse
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- stationごとの解析で最も重い処理を削減できる。
-- 線形解析の前提と整合する。
-- 将来の複数target抽出でも効果が大きい。
+- The heaviest processing for each station is reduced.
+- It is consistent with the linear analysis assumption.
+- The effect is large even for future multi-target extraction.
 
-### memberInterpolationをMVP標準にする
+### Make memberInterpolation the MVP Default
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- `nearestNode` と `explicitNode` は載荷位置を節点へ吸着させ、影響線が階段状になりやすい。
-- 既存のEuler-Bernoulli梁要素を持つため、部材上任意位置の集中荷重を等価節点荷重として扱える。
-- 移動荷重解析で必要な位置依存性をMVPから検証できる。
+- `nearestNode` and `explicitNode` snap the load position to a node and make the influence line stair-stepped.
+- Since we already have Euler-Bernoulli beam elements, concentrated loads at arbitrary positions on a member can be handled as equivalent nodal loads.
+- The position dependency required for moving load analysis can be verified from the MVP.
 
-### StationPointによるstation管理
+### Station Management by StationPoint
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- `StationPoint` を解析時の派生データとすることで、永続ドメインモデルを増やさずにstation情報を統一できる。
-- `lineId + station` を基本キーにし、`stationIndex` を補助情報に限定できる。
-- 旧来の影響線載荷点エンティティを廃止でき、荷重方向や分配結果との責務混在を避けられる。
+- Treating `StationPoint` as derived data at analysis time avoids adding more entities to the persistent domain model.
+- `lineId + station` is the primary key, with `stationIndex` limited to auxiliary information.
+- The legacy influence line loading point entity can be removed, and the mixing of responsibilities with load direction and distribution results is avoided.
 
-### DistributionRuleの独立化
+### Decoupling of DistributionRule
 
-判定: 採用推奨
+Decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- `LoadingLine` は経路幾何だけに集中できる。
-- 荷重分配方式をMVPの `memberInterpolation` から将来の `gridInterpolation`、`surfaceInterpolation`、`laneDistribution` へ拡張しやすい。
-- 構造モデルへの変換責務が明確になる。
+- `LoadingLine` can focus on path geometry only.
+- The load distribution method is easy to extend from the MVP `memberInterpolation` to future `gridInterpolation`, `surfaceInterpolation`, and `laneDistribution`.
+- The conversion responsibility to the structural model becomes clear.
 
-## 3. 保留
+## 3. Pending
 
-### 変位をMVP対象に含めるか
+### Whether to Include Displacement in the MVP Scope
 
-判定: 保留
+Decision: Pending.
 
-論点:
+Discussion:
 
-- 変位影響線は実装上は可能だが、初期UIとCSVの対象が増える。
-- 部材端力と反力だけで橋梁実務上の価値は出しやすい。
+- The displacement influence line is technically possible, but it expands the initial UI and CSV scope.
+- The bridge engineering value can be delivered with member end forces and reactions alone.
 
-推奨:
+Recommendation:
 
-- データ構造には `displacement` を残す。
-- MVP UIの初期対象は部材端力と反力を優先する。
+- Keep `displacement` in the data structure.
+- Prioritize member end forces and reactions for the MVP UI.
 
-### 影響線履歴の標準返却
+### Standard Return of Influence Line History
 
-判定: 保留
+Decision: Pending.
 
-論点:
+Discussion:
 
-- 履歴は可視化に必要だが、station数とtarget数に比例して大きくなる。
-- APIレスポンス肥大化の原因になる。
+- The history is required for visualization, but its size scales with the number of stations and targets.
+- It can blow up the API response size.
 
-推奨:
+Recommendation:
 
-- `includeHistory` オプションを設ける。
-- UI表示用は必要targetに絞って返す。
+- Add an `includeHistory` option.
+- Return only the targets required for the UI display.
 
-### 格子補間の精度保証
+### Accuracy Guarantee of Grid Interpolation
 
-判定: 保留
+Decision: Pending.
 
-理由:
+Reasons:
 
-- 格子補間は荷重保存、モーメント保存、構造部材への分配精度に影響する。
-- MVPでは `memberInterpolation` を標準とし、格子補間はPhase 2以降に送る。
+- Grid interpolation affects load conservation, moment conservation, and the accuracy of distribution to structural members.
+- In the MVP, `memberInterpolation` is the default, and grid interpolation is deferred to Phase 2.
 
-必要な決定:
+Decisions needed:
 
-- Phase 2以降で優先する補間方式。
-- 許容誤差。
-- 載荷点が格子外にある場合の扱い。
-- 等価節点荷重の検証ケース。
+- The interpolation method to prioritize in Phase 2 and later.
+- The allowed tolerance.
+- The handling when the loading point lies outside the grid.
+- The verification cases for equivalent nodal loads.
 
-### 同時性結果の出力範囲
+### Output Scope of Concurrent Results
 
-判定: 保留
+Decision: Pending.
 
-理由:
+Reasons:
 
-- 全部材端力と全反力の同時性を常時出すと結果サイズが大きくなる。
-- MVPでは `InfluenceResult`、`MovingLoadHistory`、`EnvelopeResult` を優先し、同時性断面力と同時性反力はPhase 2で扱う。
+- Returning the concurrency of all member end forces and all reactions at all times makes the result size large.
+- In the MVP, prioritize `InfluenceResult`, `MovingLoadHistory`, and `EnvelopeResult`. Concurrent section forces and concurrent reactions are handled in Phase 2.
 
-必要な決定:
+Decisions needed:
 
-- Phase 2で対象target周辺だけにするか。
-- APIオプションで全部材を返すか。
-- CSV出力の標準セクションに含めるか。
+- Whether to limit Phase 2 to areas around the target.
+- Whether the API option returns all members.
+- Whether to include them in the standard CSV sections.
 
-### R7プリセットの承認フロー
+### Approval Flow for R7 Presets
 
-判定: 保留
+Decision: Pending.
 
-理由:
+Reasons:
 
-- 出典情報の保持だけでは、数値登録ミスを防げない。
-- 道路橋示方書R7の正式な表、節、適用条件を誰が確認するかを決める必要がある。
+- Just preserving source information does not prevent a numerical registration error.
+- It must be decided who checks the official tables, sections, and applicability conditions of the Road Bridge Specification R7.
 
-必要な決定:
+Decisions needed:
 
-- プリセット登録者。
-- レビュー者。
-- 承認済みプリセットの変更手順。
-- 結果再現のためのプリセットスナップショット保存範囲。
+- Preset registrant.
+- Reviewer.
+- Procedure for changing an approved preset.
+- Scope of the preset snapshot saved for result reproducibility.
 
-## 4. 要再検討
+## 4. Re-discussion Required
 
-### LoadingGridの本格利用時期
+### When to Make Full Use of LoadingGrid
 
-判定: 要再検討
+Decision: Re-discussion required.
 
-理由:
+Reasons:
 
-- `LoadingGrid` はSPACERの格子形状思想を取り込む重要要素だが、MVPでは `LoadingLine` と `memberInterpolation` で十分に成立する。
-- 早期に格子補間まで実装すると、MVPの焦点がぼやける。
+- `LoadingGrid` is an important element that inherits the SPACER grid concept, but `LoadingLine` and `memberInterpolation` are sufficient for the MVP.
+- Implementing grid interpolation early blurs the focus of the MVP.
 
-必要な決定:
+Decisions needed:
 
-- Phase 2で格子補間を導入する条件。
-- `LoadingGrid` を保存専用から解析利用へ昇格させるタイミング。
-- 車道、歩道、軌道から生成される格子との関係。
+- Conditions under which grid interpolation is introduced in Phase 2.
+- The timing to promote `LoadingGrid` from save-only to analysis-use.
+- The relationship with grids generated from carriageways, sidewalks, and tracks.
 
-### 複数車線・面荷重時の結果サイズ管理
+### Result Size Management for Multiple Lanes and Area Loads
 
-判定: 要再検討
+Decision: Re-discussion required.
 
-理由:
+Reasons:
 
-- 複数車線、群集荷重、分布荷重、同時性結果を同時に扱うと、履歴と包絡結果が急増する。
-- MVPの `targetResults` 形式は単一ラインでは扱いやすいが、複数車線時の結果圧縮方針は追加検討が必要である。
+- Multiple lanes, crowd load, distributed load, and concurrent results together can explode the history and envelope result.
+- The MVP `targetResults` shape is easy to handle for a single line, but a result compaction policy for multiple lanes requires additional study.
 
-必要な決定:
+Decisions needed:
 
-- 結果をtarget単位で返すか、載荷ケース単位で返すか。
-- 履歴の間引き、保存、CSV分割の方針。
-- UI表示用と帳票用の結果取得APIを分けるか。
+- Whether to return results per target or per load case.
+- Policy for thinning, saving, and splitting the history CSV.
+- Whether to split the result-fetching API into UI and report use.
 
-## 5. ドメイン矛盾レビュー
+## 5. Domain Conflict Review
 
-結論: 重大な矛盾なし。
+Conclusion: No significant conflicts.
 
-確認結果:
+Confirmed:
 
-- `StructuralModel` は移動荷重モデルを参照しない。
-- `LoadingSurfaceModel` が構造モデルを所有しない。
-- `LiveLoadPreset` はプロジェクト固有エンティティを参照しない。
-- `MovingLoadCase` が `LoadingLine`、`LiveLoadModel`、`DistributionRule` を参照する方向は妥当。
+- `StructuralModel` does not reference the moving load model.
+- `LoadingSurfaceModel` does not own the structural model.
+- `LiveLoadPreset` does not reference project-specific entities.
+- The reference direction from `MovingLoadCase` to `LoadingLine`, `LiveLoadModel`, and `DistributionRule` is appropriate.
 
-注意:
+Caution:
 
-- `DistributionRule` が構造部材IDを参照する場合、載荷モデルと構造モデルの結合が強くなる。MVPでは `targetMembers` を任意の絞り込みとして扱い、分配処理本体はアダプタ層で行う。
+- When `DistributionRule` references structural member IDs, the load model and the structural model become strongly coupled. In the MVP, treat `targetMembers` as an arbitrary filter, and keep the distribution processing in the adapter layer.
 
-## 6. 循環参照レビュー
+## 6. Circular Reference Review
 
-結論: 循環参照は回避できている。
+Conclusion: Circular references are avoided.
 
-禁止すべき参照:
+References that must be prohibited:
 
 - `StructuralNode -> LoadingGridPoint`
 - `Member -> LoadingLine`
 - `LiveLoadPreset -> MovingLoadCase`
 - `InfluenceResult -> MovingLoadCase -> InfluenceResult`
 
-設計上の対策:
+Design countermeasures:
 
-- 結果は入力ケースIDを文字列で保持する。
-- プリセットは解析ケースを知らない。
-- 構造モデルは載荷モデルを知らない。
-- `StationPoint` は解析時の派生データとし、永続参照元にしない。
+- Results keep the input case ID as a string.
+- Presets do not know analysis cases.
+- The structural model does not know the load model.
+- `StationPoint` is derived data at analysis time, not a persistent reference target.
 
-## 7. データ構造重複レビュー
+## 7. Data Structure Duplication Review
 
-結論: 重複リスクは低減された。
+Conclusion: The duplication risk has been reduced.
 
-重複しやすい項目:
+Items that easily duplicate:
 
-- station座標が `StationPoint` と `InfluenceResult` に現れる。
-- 荷重方向が `LiveLoadModel` と `MovingLoadCase` に現れる可能性がある。
+- Station coordinates appear in both `StationPoint` and `InfluenceResult`.
+- Load direction can appear in both `LiveLoadModel` and `MovingLoadCase`.
 
-推奨:
+Recommendations:
 
-- `LoadingLine` は生成ルールを持つ。
-- `StationPoint` は解析時の派生データとして扱い、永続化しない。
-- `InfluenceResult` は解析時スナップショットとしてstation座標を持つ。
-- 荷重方向は原則として `LiveLoadModel` が持ち、ケース固有の上書きが必要な場合のみ `MovingLoadCase` で扱う。
+- `LoadingLine` carries a generation rule.
+- `StationPoint` is treated as derived data at analysis time and is not persisted.
+- `InfluenceResult` holds station coordinates as an analysis-time snapshot.
+- The load direction is owned by `LiveLoadModel` in principle, and only overridden in `MovingLoadCase` when case-specific overrides are needed.
 
-## 8. 責務重複レビュー
+## 8. Responsibility Duplication Review
 
-結論: 現時点では許容範囲。
+Conclusion: Acceptable for now.
 
-注意点:
+Cautions:
 
-- `LiveLoadModel` と `MovingLoadCase` の責務が近い。
-- `LoadingGrid` と `LoadingLine` のstation管理が重なる可能性がある。
+- `LiveLoadModel` and `MovingLoadCase` have similar responsibilities.
+- `LoadingGrid` and `LoadingLine` may overlap in station management.
 
-推奨:
+Recommendations:
 
-- `LiveLoadModel` は荷重の形、大きさ、方向を持つ。
-- `MovingLoadCase` はどこへ、何を、どのtargetに対して動かすかを持つ。
-- `LoadingLine` は一次元経路、`LoadingGrid` は二次元載荷点集合として分ける。
-- `DistributionRule` は載荷点から構造モデルへの変換責務を持つ。
+- `LiveLoadModel` holds the load shape, magnitude, and direction.
+- `MovingLoadCase` holds where to move what, against which target.
+- `LoadingLine` is a 1D path, and `LoadingGrid` is a 2D loading point set.
+- `DistributionRule` is responsible for converting loading points to the structural model.
 
-## 9. 将来拡張性レビュー
+## 9. Future Extensibility Review
 
-結論: 拡張性は良好。
+Conclusion: Extensibility is good.
 
-対応可能な拡張:
+Supported future extensions:
 
-- 複数軸荷重。
-- 分布荷重。
-- 複数車線。
-- 車道、歩道、軌道。
-- R7以外のプリセット。
-- 同時性断面力、同時性反力。
-- 格子補間。
+- Multi-axle loads.
+- Distributed loads.
+- Multiple lanes.
+- Carriageways, sidewalks, tracks.
+- Presets other than R7.
+- Concurrent section forces and reactions.
+- Grid interpolation.
 
-条件:
+Conditions:
 
-- MVPの `memberInterpolation` を標準とし、`nearestNode` と `explicitNode` を初期候補に戻さない。
-- プリセットの版管理を初期から入れる。
-- 結果に使用プリセット情報を残す。
+- Make `memberInterpolation` the MVP default and do not fall back to `nearestNode` / `explicitNode` as initial candidates.
+- Add preset versioning from the beginning.
+- Persist the used preset information in the result.
 
-## 10. MVP実現性レビュー
+## 10. MVP Feasibility Review
 
-結論: MVPは実現可能。
+Conclusion: The MVP is feasible.
 
-最小実装で必要な要素:
+Minimum elements required:
 
-- 単一ライン入力。
-- station生成。
-- `StationPoint` 生成。
-- `memberInterpolation` によるstationごとの等価節点荷重ベクトル作成。
-- 既存解析エンジンのK行列再利用。
-- 対象レスポンス抽出。
-- 単一集中荷重との積。
-- 最大最小包絡。
-- CSV出力。
+- Single line input.
+- Station generation.
+- `StationPoint` generation.
+- Equivalent nodal load vector creation per station with `memberInterpolation`.
+- K matrix reuse from the existing analysis engine.
+- Target response extraction.
+- Multiplication with a single concentrated load.
+- Max / min envelope.
+- CSV output.
 
-MVPで避けるべき要素:
+Elements to avoid in the MVP:
 
-- 示方書荷重プリセットの本実装。
-- 複数車線。
-- 面荷重。
-- 衝撃係数。
-- 複雑な格子補間。
-- 同時性断面力と同時性反力。
+- Full implementation of specification load presets.
+- Multiple lanes.
+- Area loads.
+- Impact factor.
+- Complex grid interpolation.
+- Concurrent section forces and concurrent reactions.
 
-## 11. 性能リスクレビュー
+## 11. Performance Risk Review
 
-結論: K行列再利用を実装すればMVP性能リスクは管理可能。
+Conclusion: With K matrix reuse, the MVP performance risk is manageable.
 
-主要リスク:
+Major risks:
 
-- station数が増えるとsolve回数が増える。
-- target数が多いと結果サイズが増える。
-- Phase 2で同時性結果を全部材で出すとレスポンスが肥大化する。
+- More stations means more solve iterations.
+- More targets means larger result size.
+- Returning all-member concurrent results in Phase 2 inflates the response.
 
-対策:
+Mitigations:
 
-- 分解済みsolver再利用。
-- 複数targetを1回のsolve結果から抽出。
-- 履歴をオプション化し、同時性結果はPhase 2で出力範囲を設計する。
-- station数の上限または警告。
-- 結果CSV生成を必要時だけ行う。
+- Reuse the factorized solver.
+- Extract multiple targets from a single solve result.
+- Make history optional and design the concurrent result output scope in Phase 2.
+- Cap the number of stations or warn about it.
+- Generate result CSVs only when needed.
 
-## 12. 総合判定
+## 12. Overall Decision
 
-総合判定: 採用推奨
+Overall decision: Recommend adoption.
 
-理由:
+Reasons:
 
-- ドメイン分離が明確で、既存3D骨組解析を壊さずに追加できる。
-- 旧来の影響線載荷点エンティティを廃止し、`StationPoint` と `DistributionRule` へ責務を分離したことで、用語とデータ構造の整合性が上がった。
-- `memberInterpolation` をMVP標準にしたことで、移動荷重解析の位置依存性を初期から検証できる。
-- 将来の道路橋示方書R7活荷重プリセット、車道、歩道、軌道、連行荷重へ拡張できる。
+- The domain separation is clear, and the feature can be added without breaking the existing 3D frame analysis.
+- Removing the legacy influence line loading point entity and splitting responsibilities into `StationPoint` and `DistributionRule` improves consistency between terminology and data structure.
+- Making `memberInterpolation` the MVP default allows the position dependency of moving load analysis to be verified from the start.
+- It can be extended to the Road Bridge Specification R7 live load preset, carriageways, sidewalks, tracks, and train loads in the future.
 
-次フェーズの優先事項:
+Priorities for the next phase:
 
-1. MVPの `LoadingLine` とstation生成仕様を確定する。
-2. `memberInterpolation` の対象部材検索、許容距離、等価節点荷重式を確定する。
-3. 影響線targetの初期対象を部材端力と反力に絞る。
-4. `LiveLoadPreset` の承認フローを決める。
+1. Finalize the `LoadingLine` and station generation specification for the MVP.
+2. Finalize the target member search, allowed distance, and equivalent nodal load formula for `memberInterpolation`.
+3. Restrict the initial influence line targets to member end forces and reactions.
+4. Decide the approval flow for `LiveLoadPreset`.

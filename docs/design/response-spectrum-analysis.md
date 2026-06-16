@@ -1,62 +1,60 @@
-# response-spectrum-analysis.md
+﻿# response-spectrum-analysis.md
 
-## 1. 応答スペクトル解析の位置付け
+## 1. Position of Response Spectrum Analysis
 
-応答スペクトル解析は、固有値解析結果を利用して地震時最大応答を推定するモード解析法である。
+Response spectrum analysis is a modal analysis method that uses the eigenvalue analysis result to estimate the maximum seismic response of a structure.
 
-本ソフトでは固有値解析（E-1）の上位解析として実装する。
+In this software it is implemented as a higher-level analysis on top of the eigenvalue analysis (E-1).
 
-MVPではユーザー入力の応答スペクトルを利用する。
+The MVP uses a user-supplied response spectrum.
 
-道路橋示方書・鉄道構造物等設計標準などの基準スペクトル自動生成は対象外とする。
-
----
-
-## 2. 固有値解析との接続
-
-応答スペクトル解析では以下の固有値解析結果を利用する。
-
-* 固有周期
-* 固有振動数
-* モード形
-* participationFactors
-* effectiveMasses
-* effectiveMassRatios
-* cumulativeEffectiveMassRatios
-
-応答スペクトル解析は単独実行しない。
-
-実行時には内部で固有値解析を実施するか、既存の固有値解析結果を利用する。
+Automatic generation of standard spectra such as the Road Bridge Specification or the Railway Structures Design Standard is out of scope.
 
 ---
 
-## 3. 入力スペクトル
+## 2. Connection to Eigenvalue Analysis
 
-MVP では疑似加速度応答スペクトル（Sa）のみを対象とする。
+The response spectrum analysis uses the following eigenvalue analysis results:
 
-スペクトル点列は、トップレベルの `spectrumCases` 配列ではなく、次のいずれかで与える。
+- Natural period
+- Natural frequency
+- Mode shape
+- participationFactors
+- effectiveMasses
+- effectiveMassRatios
+- cumulativeEffectiveMassRatios
 
-1. API リクエストの `spectrumPoints`
-2. `project.analysisSettings.responseSpectrum.spectrumPoints`
+Response spectrum analysis is not run on its own. At runtime it either invokes the eigenvalue analysis internally or uses an existing eigenvalue analysis result.
 
-`spectrumCaseId` は結果識別用の文字列であり、MVP では独立エンティティとして永続化しない。
+---
 
-### 単位系
+## 3. Input Spectrum
+
+In the MVP only the pseudo-acceleration response spectrum (Sa) is supported.
+
+The spectrum point list is supplied in one of the following ways, not as a top-level `spectrumCases` array:
+
+1. `spectrumPoints` in the API request.
+2. `project.analysisSettings.responseSpectrum.spectrumPoints`.
+
+`spectrumCaseId` is a string used to identify the result. In the MVP it is not persisted as an independent entity.
+
+### Units
 
 ```text
-m/s²
+m/s^2
 ```
 
-将来対応：
+Future units:
 
 ```text
 gal
 g
 ```
 
-### 入力形式
+### Input Format
 
-`analysisSettings.responseSpectrum` の例。
+Example of `analysisSettings.responseSpectrum`:
 
 ```json
 {
@@ -73,7 +71,7 @@ g
 }
 ```
 
-API リクエスト例。
+API request example:
 
 ```json
 {
@@ -91,46 +89,46 @@ API リクエスト例。
 }
 ```
 
-リクエストは `analysisSettings.responseSpectrum` より優先する。
+The request takes priority over `analysisSettings.responseSpectrum`.
 
-### 補間
+### Interpolation
 
-MVP では周期方向に **線形補間** を用い、範囲外は **端値固定** とする。
+In the MVP, **linear interpolation** is used in the period direction. Outside the range, the **end value is held constant**.
 
 ```text
-Tmin ≤ T ≤ Tmax: 線形補間
-T < Tmin → Sa(Tmin)
-T > Tmax → Sa(Tmax)
+Tmin <= T <= Tmax: linear interpolation
+T < Tmin -> Sa(Tmin)
+T > Tmax -> Sa(Tmax)
 ```
 
-外挿は行わない。
+No extrapolation is performed.
 
 ---
 
-## 4. 減衰定数
+## 4. Damping Ratio
 
-MVPでは全モード共通減衰とする。
+In the MVP, damping is the same for all modes.
 
-標準値：
+Standard value:
 
 ```text
 h = 0.05
 ```
 
-将来対応：
+Future extensions:
 
-* モード別減衰
-* 部材別減衰
-* Rayleigh減衰
-* 構造形式テンプレート
+- Per-mode damping
+- Per-member damping
+- Rayleigh damping
+- Structure-type templates
 
 ---
 
-## 5. 起震方向
+## 5. Excitation Direction
 
-起震方向は全体座標系で定義する。
+The excitation direction is defined in the global coordinate system.
 
-MVP対象：
+In the MVP:
 
 ```text
 X
@@ -138,55 +136,55 @@ Y
 Z
 ```
 
-任意方向ベクトルは対象外とする。
+Arbitrary direction vectors are out of scope.
 
-各方向について participationFactors を利用して刺激係数を評価する。
-
----
-
-## 6. 有効モード判定
-
-固有モードは `cumulativeEffectiveMassRatios` を利用して採用する。
-
-手順:
-
-1. 内部で固有値解析を実行し、要求 `modeCount` までモードを取得する。
-2. 起震方向ごとに、モード順へ `cumulativeEffectiveMassRatios` を参照する。
-3. 累積値が `targetCumulativeMassRatio`（MVP 既定 0.9）以上になった時点で打切る。
-
-`usedModes` に採用モード番号を保持する。全モードを使っても基準未達の場合は、取得済みモードをすべて採用する。
+The modal participation factor is evaluated for each direction using the `participationFactors`.
 
 ---
 
-## 7. モード合成
+## 6. Effective Mode Selection
 
-MVPでは SRSS を採用する。
+Modes are selected using `cumulativeEffectiveMassRatios`.
+
+Steps:
+
+1. Run the eigenvalue analysis internally and obtain modes up to the requested `modeCount`.
+2. For each excitation direction, walk through the modes and consult `cumulativeEffectiveMassRatios`.
+3. Stop as soon as the cumulative value reaches `targetCumulativeMassRatio` (MVP default 0.9).
+
+The selected mode numbers are stored in `usedModes`. If the criterion is not met even with all the obtained modes, every obtained mode is used.
+
+---
+
+## 7. Modal Combination
+
+In the MVP, SRSS is adopted.
 
 ```text
-R = sqrt(Σ Ri²)
+R = sqrt(sum of Ri^2)
 ```
 
-SRSS結果は符号付き値ではなく絶対値包絡として扱う。
+The SRSS result is treated as an absolute-value envelope, not a signed value.
 
-CQCは対象外とする。
+CQC is out of scope.
 
-将来対応：
+Future extensions:
 
-* CQC
-* DSC
-* NRC Ten Percent Method
+- CQC
+- DSC
+- NRC Ten Percent Method
 
 ---
 
-## 8. 出力仕様
+## 8. Output Specification
 
-エンドポイント。
+Endpoint:
 
 ```text
 POST /api/analysis/response-spectrum
 ```
 
-レスポンスは `eigenResult` と `responseSpectrumResult` を同一 result に含める。線形静的結果配列は空配列とする。
+The response includes both `eigenResult` and `responseSpectrumResult` in the same result. The linear static result arrays are empty.
 
 ```json
 {
@@ -218,125 +216,125 @@ POST /api/analysis/response-spectrum
 }
 ```
 
-### MVP出力
+### MVP Output
 
-* モード別応答変位（`modalResults[].displacements`）
-* SRSS 合成変位（`combinedResult.displacements`）
-* 採用モード一覧（`usedModes`）
-* 各モードの `spectralAcceleration`、`participationFactor`、`modalCoordinate`
+- Per-mode displacement response (`modalResults[].displacements`)
+- SRSS combined displacement (`combinedResult.displacements`)
+- Selected modes list (`usedModes`)
+- `spectralAcceleration`, `participationFactor`, and `modalCoordinate` per mode
 
-固有値由来の `participationFactors`、`effectiveMassRatios`、`cumulativeEffectiveMassRatios` は `eigenResult` 側に保持する。`responseSpectrumResult` へ重複コピーしない。
+The eigen-derived `participationFactors`, `effectiveMassRatios`, and `cumulativeEffectiveMassRatios` are kept on the `eigenResult` side. They are not duplicated into `responseSpectrumResult`.
 
-### MVP対象外
+### Out of Scope for the MVP
 
-* 反力（`reactions` は空配列）
-* 部材断面力（`memberSectionForces` は空配列）
-* 断面力包絡
-
----
-
-## 9. UI方針
-
-### 解析条件
-
-* 質量ケース
-* モード数
-* スペクトル選択
-* 減衰定数
-* 起震方向
-
-### 結果表示
-
-* 固有周期一覧
-* 有効質量比一覧
-* スペクトル値一覧
-* モード別応答変位
-* SRSS合成変位
-
-MVPでは変形図・モード図の高度な可視化は対象外とする。
+- Reactions (`reactions` is an empty array)
+- Member section forces (`memberSectionForces` is an empty array)
+- Section force envelope
 
 ---
 
-## 10. Result Schema 参照
+## 9. UI Policy
 
-応答スペクトル結果の正本は [result-schema.md](result-schema.md) および `schemas/result.schema.json` の `responseSpectrumResult` である。
+### Analysis Conditions
 
-MVP では `combinationMethod` は `"SRSS"` 固定とする。スキーマ上 `CQC` が列挙されていても、MVP 実装・UI では使用しない。
+- Mass case
+- Number of modes
+- Spectrum selection
+- Damping ratio
+- Excitation direction
 
----
+### Result Display
 
-## 11. 将来拡張
+- Natural period list
+- Effective mass ratio list
+- Spectrum value list
+- Per-mode displacement response
+- SRSS combined displacement
 
-### モード合成
-
-* CQC
-* DSC
-* NRC
-
-### スペクトル
-
-* 速度応答スペクトル
-* 変位応答スペクトル
-
-### 地震入力
-
-* 任意方向入力
-* 多方向同時入力
-
-### 設計基準
-
-* 道路橋示方書
-* 鉄道構造物等設計標準
-* 地盤種別補正
-* 地域補正
-
-### 結果
-
-* 反力
-* 部材端力
-* 断面力
-* PDF帳票
-* 3D応答表示
+Advanced visualization such as deformed shape or mode shape is out of scope for the MVP.
 
 ---
 
-## 12. MVP確定事項
+## 10. Result Schema Reference
 
-E-2 MVPでは以下を採用する。
+The authoritative source for the response spectrum result is [result-schema.md](result-schema.md) and `responseSpectrumResult` in `schemas/result.schema.json`.
 
-* Saスペクトル
-* m/s²
-* 線形補間、範囲外は端値固定
-* X/Y/Z方向
-* SRSS
-* 累積有効質量比 90% 以上（`targetCumulativeMassRatio = 0.9`）
-* 応答変位出力
+In the MVP, `combinationMethod` is fixed to `"SRSS"`. Even if `CQC` is listed in the schema, the MVP implementation and UI do not use it.
 
-### 対象外
+---
 
-* CQC
-* 回転慣性
-* 任意方向入力
-* 多方向同時入力
-* 基準スペクトル生成
-* 反力・断面力応答スペクトル
+## 11. Future Extensions
 
-## 13. 設計レビュー反映
+### Modal Combination
 
-### 採用
+- CQC
+- DSC
+- NRC
 
-- 実行時に内部固有値解析を必ず呼び出す
-- スペクトル入力は `spectrumPoints` 点列（API または `analysisSettings.responseSpectrum`）
-- 累積有効質量比によるモード打切り
-- SRSS 変位包絡
-- `eigenResult` と `responseSpectrumResult` の同一レスポンス保持
+### Spectrum
 
-### 保留
+- Velocity response spectrum
+- Displacement response spectrum
 
-- トップレベル `spectrumCases` 永続化
-- 多方向同時入力、CQC、基準スペクトル自動生成
+### Seismic Input
 
-### 要再検討
+- Arbitrary direction input
+- Multi-direction simultaneous input
 
-- `massCaseId` を応答スペクトル設定で必須にするか、`analysisSettings.eigen.massCaseId` へフォールバックするか
-- 反力・断面力 SRSS を E-2 後続フェーズで追加する順序
+### Design Standards
+
+- Road Bridge Specification
+- Railway Structures Design Standard
+- Soil classification correction
+- Regional correction
+
+### Result
+
+- Reactions
+- Member end forces
+- Section forces
+- PDF report
+- 3D response display
+
+---
+
+## 12. MVP Decisions
+
+The MVP (E-2) adopts the following:
+
+- Sa spectrum
+- m/s^2
+- Linear interpolation, end value held outside the range
+- X / Y / Z directions
+- SRSS
+- Cumulative effective mass ratio at least 90% (`targetCumulativeMassRatio = 0.9`)
+- Response displacement output
+
+### Out of Scope
+
+- CQC
+- Rotational inertia
+- Arbitrary direction input
+- Multi-direction simultaneous input
+- Standard spectrum generation
+- Reaction / section force response spectrum
+
+## 13. Design Review Adopted Items
+
+### Adopted
+
+- Always call the internal eigenvalue analysis at runtime.
+- Spectrum input is the `spectrumPoints` point list (API or `analysisSettings.responseSpectrum`).
+- Mode truncation by cumulative effective mass ratio.
+- SRSS displacement envelope.
+- Keep `eigenResult` and `responseSpectrumResult` in the same response.
+
+### Pending
+
+- Top-level `spectrumCases` persistence.
+- Multi-direction simultaneous input, CQC, standard spectrum auto-generation.
+
+### Re-discussion Required
+
+- Whether to make `massCaseId` mandatory in the response spectrum settings, or fall back to `analysisSettings.eigen.massCaseId`.
+- The order in which reactions and section forces SRSS are added after E-2.

@@ -1,42 +1,49 @@
-# 結果表示・図化・帳票アーキテクチャ調査
+﻿# Result Display, Drawing, and Report Architecture Study
 
-## 1. 目的
+## 1. Purpose
 
-解析結果を画面表示、図化、帳票、エクスポートへ展開する際の責務分離を整理し、本プロジェクトで採用するアーキテクチャの理由を記録する。
+This document organizes the responsibility split when expanding analysis results into screen display, drawing, reporting, and export, and records the rationale for the architecture adopted in this project.
 
-本調査は設計確定済み内容の反映であり、実装、UI変更、API変更、ライブラリ追加は行わない。
+This study is the reflection of the already-fixed design. It does not perform implementation, UI changes, API changes, or library additions.
 
-## 2. 採用アーキテクチャ
+## 2. Adopted Architecture
 
-結果表示は以下の流れとする。
+The result display follows this flow:
 
 ```text
 Result
-↓
+  |
+  v
 ViewModel
-↓
+  |
+  v
 Viewer
 ```
 
-帳票・図面出力は以下の流れとする。
+The report and drawing output follows this flow:
 
 ```text
 Result
-↓
+  |
+  v
 Drawing Model
-↓
+  |
+  v
 Report Model
-↓
+  |
+  v
 Export
 ```
 
-結果スキーマ全体では以下の関係とする。
+In the whole result schema, the relations are:
 
 ```text
 Solver
-↓
+  |
+  v
 Result Schema
-↓
+  |
+  v
 ViewModel
 
 Report Model
@@ -44,43 +51,43 @@ Report Model
 Drawing Model
 ```
 
-## 3. 採用理由
+## 3. Reasons for Adoption
 
-### 3.1 Result Schemaを純粋な解析結果に限定するため
+### 3.1 Restrict the Result Schema to Pure Analysis Result
 
-`Result Schema` はソルバが返す解析結果の永続的な受け渡し形式である。したがって、以下のような表示・操作・見た目に依存する状態は含めない。
+`Result Schema` is the persistent interchange format of the analysis result returned by the solver. Therefore it does not include display-, operation-, or appearance-dependent state, such as:
 
-- 表示倍率
-- 表示色
-- 線幅
-- フォントサイズ
-- カメラ状態
-- UI状態
+- Display scale
+- Display color
+- Line width
+- Font size
+- Camera state
+- UI state
 
-これらは `ViewModel`、`Drawing Model`、`Report Model`、または各Viewerの状態として扱う。
+These are handled in `ViewModel`, `Drawing Model`, `Report Model`, or the state of each Viewer.
 
-### 3.2 表示と帳票の目的が異なるため
+### 3.2 The Purpose of Display and Reporting Differ
 
-画面表示は対話的な確認を目的とし、選択、フィルタ、スケール、強調表示などを扱う。一方、帳票・図面出力は再現性のある出力を目的とし、用紙、表、図面要素、注記、エクスポート形式を扱う。
+Screen display is for interactive review and handles selection, filter, scale, and emphasis. Report and drawing output are for reproducible output and handle paper, tables, drawing elements, notes, and export formats.
 
-そのため、画面表示は `ViewModel` を経由し、帳票・図面は `Drawing Model` と `Report Model` を経由する。
+For this reason, screen display goes through `ViewModel`, and reports and drawings go through `Drawing Model` and `Report Model`.
 
-### 3.3 動的解析・影響線解析との拡張整合を保つため
+### 3.3 Maintain Extension Consistency with Dynamic and Influence Line Analyses
 
-固有値解析、応答スペクトル解析、影響線解析は通常の静的解析よりも結果種別が多い。`Result Schema` に以下を定義し、派生モデル側で表示・出力用途へ変換する。
+Eigenvalue analysis, response spectrum analysis, and influence line analysis produce more kinds of results than the ordinary static analysis. The `Result Schema` defines the following, and the derived models convert them for display and output purposes.
 
-- 固有値解析: 固有値、固有周期、振動数、刺激係数、有効質量比
-- 応答スペクトル解析: SRSS、CQC、モード別結果、合成結果
-- 影響線解析: 節点変位、反力、断面力
+- Eigenvalue analysis: eigenvalue, natural period, frequency, modal participation factor, effective mass ratio.
+- Response spectrum analysis: SRSS, CQC, per-mode result, combined result.
+- Influence line analysis: nodal displacement, reaction, section force.
 
-## 4. 文書間の役割
+## 4. Role of Each Document
 
-| 文書 | 役割 |
+| Document | Role |
 | --- | --- |
-| [result-schema.md](../design/result-schema.md) | ソルバ出力としての解析結果スキーマを定義する。 |
-| [result-visualization.md](../design/result-visualization.md) | ResultからViewModelを作り、Viewerへ渡す表示設計を定義する。 |
-| [report-drawing-output.md](../design/report-drawing-output.md) | ResultからDrawing Model、Report Model、Exportへ展開する帳票・図面設計を定義する。 |
+| [result-schema.md](../design/result-schema.md) | Defines the analysis result schema as the solver output. |
+| [result-visualization.md](../design/result-visualization.md) | Defines the display design that turns Result into ViewModel and passes it to the Viewer. |
+| [report-drawing-output.md](../design/report-drawing-output.md) | Defines the report and drawing design that expands Result into Drawing Model, Report Model, and Export. |
 
-## 5. 結論
+## 5. Conclusion
 
-本プロジェクトでは、解析結果そのものを `Result Schema` に閉じ込め、表示・図化・帳票の都合を派生モデルへ分離する。これにより、ソルバ出力の安定性、Viewerの自由度、帳票出力の再現性を同時に確保する。
+In this project, the analysis result itself is confined to the `Result Schema`, and the display, drawing, and report concerns are separated into derived models. This guarantees the stability of the solver output, the freedom of the Viewer, and the reproducibility of the report output at the same time.

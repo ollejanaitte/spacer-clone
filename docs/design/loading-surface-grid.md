@@ -1,12 +1,12 @@
-# LoadingSurface・LoadingGrid設計
+﻿# LoadingSurface and LoadingGrid Design
 
-## 1. 目的
+## 1. Purpose
 
-移動荷重を構造モデルから独立して扱うため、載荷面、格子、ライン、車道、歩道、軌道、荷重分配、格子補間、保存形式を定義する。
+This document defines the loading surface, grid, line, carriageway, sidewalk, track, load distribution, grid interpolation, and save format, in order to handle moving loads independently of the structural model.
 
 ## 2. LoadingSurface
 
-`LoadingSurface` は載荷モデルのルート単位である。橋面、床版、軌道敷など、荷重を置く幾何領域を表す。
+`LoadingSurface` is the root unit of the load model. It represents a geometric region where loads are placed, such as a bridge deck, a slab, or a track bed.
 
 ```json
 {
@@ -21,15 +21,15 @@
 }
 ```
 
-設計原則:
+Design principles:
 
-- 構造部材を所有しない。
-- 構造節点を所有しない。
-- 構造モデルへの変換は荷重分配規則で行う。
+- It does not own structural members.
+- It does not own structural nodes.
+- Conversion to the structural model is performed by the load distribution rule.
 
 ## 3. LoadingGrid
 
-`LoadingGrid` は載荷点の集合と補間関係を持つ。
+`LoadingGrid` holds a set of loading points and their interpolation relations.
 
 ```json
 {
@@ -45,11 +45,11 @@
 }
 ```
 
-格子点は構造節点と一致してもよいが、一致を必須にしない。
+Grid points may coincide with structural nodes, but it is not required.
 
 ## 4. LoadingLine
 
-`LoadingLine` は移動荷重の一次元経路である。
+`LoadingLine` is the 1D path of the moving load.
 
 ```json
 {
@@ -71,11 +71,11 @@
 }
 ```
 
-MVPでは直線2点と固定間隔を扱う。
+In the MVP, a 2-point straight line and a fixed interval are supported.
 
 ## 5. Carriageway
 
-`Carriageway` は車道領域である。
+`Carriageway` is the carriageway region.
 
 ```json
 {
@@ -88,11 +88,11 @@ MVPでは直線2点と固定間隔を扱う。
 }
 ```
 
-将来、車道から複数の `LoadingLine` を生成する。
+In the future, multiple `LoadingLine`s are generated from a carriageway.
 
 ## 6. Sidewalk
 
-`Sidewalk` は歩道領域である。
+`Sidewalk` is the sidewalk region.
 
 ```json
 {
@@ -104,11 +104,11 @@ MVPでは直線2点と固定間隔を扱う。
 }
 ```
 
-将来、群集荷重の載荷範囲として使用する。
+It is used in the future as the area for crowd load.
 
 ## 7. Track
 
-`Track` は鉄道軌道である。
+`Track` is a railway track.
 
 ```json
 {
@@ -121,15 +121,15 @@ MVPでは直線2点と固定間隔を扱う。
 }
 ```
 
-MVPでは未使用。
+Not used in the MVP.
 
 ## 8. DistributionRule
 
-`DistributionRule` は、載荷点から構造モデルの等価節点荷重へ変換する独立した設計対象である。単なる設定値ではなく、影響線精度と移動荷重の連続性を左右する責務を持つ。
+`DistributionRule` is a standalone design target that converts a loading point into equivalent nodal loads on the structural model. It is not a simple configuration value; it has the responsibility that affects influence line accuracy and the continuity of the moving load.
 
-MVP標準:
+MVP default:
 
-- `memberInterpolation`: 部材上の任意位置へ載荷し、Euler-Bernoulli梁要素の等価節点荷重としてI端/J端へ分配する。
+- `memberInterpolation`: place a load at an arbitrary position on a member, and distribute it to the I and J ends as the equivalent nodal load of the Euler-Bernoulli beam element.
 
 ```ts
 type DistributionRule = MemberInterpolationRule
@@ -143,27 +143,27 @@ type MemberInterpolationRule = {
 }
 ```
 
-処理方針:
+Processing policy:
 
 ```text
-LoadingLine上のstation位置
-  -> 対象部材を検索
-  -> 部材局所座標上の位置 a/L を算出
-  -> 等価節点荷重としてI端/J端へ分配
-  -> 既存解析エンジンへ荷重ベクトルとして渡す
+Station position on LoadingLine
+  -> search the target member
+  -> compute the local position a/L on the member
+  -> distribute as equivalent nodal load to the I and J ends
+  -> pass to the existing analysis engine as a load vector
 ```
 
-`nearestNode` と `explicitNode` はMVP候補から外す。載荷位置を節点へ吸着させる方式は影響線が階段状になり、移動荷重解析の位置依存性を損なうためである。
+`nearestNode` and `explicitNode` are removed from the MVP candidates. The approach that snaps the loading position to a node makes the influence line stair-stepped and harms the position dependency of the moving load analysis.
 
-将来拡張:
+Future extensions:
 
 - `gridInterpolation`
 - `surfaceInterpolation`
 - `laneDistribution`
 
-これらはMVPでは未実装とする。
+These are not implemented in the MVP.
 
-分配結果:
+Distribution result:
 
 ```json
 [
@@ -171,41 +171,41 @@ LoadingLine上のstation位置
 ]
 ```
 
-## 9. 格子補間
+## 9. Grid Interpolation
 
-格子補間はPhase 2以降の将来拡張とする。`LoadingGrid` もMVPでは保存設計の枠にとどめ、解析標準にはしない。
+Grid interpolation is a future extension in Phase 2 and later. In the MVP, `LoadingGrid` is kept only as a save-format slot and is not used as an analysis default.
 
-候補:
+Candidates:
 
-- 線形補間。
-- 双線形補間。
-- 三角形セルの面積座標。
-- 部材線上への投影。
+- Linear interpolation.
+- Bilinear interpolation.
+- Triangle-cell area coordinates.
+- Projection onto a member line.
 
-設計上の注意:
+Design notes:
 
-- 補間係数の合計が荷重保存条件を満たす。
-- 鉛直荷重だけでなく、将来の水平荷重にも拡張できる。
-- 補間に失敗した場合はエラーにする。
-- 許容距離を超える自動吸着は警告またはエラーにする。
+- The interpolation coefficients must satisfy the load conservation condition.
+- It must be extensible to future horizontal loads in addition to vertical loads.
+- An interpolation failure must produce an error.
+- An automatic snap beyond the allowed distance must produce a warning or an error.
 
-## 10. ライン生成
+## 10. Line Generation
 
-車道、歩道、軌道から `LoadingLine` を生成する将来機能を想定する。
+A future function is envisioned to generate `LoadingLine` from a carriageway, a sidewalk, or a track.
 
-生成元:
+Source:
 
-- 車道中心線。
-- 車線中心線。
-- 歩道中心線。
-- 軌道中心線。
-- 任意ユーザー線。
+- Carriageway centerline.
+- Lane centerline.
+- Sidewalk centerline.
+- Track centerline.
+- Arbitrary user line.
 
-MVPではユーザーが単一ラインを直接定義する。
+In the MVP, the user defines a single line directly.
 
-## 11. 保存形式
+## 11. Save Format
 
-`project.json` には、構造モデルと別のトップレベルキーとして保存する。
+`project.json` saves the load model as a separate top-level key from the structural model.
 
 ```json
 {
@@ -219,35 +219,35 @@ MVPではユーザーが単一ラインを直接定義する。
 }
 ```
 
-互換性:
+Compatibility:
 
-- `loadingSurfaceModel` が存在しない既存プロジェクトは有効とする。
-- 存在しない場合は空モデルとして扱う。
-- 将来のschema versionを持たせる。
+- An existing project that does not have `loadingSurfaceModel` is valid.
+- When it is missing, it is treated as an empty model.
+- A future schema version is reserved.
 
-## 12. 実装フェーズ
+## 12. Implementation Phases
 
 ### Phase 1
 
-- `LoadingLine` 直接入力。
-- station生成。
-- `memberInterpolation` 分配。
-- 単一集中荷重の影響線。
+- Direct `LoadingLine` input.
+- Station generation.
+- `memberInterpolation` distribution.
+- Influence line for a single concentrated load.
 
 ### Phase 2
 
-- `LoadingGrid` 保存。
-- 格子補間。
-- 影響線精度のためのstation自動分割。
+- `LoadingGrid` save.
+- Grid interpolation.
+- Automatic station subdivision for influence line accuracy.
 
 ### Phase 3
 
-- `Carriageway` から複数ライン生成。
-- `Sidewalk` 面荷重。
-- `Track` と連行荷重。
+- Generate multiple lines from `Carriageway`.
+- `Sidewalk` area load.
+- `Track` and train load.
 
 ### Phase 4
 
-- 格子補間。
-- 複数車線同時載荷。
-- 載荷領域のThree.js編集。
+- Grid interpolation.
+- Multiple lanes loaded simultaneously.
+- Three.js editing of the loading region.

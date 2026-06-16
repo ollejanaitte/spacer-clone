@@ -1,4 +1,4 @@
-# Bridge Animation & Display Design
+﻿# Bridge Animation & Display Design
 
 This document records the design decisions for the 5-spans straight
 continuous viaduct default model and the viewer animation feature that
@@ -107,9 +107,9 @@ Because the SPACER axis-swap toggle and the animation displacement
 both run as display-only transforms, they can be combined freely
 without touching the underlying project data.
 
-## 4. Suspended deck (future 掛け違い案)
+## 4. Suspended deck (future split-girder variant)
 
-The 掛け違い案 is modelled as a "suspended deck" where the two
+The split-girder variant is modelled as a "suspended deck" where the two
 continuous girders are not connected at the pier:
 
 * Use distinct node IDs on the two sides of the deck, e.g. `G3L` and
@@ -128,7 +128,7 @@ The dedicated `CompareView` component lays out two
 `<ThreeViewport />` instances side-by-side. The parent (App.tsx) feeds
 both viewports the same animation clock and options so they stay in
 sync. A future PR can add a project variant builder that emits a
-"一連高架橋案" and a "掛け違い案" `ProjectModel` from the same wizard
+a "continuous viaduct variant" and a "split-girder variant" `ProjectModel` from the same wizard
 inputs.
 
 ## 5. File layout
@@ -149,4 +149,4 @@ inputs.
 * The `ProjectModel` schema is unchanged.
 * The animation toggle is OFF by default; users who do not interact
   with the new UI see the exact same default view they used to see
-  after the previous "SPACER座標系表示" change.
+  after the previous SPACER coordinate system display change.

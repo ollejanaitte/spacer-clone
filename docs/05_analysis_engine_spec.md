@@ -1,45 +1,45 @@
-# 05 Analysis Engine Specification
+﻿# 05 Analysis Engine Specification
 
-## 1. 目的
+## 1. Purpose
 
-Python解析エンジンが実装すべきMVPの線形静的3次元骨組解析処理を定義する。数値解析の責務を明確化し、FastAPIやReactに解析ロジックが混入しないようにする。
+This document defines the linear static 3D frame analysis processing that the Python analysis engine must implement for the MVP. It clarifies the responsibility of the numerical layer so that no analysis logic leaks into FastAPI or React.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 1節点6自由度の自由度番号付け。
-- 3D Euler-Bernoulli梁要素。
-- 12x12局所剛性マトリクス。
-- 部材局所座標系。
-- 座標変換。
-- 全体剛性マトリクス組立。
-- 支点境界条件処理。
-- 節点集中荷重と部材等分布荷重の荷重ベクトル作成。
-- SciPy sparse solverによる連立一次方程式解法。
-- 変位、反力、部材端力の算出。
+- Six-DOF per node numbering.
+- 3D Euler-Bernoulli beam elements.
+- 12x12 local stiffness matrix.
+- Member local coordinate system.
+- Coordinate transformation.
+- Global stiffness matrix assembly.
+- Support boundary condition processing.
+- Nodal concentrated load and member uniform distributed load vector construction.
+- Linear system solution using the SciPy sparse solver.
+- Computation of displacements, reactions, and member end forces.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 幾何学的非線形、材料非線形。
-- Timoshenko梁、せん断変形。
-- 部材端リリース。
-- 部材バネ、節点間バネ。
-- 温度荷重、プレストレス、初期張力。
-- 影響線解析、移動荷重、活荷重自動載荷。
-- 荷重組合せの高度処理。
+- Geometric and material nonlinearity.
+- Timoshenko beams and shear deformation.
+- Member end releases.
+- Member springs and node-to-node springs.
+- Temperature loads, prestress, and initial tension.
+- Influence line analysis, moving loads, and automatic live load placement.
+- Advanced load combination processing.
 
-固有値解析・応答スペクトル解析は Phase E 拡張として [eigen-analysis.md](design/eigen-analysis.md)、[response-spectrum-analysis.md](design/response-spectrum-analysis.md) を参照する。本書第 4 節は線形静的 MVP 基準を示す。
+Eigenvalue analysis and response spectrum analysis are added later as the Phase E extension. See [eigen-analysis.md](design/eigen-analysis.md) and [response-spectrum-analysis.md](design/response-spectrum-analysis.md). Section 4 of this document covers the linear static MVP.
 
-## 4. 処理仕様
+## 4. Processing Specification
 
-### 自由度番号付け
+### DOF Numbering
 
-各節点は以下の順で6自由度を持つ。
+Each node has the following six DOFs in order:
 
 ```text
 UX, UY, UZ, RX, RY, RZ
 ```
 
-節点内部indexを `i` とすると、全体自由度番号は以下。
+If the internal index of a node is `i`, the global DOF indices are:
 
 ```text
 UX = 6*i + 0
@@ -50,139 +50,139 @@ RY = 6*i + 4
 RZ = 6*i + 5
 ```
 
-### 局所座標系
+### Local Coordinate System
 
-- 局所x軸は `nodeI` から `nodeJ` へ向かう。
-- `orientationVector` があれば局所y軸候補として使う。
-- `orientationNode` があれば `nodeI` からその節点へのベクトルを局所y軸候補として使う。
-- どちらもなければ、グローバルZ軸を基準候補にする。
-- 部材x軸がグローバルZ軸とほぼ平行なら、グローバルY軸を基準候補にする。
-- 候補ベクトルを局所x軸直交平面へ射影し正規化して局所y軸とする。
-- 局所z軸は `x cross y` とする。
+- The local x-axis points from `nodeI` to `nodeJ`.
+- If `orientationVector` is given, it is used as the candidate for the local y-axis.
+- If `orientationNode` is given, the vector from `nodeI` to that node is used as the candidate for the local y-axis.
+- If neither is given, the global Z-axis is used as the candidate reference.
+- If the member x-axis is nearly parallel to the global Z-axis, the global Y-axis is used as the candidate reference.
+- The candidate vector is projected onto the plane perpendicular to the local x-axis, normalized, and used as the local y-axis.
+- The local z-axis is defined as `x cross y`.
 
-### 12x12梁要素剛性マトリクス
+### 12x12 Beam Element Stiffness Matrix
 
-要素自由度順は以下。
+The element DOF order is:
 
 ```text
 uix, uiy, uiz, rix, riy, riz, ujx, ujy, ujz, rjx, rjy, rjz
 ```
 
-使用する断面・材料値:
+Required section and material values:
 
-- `E`: ヤング係数。
-- `G`: せん断弾性係数。
-- `A`: 断面積。
-- `Iy`: 局所y軸まわり断面2次モーメント。
-- `Iz`: 局所z軸まわり断面2次モーメント。
-- `J`: ねじり定数。
-- `L`: 部材長。
+- `E`: Young''s modulus.
+- `G`: shear modulus.
+- `A`: cross-section area.
+- `Iy`: second moment of area about the local y-axis.
+- `Iz`: second moment of area about the local z-axis.
+- `J`: torsional constant.
+- `L`: member length.
 
-必須剛性:
+Required stiffness terms:
 
-- 軸剛性 `EA/L`。
-- ねじり剛性 `GJ/L`。
-- 局所z方向曲げに対応する `E Iy`。
-- 局所y方向曲げに対応する `E Iz`。
+- Axial stiffness `EA/L`.
+- Torsional stiffness `GJ/L`.
+- Bending stiffness `E Iy` associated with the local z direction.
+- Bending stiffness `E Iz` associated with the local y direction.
 
-符号規約はテストで固定し、部材端力出力と一致させる。
+The sign convention is fixed by the tests and must agree with the member end force output.
 
-### 座標変換
+### Coordinate Transformation
 
-- 局所軸から方向余弦行列 `R` を作成する。
-- 並進・回転の各ブロックに `R` を配置し、12x12変換行列 `T` を作る。
-- 実装では `u_local = T @ u_global` を採用する。
-- この場合、`k_global = T.T @ k_local @ T` とする。
-- 等価節点荷重と部材端力回復も同じ規約を使う。
+- Build a direction cosine matrix `R` from the local axes.
+- Place `R` in both the translational and rotational blocks of the 12x12 transformation matrix `T`.
+- The implementation uses `u_local = T @ u_global`.
+- In that case, `k_global = T.T @ k_local @ T`.
+- Equivalent nodal loads and member end force recovery use the same convention.
 
-### 全体剛性マトリクス組立
+### Global Stiffness Assembly
 
-- 全自由度数は `6 * 節点数`。
-- 各部材の12自由度を全体自由度へマッピングする。
-- SciPy sparse形式で組み立てる。
-- 推奨は `coo_matrix` へ集約し、解法前に `csr_matrix` または `csc_matrix` へ変換する。
+- The total DOF count is `6 * node_count`.
+- The 12 DOFs of each member are mapped to global DOFs.
+- The matrix is assembled in SciPy sparse form.
+- Aggregation in `coo_matrix` is recommended, with conversion to `csr_matrix` or `csc_matrix` before solving.
 
-### 境界条件処理
+### Boundary Condition Processing
 
-MVPでは拘束自由度を消去する。
+In the MVP, restrained DOFs are eliminated.
 
-1. 全体剛性 `K` と荷重 `F` を作成する。
-2. supportから拘束自由度集合を作る。
-3. 自由自由度 `freeDofs` を抽出する。
-4. `Kff * Uf = Ff` を解く。
-5. 拘束自由度変位は0とする。
+1. Build the global stiffness `K` and load `F`.
+2. Collect the restrained DOF set from the supports.
+3. Extract the free DOFs `freeDofs`.
+4. Solve `Kff * Uf = Ff`.
+5. Restrained DOF displacements are set to 0.
 
-支点沈下は扱わない。
+Support settlement is not supported.
 
-### 荷重ベクトル作成
+### Load Vector Construction
 
-- 節点集中荷重は、該当節点の6自由度へ直接加算する。
-- 部材等分布荷重は、局所座標の等価節点荷重へ変換してから全体座標へ戻し、全体荷重へ加算する。
-- `coordinateSystem = global` の部材荷重は、先に部材局所座標へ変換する。
-- MVPでは部材全長一様荷重のみ扱う。
+- Nodal concentrated loads are added directly to the six DOFs of the target node.
+- Member uniform distributed loads are converted to equivalent nodal loads in the local frame, then converted to the global frame and added to the global load vector.
+- Member loads with `coordinateSystem = "global"` are first converted to the member local frame.
+- The MVP only supports uniform distributed loads over the full member length.
 
-### SciPy sparse solver
+### SciPy Sparse Solver
 
-- `scipy.sparse.linalg.spsolve` を標準とする。
-- 入力行列はCSRまたはCSC。
-- 特異行列、ゼロピボット、非有限解は解析失敗とする。
+- `scipy.sparse.linalg.spsolve` is the standard solver.
+- The input matrix is in CSR or CSC form.
+- Singular matrices, zero pivots, and non-finite solutions are treated as analysis failures.
 
-### 結果算出
+### Result Computation
 
-- 変位: 全節点の `ux, uy, uz, rx, ry, rz`。
-- 反力: `R = K_full @ U_full - F_full` で算出する。
-- 部材端力: `f_local = k_local @ u_local - f_equiv_local` で算出する。
-- 部材端力は局所座標系でI端、J端を出力する。
+- Displacement: `ux, uy, uz, rx, ry, rz` of all nodes.
+- Reaction: computed as `R = K_full @ U_full - F_full`.
+- Member end force: computed as `f_local = k_local @ u_local - f_equiv_local`.
+- Member end forces are output in the local coordinate system at the I end and the J end.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- 参照不正は解析前に `INVALID_REFERENCE`。
-- 部材長ゼロは `ZERO_LENGTH_MEMBER`。
-- 局所座標系を定義できない場合は `INVALID_ORIENTATION`。
-- 拘束不足または特異行列は `MODEL_UNSTABLE` または `SOLVER_ERROR`。
-- solver例外は `SOLVER_ERROR`。
-- 後処理失敗は `POSTPROCESS_ERROR`。
-- 解析失敗時は部分結果を成功扱いで返してはならない。
+- Invalid reference: `INVALID_REFERENCE` before analysis.
+- Zero-length member: `ZERO_LENGTH_MEMBER`.
+- Cannot define a local coordinate system: `INVALID_ORIENTATION`.
+- Insufficient restraints or singular matrix: `MODEL_UNSTABLE` or `SOLVER_ERROR`.
+- Solver exception: `SOLVER_ERROR`.
+- Postprocessing failure: `POSTPROCESS_ERROR`.
+- On analysis failure, partial results must not be returned as success.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 片持梁先端集中荷重の変位、回転、反力。
-- 単純梁中央集中荷重の中央変位、反力。
-- 単純梁等分布荷重の中央変位、反力。
-- 3D片持梁ねじりの回転角、反力モーメント。
-- 支点不足モデルの失敗。
-- 不正参照モデルの失敗。
-- 局所座標系が直交正規化されること。
-- 全体剛性が対称であること。
+- Displacements, rotations, and reactions of a cantilever with a tip load.
+- Center displacement and reactions of a simple beam with a center load.
+- Center displacement and reactions of a simple beam with a uniform load.
+- Rotation angle and reaction moment of a 3D cantilever under torsion.
+- Failure of an under-constrained model.
+- Failure of a model with invalid references.
+- The local coordinate system is orthogonal and normalized.
+- The global stiffness matrix is symmetric.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- `docs/11_test_spec.md` の必須検証ケースが通る。
-- `docs/12_quality_gate.md` の数値許容誤差を満たす。
-- エンジン単体でAPIやUIなしに解析できる。
-- 結果が `docs/06_result_schema.md` に変換可能である。
+- The required verification cases in `docs/11_test_spec.md` pass.
+- The numerical tolerances in `docs/12_quality_gate.md` are satisfied.
+- The engine can run analyses standalone, without the API or UI.
+- The results can be converted into the format described in `docs/06_result_schema.md`.
 
-## 8. Phase E 拡張（固有値・応答スペクトル）
+## 8. Phase E Extension (Eigenvalue and Response Spectrum)
 
-線形静的 MVP 完了後に追加する。詳細は設計書を正本とする。
+These are added after the linear static MVP is complete. The design documents are the authoritative reference.
 
-### 共通再利用
+### Common Reuse
 
-- DOF map、全体剛性組立、拘束自由度抽出は線形静的解析と同一規約を使う。
-- 解析ロジックは `backend/engine` に置き、FastAPI/React へ数値処理を持ち込まない。
+- The DOF map, the global stiffness assembly, and the restrained DOF extraction follow the same rules as the linear static analysis.
+- The analysis logic lives in `backend/engine`. No numerical processing is added to FastAPI or React.
 
-### 固有値解析
+### Eigenvalue Analysis
 
-- 集中質量ベクトルを作成し、master/slave DOF を分離する。
-- slave DOF がある場合は静的条件付きで master 系へ縮約する。
-- `scipy.linalg.eigh` で `K_reduced φ = λ Mmm φ` を解く。
-- 質量正規化、刺激係数、有効質量、累積有効質量比を算出する。
-- 参照: [eigen-analysis.md](design/eigen-analysis.md)
+- Build a lumped mass vector and separate the master and slave DOFs.
+- If slave DOFs exist, statically condense them into the master system.
+- Solve `K_reduced phi = lambda Mmm phi` using `scipy.linalg.eigh`.
+- Compute mass normalization, modal participation factors, effective masses, and cumulative effective mass ratios.
+- Reference: [eigen-analysis.md](design/eigen-analysis.md)
 
-### 応答スペクトル解析
+### Response Spectrum Analysis
 
-- 実行時に固有値解析を内部呼び出しする。
-- Sa スペクトルは **線形補間**、周期範囲外は **端値固定** とする。
-- `cumulativeEffectiveMassRatios` でモードを打切り、SRSS で変位包絡を合成する。
-- MVP では反力・断面力は空配列とする。
-- 参照: [response-spectrum-analysis.md](design/response-spectrum-analysis.md)
+- Internally call the eigenvalue analysis at runtime.
+- The Sa spectrum uses **linear interpolation**, and values outside the period range use the **end values**.
+- Truncate modes by `cumulativeEffectiveMassRatios` and combine the displacement envelope with SRSS.
+- In the MVP, reactions and section forces are returned as empty arrays.
+- Reference: [response-spectrum-analysis.md](design/response-spectrum-analysis.md)

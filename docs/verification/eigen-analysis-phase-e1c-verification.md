@@ -1,17 +1,17 @@
-# 固有値解析 Phase E-1c 検証記録
+﻿# Eigenvalue Analysis Phase E-1c Verification Record
 
-## 検証目的
+## Verification Purpose
 
-Phase E-1b で追加した以下の結果項目が、実務利用上信用できる状態であることを確認する。
+This phase confirms that the following result items added in Phase E-1b are reliable for practical use.
 
 - `totalMassByDirection`
 - `effectiveMasses`
 - `cumulativeEffectiveMassRatios`
 - `eigen_modes.csv`
 
-本フェーズでは新機能追加は行わず、有効質量・累積参加率・CSV 出力の信頼性を高めるための最小限の自動テスト追加と検証記録作成を目的とする。
+No new features are added in this phase. The purpose is to add the minimum automated tests and to record the verification to improve the reliability of the effective mass, cumulative participation ratio, and CSV output.
 
-## 検証対象
+## Verification Targets
 
 - `backend/engine/eigen.py`
 - `backend/tests/test_eigen_analysis.py`
@@ -22,65 +22,65 @@ Phase E-1b で追加した以下の結果項目が、実務利用上信用でき
 - `docs/design/eigen-analysis.md`
 - `docs/design/result-schema.md`
 
-## 自動テストで強化した観点
+## Viewpoints Strengthened by Automated Tests
 
 ### Backend
 
-- 複数モードで `cumulativeEffectiveMassRatios` がモード順に累積されること。
-- X/Y/Z 全方向で `effectiveMasses = effectiveMassRatios * totalMassByDirection` と整合すること。
-- `totalMassByDirection` が 0 の方向で、有効質量比・有効質量・累積有効質量比が 0 となり、NaN/inf が出ないこと。
-- backend の `eigen_modes.csv` ヘッダーが E-1b の列順を維持すること。
+- `cumulativeEffectiveMassRatios` is accumulated in mode order across multiple modes.
+- `effectiveMasses = effectiveMassRatios * totalMassByDirection` is consistent for all X / Y / Z directions.
+- When `totalMassByDirection` is 0 in a direction, the effective mass ratio, the effective mass, and the cumulative effective mass ratio are 0, and no NaN or inf is produced.
+- The backend `eigen_modes.csv` header preserves the column order of E-1b.
 
 ### Frontend
 
-- 旧 result で `totalMassByDirection` / `effectiveMasses` / `cumulativeEffectiveMassRatios` が欠落しても ViewModel が壊れないこと。
-- 旧 result の optional 欠落値を `eigen_modes.csv` で空欄として扱うこと。
-- frontend の `eigen_modes.csv` ヘッダーが E-1b の列順を維持すること。
+- The ViewModel does not break when `totalMassByDirection` / `effectiveMasses` / `cumulativeEffectiveMassRatios` are missing in an old result.
+- Missing optional values in old results are treated as empty cells in `eigen_modes.csv`.
+- The frontend `eigen_modes.csv` header preserves the column order of E-1b.
 
-## 自動テスト結果
+## Automated Test Result
 
-2026-06-08 に以下を実行した。
+On 2026-06-08 the following were run.
 
 - `pytest -q`: PASS
 - `npm.cmd test`: PASS
 - `npm.cmd run build`: PASS
 
-`npm.cmd run build` では Vite の chunk size warning が表示されたが、E-1c の検証対象機能に対する失敗ではない。
+`npm.cmd run build` showed a Vite chunk size warning, but this is not a failure for the features verified in E-1c.
 
-## 手動確認結果
+## Manual Verification Result
 
-ユーザー動作確認済み。
+User operation was confirmed.
 
-確認済み内容:
+Confirmed items:
 
-- 固有値解析実行
-- 結果画面表示
-- 方向別総質量表示
-- 有効質量表示
-- 有効質量比表示
-- 累積有効質量比表示
-- `eigen_modes.csv` 出力
+- Eigenvalue analysis execution
+- Result screen display
+- Display of total mass per direction
+- Display of effective mass
+- Display of effective mass ratio
+- Display of cumulative effective mass ratio
+- `eigen_modes.csv` output
 
-## 未対応事項
+## Out of Scope
 
-本フェーズでは以下を実装しない。
+The following are not implemented in this phase.
 
-- 応答スペクトル解析
+- Response spectrum analysis
 - CQC
-- PDF 出力拡張
-- schema 変更
-- UI 大改修
-- 固有値解析ロジック変更
+- PDF output extension
+- Schema changes
+- Major UI rework
+- Eigenvalue analysis logic change
 
-今後の課題:
+Future issues:
 
-- 応答スペクトル解析 E-2 の設計時に、E-1b/E-1c で確認した有効質量・累積参加率をモード採用判断へ接続する。
-- 大規模モデル向けの sparse 固有値 solver 方針は別フェーズで検討する。
+- When designing response spectrum analysis E-2, connect the effective mass and cumulative participation ratio confirmed in E-1b / E-1c to the mode selection decision.
+- The sparse eigenvalue solver policy for large models is studied in a separate phase.
 
-## 結論
+## Conclusion
 
-Phase E-1c は完了と判定する。
+Phase E-1c is judged complete.
 
-E-1b で追加した有効質量・累積参加率・CSV 出力について、最小限の自動テスト補強と検証記録作成を完了した。
+For the effective mass, cumulative participation ratio, and CSV output added in E-1b, the minimum automated test reinforcement and the verification record have been completed.
 
-次工程として、Phase E-2「応答スペクトル解析設計」へ進行可能である。
+The next step, Phase E-2 "Response Spectrum Analysis Design", can be started.

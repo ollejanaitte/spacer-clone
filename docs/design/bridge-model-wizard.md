@@ -1,108 +1,109 @@
-# bridge-model-wizard.md
+﻿# bridge-model-wizard.md
 
-## 1. 機能目的
+## 1. Feature Purpose
 
-初心者ユーザでも SPACER のような表入力型にいきなり向き合うことなく、橋梁の意味的情報（道路条件・支間・衝撃係数・走行ライン・荷重）から**3次元骨組FEMモデル**をウィザード形式で自動生成できるようにする。
+Allow even beginner users, who are not yet ready for the SPACER-style table input, to automatically generate a 3D frame FEM model through a wizard from the bridge''s semantic information: road conditions, spans, impact factor, traffic lines, and loads.
 
-従来の SPACER との対比:
+Compared to the conventional SPACER:
 
-- SPACER: 節点テーブル・部材テーブルに数値を直接入力する「表入力型」。
-- 本機能: 「橋の概念」を意味的に入力し、内部で節点・部材・支点・荷重へ変換する。
+- SPACER: a "table input" style where the user enters numbers directly into the node and member tables.
+- This feature: the user enters the bridge conceptually, and the system converts the input into nodes, members, supports, and loads internally.
 
-設計思想:
+Design principles:
 
-- **UI** は意味入力 (semantic)。
-- **FEMモデル生成** は数値変換 (numerical)。
-- **解析エンジン** は既存実装を再利用。
+- The **UI** takes semantic input.
+- The **FEM model generation** performs numerical conversion.
+- The **analysis engine** reuses the existing implementation.
 
-## 2. 6 ステップ構成
+## 2. Six Step Structure
 
-| Step | 名称 | 主入力 | 目的 |
-|------|------|--------|------|
-| 1 | 道路条件 | 車線数・車線幅・中央分離帯・歩道・高欄 | 橋梁の横断構成と主桁候補 y 座標を確定する |
-| 2 | 支間設定 | 支間数・各支間長・offset | 橋軸方向 x 座標を確定する |
-| 3 | 衝撃係数 | 自動/手動・係数値 | 荷重増幅係数を確定する |
-| 4 | ライン設定 3D | クリック 2 点でライン追加 | 荷重・走行・参照ラインを記録する |
-| 5 | 荷重設定 | 荷重タイプ・対象ライン・値・方向 | 荷重ケース別の荷重を定義する |
-| 6 | FEMモデル生成 | mesh_division | 既存の project.json 形式を生成する |
+| Step | Name | Main input | Purpose |
+| --- | --- | --- | --- |
+| 1 | Road conditions | Lane count, lane width, median, sidewalk, barrier | Decide the bridge transverse composition and the main girder candidate y coordinates |
+| 2 | Span setting | Number of spans, length of each span, offset | Decide the bridge axis x coordinates |
+| 3 | Impact factor | Auto / manual, value | Decide the load amplification factor |
+| 4 | Line setting 3D | Click two points to add a line | Record load / traffic / reference lines |
+| 5 | Load setting | Load type, target line, value, direction | Define loads per load case |
+| 6 | FEM model generation | `mesh_division` | Generate the existing `project.json` format |
 
-## 3. 画面遷移
+## 3. Screen Flow
 
-```
+```text
 [Start]
-   ↓
-[Step1 RoadCondition] →(Next)→
-[Step2 SpanSetting]   →(Next)→
-[Step3 ImpactFactor]  →(Next)→
-[Step4 LineSetting3D] →(Next)→
-[Step5 LoadSetting]   →(Next)→
-[Step6 ModelGeneration] →(Generate)→ [Viewer / Send to Analysis]
+   |
+   v
+[Step1 RoadCondition] -> (Next) ->
+[Step2 SpanSetting]   -> (Next) ->
+[Step3 ImpactFactor]  -> (Next) ->
+[Step4 LineSetting3D] -> (Next) ->
+[Step5 LoadSetting]   -> (Next) ->
+[Step6 ModelGeneration] -> (Generate) -> [Viewer / Send to Analysis]
 ```
 
-任意ステップから戻れる。
+The user can return to any previous step.
 
-## 4. 入力項目（ステップ別）
+## 4. Input Items per Step
 
-### Step 1 道路条件
-- `lane_count` (int, 1〜6)
+### Step 1 Road Conditions
+- `lane_count` (int, 1..6)
 - `lane_width` (m, >0)
 - `median_width` (m, >=0)
 - `sidewalk_width` (m, >=0)
 - `barrier_width` (m, >=0)
 
-### Step 2 支間設定
-- `spans[]` (1 以上)
-  - `index` (1〜N)
+### Step 2 Span Setting
+- `spans[]` (at least 1)
+  - `index` (1..N)
   - `length` (m, >0)
   - `offset` (m, >=0)
 
-### Step 3 衝撃係数
+### Step 3 Impact Factor
 - `auto` (bool)
-- `value` (number, 0.0〜1.0)
-- `formula` (任意、表示用)
+- `value` (number, 0.0..1.0)
+- `formula` (optional, for display)
 
-### Step 4 ライン設定
-- モード: view / draw_line / select / delete
+### Step 4 Line Setting
+- Mode: view / draw_line / select / delete
 - `BridgeLine`:
   - `id`, `type` (traffic/load/reference), `name`
-  - `points`: [[x,y,z], [x,y,z]]（MVPは 2 点の直線）
+  - `points`: [[x,y,z], [x,y,z]] (MVP: a straight line of two points)
 
-### Step 5 荷重設定
+### Step 5 Load Setting
 - `BridgeLoad`:
   - `id`, `type` (self_weight/distributed/vehicle), `name`
   - `magnitude`, `direction` (X/Y/Z/-X/-Y/-Z)
-  - `line_id` (任意)
+  - `line_id` (optional)
 
-### Step 6 FEMモデル生成
+### Step 6 FEM Model Generation
 - `mesh_division` (int, >=1)
 - `mesh_density` (coarse/standard/fine)
 
-## 5. バリデーション
+## 5. Validation
 
-- Step 1: 0 以下の寸法禁止、合計幅 0 禁止
-- Step 2: 支間長 > 0、支間数 1 以上
-- Step 3: 自動 ON のとき value は算出のみ、表示
-- Step 4: ラインは 2 点必要、同一ライン上の重複禁止
-- Step 5: 対象 line_id が存在すること
-- Step 6: mesh_division >= 1
+- Step 1: dimensions must be > 0, total width must not be 0
+- Step 2: span length > 0, number of spans >= 1
+- Step 3: when auto is on, `value` is computed and only displayed
+- Step 4: a line requires two points, no duplicates on the same line
+- Step 5: the target `line_id` must exist
+- Step 6: `mesh_division >= 1`
 
-## 6. エラー表示
+## 6. Error Display
 
-- 各入力欄の下にインラインエラー（赤）
-- サイドバー下部に集約エラーメッセージ
-- API 失敗時はトーストで通知
+- Inline error (red) under each input field.
+- Aggregated error messages in the bottom of the sidebar.
+- API failures are reported with a toast.
 
-## 7. 初心者向け UX 方針
+## 7. Beginner-friendly UX Policy
 
-- 道路条件入力時に即時プレビュー（横断構成）をサイドバーに表示
-- 支間追加・削除は +/- ボタンで操作
-- 3D は OrbitControls による視点操作、ダブルクリックでフィット
-- 「次へ」はバリデーション通過後のみ活性化
-- 専門用語は補助テキストでフォロー
+- When the road conditions are entered, an immediate preview (transverse composition) is shown in the sidebar.
+- Span add / remove is operated with +/- buttons.
+- 3D uses OrbitControls for camera operation; double-click fits the view.
+- The "Next" button is enabled only when the current step passes validation.
+- Technical terms are supported with helper text.
 
-## 8. 既存アプリへの統合方針
+## 8. Integration with the Existing App
 
-- メイン Toolbar に「橋梁モデル作成」ボタンを追加
-- 起動すると別モーダル（フルスクリーン）で BridgeWizard を表示
-- 生成された project.json は通常の project ステートへ流し込み、既存解析がそのまま走る
-- 既存の `project` / `nodes` / `members` ... のセクションは破壊しない
+- Add a "Create Bridge Model" button to the main toolbar.
+- Opening it shows the BridgeWizard in a separate (full-screen) modal.
+- The generated `project.json` is fed into the normal project state, and the existing analysis runs unchanged.
+- The existing `project` / `nodes` / `members` / ... sections are not destroyed.

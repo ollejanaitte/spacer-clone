@@ -1,47 +1,47 @@
-# 20 Agent Instructions
+﻿# 20 Agent Instructions
 
-## 1. 目的
+## 1. Purpose
 
-後続のCodex実装エージェントが、担当別に読むべき設計書、変更可能範囲、禁止事項、完了条件を迷わず判断できるようにする。
+To let subsequent Codex implementation agents determine, without hesitation, which design documents to read, what is the editable scope, what is prohibited, and what is the definition of done, by their role.
 
-## 2. 対象範囲
+## 2. Scope
 
-対象担当:
+Roles covered:
 
-- Engine担当。
-- Test担当。
-- API担当。
-- UI担当。
-- 3D担当。
-- Desktop/Electron担当。
-- Report担当。
-- Review担当。
+- Engine owner.
+- Test owner.
+- API owner.
+- UI owner.
+- 3D owner.
+- Desktop / Electron owner.
+- Report owner.
+- Review owner.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- MVP外機能の実装指示。
-- 影響線解析、移動荷重、固有値解析、応答スペクトル解析、温度荷重、プレストレス、DXF、ライセンス管理の実装。
-- JIP-SPACER完全互換対応。
-- 実装コードそのもの。
+- Implementation directives for features outside the MVP.
+- Implementation of influence line analysis, moving loads, eigenvalue analysis, response spectrum analysis, temperature loads, prestress, DXF, and license management.
+- Full compatibility with JIP-SPACER.
+- The implementation code itself.
 
-## 4. 担当別処理仕様
+## 4. Role-specific Processing Specification
 
-### 共通ルール
+### Common Rules
 
-- 最初に `docs/README.md` と `docs/02_mvp_scope.md` を読む。
-- 品質基準は `docs/12_quality_gate.md` に従う。
-- MVP外機能を追加しない。
-- 実装が設計と異なる場合は、同じPRで設計書を更新する。
-- `SPACER操作マニュアル.pdf` は参考資料であり、MVP外機能を追加する根拠にしない。
-- GPU互換設定はアプリ設定またはdesktop設定として扱い、`project.json`、API契約、解析結果JSONへ混ぜない。
+- Read `docs/README.md` and `docs/02_mvp_scope.md` first.
+- Follow the quality standards in `docs/12_quality_gate.md`.
+- Do not add features outside the MVP.
+- When the implementation differs from the design, update the design in the same PR.
+- `SPACER Operation Manual.pdf` is a reference, not a basis for adding features outside the MVP.
+- GPU compatibility settings are treated as app settings or desktop settings. They are not mixed into `project.json`, the API contract, or the analysis result JSON.
 
-### Engine担当
+### Engine Owner
 
-目的:
+Purpose:
 
-- Python解析エンジンを実装する。
+- Implement the Python analysis engine.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/02_mvp_scope.md`
 - `docs/04_input_schema.md`
@@ -50,56 +50,56 @@
 - `docs/11_test_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `backend/engine/**`
 - `backend/tests/**`
 - `schemas/**`
 - `examples/**`
 
-変更してはいけないファイル:
+Files that must not be modified:
 
 - `frontend/**`
-- APIルート。ただし明示指示がある場合を除く。
+- API routes, unless explicitly instructed.
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- 自由度番号付け。
-- 局所座標系。
-- 12x12梁要素剛性。
-- 全体剛性組立。
-- 境界条件処理。
-- 荷重ベクトル作成。
-- SciPy sparse solve。
-- 変位、反力、部材端力。
+- DOF numbering.
+- Local coordinate system.
+- 12x12 beam element stiffness.
+- Global stiffness assembly.
+- Boundary condition processing.
+- Load vector construction.
+- SciPy sparse solve.
+- Displacement, reaction, member end force.
 
-禁止事項:
+Prohibitions:
 
-- 非線形解析、固有値解析、応答スペクトル解析を実装しない。
-- 影響線解析、移動荷重を実装しない。
-- `NaN`、`Infinity` を結果へ出さない。
+- Do not implement nonlinear analysis, eigenvalue analysis, or response spectrum analysis.
+- Do not implement influence line analysis or moving loads.
+- Do not put `NaN` or `Infinity` into the result.
 
-完了条件:
+Definition of done:
 
-- 必須解析検証ケースが通る。
-- 結果JSONへ変換可能。
-- 構造化エラーを返せる。
+- The required analysis verification cases pass.
+- The result is convertible to the result JSON.
+- Structured errors can be returned.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- `pytest` 通過。
-- Ruff通過。
-- 型ヒントあり。
-- 理論値誤差が許容内。
+- `pytest` passes.
+- Ruff passes.
+- Type hints are present.
+- Theoretical value error is within tolerance.
 
-### Test担当
+### Test Owner
 
-目的:
+Purpose:
 
-- MVP品質を保証する自動テストを作成する。
+- Create automated tests that guarantee the MVP quality.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/04_input_schema.md`
 - `docs/05_analysis_engine_spec.md`
@@ -108,49 +108,49 @@ PR作成時のチェックリスト:
 - `docs/11_test_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `backend/tests/**`
 - `frontend/**/__tests__/**`
 - `examples/**`
 - `schemas/**`
 
-変更してはいけないファイル:
+Files that must not be modified:
 
-- 本番コード。ただし明示指示がある場合を除く。
+- Production code, unless explicitly instructed.
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- 6つの必須解析検証ケース。
-- APIテスト。
-- JSON Schemaテスト。
-- UIビルドテスト。
+- The 6 required analysis verification cases.
+- API tests.
+- JSON Schema tests.
+- UI build tests.
 
-禁止事項:
+Prohibitions:
 
-- 理由なく許容誤差を緩めない。
-- バグを期待値として固定しない。
-- エラー文言だけに依存しない。
+- Do not loosen the tolerance without reason.
+- Do not freeze bugs as expected values.
+- Do not rely only on the error message text.
 
-完了条件:
+Definition of done:
 
-- 正常系と異常系が両方検証されている。
-- すべての必須ケースがCIで実行可能。
+- Both the success and failure cases are verified.
+- All required cases can be run in CI.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- テストが決定的。
-- 単位がSI。
-- 符号規約コメントあり。
+- Tests are deterministic.
+- Units are SI.
+- Sign convention comments are present.
 
-### API担当
+### API Owner
 
-目的:
+Purpose:
 
-- FastAPIのMVP APIを実装する。
+- Implement the FastAPI MVP API.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/03_architecture.md`
 - `docs/04_input_schema.md`
@@ -158,20 +158,20 @@ PR作成時のチェックリスト:
 - `docs/07_api_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `backend/app/**`
 - `backend/tests/**`
 - `schemas/**`
 - `examples/**`
 
-変更してはいけないファイル:
+Files that must not be modified:
 
-- `backend/engine/**`。ただしEngine連携修正を明示された場合を除く。
+- `backend/engine/**`, except when explicitly instructed to modify the engine interface.
 - `frontend/**`
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
 - `GET /health`
 - `POST /api/projects/validate`
@@ -180,31 +180,31 @@ PR作成時のチェックリスト:
 - `POST /api/projects/load`
 - `GET /api/examples`
 
-禁止事項:
+Prohibitions:
 
-- APIルート内に数値解析を実装しない。
-- パストラバーサルを許可しない。
-- 受信projectを暗黙に変更しない。
+- Do not implement numerical analysis inside the API routes.
+- Do not allow path traversal.
+- Do not implicitly modify the received project.
 
-完了条件:
+Definition of done:
 
-- APIテストが通る。
-- OpenAPIに全エンドポイントが表示される。
-- エラー形式が安定している。
+- API tests pass.
+- All endpoints are visible in OpenAPI.
+- The error format is stable.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- 成功・失敗テストあり。
-- 500で内部詳細を漏らさない。
-- Engine呼び出し境界が明確。
+- Both success and failure tests exist.
+- HTTP 500 does not leak internal details.
+- The engine call boundary is clear.
 
-### UI担当
+### UI Owner
 
-目的:
+Purpose:
 
-- React MVP UIを実装する。
+- Implement the React MVP UI.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/02_mvp_scope.md`
 - `docs/04_input_schema.md`
@@ -213,110 +213,110 @@ PR作成時のチェックリスト:
 - `docs/08_ui_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `frontend/src/**`
 - `frontend/tests/**`
-- frontend設定ファイル。
+- Frontend configuration files.
 
-変更してはいけないファイル:
+Files that must not be modified:
 
 - `backend/engine/**`
 - `backend/app/**`
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- 上部ツールバー。
-- 左側モデルツリー。
-- 中央3Dビュー領域。
-- 右側プロパティパネル。
-- 下部結果・エラー・ログパネル。
-- MVP入力表。
-- 解析実行画面。
-- 結果表示画面。
+- Top toolbar.
+- Left model tree.
+- Center 3D view area.
+- Right property panel.
+- Bottom result / error / log panel.
+- MVP input tables.
+- Analysis execution screen.
+- Result display screen.
 
-禁止事項:
+Prohibitions:
 
-- UI内に解析ロジックを実装しない。
-- MVP外機能の有効な操作を作らない。
-- エラーをconsoleのみに出さない。
+- Do not implement analysis logic inside the UI.
+- Do not create live operation entry points for features outside the MVP.
+- Do not emit errors only to the console.
 
-完了条件:
+Definition of done:
 
-- UIビルド成功。
-- 入力、検証、解析実行、結果表示がAPIと接続されている。
+- The UI build succeeds.
+- Input, validation, analysis execution, and result display are connected to the API.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- UIビルド通過。
-- API契約と一致。
-- エラー表示あり。
+- The UI build passes.
+- The implementation matches the API contract.
+- Errors are shown in the UI.
 
-### 3D担当
+### 3D Owner
 
-目的:
+Purpose:
 
-- Three.jsのMVP表示を実装する。
+- Implement the Three.js MVP display.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/04_input_schema.md`
 - `docs/06_result_schema.md`
 - `docs/08_ui_spec.md`
 - `docs/09_3d_view_spec.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `frontend/src/viewer/**`
-- viewer関連テスト。
+- Viewer-related tests.
 
-変更してはいけないファイル:
+Files that must not be modified:
 
 - `backend/**`
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- 節点表示。
-- 部材線表示。
-- 支点記号。
-- 荷重矢印。
-- ラベル。
-- 変形図。
-- Three.js初期化失敗時の2D簡易フォールバック表示。
-- カメラ操作。
-- 選択ハイライト。
+- Node display.
+- Member line display.
+- Support symbols.
+- Load arrows.
+- Labels.
+- Deformed shape.
+- 2D fallback display when Three.js initialization fails.
+- Camera controls.
+- Selection highlight.
 
-禁止事項:
+Prohibitions:
 
-- CAD編集を実装しない。
-- viewer内でprojectを変更しない。
-- DXF対応を実装しない。
-- WebGL初期化失敗をconsoleだけに出して終わらせない。
-- GPU互換設定を `project.json` や結果JSONに混ぜない。
+- Do not implement CAD editing.
+- Do not mutate the project inside the viewer.
+- Do not implement DXF support.
+- Do not report WebGL initialization failure only in the console.
+- Do not mix GPU compatibility settings into `project.json` or the result JSON.
 
-完了条件:
+Definition of done:
 
-- サンプルモデルを表示できる。
-- 選択がUI状態と同期する。
-- 結果JSONから変形図を表示できる。
-- WebGLRenderer生成失敗時に2D簡易表示へ切り替わる。
+- A sample model can be displayed.
+- Selection is synchronized with the UI state.
+- The deformed shape is drawn from the result JSON.
+- When `WebGLRenderer` construction fails, the view switches to the 2D fallback.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- 空モデルでクラッシュしない。
-- 結果なしでも表示可能。
-- 表示倍率が機能する。
-- WebGL初期化失敗時に白画面にならない。
+- An empty model does not crash.
+- The display works even without a result.
+- The display scale works.
+- WebGL initialization failure does not produce a blank screen.
 
-### Desktop/Electron担当
+### Desktop / Electron Owner
 
-目的:
+Purpose:
 
-- 既存React UIをElectronデスクトップアプリとして起動し、古いGPU環境向けのGPU互換モードを実装する。
+- Launch the existing React UI as an Electron desktop application, and implement GPU compatibility modes for older GPUs.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/02_mvp_scope.md`
 - `docs/03_architecture.md`
@@ -325,160 +325,160 @@ PR作成時のチェックリスト:
 - `docs/11_test_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
 - `desktop/**`
-- Electron設定ファイル。
-- 必要なfrontend起動設定。
+- Electron configuration files.
+- Required frontend launch settings.
 
-変更してはいけないファイル:
+Files that must not be modified:
 
 - `backend/engine/**`
-- `backend/app/**`。ただし明示指示がある場合を除く。
-- `schemas/**`。GPU互換設定のために変更しない。
+- `backend/app/**`, unless explicitly instructed.
+- `schemas/**`. Do not modify them for GPU compatibility settings.
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- Electron起動。
-- 開発時localhost読込。
-- 本番時dist読込。
-- GPU互換モード切替。
-- WebGL失敗時の案内。
+- Electron startup.
+- Development-time localhost load.
+- Production-time dist load.
+- GPU compatibility mode switching.
+- WebGL failure guidance.
 
-禁止事項:
+Prohibitions:
 
-- Electron main processに解析ロジックを入れない。
-- API仕様を勝手に変えない。
-- `legacy-desktop-gl` を標準モードにしない。
-- GPUフラグを無条件に全ユーザーへ強制しない。
-- `project.json` の解析スキーマにGPU設定を混ぜない。
-- 解析結果JSONにGPU情報を入れない。
+- Do not put analysis logic into the Electron main process.
+- Do not change the API specification on your own.
+- Do not make `legacy-desktop-gl` the default mode.
+- Do not force GPU flags on all users unconditionally.
+- Do not mix GPU settings into the analysis schema in `project.json`.
+- Do not include GPU information in the analysis result JSON.
 
-完了条件:
+Definition of done:
 
-- Electronが既存React UIを表示できる。
-- 開発時は `http://localhost:5173` を読み込む。
-- 本番時は `frontend/dist/index.html` を読み込む。
-- `normal`、`compat-gpu-blocklist`、`compat-angle-gl`、`legacy-desktop-gl` を切り替えられる。
-- `app.commandLine.appendSwitch()` が `app.whenReady()` より前に実行される。
-- WebGL失敗時にユーザーへ互換描画モードでの再起動を案内できる。
+- Electron can display the existing React UI.
+- In development, it loads `http://localhost:5173`.
+- In production, it loads `frontend/dist/index.html`.
+- `normal`, `compat-gpu-blocklist`, `compat-angle-gl`, and `legacy-desktop-gl` can be switched.
+- `app.commandLine.appendSwitch()` runs before `app.whenReady()`.
+- On WebGL failure, the user can be guided to restart in a compatibility rendering mode.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- Electron main processテストまたはElectronビルド通過。
-- GPUフラグ選択ロジックの単体テストあり。
-- 標準モードが `normal`。
-- `legacy-desktop-gl` は最後の非常用互換モード。
-- 解析エンジン、API、スキーマ、結果仕様を拡張していない。
+- The Electron main process test or the Electron build passes.
+- There are unit tests for the GPU flag selection logic.
+- The default mode is `normal`.
+- `legacy-desktop-gl` is the last-resort compatibility mode.
+- The analysis engine, the API, the schema, and the result specification are not extended.
 
-### Report担当
+### Report Owner
 
-目的:
+Purpose:
 
-- JSON/CSV/HTML帳票出力を実装する。
+- Implement the JSON / CSV / HTML report output.
 
-読むべき設計書:
+Design documents to read:
 
 - `docs/06_result_schema.md`
 - `docs/10_report_spec.md`
 - `docs/12_quality_gate.md`
 
-変更してよいファイル:
+Files that may be modified:
 
-- report/export関連モジュール。
-- report関連テスト。
+- Report / export related modules.
+- Report related tests.
 
-変更してはいけないファイル:
+Files that must not be modified:
 
-- 解析アルゴリズム。
-- 3D viewer。
+- The analysis algorithm.
+- The 3D viewer.
 - `docs/requirements_extraction.md`
 
-成果物:
+Deliverables:
 
-- 結果JSON出力。
-- 変位CSV。
-- 反力CSV。
-- 部材端力CSV。
-- 最小HTML帳票。
+- Result JSON output.
+- Displacement CSV.
+- Reaction CSV.
+- Member end force CSV.
+- Minimal HTML report.
 
-禁止事項:
+Prohibitions:
 
-- JSON数値を文字列化しない。
-- 帳票テンプレート編集を実装しない。
-- DXF出力を実装しない。
+- Do not serialize JSON numbers as strings.
+- Do not implement report template editing.
+- Do not implement DXF output.
 
-完了条件:
+Definition of done:
 
-- CSVヘッダーが仕様通り。
-- エラー結果でも帳票出力可能。
+- The CSV headers follow the specification.
+- A report can be generated even for an error result.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- CSVテスト通過。
-- 単位表示あり。
-- 空結果を扱える。
+- CSV tests pass.
+- Units are shown.
+- Empty results can be handled.
 
-### Review担当
+### Review Owner
 
-目的:
+Purpose:
 
-- PRがMVP範囲、品質基準、設計書と整合しているか確認する。
+- Confirm that the PR is consistent with the MVP scope, the quality standards, and the design documents.
 
-読むべき設計書:
+Design documents to read:
 
-- `docs/README.md` の読む順序に従い全設計書を確認する。
+- All design documents, following the reading order in `docs/README.md`.
 
-変更してよいファイル:
+Files that may be modified:
 
-- 原則なし。レビューコメントを成果物とする。
+- In principle none. Review comments are the deliverable.
 
-変更してはいけないファイル:
+Files that must not be modified:
 
-- 実装ファイル。修正依頼がある場合を除く。
+- Implementation files, unless a fix is requested.
 
-成果物:
+Deliverables:
 
-- 重要度順の指摘。
-- ファイル・行番号。
-- 影響説明。
-- 指摘なしの場合は残リスク。
+- Findings sorted by severity.
+- File and line numbers.
+- Impact description.
+- Remaining risks when there are no findings.
 
-禁止事項:
+Prohibitions:
 
-- MVP外機能の混入を見逃さない。
-- 数値誤差や符号規約変更を軽視しない。
-- テスト不足を承認しない。
+- Do not overlook the introduction of features outside the MVP.
+- Do not trivialize numerical error or sign convention changes.
+- Do not approve insufficient tests.
 
-完了条件:
+Definition of done:
 
-- スキーマ、エンジン、API、UI、3D、帳票、テスト、品質ゲートを確認済み。
+- Schema, engine, API, UI, 3D, report, tests, and quality gate are confirmed.
 
-PR作成時のチェックリスト:
+PR checklist:
 
-- MVP範囲内。
-- 品質ゲート通過。
-- 設計書と実装が一致。
-- 結果が `project.json` から再現可能。
+- Within the MVP scope.
+- Passes the quality gate.
+- Implementation matches the design documents.
+- Results are reproducible from `project.json`.
 
-## 5. エラー処理
+## 5. Error Handling
 
-担当者は、実装中に設計の不足や矛盾を見つけた場合、推測で実装せず以下のいずれかを行う。
+When an owner finds that the design is insufficient or contradictory during implementation, do not implement by guess. Do one of the following:
 
-- 設計書を同じPRで更新する。
-- ブロッカーとして質問する。
-- MVP外として実装しない判断を明記する。
+- Update the design in the same PR.
+- Ask as a blocker.
+- Explicitly state the decision not to implement as outside the MVP.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 担当範囲の成果物が `docs/12_quality_gate.md` を満たす。
-- MVP外機能を誤って有効化していない。
-- 変更可能ファイル以外を変更していない。
-- エラーが構造化されている。
+- The deliverable in the owner''s scope satisfies `docs/12_quality_gate.md`.
+- Features outside the MVP are not accidentally enabled.
+- No files outside the editable scope are changed.
+- Errors are structured.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- 各担当がこの文書だけで作業範囲を判断できる。
-- 禁止事項とPRチェックリストが明確である。
-- `docs/02_mvp_scope.md` のMVP範囲と矛盾しない。
+- Each owner can determine the work scope from this document alone.
+- The prohibitions and the PR checklist are clear.
+- There is no contradiction with the MVP scope in `docs/02_mvp_scope.md`.

@@ -1,58 +1,58 @@
-# Design Documents README
+﻿# Design Documents README
 
-## 1. 目的
+## 1. Purpose
 
-JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一覧と読む順序をまとめる。後続のCodex実装エージェントは、このREADMEを入口として設計書を確認する。
+This README is the entry point for the design documents of the in-house 3D frame analysis system that is being built with reference to JIP-SPACER. Subsequent Codex implementation agents should start from this README to navigate the design documents.
 
-## 2. 対象範囲
+## 2. Scope
 
-- MVP設計書の読む順序。
-- 各文書の役割。
-- MVP判断時の優先順位。
-- 実装前に確認すべき品質基準。
+- The recommended reading order for the MVP design documents.
+- The role of each document.
+- The priority order when making MVP decisions.
+- The quality standards that must be confirmed before implementation.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 実装コード。
-- 詳細な数式導出。
-- JIP-SPACER完全互換仕様。
-- MVP外機能の実装計画詳細。
+- Implementation code.
+- Detailed derivations of equations.
+- Full compatibility specification with JIP-SPACER.
+- Implementation details of features outside the MVP.
 
-## 4. 設計書一覧と読む順序
+## 4. List of Design Documents and Reading Order
 
 1. `docs/requirements_extraction.md`
-   - SPACER操作マニュアルから抽出した広範な要求。
-   - MVP外機能も含む参考資料。
+   - Broad requirements extracted from the SPACER operation manual.
+   - Reference material that also includes features outside the MVP.
 2. `docs/02_mvp_scope.md`
-   - MVP範囲の最上位判断基準。
-   - 実装前に必ず読む。
+   - The top-level decision criteria for the MVP scope.
+   - Must be read before any implementation.
 3. `docs/12_quality_gate.md`
-   - PR受入基準。
-   - テスト、Ruff、型ヒント、JSON Schema、数値誤差、API、UIビルド、Electron/GPU互換表示基準を定義する。
+   - PR acceptance criteria.
+   - Defines the standards for tests, Ruff, type hints, JSON Schema, numerical error, API, UI build, and Electron/GPU compatibility.
 4. `docs/03_architecture.md`
-   - システム全体構成、責務境界、データフロー。
+   - Overall system composition, responsibility boundaries, and data flow.
 5. `docs/04_input_schema.md`
-   - `project.json` の入力構造。
+   - The input structure of `project.json`.
 6. `docs/05_analysis_engine_spec.md`
-   - Python解析エンジンの処理仕様。
+   - Processing specification of the Python analysis engine.
 7. `docs/06_result_schema.md`
-   - 解析結果JSONの構造。
+   - Structure of the analysis result JSON.
 8. `docs/07_api_spec.md`
-   - FastAPIエンドポイント仕様。
+   - FastAPI endpoint specification.
 9. `docs/08_ui_spec.md`
-   - React UI画面構成。
+   - React UI screen composition.
 10. `docs/09_3d_view_spec.md`
-    - Three.js表示仕様と2D簡易フォールバック仕様。
+    - Three.js rendering specification and the 2D fallback specification.
 11. `docs/10_report_spec.md`
-    - JSON/CSV/HTML帳票仕様。
+    - JSON / CSV / HTML report specification.
 12. `docs/11_test_spec.md`
-    - 必須検証ケースとテスト観点。
+    - Required verification cases and test viewpoints.
 13. `docs/20_agent_instructions.md`
-    - Codex担当別の実装指示テンプレート。
+    - Per-agent implementation instruction templates for Codex.
 
-### 優先順位
+### Priority Order
 
-文書間で迷った場合は以下を優先する。
+When the documents conflict, the following priority applies.
 
 1. `docs/02_mvp_scope.md`
 2. `docs/12_quality_gate.md`
@@ -60,35 +60,35 @@ JIP-SPACERを参考にした独自3次元骨組解析システムの設計書一
 4. `docs/05_analysis_engine_spec.md`
 5. `docs/06_result_schema.md`
 6. `docs/07_api_spec.md`
-7. 個別UI/3D/帳票/テスト仕様
+7. The individual UI / 3D / report / test specifications.
 8. `docs/requirements_extraction.md`
 
-`docs/requirements_extraction.md` は参考資料であり、MVP範囲を拡張する根拠にはしない。
+`docs/requirements_extraction.md` is reference material and must not be used as a basis for extending the MVP scope.
 
-## 5. エラー処理
+## 5. Error Handling
 
-設計書間に矛盾がある場合:
+If there is a conflict between design documents:
 
-- 実装を進める前に該当設計書を更新する。
-- MVP外機能が混入しそうな場合は `docs/02_mvp_scope.md` を優先する。
-- 品質基準に関わる判断は `docs/12_quality_gate.md` を優先する。
-- Electron/GPU互換設定はアプリ設定またはdesktop設定として扱い、`project.json`、API、解析結果JSONへ混ぜない。
-- `legacy-desktop-gl` は最後の非常用互換モードであり、標準モードにしない。
-- 影響線解析、移動荷重、固有値解析、応答スペクトル解析、温度荷重、プレストレス、DXF、ライセンス管理がMVPに混入しそうな場合は、実装せず設計を確認する。
+- Update the relevant design document before continuing the implementation.
+- If a feature outside the MVP is about to creep in, follow `docs/02_mvp_scope.md`.
+- For decisions that touch the quality standards, follow `docs/12_quality_gate.md`.
+- Electron / GPU compatibility settings are treated as app settings or desktop settings. They must not be mixed into `project.json`, the API, or the analysis result JSON.
+- `legacy-desktop-gl` is the last-resort compatibility mode and must not be promoted to the default mode.
+- Influence line analysis, moving loads, eigenvalue analysis, response spectrum analysis, temperature loads, prestress, DXF, and license management must not be implemented inside the MVP. When in doubt, confirm the design before coding.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-実装PRでは以下を確認する。
+Every implementation PR must satisfy all of the following:
 
-- `docs/11_test_spec.md` の必須検証ケースに対応している。
-- `docs/12_quality_gate.md` のPR受入基準を満たしている。
-- 入力・結果・API・UIが各設計書と整合している。
-- WebGL初期化失敗時にUIが白画面にならず、2D簡易表示または明示的な案内に切り替わる。
-- Electron main processに解析ロジックが入っていない。
-- MVP外機能を実装していない。
+- It covers the required verification cases listed in `docs/11_test_spec.md`.
+- It satisfies the PR acceptance criteria in `docs/12_quality_gate.md`.
+- Inputs, results, the API, and the UI are consistent with their respective design documents.
+- When WebGL initialization fails, the UI does not become a blank screen but switches to the 2D fallback or shows an explicit message.
+- The Electron main process does not contain analysis logic.
+- No feature outside the MVP is implemented.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- すべての設計書の役割が明確である。
-- 読む順序が明確である。
-- 後続Codex実装エージェントが、担当別に参照すべき文書へ到達できる。
+- The role of every design document is clear.
+- The reading order is clear.
+- Subsequent Codex implementation agents can reach the relevant document for the area they are responsible for.

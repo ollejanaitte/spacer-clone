@@ -1,262 +1,251 @@
-﻿# 固有値解析 Phase E-1b 検証記録
+﻿# Eigenvalue Analysis Phase E-1b Verification Record
 
-## 概要
+## Overview
 
-Phase E-1b「有効質量・累積参加率表示対応」の実装後検証を実施した。
+Post-implementation verification was performed for Phase E-1b "Effective Mass and Cumulative Participation Ratio Display Support".
 
-実装目的は、固有値解析結果に対して有効質量関連指標を明示し、実務利用時のモード採用判断および将来の応答スペクトル解析実装の基盤を整備することである。
+The purpose of the implementation is to make the effective-mass-related indicators explicit on the eigenvalue analysis result, and to prepare the basis for mode selection decisions in practical use and for the future response spectrum analysis implementation.
 
 ---
 
-## 実施日
+## Date
 
 2026-06-08
 
 ---
 
-## 対象機能
+## Targeted Features
 
 ### Backend
 
-* 固有値解析結果への有効質量追加
-* 方向別総質量追加
-* 累積有効質量比追加
+- Add the effective mass to the eigenvalue analysis result
+- Add the total mass per direction
+- Add the cumulative effective mass ratio
 
 ### Frontend
 
-* 有効質量表示
-* 有効質量比表示
-* 累積有効質量比表示
-* 方向別総質量表示
+- Display the effective mass
+- Display the effective mass ratio
+- Display the cumulative effective mass ratio
+- Display the total mass per direction
 
-### 出力
+### Output
 
-* eigen_modes.csv 出力
+- `eigen_modes.csv` output
 
 ---
 
-## 実装項目
+## Implementation Items
 
 ### EigenResult
 
-追加項目
+Added item:
 
-* totalMassByDirection
+- `totalMassByDirection`
 
-方向:
+Directions:
 
-* X
-* Y
-* Z
+- X
+- Y
+- Z
 
 ---
 
 ### EigenMode
 
-追加項目
+Added items:
 
-* effectiveMasses
-* cumulativeEffectiveMassRatios
+- `effectiveMasses`
+- `cumulativeEffectiveMassRatios`
 
-既存項目
+Existing items:
 
-* modalMass
-* participationFactors
-* effectiveMassRatios
+- `modalMass`
+- `participationFactors`
+- `effectiveMassRatios`
 
-は変更なし。
-
----
-
-## 動作確認結果
-
-### 1. 固有値解析実行
-
-確認結果:
-
-* 正常
-
-内容:
-
-* 固有値解析実行成功
-* エラーなし
+are unchanged.
 
 ---
 
-### 2. 結果画面表示
+## Behavior Verification Result
 
-確認結果:
+### 1. Eigenvalue Analysis Run
 
-* 正常
+Verification result:
 
-確認内容:
+- OK
 
-* 方向別総質量表示
-* 有効質量表示
-* 有効質量比表示
-* 累積有効質量比表示
+Details:
 
-表示異常なし。
+- Eigenvalue analysis run succeeded
+- No errors
 
 ---
 
-### 3. 旧結果データ互換性
+### 2. Result Screen Display
 
-確認結果:
+Verification result:
 
-* 問題なし
+- OK
 
-内容:
+Verified items:
 
-* optional項目として実装
-* 後方互換維持
+- Display of total mass per direction
+- Display of effective mass
+- Display of effective mass ratio
+- Display of cumulative effective mass ratio
 
----
-
-### 4. CSV出力
-
-確認結果:
-
-* 正常
-
-出力ファイル:
-
-* eigen_modes.csv
-
-確認内容:
-
-* CSV出力成功
-* 列出力正常
+No display issues.
 
 ---
 
-### 5. アプリ起動確認
+### 3. Compatibility with Old Result Data
 
-確認結果:
+Verification result:
 
-* 正常
+- No problem
 
-内容:
+Details:
 
-* Windows版起動成功
-* 固有値解析実行成功
+- Implemented as optional items
+- Backward compatibility maintained
 
 ---
 
-## テスト結果
+### 4. CSV Output
+
+Verification result:
+
+- OK
+
+Output file:
+
+- `eigen_modes.csv`
+
+Verified items:
+
+- CSV output succeeded
+- Columns are output correctly
+
+---
+
+### 5. Application Startup Verification
+
+Verification result:
+
+- OK
+
+Details:
+
+- Windows version started successfully
+- Eigenvalue analysis ran successfully
+
+---
+
+## Test Results
 
 ### Backend
 
-pytest 実行結果
+`pytest` execution result:
 
-* PASS
+- PASS
 
-E-1b関連テスト
+E-1b-related tests:
 
-* 有効質量計算
-* 累積有効質量比計算
-* 方向別総質量計算
-* schema適合確認
+- Effective mass calculation
+- Cumulative effective mass ratio calculation
+- Total mass per direction calculation
+- Schema compliance check
 
-正常終了。
+Completed successfully.
 
 ---
 
 ### Frontend
 
-確認内容
+Verified items:
 
-* 結果画面表示
-* CSV出力
+- Result screen display
+- CSV output
 
-異常なし。
+No issues.
 
 ---
 
-## 採用仕様
+## Adopted Specification
 
-### 有効質量
+### Effective Mass
 
 ```text
 effectiveMasses
 ```
 
-絶対有効質量を保持する。
+Holds the absolute effective mass.
 
 ---
 
-### 有効質量比
+### Effective Mass Ratio
 
 ```text
 effectiveMassRatios
 ```
 
-各モード単独の有効質量比を保持する。
+Holds the effective mass ratio of each mode alone.
 
 ---
 
-### 累積参加率
+### Cumulative Participation Ratio
 
 ```text
 cumulativeEffectiveMassRatios
 ```
 
-モード順累積値を保持する。
+Holds the cumulative value in mode order.
 
-累積値は強制的に 1.0 に丸めない。
+The cumulative value is not forced to be rounded to 1.0.
 
 ---
 
-### 総質量
+### Total Mass
 
 ```text
 totalMassByDirection
 ```
 
-分母は
-
-rᵀMr
-
-とし、拘束自由度を除く解析対象質量を採用する。
+The denominator is `r^T M r`, using the analysis-target mass with the restrained DOFs excluded.
 
 ---
 
-## ユーザー受入確認
+## User Acceptance Check
 
-実施者:
+Performed by:
 
-* 織田雅春
+- Masaharu Oda
 
-確認結果:
+Verification result:
 
-* 合格
+- Pass
 
-内容:
+Details:
 
-* 結果表示正常
-* CSV出力正常
-* 固有値解析正常
-* 実務利用上の問題なし
+- Result display OK
+- CSV output OK
+- Eigenvalue analysis OK
+- No problem for practical use
 
 ---
 
-## 結論
+## Conclusion
 
-Phase E-1b
+For Phase E-1b
 
-「有効質量・累積参加率表示対応」
+"Effective Mass and Cumulative Participation Ratio Display Support"
 
-について、
+the following are judged:
 
-* 実装完了
-* 動作確認完了
-* ユーザー受入確認完了
+- Implementation complete
+- Behavior verification complete
+- User acceptance complete
 
-と判定する。
-
-次工程として、
-
-Phase E-1c
-「固有値解析品質確認」
-
-へ移行可能である。
+The next step, Phase E-1c "Eigenvalue Analysis Quality Check", can be started.

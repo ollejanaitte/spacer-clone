@@ -1,88 +1,88 @@
-# 03 Architecture
+﻿# 03 Architecture
 
-## 1. 目的
+## 1. Purpose
 
-JIP-SPACERの「入力、実行、結果表示、帳票、描画」を分ける考え方を参考にしつつ、MVPに限定した独自3次元骨組解析システムの構成を定義する。後続のCodex実装エージェントが、責務境界を誤らずに実装できることを目的とする。
+Following the JIP-SPACER idea of separating input, execution, result display, reporting, and rendering, this document defines the architecture of the in-house 3D frame analysis system, limited to the MVP. The goal is to let subsequent Codex implementation agents build the system without confusing responsibility boundaries.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 3次元骨組モデルの入力、検証、線形静的解析、結果表示、CSV/JSON出力。
-- Python解析エンジン。
-- FastAPIバックエンド。
-- React入力UI。
-- Three.js線モデル表示。
-- Electronデスクトップアプリシェル。
-- 古いGPU向けのデスクトップGPU互換モード。
-- `project.json` と解析結果JSONを中心にしたデータ連携。
+- Input, validation, linear static analysis, result display, and CSV / JSON output of 3D frame models.
+- The Python analysis engine.
+- The FastAPI backend.
+- The React input UI.
+- The Three.js line-model display.
+- The Electron desktop application shell.
+- Desktop GPU compatibility modes for older GPUs.
+- Data exchange centered on `project.json` and the analysis result JSON.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-MVPでは以下を実装しない。
+The MVP does not implement the following:
 
-- 影響線解析、移動荷重、活荷重自動載荷。
-- 固有値解析、応答スペクトル解析。
-- 温度荷重、プレストレス、初期張力。
-- 部材バネ、節点間バネ。
-- 高度な荷重組合せ処理。
-- DXF出力、外部解析ソフト連携。
-- ライセンス管理。
-- JIP-SPACER完全互換。
+- Influence line analysis, moving loads, automatic live load placement.
+- Eigenvalue analysis, response spectrum analysis.
+- Temperature loads, prestress, initial tension.
+- Member springs, node-to-node springs.
+- Advanced load combination processing.
+- DXF output, integration with external analysis software.
+- License management.
+- Full compatibility with JIP-SPACER.
 
-## 4. 処理仕様
+## 4. Processing Specification
 
-### 全体レイヤ
+### Overall Layers
 
-- `frontend`: React UI。モデル入力、検証実行、解析実行、結果表示を担当する。
-- `viewer`: Three.js表示。節点、部材、支点、荷重、変形図を表示する。
-- `desktop/electron`: Electron main/preload。既存React UIの表示、ウィンドウ管理、GPU互換モードのChromium起動フラグ設定のみを担当する。
-- `backend/app`: FastAPI。API契約、保存読込、解析エンジン呼び出しを担当する。
-- `backend/engine`: Python解析エンジン。数値解析と結果算出のみを担当する。
-- `schemas`: JSON Schema。`project.json` と結果JSONを検証する。
-- `examples`: MVP検証用のサンプルモデル。
-- `docs`: 設計書のみ。実装コードを置かない。
+- `frontend`: React UI. Responsible for model input, validation, analysis run, and result display.
+- `viewer`: Three.js display. Responsible for nodes, members, supports, loads, and deformed shape.
+- `desktop/electron`: Electron main and preload. Responsible only for displaying the existing React UI, window management, and Chromium launch flags for GPU compatibility modes.
+- `backend/app`: FastAPI. Responsible for the API contract, save/load, and invocation of the analysis engine.
+- `backend/engine`: Python analysis engine. Responsible only for numerical analysis and result calculation.
+- `schemas`: JSON Schema. Validates `project.json` and the result JSON.
+- `examples`: Sample models used for MVP verification.
+- `docs`: Design documents only. No implementation code is placed here.
 
-### データフロー
+### Data Flow
 
-1. React UIで `project.json` 互換データを編集する。
-2. UIが `POST /api/projects/validate` へ送信する。
-3. FastAPIがJSON Schemaと参照整合性を検証する。
-4. UIが `POST /api/analysis/run` へ送信する。
-5. FastAPIがPython解析エンジンを呼び出す。
-6. 解析エンジンが変位、反力、部材端力を計算する。
-7. FastAPIが結果JSONを返す。
-8. UIが結果表、Three.js変形図、CSV/JSON出力に利用する。
+1. The React UI edits data that is compatible with `project.json`.
+2. The UI sends the data to `POST /api/projects/validate`.
+3. FastAPI validates the data against the JSON Schema and reference integrity.
+4. The UI sends the data to `POST /api/analysis/run`.
+5. FastAPI invokes the Python analysis engine.
+6. The analysis engine computes displacements, reactions, and member end forces.
+7. FastAPI returns the result JSON.
+8. The UI uses the result JSON for result tables, the Three.js deformed shape, and CSV / JSON export.
 
-Electron版では、上記React UIをデスクトップウィンドウ内に表示する。Electronは解析ロジックを持たず、API契約、`project.json`、結果JSONの構造も変更しない。
+In the Electron build, the React UI above is displayed inside a desktop window. Electron contains no analysis logic and does not change the API contract, the structure of `project.json`, or the result JSON.
 
-開発時:
+In development:
 
 ```text
 Electron -> http://localhost:5173
 ```
 
-本番時:
+In production:
 
 ```text
 Electron -> frontend/dist/index.html
 ```
 
-### 依存方向
+### Dependency Directions
 
-- UIはAPI契約にのみ依存する。
-- Three.js表示は `project.json` と結果JSONにのみ依存する。
-- FastAPIは解析エンジンに依存する。
-- 解析エンジンはFastAPI、React、Three.jsに依存しない。
-- 解析エンジンはファイル保存やHTTPを知らない。
-- Electron main processは解析エンジン、解析API仕様、JSON Schema、結果仕様を変更しない。
-- GPU互換設定はアプリ設定またはdesktop設定として扱い、`project.json` や解析結果JSONへ保存しない。
+- The UI depends only on the API contract.
+- The Three.js display depends only on `project.json` and the result JSON.
+- FastAPI depends on the analysis engine.
+- The analysis engine does not depend on FastAPI, React, or Three.js.
+- The analysis engine knows nothing about file storage or HTTP.
+- The Electron main process does not change the analysis engine, the analysis API specification, the JSON Schema, or the result specification.
+- GPU compatibility settings are treated as application or desktop settings. They are not stored in `project.json` or in the analysis result JSON.
 
-### Electron GPU互換モード
+### Electron GPU Compatibility Modes
 
-Electron main processでは、Chromium起動フラグを以下のモードで切り替え可能にする。
+The Electron main process lets the user switch the Chromium launch flags among the following modes:
 
 ```text
 normal:
-  追加GPUフラグなし
+  No additional GPU flag.
 
 compat-gpu-blocklist:
   --ignore-gpu-blocklist
@@ -96,16 +96,16 @@ legacy-desktop-gl:
   --use-gl=desktop
 ```
 
-設計制約:
+Design constraints:
 
-- 標準モードは `normal` とする。
-- `legacy-desktop-gl` はChrome全体のUI描画崩れなど副作用が大きいため、最後の非常用互換モードとして扱う。
-- GPU互換モードは、起動時設定、環境変数、またはアプリ内設定から切り替え可能にする。
-- `app.commandLine.appendSwitch()` は `app.whenReady()` より前に実行する。
-- GPUフラグを全ユーザーへ無条件に強制しない。
-- GPU互換モードの変更は、解析エンジン、API、`project.json`、結果JSONの仕様変更を伴わない。
+- The default mode is `normal`.
+- `legacy-desktop-gl` is treated as a last-resort compatibility mode because of the broad side effects on Chrome UI rendering, and must not be used by default.
+- The GPU compatibility mode is switchable from launch arguments, environment variables, or in-app settings.
+- `app.commandLine.appendSwitch()` must be called before `app.whenReady()`.
+- GPU flags are not forced on all users unconditionally.
+- Changing the GPU compatibility mode must not change the analysis engine, the API, `project.json`, or the result JSON.
 
-### 推奨ディレクトリ
+### Recommended Directory Layout
 
 ```text
 desktop/
@@ -124,33 +124,33 @@ examples/
 docs/
 ```
 
-## 5. エラー処理
+## 5. Error Handling
 
-- UI入力エラーは、該当テーブル行・項目に紐付けて表示する。
-- APIは構造化エラーを返す。
-- 解析エンジンは例外を外へ漏らさず、エラーコード付きの失敗結果へ変換できるようにする。
-- 主なエラーコードは以下とする。
+- UI input errors are displayed attached to the relevant table row or field.
+- The API returns structured errors.
+- The analysis engine must not leak exceptions outward; it must convert failures into error-coded results.
+- The main error codes are:
   - `SCHEMA_ERROR`
   - `INVALID_REFERENCE`
   - `MODEL_UNSTABLE`
   - `SOLVER_ERROR`
   - `POSTPROCESS_ERROR`
   - `INTERNAL_ERROR`
-- JSONに `NaN`、`Infinity` を出力してはならない。
+- JSON output must not contain `NaN` or `Infinity`.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- レイヤ間の責務が混ざっていないこと。
-- UIが解析ロジックを持たないこと。
-- Electron main processが解析ロジックを持たないこと。
-- Electron GPU互換モードのフラグ選択が単体テスト可能であること。
-- APIが数値解析を直接実装しないこと。
-- 解析エンジンがHTTPやUIに依存しないこと。
-- `project.json` から結果JSONまで再現可能であること。
-- `docs/12_quality_gate.md` の品質基準に反しないこと。
+- The responsibilities of the layers are not mixed.
+- The UI contains no analysis logic.
+- The Electron main process contains no analysis logic.
+- The selection of Electron GPU compatibility flags is unit-testable.
+- The API does not implement numerical analysis directly.
+- The analysis engine does not depend on HTTP or the UI.
+- Results are reproducible from `project.json`.
+- The quality standards in `docs/12_quality_gate.md` are respected.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- 後続実装で必要な主要レイヤと責務境界が明確である。
-- MVP外機能がアーキテクチャ上も実装対象外として明記されている。
-- `docs/04_input_schema.md`、`docs/05_analysis_engine_spec.md`、`docs/06_result_schema.md`、`docs/07_api_spec.md` と矛盾しない。
+- The main layers and their responsibility boundaries needed for subsequent implementation are clear.
+- Features outside the MVP are explicitly listed as out of scope at the architecture level.
+- The document does not contradict `docs/04_input_schema.md`, `docs/05_analysis_engine_spec.md`, `docs/06_result_schema.md`, or `docs/07_api_spec.md`.

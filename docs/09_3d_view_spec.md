@@ -1,44 +1,44 @@
-# 09 3D View Specification
+﻿# 09 3D View Specification
 
-## 1. 目的
+## 1. Purpose
 
-Three.jsを用いたMVPの3D線モデル表示仕様を定義する。解析入力と結果を視覚確認できることを目的とし、CAD編集機能は持たせない。
+This document defines the MVP 3D line-model display specification based on Three.js. Its purpose is to allow the analysis input and the result to be inspected visually. CAD editing features are not included.
 
-## 2. 対象範囲
+## 2. Scope
 
-- 節点表示。
-- 部材線表示。
-- 支点記号。
-- 荷重矢印。
-- 部材番号・節点番号ラベル。
-- 変形図。
-- Three.js/WebGL初期化失敗時の2D簡易フォールバック表示。
-- 表示倍率。
-- カメラ操作。
-- 選択ハイライト。
+- Node display.
+- Member line display.
+- Support symbols.
+- Load arrows.
+- Member ID and node ID labels.
+- Deformed shape.
+- 2D fallback display when Three.js / WebGL initialization fails.
+- Display scale factors.
+- Camera controls.
+- Selection highlight.
 
-## 3. 非対象範囲
+## 3. Out of Scope
 
-- 断面形状の3Dソリッド表示。
-- CAD編集、スナップ、ドラッグ作成。
-- DXF表示・出力。
-- 影響線図、モード図、応答スペクトル結果図。
-- 温度荷重やプレストレス専用表示。
-- 高度な帳票図面作成。
+- 3D solid display of cross-section shapes.
+- CAD editing, snapping, drag-and-drop creation.
+- DXF display and output.
+- Influence line diagrams, mode shape diagrams, response spectrum result diagrams.
+- Specialized display for temperature loads or prestress.
+- Advanced report drawing generation.
 
-## 4. 表示仕様
+## 4. Display Specification
 
-### 入力データ
+### Input Data
 
-- `project.json` 互換モデル。
-- 選択中荷重ケースID。
-- 任意の解析結果JSON。
-- UIの選択状態。
-- 表示設定。
+- A model compatible with `project.json`.
+- The currently selected load case ID.
+- An optional analysis result JSON.
+- The UI selection state.
+- Display settings.
 
-### Three.js Renderer基本設定
+### Base Three.js Renderer Settings
 
-古いGPU環境でも初期化可能性を高めるため、MVPのWebGLRendererは以下を基本設定とする。
+To improve initialization chances on older GPUs, the MVP `WebGLRenderer` is created with the following base settings:
 
 ```ts
 const renderer = new THREE.WebGLRenderer({
@@ -51,134 +51,134 @@ const renderer = new THREE.WebGLRenderer({
 });
 ```
 
-制約:
+Constraints:
 
-- `new THREE.WebGLRenderer(...)` の失敗をcatchする。
-- WebGL初期化失敗でviewer全体またはUI全体をクラッシュさせない。
-- エラーをブラウザconsoleだけに出さず、下部パネルへ通知する。
-- ユーザーに互換描画モードでの再起動を案内する。
-- Electron版の `legacy-desktop-gl` は最後の非常用互換モードであり、標準推奨にしない。
+- Catch the failure of `new THREE.WebGLRenderer(...)`.
+- WebGL initialization failure must not crash the viewer or the whole UI.
+- Errors must not be reported only to the browser console; they must be forwarded to the bottom panel.
+- The user is guided to restart in a compatibility rendering mode.
+- The Electron `legacy-desktop-gl` mode is the last-resort compatibility mode and is not recommended as standard.
 
-### 節点表示
+### Node Display
 
-- 各節点を点または小球で表示する。
-- 選択節点はハイライト色にする。
-- 支点がある節点は支点記号を重ねる。
+- Each node is drawn as a point or a small sphere.
+- The selected node is highlighted.
+- Nodes with supports show the support symbol on top of them.
 
-### 部材線表示
+### Member Line Display
 
-- `nodeI` から `nodeJ` へ直線を描画する。
-- 選択部材は色と線幅を変える。
-- 部材IDラベル表示を切り替え可能にする。
+- Draw a straight line from `nodeI` to `nodeJ`.
+- The selected member changes color and line width.
+- Member ID labels can be toggled.
 
-### 支点記号
+### Support Symbols
 
-- 拘束節点に簡易記号を表示する。
-- 完全固定はブロックまたは三角記号でよい。
-- 部分拘束の詳細DOFはプロパティパネルで確認する。
+- A simple symbol is drawn at restrained nodes.
+- A fully fixed support may be a block or a triangle.
+- Partial-restrained DOFs are checked in the property panel.
 
-### 荷重矢印
+### Load Arrows
 
-- 選択中荷重ケースの節点集中荷重を矢印表示する。
-- 部材等分布荷重を複数矢印または帯状記号で表示する。
-- 相対値が分かるように自動スケールする。
-- 力の向きは必ず実ベクトル方向と一致させる。
+- Concentrated loads of the selected load case are drawn as arrows at the corresponding nodes.
+- Member uniform distributed loads are drawn as multiple arrows or a band.
+- Loads are auto-scaled so that the relative magnitude is visible.
+- The force direction always matches the actual vector.
 
-### ラベル
+### Labels
 
-- 節点番号ラベルON/OFF。
-- 部材番号ラベルON/OFF。
-- ラベルはカメラ方向を向く。
-- モデルが密な場合はラベル非表示にできる。
+- Toggle node ID labels.
+- Toggle member ID labels.
+- Labels always face the camera.
+- Labels can be hidden on dense models.
 
-### 変形図
+### Deformed Shape
 
-- 解析結果がある場合、選択荷重ケースの変位を用いて変形後形状を表示する。
-- MVPでは部材を変形後節点間の直線で描いてよい。
-- 変形前形状は薄色で残す。
-- 変形倍率は手動または自動。
+- When an analysis result is available, the deformed shape is shown using the displacement of the selected load case.
+- In the MVP, each member may be drawn as a straight line between deformed node positions.
+- The undeformed shape is kept in a faded color.
+- Deformation scale can be manual or automatic.
 
-### 表示倍率
+### Display Scale
 
-設定:
+Settings:
 
 - `deformationScale`
 - `loadScale`
 - `nodeSize`
 - `labelSize`
 
-自動変形倍率:
+Automatic deformation scale:
 
-1. モデルのバウンディングボックス対角長を計算する。
-2. 最大並進変位を計算する。
-3. 最大変位が対角長の一定割合になるよう倍率を決める。
-4. 最大変位が0の場合、変形図を表示しない。
+1. Compute the diagonal of the model bounding box.
+2. Compute the maximum translational displacement.
+3. Pick a scale so that the maximum displacement is a fixed fraction of the diagonal.
+4. When the maximum displacement is 0, the deformed shape is not shown.
 
-### カメラ操作
+### Camera Controls
 
-- Orbit。
-- Pan。
-- Zoom。
-- Fit to model。
-- XY、XZ、YZ、Isometric。
+- Orbit.
+- Pan.
+- Zoom.
+- Fit to model.
+- XY, XZ, YZ, Isometric.
 
-### 選択ハイライト
+### Selection Highlight
 
-- 節点クリックで節点選択。
-- 部材クリックで部材選択。
-- 選択状態はReactへ通知する。
-- React側の選択変更も3Dビューへ反映する。
+- Clicking a node selects the node.
+- Clicking a member selects the member.
+- The selection state is reported to React.
+- Selection changes on the React side are also reflected in the 3D view.
 
-### 2D簡易フォールバック表示
+### 2D Fallback Display
 
-Three.js/WebGLが利用できない環境では、MVPの最低限表示として2D簡易ビューを表示する。
+In environments where Three.js / WebGL is not available, the MVP shows a minimal 2D fallback view.
 
-対象:
+Scope:
 
-- 節点。
-- 部材。
-- 支点の概略。
-- 節点荷重の概略。
-- 選択ハイライト。
-- Fit to model。
+- Nodes.
+- Members.
+- Rough representation of supports.
+- Rough representation of nodal loads.
+- Selection highlight.
+- Fit to model.
 
-MVP必須にしないもの:
+Not required for the 2D fallback:
 
-- 高度な3Dカメラ操作。
-- 変形図の詳細表示。
-- 荷重矢印の完全な3D表現。
-- 断面力図。
-- CAD編集。
+- Advanced 3D camera controls.
+- Detailed deformed shape.
+- Full 3D load arrows.
+- Member force diagrams.
+- CAD editing.
 
-2D簡易ビューは、表示互換性のためのフォールバックであり、解析エンジン、API、`project.json`、結果JSONの仕様を拡張しない。
+The 2D fallback exists only for display compatibility. It does not extend the analysis engine, the API, `project.json`, or the result JSON specification.
 
-## 5. エラー処理
+## 5. Error Handling
 
-- 不正参照部材があってもビュー全体をクラッシュさせない。
-- 描画不能エンティティは警告としてUIへ返す。
-- 結果JSONがない場合、変形図を非表示にする。
-- 変位に非有限値がある場合、変形図を表示せずエラー表示する。
-- WebGLRenderer生成失敗をcatchし、2D簡易フォールバック表示へ切り替える。
-- WebGL初期化失敗内容を下部パネルに表示する。
-- 互換描画モードでの再起動を案内する。
+- A bad reference to a member must not crash the whole view.
+- Entities that cannot be drawn are returned to the UI as warnings.
+- When the result JSON is not available, the deformed shape is hidden.
+- When the displacement contains non-finite values, the deformed shape is hidden and an error is shown.
+- Catch the failure of `new WebGLRenderer()` and switch to the 2D fallback.
+- The WebGL initialization failure is shown in the bottom panel.
+- The user is guided to restart in a compatibility rendering mode.
 
-## 6. テスト観点
+## 6. Test Viewpoints
 
-- 空モデルでクラッシュしない。
-- 節点・部材を表示できる。
-- 支点、荷重矢印、ラベルON/OFFが動作する。
-- 選択ハイライトがReact状態と同期する。
-- 変形図が結果JSONから描画される。
-- WebGLRenderer生成失敗をmockした場合に2D簡易表示へ切り替わる。
-- Three.js初期化失敗時にUI全体がクラッシュしない。
-- 2D簡易表示で節点、部材、支点概略、節点荷重概略、選択、Fit to modelを確認できる。
-- 1,500節点、2,500部材程度で操作可能な設計になっている。
+- An empty model does not crash.
+- Nodes and members are displayed.
+- Support symbols, load arrows, and label toggles work.
+- Selection highlight is synchronized with React state.
+- The deformed shape is drawn from the result JSON.
+- When `WebGLRenderer` construction is mocked to fail, the view switches to the 2D fallback.
+- Three.js initialization failure does not crash the whole UI.
+- In the 2D fallback, nodes, members, rough supports, rough nodal loads, selection, and fit to model are visible.
+- Performance is reasonable for roughly 1,500 nodes and 2,500 members.
 
-## 7. 完了条件
+## 7. Definition of Done
 
-- MVPモデルを線表示できる。
-- 支点と荷重の概略確認ができる。
-- 解析結果の変形図を表示できる。
-- WebGLが利用できない場合も2D簡易表示でモデル概略を確認できる。
-- UI担当がコンポーネントとして組み込める。
-- MVP外の高度図面機能を含まない。
+- MVP models can be displayed as line views.
+- Supports and loads can be checked approximately.
+- The deformed shape from the analysis result can be displayed.
+- Even when WebGL is not available, the 2D fallback allows rough model inspection.
+- The UI owner can integrate the viewer as a component.
+- No advanced drawing features outside the MVP are included.
