@@ -6,6 +6,11 @@ import math
 from typing import Any
 
 from .errors import AnalysisError
+from .time_history_models import (
+    TimeHistoryModelError,
+    parse_ground_motions,
+    parse_time_history_settings,
+)
 
 
 @dataclass(frozen=True)
@@ -492,7 +497,100 @@ def validate_model(model: Model) -> None:
     validate_saved_analysis_settings(model)
 
 
+def validate_saved_time_history_settings(model: "Model") -> None:
+    """Validate the time history analysis blocks stored on the model.
+
+    This function is the TH-1d integration point: it re-runs the
+    TH-1a model validators (parse_time_history_settings and
+    parse_ground_motions) so the in-memory Model satisfies the
+    project JSON schema.
+
+    Missing blocks are accepted. Unknown nested fields are accepted
+    (they are preserved by the loader and the saver as opaque data).
+    The function translates TimeHistoryModelError into AnalysisError
+    using the project-standard error code "INVALID_VALUE" and a
+    JSON-pointer style path.
+    """
+
+    time_history_payload = model.analysisSettings.timeHistory
+    if time_history_payload is not None:
+        try:
+            parse_time_history_settings(time_history_payload)
+        except TimeHistoryModelError as exc:
+            raise _to_analysis_error(exc, prefix="/analysisSettings/timeHistory") from exc
+
+    try:
+        parse_ground_motions(model.groundMotions)
+    except TimeHistoryModelError as exc:
+        raise _to_analysis_error(exc, prefix="/groundMotions") from exc
+
+
+def _to_analysis_error(exc: TimeHistoryModelError, *, prefix: str) -> AnalysisError:
+    """Translate a TimeHistoryModelError into a project AnalysisError.
+
+    The mapping is intentionally simple: the error message is used
+    verbatim, and the path is derived by stripping the leading
+    "timeHistory." or "groundMotions[i]." prefix from the message
+    and prepending the supplied JSON-pointer prefix. The MVP uses
+    a single "INVALID_VALUE" code for all time history violations
+    to match the existing convention used by eigen, influence, and
+    response spectrum validation paths.
+    """
+
+    message = str(exc)
+    path_suffix = _extract_path_suffix(message)
+    full_path = f"{prefix}{path_suffix}"
+    return AnalysisError("INVALID_VALUE", message, path=full_path)
+
+
+def _extract_path_suffix(message: str) -> str:
+    """Extract the path suffix from a TimeHistoryModelError message.
+
+    The TH-1a error messages use a structured prefix that mirrors
+    the JSON-pointer path to the offending field, e.g.:
+
+    * ``timeHistory.timeStep must be positive.`` -> ``/timeStep``
+    * ``groundMotions[2].direction must be one of ...`` -> ``/2/direction``
+    * ``timeHistory.damping.type must be one of ...`` -> ``/damping/type``
+
+    The MVP strips the leading "timeHistory." or "groundMotions[i]."
+    segment and returns the remainder as a JSON-pointer path
+    component starting with "/".
+    """
+
+    head_end = message.find(" ") if " " in message else len(message)
+    head = message[:head_end]
+    if head.startswith("timeHistory."):
+        # JSON pointer style: use "/" as the segment separator.
+        return "/" + head[len("timeHistory."):].replace(".", "/")
+    if head.startswith("groundMotions["):
+        bracket = head.find("]")
+        if bracket == -1:
+            return ""
+        index = head[len("groundMotions["):bracket]
+        # The dataclass __post_init__ uses "[]" to mean "any record".
+        # Map that to a "/*/" path component to indicate a project-level
+        # rule that applies to every record. parse_ground_motions emits
+        # the per-record index for known cases, so this branch is
+        # reached only for schema-level enum/range checks.
+        if index == "":
+            index_token = "/*"
+        else:
+            index_token = "/" + index
+        rest = head[bracket + 1:]
+        # Strip a leading "." separator between the index and the field name.
+        if rest.startswith("."):
+            rest = rest[1:]
+        return index_token + "/" + rest
+    return ""
+
+
 def validate_saved_analysis_settings(model: Model) -> None:
+    # Validate the time history analysis blocks first (TH-1d).
+    # This is placed before the eigen/influence checks so the
+    # call always runs even when the influence block triggers an
+    # early return.
+    validate_saved_time_history_settings(model)
     eigen = model.analysisSettings.eigen
     if eigen is not None:
         mass_case_id = eigen.get("massCaseId")
