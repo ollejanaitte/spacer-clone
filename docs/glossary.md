@@ -56,6 +56,12 @@ This glossary maps the Japanese domain terms used in this project to the English
 | 相対変位応答 | relative displacement response | Displacement of a node relative to the base. |
 | 履歴 | history / time history | Time-domain sequence of a response quantity. |
 | 包絡値 | envelope value | Maximum or minimum of a quantity over the analysis duration. |
+| 対数減衰率 | logarithmic decrement | Ratio of successive peak amplitudes in damped free vibration, delta = (2 * pi * xi) / sqrt(1 - xi^2). |
+| 動的増幅率 | dynamic amplification factor | Steady-state amplitude ratio of a damped SDOF under harmonic excitation, H(beta) = 1 / sqrt((1 - beta^2)^2 + (2 * xi * beta)^2). |
+| 擬似加速度 | pseudo acceleration | Spectral response quantity defined as omega_n^2 * u_rel; basis of response spectra. |
+| 減衰固有周期 | damped natural period | T_d = 2 * pi / (omega_n * sqrt(1 - xi^2)) for underdamped SDOF. |
+| ゼロクロス | zero crossing | Time at which a response history crosses zero; used to measure natural period. |
+| エネルギー漂流 | energy drift | Cumulative change in total mechanical energy caused by numerical integration error. |
 | 直接積分法の安定性 | stability of direct integration | Property of the time-stepping method with respect to numerical error growth. |
 | エネルギー釣合 | energy balance | Sum of kinetic, potential, and dissipated energy compared with input energy. |
 
