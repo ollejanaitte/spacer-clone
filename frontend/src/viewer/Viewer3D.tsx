@@ -30,6 +30,7 @@ export function Viewer3D({
   onSelectedEigenModeChange = () => undefined,
   onSelectedResponseSpectrumResultChange = () => undefined,
   onViewerError,
+  timeHistoryNodeOverride = null,
   compareProject,
   rightResult = null,
   initialCompareMode = false,
@@ -175,6 +176,7 @@ export function Viewer3D({
     spacerAxisSwap,
     animationOptions,
     onInitializationError: handleInitializationError,
+    timeHistoryNodeOverride,
   };
   const gpuMode = getGpuModeLabel();
 

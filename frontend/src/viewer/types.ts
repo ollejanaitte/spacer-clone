@@ -1,4 +1,4 @@
-import type { SpacerAxisSwap } from "./coordinateTransform";
+﻿import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
@@ -50,6 +50,13 @@ export type Viewer3DProps = {
   onSelectedEigenModeChange?: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange?: (resultKey: ResponseSpectrumSelection) => void;
   onViewerError?: (message: string) => void;
+  /**
+   * Optional time-history deformation override. When set and the
+   * 3D viewer is rendering, the override takes priority over the
+   * eigen / demo animation. The override is computed by the time
+   * history animation layer and never mutates the project payload.
+   */
+  timeHistoryNodeOverride?: Map<string, { x: number; y: number; z: number }> | null;
   /**
    * Optional second bridge project shown side-by-side in Compare mode.
    * The default CompareShell uses it to render the B-plan (suspended

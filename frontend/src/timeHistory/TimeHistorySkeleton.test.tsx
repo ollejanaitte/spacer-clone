@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
@@ -8,6 +8,7 @@ import { createDefaultProject } from "../data/defaultProject";
 import { ja } from "../i18n/ja";
 import type { AnalysisResult, ProjectModel } from "../types";
 import { ResultsPanel } from "../components/ResultsPanel";
+import { H24_WAVEFORM_NAMES } from "./h24GroundMotionImport";
 import { GroundMotionManagerPanel } from "./GroundMotionManagerPanel";
 import { TimeHistoryResultViewer } from "./TimeHistoryResultViewer";
 import { TimeHistorySettingsPanel } from "./TimeHistorySettingsPanel";
@@ -234,6 +235,567 @@ describe("Time History minimal editing", () => {
     expect(loaded.groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
   });
 });
+describe("Time History ground motion CSV import", () => {
+  function csvFile(name: string, contents: string): File {
+    return new File([contents], name, { type: "text/csv" });
+  }
+
+  function inputByLabel(label: string): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+    if (!element) throw new Error(`Input not found: ${label}`);
+    return element;
+  }
+
+  function setCsvInputValue(file: File) {
+    const fileInput = inputByLabel(ja.timeHistory.groundMotionManager.importFileLabel);
+    Object.defineProperty(fileInput, "files", {
+      configurable: true,
+      value: [file],
+    });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  it("imports a one-column CSV with a header into the first ground motion", async () => {
+    const project = timeHistoryProject();
+    const before = JSON.parse(JSON.stringify(project)) as ProjectModel;
+    const harness = renderEditingHarness(project);
+    setCsvInputValue(csvFile("elcentro.csv", "acceleration\n0.0\n12.3\n-5.2\n0.0\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("elcentro.csv");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0.0, 12.3, -5.2, 0.0]);
+    expect(harness.current().groundMotions?.[0]?.id).toBe(before.groundMotions?.[0]?.id);
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBe(before.groundMotions?.[0]?.timeStep);
+  });
+
+  it("imports a one-column CSV without a header", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("noheader.csv", "1.0\n2.0\n3.0"));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+    });
+  });
+
+  it('imports a two-column CSV and estimates the time step', async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile('two_col.csv', 'time,acceleration\n0.00,0.0\n0.05,12.3\n0.10,-5.2\n'));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([0.0, 12.3, -5.2]);
+    });
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.05, 9);
+    expect(harness.current().groundMotions?.[0]?.duration).toBeCloseTo(0.1, 9);
+  });
+
+  it("rejects non-numeric tokens and surfaces an error", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("bad.csv", "time,acceleration\n0.0,1.0\n0.05,NaN\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain(ja.timeHistory.groundMotionManager.importErrorNonFinite({
+        line: 3,
+        column: 2,
+        token: "NaN",
+      }));
+    });
+    // samples should remain at the original values
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects inconsistent time steps and surfaces an error", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("badtimestep.csv", "time,acceleration\n0.0,1.0\n0.05,2.0\n0.5,3.0\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("4行目に不一致な時間刻み");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects an empty file", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("empty.csv", ""));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain(ja.timeHistory.groundMotionManager.importErrorEmpty);
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects an unsupported column count", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("threecols.csv", "a,b,c\n1,2,3\n4,5,6\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("未サポートの列数です");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("sends the imported samples to the API on Run", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("two_col.csv", "time,acceleration\n0.0,1.0\n0.05,2.0\n0.10,3.0\n"));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+    });
+
+    await clickRun();
+
+    const body = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body ?? "{}")) as { project: ProjectModel };
+    expect(body.project.groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+  });
+});
+
+function waitFor(callback: () => void | Promise<void>): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const maxAttempts = 50;
+    const check = async () => {
+      attempts += 1;
+      try {
+        await callback();
+        resolve();
+      } catch (error) {
+        if (attempts >= maxAttempts) {
+          reject(error);
+        } else {
+          window.setTimeout(check, 10);
+        }
+      }
+    };
+    check();
+  });
+}
+
+describe("Time History ground motion CSV practical improvements", () => {
+  it("renders gal label as gal (cm/s^2)", () => {
+    const harness = renderTimeHistoryPanel_(timeHistoryProject());
+    expect(document.body.textContent).toContain("gal (cm/s²)");
+  });
+  it("renders m/s^2 label as m/s²", () => {
+    const harness = renderTimeHistoryPanel_(timeHistoryProject());
+    expect(document.body.textContent).toContain("m/s²");
+  });
+  it("shows sample status ok when sample count matches", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.1;
+      project.groundMotions[0].samples = [0, 1, 0];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数 OK");
+  });
+  it("shows short warning when sample count is below expected", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.2;
+      project.groundMotions[0].samples = [0, 1, 0];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数不足");
+    expect(document.body.textContent).toContain("必要 5");
+    expect(document.body.textContent).toContain("現在 3");
+  });
+  it("shows long warning when sample count is above expected", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.05;
+      project.groundMotions[0].samples = [0, 1, 2, 3];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数過剰");
+  });
+  it("shows the preview summary with max / min / abs max", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].samples = [0, 5, -3, 2];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("max:");
+    expect(document.body.textContent).toContain("min:");
+    expect(document.body.textContent).toContain("abs max:");
+  });
+  it("parse error includes line and column", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    const file = new File(["time,acceleration\n0.0,1.0\n0.05,NaN\n"], "bad.csv", { type: "text/csv" });
+    const fileInput = document.querySelector('input[aria-label="' + ja.timeHistory.groundMotionManager.importFileLabel + '"]');
+    if (!fileInput) throw new Error("CSV file input not found");
+    Object.defineProperty(fileInput, "files", { configurable: true, value: [file] });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("3行目2列目");
+    });
+  });
+});
+describe("Time History H24 ground motion import", () => {
+  function csvFile(name: string, contents: string) {
+    return new File([contents], name, { type: "text/csv" });
+  }
+  function inputByLabel(label: string) {
+    const element = document.querySelector('input[aria-label="' + label + '"]');
+    if (!element) throw new Error("Input not found: " + label);
+    return element;
+  }
+  function setH24InputValue(file: File) {
+    const fileInput = inputByLabel(ja.timeHistory.groundMotionManager.importH24FileLabel);
+    Object.defineProperty(fileInput, "files", { configurable: true, value: [file] });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+  function buildH24Text() {
+    const header = ["時間（秒）", ...H24_WAVEFORM_NAMES].join("\t");
+    const rows = [header];
+    for (let index = 0; index < 5; index += 1) {
+      const time = (index * 0.01).toFixed(2);
+      const values = H24_WAVEFORM_NAMES.map((_, waveIndex) => (index * 10 + waveIndex).toFixed(2));
+      rows.push([time, ...values].join("\t"));
+    }
+    return rows.join("\n");
+  }
+  it("imports an H24 file and lists 9 waveforms", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setH24InputValue(csvFile("h24.tsv", buildH24Text()));
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("検出波形: 9");
+    });
+    expect(document.body.textContent).toContain("Ⅱ-Ⅰ-１");
+  });
+  it("picks an H24 waveform and updates the editable ground motion", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setH24InputValue(csvFile("h24.tsv", buildH24Text()));
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("検出波形: 9");
+    });
+    const buttons = Array.from(document.querySelectorAll("button")).filter(
+      (b) => b.textContent === ja.timeHistory.groundMotionManager.h24PickerPick,
+    );
+    expect(buttons.length).toBeGreaterThan(0);
+    act(() => {
+      buttons[0].click();
+    });
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.unit).toBe("gal");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 10, 20, 30, 40]);
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.01, 9);
+  });
+});
+describe("Time History animation mode and usability", () => {
+  function renderPanelWithResult() {
+    const result = timeHistoryResult();
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={timeHistoryProject()}
+        result={result}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={() => undefined}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+  }
+  it("renders the displacement mode selector", () => {
+    renderPanelWithResult();
+    const selector = document.querySelector('select[aria-label="' + ja.timeHistory.animation.modeLabel + '"]');
+    expect(selector).toBeTruthy();
+  });
+  it("shows xyz mode by default", () => {
+    renderPanelWithResult();
+    const selector = document.querySelector('select[aria-label="' + ja.timeHistory.animation.modeLabel + '"]') as HTMLSelectElement;
+    expect(selector.value).toBe("xyz");
+  });
+  it("renders the jump-to-max button", () => {
+    renderPanelWithResult();
+    expect(document.body.textContent).toContain(ja.timeHistory.animation.jumpToMax);
+  });
+  it("renders the current time and max abs value labels", () => {
+    renderPanelWithResult();
+    expect(document.body.textContent).toContain("abs max:");
+  });
+});
+describe("Time History result persistence", () => {
+  it("persists a successful time history result into project.analysisResults.timeHistory", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    const project = timeHistoryProject();
+    delete project.analysisResults;
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    expect(latest.analysisResults?.timeHistory?.meta?.analysisId).toBe("th-mock");
+    expect(latest.analysisResults?.timeHistory?.displacements?.N2_ux).toEqual([0, 0.1, 0]);
+  });
+  it("does not overwrite the persisted result on a failed envelope", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ result: timeHistoryResult() }))
+      .mockResolvedValueOnce(jsonResponse({ result: failedTimeHistoryResult() }));
+    const project = timeHistoryProject();
+    project.analysisResults = { timeHistory: timeHistoryResult().timeHistoryResult ?? null };
+    const before = JSON.parse(JSON.stringify(project.analysisResults));
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    const firstPersisted = latest.analysisResults;
+    await clickRun();
+    expect(latest.analysisResults).toEqual(firstPersisted);
+    expect(latest.analysisResults).toEqual(before);
+    void fetchMock;
+  });
+  it("does not overwrite the persisted result on a network error", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ result: timeHistoryResult() }))
+      .mockRejectedValueOnce(new Error("boom"));
+    const project = timeHistoryProject();
+    project.analysisResults = { timeHistory: timeHistoryResult().timeHistoryResult ?? null };
+    const before = JSON.parse(JSON.stringify(project.analysisResults));
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    const firstPersisted = latest.analysisResults;
+    await act(async () => {
+      try { await latest.analysisResults; } catch { /* ignored */ }
+    });
+    await clickRun();
+    expect(latest.analysisResults).toEqual(firstPersisted);
+    expect(latest.analysisResults).toEqual(before);
+    void fetchMock;
+  });
+});
+describe("Time History deformation animation", () => {
+  function animationHeading(): HTMLElement {
+    const element = [...document.querySelectorAll("h3")].find(
+      (item) => item.textContent === ja.timeHistory.animation.heading,
+    );
+    if (!element) throw new Error("Animation heading not found");
+    return element;
+  }
+
+  function slider(): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(
+      '.time-history-animation-slider input[type="range"]',
+    );
+    if (!element) throw new Error("Animation slider not found");
+    return element;
+  }
+
+  function displacementScaleInput(): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(
+      'input[aria-label="' + ja.timeHistory.animation.displacementScaleLabel + '"]',
+    );
+    if (!element) throw new Error("Displacement scale input not found");
+    return element;
+  }
+
+  function setSliderValue(value: number) {
+    const element = slider();
+    act(() => {
+      setNativeValue(element, String(value));
+      element.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  function setDisplacementScale(value: string) {
+    const element = displacementScaleInput();
+    act(() => {
+      setNativeValue(element, value);
+      element.dispatchEvent(new Event("input", { bubbles: true }));
+      element.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  it("renders the animation heading even without a result", () => {
+    render(<TimeHistoryResultViewer />);
+    expect(animationHeading().textContent).toBe(ja.timeHistory.animation.heading);
+    expect(document.body.textContent).toContain(ja.timeHistory.animation.disabledNoResult);
+  });
+
+  it("enables the controls when a valid result is provided", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    expect(slider().disabled).toBe(false);
+    expect(displacementScaleInput().disabled).toBe(false);
+  });
+
+  it("disables the controls when the result has no displacement data", () => {
+    const result = timeHistoryResult();
+    const noDisplacement = {
+      ...result.timeHistoryResult!,
+      displacements: {},
+    };
+    render(<TimeHistoryResultViewer result={noDisplacement} status="success" />);
+    expect(slider().disabled).toBe(true);
+    expect(displacementScaleInput().disabled).toBe(true);
+  });
+
+  it("changing the slider updates the current time index", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setSliderValue(2);
+    expect(slider().value).toBe("2");
+  });
+
+  it("reset returns the current time index to zero", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setSliderValue(2);
+    act(() => {
+      const resetButton = [...document.querySelectorAll("button")]
+        .find((b) => b.textContent === ja.timeHistory.animation.reset);
+      resetButton?.click();
+    });
+    expect(slider().value).toBe("0");
+  });
+
+  it("changing the displacement scale updates the value", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setDisplacementScale("200");
+    expect(displacementScaleInput().value).toBe("200");
+  });
+
+  it("reports a deformed position override to the parent", async () => {
+    const overrides: Array<Map<string, { x: number; y: number; z: number }> | null> = [];
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+        onOverrideChange={(override) => overrides.push(override)}
+      />,
+    );
+    await waitFor(() => {
+      const last = overrides[overrides.length - 1];
+      expect(last).not.toBeNull();
+    });
+    const last = overrides[overrides.length - 1];
+    expect(last).not.toBeNull();
+    // The override is keyed by nodeId; the test project has 10 nodes
+    // (G0..G5 + B1..B4) so the override map should be at least 10.
+    const map = last as Map<string, { x: number; y: number; z: number }>;
+    expect(map.size).toBeGreaterThanOrEqual(10);
+  });
+
+  it("reports null when there is no time history result", async () => {
+    const overrides: Array<Map<string, { x: number; y: number; z: number }> | null> = [];
+    render(
+      <TimeHistoryResultViewer
+        result={null}
+        project={timeHistoryProject()}
+        onOverrideChange={(override) => overrides.push(override)}
+      />,
+    );
+    await waitFor(() => {
+      const last = overrides[overrides.length - 1];
+      expect(last).toBeNull();
+    });
+  });
+});
 
 describe("Time History basic chart", () => {
   it("renders a chart for displacement", () => {
@@ -446,6 +1008,7 @@ function render(node: ReactNode) {
   });
 }
 
+function renderTimeHistoryPanel_(project: ProjectModel) { renderTimeHistoryPanel(project); }
 function renderTimeHistoryPanel(project: ProjectModel) {
   render(
     <ResultsPanel
