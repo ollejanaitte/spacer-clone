@@ -10,6 +10,13 @@ import { openResultPdfReport } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
 import { BridgeWizard } from "./bridge/BridgeWizard";
+import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
+import {
+  ResultSummaryCard,
+} from "./timeHistory/wizard/ResultSummaryCard";
+import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
+import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
+import { ja } from "./i18n/ja";
 import type { BridgeFemResponse } from "./bridge/types";
 import { bridgeProjectToProjectModel } from "./bridge/conversion";
 import type {
@@ -52,6 +59,7 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
+  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(false);
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
 
@@ -405,7 +413,13 @@ export function App() {
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
+        onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
       />
+      <div className="time-history-wizard-entry" aria-label={ja.timeHistoryWizard.openButton}>
+        <StatusBadge status={selectTimeHistoryMainStatus(project, project.analysisResults?.timeHistory ?? null, { hasResult: Boolean(project.analysisResults?.timeHistory) })} />
+        <ResultSummaryCard result={project.analysisResults?.timeHistory ?? null} />
+        <p className="time-history-wizard-description">{ja.timeHistoryWizard.descriptionText}</p>
+      </div>
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>
           {validationNotice.text}
@@ -462,6 +476,14 @@ export function App() {
         open={bridgeWizardOpen}
         onClose={() => setBridgeWizardOpen(false)}
         onCommit={handleBridgeGenerated}
+      />
+      <TimeHistoryWizardModal
+        open={timeHistoryWizardOpen}
+        project={project}
+        result={result?.analysisSummary.analysisType === "time_history" ? result.timeHistoryResult ?? null : null}
+        onProjectChange={commitProject}
+        onAnimationOverrideChange={setTimeHistoryNodeOverride}
+        onClose={() => setTimeHistoryWizardOpen(false)}
       />
       <ResultsPanel
         activeTab={bottomTab}

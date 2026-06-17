@@ -23,6 +23,7 @@ type ToolbarProps = {
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
   onOpenBridgeWizard: () => void;
+  onOpenTimeHistoryWizard?: () => void;
 };
 
 const t = ja.toolbar;
@@ -49,6 +50,7 @@ export function Toolbar({
   onExportResultCsv,
   onExportResultPdf,
   onOpenBridgeWizard,
+  onOpenTimeHistoryWizard,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -90,6 +92,17 @@ export function Toolbar({
             <LineChart size={16} />
             {t.bridgeWizardButton}
           </button>
+          {onOpenTimeHistoryWizard && (
+            <button
+              type="button"
+              onClick={onOpenTimeHistoryWizard}
+              title={ja.timeHistoryWizard.openButton}
+              data-testid="open-time-history-wizard"
+            >
+              <Activity size={16} />
+              {ja.timeHistoryWizard.openButton}
+            </button>
+          )}
           <button type="button" onClick={onSave} title={t.saveTitle}>
             <Save size={16} />
             {t.saveButton}
