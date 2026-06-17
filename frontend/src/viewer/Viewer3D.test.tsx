@@ -81,6 +81,56 @@ describe("Viewer3D WebGL fallback", () => {
   });
 });
 
+﻿describe("Viewer3D time history override", () => {
+  it("accepts a time history override without throwing", async () => {
+    const override = new Map<string, { x: number; y: number; z: number }>([
+      ["N1", { x: 0.1, y: 0, z: 0 }],
+    ]);
+    const onViewerError = vi.fn();
+    render(
+      <Viewer3D
+        project={createDefaultProject()}
+        result={null}
+        selectedSection="nodes"
+        selection={null}
+        activeLoadCase="LC1"
+        onSelectionChange={() => undefined}
+        onActiveLoadCaseChange={() => undefined}
+        onViewerError={onViewerError}
+        timeHistoryNodeOverride={override}
+      />,
+    );
+
+    await act(async () => undefined);
+
+    // The viewer should fall back to 2D because WebGL is mocked to fail.
+    // The important property is that passing the override does not
+    // throw and the viewer continues to render the fallback.
+    expect(document.querySelector("[data-viewer-mode='fallback2d']")).not.toBeNull();
+  });
+
+  it("accepts a null override", async () => {
+    const onViewerError = vi.fn();
+    render(
+      <Viewer3D
+        project={createDefaultProject()}
+        result={null}
+        selectedSection="nodes"
+        selection={null}
+        activeLoadCase="LC1"
+        onSelectionChange={() => undefined}
+        onActiveLoadCaseChange={() => undefined}
+        onViewerError={onViewerError}
+        timeHistoryNodeOverride={null}
+      />,
+    );
+
+    await act(async () => undefined);
+
+    expect(document.querySelector("[data-viewer-mode='fallback2d']")).not.toBeNull();
+  });
+});
+
 describe("Fallback2DViewport", () => {
   it("does not crash for an empty model", () => {
     render(<Fallback2DViewport {...fallbackProps(emptyProject())} />);

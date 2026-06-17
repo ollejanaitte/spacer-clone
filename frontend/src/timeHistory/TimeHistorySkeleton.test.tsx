@@ -371,6 +371,156 @@ function waitFor(callback: () => void | Promise<void>): Promise<void> {
   });
 }
 
+describe("Time History deformation animation", () => {
+  function animationHeading(): HTMLElement {
+    const element = [...document.querySelectorAll("h3")].find(
+      (item) => item.textContent === ja.timeHistory.animation.heading,
+    );
+    if (!element) throw new Error("Animation heading not found");
+    return element;
+  }
+
+  function slider(): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(
+      '.time-history-animation-slider input[type="range"]',
+    );
+    if (!element) throw new Error("Animation slider not found");
+    return element;
+  }
+
+  function displacementScaleInput(): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(
+      'input[aria-label="' + ja.timeHistory.animation.displacementScaleLabel + '"]',
+    );
+    if (!element) throw new Error("Displacement scale input not found");
+    return element;
+  }
+
+  function setSliderValue(value: number) {
+    const element = slider();
+    act(() => {
+      setNativeValue(element, String(value));
+      element.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  function setDisplacementScale(value: string) {
+    const element = displacementScaleInput();
+    act(() => {
+      setNativeValue(element, value);
+      element.dispatchEvent(new Event("input", { bubbles: true }));
+      element.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  it("renders the animation heading even without a result", () => {
+    render(<TimeHistoryResultViewer />);
+    expect(animationHeading().textContent).toBe(ja.timeHistory.animation.heading);
+    expect(document.body.textContent).toContain(ja.timeHistory.animation.disabledNoResult);
+  });
+
+  it("enables the controls when a valid result is provided", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    expect(slider().disabled).toBe(false);
+    expect(displacementScaleInput().disabled).toBe(false);
+  });
+
+  it("disables the controls when the result has no displacement data", () => {
+    const result = timeHistoryResult();
+    const noDisplacement = {
+      ...result.timeHistoryResult!,
+      displacements: {},
+    };
+    render(<TimeHistoryResultViewer result={noDisplacement} status="success" />);
+    expect(slider().disabled).toBe(true);
+    expect(displacementScaleInput().disabled).toBe(true);
+  });
+
+  it("changing the slider updates the current time index", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setSliderValue(2);
+    expect(slider().value).toBe("2");
+  });
+
+  it("reset returns the current time index to zero", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setSliderValue(2);
+    act(() => {
+      const resetButton = [...document.querySelectorAll("button")]
+        .find((b) => b.textContent === ja.timeHistory.animation.reset);
+      resetButton?.click();
+    });
+    expect(slider().value).toBe("0");
+  });
+
+  it("changing the displacement scale updates the value", () => {
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+      />,
+    );
+    setDisplacementScale("200");
+    expect(displacementScaleInput().value).toBe("200");
+  });
+
+  it("reports a deformed position override to the parent", async () => {
+    const overrides: Array<Map<string, { x: number; y: number; z: number }> | null> = [];
+    render(
+      <TimeHistoryResultViewer
+        result={timeHistoryResult().timeHistoryResult}
+        project={timeHistoryProject()}
+        status="success"
+        onOverrideChange={(override) => overrides.push(override)}
+      />,
+    );
+    await waitFor(() => {
+      const last = overrides[overrides.length - 1];
+      expect(last).not.toBeNull();
+    });
+    const last = overrides[overrides.length - 1];
+    expect(last).not.toBeNull();
+    // The override is keyed by nodeId; the test project has 10 nodes
+    // (G0..G5 + B1..B4) so the override map should be at least 10.
+    const map = last as Map<string, { x: number; y: number; z: number }>;
+    expect(map.size).toBeGreaterThanOrEqual(10);
+  });
+
+  it("reports null when there is no time history result", async () => {
+    const overrides: Array<Map<string, { x: number; y: number; z: number }> | null> = [];
+    render(
+      <TimeHistoryResultViewer
+        result={null}
+        project={timeHistoryProject()}
+        onOverrideChange={(override) => overrides.push(override)}
+      />,
+    );
+    await waitFor(() => {
+      const last = overrides[overrides.length - 1];
+      expect(last).toBeNull();
+    });
+  });
+});
+
 describe("Time History basic chart", () => {
   it("renders a chart for displacement", () => {
     render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);

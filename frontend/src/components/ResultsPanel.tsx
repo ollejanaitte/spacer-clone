@@ -29,6 +29,7 @@ type ResultsPanelProps = {
   onProjectChange: (project: ProjectModel) => void;
   onSelectedEigenModeChange: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
+  onTimeHistoryAnimationOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 };
 
 type ResultTablesProps = {
@@ -76,6 +77,7 @@ export function ResultsPanel({
   onProjectChange,
   onSelectedEigenModeChange,
   onSelectedResponseSpectrumResultChange,
+  onTimeHistoryAnimationOverrideChange,
 }: ResultsPanelProps) {
   return (
     <section className="bottom-panel">
@@ -104,7 +106,7 @@ export function ResultsPanel({
             onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
           />
         )}
-        {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} onProjectChange={onProjectChange} />}
+        {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} onProjectChange={onProjectChange} onAnimationOverrideChange={onTimeHistoryAnimationOverrideChange} />}
         {activeTab === "errors" && <MessageTable messages={errors} empty={ja.resultsPanel.errorsEmpty} />}
         {activeTab === "warnings" && <MessageTable messages={warnings} empty={ja.resultsPanel.warningsEmpty} />}
         {activeTab === "logs" && (
@@ -128,10 +130,12 @@ function TimeHistoryWorkspace({
   project,
   result,
   onProjectChange,
+  onAnimationOverrideChange,
 }: {
   project: ProjectModel;
   result: AnalysisResult | null;
   onProjectChange: (project: ProjectModel) => void;
+  onAnimationOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 }) {
   const timeHistoryAnalysis = useTimeHistoryAnalysis();
   const latestResult = timeHistoryAnalysis.result ?? (result?.analysisSummary.analysisType === "time_history" ? result : null);
@@ -156,11 +160,13 @@ function TimeHistoryWorkspace({
       <GroundMotionManagerPanel project={project} onChange={onProjectChange} />
       <TimeHistoryResultViewer
         result={latestResult?.timeHistoryResult ?? null}
+        project={project}
         status={status}
         error={timeHistoryAnalysis.error ?? latestResult?.errors[0] ?? null}
+        onOverrideChange={onAnimationOverrideChange}
       />
-    </div>
-  );
+      </div>
+  )
 }
 
 function ResultTablesContent({

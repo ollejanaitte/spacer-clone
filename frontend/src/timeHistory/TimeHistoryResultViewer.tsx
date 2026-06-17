@@ -1,11 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { ja } from "../i18n/ja";
-import type { StructuredMessage, TimeHistoryResult } from "../types";
+import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../types";
+import { TimeHistoryAnimationProvider } from "./TimeHistoryAnimationContext";
+import { TimeHistoryAnimationControls } from "./TimeHistoryAnimationControls";
+import { useTimeHistoryAnimationState } from "./useTimeHistoryAnimationState";
 
 type TimeHistoryResultViewerProps = {
   result?: TimeHistoryResult | null;
+  project?: ProjectModel | null;
   status?: string;
   error?: StructuredMessage | null;
+  onOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 };
 
 const responseKeys: Array<keyof Pick<TimeHistoryResult, "displacements" | "velocities" | "accelerations">> = [
@@ -23,7 +28,13 @@ const seriesResultKey: Record<TimeHistorySeries, (typeof responseKeys)[number]> 
   acceleration: "accelerations",
 };
 
-export function TimeHistoryResultViewer({ result = null, status, error = null }: TimeHistoryResultViewerProps) {
+export function TimeHistoryResultViewer({
+  result = null,
+  project = null,
+  status,
+  error = null,
+  onOverrideChange,
+}: TimeHistoryResultViewerProps) {
   const labels = ja.timeHistory.resultViewer;
   const meta = result?.meta;
   const responseKeyOptions = useMemo(() => responseHistoryKeys(result), [result]);
@@ -41,121 +52,188 @@ export function TimeHistoryResultViewer({ result = null, status, error = null }:
   }, [responseKeyOptions]);
 
   return (
-    <section className="result-table time-history-result-viewer" aria-label={labels.heading}>
-      <h3>{labels.heading}</h3>
-      <div className="summary-list">
-        <span>{labels.summary.status}: {statusLabel(status ?? meta?.status)}</span>
-        <span>{labels.summary.sampleCount}: {formatNumber(meta?.sampleCount)}</span>
-        <span>{labels.summary.timeStep}: {formatNumber(meta?.timeStep)} {ja.timeHistory.units.seconds}</span>
-        <span>{labels.summary.duration}: {formatNumber(meta?.duration)} {ja.timeHistory.units.seconds}</span>
-        <span>{labels.summary.analysisId}: {meta?.analysisId ?? "-"}</span>
-        <span>{labels.summary.method}: {meta?.method ?? "-"}</span>
-        <span>{labels.summary.availableKeysCount}: {responseKeyOptions.length}</span>
-        <span>{labels.summary.firstKey}: {firstResponseKey ?? "-"}</span>
-        <span>{labels.selectedKey}: {selectedKey || "-"}</span>
-        <span>{labels.selectedSeries}: {seriesLabel(selectedSeries)}</span>
-        <span>{labels.totalSamples}: {tableRows.length}</span>
-        <span>{labels.displayedSamples}: {displayedRows.length}</span>
-      </div>
-      {error && (
-        <div className="summary-list time-history-error-summary">
-          <span>{ja.timeHistory.error.code}: {error.code}</span>
-          <span>{ja.timeHistory.error.path}: {error.path ?? "-"}</span>
-          <span>{ja.timeHistory.error.message}: {error.code === "TIME_HISTORY_NETWORK_ERROR" ? ja.timeHistory.error.network : error.message}</span>
-        </div>
-      )}
-      <div className="summary-list result-toolbar">
-        <label className="result-select">
-          <span>{labels.responseKeyLabel}</span>
-          <select
-            value={selectedKey}
-            disabled={responseKeyOptions.length === 0}
-            onChange={(event) => setSelectedKey(event.currentTarget.value)}
-          >
-            {responseKeyOptions.length === 0 ? (
-              <option value="">{labels.noResult}</option>
-            ) : (
-              responseKeyOptions.map((key) => (
-                <option key={key} value={key}>
-                  {key}
-                </option>
-              ))
-            )}
-          </select>
-        </label>
-        <label className="result-select">
-          <span>{labels.dofLabel}</span>
-          <select disabled value="">
-            <option value="">{labels.dofPlaceholder}</option>
-          </select>
-        </label>
-      </div>
-      <div className="series-picker" aria-label={labels.seriesLabel}>
-        <label>
-          <input
-            type="radio"
-            name="time-history-series"
-            checked={selectedSeries === "displacement"}
-            onChange={() => setSelectedSeries("displacement")}
-          />
-          <span>{labels.seriesDisplacement}</span>
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="time-history-series"
-            checked={selectedSeries === "velocity"}
-            onChange={() => setSelectedSeries("velocity")}
-          />
-          <span>{labels.seriesVelocity}</span>
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="time-history-series"
-            checked={selectedSeries === "acceleration"}
-            onChange={() => setSelectedSeries("acceleration")}
-          />
-          <span>{labels.seriesAcceleration}</span>
-        </label>
-      </div>
-      <div className="summary-list">
-        <span>{labels.availableKeys}: {responseKeyOptions.length > 0 ? responseKeyOptions.join(", ") : "-"}</span>
-      </div>
-      <TimeHistoryChart
-        rows={tableRows}
-        selectedKey={selectedKey}
-        selectedSeries={selectedSeries}
-        hasResult={Boolean(result)}
-      />
-      {hasTable ? (
-        <div className="result-table">
-          <table>
-            <thead>
-              <tr>
-                <th>{labels.table.time}</th>
-                <th>{labels.table.value}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedRows.map((row, index) => (
-                <tr key={index}>
-                  <td>{formatTableTime(row.time)}</td>
-                  <td>{formatTableValue(row.value)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="summary-list">
-            <span>{labels.table.showing(displayedRows.length, tableRows.length)}</span>
-          </div>
-        </div>
-      ) : (
-        <div className="empty-state">{labels.noResult}</div>
-      )}
-    </section>
+    <TimeHistoryResultViewerBody
+      result={result}
+      project={project}
+      status={status}
+      error={error}
+      labels={labels}
+      meta={meta}
+      responseKeyOptions={responseKeyOptions}
+      firstResponseKey={firstResponseKey}
+      selectedKey={selectedKey}
+      onSelectedKeyChange={setSelectedKey}
+      selectedSeries={selectedSeries}
+      onSelectedSeriesChange={setSelectedSeries}
+      tableRows={tableRows}
+      displayedRows={displayedRows}
+      hasTable={hasTable}
+      onOverrideChange={onOverrideChange}
+    />
   );
 }
+
+type BodyProps = {
+  result: TimeHistoryResult | null;
+  project: ProjectModel | null;
+  status: string | undefined;
+  error: StructuredMessage | null;
+  labels: typeof ja.timeHistory.resultViewer;
+  meta?: TimeHistoryResult["meta"];
+  responseKeyOptions: string[];
+  firstResponseKey: string | null;
+  selectedKey: string;
+  onSelectedKeyChange: (key: string) => void;
+  selectedSeries: TimeHistorySeries;
+  onSelectedSeriesChange: (series: TimeHistorySeries) => void;
+  tableRows: Array<{ time: number; value: number }>;
+  displayedRows: Array<{ time: number; value: number }>;
+  hasTable: boolean;
+  onOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
+};
+
+function TimeHistoryResultViewerBody(props: BodyProps) {
+  // The animation state is owned here so the controls and the 3D
+  // viewer can read the derived override. When the project is not
+  // available (e.g. the result viewer is used in isolation in a
+  // test), the controls still render but the override is null.
+  const animation = useTimeHistoryAnimationState({
+    project: props.project,
+    result: props.result,
+  });
+  // Report the override upward so the 3D viewer can consume it.
+  // We compare by reference; the override map is recomputed
+  // whenever the active time index or the scale changes.
+  const onOverrideChange = props.onOverrideChange;
+  useEffect(() => {
+    onOverrideChange?.(animation.override);
+  }, [animation.override, onOverrideChange]);
+  return (
+    <TimeHistoryAnimationProvider
+      project={props.project}
+      result={props.result}
+      state={animation.state}
+      setters={animation.setters}
+      reset={animation.reset}
+    >
+      <section className="result-table time-history-result-viewer" aria-label={props.labels.heading}>
+        <h3>{props.labels.heading}</h3>
+        <div className="summary-list">
+          <span>{props.labels.summary.status}: {statusLabel(props.status ?? props.meta?.status)}</span>
+          <span>{props.labels.summary.sampleCount}: {formatNumber(props.meta?.sampleCount)}</span>
+          <span>{props.labels.summary.timeStep}: {formatNumber(props.meta?.timeStep)} {ja.timeHistory.units.seconds}</span>
+          <span>{props.labels.summary.duration}: {formatNumber(props.meta?.duration)} {ja.timeHistory.units.seconds}</span>
+          <span>{props.labels.summary.analysisId}: {props.meta?.analysisId ?? "-"}</span>
+          <span>{props.labels.summary.method}: {props.meta?.method ?? "-"}</span>
+          <span>{props.labels.summary.availableKeysCount}: {props.responseKeyOptions.length}</span>
+          <span>{props.labels.summary.firstKey}: {props.firstResponseKey ?? "-"}</span>
+          <span>{props.labels.selectedKey}: {props.selectedKey || "-"}</span>
+          <span>{props.labels.selectedSeries}: {seriesLabel(props.selectedSeries)}</span>
+          <span>{props.labels.totalSamples}: {props.tableRows.length}</span>
+          <span>{props.labels.displayedSamples}: {props.displayedRows.length}</span>
+        </div>
+        {props.error && (
+          <div className="summary-list time-history-error-summary">
+            <span>{ja.timeHistory.error.code}: {props.error.code}</span>
+            <span>{ja.timeHistory.error.path}: {props.error.path ?? "-"}</span>
+            <span>{ja.timeHistory.error.message}: {props.error.code === "TIME_HISTORY_NETWORK_ERROR" ? ja.timeHistory.error.network : props.error.message}</span>
+          </div>
+        )}
+        <div className="summary-list result-toolbar">
+          <label className="result-select">
+            <span>{props.labels.responseKeyLabel}</span>
+            <select
+              value={props.selectedKey}
+              disabled={props.responseKeyOptions.length === 0}
+              onChange={(event) => props.onSelectedKeyChange(event.currentTarget.value)}
+            >
+              {props.responseKeyOptions.length === 0 ? (
+                <option value="">{props.labels.noResult}</option>
+              ) : (
+                props.responseKeyOptions.map((key) => (
+                  <option key={key} value={key}>
+                    {key}
+                  </option>
+                ))
+              )}
+            </select>
+          </label>
+          <label className="result-select">
+            <span>{props.labels.dofLabel}</span>
+            <select disabled value="">
+              <option value="">{props.labels.dofPlaceholder}</option>
+            </select>
+          </label>
+        </div>
+        <div className="series-picker" aria-label={props.labels.seriesLabel}>
+          <label>
+            <input
+              type="radio"
+              name="time-history-series"
+              checked={props.selectedSeries === "displacement"}
+              onChange={() => props.onSelectedSeriesChange("displacement")}
+            />
+            <span>{props.labels.seriesDisplacement}</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="time-history-series"
+              checked={props.selectedSeries === "velocity"}
+              onChange={() => props.onSelectedSeriesChange("velocity")}
+            />
+            <span>{props.labels.seriesVelocity}</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="time-history-series"
+              checked={props.selectedSeries === "acceleration"}
+              onChange={() => props.onSelectedSeriesChange("acceleration")}
+            />
+            <span>{props.labels.seriesAcceleration}</span>
+          </label>
+        </div>
+        <div className="summary-list">
+          <span>{props.labels.availableKeys}: {props.responseKeyOptions.length > 0 ? props.responseKeyOptions.join(", ") : "-"}</span>
+        </div>
+        <TimeHistoryChart
+          rows={props.tableRows}
+          selectedKey={props.selectedKey}
+          selectedSeries={props.selectedSeries}
+          hasResult={Boolean(props.result)}
+        />
+        {props.hasTable ? (
+          <div className="result-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>{props.labels.table.time}</th>
+                  <th>{props.labels.table.value}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {props.displayedRows.map((row, index) => (
+                  <tr key={index}>
+                    <td>{formatTableTime(row.time)}</td>
+                    <td>{formatTableValue(row.value)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="summary-list">
+              <span>{props.labels.table.showing(props.displayedRows.length, props.tableRows.length)}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="empty-state">{props.labels.noResult}</div>
+        )}
+        <TimeHistoryAnimationControls />
+      </section>
+    </TimeHistoryAnimationProvider>
+  );
+}
+
 
 function TimeHistoryChart({
   rows,
@@ -169,18 +247,16 @@ function TimeHistoryChart({
   hasResult: boolean;
 }) {
   const labels = ja.timeHistory.resultViewer.chart;
-  const points = downsampleRows(rows, maxChartPoints);
-  const width = 760;
-  const height = 220;
-  const padding = 30;
-  const values = points.map((point) => point.value);
-  const times = points.map((point) => point.time);
-  const minValue = Math.min(...values, 0);
-  const maxValue = Math.max(...values, 0);
-  const minTime = Math.min(...times, 0);
-  const maxTime = Math.max(...times, 0);
-  const valueSpan = maxValue - minValue || 1;
-  const timeSpan = maxTime - minTime || 1;
+  const points = useMemo(() => downsampleRows(rows, maxChartPoints), [rows]);
+  const minTime = points.length > 0 ? points[0].time : 0;
+  const maxTime = points.length > 0 ? points[points.length - 1].time : 0;
+  const minValue = points.length > 0 ? Math.min(...points.map((p) => p.value), 0) : 0;
+  const maxValue = points.length > 0 ? Math.max(...points.map((p) => p.value), 0) : 0;
+  const valueSpan = maxValue - minValue === 0 ? 1 : maxValue - minValue;
+  const timeSpan = maxTime - minTime === 0 ? 1 : maxTime - minTime;
+  const width = 320;
+  const height = 160;
+  const padding = 16;
   const polylinePoints = points
     .map((point) => {
       const x = padding + ((point.time - minTime) / timeSpan) * (width - 2 * padding);

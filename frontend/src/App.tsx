@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
@@ -52,6 +52,7 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
+  const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
 
   const selection: ViewerSelection = selectedNode
@@ -82,6 +83,7 @@ export function App() {
     setSelectedNode(null);
     setSelectedMember(null);
     setActiveLoadCase(nextProject.loadCases[0]?.id ?? "");
+    setTimeHistoryNodeOverride(null);
   };
 
   const log = (message: string) => {
@@ -447,6 +449,7 @@ export function App() {
           onSelectedEigenModeChange={setSelectedEigenMode}
           onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
           onViewerError={handleViewerError}
+          timeHistoryNodeOverride={timeHistoryNodeOverride}
         />
         <PropertyPanel
           project={project}
@@ -476,6 +479,7 @@ export function App() {
         onProjectChange={commitProject}
         onSelectedEigenModeChange={setSelectedEigenMode}
         onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
+        onTimeHistoryAnimationOverrideChange={setTimeHistoryNodeOverride}
       />
     </div>
   );

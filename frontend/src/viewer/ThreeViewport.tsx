@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+﻿import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
@@ -203,7 +203,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     if (!context) return;
     const override = animationOverrideFor(props, effectiveClockSeconds);
     rebuildModelScene(context.groups, props, override);
-  }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo]);
+  }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo, props.timeHistoryNodeOverride]);
 
   useEffect(() => {
     const context = contextRef.current;
@@ -222,6 +222,13 @@ function animationOverrideFor(
   props: ThreeViewportProps,
   clockSeconds: number | null,
 ): Map<string, { x: number; y: number; z: number }> | null {
+  // Time history deformation override takes priority over the eigen /
+  // demo animation. The override is a transient, display-only value
+  // computed by the time history animation layer; it never mutates
+  // the project payload or the existing animation options.
+  if (props.timeHistoryNodeOverride && props.timeHistoryNodeOverride.size > 0) {
+    return props.timeHistoryNodeOverride;
+  }
   if (!props.animationOptions) return null;
   if (!props.animationOptions.enabled) return null;
   if (clockSeconds === null || clockSeconds === undefined) return null;
