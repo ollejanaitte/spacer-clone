@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
@@ -234,6 +234,142 @@ describe("Time History minimal editing", () => {
     expect(loaded.groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
   });
 });
+describe("Time History ground motion CSV import", () => {
+  function csvFile(name: string, contents: string): File {
+    return new File([contents], name, { type: "text/csv" });
+  }
+
+  function inputByLabel(label: string): HTMLInputElement {
+    const element = document.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+    if (!element) throw new Error(`Input not found: ${label}`);
+    return element;
+  }
+
+  function setCsvInputValue(file: File) {
+    const fileInput = inputByLabel(ja.timeHistory.groundMotionManager.importFileLabel);
+    Object.defineProperty(fileInput, "files", {
+      configurable: true,
+      value: [file],
+    });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  it("imports a one-column CSV with a header into the first ground motion", async () => {
+    const project = timeHistoryProject();
+    const before = JSON.parse(JSON.stringify(project)) as ProjectModel;
+    const harness = renderEditingHarness(project);
+    setCsvInputValue(csvFile("elcentro.csv", "acceleration\n0.0\n12.3\n-5.2\n0.0\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("elcentro.csv");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0.0, 12.3, -5.2, 0.0]);
+    expect(harness.current().groundMotions?.[0]?.id).toBe(before.groundMotions?.[0]?.id);
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBe(before.groundMotions?.[0]?.timeStep);
+  });
+
+  it("imports a one-column CSV without a header", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("noheader.csv", "1.0\n2.0\n3.0"));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+    });
+  });
+
+  it('imports a two-column CSV and estimates the time step', async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile('two_col.csv', 'time,acceleration\n0.00,0.0\n0.05,12.3\n0.10,-5.2\n'));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([0.0, 12.3, -5.2]);
+    });
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.05, 9);
+    expect(harness.current().groundMotions?.[0]?.duration).toBeCloseTo(0.1, 9);
+  });
+
+  it("rejects non-numeric tokens and surfaces an error", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("bad.csv", "time,acceleration\n0.0,1.0\n0.05,NaN\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain(ja.timeHistory.groundMotionManager.importErrorNonFinite({
+        line: 3,
+        token: "NaN",
+      }));
+    });
+    // samples should remain at the original values
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects inconsistent time steps and surfaces an error", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("badtimestep.csv", "time,acceleration\n0.0,1.0\n0.05,2.0\n0.5,3.0\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("4行目に不一致な時間刻み");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects an empty file", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("empty.csv", ""));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain(ja.timeHistory.groundMotionManager.importErrorEmpty);
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("rejects an unsupported column count", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("threecols.csv", "a,b,c\n1,2,3\n4,5,6\n"));
+
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("未サポートの列数です");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("sends the imported samples to the API on Run", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    const harness = renderEditingHarness(timeHistoryProject());
+    setCsvInputValue(csvFile("two_col.csv", "time,acceleration\n0.0,1.0\n0.05,2.0\n0.10,3.0\n"));
+
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+    });
+
+    await clickRun();
+
+    const body = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body ?? "{}")) as { project: ProjectModel };
+    expect(body.project.groundMotions?.[0]?.samples).toEqual([1.0, 2.0, 3.0]);
+  });
+});
+
+function waitFor(callback: () => void | Promise<void>): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const maxAttempts = 50;
+    const check = async () => {
+      attempts += 1;
+      try {
+        await callback();
+        resolve();
+      } catch (error) {
+        if (attempts >= maxAttempts) {
+          reject(error);
+        } else {
+          window.setTimeout(check, 10);
+        }
+      }
+    };
+    check();
+  });
+}
 
 describe("Time History basic chart", () => {
   it("renders a chart for displacement", () => {
