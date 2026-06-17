@@ -10,7 +10,19 @@ import type {
 
 const endpoint = "/api/analysis/time-history";
 
-export function useTimeHistoryAnalysis() {
+export type UseTimeHistoryAnalysisOptions = {
+  /**
+   * Optional callback invoked when a successful envelope is
+   * received. The callback receives the freshly parsed envelope.
+   * It is intentionally not invoked on failed envelopes or
+   * network errors so the caller can keep the previously persisted
+   * block.
+   */
+  onSuccess?: (result: TimeHistoryAnalysisEnvelope) => void;
+};
+
+export function useTimeHistoryAnalysis(options: UseTimeHistoryAnalysisOptions = {}) {
+  const { onSuccess } = options;
   const [state, setState] = useState<TimeHistoryHookState>({
     loading: false,
     result: null,
@@ -35,13 +47,21 @@ export function useTimeHistoryAnalysis() {
       const failedEnvelope = result.analysisSummary.status === "failed";
       const error = failedEnvelope ? result.errors[0] ?? envelopeError() : null;
       setState({ loading: false, result, error });
+      if (!failedEnvelope) {
+        try {
+          onSuccess?.(result);
+        } catch (callbackError) {
+          // Callbacks are user-supplied; swallow their errors so the
+          // hook still resolves with the parsed envelope.
+        }
+      }
       return result;
     } catch (error) {
       const structured = toStructuredMessage(error);
       setState({ loading: false, result: null, error: structured });
       throw error;
     }
-  }, []);
+  }, [onSuccess]);
 
   const reset = useCallback(() => {
     setState({ loading: false, result: null, error: null });

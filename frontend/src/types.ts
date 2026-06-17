@@ -176,6 +176,10 @@ export type ProjectModel = {
     samples: number[];
   }>;
   analysisSettings: AnalysisSettings;
+  /** Persisted latest results. The MVP only persists the time history result. */
+  analysisResults?: {
+    timeHistory?: TimeHistoryResult | null;
+  };
 };
 
 export type StructuredMessage = {

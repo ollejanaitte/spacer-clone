@@ -492,6 +492,119 @@ describe("Time History H24 ground motion import", () => {
     expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.01, 9);
   });
 });
+describe("Time History result persistence", () => {
+  it("persists a successful time history result into project.analysisResults.timeHistory", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    const project = timeHistoryProject();
+    delete project.analysisResults;
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    expect(latest.analysisResults?.timeHistory?.meta?.analysisId).toBe("th-mock");
+    expect(latest.analysisResults?.timeHistory?.displacements?.N2_ux).toEqual([0, 0.1, 0]);
+  });
+  it("does not overwrite the persisted result on a failed envelope", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ result: timeHistoryResult() }))
+      .mockResolvedValueOnce(jsonResponse({ result: failedTimeHistoryResult() }));
+    const project = timeHistoryProject();
+    project.analysisResults = { timeHistory: timeHistoryResult().timeHistoryResult ?? null };
+    const before = JSON.parse(JSON.stringify(project.analysisResults));
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    const firstPersisted = latest.analysisResults;
+    await clickRun();
+    expect(latest.analysisResults).toEqual(firstPersisted);
+    expect(latest.analysisResults).toEqual(before);
+    void fetchMock;
+  });
+  it("does not overwrite the persisted result on a network error", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ result: timeHistoryResult() }))
+      .mockRejectedValueOnce(new Error("boom"));
+    const project = timeHistoryProject();
+    project.analysisResults = { timeHistory: timeHistoryResult().timeHistoryResult ?? null };
+    const before = JSON.parse(JSON.stringify(project.analysisResults));
+    let latest = project;
+    const onProjectChange = (next: ProjectModel) => { latest = next; };
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={project}
+        result={null}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={onProjectChange}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+    await clickRun();
+    await waitFor(() => {
+      expect(latest.analysisResults?.timeHistory).toBeDefined();
+    });
+    const firstPersisted = latest.analysisResults;
+    await act(async () => {
+      try { await latest.analysisResults; } catch { /* ignored */ }
+    });
+    await clickRun();
+    expect(latest.analysisResults).toEqual(firstPersisted);
+    expect(latest.analysisResults).toEqual(before);
+    void fetchMock;
+  });
+});
 describe("Time History deformation animation", () => {
   function animationHeading(): HTMLElement {
     const element = [...document.querySelectorAll("h3")].find(
