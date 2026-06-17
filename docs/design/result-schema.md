@@ -1,4 +1,4 @@
-﻿# Result Schema Design
+# Result Schema Design
 
 ## 1. Purpose
 
@@ -47,7 +47,8 @@ export type AnalysisType =
   | "eigen"
   | "responseSpectrum"
   | "influenceLine"
-  | "movingLoad";
+  | "movingLoad"
+  | "timeHistory";
 
 export type AnalysisStatus = "success" | "warning" | "failed";
 
@@ -62,6 +63,7 @@ export type ResultSchema = {
   eigenResult?: EigenResult;
   responseSpectrumResult?: ResponseSpectrumResult;
   influenceLineResult?: InfluenceLineResult;
+  timeHistoryResult?: TimeHistoryResult;
   warnings: ResultMessage[];
   errors: ResultMessage[];
 };
@@ -313,3 +315,40 @@ The following new fields are added as optional to preserve backward compatibilit
 - `eigenResult.modes[].cumulativeEffectiveMassRatios`: the cumulative effective mass ratio up to and including each mode.
 
 The existing `participationFactors`, `effectiveMassRatios`, and `modalMass` do not change in meaning. The CSV output `eigen_modes.csv` includes the basic eigenvalue quantities, modal participation factors, effective masses, effective mass ratios, cumulative effective mass ratios, and total mass per direction.
+
+## 9. Linear Time History Analysis Result
+
+The Linear Time History Analysis result holds the time axis, per-node
+displacement / velocity / acceleration histories, and a meta block that
+records the analysis settings used. The block is the persisted shape
+of `analysisResults.timeHistory` and the response shape of
+`/api/analysis/time-history` (see
+[time-history-api-contract.md](time-history-api-contract.md) for the
+frozen API contract).
+
+```ts
+export type TimeHistoryMeta = {
+  analysisId: string;
+  status: "success" | "failed";
+  method: "newmark-beta" | string;
+  timeStep: number;
+  duration: number;
+  beta: number;
+  gamma: number;
+  damping: { type: "rayleigh"; alpha: number; beta: number } | object;
+  groundMotions: Array<{ id: string; direction: "X" | "Y" | "Z" | string }>;
+  sampleCount: number;
+};
+
+export type TimeHistoryResult = {
+  meta: TimeHistoryMeta;
+  time: number[];
+  displacements: Record<string, number[]>;
+  velocities: Record<string, number[]>;
+  accelerations: Record<string, number[]>;
+};
+```
+
+Key order, required fields, and the exact set of top-level keys are
+frozen in the implementation. UI consumers should consult the API
+contract document for the authoritative list.

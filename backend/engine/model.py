@@ -1,10 +1,17 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
+import copy
 import math
 from typing import Any
 
 from .errors import AnalysisError
+from .time_history_models import (
+    TimeHistoryModelError,
+    parse_ground_motions,
+    parse_time_history_settings,
+)
+from .time_history_result import parse_time_history_result
 
 
 @dataclass(frozen=True)
@@ -138,6 +145,7 @@ class AnalysisSettings:
     eigen: dict[str, Any] | None = None
     influence: dict[str, Any] | None = None
     responseSpectrum: dict[str, Any] | None = None
+    timeHistory: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -153,6 +161,8 @@ class Model:
     memberLoads: list[MemberLoad]
     massCases: list[MassCase]
     analysisSettings: AnalysisSettings
+    groundMotions: list[dict[str, Any]] = field(default_factory=list)
+    analysisResults: dict[str, Any] | None = None
 
     @property
     def node_by_id(self) -> dict[str, Node]:
@@ -188,7 +198,24 @@ def parse_model(data: dict[str, Any]) -> Model:
     nodal_loads = [NodalLoad(**item) for item in data.get("nodalLoads", [])]
     member_loads = [MemberLoad(**item) for item in data.get("memberLoads", [])]
     mass_cases = [parse_mass_case(item) for item in data.get("massCases", [])]
-    settings = AnalysisSettings(**data.get("analysisSettings", {}))
+    settings_payload = data.get("analysisSettings", {})
+    settings = AnalysisSettings(**settings_payload)
+    ground_motions_payload = data.get("groundMotions", [])
+    if not isinstance(ground_motions_payload, list):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "groundMotions must be an array.",
+            path="/groundMotions",
+        )
+    analysis_results_payload = data.get("analysisResults")
+    if analysis_results_payload is not None and not isinstance(
+        analysis_results_payload, dict
+    ):
+        raise AnalysisError(
+            "SCHEMA_ERROR",
+            "analysisResults must be an object.",
+            path="/analysisResults",
+        )
     model = Model(
         project=project,
         nodes=nodes,
@@ -201,6 +228,12 @@ def parse_model(data: dict[str, Any]) -> Model:
         memberLoads=member_loads,
         massCases=mass_cases,
         analysisSettings=settings,
+        groundMotions=ground_motions_payload,
+        analysisResults=(
+            copy.deepcopy(analysis_results_payload)
+            if analysis_results_payload is not None
+            else None
+        ),
     )
     validate_model(model)
     return model
@@ -480,7 +513,109 @@ def validate_model(model: Model) -> None:
     validate_saved_analysis_settings(model)
 
 
+def validate_saved_time_history_settings(model: "Model") -> None:
+    """Validate the time history analysis blocks stored on the model.
+
+    This function is the TH-1d integration point: it re-runs the
+    TH-1a model validators (parse_time_history_settings and
+    parse_ground_motions) so the in-memory Model satisfies the
+    project JSON schema.
+
+    Missing blocks are accepted. Unknown nested fields are accepted
+    (they are preserved by the loader and the saver as opaque data).
+    The function translates TimeHistoryModelError into AnalysisError
+    using the project-standard error code "INVALID_VALUE" and a
+    JSON-pointer style path.
+    """
+
+    time_history_payload = model.analysisSettings.timeHistory
+    if time_history_payload is not None:
+        try:
+            parse_time_history_settings(time_history_payload)
+        except TimeHistoryModelError as exc:
+            raise _to_analysis_error(exc, prefix="/analysisSettings/timeHistory") from exc
+
+    try:
+        parse_ground_motions(model.groundMotions)
+    except TimeHistoryModelError as exc:
+        raise _to_analysis_error(exc, prefix="/groundMotions") from exc
+
+    # TH-4: validate the persisted result block, if any. The MVP keeps
+    # the result block as an opaque dict; full structural validation
+    # delegates to parse_time_history_result which raises AnalysisError
+    # with a JSON-pointer path.
+    if model.analysisResults is not None:
+        time_history_result = model.analysisResults.get("timeHistory")
+        if time_history_result is not None:
+            parse_time_history_result(time_history_result)
+
+
+def _to_analysis_error(exc: TimeHistoryModelError, *, prefix: str) -> AnalysisError:
+    """Translate a TimeHistoryModelError into a project AnalysisError.
+
+    The mapping is intentionally simple: the error message is used
+    verbatim, and the path is derived by stripping the leading
+    "timeHistory." or "groundMotions[i]." prefix from the message
+    and prepending the supplied JSON-pointer prefix. The MVP uses
+    a single "INVALID_VALUE" code for all time history violations
+    to match the existing convention used by eigen, influence, and
+    response spectrum validation paths.
+    """
+
+    message = str(exc)
+    path_suffix = _extract_path_suffix(message)
+    full_path = f"{prefix}{path_suffix}"
+    return AnalysisError("INVALID_VALUE", message, path=full_path)
+
+
+def _extract_path_suffix(message: str) -> str:
+    """Extract the path suffix from a TimeHistoryModelError message.
+
+    The TH-1a error messages use a structured prefix that mirrors
+    the JSON-pointer path to the offending field, e.g.:
+
+    * ``timeHistory.timeStep must be positive.`` -> ``/timeStep``
+    * ``groundMotions[2].direction must be one of ...`` -> ``/2/direction``
+    * ``timeHistory.damping.type must be one of ...`` -> ``/damping/type``
+
+    The MVP strips the leading "timeHistory." or "groundMotions[i]."
+    segment and returns the remainder as a JSON-pointer path
+    component starting with "/".
+    """
+
+    head_end = message.find(" ") if " " in message else len(message)
+    head = message[:head_end]
+    if head.startswith("timeHistory."):
+        # JSON pointer style: use "/" as the segment separator.
+        return "/" + head[len("timeHistory."):].replace(".", "/")
+    if head.startswith("groundMotions["):
+        bracket = head.find("]")
+        if bracket == -1:
+            return ""
+        index = head[len("groundMotions["):bracket]
+        # The dataclass __post_init__ uses "[]" to mean "any record".
+        # Map that to a "/*/" path component to indicate a project-level
+        # rule that applies to every record. parse_ground_motions emits
+        # the per-record index for known cases, so this branch is
+        # reached only for schema-level enum/range checks.
+        if index == "":
+            index_token = "/*"
+        else:
+            index_token = "/" + index
+        rest = head[bracket + 1:]
+        # Strip a leading "." separator between the index and the field name.
+        if rest.startswith("."):
+            rest = rest[1:]
+        return index_token + "/" + rest
+    return ""
+
+
 def validate_saved_analysis_settings(model: Model) -> None:
+    # Validate the time history analysis blocks first (TH-1d).
+    # This is placed before the eigen/influence checks so the
+    # call always runs even when the influence block triggers an
+    # early return.
+    validate_saved_time_history_settings(model)
     eigen = model.analysisSettings.eigen
     if eigen is not None:
         mass_case_id = eigen.get("massCaseId")
@@ -639,3 +774,122 @@ def ref(
             entity_type=entity_type,
             entity_id=entity_id,
         )
+
+# ---------------------------------------------------------------------------
+# Project saver.
+# 
+# The functions in this section serialize an in-memory Model back into a
+# project dict. The saver preserves the time history analysis fields added
+# by TH-1a (analysisSettings.timeHistory) and TH-1b (groundMotions).
+# 
+# The MVP saver is a Model-driven serializer. It does not attempt to
+# preserve unknown top-level keys that were not modeled in TH-1a; those
+# are handled by the API save endpoint, which dumps the input project
+# dict directly to JSON. The function below is intended for the future
+# TH-2 solver pipeline, where the in-memory model is the source of
+# truth.
+# ---------------------------------------------------------------------------
+
+
+def _model_to_project_payload(model: "Model") -> dict[str, Any]:
+    """Build the canonical project dict from a Model.
+
+    The output is deterministic: top-level keys are emitted in a fixed
+    order so that the same Model always produces the same JSON.
+    """
+
+    payload: dict[str, Any] = {}
+    payload["project"] = asdict(model.project)
+    payload["nodes"] = [asdict(node) for node in model.nodes]
+    payload["materials"] = [asdict(material) for material in model.materials]
+    payload["sections"] = [asdict(section) for section in model.sections]
+    payload["members"] = [_member_to_dict(member) for member in model.members]
+    payload["supports"] = [asdict(support) for support in model.supports]
+    payload["loadCases"] = [asdict(case) for case in model.loadCases]
+    payload["nodalLoads"] = [asdict(load) for load in model.nodalLoads]
+    payload["memberLoads"] = [asdict(load) for load in model.memberLoads]
+    payload["massCases"] = [_mass_case_to_dict(case) for case in model.massCases]
+    payload["analysisSettings"] = _analysis_settings_to_dict(model.analysisSettings)
+    # groundMotions is preserved as-is. The loader keeps the entries as
+    # dicts so any future-compatible keys are retained through the round
+    # trip.
+    payload["groundMotions"] = copy.deepcopy(model.groundMotions)
+    # analysisResults is preserved as an opaque dict. The MVP keeps the
+    # entire block untouched so that any future-compatible result
+    # fields (e.g. nonlinear dynamic results) are retained through the
+    # round trip without requiring per-result-type handling here.
+    if model.analysisResults is not None:
+        payload["analysisResults"] = copy.deepcopy(model.analysisResults)
+    return payload
+
+
+def model_to_project_dict(model: "Model") -> dict[str, Any]:
+    """Convert a Model back into a project dict for project saving.
+
+    The returned dict can be passed to :func:`parse_model` to obtain an
+    equivalent Model. The round trip preserves the time history fields
+    (analysisSettings.timeHistory and groundMotions).
+
+    The function does not mutate ``model``; the in-memory Model is left
+    untouched.
+    """
+
+    return _model_to_project_payload(model)
+
+
+def _member_to_dict(member: "Member") -> dict[str, Any]:
+    """Serialize a Member dataclass to a dict with a stable key order.
+
+    The Member dataclass uses ``field(default=None)`` for the two
+    orientation fields, but the project schema disallows passing them
+    together. The loader already rejects that case, so the saver only
+    needs to omit the keys when they are ``None`` to keep the output
+    compact and avoid spurious ``None`` values.
+    """
+
+    payload = asdict(member)
+    if payload.get("orientationVector") is None:
+        payload.pop("orientationVector", None)
+    if payload.get("orientationNode") is None:
+        payload.pop("orientationNode", None)
+    return payload
+
+
+def _mass_case_to_dict(case: "MassCase") -> dict[str, Any]:
+    """Serialize a MassCase to a dict.
+
+    ``items`` is normalized to an empty list when ``None`` so the saved
+    payload is deterministic.
+    """
+
+    payload = asdict(case)
+    if payload.get("items") is None:
+        payload["items"] = []
+    return payload
+
+
+def _analysis_settings_to_dict(settings: "AnalysisSettings") -> dict[str, Any]:
+    """Serialize AnalysisSettings to a dict with a stable key order.
+
+    The MVP keeps the time history block as an opaque dict so that any
+    future-compatible keys are retained. The other optional sub-blocks
+    (``eigen``, ``influence``, ``responseSpectrum``) follow the same
+    convention.
+    """
+
+    payload: dict[str, Any] = {}
+    payload["analysisType"] = settings.analysisType
+    payload["solver"] = settings.solver
+    payload["includeShearDeformation"] = settings.includeShearDeformation
+    payload["largeDisplacement"] = settings.largeDisplacement
+    payload["tolerance"] = settings.tolerance
+    if settings.eigen is not None:
+        payload["eigen"] = copy.deepcopy(settings.eigen)
+    if settings.influence is not None:
+        payload["influence"] = copy.deepcopy(settings.influence)
+    if settings.responseSpectrum is not None:
+        payload["responseSpectrum"] = copy.deepcopy(settings.responseSpectrum)
+    if settings.timeHistory is not None:
+        payload["timeHistory"] = copy.deepcopy(settings.timeHistory)
+    return payload
+

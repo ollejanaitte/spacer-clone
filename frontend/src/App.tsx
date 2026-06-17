@@ -462,6 +462,7 @@ export function App() {
       />
       <ResultsPanel
         activeTab={bottomTab}
+        project={project}
         result={result}
         errors={errors}
         warnings={warnings}
@@ -472,6 +473,7 @@ export function App() {
         selectedMember={selectedMember}
         logs={logs}
         onTabChange={setBottomTab}
+        onProjectChange={commitProject}
         onSelectedEigenModeChange={setSelectedEigenMode}
         onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
       />

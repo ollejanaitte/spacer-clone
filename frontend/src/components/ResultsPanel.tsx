@@ -7,10 +7,15 @@ import {
   type ResponseSpectrumSelection,
 } from "../results/resultViewModel";
 import { ja } from "../i18n/ja";
-import type { AnalysisResult, BottomTab, StructuredMessage } from "../types";
+import { GroundMotionManagerPanel } from "../timeHistory/GroundMotionManagerPanel";
+import { TimeHistoryResultViewer } from "../timeHistory/TimeHistoryResultViewer";
+import { TimeHistorySettingsPanel } from "../timeHistory/TimeHistorySettingsPanel";
+import { useTimeHistoryAnalysis } from "../timeHistory/useTimeHistoryAnalysis";
+import type { AnalysisResult, BottomTab, ProjectModel, StructuredMessage } from "../types";
 
 type ResultsPanelProps = {
   activeTab: BottomTab;
+  project: ProjectModel;
   result: AnalysisResult | null;
   errors: StructuredMessage[];
   warnings: StructuredMessage[];
@@ -21,6 +26,7 @@ type ResultsPanelProps = {
   selectedMember: string | null;
   logs: string[];
   onTabChange: (tab: BottomTab) => void;
+  onProjectChange: (project: ProjectModel) => void;
   onSelectedEigenModeChange: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
 };
@@ -38,22 +44,25 @@ type ResultTablesProps = {
 
 const tabs: Array<{ key: BottomTab; label: string }> = [
   { key: "results", label: ja.resultsPanel.tabs.results },
+  { key: "timeHistory", label: ja.timeHistory.tab },
   { key: "errors", label: ja.resultsPanel.tabs.errors },
   { key: "warnings", label: ja.resultsPanel.tabs.warnings },
   { key: "logs", label: ja.resultsPanel.tabs.logs },
 ];
 
-type ResultViewKey = "static" | "eigen" | "response" | "influence";
+type ResultViewKey = "static" | "eigen" | "response" | "influence" | "timeHistory";
 
 const resultViewLabels: Record<ResultViewKey, string> = {
   static: ja.resultsPanel.resultView.static,
   eigen: ja.resultsPanel.resultView.eigen,
   response: ja.resultsPanel.resultView.response,
   influence: ja.resultsPanel.resultView.influence,
+  timeHistory: ja.resultsPanel.resultView.timeHistory,
 };
 
 export function ResultsPanel({
   activeTab,
+  project,
   result,
   errors,
   warnings,
@@ -64,6 +73,7 @@ export function ResultsPanel({
   selectedMember,
   logs,
   onTabChange,
+  onProjectChange,
   onSelectedEigenModeChange,
   onSelectedResponseSpectrumResultChange,
 }: ResultsPanelProps) {
@@ -94,6 +104,7 @@ export function ResultsPanel({
             onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
           />
         )}
+        {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} onProjectChange={onProjectChange} />}
         {activeTab === "errors" && <MessageTable messages={errors} empty={ja.resultsPanel.errorsEmpty} />}
         {activeTab === "warnings" && <MessageTable messages={warnings} empty={ja.resultsPanel.warningsEmpty} />}
         {activeTab === "logs" && (
@@ -111,6 +122,45 @@ export function ResultsPanel({
 function ResultTables(props: ResultTablesProps) {
   if (!props.result) return <div className="empty-state">{ja.resultsPanel.empty}</div>;
   return <ResultTablesContent {...props} result={props.result} />;
+}
+
+function TimeHistoryWorkspace({
+  project,
+  result,
+  onProjectChange,
+}: {
+  project: ProjectModel;
+  result: AnalysisResult | null;
+  onProjectChange: (project: ProjectModel) => void;
+}) {
+  const timeHistoryAnalysis = useTimeHistoryAnalysis();
+  const latestResult = timeHistoryAnalysis.result ?? (result?.analysisSummary.analysisType === "time_history" ? result : null);
+  const status = timeHistoryAnalysis.loading
+    ? "running"
+    : timeHistoryAnalysis.error?.code === "TIME_HISTORY_NETWORK_ERROR"
+      ? "networkError"
+      : latestResult?.analysisSummary.status;
+
+  const runTimeHistory = () => {
+    void timeHistoryAnalysis.run(project).catch(() => undefined);
+  };
+
+  return (
+    <div className="results-grid">
+      <TimeHistorySettingsPanel
+        project={project}
+        running={timeHistoryAnalysis.loading}
+        onRun={runTimeHistory}
+        onChange={onProjectChange}
+      />
+      <GroundMotionManagerPanel project={project} onChange={onProjectChange} />
+      <TimeHistoryResultViewer
+        result={latestResult?.timeHistoryResult ?? null}
+        status={status}
+        error={timeHistoryAnalysis.error ?? latestResult?.errors[0] ?? null}
+      />
+    </div>
+  );
 }
 
 function ResultTablesContent({
@@ -137,6 +187,7 @@ function ResultTablesContent({
   const eigenViewModel = buildEigenModeViewModel(result, selectedEigenMode);
   const responseSpectrumViewModel = buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult);
   const influenceViewModel = buildInfluenceLineViewModel(result);
+  const timeHistoryResult = result.timeHistoryResult ?? null;
   const eigenModes = eigenViewModel?.modes ?? [];
   const selectedMode = eigenModes.find((mode) => mode.modeNo === eigenViewModel?.selectedModeNo) ?? eigenModes[0] ?? null;
   const displacements = (viewModel?.displacements.items ?? []).filter(
@@ -173,6 +224,7 @@ function ResultTablesContent({
     if (eigenModes.length > 0) views.push("eigen");
     if (responseSpectrumViewModel) views.push("response");
     if (influenceViewModel) views.push("influence");
+    if (timeHistoryResult) views.push("timeHistory");
     return views.length > 0 ? views : (["static"] satisfies ResultViewKey[]);
   }, [
     displacements.length,
@@ -181,6 +233,7 @@ function ResultTablesContent({
     memberForces.length,
     reactions.length,
     responseSpectrumViewModel,
+    timeHistoryResult,
   ]);
   const preferredView = preferredResultView(summary.analysisType, availableViews);
   const [activeView, setActiveView] = useState<ResultViewKey>(preferredView);
@@ -313,6 +366,9 @@ function ResultTablesContent({
             columns={["target", "station", "ratio", "value"]}
           />
         </>
+      )}
+      {activeView === "timeHistory" && (
+        <TimeHistoryResultViewer result={timeHistoryResult} status={summary.status} />
       )}
       {activeView === "eigen" && eigenModes.length > 0 && (
         <>
@@ -643,8 +699,10 @@ function preferredResultView(analysisType: string, availableViews: ResultViewKey
       ? "eigen"
       : analysisType === "response_spectrum" || analysisType === "responseSpectrum"
         ? "response"
-        : analysisType === "influence_line"
-          ? "influence"
+      : analysisType === "influence_line"
+        ? "influence"
+        : analysisType === "time_history"
+          ? "timeHistory"
           : "static";
   return availableViews.includes(preferred) ? preferred : availableViews[0] ?? "static";
 }

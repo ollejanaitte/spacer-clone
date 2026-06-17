@@ -179,6 +179,24 @@
         },
         "responseSpectrum": {
           "$ref": "#/$defs/responseSpectrumAnalysisSettings"
+        },
+        "timeHistory": {
+          "$ref": "#/$defs/timeHistoryAnalysisSettings"
+        }
+      }
+    },
+    "groundMotions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/groundMotion"
+      }
+    },
+    "analysisResults": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "timeHistory": {
+          "$ref": "#/$defs/timeHistoryResult"
         }
       }
     }
@@ -789,6 +807,351 @@
         "value": {
           "type": "number",
           "minimum": 0
+        }
+      }
+    },
+    "timeHistoryAnalysisSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "timeStep",
+        "duration",
+        "beta",
+        "gamma"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "method": {
+          "enum": [
+            "newmark-beta"
+          ]
+        },
+        "timeStep": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "beta": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "gamma": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "damping": {
+          "$ref": "#/$defs/timeHistoryDamping"
+        },
+        "initialConditions": {
+          "$ref": "#/$defs/timeHistoryInitialConditions"
+        }
+      }
+    },
+    "timeHistoryDamping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "rayleigh",
+            "modal",
+            "constant",
+            "userMatrix"
+          ]
+        },
+        "mode1Frequency": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "mode2Frequency": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "targetDampingRatio1": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "targetDampingRatio2": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0
+        },
+        "beta": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "timeHistoryInitialConditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "displacement": {
+          "enum": [
+            "zero",
+            "fromStatic"
+          ]
+        },
+        "velocity": {
+          "enum": [
+            "zero",
+            "fromStatic"
+          ]
+        }
+      }
+    },
+    "groundMotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "direction",
+        "timeStep",
+        "duration",
+        "unit",
+        "samples"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "timeStep": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "enum": [
+            "m/s2",
+            "gal"
+          ]
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "envelopeExtremum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "time"
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "envelopePair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max",
+        "min"
+      ],
+      "properties": {
+        "max": {
+          "$ref": "#/$defs/envelopeExtremum"
+        },
+        "min": {
+          "$ref": "#/$defs/envelopeExtremum"
+        }
+      }
+    },
+    "timeHistoryResultMemberForces": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "N": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "Vy": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "Vz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "Mx": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "My": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "Mz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "timeHistoryResultMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysisId",
+        "status",
+        "method",
+        "timeStep",
+        "duration",
+        "beta",
+        "gamma",
+        "damping",
+        "groundMotions",
+        "sampleCount"
+      ],
+      "properties": {
+        "analysisId": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "success",
+            "warning",
+            "failed"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "timeStep": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "beta": {
+          "type": "number"
+        },
+        "gamma": {
+          "type": "number"
+        },
+        "damping": {
+          "type": "object"
+        },
+        "groundMotions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "timeHistoryResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "meta": {
+          "$ref": "#/$defs/timeHistoryResultMeta"
+        },
+        "time": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "displacements": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "velocities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "accelerations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "memberForces": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/timeHistoryResultMemberForces"
+          }
+        },
+        "reactions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "envelopes": {
+          "type": "object"
         }
       }
     }

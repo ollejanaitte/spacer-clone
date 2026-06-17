@@ -133,6 +133,18 @@ export type AnalysisSettings = {
     };
     targets: InfluenceTarget[];
   };
+  timeHistory?: {
+    enabled?: boolean;
+    method: "newmark-beta";
+    timeStep: number;
+    duration: number;
+    beta: number;
+    gamma: number;
+    damping?: { type: "rayleigh"; alpha: number; beta: number };
+    massCaseId?: string;
+    groundMotionId?: string;
+    direction?: "X" | "Y" | "Z";
+  };
 };
 
 export type ProjectModel = {
@@ -154,6 +166,15 @@ export type ProjectModel = {
   nodalLoads: NodalLoad[];
   memberLoads: MemberLoad[];
   massCases?: MassCase[];
+  groundMotions?: Array<{
+    id: string;
+    name?: string;
+    direction: "X" | "Y" | "Z";
+    timeStep: number;
+    duration?: number;
+    unit: "m/s2" | "gal";
+    samples: number[];
+  }>;
   analysisSettings: AnalysisSettings;
 };
 
@@ -175,7 +196,7 @@ export type AnalysisResult = {
   projectId: string;
   schemaVersion: "1.0.0";
   analysisSummary: {
-    analysisType: "linear_static" | "eigen" | "response_spectrum" | "responseSpectrum" | "influence_line";
+    analysisType: "linear_static" | "eigen" | "response_spectrum" | "responseSpectrum" | "influence_line" | "time_history";
     status: "success" | "warning" | "failed";
     startedAt: string;
     finishedAt: string;
@@ -186,7 +207,7 @@ export type AnalysisResult = {
     totalDof: number;
     freeDof: number;
     constrainedDof: number;
-    solver: "scipy_sparse" | "scipy_eigh";
+    solver: "scipy_sparse" | "scipy_eigh" | "newmark_beta";
   };
   displacements: Array<{
     loadCaseId: string;
@@ -219,6 +240,7 @@ export type AnalysisResult = {
   eigenResult?: EigenResult;
   responseSpectrumResult?: ResponseSpectrumResult;
   influenceResult?: InfluenceResult;
+  timeHistoryResult?: TimeHistoryResult | null;
   warnings: StructuredMessage[];
   errors: StructuredMessage[];
 };
@@ -361,6 +383,27 @@ export type InfluenceResult = {
   }>;
 };
 
+export type TimeHistoryResultMeta = {
+  analysisId: string;
+  status: "success" | "failed";
+  method: string;
+  timeStep: number;
+  duration: number;
+  beta?: number;
+  gamma?: number;
+  damping?: Record<string, unknown>;
+  groundMotions?: Array<Record<string, unknown>>;
+  sampleCount: number;
+};
+
+export type TimeHistoryResult = {
+  meta: TimeHistoryResultMeta;
+  time: number[];
+  displacements: Record<string, number[]>;
+  velocities: Record<string, number[]>;
+  accelerations: Record<string, number[]>;
+};
+
 export type ResultExports = {
   "result.json": string;
   "displacements.csv": string;
@@ -393,4 +436,4 @@ export type SectionKey =
   | "analysisSettings"
   | "results";
 
-export type BottomTab = "results" | "errors" | "warnings" | "logs";
+export type BottomTab = "results" | "timeHistory" | "errors" | "warnings" | "logs";

@@ -11,7 +11,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from backend.app.reports import build_result_exports
-from backend.engine import run_analysis, run_eigen_analysis, run_influence_analysis, run_response_spectrum_analysis, validate_project
+from backend.engine import (
+    run_analysis,
+    run_eigen_analysis,
+    run_influence_analysis,
+    run_response_spectrum_analysis,
+    run_time_history_analysis,
+    TIME_HISTORY_ENVELOPE_KEYS,
+    validate_project,
+)
 from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
 from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
 
@@ -180,6 +188,42 @@ def run_response_spectrum_analysis_endpoint(payload: dict[str, Any]) -> JSONResp
         result = run_response_spectrum_analysis(copy.deepcopy(project), request)
     return safe_json_response({"result": result})
 
+
+@app.post("/api/analysis/time-history")
+def run_time_history_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    analysis_settings = project.get("analysisSettings", {})
+    saved_time_history = (
+        analysis_settings.get("timeHistory", {})
+        if isinstance(analysis_settings, dict)
+        else {}
+    )
+    request = {**saved_time_history, **payload}
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        result = failed_result(
+            project,
+            {
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="time_history",
+        )
+        # TH-5c: normalize the failure envelope to the frozen
+        # top-level key set used by the time history endpoint.
+        result["analysisSummary"]["solver"] = "newmark_beta"
+        result["timeHistoryResult"] = None
+    else:
+        result = run_time_history_analysis(copy.deepcopy(project), request)
+    # TH-5c: enforce the frozen response contract for every
+    # response path (success, engine failure, and INVALID_VALUE).
+    assert set(result.keys()) == TIME_HISTORY_ENVELOPE_KEYS, (
+        "time-history envelope key set does not match the TH-5c contract"
+    )
+    return safe_json_response({"result": result})
 
 @app.post("/api/influence/run")
 def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
