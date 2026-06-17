@@ -298,6 +298,7 @@ describe("Time History ground motion CSV import", () => {
     await waitFor(() => {
       expect(document.body.textContent).toContain(ja.timeHistory.groundMotionManager.importErrorNonFinite({
         line: 3,
+        column: 2,
         token: "NaN",
       }));
     });
@@ -372,6 +373,71 @@ function waitFor(callback: () => void | Promise<void>): Promise<void> {
   });
 }
 
+describe("Time History ground motion CSV practical improvements", () => {
+  it("renders gal label as gal (cm/s^2)", () => {
+    const harness = renderTimeHistoryPanel_(timeHistoryProject());
+    expect(document.body.textContent).toContain("gal (cm/s²)");
+  });
+  it("renders m/s^2 label as m/s²", () => {
+    const harness = renderTimeHistoryPanel_(timeHistoryProject());
+    expect(document.body.textContent).toContain("m/s²");
+  });
+  it("shows sample status ok when sample count matches", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.1;
+      project.groundMotions[0].samples = [0, 1, 0];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数 OK");
+  });
+  it("shows short warning when sample count is below expected", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.2;
+      project.groundMotions[0].samples = [0, 1, 0];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数不足");
+    expect(document.body.textContent).toContain("必要 5");
+    expect(document.body.textContent).toContain("現在 3");
+  });
+  it("shows long warning when sample count is above expected", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].timeStep = 0.05;
+      project.groundMotions[0].duration = 0.05;
+      project.groundMotions[0].samples = [0, 1, 2, 3];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("サンプル数過剰");
+  });
+  it("shows the preview summary with max / min / abs max", () => {
+    const project = timeHistoryProject();
+    if (project.groundMotions && project.groundMotions[0]) {
+      project.groundMotions[0].samples = [0, 5, -3, 2];
+    }
+    renderTimeHistoryPanel_(project);
+    expect(document.body.textContent).toContain("max:");
+    expect(document.body.textContent).toContain("min:");
+    expect(document.body.textContent).toContain("abs max:");
+  });
+  it("parse error includes line and column", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    const file = new File(["time,acceleration\n0.0,1.0\n0.05,NaN\n"], "bad.csv", { type: "text/csv" });
+    const fileInput = document.querySelector('input[aria-label="' + ja.timeHistory.groundMotionManager.importFileLabel + '"]');
+    if (!fileInput) throw new Error("CSV file input not found");
+    Object.defineProperty(fileInput, "files", { configurable: true, value: [file] });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("3行目2列目");
+    });
+  });
+});
 describe("Time History H24 ground motion import", () => {
   function csvFile(name: string, contents: string) {
     return new File([contents], name, { type: "text/csv" });
@@ -787,6 +853,7 @@ function render(node: ReactNode) {
   });
 }
 
+function renderTimeHistoryPanel_(project: ProjectModel) { renderTimeHistoryPanel(project); }
 function renderTimeHistoryPanel(project: ProjectModel) {
   render(
     <ResultsPanel

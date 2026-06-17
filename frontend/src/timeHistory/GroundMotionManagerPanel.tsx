@@ -17,6 +17,12 @@ import {
   type H24ParseSuccess,
   type H24WaveformSummary,
 } from "./h24GroundMotionImport";
+import {
+  computeGroundMotionPreview,
+  computeGroundMotionSampleStatus,
+  type GroundMotionPreview,
+  type GroundMotionSampleStatus,
+} from "./groundMotionPreview";
 
 type GroundMotionManagerPanelProps = {
   groundMotions?: ProjectModel["groundMotions"];
@@ -61,6 +67,19 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
     updateMotion({ [field]: parsed });
   };
   const sampleParse = parseSamples(sampleText);
+  const motionDuration = typeof editableMotion.duration === "number" ? editableMotion.duration : 0;
+  const preview: GroundMotionPreview = computeGroundMotionPreview({
+    samples: editableMotion.samples,
+    timeStep: editableMotion.timeStep,
+    duration: motionDuration,
+  });
+  const sampleStatus: GroundMotionSampleStatus = computeGroundMotionSampleStatus({
+    duration: motionDuration,
+    timeStep: editableMotion.timeStep,
+    sampleCount: editableMotion.samples.length,
+  });
+  const unitLabel = editableMotion.unit === "gal" ? ja.timeHistory.units.gal : ja.timeHistory.units.meterPerSecondSquared;
+  const runValidationWarning = sampleStatus.kind === "short" || sampleStatus.kind === "long";
 
   const handleImportClick = () => {
     if (!onChange) return;
@@ -268,6 +287,12 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
         />
       </label>
       {!sampleParse.valid && <div className="empty-state">{ja.timeHistory.validation.samples}</div>}
+      <GroundMotionPreviewView
+        preview={preview}
+        status={sampleStatus}
+        unitLabel={unitLabel}
+      />
+      {runValidationWarning && <div className="empty-state time-history-run-warning">{labels.runValidationWarning}</div>}
       <div className="summary-list result-toolbar">
         <button type="button" disabled>{labels.addNew}</button>
         <button type="button" disabled={!onChange} onClick={handleImportClick}>
@@ -327,6 +352,46 @@ function ImportStatusView({ status }: { status: ImportStatus }) {
     return <div className="empty-state time-history-import-status-error">{labels.h24ImportNoWaves({ fileName: status.fileName })}</div>;
   }
   return <div className="empty-state time-history-import-status-error">{status.message}</div>;
+}
+
+function GroundMotionPreviewView({
+  preview,
+  status,
+  unitLabel,
+}: {
+  preview: GroundMotionPreview;
+  status: GroundMotionSampleStatus;
+  unitLabel: string;
+}) {
+  const labels = ja.timeHistory.groundMotionManager;
+  const statusText = (() => {
+    switch (status.kind) {
+      case "ok":
+        return labels.sampleStatusOk;
+      case "short":
+        return labels.sampleStatusShort({ expected: status.expected, actual: status.actual });
+      case "long":
+        return labels.sampleStatusLong({ expected: status.expected, actual: status.actual });
+      case "unknown":
+        return labels.sampleStatusUnknown;
+    }
+  })();
+  return (
+    <div className="summary-list time-history-preview" aria-label={labels.previewLabel}>
+      <h4>{labels.previewLabel}</h4>
+      <div className="summary-list">
+        <span>{labels.previewSampleCount(preview.sampleCount)}</span>
+        <span>{labels.previewTimeStep(preview.timeStep)}</span>
+        <span>{labels.previewDuration(preview.duration)}</span>
+      </div>
+      <div className="summary-list">
+        <span>{labels.previewMax(preview.max, unitLabel)}</span>
+        <span>{labels.previewMin(preview.min, unitLabel)}</span>
+        <span>{labels.previewAbsMax(preview.absMax, unitLabel)}</span>
+      </div>
+      <div className={"summary-list time-history-sample-status " + status.kind}>{statusText}</div>
+    </div>
+  );
 }
 
 function H24WaveformPicker({
@@ -408,7 +473,7 @@ function formatError(error: GroundMotionCsvParseError): string {
     case "no-numeric-samples":
       return labels.importErrorNoNumericSamples;
     case "non-finite-value":
-      return labels.importErrorNonFinite({ line: error.line, token: error.token });
+      return labels.importErrorNonFinite({ line: error.line, column: error.column, token: error.token });
     case "inconsistent-time-step":
       return labels.importErrorInconsistentTimeStep({ line: error.line, detail: error.detail });
     case "unsupported-column-count":

@@ -30,7 +30,7 @@ export type GroundMotionCsvParseSuccess = {
 export type GroundMotionCsvParseError =
   | { kind: "error"; code: "empty-file" }
   | { kind: "error"; code: "no-numeric-samples" }
-  | { kind: "error"; code: "non-finite-value"; line: number; token: string }
+  | { kind: "error"; code: "non-finite-value"; line: number; column: number; token: string }
   | { kind: "error"; code: "inconsistent-time-step"; line: number; detail: string }
   | { kind: "error"; code: "unsupported-column-count"; detail: string };
 
@@ -127,6 +127,7 @@ export function parseGroundMotionCsv(
           kind: "error",
           code: "non-finite-value",
           line: originalLine,
+          column: column + 1,
           token: row[column],
         };
       }
