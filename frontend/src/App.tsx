@@ -462,6 +462,7 @@ export function App() {
       />
       <ResultsPanel
         activeTab={bottomTab}
+        project={project}
         result={result}
         errors={errors}
         warnings={warnings}

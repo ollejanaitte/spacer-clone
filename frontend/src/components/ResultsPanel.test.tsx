@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AnalysisResult } from "../types";
+import { createDefaultProject } from "../data/defaultProject";
 import { ja } from "../i18n/ja";
 import { ResultsPanel } from "./ResultsPanel";
 
@@ -78,6 +79,7 @@ function renderPanel(result: AnalysisResult) {
   render(
     <ResultsPanel
       activeTab="results"
+      project={createDefaultProject()}
       result={result}
       errors={[]}
       warnings={[]}
