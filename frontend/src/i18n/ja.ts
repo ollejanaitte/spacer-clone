@@ -467,6 +467,11 @@ export const ja = {
       massCases: "質量ケースなし",
       groundMotions: "地震波はまだありません。",
     },
+    validation: {
+      number: "有効な数値を入力してください。",
+      samples: "サンプルにはカンマ区切りまたは改行区切りの数値を入力してください。",
+      projectMissing: "プロジェクトがありません。",
+    },
     groundMotionManager: {
       heading: "地震波管理",
       close: "閉じる",
@@ -480,6 +485,14 @@ export const ja = {
         unit: "単位",
         timeStep: "dt",
         sampleCount: "サンプル数",
+      },
+      editor: {
+        id: "ID",
+        name: "名称",
+        direction: "方向",
+        unit: "単位",
+        timeStep: "dt",
+        samples: "サンプル",
       },
       futureFeatureNote: "今後対応",
     },

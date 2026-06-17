@@ -43,6 +43,7 @@ describe("Time History UI skeleton", () => {
         selectedMember={null}
         logs={[]}
         onTabChange={() => undefined}
+        onProjectChange={() => undefined}
         onSelectedEigenModeChange={() => undefined}
         onSelectedResponseSpectrumResultChange={() => undefined}
       />,
@@ -156,6 +157,81 @@ describe("Time History basic result table", () => {
 
     expect(() => render(<TimeHistoryResultViewer result={invalidResult} status="success" />)).not.toThrow();
     expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.noResult);
+  });
+});
+
+describe("Time History minimal editing", () => {
+  it("renders settings fields", () => {
+    renderTimeHistoryPanel(timeHistoryProject());
+
+    expect(input(ja.timeHistory.fields.timeStep)).toBeInstanceOf(HTMLInputElement);
+    expect(input(ja.timeHistory.fields.duration)).toBeInstanceOf(HTMLInputElement);
+    expect(input(ja.timeHistory.fields.rayleighAlpha)).toBeInstanceOf(HTMLInputElement);
+    expect(input(ja.timeHistory.fields.rayleighBeta)).toBeInstanceOf(HTMLInputElement);
+  });
+
+  it("editing timeStep updates project payload", () => {
+    const harness = renderEditingHarness();
+
+    changeInput(ja.timeHistory.fields.timeStep, "0.02");
+
+    expect(harness.current().analysisSettings.timeHistory?.timeStep).toBe(0.02);
+  });
+
+  it("editing duration updates project payload", () => {
+    const harness = renderEditingHarness();
+
+    changeInput(ja.timeHistory.fields.duration, "1.5");
+
+    expect(harness.current().analysisSettings.timeHistory?.duration).toBe(1.5);
+  });
+
+  it("editing Rayleigh alpha and beta updates project payload", () => {
+    const harness = renderEditingHarness();
+
+    changeInput(ja.timeHistory.fields.rayleighAlpha, "0.11");
+    changeInput(ja.timeHistory.fields.rayleighBeta, "0.22");
+
+    expect(harness.current().analysisSettings.timeHistory?.damping?.alpha).toBe(0.11);
+    expect(harness.current().analysisSettings.timeHistory?.damping?.beta).toBe(0.22);
+  });
+
+  it("editing ground motion samples updates project payload", () => {
+    const harness = renderEditingHarness();
+
+    changeTextarea(ja.timeHistory.groundMotionManager.editor.samples, "0\n1, 2\n3");
+
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 2, 3]);
+  });
+
+  it("invalid sample text shows validation error", () => {
+    const harness = renderEditingHarness();
+
+    changeTextarea(ja.timeHistory.groundMotionManager.editor.samples, "0, nope");
+
+    expect(document.body.textContent).toContain(ja.timeHistory.validation.samples);
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
+  });
+
+  it("Run button sends edited project payload", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    renderEditingHarness();
+
+    changeInput(ja.timeHistory.fields.timeStep, "0.03");
+    changeTextarea(ja.timeHistory.groundMotionManager.editor.samples, "0, 4, 8");
+    await clickRun();
+
+    const body = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body)) as { project: ProjectModel };
+    expect(body.project.analysisSettings.timeHistory?.timeStep).toBe(0.03);
+    expect(body.project.groundMotions?.[0]?.samples).toEqual([0, 4, 8]);
+  });
+
+  it("saved project JSON keeps time history settings and ground motions", () => {
+    const project = timeHistoryProject();
+    const loaded = JSON.parse(JSON.stringify(project)) as ProjectModel;
+
+    expect(loaded.analysisSettings.timeHistory?.timeStep).toBe(0.05);
+    expect(loaded.groundMotions?.[0]?.samples).toEqual([0, 1, 0]);
   });
 });
 
@@ -385,10 +461,43 @@ function renderTimeHistoryPanel(project: ProjectModel) {
       selectedMember={null}
       logs={[]}
       onTabChange={() => undefined}
+      onProjectChange={() => undefined}
       onSelectedEigenModeChange={() => undefined}
       onSelectedResponseSpectrumResultChange={() => undefined}
     />,
   );
+}
+
+function renderEditableTimeHistoryPanel(project: ProjectModel, onProjectChange: (project: ProjectModel) => void) {
+  render(
+    <ResultsPanel
+      activeTab="timeHistory"
+      project={project}
+      result={null}
+      errors={[]}
+      warnings={[]}
+      activeLoadCase=""
+      selectedEigenMode={1}
+      selectedResponseSpectrumResult="SRSS"
+      selectedNode={null}
+      selectedMember={null}
+      logs={[]}
+      onTabChange={() => undefined}
+      onProjectChange={onProjectChange}
+      onSelectedEigenModeChange={() => undefined}
+      onSelectedResponseSpectrumResultChange={() => undefined}
+    />,
+  );
+}
+
+function renderEditingHarness(initialProject = timeHistoryProject()) {
+  let current = initialProject;
+  const rerender = (next: ProjectModel) => {
+    current = next;
+    renderEditableTimeHistoryPanel(current, rerender);
+  };
+  renderEditableTimeHistoryPanel(current, rerender);
+  return { current: () => current };
 }
 
 async function clickRun() {
@@ -403,6 +512,36 @@ function button(label: string): HTMLButtonElement {
   );
   if (!(element instanceof HTMLButtonElement)) throw new Error(`Button not found: ${label}`);
   return element;
+}
+
+function input(label: string): HTMLInputElement {
+  const element = document.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+  if (!element) throw new Error(`Input not found: ${label}`);
+  return element;
+}
+
+function changeInput(label: string, value: string) {
+  act(() => {
+    const element = input(label);
+    setNativeValue(element, value);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+function changeTextarea(label: string, value: string) {
+  const element = document.querySelector<HTMLTextAreaElement>(`textarea[aria-label="${label}"]`);
+  if (!element) throw new Error(`Textarea not found: ${label}`);
+  act(() => {
+    setNativeValue(element, value);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+function setNativeValue(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), "value");
+  descriptor?.set?.call(element, value);
 }
 
 function clickInputByLabel(label: string) {

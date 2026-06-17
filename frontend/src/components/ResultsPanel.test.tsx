@@ -90,6 +90,7 @@ function renderPanel(result: AnalysisResult) {
       selectedMember={null}
       logs={[]}
       onTabChange={() => undefined}
+      onProjectChange={() => undefined}
       onSelectedEigenModeChange={() => undefined}
       onSelectedResponseSpectrumResultChange={() => undefined}
     />,

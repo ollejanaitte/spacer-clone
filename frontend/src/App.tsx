@@ -473,6 +473,7 @@ export function App() {
         selectedMember={selectedMember}
         logs={logs}
         onTabChange={setBottomTab}
+        onProjectChange={commitProject}
         onSelectedEigenModeChange={setSelectedEigenMode}
         onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
       />

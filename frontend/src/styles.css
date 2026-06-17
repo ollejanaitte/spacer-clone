@@ -844,6 +844,28 @@ button:disabled {
   color: #1f2933;
 }
 
+.result-select input,
+.time-history-samples-editor textarea {
+  border: 1px solid #c4ced8;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #1f2933;
+}
+
+.time-history-samples-editor {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+  color: #526173;
+  font-size: 12px;
+}
+
+.time-history-samples-editor textarea {
+  min-height: 76px;
+  padding: 6px;
+  resize: vertical;
+}
+
 .influence-chart svg,
 .time-history-chart svg {
   display: block;

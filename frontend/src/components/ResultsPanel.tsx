@@ -26,6 +26,7 @@ type ResultsPanelProps = {
   selectedMember: string | null;
   logs: string[];
   onTabChange: (tab: BottomTab) => void;
+  onProjectChange: (project: ProjectModel) => void;
   onSelectedEigenModeChange: (modeNo: number) => void;
   onSelectedResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
 };
@@ -72,6 +73,7 @@ export function ResultsPanel({
   selectedMember,
   logs,
   onTabChange,
+  onProjectChange,
   onSelectedEigenModeChange,
   onSelectedResponseSpectrumResultChange,
 }: ResultsPanelProps) {
@@ -102,7 +104,7 @@ export function ResultsPanel({
             onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
           />
         )}
-        {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} />}
+        {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} onProjectChange={onProjectChange} />}
         {activeTab === "errors" && <MessageTable messages={errors} empty={ja.resultsPanel.errorsEmpty} />}
         {activeTab === "warnings" && <MessageTable messages={warnings} empty={ja.resultsPanel.warningsEmpty} />}
         {activeTab === "logs" && (
@@ -122,7 +124,15 @@ function ResultTables(props: ResultTablesProps) {
   return <ResultTablesContent {...props} result={props.result} />;
 }
 
-function TimeHistoryWorkspace({ project, result }: { project: ProjectModel; result: AnalysisResult | null }) {
+function TimeHistoryWorkspace({
+  project,
+  result,
+  onProjectChange,
+}: {
+  project: ProjectModel;
+  result: AnalysisResult | null;
+  onProjectChange: (project: ProjectModel) => void;
+}) {
   const timeHistoryAnalysis = useTimeHistoryAnalysis();
   const latestResult = timeHistoryAnalysis.result ?? (result?.analysisSummary.analysisType === "time_history" ? result : null);
   const status = timeHistoryAnalysis.loading
@@ -141,8 +151,9 @@ function TimeHistoryWorkspace({ project, result }: { project: ProjectModel; resu
         project={project}
         running={timeHistoryAnalysis.loading}
         onRun={runTimeHistory}
+        onChange={onProjectChange}
       />
-      <GroundMotionManagerPanel groundMotions={project.groundMotions} />
+      <GroundMotionManagerPanel project={project} onChange={onProjectChange} />
       <TimeHistoryResultViewer
         result={latestResult?.timeHistoryResult ?? null}
         status={status}
