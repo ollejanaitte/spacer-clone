@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { ja } from "../../../i18n/ja";
 import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
+import { TimeHistoryAnimationProvider } from "../../TimeHistoryAnimationContext";
+import { useTimeHistoryAnimationState } from "../../useTimeHistoryAnimationState";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
-import { isXyzAnimationAvailable } from "../wizardState";
+import { TimeHistoryAnimationAvailability } from "../TimeHistoryAnimationAvailability";
+import { TimeHistoryAnimationViewerPanel } from "../TimeHistoryAnimationViewerPanel";
+import { TimeHistoryAnimationControlsPanel } from "../TimeHistoryAnimationControlsPanel";
 
 type SectionResultsProps = {
   project: ProjectModel;
@@ -37,7 +41,6 @@ export function SectionResults({
   useEffect(() => {
     setActive(status === "failed" || error ? "errors" : "overview");
   }, [status, error, result?.meta?.analysisId]);
-  const availability = isXyzAnimationAvailable(result);
 
   return (
     <section className="time-history-wizard-section section-results" aria-label={labels.heading}>
@@ -69,7 +72,7 @@ export function SectionResults({
           </div>
         )}
         {active === "inputMotion" && <InputMotionTab project={project} />}
-        {active === "animation" && <AnimationTab result={result} availability={availability} />}
+        {active === "animation" && <AnimationTab project={project} result={result} />}
         {active === "detail" && (
           <div className="result-table">
             <TimeHistoryResultViewer
@@ -201,52 +204,41 @@ function GroundMotionChart({ samples, timeStep }: { samples: number[]; timeStep:
 }
 
 function AnimationTab({
+  project,
   result,
-  availability,
 }: {
+  project: ProjectModel;
   result: TimeHistoryResult | null | undefined;
-  availability: { available: boolean; missingAxes: string[] };
 }) {
   const labels = ja.timeHistoryWizard.animation;
+  const animation = useTimeHistoryAnimationState({ project, result });
+  if (!result) {
+    return (
+      <div className="time-history-animation-tab">
+        <h3>{labels.heading}</h3>
+        <div className="empty-state">{labels.emptyResult}</div>
+      </div>
+    );
+  }
   return (
-    <div className="time-history-animation-availability">
-      <h3>{labels.availabilityHeading}</h3>
-      <p className="time-history-wizard-help">{labels.availabilityHelp}</p>
-      <table>
-        <thead>
-          <tr>
-            <th>{"結果"}</th>
-            <th>{"状態"}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{labels.xStatus}</td>
-            <td>{availability.missingAxes.includes("X") ? labels.missingLabel : labels.okLabel}</td>
-          </tr>
-          <tr>
-            <td>{labels.yStatus}</td>
-            <td>{availability.missingAxes.includes("Y") ? labels.missingLabel : labels.okLabel}</td>
-          </tr>
-          <tr>
-            <td>{labels.zStatus}</td>
-            <td>{availability.missingAxes.includes("Z") ? labels.missingLabel : labels.okLabel}</td>
-          </tr>
-          <tr>
-            <td>{labels.xyzStatus}</td>
-            <td>{availability.available ? labels.availableLabel : labels.unavailableLabel}</td>
-          </tr>
-        </tbody>
-      </table>
-      {!availability.available && (
-        <div className="time-history-wizard-error-card">
-          <h4>{labels.xyzUnavailableTitle}</h4>
-          <p>{labels.xyzUnavailableBody}</p>
-          <p>{labels.xyzUnavailableMissing({ axes: availability.missingAxes.join("・") })}</p>
-          <p>{labels.xyzUnavailableRemedy}</p>
-        </div>
-      )}
-      {!result && <div className="empty-state">{"解析結果がありません。"}</div>}
+    <div className="time-history-animation-tab">
+      <TimeHistoryAnimationProvider
+        project={project}
+        result={result}
+        state={animation.state}
+        setters={animation.setters}
+        reset={animation.reset}
+        jumpToMax={animation.jumpToMax}
+        currentTimeSeconds={animation.currentTimeSeconds}
+        currentValue={animation.currentValue}
+        maxAbsValue={animation.maxAbsValue}
+        maxAbsTimeSeconds={animation.maxAbsTimeSeconds}
+        largeScaleWarning={animation.largeScaleWarning}
+      >
+        <TimeHistoryAnimationAvailability result={result} />
+        <TimeHistoryAnimationViewerPanel project={project} result={result} />
+        <TimeHistoryAnimationControlsPanel result={result} />
+      </TimeHistoryAnimationProvider>
     </div>
   );
 }

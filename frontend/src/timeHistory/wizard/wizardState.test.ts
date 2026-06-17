@@ -204,4 +204,37 @@ describe("isXyzAnimationAvailable", () => {
   it("returns all axes missing for a null result", () => {
     expect(isXyzAnimationAvailable(null)).toEqual({ available: false, missingAxes: ["X", "Y", "Z"] });
   });
+
+  it("returns true for shorthand keys when the active direction is X", () => {
+    const result = makeResult({
+      displacements: { N1: [0, 0.001, 0.002] },
+      meta: { analysisId: "a1", status: "success", method: "newmark-beta", timeStep: 0.01, duration: 0.5, sampleCount: 3, groundMotions: [{ direction: "X" }] },
+    });
+    expect(isXyzAnimationAvailable(result)).toEqual({ available: false, missingAxes: ["Y", "Z"] });
+  });
+
+  it("returns Y available for shorthand keys when the active direction is Y", () => {
+    const result = makeResult({
+      displacements: { N1: [0, 0.001, 0.002] },
+      meta: { analysisId: "a1", status: "success", method: "newmark-beta", timeStep: 0.01, duration: 0.5, sampleCount: 3, groundMotions: [{ direction: "Y" }] },
+    });
+    const availability = isXyzAnimationAvailable(result);
+    expect(availability.missingAxes).toEqual(["X", "Z"]);
+  });
+
+  it("returns Z available for shorthand keys when the active direction is Z", () => {
+    const result = makeResult({
+      displacements: { N1: [0, 0.001, 0.002] },
+      meta: { analysisId: "a1", status: "success", method: "newmark-beta", timeStep: 0.01, duration: 0.5, sampleCount: 3, groundMotions: [{ direction: "Z" }] },
+    });
+    const availability = isXyzAnimationAvailable(result);
+    expect(availability.missingAxes).toEqual(["X", "Y"]);
+  });
+
+  it("ignores shorthand keys when there is no active direction", () => {
+    const result = makeResult({
+      displacements: { N1: [0, 0.001, 0.002] },
+    });
+    expect(isXyzAnimationAvailable(result)).toEqual({ available: false, missingAxes: ["X", "Y", "Z"] });
+  });
 });

@@ -242,7 +242,14 @@ export function useTimeHistoryAnimationState(args: {
     }
   } else if (activeSeriesTable) {
     for (const key of Object.keys(activeSeriesTable)) {
-      if (!key.endsWith("_ux") && !key.endsWith("_uy") && !key.endsWith("_uz")) continue;
+      if (
+        !key.endsWith("_ux") &&
+        !key.endsWith("_uy") &&
+        !key.endsWith("_uz") &&
+        key.includes("_")
+      ) {
+        continue;
+      }
       const series = activeSeriesTable[key];
       if (!Array.isArray(series)) continue;
       for (const value of series) {

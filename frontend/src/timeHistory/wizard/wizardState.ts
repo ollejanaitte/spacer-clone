@@ -7,6 +7,7 @@
 // from the existing project and result objects.
 
 import type { ProjectModel, TimeHistoryResult } from "../../types";
+import { inferTimeHistoryActiveDirection } from "../timeHistoryAnimation";
 
 export type TimeHistoryMainStatus =
   | "unconfigured"
@@ -412,14 +413,32 @@ export function isXyzAnimationAvailable(
   result: TimeHistoryResult | null | undefined,
 ): XyzAnimationAvailability {
   if (!result || !result.displacements) return { available: false, missingAxes: ["X", "Y", "Z"] };
-  const hasUx = hasSeries(result, "_ux");
-  const hasUy = hasSeries(result, "_uy");
-  const hasUz = hasSeries(result, "_uz");
+  // The MVP ground motion can express the displacement in two
+  // shapes: per-component keys (`<nodeId>_ux`, etc.) and a
+  // single-key shorthand (`<nodeId>`) when the active direction
+  // is one of the three translations. We accept both shapes so
+  // that the XYZ combined mode is correctly marked as available
+  // for single-direction runs whose active direction is Y or Z.
+  const activeDirection = inferTimeHistoryActiveDirection(result);
+  const shorthandPresent = hasShorthandSeries(result);
+  const ux = hasSeries(result, "_ux") || (shorthandPresent && activeDirection === "ux");
+  const uy = hasSeries(result, "_uy") || (shorthandPresent && activeDirection === "uy");
+  const uz = hasSeries(result, "_uz") || (shorthandPresent && activeDirection === "uz");
   const missingAxes: string[] = [];
-  if (!hasUx) missingAxes.push("X");
-  if (!hasUy) missingAxes.push("Y");
-  if (!hasUz) missingAxes.push("Z");
+  if (!ux) missingAxes.push("X");
+  if (!uy) missingAxes.push("Y");
+  if (!uz) missingAxes.push("Z");
   return { available: missingAxes.length === 0, missingAxes };
+}
+
+function hasShorthandSeries(result: TimeHistoryResult): boolean {
+  for (const key of Object.keys(result.displacements ?? {})) {
+    if (!key.includes("_")) {
+      const series = (result.displacements as Record<string, number[] | undefined>)[key];
+      if (Array.isArray(series) && series.length > 0) return true;
+    }
+  }
+  return false;
 }
 
 function hasSeries(result: TimeHistoryResult, suffix: string): boolean {
