@@ -492,6 +492,48 @@ describe("Time History H24 ground motion import", () => {
     expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.01, 9);
   });
 });
+describe("Time History animation mode and usability", () => {
+  function renderPanelWithResult() {
+    const result = timeHistoryResult();
+    render(
+      <ResultsPanel
+        activeTab="timeHistory"
+        project={timeHistoryProject()}
+        result={result}
+        errors={[]}
+        warnings={[]}
+        activeLoadCase=""
+        selectedEigenMode={1}
+        selectedResponseSpectrumResult="SRSS"
+        selectedNode={null}
+        selectedMember={null}
+        logs={[]}
+        onTabChange={() => undefined}
+        onProjectChange={() => undefined}
+        onSelectedEigenModeChange={() => undefined}
+        onSelectedResponseSpectrumResultChange={() => undefined}
+      />,
+    );
+  }
+  it("renders the displacement mode selector", () => {
+    renderPanelWithResult();
+    const selector = document.querySelector('select[aria-label="' + ja.timeHistory.animation.modeLabel + '"]');
+    expect(selector).toBeTruthy();
+  });
+  it("shows xyz mode by default", () => {
+    renderPanelWithResult();
+    const selector = document.querySelector('select[aria-label="' + ja.timeHistory.animation.modeLabel + '"]') as HTMLSelectElement;
+    expect(selector.value).toBe("xyz");
+  });
+  it("renders the jump-to-max button", () => {
+    renderPanelWithResult();
+    expect(document.body.textContent).toContain(ja.timeHistory.animation.jumpToMax);
+  });
+  it("renders the current time and max abs value labels", () => {
+    renderPanelWithResult();
+    expect(document.body.textContent).toContain("abs max:");
+  });
+});
 describe("Time History result persistence", () => {
   it("persists a successful time history result into project.analysisResults.timeHistory", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));

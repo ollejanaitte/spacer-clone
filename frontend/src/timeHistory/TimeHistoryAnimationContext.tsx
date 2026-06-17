@@ -15,9 +15,11 @@ import type { ProjectModel, TimeHistoryResult } from "../types";
 import {
   DEFAULT_TIME_HISTORY_ANIMATION_SCALE,
   DEFAULT_TIME_HISTORY_ANIMATION_SPEED,
+  DEFAULT_TIME_HISTORY_DISPLACEMENT_MODE,
   clampTimeIndex,
   computeTimeHistoryNodeOverride,
   type TimeHistoryAnimationOverride,
+  type TimeHistoryDisplacementMode,
 } from "./timeHistoryAnimation";
 
 export type TimeHistoryAnimationState = {
@@ -31,6 +33,8 @@ export type TimeHistoryAnimationState = {
   playbackSpeed: number;
   /** Display multiplier applied to the displacement vector. */
   displacementScale: number;
+  /** Active displacement mode (x / y / z / xyz). */
+  displacementMode: TimeHistoryDisplacementMode;
   /** True when playback loops from the last sample back to zero. */
   loop: boolean;
   /** Sample count derived from the active result, or 0. */
@@ -41,6 +45,16 @@ export type TimeHistoryAnimationState = {
   hasNonFiniteDisplacement: boolean;
   /** Per-node override map consumed by the 3D viewer. */
   override: TimeHistoryAnimationOverride | null;
+  /** Current time in seconds, derived from the index and dt. */
+  currentTimeSeconds: number;
+  /** Current value of the active selected key at the active time. */
+  currentValue: number;
+  /** Max absolute value of the active selected key (or all). */
+  maxAbsValue: number;
+  /** Time in seconds of the max abs value. */
+  maxAbsTimeSeconds: number;
+  /** True when the displacement scale is unusually large. */
+  largeScaleWarning: boolean;
 };
 
 export type TimeHistoryAnimationController = {
@@ -48,7 +62,9 @@ export type TimeHistoryAnimationController = {
   setIsPlaying: (playing: boolean) => void;
   setPlaybackSpeed: (speed: number) => void;
   setDisplacementScale: (scale: number) => void;
+  setDisplacementMode: (mode: TimeHistoryDisplacementMode) => void;
   reset: () => void;
+  jumpToMax: (selectedKey: string | null, seriesKind: "displacement" | "velocity" | "acceleration") => void;
 };
 
 export type TimeHistoryAnimationContextValue = TimeHistoryAnimationState & TimeHistoryAnimationController;
@@ -61,11 +77,17 @@ const DISABLED_STATE: TimeHistoryAnimationState = {
   isPlaying: false,
   playbackSpeed: DEFAULT_TIME_HISTORY_ANIMATION_SPEED,
   displacementScale: DEFAULT_TIME_HISTORY_ANIMATION_SCALE,
+  displacementMode: DEFAULT_TIME_HISTORY_DISPLACEMENT_MODE,
   loop: true,
   sampleCount: 0,
   sampleMismatch: false,
   hasNonFiniteDisplacement: false,
   override: null,
+  currentTimeSeconds: 0,
+  currentValue: 0,
+  maxAbsValue: 0,
+  maxAbsTimeSeconds: 0,
+  largeScaleWarning: false,
 };
 
 export const TimeHistoryAnimationContext = createContext<TimeHistoryAnimationContextValue>({
@@ -74,7 +96,9 @@ export const TimeHistoryAnimationContext = createContext<TimeHistoryAnimationCon
   setIsPlaying: noop,
   setPlaybackSpeed: noop,
   setDisplacementScale: noop,
+  setDisplacementMode: noop,
   reset: noop,
+  jumpToMax: noop,
 });
 
 export function useTimeHistoryAnimation(): TimeHistoryAnimationContextValue {
@@ -90,6 +114,7 @@ export type TimeHistoryAnimationProviderProps = {
     isPlaying: boolean;
     playbackSpeed: number;
     displacementScale: number;
+    displacementMode: TimeHistoryDisplacementMode;
     loop: boolean;
   };
   setters: {
@@ -97,8 +122,15 @@ export type TimeHistoryAnimationProviderProps = {
     setIsPlaying: (playing: boolean) => void;
     setPlaybackSpeed: (speed: number) => void;
     setDisplacementScale: (scale: number) => void;
+    setDisplacementMode: (mode: TimeHistoryDisplacementMode) => void;
   };
   reset: () => void;
+  jumpToMax: (selectedKey: string | null, seriesKind: "displacement" | "velocity" | "acceleration") => void;
+  currentTimeSeconds: number;
+  currentValue: number;
+  maxAbsValue: number;
+  maxAbsTimeSeconds: number;
+  largeScaleWarning: boolean;
 };
 
 /**
@@ -109,8 +141,8 @@ export type TimeHistoryAnimationProviderProps = {
  * ...).
  */
 export function TimeHistoryAnimationProvider(props: TimeHistoryAnimationProviderProps) {
-  const { project, result, state, setters, reset } = props;
-  const { currentTimeIndex, isPlaying, playbackSpeed, displacementScale, loop } = state;
+  const { project, result, state, setters, reset, jumpToMax, currentTimeSeconds, currentValue, maxAbsValue, maxAbsTimeSeconds, largeScaleWarning } = props;
+  const { currentTimeIndex, isPlaying, playbackSpeed, displacementScale, displacementMode, loop } = state;
 
   const sampleCount = typeof result?.meta?.sampleCount === "number" && Number.isFinite(result.meta.sampleCount)
     ? result.meta.sampleCount
@@ -129,6 +161,7 @@ export function TimeHistoryAnimationProvider(props: TimeHistoryAnimationProvider
         result,
         timeIndex: clampedIndex,
         displacementScale,
+        displacementMode,
       })
     : null;
 
@@ -138,16 +171,24 @@ export function TimeHistoryAnimationProvider(props: TimeHistoryAnimationProvider
     isPlaying,
     playbackSpeed,
     displacementScale,
+    displacementMode,
     loop,
     sampleCount,
     sampleMismatch,
     hasNonFiniteDisplacement,
     override,
+    currentTimeSeconds,
+    currentValue,
+    maxAbsValue,
+    maxAbsTimeSeconds,
+    largeScaleWarning,
     setCurrentTimeIndex: setters.setCurrentTimeIndex,
     setIsPlaying: setters.setIsPlaying,
     setPlaybackSpeed: setters.setPlaybackSpeed,
     setDisplacementScale: setters.setDisplacementScale,
+    setDisplacementMode: setters.setDisplacementMode,
     reset,
+    jumpToMax,
   };
 
   return (

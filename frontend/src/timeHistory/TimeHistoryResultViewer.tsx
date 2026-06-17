@@ -100,6 +100,8 @@ function TimeHistoryResultViewerBody(props: BodyProps) {
   const animation = useTimeHistoryAnimationState({
     project: props.project,
     result: props.result,
+    selectedKey: props.selectedKey || null,
+    seriesKind: props.selectedSeries,
   });
   // Report the override upward so the 3D viewer can consume it.
   // We compare by reference; the override map is recomputed
@@ -115,6 +117,12 @@ function TimeHistoryResultViewerBody(props: BodyProps) {
       state={animation.state}
       setters={animation.setters}
       reset={animation.reset}
+      jumpToMax={animation.jumpToMax}
+      currentTimeSeconds={animation.currentTimeSeconds}
+      currentValue={animation.currentValue}
+      maxAbsValue={animation.maxAbsValue}
+      maxAbsTimeSeconds={animation.maxAbsTimeSeconds}
+      largeScaleWarning={animation.largeScaleWarning}
     >
       <section className="result-table time-history-result-viewer" aria-label={props.labels.heading}>
         <h3>{props.labels.heading}</h3>

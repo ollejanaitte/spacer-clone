@@ -2,8 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   ALLOWED_TIME_HISTORY_ANIMATION_SPEEDS,
   clampTimeIndex,
+  computeAutoDisplacementScale,
+  computeMaxAbsDisplacement,
+  computeModelSize,
   computeTimeHistoryNodeOverride,
+  findMaxAbsTimeIndex,
   parseTimeHistoryDisplacementKey,
+  readActiveSeriesValue,
 } from "./timeHistoryAnimation";
 import type { ProjectModel, TimeHistoryResult } from "../types";
 import { createDefaultProject } from "../data/defaultProject";
@@ -170,4 +175,135 @@ describe("ALLOWED_TIME_HISTORY_ANIMATION_SPEEDS", () => {
   it("contains the MVP speed set", () => {
     expect(ALLOWED_TIME_HISTORY_ANIMATION_SPEEDS).toEqual([0.25, 0.5, 1, 2, 4]);
   });
+
+describe("computeTimeHistoryNodeOverride with displacement modes", () => {
+  it("x mode uses ux only", () => {
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: baseResult,
+      timeIndex: 1,
+      displacementScale: 1,
+      displacementMode: "x",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N2")).toEqual({ x: 1 + 1.0, y: 0, z: 0 });
+  });
+  it("y mode uses uy only", () => {
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: baseResult,
+      timeIndex: 1,
+      displacementScale: 1,
+      displacementMode: "y",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N2")).toEqual({ x: 1, y: 0 + 0.2, z: 0 });
+  });
+  it("z mode uses uz only", () => {
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: baseResult,
+      timeIndex: 1,
+      displacementScale: 1,
+      displacementMode: "z",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N3")).toEqual({ x: 2, y: 0, z: 0 + 2.0 });
+  });
+  it("xyz mode combines ux, uy, uz", () => {
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: baseResult,
+      timeIndex: 1,
+      displacementScale: 1,
+      displacementMode: "xyz",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N2")).toEqual({ x: 1 + 1.0, y: 0 + 0.2, z: 0 });
+    expect(map.get("N3")).toEqual({ x: 2, y: 0, z: 0 + 2.0 });
+  });
+  it("xyz mode applies displacementScale to all components", () => {
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: baseResult,
+      timeIndex: 1,
+      displacementScale: 10,
+      displacementMode: "xyz",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N2")).toEqual({ x: 1 + 10, y: 0 + 2, z: 0 });
+    expect(map.get("N3")).toEqual({ x: 2, y: 0, z: 0 + 20 });
+  });
+  it("missing component is treated as zero in xyz mode", () => {
+    const partialResult: TimeHistoryResult = {
+      ...baseResult,
+      displacements: { N2_ux: [0, 0.5, 0.5] },
+    };
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: partialResult,
+      timeIndex: 1,
+      displacementScale: 2,
+      displacementMode: "xyz",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    expect(map.get("N2")).toEqual({ x: 1 + 1.0, y: 0, z: 0 });
+  });
 });
+
+describe("computeModelSize", () => {
+  it("returns the largest axis extent", () => {
+    expect(computeModelSize(baseProject)).toBe(2);
+  });
+  it("returns 1 for empty or missing projects", () => {
+    expect(computeModelSize(null)).toBe(1);
+    expect(computeModelSize({ ...baseProject, nodes: [] })).toBe(1);
+  });
+});
+
+describe("computeMaxAbsDisplacement", () => {
+  it("returns the max absolute value across all displacement series", () => {
+    expect(computeMaxAbsDisplacement(baseResult)).toBe(2.0);
+  });
+  it("returns 0 when no result is supplied", () => {
+    expect(computeMaxAbsDisplacement(null)).toBe(0);
+    expect(computeMaxAbsDisplacement({ ...baseResult, displacements: {} })).toBe(0);
+  });
+});
+
+describe("computeAutoDisplacementScale", () => {
+  it("aims for a deformation that is roughly 1% of the model size", () => {
+    const scale = computeAutoDisplacementScale({ modelSize: 100, maxAbsDisplacement: 5, min: 0.01 });
+    expect(scale).toBeCloseTo(0.2, 9);
+  });
+  it("clamps to the minimum when the result is below 1", () => {
+    expect(computeAutoDisplacementScale({ modelSize: 0.01, maxAbsDisplacement: 100, min: 1 })).toBe(1);
+  });
+  it("clamps to the maximum when the result is above the ceiling", () => {
+    expect(computeAutoDisplacementScale({ modelSize: 1e9, maxAbsDisplacement: 1e-9, max: 100000 })).toBe(100000);
+  });
+  it("returns the fallback when the inputs are non-positive", () => {
+    expect(computeAutoDisplacementScale({ modelSize: 0, maxAbsDisplacement: 0, fallback: 50 })).toBe(50);
+  });
+});
+
+describe("findMaxAbsTimeIndex", () => {
+  it("returns the index of the largest absolute value", () => {
+    expect(findMaxAbsTimeIndex({ result: baseResult, sampleCount: 3 })).toBe(1);
+  });
+  it("respects the selected key", () => {
+    expect(findMaxAbsTimeIndex({ result: baseResult, selectedKey: "N3_uz", sampleCount: 3 })).toBe(1);
+  });
+  it("returns the fallback when no result is supplied", () => {
+    expect(findMaxAbsTimeIndex({ result: null, sampleCount: 3, fallback: 2 })).toBe(2);
+  });
+});
+
+describe("readActiveSeriesValue", () => {
+  it("returns the active value at the active index", () => {
+    expect(readActiveSeriesValue({ result: baseResult, selectedKey: "N2_ux", timeIndex: 1, sampleCount: 3 })).toBe(1.0);
+  });
+  it("returns 0 when the key is missing", () => {
+    expect(readActiveSeriesValue({ result: baseResult, selectedKey: "missing", timeIndex: 0, sampleCount: 3 })).toBe(0);
+  });
+});});

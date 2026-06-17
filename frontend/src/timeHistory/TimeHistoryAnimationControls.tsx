@@ -3,6 +3,7 @@ import { ja } from "../i18n/ja";
 import {
   ALLOWED_TIME_HISTORY_ANIMATION_SPEEDS,
   clampTimeIndex,
+  type TimeHistoryDisplacementMode,
 } from "./timeHistoryAnimation";
 import { useTimeHistoryAnimation } from "./TimeHistoryAnimationContext";
 
@@ -110,6 +111,20 @@ export function TimeHistoryAnimationControls() {
       </div>
       <div className="summary-list result-toolbar">
         <label className="result-select">
+          <span>{labels.modeLabel}</span>
+          <select
+            aria-label={labels.modeLabel}
+            value={ctx.displacementMode}
+            disabled={isDisabled}
+            onChange={(event) => ctx.setDisplacementMode(event.currentTarget.value as TimeHistoryDisplacementMode)}
+          >
+            <option value="x">{labels.modeX}</option>
+            <option value="y">{labels.modeY}</option>
+            <option value="z">{labels.modeZ}</option>
+            <option value="xyz">{labels.modeXyz}</option>
+          </select>
+        </label>
+        <label className="result-select">
           <span>{labels.speedLabel}</span>
           <select
             aria-label={labels.speedLabel}
@@ -140,6 +155,20 @@ export function TimeHistoryAnimationControls() {
           />
         </label>
       </div>
+      <div className="summary-list result-toolbar">
+        <button
+          type="button"
+          aria-label={labels.jumpToMax}
+          disabled={isDisabled}
+          onClick={() => ctx.jumpToMax(null, "displacement")}
+        >
+          {labels.jumpToMax}
+        </button>
+        <span>{labels.currentTimeLabel(ctx.currentTimeSeconds.toFixed(3), currentIndex, ctx.sampleCount)}</span>
+        <span>{labels.currentValueLabel(ctx.currentValue.toFixed(4))}</span>
+        <span>{labels.maxAbsLabel(ctx.maxAbsValue.toFixed(4), ctx.maxAbsTimeSeconds.toFixed(3))}</span>
+      </div>
+      {ctx.largeScaleWarning && <div className="empty-state time-history-scale-warning">{labels.warningLargeScale}</div>}
       {ctx.sampleMismatch && <div className="empty-state">{labels.warningSampleMismatch}</div>}
       {ctx.hasNonFiniteDisplacement && <div className="empty-state">{labels.warningNonFiniteValue}</div>}
     </section>
