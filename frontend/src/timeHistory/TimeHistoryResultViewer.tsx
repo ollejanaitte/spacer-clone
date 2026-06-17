@@ -14,6 +14,7 @@ const responseKeys: Array<keyof Pick<TimeHistoryResult, "displacements" | "veloc
   "accelerations",
 ];
 const maxDisplayedRows = 100;
+const maxChartPoints = 1000;
 type TimeHistorySeries = "displacement" | "velocity" | "acceleration";
 
 const seriesResultKey: Record<TimeHistorySeries, (typeof responseKeys)[number]> = {
@@ -121,6 +122,12 @@ export function TimeHistoryResultViewer({ result = null, status, error = null }:
       <div className="summary-list">
         <span>{labels.availableKeys}: {responseKeyOptions.length > 0 ? responseKeyOptions.join(", ") : "-"}</span>
       </div>
+      <TimeHistoryChart
+        rows={tableRows}
+        selectedKey={selectedKey}
+        selectedSeries={selectedSeries}
+        hasResult={Boolean(result)}
+      />
       {hasTable ? (
         <div className="result-table">
           <table>
@@ -150,6 +157,93 @@ export function TimeHistoryResultViewer({ result = null, status, error = null }:
   );
 }
 
+function TimeHistoryChart({
+  rows,
+  selectedKey,
+  selectedSeries,
+  hasResult,
+}: {
+  rows: Array<{ time: number; value: number }>;
+  selectedKey: string;
+  selectedSeries: TimeHistorySeries;
+  hasResult: boolean;
+}) {
+  const labels = ja.timeHistory.resultViewer.chart;
+  const points = downsampleRows(rows, maxChartPoints);
+  const width = 760;
+  const height = 220;
+  const padding = 30;
+  const values = points.map((point) => point.value);
+  const times = points.map((point) => point.time);
+  const minValue = Math.min(...values, 0);
+  const maxValue = Math.max(...values, 0);
+  const minTime = Math.min(...times, 0);
+  const maxTime = Math.max(...times, 0);
+  const valueSpan = maxValue - minValue || 1;
+  const timeSpan = maxTime - minTime || 1;
+  const polylinePoints = points
+    .map((point) => {
+      const x = padding + ((point.time - minTime) / timeSpan) * (width - 2 * padding);
+      const y = height - padding - ((point.value - minValue) / valueSpan) * (height - 2 * padding);
+      return `${x},${y}`;
+    })
+    .join(" ");
+
+  return (
+    <div className="result-table time-history-chart">
+      <h3>{labels.title}</h3>
+      <div className="summary-list">
+        <span>{ja.timeHistory.resultViewer.selectedKey}: {selectedKey || "-"}</span>
+        <span>{ja.timeHistory.resultViewer.selectedSeries}: {seriesLabel(selectedSeries)}</span>
+      </div>
+      {points.length === 0 ? (
+        <div className="empty-state">{hasResult ? labels.invalid : labels.empty}</div>
+      ) : (
+        <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={labels.ariaLabel}>
+          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} />
+          <line x1={padding} y1={padding} x2={padding} y2={height - padding} />
+          <line
+            className="zero-line"
+            x1={padding}
+            y1={height - padding - ((0 - minValue) / valueSpan) * (height - 2 * padding)}
+            x2={width - padding}
+            y2={height - padding - ((0 - minValue) / valueSpan) * (height - 2 * padding)}
+          />
+          <text x={width / 2} y={height - 6} textAnchor="middle">
+            {labels.xAxis}
+          </text>
+          <text x={12} y={height / 2} textAnchor="middle" transform={`rotate(-90 12 ${height / 2})`}>
+            {labels.yAxis}
+          </text>
+          <text x={padding} y={height - padding + 14} textAnchor="middle">
+            {formatTableTime(minTime)}
+          </text>
+          <text x={width - padding} y={height - padding + 14} textAnchor="middle">
+            {formatTableTime(maxTime)}
+          </text>
+          <text x={padding - 6} y={padding + 4} textAnchor="end">
+            {formatTableValue(maxValue)}
+          </text>
+          <text x={padding - 6} y={height - padding + 4} textAnchor="end">
+            {formatTableValue(minValue)}
+          </text>
+          <polyline
+            data-response-key={selectedKey}
+            data-series={selectedSeries}
+            points={polylinePoints}
+            fill="none"
+            stroke="#2f6f9f"
+            strokeWidth="2"
+          />
+          <text x={width - padding} y={padding + 4} textAnchor="end">
+            {labels.pointCount(points.length, rows.length)}
+          </text>
+        </svg>
+      )}
+    </div>
+  );
+}
+
 function responseHistoryKeys(result: TimeHistoryResult | null): string[] {
   if (!result) return [];
   const keys = new Set<string>();
@@ -173,6 +267,14 @@ function buildTableRows(time: number[] | undefined, values: number[] | undefined
     }
   }
   return rows;
+}
+
+function downsampleRows(rows: Array<{ time: number; value: number }>, maxPoints: number): Array<{ time: number; value: number }> {
+  if (rows.length <= maxPoints) return rows;
+  const step = Math.ceil(rows.length / maxPoints);
+  const points = rows.filter((_, index) => index % step === 0);
+  const last = rows[rows.length - 1];
+  return points[points.length - 1] === last ? points : [...points, last];
 }
 
 function statusLabel(status: string | undefined): string {

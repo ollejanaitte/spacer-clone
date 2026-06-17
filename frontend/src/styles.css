@@ -844,7 +844,8 @@ button:disabled {
   color: #1f2933;
 }
 
-.influence-chart svg {
+.influence-chart svg,
+.time-history-chart svg {
   display: block;
   width: 100%;
   max-height: 240px;
@@ -853,17 +854,20 @@ button:disabled {
   background: #ffffff;
 }
 
-.influence-chart text {
+.influence-chart text,
+.time-history-chart text {
   fill: #526173;
   font-size: 11px;
 }
 
-.influence-chart line {
+.influence-chart line,
+.time-history-chart line {
   stroke: #8a9bae;
   stroke-width: 1;
 }
 
-.influence-chart .zero-line {
+.influence-chart .zero-line,
+.time-history-chart .zero-line {
   stroke: #cbd5df;
   stroke-dasharray: 4 4;
 }

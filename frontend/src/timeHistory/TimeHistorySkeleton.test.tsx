@@ -159,6 +159,69 @@ describe("Time History basic result table", () => {
   });
 });
 
+describe("Time History basic chart", () => {
+  it("renders a chart for displacement", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    expect(chartPolyline().dataset.series).toBe("displacement");
+    expect(chartPolyline().dataset.responseKey).toBe("N2_ux");
+    expect(chartPolyline().getAttribute("points")).not.toBe("");
+  });
+
+  it("renders a chart for velocity", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    clickInputByLabel(ja.timeHistory.resultViewer.seriesVelocity);
+
+    expect(chartPolyline().dataset.series).toBe("velocity");
+  });
+
+  it("renders a chart for acceleration", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    clickInputByLabel(ja.timeHistory.resultViewer.seriesAcceleration);
+
+    expect(chartPolyline().dataset.series).toBe("acceleration");
+  });
+
+  it("updates the chart when the response key changes", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+    const before = chartPolyline().getAttribute("points");
+
+    changeSelect(ja.timeHistory.resultViewer.responseKeyLabel, "N3_ux");
+
+    expect(chartPolyline().dataset.responseKey).toBe("N3_ux");
+    expect(chartPolyline().getAttribute("points")).not.toBe(before);
+  });
+
+  it("updates the chart when the series changes", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+    const before = chartPolyline().getAttribute("points");
+
+    clickInputByLabel(ja.timeHistory.resultViewer.seriesVelocity);
+
+    expect(chartPolyline().dataset.series).toBe("velocity");
+    expect(chartPolyline().getAttribute("points")).not.toBe(before);
+  });
+
+  it("does not crash on invalid chart data", () => {
+    const invalidResult = {
+      ...timeHistoryResult().timeHistoryResult!,
+      time: [],
+      displacements: { N2_ux: [1] },
+    };
+
+    expect(() => render(<TimeHistoryResultViewer result={invalidResult} status="success" />)).not.toThrow();
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.chart.invalid);
+  });
+
+  it("shows chart empty state for an empty result", () => {
+    render(<TimeHistoryResultViewer result={null} />);
+
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.chart.empty);
+  });
+});
+
 describe("Time History connected run button", () => {
   it("calls the time history endpoint with the current project payload", async () => {
     const project = timeHistoryProject();
@@ -365,6 +428,12 @@ function tableText(): string {
   return document.querySelector("table")?.textContent ?? "";
 }
 
+function chartPolyline(): SVGPolylineElement {
+  const element = document.querySelector<SVGPolylineElement>(".time-history-chart polyline[data-series]");
+  if (!element) throw new Error("Chart polyline not found.");
+  return element;
+}
+
 function createDeferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (reason?: unknown) => void;
@@ -449,9 +518,9 @@ function timeHistoryResult(): AnalysisResult {
         sampleCount: 3,
       },
       time: [0, 0.05, 0.1],
-      displacements: { N2_ux: [0, 0.1, 0], N3_ux: [0, 2, 0] },
-      velocities: { N2_ux: [0, 0.2, 0], N3_ux: [0, 3, 0] },
-      accelerations: { N2_ux: [0, 0.3, 0], N3_ux: [0, 4, 0] },
+      displacements: { N2_ux: [0, 0.1, 0], N3_ux: [1, 2, 0] },
+      velocities: { N2_ux: [0, 0.2, 0.1], N3_ux: [1, 3, 0] },
+      accelerations: { N2_ux: [0, -0.3, 0.3], N3_ux: [1, 4, 0] },
     },
   };
 }
