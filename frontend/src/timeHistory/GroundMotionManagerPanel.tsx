@@ -8,6 +8,15 @@ import {
   type GroundMotionCsvParseResult,
   type GroundMotionCsvParseSuccess,
 } from "./groundMotionCsv";
+import {
+  h24WaveformToSamples,
+  parseH24GroundMotion,
+  summarizeH24Waveform,
+  type H24ParseError,
+  type H24ParseResult,
+  type H24ParseSuccess,
+  type H24WaveformSummary,
+} from "./h24GroundMotionImport";
 
 type GroundMotionManagerPanelProps = {
   groundMotions?: ProjectModel["groundMotions"];
@@ -19,6 +28,8 @@ type ImportStatus =
   | { kind: "idle" }
   | { kind: "success"; fileName: string; sampleCount: number; timeStep: number; columns: number }
   | { kind: "success-no-time-step"; fileName: string; sampleCount: number; columns: number }
+  | { kind: "h24-success"; fileName: string; sampleCount: number; timeStep: number; duration: number; waveformCount: number }
+  | { kind: "h24-no-waves"; fileName: string }
   | { kind: "error"; message: string };
 
 export function GroundMotionManagerPanel({ groundMotions, project, onChange }: GroundMotionManagerPanelProps) {
@@ -29,6 +40,11 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
   const [sampleText, setSampleText] = useState(editableMotion.samples.join(", "));
   const [importStatus, setImportStatus] = useState<ImportStatus>({ kind: "idle" });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const h24FileInputRef = useRef<HTMLInputElement | null>(null);
+  const [h24Import, setH24Import] = useState<
+    | { kind: "idle" }
+    | { kind: "ready"; fileName: string; result: H24ParseSuccess }
+  >({ kind: "idle" });
   useEffect(() => {
     setSampleText(editableMotion.samples.join(", "));
   }, [editableMotion.id, editableMotion.samples]);
@@ -65,7 +81,78 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
     }
   };
 
-  const applyImportResult = (
+  const handleH24ImportClick = () => {
+    if (!onChange) return;
+    h24FileInputRef.current?.click();
+  };
+
+  const handleH24FileSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file || !project || !onChange) return;
+    try {
+      const text = await readGroundMotionCsvFile(file);
+      const result = parseH24GroundMotion(text, { fileName: file.name });
+      applyH24ImportResult(result);
+    } catch (error) {
+      setImportStatus({ kind: "error", message: importLabels.importErrorFileRead });
+    }
+  };
+
+  const applyH24ImportResult = (result: H24ParseResult) => {
+    if (result.kind === "ok") {
+      if (result.waveforms.length === 0) {
+        setImportStatus({ kind: "h24-no-waves", fileName: result.fileName ?? "" });
+        return;
+      }
+      setH24Import({ kind: "ready", fileName: result.fileName ?? "", result });
+      setImportStatus({
+        kind: "h24-success",
+        fileName: result.fileName ?? "",
+        sampleCount: result.sampleCount,
+        timeStep: result.timeStep,
+        duration: result.duration,
+        waveformCount: result.waveforms.length,
+      });
+      return;
+    }
+    setImportStatus({ kind: "error", message: formatH24Error(result) });
+  };
+
+  const applyH24WaveformToMotion = (index: number) => {
+    if (!project || !onChange) return;
+    if (h24Import.kind !== "ready") return;
+    const waveform = h24Import.result.waveforms[index];
+    if (!waveform) return;
+    const samples = h24WaveformToSamples(waveform);
+    const timeStep = h24Import.result.timeStep;
+    const duration = h24Import.result.duration;
+    const safeName = waveform.name.trim() || editableMotion.name || "H24 waveform " + String(index + 1);
+    updateMotion({
+      name: safeName,
+      unit: "gal",
+      timeStep,
+      duration,
+      samples,
+    });
+  };
+
+  const handleH24PasteImport = () => {
+    if (!project || !onChange) return;
+    const text = window.prompt(importLabels.h24PastePrompt);
+    if (text === null) return;
+    const result = parseH24GroundMotion(text, { fileName: importLabels.h24PasteFileName });
+    applyH24ImportResult(result);
+  };
+
+  const h24WaveformSummaries: H24WaveformSummary[] =
+    h24Import.kind === "ready"
+      ? h24Import.result.waveforms.map((series) =>
+          summarizeH24Waveform(series, h24Import.result.timeStep, h24Import.result.duration),
+        )
+      : [];
+
+    const applyImportResult = (
     result: GroundMotionCsvParseResult,
     fileName: string,
     existingTimeStep: number,
@@ -195,22 +282,122 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
           hidden
         />
         <button type="button" disabled>{labels.importPeer}</button>
+        <button type="button" disabled={!onChange} onClick={handleH24ImportClick}>
+          {importLabels.importH24}
+        </button>
+        <input
+          ref={h24FileInputRef}
+          type="file"
+          accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain"
+          aria-label={importLabels.importH24FileLabel}
+          onChange={handleH24FileSelected}
+          hidden
+        />
+        <button type="button" disabled={!onChange} onClick={handleH24PasteImport}>
+          {importLabels.importH24Paste}
+        </button>
         <span>{labels.futureFeatureNote}</span>
       </div>
       <ImportStatusView status={importStatus} />
+      {h24Import.kind === "ready" && (
+        <H24WaveformPicker
+          fileName={h24Import.fileName}
+          summaries={h24WaveformSummaries}
+          onPick={applyH24WaveformToMotion}
+          disabled={!onChange}
+        />
+      )}
     </section>
   );
 }
 
 function ImportStatusView({ status }: { status: ImportStatus }) {
+  const labels = ja.timeHistory.groundMotionManager;
   if (status.kind === "idle") return null;
   if (status.kind === "success") {
-    return <div className="summary-list time-history-import-status">{ja.timeHistory.groundMotionManager.importSuccess(status)}</div>;
+    return <div className="summary-list time-history-import-status">{labels.importSuccess(status)}</div>;
   }
   if (status.kind === "success-no-time-step") {
-    return <div className="summary-list time-history-import-status">{ja.timeHistory.groundMotionManager.importSuccessNoTimeStep(status)}</div>;
+    return <div className="summary-list time-history-import-status">{labels.importSuccessNoTimeStep(status)}</div>;
+  }
+  if (status.kind === "h24-success") {
+    return <div className="summary-list time-history-import-status">{labels.h24ImportSuccess(status)}</div>;
+  }
+  if (status.kind === "h24-no-waves") {
+    return <div className="empty-state time-history-import-status-error">{labels.h24ImportNoWaves({ fileName: status.fileName })}</div>;
   }
   return <div className="empty-state time-history-import-status-error">{status.message}</div>;
+}
+
+function H24WaveformPicker({
+  fileName,
+  summaries,
+  onPick,
+  disabled,
+}: {
+  fileName: string;
+  summaries: H24WaveformSummary[];
+  onPick: (index: number) => void;
+  disabled: boolean;
+}) {
+  const labels = ja.timeHistory.groundMotionManager;
+  return (
+    <div className="time-history-h24-picker" aria-label={labels.h24PickerHeading}>
+      <h4>{labels.h24PickerHeading}</h4>
+      <div className="summary-list">
+        <span>{labels.h24PickerFile(fileName)}</span>
+        <span>{labels.h24PickerCount(summaries.length)}</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>{labels.h24PickerName}</th>
+            <th>{labels.h24PickerSamples}</th>
+            <th>{labels.h24PickerTimeStep}</th>
+            <th>{labels.h24PickerDuration}</th>
+            <th>{labels.h24PickerMax}</th>
+            <th>{labels.h24PickerMin}</th>
+            <th>{labels.h24PickerAbsMax}</th>
+            <th>{labels.h24PickerAction}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {summaries.map((summary, index) => (
+            <tr key={summary.name + "-" + String(index)}>
+              <td>{summary.name}</td>
+              <td>{summary.sampleCount}</td>
+              <td>{summary.timeStep.toFixed(4)}</td>
+              <td>{summary.duration.toFixed(4)}</td>
+              <td>{summary.max.toFixed(3)}</td>
+              <td>{summary.min.toFixed(3)}</td>
+              <td>{summary.absMax.toFixed(3)}</td>
+              <td>
+                <button type="button" disabled={disabled} onClick={() => onPick(index)}>
+                  {labels.h24PickerPick}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function formatH24Error(error: H24ParseError): string {
+  const labels = ja.timeHistory.groundMotionManager;
+  switch (error.code) {
+    case "empty-file":
+      return labels.importErrorEmpty;
+    case "no-numeric-samples":
+      return labels.importErrorNoNumericSamples;
+    case "non-finite-value":
+      return labels.h24ErrorNonFinite({ line: error.line, column: error.column, token: error.token });
+    case "inconsistent-time-step":
+      return labels.h24ErrorInconsistentTimeStep({ line: error.line, detail: error.detail });
+    case "missing-time-column":
+      return labels.h24ErrorMissingTimeColumn({ detail: error.detail });
+  }
 }
 
 function formatError(error: GroundMotionCsvParseError): string {

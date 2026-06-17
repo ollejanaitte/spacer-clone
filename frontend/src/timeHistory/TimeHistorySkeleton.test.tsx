@@ -8,6 +8,7 @@ import { createDefaultProject } from "../data/defaultProject";
 import { ja } from "../i18n/ja";
 import type { AnalysisResult, ProjectModel } from "../types";
 import { ResultsPanel } from "../components/ResultsPanel";
+import { H24_WAVEFORM_NAMES } from "./h24GroundMotionImport";
 import { GroundMotionManagerPanel } from "./GroundMotionManagerPanel";
 import { TimeHistoryResultViewer } from "./TimeHistoryResultViewer";
 import { TimeHistorySettingsPanel } from "./TimeHistorySettingsPanel";
@@ -371,6 +372,60 @@ function waitFor(callback: () => void | Promise<void>): Promise<void> {
   });
 }
 
+describe("Time History H24 ground motion import", () => {
+  function csvFile(name: string, contents: string) {
+    return new File([contents], name, { type: "text/csv" });
+  }
+  function inputByLabel(label: string) {
+    const element = document.querySelector('input[aria-label="' + label + '"]');
+    if (!element) throw new Error("Input not found: " + label);
+    return element;
+  }
+  function setH24InputValue(file: File) {
+    const fileInput = inputByLabel(ja.timeHistory.groundMotionManager.importH24FileLabel);
+    Object.defineProperty(fileInput, "files", { configurable: true, value: [file] });
+    act(() => {
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+  function buildH24Text() {
+    const header = ["時間（秒）", ...H24_WAVEFORM_NAMES].join("\t");
+    const rows = [header];
+    for (let index = 0; index < 5; index += 1) {
+      const time = (index * 0.01).toFixed(2);
+      const values = H24_WAVEFORM_NAMES.map((_, waveIndex) => (index * 10 + waveIndex).toFixed(2));
+      rows.push([time, ...values].join("\t"));
+    }
+    return rows.join("\n");
+  }
+  it("imports an H24 file and lists 9 waveforms", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setH24InputValue(csvFile("h24.tsv", buildH24Text()));
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("検出波形: 9");
+    });
+    expect(document.body.textContent).toContain("Ⅱ-Ⅰ-１");
+  });
+  it("picks an H24 waveform and updates the editable ground motion", async () => {
+    const harness = renderEditingHarness(timeHistoryProject());
+    setH24InputValue(csvFile("h24.tsv", buildH24Text()));
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("検出波形: 9");
+    });
+    const buttons = Array.from(document.querySelectorAll("button")).filter(
+      (b) => b.textContent === ja.timeHistory.groundMotionManager.h24PickerPick,
+    );
+    expect(buttons.length).toBeGreaterThan(0);
+    act(() => {
+      buttons[0].click();
+    });
+    await waitFor(() => {
+      expect(harness.current().groundMotions?.[0]?.unit).toBe("gal");
+    });
+    expect(harness.current().groundMotions?.[0]?.samples).toEqual([0, 10, 20, 30, 40]);
+    expect(harness.current().groundMotions?.[0]?.timeStep).toBeCloseTo(0.01, 9);
+  });
+});
 describe("Time History deformation animation", () => {
   function animationHeading(): HTMLElement {
     const element = [...document.querySelectorAll("h3")].find(
