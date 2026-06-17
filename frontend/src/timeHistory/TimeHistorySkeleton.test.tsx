@@ -79,7 +79,7 @@ describe("Time History UI skeleton", () => {
   it("renders the result viewer skeleton with an empty result", () => {
     render(<TimeHistoryResultViewer />);
 
-    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.empty);
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.noResult);
     expect(document.body.textContent).toContain(ja.timeHistory.status.notRun);
   });
 
@@ -89,6 +89,73 @@ describe("Time History UI skeleton", () => {
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.sampleCount}: 3`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.timeStep}: 0.05`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.duration}: 0.1`);
+  });
+});
+
+describe("Time History basic result table", () => {
+  it("renders no-result state", () => {
+    render(<TimeHistoryResultViewer result={null} />);
+
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.noResult);
+  });
+
+  it("renders a displacement table", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    expect(tableText()).toContain(ja.timeHistory.resultViewer.table.time);
+    expect(tableText()).toContain(ja.timeHistory.resultViewer.table.value);
+    expect(tableText()).toContain("0.05");
+    expect(tableText()).toContain("0.100");
+  });
+
+  it("renders a velocity table after series selection", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    clickInputByLabel(ja.timeHistory.resultViewer.seriesVelocity);
+
+    expect(tableText()).toContain("0.200");
+  });
+
+  it("renders an acceleration table after series selection", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    clickInputByLabel(ja.timeHistory.resultViewer.seriesAcceleration);
+
+    expect(tableText()).toContain("0.300");
+  });
+
+  it("changes displayed values from the response key selector", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    changeSelect(ja.timeHistory.resultViewer.responseKeyLabel, "N3_ux");
+
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.selectedKey}: N3_ux`);
+    expect(tableText()).toContain("2.000");
+  });
+
+  it("limits displayed rows to 100", () => {
+    render(<TimeHistoryResultViewer result={largeTimeHistoryResult().timeHistoryResult} status="success" />);
+
+    expect(document.querySelectorAll("tbody tr")).toHaveLength(100);
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.table.showing(100, 150));
+  });
+
+  it("shows the displayed sample count", () => {
+    render(<TimeHistoryResultViewer result={timeHistoryResult().timeHistoryResult} status="success" />);
+
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.totalSamples}: 3`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.displayedSamples}: 3`);
+  });
+
+  it("does not crash on invalid data", () => {
+    const invalidResult = {
+      ...timeHistoryResult().timeHistoryResult!,
+      time: [],
+      displacements: { N2_ux: [1] },
+    };
+
+    expect(() => render(<TimeHistoryResultViewer result={invalidResult} status="success" />)).not.toThrow();
+    expect(document.body.textContent).toContain(ja.timeHistory.resultViewer.noResult);
   });
 });
 
@@ -139,8 +206,8 @@ describe("Time History connected run button", () => {
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.sampleCount}: 3`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.timeStep}: 0.05`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.duration}: 0.1`);
-    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.availableKeysCount}: 3`);
-    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.firstKey}: displacements`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.availableKeysCount}: 2`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.firstKey}: N2_ux`);
   });
 
   it("updates status and error summary from a failed envelope", async () => {
@@ -275,6 +342,29 @@ function button(label: string): HTMLButtonElement {
   return element;
 }
 
+function clickInputByLabel(label: string) {
+  const target = [...document.querySelectorAll("label")].find((item) => item.textContent === label);
+  const input = target?.querySelector("input");
+  if (!(input instanceof HTMLInputElement)) throw new Error(`Input not found: ${label}`);
+  act(() => {
+    input.click();
+  });
+}
+
+function changeSelect(label: string, value: string) {
+  const target = [...document.querySelectorAll("label")].find((item) => item.textContent?.includes(label));
+  const select = target?.querySelector("select");
+  if (!(select instanceof HTMLSelectElement)) throw new Error(`Select not found: ${label}`);
+  act(() => {
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+function tableText(): string {
+  return document.querySelector("table")?.textContent ?? "";
+}
+
 function createDeferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (reason?: unknown) => void;
@@ -359,9 +449,29 @@ function timeHistoryResult(): AnalysisResult {
         sampleCount: 3,
       },
       time: [0, 0.05, 0.1],
-      displacements: { N2: [0, 0.1, 0] },
-      velocities: { N2: [0, 0.2, 0] },
-      accelerations: { N2: [0, 0.3, 0] },
+      displacements: { N2_ux: [0, 0.1, 0], N3_ux: [0, 2, 0] },
+      velocities: { N2_ux: [0, 0.2, 0], N3_ux: [0, 3, 0] },
+      accelerations: { N2_ux: [0, 0.3, 0], N3_ux: [0, 4, 0] },
+    },
+  };
+}
+
+function largeTimeHistoryResult(): AnalysisResult {
+  const result = timeHistoryResult();
+  const time = Array.from({ length: 150 }, (_, index) => index * 0.05);
+  return {
+    ...result,
+    timeHistoryResult: {
+      ...result.timeHistoryResult!,
+      meta: {
+        ...result.timeHistoryResult!.meta,
+        sampleCount: 150,
+        duration: 7.45,
+      },
+      time,
+      displacements: { N2_ux: time.map((value) => value * 0.1) },
+      velocities: { N2_ux: time.map((value) => value * 0.2) },
+      accelerations: { N2_ux: time.map((value) => value * 0.3) },
     },
   };
 }
