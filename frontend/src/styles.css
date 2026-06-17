@@ -790,6 +790,21 @@ button:disabled {
   gap: 8px;
 }
 
+.time-history-result-viewer > .summary-list:first-of-type span,
+.time-history-error-summary span {
+  padding: 4px 7px;
+  border: 1px solid #dce3ea;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #334155;
+}
+
+.time-history-settings,
+.time-history-ground-motion-manager,
+.time-history-result-viewer {
+  min-width: 0;
+}
+
 .result-table h3 {
   margin-bottom: 6px;
   color: #334155;
@@ -864,6 +879,10 @@ button:disabled {
   min-height: 76px;
   padding: 6px;
   resize: vertical;
+}
+
+.time-history-result-viewer .result-table {
+  overflow-x: auto;
 }
 
 .influence-chart svg,

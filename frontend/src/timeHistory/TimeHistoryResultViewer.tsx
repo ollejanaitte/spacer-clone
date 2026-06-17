@@ -58,7 +58,7 @@ export function TimeHistoryResultViewer({ result = null, status, error = null }:
         <span>{labels.displayedSamples}: {displayedRows.length}</span>
       </div>
       {error && (
-        <div className="summary-list">
+        <div className="summary-list time-history-error-summary">
           <span>{ja.timeHistory.error.code}: {error.code}</span>
           <span>{ja.timeHistory.error.path}: {error.path ?? "-"}</span>
           <span>{ja.timeHistory.error.message}: {error.code === "TIME_HISTORY_NETWORK_ERROR" ? ja.timeHistory.error.network : error.message}</span>

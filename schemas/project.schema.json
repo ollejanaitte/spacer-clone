@@ -885,6 +885,14 @@
           "type": "number",
           "minimum": 0,
           "exclusiveMaximum": 1
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0
+        },
+        "beta": {
+          "type": "number",
+          "minimum": 0
         }
       }
     },
