@@ -84,6 +84,114 @@ from .time_history_result import (
 # ground motion record per run.
 ALLOWED_GROUND_MOTION_DIRECTIONS: tuple[str, ...] = ("X", "Y", "Z")
 
+# ---------------------------------------------------------------------------
+# TH-5c: API response contract freeze
+# ---------------------------------------------------------------------------
+# The Linear Time History Analysis API returns a single envelope whose
+# top-level key set, result-block key set, and meta-block key set are
+# frozen by this module. The contract is enforced at runtime by
+# :func:`_assert_envelope_contract` and at test time by the contract
+# validation tests in ``backend/tests/test_time_history_api.py``.
+#
+# Freeze policy:
+# * Top-level envelope keys are an exact set. Adding, removing, or
+#   renaming a key is a breaking change and must be reflected in the
+#   documentation at ``docs/design/time-history-api-contract.md``.
+# * ``timeHistoryResult`` is required on both success and failure; on
+#   failure the value is ``None`` so the consumer can rely on a
+#   single shape.
+# * ``timeHistoryResult.meta`` is required and must contain the frozen
+#   set of fields below.
+TIME_HISTORY_ENVELOPE_KEYS: frozenset[str] = frozenset(
+    {
+        "projectId",
+        "schemaVersion",
+        "analysisSummary",
+        "displacements",
+        "reactions",
+        "memberEndForces",
+        "warnings",
+        "errors",
+        "timeHistoryResult",
+    }
+)
+TIME_HISTORY_RESULT_KEYS: frozenset[str] = frozenset(
+    {"meta", "time", "displacements", "velocities", "accelerations"}
+)
+TIME_HISTORY_RESULT_META_KEYS: frozenset[str] = frozenset(
+    {
+        "analysisId",
+        "status",
+        "method",
+        "timeStep",
+        "duration",
+        "beta",
+        "gamma",
+        "damping",
+        "groundMotions",
+        "sampleCount",
+    }
+)
+TIME_HISTORY_RESULT_REQUIRED_META_KEYS: frozenset[str] = frozenset(
+    {"analysisId", "method", "timeStep", "duration", "sampleCount"}
+)
+
+
+def _assert_envelope_contract(envelope: Mapping[str, Any]) -> None:
+    """Validate that ``envelope`` matches the TH-5c frozen contract.
+
+    The check is performed at runtime so any accidental key
+    renames or removals are caught immediately. The same assertions
+    are duplicated in the test suite.
+    """
+
+    if set(envelope.keys()) != TIME_HISTORY_ENVELOPE_KEYS:
+        raise AssertionError(
+            "Time history envelope key set does not match the TH-5c "
+            f"contract. expected={sorted(TIME_HISTORY_ENVELOPE_KEYS)} "
+            f"actual={sorted(envelope.keys())}"
+        )
+    if "analysisSummary" not in envelope:
+        raise AssertionError("Envelope is missing 'analysisSummary'.")
+    summary = envelope["analysisSummary"]
+    for key in ("analysisType", "status", "startedAt", "finishedAt",
+                "durationMs", "solver"):
+        if key not in summary:
+            raise AssertionError(
+                f"analysisSummary is missing required key {key!r}."
+            )
+    if summary.get("analysisType") != "time_history":
+        raise AssertionError(
+            "analysisSummary.analysisType must be 'time_history' for "
+            f"the time history endpoint; got {summary.get('analysisType')!r}."
+        )
+    if summary.get("solver") != "newmark_beta":
+        raise AssertionError(
+            "analysisSummary.solver must be 'newmark_beta' for the "
+            f"time history endpoint; got {summary.get('solver')!r}."
+        )
+    if "timeHistoryResult" not in envelope:
+        raise AssertionError("Envelope is missing 'timeHistoryResult'.")
+    block = envelope["timeHistoryResult"]
+    if block is None:
+        # Failure envelope: the meta block is intentionally absent.
+        return
+    if set(block.keys()) != TIME_HISTORY_RESULT_KEYS:
+        raise AssertionError(
+            "timeHistoryResult key set does not match the TH-5c "
+            f"contract. expected={sorted(TIME_HISTORY_RESULT_KEYS)} "
+            f"actual={sorted(block.keys())}"
+        )
+    if "meta" not in block:
+        raise AssertionError("timeHistoryResult is missing 'meta'.")
+    meta = block["meta"]
+    missing = TIME_HISTORY_RESULT_REQUIRED_META_KEYS - set(meta.keys())
+    if missing:
+        raise AssertionError(
+            f"timeHistoryResult.meta is missing required keys: "
+            f"{sorted(missing)}."
+        )
+
 
 def _analysis_settings_section(project_data: Mapping[str, Any]) -> dict[str, Any]:
     settings = project_data.get("analysisSettings")
@@ -285,7 +393,7 @@ def _result_envelope(
     directly.
     """
 
-    return {
+    envelope = {
         "projectId": project_id,
         "schemaVersion": "1.0.0",
         "analysisSummary": summary,
@@ -296,6 +404,9 @@ def _result_envelope(
         "errors": [],
         "timeHistoryResult": time_history_result,
     }
+    # TH-5c: enforce the frozen API response contract before returning.
+    _assert_envelope_contract(envelope)
+    return envelope
 
 
 def _build_failed_envelope(
@@ -316,6 +427,13 @@ def _build_failed_envelope(
         total_dof=0,
     )
     result["analysisSummary"]["analysisType"] = "time_history"
+    result["analysisSummary"]["solver"] = "newmark_beta"
+    # TH-5c: the failure envelope must share the same top-level key
+    # set as the success envelope so consumers can rely on a single
+    # shape. The result block is ``None`` because the solver did not
+    # produce one.
+    result["timeHistoryResult"] = None
+    _assert_envelope_contract(result)
     return result
 
 

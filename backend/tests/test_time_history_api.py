@@ -660,3 +660,290 @@ def test_api_time_history_result_matches_th4_persisted_block_shape() -> None:
     assert parsed.meta.analysisId == block["meta"]["analysisId"]
     assert parsed.meta.sampleCount == block["meta"]["sampleCount"]
     assert parsed.to_dict() == block
+
+# ---------------------------------------------------------------------------
+# TH-5c: API response contract freeze
+# ---------------------------------------------------------------------------
+# The tests below lock down the response shape of
+# /api/analysis/time-history. They are intentionally independent of the
+# rest of the file so that the contract is a single, auditable block.
+
+from backend.engine import (
+    TIME_HISTORY_ENVELOPE_KEYS,
+    TIME_HISTORY_RESULT_KEYS,
+    TIME_HISTORY_RESULT_META_KEYS,
+    TIME_HISTORY_RESULT_REQUIRED_META_KEYS,
+    parse_time_history_result,
+    run_time_history_analysis,
+    run_analysis,
+    run_eigen_analysis,
+    run_response_spectrum_analysis,
+)
+
+
+# Top-level envelope key set, in the order the implementation emits.
+EXPECTED_ENVELOPE_KEYS = {
+    "projectId",
+    "schemaVersion",
+    "analysisSummary",
+    "displacements",
+    "reactions",
+    "memberEndForces",
+    "warnings",
+    "errors",
+    "timeHistoryResult",
+}
+EXPECTED_RESULT_KEYS = {"meta", "time", "displacements", "velocities", "accelerations"}
+EXPECTED_RESULT_META_KEYS = {
+    "analysisId",
+    "status",
+    "method",
+    "timeStep",
+    "duration",
+    "beta",
+    "gamma",
+    "damping",
+    "groundMotions",
+    "sampleCount",
+}
+EXPECTED_REQUIRED_META_KEYS = {
+    "analysisId",
+    "method",
+    "timeStep",
+    "duration",
+    "sampleCount",
+}
+EXPECTED_ANALYSIS_SUMMARY_KEYS = {
+    "analysisType",
+    "status",
+    "startedAt",
+    "finishedAt",
+    "durationMs",
+    "nodeCount",
+    "memberCount",
+    "loadCaseCount",
+    "totalDof",
+    "freeDof",
+    "constrainedDof",
+    "solver",
+}
+
+
+def _th_success_envelope():
+    return run_time_history_analysis(
+        _sdof_cantilever_project(project_id="th-5c-success")
+    )
+
+
+def _th_failure_envelope():
+    project = _sdof_cantilever_project(project_id="th-5c-failure")
+    project["groundMotions"] = []
+    return run_time_history_analysis(project)
+
+
+# -- response contract validation ------------------------------------------
+
+
+def test_time_history_envelope_keys_match_frozen_contract() -> None:
+    envelope = _th_success_envelope()
+    assert set(envelope.keys()) == EXPECTED_ENVELOPE_KEYS
+    assert set(envelope.keys()) == TIME_HISTORY_ENVELOPE_KEYS
+
+
+def test_time_history_failure_envelope_keys_match_frozen_contract() -> None:
+    envelope = _th_failure_envelope()
+    # The contract guarantees the same top-level key set on success
+    # and failure, so a single shape is enough for UI consumers.
+    assert set(envelope.keys()) == EXPECTED_ENVELOPE_KEYS
+    assert envelope["timeHistoryResult"] is None
+
+
+def test_time_history_envelope_disallows_extra_or_missing_keys() -> None:
+    envelope = _th_success_envelope()
+    # Both directions of the equality are pinned so a future rename
+    # is caught immediately.
+    assert len(envelope.keys()) == len(EXPECTED_ENVELOPE_KEYS)
+    for required in EXPECTED_ENVELOPE_KEYS:
+        assert required in envelope, f"Missing envelope key: {required!r}"
+    for key in envelope.keys():
+        assert key in EXPECTED_ENVELOPE_KEYS, f"Unexpected envelope key: {key!r}"
+
+
+def test_time_history_analysis_summary_keys_match_frozen_contract() -> None:
+    envelope = _th_success_envelope()
+    summary = envelope["analysisSummary"]
+    assert set(summary.keys()) == EXPECTED_ANALYSIS_SUMMARY_KEYS
+    assert summary["analysisType"] == "time_history"
+    assert summary["solver"] == "newmark_beta"
+    assert summary["status"] == "success"
+
+
+def test_time_history_result_block_keys_match_frozen_contract() -> None:
+    envelope = _th_success_envelope()
+    block = envelope["timeHistoryResult"]
+    assert set(block.keys()) == EXPECTED_RESULT_KEYS
+    assert set(block.keys()) == TIME_HISTORY_RESULT_KEYS
+
+
+def test_time_history_result_meta_keys_match_frozen_contract() -> None:
+    envelope = _th_success_envelope()
+    meta = envelope["timeHistoryResult"]["meta"]
+    assert set(meta.keys()) == EXPECTED_RESULT_META_KEYS
+    assert set(meta.keys()) == TIME_HISTORY_RESULT_META_KEYS
+
+
+# -- required field validation ----------------------------------------------
+
+
+def test_time_history_result_meta_required_fields_present() -> None:
+    envelope = _th_success_envelope()
+    meta = envelope["timeHistoryResult"]["meta"]
+    for key in EXPECTED_REQUIRED_META_KEYS:
+        assert key in meta, f"Missing required meta key: {key!r}"
+    assert set(EXPECTED_REQUIRED_META_KEYS) == TIME_HISTORY_RESULT_REQUIRED_META_KEYS
+    # Sanity check: each required field is a scalar of the expected type.
+    assert isinstance(meta["analysisId"], str) and meta["analysisId"]
+    assert meta["method"] == "newmark-beta"
+    assert isinstance(meta["timeStep"], float) and meta["timeStep"] > 0.0
+    assert isinstance(meta["duration"], float) and meta["duration"] > 0.0
+    assert isinstance(meta["sampleCount"], int) and meta["sampleCount"] >= 1
+
+
+def test_time_history_result_time_axis_is_present_and_finite() -> None:
+    envelope = _th_success_envelope()
+    block = envelope["timeHistoryResult"]
+    assert isinstance(block["time"], list)
+    assert len(block["time"]) == block["meta"]["sampleCount"]
+    # The Newmark solver guarantees a finite time axis.
+    assert all(isinstance(t, float) and t == t for t in block["time"])
+
+
+def test_time_history_result_history_maps_are_present() -> None:
+    envelope = _th_success_envelope()
+    block = envelope["timeHistoryResult"]
+    for key in ("displacements", "velocities", "accelerations"):
+        assert key in block, f"timeHistoryResult is missing {key!r}"
+        assert isinstance(block[key], dict)
+
+
+# -- persisted block validation ---------------------------------------------
+
+
+def test_time_history_result_block_is_persisted_shape() -> None:
+    # The API envelope's timeHistoryResult must round-trip through
+    # the TH-4 loader (parse_time_history_result). This is the
+    # bridge between the API contract and the persisted
+    # analysisResults.timeHistory block.
+    envelope = _th_success_envelope()
+    block = envelope["timeHistoryResult"]
+    parsed = parse_time_history_result(block)
+    assert parsed.meta.analysisId == block["meta"]["analysisId"]
+    assert parsed.meta.sampleCount == block["meta"]["sampleCount"]
+    assert parsed.to_dict() == block
+
+
+def test_time_history_persisted_block_field_order_is_stable() -> None:
+    # JSON consumers rely on key order in a few places (diffing,
+    # snapshotting). Lock the order down so accidental reorders do
+    # not break them silently.
+    envelope = _th_success_envelope()
+    block = envelope["timeHistoryResult"]
+    assert list(block.keys()) == [
+        "meta",
+        "time",
+        "displacements",
+        "velocities",
+        "accelerations",
+    ]
+    assert list(block["meta"].keys()) == [
+        "analysisId",
+        "status",
+        "method",
+        "timeStep",
+        "duration",
+        "beta",
+        "gamma",
+        "damping",
+        "groundMotions",
+        "sampleCount",
+    ]
+
+
+# -- response shape freeze (renames) ---------------------------------------
+
+
+def test_time_history_envelope_contract_rejects_renames() -> None:
+    # If anyone accidentally renames a frozen key, the runtime
+    # contract assertion in run_time_history_analysis will raise.
+    # This test verifies the assertion exists by monkey-patching
+    # the frozen key set to a one-off value and confirming that the
+    # next run fails loudly.
+    import backend.engine.time_history_analysis as engine_module
+
+    original_keys = engine_module.TIME_HISTORY_ENVELOPE_KEYS
+    try:
+        engine_module.TIME_HISTORY_ENVELOPE_KEYS = frozenset(
+            set(original_keys) - {"timeHistoryResult"} | {"legacyResult"}
+        )
+        try:
+            run_time_history_analysis(
+                _sdof_cantilever_project(project_id="th-5c-rename")
+            )
+        except AssertionError as exc:
+            assert "TH-5c" in str(exc) or "contract" in str(exc).lower()
+        else:  # pragma: no cover - defensive
+            raise AssertionError(
+                "Renaming a frozen envelope key must trip the contract assertion."
+            )
+    finally:
+        engine_module.TIME_HISTORY_ENVELOPE_KEYS = original_keys
+
+
+# -- backward compatibility validation ------------------------------------
+
+
+def test_linear_static_envelope_keys_unchanged_by_time_history() -> None:
+    project = _sdof_cantilever_project(project_id="th-5c-bc-static")
+    project["analysisSettings"] = dict(project["analysisSettings"])
+    project["analysisSettings"].pop("timeHistory", None)
+    project["groundMotions"] = []
+    project["nodalLoads"] = [
+        {
+            "id": "NL1",
+            "loadCaseId": "LC1",
+            "nodeId": "N2",
+            "fx": 1.0,
+            "fy": 0.0,
+            "fz": 0.0,
+            "mx": 0.0,
+            "my": 0.0,
+            "mz": 0.0,
+        }
+    ]
+    result = run_analysis(project)
+    # Linear static does not introduce ``timeHistoryResult``; the
+    # key must NOT be present so existing consumers are not affected.
+    assert "timeHistoryResult" not in result
+    # And the analysisType / solver stay on the linear_static axis.
+    assert result["analysisSummary"]["analysisType"] == "linear_static"
+    assert result["analysisSummary"]["solver"] == "scipy_sparse"
+
+
+def test_eigen_envelope_keys_unchanged_by_time_history() -> None:
+    project = _sdof_cantilever_project(project_id="th-5c-bc-eigen")
+    project["analysisSettings"] = dict(project["analysisSettings"])
+    project["analysisSettings"].pop("timeHistory", None)
+    project["groundMotions"] = []
+    result = run_eigen_analysis(project, mass_case_id="m-1", mode_count=1)
+    assert "timeHistoryResult" not in result
+    assert result["analysisSummary"]["analysisType"] == "eigen"
+
+
+def test_response_spectrum_envelope_keys_unchanged_by_time_history() -> None:
+    project = _sdof_cantilever_project(project_id="th-5c-bc-rs")
+    project["analysisSettings"] = dict(project["analysisSettings"])
+    project["analysisSettings"].pop("timeHistory", None)
+    project["groundMotions"] = []
+    result = run_response_spectrum_analysis(project)
+    assert "timeHistoryResult" not in result
+    assert result["analysisSummary"]["analysisType"] == "response_spectrum"
