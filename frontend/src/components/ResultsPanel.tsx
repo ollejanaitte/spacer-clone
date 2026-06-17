@@ -10,6 +10,7 @@ import { ja } from "../i18n/ja";
 import { GroundMotionManagerPanel } from "../timeHistory/GroundMotionManagerPanel";
 import { TimeHistoryResultViewer } from "../timeHistory/TimeHistoryResultViewer";
 import { TimeHistorySettingsPanel } from "../timeHistory/TimeHistorySettingsPanel";
+import { useTimeHistoryAnalysis } from "../timeHistory/useTimeHistoryAnalysis";
 import type { AnalysisResult, BottomTab, ProjectModel, StructuredMessage } from "../types";
 
 type ResultsPanelProps = {
@@ -122,13 +123,30 @@ function ResultTables(props: ResultTablesProps) {
 }
 
 function TimeHistoryWorkspace({ project, result }: { project: ProjectModel; result: AnalysisResult | null }) {
+  const timeHistoryAnalysis = useTimeHistoryAnalysis();
+  const latestResult = timeHistoryAnalysis.result ?? (result?.analysisSummary.analysisType === "time_history" ? result : null);
+  const status = timeHistoryAnalysis.loading
+    ? "running"
+    : timeHistoryAnalysis.error?.code === "TIME_HISTORY_NETWORK_ERROR"
+      ? "networkError"
+      : latestResult?.analysisSummary.status;
+
+  const runTimeHistory = () => {
+    void timeHistoryAnalysis.run(project).catch(() => undefined);
+  };
+
   return (
     <div className="results-grid">
-      <TimeHistorySettingsPanel project={project} />
+      <TimeHistorySettingsPanel
+        project={project}
+        running={timeHistoryAnalysis.loading}
+        onRun={runTimeHistory}
+      />
       <GroundMotionManagerPanel groundMotions={project.groundMotions} />
       <TimeHistoryResultViewer
-        result={result?.timeHistoryResult ?? null}
-        status={result?.analysisSummary.analysisType === "time_history" ? result.analysisSummary.status : undefined}
+        result={latestResult?.timeHistoryResult ?? null}
+        status={status}
+        error={timeHistoryAnalysis.error ?? latestResult?.errors[0] ?? null}
       />
     </div>
   );

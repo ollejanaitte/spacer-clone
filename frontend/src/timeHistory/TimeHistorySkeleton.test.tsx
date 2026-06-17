@@ -62,6 +62,12 @@ describe("Time History UI skeleton", () => {
     expect(document.body.textContent).toContain(ja.timeHistory.fields.runButton);
   });
 
+  it("renders the Run button enabled when a project exists", () => {
+    render(<TimeHistorySettingsPanel project={timeHistoryProject()} onRun={() => undefined} />);
+
+    expect(button(ja.timeHistory.fields.runButton).disabled).toBe(false);
+  });
+
   it("renders the ground motion manager skeleton", () => {
     render(<GroundMotionManagerPanel groundMotions={timeHistoryProject().groundMotions} />);
 
@@ -83,6 +89,94 @@ describe("Time History UI skeleton", () => {
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.sampleCount}: 3`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.timeStep}: 0.05`);
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.duration}: 0.1`);
+  });
+});
+
+describe("Time History connected run button", () => {
+  it("calls the time history endpoint with the current project payload", async () => {
+    const project = timeHistoryProject();
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    renderTimeHistoryPanel(project);
+
+    await clickRun();
+
+    const body = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body)) as { project: ProjectModel };
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/analysis/time-history",
+      expect.objectContaining({ method: "POST" }),
+    );
+    expect(body.project.project.id).toBe(project.project.id);
+    expect(body.project.groundMotions?.[0]?.id).toBe("gm-001");
+    expect(body.project.analysisSettings.timeHistory?.timeStep).toBe(0.05);
+  });
+
+  it("disables the Run button while loading", async () => {
+    const deferred = createDeferred<Response>();
+    vi.spyOn(globalThis, "fetch").mockReturnValue(deferred.promise);
+    renderTimeHistoryPanel(timeHistoryProject());
+
+    await act(async () => {
+      button(ja.timeHistory.fields.runButton).click();
+      await Promise.resolve();
+    });
+    expect(button(ja.timeHistory.status.running).disabled).toBe(true);
+
+    await act(async () => {
+      deferred.resolve(jsonResponse({ result: timeHistoryResult() }));
+      await deferred.promise;
+    });
+  });
+
+  it("updates status and result summary from a success envelope", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    renderTimeHistoryPanel(timeHistoryProject());
+
+    await clickRun();
+
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.status}: ${ja.timeHistory.status.success}`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.sampleCount}: 3`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.timeStep}: 0.05`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.duration}: 0.1`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.availableKeysCount}: 3`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.firstKey}: displacements`);
+  });
+
+  it("updates status and error summary from a failed envelope", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: failedTimeHistoryResult() }));
+    renderTimeHistoryPanel(timeHistoryProject());
+
+    await clickRun();
+
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.status}: ${ja.timeHistory.status.failed}`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.error.code}: TIME_HISTORY_GROUND_MOTION_MISSING`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.error.path}: /groundMotions`);
+  });
+
+  it("updates the error summary on network error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    renderTimeHistoryPanel(timeHistoryProject());
+
+    await clickRun();
+
+    expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.summary.status}: ${ja.timeHistory.status.networkError}`);
+    expect(document.body.textContent).toContain(`${ja.timeHistory.error.code}: TIME_HISTORY_NETWORK_ERROR`);
+    expect(document.body.textContent).toContain(ja.timeHistory.error.network);
+  });
+
+  it("does not mutate the project object during the API call", async () => {
+    const project = timeHistoryProject();
+    const before = JSON.stringify(project);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ result: timeHistoryResult() }));
+    let latest: TimeHistoryHookController | undefined;
+    render(<HookProbe onState={(state) => { latest = state; }} />);
+
+    await act(async () => {
+      await latest?.run(project);
+    });
+
+    expect(JSON.stringify(project)).toBe(before);
   });
 });
 
@@ -144,6 +238,51 @@ function render(node: ReactNode) {
   act(() => {
     root?.render(node);
   });
+}
+
+function renderTimeHistoryPanel(project: ProjectModel) {
+  render(
+    <ResultsPanel
+      activeTab="timeHistory"
+      project={project}
+      result={null}
+      errors={[]}
+      warnings={[]}
+      activeLoadCase=""
+      selectedEigenMode={1}
+      selectedResponseSpectrumResult="SRSS"
+      selectedNode={null}
+      selectedMember={null}
+      logs={[]}
+      onTabChange={() => undefined}
+      onSelectedEigenModeChange={() => undefined}
+      onSelectedResponseSpectrumResultChange={() => undefined}
+    />,
+  );
+}
+
+async function clickRun() {
+  await act(async () => {
+    button(ja.timeHistory.fields.runButton).click();
+  });
+}
+
+function button(label: string): HTMLButtonElement {
+  const element = [...document.querySelectorAll("button")].find(
+    (item) => item.textContent === label,
+  );
+  if (!(element instanceof HTMLButtonElement)) throw new Error(`Button not found: ${label}`);
+  return element;
+}
+
+function createDeferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
 }
 
 function jsonResponse(payload: unknown): Response {

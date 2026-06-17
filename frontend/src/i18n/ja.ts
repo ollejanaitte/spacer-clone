@@ -454,7 +454,14 @@ export const ja = {
       warning: "警告あり",
       failed: "失敗",
       running: "実行中",
+      networkError: "通信エラー",
       notRun: "未実行",
+    },
+    error: {
+      code: "エラーコード",
+      path: "場所",
+      message: "メッセージ",
+      network: "APIサーバーに接続できません。",
     },
     empty: {
       massCases: "質量ケースなし",
@@ -495,6 +502,8 @@ export const ja = {
         duration: "解析時間",
         sampleCount: "サンプル数",
         method: "手法",
+        availableKeysCount: "応答キー数",
+        firstKey: "先頭応答キー",
       },
       chartAriaLabel: "時刻歴応答グラフ",
     },

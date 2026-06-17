@@ -1,9 +1,10 @@
 import { ja } from "../i18n/ja";
-import type { TimeHistoryResult } from "../types";
+import type { StructuredMessage, TimeHistoryResult } from "../types";
 
 type TimeHistoryResultViewerProps = {
   result?: TimeHistoryResult | null;
   status?: string;
+  error?: StructuredMessage | null;
 };
 
 const responseKeys: Array<keyof Pick<TimeHistoryResult, "displacements" | "velocities" | "accelerations">> = [
@@ -12,12 +13,13 @@ const responseKeys: Array<keyof Pick<TimeHistoryResult, "displacements" | "veloc
   "accelerations",
 ];
 
-export function TimeHistoryResultViewer({ result = null, status }: TimeHistoryResultViewerProps) {
+export function TimeHistoryResultViewer({ result = null, status, error = null }: TimeHistoryResultViewerProps) {
   const labels = ja.timeHistory.resultViewer;
   const meta = result?.meta;
   const availableKeys = result
     ? responseKeys.filter((key) => Object.keys(result[key] ?? {}).length > 0)
     : [];
+  const firstResponseKey = availableKeys[0] ?? null;
 
   return (
     <section className="result-table time-history-result-viewer" aria-label={labels.heading}>
@@ -29,7 +31,16 @@ export function TimeHistoryResultViewer({ result = null, status }: TimeHistoryRe
         <span>{labels.summary.duration}: {formatNumber(meta?.duration)} {ja.timeHistory.units.seconds}</span>
         <span>{labels.summary.analysisId}: {meta?.analysisId ?? "-"}</span>
         <span>{labels.summary.method}: {meta?.method ?? "-"}</span>
+        <span>{labels.summary.availableKeysCount}: {availableKeys.length}</span>
+        <span>{labels.summary.firstKey}: {firstResponseKey ?? "-"}</span>
       </div>
+      {error && (
+        <div className="summary-list">
+          <span>{ja.timeHistory.error.code}: {error.code}</span>
+          <span>{ja.timeHistory.error.path}: {error.path ?? "-"}</span>
+          <span>{ja.timeHistory.error.message}: {error.code === "TIME_HISTORY_NETWORK_ERROR" ? ja.timeHistory.error.network : error.message}</span>
+        </div>
+      )}
       <div className="summary-list result-toolbar">
         <label className="result-select">
           <span>{labels.nodeLabel}</span>

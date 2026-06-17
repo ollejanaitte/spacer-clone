@@ -20,10 +20,11 @@ export function useTimeHistoryAnalysis() {
   const run = useCallback(async (project: ProjectModel, overrides: Omit<TimeHistoryAnalysisRequest, "project"> = {}) => {
     setState((current) => ({ ...current, loading: true, error: null }));
     try {
+      const requestProject = cloneProject(project);
       const response = await fetch(resolveApiUrl(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ project, ...overrides }),
+        body: JSON.stringify({ project: requestProject, ...overrides }),
       });
       const payload = (await response.json().catch(() => null)) as TimeHistoryAnalysisResponse | null;
       if (!response.ok || !payload?.result) {
@@ -67,12 +68,21 @@ function toStructuredMessage(error: unknown): StructuredMessage {
     };
   }
   return {
-    code: "TIME_HISTORY_API_ERROR",
-    message: error instanceof Error ? error.message : "Time history analysis failed.",
+    code: "TIME_HISTORY_NETWORK_ERROR",
+    message: networkErrorMessage(),
     path: null,
     entityType: null,
     entityId: null,
   };
+}
+
+function cloneProject(project: ProjectModel): ProjectModel {
+  if (typeof structuredClone === "function") return structuredClone(project);
+  return JSON.parse(JSON.stringify(project)) as ProjectModel;
+}
+
+function networkErrorMessage(): string {
+  return "Network request failed.";
 }
 
 function envelopeError(): StructuredMessage {
