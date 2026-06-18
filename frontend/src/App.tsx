@@ -22,6 +22,7 @@ import type {
   ValidationResponse,
 } from "./types";
 import type { ViewerSelection } from "./viewer/types";
+import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -54,6 +55,9 @@ export function App() {
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
+  const [comparisonOpen, setComparisonOpen] = useState(
+    () => typeof window !== "undefined" && window.location.pathname === "/compare",
+  );
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
@@ -377,6 +381,18 @@ export function App() {
     log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
 
+  if (comparisonOpen) {
+    return (
+      <ModelComparisonWorkspace
+        modelA={project}
+        onClose={() => {
+          window.history.pushState({}, "", "/");
+          setComparisonOpen(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="app-shell">
       <Toolbar
@@ -405,6 +421,10 @@ export function App() {
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
+        onOpenModelComparison={() => {
+          window.history.pushState({}, "", "/compare");
+          setComparisonOpen(true);
+        }}
       />
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>

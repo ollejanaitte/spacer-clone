@@ -555,6 +555,75 @@ button:disabled {
   line-height: 1.45;
 }
 
+.model-comparison-workspace {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.comparison-workspace-header,
+.comparison-model-pane > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.comparison-workspace-header {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.comparison-workspace-header button,
+.comparison-model-pane > button {
+  min-height: 32px;
+  margin-left: 6px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.comparison-split-pane {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.comparison-model-pane {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.comparison-editor {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  max-height: 420px;
+  margin-top: 10px;
+  overflow: auto;
+  border: 1px solid #d8e0e8;
+}
+
+.comparison-empty {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  color: #526173;
+}
+
+@media (max-width: 1100px) {
+  .comparison-split-pane {
+    grid-template-columns: 1fr;
+  }
+}
+
 .display-size-input {
   display: grid;
   grid-template-columns: minmax(92px, 1fr) 28px minmax(80px, 1fr) 28px 62px;

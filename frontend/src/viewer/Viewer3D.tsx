@@ -41,10 +41,17 @@ export function Viewer3D({
   rightResult = null,
   initialCompareMode = false,
   defaultCameraSync = true,
+  displaySizeSettings,
+  onDisplaySizeSettingsChange,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
-  const [displaySize, setDisplaySize] = useState<ViewerDisplaySizeSettings>(loadViewerDisplaySize);
+  const [localDisplaySize, setLocalDisplaySize] = useState<ViewerDisplaySizeSettings>(loadViewerDisplaySize);
+  const displaySize = displaySizeSettings ?? localDisplaySize;
+  const setDisplaySize = useCallback((next: ViewerDisplaySizeSettings) => {
+    if (!displaySizeSettings) setLocalDisplaySize(next);
+    onDisplaySizeSettingsChange?.(next);
+  }, [displaySizeSettings, onDisplaySizeSettingsChange]);
   const [mode, setMode] = useState<ViewerMode>("three");
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [fitRequest, setFitRequest] = useState(0);

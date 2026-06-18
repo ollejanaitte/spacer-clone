@@ -3,6 +3,7 @@ import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
+import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
 
 export type ViewerMode = "three" | "fallback2d";
 
@@ -81,6 +82,8 @@ export type Viewer3DProps = {
   initialCompareMode?: boolean;
   /** When false, the camera-sync checkbox defaults to off. */
   defaultCameraSync?: boolean;
+  displaySizeSettings?: ViewerDisplaySizeSettings;
+  onDisplaySizeSettingsChange?: (settings: ViewerDisplaySizeSettings) => void;
 };
 
 export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {
