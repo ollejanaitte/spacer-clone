@@ -4,7 +4,7 @@ import { TimeHistorySettingsPanel } from "../../TimeHistorySettingsPanel";
 type SectionAnalysisProps = {
   project: ProjectModel;
   running: boolean;
-  onRun: () => void;
+  onRun?: () => void;
   onProjectChange: (project: ProjectModel) => void;
 };
 

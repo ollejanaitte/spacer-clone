@@ -1,4 +1,4 @@
-// Pure utilities for the Time History deformation animation.
+﻿// Pure utilities for the Time History deformation animation.
 //
 // The animation layer is display-only: it never mutates the project
 // payload, the analysis result, or the API contract. It only computes
@@ -88,14 +88,15 @@ export function computeTimeHistoryNodeOverride({
 
   // Clamp the active index into [0, sampleCount - 1].
   const clampedIndex = Math.max(0, Math.min(sampleCount - 1, Math.floor(timeIndex)));
+  const activeDirection = inferTimeHistoryActiveDirection(result);
   const includeX = displacementMode === "x" || displacementMode === "xyz";
   const includeY = displacementMode === "y" || displacementMode === "xyz";
   const includeZ = displacementMode === "z" || displacementMode === "xyz";
   const override: TimeHistoryAnimationOverride = new Map();
   for (const node of project.nodes) {
-    const ux = includeX ? readDisplacement(displacements, node.id, "ux", clampedIndex) : 0;
-    const uy = includeY ? readDisplacement(displacements, node.id, "uy", clampedIndex) : 0;
-    const uz = includeZ ? readDisplacement(displacements, node.id, "uz", clampedIndex) : 0;
+    const ux = includeX ? readDisplacement(displacements, node.id, "ux", clampedIndex, activeDirection) : 0;
+    const uy = includeY ? readDisplacement(displacements, node.id, "uy", clampedIndex, activeDirection) : 0;
+    const uz = includeZ ? readDisplacement(displacements, node.id, "uz", clampedIndex, activeDirection) : 0;
     override.set(node.id, {
       x: node.x + ux * displacementScale,
       y: node.y + uy * displacementScale,
@@ -105,17 +106,122 @@ export function computeTimeHistoryNodeOverride({
   return override;
 }
 
+/**
+ * Read the displacement series for a single node / DOF pair.
+ *
+ * The MVP result envelope can express the displacement in two ways:
+ *
+ * 1. Per-component keys: `<nodeId>_ux`, `<nodeId>_uy`, `<nodeId>_uz`.
+ *    This is the canonical shape produced for unconstrained 3D
+ *    models where the active DOF set spans all three translations.
+ *
+ * 2. Single-key shorthand: `<nodeId>`. The MVP ground motion only
+ *    supports one direction per run, so when the active DOF set has
+ *    a single translational column the mapper emits a single key per
+ *    node. The active direction lives in
+ *    `result.meta.groundMotions[0].direction`.
+ *
+ * This helper transparently supports both shapes: it first looks for
+ * the explicit per-component key, then falls back to the shorthand
+ * key, returning the value only when the requested DOF matches the
+ * inferred active direction. Missing values default to 0.
+ */
 function readDisplacement(
   displacements: Record<string, number[]>,
   nodeId: string,
   dof: TimeHistoryDofName,
   timeIndex: number,
+  activeDirection: TimeHistoryDofName | null,
 ): number {
-  const series = displacements[`${nodeId}_${dof}`];
-  if (!Array.isArray(series)) return 0;
-  if (timeIndex < 0 || timeIndex >= series.length) return 0;
-  const value = series[timeIndex];
-  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+  const explicit = displacements[`${nodeId}_${dof}`];
+  if (Array.isArray(explicit)) {
+    if (timeIndex < 0 || timeIndex >= explicit.length) return 0;
+    const value = explicit[timeIndex];
+    return typeof value === "number" && Number.isFinite(value) ? value : 0;
+  }
+  if (activeDirection === dof) {
+    const shorthand = displacements[nodeId];
+    if (Array.isArray(shorthand)) {
+      if (timeIndex < 0 || timeIndex >= shorthand.length) return 0;
+      const value = shorthand[timeIndex];
+      return typeof value === "number" && Number.isFinite(value) ? value : 0;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Infer the active translational direction from a result envelope.
+ * The MVP runs one ground motion record per analysis, so the result
+ * has at most one active direction. The helper inspects the meta
+ * block first, then falls back to the suffix of the only per-node
+ * key when the meta is silent.
+ */
+export function inferTimeHistoryActiveDirection(
+  result: TimeHistoryResult | null | undefined,
+): TimeHistoryDofName | null {
+  if (!result) return null;
+  const metaGround = result.meta?.groundMotions;
+  if (Array.isArray(metaGround) && metaGround.length > 0) {
+    const directionRaw = (metaGround[0] as Record<string, unknown> | undefined)?.direction;
+    if (typeof directionRaw === "string") {
+      const upper = directionRaw.toUpperCase();
+      if (upper === "X" || upper === "Y" || upper === "Z") {
+        return upper === "X" ? "ux" : upper === "Y" ? "uy" : "uz";
+      }
+    }
+  }
+  if (!result.displacements) return null;
+  for (const key of Object.keys(result.displacements)) {
+    if (key.endsWith("_ux")) return "ux";
+    if (key.endsWith("_uy")) return "uy";
+    if (key.endsWith("_uz")) return "uz";
+  }
+  return null;
+}
+
+export type TimeHistoryAxisAvailability = {
+  ux: boolean;
+  uy: boolean;
+  uz: boolean;
+  xyz: boolean;
+  activeDirection: TimeHistoryDofName | null;
+};
+
+/**
+ * Decide which displacement modes the user can actually preview.
+ * The result supports X, Y, Z and XYZ when all three translational
+ * columns are present. The MVP envelope only emits the active
+ * direction, so the availability is keyed off the inferred active
+ * direction and the explicit per-component keys.
+ */
+export function getTimeHistoryAxisAvailability(
+  result: TimeHistoryResult | null | undefined,
+): TimeHistoryAxisAvailability {
+  const activeDirection = inferTimeHistoryActiveDirection(result);
+  const table = (result?.displacements ?? {}) as Record<string, number[] | undefined>;
+  const hasExplicit = (suffix: TimeHistoryDofName) =>
+    Object.keys(table).some((key) => key.endsWith("_" + suffix) && Array.isArray(table[key]) && (table[key] as number[]).length > 0);
+  const hasShorthand = activeDirection !== null && Object.keys(table).some((key) => {
+    if (key.includes("_")) return false;
+    const series = table[key];
+    return Array.isArray(series) && series.length > 0;
+  });
+  const componentPresent = (suffix: TimeHistoryDofName): boolean => {
+    if (hasExplicit(suffix)) return true;
+    if (hasShorthand && activeDirection === suffix) return true;
+    return false;
+  };
+  const ux = componentPresent("ux");
+  const uy = componentPresent("uy");
+  const uz = componentPresent("uz");
+  return {
+    ux,
+    uy,
+    uz,
+    xyz: ux && uy && uz,
+    activeDirection,
+  };
 }
 
 /**
@@ -171,10 +277,20 @@ export function computeModelSize(project: ProjectModel | null | undefined): numb
  */
 export function computeMaxAbsDisplacement(result: TimeHistoryResult | null | undefined): number {
   if (!result || !result.displacements) return 0;
+  const table = result.displacements as Record<string, number[] | undefined>;
   let maxAbs = 0;
-  for (const key of Object.keys(result.displacements)) {
-    if (!key.endsWith("_ux") && !key.endsWith("_uy") && !key.endsWith("_uz")) continue;
-    const series = result.displacements[key];
+  for (const key of Object.keys(table)) {
+    let series: number[] | undefined;
+    if (key.endsWith("_ux") || key.endsWith("_uy") || key.endsWith("_uz")) {
+      series = table[key];
+    } else if (!key.includes("_")) {
+      // MVP shorthand: `<nodeId>` keys. Their DOF is the active
+      // direction in the meta block, but for the magnitude we just
+      // accept them as a single-direction displacement.
+      series = table[key];
+    } else {
+      continue;
+    }
     if (!Array.isArray(series)) continue;
     for (const value of series) {
       if (typeof value !== "number" || !Number.isFinite(value)) continue;
@@ -242,7 +358,11 @@ export function findMaxAbsTimeIndex(args: {
   if (!table || typeof table !== "object") return clampTimeIndex(fallback, sampleCount);
   const keys = typeof selectedKey === "string" && selectedKey !== "" && Array.isArray(table[selectedKey])
     ? [selectedKey]
-    : Object.keys(table).filter((key) => key.endsWith("_ux") || key.endsWith("_uy") || key.endsWith("_uz"));
+    : Object.keys(table).filter((key) => {
+        if (key.endsWith("_ux") || key.endsWith("_uy") || key.endsWith("_uz")) return true;
+        if (key.includes("_")) return false;
+        return Array.isArray(table[key]) && (table[key] as number[]).length > 0;
+      });
   if (keys.length === 0) return clampTimeIndex(fallback, sampleCount);
   let bestIndex = clampTimeIndex(fallback, sampleCount);
   let bestAbs = -1;

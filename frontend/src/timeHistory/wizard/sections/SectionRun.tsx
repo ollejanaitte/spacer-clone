@@ -6,14 +6,14 @@ type SectionRunProps = {
   project: ProjectModel;
   running: boolean;
   error?: StructuredMessage | null;
-  onRun: () => void;
+  onRun?: () => void;
   onStepChange: (step: TimeHistoryWizardStepId) => void;
 };
 
 export function SectionRun({ project, running, error = null, onRun, onStepChange }: SectionRunProps) {
   const checks = buildTimeHistoryChecks(project);
   const blockingChecks = checks.filter((check) => check.status === "ng");
-  const canRun = blockingChecks.length === 0 && !running;
+  const canRun = blockingChecks.length === 0 && !running && Boolean(onRun);
   return (
     <section className="time-history-wizard-section">
       <h3>解析実行</h3>

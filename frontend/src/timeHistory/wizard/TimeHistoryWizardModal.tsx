@@ -23,7 +23,7 @@ type TimeHistoryWizardModalProps = {
   error?: StructuredMessage | null;
   running?: boolean;
   onClose: () => void;
-  onRun: () => void;
+  onRun?: () => void;
   onProjectChange: (project: ProjectModel) => void;
   onAnimationOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 };
@@ -119,7 +119,7 @@ export function TimeHistoryWizardModal({
           <button type="button" onClick={goPrevious} disabled={stepIndex <= 0}>戻る</button>
           <span className="time-history-footer-hint">{currentStep.label}: {currentStep.description}</span>
           <button type="button" onClick={goNext} disabled={stepIndex >= timeHistoryWizardSteps.length - 1}>次へ</button>
-          <button type="button" className="time-history-primary-action" onClick={onRun} disabled={running}>
+          <button type="button" className="time-history-primary-action" onClick={onRun} disabled={running || !onRun}>
             {running ? "解析中" : "この条件で時刻歴解析を実行"}
           </button>
         </footer>

@@ -6,10 +6,12 @@ type StatusBadgeProps = {
 
 const labels: Record<TimeHistoryMainStatus, string> = {
   "not-set": "未設定",
+  unconfigured: "未設定",
   incomplete: "入力不足",
   ready: "解析可能",
   running: "解析中",
   done: "解析済み",
+  complete: "解析済み",
   error: "エラーあり",
 };
 

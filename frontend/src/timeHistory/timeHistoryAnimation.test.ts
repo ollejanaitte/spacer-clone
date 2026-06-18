@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import {
   ALLOWED_TIME_HISTORY_ANIMATION_SPEEDS,
   clampTimeIndex,
@@ -7,6 +7,8 @@ import {
   computeModelSize,
   computeTimeHistoryNodeOverride,
   findMaxAbsTimeIndex,
+  getTimeHistoryAxisAvailability,
+  inferTimeHistoryActiveDirection,
   parseTimeHistoryDisplacementKey,
   readActiveSeriesValue,
 } from "./timeHistoryAnimation";
@@ -306,4 +308,86 @@ describe("readActiveSeriesValue", () => {
   it("returns 0 when the key is missing", () => {
     expect(readActiveSeriesValue({ result: baseResult, selectedKey: "missing", timeIndex: 0, sampleCount: 3 })).toBe(0);
   });
-});});
+});
+
+describe("inferTimeHistoryActiveDirection", () => {
+  it("infers X from meta.groundMotions[0].direction", () => {
+    expect(inferTimeHistoryActiveDirection({
+      ...baseResult,
+      meta: { ...baseResult.meta, groundMotions: [{ direction: "Y" }] },
+    })).toBe("uy");
+  });
+  it("infers X from a per-node _ux key when meta is silent", () => {
+    expect(inferTimeHistoryActiveDirection(baseResult)).toBe("ux");
+  });
+  it("returns null for a null result", () => {
+    expect(inferTimeHistoryActiveDirection(null)).toBeNull();
+  });
+});
+
+describe("getTimeHistoryAxisAvailability", () => {
+  it("marks all three axes available for the unconstrained 3D result", () => {
+    expect(getTimeHistoryAxisAvailability(baseResult)).toEqual({
+      ux: true,
+      uy: true,
+      uz: true,
+      xyz: true,
+      activeDirection: "ux",
+    });
+  });
+  it("marks only the active axis available for the constrained single-direction result", () => {
+    const onlyX: TimeHistoryResult = {
+      ...baseResult,
+      displacements: { N2: [0, 0.1, 0.2] },
+      meta: { ...baseResult.meta, groundMotions: [{ direction: "X" }] },
+    };
+    expect(getTimeHistoryAxisAvailability(onlyX)).toEqual({
+      ux: true,
+      uy: false,
+      uz: false,
+      xyz: false,
+      activeDirection: "ux",
+    });
+  });
+});
+
+describe("computeTimeHistoryNodeOverride with shorthand keys", () => {
+  it("maps the shorthand <nodeId> to the active direction", () => {
+    const onlyX: TimeHistoryResult = {
+      ...baseResult,
+      displacements: { N2: [0, 0.1, 0.2], N3: [0, 0.4, 0.5] },
+      meta: { ...baseResult.meta, groundMotions: [{ direction: "X" }] },
+    };
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: onlyX,
+      timeIndex: 1,
+      displacementScale: 10,
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    // N1 has no shorthand; the override falls back to the model
+    // position.
+    expect(map.get("N1")).toEqual({ x: 0, y: 0, z: 0 });
+    // N2: ux = 0.1 * 10 = 1.0
+    expect(map.get("N2")).toEqual({ x: 1 + 0.1 * 10, y: 0, z: 0 });
+    // N3: ux = 0.4 * 10 = 4.0
+    expect(map.get("N3")).toEqual({ x: 2 + 0.4 * 10, y: 0, z: 0 });
+  });
+  it("keeps the Y and Z components at zero when the active direction is X", () => {
+    const onlyX: TimeHistoryResult = {
+      ...baseResult,
+      displacements: { N2: [0, 0.1, 0.2] },
+      meta: { ...baseResult.meta, groundMotions: [{ direction: "X" }] },
+    };
+    const override = computeTimeHistoryNodeOverride({
+      project: baseProject,
+      result: onlyX,
+      timeIndex: 1,
+      displacementScale: 1,
+      displacementMode: "y",
+    });
+    const map = override as Map<string, { x: number; y: number; z: number }>;
+    // y mode with no Y data: position is unchanged.
+    expect(map.get("N2")).toEqual({ x: 1, y: 0, z: 0 });
+  });
+});})
