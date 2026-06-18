@@ -1,5 +1,6 @@
 import { useState } from "react";
 import locale from "../i18n/locales/ja.json";
+import { ja } from "../i18n/ja";
 import type { AnalysisSettings, ProjectModel } from "../types";
 import { expectedSampleCount, groundMotionDuration } from "./wizard/wizardState";
 
@@ -79,6 +80,7 @@ export function TimeHistorySettingsPanel({
 
   return (
     <section className="time-history-analysis-config" aria-label={labels.heading}>
+      <h3>{ja.timeHistory.settingsHeading}</h3>
       <div className="time-history-config-section">
         <h4 title={labels.description}>{labels.basic}</h4>
         <div className="time-history-config-grid">
@@ -115,7 +117,7 @@ export function TimeHistorySettingsPanel({
       <div className="time-history-config-section">
         <h4 title={labels.description}>{labels.time}</h4>
         <div className="time-history-config-grid">
-          <NumberField label={labels.timeStep} value={timeStep} onChange={(value) => updateNumber(value, "timeStep")} />
+          <NumberField label={ja.timeHistory.fields.timeStep} value={timeStep} onChange={(value) => updateNumber(value, "timeStep")} />
           <button
             type="button"
             disabled={!onChange || !selectedGroundMotion}
@@ -123,7 +125,7 @@ export function TimeHistorySettingsPanel({
           >
             {labels.matchTimeStep}
           </button>
-          <NumberField label={labels.duration} value={duration} onChange={(value) => updateNumber(value, "duration")} />
+          <NumberField label={ja.timeHistory.fields.duration} value={duration} onChange={(value) => updateNumber(value, "duration")} />
           <button
             type="button"
             disabled={!onChange || motionDuration === null}
@@ -203,7 +205,7 @@ export function TimeHistorySettingsPanel({
           </button>
         ) : (
           <button type="button" className="time-history-primary-action" onClick={onRun} disabled={running || !onRun}>
-            {running ? text.actions.running : text.actions.runAnalysis}
+            {running ? ja.timeHistory.status.running : ja.timeHistory.fields.runButton}
           </button>
         )}
       </div>

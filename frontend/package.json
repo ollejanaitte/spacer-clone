@@ -9,6 +9,7 @@
     "typecheck": "tsc -b --pretty false",
     "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
     "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",

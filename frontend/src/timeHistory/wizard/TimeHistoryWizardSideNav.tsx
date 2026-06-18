@@ -31,7 +31,7 @@ export function TimeHistoryWizardSideNav({
   onStepChange,
 }: TimeHistoryWizardSideNavProps) {
   return (
-    <nav className="time-history-wizard-sidenav" aria-label={locale.thAnalysis.title}>
+    <nav className="time-history-wizard-sidenav time-history-wizard-side-nav" aria-label={locale.thAnalysis.title}>
       {timeHistoryWizardSteps.map((step, index) => {
         const state = stepStates[step.id];
         return (

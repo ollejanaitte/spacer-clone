@@ -1,4 +1,5 @@
 import type { ProjectModel } from "../../../types";
+import { ja } from "../../../i18n/ja";
 import { GroundMotionManagerPanel } from "../../GroundMotionManagerPanel";
 import { expectedSampleCount, groundMotionDuration } from "../wizardState";
 
@@ -42,6 +43,7 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
     <section className="time-history-wizard-section">
       <h3>地震波設定</h3>
       <p>地震波ファイルを読み込み、単位・dt・波形長・解析時間との整合を確認します。</p>
+      <h4>{ja.timeHistoryWizard.groundMotion.cardHeading}</h4>
       <div className="time-history-ground-motion-summary">
         <span>データ点数: {motion?.samples.length ?? 0}</span>
         <span>dt: {timeStep ?? "-"} 秒</span>

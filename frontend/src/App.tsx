@@ -60,7 +60,9 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
-  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(false);
+  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(
+    () => typeof window !== "undefined" && window.location.pathname.startsWith("/th/"),
+  );
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(
