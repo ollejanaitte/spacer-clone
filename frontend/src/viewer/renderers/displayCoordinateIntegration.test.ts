@@ -80,6 +80,57 @@ describe("3D display coordinate integration", () => {
     expect(arrowDirection(offArrow).toArray()).toEqual([0, 1, 0]);
     expect(arrowDirection(onArrow).toArray()).toEqual([0, 0, 1]);
   });
+
+  it("creates selected reaction and axial-force value labels", () => {
+    const project = createDefaultProject();
+    const nodeId = project.supports[0].nodeId;
+    const result = staticResult(nodeId, { ux: 0, uy: 0, uz: 0 });
+    result.reactions = [{
+      loadCaseId: "LC_DEAD",
+      nodeId,
+      fx: 1,
+      fy: -2,
+      fz: 3,
+      mx: 0,
+      my: 0,
+      mz: 0,
+      constrainedDofs: ["ux", "uy", "uz"],
+    }];
+    result.memberEndForces = [{
+      loadCaseId: "LC_DEAD",
+      memberId: project.members[0].id,
+      coordinateSystem: "local",
+      i: { fx: 10, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 },
+      j: { fx: 10, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 },
+    }];
+    const objects = renderResultDiagrams(
+      project,
+      result,
+      "LC_DEAD",
+      "SRSS",
+      {
+        ...defaultVisibility,
+        reactionLabels: true,
+        reactionLabelFx: true,
+        reactionLabelFy: false,
+        reactionLabelFz: true,
+        axialForceLabels: true,
+      },
+      defaultScales,
+      "on",
+    );
+
+    expect(objects.find((object) => object.userData.type === "reaction-label")?.userData.text)
+      .toBe("RFX=1  RFZ=3");
+    const axialLabels = objects.filter((object) => object.userData.type === "axial-force-label");
+    expect(axialLabels).toHaveLength(2);
+    expect(axialLabels.map((object) => object.userData.text)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("FX=10"),
+        expect.stringContaining("FX=-10"),
+      ]),
+    );
+  });
 });
 
 function arrowDirection(arrow: THREE.ArrowHelper | undefined): THREE.Vector3 {
@@ -124,3 +175,4 @@ function staticResult(
     errors: [],
   };
 }
+// @vitest-environment jsdom

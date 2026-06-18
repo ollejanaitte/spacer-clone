@@ -548,6 +548,13 @@ button:disabled {
   border-radius: 5px;
 }
 
+.viewer-result-legend {
+  margin: 8px 0 0;
+  color: #526173;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .display-size-input {
   display: grid;
   grid-template-columns: minmax(92px, 1fr) 28px minmax(80px, 1fr) 28px 62px;

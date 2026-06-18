@@ -397,6 +397,36 @@ export function ViewerControls({
           />
         </div>
       </ControlGroup>
+      <ControlGroup title="反力表示">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="数値ラベル"
+            checked={Boolean(visibility.reactionLabels)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("reactionLabels", value)}
+          />
+          <Toggle label="RFX" checked={visibility.reactionLabelFx !== false} onChange={(value) => setFlag("reactionLabelFx", value)} />
+          <Toggle label="RFY" checked={visibility.reactionLabelFy !== false} onChange={(value) => setFlag("reactionLabelFy", value)} />
+          <Toggle label="RFZ" checked={visibility.reactionLabelFz !== false} onChange={(value) => setFlag("reactionLabelFz", value)} />
+        </div>
+      </ControlGroup>
+      <ControlGroup title="断面力表示">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="部材端値ラベル"
+            checked={Boolean(visibility.axialForceLabels)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("axialForceLabels", value)}
+          />
+          <Toggle label="FX" checked={Boolean(visibility.axialForceLabels)} disabled={!hasResult} onChange={(value) => setFlag("axialForceLabels", value)} />
+          <Toggle label="FY（フェーズ2）" checked={false} disabled onChange={() => undefined} />
+          <Toggle label="FZ（フェーズ2）" checked={false} disabled onChange={() => undefined} />
+          <Toggle label="MX/MY/MZ（フェーズ2）" checked={false} disabled onChange={() => undefined} />
+        </div>
+        <p className="viewer-result-legend">
+          凡例: RFX/RFY/RFZは全体座標系。FXは部材ローカルx軸の断面力で、正値を引張側として表示。
+        </p>
+      </ControlGroup>
       <ControlGroup title="表示サイズ">
         <div className="scale-grid">
           {([

@@ -19,6 +19,11 @@ export type ViewerVisibility = {
   deformedShape: boolean;
   reactions: boolean;
   axialForce: boolean;
+  reactionLabels?: boolean;
+  reactionLabelFx?: boolean;
+  reactionLabelFy?: boolean;
+  reactionLabelFz?: boolean;
+  axialForceLabels?: boolean;
   momentMy: boolean;
   momentMz: boolean;
 };
@@ -115,6 +120,11 @@ export const defaultVisibility: ViewerVisibility = {
   deformedShape: false,
   reactions: false,
   axialForce: false,
+  reactionLabels: false,
+  reactionLabelFx: true,
+  reactionLabelFy: true,
+  reactionLabelFz: true,
+  axialForceLabels: false,
   momentMy: false,
   momentMz: false,
 };
