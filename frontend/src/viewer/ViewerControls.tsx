@@ -5,10 +5,17 @@ import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
 import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
+import {
+  clampViewerDisplaySize,
+  DEFAULT_VIEWER_DISPLAY_SIZE,
+  VIEWER_DISPLAY_SIZE_RANGES,
+  type ViewerDisplaySizeSettings,
+} from "./settings/displaySize";
 
 type ViewerControlsProps = {
   visibility: ViewerVisibility;
   scales: ViewerScales;
+  displaySize?: ViewerDisplaySizeSettings;
   loadCaseIds: string[];
   selectedLoadCaseId: string;
   eigenModeNos: number[];
@@ -22,6 +29,8 @@ type ViewerControlsProps = {
   cameraSync: boolean;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
+  onDisplaySizeChange?: (settings: ViewerDisplaySizeSettings) => void;
+  onDisplaySizeReset?: () => void;
   onLoadCaseChange: (loadCaseId: string) => void;
   onEigenModeChange: (modeNo: number) => void;
   onResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
@@ -36,6 +45,7 @@ type ViewerControlsProps = {
 export function ViewerControls({
   visibility,
   scales,
+  displaySize = DEFAULT_VIEWER_DISPLAY_SIZE,
   loadCaseIds,
   selectedLoadCaseId,
   eigenModeNos,
@@ -49,6 +59,8 @@ export function ViewerControls({
   cameraSync,
   onVisibilityChange,
   onScalesChange,
+  onDisplaySizeChange = () => undefined,
+  onDisplaySizeReset = () => undefined,
   onLoadCaseChange,
   onEigenModeChange,
   onResponseSpectrumResultChange,
@@ -69,6 +81,9 @@ export function ViewerControls({
     onAnimationOptionsChange({ ...animationOptions, ...patch });
   };
   const availableModeNumbers = eigenModeNos.length > 0 ? eigenModeNos : [1, 2, 3];
+  const setDisplaySize = (key: keyof ViewerDisplaySizeSettings, value: number) => {
+    onDisplaySizeChange({ ...displaySize, [key]: clampViewerDisplaySize(key, value) });
+  };
 
   return (
     <div className="viewer-controls" aria-label={ja.viewer.controls.ariaLabel}>
@@ -382,6 +397,105 @@ export function ViewerControls({
           />
         </div>
       </ControlGroup>
+      <ControlGroup title="反力表示">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="数値ラベル"
+            checked={Boolean(visibility.reactionLabels)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("reactionLabels", value)}
+          />
+          <Toggle label="RFX" checked={visibility.reactionLabelFx !== false} onChange={(value) => setFlag("reactionLabelFx", value)} />
+          <Toggle label="RFY" checked={visibility.reactionLabelFy !== false} onChange={(value) => setFlag("reactionLabelFy", value)} />
+          <Toggle label="RFZ" checked={visibility.reactionLabelFz !== false} onChange={(value) => setFlag("reactionLabelFz", value)} />
+          <Toggle label="RMX" checked={Boolean(visibility.reactionLabelMx)} onChange={(value) => setFlag("reactionLabelMx", value)} />
+          <Toggle label="RMY" checked={Boolean(visibility.reactionLabelMy)} onChange={(value) => setFlag("reactionLabelMy", value)} />
+          <Toggle label="RMZ" checked={Boolean(visibility.reactionLabelMz)} onChange={(value) => setFlag("reactionLabelMz", value)} />
+        </div>
+      </ControlGroup>
+      <ControlGroup title="断面力表示">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="部材端値ラベル"
+            checked={Boolean(visibility.memberForceLabels || visibility.axialForceLabels)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("memberForceLabels", value)}
+          />
+          <Toggle label="FX" checked={visibility.memberForceLabelFx !== false} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFx", value)} />
+          <Toggle label="FY" checked={Boolean(visibility.memberForceLabelFy)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFy", value)} />
+          <Toggle label="FZ" checked={Boolean(visibility.memberForceLabelFz)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFz", value)} />
+          <Toggle label="MX" checked={Boolean(visibility.memberForceLabelMx)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMx", value)} />
+          <Toggle label="MY" checked={Boolean(visibility.memberForceLabelMy)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMy", value)} />
+          <Toggle label="MZ" checked={Boolean(visibility.memberForceLabelMz)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMz", value)} />
+        </div>
+        <p className="viewer-result-legend">
+          凡例: RFX/RFY/RFZは全体座標系の反力、RMX/RMY/RMZは全体座標系の反力モーメント。部材端FX/FY/FZ/MX/MY/MZは部材ローカル座標系の断面力で、SPACER座標系表示ON時も符号・成分名は解析結果の部材座標系のまま表示。
+        </p>
+      </ControlGroup>
+      <ControlGroup title="表示サイズ">
+        <div className="scale-grid">
+          {([
+            ["nodeSize", "節点サイズ"],
+            ["supportSize", "支点サイズ"],
+            ["loadArrowSize", "荷重矢印サイズ"],
+            ["labelSize", "ラベルサイズ"],
+            ["memberLineWidth", "部材線幅"],
+          ] as const).map(([key, label]) => (
+            <DisplaySizeInput
+              key={key}
+              label={label}
+              value={displaySize[key]}
+              min={VIEWER_DISPLAY_SIZE_RANGES[key].min}
+              max={VIEWER_DISPLAY_SIZE_RANGES[key].max}
+              onChange={(value) => setDisplaySize(key, value)}
+            />
+          ))}
+          <button type="button" className="viewer-size-reset" onClick={onDisplaySizeReset}>
+            表示サイズをリセット
+          </button>
+        </div>
+      </ControlGroup>
+    </div>
+  );
+}
+
+function DisplaySizeInput({
+  label,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
+}) {
+  const step = 0.1;
+  return (
+    <div className="display-size-input">
+      <span>{label}</span>
+      <button type="button" aria-label={`${label}を小さく`} onClick={() => onChange(value - step)}>-</button>
+      <input
+        aria-label={label}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.currentTarget.value))}
+      />
+      <button type="button" aria-label={`${label}を大きく`} onClick={() => onChange(value + step)}>+</button>
+      <input
+        aria-label={`${label}数値`}
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.currentTarget.value))}
+      />
     </div>
   );
 }

@@ -1,400 +1,157 @@
-import { useEffect, useState } from "react";
-import { ja } from "../../../i18n/ja";
-import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
-import { TimeHistoryAnimationProvider } from "../../TimeHistoryAnimationContext";
-import { useTimeHistoryAnimationState } from "../../useTimeHistoryAnimationState";
+import { useMemo, useState } from "react";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
-import { TimeHistoryAnimationAvailability } from "../TimeHistoryAnimationAvailability";
-import { TimeHistoryAnimationViewerPanel } from "../TimeHistoryAnimationViewerPanel";
-import { TimeHistoryAnimationControlsPanel } from "../TimeHistoryAnimationControlsPanel";
+import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
+import { ResultSummaryCard } from "../ResultSummaryCard";
 
 type SectionResultsProps = {
   project: ProjectModel;
-  result: TimeHistoryResult | null | undefined;
-  status: string | undefined;
-  error: StructuredMessage | null;
-  onOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
+  result?: TimeHistoryResult | null;
+  error?: StructuredMessage | null;
+  onAnimationOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 };
 
-type ResultTabId = "overview" | "maxima" | "chart" | "inputMotion" | "animation" | "detail" | "errors";
+type ResultPageId = "overview" | "max" | "chart" | "ground" | "animation" | "table" | "errors";
 
-const tabs: Array<{ key: ResultTabId; label: string }> = [
-  { key: "overview", label: ja.timeHistoryWizard.results.tabs.overview },
-  { key: "maxima", label: ja.timeHistoryWizard.results.tabs.maxima },
-  { key: "chart", label: ja.timeHistoryWizard.results.tabs.chart },
-  { key: "inputMotion", label: ja.timeHistoryWizard.results.tabs.inputMotion },
-  { key: "animation", label: ja.timeHistoryWizard.results.tabs.animation },
-  { key: "detail", label: ja.timeHistoryWizard.results.tabs.detail },
-  { key: "errors", label: ja.timeHistoryWizard.results.tabs.errors },
+const resultPages: Array<{ id: ResultPageId; label: string; help: string }> = [
+  { id: "overview", label: "概要", help: "解析が成功したか、点数・時間刻み・解析時間を確認します。" },
+  { id: "max", label: "最大値一覧", help: "変位・速度・加速度の最大値を確認します。" },
+  { id: "chart", label: "時刻歴グラフ", help: "時間ごとの応答値をグラフで確認します。" },
+  { id: "ground", label: "地震波グラフ", help: "入力した地震波の形を確認します。" },
+  { id: "animation", label: "アニメーション", help: "揺れ方を再生して確認します。" },
+  { id: "table", label: "詳細表", help: "数値を表形式で確認します。" },
+  { id: "errors", label: "エラー／警告", help: "問題がある場合の理由と対応を確認します。" },
 ];
 
-export function SectionResults({
-  project,
-  result,
-  status,
-  error,
-  onOverrideChange,
-}: SectionResultsProps) {
-  const labels = ja.timeHistoryWizard.results;
-  const initialTab: ResultTabId = status === "failed" || error ? "errors" : "overview";
-  const [active, setActive] = useState<ResultTabId>(initialTab);
-  useEffect(() => {
-    setActive(status === "failed" || error ? "errors" : "overview");
-  }, [status, error, result?.meta?.analysisId]);
+export function SectionResults({ project, result = null, error = null, onAnimationOverrideChange }: SectionResultsProps) {
+  const [activePage, setActivePage] = useState<ResultPageId>("overview");
+  const pageIndex = resultPages.findIndex((page) => page.id === activePage);
+  const page = resultPages[pageIndex] ?? resultPages[0];
+  const responseKeys = useMemo(() => responseHistoryKeys(result), [result]);
+  const selectedKey = responseKeys[0] ?? "";
+  const selectedSeries = selectedKey ? result?.displacements?.[selectedKey] ?? [] : [];
+  const selectedGroundMotion = project.groundMotions?.find((motion) => motion.id === project.analysisSettings.timeHistory?.groundMotionId) ?? project.groundMotions?.[0] ?? null;
+
+  const goPrevious = () => setActivePage(resultPages[Math.max(pageIndex - 1, 0)]?.id ?? "overview");
+  const goNext = () => setActivePage(resultPages[Math.min(pageIndex + 1, resultPages.length - 1)]?.id ?? "overview");
 
   return (
-    <section className="time-history-wizard-section section-results" aria-label={labels.heading}>
-      <h2>{labels.heading}</h2>
-      <div className="tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={active === tab.key ? "tab active" : "tab"}
-            onClick={() => setActive(tab.key)}
-          >
-            {tab.label}
+    <section className="time-history-wizard-section time-history-results-section">
+      <div className="time-history-results-hero">
+        <div>
+          <h3>結果表示</h3>
+          <p>結果は紙芝居形式で1ページずつ確認できます。概要、最大値、グラフ、アニメーション、詳細表の順に見てください。</p>
+        </div>
+        <div className="time-history-page-counter">{pageIndex + 1} / {resultPages.length}</div>
+      </div>
+      <div className="time-history-result-page-tabs" aria-label="結果ページ選択">
+        {resultPages.map((item, index) => (
+          <button key={item.id} type="button" className={item.id === activePage ? "active" : ""} onClick={() => setActivePage(item.id)}>
+            <span>{index + 1}</span>{item.label}
           </button>
         ))}
       </div>
-      <div className="tab-body">
-        {active === "overview" && <OverviewTab result={result} />}
-        {active === "maxima" && <MaximaTab result={result} />}
-        {active === "chart" && (
-          <div className="result-table">
-            <TimeHistoryResultViewer
-              result={result ?? null}
-              project={project}
-              status={status}
-              error={error}
-              onOverrideChange={onOverrideChange}
-            />
-          </div>
+      <article className="time-history-result-page-card">
+        <header>
+          <div><span className="time-history-page-kicker">結果ページ {pageIndex + 1}</span><h4>{page.label}</h4><p>{page.help}</p></div>
+          <div className="time-history-page-nav"><button type="button" onClick={goPrevious} disabled={pageIndex <= 0}>前のページ</button><button type="button" onClick={goNext} disabled={pageIndex >= resultPages.length - 1}>次のページ</button></div>
+        </header>
+        {!result && activePage !== "errors" ? <EmptyRunGuide /> : (
+          <>
+            {activePage === "overview" && <OverviewPage result={result} project={project} />}
+            {activePage === "max" && <MaxValuesPage result={result} />}
+            {activePage === "chart" && <ChartPage result={result} selectedKey={selectedKey} values={selectedSeries} />}
+            {activePage === "ground" && <GroundMotionPage motion={selectedGroundMotion} />}
+            {activePage === "animation" && <TimeHistoryResultViewer project={project} result={result} error={error} status={result?.meta?.status} onOverrideChange={onAnimationOverrideChange} />}
+            {activePage === "table" && <TablePage result={result} selectedKey={selectedKey} values={selectedSeries} />}
+            {activePage === "errors" && <ErrorsPage result={result} error={error} />}
+          </>
         )}
-        {active === "inputMotion" && <InputMotionTab project={project} />}
-        {active === "animation" && <AnimationTab project={project} result={result} />}
-        {active === "detail" && (
-          <div className="result-table">
-            <TimeHistoryResultViewer
-              result={result ?? null}
-              project={project}
-              status={status}
-              error={error}
-              onOverrideChange={onOverrideChange}
-            />
-          </div>
-        )}
-        {active === "errors" && <ErrorsTab error={error} />}
-      </div>
+      </article>
     </section>
   );
 }
 
-function OverviewTab({ result }: { result: TimeHistoryResult | null | undefined }) {
-  const labels = ja.timeHistoryWizard.results.overview;
-  if (!result) {
-    return <div className="empty-state">{"まだ解析結果はありません。"}</div>;
-  }
-  const summary = computeSummary(result);
-  return (
-    <div className="time-history-overview">
-      <div className="summary-list">
-        <span>{labels.maxDisplacement}: {formatNumber(summary.maxDisplacement)}</span>
-        <span>{labels.maxVelocity}: {formatNumber(summary.maxVelocity)}</span>
-        <span>{labels.maxAcceleration}: {formatNumber(summary.maxAcceleration)}</span>
-      </div>
-      <div className="summary-list">
-        <span>{labels.timeOfMax}: {formatNumber(summary.timeOfMax)} s</span>
-        <span>{labels.analysisDuration}: {formatNumber(result.meta.duration)} s</span>
-        <span>{labels.timeStep}: {formatNumber(result.meta.timeStep)} s</span>
-      </div>
-      <p className="time-history-wizard-help">{labels.helpMaxDisplacement}</p>
-      <p className="time-history-wizard-help">{labels.helpTimeOfMax}</p>
-      <p className="time-history-wizard-help">{labels.helpSign}</p>
-    </div>
-  );
+function EmptyRunGuide() {
+  return <div className="time-history-empty-result-guide"><strong>まだ結果がありません。</strong><p>「解析実行」ページで時刻歴解析を実行してください。</p></div>;
 }
 
-function MaximaTab({ result }: { result: TimeHistoryResult | null | undefined }) {
-  const labels = ja.timeHistoryWizard.results.maximaTable;
-  if (!result) {
-    return <div className="empty-state">{"まだ解析結果はありません。"}</div>;
-  }
-  const rows = buildMaximaRows(result);
-  return (
-    <div className="result-table">
-      <h3>{labels.heading}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>{labels.kind}</th>
-            <th>{labels.target}</th>
-            <th>{labels.direction}</th>
-            <th>{labels.max}</th>
-            <th>{labels.min}</th>
-            <th>{labels.absMax}</th>
-            <th>{labels.timeOfMax}</th>
-            <th>{labels.unit}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td>{row.kind}</td>
-              <td>{row.target}</td>
-              <td>{row.direction}</td>
-              <td className="max-cell">{row.max.toFixed(4)}</td>
-              <td>{row.min.toFixed(4)}</td>
-              <td className="max-cell">{row.absMax.toFixed(4)}</td>
-              <td>{row.timeOfMax.toFixed(3)} s</td>
-              <td>{row.unit}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+function OverviewPage({ result, project }: { result: TimeHistoryResult | null; project: ProjectModel }) {
+  return <div className="time-history-page-grid"><ResultSummaryCard result={result} /><div className="time-history-overview-card"><h5>解析情報</h5><dl><div><dt>状態</dt><dd>{result?.meta?.status ?? "未実行"}</dd></div><div><dt>解析ID</dt><dd>{result?.meta?.analysisId ?? "-"}</dd></div><div><dt>手法</dt><dd>{result?.meta?.method ?? project.analysisSettings.timeHistory?.method ?? "-"}</dd></div><div><dt>dt</dt><dd>{formatNumber(result?.meta?.timeStep ?? project.analysisSettings.timeHistory?.timeStep)} 秒</dd></div><div><dt>解析時間</dt><dd>{formatNumber(result?.meta?.duration ?? project.analysisSettings.timeHistory?.duration)} 秒</dd></div><div><dt>サンプル数</dt><dd>{result?.meta?.sampleCount ?? "-"}</dd></div></dl></div><div className="time-history-beginner-note"><strong>見方</strong><p>まず状態が success になっているか確認します。次に最大値一覧とグラフを確認します。</p></div></div>;
 }
 
-function InputMotionTab({ project }: { project: ProjectModel }) {
-  const motion = project.groundMotions?.[0];
-  if (!motion || !Array.isArray(motion.samples) || motion.samples.length === 0) {
-    return <div className="empty-state">{"地震波が読み込まれていません。"}</div>;
-  }
-  return (
-    <div className="result-table">
-      <h3>{ja.timeHistory.groundMotionManager.previewLabel}</h3>
-      <GroundMotionChart samples={motion.samples} timeStep={motion.timeStep} />
-    </div>
-  );
+function MaxValuesPage({ result }: { result: TimeHistoryResult | null }) {
+  const rows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 24);
+  if (rows.length === 0) return <EmptyPage />;
+  return <div className="time-history-table-wrap"><table><thead><tr><th>種類</th><th>キー</th><th>最大絶対値</th><th>時刻</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.kind}-${row.key}`}><td>{row.kind}</td><td>{row.key}</td><td>{formatNumber(row.value)}</td><td>{formatNumber(row.time)} 秒</td></tr>)}</tbody></table></div>;
 }
 
-function GroundMotionChart({ samples, timeStep }: { samples: number[]; timeStep: number }) {
-  const width = 480;
-  const height = 200;
-  const padding = 20;
-  let max = -Infinity;
-  let min = Infinity;
-  for (const v of samples) {
-    if (typeof v === "number" && Number.isFinite(v)) {
-      if (v > max) max = v;
-      if (v < min) min = v;
-    }
-  }
-  if (!Number.isFinite(max)) max = 0;
-  if (!Number.isFinite(min)) min = 0;
-  const valueSpan = Math.max(1e-9, max - min);
-  const timeSpan = Math.max(1e-9, (samples.length - 1) * timeStep);
-  const polyline = samples
-    .map((value, index) => {
-      const x = padding + (index * timeStep / timeSpan) * (width - 2 * padding);
-      const y = height - padding - ((value - min) / valueSpan) * (height - 2 * padding);
-      return x + "," + y;
-    })
-    .join(" ");
-  return (
-    <svg viewBox={"0 0 " + width + " " + height} role="img" aria-label={"ground motion chart"}>
-      <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} />
-      <line x1={padding} y1={padding} x2={padding} y2={height - padding} />
-      <polyline data-ground-motion points={polyline} fill="none" stroke="#2f6f9f" strokeWidth={2} />
-      <text x={width / 2} y={height - 4} textAnchor="middle">{"t (s)"}</text>
-      <text x={12} y={height / 2} textAnchor="middle" transform={"rotate(-90 12 " + (height / 2) + ")"}>{"a"}</text>
-    </svg>
-  );
+function ChartPage({ result, selectedKey, values }: { result: TimeHistoryResult | null; selectedKey: string; values: number[] }) {
+  return <div><p className="time-history-help-text">表示対象: {selectedKey || "-"} / 変位</p><SeriesSvg time={result?.time ?? []} values={values} label="時刻歴応答" /></div>;
 }
 
-function AnimationTab({
-  project,
-  result,
-}: {
-  project: ProjectModel;
-  result: TimeHistoryResult | null | undefined;
-}) {
-  const labels = ja.timeHistoryWizard.animation;
-  const animation = useTimeHistoryAnimationState({ project, result });
-  if (!result) {
-    return (
-      <div className="time-history-animation-tab">
-        <h3>{labels.heading}</h3>
-        <div className="empty-state">{labels.emptyResult}</div>
-      </div>
-    );
-  }
-  return (
-    <div className="time-history-animation-tab">
-      <TimeHistoryAnimationProvider
-        project={project}
-        result={result}
-        state={animation.state}
-        setters={animation.setters}
-        reset={animation.reset}
-        jumpToMax={animation.jumpToMax}
-        currentTimeSeconds={animation.currentTimeSeconds}
-        currentValue={animation.currentValue}
-        maxAbsValue={animation.maxAbsValue}
-        maxAbsTimeSeconds={animation.maxAbsTimeSeconds}
-        largeScaleWarning={animation.largeScaleWarning}
-      >
-        <TimeHistoryAnimationAvailability result={result} />
-        <TimeHistoryAnimationViewerPanel project={project} result={result} />
-        <TimeHistoryAnimationControlsPanel result={result} />
-      </TimeHistoryAnimationProvider>
-    </div>
-  );
+function GroundMotionPage({ motion }: { motion: NonNullable<ProjectModel["groundMotions"]>[number] | null }) {
+  return <div><div className="time-history-ground-motion-summary"><span>地震波: {motion?.name ?? motion?.id ?? "-"}</span><span>単位: {motion?.unit ?? "-"}</span><span>dt: {formatNumber(motion?.timeStep)} 秒</span><span>点数: {motion?.samples.length ?? 0}</span></div><SeriesSvg time={(motion?.samples ?? []).map((_, index) => index * (motion?.timeStep ?? 0))} values={motion?.samples ?? []} label="入力地震波" /></div>;
 }
 
-function ErrorsTab({ error }: { error: StructuredMessage | null }) {
-  if (!error) {
-    return <div className="empty-state">{ja.timeHistoryWizard.results.errorTabEmpty}</div>;
-  }
-  return (
-    <div className="result-table">
-      <table>
-        <thead>
-          <tr>
-            <th>{ja.timeHistory.error.code}</th>
-            <th>{ja.timeHistory.error.message}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{error.code}</td>
-            <td>{error.message}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
+function TablePage({ result, selectedKey, values }: { result: TimeHistoryResult | null; selectedKey: string; values: number[] }) {
+  const rows = (result?.time ?? []).map((time, index) => ({ time, value: values[index] })).slice(0, 200);
+  if (rows.length === 0) return <EmptyPage />;
+  return <div className="time-history-table-wrap"><p className="time-history-help-text">表示対象: {selectedKey || "-"} / 先頭200行まで表示</p><table><thead><tr><th>No.</th><th>時刻 秒</th><th>値</th></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.time}-${index}`}><td>{index + 1}</td><td>{formatNumber(row.time)}</td><td>{formatNumber(row.value)}</td></tr>)}</tbody></table></div>;
 }
 
-type MaxRow = {
-  id: string;
-  kind: string;
-  target: string;
-  direction: string;
-  max: number;
-  min: number;
-  absMax: number;
-  timeOfMax: number;
-  unit: string;
-};
-
-function buildMaximaRows(result: TimeHistoryResult): MaxRow[] {
-  const rows: MaxRow[] = [];
-  for (const key of Object.keys(result.displacements)) {
-    rows.push(makeRow(result, "displacements", key, "m"));
-  }
-  for (const key of Object.keys(result.velocities)) {
-    rows.push(makeRow(result, "velocities", key, "m/s"));
-  }
-  for (const key of Object.keys(result.accelerations)) {
-    rows.push(makeRow(result, "accelerations", key, "m/s^2"));
-  }
-  return rows;
+function ErrorsPage({ result, error }: { result: TimeHistoryResult | null; error?: StructuredMessage | null }) {
+  if (!error && result?.meta?.status !== "failed") return <div className="time-history-run-ready">現在表示するエラーはありません。</div>;
+  return <div className="time-history-error-card"><strong>エラー／警告</strong><p>{error?.message ?? "解析結果が失敗状態です。入力条件を確認してください。"}</p>{error && <dl><div><dt>コード</dt><dd>{error.code}</dd></div><div><dt>パス</dt><dd>{error.path ?? "-"}</dd></div></dl>}</div>;
 }
 
-function makeRow(result: TimeHistoryResult, kind: keyof Pick<TimeHistoryResult, "displacements" | "velocities" | "accelerations">, key: string, unit: string): MaxRow {
-  const series = result[kind][key];
-  let max = 0;
-  let min = 0;
-  let timeOfMax = 0;
-  let absMax = 0;
-  if (Array.isArray(series) && series.length > 0) {
-    max = -Infinity;
-    min = Infinity;
-    for (let i = 0; i < series.length; i += 1) {
-      const value = series[i];
-      if (typeof value !== "number" || !Number.isFinite(value)) continue;
-      if (value > max) max = value;
-      if (value < min) min = value;
-    }
-    if (!Number.isFinite(max)) max = 0;
-    if (!Number.isFinite(min)) min = 0;
-    absMax = Math.max(Math.abs(max), Math.abs(min));
-    for (let i = 0; i < series.length; i += 1) {
-      const value = series[i];
-      if (typeof value === "number" && Math.abs(value) === absMax) {
-        timeOfMax = i * result.meta.timeStep;
-        break;
+function SeriesSvg({ time, values, label }: { time: number[]; values: number[]; label: string }) {
+  const points = buildSvgPoints(time, values);
+  if (points.length === 0) return <EmptyPage />;
+  const path = points.map((point, index) => `${index === 0 ? "M" : "L"}${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(" ");
+  return <div className="time-history-svg-chart-card"><div className="time-history-chart-caption"><strong>{label}</strong><span>最大: {formatNumber(Math.max(...values.map((value) => Math.abs(value))))}</span></div><svg viewBox="0 0 720 260" role="img" aria-label={label}><line x1="40" y1="130" x2="700" y2="130" /><line x1="40" y1="20" x2="40" y2="240" /><path d={path} /><text x="40" y="255">0 秒</text><text x="620" y="255">{formatNumber(time[time.length - 1])} 秒</text></svg></div>;
+}
+
+function buildSvgPoints(time: number[], values: number[]): Array<{ x: number; y: number }> {
+  if (time.length === 0 || values.length === 0) return [];
+  const stride = Math.max(1, Math.ceil(values.length / 360));
+  const finiteAbs = values.map((value) => Math.abs(value)).filter(Number.isFinite);
+  const maxAbs = Math.max(...finiteAbs, 1);
+  const maxTime = time[Math.min(time.length - 1, values.length - 1)] || 1;
+  const points: Array<{ x: number; y: number }> = [];
+  for (let index = 0; index < values.length; index += stride) {
+    const value = values[index];
+    const t = time[index] ?? index;
+    if (!Number.isFinite(value)) continue;
+    points.push({ x: 40 + (t / maxTime) * 660, y: 130 - (value / maxAbs) * 105 });
+  }
+  return points;
+}
+
+function responseHistoryKeys(result: TimeHistoryResult | null): string[] {
+  if (!result) return [];
+  return Array.from(new Set([...Object.keys(result.displacements ?? {}), ...Object.keys(result.velocities ?? {}), ...Object.keys(result.accelerations ?? {})])).sort();
+}
+
+function maxRows(kind: string, record: Record<string, number[]> | undefined, time: number[] | undefined) {
+  if (!record) return [];
+  return Object.entries(record).map(([key, values]) => {
+    let value = 0;
+    let index = 0;
+    values.forEach((candidate, candidateIndex) => {
+      if (Number.isFinite(candidate) && Math.abs(candidate) >= Math.abs(value)) {
+        value = candidate;
+        index = candidateIndex;
       }
-    }
-  }
-  return {
-    id: kind + ":" + key,
-    kind: kind === "displacements" ? "変位" : kind === "velocities" ? "速度" : "加速度",
-    target: key,
-    direction: extractDirection(key),
-    max,
-    min,
-    absMax,
-    timeOfMax,
-    unit,
-  };
+    });
+    return { kind, key, value, time: time?.[index] ?? index };
+  });
 }
 
-function extractDirection(key: string): string {
-  if (key.endsWith("_ux")) return "X";
-  if (key.endsWith("_uy")) return "Y";
-  if (key.endsWith("_uz")) return "Z";
-  return "-";
+function EmptyPage() {
+  return <div className="time-history-empty-result-guide">表示できるデータがありません。</div>;
 }
 
-type Summary = {
-  maxDisplacement: number;
-  maxVelocity: number;
-  maxAcceleration: number;
-  timeOfMax: number;
-};
-
-function computeSummary(result: TimeHistoryResult): Summary {
-  const timeStep = result.meta.timeStep;
-  return {
-    maxDisplacement: maxAbsValue(result.displacements),
-    maxVelocity: maxAbsValue(result.velocities),
-    maxAcceleration: maxAbsValue(result.accelerations),
-    timeOfMax: maxAbsIndex(result.displacements) * timeStep,
-  };
-}
-
-function maxAbsValue(table: Record<string, number[]>): number {
-  let max = 0;
-  for (const key of Object.keys(table)) {
-    const series = table[key];
-    if (!Array.isArray(series)) continue;
-    for (const value of series) {
-      if (typeof value === "number" && Number.isFinite(value)) {
-        const abs = Math.abs(value);
-        if (abs > max) max = abs;
-      }
-    }
-  }
-  return max;
-}
-
-function maxAbsIndex(table: Record<string, number[]>): number {
-  let bestIndex = 0;
-  let bestAbs = 0;
-  for (const key of Object.keys(table)) {
-    const series = table[key];
-    if (!Array.isArray(series)) continue;
-    for (let i = 0; i < series.length; i += 1) {
-      const value = series[i];
-      if (typeof value === "number" && Number.isFinite(value)) {
-        const abs = Math.abs(value);
-        if (abs > bestAbs) {
-          bestAbs = abs;
-          bestIndex = i;
-        }
-      }
-    }
-  }
-  return bestIndex;
-}
-
-function formatNumber(value: number): string {
-  if (!Number.isFinite(value)) return "-";
-  if (Math.abs(value) >= 1000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001)) {
-    return value.toExponential(3);
-  }
-  return value.toFixed(4);
+function formatNumber(value: number | undefined): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
+  return Math.abs(value) >= 1000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001) ? value.toExponential(4) : value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
 }

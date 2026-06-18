@@ -1,30 +1,21 @@
-import { ja } from "../../i18n/ja";
 import type { TimeHistoryMainStatus } from "./wizardState";
-
-const labels = ja.timeHistoryWizard.status;
-
-const labelMap: Record<TimeHistoryMainStatus, string> = {
-  unconfigured: labels.unconfigured,
-  incomplete: labels.incomplete,
-  ready: labels.ready,
-  running: labels.running,
-  complete: labels.complete,
-  error: labels.error,
-};
-
-const classMap: Record<TimeHistoryMainStatus, string> = {
-  unconfigured: "time-history-status-badge unconfigured",
-  incomplete: "time-history-status-badge incomplete",
-  ready: "time-history-status-badge ready",
-  running: "time-history-status-badge running",
-  complete: "time-history-status-badge complete",
-  error: "time-history-status-badge error",
-};
 
 type StatusBadgeProps = {
   status: TimeHistoryMainStatus;
 };
 
+const labels: Record<TimeHistoryMainStatus, string> = {
+  "not-set": "未設定",
+  unconfigured: "未設定",
+  incomplete: "入力不足",
+  ready: "解析可能",
+  running: "解析中",
+  done: "解析済み",
+  complete: "解析済み",
+  error: "エラーあり",
+};
+
 export function StatusBadge({ status }: StatusBadgeProps) {
-  return <span className={classMap[status]}>{labelMap[status]}</span>;
+  const className = "time-history-status-badge " + status;
+  return <span className={className}>{labels[status]}</span>;
 }

@@ -1,112 +1,58 @@
-import { useMemo } from "react";
-import { ja } from "../../../i18n/ja";
+import type { ProjectModel } from "../../../types";
 import { GroundMotionManagerPanel } from "../../GroundMotionManagerPanel";
-import { computeGroundMotionConsistency, type WizardErrorCard } from "../wizardState";
-import type { ProjectModel, TimeHistoryResult } from "../../../types";
-import { toWizardError } from "../wizardState";
+import { expectedSampleCount, groundMotionDuration } from "../wizardState";
 
 type SectionGroundMotionProps = {
   project: ProjectModel;
-  result: TimeHistoryResult | null | undefined;
-  onChange: (project: ProjectModel) => void;
-  onMatchDuration: () => void;
-  onShowMismatchCard: (card: WizardErrorCard) => void;
+  onProjectChange: (project: ProjectModel) => void;
 };
 
-export function SectionGroundMotion({
-  project,
-  result,
-  onChange,
-  onMatchDuration,
-  onShowMismatchCard,
-}: SectionGroundMotionProps) {
-  const labels = ja.timeHistoryWizard.groundMotion;
-  const groundMotion = project.groundMotions?.[0];
+export function SectionGroundMotion({ project, onProjectChange }: SectionGroundMotionProps) {
   const settings = project.analysisSettings.timeHistory;
-  const timeStep = settings?.timeStep ?? groundMotion?.timeStep ?? 0;
-  const duration = settings?.duration ?? groundMotion?.duration ?? 0;
-  const consistency = useMemo(
-    () =>
-      computeGroundMotionConsistency({
-        samples: groundMotion?.samples,
-        timeStep,
-        duration,
-      }),
-    [groundMotion?.samples, timeStep, duration],
-  );
+  const motion = project.groundMotions?.find((item) => item.id === settings?.groundMotionId) ?? project.groundMotions?.[0];
+  const timeStep = settings?.timeStep ?? motion?.timeStep;
+  const duration = settings?.duration ?? motion?.duration;
+  const waveformLength = groundMotionDuration(motion?.samples.length ?? 0, timeStep);
+  const expected = expectedSampleCount(duration, timeStep);
+  const canFitDuration = waveformLength !== null;
+
+  const fitDurationToMotion = () => {
+    if (waveformLength === null) return;
+    onProjectChange({
+      ...project,
+      analysisSettings: {
+        ...project.analysisSettings,
+        timeHistory: {
+          enabled: true,
+          method: "newmark-beta",
+          timeStep: timeStep ?? motion?.timeStep ?? 0.05,
+          duration: waveformLength,
+          beta: settings?.beta ?? 0.25,
+          gamma: settings?.gamma ?? 0.5,
+          damping: settings?.damping ?? { type: "rayleigh", alpha: 0, beta: 0 },
+          massCaseId: settings?.massCaseId ?? project.massCases?.[0]?.id ?? "",
+          groundMotionId: settings?.groundMotionId ?? motion?.id ?? "",
+          direction: settings?.direction ?? motion?.direction ?? "X",
+        },
+      },
+    });
+  };
 
   return (
-    <section className="time-history-wizard-section section-ground-motion" aria-label={labels.heading}>
-      <h2>{labels.heading}</h2>
-      <h3>{labels.stepImportLabel}</h3>
-      <p className="time-history-wizard-help">{labels.stepImportHelp}</p>
-      <div className="summary-list result-toolbar">
-        <button
-          type="button"
-          aria-label={labels.goToSectionButton}
-          onClick={() => document.getElementById("time-history-ground-motion-manager")?.scrollIntoView({ behavior: "smooth" })}
-        >
-          {labels.importButton}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            const card = toWizardError("ground-motion-mismatch", {
-              groundMotion: {
-                sampleCount: consistency.sampleCount,
-                timeStep: consistency.timeStep,
-                motionDuration: consistency.motionDuration,
-                duration: consistency.currentDuration,
-              },
-            });
-            onShowMismatchCard(card);
-          }}
-          disabled={consistency.ok}
-          aria-label={labels.matchDurationButton}
-        >
-          {labels.matchDurationButton}
-        </button>
+    <section className="time-history-wizard-section">
+      <h3>地震波設定</h3>
+      <p>地震波ファイルを読み込み、単位・dt・波形長・解析時間との整合を確認します。</p>
+      <div className="time-history-ground-motion-summary">
+        <span>データ点数: {motion?.samples.length ?? 0}</span>
+        <span>dt: {timeStep ?? "-"} 秒</span>
+        <span>波形長: {waveformLength === null ? "-" : `${waveformLength.toFixed(6)} 秒`}</span>
+        <span>現在の解析時間: {duration ?? "-"} 秒</span>
+        <span>解析に必要な点数: {expected ?? "-"}</span>
       </div>
-      <h3>{labels.selectLabel}</h3>
-      <p className="time-history-wizard-help">{labels.selectHelp}</p>
-      <h3>{labels.unitHeading}</h3>
-      <div className="summary-list">
-        <span>{labels.unitGal}</span>
-        <span>{labels.unitMeterPerSecondSquared}</span>
-      </div>
-      <p className="time-history-wizard-help">{labels.unitHelp}</p>
-      <h3>{labels.cardHeading}</h3>
-      <div className="time-history-ground-motion-card" id="time-history-ground-motion-manager">
-        <div className="summary-list">
-          <span>{labels.cardSampleCount({ n: consistency.sampleCount })}</span>
-          <span>{labels.cardTimeStep({ dt: consistency.timeStep })}</span>
-          <span>{labels.cardDuration({ d: consistency.motionDuration })}</span>
-        </div>
-        <div className="summary-list">
-          <span>{labels.cardCurrentDuration({ d: consistency.currentDuration })}</span>
-          <span>{labels.cardExpectedSamples({ n: consistency.expectedSamples })}</span>
-        </div>
-        <div className={"summary-list " + (consistency.matches ? "ok" : "ng")}>
-          <span>{consistency.matches ? labels.cardMatchOk : labels.cardMatchMismatch}</span>
-        </div>
-        {!consistency.matches && consistency.sampleCount > 0 && consistency.timeStep > 0 && (
-          <p className="time-history-wizard-help">{labels.mismatchHelp}</p>
-        )}
-        <p className="time-history-wizard-help">{labels.durationFormula}</p>
-      </div>
-      <h3>{labels.previewHeading}</h3>
-      <GroundMotionManagerPanel project={project} onChange={onChange} />
-      {/* Helper action: clicking the dedicated match button also notifies the
-          modal-level error card so the user sees the same context anywhere in
-          the wizard. */}
-      <button
-        type="button"
-        hidden
-        aria-hidden
-        onClick={onMatchDuration}
-      />
-      {/* result retained for future per-section overrides */}
-      <input type="hidden" value={result?.meta?.analysisId ?? ""} readOnly />
+      <button type="button" disabled={!canFitDuration} onClick={fitDurationToMotion}>
+        解析時間を地震波に合わせる
+      </button>
+      <GroundMotionManagerPanel project={project} onChange={onProjectChange} />
     </section>
   );
 }

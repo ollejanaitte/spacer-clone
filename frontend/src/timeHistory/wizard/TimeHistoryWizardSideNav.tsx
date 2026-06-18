@@ -1,48 +1,28 @@
-import { ja } from "../../i18n/ja";
-import type { TimeHistorySectionId } from "./wizardState";
-
-const sectionLabels: Record<TimeHistorySectionId, string> = {
-  intro: ja.timeHistoryWizard.sideNav.intro,
-  inputCheck: ja.timeHistoryWizard.sideNav.inputCheck,
-  groundMotion: ja.timeHistoryWizard.sideNav.groundMotion,
-  analysis: ja.timeHistoryWizard.sideNav.analysis,
-  output: ja.timeHistoryWizard.sideNav.output,
-  run: ja.timeHistoryWizard.sideNav.run,
-  results: ja.timeHistoryWizard.sideNav.results,
-};
+import type { TimeHistoryWizardStepId } from "./wizardState";
+import { timeHistoryWizardSteps } from "./wizardState";
 
 type TimeHistoryWizardSideNavProps = {
-  active: TimeHistorySectionId;
-  onSelect: (section: TimeHistorySectionId) => void;
+  activeStep: TimeHistoryWizardStepId;
+  onStepChange: (step: TimeHistoryWizardStepId) => void;
 };
 
-const order: TimeHistorySectionId[] = [
-  "intro",
-  "inputCheck",
-  "groundMotion",
-  "analysis",
-  "output",
-  "run",
-  "results",
-];
-
-export function TimeHistoryWizardSideNav({ active, onSelect }: TimeHistoryWizardSideNavProps) {
+export function TimeHistoryWizardSideNav({ activeStep, onStepChange }: TimeHistoryWizardSideNavProps) {
   return (
-    <nav className="time-history-wizard-side-nav" aria-label={"wizard side nav"}>
-      <ol>
-        {order.map((section, index) => (
-          <li key={section}>
-            <button
-              type="button"
-              className={active === section ? "active" : ""}
-              onClick={() => onSelect(section)}
-            >
-              <span className="wizard-step-index">{index + 1}</span>
-              <span>{sectionLabels[section]}</span>
-            </button>
-          </li>
-        ))}
-      </ol>
+    <nav className="time-history-wizard-sidenav" aria-label="時刻歴応答解析ステップ">
+      {timeHistoryWizardSteps.map((step, index) => (
+        <button
+          key={step.id}
+          type="button"
+          className={step.id === activeStep ? "active" : ""}
+          onClick={() => onStepChange(step.id)}
+        >
+          <span className="step-number">{index + 1}</span>
+          <span>
+            <strong>{step.label}</strong>
+            <small>{step.description}</small>
+          </span>
+        </button>
+      ))}
     </nav>
   );
 }

@@ -16,7 +16,7 @@ export function renderSupports(
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
-  const size = Math.max(scales.nodeSize * 2.4, 0.16);
+  const size = Math.max(scales.nodeSize * 2.4, 0.16) * (scales.supportSize ?? 1);
 
   for (const support of project.supports) {
     const position = nodeMap.get(support.nodeId);

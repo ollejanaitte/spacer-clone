@@ -10,13 +10,6 @@ import { openResultPdfReport } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
 import { BridgeWizard } from "./bridge/BridgeWizard";
-import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
-import {
-  ResultSummaryCard,
-} from "./timeHistory/wizard/ResultSummaryCard";
-import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
-import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
-import { ja } from "./i18n/ja";
 import type { BridgeFemResponse } from "./bridge/types";
 import { bridgeProjectToProjectModel } from "./bridge/conversion";
 import type {
@@ -29,6 +22,12 @@ import type {
   ValidationResponse,
 } from "./types";
 import type { ViewerSelection } from "./viewer/types";
+import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
+import { ResultSummaryCard } from "./timeHistory/wizard/ResultSummaryCard";
+import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
+import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
+import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
+import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -62,6 +61,9 @@ export function App() {
   const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(false);
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
+  const [comparisonOpen, setComparisonOpen] = useState(
+    () => typeof window !== "undefined" && window.location.pathname === "/compare",
+  );
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
@@ -75,6 +77,18 @@ export function App() {
   const errors = [...(validation?.errors ?? []), ...(result?.errors ?? []), ...apiErrors, ...viewerErrors];
   const warnings = [...(validation?.warnings ?? []), ...(result?.warnings ?? [])];
   const canRun = !running && validation?.valid !== false;
+  const timeHistoryAnalysis = useTimeHistoryAnalysis({
+    onSuccess: (analysisResult) => {
+      setProject((current) => ({
+        ...current,
+        analysisResults: {
+          ...current.analysisResults,
+          timeHistory: analysisResult.timeHistoryResult ?? null,
+        },
+      }));
+      setDirty(true);
+    },
+  });
 
   const commitProject = (nextProject: ProjectModel) => {
     setProject(nextProject);
@@ -268,6 +282,20 @@ export function App() {
     }
   };
 
+  const runTimeHistoryAnalysis = async () => {
+    try {
+      const response = await timeHistoryAnalysis.run(project);
+      setResult(response);
+      setResultExports(null);
+      setBottomTab(response.errors.length > 0 ? "errors" : "timeHistory");
+      log(`Time history analysis complete. Status: ${analysisStatusLabel(response.analysisSummary.status)}`);
+    } catch (error) {
+      pushApiError(error, "TIME_HISTORY_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("Time history analysis API request failed.");
+    }
+  };
+
   const runInfluenceAnalysis = async () => {
     setRunning(true);
     setApiErrors([]);
@@ -385,6 +413,18 @@ export function App() {
     log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
 
+  if (comparisonOpen) {
+    return (
+      <ModelComparisonWorkspace
+        modelA={project}
+        onClose={() => {
+          window.history.pushState({}, "", "/");
+          setComparisonOpen(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="app-shell">
       <Toolbar
@@ -414,11 +454,23 @@ export function App() {
         canExportPdf={Boolean(result)}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
         onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
+        onOpenModelComparison={() => {
+          window.history.pushState({}, "", "/compare");
+          setComparisonOpen(true);
+        }}
       />
-      <div className="time-history-wizard-entry" aria-label={ja.timeHistoryWizard.openButton}>
-        <StatusBadge status={selectTimeHistoryMainStatus(project, project.analysisResults?.timeHistory ?? null, { hasResult: Boolean(project.analysisResults?.timeHistory) })} />
+      <div className="time-history-wizard-entry" aria-label="時刻歴応答解析を開く">
+        <StatusBadge
+          status={selectTimeHistoryMainStatus(project, project.analysisResults?.timeHistory ?? null, {
+            running: timeHistoryAnalysis.loading,
+            hasResult: Boolean(project.analysisResults?.timeHistory),
+            error: timeHistoryAnalysis.error,
+          })}
+        />
         <ResultSummaryCard result={project.analysisResults?.timeHistory ?? null} />
-        <p className="time-history-wizard-description">{ja.timeHistoryWizard.descriptionText}</p>
+        <p className="time-history-wizard-description">
+          時刻歴応答解析は、専用ウィザードから地震波設定、入力チェック、解析実行、結果表示、アニメーション確認を行います。
+        </p>
       </div>
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>
@@ -480,10 +532,18 @@ export function App() {
       <TimeHistoryWizardModal
         open={timeHistoryWizardOpen}
         project={project}
-        result={result?.analysisSummary.analysisType === "time_history" ? result.timeHistoryResult ?? null : null}
+        result={
+          timeHistoryAnalysis.result?.timeHistoryResult ??
+          (result?.analysisSummary.analysisType === "time_history" ? result.timeHistoryResult ?? null : null) ??
+          project.analysisResults?.timeHistory ??
+          null
+        }
+        error={timeHistoryAnalysis.error}
+        running={timeHistoryAnalysis.loading}
+        onClose={() => setTimeHistoryWizardOpen(false)}
+        onRun={() => void runTimeHistoryAnalysis()}
         onProjectChange={commitProject}
         onAnimationOverrideChange={setTimeHistoryNodeOverride}
-        onClose={() => setTimeHistoryWizardOpen(false)}
       />
       <ResultsPanel
         activeTab={bottomTab}

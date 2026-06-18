@@ -34,7 +34,8 @@ export function renderLoads(
     1,
   );
   const modelSpan = computeSpan(nodeMap);
-  const baseLength = Math.max(modelSpan * 0.18, 0.35) * scales.loadScale;
+  const baseLength =
+    Math.max(modelSpan * 0.18, 0.35) * scales.loadScale * (scales.loadArrowSize ?? 1);
 
   for (const load of project.nodalLoads) {
     if (load.loadCaseId !== selectedLoadCaseId) continue;

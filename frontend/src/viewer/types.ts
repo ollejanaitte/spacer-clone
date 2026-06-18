@@ -3,6 +3,7 @@ import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
+import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
 
 export type ViewerMode = "three" | "fallback2d";
 
@@ -19,6 +20,22 @@ export type ViewerVisibility = {
   deformedShape: boolean;
   reactions: boolean;
   axialForce: boolean;
+  reactionLabels?: boolean;
+  reactionLabelFx?: boolean;
+  reactionLabelFy?: boolean;
+  reactionLabelFz?: boolean;
+  reactionLabelMx?: boolean;
+  reactionLabelMy?: boolean;
+  reactionLabelMz?: boolean;
+  memberForceLabels?: boolean;
+  memberForceLabelFx?: boolean;
+  memberForceLabelFy?: boolean;
+  memberForceLabelFz?: boolean;
+  memberForceLabelMx?: boolean;
+  memberForceLabelMy?: boolean;
+  memberForceLabelMz?: boolean;
+  /** @deprecated use memberForceLabels. Kept as migration fallback for Phase1 state. */
+  axialForceLabels?: boolean;
   momentMy: boolean;
   momentMz: boolean;
 };
@@ -30,6 +47,9 @@ export type ViewerScales = {
   resultScale: number;
   nodeSize: number;
   labelSize: number;
+  supportSize?: number;
+  loadArrowSize?: number;
+  memberLineWidth?: number;
 };
 
 export type ViewerSelection =
@@ -73,6 +93,8 @@ export type Viewer3DProps = {
   initialCompareMode?: boolean;
   /** When false, the camera-sync checkbox defaults to off. */
   defaultCameraSync?: boolean;
+  displaySizeSettings?: ViewerDisplaySizeSettings;
+  onDisplaySizeSettingsChange?: (settings: ViewerDisplaySizeSettings) => void;
 };
 
 export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {
@@ -112,6 +134,21 @@ export const defaultVisibility: ViewerVisibility = {
   deformedShape: false,
   reactions: false,
   axialForce: false,
+  reactionLabels: false,
+  reactionLabelFx: true,
+  reactionLabelFy: true,
+  reactionLabelFz: true,
+  reactionLabelMx: false,
+  reactionLabelMy: false,
+  reactionLabelMz: false,
+  memberForceLabels: false,
+  memberForceLabelFx: true,
+  memberForceLabelFy: false,
+  memberForceLabelFz: false,
+  memberForceLabelMx: false,
+  memberForceLabelMy: false,
+  memberForceLabelMz: false,
+  axialForceLabels: false,
   momentMy: false,
   momentMz: false,
 };
@@ -123,6 +160,9 @@ export const defaultScales: ViewerScales = {
   resultScale: 1,
   nodeSize: 0.075,
   labelSize: 0.26,
+  supportSize: 1,
+  loadArrowSize: 1,
+  memberLineWidth: 1,
 };
 
 /**

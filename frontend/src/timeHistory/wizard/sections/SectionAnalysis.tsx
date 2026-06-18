@@ -1,54 +1,26 @@
-import { useState } from "react";
-import { ja } from "../../../i18n/ja";
-import { TimeHistorySettingsPanel } from "../../TimeHistorySettingsPanel";
 import type { ProjectModel } from "../../../types";
+import { TimeHistorySettingsPanel } from "../../TimeHistorySettingsPanel";
 
 type SectionAnalysisProps = {
   project: ProjectModel;
-  running?: boolean;
-  onChange: (project: ProjectModel) => void;
+  running: boolean;
   onRun?: () => void;
+  onProjectChange: (project: ProjectModel) => void;
 };
 
-export function SectionAnalysis({ project, running, onChange, onRun }: SectionAnalysisProps) {
-  const labels = ja.timeHistoryWizard.analysis;
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const settings = project.analysisSettings.timeHistory;
-  const dt = settings?.timeStep ?? 0;
-  const duration = settings?.duration ?? 0;
-  const damping = settings?.damping?.beta ?? 0;
-  const beta = settings?.beta ?? 0.25;
-  const gamma = settings?.gamma ?? 0.5;
-
+export function SectionAnalysis({ project, running, onRun, onProjectChange }: SectionAnalysisProps) {
   return (
-    <section className="time-history-wizard-section section-analysis" aria-label={labels.heading}>
-      <h2>{labels.heading}</h2>
-      <p className="time-history-wizard-help">{labels.help}</p>
-      <div className="summary-list">
-        <span title={labels.tooltipDt}>{ja.timeHistory.fields.timeStep}: {dt.toFixed(4)}</span>
-        <span title={labels.tooltipDt}>{ja.timeHistory.fields.duration}: {duration.toFixed(2)}</span>
-        <span title={labels.tooltipDamping}>{ja.timeHistory.fields.rayleighBeta}: {damping.toFixed(4)}</span>
+    <section className="time-history-wizard-section">
+      <h3>解析条件設定</h3>
+      <p>
+        Newmark法は、時間を少しずつ進めながら構造物の揺れを計算する方法です。通常は初期値のままで進められます。
+      </p>
+      <div className="time-history-term-grid">
+        <span><strong>dt</strong> 時間刻みです。地震波のdtと合わせます。</span>
+        <span><strong>Rayleigh減衰</strong> 構造物の揺れが減っていく効果を表します。</span>
+        <span><strong>解析時間</strong> 計算を行う総時間です。地震波長と合わせると扱いやすくなります。</span>
       </div>
-      <button
-        type="button"
-        aria-expanded={detailsOpen}
-        onClick={() => setDetailsOpen((current) => !current)}
-      >
-        {labels.detailsToggle}
-      </button>
-      {detailsOpen && (
-        <div className="time-history-wizard-details">
-          <p title={labels.tooltipNewmark}>{ja.timeHistory.fields.newmarkBeta}: {beta.toFixed(2)}</p>
-          <p title={labels.tooltipNewmark}>{ja.timeHistory.fields.newmarkGamma}: {gamma.toFixed(2)}</p>
-          <p title={labels.tooltipRayleigh}>{ja.timeHistory.fields.rayleighAlpha}: {(settings?.damping?.alpha ?? 0).toFixed(4)}</p>
-        </div>
-      )}
-      <TimeHistorySettingsPanel
-        project={project}
-        running={running}
-        onRun={onRun}
-        onChange={onChange}
-      />
+      <TimeHistorySettingsPanel project={project} running={running} onRun={onRun} onChange={onProjectChange} />
     </section>
   );
 }

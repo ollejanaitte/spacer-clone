@@ -1,4 +1,4 @@
-﻿import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves, Activity } from "lucide-react";
+﻿import { Activity, Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 
 type ToolbarProps = {
@@ -19,11 +19,12 @@ type ToolbarProps = {
   onRunEigen: () => void;
   onRunInfluence: () => void;
   onRunResponseSpectrum: () => void;
+  onOpenTimeHistoryWizard?: () => void;
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
   onOpenBridgeWizard: () => void;
-  onOpenTimeHistoryWizard?: () => void;
+  onOpenModelComparison?: () => void;
 };
 
 const t = ja.toolbar;
@@ -46,11 +47,12 @@ export function Toolbar({
   onRunEigen,
   onRunInfluence,
   onRunResponseSpectrum,
+  onOpenTimeHistoryWizard,
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
   onOpenBridgeWizard,
-  onOpenTimeHistoryWizard,
+  onOpenModelComparison = () => undefined,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -92,20 +94,23 @@ export function Toolbar({
             <LineChart size={16} />
             {t.bridgeWizardButton}
           </button>
+          <button type="button" onClick={onSave} title={t.saveTitle}>
+            <Save size={16} />
+            {t.saveButton}
+          </button>
           {onOpenTimeHistoryWizard && (
             <button
               type="button"
               onClick={onOpenTimeHistoryWizard}
-              title={ja.timeHistoryWizard.openButton}
+              title="時刻歴応答解析を開く"
               data-testid="open-time-history-wizard"
             >
               <Activity size={16} />
-              {ja.timeHistoryWizard.openButton}
+              時刻歴応答解析を開く
             </button>
           )}
-          <button type="button" onClick={onSave} title={t.saveTitle}>
-            <Save size={16} />
-            {t.saveButton}
+          <button type="button" data-testid="open-model-comparison" onClick={onOpenModelComparison}>
+            A/B 比較
           </button>
         </div>
         <div className="toolbar-group">

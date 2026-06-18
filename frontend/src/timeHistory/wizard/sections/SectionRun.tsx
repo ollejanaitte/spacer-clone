@@ -1,47 +1,60 @@
-import { ja } from "../../../i18n/ja";
-import type { TimeHistoryCheckItem } from "../wizardState";
+import type { ProjectModel, StructuredMessage } from "../../../types";
+import type { TimeHistoryWizardStepId } from "../wizardState";
+import { buildTimeHistoryChecks, formatCheckStatus } from "../wizardState";
 
 type SectionRunProps = {
-  items: TimeHistoryCheckItem[];
+  project: ProjectModel;
   running: boolean;
-  canRun: boolean;
-  onRun: () => void;
+  error?: StructuredMessage | null;
+  onRun?: () => void;
+  onStepChange: (step: TimeHistoryWizardStepId) => void;
 };
 
-export function SectionRun({ items, running, canRun, onRun }: SectionRunProps) {
-  const labels = ja.timeHistoryWizard.run;
-  const okItems = items.filter((item) => item.state === "ok");
-  const warningItems = items.filter((item) => item.state === "warning");
-  const ngItems = items.filter((item) => item.state === "ng");
+export function SectionRun({ project, running, error = null, onRun, onStepChange }: SectionRunProps) {
+  const checks = buildTimeHistoryChecks(project);
+  const blockingChecks = checks.filter((check) => check.status === "ng");
+  const canRun = blockingChecks.length === 0 && !running && Boolean(onRun);
   return (
-    <section className="time-history-wizard-section section-run" aria-label={labels.heading}>
-      <h2>{labels.heading}</h2>
-      <h3>{labels.summaryHeading}</h3>
-      <div className="summary-list">
-        <span>{labels.okGroup}: {okItems.length}</span>
-        <span>{labels.warningGroup}: {warningItems.length}</span>
-        <span>{labels.ngGroup}: {ngItems.length}</span>
-      </div>
-      {ngItems.length > 0 && (
-        <ul className="time-history-wizard-ng-list">
-          {ngItems.map((item) => (
-            <li key={item.id}>{item.reason}</li>
-          ))}
-        </ul>
-      )}
-      {running ? (
-        <p className="time-history-wizard-help">{labels.runningMessage}</p>
+    <section className="time-history-wizard-section">
+      <h3>解析実行</h3>
+      <p>解析実行前に、入力チェックの結果をまとめて確認します。</p>
+      {blockingChecks.length > 0 ? (
+        <div className="time-history-run-warning">
+          <strong>未修正の入力があります。</strong>
+          <p>NG項目を修正すると解析を実行できます。</p>
+          <ul>
+            {blockingChecks.map((check) => (
+              <li key={check.id}>
+                {check.label}: {formatCheckStatus(check.status)} / {check.reason}
+                <button type="button" onClick={() => onStepChange(check.section)}>修正へ移動</button>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
-        <button
-          type="button"
-          disabled={!canRun || running}
-          aria-label={labels.runButton}
-          onClick={onRun}
-        >
-          {labels.runButton}
-        </button>
+        <div className="time-history-run-ready">解析可能です。この条件で時刻歴解析を実行できます。</div>
       )}
-      {!canRun && !running && <p className="time-history-wizard-help">{labels.disabledMessage}</p>}
+      {error && (
+        <div className="time-history-error-card">
+          <strong>エラーあり</strong>
+          <p>{toJapaneseError(error.message)}</p>
+          <details>
+            <summary>内部エラー詳細</summary>
+            <pre>{error.message}</pre>
+          </details>
+        </div>
+      )}
+      <button type="button" className="time-history-primary-action" disabled={!canRun} onClick={onRun}>
+        {running ? "解析を実行しています。完了までしばらくお待ちください。" : "この条件で時刻歴解析を実行"}
+      </button>
     </section>
   );
+}
+
+function toJapaneseError(message: string): string {
+  if (message.includes("Ground motion") && message.includes("samples")) {
+    return "地震波データの点数と解析時間が一致していません。読み込んだ地震波を最後まで使う場合は、解析時間を波形長に合わせてください。";
+  }
+  if (message.includes("timeHistory")) return "時刻歴応答解析の入力条件に不整合があります。入力チェックを確認してください。";
+  return message;
 }

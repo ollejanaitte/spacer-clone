@@ -67,7 +67,7 @@ export function rebuildModelScene(
   replaceGroupContents(
     groups.members,
     visibility.members
-      ? renderMembers(project, selectedSection, selection, spacerAxisSwap, nodePositionOverride)
+      ? renderMembers(project, selectedSection, selection, scales, spacerAxisSwap, nodePositionOverride)
       : [],
   );
   replaceGroupContents(

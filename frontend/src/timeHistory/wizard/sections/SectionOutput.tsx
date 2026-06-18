@@ -1,82 +1,35 @@
-import { ja } from "../../../i18n/ja";
 import type { ProjectModel } from "../../../types";
 
 type SectionOutputProps = {
   project: ProjectModel;
-  selectedNodeId: string | null;
-  selectedMemberId: string | null;
-  onSelectNode: (id: string) => void;
-  onSelectMember: (id: string) => void;
-  onClear: () => void;
 };
 
-export function SectionOutput({
-  project,
-  selectedNodeId,
-  selectedMemberId,
-  onSelectNode,
-  onSelectMember,
-  onClear,
-}: SectionOutputProps) {
-  const labels = ja.timeHistoryWizard.output;
-  const nodes = project.nodes ?? [];
-  const members = project.members ?? [];
-  const hasNode = Boolean(selectedNodeId);
-  const hasMember = Boolean(selectedMemberId);
-  const hasOutput = hasNode || hasMember;
+export function SectionOutput({ project }: SectionOutputProps) {
   return (
-    <section className="time-history-wizard-section section-output" aria-label={labels.heading}>
-      <h2>{labels.heading}</h2>
-      <div className="summary-list">
-        <span>{labels.nodeLabel}</span>
-        <span>{labels.nodeHelp}</span>
+    <section className="time-history-wizard-section">
+      <h3>出力対象選択</h3>
+      <p>解析結果を見たい節点・部材を確認します。迷う場合は、構造物の上部や揺れが大きそうな節点を選んでください。</p>
+      <div className="time-history-output-grid">
+        <article>
+          <h4>変位・速度・加速度を見たい節点</h4>
+          <p>現在のモデル節点数: {project.nodes.length}</p>
+          <ul>
+            {project.nodes.slice(0, 12).map((node) => (
+              <li key={node.id}>{node.id}</li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <h4>断面力を見たい部材</h4>
+          <p>現在のモデル部材数: {project.members.length}</p>
+          <ul>
+            {project.members.slice(0, 12).map((member) => (
+              <li key={member.id}>{member.id}</li>
+            ))}
+          </ul>
+        </article>
       </div>
-      <label className="result-select">
-        <span>{labels.nodeLabel}</span>
-        <select
-          aria-label={labels.nodeLabel}
-          value={selectedNodeId ?? ""}
-          onChange={(event) => onSelectNode(event.currentTarget.value)}
-        >
-          <option value="">{"--"}</option>
-          {nodes.map((node) => (
-            <option key={node.id} value={node.id}>
-              {node.id}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="summary-list">
-        <span>{labels.memberLabel}</span>
-        <span>{labels.memberHelp}</span>
-      </div>
-      <label className="result-select">
-        <span>{labels.memberLabel}</span>
-        <select
-          aria-label={labels.memberLabel}
-          value={selectedMemberId ?? ""}
-          onChange={(event) => onSelectMember(event.currentTarget.value)}
-        >
-          <option value="">{"--"}</option>
-          {members.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.id}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="summary-list result-toolbar">
-        <button type="button" onClick={onClear} aria-label={labels.clearButton}>
-          {labels.clearButton}
-        </button>
-      </div>
-      <h3>{labels.outputComponentsHeading}</h3>
-      <div className="summary-list">
-        <span>{"X: " + (hasOutput ? "OK" : "未出力")}</span>
-        <span>{"Y: " + (hasOutput ? "OK" : "未出力")}</span>
-        <span>{"Z: " + (hasOutput ? "OK" : "未出力")}</span>
-      </div>
-      {!hasOutput && <p className="time-history-wizard-help">{labels.ngMessage}</p>}
+      <p className="time-history-help-text">現段階では解析エンジンがモデルの有効自由度に基づいて結果キーを返します。結果表示で出力されたキーを選択できます。</p>
     </section>
   );
 }

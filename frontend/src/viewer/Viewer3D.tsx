@@ -10,6 +10,12 @@ import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps
 import { CompareShell, defaultCompareAnimationOptions, type CompareSlotDescriptor } from "./CompareShell";
 import { ThreeViewport } from "./ThreeViewport";
 import { ViewerControls } from "./ViewerControls";
+import {
+  DEFAULT_VIEWER_DISPLAY_SIZE,
+  loadViewerDisplaySize,
+  persistViewerDisplaySize,
+  type ViewerDisplaySizeSettings,
+} from "./settings/displaySize";
 
 export const webglFallbackMessage =
   ja.viewer.messages.webglInitFailed + "\n" +
@@ -35,9 +41,17 @@ export function Viewer3D({
   rightResult = null,
   initialCompareMode = false,
   defaultCameraSync = true,
+  displaySizeSettings,
+  onDisplaySizeSettingsChange,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
+  const [localDisplaySize, setLocalDisplaySize] = useState<ViewerDisplaySizeSettings>(loadViewerDisplaySize);
+  const displaySize = displaySizeSettings ?? localDisplaySize;
+  const setDisplaySize = useCallback((next: ViewerDisplaySizeSettings) => {
+    if (!displaySizeSettings) setLocalDisplaySize(next);
+    onDisplaySizeSettingsChange?.(next);
+  }, [displaySizeSettings, onDisplaySizeSettingsChange]);
   const [mode, setMode] = useState<ViewerMode>("three");
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [fitRequest, setFitRequest] = useState(0);
@@ -70,6 +84,19 @@ export function Viewer3D({
   useEffect(() => {
     persistSpacerAxisSwap(spacerAxisSwap);
   }, [spacerAxisSwap]);
+
+  useEffect(() => {
+    persistViewerDisplaySize(displaySize);
+  }, [displaySize]);
+
+  const effectiveScales = useMemo<ViewerScales>(() => ({
+    ...scales,
+    nodeSize: defaultScales.nodeSize * displaySize.nodeSize,
+    labelSize: defaultScales.labelSize * displaySize.labelSize,
+    supportSize: displaySize.supportSize,
+    loadArrowSize: displaySize.loadArrowSize,
+    memberLineWidth: displaySize.memberLineWidth,
+  }), [displaySize, scales]);
 
   useEffect(() => {
     if (!loadCaseIds.includes(selectedLoadCaseId)) {
@@ -175,7 +202,7 @@ export function Viewer3D({
     onSelectionChange,
     onActiveLoadCaseChange,
     visibility,
-    scales,
+    scales: effectiveScales,
     selectedLoadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult,
@@ -249,6 +276,7 @@ export function Viewer3D({
         <ViewerControls
           visibility={visibility}
           scales={scales}
+          displaySize={displaySize}
           loadCaseIds={loadCaseIds.length > 0 ? loadCaseIds : [""]}
           selectedLoadCaseId={selectedLoadCaseId}
           eigenModeNos={eigenModeNos}
@@ -262,6 +290,8 @@ export function Viewer3D({
           cameraSync={cameraSync}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
+          onDisplaySizeChange={setDisplaySize}
+          onDisplaySizeReset={() => setDisplaySize({ ...DEFAULT_VIEWER_DISPLAY_SIZE })}
           onLoadCaseChange={onActiveLoadCaseChange}
           onEigenModeChange={onSelectedEigenModeChange}
           onResponseSpectrumResultChange={(value: ResponseSpectrumSelection) =>

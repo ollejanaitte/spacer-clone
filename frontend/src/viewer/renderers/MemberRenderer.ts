@@ -8,6 +8,7 @@ export function renderMembers(
   project: ProjectModel,
   selectedSection: SectionKey,
   selection: ViewerSelection,
+  scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
@@ -19,7 +20,7 @@ export function renderMembers(
     if (!ends) continue;
     const selected = selection?.type === "member" && selection.id === member.id;
     const color = selected ? "#f2c94c" : selectedSection === "members" ? "#1b6b93" : "#2f6f9f";
-    const line = createLine([ends.start, ends.end], color);
+    const line = createLine([ends.start, ends.end], color, undefined, scales.memberLineWidth ?? 1);
     line.userData = { selectable: true, type: "member", id: member.id };
     objects.push(line);
 
