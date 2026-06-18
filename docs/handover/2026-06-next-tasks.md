@@ -138,3 +138,73 @@ npm test -- --run
 
 - SPACER比較モデル整備
 - 回帰試験追加
+
+## Viewer Phase Next 実施記録（2026-06-18）
+
+### ベースライン
+
+- `npm ci`: 成功（467 packages、監査上の既存脆弱性はlow 1件/high 1件）。
+- `npm run test -- --run`: 27 files / 338 tests成功。
+- `npm run build`: 成功。Vite 1632 modules transformed、生成JS 959.87 kB。
+- `npm run electron:compile`: 成功。
+- `python -m pytest backend/tests -q`: 443 tests成功。
+- `npm run typecheck` / `npm run lint`: ベースラインではscript未定義。Phase Nextでscriptを追加し、最終検証を成功させた。
+
+### 実装結果
+
+#### 3D Viewer表示サイズ
+
+- 節点、支点、荷重矢印、ラベル、部材線幅の倍率設定を追加。
+- localStorageキーは `spacer-clone:viewer:displaySize:v1`。
+- 範囲外値をクランプし、破損JSONは既定値へフォールバックする。
+- 通常ViewerとA/B比較Viewerで同じ設定stateを利用する。
+
+#### 断面力・反力可視化フェーズ1
+
+- 支点位置にRFX/RFY/RFZ数値ラベルを表示できる。
+- 部材i端・j端にFX数値ラベルを表示できる。
+- ラベルサイズ設定とSPACER表示専用座標変換を適用する。
+- 値と符号は既存API/ViewModelを再利用し、payloadは変更していない。
+
+#### A/B比較ビュー パターンAフェーズ1
+
+- 通常画面のナビゲーションから `/compare` 相当の比較ワークスペースへ遷移する。
+- Aは読取専用、明示操作でAをBへディープコピーし、BのみPropertyPanelで編集できる。
+- A/Bは個別に既存静的解析APIを実行し、左右のViewerへ独立結果を表示する。
+- Bはセッション内stateであり、project.jsonへは保存しない。
+
+### 最終検証
+
+- `npm run typecheck`: 成功、0 errors。
+- `npm run lint`: 成功、Frontend source hygiene check passed。
+- `npm run test -- --run`: 31 files / 348 tests成功。
+- `npm run build`: 成功。Vite 1636 modules transformed、生成JS 967.72 kB。
+- `npm run electron:compile`: 成功。
+- `npm run electron:build`: 成功（Web build、icon生成、Electron compile、成果物コピー）。
+- `python -m pytest backend/tests -q`: 443 tests成功。
+- 新規ロジック対象coverage: lines 72.13%（閾値70%を通過）。
+
+### 検証項目チェック
+
+- [x] 表示サイズ5項目の即時反映、リセット、永続化、クランプ、破損値復旧。
+- [x] SPACER座標系、静的変形、固有値結果、時刻歴overrideと表示サイズstateが独立。
+- [x] 反力ラベルON/OFF、RFX/RFY/RFZ成分選択。
+- [x] 軸力FXの部材端ラベル、符号整形、ラベル倍率反映。
+- [x] A/B比較画面への遷移、A→Bディープコピー、A読取専用、B編集可能。
+- [x] A/B個別解析ボタンと独立result state。
+- [x] Web buildとElectron build。
+
+### 自律判断
+
+- 状態管理ライブラリは導入せず、既存React stateの階層に表示設定とA/B名前空間を追加した。既存実装の慣習と最小スコープを優先した。
+- 部材線幅は既存 `LineBasicMaterial.linewidth` 方針を維持した。プラットフォーム差を解消する追加描画ライブラリ導入はフェーズ2以降とした。
+- A/B比較はrouter依存を追加せずHistory APIと画面stateを使用した。Electron/Webの共通実装を優先した。
+- PRはGitHub側のmerge commit方式（`gh pr merge --merge`）を使用し、mainへ反映する方針とした。
+
+### 残課題・未決事項
+
+- FY/FZ、MX/MY/MZ、RMX/RMY/RMZのラベル・矢印・分布図・カラーマップ。
+- モーメント円弧の右手系表現、ローカルy/z軸凡例、ラベル衝突回避。
+- WebGLで確実に太さが変わる部材線描画方式。
+- A/B差分、同期再生、オーバーレイ、並列一括解析、Bモデル永続保存、別ウィンドウ表示。
+- jsdomはCanvas 2D contextを実装しないため、ラベル生成テスト時に警告が出るがテスト結果は成功する。

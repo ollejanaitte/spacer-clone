@@ -23,6 +23,7 @@ type ToolbarProps = {
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
   onOpenBridgeWizard: () => void;
+  onOpenModelComparison?: () => void;
 };
 
 const t = ja.toolbar;
@@ -49,6 +50,7 @@ export function Toolbar({
   onExportResultCsv,
   onExportResultPdf,
   onOpenBridgeWizard,
+  onOpenModelComparison = () => undefined,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -93,6 +95,9 @@ export function Toolbar({
           <button type="button" onClick={onSave} title={t.saveTitle}>
             <Save size={16} />
             {t.saveButton}
+          </button>
+          <button type="button" data-testid="open-model-comparison" onClick={onOpenModelComparison}>
+            A/B 比較
           </button>
         </div>
         <div className="toolbar-group">

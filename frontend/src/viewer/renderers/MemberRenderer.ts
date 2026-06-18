@@ -1,15 +1,18 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
+import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createLabelSprite, createLine, createNodeMap, getMemberEnds } from "../threeUtils";
 
 export function renderMembers(
   project: ProjectModel,
   selectedSection: SectionKey,
   selection: ViewerSelection,
+  scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
 
   for (const member of project.members) {
@@ -17,7 +20,7 @@ export function renderMembers(
     if (!ends) continue;
     const selected = selection?.type === "member" && selection.id === member.id;
     const color = selected ? "#f2c94c" : selectedSection === "members" ? "#1b6b93" : "#2f6f9f";
-    const line = createLine([ends.start, ends.end], color);
+    const line = createLine([ends.start, ends.end], color, undefined, scales.memberLineWidth ?? 1);
     line.userData = { selectable: true, type: "member", id: member.id };
     objects.push(line);
 
@@ -39,9 +42,10 @@ export function renderMembers(
 export function renderMemberLabels(
   project: ProjectModel,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   for (const member of project.members) {
     const ends = getMemberEnds(member, nodeMap);

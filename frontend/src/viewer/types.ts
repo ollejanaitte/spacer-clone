@@ -3,6 +3,7 @@ import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
+import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
 
 export type ViewerMode = "three" | "fallback2d";
 
@@ -19,6 +20,11 @@ export type ViewerVisibility = {
   deformedShape: boolean;
   reactions: boolean;
   axialForce: boolean;
+  reactionLabels?: boolean;
+  reactionLabelFx?: boolean;
+  reactionLabelFy?: boolean;
+  reactionLabelFz?: boolean;
+  axialForceLabels?: boolean;
   momentMy: boolean;
   momentMz: boolean;
 };
@@ -30,6 +36,9 @@ export type ViewerScales = {
   resultScale: number;
   nodeSize: number;
   labelSize: number;
+  supportSize?: number;
+  loadArrowSize?: number;
+  memberLineWidth?: number;
 };
 
 export type ViewerSelection =
@@ -73,6 +82,8 @@ export type Viewer3DProps = {
   initialCompareMode?: boolean;
   /** When false, the camera-sync checkbox defaults to off. */
   defaultCameraSync?: boolean;
+  displaySizeSettings?: ViewerDisplaySizeSettings;
+  onDisplaySizeSettingsChange?: (settings: ViewerDisplaySizeSettings) => void;
 };
 
 export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {
@@ -112,6 +123,11 @@ export const defaultVisibility: ViewerVisibility = {
   deformedShape: false,
   reactions: false,
   axialForce: false,
+  reactionLabels: false,
+  reactionLabelFx: true,
+  reactionLabelFy: true,
+  reactionLabelFz: true,
+  axialForceLabels: false,
   momentMy: false,
   momentMz: false,
 };
@@ -123,6 +139,9 @@ export const defaultScales: ViewerScales = {
   resultScale: 1,
   nodeSize: 0.075,
   labelSize: 0.26,
+  supportSize: 1,
+  loadArrowSize: 1,
+  memberLineWidth: 1,
 };
 
 /**

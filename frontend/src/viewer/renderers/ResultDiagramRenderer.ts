@@ -7,7 +7,10 @@ import {
 } from "../../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../../types";
 import type { ViewerScales, ViewerVisibility } from "../types";
+import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
+import { createLabelSprite } from "../threeUtils";
+import { buildReactionLabel, formatForceLabel } from "../forceLabels";
 
 const reactionColor = 0x1f8a70;
 const positiveColor = 0x2f80ed;
@@ -21,29 +24,98 @@ export function renderResultDiagrams(
   selectedResponseSpectrumResult: ResponseSpectrumSelection,
   visibility: ViewerVisibility,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
 ): THREE.Object3D[] {
   const responseSpectrumViewModel = buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult);
   const viewModel = responseSpectrumViewModel ?? buildResultViewModel(result, selectedLoadCaseId);
   if (!viewModel || !isFiniteNumber(scales.resultScale)) return [];
 
   const objects: THREE.Object3D[] = [];
-  const nodeMap = createNodeMap(project);
+  const nodeMap = createNodeMap(project, spacerAxisSwap);
   const span = computeSpan(nodeMap);
   const baseScale = Math.max(span * 0.18, 0.35) * scales.resultScale;
 
   if (visibility.reactions) {
-    objects.push(...renderReactions(viewModel.reactions.items, nodeMap, baseScale));
+    objects.push(
+      ...renderReactions(viewModel.reactions.items, nodeMap, baseScale, spacerAxisSwap),
+    );
+  }
+  if (visibility.reactionLabels) {
+    objects.push(...renderReactionLabels(
+      viewModel.reactions.items,
+      nodeMap,
+      scales,
+      visibility,
+    ));
   }
   if (visibility.axialForce) {
-    objects.push(...renderMemberForce(project, viewModel.memberForces.items, "N", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale));
+  }
+  if (visibility.axialForceLabels) {
+    objects.push(...renderAxialForceLabels(project, nodeMap, viewModel.memberForces.items, scales));
   }
   if (visibility.momentMy) {
-    objects.push(...renderMemberForce(project, viewModel.memberForces.items, "My", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale));
   }
   if (visibility.momentMz) {
-    objects.push(...renderMemberForce(project, viewModel.memberForces.items, "Mz", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Mz", baseScale));
   }
 
+  return objects;
+}
+
+function renderReactionLabels(
+  reactions: Array<{ nodeId: string; fx: number; fy: number; fz: number }>,
+  nodeMap: Map<string, THREE.Vector3>,
+  scales: ViewerScales,
+  visibility: ViewerVisibility,
+): THREE.Object3D[] {
+  const objects: THREE.Object3D[] = [];
+  for (const reaction of reactions) {
+    const position = nodeMap.get(reaction.nodeId);
+    if (!position) continue;
+    const text = buildReactionLabel(reaction, {
+      fx: visibility.reactionLabelFx !== false,
+      fy: visibility.reactionLabelFy !== false,
+      fz: visibility.reactionLabelFz !== false,
+    });
+    if (!text) continue;
+    const label = createLabelSprite(text, "#176b55", scales.labelSize);
+    label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 5, 0));
+    label.userData = { type: "reaction-label", nodeId: reaction.nodeId, text };
+    objects.push(label);
+  }
+  return objects;
+}
+
+function renderAxialForceLabels(
+  project: ProjectModel,
+  nodeMap: Map<string, THREE.Vector3>,
+  forces: Array<{
+    memberId: string;
+    component: MemberSectionForceComponent;
+    i: number;
+    j: number;
+  }>,
+  scales: ViewerScales,
+): THREE.Object3D[] {
+  const objects: THREE.Object3D[] = [];
+  for (const force of forces.filter((item) => item.component === "N")) {
+    const member = project.members.find((item) => item.id === force.memberId);
+    if (!member) continue;
+    const ends = getMemberEnds(member, nodeMap);
+    if (!ends) continue;
+    for (const [end, position, value] of [
+      ["i", ends.start, force.i],
+      ["j", ends.end, force.j],
+    ] as const) {
+      const text = `${force.memberId}-${end} ${formatForceLabel("FX", value)}`;
+      const label = createLabelSprite(text, value >= 0 ? "#1d5f9a" : "#a43a3a", scales.labelSize);
+      label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 3.5, 0));
+      label.userData = { type: "axial-force-label", memberId: force.memberId, end, value, text };
+      objects.push(label);
+    }
+  }
   return objects;
 }
 
@@ -51,6 +123,7 @@ function renderReactions(
   reactions: Array<{ nodeId: string; fx: number; fy: number; fz: number }>,
   nodeMap: Map<string, THREE.Vector3>,
   baseScale: number,
+  spacerAxisSwap: SpacerAxisSwap,
 ): THREE.Object3D[] {
   const forceMax = Math.max(...reactions.map((reaction) => magnitude([reaction.fx, reaction.fy, reaction.fz])), 1);
   const objects: THREE.Object3D[] = [];
@@ -58,7 +131,12 @@ function renderReactions(
   for (const reaction of reactions) {
     const position = nodeMap.get(reaction.nodeId);
     if (!position) continue;
-    const vector = vectorFrom(reaction.fx, reaction.fy, reaction.fz);
+    const vector = nonZeroVector(
+      modelToViewerVector(
+        { x: reaction.fx, y: reaction.fy, z: reaction.fz },
+        spacerAxisSwap,
+      ),
+    );
     if (!vector) continue;
     const length = clamp((vector.length() / forceMax) * baseScale, baseScale * 0.18, baseScale);
     const direction = vector.normalize();
@@ -78,6 +156,7 @@ function renderReactions(
 
 function renderMemberForce(
   project: ProjectModel,
+  nodeMap: Map<string, THREE.Vector3>,
   forces: Array<{
     memberId: string;
     component: MemberSectionForceComponent;
@@ -91,7 +170,6 @@ function renderMemberForce(
     ...componentForces.flatMap((force) => force.stations.map((station) => Math.abs(station.value))),
     1,
   );
-  const nodeMap = createNodeMap(project);
   const objects: THREE.Object3D[] = [];
 
   for (const force of componentForces) {
@@ -101,7 +179,6 @@ function renderMemberForce(
     if (!ends) continue;
     const stations = [...force.stations].sort((a, b) => a.station - b.station);
     if (stations.length === 0) continue;
-    // TODO: My/Mz are local-axis components; derive this normal from the member local axes.
     const normal = diagramNormal(ends.direction, component);
     const memberVector = new THREE.Vector3().subVectors(ends.end, ends.start);
     const diagramPoints = stations.map(({ station, value }) => {
@@ -109,22 +186,6 @@ function renderMemberForce(
       const diagramPoint = basePoint.clone().addScaledVector(normal, (value / maxAbs) * baseScale);
       return { basePoint, diagramPoint, value };
     });
-    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-      console.debug(
-        "[ResultDiagram]",
-        JSON.stringify({
-          component,
-          memberId: force.memberId,
-          normal: normal.toArray(),
-          points: diagramPoints.map(({ basePoint, diagramPoint, value }, index) => ({
-            station: stations[index].station,
-            value,
-            basePoint: basePoint.toArray(),
-            diagramPoint: diagramPoint.toArray(),
-          })),
-        }),
-      );
-    }
     const color = colorFor(diagramPoints.reduce((sum, point) => sum + point.value, 0));
 
     objects.push(createLine(diagramPoints.map((point) => point.diagramPoint), color));
@@ -155,9 +216,8 @@ function diagramNormal(direction: THREE.Vector3, component: MemberSectionForceCo
   return normal;
 }
 
-function vectorFrom(x: number, y: number, z: number): THREE.Vector3 | null {
-  if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(z)) return null;
-  const vector = new THREE.Vector3(x, y, z);
+function nonZeroVector(vector: THREE.Vector3): THREE.Vector3 | null {
+  if (![vector.x, vector.y, vector.z].every(isFiniteNumber)) return null;
   return vector.lengthSq() > 1e-16 ? vector : null;
 }
 

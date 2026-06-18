@@ -193,6 +193,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     props.selectedLoadCaseId,
     props.selectedEigenMode,
     props.selectedResponseSpectrumResult,
+    props.spacerAxisSwap,
   ]);
 
   // Rebuild the model scene on every animation clock tick so the model
@@ -203,7 +204,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     if (!context) return;
     const override = animationOverrideFor(props, effectiveClockSeconds);
     rebuildModelScene(context.groups, props, override);
-  }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo, props.timeHistoryNodeOverride]);
+  }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo, props.timeHistoryNodeOverride, props.spacerAxisSwap]);
 
   useEffect(() => {
     const context = contextRef.current;
@@ -251,6 +252,7 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
     props.selectedLoadCaseId,
     props.selectedEigenMode ?? 1,
     props.selectedResponseSpectrumResult ?? "SRSS",
+    props.spacerAxisSwap ?? "off",
   );
   fitCameraToBox(context.camera, context.controls, box, direction);
 }
