@@ -91,6 +91,11 @@
       "durationError": "解析時間が地震波長を超えています。",
       "saved": "入力内容はプロジェクトに保存されています。"
     },
+    "results": {
+      "displayTargets": "表示対象",
+      "displayTargetsHelp": "解析は全モデルを対象に実行済みです。ここで結果表示だけを絞り込みます。",
+      "allTargets": "すべて表示"
+    },
     "common": {
       "ok": "OK",
       "ng": "NG",

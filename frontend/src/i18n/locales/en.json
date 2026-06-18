@@ -91,6 +91,11 @@
       "durationError": "Analysis duration exceeds the ground-motion length.",
       "saved": "Inputs are stored in the project."
     },
+    "results": {
+      "displayTargets": "Display targets",
+      "displayTargetsHelp": "The full model has already been analyzed. This filter only changes the displayed results.",
+      "allTargets": "Show all"
+    },
     "common": {
       "ok": "OK",
       "ng": "NG",

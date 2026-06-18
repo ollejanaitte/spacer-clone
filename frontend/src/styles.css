@@ -2638,6 +2638,24 @@ button:disabled {
   gap: var(--th-space-3);
 }
 
+.time-history-results-tools {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--th-space-2);
+}
+
+.time-history-target-filter {
+  display: grid;
+  gap: var(--th-space-1);
+  color: var(--th-color-text-muted);
+  font-size: 12px;
+}
+
+.time-history-target-filter select {
+  min-width: 180px;
+  min-height: 72px;
+}
+
 @media (max-width: 900px) {
   .time-history-config-grid,
   .time-history-check-list {
