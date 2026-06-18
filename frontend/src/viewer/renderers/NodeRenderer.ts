@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
+import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createLabelSprite, createNodeMap } from "../threeUtils";
 
 const nodeMaterial = new THREE.MeshStandardMaterial({ color: "#d45d50", roughness: 0.55 });
@@ -11,9 +12,10 @@ export function renderNodes(
   selectedSection: SectionKey,
   selection: ViewerSelection,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const radius = Math.max(scales.nodeSize, 0.02);
   const geometry = new THREE.SphereGeometry(radius, 18, 12);
   const objects: THREE.Object3D[] = [];
@@ -36,9 +38,10 @@ export function renderNodes(
 export function renderNodeLabels(
   project: ProjectModel,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   for (const node of project.nodes) {
     const position = nodeMap.get(node.id);

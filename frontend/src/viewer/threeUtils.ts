@@ -148,16 +148,18 @@ export function computeModelBox(
   loadCaseId: string,
   selectedEigenMode: number,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
+  swap: SpacerAxisSwap = "off",
   override?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Box3 {
   const box = new THREE.Box3();
-  const nodeMap = createNodeMap(project, "off", override);
+  const nodeMap = createNodeMap(project, swap, override);
   for (const position of nodeMap.values()) box.expandByPoint(position);
   const displacements = createDisplacementMap(
     result,
     loadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult,
+    swap,
   );
   if (displacements.size > 0 && Number.isFinite(deformationScale)) {
     for (const [nodeId, base] of nodeMap) {
