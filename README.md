@@ -2,6 +2,27 @@
 
 Initial repository baseline for pull requests.
 
+## 時刻歴応答解析ガイド
+
+「時刻歴応答解析を開く」は、地震波設定から結果確認までを一方向に進めるダッシュボード形式のガイドです。
+
+- モデル・支点・質量は前段画面の確定内容を読み取り専用で表示します。
+- 解析条件は、基本条件・時間設定・減衰・Newmark β 法に分けて設定します。
+- 結果画面では応答キーと物理量を動的に絞り込み、PNG/CSVに出力できます。
+- 3Dアニメーションは、表示要素、サイズ、再生速度、変形倍率、変位モードを変更できます。
+
+フロントエンドの品質確認:
+
+```powershell
+cd frontend
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+```
+
+設計は `docs/spec/th-analysis-revision-2026-06.md` を参照してください。
+
 ## Windowsでの起動
 
 通常はリポジトリのルートで次を実行します。

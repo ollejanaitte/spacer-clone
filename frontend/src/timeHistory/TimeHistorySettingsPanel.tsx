@@ -1,11 +1,15 @@
+import { useState } from "react";
+import locale from "../i18n/locales/ja.json";
 import { ja } from "../i18n/ja";
 import type { AnalysisSettings, ProjectModel } from "../types";
+import { expectedSampleCount, groundMotionDuration } from "./wizard/wizardState";
 
 type TimeHistorySettingsPanelProps = {
   project?: ProjectModel;
   running?: boolean;
   onRun?: () => void;
   onChange?: (project: ProjectModel) => void;
+  onContinue?: () => void;
 };
 
 export function TimeHistorySettingsPanel({
@@ -13,25 +17,36 @@ export function TimeHistorySettingsPanel({
   running = false,
   onRun,
   onChange,
+  onContinue,
 }: TimeHistorySettingsPanelProps) {
+  const text = locale.thAnalysis;
+  const labels = text.analysisConfig;
+  const [saved, setSaved] = useState(false);
   const settings = project?.analysisSettings.timeHistory;
   const massCases = project?.massCases ?? [];
   const groundMotions = project?.groundMotions ?? [];
   const selectedMassCaseId = settings?.massCaseId ?? massCases[0]?.id ?? "";
   const selectedGroundMotionId = settings?.groundMotionId ?? groundMotions[0]?.id ?? "";
-  const selectedGroundMotion = groundMotions.find((motion) => motion.id === selectedGroundMotionId) ?? groundMotions[0];
+  const selectedGroundMotion =
+    groundMotions.find((motion) => motion.id === selectedGroundMotionId) ?? groundMotions[0];
   const direction = settings?.direction ?? selectedGroundMotion?.direction ?? "X";
-  const labels = ja.timeHistory.fields;
-  const validation = ja.timeHistory.validation;
+  const timeStep = settings?.timeStep ?? selectedGroundMotion?.timeStep ?? 0.01;
+  const duration = settings?.duration ?? selectedGroundMotion?.duration ?? 0;
+  const motionDuration = groundMotionDuration(selectedGroundMotion?.samples.length ?? 0, selectedGroundMotion?.timeStep);
+  const pointCount = expectedSampleCount(duration, timeStep) ?? 0;
+  const timeStepMismatch =
+    typeof selectedGroundMotion?.timeStep === "number" &&
+    Math.abs(timeStep - selectedGroundMotion.timeStep) > 1e-12;
+  const durationOverflow = motionDuration !== null && duration > motionDuration + 1e-12;
 
   const updateSettings = (patch: Partial<NonNullable<AnalysisSettings["timeHistory"]>>) => {
     if (!project || !onChange) return;
+    setSaved(false);
     const baseDamping = {
       type: "rayleigh" as const,
       alpha: project.analysisSettings.timeHistory?.damping?.alpha ?? 0,
       beta: project.analysisSettings.timeHistory?.damping?.beta ?? 0,
     };
-    const nextDamping = { ...baseDamping, ...patch.damping };
     onChange({
       ...project,
       analysisSettings: {
@@ -40,7 +55,7 @@ export function TimeHistorySettingsPanel({
           ...defaultTimeHistorySettings(project),
           ...project.analysisSettings.timeHistory,
           ...patch,
-          damping: nextDamping,
+          damping: { ...baseDamping, ...patch.damping },
         },
       },
     });
@@ -50,84 +65,188 @@ export function TimeHistorySettingsPanel({
     const parsed = Number(value);
     if (!Number.isFinite(parsed) || (field === "timeStep" || field === "duration" ? parsed <= 0 : parsed < 0)) return;
     if (field === "alpha" || field === "beta") {
-      updateSettings({ damping: { type: "rayleigh", alpha: settings?.damping?.alpha ?? 0, beta: settings?.damping?.beta ?? 0, [field]: parsed } });
+      updateSettings({
+        damping: {
+          type: "rayleigh",
+          alpha: settings?.damping?.alpha ?? 0,
+          beta: settings?.damping?.beta ?? 0,
+          [field]: parsed,
+        },
+      });
     } else {
       updateSettings({ [field]: parsed });
     }
   };
 
   return (
-    <section className="result-table time-history-settings" aria-label={ja.timeHistory.settingsHeading}>
+    <section className="time-history-analysis-config" aria-label={labels.heading}>
       <h3>{ja.timeHistory.settingsHeading}</h3>
-      <div className="summary-list result-toolbar">
-        <label className="result-select">
-          <span>{labels.massCase}</span>
-          <select value={selectedMassCaseId} disabled={!onChange} onChange={(event) => updateSettings({ massCaseId: event.currentTarget.value })}>
-            {massCases.length === 0 ? (
-              <option value="">{ja.timeHistory.empty.massCases}</option>
-            ) : (
-              massCases.map((massCase) => (
-                <option key={massCase.id} value={massCase.id}>
-                  {massCase.id}
-                </option>
-              ))
-            )}
-          </select>
-        </label>
-        <label className="result-select">
-          <span>{labels.groundMotion}</span>
-          <select value={selectedGroundMotionId} disabled={!onChange} onChange={(event) => updateSettings({ groundMotionId: event.currentTarget.value })}>
-            {groundMotions.length === 0 ? (
-              <option value="">{ja.timeHistory.empty.groundMotions}</option>
-            ) : (
-              groundMotions.map((motion) => (
-                <option key={motion.id} value={motion.id}>
-                  {motion.id}
-                </option>
-              ))
-            )}
-          </select>
-        </label>
-        <button type="button" disabled>
-          {labels.manageGroundMotions}
+      <div className="time-history-config-section">
+        <h4 title={labels.description}>{labels.basic}</h4>
+        <div className="time-history-config-grid">
+          <SelectField
+            label={labels.massCase}
+            value={selectedMassCaseId}
+            disabled={!onChange}
+            onChange={(value) => updateSettings({ massCaseId: value })}
+            options={massCases.map((massCase) => ({ value: massCase.id, label: massCase.name || massCase.id }))}
+          />
+          <SelectField
+            label={labels.groundMotion}
+            value={selectedGroundMotionId}
+            disabled={!onChange}
+            onChange={(value) => {
+              const motion = groundMotions.find((item) => item.id === value);
+              updateSettings({
+                groundMotionId: value,
+                direction: motion?.direction ?? direction,
+              });
+            }}
+            options={groundMotions.map((motion) => ({ value: motion.id, label: motion.name || motion.id }))}
+          />
+          <SelectField
+            label={labels.direction}
+            value={direction}
+            disabled={!onChange}
+            onChange={(value) => updateSettings({ direction: value as "X" | "Y" | "Z" })}
+            options={["X", "Y", "Z"].map((value) => ({ value, label: value }))}
+          />
+        </div>
+      </div>
+
+      <div className="time-history-config-section">
+        <h4 title={labels.description}>{labels.time}</h4>
+        <div className="time-history-config-grid">
+          <NumberField label={ja.timeHistory.fields.timeStep} value={timeStep} onChange={(value) => updateNumber(value, "timeStep")} />
+          <button
+            type="button"
+            disabled={!onChange || !selectedGroundMotion}
+            onClick={() => selectedGroundMotion && updateSettings({ timeStep: selectedGroundMotion.timeStep })}
+          >
+            {labels.matchTimeStep}
+          </button>
+          <NumberField label={ja.timeHistory.fields.duration} value={duration} onChange={(value) => updateNumber(value, "duration")} />
+          <button
+            type="button"
+            disabled={!onChange || motionDuration === null}
+            onClick={() => motionDuration !== null && updateSettings({ duration: motionDuration })}
+          >
+            {labels.matchDuration}
+          </button>
+        </div>
+        {timeStepMismatch && (
+          <div className="time-history-validation-message warning" role="alert">
+            <span>{labels.timeStepWarning}</span>
+            <button type="button" onClick={() => updateSettings({ timeStep: selectedGroundMotion?.timeStep ?? timeStep })}>
+              {labels.matchTimeStep}
+            </button>
+          </div>
+        )}
+        {durationOverflow && (
+          <div className="time-history-validation-message error" role="alert">
+            <span>{labels.durationError}</span>
+            <button type="button" onClick={() => motionDuration !== null && updateSettings({ duration: motionDuration })}>
+              {labels.matchDuration}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <details className="time-history-config-section" open>
+        <summary>{labels.damping}</summary>
+        <div className="time-history-config-grid">
+          <NumberField
+            label={labels.rayleighAlpha}
+            value={settings?.damping?.alpha ?? 0}
+            onChange={(value) => updateNumber(value, "alpha")}
+          />
+          <NumberField
+            label={labels.rayleighBeta}
+            value={settings?.damping?.beta ?? 0}
+            onChange={(value) => updateNumber(value, "beta")}
+          />
+          <button
+            type="button"
+            disabled={!onChange}
+            onClick={() => updateSettings({ damping: { type: "rayleigh", alpha: 0, beta: 0.05 } })}
+          >
+            {labels.dampingPreset}
+          </button>
+        </div>
+      </details>
+
+      <details className="time-history-config-section">
+        <summary>{labels.newmark}</summary>
+        <div className="time-history-fixed-values">
+          <span>β = {settings?.beta ?? 0.25}</span>
+          <span>γ = {settings?.gamma ?? 0.5}</span>
+          <span>{labels.fixed}</span>
+        </div>
+      </details>
+
+      <div className="time-history-config-preview">
+        <strong>{labels.preview}</strong>
+        <span>
+          {labels.previewText
+            .replace("{dt}", formatNumber(timeStep))
+            .replace("{points}", String(pointCount))
+            .replace("{duration}", formatNumber(duration))}
+        </span>
+      </div>
+
+      {!project && <div className="empty-state">{locale.thAnalysis.status.notSet}</div>}
+      <div className="time-history-config-actions">
+        <button type="button" onClick={() => setSaved(true)} disabled={!project}>
+          {text.actions.saveConfig}
         </button>
+        {onContinue ? (
+          <button type="button" className="time-history-primary-action" onClick={onContinue}>
+            {text.actions.continueToRun}
+          </button>
+        ) : (
+          <button type="button" className="time-history-primary-action" onClick={onRun} disabled={running || !onRun}>
+            {running ? ja.timeHistory.status.running : ja.timeHistory.fields.runButton}
+          </button>
+        )}
       </div>
-      <div className="summary-list result-toolbar">
-        <label className="result-select">
-          <span>{labels.direction}</span>
-          <select value={direction} disabled={!onChange} onChange={(event) => updateSettings({ direction: event.currentTarget.value as "X" | "Y" | "Z" })}>
-            <option value="X">{labels.directionX}</option>
-            <option value="Y">{labels.directionY}</option>
-            <option value="Z">{labels.directionZ}</option>
-          </select>
-        </label>
-        <NumberField label={labels.timeStep} value={settings?.timeStep ?? selectedGroundMotion?.timeStep ?? 0.05} minExclusiveZero onChange={(value) => updateNumber(value, "timeStep")} />
-        <NumberField label={labels.duration} value={settings?.duration ?? selectedGroundMotion?.duration ?? 0.5} minExclusiveZero onChange={(value) => updateNumber(value, "duration")} />
-        <span>{labels.newmarkBeta}: {formatNumber(settings?.beta ?? 0.25)} ({labels.newmarkBetaFixedNote})</span>
-        <span>{labels.newmarkGamma}: {formatNumber(settings?.gamma ?? 0.5)} ({labels.newmarkBetaFixedNote})</span>
-        <NumberField label={labels.rayleighAlpha} value={settings?.damping?.alpha ?? 0} onChange={(value) => updateNumber(value, "alpha")} />
-        <NumberField label={labels.rayleighBeta} value={settings?.damping?.beta ?? 0} onChange={(value) => updateNumber(value, "beta")} />
-      </div>
-      {!project && <div className="empty-state">{validation.projectMissing}</div>}
-      <button type="button" onClick={onRun} disabled={running || !onRun}>
-        {running ? ja.timeHistory.status.running : labels.runButton}
-      </button>
+      {saved && <p className="time-history-saved-note" role="status">{labels.saved}</p>}
     </section>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  disabled,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  disabled: boolean;
+  options: Array<{ value: string; label: string }>;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="result-select">
+      <span>{label}</span>
+      <select aria-label={label} value={value} disabled={disabled} onChange={(event) => onChange(event.currentTarget.value)}>
+        {options.length === 0 && <option value="">-</option>}
+        {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      </select>
+    </label>
   );
 }
 
 function NumberField({
   label,
   value,
-  minExclusiveZero = false,
   onChange,
 }: {
   label: string;
   value: number;
-  minExclusiveZero?: boolean;
   onChange: (value: string) => void;
 }) {
-  const invalid = !Number.isFinite(value) || (minExclusiveZero ? value <= 0 : value < 0);
   return (
     <label className="result-select">
       <span>{label}</span>
@@ -136,10 +255,9 @@ function NumberField({
         type="number"
         value={String(value)}
         step="any"
-        min={minExclusiveZero ? "0" : "0"}
+        min="0"
         onChange={(event) => onChange(event.currentTarget.value)}
       />
-      {invalid && <span className="field-error">{ja.timeHistory.validation.number}</span>}
     </label>
   );
 }
@@ -160,7 +278,6 @@ function defaultTimeHistorySettings(project: ProjectModel): NonNullable<Analysis
   };
 }
 
-function formatNumber(value: number | undefined): string {
-  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
-  return String(value);
+function formatNumber(value: number): string {
+  return Number.isFinite(value) ? value.toFixed(4).replace(/0+$/, "").replace(/\.$/, "") : "-";
 }

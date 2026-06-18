@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
+import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
-import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
+import { TimeHistoryChart } from "../../TimeHistoryChart";
+import { TimeHistoryModelAnimation } from "../../TimeHistoryModelAnimation";
 import { ResultSummaryCard } from "../ResultSummaryCard";
 
 type SectionResultsProps = {
@@ -24,10 +26,12 @@ const resultPages: Array<{ id: ResultPageId; label: string; help: string }> = [
 
 export function SectionResults({ project, result = null, error = null, onAnimationOverrideChange }: SectionResultsProps) {
   const [activePage, setActivePage] = useState<ResultPageId>("overview");
+  const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
   const pageIndex = resultPages.findIndex((page) => page.id === activePage);
   const page = resultPages[pageIndex] ?? resultPages[0];
   const responseKeys = useMemo(() => responseHistoryKeys(result), [result]);
-  const selectedKey = responseKeys[0] ?? "";
+  const activeTargets = selectedTargets.filter((key) => responseKeys.includes(key));
+  const selectedKey = activeTargets[0] ?? responseKeys[0] ?? "";
   const selectedSeries = selectedKey ? result?.displacements?.[selectedKey] ?? [] : [];
   const selectedGroundMotion = project.groundMotions?.find((motion) => motion.id === project.analysisSettings.timeHistory?.groundMotionId) ?? project.groundMotions?.[0] ?? null;
 
@@ -41,7 +45,26 @@ export function SectionResults({ project, result = null, error = null, onAnimati
           <h3>結果表示</h3>
           <p>結果は紙芝居形式で1ページずつ確認できます。概要、最大値、グラフ、アニメーション、詳細表の順に見てください。</p>
         </div>
-        <div className="time-history-page-counter">{pageIndex + 1} / {resultPages.length}</div>
+        <div className="time-history-results-tools">
+          <label className="time-history-target-filter" title={locale.thAnalysis.results.displayTargetsHelp}>
+            <span>{locale.thAnalysis.results.displayTargets}</span>
+            <select
+              multiple
+              aria-label={locale.thAnalysis.results.displayTargets}
+              value={activeTargets}
+              onChange={(event) => {
+                const values = Array.from(event.currentTarget.selectedOptions, (option) => option.value);
+                setSelectedTargets(values);
+              }}
+            >
+              {responseKeys.map((key) => <option key={key} value={key}>{key}</option>)}
+            </select>
+          </label>
+          <button type="button" onClick={() => setSelectedTargets([])}>
+            {locale.thAnalysis.results.allTargets}
+          </button>
+          <div className="time-history-page-counter">{pageIndex + 1} / {resultPages.length}</div>
+        </div>
       </div>
       <div className="time-history-result-page-tabs" aria-label="結果ページ選択">
         {resultPages.map((item, index) => (
@@ -59,9 +82,20 @@ export function SectionResults({ project, result = null, error = null, onAnimati
           <>
             {activePage === "overview" && <OverviewPage result={result} project={project} />}
             {activePage === "max" && <MaxValuesPage result={result} />}
-            {activePage === "chart" && <ChartPage result={result} selectedKey={selectedKey} values={selectedSeries} />}
+            {activePage === "chart" && result && (
+              <TimeHistoryChart
+                result={result}
+                selectedKeys={activeTargets.length > 0 ? activeTargets : selectedKey ? [selectedKey] : []}
+              />
+            )}
             {activePage === "ground" && <GroundMotionPage motion={selectedGroundMotion} />}
-            {activePage === "animation" && <TimeHistoryResultViewer project={project} result={result} error={error} status={result?.meta?.status} onOverrideChange={onAnimationOverrideChange} />}
+            {activePage === "animation" && result && (
+              <TimeHistoryModelAnimation
+                project={project}
+                result={result}
+                onOverrideChange={onAnimationOverrideChange}
+              />
+            )}
             {activePage === "table" && <TablePage result={result} selectedKey={selectedKey} values={selectedSeries} />}
             {activePage === "errors" && <ErrorsPage result={result} error={error} />}
           </>
@@ -83,10 +117,6 @@ function MaxValuesPage({ result }: { result: TimeHistoryResult | null }) {
   const rows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 24);
   if (rows.length === 0) return <EmptyPage />;
   return <div className="time-history-table-wrap"><table><thead><tr><th>種類</th><th>キー</th><th>最大絶対値</th><th>時刻</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.kind}-${row.key}`}><td>{row.kind}</td><td>{row.key}</td><td>{formatNumber(row.value)}</td><td>{formatNumber(row.time)} 秒</td></tr>)}</tbody></table></div>;
-}
-
-function ChartPage({ result, selectedKey, values }: { result: TimeHistoryResult | null; selectedKey: string; values: number[] }) {
-  return <div><p className="time-history-help-text">表示対象: {selectedKey || "-"} / 変位</p><SeriesSvg time={result?.time ?? []} values={values} label="時刻歴応答" /></div>;
 }
 
 function GroundMotionPage({ motion }: { motion: NonNullable<ProjectModel["groundMotions"]>[number] | null }) {

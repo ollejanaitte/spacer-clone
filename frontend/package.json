@@ -9,6 +9,7 @@
     "typecheck": "tsc -b --pretty false",
     "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
     "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",
@@ -22,16 +23,20 @@
     "icons:build": "python ../scripts/build_icons.py"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^5.0.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "recharts": "^3.8.1",
     "three": "^0.184.0",
     "typescript": "^5.8.0",
     "vite": "^7.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

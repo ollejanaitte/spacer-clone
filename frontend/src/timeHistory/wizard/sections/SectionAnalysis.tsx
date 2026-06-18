@@ -1,3 +1,4 @@
+import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel } from "../../../types";
 import { TimeHistorySettingsPanel } from "../../TimeHistorySettingsPanel";
 
@@ -6,21 +7,33 @@ type SectionAnalysisProps = {
   running: boolean;
   onRun?: () => void;
   onProjectChange: (project: ProjectModel) => void;
+  onContinue?: () => void;
 };
 
-export function SectionAnalysis({ project, running, onRun, onProjectChange }: SectionAnalysisProps) {
+export function SectionAnalysis({
+  project,
+  running,
+  onRun,
+  onProjectChange,
+  onContinue,
+}: SectionAnalysisProps) {
+  const text = locale.thAnalysis.analysisConfig;
   return (
     <section className="time-history-wizard-section">
-      <h3>解析条件設定</h3>
-      <p>
-        Newmark法は、時間を少しずつ進めながら構造物の揺れを計算する方法です。通常は初期値のままで進められます。
-      </p>
-      <div className="time-history-term-grid">
-        <span><strong>dt</strong> 時間刻みです。地震波のdtと合わせます。</span>
-        <span><strong>Rayleigh減衰</strong> 構造物の揺れが減っていく効果を表します。</span>
-        <span><strong>解析時間</strong> 計算を行う総時間です。地震波長と合わせると扱いやすくなります。</span>
+      <div className="time-history-section-heading">
+        <div>
+          <h3>{text.heading}</h3>
+          <p>{text.description}</p>
+        </div>
+        <span className="time-history-info-tip" title={text.description}>i</span>
       </div>
-      <TimeHistorySettingsPanel project={project} running={running} onRun={onRun} onChange={onProjectChange} />
+      <TimeHistorySettingsPanel
+        project={project}
+        running={running}
+        onRun={onRun}
+        onChange={onProjectChange}
+        onContinue={onContinue}
+      />
     </section>
   );
 }

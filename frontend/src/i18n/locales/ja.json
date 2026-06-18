@@ -1,0 +1,148 @@
+{
+  "thAnalysis": {
+    "title": "時刻歴応答解析",
+    "guideLabel": "初心者向けガイド",
+    "description": "地震波の読み込み、入力確認、解析実行、結果確認を順番に進めます。",
+    "breadcrumb": "ホーム > 解析 > 時刻歴応答解析",
+    "actions": {
+      "inputCheck": "入力チェックへ",
+      "run": "解析実行へ",
+      "close": "閉じる",
+      "back": "戻る",
+      "next": "次へ",
+      "runAnalysis": "この条件で時刻歴解析を実行",
+      "running": "解析中",
+      "fix": "修正する",
+      "saveConfig": "この条件を保存",
+      "continueToRun": "解析実行へ進む"
+    },
+    "status": {
+      "notSet": "未設定",
+      "incomplete": "入力不足",
+      "ready": "実行可能",
+      "running": "解析中",
+      "complete": "完了",
+      "error": "エラー"
+    },
+    "steps": {
+      "intro": { "label": "はじめに", "description": "解析の流れを確認します" },
+      "check": { "label": "入力チェック", "description": "前提条件と不足項目を確認します" },
+      "groundMotion": { "label": "地震波設定", "description": "解析に使う地震波を選択します" },
+      "analysis": { "label": "解析条件設定", "description": "時間刻み・解析時間・減衰を設定します" },
+      "run": { "label": "解析実行", "description": "条件を確認して解析を実行します" },
+      "results": { "label": "結果表示", "description": "グラフと3Dアニメーションを確認します" }
+    },
+    "stepState": {
+      "notStarted": "未着手",
+      "inProgress": "途中",
+      "complete": "完了",
+      "invalid": "要修正"
+    },
+    "currentStep": "ステップ",
+    "pageGuidance": "このページで行うこと",
+    "latestResult": "最新結果サマリ",
+    "noLatestResult": "解析を実行すると、最大応答と発生時刻がここに表示されます。",
+    "intro": {
+      "heading": "はじめに",
+      "lead": "時刻歴応答解析は、地震波に対する構造物の変位・速度・加速度を時間ごとに確認する解析です。",
+      "flow": ["地震波を読み込む", "入力と解析条件を確認する", "解析を実行する", "グラフと3Dアニメーションで結果を確認する"],
+      "help": "左のステップを上から順に進めてください。モデル・支点・質量は前段画面の確定内容を参照します。"
+    },
+    "inputCheck": {
+      "heading": "入力チェック",
+      "description": "前段で確定したモデル情報は参照のみです。解析に必要な設定だけ、このガイド内で修正できます。",
+      "readOnly": "前段画面で確定済み",
+      "editable": "このガイドで修正可能",
+      "nodeMemberCount": "節点 {nodes} / 部材 {members}",
+      "supportCount": "支点 {count}",
+      "massCases": "質量ケース: {names}",
+      "supplement": {
+        "model": "節点と部材の定義はモデル入力画面で管理します。",
+        "support": "支点条件はモデル入力画面で管理します。",
+        "mass": "質量ケースは前段の質量設定を使用します。",
+        "groundMotion": "解析に使用する地震波と単位を確認します。",
+        "timeStep": "地震波の時間刻みと一致させることを推奨します。",
+        "duration": "地震波長を超えない解析時間を指定します。",
+        "method": "Newmark β 法と減衰条件を確認します。",
+        "animation": "結果の変位成分に応じて表示モードを選択できます。"
+      }
+    },
+    "analysisConfig": {
+      "heading": "解析条件設定",
+      "description": "必須条件、時間設定、減衰、固定の数値積分条件を順番に確認します。",
+      "basic": "① 基本条件（必須）",
+      "time": "② 時間設定",
+      "damping": "③ 減衰設定",
+      "newmark": "④ Newmark β 法",
+      "massCase": "質量ケース",
+      "groundMotion": "地震波",
+      "direction": "入力方向",
+      "timeStep": "dt［秒］",
+      "duration": "解析時間［秒］",
+      "matchTimeStep": "地震波の dt に合わせる",
+      "matchDuration": "地震波長に合わせる",
+      "dampingPreset": "標準プリセット（h=0.05）",
+      "rayleighAlpha": "Rayleigh α",
+      "rayleighBeta": "Rayleigh β",
+      "fixed": "固定値",
+      "preview": "条件プレビュー",
+      "previewText": "dt {dt} × {points} 点 = 解析時間 {duration} s",
+      "timeStepWarning": "解析 dt と地震波 dt が一致していません。",
+      "durationError": "解析時間が地震波長を超えています。",
+      "saved": "入力内容はプロジェクトに保存されています。"
+    },
+    "results": {
+      "displayTargets": "表示対象",
+      "displayTargetsHelp": "解析は全モデルを対象に実行済みです。ここで結果表示だけを絞り込みます。",
+      "allTargets": "すべて表示",
+      "chart": {
+        "heading": "時刻歴グラフ",
+        "quantity": "物理量",
+        "displacement": "変位",
+        "velocity": "速度",
+        "acceleration": "加速度",
+        "time": "時刻［s］",
+        "value": "応答値",
+        "savePng": "画像保存（PNG）",
+        "exportCsv": "CSV出力",
+        "empty": "表示する応答キーと物理量を選択してください。",
+        "legendHelp": "凡例をクリックすると系列の表示を切り替えられます。"
+      },
+      "animation": {
+        "heading": "3Dアニメーション",
+        "nodes": "節点",
+        "members": "部材",
+        "nodeLabels": "節点ラベル",
+        "memberLabels": "部材ラベル",
+        "supports": "支点記号",
+        "masses": "質量",
+        "nodeSize": "節点サイズ",
+        "memberWidth": "部材線幅",
+        "play": "再生",
+        "pause": "一時停止",
+        "reset": "リセット",
+        "viewReset": "視点リセット",
+        "seek": "再生位置",
+        "speed": "再生速度",
+        "scale": "変形倍率",
+        "customScale": "任意倍率",
+        "mode": "変位モード",
+        "combined": "合成 √(x²+y²+z²)",
+        "x": "X軸",
+        "y": "Y軸",
+        "z": "Z軸",
+        "currentTime": "現在時刻",
+        "maxNode": "最大変位節点",
+        "maxTime": "最大値発生時刻",
+        "webglError": "3D表示を初期化できません。ブラウザまたはGPU互換モードを確認してください。"
+      }
+    },
+    "common": {
+      "ok": "OK",
+      "ng": "NG",
+      "warning": "警告",
+      "unknown": "未確認",
+      "info": "ヒント"
+    }
+  }
+}

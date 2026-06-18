@@ -1,0 +1,148 @@
+{
+  "thAnalysis": {
+    "title": "Time-History Response Analysis",
+    "guideLabel": "Beginner guide",
+    "description": "Proceed through ground-motion loading, input checks, analysis, and result review.",
+    "breadcrumb": "Home > Analysis > Time-History Response Analysis",
+    "actions": {
+      "inputCheck": "Input check",
+      "run": "Run analysis",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "runAnalysis": "Run time-history analysis",
+      "running": "Running",
+      "fix": "Fix",
+      "saveConfig": "Save conditions",
+      "continueToRun": "Continue to run"
+    },
+    "status": {
+      "notSet": "Not set",
+      "incomplete": "Incomplete",
+      "ready": "Ready",
+      "running": "Running",
+      "complete": "Complete",
+      "error": "Error"
+    },
+    "steps": {
+      "intro": { "label": "Introduction", "description": "Review the analysis flow" },
+      "check": { "label": "Input check", "description": "Review prerequisites and missing inputs" },
+      "groundMotion": { "label": "Ground motion", "description": "Select the ground motion" },
+      "analysis": { "label": "Analysis conditions", "description": "Set time step, duration, and damping" },
+      "run": { "label": "Run", "description": "Review conditions and run analysis" },
+      "results": { "label": "Results", "description": "Review charts and the 3D animation" }
+    },
+    "stepState": {
+      "notStarted": "Not started",
+      "inProgress": "In progress",
+      "complete": "Complete",
+      "invalid": "Needs attention"
+    },
+    "currentStep": "Step",
+    "pageGuidance": "On this page",
+    "latestResult": "Latest result summary",
+    "noLatestResult": "Maximum responses and occurrence times appear here after analysis.",
+    "intro": {
+      "heading": "Introduction",
+      "lead": "Time-history response analysis shows displacement, velocity, and acceleration over time under ground motion.",
+      "flow": ["Load a ground motion", "Review inputs and conditions", "Run the analysis", "Review charts and the 3D animation"],
+      "help": "Proceed through the steps on the left. Model, support, and mass data are read from the preceding screens."
+    },
+    "inputCheck": {
+      "heading": "Input check",
+      "description": "Confirmed model data is read-only. Only analysis-specific settings can be changed in this guide.",
+      "readOnly": "Confirmed on previous screens",
+      "editable": "Editable in this guide",
+      "nodeMemberCount": "Nodes {nodes} / Members {members}",
+      "supportCount": "Supports {count}",
+      "massCases": "Mass cases: {names}",
+      "supplement": {
+        "model": "Nodes and members are managed on the model input screen.",
+        "support": "Support conditions are managed on the model input screen.",
+        "mass": "The analysis uses the mass cases defined previously.",
+        "groundMotion": "Review the ground motion and its unit.",
+        "timeStep": "Matching the ground-motion time step is recommended.",
+        "duration": "Set a duration that does not exceed the motion length.",
+        "method": "Review Newmark-beta and damping settings.",
+        "animation": "Available display modes depend on result displacement components."
+      }
+    },
+    "analysisConfig": {
+      "heading": "Analysis conditions",
+      "description": "Review required inputs, time settings, damping, and fixed integration parameters.",
+      "basic": "1. Required conditions",
+      "time": "2. Time settings",
+      "damping": "3. Damping",
+      "newmark": "4. Newmark-beta",
+      "massCase": "Mass case",
+      "groundMotion": "Ground motion",
+      "direction": "Input direction",
+      "timeStep": "dt [s]",
+      "duration": "Duration [s]",
+      "matchTimeStep": "Match ground-motion dt",
+      "matchDuration": "Match motion length",
+      "dampingPreset": "Standard preset (h=0.05)",
+      "rayleighAlpha": "Rayleigh alpha",
+      "rayleighBeta": "Rayleigh beta",
+      "fixed": "Fixed",
+      "preview": "Condition preview",
+      "previewText": "dt {dt} x {points} points = duration {duration} s",
+      "timeStepWarning": "Analysis dt differs from the ground-motion dt.",
+      "durationError": "Analysis duration exceeds the ground-motion length.",
+      "saved": "Inputs are stored in the project."
+    },
+    "results": {
+      "displayTargets": "Display targets",
+      "displayTargetsHelp": "The full model has already been analyzed. This filter only changes the displayed results.",
+      "allTargets": "Show all",
+      "chart": {
+        "heading": "Time-history chart",
+        "quantity": "Quantity",
+        "displacement": "Displacement",
+        "velocity": "Velocity",
+        "acceleration": "Acceleration",
+        "time": "Time [s]",
+        "value": "Response",
+        "savePng": "Save image (PNG)",
+        "exportCsv": "Export CSV",
+        "empty": "Select response keys and quantities to display.",
+        "legendHelp": "Click a legend item to toggle its series."
+      },
+      "animation": {
+        "heading": "3D animation",
+        "nodes": "Nodes",
+        "members": "Members",
+        "nodeLabels": "Node labels",
+        "memberLabels": "Member labels",
+        "supports": "Supports",
+        "masses": "Masses",
+        "nodeSize": "Node size",
+        "memberWidth": "Member width",
+        "play": "Play",
+        "pause": "Pause",
+        "reset": "Reset",
+        "viewReset": "Reset view",
+        "seek": "Seek",
+        "speed": "Playback speed",
+        "scale": "Deformation scale",
+        "customScale": "Custom scale",
+        "mode": "Displacement mode",
+        "combined": "Combined sqrt(x2+y2+z2)",
+        "x": "X axis",
+        "y": "Y axis",
+        "z": "Z axis",
+        "currentTime": "Current time",
+        "maxNode": "Maximum-displacement node",
+        "maxTime": "Time of maximum",
+        "webglError": "The 3D view could not be initialized. Check the browser or GPU compatibility mode."
+      }
+    },
+    "common": {
+      "ok": "OK",
+      "ng": "NG",
+      "warning": "Warning",
+      "unknown": "Unchecked",
+      "info": "Hint"
+    }
+  }
+}

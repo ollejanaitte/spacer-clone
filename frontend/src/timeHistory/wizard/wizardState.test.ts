@@ -178,7 +178,7 @@ describe("toWizardError", () => {
   it("renders an output target missing card", () => {
     const card = toWizardError("output-target-missing");
     expect(card.title).toContain("対象が選択されていません");
-    expect(card.targetSection).toBe("output");
+    expect(card.targetSection).toBe("run");
   });
 
   it("renders an animation incomplete card with missing axes", () => {

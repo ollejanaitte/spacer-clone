@@ -26,6 +26,7 @@ import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
 import { ResultSummaryCard } from "./timeHistory/wizard/ResultSummaryCard";
 import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
 import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
+import { redirectLegacyTimeHistoryRoute } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 
@@ -35,6 +36,7 @@ type ValidationNotice = {
 };
 
 export function App() {
+  redirectLegacyTimeHistoryRoute();
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
@@ -58,7 +60,9 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
-  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(false);
+  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(
+    () => typeof window !== "undefined" && window.location.pathname.startsWith("/th/"),
+  );
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(
