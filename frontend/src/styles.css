@@ -548,6 +548,37 @@ button:disabled {
   border-radius: 5px;
 }
 
+.display-size-input {
+  display: grid;
+  grid-template-columns: minmax(92px, 1fr) 28px minmax(80px, 1fr) 28px 62px;
+  gap: 5px;
+  align-items: center;
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.display-size-input button,
+.viewer-size-reset {
+  min-height: 28px;
+  border: 1px solid #b7c5d3;
+  border-radius: 5px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.display-size-input input[type="range"] {
+  min-width: 70px;
+}
+
+.display-size-input input[type="number"] {
+  width: 62px;
+  height: 28px;
+  border: 1px solid #c4ced8;
+  border-radius: 5px;
+}
+
 .model-placeholder {
   position: relative;
   min-height: 240px;

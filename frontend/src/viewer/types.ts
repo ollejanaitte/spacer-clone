@@ -30,6 +30,9 @@ export type ViewerScales = {
   resultScale: number;
   nodeSize: number;
   labelSize: number;
+  supportSize?: number;
+  loadArrowSize?: number;
+  memberLineWidth?: number;
 };
 
 export type ViewerSelection =
@@ -123,6 +126,9 @@ export const defaultScales: ViewerScales = {
   resultScale: 1,
   nodeSize: 0.075,
   labelSize: 0.26,
+  supportSize: 1,
+  loadArrowSize: 1,
+  memberLineWidth: 1,
 };
 
 /**

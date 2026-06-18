@@ -5,10 +5,17 @@ import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
 import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
+import {
+  clampViewerDisplaySize,
+  DEFAULT_VIEWER_DISPLAY_SIZE,
+  VIEWER_DISPLAY_SIZE_RANGES,
+  type ViewerDisplaySizeSettings,
+} from "./settings/displaySize";
 
 type ViewerControlsProps = {
   visibility: ViewerVisibility;
   scales: ViewerScales;
+  displaySize?: ViewerDisplaySizeSettings;
   loadCaseIds: string[];
   selectedLoadCaseId: string;
   eigenModeNos: number[];
@@ -22,6 +29,8 @@ type ViewerControlsProps = {
   cameraSync: boolean;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
+  onDisplaySizeChange?: (settings: ViewerDisplaySizeSettings) => void;
+  onDisplaySizeReset?: () => void;
   onLoadCaseChange: (loadCaseId: string) => void;
   onEigenModeChange: (modeNo: number) => void;
   onResponseSpectrumResultChange: (resultKey: ResponseSpectrumSelection) => void;
@@ -36,6 +45,7 @@ type ViewerControlsProps = {
 export function ViewerControls({
   visibility,
   scales,
+  displaySize = DEFAULT_VIEWER_DISPLAY_SIZE,
   loadCaseIds,
   selectedLoadCaseId,
   eigenModeNos,
@@ -49,6 +59,8 @@ export function ViewerControls({
   cameraSync,
   onVisibilityChange,
   onScalesChange,
+  onDisplaySizeChange = () => undefined,
+  onDisplaySizeReset = () => undefined,
   onLoadCaseChange,
   onEigenModeChange,
   onResponseSpectrumResultChange,
@@ -69,6 +81,9 @@ export function ViewerControls({
     onAnimationOptionsChange({ ...animationOptions, ...patch });
   };
   const availableModeNumbers = eigenModeNos.length > 0 ? eigenModeNos : [1, 2, 3];
+  const setDisplaySize = (key: keyof ViewerDisplaySizeSettings, value: number) => {
+    onDisplaySizeChange({ ...displaySize, [key]: clampViewerDisplaySize(key, value) });
+  };
 
   return (
     <div className="viewer-controls" aria-label={ja.viewer.controls.ariaLabel}>
@@ -382,6 +397,70 @@ export function ViewerControls({
           />
         </div>
       </ControlGroup>
+      <ControlGroup title="表示サイズ">
+        <div className="scale-grid">
+          {([
+            ["nodeSize", "節点サイズ"],
+            ["supportSize", "支点サイズ"],
+            ["loadArrowSize", "荷重矢印サイズ"],
+            ["labelSize", "ラベルサイズ"],
+            ["memberLineWidth", "部材線幅"],
+          ] as const).map(([key, label]) => (
+            <DisplaySizeInput
+              key={key}
+              label={label}
+              value={displaySize[key]}
+              min={VIEWER_DISPLAY_SIZE_RANGES[key].min}
+              max={VIEWER_DISPLAY_SIZE_RANGES[key].max}
+              onChange={(value) => setDisplaySize(key, value)}
+            />
+          ))}
+          <button type="button" className="viewer-size-reset" onClick={onDisplaySizeReset}>
+            表示サイズをリセット
+          </button>
+        </div>
+      </ControlGroup>
+    </div>
+  );
+}
+
+function DisplaySizeInput({
+  label,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
+}) {
+  const step = 0.1;
+  return (
+    <div className="display-size-input">
+      <span>{label}</span>
+      <button type="button" aria-label={`${label}を小さく`} onClick={() => onChange(value - step)}>-</button>
+      <input
+        aria-label={label}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.currentTarget.value))}
+      />
+      <button type="button" aria-label={`${label}を大きく`} onClick={() => onChange(value + step)}>+</button>
+      <input
+        aria-label={`${label}数値`}
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.currentTarget.value))}
+      />
     </div>
   );
 }

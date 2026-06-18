@@ -67,9 +67,10 @@ export function createLine(
   points: THREE.Vector3[],
   color: THREE.ColorRepresentation,
   name?: string,
+  width = 1,
 ): THREE.Line {
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({ color, linewidth: 2 });
+  const material = new THREE.LineBasicMaterial({ color, linewidth: Math.max(1, width * 2) });
   const line = new THREE.Line(geometry, material);
   if (name) line.name = name;
   return line;
