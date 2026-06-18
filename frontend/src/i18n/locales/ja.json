@@ -94,7 +94,20 @@
     "results": {
       "displayTargets": "表示対象",
       "displayTargetsHelp": "解析は全モデルを対象に実行済みです。ここで結果表示だけを絞り込みます。",
-      "allTargets": "すべて表示"
+      "allTargets": "すべて表示",
+      "chart": {
+        "heading": "時刻歴グラフ",
+        "quantity": "物理量",
+        "displacement": "変位",
+        "velocity": "速度",
+        "acceleration": "加速度",
+        "time": "時刻［s］",
+        "value": "応答値",
+        "savePng": "画像保存（PNG）",
+        "exportCsv": "CSV出力",
+        "empty": "表示する応答キーと物理量を選択してください。",
+        "legendHelp": "凡例をクリックすると系列の表示を切り替えられます。"
+      }
     },
     "common": {
       "ok": "OK",

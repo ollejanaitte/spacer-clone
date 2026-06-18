@@ -2656,6 +2656,57 @@ button:disabled {
   min-height: 72px;
 }
 
+.time-history-recharts {
+  display: grid;
+  gap: var(--th-space-3);
+  min-width: 0;
+}
+
+.time-history-chart-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--th-space-3);
+}
+
+.time-history-chart-toolbar > div:first-child {
+  display: grid;
+  margin-right: auto;
+}
+
+.time-history-chart-toolbar small {
+  color: var(--th-color-text-muted);
+}
+
+.time-history-chart-quantities {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--th-space-2);
+}
+
+.time-history-chart-quantities label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--th-space-1);
+  color: var(--th-color-text-muted);
+}
+
+.time-history-chart-toolbar button {
+  min-height: 38px;
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
+.time-history-chart-host {
+  min-width: 0;
+  padding: var(--th-space-3);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
 @media (max-width: 900px) {
   .time-history-config-grid,
   .time-history-check-list {

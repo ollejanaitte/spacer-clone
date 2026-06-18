@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
 import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
+import { TimeHistoryChart } from "../../TimeHistoryChart";
 import { ResultSummaryCard } from "../ResultSummaryCard";
 
 type SectionResultsProps = {
@@ -81,7 +82,12 @@ export function SectionResults({ project, result = null, error = null, onAnimati
           <>
             {activePage === "overview" && <OverviewPage result={result} project={project} />}
             {activePage === "max" && <MaxValuesPage result={result} />}
-            {activePage === "chart" && <ChartPage result={result} selectedKey={selectedKey} values={selectedSeries} />}
+            {activePage === "chart" && result && (
+              <TimeHistoryChart
+                result={result}
+                selectedKeys={activeTargets.length > 0 ? activeTargets : selectedKey ? [selectedKey] : []}
+              />
+            )}
             {activePage === "ground" && <GroundMotionPage motion={selectedGroundMotion} />}
             {activePage === "animation" && <TimeHistoryResultViewer project={project} result={result} error={error} status={result?.meta?.status} onOverrideChange={onAnimationOverrideChange} />}
             {activePage === "table" && <TablePage result={result} selectedKey={selectedKey} values={selectedSeries} />}
@@ -105,10 +111,6 @@ function MaxValuesPage({ result }: { result: TimeHistoryResult | null }) {
   const rows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 24);
   if (rows.length === 0) return <EmptyPage />;
   return <div className="time-history-table-wrap"><table><thead><tr><th>種類</th><th>キー</th><th>最大絶対値</th><th>時刻</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.kind}-${row.key}`}><td>{row.kind}</td><td>{row.key}</td><td>{formatNumber(row.value)}</td><td>{formatNumber(row.time)} 秒</td></tr>)}</tbody></table></div>;
-}
-
-function ChartPage({ result, selectedKey, values }: { result: TimeHistoryResult | null; selectedKey: string; values: number[] }) {
-  return <div><p className="time-history-help-text">表示対象: {selectedKey || "-"} / 変位</p><SeriesSvg time={result?.time ?? []} values={values} label="時刻歴応答" /></div>;
 }
 
 function GroundMotionPage({ motion }: { motion: NonNullable<ProjectModel["groundMotions"]>[number] | null }) {

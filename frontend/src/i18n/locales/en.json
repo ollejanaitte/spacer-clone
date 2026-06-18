@@ -94,7 +94,20 @@
     "results": {
       "displayTargets": "Display targets",
       "displayTargetsHelp": "The full model has already been analyzed. This filter only changes the displayed results.",
-      "allTargets": "Show all"
+      "allTargets": "Show all",
+      "chart": {
+        "heading": "Time-history chart",
+        "quantity": "Quantity",
+        "displacement": "Displacement",
+        "velocity": "Velocity",
+        "acceleration": "Acceleration",
+        "time": "Time [s]",
+        "value": "Response",
+        "savePng": "Save image (PNG)",
+        "exportCsv": "Export CSV",
+        "empty": "Select response keys and quantities to display.",
+        "legendHelp": "Click a legend item to toggle its series."
+      }
     },
     "common": {
       "ok": "OK",
