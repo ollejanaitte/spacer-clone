@@ -24,6 +24,17 @@ export type ViewerVisibility = {
   reactionLabelFx?: boolean;
   reactionLabelFy?: boolean;
   reactionLabelFz?: boolean;
+  reactionLabelMx?: boolean;
+  reactionLabelMy?: boolean;
+  reactionLabelMz?: boolean;
+  memberForceLabels?: boolean;
+  memberForceLabelFx?: boolean;
+  memberForceLabelFy?: boolean;
+  memberForceLabelFz?: boolean;
+  memberForceLabelMx?: boolean;
+  memberForceLabelMy?: boolean;
+  memberForceLabelMz?: boolean;
+  /** @deprecated use memberForceLabels. Kept as migration fallback for Phase1 state. */
   axialForceLabels?: boolean;
   momentMy: boolean;
   momentMz: boolean;
@@ -127,6 +138,16 @@ export const defaultVisibility: ViewerVisibility = {
   reactionLabelFx: true,
   reactionLabelFy: true,
   reactionLabelFz: true,
+  reactionLabelMx: false,
+  reactionLabelMy: false,
+  reactionLabelMz: false,
+  memberForceLabels: false,
+  memberForceLabelFx: true,
+  memberForceLabelFy: false,
+  memberForceLabelFz: false,
+  memberForceLabelMx: false,
+  memberForceLabelMy: false,
+  memberForceLabelMz: false,
   axialForceLabels: false,
   momentMy: false,
   momentMz: false,

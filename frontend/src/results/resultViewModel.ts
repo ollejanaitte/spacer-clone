@@ -170,7 +170,7 @@ const componentMap: Record<MemberSectionForceComponent, keyof EndForce> = {
   Mz: "mz",
 };
 
-export const phase2MemberForceComponents: MemberSectionForceComponent[] = ["N", "My", "Mz"];
+export const phase2MemberForceComponents: MemberSectionForceComponent[] = ["N", "Qy", "Qz", "Mx", "My", "Mz"];
 
 export function buildResultViewModel(
   result: AnalysisResult | null,
