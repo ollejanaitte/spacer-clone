@@ -19,7 +19,7 @@ type ToolbarProps = {
   onRunEigen: () => void;
   onRunInfluence: () => void;
   onRunResponseSpectrum: () => void;
-  onOpenTimeHistory?: () => void;
+  onOpenTimeHistoryWizard?: () => void;
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
@@ -47,7 +47,7 @@ export function Toolbar({
   onRunEigen,
   onRunInfluence,
   onRunResponseSpectrum,
-  onOpenTimeHistory,
+  onOpenTimeHistoryWizard,
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
@@ -98,12 +98,12 @@ export function Toolbar({
             <Save size={16} />
             {t.saveButton}
           </button>
-          {onOpenTimeHistory && (
+          {onOpenTimeHistoryWizard && (
             <button
               type="button"
-              onClick={onOpenTimeHistory}
+              onClick={onOpenTimeHistoryWizard}
               title="時刻歴応答解析を開く"
-              data-testid="open-time-history"
+              data-testid="open-time-history-wizard"
             >
               <Activity size={16} />
               時刻歴応答解析を開く

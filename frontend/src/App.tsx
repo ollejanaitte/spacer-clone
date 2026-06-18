@@ -23,7 +23,10 @@ import type {
 } from "./types";
 import type { ViewerSelection } from "./viewer/types";
 import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
-import { TimeHistoryModal } from "./timeHistory/TimeHistoryModal";
+import { ResultSummaryCard } from "./timeHistory/wizard/ResultSummaryCard";
+import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
+import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
+import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 
 type ValidationNotice = {
@@ -55,7 +58,7 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
-  const [timeHistoryModalOpen, setTimeHistoryModalOpen] = useState<boolean>(false);
+  const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(false);
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(
@@ -450,12 +453,25 @@ export function App() {
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
-        onOpenTimeHistory={() => setTimeHistoryModalOpen(true)}
+        onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
         onOpenModelComparison={() => {
           window.history.pushState({}, "", "/compare");
           setComparisonOpen(true);
         }}
       />
+      <div className="time-history-wizard-entry" aria-label="時刻歴応答解析を開く">
+        <StatusBadge
+          status={selectTimeHistoryMainStatus(project, project.analysisResults?.timeHistory ?? null, {
+            running: timeHistoryAnalysis.loading,
+            hasResult: Boolean(project.analysisResults?.timeHistory),
+            error: timeHistoryAnalysis.error,
+          })}
+        />
+        <ResultSummaryCard result={project.analysisResults?.timeHistory ?? null} />
+        <p className="time-history-wizard-description">
+          時刻歴応答解析は、専用ウィザードから地震波設定、入力チェック、解析実行、結果表示、アニメーション確認を行います。
+        </p>
+      </div>
       {validationNotice && (
         <div className={`validation-notice ${validationNotice.kind}`}>
           {validationNotice.text}
@@ -513,8 +529,8 @@ export function App() {
         onClose={() => setBridgeWizardOpen(false)}
         onCommit={handleBridgeGenerated}
       />
-      <TimeHistoryModal
-        open={timeHistoryModalOpen}
+      <TimeHistoryWizardModal
+        open={timeHistoryWizardOpen}
         project={project}
         result={
           timeHistoryAnalysis.result?.timeHistoryResult ??
@@ -524,7 +540,7 @@ export function App() {
         }
         error={timeHistoryAnalysis.error}
         running={timeHistoryAnalysis.loading}
-        onClose={() => setTimeHistoryModalOpen(false)}
+        onClose={() => setTimeHistoryWizardOpen(false)}
         onRun={() => void runTimeHistoryAnalysis()}
         onProjectChange={commitProject}
         onAnimationOverrideChange={setTimeHistoryNodeOverride}
