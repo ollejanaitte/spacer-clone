@@ -1,0 +1,78 @@
+{
+  "thAnalysis": {
+    "title": "時刻歴応答解析",
+    "guideLabel": "初心者向けガイド",
+    "description": "地震波の読み込み、入力確認、解析実行、結果確認を順番に進めます。",
+    "breadcrumb": "ホーム > 解析 > 時刻歴応答解析",
+    "actions": {
+      "inputCheck": "入力チェックへ",
+      "run": "解析実行へ",
+      "close": "閉じる",
+      "back": "戻る",
+      "next": "次へ",
+      "runAnalysis": "この条件で時刻歴解析を実行",
+      "running": "解析中",
+      "fix": "修正する",
+      "saveConfig": "この条件を保存",
+      "continueToRun": "解析実行へ進む"
+    },
+    "status": {
+      "notSet": "未設定",
+      "incomplete": "入力不足",
+      "ready": "実行可能",
+      "running": "解析中",
+      "complete": "完了",
+      "error": "エラー"
+    },
+    "steps": {
+      "intro": { "label": "はじめに", "description": "解析の流れを確認します" },
+      "check": { "label": "入力チェック", "description": "前提条件と不足項目を確認します" },
+      "groundMotion": { "label": "地震波設定", "description": "解析に使う地震波を選択します" },
+      "analysis": { "label": "解析条件設定", "description": "時間刻み・解析時間・減衰を設定します" },
+      "run": { "label": "解析実行", "description": "条件を確認して解析を実行します" },
+      "results": { "label": "結果表示", "description": "グラフと3Dアニメーションを確認します" }
+    },
+    "stepState": {
+      "notStarted": "未着手",
+      "inProgress": "途中",
+      "complete": "完了",
+      "invalid": "要修正"
+    },
+    "currentStep": "ステップ",
+    "pageGuidance": "このページで行うこと",
+    "latestResult": "最新結果サマリ",
+    "noLatestResult": "解析を実行すると、最大応答と発生時刻がここに表示されます。",
+    "intro": {
+      "heading": "はじめに",
+      "lead": "時刻歴応答解析は、地震波に対する構造物の変位・速度・加速度を時間ごとに確認する解析です。",
+      "flow": ["地震波を読み込む", "入力と解析条件を確認する", "解析を実行する", "グラフと3Dアニメーションで結果を確認する"],
+      "help": "左のステップを上から順に進めてください。モデル・支点・質量は前段画面の確定内容を参照します。"
+    },
+    "inputCheck": {
+      "heading": "入力チェック",
+      "description": "前段で確定したモデル情報は参照のみです。解析に必要な設定だけ、このガイド内で修正できます。",
+      "readOnly": "前段画面で確定済み",
+      "editable": "このガイドで修正可能",
+      "nodeMemberCount": "節点 {nodes} / 部材 {members}",
+      "supportCount": "支点 {count}",
+      "massCases": "質量ケース: {names}",
+      "supplement": {
+        "model": "節点と部材の定義はモデル入力画面で管理します。",
+        "support": "支点条件はモデル入力画面で管理します。",
+        "mass": "質量ケースは前段の質量設定を使用します。",
+        "groundMotion": "解析に使用する地震波と単位を確認します。",
+        "timeStep": "地震波の時間刻みと一致させることを推奨します。",
+        "duration": "地震波長を超えない解析時間を指定します。",
+        "method": "Newmark β 法と減衰条件を確認します。",
+        "animation": "結果の変位成分に応じて表示モードを選択できます。"
+      }
+    },
+    "common": {
+      "ok": "OK",
+      "ng": "NG",
+      "warning": "警告",
+      "unknown": "未確認",
+      "info": "ヒント"
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import locale from "../../i18n/locales/ja.json";
 import type { TimeHistoryMainStatus } from "./wizardState";
 
 type StatusBadgeProps = {
@@ -5,17 +6,20 @@ type StatusBadgeProps = {
 };
 
 const labels: Record<TimeHistoryMainStatus, string> = {
-  "not-set": "未設定",
-  unconfigured: "未設定",
-  incomplete: "入力不足",
-  ready: "解析可能",
-  running: "解析中",
-  done: "解析済み",
-  complete: "解析済み",
-  error: "エラーあり",
+  "not-set": locale.thAnalysis.status.notSet,
+  unconfigured: locale.thAnalysis.status.notSet,
+  incomplete: locale.thAnalysis.status.incomplete,
+  ready: locale.thAnalysis.status.ready,
+  running: locale.thAnalysis.status.running,
+  done: locale.thAnalysis.status.complete,
+  complete: locale.thAnalysis.status.complete,
+  error: locale.thAnalysis.status.error,
 };
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const className = "time-history-status-badge " + status;
-  return <span className={className}>{labels[status]}</span>;
+  return (
+    <span className={`time-history-status-badge ${status}`} role="status">
+      {labels[status]}
+    </span>
+  );
 }

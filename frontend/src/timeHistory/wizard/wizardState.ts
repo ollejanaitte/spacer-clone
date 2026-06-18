@@ -1,24 +1,57 @@
+import locale from "../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../types";
 
-export type TimeHistoryMainStatus = "not-set" | "unconfigured" | "incomplete" | "ready" | "running" | "done" | "complete" | "error";
-export type TimeHistoryWizardStepId = "intro" | "check" | "groundMotion" | "analysis" | "output" | "run" | "results";
-export type TimeHistoryCheck = { id: string; label: string; status: "ok" | "ng" | "warning" | "unknown"; reason: string; action: string; section: TimeHistoryWizardStepId };
-export type TimeHistoryCheckItem = { id: string; label: string; state: "ok" | "ng" | "warning" | "unknown"; reason: string; action: string; section: TimeHistoryWizardStepId };
+const text = locale.thAnalysis;
 
-export const timeHistoryWizardSteps: Array<{ id: TimeHistoryWizardStepId; label: string; description: string }> = [
-  { id: "intro", label: "はじめに", description: "解析の流れを確認します" },
-  { id: "check", label: "入力チェック", description: "不足入力を確認します" },
-  { id: "groundMotion", label: "地震波設定", description: "CSV / H24波形を読み込みます" },
-  { id: "analysis", label: "解析条件設定", description: "dt・解析時間・減衰を確認します" },
-  { id: "output", label: "出力対象選択", description: "確認したい節点・部材を整理します" },
-  { id: "run", label: "解析実行", description: "条件を確認して実行します" },
-  { id: "results", label: "結果表示", description: "グラフ・表・アニメーションを確認します" },
-];
+export type TimeHistoryMainStatus =
+  | "not-set"
+  | "unconfigured"
+  | "incomplete"
+  | "ready"
+  | "running"
+  | "done"
+  | "complete"
+  | "error";
+export type TimeHistoryWizardStepId = "intro" | "check" | "groundMotion" | "analysis" | "run" | "results";
+export type TimeHistoryStepState = "not-started" | "in-progress" | "complete" | "invalid";
+export type TimeHistoryCheck = {
+  id: string;
+  label: string;
+  status: "ok" | "ng" | "warning" | "unknown";
+  reason: string;
+  action: string;
+  section: TimeHistoryWizardStepId;
+  readOnly?: boolean;
+};
+export type TimeHistoryCheckItem = {
+  id: string;
+  label: string;
+  state: "ok" | "ng" | "warning" | "unknown";
+  reason: string;
+  action: string;
+  section: TimeHistoryWizardStepId;
+};
+
+export const timeHistoryWizardSteps: Array<{
+  id: TimeHistoryWizardStepId;
+  label: string;
+  description: string;
+}> = (Object.keys(text.steps) as TimeHistoryWizardStepId[]).map((id) => ({
+  id,
+  label: text.steps[id].label,
+  description: text.steps[id].description,
+}));
 
 export function selectTimeHistoryMainStatus(
   project: ProjectModel | null,
   result: TimeHistoryResult | null | undefined,
-  options: { running?: boolean; loading?: boolean; hasResult?: boolean; hasError?: boolean; error?: StructuredMessage | null } = {},
+  options: {
+    running?: boolean;
+    loading?: boolean;
+    hasResult?: boolean;
+    hasError?: boolean;
+    error?: StructuredMessage | null;
+  } = {},
 ): TimeHistoryMainStatus {
   if (options.running || options.loading) return "running";
   if (options.hasError || options.error || result?.meta?.status === "failed") return "error";
@@ -30,37 +63,162 @@ export function selectTimeHistoryMainStatus(
   return "ready";
 }
 
+export function buildStepStates(
+  project: ProjectModel,
+  result: TimeHistoryResult | null | undefined,
+  activeStep: TimeHistoryWizardStepId,
+): Record<TimeHistoryWizardStepId, TimeHistoryStepState> {
+  const checks = buildTimeHistoryChecks(project);
+  const index = timeHistoryWizardSteps.findIndex((step) => step.id === activeStep);
+  const invalidSections = new Set(checks.filter((item) => item.status === "ng").map((item) => item.section));
+  return Object.fromEntries(
+    timeHistoryWizardSteps.map((step, stepIndex) => {
+      let state: TimeHistoryStepState = stepIndex < index ? "complete" : stepIndex === index ? "in-progress" : "not-started";
+      if (invalidSections.has(step.id)) state = "invalid";
+      if (step.id === "results" && result) state = "complete";
+      return [step.id, state];
+    }),
+  ) as Record<TimeHistoryWizardStepId, TimeHistoryStepState>;
+}
+
 export function buildTimeHistoryChecks(project: ProjectModel): TimeHistoryCheck[] {
   const settings = project.analysisSettings.timeHistory;
   const groundMotions = project.groundMotions ?? [];
   const massCases = project.massCases ?? [];
-  const selectedGroundMotion = groundMotions.find((motion) => motion.id === settings?.groundMotionId) ?? groundMotions[0];
+  const selectedGroundMotion =
+    groundMotions.find((motion) => motion.id === settings?.groundMotionId) ?? groundMotions[0];
   const timeStep = settings?.timeStep ?? selectedGroundMotion?.timeStep;
   const duration = settings?.duration ?? selectedGroundMotion?.duration;
   const sampleCount = selectedGroundMotion?.samples?.length ?? 0;
   const expected = expectedSampleCount(duration, timeStep);
   const sampleDelta = expected === null ? null : sampleCount - expected;
+  const hasModel = project.nodes.length > 0 && project.members.length > 0;
+  const hasSupports = project.supports.length > 0;
+  const hasMass = massCases.length > 0;
   return [
-    { id: "model", label: "モデル定義", status: project.nodes.length > 0 && project.members.length > 0 ? "ok" : "ng", reason: project.nodes.length > 0 && project.members.length > 0 ? "節点・部材があります。" : "節点または部材が不足しています。", action: "モデル入力画面で節点・部材を確認してください。", section: "check" },
-    { id: "support", label: "支点条件", status: project.supports.length > 0 ? "ok" : "ng", reason: project.supports.length > 0 ? "支点条件があります。" : "支点条件がありません。", action: "支点条件を設定してください。", section: "check" },
-    { id: "mass", label: "質量設定", status: massCases.length > 0 ? "ok" : "ng", reason: massCases.length > 0 ? "質量ケースがあります。" : "時刻歴解析に必要な質量ケースがありません。", action: "質量ケースを作成してください。", section: "analysis" },
-    { id: "groundMotion", label: "地震波", status: selectedGroundMotion && sampleCount > 0 ? "ok" : "ng", reason: selectedGroundMotion && sampleCount > 0 ? `${sampleCount} 点の地震波が選択されています。` : "地震波が選択されていません。", action: "地震波設定でCSVまたは道路橋示方書形式の地震波を読み込んでください。", section: "groundMotion" },
-    { id: "unit", label: "地震波単位", status: selectedGroundMotion?.unit === "gal" || selectedGroundMotion?.unit === "m/s2" ? "ok" : "ng", reason: selectedGroundMotion ? `単位は ${selectedGroundMotion.unit} です。` : "単位を確認できません。", action: "地震波設定で単位を確認してください。", section: "groundMotion" },
-    { id: "timeStep", label: "dt", status: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? "ok" : "ng", reason: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? `dt = ${timeStep} 秒です。` : "dtが未設定または不正です。", action: "解析条件設定で時間刻みを確認してください。", section: "analysis" },
-    { id: "duration", label: "解析時間", status: typeof duration === "number" && Number.isFinite(duration) && duration > 0 ? "ok" : "ng", reason: typeof duration === "number" && Number.isFinite(duration) && duration > 0 ? `解析時間 = ${duration} 秒です。` : "解析時間が未設定または不正です。", action: "解析条件設定で解析時間を確認してください。", section: "analysis" },
-    { id: "sampleCount", label: "地震波点数と解析時間", status: sampleDelta === null || sampleCount === 0 ? "unknown" : sampleDelta === 0 ? "ok" : "warning", reason: sampleDelta === null || sampleCount === 0 ? "地震波点数と解析時間の一致をまだ判定できません。" : sampleDelta === 0 ? `必要点数 ${expected} 点と一致しています。` : `地震波 ${sampleCount} 点、解析条件上の必要点数 ${expected} 点です。`, action: "必要に応じて解析時間を地震波に合わせてください。", section: "groundMotion" },
-    { id: "method", label: "解析条件", status: settings?.method === "newmark-beta" ? "ok" : "ng", reason: settings?.method === "newmark-beta" ? "Newmark-β法が選択されています。" : "時刻歴解析条件が未設定です。", action: "解析条件設定で初期値を作成・確認してください。", section: "analysis" },
-    { id: "animation", label: "アニメーション用変位成分", status: "unknown", reason: "解析後に、出力された変位成分から表示可否を判定します。", action: "結果表示のアニメーション欄を確認してください。", section: "results" },
+    {
+      id: "model",
+      label: "モデル定義",
+      status: hasModel ? "ok" : "ng",
+      reason: hasModel
+        ? text.inputCheck.nodeMemberCount.replace("{nodes}", String(project.nodes.length)).replace("{members}", String(project.members.length))
+        : "節点または部材が不足しています。",
+      action: text.inputCheck.supplement.model,
+      section: "check",
+      readOnly: true,
+    },
+    {
+      id: "support",
+      label: "支点条件",
+      status: hasSupports ? "ok" : "ng",
+      reason: hasSupports
+        ? text.inputCheck.supportCount.replace("{count}", String(project.supports.length))
+        : "支点条件がありません。",
+      action: text.inputCheck.supplement.support,
+      section: "check",
+      readOnly: true,
+    },
+    {
+      id: "mass",
+      label: "質量設定",
+      status: hasMass ? "ok" : "ng",
+      reason: hasMass
+        ? text.inputCheck.massCases.replace("{names}", massCases.map((massCase) => massCase.name || massCase.id).join(", "))
+        : "質量ケースがありません。",
+      action: text.inputCheck.supplement.mass,
+      section: "check",
+      readOnly: true,
+    },
+    {
+      id: "groundMotion",
+      label: "地震波",
+      status: selectedGroundMotion && sampleCount > 0 ? "ok" : "ng",
+      reason: selectedGroundMotion && sampleCount > 0 ? `${selectedGroundMotion.name || selectedGroundMotion.id} / ${sampleCount} 点` : "地震波が選択されていません。",
+      action: text.inputCheck.supplement.groundMotion,
+      section: "groundMotion",
+    },
+    {
+      id: "unit",
+      label: "地震波単位",
+      status: selectedGroundMotion?.unit === "gal" || selectedGroundMotion?.unit === "m/s2" ? "ok" : "ng",
+      reason: selectedGroundMotion ? `単位: ${selectedGroundMotion.unit}` : "単位を確認できません。",
+      action: text.inputCheck.supplement.groundMotion,
+      section: "groundMotion",
+    },
+    {
+      id: "timeStep",
+      label: "時間刻み dt",
+      status: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? "ok" : "ng",
+      reason: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? `dt = ${timeStep} s` : "dt が未設定または不正です。",
+      action: text.inputCheck.supplement.timeStep,
+      section: "analysis",
+    },
+    {
+      id: "duration",
+      label: "解析時間",
+      status: typeof duration === "number" && Number.isFinite(duration) && duration > 0 ? "ok" : "ng",
+      reason: typeof duration === "number" && Number.isFinite(duration) && duration > 0 ? `${duration} s` : "解析時間が未設定または不正です。",
+      action: text.inputCheck.supplement.duration,
+      section: "analysis",
+    },
+    {
+      id: "sampleCount",
+      label: "地震波点数と解析時間",
+      status: sampleDelta === null || sampleCount === 0 ? "unknown" : sampleDelta === 0 ? "ok" : "warning",
+      reason:
+        sampleDelta === null || sampleCount === 0
+          ? "点数の整合性を確認できません。"
+          : sampleDelta === 0
+            ? `必要点数 ${expected} 点と一致しています。`
+            : `地震波 ${sampleCount} 点 / 解析条件 ${expected} 点`,
+      action: text.inputCheck.supplement.duration,
+      section: "analysis",
+    },
+    {
+      id: "method",
+      label: "解析条件",
+      status: settings?.method === "newmark-beta" ? "ok" : "ng",
+      reason: settings?.method === "newmark-beta" ? "Newmark β 法" : "解析手法が未設定です。",
+      action: text.inputCheck.supplement.method,
+      section: "analysis",
+    },
+    {
+      id: "animation",
+      label: "アニメーション用変位成分",
+      status: "unknown",
+      reason: "結果取得後に利用可能な X/Y/Z 成分を判定します。",
+      action: text.inputCheck.supplement.animation,
+      section: "results",
+    },
   ];
 }
 
-export function buildTimeHistoryCheckItems(args: { project: ProjectModel | null; result: TimeHistoryResult | null; inputs?: Record<string, unknown> }): TimeHistoryCheckItem[] {
+export function buildTimeHistoryCheckItems(args: {
+  project: ProjectModel | null;
+  result: TimeHistoryResult | null;
+  inputs?: Record<string, unknown>;
+}): TimeHistoryCheckItem[] {
   if (!args.project) return buildMissingChecks();
-  return buildTimeHistoryChecks(args.project).map((check) => ({ ...check, state: check.id === "animation" && args.result && !isXyzAnimationAvailable(args.result).available ? "warning" : check.status }));
+  return buildTimeHistoryChecks(args.project).map((check) => ({
+    ...check,
+    state:
+      check.id === "animation" && args.result && !isXyzAnimationAvailable(args.result).available
+        ? "warning"
+        : check.status,
+  }));
 }
 
 function buildMissingChecks(): TimeHistoryCheckItem[] {
-  return ["model", "support", "mass", "groundMotion", "unit", "timeStep", "duration", "sampleCount", "method", "animation"].map((id) => ({ id, label: id, state: "ng", reason: "未設定です。", action: "入力を確認してください。", section: "check" as TimeHistoryWizardStepId }));
+  return ["model", "support", "mass", "groundMotion", "unit", "timeStep", "duration", "sampleCount", "method", "animation"].map(
+    (id) => ({
+      id,
+      label: id,
+      state: "ng",
+      reason: "未設定です。",
+      action: "入力を確認してください。",
+      section: "check" as TimeHistoryWizardStepId,
+    }),
+  );
 }
 
 export function expectedSampleCount(duration: number | undefined, timeStep: number | undefined): number | null {
@@ -86,24 +244,27 @@ export function computeGroundMotionConsistency(args: { samples: number[]; timeSt
 }
 
 export function formatCheckStatus(status: TimeHistoryCheck["status"]): string {
-  if (status === "ok") return "OK";
-  if (status === "ng") return "NG";
-  if (status === "warning") return "警告";
-  return "未確認";
+  if (status === "ok") return text.common.ok;
+  if (status === "ng") return text.common.ng;
+  if (status === "warning") return text.common.warning;
+  return text.common.unknown;
 }
 
-export function summarizeTimeHistoryResult(result: TimeHistoryResult | null | undefined): Array<{ label: string; value: string }> {
+export function summarizeTimeHistoryResult(
+  result: TimeHistoryResult | null | undefined,
+): Array<{ label: string; value: string }> {
   if (!result) return [];
   return [
     { label: "最大変位", value: maxAbsRecord(result.displacements) },
     { label: "最大速度", value: maxAbsRecord(result.velocities) },
     { label: "最大加速度", value: maxAbsRecord(result.accelerations) },
-    { label: "最大断面力", value: "-" },
     { label: "最大値の発生時刻", value: maxAbsTime(result) },
   ];
 }
 
-export function isXyzAnimationAvailable(result: TimeHistoryResult | null | undefined): { available: boolean; missingAxes: Array<"X" | "Y" | "Z"> } {
+export function isXyzAnimationAvailable(
+  result: TimeHistoryResult | null | undefined,
+): { available: boolean; missingAxes: Array<"X" | "Y" | "Z"> } {
   if (!result) return { available: false, missingAxes: ["X", "Y", "Z"] };
   const keys = Object.keys(result.displacements ?? {});
   const active = String(result.meta.groundMotions?.[0]?.direction ?? "").toUpperCase();
@@ -116,14 +277,32 @@ export function isXyzAnimationAvailable(result: TimeHistoryResult | null | undef
   return { available: missingAxes.length === 0, missingAxes };
 }
 
-export function toWizardError(kind: string, detail: Record<string, any> = {}) {
-  const targetSection: TimeHistoryWizardStepId = kind.includes("ground-motion") ? "groundMotion" : kind.includes("dt") ? "analysis" : kind.includes("output") ? "output" : "results";
+export function toWizardError(kind: string, detail: Record<string, unknown> = {}) {
+  const targetSection: TimeHistoryWizardStepId = kind.includes("ground-motion")
+    ? "groundMotion"
+    : kind.includes("dt")
+      ? "analysis"
+      : kind.includes("output")
+        ? "run"
+        : "results";
   const missingAxes = Array.isArray(detail.missingAxes) ? detail.missingAxes.join("・") : "";
   return {
-    title: kind === "ground-motion-mismatch" ? "地震波データの点数と解析時間が一致していません" : kind === "ground-motion-missing" ? "地震波が選択されていません" : kind === "invalid-dt" ? "dtを確認してください" : kind === "output-target-missing" ? "出力対象が選択されていません" : "XYZ合成変位を表示できません",
+    title:
+      kind === "ground-motion-mismatch"
+        ? "地震波データの点数と解析時間が一致していません"
+        : kind === "ground-motion-missing"
+          ? "地震波が選択されていません"
+          : kind === "invalid-dt"
+            ? "dt を確認してください"
+            : kind === "output-target-missing"
+              ? "表示対象が選択されていません"
+              : "XYZ合成変位を表示できません",
     reason: missingAxes ? `${missingAxes}方向が不足しています。` : "入力条件を確認してください。",
     detail: Object.entries(detail).map(([key, value]) => `${key}: ${JSON.stringify(value)}`),
-    buttons: [{ id: "go-to-section", label: "該当セクションへ移動" }, { id: "match-duration", label: "解析時間を地震波に合わせる" }],
+    buttons: [
+      { id: "go-to-section", label: text.actions.fix },
+      { id: "match-duration", label: "解析時間を地震波に合わせる" },
+    ],
     targetSection,
   };
 }
@@ -132,19 +311,37 @@ function maxAbsRecord(record: Record<string, number[]> | undefined): string {
   if (!record) return "-";
   let max = 0;
   let key = "";
-  for (const [entryKey, values] of Object.entries(record)) for (const value of values) if (Number.isFinite(value) && Math.abs(value) >= Math.abs(max)) { max = value; key = entryKey; }
+  for (const [entryKey, values] of Object.entries(record)) {
+    for (const value of values) {
+      if (Number.isFinite(value) && Math.abs(value) >= Math.abs(max)) {
+        max = value;
+        key = entryKey;
+      }
+    }
+  }
   return key ? `${key}: ${formatNumber(max)}` : "-";
 }
 
 function maxAbsTime(result: TimeHistoryResult): string {
   let max = 0;
   let index = -1;
-  for (const record of [result.displacements, result.velocities, result.accelerations]) for (const values of Object.values(record ?? {})) values.forEach((value, valueIndex) => { if (Number.isFinite(value) && Math.abs(value) >= Math.abs(max)) { max = value; index = valueIndex; } });
+  for (const record of [result.displacements, result.velocities, result.accelerations]) {
+    for (const values of Object.values(record ?? {})) {
+      values.forEach((value, valueIndex) => {
+        if (Number.isFinite(value) && Math.abs(value) >= Math.abs(max)) {
+          max = value;
+          index = valueIndex;
+        }
+      });
+    }
+  }
   const time = index >= 0 ? result.time?.[index] : undefined;
-  return typeof time === "number" ? `${formatNumber(time)} 秒` : "-";
+  return typeof time === "number" ? `${formatNumber(time)} s` : "-";
 }
 
 function formatNumber(value: number): string {
   if (!Number.isFinite(value)) return "-";
-  return Math.abs(value) >= 1000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001) ? value.toExponential(4) : value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+  return Math.abs(value) >= 1000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001)
+    ? value.toExponential(4)
+    : value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
 }
