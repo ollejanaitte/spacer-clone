@@ -1652,3 +1652,63 @@ button:disabled {
   font-size: 12px;
   color: #334155;
 }
+
+.time-history-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.time-history-modal-panel {
+  width: min(1280px, 96vw);
+  max-height: 92vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #cbd5df;
+  border-radius: 10px;
+  background: #eef2f5;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+}
+
+.time-history-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  color: #f8fafc;
+  background: #243447;
+  border-bottom: 1px solid #152232;
+}
+
+.time-history-modal-header h2,
+.time-history-modal-header p {
+  margin: 0;
+}
+
+.time-history-modal-header p {
+  margin-top: 4px;
+  color: #bdd0e3;
+  font-size: 12px;
+}
+
+.time-history-modal-content {
+  display: grid;
+  gap: 12px;
+  overflow: auto;
+  padding: 14px;
+}
+
+.time-history-modal-header .secondary-button {
+  border: 1px solid #9fb7ce;
+  border-radius: 6px;
+  padding: 7px 12px;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.08);
+}

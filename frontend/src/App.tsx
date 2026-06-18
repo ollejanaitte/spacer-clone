@@ -23,6 +23,8 @@ import type {
 } from "./types";
 import type { ViewerSelection } from "./viewer/types";
 import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
+import { TimeHistoryModal } from "./timeHistory/TimeHistoryModal";
+import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -53,6 +55,7 @@ export function App() {
   const [logs, setLogs] = useState<string[]>(["UI initialized."]);
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
+  const [timeHistoryModalOpen, setTimeHistoryModalOpen] = useState<boolean>(false);
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(
@@ -71,6 +74,18 @@ export function App() {
   const errors = [...(validation?.errors ?? []), ...(result?.errors ?? []), ...apiErrors, ...viewerErrors];
   const warnings = [...(validation?.warnings ?? []), ...(result?.warnings ?? [])];
   const canRun = !running && validation?.valid !== false;
+  const timeHistoryAnalysis = useTimeHistoryAnalysis({
+    onSuccess: (analysisResult) => {
+      setProject((current) => ({
+        ...current,
+        analysisResults: {
+          ...current.analysisResults,
+          timeHistory: analysisResult.timeHistoryResult ?? null,
+        },
+      }));
+      setDirty(true);
+    },
+  });
 
   const commitProject = (nextProject: ProjectModel) => {
     setProject(nextProject);
@@ -264,6 +279,20 @@ export function App() {
     }
   };
 
+  const runTimeHistoryAnalysis = async () => {
+    try {
+      const response = await timeHistoryAnalysis.run(project);
+      setResult(response);
+      setResultExports(null);
+      setBottomTab(response.errors.length > 0 ? "errors" : "timeHistory");
+      log(`Time history analysis complete. Status: ${analysisStatusLabel(response.analysisSummary.status)}`);
+    } catch (error) {
+      pushApiError(error, "TIME_HISTORY_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("Time history analysis API request failed.");
+    }
+  };
+
   const runInfluenceAnalysis = async () => {
     setRunning(true);
     setApiErrors([]);
@@ -421,6 +450,7 @@ export function App() {
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
+        onOpenTimeHistory={() => setTimeHistoryModalOpen(true)}
         onOpenModelComparison={() => {
           window.history.pushState({}, "", "/compare");
           setComparisonOpen(true);
@@ -482,6 +512,22 @@ export function App() {
         open={bridgeWizardOpen}
         onClose={() => setBridgeWizardOpen(false)}
         onCommit={handleBridgeGenerated}
+      />
+      <TimeHistoryModal
+        open={timeHistoryModalOpen}
+        project={project}
+        result={
+          timeHistoryAnalysis.result?.timeHistoryResult ??
+          (result?.analysisSummary.analysisType === "time_history" ? result.timeHistoryResult ?? null : null) ??
+          project.analysisResults?.timeHistory ??
+          null
+        }
+        error={timeHistoryAnalysis.error}
+        running={timeHistoryAnalysis.loading}
+        onClose={() => setTimeHistoryModalOpen(false)}
+        onRun={() => void runTimeHistoryAnalysis()}
+        onProjectChange={commitProject}
+        onAnimationOverrideChange={setTimeHistoryNodeOverride}
       />
       <ResultsPanel
         activeTab={bottomTab}

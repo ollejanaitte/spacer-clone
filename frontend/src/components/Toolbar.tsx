@@ -1,4 +1,4 @@
-﻿import { Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves, Activity } from "lucide-react";
+﻿import { Activity, Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 
 type ToolbarProps = {
@@ -19,6 +19,7 @@ type ToolbarProps = {
   onRunEigen: () => void;
   onRunInfluence: () => void;
   onRunResponseSpectrum: () => void;
+  onOpenTimeHistory?: () => void;
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
@@ -46,6 +47,7 @@ export function Toolbar({
   onRunEigen,
   onRunInfluence,
   onRunResponseSpectrum,
+  onOpenTimeHistory,
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
@@ -96,6 +98,17 @@ export function Toolbar({
             <Save size={16} />
             {t.saveButton}
           </button>
+          {onOpenTimeHistory && (
+            <button
+              type="button"
+              onClick={onOpenTimeHistory}
+              title="時刻歴応答解析を開く"
+              data-testid="open-time-history"
+            >
+              <Activity size={16} />
+              時刻歴応答解析を開く
+            </button>
+          )}
           <button type="button" data-testid="open-model-comparison" onClick={onOpenModelComparison}>
             A/B 比較
           </button>
