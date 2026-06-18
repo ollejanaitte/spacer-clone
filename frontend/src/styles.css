@@ -2707,6 +2707,110 @@ button:disabled {
   background: var(--th-color-panel);
 }
 
+.time-history-model-animation {
+  display: grid;
+  gap: var(--th-space-3);
+}
+
+.time-history-animation-toolbar,
+.time-history-playback-controls,
+.time-history-animation-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--th-space-3);
+}
+
+.time-history-animation-toolbar {
+  justify-content: space-between;
+}
+
+.time-history-animation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: var(--th-space-3);
+  min-height: 500px;
+}
+
+.time-history-animation-canvas {
+  min-height: 500px;
+  overflow: hidden;
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-bg);
+}
+
+.time-history-animation-options {
+  display: grid;
+  align-content: start;
+  gap: var(--th-space-4);
+  padding: var(--th-space-4);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
+.time-history-animation-options fieldset,
+.time-history-animation-options label,
+.time-history-playback-controls label {
+  display: grid;
+  gap: var(--th-space-2);
+}
+
+.time-history-animation-options fieldset {
+  border: 0;
+  padding: 0;
+}
+
+.time-history-animation-options fieldset label {
+  grid-template-columns: auto 1fr;
+}
+
+.time-history-playback-controls {
+  padding: var(--th-space-3);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
+.time-history-playback-controls button,
+.time-history-playback-controls select,
+.time-history-playback-controls input[type="number"],
+.time-history-animation-toolbar button {
+  min-height: 38px;
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: #111c2f;
+}
+
+.time-history-seek {
+  flex: 1 1 260px;
+}
+
+.time-history-animation-status {
+  justify-content: space-between;
+  padding: var(--th-space-3);
+  color: var(--th-color-text-muted);
+  border-radius: var(--th-radius);
+  background: #111c2f;
+}
+
+.time-history-3d-label {
+  padding: 2px 5px;
+  color: #e5edf8;
+  border-radius: 4px;
+  background: rgba(14, 23, 38, 0.82);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1000px) {
+  .time-history-animation-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .time-history-config-grid,
   .time-history-check-list {

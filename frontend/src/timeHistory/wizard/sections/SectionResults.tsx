@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
-import { TimeHistoryResultViewer } from "../../TimeHistoryResultViewer";
 import { TimeHistoryChart } from "../../TimeHistoryChart";
+import { TimeHistoryModelAnimation } from "../../TimeHistoryModelAnimation";
 import { ResultSummaryCard } from "../ResultSummaryCard";
 
 type SectionResultsProps = {
@@ -89,7 +89,13 @@ export function SectionResults({ project, result = null, error = null, onAnimati
               />
             )}
             {activePage === "ground" && <GroundMotionPage motion={selectedGroundMotion} />}
-            {activePage === "animation" && <TimeHistoryResultViewer project={project} result={result} error={error} status={result?.meta?.status} onOverrideChange={onAnimationOverrideChange} />}
+            {activePage === "animation" && result && (
+              <TimeHistoryModelAnimation
+                project={project}
+                result={result}
+                onOverrideChange={onAnimationOverrideChange}
+              />
+            )}
             {activePage === "table" && <TablePage result={result} selectedKey={selectedKey} values={selectedSeries} />}
             {activePage === "errors" && <ErrorsPage result={result} error={error} />}
           </>
