@@ -121,7 +121,7 @@ describe("3D display coordinate integration", () => {
     );
 
     expect(objects.find((object) => object.userData.type === "reaction-label")?.userData.text)
-      .toBe("RFX=1  RFZ=3");
+      .toBe("RFX=1 kN  RFZ=3 kN");
     const axialLabels = objects.filter((object) => object.userData.type === "axial-force-label");
     expect(axialLabels).toHaveLength(2);
     expect(axialLabels.map((object) => object.userData.text)).toEqual(

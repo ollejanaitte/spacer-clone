@@ -51,8 +51,8 @@ export function renderResultDiagrams(
   if (visibility.axialForce) {
     objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale));
   }
-  if (visibility.axialForceLabels) {
-    objects.push(...renderAxialForceLabels(project, nodeMap, viewModel.memberForces.items, scales));
+  if (visibility.memberForceLabels || visibility.axialForceLabels) {
+    objects.push(...renderMemberForceLabels(project, nodeMap, viewModel.memberForces.items, scales, visibility));
   }
   if (visibility.momentMy) {
     objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale));
@@ -65,7 +65,7 @@ export function renderResultDiagrams(
 }
 
 function renderReactionLabels(
-  reactions: Array<{ nodeId: string; fx: number; fy: number; fz: number }>,
+  reactions: Array<{ nodeId: string; fx: number; fy: number; fz: number; mx: number; my: number; mz: number }>,
   nodeMap: Map<string, THREE.Vector3>,
   scales: ViewerScales,
   visibility: ViewerVisibility,
@@ -78,6 +78,9 @@ function renderReactionLabels(
       fx: visibility.reactionLabelFx !== false,
       fy: visibility.reactionLabelFy !== false,
       fz: visibility.reactionLabelFz !== false,
+      mx: Boolean(visibility.reactionLabelMx),
+      my: Boolean(visibility.reactionLabelMy),
+      mz: Boolean(visibility.reactionLabelMz),
     });
     if (!text) continue;
     const label = createLabelSprite(text, "#176b55", scales.labelSize);
@@ -88,7 +91,16 @@ function renderReactionLabels(
   return objects;
 }
 
-function renderAxialForceLabels(
+const memberForceLabelMap: Record<MemberSectionForceComponent, { label: string; flag: keyof ViewerVisibility; unit: "kN" | "kN·m" }> = {
+  N: { label: "FX", flag: "memberForceLabelFx", unit: "kN" },
+  Qy: { label: "FY", flag: "memberForceLabelFy", unit: "kN" },
+  Qz: { label: "FZ", flag: "memberForceLabelFz", unit: "kN" },
+  Mx: { label: "MX", flag: "memberForceLabelMx", unit: "kN·m" },
+  My: { label: "MY", flag: "memberForceLabelMy", unit: "kN·m" },
+  Mz: { label: "MZ", flag: "memberForceLabelMz", unit: "kN·m" },
+};
+
+function renderMemberForceLabels(
   project: ProjectModel,
   nodeMap: Map<string, THREE.Vector3>,
   forces: Array<{
@@ -98,9 +110,13 @@ function renderAxialForceLabels(
     j: number;
   }>,
   scales: ViewerScales,
+  visibility: ViewerVisibility,
 ): THREE.Object3D[] {
   const objects: THREE.Object3D[] = [];
-  for (const force of forces.filter((item) => item.component === "N")) {
+  for (const force of forces) {
+    const labelSpec = memberForceLabelMap[force.component];
+    const enabled = force.component === "N" && visibility.axialForceLabels ? true : Boolean(visibility[labelSpec.flag]);
+    if (!enabled) continue;
     const member = project.members.find((item) => item.id === force.memberId);
     if (!member) continue;
     const ends = getMemberEnds(member, nodeMap);
@@ -109,10 +125,17 @@ function renderAxialForceLabels(
       ["i", ends.start, force.i],
       ["j", ends.end, force.j],
     ] as const) {
-      const text = `${force.memberId}-${end} ${formatForceLabel("FX", value)}`;
+      const text = `${force.memberId}-${end} ${formatForceLabel(labelSpec.label, value, labelSpec.unit)}`;
       const label = createLabelSprite(text, value >= 0 ? "#1d5f9a" : "#a43a3a", scales.labelSize);
       label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 3.5, 0));
-      label.userData = { type: "axial-force-label", memberId: force.memberId, end, value, text };
+      label.userData = {
+        type: force.component === "N" ? "axial-force-label" : "member-force-label",
+        memberId: force.memberId,
+        end,
+        component: force.component,
+        value,
+        text,
+      };
       objects.push(label);
     }
   }

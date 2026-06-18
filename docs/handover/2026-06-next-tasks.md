@@ -208,3 +208,46 @@ npm test -- --run
 - WebGLで確実に太さが変わる部材線描画方式。
 - A/B差分、同期再生、オーバーレイ、並列一括解析、Bモデル永続保存、別ウィンドウ表示。
 - jsdomはCanvas 2D contextを実装しないため、ラベル生成テスト時に警告が出るがテスト結果は成功する。
+
+## Viewer Phase2 安定拡張 実施記録（2026-06-18）
+
+### 実装した内容
+
+- 反力数値ラベルに RMX/RMY/RMZ を追加した。表示はラベルのみで、単位は `kN·m`。
+- 既存の RFX/RFY/RFZ ラベルと同じ反力ラベル表示 UI に統合した。
+- 部材端断面力ラベルを FX に加えて FY/FZ/MX/MY/MZ まで選択可能にした。
+- 力成分は `kN`、モーメント成分は `kN·m` で表示する。
+- 部材端断面力ラベルは解析結果の部材ローカル座標系成分として表示する。SPACER座標系表示ON時も表示位置だけがViewer座標変換され、成分名と符号は解析結果の部材座標系のまま扱う。
+- Backend解析ロジック、Backend API、project.jsonスキーマ、payload形式は変更していない。
+
+### 設計だけに留めた内容
+
+- `docs/design/viewer-rendering-improvements.md` を追加し、Line2 / LineMaterial、ラベル衝突回避、優先度ベース非表示、引き出し線、クラスタリングを設計のみ記載した。
+- `docs/design/model-comparison-view.md` を更新し、Bモデル永続保存、A/B差分表示、同期再生、オーバーレイ表示をPhase2計画として整理した。
+- A/B比較の永続保存、差分表示、同期再生、オーバーレイ、別ウィンドウ化は実装していない。
+
+### 実行したテスト
+
+- `npm ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run test -- --run`
+- `npm run build`
+- `npm run electron:compile`
+- `python -m pytest backend/tests -q`
+- 可能なら `npm run electron:build`
+
+### 残課題
+
+- ラベル衝突回避は未実装。
+- Line2 / LineMaterial による確実な線幅制御は未実装。
+- 断面力分布図、カラーマップ、モーメント円弧矢印は未実装。
+- A/B比較の永続保存、差分表示、同期再生、オーバーレイは未実装。
+
+### 次に実装すべき順番
+
+1. 同一ID同士のA/B主要メトリクス差分テーブル。
+2. Viewerラベル優先度付けと選択中対象の強制表示。
+3. Line2 / LineMaterial による部材線幅改善。
+4. Bモデル永続保存のschema設計とマイグレーション。
+5. 同期再生、オーバーレイ、別ウィンドウ化。

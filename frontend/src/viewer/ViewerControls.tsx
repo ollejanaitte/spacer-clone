@@ -408,23 +408,28 @@ export function ViewerControls({
           <Toggle label="RFX" checked={visibility.reactionLabelFx !== false} onChange={(value) => setFlag("reactionLabelFx", value)} />
           <Toggle label="RFY" checked={visibility.reactionLabelFy !== false} onChange={(value) => setFlag("reactionLabelFy", value)} />
           <Toggle label="RFZ" checked={visibility.reactionLabelFz !== false} onChange={(value) => setFlag("reactionLabelFz", value)} />
+          <Toggle label="RMX" checked={Boolean(visibility.reactionLabelMx)} onChange={(value) => setFlag("reactionLabelMx", value)} />
+          <Toggle label="RMY" checked={Boolean(visibility.reactionLabelMy)} onChange={(value) => setFlag("reactionLabelMy", value)} />
+          <Toggle label="RMZ" checked={Boolean(visibility.reactionLabelMz)} onChange={(value) => setFlag("reactionLabelMz", value)} />
         </div>
       </ControlGroup>
       <ControlGroup title="断面力表示">
         <div className="viewer-toggle-grid">
           <Toggle
             label="部材端値ラベル"
-            checked={Boolean(visibility.axialForceLabels)}
+            checked={Boolean(visibility.memberForceLabels || visibility.axialForceLabels)}
             disabled={!hasResult}
-            onChange={(value) => setFlag("axialForceLabels", value)}
+            onChange={(value) => setFlag("memberForceLabels", value)}
           />
-          <Toggle label="FX" checked={Boolean(visibility.axialForceLabels)} disabled={!hasResult} onChange={(value) => setFlag("axialForceLabels", value)} />
-          <Toggle label="FY（フェーズ2）" checked={false} disabled onChange={() => undefined} />
-          <Toggle label="FZ（フェーズ2）" checked={false} disabled onChange={() => undefined} />
-          <Toggle label="MX/MY/MZ（フェーズ2）" checked={false} disabled onChange={() => undefined} />
+          <Toggle label="FX" checked={visibility.memberForceLabelFx !== false} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFx", value)} />
+          <Toggle label="FY" checked={Boolean(visibility.memberForceLabelFy)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFy", value)} />
+          <Toggle label="FZ" checked={Boolean(visibility.memberForceLabelFz)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelFz", value)} />
+          <Toggle label="MX" checked={Boolean(visibility.memberForceLabelMx)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMx", value)} />
+          <Toggle label="MY" checked={Boolean(visibility.memberForceLabelMy)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMy", value)} />
+          <Toggle label="MZ" checked={Boolean(visibility.memberForceLabelMz)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMz", value)} />
         </div>
         <p className="viewer-result-legend">
-          凡例: RFX/RFY/RFZは全体座標系。FXは部材ローカルx軸の断面力で、正値を引張側として表示。
+          凡例: RFX/RFY/RFZは全体座標系の反力、RMX/RMY/RMZは全体座標系の反力モーメント。部材端FX/FY/FZ/MX/MY/MZは部材ローカル座標系の断面力で、SPACER座標系表示ON時も符号・成分名は解析結果の部材座標系のまま表示。
         </p>
       </ControlGroup>
       <ControlGroup title="表示サイズ">
