@@ -2441,3 +2441,95 @@ button:disabled {
     display: none;
   }
 }
+
+.time-history-section-heading,
+.time-history-check-card-heading,
+.time-history-check-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--th-space-3);
+}
+
+.time-history-section-heading {
+  align-items: flex-start;
+}
+
+.time-history-info-tip {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.14);
+  cursor: help;
+}
+
+.time-history-check-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--th-space-3);
+}
+
+.time-history-check-card {
+  display: grid;
+  gap: var(--th-space-3);
+  min-height: 170px;
+  padding: var(--th-space-4);
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
+.time-history-check-card.ok {
+  border-color: rgba(34, 197, 94, 0.38);
+}
+
+.time-history-check-card.ng,
+.time-history-check-card.warning {
+  border-color: rgba(249, 115, 22, 0.48);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.time-history-check-card p,
+.time-history-check-card small {
+  color: var(--th-color-text-muted);
+}
+
+.time-history-check-badge,
+.time-history-check-scope {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.time-history-check-badge.ok {
+  color: #d8ffe5;
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.time-history-check-badge.ng,
+.time-history-check-badge.warning {
+  color: #ffe4d5;
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.time-history-check-badge.unknown,
+.time-history-check-scope {
+  color: var(--th-color-text-muted);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.time-history-check-card footer button {
+  min-height: 34px;
+  color: #fff;
+  border: 1px solid var(--th-color-primary);
+  border-radius: var(--th-radius);
+  background: var(--th-color-primary);
+}
