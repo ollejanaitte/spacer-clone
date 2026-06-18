@@ -90,6 +90,14 @@ export function Viewer3D({
   }, [eigenModeNos, selectedEigenMode, onSelectedEigenModeChange]);
 
   useEffect(() => {
+    if (eigenModeNos.length > 0) {
+      setVisibility((current) =>
+        current.deformedShape ? current : { ...current, deformedShape: true },
+      );
+    }
+  }, [eigenModeNos]);
+
+  useEffect(() => {
     if (
       responseSpectrumOptions.length > 0 &&
       !responseSpectrumOptions.some((option) => option.key === selectedResponseSpectrumResult)

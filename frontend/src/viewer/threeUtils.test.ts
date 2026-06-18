@@ -78,4 +78,82 @@ describe("createDisplacementMap", () => {
     expect(vec).not.toBeUndefined();
     expect(vec!.toArray()).toEqual([0.1, 0.3, 0.2]);
   });
+
+  it("uses the selected eigen mode and preserves all six result components", () => {
+    const eigenResult: AnalysisResult = {
+      ...baseResult,
+      analysisSummary: { ...baseResult.analysisSummary, analysisType: "eigen" },
+      displacements: [],
+      eigenResult: {
+        massCaseId: "mass-1",
+        normalization: "mass",
+        modes: [
+          {
+            modeNo: 1,
+            eigenvalue: 1,
+            circularFrequency: 1,
+            frequency: 1,
+            period: 1,
+            modalMass: 1,
+            participationFactors: [],
+            effectiveMassRatios: [],
+            shape: [{ nodeId: "N1", ux: 1, uy: 2, uz: 3, rx: 4, ry: 5, rz: 6 }],
+          },
+          {
+            modeNo: 2,
+            eigenvalue: 2,
+            circularFrequency: 2,
+            frequency: 2,
+            period: 2,
+            modalMass: 1,
+            participationFactors: [],
+            effectiveMassRatios: [],
+            shape: [{ nodeId: "N1", ux: -1, uy: -2, uz: -3, rx: -4, ry: -5, rz: -6 }],
+          },
+        ],
+      },
+    };
+
+    const map = createDisplacementMap(eigenResult, "", 2, "SRSS", "on");
+
+    expect(map.get("N1")?.toArray()).toEqual([-1, -3, -2]);
+    expect(eigenResult.eigenResult?.modes[1].shape[0]).toMatchObject({
+      ux: -1,
+      uy: -2,
+      uz: -3,
+      rx: -4,
+      ry: -5,
+      rz: -6,
+    });
+  });
+
+  it("uses response-spectrum modal and combined displacements with the same axis transform", () => {
+    const responseResult: AnalysisResult = {
+      ...baseResult,
+      analysisSummary: { ...baseResult.analysisSummary, analysisType: "response_spectrum" },
+      displacements: [],
+      responseSpectrumResult: {
+        spectrumCaseId: "RS1",
+        direction: "X",
+        dampingRatio: 0.05,
+        combinationMethod: "SRSS",
+        modalResults: [
+          {
+            modeNo: 1,
+            spectralAcceleration: 1,
+            displacements: [{ ...baseDisplacement, ux: 1, uy: 2, uz: 3 }],
+          },
+        ],
+        combinedResult: {
+          method: "SRSS",
+          displacements: [{ ...baseDisplacement, ux: 4, uy: 5, uz: 6 }],
+        },
+      },
+    };
+
+    expect(createDisplacementMap(responseResult, "", 1, "mode:1", "on").get("N1")?.toArray())
+      .toEqual([1, 3, 2]);
+    expect(createDisplacementMap(responseResult, "", 1, "SRSS", "on").get("N1")?.toArray())
+      .toEqual([4, 6, 5]);
+  });
 });

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, Support } from "../../types";
 import type { ViewerScales } from "../types";
+import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
 import { createNodeMap } from "../threeUtils";
 
 const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#4f5f70", roughness: 0.7 });
@@ -10,9 +11,10 @@ const rollerMaterial = new THREE.MeshStandardMaterial({ color: "#7a6fb3", roughn
 export function renderSupports(
   project: ProjectModel,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   const size = Math.max(scales.nodeSize * 2.4, 0.16);
 
@@ -21,7 +23,9 @@ export function renderSupports(
     if (!position) continue;
     const kind = classifySupport(support);
     const group = new THREE.Group();
-    group.position.copy(position).add(new THREE.Vector3(0, -size * 1.8, 0));
+    group.position.copy(position).add(
+      modelToViewerVector({ x: 0, y: -size * 1.8, z: 0 }, spacerAxisSwap),
+    );
 
     if (kind === "fixed") {
       const block = new THREE.Mesh(new THREE.BoxGeometry(size * 1.8, size * 0.7, size * 1.8), fixedMaterial.clone());

@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDefaultProject } from "../data/defaultProject";
-import type { ProjectModel } from "../types";
+import type { AnalysisResult, ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import { ja } from "../i18n/ja";
 import { Viewer3D, webglFallbackMessage } from "./Viewer3D";
@@ -78,6 +78,27 @@ describe("Viewer3D WebGL fallback", () => {
 
     expect(document.body.textContent).toContain("GPU: browser");
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
+  });
+
+  it("enables the deformed-shape display when an eigen result arrives", async () => {
+    render(
+      <Viewer3D
+        project={createDefaultProject()}
+        result={eigenResult()}
+        selectedSection="nodes"
+        selection={null}
+        activeLoadCase="LC_DEAD"
+        onSelectionChange={() => undefined}
+        onActiveLoadCaseChange={() => undefined}
+      />,
+    );
+
+    await act(async () => undefined);
+
+    const label = [...document.querySelectorAll("label")]
+      .find((item) => item.textContent?.includes(ja.viewer.controls.deformedShape));
+    const checkbox = label?.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+    expect(checkbox?.checked).toBe(true);
   });
 });
 
@@ -207,5 +228,46 @@ function emptyProject(): ProjectModel {
     supports: [],
     nodalLoads: [],
     memberLoads: [],
+  };
+}
+
+function eigenResult(): AnalysisResult {
+  return {
+    projectId: "p",
+    schemaVersion: "1.0.0",
+    analysisSummary: {
+      analysisType: "eigen",
+      status: "success",
+      startedAt: "2026-06-18T00:00:00Z",
+      finishedAt: "2026-06-18T00:00:00Z",
+      durationMs: 0,
+      nodeCount: 1,
+      memberCount: 0,
+      loadCaseCount: 0,
+      totalDof: 6,
+      freeDof: 6,
+      constrainedDof: 0,
+      solver: "scipy_eigh",
+    },
+    displacements: [],
+    reactions: [],
+    memberEndForces: [],
+    warnings: [],
+    errors: [],
+    eigenResult: {
+      massCaseId: "mass-1",
+      normalization: "mass",
+      modes: [{
+        modeNo: 1,
+        eigenvalue: 1,
+        circularFrequency: 1,
+        frequency: 1,
+        period: 1,
+        modalMass: 1,
+        participationFactors: [],
+        effectiveMassRatios: [],
+        shape: [{ nodeId: "G0", ux: 1, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }],
+      }],
+    },
   };
 }

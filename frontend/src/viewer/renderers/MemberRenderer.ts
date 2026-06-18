@@ -1,15 +1,17 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
+import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createLabelSprite, createLine, createNodeMap, getMemberEnds } from "../threeUtils";
 
 export function renderMembers(
   project: ProjectModel,
   selectedSection: SectionKey,
   selection: ViewerSelection,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
 
   for (const member of project.members) {
@@ -39,9 +41,10 @@ export function renderMembers(
 export function renderMemberLabels(
   project: ProjectModel,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   for (const member of project.members) {
     const ends = getMemberEnds(member, nodeMap);

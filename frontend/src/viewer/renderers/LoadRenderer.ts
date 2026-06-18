@@ -1,6 +1,11 @@
 import * as THREE from "three";
 import type { MemberLoad, ProjectModel } from "../../types";
 import type { ViewerScales } from "../types";
+import {
+  modelMemberLoadToViewer,
+  modelNodalLoadToViewer,
+  type SpacerAxisSwap,
+} from "../coordinateTransform";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
 
 const forceColor = 0xc94f4f;
@@ -11,9 +16,10 @@ export function renderLoads(
   project: ProjectModel,
   selectedLoadCaseId: string,
   scales: ViewerScales,
+  spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
   const forceMax = Math.max(
     ...project.nodalLoads
@@ -34,7 +40,8 @@ export function renderLoads(
     if (load.loadCaseId !== selectedLoadCaseId) continue;
     const position = nodeMap.get(load.nodeId);
     if (!position) continue;
-    const forceVector = vectorFrom(load.fx, load.fy, load.fz);
+    const transformed = modelNodalLoadToViewer(load, spacerAxisSwap);
+    const forceVector = nonZeroVector(transformed.force);
     if (forceVector) {
       const ratio = clamp(forceVector.length() / forceMax, 0.18, 1);
       objects.push(
@@ -48,7 +55,7 @@ export function renderLoads(
         ),
       );
     }
-    const momentVector = vectorFrom(load.mx, load.my, load.mz);
+    const momentVector = nonZeroVector(transformed.moment);
     if (momentVector) {
       const ratio = clamp(momentVector.length() / momentMax, 0.2, 1);
       objects.push(createMomentGlyph(position, momentVector.normalize(), baseLength * 0.32 * ratio));
@@ -57,7 +64,9 @@ export function renderLoads(
 
   for (const load of project.memberLoads) {
     if (load.loadCaseId !== selectedLoadCaseId) continue;
-    objects.push(...renderMemberLoad(load, project, baseLength, nodePositionOverride));
+    objects.push(
+      ...renderMemberLoad(load, project, baseLength, spacerAxisSwap, nodePositionOverride),
+    );
   }
 
   return objects;
@@ -67,14 +76,15 @@ function renderMemberLoad(
   load: MemberLoad,
   project: ProjectModel,
   baseLength: number,
+  spacerAxisSwap: SpacerAxisSwap,
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, "off", nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const member = project.members.find((item) => item.id === load.memberId);
   if (!member) return [];
   const ends = getMemberEnds(member, nodeMap);
   if (!ends) return [];
-  const direction = vectorFrom(load.wx, load.wy, load.wz);
+  const direction = nonZeroVector(modelMemberLoadToViewer(load, spacerAxisSwap));
   if (!direction) return [];
   const objects: THREE.Object3D[] = [];
   const length = ends.start.distanceTo(ends.end);
@@ -121,11 +131,9 @@ function createMomentGlyph(origin: THREE.Vector3, axis: THREE.Vector3, radius: n
   return group;
 }
 
-function vectorFrom(x: number, y: number, z: number): THREE.Vector3 | null {
-  if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(z)) return null;
-  const vector = new THREE.Vector3(x, y, z);
-  if (vector.lengthSq() <= 1e-16) return null;
-  return vector;
+function nonZeroVector(vector: THREE.Vector3): THREE.Vector3 | null {
+  if (![vector.x, vector.y, vector.z].every(isFiniteNumber)) return null;
+  return vector.lengthSq() > 1e-16 ? vector : null;
 }
 
 function computeSpan(nodeMap: Map<string, THREE.Vector3>): number {
