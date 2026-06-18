@@ -67,6 +67,30 @@
         "animation": "Available display modes depend on result displacement components."
       }
     },
+    "analysisConfig": {
+      "heading": "Analysis conditions",
+      "description": "Review required inputs, time settings, damping, and fixed integration parameters.",
+      "basic": "1. Required conditions",
+      "time": "2. Time settings",
+      "damping": "3. Damping",
+      "newmark": "4. Newmark-beta",
+      "massCase": "Mass case",
+      "groundMotion": "Ground motion",
+      "direction": "Input direction",
+      "timeStep": "dt [s]",
+      "duration": "Duration [s]",
+      "matchTimeStep": "Match ground-motion dt",
+      "matchDuration": "Match motion length",
+      "dampingPreset": "Standard preset (h=0.05)",
+      "rayleighAlpha": "Rayleigh alpha",
+      "rayleighBeta": "Rayleigh beta",
+      "fixed": "Fixed",
+      "preview": "Condition preview",
+      "previewText": "dt {dt} x {points} points = duration {duration} s",
+      "timeStepWarning": "Analysis dt differs from the ground-motion dt.",
+      "durationError": "Analysis duration exceeds the ground-motion length.",
+      "saved": "Inputs are stored in the project."
+    },
     "common": {
       "ok": "OK",
       "ng": "NG",

@@ -67,6 +67,30 @@
         "animation": "結果の変位成分に応じて表示モードを選択できます。"
       }
     },
+    "analysisConfig": {
+      "heading": "解析条件設定",
+      "description": "必須条件、時間設定、減衰、固定の数値積分条件を順番に確認します。",
+      "basic": "① 基本条件（必須）",
+      "time": "② 時間設定",
+      "damping": "③ 減衰設定",
+      "newmark": "④ Newmark β 法",
+      "massCase": "質量ケース",
+      "groundMotion": "地震波",
+      "direction": "入力方向",
+      "timeStep": "dt［秒］",
+      "duration": "解析時間［秒］",
+      "matchTimeStep": "地震波の dt に合わせる",
+      "matchDuration": "地震波長に合わせる",
+      "dampingPreset": "標準プリセット（h=0.05）",
+      "rayleighAlpha": "Rayleigh α",
+      "rayleighBeta": "Rayleigh β",
+      "fixed": "固定値",
+      "preview": "条件プレビュー",
+      "previewText": "dt {dt} × {points} 点 = 解析時間 {duration} s",
+      "timeStepWarning": "解析 dt と地震波 dt が一致していません。",
+      "durationError": "解析時間が地震波長を超えています。",
+      "saved": "入力内容はプロジェクトに保存されています。"
+    },
     "common": {
       "ok": "OK",
       "ng": "NG",

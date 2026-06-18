@@ -129,6 +129,7 @@ export function TimeHistoryWizardModal({
                 running={running}
                 onRun={onRun}
                 onProjectChange={onProjectChange}
+                onContinue={() => setActiveStep("run")}
               />
             )}
             {activeStep === "run" && (
