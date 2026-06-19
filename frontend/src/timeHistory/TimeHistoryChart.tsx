@@ -23,6 +23,7 @@ const resultKey: Record<Quantity, ResultKey> = {
 };
 
 const colors = ["#60a5fa", "#22c55e", "#f97316", "#e879f9", "#facc15", "#2dd4bf"];
+const chartLabelColor = "#b4c0d0";
 
 type TimeHistoryChartProps = {
   result: TimeHistoryResult;
@@ -152,8 +153,9 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
                 type="number"
                 domain={[0, result.meta.duration ?? "dataMax"]}
                 tickCount={6}
-                label={{ value: text.time, position: "insideBottom", offset: -10, fill: "#94a3b8" }}
-                stroke="#94a3b8"
+                tick={{ fill: chartLabelColor }}
+                label={{ value: text.time, position: "insideBottom", offset: -10, fill: chartLabelColor }}
+                stroke={chartLabelColor}
               />
               {quantities.map((quantity, index) => (
                 <YAxis
@@ -163,6 +165,7 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
                   hide={index > 1}
                   domain={["auto", "auto"]}
                   tickFormatter={formatExponentialTick}
+                  tick={{ fill: chartLabelColor }}
                   stroke={colors[index]}
                   width={82}
                 />

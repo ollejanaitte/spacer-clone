@@ -2395,6 +2395,10 @@ button:disabled {
   background: var(--th-color-panel);
 }
 
+.time-history-wizard-modal :where(button, input, select):disabled {
+  color: var(--th-color-text-muted);
+}
+
 .time-history-primary-action {
   border-color: var(--th-color-primary) !important;
   background: var(--th-color-primary) !important;
@@ -2705,6 +2709,11 @@ button:disabled {
   border: 1px solid var(--th-color-border);
   border-radius: var(--th-radius);
   background: var(--th-color-panel);
+}
+
+.time-history-chart-host .recharts-legend-item-text,
+.time-history-chart-host .recharts-tooltip-label {
+  color: var(--th-color-text-muted) !important;
 }
 
 .time-history-model-animation {
