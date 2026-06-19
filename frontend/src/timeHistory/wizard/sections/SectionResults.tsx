@@ -4,10 +4,13 @@ import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../.
 import { TimeHistoryChart } from "../../TimeHistoryChart";
 import { TimeHistoryModelAnimation } from "../../TimeHistoryModelAnimation";
 import {
+  buildPeakResponseRows,
   buildXyzDisplacementSeries,
-  findSeriesMaximum,
   findXyzDisplacementSeries,
+  formatPeakResponseCsv,
+  formatPeakResponseTsv,
   parseTimeHistoryDisplacementKey,
+  type PeakResponseComponent,
 } from "../../displacementSeries";
 import { ResultSummaryCard } from "../ResultSummaryCard";
 
@@ -18,11 +21,11 @@ type SectionResultsProps = {
   onAnimationOverrideChange?: (override: Map<string, { x: number; y: number; z: number }> | null) => void;
 };
 
-type ResultPageId = "overview" | "max" | "chart" | "ground" | "animation" | "table" | "errors";
+type ResultPageId = "overview" | "peak" | "chart" | "ground" | "animation" | "table" | "errors";
 
 const resultPages: Array<{ id: ResultPageId; label: string; help: string }> = [
   { id: "overview", label: "概要", help: "解析が成功したか、点数・時間刻み・解析時間を確認します。" },
-  { id: "max", label: "最大値一覧", help: "変位・速度・加速度の最大値を確認します。" },
+  { id: "peak", label: "最大応答抽出", help: "節点・変位成分ごとの最大、最小、絶対最大と発生時刻を確認します。" },
   { id: "chart", label: "時刻歴グラフ", help: "時間ごとの応答値をグラフで確認します。" },
   { id: "ground", label: "地震波グラフ", help: "入力した地震波の形を確認します。" },
   { id: "animation", label: "アニメーション", help: "揺れ方を再生して確認します。" },
@@ -108,7 +111,7 @@ export function SectionResults({ project, result = null, error = null, onAnimati
         {!result && activePage !== "errors" ? <EmptyRunGuide /> : (
           <>
             {activePage === "overview" && <OverviewPage result={result} project={project} />}
-            {activePage === "max" && <MaxValuesPage result={result} />}
+            {activePage === "peak" && <PeakResponsePage result={result} />}
             {activePage === "chart" && result && (
               <TimeHistoryChart
                 result={result}
@@ -140,21 +143,113 @@ function OverviewPage({ result, project }: { result: TimeHistoryResult | null; p
   return <div className="time-history-page-grid"><ResultSummaryCard result={result} /><div className="time-history-overview-card"><h5>解析情報</h5><dl><div><dt>状態</dt><dd>{result?.meta?.status ?? "未実行"}</dd></div><div><dt>解析ID</dt><dd>{result?.meta?.analysisId ?? "-"}</dd></div><div><dt>手法</dt><dd>{result?.meta?.method ?? project.analysisSettings.timeHistory?.method ?? "-"}</dd></div><div><dt>dt</dt><dd>{formatNumber(result?.meta?.timeStep ?? project.analysisSettings.timeHistory?.timeStep)} 秒</dd></div><div><dt>解析時間</dt><dd>{formatNumber(result?.meta?.duration ?? project.analysisSettings.timeHistory?.duration)} 秒</dd></div><div><dt>サンプル数</dt><dd>{result?.meta?.sampleCount ?? "-"}</dd></div></dl></div><div className="time-history-beginner-note"><strong>見方</strong><p>まず状態が success になっているか確認します。次に最大値一覧とグラフを確認します。</p></div></div>;
 }
 
-function MaxValuesPage({ result }: { result: TimeHistoryResult | null }) {
-  const xyzRows = buildXyzDisplacementSeries(result)
-    .filter((series) => series.status === "available")
-    .flatMap((series) => {
-      const maximum = findSeriesMaximum(series.values, result?.time ?? []);
-      return maximum
-        ? [{ kind: "XYZ合成変位", key: series.label, value: maximum.value, time: maximum.time }]
-        : [];
-    });
-  const componentRows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)]
-    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
-    .slice(0, Math.max(0, 24 - xyzRows.length));
-  const rows = [...xyzRows, ...componentRows];
+function PeakResponsePage({ result }: { result: TimeHistoryResult | null }) {
+  const [nodeQuery, setNodeQuery] = useState("");
+  const [componentFilter, setComponentFilter] = useState<"all" | PeakResponseComponent>("all");
+  const [sortByAbsMax, setSortByAbsMax] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const rows = useMemo(() => buildPeakResponseRows(result), [result]);
+  const visibleRows = useMemo(() => {
+    const query = nodeQuery.trim().toLocaleLowerCase();
+    const filtered = rows.filter((row) =>
+      (!query || row.nodeId.toLocaleLowerCase().includes(query)) &&
+      (componentFilter === "all" || row.component === componentFilter)
+    );
+    return sortByAbsMax
+      ? [...filtered].sort((left, right) => right.absMaxValue - left.absMaxValue)
+      : filtered;
+  }, [componentFilter, nodeQuery, rows, sortByAbsMax]);
+
   if (rows.length === 0) return <EmptyPage />;
-  return <div className="time-history-table-wrap"><table><thead><tr><th>種類</th><th>キー</th><th>最大絶対値</th><th>時刻</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.kind}-${row.key}`}><td>{row.kind}</td><td>{row.key}</td><td>{formatNumber(row.value)}</td><td>{formatNumber(row.time)} 秒</td></tr>)}</tbody></table></div>;
+
+  const downloadCsv = () => {
+    const csv = `\uFEFF${formatPeakResponseCsv(visibleRows)}`;
+    downloadText(csv, "time-history-peak-responses.csv", "text/csv;charset=utf-8");
+  };
+  const copyRows = async () => {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard API unavailable");
+      await navigator.clipboard.writeText(formatPeakResponseTsv(visibleRows));
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
+    }
+  };
+
+  return (
+    <section className="time-history-peak-response" aria-label="最大応答抽出">
+      <div className="time-history-peak-toolbar">
+        <label>
+          <span>節点検索</span>
+          <input
+            type="search"
+            aria-label="節点検索"
+            value={nodeQuery}
+            onChange={(event) => setNodeQuery(event.currentTarget.value)}
+            placeholder="例: N2"
+          />
+        </label>
+        <label>
+          <span>成分</span>
+          <select
+            aria-label="成分フィルタ"
+            value={componentFilter}
+            onChange={(event) => setComponentFilter(event.currentTarget.value as "all" | PeakResponseComponent)}
+          >
+            <option value="all">全て</option>
+            <option value="X">X</option>
+            <option value="Y">Y</option>
+            <option value="Z">Z</option>
+            <option value="XYZ">XYZ合成</option>
+          </select>
+        </label>
+        <button type="button" className={sortByAbsMax ? "active" : ""} onClick={() => setSortByAbsMax((current) => !current)}>
+          絶対最大値の降順
+        </button>
+        <button type="button" onClick={downloadCsv}>CSV保存</button>
+        <button type="button" onClick={() => void copyRows()}>クリップボードへコピー</button>
+        <span role="status">
+          {copyStatus === "copied" ? "コピーしました" : copyStatus === "failed" ? "コピーできませんでした" : `${visibleRows.length} 件`}
+        </span>
+      </div>
+      {visibleRows.length === 0 ? (
+        <div className="time-history-empty-result-guide">条件に一致する最大応答がありません。</div>
+      ) : (
+        <div className="time-history-table-wrap time-history-peak-table">
+          <table>
+            <thead>
+              <tr>
+                <th>節点</th>
+                <th>成分</th>
+                <th>最大値</th>
+                <th>最大値発生時刻</th>
+                <th>最小値</th>
+                <th>最小値発生時刻</th>
+                <th>絶対最大値</th>
+                <th>絶対最大値発生時刻</th>
+                <th>単位</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleRows.map((row) => (
+                <tr key={`${row.nodeId}-${row.component}`}>
+                  <td>{row.nodeId}</td>
+                  <td>{row.label}</td>
+                  <td>{formatNumber(row.maxValue)}</td>
+                  <td>{formatNumber(row.maxTime)} 秒</td>
+                  <td>{row.minValue === null ? "-" : formatNumber(row.minValue)}</td>
+                  <td>{row.minTime === null ? "-" : `${formatNumber(row.minTime)} 秒`}</td>
+                  <td>{formatNumber(row.absMaxValue)}</td>
+                  <td>{formatNumber(row.absMaxTime)} 秒</td>
+                  <td>{row.unit}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
 }
 
 function GroundMotionPage({ motion }: { motion: NonNullable<ProjectModel["groundMotions"]>[number] | null }) {
@@ -207,23 +302,18 @@ function responseKeyLabel(key: string): string {
   return `${parsed.nodeId} ${axis}`;
 }
 
-function maxRows(kind: string, record: Record<string, number[]> | undefined, time: number[] | undefined) {
-  if (!record) return [];
-  return Object.entries(record).map(([key, values]) => {
-    let value = 0;
-    let index = 0;
-    values.forEach((candidate, candidateIndex) => {
-      if (Number.isFinite(candidate) && Math.abs(candidate) >= Math.abs(value)) {
-        value = candidate;
-        index = candidateIndex;
-      }
-    });
-    return { kind, key, value, time: time?.[index] ?? index };
-  });
-}
-
 function EmptyPage() {
   return <div className="time-history-empty-result-guide">表示できるデータがありません。</div>;
+}
+
+function downloadText(content: string, fileName: string, type: string) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function formatNumber(value: number | undefined): string {

@@ -215,13 +215,24 @@ describe("TimeHistoryWizardModal", () => {
     expect(document.querySelector(".time-history-chart-host")?.getAttribute("data-series-labels")).toContain("N1 XYZ合成");
     expect(document.querySelector("[aria-label='グラフ凡例']")?.textContent).toContain("N1 XYZ合成");
 
-    const maxTab = Array.from(document.querySelectorAll(".time-history-result-page-tabs button"))
-      .find((button) => button.textContent?.includes("最大値一覧")) as HTMLButtonElement | undefined;
-    expect(maxTab).toBeTruthy();
-    act(() => { maxTab!.click(); });
-    expect(document.body.textContent).toContain("XYZ合成変位");
-    expect(document.body.textContent).toContain("N1 XYZ合成");
+    const peakTab = Array.from(document.querySelectorAll(".time-history-result-page-tabs button"))
+      .find((button) => button.textContent?.includes("最大応答抽出")) as HTMLButtonElement | undefined;
+    expect(peakTab).toBeTruthy();
+    act(() => { peakTab!.click(); });
+    expect(document.querySelector("[aria-label='最大応答抽出']")).toBeTruthy();
+    expect(document.body.textContent).toContain("X変位");
+    expect(document.body.textContent).toContain("Y変位");
+    expect(document.body.textContent).toContain("Z変位");
+    expect(document.body.textContent).toContain("XYZ合成");
+    expect(document.body.textContent).toContain("絶対最大値");
     expect(document.body.textContent).toContain("5");
     expect(document.body.textContent).toContain("0.01 秒");
+    expect(Array.from(document.querySelectorAll("button")).some((button) => button.textContent === "CSV保存")).toBe(true);
+    expect(Array.from(document.querySelectorAll("button")).some((button) => button.textContent === "クリップボードへコピー")).toBe(true);
+
+    const graphTabAgain = Array.from(document.querySelectorAll(".time-history-result-page-tabs button"))
+      .find((button) => button.textContent?.includes("時刻歴グラフ")) as HTMLButtonElement | undefined;
+    act(() => { graphTabAgain!.click(); });
+    expect(document.querySelector(".time-history-chart-host")).toBeTruthy();
   });
 });

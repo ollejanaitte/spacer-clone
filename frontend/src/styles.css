@@ -2187,6 +2187,63 @@ button:disabled {
   background: #eef5fb;
 }
 
+.time-history-peak-response {
+  display: grid;
+  gap: var(--th-space-3);
+}
+
+.time-history-peak-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--th-space-2);
+}
+
+.time-history-peak-toolbar label {
+  display: grid;
+  gap: var(--th-space-1);
+  color: var(--th-color-text-muted);
+  font-size: 12px;
+}
+
+.time-history-peak-toolbar input,
+.time-history-peak-toolbar select,
+.time-history-peak-toolbar button {
+  min-height: 38px;
+  padding: 7px 10px;
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: #111c2f;
+}
+
+.time-history-peak-toolbar button.active {
+  border-color: var(--th-color-primary);
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.time-history-peak-toolbar [role="status"] {
+  align-self: center;
+  color: var(--th-color-text-muted);
+  font-size: 12px;
+}
+
+.time-history-peak-table {
+  max-height: 560px;
+  border-color: var(--th-color-border);
+}
+
+.time-history-peak-table th,
+.time-history-peak-table td {
+  color: var(--th-color-text);
+  border-bottom-color: var(--th-color-border);
+  white-space: nowrap;
+}
+
+.time-history-peak-table th {
+  background: #111c2f;
+}
+
 .time-history-chart-caption {
   display: flex;
   justify-content: space-between;

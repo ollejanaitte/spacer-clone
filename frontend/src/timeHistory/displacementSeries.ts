@@ -19,6 +19,21 @@ export type XyzDisplacementSeries = {
   source: "three-component" | "single-direction";
 };
 
+export type PeakResponseComponent = "X" | "Y" | "Z" | "XYZ";
+
+export type PeakResponseRow = {
+  nodeId: string;
+  component: PeakResponseComponent;
+  label: string;
+  maxValue: number;
+  maxTime: number;
+  minValue: number | null;
+  minTime: number | null;
+  absMaxValue: number;
+  absMaxTime: number;
+  unit: "m";
+};
+
 const translationComponents: readonly TimeHistoryTranslationComponent[] = ["ux", "uy", "uz"];
 const knownDofSuffix = /_(?:ux|uy|uz|rx|ry|rz)$/;
 const virtualKeyPrefix = "xyz:";
@@ -129,6 +144,117 @@ export function findSeriesMaximum(
   return bestIndex >= 0 ? { value: bestValue, time: time[bestIndex], index: bestIndex } : null;
 }
 
+export function buildPeakResponseRows(
+  result: TimeHistoryResult | null | undefined,
+): PeakResponseRow[] {
+  if (!result?.displacements || !isValidTimeAxis(result.time)) return [];
+  const activeDirection = inferTimeHistoryActiveDirection(result);
+  const componentSeries = new Map<
+    string,
+    Partial<Record<TimeHistoryTranslationComponent, number[]>>
+  >();
+
+  for (const [key, values] of Object.entries(result.displacements)) {
+    const parsed = parseTimeHistoryDisplacementKey(key, activeDirection);
+    if (!parsed || !isValidResponseSeries(values, result.time.length)) continue;
+    const node = componentSeries.get(parsed.nodeId) ?? {};
+    if (!node[parsed.component] || parsed.format === "component") {
+      node[parsed.component] = values;
+    }
+    componentSeries.set(parsed.nodeId, node);
+  }
+
+  const xyzByNode = new Map(
+    buildXyzDisplacementSeries(result)
+      .filter((series) => series.status === "available")
+      .map((series) => [series.nodeId, series] as const),
+  );
+  const nodeIds = new Set([...componentSeries.keys(), ...xyzByNode.keys()]);
+  const rows: PeakResponseRow[] = [];
+
+  for (const nodeId of [...nodeIds].sort(compareNodeIds)) {
+    const node = componentSeries.get(nodeId) ?? {};
+    for (const component of translationComponents) {
+      const values = node[component];
+      if (!values) continue;
+      const extrema = findSignedSeriesExtrema(values, result.time);
+      if (!extrema) continue;
+      rows.push({
+        nodeId,
+        component: componentLabel(component),
+        label: `${componentLabel(component)}変位`,
+        ...extrema,
+        unit: "m",
+      });
+    }
+    const xyz = xyzByNode.get(nodeId);
+    if (xyz) {
+      const maximum = findSeriesMaximum(xyz.values, result.time);
+      if (maximum) {
+        rows.push({
+          nodeId,
+          component: "XYZ",
+          label: "XYZ合成",
+          maxValue: maximum.value,
+          maxTime: maximum.time,
+          minValue: null,
+          minTime: null,
+          absMaxValue: maximum.value,
+          absMaxTime: maximum.time,
+          unit: "m",
+        });
+      }
+    }
+  }
+  return rows;
+}
+
+export function formatPeakResponseCsv(rows: PeakResponseRow[]): string {
+  const header = [
+    "nodeId",
+    "component",
+    "maxValue",
+    "maxTime",
+    "minValue",
+    "minTime",
+    "absMaxValue",
+    "absMaxTime",
+    "unit",
+  ];
+  return [
+    header,
+    ...rows.map((row) => [
+      row.nodeId,
+      row.component,
+      row.maxValue,
+      row.maxTime,
+      row.minValue ?? "",
+      row.minTime ?? "",
+      row.absMaxValue,
+      row.absMaxTime,
+      row.unit,
+    ]),
+  ].map((columns) => columns.map(csvCell).join(",")).join("\r\n");
+}
+
+export function formatPeakResponseTsv(rows: PeakResponseRow[]): string {
+  const header = ["nodeId", "component", "maxValue", "maxTime", "minValue", "minTime", "absMaxValue", "absMaxTime", "unit"];
+  return [
+    header,
+    ...rows.map((row) => [
+      row.nodeId,
+      row.component,
+      row.maxValue,
+      row.maxTime,
+      row.minValue ?? "",
+      row.minTime ?? "",
+      row.absMaxValue,
+      row.absMaxTime,
+      row.unit,
+    ]),
+  ].map((columns) => columns.join("\t")).join("\n");
+}
+
 function deriveNodeMagnitude(
   nodeId: string,
   components: Partial<
@@ -172,4 +298,48 @@ function deriveNodeMagnitude(
     Math.hypot(...series.map((componentValues) => componentValues[index])),
   );
   return { ...base, status: "available", values };
+}
+
+function findSignedSeriesExtrema(
+  values: number[],
+  time: number[],
+): Pick<PeakResponseRow, "maxValue" | "maxTime" | "minValue" | "minTime" | "absMaxValue" | "absMaxTime"> | null {
+  if (!isValidResponseSeries(values, time.length) || !isValidTimeAxis(time)) return null;
+  let maxIndex = 0;
+  let minIndex = 0;
+  let absMaxIndex = 0;
+  for (let index = 1; index < values.length; index += 1) {
+    if (values[index] > values[maxIndex]) maxIndex = index;
+    if (values[index] < values[minIndex]) minIndex = index;
+    if (Math.abs(values[index]) > Math.abs(values[absMaxIndex])) absMaxIndex = index;
+  }
+  return {
+    maxValue: values[maxIndex],
+    maxTime: time[maxIndex],
+    minValue: values[minIndex],
+    minTime: time[minIndex],
+    absMaxValue: Math.abs(values[absMaxIndex]),
+    absMaxTime: time[absMaxIndex],
+  };
+}
+
+function isValidTimeAxis(time: number[]): boolean {
+  return Array.isArray(time) && time.length > 0 && time.every(Number.isFinite);
+}
+
+function isValidResponseSeries(values: number[], expectedLength: number): boolean {
+  return Array.isArray(values) && values.length > 0 && values.length === expectedLength && values.every(Number.isFinite);
+}
+
+function componentLabel(component: TimeHistoryTranslationComponent): Exclude<PeakResponseComponent, "XYZ"> {
+  return component === "ux" ? "X" : component === "uy" ? "Y" : "Z";
+}
+
+function compareNodeIds(left: string, right: string): number {
+  return left.localeCompare(right, undefined, { numeric: true, sensitivity: "base" });
+}
+
+function csvCell(value: string | number): string {
+  const text = String(value);
+  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, "\"\"")}"` : text;
 }
