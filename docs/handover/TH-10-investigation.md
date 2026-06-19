@@ -32,7 +32,7 @@
 
 - `NodeRenderer`: `frontend/src/viewer/renderers/NodeRenderer.ts`
 - `MemberRenderer`: `frontend/src/viewer/renderers/MemberRenderer.ts`
-- 独立した `LabelRenderer` はなく、丂 renderer の `renderNodeLabels` / `renderMemberLabels` が `threeUtils.createLabelSprite` を呼ぶ。
+- 独立した `LabelRenderer` はなく、両 renderer の `renderNodeLabels` / `renderMemberLabels` が `threeUtils.createLabelSprite` を呼ぶ。
 - `ThreeViewport`: WebGLRenderer、camera、OrbitControls、rAF、pointer picking、resize、scene lifecycle を担当。
 - `SceneBuilder`: renderer 群を呼び、SceneGroups の内容を props から再構築する。
 - ラベル方式: Canvas 2D に文字を描画し、CanvasTexture を THREE.Sprite に貼る方式。
@@ -69,4 +69,3 @@
   - `frontend/src/timeHistory/timeHistoryAnimation.ts`
   - `frontend/src/timeHistory/TimeHistoryAnimationContext.tsx`
   - `frontend/src/timeHistory/TimeHistoryAnimationControls.tsx`
-
