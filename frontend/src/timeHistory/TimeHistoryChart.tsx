@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -12,6 +11,10 @@ import {
 import locale from "../i18n/locales/ja.json";
 import type { TimeHistoryResult } from "../types";
 import { chooseEngineeringScale, formatEngineeringValue, formatExponentialTick } from "./chartScale";
+import {
+  buildXyzDisplacementSeries,
+  isXyzDisplacementKey,
+} from "./displacementSeries";
 
 type Quantity = "displacement" | "velocity" | "acceleration";
 type ResultKey = "displacements" | "velocities" | "accelerations";
@@ -36,20 +39,37 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
   const [quantities, setQuantities] = useState<Quantity[]>(["displacement"]);
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
   const keys = selectedKeys.length > 0 ? selectedKeys : availableKeys(result).slice(0, 1);
+  const xyzSeries = useMemo(() => buildXyzDisplacementSeries(result), [result]);
   const series = useMemo(
     () =>
       quantities.flatMap((quantity) =>
         keys
-          .filter((key) => Array.isArray(result[resultKey[quantity]]?.[key]))
-          .map((key) => ({
-            id: `${quantity}:${key}`,
-            quantity,
-            key,
-            label: `${key} / ${quantityLabel(quantity)}`,
-            values: result[resultKey[quantity]]?.[key] ?? [],
-          })),
+          .map((key) => {
+            if (isXyzDisplacementKey(key)) {
+              if (quantity !== "displacement") return null;
+              const derived = xyzSeries.find((candidate) => candidate.key === key);
+              if (!derived || derived.status !== "available") return null;
+              return {
+                id: `${quantity}:${key}`,
+                quantity,
+                key,
+                label: derived.label,
+                values: derived.values,
+              };
+            }
+            const values = result[resultKey[quantity]]?.[key];
+            if (!Array.isArray(values)) return null;
+            return {
+              id: `${quantity}:${key}`,
+              quantity,
+              key,
+              label: `${key} / ${quantityLabel(quantity)}`,
+              values,
+            };
+          })
+          .filter((item): item is NonNullable<typeof item> => item !== null),
       ),
-    [keys, quantities, result],
+    [keys, quantities, result, xyzSeries],
   );
   const data = useMemo(
     () =>
@@ -83,6 +103,15 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
         ? current.filter((item) => item !== quantity)
         : [...current, quantity],
     );
+  };
+
+  const toggleSeries = (id: string) => {
+    setHiddenSeries((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
   const exportCsv = () => {
@@ -144,9 +173,27 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
       {series.length === 0 ? (
         <div className="time-history-empty-result-guide">{text.empty}</div>
       ) : (
-        <div className="time-history-chart-host" data-testid="time-history-chart">
-          <ResponsiveContainer width="100%" height={420}>
-            <LineChart data={data} margin={{ top: 18, right: 48, bottom: 18, left: 28 }}>
+        <>
+          <div className="time-history-chart-legend" aria-label="グラフ凡例">
+            {series.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                className={hiddenSeries.has(item.id) ? "hidden" : ""}
+                onClick={() => toggleSeries(item.id)}
+              >
+                <span style={{ backgroundColor: colors[index % colors.length] }} />
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <div
+            className="time-history-chart-host"
+            data-testid="time-history-chart"
+            data-series-labels={series.map((item) => item.label).join("|")}
+          >
+            <ResponsiveContainer width="100%" height={420}>
+              <LineChart data={data} margin={{ top: 18, right: 48, bottom: 18, left: 28 }}>
               <CartesianGrid stroke="rgba(148,163,184,.2)" verticalPoints={[160, 320, 480, 640, 800]} />
               <XAxis
                 dataKey="time"
@@ -179,18 +226,6 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
                 labelFormatter={(value) => `${text.time}: ${Number(value).toFixed(3)}`}
                 contentStyle={{ background: "#111c2f", border: "1px solid rgba(255,255,255,.12)", color: "#e5edf8" }}
               />
-              <Legend
-                onClick={(entry) => {
-                  const id = series.find((item) => item.label === entry.value)?.id;
-                  if (!id) return;
-                  setHiddenSeries((current) => {
-                    const next = new Set(current);
-                    if (next.has(id)) next.delete(id);
-                    else next.add(id);
-                    return next;
-                  });
-                }}
-              />
               {series.map((item, index) => (
                 <Line
                   key={item.id}
@@ -205,20 +240,25 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
                   hide={hiddenSeries.has(item.id)}
                 />
               ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </>
       )}
     </div>
   );
 }
 
 function availableKeys(result: TimeHistoryResult): string[] {
-  return Array.from(new Set([
+  const rawKeys = Array.from(new Set([
     ...Object.keys(result.displacements ?? {}),
     ...Object.keys(result.velocities ?? {}),
     ...Object.keys(result.accelerations ?? {}),
-  ])).sort();
+  ]));
+  const xyzKeys = buildXyzDisplacementSeries(result)
+    .filter((series) => series.status === "available")
+    .map((series) => series.key);
+  return [...rawKeys, ...xyzKeys].sort();
 }
 
 function quantityLabel(quantity: Quantity): string {

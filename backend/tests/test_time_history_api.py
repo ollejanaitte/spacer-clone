@@ -517,6 +517,58 @@ def test_time_history_direction_z_succeeds() -> None:
     assert "N2" in result["timeHistoryResult"]["displacements"]
 
 
+@pytest.mark.parametrize(
+    ("direction", "component"),
+    [("X", "ux"), ("Y", "uy"), ("Z", "uz")],
+)
+def test_time_history_settings_direction_controls_actual_excitation(
+    direction: str,
+    component: str,
+) -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id=f"th-settings-direction-{direction.lower()}",
+        mass_components={"mx": 1.0, "my": 1.0, "mz": 1.0},
+        direction=direction,
+    )
+    project["analysisSettings"]["timeHistory"]["direction"] = direction
+
+    result = run_time_history_analysis(project)
+
+    assert result["analysisSummary"]["status"] == "success"
+    assert result["timeHistoryResult"]["meta"]["groundMotions"][0]["direction"] == direction
+    values = result["timeHistoryResult"]["displacements"][f"N2_{component}"]
+    assert max(abs(value) for value in values) > 0.0
+
+
+def test_time_history_direction_mismatch_is_rejected() -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id="th-direction-mismatch",
+        mass_components={"mx": 1.0, "my": 1.0},
+        direction="Y",
+    )
+    project["analysisSettings"]["timeHistory"]["direction"] = "X"
+
+    result = run_time_history_analysis(project)
+
+    assert result["analysisSummary"]["status"] == "failed"
+    assert result["errors"][0]["code"] == "TIME_HISTORY_DIRECTION_MISMATCH"
+    assert result["errors"][0]["path"] == "/analysisSettings/timeHistory/direction"
+
+
+def test_time_history_legacy_project_without_settings_direction_uses_ground_motion() -> None:
+    project = _sdof_cantilever_project_with_mass(
+        project_id="th-direction-legacy",
+        mass_components={"my": 1.0},
+        direction="Y",
+    )
+    project["analysisSettings"]["timeHistory"].pop("direction", None)
+
+    result = run_time_history_analysis(project)
+
+    assert result["analysisSummary"]["status"] == "success"
+    assert result["timeHistoryResult"]["meta"]["groundMotions"][0]["direction"] == "Y"
+
+
 def test_samples_too_short_raises_failed_envelope() -> None:
     # One sample is below the engine's minimum (n >= 2).
     project = _sdof_cantilever_project(samples=[1.0])

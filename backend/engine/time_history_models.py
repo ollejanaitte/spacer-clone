@@ -136,6 +136,7 @@ class TimeHistorySettings:
     initialConditions: TimeHistoryInitialConditions = field(
         default_factory=TimeHistoryInitialConditions
     )
+    direction: str | None = None
 
     def __post_init__(self) -> None:
         if self.method not in TIME_HISTORY_METHODS_MVP:
@@ -153,6 +154,10 @@ class TimeHistorySettings:
             raise TimeHistoryModelError("timeHistory.beta must be positive.")
         if self.gamma <= 0:
             raise TimeHistoryModelError("timeHistory.gamma must be positive.")
+        if self.direction is not None and self.direction not in GROUND_MOTION_DIRECTIONS:
+            raise TimeHistoryModelError(
+                f"timeHistory.direction must be one of {list(GROUND_MOTION_DIRECTIONS)}; got {self.direction!r}."
+            )
 
 
 @dataclass(frozen=True)
@@ -285,6 +290,8 @@ def time_history_settings_to_dict(settings: TimeHistorySettings) -> dict[str, An
     """
 
     payload = asdict(settings)
+    if payload["direction"] is None:
+        payload.pop("direction")
     # The dataclass ``asdict`` for a nested dataclass flattens the
     # fields, so the structure is already dict-shaped. This helper is
     # kept explicit for clarity at the call site.
@@ -406,6 +413,7 @@ def parse_time_history_settings(payload: Any) -> TimeHistorySettings | None:
         gamma=_require_number(gamma, "timeHistory.gamma"),
         damping=_parse_damping(damping_payload or {}),
         initialConditions=_parse_initial_conditions(initial_conditions_payload or {}),
+        direction=settings_payload.get("direction"),
     )
 
 

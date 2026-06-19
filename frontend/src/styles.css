@@ -2711,7 +2711,34 @@ button:disabled {
   background: var(--th-color-panel);
 }
 
-.time-history-chart-host .recharts-legend-item-text,
+.time-history-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--th-space-2);
+}
+
+.time-history-chart-legend button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--th-space-2);
+  min-height: 32px;
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: var(--th-color-panel);
+}
+
+.time-history-chart-legend button.hidden {
+  color: var(--th-color-text-muted);
+  opacity: 0.65;
+}
+
+.time-history-chart-legend button span {
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+}
+
 .time-history-chart-host .recharts-tooltip-label {
   color: var(--th-color-text-muted) !important;
 }

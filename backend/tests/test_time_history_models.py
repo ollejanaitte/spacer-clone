@@ -61,6 +61,17 @@ def test_time_history_settings_accepts_mvp_values() -> None:
     assert settings.damping.mode2Frequency == 8.0
 
 
+def test_time_history_settings_accepts_excitation_direction() -> None:
+    settings = TimeHistorySettings(direction="Y")
+
+    assert settings.direction == "Y"
+
+
+def test_time_history_settings_rejects_invalid_excitation_direction() -> None:
+    with pytest.raises(ValueError, match="timeHistory.direction"):
+        TimeHistorySettings(direction="W")
+
+
 def test_time_history_settings_rejects_invalid_method() -> None:
     with pytest.raises(ValueError, match="timeHistory.method must be one of"):
         TimeHistorySettings(
@@ -283,6 +294,13 @@ def test_time_history_settings_to_dict_matches_schema_shape() -> None:
     assert payload["gamma"] == DEFAULT_NEWMARK_GAMMA
     assert payload["damping"]["type"] == "rayleigh"
     assert payload["initialConditions"]["displacement"] == "zero"
+    assert "direction" not in payload
+
+
+def test_time_history_settings_to_dict_keeps_excitation_direction() -> None:
+    payload = time_history_settings_to_dict(TimeHistorySettings(direction="Z"))
+
+    assert payload["direction"] == "Z"
 
 
 def test_ground_motion_to_dict_matches_schema_shape() -> None:

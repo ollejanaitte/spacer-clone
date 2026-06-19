@@ -9,8 +9,24 @@
 // docs/design/time-history-animation-design.md.
 
 import type { ProjectModel, TimeHistoryResult } from "../types";
+import {
+  inferTimeHistoryActiveDirection,
+  parseTimeHistoryDisplacementKey as parseNormalizedDisplacementKey,
+  type TimeHistoryTranslationComponent,
+} from "./displacementSeries";
 
-export type TimeHistoryDofName = "ux" | "uy" | "uz";
+export type TimeHistoryDofName = TimeHistoryTranslationComponent;
+export { inferTimeHistoryActiveDirection };
+
+export type TimeHistoryDisplacementKey = {
+  nodeId: string;
+  dofName: TimeHistoryDofName;
+};
+
+export function parseTimeHistoryDisplacementKey(key: string): TimeHistoryDisplacementKey | null {
+  const parsed = parseNormalizedDisplacementKey(key);
+  return parsed ? { nodeId: parsed.nodeId, dofName: parsed.component } : null;
+}
 
 /**
  * The displacement mode selects which combination of `ux`, `uy`,
@@ -20,30 +36,6 @@ export type TimeHistoryDofName = "ux" | "uy" | "uz";
 export type TimeHistoryDisplacementMode = "x" | "y" | "z" | "xyz";
 
 export const DEFAULT_TIME_HISTORY_DISPLACEMENT_MODE: TimeHistoryDisplacementMode = "xyz";
-
-export type TimeHistoryDisplacementKey = {
-  nodeId: string;
-  dofName: TimeHistoryDofName;
-};
-
-/**
- * Parse a displacement key of the form `<nodeId>_<dof>`.
- *
- * Returns `null` when the key is malformed or the dof suffix is not
- * one of the three supported translational degrees of freedom.
- * Rotational keys (`_rx`, `_ry`, `_rz`) are intentionally rejected:
- * the MVP does not animate rotations.
- */
-export function parseTimeHistoryDisplacementKey(key: string): TimeHistoryDisplacementKey | null {
-  if (typeof key !== "string" || key === "") return null;
-  const separator = key.lastIndexOf("_");
-  if (separator <= 0 || separator >= key.length - 1) return null;
-  const nodeId = key.slice(0, separator);
-  const dofName = key.slice(separator + 1);
-  if (nodeId === "") return null;
-  if (dofName !== "ux" && dofName !== "uy" && dofName !== "uz") return null;
-  return { nodeId, dofName };
-}
 
 export type TimeHistoryAnimationOverride = Map<string, { x: number; y: number; z: number }>;
 
@@ -148,36 +140,6 @@ function readDisplacement(
     }
   }
   return 0;
-}
-
-/**
- * Infer the active translational direction from a result envelope.
- * The MVP runs one ground motion record per analysis, so the result
- * has at most one active direction. The helper inspects the meta
- * block first, then falls back to the suffix of the only per-node
- * key when the meta is silent.
- */
-export function inferTimeHistoryActiveDirection(
-  result: TimeHistoryResult | null | undefined,
-): TimeHistoryDofName | null {
-  if (!result) return null;
-  const metaGround = result.meta?.groundMotions;
-  if (Array.isArray(metaGround) && metaGround.length > 0) {
-    const directionRaw = (metaGround[0] as Record<string, unknown> | undefined)?.direction;
-    if (typeof directionRaw === "string") {
-      const upper = directionRaw.toUpperCase();
-      if (upper === "X" || upper === "Y" || upper === "Z") {
-        return upper === "X" ? "ux" : upper === "Y" ? "uy" : "uz";
-      }
-    }
-  }
-  if (!result.displacements) return null;
-  for (const key of Object.keys(result.displacements)) {
-    if (key.endsWith("_ux")) return "ux";
-    if (key.endsWith("_uy")) return "uy";
-    if (key.endsWith("_uz")) return "uz";
-  }
-  return null;
 }
 
 export type TimeHistoryAxisAvailability = {

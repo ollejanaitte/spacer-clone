@@ -850,6 +850,21 @@
         },
         "initialConditions": {
           "$ref": "#/$defs/timeHistoryInitialConditions"
+        },
+        "massCaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "groundMotionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
         }
       }
     },

@@ -3,6 +3,12 @@ import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
 import { TimeHistoryChart } from "../../TimeHistoryChart";
 import { TimeHistoryModelAnimation } from "../../TimeHistoryModelAnimation";
+import {
+  buildXyzDisplacementSeries,
+  findSeriesMaximum,
+  findXyzDisplacementSeries,
+  parseTimeHistoryDisplacementKey,
+} from "../../displacementSeries";
 import { ResultSummaryCard } from "../ResultSummaryCard";
 
 type SectionResultsProps = {
@@ -30,9 +36,26 @@ export function SectionResults({ project, result = null, error = null, onAnimati
   const pageIndex = resultPages.findIndex((page) => page.id === activePage);
   const page = resultPages[pageIndex] ?? resultPages[0];
   const responseKeys = useMemo(() => responseHistoryKeys(result), [result]);
-  const activeTargets = selectedTargets.filter((key) => responseKeys.includes(key));
-  const selectedKey = activeTargets[0] ?? responseKeys[0] ?? "";
-  const selectedSeries = selectedKey ? result?.displacements?.[selectedKey] ?? [] : [];
+  const xyzSeries = useMemo(() => buildXyzDisplacementSeries(result), [result]);
+  const targetOptions = useMemo(
+    () => [
+      ...responseKeys.map((key) => ({ key, label: responseKeyLabel(key), disabled: false })),
+      ...xyzSeries.map((series) => ({
+        key: series.key,
+        label: series.status === "available" ? series.label : `${series.label}（未出力）`,
+        disabled: series.status !== "available",
+      })),
+    ],
+    [responseKeys, xyzSeries],
+  );
+  const selectableKeys = targetOptions.filter((option) => !option.disabled).map((option) => option.key);
+  const activeTargets = selectedTargets.filter((key) => selectableKeys.includes(key));
+  const selectedKey = activeTargets[0] ?? selectableKeys[0] ?? "";
+  const selectedSeries = selectedKey
+    ? result?.displacements?.[selectedKey] ??
+      findXyzDisplacementSeries(result, selectedKey)?.values ??
+      []
+    : [];
   const selectedGroundMotion = project.groundMotions?.find((motion) => motion.id === project.analysisSettings.timeHistory?.groundMotionId) ?? project.groundMotions?.[0] ?? null;
 
   const goPrevious = () => setActivePage(resultPages[Math.max(pageIndex - 1, 0)]?.id ?? "overview");
@@ -57,7 +80,11 @@ export function SectionResults({ project, result = null, error = null, onAnimati
                 setSelectedTargets(values);
               }}
             >
-              {responseKeys.map((key) => <option key={key} value={key}>{key}</option>)}
+              {targetOptions.map((option) => (
+                <option key={option.key} value={option.key} disabled={option.disabled}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
           <button type="button" onClick={() => setSelectedTargets([])}>
@@ -114,7 +141,18 @@ function OverviewPage({ result, project }: { result: TimeHistoryResult | null; p
 }
 
 function MaxValuesPage({ result }: { result: TimeHistoryResult | null }) {
-  const rows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 24);
+  const xyzRows = buildXyzDisplacementSeries(result)
+    .filter((series) => series.status === "available")
+    .flatMap((series) => {
+      const maximum = findSeriesMaximum(series.values, result?.time ?? []);
+      return maximum
+        ? [{ kind: "XYZ合成変位", key: series.label, value: maximum.value, time: maximum.time }]
+        : [];
+    });
+  const componentRows = [...maxRows("変位", result?.displacements, result?.time), ...maxRows("速度", result?.velocities, result?.time), ...maxRows("加速度", result?.accelerations, result?.time)]
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    .slice(0, Math.max(0, 24 - xyzRows.length));
+  const rows = [...xyzRows, ...componentRows];
   if (rows.length === 0) return <EmptyPage />;
   return <div className="time-history-table-wrap"><table><thead><tr><th>種類</th><th>キー</th><th>最大絶対値</th><th>時刻</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.kind}-${row.key}`}><td>{row.kind}</td><td>{row.key}</td><td>{formatNumber(row.value)}</td><td>{formatNumber(row.time)} 秒</td></tr>)}</tbody></table></div>;
 }
@@ -160,6 +198,13 @@ function buildSvgPoints(time: number[], values: number[]): Array<{ x: number; y:
 function responseHistoryKeys(result: TimeHistoryResult | null): string[] {
   if (!result) return [];
   return Array.from(new Set([...Object.keys(result.displacements ?? {}), ...Object.keys(result.velocities ?? {}), ...Object.keys(result.accelerations ?? {})])).sort();
+}
+
+function responseKeyLabel(key: string): string {
+  const parsed = parseTimeHistoryDisplacementKey(key);
+  if (!parsed) return key;
+  const axis = parsed.component === "ux" ? "X" : parsed.component === "uy" ? "Y" : "Z";
+  return `${parsed.nodeId} ${axis}`;
 }
 
 function maxRows(kind: string, record: Record<string, number[]> | undefined, time: number[] | undefined) {

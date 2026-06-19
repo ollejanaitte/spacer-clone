@@ -256,6 +256,35 @@ def _select_ground_motion(
     return ground_motions[0]
 
 
+def _resolve_excitation_direction(
+    time_history_settings: Mapping[str, Any],
+    ground_motion: GroundMotion,
+) -> str:
+    """Resolve one authoritative excitation direction for the run.
+
+    New projects persist the direction in both the analysis settings and
+    the selected ground-motion record. Legacy projects may omit the
+    settings field, in which case the ground-motion direction remains
+    authoritative for backward compatibility. A disagreement is rejected
+    rather than silently running in a direction different from the UI.
+    """
+
+    settings_direction = time_history_settings.get("direction")
+    if settings_direction is None:
+        return ground_motion.direction
+    if settings_direction != ground_motion.direction:
+        raise AnalysisError(
+            "TIME_HISTORY_DIRECTION_MISMATCH",
+            (
+                "analysisSettings.timeHistory.direction "
+                f"{settings_direction!r} does not match "
+                f"groundMotions[0].direction {ground_motion.direction!r}."
+            ),
+            path="/analysisSettings/timeHistory/direction",
+        )
+    return str(settings_direction)
+
+
 def _validate_damping_coefficients(damping: Mapping[str, Any]) -> tuple[float, float]:
     """Read the Rayleigh ``alpha`` and ``beta`` coefficients.
 
@@ -570,6 +599,10 @@ def run_time_history_analysis(
 
         # 4. select the ground motion.
         ground_motion = _select_ground_motion(project)
+        excitation_direction = _resolve_excitation_direction(
+            time_history_settings,
+            ground_motion,
+        )
         if ground_motion.direction not in ALLOWED_GROUND_MOTION_DIRECTIONS:
             raise AnalysisError(
                 "TIME_HISTORY_GROUND_MOTION_INVALID",
@@ -577,7 +610,7 @@ def run_time_history_analysis(
                     f"Ground motion direction {ground_motion.direction!r} is not "
                     f"one of {list(ALLOWED_GROUND_MOTION_DIRECTIONS)}."
                 ),
-                path=f"/groundMotions/0/direction",
+                path="/groundMotions/0/direction",
             )
         if ground_motion.unit not in ("m/s2", "gal"):
             raise AnalysisError(
@@ -586,7 +619,7 @@ def run_time_history_analysis(
                     f"Ground motion unit {ground_motion.unit!r} is not "
                     "supported; expected 'm/s2' or 'gal'."
                 ),
-                path=f"/groundMotions/0/unit",
+                path="/groundMotions/0/unit",
             )
         # Convert gal to m/s2 once. 1 gal = 0.01 m/s^2.
         unit_factor = 1.0 if ground_motion.unit == "m/s2" else 0.01
@@ -664,7 +697,7 @@ def run_time_history_analysis(
         load_history = assemble_effective_seismic_load_history(
             mass,
             accelerations,
-            direction=ground_motion.direction.lower(),
+            direction=excitation_direction.lower(),
         )
 
         # 10. integrate via the Newmark-beta average acceleration method.
@@ -693,7 +726,7 @@ def run_time_history_analysis(
             groundMotions=[
                 {
                     "id": ground_motion.id,
-                    "direction": ground_motion.direction,
+                    "direction": excitation_direction,
                 }
             ],
             sampleCount=newmark.n_steps,

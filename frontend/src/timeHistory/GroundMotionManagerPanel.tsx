@@ -59,7 +59,19 @@ export function GroundMotionManagerPanel({ groundMotions, project, onChange }: G
     const nextMotions = project.groundMotions && project.groundMotions.length > 0
       ? project.groundMotions.map((motion, index) => (index === 0 ? { ...motion, ...patch } : motion))
       : [{ ...defaultGroundMotion(), ...patch }];
-    onChange({ ...project, groundMotions: nextMotions });
+    const nextDirection = patch.direction;
+    onChange({
+      ...project,
+      groundMotions: nextMotions,
+      analysisSettings: nextDirection
+        ? {
+            ...project.analysisSettings,
+            timeHistory: project.analysisSettings.timeHistory
+              ? { ...project.analysisSettings.timeHistory, direction: nextDirection }
+              : project.analysisSettings.timeHistory,
+          }
+        : project.analysisSettings,
+    });
   };
   const updateNumber = (value: string, field: "timeStep") => {
     const parsed = Number(value);

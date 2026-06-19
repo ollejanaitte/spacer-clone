@@ -61,6 +61,36 @@ export function TimeHistorySettingsPanel({
     });
   };
 
+  const updateDirection = (nextDirection: "X" | "Y" | "Z") => {
+    if (!project || !onChange) return;
+    setSaved(false);
+    const currentSettings = project.analysisSettings.timeHistory;
+    const baseDamping = {
+      type: "rayleigh" as const,
+      alpha: currentSettings?.damping?.alpha ?? 0,
+      beta: currentSettings?.damping?.beta ?? 0,
+    };
+    const selectedIndex = Math.max(
+      0,
+      project.groundMotions?.findIndex((motion) => motion.id === selectedGroundMotionId) ?? 0,
+    );
+    onChange({
+      ...project,
+      analysisSettings: {
+        ...project.analysisSettings,
+        timeHistory: {
+          ...defaultTimeHistorySettings(project),
+          ...currentSettings,
+          direction: nextDirection,
+          damping: baseDamping,
+        },
+      },
+      groundMotions: project.groundMotions?.map((motion, index) =>
+        index === selectedIndex ? { ...motion, direction: nextDirection } : motion
+      ),
+    });
+  };
+
   const updateNumber = (value: string, field: "timeStep" | "duration" | "alpha" | "beta") => {
     const parsed = Number(value);
     if (!Number.isFinite(parsed) || (field === "timeStep" || field === "duration" ? parsed <= 0 : parsed < 0)) return;
@@ -108,7 +138,7 @@ export function TimeHistorySettingsPanel({
             label={labels.direction}
             value={direction}
             disabled={!onChange}
-            onChange={(value) => updateSettings({ direction: value as "X" | "Y" | "Z" })}
+            onChange={(value) => updateDirection(value as "X" | "Y" | "Z")}
             options={["X", "Y", "Z"].map((value) => ({ value, label: value }))}
           />
         </div>

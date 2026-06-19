@@ -179,6 +179,27 @@ describe("Time History minimal editing", () => {
     expect(harness.current().analysisSettings.timeHistory?.timeStep).toBe(0.02);
   });
 
+  it.each(["X", "Y", "Z"] as const)(
+    "editing analysis direction to %s synchronizes the ground motion direction",
+    (direction) => {
+      const harness = renderEditingHarness();
+
+      changeSelect(ja.timeHistory.fields.direction, direction);
+
+      expect(harness.current().analysisSettings.timeHistory?.direction).toBe(direction);
+      expect(harness.current().groundMotions?.[0]?.direction).toBe(direction);
+    },
+  );
+
+  it("editing the ground motion direction synchronizes the analysis direction", () => {
+    const harness = renderEditingHarness();
+
+    changeSelect(ja.timeHistory.groundMotionManager.editor.direction, "Z");
+
+    expect(harness.current().groundMotions?.[0]?.direction).toBe("Z");
+    expect(harness.current().analysisSettings.timeHistory?.direction).toBe("Z");
+  });
+
   it("editing duration updates project payload", () => {
     const harness = renderEditingHarness();
 

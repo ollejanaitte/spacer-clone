@@ -67,9 +67,21 @@ function makeProject(): ProjectModel {
 
 function makeResult(): TimeHistoryResult {
   return {
-    meta: { analysisId: "a1", status: "success", method: "newmark-beta", timeStep: 0.01, duration: 0.05, sampleCount: 3 },
+    meta: {
+      analysisId: "a1",
+      status: "success",
+      method: "newmark-beta",
+      timeStep: 0.01,
+      duration: 0.05,
+      sampleCount: 3,
+      groundMotions: [{ direction: "X" }],
+    },
     time: [0, 0.01, 0.02],
-    displacements: { N1_ux: [0, 0.001, 0.002] },
+    displacements: {
+      N1_ux: [0, 3, 0],
+      N1_uy: [0, 4, 0],
+      N1_uz: [0, 0, 0],
+    },
     velocities: {},
     accelerations: {},
   };
@@ -167,5 +179,49 @@ describe("TimeHistoryWizardModal", () => {
       />,
     );
     expect(document.body.textContent).toContain("結果表示");
+  });
+
+  it("selects, charts, and summarizes the XYZ combined displacement", () => {
+    mount(
+      <TimeHistoryWizardModal
+        open={true}
+        project={makeProject()}
+        result={makeResult()}
+        onProjectChange={() => undefined}
+        onClose={() => undefined}
+      />,
+    );
+    const resultNav = Array.from(document.querySelectorAll("nav.time-history-wizard-side-nav button"))
+      .find((button) => button.textContent?.includes("結果表示")) as HTMLButtonElement | undefined;
+    expect(resultNav).toBeTruthy();
+    act(() => { resultNav!.click(); });
+
+    const targetSelect = document.querySelector<HTMLSelectElement>(".time-history-target-filter select");
+    expect(targetSelect).toBeTruthy();
+    const optionLabels = Array.from(targetSelect!.options, (option) => option.textContent);
+    expect(optionLabels).toEqual(expect.arrayContaining(["N1 X", "N1 Y", "N1 Z", "N1 XYZ合成"]));
+
+    act(() => {
+      for (const option of Array.from(targetSelect!.options)) {
+        option.selected = option.value === "xyz:N1";
+      }
+      targetSelect!.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    const chartTab = Array.from(document.querySelectorAll(".time-history-result-page-tabs button"))
+      .find((button) => button.textContent?.includes("時刻歴グラフ")) as HTMLButtonElement | undefined;
+    expect(chartTab).toBeTruthy();
+    act(() => { chartTab!.click(); });
+    expect(document.querySelector(".time-history-chart-host")?.getAttribute("data-series-labels")).toContain("N1 XYZ合成");
+    expect(document.querySelector("[aria-label='グラフ凡例']")?.textContent).toContain("N1 XYZ合成");
+
+    const maxTab = Array.from(document.querySelectorAll(".time-history-result-page-tabs button"))
+      .find((button) => button.textContent?.includes("最大値一覧")) as HTMLButtonElement | undefined;
+    expect(maxTab).toBeTruthy();
+    act(() => { maxTab!.click(); });
+    expect(document.body.textContent).toContain("XYZ合成変位");
+    expect(document.body.textContent).toContain("N1 XYZ合成");
+    expect(document.body.textContent).toContain("5");
+    expect(document.body.textContent).toContain("0.01 秒");
   });
 });
