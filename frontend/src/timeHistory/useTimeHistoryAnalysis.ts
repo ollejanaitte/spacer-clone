@@ -7,6 +7,7 @@ import type {
   TimeHistoryAnalysisResponse,
   TimeHistoryHookState,
 } from "./types";
+import { migrateTimeHistorySettings } from "./settingsMigration";
 
 const endpoint = "/api/analysis/time-history";
 
@@ -32,7 +33,7 @@ export function useTimeHistoryAnalysis(options: UseTimeHistoryAnalysisOptions = 
   const run = useCallback(async (project: ProjectModel, overrides: Omit<TimeHistoryAnalysisRequest, "project"> = {}) => {
     setState((current) => ({ ...current, loading: true, error: null }));
     try {
-      const requestProject = cloneProject(project);
+      const requestProject = migrateTimeHistorySettings(cloneProject(project));
       const response = await fetch(resolveApiUrl(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },

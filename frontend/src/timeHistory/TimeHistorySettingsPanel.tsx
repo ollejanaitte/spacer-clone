@@ -3,6 +3,7 @@ import locale from "../i18n/locales/ja.json";
 import { ja } from "../i18n/ja";
 import type { AnalysisSettings, ProjectModel } from "../types";
 import { expectedSampleCount, groundMotionDuration } from "./wizard/wizardState";
+import { migrateTimeHistorySettings, type TimeHistoryAxis, type TimeHistoryV2Settings } from "./settingsMigration";
 
 type TimeHistorySettingsPanelProps = {
   project?: ProjectModel;
@@ -22,14 +23,16 @@ export function TimeHistorySettingsPanel({
   const text = locale.thAnalysis;
   const labels = text.analysisConfig;
   const [saved, setSaved] = useState(false);
-  const settings = project?.analysisSettings.timeHistory;
-  const massCases = project?.massCases ?? [];
-  const groundMotions = project?.groundMotions ?? [];
+  const normalizedProject = project ? migrateTimeHistorySettings(project) : undefined;
+  const settings = normalizedProject?.analysisSettings.timeHistory as TimeHistoryV2Settings | undefined;
+  const massCases = normalizedProject?.massCases ?? [];
+  const groundMotions = normalizedProject?.groundMotions ?? [];
   const selectedMassCaseId = settings?.massCaseId ?? massCases[0]?.id ?? "";
-  const selectedGroundMotionId = settings?.groundMotionId ?? groundMotions[0]?.id ?? "";
+  const selectedGroundMotionId = (["x", "y", "z"] as TimeHistoryAxis[])
+    .map((axis) => settings?.groundMotions[axis])
+    .find((assignment) => assignment?.enabled)?.groundMotionId ?? groundMotions[0]?.id ?? "";
   const selectedGroundMotion =
     groundMotions.find((motion) => motion.id === selectedGroundMotionId) ?? groundMotions[0];
-  const direction = settings?.direction ?? selectedGroundMotion?.direction ?? "X";
   const timeStep = settings?.timeStep ?? selectedGroundMotion?.timeStep ?? 0.01;
   const duration = settings?.duration ?? selectedGroundMotion?.duration ?? 0;
   const motionDuration = groundMotionDuration(selectedGroundMotion?.samples.length ?? 0, selectedGroundMotion?.timeStep);
@@ -38,22 +41,27 @@ export function TimeHistorySettingsPanel({
     typeof selectedGroundMotion?.timeStep === "number" &&
     Math.abs(timeStep - selectedGroundMotion.timeStep) > 1e-12;
   const durationOverflow = motionDuration !== null && duration > motionDuration + 1e-12;
+  const selectedTimeSteps = new Set((["x", "y", "z"] as TimeHistoryAxis[]).flatMap((axis) => {
+    const assignment = settings?.groundMotions[axis];
+    const motion = groundMotions.find((item) => item.id === assignment?.groundMotionId);
+    return assignment?.enabled && motion ? [motion.timeStep] : [];
+  }));
 
   const updateSettings = (patch: Partial<NonNullable<AnalysisSettings["timeHistory"]>>) => {
-    if (!project || !onChange) return;
+    if (!normalizedProject || !onChange) return;
     setSaved(false);
     const baseDamping = {
       type: "rayleigh" as const,
-      alpha: project.analysisSettings.timeHistory?.damping?.alpha ?? 0,
-      beta: project.analysisSettings.timeHistory?.damping?.beta ?? 0,
+      alpha: normalizedProject.analysisSettings.timeHistory?.damping?.alpha ?? 0,
+      beta: normalizedProject.analysisSettings.timeHistory?.damping?.beta ?? 0,
     };
     onChange({
-      ...project,
+      ...normalizedProject,
       analysisSettings: {
-        ...project.analysisSettings,
+        ...normalizedProject.analysisSettings,
         timeHistory: {
-          ...defaultTimeHistorySettings(project),
-          ...project.analysisSettings.timeHistory,
+          ...defaultTimeHistorySettings(normalizedProject),
+          ...normalizedProject.analysisSettings.timeHistory,
           ...patch,
           damping: { ...baseDamping, ...patch.damping },
         },
@@ -61,33 +69,14 @@ export function TimeHistorySettingsPanel({
     });
   };
 
-  const updateDirection = (nextDirection: "X" | "Y" | "Z") => {
-    if (!project || !onChange) return;
-    setSaved(false);
-    const currentSettings = project.analysisSettings.timeHistory;
-    const baseDamping = {
-      type: "rayleigh" as const,
-      alpha: currentSettings?.damping?.alpha ?? 0,
-      beta: currentSettings?.damping?.beta ?? 0,
-    };
-    const selectedIndex = Math.max(
-      0,
-      project.groundMotions?.findIndex((motion) => motion.id === selectedGroundMotionId) ?? 0,
-    );
-    onChange({
-      ...project,
-      analysisSettings: {
-        ...project.analysisSettings,
-        timeHistory: {
-          ...defaultTimeHistorySettings(project),
-          ...currentSettings,
-          direction: nextDirection,
-          damping: baseDamping,
-        },
+  const updateAxis = (axis: TimeHistoryAxis, patch: Partial<{ enabled: boolean; groundMotionId: string | null }>) => {
+    if (!settings) return;
+    updateSettings({
+      schemaVersion: 2,
+      groundMotions: {
+        ...settings.groundMotions,
+        [axis]: { ...settings.groundMotions[axis], ...patch },
       },
-      groundMotions: project.groundMotions?.map((motion, index) =>
-        index === selectedIndex ? { ...motion, direction: nextDirection } : motion
-      ),
     });
   };
 
@@ -121,27 +110,32 @@ export function TimeHistorySettingsPanel({
             onChange={(value) => updateSettings({ massCaseId: value })}
             options={massCases.map((massCase) => ({ value: massCase.id, label: massCase.name || massCase.id }))}
           />
-          <SelectField
-            label={labels.groundMotion}
-            value={selectedGroundMotionId}
-            disabled={!onChange}
-            onChange={(value) => {
-              const motion = groundMotions.find((item) => item.id === value);
-              updateSettings({
-                groundMotionId: value,
-                direction: motion?.direction ?? direction,
-              });
-            }}
-            options={groundMotions.map((motion) => ({ value: motion.id, label: motion.name || motion.id }))}
-          />
-          <SelectField
-            label={labels.direction}
-            value={direction}
-            disabled={!onChange}
-            onChange={(value) => updateDirection(value as "X" | "Y" | "Z")}
-            options={["X", "Y", "Z"].map((value) => ({ value, label: value }))}
-          />
         </div>
+        <table className="time-history-axis-table">
+          <thead><tr><th>Direction</th><th>Enable</th><th>Ground Motion</th></tr></thead>
+          <tbody>
+            {(["x", "y", "z"] as TimeHistoryAxis[]).map((axis) => {
+              const assignment = settings?.groundMotions[axis] ?? { enabled: false, groundMotionId: null };
+              return (
+                <tr key={axis}>
+                  <td>{axis.toUpperCase()}</td>
+                  <td><input aria-label={`${axis.toUpperCase()} Enable`} type="checkbox" checked={assignment.enabled} disabled={!onChange} onChange={(event) => updateAxis(axis, { enabled: event.currentTarget.checked })} /></td>
+                  <td>
+                    <select aria-label={`${axis.toUpperCase()} Ground Motion`} value={assignment.groundMotionId ?? ""} disabled={!onChange || !assignment.enabled} onChange={(event) => updateAxis(axis, { groundMotionId: event.currentTarget.value || null })}>
+                      <option value="">-</option>
+                      {groundMotions.map((motion) => <option key={motion.id} value={motion.id}>{motion.name || motion.id}</option>)}
+                    </select>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {selectedTimeSteps.size > 1 && (
+          <div className="time-history-validation-message warning" role="alert">
+            選択した地震波の dt が一致していません。
+          </div>
+        )}
       </div>
 
       <div className="time-history-config-section">
@@ -224,9 +218,9 @@ export function TimeHistorySettingsPanel({
         </span>
       </div>
 
-      {!project && <div className="empty-state">{locale.thAnalysis.status.notSet}</div>}
+      {!normalizedProject && <div className="empty-state">{locale.thAnalysis.status.notSet}</div>}
       <div className="time-history-config-actions">
-        <button type="button" onClick={() => setSaved(true)} disabled={!project}>
+        <button type="button" onClick={() => setSaved(true)} disabled={!normalizedProject}>
           {text.actions.saveConfig}
         </button>
         {onContinue ? (
@@ -295,6 +289,7 @@ function NumberField({
 function defaultTimeHistorySettings(project: ProjectModel): NonNullable<AnalysisSettings["timeHistory"]> {
   const firstMotion = project.groundMotions?.[0];
   return {
+    schemaVersion: 2,
     enabled: true,
     method: "newmark-beta",
     timeStep: firstMotion?.timeStep ?? 0.05,
@@ -304,6 +299,11 @@ function defaultTimeHistorySettings(project: ProjectModel): NonNullable<Analysis
     massCaseId: project.massCases?.[0]?.id ?? "",
     groundMotionId: firstMotion?.id ?? "",
     direction: firstMotion?.direction ?? "X",
+    groundMotions: {
+      x: { enabled: firstMotion?.direction === "X", groundMotionId: firstMotion?.direction === "X" ? firstMotion.id : null },
+      y: { enabled: firstMotion?.direction === "Y", groundMotionId: firstMotion?.direction === "Y" ? firstMotion.id : null },
+      z: { enabled: firstMotion?.direction === "Z", groundMotionId: firstMotion?.direction === "Z" ? firstMotion.id : null },
+    },
     damping: { type: "rayleigh", alpha: 0, beta: 0 },
   };
 }

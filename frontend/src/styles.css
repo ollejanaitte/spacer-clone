@@ -2628,6 +2628,24 @@ button:disabled {
   align-items: end;
 }
 
+.time-history-axis-table {
+  width: 100%;
+  margin-top: var(--th-space-3);
+  border-collapse: collapse;
+}
+
+.time-history-axis-table th,
+.time-history-axis-table td {
+  padding: 8px 10px;
+  color: var(--th-color-text);
+  text-align: left;
+  border-bottom: 1px solid var(--th-color-border);
+}
+
+.time-history-axis-table select {
+  width: 100%;
+}
+
 .time-history-config-section label {
   display: grid;
   gap: var(--th-space-2);

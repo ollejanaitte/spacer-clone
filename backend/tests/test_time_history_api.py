@@ -248,18 +248,19 @@ def test_missing_ground_motion_raises_analysis_error() -> None:
     assert result["errors"][0]["path"] == "/groundMotions"
 
 
-def test_multiple_ground_motions_are_rejected() -> None:
+def test_multiple_stored_ground_motions_keep_legacy_selection_compatible() -> None:
     project = _sdof_cantilever_project()
-    # Duplicate the single record to push the count to two.
-    project["groundMotions"].append(copy.deepcopy(project["groundMotions"][0]))
+    extra = copy.deepcopy(project["groundMotions"][0])
+    extra["id"] = "gm-002"
+    extra["direction"] = "Y"
+    project["groundMotions"].append(extra)
 
     result = run_time_history_analysis(project)
 
-    assert result["analysisSummary"]["status"] == "failed"
-    assert (
-        result["errors"][0]["code"]
-        == "TIME_HISTORY_GROUND_MOTION_MULTIPLE"
-    )
+    assert result["analysisSummary"]["status"] == "success"
+    assert result["timeHistoryResult"]["meta"]["groundMotions"] == [
+        {"id": "gm-001", "direction": "X"}
+    ]
 
 
 def test_ground_motion_dt_mismatch_raises_analysis_error() -> None:
@@ -515,6 +516,93 @@ def test_time_history_direction_z_succeeds() -> None:
     meta = result["timeHistoryResult"]["meta"]
     assert meta["groundMotions"][0]["direction"] == "Z"
     assert "N2" in result["timeHistoryResult"]["displacements"]
+
+
+def _configure_v2_ground_motions(
+    project: dict[str, Any],
+    directions: tuple[str, ...],
+) -> dict[str, Any]:
+    configured = copy.deepcopy(project)
+    template = copy.deepcopy(configured["groundMotions"][0])
+    configured["groundMotions"] = []
+    assignments: dict[str, dict[str, Any]] = {}
+    for axis in ("X", "Y", "Z"):
+        motion = copy.deepcopy(template)
+        motion["id"] = f"gm-{axis.lower()}"
+        motion["direction"] = axis
+        configured["groundMotions"].append(motion)
+        assignments[axis.lower()] = {
+            "enabled": axis in directions,
+            "groundMotionId": motion["id"] if axis in directions else None,
+        }
+    configured["analysisSettings"]["timeHistory"].update(
+        {"schemaVersion": 2, "groundMotions": assignments}
+    )
+    configured["analysisSettings"]["timeHistory"].pop("direction", None)
+    configured["analysisSettings"]["timeHistory"].pop("groundMotionId", None)
+    return configured
+
+
+@pytest.mark.parametrize(
+    ("direction", "component"),
+    [("X", "ux"), ("Y", "uy"), ("Z", "uz")],
+)
+def test_th10_single_axis_v2_matches_legacy_to_1e_9(
+    direction: str,
+    component: str,
+) -> None:
+    legacy = _sdof_cantilever_project_with_mass(
+        project_id=f"th10-single-{direction.lower()}",
+        mass_components={"mx": 1.0, "my": 1.0, "mz": 1.0},
+        direction=direction,
+    )
+    v2 = _configure_v2_ground_motions(legacy, (direction,))
+
+    legacy_result = run_time_history_analysis(legacy)["timeHistoryResult"]
+    v2_result = run_time_history_analysis(v2)["timeHistoryResult"]
+
+    np.testing.assert_allclose(
+        legacy_result["displacements"][f"N2_{component}"],
+        v2_result["displacements"][f"N2_{component}"],
+        atol=1.0e-9,
+        rtol=0.0,
+    )
+
+
+@pytest.mark.parametrize("directions", [("X", "Y"), ("X", "Y", "Z")])
+def test_th10_multi_axis_components_and_resultant(directions: tuple[str, ...]) -> None:
+    base = _sdof_cantilever_project_with_mass(
+        project_id=f"th10-multi-{'-'.join(directions).lower()}",
+        mass_components={"mx": 1.0, "my": 1.0, "mz": 1.0},
+        direction="X",
+    )
+    combined_project = _configure_v2_ground_motions(base, directions)
+    combined = run_time_history_analysis(combined_project)["timeHistoryResult"]
+
+    for axis in directions:
+        component = f"u{axis.lower()}"
+        individual = run_time_history_analysis(
+            _configure_v2_ground_motions(base, (axis,))
+        )["timeHistoryResult"]
+        np.testing.assert_allclose(
+            combined["displacements"][f"N2_{component}"],
+            individual["displacements"][f"N2_{component}"],
+            atol=1.0e-9,
+            rtol=0.0,
+        )
+
+    expected = np.sqrt(
+        sum(
+            np.square(combined["displacements"][f"N2_u{axis.lower()}"])
+            for axis in ("X", "Y", "Z")
+        )
+    )
+    np.testing.assert_allclose(
+        combined["displacements"]["N2_resultant"],
+        expected,
+        atol=1.0e-12,
+        rtol=0.0,
+    )
 
 
 @pytest.mark.parametrize(

@@ -21,6 +21,7 @@ const responseKeys: Array<keyof Pick<TimeHistoryResult, "displacements" | "veloc
 const maxDisplayedRows = 100;
 const maxChartPoints = 1000;
 type TimeHistorySeries = "displacement" | "velocity" | "acceleration";
+type ResponseDirection = "X" | "Y" | "Z" | "Resultant";
 
 const seriesResultKey: Record<TimeHistorySeries, (typeof responseKeys)[number]> = {
   displacement: "displacements",
@@ -37,7 +38,11 @@ export function TimeHistoryResultViewer({
 }: TimeHistoryResultViewerProps) {
   const labels = ja.timeHistory.resultViewer;
   const meta = result?.meta;
-  const responseKeyOptions = useMemo(() => responseHistoryKeys(result), [result]);
+  const [selectedDirection, setSelectedDirection] = useState<ResponseDirection>("X");
+  const responseKeyOptions = useMemo(
+    () => responseHistoryKeys(result, selectedDirection),
+    [result, selectedDirection],
+  );
   const [selectedKey, setSelectedKey] = useState("");
   const [selectedSeries, setSelectedSeries] = useState<TimeHistorySeries>("displacement");
   const selectedResultKey = seriesResultKey[selectedSeries];
@@ -65,6 +70,8 @@ export function TimeHistoryResultViewer({
       onSelectedKeyChange={setSelectedKey}
       selectedSeries={selectedSeries}
       onSelectedSeriesChange={setSelectedSeries}
+      selectedDirection={selectedDirection}
+      onSelectedDirectionChange={setSelectedDirection}
       tableRows={tableRows}
       displayedRows={displayedRows}
       hasTable={hasTable}
@@ -86,6 +93,8 @@ type BodyProps = {
   onSelectedKeyChange: (key: string) => void;
   selectedSeries: TimeHistorySeries;
   onSelectedSeriesChange: (series: TimeHistorySeries) => void;
+  selectedDirection: ResponseDirection;
+  onSelectedDirectionChange: (direction: ResponseDirection) => void;
   tableRows: Array<{ time: number; value: number }>;
   displayedRows: Array<{ time: number; value: number }>;
   hasTable: boolean;
@@ -148,6 +157,19 @@ function TimeHistoryResultViewerBody(props: BodyProps) {
           </div>
         )}
         <div className="summary-list result-toolbar">
+          <label className="result-select">
+            <span>Direction</span>
+            <select
+              aria-label="Direction"
+              value={props.selectedDirection}
+              onChange={(event) => props.onSelectedDirectionChange(event.currentTarget.value as ResponseDirection)}
+            >
+              <option value="X">X</option>
+              <option value="Y">Y</option>
+              <option value="Z">Z</option>
+              <option value="Resultant">Resultant</option>
+            </select>
+          </label>
           <label className="result-select">
             <span>{props.labels.responseKeyLabel}</span>
             <select
@@ -328,15 +350,29 @@ function TimeHistoryChart({
   );
 }
 
-function responseHistoryKeys(result: TimeHistoryResult | null): string[] {
+export function responseHistoryKeys(
+  result: TimeHistoryResult | null,
+  direction: ResponseDirection = "X",
+): string[] {
   if (!result) return [];
   const keys = new Set<string>();
   for (const responseKey of responseKeys) {
     const histories = result[responseKey];
     if (!histories || typeof histories !== "object") continue;
-    for (const key of Object.keys(histories)) keys.add(key);
+    for (const key of Object.keys(histories)) {
+      if (matchesDirection(key, direction, result)) keys.add(key);
+    }
   }
   return [...keys].sort();
+}
+
+function matchesDirection(key: string, direction: ResponseDirection, result: TimeHistoryResult): boolean {
+  if (direction === "Resultant") return key.endsWith("_resultant");
+  const suffix = `_u${direction.toLowerCase()}`;
+  if (key.endsWith(suffix)) return true;
+  if (key.includes("_")) return false;
+  const legacyDirection = String(result.meta?.groundMotions?.[0]?.direction ?? "").toUpperCase();
+  return legacyDirection === direction;
 }
 
 function buildTableRows(time: number[] | undefined, values: number[] | undefined): Array<{ time: number; value: number }> {
