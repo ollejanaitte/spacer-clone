@@ -13,6 +13,7 @@ import {
   type PeakResponseComponent,
 } from "../../displacementSeries";
 import { ResultSummaryCard } from "../ResultSummaryCard";
+import { enabledGroundMotions } from "../../settingsMigration";
 
 type SectionResultsProps = {
   project: ProjectModel;
@@ -36,6 +37,7 @@ const resultPages: Array<{ id: ResultPageId; label: string; help: string }> = [
 export function SectionResults({ project, result = null, error = null, onAnimationOverrideChange }: SectionResultsProps) {
   const [activePage, setActivePage] = useState<ResultPageId>("overview");
   const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
+  const [direction, setDirection] = useState<"X" | "Y" | "Z" | "Resultant">("X");
   const pageIndex = resultPages.findIndex((page) => page.id === activePage);
   const page = resultPages[pageIndex] ?? resultPages[0];
   const responseKeys = useMemo(() => responseHistoryKeys(result), [result]);
@@ -53,13 +55,16 @@ export function SectionResults({ project, result = null, error = null, onAnimati
   );
   const selectableKeys = targetOptions.filter((option) => !option.disabled).map((option) => option.key);
   const activeTargets = selectedTargets.filter((key) => selectableKeys.includes(key));
-  const selectedKey = activeTargets[0] ?? selectableKeys[0] ?? "";
+  const directionKeys = direction === "Resultant"
+    ? selectableKeys.filter((key) => key.endsWith("_resultant") || key.endsWith("_xyz"))
+    : selectableKeys.filter((key) => key.endsWith(`_u${direction.toLowerCase()}`) || !key.includes("_"));
+  const selectedKey = activeTargets[0] ?? directionKeys[0] ?? selectableKeys[0] ?? "";
   const selectedSeries = selectedKey
     ? result?.displacements?.[selectedKey] ??
       findXyzDisplacementSeries(result, selectedKey)?.values ??
       []
     : [];
-  const selectedGroundMotion = project.groundMotions?.find((motion) => motion.id === project.analysisSettings.timeHistory?.groundMotionId) ?? project.groundMotions?.[0] ?? null;
+  const selectedGroundMotion = enabledGroundMotions(project)[0]?.motion ?? project.groundMotions?.[0] ?? null;
 
   const goPrevious = () => setActivePage(resultPages[Math.max(pageIndex - 1, 0)]?.id ?? "overview");
   const goNext = () => setActivePage(resultPages[Math.min(pageIndex + 1, resultPages.length - 1)]?.id ?? "overview");
@@ -72,6 +77,22 @@ export function SectionResults({ project, result = null, error = null, onAnimati
           <p>結果は紙芝居形式で1ページずつ確認できます。概要、最大値、グラフ、アニメーション、詳細表の順に見てください。</p>
         </div>
         <div className="time-history-results-tools">
+          <label className="result-select">
+            <span>Direction</span>
+            <select
+              aria-label="Direction"
+              value={direction}
+              onChange={(event) => {
+                setDirection(event.currentTarget.value as "X" | "Y" | "Z" | "Resultant");
+                setSelectedTargets([]);
+              }}
+            >
+              <option value="X">X</option>
+              <option value="Y">Y</option>
+              <option value="Z">Z</option>
+              <option value="Resultant">Resultant</option>
+            </select>
+          </label>
           <label className="time-history-target-filter" title={locale.thAnalysis.results.displayTargetsHelp}>
             <span>{locale.thAnalysis.results.displayTargets}</span>
             <select

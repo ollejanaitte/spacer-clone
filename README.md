@@ -11,6 +11,12 @@ Initial repository baseline for pull requests.
 - 結果画面では応答キーと物理量を動的に絞り込み、PNG/CSVに出力できます。
 - 3Dアニメーションは、表示要素、サイズ、再生速度、変形倍率、変位モードを変更できます。
 
+### X / Y / Z 3方向同時入力
+
+地震波設定の Direction テーブルで、X・Y・Z を個別に有効化し、それぞれ異なる地震波を割り当てます。選択した地震波の `dt` は一致させてください。不一致の場合は設定画面に警告が表示され、解析実行時にも検証されます。
+
+未入力方向はゼロ入力として扱われます。結果画面では `X / Y / Z / Resultant` を切り替えられ、Resultant は各時刻の3成分から `sqrt(x² + y² + z²)` で算出されます。旧形式の `direction` と `groundMotionId` を持つプロジェクトは読込時に schemaVersion 2 へ自動移行します。
+
 フロントエンドの品質確認:
 
 ```powershell

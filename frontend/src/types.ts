@@ -134,6 +134,7 @@ export type AnalysisSettings = {
     targets: InfluenceTarget[];
   };
   timeHistory?: {
+    schemaVersion?: 2;
     enabled?: boolean;
     method: "newmark-beta";
     timeStep: number;
@@ -144,6 +145,11 @@ export type AnalysisSettings = {
     massCaseId?: string;
     groundMotionId?: string;
     direction?: "X" | "Y" | "Z";
+    groundMotions?: {
+      x: { enabled: boolean; groundMotionId: string | null };
+      y: { enabled: boolean; groundMotionId: string | null };
+      z: { enabled: boolean; groundMotionId: string | null };
+    };
   };
 };
 

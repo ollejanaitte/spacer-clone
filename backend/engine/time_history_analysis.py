@@ -21,10 +21,10 @@ function:
 10. Return the analysis result in the same envelope used by
     ``run_eigen_analysis`` and ``run_response_spectrum_analysis``.
 
-The MVP scope is intentionally narrow:
+The supported scope is intentionally narrow:
 
-* One ground motion record per run. Multiple records are rejected
-  with a clear ``AnalysisError`` at the API boundary.
+* One independently assigned ground motion record per X, Y, and Z
+  direction can be combined in a run.
 * The ground motion record time step must equal the analysis time
   step. Interpolation and resampling are out of scope.
 * Rayleigh damping uses the ``alpha`` and ``beta`` coefficients
@@ -80,8 +80,7 @@ from .time_history_result import (
 )
 
 
-# MVP ground motion axis set. The MVP analysis supports only one
-# ground motion record per run.
+# Ground motion axes supported by the linear solver integration.
 ALLOWED_GROUND_MOTION_DIRECTIONS: tuple[str, ...] = ("X", "Y", "Z")
 
 # ---------------------------------------------------------------------------
@@ -210,50 +209,140 @@ def _damping_section(time_history_settings: Mapping[str, Any]) -> dict[str, Any]
     return dict(damping)
 
 
-def _select_ground_motion(
+def migrate_time_history_settings_v2(
+    time_history_settings: Mapping[str, Any],
+    ground_motions: list[GroundMotion],
+) -> dict[str, Any]:
+    """Normalize legacy single-direction settings to the TH-10 v2 shape."""
+
+    normalized = dict(time_history_settings)
+    assignments = normalized.get("groundMotions")
+    if isinstance(assignments, Mapping):
+        normalized["schemaVersion"] = 2
+        return normalized
+    legacy_id = normalized.get("groundMotionId")
+    legacy_direction = str(normalized.get("direction") or "").upper()
+    if not legacy_id and ground_motions:
+        legacy_id = ground_motions[0].id
+    if legacy_direction not in ALLOWED_GROUND_MOTION_DIRECTIONS and ground_motions:
+        legacy_direction = ground_motions[0].direction
+    normalized["schemaVersion"] = 2
+    normalized["groundMotions"] = {
+        axis.lower(): {
+            "enabled": axis == legacy_direction and bool(legacy_id),
+            "groundMotionId": legacy_id if axis == legacy_direction else None,
+        }
+        for axis in ALLOWED_GROUND_MOTION_DIRECTIONS
+    }
+    return normalized
+
+
+def _select_ground_motions(
     project_data: Mapping[str, Any],
-) -> GroundMotion:
-    """Return the single ground motion record that drives this run.
-
-    The MVP rejects projects that declare zero or more than one
-    ground motion. This decision matches
-    ``docs/design/time-history-schema.md`` section 7 which states
-    that the MVP supports one record per direction; combining
-    multiple records into a single response is reserved for a
-    future implementation.
-    """
-
-    ground_motions_raw = project_data.get("groundMotions", [])
+    time_history_settings: Mapping[str, Any],
+) -> list[tuple[str, GroundMotion]]:
     try:
-        ground_motions = parse_ground_motions(ground_motions_raw)
+        records = parse_ground_motions(project_data.get("groundMotions", []))
     except TimeHistoryModelError as exc:
-        # Surface the schema-level failure with a JSON-pointer path so
-        # that the API layer can convert it into a structured
-        # failed envelope. ``groundMotions[0]`` is the only record
-        # the MVP ever inspects, so any field-level error maps to
-        # the same prefix.
         raise AnalysisError(
             "TIME_HISTORY_GROUND_MOTION_INVALID",
             str(exc),
-            path="/groundMotions/0",
+            path="/groundMotions",
         ) from exc
-    if len(ground_motions) == 0:
+    if not records:
         raise AnalysisError(
             "TIME_HISTORY_GROUND_MOTION_MISSING",
-            "Time history analysis requires a single ground motion record.",
+            "Time history analysis requires at least one ground motion record.",
             path="/groundMotions",
         )
-    if len(ground_motions) > 1:
+    is_legacy = not isinstance(time_history_settings.get("groundMotions"), Mapping)
+    if is_legacy:
+        legacy_id = time_history_settings.get("groundMotionId")
+        legacy_record = next((record for record in records if record.id == legacy_id), records[0])
+        _resolve_excitation_direction(time_history_settings, legacy_record)
+    settings = migrate_time_history_settings_v2(time_history_settings, records)
+    by_id = {record.id: record for record in records}
+    selected: list[tuple[str, GroundMotion]] = []
+    assignments = settings["groundMotions"]
+    for axis in ALLOWED_GROUND_MOTION_DIRECTIONS:
+        assignment = assignments.get(axis.lower(), {})
+        if not isinstance(assignment, Mapping) or not assignment.get("enabled"):
+            continue
+        motion_id = assignment.get("groundMotionId")
+        motion = by_id.get(str(motion_id)) if motion_id else None
+        if motion is None:
+            raise AnalysisError(
+                "TIME_HISTORY_GROUND_MOTION_MISSING",
+                f"{axis} direction is enabled but no valid ground motion is assigned.",
+                path=f"/analysisSettings/timeHistory/groundMotions/{axis.lower()}",
+            )
+        selected.append((axis, motion))
+    if not selected:
         raise AnalysisError(
-            "TIME_HISTORY_GROUND_MOTION_MULTIPLE",
-            (
-                "Time history analysis MVP supports exactly one ground "
-                "motion record; received "
-                f"{len(ground_motions)}."
-            ),
-            path="/groundMotions",
+            "TIME_HISTORY_GROUND_MOTION_MISSING",
+            "At least one of X, Y, or Z ground motions must be enabled.",
+            path="/analysisSettings/timeHistory/groundMotions",
         )
-    return ground_motions[0]
+    return selected
+
+
+def _validated_acceleration_series(
+    motion: GroundMotion,
+    *,
+    motion_index: int,
+    time_step: float,
+    duration: float,
+) -> NDArray[np.float64]:
+    if abs(float(motion.timeStep) - time_step) > 1.0e-9:
+        raise AnalysisError(
+            "TIME_HISTORY_GROUND_MOTION_DT_MISMATCH",
+            f"Ground motion {motion.id!r} timeStep {motion.timeStep} s does not match {time_step} s.",
+            path=f"/groundMotions/{motion_index}/timeStep",
+        )
+    factor = 1.0 if motion.unit == "m/s2" else 0.01
+    values = np.asarray([float(value) * factor for value in motion.samples], dtype=float)
+    if values.size < 2 or not np.all(np.isfinite(values)):
+        raise AnalysisError(
+            "TIME_HISTORY_GROUND_MOTION_INVALID",
+            f"Ground motion {motion.id!r} must contain at least two finite samples.",
+            path=f"/groundMotions/{motion_index}/samples",
+        )
+    expected = int(round(duration / time_step)) + 1
+    if abs(values.size - expected) > 1:
+        raise AnalysisError(
+            "TIME_HISTORY_GROUND_MOTION_DURATION_MISMATCH",
+            f"Ground motion {motion.id!r} has {values.size} samples; expected {expected}.",
+            path=f"/groundMotions/{motion_index}/samples",
+        )
+    return values
+
+
+def _add_resultant_histories(result: dict[str, Any]) -> None:
+    for map_name in ("displacements", "velocities", "accelerations"):
+        histories = result.get(map_name)
+        if not isinstance(histories, dict):
+            continue
+        ground_motions = result.get("meta", {}).get("groundMotions", [])
+        if len(ground_motions) == 1:
+            suffix = str(ground_motions[0].get("direction", "")).lower()
+            for key, values in list(histories.items()):
+                if "_" not in key and suffix in {"x", "y", "z"}:
+                    histories.setdefault(f"{key}_u{suffix}", values)
+        node_ids = {
+            key.rsplit("_", 1)[0]
+            for key in histories
+            if key.endswith(("_ux", "_uy", "_uz"))
+        }
+        for node_id in node_ids:
+            components = [
+                histories.get(f"{node_id}_{suffix}", [])
+                for suffix in ("ux", "uy", "uz")
+            ]
+            count = max((len(values) for values in components), default=0)
+            histories[f"{node_id}_resultant"] = [
+                float(np.sqrt(sum((values[index] if index < len(values) else 0.0) ** 2 for values in components)))
+                for index in range(count)
+            ]
 
 
 def _resolve_excitation_direction(
@@ -597,71 +686,25 @@ def run_time_history_analysis(
         damping = _damping_section(time_history_settings)
         alpha, beta_d = _validate_damping_coefficients(damping)
 
-        # 4. select the ground motion.
-        ground_motion = _select_ground_motion(project)
-        excitation_direction = _resolve_excitation_direction(
-            time_history_settings,
-            ground_motion,
-        )
-        if ground_motion.direction not in ALLOWED_GROUND_MOTION_DIRECTIONS:
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_INVALID",
-                (
-                    f"Ground motion direction {ground_motion.direction!r} is not "
-                    f"one of {list(ALLOWED_GROUND_MOTION_DIRECTIONS)}."
+        # 4. select and validate one independent record per enabled axis.
+        selected_ground_motions = _select_ground_motions(project, time_history_settings)
+        motion_indexes = {
+            motion.id: index
+            for index, motion in enumerate(parse_ground_motions(project.get("groundMotions", [])))
+        }
+        acceleration_series = [
+            (
+                axis,
+                motion,
+                _validated_acceleration_series(
+                    motion,
+                    motion_index=motion_indexes[motion.id],
+                    time_step=time_step,
+                    duration=duration,
                 ),
-                path="/groundMotions/0/direction",
             )
-        if ground_motion.unit not in ("m/s2", "gal"):
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_INVALID",
-                (
-                    f"Ground motion unit {ground_motion.unit!r} is not "
-                    "supported; expected 'm/s2' or 'gal'."
-                ),
-                path="/groundMotions/0/unit",
-            )
-        # Convert gal to m/s2 once. 1 gal = 0.01 m/s^2.
-        unit_factor = 1.0 if ground_motion.unit == "m/s2" else 0.01
-        if abs(float(ground_motion.timeStep) - time_step) > 1.0e-9:
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_DT_MISMATCH",
-                (
-                    "Ground motion timeStep "
-                    f"{ground_motion.timeStep} s does not match the analysis "
-                    f"timeStep {time_step} s. Interpolation is not supported in "
-                    "the MVP."
-                ),
-                path="/groundMotions/0/timeStep",
-            )
-        accelerations = np.asarray(
-            [float(value) * unit_factor for value in ground_motion.samples],
-            dtype=float,
-        )
-        if accelerations.size < 2:
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_INVALID",
-                "Ground motion record must contain at least two samples.",
-                path="/groundMotions/0/samples",
-            )
-        if not np.all(np.isfinite(accelerations)):
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_INVALID",
-                "Ground motion samples must be finite.",
-                path="/groundMotions/0/samples",
-            )
-        # duration must match sample count (off-by-one is accepted).
-        n_samples = accelerations.size
-        expected_samples = int(round(duration / time_step)) + 1
-        if abs(n_samples - expected_samples) > 1:
-            raise AnalysisError(
-                "TIME_HISTORY_GROUND_MOTION_DURATION_MISMATCH",
-                (
-                    f"Ground motion has {n_samples} samples but the analysis "
-                    f"duration / timeStep implies {expected_samples} samples."
-                ),
-                path="/groundMotions/0/samples",
-            )
+            for axis, motion in selected_ground_motions
+        ]
 
         # 5. read the mass case. The MVP uses the first mass case.
         if not model.massCases:
@@ -694,18 +737,22 @@ def run_time_history_analysis(
         )
 
         # 9. build the effective seismic load history.
-        load_history = assemble_effective_seismic_load_history(
-            mass,
-            accelerations,
-            direction=excitation_direction.lower(),
-        )
+        loads = None
+        for axis, _motion, accelerations in acceleration_series:
+            directional = assemble_effective_seismic_load_history(
+                mass,
+                accelerations,
+                direction=axis.lower(),
+            ).loads
+            loads = directional.copy() if loads is None else loads + directional
+        assert loads is not None
 
         # 10. integrate via the Newmark-beta average acceleration method.
         newmark = solve_newmark_average_acceleration(
             mass_matrix=mass.matrix,
             damping_matrix=damping_matrix.matrix,
             stiffness_matrix=stiffness_reduced,
-            loads=load_history.loads,
+            loads=loads,
             dt=time_step,
         )
 
@@ -724,10 +771,8 @@ def run_time_history_analysis(
                 "beta": beta_d,
             },
             groundMotions=[
-                {
-                    "id": ground_motion.id,
-                    "direction": excitation_direction,
-                }
+                {"id": motion.id, "direction": axis}
+                for axis, motion in selected_ground_motions
             ],
             sampleCount=newmark.n_steps,
         )
@@ -747,10 +792,12 @@ def run_time_history_analysis(
             free_dof=free_dof,
             constrained_dof=total_dof - free_dof,
         )
+        result_payload = result_block.to_dict()
+        _add_resultant_histories(result_payload)
         return _result_envelope(
             model,
             project_id,
-            result_block.to_dict(),
+            result_payload,
             summary,
         )
     except AnalysisError as exc:

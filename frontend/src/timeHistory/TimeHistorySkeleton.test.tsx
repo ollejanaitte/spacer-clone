@@ -10,7 +10,7 @@ import type { AnalysisResult, ProjectModel } from "../types";
 import { ResultsPanel } from "../components/ResultsPanel";
 import { H24_WAVEFORM_NAMES } from "./h24GroundMotionImport";
 import { GroundMotionManagerPanel } from "./GroundMotionManagerPanel";
-import { TimeHistoryResultViewer } from "./TimeHistoryResultViewer";
+import { responseHistoryKeys, TimeHistoryResultViewer } from "./TimeHistoryResultViewer";
 import { TimeHistorySettingsPanel } from "./TimeHistorySettingsPanel";
 import { useTimeHistoryAnalysis } from "./useTimeHistoryAnalysis";
 
@@ -133,6 +133,24 @@ describe("Time History basic result table", () => {
 
     expect(document.body.textContent).toContain(`${ja.timeHistory.resultViewer.selectedKey}: N3_ux`);
     expect(tableText()).toContain("2.000");
+  });
+
+  it("filters X, Y, Z, and Resultant response keys", () => {
+    const base = timeHistoryResult().timeHistoryResult!;
+    const result = {
+      ...base,
+      displacements: {
+        ...base.displacements,
+        N2_uy: [0, 0.2, 0],
+        N2_uz: [0, 0.3, 0],
+        N2_resultant: [0, Math.sqrt(0.14), 0],
+      },
+    };
+
+    expect(responseHistoryKeys(result, "X")).toContain("N2_ux");
+    expect(responseHistoryKeys(result, "Y")).toEqual(["N2_uy"]);
+    expect(responseHistoryKeys(result, "Z")).toEqual(["N2_uz"]);
+    expect(responseHistoryKeys(result, "Resultant")).toEqual(["N2_resultant"]);
   });
 
   it("limits displayed rows to 100", () => {

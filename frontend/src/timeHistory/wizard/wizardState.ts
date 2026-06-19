@@ -1,5 +1,10 @@
 import locale from "../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../types";
+import {
+  enabledGroundMotions,
+  migrateTimeHistorySettings,
+  type TimeHistoryV2Settings,
+} from "../settingsMigration";
 
 const text = locale.thAnalysis;
 
@@ -82,11 +87,13 @@ export function buildStepStates(
 }
 
 export function buildTimeHistoryChecks(project: ProjectModel): TimeHistoryCheck[] {
-  const settings = project.analysisSettings.timeHistory;
-  const groundMotions = project.groundMotions ?? [];
+  const normalizedProject = migrateTimeHistorySettings(project);
+  const settings = normalizedProject.analysisSettings.timeHistory as TimeHistoryV2Settings;
+  const groundMotions = normalizedProject.groundMotions ?? [];
   const massCases = project.massCases ?? [];
-  const selectedGroundMotion =
-    groundMotions.find((motion) => motion.id === settings?.groundMotionId) ?? groundMotions[0];
+  const selectedGroundMotions = enabledGroundMotions(normalizedProject);
+  const selectedGroundMotion = selectedGroundMotions[0]?.motion;
+  const selectedTimeSteps = new Set(selectedGroundMotions.map(({ motion }) => motion.timeStep));
   const timeStep = settings?.timeStep ?? selectedGroundMotion?.timeStep;
   const duration = settings?.duration ?? selectedGroundMotion?.duration;
   const sampleCount = selectedGroundMotion?.samples?.length ?? 0;
@@ -148,8 +155,10 @@ export function buildTimeHistoryChecks(project: ProjectModel): TimeHistoryCheck[
     {
       id: "timeStep",
       label: "時間刻み dt",
-      status: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? "ok" : "ng",
-      reason: typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? `dt = ${timeStep} s` : "dt が未設定または不正です。",
+      status: selectedTimeSteps.size > 1 ? "warning" : typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? "ok" : "ng",
+      reason: selectedTimeSteps.size > 1
+        ? "選択した地震波の dt が一致していません。"
+        : typeof timeStep === "number" && Number.isFinite(timeStep) && timeStep > 0 ? `dt = ${timeStep} s` : "dt が未設定または不正です。",
       action: text.inputCheck.supplement.timeStep,
       section: "analysis",
     },
