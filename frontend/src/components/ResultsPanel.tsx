@@ -52,13 +52,14 @@ const tabs: Array<{ key: BottomTab; label: string }> = [
   { key: "logs", label: ja.resultsPanel.tabs.logs },
 ];
 
-type ResultViewKey = "static" | "eigen" | "response" | "influence" | "timeHistory";
+type ResultViewKey = "static" | "eigen" | "response" | "influence" | "movingLoad" | "timeHistory";
 
 const resultViewLabels: Record<ResultViewKey, string> = {
   static: ja.resultsPanel.resultView.static,
   eigen: ja.resultsPanel.resultView.eigen,
   response: ja.resultsPanel.resultView.response,
   influence: ja.resultsPanel.resultView.influence,
+  movingLoad: "移動荷重",
   timeHistory: ja.resultsPanel.resultView.timeHistory,
 };
 
@@ -210,6 +211,7 @@ function ResultTablesContent({
   const eigenViewModel = buildEigenModeViewModel(result, selectedEigenMode);
   const responseSpectrumViewModel = buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult);
   const influenceViewModel = buildInfluenceLineViewModel(result);
+  const movingLoadResult = result.movingLoadResult ?? null;
   const timeHistoryResult = result.timeHistoryResult ?? null;
   const eigenModes = eigenViewModel?.modes ?? [];
   const selectedMode = eigenModes.find((mode) => mode.modeNo === eigenViewModel?.selectedModeNo) ?? eigenModes[0] ?? null;
@@ -247,6 +249,7 @@ function ResultTablesContent({
     if (eigenModes.length > 0) views.push("eigen");
     if (responseSpectrumViewModel) views.push("response");
     if (influenceViewModel) views.push("influence");
+    if (movingLoadResult) views.push("movingLoad");
     if (timeHistoryResult) views.push("timeHistory");
     return views.length > 0 ? views : (["static"] satisfies ResultViewKey[]);
   }, [
@@ -254,6 +257,7 @@ function ResultTablesContent({
     eigenModes.length,
     influenceViewModel,
     memberForces.length,
+    movingLoadResult,
     reactions.length,
     responseSpectrumViewModel,
     timeHistoryResult,
@@ -387,6 +391,46 @@ function ResultTablesContent({
             title={ja.resultsPanel.tables.influenceValues}
             rows={influenceRows(filteredInfluenceSeries)}
             columns={["target", "station", "ratio", "value"]}
+          />
+        </>
+      )}
+      {activeView === "movingLoad" && movingLoadResult && (
+        <>
+          <div className="result-table">
+            <h3>移動荷重結果</h3>
+            <div className="summary-list">
+              <span>ケース: {movingLoadResult.caseId}</span>
+              <span>走行部材: {movingLoadResult.line.memberId}</span>
+              <span>station数: {movingLoadResult.line.stationCount}</span>
+              <span>荷重: {formatNumber(movingLoadResult.liveLoad?.magnitude ?? 0)} {movingLoadResult.liveLoad?.unit ?? "kN"}</span>
+            </div>
+          </div>
+          <CompactTable
+            title="包絡結果"
+            rows={movingLoadResult.envelopeResult.items.map((item) => ({
+              targetId: item.targetId,
+              type: item.target.type,
+              component: item.target.component,
+              max: item.max.value,
+              maxStation: item.max.station,
+              min: item.min.value,
+              minStation: item.min.station,
+              absMax: item.absMax.value,
+              absMaxStation: item.absMax.station,
+            }))}
+            columns={["targetId", "type", "component", "max", "maxStation", "min", "minStation", "absMax", "absMaxStation"]}
+          />
+          <CompactTable
+            title="最悪載荷位置"
+            rows={movingLoadResult.worstCaseLoadingPositions.map((item) => ({
+              targetId: item.targetId,
+              criterion: item.criterion,
+              value: item.value,
+              station: item.station,
+              ratio: item.ratio,
+              influenceValue: item.influenceValue,
+            }))}
+            columns={["targetId", "criterion", "value", "station", "ratio", "influenceValue"]}
           />
         </>
       )}
@@ -724,6 +768,8 @@ function preferredResultView(analysisType: string, availableViews: ResultViewKey
         ? "response"
       : analysisType === "influence_line"
         ? "influence"
+        : analysisType === "moving_load"
+          ? "movingLoad"
         : analysisType === "time_history"
           ? "timeHistory"
           : "static";

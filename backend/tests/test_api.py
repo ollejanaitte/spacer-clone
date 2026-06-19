@@ -126,6 +126,54 @@ def test_influence_run_endpoint_returns_influence_result(client) -> None:
     assert all(len(item["values"]) == 5 for item in influence["targetResults"])
 
 
+def test_moving_load_run_endpoint_returns_envelope_and_csv(client) -> None:
+    project = cantilever_tip_load()
+    response = client.post(
+        "/api/moving-load/run",
+        json={
+            "project": project,
+            "movingLoadCase": {
+                "id": "mlc-api-1",
+                "name": "API moving load",
+                "line": {
+                    "id": "line-M1",
+                    "memberId": "M1",
+                    "stationCount": 5,
+                    "direction": {"x": 0.0, "y": -1.0, "z": 0.0},
+                },
+                "liveLoad": {
+                    "id": "P1",
+                    "type": "singlePoint",
+                    "magnitude": 100.0,
+                    "unit": "kN",
+                    "direction": {"x": 0.0, "y": -1.0, "z": 0.0},
+                },
+                "targets": [
+                    {
+                        "id": "member-m1-mz-i",
+                        "type": "memberEndForce",
+                        "memberId": "M1",
+                        "component": "Mz",
+                        "end": "i",
+                    }
+                ],
+                "options": {"includeHistory": True, "includeInfluenceResult": True, "returnCsv": True},
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    result = body["result"]
+    assert result["analysisSummary"]["analysisType"] == "moving_load"
+    assert result["analysisSummary"]["status"] == "success"
+    moving = result["movingLoadResult"]
+    assert moving["caseId"] == "mlc-api-1"
+    assert moving["envelopeResult"]["items"][0]["targetId"] == "member-m1-mz-i"
+    assert "moving_load.csv" in body["csv"]
+    assert "Envelope" in body["csv"]["moving_load.csv"]
+
+
 def test_analysis_run_endpoint_returns_failure_for_unstable_model(client) -> None:
     project = cantilever_tip_load()
     project["supports"] = []

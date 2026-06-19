@@ -15,6 +15,7 @@ from backend.engine import (
     run_analysis,
     run_eigen_analysis,
     run_influence_analysis,
+    run_moving_load_analysis,
     run_response_spectrum_analysis,
     run_time_history_analysis,
     TIME_HISTORY_ENVELOPE_KEYS,
@@ -251,6 +252,56 @@ def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     else:
         result = run_influence_analysis(copy.deepcopy(project), request)
     return safe_json_response({"result": result})
+
+
+@app.post("/api/moving-load/run")
+def run_moving_load_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    project = extract_project(payload)
+    moving_case = payload.get("movingLoadCase")
+    request = {"movingLoadCase": moving_case}
+    options = moving_case.get("options", {}) if isinstance(moving_case, dict) else {}
+    return_csv = bool(options.get("returnCsv")) if isinstance(options, dict) else False
+    finite_error = find_non_finite(project)
+    if finite_error is not None:
+        result = failed_result(
+            project,
+            {
+                "code": "INVALID_VALUE",
+                "message": "NaN and Infinity are not valid JSON values.",
+                "path": finite_error,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="moving_load",
+        )
+        result["movingLoadResult"] = {
+            "caseId": "",
+            "caseName": "",
+            "liveLoad": None,
+            "line": {"id": "", "memberId": "", "stationCount": 0, "loadDirection": {"x": 0.0, "y": -1.0, "z": 0.0}},
+            "influenceResult": None,
+            "movingLoadHistory": None,
+            "envelopeResult": {"caseId": "", "items": []},
+            "worstCaseLoadingPositions": [],
+        }
+    else:
+        result = run_moving_load_analysis(copy.deepcopy(project), request)
+    try:
+        csv_exports = build_result_exports(result) if return_csv else None
+    except ValueError as exc:
+        result = failed_result(
+            project,
+            {
+                "code": "REPORT_ERROR",
+                "message": str(exc),
+                "path": None,
+                "entityType": None,
+                "entityId": None,
+            },
+            analysis_type="moving_load",
+        )
+        csv_exports = None
+    return safe_json_response({"result": result, "csv": csv_exports})
 
 
 @app.post("/api/projects/save")

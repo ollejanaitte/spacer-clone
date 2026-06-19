@@ -18,6 +18,7 @@ type ToolbarProps = {
   onRun: () => void;
   onRunEigen: () => void;
   onRunInfluence: () => void;
+  onRunMovingLoad: () => void;
   onRunResponseSpectrum: () => void;
   onOpenTimeHistoryWizard?: () => void;
   onExportResultJson: () => void;
@@ -46,6 +47,7 @@ export function Toolbar({
   onRun,
   onRunEigen,
   onRunInfluence,
+  onRunMovingLoad,
   onRunResponseSpectrum,
   onOpenTimeHistoryWizard,
   onExportResultJson,
@@ -133,6 +135,10 @@ export function Toolbar({
           <button type="button" onClick={onRunInfluence} disabled={!canRun} title={t.runInfluenceTitle}>
             <LineChart size={16} />
             {t.runInfluenceButton}
+          </button>
+          <button type="button" onClick={onRunMovingLoad} disabled={!canRun} title="選択部材に単一集中荷重を走行させ、包絡結果を出力します。">
+            <LineChart size={16} />
+            移動荷重
           </button>
         </div>
         <div className="toolbar-group output-group" aria-label={t.outputGroupAriaLabel}>

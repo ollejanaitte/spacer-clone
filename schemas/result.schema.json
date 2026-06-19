@@ -45,7 +45,9 @@
             "eigen",
             "response_spectrum",
             "responseSpectrum",
-            "influence_line"
+            "influence_line",
+            "moving_load",
+            "time_history"
           ]
         },
         "status": {
@@ -91,7 +93,9 @@
         "solver": {
           "enum": [
             "scipy_sparse",
-            "scipy_eigh"
+            "scipy_eigh",
+            "newmark_beta",
+            "influence_line_reuse"
           ]
         }
       }
@@ -319,6 +323,9 @@
         }
       }
     },
+    "movingLoadResult": {
+      "$ref": "#/$defs/movingLoadResult"
+    },
     "warnings": {
       "type": "array",
       "items": {
@@ -499,6 +506,44 @@
         },
         "z": {
           "type": "number"
+        }
+      }
+    },
+    "movingLoadResult": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "caseId",
+        "line",
+        "envelopeResult",
+        "worstCaseLoadingPositions"
+      ],
+      "properties": {
+        "caseId": { "type": "string" },
+        "caseName": { "type": "string" },
+        "liveLoad": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "influenceResult": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        },
+        "movingLoadHistory": {
+          "type": ["array", "null"],
+          "items": { "type": "object", "additionalProperties": true }
+        },
+        "envelopeResult": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "worstCaseLoadingPositions": {
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": true }
         }
       }
     },

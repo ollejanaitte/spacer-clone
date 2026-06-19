@@ -1,4 +1,4 @@
-import type { AnalysisResult, ProjectModel, ResultExports, ValidationResponse } from "../types";
+import type { AnalysisResult, MovingLoadCase, ProjectModel, ResultExports, ValidationResponse } from "../types";
 
 type AnalysisRunResponse = {
   result: AnalysisResult;
@@ -11,6 +11,11 @@ type EigenRunResponse = {
 
 type InfluenceRunResponse = {
   result: AnalysisResult;
+};
+
+type MovingLoadRunResponse = {
+  result: AnalysisResult;
+  csv: ResultExports | null;
 };
 
 type ResponseSpectrumRunResponse = {
@@ -192,6 +197,13 @@ export const apiClient = {
 
   runInfluenceAnalysis(project: ProjectModel): Promise<InfluenceRunResponse> {
     return postJson<InfluenceRunResponse>("/api/influence/run", buildInfluenceAnalysisRequest(project));
+  },
+
+  runMovingLoadAnalysis(project: ProjectModel, movingLoadCase: MovingLoadCase): Promise<MovingLoadRunResponse> {
+    return postJson<MovingLoadRunResponse>("/api/moving-load/run", {
+      project: buildBackendProject(project),
+      movingLoadCase,
+    });
   },
 
   saveProject(fileName: string, project: ProjectModel): Promise<SaveProjectResponse> {

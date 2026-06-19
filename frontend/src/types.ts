@@ -200,7 +200,7 @@ export type AnalysisResult = {
   projectId: string;
   schemaVersion: "1.0.0";
   analysisSummary: {
-    analysisType: "linear_static" | "eigen" | "response_spectrum" | "responseSpectrum" | "influence_line" | "time_history";
+    analysisType: "linear_static" | "eigen" | "response_spectrum" | "responseSpectrum" | "influence_line" | "time_history" | "moving_load";
     status: "success" | "warning" | "failed";
     startedAt: string;
     finishedAt: string;
@@ -211,7 +211,7 @@ export type AnalysisResult = {
     totalDof: number;
     freeDof: number;
     constrainedDof: number;
-    solver: "scipy_sparse" | "scipy_eigh" | "newmark_beta";
+    solver: "scipy_sparse" | "scipy_eigh" | "newmark_beta" | "influence_line_reuse";
   };
   displacements: Array<{
     loadCaseId: string;
@@ -244,6 +244,7 @@ export type AnalysisResult = {
   eigenResult?: EigenResult;
   responseSpectrumResult?: ResponseSpectrumResult;
   influenceResult?: InfluenceResult;
+  movingLoadResult?: MovingLoadResult;
   timeHistoryResult?: TimeHistoryResult | null;
   warnings: StructuredMessage[];
   errors: StructuredMessage[];
@@ -387,6 +388,105 @@ export type InfluenceResult = {
   }>;
 };
 
+export type Vector3 = { x: number; y: number; z: number };
+
+export type MovingLoadLine = {
+  id: string;
+  memberId: string;
+  stationCount: number;
+  direction: Vector3;
+};
+
+export type SinglePointLiveLoad = {
+  id: string;
+  type: "singlePoint";
+  name?: string;
+  magnitude: number;
+  unit: "kN";
+  direction: Vector3;
+};
+
+export type MovingLoadCase = {
+  id: string;
+  name?: string;
+  influenceCaseId?: string;
+  line: MovingLoadLine;
+  liveLoad: SinglePointLiveLoad;
+  targets: InfluenceTarget[];
+  options?: {
+    includeInfluenceResult?: boolean;
+    includeHistory?: boolean;
+    returnCsv?: boolean;
+  };
+};
+
+export type MovingLoadPosition = {
+  loadId: string;
+  station: number;
+  ratio: number;
+  position: Vector3;
+  magnitude: number;
+  unit: "kN";
+};
+
+export type MovingLoadHistoryItem = {
+  station: number;
+  ratio: number;
+  position: Vector3;
+  loadPositions: MovingLoadPosition[];
+  responses: Array<{ targetId: string; value: number }>;
+};
+
+export type EnvelopeExtreme = {
+  value: number;
+  station: number;
+  ratio: number;
+  position: Vector3;
+  stationIndex: number;
+  loadPositions: MovingLoadPosition[];
+};
+
+export type EnvelopeItem = {
+  targetId: string;
+  target: InfluenceTarget;
+  max: EnvelopeExtreme;
+  min: EnvelopeExtreme;
+  absMax: EnvelopeExtreme;
+};
+
+export type EnvelopeResult = {
+  caseId: string;
+  items: EnvelopeItem[];
+};
+
+export type WorstCaseLoadingPosition = {
+  targetId: string;
+  criterion: "max" | "min" | "absMax";
+  value: number;
+  station: number;
+  ratio: number;
+  position: Vector3;
+  stationIndex: number;
+  loadPositions: MovingLoadPosition[];
+  influenceValue: number;
+};
+
+export type MovingLoadResult = {
+  caseId: string;
+  caseName?: string;
+  liveLoad: SinglePointLiveLoad | null;
+  line: {
+    id: string;
+    memberId: string;
+    stationCount: number;
+    loadDirection: Vector3;
+  };
+  influenceResult?: InfluenceResult | null;
+  movingLoadHistory?: MovingLoadHistoryItem[] | null;
+  envelopeResult: EnvelopeResult;
+  worstCaseLoadingPositions: WorstCaseLoadingPosition[];
+};
+
 export type TimeHistoryResultMeta = {
   analysisId: string;
   status: "success" | "failed";
@@ -415,6 +515,7 @@ export type ResultExports = {
   "member_section_forces.csv": string;
   "eigen_modes.csv": string;
   "influence_lines.csv": string;
+  "moving_load.csv"?: string;
 };
 
 export type EndForce = {

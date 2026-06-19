@@ -44,8 +44,28 @@ from .time_history_result import (
     parse_time_history_result,
 )
 from .influence import run_influence_analysis, solve_influence_model
+from .moving_load import run_moving_load_analysis
 from .response_spectrum import run_response_spectrum_analysis
 from .solver import run_analysis, run_linear_static_analysis, solve_model
+from .bridge_model import (
+    BridgeProject,
+    CrossSection,
+    Span,
+    ImpactFactor,
+    BridgeLine,
+    BridgeLoad,
+    BridgeGenerationSettings,
+    BridgeDomainError,
+    parse_bridge_project,
+    bridge_default,
+    compute_impact_factor,
+)
+from .bridge_fem_generator import (
+    BridgeFemGenerationError,
+    GenerationResult,
+    generate_fem_model,
+    analyze_generation,
+)
 
 
 def validate_project(project_data: dict[str, Any]) -> dict[str, Any]:
@@ -64,6 +84,7 @@ __all__ = [
     "run_eigen_analysis",
     "run_influence_analysis",
     "run_linear_static_analysis",
+    "run_moving_load_analysis",
     "run_response_spectrum_analysis",
     "solve_eigen_model",
     "solve_influence_model",
@@ -93,41 +114,6 @@ __all__ = [
     "TimeHistoryResultMeta",
     "build_time_history_result_from_newmark",
     "parse_time_history_result",
-]
-
-from .bridge_model import (
-    BridgeProject,
-    CrossSection,
-    Span,
-    ImpactFactor,
-    BridgeLine,
-    BridgeLoad,
-    BridgeGenerationSettings,
-    BridgeDomainError,
-    parse_bridge_project,
-    bridge_default,
-    compute_impact_factor,
-)
-from .bridge_fem_generator import (
-    BridgeFemGenerationError,
-    GenerationResult,
-    generate_fem_model,
-    analyze_generation,
-)
-
-__all__ = [
-    "Model",
-    "model_to_project_dict",
-    "parse_model",
-    "run_analysis",
-    "run_eigen_analysis",
-    "run_influence_analysis",
-    "run_linear_static_analysis",
-    "run_response_spectrum_analysis",
-    "solve_eigen_model",
-    "solve_influence_model",
-    "solve_model",
-    "validate_project",
     "BridgeProject",
     "CrossSection",
     "Span",

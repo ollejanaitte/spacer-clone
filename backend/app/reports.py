@@ -71,6 +71,25 @@ CSV_HEADERS = {
         "z",
         "value",
     ],
+    "moving_load.csv": [
+        "section",
+        "case_id",
+        "target_id",
+        "criterion",
+        "load_id",
+        "line_id",
+        "member_id",
+        "station_index",
+        "station",
+        "ratio",
+        "x",
+        "y",
+        "z",
+        "value",
+        "influence_value",
+        "load_magnitude",
+        "unit",
+    ],
 }
 
 
@@ -84,6 +103,7 @@ def build_result_exports(result: dict[str, Any]) -> dict[str, str]:
         "member_section_forces.csv": member_section_forces_csv(result),
         "eigen_modes.csv": eigen_modes_csv(result),
         "influence_lines.csv": influence_lines_csv(result),
+        "moving_load.csv": moving_load_csv(result),
     }
 
 
@@ -248,6 +268,133 @@ def influence_lines_csv(result: dict[str, Any]) -> str:
             )
 
     return write_csv(CSV_HEADERS["influence_lines.csv"], rows)
+
+
+def moving_load_csv(result: dict[str, Any]) -> str:
+    moving = result.get("movingLoadResult")
+    if not isinstance(moving, dict):
+        return write_csv(CSV_HEADERS["moving_load.csv"], [])
+    case_id = str(moving.get("caseId", ""))
+    live_load = moving.get("liveLoad", {}) if isinstance(moving.get("liveLoad"), dict) else {}
+    line = moving.get("line", {}) if isinstance(moving.get("line"), dict) else {}
+    rows: list[dict[str, Any]] = [
+        {
+            "section": "MovingLoadSummary",
+            "case_id": case_id,
+            "load_id": live_load.get("id", ""),
+            "line_id": line.get("id", ""),
+            "member_id": line.get("memberId", ""),
+            "station_index": line.get("stationCount", ""),
+            "load_magnitude": live_load.get("magnitude", ""),
+            "unit": live_load.get("unit", ""),
+        }
+    ]
+    rows.extend(moving_load_history_rows(moving, case_id, live_load, line))
+    rows.extend(moving_load_envelope_rows(moving, case_id, live_load, line))
+    rows.extend(moving_load_worst_case_rows(moving, case_id, live_load, line))
+    return write_csv(CSV_HEADERS["moving_load.csv"], rows)
+
+
+def moving_load_history_rows(
+    moving: dict[str, Any],
+    case_id: str,
+    live_load: dict[str, Any],
+    line: dict[str, Any],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for history in moving.get("movingLoadHistory") or []:
+        position = history.get("position", {})
+        for response in history.get("responses", []):
+            rows.append(
+                {
+                    "section": "MovingLoadHistory",
+                    "case_id": case_id,
+                    "target_id": response.get("targetId", ""),
+                    "load_id": live_load.get("id", ""),
+                    "line_id": line.get("id", ""),
+                    "member_id": line.get("memberId", ""),
+                    "station": history.get("station", ""),
+                    "ratio": history.get("ratio", ""),
+                    "x": position.get("x", ""),
+                    "y": position.get("y", ""),
+                    "z": position.get("z", ""),
+                    "value": response.get("value", ""),
+                    "load_magnitude": live_load.get("magnitude", ""),
+                    "unit": live_load.get("unit", ""),
+                }
+            )
+    return rows
+
+
+def moving_load_envelope_rows(
+    moving: dict[str, Any],
+    case_id: str,
+    live_load: dict[str, Any],
+    line: dict[str, Any],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    envelope = moving.get("envelopeResult", {})
+    if not isinstance(envelope, dict):
+        return rows
+    for item in envelope.get("items", []):
+        target_id = item.get("targetId", "")
+        for criterion in ("max", "min", "absMax"):
+            extreme = item.get(criterion, {})
+            position = extreme.get("position", {}) if isinstance(extreme, dict) else {}
+            rows.append(
+                {
+                    "section": "Envelope",
+                    "case_id": case_id,
+                    "target_id": target_id,
+                    "criterion": criterion,
+                    "load_id": live_load.get("id", ""),
+                    "line_id": line.get("id", ""),
+                    "member_id": line.get("memberId", ""),
+                    "station_index": extreme.get("stationIndex", ""),
+                    "station": extreme.get("station", ""),
+                    "ratio": extreme.get("ratio", ""),
+                    "x": position.get("x", ""),
+                    "y": position.get("y", ""),
+                    "z": position.get("z", ""),
+                    "value": extreme.get("value", ""),
+                    "load_magnitude": live_load.get("magnitude", ""),
+                    "unit": live_load.get("unit", ""),
+                }
+            )
+    return rows
+
+
+def moving_load_worst_case_rows(
+    moving: dict[str, Any],
+    case_id: str,
+    live_load: dict[str, Any],
+    line: dict[str, Any],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for worst in moving.get("worstCaseLoadingPositions", []):
+        position = worst.get("position", {})
+        rows.append(
+            {
+                "section": "WorstCaseLoadingPosition",
+                "case_id": case_id,
+                "target_id": worst.get("targetId", ""),
+                "criterion": worst.get("criterion", ""),
+                "load_id": live_load.get("id", ""),
+                "line_id": line.get("id", ""),
+                "member_id": line.get("memberId", ""),
+                "station_index": worst.get("stationIndex", ""),
+                "station": worst.get("station", ""),
+                "ratio": worst.get("ratio", ""),
+                "x": position.get("x", ""),
+                "y": position.get("y", ""),
+                "z": position.get("z", ""),
+                "value": worst.get("value", ""),
+                "influence_value": worst.get("influenceValue", ""),
+                "load_magnitude": live_load.get("magnitude", ""),
+                "unit": live_load.get("unit", ""),
+            }
+        )
+    return rows
 
 
 def displacement_row(case_id: str, row: dict[str, Any]) -> dict[str, Any]:

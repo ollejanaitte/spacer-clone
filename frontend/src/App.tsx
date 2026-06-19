@@ -15,6 +15,7 @@ import { bridgeProjectToProjectModel } from "./bridge/conversion";
 import type {
   AnalysisResult,
   BottomTab,
+  MovingLoadCase,
   ProjectModel,
   ResultExports,
   SectionKey,
@@ -300,6 +301,37 @@ export function App() {
     }
   };
 
+  const runMovingLoadAnalysis = async () => {
+    setRunning(true);
+    setApiErrors([]);
+    try {
+      const validationResponse = validation ?? (await apiClient.validateProject(project));
+      setValidation(validationResponse);
+      if (!validationResponse.valid) {
+        setValidationNotice({
+          kind: "ng",
+          text: "Input check NG. Please review the error list below.",
+        });
+        setBottomTab("errors");
+        log("Input check NG. Moving load analysis cannot be run.");
+        return;
+      }
+      const memberId = selectedMember ?? project.analysisSettings.influence?.line.memberId ?? project.members[0]?.id ?? "";
+      const movingLoadCase = buildDefaultMovingLoadCase(project, memberId);
+      const response = await apiClient.runMovingLoadAnalysis(project, movingLoadCase);
+      setResult(response.result);
+      setResultExports(response.csv);
+      setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
+      log(`Moving load analysis complete. Member: ${memberId || "n/a"}`);
+    } catch (error) {
+      pushApiError(error, "MOVING_LOAD_API_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("Moving load analysis API request failed.");
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const runInfluenceAnalysis = async () => {
     setRunning(true);
     setApiErrors([]);
@@ -375,6 +407,9 @@ export function App() {
     downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
     downloadText("eigen_modes.csv", csvExports["eigen_modes.csv"], "text/csv");
     downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
+    if (csvExports["moving_load.csv"]) {
+      downloadText("moving_load.csv", csvExports["moving_load.csv"], "text/csv");
+    }
     log("Result CSV downloaded.");
   };
 
@@ -449,6 +484,7 @@ export function App() {
         onRun={() => void runAnalysis()}
         onRunEigen={() => void runEigenAnalysis()}
         onRunInfluence={() => void runInfluenceAnalysis()}
+        onRunMovingLoad={() => void runMovingLoadAnalysis()}
         onRunResponseSpectrum={() => void runResponseSpectrumAnalysis()}
         onExportResultJson={exportResultJson}
         onExportResultCsv={exportResultCsv}
@@ -623,6 +659,42 @@ function downloadText(fileName: string, text: string, type: string) {
   link.download = fileName;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function buildDefaultMovingLoadCase(project: ProjectModel, memberId: string): MovingLoadCase {
+  const influence = project.analysisSettings.influence;
+  const direction = influence?.line.direction ?? { x: 0, y: -1, z: 0 };
+  const targets = influence?.targets?.length
+    ? influence.targets
+    : [
+        {
+          id: `moving-${memberId}-mz-i`,
+          type: "memberEndForce" as const,
+          memberId,
+          component: "Mz",
+          end: "i" as const,
+        },
+      ];
+  return {
+    id: "moving-load-1",
+    name: "単一集中移動荷重",
+    line: {
+      id: influence?.line.id ?? `line-${memberId}`,
+      memberId,
+      stationCount: influence?.line.stationCount ?? 21,
+      direction,
+    },
+    liveLoad: {
+      id: "P1",
+      type: "singlePoint",
+      name: "単一集中荷重 P1",
+      magnitude: 100,
+      unit: "kN",
+      direction,
+    },
+    targets,
+    options: { includeInfluenceResult: true, includeHistory: true, returnCsv: true },
+  };
 }
 
 function withInfluenceMember(project: ProjectModel, memberId: string): ProjectModel {
