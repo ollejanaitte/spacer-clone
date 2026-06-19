@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
 import type { SpacerAxisSwap } from "../coordinateTransform";
-import { createLabelSprite, createLine, createNodeMap, getMemberEnds } from "../threeUtils";
+import { createLabelSprite, createLine, createNodeMap, getMemberEnds, labelSamplingStride } from "../threeUtils";
 
 export function renderMembers(
   project: ProjectModel,
@@ -47,7 +47,9 @@ export function renderMemberLabels(
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
-  for (const member of project.members) {
+  const stride = labelSamplingStride(project.members.length);
+  for (let index = 0; index < project.members.length; index += stride) {
+    const member = project.members[index];
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
     const label = createLabelSprite(member.label || member.id, "#23527a", scales.labelSize);

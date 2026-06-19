@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import { applySpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
@@ -68,9 +71,22 @@ export function createLine(
   color: THREE.ColorRepresentation,
   name?: string,
   width = 1,
-): THREE.Line {
+): THREE.Line | Line2 {
+  if (width > 1) {
+    const geometry = new LineGeometry();
+    geometry.setPositions(points.flatMap((point) => [point.x, point.y, point.z]));
+    const material = new LineMaterial({
+      color: new THREE.Color(color).getHex(),
+      linewidth: Math.min(50, Math.max(1, width)),
+      worldUnits: false,
+    });
+    const line = new Line2(geometry, material);
+    line.computeLineDistances();
+    if (name) line.name = name;
+    return line;
+  }
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({ color, linewidth: Math.max(1, width * 2) });
+  const material = new THREE.LineBasicMaterial({ color });
   const line = new THREE.Line(geometry, material);
   if (name) line.name = name;
   return line;
@@ -82,25 +98,29 @@ export function createLabelSprite(
   size = 1,
 ): THREE.Sprite {
   const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
   const fontSize = 48;
   const padding = 18;
-  const safeText = text.slice(0, 28);
+  const safeText = String(text ?? "").slice(0, 28);
   canvas.width = Math.max(128, safeText.length * 28 + padding * 2);
   canvas.height = 80;
-  if (context) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "rgba(248, 250, 252, 0.92)";
-    roundRect(context, 2, 8, canvas.width - 4, canvas.height - 16, 12);
-    context.fill();
-    context.strokeStyle = "rgba(82, 103, 125, 0.45)";
-    context.stroke();
-    context.fillStyle = color;
-    context.font = `600 ${fontSize}px Inter, Arial, sans-serif`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(safeText, canvas.width / 2, canvas.height / 2 + 1);
+  const context = canvas.getContext("2d");
+  if (!context) {
+    const fallback = new THREE.Sprite(new THREE.SpriteMaterial({ color, depthTest: false }));
+    fallback.scale.set(Math.max(size, 0.1), Math.max(size * 0.28, 0.05), 1);
+    fallback.renderOrder = 10;
+    return fallback;
   }
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(248, 250, 252, 0.92)";
+  roundRect(context, 2, 8, canvas.width - 4, canvas.height - 16, 12);
+  context.fill();
+  context.strokeStyle = "rgba(82, 103, 125, 0.45)";
+  context.stroke();
+  context.fillStyle = color;
+  context.font = `600 ${fontSize}px Inter, Arial, sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(safeText, canvas.width / 2, canvas.height / 2 + 1);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
@@ -108,6 +128,13 @@ export function createLabelSprite(
   sprite.scale.set((canvas.width / canvas.height) * size, size, 1);
   sprite.renderOrder = 10;
   return sprite;
+}
+
+export const MAX_VISIBLE_MODEL_LABELS = 250;
+
+export function labelSamplingStride(itemCount: number, maximum = MAX_VISIBLE_MODEL_LABELS): number {
+  if (!Number.isFinite(itemCount) || itemCount <= maximum) return 1;
+  return Math.max(1, Math.ceil(itemCount / Math.max(1, maximum)));
 }
 
 export function disposeObject(object: THREE.Object3D): void {

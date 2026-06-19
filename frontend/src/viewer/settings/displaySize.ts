@@ -7,11 +7,11 @@ export type ViewerDisplaySizeSettings = {
 };
 
 export const DEFAULT_VIEWER_DISPLAY_SIZE: ViewerDisplaySizeSettings = {
-  nodeSize: 1.0,
+  nodeSize: 10,
   supportSize: 1.0,
   loadArrowSize: 1.0,
   labelSize: 1.0,
-  memberLineWidth: 1.0,
+  memberLineWidth: 2,
 };
 
 export const VIEWER_DISPLAY_SIZE_STORAGE_KEY = "spacer-clone:viewer:displaySize:v1";
@@ -20,11 +20,11 @@ export const VIEWER_DISPLAY_SIZE_RANGES: Record<
   keyof ViewerDisplaySizeSettings,
   { min: number; max: number }
 > = {
-  nodeSize: { min: 0.2, max: 5 },
+  nodeSize: { min: 1, max: 100 },
   supportSize: { min: 0.2, max: 5 },
   loadArrowSize: { min: 0.2, max: 5 },
   labelSize: { min: 0.5, max: 3 },
-  memberLineWidth: { min: 0.5, max: 5 },
+  memberLineWidth: { min: 1, max: 50 },
 };
 
 /** Clamp one viewer display-size setting to its supported finite range. */

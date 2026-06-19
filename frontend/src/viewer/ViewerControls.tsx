@@ -447,6 +447,7 @@ export function ViewerControls({
               value={displaySize[key]}
               min={VIEWER_DISPLAY_SIZE_RANGES[key].min}
               max={VIEWER_DISPLAY_SIZE_RANGES[key].max}
+              unit={key === "nodeSize" || key === "memberLineWidth" ? "px" : ""}
               onChange={(value) => setDisplaySize(key, value)}
             />
           ))}
@@ -464,18 +465,20 @@ function DisplaySizeInput({
   value,
   min,
   max,
+  unit,
   onChange,
 }: {
   label: string;
   value: number;
   min: number;
   max: number;
+  unit: string;
   onChange: (value: number) => void;
 }) {
-  const step = 0.1;
+  const step = unit === "px" ? 1 : 0.1;
   return (
     <div className="display-size-input">
-      <span>{label}</span>
+      <span>{label}: {value}{unit}</span>
       <button type="button" aria-label={`${label}を小さく`} onClick={() => onChange(value - step)}>-</button>
       <input
         aria-label={label}

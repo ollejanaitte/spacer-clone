@@ -91,7 +91,7 @@ export function Viewer3D({
 
   const effectiveScales = useMemo<ViewerScales>(() => ({
     ...scales,
-    nodeSize: defaultScales.nodeSize * displaySize.nodeSize,
+    nodeSize: defaultScales.nodeSize * (displaySize.nodeSize / 10),
     labelSize: defaultScales.labelSize * displaySize.labelSize,
     supportSize: displaySize.supportSize,
     loadArrowSize: displaySize.loadArrowSize,
