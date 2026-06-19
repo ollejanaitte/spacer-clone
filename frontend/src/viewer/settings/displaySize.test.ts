@@ -12,16 +12,16 @@ describe("viewer display-size settings", () => {
   afterEach(() => window.localStorage.clear());
 
   it("clamps every range boundary", () => {
-    expect(clampViewerDisplaySize("nodeSize", 0)).toBe(0.2);
+    expect(clampViewerDisplaySize("nodeSize", 0)).toBe(1);
     expect(clampViewerDisplaySize("supportSize", 99)).toBe(5);
     expect(clampViewerDisplaySize("labelSize", 0)).toBe(0.5);
-    expect(clampViewerDisplaySize("memberLineWidth", 99)).toBe(5);
+    expect(clampViewerDisplaySize("memberLineWidth", 99)).toBe(50);
   });
 
   it("normalizes partial and invalid persisted values", () => {
     expect(normalizeViewerDisplaySize({ nodeSize: 9, labelSize: 0.1 })).toEqual({
       ...DEFAULT_VIEWER_DISPLAY_SIZE,
-      nodeSize: 5,
+      nodeSize: 9,
       labelSize: 0.5,
     });
     expect(normalizeViewerDisplaySize("broken")).toEqual(DEFAULT_VIEWER_DISPLAY_SIZE);

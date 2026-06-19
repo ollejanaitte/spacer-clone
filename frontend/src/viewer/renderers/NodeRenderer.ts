@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
 import type { SpacerAxisSwap } from "../coordinateTransform";
-import { createLabelSprite, createNodeMap } from "../threeUtils";
+import { createLabelSprite, createNodeMap, labelSamplingStride } from "../threeUtils";
 
 const nodeMaterial = new THREE.MeshStandardMaterial({ color: "#d45d50", roughness: 0.55 });
 const selectedNodeMaterial = new THREE.MeshStandardMaterial({ color: "#f2c94c", roughness: 0.35 });
@@ -43,7 +43,9 @@ export function renderNodeLabels(
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
-  for (const node of project.nodes) {
+  const stride = labelSamplingStride(project.nodes.length);
+  for (let index = 0; index < project.nodes.length; index += stride) {
+    const node = project.nodes[index];
     const position = nodeMap.get(node.id);
     if (!position) continue;
     const label = createLabelSprite(node.label || node.id, "#7b3440", scales.labelSize);

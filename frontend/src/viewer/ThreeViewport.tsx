@@ -15,6 +15,7 @@ type ThreeContext = {
   grid: THREE.GridHelper;
   axes: THREE.AxesHelper;
   frameId: number;
+  fallbackActive: boolean;
   raycaster: THREE.Raycaster;
   pointer: THREE.Vector2;
 };
@@ -113,6 +114,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
       grid,
       axes,
       frameId: 0,
+      fallbackActive: false,
       raycaster: new THREE.Raycaster(),
       pointer: new THREE.Vector2(),
     };
@@ -125,18 +127,23 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      updateWideLineResolution(groups.root, width, height);
     };
     const observer = new ResizeObserver(resize);
     observer.observe(host);
     resize();
-    rebuildModelScene(groups, propsRef.current);
+    safeRebuildModelScene(context, propsRef.current);
     applyVisibility(context, propsRef.current);
     fitCamera(context, propsRef.current, "iso");
 
     const animate = () => {
       context.frameId = window.requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
+      try {
+        controls.update();
+        renderer.render(scene, camera);
+      } catch (error) {
+        activateViewerFallback(context, error);
+      }
     };
     animate();
 
@@ -181,7 +188,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     const context = contextRef.current;
     if (!context) return;
     const override = animationOverrideFor(props, effectiveClockSeconds);
-    rebuildModelScene(context.groups, props, override);
+    safeRebuildModelScene(context, props, override);
     applyVisibility(context, props);
   }, [
     props.project,
@@ -203,7 +210,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     const context = contextRef.current;
     if (!context) return;
     const override = animationOverrideFor(props, effectiveClockSeconds);
-    rebuildModelScene(context.groups, props, override);
+    safeRebuildModelScene(context, props, override);
   }, [effectiveClockSeconds, props.animationOptions?.enabled, props.animationOptions?.scale, props.animationOptions?.speed, props.animationOptions?.useDemo, props.animationOptions?.demoDirection, props.animationOptions?.modeNo, props.timeHistoryNodeOverride, props.spacerAxisSwap]);
 
   useEffect(() => {
@@ -239,6 +246,52 @@ function animationOverrideFor(
 function applyVisibility(context: ThreeContext, props: ThreeViewportProps): void {
   context.grid.visible = props.visibility.grid;
   context.axes.visible = props.visibility.axes;
+}
+
+function safeRebuildModelScene(
+  context: ThreeContext,
+  props: ThreeViewportProps,
+  override?: Map<string, { x: number; y: number; z: number }> | null,
+): void {
+  try {
+    rebuildModelScene(context.groups, props, override);
+    const size = context.renderer.getSize(new THREE.Vector2());
+    updateWideLineResolution(context.groups.root, size.x, size.y);
+    context.groups.labels.visible = props.visibility.labels;
+    context.groups.nodes.visible = props.visibility.nodes;
+    context.groups.members.visible = props.visibility.members;
+    context.groups.supports.visible = props.visibility.supports;
+    context.groups.loads.visible = props.visibility.loads;
+    context.groups.deformed.visible = props.visibility.deformedShape;
+    context.groups.resultDiagrams.visible = true;
+    context.fallbackActive = false;
+  } catch (error) {
+    activateViewerFallback(context, error);
+  }
+}
+
+function updateWideLineResolution(root: THREE.Object3D, width: number, height: number): void {
+  root.traverse((object) => {
+    const material = (object as THREE.Mesh).material;
+    const materials = Array.isArray(material) ? material : material ? [material] : [];
+    for (const item of materials) {
+      const resolution = (item as THREE.Material & { resolution?: THREE.Vector2 }).resolution;
+      resolution?.set(width, height);
+    }
+  });
+}
+
+function activateViewerFallback(context: ThreeContext, error: unknown): void {
+  console.error("ThreeViewport rendering failed; switching to line-only fallback.", error);
+  if (context.fallbackActive) return;
+  context.fallbackActive = true;
+  context.groups.labels.visible = false;
+  context.groups.nodes.visible = false;
+  context.groups.supports.visible = false;
+  context.groups.loads.visible = false;
+  context.groups.deformed.visible = false;
+  context.groups.resultDiagrams.visible = false;
+  context.groups.members.visible = true;
 }
 
 function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: CameraPreset): void {
