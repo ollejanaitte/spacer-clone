@@ -1,8 +1,12 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
-import type { ViewerScales, ViewerSelection } from "../types";
+import type { ViewerScales, ViewerSelection, ViewerVisibility } from "../types";
 import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createLabelSprite, createLine, createNodeMap, getMemberEnds, labelSamplingStride } from "../threeUtils";
+import type { ForceColorComponent, ForceColorValueType } from "../memberForceColorMap";
+import { computeMemberForceColorValues, computeForceColorRange, memberForceColor, DEFAULT_FORCE_COLOR_MODE } from "../memberForceColorMap";
+import type { AnalysisResult } from "../../types";
+import type { ResponseSpectrumSelection } from "../../results/resultViewModel";
 
 export function renderMembers(
   project: ProjectModel,
@@ -11,15 +15,43 @@ export function renderMembers(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  forceColorMode?: {
+    enabled: boolean;
+    component: ForceColorComponent;
+    valueType: ForceColorValueType;
+    result: AnalysisResult | null;
+    loadCaseId: string;
+    selectedResponseSpectrumResult: ResponseSpectrumSelection;
+  },
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
+
+  let forceValues: Map<string, number> | null = null;
+  let forceRange = { min: 0, max: 0 };
+  if (forceColorMode?.enabled && forceColorMode.result) {
+    forceValues = computeMemberForceColorValues(
+      project,
+      forceColorMode.result,
+      forceColorMode.loadCaseId,
+      forceColorMode.component,
+      forceColorMode.valueType,
+      forceColorMode.selectedResponseSpectrumResult,
+    );
+    forceRange = computeForceColorRange(forceValues);
+  }
 
   for (const member of project.members) {
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
     const selected = selection?.type === "member" && selection.id === member.id;
-    const color = selected ? "#f2c94c" : selectedSection === "members" ? "#1b6b93" : "#2f6f9f";
+    const color = forceValues
+      ? memberForceColor(forceValues.get(member.id) ?? 0, forceRange)
+      : selected
+        ? "#f2c94c"
+        : selectedSection === "members"
+          ? "#1b6b93"
+          : "#2f6f9f";
     const line = createLine([ends.start, ends.end], color, undefined, scales.memberLineWidth ?? 1);
     line.userData = { selectable: true, type: "member", id: member.id };
     objects.push(line);
@@ -29,7 +61,7 @@ export function renderMembers(
       ends.direction,
       ends.start.clone().lerp(ends.end, 0.68),
       Math.max(length * 0.16, 0.18),
-      selected ? 0xf2c94c : 0x2f6f9f,
+      forceValues ? new THREE.Color(color).getHex() : selected ? 0xf2c94c : 0x2f6f9f,
       Math.max(length * 0.045, 0.06),
       Math.max(length * 0.028, 0.04),
     );

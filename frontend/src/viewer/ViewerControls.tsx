@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
+﻿﻿import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
@@ -11,6 +11,8 @@ import {
   VIEWER_DISPLAY_SIZE_RANGES,
   type ViewerDisplaySizeSettings,
 } from "./settings/displaySize";
+import type { ForceColorComponent, ForceColorValueType } from "./memberForceColorMap";
+import { FORCE_COLOR_COMPONENTS, FORCE_COLOR_COMPONENT_LABELS, FORCE_COLOR_VALUE_TYPE_LABELS } from "./memberForceColorMap";
 
 type ViewerControlsProps = {
   visibility: ViewerVisibility;
@@ -27,6 +29,9 @@ type ViewerControlsProps = {
   animationOptions: AnimationOptions;
   compareMode: boolean;
   cameraSync: boolean;
+  forceColorMap: boolean;
+  forceColorComponent: ForceColorComponent;
+  forceColorValueType: ForceColorValueType;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onDisplaySizeChange?: (settings: ViewerDisplaySizeSettings) => void;
@@ -38,6 +43,9 @@ type ViewerControlsProps = {
   onAnimationOptionsChange: (options: AnimationOptions) => void;
   onCompareModeChange: (next: boolean) => void;
   onCameraSyncChange: (next: boolean) => void;
+  onForceColorMapChange: (enabled: boolean) => void;
+  onForceColorComponentChange: (component: ForceColorComponent) => void;
+  onForceColorValueTypeChange: (valueType: ForceColorValueType) => void;
   onFit: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
 };
@@ -57,6 +65,9 @@ export function ViewerControls({
   animationOptions,
   compareMode,
   cameraSync,
+  forceColorMap,
+  forceColorComponent,
+  forceColorValueType,
   onVisibilityChange,
   onScalesChange,
   onDisplaySizeChange = () => undefined,
@@ -68,6 +79,9 @@ export function ViewerControls({
   onAnimationOptionsChange,
   onCompareModeChange,
   onCameraSyncChange,
+  onForceColorMapChange,
+  onForceColorComponentChange,
+  onForceColorValueTypeChange,
   onFit,
   onCameraPreset,
 }: ViewerControlsProps) {
@@ -432,6 +446,53 @@ export function ViewerControls({
           凡例: RFX/RFY/RFZは全体座標系の反力、RMX/RMY/RMZは全体座標系の反力モーメント。部材端FX/FY/FZ/MX/MY/MZは部材ローカル座標系の断面力で、SPACER座標系表示ON時も符号・成分名は解析結果の部材座標系のまま表示。
         </p>
       </ControlGroup>
+      <ControlGroup title="断面力カラーマップ">
+        <div className="viewer-toggle-grid">
+          <Toggle
+            label="カラーマップ表示"
+            checked={forceColorMap}
+            disabled={!hasResult}
+            onChange={(value) => onForceColorMapChange(value)}
+          />
+        </div>
+        {forceColorMap && (
+          <>
+            <div className="viewer-control-row">
+              <label>
+                <span>表示成分</span>
+                <select
+                  data-testid="force-color-component"
+                  value={forceColorComponent}
+                  onChange={(event) => onForceColorComponentChange(event.currentTarget.value as ForceColorComponent)}
+                >
+                  {FORCE_COLOR_COMPONENTS.map((comp) => (
+                    <option key={comp} value={comp}>
+                      {FORCE_COLOR_COMPONENT_LABELS[comp]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="viewer-control-row">
+              <label>
+                <span>表示対象</span>
+                <select
+                  data-testid="force-color-value-type"
+                  value={forceColorValueType}
+                  onChange={(event) => onForceColorValueTypeChange(event.currentTarget.value as ForceColorValueType)}
+                >
+                  {(["max", "min", "absMax"] as ForceColorValueType[]).map((vt) => (
+                    <option key={vt} value={vt}>
+                      {FORCE_COLOR_VALUE_TYPE_LABELS[vt]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <ForceColorLegend />
+          </>
+        )}
+      </ControlGroup>
       <ControlGroup title="表示サイズ">
         <div className="scale-grid">
           {([
@@ -574,5 +635,34 @@ function ScaleInput({
         onChange={(event) => onChange(Number(event.currentTarget.value))}
       />
     </label>
+  );
+}
+
+function ForceColorLegend() {
+  const stops = [
+    { color: "#1a56db", label: "小" },
+    { color: "#22c55e", label: "" },
+    { color: "#ebc72e", label: "中" },
+    { color: "#f57a1a", label: "" },
+    { color: "#dc2626", label: "大" },
+  ];
+  return (
+    <div className="force-color-legend">
+      <div className="force-color-bar">
+        {stops.map((stop, i) => (
+          <div
+            key={i}
+            className="force-color-stop"
+            style={{ background: stop.color }}
+            title={stop.label || undefined}
+          />
+        ))}
+      </div>
+      <div className="force-color-labels">
+        <span>小</span>
+        <span>中</span>
+        <span>大</span>
+      </div>
+    </div>
   );
 }

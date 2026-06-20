@@ -1,4 +1,4 @@
-﻿﻿﻿// @vitest-environment jsdom
+﻿﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
@@ -59,6 +59,9 @@ function buildProps(overrides: Partial<{
   animationOptions: AnimationOptions;
   compareMode: boolean;
   cameraSync: boolean;
+  forceColorMap: boolean;
+  forceColorComponent: import("./memberForceColorMap").ForceColorComponent;
+  forceColorValueType: import("./memberForceColorMap").ForceColorValueType;
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onLoadCaseChange: (loadCaseId: string) => void;
@@ -68,6 +71,9 @@ function buildProps(overrides: Partial<{
   onAnimationOptionsChange: (options: AnimationOptions) => void;
   onCompareModeChange: (next: boolean) => void;
   onCameraSyncChange: (next: boolean) => void;
+  onForceColorMapChange: (enabled: boolean) => void;
+  onForceColorComponentChange: (component: import("./memberForceColorMap").ForceColorComponent) => void;
+  onForceColorValueTypeChange: (valueType: import("./memberForceColorMap").ForceColorValueType) => void;
   onFit: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
 }> = {}) {
@@ -107,6 +113,9 @@ function buildProps(overrides: Partial<{
     animationOptions: { ...DEFAULT_ANIMATION_OPTIONS },
     compareMode: false,
     cameraSync: true,
+    forceColorMap: false,
+    forceColorComponent: "N" as import("./memberForceColorMap").ForceColorComponent,
+    forceColorValueType: "absMax" as import("./memberForceColorMap").ForceColorValueType,
     onVisibilityChange: () => undefined,
     onScalesChange: () => undefined,
     onLoadCaseChange: () => undefined,
@@ -116,6 +125,9 @@ function buildProps(overrides: Partial<{
     onAnimationOptionsChange: () => undefined,
     onCompareModeChange: () => undefined,
     onCameraSyncChange: () => undefined,
+    onForceColorMapChange: () => undefined,
+    onForceColorComponentChange: () => undefined,
+    onForceColorValueTypeChange: () => undefined,
     onFit: () => undefined,
     onCameraPreset: () => undefined,
     ...overrides,

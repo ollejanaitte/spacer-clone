@@ -5,6 +5,7 @@ import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
 import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
 import { computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
+import type { ForceColorModeData } from "./memberForceColorMap";
 
 type ThreeContext = {
   scene: THREE.Scene;
@@ -201,6 +202,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     props.selectedEigenMode,
     props.selectedResponseSpectrumResult,
     props.spacerAxisSwap,
+    props.forceColorMode,
   ]);
 
   // Rebuild the model scene on every animation clock tick so the model
@@ -254,7 +256,7 @@ function safeRebuildModelScene(
   override?: Map<string, { x: number; y: number; z: number }> | null,
 ): void {
   try {
-    rebuildModelScene(context.groups, props, override);
+    rebuildModelScene(context.groups, props, override, props.forceColorMode);
     const size = context.renderer.getSize(new THREE.Vector2());
     updateWideLineResolution(context.groups.root, size.x, size.y);
     context.groups.labels.visible = props.visibility.labels;

@@ -7,6 +7,7 @@ import { renderResultDiagrams } from "./renderers/ResultDiagramRenderer";
 import { renderSupports } from "./renderers/SupportRenderer";
 import type { SceneGroups, ThreeViewportProps } from "./types";
 import { replaceGroupContents } from "./threeUtils";
+import type { ForceColorModeData } from "./memberForceColorMap";
 
 export function createSceneGroups(): SceneGroups {
   const root = new THREE.Group();
@@ -45,6 +46,7 @@ export function rebuildModelScene(
   groups: SceneGroups,
   props: ThreeViewportProps,
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  forceColorMode?: ForceColorModeData,
 ): void {
   const {
     project,
@@ -67,7 +69,14 @@ export function rebuildModelScene(
   replaceGroupContents(
     groups.members,
     visibility.members
-      ? renderMembers(project, selectedSection, selection, scales, spacerAxisSwap, nodePositionOverride)
+      ? renderMembers(project, selectedSection, selection, scales, spacerAxisSwap, nodePositionOverride, {
+          enabled: forceColorMode?.enabled ?? false,
+          component: forceColorMode?.component ?? "N",
+          valueType: forceColorMode?.valueType ?? "absMax",
+          result,
+          loadCaseId: selectedLoadCaseId,
+          selectedResponseSpectrumResult,
+        })
       : [],
   );
   replaceGroupContents(

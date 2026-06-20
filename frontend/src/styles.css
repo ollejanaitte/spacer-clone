@@ -555,6 +555,47 @@ button:disabled {
   line-height: 1.45;
 }
 
+.force-color-legend {
+  margin: 8px 0;
+}
+
+.force-color-bar {
+  display: flex;
+  height: 12px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #cbd5df;
+}
+
+.force-color-stop {
+  flex: 1;
+}
+
+.force-color-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #526173;
+  margin-top: 2px;
+}
+
+.member-force-detail {
+  border: 2px solid #2f6f9f;
+  background: #f0f6fc;
+}
+
+.member-force-detail .summary-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.member-force-detail .summary-list span {
+  font-size: 12px;
+  color: #334155;
+}
+
 .model-comparison-workspace {
   min-height: 100vh;
   padding: 12px;
