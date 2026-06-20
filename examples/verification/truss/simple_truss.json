@@ -1,0 +1,79 @@
+{
+  "project": {
+    "id": "verify-truss-simple",
+    "name": "Verification: Simple Truss",
+    "schemaVersion": "1.0.0",
+    "description": "Simple 2-bar truss with vertical load. Warren-type configuration.",
+    "createdAt": "2026-06-20T00:00:00Z",
+    "updatedAt": "2026-06-20T00:00:00Z"
+  },
+  "units": {
+    "length": "m",
+    "force": "kN",
+    "moment": "kN_m",
+    "modulus": "kN_per_m2",
+    "area": "m2",
+    "inertia": "m4"
+  },
+  "nodes": [
+    { "id": "N1", "x": 0.0, "y": 0.0, "z": 0.0 },
+    { "id": "N2", "x": 3.0, "y": 0.0, "z": 0.0 },
+    { "id": "N3", "x": 1.5, "y": 2.0, "z": 0.0 }
+  ],
+  "materials": [
+    {
+      "id": "MAT1",
+      "name": "Steel",
+      "elasticModulus": 205000000.0,
+      "shearModulus": 78846153.846,
+      "poissonRatio": 0.3,
+      "density": 0.0
+    }
+  ],
+  "sections": [
+    {
+      "id": "SEC1",
+      "name": "Bar Section",
+      "area": 0.001,
+      "iy": 1e-06,
+      "iz": 1e-06,
+      "j": 1e-06
+    }
+  ],
+  "members": [
+    {
+      "id": "M1",
+      "nodeI": "N1",
+      "nodeJ": "N3",
+      "materialId": "MAT1",
+      "sectionId": "SEC1",
+      "orientationVector": { "x": 0.0, "y": 0.0, "z": 1.0 }
+    },
+    {
+      "id": "M2",
+      "nodeI": "N3",
+      "nodeJ": "N2",
+      "materialId": "MAT1",
+      "sectionId": "SEC1",
+      "orientationVector": { "x": 0.0, "y": 0.0, "z": 1.0 }
+    }
+  ],
+  "supports": [
+    { "nodeId": "N1", "ux": true, "uy": true, "uz": true, "rx": false, "ry": false, "rz": false },
+    { "nodeId": "N2", "ux": false, "uy": true, "uz": true, "rx": false, "ry": false, "rz": false }
+  ],
+  "loadCases": [
+    { "id": "LC1", "name": "Vertical Load", "type": "static" }
+  ],
+  "nodalLoads": [
+    { "id": "NL1", "loadCaseId": "LC1", "nodeId": "N3", "fx": 0.0, "fy": -20.0, "fz": 0.0, "mx": 0.0, "my": 0.0, "mz": 0.0 }
+  ],
+  "memberLoads": [],
+  "analysisSettings": {
+    "analysisType": "linear_static",
+    "solver": "scipy_sparse",
+    "includeShearDeformation": false,
+    "largeDisplacement": false,
+    "tolerance": 1e-9
+  }
+}

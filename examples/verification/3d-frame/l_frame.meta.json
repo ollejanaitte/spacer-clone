@@ -1,0 +1,17 @@
+{
+  "name": "3D L-Frame",
+  "category": "3d-frame",
+  "description": "3D L-shaped frame with combined horizontal and vertical loads. Fixed base.",
+  "modelPath": "l_frame.json",
+  "parameters": {
+    "E": 205000000,
+    "G": 78846153.846
+  },
+  "expected": {
+    "note": "Expected values to be determined after first analysis run."
+  },
+  "tolerance": {
+    "relative": 0.05,
+    "absolute": 1e-6
+  }
+}

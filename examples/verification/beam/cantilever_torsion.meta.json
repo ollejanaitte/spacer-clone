@@ -1,0 +1,33 @@
+{
+  "name": "Cantilever Torsion",
+  "category": "beam",
+  "description": "Cantilever beam with torsional load. Theory: θ=TL/(GJ).",
+  "modelPath": "cantilever_torsion.json",
+  "parameters": {
+    "E": 205000000,
+    "G": 78846153.846,
+    "J": 0.00005,
+    "L": 4.0,
+    "T": 5.0
+  },
+  "expected": {
+    "displacements": {
+      "N2": {
+        "rx": 0.005074257425742574
+      }
+    },
+    "reactions": {
+      "N1": {
+        "mx": -5.0
+      }
+    }
+  },
+  "tolerance": {
+    "relative": 1e-4,
+    "absolute": 1e-10
+  },
+  "theoryFormulas": {
+    "maxTorsionalRotation": "TL/(GJ)",
+    "maxTorsionalReaction": "T"
+  }
+}

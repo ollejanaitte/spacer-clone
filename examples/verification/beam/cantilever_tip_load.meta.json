@@ -1,0 +1,42 @@
+{
+  "name": "Cantilever Tip Load",
+  "category": "beam",
+  "description": "Cantilever beam with concentrated load at free end. Theory: δ=PL³/(3EI), Mmax=PL.",
+  "modelPath": "cantilever_tip_load.json",
+  "parameters": {
+    "E": 205000000,
+    "G": 78846153.846,
+    "A": 0.02,
+    "Iy": 0.0001,
+    "Iz": 0.0001,
+    "J": 0.00005,
+    "L": 4.0,
+    "P": 10.0
+  },
+  "expected": {
+    "displacements": {
+      "N2": {
+        "uy": -0.01040650406504065,
+        "rz": -0.003902439024390244
+      }
+    },
+    "reactions": {
+      "N1": {
+        "fy": 10.0,
+        "mz": 40.0
+      }
+    },
+    "maxAbsMemberForce": {
+      "Mz": 40.0
+    }
+  },
+  "tolerance": {
+    "relative": 1e-4,
+    "absolute": 1e-10
+  },
+  "theoryFormulas": {
+    "maxDisplacement": "PL^3/(3EI)",
+    "maxMoment": "PL",
+    "maxReaction": "P"
+  }
+}

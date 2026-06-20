@@ -1,0 +1,30 @@
+{
+  "name": "Portal Frame Horizontal Load",
+  "category": "frame",
+  "description": "2D portal frame with horizontal load at beam level. Fixed supports.",
+  "modelPath": "../../examples/portal_frame_verification.json",
+  "parameters": {
+    "E": 200000000,
+    "G": 80000000,
+    "col": { "A": 0.03, "Iy": 0.0002, "Iz": 0.0001, "J": 0.00005 },
+    "beam": { "A": 0.04, "Iy": 0.0003, "Iz": 0.00015, "J": 0.00007 },
+    "colH": 4.0,
+    "beamL": 6.0,
+    "Fx": 10.0
+  },
+  "expected": {
+    "displacements": {
+      "N2": { "ux": null },
+      "N3": { "ux": null }
+    },
+    "reactions": {
+      "N1": { "fx": null, "fy": null, "mz": null },
+      "N4": { "fx": null, "fy": null, "mz": null }
+    }
+  },
+  "tolerance": {
+    "relative": 0.05,
+    "absolute": 1e-6
+  },
+  "notes": "Expected values to be determined after first successful analysis run."
+}

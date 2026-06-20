@@ -1,0 +1,39 @@
+{
+  "name": "Simply Supported Beam Uniform Load",
+  "category": "beam",
+  "description": "Simply supported beam with uniform distributed load. Theory: δ=5wL⁴/(384EI), Mmax=wL²/8.",
+  "modelPath": "simple_beam_uniform_load.json",
+  "parameters": {
+    "E": 205000000,
+    "G": 78846153.846,
+    "A": 0.02,
+    "Iy": 0.0001,
+    "Iz": 0.0001,
+    "J": 0.00005,
+    "L": 4.0,
+    "W": 2.0
+  },
+  "expected": {
+    "displacements": {
+      "N2": {
+        "uy": -0.0003252032520325203
+      }
+    },
+    "reactions": {
+      "N1": { "fy": 4.0 },
+      "N3": { "fy": 4.0 }
+    },
+    "maxAbsMemberForce": {
+      "Mz": 4.0
+    }
+  },
+  "tolerance": {
+    "relative": 1e-4,
+    "absolute": 1e-10
+  },
+  "theoryFormulas": {
+    "maxDisplacement": "5wL^4/(384EI)",
+    "maxMoment": "wL^2/8",
+    "maxReaction": "wL/2"
+  }
+}

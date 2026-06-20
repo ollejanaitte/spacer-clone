@@ -1,0 +1,87 @@
+{
+  "project": {
+    "id": "verify-3d-frame",
+    "name": "Verification: 3D Frame",
+    "schemaVersion": "1.0.0",
+    "description": "3D L-shaped frame with vertical and horizontal loads.",
+    "createdAt": "2026-06-20T00:00:00Z",
+    "updatedAt": "2026-06-20T00:00:00Z"
+  },
+  "units": {
+    "length": "m",
+    "force": "kN",
+    "moment": "kN_m",
+    "modulus": "kN_per_m2",
+    "area": "m2",
+    "inertia": "m4"
+  },
+  "nodes": [
+    { "id": "N1", "x": 0.0, "y": 0.0, "z": 0.0 },
+    { "id": "N2", "x": 0.0, "y": 3.0, "z": 0.0 },
+    { "id": "N3", "x": 4.0, "y": 3.0, "z": 0.0 }
+  ],
+  "materials": [
+    {
+      "id": "MAT1",
+      "name": "Steel",
+      "elasticModulus": 205000000.0,
+      "shearModulus": 78846153.846,
+      "poissonRatio": 0.3,
+      "density": 0.0
+    }
+  ],
+  "sections": [
+    {
+      "id": "SEC1",
+      "name": "Column Section",
+      "area": 0.02,
+      "iy": 0.0001,
+      "iz": 0.0001,
+      "j": 0.00005
+    },
+    {
+      "id": "SEC2",
+      "name": "Beam Section",
+      "area": 0.025,
+      "iy": 0.00015,
+      "iz": 0.00012,
+      "j": 0.00006
+    }
+  ],
+  "members": [
+    {
+      "id": "COL1",
+      "nodeI": "N1",
+      "nodeJ": "N2",
+      "materialId": "MAT1",
+      "sectionId": "SEC1",
+      "orientationVector": { "x": 1.0, "y": 0.0, "z": 0.0 }
+    },
+    {
+      "id": "BEAM1",
+      "nodeI": "N2",
+      "nodeJ": "N3",
+      "materialId": "MAT1",
+      "sectionId": "SEC2",
+      "orientationVector": { "x": 0.0, "y": 0.0, "z": 1.0 }
+    }
+  ],
+  "supports": [
+    { "nodeId": "N1", "ux": true, "uy": true, "uz": true, "rx": true, "ry": true, "rz": true }
+  ],
+  "loadCases": [
+    { "id": "LC1", "name": "Combined Load", "type": "static" }
+  ],
+  "nodalLoads": [
+    { "id": "NL1", "loadCaseId": "LC1", "nodeId": "N2", "fx": 5.0, "fy": 0.0, "fz": 0.0, "mx": 0.0, "my": 0.0, "mz": 0.0 },
+    { "id": "NL2", "loadCaseId": "LC1", "nodeId": "N3", "fx": 0.0, "fy": -15.0, "fz": 0.0, "mx": 0.0, "my": 0.0, "mz": 0.0 }
+  ],
+  "memberLoads": [],
+  "analysisSettings": {
+    "analysisType": "linear_static",
+    "solver": "scipy_sparse",
+    "includeShearDeformation": false,
+    "largeDisplacement": false,
+    "tolerance": 1e-9
+  }
+}
