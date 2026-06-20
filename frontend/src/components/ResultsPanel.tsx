@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   buildEigenModeViewModel,
   buildInfluenceLineViewModel,
@@ -7,6 +7,8 @@ import {
   type ResponseSpectrumSelection,
 } from "../results/resultViewModel";
 import { ja } from "../i18n/ja";
+import { buildMemberForceDetail, formatForceValue } from "../viewer/memberForceDetail";
+import type { MemberForceDetail } from "../viewer/memberForceDetail";
 import { GroundMotionManagerPanel } from "../timeHistory/GroundMotionManagerPanel";
 import { TimeHistoryResultViewer } from "../timeHistory/TimeHistoryResultViewer";
 import { TimeHistorySettingsPanel } from "../timeHistory/TimeHistorySettingsPanel";
@@ -35,6 +37,7 @@ type ResultsPanelProps = {
 
 type ResultTablesProps = {
   result: AnalysisResult | null;
+  project: ProjectModel;
   activeLoadCase: string;
   selectedEigenMode: number;
   selectedResponseSpectrumResult: ResponseSpectrumSelection;
@@ -99,6 +102,7 @@ export function ResultsPanel({
         {activeTab === "results" && (
           <ResultTables
             result={result}
+            project={project}
             activeLoadCase={activeLoadCase}
             selectedEigenMode={selectedEigenMode}
             selectedResponseSpectrumResult={selectedResponseSpectrumResult}
@@ -189,6 +193,7 @@ function TimeHistoryWorkspace({
 
 function ResultTablesContent({
   result,
+  project,
   activeLoadCase,
   selectedEigenMode,
   selectedResponseSpectrumResult,
@@ -198,6 +203,7 @@ function ResultTablesContent({
   onSelectedResponseSpectrumResultChange,
 }: {
   result: AnalysisResult;
+  project: ProjectModel;
   activeLoadCase: string;
   selectedEigenMode: number;
   selectedResponseSpectrumResult: ResponseSpectrumSelection;
@@ -501,6 +507,15 @@ function ResultTablesContent({
       )}
       {activeView === "static" && (
         <>
+          {selectedMember && result && (
+            <MemberForceDetailPanel
+              project={project}
+              result={result}
+              selectedMember={selectedMember}
+              loadCaseId={activeLoadCase}
+              selectedResponseSpectrumResult={selectedResponseSpectrumResult}
+            />
+          )}
           <CompactTable
             title={ja.resultsPanel.tables.nodeDisplacement}
             rows={displacements}
@@ -793,4 +808,53 @@ function formatNumber(value: number): string {
   return Math.abs(value) > 10000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001)
     ? value.toExponential(4)
     : value.toFixed(6).replace(/\.?0+$/, "");
+}
+
+function MemberForceDetailPanel({
+  project,
+  result,
+  selectedMember,
+  loadCaseId,
+  selectedResponseSpectrumResult,
+}: {
+  project: ProjectModel;
+  result: AnalysisResult;
+  selectedMember: string;
+  loadCaseId: string;
+  selectedResponseSpectrumResult: ResponseSpectrumSelection;
+}) {
+  const detail = buildMemberForceDetail(project, result, selectedMember, loadCaseId, selectedResponseSpectrumResult);
+  if (!detail) return null;
+
+  return (
+    <div className="result-table member-force-detail">
+      <h3>部材断面力詳細</h3>
+      <div className="summary-list">
+        <span>部材ID: {detail.memberId}</span>
+        <span>表示名: {detail.memberLabel}</span>
+        <span>i端節点: {detail.nodeI}</span>
+        <span>j端節点: {detail.nodeJ}</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>成分</th>
+            <th>i端値</th>
+            <th>j端値</th>
+            <th>単位</th>
+          </tr>
+        </thead>
+        <tbody>
+          {detail.forces.map((force) => (
+            <tr key={force.component}>
+              <td>{force.label}</td>
+              <td>{formatForceValue(force.iValue)}</td>
+              <td>{formatForceValue(force.jValue)}</td>
+              <td>{force.unit}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }

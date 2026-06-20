@@ -1,9 +1,10 @@
-﻿import type { SpacerAxisSwap } from "./coordinateTransform";
+import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
 import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
+import type { ForceColorComponent, ForceColorValueType, ForceColorModeData } from "./memberForceColorMap";
 
 export type ViewerMode = "three" | "fallback2d";
 
@@ -38,6 +39,9 @@ export type ViewerVisibility = {
   axialForceLabels?: boolean;
   momentMy: boolean;
   momentMz: boolean;
+  memberForceColorMap?: boolean;
+  forceColorComponent?: ForceColorComponent;
+  forceColorValueType?: ForceColorValueType;
 };
 
 export type ViewerScales = {
@@ -119,6 +123,7 @@ export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | 
   onSpacerAxisSwapChange?: (swap: SpacerAxisSwap) => void;
   onAnimationOptionsChange?: (options: import("./animation").AnimationOptions) => void;
   onInitializationError: (error: unknown) => void;
+  forceColorMode?: ForceColorModeData;
 };
 
 export const defaultVisibility: ViewerVisibility = {
@@ -151,6 +156,9 @@ export const defaultVisibility: ViewerVisibility = {
   axialForceLabels: false,
   momentMy: false,
   momentMz: false,
+  memberForceColorMap: false,
+  forceColorComponent: "N",
+  forceColorValueType: "absMax",
 };
 
 export const defaultScales: ViewerScales = {

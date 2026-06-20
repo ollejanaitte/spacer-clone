@@ -194,6 +194,7 @@ function renderMemberForce(
     1,
   );
   const objects: THREE.Object3D[] = [];
+  const isMomentComponent = component === "My" || component === "Mz";
 
   for (const force of componentForces) {
     const member = project.members.find((item) => item.id === force.memberId);
@@ -210,6 +211,34 @@ function renderMemberForce(
       return { basePoint, diagramPoint, value };
     });
     const color = colorFor(diagramPoints.reduce((sum, point) => sum + point.value, 0));
+
+    if (isMomentComponent && diagramPoints.length >= 2) {
+      const ribbonPoints: THREE.Vector3[] = [];
+      for (const point of diagramPoints) {
+        ribbonPoints.push(point.basePoint);
+      }
+      for (let i = diagramPoints.length - 1; i >= 0; i--) {
+        ribbonPoints.push(diagramPoints[i].diagramPoint);
+      }
+      ribbonPoints.push(diagramPoints[0].basePoint);
+
+      const ribbonGeometry = new THREE.BufferGeometry().setFromPoints(ribbonPoints);
+      const ribbonColor = new THREE.Color(color);
+      const ribbonMaterial = new THREE.MeshBasicMaterial({
+        color: ribbonColor,
+        transparent: true,
+        opacity: 0.25,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
+      const ribbonMesh = new THREE.Mesh(ribbonGeometry, ribbonMaterial);
+      ribbonMesh.userData = {
+        type: "moment-ribbon",
+        memberId: force.memberId,
+        component,
+      };
+      objects.push(ribbonMesh);
+    }
 
     objects.push(createLine(diagramPoints.map((point) => point.diagramPoint), color));
     for (const point of diagramPoints) {

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ja } from "../i18n/ja";
 import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { ProjectModel } from "../types";
@@ -16,6 +16,8 @@ import {
   persistViewerDisplaySize,
   type ViewerDisplaySizeSettings,
 } from "./settings/displaySize";
+import type { ForceColorModeData } from "./memberForceColorMap";
+import { DEFAULT_FORCE_COLOR_MODE, type ForceColorComponent, type ForceColorValueType } from "./memberForceColorMap";
 
 export const webglFallbackMessage =
   ja.viewer.messages.webglInitFailed + "\n" +
@@ -60,6 +62,14 @@ export function Viewer3D({
   const [animationOptions, setAnimationOptions] = useState<AnimationOptions>(DEFAULT_ANIMATION_OPTIONS);
   const [compareMode, setCompareMode] = useState<boolean>(initialCompareMode);
   const [cameraSync, setCameraSync] = useState<boolean>(defaultCameraSync);
+  const [forceColorMap, setForceColorMap] = useState<boolean>(false);
+  const [forceColorComponent, setForceColorComponent] = useState<ForceColorComponent>("N");
+  const [forceColorValueType, setForceColorValueType] = useState<ForceColorValueType>("absMax");
+  const forceColorMode: ForceColorModeData = useMemo(() => ({
+    enabled: forceColorMap,
+    component: forceColorComponent,
+    valueType: forceColorValueType,
+  }), [forceColorMap, forceColorComponent, forceColorValueType]);
   const [compareProjectState] = useState<ProjectModel | null>(() => compareProject ?? createSuspendedDeckProject());
   const loadCaseIds = useMemo(
     () => project.loadCases.map((loadCase) => loadCase.id).filter(Boolean),
@@ -212,6 +222,7 @@ export function Viewer3D({
     animationOptions,
     onInitializationError: handleInitializationError,
     timeHistoryNodeOverride,
+    forceColorMode,
   };
   const gpuMode = getGpuModeLabel();
 
@@ -288,6 +299,9 @@ export function Viewer3D({
           animationOptions={animationOptions}
           compareMode={compareMode}
           cameraSync={cameraSync}
+          forceColorMap={forceColorMap}
+          forceColorComponent={forceColorComponent}
+          forceColorValueType={forceColorValueType}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
           onDisplaySizeChange={setDisplaySize}
@@ -301,6 +315,9 @@ export function Viewer3D({
           onAnimationOptionsChange={handleAnimationOptionsChange}
           onCompareModeChange={handleCompareModeChange}
           onCameraSyncChange={handleCameraSyncChange}
+          onForceColorMapChange={setForceColorMap}
+          onForceColorComponentChange={setForceColorComponent}
+          onForceColorValueTypeChange={setForceColorValueType}
           onFit={() => setFitRequest((value) => value + 1)}
           onCameraPreset={runCameraPreset}
         />
