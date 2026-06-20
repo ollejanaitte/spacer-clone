@@ -15,11 +15,13 @@ type SectionGroundMotionProps = {
 
 export function SectionGroundMotion({ project, onProjectChange }: SectionGroundMotionProps) {
   const normalizedProject = migrateTimeHistorySettings(project);
-  const settings = normalizedProject.analysisSettings.timeHistory as TimeHistoryV2Settings;
+  const settings = normalizedProject.analysisSettings.timeHistory as TimeHistoryV2Settings | undefined;
   const groundMotions = normalizedProject.groundMotions ?? [];
-  const enabledAssignments = (["x", "y", "z"] as TimeHistoryAxis[])
-    .map((axis) => ({ axis, assignment: settings.groundMotions[axis] }))
-    .filter(({ assignment }) => assignment.enabled && assignment.groundMotionId);
+  const enabledAssignments = settings
+    ? (["x", "y", "z"] as TimeHistoryAxis[])
+        .map((axis) => ({ axis, assignment: settings.groundMotions[axis] }))
+        .filter(({ assignment }) => assignment.enabled && assignment.groundMotionId)
+    : [];
   const motion = groundMotions.find((item) => item.id === enabledAssignments[0]?.assignment.groundMotionId) ?? groundMotions[0];
   const timeStep = settings?.timeStep ?? motion?.timeStep;
   const duration = settings?.duration ?? motion?.duration;
@@ -28,7 +30,7 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
   const canFitDuration = waveformLength !== null;
 
   const fitDurationToMotion = () => {
-    if (waveformLength === null) return;
+    if (waveformLength === null || !settings) return;
     onProjectChange({
       ...normalizedProject,
       analysisSettings: {
@@ -46,6 +48,7 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
     axis: TimeHistoryAxis,
     patch: Partial<{ enabled: boolean; groundMotionId: string | null }>,
   ) => {
+    if (!settings) return;
     onProjectChange({
       ...normalizedProject,
       analysisSettings: {
@@ -74,7 +77,7 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
         <thead><tr><th>Direction</th><th>Enable</th><th>Ground Motion</th></tr></thead>
         <tbody>
           {(["x", "y", "z"] as TimeHistoryAxis[]).map((axis) => {
-            const assignment = settings.groundMotions[axis];
+            const assignment = settings?.groundMotions[axis] ?? { enabled: false, groundMotionId: null };
             return (
               <tr key={axis}>
                 <td>{axis.toUpperCase()}</td>

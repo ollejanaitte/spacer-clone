@@ -88,7 +88,7 @@ export function buildStepStates(
 
 export function buildTimeHistoryChecks(project: ProjectModel): TimeHistoryCheck[] {
   const normalizedProject = migrateTimeHistorySettings(project);
-  const settings = normalizedProject.analysisSettings.timeHistory as TimeHistoryV2Settings;
+  const settings = normalizedProject.analysisSettings.timeHistory as TimeHistoryV2Settings | undefined;
   const groundMotions = normalizedProject.groundMotions ?? [];
   const massCases = project.massCases ?? [];
   const selectedGroundMotions = enabledGroundMotions(normalizedProject);
