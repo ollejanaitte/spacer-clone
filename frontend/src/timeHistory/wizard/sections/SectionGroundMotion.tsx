@@ -30,13 +30,31 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
   const canFitDuration = waveformLength !== null;
 
   const fitDurationToMotion = () => {
-    if (waveformLength === null || !settings) return;
+    if (waveformLength === null) return;
+    const baseSettings = settings ?? {
+      schemaVersion: 2 as const,
+      enabled: true,
+      method: "newmark-beta" as const,
+      timeStep: 0.01,
+      duration: 1.0,
+      beta: 0.25,
+      gamma: 0.5,
+      massCaseId: "",
+      groundMotionId: "",
+      direction: "X",
+      groundMotions: {
+        x: { enabled: false, groundMotionId: null },
+        y: { enabled: false, groundMotionId: null },
+        z: { enabled: false, groundMotionId: null },
+      },
+      damping: { type: "rayleigh" as const, alpha: 0, beta: 0 },
+    };
     onProjectChange({
       ...normalizedProject,
       analysisSettings: {
         ...normalizedProject.analysisSettings,
         timeHistory: {
-          ...settings,
+          ...baseSettings,
           timeStep: timeStep ?? motion?.timeStep ?? 0.05,
           duration: waveformLength,
         },
@@ -48,19 +66,33 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
     axis: TimeHistoryAxis,
     patch: Partial<{ enabled: boolean; groundMotionId: string | null }>,
   ) => {
-    if (!settings) return;
+    const currentGroundMotions = settings?.groundMotions ?? {
+      x: { enabled: false, groundMotionId: null },
+      y: { enabled: false, groundMotionId: null },
+      z: { enabled: false, groundMotionId: null },
+    };
+    const newTimeHistory = {
+      schemaVersion: 2 as const,
+      enabled: settings?.enabled ?? true,
+      method: (settings?.method ?? "newmark-beta") as "newmark-beta",
+      timeStep: settings?.timeStep ?? 0.01,
+      duration: settings?.duration ?? 1.0,
+      beta: settings?.beta ?? 0.25,
+      gamma: settings?.gamma ?? 0.5,
+      massCaseId: settings?.massCaseId ?? "",
+      groundMotionId: settings?.groundMotionId ?? "",
+      direction: settings?.direction ?? "X",
+      groundMotions: {
+        ...currentGroundMotions,
+        [axis]: { ...currentGroundMotions[axis], ...patch },
+      },
+      damping: settings?.damping ?? { type: "rayleigh" as const, alpha: 0, beta: 0 },
+    };
     onProjectChange({
       ...normalizedProject,
       analysisSettings: {
         ...normalizedProject.analysisSettings,
-        timeHistory: {
-          ...settings,
-          schemaVersion: 2,
-          groundMotions: {
-            ...settings.groundMotions,
-            [axis]: { ...settings.groundMotions[axis], ...patch },
-          },
-        },
+        timeHistory: newTimeHistory,
       },
     });
   };
@@ -77,7 +109,8 @@ export function SectionGroundMotion({ project, onProjectChange }: SectionGroundM
         <thead><tr><th>Direction</th><th>Enable</th><th>Ground Motion</th></tr></thead>
         <tbody>
           {(["x", "y", "z"] as TimeHistoryAxis[]).map((axis) => {
-            const assignment = settings?.groundMotions[axis] ?? { enabled: false, groundMotionId: null };
+            const defaultAssignment = { enabled: false, groundMotionId: null };
+            const assignment = settings?.groundMotions?.[axis] ?? defaultAssignment;
             return (
               <tr key={axis}>
                 <td>{axis.toUpperCase()}</td>
