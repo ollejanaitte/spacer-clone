@@ -1,4 +1,4 @@
-﻿﻿import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
+import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
@@ -32,6 +32,7 @@ type ViewerControlsProps = {
   forceColorMap: boolean;
   forceColorComponent: ForceColorComponent;
   forceColorValueType: ForceColorValueType;
+  forceColorRange?: { min: number; max: number };
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onDisplaySizeChange?: (settings: ViewerDisplaySizeSettings) => void;
@@ -68,6 +69,7 @@ export function ViewerControls({
   forceColorMap,
   forceColorComponent,
   forceColorValueType,
+  forceColorRange,
   onVisibilityChange,
   onScalesChange,
   onDisplaySizeChange = () => undefined,
@@ -481,7 +483,7 @@ export function ViewerControls({
                   value={forceColorValueType}
                   onChange={(event) => onForceColorValueTypeChange(event.currentTarget.value as ForceColorValueType)}
                 >
-                  {(["max", "min", "absMax"] as ForceColorValueType[]).map((vt) => (
+                  {(["max", "min", "absMax", "average"] as ForceColorValueType[]).map((vt) => (
                     <option key={vt} value={vt}>
                       {FORCE_COLOR_VALUE_TYPE_LABELS[vt]}
                     </option>
@@ -489,7 +491,11 @@ export function ViewerControls({
                 </select>
               </label>
             </div>
-            <ForceColorLegend />
+            <ForceColorLegend
+              component={forceColorComponent}
+              valueType={forceColorValueType}
+              range={forceColorRange}
+            />
           </>
         )}
       </ControlGroup>
@@ -638,7 +644,15 @@ function ScaleInput({
   );
 }
 
-function ForceColorLegend() {
+function ForceColorLegend({
+  component,
+  valueType,
+  range,
+}: {
+  component?: ForceColorComponent;
+  valueType?: ForceColorValueType;
+  range?: { min: number; max: number };
+}) {
   const stops = [
     { color: "#1a56db", label: "小" },
     { color: "#22c55e", label: "" },
@@ -646,22 +660,44 @@ function ForceColorLegend() {
     { color: "#f57a1a", label: "" },
     { color: "#dc2626", label: "大" },
   ];
+  const componentLabel = component ? FORCE_COLOR_COMPONENT_LABELS[component] : "";
+  const valueTypeLabel = valueType ? FORCE_COLOR_VALUE_TYPE_LABELS[valueType] : "";
+  const unit = component === "N" || component === "Vy" || component === "Vz" ? "kN" : "kN·m";
+  const formatVal = (v: number) => {
+    if (!Number.isFinite(v)) return "0";
+    const abs = Math.abs(v);
+    if (abs > 1e4 || (abs > 0 && abs < 0.001)) return v.toExponential(2);
+    return v.toFixed(2).replace(/\.?0+$/, "");
+  };
   return (
     <div className="force-color-legend">
+      {componentLabel && valueTypeLabel && (
+        <div className="force-color-legend-header">
+          {componentLabel} ({valueTypeLabel})
+        </div>
+      )}
       <div className="force-color-bar">
         {stops.map((stop, i) => (
           <div
             key={i}
             className="force-color-stop"
             style={{ background: stop.color }}
-            title={stop.label || undefined}
           />
         ))}
       </div>
       <div className="force-color-labels">
-        <span>小</span>
-        <span>中</span>
-        <span>大</span>
+        {range ? (
+          <>
+            <span>{formatVal(range.min)} {unit}</span>
+            <span>{formatVal(range.max)} {unit}</span>
+          </>
+        ) : (
+          <>
+            <span>小</span>
+            <span>中</span>
+            <span>大</span>
+          </>
+        )}
       </div>
     </div>
   );

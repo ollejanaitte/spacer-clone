@@ -11,6 +11,7 @@ import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
 import { createLabelSprite } from "../threeUtils";
 import { buildReactionLabel, formatForceLabel } from "../forceLabels";
+import { assignLabelPriority } from "../labelCollisionAvoidance";
 
 const reactionColor = 0x1f8a70;
 const positiveColor = 0x2f80ed;
@@ -86,6 +87,7 @@ function renderReactionLabels(
     const label = createLabelSprite(text, "#176b55", scales.labelSize);
     label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 5, 0));
     label.userData = { type: "reaction-label", nodeId: reaction.nodeId, text };
+    assignLabelPriority(label, "reaction", reaction.nodeId, "node");
     objects.push(label);
   }
   return objects;
@@ -136,6 +138,7 @@ function renderMemberForceLabels(
         value,
         text,
       };
+      assignLabelPriority(label, "force", force.memberId, "member");
       objects.push(label);
     }
   }

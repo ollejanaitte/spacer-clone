@@ -97,6 +97,7 @@ describe("memberForceColorMap", () => {
       expect(FORCE_COLOR_VALUE_TYPE_LABELS.max).toBeTruthy();
       expect(FORCE_COLOR_VALUE_TYPE_LABELS.min).toBeTruthy();
       expect(FORCE_COLOR_VALUE_TYPE_LABELS.absMax).toBeTruthy();
+      expect(FORCE_COLOR_VALUE_TYPE_LABELS.average).toBeTruthy();
     });
 
     it("has correct default force color mode", () => {

@@ -559,6 +559,13 @@ button:disabled {
   margin: 8px 0;
 }
 
+.force-color-legend-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
 .force-color-bar {
   display: flex;
   height: 12px;

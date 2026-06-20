@@ -4,7 +4,7 @@ import { buildResultViewModel, buildResponseSpectrumViewModel, type MemberSectio
 
 export type ForceColorComponent = "N" | "Vy" | "Vz" | "My" | "Mz" | "Mt";
 
-export type ForceColorValueType = "max" | "min" | "absMax";
+export type ForceColorValueType = "max" | "min" | "absMax" | "average";
 
 export type MemberForceColorMode = {
   enabled: boolean;
@@ -27,6 +27,7 @@ export const FORCE_COLOR_VALUE_TYPE_LABELS: Record<ForceColorValueType, string> 
   max: "最大値",
   min: "最小値",
   absMax: "絶対最大値",
+  average: "平均値",
 };
 
 const componentToSectionForce: Record<ForceColorComponent, MemberSectionForceComponent> = {
@@ -85,6 +86,9 @@ export function computeMemberForceColorValues(
         break;
       case "min":
         value = Math.min(item.i, item.j);
+        break;
+      case "average":
+        value = (item.i + item.j) / 2;
         break;
       case "absMax":
       default:

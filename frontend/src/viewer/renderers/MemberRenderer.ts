@@ -7,6 +7,7 @@ import type { ForceColorComponent, ForceColorValueType } from "../memberForceCol
 import { computeMemberForceColorValues, computeForceColorRange, memberForceColor, DEFAULT_FORCE_COLOR_MODE } from "../memberForceColorMap";
 import type { AnalysisResult } from "../../types";
 import type { ResponseSpectrumSelection } from "../../results/resultViewModel";
+import { assignLabelPriority } from "../labelCollisionAvoidance";
 
 export function renderMembers(
   project: ProjectModel,
@@ -76,6 +77,7 @@ export function renderMemberLabels(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  selection?: ViewerSelection,
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
@@ -84,8 +86,10 @@ export function renderMemberLabels(
     const member = project.members[index];
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
-    const label = createLabelSprite(member.label || member.id, "#23527a", scales.labelSize);
+    const selected = selection?.type === "member" && selection.id === member.id;
+    const label = createLabelSprite(member.label || member.id, selected ? "#1b6b93" : "#23527a", scales.labelSize);
     label.position.copy(ends.mid).add(new THREE.Vector3(0, scales.nodeSize * 2.2 + 0.08, 0));
+    assignLabelPriority(label, selected ? "selected" : "member", member.id, "member");
     objects.push(label);
   }
   return objects;

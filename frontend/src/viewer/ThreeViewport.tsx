@@ -6,6 +6,7 @@ import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
 import { computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
 import type { ForceColorModeData } from "./memberForceColorMap";
+import { cullOverlappingLabels, type LabelCandidate } from "./labelCollisionAvoidance";
 
 type ThreeContext = {
   scene: THREE.Scene;
@@ -266,10 +267,41 @@ function safeRebuildModelScene(
     context.groups.loads.visible = props.visibility.loads;
     context.groups.deformed.visible = props.visibility.deformedShape;
     context.groups.resultDiagrams.visible = true;
+    applyLabelCollisionAvoidance(context, props);
     context.fallbackActive = false;
   } catch (error) {
     activateViewerFallback(context, error);
   }
+}
+
+function applyLabelCollisionAvoidance(context: ThreeContext, props: ThreeViewportProps): void {
+  if (!props.visibility.labels) return;
+  const labelsGroup = context.groups.labels;
+  const size = context.renderer.getSize(new THREE.Vector2());
+  const candidates: LabelCandidate[] = [];
+
+  labelsGroup.traverse((child) => {
+    if (!(child as THREE.Sprite).isSprite) return;
+    const ud = child.userData;
+    const priority = ud.labelPriority as LabelCandidate["priority"] | undefined;
+    if (!priority) {
+      candidates.push({ object: child, priority: "node", ownerId: ud.id });
+      return;
+    }
+    candidates.push({
+      object: child,
+      priority,
+      ownerId: ud.ownerId ?? ud.id,
+      ownerType: ud.ownerType,
+    });
+  });
+
+  const selectedId = props.selection?.id ?? null;
+  const hidden = cullOverlappingLabels(candidates, context.camera, { width: size.x, height: size.y }, selectedId);
+
+  labelsGroup.traverse((child) => {
+    child.visible = !hidden.has(child);
+  });
 }
 
 function updateWideLineResolution(root: THREE.Object3D, width: number, height: number): void {

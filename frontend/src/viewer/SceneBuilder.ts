@@ -120,10 +120,10 @@ export function rebuildModelScene(
     visibility.labels
       ? [
           ...(visibility.nodeLabels
-            ? renderNodeLabels(project, scales, spacerAxisSwap, nodePositionOverride)
+            ? renderNodeLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection)
             : []),
           ...(visibility.memberLabels
-            ? renderMemberLabels(project, scales, spacerAxisSwap, nodePositionOverride)
+            ? renderMemberLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection)
             : []),
         ]
       : [],

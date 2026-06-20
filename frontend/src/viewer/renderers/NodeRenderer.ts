@@ -3,6 +3,7 @@ import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
 import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createLabelSprite, createNodeMap, labelSamplingStride } from "../threeUtils";
+import { assignLabelPriority } from "../labelCollisionAvoidance";
 
 const nodeMaterial = new THREE.MeshStandardMaterial({ color: "#d45d50", roughness: 0.55 });
 const selectedNodeMaterial = new THREE.MeshStandardMaterial({ color: "#f2c94c", roughness: 0.35 });
@@ -40,6 +41,7 @@ export function renderNodeLabels(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  selection?: ViewerSelection,
 ): THREE.Object3D[] {
   const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
   const objects: THREE.Object3D[] = [];
@@ -48,8 +50,10 @@ export function renderNodeLabels(
     const node = project.nodes[index];
     const position = nodeMap.get(node.id);
     if (!position) continue;
-    const label = createLabelSprite(node.label || node.id, "#7b3440", scales.labelSize);
+    const selected = selection?.type === "node" && selection.id === node.id;
+    const label = createLabelSprite(node.label || node.id, selected ? "#d45d50" : "#7b3440", scales.labelSize);
     label.position.copy(position).add(new THREE.Vector3(0, scales.nodeSize * 2.8 + 0.08, 0));
+    assignLabelPriority(label, selected ? "selected" : "node", node.id, "node");
     objects.push(label);
   }
   return objects;

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
@@ -6,6 +6,7 @@ import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
 import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
 import { buildResultCsvExports } from "./exports/resultCsvExport";
+import { buildMemberForceReportCsv } from "./exports/memberForceReport";
 import { openResultPdfReport } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
@@ -410,6 +411,7 @@ export function App() {
     if (csvExports["moving_load.csv"]) {
       downloadText("moving_load.csv", csvExports["moving_load.csv"], "text/csv");
     }
+    downloadText("member_force_report.csv", buildMemberForceReportCsv(result), "text/csv");
     log("Result CSV downloaded.");
   };
 

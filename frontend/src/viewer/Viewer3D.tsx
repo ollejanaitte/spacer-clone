@@ -17,7 +17,7 @@ import {
   type ViewerDisplaySizeSettings,
 } from "./settings/displaySize";
 import type { ForceColorModeData } from "./memberForceColorMap";
-import { DEFAULT_FORCE_COLOR_MODE, type ForceColorComponent, type ForceColorValueType } from "./memberForceColorMap";
+import { DEFAULT_FORCE_COLOR_MODE, type ForceColorComponent, type ForceColorValueType, computeMemberForceColorValues, computeForceColorRange } from "./memberForceColorMap";
 
 export const webglFallbackMessage =
   ja.viewer.messages.webglInitFailed + "\n" +
@@ -76,6 +76,11 @@ export function Viewer3D({
     [project.loadCases],
   );
   const selectedLoadCaseId = activeLoadCase || loadCaseIds[0] || "";
+  const forceColorRange = useMemo(() => {
+    if (!forceColorMap || !result) return { min: 0, max: 0 };
+    const values = computeMemberForceColorValues(project, result, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult);
+    return computeForceColorRange(values);
+  }, [forceColorMap, result, project, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult]);
   const eigenModeNos = useMemo(
     () => result?.eigenResult?.modes.map((mode) => mode.modeNo) ?? [],
     [result],
@@ -302,6 +307,7 @@ export function Viewer3D({
           forceColorMap={forceColorMap}
           forceColorComponent={forceColorComponent}
           forceColorValueType={forceColorValueType}
+          forceColorRange={forceColorRange}
           onVisibilityChange={setVisibility}
           onScalesChange={setScales}
           onDisplaySizeChange={setDisplaySize}
