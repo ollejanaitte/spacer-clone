@@ -1,4 +1,4 @@
-import type { ProjectModel } from "../types";
+import type { AnalysisResult, ProjectModel } from "../types";
 import {
   BRIDGE_NUM_SPANS,
   BRIDGE_PIER_HEIGHT,
@@ -139,15 +139,27 @@ export function computeDemoModeShape(
 
 /**
  * Build a single combined displacement map (unit amplitude) for the active
- * mode. If the supplied `lookupEigenShape` can find a real eigen shape for
- * the selected mode and `useDemo === false`, the per-node lookup is
- * delegated to the caller (ThreeViewport). Otherwise the demo pseudo-mode
- * is returned.
+ * mode. When `useDemo === false` and a real eigen result is available, the
+ * per-node displacement is taken from the selected eigen mode shape.
+ * Otherwise the demo pseudo-mode is returned.
  */
 export function resolveAnimationDisplacementMap(
   project: ProjectModel,
   options: AnimationOptions,
+  result?: AnalysisResult | null,
+  selectedEigenMode?: number,
 ): Map<string, DisplacementVector> {
+  if (!options.useDemo && result?.eigenResult) {
+    const modeNo = selectedEigenMode ?? options.modeNo;
+    const mode = result.eigenResult.modes.find((m) => m.modeNo === modeNo);
+    if (mode && mode.shape.length > 0) {
+      const map = new Map<string, DisplacementVector>();
+      for (const shape of mode.shape) {
+        map.set(shape.nodeId, { ux: shape.ux, uy: shape.uy, uz: shape.uz });
+      }
+      if (map.size > 0) return map;
+    }
+  }
   return computeDemoModeShape(project, options.demoDirection);
 }
 
@@ -169,6 +181,8 @@ export function withNodeDisplacement(
   project: ProjectModel,
   options: AnimationOptions,
   clockSeconds: number | null | undefined,
+  result?: AnalysisResult | null,
+  selectedEigenMode?: number,
 ): Map<string, AnimatedNodePosition> {
   const map = new Map<string, AnimatedNodePosition>();
   for (const node of project.nodes) {
@@ -178,7 +192,7 @@ export function withNodeDisplacement(
   if (clockSeconds === null || clockSeconds === undefined) return map;
   if (!Number.isFinite(clockSeconds)) return map;
 
-  const displacementMap = resolveAnimationDisplacementMap(project, options);
+  const displacementMap = resolveAnimationDisplacementMap(project, options, result, selectedEigenMode);
   if (displacementMap.size === 0) return map;
 
   const phase = computeAnimationPhase(clockSeconds, options.speed);

@@ -5,6 +5,7 @@ import {
   BRIDGE_PIER_HEIGHT,
   BRIDGE_SOFT_PIERS,
 } from "../data/defaultProject";
+import type { AnalysisResult } from "../types";
 import {
   computeAnimatedTransform,
   computeAnimationPhase,
@@ -116,10 +117,159 @@ describe("computeDemoModeShape", () => {
 });
 
 describe("resolveAnimationDisplacementMap", () => {
-  it("returns the demo map regardless of options (display-only fallback)", () => {
+  it("returns the demo map when useDemo is true", () => {
     const project = createDefaultProject();
-    const map = resolveAnimationDisplacementMap(project, DEFAULT_ANIMATION_OPTIONS);
+    const map = resolveAnimationDisplacementMap(project, { ...DEFAULT_ANIMATION_OPTIONS, useDemo: true });
     expect(map.size).toBeGreaterThan(0);
+  });
+
+  it("returns the demo map when useDemo is false but no result is provided", () => {
+    const project = createDefaultProject();
+    const map = resolveAnimationDisplacementMap(project, { ...DEFAULT_ANIMATION_OPTIONS, useDemo: false });
+    expect(map.size).toBeGreaterThan(0);
+  });
+
+  it("returns the demo map when useDemo is false but result has no eigenResult", () => {
+    const project = createDefaultProject();
+    const result: AnalysisResult = {
+      projectId: "test",
+      schemaVersion: "1.0.0",
+      analysisSummary: {
+        analysisType: "linear_static",
+        status: "success",
+        startedAt: "2026-01-01T00:00:00Z",
+        finishedAt: "2026-01-01T00:00:00Z",
+        durationMs: 0,
+        nodeCount: 1,
+        memberCount: 0,
+        loadCaseCount: 1,
+        totalDof: 6,
+        freeDof: 0,
+        constrainedDof: 6,
+        solver: "scipy_sparse",
+      },
+      displacements: [],
+      reactions: [],
+      memberEndForces: [],
+      warnings: [],
+      errors: [],
+    };
+    const map = resolveAnimationDisplacementMap(project, { ...DEFAULT_ANIMATION_OPTIONS, useDemo: false }, result);
+    expect(map.size).toBeGreaterThan(0);
+  });
+
+  it("uses real eigen mode shape when useDemo is false and result has eigen data", () => {
+    const project = createDefaultProject();
+    const result: AnalysisResult = {
+      projectId: "test",
+      schemaVersion: "1.0.0",
+      analysisSummary: {
+        analysisType: "eigen",
+        status: "success",
+        startedAt: "2026-01-01T00:00:00Z",
+        finishedAt: "2026-01-01T00:00:00Z",
+        durationMs: 0,
+        nodeCount: 2,
+        memberCount: 0,
+        loadCaseCount: 0,
+        totalDof: 12,
+        freeDof: 6,
+        constrainedDof: 6,
+        solver: "scipy_sparse",
+      },
+      displacements: [],
+      reactions: [],
+      memberEndForces: [],
+      eigenResult: {
+        massCaseId: "mass-1",
+        normalization: "mass",
+        modes: [
+          {
+            modeNo: 1,
+            eigenvalue: 1,
+            circularFrequency: 1,
+            frequency: 1,
+            period: 1,
+            modalMass: 1,
+            participationFactors: [],
+            effectiveMassRatios: [],
+            shape: [
+              { nodeId: "G0", ux: 0.1, uy: 0.2, uz: 0.3, rx: 0, ry: 0, rz: 0 },
+              { nodeId: "G1", ux: 0.4, uy: 0.5, uz: 0.6, rx: 0, ry: 0, rz: 0 },
+            ],
+          },
+        ],
+      },
+      warnings: [],
+      errors: [],
+    };
+    const map = resolveAnimationDisplacementMap(
+      project,
+      { ...DEFAULT_ANIMATION_OPTIONS, useDemo: false, modeNo: 1 },
+      result,
+      1,
+    );
+    expect(map.size).toBe(2);
+    expect(map.get("G0")).toEqual({ ux: 0.1, uy: 0.2, uz: 0.3 });
+    expect(map.get("G1")).toEqual({ ux: 0.4, uy: 0.5, uz: 0.6 });
+  });
+
+  it("falls back to demo when useDemo is false but requested mode does not exist", () => {
+    const project = createDefaultProject();
+    const result: AnalysisResult = {
+      projectId: "test",
+      schemaVersion: "1.0.0",
+      analysisSummary: {
+        analysisType: "eigen",
+        status: "success",
+        startedAt: "2026-01-01T00:00:00Z",
+        finishedAt: "2026-01-01T00:00:00Z",
+        durationMs: 0,
+        nodeCount: 2,
+        memberCount: 0,
+        loadCaseCount: 0,
+        totalDof: 12,
+        freeDof: 6,
+        constrainedDof: 6,
+        solver: "scipy_sparse",
+      },
+      displacements: [],
+      reactions: [],
+      memberEndForces: [],
+      eigenResult: {
+        massCaseId: "mass-1",
+        normalization: "mass",
+        modes: [
+          {
+            modeNo: 1,
+            eigenvalue: 1,
+            circularFrequency: 1,
+            frequency: 1,
+            period: 1,
+            modalMass: 1,
+            participationFactors: [],
+            effectiveMassRatios: [],
+            shape: [
+              { nodeId: "G0", ux: 0.1, uy: 0.2, uz: 0.3, rx: 0, ry: 0, rz: 0 },
+            ],
+          },
+        ],
+      },
+      warnings: [],
+      errors: [],
+    };
+    const map = resolveAnimationDisplacementMap(
+      project,
+      { ...DEFAULT_ANIMATION_OPTIONS, useDemo: false, modeNo: 99 },
+      result,
+      99,
+    );
+    // Falls back to demo mode since mode 99 doesn't exist
+    expect(map.size).toBeGreaterThan(0);
+    // G0 displacement should match demo mode, not the eigen mode (0.1, 0.2, 0.3)
+    const g0 = map.get("G0");
+    expect(g0).toBeDefined();
+    expect(g0!.ux).not.toBeCloseTo(0.1);
   });
 });
 
@@ -233,6 +383,64 @@ describe("withNodeDisplacement", () => {
     const transDeltaZ = Math.abs(transPos.z - node.z);
     expect(longDeltaX).toBeGreaterThan(0);
     expect(transDeltaZ).toBeGreaterThan(0);
+  });
+
+  it("uses real eigen mode shape when useDemo is false and result has eigen data", () => {
+    const result: AnalysisResult = {
+      projectId: "test",
+      schemaVersion: "1.0.0",
+      analysisSummary: {
+        analysisType: "eigen",
+        status: "success",
+        startedAt: "2026-01-01T00:00:00Z",
+        finishedAt: "2026-01-01T00:00:00Z",
+        durationMs: 0,
+        nodeCount: 2,
+        memberCount: 0,
+        loadCaseCount: 0,
+        totalDof: 12,
+        freeDof: 6,
+        constrainedDof: 6,
+        solver: "scipy_sparse",
+      },
+      displacements: [],
+      reactions: [],
+      memberEndForces: [],
+      eigenResult: {
+        massCaseId: "mass-1",
+        normalization: "mass",
+        modes: [
+          {
+            modeNo: 1,
+            eigenvalue: 1,
+            circularFrequency: 1,
+            frequency: 1,
+            period: 1,
+            modalMass: 1,
+            participationFactors: [],
+            effectiveMassRatios: [],
+            shape: [
+              { nodeId: "G0", ux: 1.0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+              { nodeId: "G1", ux: 2.0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+            ],
+          },
+        ],
+      },
+      warnings: [],
+      errors: [],
+    };
+    const out = withNodeDisplacement(
+      project,
+      { ...DEFAULT_ANIMATION_OPTIONS, enabled: true, useDemo: false, modeNo: 1, scale: 1 },
+      0.25,
+      result,
+      1,
+    );
+    // G0 and G1 should have real eigen displacement, not demo
+    const g0 = out.get("G0")!;
+    const g1 = out.get("G1")!;
+    expect(Math.abs(g0.x - project.nodes.find((n) => n.id === "G0")!.x)).toBeCloseTo(1.0, 5);
+    expect(Math.abs(g1.x - project.nodes.find((n) => n.id === "G1")!.x)).toBeCloseTo(2.0, 5);
   });
 });
 

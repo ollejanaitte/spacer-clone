@@ -2,9 +2,15 @@
 
 ## 最優先：不具合確認・修正
 
-### 固有値解析モード変位表示不具合
+### ~~固有値解析モード変位表示不具合~~ ✅ 修正済み（2026-06-20）
 
-モード別変位が表示されない問題を次回調査対象とする。
+`resolveAnimationDisplacementMap` が常にデモモード形状を返し、実際の固有値データを使用していなかった問題を修正。
+
+修正内容:
+- `animation.ts`: `resolveAnimationDisplacementMap` に `result` と `selectedEigenMode` パラメータを追加。`useDemo === false` で固有値結果がある場合は実際のモード形状を使用するよう変更
+- `animation.ts`: `withNodeDisplacement` に `result` と `selectedEigenMode` パラメータを追加
+- `ThreeViewport.tsx`: `animationOverrideFor` で `props.result` と `props.selectedEigenMode` を渡すよう修正
+- テスト: 5件の新規テスト追加（固有値データ使用、デモフォールバック、モード不存在時のフォールバック）
 
 確認観点:
 

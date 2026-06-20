@@ -1,4 +1,4 @@
-﻿import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
@@ -240,7 +240,7 @@ function animationOverrideFor(
   if (!props.animationOptions) return null;
   if (!props.animationOptions.enabled) return null;
   if (clockSeconds === null || clockSeconds === undefined) return null;
-  return withNodeDisplacement(props.project, props.animationOptions, clockSeconds);
+  return withNodeDisplacement(props.project, props.animationOptions, clockSeconds, props.result, props.selectedEigenMode);
 }
 
 function applyVisibility(context: ThreeContext, props: ThreeViewportProps): void {
