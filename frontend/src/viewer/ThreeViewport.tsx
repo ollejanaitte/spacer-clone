@@ -306,9 +306,10 @@ function applyLabelCollisionAvoidance(context: ThreeContext, props: ThreeViewpor
 
 function updateWideLineResolution(root: THREE.Object3D, width: number, height: number): void {
   root.traverse((object) => {
-    const material = (object as THREE.Mesh).material;
+    const material = (object as THREE.Mesh).material ?? (object as THREE.Line).material;
     const materials = Array.isArray(material) ? material : material ? [material] : [];
     for (const item of materials) {
+      if (!item) continue;
       const resolution = (item as THREE.Material & { resolution?: THREE.Vector2 }).resolution;
       resolution?.set(width, height);
     }

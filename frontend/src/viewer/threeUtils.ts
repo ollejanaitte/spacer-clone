@@ -139,22 +139,29 @@ export function labelSamplingStride(itemCount: number, maximum = MAX_VISIBLE_MOD
 
 export function disposeObject(object: THREE.Object3D): void {
   object.traverse((child) => {
-    try {
-      const geometry = (child as THREE.Mesh).geometry ?? (child as THREE.Line).geometry;
-      if (geometry && "dispose" in geometry) geometry.dispose();
-    } catch { /* geometry may not exist */ }
-    try {
-      const material = (child as THREE.Mesh).material ?? (child as THREE.Line).material ?? (child as THREE.Sprite).material;
-      const materials = Array.isArray(material) ? material : material ? [material] : [];
-      for (const item of materials) {
-        try {
-          const maybeMap = item as THREE.Material & { map?: THREE.Texture };
-          maybeMap.map?.dispose();
-          item.dispose();
-        } catch { /* material may already be disposed */ }
-      }
-    } catch { /* no material */ }
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+      if (mesh.geometry) mesh.geometry.dispose();
+      if (mesh.material) disposeMaterial(mesh.material);
+    } else if ((child as THREE.Line).isLine) {
+      const line = child as THREE.Line;
+      if (line.geometry) line.geometry.dispose();
+      if (line.material) disposeMaterial(line.material);
+    } else if ((child as THREE.Sprite).isSprite) {
+      const sprite = child as THREE.Sprite;
+      if (sprite.material) disposeMaterial(sprite.material);
+    }
   });
+}
+
+function disposeMaterial(material: THREE.Material | THREE.Material[]): void {
+  const materials = Array.isArray(material) ? material : [material];
+  for (const item of materials) {
+    if (!item) continue;
+    const maybeMap = item as THREE.Material & { map?: THREE.Texture };
+    if (maybeMap.map) maybeMap.map.dispose();
+    item.dispose();
+  }
 }
 
 export function replaceGroupContents(group: THREE.Group, children: THREE.Object3D[]): void {
