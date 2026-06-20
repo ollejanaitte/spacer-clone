@@ -139,18 +139,21 @@ export function labelSamplingStride(itemCount: number, maximum = MAX_VISIBLE_MOD
 
 export function disposeObject(object: THREE.Object3D): void {
   object.traverse((child) => {
-    const mesh = child as THREE.Mesh;
-    const line = child as THREE.Line;
-    const sprite = child as THREE.Sprite;
-    const geometry = mesh.geometry ?? line.geometry;
-    if (geometry && "dispose" in geometry) geometry.dispose();
-    const material = mesh.material ?? line.material ?? sprite.material;
-    const materials = Array.isArray(material) ? material : material ? [material] : [];
-    for (const item of materials) {
-      const maybeMap = item as THREE.Material & { map?: THREE.Texture };
-      maybeMap.map?.dispose();
-      item.dispose();
-    }
+    try {
+      const geometry = (child as THREE.Mesh).geometry ?? (child as THREE.Line).geometry;
+      if (geometry && "dispose" in geometry) geometry.dispose();
+    } catch { /* geometry may not exist */ }
+    try {
+      const material = (child as THREE.Mesh).material ?? (child as THREE.Line).material ?? (child as THREE.Sprite).material;
+      const materials = Array.isArray(material) ? material : material ? [material] : [];
+      for (const item of materials) {
+        try {
+          const maybeMap = item as THREE.Material & { map?: THREE.Texture };
+          maybeMap.map?.dispose();
+          item.dispose();
+        } catch { /* material may already be disposed */ }
+      }
+    } catch { /* no material */ }
   });
 }
 

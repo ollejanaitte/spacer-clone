@@ -20,7 +20,7 @@ export const VIEWER_DISPLAY_SIZE_RANGES: Record<
   keyof ViewerDisplaySizeSettings,
   { min: number; max: number }
 > = {
-  nodeSize: { min: 1, max: 100 },
+  nodeSize: { min: 1, max: 50 },
   supportSize: { min: 0.2, max: 5 },
   loadArrowSize: { min: 0.2, max: 5 },
   labelSize: { min: 0.5, max: 3 },

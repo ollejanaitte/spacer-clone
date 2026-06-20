@@ -32,6 +32,12 @@
 .time-history-modal-backdrop {
   font-family: var(--th-font-family);
   font-size: var(--th-font-size-base);
+  --th-color-text: #1f2933;
+  --th-color-text-muted: #526173;
+  --th-color-border: #c4ced8;
+  --th-color-bg: #ffffff;
+  --th-color-panel: #f8fafc;
+  --th-color-placeholder: #94a3b8;
 }
 
 .time-history-wizard-modal :where(input, textarea)::placeholder,
