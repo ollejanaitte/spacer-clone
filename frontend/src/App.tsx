@@ -28,7 +28,7 @@ import { ModelComparisonWorkspace } from "./compare/ModelComparisonWorkspace";
 import { ResultSummaryCard } from "./timeHistory/wizard/ResultSummaryCard";
 import { StatusBadge } from "./timeHistory/wizard/StatusBadge";
 import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardModal";
-import { redirectLegacyTimeHistoryRoute } from "./timeHistory/routeRedirect";
+import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 
@@ -38,7 +38,7 @@ type ValidationNotice = {
 };
 
 export function App() {
-  redirectLegacyTimeHistoryRoute();
+  redirectLegacyRoutes();
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
@@ -63,12 +63,12 @@ export function App() {
   const [dirty, setDirty] = useState(false);
   const [bridgeWizardOpen, setBridgeWizardOpen] = useState<boolean>(false);
   const [timeHistoryWizardOpen, setTimeHistoryWizardOpen] = useState<boolean>(
-    () => typeof window !== "undefined" && window.location.pathname.startsWith("/th/"),
+    () => typeof window !== "undefined" && window.location.pathname.startsWith("/pro/th/"),
   );
   const [timeHistoryNodeOverride, setTimeHistoryNodeOverride] = useState<Map<string, { x: number; y: number; z: number }> | null>(null);
   const [running, setRunning] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(
-    () => typeof window !== "undefined" && window.location.pathname === "/compare",
+    () => typeof window !== "undefined" && window.location.pathname === "/pro/compare",
   );
 
   const selection: ViewerSelection = selectedNode
@@ -459,7 +459,7 @@ export function App() {
       <ModelComparisonWorkspace
         modelA={project}
         onClose={() => {
-          window.history.pushState({}, "", "/");
+          window.history.pushState({}, "", "/pro");
           setComparisonOpen(false);
         }}
       />
@@ -497,7 +497,7 @@ export function App() {
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
         onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
         onOpenModelComparison={() => {
-          window.history.pushState({}, "", "/compare");
+          window.history.pushState({}, "", "/pro/compare");
           setComparisonOpen(true);
         }}
       />
