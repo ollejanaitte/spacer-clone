@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import locale from "../../../i18n/locales/ja.json";
 import type { ProjectModel, StructuredMessage, TimeHistoryResult } from "../../../types";
 import { TimeHistoryChart } from "../../TimeHistoryChart";
@@ -141,11 +141,13 @@ export function SectionResults({ project, result = null, error = null, onAnimati
             )}
             {activePage === "ground" && <GroundMotionPage motion={selectedGroundMotion} />}
             {activePage === "animation" && result && (
-              <TimeHistoryModelAnimation
-                project={project}
-                result={result}
-                onOverrideChange={onAnimationOverrideChange}
-              />
+              <AnimationErrorBoundary>
+                <TimeHistoryModelAnimation
+                  project={project}
+                  result={result}
+                  onOverrideChange={onAnimationOverrideChange}
+                />
+              </AnimationErrorBoundary>
             )}
             {activePage === "table" && <TablePage result={result} selectedKey={selectedKey} values={selectedSeries} />}
             {activePage === "errors" && <ErrorsPage result={result} error={error} />}
@@ -340,4 +342,19 @@ function downloadText(content: string, fileName: string, type: string) {
 function formatNumber(value: number | undefined): string {
   if (typeof value !== "number" || !Number.isFinite(value)) return "-";
   return Math.abs(value) >= 1000 || (Math.abs(value) > 0 && Math.abs(value) < 0.001) ? value.toExponential(4) : value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+class AnimationErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    console.error("TimeHistoryModelAnimation error:", _error);
+  }
+  render() {
+    return this.state.failed
+      ? <div className="time-history-empty-result-guide"><strong>アニメーション表示でエラーが発生しました。</strong><p>ページを再読み込みしてください。</p></div>
+      : this.props.children;
+  }
 }

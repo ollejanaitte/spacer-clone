@@ -142,7 +142,10 @@ export function TimeHistoryModelAnimation({ project, result, onOverrideChange }:
                 <input
                   type="checkbox"
                   checked={visibility[key]}
-                  onChange={(event) => setVisibility((current) => ({ ...current, [key]: event.currentTarget.checked }))}
+                  onChange={(event) => {
+                    const checked = event.currentTarget.checked;
+                    setVisibility((current) => ({ ...current, [key]: checked }));
+                  }}
                 />
                 {visibilityLabel(key)}
               </label>
