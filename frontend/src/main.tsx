@@ -5,40 +5,30 @@ import { LobbyApp } from "./lobby/routes";
 import "./styles/tokens.css";
 import "./styles.css";
 
-function getInitialRoute(): "lobby" | "pro" {
-  if (typeof window === "undefined") return "lobby";
-  const p = window.location.pathname;
-  if (p === "/pro" || p.startsWith("/pro/")) return "pro";
-  if (p === "/level0" || p.startsWith("/level0/")) return "lobby";
-  return "lobby";
+function getCurrentLocation(): string {
+  if (typeof window === "undefined") return "/";
+  return `${window.location.pathname}${window.location.search}`;
 }
 
 function Root() {
-  const [route, setRoute] = useState<"lobby" | "pro">(() => getInitialRoute());
+  const [currentLocation, setCurrentLocation] = useState(() => getCurrentLocation());
 
   const handleNavigate = useCallback((path: string) => {
     window.history.pushState({}, "", path);
-    if (path === "/pro" || path.startsWith("/pro/")) {
-      setRoute("pro");
-    } else {
-      setRoute("lobby");
-    }
+    setCurrentLocation(getCurrentLocation());
   }, []);
 
   // Listen for popstate (back/forward)
   React.useEffect(() => {
-    const onPopState = () => {
-      const p = window.location.pathname;
-      setRoute(p === "/pro" || p.startsWith("/pro/") ? "pro" : "lobby");
-    };
+    const onPopState = () => setCurrentLocation(getCurrentLocation());
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  if (route === "pro") {
+  if (currentLocation === "/pro" || currentLocation.startsWith("/pro/")) {
     return <App />;
   }
-  return <LobbyApp onNavigate={handleNavigate} />;
+  return <LobbyApp onNavigate={handleNavigate} currentLocation={currentLocation} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
