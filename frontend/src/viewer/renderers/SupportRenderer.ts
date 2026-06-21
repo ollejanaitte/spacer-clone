@@ -4,9 +4,9 @@ import type { ViewerScales } from "../types";
 import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
 import { createNodeMap } from "../threeUtils";
 
-const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#4f5f70", roughness: 0.7 });
-const pinnedMaterial = new THREE.MeshStandardMaterial({ color: "#3b8b6d", roughness: 0.7 });
-const rollerMaterial = new THREE.MeshStandardMaterial({ color: "#7a6fb3", roughness: 0.7 });
+const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#222222", roughness: 0.7 });
+const pinnedMaterial = new THREE.MeshStandardMaterial({ color: "#222222", roughness: 0.7 });
+const rollerMaterial = new THREE.MeshStandardMaterial({ color: "#222222", roughness: 0.7 });
 
 export function renderSupports(
   project: ProjectModel,

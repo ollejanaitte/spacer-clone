@@ -1871,8 +1871,8 @@ button:disabled {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  color: #f8fafc;
-  background: #243447;
+  color: #1f2933;
+  background: #ffffff;
 }
 
 .time-history-wizard-header h2,
@@ -1882,7 +1882,7 @@ button:disabled {
 
 .time-history-wizard-header p {
   margin-top: 4px;
-  color: #bdd0e3;
+  color: #6b7280;
   font-size: 12px;
 }
 
@@ -1899,8 +1899,9 @@ button:disabled {
   border: 1px solid #9fb7ce;
   border-radius: 6px;
   padding: 7px 12px;
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.08);
+  color: #1f2933;
+  font-weight: 600;
+  background: #ffffff;
 }
 
 .time-history-wizard-body {
@@ -2086,7 +2087,7 @@ button:disabled {
 
 .time-history-footer-hint {
   flex: 1;
-  color: #bdd0e3;
+  color: #6b7280;
   font-size: 12px;
   text-align: center;
 }
@@ -2495,15 +2496,17 @@ button:disabled {
 .time-history-wizard-footer {
   padding: var(--th-space-3) var(--th-space-5);
   color: var(--th-color-text);
-  background: #111c2f;
+  background: #ffffff;
   border-top: 1px solid var(--th-color-border);
 }
 
 .time-history-wizard-footer button {
   min-height: 38px;
+  color: #1f2933;
+  font-weight: 600;
   border-color: var(--th-color-border);
   border-radius: var(--th-radius);
-  background: var(--th-color-panel);
+  background: #ffffff;
 }
 
 .time-history-wizard-modal :where(button, input, select):disabled {

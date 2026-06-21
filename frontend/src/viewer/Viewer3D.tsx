@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../i18n/ja";
 import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { ProjectModel } from "../types";
@@ -62,6 +62,7 @@ export function Viewer3D({
   const [animationOptions, setAnimationOptions] = useState<AnimationOptions>(DEFAULT_ANIMATION_OPTIONS);
   const [compareMode, setCompareMode] = useState<boolean>(initialCompareMode);
   const [cameraSync, setCameraSync] = useState<boolean>(defaultCameraSync);
+  const deformedShapeAutoEnabled = useRef(false);
   const [forceColorMap, setForceColorMap] = useState<boolean>(false);
   const [forceColorComponent, setForceColorComponent] = useState<ForceColorComponent>("N");
   const [forceColorValueType, setForceColorValueType] = useState<ForceColorValueType>("absMax");
@@ -132,7 +133,8 @@ export function Viewer3D({
   }, [eigenModeNos, selectedEigenMode, onSelectedEigenModeChange]);
 
   useEffect(() => {
-    if (eigenModeNos.length > 0) {
+    if (eigenModeNos.length > 0 && !deformedShapeAutoEnabled.current) {
+      deformedShapeAutoEnabled.current = true;
       setVisibility((current) =>
         current.deformedShape ? current : { ...current, deformedShape: true },
       );
