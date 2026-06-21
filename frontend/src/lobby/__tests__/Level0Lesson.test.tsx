@@ -43,4 +43,13 @@ describe("Level0Lesson", () => {
     backButton?.click();
     expect(onNavigate).toHaveBeenCalledWith("/level0");
   });
+
+  test("教材カードクリックで教材詳細へ遷移", () => {
+    const onNavigate = vi.fn();
+    const { container } = renderComponent(<Level0Lesson onNavigate={onNavigate} />);
+    const lessonButton = Array.from(container.querySelectorAll("button"))
+      .find((button) => button.textContent?.includes("橋はなぜ支えられるのか"));
+    lessonButton?.click();
+    expect(onNavigate).toHaveBeenCalledWith("/level0/lesson/why-bridge-stands");
+  });
 });

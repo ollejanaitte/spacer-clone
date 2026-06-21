@@ -50,6 +50,8 @@ export const L0_STRINGS = {
         audience: "初心者向け",
         button: "試してみる",
         target: "/level0?sample=short",
+        overview: "短い支間のシンプルな橋です。基本的な揺れ方を確認できます。",
+        points: ["橋が短い場合の動き", "橋全体への力の伝わり方", "標準的な橋との違い"],
       },
       {
         id: "standard-bridge",
@@ -60,6 +62,8 @@ export const L0_STRINGS = {
         audience: "初心者向け",
         button: "試してみる",
         target: "/level0?sample=standard",
+        overview: "一般的な支間と橋脚高さを持つ、比較の基準となる橋です。",
+        points: ["基準となる橋の動き", "短い橋との違い", "高い橋脚の橋との違い"],
       },
       {
         id: "tall-pier-bridge",
@@ -70,6 +74,8 @@ export const L0_STRINGS = {
         audience: "初心者向け",
         button: "試してみる",
         target: "/level0?sample=tall",
+        overview: "高い橋脚を持つ橋です。橋脚高さが揺れ方へ与える影響を確認できます。",
+        points: ["高い橋脚の動き", "橋脚高さによる揺れ方の変化", "標準的な橋との違い"],
       },
     ],
     lesson: {
@@ -91,18 +97,30 @@ export const L0_STRINGS = {
         id: "why-bridge-stands",
         title: "橋はなぜ支えられるのか",
         description: "橋が荷重を支える仕組みを学びます。",
+        content: "橋の上にかかった重さは、床版や桁から橋脚・橋台へ伝わり、最後に地盤へ流れます。部材が役割を分担することで、橋は重さを安全に支えます。",
       },
       {
         id: "tall-pier-effect",
         title: "橋脚が高いと何が変わるのか",
         description: "橋脚の高さが地震反応に与える影響を学びます。",
+        content: "橋脚が高くなると、同じ材料や断面でも全体が変形しやすくなります。その結果、揺れの周期や変位の大きさが変わります。",
       },
       {
         id: "earthquake-motion",
         title: "地震で橋はどう動くのか",
         description: "地震時の橋の動的挙動を学びます。",
+        content: "地震では地盤が動き、その動きが支点を通して橋へ伝わります。橋は地震の強さだけでなく、自身の形や固さによって異なる揺れ方をします。",
       },
     ],
+  },
+  level0Detail: {
+    backButton: "サンプル一覧に戻る",
+    heading: "選択したサンプル",
+    learningPoints: "確認できること",
+    status: "サンプルの解析・アニメーション機能は次の実装段階で接続します。",
+  },
+  level0LessonDetail: {
+    backButton: "教材一覧に戻る",
   },
   level0Header: {
     backToLobby: "ホームに戻る",

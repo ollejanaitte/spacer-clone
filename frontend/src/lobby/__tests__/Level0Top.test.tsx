@@ -30,6 +30,19 @@ describe("Level0Top", () => {
     expect(container.textContent).toContain("高い橋脚の橋");
   });
 
+  test.each([
+    ["短い橋", "/level0?sample=short"],
+    ["標準的な橋", "/level0?sample=standard"],
+    ["高い橋脚の橋", "/level0?sample=tall"],
+  ])("%sクリックで対応するsampleへ遷移", (name, target) => {
+    const onNavigate = vi.fn();
+    const { container } = renderComponent(<Level0Top onNavigate={onNavigate} />);
+    const button = Array.from(container.querySelectorAll("button"))
+      .find((candidate) => candidate.textContent?.includes(name));
+    button?.click();
+    expect(onNavigate).toHaveBeenCalledWith(target);
+  });
+
   test("教材モードカードが表示される", () => {
     const { container } = renderComponent(<Level0Top onNavigate={() => {}} />);
     expect(container.textContent).toContain("教材モード");
