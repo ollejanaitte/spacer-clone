@@ -547,4 +547,4 @@ export type SectionKey =
   | "analysisSettings"
   | "results";
 
-export type BottomTab = "results" | "timeHistory" | "errors" | "warnings" | "logs";
+export type BottomTab = "results" | "howToRead" | "timeHistory" | "errors" | "warnings" | "logs";
