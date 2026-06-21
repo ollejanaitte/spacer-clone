@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0.0",
+  "level0_metadata": {
+    "templateId": "continuous_viaduct_3span",
+    "presentationLabel": "3径間の高架橋",
+    "mode": "level0",
+    "createdBy": "level0_template",
+    "displayReference": { "displacementCm": 20.0 }
+  },
+  "project": {
+    "project": {
+      "id": "level0-viaduct-3span",
+      "name": "3径間連続高架橋",
+      "schemaVersion": "1.0.0",
+      "description": "初心者向け3径間連続高架橋テンプレート",
+      "createdAt": "2026-06-21T00:00:00Z",
+      "updatedAt": "2026-06-21T00:00:00Z"
+    },
+    "units": {
+      "length": "m",
+      "force": "kN",
+      "moment": "kN·m",
+      "modulus": "N/mm²",
+      "area": "m²",
+      "inertia": "m⁴"
+    },
+    "nodes": [
+      { "id": "N001", "x": 0, "y": 0, "z": 10 },
+      { "id": "N002", "x": 10, "y": 0, "z": 10 },
+      { "id": "N003", "x": 20, "y": 0, "z": 10 },
+      { "id": "N004", "x": 30, "y": 0, "z": 10 },
+      { "id": "N005", "x": 40, "y": 0, "z": 10 },
+      { "id": "N006", "x": 50, "y": 0, "z": 10 },
+      { "id": "N007", "x": 60, "y": 0, "z": 10 },
+      { "id": "N008", "x": 70, "y": 0, "z": 10 },
+      { "id": "N009", "x": 80, "y": 0, "z": 10 },
+      { "id": "N010", "x": 90, "y": 0, "z": 10 },
+      { "id": "N011", "x": 100, "y": 0, "z": 10 },
+      { "id": "N012", "x": 110, "y": 0, "z": 10 },
+      { "id": "N013", "x": 120, "y": 0, "z": 10 },
+      { "id": "N014", "x": 40, "y": 0, "z": 0 },
+      { "id": "N015", "x": 80, "y": 0, "z": 0 },
+      { "id": "N016", "x": 0, "y": 0, "z": 0 },
+      { "id": "N017", "x": 120, "y": 0, "z": 0 }
+    ],
+    "materials": [
+      {
+        "id": "MAT_CONCRETE",
+        "name": "コンクリート",
+        "elasticModulus": 25000,
+        "shearModulus": 10417,
+        "poissonRatio": 0.2,
+        "density": 2.5
+      }
+    ],
+    "sections": [
+      {
+        "id": "SEC_GIRDER",
+        "name": "主桁（矩形1.5m×2.0m）",
+        "area": 3.0,
+        "iy": 1.0,
+        "iz": 0.5625,
+        "j": 1.296
+      },
+      {
+        "id": "SEC_PIER",
+        "name": "橋脚（円形φ2.0m）",
+        "area": 3.1416,
+        "iy": 0.7854,
+        "iz": 0.7854,
+        "j": 1.5708
+      }
+    ],
+    "members": [
+      { "id": "M001", "nodeI": "N001", "nodeJ": "N002", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M002", "nodeI": "N002", "nodeJ": "N003", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M003", "nodeI": "N003", "nodeJ": "N004", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M004", "nodeI": "N004", "nodeJ": "N005", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M005", "nodeI": "N005", "nodeJ": "N006", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M006", "nodeI": "N006", "nodeJ": "N007", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M007", "nodeI": "N007", "nodeJ": "N008", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M008", "nodeI": "N008", "nodeJ": "N009", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M009", "nodeI": "N009", "nodeJ": "N010", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M010", "nodeI": "N010", "nodeJ": "N011", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M011", "nodeI": "N011", "nodeJ": "N012", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M012", "nodeI": "N012", "nodeJ": "N013", "materialId": "MAT_CONCRETE", "sectionId": "SEC_GIRDER" },
+      { "id": "M013", "nodeI": "N005", "nodeJ": "N014", "materialId": "MAT_CONCRETE", "sectionId": "SEC_PIER" },
+      { "id": "M014", "nodeI": "N009", "nodeJ": "N015", "materialId": "MAT_CONCRETE", "sectionId": "SEC_PIER" },
+      { "id": "M015", "nodeI": "N001", "nodeJ": "N016", "materialId": "MAT_CONCRETE", "sectionId": "SEC_PIER" },
+      { "id": "M016", "nodeI": "N013", "nodeJ": "N017", "materialId": "MAT_CONCRETE", "sectionId": "SEC_PIER" }
+    ],
+    "supports": [
+      { "nodeId": "N001", "ux": true, "uy": true, "uz": true, "rx": false, "ry": false, "rz": false },
+      { "nodeId": "N013", "ux": true, "uy": true, "uz": true, "rx": false, "ry": false, "rz": false },
+      { "nodeId": "N014", "ux": true, "uy": true, "uz": true, "rx": true, "ry": true, "rz": true },
+      { "nodeId": "N015", "ux": true, "uy": true, "uz": true, "rx": true, "ry": true, "rz": true }
+    ],
+    "loadCases": [
+      { "id": "LC_DEAD", "name": "自重", "type": "static" }
+    ],
+    "nodalLoads": [],
+    "memberLoads": [],
+    "massCases": [
+      {
+        "id": "MASS_DEFAULT",
+        "name": "質量",
+        "method": "lumped",
+        "source": "manual",
+        "items": [
+          { "nodeId": "N001", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N002", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N003", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N004", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N005", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N006", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N007", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N008", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N009", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N010", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N011", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N012", "mx": 25, "my": 25, "mz": 25, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N013", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N014", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N015", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N016", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 },
+          { "nodeId": "N017", "mx": 0, "my": 0, "mz": 0, "irx": 0, "iry": 0, "irz": 0 }
+        ]
+      }
+    ],
+    "analysisSettings": {
+      "analysisType": "linear_static",
+      "includeShearDeformation": false,
+      "largeDisplacement": false,
+      "tolerance": 1e-06,
+      "timeHistory": {
+        "enabled": true,
+        "method": "newmark-beta",
+        "timeStep": 0.01,
+        "duration": 30,
+        "beta": 0.25,
+        "gamma": 0.5,
+        "damping": { "type": "rayleigh", "alpha": 0.02, "beta": 0.002 },
+        "massCaseId": "MASS_DEFAULT",
+        "groundMotionId": "elcentro_ns_scaled_medium",
+        "direction": "X"
+      }
+    }
+  },
+  "presentation": {
+    "nodes": {
+      "N001": { "kind": "abutment_left", "label_level0": "左の橋の土台" },
+      "N002": { "kind": "girder_span1", "label_level0": "1かい目の橋の棒の途中" },
+      "N003": { "kind": "girder_span1", "label_level0": "1かい目の橋の棒の途中" },
+      "N004": { "kind": "girder_span1", "label_level0": "1かい目の橋の棒の途中" },
+      "N005": { "kind": "pier_top_p1", "label_level0": "左がわの橋脚の上" },
+      "N006": { "kind": "girder_span2", "label_level0": "2かい目の橋の棒の途中" },
+      "N007": { "kind": "girder_span2", "label_level0": "2かい目の橋の棒の途中" },
+      "N008": { "kind": "girder_span2", "label_level0": "2かい目の橋の棒の途中" },
+      "N009": { "kind": "pier_top_p2", "label_level0": "右がわの橋脚の上" },
+      "N010": { "kind": "girder_span3", "label_level0": "3かい目の橋の棒の途中" },
+      "N011": { "kind": "girder_span3", "label_level0": "3かい目の橋の棒の途中" },
+      "N012": { "kind": "girder_span3", "label_level0": "3かい目の橋の棒の途中" },
+      "N013": { "kind": "abutment_right", "label_level0": "右の橋の土台" },
+      "N014": { "kind": "pier_base_p1", "label_level0": "左がわの橋脚のつぼ" },
+      "N015": { "kind": "pier_base_p2", "label_level0": "右がわの橋脚のつぼ" },
+      "N016": { "kind": "abutment_left", "label_level0": "左の橋の土台の地盤" },
+      "N017": { "kind": "abutment_right", "label_level0": "右の橋の土台の地盤" }
+    },
+    "members": {}
+  },
+  "waveforms": {
+    "elcentro_ns_scaled_weak": {
+      "dt": 0.01,
+      "unit": "gal",
+      "values": [0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]
+    },
+    "elcentro_ns_scaled_medium": {
+      "dt": 0.01,
+      "unit": "gal",
+      "values": [0, 1.5, 3.0, 4.5, 6.0, 7.5, 9.0, 10.5, 12.0, 13.5, 15.0, 16.5, 18.0, 19.5, 21.0, 22.5, 24.0, 25.5, 27.0, 28.5, 30.0]
+    },
+    "elcentro_ns_scaled_strong": {
+      "dt": 0.01,
+      "unit": "gal",
+      "values": [0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0]
+    }
+  }
+}
