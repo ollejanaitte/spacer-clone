@@ -49,6 +49,7 @@ type ResultTablesProps = {
 
 const tabs: Array<{ key: BottomTab; label: string }> = [
   { key: "results", label: ja.resultsPanel.tabs.results },
+  { key: "howToRead", label: ja.resultsPanel.tabs.howToRead },
   { key: "timeHistory", label: ja.timeHistory.tab },
   { key: "errors", label: ja.resultsPanel.tabs.errors },
   { key: "warnings", label: ja.resultsPanel.tabs.warnings },
@@ -111,6 +112,13 @@ export function ResultsPanel({
             onSelectedEigenModeChange={onSelectedEigenModeChange}
             onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
           />
+        )}
+        {activeTab === "howToRead" && (
+          <div className="how-to-read-section">
+            <h3>{ja.resultsPanel.howToRead.title}</h3>
+            <p>{ja.resultsPanel.howToRead.description}</p>
+            <p>{ja.resultsPanel.howToRead.instruction}</p>
+          </div>
         )}
         {activeTab === "timeHistory" && <TimeHistoryWorkspace project={project} result={result} onProjectChange={onProjectChange} onAnimationOverrideChange={onTimeHistoryAnimationOverrideChange} />}
         {activeTab === "errors" && <MessageTable messages={errors} empty={ja.resultsPanel.errorsEmpty} />}

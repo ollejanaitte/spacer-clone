@@ -934,6 +934,26 @@ button:disabled {
   padding: 10px 12px 14px;
 }
 
+.how-to-read-section {
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.how-to-read-section h3 {
+  margin: 0 0 12px 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.how-to-read-section p {
+  margin: 0 0 8px 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
 .results-grid {
   display: grid;
   gap: 12px;

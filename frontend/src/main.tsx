@@ -9,6 +9,7 @@ function getInitialRoute(): "lobby" | "pro" {
   if (typeof window === "undefined") return "lobby";
   const p = window.location.pathname;
   if (p === "/pro" || p.startsWith("/pro/")) return "pro";
+  if (p === "/level0" || p.startsWith("/level0/")) return "lobby";
   return "lobby";
 }
 
