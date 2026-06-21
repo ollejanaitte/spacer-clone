@@ -85,7 +85,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     }
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#f7fafc");
+    scene.background = new THREE.Color("#ffffff");
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 10000);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -102,7 +102,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     key.position.set(5, 8, 6);
     scene.add(key);
 
-    const grid = new THREE.GridHelper(20, 20, 0xb7c5d3, 0xd8e0e8);
+    const grid = new THREE.GridHelper(20, 20, 0xd0d0d0, 0xd0d0d0);
     const axes = new THREE.AxesHelper(2.5);
     const groups = createSceneGroups();
     scene.add(grid, axes, groups.root);
@@ -185,7 +185,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     };
   }, []);
 
-  // Rebuild the model scene whenever a non-animation prop changes.
+  // Rebuild the model scene whenever a structural prop changes (not visibility).
   useEffect(() => {
     const context = contextRef.current;
     if (!context) return;
@@ -196,7 +196,6 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     props.project,
     props.result,
     props.selectedSection,
-    props.visibility,
     props.scales,
     props.selection,
     props.selectedLoadCaseId,
@@ -205,6 +204,22 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     props.spacerAxisSwap,
     props.forceColorMode,
   ]);
+
+  // Toggle group visibility without rebuilding the entire scene.
+  useEffect(() => {
+    const context = contextRef.current;
+    if (!context) return;
+    context.groups.labels.visible = props.visibility.labels;
+    context.groups.nodes.visible = props.visibility.nodes;
+    context.groups.members.visible = props.visibility.members;
+    context.groups.supports.visible = props.visibility.supports;
+    context.groups.loads.visible = props.visibility.loads;
+    context.groups.deformed.visible = props.visibility.deformedShape;
+    context.groups.resultDiagrams.visible = true;
+    if (props.visibility.labels) {
+      applyLabelCollisionAvoidance(context, props);
+    }
+  }, [props.visibility]);
 
   // Rebuild the model scene on every animation clock tick so the model
   // visibly animates. We rebuild via the same path used for static

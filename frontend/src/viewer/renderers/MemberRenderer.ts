@@ -51,8 +51,8 @@ export function renderMembers(
       : selected
         ? "#f2c94c"
         : selectedSection === "members"
-          ? "#1b6b93"
-          : "#2f6f9f";
+          ? "#222222"
+          : "#222222";
     const line = createLine([ends.start, ends.end], color, undefined, scales.memberLineWidth ?? 1);
     line.userData = { selectable: true, type: "member", id: member.id };
     objects.push(line);
@@ -62,7 +62,7 @@ export function renderMembers(
       ends.direction,
       ends.start.clone().lerp(ends.end, 0.68),
       Math.max(length * 0.16, 0.18),
-      forceValues ? new THREE.Color(color).getHex() : selected ? 0xf2c94c : 0x2f6f9f,
+      forceValues ? new THREE.Color(color).getHex() : selected ? 0xf2c94c : 0x222222,
       Math.max(length * 0.045, 0.06),
       Math.max(length * 0.028, 0.04),
     );
@@ -87,7 +87,7 @@ export function renderMemberLabels(
     const ends = getMemberEnds(member, nodeMap);
     if (!ends) continue;
     const selected = selection?.type === "member" && selection.id === member.id;
-    const label = createLabelSprite(member.label || member.id, selected ? "#1b6b93" : "#23527a", scales.labelSize);
+    const label = createLabelSprite(member.label || member.id, "#222222", scales.labelSize);
     label.position.copy(ends.mid).add(new THREE.Vector3(0, scales.nodeSize * 2.2 + 0.08, 0));
     assignLabelPriority(label, selected ? "selected" : "member", member.id, "member");
     objects.push(label);

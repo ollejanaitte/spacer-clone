@@ -94,7 +94,7 @@ export function createLine(
 
 export function createLabelSprite(
   text: string,
-  color = "#243447",
+  color = "#222222",
   size = 1,
 ): THREE.Sprite {
   const canvas = document.createElement("canvas");
@@ -147,6 +147,10 @@ export function disposeObject(object: THREE.Object3D): void {
       const line = child as THREE.Line;
       if (line.geometry) line.geometry.dispose();
       if (line.material) disposeMaterial(line.material);
+    } else if ((child as unknown as { isLine2?: boolean }).isLine2) {
+      const line2 = child as unknown as { geometry?: THREE.BufferGeometry; material?: THREE.Material | THREE.Material[] };
+      if (line2.geometry) line2.geometry.dispose();
+      if (line2.material) disposeMaterial(line2.material);
     } else if ((child as THREE.Sprite).isSprite) {
       const sprite = child as THREE.Sprite;
       if (sprite.material) disposeMaterial(sprite.material);
