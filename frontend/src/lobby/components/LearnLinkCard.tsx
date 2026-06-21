@@ -1,3 +1,5 @@
+import styles from "./LearnLinkCard.module.css";
+
 type LearnLinkCardProps = {
   title: string;
   description: string;
@@ -10,11 +12,11 @@ export function LearnLinkCard({ title, description, url }: LearnLinkCardProps) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="lobby-learn-link-card"
+      className={styles.card}
       aria-label={`${title} - 外部サイトへ移動します`}
     >
-      <span className="lobby-learn-link-title">{title}</span>
-      <span className="lobby-learn-link-description">{description}</span>
+      <span className={styles.title}>{title}</span>
+      <span className={styles.description}>{description}</span>
     </a>
   );
 }

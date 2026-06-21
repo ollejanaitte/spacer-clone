@@ -5,6 +5,7 @@ import { DefaultModeCheckbox } from "../components/DefaultModeCheckbox";
 import { LearnLinkCard } from "../components/LearnLinkCard";
 import { loadLearnLinks, type LearnLink } from "../services/learnLinksLoader";
 import { getUiModeDefault, setUiModeDefault } from "../services/uiModeDefault";
+import styles from "./LearnTop.module.css";
 
 type LearnTopProps = {
   onNavigate: (path: string) => void;
@@ -28,13 +29,13 @@ export function LearnTop({ onNavigate }: LearnTopProps) {
   };
 
   return (
-    <div className="lobby-learn-top">
+    <div className={styles.page}>
       <BackToLobbyButton onClick={() => onNavigate("/")} />
-      <h1>{text.title}</h1>
-      <p className="lobby-learn-intro">{text.intro}</p>
-      <p className="lobby-learn-notice">{text.externalNotice}</p>
-      {error && <p className="lobby-learn-error">{error}</p>}
-      <div className="lobby-learn-links">
+      <h1 className={styles.title}>{text.title}</h1>
+      <p className={styles.intro}>{text.intro}</p>
+      <p className={styles.notice}>{text.externalNotice}</p>
+      {error && <p className={styles.error}>{error}</p>}
+      <div className={styles.links}>
         {links.map((link) => (
           <LearnLinkCard
             key={link.id}

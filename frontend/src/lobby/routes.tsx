@@ -13,33 +13,21 @@ export function resolveLobbyRoute(pathname: string): LobbyRoute | null {
 export function getInitialRoute(): LobbyRoute {
   const saved = getUiModeDefault();
   if (saved === "learn") return "/learn";
-  if (saved === "level0") {
-    if (typeof window !== "undefined") window.location.href = "/level0";
-    return "/";
-  }
-  if (saved === "pro") {
-    if (typeof window !== "undefined") window.location.href = "/pro";
-    return "/";
-  }
+  if (saved === "level0") return "/";
+  if (saved === "pro") return "/";
   return "/";
 }
 
-export function navigateTo(path: string): void {
-  if (typeof window === "undefined") return;
-  window.history.pushState({}, "", path);
-  window.dispatchEvent(new PopStateEvent("popstate"));
-}
-
 type LobbyAppProps = {
+  onNavigate: (path: string) => void;
   initialRoute?: LobbyRoute;
 };
 
-export function LobbyApp({ initialRoute }: LobbyAppProps) {
+export function LobbyApp({ onNavigate, initialRoute }: LobbyAppProps) {
   const route = initialRoute ?? getInitialRoute();
-  const handleNavigate = (path: string) => navigateTo(path);
 
   if (route === "/learn") {
-    return <LearnTop onNavigate={handleNavigate} />;
+    return <LearnTop onNavigate={onNavigate} />;
   }
-  return <LobbyHome onNavigate={handleNavigate} />;
+  return <LobbyHome onNavigate={onNavigate} />;
 }
