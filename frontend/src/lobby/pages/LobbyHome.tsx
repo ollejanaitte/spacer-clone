@@ -1,5 +1,6 @@
 import { L0_STRINGS } from "../data/lobbyStrings";
 import { ModeCard } from "../components/ModeCard";
+import styles from "./LobbyHome.module.css";
 
 type LobbyHomeProps = {
   onNavigate: (path: string) => void;
@@ -9,10 +10,10 @@ export function LobbyHome({ onNavigate }: LobbyHomeProps) {
   const text = L0_STRINGS.lobby;
 
   return (
-    <div className="lobby-home">
-      <h1>{text.title}</h1>
-      <p className="lobby-subtitle">{text.subtitle}</p>
-      <div className="lobby-mode-cards">
+    <div className={styles.page}>
+      <h1 className={styles.title}>{text.title}</h1>
+      <p className={styles.subtitle}>{text.subtitle}</p>
+      <div className={styles.cards}>
         <ModeCard
           icon={text.modes.learn.icon}
           name={text.modes.learn.name}
@@ -41,7 +42,7 @@ export function LobbyHome({ onNavigate }: LobbyHomeProps) {
           onClick={() => onNavigate("/pro")}
         />
       </div>
-      <p className="lobby-footer">{text.footer}</p>
+      <p className={styles.footer}>{text.footer}</p>
     </div>
   );
 }

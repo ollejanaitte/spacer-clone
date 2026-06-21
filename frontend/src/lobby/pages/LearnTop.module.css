@@ -1,0 +1,73 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 320px);
+  padding: 2rem 1.5rem 4rem;
+  box-sizing: border-box;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.backButton {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #475569;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem;
+}
+
+.intro {
+  font-size: 1.125rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+  white-space: pre-line;
+}
+
+.notice {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0 0 2rem;
+}
+
+.error {
+  font-size: 0.875rem;
+  color: #ef4444;
+  margin: 0 0 1rem;
+}
+
+.links {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

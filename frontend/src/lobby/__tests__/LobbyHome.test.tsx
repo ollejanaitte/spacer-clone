@@ -38,24 +38,24 @@ describe("LobbyHome", () => {
   test("学習編クリックで/learnに遷移", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<LobbyHome onNavigate={onNavigate} />);
-    const cards = container.querySelectorAll(".lobby-mode-card") as NodeListOf<HTMLButtonElement>;
-    cards[0].click();
+    const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    buttons[0].click();
     expect(onNavigate).toHaveBeenCalledWith("/learn");
   });
 
   test("入門編クリックで/level0に遷移", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<LobbyHome onNavigate={onNavigate} />);
-    const cards = container.querySelectorAll(".lobby-mode-card") as NodeListOf<HTMLButtonElement>;
-    cards[1].click();
+    const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    buttons[1].click();
     expect(onNavigate).toHaveBeenCalledWith("/level0");
   });
 
   test("実務編クリックで/proに遷移", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<LobbyHome onNavigate={onNavigate} />);
-    const cards = container.querySelectorAll(".lobby-mode-card") as NodeListOf<HTMLButtonElement>;
-    cards[2].click();
+    const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    buttons[2].click();
     expect(onNavigate).toHaveBeenCalledWith("/pro");
   });
 
