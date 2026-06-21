@@ -16,10 +16,15 @@ export function Level0Lesson({ onNavigate }: Level0LessonProps) {
       <p className={styles.intro}>{text.intro}</p>
       <div className={styles.links}>
         {text.lessons.map((lesson) => (
-          <div key={lesson.id} className={styles.card}>
+          <button
+            key={lesson.id}
+            type="button"
+            className={styles.card}
+            onClick={() => onNavigate(`/level0/lesson/${lesson.id}`)}
+          >
             <h3>{lesson.title}</h3>
             <p>{lesson.description}</p>
-          </div>
+          </button>
         ))}
       </div>
     </div>

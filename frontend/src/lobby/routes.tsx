@@ -9,8 +9,8 @@ export type LobbyRoute = "/" | "/learn" | "/level0" | "/level0/lesson";
 export function resolveLobbyRoute(pathname: string): LobbyRoute | null {
   if (pathname === "/") return "/";
   if (pathname === "/learn") return "/learn";
-  if (pathname === "/level0") return "/level0";
   if (pathname === "/level0/lesson") return "/level0/lesson";
+  if (pathname === "/level0") return "/level0";
   return null;
 }
 
@@ -22,22 +22,28 @@ export function getInitialRoute(): LobbyRoute {
   return "/";
 }
 
+function getCurrentRoute(): LobbyRoute {
+  if (typeof window === "undefined") return "/";
+  const resolved = resolveLobbyRoute(window.location.pathname);
+  return resolved ?? getInitialRoute();
+}
+
 type LobbyAppProps = {
   onNavigate: (path: string) => void;
   initialRoute?: LobbyRoute;
 };
 
 export function LobbyApp({ onNavigate, initialRoute }: LobbyAppProps) {
-  const route = initialRoute ?? getInitialRoute();
+  const route = initialRoute ?? getCurrentRoute();
 
   if (route === "/learn") {
     return <LearnTop onNavigate={onNavigate} />;
   }
-  if (route === "/level0") {
-    return <Level0Top onNavigate={onNavigate} />;
-  }
   if (route === "/level0/lesson") {
     return <Level0Lesson onNavigate={onNavigate} />;
+  }
+  if (route === "/level0") {
+    return <Level0Top onNavigate={onNavigate} />;
   }
   return <LobbyHome onNavigate={onNavigate} />;
 }
