@@ -2262,7 +2262,12 @@ button:disabled {
   color: var(--th-color-text);
   border: 1px solid var(--th-color-border);
   border-radius: var(--th-radius);
-  background: #111c2f;
+  background: #ffffff;
+}
+
+.time-history-peak-toolbar select option {
+  color: #1f2933;
+  background: #ffffff;
 }
 
 .time-history-peak-toolbar button.active {
@@ -2289,7 +2294,8 @@ button:disabled {
 }
 
 .time-history-peak-table th {
-  background: #111c2f;
+  background: #f1f5f9;
+  color: var(--th-color-text);
 }
 
 .time-history-chart-caption {
@@ -2692,6 +2698,17 @@ button:disabled {
 
 .time-history-axis-table select {
   width: 100%;
+  min-height: 38px;
+  padding: 6px 8px;
+  color: var(--th-color-text);
+  border: 1px solid var(--th-color-border);
+  border-radius: var(--th-radius);
+  background: #ffffff;
+}
+
+.time-history-axis-table select option {
+  color: #1f2933;
+  background: #ffffff;
 }
 
 .time-history-config-section label {
@@ -2709,7 +2726,35 @@ button:disabled {
   color: var(--th-color-text);
   border: 1px solid var(--th-color-border);
   border-radius: var(--th-radius);
-  background: #111c2f;
+  background: #ffffff;
+}
+
+.time-history-config-section select {
+  color: var(--th-color-text);
+  background: #ffffff;
+}
+
+.time-history-config-section select option {
+  color: #1f2933;
+  background: #ffffff;
+}
+
+.time-history-config-section input::placeholder {
+  color: var(--th-color-placeholder);
+}
+
+.time-history-config-section input:disabled,
+.time-history-config-section select:disabled,
+.time-history-config-section button:disabled {
+  color: #94a3b8;
+  background: #e8ecf0;
+  border-color: #d8e0e8;
+}
+
+.time-history-config-section button:not(:disabled) {
+  color: #ffffff;
+  border-color: var(--th-color-primary);
+  background: var(--th-color-primary);
 }
 
 .time-history-validation-message {
