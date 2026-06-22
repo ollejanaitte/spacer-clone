@@ -15,7 +15,7 @@ function renderRoute(currentLocation: string) {
 }
 
 describe("level0 route integration", () => {
-  test("教材詳細パスを解決する", () => {
+  test("resolves the lesson detail path", () => {
     expect(resolveLobbyRoute("/level0/lesson/why-bridge-stands"))
       .toBe("/level0/lesson/:lessonId");
   });
@@ -30,12 +30,12 @@ describe("level0 route integration", () => {
     expect(container.textContent).toContain("確認できること");
   });
 
-  test("/level0/lessonで教材一覧を表示する", () => {
+  test("renders the lesson list at /level0/lesson", () => {
     const container = renderRoute("/level0/lesson");
     expect(container.querySelector("h1")?.textContent).toBe("教材モード");
   });
 
-  test("/level0/lesson/:idで教材詳細を表示する", () => {
+  test("renders the lesson detail at /level0/lesson/:id", () => {
     const container = renderRoute("/level0/lesson/why-bridge-stands");
     expect(container.querySelector("h1")?.textContent).toBe("橋はなぜ支えられるのか");
     expect(container.textContent).toContain("地盤へ流れます");

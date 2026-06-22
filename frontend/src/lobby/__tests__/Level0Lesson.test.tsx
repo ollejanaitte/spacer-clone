@@ -13,29 +13,29 @@ function renderComponent(ui: React.ReactNode) {
 }
 
 describe("Level0Lesson", () => {
-  test("タイトルが表示される", () => {
+  test("renders the title", () => {
     const { container } = renderComponent(<Level0Lesson onNavigate={() => {}} />);
     expect(container.textContent).toContain("教材モード");
   });
 
-  test("説明が表示される", () => {
+  test("renders the description", () => {
     const { container } = renderComponent(<Level0Lesson onNavigate={() => {}} />);
     expect(container.textContent).toContain("橋の基本を、順番に確認していきます。");
   });
 
-  test("教材カードが表示される", () => {
+  test("renders the lesson cards", () => {
     const { container } = renderComponent(<Level0Lesson onNavigate={() => {}} />);
     expect(container.textContent).toContain("橋はなぜ支えられるのか");
     expect(container.textContent).toContain("橋脚が高いと何が変わるのか");
     expect(container.textContent).toContain("地震で橋はどう動くのか");
   });
 
-  test("戻るボタンが表示される", () => {
+  test("renders the back button", () => {
     const { container } = renderComponent(<Level0Lesson onNavigate={() => {}} />);
     expect(container.textContent).toContain("入門編に戻る");
   });
 
-  test("戻るボタンクリックで/level0に遷移", () => {
+  test("navigates to /level0 when the back button is clicked", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<Level0Lesson onNavigate={onNavigate} />);
     const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
@@ -44,7 +44,7 @@ describe("Level0Lesson", () => {
     expect(onNavigate).toHaveBeenCalledWith("/level0");
   });
 
-  test("教材カードクリックで教材詳細へ遷移", () => {
+  test("navigates to the lesson detail when a lesson card is clicked", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<Level0Lesson onNavigate={onNavigate} />);
     const lessonButton = Array.from(container.querySelectorAll("button"))
