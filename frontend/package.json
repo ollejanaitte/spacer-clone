@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
-    "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src",
+    "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src && node ../scripts/check_frontend_japanese_strings.mjs src",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
