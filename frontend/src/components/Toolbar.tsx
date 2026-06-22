@@ -104,15 +104,15 @@ export function Toolbar({
             <button
               type="button"
               onClick={onOpenTimeHistoryWizard}
-              title="時刻歴応答解析を開く"
+              title={t.timeHistoryButtonTitle}
               data-testid="open-time-history-wizard"
             >
               <Activity size={16} />
-              時刻歴応答解析を開く
+              {t.timeHistoryButton}
             </button>
           )}
           <button type="button" data-testid="open-model-comparison" onClick={onOpenModelComparison}>
-            A/B 比較
+            {t.modelComparisonButton}
           </button>
         </div>
         <div className="toolbar-group">
@@ -136,9 +136,9 @@ export function Toolbar({
             <LineChart size={16} />
             {t.runInfluenceButton}
           </button>
-          <button type="button" onClick={onRunMovingLoad} disabled={!canRun} title="選択部材に単一集中荷重を走行させ、包絡結果を出力します。">
+          <button type="button" onClick={onRunMovingLoad} disabled={!canRun} title={t.movingLoadTitle}>
             <LineChart size={16} />
-            移動荷重
+            {t.movingLoadButton}
           </button>
         </div>
         <div className="toolbar-group output-group" aria-label={t.outputGroupAriaLabel}>

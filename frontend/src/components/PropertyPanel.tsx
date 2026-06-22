@@ -109,7 +109,7 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={() => ({
             id: nextId("MAT", project.materials.length),
-            name: "材料",
+            name: ja.defaults.newMaterialName,
             elasticModulus: 200000000,
             shearModulus: 200000000 / (2 * (1 + 0.3)),
             poissonRatio: 0.3,
@@ -126,7 +126,7 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={() => ({
             id: nextId("SEC", project.sections.length),
-            name: "断面",
+            name: ja.defaults.newSectionName,
             area: 0.01,
             iy: 0.00001,
             iz: 0.00001,
@@ -161,7 +161,7 @@ export function PropertyPanel({
           validationPaths={validationPaths}
           createItem={(): LoadCase => ({
             id: nextId("LC", project.loadCases.length),
-            name: "荷重ケース",
+            name: ja.defaults.newLoadCaseName,
             type: "static",
           })}
           onChange={(items) => update("loadCases", items)}

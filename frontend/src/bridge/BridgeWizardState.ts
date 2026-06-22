@@ -45,7 +45,7 @@ export function nextLoadId(): string {
 }
 
 export function makeInitialBridgeProject(
-  name = "新規橋梁",
+  name = ja.defaults.newBridgeName,
   id = "bridge-001",
 ): BridgeProject {
   idCounter = 1;
@@ -55,7 +55,7 @@ export function makeInitialBridgeProject(
     id,
     name,
     schemaVersion: "0.1.0",
-    description: "Bridge Wizard で作成された橋梁モデル",
+    description: ja.defaults.newBridgeDescription,
     createdAt: now,
     updatedAt: now,
     crossSection: defaultCrossSection(),
