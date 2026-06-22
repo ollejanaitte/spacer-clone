@@ -1,6 +1,7 @@
 import type { AnalysisResult, EndForce, ProjectModel } from "../types";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import { buildResultViewModel, buildResponseSpectrumViewModel, type MemberSectionForceComponent } from "../results/resultViewModel";
+import { ja } from "../i18n/ja";
 
 export type ForceColorComponent = "N" | "Vy" | "Vz" | "My" | "Mz" | "Mt";
 
@@ -15,19 +16,19 @@ export type MemberForceColorMode = {
 export const FORCE_COLOR_COMPONENTS: ForceColorComponent[] = ["N", "Vy", "Vz", "My", "Mz", "Mt"];
 
 export const FORCE_COLOR_COMPONENT_LABELS: Record<ForceColorComponent, string> = {
-  N: "軸力 N",
-  Vy: "せん断 Vy",
-  Vz: "せん断 Vz",
-  My: "曲げ My",
-  Mz: "曲げ Mz",
-  Mt: "ねじり Mt",
+  N: ja.viewer.memberForce.components.N,
+  Vy: ja.viewer.memberForce.components.Vy,
+  Vz: ja.viewer.memberForce.components.Vz,
+  My: ja.viewer.memberForce.components.My,
+  Mz: ja.viewer.memberForce.components.Mz,
+  Mt: ja.viewer.memberForce.components.Mt,
 };
 
 export const FORCE_COLOR_VALUE_TYPE_LABELS: Record<ForceColorValueType, string> = {
-  max: "最大値",
-  min: "最小値",
-  absMax: "絶対最大値",
-  average: "平均値",
+  max: ja.viewer.memberForce.valueTypes.max,
+  min: ja.viewer.memberForce.valueTypes.min,
+  absMax: ja.viewer.memberForce.valueTypes.absMax,
+  average: ja.viewer.memberForce.valueTypes.average,
 };
 
 const componentToSectionForce: Record<ForceColorComponent, MemberSectionForceComponent> = {

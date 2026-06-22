@@ -413,10 +413,10 @@ export function ViewerControls({
           />
         </div>
       </ControlGroup>
-      <ControlGroup title="反力表示">
+      <ControlGroup title={ja.viewer.controls.reactionSection.title}>
         <div className="viewer-toggle-grid">
           <Toggle
-            label="数値ラベル"
+            label={ja.viewer.controls.reactionSection.numericLabels}
             checked={Boolean(visibility.reactionLabels)}
             disabled={!hasResult}
             onChange={(value) => setFlag("reactionLabels", value)}
@@ -429,10 +429,10 @@ export function ViewerControls({
           <Toggle label="RMZ" checked={Boolean(visibility.reactionLabelMz)} onChange={(value) => setFlag("reactionLabelMz", value)} />
         </div>
       </ControlGroup>
-      <ControlGroup title="断面力表示">
+      <ControlGroup title={ja.viewer.controls.memberForceSection.title}>
         <div className="viewer-toggle-grid">
           <Toggle
-            label="部材端値ラベル"
+            label={ja.viewer.controls.memberForceSection.endValueLabels}
             checked={Boolean(visibility.memberForceLabels || visibility.axialForceLabels)}
             disabled={!hasResult}
             onChange={(value) => setFlag("memberForceLabels", value)}
@@ -445,13 +445,13 @@ export function ViewerControls({
           <Toggle label="MZ" checked={Boolean(visibility.memberForceLabelMz)} disabled={!hasResult} onChange={(value) => setFlag("memberForceLabelMz", value)} />
         </div>
         <p className="viewer-result-legend">
-          凡例: RFX/RFY/RFZは全体座標系の反力、RMX/RMY/RMZは全体座標系の反力モーメント。部材端FX/FY/FZ/MX/MY/MZは部材ローカル座標系の断面力で、SPACER座標系表示ON時も符号・成分名は解析結果の部材座標系のまま表示。
+          {ja.viewer.controls.reactionLegend}
         </p>
       </ControlGroup>
-      <ControlGroup title="断面力カラーマップ">
+      <ControlGroup title={ja.viewer.controls.forceColorMap}>
         <div className="viewer-toggle-grid">
           <Toggle
-            label="カラーマップ表示"
+            label={ja.viewer.controls.forceColorMapToggle}
             checked={forceColorMap}
             disabled={!hasResult}
             onChange={(value) => onForceColorMapChange(value)}
@@ -461,7 +461,7 @@ export function ViewerControls({
           <>
             <div className="viewer-control-row">
               <label>
-                <span>表示成分</span>
+                <span>{ja.viewer.controls.memberForceSection.componentLabel}</span>
                 <select
                   data-testid="force-color-component"
                   value={forceColorComponent}
@@ -477,7 +477,7 @@ export function ViewerControls({
             </div>
             <div className="viewer-control-row">
               <label>
-                <span>表示対象</span>
+                <span>{ja.viewer.controls.memberForceSection.targetLabel}</span>
                 <select
                   data-testid="force-color-value-type"
                   value={forceColorValueType}
@@ -499,14 +499,14 @@ export function ViewerControls({
           </>
         )}
       </ControlGroup>
-      <ControlGroup title="表示サイズ">
+      <ControlGroup title={ja.viewer.controls.displaySize}>
         <div className="scale-grid">
           {([
-            ["nodeSize", "節点サイズ"],
-            ["supportSize", "支点サイズ"],
-            ["loadArrowSize", "荷重矢印サイズ"],
-            ["labelSize", "ラベルサイズ"],
-            ["memberLineWidth", "部材線幅"],
+            ["nodeSize", ja.viewer.controls.nodeSize],
+            ["supportSize", ja.viewer.controls.supportSize],
+            ["loadArrowSize", ja.viewer.controls.loadArrowSize],
+            ["labelSize", ja.viewer.controls.labelSize],
+            ["memberLineWidth", ja.viewer.displaySize.memberLineWidth],
           ] as const).map(([key, label]) => (
             <DisplaySizeInput
               key={key}
@@ -519,7 +519,7 @@ export function ViewerControls({
             />
           ))}
           <button type="button" className="viewer-size-reset" onClick={onDisplaySizeReset}>
-            表示サイズをリセット
+            {ja.viewer.controls.displaySizeReset}
           </button>
         </div>
       </ControlGroup>
@@ -546,7 +546,7 @@ function DisplaySizeInput({
   return (
     <div className="display-size-input">
       <span>{label}: {value}{unit}</span>
-      <button type="button" aria-label={`${label}を小さく`} onClick={() => onChange(value - step)}>-</button>
+      <button type="button" aria-label={ja.viewer.controls.decreaseSize({ label })} onClick={() => onChange(value - step)}>-</button>
       <input
         aria-label={label}
         type="range"
@@ -556,9 +556,9 @@ function DisplaySizeInput({
         value={value}
         onChange={(event) => onChange(Number(event.currentTarget.value))}
       />
-      <button type="button" aria-label={`${label}を大きく`} onClick={() => onChange(value + step)}>+</button>
+      <button type="button" aria-label={ja.viewer.controls.increaseSize({ label })} onClick={() => onChange(value + step)}>+</button>
       <input
-        aria-label={`${label}数値`}
+        aria-label={ja.viewer.controls.numericValue({ label })}
         type="number"
         min={min}
         max={max}
@@ -654,11 +654,11 @@ function ForceColorLegend({
   range?: { min: number; max: number };
 }) {
   const stops = [
-    { color: "#1a56db", label: "小" },
+    { color: "#1a56db", label: ja.viewer.colorStops.small },
     { color: "#22c55e", label: "" },
-    { color: "#ebc72e", label: "中" },
+    { color: "#ebc72e", label: ja.viewer.colorStops.medium },
     { color: "#f57a1a", label: "" },
-    { color: "#dc2626", label: "大" },
+    { color: "#dc2626", label: ja.viewer.colorStops.large },
   ];
   const componentLabel = component ? FORCE_COLOR_COMPONENT_LABELS[component] : "";
   const valueTypeLabel = valueType ? FORCE_COLOR_VALUE_TYPE_LABELS[valueType] : "";
@@ -693,9 +693,9 @@ function ForceColorLegend({
           </>
         ) : (
           <>
-            <span>小</span>
-            <span>中</span>
-            <span>大</span>
+            <span>{ja.viewer.colorStops.small}</span>
+            <span>{ja.viewer.colorStops.medium}</span>
+            <span>{ja.viewer.colorStops.large}</span>
           </>
         )}
       </div>

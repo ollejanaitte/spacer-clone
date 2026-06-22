@@ -1,5 +1,6 @@
 import type { AnalysisResult, ProjectModel } from "../types";
 import { buildResultViewModel, buildResponseSpectrumViewModel, type ResponseSpectrumSelection, type MemberSectionForceComponent } from "../results/resultViewModel";
+import { ja } from "../i18n/ja";
 
 export type MemberForceDetailItem = {
   component: MemberSectionForceComponent;
@@ -18,12 +19,12 @@ export type MemberForceDetail = {
 };
 
 const COMPONENT_META: Array<{ component: MemberSectionForceComponent; label: string; unit: string }> = [
-  { component: "N", label: "軸力 N", unit: "kN" },
-  { component: "Qy", label: "せん断 Vy", unit: "kN" },
-  { component: "Qz", label: "せん断 Vz", unit: "kN" },
-  { component: "Mx", label: "ねじり Mt", unit: "kN·m" },
-  { component: "My", label: "曲げ My", unit: "kN·m" },
-  { component: "Mz", label: "曲げ Mz", unit: "kN·m" },
+  { component: "N", label: ja.viewer.memberForce.components.N, unit: "kN" },
+  { component: "Qy", label: ja.viewer.memberForce.components.Qy, unit: "kN" },
+  { component: "Qz", label: ja.viewer.memberForce.components.Qz, unit: "kN" },
+  { component: "Mx", label: ja.viewer.memberForce.components.Mx, unit: "kN·m" },
+  { component: "My", label: ja.viewer.memberForce.components.My, unit: "kN·m" },
+  { component: "Mz", label: ja.viewer.memberForce.components.Mz, unit: "kN·m" },
 ];
 
 export function buildMemberForceDetail(
