@@ -174,7 +174,7 @@ export function TimeHistoryChart({ result, selectedKeys }: TimeHistoryChartProps
         <div className="time-history-empty-result-guide">{text.empty}</div>
       ) : (
         <>
-          <div className="time-history-chart-legend" aria-label={locale.thAnalysis.results.chart.legendHelp}>
+          <div className="time-history-chart-legend" aria-label={locale.thAnalysis.results.chart.legendLabel}>
             {series.map((item, index) => (
               <button
                 key={item.id}
