@@ -63,7 +63,7 @@ const resultViewLabels: Record<ResultViewKey, string> = {
   eigen: ja.resultsPanel.resultView.eigen,
   response: ja.resultsPanel.resultView.response,
   influence: ja.resultsPanel.resultView.influence,
-  movingLoad: "移動荷重",
+  movingLoad: ja.resultsPanel.movingLoadTab,
   timeHistory: ja.resultsPanel.resultView.timeHistory,
 };
 
@@ -411,16 +411,16 @@ function ResultTablesContent({
       {activeView === "movingLoad" && movingLoadResult && (
         <>
           <div className="result-table">
-            <h3>移動荷重結果</h3>
+            <h3>{ja.resultsPanel.movingLoadHeading}</h3>
             <div className="summary-list">
-              <span>ケース: {movingLoadResult.caseId}</span>
-              <span>走行部材: {movingLoadResult.line.memberId}</span>
-              <span>station数: {movingLoadResult.line.stationCount}</span>
-              <span>荷重: {formatNumber(movingLoadResult.liveLoad?.magnitude ?? 0)} {movingLoadResult.liveLoad?.unit ?? "kN"}</span>
+              <span>{ja.resultsPanel.movingLoadCase({ id: movingLoadResult.caseId })}</span>
+              <span>{ja.resultsPanel.movingLoadMember({ id: movingLoadResult.line.memberId })}</span>
+              <span>{ja.resultsPanel.movingLoadStations({ count: movingLoadResult.line.stationCount })}</span>
+              <span>{ja.resultsPanel.movingLoadMagnitude({ value: formatNumber(movingLoadResult.liveLoad?.magnitude ?? 0), unit: movingLoadResult.liveLoad?.unit ?? "kN" })}</span>
             </div>
           </div>
           <CompactTable
-            title="包絡結果"
+            title={ja.resultsPanel.movingLoadEnvelopTitle}
             rows={movingLoadResult.envelopeResult.items.map((item) => ({
               targetId: item.targetId,
               type: item.target.type,
@@ -435,7 +435,7 @@ function ResultTablesContent({
             columns={["targetId", "type", "component", "max", "maxStation", "min", "minStation", "absMax", "absMaxStation"]}
           />
           <CompactTable
-            title="最悪載荷位置"
+            title={ja.resultsPanel.movingLoadWorstPositionTitle}
             rows={movingLoadResult.worstCaseLoadingPositions.map((item) => ({
               targetId: item.targetId,
               criterion: item.criterion,
@@ -836,20 +836,20 @@ function MemberForceDetailPanel({
 
   return (
     <div className="result-table member-force-detail">
-      <h3>部材断面力詳細</h3>
+      <h3>{ja.resultsPanel.memberForceDetailHeading}</h3>
       <div className="summary-list">
-        <span>部材ID: {detail.memberId}</span>
-        <span>表示名: {detail.memberLabel}</span>
-        <span>i端節点: {detail.nodeI}</span>
-        <span>j端節点: {detail.nodeJ}</span>
+        <span>{ja.resultsPanel.memberForceDetailMemberId({ id: detail.memberId })}</span>
+        <span>{ja.resultsPanel.memberForceDetailLabel({ label: detail.memberLabel })}</span>
+        <span>{ja.resultsPanel.memberForceDetailNodeI({ id: detail.nodeI })}</span>
+        <span>{ja.resultsPanel.memberForceDetailNodeJ({ id: detail.nodeJ })}</span>
       </div>
       <table>
         <thead>
           <tr>
-            <th>成分</th>
-            <th>i端値</th>
-            <th>j端値</th>
-            <th>単位</th>
+            <th>{ja.resultsPanel.memberForceTableComponent}</th>
+            <th>{ja.resultsPanel.memberForceTableIEnd}</th>
+            <th>{ja.resultsPanel.memberForceTableJEnd}</th>
+            <th>{ja.resultsPanel.memberForceTableUnit}</th>
           </tr>
         </thead>
         <tbody>
