@@ -1,4 +1,5 @@
 import type { Level0Parameters } from "../components/ParameterPanel";
+import { ja } from "../../i18n/ja";
 
 export type SamplePreset = {
   id: string;
@@ -9,7 +10,7 @@ export type SamplePreset = {
 export const SAMPLE_PRESETS: SamplePreset[] = [
   {
     id: "short-bridge",
-    name: "短い橋",
+    name: ja.level0.samples.shortBridge.name,
     defaultParameters: {
       bridgeLength: 30,
       pierHeight: 8,
@@ -19,7 +20,7 @@ export const SAMPLE_PRESETS: SamplePreset[] = [
   },
   {
     id: "standard-bridge",
-    name: "標準的な橋",
+    name: ja.level0.samples.standardBridge.name,
     defaultParameters: {
       bridgeLength: 50,
       pierHeight: 10,
@@ -29,7 +30,7 @@ export const SAMPLE_PRESETS: SamplePreset[] = [
   },
   {
     id: "tall-pier-bridge",
-    name: "高い橋脚の橋",
+    name: ja.level0.samples.tallPierBridge.name,
     defaultParameters: {
       bridgeLength: 60,
       pierHeight: 20,
@@ -66,32 +67,33 @@ export function getParameterDescription(parameters: Level0Parameters): string {
   const parts: string[] = [];
 
   if (parameters.bridgeLength < 40) {
-    parts.push("短い橋");
+    parts.push(ja.level0.descriptions.shortBridge);
   } else if (parameters.bridgeLength > 70) {
-    parts.push("長い橋");
+    parts.push(ja.level0.descriptions.longBridge);
   }
 
   if (parameters.pierHeight > 15) {
-    parts.push("高い橋脚");
+    parts.push(ja.level0.descriptions.tallPier);
   } else if (parameters.pierHeight < 8) {
-    parts.push("低い橋脚");
+    parts.push(ja.level0.descriptions.shortPier);
   }
 
   if (parameters.pierCount === 1) {
-    parts.push("単支間");
+    parts.push(ja.level0.descriptions.singleSpan);
   } else if (parameters.pierCount >= 3) {
-    parts.push("多支間");
+    parts.push(ja.level0.descriptions.multiSpan);
   }
 
   if (parameters.loadMultiplier > 1.5) {
-    parts.push("重い荷重");
+    parts.push(ja.level0.descriptions.heavyLoad);
   } else if (parameters.loadMultiplier < 0.8) {
-    parts.push("軽い荷重");
+    parts.push(ja.level0.descriptions.lightLoad);
   }
 
   if (parts.length === 0) {
-    return "標準的な条件の橋です。";
+    return ja.level0.descriptions.default;
   }
 
-  return `${parts.join("・")}の橋です。`;
+  const connector = ja.level0.descriptions.connector;
+  return ja.level0.descriptions.compose(parts.join(connector));
 }
