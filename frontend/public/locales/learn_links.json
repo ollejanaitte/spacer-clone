@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "links": [
+    {
+      "id": "bridge_basics_1",
+      "title": "橋のしくみ（基本編）",
+      "description": "子供にもわかる橋の基本",
+      "url": "https://example.com/placeholder",
+      "category": "basics",
+      "targetAudience": ["子供", "大学生", "発注者", "新人技術者"]
+    },
+    {
+      "id": "bridge_basics_2",
+      "title": "橋の種類",
+      "description": "桁橋、アーチ橋、吊橋の違い",
+      "url": "https://example.com/placeholder",
+      "category": "basics",
+      "targetAudience": ["大学生", "新人技術者"]
+    },
+    {
+      "id": "seismic_1",
+      "title": "地震と橋",
+      "description": "なぜ橋は地震で揺れるのか",
+      "url": "https://example.com/placeholder",
+      "category": "seismic",
+      "targetAudience": ["大学生", "発注者", "新人技術者"]
+    },
+    {
+      "id": "seismic_2",
+      "title": "耐震設計の考え方",
+      "description": "橋を地震に強くする工夫",
+      "url": "https://example.com/placeholder",
+      "category": "seismic",
+      "targetAudience": ["発注者", "新人技術者"]
+    },
+    {
+      "id": "materials_1",
+      "title": "橋の材料",
+      "description": "コンクリート、鋼、その他",
+      "url": "https://example.com/placeholder",
+      "category": "materials",
+      "targetAudience": ["大学生", "新人技術者"]
+    },
+    {
+      "id": "history_1",
+      "title": "日本の橋の歴史",
+      "description": "古代から現代までの橋",
+      "url": "https://example.com/placeholder",
+      "category": "history",
+      "targetAudience": ["子供", "大学生", "発注者"]
+    }
+  ]
+}

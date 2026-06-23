@@ -1,0 +1,46 @@
+.container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 0.75rem;
+}
+
+.conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.condition {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.note {
+  font-size: 0.75rem;
+  color: #f59e0b;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem;
+  background: #fffbeb;
+  border-radius: 6px;
+}

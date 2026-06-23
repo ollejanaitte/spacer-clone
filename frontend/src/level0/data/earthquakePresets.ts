@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // このファイルは設計書 §26.1 をそのままコピーしたものです。
 // MiMo は数値を改変しないこと。改変が必要な場合は人間に確認。
 
@@ -48,3 +49,7 @@ export const EARTHQUAKE_PRESETS: Record<EarthquakePresetId, EarthquakePreset> = 
     description: "震度6強〜7程度のゆれです。",
   },
 };
+=======
+// T03 で実装予定
+export {};
+>>>>>>> origin/main
