@@ -1157,6 +1157,21 @@ export const ja = {
       detailLabel: "詳細",
     },
   },
+  workspace: {
+    viewPanel: {
+      openLabel: "View パネルを開く",
+      closeLabel: "View パネルを閉じる",
+      openAriaLabel: "View パネルを開く",
+      closeAriaLabel: "View パネルを閉じる",
+    },
+    dataPanel: {
+      openLabel: "プロパティパネルを開く",
+      closeLabel: "プロパティパネルを閉じる",
+      openAriaLabel: "プロパティパネルを開く",
+      closeAriaLabel: "プロパティパネルを閉じる",
+    },
+  },
+
 };
 
 export type JaDictionary = typeof ja;
