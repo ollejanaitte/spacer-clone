@@ -99,6 +99,12 @@ export type Viewer3DProps = {
   defaultCameraSync?: boolean;
   displaySizeSettings?: ViewerDisplaySizeSettings;
   onDisplaySizeSettingsChange?: (settings: ViewerDisplaySizeSettings) => void;
+  /** When false, the right-side View controls drawer is collapsed and only an open button is rendered. */
+  viewPanelOpen?: boolean;
+  /** Called when the user clicks the open/close toggle on the View controls drawer. */
+  onViewPanelToggle?: () => void;
+  /** Called when the user clicks the fit-to-view button inside ViewerControls. */
+  onFitRequest?: () => void;
 };
 
 export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {

@@ -204,8 +204,14 @@ button:disabled {
 
 .workspace {
   display: grid;
-  grid-template-columns: 220px minmax(420px, 1fr) 420px;
+  grid-template-columns: 220px minmax(0, 1fr) auto auto;
   min-height: 0;
+}
+.workspace.data-panel-open {
+  grid-template-columns: 220px minmax(420px, 1fr) minmax(360px, 420px) auto;
+}
+.workspace.data-panel-closed {
+  grid-template-columns: 220px minmax(0, 1fr) auto;
 }
 
 .project-tree,
@@ -288,6 +294,7 @@ button:disabled {
 }
 
 .viewer-body {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 236px;
   min-height: 0;
@@ -295,6 +302,9 @@ button:disabled {
   border: 1px solid #cbd5df;
   border-radius: 8px;
   background: #f7fafc;
+}
+.viewer-body.view-panel-closed {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .three-viewport {
@@ -473,6 +483,40 @@ button:disabled {
   color: #243447;
   font-size: 12px;
   font-weight: 700;
+}
+.drawer-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  border: 1px solid #b7c5d3;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  cursor: pointer;
+}
+.drawer-toggle:hover {
+  background: #dde9f4;
+}
+.drawer-toggle.view-drawer-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+}
+.drawer-toggle.view-drawer-open {
+  align-self: start;
+  margin: 8px;
+}
+.drawer-toggle.data-drawer-open {
+  align-self: start;
+  margin: 8px 8px 8px 0;
+}
+.drawer-toggle.data-drawer-close {
+  align-self: start;
+  margin: 8px 0;
 }
 
 .viewer-control-row label {

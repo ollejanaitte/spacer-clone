@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { ja } from "../i18n/ja";
 import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import type { ProjectModel } from "../types";
@@ -45,6 +46,9 @@ export function Viewer3D({
   defaultCameraSync = true,
   displaySizeSettings,
   onDisplaySizeSettingsChange,
+  viewPanelOpen = true,
+  onViewPanelToggle,
+  onFitRequest,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
@@ -263,6 +267,19 @@ export function Viewer3D({
     return <Fallback2DViewport {...viewportProps} />;
   };
 
+  const handleViewPanelToggle = useCallback(() => {
+    onViewPanelToggle?.();
+  }, [onViewPanelToggle]);
+
+  const handleFit = useCallback(() => {
+    setFitRequest((value) => value + 1);
+    onFitRequest?.();
+  }, [onFitRequest]);
+
+  useEffect(() => {
+    setFitRequest((value) => value + 1);
+  }, [viewPanelOpen]);
+
   return (
     <main className="viewer-shell">
       <div className="viewer-header">
@@ -280,7 +297,7 @@ export function Viewer3D({
           {animationOptions.enabled ? <span>{ja.viewer.messages.animationOn}</span> : null}
         </div>
       </div>
-      <section className="viewer-body">
+      <section className={`viewer-body ${viewPanelOpen ? "" : "view-panel-closed"}`}>
         <div className="viewer-viewport-stack">
           {viewerError && (
             <div className="viewer-error-banner" role="alert">
@@ -291,44 +308,73 @@ export function Viewer3D({
           )}
           {renderViewport()}
         </div>
-        <ViewerControls
-          visibility={visibility}
-          scales={scales}
-          displaySize={displaySize}
-          loadCaseIds={loadCaseIds.length > 0 ? loadCaseIds : [""]}
-          selectedLoadCaseId={selectedLoadCaseId}
-          eigenModeNos={eigenModeNos}
-          selectedEigenMode={selectedEigenMode}
-          responseSpectrumOptions={responseSpectrumOptions}
-          selectedResponseSpectrumResult={selectedResponseSpectrumResult}
-          hasResult={hasResult}
-          spacerAxisSwap={spacerAxisSwap}
-          animationOptions={animationOptions}
-          compareMode={compareMode}
-          cameraSync={cameraSync}
-          forceColorMap={forceColorMap}
-          forceColorComponent={forceColorComponent}
-          forceColorValueType={forceColorValueType}
-          forceColorRange={forceColorRange}
-          onVisibilityChange={setVisibility}
-          onScalesChange={setScales}
-          onDisplaySizeChange={setDisplaySize}
-          onDisplaySizeReset={() => setDisplaySize({ ...DEFAULT_VIEWER_DISPLAY_SIZE })}
-          onLoadCaseChange={onActiveLoadCaseChange}
-          onEigenModeChange={onSelectedEigenModeChange}
-          onResponseSpectrumResultChange={(value: ResponseSpectrumSelection) =>
-            onSelectedResponseSpectrumResultChange(value)
-          }
-          onSpacerAxisSwapChange={handleSpacerAxisSwapChange}
-          onAnimationOptionsChange={handleAnimationOptionsChange}
-          onCompareModeChange={handleCompareModeChange}
-          onCameraSyncChange={handleCameraSyncChange}
-          onForceColorMapChange={setForceColorMap}
-          onForceColorComponentChange={setForceColorComponent}
-          onForceColorValueTypeChange={setForceColorValueType}
-          onFit={() => setFitRequest((value) => value + 1)}
-          onCameraPreset={runCameraPreset}
-        />
+        {viewPanelOpen ? (
+          <>
+            <button
+              type="button"
+              className="drawer-toggle view-drawer-close"
+              aria-label={ja.workspace.viewPanel.closeAriaLabel}
+              aria-expanded={true}
+              title={ja.workspace.viewPanel.closeLabel}
+              data-testid="close-view-panel"
+              onClick={handleViewPanelToggle}
+            >
+              <PanelRightClose size={16} />
+            </button>
+            <ViewerControls
+
+            visibility={visibility}
+            scales={scales}
+            displaySize={displaySize}
+            loadCaseIds={loadCaseIds.length > 0 ? loadCaseIds : [""]}
+            selectedLoadCaseId={selectedLoadCaseId}
+            eigenModeNos={eigenModeNos}
+            selectedEigenMode={selectedEigenMode}
+            responseSpectrumOptions={responseSpectrumOptions}
+            selectedResponseSpectrumResult={selectedResponseSpectrumResult}
+            hasResult={hasResult}
+            spacerAxisSwap={spacerAxisSwap}
+            animationOptions={animationOptions}
+            compareMode={compareMode}
+            cameraSync={cameraSync}
+            forceColorMap={forceColorMap}
+            forceColorComponent={forceColorComponent}
+            forceColorValueType={forceColorValueType}
+            forceColorRange={forceColorRange}
+            onVisibilityChange={setVisibility}
+            onScalesChange={setScales}
+            onDisplaySizeChange={setDisplaySize}
+            onDisplaySizeReset={() => setDisplaySize({ ...DEFAULT_VIEWER_DISPLAY_SIZE })}
+            onLoadCaseChange={onActiveLoadCaseChange}
+            onEigenModeChange={onSelectedEigenModeChange}
+            onResponseSpectrumResultChange={(value: ResponseSpectrumSelection) =>
+              onSelectedResponseSpectrumResultChange(value)
+            }
+            onSpacerAxisSwapChange={handleSpacerAxisSwapChange}
+            onAnimationOptionsChange={handleAnimationOptionsChange}
+            onCompareModeChange={handleCompareModeChange}
+            onCameraSyncChange={handleCameraSyncChange}
+            onForceColorMapChange={setForceColorMap}
+            onForceColorComponentChange={setForceColorComponent}
+            onForceColorValueTypeChange={setForceColorValueType}
+              onFit={handleFit}
+            onCameraPreset={runCameraPreset}
+
+            />
+          </>
+        ) : (
+          <button
+            type="button"
+            className="drawer-toggle view-drawer-open"
+            aria-label={ja.workspace.viewPanel.openAriaLabel}
+            aria-expanded={false}
+            title={ja.workspace.viewPanel.openLabel}
+            data-testid="open-view-panel"
+            onClick={handleViewPanelToggle}
+          >
+            <PanelRightOpen size={16} />
+          </button>
+        )}
       </section>
     </main>
   );

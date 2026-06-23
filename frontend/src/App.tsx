@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
 import { PropertyPanel } from "./components/PropertyPanel";
@@ -71,12 +72,16 @@ export function App() {
   const [comparisonOpen, setComparisonOpen] = useState(
     () => typeof window !== "undefined" && window.location.pathname === "/pro/compare",
   );
+  const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
+  const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
     : selectedMember
       ? { type: "member", id: selectedMember }
       : null;
+  const handleViewPanelToggle = useCallback(() => setViewPanelOpen((v) => !v), []);
+  const handleDataPanelToggle = useCallback(() => setDataPanelOpen((v) => !v), []);
   const validationPaths = useMemo(
     () => new Set((validation?.errors ?? []).map((error) => error.path).filter(Boolean) as string[]),
     [validation],
@@ -542,7 +547,7 @@ export function App() {
       {autosaveStatus && !autosaveCandidate && (
         <div className="autosave-status">{autosaveStatus}</div>
       )}
-      <div className="workspace">
+      <div className={`workspace ${dataPanelOpen ? "data-panel-open" : "data-panel-closed"}`}>
         <ProjectTree project={project} selected={selectedSection} onSelect={setSelectedSection} />
         <Viewer3D
           project={project}
@@ -559,13 +564,42 @@ export function App() {
           onSelectedResponseSpectrumResultChange={setSelectedResponseSpectrumResult}
           onViewerError={handleViewerError}
           timeHistoryNodeOverride={timeHistoryNodeOverride}
+          viewPanelOpen={viewPanelOpen}
+          onViewPanelToggle={handleViewPanelToggle}
         />
-        <PropertyPanel
-          project={project}
-          selected={selectedSection}
-          validationPaths={validationPaths}
-          onChange={commitProject}
-        />
+        {dataPanelOpen ? (
+          <>
+            <PropertyPanel
+              project={project}
+              selected={selectedSection}
+              validationPaths={validationPaths}
+              onChange={commitProject}
+            />
+            <button
+              type="button"
+              className="drawer-toggle data-drawer-toggle data-drawer-close"
+              aria-label={ja.workspace.dataPanel.closeAriaLabel}
+              aria-expanded={true}
+              title={ja.workspace.dataPanel.closeLabel}
+              data-testid="close-data-panel"
+              onClick={handleDataPanelToggle}
+            >
+              <PanelLeftClose size={16} />
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="drawer-toggle data-drawer-toggle data-drawer-open"
+            aria-label={ja.workspace.dataPanel.openAriaLabel}
+            aria-expanded={false}
+            title={ja.workspace.dataPanel.openLabel}
+            data-testid="open-data-panel"
+            onClick={handleDataPanelToggle}
+          >
+            <PanelLeftOpen size={16} />
+          </button>
+        )}
       </div>
       <BridgeWizard
         open={bridgeWizardOpen}
