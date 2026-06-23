@@ -21,3 +21,4 @@ frontend/electron-dist/
 *.spec
 .local_projects/
 backend/data/projects/autosave.json
+backend/data/projects/autosave.local.json

@@ -51,3 +51,55 @@ When a new Japanese term is needed:
 1. Add the Japanese / English pair to `docs/glossary.md`.
 2. Use the English word in code identifiers and design documents.
 3. Use the Japanese word only as a UI string in `ja.ts`.
+
+
+## Test names and identifiers
+
+Test names passed to describe, 	est, and it in Vitest, and string fixture
+content that is checked against rendered UI text, are considered source code
+identifiers for the purposes of this policy. They must be written in English so
+that the test suite is searchable and debuggable for non-Japanese-speaking
+contributors.
+
+Strings that are explicitly checking that a *specific* Japanese UI label is
+rendered (for example, expect(...).toContain("読取専用")) may
+contain Japanese as data, but the *test name* that groups such assertions must
+still be English.
+
+## Domain identifiers inside rontend/src/lobby/
+
+rontend/src/lobby/data/lobbyStrings.ts is a pre-existing parallel
+localization module that predates the centralization in rontend/src/i18n/ja.ts.
+It contains user-facing Japanese strings for the lobby and learning screens.
+It is treated as a documented exception to the single-source rule: lobby
+strings are imported by rontend/src/lobby/** components via
+L0_STRINGS rather than the ja object. Future lobby work is encouraged to
+move entries into rontend/src/i18n/ja.ts and migrate consumers.
+
+## Locale JSON files
+
+rontend/src/i18n/locales/ja.json and rontend/src/i18n/locales/en.json are
+parallel JSON files that contain a 	hAnalysis (time-history analysis
+wizard) string table introduced in the eature/th-analysis merge. They are
+imported via import locale from "../../i18n/locales/ja.json" from the
+time-history wizard components. They are an additional, narrower source of
+Japanese UI text alongside rontend/src/i18n/ja.ts. The same rules apply:
+inline Japanese inside JSX is not allowed; the JSON files are the source of
+truth for the time-history wizard screens that use them.
+
+## Desktop Electron main process
+
+desktop/electron/main.ts and desktop/electron/aboutConfig.ts are not React
+components, but they emit user-facing Japanese strings to native Electron
+dialogs, the application menu, and the splash screen. These strings are not
+sourced from rontend/src/i18n/ja.ts (the renderer is not available in the
+main process at import time). Treat the source-of-truth for these strings as
+the relevant files under desktop/electron/. New Electron main-process UI
+text must be Japanese, English source-code identifiers and comments.
+
+## File encoding
+
+All source files are UTF-8. A .editorconfig file at the repository root
+sets charset = utf-8 and pins line endings to LF (or CRLF for Windows
+PowerShell scripts). The .gitattributes file at the repository root
+normalizes text files to LF.

@@ -56,7 +56,7 @@ describe("Viewer3D WebGL fallback", () => {
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
     expect(document.body.textContent).toContain(ja.viewer.messages.webglInitFailed);
     expect(document.body.textContent).toContain(ja.viewer.messages.fallback2DSwitched);
-    expect(document.body.textContent).toMatch(/GPU_MODE=compat-gpu-blocklist\s*または\s*compat-angle-gl/);
+    expect(document.body.textContent).toMatch(new RegExp(ja.viewer.messages.electronGpuHint));
     expect(document.body.textContent).toContain(ja.viewer.messages.electronGpuLastResort);
     expect(onViewerError).toHaveBeenCalledWith(expect.stringContaining(webglFallbackMessage));
   });

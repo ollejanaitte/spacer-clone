@@ -1,4 +1,5 @@
 import styles from "./ParameterPanel.module.css";
+import { ja } from "../../i18n/ja";
 
 export type Level0Parameters = {
   bridgeLength: number;
@@ -37,15 +38,15 @@ export function ParameterPanel({
 
   return (
     <div className={styles.panel}>
-      <h2 className={styles.title}>条件を変えて試す</h2>
+      <h2 className={styles.title}>{ja.level0.parameterPanelHeading}</h2>
       <p className={styles.description}>
-        スライダーを動かして、橋の条件を少し変えてみましょう。
+        {ja.level0.parameterPanelLead}
       </p>
 
       <div className={styles.parameters}>
         <div className={styles.parameter}>
           <label className={styles.label}>
-            橋長: <span className={styles.value}>{parameters.bridgeLength} m</span>
+            {ja.level0.bridgeLengthShort} <span className={styles.value}>{ja.level0.bridgeLengthUnitMeters(parameters.bridgeLength)}</span>
           </label>
           <input
             type="range"
@@ -64,7 +65,7 @@ export function ParameterPanel({
 
         <div className={styles.parameter}>
           <label className={styles.label}>
-            橋脚高さ: <span className={styles.value}>{parameters.pierHeight} m</span>
+            {ja.level0.pierHeightShort} <span className={styles.value}>{ja.level0.bridgeLengthUnitMeters(parameters.pierHeight)}</span>
           </label>
           <input
             type="range"
@@ -83,7 +84,7 @@ export function ParameterPanel({
 
         <div className={styles.parameter}>
           <label className={styles.label}>
-            橋脚本数: <span className={styles.value}>{parameters.pierCount} 本</span>
+            {ja.level0.pierCountShort} <span className={styles.value}>{ja.level0.pierCountValue(parameters.pierCount)}</span>
           </label>
           <div className={styles.stepper}>
             {[1, 2, 3, 4].map((count) => (
@@ -103,7 +104,7 @@ export function ParameterPanel({
 
         <div className={styles.parameter}>
           <label className={styles.label}>
-            荷重倍率: <span className={styles.value}>{parameters.loadMultiplier.toFixed(1)} 倍</span>
+            {ja.level0.loadMultiplierShort} <span className={styles.value}>{ja.level0.loadMultiplierValue(parameters.loadMultiplier.toFixed(1))}</span>
           </label>
           <input
             type="range"
@@ -115,18 +116,18 @@ export function ParameterPanel({
             className={styles.slider}
           />
           <div className={styles.rangeLabels}>
-            <span>0.5 倍</span>
-            <span>2.0 倍</span>
+            <span>{ja.level0.multiplierSmall}</span>
+            <span>{ja.level0.multiplierLarge}</span>
           </div>
         </div>
       </div>
 
       <div className={styles.actions}>
         <button type="button" className={styles.resetButton} onClick={onReset}>
-          初期値に戻す
+          {ja.level0.resetToDefaults}
         </button>
         <button type="button" className={styles.calculateButton} onClick={onCalculate}>
-          結果を計算
+          {ja.level0.calculateResult}
         </button>
       </div>
     </div>

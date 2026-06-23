@@ -106,7 +106,8 @@
         "savePng": "Save image (PNG)",
         "exportCsv": "Export CSV",
         "empty": "Select response keys and quantities to display.",
-        "legendHelp": "Click a legend item to toggle its series."
+        "legendHelp": "Click a legend item to toggle its series.",
+        "legendLabel": "Chart legend"
       },
       "animation": {
         "heading": "3D animation",

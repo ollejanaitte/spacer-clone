@@ -106,7 +106,8 @@
         "savePng": "画像保存（PNG）",
         "exportCsv": "CSV出力",
         "empty": "表示する応答キーと物理量を選択してください。",
-        "legendHelp": "凡例をクリックすると系列の表示を切り替えられます。"
+        "legendHelp": "凡例をクリックすると系列の表示を切り替えられます。",
+        "legendLabel": "グラフ凡例"
       },
       "animation": {
         "heading": "3Dアニメーション",

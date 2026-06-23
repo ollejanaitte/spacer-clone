@@ -19,7 +19,7 @@ describe("LearnTop", () => {
     window.localStorage.clear();
   });
 
-  test("タイトルが表示される", async () => {
+  test("renders the title", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({ version: "1.0.0", links: [] }),
@@ -29,7 +29,7 @@ describe("LearnTop", () => {
     expect(container.textContent).toContain("学習編");
   });
 
-  test("ホームに戻るが表示される", async () => {
+  test("shows the back-to-home link", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({ version: "1.0.0", links: [] }),
@@ -39,7 +39,7 @@ describe("LearnTop", () => {
     expect(container.textContent).toContain("ホームに戻る");
   });
 
-  test("外部リンクカードが表示される", async () => {
+  test("renders the external link cards", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -52,7 +52,7 @@ describe("LearnTop", () => {
     expect(container.textContent).toContain("テストリンク");
   });
 
-  test("外部リンクがtarget=_blankを持つ", async () => {
+  test("external links have target=_blank", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({

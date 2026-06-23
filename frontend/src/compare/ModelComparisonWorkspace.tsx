@@ -9,6 +9,7 @@ import {
   type ViewerDisplaySizeSettings,
 } from "../viewer/settings/displaySize";
 import { copyModelAToB, createModelComparisonState } from "./modelComparisonState";
+import { ja } from "../i18n/ja";
 
 type ModelComparisonWorkspaceProps = {
   modelA: ProjectModel;
@@ -51,8 +52,8 @@ export function ModelComparisonWorkspace({ modelA, onClose }: ModelComparisonWor
     <main className="model-comparison-workspace" data-testid="model-comparison-workspace">
       <header className="comparison-workspace-header">
         <div>
-          <h1>A/B 比較</h1>
-          <p>Aは読取専用、Bのみ編集可能です。</p>
+          <h1>{ja.comparison.heading}</h1>
+          <p>{ja.comparison.lead}</p>
         </div>
         <div>
           <button
@@ -63,16 +64,16 @@ export function ModelComparisonWorkspace({ modelA, onClose }: ModelComparisonWor
               setResultB(null);
             }}
           >
-            AをBにコピー
+            {ja.comparison.copyFromAToB}
           </button>
-          <button type="button" onClick={onClose}>通常画面へ戻る</button>
+          <button type="button" onClick={onClose}>{ja.comparison.returnToMain}</button>
         </div>
       </header>
       <div className="comparison-split-pane">
         <section className="comparison-model-pane" data-testid="model-a-pane">
-          <header><h2>モデルA</h2><strong>読取専用</strong></header>
+          <header><h2>{ja.comparison.modelAHeading}</h2><strong>{ja.comparison.modelAReadOnly}</strong></header>
           <button type="button" disabled={running !== null} onClick={() => void run("A")}>
-            {running === "A" ? "解析中..." : "Aを解析"}
+            {running === "A" ? ja.comparison.analyzing : ja.comparison.modelAAnalyze}
           </button>
           <Viewer3D
             {...viewerProps}
@@ -82,13 +83,13 @@ export function ModelComparisonWorkspace({ modelA, onClose }: ModelComparisonWor
           />
         </section>
         <section className="comparison-model-pane" data-testid="model-b-pane">
-          <header><h2>モデルB</h2><strong>編集可能</strong></header>
+          <header><h2>{ja.comparison.modelBHeading}</h2><strong>{ja.comparison.modelBEditable}</strong></header>
           {!models.modelB ? (
-            <div className="comparison-empty">「AをBにコピー」で比較モデルを作成してください。</div>
+            <div className="comparison-empty">{ja.comparison.emptyHint}</div>
           ) : (
             <>
               <button type="button" disabled={running !== null} onClick={() => void run("B")}>
-                {running === "B" ? "解析中..." : "Bを解析"}
+                {running === "B" ? ja.comparison.analyzing : ja.comparison.modelBAnalyze}
               </button>
               <Viewer3D
                 {...viewerProps}

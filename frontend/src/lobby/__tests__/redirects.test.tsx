@@ -12,23 +12,23 @@ describe("redirects", () => {
     window.localStorage.clear();
   });
 
-  test("localStorageなしで/に遷移", () => {
+  test("redirects to / when localStorage is unavailable", () => {
     expect(getInitialRoute()).toBe("/");
   });
 
-  test("learnで/learnに遷移", () => {
+  test("navigates to /learn when the mode is learn", () => {
     setUiModeDefault("learn");
     expect(getInitialRoute()).toBe("/learn");
   });
 
-  test("level0で/level0にリダイレクト", () => {
+  test("redirects to /level0 when the mode is level0", () => {
     setUiModeDefault("level0");
     const href = window.location.href;
     getInitialRoute();
     // redirect happens via window.location.href
   });
 
-  test("proで/proにリダイレクト", () => {
+  test("redirects to /pro when the mode is pro", () => {
     setUiModeDefault("pro");
     const href = window.location.href;
     getInitialRoute();

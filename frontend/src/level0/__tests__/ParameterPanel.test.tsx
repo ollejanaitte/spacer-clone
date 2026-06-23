@@ -13,7 +13,7 @@ function renderComponent(ui: React.ReactNode) {
 }
 
 describe("ParameterPanel", () => {
-  test("タイトルが表示される", () => {
+  test("renders the title", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -25,7 +25,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("条件を変えて試す");
   });
 
-  test("説明が表示される", () => {
+  test("renders the description", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -37,7 +37,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("スライダーを動かして");
   });
 
-  test("橋長スライダーが表示される", () => {
+  test("renders the bridge-length slider", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -50,7 +50,7 @@ describe("ParameterPanel", () => {
     expect(container.querySelector('input[type="range"]')).toBeTruthy();
   });
 
-  test("橋脚高さスライダーが表示される", () => {
+  test("renders the pier-height slider", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -62,7 +62,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("橋脚高さ:");
   });
 
-  test("橋脚本数セレクターが表示される", () => {
+  test("renders the pier-count selector", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -78,7 +78,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("4");
   });
 
-  test("荷重倍率スライダーが表示される", () => {
+  test("renders the load-multiplier slider", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -90,7 +90,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("荷重倍率:");
   });
 
-  test("初期値に戻すボタンが表示される", () => {
+  test("renders the reset-to-default button", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -102,7 +102,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("初期値に戻す");
   });
 
-  test("結果を計算ボタンが表示される", () => {
+  test("renders the calculate button", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}
@@ -114,7 +114,7 @@ describe("ParameterPanel", () => {
     expect(container.textContent).toContain("結果を計算");
   });
 
-  test("初期値に戻すボタンをクリックするとonResetが呼ばれる", () => {
+  test("calls onReset when the reset-to-default button is clicked", () => {
     const onReset = vi.fn();
     const { container } = renderComponent(
       <ParameterPanel
@@ -130,7 +130,7 @@ describe("ParameterPanel", () => {
     expect(onReset).toHaveBeenCalled();
   });
 
-  test("結果を計算ボタンをクリックするとonCalculateが呼ばれる", () => {
+  test("calls onCalculate when the calculate button is clicked", () => {
     const onCalculate = vi.fn();
     const { container } = renderComponent(
       <ParameterPanel
@@ -146,7 +146,7 @@ describe("ParameterPanel", () => {
     expect(onCalculate).toHaveBeenCalled();
   });
 
-  test("現在値が表示される", () => {
+  test("renders the current values", () => {
     const { container } = renderComponent(
       <ParameterPanel
         parameters={getDefaultParameters()}

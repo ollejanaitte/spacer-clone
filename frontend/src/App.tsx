@@ -31,6 +31,7 @@ import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardMo
 import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
+import { ja } from "./i18n/ja";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -501,7 +502,7 @@ export function App() {
           setComparisonOpen(true);
         }}
       />
-      <div className="time-history-wizard-entry" aria-label="時刻歴応答解析を開く">
+      <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge
           status={selectTimeHistoryMainStatus(project, project.analysisResults?.timeHistory ?? null, {
             running: timeHistoryAnalysis.loading,
@@ -511,7 +512,7 @@ export function App() {
         />
         <ResultSummaryCard result={project.analysisResults?.timeHistory ?? null} />
         <p className="time-history-wizard-description">
-          時刻歴応答解析は、専用ウィザードから地震波設定、入力チェック、解析実行、結果表示、アニメーション確認を行います。
+          {ja.appShell.timeHistoryEntryDescription}
         </p>
       </div>
       {validationNotice && (
@@ -679,7 +680,7 @@ function buildDefaultMovingLoadCase(project: ProjectModel, memberId: string): Mo
       ];
   return {
     id: "moving-load-1",
-    name: "単一集中移動荷重",
+    name: ja.defaults.movingLoadCaseName,
     line: {
       id: influence?.line.id ?? `line-${memberId}`,
       memberId,
@@ -689,7 +690,7 @@ function buildDefaultMovingLoadCase(project: ProjectModel, memberId: string): Mo
     liveLoad: {
       id: "P1",
       type: "singlePoint",
-      name: "単一集中荷重 P1",
+      name: ja.defaults.movingLoadPointName,
       magnitude: 100,
       unit: "kN",
       direction,

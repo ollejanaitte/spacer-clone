@@ -11,32 +11,32 @@ describe("uiModeDefault", () => {
     window.localStorage.clear();
   });
 
-  test("初期値はnull", () => {
+  test("defaults to null", () => {
     expect(getUiModeDefault()).toBeNull();
   });
 
-  test("learnを保存・読込", () => {
+  test("saves and reads the learn mode", () => {
     setUiModeDefault("learn");
     expect(getUiModeDefault()).toBe("learn");
   });
 
-  test("level0を保存・読込", () => {
+  test("saves and reads the level0 mode", () => {
     setUiModeDefault("level0");
     expect(getUiModeDefault()).toBe("level0");
   });
 
-  test("proを保存・読込", () => {
+  test("saves and reads the pro mode", () => {
     setUiModeDefault("pro");
     expect(getUiModeDefault()).toBe("pro");
   });
 
-  test("nullで削除", () => {
+  test("removes the entry when set to null", () => {
     setUiModeDefault("learn");
     setUiModeDefault(null);
     expect(getUiModeDefault()).toBeNull();
   });
 
-  test("不正値はnullを返す", () => {
+  test("returns null for invalid values", () => {
     window.localStorage.setItem("spacer_clone_ui_mode_default", "invalid");
     expect(getUiModeDefault()).toBeNull();
   });

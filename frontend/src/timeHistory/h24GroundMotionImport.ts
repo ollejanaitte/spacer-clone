@@ -2,7 +2,7 @@
 //
 // This module parses the H24-style ground motion file format used by
 // the Japan Road Association "Specifications for Highway Bridges, H24
-// edition" (道路橋示方書・同解説, 平成24年版) for dynamic analysis.
+// edition" (道路橋示方書・同解説, Heisei 24) for dynamic analysis.
 // Each file has the time column as the first column, followed by
 // multiple acceleration waveforms recorded at the same time grid.
 //
@@ -112,7 +112,7 @@ export function parseH24GroundMotion(text: string, options: H24ParseOptions = {}
   const rows: string[][] = dataLines.map(splitRow);
 
   // Detect a leading header row: the first row contains at least one
-  // non-numeric token (typically a label like "時間").
+  // non-numeric token (typically a label like the Japanese "時間" time header).
   const isNumericRow = (row: string[]): boolean => row.every((token) => Number.isFinite(Number(token)));
   const firstRowIsHeader = !isNumericRow(rows[0]);
   let headerRow: string[] | null = null;
