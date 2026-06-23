@@ -129,6 +129,37 @@ Automatic deformation scale:
 - The selection state is reported to React.
 - Selection changes on the React side are also reflected in the 3D view.
 
+
+### Workspace Layout
+
+The 3D view sits in the center of the pro-mode workspace. The workspace is a three-column grid:
+
+- Left: project tree (always visible).
+- Center: 3D view (3D viewport, header, and right-side control panel inside the viewer body).
+- Right: property / data panel (table editor for nodes, members, supports, loads, etc.).
+
+To maximize the 3D drawing area, the right-side View controls and the right-side property panel are placed in collapsible drawers:
+
+- Both drawers are **collapsed by default** when the pro page is opened. The center 3D view occupies the full width of the remaining area.
+- Each drawer has a thin vertical toggle button pinned to the right edge of the workspace. Clicking the button slides the drawer in or out.
+- The View control drawer contains the comparison toggle, animation controls, visibility, display scale, force color map, coordinate, eigen mode / load case selectors, and the result panel toggles. It is the same set of controls that was previously always shown on the right of the 3D viewport.
+- The property panel drawer contains the table editor (nodes / members / materials / sections / supports / load cases / nodal loads / member loads / mass cases / analysis settings). It is the same table that was previously always shown on the right of the workspace.
+- Toggling either drawer does not change the analysis engine, the project model, the API contract, the JSON schema, or any persisted data.
+- The existing input, selection, and validation behavior of the property panel and the View controls is preserved exactly. Only their visibility / occupancy is changed.
+
+Initial camera fit:
+
+- On first paint of the 3D viewport and whenever the viewport size changes (window resize, drawer open / close), the camera fits to the model bounding box using the existing fitCameraToBox helper.
+- The fit is the same as the manual Fit button: the camera is repositioned so the model bounding box is centered and the bounding sphere fits the current FOV, and the OrbitControls target is moved to the model centroid.
+- Existing OrbitControls, manual orbit, pan, zoom, and the per-mode scale factors are unchanged.
+
+Accessibility:
+
+- Each toggle button has an aria-label and a title resolved through frontend/src/i18n/ja.ts so the user-facing Japanese text stays in one place.
+- aria-expanded reflects the open / closed state of the drawer.
+- The toggle is keyboard-focusable (tabIndex=0) and activates on Enter or Space.
+- The label switches between the open variant and the close variant so screen readers announce the next action.
+
 ### 2D Fallback Display
 
 In environments where Three.js / WebGL is not available, the MVP shows a minimal 2D fallback view.
