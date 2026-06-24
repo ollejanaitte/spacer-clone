@@ -155,7 +155,77 @@ export type InfluenceLineViewModel = {
 
 The Viewer receives the ViewModel and manages the screen state and rendering. Display scale, display colors, line width, font size, camera state, and UI state live on the Viewer side or in Viewer-side settings. They are not written back to the `Result Schema`.
 
-## 6. Related Documents
+## 6. Static Member Force Diagrams
+
+Static member force diagrams are a Viewer concern. The solver, result schema,
+API response, frontend store, and ViewModel already carry member section force
+components as `N`, `Qy`, `Qz`, `Mx`, `My`, and `Mz`. The Viewer chooses which
+components are drawn for the currently selected load case.
+
+### 6.1 Existing Behavior
+
+- `N` is drawn when static analysis results are available, a load case is
+  selected, the axial force diagram toggle is enabled, and the 3D Viewer is
+  active.
+- `My` and `Mz` are drawn independently when their diagram toggles are enabled.
+- The existing result diagram scale is applied to all member force diagrams.
+- Moment components are drawn with the existing line and ribbon conventions.
+- Component sign, value, and local member force convention are not changed by
+  Viewer display settings.
+
+### 6.2 Qy and Qz Support
+
+`Qy` and `Qz` are added as independent static shear force diagram components.
+They use the same selected static load case, result scale, colors, member
+stations, and local member force values that are already used by `N`, `My`, and
+`Mz`. The implementation connects the existing ViewModel items for `Qy` and
+`Qz` to the Viewer rendering path; it does not change solver output or analysis
+post-processing.
+
+The default visibility for both shear diagrams is off. This keeps existing
+projects and saved UI states compatible, and missing visibility flags from older
+runtime state are interpreted as `false`.
+
+### 6.3 UI Behavior
+
+The Viewer result diagram controls expose separate toggles for:
+
+- axial force diagram (`N`)
+- shear force diagram (`Qy`)
+- shear force diagram (`Qz`)
+- bending moment diagram (`My`)
+- bending moment diagram (`Mz`)
+
+The labels are user-facing Japanese strings defined in `frontend/src/i18n/ja.ts`.
+No Japanese strings are hard-coded in React components.
+
+When a visible member force diagram has no meaningful value for the selected
+load case, the Viewer shows concise feedback in the controls panel. This is a
+display hint only; it does not create an analysis warning or alter result data.
+
+### 6.4 Local-Axis Behavior and Limitations
+
+`My` and `Mz` are displayed separately, and `Qy` and `Qz` are displayed
+separately. Depending on the load direction and member local axes, one component
+may be non-zero while the paired component is zero. A zero or near-zero component
+collapses onto the member baseline and may appear invisible even when its toggle
+is enabled.
+
+The current diagram geometry follows the existing Viewer convention for member
+force offsets. It is intended for visual inspection of component distribution,
+not for changing local-axis definitions or force sign conventions.
+
+### 6.5 Compatibility Notes
+
+- No solver formulas, numerical constants, force signs, or result schemas are
+  changed.
+- API response fields remain unchanged.
+- Existing `N`, `My`, and `Mz` diagram behavior is preserved.
+- Time-history, dynamic, response spectrum, and color-map behavior are not
+  changed except that the already available `Qy`/`Qz` values can now be drawn as
+  static diagrams.
+
+## 7. Related Documents
 
 - [result-schema.md](result-schema.md)
 - [report-drawing-output.md](report-drawing-output.md)

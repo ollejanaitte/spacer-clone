@@ -33,6 +33,7 @@ type ViewerControlsProps = {
   forceColorComponent: ForceColorComponent;
   forceColorValueType: ForceColorValueType;
   forceColorRange?: { min: number; max: number };
+  resultDiagramFeedback?: string[];
   onVisibilityChange: (visibility: ViewerVisibility) => void;
   onScalesChange: (scales: ViewerScales) => void;
   onDisplaySizeChange?: (settings: ViewerDisplaySizeSettings) => void;
@@ -70,6 +71,7 @@ export function ViewerControls({
   forceColorComponent,
   forceColorValueType,
   forceColorRange,
+  resultDiagramFeedback = [],
   onVisibilityChange,
   onScalesChange,
   onDisplaySizeChange = () => undefined,
@@ -360,20 +362,47 @@ export function ViewerControls({
             disabled={!hasResult}
             onChange={(value) => setFlag("axialForce", value)}
             icon={<Waves size={14} />}
+            testId="axial-force-toggle"
+          />
+          <Toggle
+            label={ja.viewer.controls.qy}
+            checked={Boolean(visibility.shearQy)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("shearQy", value)}
+            testId="shear-qy-toggle"
+          />
+          <Toggle
+            label={ja.viewer.controls.qz}
+            checked={Boolean(visibility.shearQz)}
+            disabled={!hasResult}
+            onChange={(value) => setFlag("shearQz", value)}
+            testId="shear-qz-toggle"
           />
           <Toggle
             label={ja.viewer.controls.my}
             checked={visibility.momentMy}
             disabled={!hasResult}
             onChange={(value) => setFlag("momentMy", value)}
+            testId="moment-my-toggle"
           />
           <Toggle
             label={ja.viewer.controls.mz}
             checked={visibility.momentMz}
             disabled={!hasResult}
             onChange={(value) => setFlag("momentMz", value)}
+            testId="moment-mz-toggle"
           />
         </div>
+        {resultDiagramFeedback.length > 0 && (
+          <div className="viewer-result-legend" role="status">
+            {resultDiagramFeedback.map((message) => (
+              <p key={message}>{message}</p>
+            ))}
+          </div>
+        )}
+        <p className="viewer-result-legend">
+          {ja.viewer.controls.localAxisDiagramHelp}
+        </p>
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.scales}>
         <div className="scale-grid">
@@ -585,12 +614,14 @@ function Toggle({
   disabled,
   icon,
   onChange,
+  testId,
 }: {
   label: string;
   checked: boolean;
   disabled?: boolean;
   icon?: React.ReactNode;
   onChange: (checked: boolean) => void;
+  testId?: string;
 }) {
   return (
     <label className={disabled ? "viewer-toggle disabled" : "viewer-toggle"}>
@@ -598,6 +629,7 @@ function Toggle({
         type="checkbox"
         checked={checked}
         disabled={disabled}
+        data-testid={testId}
         onChange={(event) => onChange(event.currentTarget.checked)}
       />
       {icon}

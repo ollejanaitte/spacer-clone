@@ -21,6 +21,8 @@ export type ViewerVisibility = {
   deformedShape: boolean;
   reactions: boolean;
   axialForce: boolean;
+  shearQy?: boolean;
+  shearQz?: boolean;
   reactionLabels?: boolean;
   reactionLabelFx?: boolean;
   reactionLabelFy?: boolean;
@@ -145,6 +147,8 @@ export const defaultVisibility: ViewerVisibility = {
   deformedShape: false,
   reactions: false,
   axialForce: false,
+  shearQy: false,
+  shearQz: false,
   reactionLabels: false,
   reactionLabelFx: true,
   reactionLabelFy: true,

@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { ja } from "../i18n/ja";
-import { buildResponseSpectrumViewModel, hasResponseSpectrumResult, type ResponseSpectrumSelection } from "../results/resultViewModel";
-import type { ProjectModel } from "../types";
+import {
+  buildResponseSpectrumViewModel,
+  buildResultViewModel,
+  hasResponseSpectrumResult,
+  type MemberSectionForceComponent,
+  type ResponseSpectrumSelection,
+} from "../results/resultViewModel";
+import type { AnalysisResult, ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import { createSuspendedDeckProject } from "../data/defaultProject";
 import { createSpacerAxisSwap, loadSpacerAxisSwap, persistSpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
@@ -99,6 +105,10 @@ export function Viewer3D({
     result &&
       result.errors.length === 0 &&
       (result.displacements.length > 0 || eigenModeNos.length > 0 || hasResponseSpectrumResult(result)),
+  );
+  const resultDiagramFeedback = useMemo(
+    () => buildResultDiagramFeedback(result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility),
+    [result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility],
   );
 
   useEffect(() => {
@@ -341,6 +351,7 @@ export function Viewer3D({
             forceColorComponent={forceColorComponent}
             forceColorValueType={forceColorValueType}
             forceColorRange={forceColorRange}
+            resultDiagramFeedback={resultDiagramFeedback}
             onVisibilityChange={setVisibility}
             onScalesChange={setScales}
             onDisplaySizeChange={setDisplaySize}
@@ -391,6 +402,41 @@ function statusText(selection: ViewerSelection, hasResult: boolean): string {
     ? ja.viewer.messages.deformedShapeAvailable
     : ja.viewer.messages.inputModelShown;
   return `${selected} / ${suffix}`;
+}
+
+function buildResultDiagramFeedback(
+  result: AnalysisResult | null,
+  selectedLoadCaseId: string,
+  selectedResponseSpectrumResult: ResponseSpectrumSelection,
+  visibility: ViewerVisibility,
+): string[] {
+  const selectedComponents: MemberSectionForceComponent[] = [
+    visibility.axialForce ? "N" : null,
+    visibility.shearQy ? "Qy" : null,
+    visibility.shearQz ? "Qz" : null,
+    visibility.momentMy ? "My" : null,
+    visibility.momentMz ? "Mz" : null,
+  ].filter((component): component is MemberSectionForceComponent => Boolean(component));
+  if (selectedComponents.length === 0) return [];
+
+  const viewModel =
+    buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult) ??
+    buildResultViewModel(result, selectedLoadCaseId);
+  if (!viewModel) return [];
+
+  const hasZeroVisibleComponent = selectedComponents.some((component) => {
+    const values = viewModel.memberForces.items
+      .filter((force) => force.component === component)
+      .flatMap((force) => force.stations.map((station) => Math.abs(station.value)));
+    return Math.max(...values, 0) <= 1e-12;
+  });
+
+  return hasZeroVisibleComponent
+    ? [
+        ja.viewer.controls.zeroForceComponentMessage,
+        ja.viewer.controls.forceComponentOverlapMessage,
+      ]
+    : [];
 }
 
 function getGpuModeLabel(): string {
