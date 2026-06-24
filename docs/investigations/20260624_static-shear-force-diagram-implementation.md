@@ -70,6 +70,14 @@ Automated validation:
 - `npm run lint` from `frontend/`: command exited successfully. The source
   hygiene check passed, and the Japanese string scanner printed its existing
   review/fix report for many files.
+- `npm run test:e2e` from `frontend/`: failed with 5 passed and 3 failed. The
+  failures are outside the static Viewer diagram change:
+  - `level0-navigation.spec.ts` expected `/level0?sample=short` after clicking a
+    sample, but the URL stayed `/level0`.
+  - `th-analysis-revamp.spec.ts` could not find the time-history dialog on
+    `/th/run`.
+  - `th-analysis-revamp.spec.ts` timed out waiting for the time-history input
+    check side-nav button.
 
 Initial targeted checks:
 
@@ -119,6 +127,6 @@ Screenshots are stored under:
 
 Qy and Qz static shear force diagrams are connected to the Viewer display path
 without changing solver output, result schemas, API fields, or existing `N`,
-`My`, and `Mz` behavior. Frontend validation passed. The full backend suite has
-pre-existing failures unrelated to this Viewer change and remains documented
-above.
+`My`, and `Mz` behavior. Frontend unit, typecheck, lint, and build validation
+passed. The full backend suite and frontend E2E suite have failures unrelated to
+this Viewer change and remain documented above.
