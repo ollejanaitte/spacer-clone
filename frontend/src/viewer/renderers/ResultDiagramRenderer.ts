@@ -52,6 +52,12 @@ export function renderResultDiagrams(
   if (visibility.axialForce) {
     objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale));
   }
+  if (visibility.shearQy) {
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qy", baseScale));
+  }
+  if (visibility.shearQz) {
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qz", baseScale));
+  }
   if (visibility.memberForceLabels || visibility.axialForceLabels) {
     objects.push(...renderMemberForceLabels(project, nodeMap, viewModel.memberForces.items, scales, visibility));
   }
@@ -256,9 +262,9 @@ function renderMemberForce(
 
 function diagramNormal(direction: THREE.Vector3, component: MemberSectionForceComponent): THREE.Vector3 {
   const reference =
-    component === "My"
+    component === "My" || component === "Qy"
       ? new THREE.Vector3(0, 0, 1)
-      : component === "Mz"
+      : component === "Mz" || component === "Qz"
         ? new THREE.Vector3(0, 1, 0)
         : new THREE.Vector3(0, 1, 0);
   let normal = new THREE.Vector3().crossVectors(direction, reference).normalize();

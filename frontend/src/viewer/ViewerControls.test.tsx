@@ -91,6 +91,8 @@ function buildProps(overrides: Partial<{
       deformedShape: false,
       reactions: false,
       axialForce: false,
+      shearQy: false,
+      shearQz: false,
       momentMy: false,
       momentMz: false,
     },
@@ -255,6 +257,21 @@ describe("ViewerControls wiring", () => {
       setChecked(input, false);
     });
     expect(onSpacerAxisSwapChange).toHaveBeenCalledWith("off");
+  });
+
+  it("toggles Qy and Qz diagram visibility", () => {
+    const onVisibilityChange = vi.fn();
+    render(<ViewerControls {...buildProps({ onVisibilityChange })} />);
+
+    act(() => {
+      setChecked(document.querySelector('[data-testid="shear-qy-toggle"]') as HTMLInputElement, true);
+    });
+    act(() => {
+      setChecked(document.querySelector('[data-testid="shear-qz-toggle"]') as HTMLInputElement, true);
+    });
+
+    expect(onVisibilityChange).toHaveBeenCalledWith(expect.objectContaining({ shearQy: true }));
+    expect(onVisibilityChange).toHaveBeenCalledWith(expect.objectContaining({ shearQz: true }));
   });
 
   it("invokes onCameraPreset for the Iso / XY / YZ / XZ buttons (Fit uses onFit)", () => {

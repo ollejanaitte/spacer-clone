@@ -131,6 +131,36 @@ describe("3D display coordinate integration", () => {
       ]),
     );
   });
+
+  it("renders Qy and Qz member force diagrams when shear visibility is enabled", () => {
+    const project = createDefaultProject();
+    const nodeId = project.supports[0].nodeId;
+    const result = staticResult(nodeId, { ux: 0, uy: 0, uz: 0 });
+    result.memberEndForces = [{
+      loadCaseId: "LC_DEAD",
+      memberId: project.members[0].id,
+      coordinateSystem: "local",
+      i: { fx: 0, fy: -8, fz: 4, mx: 0, my: 0, mz: 0 },
+      j: { fx: 0, fy: 8, fz: -4, mx: 0, my: 0, mz: 0 },
+    }];
+
+    const objects = renderResultDiagrams(
+      project,
+      result,
+      "LC_DEAD",
+      "SRSS",
+      {
+        ...defaultVisibility,
+        shearQy: true,
+        shearQz: true,
+      },
+      defaultScales,
+      "off",
+    );
+
+    const lines = objects.filter((object) => object.type === "Line");
+    expect(lines.length).toBeGreaterThanOrEqual(6);
+  });
 });
 
 function arrowDirection(arrow: THREE.ArrowHelper | undefined): THREE.Vector3 {
