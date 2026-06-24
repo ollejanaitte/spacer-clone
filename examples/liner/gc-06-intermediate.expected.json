@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "0.2.0",
+  "linerModelId": "gc06",
+  "gridPointSamples": [
+    { "id": "GP-gc06-000-000", "x": 0, "y": -5, "z": 10 },
+    { "id": "GP-gc06-001-001", "x": 10, "y": 0, "z": 10 },
+    { "id": "GP-gc06-002-002", "x": 20, "y": 5, "z": 10 }
+  ],
+  "nodeCount": 9,
+  "longitudinalMemberCount": 6
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.2.0",
+  "linerModelId": "gc01",
+  "coordinatePolicyId": "global",
+  "horizontal": {
+    "totalLength": 100,
+    "sampledPoints": [
+      { "physicalDistance": 0, "x": 0, "y": 0, "azimuth": 0, "curvature": 0 },
+      { "physicalDistance": 100, "x": 100, "y": 0, "azimuth": 0, "curvature": 0 }
+    ]
+  },
+  "stations": [
+    { "id": "ST-000", "physicalDistance": 0, "displayedStation": 0 },
+    { "id": "ST-001", "physicalDistance": 50, "displayedStation": 50 },
+    { "id": "ST-002", "physicalDistance": 100, "displayedStation": 100 }
+  ]
+}
