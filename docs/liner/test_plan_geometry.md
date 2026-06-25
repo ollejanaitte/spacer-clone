@@ -74,7 +74,7 @@ This document is a **highest-priority** design artifact; geometry correctness is
 | Quantity | Expected |
 | --- | --- |
 | End point (x, y) | (250.000000, 66.987298) m |
-| Midpoint at s = L/2 (x, y) | (129.409522, 13.397459) m |
+| Midpoint at s = L/2 (x, y) | (129.409522, 17.037087) m |
 | Midpoint azimuth (rad) | π/12 ≈ 0.261799 |
 | Arc length (m) | 261.799388 |
 
