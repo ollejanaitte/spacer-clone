@@ -19,7 +19,7 @@ describe("liner intermediate result builder", () => {
     ],
   };
 
-  it("builds traceable stations, grid points, nodes, and members", () => {
+  it("builds a canonical traceable intermediate result", () => {
     const result = buildIntermediateResult({
       alignment,
       stationDefinition: {
@@ -28,15 +28,29 @@ describe("liner intermediate result builder", () => {
       },
       offsets: [-5, 0, 5],
       z: 10,
+      computedAt: "2026-01-01T00:00:00.000Z",
     });
 
-    expect(result.issues.filter((issue) => issue.level === "error")).toHaveLength(0);
-    expect(result.stations).toHaveLength(3);
-    expect(result.gridPoints).toHaveLength(9);
-    expect(result.nodeCandidates).toHaveLength(9);
-    expect(result.memberCandidates).toHaveLength(6);
-    expect(result.gridPoints[4]).toMatchObject({
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.level === "error")).toHaveLength(0);
+    expect(result.computedAt).toBe("2026-01-01T00:00:00.000Z");
+    expect(result.horizontal.segments).toHaveLength(1);
+    expect(result.horizontal.sampledPoints).toHaveLength(2);
+    expect(result.vertical.profileElevation).toBe(10);
+    expect(result.vertical.sampledPoints).toHaveLength(3);
+    expect(result.stations.entries).toHaveLength(3);
+    expect(result.grid.points).toHaveLength(9);
+    expect(result.grid.lines).toHaveLength(6);
+    expect(result.grid.cells).toHaveLength(4);
+    expect(result.spans).toEqual([]);
+    expect(result.piers).toEqual([]);
+    expect(result.sections).toEqual([]);
+    expect(result.frameHints).toMatchObject({
+      defaultMemberGroupKey: "default",
+      connectivityMode: "grid_full",
+    });
+    expect(result.grid.points[4]).toMatchObject({
       id: "GP-gc06-001-001",
+      gridDefinitionId: "GRID-gc06-default",
       x: 10,
       y: 0,
       z: 10,
@@ -46,11 +60,21 @@ describe("liner intermediate result builder", () => {
         elementId: "L1",
       },
     });
-    expect(result.memberCandidates[0]).toMatchObject({
-      stationIId: "ST-000",
-      stationJId: "ST-001",
+    expect(result.grid.lines[0]).toMatchObject({
+      id: "GL-gc06-L-000",
       direction: "longitudinal",
+      pointIds: ["GP-gc06-000-000", "GP-gc06-001-000", "GP-gc06-002-000"],
     });
+    expect(result.grid.cells[0]).toMatchObject({
+      id: "GC-gc06-000-000",
+      cornerPointIds: [
+        "GP-gc06-000-000",
+        "GP-gc06-001-000",
+        "GP-gc06-001-001",
+        "GP-gc06-000-001",
+      ],
+    });
+    expect(result.dependencyGraph.createdFromSourceRevision).toBe(result.sourceRevision);
     expect(result.sourceRevision).toHaveLength(64);
   });
 
