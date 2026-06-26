@@ -6,6 +6,12 @@ This Design Alignment Gate records the gap between the current Phase 0 implement
 
 The goal is to decide, for each gap, whether the design document or the implementation should change. Production code is intentionally not changed by this review.
 
+### 1-1. Review boundary
+
+This document is allowed to update design wording, expected values, responsibility boundaries, phase status, and verification criteria. It must not claim that local commands, schema validation, or generated analysis workflows passed unless those checks were actually run in the implementation environment.
+
+Any item that depends on executing code is marked **requires local verification** until a later implementation task records the command and result.
+
 Reviewed sources:
 
 - [intermediate_result_model.md](intermediate_result_model.md)
@@ -26,7 +32,7 @@ Reviewed sources:
 - [docs/development/language-policy.md](../development/language-policy.md)
 - [docs/glossary.md](../glossary.md)
 
-Implementation reviewed:
+Implementation references from the Phase 0 review record:
 
 - `frontend/src/liner/core/types.ts`
 - `frontend/src/liner/core/pipeline/pipeline.ts`
@@ -34,6 +40,8 @@ Implementation reviewed:
 - `frontend/src/liner/core/station/stationRules.ts`
 - `frontend/src/liner/core/grid/gridGeneration.ts`
 - `frontend/src/liner/mapper/*`
+
+This follow-up documentation pass did not change implementation code and did not execute local tests.
 
 ## 2. Intermediate Result Gap
 
@@ -81,13 +89,13 @@ Implementation reviewed:
 
 ### 5-1. Current design values
 
-[test_plan_geometry.md](test_plan_geometry.md) GC-02 currently states:
+[test_plan_geometry.md](test_plan_geometry.md) GC-02 now states:
 
 | Quantity | Current expected value |
 | --- | --- |
 | Input | start `(0, 0)`, azimuth `0`, radius `R = 500 m`, left turn, deflection `30° = π/6`, arc length `L = Rθ ≈ 261.799388 m` |
 | End point | `(250.000000, 66.987298)` |
-| Midpoint at `s = L/2` | `(129.409522, 13.397459)` |
+| Midpoint at `s = L/2` | `(129.409522, 17.037087)` |
 | Midpoint azimuth | `π/12 ≈ 0.261799` |
 
 ### 5-2. Standard circular arc derivation
@@ -134,23 +142,23 @@ y_mid = 500 · (1 - cos(π/12))
       = 17.037086855465844
 ```
 
-The current implementation in `frontend/src/liner/core/geometry/arc.ts` uses the same equation, and the Phase 0 test expects `17.037087`.
+The Phase 0 review found the implementation in `frontend/src/liner/core/geometry/arc.ts` using the same equation, and the Phase 0 test expected `17.037087`. This documentation pass did not rerun that local test; current pass/fail status remains **requires local verification**.
 
 ### 5-3. Cause analysis
 
 | Possible cause | Assessment |
 | --- | --- |
-| Design document error | **Likely confirmed.** End point, azimuth, coordinate policy, and implementation all align with the standard left-arc equation, while only the midpoint y value differs. |
-| Implementation error | Not supported by current evidence. The implementation matches the same equation that reproduces the design end point. |
-| Coordinate system definition | Not supported by current evidence. The documented coordinate system produces the design end point and implementation result. |
+| Design document error | **Confirmed at design level.** End point, azimuth, coordinate policy, and the standard left-arc equation align with `17.037087`. |
+| Implementation error | Not supported by the documented derivation, but local test execution is still required before implementation pass status is claimed. |
+| Coordinate system definition | Not supported by current evidence. The documented coordinate system produces the design end point and corrected midpoint. |
 | Unit issue | Not supported by current evidence. All quantities are in meters/radians and match the end point. |
 | Other | No alternative interpretation found that preserves the documented midpoint azimuth `π/12` and gives `y = 13.397459`. |
 
 ### 5-4. Conclusion
 
-Conclusion: **Design document correction**.
+Conclusion: **Design document correction completed**.
 
-The GC-02 midpoint y value should be corrected from `13.397459` to `17.037087` in [test_plan_geometry.md](test_plan_geometry.md). This is a design numeric fixture correction, not an implementation change.
+The GC-02 midpoint y value is `17.037087` in [test_plan_geometry.md](test_plan_geometry.md). This is a design numeric fixture correction, not an implementation change. Implementation pass status still **requires local verification**.
 
 ## 6. Phase 1 Implementation Order
 
@@ -169,7 +177,7 @@ Recommended refinement:
 
 1. **P1-1a Intermediate Result convergence:** make the runtime type match [intermediate_result_model.md](intermediate_result_model.md) §1-§15.
 2. **P1-1b Fixture and snapshot convergence:** add full intermediate fixtures for GC-01 through GC-07 before extending mapping.
-3. **P1-2 Geometry Accuracy:** fix GC-02 design value, then add independent GC-08 through GC-10 clothoid references.
+3. **P1-2 Geometry Accuracy:** encode the corrected GC-02 design value, then add independent GC-08 through GC-10 clothoid references.
 4. **P1-3 Frame Mapping:** implement pure `mapToFrameModel()` from canonical intermediate result and generation settings.
 5. **P1-4 Schema Extension:** add additive `liner` and `linerTrace` schema support and migration tests.
 6. **P1-5 Headless Frame Analysis Connection:** validate generated project and run existing analysis flow without UI.
@@ -192,11 +200,13 @@ Phase 1 is complete only when all criteria below are met:
 9. No React component, UI route, DXF/PDF/CSV/glTF export, or user-facing Japanese string is added unless explicitly covered by a later phase task.
 10. `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` pass at each implementation commit.
 
+Criteria 3, 6, 7, 8, and 10 are **requires local verification** and cannot be marked complete by documentation-only review.
+
 ## 8. Human Decisions Required
 
 | ID | Decision | Recommended owner / source |
 | --- | --- | --- |
-| P1-D01 | Approve GC-02 midpoint y correction in [test_plan_geometry.md](test_plan_geometry.md). | Geometry owner; this review recommends correction. |
+| P1-D01 | GC-02 midpoint y correction is approved at design level in [test_plan_geometry.md](test_plan_geometry.md); implementation pass status still requires local verification. | Geometry owner. |
 | P1-D02 | Decide whether `GeneratedStation.source/sourceId` becomes documented station provenance or remains an internal implementation detail. | Intermediate result owner. |
 | P1-D03 | Decide if `nodeCandidates` / `memberCandidates` should be fully removed from canonical intermediate output or retained only as mapper preview output. | Frame mapping owner; recommendation is mapper output only. |
 | P1-D04 | Approve additive schema extension shape for `liner` and `linerTrace`. | Schema owner; see [schema_migration_policy.md](schema_migration_policy.md). |
@@ -216,11 +226,11 @@ Recommendation: keep `review_docs_liner.md` tracked as the original review repor
 
 ## 10. Blocker Update
 
-| Severity | Previous | P1-0 status |
+| Severity | Previous | Current documentation status |
 | --- | ---: | --- |
 | Critical | 0 | 0 |
-| High | 3 | 3 remain, but GC-02 is now identified as a design fixture correction and should be fixed before P1-2. |
+| High | 3 | 2 remain after the GC-02 design fixture correction; both remaining items require implementation work and local verification. |
 | Medium | 7 | 7 remain; P1-1 should retire the intermediate-result and fixture-layout items. |
 | Low | 5 | 5 remain; all can stay deferred unless touched by Phase 1 implementation. |
 
-P1-1 may start after the GC-02 design correction is committed, because the remaining High items map directly to P1-2 through P1-4 work packages.
+P1-1 may start from this corrected design baseline. P1-2 through P1-5 must still record local verification results before completion is claimed.
