@@ -1304,6 +1304,57 @@ export const ja = {
     },
   },
 
+  // P1-6 placeholders — not wired to React until liner UI phase.
+  liner: {
+    toolbar: {
+      openButton: "線形座標計算",
+      computeButton: "計算",
+      generateFrameButton: "フレームモデル生成",
+    },
+    window: {
+      title: "線形座標計算",
+      statusReady: "準備完了",
+      statusComputing: "計算中",
+      statusStale: "再計算が必要",
+    },
+    panels: {
+      alignmentInput: "線形入力",
+      stationTable: "ステーション表",
+      gridPreview: "格子プレビュー",
+      diagnostics: "診断",
+      mappingReview: "マッピング確認",
+      headlessGenerationSummary: "生成サマリー",
+    },
+    workflow: {
+      editInput: "入力編集",
+      computeIntermediate: "中間結果計算",
+      reviewDiagnostics: "診断確認",
+      generateFrameMapping: "フレームマッピング",
+      attachProjectExtension: "プロジェクトへ反映",
+      runHeadlessValidation: "検証",
+    },
+    actions: {
+      confirmGenerate: "フレームモデルを生成しますか？",
+      openInViewer: "3Dビューで表示",
+    },
+    status: {
+      draft: "下書き",
+      ready: "利用可能",
+      error: "エラー",
+    },
+    diagnostics: {
+      panelTitle: "診断メッセージ",
+      severityError: "エラー",
+      severityWarning: "警告",
+      severityInfo: "情報",
+    },
+    errors: {
+      geom_zero_length: "ゼロ長セグメントがあります。",
+      geom_position_gap: "セグメント位置が連続していません。",
+      frame_schema: "生成モデルがスキーマ検証に失敗しました。",
+    },
+  },
+
   workspace: {
     viewPanel: {
       openLabel: "View パネルを開く",

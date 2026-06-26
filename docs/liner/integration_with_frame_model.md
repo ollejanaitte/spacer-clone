@@ -137,9 +137,18 @@ Tagging via embedded `meta` deferred until schema allows it; until then `linerTr
 
 ### 8. UI integration points
 
-- Main menu: opens liner window or docked panel (i18n keys only — no hardcoded Japanese in design docs).
-- Action: "Generate frame model" enabled when intermediate results are valid (`ready`, no error diagnostics).
-- Post-generate: navigate to existing 3D viewer with new model loaded.
+**P1-6 preparation** ([ui_preparation.md](ui_preparation.md)):
+
+| Future UI surface | Reserved path / id | Wired entry point |
+| --- | --- | --- |
+| Liner setup editor | `/pro/liner/setup` (`liner.setup`) | domain edit → `buildIntermediateResult` |
+| Preview + diagnostics | `/pro/liner/preview` (`liner.preview`) | read intermediate; display diagnostics |
+| Mapping review | `/pro/liner/mapping-review` (`liner.mappingReview`) | `mapToFrameModel` → merge → headless validate |
+| Main menu / toolbar | i18n `liner.toolbar.*` | opens setup route (future) |
+| Generate frame model | `liner.actions.confirmGenerate` | enabled when no error diagnostics |
+| Post-generate | `liner.actions.openInViewer` | existing 3D viewer + analysis flow |
+
+Routes are **not registered** until a later phase. Constants: `frontend/src/liner/uiPreparation.ts`.
 
 ### 9. Validation gate
 
@@ -193,4 +202,4 @@ Each liner model has unique `linerModelId`. Merge/replace operates per model ID.
 - [x] Bridge wizard reuse policy: separate mapper, shared helpers only.
 - [ ] Golden fixture passes schema validation when implemented.
 - [x] Headless GC-06 pipeline validates via `createHeadlessLinerFrameProject` tests (P1-5).
-- [ ] UI entry points and i18n key groups listed.
+- [x] UI entry points and i18n key groups listed (P1-6; [ui_preparation.md](ui_preparation.md)).

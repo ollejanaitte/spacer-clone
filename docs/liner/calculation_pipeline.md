@@ -68,6 +68,8 @@ Both exported from `liner-core` package; no HTTP or React imports.
 
 **P1-5:** Headless assembly is `createHeadlessLinerFrameProject()` (`frontend/src/liner/headless/`), chaining pipeline output and mapper output into a validation-ready project without React or file I/O.
 
+**P1-6 UI preparation:** Future UI calls the same public entry points via workflow steps (`computeIntermediate` → `buildIntermediateResult`, etc.). Route/panel/workflow ids and state boundaries are defined in [ui_preparation.md](ui_preparation.md) and `frontend/src/liner/uiPreparation.ts`. No new pipeline stages in P1-6.
+
 ### 4. Re-sampling policy
 
 Changing polyline sample spacing or grid density requires re-running affected stages (2–5). Export/render modules must not invoke geometry routines directly.
@@ -98,3 +100,4 @@ Post-MVP: async generator yielding stage ids for progress UI.
 - [x] MVP TypeScript-only boundary documented.
 - [ ] Integration test covers full pipeline on GC-06.
 - [x] Headless GC-06 assembly and schema validation covered in P1-5 headless tests.
+- [x] UI workflow → pipeline entry point mapping documented (P1-6).

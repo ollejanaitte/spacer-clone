@@ -48,6 +48,17 @@ World meters → screen pixels; Y flip for canvas coordinates.
 
 Low-detail or dimmed display while `computing`; show last good snapshot under stale overlay.
 
+### 5. P1-6 UI state vs renderer input (preparation)
+
+| State | Owner | Renderer may read? |
+| --- | --- | --- |
+| Zoom, pan, selection, panel visibility | UI (`draft` / view state) | Yes — view transform only |
+| `LinerIntermediateResult` | linerCore (computed) | Yes — geometry source |
+| Domain input | project | **No** — pipeline only |
+| Mapper / headless output | linerMapper / headless | **No** — not for 2D canvas |
+
+Grid preview panel (`gridPreview`) binds to `intermediate` + UI view state via adapter types in `frontend/src/liner/uiPreparation.ts`. See [ui_preparation.md](ui_preparation.md).
+
 ## Open Questions
 
 - Reuse 2D patterns from [docs/09_3d_view_spec.md](../09_3d_view_spec.md)?
@@ -64,5 +75,6 @@ Low-detail or dimmed display while `computing`; show last good snapshot under st
 ## Pre-Implementation Checklist
 
 - [x] Renderer input contract: no domain access, no re-sampling.
+- [x] UI vs computed state boundary documented (P1-6).
 - [ ] Zoom/pan behavior documented in UI spec.
 - [ ] Performance smoke test with large grid planned.

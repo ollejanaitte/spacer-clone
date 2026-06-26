@@ -30,9 +30,23 @@ Define the original window and panel structure for the liner module without repl
 - Original iconography — no third-party logos.
 - Keyboard shortcuts (English internal names; Japanese tooltips via i18n).
 
+## P1-6 route and panel boundaries (preparation)
+
+Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.setup`, `liner.preview`, `liner.mappingReview`. **Not registered in P1-6** — constants only in `frontend/src/liner/uiPreparation.ts`.
+
+| Panel | Route | Role |
+| --- | --- | --- |
+| Alignment input | `liner.setup` | Domain edit (alignment, profile, grid defs) |
+| Station table | `liner.setup` | Read-only `stations` after compute |
+| Grid preview | `liner.preview` | Plan/profile canvas from intermediate |
+| Diagnostics | `liner.preview` | `ComputationDiagnostic[]` display |
+| Mapping review | `liner.mappingReview` | Mapper output preview before merge |
+| Headless generation summary | `liner.mappingReview` | P1-5 validation readiness |
+
+Full inventory: [ui_preparation.md](ui_preparation.md).
+
 ## Open Questions
 
-- Modal dialog vs. dedicated route `/liner`?
 - Dock liner inside main window vs. separate BrowserWindow in Electron?
 - Dark/light theme inheritance from app?
 
@@ -46,6 +60,7 @@ Define the original window and panel structure for the liner module without repl
 ## Pre-Implementation Checklist
 
 - [ ] Wireframe sketch (original layout) approved.
-- [ ] i18n key groups enumerated for all menus and panels.
-- [ ] Entry point from main menu documented.
+- [x] i18n key groups enumerated (`liner.*` in `ja.ts`; see [ui_preparation.md](ui_preparation.md)).
+- [x] Route/panel ids and reserved paths documented (P1-6).
+- [ ] Entry point from main menu wired in React.
 - [ ] No JIP-LINER menu hierarchy copied.

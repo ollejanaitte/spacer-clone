@@ -46,6 +46,22 @@ Per [validation_rules.md](validation_rules.md) and [error_handling.md](error_han
 
 After edit introduces error: show **last good** intermediate with stale/error overlay; views remain navigable but export buttons disabled.
 
+### P1-6 workflow boundaries
+
+UI orchestrates these steps in order ([ui_preparation.md](ui_preparation.md)); each step calls existing pure functions only:
+
+| Step | UI responsibility | Backend entry point |
+| --- | --- | --- |
+| `editInput` | Draft + commit domain edits | project / `BuildIntermediateInput` |
+| `computeIntermediate` | Trigger pipeline, show progress | `buildIntermediateResult()` |
+| `reviewDiagnostics` | Render diagnostics panel; no duplicate validation | read `diagnostics[]` |
+| `generateFrameMapping` | User-initiated mapper | `mapToFrameModel()` |
+| `attachProjectExtension` | Merge liner metadata | `attachLinerMappingToProject()` |
+| `runHeadlessValidation` | Optional pre-merge check | `createHeadlessLinerFrameProject()` |
+| Hand off | Navigate to existing 3D viewer / analysis | unchanged app flows |
+
+Diagnostics: display `messageKey` via i18n (`liner.errors.*`); codes remain English `LINER_*`.
+
 ## Open Questions
 
 - Direct canvas manipulation in MVP or form-only input?
@@ -63,6 +79,7 @@ After edit introduces error: show **last good** intermediate with stale/error ov
 ## Pre-Implementation Checklist
 
 - [ ] Edit flows documented per entity type.
-- [ ] Validation message i18n keys listed.
+- [x] Validation message i18n key group `liner.errors` reserved (P1-6).
+- [x] Workflow step ids and gating matrix linked to pipeline entry points (P1-6).
 - [ ] Selection model defined.
 - [ ] Export/generate buttons gated on validation + ready state.
