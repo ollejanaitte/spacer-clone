@@ -83,7 +83,7 @@ Define the on-disk format for persisting liner domain input, settings, and optio
 }
 ```
 
-P1-4 persists integration metadata and trace entries produced by `createLinerProjectExtension()` / `attachLinerMappingToProject()` in `frontend/src/liner/schema/`. A future phase may extend the same top-level `liner` object with full editable domain entities from [domain_model.md](domain_model.md).
+P1-4 persists integration metadata and trace entries produced by `createLinerProjectExtension()` / `attachLinerMappingToProject()` in `frontend/src/liner/schema/`. P1-5 adds `createHeadlessLinerFrameProject()` in `frontend/src/liner/headless/` to assemble full `nodes` / `members` / `supports` plus `liner` / `linerTrace` for headless validation and analysis smoke tests. Documented fixture materials (`MAT_LINER_*`, `SEC_LINER_*`) are placeholders for tests only.
 
 `linerTrace` defined in [integration_with_frame_model.md](integration_with_frame_model.md). Schema extension in [schema_migration_policy.md](schema_migration_policy.md).
 

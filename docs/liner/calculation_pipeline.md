@@ -66,6 +66,8 @@ function runMapper(intermediate: LinerIntermediateResult, settings: GenerationSe
 
 Both exported from `liner-core` package; no HTTP or React imports.
 
+**P1-5:** Headless assembly is `createHeadlessLinerFrameProject()` (`frontend/src/liner/headless/`), chaining pipeline output and mapper output into a validation-ready project without React or file I/O.
+
 ### 4. Re-sampling policy
 
 Changing polyline sample spacing or grid density requires re-running affected stages (2–5). Export/render modules must not invoke geometry routines directly.
@@ -95,3 +97,4 @@ Post-MVP: async generator yielding stage ids for progress UI.
 - [x] sourceRevision rules documented.
 - [x] MVP TypeScript-only boundary documented.
 - [ ] Integration test covers full pipeline on GC-06.
+- [x] Headless GC-06 assembly and schema validation covered in P1-5 headless tests.

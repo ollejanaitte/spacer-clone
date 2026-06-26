@@ -63,6 +63,10 @@ User runs analysis (existing flow)
 
 Pipeline: **alignment → stations → grid → nodes → members → frame analysis model**.
 
+**P1-5 headless path (no UI):** `buildIntermediateResult()` → `mapToFrameModel()` → `createHeadlessLinerFrameProject()` in `frontend/src/liner/headless/`. The helper assembles a `project.json`-compatible object, attaches P1-4 `liner` / `linerTrace`, and validates against `schemas/project.schema.json` plus reference integrity. Backend `validate_project` / `run_analysis` can be invoked from tests or automation when Python dependencies are available.
+
+**P1-5 analysis boundary:** Projects without support templates remain schema-valid but fail linear static analysis (`MODEL_UNSTABLE`). P1-6/P1-7 must supply user-facing generate workflow and default support templates for production analysis-ready models.
+
 ### 3. Layer responsibilities
 
 | Layer | Responsibility |
@@ -188,4 +192,5 @@ Each liner model has unique `linerModelId`. Merge/replace operates per model ID.
 - [x] MVP TypeScript-only execution boundary decided.
 - [x] Bridge wizard reuse policy: separate mapper, shared helpers only.
 - [ ] Golden fixture passes schema validation when implemented.
+- [x] Headless GC-06 pipeline validates via `createHeadlessLinerFrameProject` tests (P1-5).
 - [ ] UI entry points and i18n key groups listed.
