@@ -29,6 +29,15 @@ This document is a **highest-priority** design artifact; geometry correctness is
 - Tolerances defined in [numerical_accuracy.md](numerical_accuracy.md).
 - Golden JSON fixtures stored under `examples/liner/` (when implementing).
 - **First implementation task:** write tests from this plan so they fail, then implement until they pass.
+- Numeric values in this document are design expected values. A documentation-only edit does not establish that the current implementation passes them.
+
+### Verification status terms
+
+| Term | Meaning |
+| --- | --- |
+| Design expected | Value or behavior fixed by this document and ready to be encoded as a test expectation. |
+| Requires local verification | Needs local test execution, schema validation, benchmark execution, or generated fixture comparison before it can be marked passing. |
+| Deferred | Not required for the current phase unless a later task explicitly scopes it. |
 
 ## Design Topics
 
@@ -46,14 +55,14 @@ This document is a **highest-priority** design artifact; geometry correctness is
 
 | Quantity | Absolute tolerance | Notes |
 | --- | --- | --- |
-| Length (m) | 1e-6 | |
-| Coordinates (m) | 1e-6 | Lines, arcs |
-| Coordinates (m) | 1e-3 | Clothoid endpoints |
-| Azimuth (rad) | 1e-9 | |
-| Elevation (m) | 1e-6 | |
-| Physical distance (m) | 1e-6 | |
-| Displayed station (m) | 1e-6 | |
-| Offset (m) | 1e-4 | Inverse projection |
+| Length (m) | 1e-6 | Design expected; requires local verification in tests |
+| Coordinates (m) | 1e-6 | Lines, arcs; requires local verification in tests |
+| Coordinates (m) | 1e-3 | Clothoid endpoints; requires independent reference and local verification |
+| Azimuth (rad) | 1e-9 | Requires local verification in tests |
+| Elevation (m) | 1e-6 | Requires local verification in tests |
+| Physical distance (m) | 1e-6 | Requires local verification in tests |
+| Displayed station (m) | 1e-6 | Requires local verification in tests |
+| Offset (m) | 1e-4 | Inverse projection; requires local verification in tests |
 
 ### 3. Golden case catalog — numeric expected values
 
@@ -77,6 +86,8 @@ This document is a **highest-priority** design artifact; geometry correctness is
 | Midpoint at s = L/2 (x, y) | (129.409522, 17.037087) m |
 | Midpoint azimuth (rad) | π/12 ≈ 0.261799 |
 | Arc length (m) | 261.799388 |
+
+Status: **Design expected.** The corrected midpoint y value follows the documented circular arc equation. The implementation still requires local verification by the GC-02 unit/golden test.
 
 #### GC-03: Line–arc compound
 
@@ -134,6 +145,8 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 
 **Mapper output:** See [frame_model_mapping.md](frame_model_mapping.md) §8 — 9 nodes, 12 members, 6 boundary supports. Fixture `gc-06-project.generated.json` must pass schema validation.
 
+Status: **Requires local verification.** The mapper fixture must be generated and schema-validated locally before Phase 1 completion.
+
 #### GC-07: Skewed alignment (45° azimuth)
 
 **Input:** Straight from (0,0), azimuth π/4, length 100 m. Query point at physical distance 50, offset +5 (left).
@@ -156,6 +169,8 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 | Clothoid end κ = 0.002 | 1e-6 1/m |
 | Compound end point | Reference: independent Simpson integration or published table |
 
+Status: **Requires local verification.** GC-08 is not production-blocking until an independent numeric reference is committed and the local test passes.
+
 #### GC-09: Arc → clothoid → straight
 
 **Input:** Reverse of GC-08 pattern; κ: 0.002 → 0 over clothoid length 50 m.
@@ -163,6 +178,8 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 | Check | Tolerance |
 | --- | --- |
 | G1/G2 continuity at clothoid–straight joint | 1e-3 m, 1e-6 rad |
+
+Status: **Requires local verification.** GC-09 depends on the same independent clothoid reference method as GC-08.
 
 #### GC-10: Egg-shaped transition (finite radii)
 
@@ -173,6 +190,8 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 | Start κ = 1/800 | 1e-6 1/m |
 | End κ = 1/500 | 1e-6 1/m |
 | Endpoint coordinates | 1e-3 m (Simpson reference) |
+
+Status: **Requires local verification.** GC-10 remains blocked until an independent reference and local fixture comparison are available.
 
 ### 4. Degenerate case tests
 
@@ -192,6 +211,8 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 4. Run mapper for GC-06 → `gc-06-project.generated.json`; validate against schema.
 5. On intentional algorithm change, update expected with review.
 
+All workflow steps above are **requires local verification** until the referenced tests, generated files, and schema checks are actually run.
+
 ### 6. Inverse projection tests
 
 For `stationAtPoint(x, y)`:
@@ -208,7 +229,7 @@ For `stationAtPoint(x, y)`:
 | 10 alignments, 500 stations each | < 2 s | Soft limit |
 | Mapper 5000 nodes + 8000 members | < 200 ms | Soft limit |
 
-Not blocking CI initially; tracked as benchmark.
+Not blocking CI initially; tracked as benchmark. Performance targets are **requires local verification** and must not be recorded as passing from documentation review alone.
 
 ### 8. Test file layout (proposed)
 
@@ -234,12 +255,12 @@ examples/liner/
 
 ### 9. CI gate criteria (MVP)
 
-| Gate | Required in CI |
-| --- | --- |
-| GC-01 through GC-07 unit/golden | Yes |
-| GC-08 through GC-10 clothoid | Yes before clothoid MVP ships |
-| GC-06 schema validation | Yes |
-| Performance smoke | Optional benchmark job |
+| Gate | Required in CI | Status before local execution |
+| --- | --- | --- |
+| GC-01 through GC-07 unit/golden | Yes | Requires local verification |
+| GC-08 through GC-10 clothoid | Yes before clothoid MVP ships | Requires independent reference and local verification |
+| GC-06 schema validation | Yes | Requires local verification |
+| Performance smoke | Optional benchmark job | Deferred / requires local verification |
 
 ## Open Questions
 
@@ -257,12 +278,3 @@ examples/liner/
 - [profile_rules.md](profile_rules.md)
 - [performance_limits.md](performance_limits.md)
 - [docs/12_quality_gate.md](../12_quality_gate.md)
-
-## Pre-Implementation Checklist
-
-- [x] Golden case GC-01 through GC-07 specified with numeric expected values.
-- [x] Clothoid golden cases GC-08 through GC-10 defined.
-- [x] GC-06 mapper fixture and schema validation path defined.
-- [x] Tolerance table aligned with numerical_accuracy doc.
-- [ ] Fixture directory convention agreed in repo.
-- [ ] CI inclusion criteria implemented.
