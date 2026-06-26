@@ -123,3 +123,76 @@ def test_project_schema_accepts_saved_eigen_and_influence_settings(
     validator = jsonschema.Draft202012Validator(project_schema)
 
     assert list(validator.iter_errors(project)) == []
+
+
+def test_project_schema_accepts_optional_liner_and_liner_trace(
+    project_schema: dict, example_project: dict
+) -> None:
+    project = copy.deepcopy(example_project)
+    project["liner"] = {
+        "schemaVersion": "0.1.0",
+        "sourceRevision": "abc123",
+        "linerModelId": "gc06",
+        "coordinatePolicyId": "global",
+        "intermediateSchemaVersion": "0.2.0",
+        "generatedAt": "2026-01-01T00:00:00.000Z",
+        "source": {
+            "alignmentId": "alignment-1",
+            "gridDefinitionId": "grid-1",
+        },
+    }
+    project["linerTrace"] = [
+        {
+            "frameEntityId": "N_LINER_gc06_000_000",
+            "frameEntityType": "node",
+            "linerModelId": "gc06",
+            "coordinatePolicyId": "global",
+            "sourceRevision": "abc123",
+            "gridPointId": "GP-gc06-000-000",
+        }
+    ]
+
+    validator = jsonschema.Draft202012Validator(project_schema)
+
+    assert list(validator.iter_errors(project)) == []
+
+
+def test_project_schema_rejects_invalid_liner_trace_entity_type(
+    project_schema: dict, example_project: dict
+) -> None:
+    project = copy.deepcopy(example_project)
+    project["linerTrace"] = [
+        {
+            "frameEntityId": "N_LINER_gc06_000_000",
+            "frameEntityType": "beam",
+            "linerModelId": "gc06",
+            "coordinatePolicyId": "global",
+            "sourceRevision": "abc123",
+        }
+    ]
+
+    validator = jsonschema.Draft202012Validator(project_schema)
+    errors = list(validator.iter_errors(project))
+
+    assert errors
+    assert any("frameEntityType" in error.message for error in errors)
+
+
+def test_project_schema_rejects_missing_liner_trace_source_revision(
+    project_schema: dict, example_project: dict
+) -> None:
+    project = copy.deepcopy(example_project)
+    project["linerTrace"] = [
+        {
+            "frameEntityId": "N_LINER_gc06_000_000",
+            "frameEntityType": "node",
+            "linerModelId": "gc06",
+            "coordinatePolicyId": "global",
+        }
+    ]
+
+    validator = jsonschema.Draft202012Validator(project_schema)
+    errors = list(validator.iter_errors(project))
+
+    assert errors
+    assert any("sourceRevision" in error.message for error in errors)

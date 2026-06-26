@@ -199,6 +199,15 @@
           "$ref": "#/$defs/timeHistoryResult"
         }
       }
+    },
+    "liner": {
+      "$ref": "#/$defs/projectLinerMetadata"
+    },
+    "linerTrace": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/linerTraceEntry"
+      }
     }
   },
   "$defs": {
@@ -1107,6 +1116,148 @@
         "sampleCount": {
           "type": "integer",
           "minimum": 0
+        }
+      }
+    },
+    "projectLinerMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "sourceRevision",
+        "linerModelId",
+        "coordinatePolicyId",
+        "intermediateSchemaVersion"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "linerModelId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinatePolicyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intermediateSchemaVersion": {
+          "const": "0.2.0"
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "alignmentId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "gridDefinitionId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "linerTraceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frameEntityId",
+        "frameEntityType",
+        "linerModelId",
+        "coordinatePolicyId",
+        "sourceRevision"
+      ],
+      "properties": {
+        "frameEntityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frameEntityType": {
+          "type": "string",
+          "enum": [
+            "node",
+            "member",
+            "support"
+          ]
+        },
+        "linerModelId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinatePolicyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gridPointId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gridLineId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gridCellId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gridPointIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "physicalDistance": {
+          "type": "number"
+        },
+        "displayedStation": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "spanId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pierId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memberDirection": {
+          "type": "string",
+          "enum": [
+            "longitudinal",
+            "transverse"
+          ]
+        },
+        "memberGroupKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supportTemplateId": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

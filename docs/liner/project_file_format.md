@@ -56,12 +56,34 @@ Define the on-disk format for persisting liner domain input, settings, and optio
 
 ```json
 {
-  "liner": { "...domain as above..." },
-  "linerTrace": [],
+  "liner": {
+    "schemaVersion": "0.1.0",
+    "sourceRevision": "abc123…",
+    "linerModelId": "gc06",
+    "coordinatePolicyId": "global",
+    "intermediateSchemaVersion": "0.2.0",
+    "generatedAt": "2026-01-01T00:00:00.000Z",
+    "source": {
+      "alignmentId": "alignment-1",
+      "gridDefinitionId": "grid-1"
+    }
+  },
+  "linerTrace": [
+    {
+      "frameEntityId": "N_LINER_gc06_001_001",
+      "frameEntityType": "node",
+      "linerModelId": "gc06",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "abc123…",
+      "gridPointId": "GP-gc06-001-001"
+    }
+  ],
   "nodes": [],
   "members": []
 }
 ```
+
+P1-4 persists integration metadata and trace entries produced by `createLinerProjectExtension()` / `attachLinerMappingToProject()` in `frontend/src/liner/schema/`. A future phase may extend the same top-level `liner` object with full editable domain entities from [domain_model.md](domain_model.md).
 
 `linerTrace` defined in [integration_with_frame_model.md](integration_with_frame_model.md). Schema extension in [schema_migration_policy.md](schema_migration_policy.md).
 

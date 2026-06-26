@@ -1,3 +1,5 @@
+import type { PersistedLinerTraceEntry, ProjectLinerMetadata } from "./liner/schema/types";
+
 export type ProjectInfo = {
   id: string;
   name: string;
@@ -186,6 +188,10 @@ export type ProjectModel = {
   analysisResults?: {
     timeHistory?: TimeHistoryResult | null;
   };
+  /** Optional liner integration metadata from intermediate result / frame mapper output. */
+  liner?: ProjectLinerMetadata;
+  /** Optional trace table linking generated frame entities to liner grid sources. */
+  linerTrace?: PersistedLinerTraceEntry[];
 };
 
 export type StructuredMessage = {

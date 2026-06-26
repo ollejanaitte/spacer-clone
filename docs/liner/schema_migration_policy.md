@@ -39,13 +39,21 @@ Define how liner project, intermediate result, and **project.json extension** sc
 
 | Change | Version | Status |
 | --- | --- | --- |
-| Optional top-level `liner` object | project schema minor bump | Planned |
-| Optional top-level `linerTrace[]` | project schema minor bump | Planned |
+| Optional top-level `liner` object | project schema minor bump | **Implemented (P1-4)** |
+| Optional top-level `linerTrace[]` | project schema minor bump | **Implemented (P1-4)** |
 | Optional `meta` on `node`/`member` | project schema minor bump | Under review |
 
 **MVP without meta:** Use `linerTrace` + ID prefix until `meta` approved.
 
-Migration function: `(oldProjectJson) => newProjectJson` adds empty `linerTrace` if missing.
+Migration helpers live in `frontend/src/liner/schema/projectLinerMigration.ts`. Old projects without `liner` or `linerTrace` remain valid. When liner metadata is present but `linerTrace` is omitted, `ensureProjectLinerTraceArray()` can add an empty trace array during load.
+
+Persisted `liner` metadata (P1-4) stores integration provenance from the canonical intermediate result:
+
+- `schemaVersion`: liner integration block version (`0.1.0`)
+- `sourceRevision`, `linerModelId`, `coordinatePolicyId`, `intermediateSchemaVersion`
+- optional `generatedAt`, `source.alignmentId`, `source.gridDefinitionId`
+
+Full liner domain persistence remains a separate future extension of the same top-level `liner` object.
 
 ### 4. Golden validation path
 
