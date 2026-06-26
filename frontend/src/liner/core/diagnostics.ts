@@ -14,7 +14,12 @@ export const LINER_DIAGNOSTIC_CODES = {
   duplicateStationEquation: "LINER_STATION_DUPLICATE_EQUATION",
   stationOutOfRange: "LINER_STATION_OUT_OF_RANGE",
   gridSpacingInvalid: "LINER_GRID_SPACING_INVALID",
+  missingFrameNode: "LINER_FRAME_MISSING_NODE",
+  missingFrameSection: "LINER_FRAME_MISSING_SECTION",
   zeroLengthMember: "LINER_FRAME_ZERO_LENGTH_MEMBER",
+  disconnectedFrame: "LINER_FRAME_DISCONNECTED",
+  duplicateFrameId: "LINER_FRAME_DUPLICATE_ID",
+  invalidFrameSchema: "LINER_FRAME_SCHEMA_INVALID",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export function createIssue(

@@ -21,6 +21,14 @@ export function frameMemberId(
   return `M_LINER_${linerModelId}_${direction}_${padIndex(longitudinalIndex)}_${padIndex(transverseIndex)}`;
 }
 
+export function frameSupportId(
+  linerModelId: string,
+  templateId: string,
+  nodeId: string,
+): string {
+  return `S_LINER_${linerModelId}_${templateId}_${nodeId}`;
+}
+
 export function frameNodeIdForGridPoint(point: GridPointPreparation): string {
   return frameNodeId(
     point.id.split("-")[1] ?? "unknown",
