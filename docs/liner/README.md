@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This folder contains pre-implementation design documents for the **Linear Coordinate Calculation System** — an original, functionally equivalent capability planned as an extension to the existing 3D frame analysis application. The system computes alignment geometry, stationing, profiles, and grid coordinates, then converts the results into the existing frame analysis model (`project.json`).
+This folder contains design documents for the **Linear Coordinate Calculation System** — an original, functionally equivalent capability planned as an extension to the existing 3D frame analysis application. The system computes alignment geometry, stationing, profiles, and grid coordinates, then converts the results into the existing frame analysis model (`project.json`).
 
-These documents are **design skeletons only**. No implementation code belongs here.
+These documents are **design source material and gate records**. Implementation code does not belong here, but implementation status may be recorded here when it affects phase boundaries or downstream design work.
 
 ## Document Status (design phase)
 
@@ -35,11 +35,23 @@ These documents are **design skeletons only**. No implementation code belongs he
 | [logging_and_debug.md](logging_and_debug.md) | Medium | Draft | Debug tooling |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
-**Overall:** Architecture direction approved; implementation contracts for core pipeline reviewed. Full implementation remains gated on golden fixture implementation and `project.schema.json` extension PR.
+**Overall:** Architecture direction is approved. Phase 0 has an isolated TypeScript implementation record, but full Phase 1 implementation remains gated on canonical intermediate-result convergence, golden fixture implementation, local test execution, and `project.schema.json` extension PR.
+
+## Current phase boundaries
+
+| Phase | Status | Boundary |
+| --- | --- | --- |
+| Phase 0 | Implemented in isolated module, per [phase0_implementation_summary.md](phase0_implementation_summary.md) | Pure TypeScript liner core, minimal geometry/station/grid preparation, no UI/output/schema/analysis connection |
+| Phase 1 | Pending / in alignment review | Converge runtime result shape to [intermediate_result_model.md](intermediate_result_model.md), add fixtures, mapper, schema extension, and headless analysis connection |
+| Phase 2+ | Deferred | UI workflow, CAD/report/export surfaces, advanced geometry, production polishing |
+
+A documentation-only review may clarify wording, expected values, responsibility boundaries, and verification criteria. It must not claim that local commands, Vitest, build, schema validation, or headless analysis have passed unless those commands were actually run in the implementation environment.
 
 ## Reading Order
 
 Follow this order when filling in detailed design or starting implementation.
+
+The section labels below are **document-reading phases**, not the project implementation gates above. Use the current phase-boundary table when deciding what is already implemented, pending, or deferred.
 
 ### Phase 1 — Foundation (read first)
 
