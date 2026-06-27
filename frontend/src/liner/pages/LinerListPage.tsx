@@ -11,7 +11,7 @@ export type LinerListPageProps = {
 };
 
 export type LinerReservedRoutePageProps = {
-  routeId: Exclude<LinerUiRouteId, "liner.list">;
+  routeId: Exclude<LinerUiRouteId, "liner.list" | "liner.setup">;
   onClose: () => void;
   onBackToList: () => void;
 };
@@ -131,10 +131,7 @@ export function LinerListPage({ project, onClose, onCreate, onOpenSetup }: Liner
   );
 }
 
-function reservedRouteTitle(routeId: Exclude<LinerUiRouteId, "liner.list">): string {
-  if (routeId === "liner.setup") {
-    return ja.liner.panels.alignmentInput;
-  }
+function reservedRouteTitle(routeId: Exclude<LinerUiRouteId, "liner.list" | "liner.setup">): string {
   if (routeId === "liner.preview") {
     return ja.liner.panels.gridPreview;
   }

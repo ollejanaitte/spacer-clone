@@ -190,6 +190,8 @@ export const LINER_I18N_KEY_GROUPS = [
   "liner.toolbar",
   "liner.window",
   "liner.list",
+  "liner.editor",
+  "liner.fields",
   "liner.panels",
   "liner.workflow",
   "liner.actions",

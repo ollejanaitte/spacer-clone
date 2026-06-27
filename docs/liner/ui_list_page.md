@@ -22,7 +22,7 @@ Define the Phase2 P2-2 line-list UI surface before implementing edit, station/pr
 | Route id | Path | Purpose |
 | --- | --- | --- |
 | `liner.list` | `/pro/liner` | List entry point for current project liner models and draft creation. |
-| `liner.setup` | `/pro/liner/setup` | Form editor entry point implemented in later P2 tasks. |
+| `liner.setup` | `/pro/liner/setup` | Form editor entry point implemented in P2-3. |
 
 The list route is additive. Existing P1-6 setup, preview, and mapping-review route ids remain unchanged.
 
@@ -42,7 +42,7 @@ P2-2 must not treat `project.liner` as a full domain registry. P2-1 confirmed th
 - The toolbar opens `/pro/liner`.
 - Closing the list returns to `/pro`.
 - Selecting the create action navigates to `/pro/liner/setup`.
-- Until setup, preview, and mapping-review pages are implemented, reserved liner routes render a liner-scoped placeholder instead of falling through to the main workspace.
+- Until preview and mapping-review pages are implemented, reserved liner routes render a liner-scoped placeholder instead of falling through to the main workspace. The setup route is replaced by the P2-3 editor.
 - The page shows an empty state when no `project.liner` metadata exists.
 - All user-visible Japanese strings are under `ja.liner.*`.
 - CSS selectors use global `liner-*` kebab-case classes in `frontend/src/styles.css`.
@@ -52,4 +52,4 @@ P2-2 must not treat `project.liner` as a full domain registry. P2-1 confirmed th
 | Fact | Decision needed |
 | --- | --- |
 | Full editable liner domain persistence is not implemented. | Whether the list should later become a project-level registry, a file browser, or both. |
-| `/pro/liner/setup` is only reserved at P2-2. | P2-2 uses a placeholder; P2-3 should replace it with the actual editor. |
+| `/pro/liner/setup` is implemented as an in-memory draft editor in P2-3. | Decide how editable draft persistence should work in a later task. |

@@ -28,7 +28,7 @@ Internal route ids and reserved URL paths:
 | `liner.preview` | `/pro/liner/preview` | grid preview, diagnostics |
 | `liner.mappingReview` | `/pro/liner/mapping-review` | mapping review, headless generation summary |
 
-Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2; setup, preview, and mapping review remain reserved until their implementation tasks.
+Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2. `liner.setup` is implemented as a form-centered local draft editor in P2-3; preview and mapping review remain reserved until their implementation tasks.
 
 ## Panel inventory
 
@@ -74,6 +74,8 @@ Reserved groups in `ja.liner`:
 - `liner.toolbar` — main app entry, compute, generate
 - `liner.window` — window title, status bar
 - `liner.list` — line list page headings, empty state, and table labels
+- `liner.editor` — setup page headings, help text, and draft summary labels
+- `liner.fields` — setup form field labels
 - `liner.panels` — panel headings and empty states
 - `liner.workflow` — step labels and gating messages
 - `liner.actions` — buttons and confirmations
@@ -106,5 +108,6 @@ Diagnostic display: UI reads `messageKey` from core/headless diagnostics only; n
 - [x] i18n key groups listed.
 - [x] Preparation constants exported from `frontend/src/liner/uiPreparation.ts`.
 - [x] React route registered for `liner.list` in app shell (P2-2).
-- [ ] React routes registered for setup, preview, and mapping review.
+- [x] React route registered for setup in app shell (P2-3).
+- [ ] React routes registered for preview and mapping review.
 - [ ] Panel components implemented.
