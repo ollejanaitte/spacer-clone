@@ -37,8 +37,8 @@ Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as
 | Panel | Route | Role |
 | --- | --- | --- |
 | Liner list | `liner.list` | Current project liner metadata and draft entry |
-| Alignment input | `liner.setup` | Local draft edit for metadata, station settings, offsets, and MVP straight elements |
-| Station table | `liner.setup` | Deferred; P2-3 does not compute intermediate stations |
+| Alignment input | `liner.setup` | Local draft edit for metadata, station/profile settings, offsets, and MVP straight elements |
+| Station table | `liner.setup` | Deferred computed output; P2-4 only edits station/profile input rows |
 | Grid preview | `liner.preview` | Plan/profile canvas from intermediate |
 | Diagnostics | `liner.preview` | `ComputationDiagnostic[]` display |
 | Mapping review | `liner.mappingReview` | Mapper output preview before merge |

@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
+  addLinerExplicitStation,
+  addLinerOffset,
   addLinerStraightElement,
+  addLinerStationEquation,
   createDefaultLinerDraft,
+  removeLinerExplicitStation,
+  removeLinerOffset,
   removeLinerAlignmentElement,
+  removeLinerStationEquation,
   summarizeLinerDraft,
+  updateLinerExplicitStation,
+  updateLinerOffset,
   updateLinerAlignmentMetadata,
   updateLinerDraftSettings,
   updateLinerStationDefinition,
+  updateLinerStationEquation,
   updateLinerStraightElement,
 } from "./linerUiAdapter";
 
@@ -58,5 +67,58 @@ describe("linerUiAdapter", () => {
       offsetCount: 1,
       totalDeclaredLength: 150,
     });
+  });
+
+  it("adds, updates, and removes explicit stations immutably", () => {
+    const draft = createDefaultLinerDraft();
+    const added = addLinerExplicitStation(draft);
+    const updated = updateLinerExplicitStation(added, 0, 42);
+    const removed = removeLinerExplicitStation(updated, 0);
+
+    expect(draft.stationDefinition.explicitStations).toBeUndefined();
+    expect(added.stationDefinition.explicitStations).toEqual([0]);
+    expect(updated.stationDefinition.explicitStations).toEqual([42]);
+    expect(removed.stationDefinition.explicitStations).toEqual([]);
+  });
+
+  it("adds, updates, and removes station equations immutably", () => {
+    const draft = createDefaultLinerDraft();
+    const added = addLinerStationEquation(draft);
+    const updated = updateLinerStationEquation(added, "EQ1", {
+      physicalDistance: 30,
+      type: "reset_to_value",
+      value: 100,
+      sortIndex: 2,
+    });
+    const removed = removeLinerStationEquation(updated, "EQ1");
+
+    expect(added.stationDefinition.equations?.[0]).toMatchObject({
+      id: "EQ1",
+      physicalDistance: 0,
+      type: "add_constant",
+      value: 0,
+      sortIndex: 1,
+    });
+    expect(updated.stationDefinition.equations?.[0]).toMatchObject({
+      id: "EQ1",
+      physicalDistance: 30,
+      type: "reset_to_value",
+      value: 100,
+      sortIndex: 2,
+    });
+    expect(removed.stationDefinition.equations).toEqual([]);
+  });
+
+  it("adds, updates, and removes offsets while keeping at least one offset", () => {
+    const draft = createDefaultLinerDraft();
+    const added = addLinerOffset(draft);
+    const updated = updateLinerOffset(added, 1, 4);
+    const removed = removeLinerOffset(updated, 0);
+    const retained = removeLinerOffset(removed, 0);
+
+    expect(added.offsets).toEqual([0, 0]);
+    expect(updated.offsets).toEqual([0, 4]);
+    expect(removed.offsets).toEqual([4]);
+    expect(retained).toBe(removed);
   });
 });

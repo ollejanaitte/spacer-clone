@@ -61,12 +61,13 @@ Disallowed P2-3 adapter responsibilities:
 
 - The setup route renders a form page instead of the P2-2 reserved route placeholder.
 - Metadata fields edit `alignment.id`, `alignment.linerModelId`, and `alignment.coordinatePolicyId`.
-- Station fields edit `originDisplayedStation`, `interval`, `sampleInterval`, and flat `z`.
+- Station/profile fields are delegated to `LinerStationProfilePanel` in P2-4.
+- Station fields edit `originDisplayedStation`, `interval`, explicit station distances, station equations, `sampleInterval`, and flat `z`.
 - Offset fields edit a numeric list in draft state.
 - The alignment table supports straight element rows in the MVP.
 - Unsupported arc/clothoid rows, if supplied by a future draft source, are preserved and shown as non-editable for type-specific fields.
 - The page shows a draft summary based only on raw draft values.
-- All user-visible strings live under `ja.liner.*`.
+- Feature-specific user-visible strings live under `ja.liner.*`; generic row add/remove actions reuse `ja.common.addRow` and `ja.common.removeRow`.
 - CSS selectors use global `liner-*` kebab-case classes in `frontend/src/styles.css`.
 
 ## Human Review Required
@@ -75,4 +76,4 @@ Disallowed P2-3 adapter responsibilities:
 | --- | --- |
 | Editable domain persistence is not implemented. | Decide the durable storage model for LINER drafts before save/load behavior is added. |
 | P2-3 supports straight element form editing only. | Decide when arc and clothoid specific form controls enter the UI scope. |
-| Station/profile advanced inputs are deferred. | Decide whether P2-4 should split them into a dedicated page section or keep them in setup. |
+| Station/profile inputs are implemented as a setup-page panel in P2-4. | Decide when computed station table preview and multi-segment vertical profile input are added. |
