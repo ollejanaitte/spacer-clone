@@ -91,18 +91,24 @@ describe("LinerEditPage", () => {
 
   it("wires optional preview navigation", () => {
     const onOpenPreview = vi.fn();
+    const onOpenMappingReview = vi.fn();
     render(
       <LinerEditPage
         onClose={() => undefined}
         onBackToList={() => undefined}
         onOpenPreview={onOpenPreview}
+        onOpenMappingReview={onOpenMappingReview}
       />,
     );
 
     act(() => {
       (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
     });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-mapping-review]") as HTMLButtonElement).click();
+    });
 
     expect(onOpenPreview).toHaveBeenCalledTimes(1);
+    expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
   });
 });

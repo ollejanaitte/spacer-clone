@@ -193,6 +193,7 @@ export const LINER_I18N_KEY_GROUPS = [
   "liner.editor",
   "liner.fields",
   "liner.preview",
+  "liner.mappingReview",
   "liner.panels",
   "liner.workflow",
   "liner.actions",

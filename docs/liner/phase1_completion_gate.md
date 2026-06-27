@@ -11,7 +11,7 @@ Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateRes
 
 **P2-0 correction note:** The original gate wording said "without React routes or i18n strings." Current repository state includes `ja.liner.*` placeholder strings in `frontend/src/i18n/ja.ts` for P1-6 UI preparation; they are not wired to React components yet.
 
-**P2-5 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; P2-3 registers the `/pro/liner/setup` local draft editor and wires `ja.liner.editor.*` / `ja.liner.fields.*`; P2-4 adds station/profile input rows under the same setup route; P2-5 registers the `/pro/liner/preview` read-only SVG preview; mapping-review remains reserved.
+**P2-6 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; P2-3 registers the `/pro/liner/setup` local draft editor and wires `ja.liner.editor.*` / `ja.liner.fields.*`; P2-4 adds station/profile input rows under the same setup route; P2-5 registers the `/pro/liner/preview` read-only SVG preview; P2-6 registers `/pro/liner/mapping-review` for mapping review and Viewer3D confirmation.
 
 **Gate decision: FAIL**
 

@@ -3681,10 +3681,217 @@ button:disabled {
   background: #eef5fb;
 }
 
+.liner-mapping-page {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.liner-mapping-header,
+.liner-mapping-header-actions,
+.liner-mapping-actions button {
+  display: flex;
+  align-items: center;
+}
+
+.liner-mapping-header {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-mapping-header h1,
+.liner-mapping-header p,
+.liner-mapping-side-panel h2,
+.liner-mapping-summary,
+.liner-mapping-actions p,
+.liner-mapping-diagnostics p,
+.liner-mapping-empty h2,
+.liner-mapping-empty p {
+  margin: 0;
+}
+
+.liner-mapping-header h1 {
+  font-size: 18px;
+}
+
+.liner-mapping-header p,
+.liner-mapping-actions p,
+.liner-mapping-diagnostics p,
+.liner-mapping-empty p {
+  color: #526173;
+  font-size: 13px;
+}
+
+.liner-mapping-header-actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.liner-mapping-header button,
+.liner-mapping-actions button {
+  min-height: 32px;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-mapping-header button {
+  display: flex;
+  align-items: center;
+}
+
+.liner-mapping-actions button:disabled {
+  opacity: 0.45;
+}
+
+.liner-mapping-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 12px;
+  min-height: calc(100vh - 96px);
+}
+
+.liner-mapping-viewer-panel,
+.liner-mapping-side-panel {
+  min-width: 0;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-mapping-viewer-panel {
+  min-height: 620px;
+  overflow: hidden;
+}
+
+.liner-mapping-viewer-panel .viewer-shell {
+  min-height: 620px;
+}
+
+.liner-mapping-empty {
+  display: grid;
+  min-height: 100%;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.liner-mapping-empty h2 {
+  color: #243447;
+  font-size: 16px;
+}
+
+.liner-mapping-side-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.liner-mapping-side-panel h2 {
+  margin-bottom: 10px;
+  color: #243447;
+  font-size: 15px;
+}
+
+.liner-mapping-summary {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-mapping-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e7ef;
+}
+
+.liner-mapping-summary dt {
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-mapping-summary dd {
+  margin: 0;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-mapping-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-mapping-actions button {
+  justify-content: center;
+}
+
+.liner-mapping-diagnostics ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liner-mapping-diagnostics li {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid #d8e1ea;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.liner-mapping-diagnostics strong {
+  color: #243447;
+  font-size: 12px;
+}
+
+.liner-mapping-diagnostics span {
+  color: #243447;
+  font-size: 13px;
+}
+
+.liner-mapping-diagnostics code {
+  color: #526173;
+  font-size: 12px;
+}
+
+.liner-mapping-diagnostic-error {
+  border-color: #e7b1b1;
+  background: #fff1f1;
+}
+
+.liner-mapping-diagnostic-warning {
+  border-color: #e3c36c;
+  background: #fff7dc;
+}
+
+.liner-mapping-diagnostic-info {
+  border-color: #78a8d8;
+  background: #eef5fb;
+}
+
 @media (max-width: 860px) {
   .liner-edit-header,
   .liner-edit-layout,
-  .liner-preview-layout {
+  .liner-preview-layout,
+  .liner-mapping-layout {
     grid-template-columns: 1fr;
   }
 
@@ -3692,7 +3899,9 @@ button:disabled {
   .liner-edit-header-actions,
   .liner-edit-section-header,
   .liner-preview-header,
-  .liner-preview-header-actions {
+  .liner-preview-header-actions,
+  .liner-mapping-header,
+  .liner-mapping-header-actions {
     align-items: stretch;
     flex-direction: column;
   }

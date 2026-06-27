@@ -38,11 +38,12 @@ Implementation code does not belong in this folder. Current implementation artif
 | [ui_edit_page.md](ui_edit_page.md) | High | P2-3 design | Liner setup form UI |
 | [ui_station_profile_input.md](ui_station_profile_input.md) | High | P2-4 design | Station/profile input UI |
 | [ui_grid_preview.md](ui_grid_preview.md) | High | P2-5 design | Read-only grid preview UI |
+| [ui_mapping_review.md](ui_mapping_review.md) | High | P2-6 design | Mapping review and Viewer3D confirmation |
 | [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
 | [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
-**Overall:** Architecture direction approved; Phase1 core, mapper, schema extension, headless assembly, and UI preparation constants exist in the repository. Phase2 has started with the P2-2 list route, P2-3 setup form route, P2-4 station/profile input panel, and P2-5 read-only grid preview; mapping UI and production generate readiness remain gated by the reviews and fixture gaps tracked in [phase1_completion_gate.md](phase1_completion_gate.md).
+**Overall:** Architecture direction approved; Phase1 core, mapper, schema extension, headless assembly, and UI preparation constants exist in the repository. Phase2 has started with the P2-2 list route, P2-3 setup form route, P2-4 station/profile input panel, P2-5 read-only grid preview, and P2-6 mapping review / Viewer3D confirmation; production generate readiness remains gated by the reviews and fixture gaps tracked in [phase1_completion_gate.md](phase1_completion_gate.md).
 
 ## Reading Order
 
@@ -91,6 +92,7 @@ Follow this order when filling in detailed design or starting implementation.
 | 22 | [input_ui_behavior.md](input_ui_behavior.md) | High |
 | 23 | [rendering_strategy.md](rendering_strategy.md) | Medium |
 | 24 | [state_management.md](state_management.md) | Medium |
+| 24a | [ui_mapping_review.md](ui_mapping_review.md) | High |
 
 ### Phase 5 — Quality, Operations, and Performance
 

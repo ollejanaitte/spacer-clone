@@ -49,12 +49,14 @@ describe("LinerPreviewPage", () => {
     const onClose = vi.fn();
     const onBackToList = vi.fn();
     const onBackToSetup = vi.fn();
+    const onOpenMappingReview = vi.fn();
     render(
       <LinerPreviewPage
         draft={createDefaultLinerDraft()}
         onClose={onClose}
         onBackToList={onBackToList}
         onBackToSetup={onBackToSetup}
+        onOpenMappingReview={onOpenMappingReview}
       />,
     );
 
@@ -67,9 +69,13 @@ describe("LinerPreviewPage", () => {
     act(() => {
       (document.querySelector("[data-testid=back-to-liner-list]") as HTMLButtonElement).click();
     });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-mapping-review]") as HTMLButtonElement).click();
+    });
 
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onBackToSetup).toHaveBeenCalledTimes(1);
     expect(onBackToList).toHaveBeenCalledTimes(1);
+    expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
   });
 });
