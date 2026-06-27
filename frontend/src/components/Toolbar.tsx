@@ -1,4 +1,4 @@
-﻿import { Activity, Download, FileText, FolderOpen, LineChart, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
+﻿import { Activity, Download, FileText, FolderOpen, LineChart, Map, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 
 type ToolbarProps = {
@@ -26,6 +26,7 @@ type ToolbarProps = {
   onExportResultPdf: () => void;
   onOpenBridgeWizard: () => void;
   onOpenModelComparison?: () => void;
+  onOpenLinerList?: () => void;
 };
 
 const t = ja.toolbar;
@@ -55,6 +56,7 @@ export function Toolbar({
   onExportResultPdf,
   onOpenBridgeWizard,
   onOpenModelComparison = () => undefined,
+  onOpenLinerList,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -96,6 +98,17 @@ export function Toolbar({
             <LineChart size={16} />
             {t.bridgeWizardButton}
           </button>
+          {onOpenLinerList && (
+            <button
+              type="button"
+              onClick={onOpenLinerList}
+              title={ja.liner.toolbar.openTitle}
+              data-testid="open-liner-list"
+            >
+              <Map size={16} />
+              {ja.liner.toolbar.openButton}
+            </button>
+          )}
           <button type="button" onClick={onSave} title={t.saveTitle}>
             <Save size={16} />
             {t.saveButton}

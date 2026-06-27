@@ -11,6 +11,8 @@ Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateRes
 
 **P2-0 correction note:** The original gate wording said "without React routes or i18n strings." Current repository state includes `ja.liner.*` placeholder strings in `frontend/src/i18n/ja.ts` for P1-6 UI preparation; they are not wired to React components yet.
 
+**P2-2 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; setup, preview, and mapping-review routes remain reserved.
+
 **Gate decision: FAIL**
 
 Core P1-1 through P1-5 code paths are implemented and pass frontend checks, but explicit Phase 1 completion criteria from [phase1_intermediate_result_gap_review.md](phase1_intermediate_result_gap_review.md) §7 are not fully met: golden intermediate fixtures exist only for GC-01 and GC-06 (partial/stale), GC-02 through GC-07 fixtures are missing, example fixtures are not consumed by automated tests, and vertical profile resolution is not wired from domain input into the pipeline.
@@ -114,8 +116,8 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 
 | Item | Status | Severity | Notes |
 | --- | --- | --- | --- |
-| No React routes/components for liner | **PASS** | — | No `/pro/liner/*` registration in app shell |
-| No React-wired Japanese liner UI | **PASS** | — | `ja.liner.*` placeholders exist in `frontend/src/i18n/ja.ts`, but no liner React routes/components render them yet |
+| No React routes/components for liner | **PASS** (P2-2 superseded for list route) | — | No `/pro/liner/*` registration existed at Phase1 gate time; P2-2 adds `/pro/liner` only |
+| No React-wired Japanese liner UI | **PASS** (P2-2 superseded for list strings) | — | `ja.liner.*` placeholders existed at Phase1 gate time; P2-2 wires `ja.liner.list.*` only |
 | State boundary constants | **PASS** | — | `LINER_UI_STATE_BOUNDARIES` in `uiPreparation.ts` |
 | Workflow boundary constants | **PASS** | — | Maps to P1-1–P1-5 entry points only |
 | Accidental UI implementation | **PASS** | — | Preparation module is constants/types only |

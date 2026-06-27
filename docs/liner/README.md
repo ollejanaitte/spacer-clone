@@ -34,11 +34,12 @@ Implementation code does not belong in this folder. Current implementation artif
 | [rendering_strategy.md](rendering_strategy.md) | Medium | Draft | 2D views |
 | [logging_and_debug.md](logging_and_debug.md) | Medium | Draft | Debug tooling |
 | [ui_preparation.md](ui_preparation.md) | High | Implemented constants | Phase2 UI routing |
+| [ui_list_page.md](ui_list_page.md) | High | P2-2 design | Liner list entry UI |
 | [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
 | [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
-**Overall:** Architecture direction approved; Phase1 core, mapper, schema extension, headless assembly, and UI preparation constants exist in the repository. Phase2 UI implementation remains gated by the UI alignment review and by fixture gaps explicitly tracked in [phase1_completion_gate.md](phase1_completion_gate.md).
+**Overall:** Architecture direction approved; Phase1 core, mapper, schema extension, headless assembly, and UI preparation constants exist in the repository. Phase2 has started with the P2-2 list route; deeper setup/preview/mapping UI and production generate readiness remain gated by the reviews and fixture gaps tracked in [phase1_completion_gate.md](phase1_completion_gate.md).
 
 ## Reading Order
 

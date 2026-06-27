@@ -3088,3 +3088,143 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+.liner-list-page {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.liner-list-header,
+.liner-list-header-actions,
+.liner-list-empty button,
+.liner-list-table button {
+  display: flex;
+  align-items: center;
+}
+
+.liner-list-header {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-list-header h1,
+.liner-list-header p,
+.liner-list-empty h2,
+.liner-list-empty p {
+  margin: 0;
+}
+
+.liner-list-header h1 {
+  font-size: 18px;
+}
+
+.liner-list-header p,
+.liner-list-empty p {
+  color: #526173;
+  font-size: 13px;
+}
+
+.liner-list-header-actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.liner-list-header button,
+.liner-list-empty button,
+.liner-list-table button {
+  min-height: 32px;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-list-content {
+  min-height: 0;
+}
+
+.liner-list-empty {
+  display: grid;
+  min-height: 260px;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.liner-list-table-wrap {
+  overflow: auto;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-list-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+}
+
+.liner-list-table caption {
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.liner-list-table th,
+.liner-list-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e7ef;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.liner-list-table th {
+  color: #526173;
+  background: #f4f8fb;
+  font-size: 12px;
+}
+
+.liner-list-table td {
+  color: #243447;
+}
+
+.liner-list-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.liner-list-table td strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.liner-list-badge {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid #b9c9d8;
+  border-radius: 999px;
+  color: #35516d;
+  background: #eef5fb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-list-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}

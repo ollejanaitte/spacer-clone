@@ -19,15 +19,16 @@ Inventory route, panel, workflow, state, i18n, and entry-point boundaries for fu
 
 ## Route inventory
 
-Internal route ids and reserved URL paths (not registered until a later phase):
+Internal route ids and reserved URL paths:
 
 | Route id | Path | Primary panels |
 | --- | --- | --- |
+| `liner.list` | `/pro/liner` | liner list entry |
 | `liner.setup` | `/pro/liner/setup` | alignment input, station table |
 | `liner.preview` | `/pro/liner/preview` | grid preview, diagnostics |
 | `liner.mappingReview` | `/pro/liner/mapping-review` | mapping review, headless generation summary |
 
-Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`.
+Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2; setup, preview, and mapping review remain reserved until their implementation tasks.
 
 ## Panel inventory
 
@@ -68,10 +69,11 @@ UI must not duplicate geometry in selectors or components ([rendering_strategy.m
 
 ## i18n key groups
 
-Reserved groups in `ja.liner` (placeholders until UI phase):
+Reserved groups in `ja.liner`:
 
 - `liner.toolbar` — main app entry, compute, generate
 - `liner.window` — window title, status bar
+- `liner.list` — line list page headings, empty state, and table labels
 - `liner.panels` — panel headings and empty states
 - `liner.workflow` — step labels and gating messages
 - `liner.actions` — buttons and confirmations
@@ -103,5 +105,6 @@ Diagnostic display: UI reads `messageKey` from core/headless diagnostics only; n
 - [x] Workflow and state boundaries documented.
 - [x] i18n key groups listed.
 - [x] Preparation constants exported from `frontend/src/liner/uiPreparation.ts`.
-- [ ] React routes registered in app shell.
+- [x] React route registered for `liner.list` in app shell (P2-2).
+- [ ] React routes registered for setup, preview, and mapping review.
 - [ ] Panel components implemented.

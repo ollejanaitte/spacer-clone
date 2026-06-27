@@ -32,10 +32,11 @@ Define the original window and panel structure for the liner module without repl
 
 ## P1-6 route and panel boundaries (preparation)
 
-Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.setup`, `liner.preview`, `liner.mappingReview`. **Not registered in P1-6** — constants only in `frontend/src/liner/uiPreparation.ts`.
+Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.list`, `liner.setup`, `liner.preview`, `liner.mappingReview`. P2-2 registers `liner.list`; setup, preview, and mapping-review currently render liner-scoped placeholders until their implementation tasks.
 
 | Panel | Route | Role |
 | --- | --- | --- |
+| Liner list | `liner.list` | Current project liner metadata and draft entry |
 | Alignment input | `liner.setup` | Domain edit (alignment, profile, grid defs) |
 | Station table | `liner.setup` | Read-only `stations` after compute |
 | Grid preview | `liner.preview` | Plan/profile canvas from intermediate |
