@@ -1,14 +1,13 @@
 import { ArrowLeft, FilePlus2, Trash2 } from "lucide-react";
 import { useMemo, useState, type ChangeEvent } from "react";
 import { ja } from "../../i18n/ja";
+import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import {
   addLinerStraightElement,
   createDefaultLinerDraft,
   removeLinerAlignmentElement,
   summarizeLinerDraft,
   updateLinerAlignmentMetadata,
-  updateLinerDraftSettings,
-  updateLinerStationDefinition,
   updateLinerStraightElement,
   type LinerDraft,
   type LinerDraftAlignmentElement,
@@ -44,12 +43,6 @@ function elementTypeLabel(element: LinerDraftAlignmentElement): string {
 export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEditPageProps) {
   const [draft, setDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
   const summary = useMemo(() => summarizeLinerDraft(draft), [draft]);
-  const offsets = draft.offsets ?? [];
-
-  function updateOffset(index: number, value: number) {
-    const nextOffsets = offsets.map((offset, offsetIndex) => (offsetIndex === index ? value : offset));
-    setDraft((current) => updateLinerDraftSettings(current, { offsets: nextOffsets }));
-  }
 
   return (
     <main className="liner-edit-page" data-testid="liner-edit-page">
@@ -128,75 +121,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
         </aside>
       </div>
 
-      <section className="liner-edit-panel" aria-labelledby="liner-edit-station-title">
-        <h2 id="liner-edit-station-title">{ja.liner.editor.stationSection}</h2>
-        <div className="liner-edit-form-grid">
-          <label>
-            <span>{ja.liner.fields.originDisplayedStation}</span>
-            <input
-              type="number"
-              value={numericValue(draft.stationDefinition.originDisplayedStation)}
-              onChange={(event: TextInputEvent) => {
-                setDraft((current) =>
-                  updateLinerStationDefinition(current, {
-                    originDisplayedStation: parseNumericInput(event.currentTarget.value),
-                  }),
-                );
-              }}
-            />
-          </label>
-          <label>
-            <span>{ja.liner.fields.stationInterval}</span>
-            <input
-              type="number"
-              value={numericValue(draft.stationDefinition.interval)}
-              onChange={(event: TextInputEvent) => {
-                setDraft((current) =>
-                  updateLinerStationDefinition(current, { interval: parseNumericInput(event.currentTarget.value) }),
-                );
-              }}
-            />
-          </label>
-          <label>
-            <span>{ja.liner.fields.sampleInterval}</span>
-            <input
-              type="number"
-              value={numericValue(draft.sampleInterval)}
-              onChange={(event: TextInputEvent) => {
-                setDraft((current) =>
-                  updateLinerDraftSettings(current, { sampleInterval: parseNumericInput(event.currentTarget.value) }),
-                );
-              }}
-            />
-          </label>
-          <label>
-            <span>{ja.liner.fields.z}</span>
-            <input
-              type="number"
-              value={numericValue(draft.z)}
-              onChange={(event: TextInputEvent) => {
-                setDraft((current) => updateLinerDraftSettings(current, { z: parseNumericInput(event.currentTarget.value) }));
-              }}
-            />
-          </label>
-        </div>
-      </section>
-
-      <section className="liner-edit-panel" aria-labelledby="liner-edit-offsets-title">
-        <h2 id="liner-edit-offsets-title">{ja.liner.editor.offsetSection}</h2>
-        <div className="liner-edit-offsets">
-          {offsets.map((offset, index) => (
-            <label key={index}>
-              <span>{ja.liner.fields.offset(index + 1)}</span>
-              <input
-                type="number"
-                value={numericValue(offset)}
-                onChange={(event: TextInputEvent) => updateOffset(index, parseNumericInput(event.currentTarget.value))}
-              />
-            </label>
-          ))}
-        </div>
-      </section>
+      <LinerStationProfilePanel draft={draft} onDraftChange={setDraft} />
 
       <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
         <div className="liner-edit-section-header">

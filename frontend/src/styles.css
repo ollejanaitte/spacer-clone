@@ -3268,7 +3268,8 @@ button:disabled {
 }
 
 .liner-edit-header p,
-.liner-edit-summary p {
+.liner-edit-summary p,
+.liner-edit-help {
   color: #526173;
   font-size: 13px;
 }
@@ -3337,7 +3338,8 @@ button:disabled {
 
 .liner-edit-form-grid input,
 .liner-edit-offsets input,
-.liner-edit-table input {
+.liner-edit-table input,
+.liner-edit-table select {
   min-height: 32px;
   width: 100%;
   box-sizing: border-box;
@@ -3347,6 +3349,34 @@ button:disabled {
   background: #ffffff;
   color: #243447;
   font: inherit;
+}
+
+.liner-edit-help {
+  margin: 10px 0 0;
+}
+
+.liner-edit-inline-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  gap: 6px;
+}
+
+.liner-edit-inline-row button {
+  min-height: 32px;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+}
+
+.liner-edit-inline-row button:disabled {
+  opacity: 0.45;
+}
+
+.liner-station-equation-table {
+  min-width: 760px;
 }
 
 .liner-edit-summary {

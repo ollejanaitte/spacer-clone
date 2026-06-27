@@ -11,7 +11,7 @@ Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateRes
 
 **P2-0 correction note:** The original gate wording said "without React routes or i18n strings." Current repository state includes `ja.liner.*` placeholder strings in `frontend/src/i18n/ja.ts` for P1-6 UI preparation; they are not wired to React components yet.
 
-**P2-3 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; P2-3 registers the `/pro/liner/setup` local draft editor and wires `ja.liner.editor.*` / `ja.liner.fields.*`; preview and mapping-review routes remain reserved.
+**P2-4 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; P2-3 registers the `/pro/liner/setup` local draft editor and wires `ja.liner.editor.*` / `ja.liner.fields.*`; P2-4 adds station/profile input rows under the same setup route; preview and mapping-review routes remain reserved.
 
 **Gate decision: FAIL**
 
@@ -26,7 +26,7 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npm run typecheck` (frontend) | **PASS** | Exit 0 |
-| `npm run test -- src/liner` | **PASS** | 9 files, 42 tests |
+| `npm run test -- src/liner` | **PASS** | P2-4 observed 13 files, 61 tests |
 | `npm run lint` (frontend) | **PASS** | Exit 0 |
 | `npm run build` (frontend) | **PASS** | Vite build succeeded |
 | `python3 -m pytest backend/tests/test_project_schema.py` | **FAIL** | 2 failures (see § Tests) |
@@ -116,8 +116,8 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 
 | Item | Status | Severity | Notes |
 | --- | --- | --- | --- |
-| No React routes/components for liner | **PASS** (P2-2 superseded for list route) | — | No `/pro/liner/*` registration existed at Phase1 gate time; P2-2 adds `/pro/liner` only |
-| No React-wired Japanese liner UI | **PASS** (P2-2 superseded for list strings) | — | `ja.liner.*` placeholders existed at Phase1 gate time; P2-2 wires `ja.liner.list.*` only |
+| No React routes/components for liner | **PASS** (P2-2-P2-4 superseded for setup UI) | — | No `/pro/liner/*` registration existed at Phase1 gate time; P2-2 adds `/pro/liner`, P2-3 adds `/pro/liner/setup`, and P2-4 adds `LinerStationProfilePanel` on setup |
+| No React-wired Japanese liner UI | **PASS** (P2-2-P2-4 superseded for setup strings) | — | `ja.liner.*` placeholders existed at Phase1 gate time; P2-2 wires `ja.liner.list.*`, and P2-3/P2-4 wire `ja.liner.editor.*` / `ja.liner.fields.*` on setup |
 | State boundary constants | **PASS** | — | `LINER_UI_STATE_BOUNDARIES` in `uiPreparation.ts` |
 | Workflow boundary constants | **PASS** | — | Maps to P1-1–P1-5 entry points only |
 | Accidental UI implementation | **PASS** | — | Preparation module is constants/types only |
@@ -241,7 +241,7 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 - Canonical pipeline and mapper implementation align with design for the GC-06 straight-grid path.
 - Schema extension is additive and covered by frontend + partial backend tests.
 - Headless path validates and can run linear static analysis when supports and Python deps are present.
-- UI preparation respects layer boundaries; no accidental React or i18n implementation.
+- UI implementation through P2-4 respects layer boundaries; React setup UI uses adapter helpers and centralized i18n.
 
 ---
 

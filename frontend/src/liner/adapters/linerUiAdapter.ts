@@ -1,5 +1,5 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
-import type { AlignmentElement, LinearAlignment, StationDefinition, StraightElement } from "../core/types";
+import type { AlignmentElement, LinearAlignment, StationDefinition, StationEquation, StraightElement } from "../core/types";
 
 export type LinerDraft = BuildIntermediateInput;
 export type LinerDraftAlignmentElement = AlignmentElement;
@@ -21,6 +21,10 @@ export type LinerStraightElementPatch = Partial<{
   startY: number;
   azimuth: number;
 }>;
+
+export type LinerStationEquationPatch = Partial<
+  Pick<StationEquation, "id" | "physicalDistance" | "type" | "value" | "sortIndex">
+>;
 
 export function createDefaultLinerDraft(): BuildIntermediateInput {
   return {
@@ -113,6 +117,115 @@ export function updateLinerStraightElement(
   };
 }
 
+export function addLinerExplicitStation(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const explicitStations = draft.stationDefinition.explicitStations ?? [];
+
+  return updateLinerStationDefinition(draft, {
+    explicitStations: [...explicitStations, 0],
+  });
+}
+
+export function updateLinerExplicitStation(
+  draft: BuildIntermediateInput,
+  index: number,
+  physicalDistance: number,
+): BuildIntermediateInput {
+  const explicitStations = draft.stationDefinition.explicitStations ?? [];
+  if (!Number.isInteger(index) || index < 0 || index >= explicitStations.length) {
+    return draft;
+  }
+
+  return updateLinerStationDefinition(draft, {
+    explicitStations: explicitStations.map((station, stationIndex) =>
+      stationIndex === index ? physicalDistance : station,
+    ),
+  });
+}
+
+export function removeLinerExplicitStation(draft: BuildIntermediateInput, index: number): BuildIntermediateInput {
+  const explicitStations = draft.stationDefinition.explicitStations ?? [];
+  if (!Number.isInteger(index) || index < 0 || index >= explicitStations.length) {
+    return draft;
+  }
+
+  return updateLinerStationDefinition(draft, {
+    explicitStations: explicitStations.filter((_, stationIndex) => stationIndex !== index),
+  });
+}
+
+export function addLinerStationEquation(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const equations = draft.stationDefinition.equations ?? [];
+  const sortIndex = equations.length + 1;
+  const nextEquation: StationEquation = {
+    id: nextStationEquationId(equations),
+    physicalDistance: 0,
+    type: "add_constant",
+    value: 0,
+    sortIndex,
+  };
+
+  return updateLinerStationDefinition(draft, {
+    equations: [...equations, nextEquation],
+  });
+}
+
+export function updateLinerStationEquation(
+  draft: BuildIntermediateInput,
+  targetEquationId: string,
+  patch: LinerStationEquationPatch,
+): BuildIntermediateInput {
+  const equations = draft.stationDefinition.equations ?? [];
+
+  return updateLinerStationDefinition(draft, {
+    equations: equations.map((equation) =>
+      equation.id === targetEquationId
+        ? {
+            ...equation,
+            ...patch,
+          }
+        : equation,
+    ),
+  });
+}
+
+export function removeLinerStationEquation(
+  draft: BuildIntermediateInput,
+  targetEquationId: string,
+): BuildIntermediateInput {
+  const equations = draft.stationDefinition.equations ?? [];
+
+  return updateLinerStationDefinition(draft, {
+    equations: equations.filter((equation) => equation.id !== targetEquationId),
+  });
+}
+
+export function addLinerOffset(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const offsets = draft.offsets ?? [];
+  return updateLinerDraftSettings(draft, { offsets: [...offsets, 0] });
+}
+
+export function updateLinerOffset(draft: BuildIntermediateInput, index: number, value: number): BuildIntermediateInput {
+  const offsets = draft.offsets ?? [];
+  if (!Number.isInteger(index) || index < 0 || index >= offsets.length) {
+    return draft;
+  }
+
+  return updateLinerDraftSettings(draft, {
+    offsets: offsets.map((offset, offsetIndex) => (offsetIndex === index ? value : offset)),
+  });
+}
+
+export function removeLinerOffset(draft: BuildIntermediateInput, index: number): BuildIntermediateInput {
+  const offsets = draft.offsets ?? [];
+  if (!Number.isInteger(index) || index < 0 || index >= offsets.length || offsets.length <= 1) {
+    return draft;
+  }
+
+  return updateLinerDraftSettings(draft, {
+    offsets: offsets.filter((_, offsetIndex) => offsetIndex !== index),
+  });
+}
+
 export function addLinerStraightElement(draft: BuildIntermediateInput): BuildIntermediateInput {
   const nextElement: StraightElement = {
     id: nextStraightElementId(draft.alignment.elements),
@@ -163,6 +276,17 @@ function nextStraightElementId(elements: readonly AlignmentElement[]): string {
   while (ids.has(candidate)) {
     index += 1;
     candidate = `S${index}`;
+  }
+  return candidate;
+}
+
+function nextStationEquationId(equations: readonly StationEquation[]): string {
+  const ids = new Set(equations.map((equation) => equation.id));
+  let index = equations.length + 1;
+  let candidate = `EQ${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `EQ${index}`;
   }
   return candidate;
 }
