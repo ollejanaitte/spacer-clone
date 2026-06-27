@@ -90,6 +90,8 @@ describe("liner ui preparation", () => {
     assertUniqueLinerI18nKeyGroups();
     expect(new Set(LINER_I18N_KEY_GROUPS).size).toBe(LINER_I18N_KEY_GROUPS.length);
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.list");
+    expect(LINER_I18N_KEY_GROUPS).toContain("liner.editor");
+    expect(LINER_I18N_KEY_GROUPS).toContain("liner.fields");
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.errors");
   });
 

@@ -127,11 +127,11 @@ describe("LinerListPage", () => {
     expect(onOpenSetup).toHaveBeenCalledTimes(1);
   });
 
-  it("renders a reserved route placeholder for setup", () => {
+  it("renders a reserved route placeholder for preview", () => {
     const onBackToList = vi.fn();
     render(
       <LinerReservedRoutePage
-        routeId="liner.setup"
+        routeId="liner.preview"
         onClose={() => undefined}
         onBackToList={onBackToList}
       />,

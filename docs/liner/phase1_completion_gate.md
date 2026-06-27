@@ -11,7 +11,7 @@ Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateRes
 
 **P2-0 correction note:** The original gate wording said "without React routes or i18n strings." Current repository state includes `ja.liner.*` placeholder strings in `frontend/src/i18n/ja.ts` for P1-6 UI preparation; they are not wired to React components yet.
 
-**P2-2 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; setup, preview, and mapping-review routes remain reserved.
+**P2-3 correction note:** The Phase1 gate recorded the pre-UI state. P2-2 registers the `/pro/liner` list route and wires `ja.liner.list.*`; P2-3 registers the `/pro/liner/setup` local draft editor and wires `ja.liner.editor.*` / `ja.liner.fields.*`; preview and mapping-review routes remain reserved.
 
 **Gate decision: FAIL**
 

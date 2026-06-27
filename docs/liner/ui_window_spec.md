@@ -32,13 +32,13 @@ Define the original window and panel structure for the liner module without repl
 
 ## P1-6 route and panel boundaries (preparation)
 
-Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.list`, `liner.setup`, `liner.preview`, `liner.mappingReview`. P2-2 registers `liner.list`; setup, preview, and mapping-review currently render liner-scoped placeholders until their implementation tasks.
+Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.list`, `liner.setup`, `liner.preview`, `liner.mappingReview`. P2-2 registers `liner.list`; P2-3 registers `liner.setup` as a form-centered draft editor. Preview and mapping-review currently render liner-scoped placeholders until their implementation tasks.
 
 | Panel | Route | Role |
 | --- | --- | --- |
 | Liner list | `liner.list` | Current project liner metadata and draft entry |
-| Alignment input | `liner.setup` | Domain edit (alignment, profile, grid defs) |
-| Station table | `liner.setup` | Read-only `stations` after compute |
+| Alignment input | `liner.setup` | Local draft edit for metadata, station settings, offsets, and MVP straight elements |
+| Station table | `liner.setup` | Deferred; P2-3 does not compute intermediate stations |
 | Grid preview | `liner.preview` | Plan/profile canvas from intermediate |
 | Diagnostics | `liner.preview` | `ComputationDiagnostic[]` display |
 | Mapping review | `liner.mappingReview` | Mapper output preview before merge |

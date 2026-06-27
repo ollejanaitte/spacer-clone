@@ -32,6 +32,7 @@ import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardMo
 import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
+import { LinerEditPage } from "./liner/pages/LinerEditPage";
 import { LinerListPage, LinerReservedRoutePage } from "./liner/pages/LinerListPage";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
@@ -503,7 +504,16 @@ export function App() {
     );
   }
 
-  if (linerRouteId) {
+  if (linerRouteId === "liner.setup") {
+    return (
+      <LinerEditPage
+        onClose={() => navigatePro("/pro")}
+        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+      />
+    );
+  }
+
+  if (linerRouteId === "liner.preview" || linerRouteId === "liner.mappingReview") {
     return (
       <LinerReservedRoutePage
         routeId={linerRouteId}
