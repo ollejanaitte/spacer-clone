@@ -2,11 +2,11 @@
 
 ## Purpose
 
-This folder contains pre-implementation design documents for the **Linear Coordinate Calculation System** — an original, functionally equivalent capability planned as an extension to the existing 3D frame analysis application. The system computes alignment geometry, stationing, profiles, and grid coordinates, then converts the results into the existing frame analysis model (`project.json`).
+This folder contains design and gate documents for the **Linear Coordinate Calculation System** — an original, functionally equivalent capability planned as an extension to the existing 3D frame analysis application. The system computes alignment geometry, stationing, profiles, and grid coordinates, then converts the results into the existing frame analysis model (`project.json`).
 
-These documents are **design skeletons only**. No implementation code belongs here.
+Implementation code does not belong in this folder. Current implementation artifacts live under `frontend/src/liner/` and `schemas/project.schema.json`; this folder remains the design, review, and handoff source of truth for those artifacts.
 
-## Document Status (design phase)
+## Document Status
 
 | Document | Priority | Status | Blocks implementation? |
 | --- | --- | --- | --- |
@@ -33,9 +33,12 @@ These documents are **design skeletons only**. No implementation code belongs he
 | [performance_architecture.md](performance_architecture.md) | Medium | Draft | Workers |
 | [rendering_strategy.md](rendering_strategy.md) | Medium | Draft | 2D views |
 | [logging_and_debug.md](logging_and_debug.md) | Medium | Draft | Debug tooling |
+| [ui_preparation.md](ui_preparation.md) | High | Implemented constants | Phase2 UI routing |
+| [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
+| [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
-**Overall:** Architecture direction approved; implementation contracts for core pipeline reviewed. Full implementation remains gated on golden fixture implementation and `project.schema.json` extension PR.
+**Overall:** Architecture direction approved; Phase1 core, mapper, schema extension, headless assembly, and UI preparation constants exist in the repository. Phase2 UI implementation remains gated by the UI alignment review and by fixture gaps explicitly tracked in [phase1_completion_gate.md](phase1_completion_gate.md).
 
 ## Reading Order
 

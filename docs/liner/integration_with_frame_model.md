@@ -106,11 +106,13 @@ Pipeline: **alignment → stations → grid → nodes → members → frame anal
 **Golden validation fixture:**
 
 ```text
-examples/liner/gc-06-intermediate.json
+examples/liner/gc-06-intermediate.expected.json
   → mapToFrameModel()
   → examples/liner/gc-06-project.generated.json
   → project.schema.json validation MUST pass
 ```
+
+P2-0 status: `gc-06-intermediate.expected.json` is the current on-disk naming convention. `gc-06-project.generated.json` is still a planned committed fixture; the GC-06 headless validation path is currently covered by Vitest instead of that file.
 
 ### 5. Merge policy
 
