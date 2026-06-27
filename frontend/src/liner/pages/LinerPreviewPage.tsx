@@ -1,4 +1,4 @@
-import { ArrowLeft, List, Pencil } from "lucide-react";
+import { ArrowLeft, CheckCircle2, List, Pencil } from "lucide-react";
 import { useMemo } from "react";
 import { ja } from "../../i18n/ja";
 import { buildLinerPreviewFromDraft } from "../adapters/linerPreviewAdapter";
@@ -11,9 +11,16 @@ export type LinerPreviewPageProps = {
   onClose: () => void;
   onBackToList: () => void;
   onBackToSetup: () => void;
+  onOpenMappingReview?: () => void;
 };
 
-export function LinerPreviewPage({ draft, onClose, onBackToList, onBackToSetup }: LinerPreviewPageProps) {
+export function LinerPreviewPage({
+  draft,
+  onClose,
+  onBackToList,
+  onBackToSetup,
+  onOpenMappingReview,
+}: LinerPreviewPageProps) {
   const preview = useMemo(() => buildLinerPreviewFromDraft(draft), [draft]);
   const { viewModel } = preview;
 
@@ -37,6 +44,12 @@ export function LinerPreviewPage({ draft, onClose, onBackToList, onBackToSetup }
             <List size={16} />
             {ja.liner.list.backToList}
           </button>
+          {onOpenMappingReview && (
+            <button type="button" onClick={onOpenMappingReview} data-testid="open-liner-mapping-review">
+              <CheckCircle2 size={16} />
+              {ja.liner.mappingReview.openReview}
+            </button>
+          )}
         </div>
       </header>
 

@@ -32,7 +32,7 @@ Define the original window and panel structure for the liner module without repl
 
 ## P1-6 route and panel boundaries (preparation)
 
-Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.list`, `liner.setup`, `liner.preview`, `liner.mappingReview`. P2-2 registers `liner.list`; P2-3 registers `liner.setup` as a form-centered draft editor. Preview and mapping-review currently render liner-scoped placeholders until their implementation tasks.
+Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as `/pro/th/run`). Internal route ids: `liner.list`, `liner.setup`, `liner.preview`, `liner.mappingReview`. P2-2 registers `liner.list`; P2-3 registers `liner.setup` as a form-centered draft editor; P2-5 registers read-only grid preview; P2-6 registers mapping review and Viewer3D confirmation.
 
 | Panel | Route | Role |
 | --- | --- | --- |
@@ -41,8 +41,8 @@ Future liner UI uses **embedded pro routes** under `/pro/liner/*` (same shell as
 | Station table | `liner.setup` | Deferred computed output; P2-4 only edits station/profile input rows |
 | Grid preview | `liner.preview` | Read-only SVG plan preview from intermediate |
 | Diagnostics | `liner.preview` | `ComputationDiagnostic[]` display from preview adapter |
-| Mapping review | `liner.mappingReview` | Mapper output preview before merge |
-| Headless generation summary | `liner.mappingReview` | P1-5 validation readiness |
+| Mapping review | `liner.mappingReview` | Mapper output summary before explicit merge |
+| Headless generation summary | `liner.mappingReview` | P1-5 validation readiness and Viewer3D-ready project status |
 
 Full inventory: [ui_preparation.md](ui_preparation.md).
 

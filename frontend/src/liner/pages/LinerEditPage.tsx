@@ -18,6 +18,7 @@ export type LinerEditPageProps = {
   initialDraft?: LinerDraft;
   onDraftChange?: (draft: LinerDraft) => void;
   onOpenPreview?: () => void;
+  onOpenMappingReview?: () => void;
   onClose: () => void;
   onBackToList: () => void;
 };
@@ -48,6 +49,7 @@ export function LinerEditPage({
   initialDraft,
   onDraftChange,
   onOpenPreview,
+  onOpenMappingReview,
   onClose,
   onBackToList,
 }: LinerEditPageProps) {
@@ -82,6 +84,12 @@ export function LinerEditPage({
             <button type="button" onClick={onOpenPreview} data-testid="open-liner-preview">
               <Eye size={16} />
               {ja.liner.preview.openPreview}
+            </button>
+          )}
+          {onOpenMappingReview && (
+            <button type="button" onClick={onOpenMappingReview} data-testid="open-liner-mapping-review">
+              <FilePlus2 size={16} />
+              {ja.liner.mappingReview.openReview}
             </button>
           )}
         </div>

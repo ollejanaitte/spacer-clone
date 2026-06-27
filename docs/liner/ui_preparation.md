@@ -28,7 +28,7 @@ Internal route ids and reserved URL paths:
 | `liner.preview` | `/pro/liner/preview` | grid preview, diagnostics |
 | `liner.mappingReview` | `/pro/liner/mapping-review` | mapping review, headless generation summary |
 
-Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2. `liner.setup` is implemented as a form-centered local draft editor in P2-3 and extended with station/profile input in P2-4. `liner.preview` is implemented as a read-only SVG preview in P2-5; mapping review remains reserved until its implementation task.
+Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2. `liner.setup` is implemented as a form-centered local draft editor in P2-3 and extended with station/profile input in P2-4. `liner.preview` is implemented as a read-only SVG preview in P2-5. `liner.mappingReview` is implemented in P2-6 as an adapter-backed mapping review and Viewer3D confirmation route.
 
 ## Panel inventory
 
@@ -37,9 +37,9 @@ Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `
 | `alignmentInput` | setup | domain (`BuildIntermediateInput` / future `LinerProject`) |
 | `stationTable` | setup | `intermediate.stations` after compute; input rows remain draft fields before compute |
 | `gridPreview` | preview | `intermediate.horizontal`, `intermediate.grid` via preview adapter |
-| `diagnostics` | preview | `intermediate.diagnostics` via preview adapter (+ mapper/headless diagnostics on generate) |
-| `mappingReview` | mappingReview | `mapToFrameModel` output preview |
-| `headlessGenerationSummary` | mappingReview | `createHeadlessLinerFrameProject` validation summary |
+| `diagnostics` | preview / mappingReview | `intermediate.diagnostics` via preview adapter; mapper/headless diagnostics via viewer adapter |
+| `mappingReview` | mappingReview | `FrameMappingResult` summary via viewer adapter |
+| `headlessGenerationSummary` | mappingReview | `createHeadlessLinerFrameProject` validation summary via viewer adapter |
 
 ## Workflow boundaries
 
@@ -76,6 +76,7 @@ Reserved groups in `ja.liner`:
 - `liner.list` — line list page headings, empty state, and table labels
 - `liner.editor` — setup page headings, help text, and draft summary labels
 - `liner.fields` — setup form field labels
+- `liner.mappingReview` — mapping review page headings, summary labels, and Viewer3D confirmation text
 - `liner.panels` — panel headings and empty states
 - `liner.workflow` — step labels and gating messages
 - `liner.actions` — buttons and confirmations
@@ -100,6 +101,7 @@ Diagnostic display: UI reads `messageKey` from core/headless diagnostics only; n
 - [input_ui_behavior.md](input_ui_behavior.md)
 - [state_management.md](state_management.md)
 - [integration_with_frame_model.md](integration_with_frame_model.md)
+- [ui_mapping_review.md](ui_mapping_review.md)
 
 ## Pre-Implementation Checklist
 
@@ -110,5 +112,5 @@ Diagnostic display: UI reads `messageKey` from core/headless diagnostics only; n
 - [x] React route registered for `liner.list` in app shell (P2-2).
 - [x] React route registered for setup in app shell (P2-3).
 - [x] React route registered for preview in app shell (P2-5).
-- [ ] React route registered for mapping review.
-- [ ] Panel components implemented.
+- [x] React route registered for mapping review in app shell (P2-6).
+- [x] Panel components implemented for Phase2 MVP.

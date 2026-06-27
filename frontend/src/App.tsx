@@ -33,7 +33,8 @@ import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 import { LinerEditPage } from "./liner/pages/LinerEditPage";
-import { LinerListPage, LinerReservedRoutePage } from "./liner/pages/LinerListPage";
+import { LinerListPage } from "./liner/pages/LinerListPage";
+import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
@@ -516,6 +517,7 @@ export function App() {
         draft={linerDraft}
         onDraftChange={setLinerDraft}
         onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+        onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
@@ -529,16 +531,28 @@ export function App() {
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
       />
     );
   }
 
   if (linerRouteId === "liner.mappingReview") {
     return (
-      <LinerReservedRoutePage
-        routeId={linerRouteId}
+      <LinerMappingReviewPage
+        draft={linerDraft}
+        project={project}
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onBackToPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+        onConfirmProject={(nextProject) => {
+          commitProject(nextProject);
+          navigatePro(resolveLinerUiRoutePath("liner.list"));
+        }}
+        onOpenProjectInViewer={(nextProject) => {
+          commitProject(nextProject);
+          navigatePro("/pro");
+        }}
       />
     );
   }

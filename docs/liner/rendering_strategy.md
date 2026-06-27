@@ -14,7 +14,7 @@ Define how plan and profile views render alignment and grid geometry from interm
 
 ## Out of Scope
 
-- Full Three.js 3D liner preview — **post-MVP** (glTF export not in near-term scope; see D-LINER-007 in [design_workflow.md](design_workflow.md)).
+- New Three.js liner renderer — **post-MVP** (glTF export not in near-term scope; see D-LINER-007 in [design_workflow.md](design_workflow.md)). P2-6 reuses existing `Viewer3D` with a generated `ProjectModel`.
 - CAD export rendering ([cad_output_spec.md](cad_output_spec.md)).
 
 ## Assumptions
@@ -59,6 +59,8 @@ Low-detail or dimmed display while `computing`; show last good snapshot under st
 
 Grid preview panel (`gridPreview`) binds to `intermediate` + UI view state via adapter types in `frontend/src/liner/uiPreparation.ts`. See [ui_preparation.md](ui_preparation.md).
 
+Mapping review uses mapper/headless output only after the adapter has converted it into a standard `ProjectModel` for existing `Viewer3D`; React components do not pass liner intermediate/grid objects to the viewer.
+
 ## Open Questions
 
 - Reuse 2D patterns from [docs/09_3d_view_spec.md](../09_3d_view_spec.md)?
@@ -70,6 +72,7 @@ Grid preview panel (`gridPreview`) binds to `intermediate` + UI view state via a
 - [cad_output_spec.md](cad_output_spec.md)
 - [ui_window_spec.md](ui_window_spec.md)
 - [ui_grid_preview.md](ui_grid_preview.md)
+- [ui_mapping_review.md](ui_mapping_review.md)
 - [performance_architecture.md](performance_architecture.md)
 - [recalculation_policy.md](recalculation_policy.md)
 

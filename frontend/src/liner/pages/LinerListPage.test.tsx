@@ -4,7 +4,7 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDefaultProject } from "../../data/defaultProject";
-import { LinerListPage, LinerReservedRoutePage } from "./LinerListPage";
+import { LinerListPage } from "./LinerListPage";
 import type { ProjectModel } from "../../types";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -125,22 +125,5 @@ describe("LinerListPage", () => {
     });
 
     expect(onOpenSetup).toHaveBeenCalledTimes(1);
-  });
-
-  it("renders a reserved route placeholder for mapping review", () => {
-    const onBackToList = vi.fn();
-    render(
-      <LinerReservedRoutePage
-        routeId="liner.mappingReview"
-        onClose={() => undefined}
-        onBackToList={onBackToList}
-      />,
-    );
-
-    expect(document.querySelector("[data-testid=liner-reserved-route-page]")).not.toBeNull();
-    act(() => {
-      (document.querySelector("[data-testid=back-to-liner-list]") as HTMLButtonElement).click();
-    });
-    expect(onBackToList).toHaveBeenCalledTimes(1);
   });
 });

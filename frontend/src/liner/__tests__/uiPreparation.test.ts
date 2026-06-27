@@ -93,6 +93,7 @@ describe("liner ui preparation", () => {
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.editor");
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.fields");
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.preview");
+    expect(LINER_I18N_KEY_GROUPS).toContain("liner.mappingReview");
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.errors");
   });
 

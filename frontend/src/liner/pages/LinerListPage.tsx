@@ -1,19 +1,12 @@
 import { ArrowLeft, FilePlus2, Pencil } from "lucide-react";
 import { ja } from "../../i18n/ja";
 import type { ProjectModel } from "../../types";
-import type { LinerUiRouteId } from "../uiPreparation";
 
 export type LinerListPageProps = {
   project: ProjectModel;
   onClose: () => void;
   onCreate: () => void;
   onOpenSetup: () => void;
-};
-
-export type LinerReservedRoutePageProps = {
-  routeId: Exclude<LinerUiRouteId, "liner.list" | "liner.setup" | "liner.preview">;
-  onClose: () => void;
-  onBackToList: () => void;
 };
 
 type LinerListItem = {
@@ -126,37 +119,6 @@ export function LinerListPage({ project, onClose, onCreate, onOpenSetup }: Liner
             </table>
           </div>
         )}
-      </section>
-    </main>
-  );
-}
-
-function reservedRouteTitle(routeId: Exclude<LinerUiRouteId, "liner.list" | "liner.setup" | "liner.preview">): string {
-  void routeId;
-  return ja.liner.panels.mappingReview;
-}
-
-export function LinerReservedRoutePage({ routeId, onClose, onBackToList }: LinerReservedRoutePageProps) {
-  return (
-    <main className="liner-list-page" data-testid="liner-reserved-route-page">
-      <header className="liner-list-header">
-        <div>
-          <h1>{reservedRouteTitle(routeId)}</h1>
-          <p>{ja.liner.list.reservedRouteLead}</p>
-        </div>
-        <div className="liner-list-header-actions">
-          <button type="button" onClick={onClose} data-testid="close-liner-reserved-route">
-            <ArrowLeft size={16} />
-            {ja.liner.list.close}
-          </button>
-          <button type="button" onClick={onBackToList} data-testid="back-to-liner-list">
-            {ja.liner.list.backToList}
-          </button>
-        </div>
-      </header>
-      <section className="liner-list-empty" aria-label={reservedRouteTitle(routeId)}>
-        <h2>{ja.liner.list.reservedRouteTitle}</h2>
-        <p>{ja.liner.list.reservedRouteDescription}</p>
       </section>
     </main>
   );

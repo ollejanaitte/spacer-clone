@@ -1,22 +1,16 @@
 import Ajv2020 from "ajv/dist/2020.js";
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import projectSchema from "../../../../schemas/project.schema.json";
 import { LINER_DIAGNOSTIC_CODES, createIssue } from "../core/diagnostics";
 import type { ComputationDiagnostic } from "../core/types";
 import { validateProjectLinerExtension } from "../schema/validateProjectLinerExtension";
 import type { ProjectModel } from "../../types";
 
-const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../../../..");
-const projectSchemaPath = join(repoRoot, "schemas/project.schema.json");
-
 let cachedValidator: ReturnType<Ajv2020["compile"]> | undefined;
 
 function getProjectSchemaValidator(): ReturnType<Ajv2020["compile"]> {
   if (!cachedValidator) {
-    const schema = JSON.parse(readFileSync(projectSchemaPath, "utf8"));
     const ajv = new Ajv2020({ allErrors: true, strict: false });
-    cachedValidator = ajv.compile(schema);
+    cachedValidator = ajv.compile(projectSchema);
   }
   return cachedValidator;
 }
