@@ -19,10 +19,13 @@ import { createIssue, LINER_DIAGNOSTIC_CODES } from "../core/diagnostics";
 
 describe("liner ui preparation", () => {
   it("keeps route ids and paths stable", () => {
-    expect(LINER_UI_ROUTE_IDS).toEqual(["liner.setup", "liner.preview", "liner.mappingReview"]);
+    expect(LINER_UI_ROUTE_IDS).toEqual(["liner.list", "liner.setup", "liner.preview", "liner.mappingReview"]);
+    expect(resolveLinerUiRoutePath("liner.list")).toBe("/pro/liner");
     expect(resolveLinerUiRoutePath("liner.setup")).toBe("/pro/liner/setup");
     expect(resolveLinerUiRoutePath("liner.preview")).toBe("/pro/liner/preview");
     expect(resolveLinerUiRoutePath("liner.mappingReview")).toBe("/pro/liner/mapping-review");
+    expect(resolveLinerUiRouteId("/pro/liner")).toBe("liner.list");
+    expect(resolveLinerUiRouteId("/pro/liner/setup")).toBe("liner.setup");
     expect(resolveLinerUiRouteId("/pro/liner/preview")).toBe("liner.preview");
     expect(resolveLinerUiRouteId("/pro/th/run")).toBeNull();
   });
@@ -86,6 +89,7 @@ describe("liner ui preparation", () => {
   it("keeps i18n key groups unique", () => {
     assertUniqueLinerI18nKeyGroups();
     expect(new Set(LINER_I18N_KEY_GROUPS).size).toBe(LINER_I18N_KEY_GROUPS.length);
+    expect(LINER_I18N_KEY_GROUPS).toContain("liner.list");
     expect(LINER_I18N_KEY_GROUPS).toContain("liner.errors");
   });
 

@@ -32,6 +32,8 @@ import { TimeHistoryWizardModal } from "./timeHistory/wizard/TimeHistoryWizardMo
 import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
+import { LinerListPage, LinerReservedRoutePage } from "./liner/pages/LinerListPage";
+import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
 
 type ValidationNotice = {
@@ -72,8 +74,12 @@ export function App() {
   const [comparisonOpen, setComparisonOpen] = useState(
     () => typeof window !== "undefined" && window.location.pathname === "/pro/compare",
   );
+  const [currentPathname, setCurrentPathname] = useState(
+    () => (typeof window !== "undefined" ? window.location.pathname : "/pro"),
+  );
   const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
+  const linerRouteId = resolveLinerUiRouteId(currentPathname);
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
@@ -164,6 +170,20 @@ export function App() {
     }, 3000);
     return () => window.clearTimeout(timer);
   }, [dirty, project]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPathname(window.location.pathname);
+      setComparisonOpen(window.location.pathname === "/pro/compare");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const navigatePro = useCallback((path: string) => {
+    window.history.pushState({}, "", path);
+    setCurrentPathname(path);
+  }, []);
 
   const validate = async (): Promise<ValidationResponse | null> => {
     setApiErrors([]);
@@ -465,9 +485,30 @@ export function App() {
       <ModelComparisonWorkspace
         modelA={project}
         onClose={() => {
-          window.history.pushState({}, "", "/pro");
+          navigatePro("/pro");
           setComparisonOpen(false);
         }}
+      />
+    );
+  }
+
+  if (linerRouteId === "liner.list") {
+    return (
+      <LinerListPage
+        project={project}
+        onClose={() => navigatePro("/pro")}
+        onCreate={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+      />
+    );
+  }
+
+  if (linerRouteId) {
+    return (
+      <LinerReservedRoutePage
+        routeId={linerRouteId}
+        onClose={() => navigatePro("/pro")}
+        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
     );
   }
@@ -503,9 +544,10 @@ export function App() {
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
         onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
         onOpenModelComparison={() => {
-          window.history.pushState({}, "", "/pro/compare");
+          navigatePro("/pro/compare");
           setComparisonOpen(true);
         }}
+        onOpenLinerList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge

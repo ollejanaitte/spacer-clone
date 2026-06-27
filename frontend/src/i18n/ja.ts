@@ -1304,10 +1304,11 @@ export const ja = {
     },
   },
 
-  // P1-6 placeholders — not wired to React until liner UI phase.
+  // LINER strings. P2 wires list entry strings first; later panels add to these groups.
   liner: {
     toolbar: {
       openButton: "線形座標計算",
+      openTitle: "線形座標計算の一覧を開きます。",
       computeButton: "計算",
       generateFrameButton: "フレームモデル生成",
     },
@@ -1316,6 +1317,32 @@ export const ja = {
       statusReady: "準備完了",
       statusComputing: "計算中",
       statusStale: "再計算が必要",
+    },
+    list: {
+      title: "線形座標計算",
+      lead: "現在のプロジェクトに関連付けられた線形データを確認します。",
+      close: "メイン画面に戻る",
+      create: "新規作成",
+      openSetup: "編集を開く",
+      attachedBadge: "プロジェクト反映済み",
+      emptyTitle: "線形データはまだありません",
+      emptyDescription: "新規作成から線形入力の準備を開始します。",
+      backToList: "一覧に戻る",
+      reservedRouteTitle: "準備中",
+      reservedRouteLead: "この画面は後続のサブタスクで実装します。",
+      reservedRouteDescription: "一覧に戻るか、メイン画面へ戻ってください。",
+      tableCaption: "線形一覧",
+      columns: {
+        modelId: "モデルID",
+        coordinatePolicy: "座標系",
+        sourceRevision: "リビジョン",
+        intermediateVersion: "中間結果",
+        generatedAt: "生成日時",
+        traceCount: "トレース",
+        actions: "操作",
+      },
+      traceCount: (count: number) => `${count} 件`,
+      notGenerated: "未生成",
     },
     panels: {
       alignmentInput: "線形入力",

@@ -4,10 +4,11 @@ import type { FrameMappingOptions, FrameMappingResult } from "./mapper/frameMode
 import type { HeadlessLinerFrameProjectInput, HeadlessLinerFrameProjectResult } from "./headless/createHeadlessLinerFrameProject";
 import type { ProjectModel } from "../types";
 
-/** Internal route identifiers for future liner UI navigation (not registered in App yet). */
-export type LinerUiRouteId = "liner.setup" | "liner.preview" | "liner.mappingReview";
+/** Internal route identifiers for liner UI navigation. */
+export type LinerUiRouteId = "liner.list" | "liner.setup" | "liner.preview" | "liner.mappingReview";
 
 export const LINER_UI_ROUTE_IDS = [
+  "liner.list",
   "liner.setup",
   "liner.preview",
   "liner.mappingReview",
@@ -15,6 +16,7 @@ export const LINER_UI_ROUTE_IDS = [
 
 /** URL paths under `/pro/liner/*`, matching existing pro-feature routing style. */
 export const LINER_UI_ROUTE_PATHS: Record<LinerUiRouteId, string> = {
+  "liner.list": "/pro/liner",
   "liner.setup": "/pro/liner/setup",
   "liner.preview": "/pro/liner/preview",
   "liner.mappingReview": "/pro/liner/mapping-review",
@@ -187,6 +189,7 @@ export const LINER_FEATURE_CAPABILITIES: readonly LinerFeatureCapability[] = [
 export const LINER_I18N_KEY_GROUPS = [
   "liner.toolbar",
   "liner.window",
+  "liner.list",
   "liner.panels",
   "liner.workflow",
   "liner.actions",
