@@ -1,4 +1,4 @@
-import { ArrowLeft, FilePlus2, Trash2 } from "lucide-react";
+import { ArrowLeft, Eye, FilePlus2, Trash2 } from "lucide-react";
 import { useMemo, useState, type ChangeEvent } from "react";
 import { ja } from "../../i18n/ja";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
@@ -14,7 +14,10 @@ import {
 } from "../adapters/linerUiAdapter";
 
 export type LinerEditPageProps = {
+  draft?: LinerDraft;
   initialDraft?: LinerDraft;
+  onDraftChange?: (draft: LinerDraft) => void;
+  onOpenPreview?: () => void;
   onClose: () => void;
   onBackToList: () => void;
 };
@@ -40,8 +43,24 @@ function elementTypeLabel(element: LinerDraftAlignmentElement): string {
   return ja.liner.fields.elementTypes.clothoid;
 }
 
-export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEditPageProps) {
-  const [draft, setDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
+export function LinerEditPage({
+  draft: controlledDraft,
+  initialDraft,
+  onDraftChange,
+  onOpenPreview,
+  onClose,
+  onBackToList,
+}: LinerEditPageProps) {
+  const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
+  const draft = controlledDraft ?? localDraft;
+  const changeDraft = (update: LinerDraft | ((current: LinerDraft) => LinerDraft)) => {
+    const nextDraft = typeof update === "function" ? update(draft) : update;
+    if (onDraftChange) {
+      onDraftChange(nextDraft);
+    } else {
+      setLocalDraft(nextDraft);
+    }
+  };
   const summary = useMemo(() => summarizeLinerDraft(draft), [draft]);
 
   return (
@@ -59,6 +78,12 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
           <button type="button" onClick={onBackToList} data-testid="back-to-liner-list">
             {ja.liner.list.backToList}
           </button>
+          {onOpenPreview && (
+            <button type="button" onClick={onOpenPreview} data-testid="open-liner-preview">
+              <Eye size={16} />
+              {ja.liner.preview.openPreview}
+            </button>
+          )}
         </div>
       </header>
 
@@ -72,7 +97,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                 value={draft.alignment.id}
                 data-testid="liner-alignment-id"
                 onChange={(event) => {
-                  setDraft((current) => updateLinerAlignmentMetadata(current, { id: event.currentTarget.value }));
+                  changeDraft((current) => updateLinerAlignmentMetadata(current, { id: event.currentTarget.value }));
                 }}
               />
             </label>
@@ -81,7 +106,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
               <input
                 value={draft.alignment.linerModelId}
                 onChange={(event) => {
-                  setDraft((current) =>
+                  changeDraft((current) =>
                     updateLinerAlignmentMetadata(current, { linerModelId: event.currentTarget.value }),
                   );
                 }}
@@ -92,7 +117,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
               <input
                 value={draft.alignment.coordinatePolicyId}
                 onChange={(event) => {
-                  setDraft((current) =>
+                  changeDraft((current) =>
                     updateLinerAlignmentMetadata(current, { coordinatePolicyId: event.currentTarget.value }),
                   );
                 }}
@@ -121,14 +146,14 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
         </aside>
       </div>
 
-      <LinerStationProfilePanel draft={draft} onDraftChange={setDraft} />
+      <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />
 
       <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
         <div className="liner-edit-section-header">
           <h2 id="liner-edit-elements-title">{ja.liner.editor.elementSection}</h2>
           <button
             type="button"
-            onClick={() => setDraft((current) => addLinerStraightElement(current))}
+            onClick={() => changeDraft((current) => addLinerStraightElement(current))}
             data-testid="add-liner-straight-element"
           >
             <FilePlus2 size={16} />
@@ -157,7 +182,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                       <input
                         value={element.id}
                         onChange={(event) => {
-                          setDraft((current) =>
+                          changeDraft((current) =>
                             updateLinerStraightElement(current, element.id, { id: event.currentTarget.value }),
                           );
                         }}
@@ -174,7 +199,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                           type="number"
                           value={numericValue(element.start.x)}
                           onChange={(event: TextInputEvent) => {
-                            setDraft((current) =>
+                            changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
                                 startX: parseNumericInput(event.currentTarget.value),
                               }),
@@ -187,7 +212,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                           type="number"
                           value={numericValue(element.start.y)}
                           onChange={(event: TextInputEvent) => {
-                            setDraft((current) =>
+                            changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
                                 startY: parseNumericInput(event.currentTarget.value),
                               }),
@@ -200,7 +225,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                           type="number"
                           value={numericValue(element.azimuth)}
                           onChange={(event: TextInputEvent) => {
-                            setDraft((current) =>
+                            changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
                                 azimuth: parseNumericInput(event.currentTarget.value),
                               }),
@@ -213,7 +238,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                           type="number"
                           value={numericValue(element.length)}
                           onChange={(event: TextInputEvent) => {
-                            setDraft((current) =>
+                            changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
                                 length: parseNumericInput(event.currentTarget.value),
                               }),
@@ -229,7 +254,7 @@ export function LinerEditPage({ initialDraft, onClose, onBackToList }: LinerEdit
                   <td>
                     <button
                       type="button"
-                      onClick={() => setDraft((current) => removeLinerAlignmentElement(current, element.id))}
+                      onClick={() => changeDraft((current) => removeLinerAlignmentElement(current, element.id))}
                       disabled={draft.alignment.elements.length <= 1}
                       data-testid={`remove-liner-element-${element.id}`}
                       title={ja.liner.editor.removeElement}

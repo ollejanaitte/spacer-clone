@@ -34,6 +34,8 @@ import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 import { LinerEditPage } from "./liner/pages/LinerEditPage";
 import { LinerListPage, LinerReservedRoutePage } from "./liner/pages/LinerListPage";
+import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
+import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
 
@@ -80,6 +82,7 @@ export function App() {
   );
   const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
+  const [linerDraft, setLinerDraft] = useState(() => createDefaultLinerDraft());
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
 
   const selection: ViewerSelection = selectedNode
@@ -498,7 +501,10 @@ export function App() {
       <LinerListPage
         project={project}
         onClose={() => navigatePro("/pro")}
-        onCreate={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onCreate={() => {
+          setLinerDraft(createDefaultLinerDraft());
+          navigatePro(resolveLinerUiRoutePath("liner.setup"));
+        }}
         onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
       />
     );
@@ -507,13 +513,27 @@ export function App() {
   if (linerRouteId === "liner.setup") {
     return (
       <LinerEditPage
+        draft={linerDraft}
+        onDraftChange={setLinerDraft}
+        onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
     );
   }
 
-  if (linerRouteId === "liner.preview" || linerRouteId === "liner.mappingReview") {
+  if (linerRouteId === "liner.preview") {
+    return (
+      <LinerPreviewPage
+        draft={linerDraft}
+        onClose={() => navigatePro("/pro")}
+        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+      />
+    );
+  }
+
+  if (linerRouteId === "liner.mappingReview") {
     return (
       <LinerReservedRoutePage
         routeId={linerRouteId}

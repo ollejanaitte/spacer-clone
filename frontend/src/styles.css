@@ -3465,15 +3465,234 @@ button:disabled {
   border-bottom: 0;
 }
 
+.liner-preview-page {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.liner-preview-header,
+.liner-preview-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.liner-preview-header {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-preview-header h1,
+.liner-preview-header p,
+.liner-preview-side-panel h2,
+.liner-preview-summary {
+  margin: 0;
+}
+
+.liner-preview-header h1 {
+  font-size: 18px;
+}
+
+.liner-preview-header p,
+.liner-grid-preview-caption,
+.liner-preview-diagnostics p {
+  color: #526173;
+  font-size: 13px;
+}
+
+.liner-preview-header-actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.liner-preview-header button {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-preview-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 12px;
+  min-height: calc(100vh - 96px);
+}
+
+.liner-preview-canvas-panel,
+.liner-preview-side-panel {
+  min-width: 0;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-preview-canvas-panel {
+  display: grid;
+  min-height: 520px;
+  padding: 12px;
+}
+
+.liner-grid-preview {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.liner-grid-preview-svg {
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  border: 1px solid #d8e1ea;
+  border-radius: 6px;
+  background: #fbfcfe;
+}
+
+.liner-grid-preview-background line {
+  stroke: #e4ebf2;
+  stroke-width: 1;
+}
+
+.liner-grid-preview-line {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.liner-grid-preview-line-longitudinal {
+  stroke: #4f7595;
+}
+
+.liner-grid-preview-line-transverse {
+  stroke: #7a8a58;
+}
+
+.liner-grid-preview-axis {
+  fill: none;
+  stroke: #1f2933;
+  stroke-width: 3;
+}
+
+.liner-grid-preview-point {
+  fill: #ffffff;
+  stroke: #315a7d;
+  stroke-width: 2;
+}
+
+.liner-grid-preview-caption {
+  text-align: right;
+}
+
+.liner-preview-side-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.liner-preview-side-panel h2 {
+  margin-bottom: 10px;
+  color: #243447;
+  font-size: 15px;
+}
+
+.liner-preview-summary {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-preview-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e7ef;
+}
+
+.liner-preview-summary dt {
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-preview-summary dd {
+  margin: 0;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-preview-diagnostics ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liner-preview-diagnostics li {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid #d8e1ea;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.liner-preview-diagnostics strong {
+  color: #243447;
+  font-size: 12px;
+}
+
+.liner-preview-diagnostics span {
+  color: #243447;
+  font-size: 13px;
+}
+
+.liner-preview-diagnostics code {
+  color: #526173;
+  font-size: 12px;
+}
+
+.liner-preview-diagnostic-error {
+  border-color: #e7b1b1;
+  background: #fff1f1;
+}
+
+.liner-preview-diagnostic-warning {
+  border-color: #e3c36c;
+  background: #fff7dc;
+}
+
+.liner-preview-diagnostic-info {
+  border-color: #78a8d8;
+  background: #eef5fb;
+}
+
 @media (max-width: 860px) {
   .liner-edit-header,
-  .liner-edit-layout {
+  .liner-edit-layout,
+  .liner-preview-layout {
     grid-template-columns: 1fr;
   }
 
   .liner-edit-header,
   .liner-edit-header-actions,
-  .liner-edit-section-header {
+  .liner-edit-section-header,
+  .liner-preview-header,
+  .liner-preview-header-actions {
     align-items: stretch;
     flex-direction: column;
   }

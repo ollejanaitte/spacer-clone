@@ -88,4 +88,21 @@ describe("LinerEditPage", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onBackToList).toHaveBeenCalledTimes(1);
   });
+
+  it("wires optional preview navigation", () => {
+    const onOpenPreview = vi.fn();
+    render(
+      <LinerEditPage
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onOpenPreview={onOpenPreview}
+      />,
+    );
+
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
+    });
+
+    expect(onOpenPreview).toHaveBeenCalledTimes(1);
+  });
 });

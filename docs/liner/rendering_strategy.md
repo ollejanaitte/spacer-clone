@@ -69,6 +69,7 @@ Grid preview panel (`gridPreview`) binds to `intermediate` + UI view state via a
 - [intermediate_result_model.md](intermediate_result_model.md)
 - [cad_output_spec.md](cad_output_spec.md)
 - [ui_window_spec.md](ui_window_spec.md)
+- [ui_grid_preview.md](ui_grid_preview.md)
 - [performance_architecture.md](performance_architecture.md)
 - [recalculation_policy.md](recalculation_policy.md)
 
