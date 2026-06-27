@@ -1402,6 +1402,23 @@ export const ja = {
         resetToValue: "値にリセット",
       },
     },
+    preview: {
+      title: "格子プレビュー",
+      lead: "現在の下書きから読み取り専用の2Dプレビューを表示します。",
+      openPreview: "プレビューを開く",
+      backToSetup: "入力に戻る",
+      canvasLabel: "線形格子の2Dプレビュー",
+      summaryTitle: "プレビュー概要",
+      totalLength: "延長",
+      axisPoints: "軸点",
+      gridPoints: "格子点",
+      gridLines: "格子線",
+      stations: "測点",
+      diagnostics: "診断",
+      emptyDiagnostics: "診断メッセージはありません。",
+      bounds: (minX: number, maxX: number, minY: number, maxY: number) =>
+        `X ${minX.toFixed(2)} - ${maxX.toFixed(2)} / Y ${minY.toFixed(2)} - ${maxY.toFixed(2)}`,
+    },
     panels: {
       alignmentInput: "線形入力",
       stationTable: "ステーション表",
@@ -1436,6 +1453,7 @@ export const ja = {
     errors: {
       geom_zero_length: "ゼロ長セグメントがあります。",
       geom_position_gap: "セグメント位置が連続していません。",
+      grid_spacing: "サンプル間隔は0より大きい値にしてください。",
       frame_schema: "生成モデルがスキーマ検証に失敗しました。",
     },
   },

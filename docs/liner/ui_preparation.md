@@ -28,7 +28,7 @@ Internal route ids and reserved URL paths:
 | `liner.preview` | `/pro/liner/preview` | grid preview, diagnostics |
 | `liner.mappingReview` | `/pro/liner/mapping-review` | mapping review, headless generation summary |
 
-Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2. `liner.setup` is implemented as a form-centered local draft editor in P2-3 and extended with station/profile input in P2-4; preview and mapping review remain reserved until their implementation tasks.
+Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `frontend/src/liner/uiPreparation.ts`. `liner.list` is registered in P2-2. `liner.setup` is implemented as a form-centered local draft editor in P2-3 and extended with station/profile input in P2-4. `liner.preview` is implemented as a read-only SVG preview in P2-5; mapping review remains reserved until its implementation task.
 
 ## Panel inventory
 
@@ -36,8 +36,8 @@ Follows existing pro-feature paths (`/pro/th/run`, `/pro/compare`). Constants: `
 | --- | --- | --- |
 | `alignmentInput` | setup | domain (`BuildIntermediateInput` / future `LinerProject`) |
 | `stationTable` | setup | `intermediate.stations` after compute; input rows remain draft fields before compute |
-| `gridPreview` | preview | `intermediate.horizontal`, `intermediate.grid` |
-| `diagnostics` | preview | `intermediate.diagnostics` (+ mapper/headless diagnostics on generate) |
+| `gridPreview` | preview | `intermediate.horizontal`, `intermediate.grid` via preview adapter |
+| `diagnostics` | preview | `intermediate.diagnostics` via preview adapter (+ mapper/headless diagnostics on generate) |
 | `mappingReview` | mappingReview | `mapToFrameModel` output preview |
 | `headlessGenerationSummary` | mappingReview | `createHeadlessLinerFrameProject` validation summary |
 
@@ -109,5 +109,6 @@ Diagnostic display: UI reads `messageKey` from core/headless diagnostics only; n
 - [x] Preparation constants exported from `frontend/src/liner/uiPreparation.ts`.
 - [x] React route registered for `liner.list` in app shell (P2-2).
 - [x] React route registered for setup in app shell (P2-3).
-- [ ] React routes registered for preview and mapping review.
+- [x] React route registered for preview in app shell (P2-5).
+- [ ] React route registered for mapping review.
 - [ ] Panel components implemented.
