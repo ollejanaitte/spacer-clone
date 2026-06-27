@@ -7,7 +7,9 @@
 
 ## Executive Summary
 
-Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateResult`), frame mapper (`mapToFrameModel`), additive project schema extension (`liner` / `linerTrace`), headless project assembly with schema validation and optional backend analysis, and UI preparation constants — all without React routes or i18n strings.
+Phase 1 delivers a working canonical calculation pipeline (`buildIntermediateResult`), frame mapper (`mapToFrameModel`), additive project schema extension (`liner` / `linerTrace`), headless project assembly with schema validation and optional backend analysis, and UI preparation constants — all without React routes or wired React UI.
+
+**P2-0 correction note:** The original gate wording said "without React routes or i18n strings." Current repository state includes `ja.liner.*` placeholder strings in `frontend/src/i18n/ja.ts` for P1-6 UI preparation; they are not wired to React components yet.
 
 **Gate decision: FAIL**
 
@@ -113,7 +115,7 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 | Item | Status | Severity | Notes |
 | --- | --- | --- | --- |
 | No React routes/components for liner | **PASS** | — | No `/pro/liner/*` registration in app shell |
-| No i18n Japanese strings added | **PASS** | — | No `liner.*` keys in `frontend/src/i18n/ja.ts` |
+| No React-wired Japanese liner UI | **PASS** | — | `ja.liner.*` placeholders exist in `frontend/src/i18n/ja.ts`, but no liner React routes/components render them yet |
 | State boundary constants | **PASS** | — | `LINER_UI_STATE_BOUNDARIES` in `uiPreparation.ts` |
 | Workflow boundary constants | **PASS** | — | Maps to P1-1–P1-5 entry points only |
 | Accidental UI implementation | **PASS** | — | Preparation module is constants/types only |
@@ -139,8 +141,8 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 | Item | Status | Severity | Notes |
 | --- | --- | --- | --- |
 | Cross-references between P1 docs | **PASS** | — | `ui_preparation.md`, `integration_with_frame_model.md` updated for P1-5/P1-6 |
-| README still says "design skeletons only" | **FAIL** | LOW | [README.md](README.md) status table not updated for implementation phase |
-| Fixture path naming inconsistency | **FAIL** | MEDIUM | Docs reference `gc-06-intermediate.json`; repo has `gc-06-intermediate.expected.json` |
+| README still says "design skeletons only" | **FAIL** (P2-0 corrected) | LOW | [README.md](README.md) status table was not updated for implementation phase at gate time |
+| Fixture path naming inconsistency | **FAIL** (P2-0 partly corrected) | MEDIUM | Some docs referenced `gc-06-intermediate.json`; repo has `gc-06-intermediate.expected.json` |
 | Stale example JSON vs canonical model | **FAIL** | **BLOCKER** | `examples/liner/gc-01-intermediate.expected.json` and `gc-06-intermediate.expected.json` use Phase 0 partial shapes, not canonical `LinerIntermediateResult` |
 | GC-02 doc correction | **PASS** | — | Midpoint y corrected to `17.037087` in test plan |
 | `calculation_pipeline.md` integration test checkbox | **FAIL** | LOW | § checklist still `[ ]` though headless tests cover GC-06 path |
@@ -228,7 +230,7 @@ No BLOCKER code defects were found that warrant an automatic minimal code fix in
 
 | ID | Area | Description |
 | --- | --- | --- |
-| L-01 | Documentation | [README.md](README.md) still describes folder as design-only. |
+| L-01 | Documentation | [README.md](README.md) described folder as design-only at gate time; P2-0 updates the index to reflect implemented liner artifacts. |
 | L-02 | Documentation | [calculation_pipeline.md](calculation_pipeline.md) pre-implementation checkbox stale for GC-06 integration. |
 | L-03 | Tests | `portal_frame_verification.json` fails schema (missing `solver`); unrelated to liner but fails full pytest file. |
 
