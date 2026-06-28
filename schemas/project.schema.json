@@ -18,6 +18,10 @@
     "analysisSettings"
   ],
   "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
     "project": {
       "type": "object",
       "additionalProperties": false,
@@ -1166,6 +1170,10 @@
               "minLength": 1
             }
           }
+        },
+        "draft": {
+          "type": "object",
+          "additionalProperties": true
         }
       }
     },
