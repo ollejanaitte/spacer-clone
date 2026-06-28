@@ -23,11 +23,14 @@
     "icons:build": "python ../scripts/build_icons.py"
   },
   "dependencies": {
+    "@jscad/modeling": "^2.13.0",
+    "@jscad/stl-serializer": "^2.1.23",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^5.0.0",
     "lucide-react": "^0.468.0",
+    "makerjs": "^0.18.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^3.8.1",
@@ -42,6 +45,7 @@
     "@types/react-dom": "^19.0.0",
     "@vitest/coverage-v8": "^4.1.8",
     "concurrently": "^10.0.3",
+    "dxf-parser": "^1.1.2",
     "electron": "^42.3.3",
     "electron-builder": "^26.15.2",
     "jsdom": "^29.1.1",
