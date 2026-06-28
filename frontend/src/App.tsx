@@ -38,6 +38,7 @@ import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
+import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
 
@@ -84,7 +85,7 @@ export function App() {
   );
   const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
-  const [linerDraft, setLinerDraft] = useState(() => createDefaultLinerDraft());
+  const linerDraft = useMemo(() => linerDraftFromProject(project), [project]);
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
 
   const selection: ViewerSelection = selectedNode
@@ -131,6 +132,9 @@ export function App() {
     setActiveLoadCase(nextProject.loadCases[0]?.id ?? "");
     setTimeHistoryNodeOverride(null);
   };
+  const commitLinerDraft = useCallback((nextDraft: typeof linerDraft) => {
+    commitProject(withProjectLinerDraft(project, nextDraft));
+  }, [linerDraft, project]);
 
   const log = (message: string) => {
     setLogs((current) => [`${new Date().toLocaleTimeString()} ${message}`, ...current].slice(0, 30));
@@ -504,7 +508,7 @@ export function App() {
         project={project}
         onClose={() => navigatePro("/pro")}
         onCreate={() => {
-          setLinerDraft(createDefaultLinerDraft());
+          commitLinerDraft(createDefaultLinerDraft());
           navigatePro(resolveLinerUiRoutePath("liner.setup"));
         }}
         onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
@@ -516,7 +520,7 @@ export function App() {
     return (
       <LinerEditPage
         draft={linerDraft}
-        onDraftChange={setLinerDraft}
+        onDraftChange={commitLinerDraft}
         onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
         onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
         onClose={() => navigatePro("/pro")}
@@ -547,11 +551,11 @@ export function App() {
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
         onBackToPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
         onConfirmProject={(nextProject) => {
-          commitProject(nextProject);
+          commitProject(withProjectLinerDraft(nextProject, linerDraft));
           navigatePro(resolveLinerUiRoutePath("liner.list"));
         }}
         onOpenProjectInViewer={(nextProject) => {
-          commitProject(nextProject);
+          commitProject(withProjectLinerDraft(nextProject, linerDraft));
           navigatePro("/pro");
         }}
       />
