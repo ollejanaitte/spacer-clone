@@ -37,6 +37,7 @@ function setChecked(input: HTMLInputElement, checked: boolean) {
 
 function createProjectWithTimeHistory(): ProjectModel {
   return {
+    schemaVersion: 1,
     project: {
       id: "test",
       name: "Test",
@@ -72,6 +73,7 @@ function createProjectWithTimeHistory(): ProjectModel {
 
 function createProjectWithoutTimeHistory(): ProjectModel {
   return {
+    schemaVersion: 1,
     project: {
       id: "test",
       name: "Test",

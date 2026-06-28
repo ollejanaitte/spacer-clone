@@ -156,6 +156,7 @@ export type AnalysisSettings = {
 };
 
 export type ProjectModel = {
+  schemaVersion: number;
   project: ProjectInfo;
   units: {
     length: string;

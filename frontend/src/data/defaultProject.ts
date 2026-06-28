@@ -1,3 +1,4 @@
+import { CURRENT_PROJECT_SCHEMA_VERSION } from "../projectMigration";
 import type { ProjectModel } from "../types";
 
 export const createDefaultProject = (): ProjectModel => {
@@ -37,6 +38,7 @@ export const createDefaultProject = (): ProjectModel => {
     soft("B4"),
   ];
   return {
+    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
     project: {
       id: "bridge-continuous",
       name: "5-Span Continuous Viaduct (Plan A)",
@@ -197,6 +199,7 @@ export function createSuspendedDeckProject(): ProjectModel {
     soft("B4"),
   ];
   return {
+    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
     project: {
       id: "bridge-suspended",
       name: "5-Span Suspended Viaduct (Plan B)",

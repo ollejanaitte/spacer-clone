@@ -6,6 +6,7 @@ import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
 import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
+import { migrateProject } from "./projectMigration";
 import { buildResultCsvExports } from "./exports/resultCsvExport";
 import { buildMemberForceReportCsv } from "./exports/memberForceReport";
 import { openResultPdfReport } from "./exports/resultPdfReport";
@@ -408,7 +409,7 @@ export function App() {
 
   const openFile = async (file: File) => {
     try {
-      const loaded = JSON.parse(await file.text()) as ProjectModel;
+      const loaded = migrateProject(JSON.parse(await file.text()));
       commitProject(loaded);
       setDirty(false);
       log(`${file.name} opened.`);

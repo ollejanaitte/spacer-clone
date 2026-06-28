@@ -4,6 +4,7 @@ import type { AnalysisResult, ProjectModel } from "../types";
 
 function createMockProject(): ProjectModel {
   return {
+    schemaVersion: 1,
     project: {
       id: "test",
       name: "Test",
