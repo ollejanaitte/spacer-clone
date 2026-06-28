@@ -6,6 +6,7 @@ import type { FrameMappingOptions, FrameMappingResult } from "../mapper/frameMod
 import { mapToFrameModel } from "../mapper/frameModelMapper";
 import { attachLinerMappingToProject } from "../schema/attachLinerMappingToProject";
 import type { ProjectModel } from "../../types";
+import { CURRENT_PROJECT_SCHEMA_VERSION } from "../../projectMigration";
 import { convertFrameMappingEntities } from "./convertFrameMappingEntities";
 import {
   LINER_HEADLESS_ANALYSIS_SETTINGS,
@@ -77,6 +78,7 @@ function createMinimalProjectShell(
     : [];
 
   return {
+    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
     project: {
       id: options?.projectId ?? `liner-${linerModelId}`,
       name: options?.projectName ?? `Liner generated ${linerModelId}`,
