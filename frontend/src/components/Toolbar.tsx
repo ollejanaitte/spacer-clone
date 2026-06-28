@@ -24,6 +24,7 @@ type ToolbarProps = {
   onExportResultJson: () => void;
   onExportResultCsv: () => void;
   onExportResultPdf: () => void;
+  onExportLinerPlanDxf?: () => void;
   onOpenBridgeWizard: () => void;
   onOpenModelComparison?: () => void;
   onOpenLinerList?: () => void;
@@ -54,6 +55,7 @@ export function Toolbar({
   onExportResultJson,
   onExportResultCsv,
   onExportResultPdf,
+  onExportLinerPlanDxf,
   onOpenBridgeWizard,
   onOpenModelComparison = () => undefined,
   onOpenLinerList,
@@ -168,6 +170,12 @@ export function Toolbar({
             <Download size={16} />
             {t.exportJsonButton}
           </button>
+          {onExportLinerPlanDxf && (
+            <button type="button" onClick={onExportLinerPlanDxf} title="LINER plan DXF" data-testid="export-liner-plan-dxf">
+              <Download size={16} />
+              Plan DXF
+            </button>
+          )}
         </div>
       </div>
     </header>
