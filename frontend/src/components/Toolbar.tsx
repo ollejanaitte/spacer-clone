@@ -26,6 +26,7 @@ type ToolbarProps = {
   onExportResultPdf: () => void;
   onExportLinerPlanDxf?: () => void;
   onExportLinerProfileDxf?: () => void;
+  onExportLinerFrameStl?: () => void;
   onOpenBridgeWizard: () => void;
   onOpenModelComparison?: () => void;
   onOpenLinerList?: () => void;
@@ -58,6 +59,7 @@ export function Toolbar({
   onExportResultPdf,
   onExportLinerPlanDxf,
   onExportLinerProfileDxf,
+  onExportLinerFrameStl,
   onOpenBridgeWizard,
   onOpenModelComparison = () => undefined,
   onOpenLinerList,
@@ -187,6 +189,12 @@ export function Toolbar({
             >
               <Download size={16} />
               Profile DXF
+            </button>
+          )}
+          {onExportLinerFrameStl && (
+            <button type="button" onClick={onExportLinerFrameStl} title="LINER frame STL" data-testid="export-liner-frame-stl">
+              <Download size={16} />
+              Frame STL
             </button>
           )}
         </div>
