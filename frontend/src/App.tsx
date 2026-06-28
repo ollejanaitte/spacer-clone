@@ -41,6 +41,7 @@ import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
 import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
+import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
 
@@ -475,6 +476,11 @@ export function App() {
     log("LINER profile DXF downloaded.");
   };
 
+  const exportLinerFrameStl = () => {
+    downloadText("liner_frame.stl", buildLinerFrameStl(project), "model/stl");
+    log("LINER frame STL downloaded.");
+  };
+
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
     setSelectedNode(nextSelection?.type === "node" ? nextSelection.id : null);
     setSelectedMember(nextSelection?.type === "member" ? nextSelection.id : null);
@@ -601,6 +607,7 @@ export function App() {
         onExportResultPdf={exportResultPdf}
         onExportLinerPlanDxf={exportLinerPlanDxf}
         onExportLinerProfileDxf={exportLinerProfileDxf}
+        onExportLinerFrameStl={exportLinerFrameStl}
         canExportResults={Boolean(result)}
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
