@@ -1,6 +1,6 @@
 export const L0_STRINGS = {
   lobby: {
-    title: "橋と建物の実験室",
+    title: "簡易構造計算ソフト",
     subtitle: "やりたいことを選んでください",
     footer: "※ いつでも他の編に切り替えできます",
     modes: {

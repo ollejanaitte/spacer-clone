@@ -295,7 +295,7 @@ function ArrayEditor<T>({
         <Plus size={16} />
         {ja.propertyPanel.rowAdd}
       </button>
-      <table className="edit-table">
+      <table className={`edit-table edit-table-${tableClassName(pathPrefix)}`}>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -643,6 +643,10 @@ function descriptionFor(section: SectionKey): string {
 
 function nextId(prefix: string, length: number): string {
   return `${prefix}${length + 1}`;
+}
+
+function tableClassName(pathPrefix: string): string {
+  return pathPrefix.replaceAll("/", "-").replace(/^-/, "") || "root";
 }
 
 const projectColumns: Column<ProjectInfo>[] = [

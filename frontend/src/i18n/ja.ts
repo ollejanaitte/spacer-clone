@@ -36,10 +36,15 @@ export const ja = {
   },
 
   toolbar: {
+    backToTopTitle: "トップ画面へ戻ります。",
+    backToTopButton: "戻る",
     unsavedChanges: "未保存の変更あり",
     saved: "保存済み",
     newTitle: "新しいモデルを作成します。",
     newButton: "新規",
+    resetTitle: "モデル内の節点・部材・荷重などを全て削除します。",
+    resetButton: "初期化",
+    resetConfirm: "モデルを全て削除しますか？",
     openTitle: "ローカルPC上の project.json を開きます。",
     openButton: "開く",
     bridgeWizardTitle: "橋梁3D骨組モデルをウィザード形式で作成します。",

@@ -1,5 +1,6 @@
 ﻿import { Activity, Download, FileText, FolderOpen, LineChart, Map, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
+import { Trash2 } from "lucide-react";
 
 type ToolbarProps = {
   projectName: string;
@@ -11,7 +12,9 @@ type ToolbarProps = {
   canExportResults: boolean;
   canExportCsv: boolean;
   canExportPdf: boolean;
+  onBackToTop: () => void;
   onNew: () => void;
+  onResetModel: () => void;
   onOpen: (file: File) => void;
   onSave: () => void;
   onValidate: () => void;
@@ -44,7 +47,9 @@ export function Toolbar({
   canExportResults,
   canExportCsv,
   canExportPdf,
+  onBackToTop,
   onNew,
+  onResetModel,
   onOpen,
   onSave,
   onValidate,
@@ -78,9 +83,16 @@ export function Toolbar({
       </div>
       <div className="toolbar-actions">
         <div className="toolbar-group">
+          <button type="button" onClick={onBackToTop} title={t.backToTopTitle} data-testid="back-to-top">
+            {t.backToTopButton}
+          </button>
           <button type="button" onClick={onNew} title={t.newTitle}>
             <RotateCcw size={16} />
             {t.newButton}
+          </button>
+          <button type="button" onClick={onResetModel} title={t.resetTitle} data-testid="reset-model">
+            <Trash2 size={16} />
+            {t.resetButton}
           </button>
           <label className="button-like" title={t.openTitle}>
             <FolderOpen size={16} />

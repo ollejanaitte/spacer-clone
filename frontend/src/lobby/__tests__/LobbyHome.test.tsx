@@ -15,7 +15,7 @@ function renderComponent(ui: React.ReactNode) {
 describe("LobbyHome", () => {
   test("renders the title", () => {
     const { container } = renderComponent(<LobbyHome onNavigate={() => {}} />);
-    expect(container.textContent).toContain("橋と建物の実験室");
+    expect(container.textContent).toContain("簡易構造計算ソフト");
   });
 
   test("renders the subtitle", () => {

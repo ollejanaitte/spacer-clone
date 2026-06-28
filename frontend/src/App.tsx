@@ -198,6 +198,40 @@ export function App() {
     setCurrentPathname(path);
   }, []);
 
+  const navigateTop = useCallback(() => {
+    window.history.pushState({}, "", "/");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, []);
+
+  const resetModelContents = useCallback(() => {
+    if (!window.confirm(ja.toolbar.resetConfirm)) return;
+    commitProject({
+      ...project,
+      nodes: [],
+      materials: [],
+      sections: [],
+      members: [],
+      supports: [],
+      loadCases: [],
+      nodalLoads: [],
+      memberLoads: [],
+      massCases: [],
+      groundMotions: [],
+      analysisSettings: {
+        ...project.analysisSettings,
+        eigen: undefined,
+        responseSpectrum: undefined,
+        influence: undefined,
+        timeHistory: undefined,
+      },
+      analysisResults: undefined,
+      liner: undefined,
+      linerTrace: undefined,
+    });
+    setBottomTab("results");
+    log("Model contents reset.");
+  }, [project]);
+
   const validate = async (): Promise<ValidationResponse | null> => {
     setApiErrors([]);
     try {
@@ -589,11 +623,13 @@ export function App() {
         validationStatus={validation ? (validation.valid ? "OK" : "Has errors") : "Not validated"}
         analysisStatus={running ? "Running" : result ? analysisStatusLabel(result.analysisSummary.status) : "Not run"}
         canRun={canRun}
+        onBackToTop={navigateTop}
         onNew={() => {
           commitProject(createDefaultProject());
           setDirty(false);
           log("New model created.");
         }}
+        onResetModel={resetModelContents}
         onOpen={openFile}
         onSave={saveProject}
         onValidate={() => void validate()}

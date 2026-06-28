@@ -206,9 +206,10 @@ button:disabled {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr) auto auto;
   min-height: 0;
+  overflow: hidden;
 }
 .workspace.data-panel-open {
-  grid-template-columns: 220px minmax(420px, 1fr) minmax(360px, 420px) auto;
+  grid-template-columns: 220px minmax(360px, 1fr) clamp(440px, 34vw, 520px) auto;
 }
 .workspace.data-panel-closed {
   grid-template-columns: 220px minmax(0, 1fr) auto;
@@ -296,7 +297,7 @@ button:disabled {
 .viewer-body {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 236px;
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 22vw, 320px);
   min-height: 0;
   overflow: hidden;
   border: 1px solid #cbd5df;
@@ -433,7 +434,10 @@ button:disabled {
   align-content: start;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
+  max-height: 100%;
   overflow: auto;
+  overscroll-behavior: contain;
   padding: 10px;
   border-left: 1px solid #d8e0e8;
   background: #f8fafc;
@@ -809,6 +813,7 @@ button:disabled {
 .property-panel {
   padding: 12px;
   border-left: 1px solid #d8e0e8;
+  min-width: 0;
 }
 
 .panel-title {
@@ -851,7 +856,7 @@ button:disabled {
 .edit-table input,
 .edit-table select {
   width: 100%;
-  min-width: 72px;
+  min-width: 0;
   height: 30px;
   padding: 4px 7px;
   border: 1px solid #c4ced8;
@@ -875,6 +880,46 @@ button:disabled {
 
 .table-wrap {
   overflow: auto;
+  max-width: 100%;
+}
+
+.property-panel .edit-table {
+  table-layout: fixed;
+}
+
+.property-panel .edit-table th,
+.property-panel .edit-table td {
+  padding: 5px 4px;
+}
+
+.property-panel .edit-table input,
+.property-panel .edit-table select {
+  padding: 3px 5px;
+  font-size: 11px;
+}
+
+.property-panel .edit-table th:last-child,
+.property-panel .edit-table td:last-child {
+  width: 34px;
+}
+
+.edit-table-nodes th:nth-child(1),
+.edit-table-nodes td:nth-child(1) {
+  width: 64px;
+}
+
+.edit-table-nodes th:nth-child(2),
+.edit-table-nodes td:nth-child(2),
+.edit-table-nodes th:nth-child(3),
+.edit-table-nodes td:nth-child(3),
+.edit-table-nodes th:nth-child(4),
+.edit-table-nodes td:nth-child(4) {
+  width: 68px;
+}
+
+.edit-table-nodes th:nth-child(5),
+.edit-table-nodes td:nth-child(5) {
+  width: auto;
 }
 
 .add-row {
