@@ -40,6 +40,7 @@ Implementation code does not belong in this folder. Current implementation artif
 | [ui_grid_preview.md](ui_grid_preview.md) | High | P2-5 design | Read-only grid preview UI |
 | [ui_mapping_review.md](ui_mapping_review.md) | High | P2-6 design | Mapping review and Viewer3D confirmation |
 | [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
+| [phase3_release_notes.md](phase3_release_notes.md) | Release notes | Phase3 complete | Phase3 output summary |
 | [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
