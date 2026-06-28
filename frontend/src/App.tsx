@@ -39,6 +39,7 @@ import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
 import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
+import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ja } from "./i18n/ja";
 
@@ -463,6 +464,11 @@ export function App() {
     }
   };
 
+  const exportLinerPlanDxf = () => {
+    downloadText("liner_plan.dxf", buildLinerPlanDxf(linerDraft), "application/dxf");
+    log("LINER plan DXF downloaded.");
+  };
+
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
     setSelectedNode(nextSelection?.type === "node" ? nextSelection.id : null);
     setSelectedMember(nextSelection?.type === "member" ? nextSelection.id : null);
@@ -587,6 +593,7 @@ export function App() {
         onExportResultJson={exportResultJson}
         onExportResultCsv={exportResultCsv}
         onExportResultPdf={exportResultPdf}
+        onExportLinerPlanDxf={exportLinerPlanDxf}
         canExportResults={Boolean(result)}
         canExportCsv={Boolean(result)}
         canExportPdf={Boolean(result)}
