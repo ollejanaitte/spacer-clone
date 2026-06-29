@@ -1,19 +1,21 @@
 # cad_output_spec.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/cad_output_spec.md`
-- 髢｢騾｣Phase: 3.5-5
-- 譖ｴ譁ｰ逅・罰: Human Decision #1縺ｫ繧医ｊ縲￣hase3.5蛻晄悄縺ｮDXF譖ｲ邱壼・蜉帙・蜈ｨ譖ｲ邱嗔olyline霑台ｼｼ縺ｫ遒ｺ螳壹＠縺溘◆繧√ら樟陦慧ocs縺ｯSVG MVP/DXF post-MVP荳ｭ蠢・・縺溘ａ縲￣hase3.5 DXF譁ｹ驥昴ｒ霑ｽ險倥☆繧九・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/cad_output_spec.md`
+- 関連Phase: 3.5-5
+- 更新理由: Human Decision #1により、Phase3.5初期のDXF曲線出力は全曲線polyline近似に確定したため。現行docsはSVG MVP/DXF post-MVP中心のため、Phase3.5 DXF方針を追記する。
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+## 更新箇所
+
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| Scope | SVG MVP; DXF subset post-MVP | Phase3.5縺ｧDXF polyline subset繧貞ｮ溯｣・ｯｾ雎｡縺ｫ霑ｽ蜉 |
-| 1. Resampling contract | fixed intermediate samples only | DXF逕ｨsampling profile繧恥ipeline縺ｧ逕滓・縺励，AD module縺ｧ縺ｯ蜀行ampling縺励↑縺・|
-| 7. Post-MVP DXF | LINE/LWPOLYLINE遲・| Phase3.5蛻晄悄縺ｯARC縺ｪ縺励∝・譖ｲ邱嗔olyline霑台ｼｼ縲、RC縺ｯ5b莉･髯榊呵｣・|
+| Scope | SVG MVP; DXF subset post-MVP | Phase3.5でDXF polyline subsetを実装対象に追加 |
+| 1. Resampling contract | fixed intermediate samples only | DXF用sampling profileをpipelineで生成し、CAD moduleでは再samplingしない |
+| 7. Post-MVP DXF | LINE/LWPOLYLINE等 | Phase3.5初期はARCなし、全曲線polyline近似、ARCは5b以降候補 |
 
-## 蟾ｮ蛻・｡・
+## 差分
+
 ```diff
 @@ Scope
 - SVG export (MVP); DXF subset (post-MVP).
@@ -31,7 +33,7 @@
 + Default approximation: max chord 0.1 m, max sagitta 0.001 m.
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/dxf_stl_curve_export_strategy.md`
 - `docs/liner/phase3.5/horizontal_curve_completion.md`
