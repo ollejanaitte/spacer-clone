@@ -9,6 +9,7 @@ export * from "./geometry/horizontal";
 export * from "./geometry/line";
 export * from "./geometry/vertical";
 export * from "./pipeline/pipeline";
+export * from "./sampling";
 export * from "./pipeline/sourceRevision";
 export * from "./station/stationRules";
 export * from "./tolerances";
