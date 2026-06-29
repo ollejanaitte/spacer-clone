@@ -21,7 +21,8 @@ function finiteOrZero(value: number): number {
 export function applyCrossSlope(offset: number, slopePercent: number): number {
   const safeOffset = finiteOrZero(offset);
   const safeSlope = finiteOrZero(slopePercent);
-  return -(safeSlope / 100) * safeOffset;
+  const result = -(safeSlope / 100) * safeOffset;
+  return result === 0 ? 0 : result;
 }
 
 /**
