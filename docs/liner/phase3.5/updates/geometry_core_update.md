@@ -1,21 +1,23 @@
 # geometry_core.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/geometry_core.md`
-- 髢｢騾｣Phase: 3.5-1
-- 譖ｴ譁ｰ逅・罰: Phase3.5-0隱ｿ譟ｻ縺ｧ縲∝ｮ溯｣・ｸ医∩API縺ｯ蜑肴婿隧穂ｾ｡荳ｭ蠢・〒縲，0/C1讀懆ｨｼ縲・・兜蠖ｱ縲《ampling 3邉ｻ邨ｱ蛻・屬縲√け繝ｭ繧ｽ繧､繝臥ｲｾ蠎ｦGate縺梧悴螳御ｺ・→蛻､譏弱＠縺溘◆繧√・uman Decision #2, #9繧貞渚譏縺吶ｋ縲・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/geometry_core.md`
+- 関連Phase: 3.5-1
+- 更新理由: Phase3.5-0調査で、実装済みAPIは前方評価中心であり、C0/C1検証、投影、sampling 3系統分離、クロソイド精度Gateが未完了と判明したため、Human Decision #2, #9を反映する。
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+## 更新箇所
+
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| Scope | Horizontal/vertical/station/offset繧樽VP scope縺ｨ縺吶ｋ | Phase3.5縺ｧ縺ｯ豌ｴ蟷ｳ譖ｲ邱喞ompletion繧貞・陦後＠縲∫ｸｦ譁ｭ/讓ｪ譁ｭ/3D邨ｱ蜷医・N3縲廸5縺ｧ谿ｵ髫主ｮ溯｣・☆繧区葎繧定ｿｽ險・|
-| 2. Horizontal segment resolution | C0/C1/G2縺ｮ險ｭ險亥､縺ｮ縺ｿ | `validateAlignment()` 縺靴0/C1譛ｪ螳溯｣・〒縺ゅｋ迴ｾ迥ｶ縲￣hase3.5-1縺ｧerror險ｺ譁ｭ縺ｨ縺励※螳溯｣・☆繧季ate譚｡莉ｶ繧定ｿｽ險・|
-| 3. Clothoid | Fresnel series縺慶hosen method | Phase3.5蛻晄悄縺ｯSimpson遨榊・繧堤ｶｭ謖√＠縲・28蛻・牡縲‘ndpoint 1e-3 m莉･蜀・：resnel鄂ｮ謠姆ate繧定ｿｽ險・|
-| 5. Station computation | inverse query API縺ｮ逍台ｼｼ繧ｳ繝ｼ繝・| `stationAtPoint(x,y)` 縺ｮ謌ｻ繧雁､縲〕ine/arc/clothoid蛻･projection譁ｹ蠑上｛ffset隨ｦ蜿ｷ繧定ｿｽ險・|
-| 8. Sampling density | Rendering polyline 1.0m遲・| display/dxf/frame 3邉ｻ邨ｱ縺ｫ蛻・屬縺励∵里螳壼､縺ｨsagitta隱､蟾ｮ繧定ｿｽ險・|
+| Scope | Horizontal/vertical/station/offsetをMVP scopeとする | Phase3.5では水平曲線completionを並行し、縦断/横断/3D統合はN3〜N5で段階実装する旨を追記 |
+| 2. Horizontal segment resolution | C0/C1/G2の設計値のみ | `validateAlignment()` がC0/C1未実装である現状、Phase3.5-1でerror診断として実装するGate条件を追記 |
+| 3. Clothoid | Fresnel seriesがchosen method | Phase3.5初期はSimpson積分を維持し、128分割、endpoint 1e-3 m以内、Fresnel置換Gateを追記 |
+| 5. Station computation | inverse query APIの疑似コード | `stationAtPoint(x,y)` の戻り値、line/arc/clothoid別projection方式、offset符号を追記 |
+| 8. Sampling density | Rendering polyline 1.0m等 | display/dxf/frame 3系統に分離し、既定値とsagitta誤差を追記 |
 
-## 蟾ｮ蛻・｡・
+## 差分
+
 ```diff
 @@ Scope
 + Phase3.5 implementation is split into horizontal completion (N1), vertical alignment (N3),
@@ -49,7 +51,7 @@
 + frame max chord 0.25 m / sagitta 0.0025 m (strict).
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/horizontal_curve_completion.md`
 - `docs/liner/phase3.5/typed_liner_draft_schema_vnext.md`
