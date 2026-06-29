@@ -1,20 +1,20 @@
 # validation_rules.md Update Proposal
 
-## 対象
+## 蟇ｾ雎｡
 
-- 元ファイル: `docs/liner/validation_rules.md`
-- 関連Phase: 3.5-1。
-- 更新理由: Phase3.5-0調査で水平/縦断/横断のvalidation不足が確認されたため、N1〜N4のdomain別validationとdiagnostic code mappingを追記する。
-## 更新箇所
+- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/validation_rules.md`
+- 髢｢騾｣Phase: 3.5-1縲・
+- 譖ｴ譁ｰ逅・罰: Phase3.5-0隱ｿ譟ｻ縺ｧ豌ｴ蟷ｳ/邵ｦ譁ｭ/讓ｪ譁ｭ縺ｮvalidation荳崎ｶｳ縺檎｢ｺ隱阪＆繧後◆縺溘ａ縲・1縲廸4縺ｮdomain蛻･validation縺ｨdiagnostic code mapping繧定ｿｽ險倥☆繧九・
+## 譖ｴ譁ｰ邂・園
 
-| 現状章 | 現状記述 | 更新後記述 |
+| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
 |---|---|---|
-| 2. Rule table | MVP ruleが単表 | Horizontal / Vertical / Cross Section / Schema Migrationに分離 |
-| 2. Rule table | C0/C1は1行�Eみ | C0, C1, G2を個別rule匁E|
-| 2. Rule table | Cross-section ruleなぁE| offset重褁E��crossfall finite、template参�E、superelevation overlapを追加 |
-| Open Questions | Auto-fixのみ | 新規diagnostic codeの正式採番を実装��確認事頁E��追加 |
+| 2. Rule table | MVP rule縺悟腰陦ｨ | Horizontal / Vertical / Cross Section / Schema Migration縺ｫ蛻・牡 |
+| 2. Rule table | C0/C1縺ｯ1陦後・縺ｿ | C0, C1, G2繧貞句挨rule蛹・|
+| 2. Rule table | Cross-section rule縺ｪ縺・| offset驥崎､・…rossfall finite縲》emplate蜿ら・縲《uperelevation overlap繧定ｿｽ蜉 |
+| Open Questions | Auto-fix縺ｮ縺ｿ | 譁ｰ隕重iagnostic code縺ｮ豁｣蠑乗治逡ｪ繧貞ｮ溯｣・燕遒ｺ隱堺ｺ矩・↓霑ｽ蜉 |
 
-## 差分
+## 蟾ｮ蛻・｡・
 ```diff
 @@ 2. Rule table (MVP)
 + ### Horizontal rules
@@ -40,7 +40,7 @@
 + | Legacy draft | arbitrary free-form draft | error | `LINER_SCHEMA_INVALID` |
 ```
 
-## 参照
+## 蜿ら・
 
 - `docs/liner/phase3.5/horizontal_curve_completion.md`
 - `docs/liner/phase3.5/vertical_alignment_design.md`

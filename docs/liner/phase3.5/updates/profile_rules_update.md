@@ -1,19 +1,19 @@
-﻿# profile_rules.md Update Proposal
+# profile_rules.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/profile_rules.md`
-- 髢｢騾｣Phase: 3.5-2/3.5-3
-- 譖ｴ譁ｰ逅・罰: Phase3.5-0隱ｿ譟ｻ縺ｧ `zProvenance` 縺・蝓九ａ縺ｧ縲∫ｸｦ譁ｭpipeline譛ｪ謗･邯壹∵ｨｪ譁ｭZ蜷域・譛ｪ螳溯｣・→蛻､譏弱＠縺溘◆繧√・3/N4縺ｮ雋ｬ蜍吝・髮｢繧貞渚譏縺吶ｋ縲・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/profile_rules.md`
+- 関連Phase: 3.5-2/3.5-3
+- 更新理由: Phase3.5-0調査で `zProvenance` ぁE埋めで、縦断pipeline未接続、横断Z合成未実装��判明したため、N3/N4の責務�E離を反映する。
+## 更新箇所
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| 1. Vertical component split | crossfall/superelevation縺ｯ0 in MVP | Phase3.5-3縺ｧcrossfallOffset繧貞ｮ溷､蛹悶〕ocalFrame蝗櫁ｻ｢縺ｯ3.5-4縺ｨ譏手ｨ・|
-| 2. Vertical segment types | formula縺ｮ縺ｿ | pipeline謗･邯壹’ixed-z鄂ｮ謠帙”eightPoints/PVI/PVC/PVT蜈･蜉帙ｒ霑ｽ險・|
-| 4. Cross-section | template field蛻玲嫌 | 隨ｦ蜿ｷ隕冗ｴ・ offset蟾ｦ豁｣縲…rossfall蟾ｦ荳翫′繧頑ｭ｣縲～crossfallOffset=c*d` 繧定ｿｽ險・|
+| 1. Vertical component split | crossfall/superelevationは0 in MVP | Phase3.5-3でcrossfallOffsetを実値化、localFrame回転は3.5-4と明記|
+| 2. Vertical segment types | formulaのみ | pipeline接続、fixed-z置換、heightPoints/PVI/PVC/PVT入力を追記|
+| 4. Cross-section | template field列挙 | 符号規紁E offset左正、crossfall左上がり正、`crossfallOffset=c*d` を追記|
 
-## 蟾ｮ蛻・｡・
+## 差分
 ```diff
 @@ 1. Vertical component split
 - Cross-section module (0 in MVP)
@@ -32,7 +32,7 @@
 + - `crossfallOffset = crossfall(s) * offset`.
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/vertical_alignment_design.md`
 - `docs/liner/phase3.5/cross_section_superelevation_design.md`
