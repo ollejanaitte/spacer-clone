@@ -1,19 +1,21 @@
-﻿# calculation_pipeline.md Update Proposal
+# calculation_pipeline.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/calculation_pipeline.md`
-- 髢｢騾｣Phase: 3.5-4
-- 譖ｴ譁ｰ逅・罰: Phase3.5-0隱ｿ譟ｻ縺ｧ迴ｾpipeline縺悟崋螳啝縲｛ffset驟榊・縲∫ｩｺ `spans/piers/sections` 縺ｧ縺ゅｋ縺薙→縺悟愛譏弱＠縺溘◆繧√・5縺ｮvNext stage order繧貞渚譏縺吶ｋ縲・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/calculation_pipeline.md`
+- 関連Phase: 3.5-4
+- 更新理由: Phase3.5-0調査で現pipelineが固定Z、offset配列、空 `spans/piers/sections` であることが判明したため、N5のvNext stage orderを反映する。
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+## 更新箇所
+
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| 1. Stage order | validate竊檀orizontal竊痴tation竊致ertical竊暖rid | Horizontal竊担tation竊歎ertical竊辰rossSection竊・D combine竊痴pans/piers/sections縺ｫ蜀咲ｷｨ |
-| 3. Public API | `runPipeline(domain)` | domain draft vNext縲《ampling profile謖・ｮ壹［apper蛻・屬繧呈・險・|
-| 4. Re-sampling policy | sample spacing螟画峩縺ｧ蜀荒un | display/dxf/frame sampling key蛻･cache/invalidation繧定ｿｽ險・|
+| 1. Stage order | validate→horizontal→station→vertical→grid | Horizontal→Station→Vertical→CrossSection→3D combine→spans/piers/sectionsに再編 |
+| 3. Public API | `runPipeline(domain)` | domain draft vNext、sampling profile指定、mapper分離を明記 |
+| 4. Re-sampling policy | sample spacing変更で再run | display/dxf/frame sampling key別cache/invalidationを追記 |
 
-## 蟾ｮ蛻・｡・
+## 差分
+
 ```diff
 @@ 1. Stage order
 - 5. generateGrid(horizontal, vertical, gridDefs, sections, spans, piers)
@@ -35,7 +37,7 @@
 + Display, DXF, and Frame sampling are invalidated independently, but any domain change invalidates all.
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/coordinate_integration_3d_design.md`
 - `docs/liner/phase3.5/typed_liner_draft_schema_vnext.md`
