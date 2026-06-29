@@ -23,6 +23,8 @@ export const LINER_DIAGNOSTIC_CODES = {
   invalidFrameSchema: "LINER_FRAME_SCHEMA_INVALID",
   profileElevationDiscontinuity: "LINER_PROFILE_ELEVATION_DISCONTINUITY",
   profileGradeDiscontinuity: "LINER_PROFILE_GRADE_DISCONTINUITY",
+  profileCoverageGap: "LINER_PROFILE_COVERAGE_GAP",
+  profileParabolicZMergeDeferred: "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export function createIssue(
