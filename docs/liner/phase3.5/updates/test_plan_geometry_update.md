@@ -1,19 +1,19 @@
 # test_plan_geometry.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/test_plan_geometry.md`
-- 髢｢騾｣Phase: 3.5-1縲・
-- 譖ｴ譁ｰ逅・罰: Phase3.5-0隱ｿ譟ｻ縺ｧ縲∵峇邱喞ompletion縲∫ｸｦ譁ｭpipeline縲∵ｨｪ譁ｭZ蜷域・縲・D邨ｱ蜷医・霑ｽ蜉test縺悟ｿ・ｦ√→蛻､譏弱＠縺溘◆繧√・1縲廸5縺ｮGolden test繧貞渚譏縺吶ｋ縲・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/test_plan_geometry.md`
+- 関連Phase: 3.5-1。
+- 更新理由: Phase3.5-0調査で、曲線completion、縦断pipeline、横断Z合成、3D統合成追加testが必須と判明したため、N1〜N5のGolden testを反映する。
+## 更新箇所
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| 2. Tolerance table | clothoid endpoint 1e-3遲・| Simpson邯ｭ謖√；C-08縲・0縺ｮGate縲《ampling sagitta tolerance繧定ｿｽ險・|
-| 3. Golden catalog | GC-01縲廨C-10 | GC-11 vertical pipeline縲；C-12 crossfall縲；C-13 curved3D邨ｱ蜷医ｒ霑ｽ蜉 |
-| 8. Test layout | proposed files | `horizontal.continuity.test.ts`, `stationInverse.test.ts`, `crossfallGrid.test.ts`, `pipeline.curved3d.test.ts` 繧定ｿｽ蜉 |
+| 2. Tolerance table | clothoid endpoint 1e-3等| Simpson維持、GC-08、N0のGate、sampling sagitta toleranceを追記|
+| 3. Golden catalog | GC-01〜GC-10 | GC-11 vertical pipeline、GC-12 crossfall、GC-13 curved3D統合を追加 |
+| 8. Test layout | proposed files | `horizontal.continuity.test.ts`, `stationInverse.test.ts`, `crossfallGrid.test.ts`, `pipeline.curved3d.test.ts` を追加 |
 
-## 蟾ｮ蛻・｡・
+## 差分
 ```diff
 @@ 2. Tolerance table
 + | Display sampling sagitta (m) | 0.005 | Preview |
@@ -42,7 +42,7 @@
 + pipeline.curved3d.test.ts
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/horizontal_curve_completion.md`
 - `docs/liner/phase3.5/vertical_alignment_design.md`
