@@ -1,146 +1,131 @@
 # 3D Coordinate Integration Design
 
-## 0. 菴咲ｽｮ縺･縺・
-- 蟇ｾ雎｡Phase: Phase3.5-4
-- 蜑肴署縺ｨ縺ｪ繧玖ｨｭ險域嶌: `typed_liner_draft_schema_vnext.md`, `horizontal_curve_completion.md`, `vertical_alignment_design.md`, `cross_section_superelevation_design.md`
-- 縺薙・險ｭ險域嶌縺ｧ謇ｱ縺・ｯ・峇: 豌ｴ蟷ｳ+邵ｦ譁ｭ+讓ｪ譁ｭ縺九ｉ縺ｮ3D蠎ｧ讓咏ｵｱ蜷医～zProvenance`縲“rid/spans/piers/sections縲》race縲〕ocalFrame蜿肴丐縲：rame Model蛻・牡縲・- 縺薙・險ｭ險域嶌縺ｧ謇ｱ繧上↑縺・ｯ・峇: DXF/STL蜃ｺ蜉帙・format隧ｳ邏ｰ縲・
-## 1. 閭梧勹縺ｨ逶ｮ逧・
-迴ｾ迥ｶpipeline縺ｯ豌ｴ蟷ｳ邱壼ｽ｢縺ｨ貂ｬ轤ｹ縲∝崋螳啝縲｛ffset驟榊・縺九ｉgrid繧剃ｽ懊ｋ縲Ａspans/piers/sections` 縺ｯ蝙九□縺大ｭ伜惠縺礼ｩｺ驟榊・縺ｧ縺ゅｋ縲１hase3.5-4縺ｧ縺ｯ縲∵ｰｴ蟷ｳ譖ｲ邱壹・邵ｦ譁ｭ繝ｻ讓ｪ譁ｭ縺ｮ邨先棡繧堤ｵｱ蜷医＠縲〃iewer/Frame Model/Export縺悟・譛峨☆繧・D荳ｭ髢鍋ｵ先棡繧貞ｮ梧・縺輔○繧九・
-## 2. 逕ｨ隱槫ｮ夂ｾｩ
+## 0. 位置づけ
 
-| 逕ｨ隱・| 螳夂ｾｩ |
+- 対象Phase: Phase3.5-4
+- 前提となる設計書: `typed_liner_draft_schema_vnext.md`, `horizontal_curve_completion.md`, `vertical_alignment_design.md`, `cross_section_superelevation_design.md`
+- この設計書で扱う範囲: 水平+縦断+横断からの3D座標統合、`zProvenance`, grid/spans/piers/sections, trace, localFrame反映, Frame Model分割
+- この設計書で扱わない範囲: DXF/STL出力format詳細
+
+## 1. 背景と目的
+
+現状pipelineは水平線形、測点、固定Z、offset配列からgridを作る。`spans/piers/sections` は型だけが存在し空配列である。Phase3.5-4では、水平曲線・縦断・横断の結果を統合し、Viewer/Frame Model/Exportが共有する3D中間結果を完成させる。
+
+## 2. 用語定義
+
+| 用語 | 定義 |
 |---|---|
-| 3D combiner | Horizontal, Vertical, CrossSection繧貞粋謌舌＠縺ｦGridPointResult繧剃ｽ懊ｋstage縲・|
-| Frame蛻・牡 | 譖ｲ邱壹ｒ逵溘・譖ｲ邱嗄ember縺ｧ縺ｯ縺ｪ縺上∫ｴｰ蛻・喧縺輔ｌ縺溽峩邱嗄ember鄒､縺ｫ縺吶ｋ蜃ｦ逅・・|
-| SectionSlice | station譁ｭ髱｢縺ｮ蟷・藤縺ｨ蟾ｦ蜿ｳedge Z繧定｡ｨ縺吩ｸｭ髢鍋ｵ先棡縲・|
-| Pier line | station菴咲ｽｮ縺ｨskew縺九ｉ逕滓・縺輔ｌ繧区髪謇ｿ/讓ｪ譯〕ine縲・|
-| Trace | generated frame entity縺ｨliner source grid繧堤ｵ舌・ `linerTrace`縲・|
+| 3D combiner | Horizontal, Vertical, CrossSectionを合成してGridPointResultを作るstage。 |
+| Frame分割 | 曲線を真の曲線memberではなく、細分化された直線member群にする処理。 |
+| SectionSlice | station断面の幅員と左右edge Zを表す中間結果。 |
+| Pier line | station位置とskewから生成される橋脚/横桁line。 |
+| Trace | generated frame entityとliner source gridを結ぶ `linerTrace`。 |
 
-## 3. 遒ｺ螳壽婿驥晢ｼ・uman Decision蜿肴丐・・
-- Decision #6: Frame Model縺ｧ縺ｯ譖ｲ邱壹ｒ邏ｰ蛻・喧逶ｴ邱嗄ember縺ｨ縺励※豁｣蠑丞喧縺励∫悄縺ｮ譖ｲ邱嗄ember讎ょｿｵ縺ｯ謗｡逕ｨ縺励↑縺・・- Decision #7: superelevation縺ｮlocalFrame蜿肴丐縺ｯ3.5-4縺ｧ陦後≧縲・- Decision #8: Phase3.5縺ｧ縺ｯ蜊倅ｸalignment邯咏ｶ壹・- Decision #9: 陦ｨ遉ｺ逕ｨ/DXF逕ｨ/Frame蛻・牡逕ｨsampling縺ｮ3邉ｻ邨ｱ繧貞粋豬∬ｦ丞援莉倥″縺ｧ菴ｿ縺・・縺代ｋ縲・
-## 4. 繝峨Γ繧､繝ｳ繝｢繝・Ν
+## 3. 確定方針（Human Decision反映）
+
+- Decision #6: Frame Modelでは曲線を細分化直線memberとして正式化し、真の曲線member概念は採用しない。
+- Decision #7: superelevationのlocalFrame反映は3.5-4で行う。
+- Decision #8: Phase3.5では単一alignment継続。
+- Decision #9: 表示用/DXF用/Frame分割用samplingの3系統を合流要件付きで使い分ける。
+
+## 4. ドメインモデル
 
 ```ts
-interface GridDefinitionDraft {
+interface GridPoint3DResult {
   id: string;
-  stationRange: { startPhysicalDistance: number; endPhysicalDistance: number };
-  stationInterval: number;
-  crossSectionTemplateId: string;
-  frameDivision: { maxMemberLength: number; includeCurveBreakpoints: boolean };
+  station: number;
+  offset: number;
+  position: Vec3;
+  localFrame: LocalFrame;
+  zProvenance: ZProvenance;
+  source: GridPointSource;
 }
 
-interface PierDraft {
-  id: string;
-  physicalDistance: number;
-  skewAngleRad: number;
-  bearingOffsets: { transverseIndex: number; offset: number }[];
-}
-
-interface SpanDraft {
-  id: string;
-  startPhysicalDistance: number;
-  endPhysicalDistance: number;
-  pierIdStart?: string;
-  pierIdEnd?: string;
+interface FrameMappingHint {
+  generatedNodeId: string;
+  generatedMemberId?: string;
+  sourceGridPointId?: string;
+  sourceElementId?: string;
 }
 ```
 
-Field荳隕ｧ:
+| 名前 | 型 | 必須 | 説明 |
+|---|---|---:|---|
+| `position` | Vec3 | Yes | XYはhorizontal、Zはprofile/crossfall合成。 |
+| `localFrame` | LocalFrame | Yes | tangent/normal/binormal。 |
+| `zProvenance` | object | Yes | Z合成内訳。 |
+| `source` | object | Yes | station, offset, elementIdなどの由来。 |
+| `FrameMappingHint` | object | No | Frame Model生成時のtrace候補。 |
 
-| 蜷榊燕 | 蝙・| 蠢・・| 蛻ｶ邏・| 隱ｬ譏・|
-|---|---|---:|---|---|
-| `gridDefinitions[].stationInterval` | number | Yes | `>0` | 蝓ｺ譛ｬstation逕滓・髢馴囈縲・|
-| `frameDivision.maxMemberLength` | number | Yes | `>0` | Frame蛻・牡縺ｮ譛螟ｧ逶ｴ邱嗄ember髟ｷ縲・|
-| `piers[].skewAngleRad` | number | Yes | finite | alignment normal縺九ｉ縺ｮskew縲・|
-| `spans[].start/endPhysicalDistance` | number | Yes | alignment蜀・| span蠅・阜縲・|
+## 5. アルゴリズム / 計算要件
 
-## 5. 繧｢繝ｫ繧ｴ繝ｪ繧ｺ繝 / 險育ｮ苓ｦ丞援
-
-邨ｱ蜷亥ｼ・
+3D合成:
 
 ```text
-H(s) = (x(s), y(s))
-T(s), N(s), B(s) = local frame from horizontal azimuth
-d = transverse offset
-Pxy(s,d) = H(s) + d * Nxy(s)
-Z(s,d) = Z_profile(s) + crossfallOffset(s,d) + structuralReferenceOffset(d) + sectionDepthOffset(d) + girderEccentricity(d)
-P(s,d) = (Pxy.x, Pxy.y, Z)
+H(s) = horizontal.evaluate(s)
+N(s) = horizontal.localNormal(s)
+Pxy = H.xy + offset * N.xy
+Z = profileZ(s) + crossfallOffset(s, offset) + structural offsets
+P = (Pxy.x, Pxy.y, Z)
 ```
 
-Superelevation localFrame:
+localFrame:
 
-- Phase3.5-4縺ｧ `normal/binormal` 繧探霆ｸ蝗槭ｊ縺ｫcrossfall angle縺縺大屓霆｢縺励◆frame繧暖rid point縺ｸ菫晏ｭ倥☆繧九・- 豌ｴ蟷ｳ謚募ｽｱ菴咲ｽｮ `Pxy` 縺ｯPhase3.5縺ｧ縺ｯ蠕捺擂縺ｮ豌ｴ蟷ｳnormal offset繧堤ｶｭ謖√☆繧九・- `AlignmentSamplePoint.localFrame` 縺ｯ豌ｴ蟷ｳframe縲～GridPointResult.localFrame` 縺ｯcrossfall蜿肴丐蠕掲rame縲・
-Sampling蜷域ｵ・
+- tangentは水平線形の接線を基準にする。
+- normalは左正offset方向。
+- binormalはZ上向きを基準にする。
+- superelevation反映時はnormal/binormalを横断勾配に応じて回転する。ただしPhase3.5-4の実装Gateで検証する。
 
-| 逕ｨ騾・| 蜈･蜉・| 蜃ｺ蜉・|
-|---|---|---|
-| Display | `sampling.display` | `horizontal.sampledPoints` for preview |
-| DXF | `sampling.dxf` | export-specific sampled polyline cached or regenerated by pipeline option |
-| Frame | `sampling.frame` + grid station interval | grid stations and member subdivision |
+Frame分割:
 
-Frame蛻・牡:
+- frame sampling profileを使用する。
+- max chord 0.25 m / sagitta <= 0.0025 mを厳守する。
+- 生成memberは直線memberのみ。
+- traceで元のalignment element / station range / grid pointを参照できるようにする。
 
-1. stationDefinition逕ｱ譚･縺ｮ貂ｬ轤ｹ縲“rid interval縲《pan/pier蠅・阜縲…urve breakpoints繧帝寔邏・・2. 譖ｲ邱壼玄髢薙〒 `maxMemberLength` 縺ｨ `maxSagitta` 繧呈ｺ縺溘☆station繧定ｿｽ蜉縲・3. 霑ｽ蜉station縺九ｉgrid points繧堤函謌舌・4. `mapToFrameModel()` 縺ｯ髫｣謗･grid point髢薙ｒ逶ｴ邱嗄ember縺ｨ縺励※蜃ｺ蜉帙☆繧九・
-## 6. UI莉墓ｧ・
-驟咲ｽｮ: 縲檎｢ｺ隱榊峙縲阪ち繝悶→縲梧ｨｪ譁ｭ縲・縲檎ｸｦ譁ｭ縲阪ち繝悶・summary縲・
-繝ｯ繧､繝､:
+## 6. UI仕様
 
-```text
-[遒ｺ隱榊峙]
-  Plan / Profile / 3D grid summary
-  Display samples: N
-  Frame divisions: N stations, M members
-  Spans/Piers: list
-  Diagnostics: ...
-```
+- 確認図/3D previewではdisplay samplingを使う。
+- Frame Model反映前に「生成予定node/member数」「最大member長」「sampling profile」を表示する。
+- 3D統合エラーは確認図とtable diagnosticsの両方に出す。
 
-spans/piers縺ｮ譛蟆丞・蜉帙・Phase3.5-4縺ｧ蛻･panel縺ｾ縺溘・遒ｺ隱榊峙蜀・ｩｳ邏ｰ縺ｨ縺励※謇ｱ縺・・IP-LINER UI蜆ｪ蜈医・縺溘ａ縲∝・譛溘・advanced section縺ｫ縺ｾ縺ｨ繧√ｋ縲・
-## 7. Pipeline邨ｱ蜷・
+## 7. Pipeline統合
+
 vNext stage order:
 
 ```text
-validateDomain
-resolveHorizontal
-buildStationTable
-resolveVertical
-resolveCrossSection
-combine3DCoordinates
-generateSpansAndPiers
-buildSections
-buildFrameHints
-assembleIntermediateResult
-mapToFrameModel [user action]
+1. validateDomainDraft
+2. resolveHorizontalAlignment
+3. generateStationTable
+4. resolveVertical
+5. resolveCrossSection
+6. combine3DCoordinates
+7. generateSpansAndPiers
+8. buildSections
+9. buildFrameHints
+10. buildDependencySnapshot
+11. assembleIntermediateResult
+12. mapToFrameModel [user action only]
 ```
 
-譌｢蟄伜ｷｮ蛻・
-
-- `generateGridPoints()` 繧・`combine3DCoordinates()` 驟堺ｸ九↓遘ｻ縺吶・- `spans/piers/sections` 繧堤ｩｺ驟榊・縺ｧ縺ｯ縺ｪ縺重omain縺九ｉ逕滓・縺吶ｋ縲・- `dependencyGraph` 縺ｫ horizontal/vertical/crossSection/grid/frameHints 縺ｮ萓晏ｭ倥ｒ譏守､ｺ縺吶ｋ縲・
 ## 8. Validation / Diagnostics
 
 | Rule | Level | Code |
 |---|---|---|
-| grid station outside alignment | error | `LINER_STATION_OUT_OF_RANGE` |
-| frame division <= 0 | error | `LINER_GRID_SPACING_INVALID` |
-| pier outside alignment | error | `LINER_STATION_OUT_OF_RANGE` |
-| span overlap or inverted range | error | `LINER_SCHEMA_INVALID` |
-| missing grid point in frame line | error | `LINER_FRAME_MISSING_NODE` |
-| generated zero length member | warning | `LINER_FRAME_ZERO_LENGTH_MEMBER` |
+| no horizontal sample for station | error | `LINER_PROFILE_COVERAGE_GAP` |
+| no vertical coverage | error | `LINER_PROFILE_COVERAGE_GAP` |
+| no cross-section template | error | `LINER_SCHEMA_INVALID` |
+| non-finite 3D coordinate | error | `LINER_SCHEMA_INVALID` |
+| frame member count high | warning | `LINER_EXPORT_POINT_COUNT_HIGH` |
 
-## 9. 繝・せ繝域婿驥・
-- Unit: `combine3DCoordinates()` 縺ｮZ蜷域・縺ｨlocalFrame蝗櫁ｻ｢縲・- Golden: curved horizontal + vertical parabolic + crossfall grid縲・- Mapper: 譖ｲ邱壹ｒ邏ｰ蛻・喧逶ｴ邱嗄ember縺ｨ縺励※逕滓・縺励［ember髟ｷ縺ｨsagitta縺悟宛邏・・縲・- Viewer: `LinerMappingReviewPage.curve.test.tsx`縲・
-## 10. Migration / 蠕梧婿莠呈鋤
+## 9. テスト方針
 
-v0.1 fixed-z/offset migration縺ｯN2/N3/N4縺ｧ逕滓・縺励◆default vertical/crossSection/gridDefinition繧剃ｽｿ逕ｨ縺吶ｋ縲・rame蛻・牡縺ｯ譌｢螳・`sampling.frame` 繧剃ｽｿ縺・・
-## 11. 繧ｪ繝ｼ繝励Φ隱ｲ鬘・/ 蟆・擂諡｡蠑ｵ
+- Unit: 3D合成、localFrame、zProvenance。
+- Golden: GC-13 curved 3D integration。
+- Frame: 曲線が直線member列へ分割され、最大member長を満たすこと。
+- Trace: generated node/memberからsource gridへ辿れること。
 
-- 隍・焚alignment縲・- skew pier縺ｮ隧ｳ邏ｰ縺ｪ謾ｯ謇ｿ驟咲ｽｮUI縲・- localFrame蝗櫁ｻ｢縺ｨ隗｣譫仁ember orientation vector縺ｮ螳悟・騾｣謳ｺ縲・
-## 12. 蜿ら・
+## 10. Migration / 後方互換
 
-- 蜑肴署: `typed_liner_draft_schema_vnext.md`, `horizontal_curve_completion.md`, `vertical_alignment_design.md`, `cross_section_superelevation_design.md`
-- 蜿ら・縺輔ｌ繧玖ｨｭ險域嶌: `dxf_stl_curve_export_strategy.md`, `implementation_priority_and_pr_breakdown.md`
-- 髢｢騾｣繧ｳ繝ｼ繝・ `frontend/src/liner/core/pipeline/pipeline.ts`, `frontend/src/liner/core/grid/gridGeneration.ts`, `frontend/src/liner/mapper/frameModelMapper.ts`
-- 髢｢騾｣繝・せ繝・ planned `pipeline.curved3d.test.ts`, `frameModelMapper.curve.test.ts`
-
-### Phase3.5-0.6 Frame Sampling Decision
-
-3D coordinate integration consumes Frame sampling with max chord 0.25 m and sagitta tolerance <= 0.0025 m as a strict requirement. Performance mitigation must not relax Frame sampling; it must be handled in Display/DXF sampling or structural-side optimization.
+- 既存固定Z/offset draftはN2/N3/N4でdomain化してから3D統合する。
+- 既存ProjectModelへの直接mutationは行わず、mapper user actionでのみFrame Modelへ反映する。
