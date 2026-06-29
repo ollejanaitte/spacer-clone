@@ -1,6 +1,6 @@
 import type { LinerTraceEntry } from "../mapper/frameModelMapper";
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
-import type { GridPointRole, Vec2 } from "../core/types";
+import type { Vec2 } from "../core/types";
 import {
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
   LINER_DRAFT_SCHEMA_VERSION,
@@ -149,13 +149,13 @@ export interface VerticalGradeElementDraft {
 export interface VerticalParabolicElementDraft {
   type: "parabolic";
   id: string;
-  startPhysicalDistance: number;
-  endPhysicalDistance: number;
-  startElevation: number;
+  startStation: number;
+  endStation: number;
   startGrade: number;
   endGrade: number;
-  pviPhysicalDistance?: number;
-  pviElevation?: number;
+  length: number;
+  startElevation?: number;
+  curveType?: "crest" | "sag";
 }
 
 /**
@@ -172,13 +172,20 @@ export interface CrossSectionTemplateDraft {
  * N2 §4 leaves cross-section offset details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
+export type CrossSectionOffsetLineRole =
+  | "shoulder"
+  | "lane"
+  | "median"
+  | "sidewalk"
+  | "edge"
+  | "custom";
+
 export interface CrossSectionOffsetLineDraft {
   id: string;
   offset: number;
-  role?: GridPointRole;
-  structuralReferenceOffset?: number;
-  sectionDepthOffset?: number;
-  girderEccentricity?: number;
+  elevation: number;
+  role?: CrossSectionOffsetLineRole;
+  label?: string;
 }
 
 /**
