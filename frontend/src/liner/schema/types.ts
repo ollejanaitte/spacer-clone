@@ -163,19 +163,26 @@ export interface VerticalParabolicElementDraft {
 }
 
 /**
- * N2 §4 leaves cross-section template details open; PR-1a-1 defines this conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。
+ * 道路センターから見て右下がりを正（+）。単位は %。
  */
-export interface CrossSectionTemplateDraft {
-  id: string;
-  name?: string;
-  offsetLines: CrossSectionOffsetLineDraft[];
+export interface CrossSlopeDraft {
+  signConvention: "right_down_positive";
+  valuePercent: number;
 }
 
 /**
- * N2 §4 leaves cross-section offset details open; PR-1a-1 defines this conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断テンプレート。
+ * オフセット線リスト方式を採用する。レイヤー方式・パラメトリック方式は採用しない。
  */
+export interface CrossSectionTemplateDraft {
+  id: string;
+  name: string;
+  offsetLines: CrossSectionOffsetLineDraft[];
+  crossSlope?: CrossSlopeDraft;
+}
+
+/** Pre-Decision #4: オフセット線の意味論ロール。 */
 export type CrossSectionOffsetLineRole =
   | "shoulder"
   | "lane"
@@ -184,6 +191,11 @@ export type CrossSectionOffsetLineRole =
   | "edge"
   | "custom";
 
+/**
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断オフセット線。
+ * offset は中心線からのオフセット (m, 右正)。
+ * elevation は相対標高 (m, 上正)。
+ */
 export interface CrossSectionOffsetLineDraft {
   id: string;
   offset: number;
