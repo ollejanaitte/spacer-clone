@@ -2,6 +2,7 @@ export * from "./clothoidGate";
 export * from "./continuityC0";
 export * from "./continuityC1";
 export * from "./diagnostics";
+export * from "./elevationAt";
 export * from "./grid/gridGeneration";
 export * from "./geometry/arc";
 export * from "./geometry/clothoid";
