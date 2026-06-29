@@ -34,7 +34,7 @@ describe("liner intermediate result builder", () => {
     expect(result.diagnostics.filter((diagnostic) => diagnostic.level === "error")).toHaveLength(0);
     expect(result.computedAt).toBe("2026-01-01T00:00:00.000Z");
     expect(result.horizontal.segments).toHaveLength(1);
-    expect(result.horizontal.sampledPoints).toHaveLength(2);
+    expect(result.horizontal.sampledPoints).toHaveLength(41);
     expect(result.vertical.profileElevation).toBe(10);
     expect(result.vertical.sampledPoints).toHaveLength(3);
     expect(result.stations.entries).toHaveLength(3);
