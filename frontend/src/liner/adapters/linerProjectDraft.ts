@@ -7,7 +7,10 @@ import {
   type MigrateLinerDraftToVNextResult,
 } from "../schema/projectLinerMigration";
 import type { HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
-import { PROJECT_LINER_METADATA_SCHEMA_VERSION } from "../schema/types";
+import {
+  LINER_DRAFT_SCHEMA_VERSION,
+  PROJECT_LINER_METADATA_SCHEMA_VERSION,
+} from "../schema/types";
 import { createDefaultLinerDraft, type LinerDraft } from "./linerUiAdapter";
 
 export function linerDraftFromProject(project: ProjectModel): LinerDraft {
@@ -91,17 +94,30 @@ export function buildIntermediateInputFromDomainDraft(
   };
 }
 
+function domainDraftFromLinerDraft(draft: LinerDraft): LinerDomainDraftVNext {
+  const migration = migrateLinerDraftToVNext({ draft });
+  if (!migration.ok) {
+    const messages = migration.diagnostics.map((diagnostic) => diagnostic.message).join("; ");
+    throw new Error(`Cannot convert liner draft to vNext domain draft: ${messages}`);
+  }
+  return migration.domainDraft;
+}
+
 export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
+  const domainDraft = domainDraftFromLinerDraft(draft);
+  const { draft: _legacyDraft, ...existingLiner } = project.liner ?? {};
+
   return {
     ...project,
     liner: {
-      ...project.liner,
+      ...existingLiner,
       schemaVersion: PROJECT_LINER_METADATA_SCHEMA_VERSION,
+      draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
       sourceRevision: sourceRevisionFor(draft),
       linerModelId: draft.alignment.linerModelId,
       coordinatePolicyId: draft.alignment.coordinatePolicyId,
       intermediateSchemaVersion: "0.2.0",
-      draft,
+      domainDraft,
     },
   };
 }
