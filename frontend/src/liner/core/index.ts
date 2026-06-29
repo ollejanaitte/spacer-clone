@@ -12,6 +12,7 @@ export * from "./pipeline/pipeline";
 export * from "./sampling";
 export * from "./pipeline/sourceRevision";
 export * from "./station/stationRules";
+export * from "./stationAtPoint";
 export * from "./tolerances";
 export * from "./types";
 export * from "./vector";
