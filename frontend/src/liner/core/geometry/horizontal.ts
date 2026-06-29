@@ -1,3 +1,4 @@
+import { checkClothoidPrecision } from "../clothoidGate";
 import { checkC0Continuity } from "../continuityC0";
 import { checkC1Continuity } from "../continuityC1";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
@@ -5,6 +6,7 @@ import { DEFAULT_TOLERANCES } from "../tolerances";
 import type {
   AlignmentElement,
   AlignmentEvaluation,
+  ClothoidElement,
   ElementEvaluation,
   LinearAlignment,
   ValidationIssue,
@@ -121,5 +123,9 @@ export function validateAlignment(alignment: LinearAlignment): ValidationIssue[]
   }
   issues.push(...checkC0Continuity(alignment.elements));
   issues.push(...checkC1Continuity(alignment.elements));
+  const clothoidElements = alignment.elements.filter(
+    (element): element is ClothoidElement => element.type === "clothoid",
+  );
+  issues.push(...checkClothoidPrecision(clothoidElements));
   return issues;
 }
