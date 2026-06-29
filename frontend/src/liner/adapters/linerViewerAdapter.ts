@@ -6,6 +6,7 @@ import {
   LINER_HEADLESS_ANALYSIS_SETTINGS,
   LINER_HEADLESS_FIXTURE_MATERIAL_IDS,
   LINER_HEADLESS_FIXTURE_SECTION_IDS,
+  LINER_HEADLESS_PLACEHOLDER_LOAD_CASE,
   applyLinerHeadlessFixtureMemberRules,
   createHeadlessLinerFrameProject,
   type HeadlessLinerFrameProjectResult,
@@ -92,6 +93,10 @@ export function buildLinerViewerReviewFromDraft(
 function createViewerReviewBaseProject(project: ProjectModel): ProjectModel {
   return {
     ...project,
+    loadCases:
+      project.loadCases.length > 0
+        ? project.loadCases
+        : [{ ...LINER_HEADLESS_PLACEHOLDER_LOAD_CASE }],
     analysisSettings: {
       ...LINER_HEADLESS_ANALYSIS_SETTINGS,
       ...project.analysisSettings,

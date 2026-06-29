@@ -3,7 +3,7 @@
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createDefaultLinerDraft, type LinerDraft } from "../adapters/linerUiAdapter";
+import { createDefaultLinerDraft, type LinerDraft, type LinerDraftUpdate } from "../adapters/linerUiAdapter";
 import { LinerStationProfilePanel } from "./LinerStationProfilePanel";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -32,8 +32,8 @@ function setInputValue(input: HTMLInputElement, value: string) {
 
 function renderPanel(initialDraft: LinerDraft = createDefaultLinerDraft()) {
   let currentDraft = initialDraft;
-  const onDraftChange = vi.fn((nextDraft: LinerDraft) => {
-    currentDraft = nextDraft;
+  const onDraftChange = vi.fn((update: LinerDraftUpdate) => {
+    currentDraft = typeof update === "function" ? update(currentDraft) : update;
     root?.render(<LinerStationProfilePanel draft={currentDraft} onDraftChange={onDraftChange} />);
   });
 
@@ -124,6 +124,23 @@ describe("LinerStationProfilePanel", () => {
       type: "reset_to_value",
       value: 100,
     });
+  });
+
+  it("keeps focus while editing station equation identifiers", () => {
+    const panel = renderPanel();
+
+    act(() => {
+      (document.querySelector("[data-testid=add-liner-station-equation]") as HTMLButtonElement).click();
+    });
+    const idInput = inputByTestId("liner-equation-id-EQ1");
+    act(() => {
+      idInput.focus();
+      setInputValue(idInput, "EQ1A");
+    });
+
+    expect(panel.getDraft().stationDefinition.equations?.[0]?.id).toBe("EQ1A");
+    expect(inputByTestId("liner-equation-id-EQ1A").value).toBe("EQ1A");
+    expect(document.activeElement).toBe(inputByTestId("liner-equation-id-EQ1A"));
   });
 
   it("removes station equation rows", () => {

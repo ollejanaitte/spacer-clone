@@ -11,12 +11,13 @@ import {
   updateLinerStraightElement,
   type LinerDraft,
   type LinerDraftAlignmentElement,
+  type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
 
 export type LinerEditPageProps = {
   draft?: LinerDraft;
   initialDraft?: LinerDraft;
-  onDraftChange?: (draft: LinerDraft) => void;
+  onDraftChange?: (update: LinerDraftUpdate) => void;
   onOpenPreview?: () => void;
   onOpenMappingReview?: () => void;
   onClose: () => void;
@@ -55,12 +56,11 @@ export function LinerEditPage({
 }: LinerEditPageProps) {
   const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
   const draft = controlledDraft ?? localDraft;
-  const changeDraft = (update: LinerDraft | ((current: LinerDraft) => LinerDraft)) => {
-    const nextDraft = typeof update === "function" ? update(draft) : update;
+  const changeDraft = (update: LinerDraftUpdate) => {
     if (onDraftChange) {
-      onDraftChange(nextDraft);
+      onDraftChange(update);
     } else {
-      setLocalDraft(nextDraft);
+      setLocalDraft((current) => (typeof update === "function" ? update(current) : update));
     }
   };
   const summary = useMemo(() => summarizeLinerDraft(draft), [draft]);
@@ -105,7 +105,8 @@ export function LinerEditPage({
                 value={draft.alignment.id}
                 data-testid="liner-alignment-id"
                 onChange={(event) => {
-                  changeDraft((current) => updateLinerAlignmentMetadata(current, { id: event.currentTarget.value }));
+                  const value = event.currentTarget.value;
+                  changeDraft((current) => updateLinerAlignmentMetadata(current, { id: value }));
                 }}
               />
             </label>
@@ -113,9 +114,11 @@ export function LinerEditPage({
               <span>{ja.liner.fields.linerModelId}</span>
               <input
                 value={draft.alignment.linerModelId}
+                data-testid="liner-model-id"
                 onChange={(event) => {
+                  const value = event.currentTarget.value;
                   changeDraft((current) =>
-                    updateLinerAlignmentMetadata(current, { linerModelId: event.currentTarget.value }),
+                    updateLinerAlignmentMetadata(current, { linerModelId: value }),
                   );
                 }}
               />
@@ -124,9 +127,11 @@ export function LinerEditPage({
               <span>{ja.liner.fields.coordinatePolicyId}</span>
               <input
                 value={draft.alignment.coordinatePolicyId}
+                data-testid="liner-coordinate-policy-id"
                 onChange={(event) => {
+                  const value = event.currentTarget.value;
                   changeDraft((current) =>
-                    updateLinerAlignmentMetadata(current, { coordinatePolicyId: event.currentTarget.value }),
+                    updateLinerAlignmentMetadata(current, { coordinatePolicyId: value }),
                   );
                 }}
               />
@@ -183,15 +188,17 @@ export function LinerEditPage({
               </tr>
             </thead>
             <tbody>
-              {draft.alignment.elements.map((element) => (
-                <tr key={element.id}>
+              {draft.alignment.elements.map((element, elementIndex) => (
+                <tr key={`${element.type}-${elementIndex}`}>
                   <td>
                     {element.type === "straight" ? (
                       <input
                         value={element.id}
+                        data-testid={`liner-element-id-${element.id}`}
                         onChange={(event) => {
+                          const value = event.currentTarget.value;
                           changeDraft((current) =>
-                            updateLinerStraightElement(current, element.id, { id: event.currentTarget.value }),
+                            updateLinerStraightElement(current, element.id, { id: value }),
                           );
                         }}
                       />
@@ -206,10 +213,12 @@ export function LinerEditPage({
                         <input
                           type="number"
                           value={numericValue(element.start.x)}
+                          data-testid={`liner-element-start-x-${element.id}`}
                           onChange={(event: TextInputEvent) => {
+                            const value = parseNumericInput(event.currentTarget.value);
                             changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
-                                startX: parseNumericInput(event.currentTarget.value),
+                                startX: value,
                               }),
                             );
                           }}
@@ -219,10 +228,12 @@ export function LinerEditPage({
                         <input
                           type="number"
                           value={numericValue(element.start.y)}
+                          data-testid={`liner-element-start-y-${element.id}`}
                           onChange={(event: TextInputEvent) => {
+                            const value = parseNumericInput(event.currentTarget.value);
                             changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
-                                startY: parseNumericInput(event.currentTarget.value),
+                                startY: value,
                               }),
                             );
                           }}
@@ -232,10 +243,12 @@ export function LinerEditPage({
                         <input
                           type="number"
                           value={numericValue(element.azimuth)}
+                          data-testid={`liner-element-azimuth-${element.id}`}
                           onChange={(event: TextInputEvent) => {
+                            const value = parseNumericInput(event.currentTarget.value);
                             changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
-                                azimuth: parseNumericInput(event.currentTarget.value),
+                                azimuth: value,
                               }),
                             );
                           }}
@@ -246,9 +259,10 @@ export function LinerEditPage({
                           type="number"
                           value={numericValue(element.length)}
                           onChange={(event: TextInputEvent) => {
+                            const value = parseNumericInput(event.currentTarget.value);
                             changeDraft((current) =>
                               updateLinerStraightElement(current, element.id, {
-                                length: parseNumericInput(event.currentTarget.value),
+                                length: value,
                               }),
                             );
                           }}

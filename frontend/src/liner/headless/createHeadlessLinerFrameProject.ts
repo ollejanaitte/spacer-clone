@@ -14,6 +14,7 @@ import {
   LINER_HEADLESS_FIXTURE_SECTION_IDS,
   LINER_HEADLESS_FIXTURE_MATERIAL_IDS,
   LINER_HEADLESS_FIXTURE_SECTIONS,
+  LINER_HEADLESS_PLACEHOLDER_LOAD_CASE,
   LINER_HEADLESS_UNITS,
 } from "./linerProjectDefaults";
 import { mergeLinerFrameEntitiesIntoProject } from "./mergeLinerFrameEntities";
@@ -93,13 +94,7 @@ function createMinimalProjectShell(
     sections,
     members: [],
     supports: [],
-    loadCases: [
-      {
-        id: "LC_LINER_PLACEHOLDER",
-        name: "Liner placeholder",
-        type: "static",
-      },
-    ],
+    loadCases: [{ ...LINER_HEADLESS_PLACEHOLDER_LOAD_CASE }],
     nodalLoads: [],
     memberLoads: [],
     analysisSettings: { ...LINER_HEADLESS_ANALYSIS_SETTINGS },
