@@ -242,10 +242,11 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
         {
           type: "grade",
           id: "VG-default",
-          startPhysicalDistance: 0,
-          endPhysicalDistance: totalLength,
+          startStation: 0,
+          endStation: totalLength,
           startElevation: z,
           grade: 0,
+          length: totalLength,
         },
       ],
     },

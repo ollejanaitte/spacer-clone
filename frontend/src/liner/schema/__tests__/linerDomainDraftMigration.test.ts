@@ -90,10 +90,11 @@ describe("migrateLinerDraftToVNext", () => {
       {
         type: "grade",
         id: "VG-default",
-        startPhysicalDistance: 0,
-        endPhysicalDistance: 50,
+        startStation: 0,
+        endStation: 50,
         startElevation: 12.5,
         grade: 0,
+        length: 50,
       },
     ]);
 
@@ -199,7 +200,9 @@ describe("migrateLinerDraftToVNext", () => {
       type: "grade",
       grade: 0,
       startElevation: 0,
-      endPhysicalDistance: 100,
+      startStation: 0,
+      endStation: 100,
+      length: 100,
     });
     expect(result.domainDraft.crossSections[0]?.offsetLines).toEqual([
       { id: "OL-0", offset: 0, elevation: 0, role: "custom" },
