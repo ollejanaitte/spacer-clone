@@ -1,3 +1,4 @@
+export * from "./continuityC0";
 export * from "./diagnostics";
 export * from "./grid/gridGeneration";
 export * from "./geometry/arc";

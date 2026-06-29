@@ -1,3 +1,4 @@
+import { checkC0Continuity } from "../continuityC0";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { DEFAULT_TOLERANCES } from "../tolerances";
 import type {
@@ -117,5 +118,6 @@ export function validateAlignment(alignment: LinearAlignment): ValidationIssue[]
       );
     }
   }
+  issues.push(...checkC0Continuity(alignment.elements));
   return issues;
 }
