@@ -1,4 +1,4 @@
-import type { AnalysisSettings, Material, Section } from "../../types";
+import type { AnalysisSettings, LoadCase, Material, Section } from "../../types";
 
 /**
  * Documented P1-5 headless fixture defaults for liner-generated frame projects.
@@ -52,6 +52,12 @@ export const LINER_HEADLESS_FIXTURE_SECTIONS: Section[] = [
     j: 0.0001,
   },
 ];
+
+export const LINER_HEADLESS_PLACEHOLDER_LOAD_CASE: LoadCase = {
+  id: "LC_LINER_PLACEHOLDER",
+  name: "Liner placeholder",
+  type: "static",
+};
 
 export const LINER_HEADLESS_ANALYSIS_SETTINGS: AnalysisSettings = {
   analysisType: "linear_static",

@@ -58,6 +58,19 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=liner-summary-length]")?.textContent).toBe("125 m");
   });
 
+  it("keeps focus while editing straight element identifiers", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+    const idInput = inputByTestId("liner-element-id-S1");
+
+    act(() => {
+      idInput.focus();
+      setInputValue(idInput, "S1A");
+    });
+
+    expect(inputByTestId("liner-element-id-S1A").value).toBe("S1A");
+    expect(document.activeElement).toBe(inputByTestId("liner-element-id-S1A"));
+  });
+
   it("adds and removes straight element rows", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
