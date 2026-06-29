@@ -3349,6 +3349,52 @@ button:disabled {
   margin-bottom: 12px;
 }
 
+.liner-setup-tabs {
+  min-width: 0;
+}
+
+.liner-setup-tabs-list {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 38px;
+  border-bottom: 1px solid #cbd5df;
+  background: #eef3f8;
+}
+
+.liner-setup-tab {
+  min-width: 88px;
+  padding: 0 12px;
+  border: 0;
+  border-right: 1px solid #d8e0e8;
+  background: transparent;
+  color: #526173;
+  font-size: 13px;
+  line-height: 38px;
+  cursor: pointer;
+}
+
+.liner-setup-tab.active {
+  background: #f8fafc;
+  color: #1f2933;
+  font-weight: 700;
+}
+
+.liner-setup-tab-body {
+  padding: 12px 0 0;
+}
+
+.liner-setup-tab-body .liner-edit-panel {
+  margin-bottom: 12px;
+}
+
+.liner-setup-tab-body .liner-edit-panel:last-child {
+  margin-bottom: 0;
+}
+
+.liner-setup-tab-stub {
+  margin-bottom: 0;
+}
+
 .liner-edit-panel,
 .liner-edit-summary {
   min-width: 0;

@@ -1375,6 +1375,15 @@ export const ja = {
       count: (count: number) => `${count} 件`,
       meters: (value: number) => `${value} m`,
     },
+    setupTabs: {
+      tablistLabel: "線形入力タブ",
+      line: "ライン",
+      station: "測点",
+      height: "高さ",
+      vertical: "縦断",
+      crossSection: "横断",
+      review: "確認図",
+    },
     fields: {
       alignmentId: "線形ID",
       linerModelId: "モデルID",
