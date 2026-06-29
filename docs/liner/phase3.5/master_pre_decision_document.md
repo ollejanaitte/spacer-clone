@@ -149,7 +149,7 @@ interface CrossSectionOffsetLineDraft {
 **該当バッチで停止、織田さんに報告**。
 
 ### 詳細ルール
-1. Codex は各 PR の実装後、`npm run typecheck` `npm run lint` `npm run test` を **実行しない**（ローカル検証は織田さんが担当）
+1. Codex / Cursor CLI は各 PR の実装後、`npm run typecheck` `npm run lint` `npm run test` を **実行しない**（ローカル検証は織田さんが担当）
 2. ただし TypeScript の型エラーをコード生成中に検知した場合は即停止
 3. PR 単位で commit を分け、エラー時にロールバック可能にする
 4. バッチ内の PR-N でエラー発生 → PR-(N+1) 以降は**着手しない**
@@ -201,10 +201,11 @@ interface CrossSectionOffsetLineDraft {
 
 - 変更には織田さんの明示承認が必須
 - 変更時は変更履歴セクションを追記
-- Codex 自身による変更は**禁止**
+- Codex / Cursor CLI 自身による変更は**禁止**
 
 ### 変更履歴
 - 2026-06-29: 初版作成（織田さん承認、6項目確定）
+- 2026-06-29: v2 改訂（Cursor CLI 連携運用ルール追加）
 
 ---
 
@@ -217,3 +218,40 @@ interface CrossSectionOffsetLineDraft {
 3. **追加判断項目の発見時**: 即停止し、織田さんに報告
 4. **補遺の作成**: 各 PR で判断が必要だった事項は補遺ドキュメントに記録
 5. **PR 単位 commit/push**: 1 PR = 最低 1 commit、各 PR 完了時に origin へ push
+
+---
+
+## 11. Cursor CLI への適用ルール（v2 追加）
+
+### 11.1 役割分担再掲
+
+| 役割 | 担当 |
+|---|---|
+| 現場監督・親分 | Codex (GPT-5.5) |
+| 実装作業員 | Cursor CLI ヘッドレス |
+| 補助 | Cursor IDE インライン補完 |
+| 最終承認 | 織田さん |
+
+### 11.2 コマンド組み立て原則
+- **1 コマンド = 1 ファイル or 1 責務**
+- **編集内容は完了条件で書く**（「○○ を追加し、フィールドは X, Y, Z」）
+- **参照設計書を明記**（例: N2 §4 準拠）
+- **禁止事項を明記**（例: 既存 Foo は変更禁止）
+- **expected diff サイズを書ける場合は書く**
+
+### 11.3 Cursor CLI 出力レビュー必須項目
+- 意図しないファイルが変更されていないか（`git diff` で確認）
+- 既存型・関数の削除や変更が無いか
+- 文字コード・BOM・改行コード（UTF-8 BOM なし、LF）
+- import の重複や未使用
+- 型エラーの有無
+
+### 11.4 Cursor CLI 暴走時の対処
+- 該当ブランチで `git restore` / `git checkout HEAD -- <path>` で巻き戻し
+- 再投入コマンドを禁止事項込みで再構築
+- 3 回連続で意図と異なる出力なら**織田さんに報告し停止**
+
+### 11.5 Cursor IDE インライン補完の扱い
+- ヘッドレス出力の修正を織田さんが IDE で行う際の補助として利用可
+- インライン補完は Master Pre-Decision Document を「知らない」ため、補完結果も **Codex がレビュー対象**とする
+- インライン補完で生成された差分を commit する前に必ず Codex にレビュー依頼すること

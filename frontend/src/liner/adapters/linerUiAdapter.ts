@@ -1,5 +1,13 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
-import type { AlignmentElement, LinearAlignment, StationDefinition, StationEquation, StraightElement } from "../core/types";
+import type {
+  AlignmentElement,
+  CircularArcElement,
+  ClothoidElement,
+  LinearAlignment,
+  StationDefinition,
+  StationEquation,
+  StraightElement,
+} from "../core/types";
 
 export type LinerDraft = BuildIntermediateInput;
 export type LinerDraftAlignmentElement = AlignmentElement;
@@ -22,6 +30,29 @@ export type LinerStraightElementPatch = Partial<{
   startY: number;
   azimuth: number;
 }>;
+
+export type LinerArcElementPatch = LinerStraightElementPatch &
+  Partial<{
+    radius: number;
+    turn: "left" | "right";
+  }>;
+
+export type LinerClothoidElementPatch = LinerStraightElementPatch &
+  Partial<{
+    clothoidParameter: number;
+    startRadius: number | null;
+    endRadius: number | null;
+    turn: "left" | "right";
+  }>;
+
+export type LinerAlignmentElementPatch = LinerStraightElementPatch &
+  Partial<{
+    radius: number;
+    turn: "left" | "right";
+    clothoidParameter: number;
+    startRadius: number | null;
+    endRadius: number | null;
+  }>;
 
 export type LinerStationEquationPatch = Partial<
   Pick<StationEquation, "id" | "physicalDistance" | "type" | "value" | "sortIndex">
@@ -89,33 +120,72 @@ export function updateLinerDraftSettings(
   };
 }
 
-export function updateLinerStraightElement(
+export function updateLinerAlignmentElement(
   draft: BuildIntermediateInput,
   targetElementId: string,
-  patch: LinerStraightElementPatch,
+  patch: LinerAlignmentElementPatch,
 ): BuildIntermediateInput {
   return {
     ...draft,
     alignment: {
       ...draft.alignment,
       elements: draft.alignment.elements.map((element): AlignmentElement => {
-        if (element.id !== targetElementId || element.type !== "straight") {
+        if (element.id !== targetElementId) {
           return element;
+        }
+
+        const nextStart = {
+          x: patch.startX ?? element.start.x,
+          y: patch.startY ?? element.start.y,
+        };
+        const nextId = patch.id ?? element.id;
+        const nextLength = patch.length ?? element.length;
+        const nextAzimuth = patch.azimuth ?? element.azimuth;
+
+        if (element.type === "straight") {
+          return {
+            ...element,
+            id: nextId,
+            length: nextLength,
+            start: nextStart,
+            azimuth: nextAzimuth,
+          };
+        }
+
+        if (element.type === "arc") {
+          return {
+            ...element,
+            id: nextId,
+            length: nextLength,
+            start: nextStart,
+            azimuth: nextAzimuth,
+            radius: patch.radius ?? element.radius,
+            turn: patch.turn ?? element.turn,
+          };
         }
 
         return {
           ...element,
-          id: patch.id ?? element.id,
-          length: patch.length ?? element.length,
-          start: {
-            x: patch.startX ?? element.start.x,
-            y: patch.startY ?? element.start.y,
-          },
-          azimuth: patch.azimuth ?? element.azimuth,
+          id: nextId,
+          length: nextLength,
+          start: nextStart,
+          azimuth: nextAzimuth,
+          clothoidParameter: patch.clothoidParameter ?? element.clothoidParameter,
+          startRadius: patch.startRadius !== undefined ? patch.startRadius : element.startRadius,
+          endRadius: patch.endRadius !== undefined ? patch.endRadius : element.endRadius,
+          turn: patch.turn ?? element.turn,
         };
       }),
     },
   };
+}
+
+export function updateLinerStraightElement(
+  draft: BuildIntermediateInput,
+  targetElementId: string,
+  patch: LinerStraightElementPatch,
+): BuildIntermediateInput {
+  return updateLinerAlignmentElement(draft, targetElementId, patch);
 }
 
 export function addLinerExplicitStation(draft: BuildIntermediateInput): BuildIntermediateInput {
@@ -229,10 +299,52 @@ export function removeLinerOffset(draft: BuildIntermediateInput, index: number):
 
 export function addLinerStraightElement(draft: BuildIntermediateInput): BuildIntermediateInput {
   const nextElement: StraightElement = {
-    id: nextStraightElementId(draft.alignment.elements),
+    id: nextAlignmentElementId("S", draft.alignment.elements),
     type: "straight",
     start: { x: 0, y: 0 },
     azimuth: 0,
+    length: 50,
+  };
+
+  return {
+    ...draft,
+    alignment: {
+      ...draft.alignment,
+      elements: [...draft.alignment.elements, nextElement],
+    },
+  };
+}
+
+export function addLinerArcElement(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const nextElement: CircularArcElement = {
+    id: nextAlignmentElementId("A", draft.alignment.elements),
+    type: "arc",
+    start: { x: 0, y: 0 },
+    azimuth: 0,
+    radius: 100,
+    turn: "left",
+    length: 50,
+  };
+
+  return {
+    ...draft,
+    alignment: {
+      ...draft.alignment,
+      elements: [...draft.alignment.elements, nextElement],
+    },
+  };
+}
+
+export function addLinerClothoidElement(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const nextElement: ClothoidElement = {
+    id: nextAlignmentElementId("C", draft.alignment.elements),
+    type: "clothoid",
+    start: { x: 0, y: 0 },
+    azimuth: 0,
+    clothoidParameter: 100,
+    startRadius: null,
+    endRadius: 100,
+    turn: "left",
     length: 50,
   };
 
@@ -270,13 +382,13 @@ export function summarizeLinerDraft(draft: BuildIntermediateInput): LinerDraftSu
   };
 }
 
-function nextStraightElementId(elements: readonly AlignmentElement[]): string {
+function nextAlignmentElementId(prefix: string, elements: readonly AlignmentElement[]): string {
   const ids = new Set(elements.map((element) => element.id));
   let index = elements.length + 1;
-  let candidate = `S${index}`;
+  let candidate = `${prefix}${index}`;
   while (ids.has(candidate)) {
     index += 1;
-    candidate = `S${index}`;
+    candidate = `${prefix}${index}`;
   }
   return candidate;
 }

@@ -3,6 +3,7 @@ import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
 import { withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 
 export function resetProjectModelContents(project: ProjectModel): ProjectModel {
+  const draft = createDefaultLinerDraft();
   const resetProject: ProjectModel = {
     ...project,
     nodes: [],
@@ -27,7 +28,16 @@ export function resetProjectModelContents(project: ProjectModel): ProjectModel {
     linerTrace: [],
   };
 
-  return withProjectLinerDraft(resetProject, createDefaultLinerDraft());
+  const nextProject = withProjectLinerDraft(resetProject, draft);
+  return {
+    ...nextProject,
+    liner: nextProject.liner
+      ? {
+          ...nextProject.liner,
+          draft,
+        }
+      : nextProject.liner,
+  };
 }
 
 export function resetProjectModelContentsIfConfirmed(

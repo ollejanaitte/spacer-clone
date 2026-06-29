@@ -124,4 +124,46 @@ describe("LinerEditPage", () => {
     expect(onOpenPreview).toHaveBeenCalledTimes(1);
     expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
   });
+
+  it("renders six setup tabs in JIP-LINER display order", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    const tabButtons = Array.from(document.querySelectorAll("[data-testid^=liner-setup-tab-]")).filter(
+      (element) => element.getAttribute("role") === "tab",
+    );
+    expect(tabButtons).toHaveLength(6);
+    expect(tabButtons.map((button) => button.textContent)).toEqual([
+      "ライン",
+      "測点",
+      "高さ",
+      "縦断",
+      "横断",
+      "確認図",
+    ]);
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-line]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-alignment-id]")).not.toBeNull();
+  });
+
+  it("switches tab panels when setup tabs are clicked", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-station]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-station]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-origin-displayed-station]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-alignment-id]")).toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-height]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-origin-displayed-station]")).toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-line]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-line]")).not.toBeNull();
+    expect(inputByTestId("liner-alignment-id").value).toBe("alignment-1");
+  });
 });
