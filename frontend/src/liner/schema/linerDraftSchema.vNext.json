@@ -439,7 +439,26 @@
         }
       }
     },
+    "crossSlopeDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signConvention",
+        "valuePercent"
+      ],
+      "properties": {
+        "signConvention": {
+          "const": "right_down_positive"
+        },
+        "valuePercent": {
+          "type": "number",
+          "description": "Cross slope (%). Positive when falling to the right from centerline (右下がり正)."
+        }
+      }
+    },
     "crossSectionOffsetLineDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断オフセット線（オフセット線リスト方式）。",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -454,11 +473,11 @@
         },
         "offset": {
           "type": "number",
-          "description": "Offset from centerline (m); positive to the right."
+          "description": "Offset from centerline (m); positive to the right (中心線から m, 右正)."
         },
         "elevation": {
           "type": "number",
-          "description": "Relative elevation (m); positive upward."
+          "description": "Relative elevation (m); positive upward (相対標高 m, 上正)."
         },
         "role": {
           "enum": [
@@ -469,7 +488,7 @@
             "edge",
             "custom"
           ],
-          "description": "Optional semantic role (Pre-Decision #4)."
+          "description": "Optional semantic role: shoulder, lane, median, sidewalk, edge, or custom (Pre-Decision #4)."
         },
         "label": {
           "type": "string"
@@ -477,6 +496,7 @@
       }
     },
     "crossSectionTemplateDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断テンプレート（オフセット線リスト方式）。",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -498,6 +518,10 @@
           "items": {
             "$ref": "#/$defs/crossSectionOffsetLineDraft"
           }
+        },
+        "crossSlope": {
+          "$ref": "#/$defs/crossSlopeDraft",
+          "description": "Optional default cross slope (Pre-Decision #3)."
         }
       }
     },
