@@ -133,21 +133,22 @@ export type VerticalElementDraft =
   | VerticalParabolicElementDraft;
 
 /**
- * N2 §4 leaves vertical element details open; PR-1a-1 defines grade fields conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 4 / PR-2a-1: grade 縦断要素。測点 (startStation/endStation) と区間長 (length) で定義する。
+ * grade は dZ/ds (0.02 = 2%) として扱う。K値方式・半径 R 方式は採用しない。
  */
 export interface VerticalGradeElementDraft {
   type: "grade";
   id: string;
-  startPhysicalDistance: number;
-  endPhysicalDistance: number;
+  startStation: number;
+  endStation: number;
   startElevation: number;
   grade: number;
+  length: number;
 }
 
 /**
- * N2 §4 leaves vertical element details open; PR-1a-1 defines parabolic fields conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 4 / Master Pre-Decision #2: JIP-LINER 互換 parabolic 縦断要素。
+ * K値方式・半径 R 方式は採用しない。
  */
 export interface VerticalParabolicElementDraft {
   type: "parabolic";
