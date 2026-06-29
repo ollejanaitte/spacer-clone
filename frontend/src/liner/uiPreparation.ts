@@ -185,12 +185,41 @@ export const LINER_FEATURE_CAPABILITIES: readonly LinerFeatureCapability[] = [
   },
 ];
 
+/** Setup tab identifiers for the liner.setup route (JIP-LINER display order). */
+export type LinerSetupTabId =
+  | "line"
+  | "station"
+  | "height"
+  | "vertical"
+  | "crossSection"
+  | "review";
+
+export const LINER_SETUP_TAB_IDS = [
+  "line",
+  "station",
+  "height",
+  "vertical",
+  "crossSection",
+  "review",
+] as const satisfies readonly LinerSetupTabId[];
+
+/** i18n key paths under `liner.setupTabs.*` in frontend/src/i18n/ja.ts. */
+export const LINER_SETUP_TAB_LABEL_KEYS: Record<LinerSetupTabId, `liner.setupTabs.${LinerSetupTabId}`> = {
+  line: "liner.setupTabs.line",
+  station: "liner.setupTabs.station",
+  height: "liner.setupTabs.height",
+  vertical: "liner.setupTabs.vertical",
+  crossSection: "liner.setupTabs.crossSection",
+  review: "liner.setupTabs.review",
+};
+
 /** i18n group names only; Japanese strings live in frontend/src/i18n/ja.ts under `liner.*`. */
 export const LINER_I18N_KEY_GROUPS = [
   "liner.toolbar",
   "liner.window",
   "liner.list",
   "liner.editor",
+  "liner.setupTabs",
   "liner.fields",
   "liner.preview",
   "liner.mappingReview",
