@@ -9,6 +9,7 @@ export const LINER_DIAGNOSTIC_CODES = {
   positionDiscontinuity: "LINER_GEOM_POSITION_DISCONTINUITY",
   azimuthDiscontinuity: "LINER_GEOM_AZIMUTH_DISCONTINUITY",
   clothoidInvalidRadius: "LINER_GEOM_CLOTHOID_INVALID_RADIUS",
+  clothoidAccuracyExceeded: "LINER_GEOM_CLOTHOID_ACCURACY_EXCEEDED",
   clothoidLongSpiral: "LINER_GEOM_CLOTHOID_LONG_SPIRAL",
   inverseProjectionFailed: "LINER_GEOM_INVERSE_PROJECTION_FAILED",
   duplicateStationEquation: "LINER_STATION_DUPLICATE_EQUATION",

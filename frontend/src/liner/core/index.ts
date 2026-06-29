@@ -1,3 +1,4 @@
+export * from "./clothoidGate";
 export * from "./continuityC0";
 export * from "./continuityC1";
 export * from "./diagnostics";
