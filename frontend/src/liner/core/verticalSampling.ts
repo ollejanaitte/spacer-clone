@@ -8,6 +8,8 @@ import {
   SAMPLING_INTERVAL_FRAME,
 } from "./sampling";
 
+const STATION_EPSILON = 1e-9;
+
 export type VerticalSamplePoint = {
   station: number;
   elevation: number;
@@ -58,6 +60,10 @@ function toSamplePoint(
   };
 }
 
+function sameStation(left: number, right: number): boolean {
+  return Math.abs(left - right) <= STATION_EPSILON;
+}
+
 function sampleElementAtInterval(
   element: VerticalElementDraft,
   interval: number,
@@ -65,23 +71,23 @@ function sampleElementAtInterval(
 ): void {
   const { startStation, endStation } = element;
 
-  if (startStation === endStation) {
-    if (points.length === 0 || points[points.length - 1]!.station !== startStation) {
+  if (sameStation(startStation, endStation)) {
+    if (points.length === 0 || !sameStation(points[points.length - 1]!.station, startStation)) {
       points.push(toSamplePoint(element, startStation));
     }
     return;
   }
 
   let station = startStation;
-  if (points.length > 0 && points[points.length - 1]!.station === station) {
+  if (points.length > 0 && sameStation(points[points.length - 1]!.station, station)) {
     station += interval;
   }
 
-  for (; station < endStation; station += interval) {
+  for (; station < endStation - STATION_EPSILON; station += interval) {
     points.push(toSamplePoint(element, station));
   }
 
-  if (points.length === 0 || points[points.length - 1]!.station !== endStation) {
+  if (points.length === 0 || !sameStation(points[points.length - 1]!.station, endStation)) {
     points.push(toSamplePoint(element, endStation));
   }
 }
