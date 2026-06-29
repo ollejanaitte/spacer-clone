@@ -1,6 +1,8 @@
 import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
+import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
+import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import {
@@ -130,7 +132,13 @@ export function LinerEditPage({
             </>
           )}
 
-          {activeTab === "station" && <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />}
+          {activeTab === "station" && (
+            <>
+              <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />
+              <ContinuityDiagnosticsPanel draft={draft} />
+              <CurveSamplingControl draft={draft} onDraftChange={changeDraft} />
+            </>
+          )}
 
           {activeTab === "height" && (
             <LinerSetupTabStub label={ja.liner.setupTabs.height} tabId="height" />
