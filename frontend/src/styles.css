@@ -3717,6 +3717,83 @@ button:disabled {
   background: #f8fbfe;
 }
 
+.liner-cross-section-preview {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.liner-cross-section-preview-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #526173;
+  font-size: 12px;
+}
+
+.liner-cross-section-preview-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liner-cross-section-preview-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.liner-cross-section-preview-svg {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border: 1px solid #d8e1ea;
+  border-radius: 6px;
+  background: #fbfcfe;
+}
+
+.liner-cross-section-preview-grid line {
+  stroke: #e4ebf2;
+  stroke-width: 1;
+}
+
+.liner-cross-section-preview-axis {
+  stroke: #526173;
+  stroke-width: 1.5;
+}
+
+.liner-cross-section-preview-zero-line {
+  stroke: rgba(148, 163, 184, 0.65);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.liner-cross-section-preview-tick {
+  fill: #526173;
+  font-size: 11px;
+}
+
+.liner-cross-section-preview-axis-label {
+  fill: #526173;
+  font-size: 12px;
+}
+
+.liner-cross-section-preview-profile {
+  fill: none;
+  stroke: #94a3b8;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.liner-cross-section-preview-point {
+  stroke: #ffffff;
+  stroke-width: 1.5;
+}
+
 .liner-preview-side-panel {
   display: grid;
   align-content: start;
