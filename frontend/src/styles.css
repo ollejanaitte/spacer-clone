@@ -3686,6 +3686,37 @@ button:disabled {
   text-align: right;
 }
 
+.liner-vertical-profile-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  color: #526173;
+  font-size: 12px;
+}
+
+.liner-vertical-profile-chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liner-vertical-profile-chart-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.liner-vertical-profile-chart-host {
+  min-height: 320px;
+  padding: 8px 4px 0;
+  border: 1px solid #d8e0e8;
+  border-radius: 6px;
+  background: #f8fbfe;
+}
+
 .liner-preview-side-panel {
   display: grid;
   align-content: start;
