@@ -317,10 +317,11 @@
       "required": [
         "type",
         "id",
-        "startPhysicalDistance",
-        "endPhysicalDistance",
+        "startStation",
+        "endStation",
         "startElevation",
-        "grade"
+        "grade",
+        "length"
       ],
       "properties": {
         "type": {
@@ -330,18 +331,26 @@
           "type": "string",
           "minLength": 1
         },
-        "startPhysicalDistance": {
-          "type": "number"
+        "startStation": {
+          "type": "number",
+          "description": "Start station (m)."
         },
-        "endPhysicalDistance": {
-          "type": "number"
+        "endStation": {
+          "type": "number",
+          "description": "End station (m)."
         },
         "startElevation": {
-          "type": "number"
+          "type": "number",
+          "description": "Start elevation (m)."
         },
         "grade": {
           "type": "number",
-          "description": "Grade in percent; positive uphill in alignment direction."
+          "description": "Grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Segment length (m)."
         }
       }
     },
@@ -375,11 +384,11 @@
         },
         "startGrade": {
           "type": "number",
-          "description": "Start grade (%, positive uphill)."
+          "description": "Start grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
         },
         "endGrade": {
           "type": "number",
-          "description": "End grade (%, positive uphill)."
+          "description": "End grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
         },
         "length": {
           "type": "number",
