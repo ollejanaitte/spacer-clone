@@ -1,4 +1,5 @@
 export * from "./clothoidGate";
+export * from "./crossSectionZMerge";
 export * from "./continuityC0";
 export * from "./continuityC1";
 export * from "./diagnostics";
