@@ -1,10 +1,17 @@
 import type { LinerTraceEntry } from "../mapper/frameModelMapper";
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
 import type { GridPointRole, Vec2 } from "../core/types";
+import {
+  PROJECT_LINER_METADATA_SCHEMA_VERSION,
+  LINER_DRAFT_SCHEMA_VERSION,
+  type LinerDraftSchemaVersion,
+} from "./version";
 
-export const PROJECT_LINER_METADATA_SCHEMA_VERSION = "0.1.0" as const;
-export type LinerDraftSchemaVersion = "0.2.0";
-export const LINER_DRAFT_SCHEMA_VERSION: LinerDraftSchemaVersion = "0.2.0";
+export {
+  PROJECT_LINER_METADATA_SCHEMA_VERSION,
+  LINER_DRAFT_SCHEMA_VERSION,
+  type LinerDraftSchemaVersion,
+};
 
 export type PersistedLinerTraceEntry = LinerTraceEntry;
 
