@@ -16,4 +16,5 @@ export * from "./station/stationRules";
 export * from "./stationAtPoint";
 export * from "./tolerances";
 export * from "./types";
+export * from "./verticalContinuity";
 export * from "./vector";

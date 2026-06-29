@@ -21,6 +21,8 @@ export const LINER_DIAGNOSTIC_CODES = {
   disconnectedFrame: "LINER_FRAME_DISCONNECTED",
   duplicateFrameId: "LINER_FRAME_DUPLICATE_ID",
   invalidFrameSchema: "LINER_FRAME_SCHEMA_INVALID",
+  profileElevationDiscontinuity: "LINER_PROFILE_ELEVATION_DISCONTINUITY",
+  profileGradeDiscontinuity: "LINER_PROFILE_GRADE_DISCONTINUITY",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export function createIssue(
