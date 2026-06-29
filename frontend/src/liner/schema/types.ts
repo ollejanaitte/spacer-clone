@@ -22,13 +22,16 @@ export type ProjectLinerSourceRef = {
 
 export type ProjectLinerMetadata = {
   schemaVersion: typeof PROJECT_LINER_METADATA_SCHEMA_VERSION;
+  draftSchemaVersion?: LinerDraftSchemaVersion;
   sourceRevision: string;
   linerModelId: string;
   coordinatePolicyId: string;
   intermediateSchemaVersion: "0.2.0";
   generatedAt?: string;
   source?: ProjectLinerSourceRef;
+  /** Read-only legacy input from older projects; not written by the vNext save path. */
   draft?: BuildIntermediateInput;
+  domainDraft?: LinerDomainDraftVNext;
 };
 
 export interface ProjectLinerMetadataVNext {
