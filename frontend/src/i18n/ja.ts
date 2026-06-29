@@ -1385,6 +1385,8 @@ export const ja = {
       crossSectionOffsetLineTableCaption: "オフセット線一覧",
       crossSectionSignConventionHelp:
         "オフセットは中心線から右方向を正、相対標高は上方向を正とします。",
+      crossSlopeSection: "横断勾配",
+      crossSlopeSignConventionHelp: "+ = 右下がり（道路センターから見て右側が下がる方向を正）",
       addOffsetLine: "オフセット線を追加",
       removeOffsetLine: "オフセット線を削除",
       stationEquationTableCaption: "測点補正",
@@ -1457,6 +1459,7 @@ export const ja = {
         left: "左",
         right: "右",
       },
+      crossSlopePercent: "横断勾配 (%)",
       templateId: "テンプレートID",
       templateName: "テンプレート名",
       offsetLineId: "オフセット線ID",
