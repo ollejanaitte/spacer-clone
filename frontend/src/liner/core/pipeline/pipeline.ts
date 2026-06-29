@@ -5,6 +5,7 @@ import {
   totalAlignmentLength,
   validateAlignment,
 } from "../geometry/horizontal";
+import { SAMPLING_INTERVAL_DISPLAY, sampleDisplay } from "../sampling";
 import { displayedStationAtPhysicalDistance, generateStations } from "../station/stationRules";
 import type {
   AlignmentElement,
@@ -121,26 +122,30 @@ function buildHorizontalResult(
   const piPoints: HorizontalPiPointResult[] = [];
 
   if (canEvaluate) {
-    for (let distance = 0; distance < totalLength; distance += sampleInterval) {
+    if (sampleInterval === SAMPLING_INTERVAL_DISPLAY) {
+      sampledPoints.push(...sampleDisplay(alignment, stationDefinition));
+    } else {
+      for (let distance = 0; distance < totalLength; distance += sampleInterval) {
+        sampledPoints.push(
+          toSamplePoint(
+            evaluateAlignmentAtDistance(
+              alignment,
+              distance,
+              displayedStationAtPhysicalDistance(distance, stationDefinition, distance > 0),
+            ),
+          ),
+        );
+      }
       sampledPoints.push(
         toSamplePoint(
           evaluateAlignmentAtDistance(
             alignment,
-            distance,
-            displayedStationAtPhysicalDistance(distance, stationDefinition, distance > 0),
+            totalLength,
+            displayedStationAtPhysicalDistance(totalLength, stationDefinition),
           ),
         ),
       );
     }
-    sampledPoints.push(
-      toSamplePoint(
-        evaluateAlignmentAtDistance(
-          alignment,
-          totalLength,
-          displayedStationAtPhysicalDistance(totalLength, stationDefinition),
-        ),
-      ),
-    );
   }
 
   return {
@@ -342,7 +347,7 @@ export function buildIntermediateResult(
   const stationGeneration = generateStations(input.stationDefinition, totalLength);
   diagnostics.push(...stationGeneration.issues);
 
-  const sampleInterval = input.sampleInterval ?? Math.max(totalLength, 1);
+  const sampleInterval = input.sampleInterval ?? SAMPLING_INTERVAL_DISPLAY;
   const canEvaluate = !hasFatalIssues(diagnostics);
   const horizontal = buildHorizontalResult(
     input.alignment,
