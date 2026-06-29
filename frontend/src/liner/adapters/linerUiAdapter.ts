@@ -3,6 +3,7 @@ import type { AlignmentElement, LinearAlignment, StationDefinition, StationEquat
 
 export type LinerDraft = BuildIntermediateInput;
 export type LinerDraftAlignmentElement = AlignmentElement;
+export type LinerDraftUpdate = LinerDraft | ((current: LinerDraft) => LinerDraft);
 
 export type LinerDraftSummary = {
   elementCount: number;

@@ -13,11 +13,12 @@ import {
   updateLinerStationDefinition,
   updateLinerStationEquation,
   type LinerDraft,
+  type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
 
 export type LinerStationProfilePanelProps = {
   draft: LinerDraft;
-  onDraftChange: (nextDraft: LinerDraft) => void;
+  onDraftChange: (update: LinerDraftUpdate) => void;
 };
 
 function numericValue(value: number | undefined): string {
@@ -46,9 +47,10 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
               value={numericValue(draft.stationDefinition.originDisplayedStation)}
               data-testid="liner-origin-displayed-station"
               onChange={(event) => {
+                const value = parseNumericInput(event.currentTarget.value);
                 onDraftChange(
-                  updateLinerStationDefinition(draft, {
-                    originDisplayedStation: parseNumericInput(event.currentTarget.value),
+                  (current) => updateLinerStationDefinition(current, {
+                    originDisplayedStation: value,
                   }),
                 );
               }}
@@ -61,8 +63,9 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
               value={numericValue(draft.stationDefinition.interval)}
               data-testid="liner-station-interval"
               onChange={(event) => {
+                const value = parseNumericInput(event.currentTarget.value);
                 onDraftChange(
-                  updateLinerStationDefinition(draft, { interval: parseNumericInput(event.currentTarget.value) }),
+                  (current) => updateLinerStationDefinition(current, { interval: value }),
                 );
               }}
             />
@@ -74,8 +77,9 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
               value={numericValue(draft.sampleInterval)}
               data-testid="liner-sample-interval"
               onChange={(event) => {
+                const value = parseNumericInput(event.currentTarget.value);
                 onDraftChange(
-                  updateLinerDraftSettings(draft, { sampleInterval: parseNumericInput(event.currentTarget.value) }),
+                  (current) => updateLinerDraftSettings(current, { sampleInterval: value }),
                 );
               }}
             />
@@ -93,7 +97,8 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
               value={numericValue(draft.z)}
               data-testid="liner-profile-z"
               onChange={(event) => {
-                onDraftChange(updateLinerDraftSettings(draft, { z: parseNumericInput(event.currentTarget.value) }));
+                const value = parseNumericInput(event.currentTarget.value);
+                onDraftChange((current) => updateLinerDraftSettings(current, { z: value }));
               }}
             />
           </label>
@@ -106,7 +111,7 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
           <h2 id="liner-edit-explicit-stations-title">{ja.liner.editor.explicitStationSection}</h2>
           <button
             type="button"
-            onClick={() => onDraftChange(addLinerExplicitStation(draft))}
+            onClick={() => onDraftChange((current) => addLinerExplicitStation(current))}
             data-testid="add-liner-explicit-station"
           >
             <FilePlus2 size={16} />
@@ -125,13 +130,16 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                     type="number"
                     value={numericValue(station)}
                     onChange={(event) => {
-                      onDraftChange(updateLinerExplicitStation(draft, index, parseNumericInput(event.currentTarget.value)));
+                      const value = parseNumericInput(event.currentTarget.value);
+                      onDraftChange((current) =>
+                        updateLinerExplicitStation(current, index, value),
+                      );
                     }}
                     data-testid={`liner-explicit-station-${index}`}
                   />
                   <button
                     type="button"
-                    onClick={() => onDraftChange(removeLinerExplicitStation(draft, index))}
+                    onClick={() => onDraftChange((current) => removeLinerExplicitStation(current, index))}
                     data-testid={`remove-liner-explicit-station-${index}`}
                     title={ja.common.removeRow}
                   >
@@ -149,7 +157,7 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
           <h2 id="liner-edit-equations-title">{ja.liner.editor.stationEquationSection}</h2>
           <button
             type="button"
-            onClick={() => onDraftChange(addLinerStationEquation(draft))}
+            onClick={() => onDraftChange((current) => addLinerStationEquation(current))}
             data-testid="add-liner-station-equation"
           >
             <FilePlus2 size={16} />
@@ -175,40 +183,46 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                   <td colSpan={6}>{ja.liner.editor.noStationEquations}</td>
                 </tr>
               ) : (
-                equations.map((equation) => (
-                  <tr key={equation.id}>
+                equations.map((equation, equationIndex) => (
+                  <tr key={equationIndex}>
                     <td>
                       <input
                         value={equation.id}
-                        onChange={(event) =>
-                          onDraftChange(updateLinerStationEquation(draft, equation.id, { id: event.currentTarget.value }))
-                        }
+                        data-testid={`liner-equation-id-${equation.id}`}
+                        onChange={(event) => {
+                          const value = event.currentTarget.value;
+                          onDraftChange((current) =>
+                            updateLinerStationEquation(current, equation.id, { id: value }),
+                          );
+                        }}
                       />
                     </td>
                     <td>
                       <input
                         type="number"
                         value={numericValue(equation.physicalDistance)}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          const value = parseNumericInput(event.currentTarget.value);
                           onDraftChange(
-                            updateLinerStationEquation(draft, equation.id, {
-                              physicalDistance: parseNumericInput(event.currentTarget.value),
+                            (current) => updateLinerStationEquation(current, equation.id, {
+                              physicalDistance: value,
                             }),
-                          )
-                        }
+                          );
+                        }}
                         data-testid={`liner-equation-distance-${equation.id}`}
                       />
                     </td>
                     <td>
                       <select
                         value={equation.type}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          const value = event.currentTarget.value as "add_constant" | "reset_to_value";
                           onDraftChange(
-                            updateLinerStationEquation(draft, equation.id, {
-                              type: event.currentTarget.value as "add_constant" | "reset_to_value",
+                            (current) => updateLinerStationEquation(current, equation.id, {
+                              type: value,
                             }),
-                          )
-                        }
+                          );
+                        }}
                         data-testid={`liner-equation-type-${equation.id}`}
                       >
                         <option value="add_constant">{ja.liner.fields.stationEquationTypes.addConstant}</option>
@@ -219,13 +233,14 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                       <input
                         type="number"
                         value={numericValue(equation.value)}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          const value = parseNumericInput(event.currentTarget.value);
                           onDraftChange(
-                            updateLinerStationEquation(draft, equation.id, {
-                              value: parseNumericInput(event.currentTarget.value),
+                            (current) => updateLinerStationEquation(current, equation.id, {
+                              value,
                             }),
-                          )
-                        }
+                          );
+                        }}
                         data-testid={`liner-equation-value-${equation.id}`}
                       />
                     </td>
@@ -233,19 +248,20 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                       <input
                         type="number"
                         value={numericValue(equation.sortIndex)}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          const value = parseNumericInput(event.currentTarget.value);
                           onDraftChange(
-                            updateLinerStationEquation(draft, equation.id, {
-                              sortIndex: parseNumericInput(event.currentTarget.value),
+                            (current) => updateLinerStationEquation(current, equation.id, {
+                              sortIndex: value,
                             }),
-                          )
-                        }
+                          );
+                        }}
                       />
                     </td>
                     <td>
                       <button
                         type="button"
-                        onClick={() => onDraftChange(removeLinerStationEquation(draft, equation.id))}
+                        onClick={() => onDraftChange((current) => removeLinerStationEquation(current, equation.id))}
                         data-testid={`remove-liner-station-equation-${equation.id}`}
                         title={ja.common.removeRow}
                       >
@@ -263,7 +279,7 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
       <section className="liner-edit-panel" aria-labelledby="liner-edit-offsets-title">
         <div className="liner-edit-section-header">
           <h2 id="liner-edit-offsets-title">{ja.liner.editor.offsetSection}</h2>
-          <button type="button" onClick={() => onDraftChange(addLinerOffset(draft))} data-testid="add-liner-offset">
+          <button type="button" onClick={() => onDraftChange((current) => addLinerOffset(current))} data-testid="add-liner-offset">
             <FilePlus2 size={16} />
             {ja.common.addRow}
           </button>
@@ -276,12 +292,15 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                 <input
                   type="number"
                   value={numericValue(offset)}
-                  onChange={(event) => onDraftChange(updateLinerOffset(draft, index, parseNumericInput(event.currentTarget.value)))}
+                  onChange={(event) => {
+                    const value = parseNumericInput(event.currentTarget.value);
+                    onDraftChange((current) => updateLinerOffset(current, index, value));
+                  }}
                   data-testid={`liner-offset-${index}`}
                 />
                 <button
                   type="button"
-                  onClick={() => onDraftChange(removeLinerOffset(draft, index))}
+                  onClick={() => onDraftChange((current) => removeLinerOffset(current, index))}
                   disabled={offsets.length <= 1}
                   data-testid={`remove-liner-offset-${index}`}
                   title={ja.common.removeRow}

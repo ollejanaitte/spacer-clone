@@ -6,6 +6,7 @@ import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
 import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
+import { resetProjectModelContents } from "./modelReset";
 import { migrateProject } from "./projectMigration";
 import { buildResultCsvExports } from "./exports/resultCsvExport";
 import { buildMemberForceReportCsv } from "./exports/memberForceReport";
@@ -37,7 +38,7 @@ import { LinerEditPage } from "./liner/pages/LinerEditPage";
 import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
-import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
+import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
 import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
@@ -135,9 +136,26 @@ export function App() {
     setActiveLoadCase(nextProject.loadCases[0]?.id ?? "");
     setTimeHistoryNodeOverride(null);
   };
-  const commitLinerDraft = useCallback((nextDraft: typeof linerDraft) => {
-    commitProject(withProjectLinerDraft(project, nextDraft));
-  }, [linerDraft, project]);
+  const commitLinerDraft = useCallback((update: LinerDraftUpdate) => {
+    setProject((currentProject) => {
+      const currentDraft = linerDraftFromProject(currentProject);
+      const nextDraft = typeof update === "function" ? update(currentDraft) : update;
+      return withProjectLinerDraft(currentProject, nextDraft);
+    });
+    setDirty(true);
+    setValidation(null);
+    setValidationNotice(null);
+    setResult(null);
+    setRightResult(null);
+    setResultExports(null);
+    setSelectedEigenMode(1);
+    setSelectedResponseSpectrumResult("SRSS");
+    setApiErrors([]);
+    setViewerErrors([]);
+    setSelectedNode(null);
+    setSelectedMember(null);
+    setTimeHistoryNodeOverride(null);
+  }, []);
 
   const log = (message: string) => {
     setLogs((current) => [`${new Date().toLocaleTimeString()} ${message}`, ...current].slice(0, 30));
@@ -205,29 +223,7 @@ export function App() {
 
   const resetModelContents = useCallback(() => {
     if (!window.confirm(ja.toolbar.resetConfirm)) return;
-    commitProject({
-      ...project,
-      nodes: [],
-      materials: [],
-      sections: [],
-      members: [],
-      supports: [],
-      loadCases: [],
-      nodalLoads: [],
-      memberLoads: [],
-      massCases: [],
-      groundMotions: [],
-      analysisSettings: {
-        ...project.analysisSettings,
-        eigen: undefined,
-        responseSpectrum: undefined,
-        influence: undefined,
-        timeHistory: undefined,
-      },
-      analysisResults: undefined,
-      liner: undefined,
-      linerTrace: undefined,
-    });
+    commitProject(resetProjectModelContents(project));
     setBottomTab("results");
     log("Model contents reset.");
   }, [project]);
