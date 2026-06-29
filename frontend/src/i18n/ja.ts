@@ -1491,6 +1491,11 @@ export const ja = {
     },
     diagnostics: {
       panelTitle: "診断メッセージ",
+      continuityPanelTitle: "接続診断（C0/C1）",
+      emptyContinuityDiagnostics: "C0/C1 接続に関する診断はありません。",
+      positionDiscontinuity: "隣接要素の位置が連続していません（C0）。",
+      azimuthDiscontinuity: "隣接要素の方位角が連続していません（C1）。",
+      entityIdLabel: "要素ID",
       severityError: "エラー",
       severityWarning: "警告",
       severityInfo: "情報",
