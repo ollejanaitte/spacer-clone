@@ -1,19 +1,21 @@
 # project_file_format.md Update Proposal
 
-## 蟇ｾ雎｡
+## 対象
 
-- 蜈・ヵ繧｡繧､繝ｫ: `docs/liner/project_file_format.md`
-- 髢｢騾｣Phase: 3.5-1
-- 譖ｴ譁ｰ逅・罰: 迴ｾ蝨ｨ `liner.draft` 縺ｯ閾ｪ逕ｱ蠖｢蠑上〒縲￣hase3.5縺ｧ縺ｯdomain draft蠢・井ｿ晏ｭ倥→ `liner.draftSchemaVersion` 邂｡逅・′遒ｺ螳壹＠縺溘◆繧√・uman Decision #4, #5繧貞渚譏縺吶ｋ縲・
-## 譖ｴ譁ｰ邂・園
+- 元ファイル: `docs/liner/project_file_format.md`
+- 関連Phase: 3.5-1
+- 更新理由: 現在 `liner.draft` は自由形式で、Phase3.5ではdomain draft必須保存と `liner.draftSchemaVersion` 管理が確定したため、Human Decision #4, #5を反映する。
 
-| 迴ｾ迥ｶ遶 | 迴ｾ迥ｶ險倩ｿｰ | 譖ｴ譁ｰ蠕瑚ｨ倩ｿｰ |
+## 更新箇所
+
+| 現状章 | 現状記述 | 更新後記述 |
 |---|---|---|
-| 2. Embedded in application project | `liner` 縺ｯmetadata荳ｭ蠢・| `draftSchemaVersion` 縺ｨ `domainDraft` 繧貞ｿ・・ield縺ｨ縺励※霑ｽ蜉 |
-| 4. Not persisted | full intermediate縺ｯ菫晏ｭ倥＠縺ｪ縺・| domain draft縺ｯ蠢・井ｿ晏ｭ倥（ntermediate縺ｯ菫晏ｭ倥＠縺ｪ縺・→譏守｢ｺ蛹・|
-| 5. JSON Schema | future location縺ｮ縺ｿ | `project.schema.json` 縺ｮ `liner.domainDraft` typed schema蛹匁婿驥昴ｒ霑ｽ險・|
+| 2. Embedded in application project | `liner` はmetadata中心 | `draftSchemaVersion` と `domainDraft` を必須fieldとして追加 |
+| 4. Not persisted | full intermediateは保存しない | domain draftは必須保存、intermediateは保存しないと明確化 |
+| 5. JSON Schema | future locationのみ | `project.schema.json` の `liner.domainDraft` typed schema化方針を追記 |
 
-## 蟾ｮ蛻・｡・
+## 差分
+
 ```diff
 @@ 2. Embedded in application project
    "liner": {
@@ -43,7 +45,7 @@
 + Legacy `liner.draft` is read-only migration input; new saves use `liner.domainDraft`.
 ```
 
-## 蜿ら・
+## 参照
 
 - `docs/liner/phase3.5/typed_liner_draft_schema_vnext.md`
 - `docs/liner/schema_migration_policy.md`
