@@ -2,13 +2,23 @@ import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
+import { CrossSectionPreview } from "../components/CrossSectionPreview";
+import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEditor";
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
+import { SuperelevationEditor } from "../components/SuperelevationEditor";
+import { VerticalElementEditor } from "../components/VerticalElementEditor";
+import { VerticalProfileChart } from "../components/VerticalProfileChart";
 import {
+  createDefaultCrossSectionTemplate,
   createDefaultLinerDraft,
+  createDefaultVerticalAlignment,
   summarizeLinerDraft,
   updateLinerAlignmentMetadata,
+  updateLinerCrossSectionTemplate,
+  updateLinerCrossSlope,
+  updateLinerVerticalAlignment,
   type LinerDraft,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
@@ -55,6 +65,10 @@ export function LinerEditPage({
     }
   };
   const summary = useMemo(() => summarizeLinerDraft(draft), [draft]);
+  const verticalAlignment =
+    draft.verticalAlignment ?? createDefaultVerticalAlignment(summary.totalDeclaredLength, draft.z ?? 0);
+  const crossSectionTemplate =
+    draft.crossSections?.[0] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0]);
 
   return (
     <main className="liner-edit-page" data-testid="liner-edit-page">
@@ -150,11 +164,33 @@ export function LinerEditPage({
           )}
 
           {activeTab === "vertical" && (
-            <LinerSetupTabStub label={ja.liner.setupTabs.vertical} tabId="vertical" />
+            <div className="liner-tab-vertical">
+              <VerticalElementEditor
+                verticalAlignment={verticalAlignment}
+                onVerticalAlignmentChange={(nextVerticalAlignment) =>
+                  changeDraft((current) => updateLinerVerticalAlignment(current, nextVerticalAlignment))
+                }
+              />
+              <VerticalProfileChart verticalAlignment={verticalAlignment} />
+            </div>
           )}
 
           {activeTab === "crossSection" && (
-            <LinerSetupTabStub label={ja.liner.setupTabs.crossSection} tabId="crossSection" />
+            <div className="liner-tab-cross-section">
+              <CrossSectionTemplateEditor
+                template={crossSectionTemplate}
+                onTemplateChange={(nextTemplate) =>
+                  changeDraft((current) => updateLinerCrossSectionTemplate(current, nextTemplate))
+                }
+              />
+              <SuperelevationEditor
+                crossSlope={crossSectionTemplate.crossSlope}
+                onCrossSlopeChange={(nextCrossSlope) =>
+                  changeDraft((current) => updateLinerCrossSlope(current, nextCrossSlope))
+                }
+              />
+              <CrossSectionPreview template={crossSectionTemplate} />
+            </div>
           )}
 
           {activeTab === "review" && (
