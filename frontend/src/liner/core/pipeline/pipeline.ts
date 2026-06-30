@@ -38,10 +38,16 @@ import type {
   VerticalGeometryResult,
 } from "../types";
 import { sourceRevisionFor } from "./sourceRevision";
+import type {
+  CrossSectionTemplateDraft,
+  VerticalAlignmentDraft,
+} from "../../schema/types";
 
 export type BuildIntermediateInput = {
   alignment: LinearAlignment;
   stationDefinition: StationDefinition;
+  verticalAlignment?: VerticalAlignmentDraft;
+  crossSections?: CrossSectionTemplateDraft[];
   offsets?: number[];
   sampleInterval?: number;
   z?: number;

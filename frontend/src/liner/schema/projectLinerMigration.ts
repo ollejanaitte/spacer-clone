@@ -227,8 +227,33 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
   const alignment = draft.alignment;
   const totalLength = totalAlignmentLength(alignment);
   const stationInterval = draft.sampleInterval ?? draft.stationDefinition.interval;
-  const offsetLines = buildOffsetLines(draft.offsets ?? [0]);
+  const fallbackOffsetLines = buildOffsetLines(draft.offsets ?? [0]);
+  const crossSections = draft.crossSections?.length
+    ? draft.crossSections
+    : [
+        {
+          id: "CS-default",
+          name: "Default",
+          offsetLines: fallbackOffsetLines,
+        },
+      ];
+  const defaultTemplate = crossSections[0];
+  const offsetLines = defaultTemplate?.offsetLines ?? fallbackOffsetLines;
   const z = draft.z ?? 0;
+  const verticalAlignment = draft.verticalAlignment ?? {
+    id: "VA-default",
+    elements: [
+      {
+        type: "grade" as const,
+        id: "VG-default",
+        startStation: 0,
+        endStation: totalLength,
+        startElevation: z,
+        grade: 0,
+        length: totalLength,
+      },
+    ],
+  };
 
   return {
     id: alignment.id,
@@ -236,31 +261,12 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     coordinatePolicyId: alignment.coordinatePolicyId,
     alignment: toHorizontalAlignmentDraft(alignment),
     stationDefinition: draft.stationDefinition,
-    verticalAlignment: {
-      id: "VA-default",
-      elements: [
-        {
-          type: "grade",
-          id: "VG-default",
-          startStation: 0,
-          endStation: totalLength,
-          startElevation: z,
-          grade: 0,
-          length: totalLength,
-        },
-      ],
-    },
-    crossSections: [
-      {
-        id: "CS-default",
-        name: "Default",
-        offsetLines,
-      },
-    ],
+    verticalAlignment,
+    crossSections,
     gridDefinitions: [
       {
         id: "GRID-default",
-        crossSectionTemplateId: "CS-default",
+        crossSectionTemplateId: defaultTemplate?.id ?? "CS-default",
         stationRange: {
           startPhysicalDistance: 0,
           endPhysicalDistance: totalLength,

@@ -92,6 +92,8 @@ export function buildIntermediateInputFromDomainDraft(
       elements: domainDraft.alignment.elements.map(toAlignmentElement),
     },
     stationDefinition: domainDraft.stationDefinition,
+    verticalAlignment: domainDraft.verticalAlignment,
+    crossSections: domainDraft.crossSections,
     offsets,
     sampleInterval: domainDraft.sampling.display.maxChordLength,
     z,
