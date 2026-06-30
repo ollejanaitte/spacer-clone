@@ -16,12 +16,1719 @@
     "area": "m2",
     "inertia": "m4"
   },
-  "nodes": [],
-  "materials": [],
-  "sections": [],
-  "members": [],
+  "nodes": [
+    {
+      "id": "N_LINER_liner-model-1_000_000",
+      "x": 3,
+      "y": -5,
+      "z": 0,
+      "label": "L0T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_000_001",
+      "x": 3,
+      "y": 0,
+      "z": 0,
+      "label": "L0T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_000_002",
+      "x": 3,
+      "y": 5,
+      "z": 0,
+      "label": "L0T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_001_000",
+      "x": 13,
+      "y": -5,
+      "z": 0,
+      "label": "L1T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_001_001",
+      "x": 13,
+      "y": 0,
+      "z": 0,
+      "label": "L1T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_001_002",
+      "x": 13,
+      "y": 5,
+      "z": 0,
+      "label": "L1T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_002_000",
+      "x": 23,
+      "y": -5,
+      "z": 0,
+      "label": "L2T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_002_001",
+      "x": 23,
+      "y": 0,
+      "z": 0,
+      "label": "L2T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_002_002",
+      "x": 23,
+      "y": 5,
+      "z": 0,
+      "label": "L2T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_003_000",
+      "x": 33,
+      "y": -5,
+      "z": 0,
+      "label": "L3T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_003_001",
+      "x": 33,
+      "y": 0,
+      "z": 0,
+      "label": "L3T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_003_002",
+      "x": 33,
+      "y": 5,
+      "z": 0,
+      "label": "L3T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_004_000",
+      "x": 43,
+      "y": -5,
+      "z": 0,
+      "label": "L4T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_004_001",
+      "x": 43,
+      "y": 0,
+      "z": 0,
+      "label": "L4T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_004_002",
+      "x": 43,
+      "y": 5,
+      "z": 0,
+      "label": "L4T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_005_000",
+      "x": 53,
+      "y": -5,
+      "z": 0,
+      "label": "L5T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_005_001",
+      "x": 53,
+      "y": 0,
+      "z": 0,
+      "label": "L5T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_005_002",
+      "x": 53,
+      "y": 5,
+      "z": 0,
+      "label": "L5T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_006_000",
+      "x": 63,
+      "y": -5,
+      "z": 0,
+      "label": "L6T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_006_001",
+      "x": 63,
+      "y": 0,
+      "z": 0,
+      "label": "L6T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_006_002",
+      "x": 63,
+      "y": 5,
+      "z": 0,
+      "label": "L6T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_007_000",
+      "x": 73,
+      "y": -5,
+      "z": 0,
+      "label": "L7T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_007_001",
+      "x": 73,
+      "y": 0,
+      "z": 0,
+      "label": "L7T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_007_002",
+      "x": 73,
+      "y": 5,
+      "z": 0,
+      "label": "L7T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_008_000",
+      "x": 83,
+      "y": -5,
+      "z": 0,
+      "label": "L8T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_008_001",
+      "x": 83,
+      "y": 0,
+      "z": 0,
+      "label": "L8T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_008_002",
+      "x": 83,
+      "y": 5,
+      "z": 0,
+      "label": "L8T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_009_000",
+      "x": 93,
+      "y": -5,
+      "z": 0,
+      "label": "L9T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_009_001",
+      "x": 93,
+      "y": 0,
+      "z": 0,
+      "label": "L9T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_009_002",
+      "x": 93,
+      "y": 5,
+      "z": 0,
+      "label": "L9T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_010_000",
+      "x": 103,
+      "y": -5,
+      "z": 0,
+      "label": "L10T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_010_001",
+      "x": 103,
+      "y": 0,
+      "z": 0,
+      "label": "L10T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_010_002",
+      "x": 103,
+      "y": 5,
+      "z": 0,
+      "label": "L10T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_011_000",
+      "x": 113.04989916713355,
+      "y": -4.9664169068444775,
+      "z": 0,
+      "label": "L11T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_011_001",
+      "x": 112.99990000046272,
+      "y": 0.03333309523884867,
+      "z": 0,
+      "label": "L11T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_011_002",
+      "x": 112.94990083379189,
+      "y": 5.033083097322175,
+      "z": 0,
+      "label": "L11T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_012_000",
+      "x": 123.19674690795352,
+      "y": -4.729364341277757,
+      "z": 0,
+      "label": "L12T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_012_001",
+      "x": 122.99680023702035,
+      "y": 0.2666361920271328,
+      "z": 0,
+      "label": "L12T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_012_002",
+      "x": 122.79685356608718,
+      "y": 5.2626367253320225,
+      "z": 0,
+      "label": "L12T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_013_000",
+      "x": 133.4251018567271,
+      "y": -4.080284245171422,
+      "z": 0,
+      "label": "L13T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_013_001",
+      "x": 132.97570911073706,
+      "y": 0.89947941988855,
+      "z": 0,
+      "label": "L13T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_013_002",
+      "x": 132.526316364747,
+      "y": 5.879243084948522,
+      "z": 0,
+      "label": "L13T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_014_000",
+      "x": 143.69431232411497,
+      "y": -2.806700859909911,
+      "z": 0,
+      "label": "L14T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_014_001",
+      "x": 142.89772129104375,
+      "y": 2.129435556968224,
+      "z": 0,
+      "label": "L14T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_014_002",
+      "x": 142.10113025797253,
+      "y": 7.0655719738463585,
+      "z": 0,
+      "label": "L14T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_015_000",
+      "x": 153.92542271703212,
+      "y": -0.6964596820158029,
+      "z": 0,
+      "label": "L15T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_015_001",
+      "x": 152.6884029207595,
+      "y": 4.148102426537421,
+      "z": 0,
+      "label": "L15T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_015_002",
+      "x": 151.45138312448688,
+      "y": 8.992664535090645,
+      "z": 0,
+      "label": "L15T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_016_000",
+      "x": 163.61454693413856,
+      "y": 1.7775799105294263,
+      "z": 0,
+      "label": "L16T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_016_001",
+      "x": 162.37752713786594,
+      "y": 6.62214201908265,
+      "z": 0,
+      "label": "L16T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_016_002",
+      "x": 161.14050734159332,
+      "y": 11.466704127635875,
+      "z": 0,
+      "label": "L16T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_017_000",
+      "x": 173.30367115124503,
+      "y": 4.251619503074656,
+      "z": 0,
+      "label": "L17T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_017_001",
+      "x": 172.0666513549724,
+      "y": 9.09618161162788,
+      "z": 0,
+      "label": "L17T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_017_002",
+      "x": 170.8296315586998,
+      "y": 13.940743720181104,
+      "z": 0,
+      "label": "L17T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_018_000",
+      "x": 182.99279536835147,
+      "y": 6.725659095619885,
+      "z": 0,
+      "label": "L18T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_018_001",
+      "x": 181.75577557207885,
+      "y": 11.570221204173109,
+      "z": 0,
+      "label": "L18T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_018_002",
+      "x": 180.51875577580623,
+      "y": 16.414783312726332,
+      "z": 0,
+      "label": "L18T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_019_000",
+      "x": 192.6819195854579,
+      "y": 9.199698688165114,
+      "z": 0,
+      "label": "L19T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_019_001",
+      "x": 191.44489978918529,
+      "y": 14.044260796718337,
+      "z": 0,
+      "label": "L19T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_019_002",
+      "x": 190.20787999291267,
+      "y": 18.88882290527156,
+      "z": 0,
+      "label": "L19T2"
+    },
+    {
+      "id": "N_LINER_liner-model-1_020_000",
+      "x": 202.37104380256434,
+      "y": 11.673738280710346,
+      "z": 0,
+      "label": "L20T0"
+    },
+    {
+      "id": "N_LINER_liner-model-1_020_001",
+      "x": 201.13402400629172,
+      "y": 16.51830038926357,
+      "z": 0,
+      "label": "L20T1"
+    },
+    {
+      "id": "N_LINER_liner-model-1_020_002",
+      "x": 199.8970042100191,
+      "y": 21.362862497816792,
+      "z": 0,
+      "label": "L20T2"
+    }
+  ],
+  "materials": [
+    {
+      "id": "MAT_LINER_DECK",
+      "name": "Liner fixture deck steel",
+      "elasticModulus": 205000000,
+      "shearModulus": 78846153.8,
+      "poissonRatio": 0.3,
+      "density": 0
+    },
+    {
+      "id": "MAT_LINER_CROSS",
+      "name": "Liner fixture cross steel",
+      "elasticModulus": 205000000,
+      "shearModulus": 78846153.8,
+      "poissonRatio": 0.3,
+      "density": 0
+    }
+  ],
+  "sections": [
+    {
+      "id": "SEC_LINER_DECK",
+      "name": "Liner fixture deck section",
+      "area": 0.05,
+      "iy": 0.0008,
+      "iz": 0.0006,
+      "j": 0.0002
+    },
+    {
+      "id": "SEC_LINER_CROSS",
+      "name": "Liner fixture cross section",
+      "area": 0.03,
+      "iy": 0.0004,
+      "iz": 0.0003,
+      "j": 0.0001
+    }
+  ],
+  "members": [
+    {
+      "id": "M_LINER_liner-model-1_L_000_000",
+      "nodeI": "N_LINER_liner-model-1_000_000",
+      "nodeJ": "N_LINER_liner-model-1_001_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_001_000",
+      "nodeI": "N_LINER_liner-model-1_001_000",
+      "nodeJ": "N_LINER_liner-model-1_002_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_002_000",
+      "nodeI": "N_LINER_liner-model-1_002_000",
+      "nodeJ": "N_LINER_liner-model-1_003_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_003_000",
+      "nodeI": "N_LINER_liner-model-1_003_000",
+      "nodeJ": "N_LINER_liner-model-1_004_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_004_000",
+      "nodeI": "N_LINER_liner-model-1_004_000",
+      "nodeJ": "N_LINER_liner-model-1_005_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_005_000",
+      "nodeI": "N_LINER_liner-model-1_005_000",
+      "nodeJ": "N_LINER_liner-model-1_006_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_006_000",
+      "nodeI": "N_LINER_liner-model-1_006_000",
+      "nodeJ": "N_LINER_liner-model-1_007_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_007_000",
+      "nodeI": "N_LINER_liner-model-1_007_000",
+      "nodeJ": "N_LINER_liner-model-1_008_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_008_000",
+      "nodeI": "N_LINER_liner-model-1_008_000",
+      "nodeJ": "N_LINER_liner-model-1_009_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_009_000",
+      "nodeI": "N_LINER_liner-model-1_009_000",
+      "nodeJ": "N_LINER_liner-model-1_010_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_010_000",
+      "nodeI": "N_LINER_liner-model-1_010_000",
+      "nodeJ": "N_LINER_liner-model-1_011_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_011_000",
+      "nodeI": "N_LINER_liner-model-1_011_000",
+      "nodeJ": "N_LINER_liner-model-1_012_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_012_000",
+      "nodeI": "N_LINER_liner-model-1_012_000",
+      "nodeJ": "N_LINER_liner-model-1_013_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_013_000",
+      "nodeI": "N_LINER_liner-model-1_013_000",
+      "nodeJ": "N_LINER_liner-model-1_014_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_014_000",
+      "nodeI": "N_LINER_liner-model-1_014_000",
+      "nodeJ": "N_LINER_liner-model-1_015_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_015_000",
+      "nodeI": "N_LINER_liner-model-1_015_000",
+      "nodeJ": "N_LINER_liner-model-1_016_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_016_000",
+      "nodeI": "N_LINER_liner-model-1_016_000",
+      "nodeJ": "N_LINER_liner-model-1_017_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_017_000",
+      "nodeI": "N_LINER_liner-model-1_017_000",
+      "nodeJ": "N_LINER_liner-model-1_018_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_018_000",
+      "nodeI": "N_LINER_liner-model-1_018_000",
+      "nodeJ": "N_LINER_liner-model-1_019_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_019_000",
+      "nodeI": "N_LINER_liner-model-1_019_000",
+      "nodeJ": "N_LINER_liner-model-1_020_000",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_000_001",
+      "nodeI": "N_LINER_liner-model-1_000_001",
+      "nodeJ": "N_LINER_liner-model-1_001_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_001_001",
+      "nodeI": "N_LINER_liner-model-1_001_001",
+      "nodeJ": "N_LINER_liner-model-1_002_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_002_001",
+      "nodeI": "N_LINER_liner-model-1_002_001",
+      "nodeJ": "N_LINER_liner-model-1_003_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_003_001",
+      "nodeI": "N_LINER_liner-model-1_003_001",
+      "nodeJ": "N_LINER_liner-model-1_004_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_004_001",
+      "nodeI": "N_LINER_liner-model-1_004_001",
+      "nodeJ": "N_LINER_liner-model-1_005_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_005_001",
+      "nodeI": "N_LINER_liner-model-1_005_001",
+      "nodeJ": "N_LINER_liner-model-1_006_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_006_001",
+      "nodeI": "N_LINER_liner-model-1_006_001",
+      "nodeJ": "N_LINER_liner-model-1_007_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_007_001",
+      "nodeI": "N_LINER_liner-model-1_007_001",
+      "nodeJ": "N_LINER_liner-model-1_008_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_008_001",
+      "nodeI": "N_LINER_liner-model-1_008_001",
+      "nodeJ": "N_LINER_liner-model-1_009_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_009_001",
+      "nodeI": "N_LINER_liner-model-1_009_001",
+      "nodeJ": "N_LINER_liner-model-1_010_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_010_001",
+      "nodeI": "N_LINER_liner-model-1_010_001",
+      "nodeJ": "N_LINER_liner-model-1_011_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_011_001",
+      "nodeI": "N_LINER_liner-model-1_011_001",
+      "nodeJ": "N_LINER_liner-model-1_012_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_012_001",
+      "nodeI": "N_LINER_liner-model-1_012_001",
+      "nodeJ": "N_LINER_liner-model-1_013_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_013_001",
+      "nodeI": "N_LINER_liner-model-1_013_001",
+      "nodeJ": "N_LINER_liner-model-1_014_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_014_001",
+      "nodeI": "N_LINER_liner-model-1_014_001",
+      "nodeJ": "N_LINER_liner-model-1_015_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_015_001",
+      "nodeI": "N_LINER_liner-model-1_015_001",
+      "nodeJ": "N_LINER_liner-model-1_016_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_016_001",
+      "nodeI": "N_LINER_liner-model-1_016_001",
+      "nodeJ": "N_LINER_liner-model-1_017_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_017_001",
+      "nodeI": "N_LINER_liner-model-1_017_001",
+      "nodeJ": "N_LINER_liner-model-1_018_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_018_001",
+      "nodeI": "N_LINER_liner-model-1_018_001",
+      "nodeJ": "N_LINER_liner-model-1_019_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_019_001",
+      "nodeI": "N_LINER_liner-model-1_019_001",
+      "nodeJ": "N_LINER_liner-model-1_020_001",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_000_002",
+      "nodeI": "N_LINER_liner-model-1_000_002",
+      "nodeJ": "N_LINER_liner-model-1_001_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_001_002",
+      "nodeI": "N_LINER_liner-model-1_001_002",
+      "nodeJ": "N_LINER_liner-model-1_002_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_002_002",
+      "nodeI": "N_LINER_liner-model-1_002_002",
+      "nodeJ": "N_LINER_liner-model-1_003_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_003_002",
+      "nodeI": "N_LINER_liner-model-1_003_002",
+      "nodeJ": "N_LINER_liner-model-1_004_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_004_002",
+      "nodeI": "N_LINER_liner-model-1_004_002",
+      "nodeJ": "N_LINER_liner-model-1_005_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_005_002",
+      "nodeI": "N_LINER_liner-model-1_005_002",
+      "nodeJ": "N_LINER_liner-model-1_006_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_006_002",
+      "nodeI": "N_LINER_liner-model-1_006_002",
+      "nodeJ": "N_LINER_liner-model-1_007_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_007_002",
+      "nodeI": "N_LINER_liner-model-1_007_002",
+      "nodeJ": "N_LINER_liner-model-1_008_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_008_002",
+      "nodeI": "N_LINER_liner-model-1_008_002",
+      "nodeJ": "N_LINER_liner-model-1_009_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_009_002",
+      "nodeI": "N_LINER_liner-model-1_009_002",
+      "nodeJ": "N_LINER_liner-model-1_010_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_010_002",
+      "nodeI": "N_LINER_liner-model-1_010_002",
+      "nodeJ": "N_LINER_liner-model-1_011_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_011_002",
+      "nodeI": "N_LINER_liner-model-1_011_002",
+      "nodeJ": "N_LINER_liner-model-1_012_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_012_002",
+      "nodeI": "N_LINER_liner-model-1_012_002",
+      "nodeJ": "N_LINER_liner-model-1_013_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_013_002",
+      "nodeI": "N_LINER_liner-model-1_013_002",
+      "nodeJ": "N_LINER_liner-model-1_014_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_014_002",
+      "nodeI": "N_LINER_liner-model-1_014_002",
+      "nodeJ": "N_LINER_liner-model-1_015_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_015_002",
+      "nodeI": "N_LINER_liner-model-1_015_002",
+      "nodeJ": "N_LINER_liner-model-1_016_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_016_002",
+      "nodeI": "N_LINER_liner-model-1_016_002",
+      "nodeJ": "N_LINER_liner-model-1_017_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_017_002",
+      "nodeI": "N_LINER_liner-model-1_017_002",
+      "nodeJ": "N_LINER_liner-model-1_018_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_018_002",
+      "nodeI": "N_LINER_liner-model-1_018_002",
+      "nodeJ": "N_LINER_liner-model-1_019_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_L_019_002",
+      "nodeI": "N_LINER_liner-model-1_019_002",
+      "nodeJ": "N_LINER_liner-model-1_020_002",
+      "materialId": "MAT_LINER_DECK",
+      "sectionId": "SEC_LINER_DECK",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_000_000",
+      "nodeI": "N_LINER_liner-model-1_000_000",
+      "nodeJ": "N_LINER_liner-model-1_000_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_000_001",
+      "nodeI": "N_LINER_liner-model-1_000_001",
+      "nodeJ": "N_LINER_liner-model-1_000_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_001_000",
+      "nodeI": "N_LINER_liner-model-1_001_000",
+      "nodeJ": "N_LINER_liner-model-1_001_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_001_001",
+      "nodeI": "N_LINER_liner-model-1_001_001",
+      "nodeJ": "N_LINER_liner-model-1_001_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_002_000",
+      "nodeI": "N_LINER_liner-model-1_002_000",
+      "nodeJ": "N_LINER_liner-model-1_002_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_002_001",
+      "nodeI": "N_LINER_liner-model-1_002_001",
+      "nodeJ": "N_LINER_liner-model-1_002_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_003_000",
+      "nodeI": "N_LINER_liner-model-1_003_000",
+      "nodeJ": "N_LINER_liner-model-1_003_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_003_001",
+      "nodeI": "N_LINER_liner-model-1_003_001",
+      "nodeJ": "N_LINER_liner-model-1_003_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_004_000",
+      "nodeI": "N_LINER_liner-model-1_004_000",
+      "nodeJ": "N_LINER_liner-model-1_004_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_004_001",
+      "nodeI": "N_LINER_liner-model-1_004_001",
+      "nodeJ": "N_LINER_liner-model-1_004_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_005_000",
+      "nodeI": "N_LINER_liner-model-1_005_000",
+      "nodeJ": "N_LINER_liner-model-1_005_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_005_001",
+      "nodeI": "N_LINER_liner-model-1_005_001",
+      "nodeJ": "N_LINER_liner-model-1_005_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_006_000",
+      "nodeI": "N_LINER_liner-model-1_006_000",
+      "nodeJ": "N_LINER_liner-model-1_006_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_006_001",
+      "nodeI": "N_LINER_liner-model-1_006_001",
+      "nodeJ": "N_LINER_liner-model-1_006_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_007_000",
+      "nodeI": "N_LINER_liner-model-1_007_000",
+      "nodeJ": "N_LINER_liner-model-1_007_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_007_001",
+      "nodeI": "N_LINER_liner-model-1_007_001",
+      "nodeJ": "N_LINER_liner-model-1_007_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_008_000",
+      "nodeI": "N_LINER_liner-model-1_008_000",
+      "nodeJ": "N_LINER_liner-model-1_008_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_008_001",
+      "nodeI": "N_LINER_liner-model-1_008_001",
+      "nodeJ": "N_LINER_liner-model-1_008_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_009_000",
+      "nodeI": "N_LINER_liner-model-1_009_000",
+      "nodeJ": "N_LINER_liner-model-1_009_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_009_001",
+      "nodeI": "N_LINER_liner-model-1_009_001",
+      "nodeJ": "N_LINER_liner-model-1_009_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_010_000",
+      "nodeI": "N_LINER_liner-model-1_010_000",
+      "nodeJ": "N_LINER_liner-model-1_010_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_010_001",
+      "nodeI": "N_LINER_liner-model-1_010_001",
+      "nodeJ": "N_LINER_liner-model-1_010_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_011_000",
+      "nodeI": "N_LINER_liner-model-1_011_000",
+      "nodeJ": "N_LINER_liner-model-1_011_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_011_001",
+      "nodeI": "N_LINER_liner-model-1_011_001",
+      "nodeJ": "N_LINER_liner-model-1_011_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_012_000",
+      "nodeI": "N_LINER_liner-model-1_012_000",
+      "nodeJ": "N_LINER_liner-model-1_012_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_012_001",
+      "nodeI": "N_LINER_liner-model-1_012_001",
+      "nodeJ": "N_LINER_liner-model-1_012_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_013_000",
+      "nodeI": "N_LINER_liner-model-1_013_000",
+      "nodeJ": "N_LINER_liner-model-1_013_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_013_001",
+      "nodeI": "N_LINER_liner-model-1_013_001",
+      "nodeJ": "N_LINER_liner-model-1_013_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_014_000",
+      "nodeI": "N_LINER_liner-model-1_014_000",
+      "nodeJ": "N_LINER_liner-model-1_014_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_014_001",
+      "nodeI": "N_LINER_liner-model-1_014_001",
+      "nodeJ": "N_LINER_liner-model-1_014_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_015_000",
+      "nodeI": "N_LINER_liner-model-1_015_000",
+      "nodeJ": "N_LINER_liner-model-1_015_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_015_001",
+      "nodeI": "N_LINER_liner-model-1_015_001",
+      "nodeJ": "N_LINER_liner-model-1_015_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_016_000",
+      "nodeI": "N_LINER_liner-model-1_016_000",
+      "nodeJ": "N_LINER_liner-model-1_016_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_016_001",
+      "nodeI": "N_LINER_liner-model-1_016_001",
+      "nodeJ": "N_LINER_liner-model-1_016_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_017_000",
+      "nodeI": "N_LINER_liner-model-1_017_000",
+      "nodeJ": "N_LINER_liner-model-1_017_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_017_001",
+      "nodeI": "N_LINER_liner-model-1_017_001",
+      "nodeJ": "N_LINER_liner-model-1_017_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_018_000",
+      "nodeI": "N_LINER_liner-model-1_018_000",
+      "nodeJ": "N_LINER_liner-model-1_018_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_018_001",
+      "nodeI": "N_LINER_liner-model-1_018_001",
+      "nodeJ": "N_LINER_liner-model-1_018_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_019_000",
+      "nodeI": "N_LINER_liner-model-1_019_000",
+      "nodeJ": "N_LINER_liner-model-1_019_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_019_001",
+      "nodeI": "N_LINER_liner-model-1_019_001",
+      "nodeJ": "N_LINER_liner-model-1_019_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_020_000",
+      "nodeI": "N_LINER_liner-model-1_020_000",
+      "nodeJ": "N_LINER_liner-model-1_020_001",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "id": "M_LINER_liner-model-1_T_020_001",
+      "nodeI": "N_LINER_liner-model-1_020_001",
+      "nodeJ": "N_LINER_liner-model-1_020_002",
+      "materialId": "MAT_LINER_CROSS",
+      "sectionId": "SEC_LINER_CROSS",
+      "orientationVector": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    }
+  ],
   "supports": [],
-  "loadCases": [],
+  "loadCases": [
+    {
+      "id": "LC_LINER_PLACEHOLDER",
+      "name": "Liner placeholder",
+      "type": "static"
+    }
+  ],
   "nodalLoads": [],
   "memberLoads": [],
   "massCases": [],
@@ -35,19 +1742,26 @@
   "groundMotions": [],
   "liner": {
     "schemaVersion": "0.1.0",
-    "sourceRevision": "19cd2d45de99bafe690ca9ffb01cb2bca83ce02d13bd3c7df69f0a1031530f38",
+    "sourceRevision": "146d0c05146bb0faf8a02a9e7dc10563bae8cd0a07bb01db9442f262250c0dc1",
     "linerModelId": "liner-model-1",
     "coordinatePolicyId": "global",
     "intermediateSchemaVersion": "0.2.0",
-    "draft": {
+    "generatedAt": "2026-06-30T16:00:27.386Z",
+    "source": {
+      "alignmentId": "alignment-2",
+      "gridDefinitionId": "GRID-liner-model-1-default"
+    },
+    "draftSchemaVersion": "0.2.0",
+    "domainDraft": {
+      "id": "alignment-1",
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
       "alignment": {
         "id": "alignment-1",
-        "linerModelId": "liner-model-1",
-        "coordinatePolicyId": "global",
         "elements": [
           {
-            "id": "S1",
             "type": "straight",
+            "id": "S1",
             "start": {
               "x": 0,
               "y": 0
@@ -61,12 +1775,2665 @@
         "originDisplayedStation": 0,
         "interval": 10
       },
-      "offsets": [
-        0
+      "verticalAlignment": {
+        "id": "VA-default",
+        "elements": [
+          {
+            "type": "grade",
+            "id": "VG-default",
+            "startStation": 0,
+            "endStation": 100,
+            "startElevation": 0,
+            "grade": 0,
+            "length": 100
+          }
+        ]
+      },
+      "crossSections": [
+        {
+          "id": "CS-default",
+          "name": "Default",
+          "offsetLines": [
+            {
+              "id": "OL-0",
+              "offset": 0,
+              "elevation": 0,
+              "role": "custom"
+            }
+          ]
+        }
       ],
-      "sampleInterval": 10,
-      "z": 0
+      "gridDefinitions": [
+        {
+          "id": "GRID-default",
+          "crossSectionTemplateId": "CS-default",
+          "stationRange": {
+            "startPhysicalDistance": 0,
+            "endPhysicalDistance": 100
+          },
+          "stationInterval": 10,
+          "offsetLineIds": [
+            "OL-0"
+          ]
+        }
+      ],
+      "spans": [],
+      "piers": [],
+      "generationSettings": {
+        "defaultMemberGroupKey": "default",
+        "connectivityMode": "grid_full"
+      },
+      "sampling": {
+        "display": {
+          "maxChordLength": 10,
+          "maxSagitta": 0.005,
+          "minSegmentsPerElement": 1
+        },
+        "dxf": {
+          "maxChordLength": 0.1,
+          "maxSagitta": 0.001,
+          "minSegmentsPerElement": 1
+        },
+        "frame": {
+          "maxMemberLength": 0.25,
+          "maxSagitta": 0.0025,
+          "stationIntervalFallback": 10
+        }
+      }
     }
   },
-  "linerTrace": []
+  "linerTrace": [
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_000_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-000-000",
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_000_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-000-001",
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_000_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-000-002",
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_001_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-001-000",
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_001_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-001-001",
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_001_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-001-002",
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_002_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-002-000",
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_002_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-002-001",
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_002_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-002-002",
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_003_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-003-000",
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_003_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-003-001",
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_003_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-003-002",
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_004_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-004-000",
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_004_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-004-001",
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_004_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-004-002",
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_005_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-005-000",
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_005_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-005-001",
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_005_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-005-002",
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_006_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-006-000",
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_006_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-006-001",
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_006_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-006-002",
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_007_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-007-000",
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_007_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-007-001",
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_007_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-007-002",
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_008_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-008-000",
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_008_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-008-001",
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_008_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-008-002",
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_009_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-009-000",
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_009_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-009-001",
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_009_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-009-002",
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_010_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-010-000",
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_010_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-010-001",
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_010_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-010-002",
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_011_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-011-000",
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_011_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-011-001",
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_011_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-011-002",
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_012_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-012-000",
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_012_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-012-001",
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_012_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-012-002",
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_013_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-013-000",
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_013_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-013-001",
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_013_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-013-002",
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_014_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-014-000",
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_014_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-014-001",
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_014_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-014-002",
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_015_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-015-000",
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_015_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-015-001",
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_015_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-015-002",
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_016_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-016-000",
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_016_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-016-001",
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_016_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-016-002",
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_017_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-017-000",
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_017_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-017-001",
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_017_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-017-002",
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_018_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-018-000",
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_018_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-018-001",
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_018_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-018-002",
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_019_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-019-000",
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_019_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-019-001",
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_019_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-019-002",
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_020_000",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-020-000",
+      "physicalDistance": 200,
+      "displayedStation": 200,
+      "offset": -5,
+      "role": "edge"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_020_001",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-020-001",
+      "physicalDistance": 200,
+      "displayedStation": 200,
+      "offset": 0,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "N_LINER_liner-model-1_020_002",
+      "frameEntityType": "node",
+      "gridPointId": "GP-liner-model-1-020-002",
+      "physicalDistance": 200,
+      "displayedStation": 200,
+      "offset": 5,
+      "role": "main_girder"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_000_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-000-000",
+        "GP-liner-model-1-001-000"
+      ],
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_001_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-001-000",
+        "GP-liner-model-1-002-000"
+      ],
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_002_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-002-000",
+        "GP-liner-model-1-003-000"
+      ],
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_003_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-003-000",
+        "GP-liner-model-1-004-000"
+      ],
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_004_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-004-000",
+        "GP-liner-model-1-005-000"
+      ],
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_005_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-005-000",
+        "GP-liner-model-1-006-000"
+      ],
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_006_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-006-000",
+        "GP-liner-model-1-007-000"
+      ],
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_007_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-007-000",
+        "GP-liner-model-1-008-000"
+      ],
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_008_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-008-000",
+        "GP-liner-model-1-009-000"
+      ],
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_009_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-009-000",
+        "GP-liner-model-1-010-000"
+      ],
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_010_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-010-000",
+        "GP-liner-model-1-011-000"
+      ],
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_011_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-011-000",
+        "GP-liner-model-1-012-000"
+      ],
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_012_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-012-000",
+        "GP-liner-model-1-013-000"
+      ],
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_013_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-013-000",
+        "GP-liner-model-1-014-000"
+      ],
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_014_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-014-000",
+        "GP-liner-model-1-015-000"
+      ],
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_015_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-015-000",
+        "GP-liner-model-1-016-000"
+      ],
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_016_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-016-000",
+        "GP-liner-model-1-017-000"
+      ],
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_017_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-017-000",
+        "GP-liner-model-1-018-000"
+      ],
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_018_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-018-000",
+        "GP-liner-model-1-019-000"
+      ],
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_019_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-000",
+      "gridPointIds": [
+        "GP-liner-model-1-019-000",
+        "GP-liner-model-1-020-000"
+      ],
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": -5,
+      "role": "edge",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_000_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-000-001",
+        "GP-liner-model-1-001-001"
+      ],
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_001_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-001-001",
+        "GP-liner-model-1-002-001"
+      ],
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_002_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-002-001",
+        "GP-liner-model-1-003-001"
+      ],
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_003_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-003-001",
+        "GP-liner-model-1-004-001"
+      ],
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_004_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-004-001",
+        "GP-liner-model-1-005-001"
+      ],
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_005_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-005-001",
+        "GP-liner-model-1-006-001"
+      ],
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_006_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-006-001",
+        "GP-liner-model-1-007-001"
+      ],
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_007_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-007-001",
+        "GP-liner-model-1-008-001"
+      ],
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_008_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-008-001",
+        "GP-liner-model-1-009-001"
+      ],
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_009_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-009-001",
+        "GP-liner-model-1-010-001"
+      ],
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_010_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-010-001",
+        "GP-liner-model-1-011-001"
+      ],
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_011_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-011-001",
+        "GP-liner-model-1-012-001"
+      ],
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_012_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-012-001",
+        "GP-liner-model-1-013-001"
+      ],
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_013_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-013-001",
+        "GP-liner-model-1-014-001"
+      ],
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_014_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-014-001",
+        "GP-liner-model-1-015-001"
+      ],
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_015_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-015-001",
+        "GP-liner-model-1-016-001"
+      ],
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_016_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-016-001",
+        "GP-liner-model-1-017-001"
+      ],
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_017_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-017-001",
+        "GP-liner-model-1-018-001"
+      ],
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_018_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-018-001",
+        "GP-liner-model-1-019-001"
+      ],
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_019_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-001",
+      "gridPointIds": [
+        "GP-liner-model-1-019-001",
+        "GP-liner-model-1-020-001"
+      ],
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": 0,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_000_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-000-002",
+        "GP-liner-model-1-001-002"
+      ],
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_001_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-001-002",
+        "GP-liner-model-1-002-002"
+      ],
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_002_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-002-002",
+        "GP-liner-model-1-003-002"
+      ],
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_003_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-003-002",
+        "GP-liner-model-1-004-002"
+      ],
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_004_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-004-002",
+        "GP-liner-model-1-005-002"
+      ],
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_005_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-005-002",
+        "GP-liner-model-1-006-002"
+      ],
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_006_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-006-002",
+        "GP-liner-model-1-007-002"
+      ],
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_007_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-007-002",
+        "GP-liner-model-1-008-002"
+      ],
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_008_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-008-002",
+        "GP-liner-model-1-009-002"
+      ],
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_009_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-009-002",
+        "GP-liner-model-1-010-002"
+      ],
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_010_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-010-002",
+        "GP-liner-model-1-011-002"
+      ],
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_011_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-011-002",
+        "GP-liner-model-1-012-002"
+      ],
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_012_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-012-002",
+        "GP-liner-model-1-013-002"
+      ],
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_013_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-013-002",
+        "GP-liner-model-1-014-002"
+      ],
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_014_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-014-002",
+        "GP-liner-model-1-015-002"
+      ],
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_015_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-015-002",
+        "GP-liner-model-1-016-002"
+      ],
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_016_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-016-002",
+        "GP-liner-model-1-017-002"
+      ],
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_017_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-017-002",
+        "GP-liner-model-1-018-002"
+      ],
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_018_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-018-002",
+        "GP-liner-model-1-019-002"
+      ],
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_L_019_002",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-L-002",
+      "gridPointIds": [
+        "GP-liner-model-1-019-002",
+        "GP-liner-model-1-020-002"
+      ],
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": 5,
+      "role": "main_girder",
+      "memberDirection": "longitudinal",
+      "memberGroupKey": "deck"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_000_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-000",
+      "gridPointIds": [
+        "GP-liner-model-1-000-000",
+        "GP-liner-model-1-000-001"
+      ],
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_000_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-000",
+      "gridPointIds": [
+        "GP-liner-model-1-000-001",
+        "GP-liner-model-1-000-002"
+      ],
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_001_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-001",
+      "gridPointIds": [
+        "GP-liner-model-1-001-000",
+        "GP-liner-model-1-001-001"
+      ],
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_001_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-001",
+      "gridPointIds": [
+        "GP-liner-model-1-001-001",
+        "GP-liner-model-1-001-002"
+      ],
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_002_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-002",
+      "gridPointIds": [
+        "GP-liner-model-1-002-000",
+        "GP-liner-model-1-002-001"
+      ],
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_002_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-002",
+      "gridPointIds": [
+        "GP-liner-model-1-002-001",
+        "GP-liner-model-1-002-002"
+      ],
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_003_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-003",
+      "gridPointIds": [
+        "GP-liner-model-1-003-000",
+        "GP-liner-model-1-003-001"
+      ],
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_003_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-003",
+      "gridPointIds": [
+        "GP-liner-model-1-003-001",
+        "GP-liner-model-1-003-002"
+      ],
+      "physicalDistance": 30,
+      "displayedStation": 30,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_004_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-004",
+      "gridPointIds": [
+        "GP-liner-model-1-004-000",
+        "GP-liner-model-1-004-001"
+      ],
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_004_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-004",
+      "gridPointIds": [
+        "GP-liner-model-1-004-001",
+        "GP-liner-model-1-004-002"
+      ],
+      "physicalDistance": 40,
+      "displayedStation": 40,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_005_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-005",
+      "gridPointIds": [
+        "GP-liner-model-1-005-000",
+        "GP-liner-model-1-005-001"
+      ],
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_005_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-005",
+      "gridPointIds": [
+        "GP-liner-model-1-005-001",
+        "GP-liner-model-1-005-002"
+      ],
+      "physicalDistance": 50,
+      "displayedStation": 50,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_006_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-006",
+      "gridPointIds": [
+        "GP-liner-model-1-006-000",
+        "GP-liner-model-1-006-001"
+      ],
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_006_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-006",
+      "gridPointIds": [
+        "GP-liner-model-1-006-001",
+        "GP-liner-model-1-006-002"
+      ],
+      "physicalDistance": 60,
+      "displayedStation": 60,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_007_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-007",
+      "gridPointIds": [
+        "GP-liner-model-1-007-000",
+        "GP-liner-model-1-007-001"
+      ],
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_007_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-007",
+      "gridPointIds": [
+        "GP-liner-model-1-007-001",
+        "GP-liner-model-1-007-002"
+      ],
+      "physicalDistance": 70,
+      "displayedStation": 70,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_008_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-008",
+      "gridPointIds": [
+        "GP-liner-model-1-008-000",
+        "GP-liner-model-1-008-001"
+      ],
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_008_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-008",
+      "gridPointIds": [
+        "GP-liner-model-1-008-001",
+        "GP-liner-model-1-008-002"
+      ],
+      "physicalDistance": 80,
+      "displayedStation": 80,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_009_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-009",
+      "gridPointIds": [
+        "GP-liner-model-1-009-000",
+        "GP-liner-model-1-009-001"
+      ],
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_009_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-009",
+      "gridPointIds": [
+        "GP-liner-model-1-009-001",
+        "GP-liner-model-1-009-002"
+      ],
+      "physicalDistance": 90,
+      "displayedStation": 90,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_010_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-010",
+      "gridPointIds": [
+        "GP-liner-model-1-010-000",
+        "GP-liner-model-1-010-001"
+      ],
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_010_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-010",
+      "gridPointIds": [
+        "GP-liner-model-1-010-001",
+        "GP-liner-model-1-010-002"
+      ],
+      "physicalDistance": 100,
+      "displayedStation": 100,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_011_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-011",
+      "gridPointIds": [
+        "GP-liner-model-1-011-000",
+        "GP-liner-model-1-011-001"
+      ],
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_011_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-011",
+      "gridPointIds": [
+        "GP-liner-model-1-011-001",
+        "GP-liner-model-1-011-002"
+      ],
+      "physicalDistance": 110,
+      "displayedStation": 110,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_012_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-012",
+      "gridPointIds": [
+        "GP-liner-model-1-012-000",
+        "GP-liner-model-1-012-001"
+      ],
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_012_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-012",
+      "gridPointIds": [
+        "GP-liner-model-1-012-001",
+        "GP-liner-model-1-012-002"
+      ],
+      "physicalDistance": 120,
+      "displayedStation": 120,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_013_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-013",
+      "gridPointIds": [
+        "GP-liner-model-1-013-000",
+        "GP-liner-model-1-013-001"
+      ],
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_013_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-013",
+      "gridPointIds": [
+        "GP-liner-model-1-013-001",
+        "GP-liner-model-1-013-002"
+      ],
+      "physicalDistance": 130,
+      "displayedStation": 130,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_014_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-014",
+      "gridPointIds": [
+        "GP-liner-model-1-014-000",
+        "GP-liner-model-1-014-001"
+      ],
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_014_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-014",
+      "gridPointIds": [
+        "GP-liner-model-1-014-001",
+        "GP-liner-model-1-014-002"
+      ],
+      "physicalDistance": 140,
+      "displayedStation": 140,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_015_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-015",
+      "gridPointIds": [
+        "GP-liner-model-1-015-000",
+        "GP-liner-model-1-015-001"
+      ],
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_015_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-015",
+      "gridPointIds": [
+        "GP-liner-model-1-015-001",
+        "GP-liner-model-1-015-002"
+      ],
+      "physicalDistance": 150,
+      "displayedStation": 150,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_016_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-016",
+      "gridPointIds": [
+        "GP-liner-model-1-016-000",
+        "GP-liner-model-1-016-001"
+      ],
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_016_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-016",
+      "gridPointIds": [
+        "GP-liner-model-1-016-001",
+        "GP-liner-model-1-016-002"
+      ],
+      "physicalDistance": 160,
+      "displayedStation": 160,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_017_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-017",
+      "gridPointIds": [
+        "GP-liner-model-1-017-000",
+        "GP-liner-model-1-017-001"
+      ],
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_017_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-017",
+      "gridPointIds": [
+        "GP-liner-model-1-017-001",
+        "GP-liner-model-1-017-002"
+      ],
+      "physicalDistance": 170,
+      "displayedStation": 170,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_018_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-018",
+      "gridPointIds": [
+        "GP-liner-model-1-018-000",
+        "GP-liner-model-1-018-001"
+      ],
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_018_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-018",
+      "gridPointIds": [
+        "GP-liner-model-1-018-001",
+        "GP-liner-model-1-018-002"
+      ],
+      "physicalDistance": 180,
+      "displayedStation": 180,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_019_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-019",
+      "gridPointIds": [
+        "GP-liner-model-1-019-000",
+        "GP-liner-model-1-019-001"
+      ],
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_019_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-019",
+      "gridPointIds": [
+        "GP-liner-model-1-019-001",
+        "GP-liner-model-1-019-002"
+      ],
+      "physicalDistance": 190,
+      "displayedStation": 190,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_020_000",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-020",
+      "gridPointIds": [
+        "GP-liner-model-1-020-000",
+        "GP-liner-model-1-020-001"
+      ],
+      "physicalDistance": 200,
+      "displayedStation": 200,
+      "offset": -5,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    },
+    {
+      "linerModelId": "liner-model-1",
+      "coordinatePolicyId": "global",
+      "sourceRevision": "dbf9bf55c90816f1424b3e28e43822198ed0a99328a70b4b6592fcf56cb04e72",
+      "frameEntityId": "M_LINER_liner-model-1_T_020_001",
+      "frameEntityType": "member",
+      "gridLineId": "GL-liner-model-1-T-020",
+      "gridPointIds": [
+        "GP-liner-model-1-020-001",
+        "GP-liner-model-1-020-002"
+      ],
+      "physicalDistance": 200,
+      "displayedStation": 200,
+      "offset": 0,
+      "role": "cross_girder",
+      "memberDirection": "transverse",
+      "memberGroupKey": "cross"
+    }
+  ]
 }
