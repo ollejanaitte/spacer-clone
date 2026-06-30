@@ -13,8 +13,23 @@ import type {
 } from "../types";
 import { localFrameFromAzimuth } from "../vector";
 import { evaluateCircularArcElement } from "./arc";
-import { evaluateClothoidElement } from "./clothoid";
+import { clothoidCurvatureAt, evaluateClothoidElement } from "./clothoid";
 import { evaluateStraightElement } from "./line";
+
+export interface ElementEndState {
+  point: { x: number; y: number };
+  azimuth: number;
+  endCurvature: number;
+  endRadius: number | null;
+  turnDirection: "left" | "right" | null;
+}
+
+function radiusFromCurvature(curvature: number): number | null {
+  if (!Number.isFinite(curvature) || Math.abs(curvature) <= 1e-12) {
+    return null;
+  }
+  return 1 / Math.abs(curvature);
+}
 
 export function elementLength(element: AlignmentElement): number {
   return element.length;
@@ -31,6 +46,39 @@ export function evaluateElementAtDistance(
     return evaluateCircularArcElement(element, localDistance);
   }
   return evaluateClothoidElement(element, localDistance);
+}
+
+export function evaluateElementEndState(element: AlignmentElement): ElementEndState {
+  const endEvaluation = evaluateElementAtDistance(element, element.length);
+
+  if (element.type === "straight") {
+    return {
+      point: endEvaluation.point,
+      azimuth: endEvaluation.azimuth,
+      endCurvature: 0,
+      endRadius: null,
+      turnDirection: null,
+    };
+  }
+
+  if (element.type === "arc") {
+    return {
+      point: endEvaluation.point,
+      azimuth: endEvaluation.azimuth,
+      endCurvature: endEvaluation.curvature,
+      endRadius: element.radius,
+      turnDirection: element.turn,
+    };
+  }
+
+  const endCurvature = clothoidCurvatureAt(element, element.length);
+  return {
+    point: endEvaluation.point,
+    azimuth: endEvaluation.azimuth,
+    endCurvature,
+    endRadius: radiusFromCurvature(endCurvature),
+    turnDirection: element.turn ?? "left",
+  };
 }
 
 export function totalAlignmentLength(alignment: LinearAlignment): number {
