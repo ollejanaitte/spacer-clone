@@ -1,10 +1,17 @@
 import type { LinerTraceEntry } from "../mapper/frameModelMapper";
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
-import type { GridPointRole, Vec2 } from "../core/types";
+import type { Vec2 } from "../core/types";
+import {
+  PROJECT_LINER_METADATA_SCHEMA_VERSION,
+  LINER_DRAFT_SCHEMA_VERSION,
+  type LinerDraftSchemaVersion,
+} from "./version";
 
-export const PROJECT_LINER_METADATA_SCHEMA_VERSION = "0.1.0" as const;
-export type LinerDraftSchemaVersion = "0.2.0";
-export const LINER_DRAFT_SCHEMA_VERSION: LinerDraftSchemaVersion = "0.2.0";
+export {
+  PROJECT_LINER_METADATA_SCHEMA_VERSION,
+  LINER_DRAFT_SCHEMA_VERSION,
+  type LinerDraftSchemaVersion,
+};
 
 export type PersistedLinerTraceEntry = LinerTraceEntry;
 
@@ -15,13 +22,16 @@ export type ProjectLinerSourceRef = {
 
 export type ProjectLinerMetadata = {
   schemaVersion: typeof PROJECT_LINER_METADATA_SCHEMA_VERSION;
+  draftSchemaVersion?: LinerDraftSchemaVersion;
   sourceRevision: string;
   linerModelId: string;
   coordinatePolicyId: string;
   intermediateSchemaVersion: "0.2.0";
   generatedAt?: string;
   source?: ProjectLinerSourceRef;
+  /** Read-only legacy input from older projects; not written by the vNext save path. */
   draft?: BuildIntermediateInput;
+  domainDraft?: LinerDomainDraftVNext;
 };
 
 export interface ProjectLinerMetadataVNext {
@@ -123,55 +133,75 @@ export type VerticalElementDraft =
   | VerticalParabolicElementDraft;
 
 /**
- * N2 §4 leaves vertical element details open; PR-1a-1 defines grade fields conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 4 / PR-2a-1: grade 縦断要素。測点 (startStation/endStation) と区間長 (length) で定義する。
+ * grade は dZ/ds (0.02 = 2%) として扱う。K値方式・半径 R 方式は採用しない。
  */
 export interface VerticalGradeElementDraft {
   type: "grade";
   id: string;
-  startPhysicalDistance: number;
-  endPhysicalDistance: number;
+  startStation: number;
+  endStation: number;
   startElevation: number;
   grade: number;
+  length: number;
 }
 
 /**
- * N2 §4 leaves vertical element details open; PR-1a-1 defines parabolic fields conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 4 / Master Pre-Decision #2: JIP-LINER 互換 parabolic 縦断要素。
+ * K値方式・半径 R 方式は採用しない。
  */
 export interface VerticalParabolicElementDraft {
   type: "parabolic";
   id: string;
-  startPhysicalDistance: number;
-  endPhysicalDistance: number;
-  startElevation: number;
+  startStation: number;
+  endStation: number;
   startGrade: number;
   endGrade: number;
-  pviPhysicalDistance?: number;
-  pviElevation?: number;
+  length: number;
+  startElevation?: number;
+  curveType?: "crest" | "sag";
 }
 
 /**
- * N2 §4 leaves cross-section template details open; PR-1a-1 defines this conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。
+ * 道路センターから見て右下がりを正（+）。単位は %。
+ */
+export interface CrossSlopeDraft {
+  signConvention: "right_down_positive";
+  valuePercent: number;
+}
+
+/**
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断テンプレート。
+ * オフセット線リスト方式を採用する。レイヤー方式・パラメトリック方式は採用しない。
  */
 export interface CrossSectionTemplateDraft {
   id: string;
-  name?: string;
+  name: string;
   offsetLines: CrossSectionOffsetLineDraft[];
+  crossSlope?: CrossSlopeDraft;
 }
 
+/** Pre-Decision #4: オフセット線の意味論ロール。 */
+export type CrossSectionOffsetLineRole =
+  | "shoulder"
+  | "lane"
+  | "median"
+  | "sidewalk"
+  | "edge"
+  | "custom";
+
 /**
- * N2 §4 leaves cross-section offset details open; PR-1a-1 defines this conservatively.
- * Final field constraints should be fixed in PR-1a-2 or later.
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断オフセット線。
+ * offset は中心線からのオフセット (m, 右正)。
+ * elevation は相対標高 (m, 上正)。
  */
 export interface CrossSectionOffsetLineDraft {
   id: string;
   offset: number;
-  role?: GridPointRole;
-  structuralReferenceOffset?: number;
-  sectionDepthOffset?: number;
-  girderEccentricity?: number;
+  elevation: number;
+  role?: CrossSectionOffsetLineRole;
+  label?: string;
 }
 
 /**

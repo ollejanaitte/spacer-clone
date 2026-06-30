@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  addLinerArcElement,
+  addLinerClothoidElement,
   addLinerExplicitStation,
   addLinerOffset,
   addLinerStraightElement,
@@ -10,6 +12,7 @@ import {
   removeLinerAlignmentElement,
   removeLinerStationEquation,
   summarizeLinerDraft,
+  updateLinerAlignmentElement,
   updateLinerExplicitStation,
   updateLinerOffset,
   updateLinerAlignmentMetadata,
@@ -57,6 +60,83 @@ describe("linerUiAdapter", () => {
     expect(added.alignment.elements.map((element) => element.id)).toEqual(["S1", "S2"]);
     expect(removed.alignment.elements.map((element) => element.id)).toEqual(["S2"]);
     expect(retained).toBe(removed);
+  });
+
+  it("adds arc and clothoid elements with conservative defaults", () => {
+    const draft = createDefaultLinerDraft();
+    const withArc = addLinerArcElement(draft);
+    const withClothoid = addLinerClothoidElement(withArc);
+
+    expect(withArc.alignment.elements[1]).toMatchObject({
+      id: "A2",
+      type: "arc",
+      radius: 100,
+      turn: "left",
+      length: 50,
+    });
+    expect(withClothoid.alignment.elements[2]).toMatchObject({
+      id: "C3",
+      type: "clothoid",
+      clothoidParameter: 100,
+      startRadius: null,
+      endRadius: 100,
+      turn: "left",
+      length: 50,
+    });
+  });
+
+  it("updates arc and clothoid elements immutably by element id", () => {
+    const draft = addLinerClothoidElement(addLinerArcElement(createDefaultLinerDraft()));
+    const arcId = draft.alignment.elements[1]?.id;
+    const clothoidId = draft.alignment.elements[2]?.id;
+
+    expect(arcId).toBe("A2");
+    expect(clothoidId).toBe("C3");
+
+    const arcUpdated = updateLinerAlignmentElement(draft, arcId!, {
+      radius: 250,
+      turn: "right",
+      length: 80,
+    });
+    const clothoidUpdated = updateLinerAlignmentElement(arcUpdated, clothoidId!, {
+      clothoidParameter: 120,
+      startRadius: 500,
+      endRadius: null,
+      turn: "right",
+    });
+
+    expect(arcUpdated.alignment.elements[1]).toMatchObject({
+      id: "A2",
+      type: "arc",
+      radius: 250,
+      turn: "right",
+      length: 80,
+    });
+    expect(clothoidUpdated.alignment.elements[2]).toMatchObject({
+      id: "C3",
+      type: "clothoid",
+      clothoidParameter: 120,
+      startRadius: 500,
+      endRadius: null,
+      turn: "right",
+    });
+    expect(draft.alignment.elements[1]).toMatchObject({
+      type: "arc",
+      radius: 100,
+      turn: "left",
+    });
+  });
+
+  it("keeps straight updates compatible through updateLinerStraightElement", () => {
+    const draft = createDefaultLinerDraft();
+    const edited = updateLinerStraightElement(draft, "S1", { length: 75, startX: 10 });
+
+    expect(edited.alignment.elements[0]).toMatchObject({
+      id: "S1",
+      type: "straight",
+      length: 75,
+      start: { x: 10, y: 0 },
+    });
   });
 
   it("summarizes raw draft values without geometry evaluation", () => {

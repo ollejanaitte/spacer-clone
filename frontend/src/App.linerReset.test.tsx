@@ -82,6 +82,12 @@ async function createLinerSetup() {
   });
 }
 
+async function switchLinerSetupTab(tabId: string) {
+  await act(async () => {
+    buttonByTestId(`liner-setup-tab-${tabId}`).click();
+  });
+}
+
 afterEach(() => {
   if (root) {
     act(() => root?.unmount());
@@ -108,8 +114,12 @@ describe("App LINER reset integration", () => {
       setInputValue(inputByTestId("liner-model-id"), "liner-after-reset");
       setInputValue(inputByTestId("liner-coordinate-policy-id"), "policy-after-reset");
       setInputValue(inputByTestId("liner-element-id-S1"), "S-after-reset");
+    });
+    await switchLinerSetupTab("station");
+    await act(async () => {
       inputByTestId("liner-station-interval").focus();
     });
+    await switchLinerSetupTab("line");
 
     expect(inputByTestId("liner-alignment-id").value).toBe("alignment-after-reset");
     expect(inputByTestId("liner-model-id").value).toBe("liner-after-reset");
@@ -157,6 +167,9 @@ describe("App LINER reset integration", () => {
     await act(async () => {
       setInputValue(inputByTestId("liner-model-id"), "liner-after-reset");
       setInputValue(inputByTestId("liner-element-length-S1"), "30");
+    });
+    await switchLinerSetupTab("station");
+    await act(async () => {
       setInputValue(inputByTestId("liner-sample-interval"), "10");
     });
 

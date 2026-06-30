@@ -6,7 +6,7 @@ import {
   createDefaultLinerDraft,
   updateLinerStraightElement,
 } from "./liner/adapters/linerUiAdapter";
-import { withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
+import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 import { resetProjectModelContents, resetProjectModelContentsIfConfirmed } from "./modelReset";
 import type { ProjectModel } from "./types";
 
@@ -55,23 +55,24 @@ describe("resetProjectModelContents", () => {
     expect(reset.materials).toEqual([]);
     expect(reset.sections).toEqual([]);
     expect(reset.linerTrace).toEqual([]);
-    expect(reset.liner?.draft).toEqual(createDefaultLinerDraft());
+    expect(linerDraftFromProject(reset)).toEqual(createDefaultLinerDraft());
     expect(reset.liner?.linerModelId).toBe("liner-model-1");
     expect(reset.liner?.sourceRevision).toHaveLength(64);
   });
 
   it("allows LINER draft editing after reset", () => {
     const reset = resetProjectModelContents(projectWithEditedLiner());
-    const edited = updateLinerStraightElement(reset.liner!.draft!, "S1", { length: 75 });
+    const edited = updateLinerStraightElement(linerDraftFromProject(reset), "S1", { length: 75 });
     const nextProject = withProjectLinerDraft(reset, edited);
 
-    expect(nextProject.liner?.draft?.alignment.elements[0].length).toBe(75);
+    const draft = linerDraftFromProject(nextProject);
+    expect(draft.alignment.elements[0].length).toBe(75);
     expect(nextProject.liner?.sourceRevision).not.toBe(reset.liner?.sourceRevision);
   });
 
   it("can build and commit a 3D model from LINER after reset without stale mapping entities", () => {
     const reset = resetProjectModelContents(projectWithEditedLiner());
-    const edited = updateLinerStraightElement(reset.liner!.draft!, "S1", { length: 30 });
+    const edited = updateLinerStraightElement(linerDraftFromProject(reset), "S1", { length: 30 });
     const review = buildLinerViewerReviewFromDraft(edited, reset, { generatedAt: "2026-06-29T00:00:00Z" });
 
     expect(review.viewerProject).not.toBeNull();
@@ -87,7 +88,8 @@ describe("resetProjectModelContents", () => {
     const reset = resetProjectModelContentsIfConfirmed(project, () => false);
 
     expect(reset).toBe(project);
-    expect(reset.liner?.draft?.alignment.elements[0].length).toBe(140);
+    const originalDraft = linerDraftFromProject(reset);
+    expect(originalDraft.alignment.elements[0].length).toBe(140);
     expect(reset.nodes.length).toBeGreaterThan(0);
     expect(reset.linerTrace).toHaveLength(1);
   });

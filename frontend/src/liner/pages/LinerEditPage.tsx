@@ -1,18 +1,19 @@
-import { ArrowLeft, Eye, FilePlus2, Trash2 } from "lucide-react";
-import { useMemo, useState, type ChangeEvent } from "react";
+import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
+import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
+import { CurveSamplingControl } from "../components/CurveSamplingControl";
+import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import {
-  addLinerStraightElement,
   createDefaultLinerDraft,
-  removeLinerAlignmentElement,
   summarizeLinerDraft,
   updateLinerAlignmentMetadata,
-  updateLinerStraightElement,
   type LinerDraft,
-  type LinerDraftAlignmentElement,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
+import type { LinerSetupTabId } from "../uiPreparation";
+import { LinerSetupTabs } from "./LinerSetupTabs";
 
 export type LinerEditPageProps = {
   draft?: LinerDraft;
@@ -24,25 +25,14 @@ export type LinerEditPageProps = {
   onBackToList: () => void;
 };
 
-type TextInputEvent = ChangeEvent<HTMLInputElement>;
-
-function numericValue(value: number | undefined): string {
-  return Number.isFinite(value) ? String(value) : "";
-}
-
-function parseNumericInput(value: string): number {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function elementTypeLabel(element: LinerDraftAlignmentElement): string {
-  if (element.type === "straight") {
-    return ja.liner.fields.elementTypes.straight;
-  }
-  if (element.type === "arc") {
-    return ja.liner.fields.elementTypes.arc;
-  }
-  return ja.liner.fields.elementTypes.clothoid;
+function LinerSetupTabStub({ label, tabId }: { label: string; tabId: LinerSetupTabId }) {
+  return (
+    <section
+      className="liner-edit-panel liner-setup-tab-stub"
+      aria-label={label}
+      data-testid={`liner-setup-tab-stub-${tabId}`}
+    />
+  );
 }
 
 export function LinerEditPage({
@@ -55,6 +45,7 @@ export function LinerEditPage({
   onBackToList,
 }: LinerEditPageProps) {
   const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
+  const [activeTab, setActiveTab] = useState<LinerSetupTabId>("line");
   const draft = controlledDraft ?? localDraft;
   const changeDraft = (update: LinerDraftUpdate) => {
     if (onDraftChange) {
@@ -96,48 +87,80 @@ export function LinerEditPage({
       </header>
 
       <div className="liner-edit-layout">
-        <section className="liner-edit-panel" aria-labelledby="liner-edit-metadata-title">
-          <h2 id="liner-edit-metadata-title">{ja.liner.editor.metadataSection}</h2>
-          <div className="liner-edit-form-grid">
-            <label>
-              <span>{ja.liner.fields.alignmentId}</span>
-              <input
-                value={draft.alignment.id}
-                data-testid="liner-alignment-id"
-                onChange={(event) => {
-                  const value = event.currentTarget.value;
-                  changeDraft((current) => updateLinerAlignmentMetadata(current, { id: value }));
-                }}
-              />
-            </label>
-            <label>
-              <span>{ja.liner.fields.linerModelId}</span>
-              <input
-                value={draft.alignment.linerModelId}
-                data-testid="liner-model-id"
-                onChange={(event) => {
-                  const value = event.currentTarget.value;
-                  changeDraft((current) =>
-                    updateLinerAlignmentMetadata(current, { linerModelId: value }),
-                  );
-                }}
-              />
-            </label>
-            <label>
-              <span>{ja.liner.fields.coordinatePolicyId}</span>
-              <input
-                value={draft.alignment.coordinatePolicyId}
-                data-testid="liner-coordinate-policy-id"
-                onChange={(event) => {
-                  const value = event.currentTarget.value;
-                  changeDraft((current) =>
-                    updateLinerAlignmentMetadata(current, { coordinatePolicyId: value }),
-                  );
-                }}
-              />
-            </label>
-          </div>
-        </section>
+        <LinerSetupTabs activeTab={activeTab} onTabChange={setActiveTab}>
+          {activeTab === "line" && (
+            <>
+              <section className="liner-edit-panel" aria-labelledby="liner-edit-metadata-title">
+                <h2 id="liner-edit-metadata-title">{ja.liner.editor.metadataSection}</h2>
+                <div className="liner-edit-form-grid">
+                  <label>
+                    <span>{ja.liner.fields.alignmentId}</span>
+                    <input
+                      value={draft.alignment.id}
+                      data-testid="liner-alignment-id"
+                      onChange={(event) => {
+                        const value = event.currentTarget.value;
+                        changeDraft((current) => updateLinerAlignmentMetadata(current, { id: value }));
+                      }}
+                    />
+                  </label>
+                  <label>
+                    <span>{ja.liner.fields.linerModelId}</span>
+                    <input
+                      value={draft.alignment.linerModelId}
+                      data-testid="liner-model-id"
+                      onChange={(event) => {
+                        const value = event.currentTarget.value;
+                        changeDraft((current) =>
+                          updateLinerAlignmentMetadata(current, { linerModelId: value }),
+                        );
+                      }}
+                    />
+                  </label>
+                  <label>
+                    <span>{ja.liner.fields.coordinatePolicyId}</span>
+                    <input
+                      value={draft.alignment.coordinatePolicyId}
+                      data-testid="liner-coordinate-policy-id"
+                      onChange={(event) => {
+                        const value = event.currentTarget.value;
+                        changeDraft((current) =>
+                          updateLinerAlignmentMetadata(current, { coordinatePolicyId: value }),
+                        );
+                      }}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <HorizontalElementEditor draft={draft} onDraftChange={changeDraft} />
+            </>
+          )}
+
+          {activeTab === "station" && (
+            <>
+              <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />
+              <ContinuityDiagnosticsPanel draft={draft} />
+              <CurveSamplingControl draft={draft} onDraftChange={changeDraft} />
+            </>
+          )}
+
+          {activeTab === "height" && (
+            <LinerSetupTabStub label={ja.liner.setupTabs.height} tabId="height" />
+          )}
+
+          {activeTab === "vertical" && (
+            <LinerSetupTabStub label={ja.liner.setupTabs.vertical} tabId="vertical" />
+          )}
+
+          {activeTab === "crossSection" && (
+            <LinerSetupTabStub label={ja.liner.setupTabs.crossSection} tabId="crossSection" />
+          )}
+
+          {activeTab === "review" && (
+            <LinerSetupTabStub label={ja.liner.setupTabs.review} tabId="review" />
+          )}
+        </LinerSetupTabs>
 
         <aside className="liner-edit-summary" aria-label={ja.liner.editor.summarySection}>
           <h2>{ja.liner.editor.summarySection}</h2>
@@ -158,138 +181,6 @@ export function LinerEditPage({
           <p>{ja.liner.editor.localDraftNotice}</p>
         </aside>
       </div>
-
-      <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />
-
-      <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
-        <div className="liner-edit-section-header">
-          <h2 id="liner-edit-elements-title">{ja.liner.editor.elementSection}</h2>
-          <button
-            type="button"
-            onClick={() => changeDraft((current) => addLinerStraightElement(current))}
-            data-testid="add-liner-straight-element"
-          >
-            <FilePlus2 size={16} />
-            {ja.liner.editor.addStraightElement}
-          </button>
-        </div>
-        <div className="liner-edit-table-wrap">
-          <table className="liner-edit-table">
-            <caption>{ja.liner.editor.elementTableCaption}</caption>
-            <thead>
-              <tr>
-                <th>{ja.liner.fields.elementId}</th>
-                <th>{ja.liner.fields.elementType}</th>
-                <th>{ja.liner.fields.startX}</th>
-                <th>{ja.liner.fields.startY}</th>
-                <th>{ja.liner.fields.azimuth}</th>
-                <th>{ja.liner.fields.length}</th>
-                <th>{ja.liner.fields.actions}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {draft.alignment.elements.map((element, elementIndex) => (
-                <tr key={`${element.type}-${elementIndex}`}>
-                  <td>
-                    {element.type === "straight" ? (
-                      <input
-                        value={element.id}
-                        data-testid={`liner-element-id-${element.id}`}
-                        onChange={(event) => {
-                          const value = event.currentTarget.value;
-                          changeDraft((current) =>
-                            updateLinerStraightElement(current, element.id, { id: value }),
-                          );
-                        }}
-                      />
-                    ) : (
-                      <span>{element.id}</span>
-                    )}
-                  </td>
-                  <td>{elementTypeLabel(element)}</td>
-                  {element.type === "straight" ? (
-                    <>
-                      <td>
-                        <input
-                          type="number"
-                          value={numericValue(element.start.x)}
-                          data-testid={`liner-element-start-x-${element.id}`}
-                          onChange={(event: TextInputEvent) => {
-                            const value = parseNumericInput(event.currentTarget.value);
-                            changeDraft((current) =>
-                              updateLinerStraightElement(current, element.id, {
-                                startX: value,
-                              }),
-                            );
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          value={numericValue(element.start.y)}
-                          data-testid={`liner-element-start-y-${element.id}`}
-                          onChange={(event: TextInputEvent) => {
-                            const value = parseNumericInput(event.currentTarget.value);
-                            changeDraft((current) =>
-                              updateLinerStraightElement(current, element.id, {
-                                startY: value,
-                              }),
-                            );
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          value={numericValue(element.azimuth)}
-                          data-testid={`liner-element-azimuth-${element.id}`}
-                          onChange={(event: TextInputEvent) => {
-                            const value = parseNumericInput(event.currentTarget.value);
-                            changeDraft((current) =>
-                              updateLinerStraightElement(current, element.id, {
-                                azimuth: value,
-                              }),
-                            );
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          value={numericValue(element.length)}
-                          onChange={(event: TextInputEvent) => {
-                            const value = parseNumericInput(event.currentTarget.value);
-                            changeDraft((current) =>
-                              updateLinerStraightElement(current, element.id, {
-                                length: value,
-                              }),
-                            );
-                          }}
-                          data-testid={`liner-element-length-${element.id}`}
-                        />
-                      </td>
-                    </>
-                  ) : (
-                    <td colSpan={4}>{ja.liner.editor.unsupportedElementNotice}</td>
-                  )}
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => changeDraft((current) => removeLinerAlignmentElement(current, element.id))}
-                      disabled={draft.alignment.elements.length <= 1}
-                      data-testid={`remove-liner-element-${element.id}`}
-                      title={ja.liner.editor.removeElement}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </main>
   );
 }

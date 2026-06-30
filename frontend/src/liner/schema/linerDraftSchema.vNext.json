@@ -1,0 +1,742 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-draft-v0.2.0.schema.json",
+  "title": "LINER Domain Draft v0.2.0",
+  "description": "Standalone JSON Schema for liner.domainDraft (LINER_DRAFT_SCHEMA_VERSION 0.2.0).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "linerModelId",
+    "coordinatePolicyId",
+    "alignment",
+    "stationDefinition",
+    "verticalAlignment",
+    "crossSections",
+    "gridDefinitions",
+    "spans",
+    "piers",
+    "generationSettings",
+    "sampling"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "linerModelId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coordinatePolicyId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alignment": {
+      "$ref": "#/$defs/horizontalAlignmentDraft"
+    },
+    "stationDefinition": {
+      "$ref": "#/$defs/stationDefinitionDraft"
+    },
+    "verticalAlignment": {
+      "$ref": "#/$defs/verticalAlignmentDraft"
+    },
+    "crossSections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/crossSectionTemplateDraft"
+      }
+    },
+    "gridDefinitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/gridDefinitionDraft"
+      }
+    },
+    "spans": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/spanDraft"
+      }
+    },
+    "piers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pierDraft"
+      }
+    },
+    "generationSettings": {
+      "$ref": "#/$defs/generationSettingsDraft"
+    },
+    "sampling": {
+      "$ref": "#/$defs/samplingSettingsDraft"
+    }
+  },
+  "$defs": {
+    "vec2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "horizontalStraightElementDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "start",
+        "azimuth",
+        "length"
+      ],
+      "properties": {
+        "type": {
+          "const": "straight"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "$ref": "#/$defs/vec2"
+        },
+        "azimuth": {
+          "type": "number"
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "horizontalArcElementDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "start",
+        "azimuth",
+        "radius",
+        "turn",
+        "length"
+      ],
+      "properties": {
+        "type": {
+          "const": "arc"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "$ref": "#/$defs/vec2"
+        },
+        "azimuth": {
+          "type": "number"
+        },
+        "radius": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "turn": {
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "horizontalClothoidElementDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "start",
+        "azimuth",
+        "clothoidParameter",
+        "turn",
+        "length"
+      ],
+      "properties": {
+        "type": {
+          "const": "clothoid"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "$ref": "#/$defs/vec2"
+        },
+        "azimuth": {
+          "type": "number"
+        },
+        "clothoidParameter": {
+          "type": "number"
+        },
+        "startRadius": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "endRadius": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "turn": {
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "horizontalElementDraft": {
+      "description": "Discriminated union of horizontal alignment elements (N2 §4).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/horizontalStraightElementDraft"
+        },
+        {
+          "$ref": "#/$defs/horizontalArcElementDraft"
+        },
+        {
+          "$ref": "#/$defs/horizontalClothoidElementDraft"
+        }
+      ]
+    },
+    "horizontalAlignmentDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "elements"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/horizontalElementDraft"
+          }
+        }
+      }
+    },
+    "stationEquationDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "physicalDistance",
+        "type",
+        "value"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
+          "type": "number"
+        },
+        "type": {
+          "enum": [
+            "add_constant",
+            "reset_to_value"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "sortIndex": {
+          "type": "integer"
+        }
+      }
+    },
+    "stationDefinitionDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "originDisplayedStation"
+      ],
+      "properties": {
+        "originDisplayedStation": {
+          "type": "number"
+        },
+        "interval": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "explicitStations": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "equations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stationEquationDraft"
+          }
+        }
+      }
+    },
+    "verticalGradeElementDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "startStation",
+        "endStation",
+        "startElevation",
+        "grade",
+        "length"
+      ],
+      "properties": {
+        "type": {
+          "const": "grade"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startStation": {
+          "type": "number",
+          "description": "Start station (m)."
+        },
+        "endStation": {
+          "type": "number",
+          "description": "End station (m)."
+        },
+        "startElevation": {
+          "type": "number",
+          "description": "Start elevation (m)."
+        },
+        "grade": {
+          "type": "number",
+          "description": "Grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Segment length (m)."
+        }
+      }
+    },
+    "verticalParabolicElementDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "startStation",
+        "endStation",
+        "startGrade",
+        "endGrade",
+        "length"
+      ],
+      "properties": {
+        "type": {
+          "const": "parabolic"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startStation": {
+          "type": "number",
+          "description": "Start station (m)."
+        },
+        "endStation": {
+          "type": "number",
+          "description": "End station (m)."
+        },
+        "startGrade": {
+          "type": "number",
+          "description": "Start grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
+        },
+        "endGrade": {
+          "type": "number",
+          "description": "End grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Curve length (m)."
+        },
+        "startElevation": {
+          "type": "number",
+          "description": "Start elevation (m). Optional; derivable from adjacent geometry."
+        },
+        "curveType": {
+          "enum": [
+            "crest",
+            "sag"
+          ],
+          "description": "Optional crest/sag classification; derivable from grades."
+        }
+      }
+    },
+    "verticalElementDraft": {
+      "description": "Discriminated union of vertical alignment elements (N2 §4).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/verticalGradeElementDraft"
+        },
+        {
+          "$ref": "#/$defs/verticalParabolicElementDraft"
+        }
+      ]
+    },
+    "verticalAlignmentDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "elements"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/verticalElementDraft"
+          }
+        }
+      }
+    },
+    "crossSlopeDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signConvention",
+        "valuePercent"
+      ],
+      "properties": {
+        "signConvention": {
+          "const": "right_down_positive"
+        },
+        "valuePercent": {
+          "type": "number",
+          "description": "Cross slope (%). Positive when falling to the right from centerline (右下がり正)."
+        }
+      }
+    },
+    "crossSectionOffsetLineDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断オフセット線（オフセット線リスト方式）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "offset",
+        "elevation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "offset": {
+          "type": "number",
+          "description": "Offset from centerline (m); positive to the right (中心線から m, 右正)."
+        },
+        "elevation": {
+          "type": "number",
+          "description": "Relative elevation (m); positive upward (相対標高 m, 上正)."
+        },
+        "role": {
+          "enum": [
+            "shoulder",
+            "lane",
+            "median",
+            "sidewalk",
+            "edge",
+            "custom"
+          ],
+          "description": "Optional semantic role: shoulder, lane, median, sidewalk, edge, or custom (Pre-Decision #4)."
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "crossSectionTemplateDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断テンプレート（オフセット線リスト方式）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "offsetLines"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "offsetLines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossSectionOffsetLineDraft"
+          }
+        },
+        "crossSlope": {
+          "$ref": "#/$defs/crossSlopeDraft",
+          "description": "Optional default cross slope (Pre-Decision #3)."
+        }
+      }
+    },
+    "stationRangeDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startPhysicalDistance",
+        "endPhysicalDistance"
+      ],
+      "properties": {
+        "startPhysicalDistance": {
+          "type": "number"
+        },
+        "endPhysicalDistance": {
+          "type": "number"
+        }
+      }
+    },
+    "gridDefinitionDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "crossSectionTemplateId",
+        "stationRange"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crossSectionTemplateId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stationRange": {
+          "$ref": "#/$defs/stationRangeDraft"
+        },
+        "stationInterval": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Station sampling interval for grid point generation along alignment."
+        },
+        "offsetLineIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Cross-section offset lines included in this grid."
+        }
+      }
+    },
+    "spanDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "startPhysicalDistance",
+        "endPhysicalDistance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startPhysicalDistance": {
+          "type": "number"
+        },
+        "endPhysicalDistance": {
+          "type": "number"
+        },
+        "pierIdStart": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pierIdEnd": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pierBearingOffsetDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transverseIndex",
+        "offset"
+      ],
+      "properties": {
+        "transverseIndex": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "number"
+        }
+      }
+    },
+    "pierDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "physicalDistance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
+          "type": "number"
+        },
+        "skewAngleRad": {
+          "type": "number"
+        },
+        "bearingOffsets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pierBearingOffsetDraft"
+          }
+        }
+      }
+    },
+    "generationSettingsDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultMemberGroupKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectivityMode": {
+          "enum": [
+            "longitudinal_only",
+            "transverse_only",
+            "grid_full"
+          ]
+        }
+      }
+    },
+    "samplingProfileDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxChordLength",
+        "maxSagitta",
+        "minSegmentsPerElement"
+      ],
+      "properties": {
+        "maxChordLength": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Maximum chord length (m) for polyline approximation."
+        },
+        "maxSagitta": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Maximum sagitta error (m)."
+        },
+        "minSegmentsPerElement": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "frameSamplingProfileDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxMemberLength",
+        "maxSagitta",
+        "stationIntervalFallback"
+      ],
+      "properties": {
+        "maxMemberLength": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Maximum frame member length (m). Corresponds to N2 §5 default frame max chord 0.25 m (Decision #9, #15)."
+        },
+        "maxSagitta": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Maximum sagitta error (m) for frame member subdivision."
+        },
+        "stationIntervalFallback": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Fallback station interval (m) when element-based subdivision is insufficient."
+        }
+      }
+    },
+    "samplingSettingsDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "display",
+        "dxf",
+        "frame"
+      ],
+      "properties": {
+        "display": {
+          "$ref": "#/$defs/samplingProfileDraft",
+          "description": "Preview/display sampling (N2 default max chord 0.5 m)."
+        },
+        "dxf": {
+          "$ref": "#/$defs/samplingProfileDraft",
+          "description": "DXF export polyline sampling (N2 default max chord 0.1 m)."
+        },
+        "frame": {
+          "$ref": "#/$defs/frameSamplingProfileDraft",
+          "description": "Frame member subdivision sampling (N2 default max chord 0.25 m via maxMemberLength)."
+        }
+      }
+    }
+  }
+}
