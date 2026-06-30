@@ -62,11 +62,13 @@ describe("LinerListPage", () => {
         onClose={() => undefined}
         onCreate={() => undefined}
         onOpenSetup={() => undefined}
+        onDelete={() => undefined}
       />,
     );
 
     expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
     expect(document.querySelector("[data-testid=liner-list-empty]")).not.toBeNull();
+    expect(host?.textContent ?? "").toContain("線形モデルがありません");
   });
 
   it("renders attached liner metadata from the current project", () => {
@@ -76,6 +78,7 @@ describe("LinerListPage", () => {
         onClose={() => undefined}
         onCreate={() => undefined}
         onOpenSetup={() => undefined}
+        onDelete={() => undefined}
       />,
     );
 
@@ -95,6 +98,7 @@ describe("LinerListPage", () => {
         onClose={onClose}
         onCreate={onCreate}
         onOpenSetup={() => undefined}
+        onDelete={() => undefined}
       />,
     );
 
@@ -117,6 +121,7 @@ describe("LinerListPage", () => {
         onClose={() => undefined}
         onCreate={() => undefined}
         onOpenSetup={onOpenSetup}
+        onDelete={() => undefined}
       />,
     );
 
@@ -125,5 +130,26 @@ describe("LinerListPage", () => {
     });
 
     expect(onOpenSetup).toHaveBeenCalledTimes(1);
+  });
+
+  it("wires the attached model delete action", () => {
+    const onDelete = vi.fn();
+    render(
+      <LinerListPage
+        project={projectWithLiner()}
+        onClose={() => undefined}
+        onCreate={() => undefined}
+        onOpenSetup={() => undefined}
+        onDelete={onDelete}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=delete-liner-model]")).not.toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=delete-liner-model]") as HTMLButtonElement).click();
+    });
+
+    expect(onDelete).toHaveBeenCalledWith("gc06");
   });
 });
