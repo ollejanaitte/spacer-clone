@@ -11,9 +11,13 @@ import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
 } from "../schema/types";
-import { createDefaultLinerDraft, type LinerDraft } from "./linerUiAdapter";
+import type { LinerDraft } from "./linerUiAdapter";
 
-export function linerDraftFromProject(project: ProjectModel): LinerDraft {
+export function linerDraftFromProject(project: ProjectModel): LinerDraft | undefined {
+  if (!project.liner) {
+    return undefined;
+  }
+
   const persistedDraft = project.liner?.draft;
   if (persistedDraft) {
     return persistedDraft;
@@ -24,7 +28,7 @@ export function linerDraftFromProject(project: ProjectModel): LinerDraft {
     return buildIntermediateInputFromDomainDraft(migration.domainDraft);
   }
 
-  return createDefaultLinerDraft();
+  return undefined;
 }
 
 export function readLinerDomainDraftFromProject(

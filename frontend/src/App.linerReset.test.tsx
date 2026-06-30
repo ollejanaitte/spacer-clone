@@ -64,19 +64,21 @@ async function resetModel(confirmValue: boolean) {
   });
 }
 
-async function openLinerSetup() {
+async function openLinerList() {
   await act(async () => {
     buttonByTestId("open-liner-list").click();
   });
+}
+
+async function openLinerSetup() {
+  await openLinerList();
   await act(async () => {
     buttonByTestId("open-liner-setup").click();
   });
 }
 
 async function createLinerSetup() {
-  await act(async () => {
-    buttonByTestId("open-liner-list").click();
-  });
+  await openLinerList();
   await act(async () => {
     buttonByTestId("create-liner").click();
   });
@@ -100,14 +102,27 @@ afterEach(() => {
 });
 
 describe("App LINER reset integration", () => {
-  it("keeps edited LINER identifiers after opening setup from model reset", async () => {
+  it("shows an empty LINER list after model reset", async () => {
     const { App } = await import("./App");
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
 
     await resetModel(true);
-    await openLinerSetup();
+    await openLinerList();
+
+    expect(document.querySelector("[data-testid=liner-list-empty]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=open-liner-setup]")).toBeNull();
+  }, 20000);
+
+  it("creates and keeps edited LINER identifiers after model reset", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+
+    await resetModel(true);
+    await createLinerSetup();
 
     await act(async () => {
       setInputValue(inputByTestId("liner-alignment-id"), "alignment-after-reset");
@@ -133,7 +148,7 @@ describe("App LINER reset integration", () => {
 
     await render(<App />);
     await resetModel(true);
-    await openLinerSetup();
+    await createLinerSetup();
 
     await act(async () => {
       buttonByTestId("add-liner-straight-element").click();
@@ -162,7 +177,7 @@ describe("App LINER reset integration", () => {
 
     await render(<App />);
     await resetModel(true);
-    await openLinerSetup();
+    await createLinerSetup();
 
     await act(async () => {
       setInputValue(inputByTestId("liner-model-id"), "liner-after-reset");

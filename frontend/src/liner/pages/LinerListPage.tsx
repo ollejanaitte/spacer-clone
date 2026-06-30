@@ -1,4 +1,4 @@
-import { ArrowLeft, FilePlus2, Pencil } from "lucide-react";
+import { ArrowLeft, FilePlus2, Pencil, Trash2 } from "lucide-react";
 import { ja } from "../../i18n/ja";
 import type { ProjectModel } from "../../types";
 
@@ -7,6 +7,7 @@ export type LinerListPageProps = {
   onClose: () => void;
   onCreate: () => void;
   onOpenSetup: () => void;
+  onDelete: (modelId: string) => void;
 };
 
 type LinerListItem = {
@@ -48,7 +49,13 @@ function formatGeneratedAt(value: string | null): string {
   return new Date(timestamp).toLocaleString("ja-JP");
 }
 
-export function LinerListPage({ project, onClose, onCreate, onOpenSetup }: LinerListPageProps) {
+export function LinerListPage({
+  project,
+  onClose,
+  onCreate,
+  onOpenSetup,
+  onDelete,
+}: LinerListPageProps) {
   const items = buildListItems(project);
 
   return (
@@ -111,6 +118,15 @@ export function LinerListPage({ project, onClose, onCreate, onOpenSetup }: Liner
                       <button type="button" onClick={onOpenSetup} data-testid="open-liner-setup">
                         <Pencil size={16} />
                         {ja.liner.list.openSetup}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDelete(item.modelId)}
+                        data-testid="delete-liner-model"
+                        title={ja.liner.list.delete}
+                      >
+                        <Trash2 size={16} />
+                        {ja.liner.list.delete}
                       </button>
                     </td>
                   </tr>
