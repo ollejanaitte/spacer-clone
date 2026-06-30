@@ -78,10 +78,93 @@ describe("linerUiAdapter", () => {
       id: "C3",
       type: "clothoid",
       clothoidParameter: 100,
-      startRadius: null,
+      startRadius: 100,
       endRadius: 100,
       turn: "left",
       length: 50,
+    });
+  });
+
+  it("uses default start and azimuth when adding the first element", () => {
+    const emptyDraft = {
+      ...createDefaultLinerDraft(),
+      alignment: {
+        ...createDefaultLinerDraft().alignment,
+        elements: [],
+      },
+    };
+
+    const added = addLinerStraightElement(emptyDraft);
+
+    expect(added.alignment.elements[0]).toMatchObject({
+      id: "S1",
+      type: "straight",
+      start: { x: 0, y: 0 },
+      azimuth: 0,
+    });
+  });
+
+  it("chains a new straight element from the previous straight end state", () => {
+    const base = updateLinerStraightElement(createDefaultLinerDraft(), "S1", {
+      azimuth: Math.PI / 4,
+      length: 100,
+    });
+
+    const added = addLinerStraightElement(base);
+
+    expect(added.alignment.elements[1]).toMatchObject({
+      id: "S2",
+      type: "straight",
+      azimuth: Math.PI / 4,
+    });
+    expect(added.alignment.elements[1]?.start.x).toBeCloseTo(70.710678, 6);
+    expect(added.alignment.elements[1]?.start.y).toBeCloseTo(70.710678, 6);
+  });
+
+  it("chains an arc from a straight while keeping default radius and turn", () => {
+    const base = updateLinerStraightElement(createDefaultLinerDraft(), "S1", {
+      azimuth: Math.PI / 4,
+      length: 100,
+    });
+
+    const added = addLinerArcElement(base);
+
+    expect(added.alignment.elements[1]).toMatchObject({
+      id: "A2",
+      type: "arc",
+      radius: 100,
+      turn: "left",
+      azimuth: Math.PI / 4,
+    });
+    expect(added.alignment.elements[1]?.start.x).toBeCloseTo(70.710678, 6);
+    expect(added.alignment.elements[1]?.start.y).toBeCloseTo(70.710678, 6);
+  });
+
+  it("chains a clothoid from an arc by inheriting radius and turn", () => {
+    const withArc = addLinerArcElement(createDefaultLinerDraft());
+    const withClothoid = addLinerClothoidElement(withArc);
+
+    expect(withClothoid.alignment.elements[2]).toMatchObject({
+      id: "C3",
+      type: "clothoid",
+      startRadius: 100,
+      turn: "left",
+    });
+  });
+
+  it("chains an arc from a clothoid by inheriting the clothoid end radius", () => {
+    const withClothoid = addLinerClothoidElement(createDefaultLinerDraft());
+    const updated = updateLinerAlignmentElement(withClothoid, "C2", {
+      endRadius: 50,
+      turn: "right",
+    });
+    const withArc = addLinerArcElement(updated);
+
+    expect(withArc.alignment.elements[2]).toMatchObject({
+      id: "A3",
+      type: "arc",
+      radius: 50,
+      turn: "right",
     });
   });
 
