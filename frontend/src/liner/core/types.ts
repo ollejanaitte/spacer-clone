@@ -1,3 +1,8 @@
+import type {
+  CrossSectionTemplateDraft,
+  VerticalAlignmentDraft,
+} from "../schema/types";
+
 export type Vec2 = {
   x: number;
   y: number;
@@ -500,4 +505,6 @@ export type GridPreparationInput = {
   offsets: number[];
   sourceRevision: string;
   z?: number;
+  verticalAlignment?: VerticalAlignmentDraft;
+  crossSectionTemplate?: CrossSectionTemplateDraft;
 };

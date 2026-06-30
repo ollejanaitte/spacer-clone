@@ -5,8 +5,14 @@ import {
   totalAlignmentLength,
   validateAlignment,
 } from "../geometry/horizontal";
+import { elevationAt } from "../elevationAt";
 import { SAMPLING_INTERVAL_DISPLAY, sampleDisplay } from "../sampling";
 import { displayedStationAtPhysicalDistance, generateStations } from "../station/stationRules";
+import { checkVerticalProfileEndCoverage } from "../validateVerticalCoverage";
+import {
+  sampleVerticalDisplay,
+  type VerticalSamplePoint,
+} from "../verticalSampling";
 import type {
   AlignmentElement,
   AlignmentEvaluation,
@@ -17,7 +23,6 @@ import type {
   DependencySnapshot,
   FrameGenerationHintResult,
   GeneratedStation,
-  GradeBreakResult,
   GridCellResult,
   GridLineResult,
   GridPointResult,
@@ -185,37 +190,75 @@ function buildStationTableResult(
   };
 }
 
-function buildVerticalResult(stations: GeneratedStation[], totalLength: number, z: number): VerticalGeometryResult {
-  const segmentId = "VP-default";
-  const sampledPoints: ProfileSamplePoint[] = stations.map((station) => ({
-    physicalDistance: station.physicalDistance,
-    displayedStation: station.displayedStation,
-    profileElevation: z,
-    grade: 0,
-    segmentId,
+function buildVerticalResult(
+  verticalAlignment: VerticalAlignmentDraft | undefined,
+  stations: GeneratedStation[],
+  totalLength: number,
+  fallbackZ: number,
+): VerticalGeometryResult {
+  if (verticalAlignment === undefined || verticalAlignment.elements.length === 0) {
+    const segmentId = "VP-default";
+    const sampledPoints: ProfileSamplePoint[] = stations.map((station) => ({
+      physicalDistance: station.physicalDistance,
+      displayedStation: station.displayedStation,
+      profileElevation: fallbackZ,
+      grade: 0,
+      segmentId,
+    }));
+    const segments: ProfileSegmentResult[] = totalLength > 0
+      ? [
+          {
+            id: segmentId,
+            startPhysicalDistance: 0,
+            endPhysicalDistance: totalLength,
+            startDisplayedStation: stations[0]?.displayedStation ?? 0,
+            endDisplayedStation: stations.at(-1)?.displayedStation ?? totalLength,
+            startElevation: fallbackZ,
+            endElevation: fallbackZ,
+            startGrade: 0,
+            endGrade: 0,
+          },
+        ]
+      : [];
+    return {
+      profileElevation: fallbackZ,
+      segments,
+      sampledPoints,
+      gradeBreaks: [],
+    };
+  }
+
+  const verticalSamples: VerticalSamplePoint[] = sampleVerticalDisplay(verticalAlignment);
+  const sampledPoints: ProfileSamplePoint[] = verticalSamples.map((sample) => ({
+    physicalDistance: sample.station,
+    displayedStation: sample.station,
+    profileElevation: sample.elevation,
+    grade: sample.grade,
+    segmentId: sample.sourceElementId,
   }));
-  const segments: ProfileSegmentResult[] = totalLength > 0
-    ? [
-        {
-          id: segmentId,
-          startPhysicalDistance: 0,
-          endPhysicalDistance: totalLength,
-          startDisplayedStation: stations[0]?.displayedStation ?? 0,
-          endDisplayedStation: stations.at(-1)?.displayedStation ?? totalLength,
-          startElevation: z,
-          endElevation: z,
-          startGrade: 0,
-          endGrade: 0,
-        },
-      ]
-    : [];
-  const gradeBreaks: GradeBreakResult[] = [];
+
+  const segments: ProfileSegmentResult[] = verticalAlignment.elements.map((element) => ({
+    id: element.id,
+    startPhysicalDistance: element.startStation,
+    endPhysicalDistance: element.endStation,
+    startDisplayedStation: element.startStation,
+    endDisplayedStation: element.endStation,
+    startElevation:
+      element.type === "grade"
+        ? element.startElevation
+        : (element.startElevation ?? 0),
+    endElevation: elevationAt(element.endStation, verticalAlignment) ?? fallbackZ,
+    startGrade: element.type === "grade" ? element.grade : element.startGrade,
+    endGrade: element.type === "grade" ? element.grade : element.endGrade,
+  }));
+
+  const startElevation = elevationAt(0, verticalAlignment) ?? fallbackZ;
 
   return {
-    profileElevation: z,
+    profileElevation: startElevation,
     segments,
     sampledPoints,
-    gradeBreaks,
+    gradeBreaks: [],
   };
 }
 
@@ -363,7 +406,14 @@ export function buildIntermediateResult(
     canEvaluate,
   );
   const z = input.z ?? 0;
-  const vertical = buildVerticalResult(stationGeneration.stations, totalLength, z);
+  const verticalAlignment = input.verticalAlignment;
+  diagnostics.push(...checkVerticalProfileEndCoverage(verticalAlignment, totalLength));
+  const vertical = buildVerticalResult(
+    verticalAlignment,
+    stationGeneration.stations,
+    totalLength,
+    z,
+  );
   const stationTable = buildStationTableResult(stationGeneration.stations, input.stationDefinition);
 
   const gridInput: GridPreparationInput = {
@@ -372,6 +422,8 @@ export function buildIntermediateResult(
     offsets: input.offsets ?? [0],
     sourceRevision,
     z,
+    verticalAlignment,
+    crossSectionTemplate: input.crossSections?.[0],
   };
   const gridGeneration = canEvaluate
     ? generateGridPoints(gridInput)

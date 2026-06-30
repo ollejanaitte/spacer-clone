@@ -1,8 +1,8 @@
 import type {
   VerticalAlignmentDraft,
   VerticalElementDraft,
-  VerticalGradeElementDraft,
 } from "../schema/types";
+import { elevationAt } from "./elevationAt";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "./diagnostics";
 import type { ValidationIssue } from "./types";
 
@@ -20,22 +20,6 @@ export type MergeVerticalZResult = {
   points: MergedVerticalPoint[];
   diagnostics: ValidationIssue[];
 };
-
-function findContainingElement(
-  elements: VerticalElementDraft[],
-  station: number,
-): VerticalElementDraft | null {
-  for (const element of elements) {
-    if (element.startStation <= station && station <= element.endStation) {
-      return element;
-    }
-  }
-  return null;
-}
-
-function gradeElevationAt(element: VerticalGradeElementDraft, station: number): number {
-  return element.startElevation + element.grade * (station - element.startStation);
-}
 
 export function mergeVerticalZ(
   points: HorizontalStationPoint[],
@@ -58,9 +42,9 @@ export function mergeVerticalZ(
       continue;
     }
 
-    const element = findContainingElement(verticalAlignment.elements, station);
+    const z = elevationAt(station, verticalAlignment);
 
-    if (element === null) {
+    if (z === null) {
       mergedPoints.push({ ...point, z: null });
       diagnostics.push(
         createIssue("error", LINER_DIAGNOSTIC_CODES.profileCoverageGap, {
@@ -73,26 +57,19 @@ export function mergeVerticalZ(
       continue;
     }
 
-    if (element.type === "parabolic") {
-      mergedPoints.push({ ...point, z: null });
-      diagnostics.push(
-        createIssue("warning", LINER_DIAGNOSTIC_CODES.profileParabolicZMergeDeferred, {
-          station,
-          entityType: "verticalElement",
-          entityId: element.id,
-          // Phase 3.5-4: parabolic z merge via elevationAt / full profile evaluation.
-          detail:
-            "Parabolic vertical element; z merge is grade-only until Phase 3.5-4 combine3DCoordinates.",
-        }),
-      );
-      continue;
-    }
-
     mergedPoints.push({
       ...point,
-      z: gradeElevationAt(element, station),
+      z,
     });
   }
 
   return { points: mergedPoints, diagnostics };
+}
+
+export function verticalProfileEndStation(elements: readonly VerticalElementDraft[]): number {
+  let maxEnd = 0;
+  for (const element of elements) {
+    maxEnd = Math.max(maxEnd, element.endStation);
+  }
+  return maxEnd;
 }
