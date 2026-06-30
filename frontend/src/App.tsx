@@ -139,8 +139,13 @@ export function App() {
   const commitLinerDraft = useCallback((update: LinerDraftUpdate) => {
     setProject((currentProject) => {
       const currentDraft = linerDraftFromProject(currentProject);
-      const nextDraft = typeof update === "function" ? update(currentDraft) : update;
-      return withProjectLinerDraft(currentProject, nextDraft);
+      if (typeof update === "function") {
+        if (!currentDraft) {
+          return currentProject;
+        }
+        return withProjectLinerDraft(currentProject, update(currentDraft));
+      }
+      return withProjectLinerDraft(currentProject, update);
     });
     setDirty(true);
     setValidation(null);
@@ -220,6 +225,20 @@ export function App() {
     window.history.pushState({}, "", "/");
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, []);
+
+  const createLinerModel = useCallback(() => {
+    const draft = createDefaultLinerDraft();
+    commitProject(withProjectLinerDraft(project, draft));
+    navigatePro(resolveLinerUiRoutePath("liner.setup"));
+    log(`LINER model ${draft.alignment.linerModelId} created.`);
+  }, [project, navigatePro]);
+
+  const deleteLinerModel = useCallback((modelId: string) => {
+    if (!window.confirm(ja.liner.list.deleteConfirm)) return;
+    commitProject({ ...project, liner: undefined, linerTrace: [] });
+    navigatePro(resolveLinerUiRoutePath("liner.list"));
+    log(`LINER model ${modelId} deleted.`);
+  }, [project, navigatePro]);
 
   const resetModelContents = useCallback(() => {
     if (!window.confirm(ja.toolbar.resetConfirm)) return;
@@ -555,16 +574,26 @@ export function App() {
       <LinerListPage
         project={project}
         onClose={() => navigatePro("/pro")}
-        onCreate={() => {
-          commitLinerDraft(createDefaultLinerDraft());
-          navigatePro(resolveLinerUiRoutePath("liner.setup"));
-        }}
+        onCreate={createLinerModel}
         onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onDelete={deleteLinerModel}
       />
     );
   }
 
   if (linerRouteId === "liner.setup") {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={createLinerModel}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
     return (
       <LinerEditPage
         draft={linerDraft}
@@ -578,6 +607,18 @@ export function App() {
   }
 
   if (linerRouteId === "liner.preview") {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={createLinerModel}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
     return (
       <LinerPreviewPage
         draft={linerDraft}
@@ -590,6 +631,18 @@ export function App() {
   }
 
   if (linerRouteId === "liner.mappingReview") {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={createLinerModel}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
     return (
       <LinerMappingReviewPage
         draft={linerDraft}
