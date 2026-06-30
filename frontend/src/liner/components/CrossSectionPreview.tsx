@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ja } from "../../i18n/ja";
+import { computeOffsetLineElevation } from "../core/crossSectionElevation";
 import type {
   CrossSectionOffsetLineDraft,
   CrossSectionOffsetLineRole,
@@ -61,7 +62,17 @@ function roleLegendLabel(role: CrossSectionOffsetLineRole | undefined): string {
   return ja.liner.fields.offsetLineRoles[role];
 }
 
-function collectPlotDomain(offsetLines: readonly CrossSectionOffsetLineDraft[]): PlotDomain {
+function resolveDisplayElevation(
+  line: CrossSectionOffsetLineDraft,
+  slopePercent: number,
+): number {
+  return computeOffsetLineElevation(line.offset, slopePercent);
+}
+
+function collectPlotDomain(
+  offsetLines: readonly CrossSectionOffsetLineDraft[],
+  slopePercent: number,
+): PlotDomain {
   if (offsetLines.length === 0) {
     return {
       minOffset: -1,
@@ -72,7 +83,7 @@ function collectPlotDomain(offsetLines: readonly CrossSectionOffsetLineDraft[]):
   }
 
   const offsets = offsetLines.map((line) => line.offset);
-  const elevations = offsetLines.map((line) => line.elevation);
+  const elevations = offsetLines.map((line) => resolveDisplayElevation(line, slopePercent));
 
   const minOffset = Math.min(...offsets);
   const maxOffset = Math.max(...offsets);
@@ -140,22 +151,29 @@ function buildTickValues(min: number, max: number, count: number): number[] {
 
 export function CrossSectionPreview({ template }: CrossSectionPreviewProps) {
   const offsetLines = template.offsetLines;
+  const slopePercent = template.crossSlope?.valuePercent ?? 0;
   const isEmpty = offsetLines.length === 0;
 
   const plotWidth = VIEW_WIDTH - PLOT_PADDING * 2;
   const plotHeight = VIEW_HEIGHT - PLOT_PADDING * 2;
 
-  const domain = useMemo(() => collectPlotDomain(offsetLines), [offsetLines]);
+  const domain = useMemo(
+    () => collectPlotDomain(offsetLines, slopePercent),
+    [offsetLines, slopePercent],
+  );
   const legendRoles = useMemo(() => collectLegendRoles(offsetLines), [offsetLines]);
 
   const plotPoints = useMemo(
     (): PlotPoint[] =>
-      offsetLines.map((line) => ({
-        line,
-        sx: toSvgX(line.offset, domain, plotWidth),
-        sy: toSvgY(line.elevation, domain, plotHeight),
-      })),
-    [domain, offsetLines, plotHeight, plotWidth],
+      offsetLines.map((line) => {
+        const elevation = resolveDisplayElevation(line, slopePercent);
+        return {
+          line: { ...line, elevation },
+          sx: toSvgX(line.offset, domain, plotWidth),
+          sy: toSvgY(elevation, domain, plotHeight),
+        };
+      }),
+    [domain, offsetLines, plotHeight, plotWidth, slopePercent],
   );
 
   const profilePoints = useMemo(() => {

@@ -1,5 +1,6 @@
 import { FilePlus2, Trash2 } from "lucide-react";
 import { ja } from "../../i18n/ja";
+import { computeOffsetLineElevation } from "../core/crossSectionElevation";
 import type {
   CrossSectionOffsetLineDraft,
   CrossSectionOffsetLineRole,
@@ -14,7 +15,6 @@ export type CrossSectionTemplateEditorProps = {
 type OffsetLineFieldPatch = Partial<{
   id: string;
   offset: number;
-  elevation: number;
   role: CrossSectionOffsetLineRole | undefined;
   label: string | undefined;
 }>;
@@ -44,6 +44,21 @@ function parseOptionalRole(value: string): CrossSectionOffsetLineRole | undefine
   return undefined;
 }
 
+function slopePercentFromTemplate(template: CrossSectionTemplateDraft): number {
+  return template.crossSlope?.valuePercent ?? 0;
+}
+
+function withComputedElevations(template: CrossSectionTemplateDraft): CrossSectionTemplateDraft {
+  const slopePercent = slopePercentFromTemplate(template);
+  return {
+    ...template,
+    offsetLines: template.offsetLines.map((line) => ({
+      ...line,
+      elevation: computeOffsetLineElevation(line.offset, slopePercent),
+    })),
+  };
+}
+
 function nextOffsetLineId(prefix: string, offsetLines: readonly CrossSectionOffsetLineDraft[]): string {
   const ids = new Set(offsetLines.map((line) => line.id));
   let index = offsetLines.length;
@@ -59,25 +74,26 @@ function updateTemplateFields(
   template: CrossSectionTemplateDraft,
   patch: Partial<Pick<CrossSectionTemplateDraft, "id" | "name">>,
 ): CrossSectionTemplateDraft {
-  return {
+  return withComputedElevations({
     ...template,
     id: patch.id ?? template.id,
     name: patch.name ?? template.name,
-  };
+  });
 }
 
 function addOffsetLine(template: CrossSectionTemplateDraft): CrossSectionTemplateDraft {
+  const slopePercent = slopePercentFromTemplate(template);
   const nextLine: CrossSectionOffsetLineDraft = {
     id: nextOffsetLineId("OL", template.offsetLines),
     offset: 0,
-    elevation: 0,
+    elevation: computeOffsetLineElevation(0, slopePercent),
     role: "custom",
   };
 
-  return {
+  return withComputedElevations({
     ...template,
     offsetLines: [...template.offsetLines, nextLine],
-  };
+  });
 }
 
 function removeOffsetLine(template: CrossSectionTemplateDraft, targetLineId: string): CrossSectionTemplateDraft {
@@ -85,10 +101,10 @@ function removeOffsetLine(template: CrossSectionTemplateDraft, targetLineId: str
     return template;
   }
 
-  return {
+  return withComputedElevations({
     ...template,
     offsetLines: template.offsetLines.filter((line) => line.id !== targetLineId),
-  };
+  });
 }
 
 function updateOffsetLine(
@@ -96,18 +112,20 @@ function updateOffsetLine(
   targetLineId: string,
   patch: OffsetLineFieldPatch,
 ): CrossSectionTemplateDraft {
-  return {
+  const nextTemplate: CrossSectionTemplateDraft = {
     ...template,
     offsetLines: template.offsetLines.map((line): CrossSectionOffsetLineDraft => {
       if (line.id !== targetLineId) {
         return line;
       }
 
+      const nextOffset = patch.offset ?? line.offset;
+      const slopePercent = slopePercentFromTemplate(template);
       const next: CrossSectionOffsetLineDraft = {
         ...line,
         id: patch.id ?? line.id,
-        offset: patch.offset ?? line.offset,
-        elevation: patch.elevation ?? line.elevation,
+        offset: nextOffset,
+        elevation: computeOffsetLineElevation(nextOffset, slopePercent),
       };
 
       if ("role" in patch) {
@@ -130,6 +148,8 @@ function updateOffsetLine(
       return next;
     }),
   };
+
+  return withComputedElevations(nextTemplate);
 }
 
 function offsetLineRoleLabel(role: CrossSectionOffsetLineRole): string {
@@ -138,8 +158,10 @@ function offsetLineRoleLabel(role: CrossSectionOffsetLineRole): string {
 
 export function CrossSectionTemplateEditor({ template, onTemplateChange }: CrossSectionTemplateEditorProps) {
   const applyChange = (nextTemplate: CrossSectionTemplateDraft) => {
-    onTemplateChange(nextTemplate);
+    onTemplateChange(withComputedElevations(nextTemplate));
   };
+
+  const displayTemplate = withComputedElevations(template);
 
   return (
     <section className="liner-edit-panel" aria-labelledby="liner-edit-cross-section-template-title">
@@ -149,9 +171,9 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
         <label>
           <span>{ja.liner.fields.templateId}</span>
           <input
-            value={template.id}
+            value={displayTemplate.id}
             onChange={(event) =>
-              applyChange(updateTemplateFields(template, { id: event.currentTarget.value }))
+              applyChange(updateTemplateFields(displayTemplate, { id: event.currentTarget.value }))
             }
             data-testid="cross-section-template-id"
           />
@@ -159,9 +181,9 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
         <label>
           <span>{ja.liner.fields.templateName}</span>
           <input
-            value={template.name}
+            value={displayTemplate.name}
             onChange={(event) =>
-              applyChange(updateTemplateFields(template, { name: event.currentTarget.value }))
+              applyChange(updateTemplateFields(displayTemplate, { name: event.currentTarget.value }))
             }
             data-testid="cross-section-template-name"
           />
@@ -176,7 +198,7 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
         <h2>{ja.liner.editor.crossSectionOffsetLineSection}</h2>
         <button
           type="button"
-          onClick={() => applyChange(addOffsetLine(template))}
+          onClick={() => applyChange(addOffsetLine(displayTemplate))}
           data-testid="add-cross-section-offset-line"
         >
           <FilePlus2 size={16} />
@@ -198,14 +220,14 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
             </tr>
           </thead>
           <tbody>
-            {template.offsetLines.map((line) => (
+            {displayTemplate.offsetLines.map((line) => (
               <tr key={line.id} data-testid={`cross-section-offset-line-row-${line.id}`}>
                 <td>
                   <input
                     value={line.id}
                     onChange={(event) =>
                       applyChange(
-                        updateOffsetLine(template, line.id, {
+                        updateOffsetLine(displayTemplate, line.id, {
                           id: event.currentTarget.value,
                         }),
                       )
@@ -219,7 +241,7 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                     value={numericValue(line.offset)}
                     onChange={(event) =>
                       applyChange(
-                        updateOffsetLine(template, line.id, {
+                        updateOffsetLine(displayTemplate, line.id, {
                           offset: parseNumericInput(event.currentTarget.value),
                         }),
                       )
@@ -231,13 +253,8 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                   <input
                     type="number"
                     value={numericValue(line.elevation)}
-                    onChange={(event) =>
-                      applyChange(
-                        updateOffsetLine(template, line.id, {
-                          elevation: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    readOnly
+                    aria-readonly="true"
                     data-testid={`cross-section-offset-line-elevation-${line.id}`}
                   />
                 </td>
@@ -246,7 +263,7 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                     value={line.role ?? ""}
                     onChange={(event) =>
                       applyChange(
-                        updateOffsetLine(template, line.id, {
+                        updateOffsetLine(displayTemplate, line.id, {
                           role: parseOptionalRole(event.currentTarget.value),
                         }),
                       )
@@ -266,7 +283,7 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                     value={line.label ?? ""}
                     onChange={(event) =>
                       applyChange(
-                        updateOffsetLine(template, line.id, {
+                        updateOffsetLine(displayTemplate, line.id, {
                           label: event.currentTarget.value,
                         }),
                       )
@@ -277,8 +294,8 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                 <td>
                   <button
                     type="button"
-                    onClick={() => applyChange(removeOffsetLine(template, line.id))}
-                    disabled={template.offsetLines.length <= 1}
+                    onClick={() => applyChange(removeOffsetLine(displayTemplate, line.id))}
+                    disabled={displayTemplate.offsetLines.length <= 1}
                     data-testid={`remove-cross-section-offset-line-${line.id}`}
                     title={ja.liner.editor.removeOffsetLine}
                   >

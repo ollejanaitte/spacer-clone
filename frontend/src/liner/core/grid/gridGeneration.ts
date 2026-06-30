@@ -1,3 +1,5 @@
+import { applyCrossSlope } from "../crossSectionZMerge";
+import { elevationAt } from "../elevationAt";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { evaluateAlignmentAtDistance } from "../geometry/horizontal";
 import { DEFAULT_TOLERANCES } from "../tolerances";
@@ -15,6 +17,21 @@ function padIndex(index: number): string {
   return index.toString().padStart(3, "0");
 }
 
+function resolveProfileElevation(
+  input: GridPreparationInput,
+  physicalDistance: number,
+): number | null {
+  if (input.verticalAlignment !== undefined) {
+    return elevationAt(physicalDistance, input.verticalAlignment);
+  }
+  const fallback = input.z ?? 0;
+  return Number.isFinite(fallback) ? fallback : null;
+}
+
+function resolveCrossSlopePercent(input: GridPreparationInput): number {
+  return input.crossSectionTemplate?.crossSlope?.valuePercent ?? 0;
+}
+
 export function gridPointId(
   linerModelId: string,
   longitudinalIndex: number,
@@ -28,11 +45,11 @@ export function generateGridPoints(input: GridPreparationInput): {
   issues: ValidationIssue[];
 } {
   const issues: ValidationIssue[] = [];
-  const z = input.z ?? 0;
   const sortedStations = [...input.stations].sort(
     (a, b) => a.physicalDistance - b.physicalDistance,
   );
   const sortedOffsets = [...input.offsets].sort((a, b) => a - b);
+  const slopePercent = resolveCrossSlopePercent(input);
   const gridPoints: GridPointPreparation[] = [];
 
   for (const [longitudinalIndex, station] of sortedStations.entries()) {
@@ -41,8 +58,24 @@ export function generateGridPoints(input: GridPreparationInput): {
       station.physicalDistance,
       station.displayedStation,
     );
+    const profileElevation = resolveProfileElevation(input, station.physicalDistance);
+
+    if (profileElevation === null) {
+      issues.push(
+        createIssue("error", LINER_DIAGNOSTIC_CODES.profileCoverageGap, {
+          station: station.physicalDistance,
+          entityType: "verticalAlignment",
+          detail: `No vertical profile elevation at station ${station.physicalDistance}.`,
+        }),
+      );
+      continue;
+    }
+
     for (const [transverseIndex, offset] of sortedOffsets.entries()) {
       const planPoint = offsetPoint(base.point, base.azimuth, offset);
+      const crossfallOffset = applyCrossSlope(offset, slopePercent);
+      const z = profileElevation + crossfallOffset;
+
       gridPoints.push({
         id: gridPointId(input.alignment.linerModelId, longitudinalIndex, transverseIndex),
         physicalDistance: station.physicalDistance,
@@ -63,8 +96,8 @@ export function generateGridPoints(input: GridPreparationInput): {
         },
         roles: transverseIndex === 0 ? ["edge"] : ["main_girder"],
         zProvenance: {
-          profileElevation: z,
-          crossfallOffset: 0,
+          profileElevation,
+          crossfallOffset,
           structuralReferenceOffset: 0,
           sectionDepthOffset: 0,
           girderEccentricity: 0,
