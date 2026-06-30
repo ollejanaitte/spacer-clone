@@ -44,6 +44,7 @@ describe("linerUiAdapter", () => {
     expect(station.stationDefinition.originDisplayedStation).toBe(25);
     expect(settings.sampleInterval).toBe(5);
     expect(settings.offsets).toEqual([-2, 0, 2]);
+    expect(settings.crossSections?.[0]?.offsetLines.map((line) => line.offset)).toEqual([-2, 0, 2]);
     expect(edited.alignment.elements[0]).toMatchObject({
       id: "S1",
       length: 75,

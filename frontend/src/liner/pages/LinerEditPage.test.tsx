@@ -5,6 +5,20 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LinerEditPage } from "./LinerEditPage";
 
+vi.mock("recharts", () => ({
+  CartesianGrid: () => <div data-testid="mock-cartesian-grid" />,
+  Line: () => <div data-testid="mock-line" />,
+  LineChart: ({ children }: { children: ReactNode }) => (
+    <div data-testid="mock-line-chart">{children}</div>
+  ),
+  ResponsiveContainer: ({ children }: { children: ReactNode }) => (
+    <div data-testid="mock-responsive-container">{children}</div>
+  ),
+  Tooltip: () => <div data-testid="mock-tooltip" />,
+  XAxis: () => <div data-testid="mock-x-axis" />,
+  YAxis: () => <div data-testid="mock-y-axis" />,
+}));
+
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 let root: Root | null = null;
@@ -165,5 +179,47 @@ describe("LinerEditPage", () => {
     });
     expect(document.querySelector("[data-testid=liner-setup-tabpanel-line]")).not.toBeNull();
     expect(inputByTestId("liner-alignment-id").value).toBe("alignment-1");
+  });
+
+  it("renders vertical editor and profile chart on the vertical tab", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-vertical]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-vertical]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=add-liner-grade-element]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=add-liner-parabolic-element]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=vertical-profile-chart]")).not.toBeNull();
+  });
+
+  it("renders cross-section editor, superelevation editor, and preview on the cross-section tab", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-crossSection]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-crossSection]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=cross-section-template-id]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=superelevation-editor]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
+  });
+
+  it("keeps height and review tabs as stubs", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tab-stub-height]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=add-liner-grade-element]")).toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tab-stub-review]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=cross-section-template-id]")).toBeNull();
   });
 });
