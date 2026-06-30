@@ -46,7 +46,7 @@ describe("liner project draft persistence", () => {
     expect(linerDraftFromProject(legacyProject)).toEqual(draft);
   });
 
-  it("falls back to a default draft for old projects", () => {
-    expect(linerDraftFromProject(createDefaultProject())).toEqual(createDefaultLinerDraft());
+  it("returns undefined when the project has no LINER metadata", () => {
+    expect(linerDraftFromProject(createDefaultProject())).toBeUndefined();
   });
 });

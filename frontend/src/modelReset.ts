@@ -1,10 +1,7 @@
 import type { ProjectModel } from "./types";
-import { createDefaultLinerDraft } from "./liner/adapters/linerUiAdapter";
-import { withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 
 export function resetProjectModelContents(project: ProjectModel): ProjectModel {
-  const draft = createDefaultLinerDraft();
-  const resetProject: ProjectModel = {
+  return {
     ...project,
     nodes: [],
     materials: [],
@@ -26,17 +23,6 @@ export function resetProjectModelContents(project: ProjectModel): ProjectModel {
     analysisResults: undefined,
     liner: undefined,
     linerTrace: [],
-  };
-
-  const nextProject = withProjectLinerDraft(resetProject, draft);
-  return {
-    ...nextProject,
-    liner: nextProject.liner
-      ? {
-          ...nextProject.liner,
-          draft,
-        }
-      : nextProject.liner,
   };
 }
 

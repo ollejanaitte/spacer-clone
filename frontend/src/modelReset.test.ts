@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "./data/defaultProject";
-import { buildLinerViewerReviewFromDraft } from "./liner/adapters/linerViewerAdapter";
 import {
   addLinerOffset,
   createDefaultLinerDraft,
@@ -47,7 +46,7 @@ function projectWithEditedLiner(): ProjectModel {
 }
 
 describe("resetProjectModelContents", () => {
-  it("keeps a valid LINER initial state after clearing model contents", () => {
+  it("clears model contents and removes LINER metadata", () => {
     const reset = resetProjectModelContents(projectWithEditedLiner());
 
     expect(reset.nodes).toEqual([]);
@@ -55,32 +54,19 @@ describe("resetProjectModelContents", () => {
     expect(reset.materials).toEqual([]);
     expect(reset.sections).toEqual([]);
     expect(reset.linerTrace).toEqual([]);
-    expect(linerDraftFromProject(reset)).toEqual(createDefaultLinerDraft());
-    expect(reset.liner?.linerModelId).toBe("liner-model-1");
-    expect(reset.liner?.sourceRevision).toHaveLength(64);
+    expect(reset.liner).toBeUndefined();
+    expect(linerDraftFromProject(reset)).toBeUndefined();
   });
 
-  it("allows LINER draft editing after reset", () => {
+  it("allows a new LINER draft to be created explicitly after reset", () => {
     const reset = resetProjectModelContents(projectWithEditedLiner());
-    const edited = updateLinerStraightElement(linerDraftFromProject(reset), "S1", { length: 75 });
+    const draft = createDefaultLinerDraft();
+    const edited = updateLinerStraightElement(draft, "S1", { length: 75 });
     const nextProject = withProjectLinerDraft(reset, edited);
 
-    const draft = linerDraftFromProject(nextProject);
-    expect(draft.alignment.elements[0].length).toBe(75);
-    expect(nextProject.liner?.sourceRevision).not.toBe(reset.liner?.sourceRevision);
-  });
-
-  it("can build and commit a 3D model from LINER after reset without stale mapping entities", () => {
-    const reset = resetProjectModelContents(projectWithEditedLiner());
-    const edited = updateLinerStraightElement(linerDraftFromProject(reset), "S1", { length: 30 });
-    const review = buildLinerViewerReviewFromDraft(edited, reset, { generatedAt: "2026-06-29T00:00:00Z" });
-
-    expect(review.viewerProject).not.toBeNull();
-    expect(review.summary.validationReady).toBe(true);
-    expect(review.summary.nodeCount).toBeGreaterThan(0);
-    expect(review.summary.memberCount).toBeGreaterThan(0);
-    expect(review.viewerProject?.nodes.some((node) => node.id === "N_LINER_liner-model-1_001_001")).toBe(false);
-    expect(review.viewerProject?.linerTrace?.length).toBe(review.summary.traceCount);
+    expect(linerDraftFromProject(nextProject)?.alignment.elements[0].length).toBe(75);
+    expect(nextProject.liner?.linerModelId).toBe("liner-model-1");
+    expect(nextProject.liner?.sourceRevision).toHaveLength(64);
   });
 
   it("returns the original project when reset confirmation is cancelled", () => {
@@ -89,7 +75,7 @@ describe("resetProjectModelContents", () => {
 
     expect(reset).toBe(project);
     const originalDraft = linerDraftFromProject(reset);
-    expect(originalDraft.alignment.elements[0].length).toBe(140);
+    expect(originalDraft?.alignment.elements[0].length).toBe(140);
     expect(reset.nodes.length).toBeGreaterThan(0);
     expect(reset.linerTrace).toHaveLength(1);
   });
