@@ -1,10 +1,13 @@
 import type { ToleranceConfig } from "./types";
 
+/** C1 azimuth tolerance: 0.001 deg expressed in radians. */
+export const AZIMUTH_TOLERANCE_RAD = 0.001 * (Math.PI / 180);
+
 export const DEFAULT_TOLERANCES: ToleranceConfig = {
   length: 1e-6,
-  coordinate: 1e-6,
+  coordinate: 0.001,
   clothoidCoordinate: 1e-3,
-  azimuth: 1e-9,
+  azimuth: AZIMUTH_TOLERANCE_RAD,
   elevation: 1e-6,
   station: 1e-6,
   offset: 1e-4,
