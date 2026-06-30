@@ -16,6 +16,8 @@ type ProjectLike = Record<string, unknown> & Partial<ProjectLinerExtension>;
 const FIXED_Z_DRAFT_KEYS = new Set([
   "alignment",
   "stationDefinition",
+  "verticalAlignment",
+  "crossSections",
   "offsets",
   "sampleInterval",
   "z",

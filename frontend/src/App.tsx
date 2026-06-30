@@ -516,11 +516,13 @@ export function App() {
   };
 
   const exportLinerPlanDxf = () => {
+    if (!linerDraft) return;
     downloadText("liner_plan.dxf", buildLinerPlanDxf(linerDraft), "application/dxf");
     log("LINER plan DXF downloaded.");
   };
 
   const exportLinerProfileDxf = () => {
+    if (!linerDraft) return;
     downloadText("liner_profile.dxf", buildLinerProfileDxf(linerDraft), "application/dxf");
     log("LINER profile DXF downloaded.");
   };
