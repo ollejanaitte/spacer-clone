@@ -1,4 +1,5 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
+import { evaluateElementEndState } from "../core/geometry/horizontal";
 import type {
   AlignmentElement,
   CircularArcElement,
@@ -298,11 +299,14 @@ export function removeLinerOffset(draft: BuildIntermediateInput, index: number):
 }
 
 export function addLinerStraightElement(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const elements = draft.alignment.elements;
+  const lastElement = elements[elements.length - 1];
+  const endState = lastElement ? evaluateElementEndState(lastElement) : null;
   const nextElement: StraightElement = {
-    id: nextAlignmentElementId("S", draft.alignment.elements),
+    id: nextAlignmentElementId("S", elements),
     type: "straight",
-    start: { x: 0, y: 0 },
-    azimuth: 0,
+    start: endState?.point ?? { x: 0, y: 0 },
+    azimuth: endState?.azimuth ?? 0,
     length: 50,
   };
 
@@ -316,13 +320,16 @@ export function addLinerStraightElement(draft: BuildIntermediateInput): BuildInt
 }
 
 export function addLinerArcElement(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const elements = draft.alignment.elements;
+  const lastElement = elements[elements.length - 1];
+  const endState = lastElement ? evaluateElementEndState(lastElement) : null;
   const nextElement: CircularArcElement = {
-    id: nextAlignmentElementId("A", draft.alignment.elements),
+    id: nextAlignmentElementId("A", elements),
     type: "arc",
-    start: { x: 0, y: 0 },
-    azimuth: 0,
-    radius: 100,
-    turn: "left",
+    start: endState?.point ?? { x: 0, y: 0 },
+    azimuth: endState?.azimuth ?? 0,
+    radius: endState?.endRadius ?? 100,
+    turn: endState?.turnDirection ?? "left",
     length: 50,
   };
 
@@ -336,15 +343,18 @@ export function addLinerArcElement(draft: BuildIntermediateInput): BuildIntermed
 }
 
 export function addLinerClothoidElement(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const elements = draft.alignment.elements;
+  const lastElement = elements[elements.length - 1];
+  const endState = lastElement ? evaluateElementEndState(lastElement) : null;
   const nextElement: ClothoidElement = {
-    id: nextAlignmentElementId("C", draft.alignment.elements),
+    id: nextAlignmentElementId("C", elements),
     type: "clothoid",
-    start: { x: 0, y: 0 },
-    azimuth: 0,
+    start: endState?.point ?? { x: 0, y: 0 },
+    azimuth: endState?.azimuth ?? 0,
     clothoidParameter: 100,
-    startRadius: null,
+    startRadius: endState?.endRadius ?? null,
     endRadius: 100,
-    turn: "left",
+    turn: endState?.turnDirection ?? "left",
     length: 50,
   };
 
