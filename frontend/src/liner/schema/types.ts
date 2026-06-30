@@ -134,7 +134,7 @@ export type VerticalElementDraft =
 
 /**
  * Batch 4 / PR-2a-1: grade 縦断要素。測点 (startStation/endStation) と区間長 (length) で定義する。
- * grade は dZ/ds (0.02 = 2%) として扱う。K値方式・半径 R 方式は採用しない。
+ * grade は内部 ratio (gradePercent / 100)。UI では % 表示。
  */
 export interface VerticalGradeElementDraft {
   type: "grade";

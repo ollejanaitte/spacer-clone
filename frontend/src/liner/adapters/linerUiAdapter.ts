@@ -1,4 +1,5 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
+import { computeOffsetLineElevation } from "../core/crossSectionElevation";
 import { evaluateElementEndState } from "../core/geometry/horizontal";
 import type {
   AlignmentElement,
@@ -88,17 +89,29 @@ export function createDefaultVerticalAlignment(
 function offsetLinesFromOffsets(
   offsets: readonly number[],
   existingOffsetLines: readonly CrossSectionOffsetLineDraft[] = [],
+  slopePercent = 0,
 ): CrossSectionOffsetLineDraft[] {
   return offsets.map((offset, index) => {
     const existingLine = existingOffsetLines[index];
     return {
       id: existingLine?.id ?? `OL-${index}`,
       offset,
-      elevation: existingLine?.elevation ?? 0,
+      elevation: computeOffsetLineElevation(offset, slopePercent),
       role: existingLine?.role ?? "custom",
       ...(existingLine?.label ? { label: existingLine.label } : {}),
     };
   });
+}
+
+function syncTemplateOffsetElevations(template: CrossSectionTemplateDraft): CrossSectionTemplateDraft {
+  const slopePercent = template.crossSlope?.valuePercent ?? 0;
+  return {
+    ...template,
+    offsetLines: template.offsetLines.map((line) => ({
+      ...line,
+      elevation: computeOffsetLineElevation(line.offset, slopePercent),
+    })),
+  };
 }
 
 export function createDefaultCrossSectionTemplate(
@@ -213,14 +226,15 @@ export function updateLinerCrossSectionTemplate(
   template: CrossSectionTemplateDraft,
   templateIndex = 0,
 ): BuildIntermediateInput {
+  const syncedTemplate = syncTemplateOffsetElevations(template);
   const currentTemplates = draft.crossSections?.length
     ? draft.crossSections
     : [createDefaultCrossSectionTemplate(draft.offsets ?? [0])];
   const nextTemplates = currentTemplates.map((currentTemplate, index) =>
-    index === templateIndex ? template : currentTemplate,
+    index === templateIndex ? syncedTemplate : currentTemplate,
   );
   if (templateIndex >= nextTemplates.length) {
-    nextTemplates.push(template);
+    nextTemplates.push(syncedTemplate);
   }
 
   return {
@@ -240,10 +254,10 @@ export function updateLinerCrossSlope(
     : [createDefaultCrossSectionTemplate(draft.offsets ?? [0])];
   const targetTemplate =
     currentTemplates[templateIndex] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0]);
-  const nextTemplate: CrossSectionTemplateDraft = {
+  const nextTemplate: CrossSectionTemplateDraft = syncTemplateOffsetElevations({
     ...targetTemplate,
     crossSlope,
-  };
+  });
   if (crossSlope === undefined) {
     delete nextTemplate.crossSlope;
   }

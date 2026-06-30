@@ -1,5 +1,11 @@
 import { FilePlus2, Trash2 } from "lucide-react";
 import { ja } from "../../i18n/ja";
+import {
+  gradePercentToRatio,
+  gradeRatioToPercent,
+  parseGradePercentInput,
+  roundGradePercent,
+} from "../core/gradeConversion";
 import type {
   VerticalAlignmentDraft,
   VerticalElementDraft,
@@ -17,15 +23,18 @@ type VerticalElementFieldPatch = Partial<{
   startStation: number;
   endStation: number;
   startElevation: number | undefined;
-  grade: number;
-  startGrade: number;
-  endGrade: number;
-  length: number;
+  gradePercent: number;
+  startGradePercent: number;
+  endGradePercent: number;
   curveType: "crest" | "sag" | undefined;
 }>;
 
 function numericValue(value: number | undefined): string {
   return Number.isFinite(value) ? String(value) : "";
+}
+
+function gradePercentValue(gradeRatio: number): string {
+  return Number.isFinite(gradeRatio) ? String(roundGradePercent(gradeRatioToPercent(gradeRatio))) : "";
 }
 
 function optionalNumericValue(value: number | undefined): string {
@@ -55,6 +64,14 @@ function parseOptionalCurveType(value: string): "crest" | "sag" | undefined {
   return undefined;
 }
 
+function syncElementLength<T extends VerticalElementDraft>(element: T): T {
+  const length = element.endStation - element.startStation;
+  return {
+    ...element,
+    length,
+  };
+}
+
 function nextVerticalElementId(prefix: string, elements: readonly VerticalElementDraft[]): string {
   const ids = new Set(elements.map((element) => element.id));
   let index = elements.length + 1;
@@ -66,16 +83,23 @@ function nextVerticalElementId(prefix: string, elements: readonly VerticalElemen
   return candidate;
 }
 
+function previousElementEndStation(elements: readonly VerticalElementDraft[]): number {
+  const last = elements[elements.length - 1];
+  return last?.endStation ?? 0;
+}
+
 function addGradeElement(verticalAlignment: VerticalAlignmentDraft): VerticalAlignmentDraft {
-  const nextElement: VerticalGradeElementDraft = {
+  const startStation = previousElementEndStation(verticalAlignment.elements);
+  const endStation = startStation + 50;
+  const nextElement: VerticalGradeElementDraft = syncElementLength({
     type: "grade",
     id: nextVerticalElementId("VG", verticalAlignment.elements),
-    startStation: 0,
-    endStation: 50,
+    startStation,
+    endStation,
     startElevation: 0,
     grade: 0,
-    length: 50,
-  };
+    length: endStation - startStation,
+  });
 
   return {
     ...verticalAlignment,
@@ -84,15 +108,17 @@ function addGradeElement(verticalAlignment: VerticalAlignmentDraft): VerticalAli
 }
 
 function addParabolicElement(verticalAlignment: VerticalAlignmentDraft): VerticalAlignmentDraft {
-  const nextElement: VerticalParabolicElementDraft = {
+  const startStation = previousElementEndStation(verticalAlignment.elements);
+  const endStation = startStation + 50;
+  const nextElement: VerticalParabolicElementDraft = syncElementLength({
     type: "parabolic",
     id: nextVerticalElementId("VP", verticalAlignment.elements),
-    startStation: 0,
-    endStation: 50,
+    startStation,
+    endStation,
     startGrade: 0,
     endGrade: 0,
-    length: 50,
-  };
+    length: endStation - startStation,
+  });
 
   return {
     ...verticalAlignment,
@@ -127,26 +153,37 @@ function updateVerticalElement(
       }
 
       if (element.type === "grade") {
-        return {
+        const startStation = patch.startStation ?? element.startStation;
+        const endStation = patch.endStation ?? element.endStation;
+        return syncElementLength({
           ...element,
           id: patch.id ?? element.id,
-          startStation: patch.startStation ?? element.startStation,
-          endStation: patch.endStation ?? element.endStation,
+          startStation,
+          endStation,
           startElevation: patch.startElevation ?? element.startElevation,
-          grade: patch.grade ?? element.grade,
-          length: patch.length ?? element.length,
-        };
+          grade:
+            patch.gradePercent !== undefined
+              ? gradePercentToRatio(patch.gradePercent)
+              : element.grade,
+        });
       }
 
-      const next: VerticalParabolicElementDraft = {
+      const startStation = patch.startStation ?? element.startStation;
+      const endStation = patch.endStation ?? element.endStation;
+      const next: VerticalParabolicElementDraft = syncElementLength({
         ...element,
         id: patch.id ?? element.id,
-        startStation: patch.startStation ?? element.startStation,
-        endStation: patch.endStation ?? element.endStation,
-        startGrade: patch.startGrade ?? element.startGrade,
-        endGrade: patch.endGrade ?? element.endGrade,
-        length: patch.length ?? element.length,
-      };
+        startStation,
+        endStation,
+        startGrade:
+          patch.startGradePercent !== undefined
+            ? gradePercentToRatio(patch.startGradePercent)
+            : element.startGrade,
+        endGrade:
+          patch.endGradePercent !== undefined
+            ? gradePercentToRatio(patch.endGradePercent)
+            : element.endGrade,
+      });
 
       if ("startElevation" in patch) {
         if (patch.startElevation === undefined) {
@@ -174,6 +211,10 @@ function elementTypeLabel(element: VerticalElementDraft): string {
     return ja.liner.fields.elementTypes.grade;
   }
   return ja.liner.fields.elementTypes.parabolic;
+}
+
+export function computeGradeEndElevation(element: VerticalGradeElementDraft): number {
+  return element.startElevation + element.grade * element.length;
 }
 
 export function VerticalElementEditor({
@@ -217,9 +258,9 @@ export function VerticalElementEditor({
               <th>{ja.liner.fields.startStation}</th>
               <th>{ja.liner.fields.endStation}</th>
               <th>{ja.liner.fields.startElevation}</th>
-              <th>{ja.liner.fields.grade}</th>
-              <th>{ja.liner.fields.startGrade}</th>
-              <th>{ja.liner.fields.endGrade}</th>
+              <th>{ja.liner.fields.gradePercent}</th>
+              <th>{ja.liner.fields.startGradePercent}</th>
+              <th>{ja.liner.fields.endGradePercent}</th>
               <th>{ja.liner.fields.length}</th>
               <th>{ja.liner.fields.curveType}</th>
               <th>{ja.liner.fields.actions}</th>
@@ -303,15 +344,17 @@ export function VerticalElementEditor({
                   {element.type === "grade" ? (
                     <input
                       type="number"
-                      value={numericValue(element.grade)}
+                      step="0.001"
+                      value={gradePercentValue(element.grade)}
                       onChange={(event) =>
                         applyChange(
                           updateVerticalElement(verticalAlignment, element.id, {
-                            grade: parseNumericInput(event.currentTarget.value),
+                            gradePercent: parseGradePercentInput(event.currentTarget.value),
                           }),
                         )
                       }
                       data-testid={`liner-vertical-element-grade-${element.id}`}
+                      aria-label={ja.liner.fields.gradePercent}
                     />
                   ) : (
                     <span aria-hidden="true">—</span>
@@ -321,15 +364,17 @@ export function VerticalElementEditor({
                   {element.type === "parabolic" ? (
                     <input
                       type="number"
-                      value={numericValue(element.startGrade)}
+                      step="0.001"
+                      value={gradePercentValue(element.startGrade)}
                       onChange={(event) =>
                         applyChange(
                           updateVerticalElement(verticalAlignment, element.id, {
-                            startGrade: parseNumericInput(event.currentTarget.value),
+                            startGradePercent: parseGradePercentInput(event.currentTarget.value),
                           }),
                         )
                       }
                       data-testid={`liner-vertical-element-start-grade-${element.id}`}
+                      aria-label={ja.liner.fields.startGradePercent}
                     />
                   ) : (
                     <span aria-hidden="true">—</span>
@@ -339,15 +384,17 @@ export function VerticalElementEditor({
                   {element.type === "parabolic" ? (
                     <input
                       type="number"
-                      value={numericValue(element.endGrade)}
+                      step="0.001"
+                      value={gradePercentValue(element.endGrade)}
                       onChange={(event) =>
                         applyChange(
                           updateVerticalElement(verticalAlignment, element.id, {
-                            endGrade: parseNumericInput(event.currentTarget.value),
+                            endGradePercent: parseGradePercentInput(event.currentTarget.value),
                           }),
                         )
                       }
                       data-testid={`liner-vertical-element-end-grade-${element.id}`}
+                      aria-label={ja.liner.fields.endGradePercent}
                     />
                   ) : (
                     <span aria-hidden="true">—</span>
@@ -357,13 +404,8 @@ export function VerticalElementEditor({
                   <input
                     type="number"
                     value={numericValue(element.length)}
-                    onChange={(event) =>
-                      applyChange(
-                        updateVerticalElement(verticalAlignment, element.id, {
-                          length: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    readOnly
+                    aria-readonly="true"
                     data-testid={`liner-vertical-element-length-${element.id}`}
                   />
                 </td>
