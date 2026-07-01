@@ -10,7 +10,7 @@ from numpy.typing import NDArray
 from .assembly import Assembly
 from .dof import DOF_NAMES, DofMap
 from .element import transformation
-from .errors import AnalysisError
+from .errors import AnalysisError, AnalysisErrorDetail
 from .model import Model
 
 
@@ -35,6 +35,7 @@ def build_success_result(
     displacements_by_case: dict[str, NDArray[np.float64]],
     load_vectors_by_case: dict[str, NDArray[np.float64]],
     constrained: list[int],
+    warnings: list[AnalysisErrorDetail] | None = None,
 ) -> dict[str, Any]:
     displacements: list[dict[str, Any]] = []
     reactions: list[dict[str, Any]] = []
@@ -89,12 +90,13 @@ def build_success_result(
         datetime.fromisoformat(finished_at.replace("Z", "+00:00"))
         - datetime.fromisoformat(started_at.replace("Z", "+00:00"))
     ).total_seconds()
+    warning_dicts = [warning.to_dict() for warning in warnings or []]
     return {
         "projectId": model.project.id,
         "schemaVersion": "1.0.0",
         "analysisSummary": {
             "analysisType": "linear_static",
-            "status": "success",
+            "status": "warning" if warning_dicts else "success",
             "startedAt": started_at,
             "finishedAt": finished_at,
             "durationMs": clean(duration * 1000.0),
@@ -109,7 +111,7 @@ def build_success_result(
         "displacements": displacements,
         "reactions": reactions,
         "memberEndForces": member_forces,
-        "warnings": [],
+        "warnings": warning_dicts,
         "errors": [],
     }
 

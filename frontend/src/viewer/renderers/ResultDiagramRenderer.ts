@@ -5,7 +5,7 @@ import {
   type MemberSectionForceComponent,
   type ResponseSpectrumSelection,
 } from "../../results/resultViewModel";
-import type { AnalysisResult, ProjectModel } from "../../types";
+import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../../types";
 import type { ViewerScales, ViewerVisibility } from "../types";
 import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
@@ -50,22 +50,22 @@ export function renderResultDiagrams(
     ));
   }
   if (visibility.axialForce) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale, spacerAxisSwap));
   }
   if (visibility.shearQy) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qy", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qy", baseScale, spacerAxisSwap));
   }
   if (visibility.shearQz) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qz", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qz", baseScale, spacerAxisSwap));
   }
   if (visibility.memberForceLabels || visibility.axialForceLabels) {
     objects.push(...renderMemberForceLabels(project, nodeMap, viewModel.memberForces.items, scales, visibility));
   }
   if (visibility.momentMy) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale, spacerAxisSwap));
   }
   if (visibility.momentMz) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Mz", baseScale));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Mz", baseScale, spacerAxisSwap));
   }
 
   return objects;
@@ -196,6 +196,7 @@ function renderMemberForce(
   }>,
   component: MemberSectionForceComponent,
   baseScale: number,
+  spacerAxisSwap: SpacerAxisSwap,
 ): THREE.Object3D[] {
   const componentForces = forces.filter((force) => force.component === component);
   const maxAbs = Math.max(
@@ -212,7 +213,7 @@ function renderMemberForce(
     if (!ends) continue;
     const stations = [...force.stations].sort((a, b) => a.station - b.station);
     if (stations.length === 0) continue;
-    const normal = diagramNormal(ends.direction, component);
+    const normal = diagramNormal(project, member, ends.direction, component, spacerAxisSwap);
     const memberVector = new THREE.Vector3().subVectors(ends.end, ends.start);
     const diagramPoints = stations.map(({ station, value }) => {
       const basePoint = ends.start.clone().addScaledVector(memberVector, station);
@@ -249,10 +250,22 @@ function renderMemberForce(
       objects.push(ribbonMesh);
     }
 
-    objects.push(createLine(diagramPoints.map((point) => point.diagramPoint), color));
+    const diagramLine = createLine(diagramPoints.map((point) => point.diagramPoint), color);
+    diagramLine.userData = {
+      type: "member-force-diagram",
+      memberId: force.memberId,
+      component,
+    };
+    objects.push(diagramLine);
     for (const point of diagramPoints) {
       if (Math.abs(point.value) > 1e-12) {
-        objects.push(createLine([point.basePoint, point.diagramPoint], color));
+        const connector = createLine([point.basePoint, point.diagramPoint], color);
+        connector.userData = {
+          type: "member-force-connector",
+          memberId: force.memberId,
+          component,
+        };
+        objects.push(connector);
       }
     }
   }
@@ -260,7 +273,18 @@ function renderMemberForce(
   return objects;
 }
 
-function diagramNormal(direction: THREE.Vector3, component: MemberSectionForceComponent): THREE.Vector3 {
+function diagramNormal(
+  project: ProjectModel,
+  member: Member,
+  direction: THREE.Vector3,
+  component: MemberSectionForceComponent,
+  spacerAxisSwap: SpacerAxisSwap,
+): THREE.Vector3 {
+  const localAxes = memberLocalAxes(project, member, spacerAxisSwap);
+  if (localAxes) {
+    if (component === "My" || component === "Qz") return localAxes.z;
+    if (component === "Mz" || component === "Qy") return localAxes.y;
+  }
   const reference =
     component === "My" || component === "Qy"
       ? new THREE.Vector3(0, 0, 1)
@@ -275,6 +299,47 @@ function diagramNormal(direction: THREE.Vector3, component: MemberSectionForceCo
     normal = new THREE.Vector3(0, 0, 1);
   }
   return normal;
+}
+
+function memberLocalAxes(
+  project: ProjectModel,
+  member: Member,
+  spacerAxisSwap: SpacerAxisSwap,
+): { y: THREE.Vector3; z: THREE.Vector3 } | null {
+  const nodeI = project.nodes.find((node) => node.id === member.nodeI);
+  const nodeJ = project.nodes.find((node) => node.id === member.nodeJ);
+  if (!nodeI || !nodeJ) return null;
+  const xAxis = modelDirection(nodeI, nodeJ);
+  if (!xAxis) return null;
+  const source = member.orientationVector ?? { x: 0, y: 0, z: 1 };
+  const candidate = new THREE.Vector3(source.x, source.y, source.z);
+  if (!isUsableVector(candidate)) return null;
+  candidate.normalize();
+  const yAxis = candidate.sub(xAxis.clone().multiplyScalar(candidate.dot(xAxis)));
+  if (!isUsableVector(yAxis)) return null;
+  yAxis.normalize();
+  const zAxis = new THREE.Vector3().crossVectors(xAxis, yAxis);
+  if (!isUsableVector(zAxis)) return null;
+  zAxis.normalize();
+  yAxis.crossVectors(zAxis, xAxis).normalize();
+  return {
+    y: modelToViewerVector(yAxis, spacerAxisSwap).normalize(),
+    z: modelToViewerVector(zAxis, spacerAxisSwap).normalize(),
+  };
+}
+
+function modelDirection(nodeI: NodeItem, nodeJ: NodeItem): THREE.Vector3 | null {
+  const direction = new THREE.Vector3(
+    nodeJ.x - nodeI.x,
+    nodeJ.y - nodeI.y,
+    nodeJ.z - nodeI.z,
+  );
+  if (!isUsableVector(direction)) return null;
+  return direction.normalize();
+}
+
+function isUsableVector(vector: THREE.Vector3): boolean {
+  return [vector.x, vector.y, vector.z].every(isFiniteNumber) && vector.lengthSq() > 1e-24;
 }
 
 function nonZeroVector(vector: THREE.Vector3): THREE.Vector3 | null {

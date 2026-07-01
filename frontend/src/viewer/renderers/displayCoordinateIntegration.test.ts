@@ -6,6 +6,7 @@ import { defaultScales, defaultVisibility } from "../types";
 import { renderDeformedShape } from "./DeformedShapeRenderer";
 import { renderLoads } from "./LoadRenderer";
 import { renderResultDiagrams } from "./ResultDiagramRenderer";
+import { renderSupports } from "./SupportRenderer";
 
 describe("3D display coordinate integration", () => {
   it("applies the SPACER display transform to deformed coordinates only", () => {
@@ -79,6 +80,21 @@ describe("3D display coordinate integration", () => {
 
     expect(arrowDirection(offArrow).toArray()).toEqual([0, 1, 0]);
     expect(arrowDirection(onArrow).toArray()).toEqual([0, 0, 1]);
+  });
+
+  it("keeps support glyph offsets in viewer space when SPACER axis swap is on", () => {
+    const project = createDefaultProject();
+    const support = project.supports[0];
+    const node = project.nodes.find((item) => item.id === support.nodeId)!;
+    const supportObject = renderSupports(project, defaultScales, "on")
+      .find((object) => object.userData.nodeId === support.nodeId);
+    const size = Math.max(defaultScales.nodeSize * 2.4, 0.16) * (defaultScales.supportSize ?? 1);
+
+    expect(supportObject?.position.toArray()).toEqual([
+      node.x,
+      node.z - size * 1.8,
+      node.y,
+    ]);
   });
 
   it("creates selected reaction and axial-force value labels", () => {
@@ -161,6 +177,42 @@ describe("3D display coordinate integration", () => {
     const lines = objects.filter((object) => object.type === "Line");
     expect(lines.length).toBeGreaterThanOrEqual(6);
   });
+
+  it("uses member local axes for My and Mz diagrams with axis swap enabled", () => {
+    const project = createInclinedLocalAxisProject();
+    const result = staticResult("N1", { ux: 0, uy: 0, uz: 0 });
+    result.memberEndForces = [{
+      loadCaseId: "LC1",
+      memberId: "M1",
+      coordinateSystem: "local",
+      i: { fx: 0, fy: 0, fz: 0, mx: 0, my: -4, mz: -6 },
+      j: { fx: 0, fy: 0, fz: 0, mx: 0, my: 4, mz: 6 },
+    }];
+
+    const objects = renderResultDiagrams(
+      project,
+      result,
+      "LC1",
+      "SRSS",
+      {
+        ...defaultVisibility,
+        momentMy: true,
+        momentMz: true,
+      },
+      { ...defaultScales, resultScale: 1 },
+      "on",
+    );
+
+    const myConnector = objects.find((object) =>
+      object.userData.type === "member-force-connector" && object.userData.component === "My"
+    ) as THREE.Line | undefined;
+    const mzConnector = objects.find((object) =>
+      object.userData.type === "member-force-connector" && object.userData.component === "Mz"
+    ) as THREE.Line | undefined;
+
+    expect(lineDirection(myConnector).dot(new THREE.Vector3(1, 0, -1).normalize())).toBeCloseTo(1);
+    expect(lineDirection(mzConnector).dot(new THREE.Vector3(0, 1, 0))).toBeCloseTo(1);
+  });
 });
 
 function arrowDirection(arrow: THREE.ArrowHelper | undefined): THREE.Vector3 {
@@ -204,5 +256,44 @@ function staticResult(
     warnings: [],
     errors: [],
   };
+}
+
+function createInclinedLocalAxisProject() {
+  const project = createDefaultProject();
+  return {
+    ...project,
+    nodes: [
+      { id: "N1", x: 0, y: 0, z: 0 },
+      { id: "N2", x: 1, y: 1, z: 0 },
+    ],
+    members: [{
+      id: "M1",
+      nodeI: "N1",
+      nodeJ: "N2",
+      materialId: "MAT1",
+      sectionId: "SEC1",
+      orientationVector: { x: 0, y: 0, z: 1 },
+    }],
+    supports: [],
+    loadCases: [{ id: "LC1", name: "Load", type: "static" as const }],
+    nodalLoads: [],
+    memberLoads: [],
+  };
+}
+
+function lineDirection(line: THREE.Line | undefined): THREE.Vector3 {
+  expect(line).toBeDefined();
+  const positions = line!.geometry.getAttribute("position");
+  const start = new THREE.Vector3(
+    positions.getX(0),
+    positions.getY(0),
+    positions.getZ(0),
+  );
+  const end = new THREE.Vector3(
+    positions.getX(1),
+    positions.getY(1),
+    positions.getZ(1),
+  );
+  return end.sub(start).normalize();
 }
 // @vitest-environment jsdom

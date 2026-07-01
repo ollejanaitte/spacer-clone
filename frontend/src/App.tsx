@@ -51,6 +51,11 @@ type ValidationNotice = {
   text: string;
 };
 
+// Temporary freeze: autosave recovery/write paths are disabled while model reset
+// and coordinate-mode interactions are being stabilized. Keep the code paths in
+// place so the feature can be restored by flipping this flag.
+const AUTOSAVE_ENABLED = false;
+
 export function App() {
   redirectLegacyRoutes();
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
@@ -167,6 +172,7 @@ export function App() {
   };
 
   useEffect(() => {
+    if (!AUTOSAVE_ENABLED) return undefined;
     void apiClient
       .loadAutosaveCandidate()
       .then((response) => {
@@ -175,6 +181,7 @@ export function App() {
         }
       })
       .catch(() => setAutosaveStatus("Autosave check failed. You can continue normal operation."));
+    return undefined;
   }, []);
 
   useEffect(() => {
@@ -197,6 +204,7 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    if (!AUTOSAVE_ENABLED) return undefined;
     if (!dirty) return undefined;
     const timer = window.setTimeout(() => {
       void apiClient
@@ -724,7 +732,7 @@ export function App() {
           {validationNotice.text}
         </div>
       )}
-      {autosaveCandidate && (
+      {AUTOSAVE_ENABLED && autosaveCandidate && (
         <div className="autosave-notice">
           <span>An autosaved model is available.</span>
           <button
@@ -743,7 +751,7 @@ export function App() {
           </button>
         </div>
       )}
-      {autosaveStatus && !autosaveCandidate && (
+      {AUTOSAVE_ENABLED && autosaveStatus && !autosaveCandidate && (
         <div className="autosave-status">{autosaveStatus}</div>
       )}
       <div className={`workspace ${dataPanelOpen ? "data-panel-open" : "data-panel-closed"}`}>

@@ -49,6 +49,30 @@ def test_case_1_cantilever_tip_concentrated_load(engine_runner) -> None:
     assert_close(free_node["rz"], -(P * L**2) / (2.0 * E * I))
     assert_close(fixed_node["fy"], P)
     assert_close(fixed_node["mz"], P * L)
+    assert result["warnings"] == []
+
+
+def test_static_analysis_warns_for_near_singular_stiffness(engine_runner) -> None:
+    project = case_1()
+    project["sections"][0]["j"] = 1e-20
+
+    result = _result(engine_runner(project))
+
+    assert result["analysisSummary"]["status"] == "warning"
+    assert any(warning["code"] == "NEAR_SINGULAR_STIFFNESS" for warning in result["warnings"])
+    assert result["errors"] == []
+
+
+def test_static_analysis_warns_for_large_displacement(engine_runner) -> None:
+    project = case_1()
+    project["materials"][0]["elasticModulus"] = 1e-9
+    project["materials"][0]["shearModulus"] = 1e-9
+
+    result = _result(engine_runner(project))
+
+    assert result["analysisSummary"]["status"] == "warning"
+    assert any(warning["code"] == "LARGE_DISPLACEMENT" for warning in result["warnings"])
+    assert result["errors"] == []
 
 
 def test_case_2_simply_supported_center_concentrated_load(engine_runner) -> None:
@@ -71,6 +95,7 @@ def test_case_2_simply_supported_center_concentrated_load(engine_runner) -> None
     assert_close(left_reaction["fy"], P / 2.0)
     assert_close(right_reaction["fy"], P / 2.0)
     assert_close(max_abs_mz, P * L / 4.0)
+    assert result["warnings"] == []
 
 
 def test_case_3_simply_supported_uniform_distributed_load(engine_runner) -> None:
@@ -93,6 +118,7 @@ def test_case_3_simply_supported_uniform_distributed_load(engine_runner) -> None
     assert_close(left_reaction["fy"], W * L / 2.0)
     assert_close(right_reaction["fy"], W * L / 2.0)
     assert_close(max_abs_mz, W * L**2 / 8.0)
+    assert result["warnings"] == []
 
 
 def _global_uniform_load_project(axis: str) -> dict[str, Any]:

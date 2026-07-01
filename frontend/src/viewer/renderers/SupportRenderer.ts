@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, Support } from "../../types";
 import type { ViewerScales } from "../types";
-import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
+import type { SpacerAxisSwap } from "../coordinateTransform";
 import { createNodeMap } from "../threeUtils";
 
 const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#222222", roughness: 0.7 });
@@ -23,9 +23,7 @@ export function renderSupports(
     if (!position) continue;
     const kind = classifySupport(support);
     const group = new THREE.Group();
-    group.position.copy(position).add(
-      modelToViewerVector({ x: 0, y: -size * 1.8, z: 0 }, spacerAxisSwap),
-    );
+    group.position.copy(position).add(new THREE.Vector3(0, -size * 1.8, 0));
 
     if (kind === "fixed") {
       const block = new THREE.Mesh(new THREE.BoxGeometry(size * 1.8, size * 0.7, size * 1.8), fixedMaterial.clone());
