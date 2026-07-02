@@ -78,8 +78,20 @@ interface ImporterDiagnostic {
   targetPath: string;
   sourceRef?: SourceRef;
   suggestedAction?: string;
+  acknowledgement?: DiagnosticAcknowledgement;
+}
+
+interface DiagnosticAcknowledgement {
+  acknowledgedBy?: string | null;
+  acknowledgedAt: string;
+  reason: string;
+  suppressUntilChange: boolean;
 }
 ```
+
+`acknowledgement` は「確認済み」情報を持つ。`suppressUntilChange: true` の場合、対象セルが変更されるまで診断を再表示しない。
+
+Error レベルの診断は acknowledgement で抑制できても、エクスポート時のブロック判定には影響しない。acknowledgement は importer JSON 本体に含め、conversion log には残さない。
 
 代表コード:
 
@@ -101,4 +113,5 @@ interface ImporterDiagnostic {
 - 横断面編集ではセル単位のハイライトを行う。
 - 横断面リストでは page 単位の集約件数を表示する。
 - エクスポート確認では Error が 1 件でもある場合、書き出しボタンを無効にする。
-
+- 確認済み診断は淡色で表示する。
+- 診断パネルに「確認済みを表示 / 非表示」トグルを設ける。

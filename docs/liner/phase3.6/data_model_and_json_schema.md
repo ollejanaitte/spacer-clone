@@ -18,6 +18,7 @@ interface JipLinerImporterProject {
   createdAt: string;
   updatedAt: string;
   coordinateSystem: CoordinateSystem;
+  sourcePdfRefs?: SourcePdfRef[];
   savedSnapshots?: SavedSnapshotMeta[];
   bridges: Bridge[];
 }
@@ -94,7 +95,18 @@ interface GirderLineMaster {
   displayOrder: number;
   nominalOffset?: number | null;
 }
+
+interface SourcePdfRef {
+  id: string;
+  fileName: string;
+  sha256?: string | null;
+  totalPages?: number | null;
+  lastReferencedAt?: string | null;
+  notes?: string;
+}
 ```
+
+参照 PDF の実体は保存しない。メタデータのみを保持し、`sourceRef.pdfPage` との整合検査に使用する。SHA-256 は任意入力とし、PDF 差替えの検出に使う。
 
 ## 3. Section / Point
 
@@ -247,6 +259,7 @@ type CrossSlopeDraftLike = {
   "name": "Hランプ4号橋 JIP-LINER PDF 入力",
   "createdAt": "2026-07-02T00:00:00+09:00",
   "updatedAt": "2026-07-02T00:00:00+09:00",
+  "sourcePdfRefs": [],
   "savedSnapshots": [
     {
       "id": "snapshot-001",
@@ -368,6 +381,8 @@ type CrossSlopeDraftLike = {
   ]
 }
 ```
+
+診断確認情報は M4 §6 の `ImporterDiagnostic.acknowledgement` を参照。
 
 ## 7. Phase 3.5 vNext 対応表
 
