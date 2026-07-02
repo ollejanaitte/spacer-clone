@@ -64,3 +64,61 @@ Phase 3.5 draft から Phase 3.6 importer JSON へ戻す逆変換、または JI
 - 新規 npm パッケージ、Feature Flag、`.LIN` 直接読込、逆変換を前提にしない。
 - 実 PDF の表記と設計文書の仮定が合わない場合は作業を止め、織田さんへ報告する。
 
+### 8. Pre-Decision #G: エントリポイント配置
+
+Phase 3.6 は Phase 3.5 6 タブとは別階層のメニュー項目として起動する。別ウィンドウは採用しない。同一アプリ内 route として実装する。
+
+理由: 別ウィンドウは状態管理・保存フローが複雑化する。同一 route であれば Phase 3.5 との UI 分離を保ちつつ既存アーキテクチャで表現可能。
+
+### 9. Pre-Decision #H: 複数橋梁対応
+
+データモデル上は 1 project に複数橋梁を保持できる構造を維持する。初期 UI は 1 橋梁中心の導線とし、複数橋梁編集を強調しない。
+
+複数橋梁を跨ぐ diagnostics / export は本フェーズ非スコープとする。
+
+### 10. Pre-Decision #I: 座標系 epoch は任意
+
+水平座標系の epoch は任意入力とし、未入力の場合は Phase 3.5 draft エクスポート時に warning を出す。エクスポート自体は継続可能とする。
+
+### 11. Pre-Decision #J: ジオイドモデルは任意
+
+鉛直座標系のジオイドモデルは任意入力とし、未入力の場合は Phase 3.5 draft エクスポート時に warning を出す。エクスポート自体は継続可能とする。
+
+### 12. Pre-Decision #K: fixture への実 PDF 値反映
+
+M2 §6 のサンプル JSON に転記した Hランプ4号橋 横断面 1 の抽出値は、実装フェーズで fixture として使用してよい。ただし `REPORT09_2編-01_Hランプ4号橋_線形計算書.PDF` そのものはリポジトリに含めない。値のみコード化する。
+
+### 13. Pre-Decision #L: `********` の初期分類
+
+`********` を含むセルは、初期状態で `flags.notComputed = true` とする。
+
+ユーザーが横断面編集画面のセルコンテキストメニューから `notApplicable` / `outOfRange` へ変更可能とする。UI 実装は PR-3.6-3a のスコープに含める。
+
+### 14. Pre-Decision #M: PDF OCR は Phase 3.7 以降
+
+PDF OCR、表抽出、半自動入力は Phase 3.6 の非スコープとする。Phase 3.7 以降で改めて判断する。Pre-Decision #C（新規 npm パッケージ導入禁止）の維持と整合する。
+
+### 15. Pre-Decision #N: Phase 3.5 draft エクスポートは新規作成
+
+Phase 3.6 から Phase 3.5 draft へのエクスポートは、既存 draft を上書きせず、新規 draft として作成する。既存 Phase 3.5 draft を保護する。
+
+上書きが必要な場合はユーザーによる明示的な 2 段階確認（確認ダイアログ + 差分表示）を経ることを要件とする。実装フェーズで具体化する。
+
+### 16. Pre-Decision #O: conversion log は別ファイル
+
+Phase 3.5 adapter の conversion log は importer JSON 本体に含めず、別ファイル `<project>.conversion.log.json` として保存する。
+
+理由: importer JSON の payload 肥大化を抑え、sourceRef の詳細は log 側に集約する。M5 §6 および M7 リスク項目と整合する。
+
+### 17. Pre-Decision #P: 名前付き途中保存と再開機能
+
+Phase 3.6 は「PDF を見ながら数値を写経」する作業を主目的とするため、入力途中で作業を中断・再開できる機能を必須とする。
+
+- ユーザーは任意の入力時点で **名前を付けて JSON 保存**できる
+- 保存された JSON は **後から一覧から呼び出し可能**
+- 保存単位はプロジェクトを主とし、橋梁単位・横断面単位のバックアップは実装フェーズで判断する
+- 保存ファイル拡張子は実装フェーズで確定するが、Phase 3.5 draft と混同しない拡張子とする
+- 保存 JSON は M2 の `JipLinerImporterProject` スキーマに準拠する
+- 自動バックアップは名前付き保存とは別系統とし、実装フェーズで間隔を決める
+- 未確定の入力（バリデーション error 状態）でも名前付き保存を許可する（Draft 保存）
+- 開き直したときは、最後に編集していた画面（プロジェクト → 橋梁 → 横断面編集 等）へ復帰する

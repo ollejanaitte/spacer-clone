@@ -18,9 +18,27 @@ interface JipLinerImporterProject {
   createdAt: string;
   updatedAt: string;
   coordinateSystem: CoordinateSystem;
+  savedSnapshots?: SavedSnapshotMeta[];
   bridges: Bridge[];
 }
 ```
+
+```ts
+interface SavedSnapshotMeta {
+  id: string;
+  name: string;
+  savedAt: string;
+  lastEditedStep: "top" | "bridge" | "lineMaster" | "sectionList" | "sectionEdit" | "spanPier" | "export";
+  lastEditedRef?: {
+    bridgeId?: string;
+    sectionId?: string;
+  };
+  isDraftSave: boolean;
+  notes?: string;
+}
+```
+
+`savedSnapshots` は名前付き途中保存のメタデータのみを保持する。保存時点の実データは `JipLinerImporterProject` 本体に表現され、snapshot ごとに payload を複製しない。開き直し時は `lastEditedStep` と `lastEditedRef` を使い、最後に編集していた画面へ復帰する。
 
 ## 2. 主要型
 
@@ -84,6 +102,7 @@ interface GirderLineMaster {
 interface Section {
   id: string;
   bridgeId: string;
+  spanId: string | null;
   pdfPage: number;
   sectionNo?: string;
   title?: string;
@@ -120,6 +139,8 @@ interface Point {
   sourceRef: SourceRef;
 }
 ```
+
+`spanId` は複数 Span を持つ橋梁で Section がどの Span に属するかを一意に決めるために持つ。未確定時は `null` を許容し、adapter 側でエクスポート時に warning を出す。
 
 ## 4. 値型
 
@@ -226,6 +247,20 @@ type CrossSlopeDraftLike = {
   "name": "Hランプ4号橋 JIP-LINER PDF 入力",
   "createdAt": "2026-07-02T00:00:00+09:00",
   "updatedAt": "2026-07-02T00:00:00+09:00",
+  "savedSnapshots": [
+    {
+      "id": "snapshot-001",
+      "name": "横断面1まで入力",
+      "savedAt": "2026-07-02T00:00:00+09:00",
+      "lastEditedStep": "sectionEdit",
+      "lastEditedRef": {
+        "bridgeId": "bridge-h-ramp-4",
+        "sectionId": "section-001-ph12-pe10"
+      },
+      "isDraftSave": true,
+      "notes": "REPORT09 の横断面1を転記中"
+    }
+  ],
   "coordinateSystem": {
     "horizontal": { "datum": "JGD2011", "epoch": null, "zone": null, "unit": "m" },
     "vertical": { "heightDatum": "T.P.", "geoidModel": null, "unit": "m" }
@@ -250,11 +285,20 @@ type CrossSlopeDraftLike = {
           ]
         }
       ],
-      "spans": [{ "id": "span-1", "name": "PH12-PH15", "girderLineSetId": "gls-main" }],
+      "spans": [
+        {
+          "id": "span-1",
+          "name": "PH12-PH15",
+          "startStation": 259.8142,
+          "endStation": 95.466,
+          "girderLineSetId": "gls-main"
+        }
+      ],
       "sections": [
         {
           "id": "section-001-ph12-pe10",
           "bridgeId": "bridge-h-ramp-4",
+          "spanId": "span-1",
           "pdfPage": 23,
           "sectionNo": "横断面 1",
           "title": "PH12(PE10)",
@@ -335,6 +379,7 @@ type CrossSlopeDraftLike = {
 | `alignmentMetadata.profile` | `domainDraft.verticalAlignment` | 同型に寄せる |
 | `alignmentMetadata.crossSlope` | `domainDraft.crossSections` / crossfall data | adapter でテンプレート化 |
 | `bridges[].spans` | `domainDraft.spans` | span ID を再採番可能 |
+| `sections[].spanId` | `domainDraft.spans[].sectionRefs` | 未確定時は warning |
 | `sections[].stationingRef` | `domainDraft.gridDefinitions` / station data | station 列の根拠 |
 | `sections[].points[]` | grid / height / cross-section 相当 | 点群は検証・補完情報として保持 |
 | `sourceRef` | conversion log | Phase 3.5 draft 本体には持ち込まず log に保存 |
