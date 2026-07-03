@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/point.schema.json",
+  "title": "JIP-LINER Importer Point",
+  "description": "Phase 3.6 importer point and shared value types (version 0.1.0).",
+  "version": "0.1.0",
+  "$defs": {
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "notComputed": { "type": "boolean" },
+        "notApplicable": { "type": "boolean" },
+        "outOfRange": { "type": "boolean" }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "enteredAt"],
+      "properties": {
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "field": { "type": "string" },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "enteredBy": { "type": ["string", "null"] }
+      }
+    },
+    "angle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deg", "min", "sec", "decimalDeg", "notation"],
+      "properties": {
+        "deg": { "type": "number" },
+        "min": { "type": "number" },
+        "sec": { "type": "number" },
+        "decimalDeg": { "type": "number" },
+        "notation": { "type": "string" }
+      }
+    },
+    "nullableNumberValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "flags", "sourceRef"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "notation": { "type": ["string", "null"] },
+        "unit": { "type": "string", "enum": ["m", "%", "deg"] },
+        "flags": { "$ref": "#/$defs/flags" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "nullableAngleValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "flags", "sourceRef"],
+      "properties": {
+        "value": {
+          "oneOf": [{ "$ref": "#/$defs/angle" }, { "type": "null" }]
+        },
+        "flags": { "$ref": "#/$defs/flags" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "nullableStationValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "flags", "sourceRef"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "label": { "type": ["string", "null"] },
+        "notation": { "type": ["string", "null"] },
+        "flags": { "$ref": "#/$defs/flags" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "girderLineId",
+        "lineLabel",
+        "x",
+        "y",
+        "designElevation",
+        "crossSlope",
+        "unitDistance",
+        "cumulativeDistance",
+        "unitWidth",
+        "cumulativeWidth",
+        "flags",
+        "sourceRef"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "girderLineId": { "type": "string", "minLength": 1 },
+        "lineLabel": { "type": "string" },
+        "x": { "$ref": "#/$defs/nullableNumberValue" },
+        "y": { "$ref": "#/$defs/nullableNumberValue" },
+        "designElevation": { "$ref": "#/$defs/nullableNumberValue" },
+        "crossSlope": { "$ref": "#/$defs/nullableNumberValue" },
+        "unitDistance": { "$ref": "#/$defs/nullableNumberValue" },
+        "cumulativeDistance": { "$ref": "#/$defs/nullableNumberValue" },
+        "unitWidth": { "$ref": "#/$defs/nullableNumberValue" },
+        "cumulativeWidth": { "$ref": "#/$defs/nullableNumberValue" },
+        "intersectionAngle": { "$ref": "#/$defs/nullableAngleValue" },
+        "station": { "$ref": "#/$defs/nullableStationValue" },
+        "flags": { "$ref": "#/$defs/flags" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    }
+  },
+  "$ref": "#/$defs/point"
+}

@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/bridge.schema.json",
+  "title": "JIP-LINER Importer Bridge",
+  "description": "Phase 3.6 importer bridge and related entities (version 0.1.0).",
+  "version": "0.1.0",
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "enteredAt"],
+      "properties": {
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "field": { "type": "string" },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "enteredBy": { "type": ["string", "null"] }
+      }
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "startStation": { "type": ["number", "null"] },
+        "endStation": { "type": ["number", "null"] },
+        "girderLineSetId": { "type": ["string", "null"] },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "girderLineMaster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "displayOrder"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "role": {
+          "type": "string",
+          "enum": ["center", "girder", "edge", "barrier", "custom"]
+        },
+        "displayOrder": { "type": "integer" },
+        "nominalOffset": { "type": ["number", "null"] }
+      }
+    },
+    "girderLineSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "referenceMode", "appliesToSpanIds", "lines"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "referenceMode": {
+          "type": "string",
+          "enum": [
+            "centerline-offset",
+            "absolute-coordinate",
+            "pdf-row-master"
+          ]
+        },
+        "appliesToSpanIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "lines": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/girderLineMaster" }
+        }
+      }
+    },
+    "horizontalAlignmentDraftLike": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements"],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "id", "start", "azimuth", "length"],
+                "properties": {
+                  "type": { "const": "straight" },
+                  "id": { "type": "string", "minLength": 1 },
+                  "start": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["x", "y"],
+                    "properties": {
+                      "x": { "type": "number" },
+                      "y": { "type": "number" }
+                    }
+                  },
+                  "azimuth": { "type": "number" },
+                  "length": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "id",
+                  "start",
+                  "azimuth",
+                  "radius",
+                  "turn",
+                  "length"
+                ],
+                "properties": {
+                  "type": { "const": "arc" },
+                  "id": { "type": "string", "minLength": 1 },
+                  "start": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["x", "y"],
+                    "properties": {
+                      "x": { "type": "number" },
+                      "y": { "type": "number" }
+                    }
+                  },
+                  "azimuth": { "type": "number" },
+                  "radius": { "type": "number" },
+                  "turn": { "type": "string", "enum": ["left", "right"] },
+                  "length": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "id",
+                  "start",
+                  "azimuth",
+                  "clothoidParameter",
+                  "turn",
+                  "length"
+                ],
+                "properties": {
+                  "type": { "const": "clothoid" },
+                  "id": { "type": "string", "minLength": 1 },
+                  "start": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["x", "y"],
+                    "properties": {
+                      "x": { "type": "number" },
+                      "y": { "type": "number" }
+                    }
+                  },
+                  "azimuth": { "type": "number" },
+                  "clothoidParameter": { "type": "number" },
+                  "startRadius": { "type": ["number", "null"] },
+                  "endRadius": { "type": ["number", "null"] },
+                  "turn": { "type": "string", "enum": ["left", "right"] },
+                  "length": { "type": "number" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "verticalAlignmentDraftLike": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements"],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "id",
+                  "startStation",
+                  "endStation",
+                  "startElevation",
+                  "grade"
+                ],
+                "properties": {
+                  "type": { "const": "grade" },
+                  "id": { "type": "string", "minLength": 1 },
+                  "startStation": { "type": "number" },
+                  "endStation": { "type": "number" },
+                  "startElevation": { "type": "number" },
+                  "grade": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "id",
+                  "startStation",
+                  "endStation",
+                  "startGrade",
+                  "endGrade",
+                  "length"
+                ],
+                "properties": {
+                  "type": { "const": "parabolic" },
+                  "id": { "type": "string", "minLength": 1 },
+                  "startStation": { "type": "number" },
+                  "endStation": { "type": "number" },
+                  "startGrade": { "type": "number" },
+                  "endGrade": { "type": "number" },
+                  "length": { "type": "number" },
+                  "startElevation": { "type": "number" },
+                  "curveType": { "type": "string", "enum": ["crest", "sag"] }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "crossSlopeDraftLike": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitions"],
+      "properties": {
+        "definitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "station", "crossSlope"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "station": { "type": "number" },
+              "crossSlope": { "type": "number" },
+              "source": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "alignmentMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plan": { "$ref": "#/$defs/horizontalAlignmentDraftLike" },
+        "profile": { "$ref": "#/$defs/verticalAlignmentDraftLike" },
+        "crossSlope": { "$ref": "#/$defs/crossSlopeDraftLike" },
+        "notes": { "type": "string" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "girderLineSets", "spans", "sections"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "routeName": { "type": "string" },
+        "bridgeType": {
+          "type": "string",
+          "enum": ["simple", "continuous", "integrated", "separated", "custom"]
+        },
+        "girderLineSets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/girderLineSet" }
+        },
+        "spans": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/span" }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "https://spacer-clone.local/schemas/liner-importer/section.schema.json#/$defs/section"
+          }
+        },
+        "renderability": {
+          "$ref": "https://spacer-clone.local/schemas/liner-importer/renderability.schema.json#/$defs/renderability"
+        },
+        "alignmentMetadata": { "$ref": "#/$defs/alignmentMetadata" }
+      }
+    }
+  },
+  "$ref": "#/$defs/bridge"
+}
