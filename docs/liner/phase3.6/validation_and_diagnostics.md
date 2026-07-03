@@ -115,3 +115,70 @@ Error レベルの診断は acknowledgement で抑制できても、エクスポ
 - エクスポート確認では Error が 1 件でもある場合、書き出しボタンを無効にする。
 - 確認済み診断は淡色で表示する。
 - 診断パネルに「確認済みを表示 / 非表示」トグルを設ける。
+
+### 8. 描画可否判定 (Renderability Gate)
+
+§2 は入力データが正しいかを検出する rule 群であり、累加距離連鎖、STA 単調性、対称性などを扱う。本節は入力データが描画・エクスポートに必要な最小要件を満たしているかを判定する。両者は独立系統として動作する。ある Section が §2 の全 rule を pass しても本節で `blocked` になり得るし、逆もあり得る。
+
+#### 8.1 判定対象別 最小要件
+
+横断図 (Cross Section SVG):
+
+| Status | 条件 |
+|---|---|
+| `ok` | 対象 Section の `points[]` のうち、`cumulativeWidth` と `designElevation` の両方が非 null である Point が 2 点以上存在し、`points[]` の `lineLabel` が全て確定している。`azimuth` は不要 |
+| `partial` | 2 点未満だが 1 点は非 null。一部 Point に `********`（notComputed）があっても、残りで 2 点以上確保できる場合は `ok` |
+| `blocked` | 有効な Point が 0 または 1 点のみ |
+
+平面プレビュー (Plan Preview):
+
+| Status | 条件 |
+|---|---|
+| `ok` | 対象 Bridge の `sections[]` のうち、`points[]` の `x` と `y` が両方非 null である Point を 1 点以上含む Section が 2 セクション以上存在し、各 Section の `azimuth.value` と `stationingRef.stationValue` が非 null |
+| `partial` | 1 セクションのみ描画可能。azimuth が 1 セクションで欠落しているが XY が揃っている場合、該当セクションは点表示のみ可能 |
+| `blocked` | 描画可能な Section が 0 件 |
+
+Phase 3.5 エクスポート (Export):
+
+| Status | 条件 |
+|---|---|
+| `ok` | 全 Section の平面プレビュー要件を満たし、`alignmentMetadata.plan` が 1 要素以上存在し、`coordinateSystem.horizontal.datum` が設定済みで、全 Section の `stationingRef.stationValue` が単調増加し、Error 診断が 0 件 |
+| `partial` | `alignmentMetadata.profile` または `alignmentMetadata.crossSlope` のいずれかが欠落しているが、他要件は満たす。adapter は Warning を出しつつエクスポート可能 |
+| `blocked` | `alignmentMetadata.plan` が欠落、診断に Error が 1 件以上、または Bridge に有効な Section が 0 件 |
+
+#### 8.2 判定粒度
+
+- Section 単位: 横断図の描画可否。
+- Bridge 単位: 平面プレビュー・エクスポートの描画可否。
+- Project 単位: 含まれる全 Bridge のエクスポート可否の集約。
+
+Bridge 単位の集約ルール:
+
+- 全 Section が `ok` なら Bridge も `ok`。
+- 1 つでも `blocked` があれば Bridge は `partial` とし、描画できる部分だけ描く。
+- 全 Section が `blocked` なら Bridge は `blocked`。
+
+Project 単位も同様の集約ルールを適用する。
+
+#### 8.3 未充足フィールドリスト
+
+判定が `partial` または `blocked` の場合、「何が欠けているか」を `MissingFieldRef[]` として列挙する。
+
+| Field | 意味 |
+|---|---|
+| `targetPath` | 欠落フィールドの JSON パス。例: `bridges[0].sections[2].points[3].x` |
+| `label` | ユーザー向け表示ラベル。例: `横断面 3 / G1 / X 座標` |
+| `requiredFor` | 必要な描画対象。`crossSection` / `planPreview` / `export` |
+| `severity` | `blocking` または `degrading` |
+| `sourceRef` | sourceRef があれば添付し、PDF 行列復帰に使う |
+
+#### 8.4 Renderability 診断コード
+
+| Code | Level | 意味 |
+|---|---|---|
+| `IMPORTER_RENDER_CROSS_SECTION_BLOCKED` | Info | 横断図描画不可 |
+| `IMPORTER_RENDER_PLAN_PREVIEW_BLOCKED` | Info | 平面プレビュー描画不可 |
+| `IMPORTER_RENDER_EXPORT_BLOCKED` | Warning | Phase 3.5 エクスポート不可 |
+| `IMPORTER_RENDER_EXPORT_DEGRADED` | Info | Phase 3.5 エクスポートは可能だが補助入力欠落あり |
+
+これらは §2 の写経ミス検出ルールの診断コードとは別系統として扱う。

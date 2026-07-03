@@ -20,6 +20,7 @@ interface JipLinerImporterProject {
   coordinateSystem: CoordinateSystem;
   sourcePdfRefs?: SourcePdfRef[];
   savedSnapshots?: SavedSnapshotMeta[];
+  renderability?: Renderability;
   bridges: Bridge[];
 }
 ```
@@ -68,6 +69,7 @@ interface Bridge {
   girderLineSets: GirderLineSet[];
   spans: Span[];
   sections: Section[];
+  renderability?: Renderability;
   alignmentMetadata?: AlignmentMetadata;
 }
 
@@ -104,9 +106,29 @@ interface SourcePdfRef {
   lastReferencedAt?: string | null;
   notes?: string;
 }
+
+interface Renderability {
+  crossSection: RenderabilityStatus;
+  planPreview: RenderabilityStatus;
+  export: RenderabilityStatus;
+  missingFields: MissingFieldRef[];
+  calculatedAt: string;
+}
+
+type RenderabilityStatus = "ok" | "partial" | "blocked";
+
+interface MissingFieldRef {
+  targetPath: string;
+  label: string;
+  requiredFor: "crossSection" | "planPreview" | "export";
+  severity: "blocking" | "degrading";
+  sourceRef?: SourceRef;
+}
 ```
 
 参照 PDF の実体は保存しない。メタデータのみを保持し、`sourceRef.pdfPage` との整合検査に使用する。SHA-256 は任意入力とし、PDF 差替えの検出に使う。
+
+`renderability` は派生値である。UI 側で常時再計算するか、section 保存時に更新するかは実装フェーズで判断する。サンプル JSON への追加は不要とする。adapter は Bridge レベルの `renderability.export` を最終ゲートとして参照する。
 
 ## 3. Section / Point
 
@@ -121,6 +143,7 @@ interface Section {
   azimuth: AngleValue;
   stationingRef: StationingRef;
   points: Point[];
+  renderability?: Renderability;
   diagnostics?: DiagnosticSummary;
   sourceRef: SourceRef;
 }
