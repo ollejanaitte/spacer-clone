@@ -45,7 +45,12 @@ import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
 import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
-import { resolveImporterRoute } from "./liner/importer/routes";
+import { LineMasterPage } from "./liner/importer/line-master/LineMasterPage";
+import {
+  matchImporterRoute,
+  resolveImporterLineMasterRoutePath,
+  resolveImporterRoute,
+} from "./liner/importer/routes";
 import { ja } from "./i18n/ja";
 
 type ValidationNotice = {
@@ -99,6 +104,7 @@ export function App() {
   const linerDraft = useMemo(() => linerDraftFromProject(project), [project]);
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
   const importerRouteActive = resolveImporterRoute(currentPathname);
+  const importerRoute = matchImporterRoute(currentPathname);
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
@@ -583,8 +589,23 @@ export function App() {
   }
 
   if (importerRouteActive) {
+    if (importerRoute.kind === "lineMaster") {
+      return (
+        <LineMasterPage
+          projectId={importerRoute.projectId}
+          bridgeId={importerRoute.bridgeId}
+          onBack={() => navigatePro("/pro/importer")}
+        />
+      );
+    }
+
     return (
-      <ImporterProjectListPage onClose={() => navigatePro("/pro")} />
+      <ImporterProjectListPage
+        onClose={() => navigatePro("/pro")}
+        onOpenProject={(projectId, bridgeId) =>
+          navigatePro(resolveImporterLineMasterRoutePath(projectId, bridgeId))
+        }
+      />
     );
   }
 
