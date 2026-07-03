@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/conversion-log.schema.json",
+  "title": "JIP-LINER Importer Conversion Log",
+  "description": "Phase 3.6 importer to Phase 3.5 draft conversion log (version 0.1.0).",
+  "version": "0.1.0",
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "enteredAt"],
+      "properties": {
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "field": { "type": "string" },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "enteredBy": { "type": ["string", "null"] }
+      }
+    },
+    "adapterDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "level", "code", "message", "targetPath"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "level": { "type": "string", "enum": ["error", "warning", "info"] },
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "targetPath": { "type": "string", "minLength": 1 },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "suggestedAction": { "type": "string" }
+      }
+    },
+    "inferredValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetPath", "reason", "sourcePaths", "inferred"],
+      "properties": {
+        "targetPath": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "sourcePaths": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "inferred": { "const": true },
+        "interpolation": { "const": "linear" }
+      }
+    },
+    "importerConversionLog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "importerProjectId",
+        "bridgeId",
+        "sourceImporterSchemaVersion",
+        "targetDraftSchemaVersion",
+        "convertedAt",
+        "diagnostics",
+        "sourceRefs",
+        "inferredValues"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "importerProjectId": { "type": "string", "minLength": 1 },
+        "bridgeId": { "type": "string", "minLength": 1 },
+        "sourceImporterSchemaVersion": { "const": "0.1.0" },
+        "targetDraftSchemaVersion": { "type": "string", "minLength": 1 },
+        "convertedAt": { "type": "string", "format": "date-time" },
+        "convertedBy": { "type": ["string", "null"] },
+        "diagnostics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/adapterDiagnostic" }
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceRef" }
+        },
+        "inferredValues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/inferredValue" }
+        }
+      }
+    }
+  },
+  "$ref": "#/$defs/importerConversionLog"
+}
