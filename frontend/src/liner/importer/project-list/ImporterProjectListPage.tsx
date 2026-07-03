@@ -7,6 +7,7 @@ import {
 
 export type ImporterProjectListPageProps = {
   onClose: () => void;
+  onOpenProject?: (projectId: string, bridgeId: string) => void;
 };
 
 function formatUpdatedAt(value: string): string {
@@ -17,7 +18,7 @@ function formatUpdatedAt(value: string): string {
   return new Date(timestamp).toLocaleString("ja-JP");
 }
 
-export function ImporterProjectListPage({ onClose }: ImporterProjectListPageProps) {
+export function ImporterProjectListPage({ onClose, onOpenProject }: ImporterProjectListPageProps) {
   const service = defaultImporterProjectService;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [projects, setProjects] = useState<ProjectListEntry[]>(() => service.listProjects());
@@ -31,6 +32,27 @@ export function ImporterProjectListPage({ onClose }: ImporterProjectListPageProp
   useEffect(() => {
     refreshProjects();
   }, [refreshProjects]);
+
+  const handleOpen = (projectId: string) => {
+    setErrorMessage(null);
+    let project = service.loadProject(projectId);
+    if (!project) {
+      setErrorMessage("プロジェクトが見つかりません。");
+      return;
+    }
+
+    if (project.bridges.length === 0) {
+      project = service.createBridge(projectId, "新規橋梁");
+    }
+
+    const bridge = project.bridges[0];
+    if (!bridge) {
+      setErrorMessage("橋梁の作成に失敗しました。");
+      return;
+    }
+
+    onOpenProject?.(project.id, bridge.id);
+  };
 
   const handleCreate = () => {
     setErrorMessage(null);
@@ -156,8 +178,7 @@ export function ImporterProjectListPage({ onClose }: ImporterProjectListPageProp
                     <td>
                       <button
                         type="button"
-                        disabled
-                        title="後続 PR で編集画面へ遷移します"
+                        onClick={() => handleOpen(project.id)}
                         data-testid={`open-importer-project-${project.id}`}
                       >
                         <FolderOpen size={16} />

@@ -4110,3 +4110,267 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+.line-master-page .line-master-settings,
+.line-master-page .line-master-table-wrap,
+.line-master-page .line-master-toolbar,
+.line-master-page .line-master-footer {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.line-master-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.line-master-field,
+.line-master-span-fieldset {
+  display: grid;
+  gap: 6px;
+}
+
+.line-master-field span,
+.line-master-span-fieldset legend {
+  font-size: 13px;
+  font-weight: 700;
+  color: #526173;
+}
+
+.line-master-field input,
+.line-master-field select,
+.line-master-table input,
+.line-master-table select {
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.line-master-span-fieldset {
+  grid-column: 1 / -1;
+  padding: 8px 10px;
+  border: 1px solid #dbe4ee;
+  border-radius: 6px;
+}
+
+.line-master-span-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 12px;
+  font-size: 13px;
+}
+
+.line-master-toolbar,
+.line-master-row-actions,
+.line-master-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.line-master-toolbar button,
+.line-master-row-actions button,
+.line-master-footer button,
+.importer-help-header button,
+.line-master-csv-dialog footer button {
+  min-height: 32px;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.line-master-table-wrap {
+  overflow: auto;
+}
+
+.line-master-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+}
+
+.line-master-table caption {
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.line-master-table th,
+.line-master-table td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.line-master-status,
+.line-master-error,
+.importer-project-list-status,
+.importer-project-list-error {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.line-master-status,
+.importer-project-list-status {
+  background: #edf7ed;
+  color: #1f5d2d;
+}
+
+.line-master-error,
+.importer-project-list-error {
+  background: #fdecec;
+  color: #8a1f1f;
+}
+
+.line-master-footer {
+  justify-content: space-between;
+}
+
+.importer-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.importer-help-modal,
+.line-master-csv-dialog {
+  width: min(720px, 100%);
+  max-height: min(80vh, 720px);
+  overflow: auto;
+  border: 1px solid #cbd5df;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+}
+
+.importer-help-header,
+.line-master-csv-dialog header,
+.line-master-csv-dialog footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.line-master-csv-dialog footer {
+  border-bottom: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.importer-help-header h2,
+.line-master-csv-dialog h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.importer-help-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.importer-help-body {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0;
+}
+
+.importer-help-tabs {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.importer-help-tabs button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #243447;
+  text-align: left;
+  font-weight: 700;
+}
+
+.importer-help-tabs button.is-active {
+  border-color: #9eb1c4;
+  background: #eef5fb;
+}
+
+.importer-help-content {
+  padding: 16px;
+  color: #243447;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.importer-help-content h2,
+.importer-help-content h3,
+.importer-help-content h4 {
+  margin: 0 0 8px;
+}
+
+.importer-help-content p {
+  margin: 0 0 12px;
+}
+
+.importer-help-content pre {
+  overflow: auto;
+  margin: 0 0 12px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.line-master-csv-dialog p {
+  margin: 0;
+  padding: 0 16px 8px;
+  color: #526173;
+  font-size: 13px;
+}
+
+.line-master-csv-dialog textarea {
+  width: calc(100% - 32px);
+  margin: 0 16px 16px;
+  padding: 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+@media (max-width: 900px) {
+  .importer-help-body {
+    grid-template-columns: 1fr;
+  }
+
+  .importer-help-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}

@@ -1,11 +1,13 @@
 import { createEmptyImporterProject } from "./factory";
 import type {
   Bridge,
+  GirderLineSet,
   JipLinerImporterProject,
   LastEditedStep,
   SavedSnapshotMeta,
   SourcePdfRef,
 } from "./types";
+import { mergeGirderLineSetIntoBridge, normalizeDisplayOrder, updateLatestSnapshotMeta } from "./line-master/lineMasterHooks";
 import { evaluateProjectRenderability } from "./renderability";
 import {
   createProject,
@@ -42,6 +44,16 @@ function withUpdatedRenderability(project: JipLinerImporterProject): JipLinerImp
   return {
     ...project,
     renderability: evaluateProjectRenderability(project),
+  };
+}
+
+function sanitizeGirderLineSet(girderLineSet: GirderLineSet): GirderLineSet {
+  return {
+    ...girderLineSet,
+    name: girderLineSet.name.trim() || "CL",
+    lines: normalizeDisplayOrder(
+      girderLineSet.lines.filter((line) => line.label.trim().length > 0),
+    ),
   };
 }
 
@@ -94,6 +106,36 @@ export class ImporterProjectService {
         bridges: project.bridges.filter((bridge) => bridge.id !== bridgeId),
       }),
     );
+  }
+
+  saveBridgeGirderLineSet(
+    projectId: string,
+    bridgeId: string,
+    girderLineSet: GirderLineSet,
+  ): JipLinerImporterProject {
+    const project = this.requireProject(projectId);
+    const bridgeIndex = project.bridges.findIndex((bridge) => bridge.id === bridgeId);
+    if (bridgeIndex < 0) {
+      throw new Error(`Bridge not found: ${bridgeId}`);
+    }
+
+    const bridge = project.bridges[bridgeIndex]!;
+    const nextBridge = mergeGirderLineSetIntoBridge(bridge, sanitizeGirderLineSet(girderLineSet));
+    const nextProject = withUpdatedRenderability(
+      updateLatestSnapshotMeta(
+        {
+          ...project,
+          bridges: project.bridges.map((entry, index) =>
+            index === bridgeIndex ? nextBridge : entry,
+          ),
+        },
+        bridgeId,
+      ),
+    );
+
+    const saved = this.saveProject(nextProject);
+    saveRecoveryState(saved, "lineMaster", { bridgeId });
+    return saved;
   }
 
   addPdfReference(projectId: string, fileName: string, notes?: string): JipLinerImporterProject {
