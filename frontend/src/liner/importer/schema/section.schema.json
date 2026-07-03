@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/section.schema.json",
+  "title": "JIP-LINER Importer Section",
+  "description": "Phase 3.6 importer section (version 0.1.0).",
+  "version": "0.1.0",
+  "$defs": {
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "notComputed": { "type": "boolean" },
+        "notApplicable": { "type": "boolean" },
+        "outOfRange": { "type": "boolean" }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "enteredAt"],
+      "properties": {
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "field": { "type": "string" },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "enteredBy": { "type": ["string", "null"] }
+      }
+    },
+    "angle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deg", "min", "sec", "decimalDeg", "notation"],
+      "properties": {
+        "deg": { "type": "number" },
+        "min": { "type": "number" },
+        "sec": { "type": "number" },
+        "decimalDeg": { "type": "number" },
+        "notation": { "type": "string" }
+      }
+    },
+    "angleValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "flags", "sourceRef"],
+      "properties": {
+        "value": {
+          "oneOf": [{ "$ref": "#/$defs/angle" }, { "type": "null" }]
+        },
+        "flags": { "$ref": "#/$defs/flags" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "stationingRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stationLabel": { "type": ["string", "null"] },
+        "stationValue": { "type": ["number", "null"] },
+        "cumulativeDistance": { "type": ["number", "null"] },
+        "notation": { "type": ["string", "null"] },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "diagnosticAcknowledgement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acknowledgedAt", "reason", "suppressUntilChange"],
+      "properties": {
+        "acknowledgedBy": { "type": ["string", "null"] },
+        "acknowledgedAt": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string", "minLength": 1 },
+        "suppressUntilChange": { "type": "boolean" }
+      }
+    },
+    "importerDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "level", "code", "message", "targetPath"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "level": { "type": "string", "enum": ["error", "warning", "info"] },
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "targetPath": { "type": "string", "minLength": 1 },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "suggestedAction": { "type": "string" },
+        "acknowledgement": { "$ref": "#/$defs/diagnosticAcknowledgement" }
+      }
+    },
+    "diagnosticSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/importerDiagnostic" }
+        },
+        "lastCalculatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "bridgeId",
+        "spanId",
+        "pdfPage",
+        "azimuth",
+        "stationingRef",
+        "points",
+        "sourceRef"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "bridgeId": { "type": "string", "minLength": 1 },
+        "spanId": { "type": ["string", "null"] },
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "sectionNo": { "type": "string" },
+        "title": { "type": "string" },
+        "azimuth": { "$ref": "#/$defs/angleValue" },
+        "stationingRef": { "$ref": "#/$defs/stationingRef" },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "https://spacer-clone.local/schemas/liner-importer/point.schema.json#/$defs/point"
+          }
+        },
+        "renderability": {
+          "$ref": "https://spacer-clone.local/schemas/liner-importer/renderability.schema.json#/$defs/renderability"
+        },
+        "diagnostics": { "$ref": "#/$defs/diagnosticSummary" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    }
+  },
+  "$ref": "#/$defs/section"
+}

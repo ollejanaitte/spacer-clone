@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/renderability.schema.json",
+  "title": "JIP-LINER Importer Renderability",
+  "description": "Phase 3.6 importer renderability gate (version 0.1.0).",
+  "version": "0.1.0",
+  "$defs": {
+    "renderabilityStatus": {
+      "type": "string",
+      "enum": ["ok", "partial", "blocked"]
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "enteredAt"],
+      "properties": {
+        "pdfPage": { "type": "integer", "minimum": 1 },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "field": { "type": "string" },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "enteredBy": { "type": ["string", "null"] }
+      }
+    },
+    "missingFieldRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetPath", "label", "requiredFor", "severity"],
+      "properties": {
+        "targetPath": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "requiredFor": {
+          "type": "string",
+          "enum": ["crossSection", "planPreview", "export"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["blocking", "degrading"]
+        },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" }
+      }
+    },
+    "renderability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "crossSection",
+        "planPreview",
+        "export",
+        "missingFields",
+        "calculatedAt"
+      ],
+      "properties": {
+        "crossSection": { "$ref": "#/$defs/renderabilityStatus" },
+        "planPreview": { "$ref": "#/$defs/renderabilityStatus" },
+        "export": { "$ref": "#/$defs/renderabilityStatus" },
+        "missingFields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/missingFieldRef" }
+        },
+        "calculatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "$ref": "#/$defs/renderability"
+}

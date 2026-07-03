@@ -44,6 +44,8 @@ import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
 import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
+import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
+import { resolveImporterRoute } from "./liner/importer/routes";
 import { ja } from "./i18n/ja";
 
 type ValidationNotice = {
@@ -96,6 +98,7 @@ export function App() {
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
   const linerDraft = useMemo(() => linerDraftFromProject(project), [project]);
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
+  const importerRouteActive = resolveImporterRoute(currentPathname);
 
   const selection: ViewerSelection = selectedNode
     ? { type: "node", id: selectedNode }
@@ -576,6 +579,12 @@ export function App() {
           setComparisonOpen(false);
         }}
       />
+    );
+  }
+
+  if (importerRouteActive) {
+    return (
+      <ImporterProjectListPage onClose={() => navigatePro("/pro")} />
     );
   }
 

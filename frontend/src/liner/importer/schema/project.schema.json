@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/liner-importer/project.schema.json",
+  "title": "JIP-LINER Importer Project",
+  "description": "Phase 3.6 JipLinerImporterProject root schema (version 0.1.0).",
+  "version": "0.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "liner",
+    "id",
+    "name",
+    "createdAt",
+    "updatedAt",
+    "coordinateSystem",
+    "bridges"
+  ],
+  "properties": {
+    "liner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["importerSchemaVersion"],
+      "properties": {
+        "importerSchemaVersion": { "const": "0.1.0" }
+      }
+    },
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["horizontal", "vertical"],
+      "properties": {
+        "horizontal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["datum", "unit"],
+          "properties": {
+            "datum": { "type": "string", "minLength": 1 },
+            "epoch": { "type": ["string", "null"] },
+            "zone": { "type": ["integer", "null"] },
+            "unit": { "const": "m" },
+            "notes": { "type": "string" }
+          }
+        },
+        "vertical": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["heightDatum", "unit"],
+          "properties": {
+            "heightDatum": { "type": "string", "minLength": 1 },
+            "geoidModel": { "type": ["string", "null"] },
+            "unit": { "const": "m" },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    "sourcePdfRefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "fileName"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "fileName": { "type": "string", "minLength": 1 },
+          "sha256": { "type": ["string", "null"] },
+          "totalPages": { "type": ["integer", "null"], "minimum": 1 },
+          "lastReferencedAt": { "type": ["string", "null"], "format": "date-time" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "savedSnapshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "savedAt", "lastEditedStep", "isDraftSave"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "savedAt": { "type": "string", "format": "date-time" },
+          "lastEditedStep": {
+            "type": "string",
+            "enum": [
+              "top",
+              "bridge",
+              "lineMaster",
+              "sectionList",
+              "sectionEdit",
+              "spanPier",
+              "export"
+            ]
+          },
+          "lastEditedRef": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "bridgeId": { "type": "string", "minLength": 1 },
+              "sectionId": { "type": "string", "minLength": 1 }
+            }
+          },
+          "isDraftSave": { "type": "boolean" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "renderability": {
+      "$ref": "https://spacer-clone.local/schemas/liner-importer/renderability.schema.json#/$defs/renderability"
+    },
+    "bridges": {
+      "type": "array",
+      "items": {
+        "$ref": "https://spacer-clone.local/schemas/liner-importer/bridge.schema.json#/$defs/bridge"
+      }
+    }
+  }
+}
