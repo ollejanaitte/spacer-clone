@@ -1,212 +1,266 @@
 # spacer-clone
 
-Initial repository baseline for pull requests.
+`spacer-clone` は、橋梁・土木構造物向けの 3D フレーム解析、結果可視化、線形座標計算、レポート/エクスポートを統合するデスクトップ志向の OSS プロジェクトです。
 
-## 時刻歴応答解析ガイド
+JIP-SPACER / JIP-LINER で扱われるような構造解析・線形計算ワークフローを参考にしつつ、独自のデータモデル、UI、解析エンジン、出力仕様として実装しています。現在はプレビュー段階で、線形静的解析、動的解析の基礎機能、橋梁モデル生成、LINER 機能、DXF/SVG 系エクスポートの実装と検証を進めています。
 
-「時刻歴応答解析を開く」は、地震波設定から結果確認までを一方向に進めるダッシュボード形式のガイドです。
+## Project Status
 
-- モデル・支点・質量は前段画面の確定内容を読み取り専用で表示します。
-- 解析条件は、基本条件・時間設定・減衰・Newmark β 法に分けて設定します。
-- 結果画面では応答キーと物理量を動的に絞り込み、PNG/CSVに出力できます。
-- 3Dアニメーションは、表示要素、サイズ、再生速度、変形倍率、変位モードを変更できます。
+| 項目 | 状態 |
+| --- | --- |
+| バージョン | `0.3.0-preview` |
+| 開発段階 | Preview / active development |
+| 主な対象 | 3D フレーム解析、橋梁モデル生成、線形座標計算、結果可視化 |
+| UI | React + Vite + Electron |
+| API / Solver | FastAPI + Python |
+| ライセンス | 未設定。OSS 公開前に `LICENSE` を追加してください。 |
 
-### X / Y / Z 3方向同時入力
+> Note: 解析結果は検証用モデルと回帰テストで確認されていますが、設計実務での利用には追加検証が必要です。
 
-地震波設定の Direction テーブルで、X・Y・Z を個別に有効化し、それぞれ異なる地震波を割り当てます。選択した地震波の `dt` は一致させてください。不一致の場合は設定画面に警告が表示され、解析実行時にも検証されます。
+## Screenshots
 
-未入力方向はゼロ入力として扱われます。結果画面では `X / Y / Z / Resultant` を切り替えられ、Resultant は各時刻の3成分から `sqrt(x² + y² + z²)` で算出されます。旧形式の `direction` と `groundMotionId` を持つプロジェクトは読込時に schemaVersion 2 へ自動移行します。
+スクリーンショットは `docs/images/` に配置します。現時点では画像プレースホルダーを用意しています。
 
-フロントエンドの品質確認:
+<!-- screenshot: docs/images/app-overview.png -->
+<!-- screenshot: docs/images/analysis-results.png -->
+<!-- screenshot: docs/images/liner-workflow.png -->
+<!-- screenshot: docs/images/dxf-export.png -->
 
-```powershell
-cd frontend
-npm run lint
-npm run typecheck
-npm test
-npm run test:e2e
+## Features
+
+- 3D フレームモデルの入力、検証、保存、読込
+- 線形静的解析と結果テーブル表示
+- 変位、反力、部材力の CSV / PDF 帳票出力
+- Three.js / react-three-fiber による 3D 表示、変形図、アニメーション
+- 固有値解析、応答スペクトル解析、時刻歴応答解析のプレビュー実装
+- 影響線解析、移動荷重解析の API / エンジン基盤
+- 橋梁ドメインモデルから FEM モデルを生成する Bridge Wizard
+- LINER による平面線形、縦断、横断、グリッド、フレームモデル連携
+- SVG / DXF 系の CAD 出力実験
+- Electron デスクトップアプリと GPU 互換モード
+- Vitest、Playwright、pytest による回帰テスト
+
+## Analysis Capabilities
+
+### Linear Static Analysis
+
+`backend/engine` のフレーム解析エンジンが、節点、部材、支点、荷重ケースから剛性行列を組み立て、変位、反力、部材端力を計算します。
+
+主な出力:
+
+- 節点変位
+- 支点反力
+- 部材力
+- CSV エクスポート
+- PDF 帳票用 HTML
+- 3D Viewer の変形表示
+
+### Eigen Analysis
+
+質量ケースを使った固有値解析を実装しています。自然振動数、周期、モード形状、有効質量比を扱います。
+
+関連ドキュメント:
+
+- [docs/design/eigen-analysis.md](docs/design/eigen-analysis.md)
+- [docs/verification/eigen-analysis-phase-e1b-verification.md](docs/verification/eigen-analysis-phase-e1b-verification.md)
+- [docs/verification/eigen-analysis-phase-e1c-verification.md](docs/verification/eigen-analysis-phase-e1c-verification.md)
+
+### Response Spectrum Analysis
+
+固有値解析結果を使い、応答スペクトル解析を実行します。SRSS / CQC、線形補間、log-log 補間の検証モデルがあります。
+
+関連ドキュメント:
+
+- [docs/design/response-spectrum-analysis.md](docs/design/response-spectrum-analysis.md)
+- [examples/README.md](examples/README.md)
+
+### Time History Analysis
+
+Newmark-beta 法による時刻歴応答解析を実装しています。X / Y / Z の 3 方向地震波入力、Resultant 表示、グラフ、CSV / PNG 出力、3D 応答アニメーションを扱います。
+
+関連ドキュメント:
+
+- [docs/spec/th-analysis-revision-2026-06.md](docs/spec/th-analysis-revision-2026-06.md)
+- [docs/design/time-history-analysis.md](docs/design/time-history-analysis.md)
+- [docs/release-notes/time-history-preview.md](docs/release-notes/time-history-preview.md)
+
+### Influence Line and Moving Load
+
+影響線解析と移動荷重解析のエンジン/API/CSV 出力が実装されています。橋梁活荷重の自動配置や高度な包絡処理は今後の拡張対象です。
+
+関連ドキュメント:
+
+- [docs/design/influence-analysis.md](docs/design/influence-analysis.md)
+- [docs/design/influence-engine.md](docs/design/influence-engine.md)
+- [docs/design/influence-moving-load.md](docs/design/influence-moving-load.md)
+
+## LINER
+
+LINER は、線形座標計算とフレームモデル生成を担う機能モジュールです。
+
+主な範囲:
+
+- 平面線形の入力とサンプリング
+- 縦断線形、勾配、標高計算
+- 横断テンプレート、横断勾配、グリッド点生成
+- station / chainage の管理
+- 中間結果モデルを経由した再計算
+- 生成した節点・部材・支点の `project.json` へのマッピング
+- 2D プレビュー、マッピングレビュー、Viewer3D 確認
+- LINER プロジェクト保存、読込、インポータ基盤
+
+実装は `frontend/src/liner/`、設計ドキュメントは [docs/liner/README.md](docs/liner/README.md) にあります。
+
+## DXF Export
+
+DXF Export は、LINER の CAD 出力および解析結果出力の拡張として整備中です。
+
+現在の位置付け:
+
+- LINER の plan/profile DXF 出力実装が `frontend/src/liner/exports/` に存在
+- Maker.js / `dxf-parser` を使ったテストと実験を含む
+- 仕様上の安定ターゲットは `docs/liner/cad_output_spec.md` で管理
+- SVG 出力を基礎仕様としつつ、DXF subset の品質改善を継続
+
+関連ドキュメント:
+
+- [docs/liner/cad_output_spec.md](docs/liner/cad_output_spec.md)
+- [docs/design/report-drawing-output.md](docs/design/report-drawing-output.md)
+
+## Technology Stack
+
+| Layer | Technology |
+| --- | --- |
+| Desktop | Electron |
+| Frontend | React, TypeScript, Vite |
+| 3D Viewer | Three.js, react-three-fiber, drei |
+| Charts | Recharts |
+| CAD / Geometry | Maker.js, JSCAD utilities |
+| Backend API | FastAPI |
+| Solver Core | Python |
+| Schema | JSON Schema |
+| Frontend Tests | Vitest, Playwright |
+| Backend Tests | pytest |
+| Packaging | electron-builder, PyInstaller path for backend executable |
+
+## Repository Structure
+
+```text
+backend/
+  app/              FastAPI endpoints, reports, project storage API
+  engine/           analysis engine, solvers, bridge FEM generator
+  tests/            pytest verification and API tests
+desktop/
+  electron/         Electron main/preload process and GPU mode handling
+docs/
+  design/           feature design notes
+  liner/            LINER design, gates, release notes
+  verification/     verification reports and manual smoke tests
+  development/      development policies
+  images/           README screenshot placeholders
+examples/
+  verification/     structural verification models
+  liner/            LINER fixtures and expected intermediate results
+frontend/
+  src/              React application, viewer, LINER, bridge wizard, exports
+schemas/            project/result/bridge/generated FEM JSON Schemas
+scripts/            build and source hygiene helper scripts
 ```
 
-設計は `docs/spec/th-analysis-revision-2026-06.md` を参照してください。
+## Quick Start
 
-## Windowsでの起動
-
-通常はリポジトリのルートで次を実行します。
+### Windows
 
 ```powershell
 .\start-windows.ps1
 ```
 
-このコマンドでFastAPIバックエンドとElectron版React UIをまとめて起動します。デフォルトのGPU互換モードは `compat-gpu-blocklist` です。
-
-GPU互換モードを指定する場合は次のように起動します。
-
-```powershell
-.\start-windows.ps1 -GpuMode normal
-.\start-windows.ps1 -GpuMode compat-angle-gl
-```
-
-選べるモードは `normal`, `compat-gpu-blocklist`, `compat-angle-gl`, `legacy-desktop-gl` です。`legacy-desktop-gl` は表示できない場合の最後の非常用で、通常は使わないでください。
-
-終了するにはElectronのウィンドウを閉じるか、起動したPowerShellで `Ctrl+C` を押します。スクリプトは終了時にバックエンドも停止します。
-
-うまく表示されない場合は、まず `compat-angle-gl` を試してください。それでも表示できない場合のみ `legacy-desktop-gl` を試します。バックエンド起動ログは `.local_projects/backend-start.out.log` と `.local_projects/backend-start.err.log` に出力されます。
-
-既存の手動起動も引き続き使えます。
-
-```powershell
-python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-```powershell
-cd frontend
-$env:GPU_MODE="compat-gpu-blocklist"
-npm run electron:dev
-```
-
-## Macでの起動
-
-Macでは次を実行します。
+### macOS
 
 ```bash
 ./start-mac.sh
 ```
 
-GPU互換モードを指定する場合は引数で渡します。
-
-```bash
-./start-mac.sh compat-angle-gl
-```
-
-Pythonコマンド名を変えたい場合は `PYTHON_BIN` を指定できます。
-
-```bash
-PYTHON_BIN=python ./start-mac.sh
-```
-
-## Linux (Ubuntu / WSL) での起動
-
-Ubuntu 20.04 以降 / WSL2 (Ubuntu) では `start-ubuntu.sh` を使います。
+### Ubuntu / WSL
 
 ```bash
 ./start-ubuntu.sh
 ```
 
-必要に応じて Python venv・`fastapi/uvicorn`・`npm` 依存・Electron ビルドを自動で行います。終了は `Ctrl+C` で、バックエンド・Electron・関連プロセスグループをすべて停止します。
-
-GPU 互換モードの指定:
-
-```bash
-./start-ubuntu.sh --safe-gpu        # ANGLE GL fallback
-./start-ubuntu.sh --legacy-gl       # legacy desktop GL
-./start-ubuntu.sh --normal          # 通常 GPU
-```
-
-Electron をスキップして Vite dev のみ使う:
+Web UI のみを起動する場合:
 
 ```bash
 ./start-ubuntu.sh --web
 ```
 
-バックエンドのみ (curl などで API 検証する用途):
+詳細は [docs/run-ubuntu.md](docs/run-ubuntu.md) と [docs/exe-build-windows.md](docs/exe-build-windows.md) を参照してください。
+
+## Development
+
+バックエンド:
 
 ```bash
-./start-ubuntu.sh --backend-only
+python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+python -m pytest backend/tests -q
 ```
 
-詳細・トラブルシューティングは `docs/run-ubuntu.md` を参照してください。
+フロントエンド:
 
-## exe 配布版での起動
+```bash
+cd frontend
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+npm run build
+```
 
-ビルド済みの配布物を使う場合、フォルダに同梱された `Spacer Clone.exe` を実行します。
+Electron:
 
-- 配布物にはバックエンド（PyInstaller onefile 化済み）とフロントエンド（Vite ビルド）が含まれます。
-- バックエンドの展開のため、**初回起動には数秒〜十数秒かかる**ことがあります。
-- 起動中はスプラッシュ画面が表示され、「バックエンドを起動しています」「UIを準備しています」のように状態が切り替わります。
-- スプラッシュが閉じ、メインウィンドウが表示されたら起動完了です。
+```bash
+cd frontend
+npm run electron:dev
+npm run electron:build
+```
 
-## 起動中ステータス表示
+開発参加の詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
 
-バックエンドの起動待ち、UI の初期化中、エラー発生時を画面で確認できます。
+## Documentation
 
-- バックエンド起動中: 「バックエンドを起動しています。初回は数秒かかる場合があります。」と表示
-- UI 準備中: 「UIを準備しています。」と表示
-- 起動失敗時: エラー内容をダイアログで表示
+主要ドキュメント:
 
-## バージョン表示
+- [ARCHITECTURE.md](ARCHITECTURE.md) - システム構成と責務分離
+- [ROADMAP.md](ROADMAP.md) - Short / Mid / Long Term の開発計画
+- [CHANGELOG.md](CHANGELOG.md) - 主要変更履歴
+- [CONTRIBUTING.md](CONTRIBUTING.md) - 開発参加ガイド
+- [docs/README.md](docs/README.md) - 詳細ドキュメント索引
+- [docs/liner/README.md](docs/liner/README.md) - LINER ドキュメント索引
 
-メイン画面左上のプロジェクト名の下に `Version x.y.z` を表示します。値はバックエンド `/health` レスポンスの `version` を表示しているため、バックエンドとフロントを別々に動かした場合も、表示されているバージョンはバックエンド側のものです。
+## Development Status
 
-バックエンドを起動できない場合は `Version 0.0.0` が表示されます。
+現在は、構造解析 MVP から橋梁・LINER 統合へ拡張している段階です。
 
-## About と更新確認（デスクトップ版）
+安定化済み/実装済みの主な領域:
 
-デスクトップ版（Electron）では、メニュー「ヘルプ」から以下を利用できます。
+- 静的解析の基礎エンジン
+- 結果スキーマと CSV/PDF 系出力
+- 3D Viewer と表示サイズ調整
+- 固有値解析、応答スペクトル解析、時刻歴解析のプレビュー
+- 影響線・移動荷重解析の基盤
+- Bridge Wizard / FEM 生成 API
+- LINER Phase 3.x 系のコア、UI、インポータ、保存/読込
 
-- **`このアプリについて`**: アプリ名 / バージョン / リポジトリ URL を表示するダイアログを開きます。
-- **`更新を確認`**: GitHub Releases ページへのリンクを案内するダイアログを開きます。現時点では自動ダウンロード / 自動再起動は行いません（`electron-updater` 等の自動更新基盤は未導入）。
+継続中の主な領域:
 
-## アイコン
+- LINER 完成度向上
+- DXF Export の仕様固定と品質改善
+- UI/UX と大規模モデル表示の改善
+- 解析モデル生成と検証ケースの拡充
+- OSS としてのライセンス、リリース、CI 整備
 
-`build/icon.png` / `build/icon.ico` はプレースホルダーのアプリアイコンです。
+今後の詳細は [ROADMAP.md](ROADMAP.md) を参照してください。
 
-- Windows 配布時は `build/icon.ico` が `electron-builder` の `build.win.icon` から参照されます（`frontend/package.json` 参照）。
-- 再生成スクリプト: `scripts/build_icons.py`（Pure Python、外部ライブラリ不要）。
-- `electron:build` 実行時に自動的にこのスクリプトが走るため、`build/icon.*` を直接編集する必要はありません。
+## License
 
-## サンプルJSON（動的解析）
-
-動的解析を試したい方は、まず次のサンプルを開いてください。`examples/` フォルダにあります。
-
-- `examples/cantilever_eigen.json` — 片持ち梁 固有値解析
-- `examples/simple_beam_eigen.json` — 単純梁 固有値解析
-- `examples/cantilever_response_spectrum.json` — 片持ち梁 応答スペクトル解析（SRSS）
-- `examples/simple_beam_response_spectrum.json` — 単純梁 応答スペクトル解析（SRSS）
-- `examples/response_spectrum_cqc.json` — 応答スペクトル解析（CQC、片持ち梁）
-- `examples/response_spectrum_loglog.json` — 応答スペクトル解析（log-log 補間、片持ち梁）
-
-使い方:
-
-1. UI の「開く」から該当 JSON を選択するか、API 経由で `/api/examples` から取得します。
-2. サンプルを開いたら、左ペインで「質量ケース」「解析設定」を確認します。
-3. ツールバーの「固有値」または「応答」ボタンを押して解析を実行します。
-4. 結果は下部の結果タブに表示されます。PDF 帳票で帳票化できます。
-
-これらは社内試用の入口として位置付けています。質量やスペクトル点の数値は `analysisSettings` 内で書き換えられるので、動的解析のパラメータ感度を手早く確認できます。
-
-## PDF帳票
-
-ツールバーの「PDF 帳票」ボタンで印刷可能なHTML帳票を開きます。`window.print()` 経由でPDF化されます。
-
-線形静的解析に加え、動的解析の結果も以下を含みます。
-
-- 固有値表（モード番号 / 固有値 / 固有円振動数 / 固有振動数 / 固有周期 / 刺激係数 X Y Z / 有効質量比 X Y Z / 累積有効質量比 X Y Z）
-- 有効質量比サマリ（方向 / 総質量 / 最終累積有効質量比 / 使用モード数）
-- 応答スペクトル条件（スペクトルケースID / 起震方向 / 減衰定数 / モード合成方法 / 補間方法 / 目標累積有効質量比 / 使用モード / スペクトル点数 / 方向別結果数）
-- 変位表（SRSS / CQC のモード合成方法を反映。節点番号 / DX DY DZ / RX RY RZ）
-- 動的反力表（節点番号 / Fx Fy Fz / Mx My Mz）
-- 動的部材力表（部材番号 / ステーション / 成分 / 値）
-- 方向別結果サマリ（複数方向実行時の各方向の合成情報）
-- CQC 使用時の注記（減衰定数と rho_ij 補間式に言及）
-
-データが存在しないセクションは帳票に出力されません（壊れない）。
-
-## トラブル時の確認方法
-
-- **起動しない・黒い画面のまま**: `.local_projects/backend-start.err.log` を確認します。バックエンドが起動していないとフロント側はスプラッシュで停止します。
-- **ビルド済みexeで初回起動が遅い**: PyInstaller 展開のため十数秒かかることがあります。2回目以降は高速になります。
-- **開発環境で個別に確認したい**:
-
-  ```powershell
-  cd backend
-  .venv\Scripts\python.exe -m pytest -q
-  ```
-
-  ```powershell
-  cd frontend
-  npm test -- --run
-  npm run build
-  ```
-
-  バックエンドの API テスト (`tests/test_api.py`) は FastAPI の TestClient を使うため、sandbox 環境や一部 CI 環境ではハングすることがあります。その場合は `pytest -q -k "not api"` でエンジン系のテストのみを確認してください。
-- **画面が真っ黒で3D表示が出ない**: README冒頭の GPU 互換モードの説明を参照し、`compat-angle-gl` → `legacy-desktop-gl` の順に切り替えてみてください。
+このリポジトリには現時点で `LICENSE` ファイルがありません。企業レベルの OSS として公開する前に、MIT、Apache-2.0、GPL 系などの採用ライセンスを明示してください。

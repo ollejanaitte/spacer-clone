@@ -1,94 +1,105 @@
-﻿# Design Documents README
+# Documentation
 
-## 1. Purpose
+このディレクトリは `spacer-clone` の詳細ドキュメント置き場です。GitHub の入口は [README.md](../README.md)、公開向けアーキテクチャ概要は [ARCHITECTURE.md](../ARCHITECTURE.md)、今後の計画は [ROADMAP.md](../ROADMAP.md) を参照してください。
 
-This README is the entry point for the design documents of the in-house 3D frame analysis system that is being built with reference to JIP-SPACER. Subsequent Codex implementation agents should start from this README to navigate the design documents.
+## Recommended Reading
 
-## 2. Scope
+初めて読む場合は、次の順番を推奨します。
 
-- The recommended reading order for the MVP design documents.
-- The role of each document.
-- The priority order when making MVP decisions.
-- The quality standards that must be confirmed before implementation.
+1. [../README.md](../README.md) - プロジェクト概要、機能、起動方法
+2. [../ARCHITECTURE.md](../ARCHITECTURE.md) - システム構成と責務分離
+3. [../ROADMAP.md](../ROADMAP.md) - Short / Mid / Long Term の開発計画
+4. [../CONTRIBUTING.md](../CONTRIBUTING.md) - 開発参加ガイド
+5. [12_quality_gate.md](12_quality_gate.md) - PR 品質基準
+6. [liner/README.md](liner/README.md) - LINER の設計・実装状況
 
-## 3. Out of Scope
+## Documentation Map
 
-- Implementation code.
-- Detailed derivations of equations.
-- Full compatibility specification with JIP-SPACER.
-- Implementation details of features outside the MVP.
+| Area | Location | Purpose |
+| --- | --- | --- |
+| Public overview | `../README.md` | GitHub トップページ向けの概要 |
+| Architecture overview | `../ARCHITECTURE.md` | 全体構成、層、データフロー |
+| Roadmap | `../ROADMAP.md` | 短期・中期・長期計画 |
+| Contribution | `../CONTRIBUTING.md` | 開発フロー、PR、品質基準 |
+| Core MVP specs | `02_*` - `12_*` | 入力、解析、API、UI、Viewer、帳票、品質基準 |
+| Feature design | `design/` | 個別機能の設計メモ |
+| LINER | `liner/` | 線形座標計算、マッピング、CAD/Report 出力 |
+| Verification | `verification/` | 検証計画、検証結果、手動 smoke test |
+| Development | `development/` | 開発ポリシー |
+| Manual | `manual/` | ユーザー向け手順の配置先 |
+| Images | `images/` | README / docs 用スクリーンショット |
+| Roadmap details | `roadmap/` | 詳細ロードマップの配置先 |
+| Handover / investigation | `handover/`, `investigation/`, `investigations/`, `level0/`, `lobby/`, `pr/` | 実装調査、引き継ぎ、PR メモ |
 
-## 4. List of Design Documents and Reading Order
+## Core Specifications
 
-1. `docs/requirements_extraction.md`
-   - Broad requirements extracted from the SPACER operation manual.
-   - Reference material that also includes features outside the MVP.
-2. `docs/02_mvp_scope.md`
-   - The top-level decision criteria for the MVP scope.
-   - Must be read before any implementation.
-3. `docs/12_quality_gate.md`
-   - PR acceptance criteria.
-   - Defines the standards for tests, Ruff, type hints, JSON Schema, numerical error, API, UI build, and Electron/GPU compatibility.
-4. `docs/03_architecture.md`
-   - Overall system composition, responsibility boundaries, and data flow.
-5. `docs/04_input_schema.md`
-   - The input structure of `project.json`.
-6. `docs/05_analysis_engine_spec.md`
-   - Processing specification of the Python analysis engine.
-7. `docs/06_result_schema.md`
-   - Structure of the analysis result JSON.
-8. `docs/07_api_spec.md`
-   - FastAPI endpoint specification.
-9. `docs/08_ui_spec.md`
-   - React UI screen composition.
-10. `docs/09_3d_view_spec.md`
-    - Three.js rendering specification and the 2D fallback specification.
-11. `docs/10_report_spec.md`
-    - JSON / CSV / HTML report specification.
-12. `docs/11_test_spec.md`
-    - Required verification cases and test viewpoints.
-13. `docs/20_agent_instructions.md`
-    - Per-agent implementation instruction templates for Codex.
+| Document | Role |
+| --- | --- |
+| [02_mvp_scope.md](02_mvp_scope.md) | MVP scope and decision criteria |
+| [03_architecture.md](03_architecture.md) | Original MVP architecture specification |
+| [04_input_schema.md](04_input_schema.md) | `project.json` input schema |
+| [05_analysis_engine_spec.md](05_analysis_engine_spec.md) | Python analysis engine behavior |
+| [06_result_schema.md](06_result_schema.md) | Analysis result JSON |
+| [07_api_spec.md](07_api_spec.md) | FastAPI contract |
+| [08_ui_spec.md](08_ui_spec.md) | React UI specification |
+| [09_3d_view_spec.md](09_3d_view_spec.md) | Three.js viewer and fallback |
+| [10_report_spec.md](10_report_spec.md) | JSON / CSV / HTML report output |
+| [11_test_spec.md](11_test_spec.md) | Required verification cases |
+| [12_quality_gate.md](12_quality_gate.md) | PR acceptance criteria |
 
-### Priority Order
+## Feature Design Index
 
-When the documents conflict, the following priority applies.
+Representative design documents:
 
-1. `docs/02_mvp_scope.md`
-2. `docs/12_quality_gate.md`
-3. `docs/04_input_schema.md`
-4. `docs/05_analysis_engine_spec.md`
-5. `docs/06_result_schema.md`
-6. `docs/07_api_spec.md`
-7. The individual UI / 3D / report / test specifications.
-8. `docs/requirements_extraction.md`
+- [design/eigen-analysis.md](design/eigen-analysis.md)
+- [design/response-spectrum-analysis.md](design/response-spectrum-analysis.md)
+- [design/time-history-analysis.md](design/time-history-analysis.md)
+- [design/influence-analysis.md](design/influence-analysis.md)
+- [design/influence-engine.md](design/influence-engine.md)
+- [design/bridge-model-wizard.md](design/bridge-model-wizard.md)
+- [design/bridge-fem-generator.md](design/bridge-fem-generator.md)
+- [design/model-comparison-view.md](design/model-comparison-view.md)
+- [design/result-visualization.md](design/result-visualization.md)
+- [design/report-drawing-output.md](design/report-drawing-output.md)
+- [design/viewer-rendering-improvements.md](design/viewer-rendering-improvements.md)
 
-`docs/requirements_extraction.md` is reference material and must not be used as a basis for extending the MVP scope.
+## LINER
 
-## 5. Error Handling
+LINER の詳細は [liner/README.md](liner/README.md) が source of truth です。
 
-If there is a conflict between design documents:
+Key documents:
 
-- Update the relevant design document before continuing the implementation.
-- If a feature outside the MVP is about to creep in, follow `docs/02_mvp_scope.md`.
-- For decisions that touch the quality standards, follow `docs/12_quality_gate.md`.
-- Electron / GPU compatibility settings are treated as app settings or desktop settings. They must not be mixed into `project.json`, the API, or the analysis result JSON.
-- `legacy-desktop-gl` is the last-resort compatibility mode and must not be promoted to the default mode.
-- Influence line analysis, moving loads, eigenvalue analysis, response spectrum analysis, temperature loads, prestress, DXF, and license management must not be implemented inside the MVP. When in doubt, confirm the design before coding.
+- [liner/liner_scope.md](liner/liner_scope.md)
+- [liner/domain_model.md](liner/domain_model.md)
+- [liner/geometry_core.md](liner/geometry_core.md)
+- [liner/intermediate_result_model.md](liner/intermediate_result_model.md)
+- [liner/frame_model_mapping.md](liner/frame_model_mapping.md)
+- [liner/integration_with_frame_model.md](liner/integration_with_frame_model.md)
+- [liner/cad_output_spec.md](liner/cad_output_spec.md)
+- [liner/test_plan_geometry.md](liner/test_plan_geometry.md)
 
-## 6. Test Viewpoints
+## Verification
 
-Every implementation PR must satisfy all of the following:
+検証ドキュメント:
 
-- It covers the required verification cases listed in `docs/11_test_spec.md`.
-- It satisfies the PR acceptance criteria in `docs/12_quality_gate.md`.
-- Inputs, results, the API, and the UI are consistent with their respective design documents.
-- When WebGL initialization fails, the UI does not become a blank screen but switches to the 2D fallback or shows an explicit message.
-- The Electron main process does not contain analysis logic.
-- No feature outside the MVP is implemented.
+- [verification/spacer-comparison-plan.md](verification/spacer-comparison-plan.md)
+- [verification/spacer-comparison-results.md](verification/spacer-comparison-results.md)
+- [verification/bridge-model-generator.md](verification/bridge-model-generator.md)
+- [verification/eigen-analysis-phase-e1b-verification.md](verification/eigen-analysis-phase-e1b-verification.md)
+- [verification/eigen-analysis-phase-e1c-verification.md](verification/eigen-analysis-phase-e1c-verification.md)
+- [verification/time-history-known-limitations.md](verification/time-history-known-limitations.md)
+- [verification/time-history-performance-note.md](verification/time-history-performance-note.md)
 
-## 7. Definition of Done
+## Runtime and Packaging
 
-- The role of every design document is clear.
-- The reading order is clear.
-- Subsequent Codex implementation agents can reach the relevant document for the area they are responsible for.
+- [run-ubuntu.md](run-ubuntu.md)
+- [exe-build-windows.md](exe-build-windows.md)
+- [../desktop/electron/README.md](../desktop/electron/README.md)
+
+## Documentation Maintenance Rules
+
+- Top-level documents should explain project purpose, current status, and navigation.
+- Deep technical details should live under `docs/`.
+- Do not duplicate long specifications in multiple files; link to the source of truth.
+- If implementation behavior changes, update the relevant design/specification document in the same PR.
+- Handover and investigation notes are historical context. Promote durable decisions into design/spec documents when they become authoritative.

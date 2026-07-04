@@ -1,28 +1,96 @@
 # Changelog
 
-## Unreleased
+このファイルは [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) の形式を参考にしています。
+
+## [Unreleased]
 
 ### Added
 
-- TH-10 Phase-3: X・Y・Z へ独立した地震波を割り当てる3方向同時時刻歴解析と、各応答の Resultant 表示。
-- 時刻歴応答解析ガイドのダッシュボードUIと日英ロケール。
-- Rechartsベースの複数系列時刻歴グラフ、PNG保存、CSV出力。
-- react-three-fiberベースの3D応答アニメーションと再生・シーク・速度・倍率・表示切替。
-- VitestおよびPlaywrightによる回帰テスト。
+- LINER Phase 3.6 importer / launcher.
+- LINER project storage, save/load, recovery flow.
+- LINER Line Master UI.
+- LINER schema adapter skeleton.
+- LINER renderability gate and diagnostics design.
+- Documentation reorganization for OSS readiness.
 
 ### Changed
 
-- TH-10 Phase-3: 時刻歴設定を schemaVersion 2 の `groundMotions.x/y/z` 形式へ統一し、旧 `direction` / `groundMotionId` を自動移行。
-- TH-10 Phase-3: 既存 Newmark-β ソルバへ各方向の有効地震荷重を重ね合わせて入力する方式へ拡張。
-- TH-10 Phase-2: Viewer の節点サイズを 1〜100px、部材線幅を 1〜50px に拡張し、大規模モデルのラベルを最大250件へ間引くよう変更。
-- TH-10 Phase-1: 時刻歴応答解析の本文、補助文、プレースホルダ、バッジ文字を用途別デザイントークンへ分離し、ダークテーマの WCAG AA コントラストを固定。
-- 時刻歴応答解析の出力対象選択ステップを廃止し、結果画面の動的フィルタへ移行。
-- モデル・支点・質量の入力チェックカードを読み取り専用化。
-- 解析条件画面を基本条件、時間設定、減衰、Newmark β 法のグループ構成に刷新。
-- 微小変位を指数表記と物理量別自動Y軸で判読可能に変更。
+- README / docs entry points are being reorganized around project purpose, architecture, status, and roadmap.
+- LINER documentation now distinguishes implemented features, design source of truth, and future export work.
 
 ### Fixed
 
-- TH-10 Phase-2: ラベル生成または描画中の例外を Viewer 内で隔離し、線画フォールバックへ切り替えてアプリ全体の停止を防止。
-- 時刻歴結果の微小値がフラットに見える問題。
-- 結果取得後も3Dモデルの応答アニメーションが表示されない問題。
+- LINER default draft creation.
+- Axis-aware support and result rendering stabilization.
+
+## [0.3.0-preview] - 2026-06
+
+### Added
+
+- FastAPI backend with project validation, analysis execution, save/load, autosave, examples, and health endpoints.
+- Python 3D frame analysis engine for linear static analysis.
+- Result export pipeline for displacement, reaction, member force, eigen, influence, and moving-load CSV output.
+- React / TypeScript frontend with project tree, property panel, toolbar, result panels, and viewer integration.
+- Electron desktop shell with Windows/macOS/Ubuntu startup scripts.
+- GPU compatibility modes for Electron: `normal`, `compat-gpu-blocklist`, `compat-angle-gl`, `legacy-desktop-gl`.
+- Three.js / react-three-fiber viewer for model display, deformed shape, labels, and response animation.
+- Viewer display-size controls for nodes, supports, loads, labels, and member line width.
+- A/B model comparison workspace with editable B model and independent analysis results.
+- Static analysis verification cases for cantilever, simple beam, uniform load, torsion, truss, portal frame, and 3D frame examples.
+- Eigenvalue analysis with natural period/frequency, mode vectors, participation factors, and effective mass ratios.
+- Response spectrum analysis with SRSS, CQC, linear interpolation, and log-log interpolation examples.
+- Time history analysis using Newmark-beta integration.
+- Time history dashboard UI with model/support/mass checks, settings panels, result filters, charting, and animation controls.
+- X / Y / Z independent ground-motion assignment and Resultant display for time history analysis.
+- H24 ground motion import and sample data under `examples/ground-motions/`.
+- Bridge domain model, bridge project API, bridge template API, and FEM generation endpoints.
+- Bridge Wizard UI with road condition, span, impact factor, line, load, and model generation steps.
+- Influence line analysis API and engine.
+- Moving load analysis API and engine with moving history, envelope, and worst-case positions.
+- PDF report path via printable HTML.
+- JSON Schemas for project, result, bridge, and generated FEM payloads.
+- Vitest, Playwright, and pytest test suites.
+- Source hygiene checks for frontend code and Japanese string handling.
+- LINER design document set under `docs/liner/`.
+- LINER core geometry helpers for horizontal, vertical, cross-section, station, sampling, continuity, and Z merge logic.
+- LINER UI pages for list, edit, setup tabs, station/profile input, grid preview, mapping review, and preview.
+- LINER frame-model mapping and headless project generation.
+- LINER project schema extension and migration helpers.
+- LINER plan/profile DXF export experiments and tests.
+- JSCAD/STL-related LINER frame export utilities.
+
+### Changed
+
+- Time history settings migrated to schemaVersion 2 `groundMotions.x/y/z` shape.
+- Legacy time history `direction` / `groundMotionId` settings are migrated on load.
+- Time history result selection moved from an output-target step to dynamic result filters.
+- Time history charts use physical-quantity-aware Y axes and scientific notation for small values.
+- Time history input checks for model/support/mass are read-only dashboard cards.
+- Viewer label rendering isolates label-generation errors and falls back to line rendering.
+- Large model labels are throttled to keep viewer interaction usable.
+- Dynamic analysis report content now includes eigen and response-spectrum sections when available.
+- Frontend localization has expanded across time-history and LINER UI.
+- Bridge and LINER workflows are progressively integrated with the existing frame model rather than replacing `project.json`.
+
+### Fixed
+
+- Time history result values that appeared visually flat because of scaling.
+- Time history 3D animation not appearing after result retrieval.
+- Ground-motion direction handling for time history and H24 imports.
+- Viewer displacement validation and member force visualization issues documented in handover reports.
+- Eigen mode visualization path so actual mode shapes can be used instead of demo fallback data.
+- Model reset tests for LINER vNext draft integration.
+- LINER sampling and cross-slope tests.
+- Horizontal and vertical continuity tolerances for LINER geometry.
+- Project save/load path validation and non-finite JSON value handling.
+
+### Removed
+
+- No user-facing feature removals are documented for this preview line.
+
+## [Initial Baseline]
+
+### Added
+
+- Initial repository baseline for pull requests.
+- MVP design documents for architecture, input schema, analysis engine, result schema, API, UI, 3D view, reports, tests, and quality gates.
