@@ -16,10 +16,11 @@ export type LineMasterPageProps = {
   projectId: string;
   bridgeId: string;
   onBack: () => void;
+  onNext?: () => void;
   onSaved?: (project: JipLinerImporterProject) => void;
 };
 
-export function LineMasterPage({ projectId, bridgeId, onBack, onSaved }: LineMasterPageProps) {
+export function LineMasterPage({ projectId, bridgeId, onBack, onNext, onSaved }: LineMasterPageProps) {
   const service = defaultImporterProjectService;
   const [project, setProject] = useState<JipLinerImporterProject | null>(() =>
     service.loadProject(projectId),
@@ -103,6 +104,11 @@ export function LineMasterPage({ projectId, bridgeId, onBack, onSaved }: LineMas
       setErrorMessage(error instanceof Error ? error.message : "保存に失敗しました。");
     }
   }, [bridge, bridgeId, draft, onSaved, projectId, service]);
+
+  const handleSaveAndNext = useCallback(() => {
+    handleSave();
+    onNext?.();
+  }, [handleSave, onNext]);
 
   if (!project || !bridge || !initialSet) {
     return (
@@ -230,7 +236,7 @@ export function LineMasterPage({ projectId, bridgeId, onBack, onSaved }: LineMas
         <button type="button" onClick={onBack}>
           戻る
         </button>
-        <button type="button" onClick={handleSave} data-testid="line-master-save-footer">
+        <button type="button" onClick={handleSaveAndNext} data-testid="line-master-save-footer">
           保存して次へ
         </button>
       </footer>

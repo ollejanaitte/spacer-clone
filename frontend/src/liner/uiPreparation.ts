@@ -14,6 +14,9 @@ export const LINER_UI_ROUTE_IDS = [
   "liner.mappingReview",
 ] as const satisfies readonly LinerUiRouteId[];
 
+/** Upper-level launcher for choosing GUI direct input vs Phase 3.6 Importer. */
+export const LINEAR_COORDINATE_LAUNCHER_PATH = "/pro/linear-coordinate";
+
 /** URL paths under `/pro/liner/*`, matching existing pro-feature routing style. */
 export const LINER_UI_ROUTE_PATHS: Record<LinerUiRouteId, string> = {
   "liner.list": "/pro/liner",

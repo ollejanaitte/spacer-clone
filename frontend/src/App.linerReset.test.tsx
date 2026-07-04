@@ -66,7 +66,28 @@ async function resetModel(confirmValue: boolean) {
 
 async function openLinerList() {
   await act(async () => {
+    window.history.pushState({}, "", "/pro/liner");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+}
+
+async function openLinearCoordinateLauncher() {
+  await act(async () => {
     buttonByTestId("open-liner-list").click();
+  });
+}
+
+async function openImporterViaLauncher() {
+  await openLinearCoordinateLauncher();
+  await act(async () => {
+    buttonByTestId("liner-launcher-pdf").click();
+  });
+}
+
+async function openLinerViaLauncher() {
+  await openLinearCoordinateLauncher();
+  await act(async () => {
+    buttonByTestId("liner-launcher-gui").click();
   });
 }
 
@@ -102,6 +123,39 @@ afterEach(() => {
 });
 
 describe("App LINER reset integration", () => {
+  it("opens the linear coordinate launcher from the toolbar LINER button", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openLinearCoordinateLauncher();
+
+    expect(window.location.pathname).toBe("/pro/linear-coordinate");
+    expect(document.querySelector("[data-testid=liner-launcher-page]")).not.toBeNull();
+  }, 20000);
+
+  it("opens the GUI liner list from the launcher GUI card", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openLinerViaLauncher();
+
+    expect(window.location.pathname).toBe("/pro/liner");
+    expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
+  }, 20000);
+
+  it("opens the Phase 3.6 Importer from the launcher PDF card", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openImporterViaLauncher();
+
+    expect(window.location.pathname).toBe("/pro/importer");
+    expect(document.querySelector("[data-testid=importer-project-list-page]")).not.toBeNull();
+  }, 20000);
+
   it("shows an empty LINER list after model reset", async () => {
     const { App } = await import("./App");
     window.history.pushState({}, "", "/pro");

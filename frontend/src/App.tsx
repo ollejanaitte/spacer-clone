@@ -35,6 +35,7 @@ import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import { selectTimeHistoryMainStatus } from "./timeHistory/wizard/wizardState";
 import { useTimeHistoryAnalysis } from "./timeHistory/useTimeHistoryAnalysis";
 import { LinerEditPage } from "./liner/pages/LinerEditPage";
+import { LinerLauncherPage } from "./liner/pages/LinerLauncherPage";
 import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
@@ -43,13 +44,26 @@ import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/l
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
-import { resolveLinerUiRouteId, resolveLinerUiRoutePath } from "./liner/uiPreparation";
+import {
+  LINEAR_COORDINATE_LAUNCHER_PATH,
+  resolveLinerUiRouteId,
+  resolveLinerUiRoutePath,
+} from "./liner/uiPreparation";
 import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
+import { defaultImporterProjectService } from "./liner/importer/ImporterProjectService";
 import { LineMasterPage } from "./liner/importer/line-master/LineMasterPage";
+import { SectionListPage } from "./liner/importer/section-list/SectionListPage";
+import { SectionEditorPage } from "./liner/importer/section-editor/SectionEditorPage";
+import { ExportPanel, ValidationPanelPage } from "./liner/importer/export/ExportPanel";
 import {
   matchImporterRoute,
+  resolveImporterExportRoutePath,
   resolveImporterLineMasterRoutePath,
+  resolveImporterRoutePath,
   resolveImporterRoute,
+  resolveImporterSectionEditRoutePath,
+  resolveImporterSectionListRoutePath,
+  resolveImporterValidationRoutePath,
 } from "./liner/importer/routes";
 import { ja } from "./i18n/ja";
 
@@ -588,6 +602,16 @@ export function App() {
     );
   }
 
+  if (currentPathname === LINEAR_COORDINATE_LAUNCHER_PATH) {
+    return (
+      <LinerLauncherPage
+        onClose={() => navigatePro("/pro")}
+        onOpenGui={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onOpenImporter={() => navigatePro(resolveImporterRoutePath())}
+      />
+    );
+  }
+
   if (importerRouteActive) {
     if (importerRoute.kind === "lineMaster") {
       return (
@@ -595,6 +619,139 @@ export function App() {
           projectId={importerRoute.projectId}
           bridgeId={importerRoute.bridgeId}
           onBack={() => navigatePro("/pro/importer")}
+          onNext={() =>
+            navigatePro(
+              resolveImporterSectionListRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+        />
+      );
+    }
+
+    if (importerRoute.kind === "sectionList") {
+      return (
+        <SectionListPage
+          projectId={importerRoute.projectId}
+          bridgeId={importerRoute.bridgeId}
+          onBack={() =>
+            navigatePro(
+              resolveImporterLineMasterRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+          onEditSection={(sectionId) =>
+            navigatePro(
+              resolveImporterSectionEditRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+                sectionId,
+              ),
+            )
+          }
+          onNext={() => {
+            const project = defaultImporterProjectService.loadProject(importerRoute.projectId);
+            const bridge = project?.bridges.find((entry) => entry.id === importerRoute.bridgeId);
+            const firstSection = bridge?.sections[0];
+            if (firstSection) {
+              navigatePro(
+                resolveImporterSectionEditRoutePath(
+                  importerRoute.projectId,
+                  importerRoute.bridgeId,
+                  firstSection.id,
+                ),
+              );
+            }
+          }}
+        />
+      );
+    }
+
+    if (importerRoute.kind === "sectionEdit") {
+      return (
+        <SectionEditorPage
+          projectId={importerRoute.projectId}
+          bridgeId={importerRoute.bridgeId}
+          sectionId={importerRoute.sectionId}
+          onBack={() =>
+            navigatePro(
+              resolveImporterSectionListRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+          onNavigateSection={(nextSectionId) =>
+            navigatePro(
+              resolveImporterSectionEditRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+                nextSectionId,
+              ),
+            )
+          }
+          onOpenValidation={() =>
+            navigatePro(
+              resolveImporterValidationRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+          onOpenExport={() =>
+            navigatePro(
+              resolveImporterExportRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+        />
+      );
+    }
+
+    if (importerRoute.kind === "validation") {
+      return (
+        <ValidationPanelPage
+          projectId={importerRoute.projectId}
+          bridgeId={importerRoute.bridgeId}
+          onBack={() =>
+            navigatePro(
+              resolveImporterSectionListRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+          onOpenExport={() =>
+            navigatePro(
+              resolveImporterExportRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
+        />
+      );
+    }
+
+    if (importerRoute.kind === "export") {
+      return (
+        <ExportPanel
+          projectId={importerRoute.projectId}
+          bridgeId={importerRoute.bridgeId}
+          onBack={() =>
+            navigatePro(
+              resolveImporterValidationRoutePath(
+                importerRoute.projectId,
+                importerRoute.bridgeId,
+              ),
+            )
+          }
         />
       );
     }
@@ -742,7 +899,7 @@ export function App() {
           navigatePro("/pro/compare");
           setComparisonOpen(true);
         }}
-        onOpenLinerList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onOpenLinerList={() => navigatePro(LINEAR_COORDINATE_LAUNCHER_PATH)}
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge
