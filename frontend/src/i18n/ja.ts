@@ -1313,9 +1313,21 @@ export const ja = {
   liner: {
     toolbar: {
       openButton: "線形座標計算",
-      openTitle: "線形座標計算の一覧を開きます。",
+      openTitle: "線形入力方式を選択します。",
       computeButton: "計算",
       generateFrameButton: "フレームモデル生成",
+    },
+    launcher: {
+      title: "線形座標計算",
+      lead: "線形入力方式を選択してください。",
+      close: "メイン画面に戻る",
+      cardsLabel: "線形入力方式",
+      guiTitle: "GUIで線形を直接入力",
+      guiDescription:
+        "平面線形・測点・高さ・縦断・横断勾配を画面上で直接設定します。",
+      pdfTitle: "JIP-LINER PDFから写経入力",
+      pdfDescription:
+        "JIP-LINERのPDF計算書を見ながら、Project / Bridge / Line Master / Section List / Section Editor の流れで入力します。",
     },
     window: {
       title: "線形座標計算",

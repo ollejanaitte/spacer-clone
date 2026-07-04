@@ -1,11 +1,16 @@
 import { createEmptyImporterProject } from "./factory";
 import type {
   Bridge,
+  GirderLineSet,
   JipLinerImporterProject,
   LastEditedStep,
   SavedSnapshotMeta,
+  Section,
   SourcePdfRef,
 } from "./types";
+import { evaluateBridgeRenderability, evaluateSectionRenderability } from "./renderability";
+import { validateBridge, validateSection } from "./diagnostics/validateImporter";
+import { mergeGirderLineSetIntoBridge, normalizeDisplayOrder, updateLatestSnapshotMeta } from "./line-master/lineMasterHooks";
 import { evaluateProjectRenderability } from "./renderability";
 import {
   createProject,
@@ -42,6 +47,16 @@ function withUpdatedRenderability(project: JipLinerImporterProject): JipLinerImp
   return {
     ...project,
     renderability: evaluateProjectRenderability(project),
+  };
+}
+
+function sanitizeGirderLineSet(girderLineSet: GirderLineSet): GirderLineSet {
+  return {
+    ...girderLineSet,
+    name: girderLineSet.name.trim() || "CL",
+    lines: normalizeDisplayOrder(
+      girderLineSet.lines.filter((line) => line.label.trim().length > 0),
+    ),
   };
 }
 
@@ -94,6 +109,110 @@ export class ImporterProjectService {
         bridges: project.bridges.filter((bridge) => bridge.id !== bridgeId),
       }),
     );
+  }
+
+  saveBridgeSections(
+    projectId: string,
+    bridgeId: string,
+    sections: Section[],
+  ): JipLinerImporterProject {
+    const project = this.requireProject(projectId);
+    const bridgeIndex = project.bridges.findIndex((bridge) => bridge.id === bridgeId);
+    if (bridgeIndex < 0) {
+      throw new Error(`Bridge not found: ${bridgeId}`);
+    }
+
+    const bridge = project.bridges[bridgeIndex]!;
+    const bridgeWithSections = { ...bridge, sections };
+    const bridgeErrors = validateBridge(bridgeWithSections).filter(
+      (item) => item.level === "error",
+    );
+
+    const enrichedSections = sections.map((section) => {
+      const sectionDiagnostics = validateSection(section, bridgeWithSections, sections);
+      return {
+        ...section,
+        bridgeId,
+        diagnostics: {
+          items: sectionDiagnostics,
+          lastCalculatedAt: new Date().toISOString(),
+        },
+        renderability: evaluateSectionRenderability(section),
+      };
+    });
+
+    const nextBridge: Bridge = {
+      ...bridge,
+      sections: enrichedSections,
+      renderability: evaluateBridgeRenderability(
+        { ...bridge, sections: enrichedSections },
+        bridgeErrors,
+      ),
+    };
+
+    const nextProject = withUpdatedRenderability({
+      ...project,
+      bridges: project.bridges.map((entry, index) =>
+        index === bridgeIndex ? nextBridge : entry,
+      ),
+    });
+
+    const saved = this.saveProject(nextProject);
+    saveRecoveryState(saved, "sectionList", { bridgeId });
+    return saved;
+  }
+
+  saveBridgeSection(
+    projectId: string,
+    bridgeId: string,
+    section: Section,
+  ): JipLinerImporterProject {
+    const project = this.requireProject(projectId);
+    const bridge = project.bridges.find((entry) => entry.id === bridgeId);
+    if (!bridge) {
+      throw new Error(`Bridge not found: ${bridgeId}`);
+    }
+
+    const sections = bridge.sections.map((entry) =>
+      entry.id === section.id ? { ...section, bridgeId } : entry,
+    );
+    if (!sections.some((entry) => entry.id === section.id)) {
+      sections.push({ ...section, bridgeId });
+    }
+
+    const saved = this.saveBridgeSections(projectId, bridgeId, sections);
+    saveRecoveryState(saved, "sectionEdit", { bridgeId, sectionId: section.id });
+    return saved;
+  }
+
+  saveBridgeGirderLineSet(
+    projectId: string,
+    bridgeId: string,
+    girderLineSet: GirderLineSet,
+  ): JipLinerImporterProject {
+    const project = this.requireProject(projectId);
+    const bridgeIndex = project.bridges.findIndex((bridge) => bridge.id === bridgeId);
+    if (bridgeIndex < 0) {
+      throw new Error(`Bridge not found: ${bridgeId}`);
+    }
+
+    const bridge = project.bridges[bridgeIndex]!;
+    const nextBridge = mergeGirderLineSetIntoBridge(bridge, sanitizeGirderLineSet(girderLineSet));
+    const nextProject = withUpdatedRenderability(
+      updateLatestSnapshotMeta(
+        {
+          ...project,
+          bridges: project.bridges.map((entry, index) =>
+            index === bridgeIndex ? nextBridge : entry,
+          ),
+        },
+        bridgeId,
+      ),
+    );
+
+    const saved = this.saveProject(nextProject);
+    saveRecoveryState(saved, "lineMaster", { bridgeId });
+    return saved;
   }
 
   addPdfReference(projectId: string, fileName: string, notes?: string): JipLinerImporterProject {

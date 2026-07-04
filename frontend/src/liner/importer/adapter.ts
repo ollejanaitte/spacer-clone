@@ -11,6 +11,7 @@ import {
   getImporterSchemaVersion,
   isSupportedImporterVersion,
 } from "./version";
+import { convertImporterToPhase35Draft } from "./export/ImporterToPhase35Adapter";
 
 export interface AdapterResult {
   draft: unknown | null;
@@ -139,39 +140,13 @@ function validateRenderability(
   return { renderability, diagnostics };
 }
 
-function shouldStopConversion(diagnostics: AdapterDiagnostic[]): boolean {
-  return diagnostics.some((diagnostic) => diagnostic.level === "error");
-}
-
 export class ImporterAdapterSkeleton implements ImporterAdapter {
   convertProject(project: JipLinerImporterProject): AdapterResult {
-    const diagnostics: AdapterDiagnostic[] = [];
-
-    diagnostics.push(...validateSchemaVersion(project));
-    diagnostics.push(...validateRequiredMetadata(project));
-
-    const { renderability, diagnostics: renderabilityDiagnosticItems } =
-      validateRenderability(project, diagnostics);
-    diagnostics.push(...renderabilityDiagnosticItems);
-
-    if (shouldStopConversion(diagnostics)) {
-      return {
-        draft: null,
-        diagnostics,
-        renderability,
-      };
-    }
-
-    // TODO(PR-3.6-5): Map alignmentMetadata.plan/profile/crossSlope to Phase 3.5 vNext draft fields.
-    // TODO(PR-3.6-5): Map bridges[].spans/sections/points to domainDraft spans, gridDefinitions, crossSections.
-    // TODO(PR-3.6-5): Resolve coordinateSystem to coordinatePolicyId with conversion log warnings.
-    // TODO(PR-3.6-5): Aggregate sourceRef entries into ImporterConversionLog (separate file per Pre-Decision #O).
-    // TODO(PR-3.6-5): Mark inferred values with inferred: true and interpolation: "linear" when interpolating from point data.
-
+    const result = convertImporterToPhase35Draft(project);
     return {
-      draft: null,
-      diagnostics,
-      renderability,
+      draft: result.draft,
+      diagnostics: result.diagnostics,
+      renderability: result.renderability,
     };
   }
 }

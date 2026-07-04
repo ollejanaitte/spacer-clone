@@ -45,7 +45,8 @@ function buttonByTestId(testId: string): HTMLButtonElement {
 
 async function openLinerList() {
   await act(async () => {
-    buttonByTestId("open-liner-list").click();
+    window.history.pushState({}, "", "/pro/liner");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   });
 }
 
