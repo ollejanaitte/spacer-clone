@@ -276,6 +276,7 @@ export type GridPointSource = {
   alignmentId: string;
   stationRuleId?: string;
   stationId?: string;
+  sectionId?: string;
   elementId?: string;
   spanId?: string;
   pierId?: string;

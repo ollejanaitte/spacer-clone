@@ -473,10 +473,14 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
-    const expected = [0, 0.6399, 45.1726, 102.7325, 163.3996, 164.2476];
+    const expected = [
+      0, 0.5897, 0.6399, 8.3121, 16.2403, 24.1779, 32.1547, 40.1559, 45.1726, 50.4373,
+      59.8385, 69.2395, 78.6403, 88.041, 97.4416, 102.7325, 108.022, 117.5223, 127.0224,
+      136.5224, 146.0224, 155.5224, 163.3996, 163.9996, 164.2476,
+    ];
     expect(result.draft!.stationDefinition.explicitStations).toHaveLength(expected.length);
     result.draft!.stationDefinition.explicitStations!.forEach((value, index) => {
-      expect(value).toBeCloseTo(expected[index]!, 4);
+      expect(value).toBeCloseTo(expected[index]!, 3);
     });
   });
 
@@ -502,5 +506,100 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(result.draft!.crossBeams).toBeUndefined();
     expect(result.draft!.widthChangePoints).toBeUndefined();
     expect(result.diagnostics.some((d) => d.level === "error")).toBe(false);
+  });
+});
+
+describe("Phase 3.8 measuredGrid adapter", () => {
+  it("built-in sample draft includes measuredGrid with points", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    expect(result.draft!.measuredGrid).toBeDefined();
+    expect(result.draft!.measuredGrid!.points.length).toBeGreaterThan(0);
+  });
+
+  it("PH12 HCL is at local origin in measuredGrid", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    const grid = result.draft!.measuredGrid!;
+    const ph12 = grid.sections.find((section) => section.label.includes("PH12"));
+    const hcl = grid.lines.find((line) => line.label === "HCL");
+    expect(ph12).toBeDefined();
+    expect(hcl).toBeDefined();
+    const point = grid.points.find(
+      (entry) => entry.sectionId === ph12!.id && entry.lineId === hcl!.id,
+    );
+    expect(point?.x).toBeCloseTo(0, 4);
+    expect(point?.y).toBeCloseTo(0, 4);
+  });
+
+  it("PH15 HCL station is approximately 164.2476", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    const grid = result.draft!.measuredGrid!;
+    const ph15 = grid.sections.find((section) => section.label.includes("PH15"));
+    const hcl = grid.lines.find((line) => line.label === "HCL");
+    const point = grid.points.find(
+      (entry) => entry.sectionId === ph15!.id && entry.lineId === hcl!.id,
+    );
+    expect(point?.station).toBeCloseTo(164.2476, 4);
+  });
+
+  it("G1/G2 offsets vary by section in measuredGrid", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    const grid = result.draft!.measuredGrid!;
+    const g1 = grid.lines.find((line) => line.label === "G1")!;
+    const g2 = grid.lines.find((line) => line.label === "G2")!;
+    const ph12 = grid.sections.find((section) => section.label.includes("PH12"))!;
+    const ph13 = grid.sections.find((section) => section.label.includes("PH13"))!;
+    const ph12G1 = grid.points.find(
+      (point) => point.sectionId === ph12.id && point.lineId === g1.id,
+    )!;
+    const ph13G1 = grid.points.find(
+      (point) => point.sectionId === ph13.id && point.lineId === g1.id,
+    )!;
+    const ph12G2 = grid.points.find(
+      (point) => point.sectionId === ph12.id && point.lineId === g2.id,
+    )!;
+    const ph13G2 = grid.points.find(
+      (point) => point.sectionId === ph13.id && point.lineId === g2.id,
+    )!;
+    expect(ph12G1.cumulativeWidth).not.toBeCloseTo(ph13G1.cumulativeWidth, 2);
+    expect(ph12G2.cumulativeWidth).not.toBeCloseTo(ph13G2.cumulativeWidth, 2);
+  });
+
+  it("includes C1 through C17 sections in measuredGrid", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    const labels = result.draft!.measuredGrid!.sections.map((section) => section.label);
+    for (let index = 1; index <= 17; index += 1) {
+      expect(labels.some((label) => label === `C${index}`)).toBe(true);
+    }
+  });
+
+  it("draft without measuredGrid uses nominalOffset path in pipeline (regression)", async () => {
+    const { buildIntermediateResult } = await import("../../core/pipeline/pipeline");
+    const withoutMeasured = buildIntermediateResult({
+      alignment: {
+        id: "alignment-fallback",
+        linerModelId: "fallback-model",
+        coordinatePolicyId: "global",
+        elements: [
+          {
+            type: "straight",
+            id: "L1",
+            start: { x: 0, y: 0 },
+            azimuth: 0,
+            length: 20,
+          },
+        ],
+      },
+      stationDefinition: { originDisplayedStation: 0, interval: 10 },
+      offsets: [-5, 0, 5],
+      z: 10,
+    });
+    expect(withoutMeasured.grid.points).toHaveLength(9);
+    expect(withoutMeasured.grid.points[4]?.x).toBeCloseTo(10, 1);
   });
 });

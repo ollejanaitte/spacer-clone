@@ -2,7 +2,9 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
+import projectSchema from "../../../../../schemas/project.schema.json";
 import { createDefaultProject } from "../../../data/defaultProject";
 import { buildIntermediateResult } from "../../core/pipeline/pipeline";
 import type { CanonicalLinerIntermediateResult, LinearAlignment } from "../../core/types";
@@ -19,6 +21,103 @@ import {
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const exampleProjectPath = join(repoRoot, "examples/project.json");
+
+const samplingProfile = {
+  maxChordLength: 0.5,
+  maxSagitta: 0.005,
+  minSegmentsPerElement: 1,
+};
+
+const frameSamplingProfile = {
+  maxMemberLength: 0.25,
+  maxSagitta: 0.0025,
+  stationIntervalFallback: 1,
+};
+
+const minimalMeasuredGrid = {
+  id: "mg-test",
+  source: "unit-test",
+  sections: [{ id: "sec-1", label: "C1", station: 0, sortIndex: 0 }],
+  lines: [{ id: "line-hcl", label: "HCL", role: "center", sortIndex: 0 }],
+  points: [
+    {
+      id: "pt-1",
+      sectionId: "sec-1",
+      lineId: "line-hcl",
+      station: 0,
+      x: 0,
+      y: 0,
+      z: 10,
+      cumulativeWidth: 0,
+    },
+  ],
+};
+
+function minimalProjectDomainDraft(measuredGrid?: typeof minimalMeasuredGrid) {
+  return {
+    id: "draft-test",
+    linerModelId: "gc06",
+    coordinatePolicyId: "global",
+    alignment: {
+      id: "alignment-test",
+      elements: [
+        {
+          type: "straight",
+          id: "L1",
+          start: { x: 0, y: 0 },
+          azimuth: 0,
+          length: 50,
+        },
+      ],
+    },
+    stationDefinition: { originDisplayedStation: 0 },
+    verticalAlignment: {
+      id: "va-test",
+      elements: [
+        {
+          type: "grade",
+          id: "V1",
+          startPhysicalDistance: 0,
+          endPhysicalDistance: 50,
+          startElevation: 10,
+          grade: 0,
+        },
+      ],
+    },
+    crossSections: [
+      {
+        id: "cs-1",
+        name: "Default",
+        offsetLines: [{ id: "ol-1", offset: 0, elevation: 0 }],
+      },
+    ],
+    gridDefinitions: [
+      {
+        id: "grid-1",
+        crossSectionTemplateId: "cs-1",
+        stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 50 },
+      },
+    ],
+    spans: [],
+    piers: [],
+    generationSettings: {},
+    sampling: {
+      display: samplingProfile,
+      dxf: samplingProfile,
+      frame: frameSamplingProfile,
+    },
+    ...(measuredGrid ? { measuredGrid } : {}),
+  };
+}
+
+function compileProjectLinerDomainDraftValidator() {
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  return ajv.compile({
+    $schema: projectSchema.$schema,
+    ...projectSchema.$defs.linerDomainDraftVNext,
+    $defs: projectSchema.$defs,
+  });
+}
 
 const alignment: LinearAlignment = {
   id: "alignment-1",
@@ -130,6 +229,18 @@ describe("createHeadlessLinerFrameProject", () => {
     expect(result.project?.nodes.length).toBe(9);
     expect(result.project?.members.length).toBe(12);
     expect(validateGeneratedLinerProject(result.project!)).toEqual([]);
+  });
+
+  it("accepts measuredGrid on linerDomainDraftVNext in project.schema.json", () => {
+    const validate = compileProjectLinerDomainDraftValidator();
+
+    const withMeasuredGrid = minimalProjectDomainDraft(minimalMeasuredGrid);
+    expect(validate(withMeasuredGrid)).toBe(true);
+    expect(validate.errors ?? []).toEqual([]);
+
+    const withoutMeasuredGrid = minimalProjectDomainDraft();
+    expect(validate(withoutMeasuredGrid)).toBe(true);
+    expect(validate.errors ?? []).toEqual([]);
   });
 
   it("includes liner and linerTrace metadata on the generated project", () => {

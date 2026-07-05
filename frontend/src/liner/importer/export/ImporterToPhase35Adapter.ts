@@ -34,6 +34,7 @@ import {
   normalizeSupports,
   normalizeWidthPoints,
 } from "./normalize/normalizeSubstructure";
+import { normalizeMeasuredGrid } from "./normalize/normalizeMeasuredGrid";
 
 function createDiagnostic(
   partial: Omit<AdapterDiagnostic, "id"> & { id?: string },
@@ -171,6 +172,11 @@ function buildDomainDraft(
       frame: { maxMemberLength: 2, maxSagitta: 0.01, stationIntervalFallback: 1 },
     },
   };
+
+  const measuredGrid = normalizeMeasuredGrid(bridge, ctx);
+  if (measuredGrid) {
+    draft.measuredGrid = measuredGrid;
+  }
 
   applyPostConditionResults(diagnostics, draft, ctx);
   return draft;

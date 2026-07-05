@@ -94,6 +94,7 @@ export function buildIntermediateInputFromDomainDraft(
     stationDefinition: domainDraft.stationDefinition,
     verticalAlignment: domainDraft.verticalAlignment,
     crossSections: domainDraft.crossSections,
+    measuredGrid: domainDraft.measuredGrid,
     offsets,
     sampleInterval: domainDraft.sampling.display.maxChordLength,
     z,

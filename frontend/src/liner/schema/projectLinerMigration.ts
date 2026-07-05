@@ -18,6 +18,7 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "stationDefinition",
   "verticalAlignment",
   "crossSections",
+  "measuredGrid",
   "offsets",
   "sampleInterval",
   "z",
@@ -265,6 +266,7 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     stationDefinition: draft.stationDefinition,
     verticalAlignment,
     crossSections,
+    ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     gridDefinitions: [
       {
         id: "GRID-default",

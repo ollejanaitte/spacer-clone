@@ -1,5 +1,6 @@
 import { hasFatalIssues } from "../diagnostics";
 import { generateGridPoints } from "../grid/gridGeneration";
+import { generateMeasuredGridPoints } from "../grid/measuredGridGeneration";
 import {
   evaluateAlignmentAtDistance,
   totalAlignmentLength,
@@ -45,6 +46,7 @@ import type {
 import { sourceRevisionFor } from "./sourceRevision";
 import type {
   CrossSectionTemplateDraft,
+  MeasuredGridDraft,
   VerticalAlignmentDraft,
 } from "../../schema/types";
 
@@ -53,6 +55,7 @@ export type BuildIntermediateInput = {
   stationDefinition: StationDefinition;
   verticalAlignment?: VerticalAlignmentDraft;
   crossSections?: CrossSectionTemplateDraft[];
+  measuredGrid?: MeasuredGridDraft;
   offsets?: number[];
   sampleInterval?: number;
   z?: number;
@@ -389,6 +392,7 @@ export function buildIntermediateResult(
     alignment: input.alignment,
     stationDefinition: input.stationDefinition,
     offsets: input.offsets ?? [0],
+    measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
   });
   const diagnostics: ComputationDiagnostic[] = validateAlignment(input.alignment);
@@ -425,9 +429,16 @@ export function buildIntermediateResult(
     verticalAlignment,
     crossSectionTemplate: input.crossSections?.[0],
   };
-  const gridGeneration = canEvaluate
-    ? generateGridPoints(gridInput)
-    : { gridPoints: [], issues: [] };
+  const gridGeneration =
+    canEvaluate && input.measuredGrid
+      ? generateMeasuredGridPoints({
+          measuredGrid: input.measuredGrid,
+          alignment: input.alignment,
+          sourceRevision,
+        })
+      : canEvaluate
+        ? generateGridPoints(gridInput)
+        : { gridPoints: [], issues: [] };
   diagnostics.push(...gridGeneration.issues);
   const grid = buildGridResult(gridGeneration.gridPoints, input.alignment.linerModelId);
   const spans: SpanResult[] = [];

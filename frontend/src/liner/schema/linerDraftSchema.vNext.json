@@ -72,6 +72,24 @@
     },
     "sampling": {
       "$ref": "#/$defs/samplingSettingsDraft"
+    },
+    "measuredGrid": {
+      "$ref": "#/$defs/measuredGridDraft",
+      "description": "Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source)."
+    },
+    "crossBeams": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/crossBeamDraft"
+      },
+      "description": "Phase 3.7 optional: cross-beam supports at normalized stations."
+    },
+    "widthChangePoints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/widthChangePointDraft"
+      },
+      "description": "Phase 3.7 optional: width change points at normalized stations."
     }
   },
   "$defs": {
@@ -522,6 +540,10 @@
         "crossSlope": {
           "$ref": "#/$defs/crossSlopeDraft",
           "description": "Optional default cross slope (Pre-Decision #3)."
+        },
+        "station": {
+          "type": "number",
+          "description": "Phase 3.7 optional: normalized physicalDistance of this template."
         }
       }
     },
@@ -626,6 +648,40 @@
       "additionalProperties": false,
       "required": [
         "id",
+        "physicalDistance",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
+          "type": "number"
+        },
+        "kind": {
+          "enum": [
+            "abutment",
+            "pier",
+            "virtual_pier"
+          ]
+        },
+        "skewAngleRad": {
+          "type": "number"
+        },
+        "bearingOffsets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pierBearingOffsetDraft"
+          }
+        }
+      }
+    },
+    "crossBeamDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
         "physicalDistance"
       ],
       "properties": {
@@ -636,14 +692,34 @@
         "physicalDistance": {
           "type": "number"
         },
-        "skewAngleRad": {
+        "spanId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "widthChangePointDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "physicalDistance",
+        "leftOffset",
+        "rightOffset"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
           "type": "number"
         },
-        "bearingOffsets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/pierBearingOffsetDraft"
-          }
+        "leftOffset": {
+          "type": "number"
+        },
+        "rightOffset": {
+          "type": "number"
         }
       }
     },
@@ -735,6 +811,156 @@
         "frame": {
           "$ref": "#/$defs/frameSamplingProfileDraft",
           "description": "Frame member subdivision sampling (N2 default max chord 0.25 m via maxMemberLength)."
+        }
+      }
+    },
+    "measuredGridLineRoleDraft": {
+      "description": "Cross-section offset line role or importer girder-line role for measured grid metadata.",
+      "enum": [
+        "shoulder",
+        "lane",
+        "median",
+        "sidewalk",
+        "edge",
+        "custom",
+        "center",
+        "girder",
+        "barrier"
+      ]
+    },
+    "measuredGridPointDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sectionId",
+        "lineId",
+        "station",
+        "x",
+        "y",
+        "z",
+        "cumulativeWidth"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sectionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lineId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "station": {
+          "type": "number"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "cumulativeWidth": {
+          "type": "number"
+        },
+        "sortIndex": {
+          "type": "integer"
+        }
+      }
+    },
+    "measuredGridSectionDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "station",
+        "sortIndex"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "station": {
+          "type": "number"
+        },
+        "sortIndex": {
+          "type": "integer"
+        }
+      }
+    },
+    "measuredGridLineDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "sortIndex"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "$ref": "#/$defs/measuredGridLineRoleDraft"
+        },
+        "sortIndex": {
+          "type": "integer"
+        }
+      }
+    },
+    "measuredGridDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "sections",
+        "lines",
+        "points"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measuredGridSectionDraft"
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measuredGridLineDraft"
+          }
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measuredGridPointDraft"
+          }
         }
       }
     }
