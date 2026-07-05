@@ -90,11 +90,15 @@ function mapCrossSections(bridge: Bridge): LinerDomainDraftVNext["crossSections"
   ];
 }
 
-function mapGridDefinitions(bridge: Bridge): LinerDomainDraftVNext["gridDefinitions"] {
+function mapGridDefinitions(
+  bridge: Bridge,
+  originStation: number,
+): LinerDomainDraftVNext["gridDefinitions"] {
   const templateId = createUniqueId("grid-template");
   const stations = bridge.sections
     .map((section) => section.stationingRef.stationValue)
-    .filter((value): value is number => value != null);
+    .filter((value): value is number => value != null)
+    .map((value) => value - originStation);
 
   if (stations.length < 2) {
     return [];
@@ -113,11 +117,14 @@ function mapGridDefinitions(bridge: Bridge): LinerDomainDraftVNext["gridDefiniti
   ];
 }
 
-function mapSpans(bridge: Bridge): LinerDomainDraftVNext["spans"] {
+function mapSpans(
+  bridge: Bridge,
+  originStation: number,
+): LinerDomainDraftVNext["spans"] {
   return bridge.spans.map((span) => ({
     id: span.id,
-    startPhysicalDistance: span.startStation ?? 0,
-    endPhysicalDistance: span.endStation ?? 0,
+    startPhysicalDistance: (span.startStation ?? 0) - originStation,
+    endPhysicalDistance: (span.endStation ?? 0) - originStation,
   }));
 }
 
@@ -129,6 +136,18 @@ function buildDomainDraft(
   const planElements = bridge.alignmentMetadata?.plan?.elements ?? [];
   const profileElements = bridge.alignmentMetadata?.profile?.elements ?? [];
 
+  // Section stationValues and span start/end live in the bridge-wide
+  // stationing system (e.g. "12+19.8142" = 259.8142 m). The plan alignment
+  // has its own coordinate frame starting at 0. The Phase 3.5 station
+  // pipeline validates that every explicit/interval station falls inside
+  // [0, totalLength(alignment)], so we normalize the section stations into
+  // the alignment's frame and remember the offset in originDisplayedStation.
+  const sectionStations = bridge.sections
+    .map((section) => section.stationingRef.stationValue)
+    .filter((value): value is number => value != null);
+  const originStation = sectionStations[0] ?? 0;
+  const explicitStations = sectionStations.map((value) => value - originStation);
+
   return {
     id: createUniqueId("domain-draft"),
     linerModelId,
@@ -138,10 +157,8 @@ function buildDomainDraft(
       elements: planElements.map((element) => ({ ...element })),
     },
     stationDefinition: {
-      originDisplayedStation: bridge.sections[0]?.stationingRef.stationValue ?? 0,
-      explicitStations: bridge.sections
-        .map((section) => section.stationingRef.stationValue)
-        .filter((value): value is number => value != null),
+      originDisplayedStation: originStation,
+      explicitStations,
     },
     verticalAlignment: {
       id: createUniqueId("vertical-alignment"),
@@ -156,8 +173,8 @@ function buildDomainDraft(
       }),
     },
     crossSections: mapCrossSections(bridge),
-    gridDefinitions: mapGridDefinitions(bridge),
-    spans: mapSpans(bridge),
+    gridDefinitions: mapGridDefinitions(bridge, originStation),
+    spans: mapSpans(bridge, originStation),
     piers: [],
     generationSettings: {
       connectivityMode: "grid_full",
