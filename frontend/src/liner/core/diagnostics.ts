@@ -24,6 +24,10 @@ export const LINER_DIAGNOSTIC_CODES = {
   profileElevationDiscontinuity: "LINER_PROFILE_ELEVATION_DISCONTINUITY",
   profileGradeDiscontinuity: "LINER_PROFILE_GRADE_DISCONTINUITY",
   profileCoverageGap: "LINER_PROFILE_COVERAGE_GAP",
+  profileAdjacencyGap: "LINER_PROFILE_ADJACENCY_GAP",
+  profileEndCoverageGap: "LINER_PROFILE_END_COVERAGE_GAP",
+  spanEndExceedsAlignment: "LINER_SPAN_END_EXCEEDS_ALIGNMENT",
+  originStationAmbiguous: "LINER_ORIGIN_STATION_AMBIGUOUS",
   profileParabolicZMergeDeferred: "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 

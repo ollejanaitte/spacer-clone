@@ -32,6 +32,22 @@ function resolveCrossSlopePercent(input: GridPreparationInput): number {
   return input.crossSectionTemplate?.crossSlope?.valuePercent ?? 0;
 }
 
+function verticalProfileEndStation(input: GridPreparationInput): number {
+  if (input.verticalAlignment === undefined) {
+    return 0;
+  }
+  let maxEnd = 0;
+  for (const element of input.verticalAlignment.elements) {
+    maxEnd = Math.max(maxEnd, element.endStation);
+  }
+  return maxEnd;
+}
+
+function isEndCoverageMiss(input: GridPreparationInput, physicalDistance: number): boolean {
+  const profileEnd = verticalProfileEndStation(input);
+  return physicalDistance > profileEnd + DEFAULT_TOLERANCES.station;
+}
+
 export function gridPointId(
   linerModelId: string,
   longitudinalIndex: number,
@@ -61,12 +77,19 @@ export function generateGridPoints(input: GridPreparationInput): {
     const profileElevation = resolveProfileElevation(input, station.physicalDistance);
 
     if (profileElevation === null) {
+      const endCoverageMiss = isEndCoverageMiss(input, station.physicalDistance);
       issues.push(
-        createIssue("error", LINER_DIAGNOSTIC_CODES.profileCoverageGap, {
-          station: station.physicalDistance,
-          entityType: "verticalAlignment",
-          detail: `No vertical profile elevation at station ${station.physicalDistance}.`,
-        }),
+        createIssue(
+          endCoverageMiss ? "warning" : "error",
+          endCoverageMiss
+            ? LINER_DIAGNOSTIC_CODES.profileEndCoverageGap
+            : LINER_DIAGNOSTIC_CODES.profileCoverageGap,
+          {
+            station: station.physicalDistance,
+            entityType: "verticalAlignment",
+            detail: `No vertical profile elevation at station ${station.physicalDistance}.`,
+          },
+        ),
       );
       continue;
     }

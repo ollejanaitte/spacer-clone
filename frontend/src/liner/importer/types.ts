@@ -78,6 +78,40 @@ export interface Bridge {
   sections: Section[];
   renderability?: Renderability;
   alignmentMetadata?: AlignmentMetadata;
+  /** Phase 3.7: optional. Phase 3.9: required. */
+  substructure?: BridgeSubstructure;
+}
+
+export type SubstructureKind = "abutment" | "pier" | "virtual_pier";
+
+export interface SupportPoint {
+  id: string;
+  kind: SubstructureKind;
+  /** bridge-wide station. */
+  station: number;
+  skewAngleDeg?: number | null;
+  label?: string;
+}
+
+export interface CrossBeam {
+  id: string;
+  /** bridge-wide station. */
+  station: number;
+  label?: string;
+}
+
+export interface WidthPoint {
+  id: string;
+  /** bridge-wide station. */
+  station: number;
+  leftOffset: number;
+  rightOffset: number;
+}
+
+export interface BridgeSubstructure {
+  supports: SupportPoint[];
+  crossBeams: CrossBeam[];
+  widthChangePoints: WidthPoint[];
 }
 
 export interface Span {

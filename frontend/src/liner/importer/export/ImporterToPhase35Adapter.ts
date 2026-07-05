@@ -19,6 +19,21 @@ import {
   validateSchemaVersion,
 } from "../adapter";
 import { createUniqueId } from "../utils/importerUtils";
+import {
+  AggregateNormalizationError,
+  buildNormalizationContext,
+} from "./normalize/normalizationContext";
+import { runPostConditions } from "./normalize/postConditions";
+import { normalizeStationDefinition } from "./normalize/normalizeStationDefinition";
+import { normalizeSpans } from "./normalize/normalizeSpans";
+import { normalizeGridDefinitions } from "./normalize/normalizeGridDefinitions";
+import { normalizeVerticalAlignment } from "./normalize/normalizeVerticalAlignment";
+import { normalizeCrossSections } from "./normalize/normalizeCrossSections";
+import {
+  normalizeCrossBeams,
+  normalizeSupports,
+  normalizeWidthPoints,
+} from "./normalize/normalizeSubstructure";
 
 function createDiagnostic(
   partial: Omit<AdapterDiagnostic, "id"> & { id?: string },
@@ -54,101 +69,78 @@ function collectSourceRefs(project: JipLinerImporterProject): SourceRef[] {
   return refs;
 }
 
-function mapCrossSections(bridge: Bridge): LinerDomainDraftVNext["crossSections"] {
-  const crossSlopeDefs = bridge.alignmentMetadata?.crossSlope?.definitions ?? [];
-  const girderLines = bridge.girderLineSets[0]?.lines ?? [];
-
-  if (crossSlopeDefs.length > 0) {
-    return crossSlopeDefs.map((definition, index) => ({
-      id: definition.id || createUniqueId("cross-section-template"),
-      name: `CrossSlope @ ${definition.station}`,
-      offsetLines: girderLines.map((line, lineIndex) => ({
-        id: createUniqueId("offset-line"),
-        offset: line.nominalOffset ?? lineIndex,
-        elevation: 0,
-        role: line.role === "edge" ? "edge" : line.role === "girder" ? "lane" : "custom",
-        label: line.label,
-      })),
-      crossSlope: {
-        signConvention: "right_down_positive" as const,
-        valuePercent: definition.crossSlope,
-      },
-    }));
+function pushNormalizationDiagnostics(
+  diagnostics: AdapterDiagnostic[],
+  ctx: ReturnType<typeof buildNormalizationContext>,
+): void {
+  for (const item of ctx.diagnostics) {
+    diagnostics.push(
+      createDiagnostic({
+        id: `norm-${item.code}-${item.candidateValues.join("-")}`,
+        level: item.level,
+        code: item.code,
+        message: item.detail,
+        targetPath: "normalizationContext",
+      }),
+    );
   }
-
-  return [
-    {
-      id: createUniqueId("cross-section-template"),
-      name: `${bridge.name} default`,
-      offsetLines: girderLines.map((line, index) => ({
-        id: createUniqueId("offset-line"),
-        offset: line.nominalOffset ?? index,
-        elevation: 0,
-        label: line.label,
-      })),
-    },
-  ];
 }
 
-function mapGridDefinitions(
-  bridge: Bridge,
-  originStation: number,
-): LinerDomainDraftVNext["gridDefinitions"] {
-  const templateId = createUniqueId("grid-template");
-  const stations = bridge.sections
-    .map((section) => section.stationingRef.stationValue)
-    .filter((value): value is number => value != null)
-    .map((value) => value - originStation);
+function applyPostConditionResults(
+  diagnostics: AdapterDiagnostic[],
+  draft: LinerDomainDraftVNext,
+  ctx: ReturnType<typeof buildNormalizationContext>,
+): void {
+  const postResults = runPostConditions(ctx, draft);
+  const errors = postResults.filter((result) => result.severity === "error");
+  const warnings = postResults.filter((result) => result.severity === "warning");
 
-  if (stations.length < 2) {
-    return [];
+  for (const warning of warnings) {
+    diagnostics.push(
+      createDiagnostic({
+        id: `pc-${warning.code}-${warning.label}`,
+        level: "warning",
+        code: warning.code,
+        message: warning.message,
+        targetPath: warning.label,
+      }),
+    );
+    console.warn(`[normalize] ${warning.code}: ${warning.message}`);
   }
 
-  return [
-    {
-      id: createUniqueId("grid-definition"),
-      crossSectionTemplateId: templateId,
-      stationRange: {
-        startPhysicalDistance: Math.min(...stations),
-        endPhysicalDistance: Math.max(...stations),
-      },
-      stationInterval: undefined,
-    },
-  ];
-}
-
-function mapSpans(
-  bridge: Bridge,
-  originStation: number,
-): LinerDomainDraftVNext["spans"] {
-  return bridge.spans.map((span) => ({
-    id: span.id,
-    startPhysicalDistance: (span.startStation ?? 0) - originStation,
-    endPhysicalDistance: (span.endStation ?? 0) - originStation,
-  }));
+  if (errors.length > 0) {
+    throw new AggregateNormalizationError(
+      errors.map((error) => ({ code: error.code, message: error.message })),
+    );
+  }
 }
 
 function buildDomainDraft(
   project: JipLinerImporterProject,
   bridge: Bridge,
+  diagnostics: AdapterDiagnostic[],
 ): LinerDomainDraftVNext {
   const linerModelId = createUniqueId("liner-model");
   const planElements = bridge.alignmentMetadata?.plan?.elements ?? [];
-  const profileElements = bridge.alignmentMetadata?.profile?.elements ?? [];
 
-  // Section stationValues and span start/end live in the bridge-wide
-  // stationing system (e.g. "12+19.8142" = 259.8142 m). The plan alignment
-  // has its own coordinate frame starting at 0. The Phase 3.5 station
-  // pipeline validates that every explicit/interval station falls inside
-  // [0, totalLength(alignment)], so we normalize the section stations into
-  // the alignment's frame and remember the offset in originDisplayedStation.
   const sectionStations = bridge.sections
     .map((section) => section.stationingRef.stationValue)
     .filter((value): value is number => value != null);
-  const originStation = sectionStations[0] ?? 0;
-  const explicitStations = sectionStations.map((value) => value - originStation);
+  const spanStartStations = bridge.spans.map((span) => span.startStation);
+  const spanEndStations = bridge.spans.map((span) => span.endStation);
+  const planLength = planElements.reduce((sum, element) => sum + element.length, 0);
 
-  return {
+  const ctx = buildNormalizationContext({
+    sectionStations,
+    spanStartStations,
+    spanEndStations,
+    planLength,
+    stationEquations: [],
+  });
+
+  pushNormalizationDiagnostics(diagnostics, ctx);
+
+  const draft: LinerDomainDraftVNext = {
     id: createUniqueId("domain-draft"),
     linerModelId,
     coordinatePolicyId: project.coordinateSystem.horizontal.datum || "default",
@@ -156,26 +148,14 @@ function buildDomainDraft(
       id: createUniqueId("alignment"),
       elements: planElements.map((element) => ({ ...element })),
     },
-    stationDefinition: {
-      originDisplayedStation: originStation,
-      explicitStations,
-    },
-    verticalAlignment: {
-      id: createUniqueId("vertical-alignment"),
-      elements: profileElements.map((element) => {
-        if (element.type === "grade") {
-          return {
-            ...element,
-            length: element.endStation - element.startStation,
-          };
-        }
-        return element;
-      }),
-    },
-    crossSections: mapCrossSections(bridge),
-    gridDefinitions: mapGridDefinitions(bridge, originStation),
-    spans: mapSpans(bridge, originStation),
-    piers: [],
+    stationDefinition: normalizeStationDefinition(sectionStations, ctx),
+    verticalAlignment: normalizeVerticalAlignment(bridge, ctx),
+    crossSections: normalizeCrossSections(bridge, ctx),
+    gridDefinitions: normalizeGridDefinitions(bridge, ctx),
+    spans: normalizeSpans(bridge, ctx),
+    piers: normalizeSupports(bridge, ctx),
+    crossBeams: normalizeCrossBeams(bridge, ctx),
+    widthChangePoints: normalizeWidthPoints(bridge, ctx),
     generationSettings: {
       connectivityMode: "grid_full",
     },
@@ -185,6 +165,9 @@ function buildDomainDraft(
       frame: { maxMemberLength: 2, maxSagitta: 0.01, stationIntervalFallback: 1 },
     },
   };
+
+  applyPostConditionResults(diagnostics, draft, ctx);
+  return draft;
 }
 
 export type AdapterConversionResult = {
@@ -229,7 +212,27 @@ export class ImporterToPhase35Adapter {
       return { draft: null, diagnostics, renderability, conversionLog: null };
     }
 
-    const draft = buildDomainDraft(project, bridge);
+    let draft: LinerDomainDraftVNext | null = null;
+    try {
+      draft = buildDomainDraft(project, bridge, diagnostics);
+    } catch (error) {
+      if (error instanceof AggregateNormalizationError) {
+        for (const result of error.results) {
+          diagnostics.push(
+            createDiagnostic({
+              id: `pc-${result.code}`,
+              level: "error",
+              code: result.code,
+              message: result.message,
+              targetPath: "normalization.postConditions",
+            }),
+          );
+        }
+        return { draft: null, diagnostics, renderability, conversionLog: null };
+      }
+      throw error;
+    }
+
     const conversionLog: ImporterConversionLog = {
       id: createUniqueId("conversion-log"),
       importerProjectId: project.id,
