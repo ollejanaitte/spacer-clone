@@ -4,6 +4,7 @@ import {
   LINER_HEADLESS_FIXTURE_MATERIAL_IDS,
   LINER_HEADLESS_FIXTURE_SECTION_IDS,
 } from "../headless";
+import { isLinerDerivedProject, resolveInitialSpacerAxisSwap } from "../../viewer/coordinateTransform";
 import { buildLinerViewerReviewFromDraft } from "./linerViewerAdapter";
 import { createDefaultLinerDraft, updateLinerDraftSettings } from "./linerUiAdapter";
 
@@ -42,5 +43,13 @@ describe("linerViewerAdapter", () => {
       level: "error",
       code: "LINER_GRID_SPACING_INVALID",
     });
+  });
+
+  it("marks mapping review viewer projects as liner-derived for axis swap defaults", () => {
+    const result = buildLinerViewerReviewFromDraft(createDefaultLinerDraft(), createDefaultProject());
+
+    expect(result.viewerProject).not.toBeNull();
+    expect(isLinerDerivedProject(result.viewerProject!)).toBe(true);
+    expect(resolveInitialSpacerAxisSwap(true)).toBe("on");
   });
 });

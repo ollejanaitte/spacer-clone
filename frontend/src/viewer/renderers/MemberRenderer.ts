@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection, ViewerVisibility } from "../types";
-import type { SpacerAxisSwap } from "../coordinateTransform";
+import type { SpacerAxisSwap, ViewerDisplayCoordinatePolicy } from "../coordinateTransform";
 import { createLabelSprite, createLine, createNodeMap, getMemberEnds, labelSamplingStride } from "../threeUtils";
 import type { ForceColorComponent, ForceColorValueType } from "../memberForceColorMap";
 import { computeMemberForceColorValues, computeForceColorRange, memberForceColor, DEFAULT_FORCE_COLOR_MODE } from "../memberForceColorMap";
@@ -24,8 +24,9 @@ export function renderMembers(
     loadCaseId: string;
     selectedResponseSpectrumResult: ResponseSpectrumSelection;
   },
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const objects: THREE.Object3D[] = [];
 
   let forceValues: Map<string, number> | null = null;
@@ -78,8 +79,9 @@ export function renderMemberLabels(
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
   selection?: ViewerSelection,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const objects: THREE.Object3D[] = [];
   const stride = labelSamplingStride(project.members.length);
   for (let index = 0; index < project.members.length; index += stride) {

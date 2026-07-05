@@ -116,6 +116,7 @@ export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | 
   fitRequest: number;
   cameraRequest: CameraPreset | null;
   spacerAxisSwap?: SpacerAxisSwap;
+  viewerDisplayPolicy?: import("./coordinateTransform").ViewerDisplayCoordinatePolicy;
   animationOptions?: AnimationOptions;
   /**
    * When set, the viewport uses this value (in seconds) as the animation

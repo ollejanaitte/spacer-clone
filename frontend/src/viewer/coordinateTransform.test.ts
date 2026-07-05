@@ -1,12 +1,22 @@
-import { describe, expect, it } from "vitest";
+// @vitest-environment jsdom
+
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import {
   applySpacerAxisSwap,
+  applyViewerDisplayTransform,
   createSpacerAxisSwap,
+  isLinerDerivedProject,
+  loadStoredSpacerAxisSwap,
+  resolveInitialSpacerAxisSwap,
+  resolveViewerDisplayCoordinatePolicy,
+  SPACER_AXIS_SWAP_STORAGE_KEY,
   modelDisplacementToViewer,
   modelMemberLoadToViewer,
   modelNodalLoadToViewer,
   modelToViewerVector,
 } from "./coordinateTransform";
+import { createDefaultProject } from "../data/defaultProject";
+import { PROJECT_LINER_METADATA_SCHEMA_VERSION } from "../liner/schema/types";
 
 describe("applySpacerAxisSwap", () => {
   it("returns identical coordinates when swap is off", () => {
@@ -27,6 +37,44 @@ describe("applySpacerAxisSwap", () => {
   });
 });
 
+describe("applyViewerDisplayTransform", () => {
+  it("keeps general project axis swap behavior unchanged", () => {
+    expect(applyViewerDisplayTransform(1, 2, 3, "off", "general")).toEqual({ x: 1, y: 2, z: 3 });
+    expect(applyViewerDisplayTransform(1, 2, 3, "on", "general")).toEqual({ x: 1, y: 3, z: 2 });
+  });
+
+  it("leaves liner project coordinates unchanged when swap is off", () => {
+    const model = { x: 0, y: 5.4833, z: 17.6595 };
+    expect(applyViewerDisplayTransform(model.x, model.y, model.z, "off", "liner")).toEqual(model);
+  });
+
+  it("maps LINER PH12/HCL model coordinates to bridge-oriented viewer display when swap is on", () => {
+    const model = { x: 0, y: 0, z: 17.6595 };
+    const out = applyViewerDisplayTransform(model.x, model.y, model.z, "on", "liner");
+    expect(out.x).toBe(0);
+    expect(out.y).toBeCloseTo(17.6595);
+    expect(out.z).toBeCloseTo(0);
+  });
+
+  it("maps LINER PH12/G1 model coordinates to bridge-oriented viewer display when swap is on", () => {
+    const model = { x: 0, y: 5.4833, z: 17.6595 };
+    expect(applyViewerDisplayTransform(model.x, model.y, model.z, "on", "liner")).toEqual({
+      x: 0,
+      y: 17.6595,
+      z: -5.4833,
+    });
+  });
+
+  it("maps LINER PH12/ECL model coordinates to bridge-oriented viewer display when swap is on", () => {
+    const model = { x: 0, y: -11.9577, z: 17.6595 };
+    expect(applyViewerDisplayTransform(model.x, model.y, model.z, "on", "liner")).toEqual({
+      x: 0,
+      y: 17.6595,
+      z: 11.9577,
+    });
+  });
+});
+
 describe("createSpacerAxisSwap", () => {
   it("treats true / \"on\" as on and anything else as off", () => {
     expect(createSpacerAxisSwap(true)).toBe("on");
@@ -34,6 +82,68 @@ describe("createSpacerAxisSwap", () => {
     expect(createSpacerAxisSwap(false)).toBe("off");
     expect(createSpacerAxisSwap("off")).toBe("off");
     expect(createSpacerAxisSwap(undefined)).toBe("off");
+  });
+});
+
+describe("isLinerDerivedProject", () => {
+  it("returns true when project.liner metadata is present", () => {
+    expect(
+      isLinerDerivedProject({
+        ...createDefaultProject(),
+        liner: {
+          schemaVersion: PROJECT_LINER_METADATA_SCHEMA_VERSION,
+          linerModelId: "gc06",
+          coordinatePolicyId: "policy",
+          intermediateSchemaVersion: "0.2.0",
+          sourceRevision: "abc123",
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it("returns false for general projects", () => {
+    expect(isLinerDerivedProject(createDefaultProject())).toBe(false);
+  });
+});
+
+describe("resolveViewerDisplayCoordinatePolicy", () => {
+  it("selects liner display policy only for liner-derived projects", () => {
+    expect(resolveViewerDisplayCoordinatePolicy(true)).toBe("liner");
+    expect(resolveViewerDisplayCoordinatePolicy(false)).toBe("general");
+  });
+});
+
+describe("resolveInitialSpacerAxisSwap", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("defaults to on for liner-derived projects without a stored preference", () => {
+    expect(resolveInitialSpacerAxisSwap(true)).toBe("on");
+  });
+
+  it("defaults to off for general projects without a stored preference", () => {
+    expect(resolveInitialSpacerAxisSwap(false)).toBe("off");
+  });
+
+  it("respects an explicit stored on preference", () => {
+    window.localStorage.setItem(SPACER_AXIS_SWAP_STORAGE_KEY, "on");
+    expect(resolveInitialSpacerAxisSwap(false)).toBe("on");
+    expect(resolveInitialSpacerAxisSwap(true)).toBe("on");
+  });
+
+  it("respects an explicit stored off preference", () => {
+    window.localStorage.setItem(SPACER_AXIS_SWAP_STORAGE_KEY, "off");
+    expect(resolveInitialSpacerAxisSwap(true)).toBe("off");
+    expect(resolveInitialSpacerAxisSwap(false)).toBe("off");
+  });
+
+  it("treats missing localStorage as unset", () => {
+    expect(loadStoredSpacerAxisSwap()).toBeNull();
   });
 });
 

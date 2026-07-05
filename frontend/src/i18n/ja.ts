@@ -823,6 +823,7 @@ export const ja = {
         animationSpeed: "Speed",
         coordinate: "Coordinate",
         spacerAxisSwap: "SPACER Axis Swap",
+        spacerAxisSwapLinerHint: "LINER橋軸座標 (x, 横断y, 鉛直z) を Three.js 表示向けに Y/Z 入替",
         analysisResults: "解析結果",
         loadCaseLabel: "荷重ケース",
         loadCaseAll: "すべて",

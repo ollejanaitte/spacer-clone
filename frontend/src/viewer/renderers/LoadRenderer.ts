@@ -5,6 +5,7 @@ import {
   modelMemberLoadToViewer,
   modelNodalLoadToViewer,
   type SpacerAxisSwap,
+  type ViewerDisplayCoordinatePolicy,
 } from "../coordinateTransform";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
 
@@ -18,8 +19,9 @@ export function renderLoads(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const objects: THREE.Object3D[] = [];
   const forceMax = Math.max(
     ...project.nodalLoads
@@ -41,7 +43,7 @@ export function renderLoads(
     if (load.loadCaseId !== selectedLoadCaseId) continue;
     const position = nodeMap.get(load.nodeId);
     if (!position) continue;
-    const transformed = modelNodalLoadToViewer(load, spacerAxisSwap);
+    const transformed = modelNodalLoadToViewer(load, spacerAxisSwap, displayPolicy);
     const forceVector = nonZeroVector(transformed.force);
     if (forceVector) {
       const ratio = clamp(forceVector.length() / forceMax, 0.18, 1);
@@ -66,7 +68,7 @@ export function renderLoads(
   for (const load of project.memberLoads) {
     if (load.loadCaseId !== selectedLoadCaseId) continue;
     objects.push(
-      ...renderMemberLoad(load, project, baseLength, spacerAxisSwap, nodePositionOverride),
+      ...renderMemberLoad(load, project, baseLength, spacerAxisSwap, nodePositionOverride, displayPolicy),
     );
   }
 
@@ -79,13 +81,14 @@ function renderMemberLoad(
   baseLength: number,
   spacerAxisSwap: SpacerAxisSwap,
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const member = project.members.find((item) => item.id === load.memberId);
   if (!member) return [];
   const ends = getMemberEnds(member, nodeMap);
   if (!ends) return [];
-  const direction = nonZeroVector(modelMemberLoadToViewer(load, spacerAxisSwap));
+  const direction = nonZeroVector(modelMemberLoadToViewer(load, spacerAxisSwap, displayPolicy));
   if (!direction) return [];
   const objects: THREE.Object3D[] = [];
   const length = ends.start.distanceTo(ends.end);

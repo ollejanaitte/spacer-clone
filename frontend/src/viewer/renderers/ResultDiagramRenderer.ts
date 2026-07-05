@@ -7,7 +7,7 @@ import {
 } from "../../results/resultViewModel";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../../types";
 import type { ViewerScales, ViewerVisibility } from "../types";
-import { modelToViewerVector, type SpacerAxisSwap } from "../coordinateTransform";
+import { modelToViewerVector, type SpacerAxisSwap, type ViewerDisplayCoordinatePolicy } from "../coordinateTransform";
 import { createLine, createNodeMap, getMemberEnds, isFiniteNumber, magnitude } from "../threeUtils";
 import { createLabelSprite } from "../threeUtils";
 import { buildReactionLabel, formatForceLabel } from "../forceLabels";
@@ -26,19 +26,20 @@ export function renderResultDiagrams(
   visibility: ViewerVisibility,
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
   const responseSpectrumViewModel = buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult);
   const viewModel = responseSpectrumViewModel ?? buildResultViewModel(result, selectedLoadCaseId);
   if (!viewModel || !isFiniteNumber(scales.resultScale)) return [];
 
   const objects: THREE.Object3D[] = [];
-  const nodeMap = createNodeMap(project, spacerAxisSwap);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, undefined, displayPolicy);
   const span = computeSpan(nodeMap);
   const baseScale = Math.max(span * 0.18, 0.35) * scales.resultScale;
 
   if (visibility.reactions) {
     objects.push(
-      ...renderReactions(viewModel.reactions.items, nodeMap, baseScale, spacerAxisSwap),
+      ...renderReactions(viewModel.reactions.items, nodeMap, baseScale, spacerAxisSwap, displayPolicy),
     );
   }
   if (visibility.reactionLabels) {
@@ -50,22 +51,22 @@ export function renderResultDiagrams(
     ));
   }
   if (visibility.axialForce) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale, spacerAxisSwap));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "N", baseScale, spacerAxisSwap, displayPolicy));
   }
   if (visibility.shearQy) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qy", baseScale, spacerAxisSwap));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qy", baseScale, spacerAxisSwap, displayPolicy));
   }
   if (visibility.shearQz) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qz", baseScale, spacerAxisSwap));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Qz", baseScale, spacerAxisSwap, displayPolicy));
   }
   if (visibility.memberForceLabels || visibility.axialForceLabels) {
     objects.push(...renderMemberForceLabels(project, nodeMap, viewModel.memberForces.items, scales, visibility));
   }
   if (visibility.momentMy) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale, spacerAxisSwap));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "My", baseScale, spacerAxisSwap, displayPolicy));
   }
   if (visibility.momentMz) {
-    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Mz", baseScale, spacerAxisSwap));
+    objects.push(...renderMemberForce(project, nodeMap, viewModel.memberForces.items, "Mz", baseScale, spacerAxisSwap, displayPolicy));
   }
 
   return objects;
@@ -156,6 +157,7 @@ function renderReactions(
   nodeMap: Map<string, THREE.Vector3>,
   baseScale: number,
   spacerAxisSwap: SpacerAxisSwap,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
   const forceMax = Math.max(...reactions.map((reaction) => magnitude([reaction.fx, reaction.fy, reaction.fz])), 1);
   const objects: THREE.Object3D[] = [];
@@ -167,6 +169,7 @@ function renderReactions(
       modelToViewerVector(
         { x: reaction.fx, y: reaction.fy, z: reaction.fz },
         spacerAxisSwap,
+        displayPolicy,
       ),
     );
     if (!vector) continue;
@@ -197,6 +200,7 @@ function renderMemberForce(
   component: MemberSectionForceComponent,
   baseScale: number,
   spacerAxisSwap: SpacerAxisSwap,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
   const componentForces = forces.filter((force) => force.component === component);
   const maxAbs = Math.max(
@@ -213,7 +217,7 @@ function renderMemberForce(
     if (!ends) continue;
     const stations = [...force.stations].sort((a, b) => a.station - b.station);
     if (stations.length === 0) continue;
-    const normal = diagramNormal(project, member, ends.direction, component, spacerAxisSwap);
+    const normal = diagramNormal(project, member, ends.direction, component, spacerAxisSwap, displayPolicy);
     const memberVector = new THREE.Vector3().subVectors(ends.end, ends.start);
     const diagramPoints = stations.map(({ station, value }) => {
       const basePoint = ends.start.clone().addScaledVector(memberVector, station);
@@ -279,8 +283,9 @@ function diagramNormal(
   direction: THREE.Vector3,
   component: MemberSectionForceComponent,
   spacerAxisSwap: SpacerAxisSwap,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Vector3 {
-  const localAxes = memberLocalAxes(project, member, spacerAxisSwap);
+  const localAxes = memberLocalAxes(project, member, spacerAxisSwap, displayPolicy);
   if (localAxes) {
     if (component === "My" || component === "Qz") return localAxes.z;
     if (component === "Mz" || component === "Qy") return localAxes.y;
@@ -305,6 +310,7 @@ function memberLocalAxes(
   project: ProjectModel,
   member: Member,
   spacerAxisSwap: SpacerAxisSwap,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): { y: THREE.Vector3; z: THREE.Vector3 } | null {
   const nodeI = project.nodes.find((node) => node.id === member.nodeI);
   const nodeJ = project.nodes.find((node) => node.id === member.nodeJ);
@@ -323,8 +329,8 @@ function memberLocalAxes(
   zAxis.normalize();
   yAxis.crossVectors(zAxis, xAxis).normalize();
   return {
-    y: modelToViewerVector(yAxis, spacerAxisSwap).normalize(),
-    z: modelToViewerVector(zAxis, spacerAxisSwap).normalize(),
+    y: modelToViewerVector(yAxis, spacerAxisSwap, displayPolicy).normalize(),
+    z: modelToViewerVector(zAxis, spacerAxisSwap, displayPolicy).normalize(),
   };
 }
 

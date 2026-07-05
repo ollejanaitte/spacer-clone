@@ -26,6 +26,7 @@ type ViewerControlsProps = {
   selectedResponseSpectrumResult: ResponseSpectrumSelection;
   hasResult: boolean;
   spacerAxisSwap: SpacerAxisSwap;
+  spacerAxisSwapHint?: string;
   animationOptions: AnimationOptions;
   compareMode: boolean;
   cameraSync: boolean;
@@ -64,6 +65,7 @@ export function ViewerControls({
   selectedResponseSpectrumResult,
   hasResult,
   spacerAxisSwap,
+  spacerAxisSwapHint,
   animationOptions,
   compareMode,
   cameraSync,
@@ -276,6 +278,11 @@ export function ViewerControls({
             <span>{ja.viewer.controls.spacerAxisSwap}</span>
           </label>
         </div>
+        {spacerAxisSwapHint ? (
+          <p className="viewer-control-hint" data-testid="spacer-axis-swap-hint">
+            {spacerAxisSwapHint}
+          </p>
+        ) : null}
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.analysisResults}>
         <div className="viewer-control-row">

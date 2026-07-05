@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, Support } from "../../types";
 import type { ViewerScales } from "../types";
-import type { SpacerAxisSwap } from "../coordinateTransform";
+import type { SpacerAxisSwap, ViewerDisplayCoordinatePolicy } from "../coordinateTransform";
 import { createNodeMap } from "../threeUtils";
 
 const fixedMaterial = new THREE.MeshStandardMaterial({ color: "#222222", roughness: 0.7 });
@@ -13,8 +13,9 @@ export function renderSupports(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const objects: THREE.Object3D[] = [];
   const size = Math.max(scales.nodeSize * 2.4, 0.16) * (scales.supportSize ?? 1);
 

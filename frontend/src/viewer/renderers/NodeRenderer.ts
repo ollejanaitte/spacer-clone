@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { ProjectModel, SectionKey } from "../../types";
 import type { ViewerScales, ViewerSelection } from "../types";
-import type { SpacerAxisSwap } from "../coordinateTransform";
+import type { SpacerAxisSwap, ViewerDisplayCoordinatePolicy } from "../coordinateTransform";
 import { createLabelSprite, createNodeMap, labelSamplingStride } from "../threeUtils";
 import { assignLabelPriority } from "../labelCollisionAvoidance";
 
@@ -15,8 +15,9 @@ export function renderNodes(
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const radius = Math.max(scales.nodeSize, 0.02);
   const geometry = new THREE.SphereGeometry(radius, 18, 12);
   const objects: THREE.Object3D[] = [];
@@ -42,8 +43,9 @@ export function renderNodeLabels(
   spacerAxisSwap: SpacerAxisSwap = "off",
   nodePositionOverride?: Map<string, { x: number; y: number; z: number }> | null,
   selection?: ViewerSelection,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
-  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, nodePositionOverride, displayPolicy);
   const objects: THREE.Object3D[] = [];
   const stride = labelSamplingStride(project.nodes.length);
   for (let index = 0; index < project.nodes.length; index += stride) {
