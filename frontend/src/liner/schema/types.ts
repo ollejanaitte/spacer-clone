@@ -45,6 +45,49 @@ export interface ProjectLinerMetadataVNext {
   domainDraft: LinerDomainDraftVNext;
 }
 
+/** Phase 3.8: measured line × section grid from LINER local coordinates. */
+export interface MeasuredGridPointDraft {
+  id: string;
+  sectionId: string;
+  lineId: string;
+  station: number;
+  x: number;
+  y: number;
+  z: number;
+  cumulativeWidth: number;
+  sortIndex?: number;
+}
+
+export interface MeasuredGridSectionDraft {
+  id: string;
+  label: string;
+  station: number;
+  sortIndex: number;
+}
+
+export interface MeasuredGridLineDraft {
+  id: string;
+  label: string;
+  role?: CrossSectionOffsetLineRole | GirderLineRoleLike;
+  sortIndex: number;
+}
+
+/** Importer girder-line role alias for measured grid metadata. */
+export type GirderLineRoleLike =
+  | "center"
+  | "girder"
+  | "edge"
+  | "barrier"
+  | "custom";
+
+export interface MeasuredGridDraft {
+  id: string;
+  source: string;
+  sections: MeasuredGridSectionDraft[];
+  lines: MeasuredGridLineDraft[];
+  points: MeasuredGridPointDraft[];
+}
+
 export interface LinerDomainDraftVNext {
   id: string;
   linerModelId: string;
@@ -54,6 +97,8 @@ export interface LinerDomainDraftVNext {
   verticalAlignment: VerticalAlignmentDraft;
   crossSections: CrossSectionTemplateDraft[];
   gridDefinitions: GridDefinitionDraft[];
+  /** Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source). */
+  measuredGrid?: MeasuredGridDraft;
   spans: SpanDraft[];
   piers: PierDraft[];
   crossBeams?: CrossBeamDraft[];

@@ -29,7 +29,7 @@ describe("buildBuiltInSampleProject", () => {
 
     const bridge = project.bridges[0];
     expect(bridge?.name).toBe(BUILT_IN_SAMPLE_BRIDGE_NAME);
-    expect(bridge?.sections).toHaveLength(6);
+    expect(bridge?.sections).toHaveLength(25);
     expect(bridge?.girderLineSets[0]?.lines).toHaveLength(9);
 
     const section = bridge?.sections[0];
@@ -49,7 +49,7 @@ describe("buildBuiltInSampleProject", () => {
 
     expect(imported.ok).toBe(true);
     expect(imported.project?.name).toBe(BUILT_IN_SAMPLE_PROJECT_NAME);
-    expect(imported.project?.bridges[0]?.sections).toHaveLength(6);
+    expect(imported.project?.bridges[0]?.sections).toHaveLength(25);
   });
 
   it("uses PH12 HCL local origin and PH15 cumulative distance from PDF 小座標", () => {
@@ -101,8 +101,8 @@ describe("buildBuiltInSampleProject", () => {
     const azimuthJumps = diagnostics.filter((entry) => entry.code === IMPORTER_AZIMUTH_JUMP);
     expect(azimuthJumps).toHaveLength(2);
     expect(azimuthJumps.map((entry) => entry.message)).toEqual([
-      "方位角急変: Page 22 → 23 (18.898°)",
-      "方位角急変: Page 25 → 26 (22.388°)",
+      "方位角急変: Page 53 → 54 (18.888°)",
+      "方位角急変: Page 71 → 72 (22.388°)",
     ]);
   });
 });

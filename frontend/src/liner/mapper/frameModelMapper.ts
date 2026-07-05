@@ -52,6 +52,8 @@ export type LinerTraceEntry = {
   gridPointId?: string;
   gridLineId?: string;
   gridPointIds?: string[];
+  sectionId?: string;
+  longitudinalLineId?: string;
   physicalDistance?: number;
   displayedStation?: number;
   offset?: number;
@@ -295,6 +297,8 @@ export function mapToFrameModel(
       frameEntityId: id,
       frameEntityType: "node",
       gridPointId: point.id,
+      sectionId: point.source.sectionId,
+      longitudinalLineId: point.source.longitudinalLineId,
       physicalDistance: point.physicalDistance,
       displayedStation: point.displayedStation,
       offset: point.offset,
@@ -385,12 +389,27 @@ export function mapToFrameModel(
         sectionId: resolved.sectionId,
         orientationVector: { x: 0, y: 0, z: 1 },
       });
+      const sharedLongitudinalLineId =
+        line.direction === "longitudinal" &&
+        pointI.source.longitudinalLineId !== undefined &&
+        pointI.source.longitudinalLineId === pointJ.source.longitudinalLineId
+          ? pointI.source.longitudinalLineId
+          : undefined;
+      const sharedSectionId =
+        line.direction === "transverse" &&
+        pointI.source.sectionId !== undefined &&
+        pointI.source.sectionId === pointJ.source.sectionId
+          ? pointI.source.sectionId
+          : undefined;
+
       linerTrace.push({
         ...base,
         frameEntityId: id,
         frameEntityType: "member",
         gridLineId: line.id,
         gridPointIds: [pointI.id, pointJ.id],
+        sectionId: sharedSectionId,
+        longitudinalLineId: sharedLongitudinalLineId,
         physicalDistance: pointI.physicalDistance,
         displayedStation: pointI.displayedStation,
         offset: pointI.offset,
