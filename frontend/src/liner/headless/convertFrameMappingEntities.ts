@@ -69,7 +69,7 @@ export function convertFrameMappingEntities(
   supports: Support[];
   diagnostics: ComputationDiagnostic[];
 } {
-  const diagnostics: ComputationDiagnostic[] = [...mappingResult.diagnostics];
+  const diagnostics: ComputationDiagnostic[] = [];
   const nodes = toProjectNodes(mappingResult.nodes);
   const members = toProjectMembers(mappingResult.members, diagnostics);
   const supports = toProjectSupports(mappingResult.supports);

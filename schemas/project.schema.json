@@ -1447,10 +1447,11 @@
       "required": [
         "type",
         "id",
-        "startPhysicalDistance",
-        "endPhysicalDistance",
+        "startStation",
+        "endStation",
         "startElevation",
-        "grade"
+        "grade",
+        "length"
       ],
       "properties": {
         "type": {
@@ -1460,18 +1461,26 @@
           "type": "string",
           "minLength": 1
         },
-        "startPhysicalDistance": {
-          "type": "number"
+        "startStation": {
+          "type": "number",
+          "description": "Start station (m)."
         },
-        "endPhysicalDistance": {
-          "type": "number"
+        "endStation": {
+          "type": "number",
+          "description": "End station (m)."
         },
         "startElevation": {
-          "type": "number"
+          "type": "number",
+          "description": "Start elevation (m)."
         },
         "grade": {
           "type": "number",
-          "description": "Grade in percent; positive uphill in alignment direction."
+          "description": "Grade as dZ/ds; 0.02 represents 2% rise. Positive uphill in alignment direction."
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Segment length (m)."
         }
       }
     },
@@ -1597,6 +1606,24 @@
         }
       }
     },
+    "crossSlopeDraft": {
+      "description": "Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signConvention",
+        "valuePercent"
+      ],
+      "properties": {
+        "signConvention": {
+          "const": "right_down_positive"
+        },
+        "valuePercent": {
+          "type": "number",
+          "description": "Cross slope (%). Positive when falling to the right from centerline (右下がり正)."
+        }
+      }
+    },
     "crossSectionTemplateDraft": {
       "type": "object",
       "additionalProperties": false,
@@ -1619,6 +1646,14 @@
           "items": {
             "$ref": "#/$defs/crossSectionOffsetLineDraft"
           }
+        },
+        "crossSlope": {
+          "$ref": "#/$defs/crossSlopeDraft",
+          "description": "Optional default cross slope (Pre-Decision #3)."
+        },
+        "station": {
+          "type": "number",
+          "description": "Phase 3.7 optional: normalized physicalDistance of this template."
         }
       }
     },
@@ -1723,6 +1758,40 @@
       "additionalProperties": false,
       "required": [
         "id",
+        "physicalDistance",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
+          "type": "number"
+        },
+        "kind": {
+          "enum": [
+            "abutment",
+            "pier",
+            "virtual_pier"
+          ]
+        },
+        "skewAngleRad": {
+          "type": "number"
+        },
+        "bearingOffsets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pierBearingOffsetDraft"
+          }
+        }
+      }
+    },
+    "crossBeamDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
         "physicalDistance"
       ],
       "properties": {
@@ -1733,14 +1802,34 @@
         "physicalDistance": {
           "type": "number"
         },
-        "skewAngleRad": {
+        "spanId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "widthChangePointDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "physicalDistance",
+        "leftOffset",
+        "rightOffset"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalDistance": {
           "type": "number"
         },
-        "bearingOffsets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/pierBearingOffsetDraft"
-          }
+        "leftOffset": {
+          "type": "number"
+        },
+        "rightOffset": {
+          "type": "number"
         }
       }
     },
@@ -1909,6 +1998,20 @@
         "measuredGrid": {
           "$ref": "#/$defs/measuredGridDraft",
           "description": "Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source)."
+        },
+        "crossBeams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossBeamDraft"
+          },
+          "description": "Phase 3.7 optional: cross-beam supports at normalized stations."
+        },
+        "widthChangePoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/widthChangePointDraft"
+          },
+          "description": "Phase 3.7 optional: width change points at normalized stations."
         }
       }
     },

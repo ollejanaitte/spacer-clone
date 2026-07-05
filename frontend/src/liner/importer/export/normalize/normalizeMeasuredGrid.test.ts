@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeMeasuredGrid } from "./normalizeMeasuredGrid";
+import { normalizeMeasuredGrid, collectMeasuredGridCollapseWarnings } from "./normalizeMeasuredGrid";
 import { buildNormalizationContext } from "./normalizationContext";
 import type { Bridge, Section } from "../../types";
 
@@ -151,5 +151,47 @@ describe("normalizeMeasuredGrid", () => {
       planLength: 164.2476,
     });
     expect(normalizeMeasuredGrid(bridge, ctx)).toBeUndefined();
+  });
+
+  it("reports adjacent lines that collapse to the same cumulativeWidth within a section", () => {
+    const measuredGrid = {
+      id: "mg-test",
+      source: "unit-test",
+      sections: [{ id: "sec-1", label: "S1", station: 0, sortIndex: 0 }],
+      lines: [
+        { id: "l1", label: "HL1", sortIndex: 0 },
+        { id: "l2", label: "HL2", sortIndex: 1 },
+      ],
+      points: [
+        {
+          id: "p1",
+          sectionId: "sec-1",
+          lineId: "l1",
+          station: 0,
+          x: 0,
+          y: 5,
+          z: 0,
+          cumulativeWidth: 5,
+        },
+        {
+          id: "p2",
+          sectionId: "sec-1",
+          lineId: "l2",
+          station: 0,
+          x: 0,
+          y: 5,
+          z: 0,
+          cumulativeWidth: 5,
+        },
+      ],
+    };
+
+    expect(collectMeasuredGridCollapseWarnings(measuredGrid)).toEqual([
+      expect.objectContaining({
+        sectionId: "sec-1",
+        adjacentLineLabel: "HL1",
+        lineLabel: "HL2",
+      }),
+    ]);
   });
 });

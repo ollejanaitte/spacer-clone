@@ -58,8 +58,18 @@ export function attachLinerMappingToProject<T extends ProjectLike>(
   mappingResult: FrameMappingResult,
   options?: { generatedAt?: string },
 ): T & Required<ProjectLinerExtension> {
+  const extension = createLinerProjectExtension(intermediate, mappingResult, options);
+  const existingLiner =
+    typeof project.liner === "object" && project.liner !== null && !Array.isArray(project.liner)
+      ? (project.liner as Record<string, unknown>)
+      : {};
+
   return {
     ...project,
-    ...createLinerProjectExtension(intermediate, mappingResult, options),
+    liner: {
+      ...existingLiner,
+      ...extension.liner,
+    },
+    linerTrace: extension.linerTrace,
   };
 }
