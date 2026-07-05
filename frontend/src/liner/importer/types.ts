@@ -62,11 +62,17 @@ export type BridgeType =
   | "separated"
   | "custom";
 
+export interface BridgeValidationProfile {
+  /** When true, cumulativeWidth symmetry is checked against HCL/CL. Defaults to false. */
+  expectSymmetry?: boolean;
+}
+
 export interface Bridge {
   id: string;
   name: string;
   routeName?: string;
   bridgeType?: BridgeType;
+  validationProfile?: BridgeValidationProfile;
   girderLineSets: GirderLineSet[];
   spans: Span[];
   sections: Section[];

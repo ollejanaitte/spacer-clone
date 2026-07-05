@@ -7,7 +7,9 @@ import {
   updateLinerCrossSlope,
   updateLinerVerticalAlignment,
 } from "./linerUiAdapter";
-import { linerDraftFromProject, withProjectLinerDraft } from "./linerProjectDraft";
+import { linerDraftFromProject, withProjectLinerDraft, withProjectLinerDomainDraft } from "./linerProjectDraft";
+import { convertImporterToPhase35Draft } from "../importer/export/ImporterToPhase35Adapter";
+import { createSampleImporterProject } from "../importer/__tests__/fixtures/sampleProject";
 import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
@@ -33,6 +35,15 @@ describe("liner project draft persistence", () => {
     const project = withProjectLinerDraft(createDefaultProject(), draft);
 
     expect(linerDraftFromProject(project)).toEqual(draft);
+  });
+
+  it("stores domain draft directly via withProjectLinerDomainDraft", () => {
+    const conversion = convertImporterToPhase35Draft(createSampleImporterProject());
+    expect(conversion.draft).not.toBeNull();
+    const project = withProjectLinerDomainDraft(createDefaultProject(), conversion.draft!);
+
+    expect(project.liner?.domainDraft?.alignment.elements.length).toBeGreaterThan(0);
+    expect(linerDraftFromProject(project)?.alignment.elements.length).toBeGreaterThan(0);
   });
 
   it("preserves vertical and cross-section draft edits through vNext save and load", () => {

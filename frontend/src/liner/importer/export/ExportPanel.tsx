@@ -2,18 +2,37 @@ import { useCallback, useMemo, useState } from "react";
 import { ArrowLeft, Download } from "lucide-react";
 import { defaultImporterProjectService } from "../ImporterProjectService";
 import type { JipLinerImporterProject } from "../types";
+import type { LinerDomainDraftVNext } from "../../schema/types";
 import { buildValidationViewModel } from "./ExportValidator";
 import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
 import { conversionLogFileName, defaultConversionLogWriter } from "./ConversionLogWriter";
+import { domainDraftToDownloadJson } from "./importerPhase35Bridge";
 
 export type ExportPanelProps = {
   projectId: string;
   bridgeId: string;
   onBack: () => void;
   onExported?: (project: JipLinerImporterProject) => void;
+  onOpenInPhase35?: (domainDraft: LinerDomainDraftVNext) => void;
 };
 
-export function ExportPanel({ projectId, bridgeId, onBack, onExported }: ExportPanelProps) {
+function downloadJsonFile(fileName: string, jsonText: string): void {
+  const blob = new Blob([jsonText], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+export function ExportPanel({
+  projectId,
+  bridgeId,
+  onBack,
+  onExported,
+  onOpenInPhase35,
+}: ExportPanelProps) {
   const service = defaultImporterProjectService;
   const [project, setProject] = useState<JipLinerImporterProject | null>(() =>
     service.loadProject(projectId),
@@ -37,6 +56,31 @@ export function ExportPanel({ projectId, bridgeId, onBack, onExported }: ExportP
     return buildValidationViewModel(project, showAcknowledged);
   }, [project, showAcknowledged]);
 
+  const runConversion = useCallback(() => {
+    if (!project || !bridge) {
+      return null;
+    }
+
+    const result = convertImporterToPhase35Draft(project, bridgeId);
+    if (result.renderability.export === "blocked" || result.draft == null) {
+      setErrorMessage("エクスポート不可: 最小要件または Error 診断を解消してください。");
+      return null;
+    }
+
+    return result;
+  }, [bridge, bridgeId, project]);
+
+  const handleDownloadJson = useCallback(() => {
+    setErrorMessage(null);
+    const result = runConversion();
+    if (!result?.draft || !project) {
+      return;
+    }
+
+    downloadJsonFile(`${project.name}-phase35-draft.json`, domainDraftToDownloadJson(result.draft));
+    setStatusMessage("Phase 3.5 draft JSON をダウンロードしました。");
+  }, [project, runConversion]);
+
   const handleExport = useCallback(() => {
     if (!project || !bridge) {
       setErrorMessage("プロジェクトが見つかりません。");
@@ -44,48 +88,28 @@ export function ExportPanel({ projectId, bridgeId, onBack, onExported }: ExportP
     }
 
     setErrorMessage(null);
-    const result = convertImporterToPhase35Draft(project, bridgeId);
-
-    if (result.renderability.export === "blocked" || result.draft == null) {
-      setErrorMessage("エクスポート不可: 最小要件または Error 診断を解消してください。");
+    const result = runConversion();
+    if (!result?.draft) {
       return;
     }
 
     if (result.conversionLog) {
       defaultConversionLogWriter.write(projectId, result.conversionLog);
-    }
-
-    const draftJson = JSON.stringify(result.draft, null, 2);
-    const logJson = result.conversionLog
-      ? defaultConversionLogWriter.write(projectId, result.conversionLog)
-      : "";
-
-    const draftBlob = new Blob([draftJson], { type: "application/json" });
-    const draftUrl = URL.createObjectURL(draftBlob);
-    const draftLink = document.createElement("a");
-    draftLink.href = draftUrl;
-    draftLink.download = `${project.name}-phase35-draft.json`;
-    draftLink.click();
-    URL.revokeObjectURL(draftUrl);
-
-    if (logJson.length > 0) {
-      const logBlob = new Blob([logJson], { type: "application/json" });
-      const logUrl = URL.createObjectURL(logBlob);
-      const logLink = document.createElement("a");
-      logLink.href = logUrl;
-      logLink.download = conversionLogFileName(projectId);
-      logLink.click();
-      URL.revokeObjectURL(logUrl);
+      const logJson = defaultConversionLogWriter.write(projectId, result.conversionLog);
+      if (logJson.length > 0) {
+        downloadJsonFile(conversionLogFileName(projectId), logJson);
+      }
     }
 
     service.updateLastEditedStep(projectId, "export", { bridgeId });
     setStatusMessage(
       result.renderability.export === "partial"
-        ? "Warning 付きで Phase 3.5 draft をエクスポートしました。"
-        : "Phase 3.5 draft をエクスポートしました。",
+        ? "Phase 3.5 draft を作成しました（Warning あり）。"
+        : "Phase 3.5 draft を作成しました。",
     );
     onExported?.(project);
-  }, [bridge, bridgeId, onExported, project, projectId, service]);
+    onOpenInPhase35?.(result.draft);
+  }, [bridge, onExported, onOpenInPhase35, project, projectId, runConversion, service]);
 
   if (!project || !bridge || !summary) {
     return (
@@ -119,6 +143,15 @@ export function ExportPanel({ projectId, bridgeId, onBack, onExported }: ExportP
           <button type="button" onClick={onBack} data-testid="export-panel-back">
             <ArrowLeft size={16} />
             戻る
+          </button>
+          <button
+            type="button"
+            onClick={handleDownloadJson}
+            disabled={exportDisabled}
+            data-testid="export-panel-download-json"
+          >
+            <Download size={16} />
+            Download JSON
           </button>
           <button
             type="button"

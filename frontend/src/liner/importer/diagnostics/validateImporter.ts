@@ -351,7 +351,9 @@ export function validateSection(
 
   diagnostics.push(...validateSectionDistanceChain(allSections, section));
   diagnostics.push(...validateAzimuthJump(allSections, section));
-  diagnostics.push(...validateSymmetry(section));
+  if (bridge.validationProfile?.expectSymmetry === true) {
+    diagnostics.push(...validateSymmetry(section));
+  }
   diagnostics.push(...validateProfileGrade(section));
   diagnostics.push(...validateLineMasterMatch(section, masterLines));
 

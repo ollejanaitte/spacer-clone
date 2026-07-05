@@ -257,6 +257,13 @@
         "sourceRef": { "$ref": "#/$defs/sourceRef" }
       }
     },
+    "validationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "expectSymmetry": { "type": "boolean" }
+      }
+    },
     "bridge": {
       "type": "object",
       "additionalProperties": false,
@@ -269,6 +276,7 @@
           "type": "string",
           "enum": ["simple", "continuous", "integrated", "separated", "custom"]
         },
+        "validationProfile": { "$ref": "#/$defs/validationProfile" },
         "girderLineSets": {
           "type": "array",
           "items": { "$ref": "#/$defs/girderLineSet" }

@@ -1329,6 +1329,21 @@ export const ja = {
       pdfDescription:
         "JIP-LINERのPDF計算書を見ながら、Project / Bridge / Line Master / Section List / Section Editor の流れで入力します。",
     },
+    importer: {
+      startup: {
+        title: "JIP-LINER PDF 入力の開始方法",
+        lead: "サンプルデータで全体の流れを試すか、空のプロジェクトから写経入力を始めてください。",
+        back: "入力方式選択に戻る",
+        cardsLabel: "開始方法",
+        sampleTitle: "同梱サンプルデータセットを使う",
+        sampleDescription:
+          "001_サンプル_LINER計算書_高架橋（Hランプ4号橋）の転記済みデータで、Line Master から Section Editor まで試せます。",
+        emptyTitle: "空のプロジェクトから始める",
+        emptyDescription:
+          "新規プロジェクトと橋梁を作成し、PDF を見ながら写経入力を開始します。",
+        note: "保存済みプロジェクトの一覧は、メニューから Importer 一覧を開くと確認できます。",
+      },
+    },
     window: {
       title: "線形座標計算",
       statusReady: "準備完了",
