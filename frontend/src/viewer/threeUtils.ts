@@ -3,7 +3,7 @@ import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
-import { applySpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
+import { applyViewerDisplayTransform, type SpacerAxisSwap, type ViewerDisplayCoordinatePolicy } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
@@ -34,6 +34,7 @@ export function createNodeMap(
   project: ProjectModel,
   swap: SpacerAxisSwap = "off",
   override?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): Map<string, THREE.Vector3> {
   const nodes = new Map<string, THREE.Vector3>();
   for (const node of project.nodes) {
@@ -42,7 +43,7 @@ export function createNodeMap(
     const srcX = o && isFiniteNumber(o.x) ? o.x : node.x;
     const srcY = o && isFiniteNumber(o.y) ? o.y : node.y;
     const srcZ = o && isFiniteNumber(o.z) ? o.z : node.z;
-    const t = applySpacerAxisSwap(srcX, srcY, srcZ, swap);
+    const t = applyViewerDisplayTransform(srcX, srcY, srcZ, swap, displayPolicy);
     nodes.set(node.id, new THREE.Vector3(t.x, t.y, t.z));
   }
   return nodes;
@@ -192,9 +193,10 @@ export function computeModelBox(
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
   swap: SpacerAxisSwap = "off",
   override?: Map<string, { x: number; y: number; z: number }> | null,
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Box3 {
   const box = new THREE.Box3();
-  const nodeMap = createNodeMap(project, swap, override);
+  const nodeMap = createNodeMap(project, swap, override, displayPolicy);
   for (const position of nodeMap.values()) box.expandByPoint(position);
   const displacements = createDisplacementMap(
     result,
@@ -202,6 +204,7 @@ export function computeModelBox(
     selectedEigenMode,
     selectedResponseSpectrumResult,
     swap,
+    displayPolicy,
   );
   if (displacements.size > 0 && Number.isFinite(deformationScale)) {
     for (const [nodeId, base] of nodeMap) {
@@ -243,12 +246,13 @@ export function createDisplacementMap(
   selectedEigenMode = 1,
   selectedResponseSpectrumResult: ResponseSpectrumSelection = "SRSS",
   swap: SpacerAxisSwap = "off",
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): Map<string, THREE.Vector3> {
   const map = new Map<string, THREE.Vector3>();
   if (!result || result.errors.length > 0) return map;
   const recordSample = (nodeId: string, ux: number, uy: number, uz: number) => {
     if (!isFiniteNumber(ux) || !isFiniteNumber(uy) || !isFiniteNumber(uz)) return;
-    const transformed = applySpacerAxisSwap(ux, uy, uz, swap);
+    const transformed = applyViewerDisplayTransform(ux, uy, uz, swap, displayPolicy);
     map.set(nodeId, new THREE.Vector3(transformed.x, transformed.y, transformed.z));
   };
   const responseSpectrumDisplacements = getResponseSpectrumDisplacements(result, selectedResponseSpectrumResult);

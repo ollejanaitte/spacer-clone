@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { ResponseSpectrumSelection } from "../../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../../types";
 import type { ViewerScales } from "../types";
-import type { SpacerAxisSwap } from "../coordinateTransform";
+import type { SpacerAxisSwap, ViewerDisplayCoordinatePolicy } from "../coordinateTransform";
 import {
   createDisplacementMap,
   createLine,
@@ -19,17 +19,19 @@ export function renderDeformedShape(
   selectedResponseSpectrumResult: ResponseSpectrumSelection,
   scales: ViewerScales,
   spacerAxisSwap: SpacerAxisSwap = "off",
+  displayPolicy: ViewerDisplayCoordinatePolicy = "general",
 ): THREE.Object3D[] {
   const displacementScale =
     result?.eigenResult && !result.responseSpectrumResult ? scales.modeScale : scales.deformationScale;
   if (!result || result.errors.length > 0 || !isFiniteNumber(displacementScale)) return [];
-  const nodeMap = createNodeMap(project, spacerAxisSwap);
+  const nodeMap = createNodeMap(project, spacerAxisSwap, undefined, displayPolicy);
   const displacementMap = createDisplacementMap(
     result,
     selectedLoadCaseId,
     selectedEigenMode,
     selectedResponseSpectrumResult,
     spacerAxisSwap,
+    displayPolicy,
   );
   if (displacementMap.size === 0) return [];
 

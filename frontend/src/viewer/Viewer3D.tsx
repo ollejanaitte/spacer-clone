@@ -11,7 +11,14 @@ import {
 import type { AnalysisResult, ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import { createSuspendedDeckProject } from "../data/defaultProject";
-import { createSpacerAxisSwap, loadSpacerAxisSwap, persistSpacerAxisSwap, type SpacerAxisSwap } from "./coordinateTransform";
+import {
+  isLinerDerivedProject,
+  loadStoredSpacerAxisSwap,
+  persistSpacerAxisSwap,
+  resolveInitialSpacerAxisSwap,
+  resolveViewerDisplayCoordinatePolicy,
+  type SpacerAxisSwap,
+} from "./coordinateTransform";
 import { DEFAULT_ANIMATION_OPTIONS, type AnimationOptions } from "./animation";
 import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps, type ViewerMode, type ViewerScales, type ViewerSelection, type ViewerVisibility } from "./types";
 import { CompareShell, defaultCompareAnimationOptions, type CompareSlotDescriptor } from "./CompareShell";
@@ -68,7 +75,11 @@ export function Viewer3D({
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [fitRequest, setFitRequest] = useState(0);
   const [cameraRequest, setCameraRequest] = useState<CameraPreset | null>(null);
-  const [spacerAxisSwap, setSpacerAxisSwap] = useState<SpacerAxisSwap>(() => createSpacerAxisSwap(loadSpacerAxisSwap()));
+  const isLinerDerived = isLinerDerivedProject(project);
+  const viewerDisplayPolicy = resolveViewerDisplayCoordinatePolicy(isLinerDerived);
+  const [spacerAxisSwap, setSpacerAxisSwap] = useState<SpacerAxisSwap>(() =>
+    resolveInitialSpacerAxisSwap(isLinerDerived),
+  );
   const [animationOptions, setAnimationOptions] = useState<AnimationOptions>(DEFAULT_ANIMATION_OPTIONS);
   const [compareMode, setCompareMode] = useState<boolean>(initialCompareMode);
   const [cameraSync, setCameraSync] = useState<boolean>(defaultCameraSync);
@@ -112,8 +123,9 @@ export function Viewer3D({
   );
 
   useEffect(() => {
-    persistSpacerAxisSwap(spacerAxisSwap);
-  }, [spacerAxisSwap]);
+    if (loadStoredSpacerAxisSwap() !== null) return;
+    setSpacerAxisSwap(isLinerDerived ? "on" : "off");
+  }, [project.project.id, isLinerDerived]);
 
   useEffect(() => {
     persistViewerDisplaySize(displaySize);
@@ -182,6 +194,7 @@ export function Viewer3D({
 
   const handleSpacerAxisSwapChange = useCallback((next: SpacerAxisSwap) => {
     setSpacerAxisSwap(next);
+    persistSpacerAxisSwap(next);
     setFitRequest((value) => value + 1);
   }, []);
 
@@ -240,6 +253,7 @@ export function Viewer3D({
     fitRequest,
     cameraRequest,
     spacerAxisSwap,
+    viewerDisplayPolicy,
     animationOptions,
     onInitializationError: handleInitializationError,
     timeHistoryNodeOverride,
@@ -267,7 +281,7 @@ export function Viewer3D({
           onActiveLoadCaseChange={onActiveLoadCaseChange}
           onSelectedEigenModeChange={onSelectedEigenModeChange}
           onSelectedResponseSpectrumResultChange={(value) => onSelectedResponseSpectrumResultChange(value ?? "SRSS")}
-          onSpacerAxisSwapChange={setSpacerAxisSwap}
+          onSpacerAxisSwapChange={handleSpacerAxisSwapChange}
           onAnimationOptionsChange={setAnimationOptions}
           onInitializationError={() => undefined}
         />
@@ -362,6 +376,7 @@ export function Viewer3D({
               onSelectedResponseSpectrumResultChange(value)
             }
             onSpacerAxisSwapChange={handleSpacerAxisSwapChange}
+            spacerAxisSwapHint={isLinerDerived ? ja.viewer.controls.spacerAxisSwapLinerHint : undefined}
             onAnimationOptionsChange={handleAnimationOptionsChange}
             onCompareModeChange={handleCompareModeChange}
             onCameraSyncChange={handleCameraSyncChange}

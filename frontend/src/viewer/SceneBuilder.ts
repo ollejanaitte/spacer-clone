@@ -59,11 +59,12 @@ export function rebuildModelScene(
     selectedEigenMode,
     selectedResponseSpectrumResult = "SRSS",
     spacerAxisSwap = "off",
+    viewerDisplayPolicy = "general",
   } = props;
   replaceGroupContents(
     groups.nodes,
     visibility.nodes
-      ? renderNodes(project, selectedSection, selection, scales, spacerAxisSwap, nodePositionOverride)
+      ? renderNodes(project, selectedSection, selection, scales, spacerAxisSwap, nodePositionOverride, viewerDisplayPolicy)
       : [],
   );
   replaceGroupContents(
@@ -76,17 +77,17 @@ export function rebuildModelScene(
           result,
           loadCaseId: selectedLoadCaseId,
           selectedResponseSpectrumResult,
-        })
+        }, viewerDisplayPolicy)
       : [],
   );
   replaceGroupContents(
     groups.supports,
-    visibility.supports ? renderSupports(project, scales, spacerAxisSwap, nodePositionOverride) : [],
+    visibility.supports ? renderSupports(project, scales, spacerAxisSwap, nodePositionOverride, viewerDisplayPolicy) : [],
   );
   replaceGroupContents(
     groups.loads,
     visibility.loads
-      ? renderLoads(project, selectedLoadCaseId, scales, spacerAxisSwap, nodePositionOverride)
+      ? renderLoads(project, selectedLoadCaseId, scales, spacerAxisSwap, nodePositionOverride, viewerDisplayPolicy)
       : [],
   );
   replaceGroupContents(
@@ -100,6 +101,7 @@ export function rebuildModelScene(
           selectedResponseSpectrumResult,
           scales,
           spacerAxisSwap,
+          viewerDisplayPolicy,
         )
       : [],
   );
@@ -113,6 +115,7 @@ export function rebuildModelScene(
       visibility,
       scales,
       spacerAxisSwap,
+      viewerDisplayPolicy,
     ),
   );
   replaceGroupContents(
@@ -120,10 +123,10 @@ export function rebuildModelScene(
     visibility.labels
       ? [
           ...(visibility.nodeLabels
-            ? renderNodeLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection)
+            ? renderNodeLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection, viewerDisplayPolicy)
             : []),
           ...(visibility.memberLabels
-            ? renderMemberLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection)
+            ? renderMemberLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection, viewerDisplayPolicy)
             : []),
         ]
       : [],
