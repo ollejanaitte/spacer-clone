@@ -43,8 +43,8 @@ describe("importerPhase35Bridge", () => {
     );
     expect(result.bridge.domainDraft.verticalAlignment.elements[0]).toMatchObject({
       type: "grade",
-      startStation: 250,
-      endStation: 300,
+      startStation: 0,
+      endStation: 40.286699999999996,
     });
   });
 

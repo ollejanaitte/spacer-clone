@@ -3,6 +3,8 @@ import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
 import { buildBuiltInSampleProject } from "../sample/builtInSampleDataset";
 import type { Bridge, JipLinerImporterProject, Section } from "../types";
+import { buildNormalizationContext } from "./normalize/normalizationContext";
+import { POST_CONDITION_CODES } from "./normalize/postConditions";
 
 function createBridgeForStationNormalization(): Bridge {
   const bridgeId = "bridge-station-normalization";
@@ -275,5 +277,183 @@ describe("ImporterToPhase35Adapter", () => {
       (diagnostic) => diagnostic.code === "LINER_STATION_OUT_OF_RANGE",
     );
     expect(outOfRange).toEqual([]);
+  });
+});
+
+describe("Phase 3.7 NormalizationContext pipeline", () => {
+  it("1: NormalizationContext round-trip toOriginal(toNormalized(259.7133)) ≈ 259.7133", () => {
+    const ctx = buildNormalizationContext({
+      sectionStations: [259.7133],
+      spanStartStations: [],
+      spanEndStations: [395.466],
+      planLength: 135,
+      stationEquations: [],
+    });
+    expect(Math.abs(ctx.toOriginal(ctx.toNormalized(259.7133)) - 259.7133)).toBeLessThan(
+      ctx.tolerance.station,
+    );
+  });
+
+  it("2: originStation simple min — section-only and section+span cases", () => {
+    const sectionOnly = buildNormalizationContext({
+      sectionStations: [259.7133],
+      spanStartStations: [],
+      spanEndStations: [],
+      planLength: 135,
+    });
+    expect(sectionOnly.originStation).toBeCloseTo(259.7133, 6);
+    expect(sectionOnly.diagnostics.some((d) => d.code === "LINER_ORIGIN_STATION_AMBIGUOUS")).toBe(
+      false,
+    );
+
+    const sectionAndSpan = buildNormalizationContext({
+      sectionStations: [259.7133],
+      spanStartStations: [259.8142],
+      spanEndStations: [],
+      planLength: 135,
+    });
+    expect(sectionAndSpan.originStation).toBeCloseTo(259.7133, 6);
+    expect(sectionAndSpan.diagnostics.some((d) => d.code === "LINER_ORIGIN_STATION_AMBIGUOUS")).toBe(
+      true,
+    );
+  });
+
+  it("3: alignmentLength Case D — planLength=135, spanReach=135.6518 → 135.6518", () => {
+    const ctx = buildNormalizationContext({
+      sectionStations: [259.8142],
+      spanStartStations: [259.8142],
+      spanEndStations: [395.466],
+      planLength: 135,
+    });
+    expect(ctx.planLength).toBeCloseTo(135, 6);
+    expect(ctx.spanReach).toBeCloseTo(135.6518, 4);
+    expect(ctx.alignmentLength).toBeCloseTo(135.6518, 4);
+  });
+
+  it("4: built-in sample profile.elements[0] startStation=0 and endStation≈40.2867", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    const element = result.draft!.verticalAlignment.elements[0]!;
+    expect(element.startStation).toBeCloseTo(0, 6);
+    expect(element.endStation).toBeCloseTo(40.2867, 4);
+  });
+
+  it("5: built-in sample pipeline has zero LINER_PROFILE_COVERAGE_GAP", async () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+
+    const { buildIntermediateResult } = await import("../../core/pipeline/pipeline");
+    const { linerDraftFromProject, withProjectLinerDomainDraft } = await import(
+      "../../adapters/linerProjectDraft"
+    );
+
+    const shell = {
+      schemaVersion: "1.0.0",
+      project: {
+        id: "shell-coverage",
+        name: "Shell coverage",
+        schemaVersion: "1.0.0",
+        createdAt: "2026-07-05T00:00:00+09:00",
+        updatedAt: "2026-07-05T00:00:00+09:00",
+      },
+      units: { length: "m", force: "kN", temperature: "C" } as {
+        length: string;
+        force: string;
+        temperature: string;
+      },
+      nodes: [],
+      materials: [],
+      sections: [],
+      members: [],
+      supports: [],
+      loadCases: [],
+      nodalLoads: [],
+      memberLoads: [],
+      analysisSettings: { solver: "direct-stiffness" } as { solver: string },
+    };
+    const stored = withProjectLinerDomainDraft(
+      shell as unknown as Parameters<typeof withProjectLinerDomainDraft>[0],
+      result.draft!,
+    );
+    const draft = linerDraftFromProject(stored);
+    const intermediate = buildIntermediateResult(draft!);
+    const coverageGaps = intermediate.diagnostics.filter(
+      (diagnostic) => diagnostic.code === "LINER_PROFILE_COVERAGE_GAP",
+    );
+    expect(coverageGaps).toHaveLength(0);
+  });
+
+  it("6: built-in sample emits exactly one LINER_PROFILE_END_COVERAGE_GAP warning", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    const endCoverageWarnings = result.diagnostics.filter(
+      (diagnostic) => diagnostic.code === POST_CONDITION_CODES.PROFILE_END_COVERAGE_GAP,
+    );
+    expect(endCoverageWarnings).toHaveLength(1);
+  });
+
+  it("7: built-in sample has zero LINER_SPAN_END_EXCEEDS_ALIGNMENT", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    const spanOverflow = result.diagnostics.filter(
+      (diagnostic) => diagnostic.code === POST_CONDITION_CODES.SPAN_END_EXCEEDS_ALIGNMENT,
+    );
+    expect(spanOverflow).toHaveLength(0);
+    expect(result.draft!.spans[0]!.endPhysicalDistance).toBeLessThanOrEqual(
+      buildNormalizationContext({
+        sectionStations: [259.7133],
+        spanStartStations: [259.8142],
+        spanEndStations: [395.466],
+        planLength: 135,
+      }).alignmentLength + 1e-6,
+    );
+  });
+
+  it("8: built-in crossSections[0].station=0 and name CrossSlope @ 0", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    const crossSection = result.draft!.crossSections[0]!;
+    expect(crossSection.station).toBeCloseTo(0, 6);
+    expect(crossSection.name).toBe("CrossSlope @ 0");
+  });
+
+  it("9: built-in explicitStations ascending [0, 9.7867, 19.7867, 29.7867]", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    const expected = [0, 9.7867, 19.7867, 29.7867];
+    expect(result.draft!.stationDefinition.explicitStations).toHaveLength(expected.length);
+    result.draft!.stationDefinition.explicitStations!.forEach((value, index) => {
+      expect(value).toBeCloseTo(expected[index]!, 4);
+    });
+  });
+
+  it("10: NormalizationContext is frozen and originStation assignment throws", () => {
+    const ctx = buildNormalizationContext({
+      sectionStations: [259.7133],
+      spanStartStations: [],
+      spanEndStations: [],
+      planLength: 135,
+    });
+    expect(Object.isFrozen(ctx)).toBe(true);
+    expect(() => {
+      (ctx as { originStation: number }).originStation = 999;
+    }).toThrow(TypeError);
+  });
+
+  it("11: substructure no-op — undefined bridge.substructure yields empty piers and no crossBeams", () => {
+    const sample = buildBuiltInSampleProject();
+    expect(sample.bridges[0]!.substructure).toBeUndefined();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+    expect(result.draft!.piers).toEqual([]);
+    expect(result.draft!.crossBeams).toBeUndefined();
+    expect(result.draft!.widthChangePoints).toBeUndefined();
+    expect(result.diagnostics.some((d) => d.level === "error")).toBe(false);
   });
 });

@@ -56,6 +56,8 @@ export interface LinerDomainDraftVNext {
   gridDefinitions: GridDefinitionDraft[];
   spans: SpanDraft[];
   piers: PierDraft[];
+  crossBeams?: CrossBeamDraft[];
+  widthChangePoints?: WidthChangePointDraft[];
   generationSettings: GenerationSettingsDraft;
   sampling: SamplingSettingsDraft;
 }
@@ -180,6 +182,8 @@ export interface CrossSectionTemplateDraft {
   name: string;
   offsetLines: CrossSectionOffsetLineDraft[];
   crossSlope?: CrossSlopeDraft;
+  /** Phase 3.7 optional: normalized physicalDistance of this template. */
+  station?: number;
 }
 
 /** Pre-Decision #4: オフセット線の意味論ロール。 */
@@ -244,8 +248,24 @@ export interface SpanDraft {
 export interface PierDraft {
   id: string;
   physicalDistance: number;
+  kind: "abutment" | "pier" | "virtual_pier";
   skewAngleRad?: number;
   bearingOffsets?: PierBearingOffsetDraft[];
+}
+
+/** Phase 3.7: cross-beam support at a normalized station. */
+export interface CrossBeamDraft {
+  id: string;
+  physicalDistance: number;
+  spanId?: string;
+}
+
+/** Phase 3.7: width change point at a normalized station. */
+export interface WidthChangePointDraft {
+  id: string;
+  physicalDistance: number;
+  leftOffset: number;
+  rightOffset: number;
 }
 
 /**

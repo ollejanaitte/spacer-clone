@@ -55,7 +55,7 @@ describe("pipeline vertical integration (PR-C)", () => {
     expect(endGrid?.zProvenance.profileElevation).toBeCloseTo(20, 6);
   });
 
-  it("case 3: short vertical profile blocks evaluation with error", () => {
+  it("case 3: short vertical profile emits end-coverage warning", () => {
     const shortVertical: VerticalAlignmentDraft = {
       id: "VA-short",
       elements: [
@@ -79,10 +79,11 @@ describe("pipeline vertical integration (PR-C)", () => {
       z: 0,
     });
 
-    const coverageErrors = result.diagnostics.filter(
+    const endCoverageWarnings = result.diagnostics.filter(
       (diagnostic) =>
-        diagnostic.level === "error" && diagnostic.code === "LINER_PROFILE_COVERAGE_GAP",
+        diagnostic.level === "warning" &&
+        diagnostic.code === "LINER_PROFILE_END_COVERAGE_GAP",
     );
-    expect(coverageErrors.length).toBeGreaterThan(0);
+    expect(endCoverageWarnings.length).toBeGreaterThan(0);
   });
 });

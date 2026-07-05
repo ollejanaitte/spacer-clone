@@ -33,7 +33,7 @@ export function checkVerticalProfileEndCoverage(
 
   if (gap > DEFAULT_TOLERANCES.station) {
     return [
-      createIssue("error", LINER_DIAGNOSTIC_CODES.profileCoverageGap, {
+      createIssue("warning", LINER_DIAGNOSTIC_CODES.profileEndCoverageGap, {
         entityType: "verticalAlignment",
         entityId: verticalAlignment.id,
         station: profileEnd,
