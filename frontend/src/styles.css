@@ -3215,6 +3215,95 @@ button:disabled {
   line-height: 1.5;
 }
 
+.importer-startup-page {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.importer-startup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.importer-startup-header h1,
+.importer-startup-header p,
+.importer-startup-card h2,
+.importer-startup-card p,
+.importer-startup-note {
+  margin: 0;
+}
+
+.importer-startup-header h1 {
+  font-size: 18px;
+}
+
+.importer-startup-header p {
+  color: #526173;
+  font-size: 13px;
+}
+
+.importer-startup-header button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.importer-startup-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.importer-startup-card {
+  display: grid;
+  gap: 10px;
+  min-height: 180px;
+  padding: 20px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #243447;
+  text-align: left;
+  cursor: pointer;
+}
+
+.importer-startup-card:hover {
+  border-color: #7a95b0;
+  background: #f7fbff;
+}
+
+.importer-startup-card h2 {
+  font-size: 16px;
+}
+
+.importer-startup-card p {
+  color: #526173;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.importer-startup-note {
+  padding: 10px 12px;
+  border: 1px solid #d5e0ea;
+  border-radius: 8px;
+  background: #f8fbff;
+  color: #526173;
+  font-size: 12px;
+}
+
 .liner-list-page {
   min-height: 100vh;
   padding: 12px;

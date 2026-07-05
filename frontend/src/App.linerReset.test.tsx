@@ -145,15 +145,30 @@ describe("App LINER reset integration", () => {
     expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
   }, 20000);
 
-  it("opens the Phase 3.6 Importer from the launcher PDF card", async () => {
+  it("opens the Phase 3.6 Importer startup dialog from the launcher PDF card", async () => {
     const { App } = await import("./App");
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
     await openImporterViaLauncher();
 
-    expect(window.location.pathname).toBe("/pro/importer");
-    expect(document.querySelector("[data-testid=importer-project-list-page]")).not.toBeNull();
+    expect(window.location.pathname).toBe("/pro/importer/startup");
+    expect(document.querySelector("[data-testid=importer-startup-page]")).not.toBeNull();
+  }, 20000);
+
+  it("opens an empty importer project from the startup dialog", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openImporterViaLauncher();
+
+    await act(async () => {
+      buttonByTestId("importer-startup-start-empty").click();
+    });
+
+    expect(window.location.pathname).toMatch(/^\/pro\/importer\/.+\/line-master\/.+$/);
+    expect(document.querySelector("[data-testid=line-master-page]")).not.toBeNull();
   }, 20000);
 
   it("shows an empty LINER list after model reset", async () => {

@@ -1,4 +1,5 @@
 import { createEmptyImporterProject } from "./factory";
+import { buildBuiltInSampleProject } from "./sample/builtInSampleDataset";
 import type {
   Bridge,
   GirderLineSet,
@@ -64,6 +65,87 @@ export class ImporterProjectService {
   createEmptyProject(name?: string): JipLinerImporterProject {
     const project = createEmptyImporterProject(name);
     return createProject(project);
+  }
+
+  createBuiltInSampleProject(): JipLinerImporterProject {
+    const template = buildBuiltInSampleProject();
+    const bridgeTemplate = template.bridges[0];
+    if (!bridgeTemplate) {
+      throw new Error("Built-in sample project is missing bridge data.");
+    }
+
+    const bridgeId = createUniqueId("bridge");
+    const spanId = createUniqueId("span");
+    const girderLineSetId = createUniqueId("gls");
+    const lineIdMap = new Map<string, string>();
+
+    const girderLineSetTemplate = bridgeTemplate.girderLineSets[0];
+    if (!girderLineSetTemplate) {
+      throw new Error("Built-in sample project is missing girder line set data.");
+    }
+
+    const lines = girderLineSetTemplate.lines.map((line) => {
+      const nextId = createUniqueId("line");
+      lineIdMap.set(line.id, nextId);
+      return { ...line, id: nextId };
+    });
+
+    const sections = bridgeTemplate.sections.map((section) => ({
+      ...section,
+      id: createUniqueId("section"),
+      bridgeId,
+      spanId,
+      points: section.points.map((point) => ({
+        ...point,
+        id: createUniqueId("point"),
+        girderLineId: lineIdMap.get(point.girderLineId) ?? point.girderLineId,
+      })),
+    }));
+
+    const bridge: Bridge = {
+      ...bridgeTemplate,
+      id: bridgeId,
+      girderLineSets: [
+        {
+          ...girderLineSetTemplate,
+          id: girderLineSetId,
+          appliesToSpanIds: [spanId],
+          lines,
+        },
+      ],
+      spans: bridgeTemplate.spans.map((span) => ({
+        ...span,
+        id: spanId,
+        girderLineSetId,
+      })),
+      sections,
+    };
+
+    return createProject({
+      ...template,
+      id: createUniqueId("importer-project"),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      savedSnapshots: (template.savedSnapshots ?? []).map((snapshot) => ({
+        ...snapshot,
+        id: createUniqueId("snapshot"),
+        savedAt: new Date().toISOString(),
+        lastEditedRef: {
+          bridgeId,
+          sectionId: sections[0]?.id,
+        },
+      })),
+      sourcePdfRefs: (template.sourcePdfRefs ?? []).map((pdfRef) => ({
+        ...pdfRef,
+        id: createUniqueId("pdf-ref"),
+        lastReferencedAt: new Date().toISOString(),
+      })),
+      bridges: [bridge],
+      renderability: evaluateProjectRenderability({
+        ...template,
+        bridges: [bridge],
+      }),
+    });
   }
 
   loadProject(projectId: string): JipLinerImporterProject | null {

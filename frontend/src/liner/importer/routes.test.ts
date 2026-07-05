@@ -4,10 +4,14 @@ import {
   resolveImporterExportRoutePath,
   resolveImporterSectionEditRoutePath,
   resolveImporterSectionListRoutePath,
+  resolveImporterStartupRoutePath,
 } from "./routes";
 
 describe("importer routes", () => {
-  it("matches section list, editor, and export routes", () => {
+  it("matches startup, section list, editor, and export routes", () => {
+    expect(matchImporterRoute("/pro/importer/startup")).toEqual({ kind: "startup" });
+    expect(resolveImporterStartupRoutePath()).toBe("/pro/importer/startup");
+
     expect(matchImporterRoute("/pro/importer/p1/sections/b1")).toEqual({
       kind: "sectionList",
       projectId: "p1",

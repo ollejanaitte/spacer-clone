@@ -1,7 +1,9 @@
 export const IMPORTER_ROUTE_PATH = "/pro/importer";
+export const IMPORTER_STARTUP_ROUTE_PATH = `${IMPORTER_ROUTE_PATH}/startup`;
 
 export type ImporterRouteMatch =
   | { kind: "list" }
+  | { kind: "startup" }
   | { kind: "lineMaster"; projectId: string; bridgeId: string }
   | { kind: "sectionList"; projectId: string; bridgeId: string }
   | { kind: "sectionEdit"; projectId: string; bridgeId: string; sectionId: string }
@@ -14,6 +16,10 @@ export function resolveImporterRoute(pathname: string): boolean {
 
 export function resolveImporterRoutePath(): string {
   return IMPORTER_ROUTE_PATH;
+}
+
+export function resolveImporterStartupRoutePath(): string {
+  return IMPORTER_STARTUP_ROUTE_PATH;
 }
 
 export function resolveImporterLineMasterRoutePath(
@@ -53,6 +59,10 @@ export function resolveImporterExportRoutePath(
 }
 
 export function matchImporterRoute(pathname: string): ImporterRouteMatch {
+  if (pathname === IMPORTER_STARTUP_ROUTE_PATH) {
+    return { kind: "startup" };
+  }
+
   if (pathname === IMPORTER_ROUTE_PATH) {
     return { kind: "list" };
   }

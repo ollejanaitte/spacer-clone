@@ -50,6 +50,7 @@ import {
   resolveLinerUiRoutePath,
 } from "./liner/uiPreparation";
 import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
+import { ImporterStartupPage } from "./liner/importer/project-list/ImporterStartupPage";
 import { defaultImporterProjectService } from "./liner/importer/ImporterProjectService";
 import { LineMasterPage } from "./liner/importer/line-master/LineMasterPage";
 import { SectionListPage } from "./liner/importer/section-list/SectionListPage";
@@ -60,6 +61,7 @@ import {
   resolveImporterExportRoutePath,
   resolveImporterLineMasterRoutePath,
   resolveImporterRoutePath,
+  resolveImporterStartupRoutePath,
   resolveImporterRoute,
   resolveImporterSectionEditRoutePath,
   resolveImporterSectionListRoutePath,
@@ -607,7 +609,7 @@ export function App() {
       <LinerLauncherPage
         onClose={() => navigatePro("/pro")}
         onOpenGui={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
-        onOpenImporter={() => navigatePro(resolveImporterRoutePath())}
+        onOpenImporter={() => navigatePro(resolveImporterStartupRoutePath())}
       />
     );
   }
@@ -751,6 +753,17 @@ export function App() {
                 importerRoute.bridgeId,
               ),
             )
+          }
+        />
+      );
+    }
+
+    if (importerRoute.kind === "startup") {
+      return (
+        <ImporterStartupPage
+          onBack={() => navigatePro(LINEAR_COORDINATE_LAUNCHER_PATH)}
+          onOpenProject={(projectId, bridgeId) =>
+            navigatePro(resolveImporterLineMasterRoutePath(projectId, bridgeId))
           }
         />
       );
