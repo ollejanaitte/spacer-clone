@@ -6,7 +6,9 @@ describe("ExportValidator", () => {
   it("summarizes validation for export", () => {
     const project = createSampleImporterProject();
     const summary = runExportValidation(project);
-    expect(summary.diagnostics.length).toBeGreaterThan(0);
+    expect(summary.errorCount).toBe(0);
+    expect(summary.warningCount).toBe(0);
+    expect(summary.exportBlocked).toBe(false);
     expect(summary.renderability.export).not.toBe("blocked");
   });
 });

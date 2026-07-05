@@ -21,7 +21,7 @@ Phase 3.6 の診断は、PDF 写経ミスを早期に検出し、Phase 3.5 vNext
 | 1 | 累加距離連鎖 | `sec[n].cumDist - sec[n-1].cumDist == sec[n].unitDist` を許容差内で確認 | Error / Warning |
 | 2 | 累加幅連鎖 | `point[n].cumWidth - point[n-1].cumWidth == point[n].unitWidth` を許容差内で確認 | Error / Warning |
 | 3 | 方位角急変 | 隣接 section の方位角差が Phase 3.5 PR-A 後 C1 許容 `0.001°` を超える | Warning |
-| 4 | 左右対称性 | 対称主桁の累加幅差が 1mm を超える | Warning |
+| 4 | 左右対称性 | 対称主桁の累加幅差が 1mm を超える（`bridge.validationProfile.expectSymmetry === true` のときのみ） | Warning |
 | 5 | STA 単調増加 | section の station が前 section 以下になる | Error |
 | 6 | 計画高と縦断勾配 | 隣接計画高差と距離から求めた勾配が PDF 勾配と不整合 | Warning |
 | 7 | `********` 整合 | notation が `********` で value が null かつ `flags.notComputed` | Info / Error |
@@ -100,7 +100,7 @@ Error レベルの診断は acknowledgement で抑制できても、エクスポ
 | `IMPORTER_CUM_DISTANCE_CHAIN_INVALID` | Error / Warning | 累加距離連鎖不一致 |
 | `IMPORTER_CUM_WIDTH_CHAIN_INVALID` | Error / Warning | 累加幅連鎖不一致 |
 | `IMPORTER_AZIMUTH_JUMP` | Warning | 方位角急変 |
-| `IMPORTER_SYMMETRY_WIDTH_MISMATCH` | Warning | 左右対称性不一致 |
+| `IMPORTER_SYMMETRY_WIDTH_MISMATCH` | Warning | 左右対称性不一致（`expectSymmetry` が true の橋のみ） |
 | `IMPORTER_STATION_NOT_MONOTONIC` | Error | STA 単調性違反 |
 | `IMPORTER_PROFILE_GRADE_MISMATCH` | Warning | 計画高と勾配の不整合 |
 | `IMPORTER_NOT_COMPUTED_FLAG_MISMATCH` | Error | `********` と flags が不整合 |
