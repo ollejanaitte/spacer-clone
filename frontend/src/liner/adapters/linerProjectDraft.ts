@@ -111,6 +111,14 @@ function domainDraftFromLinerDraft(draft: LinerDraft): LinerDomainDraftVNext {
 
 export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
   const domainDraft = domainDraftFromLinerDraft(draft);
+  return withProjectLinerDomainDraft(project, domainDraft);
+}
+
+export function withProjectLinerDomainDraft(
+  project: ProjectModel,
+  domainDraft: LinerDomainDraftVNext,
+): ProjectModel {
+  const linerDraft = buildIntermediateInputFromDomainDraft(domainDraft);
   const { draft: _legacyDraft, ...existingLiner } = project.liner ?? {};
 
   return {
@@ -119,11 +127,11 @@ export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft):
       ...existingLiner,
       schemaVersion: PROJECT_LINER_METADATA_SCHEMA_VERSION,
       draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
-      sourceRevision: sourceRevisionFor(draft),
-      linerModelId: draft.alignment.linerModelId,
-      coordinatePolicyId: draft.alignment.coordinatePolicyId,
+      sourceRevision: sourceRevisionFor(linerDraft),
+      linerModelId: domainDraft.linerModelId,
+      coordinatePolicyId: domainDraft.coordinatePolicyId,
       intermediateSchemaVersion: "0.2.0",
-      domainDraft,
+      domainDraft: structuredClone(domainDraft),
     },
   };
 }

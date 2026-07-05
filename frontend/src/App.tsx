@@ -40,7 +40,7 @@ import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
-import { linerDraftFromProject, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
+import { linerDraftFromProject, withProjectLinerDomainDraft, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
@@ -68,6 +68,7 @@ import {
   resolveImporterValidationRoutePath,
 } from "./liner/importer/routes";
 import { ja } from "./i18n/ja";
+import type { LinerDomainDraftVNext } from "./liner/schema/types";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -265,6 +266,15 @@ export function App() {
     navigatePro(resolveLinerUiRoutePath("liner.setup"));
     log(`LINER model ${draft.alignment.linerModelId} created.`);
   }, [project, navigatePro]);
+
+  const openImporterDraftInPhase35 = useCallback(
+    (domainDraft: LinerDomainDraftVNext) => {
+      commitProject(withProjectLinerDomainDraft(project, domainDraft));
+      navigatePro(resolveLinerUiRoutePath("liner.setup"));
+      log(`Phase 3.5 draft ${domainDraft.linerModelId} opened from importer export.`);
+    },
+    [project, navigatePro],
+  );
 
   const deleteLinerModel = useCallback((modelId: string) => {
     if (!window.confirm(ja.liner.list.deleteConfirm)) return;
@@ -754,6 +764,7 @@ export function App() {
               ),
             )
           }
+          onOpenInPhase35={openImporterDraftInPhase35}
         />
       );
     }
