@@ -124,7 +124,13 @@ function buildDomainDraft(
   const planElements = bridge.alignmentMetadata?.plan?.elements ?? [];
 
   const sectionStations = bridge.sections
-    .map((section) => section.stationingRef.stationValue)
+    .map((section) => {
+      const ref = section.stationingRef;
+      if (ref.cumulativeDistance != null) {
+        return ref.cumulativeDistance;
+      }
+      return ref.stationValue;
+    })
     .filter((value): value is number => value != null);
   const spanStartStations = bridge.spans.map((span) => span.startStation);
   const spanEndStations = bridge.spans.map((span) => span.endStation);

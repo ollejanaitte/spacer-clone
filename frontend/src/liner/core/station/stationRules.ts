@@ -78,13 +78,18 @@ export function generateStations(
     const key = clampedDistance.toFixed(9);
     if (stationMap.has(key)) {
       if (source === "explicit") {
-        issues.push(
-          createIssue("warning", LINER_DIAGNOSTIC_CODES.duplicateStationEquation, {
-            physicalDistance: clampedDistance,
-            entityType: "station",
-            field: "physicalDistance",
-          }),
-        );
+        const duplicatesAutomaticBoundary =
+          nearlyEqual(clampedDistance, 0, DEFAULT_TOLERANCES.station) ||
+          nearlyEqual(clampedDistance, totalLength, DEFAULT_TOLERANCES.station);
+        if (!duplicatesAutomaticBoundary) {
+          issues.push(
+            createIssue("warning", LINER_DIAGNOSTIC_CODES.duplicateStationEquation, {
+              physicalDistance: clampedDistance,
+              entityType: "station",
+              field: "physicalDistance",
+            }),
+          );
+        }
       }
       return;
     }

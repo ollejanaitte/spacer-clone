@@ -1,7 +1,7 @@
 ﻿import { describe, expect, it } from "vitest";
 import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
-import { buildBuiltInSampleProject } from "../sample/builtInSampleDataset";
+import { buildBuiltInSampleProject, BUILT_IN_SAMPLE_ALIGNMENT_LENGTH } from "../sample/builtInSampleDataset";
 import type { Bridge, JipLinerImporterProject, Section } from "../types";
 import { buildNormalizationContext } from "./normalize/normalizationContext";
 import { POST_CONDITION_CODES } from "./normalize/postConditions";
@@ -278,6 +278,52 @@ describe("ImporterToPhase35Adapter", () => {
     );
     expect(outOfRange).toEqual([]);
   });
+
+  it("built-in sample pipeline emits zero LINER_STATION_DUPLICATE_EQUATION warnings", async () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+
+    const { buildIntermediateResult } = await import("../../core/pipeline/pipeline");
+    const { linerDraftFromProject, withProjectLinerDomainDraft } = await import(
+      "../../adapters/linerProjectDraft"
+    );
+
+    const shell = {
+      schemaVersion: "1.0.0",
+      project: {
+        id: "shell-built-in-dup",
+        name: "Shell built-in dup",
+        schemaVersion: "1.0.0",
+        createdAt: "2026-07-05T00:00:00+09:00",
+        updatedAt: "2026-07-05T00:00:00+09:00",
+      },
+      units: { length: "m", force: "kN", temperature: "C" } as {
+        length: string;
+        force: string;
+        temperature: string;
+      },
+      nodes: [],
+      materials: [],
+      sections: [],
+      members: [],
+      supports: [],
+      loadCases: [],
+      nodalLoads: [],
+      memberLoads: [],
+      analysisSettings: { solver: "direct-stiffness" } as { solver: string },
+    };
+    const stored = withProjectLinerDomainDraft(
+      shell as unknown as Parameters<typeof withProjectLinerDomainDraft>[0],
+      result.draft!,
+    );
+    const draft = linerDraftFromProject(stored);
+    const intermediate = buildIntermediateResult(draft!);
+    const duplicateStations = intermediate.diagnostics.filter(
+      (diagnostic) => diagnostic.code === "LINER_STATION_DUPLICATE_EQUATION",
+    );
+    expect(duplicateStations).toEqual([]);
+  });
 });
 
 describe("Phase 3.7 NormalizationContext pipeline", () => {
@@ -330,13 +376,18 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(ctx.alignmentLength).toBeCloseTo(135.6518, 4);
   });
 
-  it("4: built-in sample profile.elements[0] startStation=0 and endStation≈40.2867", () => {
+  it("4: built-in sample profile.elements[0] covers the full HCL alignment length", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
     const element = result.draft!.verticalAlignment.elements[0]!;
+    const totalLength = result.draft!.alignment.elements.reduce(
+      (sum, alignmentElement) => sum + alignmentElement.length,
+      0,
+    );
     expect(element.startStation).toBeCloseTo(0, 6);
-    expect(element.endStation).toBeCloseTo(40.2867, 4);
+    expect(element.endStation).toBeCloseTo(totalLength, 4);
+    expect(totalLength).toBeCloseTo(BUILT_IN_SAMPLE_ALIGNMENT_LENGTH, 4);
   });
 
   it("5: built-in sample pipeline has zero LINER_PROFILE_COVERAGE_GAP", async () => {
@@ -385,14 +436,14 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(coverageGaps).toHaveLength(0);
   });
 
-  it("6: built-in sample emits exactly one LINER_PROFILE_END_COVERAGE_GAP warning", () => {
+  it("6: built-in sample emits zero LINER_PROFILE_END_COVERAGE_GAP warnings", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
     const endCoverageWarnings = result.diagnostics.filter(
       (diagnostic) => diagnostic.code === POST_CONDITION_CODES.PROFILE_END_COVERAGE_GAP,
     );
-    expect(endCoverageWarnings).toHaveLength(1);
+    expect(endCoverageWarnings).toHaveLength(0);
   });
 
   it("7: built-in sample has zero LINER_SPAN_END_EXCEEDS_ALIGNMENT", () => {
@@ -403,13 +454,9 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
       (diagnostic) => diagnostic.code === POST_CONDITION_CODES.SPAN_END_EXCEEDS_ALIGNMENT,
     );
     expect(spanOverflow).toHaveLength(0);
-    expect(result.draft!.spans[0]!.endPhysicalDistance).toBeLessThanOrEqual(
-      buildNormalizationContext({
-        sectionStations: [259.7133],
-        spanStartStations: [259.8142],
-        spanEndStations: [395.466],
-        planLength: 135,
-      }).alignmentLength + 1e-6,
+    expect(result.draft!.spans[0]!.endPhysicalDistance).toBeCloseTo(
+      BUILT_IN_SAMPLE_ALIGNMENT_LENGTH,
+      4,
     );
   });
 
@@ -422,11 +469,11 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(crossSection.name).toBe("CrossSlope @ 0");
   });
 
-  it("9: built-in explicitStations ascending [0, 9.7867, 19.7867, 29.7867]", () => {
+  it("9: built-in explicitStations follow PDF 小座標 cumulative distances", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
-    const expected = [0, 9.7867, 19.7867, 29.7867];
+    const expected = [0, 0.6399, 45.1726, 102.7325, 163.3996, 164.2476];
     expect(result.draft!.stationDefinition.explicitStations).toHaveLength(expected.length);
     result.draft!.stationDefinition.explicitStations!.forEach((value, index) => {
       expect(value).toBeCloseTo(expected[index]!, 4);

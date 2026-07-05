@@ -64,45 +64,49 @@ async function resetModel(confirmValue: boolean) {
   });
 }
 
-async function openLinerList() {
+async function openLinerListFromToolbar() {
+  await act(async () => {
+    buttonByTestId("open-liner-list").click();
+  });
+}
+
+async function openLinearCoordinateLauncherFromList() {
+  await openLinerListFromToolbar();
+  await act(async () => {
+    buttonByTestId("create-liner").click();
+  });
+}
+
+async function openImporterViaLauncher() {
+  await openLinearCoordinateLauncherFromList();
+  await act(async () => {
+    buttonByTestId("liner-launcher-pdf").click();
+  });
+}
+
+async function openLinerSetupViaLauncher() {
+  await openLinearCoordinateLauncherFromList();
+  await act(async () => {
+    buttonByTestId("liner-launcher-gui").click();
+  });
+}
+
+async function openLinerListDirect() {
   await act(async () => {
     window.history.pushState({}, "", "/pro/liner");
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 }
 
-async function openLinearCoordinateLauncher() {
-  await act(async () => {
-    buttonByTestId("open-liner-list").click();
-  });
-}
-
-async function openImporterViaLauncher() {
-  await openLinearCoordinateLauncher();
-  await act(async () => {
-    buttonByTestId("liner-launcher-pdf").click();
-  });
-}
-
-async function openLinerViaLauncher() {
-  await openLinearCoordinateLauncher();
-  await act(async () => {
-    buttonByTestId("liner-launcher-gui").click();
-  });
-}
-
 async function openLinerSetup() {
-  await openLinerList();
+  await openLinerListDirect();
   await act(async () => {
     buttonByTestId("open-liner-setup").click();
   });
 }
 
 async function createLinerSetup() {
-  await openLinerList();
-  await act(async () => {
-    buttonByTestId("create-liner").click();
-  });
+  await openLinerSetupViaLauncher();
 }
 
 async function switchLinerSetupTab(tabId: string) {
@@ -123,26 +127,37 @@ afterEach(() => {
 });
 
 describe("App LINER reset integration", () => {
-  it("opens the linear coordinate launcher from the toolbar LINER button", async () => {
+  it("opens the liner list from the toolbar LINER button", async () => {
     const { App } = await import("./App");
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
-    await openLinearCoordinateLauncher();
+    await openLinerListFromToolbar();
+
+    expect(window.location.pathname).toBe("/pro/liner");
+    expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
+  }, 20000);
+
+  it("opens the linear coordinate launcher from the liner list create action", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openLinearCoordinateLauncherFromList();
 
     expect(window.location.pathname).toBe("/pro/linear-coordinate");
     expect(document.querySelector("[data-testid=liner-launcher-page]")).not.toBeNull();
   }, 20000);
 
-  it("opens the GUI liner list from the launcher GUI card", async () => {
+  it("opens the GUI liner setup from the launcher GUI card", async () => {
     const { App } = await import("./App");
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
-    await openLinerViaLauncher();
+    await openLinerSetupViaLauncher();
 
-    expect(window.location.pathname).toBe("/pro/liner");
-    expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
+    expect(window.location.pathname).toBe("/pro/liner/setup");
+    expect(document.querySelector("[data-testid=liner-edit-page]")).not.toBeNull();
   }, 20000);
 
   it("opens the Phase 3.6 Importer startup dialog from the launcher PDF card", async () => {
@@ -178,7 +193,7 @@ describe("App LINER reset integration", () => {
     await render(<App />);
 
     await resetModel(true);
-    await openLinerList();
+    await openLinerListDirect();
 
     expect(document.querySelector("[data-testid=liner-list-empty]")).not.toBeNull();
     expect(document.querySelector("[data-testid=open-liner-setup]")).toBeNull();

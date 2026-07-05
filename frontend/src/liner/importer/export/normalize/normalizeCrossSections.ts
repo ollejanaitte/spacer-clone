@@ -2,6 +2,7 @@ import type { CrossSectionTemplateDraft } from "../../../schema/types";
 import type { Bridge } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
+import { resolveGirderLineOffset } from "./resolveGirderLineOffset";
 
 export function normalizeCrossSections(
   bridge: Bridge,
@@ -22,7 +23,7 @@ export function normalizeCrossSections(
         station: normalizedStation,
         offsetLines: girderLines.map((line, lineIndex) => ({
           id: createUniqueId("offset-line"),
-          offset: line.nominalOffset ?? lineIndex,
+          offset: resolveGirderLineOffset(line, bridge, lineIndex),
           elevation: 0,
           role:
             line.role === "edge"
@@ -46,7 +47,7 @@ export function normalizeCrossSections(
       name: `${bridge.name} default`,
       offsetLines: girderLines.map((line, index) => ({
         id: createUniqueId("offset-line"),
-        offset: line.nominalOffset ?? index,
+        offset: resolveGirderLineOffset(line, bridge, index),
         elevation: 0,
         label: line.label,
       })),

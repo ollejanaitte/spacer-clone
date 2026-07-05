@@ -22,6 +22,202 @@ import {
 
 const ENTERED_AT = BUILT_IN_SAMPLE_TIMESTAMP;
 
+/** HCL local alignment length from PDF 小座標 (PH15 cumulative distance). */
+export const BUILT_IN_SAMPLE_ALIGNMENT_LENGTH = 164.2476;
+
+type LineLabel =
+  | "HL1"
+  | "HL2"
+  | "G1"
+  | "HCL"
+  | "G2"
+  | "HR2"
+  | "HR1"
+  | "CL"
+  | "ECL";
+
+type SectionPointSpec = {
+  localX: number;
+  localY: number;
+  cumulativeDistance: number;
+  designElevation: number;
+  crossSlope: number;
+  offsets: Record<LineLabel, number>;
+};
+
+type BuiltInSectionSpec = {
+  id: string;
+  pdfPage: number;
+  sectionNo: string;
+  title: string;
+  azimuthNotation: string;
+  stationLabel: string;
+  point: SectionPointSpec;
+  /** When true, offsets are interpolated placeholders (see project notes). */
+  interpolated?: boolean;
+};
+
+const PH12_OFFSETS: Record<LineLabel, number> = {
+  HL1: 7.5707,
+  HL2: 7.1256,
+  G1: 5.4833,
+  HCL: 0,
+  G2: -0.5473,
+  HR2: -2.6352,
+  HR1: -3.0803,
+  CL: -4.8875,
+  ECL: -11.9577,
+};
+
+const BUILT_IN_SECTION_SPECS: BuiltInSectionSpec[] = [
+  {
+    id: "built-in-section-ph12",
+    pdfPage: 21,
+    sectionNo: "横断面 1",
+    title: "PH12(PE10)",
+    azimuthNotation: "109-58-28.3",
+    stationLabel: "0+00.0000",
+    point: {
+      localX: 0,
+      localY: 0,
+      cumulativeDistance: 0,
+      designElevation: 17.6595,
+      crossSlope: 0,
+      offsets: PH12_OFFSETS,
+    },
+  },
+  {
+    id: "built-in-section-s1",
+    pdfPage: 22,
+    sectionNo: "横断面 3",
+    title: "S1",
+    azimuthNotation: "109-58-27.0",
+    stationLabel: "0+00.6399",
+    point: {
+      localX: 0.6399,
+      localY: 0.0211,
+      cumulativeDistance: 0.6399,
+      designElevation: 17.6304,
+      crossSlope: 0,
+      offsets: {
+        HL1: 7.5708,
+        HL2: 7.1257,
+        G1: 5.4197,
+        HCL: 0,
+        G2: -0.5803,
+        HR2: -2.6353,
+        HR1: -3.0803,
+        CL: -4.876,
+        ECL: -11.9017,
+      },
+    },
+  },
+  {
+    id: "built-in-section-ph13",
+    pdfPage: 23,
+    sectionNo: "横断面 11",
+    title: "PH13(PE11)",
+    azimuthNotation: "91-04-32.7",
+    stationLabel: "0+45.1726",
+    point: {
+      localX: 45.1698,
+      localY: 0.2763,
+      cumulativeDistance: 45.1726,
+      designElevation: 16.8476,
+      crossSlope: 0,
+      offsets: {
+        HL1: 4.571,
+        HL2: 4.1259,
+        G1: 2.9457,
+        HCL: 0,
+        G2: -1.4553,
+        HR2: -2.6356,
+        HR1: -3.0807,
+        CL: -3.8906,
+        ECL: -8.8562,
+      },
+    },
+  },
+  {
+    id: "built-in-section-ph14",
+    pdfPage: 24,
+    sectionNo: "横断面 19",
+    title: "PH14(PE12)",
+    azimuthNotation: "90-10-35.6",
+    stationLabel: "1+02.7325",
+    point: {
+      localX: 102.7296,
+      localY: 0.1428,
+      cumulativeDistance: 102.7325,
+      designElevation: 17.2926,
+      crossSlope: 0,
+      offsets: {
+        HL1: 4.5701,
+        HL2: 4.1251,
+        G1: 2.945,
+        HCL: 0,
+        G2: -1.455,
+        HR2: -2.635,
+        HR1: -3.08,
+        CL: -3.1804,
+        ECL: -6.5166,
+      },
+    },
+  },
+  {
+    id: "built-in-section-s2",
+    pdfPage: 25,
+    sectionNo: "横断面 28",
+    title: "S2",
+    azimuthNotation: "89-54-08.3",
+    stationLabel: "1+63.3996",
+    point: {
+      localX: 163.3996,
+      localY: 0.002,
+      cumulativeDistance: 163.3996,
+      designElevation: 17.7791,
+      crossSlope: 0,
+      offsets: {
+        HL1: 4.572,
+        HL2: 4.127,
+        G1: 2.947,
+        HCL: 0,
+        G2: -1.453,
+        HR2: -2.635,
+        HR1: -3.08,
+        CL: -3.0571,
+        ECL: -6.0738,
+      },
+    },
+  },
+  {
+    id: "built-in-section-ph15",
+    pdfPage: 26,
+    sectionNo: "横断面 30",
+    title: "PH15(PE13)",
+    azimuthNotation: "112-17-26.2",
+    stationLabel: "1+64.2476",
+    point: {
+      localX: 164.2446,
+      localY: 0,
+      cumulativeDistance: 164.2476,
+      designElevation: 17.7878,
+      crossSlope: 0,
+      offsets: {
+        HL1: 4.57,
+        HL2: 4.125,
+        G1: 2.945,
+        HCL: 0,
+        G2: -1.455,
+        HR2: -2.635,
+        HR1: -3.08,
+        CL: -3.0566,
+        ECL: -6.0718,
+      },
+    },
+  },
+];
+
 function sourceRef(pdfPage: number, partial?: Partial<SourceRef>): SourceRef {
   return {
     pdfPage,
@@ -50,20 +246,6 @@ function numberValue(
   };
 }
 
-function notComputedValue(
-  notation: string,
-  pdfPage: number,
-  unit: NullableNumberValue["unit"] = "m",
-): NullableNumberValue {
-  return {
-    value: null,
-    notation,
-    unit,
-    flags: { notComputed: true },
-    sourceRef: sourceRef(pdfPage),
-  };
-}
-
 function angleValue(angle: Angle, pdfPage: number, row?: number, col?: number) {
   return {
     value: angle,
@@ -85,21 +267,15 @@ function parseDms(notation: string): Angle {
 }
 
 export const BUILT_IN_GIRDER_LINES: GirderLineMaster[] = [
-  { id: "built-in-hl1", label: "HL1", role: "edge", displayOrder: 0 },
-  { id: "built-in-hl2", label: "HL2", role: "edge", displayOrder: 1 },
-  { id: "built-in-hl2p", label: "HL2'", role: "edge", displayOrder: 2 },
-  { id: "built-in-g1", label: "G1", role: "girder", displayOrder: 3 },
-  { id: "built-in-hcl", label: "HCL", role: "center", displayOrder: 4 },
-  { id: "built-in-g2", label: "G2", role: "girder", displayOrder: 5 },
-  { id: "built-in-hr2", label: "HR2", role: "girder", displayOrder: 6 },
-  { id: "built-in-hr1", label: "HR1", role: "girder", displayOrder: 7 },
-  { id: "built-in-cl", label: "CL", role: "custom", displayOrder: 8 },
-  { id: "built-in-hr2p", label: "HR2'", role: "girder", displayOrder: 9 },
-  { id: "built-in-hr1p", label: "HR1'", role: "girder", displayOrder: 10 },
-  { id: "built-in-el1p", label: "EL1'", role: "custom", displayOrder: 11 },
-  { id: "built-in-el1", label: "EL1", role: "custom", displayOrder: 12 },
-  { id: "built-in-el2", label: "EL2", role: "custom", displayOrder: 13 },
-  { id: "built-in-ecl", label: "ECL", role: "custom", displayOrder: 14 },
+  { id: "built-in-hl1", label: "HL1", role: "edge", displayOrder: 0, nominalOffset: 7.5707 },
+  { id: "built-in-hl2", label: "HL2", role: "edge", displayOrder: 1, nominalOffset: 7.1256 },
+  { id: "built-in-g1", label: "G1", role: "girder", displayOrder: 2, nominalOffset: 5.4833 },
+  { id: "built-in-hcl", label: "HCL", role: "center", displayOrder: 3, nominalOffset: 0 },
+  { id: "built-in-g2", label: "G2", role: "girder", displayOrder: 4, nominalOffset: -0.5473 },
+  { id: "built-in-hr2", label: "HR2", role: "girder", displayOrder: 5, nominalOffset: -2.6352 },
+  { id: "built-in-hr1", label: "HR1", role: "girder", displayOrder: 6, nominalOffset: -3.0803 },
+  { id: "built-in-cl", label: "CL", role: "custom", displayOrder: 7, nominalOffset: -4.8875 },
+  { id: "built-in-ecl", label: "ECL", role: "custom", displayOrder: 8, nominalOffset: -11.9577 },
 ];
 
 const GIRDER_LINE_SET: GirderLineSet = {
@@ -110,46 +286,44 @@ const GIRDER_LINE_SET: GirderLineSet = {
   lines: BUILT_IN_GIRDER_LINES,
 };
 
-function createPoint(
+function createSectionPoint(
   line: GirderLineMaster,
-  pdfPage: number,
-  data: Partial<
-    Pick<
-      Point,
-      | "x"
-      | "y"
-      | "designElevation"
-      | "crossSlope"
-      | "unitDistance"
-      | "cumulativeDistance"
-      | "unitWidth"
-      | "cumulativeWidth"
-      | "intersectionAngle"
-      | "station"
-    >
-  > = {},
+  spec: BuiltInSectionSpec,
+  offset: number,
+  unitDistance: number,
 ): Point {
+  const { pdfPage, point } = spec;
+  const isCenter = line.label === "HCL";
   return {
-    id: `built-in-point-${line.id}-p${pdfPage}`,
+    id: `${spec.id}-${line.id}`,
     girderLineId: line.id,
     lineLabel: line.label,
-    x: data.x ?? notComputedValue("********", pdfPage),
-    y: data.y ?? notComputedValue("********", pdfPage),
-    designElevation: data.designElevation ?? notComputedValue("********", pdfPage),
-    crossSlope: data.crossSlope ?? notComputedValue("********", pdfPage, "%"),
-    unitDistance: data.unitDistance ?? notComputedValue("*********", pdfPage),
-    cumulativeDistance: data.cumulativeDistance ?? notComputedValue("*********", pdfPage),
-    unitWidth: data.unitWidth ?? notComputedValue("********", pdfPage),
-    cumulativeWidth: data.cumulativeWidth ?? notComputedValue("********", pdfPage),
-    intersectionAngle: data.intersectionAngle ?? {
+    x: numberValue(point.localX, point.localX.toFixed(4), pdfPage),
+    y: numberValue(isCenter ? point.localY : offset, (isCenter ? point.localY : offset).toFixed(4), pdfPage),
+    designElevation: numberValue(point.designElevation, point.designElevation.toFixed(4), pdfPage),
+    crossSlope: numberValue(
+      isCenter ? point.crossSlope : point.crossSlope,
+      (isCenter ? point.crossSlope : point.crossSlope).toFixed(4),
+      pdfPage,
+      "%",
+    ),
+    unitDistance: numberValue(unitDistance, unitDistance.toFixed(4), pdfPage),
+    cumulativeDistance: numberValue(
+      point.cumulativeDistance,
+      point.cumulativeDistance.toFixed(4),
+      pdfPage,
+    ),
+    unitWidth: numberValue(0, "0.0000", pdfPage),
+    cumulativeWidth: numberValue(isCenter ? 0 : offset, (isCenter ? 0 : offset).toFixed(4), pdfPage),
+    intersectionAngle: {
       value: null,
       flags: {},
       sourceRef: sourceRef(pdfPage),
     },
-    station: data.station ?? {
-      value: null,
-      label: null,
-      notation: null,
+    station: {
+      value: point.cumulativeDistance,
+      label: spec.stationLabel,
+      notation: spec.stationLabel,
       flags: {},
       sourceRef: sourceRef(pdfPage),
     },
@@ -158,185 +332,42 @@ function createPoint(
   };
 }
 
-function lineByLabel(label: string): GirderLineMaster {
-  const line = BUILT_IN_GIRDER_LINES.find((entry) => entry.label === label);
-  if (!line) {
-    throw new Error(`Unknown girder line label: ${label}`);
-  }
-  return line;
-}
-
-/** 横断面 1 : PH12(PE10) — values from 001 sample PDF §3.1 大座標. */
-function createSectionPh12(bridgeId: string): Section {
-  const pdfPage = 21;
-  const points: Point[] = [
-    createPoint(lineByLabel("HL1"), pdfPage, {
-      x: numberValue(-105476.6593, "-105476.6593", pdfPage, "m", 1, 2),
-      y: numberValue(-24333.779, "-24333.7790", pdfPage, "m", 1, 3),
-      designElevation: numberValue(17.8144, "17.8144", pdfPage, "m", 1, 4),
-      crossSlope: numberValue(2.0, "2.0000", pdfPage, "%", 1, 5),
-      unitWidth: numberValue(0.445, "0.4450", pdfPage, "m", 2, 8),
-      cumulativeWidth: numberValue(7.5707, "7.5707", pdfPage, "m", 1, 9),
-      intersectionAngle: angleValue(parseDms("90-45-49"), pdfPage, 1, 10),
-      station: {
-        value: 259.8142,
-        label: "12+19.8142",
-        notation: "12+19.8142",
-        flags: {},
-        sourceRef: sourceRef(pdfPage, { row: 1, col: 11 }),
-      },
-    }),
-    createPoint(lineByLabel("HCL"), pdfPage, {
-      x: numberValue(-105474.0732, "-105474.0732", pdfPage, "m", 5, 2),
-      y: numberValue(-24340.8943, "-24340.8943", pdfPage, "m", 5, 3),
-      designElevation: numberValue(17.6595, "17.6595", pdfPage, "m", 5, 4),
-      crossSlope: numberValue(0.0, "0.0000", pdfPage, "%", 5, 5),
-      unitWidth: numberValue(0.5473, "0.5473", pdfPage, "m", 6, 8),
-      cumulativeWidth: numberValue(0.0, "0.0000", pdfPage, "m", 5, 9),
-      intersectionAngle: angleValue(parseDms("90-46-10"), pdfPage, 5, 10),
-      station: {
-        value: 259.7133,
-        label: "12+19.7133",
-        notation: "12+19.7133",
-        flags: {},
-        sourceRef: sourceRef(pdfPage, { row: 5, col: 11 }),
-      },
-    }),
-    createPoint(lineByLabel("CL"), pdfPage, {
-      x: numberValue(-105472.4036, "-105472.4036", pdfPage, "m", 9, 2),
-      y: numberValue(-24345.4878, "-24345.4878", pdfPage, "m", 9, 3),
-      designElevation: notComputedValue("*********", pdfPage, "m"),
-      crossSlope: notComputedValue("********", pdfPage, "%"),
-      unitWidth: numberValue(3.6805, "3.6805", pdfPage, "m", 10, 8),
-      cumulativeWidth: numberValue(-4.8875, "-4.8875", pdfPage, "m", 9, 9),
-      intersectionAngle: angleValue(parseDms("90-00-00"), pdfPage, 9, 10),
-      station: {
-        value: 926.9277,
-        label: "46+06.9277",
-        notation: "46+06.9277",
-        flags: {},
-        sourceRef: sourceRef(pdfPage, { row: 9, col: 11 }),
-      },
-    }),
-    createPoint(lineByLabel("G1"), pdfPage, {
-      x: numberValue(-105475.9463, "-105475.9463", pdfPage),
-      y: numberValue(-24349.1587, "-24349.1587", pdfPage),
-      designElevation: numberValue(17.6483, "17.6483", pdfPage),
-      crossSlope: numberValue(-2.0, "-2.0000", pdfPage, "%"),
-      unitWidth: numberValue(0.4456, "0.4456", pdfPage),
-      cumulativeWidth: numberValue(-8.8835, "-8.8835", pdfPage),
-    }),
-    createPoint(lineByLabel("G2"), pdfPage, {
-      x: numberValue(-105473.173, "-105473.1730", pdfPage),
-      y: numberValue(-24348.9469, "-24348.9469", pdfPage),
-      designElevation: numberValue(17.7717, "17.7717", pdfPage),
-      crossSlope: numberValue(2.0, "2.0000", pdfPage, "%"),
-      unitWidth: numberValue(2.088, "2.0880", pdfPage),
-      cumulativeWidth: numberValue(-0.5473, "-0.5473", pdfPage),
-    }),
-  ];
-
-  for (const line of BUILT_IN_GIRDER_LINES) {
-    if (!points.some((point) => point.girderLineId === line.id)) {
-      points.push(createPoint(line, pdfPage));
-    }
-  }
-
-  points.sort(
-    (left, right) =>
-      (BUILT_IN_GIRDER_LINES.find((line) => line.id === left.girderLineId)?.displayOrder ?? 0) -
-      (BUILT_IN_GIRDER_LINES.find((line) => line.id === right.girderLineId)?.displayOrder ?? 0),
+function createSectionFromSpec(
+  bridgeId: string,
+  spec: BuiltInSectionSpec,
+  unitDistance: number,
+): Section {
+  const azimuth = parseDms(spec.azimuthNotation);
+  const points = BUILT_IN_GIRDER_LINES.map((line) =>
+    createSectionPoint(line, spec, spec.point.offsets[line.label as LineLabel], unitDistance),
   );
 
   return {
-    id: "built-in-section-ph12",
+    id: spec.id,
     bridgeId,
     spanId: "built-in-span-1",
-    pdfPage,
-    sectionNo: "横断面 1",
-    title: "PH12(PE10)",
-    azimuth: angleValue(parseDms("109-58-28.3"), pdfPage, 1, 1),
+    pdfPage: spec.pdfPage,
+    sectionNo: spec.sectionNo,
+    title: spec.title,
+    azimuth: angleValue(azimuth, spec.pdfPage, 1, 1),
     stationingRef: {
-      stationLabel: "12+19.7133",
-      stationValue: 259.7133,
-      cumulativeDistance: null,
-      notation: "12+19.7133",
-      sourceRef: sourceRef(pdfPage),
+      stationLabel: spec.stationLabel,
+      stationValue: spec.point.cumulativeDistance,
+      cumulativeDistance: spec.point.cumulativeDistance,
+      notation: spec.stationLabel,
+      sourceRef: sourceRef(spec.pdfPage),
     },
     points,
-    sourceRef: sourceRef(pdfPage),
-  };
-}
-
-function createSectionFromTemplate(
-  bridgeId: string,
-  template: Section,
-  config: {
-    id: string;
-    pdfPage: number;
-    sectionNo: string;
-    title: string;
-    stationLabel: string;
-    stationValue: number;
-    azimuthNotation: string;
-  },
-): Section {
-  const azimuth = parseDms(config.azimuthNotation);
-  return {
-    ...template,
-    id: config.id,
-    bridgeId,
-    pdfPage: config.pdfPage,
-    sectionNo: config.sectionNo,
-    title: config.title,
-    azimuth: angleValue(azimuth, config.pdfPage, 1, 1),
-    stationingRef: {
-      stationLabel: config.stationLabel,
-      stationValue: config.stationValue,
-      cumulativeDistance: null,
-      notation: config.stationLabel,
-      sourceRef: sourceRef(config.pdfPage),
-    },
-    points: template.points.map((point) => ({
-      ...point,
-      id: `${point.id}-p${config.pdfPage}`,
-      x: { ...point.x, sourceRef: sourceRef(config.pdfPage) },
-      y: { ...point.y, sourceRef: sourceRef(config.pdfPage) },
-      designElevation: {
-        ...point.designElevation,
-        sourceRef: sourceRef(config.pdfPage),
-      },
-      crossSlope: { ...point.crossSlope, sourceRef: sourceRef(config.pdfPage) },
-      unitDistance: { ...point.unitDistance, sourceRef: sourceRef(config.pdfPage) },
-      cumulativeDistance: {
-        ...point.cumulativeDistance,
-        sourceRef: sourceRef(config.pdfPage),
-      },
-      unitWidth: { ...point.unitWidth, sourceRef: sourceRef(config.pdfPage) },
-      cumulativeWidth: {
-        ...point.cumulativeWidth,
-        sourceRef: sourceRef(config.pdfPage),
-      },
-      intersectionAngle: point.intersectionAngle
-        ? { ...point.intersectionAngle, sourceRef: sourceRef(config.pdfPage) }
-        : { value: null, flags: {}, sourceRef: sourceRef(config.pdfPage) },
-      station: point.station
-        ? { ...point.station, sourceRef: sourceRef(config.pdfPage) }
-        : {
-            value: null,
-            label: null,
-            notation: null,
-            flags: {},
-            sourceRef: sourceRef(config.pdfPage),
-          },
-      sourceRef: sourceRef(config.pdfPage, { row: point.sourceRef.row ?? null }),
-    })),
-    sourceRef: sourceRef(config.pdfPage),
+    sourceRef: sourceRef(spec.pdfPage),
   };
 }
 
 function createBuiltInBridge(bridgeId: string): Bridge {
-  const sectionPh12 = createSectionPh12(bridgeId);
+  const startElevation = BUILT_IN_SECTION_SPECS[0]!.point.designElevation;
+  const endElevation = BUILT_IN_SECTION_SPECS[BUILT_IN_SECTION_SPECS.length - 1]!.point.designElevation;
+  const profileGrade =
+    (endElevation - startElevation) / BUILT_IN_SAMPLE_ALIGNMENT_LENGTH;
+
   return {
     id: bridgeId,
     name: BUILT_IN_SAMPLE_BRIDGE_NAME,
@@ -347,50 +378,28 @@ function createBuiltInBridge(bridgeId: string): Bridge {
       {
         id: "built-in-span-1",
         name: "PH12-PH15",
-        startStation: 259.8142,
-        endStation: 395.466,
+        startStation: 0,
+        endStation: BUILT_IN_SAMPLE_ALIGNMENT_LENGTH,
         girderLineSetId: GIRDER_LINE_SET.id,
       },
     ],
-    sections: [
-      sectionPh12,
-      createSectionFromTemplate(bridgeId, sectionPh12, {
-        id: "built-in-section-ph13",
-        pdfPage: 22,
-        sectionNo: "横断面 2",
-        title: "PH13(PE11)",
-        stationLabel: "12+29.5000",
-        stationValue: 269.5,
-        azimuthNotation: "109-58-20.0",
-      }),
-      createSectionFromTemplate(bridgeId, sectionPh12, {
-        id: "built-in-section-ph14",
-        pdfPage: 23,
-        sectionNo: "横断面 3",
-        title: "PH14(PE12)",
-        stationLabel: "12+39.5000",
-        stationValue: 279.5,
-        azimuthNotation: "109-58-10.0",
-      }),
-      createSectionFromTemplate(bridgeId, sectionPh12, {
-        id: "built-in-section-ph15",
-        pdfPage: 24,
-        sectionNo: "横断面 4",
-        title: "PH15(PE13)",
-        stationLabel: "12+49.5000",
-        stationValue: 289.5,
-        azimuthNotation: "109-58-00.0",
-      }),
-    ],
+    sections: BUILT_IN_SECTION_SPECS.map((spec, index) => {
+      const unitDistance =
+        index === 0
+          ? 0
+          : spec.point.cumulativeDistance -
+            BUILT_IN_SECTION_SPECS[index - 1]!.point.cumulativeDistance;
+      return createSectionFromSpec(bridgeId, spec, unitDistance);
+    }),
     alignmentMetadata: {
       plan: {
         elements: [
           {
             type: "straight",
-            id: "built-in-plan-1",
-            start: { x: -105476.6593, y: -24333.779 },
-            azimuth: 1.919,
-            length: 135.0,
+            id: "built-in-plan-hcl",
+            start: { x: 0, y: 0 },
+            azimuth: 0,
+            length: BUILT_IN_SAMPLE_ALIGNMENT_LENGTH,
           },
         ],
       },
@@ -398,18 +407,19 @@ function createBuiltInBridge(bridgeId: string): Bridge {
         elements: [
           {
             type: "grade",
-            id: "built-in-profile-1",
-            startStation: 250,
-            endStation: 300,
-            startElevation: 17.6,
-            grade: 0.01,
+            id: "built-in-profile-hcl",
+            startStation: 0,
+            endStation: BUILT_IN_SAMPLE_ALIGNMENT_LENGTH,
+            startElevation,
+            grade: profileGrade,
           },
         ],
       },
       crossSlope: {
-        definitions: [{ id: "built-in-cs-1", station: 259.7133, crossSlope: 2.0 }],
+        definitions: [{ id: "built-in-cs-ph12", station: 0, crossSlope: 2.0 }],
       },
-      notes: "001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF より転記",
+      notes:
+        "001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF 小座標表より転記。PH12(PE10) HCL を原点 (0,0)。S1/S2 は PDF 小座標値。GE/C 断面は未収録。",
     },
   };
 }
@@ -438,7 +448,7 @@ export function buildBuiltInSampleProject(): JipLinerImporterProject {
     savedSnapshots: [
       {
         id: "built-in-snapshot-001",
-        name: "横断面1まで入力",
+        name: "PH12-PH15 小座標",
         savedAt: ENTERED_AT,
         lastEditedStep: "sectionEdit",
         lastEditedRef: {
@@ -446,7 +456,7 @@ export function buildBuiltInSampleProject(): JipLinerImporterProject {
           sectionId: "built-in-section-ph12",
         },
         isDraftSave: false,
-        notes: "001 サンプル PDF の横断面1を転記済み",
+        notes: "001 サンプル PDF 小座標 (PH12/S1/PH13/PH14/S2/PH15) を転記済み",
       },
     ],
     bridges: [createBuiltInBridge(bridgeId)],

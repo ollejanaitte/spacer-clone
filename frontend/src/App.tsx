@@ -265,7 +265,11 @@ export function App() {
     commitProject(withProjectLinerDraft(project, draft));
     navigatePro(resolveLinerUiRoutePath("liner.setup"));
     log(`LINER model ${draft.alignment.linerModelId} created.`);
-  }, [project, navigatePro]);
+  }, [project, navigatePro, commitProject]);
+
+  const openLinearCoordinateLauncher = useCallback(() => {
+    navigatePro(LINEAR_COORDINATE_LAUNCHER_PATH);
+  }, [navigatePro]);
 
   const openImporterDraftInPhase35 = useCallback(
     (domainDraft: LinerDomainDraftVNext) => {
@@ -618,7 +622,7 @@ export function App() {
     return (
       <LinerLauncherPage
         onClose={() => navigatePro("/pro")}
-        onOpenGui={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onOpenGui={createLinerModel}
         onOpenImporter={() => navigatePro(resolveImporterStartupRoutePath())}
       />
     );
@@ -795,7 +799,7 @@ export function App() {
       <LinerListPage
         project={project}
         onClose={() => navigatePro("/pro")}
-        onCreate={createLinerModel}
+        onCreate={openLinearCoordinateLauncher}
         onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
         onDelete={deleteLinerModel}
       />
@@ -808,7 +812,7 @@ export function App() {
         <LinerListPage
           project={project}
           onClose={() => navigatePro("/pro")}
-          onCreate={createLinerModel}
+          onCreate={openLinearCoordinateLauncher}
           onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
           onDelete={deleteLinerModel}
         />
@@ -833,7 +837,7 @@ export function App() {
         <LinerListPage
           project={project}
           onClose={() => navigatePro("/pro")}
-          onCreate={createLinerModel}
+          onCreate={openLinearCoordinateLauncher}
           onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
           onDelete={deleteLinerModel}
         />
@@ -857,7 +861,7 @@ export function App() {
         <LinerListPage
           project={project}
           onClose={() => navigatePro("/pro")}
-          onCreate={createLinerModel}
+          onCreate={openLinearCoordinateLauncher}
           onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
           onDelete={deleteLinerModel}
         />
@@ -923,7 +927,7 @@ export function App() {
           navigatePro("/pro/compare");
           setComparisonOpen(true);
         }}
-        onOpenLinerList={() => navigatePro(LINEAR_COORDINATE_LAUNCHER_PATH)}
+        onOpenLinerList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge

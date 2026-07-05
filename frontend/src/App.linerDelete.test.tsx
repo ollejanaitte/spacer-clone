@@ -55,6 +55,9 @@ async function createLinerSetup() {
   await act(async () => {
     buttonByTestId("create-liner").click();
   });
+  await act(async () => {
+    buttonByTestId("liner-launcher-gui").click();
+  });
 }
 
 afterEach(() => {

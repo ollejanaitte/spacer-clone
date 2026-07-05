@@ -51,6 +51,44 @@ describe("liner station generation", () => {
     );
   });
 
+  it("does not warn when explicit stations duplicate automatic start or end", () => {
+    const result = generateStations(
+      {
+        originDisplayedStation: 0,
+        explicitStations: [0, 15, 25],
+      },
+      25,
+    );
+
+    expect(result.stations.map((station) => station.physicalDistance)).toEqual([
+      0, 15, 25,
+    ]);
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it("still warns for duplicate explicit interior stations", () => {
+    const result = generateStations(
+      {
+        originDisplayedStation: 0,
+        explicitStations: [15, 15],
+      },
+      25,
+    );
+
+    expect(result.stations.map((station) => station.physicalDistance)).toEqual([
+      0, 15, 25,
+    ]);
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          level: "warning",
+          code: "LINER_STATION_DUPLICATE_EQUATION",
+          physicalDistance: 15,
+        }),
+      ]),
+    );
+  });
+
   it("applies station equations at and after the boundary", () => {
     const definition = {
       originDisplayedStation: 0,
