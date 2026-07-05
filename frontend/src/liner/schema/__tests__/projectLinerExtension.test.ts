@@ -185,6 +185,39 @@ describe("attachLinerMappingToProject", () => {
     expect(project.liner).toBeUndefined();
     expect(validateProjectLinerExtension(attached)).toEqual([]);
   });
+
+  it("preserves existing domainDraft on project.liner when attaching mapping metadata", () => {
+    const domainDraft = {
+      id: "draft-preserve",
+      linerModelId: "gc06",
+      coordinatePolicyId: "global",
+      alignment: { id: "alignment-preserve", elements: [] },
+      stationDefinition: { originDisplayedStation: 0 },
+      verticalAlignment: { id: "va-preserve", elements: [] },
+      crossSections: [{ id: "cs-preserve", name: "Default", offsetLines: [] }],
+      gridDefinitions: [],
+      spans: [],
+      piers: [],
+      generationSettings: {},
+      sampling: {
+        display: { maxChordLength: 1, maxSagitta: 0.01, minSegmentsPerElement: 1 },
+        dxf: { maxChordLength: 0.5, maxSagitta: 0.005, minSegmentsPerElement: 1 },
+        frame: { maxMemberLength: 2, maxSagitta: 0.01, stationIntervalFallback: 1 },
+      },
+    };
+    const project = {
+      ...createDefaultProject(),
+      liner: {
+        ...minimalLinerMetadata(),
+        draftSchemaVersion: "0.2.0" as const,
+        domainDraft,
+      },
+    };
+    const attached = attachLinerMappingToProject(project, createIntermediate(), mapToFrameModel(createIntermediate()));
+
+    expect(attached.liner?.domainDraft).toEqual(domainDraft);
+    expect(attached.liner?.draftSchemaVersion).toBe("0.2.0");
+  });
 });
 
 describe("migrateProjectLinerExtension", () => {

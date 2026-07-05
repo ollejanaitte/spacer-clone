@@ -188,7 +188,7 @@ const BUILT_IN_SECTION_SPECS: BuiltInSectionSpec[] = [
       crossSlope: 0,
       offsets: {
         HL1: 6.6263,
-        HL2: 6.6263,
+        HL2: 6.2263,
         G1: 4.3872,
         HCL: 0,
         G2: -0.9,
@@ -215,7 +215,7 @@ const BUILT_IN_SECTION_SPECS: BuiltInSectionSpec[] = [
       crossSlope: 0,
       offsets: {
         HL1: 5.8263,
-        HL2: 5.8263,
+        HL2: 5.4263,
         G1: 3.9458,
         HCL: 0,
         G2: -1.0,
@@ -242,7 +242,7 @@ const BUILT_IN_SECTION_SPECS: BuiltInSectionSpec[] = [
       crossSlope: 0,
       offsets: {
         HL1: 5.0263,
-        HL2: 5.0263,
+        HL2: 4.6263,
         G1: 3.5593,
         HCL: 0,
         G2: -1.1,

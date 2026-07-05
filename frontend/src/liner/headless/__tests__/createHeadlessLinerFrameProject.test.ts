@@ -77,10 +77,11 @@ function minimalProjectDomainDraft(measuredGrid?: typeof minimalMeasuredGrid) {
         {
           type: "grade",
           id: "V1",
-          startPhysicalDistance: 0,
-          endPhysicalDistance: 50,
+          startStation: 0,
+          endStation: 50,
           startElevation: 10,
           grade: 0,
+          length: 50,
         },
       ],
     },

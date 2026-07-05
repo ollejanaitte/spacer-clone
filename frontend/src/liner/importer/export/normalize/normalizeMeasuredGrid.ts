@@ -8,6 +8,20 @@ import type { Bridge, GirderLineMaster, Point, Section } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 
+export const MEASURED_GRID_COLLAPSED_LINE_OFFSET = "LINER_MEASURED_GRID_COLLAPSED_LINE_OFFSET";
+
+export type MeasuredGridCollapseWarning = {
+  sectionId: string;
+  sectionLabel: string;
+  lineId: string;
+  lineLabel: string;
+  adjacentLineId: string;
+  adjacentLineLabel: string;
+  coordinate: number;
+};
+
+const COORDINATE_TOLERANCE = 1e-4;
+
 function isFiniteNumber(value: number | null | undefined): value is number {
   return value != null && Number.isFinite(value);
 }
@@ -124,6 +138,50 @@ function buildMeasuredGridPoints(
   }
 
   return points;
+}
+
+export function collectMeasuredGridCollapseWarnings(
+  measuredGrid: MeasuredGridDraft,
+): MeasuredGridCollapseWarning[] {
+  const lineById = new Map(measuredGrid.lines.map((line) => [line.id, line]));
+  const sectionById = new Map(measuredGrid.sections.map((section) => [section.id, section]));
+  const warnings: MeasuredGridCollapseWarning[] = [];
+
+  for (const section of measuredGrid.sections) {
+    const sectionPoints = measuredGrid.points
+      .filter((point) => point.sectionId === section.id)
+      .sort((left, right) => {
+        const leftLine = lineById.get(left.lineId);
+        const rightLine = lineById.get(right.lineId);
+        return (leftLine?.sortIndex ?? 0) - (rightLine?.sortIndex ?? 0);
+      });
+
+    for (let index = 1; index < sectionPoints.length; index += 1) {
+      const previous = sectionPoints[index - 1]!;
+      const current = sectionPoints[index]!;
+      if (Math.abs(previous.cumulativeWidth - current.cumulativeWidth) > COORDINATE_TOLERANCE) {
+        continue;
+      }
+
+      const previousLine = lineById.get(previous.lineId);
+      const currentLine = lineById.get(current.lineId);
+      if (!previousLine || !currentLine) {
+        continue;
+      }
+
+      warnings.push({
+        sectionId: section.id,
+        sectionLabel: sectionById.get(section.id)?.label ?? section.id,
+        lineId: current.lineId,
+        lineLabel: currentLine.label,
+        adjacentLineId: previous.lineId,
+        adjacentLineLabel: previousLine.label,
+        coordinate: current.cumulativeWidth,
+      });
+    }
+  }
+
+  return warnings;
 }
 
 export function normalizeMeasuredGrid(

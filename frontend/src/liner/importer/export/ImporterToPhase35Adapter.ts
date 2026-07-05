@@ -34,7 +34,7 @@ import {
   normalizeSupports,
   normalizeWidthPoints,
 } from "./normalize/normalizeSubstructure";
-import { normalizeMeasuredGrid } from "./normalize/normalizeMeasuredGrid";
+import { normalizeMeasuredGrid, collectMeasuredGridCollapseWarnings, MEASURED_GRID_COLLAPSED_LINE_OFFSET } from "./normalize/normalizeMeasuredGrid";
 
 function createDiagnostic(
   partial: Omit<AdapterDiagnostic, "id"> & { id?: string },
@@ -176,6 +176,17 @@ function buildDomainDraft(
   const measuredGrid = normalizeMeasuredGrid(bridge, ctx);
   if (measuredGrid) {
     draft.measuredGrid = measuredGrid;
+    for (const warning of collectMeasuredGridCollapseWarnings(measuredGrid)) {
+      diagnostics.push(
+        createDiagnostic({
+          level: "warning",
+          code: MEASURED_GRID_COLLAPSED_LINE_OFFSET,
+          message:
+            `measuredGrid section ${warning.sectionLabel}: adjacent lines ${warning.adjacentLineLabel} and ${warning.lineLabel} share coordinate ${warning.coordinate}`,
+          targetPath: `measuredGrid.sections.${warning.sectionId}`,
+        }),
+      );
+    }
   }
 
   applyPostConditionResults(diagnostics, draft, ctx);
