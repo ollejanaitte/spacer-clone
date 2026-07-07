@@ -1441,6 +1441,26 @@ export const ja = {
       crossSection: "横断",
       review: "確認図",
     },
+    setupTabPlaceholder: {
+      height: {
+        title: "高さの独立編集は Phase 4+ で対応予定です",
+        description: "現状の高さ情報は「縦断」タブで編集してください。",
+        bullets: [
+          "PDF 由来の各線ごとの標高は測定グリッドとして保持されています。",
+          "形状計算・プレビュー・3D 表示にはすでに反映されています。",
+          "各線の高さを独立して編集する UI は Phase 4+ の候補です。",
+        ],
+      },
+      review: {
+        title: "JIP-LINER 互換の確認図は Phase 4.0-2 以降で対応予定です",
+        description: "現状は画面上部の「プレビューを開く」から現状のプレビューをご確認ください。",
+        bullets: [
+          "平面図（線形・IP・BC/EC・寸法）は Phase 4.0-2 で追加予定です。",
+          "縦断図（勾配・VCL・凸凹曲線）は Phase 4.0-3 で追加予定です。",
+          "帯（横断勾配・拡幅・備考）は Phase 4.0-4 で追加予定です。",
+        ],
+      },
+    },
     fields: {
       alignmentId: "線形ID",
       linerModelId: "モデルID",

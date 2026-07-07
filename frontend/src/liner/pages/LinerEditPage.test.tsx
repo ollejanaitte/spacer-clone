@@ -3,6 +3,7 @@
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ja } from "../../i18n/ja";
 import { LinerEditPage } from "./LinerEditPage";
 
 vi.mock("recharts", () => ({
@@ -296,19 +297,21 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
-  it("keeps height and review tabs as stubs", () => {
+  it("renders placeholders on height and review tabs", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-stub-height]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-height]")).not.toBeNull();
+    expect(document.body.textContent).toContain(ja.liner.setupTabPlaceholder.height.title);
     expect(document.querySelector("[data-testid=add-liner-grade-element]")).toBeNull();
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-stub-review]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-review]")).not.toBeNull();
+    expect(document.body.textContent).toContain(ja.liner.setupTabPlaceholder.review.title);
     expect(document.querySelector("[data-testid=cross-section-template-id]")).toBeNull();
   });
 });
