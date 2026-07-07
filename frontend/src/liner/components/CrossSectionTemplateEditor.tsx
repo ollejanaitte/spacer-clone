@@ -1,6 +1,7 @@
 import { FilePlus2, Trash2 } from "lucide-react";
 import { ja } from "../../i18n/ja";
 import { computeOffsetLineElevation } from "../core/crossSectionElevation";
+import { defaultFrameModelEnabled } from "../core/frameModelTarget";
 import type {
   CrossSectionOffsetLineDraft,
   CrossSectionOffsetLineRole,
@@ -17,6 +18,7 @@ type OffsetLineFieldPatch = Partial<{
   offset: number;
   role: CrossSectionOffsetLineRole | undefined;
   label: string | undefined;
+  frameModelEnabled: boolean | undefined;
 }>;
 
 const OFFSET_LINE_ROLES: readonly CrossSectionOffsetLineRole[] = [
@@ -148,6 +150,12 @@ function updateOffsetLine(
         }
       }
 
+      if ("frameModelEnabled" in patch) {
+        // Phase 3.9: undefined の場合はラベルからの既定値に戻す（HCL/CL/ECL → false）。
+        next.frameModelEnabled =
+          patch.frameModelEnabled ?? defaultFrameModelEnabled(next.label);
+      }
+
       return next;
     }),
   };
@@ -219,6 +227,12 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
               <th>{ja.liner.fields.elevationUpPositive}</th>
               <th>{ja.liner.fields.offsetLineRole}</th>
               <th>{ja.liner.fields.offsetLineLabel}</th>
+              <th>
+                <span>{ja.liner.fields.frameModelTargetColumn}</span>
+                <span className="liner-edit-help" data-testid="cross-section-frame-model-target-help">
+                  {ja.liner.editor.frameModelTargetHelp}
+                </span>
+              </th>
               <th>{ja.liner.fields.actions}</th>
             </tr>
           </thead>
@@ -292,6 +306,21 @@ export function CrossSectionTemplateEditor({ template, onTemplateChange }: Cross
                       )
                     }
                     data-testid={`cross-section-offset-line-label-${line.id}`}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={line.frameModelEnabled ?? defaultFrameModelEnabled(line.label)}
+                    onChange={(event) =>
+                      applyChange(
+                        updateOffsetLine(displayTemplate, line.id, {
+                          frameModelEnabled: event.currentTarget.checked,
+                        }),
+                      )
+                    }
+                    aria-label={ja.liner.fields.frameModelTargetColumn}
+                    data-testid={`cross-section-offset-line-frame-model-enabled-${line.id}`}
                   />
                 </td>
                 <td>

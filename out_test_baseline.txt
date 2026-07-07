@@ -1,0 +1,23 @@
+﻿
+> spacer-clone-frontend@0.3.0-preview test
+> vitest run
+
+
+ RUN  v4.1.8 C:/Users/織田雅春/Desktop/三次元立体骨組み解析ソフトプロジェクト/spacer-clone/frontend
+
+node.exe : Python Python Not implemented: navigation to another Document
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Python Python N...nother Document:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  123 passed (123)
+      Tests  869 passed (869)
+   Start at  16:16:23
+   Duration  26.66s (transform 36.22s, setup 0ms, import 62.00s, tests 52.90s, environment 158.10s)
+

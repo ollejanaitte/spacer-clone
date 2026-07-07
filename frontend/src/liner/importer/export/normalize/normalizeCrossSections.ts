@@ -1,5 +1,6 @@
 import type { CrossSectionTemplateDraft } from "../../../schema/types";
 import type { Bridge } from "../../types";
+import { defaultFrameModelEnabled } from "../../../core/frameModelTarget";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 import { resolveGirderLineOffset } from "./resolveGirderLineOffset";
@@ -50,6 +51,8 @@ export function normalizeCrossSections(
         offset: resolveGirderLineOffset(line, bridge, index),
         elevation: 0,
         label: line.label,
+        // Phase 3.9: 骨組み生成対象フラグ（HCL/CL/ECL は既定 OFF）
+        frameModelEnabled: defaultFrameModelEnabled(line.label),
       })),
     },
   ];

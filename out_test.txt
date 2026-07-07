@@ -1,0 +1,158 @@
+﻿
+> spacer-clone-frontend@0.3.0-preview test
+> vitest run
+
+
+ RUN  v4.1.8 C:/Users/織田雅春/Desktop/三次元立体骨組み解析ソフトプロジェクト/spacer-clone/frontend
+
+node.exe : Python stderr | src/liner/importer/sample/builtInSampleMappingReview.test.ts > built-in sample Mapping Revie
+w > passes project schema validation before and after apply
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Python stderr |...and after apply:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+
+ ❯ src/liner/importer/sample/builtInSampleMappingReview.test.ts (8 tests | 3 failed) 1260ms
+     × produces no LINER_FRAME_SCHEMA_INVALID diagnostics 86ms
+     × keeps frame at 150 nodes and 269 members 43ms
+     × passes project schema validation before and after apply 350ms
+Python Not implemented: navigation to another Document
+stderr | src/App.linerDelete.test.tsx > App LINER delete integration > deletes only LINER metadata and trace while pres
+erving generated frame entities
+THREE.WARNING: Multiple instances of Three.js being imported.
+
+stderr | src/App.linerDelete.test.tsx > App LINER delete integration > deletes only LINER metadata and trace while pres
+erving generated frame entities
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+
+ ❯ src/App.linerDelete.test.tsx (1 test | 1 failed) 14789ms
+     × deletes only LINER metadata and trace while preserving generated frame entities 14781ms
+stderr | src/App.linerReset.test.tsx > App LINER reset integration > opens mapping review and applies the generated 3D 
+model after reset
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/createdAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/project/properties/updatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+unknown format "date-time" ignored in schema at path "#/properties/generatedAt"
+
+ ❯ src/App.linerReset.test.tsx (10 tests | 1 failed) 16437ms
+     × opens mapping review and applies the generated 3D model after reset 853ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.linerDelete.test.tsx > App LINER delete integration > deletes only LINER metadata and trace while preser
+ving generated frame entities
+AssertionError: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/App.linerDelete.test.tsx:90:29
+     88|
+     89|     const generatedCounts = document.querySelector("[data-testid=mock-…
+     90|     expect(generatedCounts).toBeTruthy();
+       |                             ^
+     91|     expect(generatedCounts).not.toBe("0/0");
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/App.linerReset.test.tsx > App LINER reset integration > opens mapping review and applies the generated 3D mo
+del after reset
+AssertionError: expected null not to be null
+ ❯ src/App.linerReset.test.tsx:280:71
+    278|
+    279|     expect(document.querySelector("[data-testid=liner-mapping-review-p…
+    280|     expect(document.querySelector("[data-testid=mock-viewer3d]")).not.…
+       |                                                                       ^
+    281|     expect(buttonByTestId("open-liner-viewer").disabled).toBe(false);
+    282|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/liner/importer/sample/builtInSampleMappingReview.test.ts > built-in sample Mapping Review > produces no LINE
+R_FRAME_SCHEMA_INVALID diagnostics
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/liner/importer/sample/builtInSampleMappingReview.test.ts:107:38
+    105|     });
+    106|
+    107|     expect(headless.validationReady).toBe(true);
+       |                                      ^
+    108|     expect(
+    109|       headless.diagnostics.filter(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/liner/importer/sample/builtInSampleMappingReview.test.ts > built-in sample Mapping Review > keeps frame at 1
+50 nodes and 269 members
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/liner/importer/sample/builtInSampleMappingReview.test.ts:141:44
+    139|     expect(review.summary.nodeCount).toBe(150);
+    140|     expect(review.summary.memberCount).toBe(269);
+    141|     expect(review.summary.validationReady).toBe(true);
+       |                                            ^
+    142|   });
+    143|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/liner/importer/sample/builtInSampleMappingReview.test.ts > built-in sample Mapping Review > passes project s
+chema validation before and after apply
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/liner/importer/sample/builtInSampleMappingReview.test.ts:148:35
+    146|     const beforeApply = mappingReviewBaseProject();
+    147|
+    148|     expect(validate(beforeApply)).toBe(true);
+       |                                   ^
+    149|
+    150|     const review = buildLinerViewerReviewFromDraft(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  3 failed | 120 passed (123)
+      Tests  5 failed | 866 passed (871)
+   Start at  16:18:53
+   Duration  31.69s (transform 43.90s, setup 0ms, import 72.35s, tests 64.96s, environment 193.90s)
+

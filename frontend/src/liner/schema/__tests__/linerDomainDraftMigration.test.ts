@@ -205,7 +205,8 @@ describe("migrateLinerDraftToVNext", () => {
       length: 100,
     });
     expect(result.domainDraft.crossSections[0]?.offsetLines).toEqual([
-      { id: "OL-0", offset: 0, elevation: 0, role: "custom" },
+      // Phase 3.9: 骨組み生成対象フラグが既定で付与される（label 未設定 → true）。
+      { id: "OL-0", offset: 0, elevation: 0, role: "custom", frameModelEnabled: true },
     ]);
     expect(result.diagnostics).toEqual([]);
   });

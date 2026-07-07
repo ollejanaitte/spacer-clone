@@ -1,5 +1,6 @@
-import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
+﻿import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
 import { computeOffsetLineElevation } from "../core/crossSectionElevation";
+import { defaultFrameModelEnabled } from "../core/frameModelTarget";
 import { evaluateElementEndState } from "../core/geometry/horizontal";
 import type {
   AlignmentElement,
@@ -93,12 +94,17 @@ function offsetLinesFromOffsets(
 ): CrossSectionOffsetLineDraft[] {
   return offsets.map((offset, index) => {
     const existingLine = existingOffsetLines[index];
+    const label = existingLine?.label;
     return {
       id: existingLine?.id ?? `OL-${index}`,
       offset,
       elevation: computeOffsetLineElevation(offset, slopePercent),
       role: existingLine?.role ?? "custom",
-      ...(existingLine?.label ? { label: existingLine.label } : {}),
+      // Phase 3.9: 既存行が frameModelEnabled を明示していなければ、ラベルから既定値
+      // （HCL/CL/ECL → false, それ以外 → true）を適用する。
+      frameModelEnabled:
+        existingLine?.frameModelEnabled ?? defaultFrameModelEnabled(label),
+      ...(label ? { label } : {}),
     };
   });
 }

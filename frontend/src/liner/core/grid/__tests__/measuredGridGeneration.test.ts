@@ -31,7 +31,7 @@ function buildSampleMeasuredGrid(): MeasuredGridDraft {
   ];
   const lines = [
     { id: "line-g1", label: "G1", role: "girder" as const, sortIndex: 0 },
-    { id: "line-hcl", label: "HCL", role: "center" as const, sortIndex: 1 },
+    { id: "line-hcl", label: "HCL", role: "center" as const, sortIndex: 1, frameModelEnabled: true },
   ];
   const points = [
     {
@@ -223,6 +223,47 @@ describe("measured grid pipeline fallback", () => {
     expect(nominalMid).toBeDefined();
     expect(nominalMid!.x).toBeCloseTo(82, 1);
     expect(nominalMid!.y).toBeCloseTo(5, 4);
+  });
+});
+
+describe("frameModelEnabled filter (Phase 3.9)", () => {
+  it("excludes grid points on lines with frameModelEnabled === false", () => {
+    const measuredGrid = buildSampleMeasuredGrid();
+    // Disable HCL line in the measured grid.
+    const hclDisabled: MeasuredGridDraft = {
+      ...measuredGrid,
+      lines: measuredGrid.lines.map((line) =>
+        line.id === "line-hcl" ? { ...line, frameModelEnabled: false } : line,
+      ),
+    };
+
+    const { gridPoints } = generateMeasuredGridPoints({
+      measuredGrid: hclDisabled,
+      alignment,
+      sourceRevision: "test-revision",
+    });
+
+    // Only G1 points should remain.
+    expect(gridPoints).toHaveLength(3);
+    expect(gridPoints.every((point) => point.source.longitudinalLineId === "line-g1")).toBe(true);
+  });
+
+  it("uses label-based default for unset frameModelEnabled (HCL/CL/ECL = false)", () => {
+    const measuredGrid = buildSampleMeasuredGrid();
+    // Remove the explicit frameModelEnabled (relies on the default).
+    const lines: typeof measuredGrid.lines = [
+      { id: "line-g1", label: "G1", role: "girder" as const, sortIndex: 0 },
+      { id: "line-hcl", label: "HCL", role: "center" as const, sortIndex: 1 },
+    ];
+    const draft: MeasuredGridDraft = { ...measuredGrid, lines };
+    const { gridPoints } = generateMeasuredGridPoints({
+      measuredGrid: draft,
+      alignment,
+      sourceRevision: "test-revision",
+    });
+    // HCL points should be excluded by the default rule.
+    expect(gridPoints).toHaveLength(3);
+    expect(gridPoints.every((point) => point.source.longitudinalLineId === "line-g1")).toBe(true);
   });
 });
 

@@ -1,4 +1,5 @@
 import { applyCrossSlope } from "../crossSectionZMerge";
+import { resolveFrameModelEnabled } from "../frameModelTarget";
 import { elevationAt } from "../elevationAt";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { evaluateAlignmentAtDistance } from "../geometry/horizontal";
@@ -56,6 +57,21 @@ export function gridPointId(
   return `GP-${linerModelId}-${padIndex(longitudinalIndex)}-${padIndex(transverseIndex)}`;
 }
 
+function isFrameModelTargetOffset(
+  offset: number,
+  input: GridPreparationInput,
+): boolean {
+  const lines = input.crossSectionTemplate?.offsetLines;
+  if (!lines || lines.length === 0) {
+    return true;
+  }
+  const match = lines.find((line) => line.offset === offset);
+  if (!match) {
+    return true;
+  }
+  return resolveFrameModelEnabled(match.frameModelEnabled, match.label);
+}
+
 export function generateGridPoints(input: GridPreparationInput): {
   gridPoints: GridPointPreparation[];
   issues: ValidationIssue[];
@@ -95,6 +111,9 @@ export function generateGridPoints(input: GridPreparationInput): {
     }
 
     for (const [transverseIndex, offset] of sortedOffsets.entries()) {
+      if (!isFrameModelTargetOffset(offset, input)) {
+        continue;
+      }
       const planPoint = offsetPoint(base.point, base.azimuth, offset);
       const crossfallOffset = applyCrossSlope(offset, slopePercent);
       const z = profileElevation + crossfallOffset;

@@ -71,7 +71,8 @@ describe("built-in sample Mapping Review", () => {
         (diagnostic) => diagnostic.code === LINER_DIAGNOSTIC_CODES.zeroLengthMember,
       ),
     ).toEqual([]);
-    expect(headless.mappingResult.members).toHaveLength(416);
+    // Phase 3.9: 6 lines * 24 + 25 * 5 = 269 (HCL/CL/ECL excluded)
+    expect(headless.mappingResult.members).toHaveLength(269);
   });
 
   it("does not double-count mapper diagnostics in headless output", () => {
@@ -112,25 +113,31 @@ describe("built-in sample Mapping Review", () => {
     expect(validateGeneratedLinerProject(headless.project!)).toEqual([]);
   });
 
-  it("keeps measuredGrid preview at 225 points and intermediate grid at 34 lines", () => {
+  // Phase 3.9: built-in sample defaults HCL/CL/ECL to frameModelEnabled=false.
+  // The PDF "preview" still contains 225 measured grid points, but the
+  // intermediate grid and frame model are built only from the structural lines
+  // (G1, G2, HL1, HL2, HR1, HR2 = 6 lines) and the 25 sections.
+  it("keeps measuredGrid preview at 225 points and intermediate grid at 31 lines", () => {
     const domainDraft = builtInDomainDraft();
     expect(domainDraft.measuredGrid?.points).toHaveLength(225);
 
     const intermediate = applyLinerHeadlessFixtureMemberRules(
       buildIntermediateResult(buildIntermediateInputFromDomainDraft(domainDraft)),
     );
-    expect(intermediate.grid.points).toHaveLength(225);
-    expect(intermediate.grid.lines).toHaveLength(34);
+    // 25 sections * 6 structural lines = 150 grid points
+    expect(intermediate.grid.points).toHaveLength(150);
+    // 6 longitudinal + 25 transverse = 31 lines
+    expect(intermediate.grid.lines).toHaveLength(31);
   });
 
-  it("keeps frame at 225 nodes and 416 members", () => {
+  it("keeps frame at 150 nodes and 269 members", () => {
     const review = buildLinerViewerReviewFromDraft(
       builtInLinerDraft(),
       mappingReviewBaseProject(),
     );
 
-    expect(review.summary.nodeCount).toBe(225);
-    expect(review.summary.memberCount).toBe(416);
+    expect(review.summary.nodeCount).toBe(150);
+    expect(review.summary.memberCount).toBe(269);
     expect(review.summary.validationReady).toBe(true);
   });
 

@@ -5,6 +5,7 @@ import type {
   MeasuredGridSectionDraft,
 } from "../../../schema/types";
 import type { Bridge, GirderLineMaster, Point, Section } from "../../types";
+import { defaultFrameModelEnabled } from "../../../core/frameModelTarget";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 
@@ -54,6 +55,9 @@ function buildMeasuredGridLines(girderLines: GirderLineMaster[]): MeasuredGridLi
     label: line.label,
     role: line.role,
     sortIndex: index,
+    // Phase 3.9: ラインラベルから既定の frameModelEnabled を解決する。
+    // HCL / CL / ECL は false、それ以外は true。
+    frameModelEnabled: defaultFrameModelEnabled(line.label),
   }));
 }
 

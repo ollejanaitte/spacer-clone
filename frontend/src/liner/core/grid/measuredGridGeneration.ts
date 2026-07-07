@@ -1,4 +1,5 @@
 import type { MeasuredGridDraft } from "../../schema/types";
+import { resolveFrameModelEnabled } from "../frameModelTarget";
 import { gridPointId } from "./gridGeneration";
 import type {
   GridPointPreparation,
@@ -120,6 +121,9 @@ export function generateMeasuredGridPoints(input: MeasuredGridPreparationInput):
     const section = sectionById.get(point.sectionId);
     const line = lineById.get(point.lineId);
     if (!section || !line) {
+      continue;
+    }
+    if (!resolveFrameModelEnabled(line.frameModelEnabled, line.label)) {
       continue;
     }
 

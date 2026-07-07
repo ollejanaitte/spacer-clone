@@ -7,6 +7,7 @@ import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEd
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
+import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
 import { SuperelevationEditor } from "../components/SuperelevationEditor";
 import { VerticalElementEditor } from "../components/VerticalElementEditor";
 import { VerticalProfileChart } from "../components/VerticalProfileChart";
@@ -35,14 +36,16 @@ export type LinerEditPageProps = {
   onBackToList: () => void;
 };
 
-function LinerSetupTabStub({ label, tabId }: { label: string; tabId: LinerSetupTabId }) {
-  return (
-    <section
-      className="liner-edit-panel liner-setup-tab-stub"
-      aria-label={label}
-      data-testid={`liner-setup-tab-stub-${tabId}`}
-    />
-  );
+function LinerSetupTabStub({
+  label,
+  tabId,
+  variant,
+}: {
+  label: string;
+  tabId: LinerSetupTabId;
+  variant: "height" | "review";
+}) {
+  return <SetupTabPlaceholder tabId={tabId} variant={variant} />;
 }
 
 export function LinerEditPage({
@@ -188,7 +191,11 @@ export function LinerEditPage({
           )}
 
           {activeTab === "height" && (
-            <LinerSetupTabStub label={ja.liner.setupTabs.height} tabId="height" />
+            <LinerSetupTabStub
+              label={ja.liner.setupTabs.height}
+              tabId="height"
+              variant="height"
+            />
           )}
 
           {activeTab === "vertical" && (
@@ -222,7 +229,11 @@ export function LinerEditPage({
           )}
 
           {activeTab === "review" && (
-            <LinerSetupTabStub label={ja.liner.setupTabs.review} tabId="review" />
+            <LinerSetupTabStub
+              label={ja.liner.setupTabs.review}
+              tabId="review"
+              variant="review"
+            />
           )}
         </LinerSetupTabs>
 

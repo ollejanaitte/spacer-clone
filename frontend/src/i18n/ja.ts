@@ -1424,6 +1424,8 @@ export const ja = {
       crossSlopeSignConventionHelp: "+ = 右下がり（道路センターから見て右側が下がる方向を正）",
       addOffsetLine: "オフセット線を追加",
       removeOffsetLine: "オフセット線を削除",
+      frameModelTargetHelp:
+        "ON のラインは SPACER 骨組み解析モデルのノード・メンバーに含めます。OFF のラインは Preview には表示されますが、フレームモデル生成からは除外されます（CL / ECL / HCL 等の参照線は既定 OFF）。",
       stationEquationTableCaption: "測点補正",
       unsupportedElementNotice: "この要素種別の詳細編集は後続タスクで対応します。",
       flatProfileNotice: "現在の計算パイプラインは一定高さZのみを使用します。",
@@ -1440,6 +1442,16 @@ export const ja = {
       vertical: "縦断",
       crossSection: "横断",
       review: "確認図",
+      placeholders: {
+        height: {
+          title: "高さは縦断タブで管理します",
+          body: "本リリースでは、構造物の高さは「縦断」タブの縦断線形で管理します。G1/G2/HL/HR などの各ラインごとの高さは横断面エディタの小座標表で再現してください。将来拡張として「高さ」タブを独立化したい場合は、このタブで編集できるよう拡張します。",
+        },
+        review: {
+          title: "確認図の位置付け",
+          body: "構造確認は Preview 画面（縦断・横断・平面を統合した 2D プレビュー）で行います。3D Viewer は Mapping 確認画面 (/pro/liner/mapping-review) で開けます。このタブは Phase 3.9 では位置付け説明のみ。JIP-LINER 互換の確認図を別途再構成する課題は Phase 4+ で扱います。",
+        },
+      },
     },
     fields: {
       alignmentId: "線形ID",
@@ -1505,6 +1517,7 @@ export const ja = {
       elevationUpPositive: "相対標高 (m, 上正)",
       offsetLineRole: "ロール",
       offsetLineLabel: "ラベル",
+      frameModelTargetColumn: "骨組み生成対象",
       offsetLineRoles: {
         unspecified: "未指定",
         shoulder: "路肩",
@@ -1552,6 +1565,9 @@ export const ja = {
       diagnostics: "診断",
       validationReady: "検証状態",
       actionsLabel: "反映操作",
+      frameModelTargetsTitle: "骨組み生成対象ライン",
+      frameModelTargetsHelp:
+        "false にしたラインは SPACER 骨組み解析モデルから除外されます。CL / ECL / HCL 等の参照線は既定 OFF。",
       confirmMerge: "プロジェクトへ反映",
       mergeNotice: "反映するまで現在のプロジェクトは変更されません。",
       emptyDiagnostics: "診断メッセージはありません。",

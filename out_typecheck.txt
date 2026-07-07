@@ -1,0 +1,4 @@
+﻿
+> spacer-clone-frontend@0.3.0-preview typecheck
+> tsc -b --pretty false
+

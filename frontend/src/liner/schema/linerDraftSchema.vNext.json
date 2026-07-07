@@ -510,6 +510,10 @@
         },
         "label": {
           "type": "string"
+        },
+        "frameModelEnabled": {
+          "type": "boolean",
+          "description": "Phase 3.9: when false, exclude this offset line from the SPACER frame model (nodes/members/supports)."
         }
       }
     },
@@ -922,6 +926,10 @@
         },
         "sortIndex": {
           "type": "integer"
+        },
+        "frameModelEnabled": {
+          "type": "boolean",
+          "description": "Phase 3.9: when false, exclude this measured grid line from the SPACER frame model."
         }
       }
     },

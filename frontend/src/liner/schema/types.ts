@@ -1,4 +1,4 @@
-import type { LinerTraceEntry } from "../mapper/frameModelMapper";
+﻿import type { LinerTraceEntry } from "../mapper/frameModelMapper";
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
 import type { Vec2 } from "../core/types";
 import {
@@ -45,7 +45,7 @@ export interface ProjectLinerMetadataVNext {
   domainDraft: LinerDomainDraftVNext;
 }
 
-/** Phase 3.8: measured line × section grid from LINER local coordinates. */
+/** Phase 3.8: measured line x section grid from LINER local coordinates. */
 export interface MeasuredGridPointDraft {
   id: string;
   sectionId: string;
@@ -70,6 +70,12 @@ export interface MeasuredGridLineDraft {
   label: string;
   role?: CrossSectionOffsetLineRole | GirderLineRoleLike;
   sortIndex: number;
+  /**
+   * Phase 3.9: when false, this line is treated as a reference / non-structural
+   * line and is excluded from the SPACER frame model. Default behavior (when
+   * undefined) is the same as `true` so legacy drafts keep working.
+   */
+  frameModelEnabled?: boolean;
 }
 
 /** Importer girder-line role alias for measured grid metadata. */
@@ -148,7 +154,7 @@ export interface ClothoidElementDraft {
 }
 
 /**
- * N2 §4 leaves station equation details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves station equation details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface StationEquationDraft {
@@ -160,7 +166,7 @@ export interface StationEquationDraft {
 }
 
 /**
- * N2 §4 leaves StationDefinitionDraft details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves StationDefinitionDraft details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface StationDefinitionDraft {
@@ -180,8 +186,8 @@ export type VerticalElementDraft =
   | VerticalParabolicElementDraft;
 
 /**
- * Batch 4 / PR-2a-1: grade 縦断要素。測点 (startStation/endStation) と区間長 (length) で定義する。
- * grade は内部 ratio (gradePercent / 100)。UI では % 表示。
+ * Batch 4 / PR-2a-1: vertical grade element.
+ * Stations are represented by startStation/endStation and length; grade is a ratio.
  */
 export interface VerticalGradeElementDraft {
   type: "grade";
@@ -194,8 +200,8 @@ export interface VerticalGradeElementDraft {
 }
 
 /**
- * Batch 4 / Master Pre-Decision #2: JIP-LINER 互換 parabolic 縦断要素。
- * K値方式・半径 R 方式は採用しない。
+ * Batch 4 / Master Pre-Decision #2: JIP-LINER-compatible parabolic vertical element.
+ * K-value and radius-R editing styles are not adopted.
  */
 export interface VerticalParabolicElementDraft {
   type: "parabolic";
@@ -210,8 +216,8 @@ export interface VerticalParabolicElementDraft {
 }
 
 /**
- * Batch 5 / PR-3a-1 / Master Pre-Decision #3: 横断勾配。
- * 道路センターから見て右下がりを正（+）。単位は %。
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #3: cross slope.
+ * Positive means the right side from the road center goes downward. Unit is percent.
  */
 export interface CrossSlopeDraft {
   signConvention: "right_down_positive";
@@ -219,8 +225,8 @@ export interface CrossSlopeDraft {
 }
 
 /**
- * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断テンプレート。
- * オフセット線リスト方式を採用する。レイヤー方式・パラメトリック方式は採用しない。
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: cross-section template.
+ * Uses the offset-line list model; layer and parametric models are not adopted.
  */
 export interface CrossSectionTemplateDraft {
   id: string;
@@ -231,7 +237,7 @@ export interface CrossSectionTemplateDraft {
   station?: number;
 }
 
-/** Pre-Decision #4: オフセット線の意味論ロール。 */
+/** Pre-Decision #4: semantic role for an offset line. */
 export type CrossSectionOffsetLineRole =
   | "shoulder"
   | "lane"
@@ -241,9 +247,12 @@ export type CrossSectionOffsetLineRole =
   | "custom";
 
 /**
- * Batch 5 / PR-3a-1 / Master Pre-Decision #4: 横断オフセット線。
- * offset は中心線からのオフセット (m, 右正)。
- * elevation は相対標高 (m, 上正)。
+ * Batch 5 / PR-3a-1 / Master Pre-Decision #4: cross-section offset line.
+ * offset is the distance from the centerline (m, right positive).
+ * elevation is relative elevation (m, up positive).
+ *
+ * Phase 3.9: frameModelEnabled=false excludes the line from SPACER frame-model
+ * nodes, members, and supports. Preview and measured-grid storage are unaffected.
  */
 export interface CrossSectionOffsetLineDraft {
   id: string;
@@ -251,10 +260,15 @@ export interface CrossSectionOffsetLineDraft {
   elevation: number;
   role?: CrossSectionOffsetLineRole;
   label?: string;
+  /**
+   * Phase 3.9: whether this line participates in SPACER frame-model generation.
+   * Undefined resolves from the label defaults: HCL/CL/ECL=false, others=true.
+   */
+  frameModelEnabled?: boolean;
 }
 
 /**
- * N2 §4 leaves grid definition details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves grid definition details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface GridDefinitionDraft {
@@ -266,7 +280,7 @@ export interface GridDefinitionDraft {
 }
 
 /**
- * N2 §4 leaves station range details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves station range details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface StationRangeDraft {
@@ -275,7 +289,7 @@ export interface StationRangeDraft {
 }
 
 /**
- * N2 §4 leaves span details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves span details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface SpanDraft {
@@ -287,7 +301,7 @@ export interface SpanDraft {
 }
 
 /**
- * N2 §4 leaves pier details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves pier details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface PierDraft {
@@ -314,7 +328,7 @@ export interface WidthChangePointDraft {
 }
 
 /**
- * N2 §4 leaves pier bearing details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves pier bearing details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface PierBearingOffsetDraft {
@@ -323,7 +337,7 @@ export interface PierBearingOffsetDraft {
 }
 
 /**
- * N2 §4 leaves generation settings details open; PR-1a-1 defines this conservatively.
+ * N2 section 4 leaves generation settings details open; PR-1a-1 defines this conservatively.
  * Final field constraints should be fixed in PR-1a-2 or later.
  */
 export interface GenerationSettingsDraft {

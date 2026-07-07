@@ -296,19 +296,19 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
-  it("keeps height and review tabs as stubs", () => {
+  it("renders placeholder body for height and review tabs", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-stub-height]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-height]")).not.toBeNull();
     expect(document.querySelector("[data-testid=add-liner-grade-element]")).toBeNull();
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-stub-review]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-review]")).not.toBeNull();
     expect(document.querySelector("[data-testid=cross-section-template-id]")).toBeNull();
   });
 });

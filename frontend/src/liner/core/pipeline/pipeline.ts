@@ -392,6 +392,7 @@ export function buildIntermediateResult(
     alignment: input.alignment,
     stationDefinition: input.stationDefinition,
     offsets: input.offsets ?? [0],
+    crossSections: input.crossSections,
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
   });
