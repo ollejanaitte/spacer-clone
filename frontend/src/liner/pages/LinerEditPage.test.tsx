@@ -72,6 +72,95 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=liner-summary-length]")?.textContent).toBe("125 m");
   });
 
+  it("keeps temporary empty string identifiers local until a commit action", () => {
+    const onDraftChange = vi.fn(() => {
+      throw new Error("conversion failed");
+    });
+    render(
+      <LinerEditPage
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onDraftChange={onDraftChange}
+      />,
+    );
+
+    act(() => {
+      setInputValue(inputByTestId("liner-alignment-id"), "");
+    });
+
+    expect(inputByTestId("liner-alignment-id").value).toBe("");
+    expect(onDraftChange).not.toHaveBeenCalled();
+    expect(document.querySelector("[data-testid=liner-edit-page]")).not.toBeNull();
+
+    act(() => {
+      setInputValue(inputByTestId("liner-alignment-id"), "XYZ");
+    });
+    expect(inputByTestId("liner-alignment-id").value).toBe("XYZ");
+  });
+
+  it("keeps horizontal numeric inputs empty while editing and accepts re-entry", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      setInputValue(inputByTestId("liner-element-length-S1"), "");
+    });
+    expect(inputByTestId("liner-element-length-S1").value).toBe("");
+
+    act(() => {
+      setInputValue(inputByTestId("liner-element-length-S1"), "150");
+    });
+    expect(inputByTestId("liner-element-length-S1").value).toBe("150");
+    expect(document.querySelector("[data-testid=liner-summary-length]")?.textContent).toBe("150 m");
+  });
+
+  it("keeps station, vertical, and cross-section numeric inputs empty while editing", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-station]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("liner-station-interval"), "");
+    });
+    expect(inputByTestId("liner-station-interval").value).toBe("");
+    act(() => {
+      setInputValue(inputByTestId("liner-station-interval"), "25");
+    });
+    expect(inputByTestId("liner-station-interval").value).toBe("25");
+    act(() => {
+      setInputValue(inputByTestId("liner-display-sampling-interval"), "");
+    });
+    expect(inputByTestId("liner-display-sampling-interval").value).toBe("");
+    act(() => {
+      setInputValue(inputByTestId("liner-display-sampling-interval"), "5");
+    });
+    expect(inputByTestId("liner-display-sampling-interval").value).toBe("5");
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-vertical]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("liner-vertical-element-start-station-VG-default"), "");
+    });
+    expect(inputByTestId("liner-vertical-element-start-station-VG-default").value).toBe("");
+    act(() => {
+      setInputValue(inputByTestId("liner-vertical-element-start-station-VG-default"), "10");
+    });
+    expect(inputByTestId("liner-vertical-element-start-station-VG-default").value).toBe("10");
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-crossSection]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-0"), "");
+    });
+    expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("");
+    act(() => {
+      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-0"), "2.5");
+    });
+    expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("2.5");
+  });
+
   it("keeps focus while editing straight element identifiers", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
     const idInput = inputByTestId("liner-element-id-S1");

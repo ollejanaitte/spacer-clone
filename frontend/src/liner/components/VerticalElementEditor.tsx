@@ -45,8 +45,11 @@ function optionalNumericValue(value: number | undefined): string {
 }
 
 function parseNumericInput(value: string): number {
+  if (value.trim() === "") {
+    return Number.NaN;
+  }
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+  return Number.isFinite(parsed) ? parsed : Number.NaN;
 }
 
 function parseOptionalNumericInput(value: string): number | undefined {

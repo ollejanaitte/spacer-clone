@@ -12,12 +12,15 @@ export type CurveSamplingControlProps = {
 };
 
 function parseNumericInput(value: string): number {
+  if (value.trim() === "") {
+    return Number.NaN;
+  }
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+  return Number.isFinite(parsed) ? parsed : Number.NaN;
 }
 
 function displaySampleIntervalValue(value: number | undefined): string {
-  return Number.isFinite(value) ? String(value) : String(SAMPLING_INTERVAL_DISPLAY);
+  return Number.isFinite(value) ? String(value) : "";
 }
 
 export function CurveSamplingControl({ draft, onDraftChange }: CurveSamplingControlProps) {
