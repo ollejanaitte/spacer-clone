@@ -1,5 +1,5 @@
 import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossSectionPreview } from "../components/CrossSectionPreview";
@@ -56,12 +56,35 @@ export function LinerEditPage({
 }: LinerEditPageProps) {
   const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
   const [activeTab, setActiveTab] = useState<LinerSetupTabId>("line");
-  const draft = controlledDraft ?? localDraft;
+  const [commitError, setCommitError] = useState<string | null>(null);
+  const draft = localDraft;
+  useEffect(() => {
+    if (controlledDraft) {
+      setLocalDraft(controlledDraft);
+      setCommitError(null);
+    }
+  }, [controlledDraft]);
   const changeDraft = (update: LinerDraftUpdate) => {
-    if (onDraftChange) {
-      onDraftChange(update);
-    } else {
-      setLocalDraft((current) => (typeof update === "function" ? update(current) : update));
+    setCommitError(null);
+    setLocalDraft((current) => (typeof update === "function" ? update(current) : update));
+  };
+  const commitDraft = (): boolean => {
+    if (!onDraftChange) {
+      return true;
+    }
+    try {
+      onDraftChange(draft);
+      setCommitError(null);
+      return true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setCommitError(message);
+      return false;
+    }
+  };
+  const commitAndRun = (action: () => void) => {
+    if (commitDraft()) {
+      action();
     }
   };
   const summary = useMemo(() => summarizeLinerDraft(draft), [draft]);
@@ -78,27 +101,32 @@ export function LinerEditPage({
           <p>{ja.liner.editor.lead}</p>
         </div>
         <div className="liner-edit-header-actions">
-          <button type="button" onClick={onClose} data-testid="close-liner-edit">
+          <button type="button" onClick={() => commitAndRun(onClose)} data-testid="close-liner-edit">
             <ArrowLeft size={16} />
             {ja.liner.list.close}
           </button>
-          <button type="button" onClick={onBackToList} data-testid="back-to-liner-list">
+          <button type="button" onClick={() => commitAndRun(onBackToList)} data-testid="back-to-liner-list">
             {ja.liner.list.backToList}
           </button>
           {onOpenPreview && (
-            <button type="button" onClick={onOpenPreview} data-testid="open-liner-preview">
+            <button type="button" onClick={() => commitAndRun(onOpenPreview)} data-testid="open-liner-preview">
               <Eye size={16} />
               {ja.liner.preview.openPreview}
             </button>
           )}
           {onOpenMappingReview && (
-            <button type="button" onClick={onOpenMappingReview} data-testid="open-liner-mapping-review">
+            <button type="button" onClick={() => commitAndRun(onOpenMappingReview)} data-testid="open-liner-mapping-review">
               <FilePlus2 size={16} />
               {ja.liner.mappingReview.openReview}
             </button>
           )}
         </div>
       </header>
+      {commitError && (
+        <p className="liner-edit-help" role="alert" data-testid="liner-draft-commit-error">
+          {commitError}
+        </p>
+      )}
 
       <div className="liner-edit-layout">
         <LinerSetupTabs activeTab={activeTab} onTabChange={setActiveTab}>

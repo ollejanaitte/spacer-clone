@@ -1,4 +1,5 @@
 import { FilePlus2, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { ja } from "../../i18n/ja";
 import {
   addLinerArcElement,
@@ -39,6 +40,8 @@ function parseOptionalNumericInput(value: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+type NumericField = "startX" | "startY" | "azimuth" | "length" | "radius" | "clothoidParameter" | "startRadius" | "endRadius";
+
 function elementTypeLabel(element: LinerDraftAlignmentElement): string {
   if (element.type === "straight") {
     return ja.liner.fields.elementTypes.straight;
@@ -54,6 +57,26 @@ function clothoidTurnValue(element: LinerDraftAlignmentElement & { type: "clotho
 }
 
 export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElementEditorProps) {
+  const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
+  const numericFieldKey = (element: LinerDraftAlignmentElement, field: NumericField) =>
+    `${element.type}:${element.id}:${field}`;
+  const numericInputValue = (
+    element: LinerDraftAlignmentElement,
+    field: NumericField,
+    fallback: string,
+  ): string => numericInputText[numericFieldKey(element, field)] ?? fallback;
+  const updateNumericInput = (
+    element: LinerDraftAlignmentElement,
+    field: NumericField,
+    value: string,
+    applyValue: (value: string) => void,
+  ) => {
+    const key = numericFieldKey(element, field);
+    setNumericInputText((current) => ({ ...current, [key]: value }));
+    if (value.trim() !== "") {
+      applyValue(value);
+    }
+  };
   return (
     <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
       <div className="liner-edit-section-header">
@@ -120,56 +143,64 @@ export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElem
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.start.x)}
-                    onChange={(event) =>
-                      onDraftChange(
-                        updateLinerAlignmentElement(draft, element.id, {
-                          startX: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    value={numericInputValue(element, "startX", numericValue(element.start.x))}
+                    onChange={(event) => {
+                      updateNumericInput(element, "startX", event.currentTarget.value, (value) =>
+                        onDraftChange(
+                          updateLinerAlignmentElement(draft, element.id, {
+                            startX: parseNumericInput(value),
+                          }),
+                        ),
+                      );
+                    }}
                     data-testid={`liner-element-start-x-${element.id}`}
                   />
                 </td>
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.start.y)}
-                    onChange={(event) =>
-                      onDraftChange(
-                        updateLinerAlignmentElement(draft, element.id, {
-                          startY: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    value={numericInputValue(element, "startY", numericValue(element.start.y))}
+                    onChange={(event) => {
+                      updateNumericInput(element, "startY", event.currentTarget.value, (value) =>
+                        onDraftChange(
+                          updateLinerAlignmentElement(draft, element.id, {
+                            startY: parseNumericInput(value),
+                          }),
+                        ),
+                      );
+                    }}
                     data-testid={`liner-element-start-y-${element.id}`}
                   />
                 </td>
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.azimuth)}
-                    onChange={(event) =>
-                      onDraftChange(
-                        updateLinerAlignmentElement(draft, element.id, {
-                          azimuth: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    value={numericInputValue(element, "azimuth", numericValue(element.azimuth))}
+                    onChange={(event) => {
+                      updateNumericInput(element, "azimuth", event.currentTarget.value, (value) =>
+                        onDraftChange(
+                          updateLinerAlignmentElement(draft, element.id, {
+                            azimuth: parseNumericInput(value),
+                          }),
+                        ),
+                      );
+                    }}
                     data-testid={`liner-element-azimuth-${element.id}`}
                   />
                 </td>
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.length)}
-                    onChange={(event) =>
-                      onDraftChange(
-                        updateLinerAlignmentElement(draft, element.id, {
-                          length: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                    value={numericInputValue(element, "length", numericValue(element.length))}
+                    onChange={(event) => {
+                      updateNumericInput(element, "length", event.currentTarget.value, (value) =>
+                        onDraftChange(
+                          updateLinerAlignmentElement(draft, element.id, {
+                            length: parseNumericInput(value),
+                          }),
+                        ),
+                      );
+                    }}
                     data-testid={`liner-element-length-${element.id}`}
                   />
                 </td>
@@ -177,14 +208,16 @@ export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElem
                   {element.type === "arc" ? (
                     <input
                       type="number"
-                      value={numericValue(element.radius)}
-                      onChange={(event) =>
-                        onDraftChange(
-                          updateLinerAlignmentElement(draft, element.id, {
-                            radius: parseNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                      value={numericInputValue(element, "radius", numericValue(element.radius))}
+                      onChange={(event) => {
+                        updateNumericInput(element, "radius", event.currentTarget.value, (value) =>
+                          onDraftChange(
+                            updateLinerAlignmentElement(draft, element.id, {
+                              radius: parseNumericInput(value),
+                            }),
+                          ),
+                        );
+                      }}
                       data-testid={`liner-element-radius-${element.id}`}
                     />
                   ) : (
@@ -215,14 +248,16 @@ export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElem
                   {element.type === "clothoid" ? (
                     <input
                       type="number"
-                      value={numericValue(element.clothoidParameter)}
-                      onChange={(event) =>
-                        onDraftChange(
-                          updateLinerAlignmentElement(draft, element.id, {
-                            clothoidParameter: parseNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                      value={numericInputValue(element, "clothoidParameter", numericValue(element.clothoidParameter))}
+                      onChange={(event) => {
+                        updateNumericInput(element, "clothoidParameter", event.currentTarget.value, (value) =>
+                          onDraftChange(
+                            updateLinerAlignmentElement(draft, element.id, {
+                              clothoidParameter: parseNumericInput(value),
+                            }),
+                          ),
+                        );
+                      }}
                       data-testid={`liner-element-clothoid-parameter-${element.id}`}
                     />
                   ) : (
@@ -233,14 +268,16 @@ export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElem
                   {element.type === "clothoid" ? (
                     <input
                       type="number"
-                      value={optionalNumericValue(element.startRadius)}
-                      onChange={(event) =>
-                        onDraftChange(
-                          updateLinerAlignmentElement(draft, element.id, {
-                            startRadius: parseOptionalNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                      value={numericInputValue(element, "startRadius", optionalNumericValue(element.startRadius))}
+                      onChange={(event) => {
+                        updateNumericInput(element, "startRadius", event.currentTarget.value, (value) =>
+                          onDraftChange(
+                            updateLinerAlignmentElement(draft, element.id, {
+                              startRadius: parseOptionalNumericInput(value),
+                            }),
+                          ),
+                        );
+                      }}
                       data-testid={`liner-element-start-radius-${element.id}`}
                     />
                   ) : (
@@ -251,14 +288,16 @@ export function HorizontalElementEditor({ draft, onDraftChange }: HorizontalElem
                   {element.type === "clothoid" ? (
                     <input
                       type="number"
-                      value={optionalNumericValue(element.endRadius)}
-                      onChange={(event) =>
-                        onDraftChange(
-                          updateLinerAlignmentElement(draft, element.id, {
-                            endRadius: parseOptionalNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                      value={numericInputValue(element, "endRadius", optionalNumericValue(element.endRadius))}
+                      onChange={(event) => {
+                        updateNumericInput(element, "endRadius", event.currentTarget.value, (value) =>
+                          onDraftChange(
+                            updateLinerAlignmentElement(draft, element.id, {
+                              endRadius: parseOptionalNumericInput(value),
+                            }),
+                          ),
+                        );
+                      }}
                       data-testid={`liner-element-end-radius-${element.id}`}
                     />
                   ) : (
