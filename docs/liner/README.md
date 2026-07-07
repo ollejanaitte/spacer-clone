@@ -41,6 +41,7 @@ Implementation code does not belong in this folder. Current implementation artif
 | [ui_mapping_review.md](ui_mapping_review.md) | High | P2-6 design | Mapping review and Viewer3D confirmation |
 | [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
 | [phase3_release_notes.md](phase3_release_notes.md) | Release notes | Phase3 complete | Phase3 output summary |
+| [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | High | Design | BridgeDefinition intermediate layer; FEM path unification |
 | [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 
@@ -94,6 +95,14 @@ Follow this order when filling in detailed design or starting implementation.
 | 23 | [rendering_strategy.md](rendering_strategy.md) | Medium |
 | 24 | [state_management.md](state_management.md) | Medium |
 | 24a | [ui_mapping_review.md](ui_mapping_review.md) | High |
+
+### Phase 4.5 — BridgeDefinition Intermediate Layer
+
+| Order | Document | Priority |
+| --- | --- | --- |
+| 24b | [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | High |
+
+Bridges LINER and Bridge Wizard through a shared structural design intermediate (`BridgeDefinition`) before FEM / `project.json` generation. Read after Phase 3.6–3.7 importer normalization docs and before extending FEM generators.
 
 ### Phase 5 — Quality, Operations, and Performance
 
@@ -175,6 +184,7 @@ Supporting documents. Can be refined after the backbone is stable.
 | [docs/glossary.md](../glossary.md) | Domain term mapping |
 | [docs/design/bridge-domain-model.md](../design/bridge-domain-model.md) | Prior art for domain-to-FEM conversion |
 | [docs/design/bridge-fem-generator.md](../design/bridge-fem-generator.md) | Prior art for coordinate grid generation |
+| [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | BridgeDefinition layer; unifies LINER and Wizard FEM paths |
 
 ## Design Principles (non-negotiable)
 
