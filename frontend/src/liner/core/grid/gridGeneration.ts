@@ -2,6 +2,7 @@ import { applyCrossSlope } from "../crossSectionZMerge";
 import { elevationAt } from "../elevationAt";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { evaluateAlignmentAtDistance } from "../geometry/horizontal";
+import { formatStationDisplay } from "../station/stationFormat";
 import { DEFAULT_TOLERANCES } from "../tolerances";
 import type {
   GeneratedStation,
@@ -87,7 +88,7 @@ export function generateGridPoints(input: GridPreparationInput): {
           {
             station: station.physicalDistance,
             entityType: "verticalAlignment",
-            detail: `No vertical profile elevation at station ${station.physicalDistance}.`,
+            detail: `No vertical profile elevation at station ${formatStationDisplay(station.physicalDistance)}.`,
           },
         ),
       );

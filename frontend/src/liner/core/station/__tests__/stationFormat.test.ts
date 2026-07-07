@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   formatStationNoPlus,
+  formatStationDisplay,
   parseStationNoPlus,
   parseStationInput,
   DEFAULT_STATION_FORMAT_OPTIONS,
@@ -215,5 +216,15 @@ describe("DEFAULT_STATION_FORMAT_OPTIONS", () => {
   });
   it("has prefix No.", () => {
     expect(DEFAULT_STATION_FORMAT_OPTIONS.prefix).toBe("No.");
+  });
+});
+
+describe("formatStationDisplay", () => {
+  it("formats with the default No.XX+YY.YYY display settings", () => {
+    expect(formatStationDisplay(2535)).toBe("No.25+35.000");
+  });
+
+  it("returns empty string for non-finite values", () => {
+    expect(formatStationDisplay(Number.NaN)).toBe("");
   });
 });

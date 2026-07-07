@@ -127,3 +127,11 @@ export function parseStationInput(
   if (!Number.isFinite(num)) return { ok: false, reason: "not_finite" };
   return { ok: true, value: num };
 }
+
+/**
+ * UI 表示用の標準測点フォーマッタ。
+ * Phase 4.0-1b では No 間隔 100m 固定のデフォルト設定を使う。
+ */
+export function formatStationDisplay(meters: number): string {
+  return formatStationNoPlus(meters) ?? "";
+}

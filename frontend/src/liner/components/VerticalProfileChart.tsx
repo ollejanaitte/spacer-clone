@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 import { ja } from "../../i18n/ja";
+import { formatStationDisplay } from "../core/station/stationFormat";
 import type {
   VerticalAlignmentDraft,
   VerticalElementDraft,
@@ -120,7 +121,7 @@ function collectAxisDomain(series: ProfileSeries[]): {
   };
 }
 
-function formatAxisValue(value: number): string {
+function formatElevationAxisValue(value: number): string {
   return Number.isFinite(value) ? value.toFixed(2) : "";
 }
 
@@ -172,7 +173,7 @@ export function VerticalProfileChart({ verticalAlignment }: VerticalProfileChart
                   dataKey="station"
                   type="number"
                   domain={axisDomain.stationDomain}
-                  tickFormatter={formatAxisValue}
+                  tickFormatter={(value) => formatStationDisplay(Number(value))}
                   tick={{ fill: CHART_LABEL_COLOR, fontSize: 12 }}
                   stroke={CHART_LABEL_COLOR}
                   label={{
@@ -185,7 +186,7 @@ export function VerticalProfileChart({ verticalAlignment }: VerticalProfileChart
                 />
                 <YAxis
                   domain={axisDomain.elevationDomain}
-                  tickFormatter={formatAxisValue}
+                  tickFormatter={formatElevationAxisValue}
                   tick={{ fill: CHART_LABEL_COLOR, fontSize: 12 }}
                   stroke={CHART_LABEL_COLOR}
                   width={72}
@@ -199,11 +200,11 @@ export function VerticalProfileChart({ verticalAlignment }: VerticalProfileChart
                 />
                 <Tooltip
                   formatter={(value) => [
-                    formatAxisValue(Number(value)),
+                    formatElevationAxisValue(Number(value)),
                     ja.liner.editor.verticalProfileElevationAxis,
                   ]}
                   labelFormatter={(value) =>
-                    `${ja.liner.editor.verticalProfileStationAxis}: ${formatAxisValue(Number(value))}`
+                    `${ja.liner.editor.verticalProfileStationAxis}: ${formatStationDisplay(Number(value))}`
                   }
                   contentStyle={{
                     background: "#ffffff",

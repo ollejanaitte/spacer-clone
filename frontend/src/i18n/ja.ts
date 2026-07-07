@@ -1409,7 +1409,7 @@ export const ja = {
       verticalProfileEmpty: "縦断要素がありません。縦断線形要素を追加するとグラフが表示されます。",
       verticalProfileChartAriaLabel: "縦断プロファイルグラフ",
       verticalProfileLegendLabel: "縦断要素凡例",
-      verticalProfileStationAxis: "測点 (m)",
+      verticalProfileStationAxis: "測点",
       verticalProfileElevationAxis: "標高 (m)",
       crossSectionTemplateSection: "横断テンプレート",
       crossSectionOffsetLineSection: "オフセット線",
