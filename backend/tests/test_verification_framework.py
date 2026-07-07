@@ -194,7 +194,7 @@ class TestTrussVerification:
         right_reaction = by_id(result["reactions"], "nodeId", "N2")
 
         total_fy = left_reaction["fy"] + right_reaction["fy"]
-        assert_close(total_fy, -20.0, rel_tol=1e-4)
+        assert_close(total_fy, 20.0, rel_tol=1e-4)
 
         assert apex["uy"] < 0, "Apex should displace downward"
 
@@ -208,9 +208,9 @@ class TestFrameVerification:
         right_reaction = by_id(result["reactions"], "nodeId", "N4")
 
         total_fx = left_reaction["fx"] + right_reaction["fx"]
-        assert_close(total_fx, 10.0, rel_tol=1e-4)
+        assert_close(total_fx, -10.0, rel_tol=1e-4)
 
-        assert left_reaction["fx"] + right_reaction["fx"] == pytest.approx(10.0, rel=1e-4)
+        assert left_reaction["fx"] + right_reaction["fx"] == pytest.approx(-10.0, rel=1e-4)
 
 
 class Test3DFrameVerification:

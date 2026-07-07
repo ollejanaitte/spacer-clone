@@ -175,7 +175,10 @@ def test_project_schema_rejects_invalid_liner_trace_entity_type(
     errors = list(validator.iter_errors(project))
 
     assert errors
-    assert any("frameEntityType" in error.message for error in errors)
+    assert any(
+        list(error.path)[-1:] == ["frameEntityType"] and error.validator == "enum"
+        for error in errors
+    )
 
 
 def test_project_schema_rejects_missing_liner_trace_source_revision(

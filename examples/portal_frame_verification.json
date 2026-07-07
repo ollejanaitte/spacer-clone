@@ -88,6 +88,7 @@
   "memberLoads": [],
   "analysisSettings": {
     "analysisType": "linear_static",
+    "solver": "scipy_sparse",
     "includeShearDeformation": false,
     "largeDisplacement": false,
     "tolerance": 1e-06

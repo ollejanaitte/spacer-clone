@@ -2,7 +2,7 @@
   "name": "Portal Frame Horizontal Load",
   "category": "frame",
   "description": "2D portal frame with horizontal load at beam level. Fixed supports.",
-  "modelPath": "../../examples/portal_frame_verification.json",
+  "modelPath": "../../portal_frame_verification.json",
   "parameters": {
     "E": 200000000,
     "G": 80000000,

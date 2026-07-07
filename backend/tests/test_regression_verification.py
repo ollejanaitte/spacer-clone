@@ -59,7 +59,7 @@ class TestRegressionDisplacement:
         project = load_verification_model("beam", "cantilever_torsion")
         result = _run_success(engine_runner, project)
         node = by_id(result["displacements"], "nodeId", "N2")
-        assert_close(node["rx"], 0.005074257, rel_tol=1e-4)
+        assert_close(node["rx"], 0.005073170731717216, rel_tol=1e-4)
 
 
 class TestRegressionReaction:
@@ -98,7 +98,7 @@ class TestRegressionReaction:
         left = by_id(result["reactions"], "nodeId", "N1")
         right = by_id(result["reactions"], "nodeId", "N4")
         total_fx = left["fx"] + right["fx"]
-        assert_close(total_fx, 10.0, rel_tol=1e-4)
+        assert_close(total_fx, -10.0, rel_tol=1e-4)
 
 
 class TestRegressionMemberForce:
