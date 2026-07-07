@@ -22,3 +22,14 @@ frontend/electron-dist/
 .local_projects/
 backend/data/projects/autosave.json
 backend/data/projects/autosave.local.json
+
+# Local test/typecheck output logs
+out_test.txt
+out_test_baseline.txt
+out_typecheck.txt
+
+# Codex / Cursor stage prompts and results
+stage*_prompt.txt
+stage*_result.md
+scan_prompt.txt
+scan_result.md
