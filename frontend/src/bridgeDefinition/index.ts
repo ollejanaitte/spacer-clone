@@ -27,3 +27,10 @@ export {
 } from "./adapters/fromLinerBridge";
 
 export type { LinerBridgeToBridgeDefinitionOptions } from "./adapters/fromLinerBridge";
+
+export {
+  createBridgeDefinitionFromBridgeProject,
+  validateBridgeProjectForBridgeDefinition,
+} from "./adapters/fromBridgeProject";
+
+export type { BridgeProjectToBridgeDefinitionOptions } from "./adapters/fromBridgeProject";
