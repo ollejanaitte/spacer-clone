@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer-clone.local/schemas/bridge-definition.schema.json",
+  "title": "BridgeDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "source",
+    "coordinatePolicy",
+    "alignmentRefs",
+    "stations",
+    "spans",
+    "supports",
+    "superstructure",
+    "girders",
+    "crossBeams",
+    "bearings",
+    "deck",
+    "loads",
+    "generationSettings",
+    "metadata"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "source": { "$ref": "#/$defs/source" },
+    "coordinatePolicy": { "$ref": "#/$defs/coordinatePolicy" },
+    "alignmentRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/alignmentRef" }
+    },
+    "stations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/station" }
+    },
+    "spans": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/span" }
+    },
+    "supports": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/support" }
+    },
+    "superstructure": { "$ref": "#/$defs/superstructure" },
+    "girders": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/girder" }
+    },
+    "crossBeams": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/crossBeam" }
+    },
+    "bearings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/bearing" }
+    },
+    "deck": { "$ref": "#/$defs/deck" },
+    "loads": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/load" }
+    },
+    "generationSettings": { "$ref": "#/$defs/generationSettings" },
+    "metadata": { "$ref": "#/$defs/metadata" }
+  },
+  "$defs": {
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "linerModelId"],
+          "properties": {
+            "kind": { "const": "liner" },
+            "linerModelId": { "type": "string", "minLength": 1 },
+            "importerBridgeId": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "bridgeProjectId"],
+          "properties": {
+            "kind": { "const": "bridgeProject" },
+            "bridgeProjectId": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "const": "manual" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "const": "unknown" },
+            "reason": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "coordinatePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policyId", "frame"],
+      "properties": {
+        "policyId": { "type": "string", "minLength": 1 },
+        "frame": { "enum": ["global", "bridge-local", "span-local"] },
+        "axisConvention": { "const": "x-longitudinal-y-transverse-z-up" },
+        "sign": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "x": { "enum": [1, -1] },
+            "y": { "enum": [1, -1] },
+            "z": { "enum": [1, -1] }
+          }
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["length"],
+          "properties": {
+            "length": { "const": "m" },
+            "angle": { "enum": ["deg", "rad"] }
+          }
+        }
+      }
+    },
+    "alignmentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alignmentId", "originStation", "totalLength"],
+      "properties": {
+        "alignmentId": { "type": "string", "minLength": 1 },
+        "originStation": { "type": "number" },
+        "totalLength": { "type": "number", "minimum": 0 }
+      }
+    },
+    "station": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "station"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "station": { "type": "number" },
+        "label": { "type": "string" },
+        "cumulativeDistance": { "type": "number" },
+        "role": { "enum": ["origin", "pier", "expansion", "custom"] }
+      }
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "index", "startStation", "endStation", "length"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "index": { "type": "integer", "minimum": 1 },
+        "startStation": { "type": "number" },
+        "endStation": { "type": "number" },
+        "length": { "type": "number", "exclusiveMinimum": 0 },
+        "girderLineSetId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "station", "kind"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "station": { "type": "number" },
+        "kind": { "enum": ["fixed", "pinned", "roller", "custom"] },
+        "substructureKind": { "enum": ["abutment", "pier", "virtual_pier"] },
+        "skewAngleDeg": { "type": "number" },
+        "transversePosition": {
+          "oneOf": [
+            { "enum": ["centre", "edge"] },
+            { "type": "number" }
+          ]
+        }
+      }
+    },
+    "superstructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "slab_girder_grid",
+            "box_girder",
+            "plate_girder",
+            "pc_girder",
+            "custom"
+          ]
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "girder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "role", "offset", "spanIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "role": { "enum": ["main", "edge", "barrier", "custom"] },
+        "offset": { "type": "number" },
+        "spanIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "sectionRefId": { "type": "string", "minLength": 1 },
+        "materialRefId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "crossBeam": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "station"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "station": { "type": "number" },
+        "girderIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "sectionRefId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "bearing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "supportId", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "supportId": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["elastomeric", "pot", "fixed", "custom"] }
+      }
+    },
+    "deck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "width"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "thickness": { "type": "number", "exclusiveMinimum": 0 },
+        "kind": { "enum": ["steel_composite", "rc", "orthotropic"] }
+      }
+    },
+    "loadTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "refId"],
+      "properties": {
+        "kind": { "enum": ["girder", "deck", "node", "line"] },
+        "refId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "load": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "caseId", "type", "magnitude", "direction", "target"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": ["self_weight", "distributed", "vehicle", "temperature"]
+        },
+        "magnitude": { "type": "number" },
+        "direction": { "enum": ["X", "Y", "Z", "-X", "-Y", "-Z"] },
+        "target": { "$ref": "#/$defs/loadTarget" },
+        "impactFactor": { "type": "number", "minimum": 0 }
+      }
+    },
+    "generationSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meshDivision", "meshDensity"],
+      "properties": {
+        "meshDivision": { "type": "integer", "minimum": 1, "maximum": 50 },
+        "meshDensity": { "enum": ["coarse", "standard", "fine"] },
+        "girderSpacingOverride": { "type": "number", "exclusiveMinimum": 0 },
+        "defaultMaterialId": { "type": "string", "minLength": 1 },
+        "defaultSectionId": { "type": "string", "minLength": 1 },
+        "useLegacyFemPath": { "type": "boolean" }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

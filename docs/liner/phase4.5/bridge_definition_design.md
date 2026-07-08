@@ -1,6 +1,6 @@
 # Phase 4.5 — BridgeDefinition 中間レイヤー設計書
 
-> Status: **Design (docs-only)** — 実装前の設計・境界定義。本 Phase ではコード変更を行わない。
+> Status: **Partial implementation** — Step 1（命名整理）・Step 2（型 + JSON Schema + validation test）完了。adapter / generator / UI 接続は未実装。
 > Repo: spacer-clone
 > 作成日: 2026年7月8日
 > 関連: [integration_with_frame_model.md](../integration_with_frame_model.md), [phase35_bridge_adapter_spec.md](../phase3.6/phase35_bridge_adapter_spec.md), [bridge-domain-model.md](../../design/bridge-domain-model.md), [bridge-fem-generator.md](../../design/bridge-fem-generator.md)
@@ -82,7 +82,7 @@ LINER は **道路線形（測点・平面・縦断・横断・グリッド）**
 | **RoadGeometry** | 道路・橋梁位置決めの幾何。平面線形、縦断、横断勾配、測点定義、幅員変化。解析節点ではない。 | LINER: `alignment`, `verticalAlignment`, `crossSections`, `stationDefinition`, `measuredGrid` |
 | **LinerBridge** | LINER 系統における 1 橋梁分の **設計意図** 。RoadGeometry + スパン/支点/横桁/主桁線 master + importer メタデータ。FEM 部材ではない。 | `LinerBridge`（`liner/importer/types.ts`）+ 正規化後 `LinerDomainDraftVNext`（1 bridge 分） |
 | **BridgeProject** | Bridge Wizard が保持する **Wizard 入力プロジェクト** 。横断组成、スパン、衝撃係数、3D 線、荷重、メッシュ設定。 | `frontend/src/bridge/types.ts` の `BridgeProject` |
-| **BridgeDefinition** | **新設** 共通中間表現。構造設計者が意図する橋梁構造（スパン、支点、上部構造形式、主桁・横桁・支承・床版・荷重・生成設定）を、入口非依存で記述。 | （未実装）本設計書 §7 |
+| **BridgeDefinition** | **新設** 共通中間表現。構造設計者が意図する橋梁構造（スパン、支点、上部構造形式、主桁・横桁・支承・床版・荷重・生成設定）を、入口非依存で記述。 | `frontend/src/bridgeDefinition/types.ts`, `schemas/bridge-definition.schema.json`（Step 2） |
 | **StructuralModel** | 解析直前モデル。節点・部材・材質断面参照・支点条件・荷重・局所座標・member orientation・解析ケース。`project.json` への写像前。 | 概念的には `FrameMappingResult` + 荷重/ケース、または generator 内部状態 |
 | **FEM Model** | SPACER が検証・解析する JSON。 | `ProjectModel` / `schemas/project.schema.json` |
 | **SPACER Project** | アプリが保存する解析プロジェクト全体。FEM + 解析設定 + 拡張（`liner`, `linerTrace` 等）。 | `ProjectModel` + metadata |
@@ -190,7 +190,22 @@ flowchart TB
 
 ## 7. 型設計案
 
-実装は本 Phase では行わない。以下は TypeScript **擬似コード** による初期型案。Python 側には将来同等概念の `@dataclass` を追加する方針とする。
+以下は TypeScript 初期型案。**Step 2（2026-07-09）** で `frontend/src/bridgeDefinition/types.ts` および `schemas/bridge-definition.schema.json` として実装済み。Python `@dataclass` は **Step 3 以降または generator 実装前** に追加する（本 Step では未実装）。
+
+### Step 2 実装ファイル
+
+| 種別 | パス | 状態 |
+| --- | --- | --- |
+| TypeScript 型 | `frontend/src/bridgeDefinition/types.ts` | 実装済み |
+| TypeScript export | `frontend/src/bridgeDefinition/index.ts` | 実装済み |
+| JSON Schema | `schemas/bridge-definition.schema.json` | 実装済み（`schemaVersion: "1.0.0"`） |
+| Schema validation test | `backend/tests/test_bridge_definition_schema.py` | 実装済み |
+| Python dataclass | `backend/engine/bridge_definition.py`（予定） | **未実装** — Step 3 以降 |
+| LinerBridge → BridgeDefinition adapter | `frontend/src/liner/bridgeDefinition/*`（予定） | **未実装** — Step 3 |
+| BridgeProject → BridgeDefinition adapter | `frontend/src/bridge/bridgeProjectToBridgeDefinition.ts`（予定） | **未実装** — Step 4 |
+| BridgeDefinition → StructuralModel generator | 新規 TS / Python generator（予定） | **未実装** — Step 5 |
+
+### 初期型案（設計参照用）
 
 ```typescript
 /** Phase 4.5 initial — not implemented */
@@ -332,7 +347,7 @@ interface BridgeDefinition {
 }
 ```
 
-**Python 方針:** `backend/engine/bridge_definition.py`（新規）に frozen dataclass 群を将来追加。`to_dict` / `from_dict` は `bridge_model.py` と同パターン。TS ↔ Python の同期方法は §13 未決事項。
+**Python 方針:** `backend/engine/bridge_definition.py`（新規）に frozen dataclass 群を **Step 3 以降または generator 実装前** に追加する。`to_dict` / `from_dict` は `bridge_model.py` と同パターン。TS ↔ Python の同期方法は §13 未決事項。**Step 2 時点では Python dataclass は未実装。**
 
 ---
 
@@ -410,7 +425,7 @@ interface BridgeDefinition {
 | Step | 作業内容 | 触る候補ファイル | リスク | 完了条件 |
 | --- | --- | --- | --- | --- |
 | **1** | Bridge / BridgeProject 命名・責務整理（`Bridge` → `LinerBridge` 等） | `liner/importer/types.ts`, `bridge/types.ts`, 本 doc | 混同継続 | 用語表がコードコメントと一致。挙動変更なし |
-| **2** | BridgeDefinition 型・schema 追加 | 新規 `frontend/src/bridgeDefinition/types.ts`, `schemas/bridge-definition.schema.json` | schema 配置未決 | typecheck pass。schema validate fixture 1 件 |
+| **2** | BridgeDefinition 型・schema 追加 | 新規 `frontend/src/bridgeDefinition/types.ts`, `schemas/bridge-definition.schema.json` | schema 配置未決 | **完了** — typecheck pass。schema validate fixture 1 件 |
 | **3** | LinerBridge → BridgeDefinition adapter | 新規 `liner/bridgeDefinition/*`, tests | LINER pipeline 回帰 | built-in sample → BD golden。importer tests pass |
 | **4** | BridgeProject → BridgeDefinition adapter | `bridge/bridgeProjectToBridgeDefinition.ts`, `backend/engine/bridge_project_adapter.py`, tests | Wizard API 互換 | 既存 `BridgeWizardState.test.ts` pass |
 | **5** | BridgeDefinition → StructuralModel generator | 新規 TS generator + Python 骨格 | ロジック重複 | 単体テストで node/member/support 件数一致 |
@@ -447,12 +462,12 @@ interface BridgeDefinition {
 
 | ID | 論点 | 候補 | 決定期限 |
 | --- | --- | --- | --- |
-| O1 | schema 配置 | `schemas/bridge-definition.schema.json` vs `project.schema.json` `$defs` | Step 2 前 |
+| O1 | schema 配置 | `schemas/bridge-definition.schema.json` vs `project.schema.json` `$defs` | **決定:** `schemas/bridge-definition.schema.json`（Step 2） |
 | O2 | TS ↔ Python 同期 | 手動 mirror / codegen / JSON Schema single source | Step 2〜5 |
 | O3 | 既存 importer 橋梁型 rename | Step 1 で `LinerBridge` に統一済み | — |
 | O4 | App.tsx 分割 | BridgeDefinition 導入とは独立。別 Phase | — |
 | O5 | LinerBridge 保存形式 | project.liner 内 BD 埋込 vs 別ファイル | Step 3 前 |
-| O6 | BridgeDefinition バージョニング | semver + migration registry | Step 2 |
+| O6 | BridgeDefinition バージョニング | semver + migration registry | **初期値:** `"1.0.0"`（Step 2） |
 | O7 | SPACER project JSON との関係 | BD を `project.bridgeDefinition?` として top-level 拡張 | Step 5 前 |
 | O8 | 座標系・軸方向・符号 | [coordinate_system_policy.md](../coordinate_system_policy.md) との統一。Wizard y 对称 vs LINER measured grid | Step 5 前 |
 
@@ -498,3 +513,4 @@ interface BridgeDefinition {
 | Date | Change |
 | --- | --- |
 | 2026-07-08 | Initial design (Phase 4.5 docs-only) |
+| 2026-07-09 | Step 2: TypeScript types, JSON Schema, schema validation test added |
