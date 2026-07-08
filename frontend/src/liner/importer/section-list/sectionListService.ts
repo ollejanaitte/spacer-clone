@@ -1,4 +1,4 @@
-import type { Bridge, Section } from "../types";
+import type { LinerBridge, Section } from "../types";
 import { evaluateSectionRenderability } from "../renderability";
 import { validateSection, summarizeDiagnostics } from "../diagnostics/validateImporter";
 import {
@@ -18,7 +18,7 @@ export type SectionListRowSummary = {
   warningCount: number;
 };
 
-export function buildSectionListSummaries(bridge: Bridge): SectionListRowSummary[] {
+export function buildSectionListSummaries(bridge: LinerBridge): SectionListRowSummary[] {
   return sortSectionsByPdfPage(bridge.sections).map((section) => {
     const diagnostics = validateSection(section, bridge, bridge.sections);
     const summary = summarizeDiagnostics(diagnostics);
@@ -41,7 +41,7 @@ export function buildSectionListSummaries(bridge: Bridge): SectionListRowSummary
   });
 }
 
-export function addSection(bridge: Bridge, pdfPage?: number): Bridge {
+export function addSection(bridge: LinerBridge, pdfPage?: number): LinerBridge {
   const girderSet = resolvePrimaryGirderLineSet(bridge);
   const lines = girderSet?.lines ?? [];
   const nextPage =
@@ -57,14 +57,14 @@ export function addSection(bridge: Bridge, pdfPage?: number): Bridge {
   };
 }
 
-export function removeSection(bridge: Bridge, sectionId: string): Bridge {
+export function removeSection(bridge: LinerBridge, sectionId: string): LinerBridge {
   return {
     ...bridge,
     sections: bridge.sections.filter((section) => section.id !== sectionId),
   };
 }
 
-export function duplicatePreviousSection(bridge: Bridge, sectionId?: string): Bridge {
+export function duplicatePreviousSection(bridge: LinerBridge, sectionId?: string): LinerBridge {
   const ordered = sortSectionsByPdfPage(bridge.sections);
   if (ordered.length === 0) {
     return addSection(bridge);
@@ -85,10 +85,10 @@ export function duplicatePreviousSection(bridge: Bridge, sectionId?: string): Br
 }
 
 export function bulkCreateSectionsByPdfPages(
-  bridge: Bridge,
+  bridge: LinerBridge,
   startPage: number,
   endPage: number,
-): Bridge {
+): LinerBridge {
   if (startPage > endPage || startPage < 1) {
     return bridge;
   }
@@ -104,7 +104,7 @@ export function bulkCreateSectionsByPdfPages(
   return nextBridge;
 }
 
-export function updateBridgeSections(bridge: Bridge, sections: Section[]): Bridge {
+export function updateBridgeSections(bridge: LinerBridge, sections: Section[]): LinerBridge {
   return {
     ...bridge,
     sections: sections.map((section) => ({
@@ -114,11 +114,11 @@ export function updateBridgeSections(bridge: Bridge, sections: Section[]): Bridg
   };
 }
 
-export function findSection(bridge: Bridge, sectionId: string): Section | null {
+export function findSection(bridge: LinerBridge, sectionId: string): Section | null {
   return bridge.sections.find((section) => section.id === sectionId) ?? null;
 }
 
-export function reindexSectionPdfPages(bridge: Bridge): Bridge {
+export function reindexSectionPdfPages(bridge: LinerBridge): LinerBridge {
   const ordered = sortSectionsByPdfPage(bridge.sections);
   return {
     ...bridge,

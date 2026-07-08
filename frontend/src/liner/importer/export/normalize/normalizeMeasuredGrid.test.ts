@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { normalizeMeasuredGrid, collectMeasuredGridCollapseWarnings } from "./normalizeMeasuredGrid";
 import { buildNormalizationContext } from "./normalizationContext";
-import type { Bridge, Section } from "../../types";
+import type { LinerBridge, Section } from "../../types";
 
-function createMinimalBridge(sections: Section[]): Bridge {
+function createMinimalBridge(sections: Section[]): LinerBridge {
   return {
     id: "bridge-min",
     name: "Minimal",

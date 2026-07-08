@@ -1,4 +1,4 @@
-import type { Bridge, GirderLineMaster } from "../../types";
+import type { LinerBridge, GirderLineMaster } from "../../types";
 
 function isCenterLine(line: GirderLineMaster): boolean {
   return line.role === "center" || line.label === "HCL";
@@ -7,7 +7,7 @@ function isCenterLine(line: GirderLineMaster): boolean {
 /** Resolve transverse offset for a girder line: nominalOffset > section cumulativeWidth > lineIndex. */
 export function resolveGirderLineOffset(
   line: GirderLineMaster,
-  bridge: Bridge,
+  bridge: LinerBridge,
   lineIndex: number,
 ): number {
   if (isCenterLine(line)) {

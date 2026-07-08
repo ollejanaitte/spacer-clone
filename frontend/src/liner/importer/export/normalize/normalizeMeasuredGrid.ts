@@ -4,7 +4,7 @@ import type {
   MeasuredGridPointDraft,
   MeasuredGridSectionDraft,
 } from "../../../schema/types";
-import type { Bridge, GirderLineMaster, Point, Section } from "../../types";
+import type { LinerBridge, GirderLineMaster, Point, Section } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 
@@ -40,7 +40,7 @@ function resolveSectionStation(section: Section, ctx: NormalizationContext): num
   return ctx.toNormalized(raw, `measuredGrid.sections.${section.id}.station`);
 }
 
-function resolveGirderLines(bridge: Bridge): GirderLineMaster[] {
+function resolveGirderLines(bridge: LinerBridge): GirderLineMaster[] {
   const primarySpan = bridge.spans[0];
   const lineSet =
     bridge.girderLineSets.find((set) => set.id === primarySpan?.girderLineSetId) ??
@@ -58,7 +58,7 @@ function buildMeasuredGridLines(girderLines: GirderLineMaster[]): MeasuredGridLi
 }
 
 function buildMeasuredGridSections(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): MeasuredGridSectionDraft[] {
   const sections = [...bridge.sections]
@@ -84,7 +84,7 @@ function buildMeasuredGridSections(
 }
 
 function buildMeasuredGridPoints(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
   sections: MeasuredGridSectionDraft[],
   lines: MeasuredGridLineDraft[],
@@ -185,7 +185,7 @@ export function collectMeasuredGridCollapseWarnings(
 }
 
 export function normalizeMeasuredGrid(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): MeasuredGridDraft | undefined {
   const girderLines = resolveGirderLines(bridge);

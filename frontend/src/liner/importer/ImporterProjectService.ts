@@ -1,7 +1,7 @@
 import { createEmptyImporterProject } from "./factory";
 import { buildBuiltInSampleProject } from "./sample/builtInSampleDataset";
 import type {
-  Bridge,
+  LinerBridge,
   GirderLineSet,
   JipLinerImporterProject,
   LastEditedStep,
@@ -102,7 +102,7 @@ export class ImporterProjectService {
       })),
     }));
 
-    const bridge: Bridge = {
+    const bridge: LinerBridge = {
       ...bridgeTemplate,
       id: bridgeId,
       girderLineSets: [
@@ -167,7 +167,7 @@ export class ImporterProjectService {
 
   createBridge(projectId: string, bridgeName: string): JipLinerImporterProject {
     const project = this.requireProject(projectId);
-    const bridge: Bridge = {
+    const bridge: LinerBridge = {
       id: createUniqueId("bridge"),
       name: bridgeName.trim() || "新規橋梁",
       girderLineSets: [],
@@ -223,7 +223,7 @@ export class ImporterProjectService {
       };
     });
 
-    const nextBridge: Bridge = {
+    const nextBridge: LinerBridge = {
       ...bridge,
       sections: enrichedSections,
       renderability: evaluateBridgeRenderability(

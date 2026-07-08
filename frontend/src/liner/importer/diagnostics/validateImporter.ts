@@ -1,5 +1,5 @@
 import type {
-  Bridge,
+  LinerBridge,
   GirderLineMaster,
   ImporterDiagnostic,
   JipLinerImporterProject,
@@ -338,7 +338,7 @@ function validateLineMasterMatch(
 
 export function validateSection(
   section: Section,
-  bridge: Bridge,
+  bridge: LinerBridge,
   allSections: Section[],
 ): ImporterDiagnostic[] {
   const girderSet = resolvePrimaryGirderLineSet(bridge);
@@ -362,7 +362,7 @@ export function validateSection(
   return diagnostics;
 }
 
-export function validateBridgeStationMonotonic(bridge: Bridge): ImporterDiagnostic[] {
+export function validateBridgeStationMonotonic(bridge: LinerBridge): ImporterDiagnostic[] {
   const ordered = sortSectionsByPdfPage(bridge.sections);
   const diagnostics: ImporterDiagnostic[] = [];
 
@@ -385,7 +385,7 @@ export function validateBridgeStationMonotonic(bridge: Bridge): ImporterDiagnost
   return diagnostics;
 }
 
-export function validateBridge(bridge: Bridge): ImporterDiagnostic[] {
+export function validateBridge(bridge: LinerBridge): ImporterDiagnostic[] {
   const diagnostics: ImporterDiagnostic[] = [];
   diagnostics.push(...validateBridgeStationMonotonic(bridge));
 

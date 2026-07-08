@@ -3,7 +3,7 @@ import { validateBridge, validateProject, validateSection } from "./validateImpo
 import { IMPORTER_STATION_NOT_MONOTONIC, IMPORTER_SYMMETRY_WIDTH_MISMATCH } from "./diagnosticCodes";
 import { createSampleBridge, createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
 import { buildBuiltInSampleProject } from "../sample/builtInSampleDataset";
-import type { Bridge, GirderLineMaster, Point, Section } from "../types";
+import type { LinerBridge, GirderLineMaster, Point, Section } from "../types";
 import { createPointFromGirderLine } from "../utils/importerUtils";
 
 const SYMMETRIC_GIRDER_LINES: GirderLineMaster[] = [
@@ -48,7 +48,7 @@ function createSymmetricSection(bridgeId: string, pdfPage = 23): Section {
   return section;
 }
 
-function createAsymmetricRampBridge(): Bridge {
+function createAsymmetricRampBridge(): LinerBridge {
   const bridge = createSampleBridge();
   const pdfPage = 23;
   const lines: GirderLineMaster[] = [
@@ -102,7 +102,7 @@ describe("validateImporter", () => {
   it("does not emit symmetry diagnostics for a symmetric bridge when expectSymmetry is true", () => {
     const bridge = createSampleBridge();
     const section = createSymmetricSection(bridge.id);
-    const symmetricBridge: Bridge = {
+    const symmetricBridge: LinerBridge = {
       ...bridge,
       validationProfile: { expectSymmetry: true },
       girderLineSets: [
@@ -131,7 +131,7 @@ describe("validateImporter", () => {
   });
 
   it("emits symmetry warnings for an asymmetric ramp bridge when expectSymmetry is true", () => {
-    const bridge: Bridge = {
+    const bridge: LinerBridge = {
       ...createAsymmetricRampBridge(),
       validationProfile: { expectSymmetry: true },
     };

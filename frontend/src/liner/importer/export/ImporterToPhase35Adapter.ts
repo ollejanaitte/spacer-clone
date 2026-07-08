@@ -6,7 +6,7 @@ import {
 } from "../renderability";
 import type {
   AdapterDiagnostic,
-  Bridge,
+  LinerBridge,
   ImporterConversionLog,
   JipLinerImporterProject,
   Renderability,
@@ -118,7 +118,7 @@ function applyPostConditionResults(
 
 function buildDomainDraft(
   project: JipLinerImporterProject,
-  bridge: Bridge,
+  bridge: LinerBridge,
   diagnostics: AdapterDiagnostic[],
 ): LinerDomainDraftVNext {
   const linerModelId = createUniqueId("liner-model");

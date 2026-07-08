@@ -5,7 +5,7 @@ import {
   IMPORTER_RENDER_PLAN_PREVIEW_BLOCKED,
 } from "./diagnostics";
 import type {
-  Bridge,
+  LinerBridge,
   ImporterDiagnostic,
   JipLinerImporterProject,
   MissingFieldRef,
@@ -119,7 +119,7 @@ export function evaluateSectionRenderability(section: Section): Renderability {
 }
 
 export function evaluateBridgeRenderability(
-  bridge: Bridge,
+  bridge: LinerBridge,
   errorDiagnostics: ImporterDiagnostic[] = [],
 ): Renderability {
   const missingFields: MissingFieldRef[] = [];

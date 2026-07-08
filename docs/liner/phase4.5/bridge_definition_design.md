@@ -33,11 +33,11 @@ LINER は **道路線形（測点・平面・縦断・横断・グリッド）**
 
 | 型名 | 配置 | 主な責務 |
 | --- | --- | --- |
-| `Bridge` | `frontend/src/liner/importer/types.ts` | PDF インポート用の橋梁エンティティ（sections, spans, girderLineSets, substructure） |
+| `LinerBridge` | `frontend/src/liner/importer/types.ts` | PDF インポート用の橋梁エンティティ（sections, spans, girderLineSets, substructure） |
 | `BridgeProject` | `frontend/src/bridge/types.ts`, `backend/engine/bridge_model.py` | Wizard 用ドメインモデル（crossSection, spans, lines, loads, generationSettings） |
 | `LinerDomainDraftVNext` | `frontend/src/liner/schema/types.ts` | LINER 計算用 draft（alignment, verticalAlignment, gridDefinitions, piers 等） |
 
-`Bridge`（importer）と `BridgeProject`（wizard）はどちらも「橋梁」だが、前者は **道路測量・線形** 中心、後者は **解析用簡略モデル** 中心であり、型のフィールド集合も生成経路も異なる。
+`LinerBridge`（importer）と `BridgeProject`（wizard）はどちらも「橋梁」だが、前者は **道路測量・線形** 中心、後者は **解析用簡略モデル** 中心であり、型のフィールド集合も生成経路も異なる。
 
 ### 1.3 Phase 4.5 で中間層を導入する理由
 
@@ -80,7 +80,7 @@ LINER は **道路線形（測点・平面・縦断・横断・グリッド）**
 | 用語 | 定義 | 現行コード上の近似 |
 | --- | --- | --- |
 | **RoadGeometry** | 道路・橋梁位置決めの幾何。平面線形、縦断、横断勾配、測点定義、幅員変化。解析節点ではない。 | LINER: `alignment`, `verticalAlignment`, `crossSections`, `stationDefinition`, `measuredGrid` |
-| **LinerBridge** | LINER 系統における 1 橋梁分の **設計意図** 。RoadGeometry + スパン/支点/横桁/主桁線 master + importer メタデータ。FEM 部材ではない。 | Importer `Bridge` + 正規化後 `LinerDomainDraftVNext`（1 bridge 分） |
+| **LinerBridge** | LINER 系統における 1 橋梁分の **設計意図** 。RoadGeometry + スパン/支点/横桁/主桁線 master + importer メタデータ。FEM 部材ではない。 | `LinerBridge`（`liner/importer/types.ts`）+ 正規化後 `LinerDomainDraftVNext`（1 bridge 分） |
 | **BridgeProject** | Bridge Wizard が保持する **Wizard 入力プロジェクト** 。横断组成、スパン、衝撃係数、3D 線、荷重、メッシュ設定。 | `frontend/src/bridge/types.ts` の `BridgeProject` |
 | **BridgeDefinition** | **新設** 共通中間表現。構造設計者が意図する橋梁構造（スパン、支点、上部構造形式、主桁・横桁・支承・床版・荷重・生成設定）を、入口非依存で記述。 | （未実装）本設計書 §7 |
 | **StructuralModel** | 解析直前モデル。節点・部材・材質断面参照・支点条件・荷重・局所座標・member orientation・解析ケース。`project.json` への写像前。 | 概念的には `FrameMappingResult` + 荷重/ケース、または generator 内部状態 |
@@ -99,7 +99,7 @@ LINER は **道路線形（測点・平面・縦断・横断・グリッド）**
 
 | 領域 | 現在の責務 | BridgeDefinition 導入時の影響 | 変更候補（将来） |
 | --- | --- | --- | --- |
-| **LINER — importer** | PDF 由来 JSON の CRUD、検証、Phase 3.5 draft への adapter | Importer `Bridge` は RoadGeometry 源として残す。FEM 直結はしない。`LinerBridge` → `BridgeDefinition` adapter を新設 | `frontend/src/liner/importer/types.ts`, `importer/export/ImporterToPhase35Adapter.ts`, 新規 `liner/bridgeDefinition/` |
+| **LINER — importer** | PDF 由来 JSON の CRUD、検証、Phase 3.5 draft への adapter | `LinerBridge` は RoadGeometry 源として維持。FEM 直結はしない。`LinerBridge` → `BridgeDefinition` adapter を新設 | `frontend/src/liner/importer/types.ts`, `importer/export/ImporterToPhase35Adapter.ts`, 新規 `liner/bridgeDefinition/` |
 | **LINER — core** | 線形計算 pipeline、中間結果、診断 | `CanonicalLinerIntermediateResult` は RoadGeometry 計算結果。BridgeDefinition には **計算後の幾何スナップショット** を渡す | `frontend/src/liner/core/pipeline/`, `core/types.ts` |
 | **LINER — mapper** | 中間結果 → frame entity draft | 短期は現行維持。中期は `BridgeDefinition` → `StructuralModel` → 既存 mapper 相当に統合 | `frontend/src/liner/mapper/frameModelMapper.ts` |
 | **LINER — headless** | テスト/自動化用 `project.json` 組立 | 新経路では `BridgeDefinition` 経由の golden 比較を追加。旧経路は feature flag 下で並存 | `frontend/src/liner/headless/createHeadlessLinerFrameProject.ts` |
@@ -137,7 +137,7 @@ BridgeProject (UI state)
 
 ### 5.3 型フィールド対照（抜粋）
 
-| 概念 | Importer `Bridge` | `LinerDomainDraftVNext` | `BridgeProject` |
+| 概念 | Importer `LinerBridge` | `LinerDomainDraftVNext` | `BridgeProject` |
 | --- | --- | --- | --- |
 | スパン | `spans[]` (station range) | `spans[]`, `piers[]` | `spans[]` (length) |
 | 横断 | `sections[]`, girderLineSets | `crossSections[]`, `measuredGrid?` | `crossSection` (lane 组成) |
@@ -340,7 +340,7 @@ interface BridgeDefinition {
 
 ### 8.1 LINER 経路: LinerBridge → BridgeDefinition
 
-**入力:** Importer `Bridge` + 正規化済み `LinerDomainDraftVNext` +（任意）`CanonicalLinerIntermediateResult`
+**入力:** Importer `LinerBridge` + 正規化済み `LinerDomainDraftVNext` +（任意）`CanonicalLinerIntermediateResult`
 
 | BridgeDefinition フィールド | 変換元 | 変換ルール |
 | --- | --- | --- |
@@ -409,7 +409,7 @@ interface BridgeDefinition {
 
 | Step | 作業内容 | 触る候補ファイル | リスク | 完了条件 |
 | --- | --- | --- | --- | --- |
-| **1** | Bridge / BridgeProject 命名・責務整理（doc + type alias コメント） | `liner/importer/types.ts`, `bridge/types.ts`, 本 doc | 混同継続 | 用語表がコードコメントと一致。挙動変更なし |
+| **1** | Bridge / BridgeProject 命名・責務整理（`Bridge` → `LinerBridge` 等） | `liner/importer/types.ts`, `bridge/types.ts`, 本 doc | 混同継続 | 用語表がコードコメントと一致。挙動変更なし |
 | **2** | BridgeDefinition 型・schema 追加 | 新規 `frontend/src/bridgeDefinition/types.ts`, `schemas/bridge-definition.schema.json` | schema 配置未決 | typecheck pass。schema validate fixture 1 件 |
 | **3** | LinerBridge → BridgeDefinition adapter | 新規 `liner/bridgeDefinition/*`, tests | LINER pipeline 回帰 | built-in sample → BD golden。importer tests pass |
 | **4** | BridgeProject → BridgeDefinition adapter | `bridge/bridgeProjectToBridgeDefinition.ts`, `backend/engine/bridge_project_adapter.py`, tests | Wizard API 互換 | 既存 `BridgeWizardState.test.ts` pass |
@@ -449,7 +449,7 @@ interface BridgeDefinition {
 | --- | --- | --- | --- |
 | O1 | schema 配置 | `schemas/bridge-definition.schema.json` vs `project.schema.json` `$defs` | Step 2 前 |
 | O2 | TS ↔ Python 同期 | 手動 mirror / codegen / JSON Schema single source | Step 2〜5 |
-| O3 | 既存 `Bridge` 型 rename | `ImporterBridge` 等。タイミングは Step 1 | Step 1 PR |
+| O3 | 既存 importer 橋梁型 rename | Step 1 で `LinerBridge` に統一済み | — |
 | O4 | App.tsx 分割 | BridgeDefinition 導入とは独立。別 Phase | — |
 | O5 | LinerBridge 保存形式 | project.liner 内 BD 埋込 vs 別ファイル | Step 3 前 |
 | O6 | BridgeDefinition バージョニング | semver + migration registry | Step 2 |

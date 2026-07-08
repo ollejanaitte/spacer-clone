@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Save } from "lucide-react";
 import { defaultImporterProjectService } from "../ImporterProjectService";
-import type { Bridge, JipLinerImporterProject } from "../types";
+import type { LinerBridge, JipLinerImporterProject } from "../types";
 import { LineMasterHelpButton, LineMasterHelpModal } from "./LineMasterHelpModal";
 import { LineMasterTable } from "./LineMasterTable";
 import { LineMasterToolbar } from "./LineMasterToolbar";
@@ -246,7 +246,7 @@ export function LineMasterPage({ projectId, bridgeId, onBack, onNext, onSaved }:
   );
 }
 
-export function resolveBridgeForLineMaster(project: JipLinerImporterProject, bridgeId?: string): Bridge | null {
+export function resolveBridgeForLineMaster(project: JipLinerImporterProject, bridgeId?: string): LinerBridge | null {
   if (bridgeId) {
     return project.bridges.find((bridge) => bridge.id === bridgeId) ?? null;
   }

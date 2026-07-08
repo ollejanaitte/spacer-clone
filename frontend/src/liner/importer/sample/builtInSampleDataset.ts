@@ -1,6 +1,6 @@
 import type {
   Angle,
-  Bridge,
+  LinerBridge,
   GirderLineMaster,
   GirderLineSet,
   JipLinerImporterProject,
@@ -883,7 +883,7 @@ function createSectionFromSpec(
   };
 }
 
-function createBuiltInBridge(bridgeId: string): Bridge {
+function createBuiltInBridge(bridgeId: string): LinerBridge {
   const startElevation = BUILT_IN_SECTION_SPECS[0]!.point.designElevation;
   const endElevation = BUILT_IN_SECTION_SPECS[BUILT_IN_SECTION_SPECS.length - 1]!.point.designElevation;
   const profileGrade =

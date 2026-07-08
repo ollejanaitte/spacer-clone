@@ -2,11 +2,11 @@
 import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
 import { buildBuiltInSampleProject, BUILT_IN_SAMPLE_ALIGNMENT_LENGTH } from "../sample/builtInSampleDataset";
-import type { Bridge, JipLinerImporterProject, Section } from "../types";
+import type { LinerBridge, JipLinerImporterProject, Section } from "../types";
 import { buildNormalizationContext } from "./normalize/normalizationContext";
 import { POST_CONDITION_CODES } from "./normalize/postConditions";
 
-function createBridgeForStationNormalization(): Bridge {
+function createBridgeForStationNormalization(): LinerBridge {
   const bridgeId = "bridge-station-normalization";
   function makeSection(id: string, pdfPage: number, stationValue: number, stationLabel: string, notation: string): Section {
     return {

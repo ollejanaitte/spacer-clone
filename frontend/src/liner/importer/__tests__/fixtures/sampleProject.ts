@@ -1,4 +1,4 @@
-import type { Bridge, GirderLineMaster, JipLinerImporterProject, Section } from "../../types";
+import type { LinerBridge, GirderLineMaster, JipLinerImporterProject, Section } from "../../types";
 import { createEmptyImporterProject } from "../../factory";
 import { createEmptySection, createPointFromGirderLine } from "../../utils/importerUtils";
 
@@ -49,7 +49,7 @@ export function createSampleSection(bridgeId: string, pdfPage = 23): Section {
   return section;
 }
 
-export function createSampleBridge(): Bridge {
+export function createSampleBridge(): LinerBridge {
   const bridgeId = "bridge-h-ramp-4";
   return {
     id: bridgeId,

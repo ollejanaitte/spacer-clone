@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
-  Bridge,
+  LinerBridge,
   GirderLineMaster,
   GirderLineReferenceMode,
   GirderLineRole,
@@ -129,7 +129,7 @@ export function createDefaultGirderLineSet(spans: Span[]): GirderLineSet {
   };
 }
 
-export function resolvePrimaryGirderLineSet(bridge: Bridge): GirderLineSet {
+export function resolvePrimaryGirderLineSet(bridge: LinerBridge): GirderLineSet {
   if (bridge.girderLineSets.length > 0) {
     return {
       ...bridge.girderLineSets[0]!,
@@ -258,7 +258,7 @@ export function useLineMasterEditor(initialSet: GirderLineSet) {
 export function findCopySourceBridge(
   project: JipLinerImporterProject,
   targetBridgeId: string,
-): Bridge | null {
+): LinerBridge | null {
   const targetIndex = project.bridges.findIndex((bridge) => bridge.id === targetBridgeId);
   if (targetIndex <= 0) {
     return null;
@@ -275,9 +275,9 @@ export function findCopySourceBridge(
 }
 
 export function mergeGirderLineSetIntoBridge(
-  bridge: Bridge,
+  bridge: LinerBridge,
   girderLineSet: GirderLineSet,
-): Bridge {
+): LinerBridge {
   const existingIndex = bridge.girderLineSets.findIndex((set) => set.id === girderLineSet.id);
   const nextSets =
     existingIndex >= 0

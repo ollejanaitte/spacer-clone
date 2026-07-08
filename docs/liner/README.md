@@ -102,7 +102,7 @@ Follow this order when filling in detailed design or starting implementation.
 | --- | --- | --- |
 | 24b | [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | High |
 
-Bridges LINER and Bridge Wizard through a shared structural design intermediate (`BridgeDefinition`) before FEM / `project.json` generation. Read after Phase 3.6–3.7 importer normalization docs and before extending FEM generators.
+Bridges LINER (`LinerBridge`) and Bridge Wizard (`BridgeProject`) through a shared structural design intermediate (`BridgeDefinition`) before FEM / `project.json` generation. Read after Phase 3.6–3.7 importer normalization docs and before extending FEM generators.
 
 ### Phase 5 — Quality, Operations, and Performance
 

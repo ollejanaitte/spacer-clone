@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { createEmptyImporterProject } from "../factory";
-import type { Bridge, GirderLineSet } from "../types";
+import type { LinerBridge, GirderLineSet } from "../types";
 import {
   cloneGirderLineSetWithNewIds,
   findCopySourceBridge,
@@ -80,14 +80,14 @@ describe("lineMaster bridge copy", () => {
   });
 
   it("finds previous bridge with girder line sets", () => {
-    const bridgeA: Bridge = {
+    const bridgeA: LinerBridge = {
       id: "bridge-a",
       name: "橋A",
       girderLineSets: [sampleSet()],
       spans: [],
       sections: [],
     };
-    const bridgeB: Bridge = {
+    const bridgeB: LinerBridge = {
       id: "bridge-b",
       name: "橋B",
       girderLineSets: [],

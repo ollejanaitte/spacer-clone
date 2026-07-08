@@ -1,11 +1,11 @@
 import type { CrossSectionTemplateDraft } from "../../../schema/types";
-import type { Bridge } from "../../types";
+import type { LinerBridge } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 import { resolveGirderLineOffset } from "./resolveGirderLineOffset";
 
 export function normalizeCrossSections(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): CrossSectionTemplateDraft[] {
   const crossSlopeDefs = bridge.alignmentMetadata?.crossSlope?.definitions ?? [];

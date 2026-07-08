@@ -1,10 +1,10 @@
 import type { GridDefinitionDraft } from "../../../schema/types";
-import type { Bridge } from "../../types";
+import type { LinerBridge } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 
 export function normalizeGridDefinitions(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): GridDefinitionDraft[] {
   const templateId = createUniqueId("grid-template");

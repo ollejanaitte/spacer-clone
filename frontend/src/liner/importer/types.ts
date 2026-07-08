@@ -23,7 +23,7 @@ export interface JipLinerImporterProject {
   sourcePdfRefs?: SourcePdfRef[];
   savedSnapshots?: SavedSnapshotMeta[];
   renderability?: Renderability;
-  bridges: Bridge[];
+  bridges: LinerBridge[];
 }
 
 export interface SavedSnapshotMeta {
@@ -67,7 +67,8 @@ export interface BridgeValidationProfile {
   expectSymmetry?: boolean;
 }
 
-export interface Bridge {
+/** LINER importer: one bridge entity (sections, spans, girder lines, substructure). Not Bridge Wizard's BridgeProject. */
+export interface LinerBridge {
   id: string;
   name: string;
   routeName?: string;

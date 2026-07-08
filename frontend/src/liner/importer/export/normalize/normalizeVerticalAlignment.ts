@@ -1,10 +1,10 @@
 import type { LinerDomainDraftVNext } from "../../../schema/types";
-import type { Bridge } from "../../types";
+import type { LinerBridge } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
 
 export function normalizeVerticalAlignment(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): LinerDomainDraftVNext["verticalAlignment"] {
   const profileElements = bridge.alignmentMetadata?.profile?.elements ?? [];

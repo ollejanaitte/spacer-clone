@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { resolveGirderLineOffset } from "./resolveGirderLineOffset";
-import type { Bridge, GirderLineMaster } from "../../types";
+import type { LinerBridge, GirderLineMaster } from "../../types";
 
 function createBridge(
   lines: GirderLineMaster[],
   sectionPoints: Array<{ lineId: string; cumulativeWidth: number | null }>,
-): Bridge {
+): LinerBridge {
   return {
     id: "bridge-offset-test",
     name: "Offset test bridge",

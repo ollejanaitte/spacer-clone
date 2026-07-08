@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import type { Bridge, JipLinerImporterProject, Section } from "../types";
+import type { LinerBridge, JipLinerImporterProject, Section } from "../types";
 import {
   addSection,
   bulkCreateSectionsByPdfPages,
@@ -9,10 +9,10 @@ import {
   type SectionListRowSummary,
 } from "./sectionListService";
 
-export function useSectionListEditor(initialBridge: Bridge) {
-  const [draft, setDraft] = useState<Bridge>(initialBridge);
+export function useSectionListEditor(initialBridge: LinerBridge) {
+  const [draft, setDraft] = useState<LinerBridge>(initialBridge);
 
-  const resetDraft = useCallback((bridge: Bridge) => {
+  const resetDraft = useCallback((bridge: LinerBridge) => {
     setDraft(bridge);
   }, []);
 
@@ -56,7 +56,7 @@ export function useSectionListEditor(initialBridge: Bridge) {
 export function mergeBridgeIntoProject(
   project: JipLinerImporterProject,
   bridgeId: string,
-  bridge: Bridge,
+  bridge: LinerBridge,
 ): JipLinerImporterProject {
   return {
     ...project,

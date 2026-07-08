@@ -1,7 +1,7 @@
 import type {
   Angle,
   AngleValue,
-  Bridge,
+  LinerBridge,
   Flags,
   GirderLineMaster,
   NullableNumberValue,
@@ -250,7 +250,7 @@ export function calculateSectionInputRate(section: Section): number {
   return Math.round((filled / total) * 100);
 }
 
-export function calculateBridgeInputRate(bridge: Bridge): number {
+export function calculateBridgeInputRate(bridge: LinerBridge): number {
   if (bridge.sections.length === 0) {
     return 0;
   }

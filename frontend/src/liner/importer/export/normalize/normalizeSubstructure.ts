@@ -3,10 +3,10 @@ import type {
   PierDraft,
   WidthChangePointDraft,
 } from "../../../schema/types";
-import type { Bridge } from "../../types";
+import type { LinerBridge } from "../../types";
 import type { NormalizationContext } from "./normalizationContext";
 
-export function normalizeSupports(bridge: Bridge, ctx: NormalizationContext): PierDraft[] {
+export function normalizeSupports(bridge: LinerBridge, ctx: NormalizationContext): PierDraft[] {
   const src = bridge.substructure?.supports ?? [];
   return src.map((support) => ({
     id: support.id,
@@ -21,7 +21,7 @@ export function normalizeSupports(bridge: Bridge, ctx: NormalizationContext): Pi
 }
 
 export function normalizeCrossBeams(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): CrossBeamDraft[] | undefined {
   const src = bridge.substructure?.crossBeams ?? [];
@@ -36,7 +36,7 @@ export function normalizeCrossBeams(
 }
 
 export function normalizeWidthPoints(
-  bridge: Bridge,
+  bridge: LinerBridge,
   ctx: NormalizationContext,
 ): WidthChangePointDraft[] | undefined {
   const src = bridge.substructure?.widthChangePoints ?? [];
