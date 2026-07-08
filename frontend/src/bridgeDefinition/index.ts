@@ -20,3 +20,10 @@ export type {
 } from "./types";
 
 export { BRIDGE_DEFINITION_SCHEMA_VERSION_LITERAL } from "./types";
+
+export {
+  createBridgeDefinitionFromLinerBridge,
+  validateLinerBridgeForBridgeDefinition,
+} from "./adapters/fromLinerBridge";
+
+export type { LinerBridgeToBridgeDefinitionOptions } from "./adapters/fromLinerBridge";
