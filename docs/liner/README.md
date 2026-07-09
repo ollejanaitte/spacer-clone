@@ -41,7 +41,7 @@ Implementation code does not belong in this folder. Current implementation artif
 | [ui_mapping_review.md](ui_mapping_review.md) | High | P2-6 design | Mapping review and Viewer3D confirmation |
 | [phase1_completion_gate.md](phase1_completion_gate.md) | Gate | Reviewed | Phase2 prerequisites |
 | [phase3_release_notes.md](phase3_release_notes.md) | Release notes | Phase3 complete | Phase3 output summary |
-| [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | High | Partial (Step 4) | BridgeDefinition types + schema + LinerBridge / BridgeProject adapters added; StructuralModel generator / UI pending |
+| [phase4.5/bridge_definition_design.md](phase4.5/bridge_definition_design.md) | High | Partial (Step 5) | BridgeDefinition types + schema + adapters + StructuralModel generator MVP added; UI / App / FEM generator connection pending (Step 6) |
 | [reviews/P2-0_ui_alignment_review.md](reviews/P2-0_ui_alignment_review.md) | Gate | Phase2 review | Phase2 UI implementation |
 | [design_workflow.md](design_workflow.md) | Guide | Reviewed | Sign-off navigation |
 

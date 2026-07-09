@@ -34,3 +34,14 @@ export {
 } from "./adapters/fromBridgeProject";
 
 export type { BridgeProjectToBridgeDefinitionOptions } from "./adapters/fromBridgeProject";
+
+export {
+  createStructuralModelFromBridgeDefinition,
+  validateBridgeDefinitionForStructuralModel,
+} from "./generator";
+
+export type {
+  BridgeDefinitionStructuralModelDiagnostic,
+  BridgeDefinitionStructuralModelOptions,
+  StructuralModelGenerationResult,
+} from "./generator";

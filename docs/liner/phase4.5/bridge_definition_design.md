@@ -1,6 +1,6 @@
 # Phase 4.5 — BridgeDefinition 中間レイヤー設計書
 
-> Status: **Partial implementation** — Step 1（命名整理）・Step 2（型 + JSON Schema + validation test）・Step 3（LinerBridge → BridgeDefinition adapter）・Step 4（BridgeProject → BridgeDefinition adapter）完了。UI / App / FEM generator 接続および StructuralModel generator は未実装。
+> Status: **Partial implementation** — Step 1（命名整理）・Step 2（型 + JSON Schema + validation test）・Step 3（LinerBridge → BridgeDefinition adapter）・Step 4（BridgeProject → BridgeDefinition adapter）・Step 5（BridgeDefinition → StructuralModel generator MVP）完了。UI / App / 既存 FEM generator への接続は未実装（Step 6 で feature flag 下の段階移行予定）。
 > Repo: spacer-clone
 > 作成日: 2026年7月8日
 > 関連: [integration_with_frame_model.md](../integration_with_frame_model.md), [phase35_bridge_adapter_spec.md](../phase3.6/phase35_bridge_adapter_spec.md), [bridge-domain-model.md](../../design/bridge-domain-model.md), [bridge-fem-generator.md](../../design/bridge-fem-generator.md)
@@ -203,7 +203,7 @@ flowchart TB
 | Python dataclass | `backend/engine/bridge_definition.py`（予定） | **未実装** — generator 実装前 |
 | LinerBridge → BridgeDefinition adapter | `frontend/src/bridgeDefinition/adapters/fromLinerBridge.ts` | **実装済み** — Step 3（純粋関数 + unit test）。UI / App / importer pipeline には未接続 |
 | BridgeProject → BridgeDefinition adapter | `frontend/src/bridgeDefinition/adapters/fromBridgeProject.ts` | **実装済み** — Step 4（純粋関数 + unit test）。UI / App / FEM generator には未接続 |
-| BridgeDefinition → StructuralModel generator | 新規 TS / Python generator（予定） | **未実装** — Step 5 |
+| BridgeDefinition → StructuralModel generator | `frontend/src/bridgeDefinition/generator/structuralModelGenerator.ts` | **実装済み** — Step 5（純粋関数 + unit test）。UI / App / Bridge Wizard / backend FEM generator には **未接続** |
 
 ### 初期型案（設計参照用）
 
@@ -399,7 +399,9 @@ interface BridgeDefinition {
 
 **配置:** `frontend/src/bridgeDefinition/adapters/fromBridgeProject.ts`（純粋関数、`validateBridgeProjectForBridgeDefinition` で warnings 返却）
 
-**Step 4 実装状況（2026-07-09）:** adapter と unit test を追加済み。`createBridgeDefinitionFromBridgeProject()` は deterministic に `BridgeDefinition` を生成する。Bridge Wizard UI・`App.tsx`・FEM generator には **接続していない**。BridgeDefinition → StructuralModel は **Step 5**。
+**Step 4 実装状況（2026-07-09）:** adapter と unit test を追加済み。`createBridgeDefinitionFromBridgeProject()` は deterministic に `BridgeDefinition` を生成する。Bridge Wizard UI・`App.tsx`・FEM generator には **接続していない**。
+
+**Step 5 実装状況（2026-07-10）:** `createStructuralModelFromBridgeDefinition()` と `validateBridgeDefinitionForStructuralModel()` を `frontend/src/bridgeDefinition/generator/` に追加済み。`BridgeDefinition` から `ProjectModel` 候補（nodes, members, materials, sections, supports, loads, analysisSettings, metadata）を deterministic に生成する MVP generator。`App.tsx`・Bridge Wizard UI・`/api/fem/generate`・`bridge_fem_generator.py`・`frameModelMapper.ts` には **接続していない**。Step 6 で既存 FEM Generator へ feature flag（`useLegacyFemPath` / `useBridgeDefinitionFemPath`）下で段階移行予定。
 
 **配置候補（将来 API 境界）:** `backend/engine/bridge_project_adapter.py`（API 境界用、未実装）
 
@@ -434,7 +436,7 @@ interface BridgeDefinition {
 | **2** | BridgeDefinition 型・schema 追加 | 新規 `frontend/src/bridgeDefinition/types.ts`, `schemas/bridge-definition.schema.json` | schema 配置未決 | **完了** — typecheck pass。schema validate fixture 1 件 |
 | **3** | LinerBridge → BridgeDefinition adapter | `frontend/src/bridgeDefinition/adapters/fromLinerBridge.ts`, tests | LINER pipeline 回帰 | **完了** — adapter unit test pass。importer / UI / App 未接続 |
 | **4** | BridgeProject → BridgeDefinition adapter | `frontend/src/bridgeDefinition/adapters/fromBridgeProject.ts`, tests | Wizard API 互換 | **完了** — adapter unit test pass。UI / App / FEM 未接続 |
-| **5** | BridgeDefinition → StructuralModel generator | 新規 TS generator + Python 骨格 | ロジック重複 | 単体テストで node/member/support 件数一致 |
+| **5** | BridgeDefinition → StructuralModel generator | `frontend/src/bridgeDefinition/generator/structuralModelGenerator.ts` | ロジック重複 | **完了** — 単体テストで node/member/support 生成確認。UI / App / FEM 未接続 |
 | **6** | 既存 Bridge FEM Generator 段階移行 | `bridge_fem_generator.py`, `frameModelMapper.ts`, feature flag | FEM 出力差分 | golden: 旧経路と node/member/support 数一致 |
 | **7** | 回帰テスト・docs 更新 | tests, `docs/design/*`, 本 doc Status | docs  drift | pytest + vitest 全 pass。設計書 Status → Implemented 部分反映 |
 
@@ -521,4 +523,5 @@ interface BridgeDefinition {
 | 2026-07-08 | Initial design (Phase 4.5 docs-only) |
 | 2026-07-09 | Step 2: TypeScript types, JSON Schema, schema validation test added |
 | 2026-07-09 | Step 3: LinerBridge → BridgeDefinition adapter (`fromLinerBridge.ts`) + unit tests; UI / App / FEM 未接続 |
-| 2026-07-09 | Step 4: BridgeProject → BridgeDefinition adapter (`fromBridgeProject.ts`) + unit tests; UI / App / FEM 未接続。StructuralModel generator は Step 5 |
+| 2026-07-09 | Step 4: BridgeProject → BridgeDefinition adapter (`fromBridgeProject.ts`) + unit tests; UI / App / FEM 未接続 |
+| 2026-07-10 | Step 5: BridgeDefinition → StructuralModel generator MVP (`structuralModelGenerator.ts`) + unit tests; UI / App / Bridge Wizard / backend FEM generator 未接続。Step 6 で feature flag 下の段階移行予定 |
