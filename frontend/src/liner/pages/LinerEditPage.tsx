@@ -1,10 +1,11 @@
 import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossSectionPreview } from "../components/CrossSectionPreview";
 import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEditor";
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
+import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
@@ -46,17 +47,30 @@ export function LinerEditPage({
   onClose,
   onBackToList,
 }: LinerEditPageProps) {
-  const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
+  const [localDraft, setLocalDraft] = useState<LinerDraft>(
+    () => controlledDraft ?? initialDraft ?? createDefaultLinerDraft(),
+  );
   const [activeTab, setActiveTab] = useState<LinerSetupTabId>("line");
   const [commitError, setCommitError] = useState<string | null>(null);
   const [invalidNumericFields, setInvalidNumericFields] = useState<Set<string>>(() => new Set());
+  const [compositionDepth, setCompositionDepth] = useState(0);
+  const isComposing = compositionDepth > 0;
+  const lastObservedControlledDraft = useRef(controlledDraft);
   const draft = localDraft;
   useEffect(() => {
-    if (controlledDraft) {
+    if (isComposing) {
+      lastObservedControlledDraft.current = controlledDraft;
+      return;
+    }
+    if (controlledDraft && controlledDraft !== lastObservedControlledDraft.current) {
       setLocalDraft(controlledDraft);
       setCommitError(null);
     }
-  }, [controlledDraft]);
+    lastObservedControlledDraft.current = controlledDraft;
+  }, [controlledDraft, isComposing]);
+  const reportCompositionState = useCallback((composing: boolean) => {
+    setCompositionDepth((current) => Math.max(0, current + (composing ? 1 : -1)));
+  }, []);
   const changeDraft = (update: LinerDraftUpdate) => {
     setCommitError(null);
     setLocalDraft((current) => (typeof update === "function" ? update(current) : update));
@@ -150,22 +164,22 @@ export function LinerEditPage({
                 <div className="liner-edit-form-grid">
                   <label>
                     <span>{ja.liner.fields.alignmentId}</span>
-                    <input
-                      value={draft.alignment.id}
+                    <CompositionAwareInput
+                      value={draft.alignment.id ?? ""}
                       data-testid="liner-alignment-id"
-                      onChange={(event) => {
-                        const value = event.currentTarget.value;
+                      onCompositionStateChange={reportCompositionState}
+                      onValueChange={(value) => {
                         changeDraft((current) => updateLinerAlignmentMetadata(current, { id: value }));
                       }}
                     />
                   </label>
                   <label>
                     <span>{ja.liner.fields.linerModelId}</span>
-                    <input
-                      value={draft.alignment.linerModelId}
+                    <CompositionAwareInput
+                      value={draft.alignment.linerModelId ?? ""}
                       data-testid="liner-model-id"
-                      onChange={(event) => {
-                        const value = event.currentTarget.value;
+                      onCompositionStateChange={reportCompositionState}
+                      onValueChange={(value) => {
                         changeDraft((current) =>
                           updateLinerAlignmentMetadata(current, { linerModelId: value }),
                         );
@@ -174,11 +188,11 @@ export function LinerEditPage({
                   </label>
                   <label>
                     <span>{ja.liner.fields.coordinatePolicyId}</span>
-                    <input
-                      value={draft.alignment.coordinatePolicyId}
+                    <CompositionAwareInput
+                      value={draft.alignment.coordinatePolicyId ?? ""}
                       data-testid="liner-coordinate-policy-id"
-                      onChange={(event) => {
-                        const value = event.currentTarget.value;
+                      onCompositionStateChange={reportCompositionState}
+                      onValueChange={(value) => {
                         changeDraft((current) =>
                           updateLinerAlignmentMetadata(current, { coordinatePolicyId: value }),
                         );
@@ -192,6 +206,7 @@ export function LinerEditPage({
                 draft={draft}
                 onDraftChange={changeDraft}
                 onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
             </>
           )}
@@ -202,12 +217,14 @@ export function LinerEditPage({
                 draft={draft}
                 onDraftChange={changeDraft}
                 onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
               <ContinuityDiagnosticsPanel draft={draft} />
               <CurveSamplingControl
                 draft={draft}
                 onDraftChange={changeDraft}
                 onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
             </>
           )}
@@ -224,6 +241,7 @@ export function LinerEditPage({
                   changeDraft((current) => updateLinerVerticalAlignment(current, nextVerticalAlignment))
                 }
                 onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
               <VerticalProfileChart verticalAlignment={verticalAlignment} />
             </div>
@@ -237,6 +255,7 @@ export function LinerEditPage({
                   changeDraft((current) => updateLinerCrossSectionTemplate(current, nextTemplate))
                 }
                 onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
               <SuperelevationEditor
                 crossSlope={crossSectionTemplate.crossSlope}

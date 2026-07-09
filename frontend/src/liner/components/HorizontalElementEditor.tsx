@@ -10,11 +10,13 @@ import {
   type LinerDraft,
   type LinerDraftAlignmentElement,
 } from "../adapters/linerUiAdapter";
+import { CompositionAwareInput } from "./CompositionAwareInput";
 
 export type HorizontalElementEditorProps = {
   draft: LinerDraft;
   onDraftChange: (nextDraft: LinerDraft) => void;
   onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
+  onCompositionStateChange?: (composing: boolean) => void;
 };
 
 function numericValue(value: number | undefined): string {
@@ -63,6 +65,7 @@ export function HorizontalElementEditor({
   draft,
   onDraftChange,
   onInputValidityChange,
+  onCompositionStateChange,
 }: HorizontalElementEditorProps) {
   const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
   const rowKeys = useRef<string[]>([]);
@@ -147,21 +150,23 @@ export function HorizontalElementEditor({
               return (
               <tr key={rowKey} data-testid={`liner-horizontal-element-row-${element.id}`}>
                 <td>
-                  <input
-                    value={element.id}
-                    onChange={(event) =>
-                      onDraftChange(updateLinerAlignmentElementAtIndex(draft, elementIndex, { id: event.currentTarget.value }))
+                  <CompositionAwareInput
+                    value={element.id ?? ""}
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(value) =>
+                      onDraftChange(updateLinerAlignmentElementAtIndex(draft, elementIndex, { id: value }))
                     }
                     data-testid={`liner-element-id-${element.id}`}
                   />
                 </td>
                 <td>{elementTypeLabel(element)}</td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "startX", numericValue(element.start.x))}
-                    onChange={(event) => {
-                      updateNumericInput(rowKey, "startX", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) => {
+                      updateNumericInput(rowKey, "startX", nextValue, (value) =>
                         onDraftChange(
                           updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                             startX: parseNumericInput(value),
@@ -173,11 +178,12 @@ export function HorizontalElementEditor({
                   />
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "startY", numericValue(element.start.y))}
-                    onChange={(event) => {
-                      updateNumericInput(rowKey, "startY", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) => {
+                      updateNumericInput(rowKey, "startY", nextValue, (value) =>
                         onDraftChange(
                           updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                             startY: parseNumericInput(value),
@@ -189,11 +195,12 @@ export function HorizontalElementEditor({
                   />
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "azimuth", numericValue(element.azimuth))}
-                    onChange={(event) => {
-                      updateNumericInput(rowKey, "azimuth", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) => {
+                      updateNumericInput(rowKey, "azimuth", nextValue, (value) =>
                         onDraftChange(
                           updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                             azimuth: parseNumericInput(value),
@@ -205,11 +212,12 @@ export function HorizontalElementEditor({
                   />
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "length", numericValue(element.length))}
-                    onChange={(event) => {
-                      updateNumericInput(rowKey, "length", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) => {
+                      updateNumericInput(rowKey, "length", nextValue, (value) =>
                         onDraftChange(
                           updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                             length: parseNumericInput(value),
@@ -222,11 +230,12 @@ export function HorizontalElementEditor({
                 </td>
                 <td>
                   {element.type === "arc" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "radius", numericValue(element.radius))}
-                      onChange={(event) => {
-                        updateNumericInput(rowKey, "radius", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) => {
+                        updateNumericInput(rowKey, "radius", nextValue, (value) =>
                           onDraftChange(
                             updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                               radius: parseNumericInput(value),
@@ -262,11 +271,12 @@ export function HorizontalElementEditor({
                 </td>
                 <td>
                   {element.type === "clothoid" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "clothoidParameter", numericValue(element.clothoidParameter))}
-                      onChange={(event) => {
-                        updateNumericInput(rowKey, "clothoidParameter", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) => {
+                        updateNumericInput(rowKey, "clothoidParameter", nextValue, (value) =>
                           onDraftChange(
                             updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                               clothoidParameter: parseNumericInput(value),
@@ -282,11 +292,12 @@ export function HorizontalElementEditor({
                 </td>
                 <td>
                   {element.type === "clothoid" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "startRadius", optionalNumericValue(element.startRadius))}
-                      onChange={(event) => {
-                        updateNumericInput(rowKey, "startRadius", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) => {
+                        updateNumericInput(rowKey, "startRadius", nextValue, (value) =>
                           onDraftChange(
                             updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                               startRadius: parseOptionalNumericInput(value),
@@ -302,11 +313,12 @@ export function HorizontalElementEditor({
                 </td>
                 <td>
                   {element.type === "clothoid" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "endRadius", optionalNumericValue(element.endRadius))}
-                      onChange={(event) => {
-                        updateNumericInput(rowKey, "endRadius", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) => {
+                        updateNumericInput(rowKey, "endRadius", nextValue, (value) =>
                           onDraftChange(
                             updateLinerAlignmentElementAtIndex(draft, elementIndex, {
                               endRadius: parseOptionalNumericInput(value),

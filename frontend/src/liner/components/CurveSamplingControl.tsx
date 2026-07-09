@@ -6,11 +6,13 @@ import {
   SAMPLING_INTERVAL_DXF,
   SAMPLING_INTERVAL_FRAME,
 } from "../core/sampling";
+import { CompositionAwareInput } from "./CompositionAwareInput";
 
 export type CurveSamplingControlProps = {
   draft: LinerDraft;
   onDraftChange: (draft: LinerDraft) => void;
   onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
+  onCompositionStateChange?: (composing: boolean) => void;
 };
 
 function displaySampleIntervalValue(value: number | undefined): string {
@@ -21,6 +23,7 @@ export function CurveSamplingControl({
   draft,
   onDraftChange,
   onInputValidityChange,
+  onCompositionStateChange,
 }: CurveSamplingControlProps) {
   const [inputText, setInputText] = useState<string | null>(null);
   return (
@@ -33,12 +36,12 @@ export function CurveSamplingControl({
       <div className="liner-edit-form-grid">
         <label>
           <span>{ja.liner.fields.displaySamplingInterval}</span>
-          <input
+          <CompositionAwareInput
             type="number"
             value={inputText ?? displaySampleIntervalValue(draft.sampleInterval)}
             data-testid="liner-display-sampling-interval"
-            onChange={(event) => {
-              const text = event.currentTarget.value;
+            onCompositionStateChange={onCompositionStateChange}
+            onValueChange={(text) => {
               const parsed = Number(text);
               const valid = text.trim() !== "" && Number.isFinite(parsed);
               setInputText(text);
