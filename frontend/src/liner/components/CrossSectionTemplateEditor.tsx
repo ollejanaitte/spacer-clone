@@ -7,11 +7,13 @@ import type {
   CrossSectionOffsetLineRole,
   CrossSectionTemplateDraft,
 } from "../schema/types";
+import { CompositionAwareInput } from "./CompositionAwareInput";
 
 export type CrossSectionTemplateEditorProps = {
   template: CrossSectionTemplateDraft;
   onTemplateChange: (template: CrossSectionTemplateDraft) => void;
   onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
+  onCompositionStateChange?: (composing: boolean) => void;
 };
 
 type OffsetLineFieldPatch = Partial<{
@@ -159,6 +161,7 @@ export function CrossSectionTemplateEditor({
   template,
   onTemplateChange,
   onInputValidityChange,
+  onCompositionStateChange,
 }: CrossSectionTemplateEditorProps) {
   const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
   const rowKeys = useRef<string[]>([]);
@@ -179,20 +182,22 @@ export function CrossSectionTemplateEditor({
       <div className="liner-edit-form-grid">
         <label>
           <span>{ja.liner.fields.templateId}</span>
-          <input
-            value={displayTemplate.id}
-            onChange={(event) =>
-              applyChange(updateTemplateFields(displayTemplate, { id: event.currentTarget.value }))
+          <CompositionAwareInput
+            value={displayTemplate.id ?? ""}
+            onCompositionStateChange={onCompositionStateChange}
+            onValueChange={(value) =>
+              applyChange(updateTemplateFields(displayTemplate, { id: value }))
             }
             data-testid="cross-section-template-id"
           />
         </label>
         <label>
           <span>{ja.liner.fields.templateName}</span>
-          <input
-            value={displayTemplate.name}
-            onChange={(event) =>
-              applyChange(updateTemplateFields(displayTemplate, { name: event.currentTarget.value }))
+          <CompositionAwareInput
+            value={displayTemplate.name ?? ""}
+            onCompositionStateChange={onCompositionStateChange}
+            onValueChange={(value) =>
+              applyChange(updateTemplateFields(displayTemplate, { name: value }))
             }
             data-testid="cross-section-template-name"
           />
@@ -235,12 +240,13 @@ export function CrossSectionTemplateEditor({
               return (
               <tr key={rowKey} data-testid={`cross-section-offset-line-row-${line.id}`}>
                 <td>
-                  <input
-                    value={line.id}
-                    onChange={(event) =>
+                  <CompositionAwareInput
+                    value={line.id ?? ""}
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(value) =>
                       applyChange(
                         updateOffsetLine(displayTemplate, lineIndex, {
-                          id: event.currentTarget.value,
+                          id: value,
                         }),
                       )
                     }
@@ -248,11 +254,11 @@ export function CrossSectionTemplateEditor({
                   />
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputText[offsetInputKey] ?? numericValue(line.offset)}
-                    onChange={(event) => {
-                      const text = event.currentTarget.value;
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(text) => {
                       const parsed = Number(text);
                       const valid = text.trim() !== "" && Number.isFinite(parsed);
                       setNumericInputText((current) => ({ ...current, [offsetInputKey]: text }));
@@ -294,12 +300,13 @@ export function CrossSectionTemplateEditor({
                   </select>
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     value={line.label ?? ""}
-                    onChange={(event) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(value) =>
                       applyChange(
                         updateOffsetLine(displayTemplate, lineIndex, {
-                          label: event.currentTarget.value,
+                          label: value,
                         }),
                       )
                     }

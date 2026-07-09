@@ -4,6 +4,7 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ja } from "../../i18n/ja";
+import { createDefaultLinerDraft } from "../adapters/linerUiAdapter";
 import { LinerEditPage } from "./LinerEditPage";
 
 vi.mock("recharts", () => ({
@@ -42,6 +43,13 @@ function setInputValue(input: HTMLInputElement, value: string) {
   const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
   valueSetter?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function startComposition(input: HTMLInputElement, value: string) {
+  input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
+  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+  valueSetter?.call(input, value);
+  input.dispatchEvent(new InputEvent("input", { bubbles: true, data: value, isComposing: true }));
 }
 
 afterEach(() => {
@@ -122,6 +130,32 @@ describe("LinerEditPage", () => {
     expect(onOpenPreview).not.toHaveBeenCalled();
     expect(document.querySelector("[data-testid=liner-draft-commit-error]")?.textContent)
       .toContain("legacy draft is not a supported");
+  });
+
+  it("does not overwrite a composing value when the controlled draft changes", () => {
+    const firstDraft = createDefaultLinerDraft();
+    const nextDraft = createDefaultLinerDraft();
+    nextDraft.alignment.id = "external-update";
+    const props = {
+      onClose: () => undefined,
+      onBackToList: () => undefined,
+    };
+    render(<LinerEditPage {...props} draft={firstDraft} />);
+    const input = inputByTestId("liner-alignment-id");
+
+    act(() => {
+      startComposition(input, "あ");
+    });
+    act(() => {
+      root?.render(<LinerEditPage {...props} draft={nextDraft} />);
+    });
+
+    expect(inputByTestId("liner-alignment-id").value).toBe("あ");
+
+    act(() => {
+      input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "あ" }));
+    });
+    expect(inputByTestId("liner-alignment-id").value).toBe("あ");
   });
 
   it("keeps horizontal numeric inputs empty while editing and accepts re-entry", () => {

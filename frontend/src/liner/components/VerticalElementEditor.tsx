@@ -12,11 +12,13 @@ import type {
   VerticalGradeElementDraft,
   VerticalParabolicElementDraft,
 } from "../schema/types";
+import { CompositionAwareInput } from "./CompositionAwareInput";
 
 export type VerticalElementEditorProps = {
   verticalAlignment: VerticalAlignmentDraft;
   onVerticalAlignmentChange: (verticalAlignment: VerticalAlignmentDraft) => void;
   onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
+  onCompositionStateChange?: (composing: boolean) => void;
 };
 
 type VerticalElementFieldPatch = Partial<{
@@ -211,6 +213,7 @@ export function VerticalElementEditor({
   verticalAlignment,
   onVerticalAlignmentChange,
   onInputValidityChange,
+  onCompositionStateChange,
 }: VerticalElementEditorProps) {
   const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
   const rowKeys = useRef<string[]>([]);
@@ -286,12 +289,13 @@ export function VerticalElementEditor({
               return (
               <tr key={rowKey} data-testid={`liner-vertical-element-row-${element.id}`}>
                 <td>
-                  <input
-                    value={element.id}
-                    onChange={(event) =>
+                  <CompositionAwareInput
+                    value={element.id ?? ""}
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(value) =>
                       applyChange(
                         updateVerticalElement(verticalAlignment, elementIndex, {
-                          id: event.currentTarget.value,
+                          id: value,
                         }),
                       )
                     }
@@ -300,11 +304,12 @@ export function VerticalElementEditor({
                 </td>
                 <td>{elementTypeLabel(element)}</td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "startStation", numericValue(element.startStation))}
-                    onChange={(event) =>
-                      updateNumericInput(rowKey, "startStation", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) =>
+                      updateNumericInput(rowKey, "startStation", nextValue, (value) =>
                         applyChange(
                           updateVerticalElement(verticalAlignment, elementIndex, { startStation: value }),
                         ),
@@ -313,11 +318,12 @@ export function VerticalElementEditor({
                   />
                 </td>
                 <td>
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(rowKey, "endStation", numericValue(element.endStation))}
-                    onChange={(event) =>
-                      updateNumericInput(rowKey, "endStation", event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) =>
+                      updateNumericInput(rowKey, "endStation", nextValue, (value) =>
                         applyChange(
                           updateVerticalElement(verticalAlignment, elementIndex, { endStation: value }),
                         ),
@@ -327,11 +333,12 @@ export function VerticalElementEditor({
                 </td>
                 <td>
                   {element.type === "grade" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "startElevation", numericValue(element.startElevation))}
-                      onChange={(event) =>
-                        updateNumericInput(rowKey, "startElevation", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) =>
+                        updateNumericInput(rowKey, "startElevation", nextValue, (value) =>
                           applyChange(
                             updateVerticalElement(verticalAlignment, elementIndex, { startElevation: value }),
                           ),
@@ -339,11 +346,12 @@ export function VerticalElementEditor({
                       data-testid={`liner-vertical-element-start-elevation-${element.id}`}
                     />
                   ) : (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       value={numericInputValue(rowKey, "startElevation", optionalNumericValue(element.startElevation))}
-                      onChange={(event) =>
-                        updateNumericInput(rowKey, "startElevation", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) =>
+                        updateNumericInput(rowKey, "startElevation", nextValue, (value) =>
                           applyChange(
                             updateVerticalElement(verticalAlignment, elementIndex, { startElevation: value }),
                           ),
@@ -354,12 +362,13 @@ export function VerticalElementEditor({
                 </td>
                 <td>
                   {element.type === "grade" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       step="0.001"
                       value={numericInputValue(rowKey, "gradePercent", gradePercentValue(element.grade))}
-                      onChange={(event) =>
-                        updateNumericInput(rowKey, "gradePercent", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) =>
+                        updateNumericInput(rowKey, "gradePercent", nextValue, (value) =>
                           applyChange(
                             updateVerticalElement(verticalAlignment, elementIndex, { gradePercent: value }),
                           ),
@@ -373,12 +382,13 @@ export function VerticalElementEditor({
                 </td>
                 <td>
                   {element.type === "parabolic" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       step="0.001"
                       value={numericInputValue(rowKey, "startGradePercent", gradePercentValue(element.startGrade))}
-                      onChange={(event) =>
-                        updateNumericInput(rowKey, "startGradePercent", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) =>
+                        updateNumericInput(rowKey, "startGradePercent", nextValue, (value) =>
                           applyChange(
                             updateVerticalElement(verticalAlignment, elementIndex, { startGradePercent: value }),
                           ),
@@ -392,12 +402,13 @@ export function VerticalElementEditor({
                 </td>
                 <td>
                   {element.type === "parabolic" ? (
-                    <input
+                    <CompositionAwareInput
                       type="number"
                       step="0.001"
                       value={numericInputValue(rowKey, "endGradePercent", gradePercentValue(element.endGrade))}
-                      onChange={(event) =>
-                        updateNumericInput(rowKey, "endGradePercent", event.currentTarget.value, (value) =>
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(nextValue) =>
+                        updateNumericInput(rowKey, "endGradePercent", nextValue, (value) =>
                           applyChange(
                             updateVerticalElement(verticalAlignment, elementIndex, { endGradePercent: value }),
                           ),

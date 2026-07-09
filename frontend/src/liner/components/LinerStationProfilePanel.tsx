@@ -16,11 +16,13 @@ import {
   type LinerDraft,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
+import { CompositionAwareInput } from "./CompositionAwareInput";
 
 export type LinerStationProfilePanelProps = {
   draft: LinerDraft;
   onDraftChange: (update: LinerDraftUpdate) => void;
   onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
+  onCompositionStateChange?: (composing: boolean) => void;
 };
 
 function numericValue(value: number | undefined): string {
@@ -31,6 +33,7 @@ export function LinerStationProfilePanel({
   draft,
   onDraftChange,
   onInputValidityChange,
+  onCompositionStateChange,
 }: LinerStationProfilePanelProps) {
   const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
   const explicitStations = draft.stationDefinition.explicitStations ?? [];
@@ -55,12 +58,13 @@ export function LinerStationProfilePanel({
         <div className="liner-edit-form-grid">
           <label>
             <span>{ja.liner.fields.originDisplayedStation}</span>
-            <input
+            <CompositionAwareInput
               type="number"
               value={numericInputValue("originDisplayedStation", draft.stationDefinition.originDisplayedStation)}
               data-testid="liner-origin-displayed-station"
-              onChange={(event) => {
-                updateNumericInput("originDisplayedStation", event.currentTarget.value, (value) =>
+              onCompositionStateChange={onCompositionStateChange}
+              onValueChange={(nextValue) => {
+                updateNumericInput("originDisplayedStation", nextValue, (value) =>
                   onDraftChange(
                     (current) => updateLinerStationDefinition(current, {
                       originDisplayedStation: value,
@@ -72,12 +76,13 @@ export function LinerStationProfilePanel({
           </label>
           <label>
             <span>{ja.liner.fields.stationInterval}</span>
-            <input
+            <CompositionAwareInput
               type="number"
               value={numericInputValue("interval", draft.stationDefinition.interval)}
               data-testid="liner-station-interval"
-              onChange={(event) => {
-                updateNumericInput("interval", event.currentTarget.value, (value) =>
+              onCompositionStateChange={onCompositionStateChange}
+              onValueChange={(nextValue) => {
+                updateNumericInput("interval", nextValue, (value) =>
                   onDraftChange(
                     (current) => updateLinerStationDefinition(current, { interval: value }),
                   ),
@@ -87,12 +92,13 @@ export function LinerStationProfilePanel({
           </label>
           <label>
             <span>{ja.liner.fields.sampleInterval}</span>
-            <input
+            <CompositionAwareInput
               type="number"
               value={numericInputValue("sampleInterval", draft.sampleInterval)}
               data-testid="liner-sample-interval"
-              onChange={(event) => {
-                updateNumericInput("sampleInterval", event.currentTarget.value, (value) =>
+              onCompositionStateChange={onCompositionStateChange}
+              onValueChange={(nextValue) => {
+                updateNumericInput("sampleInterval", nextValue, (value) =>
                   onDraftChange(
                     (current) => updateLinerDraftSettings(current, { sampleInterval: value }),
                   ),
@@ -108,12 +114,13 @@ export function LinerStationProfilePanel({
         <div className="liner-edit-form-grid">
           <label>
             <span>{ja.liner.fields.z}</span>
-            <input
+            <CompositionAwareInput
               type="number"
               value={numericInputValue("profileZ", draft.z)}
               data-testid="liner-profile-z"
-              onChange={(event) => {
-                updateNumericInput("profileZ", event.currentTarget.value, (value) =>
+              onCompositionStateChange={onCompositionStateChange}
+              onValueChange={(nextValue) => {
+                updateNumericInput("profileZ", nextValue, (value) =>
                   onDraftChange((current) => updateLinerDraftSettings(current, { z: value })),
                 );
               }}
@@ -143,11 +150,12 @@ export function LinerStationProfilePanel({
               <label key={index}>
                 <span>{ja.liner.fields.explicitStation(index + 1)}</span>
                 <span className="liner-edit-inline-row">
-                  <input
+                  <CompositionAwareInput
                     type="number"
                     value={numericInputValue(`explicitStation:${index}`, station)}
-                    onChange={(event) => {
-                      updateNumericInput(`explicitStation:${index}`, event.currentTarget.value, (value) =>
+                    onCompositionStateChange={onCompositionStateChange}
+                    onValueChange={(nextValue) => {
+                      updateNumericInput(`explicitStation:${index}`, nextValue, (value) =>
                         onDraftChange((current) =>
                           updateLinerExplicitStation(current, index, value),
                         ),
@@ -204,11 +212,11 @@ export function LinerStationProfilePanel({
                 equations.map((equation, equationIndex) => (
                   <tr key={equationIndex}>
                     <td>
-                      <input
-                        value={equation.id}
+                      <CompositionAwareInput
+                        value={equation.id ?? ""}
                         data-testid={`liner-equation-id-${equation.id}`}
-                        onChange={(event) => {
-                          const value = event.currentTarget.value;
+                        onCompositionStateChange={onCompositionStateChange}
+                        onValueChange={(value) => {
                           onDraftChange((current) =>
                             updateLinerStationEquation(current, equation.id, { id: value }),
                           );
@@ -216,11 +224,12 @@ export function LinerStationProfilePanel({
                       />
                     </td>
                     <td>
-                      <input
+                      <CompositionAwareInput
                         type="number"
                         value={numericInputValue(`equation:${equationIndex}:physicalDistance`, equation.physicalDistance)}
-                        onChange={(event) => {
-                          updateNumericInput(`equation:${equationIndex}:physicalDistance`, event.currentTarget.value, (value) =>
+                        onCompositionStateChange={onCompositionStateChange}
+                        onValueChange={(nextValue) => {
+                          updateNumericInput(`equation:${equationIndex}:physicalDistance`, nextValue, (value) =>
                             onDraftChange(
                               (current) => updateLinerStationEquation(current, equation.id, {
                                 physicalDistance: value,
@@ -249,11 +258,12 @@ export function LinerStationProfilePanel({
                       </select>
                     </td>
                     <td>
-                      <input
+                      <CompositionAwareInput
                         type="number"
                         value={numericInputValue(`equation:${equationIndex}:value`, equation.value)}
-                        onChange={(event) => {
-                          updateNumericInput(`equation:${equationIndex}:value`, event.currentTarget.value, (value) =>
+                        onCompositionStateChange={onCompositionStateChange}
+                        onValueChange={(nextValue) => {
+                          updateNumericInput(`equation:${equationIndex}:value`, nextValue, (value) =>
                             onDraftChange(
                               (current) => updateLinerStationEquation(current, equation.id, {
                                 value,
@@ -265,11 +275,12 @@ export function LinerStationProfilePanel({
                       />
                     </td>
                     <td>
-                      <input
+                      <CompositionAwareInput
                         type="number"
                         value={numericInputValue(`equation:${equationIndex}:sortIndex`, equation.sortIndex)}
-                        onChange={(event) => {
-                          updateNumericInput(`equation:${equationIndex}:sortIndex`, event.currentTarget.value, (value) =>
+                        onCompositionStateChange={onCompositionStateChange}
+                        onValueChange={(nextValue) => {
+                          updateNumericInput(`equation:${equationIndex}:sortIndex`, nextValue, (value) =>
                             onDraftChange(
                               (current) => updateLinerStationEquation(current, equation.id, {
                                 sortIndex: value,
@@ -310,11 +321,12 @@ export function LinerStationProfilePanel({
             <label key={index}>
               <span>{ja.liner.fields.offset(index + 1)}</span>
               <span className="liner-edit-inline-row">
-                <input
+                <CompositionAwareInput
                   type="number"
                   value={numericInputValue(`offset:${index}`, offset)}
-                  onChange={(event) => {
-                    updateNumericInput(`offset:${index}`, event.currentTarget.value, (value) =>
+                  onCompositionStateChange={onCompositionStateChange}
+                  onValueChange={(nextValue) => {
+                    updateNumericInput(`offset:${index}`, nextValue, (value) =>
                       onDraftChange((current) => updateLinerOffset(current, index, value)),
                     );
                   }}
