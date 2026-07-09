@@ -99,6 +99,31 @@ describe("LinerEditPage", () => {
     expect(inputByTestId("liner-alignment-id").value).toBe("XYZ");
   });
 
+  it("blocks commit and navigation while a required identifier is empty", () => {
+    const onDraftChange = vi.fn();
+    const onOpenPreview = vi.fn();
+    render(
+      <LinerEditPage
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onDraftChange={onDraftChange}
+        onOpenPreview={onOpenPreview}
+      />,
+    );
+
+    act(() => {
+      setInputValue(inputByTestId("liner-alignment-id"), "");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
+    });
+
+    expect(onDraftChange).not.toHaveBeenCalled();
+    expect(onOpenPreview).not.toHaveBeenCalled();
+    expect(document.querySelector("[data-testid=liner-draft-commit-error]")?.textContent)
+      .toContain("legacy draft is not a supported");
+  });
+
   it("keeps horizontal numeric inputs empty while editing and accepts re-entry", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
@@ -160,6 +185,48 @@ describe("LinerEditPage", () => {
       setInputValue(inputByTestId("cross-section-offset-line-offset-OL-0"), "2.5");
     });
     expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("2.5");
+  });
+
+  it("does not commit NaN and blocks navigation while a numeric input is empty", () => {
+    const onDraftChange = vi.fn();
+    const onOpenPreview = vi.fn();
+    render(
+      <LinerEditPage
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onDraftChange={onDraftChange}
+        onOpenPreview={onOpenPreview}
+      />,
+    );
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-station]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("liner-station-interval"), "");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
+    });
+
+    expect(onDraftChange).not.toHaveBeenCalled();
+    expect(onOpenPreview).not.toHaveBeenCalled();
+    expect(document.querySelector("[data-testid=liner-draft-commit-error]")?.textContent)
+      .toBe(ja.liner.editor.invalidNumericInput);
+
+    act(() => {
+      setInputValue(inputByTestId("liner-station-interval"), "25");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
+    });
+
+    expect(onDraftChange).toHaveBeenCalledTimes(1);
+    const committedDraft = onDraftChange.mock.calls[0]?.[0];
+    expect(typeof committedDraft).toBe("object");
+    expect(committedDraft.stationDefinition.interval).toBe(25);
+    expect(Number.isNaN(committedDraft.stationDefinition.interval)).toBe(false);
+    expect(onOpenPreview).toHaveBeenCalledTimes(1);
   });
 
   it("keeps focus while editing straight element identifiers", () => {

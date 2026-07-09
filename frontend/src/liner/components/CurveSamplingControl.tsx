@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ja } from "../../i18n/ja";
 import { updateLinerDraftSettings, type LinerDraft } from "../adapters/linerUiAdapter";
 import {
@@ -9,21 +10,19 @@ import {
 export type CurveSamplingControlProps = {
   draft: LinerDraft;
   onDraftChange: (draft: LinerDraft) => void;
+  onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
 };
-
-function parseNumericInput(value: string): number {
-  if (value.trim() === "") {
-    return Number.NaN;
-  }
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : Number.NaN;
-}
 
 function displaySampleIntervalValue(value: number | undefined): string {
   return Number.isFinite(value) ? String(value) : "";
 }
 
-export function CurveSamplingControl({ draft, onDraftChange }: CurveSamplingControlProps) {
+export function CurveSamplingControl({
+  draft,
+  onDraftChange,
+  onInputValidityChange,
+}: CurveSamplingControlProps) {
+  const [inputText, setInputText] = useState<string | null>(null);
   return (
     <section
       className="liner-edit-panel"
@@ -36,14 +35,17 @@ export function CurveSamplingControl({ draft, onDraftChange }: CurveSamplingCont
           <span>{ja.liner.fields.displaySamplingInterval}</span>
           <input
             type="number"
-            value={displaySampleIntervalValue(draft.sampleInterval)}
+            value={inputText ?? displaySampleIntervalValue(draft.sampleInterval)}
             data-testid="liner-display-sampling-interval"
             onChange={(event) => {
-              onDraftChange(
-                updateLinerDraftSettings(draft, {
-                  sampleInterval: parseNumericInput(event.currentTarget.value),
-                }),
-              );
+              const text = event.currentTarget.value;
+              const parsed = Number(text);
+              const valid = text.trim() !== "" && Number.isFinite(parsed);
+              setInputText(text);
+              onInputValidityChange?.("sampling:display", valid);
+              if (valid) {
+                onDraftChange(updateLinerDraftSettings(draft, { sampleInterval: parsed }));
+              }
             }}
           />
         </label>

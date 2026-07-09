@@ -110,9 +110,25 @@ function domainDraftFromLinerDraft(draft: LinerDraft): LinerDomainDraftVNext {
   return migration.domainDraft;
 }
 
+export function validateLinerDraftForCommit(draft: LinerDraft): string | null {
+  const migration = migrateLinerDraftToVNext({ draft });
+  if (migration.ok) {
+    return null;
+  }
+  return migration.diagnostics.map((diagnostic) => diagnostic.message).join("; ");
+}
+
 export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
   const domainDraft = domainDraftFromLinerDraft(draft);
   return withProjectLinerDomainDraft(project, domainDraft);
+}
+
+export function tryWithProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
+  const migration = migrateLinerDraftToVNext({ draft });
+  if (!migration.ok) {
+    return project;
+  }
+  return withProjectLinerDomainDraft(project, migration.domainDraft);
 }
 
 export function withProjectLinerDomainDraft(
