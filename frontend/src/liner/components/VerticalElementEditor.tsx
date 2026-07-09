@@ -1,9 +1,9 @@
 import { FilePlus2, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import {
   gradePercentToRatio,
   gradeRatioToPercent,
-  parseGradePercentInput,
   roundGradePercent,
 } from "../core/gradeConversion";
 import type {
@@ -16,6 +16,7 @@ import type {
 export type VerticalElementEditorProps = {
   verticalAlignment: VerticalAlignmentDraft;
   onVerticalAlignmentChange: (verticalAlignment: VerticalAlignmentDraft) => void;
+  onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
 };
 
 type VerticalElementFieldPatch = Partial<{
@@ -42,22 +43,6 @@ function optionalNumericValue(value: number | undefined): string {
     return "";
   }
   return Number.isFinite(value) ? String(value) : "";
-}
-
-function parseNumericInput(value: string): number {
-  if (value.trim() === "") {
-    return Number.NaN;
-  }
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : Number.NaN;
-}
-
-function parseOptionalNumericInput(value: string): number | undefined {
-  if (value.trim() === "") {
-    return undefined;
-  }
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 function parseOptionalCurveType(value: string): "crest" | "sag" | undefined {
@@ -131,7 +116,7 @@ function addParabolicElement(verticalAlignment: VerticalAlignmentDraft): Vertica
 
 function removeVerticalElement(
   verticalAlignment: VerticalAlignmentDraft,
-  targetElementId: string,
+  targetElementIndex: number,
 ): VerticalAlignmentDraft {
   if (verticalAlignment.elements.length <= 1) {
     return verticalAlignment;
@@ -139,19 +124,19 @@ function removeVerticalElement(
 
   return {
     ...verticalAlignment,
-    elements: verticalAlignment.elements.filter((element) => element.id !== targetElementId),
+    elements: verticalAlignment.elements.filter((_, elementIndex) => elementIndex !== targetElementIndex),
   };
 }
 
 function updateVerticalElement(
   verticalAlignment: VerticalAlignmentDraft,
-  targetElementId: string,
+  targetElementIndex: number,
   patch: VerticalElementFieldPatch,
 ): VerticalAlignmentDraft {
   return {
     ...verticalAlignment,
-    elements: verticalAlignment.elements.map((element): VerticalElementDraft => {
-      if (element.id !== targetElementId) {
+    elements: verticalAlignment.elements.map((element, elementIndex): VerticalElementDraft => {
+      if (elementIndex !== targetElementIndex) {
         return element;
       }
 
@@ -220,10 +205,36 @@ export function computeGradeEndElevation(element: VerticalGradeElementDraft): nu
   return element.startElevation + element.grade * element.length;
 }
 
+let verticalRowKeySequence = 0;
+
 export function VerticalElementEditor({
   verticalAlignment,
   onVerticalAlignmentChange,
+  onInputValidityChange,
 }: VerticalElementEditorProps) {
+  const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
+  const rowKeys = useRef<string[]>([]);
+  while (rowKeys.current.length < verticalAlignment.elements.length) {
+    verticalRowKeySequence += 1;
+    rowKeys.current.push(`vertical-row-${verticalRowKeySequence}`);
+  }
+  const numericInputValue = (rowKey: string, field: string, fallback: string) =>
+    numericInputText[`${rowKey}:${field}`] ?? fallback;
+  const updateNumericInput = (
+    rowKey: string,
+    field: string,
+    text: string,
+    applyValue: (value: number) => void,
+  ) => {
+    const key = `${rowKey}:${field}`;
+    setNumericInputText((current) => ({ ...current, [key]: text }));
+    const parsed = Number(text);
+    const valid = text.trim() !== "" && Number.isFinite(parsed);
+    onInputValidityChange?.(`vertical:${rowKeys.current.indexOf(rowKey)}:${field}`, valid);
+    if (valid) {
+      applyValue(parsed);
+    }
+  };
   const applyChange = (nextVerticalAlignment: VerticalAlignmentDraft) => {
     onVerticalAlignmentChange(nextVerticalAlignment);
   };
@@ -270,14 +281,16 @@ export function VerticalElementEditor({
             </tr>
           </thead>
           <tbody>
-            {verticalAlignment.elements.map((element) => (
-              <tr key={element.id} data-testid={`liner-vertical-element-row-${element.id}`}>
+            {verticalAlignment.elements.map((element, elementIndex) => {
+              const rowKey = rowKeys.current[elementIndex]!;
+              return (
+              <tr key={rowKey} data-testid={`liner-vertical-element-row-${element.id}`}>
                 <td>
                   <input
                     value={element.id}
                     onChange={(event) =>
                       applyChange(
-                        updateVerticalElement(verticalAlignment, element.id, {
+                        updateVerticalElement(verticalAlignment, elementIndex, {
                           id: event.currentTarget.value,
                         }),
                       )
@@ -289,28 +302,26 @@ export function VerticalElementEditor({
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.startStation)}
+                    value={numericInputValue(rowKey, "startStation", numericValue(element.startStation))}
                     onChange={(event) =>
-                      applyChange(
-                        updateVerticalElement(verticalAlignment, element.id, {
-                          startStation: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                      updateNumericInput(rowKey, "startStation", event.currentTarget.value, (value) =>
+                        applyChange(
+                          updateVerticalElement(verticalAlignment, elementIndex, { startStation: value }),
+                        ),
+                      )}
                     data-testid={`liner-vertical-element-start-station-${element.id}`}
                   />
                 </td>
                 <td>
                   <input
                     type="number"
-                    value={numericValue(element.endStation)}
+                    value={numericInputValue(rowKey, "endStation", numericValue(element.endStation))}
                     onChange={(event) =>
-                      applyChange(
-                        updateVerticalElement(verticalAlignment, element.id, {
-                          endStation: parseNumericInput(event.currentTarget.value),
-                        }),
-                      )
-                    }
+                      updateNumericInput(rowKey, "endStation", event.currentTarget.value, (value) =>
+                        applyChange(
+                          updateVerticalElement(verticalAlignment, elementIndex, { endStation: value }),
+                        ),
+                      )}
                     data-testid={`liner-vertical-element-end-station-${element.id}`}
                   />
                 </td>
@@ -318,27 +329,25 @@ export function VerticalElementEditor({
                   {element.type === "grade" ? (
                     <input
                       type="number"
-                      value={numericValue(element.startElevation)}
+                      value={numericInputValue(rowKey, "startElevation", numericValue(element.startElevation))}
                       onChange={(event) =>
-                        applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
-                            startElevation: parseNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                        updateNumericInput(rowKey, "startElevation", event.currentTarget.value, (value) =>
+                          applyChange(
+                            updateVerticalElement(verticalAlignment, elementIndex, { startElevation: value }),
+                          ),
+                        )}
                       data-testid={`liner-vertical-element-start-elevation-${element.id}`}
                     />
                   ) : (
                     <input
                       type="number"
-                      value={optionalNumericValue(element.startElevation)}
+                      value={numericInputValue(rowKey, "startElevation", optionalNumericValue(element.startElevation))}
                       onChange={(event) =>
-                        applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
-                            startElevation: parseOptionalNumericInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                        updateNumericInput(rowKey, "startElevation", event.currentTarget.value, (value) =>
+                          applyChange(
+                            updateVerticalElement(verticalAlignment, elementIndex, { startElevation: value }),
+                          ),
+                        )}
                       data-testid={`liner-vertical-element-start-elevation-${element.id}`}
                     />
                   )}
@@ -348,14 +357,13 @@ export function VerticalElementEditor({
                     <input
                       type="number"
                       step="0.001"
-                      value={gradePercentValue(element.grade)}
+                      value={numericInputValue(rowKey, "gradePercent", gradePercentValue(element.grade))}
                       onChange={(event) =>
-                        applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
-                            gradePercent: parseGradePercentInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                        updateNumericInput(rowKey, "gradePercent", event.currentTarget.value, (value) =>
+                          applyChange(
+                            updateVerticalElement(verticalAlignment, elementIndex, { gradePercent: value }),
+                          ),
+                        )}
                       data-testid={`liner-vertical-element-grade-${element.id}`}
                       aria-label={ja.liner.fields.gradePercent}
                     />
@@ -368,14 +376,13 @@ export function VerticalElementEditor({
                     <input
                       type="number"
                       step="0.001"
-                      value={gradePercentValue(element.startGrade)}
+                      value={numericInputValue(rowKey, "startGradePercent", gradePercentValue(element.startGrade))}
                       onChange={(event) =>
-                        applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
-                            startGradePercent: parseGradePercentInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                        updateNumericInput(rowKey, "startGradePercent", event.currentTarget.value, (value) =>
+                          applyChange(
+                            updateVerticalElement(verticalAlignment, elementIndex, { startGradePercent: value }),
+                          ),
+                        )}
                       data-testid={`liner-vertical-element-start-grade-${element.id}`}
                       aria-label={ja.liner.fields.startGradePercent}
                     />
@@ -388,14 +395,13 @@ export function VerticalElementEditor({
                     <input
                       type="number"
                       step="0.001"
-                      value={gradePercentValue(element.endGrade)}
+                      value={numericInputValue(rowKey, "endGradePercent", gradePercentValue(element.endGrade))}
                       onChange={(event) =>
-                        applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
-                            endGradePercent: parseGradePercentInput(event.currentTarget.value),
-                          }),
-                        )
-                      }
+                        updateNumericInput(rowKey, "endGradePercent", event.currentTarget.value, (value) =>
+                          applyChange(
+                            updateVerticalElement(verticalAlignment, elementIndex, { endGradePercent: value }),
+                          ),
+                        )}
                       data-testid={`liner-vertical-element-end-grade-${element.id}`}
                       aria-label={ja.liner.fields.endGradePercent}
                     />
@@ -418,7 +424,7 @@ export function VerticalElementEditor({
                       value={element.curveType ?? ""}
                       onChange={(event) =>
                         applyChange(
-                          updateVerticalElement(verticalAlignment, element.id, {
+                          updateVerticalElement(verticalAlignment, elementIndex, {
                             curveType: parseOptionalCurveType(event.currentTarget.value),
                           }),
                         )
@@ -436,7 +442,10 @@ export function VerticalElementEditor({
                 <td>
                   <button
                     type="button"
-                    onClick={() => applyChange(removeVerticalElement(verticalAlignment, element.id))}
+                    onClick={() => {
+                      rowKeys.current.splice(elementIndex, 1);
+                      applyChange(removeVerticalElement(verticalAlignment, elementIndex));
+                    }}
                     disabled={verticalAlignment.elements.length <= 1}
                     data-testid={`remove-liner-vertical-element-${element.id}`}
                     title={ja.liner.editor.removeElement}
@@ -445,7 +454,8 @@ export function VerticalElementEditor({
                   </button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

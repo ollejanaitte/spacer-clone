@@ -23,6 +23,7 @@ import {
   type LinerDraft,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
+import { validateLinerDraftForCommit } from "../adapters/linerProjectDraft";
 import type { LinerSetupTabId } from "../uiPreparation";
 import { LinerSetupTabs } from "./LinerSetupTabs";
 
@@ -48,6 +49,7 @@ export function LinerEditPage({
   const [localDraft, setLocalDraft] = useState<LinerDraft>(() => initialDraft ?? createDefaultLinerDraft());
   const [activeTab, setActiveTab] = useState<LinerSetupTabId>("line");
   const [commitError, setCommitError] = useState<string | null>(null);
+  const [invalidNumericFields, setInvalidNumericFields] = useState<Set<string>>(() => new Set());
   const draft = localDraft;
   useEffect(() => {
     if (controlledDraft) {
@@ -59,7 +61,27 @@ export function LinerEditPage({
     setCommitError(null);
     setLocalDraft((current) => (typeof update === "function" ? update(current) : update));
   };
+  const reportInputValidity = (fieldKey: string, valid: boolean) => {
+    setInvalidNumericFields((current) => {
+      const next = new Set(current);
+      if (valid) {
+        next.delete(fieldKey);
+      } else {
+        next.add(fieldKey);
+      }
+      return next;
+    });
+  };
   const commitDraft = (): boolean => {
+    if (invalidNumericFields.size > 0) {
+      setCommitError(ja.liner.editor.invalidNumericInput);
+      return false;
+    }
+    const validationError = validateLinerDraftForCommit(draft);
+    if (validationError) {
+      setCommitError(validationError);
+      return false;
+    }
     if (!onDraftChange) {
       return true;
     }
@@ -166,15 +188,27 @@ export function LinerEditPage({
                 </div>
               </section>
 
-              <HorizontalElementEditor draft={draft} onDraftChange={changeDraft} />
+              <HorizontalElementEditor
+                draft={draft}
+                onDraftChange={changeDraft}
+                onInputValidityChange={reportInputValidity}
+              />
             </>
           )}
 
           {activeTab === "station" && (
             <>
-              <LinerStationProfilePanel draft={draft} onDraftChange={changeDraft} />
+              <LinerStationProfilePanel
+                draft={draft}
+                onDraftChange={changeDraft}
+                onInputValidityChange={reportInputValidity}
+              />
               <ContinuityDiagnosticsPanel draft={draft} />
-              <CurveSamplingControl draft={draft} onDraftChange={changeDraft} />
+              <CurveSamplingControl
+                draft={draft}
+                onDraftChange={changeDraft}
+                onInputValidityChange={reportInputValidity}
+              />
             </>
           )}
 
@@ -189,6 +223,7 @@ export function LinerEditPage({
                 onVerticalAlignmentChange={(nextVerticalAlignment) =>
                   changeDraft((current) => updateLinerVerticalAlignment(current, nextVerticalAlignment))
                 }
+                onInputValidityChange={reportInputValidity}
               />
               <VerticalProfileChart verticalAlignment={verticalAlignment} />
             </div>
@@ -201,6 +236,7 @@ export function LinerEditPage({
                 onTemplateChange={(nextTemplate) =>
                   changeDraft((current) => updateLinerCrossSectionTemplate(current, nextTemplate))
                 }
+                onInputValidityChange={reportInputValidity}
               />
               <SuperelevationEditor
                 crossSlope={crossSectionTemplate.crossSlope}

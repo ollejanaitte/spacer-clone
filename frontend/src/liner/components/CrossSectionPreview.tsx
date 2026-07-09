@@ -150,7 +150,8 @@ function buildTickValues(min: number, max: number, count: number): number[] {
 }
 
 export function CrossSectionPreview({ template }: CrossSectionPreviewProps) {
-  const offsetLines = template.offsetLines;
+  const hasInvalidOffset = template.offsetLines.some((line) => !Number.isFinite(line.offset));
+  const offsetLines = template.offsetLines.filter((line) => Number.isFinite(line.offset));
   const slopePercent = template.crossSlope?.valuePercent ?? 0;
   const isEmpty = offsetLines.length === 0;
 
@@ -199,7 +200,11 @@ export function CrossSectionPreview({ template }: CrossSectionPreviewProps) {
 
   return (
     <figure className="liner-cross-section-preview" data-testid="cross-section-preview">
-      {isEmpty ? (
+      {hasInvalidOffset ? (
+        <p className="liner-edit-help" role="alert" data-testid="cross-section-preview-invalid-offset">
+          {ja.liner.editor.invalidOffsetPreview}
+        </p>
+      ) : isEmpty ? (
         <p className="liner-edit-help" data-testid="cross-section-preview-empty">
           {ja.liner.editor.crossSectionPreviewEmpty}
         </p>
@@ -340,9 +345,9 @@ export function CrossSectionPreview({ template }: CrossSectionPreviewProps) {
             )}
 
             <g className="liner-cross-section-preview-points">
-              {plotPoints.map((point) => (
+              {plotPoints.map((point, pointIndex) => (
                 <circle
-                  key={point.line.id}
+                  key={`cross-section-preview-point-${pointIndex}`}
                   className="liner-cross-section-preview-point"
                   cx={point.sx}
                   cy={point.sy}

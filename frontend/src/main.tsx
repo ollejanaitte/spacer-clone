@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ja } from "./i18n/ja";
 import { LobbyApp } from "./lobby/routes";
 import "./styles/tokens.css";
 import "./styles.css";
@@ -33,6 +35,17 @@ function Root() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Root />
+    <ErrorBoundary
+      fallback={(
+        <main role="alert">
+          <p>{ja.common.unexpectedError}</p>
+          <button type="button" onClick={() => window.location.reload()}>
+            {ja.common.reload}
+          </button>
+        </main>
+      )}
+    >
+      <Root />
+    </ErrorBoundary>
   </React.StrictMode>,
 );

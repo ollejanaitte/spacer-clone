@@ -30,6 +30,20 @@ afterEach(() => {
 });
 
 describe("CrossSectionPreview (PR-D)", () => {
+  it("does not render SVG geometry when an offset is not finite", () => {
+    const template: CrossSectionTemplateDraft = {
+      id: "CS-invalid",
+      name: "Invalid",
+      offsetLines: [{ id: "invalid", offset: Number.NaN, elevation: 0 }],
+    };
+
+    render(<CrossSectionPreview template={template} />);
+
+    expect(document.querySelector("[data-testid=cross-section-preview-invalid-offset]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=cross-section-preview-canvas]")).toBeNull();
+    expect(document.body.innerHTML).not.toContain("NaN");
+  });
+
   it("reflects auto-computed elevation for offset and slope (case 2)", () => {
     const template: CrossSectionTemplateDraft = {
       id: "CS-preview",

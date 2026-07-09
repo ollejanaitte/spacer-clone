@@ -1,4 +1,5 @@
 import { FilePlus2, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { ja } from "../../i18n/ja";
 import {
   addLinerExplicitStation,
@@ -19,24 +20,33 @@ import {
 export type LinerStationProfilePanelProps = {
   draft: LinerDraft;
   onDraftChange: (update: LinerDraftUpdate) => void;
+  onInputValidityChange?: (fieldKey: string, valid: boolean) => void;
 };
 
 function numericValue(value: number | undefined): string {
   return Number.isFinite(value) ? String(value) : "";
 }
 
-function parseNumericInput(value: string): number {
-  if (value.trim() === "") {
-    return Number.NaN;
-  }
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : Number.NaN;
-}
-
-export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationProfilePanelProps) {
+export function LinerStationProfilePanel({
+  draft,
+  onDraftChange,
+  onInputValidityChange,
+}: LinerStationProfilePanelProps) {
+  const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
   const explicitStations = draft.stationDefinition.explicitStations ?? [];
   const equations = draft.stationDefinition.equations ?? [];
   const offsets = draft.offsets ?? [];
+  const numericInputValue = (key: string, value: number | undefined) =>
+    numericInputText[key] ?? numericValue(value);
+  const updateNumericInput = (key: string, text: string, applyValue: (value: number) => void) => {
+    setNumericInputText((current) => ({ ...current, [key]: text }));
+    const parsed = Number(text);
+    const valid = text.trim() !== "" && Number.isFinite(parsed);
+    onInputValidityChange?.(`station:${key}`, valid);
+    if (valid) {
+      applyValue(parsed);
+    }
+  };
 
   return (
     <>
@@ -47,14 +57,15 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
             <span>{ja.liner.fields.originDisplayedStation}</span>
             <input
               type="number"
-              value={numericValue(draft.stationDefinition.originDisplayedStation)}
+              value={numericInputValue("originDisplayedStation", draft.stationDefinition.originDisplayedStation)}
               data-testid="liner-origin-displayed-station"
               onChange={(event) => {
-                const value = parseNumericInput(event.currentTarget.value);
-                onDraftChange(
-                  (current) => updateLinerStationDefinition(current, {
-                    originDisplayedStation: value,
-                  }),
+                updateNumericInput("originDisplayedStation", event.currentTarget.value, (value) =>
+                  onDraftChange(
+                    (current) => updateLinerStationDefinition(current, {
+                      originDisplayedStation: value,
+                    }),
+                  ),
                 );
               }}
             />
@@ -63,12 +74,13 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
             <span>{ja.liner.fields.stationInterval}</span>
             <input
               type="number"
-              value={numericValue(draft.stationDefinition.interval)}
+              value={numericInputValue("interval", draft.stationDefinition.interval)}
               data-testid="liner-station-interval"
               onChange={(event) => {
-                const value = parseNumericInput(event.currentTarget.value);
-                onDraftChange(
-                  (current) => updateLinerStationDefinition(current, { interval: value }),
+                updateNumericInput("interval", event.currentTarget.value, (value) =>
+                  onDraftChange(
+                    (current) => updateLinerStationDefinition(current, { interval: value }),
+                  ),
                 );
               }}
             />
@@ -77,12 +89,13 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
             <span>{ja.liner.fields.sampleInterval}</span>
             <input
               type="number"
-              value={numericValue(draft.sampleInterval)}
+              value={numericInputValue("sampleInterval", draft.sampleInterval)}
               data-testid="liner-sample-interval"
               onChange={(event) => {
-                const value = parseNumericInput(event.currentTarget.value);
-                onDraftChange(
-                  (current) => updateLinerDraftSettings(current, { sampleInterval: value }),
+                updateNumericInput("sampleInterval", event.currentTarget.value, (value) =>
+                  onDraftChange(
+                    (current) => updateLinerDraftSettings(current, { sampleInterval: value }),
+                  ),
                 );
               }}
             />
@@ -97,11 +110,12 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
             <span>{ja.liner.fields.z}</span>
             <input
               type="number"
-              value={numericValue(draft.z)}
+              value={numericInputValue("profileZ", draft.z)}
               data-testid="liner-profile-z"
               onChange={(event) => {
-                const value = parseNumericInput(event.currentTarget.value);
-                onDraftChange((current) => updateLinerDraftSettings(current, { z: value }));
+                updateNumericInput("profileZ", event.currentTarget.value, (value) =>
+                  onDraftChange((current) => updateLinerDraftSettings(current, { z: value })),
+                );
               }}
             />
           </label>
@@ -131,11 +145,12 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                 <span className="liner-edit-inline-row">
                   <input
                     type="number"
-                    value={numericValue(station)}
+                    value={numericInputValue(`explicitStation:${index}`, station)}
                     onChange={(event) => {
-                      const value = parseNumericInput(event.currentTarget.value);
-                      onDraftChange((current) =>
-                        updateLinerExplicitStation(current, index, value),
+                      updateNumericInput(`explicitStation:${index}`, event.currentTarget.value, (value) =>
+                        onDraftChange((current) =>
+                          updateLinerExplicitStation(current, index, value),
+                        ),
                       );
                     }}
                     data-testid={`liner-explicit-station-${index}`}
@@ -203,13 +218,14 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                     <td>
                       <input
                         type="number"
-                        value={numericValue(equation.physicalDistance)}
+                        value={numericInputValue(`equation:${equationIndex}:physicalDistance`, equation.physicalDistance)}
                         onChange={(event) => {
-                          const value = parseNumericInput(event.currentTarget.value);
-                          onDraftChange(
-                            (current) => updateLinerStationEquation(current, equation.id, {
-                              physicalDistance: value,
-                            }),
+                          updateNumericInput(`equation:${equationIndex}:physicalDistance`, event.currentTarget.value, (value) =>
+                            onDraftChange(
+                              (current) => updateLinerStationEquation(current, equation.id, {
+                                physicalDistance: value,
+                              }),
+                            ),
                           );
                         }}
                         data-testid={`liner-equation-distance-${equation.id}`}
@@ -235,13 +251,14 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                     <td>
                       <input
                         type="number"
-                        value={numericValue(equation.value)}
+                        value={numericInputValue(`equation:${equationIndex}:value`, equation.value)}
                         onChange={(event) => {
-                          const value = parseNumericInput(event.currentTarget.value);
-                          onDraftChange(
-                            (current) => updateLinerStationEquation(current, equation.id, {
-                              value,
-                            }),
+                          updateNumericInput(`equation:${equationIndex}:value`, event.currentTarget.value, (value) =>
+                            onDraftChange(
+                              (current) => updateLinerStationEquation(current, equation.id, {
+                                value,
+                              }),
+                            ),
                           );
                         }}
                         data-testid={`liner-equation-value-${equation.id}`}
@@ -250,13 +267,14 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
                     <td>
                       <input
                         type="number"
-                        value={numericValue(equation.sortIndex)}
+                        value={numericInputValue(`equation:${equationIndex}:sortIndex`, equation.sortIndex)}
                         onChange={(event) => {
-                          const value = parseNumericInput(event.currentTarget.value);
-                          onDraftChange(
-                            (current) => updateLinerStationEquation(current, equation.id, {
-                              sortIndex: value,
-                            }),
+                          updateNumericInput(`equation:${equationIndex}:sortIndex`, event.currentTarget.value, (value) =>
+                            onDraftChange(
+                              (current) => updateLinerStationEquation(current, equation.id, {
+                                sortIndex: value,
+                              }),
+                            ),
                           );
                         }}
                       />
@@ -294,10 +312,11 @@ export function LinerStationProfilePanel({ draft, onDraftChange }: LinerStationP
               <span className="liner-edit-inline-row">
                 <input
                   type="number"
-                  value={numericValue(offset)}
+                  value={numericInputValue(`offset:${index}`, offset)}
                   onChange={(event) => {
-                    const value = parseNumericInput(event.currentTarget.value);
-                    onDraftChange((current) => updateLinerOffset(current, index, value));
+                    updateNumericInput(`offset:${index}`, event.currentTarget.value, (value) =>
+                      onDraftChange((current) => updateLinerOffset(current, index, value)),
+                    );
                   }}
                   data-testid={`liner-offset-${index}`}
                 />

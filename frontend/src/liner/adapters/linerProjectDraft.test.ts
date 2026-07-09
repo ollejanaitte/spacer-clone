@@ -7,7 +7,12 @@ import {
   updateLinerCrossSlope,
   updateLinerVerticalAlignment,
 } from "./linerUiAdapter";
-import { linerDraftFromProject, withProjectLinerDraft, withProjectLinerDomainDraft } from "./linerProjectDraft";
+import {
+  linerDraftFromProject,
+  tryWithProjectLinerDraft,
+  withProjectLinerDraft,
+  withProjectLinerDomainDraft,
+} from "./linerProjectDraft";
 import { convertImporterToPhase35Draft } from "../importer/export/ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../importer/__tests__/fixtures/sampleProject";
 import {
@@ -16,6 +21,14 @@ import {
 } from "../schema/types";
 
 describe("liner project draft persistence", () => {
+  it("keeps the previous project when a draft cannot be migrated", () => {
+    const project = createDefaultProject();
+    const invalidDraft = createDefaultLinerDraft();
+    invalidDraft.alignment.id = "";
+
+    expect(tryWithProjectLinerDraft(project, invalidDraft)).toBe(project);
+  });
+
   it("stores vNext domainDraft under project.liner without persisting legacy draft", () => {
     const draft = addLinerOffset(createDefaultLinerDraft());
     const project = withProjectLinerDraft(createDefaultProject(), draft);

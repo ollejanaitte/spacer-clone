@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
 import { ProjectTree } from "./components/ProjectTree";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
@@ -40,7 +41,12 @@ import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
-import { linerDraftFromProject, withProjectLinerDomainDraft, withProjectLinerDraft } from "./liner/adapters/linerProjectDraft";
+import {
+  linerDraftFromProject,
+  tryWithProjectLinerDraft,
+  withProjectLinerDomainDraft,
+  withProjectLinerDraft,
+} from "./liner/adapters/linerProjectDraft";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
@@ -174,9 +180,9 @@ export function App() {
         if (!currentDraft) {
           return currentProject;
         }
-        return withProjectLinerDraft(currentProject, update(currentDraft));
+        return tryWithProjectLinerDraft(currentProject, update(currentDraft));
       }
-      return withProjectLinerDraft(currentProject, update);
+      return tryWithProjectLinerDraft(currentProject, update);
     });
     setDirty(true);
     setValidation(null);
@@ -820,14 +826,22 @@ export function App() {
     }
 
     return (
-      <LinerEditPage
-        draft={linerDraft}
-        onDraftChange={commitLinerDraft}
-        onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
-        onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
-        onClose={() => navigatePro("/pro")}
-        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
-      />
+      <ErrorBoundary
+        fallback={(
+          <main className="liner-edit-page" role="alert" data-testid="liner-error-boundary">
+            <p>{ja.liner.editor.linerError}</p>
+          </main>
+        )}
+      >
+        <LinerEditPage
+          draft={linerDraft}
+          onDraftChange={commitLinerDraft}
+          onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+          onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
+          onClose={() => navigatePro("/pro")}
+          onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        />
+      </ErrorBoundary>
     );
   }
 

@@ -324,6 +324,32 @@ export function updateLinerAlignmentElement(
   };
 }
 
+export function updateLinerAlignmentElementAtIndex(
+  draft: BuildIntermediateInput,
+  targetElementIndex: number,
+  patch: LinerAlignmentElementPatch,
+): BuildIntermediateInput {
+  const target = draft.alignment.elements[targetElementIndex];
+  if (!target) {
+    return draft;
+  }
+  return {
+    ...draft,
+    alignment: {
+      ...draft.alignment,
+      elements: draft.alignment.elements.map((element, elementIndex) =>
+        elementIndex === targetElementIndex
+          ? updateLinerAlignmentElement(
+              { ...draft, alignment: { ...draft.alignment, elements: [element] } },
+              element.id,
+              patch,
+            ).alignment.elements[0] ?? element
+          : element,
+      ),
+    },
+  };
+}
+
 export function updateLinerStraightElement(
   draft: BuildIntermediateInput,
   targetElementId: string,
@@ -523,6 +549,22 @@ export function removeLinerAlignmentElement(
     alignment: {
       ...draft.alignment,
       elements: draft.alignment.elements.filter((element) => element.id !== targetElementId),
+    },
+  };
+}
+
+export function removeLinerAlignmentElementAtIndex(
+  draft: BuildIntermediateInput,
+  targetElementIndex: number,
+): BuildIntermediateInput {
+  if (draft.alignment.elements.length <= 1) {
+    return draft;
+  }
+  return {
+    ...draft,
+    alignment: {
+      ...draft.alignment,
+      elements: draft.alignment.elements.filter((_, elementIndex) => elementIndex !== targetElementIndex),
     },
   };
 }
