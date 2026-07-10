@@ -38,6 +38,8 @@ export type { BridgeProjectToBridgeDefinitionOptions } from "./adapters/fromBrid
 export {
   createStructuralModelFromBridgeDefinition,
   validateBridgeDefinitionForStructuralModel,
+  generateStructuralModel,
+  generateStructuralModelFromLinerBridge,
 } from "./generator";
 
 export type {

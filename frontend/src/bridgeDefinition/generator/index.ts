@@ -3,6 +3,11 @@ export {
   validateBridgeDefinitionForStructuralModel,
 } from "./structuralModelGenerator";
 
+export {
+  generateStructuralModel,
+  generateStructuralModelFromLinerBridge,
+} from "./facade";
+
 export type {
   BridgeDefinitionStructuralModelDiagnostic,
   BridgeDefinitionStructuralModelOptions,

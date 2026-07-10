@@ -1,4 +1,6 @@
 import type { BridgeFemResponse, BridgeProject, ViewerModelPayload } from "./types";
+import { isBridgeDefinitionStructuralModelEnabled } from "../bridgeDefinition/featureFlags";
+import { generateStructuralModel } from "../bridgeDefinition";
 
 function buildBaseUrl(): string {
   if (typeof window === "undefined") return "";
@@ -65,7 +67,19 @@ export async function generateFem(
   bridge: BridgeProject,
   runAnalysis = false,
 ): Promise<BridgeFemResponse> {
-  const base = buildBaseUrl();
+  if (isBridgeDefinitionStructuralModelEnabled()) {
+    const base = buildBaseUrl();
+    const legacy = await fetchLegacyFem(base, bridge, runAnalysis);
+    return generateStructuralModel(bridge, { legacyResult: legacy });
+  }
+  return fetchLegacyFem(buildBaseUrl(), bridge, runAnalysis);
+}
+
+async function fetchLegacyFem(
+  base: string,
+  bridge: BridgeProject,
+  runAnalysis: boolean,
+): Promise<BridgeFemResponse> {
   const res = await fetch(`${base}/api/fem/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

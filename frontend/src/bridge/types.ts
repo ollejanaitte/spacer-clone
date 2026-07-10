@@ -82,6 +82,12 @@ export type BridgeFemResponse = {
   summary: GeneratedFemModel;
   fem: import("../types").ProjectModel;
   analysis?: import("../types").AnalysisResult | null;
+  diagnostics?: Array<{
+    severity: "info" | "warning" | "error";
+    code: string;
+    message: string;
+    path?: string;
+  }>;
 };
 
 export type ViewerModelPayload = {
