@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { isAbsolute, join, resolve } from "node:path";
 import type { BridgeProject } from "../../bridge/types";
 import { generateStructuralModel } from "../generator/facade";
 
@@ -18,7 +19,64 @@ export type RegressionDiff = {
   loadMismatches: Array<{ id: string; legacy: unknown; bridgeDefinition: unknown }>;
 };
 
-const PYTHON = process.env.PYTHON ?? "python";
+const REPO_ROOT = resolve(process.cwd(), "..");
+
+function resolvePythonCandidate(candidate: string): string {
+  return isAbsolute(candidate) ? candidate : resolve(process.cwd(), candidate);
+}
+
+function selectPythonExecutable(): string {
+  const candidates = process.env.PYTHON
+    ? [process.env.PYTHON]
+    : [
+        join(REPO_ROOT, ".venv", "bin", "python"),
+        join(REPO_ROOT, ".venv", "Scripts", "python.exe"),
+      ];
+
+  for (const candidate of candidates) {
+    const absolute = resolvePythonCandidate(candidate);
+    if (existsSync(absolute)) {
+      return absolute;
+    }
+  }
+
+  const requested = process.env.PYTHON
+    ? `Requested PYTHON was not found: ${resolvePythonCandidate(process.env.PYTHON)}`
+    : `No project Python venv was found at ${join(REPO_ROOT, ".venv")}.`;
+  throw new Error(
+    [
+      "BridgeDefinition regression tests require the project Python environment.",
+      requested,
+      "Create or refresh the repo venv, for example by running ./start-ubuntu.sh from the repository root.",
+    ].join("\n"),
+  );
+}
+
+function assertPythonEnvironment(python: string): void {
+  try {
+    execFileSync(python, ["-c", "import numpy"], { encoding: "utf8" });
+  } catch (error) {
+    const err = error as NodeJS.ErrnoException & { stderr?: Buffer | string };
+    if (err.code === "ENOENT") {
+      throw new Error(`Python executable was not found for BridgeDefinition regression tests: ${python}`);
+    }
+
+    const stderr = Buffer.isBuffer(err.stderr) ? err.stderr.toString("utf8") : String(err.stderr ?? "");
+    if (stderr.includes("ModuleNotFoundError") && stderr.includes("numpy")) {
+      throw new Error(
+        [
+          `Python executable is missing numpy: ${python}`,
+          "Install the project backend dependencies into the repo venv, for example by running ./start-ubuntu.sh from the repository root.",
+        ].join("\n"),
+      );
+    }
+
+    throw error;
+  }
+}
+
+const PYTHON = selectPythonExecutable();
+assertPythonEnvironment(PYTHON);
 
 export function generateLegacyStructuralModel(project: BridgeProject): any {
   const script = `
@@ -30,7 +88,7 @@ model = parse_bridge_project(project)
 result = generate_fem_model(model)
 print(json.dumps({"summary": result.summary, "fem": result.project}, ensure_ascii=False))
 `;
-  const output = execFileSync(PYTHON, ["-c", script], { encoding: "utf8", cwd: resolve(process.cwd(), "..") });
+  const output = execFileSync(PYTHON, ["-c", script], { encoding: "utf8", cwd: REPO_ROOT });
   return JSON.parse(output.trim());
 }
 
