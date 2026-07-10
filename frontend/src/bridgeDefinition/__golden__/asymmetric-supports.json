@@ -1,0 +1,951 @@
+{
+  "name": "asymmetric-supports",
+  "legacy": {
+    "source_bridge_id": "bd-asym-supports",
+    "generatedAt": "2026-07-10T09:08:06.095097+00:00",
+    "xCount": 21,
+    "yCount": 7,
+    "nodeCount": 147,
+    "memberCount": 266,
+    "supportCount": 6,
+    "loadCount": 169,
+    "summary": {
+      "totalLength": 44,
+      "girderPositions": [
+        -5.5,
+        -5,
+        -3.5,
+        0,
+        3.5,
+        5,
+        5.5
+      ],
+      "supports": [
+        {
+          "x": 0,
+          "y": -5.5,
+          "nodeId": "N1"
+        },
+        {
+          "x": 0,
+          "y": 5.5,
+          "nodeId": "N7"
+        },
+        {
+          "x": 16,
+          "y": -5.5,
+          "nodeId": "N71"
+        },
+        {
+          "x": 16,
+          "y": 5.5,
+          "nodeId": "N77"
+        },
+        {
+          "x": 44,
+          "y": -5.5,
+          "nodeId": "N141"
+        },
+        {
+          "x": 44,
+          "y": 5.5,
+          "nodeId": "N147"
+        }
+      ]
+    }
+  },
+  "bridgeDefinition": {
+    "source_bridge_id": "bd-asym-supports",
+    "generatedAt": "2026-07-10T09:07:53.318Z",
+    "xCount": 21,
+    "yCount": 3,
+    "nodeCount": 21,
+    "memberCount": 20,
+    "supportCount": 3,
+    "loadCount": 20,
+    "summary": {
+      "totalLength": 44,
+      "girderPositions": [],
+      "supports": []
+    }
+  },
+  "diff": {
+    "counts": {
+      "nodeCount": {
+        "legacy": 147,
+        "bridgeDefinition": 21,
+        "delta": -126
+      },
+      "memberCount": {
+        "legacy": 266,
+        "bridgeDefinition": 20,
+        "delta": -246
+      },
+      "supportCount": {
+        "legacy": 6,
+        "bridgeDefinition": 3,
+        "delta": -3
+      },
+      "loadCount": {
+        "legacy": 169,
+        "bridgeDefinition": 20,
+        "delta": -149
+      }
+    },
+    "nodeCoordinateMismatches": [
+      {
+        "id": "N1",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N2",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 1.6,
+        "delta": 1.6
+      },
+      {
+        "id": "N2",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N3",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 3.2,
+        "delta": 3.2
+      },
+      {
+        "id": "N3",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N4",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 4.8,
+        "delta": 4.8
+      },
+      {
+        "id": "N5",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 6.4,
+        "delta": 6.4
+      },
+      {
+        "id": "N5",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N6",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 8,
+        "delta": 8
+      },
+      {
+        "id": "N6",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N7",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 9.6,
+        "delta": 9.6
+      },
+      {
+        "id": "N7",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N8",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 11.2,
+        "delta": 9.6
+      },
+      {
+        "id": "N8",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N9",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 12.8,
+        "delta": 11.200000000000001
+      },
+      {
+        "id": "N9",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N10",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 14.4,
+        "delta": 12.8
+      },
+      {
+        "id": "N10",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N11",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 16,
+        "delta": 14.4
+      },
+      {
+        "id": "N12",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 18.8,
+        "delta": 17.2
+      },
+      {
+        "id": "N12",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N13",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 21.6,
+        "delta": 20
+      },
+      {
+        "id": "N13",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N14",
+        "axis": "x",
+        "legacy": 1.6,
+        "bridgeDefinition": 24.4,
+        "delta": 22.799999999999997
+      },
+      {
+        "id": "N14",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N15",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 27.2,
+        "delta": 24
+      },
+      {
+        "id": "N15",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N16",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 30,
+        "delta": 26.8
+      },
+      {
+        "id": "N16",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N17",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 32.8,
+        "delta": 29.599999999999998
+      },
+      {
+        "id": "N17",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N18",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 35.6,
+        "delta": 32.4
+      },
+      {
+        "id": "N19",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 38.4,
+        "delta": 35.199999999999996
+      },
+      {
+        "id": "N19",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N20",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 41.2,
+        "delta": 38
+      },
+      {
+        "id": "N20",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N21",
+        "axis": "x",
+        "legacy": 3.2,
+        "bridgeDefinition": 44,
+        "delta": 40.8
+      },
+      {
+        "id": "N21",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      }
+    ],
+    "memberConnectionMismatches": [
+      {
+        "id": "M1",
+        "legacy": "N1->N8",
+        "bridgeDefinition": "N1->N2"
+      },
+      {
+        "id": "M2",
+        "legacy": "N8->N15",
+        "bridgeDefinition": "N2->N3"
+      },
+      {
+        "id": "M3",
+        "legacy": "N15->N22",
+        "bridgeDefinition": "N3->N4"
+      },
+      {
+        "id": "M4",
+        "legacy": "N22->N29",
+        "bridgeDefinition": "N4->N5"
+      },
+      {
+        "id": "M5",
+        "legacy": "N29->N36",
+        "bridgeDefinition": "N5->N6"
+      },
+      {
+        "id": "M6",
+        "legacy": "N36->N43",
+        "bridgeDefinition": "N6->N7"
+      },
+      {
+        "id": "M7",
+        "legacy": "N43->N50",
+        "bridgeDefinition": "N7->N8"
+      },
+      {
+        "id": "M8",
+        "legacy": "N50->N57",
+        "bridgeDefinition": "N8->N9"
+      },
+      {
+        "id": "M9",
+        "legacy": "N57->N64",
+        "bridgeDefinition": "N9->N10"
+      },
+      {
+        "id": "M10",
+        "legacy": "N64->N71",
+        "bridgeDefinition": "N10->N11"
+      },
+      {
+        "id": "M11",
+        "legacy": "N71->N78",
+        "bridgeDefinition": "N11->N12"
+      },
+      {
+        "id": "M12",
+        "legacy": "N78->N85",
+        "bridgeDefinition": "N12->N13"
+      },
+      {
+        "id": "M13",
+        "legacy": "N85->N92",
+        "bridgeDefinition": "N13->N14"
+      },
+      {
+        "id": "M14",
+        "legacy": "N92->N99",
+        "bridgeDefinition": "N14->N15"
+      },
+      {
+        "id": "M15",
+        "legacy": "N99->N106",
+        "bridgeDefinition": "N15->N16"
+      },
+      {
+        "id": "M16",
+        "legacy": "N106->N113",
+        "bridgeDefinition": "N16->N17"
+      },
+      {
+        "id": "M17",
+        "legacy": "N113->N120",
+        "bridgeDefinition": "N17->N18"
+      },
+      {
+        "id": "M18",
+        "legacy": "N120->N127",
+        "bridgeDefinition": "N18->N19"
+      },
+      {
+        "id": "M19",
+        "legacy": "N127->N134",
+        "bridgeDefinition": "N19->N20"
+      },
+      {
+        "id": "M20",
+        "legacy": "N134->N141",
+        "bridgeDefinition": "N20->N21"
+      }
+    ],
+    "supportMismatches": [
+      {
+        "id": "N1",
+        "legacy": {
+          "nodeId": "N1",
+          "ux": false,
+          "uy": true,
+          "uz": true,
+          "rx": true,
+          "ry": true,
+          "rz": true
+        },
+        "bridgeDefinition": {
+          "nodeId": "N1",
+          "ux": true,
+          "uy": true,
+          "uz": true,
+          "rx": true,
+          "ry": true,
+          "rz": true
+        }
+      }
+    ],
+    "loadMismatches": [
+      {
+        "id": "ML1",
+        "legacy": {
+          "id": "ML1",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M1",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML1",
+          "loadCaseId": "LC1",
+          "memberId": "M1",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML2",
+        "legacy": {
+          "id": "ML2",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M2",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML2",
+          "loadCaseId": "LC1",
+          "memberId": "M2",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML3",
+        "legacy": {
+          "id": "ML3",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M3",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML3",
+          "loadCaseId": "LC1",
+          "memberId": "M3",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML4",
+        "legacy": {
+          "id": "ML4",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M4",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML4",
+          "loadCaseId": "LC1",
+          "memberId": "M4",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML5",
+        "legacy": {
+          "id": "ML5",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M5",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML5",
+          "loadCaseId": "LC1",
+          "memberId": "M5",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML6",
+        "legacy": {
+          "id": "ML6",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M6",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML6",
+          "loadCaseId": "LC1",
+          "memberId": "M6",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML7",
+        "legacy": {
+          "id": "ML7",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M7",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML7",
+          "loadCaseId": "LC1",
+          "memberId": "M7",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML8",
+        "legacy": {
+          "id": "ML8",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M8",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML8",
+          "loadCaseId": "LC1",
+          "memberId": "M8",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML9",
+        "legacy": {
+          "id": "ML9",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M9",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML9",
+          "loadCaseId": "LC1",
+          "memberId": "M9",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML10",
+        "legacy": {
+          "id": "ML10",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M10",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML10",
+          "loadCaseId": "LC1",
+          "memberId": "M10",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML11",
+        "legacy": {
+          "id": "ML11",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M11",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML11",
+          "loadCaseId": "LC1",
+          "memberId": "M11",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML12",
+        "legacy": {
+          "id": "ML12",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M12",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML12",
+          "loadCaseId": "LC1",
+          "memberId": "M12",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML13",
+        "legacy": {
+          "id": "ML13",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M13",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML13",
+          "loadCaseId": "LC1",
+          "memberId": "M13",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML14",
+        "legacy": {
+          "id": "ML14",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M21",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML14",
+          "loadCaseId": "LC1",
+          "memberId": "M14",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML15",
+        "legacy": {
+          "id": "ML15",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M22",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML15",
+          "loadCaseId": "LC1",
+          "memberId": "M15",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML16",
+        "legacy": {
+          "id": "ML16",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M23",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML16",
+          "loadCaseId": "LC1",
+          "memberId": "M16",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML17",
+        "legacy": {
+          "id": "ML17",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M24",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML17",
+          "loadCaseId": "LC1",
+          "memberId": "M17",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML18",
+        "legacy": {
+          "id": "ML18",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M25",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML18",
+          "loadCaseId": "LC1",
+          "memberId": "M18",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML19",
+        "legacy": {
+          "id": "ML19",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M26",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML19",
+          "loadCaseId": "LC1",
+          "memberId": "M19",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      },
+      {
+        "id": "ML20",
+        "legacy": {
+          "id": "ML20",
+          "loadCaseId": "LC_load-1",
+          "memberId": "M27",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        },
+        "bridgeDefinition": {
+          "id": "ML20",
+          "loadCaseId": "LC1",
+          "memberId": "M20",
+          "coordinateSystem": "global",
+          "type": "uniform",
+          "wx": 0,
+          "wy": -12,
+          "wz": 0
+        }
+      }
+    ]
+  }
+}

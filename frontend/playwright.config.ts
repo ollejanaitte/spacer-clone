@@ -9,7 +9,11 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "npm run dev -- --host 127.0.0.1 --port 4173",
+    command:
+      "npx concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000\" \"npm run dev -- --host 127.0.0.1 --port 4173\"",
+    env: {
+      VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL: "true",
+    },
     url: "http://127.0.0.1:4173",
     reuseExistingServer: true,
     timeout: 120000,

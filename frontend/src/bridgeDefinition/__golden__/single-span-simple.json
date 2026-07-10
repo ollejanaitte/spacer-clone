@@ -1,0 +1,1394 @@
+{
+  "name": "single-span-simple",
+  "legacy": {
+    "source_bridge_id": "bd-single-span",
+    "generatedAt": "2026-07-10T09:07:56.648772+00:00",
+    "xCount": 11,
+    "yCount": 7,
+    "nodeCount": 77,
+    "memberCount": 136,
+    "supportCount": 4,
+    "loadCount": 0,
+    "summary": {
+      "totalLength": 30,
+      "girderPositions": [
+        -5.5,
+        -5,
+        -3.5,
+        0,
+        3.5,
+        5,
+        5.5
+      ],
+      "supports": [
+        {
+          "x": 0,
+          "y": -5.5,
+          "nodeId": "N1"
+        },
+        {
+          "x": 0,
+          "y": 5.5,
+          "nodeId": "N7"
+        },
+        {
+          "x": 30,
+          "y": -5.5,
+          "nodeId": "N71"
+        },
+        {
+          "x": 30,
+          "y": 5.5,
+          "nodeId": "N77"
+        }
+      ]
+    }
+  },
+  "bridgeDefinition": {
+    "source_bridge_id": "bd-single-span",
+    "generatedAt": "2026-07-10T09:07:53.314Z",
+    "xCount": 77,
+    "yCount": 2,
+    "nodeCount": 77,
+    "memberCount": 70,
+    "supportCount": 2,
+    "loadCount": 0,
+    "summary": {
+      "totalLength": 30,
+      "girderPositions": [],
+      "supports": []
+    }
+  },
+  "diff": {
+    "counts": {
+      "nodeCount": {
+        "legacy": 77,
+        "bridgeDefinition": 77,
+        "delta": 0
+      },
+      "memberCount": {
+        "legacy": 136,
+        "bridgeDefinition": 70,
+        "delta": -66
+      },
+      "supportCount": {
+        "legacy": 4,
+        "bridgeDefinition": 2,
+        "delta": -2
+      },
+      "loadCount": {
+        "legacy": 0,
+        "bridgeDefinition": 0,
+        "delta": 0
+      }
+    },
+    "nodeCoordinateMismatches": [
+      {
+        "id": "N2",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 3,
+        "delta": 3
+      },
+      {
+        "id": "N2",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N3",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 6,
+        "delta": 6
+      },
+      {
+        "id": "N3",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N4",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 9,
+        "delta": 9
+      },
+      {
+        "id": "N4",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N5",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 12,
+        "delta": 12
+      },
+      {
+        "id": "N5",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -9
+      },
+      {
+        "id": "N6",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 15,
+        "delta": 15
+      },
+      {
+        "id": "N6",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5.5,
+        "delta": -10.5
+      },
+      {
+        "id": "N7",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 18,
+        "delta": 18
+      },
+      {
+        "id": "N7",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5.5,
+        "delta": -11
+      },
+      {
+        "id": "N8",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 21,
+        "delta": 18
+      },
+      {
+        "id": "N9",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 24,
+        "delta": 21
+      },
+      {
+        "id": "N9",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N10",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 27,
+        "delta": 24
+      },
+      {
+        "id": "N10",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N11",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 30,
+        "delta": 27
+      },
+      {
+        "id": "N11",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N12",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 0,
+        "delta": -3
+      },
+      {
+        "id": "N12",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N13",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N14",
+        "axis": "x",
+        "legacy": 3,
+        "bridgeDefinition": 6,
+        "delta": 3
+      },
+      {
+        "id": "N14",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N15",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 9,
+        "delta": 3
+      },
+      {
+        "id": "N15",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N16",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 12,
+        "delta": 6
+      },
+      {
+        "id": "N17",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 15,
+        "delta": 9
+      },
+      {
+        "id": "N17",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5,
+        "delta": -1.5
+      },
+      {
+        "id": "N18",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 18,
+        "delta": 12
+      },
+      {
+        "id": "N18",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N19",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 21,
+        "delta": 15
+      },
+      {
+        "id": "N19",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N20",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 24,
+        "delta": 18
+      },
+      {
+        "id": "N20",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N21",
+        "axis": "x",
+        "legacy": 6,
+        "bridgeDefinition": 27,
+        "delta": 21
+      },
+      {
+        "id": "N21",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N22",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 30,
+        "delta": 21
+      },
+      {
+        "id": "N22",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N23",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 0,
+        "delta": -9
+      },
+      {
+        "id": "N23",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N24",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 3,
+        "delta": -6
+      },
+      {
+        "id": "N25",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 6,
+        "delta": -3
+      },
+      {
+        "id": "N25",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N26",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N27",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 12,
+        "delta": 3
+      },
+      {
+        "id": "N27",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -3.5,
+        "delta": -8.5
+      },
+      {
+        "id": "N28",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 15,
+        "delta": 6
+      },
+      {
+        "id": "N28",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N29",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 18,
+        "delta": 6
+      },
+      {
+        "id": "N29",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N30",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 21,
+        "delta": 9
+      },
+      {
+        "id": "N30",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N31",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 24,
+        "delta": 12
+      },
+      {
+        "id": "N32",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 27,
+        "delta": 15
+      },
+      {
+        "id": "N32",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N33",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 30,
+        "delta": 18
+      },
+      {
+        "id": "N33",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N34",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 0,
+        "delta": -12
+      },
+      {
+        "id": "N34",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N35",
+        "axis": "x",
+        "legacy": 12,
+        "bridgeDefinition": 3,
+        "delta": -9
+      },
+      {
+        "id": "N35",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N36",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 6,
+        "delta": -9
+      },
+      {
+        "id": "N36",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N37",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 9,
+        "delta": -6
+      },
+      {
+        "id": "N37",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N38",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 12,
+        "delta": -3
+      },
+      {
+        "id": "N38",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N40",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 18,
+        "delta": 3
+      },
+      {
+        "id": "N40",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N41",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 21,
+        "delta": 6
+      },
+      {
+        "id": "N41",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N42",
+        "axis": "x",
+        "legacy": 15,
+        "bridgeDefinition": 24,
+        "delta": 9
+      },
+      {
+        "id": "N42",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N43",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 27,
+        "delta": 9
+      },
+      {
+        "id": "N43",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N44",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 30,
+        "delta": 12
+      },
+      {
+        "id": "N44",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N45",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 0,
+        "delta": -18
+      },
+      {
+        "id": "N45",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N46",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 3,
+        "delta": -15
+      },
+      {
+        "id": "N46",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N47",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 6,
+        "delta": -12
+      },
+      {
+        "id": "N48",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 9,
+        "delta": -9
+      },
+      {
+        "id": "N48",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N49",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 12,
+        "delta": -6
+      },
+      {
+        "id": "N49",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N50",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 15,
+        "delta": -6
+      },
+      {
+        "id": "N50",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N51",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 18,
+        "delta": -3
+      },
+      {
+        "id": "N51",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 3.5,
+        "delta": 8.5
+      },
+      {
+        "id": "N52",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N53",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 24,
+        "delta": 3
+      },
+      {
+        "id": "N53",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N54",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 27,
+        "delta": 6
+      },
+      {
+        "id": "N55",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 30,
+        "delta": 9
+      },
+      {
+        "id": "N55",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N56",
+        "axis": "x",
+        "legacy": 21,
+        "bridgeDefinition": 0,
+        "delta": -21
+      },
+      {
+        "id": "N56",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N57",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 3,
+        "delta": -21
+      },
+      {
+        "id": "N57",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N58",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 6,
+        "delta": -18
+      },
+      {
+        "id": "N58",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N59",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 9,
+        "delta": -15
+      },
+      {
+        "id": "N59",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N60",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 12,
+        "delta": -12
+      },
+      {
+        "id": "N60",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N61",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 15,
+        "delta": -9
+      },
+      {
+        "id": "N61",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5,
+        "delta": 1.5
+      },
+      {
+        "id": "N62",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 18,
+        "delta": -6
+      },
+      {
+        "id": "N63",
+        "axis": "x",
+        "legacy": 24,
+        "bridgeDefinition": 21,
+        "delta": -3
+      },
+      {
+        "id": "N63",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N64",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 24,
+        "delta": -3
+      },
+      {
+        "id": "N64",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N65",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N66",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 30,
+        "delta": 3
+      },
+      {
+        "id": "N66",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N67",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 0,
+        "delta": -27
+      },
+      {
+        "id": "N67",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N68",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 3,
+        "delta": -24
+      },
+      {
+        "id": "N68",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N69",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 6,
+        "delta": -21
+      },
+      {
+        "id": "N69",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      },
+      {
+        "id": "N70",
+        "axis": "x",
+        "legacy": 27,
+        "bridgeDefinition": 9,
+        "delta": -18
+      },
+      {
+        "id": "N71",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 12,
+        "delta": -18
+      },
+      {
+        "id": "N71",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5.5,
+        "delta": 11
+      },
+      {
+        "id": "N72",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 15,
+        "delta": -15
+      },
+      {
+        "id": "N72",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5.5,
+        "delta": 10.5
+      },
+      {
+        "id": "N73",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 18,
+        "delta": -12
+      },
+      {
+        "id": "N73",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 9
+      },
+      {
+        "id": "N74",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 21,
+        "delta": -9
+      },
+      {
+        "id": "N74",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N75",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 24,
+        "delta": -6
+      },
+      {
+        "id": "N75",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N76",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 27,
+        "delta": -3
+      },
+      {
+        "id": "N76",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      }
+    ],
+    "memberConnectionMismatches": [
+      {
+        "id": "M1",
+        "legacy": "N1->N8",
+        "bridgeDefinition": "N1->N2"
+      },
+      {
+        "id": "M2",
+        "legacy": "N8->N15",
+        "bridgeDefinition": "N2->N3"
+      },
+      {
+        "id": "M3",
+        "legacy": "N15->N22",
+        "bridgeDefinition": "N3->N4"
+      },
+      {
+        "id": "M4",
+        "legacy": "N22->N29",
+        "bridgeDefinition": "N4->N5"
+      },
+      {
+        "id": "M5",
+        "legacy": "N29->N36",
+        "bridgeDefinition": "N5->N6"
+      },
+      {
+        "id": "M6",
+        "legacy": "N36->N43",
+        "bridgeDefinition": "N6->N7"
+      },
+      {
+        "id": "M7",
+        "legacy": "N43->N50",
+        "bridgeDefinition": "N7->N8"
+      },
+      {
+        "id": "M8",
+        "legacy": "N50->N57",
+        "bridgeDefinition": "N8->N9"
+      },
+      {
+        "id": "M9",
+        "legacy": "N57->N64",
+        "bridgeDefinition": "N9->N10"
+      },
+      {
+        "id": "M10",
+        "legacy": "N64->N71",
+        "bridgeDefinition": "N10->N11"
+      },
+      {
+        "id": "M11",
+        "legacy": "N2->N9",
+        "bridgeDefinition": "N12->N13"
+      },
+      {
+        "id": "M12",
+        "legacy": "N9->N16",
+        "bridgeDefinition": "N13->N14"
+      },
+      {
+        "id": "M13",
+        "legacy": "N16->N23",
+        "bridgeDefinition": "N14->N15"
+      },
+      {
+        "id": "M14",
+        "legacy": "N23->N30",
+        "bridgeDefinition": "N15->N16"
+      },
+      {
+        "id": "M15",
+        "legacy": "N30->N37",
+        "bridgeDefinition": "N16->N17"
+      },
+      {
+        "id": "M16",
+        "legacy": "N37->N44",
+        "bridgeDefinition": "N17->N18"
+      },
+      {
+        "id": "M17",
+        "legacy": "N44->N51",
+        "bridgeDefinition": "N18->N19"
+      },
+      {
+        "id": "M18",
+        "legacy": "N51->N58",
+        "bridgeDefinition": "N19->N20"
+      },
+      {
+        "id": "M19",
+        "legacy": "N58->N65",
+        "bridgeDefinition": "N20->N21"
+      },
+      {
+        "id": "M20",
+        "legacy": "N65->N72",
+        "bridgeDefinition": "N21->N22"
+      },
+      {
+        "id": "M21",
+        "legacy": "N3->N10",
+        "bridgeDefinition": "N23->N24"
+      },
+      {
+        "id": "M22",
+        "legacy": "N10->N17",
+        "bridgeDefinition": "N24->N25"
+      },
+      {
+        "id": "M23",
+        "legacy": "N17->N24",
+        "bridgeDefinition": "N25->N26"
+      },
+      {
+        "id": "M24",
+        "legacy": "N24->N31",
+        "bridgeDefinition": "N26->N27"
+      },
+      {
+        "id": "M25",
+        "legacy": "N31->N38",
+        "bridgeDefinition": "N27->N28"
+      },
+      {
+        "id": "M26",
+        "legacy": "N38->N45",
+        "bridgeDefinition": "N28->N29"
+      },
+      {
+        "id": "M27",
+        "legacy": "N45->N52",
+        "bridgeDefinition": "N29->N30"
+      },
+      {
+        "id": "M28",
+        "legacy": "N52->N59",
+        "bridgeDefinition": "N30->N31"
+      },
+      {
+        "id": "M29",
+        "legacy": "N59->N66",
+        "bridgeDefinition": "N31->N32"
+      },
+      {
+        "id": "M30",
+        "legacy": "N66->N73",
+        "bridgeDefinition": "N32->N33"
+      },
+      {
+        "id": "M31",
+        "legacy": "N4->N11",
+        "bridgeDefinition": "N34->N35"
+      },
+      {
+        "id": "M32",
+        "legacy": "N11->N18",
+        "bridgeDefinition": "N35->N36"
+      },
+      {
+        "id": "M33",
+        "legacy": "N18->N25",
+        "bridgeDefinition": "N36->N37"
+      },
+      {
+        "id": "M34",
+        "legacy": "N25->N32",
+        "bridgeDefinition": "N37->N38"
+      },
+      {
+        "id": "M35",
+        "legacy": "N32->N39",
+        "bridgeDefinition": "N38->N39"
+      },
+      {
+        "id": "M36",
+        "legacy": "N39->N46",
+        "bridgeDefinition": "N39->N40"
+      },
+      {
+        "id": "M37",
+        "legacy": "N46->N53",
+        "bridgeDefinition": "N40->N41"
+      },
+      {
+        "id": "M38",
+        "legacy": "N53->N60",
+        "bridgeDefinition": "N41->N42"
+      },
+      {
+        "id": "M39",
+        "legacy": "N60->N67",
+        "bridgeDefinition": "N42->N43"
+      },
+      {
+        "id": "M40",
+        "legacy": "N67->N74",
+        "bridgeDefinition": "N43->N44"
+      },
+      {
+        "id": "M41",
+        "legacy": "N5->N12",
+        "bridgeDefinition": "N45->N46"
+      },
+      {
+        "id": "M42",
+        "legacy": "N12->N19",
+        "bridgeDefinition": "N46->N47"
+      },
+      {
+        "id": "M43",
+        "legacy": "N19->N26",
+        "bridgeDefinition": "N47->N48"
+      },
+      {
+        "id": "M44",
+        "legacy": "N26->N33",
+        "bridgeDefinition": "N48->N49"
+      },
+      {
+        "id": "M45",
+        "legacy": "N33->N40",
+        "bridgeDefinition": "N49->N50"
+      },
+      {
+        "id": "M46",
+        "legacy": "N40->N47",
+        "bridgeDefinition": "N50->N51"
+      },
+      {
+        "id": "M47",
+        "legacy": "N47->N54",
+        "bridgeDefinition": "N51->N52"
+      },
+      {
+        "id": "M48",
+        "legacy": "N54->N61",
+        "bridgeDefinition": "N52->N53"
+      },
+      {
+        "id": "M49",
+        "legacy": "N61->N68",
+        "bridgeDefinition": "N53->N54"
+      },
+      {
+        "id": "M50",
+        "legacy": "N68->N75",
+        "bridgeDefinition": "N54->N55"
+      },
+      {
+        "id": "M51",
+        "legacy": "N6->N13",
+        "bridgeDefinition": "N56->N57"
+      },
+      {
+        "id": "M52",
+        "legacy": "N13->N20",
+        "bridgeDefinition": "N57->N58"
+      },
+      {
+        "id": "M53",
+        "legacy": "N20->N27",
+        "bridgeDefinition": "N58->N59"
+      },
+      {
+        "id": "M54",
+        "legacy": "N27->N34",
+        "bridgeDefinition": "N59->N60"
+      },
+      {
+        "id": "M55",
+        "legacy": "N34->N41",
+        "bridgeDefinition": "N60->N61"
+      },
+      {
+        "id": "M56",
+        "legacy": "N41->N48",
+        "bridgeDefinition": "N61->N62"
+      },
+      {
+        "id": "M57",
+        "legacy": "N48->N55",
+        "bridgeDefinition": "N62->N63"
+      },
+      {
+        "id": "M58",
+        "legacy": "N55->N62",
+        "bridgeDefinition": "N63->N64"
+      },
+      {
+        "id": "M59",
+        "legacy": "N62->N69",
+        "bridgeDefinition": "N64->N65"
+      },
+      {
+        "id": "M60",
+        "legacy": "N69->N76",
+        "bridgeDefinition": "N65->N66"
+      },
+      {
+        "id": "M61",
+        "legacy": "N7->N14",
+        "bridgeDefinition": "N67->N68"
+      },
+      {
+        "id": "M62",
+        "legacy": "N14->N21",
+        "bridgeDefinition": "N68->N69"
+      },
+      {
+        "id": "M63",
+        "legacy": "N21->N28",
+        "bridgeDefinition": "N69->N70"
+      },
+      {
+        "id": "M64",
+        "legacy": "N28->N35",
+        "bridgeDefinition": "N70->N71"
+      },
+      {
+        "id": "M65",
+        "legacy": "N35->N42",
+        "bridgeDefinition": "N71->N72"
+      },
+      {
+        "id": "M66",
+        "legacy": "N42->N49",
+        "bridgeDefinition": "N72->N73"
+      },
+      {
+        "id": "M67",
+        "legacy": "N49->N56",
+        "bridgeDefinition": "N73->N74"
+      },
+      {
+        "id": "M68",
+        "legacy": "N56->N63",
+        "bridgeDefinition": "N74->N75"
+      },
+      {
+        "id": "M69",
+        "legacy": "N63->N70",
+        "bridgeDefinition": "N75->N76"
+      },
+      {
+        "id": "M70",
+        "legacy": "N70->N77",
+        "bridgeDefinition": "N76->N77"
+      }
+    ],
+    "supportMismatches": [],
+    "loadMismatches": []
+  }
+}

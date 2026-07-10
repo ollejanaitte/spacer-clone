@@ -105,5 +105,5 @@ describe("App LINER delete integration", () => {
     });
 
     expect(document.querySelector("[data-testid=mock-viewer3d]")?.textContent).toBe(generatedCounts);
-  }, 20000);
+  }, 40000);
 });

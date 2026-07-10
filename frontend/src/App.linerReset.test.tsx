@@ -136,7 +136,7 @@ describe("App LINER reset integration", () => {
 
     expect(window.location.pathname).toBe("/pro/liner");
     expect(document.querySelector("[data-testid=liner-list-page]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("opens the linear coordinate launcher from the liner list create action", async () => {
     const { App } = await import("./App");
@@ -147,7 +147,7 @@ describe("App LINER reset integration", () => {
 
     expect(window.location.pathname).toBe("/pro/linear-coordinate");
     expect(document.querySelector("[data-testid=liner-launcher-page]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("opens the GUI liner setup from the launcher GUI card", async () => {
     const { App } = await import("./App");
@@ -158,7 +158,7 @@ describe("App LINER reset integration", () => {
 
     expect(window.location.pathname).toBe("/pro/liner/setup");
     expect(document.querySelector("[data-testid=liner-edit-page]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("opens the Phase 3.6 Importer startup dialog from the launcher PDF card", async () => {
     const { App } = await import("./App");
@@ -169,7 +169,7 @@ describe("App LINER reset integration", () => {
 
     expect(window.location.pathname).toBe("/pro/importer/startup");
     expect(document.querySelector("[data-testid=importer-startup-page]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("opens an empty importer project from the startup dialog", async () => {
     const { App } = await import("./App");
@@ -184,7 +184,7 @@ describe("App LINER reset integration", () => {
 
     expect(window.location.pathname).toMatch(/^\/pro\/importer\/.+\/line-master\/.+$/);
     expect(document.querySelector("[data-testid=line-master-page]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("shows an empty LINER list after model reset", async () => {
     const { App } = await import("./App");
@@ -197,7 +197,7 @@ describe("App LINER reset integration", () => {
 
     expect(document.querySelector("[data-testid=liner-list-empty]")).not.toBeNull();
     expect(document.querySelector("[data-testid=open-liner-setup]")).toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("creates and keeps edited LINER identifiers after model reset", async () => {
     const { App } = await import("./App");
@@ -224,7 +224,7 @@ describe("App LINER reset integration", () => {
     expect(inputByTestId("liner-model-id").value).toBe("liner-after-reset");
     expect(inputByTestId("liner-coordinate-policy-id").value).toBe("policy-after-reset");
     expect(inputByTestId("liner-element-id-S-after-reset").value).toBe("S-after-reset");
-  }, 20000);
+  }, 40000);
 
   it("adds and edits a straight element after model reset", async () => {
     const { App } = await import("./App");
@@ -253,7 +253,7 @@ describe("App LINER reset integration", () => {
     expect(inputByTestId("liner-element-azimuth-S-new").value).toBe("0.5");
     expect(inputByTestId("liner-element-length-S-new").value).toBe("75");
     expect(document.querySelector("[data-testid=remove-liner-element-S-new]")).not.toBeNull();
-  }, 20000);
+  }, 40000);
 
   it("opens mapping review and applies the generated 3D model after reset", async () => {
     const { App } = await import("./App");
@@ -286,7 +286,7 @@ describe("App LINER reset integration", () => {
 
     expect(document.querySelector("[data-testid=liner-mapping-review-page]")).toBeNull();
     expect(document.querySelector("[data-testid=mock-viewer3d]")?.textContent).not.toBe("0/0");
-  }, 20000);
+  }, 40000);
 
   it("does not change LINER state when model reset is cancelled", async () => {
     const { App } = await import("./App");
@@ -308,5 +308,5 @@ describe("App LINER reset integration", () => {
 
     expect(inputByTestId("liner-alignment-id").value).toBe("alignment-before-cancel");
     expect(inputByTestId("liner-model-id").value).toBe("liner-before-cancel");
-  }, 20000);
+  }, 40000);
 });

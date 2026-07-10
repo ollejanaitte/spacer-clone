@@ -9,6 +9,8 @@
     "typecheck": "tsc -b --pretty false",
     "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src && node ../scripts/check_frontend_japanese_strings.mjs src",
     "test": "vitest run",
+    "test:regression": "vitest run --config vitest.regression.config.ts",
+    "test:all": "npm run test && npm run test:regression",
     "test:e2e": "playwright test",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",

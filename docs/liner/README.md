@@ -104,6 +104,11 @@ Follow this order when filling in detailed design or starting implementation.
 
 Bridges LINER (`LinerBridge`) and Bridge Wizard (`BridgeProject`) through a shared structural design intermediate (`BridgeDefinition`) before FEM / `project.json` generation. Read after Phase 3.6–3.7 importer normalization docs and before extending FEM generators.
 
+Step 7 adds an isolated golden regression suite for this layer. Use `npm run test`
+for the normal frontend unit suite, `npm run test:regression` for the Python-backed
+BridgeDefinition legacy-vs-new-path golden checks, and `npm run test:e2e` for
+Playwright browser coverage. The BridgeDefinition feature flag remains default OFF.
+
 ### Phase 5 — Quality, Operations, and Performance
 
 | Order | Document | Priority |

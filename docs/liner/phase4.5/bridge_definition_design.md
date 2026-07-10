@@ -7,6 +7,24 @@
 
 ---
 
+## Step 7 regression suite
+
+Step 7 adds golden regression coverage for the `BridgeDefinition -> StructuralModel`
+pipeline. The suite compares representative `BridgeProject` fixtures through both
+the legacy generator and the BridgeDefinition generator, then checks node/member/
+support/load summaries and detailed numeric diffs against committed golden JSON.
+
+Test commands are intentionally split:
+
+- `npm run test`: normal frontend unit suite; excludes Python-backed golden regression.
+- `npm run test:regression`: BridgeDefinition golden regression suite.
+- `npm run test:e2e`: Playwright browser checks, including the feature-flag session.
+
+The BridgeDefinition structural-model feature flag remains default OFF. Legacy
+generation remains available and is used as the comparison baseline.
+
+---
+
 ## Purpose
 
 LINER（線形座標・PDF インポート）経路と Bridge Wizard 経路が、それぞれ独立した Bridge 型と FEM 生成パイプラインを持つ現状を整理し、**BridgeDefinition** を共通の構造設計中間表現として導入する設計を定義する。

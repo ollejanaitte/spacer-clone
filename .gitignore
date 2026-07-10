@@ -27,6 +27,8 @@ backend/data/projects/autosave.local.json
 out_test.txt
 out_test_baseline.txt
 out_typecheck.txt
+frontend/test-results/
+frontend/playwright-report/
 
 # Codex / Cursor stage prompts and results
 stage*_prompt.txt

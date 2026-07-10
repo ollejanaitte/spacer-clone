@@ -1,0 +1,3934 @@
+{
+  "name": "three-span-continuous",
+  "legacy": {
+    "source_bridge_id": "bd-three-span",
+    "generatedAt": "2026-07-10T09:08:02.903011+00:00",
+    "xCount": 31,
+    "yCount": 7,
+    "nodeCount": 217,
+    "memberCount": 396,
+    "supportCount": 8,
+    "loadCount": 0,
+    "summary": {
+      "totalLength": 60,
+      "girderPositions": [
+        -5.5,
+        -5,
+        -3.5,
+        0,
+        3.5,
+        5,
+        5.5
+      ],
+      "supports": [
+        {
+          "x": 0,
+          "y": -5.5,
+          "nodeId": "N1"
+        },
+        {
+          "x": 0,
+          "y": 5.5,
+          "nodeId": "N7"
+        },
+        {
+          "x": 18,
+          "y": -5.5,
+          "nodeId": "N71"
+        },
+        {
+          "x": 18,
+          "y": 5.5,
+          "nodeId": "N77"
+        },
+        {
+          "x": 42,
+          "y": -5.5,
+          "nodeId": "N141"
+        },
+        {
+          "x": 42,
+          "y": 5.5,
+          "nodeId": "N147"
+        },
+        {
+          "x": 60,
+          "y": -5.5,
+          "nodeId": "N211"
+        },
+        {
+          "x": 60,
+          "y": 5.5,
+          "nodeId": "N217"
+        }
+      ]
+    }
+  },
+  "bridgeDefinition": {
+    "source_bridge_id": "bd-three-span",
+    "generatedAt": "2026-07-10T09:07:53.318Z",
+    "xCount": 217,
+    "yCount": 4,
+    "nodeCount": 217,
+    "memberCount": 210,
+    "supportCount": 4,
+    "loadCount": 0,
+    "summary": {
+      "totalLength": 60,
+      "girderPositions": [],
+      "supports": []
+    }
+  },
+  "diff": {
+    "counts": {
+      "nodeCount": {
+        "legacy": 217,
+        "bridgeDefinition": 217,
+        "delta": 0
+      },
+      "memberCount": {
+        "legacy": 396,
+        "bridgeDefinition": 210,
+        "delta": -186
+      },
+      "supportCount": {
+        "legacy": 8,
+        "bridgeDefinition": 4,
+        "delta": -4
+      },
+      "loadCount": {
+        "legacy": 0,
+        "bridgeDefinition": 0,
+        "delta": 0
+      }
+    },
+    "nodeCoordinateMismatches": [
+      {
+        "id": "N2",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 1.8,
+        "delta": 1.8
+      },
+      {
+        "id": "N2",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N3",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 3.6,
+        "delta": 3.6
+      },
+      {
+        "id": "N3",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N4",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 5.4,
+        "delta": 5.4
+      },
+      {
+        "id": "N4",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N5",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 7.2,
+        "delta": 7.2
+      },
+      {
+        "id": "N5",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -9
+      },
+      {
+        "id": "N6",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 9,
+        "delta": 9
+      },
+      {
+        "id": "N6",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5.5,
+        "delta": -10.5
+      },
+      {
+        "id": "N7",
+        "axis": "x",
+        "legacy": 0,
+        "bridgeDefinition": 10.8,
+        "delta": 10.8
+      },
+      {
+        "id": "N7",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5.5,
+        "delta": -11
+      },
+      {
+        "id": "N8",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 12.6,
+        "delta": 10.799999999999999
+      },
+      {
+        "id": "N9",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 14.4,
+        "delta": 12.6
+      },
+      {
+        "id": "N9",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N10",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 16.2,
+        "delta": 14.399999999999999
+      },
+      {
+        "id": "N10",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N11",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 18,
+        "delta": 16.2
+      },
+      {
+        "id": "N11",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N12",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 20.4,
+        "delta": 18.599999999999998
+      },
+      {
+        "id": "N12",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -9
+      },
+      {
+        "id": "N13",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 22.8,
+        "delta": 21
+      },
+      {
+        "id": "N13",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5.5,
+        "delta": -10.5
+      },
+      {
+        "id": "N14",
+        "axis": "x",
+        "legacy": 1.8,
+        "bridgeDefinition": 25.2,
+        "delta": 23.4
+      },
+      {
+        "id": "N14",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5.5,
+        "delta": -11
+      },
+      {
+        "id": "N15",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 27.6,
+        "delta": 24
+      },
+      {
+        "id": "N16",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 30,
+        "delta": 26.4
+      },
+      {
+        "id": "N16",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N17",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 32.4,
+        "delta": 28.799999999999997
+      },
+      {
+        "id": "N17",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N18",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 34.8,
+        "delta": 31.199999999999996
+      },
+      {
+        "id": "N18",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N19",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 37.2,
+        "delta": 33.6
+      },
+      {
+        "id": "N19",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -9
+      },
+      {
+        "id": "N20",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 39.6,
+        "delta": 36
+      },
+      {
+        "id": "N20",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5.5,
+        "delta": -10.5
+      },
+      {
+        "id": "N21",
+        "axis": "x",
+        "legacy": 3.6,
+        "bridgeDefinition": 42,
+        "delta": 38.4
+      },
+      {
+        "id": "N21",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5.5,
+        "delta": -11
+      },
+      {
+        "id": "N22",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 43.8,
+        "delta": 38.4
+      },
+      {
+        "id": "N23",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 45.6,
+        "delta": 40.2
+      },
+      {
+        "id": "N23",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N24",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 47.4,
+        "delta": 42
+      },
+      {
+        "id": "N24",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N25",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 49.2,
+        "delta": 43.800000000000004
+      },
+      {
+        "id": "N25",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5.5,
+        "delta": -5.5
+      },
+      {
+        "id": "N26",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 51,
+        "delta": 45.6
+      },
+      {
+        "id": "N26",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -9
+      },
+      {
+        "id": "N27",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 52.8,
+        "delta": 47.4
+      },
+      {
+        "id": "N27",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5.5,
+        "delta": -10.5
+      },
+      {
+        "id": "N28",
+        "axis": "x",
+        "legacy": 5.4,
+        "bridgeDefinition": 54.6,
+        "delta": 49.2
+      },
+      {
+        "id": "N28",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5.5,
+        "delta": -11
+      },
+      {
+        "id": "N29",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 56.4,
+        "delta": 49.199999999999996
+      },
+      {
+        "id": "N30",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 58.2,
+        "delta": 51
+      },
+      {
+        "id": "N30",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -5.5,
+        "delta": -0.5
+      },
+      {
+        "id": "N31",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 60,
+        "delta": 52.8
+      },
+      {
+        "id": "N31",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5.5,
+        "delta": -2
+      },
+      {
+        "id": "N32",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 0,
+        "delta": -7.2
+      },
+      {
+        "id": "N32",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N33",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 1.8,
+        "delta": -5.4
+      },
+      {
+        "id": "N33",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N34",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 3.6,
+        "delta": -3.6
+      },
+      {
+        "id": "N34",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N35",
+        "axis": "x",
+        "legacy": 7.2,
+        "bridgeDefinition": 5.4,
+        "delta": -1.7999999999999998
+      },
+      {
+        "id": "N35",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N36",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 7.2,
+        "delta": -1.7999999999999998
+      },
+      {
+        "id": "N36",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N38",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 10.8,
+        "delta": 1.8000000000000007
+      },
+      {
+        "id": "N38",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5,
+        "delta": -1.5
+      },
+      {
+        "id": "N39",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 12.6,
+        "delta": 3.5999999999999996
+      },
+      {
+        "id": "N39",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N40",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 14.4,
+        "delta": 5.4
+      },
+      {
+        "id": "N40",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N41",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 16.2,
+        "delta": 7.199999999999999
+      },
+      {
+        "id": "N41",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N42",
+        "axis": "x",
+        "legacy": 9,
+        "bridgeDefinition": 18,
+        "delta": 9
+      },
+      {
+        "id": "N42",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N43",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 20.4,
+        "delta": 9.599999999999998
+      },
+      {
+        "id": "N43",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N44",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 22.8,
+        "delta": 12
+      },
+      {
+        "id": "N45",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 25.2,
+        "delta": 14.399999999999999
+      },
+      {
+        "id": "N45",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5,
+        "delta": -1.5
+      },
+      {
+        "id": "N46",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 27.6,
+        "delta": 16.8
+      },
+      {
+        "id": "N46",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N47",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 30,
+        "delta": 19.2
+      },
+      {
+        "id": "N47",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N48",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 32.4,
+        "delta": 21.599999999999998
+      },
+      {
+        "id": "N48",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N49",
+        "axis": "x",
+        "legacy": 10.8,
+        "bridgeDefinition": 34.8,
+        "delta": 23.999999999999996
+      },
+      {
+        "id": "N49",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N50",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 37.2,
+        "delta": 24.6
+      },
+      {
+        "id": "N50",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N51",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 39.6,
+        "delta": 27
+      },
+      {
+        "id": "N52",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 42,
+        "delta": 29.4
+      },
+      {
+        "id": "N52",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5,
+        "delta": -1.5
+      },
+      {
+        "id": "N53",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 43.8,
+        "delta": 31.199999999999996
+      },
+      {
+        "id": "N53",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N54",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 45.6,
+        "delta": 33
+      },
+      {
+        "id": "N54",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N55",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 47.4,
+        "delta": 34.8
+      },
+      {
+        "id": "N55",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N56",
+        "axis": "x",
+        "legacy": 12.6,
+        "bridgeDefinition": 49.2,
+        "delta": 36.6
+      },
+      {
+        "id": "N56",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -5,
+        "delta": -10.5
+      },
+      {
+        "id": "N57",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 51,
+        "delta": 36.6
+      },
+      {
+        "id": "N57",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -5,
+        "delta": 0.5
+      },
+      {
+        "id": "N58",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 52.8,
+        "delta": 38.4
+      },
+      {
+        "id": "N59",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 54.6,
+        "delta": 40.2
+      },
+      {
+        "id": "N59",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": -5,
+        "delta": -1.5
+      },
+      {
+        "id": "N60",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 56.4,
+        "delta": 42
+      },
+      {
+        "id": "N60",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -5,
+        "delta": -5
+      },
+      {
+        "id": "N61",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 58.2,
+        "delta": 43.800000000000004
+      },
+      {
+        "id": "N61",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -5,
+        "delta": -8.5
+      },
+      {
+        "id": "N62",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 60,
+        "delta": 45.6
+      },
+      {
+        "id": "N62",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -5,
+        "delta": -10
+      },
+      {
+        "id": "N63",
+        "axis": "x",
+        "legacy": 14.4,
+        "bridgeDefinition": 0,
+        "delta": -14.4
+      },
+      {
+        "id": "N63",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N64",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 1.8,
+        "delta": -14.399999999999999
+      },
+      {
+        "id": "N64",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N65",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 3.6,
+        "delta": -12.6
+      },
+      {
+        "id": "N65",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N66",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 5.4,
+        "delta": -10.799999999999999
+      },
+      {
+        "id": "N67",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 7.2,
+        "delta": -9
+      },
+      {
+        "id": "N67",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N68",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 9,
+        "delta": -7.199999999999999
+      },
+      {
+        "id": "N68",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N69",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 10.8,
+        "delta": -5.399999999999999
+      },
+      {
+        "id": "N69",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -3.5,
+        "delta": -8.5
+      },
+      {
+        "id": "N70",
+        "axis": "x",
+        "legacy": 16.2,
+        "bridgeDefinition": 12.6,
+        "delta": -3.5999999999999996
+      },
+      {
+        "id": "N70",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N71",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 14.4,
+        "delta": -3.5999999999999996
+      },
+      {
+        "id": "N71",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N72",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 16.2,
+        "delta": -1.8000000000000007
+      },
+      {
+        "id": "N72",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N74",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 20.4,
+        "delta": 2.3999999999999986
+      },
+      {
+        "id": "N74",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N75",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 22.8,
+        "delta": 4.800000000000001
+      },
+      {
+        "id": "N75",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N76",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 25.2,
+        "delta": 7.199999999999999
+      },
+      {
+        "id": "N76",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -3.5,
+        "delta": -8.5
+      },
+      {
+        "id": "N77",
+        "axis": "x",
+        "legacy": 18,
+        "bridgeDefinition": 27.6,
+        "delta": 9.600000000000001
+      },
+      {
+        "id": "N77",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N78",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 30,
+        "delta": 9.600000000000001
+      },
+      {
+        "id": "N78",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N79",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 32.4,
+        "delta": 12
+      },
+      {
+        "id": "N79",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N80",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 34.8,
+        "delta": 14.399999999999999
+      },
+      {
+        "id": "N81",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 37.2,
+        "delta": 16.800000000000004
+      },
+      {
+        "id": "N81",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N82",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 39.6,
+        "delta": 19.200000000000003
+      },
+      {
+        "id": "N82",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N83",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 42,
+        "delta": 21.6
+      },
+      {
+        "id": "N83",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -3.5,
+        "delta": -8.5
+      },
+      {
+        "id": "N84",
+        "axis": "x",
+        "legacy": 20.4,
+        "bridgeDefinition": 43.8,
+        "delta": 23.4
+      },
+      {
+        "id": "N84",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N85",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 45.6,
+        "delta": 22.8
+      },
+      {
+        "id": "N85",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N86",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 47.4,
+        "delta": 24.599999999999998
+      },
+      {
+        "id": "N86",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N87",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 49.2,
+        "delta": 26.400000000000002
+      },
+      {
+        "id": "N88",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 51,
+        "delta": 28.2
+      },
+      {
+        "id": "N88",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": -3.5,
+        "delta": -3.5
+      },
+      {
+        "id": "N89",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 52.8,
+        "delta": 29.999999999999996
+      },
+      {
+        "id": "N89",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": -3.5,
+        "delta": -7
+      },
+      {
+        "id": "N90",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 54.6,
+        "delta": 31.8
+      },
+      {
+        "id": "N90",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": -3.5,
+        "delta": -8.5
+      },
+      {
+        "id": "N91",
+        "axis": "x",
+        "legacy": 22.8,
+        "bridgeDefinition": 56.4,
+        "delta": 33.599999999999994
+      },
+      {
+        "id": "N91",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": -3.5,
+        "delta": -9
+      },
+      {
+        "id": "N92",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 58.2,
+        "delta": 33
+      },
+      {
+        "id": "N92",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": -3.5,
+        "delta": 2
+      },
+      {
+        "id": "N93",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 60,
+        "delta": 34.8
+      },
+      {
+        "id": "N93",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": -3.5,
+        "delta": 1.5
+      },
+      {
+        "id": "N94",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 0,
+        "delta": -25.2
+      },
+      {
+        "id": "N94",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N95",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 1.8,
+        "delta": -23.4
+      },
+      {
+        "id": "N96",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 3.6,
+        "delta": -21.599999999999998
+      },
+      {
+        "id": "N96",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N97",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 5.4,
+        "delta": -19.799999999999997
+      },
+      {
+        "id": "N97",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N98",
+        "axis": "x",
+        "legacy": 25.2,
+        "bridgeDefinition": 7.2,
+        "delta": -18
+      },
+      {
+        "id": "N98",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N99",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 9,
+        "delta": -18.6
+      },
+      {
+        "id": "N99",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N100",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 10.8,
+        "delta": -16.8
+      },
+      {
+        "id": "N100",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N101",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 12.6,
+        "delta": -15.000000000000002
+      },
+      {
+        "id": "N101",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N102",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 14.4,
+        "delta": -13.200000000000001
+      },
+      {
+        "id": "N103",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 16.2,
+        "delta": -11.400000000000002
+      },
+      {
+        "id": "N103",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N104",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 18,
+        "delta": -9.600000000000001
+      },
+      {
+        "id": "N104",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N105",
+        "axis": "x",
+        "legacy": 27.6,
+        "bridgeDefinition": 20.4,
+        "delta": -7.200000000000003
+      },
+      {
+        "id": "N105",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N106",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 22.8,
+        "delta": -7.199999999999999
+      },
+      {
+        "id": "N106",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N107",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 25.2,
+        "delta": -4.800000000000001
+      },
+      {
+        "id": "N107",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N108",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 27.6,
+        "delta": -2.3999999999999986
+      },
+      {
+        "id": "N108",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N110",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 32.4,
+        "delta": 2.3999999999999986
+      },
+      {
+        "id": "N110",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N111",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 34.8,
+        "delta": 4.799999999999997
+      },
+      {
+        "id": "N111",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N112",
+        "axis": "x",
+        "legacy": 30,
+        "bridgeDefinition": 37.2,
+        "delta": 7.200000000000003
+      },
+      {
+        "id": "N112",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N113",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 39.6,
+        "delta": 7.200000000000003
+      },
+      {
+        "id": "N113",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N114",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 42,
+        "delta": 9.600000000000001
+      },
+      {
+        "id": "N114",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N115",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 43.8,
+        "delta": 11.399999999999999
+      },
+      {
+        "id": "N115",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N116",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 45.6,
+        "delta": 13.200000000000003
+      },
+      {
+        "id": "N117",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 47.4,
+        "delta": 15
+      },
+      {
+        "id": "N117",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N118",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 49.2,
+        "delta": 16.800000000000004
+      },
+      {
+        "id": "N118",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 0,
+        "delta": -5
+      },
+      {
+        "id": "N119",
+        "axis": "x",
+        "legacy": 32.4,
+        "bridgeDefinition": 51,
+        "delta": 18.6
+      },
+      {
+        "id": "N119",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 0,
+        "delta": -5.5
+      },
+      {
+        "id": "N120",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 52.8,
+        "delta": 18
+      },
+      {
+        "id": "N120",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 0,
+        "delta": 5.5
+      },
+      {
+        "id": "N121",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 54.6,
+        "delta": 19.800000000000004
+      },
+      {
+        "id": "N121",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 0,
+        "delta": 5
+      },
+      {
+        "id": "N122",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 56.4,
+        "delta": 21.6
+      },
+      {
+        "id": "N122",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 0,
+        "delta": 3.5
+      },
+      {
+        "id": "N123",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 58.2,
+        "delta": 23.400000000000006
+      },
+      {
+        "id": "N124",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 60,
+        "delta": 25.200000000000003
+      },
+      {
+        "id": "N124",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 0,
+        "delta": -3.5
+      },
+      {
+        "id": "N125",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 0,
+        "delta": -34.8
+      },
+      {
+        "id": "N125",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N126",
+        "axis": "x",
+        "legacy": 34.8,
+        "bridgeDefinition": 1.8,
+        "delta": -33
+      },
+      {
+        "id": "N126",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N127",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 3.6,
+        "delta": -33.6
+      },
+      {
+        "id": "N127",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N128",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 5.4,
+        "delta": -31.800000000000004
+      },
+      {
+        "id": "N128",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 3.5,
+        "delta": 8.5
+      },
+      {
+        "id": "N129",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 7.2,
+        "delta": -30.000000000000004
+      },
+      {
+        "id": "N129",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N130",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 9,
+        "delta": -28.200000000000003
+      },
+      {
+        "id": "N130",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N131",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 10.8,
+        "delta": -26.400000000000002
+      },
+      {
+        "id": "N132",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 12.6,
+        "delta": -24.6
+      },
+      {
+        "id": "N132",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N133",
+        "axis": "x",
+        "legacy": 37.2,
+        "bridgeDefinition": 14.4,
+        "delta": -22.800000000000004
+      },
+      {
+        "id": "N133",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N134",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 16.2,
+        "delta": -23.400000000000002
+      },
+      {
+        "id": "N134",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N135",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 18,
+        "delta": -21.6
+      },
+      {
+        "id": "N135",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 3.5,
+        "delta": 8.5
+      },
+      {
+        "id": "N136",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 20.4,
+        "delta": -19.200000000000003
+      },
+      {
+        "id": "N136",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N137",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 22.8,
+        "delta": -16.8
+      },
+      {
+        "id": "N137",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N138",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 25.2,
+        "delta": -14.400000000000002
+      },
+      {
+        "id": "N139",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 27.6,
+        "delta": -12
+      },
+      {
+        "id": "N139",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N140",
+        "axis": "x",
+        "legacy": 39.6,
+        "bridgeDefinition": 30,
+        "delta": -9.600000000000001
+      },
+      {
+        "id": "N140",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N141",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 32.4,
+        "delta": -9.600000000000001
+      },
+      {
+        "id": "N141",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N142",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 34.8,
+        "delta": -7.200000000000003
+      },
+      {
+        "id": "N142",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 3.5,
+        "delta": 8.5
+      },
+      {
+        "id": "N143",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 37.2,
+        "delta": -4.799999999999997
+      },
+      {
+        "id": "N143",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N144",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 39.6,
+        "delta": -2.3999999999999986
+      },
+      {
+        "id": "N144",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N146",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 43.8,
+        "delta": 1.7999999999999972
+      },
+      {
+        "id": "N146",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N147",
+        "axis": "x",
+        "legacy": 42,
+        "bridgeDefinition": 45.6,
+        "delta": 3.6000000000000014
+      },
+      {
+        "id": "N147",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N148",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 47.4,
+        "delta": 3.6000000000000014
+      },
+      {
+        "id": "N148",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N149",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 49.2,
+        "delta": 5.400000000000006
+      },
+      {
+        "id": "N149",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 3.5,
+        "delta": 8.5
+      },
+      {
+        "id": "N150",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 51,
+        "delta": 7.200000000000003
+      },
+      {
+        "id": "N150",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 3.5,
+        "delta": 7
+      },
+      {
+        "id": "N151",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 52.8,
+        "delta": 9
+      },
+      {
+        "id": "N151",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 3.5,
+        "delta": 3.5
+      },
+      {
+        "id": "N152",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 54.6,
+        "delta": 10.800000000000004
+      },
+      {
+        "id": "N153",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 56.4,
+        "delta": 12.600000000000001
+      },
+      {
+        "id": "N153",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 3.5,
+        "delta": -1.5
+      },
+      {
+        "id": "N154",
+        "axis": "x",
+        "legacy": 43.8,
+        "bridgeDefinition": 58.2,
+        "delta": 14.400000000000006
+      },
+      {
+        "id": "N154",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 3.5,
+        "delta": -2
+      },
+      {
+        "id": "N155",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 60,
+        "delta": 14.399999999999999
+      },
+      {
+        "id": "N155",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 3.5,
+        "delta": 9
+      },
+      {
+        "id": "N156",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 0,
+        "delta": -45.6
+      },
+      {
+        "id": "N156",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N157",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 1.8,
+        "delta": -43.800000000000004
+      },
+      {
+        "id": "N157",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N158",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 3.6,
+        "delta": -42
+      },
+      {
+        "id": "N158",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N159",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 5.4,
+        "delta": -40.2
+      },
+      {
+        "id": "N159",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5,
+        "delta": 1.5
+      },
+      {
+        "id": "N160",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 7.2,
+        "delta": -38.4
+      },
+      {
+        "id": "N161",
+        "axis": "x",
+        "legacy": 45.6,
+        "bridgeDefinition": 9,
+        "delta": -36.6
+      },
+      {
+        "id": "N161",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N162",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 10.8,
+        "delta": -36.599999999999994
+      },
+      {
+        "id": "N162",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N163",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 12.6,
+        "delta": -34.8
+      },
+      {
+        "id": "N163",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N164",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 14.4,
+        "delta": -33
+      },
+      {
+        "id": "N164",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N165",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 16.2,
+        "delta": -31.2
+      },
+      {
+        "id": "N165",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N166",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 18,
+        "delta": -29.4
+      },
+      {
+        "id": "N166",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5,
+        "delta": 1.5
+      },
+      {
+        "id": "N167",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 20.4,
+        "delta": -27
+      },
+      {
+        "id": "N168",
+        "axis": "x",
+        "legacy": 47.4,
+        "bridgeDefinition": 22.8,
+        "delta": -24.599999999999998
+      },
+      {
+        "id": "N168",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N169",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 25.2,
+        "delta": -24.000000000000004
+      },
+      {
+        "id": "N169",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N170",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 27.6,
+        "delta": -21.6
+      },
+      {
+        "id": "N170",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N171",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 30,
+        "delta": -19.200000000000003
+      },
+      {
+        "id": "N171",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N172",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 32.4,
+        "delta": -16.800000000000004
+      },
+      {
+        "id": "N172",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N173",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 34.8,
+        "delta": -14.400000000000006
+      },
+      {
+        "id": "N173",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5,
+        "delta": 1.5
+      },
+      {
+        "id": "N174",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 37.2,
+        "delta": -12
+      },
+      {
+        "id": "N175",
+        "axis": "x",
+        "legacy": 49.2,
+        "bridgeDefinition": 39.6,
+        "delta": -9.600000000000001
+      },
+      {
+        "id": "N175",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N176",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 42,
+        "delta": -9
+      },
+      {
+        "id": "N176",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N177",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 43.8,
+        "delta": -7.200000000000003
+      },
+      {
+        "id": "N177",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N178",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 45.6,
+        "delta": -5.399999999999999
+      },
+      {
+        "id": "N178",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N179",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 47.4,
+        "delta": -3.6000000000000014
+      },
+      {
+        "id": "N179",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N180",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 49.2,
+        "delta": -1.7999999999999972
+      },
+      {
+        "id": "N180",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5,
+        "delta": 1.5
+      },
+      {
+        "id": "N182",
+        "axis": "x",
+        "legacy": 51,
+        "bridgeDefinition": 52.8,
+        "delta": 1.7999999999999972
+      },
+      {
+        "id": "N182",
+        "axis": "y",
+        "legacy": 5.5,
+        "bridgeDefinition": 5,
+        "delta": -0.5
+      },
+      {
+        "id": "N183",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 54.6,
+        "delta": 1.8000000000000043
+      },
+      {
+        "id": "N183",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5,
+        "delta": 10.5
+      },
+      {
+        "id": "N184",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 56.4,
+        "delta": 3.6000000000000014
+      },
+      {
+        "id": "N184",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5,
+        "delta": 10
+      },
+      {
+        "id": "N185",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 58.2,
+        "delta": 5.400000000000006
+      },
+      {
+        "id": "N185",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5,
+        "delta": 8.5
+      },
+      {
+        "id": "N186",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 60,
+        "delta": 7.200000000000003
+      },
+      {
+        "id": "N186",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5,
+        "delta": 5
+      },
+      {
+        "id": "N187",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 0,
+        "delta": -52.8
+      },
+      {
+        "id": "N187",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N188",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 1.8,
+        "delta": -51
+      },
+      {
+        "id": "N188",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      },
+      {
+        "id": "N189",
+        "axis": "x",
+        "legacy": 52.8,
+        "bridgeDefinition": 3.6,
+        "delta": -49.199999999999996
+      },
+      {
+        "id": "N190",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 5.4,
+        "delta": -49.2
+      },
+      {
+        "id": "N190",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5.5,
+        "delta": 11
+      },
+      {
+        "id": "N191",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 7.2,
+        "delta": -47.4
+      },
+      {
+        "id": "N191",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5.5,
+        "delta": 10.5
+      },
+      {
+        "id": "N192",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 9,
+        "delta": -45.6
+      },
+      {
+        "id": "N192",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 9
+      },
+      {
+        "id": "N193",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 10.8,
+        "delta": -43.8
+      },
+      {
+        "id": "N193",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N194",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 12.6,
+        "delta": -42
+      },
+      {
+        "id": "N194",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N195",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 14.4,
+        "delta": -40.2
+      },
+      {
+        "id": "N195",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      },
+      {
+        "id": "N196",
+        "axis": "x",
+        "legacy": 54.6,
+        "bridgeDefinition": 16.2,
+        "delta": -38.400000000000006
+      },
+      {
+        "id": "N197",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 18,
+        "delta": -38.4
+      },
+      {
+        "id": "N197",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5.5,
+        "delta": 11
+      },
+      {
+        "id": "N198",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 20.4,
+        "delta": -36
+      },
+      {
+        "id": "N198",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5.5,
+        "delta": 10.5
+      },
+      {
+        "id": "N199",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 22.8,
+        "delta": -33.599999999999994
+      },
+      {
+        "id": "N199",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 9
+      },
+      {
+        "id": "N200",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 25.2,
+        "delta": -31.2
+      },
+      {
+        "id": "N200",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N201",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 27.6,
+        "delta": -28.799999999999997
+      },
+      {
+        "id": "N201",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N202",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 30,
+        "delta": -26.4
+      },
+      {
+        "id": "N202",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      },
+      {
+        "id": "N203",
+        "axis": "x",
+        "legacy": 56.4,
+        "bridgeDefinition": 32.4,
+        "delta": -24
+      },
+      {
+        "id": "N204",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 34.8,
+        "delta": -23.400000000000006
+      },
+      {
+        "id": "N204",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5.5,
+        "delta": 11
+      },
+      {
+        "id": "N205",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 37.2,
+        "delta": -21
+      },
+      {
+        "id": "N205",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5.5,
+        "delta": 10.5
+      },
+      {
+        "id": "N206",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 39.6,
+        "delta": -18.6
+      },
+      {
+        "id": "N206",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 9
+      },
+      {
+        "id": "N207",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 42,
+        "delta": -16.200000000000003
+      },
+      {
+        "id": "N207",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N208",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 43.8,
+        "delta": -14.400000000000006
+      },
+      {
+        "id": "N208",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N209",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 45.6,
+        "delta": -12.600000000000001
+      },
+      {
+        "id": "N209",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      },
+      {
+        "id": "N210",
+        "axis": "x",
+        "legacy": 58.2,
+        "bridgeDefinition": 47.4,
+        "delta": -10.800000000000004
+      },
+      {
+        "id": "N211",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 49.2,
+        "delta": -10.799999999999997
+      },
+      {
+        "id": "N211",
+        "axis": "y",
+        "legacy": -5.5,
+        "bridgeDefinition": 5.5,
+        "delta": 11
+      },
+      {
+        "id": "N212",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 51,
+        "delta": -9
+      },
+      {
+        "id": "N212",
+        "axis": "y",
+        "legacy": -5,
+        "bridgeDefinition": 5.5,
+        "delta": 10.5
+      },
+      {
+        "id": "N213",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 52.8,
+        "delta": -7.200000000000003
+      },
+      {
+        "id": "N213",
+        "axis": "y",
+        "legacy": -3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 9
+      },
+      {
+        "id": "N214",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 54.6,
+        "delta": -5.399999999999999
+      },
+      {
+        "id": "N214",
+        "axis": "y",
+        "legacy": 0,
+        "bridgeDefinition": 5.5,
+        "delta": 5.5
+      },
+      {
+        "id": "N215",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 56.4,
+        "delta": -3.6000000000000014
+      },
+      {
+        "id": "N215",
+        "axis": "y",
+        "legacy": 3.5,
+        "bridgeDefinition": 5.5,
+        "delta": 2
+      },
+      {
+        "id": "N216",
+        "axis": "x",
+        "legacy": 60,
+        "bridgeDefinition": 58.2,
+        "delta": -1.7999999999999972
+      },
+      {
+        "id": "N216",
+        "axis": "y",
+        "legacy": 5,
+        "bridgeDefinition": 5.5,
+        "delta": 0.5
+      }
+    ],
+    "memberConnectionMismatches": [
+      {
+        "id": "M1",
+        "legacy": "N1->N8",
+        "bridgeDefinition": "N1->N2"
+      },
+      {
+        "id": "M2",
+        "legacy": "N8->N15",
+        "bridgeDefinition": "N2->N3"
+      },
+      {
+        "id": "M3",
+        "legacy": "N15->N22",
+        "bridgeDefinition": "N3->N4"
+      },
+      {
+        "id": "M4",
+        "legacy": "N22->N29",
+        "bridgeDefinition": "N4->N5"
+      },
+      {
+        "id": "M5",
+        "legacy": "N29->N36",
+        "bridgeDefinition": "N5->N6"
+      },
+      {
+        "id": "M6",
+        "legacy": "N36->N43",
+        "bridgeDefinition": "N6->N7"
+      },
+      {
+        "id": "M7",
+        "legacy": "N43->N50",
+        "bridgeDefinition": "N7->N8"
+      },
+      {
+        "id": "M8",
+        "legacy": "N50->N57",
+        "bridgeDefinition": "N8->N9"
+      },
+      {
+        "id": "M9",
+        "legacy": "N57->N64",
+        "bridgeDefinition": "N9->N10"
+      },
+      {
+        "id": "M10",
+        "legacy": "N64->N71",
+        "bridgeDefinition": "N10->N11"
+      },
+      {
+        "id": "M11",
+        "legacy": "N71->N78",
+        "bridgeDefinition": "N11->N12"
+      },
+      {
+        "id": "M12",
+        "legacy": "N78->N85",
+        "bridgeDefinition": "N12->N13"
+      },
+      {
+        "id": "M13",
+        "legacy": "N85->N92",
+        "bridgeDefinition": "N13->N14"
+      },
+      {
+        "id": "M14",
+        "legacy": "N92->N99",
+        "bridgeDefinition": "N14->N15"
+      },
+      {
+        "id": "M15",
+        "legacy": "N99->N106",
+        "bridgeDefinition": "N15->N16"
+      },
+      {
+        "id": "M16",
+        "legacy": "N106->N113",
+        "bridgeDefinition": "N16->N17"
+      },
+      {
+        "id": "M17",
+        "legacy": "N113->N120",
+        "bridgeDefinition": "N17->N18"
+      },
+      {
+        "id": "M18",
+        "legacy": "N120->N127",
+        "bridgeDefinition": "N18->N19"
+      },
+      {
+        "id": "M19",
+        "legacy": "N127->N134",
+        "bridgeDefinition": "N19->N20"
+      },
+      {
+        "id": "M20",
+        "legacy": "N134->N141",
+        "bridgeDefinition": "N20->N21"
+      },
+      {
+        "id": "M21",
+        "legacy": "N141->N148",
+        "bridgeDefinition": "N21->N22"
+      },
+      {
+        "id": "M22",
+        "legacy": "N148->N155",
+        "bridgeDefinition": "N22->N23"
+      },
+      {
+        "id": "M23",
+        "legacy": "N155->N162",
+        "bridgeDefinition": "N23->N24"
+      },
+      {
+        "id": "M24",
+        "legacy": "N162->N169",
+        "bridgeDefinition": "N24->N25"
+      },
+      {
+        "id": "M25",
+        "legacy": "N169->N176",
+        "bridgeDefinition": "N25->N26"
+      },
+      {
+        "id": "M26",
+        "legacy": "N176->N183",
+        "bridgeDefinition": "N26->N27"
+      },
+      {
+        "id": "M27",
+        "legacy": "N183->N190",
+        "bridgeDefinition": "N27->N28"
+      },
+      {
+        "id": "M28",
+        "legacy": "N190->N197",
+        "bridgeDefinition": "N28->N29"
+      },
+      {
+        "id": "M29",
+        "legacy": "N197->N204",
+        "bridgeDefinition": "N29->N30"
+      },
+      {
+        "id": "M30",
+        "legacy": "N204->N211",
+        "bridgeDefinition": "N30->N31"
+      },
+      {
+        "id": "M31",
+        "legacy": "N2->N9",
+        "bridgeDefinition": "N32->N33"
+      },
+      {
+        "id": "M32",
+        "legacy": "N9->N16",
+        "bridgeDefinition": "N33->N34"
+      },
+      {
+        "id": "M33",
+        "legacy": "N16->N23",
+        "bridgeDefinition": "N34->N35"
+      },
+      {
+        "id": "M34",
+        "legacy": "N23->N30",
+        "bridgeDefinition": "N35->N36"
+      },
+      {
+        "id": "M35",
+        "legacy": "N30->N37",
+        "bridgeDefinition": "N36->N37"
+      },
+      {
+        "id": "M36",
+        "legacy": "N37->N44",
+        "bridgeDefinition": "N37->N38"
+      },
+      {
+        "id": "M37",
+        "legacy": "N44->N51",
+        "bridgeDefinition": "N38->N39"
+      },
+      {
+        "id": "M38",
+        "legacy": "N51->N58",
+        "bridgeDefinition": "N39->N40"
+      },
+      {
+        "id": "M39",
+        "legacy": "N58->N65",
+        "bridgeDefinition": "N40->N41"
+      },
+      {
+        "id": "M40",
+        "legacy": "N65->N72",
+        "bridgeDefinition": "N41->N42"
+      },
+      {
+        "id": "M41",
+        "legacy": "N72->N79",
+        "bridgeDefinition": "N42->N43"
+      },
+      {
+        "id": "M42",
+        "legacy": "N79->N86",
+        "bridgeDefinition": "N43->N44"
+      },
+      {
+        "id": "M43",
+        "legacy": "N86->N93",
+        "bridgeDefinition": "N44->N45"
+      },
+      {
+        "id": "M44",
+        "legacy": "N93->N100",
+        "bridgeDefinition": "N45->N46"
+      },
+      {
+        "id": "M45",
+        "legacy": "N100->N107",
+        "bridgeDefinition": "N46->N47"
+      },
+      {
+        "id": "M46",
+        "legacy": "N107->N114",
+        "bridgeDefinition": "N47->N48"
+      },
+      {
+        "id": "M47",
+        "legacy": "N114->N121",
+        "bridgeDefinition": "N48->N49"
+      },
+      {
+        "id": "M48",
+        "legacy": "N121->N128",
+        "bridgeDefinition": "N49->N50"
+      },
+      {
+        "id": "M49",
+        "legacy": "N128->N135",
+        "bridgeDefinition": "N50->N51"
+      },
+      {
+        "id": "M50",
+        "legacy": "N135->N142",
+        "bridgeDefinition": "N51->N52"
+      },
+      {
+        "id": "M51",
+        "legacy": "N142->N149",
+        "bridgeDefinition": "N52->N53"
+      },
+      {
+        "id": "M52",
+        "legacy": "N149->N156",
+        "bridgeDefinition": "N53->N54"
+      },
+      {
+        "id": "M53",
+        "legacy": "N156->N163",
+        "bridgeDefinition": "N54->N55"
+      },
+      {
+        "id": "M54",
+        "legacy": "N163->N170",
+        "bridgeDefinition": "N55->N56"
+      },
+      {
+        "id": "M55",
+        "legacy": "N170->N177",
+        "bridgeDefinition": "N56->N57"
+      },
+      {
+        "id": "M56",
+        "legacy": "N177->N184",
+        "bridgeDefinition": "N57->N58"
+      },
+      {
+        "id": "M57",
+        "legacy": "N184->N191",
+        "bridgeDefinition": "N58->N59"
+      },
+      {
+        "id": "M58",
+        "legacy": "N191->N198",
+        "bridgeDefinition": "N59->N60"
+      },
+      {
+        "id": "M59",
+        "legacy": "N198->N205",
+        "bridgeDefinition": "N60->N61"
+      },
+      {
+        "id": "M60",
+        "legacy": "N205->N212",
+        "bridgeDefinition": "N61->N62"
+      },
+      {
+        "id": "M61",
+        "legacy": "N3->N10",
+        "bridgeDefinition": "N63->N64"
+      },
+      {
+        "id": "M62",
+        "legacy": "N10->N17",
+        "bridgeDefinition": "N64->N65"
+      },
+      {
+        "id": "M63",
+        "legacy": "N17->N24",
+        "bridgeDefinition": "N65->N66"
+      },
+      {
+        "id": "M64",
+        "legacy": "N24->N31",
+        "bridgeDefinition": "N66->N67"
+      },
+      {
+        "id": "M65",
+        "legacy": "N31->N38",
+        "bridgeDefinition": "N67->N68"
+      },
+      {
+        "id": "M66",
+        "legacy": "N38->N45",
+        "bridgeDefinition": "N68->N69"
+      },
+      {
+        "id": "M67",
+        "legacy": "N45->N52",
+        "bridgeDefinition": "N69->N70"
+      },
+      {
+        "id": "M68",
+        "legacy": "N52->N59",
+        "bridgeDefinition": "N70->N71"
+      },
+      {
+        "id": "M69",
+        "legacy": "N59->N66",
+        "bridgeDefinition": "N71->N72"
+      },
+      {
+        "id": "M70",
+        "legacy": "N66->N73",
+        "bridgeDefinition": "N72->N73"
+      },
+      {
+        "id": "M71",
+        "legacy": "N73->N80",
+        "bridgeDefinition": "N73->N74"
+      },
+      {
+        "id": "M72",
+        "legacy": "N80->N87",
+        "bridgeDefinition": "N74->N75"
+      },
+      {
+        "id": "M73",
+        "legacy": "N87->N94",
+        "bridgeDefinition": "N75->N76"
+      },
+      {
+        "id": "M74",
+        "legacy": "N94->N101",
+        "bridgeDefinition": "N76->N77"
+      },
+      {
+        "id": "M75",
+        "legacy": "N101->N108",
+        "bridgeDefinition": "N77->N78"
+      },
+      {
+        "id": "M76",
+        "legacy": "N108->N115",
+        "bridgeDefinition": "N78->N79"
+      },
+      {
+        "id": "M77",
+        "legacy": "N115->N122",
+        "bridgeDefinition": "N79->N80"
+      },
+      {
+        "id": "M78",
+        "legacy": "N122->N129",
+        "bridgeDefinition": "N80->N81"
+      },
+      {
+        "id": "M79",
+        "legacy": "N129->N136",
+        "bridgeDefinition": "N81->N82"
+      },
+      {
+        "id": "M80",
+        "legacy": "N136->N143",
+        "bridgeDefinition": "N82->N83"
+      },
+      {
+        "id": "M81",
+        "legacy": "N143->N150",
+        "bridgeDefinition": "N83->N84"
+      },
+      {
+        "id": "M82",
+        "legacy": "N150->N157",
+        "bridgeDefinition": "N84->N85"
+      },
+      {
+        "id": "M83",
+        "legacy": "N157->N164",
+        "bridgeDefinition": "N85->N86"
+      },
+      {
+        "id": "M84",
+        "legacy": "N164->N171",
+        "bridgeDefinition": "N86->N87"
+      },
+      {
+        "id": "M85",
+        "legacy": "N171->N178",
+        "bridgeDefinition": "N87->N88"
+      },
+      {
+        "id": "M86",
+        "legacy": "N178->N185",
+        "bridgeDefinition": "N88->N89"
+      },
+      {
+        "id": "M87",
+        "legacy": "N185->N192",
+        "bridgeDefinition": "N89->N90"
+      },
+      {
+        "id": "M88",
+        "legacy": "N192->N199",
+        "bridgeDefinition": "N90->N91"
+      },
+      {
+        "id": "M89",
+        "legacy": "N199->N206",
+        "bridgeDefinition": "N91->N92"
+      },
+      {
+        "id": "M90",
+        "legacy": "N206->N213",
+        "bridgeDefinition": "N92->N93"
+      },
+      {
+        "id": "M91",
+        "legacy": "N4->N11",
+        "bridgeDefinition": "N94->N95"
+      },
+      {
+        "id": "M92",
+        "legacy": "N11->N18",
+        "bridgeDefinition": "N95->N96"
+      },
+      {
+        "id": "M93",
+        "legacy": "N18->N25",
+        "bridgeDefinition": "N96->N97"
+      },
+      {
+        "id": "M94",
+        "legacy": "N25->N32",
+        "bridgeDefinition": "N97->N98"
+      },
+      {
+        "id": "M95",
+        "legacy": "N32->N39",
+        "bridgeDefinition": "N98->N99"
+      },
+      {
+        "id": "M96",
+        "legacy": "N39->N46",
+        "bridgeDefinition": "N99->N100"
+      },
+      {
+        "id": "M97",
+        "legacy": "N46->N53",
+        "bridgeDefinition": "N100->N101"
+      },
+      {
+        "id": "M98",
+        "legacy": "N53->N60",
+        "bridgeDefinition": "N101->N102"
+      },
+      {
+        "id": "M99",
+        "legacy": "N60->N67",
+        "bridgeDefinition": "N102->N103"
+      },
+      {
+        "id": "M100",
+        "legacy": "N67->N74",
+        "bridgeDefinition": "N103->N104"
+      },
+      {
+        "id": "M101",
+        "legacy": "N74->N81",
+        "bridgeDefinition": "N104->N105"
+      },
+      {
+        "id": "M102",
+        "legacy": "N81->N88",
+        "bridgeDefinition": "N105->N106"
+      },
+      {
+        "id": "M103",
+        "legacy": "N88->N95",
+        "bridgeDefinition": "N106->N107"
+      },
+      {
+        "id": "M104",
+        "legacy": "N95->N102",
+        "bridgeDefinition": "N107->N108"
+      },
+      {
+        "id": "M105",
+        "legacy": "N102->N109",
+        "bridgeDefinition": "N108->N109"
+      },
+      {
+        "id": "M106",
+        "legacy": "N109->N116",
+        "bridgeDefinition": "N109->N110"
+      },
+      {
+        "id": "M107",
+        "legacy": "N116->N123",
+        "bridgeDefinition": "N110->N111"
+      },
+      {
+        "id": "M108",
+        "legacy": "N123->N130",
+        "bridgeDefinition": "N111->N112"
+      },
+      {
+        "id": "M109",
+        "legacy": "N130->N137",
+        "bridgeDefinition": "N112->N113"
+      },
+      {
+        "id": "M110",
+        "legacy": "N137->N144",
+        "bridgeDefinition": "N113->N114"
+      },
+      {
+        "id": "M111",
+        "legacy": "N144->N151",
+        "bridgeDefinition": "N114->N115"
+      },
+      {
+        "id": "M112",
+        "legacy": "N151->N158",
+        "bridgeDefinition": "N115->N116"
+      },
+      {
+        "id": "M113",
+        "legacy": "N158->N165",
+        "bridgeDefinition": "N116->N117"
+      },
+      {
+        "id": "M114",
+        "legacy": "N165->N172",
+        "bridgeDefinition": "N117->N118"
+      },
+      {
+        "id": "M115",
+        "legacy": "N172->N179",
+        "bridgeDefinition": "N118->N119"
+      },
+      {
+        "id": "M116",
+        "legacy": "N179->N186",
+        "bridgeDefinition": "N119->N120"
+      },
+      {
+        "id": "M117",
+        "legacy": "N186->N193",
+        "bridgeDefinition": "N120->N121"
+      },
+      {
+        "id": "M118",
+        "legacy": "N193->N200",
+        "bridgeDefinition": "N121->N122"
+      },
+      {
+        "id": "M119",
+        "legacy": "N200->N207",
+        "bridgeDefinition": "N122->N123"
+      },
+      {
+        "id": "M120",
+        "legacy": "N207->N214",
+        "bridgeDefinition": "N123->N124"
+      },
+      {
+        "id": "M121",
+        "legacy": "N5->N12",
+        "bridgeDefinition": "N125->N126"
+      },
+      {
+        "id": "M122",
+        "legacy": "N12->N19",
+        "bridgeDefinition": "N126->N127"
+      },
+      {
+        "id": "M123",
+        "legacy": "N19->N26",
+        "bridgeDefinition": "N127->N128"
+      },
+      {
+        "id": "M124",
+        "legacy": "N26->N33",
+        "bridgeDefinition": "N128->N129"
+      },
+      {
+        "id": "M125",
+        "legacy": "N33->N40",
+        "bridgeDefinition": "N129->N130"
+      },
+      {
+        "id": "M126",
+        "legacy": "N40->N47",
+        "bridgeDefinition": "N130->N131"
+      },
+      {
+        "id": "M127",
+        "legacy": "N47->N54",
+        "bridgeDefinition": "N131->N132"
+      },
+      {
+        "id": "M128",
+        "legacy": "N54->N61",
+        "bridgeDefinition": "N132->N133"
+      },
+      {
+        "id": "M129",
+        "legacy": "N61->N68",
+        "bridgeDefinition": "N133->N134"
+      },
+      {
+        "id": "M130",
+        "legacy": "N68->N75",
+        "bridgeDefinition": "N134->N135"
+      },
+      {
+        "id": "M131",
+        "legacy": "N75->N82",
+        "bridgeDefinition": "N135->N136"
+      },
+      {
+        "id": "M132",
+        "legacy": "N82->N89",
+        "bridgeDefinition": "N136->N137"
+      },
+      {
+        "id": "M133",
+        "legacy": "N89->N96",
+        "bridgeDefinition": "N137->N138"
+      },
+      {
+        "id": "M134",
+        "legacy": "N96->N103",
+        "bridgeDefinition": "N138->N139"
+      },
+      {
+        "id": "M135",
+        "legacy": "N103->N110",
+        "bridgeDefinition": "N139->N140"
+      },
+      {
+        "id": "M136",
+        "legacy": "N110->N117",
+        "bridgeDefinition": "N140->N141"
+      },
+      {
+        "id": "M137",
+        "legacy": "N117->N124",
+        "bridgeDefinition": "N141->N142"
+      },
+      {
+        "id": "M138",
+        "legacy": "N124->N131",
+        "bridgeDefinition": "N142->N143"
+      },
+      {
+        "id": "M139",
+        "legacy": "N131->N138",
+        "bridgeDefinition": "N143->N144"
+      },
+      {
+        "id": "M140",
+        "legacy": "N138->N145",
+        "bridgeDefinition": "N144->N145"
+      },
+      {
+        "id": "M141",
+        "legacy": "N145->N152",
+        "bridgeDefinition": "N145->N146"
+      },
+      {
+        "id": "M142",
+        "legacy": "N152->N159",
+        "bridgeDefinition": "N146->N147"
+      },
+      {
+        "id": "M143",
+        "legacy": "N159->N166",
+        "bridgeDefinition": "N147->N148"
+      },
+      {
+        "id": "M144",
+        "legacy": "N166->N173",
+        "bridgeDefinition": "N148->N149"
+      },
+      {
+        "id": "M145",
+        "legacy": "N173->N180",
+        "bridgeDefinition": "N149->N150"
+      },
+      {
+        "id": "M146",
+        "legacy": "N180->N187",
+        "bridgeDefinition": "N150->N151"
+      },
+      {
+        "id": "M147",
+        "legacy": "N187->N194",
+        "bridgeDefinition": "N151->N152"
+      },
+      {
+        "id": "M148",
+        "legacy": "N194->N201",
+        "bridgeDefinition": "N152->N153"
+      },
+      {
+        "id": "M149",
+        "legacy": "N201->N208",
+        "bridgeDefinition": "N153->N154"
+      },
+      {
+        "id": "M150",
+        "legacy": "N208->N215",
+        "bridgeDefinition": "N154->N155"
+      },
+      {
+        "id": "M151",
+        "legacy": "N6->N13",
+        "bridgeDefinition": "N156->N157"
+      },
+      {
+        "id": "M152",
+        "legacy": "N13->N20",
+        "bridgeDefinition": "N157->N158"
+      },
+      {
+        "id": "M153",
+        "legacy": "N20->N27",
+        "bridgeDefinition": "N158->N159"
+      },
+      {
+        "id": "M154",
+        "legacy": "N27->N34",
+        "bridgeDefinition": "N159->N160"
+      },
+      {
+        "id": "M155",
+        "legacy": "N34->N41",
+        "bridgeDefinition": "N160->N161"
+      },
+      {
+        "id": "M156",
+        "legacy": "N41->N48",
+        "bridgeDefinition": "N161->N162"
+      },
+      {
+        "id": "M157",
+        "legacy": "N48->N55",
+        "bridgeDefinition": "N162->N163"
+      },
+      {
+        "id": "M158",
+        "legacy": "N55->N62",
+        "bridgeDefinition": "N163->N164"
+      },
+      {
+        "id": "M159",
+        "legacy": "N62->N69",
+        "bridgeDefinition": "N164->N165"
+      },
+      {
+        "id": "M160",
+        "legacy": "N69->N76",
+        "bridgeDefinition": "N165->N166"
+      },
+      {
+        "id": "M161",
+        "legacy": "N76->N83",
+        "bridgeDefinition": "N166->N167"
+      },
+      {
+        "id": "M162",
+        "legacy": "N83->N90",
+        "bridgeDefinition": "N167->N168"
+      },
+      {
+        "id": "M163",
+        "legacy": "N90->N97",
+        "bridgeDefinition": "N168->N169"
+      },
+      {
+        "id": "M164",
+        "legacy": "N97->N104",
+        "bridgeDefinition": "N169->N170"
+      },
+      {
+        "id": "M165",
+        "legacy": "N104->N111",
+        "bridgeDefinition": "N170->N171"
+      },
+      {
+        "id": "M166",
+        "legacy": "N111->N118",
+        "bridgeDefinition": "N171->N172"
+      },
+      {
+        "id": "M167",
+        "legacy": "N118->N125",
+        "bridgeDefinition": "N172->N173"
+      },
+      {
+        "id": "M168",
+        "legacy": "N125->N132",
+        "bridgeDefinition": "N173->N174"
+      },
+      {
+        "id": "M169",
+        "legacy": "N132->N139",
+        "bridgeDefinition": "N174->N175"
+      },
+      {
+        "id": "M170",
+        "legacy": "N139->N146",
+        "bridgeDefinition": "N175->N176"
+      },
+      {
+        "id": "M171",
+        "legacy": "N146->N153",
+        "bridgeDefinition": "N176->N177"
+      },
+      {
+        "id": "M172",
+        "legacy": "N153->N160",
+        "bridgeDefinition": "N177->N178"
+      },
+      {
+        "id": "M173",
+        "legacy": "N160->N167",
+        "bridgeDefinition": "N178->N179"
+      },
+      {
+        "id": "M174",
+        "legacy": "N167->N174",
+        "bridgeDefinition": "N179->N180"
+      },
+      {
+        "id": "M175",
+        "legacy": "N174->N181",
+        "bridgeDefinition": "N180->N181"
+      },
+      {
+        "id": "M176",
+        "legacy": "N181->N188",
+        "bridgeDefinition": "N181->N182"
+      },
+      {
+        "id": "M177",
+        "legacy": "N188->N195",
+        "bridgeDefinition": "N182->N183"
+      },
+      {
+        "id": "M178",
+        "legacy": "N195->N202",
+        "bridgeDefinition": "N183->N184"
+      },
+      {
+        "id": "M179",
+        "legacy": "N202->N209",
+        "bridgeDefinition": "N184->N185"
+      },
+      {
+        "id": "M180",
+        "legacy": "N209->N216",
+        "bridgeDefinition": "N185->N186"
+      },
+      {
+        "id": "M181",
+        "legacy": "N7->N14",
+        "bridgeDefinition": "N187->N188"
+      },
+      {
+        "id": "M182",
+        "legacy": "N14->N21",
+        "bridgeDefinition": "N188->N189"
+      },
+      {
+        "id": "M183",
+        "legacy": "N21->N28",
+        "bridgeDefinition": "N189->N190"
+      },
+      {
+        "id": "M184",
+        "legacy": "N28->N35",
+        "bridgeDefinition": "N190->N191"
+      },
+      {
+        "id": "M185",
+        "legacy": "N35->N42",
+        "bridgeDefinition": "N191->N192"
+      },
+      {
+        "id": "M186",
+        "legacy": "N42->N49",
+        "bridgeDefinition": "N192->N193"
+      },
+      {
+        "id": "M187",
+        "legacy": "N49->N56",
+        "bridgeDefinition": "N193->N194"
+      },
+      {
+        "id": "M188",
+        "legacy": "N56->N63",
+        "bridgeDefinition": "N194->N195"
+      },
+      {
+        "id": "M189",
+        "legacy": "N63->N70",
+        "bridgeDefinition": "N195->N196"
+      },
+      {
+        "id": "M190",
+        "legacy": "N70->N77",
+        "bridgeDefinition": "N196->N197"
+      },
+      {
+        "id": "M191",
+        "legacy": "N77->N84",
+        "bridgeDefinition": "N197->N198"
+      },
+      {
+        "id": "M192",
+        "legacy": "N84->N91",
+        "bridgeDefinition": "N198->N199"
+      },
+      {
+        "id": "M193",
+        "legacy": "N91->N98",
+        "bridgeDefinition": "N199->N200"
+      },
+      {
+        "id": "M194",
+        "legacy": "N98->N105",
+        "bridgeDefinition": "N200->N201"
+      },
+      {
+        "id": "M195",
+        "legacy": "N105->N112",
+        "bridgeDefinition": "N201->N202"
+      },
+      {
+        "id": "M196",
+        "legacy": "N112->N119",
+        "bridgeDefinition": "N202->N203"
+      },
+      {
+        "id": "M197",
+        "legacy": "N119->N126",
+        "bridgeDefinition": "N203->N204"
+      },
+      {
+        "id": "M198",
+        "legacy": "N126->N133",
+        "bridgeDefinition": "N204->N205"
+      },
+      {
+        "id": "M199",
+        "legacy": "N133->N140",
+        "bridgeDefinition": "N205->N206"
+      },
+      {
+        "id": "M200",
+        "legacy": "N140->N147",
+        "bridgeDefinition": "N206->N207"
+      },
+      {
+        "id": "M201",
+        "legacy": "N147->N154",
+        "bridgeDefinition": "N207->N208"
+      },
+      {
+        "id": "M202",
+        "legacy": "N154->N161",
+        "bridgeDefinition": "N208->N209"
+      },
+      {
+        "id": "M203",
+        "legacy": "N161->N168",
+        "bridgeDefinition": "N209->N210"
+      },
+      {
+        "id": "M204",
+        "legacy": "N168->N175",
+        "bridgeDefinition": "N210->N211"
+      },
+      {
+        "id": "M205",
+        "legacy": "N175->N182",
+        "bridgeDefinition": "N211->N212"
+      },
+      {
+        "id": "M206",
+        "legacy": "N182->N189",
+        "bridgeDefinition": "N212->N213"
+      },
+      {
+        "id": "M207",
+        "legacy": "N189->N196",
+        "bridgeDefinition": "N213->N214"
+      },
+      {
+        "id": "M208",
+        "legacy": "N196->N203",
+        "bridgeDefinition": "N214->N215"
+      },
+      {
+        "id": "M209",
+        "legacy": "N203->N210",
+        "bridgeDefinition": "N215->N216"
+      },
+      {
+        "id": "M210",
+        "legacy": "N210->N217",
+        "bridgeDefinition": "N216->N217"
+      }
+    ],
+    "supportMismatches": [],
+    "loadMismatches": []
+  }
+}
