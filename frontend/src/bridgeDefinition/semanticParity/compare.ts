@@ -1,5 +1,6 @@
 import type { ProjectModel } from "../../types";
 import { buildGeometryMetrics } from "./geometryParity";
+import { compareLoadParity } from "./loadParity";
 import { matchNormalizedMembers } from "./memberMatching";
 import { matchNormalizedNodes } from "./nodeMatching";
 import { normalizeProjectModelForSemanticParity } from "./normalize";
@@ -26,7 +27,7 @@ function deriveStatus(
   metrics: ParityReport["metrics"],
 ): SemanticParityStatus {
   if (report.errors.length > 0) return "invalid";
-  if (report.ambiguities.length > 0 || metrics.support.ambiguousNodeCount > 0) {
+  if (report.ambiguities.length > 0 || metrics.support.ambiguousNodeCount > 0 || metrics.load.ambiguousLoadCandidateCount > 0) {
     return "indeterminate";
   }
   if (!metrics.structuralValidation.left.valid || !metrics.structuralValidation.right.valid) {
@@ -44,6 +45,15 @@ function deriveStatus(
     || metrics.property.sectionMismatchCount > 0
     || metrics.property.materialMismatchCount > 0
     || metrics.property.orientationMismatchCount > 0
+    || metrics.load.unmatchedLeftLoadCaseCount > 0
+    || metrics.load.unmatchedRightLoadCaseCount > 0
+    || metrics.load.unmatchedLeftNodalLoadCount > 0
+    || metrics.load.unmatchedRightNodalLoadCount > 0
+    || metrics.load.unmatchedLeftMemberLoadCount > 0
+    || metrics.load.unmatchedRightMemberLoadCount > 0
+    || metrics.load.nodalLoadValueMismatchCount > 0
+    || metrics.load.memberLoadValueMismatchCount > 0
+    || !metrics.load.totalAppliedLoadEquivalent
   ) {
     return "different";
   }
@@ -79,6 +89,7 @@ export function compareNormalizedModels(
   const topology = buildTopologyMetrics(left, right, nodeMatch.matched);
   const support = compareSupportParity(left, right, nodeMatch.matched);
   const property = comparePropertyParity(left, right, memberMatch.matched, tolerance);
+  const load = compareLoadParity(left, right, nodeMatch.matched, memberMatch.matched, tolerance);
 
   const unmatchedLeft = [...nodeMatch.unmatchedLeft, ...memberMatch.unmatchedLeft];
   const unmatchedRight = [...nodeMatch.unmatchedRight, ...memberMatch.unmatchedRight];
@@ -89,12 +100,14 @@ export function compareNormalizedModels(
     .concat(geometry.mismatches)
     .concat(topology.mismatches)
     .concat(support.mismatches)
-    .concat(property.mismatches);
+    .concat(property.mismatches)
+    .concat(load.mismatches);
 
   const ambiguities = [
     ...nodeMatch.ambiguities,
     ...memberMatch.ambiguities,
     ...support.ambiguities,
+    ...load.ambiguities,
   ];
 
   const metrics: ParityReport["metrics"] = {
@@ -114,6 +127,7 @@ export function compareNormalizedModels(
     },
     support: support.summary,
     property: property.summary,
+    load: load.summary,
   };
 
   const reportBase = {
@@ -125,6 +139,9 @@ export function compareNormalizedModels(
         supports: left.supports.length,
         sections: left.sections.length,
         materials: left.materials?.length,
+        loadCases: left.loadCases?.length,
+        nodalLoads: left.nodalLoads?.length,
+        memberLoads: left.memberLoads?.length,
       },
       right: {
         nodes: right.nodes.length,
@@ -132,6 +149,9 @@ export function compareNormalizedModels(
         supports: right.supports.length,
         sections: right.sections.length,
         materials: right.materials?.length,
+        loadCases: right.loadCases?.length,
+        nodalLoads: right.nodalLoads?.length,
+        memberLoads: right.memberLoads?.length,
       },
       matched: {
         nodes: nodeMatch.matched.length,
@@ -151,6 +171,7 @@ export function compareNormalizedModels(
       ...rightValidation.warnings,
       ...topology.warnings,
       ...property.warnings,
+      ...load.warnings,
     ],
     errors: [
       ...left.errors,
@@ -188,6 +209,16 @@ export function compareNormalizedModels(
         && metrics.property.materialMismatchCount === 0
         && metrics.property.orientationMismatchCount === 0
         && metrics.property.orientationOppositeCount === 0,
+      loadEquivalent: metrics.load.unmatchedLeftLoadCaseCount === 0
+        && metrics.load.unmatchedRightLoadCaseCount === 0
+        && metrics.load.unmatchedLeftNodalLoadCount === 0
+        && metrics.load.unmatchedRightNodalLoadCount === 0
+        && metrics.load.unmatchedLeftMemberLoadCount === 0
+        && metrics.load.unmatchedRightMemberLoadCount === 0
+        && metrics.load.nodalLoadValueMismatchCount === 0
+        && metrics.load.memberLoadValueMismatchCount === 0
+        && metrics.load.ambiguousLoadCandidateCount === 0
+        && metrics.load.totalAppliedLoadEquivalent,
     },
   };
 }
@@ -201,11 +232,13 @@ export function compareSemanticParity(
     ...options,
     source: options.leftSource ?? "unknown",
     leftLabel: options.leftLabel,
+    loadsMapped: options.leftLoadsMapped,
   });
   const rightModel = normalizeProjectModelForSemanticParity(right, {
     ...options,
     source: options.rightSource ?? "unknown",
     rightLabel: options.rightLabel,
+    loadsMapped: options.rightLoadsMapped,
   });
   return compareNormalizedModels(leftModel, rightModel, options);
 }

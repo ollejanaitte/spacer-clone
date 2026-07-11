@@ -12,6 +12,8 @@ export {
   serializeSemanticParityReportForGolden,
 } from "./generatedModelParity";
 export { buildGeometryMetrics, computeGeometryMetrics } from "./geometryParity";
+export { compareLoadParity } from "./loadParity";
+export { loadCaseSemanticKey, normalizeLoadCaseName } from "./normalize";
 export { matchNormalizedMembers } from "./memberMatching";
 export { matchNormalizedNodes } from "./nodeMatching";
 export { normalizeProjectModelForSemanticParity } from "./normalize";
@@ -51,12 +53,18 @@ export type {
   MatchDiagnostics,
   MatchResult,
   MatchedPair,
+  NormalizedLoadCase,
   NormalizedMaterial,
   NormalizedMember,
+  NormalizedMemberLoad,
   NormalizedModel,
   NormalizedNode,
+  NormalizedNodalLoad,
   NormalizedSection,
   NormalizedSupport,
+  NodalLoadVector,
+  MemberLoadVector,
+  LoadParitySummary,
   ParityMetrics,
   ParityMismatch,
   ParityReport,

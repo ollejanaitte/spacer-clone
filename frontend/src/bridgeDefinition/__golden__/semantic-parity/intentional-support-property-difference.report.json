@@ -4,8 +4,11 @@
     "ambiguities": [],
     "counts": {
       "left": {
+        "loadCases": 1,
         "materials": 1,
+        "memberLoads": 0,
         "members": 136,
+        "nodalLoads": 0,
         "nodes": 77,
         "sections": 1,
         "supports": 4
@@ -15,8 +18,11 @@
         "nodes": 77
       },
       "right": {
+        "loadCases": 1,
         "materials": 1,
+        "memberLoads": 0,
         "members": 136,
+        "nodalLoads": 0,
         "nodes": 77,
         "sections": 1,
         "supports": 4
@@ -362,6 +368,23 @@
           },
           "nodeCount": 77
         }
+      },
+      "load": {
+        "ambiguousLoadCandidateCount": 0,
+        "matchedLoadCaseCount": 1,
+        "matchedMemberLoadCount": 0,
+        "matchedNodalLoadCount": 0,
+        "memberLoadValueMismatchCount": 0,
+        "nodalLoadValueMismatchCount": 0,
+        "totalAppliedLoadEquivalent": true,
+        "totalAppliedLoadLeft": 0,
+        "totalAppliedLoadRight": 0,
+        "unmatchedLeftLoadCaseCount": 0,
+        "unmatchedLeftMemberLoadCount": 0,
+        "unmatchedLeftNodalLoadCount": 0,
+        "unmatchedRightLoadCaseCount": 0,
+        "unmatchedRightMemberLoadCount": 0,
+        "unmatchedRightNodalLoadCount": 0
       },
       "property": {
         "comparedMemberCount": 136,
@@ -2350,6 +2373,7 @@
       "ambiguityCount": 0,
       "errorCount": 0,
       "geometryEquivalent": true,
+      "loadEquivalent": true,
       "matchedMembers": 136,
       "matchedNodes": 77,
       "mismatchCount": 137,

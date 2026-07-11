@@ -1,13 +1,18 @@
-import type { Material, Member, NodeItem, ProjectModel, Section, Support } from "../../types";
+import type { LoadCase, Material, Member, MemberLoad, NodeItem, NodalLoad, ProjectModel, Section, Support } from "../../types";
 import { mergeSemanticTolerance } from "./tolerance";
 import type {
   CompareSemanticParityOptions,
+  MemberLoadVector,
+  NormalizedLoadCase,
   NormalizedMaterial,
   NormalizedMember,
+  NormalizedMemberLoad,
   NormalizedModel,
   NormalizedNode,
+  NormalizedNodalLoad,
   NormalizedSection,
   NormalizedSupport,
+  NodalLoadVector,
   SemanticParityDiagnostic,
   SemanticParitySource,
   SemanticTolerance,
@@ -15,7 +20,7 @@ import type {
 } from "./types";
 
 type ProjectLike = Pick<ProjectModel, "nodes" | "members" | "supports" | "sections"> &
-  Partial<Pick<ProjectModel, "materials" | "units">>;
+  Partial<Pick<ProjectModel, "materials" | "units" | "loadCases" | "nodalLoads" | "memberLoads">>;
 
 function isFiniteVector(vector: Vector3): boolean {
   return Number.isFinite(vector.x) && Number.isFinite(vector.y) && Number.isFinite(vector.z);
@@ -200,6 +205,200 @@ function normalizeMaterials(materials: Material[]): NormalizedMaterial[] {
     .map((material, stableIndex) => ({ ...material, stableIndex }));
 }
 
+export function normalizeLoadCaseName(name: string): string {
+  return name.trim();
+}
+
+export function loadCaseSemanticKey(name: string, type: string): string {
+  return `${normalizeLoadCaseName(name)}:${type}`;
+}
+
+function nodalVectorKey(vector: NodalLoadVector): string {
+  return [vector.fx, vector.fy, vector.fz, vector.mx, vector.my, vector.mz]
+    .map((value) => (Number.isFinite(value) ? value.toPrecision(15) : "nan"))
+    .join(",");
+}
+
+function memberVectorKey(vector: MemberLoadVector): string {
+  return [vector.wx, vector.wy, vector.wz]
+    .map((value) => (Number.isFinite(value) ? value.toPrecision(15) : "nan"))
+    .join(",");
+}
+
+function normalizeLoadCases(
+  loadCases: LoadCase[],
+  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
+): NormalizedLoadCase[] {
+  return loadCases
+    .map((loadCase, sourceIndex) => {
+      if (loadCase.type !== "static") {
+        diagnostics.warnings.push({
+          category: "load",
+          severity: "info",
+          code: "SEMANTIC_LOAD_CASE_TYPE_UNSUPPORTED",
+          path: `loadCases/${sourceIndex}`,
+          sourceId: loadCase.id,
+          message: `Load case type "${loadCase.type}" is outside Step 8.5 static load parity scope.`,
+        });
+      }
+
+      const semanticKey = loadCaseSemanticKey(loadCase.name, loadCase.type);
+      return {
+        kind: "loadCase" as const,
+        key: semanticKey,
+        semanticKey,
+        stableIndex: sourceIndex,
+        sourceId: loadCase.id,
+        trace: { sourceId: loadCase.id, sourceIndex, sourcePath: `loadCases/${sourceIndex}` },
+        name: loadCase.name,
+        type: loadCase.type,
+      };
+    })
+    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
+    .map((loadCase, stableIndex) => ({ ...loadCase, stableIndex }));
+}
+
+function normalizeNodalLoads(
+  nodalLoads: NodalLoad[],
+  nodesById: Map<string, NormalizedNode>,
+  loadCaseById: Map<string, NormalizedLoadCase>,
+  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
+): NormalizedNodalLoad[] {
+  return nodalLoads
+    .map((load, sourceIndex) => {
+      const node = nodesById.get(load.nodeId);
+      const loadCase = loadCaseById.get(load.loadCaseId);
+      if (!node) {
+        diagnostics.errors.push({
+          category: "load",
+          severity: "error",
+          code: "SEMANTIC_NODAL_LOAD_NODE_REF_MISSING",
+          path: `nodalLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Nodal load references missing node "${load.nodeId}".`,
+        });
+      }
+      if (!loadCase) {
+        diagnostics.errors.push({
+          category: "load",
+          severity: "error",
+          code: "SEMANTIC_NODAL_LOAD_CASE_REF_MISSING",
+          path: `nodalLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Nodal load references missing load case "${load.loadCaseId}".`,
+        });
+      }
+
+      const vector: NodalLoadVector = {
+        fx: load.fx,
+        fy: load.fy,
+        fz: load.fz,
+        mx: load.mx,
+        my: load.my,
+        mz: load.mz,
+      };
+      const nodeKey = node?.key ?? `missing:${load.nodeId}`;
+      const loadCaseSemantic = loadCase?.semanticKey ?? `missing:${load.loadCaseId}`;
+      const semanticKey = `${nodeKey}:${loadCaseSemantic}:${nodalVectorKey(vector)}`;
+
+      return {
+        kind: "nodalLoad" as const,
+        key: semanticKey,
+        semanticKey,
+        stableIndex: sourceIndex,
+        sourceId: load.id,
+        trace: { sourceId: load.id, sourceIndex, sourcePath: `nodalLoads/${sourceIndex}` },
+        nodeKey: node?.key,
+        sourceNodeId: load.nodeId,
+        loadCaseSemanticKey: loadCaseSemantic,
+        sourceLoadCaseId: load.loadCaseId,
+        vector,
+      };
+    })
+    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
+    .map((load, stableIndex) => ({ ...load, stableIndex }));
+}
+
+function normalizeMemberLoads(
+  memberLoads: MemberLoad[],
+  membersById: Map<string, NormalizedMember>,
+  loadCaseById: Map<string, NormalizedLoadCase>,
+  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
+): NormalizedMemberLoad[] {
+  return memberLoads
+    .map((load, sourceIndex) => {
+      const member = membersById.get(load.memberId);
+      const loadCase = loadCaseById.get(load.loadCaseId);
+      if (!member) {
+        diagnostics.errors.push({
+          category: "load",
+          severity: "error",
+          code: "SEMANTIC_MEMBER_LOAD_MEMBER_REF_MISSING",
+          path: `memberLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Member load references missing member "${load.memberId}".`,
+        });
+      }
+      if (!loadCase) {
+        diagnostics.errors.push({
+          category: "load",
+          severity: "error",
+          code: "SEMANTIC_MEMBER_LOAD_CASE_REF_MISSING",
+          path: `memberLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Member load references missing load case "${load.loadCaseId}".`,
+        });
+      }
+      if (load.type !== "uniform") {
+        diagnostics.warnings.push({
+          category: "load",
+          severity: "info",
+          code: "SEMANTIC_MEMBER_LOAD_TYPE_UNSUPPORTED",
+          path: `memberLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Member load type "${load.type}" is outside Step 8.5 uniform load parity scope.`,
+        });
+      }
+      if (load.coordinateSystem !== "local" && load.coordinateSystem !== "global") {
+        diagnostics.errors.push({
+          category: "load",
+          severity: "error",
+          code: "SEMANTIC_MEMBER_LOAD_COORDINATE_SYSTEM_INVALID",
+          path: `memberLoads/${sourceIndex}`,
+          sourceId: load.id,
+          message: `Member load coordinateSystem "${load.coordinateSystem}" must be local or global.`,
+        });
+      }
+
+      const vector: MemberLoadVector = {
+        wx: load.wx,
+        wy: load.wy,
+        wz: load.wz,
+      };
+      const endpointKey = member?.endpointKey ?? `missing:${load.memberId}`;
+      const loadCaseSemantic = loadCase?.semanticKey ?? `missing:${load.loadCaseId}`;
+      const coordinateSystem: "local" | "global" = load.coordinateSystem === "local" ? "local" : "global";
+      const semanticKey = `${endpointKey}:${loadCaseSemantic}:${coordinateSystem}:${memberVectorKey(vector)}`;
+
+      return {
+        kind: "memberLoad" as const,
+        key: semanticKey,
+        semanticKey,
+        stableIndex: sourceIndex,
+        sourceId: load.id,
+        trace: { sourceId: load.id, sourceIndex, sourcePath: `memberLoads/${sourceIndex}` },
+        endpointKey: member?.endpointKey,
+        sourceMemberId: load.memberId,
+        loadCaseSemanticKey: loadCaseSemantic,
+        sourceLoadCaseId: load.loadCaseId,
+        coordinateSystem,
+        vector,
+      } satisfies NormalizedMemberLoad;
+    })
+    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
+    .map((load, stableIndex) => ({ ...load, stableIndex }));
+}
+
 export function normalizeProjectModelForSemanticParity(
   model: ProjectLike,
   options: CompareSemanticParityOptions & { source?: SemanticParitySource } = {},
@@ -215,17 +414,33 @@ export function normalizeProjectModelForSemanticParity(
     if (node.sourceId) nodesById.set(node.sourceId, node);
   }
 
+  const members = normalizeMembers(model.members ?? [], nodesById, diagnostics);
+  const membersById = new Map<string, NormalizedMember>();
+  for (const member of members) {
+    if (member.sourceId) membersById.set(member.sourceId, member);
+  }
+
+  const loadCases = normalizeLoadCases(model.loadCases ?? [], diagnostics);
+  const loadCaseById = new Map<string, NormalizedLoadCase>();
+  for (const loadCase of loadCases) {
+    if (loadCase.sourceId) loadCaseById.set(loadCase.sourceId, loadCase);
+  }
+
   return {
     metadata: {
       source: options.source ?? "unknown",
       label: options.leftLabel ?? options.rightLabel,
       units: model.units,
+      loadsMapped: options.loadsMapped ?? options.leftLoadsMapped ?? options.rightLoadsMapped,
     },
     nodes,
-    members: normalizeMembers(model.members ?? [], nodesById, diagnostics),
+    members,
     supports: normalizeSupports(model.supports ?? [], nodesById),
     sections: normalizeSections(model.sections ?? []),
     materials: normalizeMaterials(model.materials ?? []),
+    loadCases,
+    nodalLoads: normalizeNodalLoads(model.nodalLoads ?? [], nodesById, loadCaseById, diagnostics),
+    memberLoads: normalizeMemberLoads(model.memberLoads ?? [], membersById, loadCaseById, diagnostics),
     warnings: diagnostics.warnings,
     errors: diagnostics.errors,
   };
