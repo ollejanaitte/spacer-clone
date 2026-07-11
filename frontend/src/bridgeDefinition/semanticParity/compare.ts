@@ -1,7 +1,12 @@
 import type { ProjectModel } from "../../types";
+import { buildGeometryMetrics } from "./geometryParity";
 import { matchNormalizedMembers } from "./memberMatching";
 import { matchNormalizedNodes } from "./nodeMatching";
 import { normalizeProjectModelForSemanticParity } from "./normalize";
+import { comparePropertyParity } from "./propertyParity";
+import { validateStructuralModel } from "./structuralValidation";
+import { compareSupportParity } from "./supportParity";
+import { buildTopologyMetrics } from "./topologyParity";
 import { mergeSemanticTolerance } from "./tolerance";
 import type {
   CompareSemanticParityOptions,
@@ -12,10 +17,37 @@ import type {
   UnmatchedItem,
 } from "./types";
 
-function deriveStatus(report: Omit<ParityReport, "status" | "summary">): SemanticParityStatus {
+function hasBlockingMismatch(mismatches: ParityMismatch[]): boolean {
+  return mismatches.some((mismatch) => mismatch.severity === "error" || mismatch.severity === "blocker");
+}
+
+function deriveStatus(
+  report: Omit<ParityReport, "status" | "summary">,
+  metrics: ParityReport["metrics"],
+): SemanticParityStatus {
   if (report.errors.length > 0) return "invalid";
-  if (report.ambiguities.length > 0) return "indeterminate";
-  if (report.unmatchedLeft.length > 0 || report.unmatchedRight.length > 0 || report.mismatches.length > 0) {
+  if (report.ambiguities.length > 0 || metrics.support.ambiguousNodeCount > 0) {
+    return "indeterminate";
+  }
+  if (!metrics.structuralValidation.left.valid || !metrics.structuralValidation.right.valid) {
+    return "invalid";
+  }
+  if (
+    report.unmatchedLeft.length > 0
+    || report.unmatchedRight.length > 0
+    || hasBlockingMismatch(report.mismatches)
+    || !metrics.geometry.equivalent
+    || !metrics.topology.equivalent
+    || metrics.support.fixityMismatchCount > 0
+    || metrics.support.unmatchedLeftCount > 0
+    || metrics.support.unmatchedRightCount > 0
+    || metrics.property.sectionMismatchCount > 0
+    || metrics.property.materialMismatchCount > 0
+    || metrics.property.orientationMismatchCount > 0
+  ) {
+    return "different";
+  }
+  if (metrics.property.orientationOppositeCount > 0) {
     return "different";
   }
   return "equivalent";
@@ -38,10 +70,51 @@ export function compareNormalizedModels(
   options: CompareSemanticParityOptions = {},
 ): ParityReport {
   const tolerance = mergeSemanticTolerance(options.tolerance);
+  const leftValidation = validateStructuralModel(left, tolerance);
+  const rightValidation = validateStructuralModel(right, tolerance);
+
   const nodeMatch = matchNormalizedNodes(left.nodes, right.nodes, tolerance);
   const memberMatch = matchNormalizedMembers(left.members, right.members, nodeMatch.matched);
+  const geometry = buildGeometryMetrics(left, right, nodeMatch.matched, memberMatch.matched, tolerance);
+  const topology = buildTopologyMetrics(left, right, nodeMatch.matched);
+  const support = compareSupportParity(left, right, nodeMatch.matched);
+  const property = comparePropertyParity(left, right, memberMatch.matched, tolerance);
+
   const unmatchedLeft = [...nodeMatch.unmatchedLeft, ...memberMatch.unmatchedLeft];
   const unmatchedRight = [...nodeMatch.unmatchedRight, ...memberMatch.unmatchedRight];
+  const mismatches = [
+    ...unmatchedLeft,
+    ...unmatchedRight,
+  ].map(mismatchFromUnmatched)
+    .concat(geometry.mismatches)
+    .concat(topology.mismatches)
+    .concat(support.mismatches)
+    .concat(property.mismatches);
+
+  const ambiguities = [
+    ...nodeMatch.ambiguities,
+    ...memberMatch.ambiguities,
+    ...support.ambiguities,
+  ];
+
+  const metrics: ParityReport["metrics"] = {
+    geometry: {
+      left: geometry.left,
+      right: geometry.right,
+      equivalent: geometry.equivalent,
+    },
+    topology: {
+      left: topology.left,
+      right: topology.right,
+      equivalent: topology.equivalent,
+    },
+    structuralValidation: {
+      left: leftValidation.summary,
+      right: rightValidation.summary,
+    },
+    support: support.summary,
+    property: property.summary,
+  };
 
   const reportBase = {
     tolerance,
@@ -51,12 +124,14 @@ export function compareNormalizedModels(
         members: left.members.length,
         supports: left.supports.length,
         sections: left.sections.length,
+        materials: left.materials?.length,
       },
       right: {
         nodes: right.nodes.length,
         members: right.members.length,
         supports: right.supports.length,
         sections: right.sections.length,
+        materials: right.materials?.length,
       },
       matched: {
         nodes: nodeMatch.matched.length,
@@ -65,23 +140,30 @@ export function compareNormalizedModels(
     },
     unmatchedLeft,
     unmatchedRight,
-    mismatches: [...unmatchedLeft, ...unmatchedRight].map(mismatchFromUnmatched),
-    ambiguities: [...nodeMatch.ambiguities, ...memberMatch.ambiguities],
+    mismatches,
+    ambiguities,
     warnings: [
       ...left.warnings,
       ...right.warnings,
       ...nodeMatch.diagnostics.warnings,
       ...memberMatch.diagnostics.warnings,
+      ...leftValidation.warnings,
+      ...rightValidation.warnings,
+      ...topology.warnings,
+      ...property.warnings,
     ],
     errors: [
       ...left.errors,
       ...right.errors,
       ...nodeMatch.diagnostics.errors,
       ...memberMatch.diagnostics.errors,
+      ...leftValidation.errors,
+      ...rightValidation.errors,
     ],
+    metrics,
   } satisfies Omit<ParityReport, "status" | "summary">;
 
-  const status = deriveStatus(reportBase);
+  const status = deriveStatus(reportBase, metrics);
   return {
     status,
     ...reportBase,
@@ -95,6 +177,17 @@ export function compareNormalizedModels(
       ambiguityCount: reportBase.ambiguities.length,
       warningCount: reportBase.warnings.length,
       errorCount: reportBase.errors.length,
+      geometryEquivalent: metrics.geometry.equivalent,
+      topologyEquivalent: metrics.topology.equivalent,
+      structurallyValid: metrics.structuralValidation.left.valid && metrics.structuralValidation.right.valid,
+      supportEquivalent: metrics.support.fixityMismatchCount === 0
+        && metrics.support.unmatchedLeftCount === 0
+        && metrics.support.unmatchedRightCount === 0
+        && metrics.support.ambiguousNodeCount === 0,
+      propertyEquivalent: metrics.property.sectionMismatchCount === 0
+        && metrics.property.materialMismatchCount === 0
+        && metrics.property.orientationMismatchCount === 0
+        && metrics.property.orientationOppositeCount === 0,
     },
   };
 }

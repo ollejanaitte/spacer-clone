@@ -1,7 +1,8 @@
-import type { Member, NodeItem, ProjectModel, Section, Support } from "../../types";
+import type { Material, Member, NodeItem, ProjectModel, Section, Support } from "../../types";
 import { mergeSemanticTolerance } from "./tolerance";
 import type {
   CompareSemanticParityOptions,
+  NormalizedMaterial,
   NormalizedMember,
   NormalizedModel,
   NormalizedNode,
@@ -14,7 +15,7 @@ import type {
 } from "./types";
 
 type ProjectLike = Pick<ProjectModel, "nodes" | "members" | "supports" | "sections"> &
-  Partial<Pick<ProjectModel, "units">>;
+  Partial<Pick<ProjectModel, "materials" | "units">>;
 
 function isFiniteVector(vector: Vector3): boolean {
   return Number.isFinite(vector.x) && Number.isFinite(vector.y) && Number.isFinite(vector.z);
@@ -173,6 +174,32 @@ function normalizeSections(sections: Section[]): NormalizedSection[] {
     .map((section, stableIndex) => ({ ...section, stableIndex }));
 }
 
+function normalizeMaterials(materials: Material[]): NormalizedMaterial[] {
+  return materials
+    .map((material, sourceIndex) => ({
+      kind: "material" as const,
+      key: [
+        material.id,
+        material.name,
+        material.elasticModulus,
+        material.shearModulus,
+        material.poissonRatio,
+        material.density,
+      ].join(":"),
+      stableIndex: sourceIndex,
+      sourceId: material.id,
+      trace: { sourceId: material.id, sourceIndex, sourcePath: `materials/${sourceIndex}` },
+      properties: {
+        elasticModulus: numericProperty(material.elasticModulus),
+        shearModulus: numericProperty(material.shearModulus),
+        poissonRatio: numericProperty(material.poissonRatio),
+        density: numericProperty(material.density),
+      },
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
+    .map((material, stableIndex) => ({ ...material, stableIndex }));
+}
+
 export function normalizeProjectModelForSemanticParity(
   model: ProjectLike,
   options: CompareSemanticParityOptions & { source?: SemanticParitySource } = {},
@@ -198,6 +225,7 @@ export function normalizeProjectModelForSemanticParity(
     members: normalizeMembers(model.members ?? [], nodesById, diagnostics),
     supports: normalizeSupports(model.supports ?? [], nodesById),
     sections: normalizeSections(model.sections ?? []),
+    materials: normalizeMaterials(model.materials ?? []),
     warnings: diagnostics.warnings,
     errors: diagnostics.errors,
   };

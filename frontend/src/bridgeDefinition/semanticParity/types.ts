@@ -7,6 +7,7 @@ export type SemanticParitySeverity = "info" | "warning" | "error" | "blocker";
 export type SemanticParitySource = "legacy" | "bridgeDefinition" | "liner" | "imported" | "generated" | "unknown";
 
 export type SemanticParityCategory =
+  | "geometry"
   | "normalization"
   | "node"
   | "member"
@@ -94,6 +95,20 @@ export type NormalizedSection = {
   };
 };
 
+export type NormalizedMaterial = {
+  kind: "material";
+  key: string;
+  stableIndex: number;
+  sourceId?: string;
+  trace: TraceInfo;
+  properties: {
+    elasticModulus?: number;
+    shearModulus?: number;
+    poissonRatio?: number;
+    density?: number;
+  };
+};
+
 export type NormalizedModelMetadata = {
   source: SemanticParitySource;
   label?: string;
@@ -115,6 +130,7 @@ export type NormalizedModel = {
   members: NormalizedMember[];
   supports: NormalizedSupport[];
   sections: NormalizedSection[];
+  materials?: NormalizedMaterial[];
   warnings: SemanticParityDiagnostic[];
   errors: SemanticParityDiagnostic[];
 };
@@ -163,6 +179,88 @@ export type ParityMismatch = {
   message: string;
 };
 
+export type BoundingBox3 = {
+  min: Vector3;
+  max: Vector3;
+};
+
+export type LengthStats = {
+  min: number;
+  max: number;
+  mean: number;
+  total: number;
+  count: number;
+};
+
+export type GeometryMetrics = {
+  nodeCount: number;
+  memberCount: number;
+  boundingBox: BoundingBox3;
+  centroid: Vector3;
+  memberLengths: LengthStats;
+  maxMatchedNodeDistance?: number;
+  maxMatchedMemberLengthDelta?: number;
+  matchedMemberLengthDeltas?: number[];
+};
+
+export type DegreeHistogram = Record<string, number>;
+
+export type TopologyMetrics = {
+  degreeHistogram: DegreeHistogram;
+  isolatedNodeCount: number;
+  connectedComponentCount: number;
+  connectedComponentSizes: number[];
+  parallelEdgeCandidateCount: number;
+  selfLoopCandidateCount: number;
+  unmatchedConnectivityEdgeCount?: number;
+};
+
+export type StructuralValidationSummary = {
+  valid: boolean;
+  isolatedNodeCount: number;
+  disconnectedComponentCount: number;
+  zeroLengthMemberCount: number;
+  selfLoopCount: number;
+  missingEndpointCount: number;
+  nonFiniteGeometryCount: number;
+};
+
+export type SupportParitySummary = {
+  matchedSupportCount: number;
+  unmatchedLeftCount: number;
+  unmatchedRightCount: number;
+  fixityMismatchCount: number;
+  ambiguousNodeCount: number;
+};
+
+export type PropertyParitySummary = {
+  comparedMemberCount: number;
+  sectionMismatchCount: number;
+  materialMismatchCount: number;
+  orientationMismatchCount: number;
+  orientationOppositeCount: number;
+  skippedUndefinedCount: number;
+};
+
+export type ParityMetrics = {
+  geometry: {
+    left: GeometryMetrics;
+    right: GeometryMetrics;
+    equivalent: boolean;
+  };
+  topology: {
+    left: TopologyMetrics;
+    right: TopologyMetrics;
+    equivalent: boolean;
+  };
+  structuralValidation: {
+    left: StructuralValidationSummary;
+    right: StructuralValidationSummary;
+  };
+  support: SupportParitySummary;
+  property: PropertyParitySummary;
+};
+
 export type ParityReportSummary = {
   status: SemanticParityStatus;
   matchedNodes: number;
@@ -173,6 +271,11 @@ export type ParityReportSummary = {
   ambiguityCount: number;
   warningCount: number;
   errorCount: number;
+  geometryEquivalent?: boolean;
+  topologyEquivalent?: boolean;
+  structurallyValid?: boolean;
+  supportEquivalent?: boolean;
+  propertyEquivalent?: boolean;
 };
 
 export type ParityReport = {
@@ -184,12 +287,14 @@ export type ParityReport = {
       members: number;
       supports: number;
       sections: number;
+      materials?: number;
     };
     right: {
       nodes: number;
       members: number;
       supports: number;
       sections: number;
+      materials?: number;
     };
     matched: {
       nodes: number;
@@ -202,6 +307,7 @@ export type ParityReport = {
   ambiguities: AmbiguousMatch[];
   warnings: SemanticParityDiagnostic[];
   errors: SemanticParityDiagnostic[];
+  metrics: ParityMetrics;
   summary: ParityReportSummary;
 };
 
