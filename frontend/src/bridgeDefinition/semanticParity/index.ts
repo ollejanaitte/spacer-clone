@@ -13,6 +13,7 @@ export {
 } from "./generatedModelParity";
 export { buildGeometryMetrics, computeGeometryMetrics } from "./geometryParity";
 export { compareLoadParity } from "./loadParity";
+export { compareAnalysisResults, createAnalysisResultParityEnvelope, serializeAnalysisResultParityEnvelope } from "./resultParity";
 export { loadCaseSemanticKey, normalizeLoadCaseName } from "./normalize";
 export { matchNormalizedMembers } from "./memberMatching";
 export { matchNormalizedNodes } from "./nodeMatching";
