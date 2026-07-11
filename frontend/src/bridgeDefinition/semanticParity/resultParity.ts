@@ -1,4 +1,11 @@
-import type { AnalysisResult, EigenModeResult, EigenResult } from "../../types";
+import type {
+  AnalysisResult,
+  EigenModeResult,
+  EigenResult,
+  ResponseSpectrumCombinedResult,
+  ResponseSpectrumModalResult,
+  ResponseSpectrumResult,
+} from "../../types";
 import { compareScalarWithTolerance, nearlyEqual, mergeSemanticTolerance } from "./tolerance";
 import { createParityReportEnvelope, serializeParityReportEnvelope } from "./serializer";
 import type {
@@ -15,7 +22,7 @@ import type {
   SemanticTolerance,
 } from "./types";
 
-export type ResultParityKind = "static" | "eigen";
+export type ResultParityKind = "static" | "eigen" | "responseSpectrum";
 
 export type ResultParityReport = ParityReport & {
   kind: ResultParityKind;
@@ -29,6 +36,12 @@ export type ResultParityReport = ParityReport & {
       modeCount: number;
       matchedModeCount: number;
       ambiguousModeCount: number;
+    };
+    responseSpectrum?: {
+      modalResultCount: number;
+      combinedDisplacementCount: number;
+      combinedReactionCount: number;
+      combinedMemberSectionForceCount: number;
     };
   };
 };
@@ -232,6 +245,304 @@ function compareEigenResults(left: EigenResult, right: EigenResult, tolerance: S
   return report;
 }
 
+function compareSectionForceRows(
+  left: Array<{ memberId: string; station: number; component: string; value: number }>,
+  right: Array<{ memberId: string; station: number; component: string; value: number }>,
+  tolerance: SemanticTolerance["scalar"],
+  pathPrefix: string,
+  mismatches: ParityMismatch[],
+): void {
+  const leftRows = [...left].sort((a, b) => [a.memberId, a.station, a.component].join("|").localeCompare([b.memberId, b.station, b.component].join("|")));
+  const rightRows = [...right].sort((a, b) => [a.memberId, a.station, a.component].join("|").localeCompare([b.memberId, b.station, b.component].join("|")));
+  const size = Math.max(leftRows.length, rightRows.length);
+  for (let i = 0; i < size; i += 1) {
+    const l = leftRows[i];
+    const r = rightRows[i];
+    if (!l || !r) {
+      mismatches.push({
+        category: "member",
+        path: `${pathPrefix}/${i}`,
+        leftValue: valueLabel(l),
+        rightValue: valueLabel(r),
+        severity: "error",
+        message: "Response spectrum member section force row count mismatch.",
+      });
+      continue;
+    }
+    if (l.memberId !== r.memberId || l.station !== r.station || l.component !== r.component) {
+      mismatches.push({
+        category: "member",
+        path: `${pathPrefix}/${l.memberId}/${l.station}/${l.component}`,
+        leftValue: valueLabel(l),
+        rightValue: valueLabel(r),
+        severity: "error",
+        message: "Response spectrum member section force identity mismatch.",
+      });
+      continue;
+    }
+    if (!nearlyEqual(l.value, r.value, tolerance)) {
+      mismatches.push({
+        category: "member",
+        path: `${pathPrefix}/${l.memberId}/${l.station}/${l.component}`,
+        leftValue: l.value,
+        rightValue: r.value,
+        delta: Math.abs(l.value - r.value),
+        severity: "error",
+        message: "Response spectrum member section force mismatch.",
+      });
+    }
+  }
+}
+
+function hasNonFiniteResponseSpectrumNumber(result: ResponseSpectrumResult): boolean {
+  const check = (value: unknown): boolean => typeof value === "number" && !Number.isFinite(value);
+  if (check(result.dampingRatio) || check(result.targetCumulativeMassRatio)) return true;
+  for (const mode of result.modalResults) {
+    if (check(mode.modeNo) || check(mode.spectralAcceleration)) return true;
+    for (const displacement of mode.displacements) {
+      if (check(displacement.ux) || check(displacement.uy) || check(displacement.uz) || check(displacement.rx) || check(displacement.ry) || check(displacement.rz)) return true;
+    }
+    for (const reaction of mode.reactions ?? []) {
+      if (check(reaction.fx) || check(reaction.fy) || check(reaction.fz) || check(reaction.mx) || check(reaction.my) || check(reaction.mz)) return true;
+    }
+    for (const force of mode.memberSectionForces ?? []) {
+      if (check(force.station) || check(force.value)) return true;
+    }
+  }
+  for (const displacement of result.combinedResult.displacements) {
+    if (check(displacement.ux) || check(displacement.uy) || check(displacement.uz) || check(displacement.rx) || check(displacement.ry) || check(displacement.rz)) return true;
+  }
+  for (const reaction of result.combinedResult.reactions ?? []) {
+    if (check(reaction.fx) || check(reaction.fy) || check(reaction.fz) || check(reaction.mx) || check(reaction.my) || check(reaction.mz)) return true;
+  }
+  for (const force of result.combinedResult.memberSectionForces ?? []) {
+    if (check(force.station) || check(force.value)) return true;
+  }
+  return false;
+}
+
+export function compareResponseSpectrumResults(
+  left: ResponseSpectrumResult,
+  right: ResponseSpectrumResult,
+  tolerance: SemanticTolerance,
+): ResultParityReport {
+  const report = emptyReport(tolerance, "responseSpectrum");
+  const mismatches: ParityMismatch[] = [];
+  const ambiguities: AmbiguousMatch[] = [];
+
+  if (hasNonFiniteResponseSpectrumNumber(left) || hasNonFiniteResponseSpectrumNumber(right)) {
+    report.errors = [{
+      category: "normalization",
+      severity: "error",
+      code: "SEMANTIC_RESULT_NON_FINITE",
+      path: "responseSpectrum",
+      message: "Response spectrum results must not contain NaN or Infinity.",
+    }];
+    report.status = "invalid";
+    report.resultSummary.responseSpectrum = {
+      modalResultCount: left.modalResults.length,
+      combinedDisplacementCount: left.combinedResult.displacements.length,
+      combinedReactionCount: left.combinedResult.reactions?.length ?? 0,
+      combinedMemberSectionForceCount: left.combinedResult.memberSectionForces?.length ?? 0,
+    };
+    return report;
+  }
+
+  if (
+    left.spectrumCaseId !== right.spectrumCaseId
+    || left.direction !== right.direction
+    || left.combinationMethod !== right.combinationMethod
+    || left.interpolationMethod !== right.interpolationMethod
+  ) {
+    mismatches.push({
+      category: "load",
+      path: "responseSpectrum",
+      leftValue: valueLabel(left),
+      rightValue: valueLabel(right),
+      severity: "error",
+      message: "Response spectrum top-level identity mismatch.",
+    });
+  }
+
+  const leftModes = [...left.modalResults].sort((a, b) => a.modeNo - b.modeNo);
+  const rightModes = [...right.modalResults].sort((a, b) => a.modeNo - b.modeNo);
+  const rightByModeNo = new Map(rightModes.map((mode) => [mode.modeNo, mode]));
+  for (const leftMode of leftModes) {
+    const rightMode = rightByModeNo.get(leftMode.modeNo);
+    if (!rightMode) {
+      mismatches.push({
+        category: "member",
+        path: `responseSpectrum/modalResults/${leftMode.modeNo}`,
+        leftValue: valueLabel(leftMode),
+        rightValue: undefined,
+        severity: "error",
+        message: "Missing response spectrum modal result on right side.",
+      });
+      continue;
+    }
+    if (!nearlyEqual(leftMode.spectralAcceleration, rightMode.spectralAcceleration, tolerance.scalar)) {
+      mismatches.push({
+        category: "member",
+        path: `responseSpectrum/modalResults/${leftMode.modeNo}/spectralAcceleration`,
+        leftValue: leftMode.spectralAcceleration,
+        rightValue: rightMode.spectralAcceleration,
+        delta: Math.abs(leftMode.spectralAcceleration - rightMode.spectralAcceleration),
+        severity: "error",
+        message: "Response spectrum spectralAcceleration mismatch.",
+      });
+    }
+    compareVectors(
+      { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+      { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+      tolerance.scalar,
+    );
+    const leftDisp = new Map(leftMode.displacements.map((item) => [item.nodeId, item]));
+    const rightDisp = new Map(rightMode.displacements.map((item) => [item.nodeId, item]));
+    for (const [nodeId, l] of leftDisp) {
+      const r = rightDisp.get(nodeId);
+      if (!r) {
+        mismatches.push({
+          category: "node",
+          path: `responseSpectrum/modalResults/${leftMode.modeNo}/displacements/${nodeId}`,
+          leftValue: valueLabel(l),
+          rightValue: undefined,
+          severity: "error",
+          message: "Missing response spectrum modal displacement on right side.",
+        });
+        continue;
+      }
+      const cmp = compareVectors({ ux: l.ux, uy: l.uy, uz: l.uz, rx: l.rx, ry: l.ry, rz: l.rz }, { ux: r.ux, uy: r.uy, uz: r.uz, rx: r.rx, ry: r.ry, rz: r.rz }, tolerance.scalar);
+      if (!cmp.equal) {
+        mismatches.push({
+          category: "node",
+          path: `responseSpectrum/modalResults/${leftMode.modeNo}/displacements/${nodeId}`,
+          leftValue: valueLabel(l),
+          rightValue: valueLabel(r),
+          delta: cmp.delta,
+          severity: "error",
+          message: "Response spectrum displacement mismatch.",
+        });
+      }
+    }
+    const leftReac = new Map((leftMode.reactions ?? []).map((item) => [item.nodeId, item]));
+    const rightReac = new Map((rightMode.reactions ?? []).map((item) => [item.nodeId, item]));
+    for (const [nodeId, l] of leftReac) {
+      const r = rightReac.get(nodeId);
+      if (!r) {
+        mismatches.push({
+          category: "node",
+          path: `responseSpectrum/modalResults/${leftMode.modeNo}/reactions/${nodeId}`,
+          leftValue: valueLabel(l),
+          rightValue: undefined,
+          severity: "error",
+          message: "Missing response spectrum modal reaction on right side.",
+        });
+        continue;
+      }
+      const cmp = compareVectors({ fx: l.fx, fy: l.fy, fz: l.fz, mx: l.mx, my: l.my, mz: l.mz }, { fx: r.fx, fy: r.fy, fz: r.fz, mx: r.mx, my: r.my, mz: r.mz }, tolerance.scalar);
+      if (!cmp.equal) {
+        mismatches.push({
+          category: "node",
+          path: `responseSpectrum/modalResults/${leftMode.modeNo}/reactions/${nodeId}`,
+          leftValue: valueLabel(l),
+          rightValue: valueLabel(r),
+          delta: cmp.delta,
+          severity: "error",
+          message: "Response spectrum reaction mismatch.",
+        });
+      }
+    }
+    compareSectionForceRows(leftMode.memberSectionForces ?? [], rightMode.memberSectionForces ?? [], tolerance.scalar, `responseSpectrum/modalResults/${leftMode.modeNo}/memberSectionForces`, mismatches);
+  }
+
+  const leftCombined = left.combinedResult;
+  const rightCombined = right.combinedResult;
+  if (leftCombined.method !== rightCombined.method) {
+    mismatches.push({
+      category: "load",
+      path: "responseSpectrum/combinedResult/method",
+      leftValue: leftCombined.method,
+      rightValue: rightCombined.method,
+      severity: "error",
+      message: "Response spectrum combined result method mismatch.",
+    });
+  }
+  const cmpCombinedDisp = compareVectors(
+    { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+    { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 },
+    tolerance.scalar,
+  );
+  void cmpCombinedDisp;
+  const leftCombinedDisp = new Map(leftCombined.displacements.map((item) => [item.nodeId, item]));
+  const rightCombinedDisp = new Map(rightCombined.displacements.map((item) => [item.nodeId, item]));
+  for (const [nodeId, l] of leftCombinedDisp) {
+    const r = rightCombinedDisp.get(nodeId);
+    if (!r) {
+      mismatches.push({
+        category: "node",
+        path: `responseSpectrum/combinedResult/displacements/${nodeId}`,
+        leftValue: valueLabel(l),
+        rightValue: undefined,
+        severity: "error",
+        message: "Missing response spectrum combined displacement on right side.",
+      });
+      continue;
+    }
+    const cmp = compareVectors({ ux: l.ux, uy: l.uy, uz: l.uz, rx: l.rx, ry: l.ry, rz: l.rz }, { ux: r.ux, uy: r.uy, uz: r.uz, rx: r.rx, ry: r.ry, rz: r.rz }, tolerance.scalar);
+    if (!cmp.equal) {
+      mismatches.push({
+        category: "node",
+        path: `responseSpectrum/combinedResult/displacements/${nodeId}`,
+        leftValue: valueLabel(l),
+        rightValue: valueLabel(r),
+        delta: cmp.delta,
+        severity: "error",
+        message: "Response spectrum combined displacement mismatch.",
+      });
+    }
+  }
+  const leftCombinedReac = new Map((leftCombined.reactions ?? []).map((item) => [item.nodeId, item]));
+  const rightCombinedReac = new Map((rightCombined.reactions ?? []).map((item) => [item.nodeId, item]));
+  for (const [nodeId, l] of leftCombinedReac) {
+    const r = rightCombinedReac.get(nodeId);
+    if (!r) {
+      mismatches.push({
+        category: "node",
+        path: `responseSpectrum/combinedResult/reactions/${nodeId}`,
+        leftValue: valueLabel(l),
+        rightValue: undefined,
+        severity: "error",
+        message: "Missing response spectrum combined reaction on right side.",
+      });
+      continue;
+    }
+    const cmp = compareVectors({ fx: l.fx, fy: l.fy, fz: l.fz, mx: l.mx, my: l.my, mz: l.mz }, { fx: r.fx, fy: r.fy, fz: r.fz, mx: r.mx, my: r.my, mz: r.mz }, tolerance.scalar);
+    if (!cmp.equal) {
+      mismatches.push({
+        category: "node",
+        path: `responseSpectrum/combinedResult/reactions/${nodeId}`,
+        leftValue: valueLabel(l),
+        rightValue: valueLabel(r),
+        delta: cmp.delta,
+        severity: "error",
+        message: "Response spectrum combined reaction mismatch.",
+      });
+    }
+  }
+  compareSectionForceRows(leftCombined.memberSectionForces ?? [], rightCombined.memberSectionForces ?? [], tolerance.scalar, "responseSpectrum/combinedResult/memberSectionForces", mismatches);
+
+  report.status = resultStatus({ errors: [], ambiguities, mismatches });
+  report.mismatches = mismatches;
+  report.ambiguities = ambiguities;
+  report.resultSummary.responseSpectrum = {
+    modalResultCount: left.modalResults.length,
+    combinedDisplacementCount: leftCombined.displacements.length,
+    combinedReactionCount: leftCombined.reactions?.length ?? 0,
+    combinedMemberSectionForceCount: leftCombined.memberSectionForces?.length ?? 0,
+  };
+  return report;
+}
+
 export function compareAnalysisResults(
   left: AnalysisResult,
   right: AnalysisResult,
@@ -239,7 +550,14 @@ export function compareAnalysisResults(
 ): ResultParityReport {
   const tolerance = mergeSemanticTolerance(options.tolerance);
   if (left.analysisSummary.status === "failed" || right.analysisSummary.status === "failed" || left.errors.length > 0 || right.errors.length > 0) {
-    return { ...emptyReport(tolerance, left.analysisSummary.analysisType === "eigen" ? "eigen" : "static"), status: "invalid" };
+    const kind = left.analysisSummary.analysisType === "eigen" ? "eigen" : left.analysisSummary.analysisType === "response_spectrum" || left.analysisSummary.analysisType === "responseSpectrum" ? "responseSpectrum" : "static";
+    return { ...emptyReport(tolerance, kind), status: "invalid" };
+  }
+  if (left.analysisSummary.analysisType === "response_spectrum" || left.analysisSummary.analysisType === "responseSpectrum" || right.analysisSummary.analysisType === "response_spectrum" || right.analysisSummary.analysisType === "responseSpectrum") {
+    if (!left.responseSpectrumResult || !right.responseSpectrumResult) {
+      return { ...emptyReport(tolerance, "responseSpectrum"), status: "indeterminate" };
+    }
+    return compareResponseSpectrumResults(left.responseSpectrumResult, right.responseSpectrumResult, tolerance);
   }
   if (left.analysisSummary.analysisType === "eigen" || right.analysisSummary.analysisType === "eigen") {
     if (!left.eigenResult || !right.eigenResult) {
