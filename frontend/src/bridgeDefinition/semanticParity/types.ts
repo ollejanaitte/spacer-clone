@@ -14,7 +14,8 @@ export type SemanticParityCategory =
   | "support"
   | "section"
   | "property"
-  | "topology";
+  | "topology"
+  | "load";
 
 export type Vector3 = {
   x: number;
@@ -109,10 +110,66 @@ export type NormalizedMaterial = {
   };
 };
 
+export type NormalizedLoadCase = {
+  kind: "loadCase";
+  key: string;
+  semanticKey: string;
+  stableIndex: number;
+  sourceId?: string;
+  trace: TraceInfo;
+  name: string;
+  type: "static";
+};
+
+export type NodalLoadVector = {
+  fx: number;
+  fy: number;
+  fz: number;
+  mx: number;
+  my: number;
+  mz: number;
+};
+
+export type NormalizedNodalLoad = {
+  kind: "nodalLoad";
+  key: string;
+  semanticKey: string;
+  stableIndex: number;
+  sourceId?: string;
+  trace: TraceInfo;
+  nodeKey?: string;
+  sourceNodeId?: string;
+  loadCaseSemanticKey: string;
+  sourceLoadCaseId?: string;
+  vector: NodalLoadVector;
+};
+
+export type MemberLoadVector = {
+  wx: number;
+  wy: number;
+  wz: number;
+};
+
+export type NormalizedMemberLoad = {
+  kind: "memberLoad";
+  key: string;
+  semanticKey: string;
+  stableIndex: number;
+  sourceId?: string;
+  trace: TraceInfo;
+  endpointKey?: string;
+  sourceMemberId?: string;
+  loadCaseSemanticKey: string;
+  sourceLoadCaseId?: string;
+  coordinateSystem: "local" | "global";
+  vector: MemberLoadVector;
+};
+
 export type NormalizedModelMetadata = {
   source: SemanticParitySource;
   label?: string;
   units?: ProjectModel["units"];
+  loadsMapped?: boolean;
 };
 
 export type SemanticParityDiagnostic = {
@@ -131,6 +188,9 @@ export type NormalizedModel = {
   supports: NormalizedSupport[];
   sections: NormalizedSection[];
   materials?: NormalizedMaterial[];
+  loadCases?: NormalizedLoadCase[];
+  nodalLoads?: NormalizedNodalLoad[];
+  memberLoads?: NormalizedMemberLoad[];
   warnings: SemanticParityDiagnostic[];
   errors: SemanticParityDiagnostic[];
 };
@@ -149,7 +209,7 @@ export type UnmatchedItem = {
 };
 
 export type AmbiguousMatch = {
-  category: "node" | "member";
+  category: "node" | "member" | "load";
   leftKeys: string[];
   rightKeys: string[];
   message: string;
@@ -242,6 +302,24 @@ export type PropertyParitySummary = {
   skippedUndefinedCount: number;
 };
 
+export type LoadParitySummary = {
+  matchedLoadCaseCount: number;
+  unmatchedLeftLoadCaseCount: number;
+  unmatchedRightLoadCaseCount: number;
+  matchedNodalLoadCount: number;
+  unmatchedLeftNodalLoadCount: number;
+  unmatchedRightNodalLoadCount: number;
+  nodalLoadValueMismatchCount: number;
+  matchedMemberLoadCount: number;
+  unmatchedLeftMemberLoadCount: number;
+  unmatchedRightMemberLoadCount: number;
+  memberLoadValueMismatchCount: number;
+  ambiguousLoadCandidateCount: number;
+  totalAppliedLoadLeft: number;
+  totalAppliedLoadRight: number;
+  totalAppliedLoadEquivalent: boolean;
+};
+
 export type ParityMetrics = {
   geometry: {
     left: GeometryMetrics;
@@ -259,6 +337,7 @@ export type ParityMetrics = {
   };
   support: SupportParitySummary;
   property: PropertyParitySummary;
+  load: LoadParitySummary;
 };
 
 export type ParityReportSummary = {
@@ -276,6 +355,7 @@ export type ParityReportSummary = {
   structurallyValid?: boolean;
   supportEquivalent?: boolean;
   propertyEquivalent?: boolean;
+  loadEquivalent?: boolean;
 };
 
 export type ParityReport = {
@@ -288,6 +368,9 @@ export type ParityReport = {
       supports: number;
       sections: number;
       materials?: number;
+      loadCases?: number;
+      nodalLoads?: number;
+      memberLoads?: number;
     };
     right: {
       nodes: number;
@@ -295,6 +378,9 @@ export type ParityReport = {
       supports: number;
       sections: number;
       materials?: number;
+      loadCases?: number;
+      nodalLoads?: number;
+      memberLoads?: number;
     };
     matched: {
       nodes: number;
@@ -317,6 +403,9 @@ export type CompareSemanticParityOptions = {
   rightSource?: SemanticParitySource;
   leftLabel?: string;
   rightLabel?: string;
+  leftLoadsMapped?: boolean;
+  rightLoadsMapped?: boolean;
+  loadsMapped?: boolean;
 };
 
 export type JsonSafeValue =

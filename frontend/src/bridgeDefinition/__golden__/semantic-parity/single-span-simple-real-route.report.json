@@ -4,8 +4,11 @@
     "ambiguities": [],
     "counts": {
       "left": {
+        "loadCases": 1,
         "materials": 1,
+        "memberLoads": 0,
         "members": 136,
+        "nodalLoads": 0,
         "nodes": 77,
         "sections": 1,
         "supports": 4
@@ -15,8 +18,11 @@
         "nodes": 77
       },
       "right": {
+        "loadCases": 1,
         "materials": 1,
+        "memberLoads": 0,
         "members": 70,
+        "nodalLoads": 0,
         "nodes": 77,
         "sections": 1,
         "supports": 2
@@ -239,6 +245,23 @@
           "nodeCount": 77
         }
       },
+      "load": {
+        "ambiguousLoadCandidateCount": 0,
+        "matchedLoadCaseCount": 0,
+        "matchedMemberLoadCount": 0,
+        "matchedNodalLoadCount": 0,
+        "memberLoadValueMismatchCount": 0,
+        "nodalLoadValueMismatchCount": 0,
+        "totalAppliedLoadEquivalent": true,
+        "totalAppliedLoadLeft": 0,
+        "totalAppliedLoadRight": 0,
+        "unmatchedLeftLoadCaseCount": 1,
+        "unmatchedLeftMemberLoadCount": 0,
+        "unmatchedLeftNodalLoadCount": 0,
+        "unmatchedRightLoadCaseCount": 1,
+        "unmatchedRightMemberLoadCount": 0,
+        "unmatchedRightNodalLoadCount": 0
+      },
       "property": {
         "comparedMemberCount": 70,
         "materialMismatchCount": 0,
@@ -368,6 +391,20 @@
           "floor": 1,
           "relative": 0.000001
         }
+      },
+      {
+        "category": "load",
+        "leftValue": "Bridge Default Load:static",
+        "message": "Left load case has no right counterpart with the same semantic key.",
+        "path": "loadCases/*",
+        "severity": "error"
+      },
+      {
+        "category": "load",
+        "message": "Right load case has no left counterpart with the same semantic key.",
+        "path": "loadCases/*",
+        "rightValue": "Bridge Definition Placeholder:static",
+        "severity": "error"
       },
       {
         "category": "member",
@@ -928,9 +965,10 @@
       "ambiguityCount": 0,
       "errorCount": 1,
       "geometryEquivalent": false,
+      "loadEquivalent": false,
       "matchedMembers": 70,
       "matchedNodes": 77,
-      "mismatchCount": 80,
+      "mismatchCount": 82,
       "propertyEquivalent": true,
       "status": "invalid",
       "structurallyValid": false,

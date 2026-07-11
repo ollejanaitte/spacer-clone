@@ -161,8 +161,8 @@ function cloneJsonSafe<T>(value: T): T {
   return canonicalizeJsonValue(value, seen) as T;
 }
 
-const SOURCE_INDEX_PATH_PREFIX = /^(nodes|members|supports|sections|materials)\/\d+/;
-const EMBEDDED_SOURCE_INDEX_PATH = /(nodes|members|supports|sections|materials)\/\d+/g;
+const SOURCE_INDEX_PATH_PREFIX = /^(nodes|members|supports|sections|materials|loadCases|nodalLoads|memberLoads)\/\d+/;
+const EMBEDDED_SOURCE_INDEX_PATH = /(nodes|members|supports|sections|materials|loadCases|nodalLoads|memberLoads)\/\d+/g;
 
 function goldenEntityIndexToken(sourceId?: string): string {
   return sourceId ?? "*";
