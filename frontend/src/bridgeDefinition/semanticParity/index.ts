@@ -14,6 +14,7 @@ export {
 export { buildGeometryMetrics, computeGeometryMetrics } from "./geometryParity";
 export { compareLoadParity } from "./loadParity";
 export { compareAnalysisResults, createAnalysisResultParityEnvelope, serializeAnalysisResultParityEnvelope } from "./resultParity";
+export { compareResponseSpectrumResults } from "./resultParity";
 export { loadCaseSemanticKey, normalizeLoadCaseName } from "./normalize";
 export { matchNormalizedMembers } from "./memberMatching";
 export { matchNormalizedNodes } from "./nodeMatching";
