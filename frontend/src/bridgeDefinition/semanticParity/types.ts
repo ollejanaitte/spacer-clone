@@ -318,3 +318,50 @@ export type CompareSemanticParityOptions = {
   leftLabel?: string;
   rightLabel?: string;
 };
+
+export type JsonSafeValue =
+  | null
+  | boolean
+  | number
+  | string
+  | JsonSafeValue[]
+  | { [key: string]: JsonSafeValue };
+
+export type ParityReportSource = {
+  source: SemanticParitySource;
+  label?: string;
+  generatorRoute?: string;
+  metadata?: Record<string, JsonSafeValue>;
+};
+
+export type ParityReportEnvelope = {
+  schemaVersion: string;
+  sources: {
+    left: ParityReportSource;
+    right: ParityReportSource;
+  };
+  tolerance: SemanticTolerance;
+  report: ParityReport;
+  generatedAt?: string;
+  toolVersion?: string;
+};
+
+export type CreateParityReportEnvelopeOptions = {
+  sources: {
+    left: ParityReportSource;
+    right: ParityReportSource;
+  };
+  tolerance?: SemanticTolerance;
+  schemaVersion?: string;
+  generatedAt?: string;
+  toolVersion?: string;
+};
+
+export type CanonicalizeParityReportEnvelopeOptions = {
+  generatedAt?: string;
+};
+
+export type SerializeParityReportEnvelopeOptions = {
+  pretty?: boolean;
+  generatedAt?: string;
+};

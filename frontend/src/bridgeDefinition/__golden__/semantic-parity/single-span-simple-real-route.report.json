@@ -1,0 +1,1470 @@
+{
+  "generatedAt": "2026-07-11T12:00:00.000Z",
+  "report": {
+    "ambiguities": [],
+    "counts": {
+      "left": {
+        "materials": 1,
+        "members": 136,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 4
+      },
+      "matched": {
+        "members": 70,
+        "nodes": 77
+      },
+      "right": {
+        "materials": 1,
+        "members": 70,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 2
+      }
+    },
+    "errors": [
+      {
+        "category": "topology",
+        "code": "SEMANTIC_MODEL_DISCONNECTED",
+        "message": "Model has 7 connected components; expected 1.",
+        "path": "topology/connectedComponents",
+        "severity": "blocker"
+      }
+    ],
+    "metrics": {
+      "geometry": {
+        "equivalent": false,
+        "left": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 136,
+          "memberLengths": {
+            "count": 136,
+            "max": 3.5,
+            "mean": 2.4338235294117645,
+            "min": 0.5,
+            "total": 331
+          },
+          "nodeCount": 77
+        },
+        "right": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 70,
+          "memberLengths": {
+            "count": 70,
+            "max": 3,
+            "mean": 3,
+            "min": 3,
+            "total": 210
+          },
+          "nodeCount": 77
+        }
+      },
+      "property": {
+        "comparedMemberCount": 70,
+        "materialMismatchCount": 0,
+        "orientationMismatchCount": 0,
+        "orientationOppositeCount": 0,
+        "sectionMismatchCount": 0,
+        "skippedUndefinedCount": 0
+      },
+      "structuralValidation": {
+        "left": {
+          "disconnectedComponentCount": 1,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": true,
+          "zeroLengthMemberCount": 0
+        },
+        "right": {
+          "disconnectedComponentCount": 7,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": false,
+          "zeroLengthMemberCount": 0
+        }
+      },
+      "support": {
+        "ambiguousNodeCount": 0,
+        "fixityMismatchCount": 0,
+        "matchedSupportCount": 0,
+        "unmatchedLeftCount": 4,
+        "unmatchedRightCount": 2
+      },
+      "topology": {
+        "equivalent": false,
+        "left": {
+          "connectedComponentCount": 1,
+          "connectedComponentSizes": [
+            77
+          ],
+          "degreeHistogram": {
+            "2": 4,
+            "3": 28,
+            "4": 45
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0,
+          "unmatchedConnectivityEdgeCount": 66
+        },
+        "right": {
+          "connectedComponentCount": 7,
+          "connectedComponentSizes": [
+            11,
+            11,
+            11,
+            11,
+            11,
+            11,
+            11
+          ],
+          "degreeHistogram": {
+            "1": 14,
+            "2": 63
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0
+        }
+      }
+    },
+    "mismatches": [
+      {
+        "category": "geometry",
+        "delta": 0.5,
+        "leftValue": 3.5,
+        "message": "Maximum member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.max",
+        "rightValue": 3,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "geometry",
+        "delta": 0.5661764705882355,
+        "leftValue": 2.4338235294117645,
+        "message": "Mean member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.mean",
+        "rightValue": 3,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "geometry",
+        "delta": 2.5,
+        "leftValue": 0.5,
+        "message": "Minimum member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.min",
+        "rightValue": 3,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "geometry",
+        "delta": 121,
+        "leftValue": 331,
+        "message": "Total member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.total",
+        "rightValue": 210,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "member",
+        "leftValue": "M100",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M100",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M101",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M101",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M102",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M102",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M103",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M103",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M104",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M104",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M105",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M105",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M106",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M106",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M107",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M107",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M108",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M108",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M109",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M109",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M110",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M110",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M111",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M111",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M112",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M112",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M113",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M113",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M114",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M114",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M115",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M115",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M116",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M116",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M117",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M117",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M118",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M118",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M119",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M119",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M120",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M120",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M121",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M121",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M122",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M122",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M123",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M123",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M124",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M124",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M125",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M125",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M126",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M126",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M127",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M127",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M128",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M128",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M129",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M129",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M130",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M130",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M131",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M131",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M132",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M132",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M133",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M133",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M134",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M134",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M135",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M135",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M136",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M136",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M71",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M71",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M72",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M72",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M73",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M73",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M74",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M74",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M75",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M75",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M76",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M76",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M77",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M77",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M78",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M78",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M79",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M79",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M80",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M80",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M81",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M81",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M82",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M82",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M83",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M83",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M84",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M84",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M85",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M85",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M86",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M86",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M87",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M87",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M88",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M88",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M89",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M89",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M90",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M90",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M91",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M91",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M92",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M92",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M93",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M93",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M94",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M94",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M95",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M95",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M96",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M96",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M97",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M97",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M98",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M98",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M99",
+        "message": "left item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M99",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Left model has support at matched node with no right counterpart.",
+        "path": "supports/*",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Left model has support at matched node with no right counterpart.",
+        "path": "supports/*",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Left model has support at matched node with no right counterpart.",
+        "path": "supports/*",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Left model has support at matched node with no right counterpart.",
+        "path": "supports/*",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "message": "Right model has support at matched node with no left counterpart.",
+        "path": "supports/*",
+        "rightValue": "0,1,1,1,1,1",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "message": "Right model has support at matched node with no left counterpart.",
+        "path": "supports/*",
+        "rightValue": "1,1,1,1,1,1",
+        "severity": "error"
+      },
+      {
+        "category": "topology",
+        "leftValue": 1,
+        "message": "Connected component count differs between models.",
+        "path": "topology.connectedComponentCount",
+        "rightValue": 7,
+        "severity": "error"
+      },
+      {
+        "category": "topology",
+        "leftValue": [
+          77
+        ],
+        "message": "Connected component size distribution differs between models.",
+        "path": "topology.connectedComponentSizes",
+        "rightValue": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "severity": "error"
+      },
+      {
+        "category": "topology",
+        "leftValue": {
+          "2": 4,
+          "3": 28,
+          "4": 45
+        },
+        "message": "Degree histogram differs between models.",
+        "path": "topology.degreeHistogram",
+        "rightValue": {
+          "1": 14,
+          "2": 63
+        },
+        "severity": "warning"
+      },
+      {
+        "category": "topology",
+        "leftValue": 66,
+        "message": "Left model has connectivity edges not represented on the right via matched nodes.",
+        "path": "topology.unmatchedConnectivityEdgeCount",
+        "rightValue": 0,
+        "severity": "error"
+      }
+    ],
+    "status": "invalid",
+    "summary": {
+      "ambiguityCount": 0,
+      "errorCount": 1,
+      "geometryEquivalent": false,
+      "matchedMembers": 70,
+      "matchedNodes": 77,
+      "mismatchCount": 80,
+      "propertyEquivalent": true,
+      "status": "invalid",
+      "structurallyValid": false,
+      "supportEquivalent": false,
+      "topologyEquivalent": false,
+      "unmatchedLeft": 66,
+      "unmatchedRight": 0,
+      "warningCount": 0
+    },
+    "tolerance": {
+      "angle": {
+        "absolute": 0.000001
+      },
+      "coordinate": {
+        "absolute": 0.000001
+      },
+      "length": {
+        "absolute": 0.0001,
+        "floor": 1,
+        "relative": 0.000001
+      },
+      "scalar": {
+        "absolute": 1e-9,
+        "floor": 1e-9,
+        "relative": 0.000001
+      }
+    },
+    "unmatchedLeft": [
+      {
+        "key": "0.00000000000000:-3.50000000000000:0.00000000000000|0.00000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M72",
+        "path": "members/M72",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M72"
+      },
+      {
+        "key": "0.00000000000000:-3.50000000000000:0.00000000000000|0.00000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M73",
+        "path": "members/M73",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M73"
+      },
+      {
+        "key": "0.00000000000000:-5.00000000000000:0.00000000000000|0.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M71",
+        "path": "members/M71",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M71"
+      },
+      {
+        "key": "0.00000000000000:0.00000000000000:0.00000000000000|0.00000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M74",
+        "path": "members/M74",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M74"
+      },
+      {
+        "key": "0.00000000000000:3.50000000000000:0.00000000000000|0.00000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M75",
+        "path": "members/M75",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M75"
+      },
+      {
+        "key": "0.00000000000000:5.00000000000000:0.00000000000000|0.00000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M76",
+        "path": "members/M76",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M76"
+      },
+      {
+        "key": "12.0000000000000:-3.50000000000000:0.00000000000000|12.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M96",
+        "path": "members/M96",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M96"
+      },
+      {
+        "key": "12.0000000000000:-3.50000000000000:0.00000000000000|12.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M97",
+        "path": "members/M97",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M97"
+      },
+      {
+        "key": "12.0000000000000:-5.00000000000000:0.00000000000000|12.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M95",
+        "path": "members/M95",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M95"
+      },
+      {
+        "key": "12.0000000000000:0.00000000000000:0.00000000000000|12.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M98",
+        "path": "members/M98",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M98"
+      },
+      {
+        "key": "12.0000000000000:3.50000000000000:0.00000000000000|12.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M99",
+        "path": "members/M99",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M99"
+      },
+      {
+        "key": "12.0000000000000:5.00000000000000:0.00000000000000|12.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M100",
+        "path": "members/M100",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M100"
+      },
+      {
+        "key": "15.0000000000000:-3.50000000000000:0.00000000000000|15.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M102",
+        "path": "members/M102",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M102"
+      },
+      {
+        "key": "15.0000000000000:-3.50000000000000:0.00000000000000|15.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M103",
+        "path": "members/M103",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M103"
+      },
+      {
+        "key": "15.0000000000000:-5.00000000000000:0.00000000000000|15.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M101",
+        "path": "members/M101",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M101"
+      },
+      {
+        "key": "15.0000000000000:0.00000000000000:0.00000000000000|15.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M104",
+        "path": "members/M104",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M104"
+      },
+      {
+        "key": "15.0000000000000:3.50000000000000:0.00000000000000|15.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M105",
+        "path": "members/M105",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M105"
+      },
+      {
+        "key": "15.0000000000000:5.00000000000000:0.00000000000000|15.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M106",
+        "path": "members/M106",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M106"
+      },
+      {
+        "key": "18.0000000000000:-3.50000000000000:0.00000000000000|18.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M108",
+        "path": "members/M108",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M108"
+      },
+      {
+        "key": "18.0000000000000:-3.50000000000000:0.00000000000000|18.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M109",
+        "path": "members/M109",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M109"
+      },
+      {
+        "key": "18.0000000000000:-5.00000000000000:0.00000000000000|18.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M107",
+        "path": "members/M107",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M107"
+      },
+      {
+        "key": "18.0000000000000:0.00000000000000:0.00000000000000|18.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M110",
+        "path": "members/M110",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M110"
+      },
+      {
+        "key": "18.0000000000000:3.50000000000000:0.00000000000000|18.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M111",
+        "path": "members/M111",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M111"
+      },
+      {
+        "key": "18.0000000000000:5.00000000000000:0.00000000000000|18.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M112",
+        "path": "members/M112",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M112"
+      },
+      {
+        "key": "21.0000000000000:-3.50000000000000:0.00000000000000|21.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M114",
+        "path": "members/M114",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M114"
+      },
+      {
+        "key": "21.0000000000000:-3.50000000000000:0.00000000000000|21.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M115",
+        "path": "members/M115",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M115"
+      },
+      {
+        "key": "21.0000000000000:-5.00000000000000:0.00000000000000|21.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M113",
+        "path": "members/M113",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M113"
+      },
+      {
+        "key": "21.0000000000000:0.00000000000000:0.00000000000000|21.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M116",
+        "path": "members/M116",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M116"
+      },
+      {
+        "key": "21.0000000000000:3.50000000000000:0.00000000000000|21.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M117",
+        "path": "members/M117",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M117"
+      },
+      {
+        "key": "21.0000000000000:5.00000000000000:0.00000000000000|21.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M118",
+        "path": "members/M118",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M118"
+      },
+      {
+        "key": "24.0000000000000:-3.50000000000000:0.00000000000000|24.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M120",
+        "path": "members/M120",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M120"
+      },
+      {
+        "key": "24.0000000000000:-3.50000000000000:0.00000000000000|24.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M121",
+        "path": "members/M121",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M121"
+      },
+      {
+        "key": "24.0000000000000:-5.00000000000000:0.00000000000000|24.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M119",
+        "path": "members/M119",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M119"
+      },
+      {
+        "key": "24.0000000000000:0.00000000000000:0.00000000000000|24.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M122",
+        "path": "members/M122",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M122"
+      },
+      {
+        "key": "24.0000000000000:3.50000000000000:0.00000000000000|24.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M123",
+        "path": "members/M123",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M123"
+      },
+      {
+        "key": "24.0000000000000:5.00000000000000:0.00000000000000|24.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M124",
+        "path": "members/M124",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M124"
+      },
+      {
+        "key": "27.0000000000000:-3.50000000000000:0.00000000000000|27.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M126",
+        "path": "members/M126",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M126"
+      },
+      {
+        "key": "27.0000000000000:-3.50000000000000:0.00000000000000|27.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M127",
+        "path": "members/M127",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M127"
+      },
+      {
+        "key": "27.0000000000000:-5.00000000000000:0.00000000000000|27.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M125",
+        "path": "members/M125",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M125"
+      },
+      {
+        "key": "27.0000000000000:0.00000000000000:0.00000000000000|27.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M128",
+        "path": "members/M128",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M128"
+      },
+      {
+        "key": "27.0000000000000:3.50000000000000:0.00000000000000|27.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M129",
+        "path": "members/M129",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M129"
+      },
+      {
+        "key": "27.0000000000000:5.00000000000000:0.00000000000000|27.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M130",
+        "path": "members/M130",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M130"
+      },
+      {
+        "key": "3.00000000000000:-3.50000000000000:0.00000000000000|3.00000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M78",
+        "path": "members/M78",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M78"
+      },
+      {
+        "key": "3.00000000000000:-3.50000000000000:0.00000000000000|3.00000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M79",
+        "path": "members/M79",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M79"
+      },
+      {
+        "key": "3.00000000000000:-5.00000000000000:0.00000000000000|3.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M77",
+        "path": "members/M77",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M77"
+      },
+      {
+        "key": "3.00000000000000:0.00000000000000:0.00000000000000|3.00000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M80",
+        "path": "members/M80",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M80"
+      },
+      {
+        "key": "3.00000000000000:3.50000000000000:0.00000000000000|3.00000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M81",
+        "path": "members/M81",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M81"
+      },
+      {
+        "key": "3.00000000000000:5.00000000000000:0.00000000000000|3.00000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M82",
+        "path": "members/M82",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M82"
+      },
+      {
+        "key": "30.0000000000000:-3.50000000000000:0.00000000000000|30.0000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M132",
+        "path": "members/M132",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M132"
+      },
+      {
+        "key": "30.0000000000000:-3.50000000000000:0.00000000000000|30.0000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M133",
+        "path": "members/M133",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M133"
+      },
+      {
+        "key": "30.0000000000000:-5.00000000000000:0.00000000000000|30.0000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M131",
+        "path": "members/M131",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M131"
+      },
+      {
+        "key": "30.0000000000000:0.00000000000000:0.00000000000000|30.0000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M134",
+        "path": "members/M134",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M134"
+      },
+      {
+        "key": "30.0000000000000:3.50000000000000:0.00000000000000|30.0000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M135",
+        "path": "members/M135",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M135"
+      },
+      {
+        "key": "30.0000000000000:5.00000000000000:0.00000000000000|30.0000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M136",
+        "path": "members/M136",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M136"
+      },
+      {
+        "key": "6.00000000000000:-3.50000000000000:0.00000000000000|6.00000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M84",
+        "path": "members/M84",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M84"
+      },
+      {
+        "key": "6.00000000000000:-3.50000000000000:0.00000000000000|6.00000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M85",
+        "path": "members/M85",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M85"
+      },
+      {
+        "key": "6.00000000000000:-5.00000000000000:0.00000000000000|6.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M83",
+        "path": "members/M83",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M83"
+      },
+      {
+        "key": "6.00000000000000:0.00000000000000:0.00000000000000|6.00000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M86",
+        "path": "members/M86",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M86"
+      },
+      {
+        "key": "6.00000000000000:3.50000000000000:0.00000000000000|6.00000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M87",
+        "path": "members/M87",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M87"
+      },
+      {
+        "key": "6.00000000000000:5.00000000000000:0.00000000000000|6.00000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M88",
+        "path": "members/M88",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M88"
+      },
+      {
+        "key": "9.00000000000000:-3.50000000000000:0.00000000000000|9.00000000000000:-5.00000000000000:0.00000000000000:SEC1:MAT1:M90",
+        "path": "members/M90",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M90"
+      },
+      {
+        "key": "9.00000000000000:-3.50000000000000:0.00000000000000|9.00000000000000:0.00000000000000:0.00000000000000:SEC1:MAT1:M91",
+        "path": "members/M91",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M91"
+      },
+      {
+        "key": "9.00000000000000:-5.00000000000000:0.00000000000000|9.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M89",
+        "path": "members/M89",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M89"
+      },
+      {
+        "key": "9.00000000000000:0.00000000000000:0.00000000000000|9.00000000000000:3.50000000000000:0.00000000000000:SEC1:MAT1:M92",
+        "path": "members/M92",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M92"
+      },
+      {
+        "key": "9.00000000000000:3.50000000000000:0.00000000000000|9.00000000000000:5.00000000000000:0.00000000000000:SEC1:MAT1:M93",
+        "path": "members/M93",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M93"
+      },
+      {
+        "key": "9.00000000000000:5.00000000000000:0.00000000000000|9.00000000000000:5.50000000000000:0.00000000000000:SEC1:MAT1:M94",
+        "path": "members/M94",
+        "reason": "no member with matched endpoint pair",
+        "side": "left",
+        "sourceId": "M94"
+      }
+    ],
+    "unmatchedRight": [],
+    "warnings": []
+  },
+  "schemaVersion": "1.0.0",
+  "sources": {
+    "left": {
+      "generatorRoute": "bridge-project/legacy-python",
+      "label": "single-span-simple-legacy",
+      "metadata": {
+        "bridgeProjectId": "bd-single-span",
+        "fixtureName": "single-span-simple",
+        "loadsMapped": true
+      },
+      "source": "legacy"
+    },
+    "right": {
+      "generatorRoute": "bridge-project/bridge-definition",
+      "label": "single-span-simple-bridge-definition",
+      "metadata": {
+        "bridgeProjectId": "bd-single-span",
+        "fixtureName": "single-span-simple",
+        "loadsMapped": true
+      },
+      "source": "bridgeDefinition"
+    }
+  },
+  "tolerance": {
+    "angle": {
+      "absolute": 0.000001
+    },
+    "coordinate": {
+      "absolute": 0.000001
+    },
+    "length": {
+      "absolute": 0.0001,
+      "floor": 1,
+      "relative": 0.000001
+    },
+    "scalar": {
+      "absolute": 1e-9,
+      "floor": 1e-9,
+      "relative": 0.000001
+    }
+  },
+  "toolVersion": "spacer-clone-semantic-parity-8.4"
+}

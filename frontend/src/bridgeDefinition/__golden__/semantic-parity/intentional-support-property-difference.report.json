@@ -1,0 +1,2425 @@
+{
+  "generatedAt": "2026-07-11T12:00:00.000Z",
+  "report": {
+    "ambiguities": [],
+    "counts": {
+      "left": {
+        "materials": 1,
+        "members": 136,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 4
+      },
+      "matched": {
+        "members": 136,
+        "nodes": 77
+      },
+      "right": {
+        "materials": 1,
+        "members": 136,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 4
+      }
+    },
+    "errors": [],
+    "metrics": {
+      "geometry": {
+        "equivalent": true,
+        "left": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 136,
+          "memberLengths": {
+            "count": 136,
+            "max": 3.5,
+            "mean": 2.4338235294117645,
+            "min": 0.5,
+            "total": 331
+          },
+          "nodeCount": 77
+        },
+        "right": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 136,
+          "memberLengths": {
+            "count": 136,
+            "max": 3.5,
+            "mean": 2.4338235294117645,
+            "min": 0.5,
+            "total": 331
+          },
+          "nodeCount": 77
+        }
+      },
+      "property": {
+        "comparedMemberCount": 136,
+        "materialMismatchCount": 0,
+        "orientationMismatchCount": 0,
+        "orientationOppositeCount": 0,
+        "sectionMismatchCount": 136,
+        "skippedUndefinedCount": 0
+      },
+      "structuralValidation": {
+        "left": {
+          "disconnectedComponentCount": 1,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": true,
+          "zeroLengthMemberCount": 0
+        },
+        "right": {
+          "disconnectedComponentCount": 1,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": true,
+          "zeroLengthMemberCount": 0
+        }
+      },
+      "support": {
+        "ambiguousNodeCount": 0,
+        "fixityMismatchCount": 1,
+        "matchedSupportCount": 3,
+        "unmatchedLeftCount": 0,
+        "unmatchedRightCount": 0
+      },
+      "topology": {
+        "equivalent": true,
+        "left": {
+          "connectedComponentCount": 1,
+          "connectedComponentSizes": [
+            77
+          ],
+          "degreeHistogram": {
+            "2": 4,
+            "3": 28,
+            "4": 45
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0,
+          "unmatchedConnectivityEdgeCount": 0
+        },
+        "right": {
+          "connectedComponentCount": 1,
+          "connectedComponentSizes": [
+            77
+          ],
+          "degreeHistogram": {
+            "2": 4,
+            "3": 28,
+            "4": 45
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0
+        }
+      }
+    },
+    "mismatches": [
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "section",
+        "delta": 0.02500000000000001,
+        "leftValue": 0.05,
+        "message": "Property members/*/section/area differs beyond scalar tolerance.",
+        "path": "members/*/section/area",
+        "rightValue": 0.07500000000000001,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 1e-9,
+          "floor": 1e-9,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Support fixity mismatch at matched node.",
+        "path": "supports/*",
+        "rightValue": "0,0,0,1,1,1",
+        "severity": "error"
+      }
+    ],
+    "status": "different",
+    "summary": {
+      "ambiguityCount": 0,
+      "errorCount": 0,
+      "geometryEquivalent": true,
+      "matchedMembers": 136,
+      "matchedNodes": 77,
+      "mismatchCount": 137,
+      "propertyEquivalent": false,
+      "status": "different",
+      "structurallyValid": true,
+      "supportEquivalent": false,
+      "topologyEquivalent": true,
+      "unmatchedLeft": 0,
+      "unmatchedRight": 0,
+      "warningCount": 0
+    },
+    "tolerance": {
+      "angle": {
+        "absolute": 0.000001
+      },
+      "coordinate": {
+        "absolute": 0.000001
+      },
+      "length": {
+        "absolute": 0.0001,
+        "floor": 1,
+        "relative": 0.000001
+      },
+      "scalar": {
+        "absolute": 1e-9,
+        "floor": 1e-9,
+        "relative": 0.000001
+      }
+    },
+    "unmatchedLeft": [],
+    "unmatchedRight": [],
+    "warnings": []
+  },
+  "schemaVersion": "1.0.0",
+  "sources": {
+    "left": {
+      "generatorRoute": "fixture/support-property-baseline",
+      "label": "support-property-baseline",
+      "metadata": {
+        "fixtureName": "intentional-support-property-difference"
+      },
+      "source": "legacy"
+    },
+    "right": {
+      "generatorRoute": "fixture/support-property-mutated",
+      "label": "support-property-mutated",
+      "metadata": {
+        "fixtureName": "intentional-support-property-difference"
+      },
+      "source": "legacy"
+    }
+  },
+  "tolerance": {
+    "angle": {
+      "absolute": 0.000001
+    },
+    "coordinate": {
+      "absolute": 0.000001
+    },
+    "length": {
+      "absolute": 0.0001,
+      "floor": 1,
+      "relative": 0.000001
+    },
+    "scalar": {
+      "absolute": 1e-9,
+      "floor": 1e-9,
+      "relative": 0.000001
+    }
+  },
+  "toolVersion": "spacer-clone-semantic-parity-8.4"
+}

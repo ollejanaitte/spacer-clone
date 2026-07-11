@@ -1,0 +1,657 @@
+{
+  "generatedAt": "2026-07-11T12:00:00.000Z",
+  "report": {
+    "ambiguities": [],
+    "counts": {
+      "left": {
+        "materials": 1,
+        "members": 136,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 4
+      },
+      "matched": {
+        "members": 134,
+        "nodes": 76
+      },
+      "right": {
+        "materials": 1,
+        "members": 136,
+        "nodes": 77,
+        "sections": 1,
+        "supports": 4
+      }
+    },
+    "errors": [],
+    "metrics": {
+      "geometry": {
+        "equivalent": false,
+        "left": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 136,
+          "memberLengths": {
+            "count": 136,
+            "max": 3.5,
+            "mean": 2.4338235294117645,
+            "min": 0.5,
+            "total": 331
+          },
+          "nodeCount": 77
+        },
+        "right": {
+          "boundingBox": {
+            "max": {
+              "x": 30,
+              "y": 5.5,
+              "z": 0
+            },
+            "min": {
+              "x": 0,
+              "y": -5.5,
+              "z": 0
+            }
+          },
+          "centroid": {
+            "x": 15.006493506493506,
+            "y": 0,
+            "z": 0
+          },
+          "matchedMemberLengthDeltas": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "maxMatchedMemberLengthDelta": 0,
+          "maxMatchedNodeDistance": 0,
+          "memberCount": 136,
+          "memberLengths": {
+            "count": 136,
+            "max": 3.5,
+            "mean": 2.431669902802842,
+            "min": 0.5,
+            "total": 330.70710678118655
+          },
+          "nodeCount": 77
+        }
+      },
+      "property": {
+        "comparedMemberCount": 134,
+        "materialMismatchCount": 0,
+        "orientationMismatchCount": 0,
+        "orientationOppositeCount": 0,
+        "sectionMismatchCount": 0,
+        "skippedUndefinedCount": 0
+      },
+      "structuralValidation": {
+        "left": {
+          "disconnectedComponentCount": 1,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": true,
+          "zeroLengthMemberCount": 0
+        },
+        "right": {
+          "disconnectedComponentCount": 1,
+          "isolatedNodeCount": 0,
+          "missingEndpointCount": 0,
+          "nonFiniteGeometryCount": 0,
+          "selfLoopCount": 0,
+          "valid": true,
+          "zeroLengthMemberCount": 0
+        }
+      },
+      "support": {
+        "ambiguousNodeCount": 0,
+        "fixityMismatchCount": 0,
+        "matchedSupportCount": 3,
+        "unmatchedLeftCount": 1,
+        "unmatchedRightCount": 1
+      },
+      "topology": {
+        "equivalent": false,
+        "left": {
+          "connectedComponentCount": 1,
+          "connectedComponentSizes": [
+            77
+          ],
+          "degreeHistogram": {
+            "2": 4,
+            "3": 28,
+            "4": 45
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0,
+          "unmatchedConnectivityEdgeCount": 2
+        },
+        "right": {
+          "connectedComponentCount": 1,
+          "connectedComponentSizes": [
+            77
+          ],
+          "degreeHistogram": {
+            "2": 4,
+            "3": 28,
+            "4": 45
+          },
+          "isolatedNodeCount": 0,
+          "parallelEdgeCandidateCount": 0,
+          "selfLoopCandidateCount": 0
+        }
+      }
+    },
+    "mismatches": [
+      {
+        "category": "geometry",
+        "delta": 0.006493506493505663,
+        "leftValue": 15,
+        "message": "Geometry centroid.x differs beyond coordinate tolerance.",
+        "path": "centroid",
+        "rightValue": 15.006493506493506,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.000001
+        }
+      },
+      {
+        "category": "geometry",
+        "delta": 0.0021536266089223766,
+        "leftValue": 2.4338235294117645,
+        "message": "Mean member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.mean",
+        "rightValue": 2.431669902802842,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "geometry",
+        "delta": 0.29289321881344677,
+        "leftValue": 331,
+        "message": "Total member length differs beyond tolerance.",
+        "path": "geometry.memberLengths.total",
+        "rightValue": 330.70710678118655,
+        "severity": "error",
+        "tolerance": {
+          "absolute": 0.0001,
+          "floor": 1,
+          "relative": 0.000001
+        }
+      },
+      {
+        "category": "member",
+        "leftValue": "M1",
+        "message": "left item is unmatched: endpoint node was not matched.",
+        "path": "members/M1",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "message": "right item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M1",
+        "rightValue": "M1",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "leftValue": "M71",
+        "message": "left item is unmatched: endpoint node was not matched.",
+        "path": "members/M71",
+        "severity": "error"
+      },
+      {
+        "category": "member",
+        "message": "right item is unmatched: no member with matched endpoint pair.",
+        "path": "members/M71",
+        "rightValue": "M71",
+        "severity": "error"
+      },
+      {
+        "category": "node",
+        "leftValue": "N1",
+        "message": "left item is unmatched: no coordinate match.",
+        "path": "nodes/N1",
+        "severity": "error"
+      },
+      {
+        "category": "node",
+        "message": "right item is unmatched: no coordinate match.",
+        "path": "nodes/N1",
+        "rightValue": "N1",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "leftValue": "0,1,1,1,1,1",
+        "message": "Left support node was not matched to any right node.",
+        "path": "supports/*",
+        "severity": "error"
+      },
+      {
+        "category": "support",
+        "message": "Right support node was not matched to any left node.",
+        "path": "supports/*",
+        "rightValue": "0,1,1,1,1,1",
+        "severity": "error"
+      },
+      {
+        "category": "topology",
+        "leftValue": 2,
+        "message": "Left model has connectivity edges not represented on the right via matched nodes.",
+        "path": "topology.unmatchedConnectivityEdgeCount",
+        "rightValue": 0,
+        "severity": "error"
+      }
+    ],
+    "status": "different",
+    "summary": {
+      "ambiguityCount": 0,
+      "errorCount": 0,
+      "geometryEquivalent": false,
+      "matchedMembers": 134,
+      "matchedNodes": 76,
+      "mismatchCount": 12,
+      "propertyEquivalent": true,
+      "status": "different",
+      "structurallyValid": true,
+      "supportEquivalent": false,
+      "topologyEquivalent": false,
+      "unmatchedLeft": 3,
+      "unmatchedRight": 3,
+      "warningCount": 0
+    },
+    "tolerance": {
+      "angle": {
+        "absolute": 0.000001
+      },
+      "coordinate": {
+        "absolute": 0.000001
+      },
+      "length": {
+        "absolute": 0.0001,
+        "floor": 1,
+        "relative": 0.000001
+      },
+      "scalar": {
+        "absolute": 1e-9,
+        "floor": 1e-9,
+        "relative": 0.000001
+      }
+    },
+    "unmatchedLeft": [
+      {
+        "key": "0.00000000000000:-5.00000000000000:0.00000000000000|0.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M71",
+        "path": "members/M71",
+        "reason": "endpoint node was not matched",
+        "side": "left",
+        "sourceId": "M71"
+      },
+      {
+        "key": "0.00000000000000:-5.50000000000000:0.00000000000000",
+        "path": "nodes/N1",
+        "reason": "no coordinate match",
+        "side": "left",
+        "sourceId": "N1"
+      },
+      {
+        "key": "0.00000000000000:-5.50000000000000:0.00000000000000|3.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M1",
+        "path": "members/M1",
+        "reason": "endpoint node was not matched",
+        "side": "left",
+        "sourceId": "M1"
+      }
+    ],
+    "unmatchedRight": [
+      {
+        "key": "0.00000000000000:-5.00000000000000:0.00000000000000|0.500000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M71",
+        "path": "members/M71",
+        "reason": "no member with matched endpoint pair",
+        "side": "right",
+        "sourceId": "M71"
+      },
+      {
+        "key": "0.500000000000000:-5.50000000000000:0.00000000000000",
+        "path": "nodes/N1",
+        "reason": "no coordinate match",
+        "side": "right",
+        "sourceId": "N1"
+      },
+      {
+        "key": "0.500000000000000:-5.50000000000000:0.00000000000000|3.00000000000000:-5.50000000000000:0.00000000000000:SEC1:MAT1:M1",
+        "path": "members/M1",
+        "reason": "no member with matched endpoint pair",
+        "side": "right",
+        "sourceId": "M1"
+      }
+    ],
+    "warnings": []
+  },
+  "schemaVersion": "1.0.0",
+  "sources": {
+    "left": {
+      "generatorRoute": "fixture/geometry-baseline",
+      "label": "geometry-baseline",
+      "metadata": {
+        "fixtureName": "intentional-geometry-difference"
+      },
+      "source": "legacy"
+    },
+    "right": {
+      "generatorRoute": "fixture/geometry-shifted",
+      "label": "geometry-shifted",
+      "metadata": {
+        "fixtureName": "intentional-geometry-difference"
+      },
+      "source": "legacy"
+    }
+  },
+  "tolerance": {
+    "angle": {
+      "absolute": 0.000001
+    },
+    "coordinate": {
+      "absolute": 0.000001
+    },
+    "length": {
+      "absolute": 0.0001,
+      "floor": 1,
+      "relative": 0.000001
+    },
+    "scalar": {
+      "absolute": 1e-9,
+      "floor": 1e-9,
+      "relative": 0.000001
+    }
+  },
+  "toolVersion": "spacer-clone-semantic-parity-8.4"
+}

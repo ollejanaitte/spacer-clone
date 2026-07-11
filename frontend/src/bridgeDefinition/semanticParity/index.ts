@@ -1,9 +1,27 @@
 export { compareNormalizedModels, compareSemanticParity } from "./compare";
+export {
+  compareGeneratedProjectModels,
+  compareLegacyAndBridgeDefinitionModels,
+  createLegacyBridgeDefinitionSourceMeta,
+  createLinerStructureOnlySourceMeta,
+  createSemanticParityReportForGeneratedModels,
+  generateBridgeDefinitionProjectModelFromBridgeProject,
+  generateBridgeDefinitionProjectModelFromLinerBridge,
+  SEMANTIC_PARITY_GOLDEN_GENERATED_AT,
+  SEMANTIC_PARITY_TOOL_VERSION,
+  serializeSemanticParityReportForGolden,
+} from "./generatedModelParity";
 export { buildGeometryMetrics, computeGeometryMetrics } from "./geometryParity";
 export { matchNormalizedMembers } from "./memberMatching";
 export { matchNormalizedNodes } from "./nodeMatching";
 export { normalizeProjectModelForSemanticParity } from "./normalize";
 export { comparePropertyParity, isNearEqualProperty } from "./propertyParity";
+export {
+  PARITY_REPORT_ENVELOPE_SCHEMA_VERSION,
+  canonicalizeParityReportEnvelope,
+  createParityReportEnvelope,
+  serializeParityReportEnvelope,
+} from "./serializer";
 export { validateStructuralModel } from "./structuralValidation";
 export { compareSupportParity } from "./supportParity";
 export { buildTopologyMetrics, computeTopologyMetrics } from "./topologyParity";
@@ -18,6 +36,11 @@ export {
   nearlyZero,
 } from "./tolerance";
 
+export type {
+  CompareGeneratedProjectModelsOptions,
+  CreateSemanticParityReportOptions,
+  GeneratedProjectModelSourceMeta,
+} from "./generatedModelParity";
 export type {
   AmbiguousMatch,
   BoundingBox3,
@@ -37,6 +60,8 @@ export type {
   ParityMetrics,
   ParityMismatch,
   ParityReport,
+  ParityReportEnvelope,
+  ParityReportSource,
   ParityReportSummary,
   PropertyParitySummary,
   SemanticParityDiagnostic,
@@ -44,6 +69,7 @@ export type {
   SemanticParitySource,
   SemanticParityStatus,
   SemanticTolerance,
+  SerializeParityReportEnvelopeOptions,
   StructuralValidationSummary,
   SupportParitySummary,
   ToleranceBand,
@@ -51,4 +77,7 @@ export type {
   TraceInfo,
   UnmatchedItem,
   Vector3,
+  CanonicalizeParityReportEnvelopeOptions,
+  CreateParityReportEnvelopeOptions,
+  JsonSafeValue,
 } from "./types";
