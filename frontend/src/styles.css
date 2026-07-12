@@ -1048,6 +1048,215 @@ button:disabled {
   gap: 12px;
 }
 
+.semantic-parity-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #dce4ed;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.semantic-parity-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.semantic-parity-header h3 {
+  margin: 0 0 4px 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.semantic-parity-header p,
+.semantic-parity-card p,
+.semantic-parity-empty {
+  margin: 0;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.semantic-parity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.semantic-parity-grid,
+.semantic-parity-results {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.semantic-parity-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.semantic-parity-card h4 {
+  margin: 0 0 8px 0;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.semantic-parity-file {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+  color: #334155;
+  font-weight: 600;
+}
+
+.semantic-parity-file input {
+  max-width: 100%;
+}
+
+.semantic-parity-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.semantic-parity-status-badge,
+.semantic-parity-diagnostic-level {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.semantic-parity-status-badge.idle {
+  border-color: #cbd5e1;
+  background: #eef2f7;
+  color: #475569;
+}
+
+.semantic-parity-status-badge.equivalent {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.semantic-parity-status-badge.different {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.semantic-parity-status-badge.indeterminate {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.semantic-parity-status-badge.invalid {
+  border-color: #fbcfe8;
+  background: #fdf2f8;
+  color: #9d174d;
+}
+
+.semantic-parity-status-text,
+.semantic-parity-stale,
+.semantic-parity-status-message {
+  color: #475569;
+}
+
+.semantic-parity-stale {
+  font-weight: 700;
+}
+
+.semantic-parity-error {
+  margin: 0;
+  color: #9f1239;
+  font-weight: 600;
+}
+
+.semantic-parity-summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+
+.semantic-parity-summary dt {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.semantic-parity-summary dd {
+  margin: 0;
+  color: #1e293b;
+  word-break: break-word;
+}
+
+.semantic-parity-diagnostics {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.semantic-parity-diagnostics li {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.semantic-parity-diagnostic-level.info {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.semantic-parity-diagnostic-level.warning {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.semantic-parity-diagnostic-level.error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.semantic-parity-diagnostic-level.blocker {
+  background: #fdf2f8;
+  color: #9d174d;
+}
+
+.semantic-parity-json {
+  width: 100%;
+  min-height: 240px;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
 .summary-list {
   display: flex;
   flex-wrap: wrap;

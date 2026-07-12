@@ -15,6 +15,7 @@ import { TimeHistorySettingsPanel } from "../timeHistory/TimeHistorySettingsPane
 import { useTimeHistoryAnalysis } from "../timeHistory/useTimeHistoryAnalysis";
 import type { AnalysisResult, BottomTab, ProjectModel, StructuredMessage } from "../types";
 import type { TimeHistoryAnalysisEnvelope } from "../timeHistory/types";
+import { ResultsPanelSemanticParity } from "./ResultsPanelSemanticParity";
 
 type ResultsPanelProps = {
   activeTab: BottomTab;
@@ -101,17 +102,20 @@ export function ResultsPanel({
       </div>
       <div className="tab-body">
         {activeTab === "results" && (
-          <ResultTables
-            result={result}
-            project={project}
-            activeLoadCase={activeLoadCase}
-            selectedEigenMode={selectedEigenMode}
-            selectedResponseSpectrumResult={selectedResponseSpectrumResult}
-            selectedNode={selectedNode}
-            selectedMember={selectedMember}
-            onSelectedEigenModeChange={onSelectedEigenModeChange}
-            onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
-          />
+          <div className="results-grid">
+            <ResultTables
+              result={result}
+              project={project}
+              activeLoadCase={activeLoadCase}
+              selectedEigenMode={selectedEigenMode}
+              selectedResponseSpectrumResult={selectedResponseSpectrumResult}
+              selectedNode={selectedNode}
+              selectedMember={selectedMember}
+              onSelectedEigenModeChange={onSelectedEigenModeChange}
+              onSelectedResponseSpectrumResultChange={onSelectedResponseSpectrumResultChange}
+            />
+            <ResultsPanelSemanticParity project={project} />
+          </div>
         )}
         {activeTab === "howToRead" && (
           <div className="how-to-read-section">
