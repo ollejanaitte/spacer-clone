@@ -76,6 +76,9 @@ function serializeLayerRecord(
   writer.pair(70, layer.frozen ? 1 : 0);
   writer.pair(62, layer.color);
   writer.pair(6, layer.lineType);
+  if (layer.lineweight !== undefined) {
+    writer.pair(370, layer.lineweight);
+  }
 }
 
 function serializeTextStyleTable(

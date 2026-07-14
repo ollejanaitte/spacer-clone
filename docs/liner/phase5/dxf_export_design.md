@@ -1,9 +1,10 @@
 # DXF Export Design
 
-> Status: `READY_WITH_OPEN_DECISIONS`
-> Date: 2026-07-13
+> Status: `STEP3_IMPLEMENTING`
+> Date: 2026-07-14
 > Phase: Phase 5 / Step 3
 > Readiness: `README.md` の `READY_WITH_OPEN_DECISIONS`
+> Implementation: [step3_complete_dxf_implementation.md](step3_complete_dxf_implementation.md)
 > Related docs: [README.md](README.md), [drawing_model_design.md](drawing_model_design.md), [phase5_liner_formal_drawing_design.md](phase5_liner_formal_drawing_design.md), [formal_drawing_ui_design.md](formal_drawing_ui_design.md), [../cad_output_spec.md](../cad_output_spec.md), [../intermediate_result_model.md](../intermediate_result_model.md)
 
 ## 1. 確認済み事実
@@ -64,23 +65,34 @@ DXF 生成では少なくとも次を明示する。
 
 ### 2.5 Entity 方針
 
-対応する。
+Step 3 必須（実装済み / 実装対象）。
 
 - `LINE`
 - `LWPOLYLINE`
+- `ARC`
+- `CIRCLE`
 - `TEXT`
+- `TABLES` / `BLOCKS` / `ENTITIES` / `EOF`
+- `DrawingDimension` → LINE + TEXT 分解（native `DIMENSION` は必須でない）
+
+将来候補（今回必須でない）。
+
 - `MTEXT`
-- `BLOCK`
-- `INSERT`
 - `HATCH`
-- `DIMENSION`
-
-不足する、または現時点で未確定。
-
+- native `DIMENSION`
 - `SPLINE`
 - `LEADER`
 - custom annotative entity
 - full 3D solid / mesh
+
+### 2.5.1 Version / code page / units（Step 3 pin）
+
+- `$ACADVER` = `AC1021`
+- `$DWGCODEPAGE` = `UTF-8`
+- `$INSUNITS` = meters
+- `$MEASUREMENT` = metric
+- 日本語 TEXT は UTF-8 round-trip を優先
+- LibreCAD open 検証を自動 gate とし、ユーザー目視は merge 後
 
 ### 2.6 日本語 TEXT
 

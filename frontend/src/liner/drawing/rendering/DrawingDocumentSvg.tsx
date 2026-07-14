@@ -24,11 +24,39 @@ function strokeWidthForLayer(layer: DrawingLayer): number {
 }
 
 function strokeColorForLayer(layer: DrawingLayer): string {
-  return layer.style?.color ?? "#0f172a";
+  const color = layer.style?.color;
+  if (!color) {
+    return "#0f172a";
+  }
+  if (color.startsWith("#")) {
+    return color;
+  }
+  const aci = Number.parseInt(color, 10);
+  switch (aci) {
+    case 1:
+      return "#cc0000";
+    case 3:
+      return "#009900";
+    case 5:
+      return "#0000cc";
+    case 6:
+      return "#cc00cc";
+    case 8:
+      return "#808080";
+    default:
+      return "#0f172a";
+  }
 }
 
 function strokeDasharrayForLayer(layer: DrawingLayer): string | undefined {
-  return layer.style?.lineType === "dashed" ? "4 2" : undefined;
+  const lineType = layer.style?.lineType?.toUpperCase();
+  if (lineType === "DASHED" || lineType === "HIDDEN") {
+    return "4 2";
+  }
+  if (lineType === "CENTER") {
+    return "8 2 2 2";
+  }
+  return undefined;
 }
 
 function transformForLayer(viewport: DrawingViewport, layer: DrawingLayer): AffineTransform2 {

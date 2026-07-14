@@ -117,19 +117,21 @@ describe("DrawingDocument to DxfDocument mapper", () => {
     }
   });
 
-  it("emits diagnostic for DrawingDimension without native DIMENSION entity", () => {
+  it("decomposes DrawingDimension into LINE and TEXT entities", () => {
     const dimension: DrawingDimension = {
       kind: "dimension",
       id: "dim-1",
       start: createPoint2(0, 0),
       end: createPoint2(10, 0),
       offset: 1,
+      text: "10.000",
       layerId: "layer-a",
     };
     const mapped = mapDrawingPrimitiveToDxfEntities(dimension, new Map([["layer-a", "DIM"]]), "meters");
 
-    expect(mapped.entities).toHaveLength(0);
-    expect(mapped.diagnostics.some((diagnostic) => diagnostic.code === "DXF_DIMENSION_UNSUPPORTED")).toBe(true);
+    expect(mapped.entities.some((entity) => entity.kind === "line")).toBe(true);
+    expect(mapped.entities.some((entity) => entity.kind === "text")).toBe(true);
+    expect(mapped.diagnostics.some((diagnostic) => diagnostic.code === "DXF_DIMENSION_DECOMPOSED")).toBe(true);
   });
 
   it("falls back to layer 0 for missing layer id", () => {

@@ -434,7 +434,7 @@ describe("formal drawing builders (redline)", () => {
     if (centerline?.kind === "line") {
       expect(centerline.start.x).toBe(0);
       expect(centerline.end.x).toBe(0);
-      expect(centerlineLayer?.style?.lineType).toBe("dashed");
+      expect(centerlineLayer?.style?.lineType).toBe("CENTER");
     }
     const label = centerlineLayer?.primitives.find(
       (primitive) => primitive.kind === "text" && primitive.id === "cross-section-centerline-label",
