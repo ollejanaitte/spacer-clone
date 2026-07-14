@@ -1,0 +1,64 @@
+[0m
+> build · mimo-auto
+[0m
+[0m⚙ [0mmemory Memory search: 1 result
+[0m→ [0mRead .
+[0m→ [0mRead docs/liner/phase4.5
+[0m→ [0mRead frontend/src
+[0m→ [0mRead backend
+[0m→ [0mRead docs/liner/phase4.5/step8_semantic_parity_spec.md
+[0m→ [0mRead docs/liner/phase4.5/step8_2_semantic_comparison_helper.md
+[0m→ [0mRead docs/liner/phase4.5/step8_3_semantic_parity_metrics.md
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity
+[0m→ [0mRead frontend/src/bridgeDefinition
+[0m→ [0mRead frontend/src/bridgeDefinition/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/compare.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/index.ts
+[0m→ [0mRead frontend/src/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/index.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/generator
+[0m→ [0mRead frontend/src/bridgeDefinition/generator/structuralModelGenerator.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/adapters
+[0m→ [0mRead frontend/src/bridgeDefinition/featureFlags.ts
+[0m→ [0mRead backend/engine
+[0m→ [0mRead frontend/src/results
+[0m→ [0mRead frontend/src/App.tsx
+[0m→ [0mRead frontend/src/api
+[0m→ [0mRead backend/engine/solver.py
+[0m→ [0mRead frontend/src/results/resultViewModel.ts
+[0m→ [0mRead frontend/src/api/client.ts
+[0m→ [0mRead backend/app
+[0m→ [0mRead backend/engine/results.py
+[0m→ [0mRead backend/app/main.py
+[0m→ [0mRead backend/engine/eigen.py
+[0m→ [0mRead backend/engine/response_spectrum.py[90m [limit=100][0m
+[0m→ [0mRead frontend/src/bridgeDefinition/__tests__
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/__tests__
+[0m→ [0mRead frontend/src/bridgeDefinition/generator/facade.ts
+[0m✱ [0mGlob "frontend/package.json"[90m 1 match[0m
+[0m✱ [0mGlob "frontend/tsconfig*.json"[90m 2 matches[0m
+[0m✱ [0mGlob "frontend/vitest*.{ts,js,mts,mjs}"[90m 2 matches[0m
+[0m→ [0mRead frontend/package.json
+[0m→ [0mRead frontend/vitest.config.ts
+[0m→ [0mRead frontend/vitest.regression.config.ts
+[0m→ [0mRead backend/engine/element.py
+[0m→ [0mRead backend/engine/model.py
+[0m→ [0mRead backend/engine/dof.py
+[0m→ [0mRead backend/engine/assembly.py
+[0m→ [0mRead frontend/src/bridgeDefinition/__tests__/regression.golden.test.ts[90m [limit=100][0m
+[0m→ [0mRead frontend/src/bridgeDefinition/__fixtures__
+[0m→ [0mRead frontend/src/bridgeDefinition/__fixtures__/bridgeRegressionFixtures.ts[90m [limit=100][0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures
+[0m→ [0mRead frontend/src/bridgeDefinition/adapters/fromBridgeProject.ts[90m [limit=80][0m
+[0m→ [0mRead frontend/src/bridge/types.ts[90m [limit=60][0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/normalize.ts
+[0m→ [0mRead frontend/src/components/ResultsPanel.tsx[90m [limit=60][0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/tolerance.ts
+[0m→ [0mRead frontend/src/projectMigration.ts[90m [limit=50][0m
+[0m→ [0mRead docs/liner/phase4.5/bridge_definition_design.md[90m [limit=80][0m
+[0m→ [0mRead backend/engine/bridge_fem_generator.py[90m [limit=100][0m
+[0m→ [0mRead frontend/src/viewer
+[0m✱ [0mGlob "scripts/**/*.{ts,js,mjs,py}"[90m 4 matches[0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/supportParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/propertyParity.ts

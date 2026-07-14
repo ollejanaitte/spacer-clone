@@ -1,0 +1,24 @@
+You are Cursor CLI Headless for spacer-clone Phase 4.5 Step 8.6 Response Spectrum Partial Parity.
+Use only local Headless CLI. Do not use GUI, Cloud Agent, Background Agent, Bugbot, or GitHub.
+Do not touch backend/, package manifests, UI, or schema. Do not change solver algorithms. Do not add unsupported Qy/Qz/Mx parity or I/J reversal transforms.
+
+Implement only the currently supported response spectrum partial parity in frontend semanticParity:
+- response spectrum normalization
+- modal result matching using existing eigen mode matching/MAC helpers where possible
+- combined result matching
+- displacement parity for supported result fields
+- reaction parity for supported result fields
+- member section force partial parity for supported fields only (verify actual types first)
+- missing / zero / failed / invalid semantics
+- deterministic report integration using existing serializer/envelope contract
+- fixtures and tests for modal order permutation, missing, zero, failed, invalid, NaN/Infinity, serializer determinism
+- docs file docs/liner/phase4.5/step8_6_response_spectrum_partial_parity.md
+
+Rules:
+- Keep static/eigen parity working.
+- Reuse existing compare/report infrastructure; do not invent a new serializer.
+- Do not create unsupported fields or invent Qy/Qz/Mx if absent in the actual type/model.
+- If member section forces or response spectrum subfields are not enough to compare safely, mark them unsupported/indeterminate rather than guessing.
+- Preserve model-only compareSemanticParity behavior.
+- Keep changes limited to frontend/src/bridgeDefinition/semanticParity, related tests/fixtures, and docs.
+- Return a concise summary of files changed and unresolved blockers.

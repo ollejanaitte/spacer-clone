@@ -1,0 +1,38 @@
+[0m
+> build · mimo-auto
+[0m
+[0m✱ [0mGlob "docs/liner/phase4.5/step8_*.md"[90m 3 matches[0m
+[0m→ [0mRead docs/liner/phase4.5/step8_semantic_parity_spec.md
+[0m→ [0mRead docs/liner/phase4.5/step8_2_semantic_comparison_helper.md
+[0m→ [0mRead docs/liner/phase4.5/step8_3_semantic_parity_metrics.md
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/compare.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/normalize.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/tolerance.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/supportParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/propertyParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/structuralValidation.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/nodeMatching.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/memberMatching.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/modelGraph.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/geometryParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/topologyParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/index.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/index.ts
+[0m→ [0mRead frontend/src/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/generator/structuralModelGenerator.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/generator/facade.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/generator/index.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/adapters
+[0m→ [0mRead frontend/src/bridgeDefinition/__fixtures__/bridgeRegressionFixtures.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/__tests__/regressionHelpers.ts
+[0m→ [0mRead frontend/src/bridge/types.ts
+[0m→ [0mRead frontend/src/bridge/api.ts
+[0m→ [0mRead frontend/src/api/client.ts
+[0m→ [0mRead frontend/src/results/resultViewModel.ts
+[0m→ [0mRead frontend/src/viewer/comparisonMetrics.ts
+[0m→ [0mRead backend/engine/solver.py
+[0m→ [0mRead frontend/src/bridgeDefinition/adapters/fromBridgeProject.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/adapters/fromLinerBridge.ts
+[0m✱ [0mGlob "frontend/src/bridgeDefinition/featureFlags.ts"[90m 1 match[0m

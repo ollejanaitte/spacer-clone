@@ -1,0 +1,1328 @@
+[0m
+> build · mimo-auto
+[0m
+[0m$ [0mgit status -sb
+## main...origin/main
+ M frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json
+ M frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json
+ M frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json
+ M frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json
+ M frontend/src/bridgeDefinition/index.ts
+ M frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts
+ M frontend/src/bridgeDefinition/semanticParity/compare.ts
+ M frontend/src/bridgeDefinition/semanticParity/index.ts
+ M frontend/src/bridgeDefinition/semanticParity/normalize.ts
+ M frontend/src/bridgeDefinition/semanticParity/serializer.ts
+ M frontend/src/bridgeDefinition/semanticParity/types.ts
+?? docs/liner/phase4.5/implementation/
+?? docs/liner/phase4.5/scope/
+?? docs/liner/phase4.5/step8_5_load_boundary_parity.md
+?? frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures/loadParityFixtures.ts
+?? frontend/src/bridgeDefinition/semanticParity/__tests__/loadParity.test.ts
+?? frontend/src/bridgeDefinition/semanticParity/loadParity.ts
+[0m
+[0m$ [0mgit log --oneline -5
+45d3988 feat: add real-route semantic parity goldens (#130)
+12647b1 feat: add semantic parity metrics and structural checks (#129)
+a8c8166 feat: implement semantic comparison helper foundation
+2d3aeac docs: define phase 4.5 semantic parity specification
+64b37e9 docs(bridge): freeze BridgeDefinition architecture
+[0m
+[0m$ [0mgit diff --stat
+.../intentional-geometry-difference.report.json    |  24 +++
+ ...ntional-support-property-difference.report.json |  24 +++
+ .../intentional-topology-difference.report.json    |  24 +++
+ .../single-span-simple-real-route.report.json      |  40 +++-
+ frontend/src/bridgeDefinition/index.ts             |   7 +
+ .../semanticParity/__tests__/serializer.test.ts    |  18 ++
+ .../src/bridgeDefinition/semanticParity/compare.ts |  37 +++-
+ .../src/bridgeDefinition/semanticParity/index.ts   |   8 +
+ .../bridgeDefinition/semanticParity/normalize.ts   | 221 ++++++++++++++++++++-
+ .../bridgeDefinition/semanticParity/serializer.ts  |   4 +-
+ .../src/bridgeDefinition/semanticParity/types.ts   |  93 ++++++++-
+ 11 files changed, 490 insertions(+), 10 deletions(-)
+[0m
+[0m$ [0mgit diff --cached --stat
+(no output)
+[0m
+[0m$ [0mgit diff -- frontend/src/bridgeDefinition/
+diff --git a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json
+index 60e5870..e1fc71a 100644
+--- a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json
++++ b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json
+@@ -4,8 +4,11 @@
+     "ambiguities": [],
+     "counts": {
+       "left": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -15,8 +18,11 @@
+         "nodes": 76
+       },
+       "right": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -359,6 +365,23 @@
+           "nodeCount": 77
+         }
+       },
++      "load": {
++        "ambiguousLoadCandidateCount": 0,
++        "matchedLoadCaseCount": 1,
++        "matchedMemberLoadCount": 0,
++        "matchedNodalLoadCount": 0,
++        "memberLoadValueMismatchCount": 0,
++        "nodalLoadValueMismatchCount": 0,
++        "totalAppliedLoadEquivalent": true,
++        "totalAppliedLoadLeft": 0,
++        "totalAppliedLoadRight": 0,
++        "unmatchedLeftLoadCaseCount": 0,
++        "unmatchedLeftMemberLoadCount": 0,
++        "unmatchedLeftNodalLoadCount": 0,
++        "unmatchedRightLoadCaseCount": 0,
++        "unmatchedRightMemberLoadCount": 0,
++        "unmatchedRightNodalLoadCount": 0
++      },
+       "property": {
+         "comparedMemberCount": 134,
+         "materialMismatchCount": 0,
+@@ -538,6 +561,7 @@
+       "ambiguityCount": 0,
+       "errorCount": 0,
+       "geometryEquivalent": false,
++      "loadEquivalent": true,
+       "matchedMembers": 134,
+       "matchedNodes": 76,
+       "mismatchCount": 12,
+diff --git a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json
+index acaf47b..6e77911 100644
+--- a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json
++++ b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json
+@@ -4,8 +4,11 @@
+     "ambiguities": [],
+     "counts": {
+       "left": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -15,8 +18,11 @@
+         "nodes": 77
+       },
+       "right": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -363,6 +369,23 @@
+           "nodeCount": 77
+         }
+       },
++      "load": {
++        "ambiguousLoadCandidateCount": 0,
++        "matchedLoadCaseCount": 1,
++        "matchedMemberLoadCount": 0,
++        "matchedNodalLoadCount": 0,
++        "memberLoadValueMismatchCount": 0,
++        "nodalLoadValueMismatchCount": 0,
++        "totalAppliedLoadEquivalent": true,
++        "totalAppliedLoadLeft": 0,
++        "totalAppliedLoadRight": 0,
++        "unmatchedLeftLoadCaseCount": 0,
++        "unmatchedLeftMemberLoadCount": 0,
++        "unmatchedLeftNodalLoadCount": 0,
++        "unmatchedRightLoadCaseCount": 0,
++        "unmatchedRightMemberLoadCount": 0,
++        "unmatchedRightNodalLoadCount": 0
++      },
+       "property": {
+         "comparedMemberCount": 136,
+         "materialMismatchCount": 0,
+@@ -2350,6 +2373,7 @@
+       "ambiguityCount": 0,
+       "errorCount": 0,
+       "geometryEquivalent": true,
++      "loadEquivalent": true,
+       "matchedMembers": 136,
+       "matchedNodes": 77,
+       "mismatchCount": 137,
+diff --git a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json
+index d417596..b30ff4a 100644
+--- a/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json
++++ b/frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json
+@@ -4,8 +4,11 @@
+     "ambiguities": [],
+     "counts": {
+       "left": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -15,8 +18,11 @@
+         "nodes": 77
+       },
+       "right": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 135,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -361,6 +367,23 @@
+           "nodeCount": 77
+         }
+       },
++      "load": {
++        "ambiguousLoadCandidateCount": 0,
++        "matchedLoadCaseCount": 1,
++        "matchedMemberLoadCount": 0,
++        "matchedNodalLoadCount": 0,
++        "memberLoadValueMismatchCount": 0,
++        "nodalLoadValueMismatchCount": 0,
++        "totalAppliedLoadEquivalent": true,
++        "totalAppliedLoadLeft": 0,
++        "totalAppliedLoadRight": 0,
++        "unmatchedLeftLoadCaseCount": 0,
++        "unmatchedLeftMemberLoadCount": 0,
++        "unmatchedLeftNodalLoadCount": 0,
++        "unmatchedRightLoadCaseCount": 0,
++        "unmatchedRightMemberLoadCount": 0,
++        "unmatchedRightNodalLoadCount": 0
++      },
+       "property": {
+         "comparedMemberCount": 135,
+         "materialMismatchCount": 0,
+@@ -497,6 +520,7 @@
+       "ambiguityCount": 0,
+       "errorCount": 0,
+       "geometryEquivalent": false,
++      "loadEquivalent": true,
+       "matchedMembers": 135,
+       "matchedNodes": 77,
+       "mismatchCount": 5,
+diff --git a/frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json b/frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json
+index 7b349e2..2e137ae 100644
+--- a/frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json
++++ b/frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json
+@@ -4,8 +4,11 @@
+     "ambiguities": [],
+     "counts": {
+       "left": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 136,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 4
+@@ -15,8 +18,11 @@
+         "nodes": 77
+       },
+       "right": {
++        "loadCases": 1,
+         "materials": 1,
++        "memberLoads": 0,
+         "members": 70,
++        "nodalLoads": 0,
+         "nodes": 77,
+         "sections": 1,
+         "supports": 2
+@@ -239,6 +245,23 @@
+           "nodeCount": 77
+         }
+       },
++      "load": {
++        "ambiguousLoadCandidateCount": 0,
++        "matchedLoadCaseCount": 0,
++        "matchedMemberLoadCount": 0,
++        "matchedNodalLoadCount": 0,
++        "memberLoadValueMismatchCount": 0,
++        "nodalLoadValueMismatchCount": 0,
++        "totalAppliedLoadEquivalent": true,
++        "totalAppliedLoadLeft": 0,
++        "totalAppliedLoadRight": 0,
++        "unmatchedLeftLoadCaseCount": 1,
++        "unmatchedLeftMemberLoadCount": 0,
++        "unmatchedLeftNodalLoadCount": 0,
++        "unmatchedRightLoadCaseCount": 1,
++        "unmatchedRightMemberLoadCount": 0,
++        "unmatchedRightNodalLoadCount": 0
++      },
+       "property": {
+         "comparedMemberCount": 70,
+         "materialMismatchCount": 0,
+@@ -369,6 +392,20 @@
+           "relative": 0.000001
+         }
+       },
++      {
++        "category": "load",
++        "leftValue": "Bridge Default Load:static",
++        "message": "Left load case has no right counterpart with the same semantic key.",
++        "path": "loadCases/*",
++        "severity": "error"
++      },
++      {
++        "category": "load",
++        "message": "Right load case has no left counterpart with the same semantic key.",
++        "path": "loadCases/*",
++        "rightValue": "Bridge Definition Placeholder:static",
++        "severity": "error"
++      },
+       {
+         "category": "member",
+         "leftValue": "M100",
+@@ -928,9 +965,10 @@
+       "ambiguityCount": 0,
+       "errorCount": 1,
+       "geometryEquivalent": false,
++      "loadEquivalent": false,
+       "matchedMembers": 70,
+       "matchedNodes": 77,
+-      "mismatchCount": 80,
++      "mismatchCount": 82,
+       "propertyEquivalent": true,
+       "status": "invalid",
+       "structurallyValid": false,
+diff --git a/frontend/src/bridgeDefinition/index.ts b/frontend/src/bridgeDefinition/index.ts
+index fbe4365..62a488a 100644
+--- a/frontend/src/bridgeDefinition/index.ts
++++ b/frontend/src/bridgeDefinition/index.ts
+@@ -58,6 +58,7 @@ export {
+   compareScalarWithTolerance,
+   compareGeneratedProjectModels,
+   compareLegacyAndBridgeDefinitionModels,
++  compareLoadParity,
+   compareSemanticParity,
+   createLegacyBridgeDefinitionSourceMeta,
+   createLinerStructureOnlySourceMeta,
+@@ -99,15 +100,21 @@ export type {
+   GeometryMetrics,
+   JsonSafeValue,
+   LengthStats,
++  LoadParitySummary,
+   MatchDiagnostics,
+   MatchResult,
+   MatchedPair,
++  NormalizedLoadCase,
+   NormalizedMaterial,
+   NormalizedMember,
++  NormalizedMemberLoad,
+   NormalizedModel,
+   NormalizedNode,
++  NormalizedNodalLoad,
+   NormalizedSection,
+   NormalizedSupport,
++  NodalLoadVector,
++  MemberLoadVector,
+   ParityMetrics,
+   ParityMismatch,
+   ParityReport,
+diff --git a/frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts b/frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts
+index 455e648..9b29b1c 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts
+@@ -103,6 +103,23 @@ function createMinimalReport(overrides: Partial<ParityReport> = {}): ParityRepor
+         orientationOppositeCount: 0,
+         skippedUndefinedCount: 0,
+       },
++      load: {
++        matchedLoadCaseCount: 0,
++        unmatchedLeftLoadCaseCount: 0,
++        unmatchedRightLoadCaseCount: 0,
++        matchedNodalLoadCount: 0,
++        unmatchedLeftNodalLoadCount: 0,
++        unmatchedRightNodalLoadCount: 0,
++        nodalLoadValueMismatchCount: 0,
++        matchedMemberLoadCount: 0,
++        unmatchedLeftMemberLoadCount: 0,
++        unmatchedRightMemberLoadCount: 0,
++        memberLoadValueMismatchCount: 0,
++        ambiguousLoadCandidateCount: 0,
++        totalAppliedLoadLeft: 0,
++        totalAppliedLoadRight: 0,
++        totalAppliedLoadEquivalent: true,
++      },
+     },
+     summary: {
+       status,
+@@ -119,6 +136,7 @@ function createMinimalReport(overrides: Partial<ParityReport> = {}): ParityRepor
+       structurallyValid: true,
+       supportEquivalent: true,
+       propertyEquivalent: true,
++      loadEquivalent: true,
+     },
+     ...overrides,
+   };
+diff --git a/frontend/src/bridgeDefinition/semanticParity/compare.ts b/frontend/src/bridgeDefinition/semanticParity/compare.ts
+index 4929492..610bbc5 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/compare.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/compare.ts
+@@ -1,5 +1,6 @@
+ import type { ProjectModel } from "../../types";
+ import { buildGeometryMetrics } from "./geometryParity";
++import { compareLoadParity } from "./loadParity";
+ import { matchNormalizedMembers } from "./memberMatching";
+ import { matchNormalizedNodes } from "./nodeMatching";
+ import { normalizeProjectModelForSemanticParity } from "./normalize";
+@@ -26,7 +27,7 @@ function deriveStatus(
+   metrics: ParityReport["metrics"],
+ ): SemanticParityStatus {
+   if (report.errors.length > 0) return "invalid";
+-  if (report.ambiguities.length > 0 || metrics.support.ambiguousNodeCount > 0) {
++  if (report.ambiguities.length > 0 || metrics.support.ambiguousNodeCount > 0 || metrics.load.ambiguousLoadCandidateCount > 0) {
+     return "indeterminate";
+   }
+   if (!metrics.structuralValidation.left.valid || !metrics.structuralValidation.right.valid) {
+@@ -44,6 +45,15 @@ function deriveStatus(
+     || metrics.property.sectionMismatchCount > 0
+     || metrics.property.materialMismatchCount > 0
+     || metrics.property.orientationMismatchCount > 0
++    || metrics.load.unmatchedLeftLoadCaseCount > 0
++    || metrics.load.unmatchedRightLoadCaseCount > 0
++    || metrics.load.unmatchedLeftNodalLoadCount > 0
++    || metrics.load.unmatchedRightNodalLoadCount > 0
++    || metrics.load.unmatchedLeftMemberLoadCount > 0
++    || metrics.load.unmatchedRightMemberLoadCount > 0
++    || metrics.load.nodalLoadValueMismatchCount > 0
++    || metrics.load.memberLoadValueMismatchCount > 0
++    || !metrics.load.totalAppliedLoadEquivalent
+   ) {
+     return "different";
+   }
+@@ -79,6 +89,7 @@ export function compareNormalizedModels(
+   const topology = buildTopologyMetrics(left, right, nodeMatch.matched);
+   const support = compareSupportParity(left, right, nodeMatch.matched);
+   const property = comparePropertyParity(left, right, memberMatch.matched, tolerance);
++  const load = compareLoadParity(left, right, nodeMatch.matched, memberMatch.matched, tolerance);
+ 
+   const unmatchedLeft = [...nodeMatch.unmatchedLeft, ...memberMatch.unmatchedLeft];
+   const unmatchedRight = [...nodeMatch.unmatchedRight, ...memberMatch.unmatchedRight];
+@@ -89,12 +100,14 @@ export function compareNormalizedModels(
+     .concat(geometry.mismatches)
+     .concat(topology.mismatches)
+     .concat(support.mismatches)
+-    .concat(property.mismatches);
++    .concat(property.mismatches)
++    .concat(load.mismatches);
+ 
+   const ambiguities = [
+     ...nodeMatch.ambiguities,
+     ...memberMatch.ambiguities,
+     ...support.ambiguities,
++    ...load.ambiguities,
+   ];
+ 
+   const metrics: ParityReport["metrics"] = {
+@@ -114,6 +127,7 @@ export function compareNormalizedModels(
+     },
+     support: support.summary,
+     property: property.summary,
++    load: load.summary,
+   };
+ 
+   const reportBase = {
+@@ -125,6 +139,9 @@ export function compareNormalizedModels(
+         supports: left.supports.length,
+         sections: left.sections.length,
+         materials: left.materials?.length,
++        loadCases: left.loadCases?.length,
++        nodalLoads: left.nodalLoads?.length,
++        memberLoads: left.memberLoads?.length,
+       },
+       right: {
+         nodes: right.nodes.length,
+@@ -132,6 +149,9 @@ export function compareNormalizedModels(
+         supports: right.supports.length,
+         sections: right.sections.length,
+         materials: right.materials?.length,
++        loadCases: right.loadCases?.length,
++        nodalLoads: right.nodalLoads?.length,
++        memberLoads: right.memberLoads?.length,
+       },
+       matched: {
+         nodes: nodeMatch.matched.length,
+@@ -151,6 +171,7 @@ export function compareNormalizedModels(
+       ...rightValidation.warnings,
+       ...topology.warnings,
+       ...property.warnings,
++      ...load.warnings,
+     ],
+     errors: [
+       ...left.errors,
+@@ -188,6 +209,16 @@ export function compareNormalizedModels(
+         && metrics.property.materialMismatchCount === 0
+         && metrics.property.orientationMismatchCount === 0
+         && metrics.property.orientationOppositeCount === 0,
++      loadEquivalent: metrics.load.unmatchedLeftLoadCaseCount === 0
++        && metrics.load.unmatchedRightLoadCaseCount === 0
++        && metrics.load.unmatchedLeftNodalLoadCount === 0
++        && metrics.load.unmatchedRightNodalLoadCount === 0
++        && metrics.load.unmatchedLeftMemberLoadCount === 0
++        && metrics.load.unmatchedRightMemberLoadCount === 0
++        && metrics.load.nodalLoadValueMismatchCount === 0
++        && metrics.load.memberLoadValueMismatchCount === 0
++        && metrics.load.ambiguousLoadCandidateCount === 0
++        && metrics.load.totalAppliedLoadEquivalent,
+     },
+   };
+ }
+@@ -201,11 +232,13 @@ export function compareSemanticParity(
+     ...options,
+     source: options.leftSource ?? "unknown",
+     leftLabel: options.leftLabel,
++    loadsMapped: options.leftLoadsMapped,
+   });
+   const rightModel = normalizeProjectModelForSemanticParity(right, {
+     ...options,
+     source: options.rightSource ?? "unknown",
+     rightLabel: options.rightLabel,
++    loadsMapped: options.rightLoadsMapped,
+   });
+   return compareNormalizedModels(leftModel, rightModel, options);
+ }
+diff --git a/frontend/src/bridgeDefinition/semanticParity/index.ts b/frontend/src/bridgeDefinition/semanticParity/index.ts
+index 80ab129..7e3b5fc 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/index.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/index.ts
+@@ -12,6 +12,8 @@ export {
+   serializeSemanticParityReportForGolden,
+ } from "./generatedModelParity";
+ export { buildGeometryMetrics, computeGeometryMetrics } from "./geometryParity";
++export { compareLoadParity } from "./loadParity";
++export { loadCaseSemanticKey, normalizeLoadCaseName } from "./normalize";
+ export { matchNormalizedMembers } from "./memberMatching";
+ export { matchNormalizedNodes } from "./nodeMatching";
+ export { normalizeProjectModelForSemanticParity } from "./normalize";
+@@ -51,12 +53,18 @@ export type {
+   MatchDiagnostics,
+   MatchResult,
+   MatchedPair,
++  NormalizedLoadCase,
+   NormalizedMaterial,
+   NormalizedMember,
++  NormalizedMemberLoad,
+   NormalizedModel,
+   NormalizedNode,
++  NormalizedNodalLoad,
+   NormalizedSection,
+   NormalizedSupport,
++  NodalLoadVector,
++  MemberLoadVector,
++  LoadParitySummary,
+   ParityMetrics,
+   ParityMismatch,
+   ParityReport,
+diff --git a/frontend/src/bridgeDefinition/semanticParity/normalize.ts b/frontend/src/bridgeDefinition/semanticParity/normalize.ts
+index 36d6cdb..3780bdd 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/normalize.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/normalize.ts
+@@ -1,13 +1,18 @@
+-import type { Material, Member, NodeItem, ProjectModel, Section, Support } from "../../types";
++import type { LoadCase, Material, Member, MemberLoad, NodeItem, NodalLoad, ProjectModel, Section, Support } from "../../types";
+ import { mergeSemanticTolerance } from "./tolerance";
+ import type {
+   CompareSemanticParityOptions,
++  MemberLoadVector,
++  NormalizedLoadCase,
+   NormalizedMaterial,
+   NormalizedMember,
++  NormalizedMemberLoad,
+   NormalizedModel,
+   NormalizedNode,
++  NormalizedNodalLoad,
+   NormalizedSection,
+   NormalizedSupport,
++  NodalLoadVector,
+   SemanticParityDiagnostic,
+   SemanticParitySource,
+   SemanticTolerance,
+@@ -15,7 +20,7 @@ import type {
+ } from "./types";
+ 
+ type ProjectLike = Pick<ProjectModel, "nodes" | "members" | "supports" | "sections"> &
+-  Partial<Pick<ProjectModel, "materials" | "units">>;
++  Partial<Pick<ProjectModel, "materials" | "units" | "loadCases" | "nodalLoads" | "memberLoads">>;
+ 
+ function isFiniteVector(vector: Vector3): boolean {
+   return Number.isFinite(vector.x) && Number.isFinite(vector.y) && Number.isFinite(vector.z);
+@@ -200,6 +205,200 @@ function normalizeMaterials(materials: Material[]): NormalizedMaterial[] {
+     .map((material, stableIndex) => ({ ...material, stableIndex }));
+ }
+ 
++export function normalizeLoadCaseName(name: string): string {
++  return name.trim();
++}
++
++export function loadCaseSemanticKey(name: string, type: string): string {
++  return `${normalizeLoadCaseName(name)}:${type}`;
++}
++
++function nodalVectorKey(vector: NodalLoadVector): string {
++  return [vector.fx, vector.fy, vector.fz, vector.mx, vector.my, vector.mz]
++    .map((value) => (Number.isFinite(value) ? value.toPrecision(15) : "nan"))
++    .join(",");
++}
++
++function memberVectorKey(vector: MemberLoadVector): string {
++  return [vector.wx, vector.wy, vector.wz]
++    .map((value) => (Number.isFinite(value) ? value.toPrecision(15) : "nan"))
++    .join(",");
++}
++
++function normalizeLoadCases(
++  loadCases: LoadCase[],
++  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
++): NormalizedLoadCase[] {
++  return loadCases
++    .map((loadCase, sourceIndex) => {
++      if (loadCase.type !== "static") {
++        diagnostics.warnings.push({
++          category: "load",
++          severity: "info",
++          code: "SEMANTIC_LOAD_CASE_TYPE_UNSUPPORTED",
++          path: `loadCases/${sourceIndex}`,
++          sourceId: loadCase.id,
++          message: `Load case type "${loadCase.type}" is outside Step 8.5 static load parity scope.`,
++        });
++      }
++
++      const semanticKey = loadCaseSemanticKey(loadCase.name, loadCase.type);
++      return {
++        kind: "loadCase" as const,
++        key: semanticKey,
++        semanticKey,
++        stableIndex: sourceIndex,
++        sourceId: loadCase.id,
++        trace: { sourceId: loadCase.id, sourceIndex, sourcePath: `loadCases/${sourceIndex}` },
++        name: loadCase.name,
++        type: loadCase.type,
++      };
++    })
++    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
++    .map((loadCase, stableIndex) => ({ ...loadCase, stableIndex }));
++}
++
++function normalizeNodalLoads(
++  nodalLoads: NodalLoad[],
++  nodesById: Map<string, NormalizedNode>,
++  loadCaseById: Map<string, NormalizedLoadCase>,
++  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
++): NormalizedNodalLoad[] {
++  return nodalLoads
++    .map((load, sourceIndex) => {
++      const node = nodesById.get(load.nodeId);
++      const loadCase = loadCaseById.get(load.loadCaseId);
++      if (!node) {
++        diagnostics.errors.push({
++          category: "load",
++          severity: "error",
++          code: "SEMANTIC_NODAL_LOAD_NODE_REF_MISSING",
++          path: `nodalLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Nodal load references missing node "${load.nodeId}".`,
++        });
++      }
++      if (!loadCase) {
++        diagnostics.errors.push({
++          category: "load",
++          severity: "error",
++          code: "SEMANTIC_NODAL_LOAD_CASE_REF_MISSING",
++          path: `nodalLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Nodal load references missing load case "${load.loadCaseId}".`,
++        });
++      }
++
++      const vector: NodalLoadVector = {
++        fx: load.fx,
++        fy: load.fy,
++        fz: load.fz,
++        mx: load.mx,
++        my: load.my,
++        mz: load.mz,
++      };
++      const nodeKey = node?.key ?? `missing:${load.nodeId}`;
++      const loadCaseSemantic = loadCase?.semanticKey ?? `missing:${load.loadCaseId}`;
++      const semanticKey = `${nodeKey}:${loadCaseSemantic}:${nodalVectorKey(vector)}`;
++
++      return {
++        kind: "nodalLoad" as const,
++        key: semanticKey,
++        semanticKey,
++        stableIndex: sourceIndex,
++        sourceId: load.id,
++        trace: { sourceId: load.id, sourceIndex, sourcePath: `nodalLoads/${sourceIndex}` },
++        nodeKey: node?.key,
++        sourceNodeId: load.nodeId,
++        loadCaseSemanticKey: loadCaseSemantic,
++        sourceLoadCaseId: load.loadCaseId,
++        vector,
++      };
++    })
++    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
++    .map((load, stableIndex) => ({ ...load, stableIndex }));
++}
++
++function normalizeMemberLoads(
++  memberLoads: MemberLoad[],
++  membersById: Map<string, NormalizedMember>,
++  loadCaseById: Map<string, NormalizedLoadCase>,
++  diagnostics: { warnings: SemanticParityDiagnostic[]; errors: SemanticParityDiagnostic[] },
++): NormalizedMemberLoad[] {
++  return memberLoads
++    .map((load, sourceIndex) => {
++      const member = membersById.get(load.memberId);
++      const loadCase = loadCaseById.get(load.loadCaseId);
++      if (!member) {
++        diagnostics.errors.push({
++          category: "load",
++          severity: "error",
++          code: "SEMANTIC_MEMBER_LOAD_MEMBER_REF_MISSING",
++          path: `memberLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Member load references missing member "${load.memberId}".`,
++        });
++      }
++      if (!loadCase) {
++        diagnostics.errors.push({
++          category: "load",
++          severity: "error",
++          code: "SEMANTIC_MEMBER_LOAD_CASE_REF_MISSING",
++          path: `memberLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Member load references missing load case "${load.loadCaseId}".`,
++        });
++      }
++      if (load.type !== "uniform") {
++        diagnostics.warnings.push({
++          category: "load",
++          severity: "info",
++          code: "SEMANTIC_MEMBER_LOAD_TYPE_UNSUPPORTED",
++          path: `memberLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Member load type "${load.type}" is outside Step 8.5 uniform load parity scope.`,
++        });
++      }
++      if (load.coordinateSystem !== "local" && load.coordinateSystem !== "global") {
++        diagnostics.errors.push({
++          category: "load",
++          severity: "error",
++          code: "SEMANTIC_MEMBER_LOAD_COORDINATE_SYSTEM_INVALID",
++          path: `memberLoads/${sourceIndex}`,
++          sourceId: load.id,
++          message: `Member load coordinateSystem "${load.coordinateSystem}" must be local or global.`,
++        });
++      }
++
++      const vector: MemberLoadVector = {
++        wx: load.wx,
++        wy: load.wy,
++        wz: load.wz,
++      };
++      const endpointKey = member?.endpointKey ?? `missing:${load.memberId}`;
++      const loadCaseSemantic = loadCase?.semanticKey ?? `missing:${load.loadCaseId}`;
++      const coordinateSystem: "local" | "global" = load.coordinateSystem === "local" ? "local" : "global";
++      const semanticKey = `${endpointKey}:${loadCaseSemantic}:${coordinateSystem}:${memberVectorKey(vector)}`;
++
++      return {
++        kind: "memberLoad" as const,
++        key: semanticKey,
++        semanticKey,
++        stableIndex: sourceIndex,
++        sourceId: load.id,
++        trace: { sourceId: load.id, sourceIndex, sourcePath: `memberLoads/${sourceIndex}` },
++        endpointKey: member?.endpointKey,
++        sourceMemberId: load.memberId,
++        loadCaseSemanticKey: loadCaseSemantic,
++        sourceLoadCaseId: load.loadCaseId,
++        coordinateSystem,
++        vector,
++      } satisfies NormalizedMemberLoad;
++    })
++    .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey) || sourceSortKey(a.sourceId, a.stableIndex).localeCompare(sourceSortKey(b.sourceId, b.stableIndex)))
++    .map((load, stableIndex) => ({ ...load, stableIndex }));
++}
++
+ export function normalizeProjectModelForSemanticParity(
+   model: ProjectLike,
+   options: CompareSemanticParityOptions & { source?: SemanticParitySource } = {},
+@@ -215,17 +414,33 @@ export function normalizeProjectModelForSemanticParity(
+     if (node.sourceId) nodesById.set(node.sourceId, node);
+   }
+ 
++  const members = normalizeMembers(model.members ?? [], nodesById, diagnostics);
++  const membersById = new Map<string, NormalizedMember>();
++  for (const member of members) {
++    if (member.sourceId) membersById.set(member.sourceId, member);
++  }
++
++  const loadCases = normalizeLoadCases(model.loadCases ?? [], diagnostics);
++  const loadCaseById = new Map<string, NormalizedLoadCase>();
++  for (const loadCase of loadCases) {
++    if (loadCase.sourceId) loadCaseById.set(loadCase.sourceId, loadCase);
++  }
++
+   return {
+     metadata: {
+       source: options.source ?? "unknown",
+       label: options.leftLabel ?? options.rightLabel,
+       units: model.units,
++      loadsMapped: options.loadsMapped ?? options.leftLoadsMapped ?? options.rightLoadsMapped,
+     },
+     nodes,
+-    members: normalizeMembers(model.members ?? [], nodesById, diagnostics),
++    members,
+     supports: normalizeSupports(model.supports ?? [], nodesById),
+     sections: normalizeSections(model.sections ?? []),
+     materials: normalizeMaterials(model.materials ?? []),
++    loadCases,
++    nodalLoads: normalizeNodalLoads(model.nodalLoads ?? [], nodesById, loadCaseById, diagnostics),
++    memberLoads: normalizeMemberLoads(model.memberLoads ?? [], membersById, loadCaseById, diagnostics),
+     warnings: diagnostics.warnings,
+     errors: diagnostics.errors,
+   };
+diff --git a/frontend/src/bridgeDefinition/semanticParity/serializer.ts b/frontend/src/bridgeDefinition/semanticParity/serializer.ts
+index 38ea07c..2502fa5 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/serializer.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/serializer.ts
+@@ -161,8 +161,8 @@ function cloneJsonSafe<T>(value: T): T {
+   return canonicalizeJsonValue(value, seen) as T;
+ }
+ 
+-const SOURCE_INDEX_PATH_PREFIX = /^(nodes|members|supports|sections|materials)\/\d+/;
+-const EMBEDDED_SOURCE_INDEX_PATH = /(nodes|members|supports|sections|materials)\/\d+/g;
++const SOURCE_INDEX_PATH_PREFIX = /^(nodes|members|supports|sections|materials|loadCases|nodalLoads|memberLoads)\/\d+/;
++const EMBEDDED_SOURCE_INDEX_PATH = /(nodes|members|supports|sections|materials|loadCases|nodalLoads|memberLoads)\/\d+/g;
+ 
+ function goldenEntityIndexToken(sourceId?: string): string {
+   return sourceId ?? "*";
+diff --git a/frontend/src/bridgeDefinition/semanticParity/types.ts b/frontend/src/bridgeDefinition/semanticParity/types.ts
+index 3c356cd..1dc7b52 100644
+--- a/frontend/src/bridgeDefinition/semanticParity/types.ts
++++ b/frontend/src/bridgeDefinition/semanticParity/types.ts
+@@ -14,7 +14,8 @@ export type SemanticParityCategory =
+   | "support"
+   | "section"
+   | "property"
+-  | "topology";
++  | "topology"
++  | "load";
+ 
+ export type Vector3 = {
+   x: number;
+@@ -109,10 +110,66 @@ export type NormalizedMaterial = {
+   };
+ };
+ 
++export type NormalizedLoadCase = {
++  kind: "loadCase";
++  key: string;
++  semanticKey: string;
++  stableIndex: number;
++  sourceId?: string;
++  trace: TraceInfo;
++  name: string;
++  type: "static";
++};
++
++export type NodalLoadVector = {
++  fx: number;
++  fy: number;
++  fz: number;
++  mx: number;
++  my: number;
++  mz: number;
++};
++
++export type NormalizedNodalLoad = {
++  kind: "nodalLoad";
++  key: string;
++  semanticKey: string;
++  stableIndex: number;
++  sourceId?: string;
++  trace: TraceInfo;
++  nodeKey?: string;
++  sourceNodeId?: string;
++  loadCaseSemanticKey: string;
++  sourceLoadCaseId?: string;
++  vector: NodalLoadVector;
++};
++
++export type MemberLoadVector = {
++  wx: number;
++  wy: number;
++  wz: number;
++};
++
++export type NormalizedMemberLoad = {
++  kind: "memberLoad";
++  key: string;
++  semanticKey: string;
++  stableIndex: number;
++  sourceId?: string;
++  trace: TraceInfo;
++  endpointKey?: string;
++  sourceMemberId?: string;
++  loadCaseSemanticKey: string;
++  sourceLoadCaseId?: string;
++  coordinateSystem: "local" | "global";
++  vector: MemberLoadVector;
++};
++
+ export type NormalizedModelMetadata = {
+   source: SemanticParitySource;
+   label?: string;
+   units?: ProjectModel["units"];
++  loadsMapped?: boolean;
+ };
+ 
+ export type SemanticParityDiagnostic = {
+@@ -131,6 +188,9 @@ export type NormalizedModel = {
+   supports: NormalizedSupport[];
+   sections: NormalizedSection[];
+   materials?: NormalizedMaterial[];
++  loadCases?: NormalizedLoadCase[];
++  nodalLoads?: NormalizedNodalLoad[];
++  memberLoads?: NormalizedMemberLoad[];
+   warnings: SemanticParityDiagnostic[];
+   errors: SemanticParityDiagnostic[];
+ };
+@@ -149,7 +209,7 @@ export type UnmatchedItem = {
+ };
+ 
+ export type AmbiguousMatch = {
+-  category: "node" | "member";
++  category: "node" | "member" | "load";
+   leftKeys: string[];
+   rightKeys: string[];
+   message: string;
+@@ -242,6 +302,24 @@ export type PropertyParitySummary = {
+   skippedUndefinedCount: number;
+ };
+ 
++export type LoadParitySummary = {
++  matchedLoadCaseCount: number;
++  unmatchedLeftLoadCaseCount: number;
++  unmatchedRightLoadCaseCount: number;
++  matchedNodalLoadCount: number;
++  unmatchedLeftNodalLoadCount: number;
++  unmatchedRightNodalLoadCount: number;
++  nodalLoadValueMismatchCount: number;
++  matchedMemberLoadCount: number;
++  unmatchedLeftMemberLoadCount: number;
++  unmatchedRightMemberLoadCount: number;
++  memberLoadValueMismatchCount: number;
++  ambiguousLoadCandidateCount: number;
++  totalAppliedLoadLeft: number;
++  totalAppliedLoadRight: number;
++  totalAppliedLoadEquivalent: boolean;
++};
++
+ export type ParityMetrics = {
+   geometry: {
+     left: GeometryMetrics;
+@@ -259,6 +337,7 @@ export type ParityMetrics = {
+   };
+   support: SupportParitySummary;
+   property: PropertyParitySummary;
++  load: LoadParitySummary;
+ };
+ 
+ export type ParityReportSummary = {
+@@ -276,6 +355,7 @@ export type ParityReportSummary = {
+   structurallyValid?: boolean;
+   supportEquivalent?: boolean;
+   propertyEquivalent?: boolean;
++  loadEquivalent?: boolean;
+ };
+ 
+ export type ParityReport = {
+@@ -288,6 +368,9 @@ export type ParityReport = {
+       supports: number;
+       sections: number;
+       materials?: number;
++      loadCases?: number;
++      nodalLoads?: number;
++      memberLoads?: number;
+     };
+     right: {
+       nodes: number;
+@@ -295,6 +378,9 @@ export type ParityReport = {
+       supports: number;
+       sections: number;
+       materials?: number;
++      loadCases?: number;
++      nodalLoads?: number;
++      memberLoads?: number;
+     };
+     matched: {
+       nodes: number;
+@@ -317,6 +403,9 @@ export type CompareSemanticParityOptions = {
+   rightSource?: SemanticParitySource;
+   leftLabel?: string;
+   rightLabel?: string;
++  leftLoadsMapped?: boolean;
++  rightLoadsMapped?: boolean;
++  loadsMapped?: boolean;
+ };
+ 
+ export type JsonSafeValue =
+[0m
+[0m→ [0mRead docs/liner/phase4.5/step8_5_load_boundary_parity.md[90m [limit=100][0m
+[0m
+[0m$ [0mls docs/liner/phase4.5/scope/ docs/liner/phase4.5/implementation/
+docs/liner/phase4.5/implementation/:
+step8_5_mimo_scope_20260711-213000.md
+step8_5_mimo_scope_20260711-221350.md
+step8_5_mimo_scope_20260711-221350.stderr.txt
+step8_5_mimo_validation_20260711-224024.md
+step8_5_mimo_validation_20260711-224024.stderr.txt
+
+docs/liner/phase4.5/scope/:
+step8_4_to_8_8_rescope_final_20260711-211101.md
+step8_4_to_8_8_rescope_followup_20260711-211101.md
+step8_4_to_8_8_rescope_followup_20260711-211101.stderr.txt
+step8_4_to_8_8_rescope_initial_20260711-211101.md
+step8_4_to_8_8_rescope_initial_20260711-211101.stderr.txt
+step8_4_to_8_8_rescope_review_20260711-211101.md
+step8_4_to_8_8_scope_final_20260711-202830.md
+step8_4_to_8_8_scope_followup_20260711-202618.md
+step8_4_to_8_8_scope_followup_20260711-202618.stderr.txt
+step8_4_to_8_8_scope_initial_20260711-202413.md
+step8_4_to_8_8_scope_initial_20260711-202413.stderr.txt
+[0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/loadParity.ts[90m [limit=50][0m
+[0m
+[0m$ [0mnpm run test -- semanticParity 2>&1
+> spacer-clone-frontend@0.3.0-preview test
+> vitest run semanticParity
+
+
+ RUN  v4.1.8 /home/masaharu/Projects/spacer-clone/frontend
+
+
+ Test Files  11 passed (11)
+      Tests  94 passed (94)
+   Start at  22:40:52
+   Duration  3.37s (transform 1.29s, setup 0ms, import 2.36s, tests 3.00s, environment 2ms)
+[0m
+[0m$ [0mnpm run test -- bridgeDefinition 2>&1
+> spacer-clone-frontend@0.3.0-preview test
+> vitest run bridgeDefinition
+
+
+ RUN  v4.1.8 /home/masaharu/Projects/spacer-clone/frontend
+
+
+ Test Files  14 passed (14)
+      Tests  120 passed (120)
+   Start at  22:41:00
+   Duration  4.19s (transform 2.47s, setup 0ms, import 4.44s, tests 3.79s, environment 3ms)
+[0m
+[0m$ [0mnpm run typecheck 2>&1
+> spacer-clone-frontend@0.3.0-preview typecheck
+> tsc -b --pretty false
+[0m
+[0m$ [0mnode ../scripts/check_frontend_source_hygiene.mjs src/bridgeDefinition/semanticParity src/bridgeDefinition/__tests__ 2>&1
+Frontend source hygiene check passed.
+[0m
+[0m$ [0mnode ../scripts/check_frontend_japanese_strings.mjs src/bridgeDefinition/semanticParity src/bridgeDefinition/__tests__ 2>&1
+No hard-coded Japanese characters found outside allowed files.
+[0m
+[0m$ [0mnpm run test:regression 2>&1
+> spacer-clone-frontend@0.3.0-preview test:regression
+> vitest run --config vitest.regression.config.ts
+
+
+ RUN  v4.1.8 /home/masaharu/Projects/spacer-clone/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:41:14
+   Duration  2.84s (transform 169ms, setup 0ms, import 307ms, tests 2.42s, environment 0ms)
+[0m
+[0m$ [0mnpm run lint 2>&1
+> spacer-clone-frontend@0.3.0-preview lint
+> tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src && node ../scripts/check_frontend_japanese_strings.mjs src
+
+src/liner/importer/sample/builtInSampleDataset.ts:35: TODO markers are not allowed
+src/liner/importer/sample/builtInSampleDataset.ts:943: TODO markers are not allowed
+[0m
+[0m$ [0mnpm run build 2>&1
+> spacer-clone-frontend@0.3.0-preview build
+> tsc -b && vite build
+
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 3583 modules transformed.
+node_modules/makerjs/dist/index.js (66:24): Use of eval in "node_modules/makerjs/dist/index.js" is strongly discouraged as it poses security risks and may cause issues with minification.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.40 kB │ gzip:   0.28 kB
+dist/assets/index-BsH8LOYt.css     77.62 kB │ gzip:  13.42 kB
+dist/assets/index-DGIUBdxO.js   2,962.79 kB │ gzip: 788.04 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 9.11s
+[0m
+[0m$ [0mgit diff --check 2>&1
+(no output)
+[0m
+[0m$ [0mgit switch -c phase4.5-step8.5-load-boundary-parity 2>&1
+Switched to a new branch 'phase4.5-step8.5-load-boundary-parity'
+[0m
+[0m$ [0mgit add docs/liner/phase4.5/step8_5_load_boundary_parity.md \
+  frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json \
+  frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json \
+  frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json \
+  frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json \
+  frontend/src/bridgeDefinition/index.ts \
+  frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts \
+  frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures/loadParityFixtures.ts \
+  frontend/src/bridgeDefinition/semanticParity/__tests__/loadParity.test.ts \
+  frontend/src/bridgeDefinition/semanticParity/compare.ts \
+  frontend/src/bridgeDefinition/semanticParity/index.ts \
+  frontend/src/bridgeDefinition/semanticParity/loadParity.ts \
+  frontend/src/bridgeDefinition/semanticParity/normalize.ts \
+  frontend/src/bridgeDefinition/semanticParity/serializer.ts \
+  frontend/src/bridgeDefinition/semanticParity/types.ts 2>&1
+(no output)
+[0m
+[0m$ [0mgit diff --cached --stat 2>&1
+.../liner/phase4.5/step8_5_load_boundary_parity.md | 158 ++++++
+ .../intentional-geometry-difference.report.json    |  24 +
+ ...ntional-support-property-difference.report.json |  24 +
+ .../intentional-topology-difference.report.json    |  24 +
+ .../single-span-simple-real-route.report.json      |  40 +-
+ frontend/src/bridgeDefinition/index.ts             |   7 +
+ .../__tests__/fixtures/loadParityFixtures.ts       | 402 +++++++++++++++
+ .../semanticParity/__tests__/loadParity.test.ts    | 214 ++++++++
+ .../semanticParity/__tests__/serializer.test.ts    |  18 +
+ .../src/bridgeDefinition/semanticParity/compare.ts |  37 +-
+ .../src/bridgeDefinition/semanticParity/index.ts   |   8 +
+ .../bridgeDefinition/semanticParity/loadParity.ts  | 572 +++++++++++++++++++++
+ .../bridgeDefinition/semanticParity/normalize.ts   | 221 +++++++-
+ .../bridgeDefinition/semanticParity/serializer.ts  |   4 +-
+ .../src/bridgeDefinition/semanticParity/types.ts   |  93 +++-
+ 15 files changed, 1836 insertions(+), 10 deletions(-)
+[0m
+[0m$ [0mgit status 2>&1
+On branch phase4.5-step8.5-load-boundary-parity
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   docs/liner/phase4.5/step8_5_load_boundary_parity.md
+	modified:   frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-geometry-difference.report.json
+	modified:   frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-support-property-difference.report.json
+	modified:   frontend/src/bridgeDefinition/__golden__/semantic-parity/intentional-topology-difference.report.json
+	modified:   frontend/src/bridgeDefinition/__golden__/semantic-parity/single-span-simple-real-route.report.json
+	modified:   frontend/src/bridgeDefinition/index.ts
+	new file:   frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures/loadParityFixtures.ts
+	new file:   frontend/src/bridgeDefinition/semanticParity/__tests__/loadParity.test.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/__tests__/serializer.test.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/compare.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/index.ts
+	new file:   frontend/src/bridgeDefinition/semanticParity/loadParity.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/normalize.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/serializer.ts
+	modified:   frontend/src/bridgeDefinition/semanticParity/types.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	docs/liner/phase4.5/implementation/
+	docs/liner/phase4.5/scope/
+[0m
+[0m$ [0mgit commit -m "feat(semantic-parity): add load and boundary parity comparison (Step 8.5)" -m "- LoadCase identity via normalized name + type semantic key
+- NodalLoad matching on matched node keys + load case + 6DOF vector
+- uniform MemberLoad matching on endpoint key + load case + coordinateSystem
+- LoadParitySummary metrics and loadEquivalent summary flag
+- Golden reports refreshed with new metrics.load block
+- Tests: loadParity.test.ts + loadParityFixtures.ts (402+214 lines)
+- Serializer path canonicalization extended for loadCases/nodalLoads/memberLoads" 2>&1
+[phase4.5-step8.5-load-boundary-parity 73d57b1] feat(semantic-parity): add load and boundary parity comparison (Step 8.5)
+ 15 files changed, 1836 insertions(+), 10 deletions(-)
+ create mode 100644 docs/liner/phase4.5/step8_5_load_boundary_parity.md
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures/loadParityFixtures.ts
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/__tests__/loadParity.test.ts
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/loadParity.ts
+[0m
+[0m$ [0mgit push -u origin phase4.5-step8.5-load-boundary-parity 2>&1
+remote: 
+remote: Create a pull request for 'phase4.5-step8.5-load-boundary-parity' on GitHub by visiting:        
+remote:      https://github.com/ollejanaitte/spacer-clone/pull/new/phase4.5-step8.5-load-boundary-parity        
+remote: 
+To https://github.com/ollejanaitte/spacer-clone.git
+ * [new branch]      phase4.5-step8.5-load-boundary-parity -> phase4.5-step8.5-load-boundary-parity
+Branch 'phase4.5-step8.5-load-boundary-parity' set up to track remote branch 'phase4.5-step8.5-load-boundary-parity' from 'origin'.
+[0m
+[0m$ [0mgh pr create \
+  --title "feat(semantic-parity): add load and boundary parity comparison (Step 8.5)" \
+  --body "$(cat <<'EOF'
+## Summary
+
+- **LoadCase** identity via normalized `name + type` semantic key (id-independent, order-independent)
+- **NodalLoad** matching on matched node keys + load case semantic key + 6DOF vector with scalar tolerance
+- uniform **MemberLoad** matching on matched member endpoint key + load case + `coordinateSystem` + vector
+- `LoadParitySummary` metrics (`metrics.load`) and `loadEquivalent` summary flag in `ParityReport`
+- Golden reports refreshed with new `metrics.load` block
+- Serializer path canonicalization extended for `loadCases/nodalLoads/memberLoads` trace paths
+
+## Scope
+
+- `types.ts`: New load types (`NormalizedLoadCase`, `NormalizedNodalLoad`, `NormalizedMemberLoad`, `NodalLoadVector`, `MemberLoadVector`, `LoadParitySummary`)
+- `normalize.ts`: Extension of `NormalizedModel` with optional load arrays + normalization functions
+- `loadParity.ts` (new): `compareLoadParity` core comparison logic (572 lines)
+- `compare.ts`: Integration into `compareNormalizedModels` / `compareSemanticParity`
+- `serializer.ts`: Path pattern updates for load-related paths
+- `index.ts` (bridgeDefinition + semanticParity): Re-exports
+- Golden reports: Updated with new `metrics.load` and `loadEquivalent` fields
+- Tests: `loadParity.test.ts` + `loadParityFixtures.ts` (402+214 lines) + serializer test update
+
+## Verification
+
+- [x] semanticParity tests: 11 files, 94 tests passed
+- [x] bridgeDefinition tests: 14 files, 120 tests passed
+- [x] regression tests: 1 file, 6 tests passed
+- [x] typecheck: clean
+- [x] build: vite build success
+- [x] source hygiene: passed
+- [x] Japanese strings: passed
+- [x] lint: 2 pre-existing TODO markers (builtInSampleDataset.ts), no new failures
+
+## Non-Scope
+
+Springs, releases, local node coordinate systems, temperature/imposed displacement, non-uniform loads, load combinations, mass parity, analysis results, CLI/UI/backend changes.
+EOF
+)" 2>&1
+Warning: 2 uncommitted changes
+https://github.com/ollejanaitte/spacer-clone/pull/131
+[0m
+[0m$ [0mgh pr checks 131 2>&1
+no checks reported on the 'main' branch
+[0m
+[0m$ [0mgh pr merge 131 --squash --delete-branch 2>&1
+From https://github.com/ollejanaitte/spacer-clone
+ * branch            main       -> FETCH_HEAD
+   45d3988..98ab708  main       -> origin/main
+Updating 45d3988..98ab708
+Fast-forward
+ .../liner/phase4.5/step8_5_load_boundary_parity.md | 158 ++++++
+ .../intentional-geometry-difference.report.json    |  24 +
+ ...ntional-support-property-difference.report.json |  24 +
+ .../intentional-topology-difference.report.json    |  24 +
+ .../single-span-simple-real-route.report.json      |  40 +-
+ frontend/src/bridgeDefinition/index.ts             |   7 +
+ .../__tests__/fixtures/loadParityFixtures.ts       | 402 +++++++++++++++
+ .../semanticParity/__tests__/loadParity.test.ts    | 214 ++++++++
+ .../semanticParity/__tests__/serializer.test.ts    |  18 +
+ .../src/bridgeDefinition/semanticParity/compare.ts |  37 +-
+ .../src/bridgeDefinition/semanticParity/index.ts   |   8 +
+ .../bridgeDefinition/semanticParity/loadParity.ts  | 572 +++++++++++++++++++++
+ .../bridgeDefinition/semanticParity/normalize.ts   | 221 +++++++-
+ .../bridgeDefinition/semanticParity/serializer.ts  |   4 +-
+ .../src/bridgeDefinition/semanticParity/types.ts   |  93 +++-
+ 15 files changed, 1836 insertions(+), 10 deletions(-)
+ create mode 100644 docs/liner/phase4.5/step8_5_load_boundary_parity.md
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/__tests__/fixtures/loadParityFixtures.ts
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/__tests__/loadParity.test.ts
+ create mode 100644 frontend/src/bridgeDefinition/semanticParity/loadParity.ts
+[0m
+[0m$ [0mgit status -sb 2>&1
+## main...origin/main
+?? docs/liner/phase4.5/implementation/
+?? docs/liner/phase4.5/scope/
+[0m
+[0m$ [0mgit rev-parse HEAD 2>&1
+98ab708846d3d7c21b38d37330ebe743a84496fc
+[0m
+[0m$ [0mgit rev-parse origin/main 2>&1
+98ab708846d3d7c21b38d37330ebe743a84496fc
+[0m
+[0m$ [0mgit branch -vv 2>&1
+backup/pre-force-push-20260707-224926        488d85c chore: ignore local test logs and codex/cursor stage artifacts
+  backup/pre-phase3.9-commit                   ea14428 Fix LINER draft editing empty input handling
+  backup/pre-setup-placeholder-20260708-003844 887c305 feat(liner): add station format/parse utilities for Phase 4.0-1a
+  backup/ubuntu-before-github-sync             b9fd365 feat(bridge): add BridgeProject to BridgeDefinition adapter
+  feature/phase3.5-1a                          d35ae54 [origin/feature/phase3.5-1a: behind 2] Merge pull request #67 from ollejanaitte/pr/1a-1-typed-draft-schema
+  feature/phase3.5-1b                          4cabb51 [origin/feature/phase3.5-1b: behind 4] Add liner setup tab framework
+  feature/phase3.5-1c                          0e28950 [origin/feature/phase3.5-1c: behind 2] Add horizontal curve golden tests
+  feature/phase3.5-2                           12fd8f6 [origin/feature/phase3.5-2: behind 2] Integrate horizontal setup tab UI
+  feature/phase3.5-3                           cec6d52 [origin/feature/phase3.5-3: behind 2] Add vertical golden tests
+  feature/phase3.5-abcde                       db2021d Update autosave data
+  feature/phase3.5-liner-integration           c2c6886 [origin/feature/phase3.5-liner-integration: behind 1] WIP integrate Phase 3.5 LINER
+* main                                         98ab708 [origin/main] feat(semantic-parity): add load and boundary parity comparison (Step 8.5) (#131)
+  phase3.6-full-build                          1245cd6 [origin/phase3.6-full-build] docs: organize project documentation
+  pr/1a-2-json-schema                          4e85a97 [origin/pr/1a-2-json-schema: behind 2] Add liner draft vNext JSON schema
+  pr/1a-3-schema-version                       5f576df [origin/pr/1a-3-schema-version: behind 2] Add liner draft schema version helpers
+  pr/1a-4-migration                            eb45ebc [origin/pr/1a-4-migration: behind 2] Add liner draft vNext migration
+  pr/1a-5-migration-test                       a9486db [origin/pr/1a-5-migration-test: behind 2] Add liner draft migration tests
+  pr/1a-6-draft-adapter                        761abc0 [origin/pr/1a-6-draft-adapter: behind 2] Switch liner draft adapter to vNext save path
+  pr/1b-0-clothoid-spike                       a09ce9d [origin/pr/1b-0-clothoid-spike] Add clothoid precision spike
+  pr/1b-1-c0-continuity                        7110653 [origin/pr/1b-1-c0-continuity: behind 2] Add C0 continuity validation
+  pr/1b-2-c1-continuity                        07fb934 [origin/pr/1b-2-c1-continuity: behind 2] Add C1 continuity validation
+  pr/1b-3-sampling-split                       96620cf [origin/pr/1b-3-sampling-split: behind 2] Split horizontal sampling profiles
+  pr/1b-4-station-at-point                     4ad439d [origin/pr/1b-4-station-at-point: behind 2] Add stationAtPoint projection API
+  pr/1b-5-clothoid-gate                        9b7876b [origin/pr/1b-5-clothoid-gate: behind 2] Add clothoid precision gate
+  pr/1b-6-golden-test                          0e28950 [origin/pr/1b-6-golden-test] Add horizontal curve golden tests
+  pr/1c-1-horizontal-editor                    4b2bfa2 [origin/pr/1c-1-horizontal-editor: behind 2] Add horizontal element editor
+  pr/1c-2-continuity-panel                     b4eb557 [origin/pr/1c-2-continuity-panel: behind 2] Add continuity diagnostics panel
+  pr/1c-3-sampling-control                     0b20855 [origin/pr/1c-3-sampling-control: behind 2] Add curve sampling control
+  pr/1c-4-preview-integration                  8919b57 [origin/pr/1c-4-preview-integration: behind 2] Integrate horizontal editor with liner edit page
+  pr/1c-5-ui-integration                       12fd8f6 [origin/pr/1c-5-ui-integration] Integrate horizontal setup tab UI
+  pr/2a-1-vertical-domain                      d064927 [origin/pr/2a-1-vertical-domain: behind 2] Define vertical draft domain
+  pr/2a-2-vertical-json-schema                 453dba4 [origin/pr/2a-2-vertical-json-schema: behind 2] Add vertical draft JSON schema fields
+  pr/2a-3-vertical-migration                   5c3c9c2 [origin/pr/2a-3-vertical-migration: behind 2] Migrate fixed z drafts to vertical grade
+  pr/2a-4-vertical-editor                      5faef90 [origin/pr/2a-4-vertical-editor: behind 2] Add vertical element editor
+  pr/2a-5-vertical-profile                     3911730 [origin/pr/2a-5-vertical-profile: behind 2] Add vertical profile chart
+  pr/2b-1-vertical-continuity                  489e3de [origin/pr/2b-1-vertical-continuity: behind 2] Add vertical continuity diagnostics
+  pr/2b-2-vertical-sampling                    ca988a2 [origin/pr/2b-2-vertical-sampling: behind 2] Add vertical sampling helpers
+  pr/2b-3-elevation-at                         57104d7 [origin/pr/2b-3-elevation-at: behind 2] Add vertical elevation lookup
+  pr/2b-4-vertical-z-merge                     eb56ffc [origin/pr/2b-4-vertical-z-merge: behind 2] Add grade vertical z merge
+  pr/2b-5-vertical-golden                      cec6d52 [origin/pr/2b-5-vertical-golden] Add vertical golden tests
+  pr/3.6-1a-schema-adapter                     4337317 [origin/pr/3.6-1a-schema-adapter: behind 2] PR-3.6-1a: Importer Schema + Adapter Skeleton
+  pr/3.6-1b-project-storage                    ea4f39b [origin/pr/3.6-1b-project-storage: behind 2] PR-3.6-1b: Project Storage + Save/Load + Recovery
+  pr/3.6-2a-line-master-ui                     1afb861 [origin/pr/3.6-2a-line-master-ui] PR-3.6-2a: Line Master UI
+  pr/3.6-6-built-in-sample                     11a7dae [origin/pr/3.6-6-built-in-sample] feat: auto-open Phase 3.5 after Phase 3.6 export
+  pr/3a-1-cross-domain                         1501b47 [origin/pr/3a-1-cross-domain: behind 2] Define cross-section draft domain
+  pr/3a-2-cross-json-schema                    2f11a40 [origin/pr/3a-2-cross-json-schema: behind 2] Add cross-section JSON schema fields
+  pr/3a-3-cross-editor                         8d6a37b [origin/pr/3a-3-cross-editor: behind 2] Add cross-section template editor
+  pr/3a-4-superelevation-ui                    38c0d27 [origin/pr/3a-4-superelevation-ui: behind 2] Add superelevation editor
+  pr/3a-5-cross-preview                        d7ee58e [origin/pr/3a-5-cross-preview: behind 2] Add cross-section preview
+  pr/3b-1-cross-z-merge                        9a7087f [origin/pr/3b-1-cross-z-merge: behind 2] Add scalar cross-section z merge
+  pr/3b-2-superelevation-sign                  06f45ad [origin/pr/3b-2-superelevation-sign: behind 2] Apply right-down cross slope sign
+  pr/3b-3-cross-sampling                       6874915 [origin/pr/3b-3-cross-sampling: behind 2] Add cross-section sampling helpers
+  pr/3b-4-cross-golden                         33626c6 [origin/pr/3b-4-cross-golden: behind 2] Add cross-section golden tests
+  pr/UI-0-tab-framework                        4cabb51 [origin/pr/UI-0-tab-framework] Add liner setup tab framework
+  pr/fix-liner-test-failures                   3c84836 [origin/pr/fix-liner-test-failures] Fix LINER sampling and cross slope tests
+[0m

@@ -1,0 +1,69 @@
+あなたは spacer-clone リポジトリの読み取り専用調査担当です。
+
+Phase 4.5 Step 8.6補完PR
+Response Spectrum Partial Parity
+の実装スコープを調査してください。
+
+コード変更、テスト実行、ビルド、package install、commit、pushは禁止です。
+
+時間制限はありません。
+必要なコードを十分に確認し、
+完成した日本語Markdownレポートだけを標準出力してください。
+
+必ず、コードから確認できた事実、推定、未確認、未実装を分離してください。
+各判断にはファイル、型、関数の根拠を付けてください。
+
+MiMoに最低限確認させる対象:
+frontend/src/types.ts
+
+frontend/src/bridgeDefinition/semanticParity/
+- types.ts
+- resultParity.ts
+- modeMatching.ts
+- compare.ts
+- serializer.ts
+- generatedModelParity.ts
+- index.ts
+- current result parity tests / fixtures
+
+frontend/src/results/resultViewModel.ts
+
+backend/engine/
+- response_spectrum.py
+- eigen.py
+- results.py
+- element.py
+
+関連backend tests
+関連frontend tests
+Step 8.6 docs
+final rescope
+
+MiMoに必ず確定させること:
+1. ResponseSpectrumResultの正確な型
+2. modalResultsの構造
+3. combinedResultの構造
+4. displacement成分
+5. reaction成分
+6. memberSectionForcesの成分
+7. station 0.0 / 1.0の意味
+8. coordinate basis
+9. N / My / Mzのみか
+10. Qy / Qz / Mxが本当に未出力か
+11. mode numberの対応
+12. direction / combination methodの意味
+13. SRSS / CQCの扱い
+14. missing / failed / invalidの扱い
+15. zero resultの扱い
+16. NaN / Infinityの扱い
+17. response spectrum結果のID非依存matching方法
+18. static/eigen parityとの共有可能部分
+19. deterministic serializerへの統合
+20. partial parityで明示的に除外すべき項目
+21. fixture戦略
+22. acceptance criteria
+23.変更候補ファイル
+24.新規候補ファイル
+25. PR境界
+
+MiMo完了まで待機し、exit codeとレポートを確認してください。

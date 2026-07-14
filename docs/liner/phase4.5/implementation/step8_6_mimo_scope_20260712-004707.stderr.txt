@@ -1,0 +1,39 @@
+[0m
+> build · mimo-auto
+[0m
+[0m→ [0mRead frontend/src/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/types.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/compare.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/normalize.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/tolerance.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/nodeMatching.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/memberMatching.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/generatedModelParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/serializer.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/loadParity.ts
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/index.ts
+[0m→ [0mRead frontend/src/results/resultViewModel.ts
+[0m→ [0mRead frontend/src/results/resultViewModel.test.ts
+[0m→ [0mRead backend/engine/solver.py
+[0m→ [0mRead backend/engine/results.py
+[0m→ [0mRead backend/engine/element.py
+[0m→ [0mRead backend/engine/assembly.py
+[0m→ [0mRead backend/engine/model.py
+[0m→ [0mRead backend/engine/dof.py
+[0m→ [0mRead backend/engine/eigen.py
+[0m→ [0mRead backend/engine/errors.py
+[0m→ [0mRead backend/tests
+[0m✱ [0mGlob "backend/tests/**/*.py"[90m 32 matches[0m
+[0m✱ [0mGlob "frontend/src/viewer/Viewer3D.tsx"[90m 1 match[0m
+[0m→ [0mRead backend/tests/test_eigen_analysis.py
+[0m→ [0mRead backend/tests/test_result_schema.py
+[0m→ [0mRead backend/tests/test_engine_result_schema.py
+[0m→ [0mRead backend/tests/test_engine_verification_cases.py
+[0m→ [0mRead frontend/src/viewer/Viewer3D.tsx
+[0m→ [0mRead backend/tests/test_bridge_api.py
+[0m→ [0mRead backend/tests/sample_models.py
+[0m→ [0mRead backend/tests/conftest.py
+[0m→ [0mRead backend/tests/assertions.py
+[0m→ [0mRead schemas/result.schema.json
+[0m✱ [0mGlob "frontend/src/bridgeDefinition/semanticParity/propertyParity.ts"[90m 1 match[0m
+[0m→ [0mRead frontend/src/bridgeDefinition/semanticParity/propertyParity.ts
