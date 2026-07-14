@@ -67,8 +67,9 @@ describe("cross slope Z merge (PR-E)", () => {
     const right = result.grid.points.find((point) => point.offset === 5);
 
     expect(center?.z).toBeCloseTo(100, 6);
-    expect(right?.z).toBeCloseTo(99.9, 6);
+    expect(right?.z).toBeCloseTo(99.8, 6);
     expect(right?.zProvenance.profileElevation).toBeCloseTo(100, 6);
     expect(right?.zProvenance.crossfallOffset).toBeCloseTo(-0.1, 6);
+    expect(right?.zProvenance.sectionDepthOffset).toBeCloseTo(-0.1, 6);
   });
 });

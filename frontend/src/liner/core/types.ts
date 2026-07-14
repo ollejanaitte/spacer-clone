@@ -1,5 +1,8 @@
 import type {
+  CrossSlopeIntervalDraft,
+  CrossfallMode,
   CrossSectionTemplateDraft,
+  GridDefinitionDraft,
   VerticalAlignmentDraft,
 } from "../schema/types";
 
@@ -57,7 +60,10 @@ export type LinerDiagnosticCode =
   | "LINER_PROFILE_END_COVERAGE_GAP"
   | "LINER_SPAN_END_EXCEEDS_ALIGNMENT"
   | "LINER_ORIGIN_STATION_AMBIGUOUS"
-  | "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED";
+  | "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED"
+  | "LINER_CROSSFALL_INTERVAL_OVERLAP"
+  | "LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED"
+  | "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE";
 
 export type ComputationDiagnostic = {
   level: DiagnosticLevel;
@@ -392,12 +398,43 @@ export type FrameGenerationHintResult = {
 };
 
 export type SectionSliceResult = {
+  id: string;
   physicalDistance: number;
   displayedStation: number;
   width: number;
   leftEdge: { offset: number; z: number };
   rightEdge: { offset: number; z: number };
   templateId: string;
+  points: SectionPointResult[];
+  crossfall: ResolvedCrossfallState;
+};
+
+export type CrossfallResolutionSource =
+  | "interval"
+  | "transition"
+  | "legacy_scalar"
+  | "flat"
+  | "measured_grid";
+
+export type ResolvedCrossfallState = {
+  physicalDistance: number;
+  displayedStation: number;
+  mode: CrossfallMode;
+  leftSlopePercent: number;
+  rightSlopePercent: number;
+  pivotDistance: number;
+  source: CrossfallResolutionSource;
+  intervalId?: string;
+};
+
+export type SectionPointResult = {
+  id: string;
+  offset: number;
+  z: number;
+  x: number;
+  y: number;
+  label?: string;
+  role?: string;
 };
 
 export type DependencyNodeKind =
@@ -512,4 +549,7 @@ export type GridPreparationInput = {
   z?: number;
   verticalAlignment?: VerticalAlignmentDraft;
   crossSectionTemplate?: CrossSectionTemplateDraft;
+  crossSections?: CrossSectionTemplateDraft[];
+  gridDefinitions?: GridDefinitionDraft[];
+  crossSlopeIntervals?: CrossSlopeIntervalDraft[];
 };

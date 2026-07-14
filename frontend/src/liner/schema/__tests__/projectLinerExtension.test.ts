@@ -212,7 +212,7 @@ describe("attachLinerMappingToProject", () => {
         draftSchemaVersion: "0.2.0" as const,
         domainDraft,
       },
-    };
+    } as any;
     const attached = attachLinerMappingToProject(project, createIntermediate(), mapToFrameModel(createIntermediate()));
 
     expect(attached.liner?.domainDraft).toEqual(domainDraft);

@@ -39,6 +39,7 @@ import { LinerEditPage } from "./liner/pages/LinerEditPage";
 import { LinerLauncherPage } from "./liner/pages/LinerLauncherPage";
 import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
+import { LinerFormalDrawingWorkspacePage } from "./liner/pages/LinerFormalDrawingWorkspacePage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
 import {
@@ -52,6 +53,7 @@ import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
 import {
   LINEAR_COORDINATE_LAUNCHER_PATH,
+  resolveLinerDrawingWorkspaceKind,
   resolveLinerUiRouteId,
   resolveLinerUiRoutePath,
 } from "./liner/uiPreparation";
@@ -837,6 +839,7 @@ export function App() {
           draft={linerDraft}
           onDraftChange={commitLinerDraft}
           onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+          onOpenDrawings={() => navigatePro(resolveLinerUiRoutePath("liner.drawingPlan"))}
           onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
           onClose={() => navigatePro("/pro")}
           onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
@@ -864,7 +867,44 @@ export function App() {
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onOpenDrawings={() => navigatePro(resolveLinerUiRoutePath("liner.drawingPlan"))}
         onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
+      />
+    );
+  }
+
+  const drawingWorkspaceKind = resolveLinerDrawingWorkspaceKind(linerRouteId ?? "liner.list");
+  if (drawingWorkspaceKind) {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={openLinearCoordinateLauncher}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
+    return (
+      <LinerFormalDrawingWorkspacePage
+        kind={drawingWorkspaceKind}
+        draft={linerDraft}
+        onDraftChange={commitLinerDraft}
+        onClose={() => navigatePro("/pro")}
+        onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onNavigate={(nextKind) =>
+          navigatePro(
+            resolveLinerUiRoutePath(
+              nextKind === "plan"
+                ? "liner.drawingPlan"
+                : nextKind === "profile"
+                  ? "liner.drawingProfile"
+                  : "liner.drawingCrossSection",
+            ),
+          )
+        }
       />
     );
   }

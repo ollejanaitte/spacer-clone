@@ -1,5 +1,10 @@
 import { hasFatalIssues } from "../diagnostics";
+import {
+  resolveCrossSectionTemplateById,
+  resolveCrossSectionTemplateForPhysicalDistance,
+} from "../crossSectionTemplateResolution";
 import { generateGridPoints } from "../grid/gridGeneration";
+import { resolveCrossfallState } from "../grid/crossfallResolution";
 import { generateMeasuredGridPoints } from "../grid/measuredGridGeneration";
 import {
   evaluateAlignmentAtDistance,
@@ -24,6 +29,7 @@ import type {
   DependencySnapshot,
   FrameGenerationHintResult,
   GeneratedStation,
+  GridPointPreparation,
   GridCellResult,
   GridLineResult,
   GridPointResult,
@@ -45,7 +51,10 @@ import type {
 } from "../types";
 import { sourceRevisionFor } from "./sourceRevision";
 import type {
+  CrossSlopeIntervalDraft,
   CrossSectionTemplateDraft,
+  GridDefinitionDraft,
+  LinerDrawingSettingsDraft,
   MeasuredGridDraft,
   VerticalAlignmentDraft,
 } from "../../schema/types";
@@ -55,10 +64,14 @@ export type BuildIntermediateInput = {
   stationDefinition: StationDefinition;
   verticalAlignment?: VerticalAlignmentDraft;
   crossSections?: CrossSectionTemplateDraft[];
+  gridDefinitions?: GridDefinitionDraft[];
+  crossSlopeIntervals?: CrossSlopeIntervalDraft[];
   measuredGrid?: MeasuredGridDraft;
   offsets?: number[];
   sampleInterval?: number;
   z?: number;
+  selectedCrossSectionStation?: number;
+  drawingSettings?: LinerDrawingSettingsDraft;
   computedAt?: string;
 };
 
@@ -353,6 +366,78 @@ function buildFrameHints(): FrameGenerationHintResult {
   };
 }
 
+function buildSectionResult(
+  gridPoints: readonly GridPointPreparation[],
+  input: BuildIntermediateInput,
+): SectionSliceResult[] {
+  if (gridPoints.length === 0) {
+    return [];
+  }
+  const byLongitudinal = new Map<number, GridPointPreparation[]>();
+  for (const point of gridPoints) {
+    const existing = byLongitudinal.get(point.labels.longitudinalIndex) ?? [];
+    existing.push(point);
+    byLongitudinal.set(point.labels.longitudinalIndex, existing);
+  }
+  return [...byLongitudinal.entries()]
+    .sort((left, right) => left[0] - right[0])
+    .map(([longitudinalIndex, sectionPoints]) => {
+      const orderedPoints = [...sectionPoints].sort((left, right) => left.offset - right.offset);
+      const firstPoint = orderedPoints[0]!;
+      const lastPoint = orderedPoints[orderedPoints.length - 1]!;
+      const template = resolveCrossSectionTemplateById(
+        input.crossSections,
+        firstPoint.source.crossSectionTemplateId,
+      ) ?? resolveCrossSectionTemplateForPhysicalDistance(input, firstPoint.physicalDistance);
+      const offsetLineByIndex = [...(template?.offsetLines ?? [])]
+        .sort((left, right) => left.offset - right.offset)
+        .map((line) => ({
+          role: line.role,
+          label: line.label ?? line.id,
+        }));
+      const crossfall = input.measuredGrid
+        ? {
+            physicalDistance: firstPoint.physicalDistance,
+            displayedStation: firstPoint.displayedStation,
+            mode: "independent" as const,
+            leftSlopePercent: 0,
+            rightSlopePercent: 0,
+            pivotDistance: 0,
+            source: "measured_grid" as const,
+          }
+        : resolveCrossfallState(
+            {
+              crossSectionTemplate: template,
+              crossSlopeIntervals: input.crossSlopeIntervals,
+            },
+            firstPoint.physicalDistance,
+            firstPoint.displayedStation,
+          );
+      return {
+        id: `SEC-${input.alignment.linerModelId}-${longitudinalIndex.toString().padStart(3, "0")}`,
+        physicalDistance: firstPoint.physicalDistance,
+        displayedStation: firstPoint.displayedStation,
+        width: lastPoint.offset - firstPoint.offset,
+        leftEdge: { offset: firstPoint.offset, z: firstPoint.z },
+        rightEdge: { offset: lastPoint.offset, z: lastPoint.z },
+        templateId: template?.id ?? "CS-default",
+        points: orderedPoints.map((point) => {
+          const meta = offsetLineByIndex[point.labels.transverseIndex];
+          return {
+            id: point.id,
+            offset: point.offset,
+            z: point.z,
+            x: point.x,
+            y: point.y,
+            label: meta?.label,
+            role: meta?.role,
+          };
+        }),
+        crossfall,
+      };
+    });
+}
+
 function buildDependencyGraph(sourceRevision: string): DependencySnapshot {
   const kinds: DependencyNodeKind[] = [
     "horizontal",
@@ -391,6 +476,10 @@ export function buildIntermediateResult(
   const sourceRevision = sourceRevisionFor({
     alignment: input.alignment,
     stationDefinition: input.stationDefinition,
+    verticalAlignment: input.verticalAlignment,
+    crossSections: input.crossSections,
+    gridDefinitions: input.gridDefinitions,
+    crossSlopeIntervals: input.crossSlopeIntervals,
     offsets: input.offsets ?? [0],
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
@@ -427,8 +516,22 @@ export function buildIntermediateResult(
     sourceRevision,
     z,
     verticalAlignment,
-    crossSectionTemplate: input.crossSections?.[0],
+    crossSections: input.crossSections,
+    gridDefinitions: input.gridDefinitions,
+    crossSlopeIntervals: input.crossSlopeIntervals,
   };
+  if (canEvaluate && input.measuredGrid && (input.crossSlopeIntervals?.length ?? 0) > 0) {
+    diagnostics.push(
+      {
+        level: "warning",
+        code: "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE",
+        messageKey: "liner.errors.crossfall_measured_grid_precedence",
+        detail:
+          "測定格子が有効なため、横断勾配区間による標高補正は適用されません。格子標高が優先されます。",
+        entityType: "measuredGrid",
+      },
+    );
+  }
   const gridGeneration =
     canEvaluate && input.measuredGrid
       ? generateMeasuredGridPoints({
@@ -443,7 +546,7 @@ export function buildIntermediateResult(
   const grid = buildGridResult(gridGeneration.gridPoints, input.alignment.linerModelId);
   const spans: SpanResult[] = [];
   const piers: PierResult[] = [];
-  const sections: SectionSliceResult[] = [];
+  const sections = buildSectionResult(gridGeneration.gridPoints, input);
 
   return {
     schemaVersion: "0.2.0",

@@ -2,6 +2,7 @@ import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
+import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionPreview } from "../components/CrossSectionPreview";
 import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEditor";
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
@@ -9,7 +10,6 @@ import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
-import { SuperelevationEditor } from "../components/SuperelevationEditor";
 import { VerticalElementEditor } from "../components/VerticalElementEditor";
 import { VerticalProfileChart } from "../components/VerticalProfileChart";
 import {
@@ -19,7 +19,7 @@ import {
   summarizeLinerDraft,
   updateLinerAlignmentMetadata,
   updateLinerCrossSectionTemplate,
-  updateLinerCrossSlope,
+  updateLinerCrossSlopeIntervals,
   updateLinerVerticalAlignment,
   type LinerDraft,
   type LinerDraftUpdate,
@@ -33,6 +33,7 @@ export type LinerEditPageProps = {
   initialDraft?: LinerDraft;
   onDraftChange?: (update: LinerDraftUpdate) => void;
   onOpenPreview?: () => void;
+  onOpenDrawings?: () => void;
   onOpenMappingReview?: () => void;
   onClose: () => void;
   onBackToList: () => void;
@@ -43,6 +44,7 @@ export function LinerEditPage({
   initialDraft,
   onDraftChange,
   onOpenPreview,
+  onOpenDrawings,
   onOpenMappingReview,
   onClose,
   onBackToList,
@@ -139,6 +141,12 @@ export function LinerEditPage({
             <button type="button" onClick={() => commitAndRun(onOpenPreview)} data-testid="open-liner-preview">
               <Eye size={16} />
               {ja.liner.preview.openPreview}
+            </button>
+          )}
+          {onOpenDrawings && (
+            <button type="button" onClick={() => commitAndRun(onOpenDrawings)} data-testid="open-liner-drawings">
+              <Eye size={16} />
+              {ja.liner.preview.openDrawings}
             </button>
           )}
           {onOpenMappingReview && (
@@ -257,13 +265,20 @@ export function LinerEditPage({
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}
               />
-              <SuperelevationEditor
-                crossSlope={crossSectionTemplate.crossSlope}
-                onCrossSlopeChange={(nextCrossSlope) =>
-                  changeDraft((current) => updateLinerCrossSlope(current, nextCrossSlope))
+              <CrossfallIntervalEditor
+                draft={draft}
+                intervals={draft.crossSlopeIntervals ?? []}
+                onIntervalsChange={(nextIntervals) =>
+                  changeDraft((current) => updateLinerCrossSlopeIntervals(current, nextIntervals))
                 }
+                onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
               />
-              <CrossSectionPreview template={crossSectionTemplate} />
+              <CrossSectionPreview
+                template={crossSectionTemplate}
+                crossSlopeIntervals={draft.crossSlopeIntervals}
+                previewPhysicalDistance={0}
+              />
             </div>
           )}
 

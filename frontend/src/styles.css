@@ -4259,6 +4259,332 @@ button:disabled {
   background: #eef5fb;
 }
 
+.liner-formal-workspace-page {
+  min-height: 100vh;
+  padding: 12px;
+  background: #eef3f8;
+}
+
+.liner-formal-workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-formal-workspace-header h1,
+.liner-formal-workspace-header p,
+.liner-formal-workspace-panel h2,
+.liner-formal-workspace-summary h2 {
+  margin: 0;
+}
+
+.liner-formal-workspace-kicker {
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.liner-formal-workspace-header-actions,
+.liner-formal-workspace-toolbar,
+.liner-formal-workspace-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liner-formal-workspace-header-actions button,
+.liner-formal-workspace-toolbar button,
+.liner-formal-workspace-tabs button {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-formal-workspace-tabs {
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.liner-formal-workspace-tab.active {
+  background: #dfeef9;
+  border-color: #6fa2cf;
+}
+
+.liner-formal-workspace-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+@media (min-width: 1280px) {
+  .liner-formal-workspace-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .liner-formal-workspace-sidebar {
+    grid-column: 1 / -1;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .liner-formal-workspace-canvas {
+    grid-column: 1 / -1;
+  }
+
+  .liner-crossfall-interval-editor--full-width .liner-crossfall-interval-table-view {
+    overflow: visible;
+  }
+}
+
+.liner-crossfall-interval-editor .liner-edit-section-header {
+  flex-wrap: wrap;
+}
+
+.liner-crossfall-interval-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.liner-crossfall-interval-table th,
+.liner-crossfall-interval-table td {
+  padding: 4px 6px;
+  font-size: 12px;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.liner-crossfall-interval-table input,
+.liner-crossfall-interval-table select {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.liner-crossfall-interval-table-view {
+  overflow: visible;
+}
+
+.liner-crossfall-interval-card-view {
+  display: none;
+  gap: 12px;
+}
+
+.liner-crossfall-interval-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #f8fbfe;
+}
+
+.liner-crossfall-interval-card-field {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-crossfall-interval-card-field input,
+.liner-crossfall-interval-card-field select {
+  min-height: 32px;
+}
+
+.liner-crossfall-interval-card-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 1279px) {
+  .liner-crossfall-interval-table-view {
+    display: none;
+  }
+
+  .liner-crossfall-interval-card-view {
+    display: grid;
+  }
+}
+
+@media (min-width: 1280px) {
+  .liner-crossfall-interval-card-view {
+    display: none;
+  }
+}
+
+.liner-formal-workspace-sidebar,
+.liner-formal-workspace-canvas,
+.liner-formal-workspace-summary {
+  min-width: 0;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.liner-formal-workspace-sidebar {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: auto;
+  max-height: calc(100vh - 180px);
+}
+
+.liner-formal-workspace-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-formal-workspace-panel label {
+  display: grid;
+  gap: 4px;
+  color: #243447;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-formal-workspace-panel select {
+  min-height: 32px;
+  border: 1px solid #b8c8d8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.liner-formal-workspace-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow: auto;
+  min-height: 240px;
+  max-height: min(520px, calc(100dvh - 360px));
+}
+
+.liner-formal-workspace-canvas-transform {
+  transform-origin: center center;
+  width: 100%;
+}
+
+.drawing-document-svg {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.drawing-sheet-svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+  border: 1px solid #d8e1ea;
+  border-radius: 6px;
+  background: #fbfcfe;
+}
+
+.liner-formal-workspace-summary {
+  margin-top: 12px;
+  padding: 12px;
+}
+
+.liner-formal-workspace-summary dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.liner-formal-workspace-summary div {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid #e0e7ef;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.liner-formal-workspace-summary dt {
+  color: #526173;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liner-formal-workspace-summary dd {
+  margin: 0;
+  color: #243447;
+  font-weight: 700;
+}
+
+.liner-cross-slope-table {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-cross-slope-table-header,
+.liner-cross-slope-table-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+  gap: 6px;
+  align-items: end;
+}
+
+.liner-cross-slope-table-header {
+  color: #526173;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.liner-cross-slope-table-row label {
+  display: grid;
+  gap: 4px;
+  color: #243447;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.liner-cross-slope-table-row input,
+.liner-cross-slope-table-row select {
+  min-height: 30px;
+  border: 1px solid #b8c8d8;
+  border-radius: 6px;
+}
+
+.liner-cross-slope-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liner-cross-slope-table-actions button {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .liner-mapping-page {
   min-height: 100vh;
   padding: 12px;

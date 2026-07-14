@@ -44,24 +44,31 @@ describe("CrossSectionPreview (PR-D)", () => {
     expect(document.body.innerHTML).not.toContain("NaN");
   });
 
-  it("reflects auto-computed elevation for offset and slope (case 2)", () => {
-    const template: CrossSectionTemplateDraft = {
+  it("reflects template elevation and crossfall interval in preview coordinates", () => {
+    const template = {
       id: "CS-preview",
       name: "Preview",
-      crossSlope: {
-        signConvention: "right_down_positive",
-        valuePercent: 2,
-      },
       offsetLines: [
-        { id: "right", offset: 5, elevation: 0 },
+        { id: "right", offset: 5, elevation: 0.5 },
         { id: "center", offset: 0, elevation: 0 },
       ],
     };
+    const intervals = [
+      {
+        id: "CF-1",
+        startPhysicalDistance: 0,
+        endPhysicalDistance: 100,
+        mode: "one_way_right" as const,
+        leftSlopePercent: 2,
+        rightSlopePercent: 2,
+        pivotDistance: 0,
+      },
+    ];
 
-    render(<CrossSectionPreview template={template} />);
+    render(<CrossSectionPreview template={template} crossSlopeIntervals={intervals} previewPhysicalDistance={0} />);
 
     const rightPoint = document.querySelector("[data-testid=cross-section-preview-point-right]");
     expect(rightPoint).not.toBeNull();
-    expect(rightPoint?.querySelector("title")?.textContent).toContain("-0.10");
+    expect(rightPoint?.querySelector("title")?.textContent).toContain("0.40");
   });
 });

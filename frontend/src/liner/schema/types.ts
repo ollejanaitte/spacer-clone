@@ -96,6 +96,7 @@ export interface LinerDomainDraftVNext {
   stationDefinition: StationDefinitionDraft;
   verticalAlignment: VerticalAlignmentDraft;
   crossSections: CrossSectionTemplateDraft[];
+  crossSlopeIntervals?: CrossSlopeIntervalDraft[];
   gridDefinitions: GridDefinitionDraft[];
   /** Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source). */
   measuredGrid?: MeasuredGridDraft;
@@ -103,6 +104,8 @@ export interface LinerDomainDraftVNext {
   piers: PierDraft[];
   crossBeams?: CrossBeamDraft[];
   widthChangePoints?: WidthChangePointDraft[];
+  selectedCrossSectionStation?: number;
+  drawingSettings?: LinerDrawingSettingsDraft;
   generationSettings: GenerationSettingsDraft;
   sampling: SamplingSettingsDraft;
 }
@@ -216,6 +219,42 @@ export interface VerticalParabolicElementDraft {
 export interface CrossSlopeDraft {
   signConvention: "right_down_positive";
   valuePercent: number;
+}
+
+export type CrossfallMode =
+  | "flat"
+  | "one_way_left"
+  | "one_way_right"
+  | "crown"
+  | "independent";
+
+export interface CrossSlopeIntervalDraft {
+  id: string;
+  startPhysicalDistance: number;
+  endPhysicalDistance: number;
+  mode: CrossfallMode;
+  leftSlopePercent: number;
+  rightSlopePercent: number;
+  pivotDistance?: number;
+}
+
+export type LinerDrawingPaperSize =
+  | "A0"
+  | "A1"
+  | "A2"
+  | "A3"
+  | "A4";
+
+export type LinerDrawingPaperOrientation = "landscape" | "portrait";
+
+export interface LinerDrawingSettingsDraft {
+  version: "0.1.0";
+  planPaperSize?: LinerDrawingPaperSize;
+  profilePaperSize?: LinerDrawingPaperSize;
+  crossSectionPaperSize?: LinerDrawingPaperSize;
+  bandPaperSize?: LinerDrawingPaperSize;
+  paperOrientation?: LinerDrawingPaperOrientation;
+  marginMm?: number;
 }
 
 /**

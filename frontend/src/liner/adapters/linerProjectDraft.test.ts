@@ -95,6 +95,56 @@ describe("liner project draft persistence", () => {
     expect(linerDraftFromProject(project)).toEqual(edited);
   });
 
+  it("preserves gridDefinitions and multiple cross-sections through save and reload", () => {
+    const draft = {
+      ...createDefaultLinerDraft(),
+      crossSections: [
+        {
+          id: "CS-a",
+          name: "A",
+          station: 0,
+          offsetLines: [
+            { id: "OL-a-l", offset: -4, elevation: 0, role: "edge" as const },
+            { id: "OL-a-c", offset: 0, elevation: 0, role: "lane" as const },
+            { id: "OL-a-r", offset: 4, elevation: 0, role: "edge" as const },
+          ],
+        },
+        {
+          id: "CS-b",
+          name: "B",
+          station: 100,
+          offsetLines: [
+            { id: "OL-b-l", offset: -6, elevation: 0, role: "edge" as const },
+            { id: "OL-b-c", offset: 0, elevation: 0, role: "lane" as const },
+            { id: "OL-b-r", offset: 6, elevation: 0, role: "edge" as const },
+          ],
+        },
+      ],
+      gridDefinitions: [
+        {
+          id: "GRID-a",
+          crossSectionTemplateId: "CS-a",
+          stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 50 },
+          offsetLineIds: ["OL-a-l", "OL-a-c", "OL-a-r"],
+        },
+        {
+          id: "GRID-b",
+          crossSectionTemplateId: "CS-b",
+          stationRange: { startPhysicalDistance: 50, endPhysicalDistance: 100 },
+          offsetLineIds: ["OL-b-l", "OL-b-c", "OL-b-r"],
+        },
+      ],
+      offsets: [-4, 0, 4],
+    };
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const reloaded = linerDraftFromProject(project);
+
+    expect(project.liner?.domainDraft?.crossSections.map((entry) => entry.id)).toEqual(["CS-a", "CS-b"]);
+    expect(project.liner?.domainDraft?.gridDefinitions).toEqual(draft.gridDefinitions);
+    expect(reloaded?.crossSections).toEqual(draft.crossSections);
+    expect(reloaded?.gridDefinitions).toEqual(draft.gridDefinitions);
+  });
+
   it("reads legacy project.liner.draft as a read-only fallback", () => {
     const draft = addLinerOffset(createDefaultLinerDraft());
     const legacyProject = {

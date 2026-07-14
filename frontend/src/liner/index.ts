@@ -5,3 +5,4 @@ export * from "./mapper/frameMappingPreview";
 export * from "./schema";
 export * from "./headless";
 export * from "./uiPreparation";
+export * from "./drawing";

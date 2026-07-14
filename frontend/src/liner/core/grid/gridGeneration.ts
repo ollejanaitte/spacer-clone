@@ -1,5 +1,5 @@
-import { applyCrossSlope } from "../crossSectionZMerge";
 import { elevationAt } from "../elevationAt";
+import { resolveCrossSectionTemplateForPhysicalDistance } from "../crossSectionTemplateResolution";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { evaluateAlignmentAtDistance } from "../geometry/horizontal";
 import { formatStationDisplay } from "../station/stationFormat";
@@ -13,6 +13,12 @@ import type {
   ValidationIssue,
 } from "../types";
 import { offsetPoint } from "../vector";
+import {
+  resolveCrossfallOffset,
+  resolveCrossfallState,
+  validateCrossSlopeIntervals,
+} from "./crossfallResolution";
+import type { CrossSectionOffsetLineDraft } from "../../schema/types";
 
 function padIndex(index: number): string {
   return index.toString().padStart(3, "0");
@@ -27,10 +33,6 @@ function resolveProfileElevation(
   }
   const fallback = input.z ?? 0;
   return Number.isFinite(fallback) ? fallback : null;
-}
-
-function resolveCrossSlopePercent(input: GridPreparationInput): number {
-  return input.crossSectionTemplate?.crossSlope?.valuePercent ?? 0;
 }
 
 function verticalProfileEndStation(input: GridPreparationInput): number {
@@ -61,12 +63,10 @@ export function generateGridPoints(input: GridPreparationInput): {
   gridPoints: GridPointPreparation[];
   issues: ValidationIssue[];
 } {
-  const issues: ValidationIssue[] = [];
+  const issues: ValidationIssue[] = validateCrossSlopeIntervals(input.crossSlopeIntervals);
   const sortedStations = [...input.stations].sort(
     (a, b) => a.physicalDistance - b.physicalDistance,
   );
-  const sortedOffsets = [...input.offsets].sort((a, b) => a - b);
-  const slopePercent = resolveCrossSlopePercent(input);
   const gridPoints: GridPointPreparation[] = [];
 
   for (const [longitudinalIndex, station] of sortedStations.entries()) {
@@ -95,10 +95,36 @@ export function generateGridPoints(input: GridPreparationInput): {
       continue;
     }
 
-    for (const [transverseIndex, offset] of sortedOffsets.entries()) {
+    const resolvedTemplate = resolveCrossSectionTemplateForPhysicalDistance(
+      {
+        crossSections: input.crossSections,
+        gridDefinitions: input.gridDefinitions,
+      },
+      station.physicalDistance,
+    );
+    const crossfallState = resolveCrossfallState(
+      {
+        crossSectionTemplate: resolvedTemplate,
+        crossSlopeIntervals: input.crossSlopeIntervals,
+      },
+      station.physicalDistance,
+      station.displayedStation,
+    );
+    const stationOffsetLines: CrossSectionOffsetLineDraft[] = resolvedTemplate?.offsetLines.length
+      ? [...resolvedTemplate.offsetLines].sort((left, right) => left.offset - right.offset)
+      : [...input.offsets].sort((a, b) => a - b).map((offset, index) => ({
+          id: `offset-${index}`,
+          offset,
+          elevation: 0,
+          role: index === 0 ? "edge" : "custom",
+        }));
+
+    for (const [transverseIndex, offsetLine] of stationOffsetLines.entries()) {
+      const offset = offsetLine.offset;
       const planPoint = offsetPoint(base.point, base.azimuth, offset);
-      const crossfallOffset = applyCrossSlope(offset, slopePercent);
-      const z = profileElevation + crossfallOffset;
+      const crossfallOffset = resolveCrossfallOffset(crossfallState, offset);
+      const templateElevation = Number.isFinite(offsetLine.elevation) ? offsetLine.elevation : 0;
+      const z = profileElevation + templateElevation + crossfallOffset;
 
       gridPoints.push({
         id: gridPointId(input.alignment.linerModelId, longitudinalIndex, transverseIndex),
@@ -117,13 +143,14 @@ export function generateGridPoints(input: GridPreparationInput): {
           alignmentId: input.alignment.id,
           stationId: station.id,
           elementId: base.elementId,
+          crossSectionTemplateId: resolvedTemplate?.id,
         },
-        roles: transverseIndex === 0 ? ["edge"] : ["main_girder"],
+        roles: offsetLine.role === "edge" ? ["edge"] : ["main_girder"],
         zProvenance: {
           profileElevation,
           crossfallOffset,
           structuralReferenceOffset: 0,
-          sectionDepthOffset: 0,
+          sectionDepthOffset: templateElevation,
           girderEccentricity: 0,
         },
       });

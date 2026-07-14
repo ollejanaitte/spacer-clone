@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://spacer-clone.local/schemas/liner-draft-v0.2.0.schema.json",
-  "title": "LINER Domain Draft v0.2.0",
-  "description": "Standalone JSON Schema for liner.domainDraft (LINER_DRAFT_SCHEMA_VERSION 0.2.0).",
+  "$id": "https://spacer-clone.local/schemas/liner-draft-v0.3.0.schema.json",
+  "title": "LINER Domain Draft v0.3.0",
+  "description": "Standalone JSON Schema for liner.domainDraft (LINER_DRAFT_SCHEMA_VERSION 0.3.0).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -48,6 +48,12 @@
         "$ref": "#/$defs/crossSectionTemplateDraft"
       }
     },
+    "crossSlopeIntervals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/crossSlopeIntervalDraft"
+      }
+    },
     "gridDefinitions": {
       "type": "array",
       "minItems": 1,
@@ -90,6 +96,12 @@
         "$ref": "#/$defs/widthChangePointDraft"
       },
       "description": "Phase 3.7 optional: width change points at normalized stations."
+    },
+    "selectedCrossSectionStation": {
+      "type": "number"
+    },
+    "drawingSettings": {
+      "$ref": "#/$defs/drawingSettingsDraft"
     }
   },
   "$defs": {
@@ -547,6 +559,48 @@
         }
       }
     },
+    "crossSlopeIntervalDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "startPhysicalDistance",
+        "endPhysicalDistance",
+        "mode",
+        "leftSlopePercent",
+        "rightSlopePercent"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startPhysicalDistance": {
+          "type": "number"
+        },
+        "endPhysicalDistance": {
+          "type": "number"
+        },
+        "mode": {
+          "enum": [
+            "flat",
+            "one_way_left",
+            "one_way_right",
+            "crown",
+            "independent"
+          ]
+        },
+        "leftSlopePercent": {
+          "type": "number"
+        },
+        "rightSlopePercent": {
+          "type": "number"
+        },
+        "pivotDistance": {
+          "type": "number"
+        }
+      }
+    },
     "stationRangeDraft": {
       "type": "object",
       "additionalProperties": false,
@@ -737,6 +791,60 @@
             "transverse_only",
             "grid_full"
           ]
+        }
+      }
+    },
+    "drawingSettingsDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "planPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "profilePaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "crossSectionPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "bandPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "paperOrientation": {
+          "enum": [
+            "landscape",
+            "portrait"
+          ]
+        },
+        "marginMm": {
+          "type": "number"
         }
       }
     },

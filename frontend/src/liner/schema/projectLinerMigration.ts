@@ -1,8 +1,9 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
 import { totalAlignmentLength } from "../core/geometry/horizontal";
 import type { AlignmentElement, LinearAlignment, StationDefinition } from "../core/types";
-import { LINER_DRAFT_SCHEMA_VERSION } from "./version";
+import { isSupportedVersion, LINER_DRAFT_SCHEMA_VERSION } from "./version";
 import type {
+  CrossSlopeIntervalDraft,
   CrossSectionOffsetLineDraft,
   HorizontalAlignmentDraft,
   HorizontalElementDraft,
@@ -18,9 +19,13 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "stationDefinition",
   "verticalAlignment",
   "crossSections",
+  "gridDefinitions",
   "measuredGrid",
+  "crossSlopeIntervals",
   "offsets",
   "sampleInterval",
+  "selectedCrossSectionStation",
+  "drawingSettings",
   "z",
   "computedAt",
 ]);
@@ -150,6 +155,9 @@ function isFixedZDraft(value: unknown): value is BuildIntermediateInput {
   if (value.sampleInterval !== undefined && !isFiniteNumber(value.sampleInterval)) {
     return false;
   }
+  if (value.gridDefinitions !== undefined && !Array.isArray(value.gridDefinitions)) {
+    return false;
+  }
   if (value.computedAt !== undefined && !isNonEmptyString(value.computedAt)) {
     return false;
   }
@@ -226,6 +234,33 @@ function buildOffsetLines(offsets: number[]): CrossSectionOffsetLineDraft[] {
   }));
 }
 
+function defaultCrossfallModeForSlope(valuePercent: number): CrossSlopeIntervalDraft["mode"] {
+  if (valuePercent > 0) {
+    return "one_way_right";
+  }
+  if (valuePercent < 0) {
+    return "one_way_left";
+  }
+  return "flat";
+}
+
+function buildDefaultCrossSlopeIntervals(
+  draft: BuildIntermediateInput,
+  totalLength: number,
+): CrossSlopeIntervalDraft[] {
+  const slopePercent = draft.crossSections?.[0]?.crossSlope?.valuePercent ?? 0;
+  return [
+    {
+      id: "CF-default",
+      startPhysicalDistance: 0,
+      endPhysicalDistance: totalLength,
+      mode: defaultCrossfallModeForSlope(slopePercent),
+      leftSlopePercent: slopePercent,
+      rightSlopePercent: slopePercent,
+    },
+  ];
+}
+
 function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDraftVNext {
   const alignment = draft.alignment;
   const totalLength = totalAlignmentLength(alignment);
@@ -257,6 +292,34 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
       },
     ],
   };
+  const crossSlopeIntervals = draft.crossSlopeIntervals?.length
+    ? structuredClone(draft.crossSlopeIntervals)
+    : buildDefaultCrossSlopeIntervals(draft, totalLength);
+  const selectedCrossSectionStation = Number.isFinite(draft.selectedCrossSectionStation)
+    ? draft.selectedCrossSectionStation
+    : draft.stationDefinition.explicitStations?.[0] ?? 0;
+
+  const crossSectionTemplateIds = new Set(crossSections.map((section) => section.id));
+  const canPreserveGridDefinitions =
+    Array.isArray(draft.gridDefinitions)
+    && draft.gridDefinitions.length > 0
+    && draft.gridDefinitions.every((definition) =>
+      crossSectionTemplateIds.has(definition.crossSectionTemplateId),
+    );
+  const gridDefinitions = canPreserveGridDefinitions
+    ? structuredClone(draft.gridDefinitions!)
+    : [
+        {
+          id: "GRID-default",
+          crossSectionTemplateId: defaultTemplate?.id ?? "CS-default",
+          stationRange: {
+            startPhysicalDistance: 0,
+            endPhysicalDistance: totalLength,
+          },
+          stationInterval,
+          offsetLineIds: offsetLines.map((line) => line.id),
+        },
+      ];
 
   return {
     id: alignment.id,
@@ -266,21 +329,13 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     stationDefinition: draft.stationDefinition,
     verticalAlignment,
     crossSections,
+    crossSlopeIntervals,
     ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
-    gridDefinitions: [
-      {
-        id: "GRID-default",
-        crossSectionTemplateId: defaultTemplate?.id ?? "CS-default",
-        stationRange: {
-          startPhysicalDistance: 0,
-          endPhysicalDistance: totalLength,
-        },
-        stationInterval,
-        offsetLineIds: offsetLines.map((line) => line.id),
-      },
-    ],
+    gridDefinitions,
     spans: [],
     piers: [],
+    selectedCrossSectionStation,
+    ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",
       connectivityMode: "grid_full",
@@ -322,7 +377,7 @@ export function migrateLinerDraftToVNext(metadata: unknown): MigrateLinerDraftTo
   const domainDraft = metadata.domainDraft;
   const legacyDraft = metadata.draft;
 
-  if (draftSchemaVersion === LINER_DRAFT_SCHEMA_VERSION) {
+  if (typeof draftSchemaVersion === "string" && isSupportedVersion(draftSchemaVersion)) {
     if (isLinerDomainDraftVNext(domainDraft)) {
       return {
         ok: true,
@@ -334,7 +389,7 @@ export function migrateLinerDraftToVNext(metadata: unknown): MigrateLinerDraftTo
       ok: false,
       domainDraft: null,
       diagnostics: [
-        schemaInvalid("/liner/domainDraft", "domainDraft is required for draftSchemaVersion 0.2.0."),
+        schemaInvalid("/liner/domainDraft", `domainDraft is required for draftSchemaVersion ${draftSchemaVersion}.`),
       ],
     };
   }

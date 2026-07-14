@@ -98,6 +98,6 @@ describe("frame generation with vertical and cross slope (PR-E)", () => {
     const rightNode = result.nodes.find((node) => node.id === "N_LINER_fg1_002_002");
 
     expect(centerNode?.z).toBeCloseTo(11, 6);
-    expect(rightNode?.z).toBeCloseTo(10.9, 6);
+    expect(rightNode?.z).toBeCloseTo(10.8, 6);
   });
 });

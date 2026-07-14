@@ -5,13 +5,25 @@ import type { HeadlessLinerFrameProjectInput, HeadlessLinerFrameProjectResult } 
 import type { ProjectModel } from "../types";
 
 /** Internal route identifiers for liner UI navigation. */
-export type LinerUiRouteId = "liner.list" | "liner.setup" | "liner.preview" | "liner.mappingReview";
+export type LinerUiRouteId =
+  | "liner.list"
+  | "liner.setup"
+  | "liner.preview"
+  | "liner.mappingReview"
+  | "liner.drawingPlan"
+  | "liner.drawingProfile"
+  | "liner.drawingCrossSection";
+
+export type LinerDrawingWorkspaceKind = "plan" | "profile" | "cross-section";
 
 export const LINER_UI_ROUTE_IDS = [
   "liner.list",
   "liner.setup",
   "liner.preview",
   "liner.mappingReview",
+  "liner.drawingPlan",
+  "liner.drawingProfile",
+  "liner.drawingCrossSection",
 ] as const satisfies readonly LinerUiRouteId[];
 
 /** Upper-level launcher for choosing GUI direct input vs Phase 3.6 Importer. */
@@ -23,6 +35,9 @@ export const LINER_UI_ROUTE_PATHS: Record<LinerUiRouteId, string> = {
   "liner.setup": "/pro/liner/setup",
   "liner.preview": "/pro/liner/preview",
   "liner.mappingReview": "/pro/liner/mapping-review",
+  "liner.drawingPlan": "/pro/liner/drawings/plan",
+  "liner.drawingProfile": "/pro/liner/drawings/profile",
+  "liner.drawingCrossSection": "/pro/liner/drawings/cross-section",
 };
 
 export type LinerUiPanelId =
@@ -281,6 +296,21 @@ export function resolveLinerUiRouteId(pathname: string): LinerUiRouteId | null {
     if (pathname === LINER_UI_ROUTE_PATHS[routeId]) {
       return routeId;
     }
+  }
+  return null;
+}
+
+export function resolveLinerDrawingWorkspaceKind(
+  routeId: LinerUiRouteId,
+): LinerDrawingWorkspaceKind | null {
+  if (routeId === "liner.drawingPlan") {
+    return "plan";
+  }
+  if (routeId === "liner.drawingProfile") {
+    return "profile";
+  }
+  if (routeId === "liner.drawingCrossSection") {
+    return "cross-section";
   }
   return null;
 }

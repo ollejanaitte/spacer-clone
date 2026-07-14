@@ -19,14 +19,26 @@ import { createIssue, LINER_DIAGNOSTIC_CODES } from "../core/diagnostics";
 
 describe("liner ui preparation", () => {
   it("keeps route ids and paths stable", () => {
-    expect(LINER_UI_ROUTE_IDS).toEqual(["liner.list", "liner.setup", "liner.preview", "liner.mappingReview"]);
+    expect(LINER_UI_ROUTE_IDS).toEqual([
+      "liner.list",
+      "liner.setup",
+      "liner.preview",
+      "liner.mappingReview",
+      "liner.drawingPlan",
+      "liner.drawingProfile",
+      "liner.drawingCrossSection",
+    ]);
     expect(resolveLinerUiRoutePath("liner.list")).toBe("/pro/liner");
     expect(resolveLinerUiRoutePath("liner.setup")).toBe("/pro/liner/setup");
     expect(resolveLinerUiRoutePath("liner.preview")).toBe("/pro/liner/preview");
     expect(resolveLinerUiRoutePath("liner.mappingReview")).toBe("/pro/liner/mapping-review");
+    expect(resolveLinerUiRoutePath("liner.drawingPlan")).toBe("/pro/liner/drawings/plan");
+    expect(resolveLinerUiRoutePath("liner.drawingProfile")).toBe("/pro/liner/drawings/profile");
+    expect(resolveLinerUiRoutePath("liner.drawingCrossSection")).toBe("/pro/liner/drawings/cross-section");
     expect(resolveLinerUiRouteId("/pro/liner")).toBe("liner.list");
     expect(resolveLinerUiRouteId("/pro/liner/setup")).toBe("liner.setup");
     expect(resolveLinerUiRouteId("/pro/liner/preview")).toBe("liner.preview");
+    expect(resolveLinerUiRouteId("/pro/liner/drawings/plan")).toBe("liner.drawingPlan");
     expect(resolveLinerUiRouteId("/pro/th/run")).toBeNull();
   });
 

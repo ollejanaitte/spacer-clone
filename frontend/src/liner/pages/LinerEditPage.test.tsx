@@ -385,7 +385,7 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=vertical-profile-chart]")).not.toBeNull();
   });
 
-  it("renders cross-section editor, superelevation editor, and preview on the cross-section tab", () => {
+  it("renders cross-section editor, crossfall interval editor, and preview on the cross-section tab", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
@@ -394,7 +394,8 @@ describe("LinerEditPage", () => {
 
     expect(document.querySelector("[data-testid=liner-setup-tabpanel-crossSection]")).not.toBeNull();
     expect(document.querySelector("[data-testid=cross-section-template-id]")).not.toBeNull();
-    expect(document.querySelector("[data-testid=superelevation-editor]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=superelevation-editor]")).toBeNull();
+    expect(document.querySelector("[data-testid=add-crossfall-interval]")).not.toBeNull();
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
