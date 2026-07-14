@@ -135,6 +135,7 @@ export function LinerStationProfilePanel({
           <h2 id="liner-edit-explicit-stations-title">{ja.liner.editor.explicitStationSection}</h2>
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => onDraftChange((current) => addLinerExplicitStation(current))}
             data-testid="add-liner-explicit-station"
           >
@@ -183,6 +184,7 @@ export function LinerStationProfilePanel({
           <h2 id="liner-edit-equations-title">{ja.liner.editor.stationEquationSection}</h2>
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => onDraftChange((current) => addLinerStationEquation(current))}
             data-testid="add-liner-station-equation"
           >

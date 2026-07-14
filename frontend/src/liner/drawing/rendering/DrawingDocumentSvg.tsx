@@ -176,6 +176,23 @@ function renderPrimitive(
       />
     );
   }
+  if (primitive.kind === "circle") {
+    const center = transformPoint2(transform, primitive.center);
+    const radius = Math.abs(primitive.radius * transform.a);
+    return (
+      <circle
+        key={primitive.id}
+        cx={center.x}
+        cy={center.y}
+        r={radius}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        strokeDasharray={strokeDasharray}
+        data-testid={primitive.id}
+      />
+    );
+  }
   if (primitive.kind === "text") {
     const layout = planTextLayout?.get(primitive.id);
     if (layout && !layout.visible) {

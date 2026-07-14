@@ -77,6 +77,12 @@ function primitivePoints(primitive: DrawingPrimitive): Point2[] {
       createPoint2(primitive.center.x + primitive.radius, primitive.center.y + primitive.radius),
     ];
   }
+  if (primitive.kind === "circle") {
+    return [
+      createPoint2(primitive.center.x - primitive.radius, primitive.center.y - primitive.radius),
+      createPoint2(primitive.center.x + primitive.radius, primitive.center.y + primitive.radius),
+    ];
+  }
   if (primitive.kind === "text") {
     return [primitive.position];
   }

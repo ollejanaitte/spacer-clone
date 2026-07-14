@@ -3698,23 +3698,70 @@ button:disabled {
   font-size: 13px;
 }
 
-.liner-edit-header-actions,
-.liner-edit-section-header {
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 .liner-edit-header button,
 .liner-edit-section-header button,
-.liner-edit-table button {
-  min-height: 32px;
+.liner-edit-table button,
+.liner-action-btn {
+  min-height: 36px;
+  min-width: 36px;
   gap: 6px;
-  padding: 0 10px;
+  padding: 0 12px;
   border: 1px solid #9eb1c4;
   border-radius: 6px;
   background: #eef5fb;
   color: #243447;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.liner-edit-header-actions,
+.liner-edit-section-header,
+.liner-section-actions,
+.liner-row-actions,
+.liner-offset-line-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.liner-edit-header-actions,
+.liner-edit-section-header {
+  justify-content: flex-end;
+}
+
+.liner-edit-section-header {
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.liner-edit-section-header h2 {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.liner-section-actions,
+.liner-offset-line-actions {
+  justify-content: flex-end;
+  flex: 0 1 auto;
+}
+
+.liner-row-actions {
+  justify-content: flex-start;
+}
+
+.liner-action-btn-compact {
+  min-height: 32px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.liner-action-btn:disabled,
+.liner-edit-table button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .liner-edit-table button:disabled {
@@ -4311,6 +4358,30 @@ button:disabled {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
+}
+
+.liner-formal-workspace-plan-type {
+  display: grid;
+  gap: 8px;
+}
+
+.liner-formal-workspace-plan-type label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #243447;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.liner-formal-workspace-plan-type label.active {
+  background: #e8f1fb;
+  border-color: #6f8fad;
 }
 
 .liner-formal-workspace-header-actions button,

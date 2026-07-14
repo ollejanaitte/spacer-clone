@@ -18,6 +18,7 @@ import {
   createProfileDrawingBuilder,
 } from "../drawing";
 import type { DrawingDocument } from "../drawing/model/document";
+import type { FormalPlanType } from "../drawing/builders/types";
 import { DrawingDocumentSvg } from "../drawing/rendering/DrawingDocumentSvg";
 import { formatStationDisplay } from "../core/station/stationFormat";
 import {
@@ -57,6 +58,18 @@ function resolveDiagnosticMessage(
   return message;
 }
 
+function buildPlanDocument(
+  intermediate: ReturnType<typeof buildIntermediateResult>,
+  baseSettings: ReturnType<typeof createDrawingSettingsFromDraft> & {
+    selectedCrossSectionStation?: number;
+  },
+  planType: FormalPlanType,
+): DrawingDocument {
+  const settings = { ...baseSettings, planType };
+  const planOutput = createPlanDrawingBuilder().build({ result: intermediate, settings });
+  return buildDrawingDocument(planOutput.sheet, settings, planOutput.diagnostics);
+}
+
 export function LinerFormalDrawingWorkspacePage({
   kind,
   draft,
@@ -72,6 +85,7 @@ export function LinerFormalDrawingWorkspacePage({
   const [canvasWidthPx, setCanvasWidthPx] = useState(1366);
   const [exportMessage, setExportMessage] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
+  const [planType, setPlanType] = useState<FormalPlanType>("road_shape");
   const canvasRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const intermediate = useMemo(() => buildIntermediateResult(draft), [draft]);
@@ -80,8 +94,9 @@ export function LinerFormalDrawingWorkspacePage({
     return {
       ...next,
       selectedCrossSectionStation: draft.selectedCrossSectionStation,
+      planType: kind === "plan" ? planType : next.planType,
     };
-  }, [draft.drawingSettings, draft.selectedCrossSectionStation, intermediate]);
+  }, [draft.drawingSettings, draft.selectedCrossSectionStation, intermediate, kind, planType]);
   const builder = useMemo(() => {
     if (kind === "plan") {
       return createPlanDrawingBuilder();
@@ -94,13 +109,14 @@ export function LinerFormalDrawingWorkspacePage({
   const output = useMemo(() => builder.build({ result: intermediate, settings }), [builder, intermediate, settings]);
   const document = useMemo(() => buildDrawingDocument(output.sheet, settings, output.diagnostics), [output, settings]);
 
-  const planDocument = useMemo(() => {
-    if (kind === "plan") {
-      return document;
-    }
-    const planOutput = createPlanDrawingBuilder().build({ result: intermediate, settings });
-    return buildDrawingDocument(planOutput.sheet, settings, planOutput.diagnostics);
-  }, [document, intermediate, kind, settings]);
+  const planTypeADocument = useMemo(
+    () => buildPlanDocument(intermediate, settings, "road_shape"),
+    [intermediate, settings],
+  );
+  const planTypeBDocument = useMemo(
+    () => buildPlanDocument(intermediate, settings, "centerline_only"),
+    [intermediate, settings],
+  );
 
   const profileDocument = useMemo(() => {
     if (kind === "profile") {
@@ -279,6 +295,34 @@ export function LinerFormalDrawingWorkspacePage({
             </label>
           </section>
 
+          <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-plan-type-title">
+            <h2 id="formal-drawing-plan-type-title">{ja.liner.formalDrawing.planTypeSectionTitle}</h2>
+            <div className="liner-formal-workspace-plan-type" role="radiogroup" aria-label={ja.liner.formalDrawing.planTypeSectionTitle}>
+              <label className={planType === "road_shape" ? "active" : undefined}>
+                <input
+                  type="radio"
+                  name="formal-plan-type"
+                  value="road_shape"
+                  checked={planType === "road_shape"}
+                  onChange={() => setPlanType("road_shape")}
+                  data-testid="formal-plan-type-road-shape"
+                />
+                {ja.liner.formalDrawing.planTypeRoadShape}
+              </label>
+              <label className={planType === "centerline_only" ? "active" : undefined}>
+                <input
+                  type="radio"
+                  name="formal-plan-type"
+                  value="centerline_only"
+                  checked={planType === "centerline_only"}
+                  onChange={() => setPlanType("centerline_only")}
+                  data-testid="formal-plan-type-centerline-only"
+                />
+                {ja.liner.formalDrawing.planTypeCenterlineOnly}
+              </label>
+            </div>
+          </section>
+
           <CrossfallIntervalEditor
             draft={draft}
             intervals={draft.crossSlopeIntervals ?? []}
@@ -323,9 +367,32 @@ export function LinerFormalDrawingWorkspacePage({
             <div className="liner-formal-workspace-dxf-actions">
               <button
                 type="button"
+                data-testid="formal-drawing-export-plan-type-a-dxf"
+                disabled={exportBusy || !canExportFormalDrawingDxf(planTypeADocument)}
+                onClick={() => handleExportDxf("plan-type-a", planTypeADocument)}
+              >
+                <Download size={14} />
+                {ja.liner.formalDrawing.exportPlanTypeADxf}
+              </button>
+              <button
+                type="button"
+                data-testid="formal-drawing-export-plan-type-b-dxf"
+                disabled={exportBusy || !canExportFormalDrawingDxf(planTypeBDocument)}
+                onClick={() => handleExportDxf("plan-type-b-centerline", planTypeBDocument)}
+              >
+                <Download size={14} />
+                {ja.liner.formalDrawing.exportPlanTypeBDxf}
+              </button>
+              <button
+                type="button"
                 data-testid="formal-drawing-export-plan-dxf"
-                disabled={exportBusy || !canExportFormalDrawingDxf(planDocument)}
-                onClick={() => handleExportDxf("plan", planDocument)}
+                disabled={exportBusy || !canExportFormalDrawingDxf(kind === "plan" ? document : planTypeADocument)}
+                onClick={() =>
+                  handleExportDxf(
+                    "plan",
+                    kind === "plan" ? document : planTypeADocument,
+                  )
+                }
               >
                 <Download size={14} />
                 {ja.liner.formalDrawing.exportPlanDxf}

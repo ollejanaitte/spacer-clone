@@ -246,9 +246,10 @@ export function VerticalElementEditor({
     <section className="liner-edit-panel" aria-labelledby="liner-edit-vertical-elements-title">
       <div className="liner-edit-section-header">
         <h2 id="liner-edit-vertical-elements-title">{ja.liner.editor.verticalElementSection}</h2>
-        <div className="liner-edit-inline-row">
+        <div className="liner-section-actions">
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => applyChange(addGradeElement(verticalAlignment))}
             data-testid="add-liner-grade-element"
           >
@@ -257,6 +258,7 @@ export function VerticalElementEditor({
           </button>
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => applyChange(addParabolicElement(verticalAlignment))}
             data-testid="add-liner-parabolic-element"
           >

@@ -72,7 +72,7 @@ describe("Phase 5 Step 3 DXF file generation for LibreCAD", () => {
       const entities = Object.values(parsed?.entities ?? {});
       expect(entities.length).toBeGreaterThan(0);
 
-      for (const entity of entities as Array<Record<string, unknown>>) {
+      for (const entity of entities as unknown as Array<Record<string, unknown>>) {
         const vertices = (entity.vertices as Array<{ x: number; y: number }> | undefined) ?? [];
         for (const vertex of vertices) {
           expect(Number.isFinite(vertex.x)).toBe(true);

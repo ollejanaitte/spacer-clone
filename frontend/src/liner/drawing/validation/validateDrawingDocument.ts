@@ -54,6 +54,14 @@ function validatePrimitive(primitive: DrawingPrimitive, source: string): Drawing
         : [invalidValueDiagnostic("DRAWING_ARC_INVALID_RADIUS", "Arc radius must be a finite positive number.", source)]),
     ];
   }
+  if (primitive.kind === "circle") {
+    return [
+      ...validatePoint(primitive.center, `${source}.center`),
+      ...(primitive.radius > 0 && Number.isFinite(primitive.radius)
+        ? []
+        : [invalidValueDiagnostic("DRAWING_CIRCLE_INVALID_RADIUS", "Circle radius must be a finite positive number.", source)]),
+    ];
+  }
   if (primitive.kind === "text") {
     return [
       ...validatePoint(primitive.position, `${source}.position`),

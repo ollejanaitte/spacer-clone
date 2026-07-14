@@ -7,7 +7,12 @@ import {
 import type { SheetPresetId } from "../presets/sheetPresets";
 import { getSheetPreset } from "../presets/sheetPresets";
 
-export type FormalDrawingDxfKind = "plan" | "profile-band" | "cross-section";
+export type FormalDrawingDxfKind =
+  | "plan"
+  | "plan-type-a"
+  | "plan-type-b-centerline"
+  | "profile-band"
+  | "cross-section";
 
 export type FormalDrawingDxfExportResult = {
   kind: FormalDrawingDxfKind;
