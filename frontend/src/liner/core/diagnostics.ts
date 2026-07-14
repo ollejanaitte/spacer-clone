@@ -29,6 +29,9 @@ export const LINER_DIAGNOSTIC_CODES = {
   spanEndExceedsAlignment: "LINER_SPAN_END_EXCEEDS_ALIGNMENT",
   originStationAmbiguous: "LINER_ORIGIN_STATION_AMBIGUOUS",
   profileParabolicZMergeDeferred: "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED",
+  crossfallIntervalOverlap: "LINER_CROSSFALL_INTERVAL_OVERLAP",
+  crossfallPivotChangeUnsupported: "LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED",
+  crossfallMeasuredGridPrecedence: "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export function createIssue(

@@ -1,14 +1,17 @@
 import { useMemo } from "react";
 import { ja } from "../../i18n/ja";
-import { computeOffsetLineElevation } from "../core/crossSectionElevation";
+import { resolveCrossfallOffset, resolveCrossfallState } from "../core/grid/crossfallResolution";
 import type {
   CrossSectionOffsetLineDraft,
   CrossSectionOffsetLineRole,
   CrossSectionTemplateDraft,
+  CrossSlopeIntervalDraft,
 } from "../schema/types";
 
 export type CrossSectionPreviewProps = {
   template: CrossSectionTemplateDraft;
+  crossSlopeIntervals?: readonly CrossSlopeIntervalDraft[];
+  previewPhysicalDistance?: number;
 };
 
 const OFFSET_LINE_ROLES: readonly CrossSectionOffsetLineRole[] = [
@@ -64,14 +67,27 @@ function roleLegendLabel(role: CrossSectionOffsetLineRole | undefined): string {
 
 function resolveDisplayElevation(
   line: CrossSectionOffsetLineDraft,
-  slopePercent: number,
+  template: CrossSectionTemplateDraft,
+  crossSlopeIntervals: readonly CrossSlopeIntervalDraft[] | undefined,
+  previewPhysicalDistance: number,
 ): number {
-  return computeOffsetLineElevation(line.offset, slopePercent);
+  const templateElevation = Number.isFinite(line.elevation) ? line.elevation : 0;
+  const crossfallState = resolveCrossfallState(
+    {
+      crossSectionTemplate: template,
+      crossSlopeIntervals: crossSlopeIntervals as CrossSlopeIntervalDraft[] | undefined,
+    },
+    previewPhysicalDistance,
+    previewPhysicalDistance,
+  );
+  return templateElevation + resolveCrossfallOffset(crossfallState, line.offset);
 }
 
 function collectPlotDomain(
   offsetLines: readonly CrossSectionOffsetLineDraft[],
-  slopePercent: number,
+  template: CrossSectionTemplateDraft,
+  crossSlopeIntervals: readonly CrossSlopeIntervalDraft[] | undefined,
+  previewPhysicalDistance: number,
 ): PlotDomain {
   if (offsetLines.length === 0) {
     return {
@@ -83,7 +99,9 @@ function collectPlotDomain(
   }
 
   const offsets = offsetLines.map((line) => line.offset);
-  const elevations = offsetLines.map((line) => resolveDisplayElevation(line, slopePercent));
+  const elevations = offsetLines.map((line) =>
+    resolveDisplayElevation(line, template, crossSlopeIntervals, previewPhysicalDistance),
+  );
 
   const minOffset = Math.min(...offsets);
   const maxOffset = Math.max(...offsets);
@@ -149,32 +167,40 @@ function buildTickValues(min: number, max: number, count: number): number[] {
   return Array.from({ length: count }, (_, index) => min + step * index);
 }
 
-export function CrossSectionPreview({ template }: CrossSectionPreviewProps) {
+export function CrossSectionPreview({
+  template,
+  crossSlopeIntervals,
+  previewPhysicalDistance = 0,
+}: CrossSectionPreviewProps) {
   const hasInvalidOffset = template.offsetLines.some((line) => !Number.isFinite(line.offset));
   const offsetLines = template.offsetLines.filter((line) => Number.isFinite(line.offset));
-  const slopePercent = template.crossSlope?.valuePercent ?? 0;
   const isEmpty = offsetLines.length === 0;
 
   const plotWidth = VIEW_WIDTH - PLOT_PADDING * 2;
   const plotHeight = VIEW_HEIGHT - PLOT_PADDING * 2;
 
   const domain = useMemo(
-    () => collectPlotDomain(offsetLines, slopePercent),
-    [offsetLines, slopePercent],
+    () => collectPlotDomain(offsetLines, template, crossSlopeIntervals, previewPhysicalDistance),
+    [offsetLines, template, crossSlopeIntervals, previewPhysicalDistance],
   );
   const legendRoles = useMemo(() => collectLegendRoles(offsetLines), [offsetLines]);
 
   const plotPoints = useMemo(
     (): PlotPoint[] =>
       offsetLines.map((line) => {
-        const elevation = resolveDisplayElevation(line, slopePercent);
+        const elevation = resolveDisplayElevation(
+          line,
+          template,
+          crossSlopeIntervals,
+          previewPhysicalDistance,
+        );
         return {
           line: { ...line, elevation },
           sx: toSvgX(line.offset, domain, plotWidth),
           sy: toSvgY(elevation, domain, plotHeight),
         };
       }),
-    [domain, offsetLines, plotHeight, plotWidth, slopePercent],
+    [domain, offsetLines, plotHeight, plotWidth, template, crossSlopeIntervals, previewPhysicalDistance],
   );
 
   const profilePoints = useMemo(() => {

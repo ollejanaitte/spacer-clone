@@ -147,6 +147,7 @@ function buildDomainDraft(
 
   pushNormalizationDiagnostics(diagnostics, ctx);
 
+  const crossSections = normalizeCrossSections(bridge, ctx);
   const draft: LinerDomainDraftVNext = {
     id: createUniqueId("domain-draft"),
     linerModelId,
@@ -157,8 +158,8 @@ function buildDomainDraft(
     },
     stationDefinition: normalizeStationDefinition(sectionStations, ctx),
     verticalAlignment: normalizeVerticalAlignment(bridge, ctx),
-    crossSections: normalizeCrossSections(bridge, ctx),
-    gridDefinitions: normalizeGridDefinitions(bridge, ctx),
+    crossSections,
+    gridDefinitions: normalizeGridDefinitions(bridge, ctx, crossSections),
     spans: normalizeSpans(bridge, ctx),
     piers: normalizeSupports(bridge, ctx),
     crossBeams: normalizeCrossBeams(bridge, ctx),

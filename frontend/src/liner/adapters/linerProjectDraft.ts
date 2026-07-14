@@ -94,10 +94,30 @@ export function buildIntermediateInputFromDomainDraft(
     stationDefinition: domainDraft.stationDefinition,
     verticalAlignment: domainDraft.verticalAlignment,
     crossSections: domainDraft.crossSections,
+    crossSlopeIntervals: domainDraft.crossSlopeIntervals,
     measuredGrid: domainDraft.measuredGrid,
     offsets,
     sampleInterval: domainDraft.sampling.display.maxChordLength,
+    selectedCrossSectionStation: domainDraft.selectedCrossSectionStation,
+    drawingSettings: domainDraft.drawingSettings,
     z,
+    ...(domainDraft.crossSections.length > 1 || domainDraft.gridDefinitions.length > 1
+      ? { gridDefinitions: domainDraft.gridDefinitions }
+      : {}),
+  };
+}
+
+function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<string, unknown> {
+  return {
+    alignment: draft.alignment,
+    stationDefinition: draft.stationDefinition,
+    verticalAlignment: draft.verticalAlignment,
+    crossSections: draft.crossSections,
+    gridDefinitions: draft.gridDefinitions,
+    crossSlopeIntervals: draft.crossSlopeIntervals,
+    measuredGrid: draft.measuredGrid,
+    offsets: draft.offsets ?? [0],
+    z: draft.z ?? 0,
   };
 }
 
@@ -144,7 +164,7 @@ export function withProjectLinerDomainDraft(
       ...existingLiner,
       schemaVersion: PROJECT_LINER_METADATA_SCHEMA_VERSION,
       draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
-      sourceRevision: sourceRevisionFor(linerDraft),
+      sourceRevision: sourceRevisionFor(linerDraftSourceRevisionInput(linerDraft)),
       linerModelId: domainDraft.linerModelId,
       coordinatePolicyId: domainDraft.coordinatePolicyId,
       intermediateSchemaVersion: "0.2.0",

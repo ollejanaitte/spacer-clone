@@ -1177,8 +1177,8 @@
           "additionalProperties": true
         },
         "draftSchemaVersion": {
-          "const": "0.2.0",
-          "description": "Domain draft schema version (Decision #12). Required when saving vNext domain draft."
+          "enum": ["0.2.0", "0.3.0"],
+          "description": "Domain draft schema version. Required when saving vNext domain draft."
         },
         "domainDraft": {
           "$ref": "#/$defs/linerDomainDraftVNext",
@@ -1199,7 +1199,7 @@
           ],
           "properties": {
             "draftSchemaVersion": {
-              "const": "0.2.0"
+              "enum": ["0.2.0", "0.3.0"]
             }
           }
         }
@@ -1657,6 +1657,48 @@
         }
       }
     },
+    "crossSlopeIntervalDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "startPhysicalDistance",
+        "endPhysicalDistance",
+        "mode",
+        "leftSlopePercent",
+        "rightSlopePercent"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startPhysicalDistance": {
+          "type": "number"
+        },
+        "endPhysicalDistance": {
+          "type": "number"
+        },
+        "mode": {
+          "enum": [
+            "flat",
+            "one_way_left",
+            "one_way_right",
+            "crown",
+            "independent"
+          ]
+        },
+        "leftSlopePercent": {
+          "type": "number"
+        },
+        "rightSlopePercent": {
+          "type": "number"
+        },
+        "pivotDistance": {
+          "type": "number"
+        }
+      }
+    },
     "stationRangeDraft": {
       "type": "object",
       "additionalProperties": false,
@@ -1833,6 +1875,60 @@
         }
       }
     },
+    "drawingSettingsDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "planPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "profilePaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "crossSectionPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "bandPaperSize": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ]
+        },
+        "paperOrientation": {
+          "enum": [
+            "landscape",
+            "portrait"
+          ]
+        },
+        "marginMm": {
+          "type": "number"
+        }
+      }
+    },
     "generationSettingsDraft": {
       "type": "object",
       "additionalProperties": false,
@@ -1999,6 +2095,13 @@
           "$ref": "#/$defs/measuredGridDraft",
           "description": "Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source)."
         },
+        "crossSlopeIntervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossSlopeIntervalDraft"
+          },
+          "description": "Phase 5 optional: physical-distance-based crossfall interval definitions."
+        },
         "crossBeams": {
           "type": "array",
           "items": {
@@ -2012,6 +2115,14 @@
             "$ref": "#/$defs/widthChangePointDraft"
           },
           "description": "Phase 3.7 optional: width change points at normalized stations."
+        },
+        "selectedCrossSectionStation": {
+          "type": "number",
+          "description": "Phase 5 optional: selected station for cross-section drawing workspace."
+        },
+        "drawingSettings": {
+          "$ref": "#/$defs/drawingSettingsDraft",
+          "description": "Phase 5 optional: drawing workspace sheet settings."
         }
       }
     },

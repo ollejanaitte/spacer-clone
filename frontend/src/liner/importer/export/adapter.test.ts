@@ -469,6 +469,21 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(crossSection.name).toBe("CrossSlope @ 0");
   });
 
+  it("8b: built-in gridDefinitions reference existing cross-section templates", () => {
+    const sample = buildBuiltInSampleProject();
+    const result = convertImporterToPhase35Draft(sample);
+    expect(result.draft).not.toBeNull();
+
+    const templateIds = new Set(result.draft!.crossSections.map((section) => section.id));
+    expect(result.draft!.gridDefinitions.length).toBeGreaterThan(0);
+    for (const definition of result.draft!.gridDefinitions) {
+      expect(templateIds.has(definition.crossSectionTemplateId)).toBe(true);
+      expect(definition.stationRange.endPhysicalDistance).toBeGreaterThanOrEqual(
+        definition.stationRange.startPhysicalDistance,
+      );
+    }
+  });
+
   it("9: built-in explicitStations follow PDF 小座標 cumulative distances", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);

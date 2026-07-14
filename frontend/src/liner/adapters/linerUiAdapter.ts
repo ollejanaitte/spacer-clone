@@ -1,5 +1,4 @@
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
-import { computeOffsetLineElevation } from "../core/crossSectionElevation";
 import { evaluateElementEndState } from "../core/geometry/horizontal";
 import type {
   AlignmentElement,
@@ -11,9 +10,12 @@ import type {
   StraightElement,
 } from "../core/types";
 import type {
+  CrossSlopeIntervalDraft,
   CrossSectionOffsetLineDraft,
   CrossSectionTemplateDraft,
   CrossSlopeDraft,
+  CrossfallMode,
+  LinerDrawingSettingsDraft,
   VerticalAlignmentDraft,
 } from "../schema/types";
 
@@ -89,29 +91,17 @@ export function createDefaultVerticalAlignment(
 function offsetLinesFromOffsets(
   offsets: readonly number[],
   existingOffsetLines: readonly CrossSectionOffsetLineDraft[] = [],
-  slopePercent = 0,
 ): CrossSectionOffsetLineDraft[] {
   return offsets.map((offset, index) => {
     const existingLine = existingOffsetLines[index];
     return {
       id: existingLine?.id ?? `OL-${index}`,
       offset,
-      elevation: computeOffsetLineElevation(offset, slopePercent),
+      elevation: existingLine?.elevation ?? 0,
       role: existingLine?.role ?? "custom",
       ...(existingLine?.label ? { label: existingLine.label } : {}),
     };
   });
-}
-
-function syncTemplateOffsetElevations(template: CrossSectionTemplateDraft): CrossSectionTemplateDraft {
-  const slopePercent = template.crossSlope?.valuePercent ?? 0;
-  return {
-    ...template,
-    offsetLines: template.offsetLines.map((line) => ({
-      ...line,
-      elevation: computeOffsetLineElevation(line.offset, slopePercent),
-    })),
-  };
 }
 
 export function createDefaultCrossSectionTemplate(
@@ -121,6 +111,37 @@ export function createDefaultCrossSectionTemplate(
     id: "CS-default",
     name: "Default",
     offsetLines: offsetLinesFromOffsets(offsets),
+  };
+}
+
+function totalDraftLength(draft: BuildIntermediateInput): number {
+  return draft.alignment.elements.reduce((total, element) => total + element.length, 0);
+}
+
+function defaultCrossfallModeForSlope(valuePercent: number): CrossfallMode {
+  if (valuePercent > 0) {
+    return "one_way_right";
+  }
+  if (valuePercent < 0) {
+    return "one_way_left";
+  }
+  return "flat";
+}
+
+export function createDefaultCrossSlopeInterval(
+  draft: BuildIntermediateInput,
+  patch: Partial<CrossSlopeIntervalDraft> = {},
+): CrossSlopeIntervalDraft {
+  const scalarSlope = draft.crossSections?.[0]?.crossSlope?.valuePercent ?? 0;
+  const endPhysicalDistance = patch.endPhysicalDistance ?? totalDraftLength(draft);
+  return {
+    id: patch.id ?? `CF-${(draft.crossSlopeIntervals?.length ?? 0) + 1}`,
+    startPhysicalDistance: patch.startPhysicalDistance ?? 0,
+    endPhysicalDistance,
+    mode: patch.mode ?? defaultCrossfallModeForSlope(scalarSlope),
+    leftSlopePercent: patch.leftSlopePercent ?? scalarSlope,
+    rightSlopePercent: patch.rightSlopePercent ?? scalarSlope,
+    ...(patch.pivotDistance !== undefined ? { pivotDistance: patch.pivotDistance } : {}),
   };
 }
 
@@ -141,7 +162,7 @@ export function createDefaultLinerDraft(): BuildIntermediateInput {
   };
   const offsets = [0];
   const totalLength = alignment.elements.reduce((total, element) => total + element.length, 0);
-  return {
+  const draft: BuildIntermediateInput = {
     alignment,
     stationDefinition: {
       originDisplayedStation: 0,
@@ -152,6 +173,12 @@ export function createDefaultLinerDraft(): BuildIntermediateInput {
     offsets,
     sampleInterval: 10,
     z: 0,
+  };
+
+  return {
+    ...draft,
+    crossSlopeIntervals: [createDefaultCrossSlopeInterval(draft)],
+    selectedCrossSectionStation: 0,
   };
 }
 
@@ -226,15 +253,14 @@ export function updateLinerCrossSectionTemplate(
   template: CrossSectionTemplateDraft,
   templateIndex = 0,
 ): BuildIntermediateInput {
-  const syncedTemplate = syncTemplateOffsetElevations(template);
   const currentTemplates = draft.crossSections?.length
     ? draft.crossSections
     : [createDefaultCrossSectionTemplate(draft.offsets ?? [0])];
   const nextTemplates = currentTemplates.map((currentTemplate, index) =>
-    index === templateIndex ? syncedTemplate : currentTemplate,
+    index === templateIndex ? template : currentTemplate,
   );
   if (templateIndex >= nextTemplates.length) {
-    nextTemplates.push(syncedTemplate);
+    nextTemplates.push(template);
   }
 
   return {
@@ -254,14 +280,48 @@ export function updateLinerCrossSlope(
     : [createDefaultCrossSectionTemplate(draft.offsets ?? [0])];
   const targetTemplate =
     currentTemplates[templateIndex] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0]);
-  const nextTemplate: CrossSectionTemplateDraft = syncTemplateOffsetElevations({
+  const nextTemplate: CrossSectionTemplateDraft = {
     ...targetTemplate,
     crossSlope,
-  });
+  };
   if (crossSlope === undefined) {
     delete nextTemplate.crossSlope;
   }
   return updateLinerCrossSectionTemplate(draft, nextTemplate, templateIndex);
+}
+
+export function updateLinerCrossSlopeIntervals(
+  draft: BuildIntermediateInput,
+  crossSlopeIntervals: readonly CrossSlopeIntervalDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(crossSlopeIntervals.length > 0
+      ? { crossSlopeIntervals: [...crossSlopeIntervals] }
+      : { crossSlopeIntervals: undefined }),
+  };
+}
+
+export function updateLinerSelectedCrossSectionStation(
+  draft: BuildIntermediateInput,
+  selectedCrossSectionStation: number | undefined,
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(Number.isFinite(selectedCrossSectionStation)
+      ? { selectedCrossSectionStation }
+      : { selectedCrossSectionStation: undefined }),
+  };
+}
+
+export function updateLinerDrawingSettings(
+  draft: BuildIntermediateInput,
+  drawingSettings: LinerDrawingSettingsDraft | undefined,
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(drawingSettings ? { drawingSettings: structuredClone(drawingSettings) } : { drawingSettings: undefined }),
+  };
 }
 
 export function updateLinerAlignmentElement(
