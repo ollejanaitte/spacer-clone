@@ -1,4 +1,4 @@
-import { FilePlus2, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, FilePlus2, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import type {
@@ -7,6 +7,17 @@ import type {
   CrossSectionTemplateDraft,
 } from "../schema/types";
 import { CompositionAwareInput } from "./CompositionAwareInput";
+import {
+  appendOffsetLine,
+  canMoveOffsetLineDown,
+  canMoveOffsetLineUp,
+  canRemoveOffsetLine,
+  hasDuplicateOffsets,
+  insertOffsetLine,
+  isCenterlineOffsetLine,
+  moveOffsetLine,
+  removeOffsetLineAt,
+} from "./offsetLineOrdering";
 
 export type CrossSectionTemplateEditorProps = {
   template: CrossSectionTemplateDraft;
@@ -54,31 +65,6 @@ function updateTemplateFields(
   };
 }
 
-function addOffsetLine(template: CrossSectionTemplateDraft): CrossSectionTemplateDraft {
-  const nextLine: CrossSectionOffsetLineDraft = {
-    id: nextOffsetLineId("OL", template.offsetLines),
-    offset: 0,
-    elevation: 0,
-    role: "custom",
-  };
-
-  return {
-    ...template,
-    offsetLines: [...template.offsetLines, nextLine],
-  };
-}
-
-function removeOffsetLine(template: CrossSectionTemplateDraft, targetLineIndex: number): CrossSectionTemplateDraft {
-  if (template.offsetLines.length <= 1) {
-    return template;
-  }
-
-  return {
-    ...template,
-    offsetLines: template.offsetLines.filter((_, lineIndex) => lineIndex !== targetLineIndex),
-  };
-}
-
 function updateOffsetLine(
   template: CrossSectionTemplateDraft,
   targetLineIndex: number,
@@ -120,17 +106,6 @@ function updateOffsetLine(
   };
 }
 
-function nextOffsetLineId(prefix: string, offsetLines: readonly CrossSectionOffsetLineDraft[]): string {
-  const ids = new Set(offsetLines.map((line) => line.id));
-  let index = offsetLines.length;
-  let candidate = `${prefix}-${index}`;
-  while (ids.has(candidate)) {
-    index += 1;
-    candidate = `${prefix}-${index}`;
-  }
-  return candidate;
-}
-
 function offsetLineRoleLabel(role: CrossSectionOffsetLineRole): string {
   return ja.liner.fields.offsetLineRoles[role];
 }
@@ -144,11 +119,13 @@ export function CrossSectionTemplateEditor({
   onCompositionStateChange,
 }: CrossSectionTemplateEditorProps) {
   const [numericInputText, setNumericInputText] = useState<Record<string, string>>({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const rowKeys = useRef<string[]>([]);
   while (rowKeys.current.length < template.offsetLines.length) {
     offsetLineRowKeySequence += 1;
     rowKeys.current.push(`offset-line-row-${offsetLineRowKeySequence}`);
   }
+  const safeSelected = Math.max(0, Math.min(selectedIndex, template.offsetLines.length - 1));
   const applyChange = (nextTemplate: CrossSectionTemplateDraft) => {
     onTemplateChange(nextTemplate);
   };
@@ -188,15 +165,53 @@ export function CrossSectionTemplateEditor({
 
       <div className="liner-edit-section-header">
         <h2>{ja.liner.editor.crossSectionOffsetLineSection}</h2>
-        <button
-          type="button"
-          onClick={() => applyChange(addOffsetLine(template))}
-          data-testid="add-cross-section-offset-line"
-        >
-          <FilePlus2 size={16} />
-          {ja.liner.editor.addOffsetLine}
-        </button>
+        <div className="liner-section-actions liner-offset-line-actions">
+          <button
+            type="button"
+            className="liner-action-btn"
+            onClick={() => {
+              const next = insertOffsetLine(template, safeSelected, "before");
+              applyChange(next);
+              setSelectedIndex(safeSelected);
+            }}
+            data-testid="insert-cross-section-offset-line-before"
+          >
+            <FilePlus2 size={16} />
+            {ja.liner.editor.insertOffsetLineBefore}
+          </button>
+          <button
+            type="button"
+            className="liner-action-btn"
+            onClick={() => {
+              const next = insertOffsetLine(template, safeSelected, "after");
+              applyChange(next);
+              setSelectedIndex(safeSelected + 1);
+            }}
+            data-testid="insert-cross-section-offset-line-after"
+          >
+            <FilePlus2 size={16} />
+            {ja.liner.editor.insertOffsetLineAfter}
+          </button>
+          <button
+            type="button"
+            className="liner-action-btn"
+            onClick={() => {
+              applyChange(appendOffsetLine(template));
+              setSelectedIndex(template.offsetLines.length);
+            }}
+            data-testid="add-cross-section-offset-line"
+          >
+            <FilePlus2 size={16} />
+            {ja.liner.editor.addOffsetLine}
+          </button>
+        </div>
       </div>
+
+      {hasDuplicateOffsets(template.offsetLines) ? (
+        <p className="liner-edit-help" data-testid="cross-section-offset-duplicate-warning" role="status">
+          {ja.liner.editor.offsetDuplicateWarning}
+        </p>
+      ) : null}
 
       <div className="liner-edit-table-wrap">
         <table className="liner-edit-table liner-cross-section-offset-line-table">
@@ -216,8 +231,15 @@ export function CrossSectionTemplateEditor({
               const rowKey = rowKeys.current[lineIndex]!;
               const offsetInputKey = `${rowKey}:offset`;
               const elevationInputKey = `${rowKey}:elevation`;
+              const centerline = isCenterlineOffsetLine(line);
               return (
-              <tr key={rowKey} data-testid={`cross-section-offset-line-row-${line.id}`}>
+              <tr
+                key={rowKey}
+                data-testid={`cross-section-offset-line-row-${line.id}`}
+                data-selected={lineIndex === safeSelected ? "true" : "false"}
+                data-centerline={centerline ? "true" : "false"}
+                onClick={() => setSelectedIndex(lineIndex)}
+              >
                 <td>
                   <CompositionAwareInput
                     value={line.id ?? ""}
@@ -303,18 +325,60 @@ export function CrossSectionTemplateEditor({
                   />
                 </td>
                 <td>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      rowKeys.current.splice(lineIndex, 1);
-                      applyChange(removeOffsetLine(template, lineIndex));
-                    }}
-                    disabled={template.offsetLines.length <= 1}
-                    data-testid={`remove-cross-section-offset-line-${line.id}`}
-                    title={ja.liner.editor.removeOffsetLine}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="liner-row-actions">
+                    <button
+                      type="button"
+                      className="liner-action-btn liner-action-btn-compact"
+                      disabled={!canMoveOffsetLineUp(template, lineIndex)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        const lineId = line.id;
+                        const next = moveOffsetLine(template, lineIndex, "up");
+                        applyChange(next);
+                        const nextIndex = next.offsetLines.findIndex((entry) => entry.id === lineId);
+                        setSelectedIndex(nextIndex >= 0 ? nextIndex : lineIndex);
+                      }}
+                      data-testid={`move-up-cross-section-offset-line-${line.id}`}
+                      title={ja.liner.editor.moveOffsetLineUp}
+                    >
+                      <ArrowUp size={14} />
+                      <span>{ja.liner.editor.moveUp}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="liner-action-btn liner-action-btn-compact"
+                      disabled={!canMoveOffsetLineDown(template, lineIndex)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        const lineId = line.id;
+                        const next = moveOffsetLine(template, lineIndex, "down");
+                        applyChange(next);
+                        const nextIndex = next.offsetLines.findIndex((entry) => entry.id === lineId);
+                        setSelectedIndex(nextIndex >= 0 ? nextIndex : lineIndex);
+                      }}
+                      data-testid={`move-down-cross-section-offset-line-${line.id}`}
+                      title={ja.liner.editor.moveOffsetLineDown}
+                    >
+                      <ArrowDown size={14} />
+                      <span>{ja.liner.editor.moveDown}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="liner-action-btn liner-action-btn-compact"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        rowKeys.current.splice(lineIndex, 1);
+                        applyChange(removeOffsetLineAt(template, lineIndex));
+                        setSelectedIndex(Math.max(0, lineIndex - 1));
+                      }}
+                      disabled={!canRemoveOffsetLine(template, lineIndex)}
+                      data-testid={`remove-cross-section-offset-line-${line.id}`}
+                      title={centerline ? ja.liner.editor.centerlineProtected : ja.liner.editor.removeOffsetLine}
+                    >
+                      <Trash2 size={14} />
+                      <span>{ja.liner.editor.remove}</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
               );

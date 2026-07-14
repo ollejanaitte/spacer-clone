@@ -1,4 +1,4 @@
-import { formatStationDisplay } from "../../core/station/stationFormat";
+import { formatStationDisplay, formatStationPlanNotation } from "../../core/station/stationFormat";
 import { ja } from "../../../i18n/ja";
 import type {
   CanonicalLinerIntermediateResult,
@@ -29,6 +29,7 @@ import {
   CAD_LAYER_PRESETS,
   drawingStyleFromCadPreset,
 } from "../../dxf/presets/cadLayerPresets";
+import { buildCenterlineOnlyPlanOutput } from "./planCenterlineOnlyBuilder";
 import type { DrawingPolyline } from "../model/primitives";
 import type { StationAxis, StationAxisLabelKind } from "../model/stationAxis";
 import { transformPoint2 } from "../transforms/affineTransform2";
@@ -1107,10 +1108,36 @@ function buildProfileBandLayerPaper(
       label: ja.liner.formalDrawing.bandRows.verticalCurve,
       value: (stationIndex: number) => {
         const station = result.stations.entries[stationIndex];
-        const breakPoint = result.vertical.gradeBreaks.find(
-          (entry) => entry.physicalDistance === station?.physicalDistance,
+        const distance = station?.physicalDistance ?? Number.NaN;
+        const segment = result.vertical.segments.find(
+          (entry) =>
+            entry.pvcPhysicalDistance !== undefined
+            && distance >= entry.startPhysicalDistance
+            && distance <= entry.endPhysicalDistance,
         );
-        return breakPoint ? ja.liner.fields.elementTypes.parabolic : ja.liner.formalDrawing.bandRows.unavailable;
+        if (!segment) {
+          return ja.liner.formalDrawing.bandRows.unavailable;
+        }
+        if (
+          segment.pvcPhysicalDistance !== undefined
+          && Math.abs(distance - segment.pvcPhysicalDistance) < 1e-6
+        ) {
+          return "BVC";
+        }
+        if (
+          segment.pvtPhysicalDistance !== undefined
+          && Math.abs(distance - segment.pvtPhysicalDistance) < 1e-6
+        ) {
+          return "EVC";
+        }
+        if (
+          segment.pviPhysicalDistance !== undefined
+          && Math.abs(distance - segment.pviPhysicalDistance) < 1e-6
+        ) {
+          return "PVI";
+        }
+        const lengthM = segment.endPhysicalDistance - segment.startPhysicalDistance;
+        return `L=${lengthM.toFixed(1)}`;
       },
     },
     {
@@ -1184,6 +1211,93 @@ function buildProfileBandLayerPaper(
         createPoint2(x, bandBounds.minY + rowDefinitions.length * rowHeight),
       ],
     });
+  }
+
+  const verticalCurveRowIndex = rowDefinitions.findIndex((row) => row.key === "verticalCurve");
+  if (verticalCurveRowIndex >= 0) {
+    const rowY = bandBounds.minY + verticalCurveRowIndex * rowHeight;
+    const midY = rowY + rowHeight / 2;
+    for (const segment of result.vertical.segments) {
+      if (segment.pvcPhysicalDistance === undefined || segment.pvtPhysicalDistance === undefined) {
+        continue;
+      }
+      const xStart = stationColumnPaperX(
+        bandBounds,
+        segment.pvcPhysicalDistance,
+        startDistance,
+        mmPerMeter,
+      );
+      const xEnd = stationColumnPaperX(
+        bandBounds,
+        segment.pvtPhysicalDistance,
+        startDistance,
+        mmPerMeter,
+      );
+      const slash = Math.min(rowHeight * 0.35, 2.2);
+      layer.primitives.push({
+        kind: "polyline",
+        id: `band-vc-baseline-${segment.id}`,
+        points: [createPoint2(xStart, midY), createPoint2(xEnd, midY)],
+      });
+      layer.primitives.push({
+        kind: "polyline",
+        id: `band-vc-bvc-${segment.id}`,
+        points: [
+          createPoint2(xStart, rowY + 0.4),
+          createPoint2(xStart, rowY + rowHeight - 0.4),
+        ],
+      });
+      layer.primitives.push({
+        kind: "polyline",
+        id: `band-vc-evc-${segment.id}`,
+        points: [
+          createPoint2(xEnd, rowY + 0.4),
+          createPoint2(xEnd, rowY + rowHeight - 0.4),
+        ],
+      });
+      // Slash marks at BVC / EVC (Japanese-style vertical-curve interval markers).
+      layer.primitives.push({
+        kind: "polyline",
+        id: `band-vc-slash-start-${segment.id}`,
+        points: [
+          createPoint2(xStart - slash * 0.2, midY - slash),
+          createPoint2(xStart + slash * 0.8, midY + slash),
+        ],
+      });
+      layer.primitives.push({
+        kind: "polyline",
+        id: `band-vc-slash-end-${segment.id}`,
+        points: [
+          createPoint2(xEnd - slash * 0.2, midY - slash),
+          createPoint2(xEnd + slash * 0.8, midY + slash),
+        ],
+      });
+      if (segment.pviPhysicalDistance !== undefined) {
+        const xPvi = stationColumnPaperX(
+          bandBounds,
+          segment.pviPhysicalDistance,
+          startDistance,
+          mmPerMeter,
+        );
+        layer.primitives.push({
+          kind: "text",
+          id: `band-vc-pvi-${segment.id}`,
+          position: createPoint2(xPvi, midY + valueHeight * 0.2),
+          value: `PVI ${formatStationPlanNotation(segment.pviPhysicalDistance)}`,
+          heightMm: Math.max(valueHeight - 0.2, 1.6),
+          alignment: "center",
+        });
+      }
+      const lengthM = segment.endPhysicalDistance - segment.startPhysicalDistance;
+      layer.primitives.push({
+        kind: "text",
+        id: `band-vc-length-${segment.id}`,
+        position: createPoint2((xStart + xEnd) / 2, midY - valueHeight * 0.85),
+        value: `L=${lengthM.toFixed(1)}`,
+        heightMm: Math.max(valueHeight - 0.3, 1.5),
+        alignment: "center",
+      });
+    }
   }
 
   const dataRight = geometryDataOriginX(bandBounds) + (endDistance - startDistance) * mmPerMeter;
@@ -1434,6 +1548,9 @@ export function createPlanDrawingBuilder(): DrawingBuilder {
     build(context: BuildDrawingContext): DrawingBuilderOutput {
       if (context.result.horizontal.sampledPoints.length < 2) {
         return emptyOutput("plan", context);
+      }
+      if (context.settings.planType === "centerline_only") {
+        return buildCenterlineOnlyPlanOutput(context);
       }
       const sheet = buildSheet(
         "plan-sheet",

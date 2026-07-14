@@ -72,6 +72,11 @@ function renderPrimitive(viewport: DrawingViewport, primitive: DrawingPrimitive)
   if (primitive.kind === "arc") {
     return <path key={primitive.id} d={arcPath(viewport, primitive)} style={style} fill="none" />;
   }
+  if (primitive.kind === "circle") {
+    const center = transformPoint2(viewport.transform, primitive.center);
+    const radius = Math.abs(primitive.radius * viewport.transform.a);
+    return <circle key={primitive.id} cx={center.x} cy={center.y} r={radius} style={style} fill="none" />;
+  }
   if (primitive.kind === "text") {
     const position = transformPoint2(viewport.transform, primitive.position);
     return (

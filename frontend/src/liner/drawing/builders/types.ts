@@ -4,6 +4,8 @@ import type { DrawingSheet, DrawingViewport, DrawingViewportKind } from "../mode
 import type { PaperDefinition } from "../model/paper";
 import type { StationAxis } from "../model/stationAxis";
 
+export type FormalPlanType = "road_shape" | "centerline_only";
+
 export type DrawingSettings = {
   version: string;
   planPaper: PaperDefinition;
@@ -12,6 +14,8 @@ export type DrawingSettings = {
   bandPaper: PaperDefinition;
   stationAxes: StationAxis[];
   selectedCrossSectionStation?: number;
+  /** Type A = road_shape (default), Type B = centerline_only */
+  planType?: FormalPlanType;
 };
 
 export type BuildDrawingContext = {

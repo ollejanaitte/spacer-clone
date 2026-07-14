@@ -135,3 +135,36 @@ export function parseStationInput(
 export function formatStationDisplay(meters: number): string {
   return formatStationNoPlus(meters) ?? "";
 }
+
+/**
+ * Japanese plan-drawing station notation.
+ * Examples (majorInterval=100): 0→No.0, 20→No.0+20, 100→No.1, 140→No.1+40
+ */
+export function formatStationPlanNotation(
+  meters: number,
+  majorInterval = 100,
+): string {
+  if (!Number.isFinite(meters)) {
+    return "";
+  }
+  const negative = meters < 0;
+  const abs = Math.abs(meters);
+  const noNumber = Math.floor(abs / majorInterval + 1e-9);
+  const remainder = abs - noNumber * majorInterval;
+  const sign = negative ? "-" : "";
+  if (Math.abs(remainder) < 1e-6) {
+    return `${sign}No.${noNumber}`;
+  }
+  if (Math.abs(remainder - Math.round(remainder)) < 1e-6) {
+    return `${sign}No.${noNumber}+${Math.round(remainder)}`;
+  }
+  return `${sign}No.${noNumber}+${remainder.toFixed(3)}`;
+}
+
+export function isMajorStationDistance(meters: number, majorInterval = 100): boolean {
+  if (!Number.isFinite(meters)) {
+    return false;
+  }
+  const rem = Math.abs(meters) % majorInterval;
+  return rem < 1e-6 || majorInterval - rem < 1e-6;
+}

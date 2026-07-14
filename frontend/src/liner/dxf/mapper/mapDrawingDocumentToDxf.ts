@@ -200,6 +200,8 @@ function transformPrimitiveCoordinates(
       return { ...primitive, points: primitive.points.map(mapPoint) };
     case "arc":
       return { ...primitive, center: mapPoint(primitive.center) };
+    case "circle":
+      return { ...primitive, center: mapPoint(primitive.center) };
     case "text":
       return { ...primitive, position: mapPoint(primitive.position) };
     case "dimension":

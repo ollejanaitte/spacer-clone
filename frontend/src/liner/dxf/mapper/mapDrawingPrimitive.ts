@@ -1,6 +1,7 @@
 import type { Point2 } from "../../drawing/model/geometry";
 import type {
   DrawingArc,
+  DrawingCircle,
   DrawingDimension,
   DrawingLine,
   DrawingPolyline,
@@ -34,6 +35,8 @@ export function mapDrawingPrimitiveToDxfEntities(
       return mapDrawingPolyline(primitive, layer);
     case "arc":
       return mapDrawingArc(primitive, layer);
+    case "circle":
+      return mapDrawingCircle(primitive, layer);
     case "text":
       return mapDrawingText(primitive, layer, units);
     case "dimension":
@@ -113,6 +116,34 @@ function mapDrawingArc(arc: DrawingArc, layer: string): MapDrawingPrimitiveResul
         center: copyPoint(arc.center),
         radius: roundDxfNumber(arc.radius, precision.coordinateDecimals),
         ...angles,
+      },
+    ],
+    diagnostics: [],
+  };
+}
+
+function mapDrawingCircle(circle: DrawingCircle, layer: string): MapDrawingPrimitiveResult {
+  const precision = resolveDxfPrecisionPolicy();
+  if (!(circle.radius > 0) || !Number.isFinite(circle.radius)) {
+    return {
+      entities: [],
+      diagnostics: [
+        createDxfDiagnostic(
+          "error",
+          "DXF_INVALID_CIRCLE_RADIUS",
+          `Circle ${circle.id} has invalid radius`,
+          { entityId: circle.id, layerName: layer },
+        ),
+      ],
+    };
+  }
+  return {
+    entities: [
+      {
+        kind: "circle",
+        layer,
+        center: copyPoint(circle.center),
+        radius: roundDxfNumber(circle.radius, precision.coordinateDecimals),
       },
     ],
     diagnostics: [],

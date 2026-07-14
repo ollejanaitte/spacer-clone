@@ -50,6 +50,15 @@ export type DrawingText = {
   styleId?: string;
 };
 
+export type DrawingCircle = {
+  kind: "circle";
+  id: string;
+  center: Point2;
+  radius: number;
+  layerId?: string;
+  styleId?: string;
+};
+
 export type DrawingDimension = {
   kind: "dimension";
   id: string;
@@ -66,5 +75,6 @@ export type DrawingPrimitive =
   | DrawingLine
   | DrawingPolyline
   | DrawingArc
+  | DrawingCircle
   | DrawingText
   | DrawingDimension;

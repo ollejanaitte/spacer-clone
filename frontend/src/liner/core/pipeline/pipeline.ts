@@ -42,6 +42,7 @@ import type {
   PierResult,
   ProfileSamplePoint,
   ProfileSegmentResult,
+  GradeBreakResult,
   SectionSliceResult,
   SpanResult,
   StationDefinition,
@@ -253,20 +254,48 @@ function buildVerticalResult(
     segmentId: sample.sourceElementId,
   }));
 
-  const segments: ProfileSegmentResult[] = verticalAlignment.elements.map((element) => ({
-    id: element.id,
-    startPhysicalDistance: element.startStation,
-    endPhysicalDistance: element.endStation,
-    startDisplayedStation: element.startStation,
-    endDisplayedStation: element.endStation,
-    startElevation:
-      element.type === "grade"
-        ? element.startElevation
-        : (element.startElevation ?? 0),
-    endElevation: elevationAt(element.endStation, verticalAlignment) ?? fallbackZ,
-    startGrade: element.type === "grade" ? element.grade : element.startGrade,
-    endGrade: element.type === "grade" ? element.grade : element.endGrade,
-  }));
+  const segments: ProfileSegmentResult[] = verticalAlignment.elements.map((element) => {
+    const base: ProfileSegmentResult = {
+      id: element.id,
+      startPhysicalDistance: element.startStation,
+      endPhysicalDistance: element.endStation,
+      startDisplayedStation: element.startStation,
+      endDisplayedStation: element.endStation,
+      startElevation:
+        element.type === "grade"
+          ? element.startElevation
+          : (element.startElevation ?? 0),
+      endElevation: elevationAt(element.endStation, verticalAlignment) ?? fallbackZ,
+      startGrade: element.type === "grade" ? element.grade : element.startGrade,
+      endGrade: element.type === "grade" ? element.grade : element.endGrade,
+    };
+    if (element.type === "parabolic") {
+      // Equal-tangent vertical curve: BVC/EVC at element ends; PVI at mid-station.
+      base.pvcPhysicalDistance = element.startStation;
+      base.pvtPhysicalDistance = element.endStation;
+      base.pviPhysicalDistance = element.startStation + element.length / 2;
+    }
+    return base;
+  });
+
+  const gradeBreaks: GradeBreakResult[] = [];
+  for (const segment of segments) {
+    if (segment.pvcPhysicalDistance === undefined || segment.pvtPhysicalDistance === undefined) {
+      continue;
+    }
+    gradeBreaks.push({
+      id: `${segment.id}-bvc`,
+      physicalDistance: segment.pvcPhysicalDistance,
+      displayedStation: segment.pvcPhysicalDistance,
+      outgoingGrade: segment.startGrade,
+    });
+    gradeBreaks.push({
+      id: `${segment.id}-evc`,
+      physicalDistance: segment.pvtPhysicalDistance,
+      displayedStation: segment.pvtPhysicalDistance,
+      incomingGrade: segment.endGrade,
+    });
+  }
 
   const startElevation = elevationAt(0, verticalAlignment) ?? fallbackZ;
 
@@ -274,7 +303,7 @@ function buildVerticalResult(
     profileElevation: startElevation,
     segments,
     sampledPoints,
-    gradeBreaks: [],
+    gradeBreaks,
   };
 }
 

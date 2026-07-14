@@ -98,9 +98,10 @@ export function HorizontalElementEditor({
     <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
       <div className="liner-edit-section-header">
         <h2 id="liner-edit-elements-title">{ja.liner.editor.elementSection}</h2>
-        <div className="liner-edit-inline-row">
+        <div className="liner-section-actions">
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => onDraftChange(addLinerStraightElement(draft))}
             data-testid="add-liner-straight-element"
           >
@@ -109,6 +110,7 @@ export function HorizontalElementEditor({
           </button>
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => onDraftChange(addLinerArcElement(draft))}
             data-testid="add-liner-arc-element"
           >
@@ -117,6 +119,7 @@ export function HorizontalElementEditor({
           </button>
           <button
             type="button"
+            className="liner-action-btn"
             onClick={() => onDraftChange(addLinerClothoidElement(draft))}
             data-testid="add-liner-clothoid-element"
           >
