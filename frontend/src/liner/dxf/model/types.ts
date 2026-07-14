@@ -25,6 +25,8 @@ export type DxfLayer = {
   name: string;
   color: number;
   lineType: string;
+  /** DXF lineweight in 100ths of mm (group 370). Optional. */
+  lineweight?: number;
   frozen: boolean;
   visible: boolean;
 };

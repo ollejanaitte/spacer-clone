@@ -49,6 +49,27 @@ flowchart LR
 - `title`: 版数、図種、対象区間を明示する
 - `layer` の後段変換は manual からの GCONVA 後段 layer 変換概念のみを参照し、製品固有変換は採用しない
 
+#### 2.3.1 Step 3 CAD layer / sheet presets
+
+Semantic ASCII layers（日本語レイヤ名は避ける）:
+
+```text
+PLAN_CENTER, PLAN_OFFSET, PLAN_STATION, PLAN_TEXT, PLAN_BAND
+PROFILE_GRID, PROFILE_DESIGN, PROFILE_GROUND, PROFILE_TEXT, PROFILE_BAND
+CROSS_SHAPE, CROSS_CENTER, CROSS_DIM, CROSS_TEXT
+SHEET_FRAME, SHEET_TEXT
+```
+
+Sheet presets:
+
+| id | paper | orientation |
+| --- | --- | --- |
+| `common` | A2 | landscape |
+| `a1-landscape` | A1 | landscape |
+| `a3-landscape` | A3 | landscape |
+
+詳細は [step3_complete_dxf_implementation.md](step3_complete_dxf_implementation.md)。
+
 ### 2.4 scale / text / lineweight
 
 - `scale` は図面種別ごとに既定値を持つ

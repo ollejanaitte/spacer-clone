@@ -25,6 +25,10 @@ import {
   type DrawingViewport,
 } from "../model/document";
 import { createPaperDefinition, paperContentBoundsMm } from "../model/paper";
+import {
+  CAD_LAYER_PRESETS,
+  drawingStyleFromCadPreset,
+} from "../../dxf/presets/cadLayerPresets";
 import type { DrawingPolyline } from "../model/primitives";
 import type { StationAxis, StationAxisLabelKind } from "../model/stationAxis";
 import { transformPoint2 } from "../transforms/affineTransform2";
@@ -375,8 +379,11 @@ function segmentAnnotation(segment: HorizontalSegmentResult): string {
 }
 
 function planGeometryLayer(context: BuildDrawingContext): DrawingLayer {
-  const layer = createEmptyDrawingLayer("plan-layer", "plan");
-  layer.style = { strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm };
+  const layer = createEmptyDrawingLayer("plan-layer", CAD_LAYER_PRESETS.PLAN_CENTER.name);
+  layer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_CENTER),
+    strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm,
+  };
   const pointMap = pointsById(context.result);
   const centerline = centerlinePolyline(context.result);
   if (centerline) {
@@ -434,8 +441,9 @@ function buildPlanAnnotationLayerPaper(
   geometryPaperBounds: Bounds2,
   layout: PlanTextLayoutContext,
 ): DrawingLayer {
-  const layer = createEmptyDrawingLayer("plan-annotation-layer", "plan-annotation");
+  const layer = createEmptyDrawingLayer("plan-annotation-layer", CAD_LAYER_PRESETS.PLAN_TEXT.name);
   layer.coordinateSpace = "paper";
+  layer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_TEXT);
   const annotationHeight = FORMAL_DRAWING_LAYOUT.planAnnotationTextHeightMm;
   const northHeight = FORMAL_DRAWING_LAYOUT.planNorthTextHeightMm;
   const layoutAnnotationHeight = planLayoutTextHeightMm(annotationHeight, "station", layout);
@@ -662,9 +670,12 @@ function buildPlanBandLayerPaper(
   mmPerMeter: number,
   layout: PlanTextLayoutContext,
 ): DrawingLayer {
-  const layer = createEmptyDrawingLayer("plan-band-layer", "plan-band");
+  const layer = createEmptyDrawingLayer("plan-band-layer", CAD_LAYER_PRESETS.PLAN_BAND.name);
   layer.coordinateSpace = "paper";
-  layer.style = { strokeWidthMm: FORMAL_DRAWING_LAYOUT.bandStrokeWidthMm };
+  layer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_BAND),
+    strokeWidthMm: FORMAL_DRAWING_LAYOUT.bandStrokeWidthMm,
+  };
   const rowHeight = FORMAL_DRAWING_LAYOUT.planRowHeightMm;
   const labelHeight = FORMAL_DRAWING_LAYOUT.bandLabelTextHeightMm;
   const valueHeight = FORMAL_DRAWING_LAYOUT.bandValueTextHeightMm;
@@ -863,8 +874,11 @@ function profileElevationBounds(result: CanonicalLinerIntermediateResult): { min
 }
 
 function buildProfileLayer(result: CanonicalLinerIntermediateResult): DrawingLayer {
-  const layer = createEmptyDrawingLayer("profile-layer", "profile");
-  layer.style = { strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm };
+  const layer = createEmptyDrawingLayer("profile-layer", CAD_LAYER_PRESETS.PROFILE_DESIGN.name);
+  layer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PROFILE_DESIGN),
+    strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm,
+  };
   const profilePoints = result.vertical.sampledPoints.map((point) =>
     createPoint2(point.physicalDistance, point.profileElevation),
   );
@@ -913,8 +927,9 @@ function buildProfileAnnotationLayerPaper(
   geometryTransform: DrawingViewport["transform"],
   geometryPaperBounds: Bounds2,
 ): DrawingLayer {
-  const layer = createEmptyDrawingLayer("profile-annotation-layer", "profile-annotation");
+  const layer = createEmptyDrawingLayer("profile-annotation-layer", CAD_LAYER_PRESETS.PROFILE_TEXT.name);
   layer.coordinateSpace = "paper";
+  layer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PROFILE_TEXT);
   const annotationHeight = FORMAL_DRAWING_LAYOUT.profileAnnotationTextHeightMm;
   const { minY, maxY } = profileElevationBounds(result);
   const minX = result.stations.entries[0]?.physicalDistance ?? 0;
@@ -1001,9 +1016,12 @@ function buildProfileBandLayerPaper(
   bandBounds: Bounds2,
   mmPerMeter: number,
 ): DrawingLayer {
-  const layer = createEmptyDrawingLayer("band-layer", "band");
+  const layer = createEmptyDrawingLayer("band-layer", CAD_LAYER_PRESETS.PROFILE_BAND.name);
   layer.coordinateSpace = "paper";
-  layer.style = { strokeWidthMm: FORMAL_DRAWING_LAYOUT.bandStrokeWidthMm };
+  layer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PROFILE_BAND),
+    strokeWidthMm: FORMAL_DRAWING_LAYOUT.bandStrokeWidthMm,
+  };
   const rowHeight = FORMAL_DRAWING_LAYOUT.profileRowHeightMm;
   const labelHeight = FORMAL_DRAWING_LAYOUT.bandLabelTextHeightMm;
   const valueHeight = FORMAL_DRAWING_LAYOUT.bandValueTextHeightMm;
@@ -1187,31 +1205,47 @@ function buildCrossSectionViewport(
   context: BuildDrawingContext,
   selectedStation: number | undefined,
 ): DrawingViewport {
-  const geometryLayer = createEmptyDrawingLayer("cross-section-layer", "cross-section");
-  geometryLayer.style = { strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm };
+  const geometryLayer = createEmptyDrawingLayer("cross-section-layer", CAD_LAYER_PRESETS.CROSS_SHAPE.name);
+  geometryLayer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.CROSS_SHAPE),
+    strokeWidthMm: FORMAL_DRAWING_LAYOUT.geometryStrokeWidthMm,
+  };
   const centerlineLayer = createEmptyDrawingLayer(
     "cross-section-centerline-layer",
-    "cross-section-centerline",
+    CAD_LAYER_PRESETS.CROSS_CENTER.name,
   );
   centerlineLayer.style = {
+    ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.CROSS_CENTER),
     strokeWidthMm: FORMAL_DRAWING_LAYOUT.crossSectionCenterlineStrokeWidthMm,
-    lineType: "dashed",
-    color: "#64748b",
   };
 
   const section = closestSection(context.result.sections, selectedStation);
   let sectionZMin = 0;
   let sectionZMax = 0;
   if (section) {
-    const sectionPolyline: DrawingPolyline = {
-      kind: "polyline",
-      id: `cross-section-${section.id}`,
-      points: section.points.map((point) => createPoint2(point.offset, point.z)),
-    };
-    geometryLayer.primitives.push(sectionPolyline);
+    const sectionPoints = section.points.map((point) => createPoint2(point.offset, point.z));
+    // Ensure a drawable shape even when only the center offset exists.
+    const shapePoints =
+      sectionPoints.length >= 2
+        ? sectionPoints
+        : sectionPoints.length === 1
+          ? [
+              createPoint2(sectionPoints[0]!.x - 1, sectionPoints[0]!.y),
+              sectionPoints[0]!,
+              createPoint2(sectionPoints[0]!.x + 1, sectionPoints[0]!.y),
+            ]
+          : [];
+    if (shapePoints.length >= 2) {
+      const sectionPolyline: DrawingPolyline = {
+        kind: "polyline",
+        id: `cross-section-${section.id}`,
+        points: shapePoints,
+      };
+      geometryLayer.primitives.push(sectionPolyline);
+    }
     const sectionZs = section.points.map((point) => point.z);
-    sectionZMin = Math.min(...sectionZs);
-    sectionZMax = Math.max(...sectionZs);
+    sectionZMin = sectionZs.length > 0 ? Math.min(...sectionZs) : 0;
+    sectionZMax = sectionZs.length > 0 ? Math.max(...sectionZs) : 0;
     geometryLayer.primitives.push({
       kind: "text",
       id: `cross-section-title-${section.id}`,

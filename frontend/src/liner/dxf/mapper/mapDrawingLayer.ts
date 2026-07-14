@@ -5,15 +5,28 @@ import {
   DEFAULT_DXF_TEXT_STYLE,
 } from "../model/defaults";
 import type { DxfLayer, DxfLinetype, DxfTables, DxfTextStyle } from "../model/types";
+import {
+  CAD_LINETYPE_DEFINITIONS,
+  normalizeDrawingLineType,
+  resolveCadLayerPreset,
+  type CadLinetypeName,
+} from "../presets/cadLayerPresets";
+import { sanitizeDxfLayerName } from "../presets/sanitizeLayerName";
 
 const DEFAULT_LAYER_COLOR = 7;
 
 export function mapDrawingLayerToDxfLayer(layer: DrawingLayer): DxfLayer {
+  const preset = resolveCadLayerPreset(layer.id, layer.name);
   const style = layer.style;
+  const lineType = normalizeDrawingLineType(style?.lineType ?? preset?.lineType);
+  const color = parseColorIndex(style?.color) ?? preset?.aciColor ?? DEFAULT_LAYER_COLOR;
+  const name = sanitizeDxfLayerName(preset?.name ?? layer.name, "LAYER");
+
   return {
-    name: layer.name,
-    color: parseColorIndex(style?.color) ?? DEFAULT_LAYER_COLOR,
-    lineType: style?.lineType ?? DEFAULT_DXF_LAYER_0.lineType,
+    name,
+    color,
+    lineType,
+    lineweight: preset?.lineweight ?? lineweightFromStrokeMm(style?.strokeWidthMm),
     frozen: false,
     visible: layer.visible,
   };
@@ -36,25 +49,19 @@ export function buildDxfTablesFromDrawingLayers(layers: readonly DrawingLayer[])
 }
 
 function collectLineTypes(layers: readonly DxfLayer[]): DxfLinetype[] {
-  const names = new Set<string>([DEFAULT_DXF_LINETYPE_CONTINUOUS.name]);
+  const names = new Set<CadLinetypeName>([DEFAULT_DXF_LINETYPE_CONTINUOUS.name as CadLinetypeName]);
   for (const layer of layers) {
-    if (layer.lineType) {
-      names.add(layer.lineType);
-    }
+    names.add(normalizeDrawingLineType(layer.lineType));
   }
 
   return [...names]
     .sort((left, right) => left.localeCompare(right))
     .map((name) => {
-      if (name === DEFAULT_DXF_LINETYPE_CONTINUOUS.name) {
-        return { ...DEFAULT_DXF_LINETYPE_CONTINUOUS };
+      const definition = CAD_LINETYPE_DEFINITIONS[name];
+      if (definition) {
+        return { ...definition };
       }
-      return {
-        name,
-        description: name,
-        patternLength: 0,
-        elements: [],
-      };
+      return { ...DEFAULT_DXF_LINETYPE_CONTINUOUS };
     });
 }
 
@@ -62,8 +69,18 @@ function parseColorIndex(color: string | undefined): number | undefined {
   if (!color) {
     return undefined;
   }
+  if (color.startsWith("#")) {
+    return undefined;
+  }
   const parsed = Number.parseInt(color, 10);
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function lineweightFromStrokeMm(strokeWidthMm: number | undefined): number | undefined {
+  if (strokeWidthMm === undefined || !Number.isFinite(strokeWidthMm)) {
+    return undefined;
+  }
+  return Math.max(0, Math.round(strokeWidthMm * 100));
 }
 
 function sortByName<T extends { name: string }>(items: readonly T[]): T[] {

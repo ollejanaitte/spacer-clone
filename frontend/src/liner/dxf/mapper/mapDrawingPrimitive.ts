@@ -37,7 +37,7 @@ export function mapDrawingPrimitiveToDxfEntities(
     case "text":
       return mapDrawingText(primitive, layer, units);
     case "dimension":
-      return mapDrawingDimension(primitive, layer);
+      return mapDrawingDimension(primitive, layer, units);
     default: {
       const exhaustive: never = primitive;
       return exhaustive;
@@ -146,14 +146,64 @@ function mapDrawingText(text: DrawingText, layer: string, units: DxfUnits): MapD
 function mapDrawingDimension(
   dimension: DrawingDimension,
   layer: string,
+  units: DxfUnits,
 ): MapDrawingPrimitiveResult {
+  const precision = resolveDxfPrecisionPolicy();
+  const dx = dimension.end.x - dimension.start.x;
+  const dy = dimension.end.y - dimension.start.y;
+  const length = Math.hypot(dx, dy);
+  const entities: DxfEntity[] = [
+    {
+      kind: "line",
+      layer,
+      start: copyPoint(dimension.start),
+      end: copyPoint(dimension.end),
+    },
+  ];
+
+  if (length > 1e-9 && Number.isFinite(dimension.offset) && Math.abs(dimension.offset) > 1e-9) {
+    const ux = -dy / length;
+    const uy = dx / length;
+    const offsetStart = {
+      x: dimension.start.x + ux * dimension.offset,
+      y: dimension.start.y + uy * dimension.offset,
+    };
+    const offsetEnd = {
+      x: dimension.end.x + ux * dimension.offset,
+      y: dimension.end.y + uy * dimension.offset,
+    };
+    entities.push(
+      { kind: "line", layer, start: offsetStart, end: offsetEnd },
+      { kind: "line", layer, start: copyPoint(dimension.start), end: offsetStart },
+      { kind: "line", layer, start: copyPoint(dimension.end), end: offsetEnd },
+    );
+  }
+
+  const label =
+    dimension.text
+    ?? `${roundDxfNumber(length, precision.coordinateDecimals)}`;
+  const textPosition = dimension.textPosition
+    ?? {
+      x: (dimension.start.x + dimension.end.x) / 2,
+      y: (dimension.start.y + dimension.end.y) / 2 + (dimension.offset || 0),
+    };
+  entities.push({
+    kind: "text",
+    layer,
+    position: copyPoint(textPosition),
+    text: label,
+    height: roundDxfNumber(textHeightModelUnits(2.5, units), precision.textHeightDecimals),
+    halign: 1,
+    valign: 0,
+  });
+
   return {
-    entities: [],
+    entities,
     diagnostics: [
       createDxfDiagnostic(
-        "warning",
-        "DXF_DIMENSION_UNSUPPORTED",
-        `Native DIMENSION export is unsupported; skipped dimension ${dimension.id}`,
+        "info",
+        "DXF_DIMENSION_DECOMPOSED",
+        `Dimension ${dimension.id} exported as LINE/TEXT decomposition`,
         { entityId: dimension.id, layerName: layer },
       ),
     ],

@@ -891,6 +891,7 @@ export function App() {
       <LinerFormalDrawingWorkspacePage
         kind={drawingWorkspaceKind}
         draft={linerDraft}
+        projectId={project.project.id}
         onDraftChange={commitLinerDraft}
         onClose={() => navigatePro("/pro")}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}

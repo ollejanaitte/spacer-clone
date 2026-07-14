@@ -1,4 +1,4 @@
-import { ArrowLeft, Minus, Plus, RefreshCw } from "lucide-react";
+import { ArrowLeft, Download, Minus, Plus, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { buildIntermediateResult } from "../core/pipeline/pipeline";
@@ -17,12 +17,20 @@ import {
   createPlanDrawingBuilder,
   createProfileDrawingBuilder,
 } from "../drawing";
+import type { DrawingDocument } from "../drawing/model/document";
 import { DrawingDocumentSvg } from "../drawing/rendering/DrawingDocumentSvg";
 import { formatStationDisplay } from "../core/station/stationFormat";
+import {
+  canExportFormalDrawingDxf,
+  downloadFormalDrawingDxf,
+  exportFormalDrawingDxf,
+  type FormalDrawingDxfKind,
+} from "../dxf";
 
 export type LinerFormalDrawingWorkspacePageProps = {
   kind: LinerDrawingWorkspaceKind;
   draft: LinerDraft;
+  projectId?: string;
   onDraftChange?: (update: LinerDraftUpdate) => void;
   onClose: () => void;
   onBackToSetup: () => void;
@@ -52,6 +60,7 @@ function resolveDiagnosticMessage(
 export function LinerFormalDrawingWorkspacePage({
   kind,
   draft,
+  projectId,
   onDraftChange,
   onClose,
   onBackToSetup,
@@ -61,6 +70,8 @@ export function LinerFormalDrawingWorkspacePage({
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
   const [canvasWidthPx, setCanvasWidthPx] = useState(1366);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
+  const [exportBusy, setExportBusy] = useState(false);
   const canvasRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const intermediate = useMemo(() => buildIntermediateResult(draft), [draft]);
@@ -82,6 +93,64 @@ export function LinerFormalDrawingWorkspacePage({
   }, [kind, settings.selectedCrossSectionStation]);
   const output = useMemo(() => builder.build({ result: intermediate, settings }), [builder, intermediate, settings]);
   const document = useMemo(() => buildDrawingDocument(output.sheet, settings, output.diagnostics), [output, settings]);
+
+  const planDocument = useMemo(() => {
+    if (kind === "plan") {
+      return document;
+    }
+    const planOutput = createPlanDrawingBuilder().build({ result: intermediate, settings });
+    return buildDrawingDocument(planOutput.sheet, settings, planOutput.diagnostics);
+  }, [document, intermediate, kind, settings]);
+
+  const profileDocument = useMemo(() => {
+    if (kind === "profile") {
+      return document;
+    }
+    const profileOutput = createProfileDrawingBuilder().build({ result: intermediate, settings });
+    return buildDrawingDocument(profileOutput.sheet, settings, profileOutput.diagnostics);
+  }, [document, intermediate, kind, settings]);
+
+  const crossSectionDocument = useMemo(() => {
+    if (kind === "cross-section") {
+      return document;
+    }
+    const crossOutput = createCrossSectionDrawingBuilder(settings.selectedCrossSectionStation).build({
+      result: intermediate,
+      settings,
+    });
+    return buildDrawingDocument(crossOutput.sheet, settings, crossOutput.diagnostics);
+  }, [document, intermediate, kind, settings]);
+
+  const handleExportDxf = useCallback(
+    (exportKind: FormalDrawingDxfKind, source: DrawingDocument) => {
+      if (exportBusy) {
+        return;
+      }
+      setExportBusy(true);
+      try {
+        if (!canExportFormalDrawingDxf(source)) {
+          setExportMessage(ja.liner.formalDrawing.exportDxfDisabled);
+          return;
+        }
+        const result = exportFormalDrawingDxf(exportKind, source, {
+          projectId,
+          timestamp: new Date(),
+          sheetPresetId: "common",
+        });
+        if (result.entityCount === 0 || !result.dxf) {
+          setExportMessage(ja.liner.formalDrawing.exportDxfError);
+          return;
+        }
+        downloadFormalDrawingDxf(result);
+        setExportMessage(ja.liner.formalDrawing.exportDxfSuccess(result.fileName));
+      } catch {
+        setExportMessage(ja.liner.formalDrawing.exportDxfError);
+      } finally {
+        setExportBusy(false);
+      }
+    },
+    [exportBusy, projectId],
+  );
 
   const measureFitZoom = useCallback(() => {
     const canvas = canvasRef.current;
@@ -247,6 +316,42 @@ export function LinerFormalDrawingWorkspacePage({
                 {ja.liner.formalDrawing.fitView}
               </button>
             </div>
+          </section>
+
+          <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-dxf-export-title">
+            <h2 id="formal-drawing-dxf-export-title">{ja.liner.formalDrawing.exportDxfSectionTitle}</h2>
+            <div className="liner-formal-workspace-dxf-actions">
+              <button
+                type="button"
+                data-testid="formal-drawing-export-plan-dxf"
+                disabled={exportBusy || !canExportFormalDrawingDxf(planDocument)}
+                onClick={() => handleExportDxf("plan", planDocument)}
+              >
+                <Download size={14} />
+                {ja.liner.formalDrawing.exportPlanDxf}
+              </button>
+              <button
+                type="button"
+                data-testid="formal-drawing-export-profile-dxf"
+                disabled={exportBusy || !canExportFormalDrawingDxf(profileDocument)}
+                onClick={() => handleExportDxf("profile-band", profileDocument)}
+              >
+                <Download size={14} />
+                {ja.liner.formalDrawing.exportProfileDxf}
+              </button>
+              <button
+                type="button"
+                data-testid="formal-drawing-export-cross-section-dxf"
+                disabled={exportBusy || !canExportFormalDrawingDxf(crossSectionDocument)}
+                onClick={() => handleExportDxf("cross-section", crossSectionDocument)}
+              >
+                <Download size={14} />
+                {ja.liner.formalDrawing.exportCrossSectionDxf}
+              </button>
+            </div>
+            {exportMessage ? (
+              <p data-testid="formal-drawing-export-message">{exportMessage}</p>
+            ) : null}
           </section>
 
           <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-diagnostics-title">
