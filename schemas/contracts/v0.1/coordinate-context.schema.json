@@ -1,0 +1,468 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "contextId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "referenceType": {
+      "type": "string",
+      "enum": [
+        "local",
+        "project",
+        "external-crs"
+      ]
+    },
+    "referenceName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "externalCrsIdentifier": {
+      "type": "string",
+      "minLength": 1
+    },
+    "origin": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "axisOrder": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        {
+          "type": "string",
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        {
+          "type": "string",
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        }
+      ]
+    },
+    "axisDirections": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "string",
+          "enum": [
+            "+x",
+            "-x",
+            "+y",
+            "-y",
+            "+z",
+            "-z"
+          ]
+        },
+        "y": {
+          "type": "string",
+          "enum": [
+            "+x",
+            "-x",
+            "+y",
+            "-y",
+            "+z",
+            "-z"
+          ]
+        },
+        "z": {
+          "type": "string",
+          "enum": [
+            "+x",
+            "-x",
+            "+y",
+            "-y",
+            "+z",
+            "-z"
+          ]
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "handedness": {
+      "type": "string",
+      "enum": [
+        "left",
+        "right"
+      ]
+    },
+    "verticalAxis": {
+      "type": "string",
+      "enum": [
+        "x",
+        "y",
+        "z"
+      ]
+    },
+    "orientation": {
+      "type": "object",
+      "properties": {
+        "rotations": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "rotationOrder": {
+          "type": "string",
+          "enum": [
+            "xyz",
+            "xzy",
+            "yxz",
+            "yzx",
+            "zxy",
+            "zyx"
+          ]
+        },
+        "rotationConvention": {
+          "type": "string",
+          "enum": [
+            "intrinsic",
+            "extrinsic"
+          ]
+        }
+      },
+      "required": [
+        "rotations",
+        "rotationOrder",
+        "rotationConvention"
+      ],
+      "additionalProperties": false
+    },
+    "transformToCanonical": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "transformVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "const": "verified"
+            },
+            "matrix": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "required": [
+            "transformVersion",
+            "status",
+            "matrix"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "transformVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "conflicted"
+              ]
+            },
+            "matrix": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "required": [
+            "transformVersion",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "horizontalDatum": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unknown",
+            "conflicted"
+          ]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "verticalDatum": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unknown",
+            "conflicted"
+          ]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "stationConvention": {
+      "type": "object",
+      "properties": {
+        "tangentDirection": {
+          "type": "string",
+          "enum": [
+            "+x",
+            "-x",
+            "+y",
+            "-y",
+            "+z",
+            "-z"
+          ]
+        },
+        "offsetSign": {
+          "type": "string",
+          "enum": [
+            "left_positive",
+            "right_positive"
+          ]
+        },
+        "elevationSign": {
+          "type": "string",
+          "enum": [
+            "up_positive",
+            "down_positive"
+          ]
+        }
+      },
+      "required": [
+        "tangentDirection",
+        "offsetSign",
+        "elevationSign"
+      ],
+      "additionalProperties": false
+    },
+    "angleUnit": {
+      "type": "string",
+      "enum": [
+        "rad",
+        "deg"
+      ]
+    },
+    "confidenceStatus": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "unknown",
+        "conflicted"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "contextId",
+    "referenceType",
+    "referenceName",
+    "origin",
+    "axisOrder",
+    "axisDirections",
+    "handedness",
+    "verticalAxis",
+    "orientation",
+    "transformToCanonical",
+    "angleUnit",
+    "confidenceStatus"
+  ],
+  "additionalProperties": false,
+  "title": "CoordinateContext",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/coordinate-context.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates structural fields only. Axis uniqueness, handedness consistency, transform matrix semantics, and datum rules require runtime semantic validation.",
+    "runtimeRules": [
+      "COORDINATE_AXIS_DIRECTION_DUPLICATE",
+      "COORDINATE_AXIS_ORDER_INVALID",
+      "COORDINATE_VERTICAL_AXIS_INVALID",
+      "COORDINATE_TRANSFORM_MATRIX_INVALID",
+      "COORDINATE_DATUM_IDENTIFIER_MISSING"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

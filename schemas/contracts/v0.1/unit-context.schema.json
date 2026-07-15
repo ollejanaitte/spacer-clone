@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "contextId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "length": {
+      "type": "string",
+      "enum": [
+        "m",
+        "mm",
+        "ft",
+        "in"
+      ]
+    },
+    "angle": {
+      "type": "string",
+      "enum": [
+        "rad",
+        "deg"
+      ]
+    },
+    "force": {
+      "type": "string",
+      "enum": [
+        "N",
+        "kN",
+        "lbf"
+      ]
+    },
+    "moment": {
+      "type": "string",
+      "enum": [
+        "N·m",
+        "kN·m",
+        "lbf·ft"
+      ]
+    },
+    "mass": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "t",
+        "lb"
+      ]
+    },
+    "temperature": {
+      "type": "string",
+      "enum": [
+        "K",
+        "°C",
+        "°F"
+      ]
+    },
+    "stress": {
+      "type": "string",
+      "enum": [
+        "Pa",
+        "kPa",
+        "MPa",
+        "GPa"
+      ]
+    },
+    "area": {
+      "type": "string",
+      "enum": [
+        "m²",
+        "mm²",
+        "ft²",
+        "in²"
+      ]
+    },
+    "inertia": {
+      "type": "string",
+      "enum": [
+        "m⁴",
+        "mm⁴",
+        "ft⁴",
+        "in⁴"
+      ]
+    },
+    "modulus": {
+      "type": "string",
+      "enum": [
+        "Pa",
+        "kPa",
+        "MPa",
+        "GPa"
+      ]
+    },
+    "time": {
+      "type": "string",
+      "enum": [
+        "s",
+        "min",
+        "h"
+      ]
+    },
+    "signConventions": {
+      "type": "object",
+      "properties": {
+        "crossfall": {
+          "type": "string",
+          "enum": [
+            "right_down_positive",
+            "left_down_positive"
+          ]
+        },
+        "rotation": {
+          "type": "string",
+          "enum": [
+            "counterclockwise_positive",
+            "clockwise_positive"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "conversionVersion": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "contextId",
+    "length",
+    "angle",
+    "conversionVersion"
+  ],
+  "additionalProperties": false,
+  "title": "UnitContext",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/unit-context.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates structural fields only. Profile-specific unit requirements (generic, road, mechanical) are enforced by runtime semantic validation.",
+    "runtimeRules": [
+      "UNIT_FORCE_INVALID",
+      "UNIT_MOMENT_INVALID",
+      "UNIT_MASS_INVALID",
+      "UNIT_TEMPERATURE_INVALID",
+      "UNIT_STRESS_INVALID"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}
