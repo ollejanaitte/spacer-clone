@@ -3,6 +3,42 @@ export {
   type BridgeFrameAnalysisDocumentValue,
 } from "./bridgeFrameAnalysisDocument";
 export {
+  packageArtifactReferenceSchema,
+  policyReferenceSchema,
+  transferRecordArtifactReferenceSchema,
+  type PackageArtifactReferenceValue,
+  type PolicyReferenceValue,
+  type TransferRecordArtifactReferenceValue,
+} from "./artifactReference";
+export {
+  point3Schema,
+  polyline3Schema,
+  polygon3Schema,
+  type Point3Value,
+  type Polyline3Value,
+  type Polygon3Value,
+} from "./geometryPrimitives";
+export {
+  packageCapabilityEntrySchema,
+  capabilityAssessmentSummarySchema,
+  type PackageCapabilityEntryValue,
+  type CapabilityAssessmentSummaryValue,
+} from "./packageCapability";
+export {
+  roadToFrameTransferPackageSchema,
+  type RoadToFrameTransferPackageValue,
+} from "./roadToFrameTransferPackage";
+export {
+  transferPackageGeometrySchema,
+  type TransferPackageGeometryValue,
+} from "./transferGeometry";
+export {
+  entityMappingEntrySchema,
+  transferDecisionEntrySchema,
+  transferRecordSchema,
+  type TransferRecordValue,
+} from "./transferRecord";
+export {
   capabilityBlockSchema,
   type CapabilityBlockValue,
 } from "./capabilityBlock";

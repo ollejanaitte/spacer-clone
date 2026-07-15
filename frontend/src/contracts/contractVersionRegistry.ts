@@ -13,6 +13,9 @@ export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID =
 export const UNKNOWN_FIELD_STORE_SCHEMA_ID = "spacer.contracts.unknown-field-store" as SchemaId;
 export const MIGRATION_RECORD_SCHEMA_ID = "spacer.contracts.migration-record" as SchemaId;
 export const DOCUMENT_REFERENCE_SCHEMA_ID = "spacer.contracts.document-reference" as SchemaId;
+export const ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_ID =
+  "spacer.contracts.road-to-frame-transfer-package" as SchemaId;
+export const TRANSFER_RECORD_SCHEMA_ID = "spacer.contracts.transfer-record" as SchemaId;
 
 /** Reusable envelope shape identifier for JSON Schema metadata; not a standalone document family. */
 export const COMMON_ENVELOPE_SHAPE_ID = "spacer.contracts.common-envelope-shape" as SchemaId;
@@ -22,6 +25,8 @@ export const ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0")
 export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const UNKNOWN_FIELD_STORE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const MIGRATION_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const TRANSFER_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 
 export interface ContractVersionSupport {
   readonly schemaId: SchemaId;
@@ -64,6 +69,16 @@ export const CONTRACT_VERSION_SUPPORT_MATRIX: Readonly<
     schemaId: MIGRATION_RECORD_SCHEMA_ID,
     supportedVersions: [MIGRATION_RECORD_SCHEMA_VERSION],
     currentVersion: MIGRATION_RECORD_SCHEMA_VERSION,
+  },
+  [ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_ID]: {
+    schemaId: ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_ID,
+    supportedVersions: [ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_VERSION],
+    currentVersion: ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_VERSION,
+  },
+  [TRANSFER_RECORD_SCHEMA_ID]: {
+    schemaId: TRANSFER_RECORD_SCHEMA_ID,
+    supportedVersions: [TRANSFER_RECORD_SCHEMA_VERSION],
+    currentVersion: TRANSFER_RECORD_SCHEMA_VERSION,
   },
 };
 

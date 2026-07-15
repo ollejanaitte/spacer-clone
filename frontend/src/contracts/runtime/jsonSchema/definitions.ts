@@ -11,6 +11,8 @@ import { migrationRecordSchema } from "../schemas/migrationRecord";
 import { provenanceSchema } from "../schemas/provenance";
 import { revisionMetadataSchema } from "../schemas/revision";
 import { roadDesignDocumentSchema } from "../schemas/roadDesignDocument";
+import { roadToFrameTransferPackageSchema } from "../schemas/roadToFrameTransferPackage";
+import { transferRecordSchema } from "../schemas/transferRecord";
 import { schemaIdentitySchema, uuidValueSchema } from "../schemas/schemaIdentity";
 import { stableEntityIdSchema } from "../schemas/stableEntityId";
 import { unitContextSchema } from "../schemas/unitContext";
@@ -41,6 +43,8 @@ export const CONTRACT_JSON_SCHEMA_DEFINITIONS: readonly ContractJsonSchemaDefini
   { slug: "bridge-frame-analysis-document", schema: bridgeFrameAnalysisDocumentSchema },
   { slug: "unknown-field-store", schema: unknownFieldStoreSchema },
   { slug: "migration-record", schema: migrationRecordSchema },
+  { slug: "road-to-frame-transfer-package", schema: roadToFrameTransferPackageSchema },
+  { slug: "transfer-record", schema: transferRecordSchema },
 ];
 
 export function contractJsonSchemaPath(slug: string): string {

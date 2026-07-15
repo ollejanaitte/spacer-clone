@@ -174,6 +174,10 @@ export {
   ENGINEERING_PROJECT_SCHEMA_VERSION,
   ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
   ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION,
+  ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_ID,
+  ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_VERSION,
+  TRANSFER_RECORD_SCHEMA_ID,
+  TRANSFER_RECORD_SCHEMA_VERSION,
   getContractVersionSupport,
   isSupportedContractVersion,
   MIGRATION_RECORD_SCHEMA_ID,
@@ -236,6 +240,71 @@ export {
 } from "./roadDesignDocument";
 
 export {
+  validatePackageArtifactReference,
+  validatePolicyReference,
+  validateTransferRecordArtifactReference,
+  type PackageArtifactReference,
+  type PolicyReference,
+  type TransferRecordArtifactReference,
+} from "./artifactReference";
+
+export { deepFreeze } from "./deepFreeze";
+
+export {
+  validatePolygon3,
+  validatePolyline3,
+  type Polygon3,
+  type Polyline3,
+} from "./geometryPrimitives";
+
+export {
+  PACKAGE_CAPABILITY_STATES,
+  isApplyBlockingCapabilityState,
+  isPackageCapabilityState,
+  validateCapabilityAssessmentSummary,
+  validatePackageCapabilityCollection,
+  validatePackageCapabilityEntry,
+  type CapabilityAssessmentSummary,
+  type PackageCapabilityEntry,
+  type PackageCapabilityState,
+} from "./packageCapability";
+
+export {
+  assessPackageApplyability,
+  detectForbiddenTransferPackageKeys,
+  validateRoadToFrameTransferPackage,
+  validateRoadToFrameTransferPackageInput,
+  ROAD_TO_FRAME_TRANSFER_PACKAGE_KIND,
+  type AlignmentRefEntry,
+  type BearingLineEntry,
+  type CrossBeamCandidateEntry,
+  type LoadPlacementCandidateEntry,
+  type MainGirderCandidateEntry,
+  type PackageApplyabilityResult,
+  type RoadRegionEntry,
+  type RoadToFrameTransferPackage,
+  type SpanEndpointRef,
+  type SpanEntry,
+  type StationRefEntry,
+  type SubstructureEntry,
+  type SurfaceRegionEntry,
+  type TransferPackageGeometry,
+} from "./roadToFrameTransferPackage";
+
+export {
+  validateTransferRecord,
+  validateTransferCapabilityAssessmentCollection,
+  validateTransferCapabilityAssessmentEntry,
+  TRANSFER_RECORD_KIND,
+  type EntityMappingDisposition,
+  type EntityMappingEntry,
+  type TransferCapabilityAssessmentEntry,
+  type TransferDecisionEntry,
+  type TransferRecord,
+  type TransferRecordStatus,
+} from "./transferRecord";
+
+export {
   UNKNOWN_FIELD_STORE_DOCUMENT_KIND,
   validateUnknownFieldStore,
   type SourceVersionClassification,
@@ -278,6 +347,8 @@ export {
   parseMigrationRecordValue,
   parseProvenanceValue,
   parseRoadDesignDocumentValue,
+  parseRoadToFrameTransferPackageValue,
+  parseTransferRecordValue,
   parseRevisionMetadataValue,
   parseSchemaIdentityValue,
   parseStableEntityIdValue,
@@ -287,6 +358,8 @@ export {
   parseValidationResultValue,
   provenanceSchema,
   roadDesignDocumentSchema,
+  roadToFrameTransferPackageSchema,
+  transferRecordSchema,
   revisionMetadataSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
@@ -321,6 +394,8 @@ export {
   type MigrationRecordValue,
   type ProvenanceValue,
   type RoadDesignDocumentValue,
+  type RoadToFrameTransferPackageValue,
+  type TransferRecordValue,
   type RevisionMetadataValue,
   type SchemaIdentityValue,
   type SemanticValidationOptions,

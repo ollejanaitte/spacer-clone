@@ -200,6 +200,37 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
     ],
   },
+  "road-to-frame-transfer-package": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates RoadToFrameTransferPackage v0.1 shape. Exact source references, geometry collection integrity, dependency closure, prohibited frame mechanics fields, capability assessment, and applyability gates require runtime semantic validation.",
+    runtimeRules: [
+      "TRANSFER_PACKAGE_SCHEMA_ID_INVALID",
+      "TRANSFER_GEOMETRY_ENTITY_ID_DUPLICATE",
+      "TRANSFER_PACKAGE_SELECTION_DEPENDENCY_CLOSURE",
+      "TRANSFER_PACKAGE_STATION_CONVENTION_REQUIRED",
+      "TRANSFER_PACKAGE_FORBIDDEN_FIELD",
+      "TRANSFER_PACKAGE_COORDINATE_CONTEXT_BLOCKS_APPLY",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+    ],
+  },
+  "transfer-record": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates append-only TransferRecord shape. Exact package/source/target references, first-import baseline invariants, status-dependent targetAfter rules, mapping namespace separation, and decision ID uniqueness require runtime semantic validation.",
+    runtimeRules: [
+      "TRANSFER_RECORD_SCHEMA_ID_INVALID",
+      "TRANSFER_RECORD_BASELINE_REQUIRED_ON_REIMPORT",
+      "TRANSFER_RECORD_TARGET_AFTER_REQUIRED",
+      "TRANSFER_RECORD_NAMESPACE_REUSE_FORBIDDEN",
+      "TRANSFER_RECORD_DECISION_ID_COLLISION",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+    ],
+  },
   "immutable-resource-reference": {
     scope: "structural-plus-semantic",
     completeValidator: false,

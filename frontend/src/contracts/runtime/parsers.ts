@@ -10,8 +10,11 @@ import {
   type DocumentReference,
 } from "../documentReference";
 import { validateEngineeringProject, type EngineeringProject } from "../engineeringProject";
+import { deepFreeze } from "../deepFreeze";
 import { validateBridgeFrameAnalysisDocument, type BridgeFrameAnalysisDocument } from "../bridgeFrameAnalysisDocument";
 import { validateRoadDesignDocument, type RoadDesignDocument } from "../roadDesignDocument";
+import { validateRoadToFrameTransferPackage, type RoadToFrameTransferPackage } from "../roadToFrameTransferPackage";
+import { validateTransferRecord, type TransferRecord } from "../transferRecord";
 import { validateMigrationRecord, type MigrationRecord } from "../migrationRecord";
 import { validateProvenance, type Provenance } from "../provenance";
 import { validateRevisionMetadata, type RevisionMetadata } from "../revision";
@@ -37,6 +40,8 @@ import {
   mapProvenanceValue,
   mapRevisionMetadataValue,
   mapRoadDesignDocumentValue,
+  mapRoadToFrameTransferPackageValue,
+  mapTransferRecordValue,
   mapSchemaIdentityValue,
   mapStableEntityIdValue,
   mapUnitContextValue,
@@ -56,6 +61,8 @@ import {
   provenanceSchema,
   revisionMetadataSchema,
   roadDesignDocumentSchema,
+  roadToFrameTransferPackageSchema,
+  transferRecordSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
   unitContextSchema,
@@ -375,4 +382,58 @@ export function parseBridgeFrameAnalysisDocumentValue(
 
   const semanticResult = validateBridgeFrameAnalysisDocument(mapped.data, basePath);
   return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseRoadToFrameTransferPackageValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<RoadToFrameTransferPackage> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(roadToFrameTransferPackageSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapRoadToFrameTransferPackageValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateRoadToFrameTransferPackage(mapped.data, basePath);
+  if (semanticResult.status === "invalid") {
+    return { success: false, validation: semanticResult };
+  }
+
+  return {
+    success: true,
+    data: deepFreeze(mapped.data),
+    validation: semanticResult,
+  };
+}
+
+export function parseTransferRecordValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<TransferRecord> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(transferRecordSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapTransferRecordValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateTransferRecord(mapped.data, basePath);
+  if (semanticResult.status === "invalid") {
+    return { success: false, validation: semanticResult };
+  }
+
+  return {
+    success: true,
+    data: deepFreeze(mapped.data),
+    validation: semanticResult,
+  };
 }

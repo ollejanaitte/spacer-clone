@@ -6,10 +6,22 @@ import type { CoordinateContext } from "../coordinateContext";
 import type { DocumentReference } from "../documentReference";
 import type { BridgeFrameAnalysisDocument, TransferBinding } from "../bridgeFrameAnalysisDocument";
 import { BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND } from "../bridgeFrameAnalysisDocument";
+import type {
+  PackageArtifactReference,
+  PolicyReference,
+  TransferRecordArtifactReference,
+} from "../artifactReference";
 import type { CapabilityBlock } from "../capabilityBlock";
 import type { EngineeringProject } from "../engineeringProject";
+import type { Polyline3, Polygon3 } from "../geometryPrimitives";
+import type {
+  CapabilityAssessmentSummary,
+  PackageCapabilityEntry,
+} from "../packageCapability";
 import type { RoadDesignDocument } from "../roadDesignDocument";
 import { ROAD_DESIGN_DOCUMENT_KIND } from "../roadDesignDocument";
+import type { RoadToFrameTransferPackage, TransferPackageGeometry } from "../roadToFrameTransferPackage";
+import type { EntityMappingEntry, TransferCapabilityAssessmentEntry, TransferDecisionEntry, TransferRecord } from "../transferRecord";
 import type { Extensions, ExtensionValue } from "../extensions";
 import type { ImmutableResourceReference } from "../immutableResourceReference";
 import type { MigrationRecord, MigrationIdMapping } from "../migrationRecord";
@@ -52,6 +64,19 @@ import type {
   TransferBindingValue,
 } from "./schemas/domainSkeleton";
 import type { RoadDesignDocumentValue } from "./schemas/roadDesignDocument";
+import type { RoadToFrameTransferPackageValue } from "./schemas/roadToFrameTransferPackage";
+import type { TransferRecordValue } from "./schemas/transferRecord";
+import type { TransferPackageGeometryValue } from "./schemas/transferGeometry";
+import type {
+  PackageArtifactReferenceValue,
+  PolicyReferenceValue,
+  TransferRecordArtifactReferenceValue,
+} from "./schemas/artifactReference";
+import type {
+  CapabilityAssessmentSummaryValue,
+  PackageCapabilityEntryValue,
+} from "./schemas/packageCapability";
+import type { Polyline3Value, Polygon3Value } from "./schemas/geometryPrimitives";
 import type { ExtensionValueSchemaValue, ExtensionsValue } from "./schemas/extensions";
 import type { ImmutableResourceReferenceValue } from "./schemas/immutableResourceReference";
 import type { MigrationRecordValue } from "./schemas/migrationRecord";
@@ -132,6 +157,29 @@ function requireUuidField(
     };
   }
   return { uuid };
+}
+
+function mapUuidArrayValue(
+  values: readonly string[],
+  basePath: string,
+  code: string,
+  message: string,
+): { uuids: UuidString[]; issues: ValidationIssue[] } {
+  const issues: ValidationIssue[] = [];
+  const uuids: UuidString[] = [];
+
+  values.forEach((value, index) => {
+    const parsed = requireUuidField(value, joinIndexedPath(basePath, index), code, message);
+    if (parsed.issue !== undefined) {
+      issues.push(parsed.issue);
+      return;
+    }
+    if (parsed.uuid !== undefined) {
+      uuids.push(parsed.uuid);
+    }
+  });
+
+  return { uuids, issues };
 }
 
 export function mapUuidValue(value: string, basePath = ""): DomainMapResult<UuidString> {
@@ -1901,6 +1949,1051 @@ export function mapBridgeFrameAnalysisDocumentValue(
       ...(reportRefs.length > 0 ? { reportRefs } : {}),
       ...(draftRefs.length > 0 ? { draftRefs } : {}),
       ...(attachments.length > 0 ? { attachments } : {}),
+    },
+  };
+}
+
+function mapPolyline3Value(value: Polyline3Value): Polyline3 {
+  return {
+    points: value.points.map((point) => ({ x: point.x, y: point.y, z: point.z })),
+  };
+}
+
+function mapPolygon3Value(value: Polygon3Value): Polygon3 {
+  return {
+    vertices: value.vertices.map((vertex) => ({ x: vertex.x, y: vertex.y, z: vertex.z })),
+  };
+}
+
+function mapPackageCapabilityEntryValue(value: PackageCapabilityEntryValue): PackageCapabilityEntry {
+  return {
+    capabilityId: value.capabilityId,
+    status: value.status,
+    ...(value.critical !== undefined ? { critical: value.critical } : {}),
+  };
+}
+
+function mapCapabilityAssessmentSummaryValue(
+  value: CapabilityAssessmentSummaryValue,
+): CapabilityAssessmentSummary {
+  return {
+    mutationBlocked: value.mutationBlocked,
+    ...(value.blockedCapabilityIds !== undefined
+      ? { blockedCapabilityIds: value.blockedCapabilityIds }
+      : {}),
+  };
+}
+
+function mapPackageArtifactReferenceValue(
+  value: PackageArtifactReferenceValue,
+  basePath: string,
+): DomainMapResult<PackageArtifactReference> {
+  const schemaVersionResult = requireSchemaVersionField(
+    value.schemaVersion,
+    basePath,
+    "DOMAIN_SCHEMA_VERSION_INVALID",
+  );
+  const packageIdResult = requireUuidField(
+    value.packageId,
+    joinFieldPath(basePath, "packageId"),
+    "DOMAIN_PACKAGE_ID_INVALID",
+    "packageId could not be converted to a domain UuidString.",
+  );
+  const checksumMapped = mapContentChecksumValue(
+    value.contentChecksum,
+    joinFieldPath(basePath, "contentChecksum"),
+  );
+
+  const issues: ValidationIssue[] = [];
+  if (schemaVersionResult.issue !== undefined) {
+    issues.push(schemaVersionResult.issue);
+  }
+  if (packageIdResult.issue !== undefined) {
+    issues.push(packageIdResult.issue);
+  }
+  if (!checksumMapped.ok) {
+    issues.push(...checksumMapped.validation.issues);
+  }
+  if (
+    issues.length > 0 ||
+    schemaVersionResult.schemaVersion === undefined ||
+    packageIdResult.uuid === undefined ||
+    !checksumMapped.ok
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      packageId: packageIdResult.uuid,
+      schemaVersion: schemaVersionResult.schemaVersion,
+      contentChecksum: checksumMapped.data,
+    },
+  };
+}
+
+function mapTransferRecordArtifactReferenceValue(
+  value: TransferRecordArtifactReferenceValue,
+  basePath: string,
+): DomainMapResult<TransferRecordArtifactReference> {
+  const schemaVersionResult = requireSchemaVersionField(
+    value.schemaVersion,
+    basePath,
+    "DOMAIN_SCHEMA_VERSION_INVALID",
+  );
+  const recordIdResult = requireUuidField(
+    value.recordId,
+    joinFieldPath(basePath, "recordId"),
+    "DOMAIN_RECORD_ID_INVALID",
+    "recordId could not be converted to a domain UuidString.",
+  );
+  const checksumMapped = mapContentChecksumValue(
+    value.contentChecksum,
+    joinFieldPath(basePath, "contentChecksum"),
+  );
+
+  const issues: ValidationIssue[] = [];
+  if (schemaVersionResult.issue !== undefined) {
+    issues.push(schemaVersionResult.issue);
+  }
+  if (recordIdResult.issue !== undefined) {
+    issues.push(recordIdResult.issue);
+  }
+  if (!checksumMapped.ok) {
+    issues.push(...checksumMapped.validation.issues);
+  }
+  if (
+    issues.length > 0 ||
+    schemaVersionResult.schemaVersion === undefined ||
+    recordIdResult.uuid === undefined ||
+    !checksumMapped.ok
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      recordId: recordIdResult.uuid,
+      schemaVersion: schemaVersionResult.schemaVersion,
+      contentChecksum: checksumMapped.data,
+    },
+  };
+}
+
+function mapPolicyReferenceValue(
+  value: PolicyReferenceValue,
+  basePath: string,
+): DomainMapResult<PolicyReference> {
+  const schemaVersionResult = requireSchemaVersionField(
+    value.schemaVersion,
+    basePath,
+    "DOMAIN_SCHEMA_VERSION_INVALID",
+  );
+  const checksumMapped = mapContentChecksumValue(
+    value.contentChecksum,
+    joinFieldPath(basePath, "contentChecksum"),
+  );
+
+  const issues: ValidationIssue[] = [];
+  if (schemaVersionResult.issue !== undefined) {
+    issues.push(schemaVersionResult.issue);
+  }
+  if (!checksumMapped.ok) {
+    issues.push(...checksumMapped.validation.issues);
+  }
+  if (issues.length > 0 || schemaVersionResult.schemaVersion === undefined || !checksumMapped.ok) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      policyId: value.policyId,
+      schemaVersion: schemaVersionResult.schemaVersion,
+      contentChecksum: checksumMapped.data,
+    },
+  };
+}
+
+function mapGeometryProvenanceValue(
+  value: ProvenanceValue,
+  basePath: string,
+): DomainMapResult<Provenance> {
+  const mapped = mapProvenanceValue(value);
+  if (!mapped.ok) {
+    return domainMapFailure(
+      mapped.validation.issues.map((issue) => ({
+        ...issue,
+        path: joinFieldPath(basePath, issue.path.replace(/^\//, "")),
+      })),
+    );
+  }
+  return mapped;
+}
+
+function mapGeometryEntityBaseFields(
+  value: {
+    readonly entityId: string;
+    readonly provenance: ProvenanceValue;
+    readonly dependencyIds: readonly string[];
+  },
+  basePath: string,
+): {
+  readonly entityId?: UuidString;
+  readonly provenance?: Provenance;
+  readonly dependencyIds?: UuidString[];
+  readonly issues: ValidationIssue[];
+} {
+  const issues: ValidationIssue[] = [];
+
+  const entityIdResult = requireUuidField(
+    value.entityId,
+    joinFieldPath(basePath, "entityId"),
+    "DOMAIN_ENTITY_ID_INVALID",
+    "entityId could not be converted to a domain UuidString.",
+  );
+  if (entityIdResult.issue !== undefined) {
+    issues.push(entityIdResult.issue);
+  }
+
+  const provenanceMapped = mapGeometryProvenanceValue(
+    value.provenance,
+    joinFieldPath(basePath, "provenance"),
+  );
+  if (!provenanceMapped.ok) {
+    issues.push(...provenanceMapped.validation.issues);
+  }
+
+  const dependencyIdsMapped = mapUuidArrayValue(
+    value.dependencyIds,
+    joinFieldPath(basePath, "dependencyIds"),
+    "DOMAIN_DEPENDENCY_ID_INVALID",
+    "dependencyIds entry could not be converted to a domain UuidString.",
+  );
+  issues.push(...dependencyIdsMapped.issues);
+
+  return {
+    entityId: entityIdResult.uuid,
+    provenance: provenanceMapped.ok ? provenanceMapped.data : undefined,
+    dependencyIds: dependencyIdsMapped.issues.length === 0 ? dependencyIdsMapped.uuids : undefined,
+    issues,
+  };
+}
+
+function mapTransferPackageGeometryValue(
+  value: TransferPackageGeometryValue,
+  basePath: string,
+): DomainMapResult<TransferPackageGeometry> {
+  const issues: ValidationIssue[] = [];
+
+  const alignmentRefs: TransferPackageGeometry["alignmentRefs"][number][] = [];
+  value.alignmentRefs.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "alignmentRefs"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const sourceAlignmentId = requireUuidField(
+      entry.sourceAlignmentId,
+      joinFieldPath(entryPath, "sourceAlignmentId"),
+      "DOMAIN_SOURCE_ALIGNMENT_ID_INVALID",
+      "sourceAlignmentId could not be converted to a domain UuidString.",
+    );
+    if (sourceAlignmentId.issue !== undefined) {
+      issues.push(sourceAlignmentId.issue);
+    }
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      sourceAlignmentId.uuid !== undefined
+    ) {
+      alignmentRefs.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        sourceAlignmentId: sourceAlignmentId.uuid,
+        ...(entry.label !== undefined ? { label: entry.label } : {}),
+      });
+    }
+  });
+
+  const stationRefs: TransferPackageGeometry["stationRefs"][number][] = [];
+  value.stationRefs.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "stationRefs"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const alignmentRefId = requireUuidField(
+      entry.alignmentRefId,
+      joinFieldPath(entryPath, "alignmentRefId"),
+      "DOMAIN_ALIGNMENT_REF_ID_INVALID",
+      "alignmentRefId could not be converted to a domain UuidString.",
+    );
+    if (alignmentRefId.issue !== undefined) {
+      issues.push(alignmentRefId.issue);
+    }
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      alignmentRefId.uuid !== undefined
+    ) {
+      stationRefs.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        alignmentRefId: alignmentRefId.uuid,
+        station: entry.station,
+      });
+    }
+  });
+
+  const substructures: TransferPackageGeometry["substructures"][number][] = [];
+  value.substructures.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "substructures"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    if (base.entityId !== undefined && base.provenance !== undefined && base.dependencyIds !== undefined) {
+      substructures.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        kind: entry.kind,
+        ...(entry.point !== undefined ? { point: entry.point } : {}),
+        ...(entry.polyline !== undefined ? { polyline: mapPolyline3Value(entry.polyline) } : {}),
+      });
+    }
+  });
+
+  const bearingLines: TransferPackageGeometry["bearingLines"][number][] = [];
+  value.bearingLines.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "bearingLines"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const substructureId = requireUuidField(
+      entry.substructureId,
+      joinFieldPath(entryPath, "substructureId"),
+      "DOMAIN_SUBSTRUCTURE_ID_INVALID",
+      "substructureId could not be converted to a domain UuidString.",
+    );
+    if (substructureId.issue !== undefined) {
+      issues.push(substructureId.issue);
+    }
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      substructureId.uuid !== undefined
+    ) {
+      bearingLines.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        polyline: mapPolyline3Value(entry.polyline),
+        substructureId: substructureId.uuid,
+      });
+    }
+  });
+
+  const spans: TransferPackageGeometry["spans"][number][] = [];
+  value.spans.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "spans"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const startRefId = requireUuidField(
+      entry.startRef.refId,
+      joinFieldPath(entryPath, "startRef/refId"),
+      "DOMAIN_SPAN_START_REF_ID_INVALID",
+      "startRef.refId could not be converted to a domain UuidString.",
+    );
+    if (startRefId.issue !== undefined) {
+      issues.push(startRefId.issue);
+    }
+    const endRefId = requireUuidField(
+      entry.endRef.refId,
+      joinFieldPath(entryPath, "endRef/refId"),
+      "DOMAIN_SPAN_END_REF_ID_INVALID",
+      "endRef.refId could not be converted to a domain UuidString.",
+    );
+    if (endRefId.issue !== undefined) {
+      issues.push(endRefId.issue);
+    }
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      startRefId.uuid !== undefined &&
+      endRefId.uuid !== undefined
+    ) {
+      spans.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        startRef: { refKind: entry.startRef.refKind, refId: startRefId.uuid },
+        endRef: { refKind: entry.endRef.refKind, refId: endRefId.uuid },
+        length: entry.length,
+      });
+    }
+  });
+
+  const mainGirderCandidates: TransferPackageGeometry["mainGirderCandidates"][number][] = [];
+  value.mainGirderCandidates.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "mainGirderCandidates"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const spanIdsMapped = mapUuidArrayValue(
+      entry.spanIds,
+      joinFieldPath(entryPath, "spanIds"),
+      "DOMAIN_SPAN_ID_INVALID",
+      "spanIds entry could not be converted to a domain UuidString.",
+    );
+    issues.push(...spanIdsMapped.issues);
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      spanIdsMapped.issues.length === 0
+    ) {
+      mainGirderCandidates.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        polyline: mapPolyline3Value(entry.polyline),
+        spanIds: spanIdsMapped.uuids,
+      });
+    }
+  });
+
+  const crossBeamCandidates: TransferPackageGeometry["crossBeamCandidates"][number][] = [];
+  value.crossBeamCandidates.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "crossBeamCandidates"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const mainGirderIdsMapped = mapUuidArrayValue(
+      entry.mainGirderIds,
+      joinFieldPath(entryPath, "mainGirderIds"),
+      "DOMAIN_MAIN_GIRDER_ID_INVALID",
+      "mainGirderIds entry could not be converted to a domain UuidString.",
+    );
+    issues.push(...mainGirderIdsMapped.issues);
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      mainGirderIdsMapped.issues.length === 0
+    ) {
+      crossBeamCandidates.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        polyline: mapPolyline3Value(entry.polyline),
+        mainGirderIds: mainGirderIdsMapped.uuids,
+      });
+    }
+  });
+
+  const surfaceRegions: TransferPackageGeometry["surfaceRegions"][number][] = [];
+  value.surfaceRegions.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "surfaceRegions"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    if (base.entityId !== undefined && base.provenance !== undefined && base.dependencyIds !== undefined) {
+      surfaceRegions.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        polygon: mapPolygon3Value(entry.polygon),
+        role: entry.role,
+      });
+    }
+  });
+
+  const roadRegions: TransferPackageGeometry["roadRegions"][number][] = [];
+  value.roadRegions.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "roadRegions"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    if (base.entityId !== undefined && base.provenance !== undefined && base.dependencyIds !== undefined) {
+      roadRegions.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        polygon: mapPolygon3Value(entry.polygon),
+        role: entry.role,
+      });
+    }
+  });
+
+  const loadPlacementCandidates: TransferPackageGeometry["loadPlacementCandidates"][number][] = [];
+  value.loadPlacementCandidates.forEach((entry, index) => {
+    const entryPath = joinIndexedPath(joinFieldPath(basePath, "loadPlacementCandidates"), index);
+    const base = mapGeometryEntityBaseFields(entry, entryPath);
+    issues.push(...base.issues);
+    const roadRegionIdsMapped = mapUuidArrayValue(
+      entry.roadRegionIds,
+      joinFieldPath(entryPath, "roadRegionIds"),
+      "DOMAIN_ROAD_REGION_ID_INVALID",
+      "roadRegionIds entry could not be converted to a domain UuidString.",
+    );
+    issues.push(...roadRegionIdsMapped.issues);
+    if (
+      base.entityId !== undefined &&
+      base.provenance !== undefined &&
+      base.dependencyIds !== undefined &&
+      roadRegionIdsMapped.issues.length === 0
+    ) {
+      loadPlacementCandidates.push({
+        entityId: base.entityId,
+        provenance: base.provenance,
+        dependencyIds: base.dependencyIds,
+        ...(entry.polyline !== undefined ? { polyline: mapPolyline3Value(entry.polyline) } : {}),
+        ...(entry.polygon !== undefined ? { polygon: mapPolygon3Value(entry.polygon) } : {}),
+        roadRegionIds: roadRegionIdsMapped.uuids,
+      });
+    }
+  });
+
+  if (issues.length > 0) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      alignmentRefs,
+      stationRefs,
+      substructures,
+      bearingLines,
+      spans,
+      mainGirderCandidates,
+      crossBeamCandidates,
+      surfaceRegions,
+      roadRegions,
+      loadPlacementCandidates,
+    },
+  };
+}
+
+export function mapRoadToFrameTransferPackageValue(
+  value: RoadToFrameTransferPackageValue,
+  basePath = "",
+): DomainMapResult<RoadToFrameTransferPackage> {
+  const issues: ValidationIssue[] = [];
+
+  const schemaId = parseSchemaId(value.schemaId);
+  if (schemaId === undefined) {
+    issues.push(
+      createValidationIssue({
+        code: "DOMAIN_SCHEMA_ID_INVALID",
+        severity: "error",
+        message: "schemaId could not be converted to a domain SchemaId.",
+        path: joinFieldPath(basePath, "schemaId"),
+      }),
+    );
+  }
+
+  const schemaVersionResult = requireSchemaVersionField(
+    value.schemaVersion,
+    basePath,
+    "DOMAIN_SCHEMA_VERSION_INVALID",
+  );
+  if (schemaVersionResult.issue !== undefined) {
+    issues.push(schemaVersionResult.issue);
+  }
+
+  const packageIdResult = requireUuidField(
+    value.packageId,
+    joinFieldPath(basePath, "packageId"),
+    "DOMAIN_PACKAGE_ID_INVALID",
+    "packageId could not be converted to a domain UuidString.",
+  );
+  if (packageIdResult.issue !== undefined) {
+    issues.push(packageIdResult.issue);
+  }
+
+  const checksumMapped = mapContentChecksumValue(
+    value.contentChecksum,
+    joinFieldPath(basePath, "contentChecksum"),
+  );
+  if (!checksumMapped.ok) {
+    issues.push(...checksumMapped.validation.issues);
+  }
+
+  const provenanceMapped = mapProvenanceValue(value.provenance);
+  if (!provenanceMapped.ok) {
+    issues.push(...provenanceMapped.validation.issues);
+  }
+
+  const sourceDocumentMapped = mapDocumentReferenceValue(
+    value.sourceDocumentRef,
+    joinFieldPath(basePath, "sourceDocumentRef"),
+  );
+  if (!sourceDocumentMapped.ok) {
+    issues.push(...sourceDocumentMapped.validation.issues);
+  }
+
+  const coordinateContextMapped = mapCoordinateContextValue(
+    value.coordinateContext,
+    joinFieldPath(basePath, "coordinateContext"),
+  );
+  if (!coordinateContextMapped.ok) {
+    issues.push(...coordinateContextMapped.validation.issues);
+  }
+
+  const unitContextMapped = mapUnitContextValue(
+    value.unitContext,
+    joinFieldPath(basePath, "unitContext"),
+  );
+  if (!unitContextMapped.ok) {
+    issues.push(...unitContextMapped.validation.issues);
+  }
+
+  let validationRefMapped: DomainMapResult<DocumentReference> | undefined;
+  if (value.validationRef !== undefined) {
+    validationRefMapped = mapDocumentReferenceValue(
+      value.validationRef,
+      joinFieldPath(basePath, "validationRef"),
+    );
+    if (!validationRefMapped.ok) {
+      issues.push(...validationRefMapped.validation.issues);
+    }
+  }
+
+  let unknownFieldStoreRefMapped: DomainMapResult<DocumentReference> | undefined;
+  if (value.unknownFieldStoreRef !== undefined) {
+    unknownFieldStoreRefMapped = mapDocumentReferenceValue(
+      value.unknownFieldStoreRef,
+      joinFieldPath(basePath, "unknownFieldStoreRef"),
+    );
+    if (!unknownFieldStoreRefMapped.ok) {
+      issues.push(...unknownFieldStoreRefMapped.validation.issues);
+    }
+  }
+
+  let parentPackageRefMapped: DomainMapResult<PackageArtifactReference> | undefined;
+  if (value.parentPackageRef !== undefined) {
+    parentPackageRefMapped = mapPackageArtifactReferenceValue(
+      value.parentPackageRef,
+      joinFieldPath(basePath, "parentPackageRef"),
+    );
+    if (!parentPackageRefMapped.ok) {
+      issues.push(...parentPackageRefMapped.validation.issues);
+    }
+  }
+
+  const geometryMapped = mapTransferPackageGeometryValue(
+    value.geometry,
+    joinFieldPath(basePath, "geometry"),
+  );
+  if (!geometryMapped.ok) {
+    issues.push(...geometryMapped.validation.issues);
+  }
+
+  const selectionMapped = mapUuidArrayValue(
+    value.selection,
+    joinFieldPath(basePath, "selection"),
+    "DOMAIN_SELECTION_ID_INVALID",
+    "selection entry could not be converted to a domain UuidString.",
+  );
+  issues.push(...selectionMapped.issues);
+
+  if (
+    issues.length > 0 ||
+    schemaId === undefined ||
+    schemaVersionResult.schemaVersion === undefined ||
+    packageIdResult.uuid === undefined ||
+    !checksumMapped.ok ||
+    !provenanceMapped.ok ||
+    !sourceDocumentMapped.ok ||
+    !coordinateContextMapped.ok ||
+    !unitContextMapped.ok ||
+    !geometryMapped.ok ||
+    selectionMapped.issues.length > 0
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      schemaId,
+      schemaVersion: schemaVersionResult.schemaVersion,
+      documentKind: value.documentKind,
+      packageId: packageIdResult.uuid,
+      contentChecksum: checksumMapped.data,
+      provenance: provenanceMapped.data,
+      sourceDocumentRef: sourceDocumentMapped.data,
+      coordinateContext: coordinateContextMapped.data,
+      unitContext: unitContextMapped.data,
+      capabilities: value.capabilities.map(mapPackageCapabilityEntryValue),
+      selection: selectionMapped.uuids,
+      geometry: geometryMapped.data,
+      ...(value.capabilityAssessmentSummary !== undefined
+        ? {
+            capabilityAssessmentSummary: mapCapabilityAssessmentSummaryValue(
+              value.capabilityAssessmentSummary,
+            ),
+          }
+        : {}),
+      ...(validationRefMapped?.ok === true ? { validationRef: validationRefMapped.data } : {}),
+      ...(unknownFieldStoreRefMapped?.ok === true
+        ? { unknownFieldStoreRef: unknownFieldStoreRefMapped.data }
+        : {}),
+      ...(parentPackageRefMapped?.ok === true
+        ? { parentPackageRef: parentPackageRefMapped.data }
+        : {}),
+      ...(value.extensions !== undefined ? { extensions: mapExtensionsValue(value.extensions) } : {}),
+    },
+  };
+}
+
+function mapEntityMappingValue(
+  value: TransferRecordValue["entityMappings"][number],
+  basePath: string,
+): DomainMapResult<EntityMappingEntry> {
+  const issues: ValidationIssue[] = [];
+
+  const roadGeometryId = requireUuidField(
+    value.roadGeometryId,
+    joinFieldPath(basePath, "roadGeometryId"),
+    "DOMAIN_ROAD_GEOMETRY_ID_INVALID",
+    "roadGeometryId could not be converted to a domain UuidString.",
+  );
+  if (roadGeometryId.issue !== undefined) {
+    issues.push(roadGeometryId.issue);
+  }
+
+  const frameEntityIdsMapped = mapUuidArrayValue(
+    value.frameEntityIds,
+    joinFieldPath(basePath, "frameEntityIds"),
+    "DOMAIN_FRAME_ENTITY_ID_INVALID",
+    "frameEntityIds entry could not be converted to a domain UuidString.",
+  );
+  issues.push(...frameEntityIdsMapped.issues);
+
+  if (issues.length > 0 || roadGeometryId.uuid === undefined || frameEntityIdsMapped.issues.length > 0) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      roadGeometryId: roadGeometryId.uuid,
+      frameEntityIds: frameEntityIdsMapped.uuids,
+      disposition: value.disposition,
+      ...(value.reason !== undefined ? { reason: value.reason } : {}),
+    },
+  };
+}
+
+function mapTransferDecisionValue(
+  value: TransferRecordValue["acceptedChanges"][number],
+  basePath: string,
+): DomainMapResult<TransferDecisionEntry> {
+  const issues: ValidationIssue[] = [];
+
+  const decisionId = requireUuidField(
+    value.decisionId,
+    joinFieldPath(basePath, "decisionId"),
+    "DOMAIN_DECISION_ID_INVALID",
+    "decisionId could not be converted to a domain UuidString.",
+  );
+  if (decisionId.issue !== undefined) {
+    issues.push(decisionId.issue);
+  }
+
+  let entityIdMapped: { uuid?: UuidString; issue?: ValidationIssue } | undefined;
+  if (value.entityId !== undefined) {
+    entityIdMapped = requireUuidField(
+      value.entityId,
+      joinFieldPath(basePath, "entityId"),
+      "DOMAIN_DECISION_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    if (entityIdMapped.issue !== undefined) {
+      issues.push(entityIdMapped.issue);
+    }
+  }
+
+  if (issues.length > 0 || decisionId.uuid === undefined) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      decisionId: decisionId.uuid,
+      reason: value.reason,
+      ...(entityIdMapped?.uuid !== undefined ? { entityId: entityIdMapped.uuid } : {}),
+      ...(value.fieldPath !== undefined ? { fieldPath: value.fieldPath } : {}),
+    },
+  };
+}
+
+function mapTransferCapabilityAssessmentEntryValue(
+  value: TransferRecordValue["capabilityAssessment"][number],
+): TransferCapabilityAssessmentEntry {
+  return {
+    capabilityId: value.capabilityId,
+    producerStatus: value.producerStatus,
+    consumerStatus: value.consumerStatus,
+    blocked: value.blocked,
+    ...(value.reason !== undefined ? { reason: value.reason } : {}),
+  };
+}
+
+export function mapTransferRecordValue(
+  value: TransferRecordValue,
+  basePath = "",
+): DomainMapResult<TransferRecord> {
+  const issues: ValidationIssue[] = [];
+
+  const schemaId = parseSchemaId(value.schemaId);
+  if (schemaId === undefined) {
+    issues.push(
+      createValidationIssue({
+        code: "DOMAIN_SCHEMA_ID_INVALID",
+        severity: "error",
+        message: "schemaId could not be converted to a domain SchemaId.",
+        path: joinFieldPath(basePath, "schemaId"),
+      }),
+    );
+  }
+
+  const schemaVersionResult = requireSchemaVersionField(
+    value.schemaVersion,
+    basePath,
+    "DOMAIN_SCHEMA_VERSION_INVALID",
+  );
+  if (schemaVersionResult.issue !== undefined) {
+    issues.push(schemaVersionResult.issue);
+  }
+
+  const recordIdResult = requireUuidField(
+    value.recordId,
+    joinFieldPath(basePath, "recordId"),
+    "DOMAIN_RECORD_ID_INVALID",
+    "recordId could not be converted to a domain UuidString.",
+  );
+  if (recordIdResult.issue !== undefined) {
+    issues.push(recordIdResult.issue);
+  }
+
+  const checksumMapped = mapContentChecksumValue(
+    value.contentChecksum,
+    joinFieldPath(basePath, "contentChecksum"),
+  );
+  if (!checksumMapped.ok) {
+    issues.push(...checksumMapped.validation.issues);
+  }
+
+  const packageRefMapped = mapPackageArtifactReferenceValue(
+    value.packageRef,
+    joinFieldPath(basePath, "packageRef"),
+  );
+  if (!packageRefMapped.ok) {
+    issues.push(...packageRefMapped.validation.issues);
+  }
+
+  const sourceDocumentMapped = mapDocumentReferenceValue(
+    value.sourceDocumentRef,
+    joinFieldPath(basePath, "sourceDocumentRef"),
+  );
+  if (!sourceDocumentMapped.ok) {
+    issues.push(...sourceDocumentMapped.validation.issues);
+  }
+
+  const targetBeforeMapped = mapDocumentReferenceValue(
+    value.targetBefore,
+    joinFieldPath(basePath, "targetBefore"),
+  );
+  if (!targetBeforeMapped.ok) {
+    issues.push(...targetBeforeMapped.validation.issues);
+  }
+
+  let targetAfterMapped: DomainMapResult<DocumentReference> | undefined;
+  if (value.targetAfter !== undefined) {
+    targetAfterMapped = mapDocumentReferenceValue(
+      value.targetAfter,
+      joinFieldPath(basePath, "targetAfter"),
+    );
+    if (!targetAfterMapped.ok) {
+      issues.push(...targetAfterMapped.validation.issues);
+    }
+  }
+
+  let baselineRecordRefMapped: DomainMapResult<TransferRecordArtifactReference> | undefined;
+  if (value.baselineRecordRef !== undefined) {
+    baselineRecordRefMapped = mapTransferRecordArtifactReferenceValue(
+      value.baselineRecordRef,
+      joinFieldPath(basePath, "baselineRecordRef"),
+    );
+    if (!baselineRecordRefMapped.ok) {
+      issues.push(...baselineRecordRefMapped.validation.issues);
+    }
+  }
+
+  let rollbackOfMapped: DomainMapResult<TransferRecordArtifactReference> | undefined;
+  if (value.rollbackOf !== undefined) {
+    rollbackOfMapped = mapTransferRecordArtifactReferenceValue(
+      value.rollbackOf,
+      joinFieldPath(basePath, "rollbackOf"),
+    );
+    if (!rollbackOfMapped.ok) {
+      issues.push(...rollbackOfMapped.validation.issues);
+    }
+  }
+
+  let supersedesMapped: DomainMapResult<TransferRecordArtifactReference> | undefined;
+  if (value.supersedes !== undefined) {
+    supersedesMapped = mapTransferRecordArtifactReferenceValue(
+      value.supersedes,
+      joinFieldPath(basePath, "supersedes"),
+    );
+    if (!supersedesMapped.ok) {
+      issues.push(...supersedesMapped.validation.issues);
+    }
+  }
+
+  const coordinateTransformMapped = mapPolicyReferenceValue(
+    value.coordinateTransform,
+    joinFieldPath(basePath, "coordinateTransform"),
+  );
+  if (!coordinateTransformMapped.ok) {
+    issues.push(...coordinateTransformMapped.validation.issues);
+  }
+
+  const applyProfileMapped = mapPolicyReferenceValue(
+    value.applyProfile,
+    joinFieldPath(basePath, "applyProfile"),
+  );
+  if (!applyProfileMapped.ok) {
+    issues.push(...applyProfileMapped.validation.issues);
+  }
+
+  let validationRefMapped: DomainMapResult<DocumentReference> | undefined;
+  if (value.validationRef !== undefined) {
+    validationRefMapped = mapDocumentReferenceValue(
+      value.validationRef,
+      joinFieldPath(basePath, "validationRef"),
+    );
+    if (!validationRefMapped.ok) {
+      issues.push(...validationRefMapped.validation.issues);
+    }
+  }
+
+  let unknownFieldStoreRefMapped: DomainMapResult<DocumentReference> | undefined;
+  if (value.unknownFieldStoreRef !== undefined) {
+    unknownFieldStoreRefMapped = mapDocumentReferenceValue(
+      value.unknownFieldStoreRef,
+      joinFieldPath(basePath, "unknownFieldStoreRef"),
+    );
+    if (!unknownFieldStoreRefMapped.ok) {
+      issues.push(...unknownFieldStoreRefMapped.validation.issues);
+    }
+  }
+
+  const entityMappings: EntityMappingEntry[] = [];
+  value.entityMappings.forEach((mapping, index) => {
+    const mapped = mapEntityMappingValue(
+      mapping,
+      joinIndexedPath(joinFieldPath(basePath, "entityMappings"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+      return;
+    }
+    entityMappings.push(mapped.data);
+  });
+
+  const acceptedChanges: TransferDecisionEntry[] = [];
+  value.acceptedChanges.forEach((decision, index) => {
+    const mapped = mapTransferDecisionValue(
+      decision,
+      joinIndexedPath(joinFieldPath(basePath, "acceptedChanges"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+      return;
+    }
+    acceptedChanges.push(mapped.data);
+  });
+
+  const rejectedChanges: TransferDecisionEntry[] = [];
+  value.rejectedChanges.forEach((decision, index) => {
+    const mapped = mapTransferDecisionValue(
+      decision,
+      joinIndexedPath(joinFieldPath(basePath, "rejectedChanges"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+      return;
+    }
+    rejectedChanges.push(mapped.data);
+  });
+
+  const conflicts: TransferDecisionEntry[] = [];
+  value.conflicts.forEach((decision, index) => {
+    const mapped = mapTransferDecisionValue(
+      decision,
+      joinIndexedPath(joinFieldPath(basePath, "conflicts"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+      return;
+    }
+    conflicts.push(mapped.data);
+  });
+
+  if (
+    issues.length > 0 ||
+    schemaId === undefined ||
+    schemaVersionResult.schemaVersion === undefined ||
+    recordIdResult.uuid === undefined ||
+    !checksumMapped.ok ||
+    !packageRefMapped.ok ||
+    !sourceDocumentMapped.ok ||
+    !targetBeforeMapped.ok ||
+    !coordinateTransformMapped.ok ||
+    !applyProfileMapped.ok
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  return {
+    ok: true,
+    data: {
+      schemaId,
+      schemaVersion: schemaVersionResult.schemaVersion,
+      documentKind: value.documentKind,
+      recordId: recordIdResult.uuid,
+      contentChecksum: checksumMapped.data,
+      packageRef: packageRefMapped.data,
+      sourceDocumentRef: sourceDocumentMapped.data,
+      targetBefore: targetBeforeMapped.data,
+      ...(targetAfterMapped?.ok === true ? { targetAfter: targetAfterMapped.data } : {}),
+      ...(baselineRecordRefMapped?.ok === true
+        ? { baselineRecordRef: baselineRecordRefMapped.data }
+        : {}),
+      ...(rollbackOfMapped?.ok === true ? { rollbackOf: rollbackOfMapped.data } : {}),
+      ...(supersedesMapped?.ok === true ? { supersedes: supersedesMapped.data } : {}),
+      status: value.status,
+      firstImport: value.firstImport,
+      capabilityAssessment: value.capabilityAssessment.map(mapTransferCapabilityAssessmentEntryValue),
+      entityMappings,
+      acceptedChanges,
+      rejectedChanges,
+      conflicts,
+      coordinateTransform: coordinateTransformMapped.data,
+      applyProfile: applyProfileMapped.data,
+      timestamp: value.timestamp,
+      actor: value.actor,
+      toolVersion: value.toolVersion,
+      ...(validationRefMapped?.ok === true ? { validationRef: validationRefMapped.data } : {}),
+      ...(unknownFieldStoreRefMapped?.ok === true
+        ? { unknownFieldStoreRef: unknownFieldStoreRefMapped.data }
+        : {}),
+      ...(value.extensions !== undefined ? { extensions: mapExtensionsValue(value.extensions) } : {}),
     },
   };
 }

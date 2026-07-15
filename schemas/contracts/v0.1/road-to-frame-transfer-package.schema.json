@@ -1,0 +1,1759 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaId": {
+      "type": "string",
+      "const": "spacer.contracts.road-to-frame-transfer-package"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "documentKind": {
+      "type": "string",
+      "const": "road-to-frame-transfer-package"
+    },
+    "packageId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "contentChecksum": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+    },
+    "provenance": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+    },
+    "sourceDocumentRef": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+    },
+    "coordinateContext": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/coordinate-context.schema.json"
+    },
+    "unitContext": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/unit-context.schema.json"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/package-capability-entry.schema.json"
+      }
+    },
+    "selection": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+      }
+    },
+    "geometry": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/transfer-package-geometry.schema.json"
+    },
+    "validationRef": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+    },
+    "capabilityAssessmentSummary": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/capability-assessment-summary.schema.json"
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "json": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+          },
+          "resourceRef": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "unknownFieldStoreRef": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+    },
+    "parentPackageRef": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/package-artifact-reference.schema.json"
+    }
+  },
+  "required": [
+    "schemaId",
+    "schemaVersion",
+    "documentKind",
+    "packageId",
+    "contentChecksum",
+    "provenance",
+    "sourceDocumentRef",
+    "coordinateContext",
+    "unitContext",
+    "capabilities",
+    "selection",
+    "geometry"
+  ],
+  "additionalProperties": false,
+  "title": "RoadToFrameTransferPackage",
+  "contractVersion": "0.1.0",
+  "$defs": {
+    "https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "hexDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "algorithm",
+        "hexDigest"
+      ],
+      "additionalProperties": false,
+      "title": "ContentChecksum",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/provenance.schema.json": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "createdBy": {
+          "type": "object",
+          "properties": {
+            "actorId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "actorType": {
+              "type": "string",
+              "enum": [
+                "user",
+                "system",
+                "tool"
+              ]
+            },
+            "displayName": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "actorId",
+            "actorType"
+          ],
+          "additionalProperties": false
+        },
+        "updatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "updatedBy": {
+          "type": "object",
+          "properties": {
+            "actorId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "actorType": {
+              "type": "string",
+              "enum": [
+                "user",
+                "system",
+                "tool"
+              ]
+            },
+            "displayName": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "actorId",
+            "actorType"
+          ],
+          "additionalProperties": false
+        },
+        "producer": {
+          "type": "object",
+          "properties": {
+            "toolId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "toolVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "algorithmVersion": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "toolId",
+            "toolVersion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "createdAt",
+        "createdBy",
+        "producer"
+      ],
+      "additionalProperties": false,
+      "title": "Provenance",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json": {
+      "type": "object",
+      "properties": {
+        "documentKind": {
+          "type": "string",
+          "enum": [
+            "engineering-project",
+            "road-design",
+            "bridge-frame-analysis",
+            "road-to-frame-transfer-package",
+            "transfer-record",
+            "persisted-result",
+            "coordinate-context",
+            "unit-context",
+            "revision-metadata",
+            "validation-result",
+            "unknown-field-store",
+            "migration-record"
+          ]
+        },
+        "documentId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "revisionId": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contentChecksum": {
+          "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+        },
+        "uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "embeddedResourceKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "documentKind",
+        "documentId",
+        "revisionId",
+        "contentChecksum"
+      ],
+      "additionalProperties": false,
+      "title": "DocumentReference",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/coordinate-context.schema.json": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+        },
+        "contextId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "referenceType": {
+          "type": "string",
+          "enum": [
+            "local",
+            "project",
+            "external-crs"
+          ]
+        },
+        "referenceName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "externalCrsIdentifier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "additionalProperties": false
+        },
+        "axisOrder": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "enum": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "type": "string",
+              "enum": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "type": "string",
+              "enum": [
+                "x",
+                "y",
+                "z"
+              ]
+            }
+          ]
+        },
+        "axisDirections": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "string",
+              "enum": [
+                "+x",
+                "-x",
+                "+y",
+                "-y",
+                "+z",
+                "-z"
+              ]
+            },
+            "y": {
+              "type": "string",
+              "enum": [
+                "+x",
+                "-x",
+                "+y",
+                "-y",
+                "+z",
+                "-z"
+              ]
+            },
+            "z": {
+              "type": "string",
+              "enum": [
+                "+x",
+                "-x",
+                "+y",
+                "-y",
+                "+z",
+                "-z"
+              ]
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "additionalProperties": false
+        },
+        "handedness": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "verticalAxis": {
+          "type": "string",
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        "orientation": {
+          "type": "object",
+          "properties": {
+            "rotations": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "rotationOrder": {
+              "type": "string",
+              "enum": [
+                "xyz",
+                "xzy",
+                "yxz",
+                "yzx",
+                "zxy",
+                "zyx"
+              ]
+            },
+            "rotationConvention": {
+              "type": "string",
+              "enum": [
+                "intrinsic",
+                "extrinsic"
+              ]
+            }
+          },
+          "required": [
+            "rotations",
+            "rotationOrder",
+            "rotationConvention"
+          ],
+          "additionalProperties": false
+        },
+        "transformToCanonical": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "transformVersion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "const": "verified"
+                },
+                "matrix": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "transformVersion",
+                "status",
+                "matrix"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "transformVersion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "conflicted"
+                  ]
+                },
+                "matrix": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "transformVersion",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "horizontalDatum": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "unknown",
+                "conflicted"
+              ]
+            },
+            "identifier": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "name",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "verticalDatum": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "unknown",
+                "conflicted"
+              ]
+            },
+            "identifier": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "name",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "stationConvention": {
+          "type": "object",
+          "properties": {
+            "tangentDirection": {
+              "type": "string",
+              "enum": [
+                "+x",
+                "-x",
+                "+y",
+                "-y",
+                "+z",
+                "-z"
+              ]
+            },
+            "offsetSign": {
+              "type": "string",
+              "enum": [
+                "left_positive",
+                "right_positive"
+              ]
+            },
+            "elevationSign": {
+              "type": "string",
+              "enum": [
+                "up_positive",
+                "down_positive"
+              ]
+            }
+          },
+          "required": [
+            "tangentDirection",
+            "offsetSign",
+            "elevationSign"
+          ],
+          "additionalProperties": false
+        },
+        "angleUnit": {
+          "type": "string",
+          "enum": [
+            "rad",
+            "deg"
+          ]
+        },
+        "confidenceStatus": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unknown",
+            "conflicted"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "contextId",
+        "referenceType",
+        "referenceName",
+        "origin",
+        "axisOrder",
+        "axisDirections",
+        "handedness",
+        "verticalAxis",
+        "orientation",
+        "transformToCanonical",
+        "angleUnit",
+        "confidenceStatus"
+      ],
+      "additionalProperties": false,
+      "title": "CoordinateContext",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/unit-context.schema.json": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+        },
+        "contextId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "length": {
+          "type": "string",
+          "enum": [
+            "m",
+            "mm",
+            "ft",
+            "in"
+          ]
+        },
+        "angle": {
+          "type": "string",
+          "enum": [
+            "rad",
+            "deg"
+          ]
+        },
+        "force": {
+          "type": "string",
+          "enum": [
+            "N",
+            "kN",
+            "lbf"
+          ]
+        },
+        "moment": {
+          "type": "string",
+          "enum": [
+            "N·m",
+            "kN·m",
+            "lbf·ft"
+          ]
+        },
+        "mass": {
+          "type": "string",
+          "enum": [
+            "kg",
+            "t",
+            "lb"
+          ]
+        },
+        "temperature": {
+          "type": "string",
+          "enum": [
+            "K",
+            "°C",
+            "°F"
+          ]
+        },
+        "stress": {
+          "type": "string",
+          "enum": [
+            "Pa",
+            "kPa",
+            "MPa",
+            "GPa"
+          ]
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "m²",
+            "mm²",
+            "ft²",
+            "in²"
+          ]
+        },
+        "inertia": {
+          "type": "string",
+          "enum": [
+            "m⁴",
+            "mm⁴",
+            "ft⁴",
+            "in⁴"
+          ]
+        },
+        "modulus": {
+          "type": "string",
+          "enum": [
+            "Pa",
+            "kPa",
+            "MPa",
+            "GPa"
+          ]
+        },
+        "time": {
+          "type": "string",
+          "enum": [
+            "s",
+            "min",
+            "h"
+          ]
+        },
+        "signConventions": {
+          "type": "object",
+          "properties": {
+            "crossfall": {
+              "type": "string",
+              "enum": [
+                "right_down_positive",
+                "left_down_positive"
+              ]
+            },
+            "rotation": {
+              "type": "string",
+              "enum": [
+                "counterclockwise_positive",
+                "clockwise_positive"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "conversionVersion": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "contextId",
+        "length",
+        "angle",
+        "conversionVersion"
+      ],
+      "additionalProperties": false,
+      "title": "UnitContext",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/package-capability-entry.schema.json": {
+      "type": "object",
+      "properties": {
+        "capabilityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "unsupported",
+            "absent",
+            "deferred",
+            "unknown"
+          ]
+        },
+        "critical": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "capabilityId",
+        "status"
+      ],
+      "additionalProperties": false,
+      "title": "PackageCapabilityEntry",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/transfer-package-geometry.schema.json": {
+      "type": "object",
+      "properties": {
+        "alignmentRefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "sourceAlignmentId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "sourceAlignmentId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "stationRefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "alignmentRefId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "station": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "alignmentRefId",
+              "station"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "substructures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "abutment",
+                  "pier",
+                  "other"
+                ]
+              },
+              "point": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "z": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y",
+                  "z"
+                ],
+                "additionalProperties": false
+              },
+              "polyline": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "minItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "points"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "kind"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "bearingLines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polyline": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "minItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "points"
+                ],
+                "additionalProperties": false
+              },
+              "substructureId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "polyline",
+              "substructureId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "startRef": {
+                "type": "object",
+                "properties": {
+                  "refKind": {
+                    "type": "string",
+                    "enum": [
+                      "substructure",
+                      "bearing-line"
+                    ]
+                  },
+                  "refId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "refKind",
+                  "refId"
+                ],
+                "additionalProperties": false
+              },
+              "endRef": {
+                "type": "object",
+                "properties": {
+                  "refKind": {
+                    "type": "string",
+                    "enum": [
+                      "substructure",
+                      "bearing-line"
+                    ]
+                  },
+                  "refId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "refKind",
+                  "refId"
+                ],
+                "additionalProperties": false
+              },
+              "length": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "startRef",
+              "endRef",
+              "length"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mainGirderCandidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polyline": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "minItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "points"
+                ],
+                "additionalProperties": false
+              },
+              "spanIds": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "polyline",
+              "spanIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "crossBeamCandidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polyline": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "minItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "points"
+                ],
+                "additionalProperties": false
+              },
+              "mainGirderIds": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "polyline",
+              "mainGirderIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "surfaceRegions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polygon": {
+                "type": "object",
+                "properties": {
+                  "vertices": {
+                    "minItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "vertices"
+                ],
+                "additionalProperties": false
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "deck",
+                  "pavement",
+                  "haunch",
+                  "other"
+                ]
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "polygon",
+              "role"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "roadRegions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polygon": {
+                "type": "object",
+                "properties": {
+                  "vertices": {
+                    "minItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "vertices"
+                ],
+                "additionalProperties": false
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "carriageway",
+                  "sidewalk",
+                  "median",
+                  "other"
+                ]
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "polygon",
+              "role"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "loadPlacementCandidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "dependencyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "polyline": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "minItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "points"
+                ],
+                "additionalProperties": false
+              },
+              "polygon": {
+                "type": "object",
+                "properties": {
+                  "vertices": {
+                    "minItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "z": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "vertices"
+                ],
+                "additionalProperties": false
+              },
+              "roadRegionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              }
+            },
+            "required": [
+              "entityId",
+              "provenance",
+              "dependencyIds",
+              "roadRegionIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "alignmentRefs",
+        "stationRefs",
+        "substructures",
+        "bearingLines",
+        "spans",
+        "mainGirderCandidates",
+        "crossBeamCandidates",
+        "surfaceRegions",
+        "roadRegions",
+        "loadPlacementCandidates"
+      ],
+      "additionalProperties": false,
+      "title": "TransferPackageGeometry",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/capability-assessment-summary.schema.json": {
+      "type": "object",
+      "properties": {
+        "mutationBlocked": {
+          "type": "boolean"
+        },
+        "blockedCapabilityIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "mutationBlocked"
+      ],
+      "additionalProperties": false,
+      "title": "CapabilityAssessmentSummary",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/json-value.schema.json": {
+      "title": "JsonValue",
+      "contractVersion": "0.1.0",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+          }
+        }
+      ]
+    },
+    "https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentChecksum": {
+          "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "uri",
+        "contentChecksum"
+      ],
+      "additionalProperties": false,
+      "title": "ImmutableResourceReference",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/package-artifact-reference.schema.json": {
+      "type": "object",
+      "properties": {
+        "packageId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+        },
+        "contentChecksum": {
+          "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+        }
+      },
+      "required": [
+        "packageId",
+        "schemaVersion",
+        "contentChecksum"
+      ],
+      "additionalProperties": false,
+      "title": "PackageArtifactReference",
+      "contractVersion": "0.1.0"
+    }
+  },
+  "$id": "https://spacer.local/schemas/contracts/v0.1/road-to-frame-transfer-package.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates RoadToFrameTransferPackage v0.1 shape. Exact source references, geometry collection integrity, dependency closure, prohibited frame mechanics fields, capability assessment, and applyability gates require runtime semantic validation.",
+    "runtimeRules": [
+      "TRANSFER_PACKAGE_SCHEMA_ID_INVALID",
+      "TRANSFER_GEOMETRY_ENTITY_ID_DUPLICATE",
+      "TRANSFER_PACKAGE_SELECTION_DEPENDENCY_CLOSURE",
+      "TRANSFER_PACKAGE_STATION_CONVENTION_REQUIRED",
+      "TRANSFER_PACKAGE_FORBIDDEN_FIELD",
+      "TRANSFER_PACKAGE_COORDINATE_CONTEXT_BLOCKS_APPLY",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}
