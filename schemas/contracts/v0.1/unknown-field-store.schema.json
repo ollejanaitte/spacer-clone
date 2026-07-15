@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaId": {
+      "type": "string",
+      "const": "spacer.contracts.unknown-field-store"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "documentKind": {
+      "type": "string",
+      "const": "unknown-field-store"
+    },
+    "storeId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "sourceRawChecksum": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+    },
+    "sourceVersionClassification": {
+      "type": "string",
+      "enum": [
+        "exact_supported",
+        "same_major_future_minor",
+        "supported_older",
+        "supported_legacy",
+        "unsupported_future_major",
+        "missing_or_invalid"
+      ]
+    },
+    "sourceVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "jsonPointer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourcePointer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criticality": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "optional",
+              "informational"
+            ]
+          },
+          "rawPayloadRef": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+          }
+        },
+        "required": [
+          "jsonPointer",
+          "criticality",
+          "rawPayloadRef"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rawPayloadRef": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+    },
+    "collisionRecords": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "jsonPointer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "knownFieldPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rawPayloadRef": {
+            "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+          }
+        },
+        "required": [
+          "jsonPointer",
+          "knownFieldPath",
+          "rawPayloadRef"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaId",
+    "schemaVersion",
+    "documentKind",
+    "storeId",
+    "sourceRawChecksum",
+    "sourceVersionClassification",
+    "entries"
+  ],
+  "additionalProperties": false,
+  "title": "UnknownFieldStore",
+  "contractVersion": "0.1.0",
+  "$defs": {
+    "https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "hexDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "algorithm",
+        "hexDigest"
+      ],
+      "additionalProperties": false,
+      "title": "ContentChecksum",
+      "contractVersion": "0.1.0"
+    },
+    "https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentChecksum": {
+          "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "uri",
+        "contentChecksum"
+      ],
+      "additionalProperties": false,
+      "title": "ImmutableResourceReference",
+      "contractVersion": "0.1.0"
+    }
+  },
+  "$id": "https://spacer.local/schemas/contracts/v0.1/unknown-field-store.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates UnknownFieldStore preservation metadata. JSON Pointer validity, immutable resource references, duplicate detection, and apply-blocking critical collision rules require runtime semantic validation.",
+    "runtimeRules": [
+      "UNKNOWN_FIELD_ENTRY_POINTER_INVALID",
+      "UNKNOWN_FIELD_ENTRY_POINTER_DUPLICATE",
+      "UNKNOWN_FIELD_CRITICAL_COLLISION_BLOCKS_APPLY",
+      "UNKNOWN_FIELD_STORE_SOURCE_VERSION_REQUIRED"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

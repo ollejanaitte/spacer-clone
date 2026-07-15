@@ -200,7 +200,10 @@ describe("runtime contract parse API", () => {
       documentId: DOCUMENT_ID,
       revisionId,
       createdAt: "2026-07-15T12:00:00.000Z",
-      contentChecksum: "sha256:abcdef",
+      contentChecksum: {
+        algorithm: "sha256",
+        hexDigest: "a".repeat(64),
+      },
     });
     expect(valid.success).toBe(true);
 
@@ -209,7 +212,10 @@ describe("runtime contract parse API", () => {
       documentId: DOCUMENT_ID,
       revisionId,
       createdAt: "July 15, 2026",
-      contentChecksum: "sha256:abcdef",
+      contentChecksum: {
+        algorithm: "sha256",
+        hexDigest: "a".repeat(64),
+      },
     });
     expect(invalidTimestamp.success).toBe(false);
     if (!invalidTimestamp.success) {

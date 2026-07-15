@@ -129,6 +129,92 @@ export {
 } from "./uuid";
 
 export {
+  contentChecksumsEqual,
+  CONTENT_CHECKSUM_ALGORITHM,
+  isSha256HexDigest,
+  parseContentChecksum,
+  SHA256_HEX_LOWERCASE_PATTERN,
+  validateContentChecksum,
+  type ContentChecksum,
+  type ContentChecksumAlgorithm,
+} from "./contentChecksum";
+
+export {
+  COMMON_ENVELOPE_SHAPE_ID,
+  CONTRACT_VERSION_SUPPORT_MATRIX,
+  DOCUMENT_REFERENCE_SCHEMA_ID,
+  ENGINEERING_PROJECT_SCHEMA_ID,
+  ENGINEERING_PROJECT_SCHEMA_VERSION,
+  getContractVersionSupport,
+  isSupportedContractVersion,
+  MIGRATION_RECORD_SCHEMA_ID,
+  MIGRATION_RECORD_SCHEMA_VERSION,
+  UNKNOWN_FIELD_STORE_SCHEMA_ID,
+  UNKNOWN_FIELD_STORE_SCHEMA_VERSION,
+  validateSupportedContractVersion,
+  type ContractVersionSupport,
+} from "./contractVersionRegistry";
+
+export {
+  validateCommonEnvelope,
+  type CommonEnvelope,
+  type ValidateCommonEnvelopeOptions,
+} from "./commonEnvelope";
+
+export {
+  documentReferenceIdentity,
+  validateDocumentReference,
+  validateDocumentReferenceCollection,
+  type DocumentReference,
+  type DocumentReferenceIdentity,
+} from "./documentReference";
+
+export {
+  detectForbiddenEmbeddedPayloadKeys,
+  ENGINEERING_PROJECT_DOCUMENT_KIND,
+  validateEngineeringProject,
+  type EngineeringProject,
+} from "./engineeringProject";
+
+export {
+  EXTENSION_KEY_PATTERN,
+  isExtensionKey,
+  validateExtensions,
+  type ExtensionValue,
+  type Extensions,
+} from "./extensions";
+
+export {
+  MIGRATION_RECORD_DOCUMENT_KIND,
+  validateMigrationRecord,
+  type MappingDisposition,
+  type MigrationIdMapping,
+  type MigrationRecord,
+  type MigrationStatus,
+} from "./migrationRecord";
+
+export {
+  UNKNOWN_FIELD_STORE_DOCUMENT_KIND,
+  validateUnknownFieldStore,
+  type SourceVersionClassification,
+  type UnknownFieldCollisionRecord,
+  type UnknownFieldCriticality,
+  type UnknownFieldEntry,
+  type UnknownFieldStore,
+} from "./unknownFieldStore";
+
+export {
+  validateImmutableResourceReference,
+  type ImmutableResourceReference,
+} from "./immutableResourceReference";
+
+export {
+  isJsonValue,
+  validateJsonValue,
+  type JsonValue,
+} from "./jsonValue";
+
+export {
   CONTRACT_JSON_SCHEMA_DEFINITIONS,
   CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA,
   CONTRACT_SCHEMA_ID_BASE,
@@ -140,13 +226,19 @@ export {
   generateContractJsonSchema,
   jsonSchemaSemanticallyEqual,
   normalizeJsonSchema,
+  parseCommonEnvelopeValue,
+  parseContentChecksumValue,
   parseContractValue,
   parseCoordinateContextValue,
+  parseDocumentReferenceValue,
+  parseEngineeringProjectValue,
+  parseMigrationRecordValue,
   parseProvenanceValue,
   parseRevisionMetadataValue,
   parseSchemaIdentityValue,
   parseStableEntityIdValue,
   parseUnitContextValue,
+  parseUnknownFieldStoreValue,
   parseUuidValue,
   parseValidationResultValue,
   provenanceSchema,
@@ -154,25 +246,39 @@ export {
   schemaIdentitySchema,
   stableEntityIdSchema,
   unitContextSchema,
+  unknownFieldStoreSchema,
   uuidValueSchema,
   validationIssueSchema,
   validationResultSchema,
   validContractValidationResult,
   zodIssueToValidationIssue,
   zodIssuesToValidationResult,
+  commonEnvelopeSchema,
+  createCommonEnvelopeSchema,
+  contentChecksumSchema,
+  documentReferenceSchema,
+  engineeringProjectSchema,
+  migrationRecordSchema,
+  type CommonEnvelopeValue,
+  type ContentChecksumValue,
+  type CreateCommonEnvelopeSchemaOptions,
   type ContractJsonSchemaDefinition,
   type ContractJsonSchemaSemanticMetadata,
   type ContractParseFailure,
   type ContractParseResult,
   type ContractParseSuccess,
   type CoordinateContextValue,
+  type DocumentReferenceValue,
+  type EngineeringProjectValue,
   type GeneratedContractJsonSchema,
+  type MigrationRecordValue,
   type ProvenanceValue,
   type RevisionMetadataValue,
   type SchemaIdentityValue,
   type SemanticValidationOptions,
   type StableEntityIdValue,
   type UnitContextValue,
+  type UnknownFieldStoreValue,
   type UuidValue,
   type ValidationResultValue,
 } from "./runtime";

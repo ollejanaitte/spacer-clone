@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "algorithm": {
+      "type": "string",
+      "const": "sha256"
+    },
+    "hexDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "algorithm",
+    "hexDigest"
+  ],
+  "additionalProperties": false,
+  "title": "ContentChecksum",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates SHA-256 checksum object shape. Algorithm lock and lowercase hex digest semantics are enforced by runtime semantic validation.",
+    "runtimeRules": [
+      "CONTENT_CHECKSUM_ALGORITHM_INVALID",
+      "CONTENT_CHECKSUM_HEX_INVALID"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

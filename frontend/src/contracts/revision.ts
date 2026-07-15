@@ -1,3 +1,5 @@
+import type { ContentChecksum } from "./contentChecksum";
+import { validateContentChecksum } from "./contentChecksum";
 import { isSemVerString, requireSchemaVersion, type SchemaVersion } from "./schemaIdentity";
 import { isIso8601UtcTimestamp } from "./isoTimestamp";
 import { isValidUuid, type UuidString } from "./uuid";
@@ -18,7 +20,7 @@ export interface RevisionMetadata {
   readonly documentId: UuidString;
   readonly revisionId: RevisionId;
   readonly createdAt: string;
-  readonly contentChecksum: string;
+  readonly contentChecksum: ContentChecksum;
   readonly parentRevisionIds?: readonly RevisionId[];
   readonly baseRevisionId?: RevisionId;
   readonly sequence?: number;
@@ -147,16 +149,9 @@ export function validateRevisionMetadata(
     );
   }
 
-  if (typeof metadata.contentChecksum !== "string" || metadata.contentChecksum.trim().length === 0) {
-    issues.push(
-      createValidationIssue({
-        code: "REVISION_CHECKSUM_MISSING",
-        severity: "error",
-        message: "contentChecksum must be a non-empty string.",
-        path: `${basePath}/contentChecksum`,
-      }),
-    );
-  }
+  issues.push(
+    ...validateContentChecksum(metadata.contentChecksum, `${basePath}/contentChecksum`).issues,
+  );
 
   issues.push(
     ...validateParentRevisionIds(metadata.parentRevisionIds, `${basePath}/parentRevisionIds`),

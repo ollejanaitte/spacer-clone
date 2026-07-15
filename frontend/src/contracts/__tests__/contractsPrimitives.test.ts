@@ -98,7 +98,10 @@ function createValidRevisionMetadata(): RevisionMetadata {
     documentId: DOCUMENT_ID,
     revisionId,
     createdAt: "2026-07-15T12:00:00.000Z",
-    contentChecksum: "sha256:abcdef",
+    contentChecksum: {
+      algorithm: "sha256",
+      hexDigest: "a".repeat(64),
+    },
     parentRevisionIds: [],
     baseRevisionId: revisionId,
     actor: { actorId: "user-1", actorType: "user", displayName: "Engineer" },
@@ -263,7 +266,10 @@ describe("contracts revision validation", () => {
       schemaVersion: requireSchemaVersion("0.1.0"),
       documentId: DOCUMENT_ID,
       createdAt: "2026-07-15T12:00:00.000Z",
-      contentChecksum: "sha256:abcdef",
+      contentChecksum: {
+      algorithm: "sha256",
+      hexDigest: "a".repeat(64),
+    },
     });
     expect(missingRevision.status).toBe("invalid");
     expect(

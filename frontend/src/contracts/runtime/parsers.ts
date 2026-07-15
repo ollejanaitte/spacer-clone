@@ -1,8 +1,16 @@
+import { validateCommonEnvelope, type CommonEnvelope, type ValidateCommonEnvelopeOptions } from "../commonEnvelope";
+import { validateContentChecksum, type ContentChecksum } from "../contentChecksum";
 import {
   validateCoordinateContext,
   type CoordinateContext,
   type ValidateCoordinateContextOptions,
 } from "../coordinateContext";
+import {
+  validateDocumentReference,
+  type DocumentReference,
+} from "../documentReference";
+import { validateEngineeringProject, type EngineeringProject } from "../engineeringProject";
+import { validateMigrationRecord, type MigrationRecord } from "../migrationRecord";
 import { validateProvenance, type Provenance } from "../provenance";
 import { validateRevisionMetadata, type RevisionMetadata } from "../revision";
 import { validateSchemaIdentity, type SchemaIdentity } from "../schemaIdentity";
@@ -12,27 +20,40 @@ import {
   type UnitContext,
   type ValidateUnitContextOptions,
 } from "../unitContext";
+import { validateUnknownFieldStore, type UnknownFieldStore } from "../unknownFieldStore";
 import type { UuidString } from "../uuid";
 import type { ValidationResult } from "../validation";
 import {
   domainMapFailureToParseFailure,
+  mapCommonEnvelopeValue,
+  mapContentChecksumValue,
   mapCoordinateContextValue,
+  mapDocumentReferenceValue,
+  mapEngineeringProjectValue,
+  mapMigrationRecordValue,
   mapProvenanceValue,
   mapRevisionMetadataValue,
   mapSchemaIdentityValue,
   mapStableEntityIdValue,
   mapUnitContextValue,
+  mapUnknownFieldStoreValue,
   mapUuidValue,
   mapValidationResultValue,
 } from "./domainMappers";
 import { parseContractValue, type ContractParseResult } from "./parseContract";
 import {
+  commonEnvelopeSchema,
+  contentChecksumSchema,
   coordinateContextSchema,
+  documentReferenceSchema,
+  engineeringProjectSchema,
+  migrationRecordSchema,
   provenanceSchema,
   revisionMetadataSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
   unitContextSchema,
+  unknownFieldStoreSchema,
   uuidValueSchema,
   validationResultSchema,
 } from "./schemas";
@@ -194,4 +215,120 @@ export function parseValidationResultValue(
   }
 
   return { success: true, data: mapped.data, validation: structural.validation };
+}
+
+export function parseContentChecksumValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<ContentChecksum> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(contentChecksumSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapContentChecksumValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateContentChecksum(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseDocumentReferenceValue(
+  value: unknown,
+  path?: string,
+  expectedKind?: DocumentReference["documentKind"],
+): ContractParseResult<DocumentReference> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(documentReferenceSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapDocumentReferenceValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateDocumentReference(mapped.data, basePath, expectedKind);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseCommonEnvelopeValue(
+  value: unknown,
+  path?: string,
+  options: ValidateCommonEnvelopeOptions = {},
+): ContractParseResult<CommonEnvelope> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(commonEnvelopeSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapCommonEnvelopeValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateCommonEnvelope(mapped.data, basePath, options);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseEngineeringProjectValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<EngineeringProject> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(engineeringProjectSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapEngineeringProjectValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateEngineeringProject(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseUnknownFieldStoreValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<UnknownFieldStore> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(unknownFieldStoreSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapUnknownFieldStoreValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateUnknownFieldStore(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseMigrationRecordValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<MigrationRecord> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(migrationRecordSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapMigrationRecordValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateMigrationRecord(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
 }

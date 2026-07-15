@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { contractSchemaId, SHARED_CONTRACT_VERSION } from "../constants";
+import { contentChecksumSchema } from "./contentChecksum";
 import {
   iso8601UtcTimestampSchema,
   nonEmptyStringSchema,
@@ -16,7 +17,7 @@ export const revisionMetadataSchema = z
     documentId: uuidStringSchema,
     revisionId: positiveIntegerSchema,
     createdAt: iso8601UtcTimestampSchema,
-    contentChecksum: nonEmptyStringSchema,
+    contentChecksum: contentChecksumSchema,
     parentRevisionIds: z.array(positiveIntegerSchema).optional(),
     baseRevisionId: positiveIntegerSchema.optional(),
     sequence: nonNegativeIntegerSchema.optional(),

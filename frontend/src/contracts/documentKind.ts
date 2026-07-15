@@ -9,6 +9,8 @@ export const DOCUMENT_KINDS = [
   "unit-context",
   "revision-metadata",
   "validation-result",
+  "unknown-field-store",
+  "migration-record",
 ] as const;
 
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number];

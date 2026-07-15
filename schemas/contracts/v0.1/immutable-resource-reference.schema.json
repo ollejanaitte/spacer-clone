@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contentChecksum": {
+      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json"
+    },
+    "mediaType": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "uri",
+    "contentChecksum"
+  ],
+  "additionalProperties": false,
+  "title": "ImmutableResourceReference",
+  "contractVersion": "0.1.0",
+  "$defs": {
+    "https://spacer.local/schemas/contracts/v0.1/content-checksum.schema.json": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "hexDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "algorithm",
+        "hexDigest"
+      ],
+      "additionalProperties": false,
+      "title": "ContentChecksum",
+      "contractVersion": "0.1.0"
+    }
+  },
+  "$id": "https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates immutable resource reference shape. URI and checksum semantics are enforced by runtime semantic validation.",
+    "runtimeRules": [
+      "IMMUTABLE_RESOURCE_REFERENCE_URI_INVALID",
+      "CONTENT_CHECKSUM_HEX_INVALID"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

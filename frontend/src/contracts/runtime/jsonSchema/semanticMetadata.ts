@@ -88,4 +88,101 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
     description:
       "This JSON Schema validates ValidationResult document shape. Issue aggregation semantics are defined by Step 0A validation helpers, not by JSON Schema alone.",
   },
+  "content-checksum": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates SHA-256 checksum object shape. Algorithm lock and lowercase hex digest semantics are enforced by runtime semantic validation.",
+    runtimeRules: [
+      "CONTENT_CHECKSUM_ALGORITHM_INVALID",
+      "CONTENT_CHECKSUM_HEX_INVALID",
+    ],
+  },
+  "document-reference": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates DocumentReference shape. Exact revision, checksum, and kind-specific reference rules are enforced by runtime semantic validation.",
+    runtimeRules: [
+      "DOCUMENT_REFERENCE_REVISION_INVALID",
+      "DOCUMENT_REFERENCE_KIND_MISMATCH",
+      "DOCUMENT_REFERENCE_DUPLICATE",
+    ],
+  },
+  "common-envelope": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "Reusable base envelope shape for Road/Frame/Transfer contract families. Not a standalone document family; schemaId and documentKind are fixed per family at parse time. Contract version matrix, provenance, and extension rules require runtime semantic validation.",
+    runtimeRules: [
+      "COMMON_ENVELOPE_SCHEMA_ID_UNKNOWN",
+      "CONTRACT_SCHEMA_VERSION_UNSUPPORTED",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+      "EXTENSION_KEY_INVALID",
+      "EXTENSION_VALUE_EXCLUSIVE",
+    ],
+  },
+  "engineering-project": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates EngineeringProject reference manifest shape. Reference kind alignment, duplicate rejection, version matrix, and forbidden embedded payloads require runtime semantic validation.",
+    runtimeRules: [
+      "ENGINEERING_PROJECT_SCHEMA_VERSION_UNSUPPORTED",
+      "ENGINEERING_PROJECT_REVISION_DOCUMENT_ID_MISMATCH",
+      "ENGINEERING_PROJECT_REVISION_CHECKSUM_MISMATCH",
+      "DOCUMENT_REFERENCE_KIND_MISMATCH",
+      "DOCUMENT_REFERENCE_DUPLICATE",
+      "ENGINEERING_PROJECT_EMBEDDED_PAYLOAD_FORBIDDEN",
+    ],
+  },
+  "unknown-field-store": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates UnknownFieldStore preservation metadata. JSON Pointer validity, immutable resource references, duplicate detection, and apply-blocking critical collision rules require runtime semantic validation.",
+    runtimeRules: [
+      "UNKNOWN_FIELD_ENTRY_POINTER_INVALID",
+      "UNKNOWN_FIELD_ENTRY_POINTER_DUPLICATE",
+      "UNKNOWN_FIELD_CRITICAL_COLLISION_BLOCKS_APPLY",
+      "UNKNOWN_FIELD_STORE_SOURCE_VERSION_REQUIRED",
+    ],
+  },
+  "migration-record": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates MigrationRecord audit shape. Exact target document references, mapping disposition rules, and status-dependent requirements require runtime semantic validation.",
+    runtimeRules: [
+      "MIGRATION_RECORD_RECORDED_AT_INVALID",
+      "MIGRATION_RECORD_TARGET_REFS_REQUIRED",
+      "MIGRATION_RECORD_TARGET_ID_REQUIRED",
+      "CONTRACT_SCHEMA_VERSION_UNSUPPORTED",
+    ],
+  },
+  "immutable-resource-reference": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates immutable resource reference shape. URI and checksum semantics are enforced by runtime semantic validation.",
+    runtimeRules: [
+      "IMMUTABLE_RESOURCE_REFERENCE_URI_INVALID",
+      "CONTENT_CHECKSUM_HEX_INVALID",
+    ],
+  },
+  "json-value": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "Recursive JSON value schema rejecting undefined, functions, symbols, bigint, NaN, and Infinity.",
+    runtimeRules: ["JSON_VALUE_INVALID"],
+  },
 };

@@ -1,4 +1,45 @@
 export {
+  contentChecksumSchema,
+  type ContentChecksumValue,
+} from "./contentChecksum";
+export {
+  commonEnvelopeSchema,
+  createCommonEnvelopeSchema,
+  type CommonEnvelopeValue,
+  type CreateCommonEnvelopeSchemaOptions,
+} from "./commonEnvelope";
+export {
+  documentKindSchema,
+  documentReferenceSchema,
+  type DocumentReferenceValue,
+} from "./documentReference";
+export {
+  engineeringProjectSchema,
+  type EngineeringProjectValue,
+} from "./engineeringProject";
+export {
+  immutableResourceReferenceSchema,
+  type ImmutableResourceReferenceValue,
+} from "./immutableResourceReference";
+export { jsonValueSchema } from "./jsonValue";
+export {
+  extensionValueSchema,
+  extensionsSchema,
+  type ExtensionValueSchemaValue,
+  type ExtensionsValue,
+} from "./extensions";
+export {
+  migrationIdMappingSchema,
+  migrationRecordSchema,
+  type MigrationRecordValue,
+} from "./migrationRecord";
+export {
+  unknownFieldCollisionRecordSchema,
+  unknownFieldEntrySchema,
+  unknownFieldStoreSchema,
+  type UnknownFieldStoreValue,
+} from "./unknownFieldStore";
+export {
   actorRefSchema,
   provenanceSchema,
   toolProvenanceSchema,
