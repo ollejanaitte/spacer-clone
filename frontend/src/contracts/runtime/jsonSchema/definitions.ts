@@ -1,4 +1,5 @@
 import type { ZodType } from "zod";
+import { bridgeFrameAnalysisDocumentSchema } from "../schemas/bridgeFrameAnalysisDocument";
 import { commonEnvelopeSchema } from "../schemas/commonEnvelope";
 import { contentChecksumSchema } from "../schemas/contentChecksum";
 import { coordinateContextSchema } from "../schemas/coordinateContext";
@@ -9,6 +10,7 @@ import { jsonValueSchema } from "../schemas/jsonValue";
 import { migrationRecordSchema } from "../schemas/migrationRecord";
 import { provenanceSchema } from "../schemas/provenance";
 import { revisionMetadataSchema } from "../schemas/revision";
+import { roadDesignDocumentSchema } from "../schemas/roadDesignDocument";
 import { schemaIdentitySchema, uuidValueSchema } from "../schemas/schemaIdentity";
 import { stableEntityIdSchema } from "../schemas/stableEntityId";
 import { unitContextSchema } from "../schemas/unitContext";
@@ -35,6 +37,8 @@ export const CONTRACT_JSON_SCHEMA_DEFINITIONS: readonly ContractJsonSchemaDefini
   { slug: "document-reference", schema: documentReferenceSchema },
   { slug: "common-envelope", schema: commonEnvelopeSchema },
   { slug: "engineering-project", schema: engineeringProjectSchema },
+  { slug: "road-design-document", schema: roadDesignDocumentSchema },
+  { slug: "bridge-frame-analysis-document", schema: bridgeFrameAnalysisDocumentSchema },
   { slug: "unknown-field-store", schema: unknownFieldStoreSchema },
   { slug: "migration-record", schema: migrationRecordSchema },
 ];

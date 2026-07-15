@@ -4,7 +4,12 @@ import { isDocumentKind } from "../documentKind";
 import { parseContentChecksum, type ContentChecksum } from "../contentChecksum";
 import type { CoordinateContext } from "../coordinateContext";
 import type { DocumentReference } from "../documentReference";
+import type { BridgeFrameAnalysisDocument, TransferBinding } from "../bridgeFrameAnalysisDocument";
+import { BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND } from "../bridgeFrameAnalysisDocument";
+import type { CapabilityBlock } from "../capabilityBlock";
 import type { EngineeringProject } from "../engineeringProject";
+import type { RoadDesignDocument } from "../roadDesignDocument";
+import { ROAD_DESIGN_DOCUMENT_KIND } from "../roadDesignDocument";
 import type { Extensions, ExtensionValue } from "../extensions";
 import type { ImmutableResourceReference } from "../immutableResourceReference";
 import type { MigrationRecord, MigrationIdMapping } from "../migrationRecord";
@@ -33,6 +38,20 @@ import type { ContentChecksumValue } from "./schemas/contentChecksum";
 import type { CoordinateContextValue } from "./schemas/coordinateContext";
 import type { DocumentReferenceValue } from "./schemas/documentReference";
 import type { EngineeringProjectValue } from "./schemas/engineeringProject";
+import type { BridgeFrameAnalysisDocumentValue } from "./schemas/bridgeFrameAnalysisDocument";
+import type { CapabilityBlockValue } from "./schemas/capabilityBlock";
+import type {
+  AnalysisSettingsValue,
+  LoadDefinitionEntryValue,
+  RoadAlignmentEntryValue,
+  RoadBridgeEntryValue,
+  RoadCrossSectionEntryValue,
+  RoadProfileEntryValue,
+  RoadStationingValue,
+  StructuralModelValue,
+  TransferBindingValue,
+} from "./schemas/domainSkeleton";
+import type { RoadDesignDocumentValue } from "./schemas/roadDesignDocument";
 import type { ExtensionValueSchemaValue, ExtensionsValue } from "./schemas/extensions";
 import type { ImmutableResourceReferenceValue } from "./schemas/immutableResourceReference";
 import type { MigrationRecordValue } from "./schemas/migrationRecord";
@@ -1120,6 +1139,768 @@ export function mapMigrationRecordValue(
       idMappings,
       status: value.status,
       ...(value.operator !== undefined ? { operator: value.operator } : {}),
+    },
+  };
+}
+
+function mapCapabilityBlockValue(value: CapabilityBlockValue): CapabilityBlock {
+  return { state: value.state };
+}
+
+function mapRoadAlignmentEntries(
+  entries: readonly RoadAlignmentEntryValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return entries.map((entry, index) => {
+    const entryPath = joinIndexedPath(basePath, index);
+    const entityId = requireUuidField(
+      entry.entityId,
+      joinFieldPath(entryPath, "entityId"),
+      "DOMAIN_ROAD_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    const coordinateContextId = requireUuidField(
+      entry.coordinateContextId,
+      joinFieldPath(entryPath, "coordinateContextId"),
+      "DOMAIN_ROAD_COORDINATE_CONTEXT_ID_INVALID",
+      "coordinateContextId could not be converted to a domain UuidString.",
+    );
+    if (entityId.issue !== undefined) {
+      issues.push(entityId.issue);
+    }
+    if (coordinateContextId.issue !== undefined) {
+      issues.push(coordinateContextId.issue);
+    }
+    return {
+      entityId: entityId.uuid!,
+      coordinateContextId: coordinateContextId.uuid!,
+      label: entry.label,
+    };
+  });
+}
+
+function mapRoadStationingValue(
+  value: RoadStationingValue,
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return {
+    entries: value.entries.map((entry, index) => {
+      const entryPath = joinIndexedPath(joinFieldPath(basePath, "entries"), index);
+      const entityId = requireUuidField(
+        entry.entityId,
+        joinFieldPath(entryPath, "entityId"),
+        "DOMAIN_ROAD_ENTITY_ID_INVALID",
+        "entityId could not be converted to a domain UuidString.",
+      );
+      const alignmentId = requireUuidField(
+        entry.alignmentId,
+        joinFieldPath(entryPath, "alignmentId"),
+        "DOMAIN_ROAD_ALIGNMENT_ID_INVALID",
+        "alignmentId could not be converted to a domain UuidString.",
+      );
+      if (entityId.issue !== undefined) {
+        issues.push(entityId.issue);
+      }
+      if (alignmentId.issue !== undefined) {
+        issues.push(alignmentId.issue);
+      }
+      return {
+        entityId: entityId.uuid!,
+        alignmentId: alignmentId.uuid!,
+        originStation: entry.originStation,
+      };
+    }),
+  };
+}
+
+function mapRoadProfileEntries(
+  entries: readonly RoadProfileEntryValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return entries.map((entry, index) => {
+    const entryPath = joinIndexedPath(basePath, index);
+    const entityId = requireUuidField(
+      entry.entityId,
+      joinFieldPath(entryPath, "entityId"),
+      "DOMAIN_ROAD_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    const alignmentId = requireUuidField(
+      entry.alignmentId,
+      joinFieldPath(entryPath, "alignmentId"),
+      "DOMAIN_ROAD_ALIGNMENT_ID_INVALID",
+      "alignmentId could not be converted to a domain UuidString.",
+    );
+    if (entityId.issue !== undefined) {
+      issues.push(entityId.issue);
+    }
+    if (alignmentId.issue !== undefined) {
+      issues.push(alignmentId.issue);
+    }
+    return {
+      entityId: entityId.uuid!,
+      alignmentId: alignmentId.uuid!,
+      label: entry.label,
+    };
+  });
+}
+
+function mapRoadCrossSectionEntries(
+  entries: readonly RoadCrossSectionEntryValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return entries.map((entry, index) => {
+    const entryPath = joinIndexedPath(basePath, index);
+    const entityId = requireUuidField(
+      entry.entityId,
+      joinFieldPath(entryPath, "entityId"),
+      "DOMAIN_ROAD_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    const profileId = requireUuidField(
+      entry.profileId,
+      joinFieldPath(entryPath, "profileId"),
+      "DOMAIN_ROAD_PROFILE_ID_INVALID",
+      "profileId could not be converted to a domain UuidString.",
+    );
+    if (entityId.issue !== undefined) {
+      issues.push(entityId.issue);
+    }
+    if (profileId.issue !== undefined) {
+      issues.push(profileId.issue);
+    }
+    return {
+      entityId: entityId.uuid!,
+      profileId: profileId.uuid!,
+      label: entry.label,
+    };
+  });
+}
+
+function mapRoadBridgeEntries(
+  entries: readonly RoadBridgeEntryValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return entries.map((entry, index) => {
+    const entryPath = joinIndexedPath(basePath, index);
+    const entityId = requireUuidField(
+      entry.entityId,
+      joinFieldPath(entryPath, "entityId"),
+      "DOMAIN_ROAD_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    const alignmentId = requireUuidField(
+      entry.alignmentId,
+      joinFieldPath(entryPath, "alignmentId"),
+      "DOMAIN_ROAD_ALIGNMENT_ID_INVALID",
+      "alignmentId could not be converted to a domain UuidString.",
+    );
+    if (entityId.issue !== undefined) {
+      issues.push(entityId.issue);
+    }
+    if (alignmentId.issue !== undefined) {
+      issues.push(alignmentId.issue);
+    }
+    return {
+      entityId: entityId.uuid!,
+      alignmentId: alignmentId.uuid!,
+      label: entry.label,
+    };
+  });
+}
+
+function mapStructuralModelValue(
+  value: StructuralModelValue,
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  const mapEntityId = (id: string, fieldPath: string) =>
+    requireUuidField(
+      id,
+      fieldPath,
+      "DOMAIN_FRAME_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+
+  return {
+    nodes: value.nodes.map((node, index) => {
+      const nodePath = joinIndexedPath(joinFieldPath(basePath, "nodes"), index);
+      const entityId = mapEntityId(node.entityId, joinFieldPath(nodePath, "entityId"));
+      const coordinateContextId = requireUuidField(
+        node.coordinateContextId,
+        joinFieldPath(nodePath, "coordinateContextId"),
+        "DOMAIN_FRAME_COORDINATE_CONTEXT_ID_INVALID",
+        "coordinateContextId could not be converted to a domain UuidString.",
+      );
+      if (entityId.issue !== undefined) {
+        issues.push(entityId.issue);
+      }
+      if (coordinateContextId.issue !== undefined) {
+        issues.push(coordinateContextId.issue);
+      }
+      return {
+        entityId: entityId.uuid!,
+        coordinateContextId: coordinateContextId.uuid!,
+        x: node.x,
+        y: node.y,
+        z: node.z,
+      };
+    }),
+    materials: value.materials.map((material, index) => {
+      const materialPath = joinIndexedPath(joinFieldPath(basePath, "materials"), index);
+      const entityId = mapEntityId(material.entityId, joinFieldPath(materialPath, "entityId"));
+      if (entityId.issue !== undefined) {
+        issues.push(entityId.issue);
+      }
+      return { entityId: entityId.uuid!, label: material.label };
+    }),
+    sections: value.sections.map((section, index) => {
+      const sectionPath = joinIndexedPath(joinFieldPath(basePath, "sections"), index);
+      const entityId = mapEntityId(section.entityId, joinFieldPath(sectionPath, "entityId"));
+      if (entityId.issue !== undefined) {
+        issues.push(entityId.issue);
+      }
+      return { entityId: entityId.uuid!, label: section.label };
+    }),
+    members: value.members.map((member, index) => {
+      const memberPath = joinIndexedPath(joinFieldPath(basePath, "members"), index);
+      const entityId = mapEntityId(member.entityId, joinFieldPath(memberPath, "entityId"));
+      const nodeIId = requireUuidField(
+        member.nodeIId,
+        joinFieldPath(memberPath, "nodeIId"),
+        "DOMAIN_FRAME_NODE_ID_INVALID",
+        "nodeIId could not be converted to a domain UuidString.",
+      );
+      const nodeJId = requireUuidField(
+        member.nodeJId,
+        joinFieldPath(memberPath, "nodeJId"),
+        "DOMAIN_FRAME_NODE_ID_INVALID",
+        "nodeJId could not be converted to a domain UuidString.",
+      );
+      const materialId = requireUuidField(
+        member.materialId,
+        joinFieldPath(memberPath, "materialId"),
+        "DOMAIN_FRAME_MATERIAL_ID_INVALID",
+        "materialId could not be converted to a domain UuidString.",
+      );
+      const sectionId = requireUuidField(
+        member.sectionId,
+        joinFieldPath(memberPath, "sectionId"),
+        "DOMAIN_FRAME_SECTION_ID_INVALID",
+        "sectionId could not be converted to a domain UuidString.",
+      );
+      [entityId, nodeIId, nodeJId, materialId, sectionId].forEach((result) => {
+        if (result.issue !== undefined) {
+          issues.push(result.issue);
+        }
+      });
+      return {
+        entityId: entityId.uuid!,
+        nodeIId: nodeIId.uuid!,
+        nodeJId: nodeJId.uuid!,
+        materialId: materialId.uuid!,
+        sectionId: sectionId.uuid!,
+      };
+    }),
+    supports: value.supports.map((support, index) => {
+      const supportPath = joinIndexedPath(joinFieldPath(basePath, "supports"), index);
+      const entityId = mapEntityId(support.entityId, joinFieldPath(supportPath, "entityId"));
+      const nodeId = requireUuidField(
+        support.nodeId,
+        joinFieldPath(supportPath, "nodeId"),
+        "DOMAIN_FRAME_NODE_ID_INVALID",
+        "nodeId could not be converted to a domain UuidString.",
+      );
+      if (entityId.issue !== undefined) {
+        issues.push(entityId.issue);
+      }
+      if (nodeId.issue !== undefined) {
+        issues.push(nodeId.issue);
+      }
+      return { entityId: entityId.uuid!, nodeId: nodeId.uuid!, label: support.label };
+    }),
+  };
+}
+
+function mapLoadDefinitionEntries(
+  entries: readonly LoadDefinitionEntryValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  return entries.map((entry, index) => {
+    const entryPath = joinIndexedPath(basePath, index);
+    const entityId = requireUuidField(
+      entry.entityId,
+      joinFieldPath(entryPath, "entityId"),
+      "DOMAIN_FRAME_ENTITY_ID_INVALID",
+      "entityId could not be converted to a domain UuidString.",
+    );
+    if (entityId.issue !== undefined) {
+      issues.push(entityId.issue);
+    }
+    return {
+      entityId: entityId.uuid!,
+      label: entry.label,
+      loadKind: entry.loadKind,
+    };
+  });
+}
+
+function mapAnalysisSettingsValue(
+  value: AnalysisSettingsValue,
+  basePath: string,
+  issues: ValidationIssue[],
+) {
+  const settingsId = requireUuidField(
+    value.settingsId,
+    joinFieldPath(basePath, "settingsId"),
+    "DOMAIN_FRAME_SETTINGS_ID_INVALID",
+    "settingsId could not be converted to a domain UuidString.",
+  );
+  if (settingsId.issue !== undefined) {
+    issues.push(settingsId.issue);
+  }
+  return {
+    settingsId: settingsId.uuid!,
+    solverFamily: value.solverFamily,
+    settingsVersion: value.settingsVersion,
+  };
+}
+
+function mapTransferBindings(
+  bindings: readonly TransferBindingValue[],
+  basePath: string,
+  issues: ValidationIssue[],
+): TransferBinding[] {
+  const mappedBindings: TransferBinding[] = [];
+
+  bindings.forEach((binding, index) => {
+    const bindingPath = joinIndexedPath(basePath, index);
+    const bindingId = requireUuidField(
+      binding.bindingId,
+      joinFieldPath(bindingPath, "bindingId"),
+      "DOMAIN_FRAME_BINDING_ID_INVALID",
+      "bindingId could not be converted to a domain UuidString.",
+    );
+    const sourceMapped = mapDocumentReferenceValue(
+      binding.sourceDocumentRef,
+      joinFieldPath(bindingPath, "sourceDocumentRef"),
+    );
+    const targetEntityId = requireUuidField(
+      binding.targetEntityId,
+      joinFieldPath(bindingPath, "targetEntityId"),
+      "DOMAIN_FRAME_TARGET_ENTITY_ID_INVALID",
+      "targetEntityId could not be converted to a domain UuidString.",
+    );
+    const sourceEntityId = requireUuidField(
+      binding.sourceEntityId,
+      joinFieldPath(bindingPath, "sourceEntityId"),
+      "DOMAIN_FRAME_SOURCE_ENTITY_ID_INVALID",
+      "sourceEntityId could not be converted to a domain UuidString.",
+    );
+    if (bindingId.issue !== undefined) {
+      issues.push(bindingId.issue);
+    }
+    if (!sourceMapped.ok) {
+      issues.push(...sourceMapped.validation.issues);
+    }
+    if (targetEntityId.issue !== undefined) {
+      issues.push(targetEntityId.issue);
+    }
+    if (sourceEntityId.issue !== undefined) {
+      issues.push(sourceEntityId.issue);
+    }
+    if (
+      bindingId.uuid === undefined ||
+      !sourceMapped.ok ||
+      targetEntityId.uuid === undefined ||
+      sourceEntityId.uuid === undefined
+    ) {
+      return;
+    }
+
+    mappedBindings.push({
+      bindingId: bindingId.uuid,
+      sourceDocumentRef: sourceMapped.data,
+      mappingProvenance: binding.mappingProvenance,
+      targetEntityKind: binding.targetEntityKind,
+      targetEntityId: targetEntityId.uuid,
+      sourceEntityId: sourceEntityId.uuid,
+    });
+  });
+
+  return mappedBindings;
+}
+
+function mapDocumentReferenceArray(
+  refs: readonly DocumentReferenceValue[] | undefined,
+  basePath: string,
+  issues: ValidationIssue[],
+): DocumentReference[] {
+  if (refs === undefined) {
+    return [];
+  }
+
+  const mappedRefs: DocumentReference[] = [];
+  refs.forEach((ref, index) => {
+    const mapped = mapDocumentReferenceValue(ref, joinIndexedPath(basePath, index));
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+    } else {
+      mappedRefs.push(mapped.data);
+    }
+  });
+  return mappedRefs;
+}
+
+function mapImmutableResourceReferenceArray(
+  refs: readonly ImmutableResourceReferenceValue[] | undefined,
+  basePath: string,
+  issues: ValidationIssue[],
+): ImmutableResourceReference[] {
+  if (refs === undefined) {
+    return [];
+  }
+
+  return refs.map((ref, index) => {
+    const mapped = mapImmutableResourceReferenceValue(ref, joinIndexedPath(basePath, index));
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+      return {
+        uri: ref.uri,
+        contentChecksum: {
+          algorithm: ref.contentChecksum.algorithm,
+          hexDigest: ref.contentChecksum.hexDigest,
+        },
+      };
+    }
+    return mapped.data;
+  });
+}
+
+export function mapRoadDesignDocumentValue(
+  value: RoadDesignDocumentValue,
+  basePath = "",
+): DomainMapResult<RoadDesignDocument> {
+  const envelopeMapped = mapCommonEnvelopeValue(value, basePath);
+  if (!envelopeMapped.ok) {
+    return envelopeMapped;
+  }
+
+  const issues: ValidationIssue[] = [];
+  const coordinateContexts: CoordinateContext[] = [];
+  value.coordinateContexts.forEach((context, index) => {
+    const mapped = mapCoordinateContextValue(
+      context,
+      joinIndexedPath(joinFieldPath(basePath, "coordinateContexts"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+    } else {
+      coordinateContexts.push(mapped.data);
+    }
+  });
+
+  const unitContextMapped = mapUnitContextValue(
+    value.unitContext,
+    joinFieldPath(basePath, "unitContext"),
+  );
+  if (!unitContextMapped.ok) {
+    issues.push(...unitContextMapped.validation.issues);
+  }
+
+  const stableIdRegistry: StableEntityId[] = [];
+  value.stableIdRegistry.forEach((entry, index) => {
+    const mapped = mapStableEntityIdValue(
+      entry,
+      joinIndexedPath(joinFieldPath(basePath, "stableIdRegistry"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+    } else {
+      stableIdRegistry.push(mapped.data);
+    }
+  });
+
+  const validationMapped = mapDocumentReferenceValue(
+    value.validation,
+    joinFieldPath(basePath, "validation"),
+  );
+  if (!validationMapped.ok) {
+    issues.push(...validationMapped.validation.issues);
+  }
+
+  const revisionMapped = mapRevisionMetadataValue(
+    value.revision,
+    joinFieldPath(basePath, "revision"),
+  );
+  if (!revisionMapped.ok) {
+    issues.push(...revisionMapped.validation.issues);
+  }
+
+  const alignments = mapRoadAlignmentEntries(
+    value.alignments,
+    joinFieldPath(basePath, "alignments"),
+    issues,
+  );
+  const stationing = mapRoadStationingValue(
+    value.stationing,
+    joinFieldPath(basePath, "stationing"),
+    issues,
+  );
+  const profiles = mapRoadProfileEntries(
+    value.profiles,
+    joinFieldPath(basePath, "profiles"),
+    issues,
+  );
+  const crossSections = mapRoadCrossSectionEntries(
+    value.crossSections,
+    joinFieldPath(basePath, "crossSections"),
+    issues,
+  );
+  const bridges = mapRoadBridgeEntries(
+    value.bridges,
+    joinFieldPath(basePath, "bridges"),
+    issues,
+  );
+  const sourceRefs = mapDocumentReferenceArray(
+    value.sourceRefs,
+    joinFieldPath(basePath, "sourceRefs"),
+    issues,
+  );
+  const attachments = mapImmutableResourceReferenceArray(
+    value.attachments,
+    joinFieldPath(basePath, "attachments"),
+    issues,
+  );
+
+  if (
+    issues.length > 0 ||
+    !unitContextMapped.ok ||
+    !validationMapped.ok ||
+    !revisionMapped.ok
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  const envelope = envelopeMapped.data;
+  return {
+    ok: true,
+    data: {
+      schemaId: envelope.schemaId,
+      schemaVersion: envelope.schemaVersion,
+      documentKind: ROAD_DESIGN_DOCUMENT_KIND,
+      documentId: envelope.documentId,
+      revisionId: envelope.revisionId,
+      contentChecksum: envelope.contentChecksum,
+      provenance: envelope.provenance,
+      ...(envelope.extensions !== undefined ? { extensions: envelope.extensions } : {}),
+      ...(envelope.unknownFieldStoreRef !== undefined
+        ? { unknownFieldStoreRef: envelope.unknownFieldStoreRef }
+        : {}),
+      ...(envelope.migrationProvenanceRef !== undefined
+        ? { migrationProvenanceRef: envelope.migrationProvenanceRef }
+        : {}),
+      coordinateContexts,
+      unitContext: unitContextMapped.data,
+      stableIdRegistry,
+      alignments,
+      stationing,
+      profiles,
+      crossSections,
+      bridges,
+      revision: revisionMapped.data,
+      validation: validationMapped.data,
+      ...(value.topologyCapability !== undefined
+        ? { topologyCapability: mapCapabilityBlockValue(value.topologyCapability) }
+        : {}),
+      ...(value.bridgeGeometryCapability !== undefined
+        ? { bridgeGeometryCapability: mapCapabilityBlockValue(value.bridgeGeometryCapability) }
+        : {}),
+      ...(value.ldistCapability !== undefined
+        ? { ldistCapability: mapCapabilityBlockValue(value.ldistCapability) }
+        : {}),
+      ...(value.haunchCapability !== undefined
+        ? { haunchCapability: mapCapabilityBlockValue(value.haunchCapability) }
+        : {}),
+      ...(value.hosoCapability !== undefined
+        ? { hosoCapability: mapCapabilityBlockValue(value.hosoCapability) }
+        : {}),
+      ...(value.drawingCapability !== undefined
+        ? { drawingCapability: mapCapabilityBlockValue(value.drawingCapability) }
+        : {}),
+      ...(sourceRefs.length > 0 ? { sourceRefs } : {}),
+      ...(attachments.length > 0 ? { attachments } : {}),
+    },
+  };
+}
+
+export function mapBridgeFrameAnalysisDocumentValue(
+  value: BridgeFrameAnalysisDocumentValue,
+  basePath = "",
+): DomainMapResult<BridgeFrameAnalysisDocument> {
+  const envelopeMapped = mapCommonEnvelopeValue(value, basePath);
+  if (!envelopeMapped.ok) {
+    return envelopeMapped;
+  }
+
+  const issues: ValidationIssue[] = [];
+  const coordinateContexts: CoordinateContext[] = [];
+  value.coordinateContexts.forEach((context, index) => {
+    const mapped = mapCoordinateContextValue(
+      context,
+      joinIndexedPath(joinFieldPath(basePath, "coordinateContexts"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+    } else {
+      coordinateContexts.push(mapped.data);
+    }
+  });
+
+  const unitContextMapped = mapUnitContextValue(
+    value.unitContext,
+    joinFieldPath(basePath, "unitContext"),
+  );
+  if (!unitContextMapped.ok) {
+    issues.push(...unitContextMapped.validation.issues);
+  }
+
+  const validationMapped = mapDocumentReferenceValue(
+    value.validation,
+    joinFieldPath(basePath, "validation"),
+  );
+  if (!validationMapped.ok) {
+    issues.push(...validationMapped.validation.issues);
+  }
+
+  const revisionMapped = mapRevisionMetadataValue(
+    value.revision,
+    joinFieldPath(basePath, "revision"),
+  );
+  if (!revisionMapped.ok) {
+    issues.push(...revisionMapped.validation.issues);
+  }
+
+  const structuralModel = mapStructuralModelValue(
+    value.structuralModel,
+    joinFieldPath(basePath, "structuralModel"),
+    issues,
+  );
+  const loadDefinitions = mapLoadDefinitionEntries(
+    value.loadDefinitions,
+    joinFieldPath(basePath, "loadDefinitions"),
+    issues,
+  );
+  const analysisSettings = mapAnalysisSettingsValue(
+    value.analysisSettings,
+    joinFieldPath(basePath, "analysisSettings"),
+    issues,
+  );
+  const transferBindings = mapTransferBindings(
+    value.transferBindings,
+    joinFieldPath(basePath, "transferBindings"),
+    issues,
+  );
+  const persistedResultRefs = mapDocumentReferenceArray(
+    value.persistedResultRefs,
+    joinFieldPath(basePath, "persistedResultRefs"),
+    issues,
+  );
+  const reportRefs = mapDocumentReferenceArray(
+    value.reportRefs,
+    joinFieldPath(basePath, "reportRefs"),
+    issues,
+  );
+  const draftRefs = mapDocumentReferenceArray(
+    value.draftRefs,
+    joinFieldPath(basePath, "draftRefs"),
+    issues,
+  );
+  const attachments = mapImmutableResourceReferenceArray(
+    value.attachments,
+    joinFieldPath(basePath, "attachments"),
+    issues,
+  );
+
+  if (
+    issues.length > 0 ||
+    !unitContextMapped.ok ||
+    !validationMapped.ok ||
+    !revisionMapped.ok
+  ) {
+    return domainMapFailure(issues);
+  }
+
+  const envelope = envelopeMapped.data;
+  return {
+    ok: true,
+    data: {
+      schemaId: envelope.schemaId,
+      schemaVersion: envelope.schemaVersion,
+      documentKind: BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND,
+      documentId: envelope.documentId,
+      revisionId: envelope.revisionId,
+      contentChecksum: envelope.contentChecksum,
+      provenance: envelope.provenance,
+      ...(envelope.extensions !== undefined ? { extensions: envelope.extensions } : {}),
+      ...(envelope.unknownFieldStoreRef !== undefined
+        ? { unknownFieldStoreRef: envelope.unknownFieldStoreRef }
+        : {}),
+      ...(envelope.migrationProvenanceRef !== undefined
+        ? { migrationProvenanceRef: envelope.migrationProvenanceRef }
+        : {}),
+      coordinateContexts,
+      unitContext: unitContextMapped.data,
+      structuralModel,
+      loadDefinitions,
+      analysisSettings,
+      transferBindings,
+      revision: revisionMapped.data,
+      validation: validationMapped.data,
+      ...(value.springsCapability !== undefined
+        ? { springsCapability: mapCapabilityBlockValue(value.springsCapability) }
+        : {}),
+      ...(value.memberReleasesCapability !== undefined
+        ? { memberReleasesCapability: mapCapabilityBlockValue(value.memberReleasesCapability) }
+        : {}),
+      ...(value.rigidOffsetsCapability !== undefined
+        ? { rigidOffsetsCapability: mapCapabilityBlockValue(value.rigidOffsetsCapability) }
+        : {}),
+      ...(value.fixedLoadsCapability !== undefined
+        ? { fixedLoadsCapability: mapCapabilityBlockValue(value.fixedLoadsCapability) }
+        : {}),
+      ...(value.influenceLiveLoadsCapability !== undefined
+        ? {
+            influenceLiveLoadsCapability: mapCapabilityBlockValue(
+              value.influenceLiveLoadsCapability,
+            ),
+          }
+        : {}),
+      ...(value.staticCombinationsCapability !== undefined
+        ? {
+            staticCombinationsCapability: mapCapabilityBlockValue(
+              value.staticCombinationsCapability,
+            ),
+          }
+        : {}),
+      ...(value.modalAnalysisCapability !== undefined
+        ? { modalAnalysisCapability: mapCapabilityBlockValue(value.modalAnalysisCapability) }
+        : {}),
+      ...(value.responseSpectrumCapability !== undefined
+        ? {
+            responseSpectrumCapability: mapCapabilityBlockValue(value.responseSpectrumCapability),
+          }
+        : {}),
+      ...(persistedResultRefs.length > 0 ? { persistedResultRefs } : {}),
+      ...(reportRefs.length > 0 ? { reportRefs } : {}),
+      ...(draftRefs.length > 0 ? { draftRefs } : {}),
+      ...(attachments.length > 0 ? { attachments } : {}),
     },
   };
 }

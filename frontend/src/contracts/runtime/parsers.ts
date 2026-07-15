@@ -10,6 +10,8 @@ import {
   type DocumentReference,
 } from "../documentReference";
 import { validateEngineeringProject, type EngineeringProject } from "../engineeringProject";
+import { validateBridgeFrameAnalysisDocument, type BridgeFrameAnalysisDocument } from "../bridgeFrameAnalysisDocument";
+import { validateRoadDesignDocument, type RoadDesignDocument } from "../roadDesignDocument";
 import { validateMigrationRecord, type MigrationRecord } from "../migrationRecord";
 import { validateProvenance, type Provenance } from "../provenance";
 import { validateRevisionMetadata, type RevisionMetadata } from "../revision";
@@ -29,10 +31,12 @@ import {
   mapContentChecksumValue,
   mapCoordinateContextValue,
   mapDocumentReferenceValue,
+  mapBridgeFrameAnalysisDocumentValue,
   mapEngineeringProjectValue,
   mapMigrationRecordValue,
   mapProvenanceValue,
   mapRevisionMetadataValue,
+  mapRoadDesignDocumentValue,
   mapSchemaIdentityValue,
   mapStableEntityIdValue,
   mapUnitContextValue,
@@ -42,6 +46,7 @@ import {
 } from "./domainMappers";
 import { parseContractValue, type ContractParseResult } from "./parseContract";
 import {
+  bridgeFrameAnalysisDocumentSchema,
   commonEnvelopeSchema,
   contentChecksumSchema,
   coordinateContextSchema,
@@ -50,6 +55,7 @@ import {
   migrationRecordSchema,
   provenanceSchema,
   revisionMetadataSchema,
+  roadDesignDocumentSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
   unitContextSchema,
@@ -330,5 +336,43 @@ export function parseMigrationRecordValue(
   }
 
   const semanticResult = validateMigrationRecord(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseRoadDesignDocumentValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<RoadDesignDocument> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(roadDesignDocumentSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapRoadDesignDocumentValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateRoadDesignDocument(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseBridgeFrameAnalysisDocumentValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<BridgeFrameAnalysisDocument> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(bridgeFrameAnalysisDocumentSchema, value, { path: basePath });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapBridgeFrameAnalysisDocumentValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateBridgeFrameAnalysisDocument(mapped.data, basePath);
   return finalizeSemanticParse(mapped, semanticResult);
 }

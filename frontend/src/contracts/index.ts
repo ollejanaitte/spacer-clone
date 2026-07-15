@@ -140,11 +140,40 @@ export {
 } from "./contentChecksum";
 
 export {
+  CAPABILITY_STATES,
+  isCapabilityState,
+  validateCapabilityBlock,
+  type CapabilityBlock,
+  type CapabilityState,
+} from "./capabilityBlock";
+
+export {
+  BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND,
+  detectForbiddenFrameRoadOrViewerKeys,
+  validateBridgeFrameAnalysisDocument,
+  type AnalysisSettings,
+  type BridgeFrameAnalysisDocument,
+  type FrameMaterialEntry,
+  type FrameMemberEntry,
+  type FrameNodeEntry,
+  type FrameSectionEntry,
+  type FrameSupportEntry,
+  type LoadDefinitionEntry,
+  type LoadKind,
+  type StructuralModel,
+  type TransferBinding,
+} from "./bridgeFrameAnalysisDocument";
+
+export {
   COMMON_ENVELOPE_SHAPE_ID,
+  BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID,
+  BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION,
   CONTRACT_VERSION_SUPPORT_MATRIX,
   DOCUMENT_REFERENCE_SCHEMA_ID,
   ENGINEERING_PROJECT_SCHEMA_ID,
   ENGINEERING_PROJECT_SCHEMA_VERSION,
+  ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
+  ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION,
   getContractVersionSupport,
   isSupportedContractVersion,
   MIGRATION_RECORD_SCHEMA_ID,
@@ -194,6 +223,19 @@ export {
 } from "./migrationRecord";
 
 export {
+  detectForbiddenRoadFrameMechanicsKeys,
+  ROAD_DESIGN_DOCUMENT_KIND,
+  validateRoadDesignDocument,
+  type RoadAlignmentEntry,
+  type RoadBridgeEntry,
+  type RoadCrossSectionEntry,
+  type RoadDesignDocument,
+  type RoadProfileEntry,
+  type RoadStationing,
+  type RoadStationingEntry,
+} from "./roadDesignDocument";
+
+export {
   UNKNOWN_FIELD_STORE_DOCUMENT_KIND,
   validateUnknownFieldStore,
   type SourceVersionClassification,
@@ -226,6 +268,7 @@ export {
   generateContractJsonSchema,
   jsonSchemaSemanticallyEqual,
   normalizeJsonSchema,
+  parseBridgeFrameAnalysisDocumentValue,
   parseCommonEnvelopeValue,
   parseContentChecksumValue,
   parseContractValue,
@@ -234,6 +277,7 @@ export {
   parseEngineeringProjectValue,
   parseMigrationRecordValue,
   parseProvenanceValue,
+  parseRoadDesignDocumentValue,
   parseRevisionMetadataValue,
   parseSchemaIdentityValue,
   parseStableEntityIdValue,
@@ -242,6 +286,7 @@ export {
   parseUuidValue,
   parseValidationResultValue,
   provenanceSchema,
+  roadDesignDocumentSchema,
   revisionMetadataSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
@@ -253,12 +298,14 @@ export {
   validContractValidationResult,
   zodIssueToValidationIssue,
   zodIssuesToValidationResult,
+  bridgeFrameAnalysisDocumentSchema,
   commonEnvelopeSchema,
   createCommonEnvelopeSchema,
   contentChecksumSchema,
   documentReferenceSchema,
   engineeringProjectSchema,
   migrationRecordSchema,
+  type BridgeFrameAnalysisDocumentValue,
   type CommonEnvelopeValue,
   type ContentChecksumValue,
   type CreateCommonEnvelopeSchemaOptions,
@@ -273,6 +320,7 @@ export {
   type GeneratedContractJsonSchema,
   type MigrationRecordValue,
   type ProvenanceValue,
+  type RoadDesignDocumentValue,
   type RevisionMetadataValue,
   type SchemaIdentityValue,
   type SemanticValidationOptions,

@@ -166,6 +166,40 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "CONTRACT_SCHEMA_VERSION_UNSUPPORTED",
     ],
   },
+  "road-design-document": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates RoadDesignDocument skeleton shape. Station-capable coordinate contexts, road unit profile, stable ID uniqueness, cross-entity references, revision/checksum consistency, and forbidden frame mechanics fields require runtime semantic validation.",
+    runtimeRules: [
+      "ROAD_DESIGN_SCHEMA_ID_INVALID",
+      "ROAD_DESIGN_REVISION_CHECKSUM_MISMATCH",
+      "ROAD_DESIGN_STATION_CAPABLE_CONTEXT_REQUIRED",
+      "ROAD_DESIGN_FRAME_MECHANICS_FORBIDDEN",
+      "ROAD_DESIGN_STABLE_ID_DUPLICATE",
+      "ROAD_DESIGN_ALIGNMENT_REF_UNRESOLVED",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+    ],
+  },
+  "bridge-frame-analysis-document": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates BridgeFrameAnalysisDocument skeleton shape. Mechanical unit profile, structural model reference integrity, transfer binding exact road references, forbidden road/viewer fields, and revision/checksum consistency require runtime semantic validation.",
+    runtimeRules: [
+      "BRIDGE_FRAME_SCHEMA_ID_INVALID",
+      "BRIDGE_FRAME_REVISION_CHECKSUM_MISMATCH",
+      "BRIDGE_FRAME_MEMBER_ZERO_LENGTH",
+      "BRIDGE_FRAME_NODE_REF_UNRESOLVED",
+      "BRIDGE_FRAME_MATERIAL_REF_UNRESOLVED",
+      "BRIDGE_FRAME_ROAD_OR_VIEWER_FIELD_FORBIDDEN",
+      "BRIDGE_FRAME_TRANSFER_SOURCE_KIND_INVALID",
+      "UNIT_FORCE_INVALID",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+    ],
+  },
   "immutable-resource-reference": {
     scope: "structural-plus-semantic",
     completeValidator: false,

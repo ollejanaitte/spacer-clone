@@ -14,6 +14,7 @@ export {
 } from "./jsonSchema/generate";
 export { jsonSchemaSemanticallyEqual, normalizeJsonSchema } from "./jsonSchema/normalize";
 export {
+  parseBridgeFrameAnalysisDocumentValue,
   parseCommonEnvelopeValue,
   parseContentChecksumValue,
   parseCoordinateContextValue,
@@ -21,6 +22,7 @@ export {
   parseEngineeringProjectValue,
   parseMigrationRecordValue,
   parseProvenanceValue,
+  parseRoadDesignDocumentValue,
   parseRevisionMetadataValue,
   parseSchemaIdentityValue,
   parseStableEntityIdValue,
@@ -43,6 +45,7 @@ export {
   contractSchemaId,
 } from "./constants";
 export {
+  bridgeFrameAnalysisDocumentSchema,
   commonEnvelopeSchema,
   createCommonEnvelopeSchema,
   contentChecksumSchema,
@@ -51,6 +54,7 @@ export {
   engineeringProjectSchema,
   migrationRecordSchema,
   provenanceSchema,
+  roadDesignDocumentSchema,
   revisionMetadataSchema,
   schemaIdentitySchema,
   stableEntityIdSchema,
@@ -59,6 +63,7 @@ export {
   uuidValueSchema,
   validationIssueSchema,
   validationResultSchema,
+  type BridgeFrameAnalysisDocumentValue,
   type CommonEnvelopeValue,
   type ContentChecksumValue,
   type CreateCommonEnvelopeSchemaOptions,
@@ -67,6 +72,7 @@ export {
   type EngineeringProjectValue,
   type MigrationRecordValue,
   type ProvenanceValue,
+  type RoadDesignDocumentValue,
   type RevisionMetadataValue,
   type SchemaIdentityValue,
   type StableEntityIdValue,

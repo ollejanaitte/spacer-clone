@@ -1,4 +1,12 @@
 export {
+  bridgeFrameAnalysisDocumentSchema,
+  type BridgeFrameAnalysisDocumentValue,
+} from "./bridgeFrameAnalysisDocument";
+export {
+  capabilityBlockSchema,
+  type CapabilityBlockValue,
+} from "./capabilityBlock";
+export {
   contentChecksumSchema,
   type ContentChecksumValue,
 } from "./contentChecksum";
@@ -14,14 +22,44 @@ export {
   type DocumentReferenceValue,
 } from "./documentReference";
 export {
+  analysisSettingsSchema,
+  frameMaterialEntrySchema,
+  frameMemberEntrySchema,
+  frameNodeEntrySchema,
+  frameSectionEntrySchema,
+  frameSupportEntrySchema,
+  loadDefinitionEntrySchema,
+  roadAlignmentEntrySchema,
+  roadBridgeEntrySchema,
+  roadCrossSectionEntrySchema,
+  roadProfileEntrySchema,
+  roadStationingEntrySchema,
+  roadStationingSchema,
+  structuralModelSchema,
+  transferBindingSchema,
+  type AnalysisSettingsValue,
+  type LoadDefinitionEntryValue,
+  type RoadAlignmentEntryValue,
+  type RoadBridgeEntryValue,
+  type RoadCrossSectionEntryValue,
+  type RoadProfileEntryValue,
+  type RoadStationingValue,
+  type StructuralModelValue,
+  type TransferBindingValue,
+} from "./domainSkeleton";
+export {
   engineeringProjectSchema,
   type EngineeringProjectValue,
 } from "./engineeringProject";
+export { jsonValueSchema } from "./jsonValue";
+export {
+  roadDesignDocumentSchema,
+  type RoadDesignDocumentValue,
+} from "./roadDesignDocument";
 export {
   immutableResourceReferenceSchema,
   type ImmutableResourceReferenceValue,
 } from "./immutableResourceReference";
-export { jsonValueSchema } from "./jsonValue";
 export {
   extensionValueSchema,
   extensionsSchema,

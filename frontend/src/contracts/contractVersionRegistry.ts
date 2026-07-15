@@ -7,6 +7,9 @@ import {
 } from "./validation";
 
 export const ENGINEERING_PROJECT_SCHEMA_ID = "spacer.contracts.engineering-project" as SchemaId;
+export const ROAD_DESIGN_DOCUMENT_SCHEMA_ID = "spacer.contracts.road-design-document" as SchemaId;
+export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID =
+  "spacer.contracts.bridge-frame-analysis-document" as SchemaId;
 export const UNKNOWN_FIELD_STORE_SCHEMA_ID = "spacer.contracts.unknown-field-store" as SchemaId;
 export const MIGRATION_RECORD_SCHEMA_ID = "spacer.contracts.migration-record" as SchemaId;
 export const DOCUMENT_REFERENCE_SCHEMA_ID = "spacer.contracts.document-reference" as SchemaId;
@@ -15,6 +18,8 @@ export const DOCUMENT_REFERENCE_SCHEMA_ID = "spacer.contracts.document-reference
 export const COMMON_ENVELOPE_SHAPE_ID = "spacer.contracts.common-envelope-shape" as SchemaId;
 
 export const ENGINEERING_PROJECT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const UNKNOWN_FIELD_STORE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const MIGRATION_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 
@@ -39,6 +44,16 @@ export const CONTRACT_VERSION_SUPPORT_MATRIX: Readonly<
     schemaId: ENGINEERING_PROJECT_SCHEMA_ID,
     supportedVersions: [ENGINEERING_PROJECT_SCHEMA_VERSION],
     currentVersion: ENGINEERING_PROJECT_SCHEMA_VERSION,
+  },
+  [ROAD_DESIGN_DOCUMENT_SCHEMA_ID]: {
+    schemaId: ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
+    supportedVersions: [ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION],
+    currentVersion: ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION,
+  },
+  [BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID]: {
+    schemaId: BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID,
+    supportedVersions: [BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION],
+    currentVersion: BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION,
   },
   [UNKNOWN_FIELD_STORE_SCHEMA_ID]: {
     schemaId: UNKNOWN_FIELD_STORE_SCHEMA_ID,
