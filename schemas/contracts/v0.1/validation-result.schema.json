@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "invalid",
+        "warning"
+      ]
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string"
+          },
+          "entityKind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entityId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "evaluatedRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "evaluatedChecksum": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ruleSetVersion": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "status",
+    "issues"
+  ],
+  "additionalProperties": false,
+  "title": "ValidationResult",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/validation-result.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-only",
+    "completeValidator": false,
+    "runtimeRequired": false,
+    "description": "This JSON Schema validates ValidationResult document shape. Issue aggregation semantics are defined by Step 0A validation helpers, not by JSON Schema alone."
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

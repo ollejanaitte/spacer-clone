@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JsonValue",
+  "contractVersion": "0.1.0",
+  "anyOf": [
+    {
+      "type": "null"
+    },
+    {
+      "type": "boolean"
+    },
+    {
+      "type": "string"
+    },
+    {
+      "type": "number"
+    },
+    {
+      "type": "array",
+      "items": {
+        "$ref": "#"
+      }
+    },
+    {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "$ref": "#"
+      }
+    }
+  ],
+  "$id": "https://spacer.local/schemas/contracts/v0.1/json-value.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "Recursive JSON value schema rejecting undefined, functions, symbols, bigint, NaN, and Infinity.",
+    "runtimeRules": [
+      "JSON_VALUE_INVALID"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

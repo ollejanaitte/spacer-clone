@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string",
+  "format": "uuid",
+  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+  "title": "UuidString",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/uuid.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-only",
+    "completeValidator": false,
+    "runtimeRequired": false,
+    "description": "This JSON Schema validates UUID string format only. It is not a complete contract validator."
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}

@@ -14,6 +14,7 @@
     "test:parity-cli": "vitest run src/bridgeDefinition/__tests__/parityCli.test.ts",
     "test:regression": "vitest run --config vitest.regression.config.ts",
     "test:all": "npm run test && npm run test:regression",
+    "contracts:schema:generate": "node scripts/generate-contract-schemas.mjs",
     "test:e2e": "playwright test",
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
@@ -41,7 +42,8 @@
     "recharts": "^3.8.1",
     "three": "^0.184.0",
     "typescript": "^5.8.0",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",

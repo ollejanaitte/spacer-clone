@@ -10,6 +10,12 @@ from typing import Any, Callable
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
+from backend.app.atomic_json import (
+    JsonSerializationError,
+    JsonStoreConflictError,
+    PublishedDataDirectoryFsyncError,
+    default_store,
+)
 from backend.app.reports import build_result_exports
 from backend.engine import (
     run_analysis,
@@ -319,11 +325,8 @@ def save_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
             },
         )
 
-    PROJECT_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     path = PROJECT_STORAGE_DIR / file_name
-    with path.open("w", encoding="utf-8") as file:
-        json.dump(project, file, ensure_ascii=False, allow_nan=False, indent=2)
-        file.write("\n")
+    _store_legacy_project_json(path, project)
 
     return safe_json_response({"saved": True, "fileName": file_name})
 
@@ -371,11 +374,8 @@ def autosave_project_endpoint(payload: dict[str, Any]) -> JSONResponse:
             },
         )
 
-    PROJECT_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     path = PROJECT_STORAGE_DIR / AUTOSAVE_FILE_NAME
-    with path.open("w", encoding="utf-8") as file:
-        json.dump(project, file, ensure_ascii=False, allow_nan=False, indent=2)
-        file.write("\n")
+    _store_legacy_project_json(path, project)
 
     return safe_json_response({"saved": True, "fileName": AUTOSAVE_FILE_NAME})
 
@@ -455,6 +455,32 @@ def extract_file_name(payload: dict[str, Any]) -> str:
             },
         )
     return file_name
+
+
+def _raise_published_not_durable(exc: PublishedDataDirectoryFsyncError) -> None:
+    raise HTTPException(
+        status_code=503,
+        detail={
+            "code": "PUBLISHED_NOT_DURABLE",
+            "message": str(exc),
+            "checksum": exc.checksum,
+        },
+    ) from exc
+
+
+def _store_legacy_project_json(path: Path, project: dict[str, Any]) -> None:
+    try:
+        default_store.store(path, project)
+    except JsonSerializationError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_VALUE",
+                "message": f"Project could not be serialized: {exc}",
+            },
+        ) from exc
+    except PublishedDataDirectoryFsyncError as exc:
+        _raise_published_not_durable(exc)
 
 
 def safe_json_response(content: dict[str, Any], status_code: int = 200) -> JSONResponse:
@@ -934,16 +960,21 @@ def create_bridge_endpoint(payload: dict[str, Any]) -> JSONResponse:
             status_code=400,
             detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
         )
-    BRIDGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     path = _bridge_path(bridge_id)
-    if path.exists():
-        raise HTTPException(
-            status_code=409,
-            detail={"code": "ALREADY_EXISTS", "message": f"bridge {bridge_id} already exists."},
-        )
-    with path.open("w", encoding="utf-8") as file:
-        json.dump(project.to_dict(), file, ensure_ascii=False, allow_nan=False, indent=2)
-        file.write("\n")
+    try:
+        default_store.store(path, project.to_dict(), create_only=True)
+    except JsonStoreConflictError as exc:
+        if exc.code == "ALREADY_EXISTS":
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "ALREADY_EXISTS",
+                    "message": f"bridge {bridge_id} already exists.",
+                },
+            ) from exc
+        raise
+    except PublishedDataDirectoryFsyncError as exc:
+        _raise_published_not_durable(exc)
     return safe_json_response({"id": bridge_id, "project": project.to_dict()})
 
 
@@ -978,11 +1009,11 @@ def update_bridge_endpoint(bridge_id: str, payload: dict[str, Any]) -> JSONRespo
             status_code=400,
             detail={"code": "BRIDGE_DOMAIN_ERROR", "message": str(exc)},
         )
-    BRIDGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     path = _bridge_path(bridge_id)
-    with path.open("w", encoding="utf-8") as file:
-        json.dump(project.to_dict(), file, ensure_ascii=False, allow_nan=False, indent=2)
-        file.write("\n")
+    try:
+        default_store.store(path, project.to_dict())
+    except PublishedDataDirectoryFsyncError as exc:
+        _raise_published_not_durable(exc)
     return safe_json_response({"id": bridge_id, "project": project.to_dict()})
 
 

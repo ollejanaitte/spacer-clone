@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    }
+  },
+  "required": [
+    "schemaId",
+    "schemaVersion"
+  ],
+  "additionalProperties": false,
+  "title": "SchemaIdentity",
+  "contractVersion": "0.1.0",
+  "$id": "https://spacer.local/schemas/contracts/v0.1/schema-identity.schema.json",
+  "x-semantic-validation": {
+    "scope": "structural-plus-semantic",
+    "completeValidator": false,
+    "runtimeRequired": true,
+    "description": "This JSON Schema validates field presence and SemVer surface form. Non-empty schemaId and SemVer semantics are enforced by runtime semantic validation.",
+    "runtimeRules": [
+      "SCHEMA_ID_MISSING",
+      "SCHEMA_VERSION_INVALID"
+    ]
+  },
+  "$comment": "Structural JSON Schema only. Do not treat this document as a complete validator; runtime semantic validation is required where x-semantic-validation.runtimeRequired is true."
+}
