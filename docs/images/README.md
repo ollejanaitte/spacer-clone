@@ -11,8 +11,12 @@ Expected files:
 
 Current status:
 
-- TODO: add screenshots before public release.
-- README placeholders already exist as HTML comments in the repository root `README.md`.
+| Gap | Status | Owner | Gate |
+| --- | --- | --- | --- |
+| Public screenshots | DOCUMENT_GAP | Documentation owner + UI/release owner | Reproducible stable UI states and approved non-confidential sample data before public release |
+
+README placeholders already exist as HTML comments in the repository root `README.md`. Expected files
+remain proposals until approved screenshots are added; this index does not claim that they exist.
 
 Guidelines:
 

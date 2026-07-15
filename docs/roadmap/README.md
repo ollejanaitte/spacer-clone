@@ -1,12 +1,9 @@
-# Roadmap Notes
+# Roadmap Notes Compatibility
 
-公開向けロードマップは [../../ROADMAP.md](../../ROADMAP.md) を参照してください。
+**Authority:** COMPATIBILITY
+**Status:** DEPRECATED
 
-このディレクトリは、今後ロードマップを詳細化するための配置先です。
-
-既存の関連ドキュメント:
-
-- [../design/mvp-implementation-roadmap.md](../design/mvp-implementation-roadmap.md)
-- [../handover/2026-06-next-tasks.md](../handover/2026-06-next-tasks.md)
-- [../handover/2026-06-improvement-candidates.md](../handover/2026-06-improvement-candidates.md)
-- [../liner/phase3_release_notes.md](../liner/phase3_release_notes.md)
+The former roadmap note is retained at [../history/planning/README.md](../history/planning/README.md).
+Use [../../ROADMAP.md](../../ROADMAP.md) for the public summary and
+[../planning/stage6-10/stage10_gap_migration_sequence.md](../planning/stage6-10/stage10_gap_migration_sequence.md)
+for the accepted target implementation sequence.

@@ -1,4 +1,4 @@
-﻿# Glossary
+# Glossary
 
 This glossary maps the Japanese domain terms used in this project to the English terms used in source code, internal documentation, and API field names. UI strings rendered to the user remain in Japanese and live in `frontend/src/i18n/ja.ts`.
 

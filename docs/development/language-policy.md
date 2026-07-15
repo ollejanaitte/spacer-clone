@@ -1,4 +1,4 @@
-﻿# Language Policy
+# Language Policy
 
 This project uses two distinct languages for two distinct audiences:
 

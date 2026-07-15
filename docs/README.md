@@ -2,104 +2,102 @@
 
 このディレクトリは `spacer-clone` の詳細ドキュメント置き場です。GitHub の入口は [README.md](../README.md)、公開向けアーキテクチャ概要は [ARCHITECTURE.md](../ARCHITECTURE.md)、今後の計画は [ROADMAP.md](../ROADMAP.md) を参照してください。
 
+**Authority:** NAVIGATION
+**Status:** ACTIVE
+**Governing baselines:** [scoping/README.md](scoping/README.md) (CURRENT FACT), [planning/stage6-10/README.md](planning/stage6-10/README.md) (TARGET DECISION / PLAN)
+
+## Authority Hierarchy
+
+Documentation authority is **temporal**, not a single winner-takes-all priority between the two baselines:
+
+- **CURRENT FACT** ([scoping/](scoping/README.md)) governs claims about the **current implementation** at the stated scoping baseline.
+- **TARGET DECISION / PLAN** ([planning/stage6-10/](planning/stage6-10/README.md)) governs **future** target design, ownership, contracts, acceptance, migration, and decision IDs.
+- Neither overwrites the other: do not rewrite current facts from target design, and do not rewrite target decisions from current implementation.
+
+Supporting classes (subordinate to the baselines above):
+
+| Class | Location | Use |
+| --- | --- | --- |
+| ACTIVE REFERENCE | Product design indexes below | Detailed design / algorithm reference (not implementation truth) |
+| HISTORICAL | [history/](history/README.md) and phase / handover / PR notes | Delivery evidence; not automatic current requirements or target truth |
+| FUTURE PROPOSAL | Untracked `docs/bridge-modeler-v2/**` | Excluded; never current fact or target authority |
+
+長い Stage 表はここへ複製しません。Governance details: [development/documentation-governance.md](development/documentation-governance.md)
+
+## Product Entry Points
+
+| Product / boundary | Index | Current fact (1 hop) | Target decision (1 hop) |
+| --- | --- | --- | --- |
+| Road Design Tool | [road/README.md](road/README.md) | [scoping/stage4_road_design_scope.md](scoping/stage4_road_design_scope.md) | [planning/stage6-10/stage6_target_architecture.md](planning/stage6-10/stage6_target_architecture.md) |
+| Bridge Frame Analysis Tool | [frame/README.md](frame/README.md) | [scoping/stage5_frame_analysis_scope.md](scoping/stage5_frame_analysis_scope.md) | [planning/stage6-10/stage6_target_architecture.md](planning/stage6-10/stage6_target_architecture.md) |
+| Road-to-Frame transfer | [transfer/README.md](transfer/README.md) | [scoping/responsibility_split.md](scoping/responsibility_split.md) | [planning/stage6-10/road_to_frame_contract.md](planning/stage6-10/road_to_frame_contract.md) |
+
+Target rule: `RoadDesignDocument` and `BridgeFrameAnalysisDocument` are separate sources of truth. Road-to-Frame uses an immutable versioned transfer package. Direct mutation of the other product’s authoritative document is forbidden in the target design. Viewer is not formal Frame.DRAFT.
+
 ## Recommended Reading
 
-初めて読む場合は、次の順番を推奨します。
-
-1. [../README.md](../README.md) - プロジェクト概要、機能、起動方法
-2. [../ARCHITECTURE.md](../ARCHITECTURE.md) - システム構成と責務分離
-3. [../ROADMAP.md](../ROADMAP.md) - Short / Mid / Long Term の開発計画
-4. [../CONTRIBUTING.md](../CONTRIBUTING.md) - 開発参加ガイド
-5. [12_quality_gate.md](12_quality_gate.md) - PR 品質基準
-6. [liner/README.md](liner/README.md) - LINER の設計・実装状況
+1. [../README.md](../README.md) — project overview and how to run
+2. [scoping/README.md](scoping/README.md) — CURRENT FACT baseline
+3. [planning/stage6-10/README.md](planning/stage6-10/README.md) — TARGET DECISION / PLAN
+4. [road/README.md](road/README.md) and [frame/README.md](frame/README.md) — product maps
+5. [transfer/README.md](transfer/README.md) — integration boundary
+6. [architecture/README.md](architecture/README.md) — architecture crosswalk
+7. [development/README.md](development/README.md) — contributor / docs governance
+8. [development/quality-gates.md](development/quality-gates.md) — PR quality criteria
 
 ## Documentation Map
 
-| Area | Location | Purpose |
+| Area | Location | Authority / note |
 | --- | --- | --- |
-| Public overview | `../README.md` | GitHub トップページ向けの概要 |
-| Architecture overview | `../ARCHITECTURE.md` | 全体構成、層、データフロー |
-| Roadmap | `../ROADMAP.md` | 短期・中期・長期計画 |
-| Contribution | `../CONTRIBUTING.md` | 開発フロー、PR、品質基準 |
-| Core MVP specs | `02_*` - `12_*` | 入力、解析、API、UI、Viewer、帳票、品質基準 |
-| Feature design | `design/` | 個別機能の設計メモ |
-| LINER | `liner/` | 線形座標計算、マッピング、CAD/Report 出力 |
-| Verification | `verification/` | 検証計画、検証結果、手動 smoke test |
-| Development | `development/` | 開発ポリシー |
-| Manual | `manual/` | ユーザー向け手順の配置先 |
-| Images | `images/` | README / docs 用スクリーンショット |
-| Roadmap details | `roadmap/` | 詳細ロードマップの配置先 |
-| Handover / investigation | `handover/`, `investigation/`, `investigations/`, `level0/`, `lobby/`, `pr/` | 実装調査、引き継ぎ、PR メモ |
+| Public overview | [../README.md](../README.md) | Public entry |
+| Architecture overview | [../ARCHITECTURE.md](../ARCHITECTURE.md) | Public summary; detail via [architecture/](architecture/README.md) |
+| Roadmap | [../ROADMAP.md](../ROADMAP.md) | Public summary; target sequence via Stage 10 |
+| Contribution | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Development participation |
+| Current facts | [scoping/](scoping/README.md) | CURRENT FACT |
+| Target decisions | [planning/stage6-10/](planning/stage6-10/README.md) | TARGET DECISION / PLAN |
+| Road product | [road/](road/README.md) | ACTIVE REFERENCE with design, UI, output, verification, and legacy-integration indexes |
+| Frame product | [frame/](frame/README.md) | ACTIVE REFERENCE with contracts, analysis, modeler, Viewer, output, UI, and verification indexes |
+| Transfer boundary | [transfer/](transfer/README.md) | Navigation to formal contract |
+| Architecture crosswalk | [architecture/](architecture/README.md) | CURRENT vs TARGET map |
+| Development | [development/](development/README.md) | OPERATIONAL |
+| Manual | [manual/](manual/README.md) | User docs (many manuals still future work) |
+| Images | [images/](images/README.md) | Shared media |
+| History | [history/](history/README.md) | Canonical HISTORICAL index for relocated evidence; other historical material may remain in topic directories |
+| Legacy LINER namespace | [liner/README.md](liner/README.md) | Compatibility index and required redirect stubs only |
+| Legacy MVP specs | [architecture/](architecture/README.md) and [frame/](frame/README.md) | SEMANTIC REFERENCE / LEGACY MVP — not Stage 6-10 target contracts |
+| Legacy Frame paths | [design/](design/README.md), [verification/](verification/README.md) | Required redirect stubs only; canonical navigation is [frame/](frame/README.md) |
+| Roadmap compatibility | [roadmap/](roadmap/README.md) | Redirect to retained history; Stage 10 governs target sequence |
+| FUTURE PROPOSAL (excluded) | `docs/bridge-modeler-v2/**` | Untracked; do not treat as authority |
 
-## Core Specifications
+## Legacy MVP Specs (reference only)
+
+これらの文書は元 MVP / 現行モジュール参照です。目標契約は Stage 6-10 が支配します。
 
 | Document | Role |
 | --- | --- |
-| [02_mvp_scope.md](02_mvp_scope.md) | MVP scope and decision criteria |
-| [03_architecture.md](03_architecture.md) | Original MVP architecture specification |
-| [04_input_schema.md](04_input_schema.md) | `project.json` input schema |
-| [05_analysis_engine_spec.md](05_analysis_engine_spec.md) | Python analysis engine behavior |
-| [06_result_schema.md](06_result_schema.md) | Analysis result JSON |
-| [07_api_spec.md](07_api_spec.md) | FastAPI contract |
-| [08_ui_spec.md](08_ui_spec.md) | React UI specification |
-| [09_3d_view_spec.md](09_3d_view_spec.md) | Three.js viewer and fallback |
-| [10_report_spec.md](10_report_spec.md) | JSON / CSV / HTML report output |
-| [11_test_spec.md](11_test_spec.md) | Required verification cases |
-| [12_quality_gate.md](12_quality_gate.md) | PR acceptance criteria |
-
-## Feature Design Index
-
-Representative design documents:
-
-- [design/eigen-analysis.md](design/eigen-analysis.md)
-- [design/response-spectrum-analysis.md](design/response-spectrum-analysis.md)
-- [design/time-history-analysis.md](design/time-history-analysis.md)
-- [design/influence-analysis.md](design/influence-analysis.md)
-- [design/influence-engine.md](design/influence-engine.md)
-- [design/bridge-model-wizard.md](design/bridge-model-wizard.md)
-- [design/bridge-fem-generator.md](design/bridge-fem-generator.md)
-- [design/model-comparison-view.md](design/model-comparison-view.md)
-- [design/result-visualization.md](design/result-visualization.md)
-- [design/report-drawing-output.md](design/report-drawing-output.md)
-- [design/viewer-rendering-improvements.md](design/viewer-rendering-improvements.md)
-
-## LINER
-
-LINER の詳細は [liner/README.md](liner/README.md) が source of truth です。
-
-Key documents:
-
-- [liner/liner_scope.md](liner/liner_scope.md)
-- [liner/domain_model.md](liner/domain_model.md)
-- [liner/geometry_core.md](liner/geometry_core.md)
-- [liner/intermediate_result_model.md](liner/intermediate_result_model.md)
-- [liner/frame_model_mapping.md](liner/frame_model_mapping.md)
-- [liner/integration_with_frame_model.md](liner/integration_with_frame_model.md)
-- [liner/cad_output_spec.md](liner/cad_output_spec.md)
-- [liner/test_plan_geometry.md](liner/test_plan_geometry.md)
-
-## Verification
-
-検証ドキュメント:
-
-- [verification/spacer-comparison-plan.md](verification/spacer-comparison-plan.md)
-- [verification/spacer-comparison-results.md](verification/spacer-comparison-results.md)
-- [verification/bridge-model-generator.md](verification/bridge-model-generator.md)
-- [verification/eigen-analysis-phase-e1b-verification.md](verification/eigen-analysis-phase-e1b-verification.md)
-- [verification/eigen-analysis-phase-e1c-verification.md](verification/eigen-analysis-phase-e1c-verification.md)
-- [verification/time-history-known-limitations.md](verification/time-history-known-limitations.md)
-- [verification/time-history-performance-note.md](verification/time-history-performance-note.md)
+| [legacy-mvp-scope.md](architecture/legacy-mvp-scope.md) | Original MVP scope |
+| [legacy-mvp-architecture.md](architecture/legacy-mvp-architecture.md) | Original MVP architecture |
+| [04_input_schema.md](frame/contracts/04_input_schema.md) | Legacy `project.json` input schema |
+| [05_analysis_engine_spec.md](frame/analysis/05_analysis_engine_spec.md) | Linear static engine behavior |
+| [06_result_schema.md](frame/contracts/06_result_schema.md) | Legacy analysis result JSON |
+| [07_api_spec.md](frame/contracts/07_api_spec.md) | Legacy FastAPI contract |
+| [08_ui_spec.md](frame/ui/08_ui_spec.md) | Legacy React UI specification |
+| [09_3d_view_spec.md](frame/viewer/09_3d_view_spec.md) | Viewer / fallback (Viewer ≠ formal DRAFT) |
+| [10_report_spec.md](frame/output/10_report_spec.md) | Report output reference |
+| [11_test_spec.md](frame/verification/11_test_spec.md) | Original verification cases |
+| [quality-gates.md](development/quality-gates.md) | PR acceptance criteria |
 
 ## Runtime and Packaging
 
-- [run-ubuntu.md](run-ubuntu.md)
-- [exe-build-windows.md](exe-build-windows.md)
+- [runtime-ubuntu.md](development/runtime-ubuntu.md)
+- [packaging-windows.md](development/packaging-windows.md)
 - [../desktop/electron/README.md](../desktop/electron/README.md)
+- [development/README.md](development/README.md)
 
-## Documentation Maintenance Rules
+## Documentation Maintenance
 
-- Top-level documents should explain project purpose, current status, and navigation.
-- Deep technical details should live under `docs/`.
-- Do not duplicate long specifications in multiple files; link to the source of truth.
-- If implementation behavior changes, update the relevant design/specification document in the same PR.
-- Handover and investigation notes are historical context. Promote durable decisions into design/spec documents when they become authoritative.
+- Follow [development/documentation-governance.md](development/documentation-governance.md).
+- Validate with [development/documentation-validation.md](development/documentation-validation.md).
+- Do not duplicate long Stage 0–10 tables; link the governing baseline.
+- Historical notes stay evidence; promote durable decisions only when a governing Stage decision exists.
+- Do not edit, adopt, or index untracked `docs/bridge-modeler-v2/**` as current/target authority.
