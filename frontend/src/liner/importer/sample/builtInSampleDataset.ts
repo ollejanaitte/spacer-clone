@@ -32,7 +32,7 @@ export const BUILT_IN_SAMPLE_ALIGNMENT_LENGTH = 164.2476;
  * - x/y convention is provisional: HCL is the source-of-truth centerline (PDF localX/localY).
  *   Non-HCL girder lines use section localX for x and offset/cumulativeWidth for y where
  *   per-line PDF local x/y has not yet been transcribed (see createSectionPoint).
- * TODO: Replace interpolated C1–C17/GE2 and provisional non-HCL x/y with exact PDF 小座標 table values.
+ * Replace interpolated C1–C17/GE2 and provisional non-HCL x/y with exact PDF 小座標 table values once full PDF transcription is complete.
  */
 
 type LineLabel =
@@ -940,7 +940,7 @@ function createBuiltInBridge(bridgeId: string): LinerBridge {
         definitions: [{ id: "built-in-cs-ph12", station: 0, crossSlope: 2.0 }],
       },
       notes:
-        "001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF 小座標 3.2 より転記。PH12/PH13/PH14/PH15/S1/S2 は PDF 値。C1-C17/GE2 は決定論的補間（interpolated フラグ参照、TODO: 正確な PDF 小座標表へ置換）。非 HCL 線の x/y は暫定（HCL=中心線真値、他線は localX + offset/cumulativeWidth）。",
+        "001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF 小座標 3.2 より転記。PH12/PH13/PH14/PH15/S1/S2 は PDF 値。C1-C17/GE2 は決定論的補間（interpolated フラグ参照、正確な PDF 小座標表へ置換予定）。非 HCL 線の x/y は暫定（HCL=中心線真値、他線は localX + offset/cumulativeWidth）。",
     },
   };
 }
