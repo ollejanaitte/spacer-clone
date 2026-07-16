@@ -119,4 +119,35 @@ describe("liner geometry core", () => {
       ]),
     );
   });
+
+  it("rejects invalid circular arc radius with stable diagnostic metadata", () => {
+    const alignment: LinearAlignment = {
+      id: "bad-arc",
+      linerModelId: "bad-arc",
+      coordinatePolicyId: "global",
+      elements: [
+        {
+          type: "arc",
+          id: "A-bad",
+          start: { x: 0, y: 0 },
+          azimuth: 0,
+          radius: 0,
+          turn: "left",
+          length: 10,
+        },
+      ],
+    };
+
+    expect(validateAlignment(alignment)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          level: "error",
+          code: "LINER_GEOM_CLOTHOID_INVALID_RADIUS",
+          messageKey: "liner.errors.geom_clothoid_radius",
+          entityPath: "elements[0].radius",
+          field: "radius",
+        }),
+      ]),
+    );
+  });
 });

@@ -154,6 +154,12 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 
 **Input:** Line 50 m; clothoid A = 100, L = 50 m (κ: 0 → 0.002); arc R = 500 m, 30° deflection.
 
+**P1-D04 classification:** Phase 1 fail-closed/blocked testcase. No committed
+intermediate expected fixture is authored until an independent numeric endpoint
+baseline (published table or separately reviewed reference script) is available.
+Production shipment remains blocked while `isPhase0ClothoidApproximation()` is
+true.
+
 | Check | Tolerance |
 | --- | --- |
 | Clothoid end matches arc start position | 1e-3 m |
@@ -165,6 +171,10 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 
 **Input:** Reverse of GC-08 pattern; κ: 0.002 → 0 over clothoid length 50 m.
 
+**P1-D04 classification:** Phase 1 fail-closed/blocked testcase for the same
+reason as GC-08. Continuity expectations are retained as the future acceptance
+target; no actual-as-expected snapshot is allowed.
+
 | Check | Tolerance |
 | --- | --- |
 | G1/G2 continuity at clothoid–straight joint | 1e-3 m, 1e-6 rad |
@@ -172,6 +182,10 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 #### GC-10: Egg-shaped transition (finite radii)
 
 **Input:** R_in = 800 m, R_out = 500 m, clothoid length L = 60 m, A derived from standard transition formula.
+
+**P1-D04 classification:** Phase 1 fail-closed/blocked testcase. Finite-radius
+input validation is covered, but committed endpoint baselines wait for an
+independent source.
 
 | Check | Tolerance |
 | --- | --- |
@@ -249,7 +263,7 @@ examples/liner/
 | Gate | Required in CI |
 | --- | --- |
 | GC-01 through GC-07 unit/golden | Yes |
-| GC-08 through GC-10 clothoid | Yes before clothoid MVP ships |
+| GC-08 through GC-10 clothoid | Fail-closed/blocked in Phase 1; independent baselines required before clothoid MVP ships |
 | GC-06 schema validation | Yes |
 | Performance smoke | Optional benchmark job |
 

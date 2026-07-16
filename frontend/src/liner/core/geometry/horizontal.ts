@@ -168,6 +168,36 @@ export function validateAlignment(alignment: LinearAlignment): ValidationIssue[]
         }),
       );
     }
+    if (
+      element.type === "clothoid" &&
+      element.startRadius !== null &&
+      element.startRadius !== undefined &&
+      (!Number.isFinite(element.startRadius) || element.startRadius <= DEFAULT_TOLERANCES.length)
+    ) {
+      issues.push(
+        createIssue("error", LINER_DIAGNOSTIC_CODES.clothoidInvalidRadius, {
+          entityType: "alignmentElement",
+          entityId: element.id,
+          entityPath: `elements[${index}].startRadius`,
+          field: "startRadius",
+        }),
+      );
+    }
+    if (
+      element.type === "clothoid" &&
+      element.endRadius !== null &&
+      element.endRadius !== undefined &&
+      (!Number.isFinite(element.endRadius) || element.endRadius <= DEFAULT_TOLERANCES.length)
+    ) {
+      issues.push(
+        createIssue("error", LINER_DIAGNOSTIC_CODES.clothoidInvalidRadius, {
+          entityType: "alignmentElement",
+          entityId: element.id,
+          entityPath: `elements[${index}].endRadius`,
+          field: "endRadius",
+        }),
+      );
+    }
   }
   issues.push(...checkC0Continuity(alignment.elements));
   issues.push(...checkC1Continuity(alignment.elements));
