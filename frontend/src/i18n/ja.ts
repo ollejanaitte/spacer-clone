@@ -1894,6 +1894,8 @@ export const ja = {
       exportDxfDisabled: "出力可能な図面がありません",
       exportDxfSuccess: (fileName: string) => `${fileName} をダウンロードしました`,
       exportDxfError: "DXF出力に失敗しました",
+      printSectionTitle: "印刷",
+      printActiveSheet: "表示中の図面を印刷",
       planTypeSectionTitle: "平面図の種類",
       planTypeRoadShape: "平面図（道路形状）",
       planTypeCenterlineOnly: "平面線形図（中心線のみ）",

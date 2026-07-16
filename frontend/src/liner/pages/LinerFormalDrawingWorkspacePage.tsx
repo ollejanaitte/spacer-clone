@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, Minus, Plus, RefreshCw } from "lucide-react";
+import { ArrowLeft, Download, Minus, Plus, Printer, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { buildIntermediateResult } from "../core/pipeline/pipeline";
@@ -22,6 +22,7 @@ import {
 import type { DrawingDocument } from "../drawing/model/document";
 import type { FormalPlanType } from "../drawing/builders/types";
 import { DrawingDocumentSvg } from "../drawing/rendering/DrawingDocumentSvg";
+import { printFormalDrawing } from "../drawing/print/printFormalDrawing";
 import { formatStationDisplay } from "../core/station/stationFormat";
 import {
   canExportFormalDrawingDxf,
@@ -163,6 +164,13 @@ export function LinerFormalDrawingWorkspacePage({
     },
     [exportBusy, projectId],
   );
+
+  const handlePrint = useCallback(() => {
+    printFormalDrawing({
+      document,
+      title: ROUTE_LABELS[kind],
+    });
+  }, [document, kind]);
 
   const measureFitZoom = useCallback(() => {
     const canvas = canvasRef.current;
@@ -374,6 +382,21 @@ export function LinerFormalDrawingWorkspacePage({
             </div>
           </section>
 
+          <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-print-title">
+            <h2 id="formal-drawing-print-title">{ja.liner.formalDrawing.printSectionTitle}</h2>
+            <div className="liner-formal-workspace-dxf-actions">
+              <button
+                type="button"
+                data-testid="formal-drawing-print-active-sheet"
+                aria-label={ja.liner.formalDrawing.printActiveSheet}
+                onClick={handlePrint}
+              >
+                <Printer size={14} />
+                {ja.liner.formalDrawing.printActiveSheet}
+              </button>
+            </div>
+          </section>
+
           <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-dxf-export-title">
             <h2 id="formal-drawing-dxf-export-title">{ja.liner.formalDrawing.exportDxfSectionTitle}</h2>
             <div className="liner-formal-workspace-dxf-actions">
@@ -464,11 +487,13 @@ export function LinerFormalDrawingWorkspacePage({
             className="liner-formal-workspace-canvas-transform"
             style={{ transform: `translate(${panX}px, ${panY}px) scale(${zoom})` }}
           >
+          <div data-testid="formal-drawing-preview-document" data-drawing-document-ref="preview">
             <DrawingDocumentSvg
               document={document}
               screenScale={zoom}
               viewportWidthPx={canvasWidthPx}
             />
+          </div>
           </div>
         </section>
       </div>

@@ -14,3 +14,6 @@ export * from "./sheet/formalDrawingPages";
 export * from "./sheet/sheetScale";
 export * from "./sheet/sheetDecoration";
 export * from "./sheet/multiPageDocument";
+export * from "./formalDrawingWorkspaceDocuments";
+export * from "./print/printFormalDrawing";
+export * from "./print/formalDrawingPrintStyles";
