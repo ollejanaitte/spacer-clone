@@ -3,6 +3,7 @@ import { createDefaultProject } from "../../data/defaultProject";
 import {
   addLinerOffset,
   createDefaultLinerDraft,
+  updateLinerDraftSettings,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlope,
   updateLinerVerticalAlignment,
@@ -10,6 +11,7 @@ import {
 import {
   linerDraftFromProject,
   tryWithProjectLinerDraft,
+  validateLinerDraftForCommit,
   withProjectLinerDraft,
   withProjectLinerDomainDraft,
 } from "./linerProjectDraft";
@@ -57,6 +59,50 @@ describe("liner project draft persistence", () => {
 
     expect(project.liner?.domainDraft?.alignment.elements.length).toBeGreaterThan(0);
     expect(linerDraftFromProject(project)?.alignment.elements.length).toBeGreaterThan(0);
+  });
+
+  it("validates P2-D06 viewer E2E-like drafts for commit", () => {
+    let draft = createDefaultLinerDraft();
+    draft.alignment.id = "alignment-p2-d06";
+    draft.alignment.linerModelId = "liner-p2-d06";
+    draft.alignment.elements[0] = {
+      ...draft.alignment.elements[0],
+      length: 24,
+    };
+    draft = updateLinerDraftSettings(draft, { sampleInterval: 12 });
+    draft = updateLinerVerticalAlignment(draft, {
+      id: "VA-default",
+      elements: [
+        {
+          type: "grade",
+          id: "VG-default",
+          startStation: 0,
+          endStation: 24,
+          startElevation: 10,
+          grade: 0.01,
+          length: 24,
+        },
+      ],
+    });
+
+    expect(validateLinerDraftForCommit(draft)).toBeNull();
+    expect(withProjectLinerDraft(createDefaultProject(), draft).liner?.domainDraft).toMatchObject({
+      verticalAlignment: {
+        elements: [expect.objectContaining({ startElevation: 10, grade: 0.01, endStation: 24 })],
+      },
+    });
+  });
+
+  it("validates persisted domain round-trip drafts for commit", () => {
+    const originalDraft = createDefaultLinerDraft();
+    const persistedDraft = linerDraftFromProject(
+      withProjectLinerDraft(createDefaultProject(), originalDraft),
+    );
+    expect(persistedDraft).toBeDefined();
+    expect(persistedDraft).toEqual(originalDraft);
+    expect(Object.keys(persistedDraft!).sort()).toEqual(Object.keys(originalDraft).sort());
+    expect(validateLinerDraftForCommit(originalDraft)).toBeNull();
+    expect(validateLinerDraftForCommit(persistedDraft!)).toBeNull();
   });
 
   it("preserves vertical and cross-section draft edits through vNext save and load", () => {

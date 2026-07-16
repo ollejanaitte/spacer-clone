@@ -95,13 +95,15 @@ export function buildIntermediateInputFromDomainDraft(
     verticalAlignment: domainDraft.verticalAlignment,
     crossSections: domainDraft.crossSections,
     crossSlopeIntervals: domainDraft.crossSlopeIntervals,
-    measuredGrid: domainDraft.measuredGrid,
     offsets,
     sampleInterval: domainDraft.sampling.display.maxChordLength,
     selectedCrossSectionStation: domainDraft.selectedCrossSectionStation,
-    drawingSettings: domainDraft.drawingSettings,
-    widthChangePoints: domainDraft.widthChangePoints,
     z,
+    ...(domainDraft.measuredGrid ? { measuredGrid: domainDraft.measuredGrid } : {}),
+    ...(domainDraft.drawingSettings ? { drawingSettings: domainDraft.drawingSettings } : {}),
+    ...(domainDraft.widthChangePoints?.length
+      ? { widthChangePoints: domainDraft.widthChangePoints }
+      : {}),
     ...(domainDraft.crossSections.length > 1 || domainDraft.gridDefinitions.length > 1
       ? { gridDefinitions: domainDraft.gridDefinitions }
       : {}),

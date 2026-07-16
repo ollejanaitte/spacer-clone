@@ -26,6 +26,7 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "sampleInterval",
   "selectedCrossSectionStation",
   "drawingSettings",
+  "widthChangePoints",
   "z",
   "computedAt",
 ]);
