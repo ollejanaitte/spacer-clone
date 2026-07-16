@@ -1,8 +1,8 @@
 {
   "schemaVersion": "0.2.0",
   "computedAt": "2026-01-01T00:00:00.000Z",
-  "sourceRevision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3",
-  "linerModelId": "gc01",
+  "sourceRevision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa",
+  "linerModelId": "gc05",
   "coordinatePolicyId": "global",
   "horizontal": {
     "totalLength": 100,
@@ -5252,44 +5252,1446 @@
     "piPoints": []
   },
   "vertical": {
-    "profileElevation": 0,
+    "profileElevation": 100,
     "segments": [
       {
-        "id": "VP-default",
+        "id": "VP-1",
         "startPhysicalDistance": 0,
         "endPhysicalDistance": 100,
         "startDisplayedStation": 0,
         "endDisplayedStation": 100,
-        "startElevation": 0,
-        "endElevation": 0,
-        "startGrade": 0,
-        "endGrade": 0
+        "startElevation": 100,
+        "endElevation": 100,
+        "startGrade": 0.02,
+        "endGrade": -0.02,
+        "pvcPhysicalDistance": 0,
+        "pvtPhysicalDistance": 100,
+        "pviPhysicalDistance": 50
       }
     ],
     "sampledPoints": [
       {
         "physicalDistance": 0,
         "displayedStation": 0,
-        "profileElevation": 0,
-        "grade": 0,
-        "segmentId": "VP-default"
+        "profileElevation": 100,
+        "grade": 0.02,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 0.5,
+        "displayedStation": 0.5,
+        "profileElevation": 100.00995,
+        "grade": 0.0198,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 1,
+        "displayedStation": 1,
+        "profileElevation": 100.01979999999999,
+        "grade": 0.0196,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 1.5,
+        "displayedStation": 1.5,
+        "profileElevation": 100.02955,
+        "grade": 0.0194,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 2,
+        "displayedStation": 2,
+        "profileElevation": 100.03920000000001,
+        "grade": 0.019200000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 2.5,
+        "displayedStation": 2.5,
+        "profileElevation": 100.04875,
+        "grade": 0.019,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 3,
+        "displayedStation": 3,
+        "profileElevation": 100.0582,
+        "grade": 0.0188,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 3.5,
+        "displayedStation": 3.5,
+        "profileElevation": 100.06755,
+        "grade": 0.018600000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 4,
+        "displayedStation": 4,
+        "profileElevation": 100.07679999999999,
+        "grade": 0.0184,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 4.5,
+        "displayedStation": 4.5,
+        "profileElevation": 100.08595,
+        "grade": 0.0182,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 5,
+        "displayedStation": 5,
+        "profileElevation": 100.095,
+        "grade": 0.018000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 5.5,
+        "displayedStation": 5.5,
+        "profileElevation": 100.10395,
+        "grade": 0.0178,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 6,
+        "displayedStation": 6,
+        "profileElevation": 100.11280000000001,
+        "grade": 0.0176,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 6.5,
+        "displayedStation": 6.5,
+        "profileElevation": 100.12155,
+        "grade": 0.0174,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 7,
+        "displayedStation": 7,
+        "profileElevation": 100.1302,
+        "grade": 0.0172,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 7.5,
+        "displayedStation": 7.5,
+        "profileElevation": 100.13875,
+        "grade": 0.017,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 8,
+        "displayedStation": 8,
+        "profileElevation": 100.1472,
+        "grade": 0.0168,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 8.5,
+        "displayedStation": 8.5,
+        "profileElevation": 100.15555,
+        "grade": 0.0166,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 9,
+        "displayedStation": 9,
+        "profileElevation": 100.16380000000001,
+        "grade": 0.0164,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 9.5,
+        "displayedStation": 9.5,
+        "profileElevation": 100.17195,
+        "grade": 0.0162,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "profileElevation": 100.18,
+        "grade": 0.016,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 10.5,
+        "displayedStation": 10.5,
+        "profileElevation": 100.18795,
+        "grade": 0.0158,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 11,
+        "displayedStation": 11,
+        "profileElevation": 100.1958,
+        "grade": 0.0156,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 11.5,
+        "displayedStation": 11.5,
+        "profileElevation": 100.20355,
+        "grade": 0.0154,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 12,
+        "displayedStation": 12,
+        "profileElevation": 100.21119999999999,
+        "grade": 0.0152,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 12.5,
+        "displayedStation": 12.5,
+        "profileElevation": 100.21875,
+        "grade": 0.015,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 13,
+        "displayedStation": 13,
+        "profileElevation": 100.2262,
+        "grade": 0.0148,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 13.5,
+        "displayedStation": 13.5,
+        "profileElevation": 100.23355,
+        "grade": 0.0146,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 14,
+        "displayedStation": 14,
+        "profileElevation": 100.24080000000001,
+        "grade": 0.0144,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 14.5,
+        "displayedStation": 14.5,
+        "profileElevation": 100.24795,
+        "grade": 0.0142,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 15,
+        "displayedStation": 15,
+        "profileElevation": 100.255,
+        "grade": 0.014,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 15.5,
+        "displayedStation": 15.5,
+        "profileElevation": 100.26195,
+        "grade": 0.0138,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 16,
+        "displayedStation": 16,
+        "profileElevation": 100.2688,
+        "grade": 0.013600000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 16.5,
+        "displayedStation": 16.5,
+        "profileElevation": 100.27555,
+        "grade": 0.0134,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 17,
+        "displayedStation": 17,
+        "profileElevation": 100.2822,
+        "grade": 0.0132,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 17.5,
+        "displayedStation": 17.5,
+        "profileElevation": 100.28875,
+        "grade": 0.013000000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 18,
+        "displayedStation": 18,
+        "profileElevation": 100.2952,
+        "grade": 0.012799999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 18.5,
+        "displayedStation": 18.5,
+        "profileElevation": 100.30155,
+        "grade": 0.0126,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 19,
+        "displayedStation": 19,
+        "profileElevation": 100.3078,
+        "grade": 0.012400000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 19.5,
+        "displayedStation": 19.5,
+        "profileElevation": 100.31395,
+        "grade": 0.012199999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "profileElevation": 100.32000000000001,
+        "grade": 0.012,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 20.5,
+        "displayedStation": 20.5,
+        "profileElevation": 100.32594999999999,
+        "grade": 0.0118,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 21,
+        "displayedStation": 21,
+        "profileElevation": 100.3318,
+        "grade": 0.0116,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 21.5,
+        "displayedStation": 21.5,
+        "profileElevation": 100.33755000000001,
+        "grade": 0.0114,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 22,
+        "displayedStation": 22,
+        "profileElevation": 100.3432,
+        "grade": 0.0112,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 22.5,
+        "displayedStation": 22.5,
+        "profileElevation": 100.34875000000001,
+        "grade": 0.011,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 23,
+        "displayedStation": 23,
+        "profileElevation": 100.35419999999999,
+        "grade": 0.0108,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 23.5,
+        "displayedStation": 23.5,
+        "profileElevation": 100.35955,
+        "grade": 0.0106,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 24,
+        "displayedStation": 24,
+        "profileElevation": 100.3648,
+        "grade": 0.0104,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 24.5,
+        "displayedStation": 24.5,
+        "profileElevation": 100.36994999999999,
+        "grade": 0.0102,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 25,
+        "displayedStation": 25,
+        "profileElevation": 100.375,
+        "grade": 0.01,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 25.5,
+        "displayedStation": 25.5,
+        "profileElevation": 100.37995000000001,
+        "grade": 0.0098,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 26,
+        "displayedStation": 26,
+        "profileElevation": 100.3848,
+        "grade": 0.0096,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 26.5,
+        "displayedStation": 26.5,
+        "profileElevation": 100.38955,
+        "grade": 0.0094,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 27,
+        "displayedStation": 27,
+        "profileElevation": 100.39420000000001,
+        "grade": 0.0092,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 27.5,
+        "displayedStation": 27.5,
+        "profileElevation": 100.39874999999999,
+        "grade": 0.009,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 28,
+        "displayedStation": 28,
+        "profileElevation": 100.4032,
+        "grade": 0.0088,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 28.5,
+        "displayedStation": 28.5,
+        "profileElevation": 100.40754999999999,
+        "grade": 0.0086,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 29,
+        "displayedStation": 29,
+        "profileElevation": 100.4118,
+        "grade": 0.0084,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 29.5,
+        "displayedStation": 29.5,
+        "profileElevation": 100.41595000000001,
+        "grade": 0.0082,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 30,
+        "displayedStation": 30,
+        "profileElevation": 100.41999999999999,
+        "grade": 0.008,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 30.5,
+        "displayedStation": 30.5,
+        "profileElevation": 100.42395,
+        "grade": 0.0078,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 31,
+        "displayedStation": 31,
+        "profileElevation": 100.4278,
+        "grade": 0.007599999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 31.5,
+        "displayedStation": 31.5,
+        "profileElevation": 100.43155,
+        "grade": 0.0074,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 32,
+        "displayedStation": 32,
+        "profileElevation": 100.4352,
+        "grade": 0.0072,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 32.5,
+        "displayedStation": 32.5,
+        "profileElevation": 100.43875,
+        "grade": 0.006999999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 33,
+        "displayedStation": 33,
+        "profileElevation": 100.4422,
+        "grade": 0.0068000000000000005,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 33.5,
+        "displayedStation": 33.5,
+        "profileElevation": 100.44555,
+        "grade": 0.0066,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 34,
+        "displayedStation": 34,
+        "profileElevation": 100.4488,
+        "grade": 0.0063999999999999994,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 34.5,
+        "displayedStation": 34.5,
+        "profileElevation": 100.45195,
+        "grade": 0.006199999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 35,
+        "displayedStation": 35,
+        "profileElevation": 100.455,
+        "grade": 0.006,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 35.5,
+        "displayedStation": 35.5,
+        "profileElevation": 100.45795,
+        "grade": 0.0058,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 36,
+        "displayedStation": 36,
+        "profileElevation": 100.46079999999999,
+        "grade": 0.005599999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 36.5,
+        "displayedStation": 36.5,
+        "profileElevation": 100.46355,
+        "grade": 0.0054,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 37,
+        "displayedStation": 37,
+        "profileElevation": 100.4662,
+        "grade": 0.0052,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 37.5,
+        "displayedStation": 37.5,
+        "profileElevation": 100.46875,
+        "grade": 0.004999999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 38,
+        "displayedStation": 38,
+        "profileElevation": 100.47120000000001,
+        "grade": 0.0048000000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 38.5,
+        "displayedStation": 38.5,
+        "profileElevation": 100.47355,
+        "grade": 0.0046,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 39,
+        "displayedStation": 39,
+        "profileElevation": 100.4758,
+        "grade": 0.004399999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 39.5,
+        "displayedStation": 39.5,
+        "profileElevation": 100.47795,
+        "grade": 0.004199999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 40,
+        "displayedStation": 40,
+        "profileElevation": 100.48,
+        "grade": 0.004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 40.5,
+        "displayedStation": 40.5,
+        "profileElevation": 100.48195,
+        "grade": 0.0038000000000000013,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 41,
+        "displayedStation": 41,
+        "profileElevation": 100.48379999999999,
+        "grade": 0.003599999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 41.5,
+        "displayedStation": 41.5,
+        "profileElevation": 100.48555,
+        "grade": 0.0034000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 42,
+        "displayedStation": 42,
+        "profileElevation": 100.4872,
+        "grade": 0.003199999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 42.5,
+        "displayedStation": 42.5,
+        "profileElevation": 100.48875,
+        "grade": 0.002999999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 43,
+        "displayedStation": 43,
+        "profileElevation": 100.4902,
+        "grade": 0.0028000000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 43.5,
+        "displayedStation": 43.5,
+        "profileElevation": 100.49155,
+        "grade": 0.002599999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 44,
+        "displayedStation": 44,
+        "profileElevation": 100.49279999999999,
+        "grade": 0.0023999999999999994,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 44.5,
+        "displayedStation": 44.5,
+        "profileElevation": 100.49395,
+        "grade": 0.0022000000000000006,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 45,
+        "displayedStation": 45,
+        "profileElevation": 100.495,
+        "grade": 0.0019999999999999983,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 45.5,
+        "displayedStation": 45.5,
+        "profileElevation": 100.49595,
+        "grade": 0.0017999999999999995,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 46,
+        "displayedStation": 46,
+        "profileElevation": 100.49680000000001,
+        "grade": 0.0016000000000000007,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 46.5,
+        "displayedStation": 46.5,
+        "profileElevation": 100.49755,
+        "grade": 0.0013999999999999985,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 47,
+        "displayedStation": 47,
+        "profileElevation": 100.4982,
+        "grade": 0.0011999999999999997,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 47.5,
+        "displayedStation": 47.5,
+        "profileElevation": 100.49875,
+        "grade": 0.0010000000000000009,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 48,
+        "displayedStation": 48,
+        "profileElevation": 100.49919999999999,
+        "grade": 0.0007999999999999986,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 48.5,
+        "displayedStation": 48.5,
+        "profileElevation": 100.49955,
+        "grade": 0.0005999999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 49,
+        "displayedStation": 49,
+        "profileElevation": 100.49980000000001,
+        "grade": 0.00040000000000000105,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 49.5,
+        "displayedStation": 49.5,
+        "profileElevation": 100.49995,
+        "grade": 0.0001999999999999988,
+        "segmentId": "VP-1"
       },
       {
         "physicalDistance": 50,
         "displayedStation": 50,
-        "profileElevation": 0,
+        "profileElevation": 100.5,
         "grade": 0,
-        "segmentId": "VP-default"
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 50.5,
+        "displayedStation": 50.5,
+        "profileElevation": 100.49995,
+        "grade": -0.00020000000000000226,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 51,
+        "displayedStation": 51,
+        "profileElevation": 100.4998,
+        "grade": -0.00040000000000000105,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 51.5,
+        "displayedStation": 51.5,
+        "profileElevation": 100.49955,
+        "grade": -0.0005999999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 52,
+        "displayedStation": 52,
+        "profileElevation": 100.4992,
+        "grade": -0.0008000000000000021,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 52.5,
+        "displayedStation": 52.5,
+        "profileElevation": 100.49875,
+        "grade": -0.0010000000000000009,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 53,
+        "displayedStation": 53,
+        "profileElevation": 100.4982,
+        "grade": -0.0011999999999999997,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 53.5,
+        "displayedStation": 53.5,
+        "profileElevation": 100.49754999999999,
+        "grade": -0.001400000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 54,
+        "displayedStation": 54,
+        "profileElevation": 100.4968,
+        "grade": -0.0016000000000000007,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 54.5,
+        "displayedStation": 54.5,
+        "profileElevation": 100.49595000000001,
+        "grade": -0.0017999999999999995,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 55,
+        "displayedStation": 55,
+        "profileElevation": 100.49499999999999,
+        "grade": -0.0020000000000000018,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 55.5,
+        "displayedStation": 55.5,
+        "profileElevation": 100.49395,
+        "grade": -0.0022000000000000006,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 56,
+        "displayedStation": 56,
+        "profileElevation": 100.4928,
+        "grade": -0.0023999999999999994,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 56.5,
+        "displayedStation": 56.5,
+        "profileElevation": 100.49154999999999,
+        "grade": -0.0026000000000000016,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 57,
+        "displayedStation": 57,
+        "profileElevation": 100.4902,
+        "grade": -0.0028000000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 57.5,
+        "displayedStation": 57.5,
+        "profileElevation": 100.48875000000001,
+        "grade": -0.002999999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 58,
+        "displayedStation": 58,
+        "profileElevation": 100.4872,
+        "grade": -0.0032000000000000015,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 58.5,
+        "displayedStation": 58.5,
+        "profileElevation": 100.48555,
+        "grade": -0.0034000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 59,
+        "displayedStation": 59,
+        "profileElevation": 100.4838,
+        "grade": -0.003599999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 59.5,
+        "displayedStation": 59.5,
+        "profileElevation": 100.48195,
+        "grade": -0.0038000000000000013,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 60,
+        "displayedStation": 60,
+        "profileElevation": 100.48,
+        "grade": -0.004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 60.5,
+        "displayedStation": 60.5,
+        "profileElevation": 100.47794999999999,
+        "grade": -0.004200000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 61,
+        "displayedStation": 61,
+        "profileElevation": 100.47579999999999,
+        "grade": -0.004400000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 61.5,
+        "displayedStation": 61.5,
+        "profileElevation": 100.47355,
+        "grade": -0.0046,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 62,
+        "displayedStation": 62,
+        "profileElevation": 100.4712,
+        "grade": -0.004800000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 62.5,
+        "displayedStation": 62.5,
+        "profileElevation": 100.46875,
+        "grade": -0.005000000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 63,
+        "displayedStation": 63,
+        "profileElevation": 100.4662,
+        "grade": -0.0052,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 63.5,
+        "displayedStation": 63.5,
+        "profileElevation": 100.46355,
+        "grade": -0.005400000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 64,
+        "displayedStation": 64,
+        "profileElevation": 100.4608,
+        "grade": -0.005600000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 64.5,
+        "displayedStation": 64.5,
+        "profileElevation": 100.45795000000001,
+        "grade": -0.0058,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 65,
+        "displayedStation": 65,
+        "profileElevation": 100.455,
+        "grade": -0.006000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 65.5,
+        "displayedStation": 65.5,
+        "profileElevation": 100.45195,
+        "grade": -0.006200000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 66,
+        "displayedStation": 66,
+        "profileElevation": 100.44879999999999,
+        "grade": -0.0063999999999999994,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 66.5,
+        "displayedStation": 66.5,
+        "profileElevation": 100.44555,
+        "grade": -0.006600000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 67,
+        "displayedStation": 67,
+        "profileElevation": 100.4422,
+        "grade": -0.0068000000000000005,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 67.5,
+        "displayedStation": 67.5,
+        "profileElevation": 100.43875,
+        "grade": -0.006999999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 68,
+        "displayedStation": 68,
+        "profileElevation": 100.4352,
+        "grade": -0.0072000000000000015,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 68.5,
+        "displayedStation": 68.5,
+        "profileElevation": 100.43155,
+        "grade": -0.0074,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 69,
+        "displayedStation": 69,
+        "profileElevation": 100.42779999999999,
+        "grade": -0.007600000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 69.5,
+        "displayedStation": 69.5,
+        "profileElevation": 100.42395,
+        "grade": -0.007800000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 70,
+        "displayedStation": 70,
+        "profileElevation": 100.42,
+        "grade": -0.008,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 70.5,
+        "displayedStation": 70.5,
+        "profileElevation": 100.41595,
+        "grade": -0.008200000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 71,
+        "displayedStation": 71,
+        "profileElevation": 100.4118,
+        "grade": -0.008400000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 71.5,
+        "displayedStation": 71.5,
+        "profileElevation": 100.40755,
+        "grade": -0.0086,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 72,
+        "displayedStation": 72,
+        "profileElevation": 100.4032,
+        "grade": -0.008800000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 72.5,
+        "displayedStation": 72.5,
+        "profileElevation": 100.39875,
+        "grade": -0.009000000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 73,
+        "displayedStation": 73,
+        "profileElevation": 100.3942,
+        "grade": -0.0092,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 73.5,
+        "displayedStation": 73.5,
+        "profileElevation": 100.38955,
+        "grade": -0.009400000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 74,
+        "displayedStation": 74,
+        "profileElevation": 100.3848,
+        "grade": -0.009600000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 74.5,
+        "displayedStation": 74.5,
+        "profileElevation": 100.37995,
+        "grade": -0.0098,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 75,
+        "displayedStation": 75,
+        "profileElevation": 100.375,
+        "grade": -0.010000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 75.5,
+        "displayedStation": 75.5,
+        "profileElevation": 100.36995,
+        "grade": -0.0102,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 76,
+        "displayedStation": 76,
+        "profileElevation": 100.3648,
+        "grade": -0.0104,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 76.5,
+        "displayedStation": 76.5,
+        "profileElevation": 100.35955,
+        "grade": -0.010600000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 77,
+        "displayedStation": 77,
+        "profileElevation": 100.3542,
+        "grade": -0.0108,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 77.5,
+        "displayedStation": 77.5,
+        "profileElevation": 100.34875,
+        "grade": -0.011,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 78,
+        "displayedStation": 78,
+        "profileElevation": 100.3432,
+        "grade": -0.011200000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 78.5,
+        "displayedStation": 78.5,
+        "profileElevation": 100.33755,
+        "grade": -0.011400000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 79,
+        "displayedStation": 79,
+        "profileElevation": 100.3318,
+        "grade": -0.011600000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 79.5,
+        "displayedStation": 79.5,
+        "profileElevation": 100.32595,
+        "grade": -0.011800000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 80,
+        "displayedStation": 80,
+        "profileElevation": 100.32,
+        "grade": -0.012,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 80.5,
+        "displayedStation": 80.5,
+        "profileElevation": 100.31395,
+        "grade": -0.012199999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 81,
+        "displayedStation": 81,
+        "profileElevation": 100.3078,
+        "grade": -0.012399999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 81.5,
+        "displayedStation": 81.5,
+        "profileElevation": 100.30154999999999,
+        "grade": -0.012600000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 82,
+        "displayedStation": 82,
+        "profileElevation": 100.2952,
+        "grade": -0.012800000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 82.5,
+        "displayedStation": 82.5,
+        "profileElevation": 100.28875000000001,
+        "grade": -0.013000000000000001,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 83,
+        "displayedStation": 83,
+        "profileElevation": 100.2822,
+        "grade": -0.0132,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 83.5,
+        "displayedStation": 83.5,
+        "profileElevation": 100.27555,
+        "grade": -0.013399999999999999,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 84,
+        "displayedStation": 84,
+        "profileElevation": 100.26880000000001,
+        "grade": -0.013600000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 84.5,
+        "displayedStation": 84.5,
+        "profileElevation": 100.26195,
+        "grade": -0.013800000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 85,
+        "displayedStation": 85,
+        "profileElevation": 100.25500000000001,
+        "grade": -0.014000000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 85.5,
+        "displayedStation": 85.5,
+        "profileElevation": 100.24794999999999,
+        "grade": -0.0142,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 86,
+        "displayedStation": 86,
+        "profileElevation": 100.2408,
+        "grade": -0.0144,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 86.5,
+        "displayedStation": 86.5,
+        "profileElevation": 100.23355000000001,
+        "grade": -0.014599999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 87,
+        "displayedStation": 87,
+        "profileElevation": 100.22619999999999,
+        "grade": -0.014800000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 87.5,
+        "displayedStation": 87.5,
+        "profileElevation": 100.21875,
+        "grade": -0.015000000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 88,
+        "displayedStation": 88,
+        "profileElevation": 100.2112,
+        "grade": -0.015200000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 88.5,
+        "displayedStation": 88.5,
+        "profileElevation": 100.20354999999999,
+        "grade": -0.0154,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 89,
+        "displayedStation": 89,
+        "profileElevation": 100.1958,
+        "grade": -0.0156,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 89.5,
+        "displayedStation": 89.5,
+        "profileElevation": 100.18795,
+        "grade": -0.015799999999999998,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 90,
+        "displayedStation": 90,
+        "profileElevation": 100.17999999999999,
+        "grade": -0.016000000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 90.5,
+        "displayedStation": 90.5,
+        "profileElevation": 100.17195,
+        "grade": -0.016200000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 91,
+        "displayedStation": 91,
+        "profileElevation": 100.1638,
+        "grade": -0.0164,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 91.5,
+        "displayedStation": 91.5,
+        "profileElevation": 100.15555,
+        "grade": -0.0166,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 92,
+        "displayedStation": 92,
+        "profileElevation": 100.1472,
+        "grade": -0.0168,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 92.5,
+        "displayedStation": 92.5,
+        "profileElevation": 100.13874999999999,
+        "grade": -0.017000000000000005,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 93,
+        "displayedStation": 93,
+        "profileElevation": 100.1302,
+        "grade": -0.017200000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 93.5,
+        "displayedStation": 93.5,
+        "profileElevation": 100.12155,
+        "grade": -0.017400000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 94,
+        "displayedStation": 94,
+        "profileElevation": 100.1128,
+        "grade": -0.0176,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 94.5,
+        "displayedStation": 94.5,
+        "profileElevation": 100.10395,
+        "grade": -0.0178,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 95,
+        "displayedStation": 95,
+        "profileElevation": 100.095,
+        "grade": -0.018,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 95.5,
+        "displayedStation": 95.5,
+        "profileElevation": 100.08595,
+        "grade": -0.018200000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 96,
+        "displayedStation": 96,
+        "profileElevation": 100.0768,
+        "grade": -0.018400000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 96.5,
+        "displayedStation": 96.5,
+        "profileElevation": 100.06755000000001,
+        "grade": -0.018600000000000002,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 97,
+        "displayedStation": 97,
+        "profileElevation": 100.0582,
+        "grade": -0.0188,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 97.5,
+        "displayedStation": 97.5,
+        "profileElevation": 100.04875,
+        "grade": -0.019,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 98,
+        "displayedStation": 98,
+        "profileElevation": 100.0392,
+        "grade": -0.0192,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 98.5,
+        "displayedStation": 98.5,
+        "profileElevation": 100.02955,
+        "grade": -0.019400000000000004,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 99,
+        "displayedStation": 99,
+        "profileElevation": 100.0198,
+        "grade": -0.019600000000000003,
+        "segmentId": "VP-1"
+      },
+      {
+        "physicalDistance": 99.5,
+        "displayedStation": 99.5,
+        "profileElevation": 100.00994999999999,
+        "grade": -0.0198,
+        "segmentId": "VP-1"
       },
       {
         "physicalDistance": 100,
         "displayedStation": 100,
-        "profileElevation": 0,
-        "grade": 0,
-        "segmentId": "VP-default"
+        "profileElevation": 100,
+        "grade": -0.02,
+        "segmentId": "VP-1"
       }
     ],
-    "gradeBreaks": []
+    "gradeBreaks": [
+      {
+        "id": "VP-1-bvc",
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "outgoingGrade": 0.02
+      },
+      {
+        "id": "VP-1-evc",
+        "physicalDistance": 100,
+        "displayedStation": 100,
+        "incomingGrade": -0.02
+      }
+    ]
   },
   "stations": {
     "entries": [
@@ -5304,8 +6706,8 @@
       },
       {
         "entryId": "ST-001",
-        "displayedStation": 50,
-        "physicalDistance": 50,
+        "displayedStation": 25,
+        "physicalDistance": 25,
         "sortIndex": 1,
         "provenance": {
           "source": "interval"
@@ -5313,9 +6715,27 @@
       },
       {
         "entryId": "ST-002",
+        "displayedStation": 50,
+        "physicalDistance": 50,
+        "sortIndex": 2,
+        "provenance": {
+          "source": "interval"
+        }
+      },
+      {
+        "entryId": "ST-003",
+        "displayedStation": 75,
+        "physicalDistance": 75,
+        "sortIndex": 3,
+        "provenance": {
+          "source": "interval"
+        }
+      },
+      {
+        "entryId": "ST-004",
         "displayedStation": 100,
         "physicalDistance": 100,
-        "sortIndex": 2,
+        "sortIndex": 4,
         "provenance": {
           "source": "end"
         }
@@ -5327,13 +6747,13 @@
   "grid": {
     "points": [
       {
-        "id": "GP-gc01-000-000",
+        "id": "GP-gc05-000-000",
         "physicalDistance": 0,
         "displayedStation": 0,
         "offset": 0,
         "x": 0,
         "y": 0,
-        "z": 0,
+        "z": 100,
         "localFrame": {
           "tangent": {
             "x": 1,
@@ -5356,7 +6776,7 @@
           "transverseIndex": 0
         },
         "source": {
-          "alignmentId": "gc01-alignment",
+          "alignmentId": "gc05-alignment",
           "stationId": "ST-000",
           "elementId": "L1"
         },
@@ -5364,22 +6784,22 @@
           "edge"
         ],
         "zProvenance": {
-          "profileElevation": 0,
+          "profileElevation": 100,
           "crossfallOffset": 0,
           "structuralReferenceOffset": 0,
           "sectionDepthOffset": 0,
           "girderEccentricity": 0
         },
-        "gridDefinitionId": "GRID-gc01-default"
+        "gridDefinitionId": "GRID-gc05-default"
       },
       {
-        "id": "GP-gc01-001-000",
-        "physicalDistance": 50,
-        "displayedStation": 50,
+        "id": "GP-gc05-001-000",
+        "physicalDistance": 25,
+        "displayedStation": 25,
         "offset": 0,
-        "x": 50,
+        "x": 25,
         "y": 0,
-        "z": 0,
+        "z": 100.375,
         "localFrame": {
           "tangent": {
             "x": 1,
@@ -5402,7 +6822,7 @@
           "transverseIndex": 0
         },
         "source": {
-          "alignmentId": "gc01-alignment",
+          "alignmentId": "gc05-alignment",
           "stationId": "ST-001",
           "elementId": "L1"
         },
@@ -5410,22 +6830,22 @@
           "edge"
         ],
         "zProvenance": {
-          "profileElevation": 0,
+          "profileElevation": 100.375,
           "crossfallOffset": 0,
           "structuralReferenceOffset": 0,
           "sectionDepthOffset": 0,
           "girderEccentricity": 0
         },
-        "gridDefinitionId": "GRID-gc01-default"
+        "gridDefinitionId": "GRID-gc05-default"
       },
       {
-        "id": "GP-gc01-002-000",
-        "physicalDistance": 100,
-        "displayedStation": 100,
+        "id": "GP-gc05-002-000",
+        "physicalDistance": 50,
+        "displayedStation": 50,
         "offset": 0,
-        "x": 100,
+        "x": 50,
         "y": 0,
-        "z": 0,
+        "z": 100.5,
         "localFrame": {
           "tangent": {
             "x": 1,
@@ -5448,7 +6868,7 @@
           "transverseIndex": 0
         },
         "source": {
-          "alignmentId": "gc01-alignment",
+          "alignmentId": "gc05-alignment",
           "stationId": "ST-002",
           "elementId": "L1"
         },
@@ -5456,55 +6876,169 @@
           "edge"
         ],
         "zProvenance": {
-          "profileElevation": 0,
+          "profileElevation": 100.5,
           "crossfallOffset": 0,
           "structuralReferenceOffset": 0,
           "sectionDepthOffset": 0,
           "girderEccentricity": 0
         },
-        "gridDefinitionId": "GRID-gc01-default"
+        "gridDefinitionId": "GRID-gc05-default"
+      },
+      {
+        "id": "GP-gc05-003-000",
+        "physicalDistance": 75,
+        "displayedStation": 75,
+        "offset": 0,
+        "x": 75,
+        "y": 0,
+        "z": 100.375,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 3,
+          "transverseIndex": 0
+        },
+        "source": {
+          "alignmentId": "gc05-alignment",
+          "stationId": "ST-003",
+          "elementId": "L1"
+        },
+        "roles": [
+          "edge"
+        ],
+        "zProvenance": {
+          "profileElevation": 100.375,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc05-default"
+      },
+      {
+        "id": "GP-gc05-004-000",
+        "physicalDistance": 100,
+        "displayedStation": 100,
+        "offset": 0,
+        "x": 100,
+        "y": 0,
+        "z": 100,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 4,
+          "transverseIndex": 0
+        },
+        "source": {
+          "alignmentId": "gc05-alignment",
+          "stationId": "ST-004",
+          "elementId": "L1"
+        },
+        "roles": [
+          "edge"
+        ],
+        "zProvenance": {
+          "profileElevation": 100,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc05-default"
       }
     ],
     "lines": [
       {
-        "id": "GL-gc01-L-000",
-        "gridDefinitionId": "GRID-gc01-default",
+        "id": "GL-gc05-L-000",
+        "gridDefinitionId": "GRID-gc05-default",
         "direction": "longitudinal",
         "index": 0,
         "pointIds": [
-          "GP-gc01-000-000",
-          "GP-gc01-001-000",
-          "GP-gc01-002-000"
+          "GP-gc05-000-000",
+          "GP-gc05-001-000",
+          "GP-gc05-002-000",
+          "GP-gc05-003-000",
+          "GP-gc05-004-000"
         ],
         "role": "edge"
       },
       {
-        "id": "GL-gc01-T-000",
-        "gridDefinitionId": "GRID-gc01-default",
+        "id": "GL-gc05-T-000",
+        "gridDefinitionId": "GRID-gc05-default",
         "direction": "transverse",
         "index": 0,
         "pointIds": [
-          "GP-gc01-000-000"
+          "GP-gc05-000-000"
         ],
         "role": "cross_girder"
       },
       {
-        "id": "GL-gc01-T-001",
-        "gridDefinitionId": "GRID-gc01-default",
+        "id": "GL-gc05-T-001",
+        "gridDefinitionId": "GRID-gc05-default",
         "direction": "transverse",
         "index": 1,
         "pointIds": [
-          "GP-gc01-001-000"
+          "GP-gc05-001-000"
         ],
         "role": "cross_girder"
       },
       {
-        "id": "GL-gc01-T-002",
-        "gridDefinitionId": "GRID-gc01-default",
+        "id": "GL-gc05-T-002",
+        "gridDefinitionId": "GRID-gc05-default",
         "direction": "transverse",
         "index": 2,
         "pointIds": [
-          "GP-gc01-002-000"
+          "GP-gc05-002-000"
+        ],
+        "role": "cross_girder"
+      },
+      {
+        "id": "GL-gc05-T-003",
+        "gridDefinitionId": "GRID-gc05-default",
+        "direction": "transverse",
+        "index": 3,
+        "pointIds": [
+          "GP-gc05-003-000"
+        ],
+        "role": "cross_girder"
+      },
+      {
+        "id": "GL-gc05-T-004",
+        "gridDefinitionId": "GRID-gc05-default",
+        "direction": "transverse",
+        "index": 4,
+        "pointIds": [
+          "GP-gc05-004-000"
         ],
         "role": "cross_girder"
       }
@@ -5521,24 +7055,24 @@
   },
   "sections": [
     {
-      "id": "SEC-gc01-000",
+      "id": "SEC-gc05-000",
       "physicalDistance": 0,
       "displayedStation": 0,
       "width": 0,
       "leftEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100
       },
       "rightEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100
       },
       "templateId": "CS-default",
       "points": [
         {
-          "id": "GP-gc01-000-000",
+          "id": "GP-gc05-000-000",
           "offset": 0,
-          "z": 0,
+          "z": 100,
           "x": 0,
           "y": 0
         }
@@ -5554,24 +7088,57 @@
       }
     },
     {
-      "id": "SEC-gc01-001",
+      "id": "SEC-gc05-001",
+      "physicalDistance": 25,
+      "displayedStation": 25,
+      "width": 0,
+      "leftEdge": {
+        "offset": 0,
+        "z": 100.375
+      },
+      "rightEdge": {
+        "offset": 0,
+        "z": 100.375
+      },
+      "templateId": "CS-default",
+      "points": [
+        {
+          "id": "GP-gc05-001-000",
+          "offset": 0,
+          "z": 100.375,
+          "x": 25,
+          "y": 0
+        }
+      ],
+      "crossfall": {
+        "physicalDistance": 25,
+        "displayedStation": 25,
+        "mode": "flat",
+        "leftSlopePercent": 0,
+        "rightSlopePercent": 0,
+        "pivotDistance": 0,
+        "source": "flat"
+      }
+    },
+    {
+      "id": "SEC-gc05-002",
       "physicalDistance": 50,
       "displayedStation": 50,
       "width": 0,
       "leftEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100.5
       },
       "rightEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100.5
       },
       "templateId": "CS-default",
       "points": [
         {
-          "id": "GP-gc01-001-000",
+          "id": "GP-gc05-002-000",
           "offset": 0,
-          "z": 0,
+          "z": 100.5,
           "x": 50,
           "y": 0
         }
@@ -5587,24 +7154,57 @@
       }
     },
     {
-      "id": "SEC-gc01-002",
+      "id": "SEC-gc05-003",
+      "physicalDistance": 75,
+      "displayedStation": 75,
+      "width": 0,
+      "leftEdge": {
+        "offset": 0,
+        "z": 100.375
+      },
+      "rightEdge": {
+        "offset": 0,
+        "z": 100.375
+      },
+      "templateId": "CS-default",
+      "points": [
+        {
+          "id": "GP-gc05-003-000",
+          "offset": 0,
+          "z": 100.375,
+          "x": 75,
+          "y": 0
+        }
+      ],
+      "crossfall": {
+        "physicalDistance": 75,
+        "displayedStation": 75,
+        "mode": "flat",
+        "leftSlopePercent": 0,
+        "rightSlopePercent": 0,
+        "pivotDistance": 0,
+        "source": "flat"
+      }
+    },
+    {
+      "id": "SEC-gc05-004",
       "physicalDistance": 100,
       "displayedStation": 100,
       "width": 0,
       "leftEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100
       },
       "rightEdge": {
         "offset": 0,
-        "z": 0
+        "z": 100
       },
       "templateId": "CS-default",
       "points": [
         {
-          "id": "GP-gc01-002-000",
+          "id": "GP-gc05-004-000",
           "offset": 0,
-          "z": 0,
+          "z": 100,
           "x": 100,
           "y": 0
         }
@@ -5627,55 +7227,55 @@
         "id": "liner.horizontal",
         "kind": "horizontal",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.vertical",
         "kind": "vertical",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.stations",
         "kind": "stations",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.grid",
         "kind": "grid",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.spans",
         "kind": "spans",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.piers",
         "kind": "piers",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.frameHints",
         "kind": "frameHints",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.sections",
         "kind": "sections",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       },
       {
         "id": "liner.diagnostics",
         "kind": "diagnostics",
         "sourceEntityIds": [],
-        "revision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+        "revision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
       }
     ],
     "edges": [
@@ -5705,6 +7305,6 @@
         "invalidates": true
       }
     ],
-    "createdFromSourceRevision": "9d58a6c26615b71f1e049bafcfc69fcb40132c93863482c5dd4e5c1192b07dc3"
+    "createdFromSourceRevision": "f9c0baae5e251232fe1b2316635b60f0f5a964b15eccce6166c61cd8aa5a1dfa"
   }
 }

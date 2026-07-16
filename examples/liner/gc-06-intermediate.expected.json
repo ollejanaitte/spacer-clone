@@ -1,11 +1,1935 @@
 {
   "schemaVersion": "0.2.0",
+  "computedAt": "2026-01-01T00:00:00.000Z",
+  "sourceRevision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87",
   "linerModelId": "gc06",
-  "gridPointSamples": [
-    { "id": "GP-gc06-000-000", "x": 0, "y": -5, "z": 10 },
-    { "id": "GP-gc06-001-001", "x": 10, "y": 0, "z": 10 },
-    { "id": "GP-gc06-002-002", "x": 20, "y": 5, "z": 10 }
+  "coordinatePolicyId": "global",
+  "horizontal": {
+    "totalLength": 20,
+    "segments": [
+      {
+        "id": "HSEG-L1",
+        "sourceElementId": "L1",
+        "type": "straight",
+        "startPhysicalDistance": 0,
+        "endPhysicalDistance": 20,
+        "startDisplayedStation": 0,
+        "endDisplayedStation": 20,
+        "startAzimuth": 0,
+        "endAzimuth": 0,
+        "startCurvature": 0,
+        "endCurvature": 0
+      }
+    ],
+    "sampledPoints": [
+      {
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "x": 0,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 0.5,
+        "displayedStation": 0.5,
+        "x": 0.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 1,
+        "displayedStation": 1,
+        "x": 1,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 1.5,
+        "displayedStation": 1.5,
+        "x": 1.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 2,
+        "displayedStation": 2,
+        "x": 2,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 2.5,
+        "displayedStation": 2.5,
+        "x": 2.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 3,
+        "displayedStation": 3,
+        "x": 3,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 3.5,
+        "displayedStation": 3.5,
+        "x": 3.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 4,
+        "displayedStation": 4,
+        "x": 4,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 4.5,
+        "displayedStation": 4.5,
+        "x": 4.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 5,
+        "displayedStation": 5,
+        "x": 5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 5.5,
+        "displayedStation": 5.5,
+        "x": 5.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 6,
+        "displayedStation": 6,
+        "x": 6,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 6.5,
+        "displayedStation": 6.5,
+        "x": 6.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 7,
+        "displayedStation": 7,
+        "x": 7,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 7.5,
+        "displayedStation": 7.5,
+        "x": 7.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 8,
+        "displayedStation": 8,
+        "x": 8,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 8.5,
+        "displayedStation": 8.5,
+        "x": 8.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 9,
+        "displayedStation": 9,
+        "x": 9,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 9.5,
+        "displayedStation": 9.5,
+        "x": 9.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "x": 10,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 10.5,
+        "displayedStation": 10.5,
+        "x": 10.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 11,
+        "displayedStation": 11,
+        "x": 11,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 11.5,
+        "displayedStation": 11.5,
+        "x": 11.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 12,
+        "displayedStation": 12,
+        "x": 12,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 12.5,
+        "displayedStation": 12.5,
+        "x": 12.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 13,
+        "displayedStation": 13,
+        "x": 13,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 13.5,
+        "displayedStation": 13.5,
+        "x": 13.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 14,
+        "displayedStation": 14,
+        "x": 14,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 14.5,
+        "displayedStation": 14.5,
+        "x": 14.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 15,
+        "displayedStation": 15,
+        "x": 15,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 15.5,
+        "displayedStation": 15.5,
+        "x": 15.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 16,
+        "displayedStation": 16,
+        "x": 16,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 16.5,
+        "displayedStation": 16.5,
+        "x": 16.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 17,
+        "displayedStation": 17,
+        "x": 17,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 17.5,
+        "displayedStation": 17.5,
+        "x": 17.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 18,
+        "displayedStation": 18,
+        "x": 18,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 18.5,
+        "displayedStation": 18.5,
+        "x": 18.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 19,
+        "displayedStation": 19,
+        "x": 19,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 19.5,
+        "displayedStation": 19.5,
+        "x": 19.5,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      },
+      {
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "x": 20,
+        "y": 0,
+        "azimuth": 0,
+        "curvature": 0,
+        "segmentId": "L1",
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      }
+    ],
+    "piPoints": []
+  },
+  "vertical": {
+    "profileElevation": 10,
+    "segments": [
+      {
+        "id": "VP-default",
+        "startPhysicalDistance": 0,
+        "endPhysicalDistance": 20,
+        "startDisplayedStation": 0,
+        "endDisplayedStation": 20,
+        "startElevation": 10,
+        "endElevation": 10,
+        "startGrade": 0,
+        "endGrade": 0
+      }
+    ],
+    "sampledPoints": [
+      {
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "profileElevation": 10,
+        "grade": 0,
+        "segmentId": "VP-default"
+      },
+      {
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "profileElevation": 10,
+        "grade": 0,
+        "segmentId": "VP-default"
+      },
+      {
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "profileElevation": 10,
+        "grade": 0,
+        "segmentId": "VP-default"
+      }
+    ],
+    "gradeBreaks": []
+  },
+  "stations": {
+    "entries": [
+      {
+        "entryId": "ST-000",
+        "displayedStation": 0,
+        "physicalDistance": 0,
+        "sortIndex": 0,
+        "provenance": {
+          "source": "start"
+        }
+      },
+      {
+        "entryId": "ST-001",
+        "displayedStation": 10,
+        "physicalDistance": 10,
+        "sortIndex": 1,
+        "provenance": {
+          "source": "interval"
+        }
+      },
+      {
+        "entryId": "ST-002",
+        "displayedStation": 20,
+        "physicalDistance": 20,
+        "sortIndex": 2,
+        "provenance": {
+          "source": "end"
+        }
+      }
+    ],
+    "originDisplayedStation": 0,
+    "increasingDirection": "forward"
+  },
+  "grid": {
+    "points": [
+      {
+        "id": "GP-gc06-000-000",
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "offset": -5,
+        "x": 0,
+        "y": -5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 0,
+          "transverseIndex": 0
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-000",
+          "elementId": "L1"
+        },
+        "roles": [
+          "edge"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-000-001",
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "offset": 0,
+        "x": 0,
+        "y": 0,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 0,
+          "transverseIndex": 1
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-000",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-000-002",
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "offset": 5,
+        "x": 0,
+        "y": 5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 0,
+          "transverseIndex": 2
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-000",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-001-000",
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "offset": -5,
+        "x": 10,
+        "y": -5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 1,
+          "transverseIndex": 0
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-001",
+          "elementId": "L1"
+        },
+        "roles": [
+          "edge"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-001-001",
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "offset": 0,
+        "x": 10,
+        "y": 0,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 1,
+          "transverseIndex": 1
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-001",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-001-002",
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "offset": 5,
+        "x": 10,
+        "y": 5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 1,
+          "transverseIndex": 2
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-001",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-002-000",
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "offset": -5,
+        "x": 20,
+        "y": -5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 2,
+          "transverseIndex": 0
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-002",
+          "elementId": "L1"
+        },
+        "roles": [
+          "edge"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-002-001",
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "offset": 0,
+        "x": 20,
+        "y": 0,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 2,
+          "transverseIndex": 1
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-002",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      },
+      {
+        "id": "GP-gc06-002-002",
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "offset": 5,
+        "x": 20,
+        "y": 5,
+        "z": 10,
+        "localFrame": {
+          "tangent": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "normal": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "binormal": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        },
+        "labels": {
+          "longitudinalIndex": 2,
+          "transverseIndex": 2
+        },
+        "source": {
+          "alignmentId": "gc06-alignment",
+          "stationId": "ST-002",
+          "elementId": "L1"
+        },
+        "roles": [
+          "main_girder"
+        ],
+        "zProvenance": {
+          "profileElevation": 10,
+          "crossfallOffset": 0,
+          "structuralReferenceOffset": 0,
+          "sectionDepthOffset": 0,
+          "girderEccentricity": 0
+        },
+        "gridDefinitionId": "GRID-gc06-default"
+      }
+    ],
+    "lines": [
+      {
+        "id": "GL-gc06-L-000",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "longitudinal",
+        "index": 0,
+        "pointIds": [
+          "GP-gc06-000-000",
+          "GP-gc06-001-000",
+          "GP-gc06-002-000"
+        ],
+        "role": "edge"
+      },
+      {
+        "id": "GL-gc06-L-001",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "longitudinal",
+        "index": 1,
+        "pointIds": [
+          "GP-gc06-000-001",
+          "GP-gc06-001-001",
+          "GP-gc06-002-001"
+        ],
+        "role": "main_girder"
+      },
+      {
+        "id": "GL-gc06-L-002",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "longitudinal",
+        "index": 2,
+        "pointIds": [
+          "GP-gc06-000-002",
+          "GP-gc06-001-002",
+          "GP-gc06-002-002"
+        ],
+        "role": "main_girder"
+      },
+      {
+        "id": "GL-gc06-T-000",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "transverse",
+        "index": 0,
+        "pointIds": [
+          "GP-gc06-000-000",
+          "GP-gc06-000-001",
+          "GP-gc06-000-002"
+        ],
+        "role": "cross_girder"
+      },
+      {
+        "id": "GL-gc06-T-001",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "transverse",
+        "index": 1,
+        "pointIds": [
+          "GP-gc06-001-000",
+          "GP-gc06-001-001",
+          "GP-gc06-001-002"
+        ],
+        "role": "cross_girder"
+      },
+      {
+        "id": "GL-gc06-T-002",
+        "gridDefinitionId": "GRID-gc06-default",
+        "direction": "transverse",
+        "index": 2,
+        "pointIds": [
+          "GP-gc06-002-000",
+          "GP-gc06-002-001",
+          "GP-gc06-002-002"
+        ],
+        "role": "cross_girder"
+      }
+    ],
+    "cells": [
+      {
+        "id": "GC-gc06-000-000",
+        "cornerPointIds": [
+          "GP-gc06-000-000",
+          "GP-gc06-001-000",
+          "GP-gc06-001-001",
+          "GP-gc06-000-001"
+        ]
+      },
+      {
+        "id": "GC-gc06-000-001",
+        "cornerPointIds": [
+          "GP-gc06-000-001",
+          "GP-gc06-001-001",
+          "GP-gc06-001-002",
+          "GP-gc06-000-002"
+        ]
+      },
+      {
+        "id": "GC-gc06-001-000",
+        "cornerPointIds": [
+          "GP-gc06-001-000",
+          "GP-gc06-002-000",
+          "GP-gc06-002-001",
+          "GP-gc06-001-001"
+        ]
+      },
+      {
+        "id": "GC-gc06-001-001",
+        "cornerPointIds": [
+          "GP-gc06-001-001",
+          "GP-gc06-002-001",
+          "GP-gc06-002-002",
+          "GP-gc06-001-002"
+        ]
+      }
+    ]
+  },
+  "spans": [],
+  "piers": [],
+  "frameHints": {
+    "defaultMemberGroupKey": "default",
+    "memberGroupRules": [],
+    "supportTemplates": [],
+    "connectivityMode": "grid_full"
+  },
+  "sections": [
+    {
+      "id": "SEC-gc06-000",
+      "physicalDistance": 0,
+      "displayedStation": 0,
+      "width": 10,
+      "leftEdge": {
+        "offset": -5,
+        "z": 10
+      },
+      "rightEdge": {
+        "offset": 5,
+        "z": 10
+      },
+      "templateId": "CS-default",
+      "points": [
+        {
+          "id": "GP-gc06-000-000",
+          "offset": -5,
+          "z": 10,
+          "x": 0,
+          "y": -5
+        },
+        {
+          "id": "GP-gc06-000-001",
+          "offset": 0,
+          "z": 10,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "GP-gc06-000-002",
+          "offset": 5,
+          "z": 10,
+          "x": 0,
+          "y": 5
+        }
+      ],
+      "crossfall": {
+        "physicalDistance": 0,
+        "displayedStation": 0,
+        "mode": "flat",
+        "leftSlopePercent": 0,
+        "rightSlopePercent": 0,
+        "pivotDistance": 0,
+        "source": "flat"
+      }
+    },
+    {
+      "id": "SEC-gc06-001",
+      "physicalDistance": 10,
+      "displayedStation": 10,
+      "width": 10,
+      "leftEdge": {
+        "offset": -5,
+        "z": 10
+      },
+      "rightEdge": {
+        "offset": 5,
+        "z": 10
+      },
+      "templateId": "CS-default",
+      "points": [
+        {
+          "id": "GP-gc06-001-000",
+          "offset": -5,
+          "z": 10,
+          "x": 10,
+          "y": -5
+        },
+        {
+          "id": "GP-gc06-001-001",
+          "offset": 0,
+          "z": 10,
+          "x": 10,
+          "y": 0
+        },
+        {
+          "id": "GP-gc06-001-002",
+          "offset": 5,
+          "z": 10,
+          "x": 10,
+          "y": 5
+        }
+      ],
+      "crossfall": {
+        "physicalDistance": 10,
+        "displayedStation": 10,
+        "mode": "flat",
+        "leftSlopePercent": 0,
+        "rightSlopePercent": 0,
+        "pivotDistance": 0,
+        "source": "flat"
+      }
+    },
+    {
+      "id": "SEC-gc06-002",
+      "physicalDistance": 20,
+      "displayedStation": 20,
+      "width": 10,
+      "leftEdge": {
+        "offset": -5,
+        "z": 10
+      },
+      "rightEdge": {
+        "offset": 5,
+        "z": 10
+      },
+      "templateId": "CS-default",
+      "points": [
+        {
+          "id": "GP-gc06-002-000",
+          "offset": -5,
+          "z": 10,
+          "x": 20,
+          "y": -5
+        },
+        {
+          "id": "GP-gc06-002-001",
+          "offset": 0,
+          "z": 10,
+          "x": 20,
+          "y": 0
+        },
+        {
+          "id": "GP-gc06-002-002",
+          "offset": 5,
+          "z": 10,
+          "x": 20,
+          "y": 5
+        }
+      ],
+      "crossfall": {
+        "physicalDistance": 20,
+        "displayedStation": 20,
+        "mode": "flat",
+        "leftSlopePercent": 0,
+        "rightSlopePercent": 0,
+        "pivotDistance": 0,
+        "source": "flat"
+      }
+    }
   ],
-  "nodeCount": 9,
-  "longitudinalMemberCount": 6
+  "diagnostics": [],
+  "dependencyGraph": {
+    "nodes": [
+      {
+        "id": "liner.horizontal",
+        "kind": "horizontal",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.vertical",
+        "kind": "vertical",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.stations",
+        "kind": "stations",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.grid",
+        "kind": "grid",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.spans",
+        "kind": "spans",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.piers",
+        "kind": "piers",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.frameHints",
+        "kind": "frameHints",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.sections",
+        "kind": "sections",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      },
+      {
+        "id": "liner.diagnostics",
+        "kind": "diagnostics",
+        "sourceEntityIds": [],
+        "revision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+      }
+    ],
+    "edges": [
+      {
+        "fromNodeId": "liner.horizontal",
+        "toNodeId": "liner.stations",
+        "invalidates": true
+      },
+      {
+        "fromNodeId": "liner.horizontal",
+        "toNodeId": "liner.grid",
+        "invalidates": true
+      },
+      {
+        "fromNodeId": "liner.vertical",
+        "toNodeId": "liner.grid",
+        "invalidates": true
+      },
+      {
+        "fromNodeId": "liner.grid",
+        "toNodeId": "liner.frameHints",
+        "invalidates": true
+      },
+      {
+        "fromNodeId": "liner.grid",
+        "toNodeId": "liner.sections",
+        "invalidates": true
+      }
+    ],
+    "createdFromSourceRevision": "6e4931fb1d5537565e7af6981a427c74fc77b9befc4ebd6700f182bb48426f87"
+  }
 }
