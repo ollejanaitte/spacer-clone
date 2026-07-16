@@ -119,6 +119,11 @@ examples/liner/gc-06-intermediate.expected.json
 
 P2-0 status: `gc-06-intermediate.expected.json` is the current on-disk naming convention. `gc-06-project.generated.json` is still a planned committed fixture; the GC-06 headless validation path is currently covered by Vitest instead of that file.
 
+P1-D03 status: this remains the Phase 1 decision. The generated project fixture
+is not committed in P1-D03; `createHeadlessLinerFrameProject` tests continue to
+prove the GC-06 mapper → project schema path without making tests depend on an
+absent `gc-06-project.generated.json`.
+
 ### 5. Merge policy
 
 When liner regenerates the frame model:

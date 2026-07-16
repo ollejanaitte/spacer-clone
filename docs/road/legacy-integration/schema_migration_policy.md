@@ -68,6 +68,12 @@ gc-06-project.generated.json → validate against project.schema.json (current +
 
 Required before enabling frame generate in production.
 
+P1-D03 status: the committed generated-project fixture is deferred. Current
+Phase 1 compatibility evidence comes from focused Vitest coverage of
+`createHeadlessLinerFrameProject`, `validateGeneratedLinerProject`,
+`attachLinerMappingToProject`, and legacy read-old/write-target persistence
+tests. No schema or migration version change is introduced for this evidence.
+
 ### 5. Read compatibility
 
 Support N-1 project schema version in same app release.
