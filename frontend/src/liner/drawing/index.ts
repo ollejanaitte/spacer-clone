@@ -10,3 +10,7 @@ export * from "./builders/emptyBuilders";
 export * from "./builders/formalBuilders";
 export * from "./rendering/DrawingDocumentSvg";
 export * from "./validation/validateDrawingDocument";
+export * from "./sheet/formalDrawingPages";
+export * from "./sheet/sheetScale";
+export * from "./sheet/sheetDecoration";
+export * from "./sheet/multiPageDocument";

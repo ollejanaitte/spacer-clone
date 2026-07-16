@@ -196,6 +196,8 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   CROSS_TEXT: "CROSS_TEXT",
   SHEET_FRAME: "SHEET_FRAME",
   SHEET_TEXT: "SHEET_TEXT",
+  "sheet-frame-layer": "SHEET_FRAME",
+  "sheet-text-layer": "SHEET_TEXT",
 };
 
 export function resolveCadLayerPreset(

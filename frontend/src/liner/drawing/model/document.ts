@@ -5,7 +5,19 @@ import type { PaperDefinition } from "./paper";
 import type { StationAxis } from "./stationAxis";
 import type { AffineTransform2 } from "../transforms/affineTransform2";
 
-export type DrawingViewportKind = "plan" | "profile" | "cross_section" | "band";
+export type DrawingViewportKind = "plan" | "profile" | "cross_section" | "band" | "sheet";
+
+export type DrawingSheetPageKind = "plan" | "profile" | "cross_section";
+
+export type DrawingSheetPageMeta = {
+  pageIndex: number;
+  pageNumber: number;
+  pageCount: number;
+  drawingKind: DrawingSheetPageKind;
+  scaleLabel: string;
+  scaleHorizontal?: string;
+  scaleVertical?: string;
+};
 
 export type DrawingCoordinateSpace = "model" | "paper";
 
@@ -33,6 +45,7 @@ export type DrawingSheet = {
   name: string;
   paper: PaperDefinition;
   viewports: DrawingViewport[];
+  page?: DrawingSheetPageMeta;
 };
 
 export type DrawingDocument = {

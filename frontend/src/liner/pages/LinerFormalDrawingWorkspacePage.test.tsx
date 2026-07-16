@@ -113,4 +113,20 @@ describe("LinerFormalDrawingWorkspacePage", () => {
     const height = Number(viewBoxParts[3]);
     expect(width).toBeGreaterThan(height);
   });
+
+  it("shows page indicator and scale for the active sheet", () => {
+    render(
+      <LinerFormalDrawingWorkspacePage
+        kind="profile"
+        draft={createDefaultLinerDraft()}
+        onClose={() => undefined}
+        onBackToSetup={() => undefined}
+        onNavigate={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=formal-drawing-page-indicator]")?.textContent).toContain("2/3");
+    expect(document.querySelector("[data-testid=formal-drawing-scale-indicator]")?.textContent).toContain("H 1:500");
+    expect(document.querySelector("[data-testid=drawing-viewport-sheet-decoration-viewport]")).not.toBeNull();
+  });
 });
