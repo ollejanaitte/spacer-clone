@@ -1,8 +1,8 @@
 # Phase 2 Final Verification
 
 **Date:** 2026-07-16
-**Scope:** P2-D08 final acceptance verification for road/liner Phase 2 (vertical, crossfall, width, cross section, 3D API, viewer, persistence).
-**Verdict:** COMPLETE — Phase 2 acceptance gates pass locally with documented PARTIAL items (RDD App write-target projection only; one focused E2E skip).
+**Scope:** P2-F03 final re-verification for road/liner Phase 2 (vertical, crossfall, width, cross section, 3D API, viewer, persistence).
+**Verdict:** COMPLETE — Phase 2 acceptance gates pass locally; prior PARTIAL items (RDD App write-target, E2E skip) are resolved.
 
 ## Authoritative inputs
 
@@ -28,8 +28,9 @@
 | P2-D04 | `f3e84a0` | Cross-section template validation and diagnostics. |
 | P2-D05 | `0073767` | Explicit 3D coordinate public API (`coordinate3d`). |
 | P2-D06 | `c9e353c` | Graded 3D coordinates integrated into mapping-review viewer handoff. |
-| P2-D07 | `928c53a` | `domainDraft` ↔ `RoadDesignDocument` persistence bridge (projection; App write-target remains `domainDraft`). |
-| P2-D08 | (this verification) | Quality gates, focused E2E, verification evidence, PR. |
+| P2-D07 | `928c53a` | `domainDraft` ↔ `RoadDesignDocument` persistence bridge (projection). |
+| P2-F01/F02 | `9f78738` | RDD App write-target cutover; browser SHA digest fix; P2-D06 save/reload E2E (0 skip). |
+| P2-F03 | (this verification) | P1-D05 E2E updated to RDD write-target assertions; full quality gates; PR. |
 
 GitHub checks were not configured on this branch; local validation is the recorded evidence.
 
@@ -42,46 +43,51 @@ GitHub checks were not configured on this branch; local validation is the record
 | Width change points | PASS | `widthResolution.test.ts`, `WidthChangePointEditor`, grid generation updates. |
 | Cross section template | PASS | `crossSectionTemplateValidation.test.ts`, `CrossSectionDiagnosticsPanel`, `CrossSectionPreview`. |
 | 3D coordinate API | PASS | `coordinate3d.test.ts`, public export from `liner/core/index.ts`. |
-| Viewer / mapping review | PASS | `linerViewerAdapter.test.ts`, `p2-d06-viewer-vertical-z.spec.ts` (1 active scenario). |
-| Persistence / RDD bridge | PARTIAL | `linerDomainDraftRoadDesignMapper.test.ts`, `migrationIntegration.test.ts`; App production write-target remains `project.liner.domainDraft` with RDD as extensions projection per P2-D07 scope. |
+| Viewer / mapping review | PASS | `linerViewerAdapter.test.ts`, `p2-d06-viewer-vertical-z.spec.ts` (2 active scenarios, 0 skip). |
+| Persistence / RDD write-target | PASS | `linerDomainDraftRoadDesignMapper.test.ts`, `linerProjectDraft.test.ts`, `App.linerSaveLoad.test.tsx`, `migrationIntegration.test.ts`; App production write-target is `project.liner.roadDesignDocument`; `domainDraft` is in-memory only (read-old for legacy persisted projects). |
 | Fail-closed | PASS | Vertical station range, crossfall interval range, width station range, and cross-section template validation block invalid geometry. |
 | Stable ID | PASS | Mapper round-trip and adapter tests preserve alignment/model/template IDs. |
-| Legacy compatibility | PASS | `legacyRoadAdapter.test.ts`, `migrationIntegration.test.ts`, no `schemaVersion` addition. |
+| Legacy compatibility | PASS | `legacyRoadAdapter.test.ts`, `migrationIntegration.test.ts`, `linerProjectDraft.test.ts` read-old path; no `schemaVersion` addition. |
 | UI integration | PASS | Vertical, cross-section, width tabs on `/pro/liner/setup`; preview and mapping-review paths. |
-| Save / load | PASS | `App.linerSaveLoad.test.tsx`, `p1-d05-liner-ui-save-load.spec.ts`. |
+| Save / load | PASS | `App.linerSaveLoad.test.tsx`, `p1-d05-liner-ui-save-load.spec.ts` (RDD assertions). |
 | Preview | PASS | Grid preview bounds and summary after Phase 2 fail-closed alignment with shortened test fixtures. |
 | Regression | PASS | `npm run test:regression` (6 tests). |
-| Build | PASS | `npm run build`; Vite chunk-size and Maker.js eval warnings only. |
+| Build | PASS | `npm run build`; Vite chunk-size warning only. |
 | Source hygiene | PASS | `npm run lint` (typecheck, hygiene scripts, Japanese string scan). |
-| E2E | PASS (1 skip) | `p1-d05-liner-ui-save-load.spec.ts` pass; `p2-d06-viewer-vertical-z.spec.ts` pass + 1 explicit `test.skip` (save/reload merge). No `p2-d07` E2E spec exists. |
+| E2E | PASS (0 skip) | `p1-d05-liner-ui-save-load.spec.ts` pass; `p2-d06-viewer-vertical-z.spec.ts` pass (2 scenarios). |
 
-## Final validation commands
+## Write-target cutover (P2-F01/F02/F03)
+
+| Path | Behavior |
+| --- | --- |
+| **Write (save)** | `serializeProjectForPersistence` embeds `project.liner.roadDesignDocument`; `domainDraft` and legacy `draft` are omitted from persisted JSON. |
+| **Read (load)** | `hydrateProjectLinerFromPersistence` prefers `roadDesignDocument` → in-memory `domainDraft`; legacy `domainDraft` / `draft` read-old paths retained. |
+| **Dual-write** | None — single write-target only. |
+
+## Final validation commands (P2-F03)
 
 | Command | Result | Counts / notes |
 | --- | --- | --- |
 | `git status --short && git diff --check` | PASS | Clean before verification commit; whitespace check clean. |
 | `cd frontend && npm run typecheck` | PASS | `tsc -b --pretty false`. |
 | `cd frontend && npm run lint` | PASS | Includes typecheck, source hygiene, and Japanese string scan. |
-| `cd frontend && npm run test -- src/liner src/contracts/persistence src/contracts/legacy src/App.linerSaveLoad.test.tsx` | PASS | 94 files, 550 tests. |
+| `cd frontend && npm run test -- src/liner src/contracts/persistence src/contracts/legacy src/App.linerSaveLoad.test.tsx src/liner/adapters/linerProjectDraft.test.ts src/liner/adapters/linerDomainDraftRoadDesignMapper.test.ts` | PASS | 105 files, 603 tests. |
 | `cd frontend && npm run test:regression` | PASS | 1 file, 6 tests. |
-| `cd frontend && npx playwright test tests/e2e/p1-d05-liner-ui-save-load.spec.ts tests/e2e/p2-d06-viewer-vertical-z.spec.ts` | PASS | 2 passed, 1 skipped (`persists merged liner node Z through project.json save and reload`). Playwright `webServer` started backend + Vite on `127.0.0.1:4173`. |
-| `cd frontend && npm run build` | PASS | 3,818 modules transformed; chunk-size and Maker.js eval warnings only. |
+| `cd frontend && npx playwright test tests/e2e/p1-d05-liner-ui-save-load.spec.ts tests/e2e/p2-d06-viewer-vertical-z.spec.ts` | PASS | 3 passed, 0 skipped. Playwright `webServer` started backend + Vite on `127.0.0.1:4173`. |
+| `cd frontend && npm run build` | PASS | 3,812 modules transformed; chunk-size warning only. |
 
-## P2-D08 verification fixes
+## P2-F03 verification fixes
 
-Minimal test-only adjustments required after Phase 2 fail-closed validation tightened station/crossfall range checks:
-
-1. `frontend/src/liner/dxf/__tests__/phase5JapaneseRemediationDxf.test.ts` — extend default alignment to 120 m and fix vertical element continuity so DXF plan-type-a exports entities.
-2. `frontend/tests/e2e/p1-d05-liner-ui-save-load.spec.ts` — after shortening alignment to 36 m, sync vertical end station and crossfall interval end to 36 m before preview.
+1. `frontend/tests/e2e/p1-d05-liner-ui-save-load.spec.ts` — assertions updated from `domainDraft` to `roadDesignDocument` write-target (geometry via `spacer.liner/domain-draft-vnext-geometry` extension); `domainDraft` must be absent on save.
 
 No schema or migration version changes were made.
 
-## Known PARTIAL items
+## Resolved items (formerly PARTIAL)
 
-- **RDD App write-target:** Production save path remains `project.liner.domainDraft`; `RoadDesignDocument` is projected via extensions bridge (P2-D07 PARTIAL scope).
-- **E2E skip:** `p2-d06-viewer-vertical-z.spec.ts` skips save/reload merged node Z; covered by unit/integration tests per inline comment.
+- **RDD App write-target:** Resolved in P2-F01/F02 — production save path writes `project.liner.roadDesignDocument` only.
+- **E2E skip:** Resolved in P2-F02 — `p2-d06-viewer-vertical-z.spec.ts` save/reload scenario active; P2-F03 aligns `p1-d05` with the same write-target contract.
 
 ## Final notes
 
-- Drawing / DXF / print remain Phase 3+ scope; Phase 5 DXF regression test updated only for Phase 2 vertical range compatibility.
+- Drawing / DXF / print remain Phase 3+ scope.
 - Do not infer Phase 3 readiness without an explicit next-step request.

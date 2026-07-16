@@ -3,6 +3,25 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const OUT_DIR = "/tmp/p1-d05-liner-ui-save-load";
+const GEOMETRY_EXTENSION_KEY = "spacer.liner/domain-draft-vnext-geometry";
+
+type SavedProject = {
+  liner?: {
+    draft?: unknown;
+    domainDraft?: unknown;
+    roadDesignDocument?: {
+      documentKind?: string;
+      alignments?: Array<{ label?: string }>;
+      extensions?: Record<string, { json?: { domainDraft?: Record<string, unknown> } }>;
+    };
+    sourceRevision?: string;
+  };
+};
+
+function readGeometryDomainDraft(saved: SavedProject): Record<string, unknown> | undefined {
+  const extension = saved.liner?.roadDesignDocument?.extensions?.[GEOMETRY_EXTENSION_KEY];
+  return extension?.json?.domainDraft;
+}
 
 test.describe("P1-D05 liner UI save/load integration", () => {
   test.beforeAll(() => {
@@ -57,13 +76,22 @@ test.describe("P1-D05 liner UI save/load integration", () => {
     ]);
     const savedPath = join(OUT_DIR, "project.json");
     await download.saveAs(savedPath);
-    const saved = JSON.parse(readFileSync(savedPath, "utf8"));
+    const saved = JSON.parse(readFileSync(savedPath, "utf8")) as SavedProject;
     expect(saved.liner?.draft).toBeUndefined();
-    expect(saved.liner?.domainDraft?.linerModelId).toBe("liner-e2e-p1-d05");
-    expect(saved.liner?.domainDraft?.alignment?.id).toBe("alignment-e2e-p1-d05");
-    expect(saved.liner?.domainDraft?.alignment?.elements?.[0]?.length).toBe(36);
-    expect(saved.liner?.domainDraft?.stationDefinition?.originDisplayedStation).toBe(5);
-    expect(saved.liner?.domainDraft?.stationDefinition?.interval).toBe(6);
+    expect(saved.liner?.domainDraft).toBeUndefined();
+    expect(saved.liner?.roadDesignDocument?.documentKind).toBe("road-design");
+    expect(saved.liner?.roadDesignDocument?.alignments?.[0]?.label).toBe("alignment-e2e-p1-d05");
+
+    const geometryDraft = readGeometryDomainDraft(saved);
+    expect(geometryDraft?.linerModelId).toBe("liner-e2e-p1-d05");
+    expect(geometryDraft?.alignment).toMatchObject({ id: "alignment-e2e-p1-d05" });
+    const alignmentElements = geometryDraft?.alignment as { elements?: Array<{ length?: number }> } | undefined;
+    expect(alignmentElements?.elements?.[0]?.length).toBe(36);
+    const stationDefinition = geometryDraft?.stationDefinition as
+      | { originDisplayedStation?: number; interval?: number }
+      | undefined;
+    expect(stationDefinition?.originDisplayedStation).toBe(5);
+    expect(stationDefinition?.interval).toBe(6);
     expect(saved.liner?.sourceRevision).toMatch(/^[a-f0-9]{64}$/);
 
     const roundTripPath = join(OUT_DIR, "project-roundtrip.json");
