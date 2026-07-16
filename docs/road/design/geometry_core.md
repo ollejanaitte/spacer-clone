@@ -126,6 +126,11 @@ Generalized clothoid (finite R_in → R_out): integrate κ(s) = κ₀ + (κ₁�
 
 Golden cases GC-08 through GC-10 in [test_plan_geometry.md](../verification/test_plan_geometry.md).
 
+P1-D04 status: GC-08 through GC-10 remain blocked from production shipment while
+the implementation reports `isPhase0ClothoidApproximation() === true`. Phase 1
+does not commit clothoid endpoint expected JSON without an independent numeric
+baseline; validation tests cover invalid clothoid parameters and finite radii.
+
 ### 4. Vertical segment resolution
 
 | Segment type | Inputs | Outputs |
