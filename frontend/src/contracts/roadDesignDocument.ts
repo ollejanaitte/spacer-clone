@@ -211,6 +211,7 @@ const ROAD_STABLE_ENTITY_KINDS = {
   profile: "profile",
   crossSection: "cross-section",
   bridge: "bridge",
+  centerline: "centerline",
 } as const;
 
 function validateRoadCoordinateContexts(
@@ -350,6 +351,9 @@ function validateStableIdRegistryConsistency(
 
   registry.forEach((entry, index) => {
     if (!isValidUuid(entry.id)) {
+      return;
+    }
+    if (entry.entityKind === ROAD_STABLE_ENTITY_KINDS.centerline) {
       return;
     }
     if (!entityIds.has(entry.id)) {

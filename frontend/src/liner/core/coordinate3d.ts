@@ -26,6 +26,7 @@ import type {
   HorizontalElementDraft,
   LinerDomainDraftVNext,
 } from "../schema/types";
+import { getActiveAlignmentBundle } from "../adapters/linerDomainDraftRoadDesignMapper";
 
 export type Coordinate3dInput = BuildIntermediateInput | LinerDomainDraftVNext;
 
@@ -78,7 +79,7 @@ const COORDINATE_STATION_OUT_OF_RANGE = "LINER_COORDINATE_STATION_OUT_OF_RANGE";
 const COORDINATE_PROFILE_COVERAGE_GAP = "LINER_COORDINATE_PROFILE_COVERAGE_GAP";
 
 function isLinerDomainDraftVNext(input: Coordinate3dInput): input is LinerDomainDraftVNext {
-  return "generationSettings" in input && "sampling" in input;
+  return "generationSettings" in input && "sampling" in input && "alignments" in input;
 }
 
 function toAlignmentElement(element: HorizontalElementDraft): AlignmentElement {
@@ -120,32 +121,46 @@ export function normalizeCoordinate3dInput(input: Coordinate3dInput): BuildInter
     return input;
   }
 
-  const defaultTemplate = input.crossSections[0];
+  const activeBundle = getActiveAlignmentBundle(input);
+  if (!activeBundle) {
+    throw new Error("domainDraft has no active alignment bundle.");
+  }
+
+  const defaultTemplate = activeBundle.crossSections[0];
   const offsets = defaultTemplate?.offsetLines.map((line) => line.offset) ?? [0];
-  const gradeElement = input.verticalAlignment.elements.find((element) => element.type === "grade");
+  const gradeElement = activeBundle.verticalAlignment.elements.find(
+    (element) => element.type === "grade",
+  );
   const z = gradeElement?.type === "grade" ? gradeElement.startElevation : 0;
 
   return {
     alignment: {
-      id: input.alignment.id,
+      id: activeBundle.id,
       linerModelId: input.linerModelId,
       coordinatePolicyId: input.coordinatePolicyId,
-      elements: input.alignment.elements.map(toAlignmentElement),
+      elements: activeBundle.alignment.elements.map(toAlignmentElement),
     },
-    stationDefinition: input.stationDefinition,
-    verticalAlignment: input.verticalAlignment,
-    crossSections: input.crossSections,
-    crossSlopeIntervals: input.crossSlopeIntervals,
+    stationDefinition: activeBundle.stationDefinition,
+    verticalAlignment: activeBundle.verticalAlignment,
+    crossSections: activeBundle.crossSections,
+    crossSlopeIntervals: activeBundle.crossSlopeIntervals,
     measuredGrid: input.measuredGrid,
     offsets,
     sampleInterval: input.sampling.display.maxChordLength,
     selectedCrossSectionStation: input.selectedCrossSectionStation,
     drawingSettings: input.drawingSettings,
-    widthChangePoints: input.widthChangePoints,
+    widthChangePoints: activeBundle.widthChangePoints,
     z,
-    ...(input.crossSections.length > 1 || input.gridDefinitions.length > 1
-      ? { gridDefinitions: input.gridDefinitions }
-      : {}),
+    linerAlignments: input.alignments,
+    activeAlignmentId: input.activeAlignmentId ?? activeBundle.id,
+    activeLineId: input.activeLineId,
+    ...(activeBundle.crossSections.length > 1 || activeBundle.gridDefinitions.length > 1
+      ? { gridDefinitions: activeBundle.gridDefinitions }
+      : activeBundle.gridDefinitions.length
+        ? { gridDefinitions: activeBundle.gridDefinitions }
+        : {}),
+    ...(activeBundle.spans.length ? { spans: activeBundle.spans } : {}),
+    ...(activeBundle.piers.length ? { piers: activeBundle.piers } : {}),
   };
 }
 

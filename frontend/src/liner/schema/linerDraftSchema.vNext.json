@@ -9,13 +9,7 @@
     "id",
     "linerModelId",
     "coordinatePolicyId",
-    "alignment",
-    "stationDefinition",
-    "verticalAlignment",
-    "crossSections",
-    "gridDefinitions",
-    "spans",
-    "piers",
+    "alignments",
     "generationSettings",
     "sampling"
   ],
@@ -32,46 +26,20 @@
       "type": "string",
       "minLength": 1
     },
-    "alignment": {
-      "$ref": "#/$defs/horizontalAlignmentDraft"
-    },
-    "stationDefinition": {
-      "$ref": "#/$defs/stationDefinitionDraft"
-    },
-    "verticalAlignment": {
-      "$ref": "#/$defs/verticalAlignmentDraft"
-    },
-    "crossSections": {
+    "alignments": {
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/crossSectionTemplateDraft"
+        "$ref": "#/$defs/alignmentBundleDraft"
       }
     },
-    "crossSlopeIntervals": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/crossSlopeIntervalDraft"
-      }
+    "activeAlignmentId": {
+      "type": "string",
+      "minLength": 1
     },
-    "gridDefinitions": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/$defs/gridDefinitionDraft"
-      }
-    },
-    "spans": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/spanDraft"
-      }
-    },
-    "piers": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/pierDraft"
-      }
+    "activeLineId": {
+      "type": "string",
+      "minLength": 1
     },
     "generationSettings": {
       "$ref": "#/$defs/generationSettingsDraft"
@@ -522,6 +490,102 @@
         },
         "label": {
           "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "sortIndex": {
+          "type": "integer"
+        },
+        "baseLineId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "alignmentBundleDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "enabled",
+        "sortIndex",
+        "alignment",
+        "stationDefinition",
+        "verticalAlignment",
+        "crossSections",
+        "gridDefinitions",
+        "spans",
+        "piers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "sortIndex": {
+          "type": "integer"
+        },
+        "alignment": {
+          "$ref": "#/$defs/horizontalAlignmentDraft"
+        },
+        "stationDefinition": {
+          "$ref": "#/$defs/stationDefinitionDraft"
+        },
+        "verticalAlignment": {
+          "$ref": "#/$defs/verticalAlignmentDraft"
+        },
+        "crossSections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/crossSectionTemplateDraft"
+          }
+        },
+        "crossSlopeIntervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossSlopeIntervalDraft"
+          }
+        },
+        "gridDefinitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/gridDefinitionDraft"
+          }
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/spanDraft"
+          }
+        },
+        "piers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pierDraft"
+          }
+        },
+        "crossBeams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossBeamDraft"
+          }
+        },
+        "widthChangePoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/widthChangePointDraft"
+          }
         }
       }
     },

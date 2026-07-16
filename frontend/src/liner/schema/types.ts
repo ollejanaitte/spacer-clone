@@ -92,22 +92,33 @@ export interface MeasuredGridDraft {
   points: MeasuredGridPointDraft[];
 }
 
-export interface LinerDomainDraftVNext {
+/** Per-alignment geometry and bridge-layout bundle (P4-D01). */
+export interface AlignmentBundleDraft {
   id: string;
-  linerModelId: string;
-  coordinatePolicyId: string;
+  name: string;
+  enabled: boolean;
+  sortIndex: number;
   alignment: HorizontalAlignmentDraft;
   stationDefinition: StationDefinitionDraft;
   verticalAlignment: VerticalAlignmentDraft;
   crossSections: CrossSectionTemplateDraft[];
   crossSlopeIntervals?: CrossSlopeIntervalDraft[];
   gridDefinitions: GridDefinitionDraft[];
-  /** Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source). */
-  measuredGrid?: MeasuredGridDraft;
   spans: SpanDraft[];
   piers: PierDraft[];
   crossBeams?: CrossBeamDraft[];
   widthChangePoints?: WidthChangePointDraft[];
+}
+
+export interface LinerDomainDraftVNext {
+  id: string;
+  linerModelId: string;
+  coordinatePolicyId: string;
+  alignments: AlignmentBundleDraft[];
+  activeAlignmentId?: string;
+  activeLineId?: string;
+  /** Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source). */
+  measuredGrid?: MeasuredGridDraft;
   selectedCrossSectionStation?: number;
   drawingSettings?: LinerDrawingSettingsDraft;
   generationSettings: GenerationSettingsDraft;
@@ -294,6 +305,12 @@ export interface CrossSectionOffsetLineDraft {
   elevation: number;
   role?: CrossSectionOffsetLineRole;
   label?: string;
+  /** When false the line is retained but excluded from active calculations. Default true. */
+  enabled?: boolean;
+  /** Display / persistence order within the template. */
+  sortIndex?: number;
+  /** Defaults to the alignment centerline id when omitted. */
+  baseLineId?: string;
 }
 
 /**
