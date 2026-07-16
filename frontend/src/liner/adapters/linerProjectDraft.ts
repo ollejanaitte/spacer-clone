@@ -115,8 +115,8 @@ export function buildIntermediateInputFromDomainDraft(
     ...(domainDraft.gridDefinitions.length > 1 || domainDraft.crossSections.length > 1
       ? { gridDefinitions: domainDraft.gridDefinitions }
       : {}),
-    spans: domainDraft.spans,
-    piers: domainDraft.piers,
+    ...(domainDraft.spans.length ? { spans: domainDraft.spans } : {}),
+    ...(domainDraft.piers.length ? { piers: domainDraft.piers } : {}),
   };
 }
 
