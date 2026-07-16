@@ -1,6 +1,13 @@
 import DxfParser from "dxf-parser";
 import { describe, expect, it } from "vitest";
-import { createDefaultLinerDraft } from "../../adapters/linerUiAdapter";
+import { createDefaultProject } from "../../../data/defaultProject";
+import { createDefaultLinerDraft, updateLinerDrawingSettings } from "../../adapters/linerUiAdapter";
+import {
+  hydrateProjectLinerFromPersistence,
+  linerDraftFromProject,
+  serializeProjectForPersistence,
+  withProjectLinerDraft,
+} from "../../adapters/linerProjectDraft";
 import { buildIntermediateResult } from "../../core/pipeline/pipeline";
 import {
   buildFormalDrawingWorkspaceDocuments,
@@ -15,6 +22,16 @@ import {
 import type { DrawingDocument, DrawingLayer } from "../../drawing/model/document";
 import { exportFormalDrawingDxf } from "../export/exportFormalDrawingDxf";
 import { mapDrawingDocumentToDxf } from "../mapper/mapDrawingDocumentToDxf";
+
+const PERSISTED_DRAWING_SETTINGS = {
+  version: "0.1.0" as const,
+  planPaperSize: "A1" as const,
+  profilePaperSize: "A2" as const,
+  crossSectionPaperSize: "A3" as const,
+  bandPaperSize: "A4" as const,
+  paperOrientation: "landscape" as const,
+  marginMm: 12,
+};
 
 function buildDrawableDraft() {
   const draft = createDefaultLinerDraft();
@@ -34,6 +51,29 @@ function buildDrawableDraft() {
     ];
   }
   return draft;
+}
+
+function buildDrawableDraftWithPersistedSettings() {
+  return updateLinerDrawingSettings(buildDrawableDraft(), PERSISTED_DRAWING_SETTINGS);
+}
+
+function reloadDraftThroughRdd(draft: ReturnType<typeof buildDrawableDraft>) {
+  const project = withProjectLinerDraft(createDefaultProject(), draft);
+  const serialized = serializeProjectForPersistence(project);
+  expect(serialized.ok).toBe(true);
+  if (!serialized.ok) {
+    throw new Error("serializeProjectForPersistence failed");
+  }
+  const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+  expect(hydrated.ok).toBe(true);
+  if (!hydrated.ok) {
+    throw new Error("hydrateProjectLinerFromPersistence failed");
+  }
+  const reloaded = linerDraftFromProject(hydrated.project);
+  if (!reloaded) {
+    throw new Error("linerDraftFromProject returned undefined");
+  }
+  return reloaded;
 }
 
 function collectLayerNames(document: DrawingDocument): string[] {
@@ -97,6 +137,23 @@ describe("preview / DXF / print DrawingDocument parity", () => {
       expect(bundle.previewDocument.sheets).toHaveLength(1);
       expect(bundle.previewDocument.sheets[0]?.id).toBe(page.sheetId);
       expect(countPrimitives(bundle.previewDocument)).toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps preview, DXF, and print parity after drawingSettings RDD round-trip", () => {
+    const originalDraft = buildDrawableDraftWithPersistedSettings();
+    const reloadedDraft = reloadDraftThroughRdd(originalDraft);
+    expect(reloadedDraft.drawingSettings).toEqual(PERSISTED_DRAWING_SETTINGS);
+
+    for (const page of FORMAL_DRAWING_PAGES) {
+      const before = buildFormalDrawingWorkspaceDocuments(originalDraft, page.routeKind);
+      const after = buildFormalDrawingWorkspaceDocuments(reloadedDraft, page.routeKind);
+
+      expect(after.previewDocument).toBe(after.dxfDocument);
+      expect(after.printDocument).toBe(after.previewDocument);
+      expect(before.previewDocument).toEqual(after.previewDocument);
+      expect(countPrimitives(after.previewDocument)).toBeGreaterThan(0);
+      expect(mapDrawingDocumentToDxf(after.previewDocument).document.entities.length).toBeGreaterThan(0);
     }
   });
 

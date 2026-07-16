@@ -74,6 +74,14 @@ function inputByTestId(testId: string): HTMLInputElement {
   return input;
 }
 
+function selectByTestId(testId: string): HTMLSelectElement {
+  const select = document.querySelector(`[data-testid=${testId}]`) as HTMLSelectElement | null;
+  if (!select) {
+    throw new Error(`Select not found: ${testId}`);
+  }
+  return select;
+}
+
 function buttonByTestId(testId: string): HTMLButtonElement {
   const button = document.querySelector(`[data-testid=${testId}]`) as HTMLButtonElement | null;
   if (!button) {
@@ -112,6 +120,12 @@ async function switchLinerSetupTab(tabId: string) {
   await act(async () => {
     buttonByTestId(`liner-setup-tab-${tabId}`).click();
   });
+}
+
+function setSelectValue(select: HTMLSelectElement, value: string) {
+  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, "value")?.set;
+  valueSetter?.call(select, value);
+  select.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 async function readDownloadedProjectJson(): Promise<Record<string, any>> {
@@ -238,6 +252,10 @@ describe("App LINER save/load integration", () => {
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
 
     const { App } = await import("./App");
+    const {
+      deriveLinerBridgeEntityId,
+      LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
+    } = await import("./liner/adapters/linerDomainDraftRoadDesignMapper");
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
@@ -246,10 +264,29 @@ describe("App LINER save/load integration", () => {
     await switchLinerSetupTab("review");
     await act(async () => {
       buttonByTestId("add-bridge-pier").click();
+    });
+    await act(async () => {
+      setInputValue(inputByTestId("bridge-pier-station-P1"), "20");
+      setInputValue(inputByTestId("bridge-pier-offset-P1"), "0.5");
+    });
+    await act(async () => {
+      buttonByTestId("add-bridge-pier").click();
+    });
+    await act(async () => {
+      setInputValue(inputByTestId("bridge-pier-station-P2"), "80");
+    });
+    await act(async () => {
       buttonByTestId("add-bridge-span").click();
+    });
+    await act(async () => {
+      setInputValue(inputByTestId("bridge-span-start-SP1"), "20");
+      setInputValue(inputByTestId("bridge-span-end-SP1"), "80");
+      setSelectValue(selectByTestId("bridge-span-pier-start-SP1"), "P1");
+      setSelectValue(selectByTestId("bridge-span-pier-end-SP1"), "P2");
     });
 
     expect(document.querySelector("[data-testid=bridge-pier-row-P1]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=bridge-pier-row-P2]")).not.toBeNull();
     expect(document.querySelector("[data-testid=bridge-span-row-SP1]")).not.toBeNull();
 
     await act(async () => {
@@ -265,6 +302,44 @@ describe("App LINER save/load integration", () => {
     expect(savedProject.liner?.roadDesignDocument).toMatchObject({
       documentKind: "road-design",
     });
+    expect(savedProject.liner?.roadDesignDocument?.bridges).toEqual([
+      expect.objectContaining({
+        entityId: deriveLinerBridgeEntityId("SP1"),
+        label: "SP1",
+      }),
+    ]);
+
+    const extension =
+      savedProject.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as {
+      domainDraft: {
+        spans: Array<Record<string, unknown>>;
+        piers: Array<Record<string, unknown>>;
+      };
+    };
+    expect(payload.domainDraft.spans).toEqual([
+      expect.objectContaining({
+        id: "SP1",
+        startPhysicalDistance: 20,
+        endPhysicalDistance: 80,
+        pierIdStart: "P1",
+        pierIdEnd: "P2",
+      }),
+    ]);
+    expect(payload.domainDraft.piers).toEqual([
+      expect.objectContaining({
+        id: "P1",
+        physicalDistance: 20,
+        bearingOffsets: [{ transverseIndex: 0, offset: 0.5 }],
+      }),
+      expect.objectContaining({
+        id: "P2",
+        physicalDistance: 80,
+      }),
+    ]);
+    expect((payload.domainDraft.piers[0]?.bearingOffsets as unknown[] | undefined)?.[0]).toEqual(
+      expect.objectContaining({ transverseIndex: 0, offset: 0.5 }),
+    );
 
     const {
       roadDesignDocumentToProjectLinerDomainDraft,
@@ -277,10 +352,24 @@ describe("App LINER save/load integration", () => {
       return;
     }
     expect(restoredFromRdd.domainDraft.spans).toEqual([
-      expect.objectContaining({ id: "SP1" }),
+      expect.objectContaining({
+        id: "SP1",
+        startPhysicalDistance: 20,
+        endPhysicalDistance: 80,
+        pierIdStart: "P1",
+        pierIdEnd: "P2",
+      }),
     ]);
     expect(restoredFromRdd.domainDraft.piers).toEqual([
-      expect.objectContaining({ id: "P1" }),
+      expect.objectContaining({
+        id: "P1",
+        physicalDistance: 20,
+        bearingOffsets: [{ transverseIndex: 0, offset: 0.5 }],
+      }),
+      expect.objectContaining({
+        id: "P2",
+        physicalDistance: 80,
+      }),
     ]);
 
     await openProjectJson(savedProject);
@@ -291,6 +380,104 @@ describe("App LINER save/load integration", () => {
 
     await switchLinerSetupTab("review");
     expect(document.querySelector("[data-testid=bridge-pier-row-P1]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=bridge-pier-row-P2]")).not.toBeNull();
     expect(document.querySelector("[data-testid=bridge-span-row-SP1]")).not.toBeNull();
+    expect(inputByTestId("bridge-pier-station-P1").value).toBe("20");
+    expect(inputByTestId("bridge-pier-offset-P1").value).toBe("0.5");
+    expect(inputByTestId("bridge-pier-station-P2").value).toBe("80");
+    expect(inputByTestId("bridge-span-start-SP1").value).toBe("20");
+    expect(inputByTestId("bridge-span-end-SP1").value).toBe("80");
+    expect(selectByTestId("bridge-span-pier-start-SP1").value).toBe("P1");
+    expect(selectByTestId("bridge-span-pier-end-SP1").value).toBe("P2");
+  }, 40000);
+
+  it("preserves drawingSettings through project.json save and reload without persisting DrawingDocument", async () => {
+    installObjectURLMocks();
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+
+    const { createDefaultProject } = await import("./data/defaultProject");
+    const {
+      addLinerOffset,
+      createDefaultLinerDraft,
+      updateLinerDrawingSettings,
+    } = await import("./liner/adapters/linerUiAdapter");
+    const {
+      withProjectLinerDraft,
+      serializeProjectForPersistence,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const { LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY } = await import(
+      "./liner/adapters/linerDomainDraftRoadDesignMapper"
+    );
+
+    const drawingSettings = {
+      version: "0.1.0" as const,
+      planPaperSize: "A1" as const,
+      profilePaperSize: "A2" as const,
+      crossSectionPaperSize: "A3" as const,
+      bandPaperSize: "A4" as const,
+      paperOrientation: "landscape" as const,
+      marginMm: 12,
+    };
+    const draft = updateLinerDrawingSettings(addLinerOffset(createDefaultLinerDraft()), drawingSettings);
+    const serialized = serializeProjectForPersistence(withProjectLinerDraft(createDefaultProject(), draft));
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openProjectJson(serialized.project as Record<string, unknown>);
+
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+    const savedProject = await readDownloadedProjectJson();
+
+    expect(savedProject.drawingDocument).toBeUndefined();
+    expect(savedProject.liner?.draft).toBeUndefined();
+    expect(savedProject.liner?.domainDraft).toBeUndefined();
+    expect(savedProject.liner?.roadDesignDocument).toMatchObject({
+      documentKind: "road-design",
+    });
+
+    const extension =
+      savedProject.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as {
+      domainDraft: {
+        drawingSettings?: typeof drawingSettings;
+      };
+    };
+    expect(payload.domainDraft.drawingSettings).toEqual(drawingSettings);
+
+    const {
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const restoredFromRdd = roadDesignDocumentToProjectLinerDomainDraft(
+      savedProject.liner.roadDesignDocument,
+    );
+    expect(restoredFromRdd.ok).toBe(true);
+    if (!restoredFromRdd.ok) {
+      return;
+    }
+    expect(restoredFromRdd.domainDraft.drawingSettings).toEqual(drawingSettings);
+
+    await openProjectJson(savedProject);
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+    const reloadedSave = await readDownloadedProjectJson();
+    const reloadedExtension =
+      reloadedSave.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const reloadedPayload = reloadedExtension?.json as {
+      domainDraft: {
+        drawingSettings?: typeof drawingSettings;
+      };
+    };
+    expect(reloadedPayload.domainDraft.drawingSettings).toEqual(drawingSettings);
+    expect(reloadedSave.drawingDocument).toBeUndefined();
+    expect(reloadedSave.liner?.drawingDocument).toBeUndefined();
   }, 40000);
 });

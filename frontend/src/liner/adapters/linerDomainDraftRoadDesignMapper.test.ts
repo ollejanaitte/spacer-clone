@@ -355,6 +355,68 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     expect(restored.diagnostics.join(" ")).toContain("bridge stable ids");
   });
 
+  it("fails closed when domainDraft has duplicate span ids during mapping", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createBridgeLayoutDraft(),
+    ).liner!.domainDraft!;
+    const duplicateSpans = {
+      ...domainDraft,
+      spans: [
+        ...domainDraft.spans,
+        { ...domainDraft.spans[0]!, id: domainDraft.spans[0]!.id },
+      ],
+    };
+
+    const mapped = domainDraftToRoadDesignDocument(duplicateSpans, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(false);
+    if (mapped.ok) {
+      return;
+    }
+    expect(mapped.diagnostics.join(" ")).toContain("LINER_SPAN_DUPLICATE_ID");
+  });
+
+  it("fails closed when domainDraft span references a missing pier", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createBridgeLayoutDraft(),
+    ).liner!.domainDraft!;
+    const missingRef = {
+      ...domainDraft,
+      spans: domainDraft.spans.map((span) => ({
+        ...span,
+        pierIdEnd: "missing-pier",
+      })),
+    };
+
+    const mapped = domainDraftToRoadDesignDocument(missingRef, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(false);
+    if (mapped.ok) {
+      return;
+    }
+    expect(mapped.diagnostics.join(" ")).toContain("LINER_SPAN_PIER_REFERENCE_MISSING");
+  });
+
+  it("fails closed when pier station exceeds alignment length", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createBridgeLayoutDraft(),
+    ).liner!.domainDraft!;
+    const invalidStation = {
+      ...domainDraft,
+      piers: domainDraft.piers.map((pier) =>
+        pier.id === "P1" ? { ...pier, physicalDistance: 999 } : pier,
+      ),
+    };
+
+    const mapped = domainDraftToRoadDesignDocument(invalidStation, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(false);
+    if (mapped.ok) {
+      return;
+    }
+    expect(mapped.diagnostics.join(" ")).toContain("LINER_STATION_OUT_OF_RANGE");
+  });
+
   it("fails closed when geometry payload is missing spans or piers", () => {
     const mapped = domainDraftToRoadDesignDocument(
       withProjectLinerDraft(createDefaultProject(), createBridgeLayoutDraft()).liner!.domainDraft!,

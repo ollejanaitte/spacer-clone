@@ -1,8 +1,8 @@
 # Phase 3 Final Verification
 
 **Date:** 2026-07-16
-**Scope:** P3-D09 final acceptance verification for road/liner Phase 3 (bridge layout, DrawingDocument, formal drawing, Japanese bands, multi-page, preview/print/DXF parity, persistence).
-**Verdict:** COMPLETE — Phase 3 acceptance gates pass locally with documented PARTIAL items (RDD App write-target projection only; one focused E2E skip inherited from Phase 2).
+**Scope:** P3-D09 / P3-F03 final acceptance verification for road/liner Phase 3 (bridge layout, DrawingDocument, formal drawing, Japanese bands, multi-page, preview/print/DXF parity, RoadDesignDocument persistence).
+**Verdict:** COMPLETE — Phase 3 acceptance gates pass locally with evidence from focused browser E2E and quality gates.
 
 ## Authoritative inputs
 
@@ -31,7 +31,10 @@
 | P3-D06 | `a72387a` | Multi-page DrawingDocument assembly with sheet frame, scale, page navigation. |
 | P3-D07 | `b590102` | Browser print and preview/DXF/print DrawingDocument parity. |
 | P3-D08 | `eecf4e8` | Bridge layout and drawing settings round-trip through persistence. |
-| P3-D09 | (this verification) | Quality gates, focused E2E, verification evidence, PR. |
+| P3-D09 | (verification) | Quality gates, focused E2E, verification evidence, PR. |
+| P3-F01 | `5f41028` | Bridge layout RDD round-trip with fail-closed validation on save/hydrate. |
+| P3-F02 | `e2481a8` | drawingSettings RDD round-trip regenerates DrawingDocument deterministically. |
+| P3-F03 | (this verification) | Browser E2E for bridge layout + formal drawing settings save/reload; quality gates; PR. |
 
 GitHub checks were not configured on this branch; local validation is the recorded evidence.
 
@@ -45,17 +48,19 @@ GitHub checks were not configured on this branch; local validation is the record
 | Japanese bands / coordinate tables | PASS | `phase5JapaneseRemediationDrawing.test.ts`, `planCoordinateTable.ts`, `alignmentSegmentDimensions.ts`. |
 | Multi-page assembly | PASS | `multiPageDocument.test.ts`, `multiPageDxf.test.ts`, sheet frame/scale/navigation in formal workspace. |
 | Preview / print / DXF parity | PASS | `previewDxfPrintParity.test.ts`, `printFormalDrawing.test.ts`, `p3-d07-print-dxf-parity.spec.ts`. |
-| Persistence / RDD bridge | PARTIAL | `linerDomainDraftRoadDesignMapper.test.ts`, `migrationIntegration.test.ts`, `App.linerSaveLoad.test.tsx`; App production write-target remains `project.liner.domainDraft` with RDD as extensions projection (P2-D07 scope). |
+| Persistence / RDD bridge | PASS | `linerDomainDraftRoadDesignMapper.test.ts`, `migrationIntegration.test.ts`, `App.linerSaveLoad.test.tsx`, `p1-d05-liner-ui-save-load.spec.ts`, `p3-f03-rdd-bridge-drawing-persistence.spec.ts`; production write-target is `project.liner.roadDesignDocument` (no `domainDraft` / `drawingDocument` in saved JSON). |
+| drawingSettings persistence | PASS | `drawingSettingsPersistence.test.ts`, `App.linerSaveLoad.test.tsx`, `p3-f03-rdd-bridge-drawing-persistence.spec.ts` (cross-section display station + formal drawing regeneration after reload). |
 | Fail-closed | PASS | Bridge layout diagnostics, fixed-z draft validation, RDD mapper stable-id checks block invalid geometry/payloads. |
 | Stable ID | PASS | Mapper round-trip and bridge entity ID derivation tests preserve span/pier/alignment IDs. |
 | Legacy compatibility | PASS | `legacyRoadAdapter.test.ts`, `migrationIntegration.test.ts`, no `schemaVersion` addition. |
 | UI integration | PASS | Bridge layout editor, formal drawing workspace tabs (plan/profile/cross), print and DXF controls. |
-| Save / load | PASS | `App.linerSaveLoad.test.tsx` (bridge layout spans/piers), `p1-d05-liner-ui-save-load.spec.ts`. |
-| Viewer / mapping review | PASS | `linerViewerAdapter.test.ts`, `p2-d06-viewer-vertical-z.spec.ts` (1 active scenario). |
+| Save / load | PASS | `App.linerSaveLoad.test.tsx` (bridge layout spans/piers, drawingSettings), `p1-d05-liner-ui-save-load.spec.ts`, `p3-f03-rdd-bridge-drawing-persistence.spec.ts`. |
+| Viewer / mapping review | PASS | `linerViewerAdapter.test.ts`, `p2-d06-viewer-vertical-z.spec.ts` (2 active scenarios, 0 skipped). |
+| Ground profile | PASS (unavailable explicit) | Profile formal drawing shows `地盤データ未設定` in preview/DXF bands; no fabricated ground data. Verified in `p3-f03-rdd-bridge-drawing-persistence.spec.ts`. |
 | Regression | PASS | `npm run test:regression` (6 tests). |
-| Build | PASS | `npm run build`; Vite chunk-size and Maker.js eval warnings only. |
+| Build | PASS | `npm run build`; Vite chunk-size warnings only. |
 | Source hygiene | PASS | `npm run lint` (typecheck, hygiene scripts, Japanese string scan). |
-| E2E | PASS (1 skip) | `p1-d05-liner-ui-save-load.spec.ts` pass; `p2-d06-viewer-vertical-z.spec.ts` pass + 1 explicit `test.skip` (save/reload merge); `p3-d07-print-dxf-parity.spec.ts` pass. |
+| E2E | PASS (0 skip) | `p1-d05-liner-ui-save-load.spec.ts`, `p2-d06-viewer-vertical-z.spec.ts`, `p3-d07-print-dxf-parity.spec.ts`, `p3-f03-rdd-bridge-drawing-persistence.spec.ts` — all pass; Playwright `webServer` started backend + Vite on `127.0.0.1:4173`. |
 
 ## Final validation commands
 
@@ -64,24 +69,23 @@ GitHub checks were not configured on this branch; local validation is the record
 | `git status --short && git diff --check` | 0 | PASS | Clean before verification commit; whitespace check clean. |
 | `cd frontend && npm run typecheck` | 0 | PASS | `tsc -b --pretty false`. |
 | `cd frontend && npm run lint` | 0 | PASS | Includes typecheck, source hygiene, and Japanese string scan. |
-| `cd frontend && npm run test -- src/liner src/contracts/persistence src/contracts/legacy src/App.linerSaveLoad.test.tsx` | 0 | PASS | 105 files, 600 tests (after P3-D09 round-trip fix). |
+| `cd frontend && npm run test -- src/liner src/contracts/persistence src/contracts/legacy src/App.linerSaveLoad.test.tsx` | 0 | PASS | 106 files, 618 tests. |
 | `cd frontend && npm run test:regression` | 0 | PASS | 1 file, 6 tests. |
-| `cd frontend && npx playwright test tests/e2e/p1-d05-liner-ui-save-load.spec.ts tests/e2e/p2-d06-viewer-vertical-z.spec.ts tests/e2e/p3-d07-print-dxf-parity.spec.ts` | 0 | PASS | 3 passed, 1 skipped. Playwright `webServer` started backend + Vite on `127.0.0.1:4173`. |
+| `cd frontend && npx playwright test tests/e2e/p1-d05-liner-ui-save-load.spec.ts tests/e2e/p2-d06-viewer-vertical-z.spec.ts tests/e2e/p3-f03-rdd-bridge-drawing-persistence.spec.ts tests/e2e/p3-d07-print-dxf-parity.spec.ts` | 0 | PASS | 5 passed, 0 skipped. Playwright `webServer` started backend + Vite on `127.0.0.1:4173`. |
 | `cd frontend && npm run build` | 0 | PASS | 3,812 modules transformed; chunk-size warnings only. |
 
-## P3-D09 verification fixes
+## P3-F03 verification fixes
 
-Minimal adapter adjustment required after P3-D08 persistence added always-present empty `spans`/`piers` arrays on domain draft round-trip:
+1. `frontend/tests/e2e/p3-f03-rdd-bridge-drawing-persistence.spec.ts` — browser E2E covering bridge layout edit, formal drawing settings (cross-section display station, plan type), multi-page indicators (1/3–3/3), preview/print/DXF routes, save JSON shape (`roadDesignDocument` only), reload round-trip, and post-reload DXF export.
+2. `frontend/src/liner/adapters/linerDomainDraftRoadDesignMapper.ts` — bridge layout validation uses effective alignment length `max(plan element length, span reach)` so importer-normalized drafts with plan/span length mismatch map fail-closed only on genuinely out-of-range geometry.
 
-1. `frontend/src/liner/adapters/linerProjectDraft.ts` — omit empty `spans`/`piers` when projecting domain draft back to UI `BuildIntermediateInput`, matching existing source-revision serialization and preserving pre-Phase-3 draft equality.
+No schema or migration version changes were made. No backend changes.
 
-No schema or migration version changes were made.
+## Ground profile status
 
-## Known PARTIAL items
-
-- **RDD App write-target:** Production save path remains `project.liner.domainDraft`; `RoadDesignDocument` is projected via extensions bridge (P2-D07 PARTIAL scope, unchanged in Phase 3).
-- **E2E skip:** `p2-d06-viewer-vertical-z.spec.ts` skips save/reload merged node Z; covered by unit/integration tests per inline comment.
-- **Bridge layout E2E:** No dedicated bridge-layout save/load Playwright spec; covered by `App.linerSaveLoad.test.tsx` and mapper integration tests.
+- **Status:** unavailable (explicit)
+- **UI/DXF evidence:** Profile sheet renders `地盤データ未設定` (`ja.liner.formalDrawing.groundLineUnavailable`); band rows use `—` where ground elevation is absent.
+- **Policy:** No fabricated ground profile data; not a Phase 3 blocker.
 
 ## Final notes
 
