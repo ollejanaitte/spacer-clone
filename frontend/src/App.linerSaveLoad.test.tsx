@@ -390,4 +390,94 @@ describe("App LINER save/load integration", () => {
     expect(selectByTestId("bridge-span-pier-start-SP1").value).toBe("P1");
     expect(selectByTestId("bridge-span-pier-end-SP1").value).toBe("P2");
   }, 40000);
+
+  it("preserves drawingSettings through project.json save and reload without persisting DrawingDocument", async () => {
+    installObjectURLMocks();
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+
+    const { createDefaultProject } = await import("./data/defaultProject");
+    const {
+      addLinerOffset,
+      createDefaultLinerDraft,
+      updateLinerDrawingSettings,
+    } = await import("./liner/adapters/linerUiAdapter");
+    const {
+      withProjectLinerDraft,
+      serializeProjectForPersistence,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const { LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY } = await import(
+      "./liner/adapters/linerDomainDraftRoadDesignMapper"
+    );
+
+    const drawingSettings = {
+      version: "0.1.0" as const,
+      planPaperSize: "A1" as const,
+      profilePaperSize: "A2" as const,
+      crossSectionPaperSize: "A3" as const,
+      bandPaperSize: "A4" as const,
+      paperOrientation: "landscape" as const,
+      marginMm: 12,
+    };
+    const draft = updateLinerDrawingSettings(addLinerOffset(createDefaultLinerDraft()), drawingSettings);
+    const serialized = serializeProjectForPersistence(withProjectLinerDraft(createDefaultProject(), draft));
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openProjectJson(serialized.project as Record<string, unknown>);
+
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+    const savedProject = await readDownloadedProjectJson();
+
+    expect(savedProject.drawingDocument).toBeUndefined();
+    expect(savedProject.liner?.draft).toBeUndefined();
+    expect(savedProject.liner?.domainDraft).toBeUndefined();
+    expect(savedProject.liner?.roadDesignDocument).toMatchObject({
+      documentKind: "road-design",
+    });
+
+    const extension =
+      savedProject.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as {
+      domainDraft: {
+        drawingSettings?: typeof drawingSettings;
+      };
+    };
+    expect(payload.domainDraft.drawingSettings).toEqual(drawingSettings);
+
+    const {
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const restoredFromRdd = roadDesignDocumentToProjectLinerDomainDraft(
+      savedProject.liner.roadDesignDocument,
+    );
+    expect(restoredFromRdd.ok).toBe(true);
+    if (!restoredFromRdd.ok) {
+      return;
+    }
+    expect(restoredFromRdd.domainDraft.drawingSettings).toEqual(drawingSettings);
+
+    await openProjectJson(savedProject);
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+    const reloadedSave = await readDownloadedProjectJson();
+    const reloadedExtension =
+      reloadedSave.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const reloadedPayload = reloadedExtension?.json as {
+      domainDraft: {
+        drawingSettings?: typeof drawingSettings;
+      };
+    };
+    expect(reloadedPayload.domainDraft.drawingSettings).toEqual(drawingSettings);
+    expect(reloadedSave.drawingDocument).toBeUndefined();
+    expect(reloadedSave.liner?.drawingDocument).toBeUndefined();
+  }, 40000);
 });

@@ -6,6 +6,7 @@ import {
   updateLinerDraftSettings,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlope,
+  updateLinerDrawingSettings,
   updateLinerPiers,
   updateLinerSpans,
   updateLinerVerticalAlignment,
@@ -31,6 +32,20 @@ import {
   LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
 } from "./linerDomainDraftRoadDesignMapper";
 import { parseUuid, type UuidString } from "../../contracts/uuid";
+
+const PERSISTED_DRAWING_SETTINGS = {
+  version: "0.1.0" as const,
+  planPaperSize: "A1" as const,
+  profilePaperSize: "A2" as const,
+  crossSectionPaperSize: "A3" as const,
+  bandPaperSize: "A4" as const,
+  paperOrientation: "landscape" as const,
+  marginMm: 12,
+};
+
+function createDrawingSettingsDraft() {
+  return updateLinerDrawingSettings(addLinerOffset(createDefaultLinerDraft()), PERSISTED_DRAWING_SETTINGS);
+}
 
 function createBridgeLayoutDraft() {
   let draft = addLinerOffset(createDefaultLinerDraft());
@@ -312,6 +327,48 @@ describe("liner project draft persistence", () => {
 
   it("returns undefined when the project has no LINER metadata", () => {
     expect(linerDraftFromProject(createDefaultProject())).toBeUndefined();
+  });
+
+  it("serializes drawingSettings into roadDesignDocument extensions without domainDraft", () => {
+    const project = withProjectLinerDraft(createDefaultProject(), createDrawingSettingsDraft());
+    const serialized = serializeProjectForPersistence(project);
+
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    expect(serialized.project.liner?.draft).toBeUndefined();
+
+    const extension =
+      serialized.project.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as {
+      domainDraft: {
+        drawingSettings?: typeof PERSISTED_DRAWING_SETTINGS;
+      };
+    };
+    expect(payload.domainDraft.drawingSettings).toEqual(PERSISTED_DRAWING_SETTINGS);
+  });
+
+  it("hydrates drawingSettings from roadDesignDocument into in-memory domainDraft", () => {
+    const originalDraft = createDrawingSettingsDraft();
+    const project = withProjectLinerDraft(createDefaultProject(), originalDraft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+
+    expect(hydrated.project.liner?.roadDesignDocument).toBeUndefined();
+    expect(hydrated.project.liner?.domainDraft?.drawingSettings).toEqual(PERSISTED_DRAWING_SETTINGS);
+    expect(linerDraftFromProject(hydrated.project)?.drawingSettings).toEqual(PERSISTED_DRAWING_SETTINGS);
   });
 
   it("serializes bridge layout spans and piers into roadDesignDocument without domainDraft", () => {
