@@ -1,0 +1,36 @@
+{
+  "alignment": {
+    "id": "gc05-alignment",
+    "linerModelId": "gc05",
+    "coordinatePolicyId": "global",
+    "elements": [
+      {
+        "type": "straight",
+        "id": "L1",
+        "start": { "x": 0, "y": 0 },
+        "azimuth": 0,
+        "length": 100
+      }
+    ]
+  },
+  "stationDefinition": {
+    "originDisplayedStation": 0,
+    "interval": 25
+  },
+  "verticalAlignment": {
+    "elements": [
+      {
+        "type": "parabolic",
+        "id": "VP-1",
+        "startStation": 0,
+        "endStation": 100,
+        "startElevation": 100,
+        "startGrade": 0.02,
+        "endGrade": -0.02,
+        "length": 100
+      }
+    ]
+  },
+  "offsets": [0],
+  "z": 100
+}
