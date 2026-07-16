@@ -14,6 +14,9 @@ import {
   validateLinerDraftForCommit,
   withProjectLinerDraft,
   withProjectLinerDomainDraft,
+  serializeProjectForPersistence,
+  hydrateProjectLinerFromPersistence,
+  readLinerDomainDraftFromProject,
 } from "./linerProjectDraft";
 import { convertImporterToPhase35Draft } from "../importer/export/ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../importer/__tests__/fixtures/sampleProject";
@@ -31,7 +34,7 @@ describe("liner project draft persistence", () => {
     expect(tryWithProjectLinerDraft(project, invalidDraft)).toBe(project);
   });
 
-  it("stores vNext domainDraft under project.liner without persisting legacy draft", () => {
+  it("stores vNext domainDraft in memory under project.liner without persisting legacy draft", () => {
     const draft = addLinerOffset(createDefaultLinerDraft());
     const project = withProjectLinerDraft(createDefaultProject(), draft);
 
@@ -191,6 +194,63 @@ describe("liner project draft persistence", () => {
     expect(reloaded?.gridDefinitions).toEqual(draft.gridDefinitions);
   });
 
+  it("serializes liner data to embedded roadDesignDocument without domainDraft", () => {
+    const draft = addLinerOffset(createDefaultLinerDraft());
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    expect(serialized.project.liner?.draft).toBeUndefined();
+    expect(serialized.project.liner?.roadDesignDocument).toMatchObject({
+      documentKind: "road-design",
+      schemaVersion: "0.1.0",
+    });
+    expect(serialized.project.liner?.draftSchemaVersion).toBe(LINER_DRAFT_SCHEMA_VERSION);
+  });
+
+  it("hydrates roadDesignDocument into in-memory domainDraft on load", () => {
+    const draft = addLinerOffset(createDefaultLinerDraft());
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+    expect(hydrated.project.liner?.roadDesignDocument).toBeUndefined();
+    expect(hydrated.project.liner?.domainDraft).toBeDefined();
+    expect(linerDraftFromProject(hydrated.project)).toEqual(draft);
+  });
+
+  it("reads legacy domainDraft projects via read-old path", () => {
+    const draft = addLinerOffset(createDefaultLinerDraft());
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const legacyPersisted = {
+      ...project,
+      liner: {
+        ...project.liner!,
+        domainDraft: project.liner!.domainDraft,
+      },
+    };
+    delete (legacyPersisted.liner as { roadDesignDocument?: unknown }).roadDesignDocument;
+
+    const migration = readLinerDomainDraftFromProject(legacyPersisted);
+    expect(migration.ok).toBe(true);
+    if (!migration.ok) {
+      return;
+    }
+    expect(linerDraftFromProject(legacyPersisted)).toEqual(draft);
+  });
+
   it("reads legacy project.liner.draft as a read-only fallback", () => {
     const draft = addLinerOffset(createDefaultLinerDraft());
     const legacyProject = {
@@ -206,6 +266,14 @@ describe("liner project draft persistence", () => {
     };
 
     expect(linerDraftFromProject(legacyProject)).toEqual(draft);
+
+    const hydrated = hydrateProjectLinerFromPersistence(legacyProject);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+    expect(hydrated.project.liner?.draft).toBeUndefined();
+    expect(hydrated.project.liner?.domainDraft).toBeDefined();
   });
 
   it("returns undefined when the project has no LINER metadata", () => {

@@ -152,7 +152,7 @@ afterEach(() => {
 });
 
 describe("App LINER save/load integration", () => {
-  it("writes canonical liner domainDraft and reloads it through project.json", async () => {
+  it("writes embedded roadDesignDocument and reloads it through project.json", async () => {
     installObjectURLMocks();
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
 
@@ -189,8 +189,25 @@ describe("App LINER save/load integration", () => {
     const savedProject = await readDownloadedProjectJson();
 
     expect(savedProject.liner?.draft).toBeUndefined();
+    expect(savedProject.liner?.domainDraft).toBeUndefined();
     expect(savedProject.liner?.draftSchemaVersion).toBe("0.3.0");
-    expect(savedProject.liner?.domainDraft).toMatchObject({
+    expect(savedProject.liner?.roadDesignDocument).toMatchObject({
+      documentKind: "road-design",
+      schemaVersion: "0.1.0",
+    });
+    expect(savedProject.liner?.roadDesignDocument?.bridges).toEqual([]);
+
+    const {
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const restoredFromRdd = roadDesignDocumentToProjectLinerDomainDraft(
+      savedProject.liner.roadDesignDocument,
+    );
+    expect(restoredFromRdd.ok).toBe(true);
+    if (!restoredFromRdd.ok) {
+      return;
+    }
+    expect(restoredFromRdd.domainDraft).toMatchObject({
       linerModelId: "liner-p1-d05",
       alignment: {
         id: "alignment-p1-d05",
@@ -214,25 +231,6 @@ describe("App LINER save/load integration", () => {
     await switchLinerSetupTab("station");
     expect(inputByTestId("liner-origin-displayed-station").value).toBe("10");
     expect(inputByTestId("liner-station-interval").value).toBe("7");
-
-    const {
-      projectLinerDomainDraftToRoadDesignDocument,
-      roadDesignDocumentToProjectLinerDomainDraft,
-    } = await import("./liner/adapters/linerProjectDraft");
-    const projected = projectLinerDomainDraftToRoadDesignDocument(savedProject.liner.domainDraft, {
-      createdAt: "2026-07-16T10:00:00.000Z",
-    });
-    expect(projected.ok).toBe(true);
-    if (!projected.ok) {
-      return;
-    }
-    const restored = roadDesignDocumentToProjectLinerDomainDraft(projected.document);
-    expect(restored.ok).toBe(true);
-    if (!restored.ok) {
-      return;
-    }
-    expect(restored.domainDraft.verticalAlignment).toEqual(savedProject.liner.domainDraft.verticalAlignment);
-    expect(restored.domainDraft.crossSections).toEqual(savedProject.liner.domainDraft.crossSections);
   }, 40000);
 
   it("preserves bridge layout spans and piers through project.json save and reload", async () => {
@@ -263,10 +261,25 @@ describe("App LINER save/load integration", () => {
     const savedProject = await readDownloadedProjectJson();
 
     expect(savedProject.liner?.draft).toBeUndefined();
-    expect(savedProject.liner?.domainDraft?.spans).toEqual([
+    expect(savedProject.liner?.domainDraft).toBeUndefined();
+    expect(savedProject.liner?.roadDesignDocument).toMatchObject({
+      documentKind: "road-design",
+    });
+
+    const {
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const restoredFromRdd = roadDesignDocumentToProjectLinerDomainDraft(
+      savedProject.liner.roadDesignDocument,
+    );
+    expect(restoredFromRdd.ok).toBe(true);
+    if (!restoredFromRdd.ok) {
+      return;
+    }
+    expect(restoredFromRdd.domainDraft.spans).toEqual([
       expect.objectContaining({ id: "SP1" }),
     ]);
-    expect(savedProject.liner?.domainDraft?.piers).toEqual([
+    expect(restoredFromRdd.domainDraft.piers).toEqual([
       expect.objectContaining({ id: "P1" }),
     ]);
 
@@ -279,26 +292,5 @@ describe("App LINER save/load integration", () => {
     await switchLinerSetupTab("review");
     expect(document.querySelector("[data-testid=bridge-pier-row-P1]")).not.toBeNull();
     expect(document.querySelector("[data-testid=bridge-span-row-SP1]")).not.toBeNull();
-
-    const {
-      projectLinerDomainDraftToRoadDesignDocument,
-      roadDesignDocumentToProjectLinerDomainDraft,
-    } = await import("./liner/adapters/linerProjectDraft");
-    const projected = projectLinerDomainDraftToRoadDesignDocument(savedProject.liner.domainDraft, {
-      createdAt: "2026-07-16T10:00:00.000Z",
-    });
-    expect(projected.ok).toBe(true);
-    if (!projected.ok) {
-      return;
-    }
-    expect(projected.document.bridges.length).toBe(savedProject.liner.domainDraft.spans.length);
-
-    const restored = roadDesignDocumentToProjectLinerDomainDraft(projected.document);
-    expect(restored.ok).toBe(true);
-    if (!restored.ok) {
-      return;
-    }
-    expect(restored.domainDraft.spans).toEqual(savedProject.liner.domainDraft.spans);
-    expect(restored.domainDraft.piers).toEqual(savedProject.liner.domainDraft.piers);
   }, 40000);
 });

@@ -26,12 +26,7 @@ export function linerDraftFromProject(project: ProjectModel): LinerDraft | undef
     return undefined;
   }
 
-  const persistedDraft = project.liner?.draft;
-  if (persistedDraft) {
-    return persistedDraft;
-  }
-
-  const migration = migrateLinerDraftToVNext(project.liner);
+  const migration = readLinerDomainDraftFromProject(project);
   if (migration.ok) {
     return buildIntermediateInputFromDomainDraft(migration.domainDraft);
   }
@@ -42,7 +37,142 @@ export function linerDraftFromProject(project: ProjectModel): LinerDraft | undef
 export function readLinerDomainDraftFromProject(
   project: ProjectModel,
 ): MigrateLinerDraftToVNextResult {
+  if (!project.liner) {
+    return {
+      ok: false,
+      domainDraft: null,
+      diagnostics: [
+        {
+          level: "error",
+          code: "LINER_SCHEMA_INVALID",
+          path: "/liner",
+          message: "liner metadata is missing.",
+        },
+      ],
+    };
+  }
+
+  const roadDesignDocument = project.liner.roadDesignDocument;
+  if (roadDesignDocument !== undefined) {
+    const restored = roadDesignDocumentToDomainDraft(roadDesignDocument);
+    if (!restored.ok) {
+      return {
+        ok: false,
+        domainDraft: null,
+        diagnostics: restored.diagnostics.map((message) => ({
+          level: "error" as const,
+          code: "LINER_SCHEMA_INVALID" as const,
+          path: "/liner/roadDesignDocument",
+          message,
+        })),
+      };
+    }
+    return {
+      ok: true,
+      domainDraft: restored.domainDraft,
+      diagnostics: [],
+    };
+  }
+
   return migrateLinerDraftToVNext(project.liner);
+}
+
+export type HydrateProjectLinerResult =
+  | { readonly ok: true; readonly project: ProjectModel }
+  | { readonly ok: false; readonly diagnostics: readonly string[] };
+
+export type SerializeProjectForPersistenceResult =
+  | { readonly ok: true; readonly project: ProjectModel }
+  | { readonly ok: false; readonly diagnostics: readonly string[] };
+
+/**
+ * Normalizes persisted liner metadata into the in-memory domainDraft working copy.
+ * RDD is converted to domainDraft; legacy draft is migrated; roadDesignDocument is stripped.
+ */
+export function hydrateProjectLinerFromPersistence(project: ProjectModel): HydrateProjectLinerResult {
+  if (!project.liner) {
+    return { ok: true, project };
+  }
+
+  if (project.liner.roadDesignDocument !== undefined) {
+    const restored = roadDesignDocumentToDomainDraft(project.liner.roadDesignDocument);
+    if (!restored.ok) {
+      return { ok: false, diagnostics: restored.diagnostics };
+    }
+    const hydrated = withProjectLinerDomainDraft(project, restored.domainDraft);
+    const { roadDesignDocument: _roadDesignDocument, ...linerWithoutRdd } = hydrated.liner!;
+    return {
+      ok: true,
+      project: {
+        ...hydrated,
+        liner: linerWithoutRdd,
+      },
+    };
+  }
+
+  if (project.liner.draft !== undefined && project.liner.domainDraft === undefined) {
+    const migration = migrateLinerDraftToVNext(project.liner);
+    if (!migration.ok) {
+      return {
+        ok: false,
+        diagnostics: migration.diagnostics.map((diagnostic) => diagnostic.message),
+      };
+    }
+    const hydrated = withProjectLinerDomainDraft(project, migration.domainDraft);
+    const { draft: _legacyDraft, ...linerWithoutLegacy } = hydrated.liner!;
+    return {
+      ok: true,
+      project: {
+        ...hydrated,
+        liner: linerWithoutLegacy,
+      },
+    };
+  }
+
+  return { ok: true, project };
+}
+
+/**
+ * Prepares project JSON for download: embeds RoadDesignDocument and omits domainDraft / legacy draft.
+ */
+export function serializeProjectForPersistence(
+  project: ProjectModel,
+): SerializeProjectForPersistenceResult {
+  if (!project.liner) {
+    return { ok: true, project };
+  }
+
+  const migration = readLinerDomainDraftFromProject(project);
+  if (!migration.ok) {
+    return {
+      ok: false,
+      diagnostics: migration.diagnostics.map((diagnostic) => diagnostic.message),
+    };
+  }
+
+  const mapped = domainDraftToRoadDesignDocument(migration.domainDraft);
+  if (!mapped.ok) {
+    return { ok: false, diagnostics: mapped.diagnostics };
+  }
+
+  const {
+    domainDraft: _domainDraft,
+    draft: _legacyDraft,
+    roadDesignDocument: _roadDesignDocument,
+    ...linerRest
+  } = project.liner;
+
+  return {
+    ok: true,
+    project: {
+      ...project,
+      liner: {
+        ...linerRest,
+        draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
+        roadDesignDocument: mapped.document,
+      },
+    },
+  };
 }
 
 function toAlignmentElement(element: HorizontalElementDraft): AlignmentElement {

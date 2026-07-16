@@ -286,6 +286,7 @@ export const ja = {
       VALIDATION_API_ERROR: "入力チェックAPIでエラーが発生しました。",
       ANALYSIS_API_ERROR: "解析実行APIでエラーが発生しました。",
       PROJECT_OPEN_ERROR: "project.jsonを開けませんでした。",
+      PROJECT_SAVE_ERROR: "project.jsonを保存できませんでした。",
     } as Record<string, string>,
     metrics: {
       modalMass: "モード質量",
