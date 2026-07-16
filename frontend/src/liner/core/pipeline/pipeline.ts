@@ -512,7 +512,9 @@ export function buildIntermediateResult(
     crossSections: input.crossSections,
     gridDefinitions: input.gridDefinitions,
     crossSlopeIntervals: input.crossSlopeIntervals,
-    widthChangePoints: input.widthChangePoints,
+    ...(input.widthChangePoints?.length
+      ? { widthChangePoints: input.widthChangePoints }
+      : {}),
     offsets: input.offsets ?? [0],
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,

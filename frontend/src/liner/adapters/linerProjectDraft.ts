@@ -116,7 +116,7 @@ function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<st
     crossSections: draft.crossSections,
     gridDefinitions: draft.gridDefinitions,
     crossSlopeIntervals: draft.crossSlopeIntervals,
-    widthChangePoints: draft.widthChangePoints,
+    ...(draft.widthChangePoints?.length ? { widthChangePoints: draft.widthChangePoints } : {}),
     measuredGrid: draft.measuredGrid,
     offsets: draft.offsets ?? [0],
     z: draft.z ?? 0,
