@@ -163,6 +163,15 @@ function domainDraftAlignmentTotalLength(domainDraft: LinerDomainDraftVNext): nu
   return domainDraft.alignment.elements.reduce((total, element) => total + element.length, 0);
 }
 
+function domainDraftBridgeAlignmentLength(domainDraft: LinerDomainDraftVNext): number {
+  const elementLength = domainDraftAlignmentTotalLength(domainDraft);
+  const spanReach = domainDraft.spans.reduce(
+    (max, span) => Math.max(max, span.endPhysicalDistance),
+    0,
+  );
+  return Math.max(elementLength, spanReach);
+}
+
 function validateBridgeLayoutForMapping(domainDraft: LinerDomainDraftVNext): readonly string[] {
   if (domainDraft.spans.length === 0 && domainDraft.piers.length === 0) {
     return [];
@@ -171,7 +180,7 @@ function validateBridgeLayoutForMapping(domainDraft: LinerDomainDraftVNext): rea
   const bridgeIssues = validateBridgeLayout({
     spans: domainDraft.spans,
     piers: domainDraft.piers,
-    alignmentTotalLength: domainDraftAlignmentTotalLength(domainDraft),
+    alignmentTotalLength: domainDraftBridgeAlignmentLength(domainDraft),
     stationDefinition: domainDraft.stationDefinition,
     gridPoints: [],
   });
