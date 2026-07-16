@@ -5,6 +5,7 @@ import {
   removeLinerAlignmentBundle,
   renameLinerAlignmentBundle,
   reorderLinerAlignmentBundles,
+  setLinerAlignmentEnabled,
   switchActiveAlignment,
 } from "../adapters/linerUiAdapter";
 import { CompositionAwareInput } from "./CompositionAwareInput";
@@ -60,6 +61,7 @@ export function AlignmentManager({
           <tr>
             <th scope="col">{ja.liner.alignmentManager.name}</th>
             <th scope="col">{ja.liner.alignmentManager.id}</th>
+            <th scope="col">{ja.liner.alignmentManager.enabled}</th>
             <th scope="col">{ja.liner.alignmentManager.active}</th>
             <th scope="col">{ja.liner.alignmentManager.actions}</th>
           </tr>
@@ -84,6 +86,18 @@ export function AlignmentManager({
                   />
                 </td>
                 <td>{bundle.id}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={bundle.enabled !== false}
+                    data-testid={`liner-alignment-enabled-${bundle.id}`}
+                    onChange={(event) =>
+                      onDraftChange((current) =>
+                        setLinerAlignmentEnabled(current, bundle.id, event.target.checked),
+                      )
+                    }
+                  />
+                </td>
                 <td>
                   <button
                     type="button"

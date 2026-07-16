@@ -475,6 +475,19 @@ export function renameLinerAlignmentBundle(
   }));
 }
 
+export function setLinerAlignmentEnabled(
+  draft: BuildIntermediateInput,
+  alignmentId: string,
+  enabled: boolean,
+): BuildIntermediateInput {
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
+    linerAlignments: (current.linerAlignments ?? []).map((bundle) =>
+      bundle.id === alignmentId ? { ...bundle, enabled } : bundle,
+    ),
+  }));
+}
+
 export function reorderLinerAlignmentBundles(
   draft: BuildIntermediateInput,
   orderedIds: readonly string[],

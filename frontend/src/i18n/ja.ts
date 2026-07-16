@@ -1580,6 +1580,7 @@ export const ja = {
       tableCaption: "線形一覧",
       name: "名称",
       id: "ID",
+      enabled: "有効",
       active: "選択",
       actions: "操作",
       add: "線形を追加",

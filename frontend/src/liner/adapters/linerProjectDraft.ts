@@ -7,7 +7,7 @@ import {
   type MigrateLinerDraftToVNextResult,
 } from "../schema/projectLinerMigration";
 import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
-import type { HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
+import type { AlignmentBundleDraft, HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
 import {
   deriveLinerCenterlineId,
   domainDraftToRoadDesignDocument,
@@ -294,12 +294,16 @@ function domainDraftFromLinerDraft(
 ): LinerDomainDraftVNext {
   const synced = syncActiveBundleToAlignments(draft);
   const activeId = synced.activeAlignmentId ?? synced.alignment.id;
-  const activeBundle = createAlignmentBundleFromDraft(
-    synced,
-    activeId,
-    synced.linerAlignments?.find((entry) => entry.id === activeId)?.name,
-    synced.linerAlignments?.find((entry) => entry.id === activeId)?.sortIndex ?? 0,
-  );
+  const existingActive = synced.linerAlignments?.find((entry) => entry.id === activeId);
+  const activeBundle: AlignmentBundleDraft = {
+    ...createAlignmentBundleFromDraft(
+      synced,
+      activeId,
+      existingActive?.name,
+      existingActive?.sortIndex ?? 0,
+    ),
+    enabled: existingActive?.enabled ?? true,
+  };
   const alignments =
     synced.linerAlignments?.map((bundle) =>
       bundle.id === activeBundle.id ? activeBundle : bundle,

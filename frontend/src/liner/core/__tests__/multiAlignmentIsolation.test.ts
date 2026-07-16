@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addLinerAlignmentBundle,
   createDefaultLinerDraft,
+  setLinerAlignmentEnabled,
   switchActiveAlignment,
   updateLinerAlignmentElement,
 } from "../../adapters/linerUiAdapter";
@@ -13,7 +14,7 @@ import {
   domainDraftToRoadDesignDocument,
   normalizeLinerDomainDraft,
 } from "../../adapters/linerDomainDraftRoadDesignMapper";
-import { withProjectLinerDraft } from "../../adapters/linerProjectDraft";
+import { linerDraftFromProject, withProjectLinerDraft } from "../../adapters/linerProjectDraft";
 import { createDefaultProject } from "../../../data/defaultProject";
 import { buildIntermediateResult } from "../pipeline/pipeline";
 
@@ -153,5 +154,22 @@ describe("multi-alignment isolation (R8-09)", () => {
     expect(normalized!.alignments).toHaveLength(1);
     expect(normalized!.activeAlignmentId).toBe("alignment-1");
     expect(normalized!.activeLineId).toBe(deriveLinerCenterlineId("alignment-1"));
+  });
+
+  it("preserves alignment enabled state through domain save and reload", () => {
+    let draft = createDefaultLinerDraft();
+    draft = addLinerAlignmentBundle(draft);
+    const firstId = "alignment-1";
+    draft = switchActiveAlignment(draft, firstId);
+    draft = setLinerAlignmentEnabled(draft, firstId, false);
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const domainDraft = project.liner!.domainDraft!;
+    expect(domainDraft.alignments.find((bundle) => bundle.id === firstId)?.enabled).toBe(false);
+
+    const reloaded = linerDraftFromProject(project);
+    expect(reloaded).toBeDefined();
+    expect(reloaded!.linerAlignments?.find((bundle) => bundle.id === firstId)?.enabled).toBe(false);
+    expect(reloaded!.activeAlignmentId).toBe(firstId);
   });
 });
