@@ -4,6 +4,7 @@ export * from "./crossSectionSampling";
 export * from "./crossSectionZMerge";
 export * from "./continuityC0";
 export * from "./continuityC1";
+export * from "./coordinate3d";
 export * from "./diagnostics";
 export * from "./elevationAt";
 export * from "./gradeConversion";
