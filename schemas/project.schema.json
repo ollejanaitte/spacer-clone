@@ -1603,6 +1603,16 @@
         },
         "label": {
           "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "sortIndex": {
+          "type": "integer"
+        },
+        "baseLineId": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
@@ -2020,35 +2030,36 @@
         }
       }
     },
-    "linerDomainDraftVNext": {
+    "alignmentBundleDraft": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "id",
-        "linerModelId",
-        "coordinatePolicyId",
+        "name",
+        "enabled",
+        "sortIndex",
         "alignment",
         "stationDefinition",
         "verticalAlignment",
         "crossSections",
         "gridDefinitions",
         "spans",
-        "piers",
-        "generationSettings",
-        "sampling"
+        "piers"
       ],
       "properties": {
         "id": {
           "type": "string",
           "minLength": 1
         },
-        "linerModelId": {
+        "name": {
           "type": "string",
           "minLength": 1
         },
-        "coordinatePolicyId": {
-          "type": "string",
-          "minLength": 1
+        "enabled": {
+          "type": "boolean"
+        },
+        "sortIndex": {
+          "type": "integer"
         },
         "alignment": {
           "$ref": "#/$defs/horizontalAlignmentDraft"
@@ -2064,6 +2075,12 @@
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/crossSectionTemplateDraft"
+          }
+        },
+        "crossSlopeIntervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossSlopeIntervalDraft"
           }
         },
         "gridDefinitions": {
@@ -2085,6 +2102,59 @@
             "$ref": "#/$defs/pierDraft"
           }
         },
+        "crossBeams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crossBeamDraft"
+          }
+        },
+        "widthChangePoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/widthChangePointDraft"
+          }
+        }
+      }
+    },
+    "linerDomainDraftVNext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "linerModelId",
+        "coordinatePolicyId",
+        "alignments",
+        "generationSettings",
+        "sampling"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "linerModelId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinatePolicyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alignments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/alignmentBundleDraft"
+          }
+        },
+        "activeAlignmentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activeLineId": {
+          "type": "string",
+          "minLength": 1
+        },
         "generationSettings": {
           "$ref": "#/$defs/generationSettingsDraft"
         },
@@ -2094,13 +2164,6 @@
         "measuredGrid": {
           "$ref": "#/$defs/measuredGridDraft",
           "description": "Phase 3.8: optional measured local-coordinate grid (highest-priority geometry source)."
-        },
-        "crossSlopeIntervals": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/crossSlopeIntervalDraft"
-          },
-          "description": "Phase 5 optional: physical-distance-based crossfall interval definitions."
         },
         "crossBeams": {
           "type": "array",

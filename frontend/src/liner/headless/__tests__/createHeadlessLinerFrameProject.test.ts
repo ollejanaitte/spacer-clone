@@ -54,54 +54,72 @@ const minimalMeasuredGrid = {
 };
 
 function minimalProjectDomainDraft(measuredGrid?: typeof minimalMeasuredGrid) {
+  const alignment = {
+    id: "alignment-test",
+    elements: [
+      {
+        type: "straight" as const,
+        id: "L1",
+        start: { x: 0, y: 0 },
+        azimuth: 0,
+        length: 50,
+      },
+    ],
+  };
+  const stationDefinition = { originDisplayedStation: 0 };
+  const verticalAlignment = {
+    id: "va-test",
+    elements: [
+      {
+        type: "grade" as const,
+        id: "V1",
+        startStation: 0,
+        endStation: 50,
+        startElevation: 10,
+        grade: 0,
+        length: 50,
+      },
+    ],
+  };
+  const crossSections = [
+    {
+      id: "cs-1",
+      name: "Default",
+      offsetLines: [{ id: "ol-1", offset: 0, elevation: 0 }],
+    },
+  ];
+  const gridDefinitions = [
+    {
+      id: "grid-1",
+      crossSectionTemplateId: "cs-1",
+      stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 50 },
+    },
+  ];
   return {
     id: "draft-test",
     linerModelId: "gc06",
     coordinatePolicyId: "global",
-    alignment: {
-      id: "alignment-test",
-      elements: [
-        {
-          type: "straight",
-          id: "L1",
-          start: { x: 0, y: 0 },
-          azimuth: 0,
-          length: 50,
-        },
-      ],
-    },
-    stationDefinition: { originDisplayedStation: 0 },
-    verticalAlignment: {
-      id: "va-test",
-      elements: [
-        {
-          type: "grade",
-          id: "V1",
-          startStation: 0,
-          endStation: 50,
-          startElevation: 10,
-          grade: 0,
-          length: 50,
-        },
-      ],
-    },
-    crossSections: [
+    alignments: [
       {
-        id: "cs-1",
-        name: "Default",
-        offsetLines: [{ id: "ol-1", offset: 0, elevation: 0 }],
+        id: "alignment-test",
+        name: "alignment-test",
+        enabled: true,
+        sortIndex: 0,
+        alignment,
+        stationDefinition,
+        verticalAlignment,
+        crossSections,
+        gridDefinitions,
+        spans: [],
+        piers: [],
       },
     ],
-    gridDefinitions: [
-      {
-        id: "grid-1",
-        crossSectionTemplateId: "cs-1",
-        stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 50 },
-      },
-    ],
-    spans: [],
-    piers: [],
-    generationSettings: {},
+    activeAlignmentId: "alignment-test",
+    activeLineId: "ol-1",
+    generationSettings: {
+      defaultMemberGroupKey: "default",
+      connectivityMode: "grid_full",
+    },
     sampling: {
       display: samplingProfile,
       dxf: samplingProfile,

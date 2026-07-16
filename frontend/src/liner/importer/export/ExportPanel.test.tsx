@@ -9,6 +9,7 @@ import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject
 import { clearImporterStorageForTests } from "../storage/importerStorage";
 import { clearRecoveryStateForTests } from "../storage/recoveryManager";
 import { ExportPanel } from "./ExportPanel";
+import { getActiveAlignmentBundle } from "../../adapters/linerDomainDraftRoadDesignMapper";
 import { resolveLinerUiRoutePath } from "../../uiPreparation";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -64,8 +65,10 @@ describe("ExportPanel Phase 3.5 bridge", () => {
     });
 
     expect(onOpenInPhase35).toHaveBeenCalledTimes(1);
-    expect(onOpenInPhase35.mock.calls[0]?.[0]?.alignment.elements.length).toBeGreaterThan(0);
-    expect(onOpenInPhase35.mock.calls[0]?.[0]?.verticalAlignment.elements.length).toBeGreaterThan(0);
+    const exportedDraft = onOpenInPhase35.mock.calls[0]?.[0];
+    const activeBundle = exportedDraft ? getActiveAlignmentBundle(exportedDraft) : undefined;
+    expect(activeBundle?.alignment.elements.length).toBeGreaterThan(0);
+    expect(activeBundle?.verticalAlignment.elements.length).toBeGreaterThan(0);
     expect(document.querySelector("[data-testid=export-panel-status]")?.textContent).toContain(
       "Phase 3.5 draft",
     );

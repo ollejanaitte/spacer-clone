@@ -255,6 +255,38 @@ export function createAlignmentBundleFromDraft(
   };
 }
 
+function resyncAlignmentLengthDependents(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const totalLength = totalDraftLength(draft);
+  const alignmentId = draft.activeAlignmentId ?? draft.alignment.id;
+  const verticalAlignment = draft.verticalAlignment
+    ? {
+        ...draft.verticalAlignment,
+        elements: draft.verticalAlignment.elements.map((element) =>
+          element.type === "grade"
+            ? { ...element, endStation: totalLength, length: totalLength }
+            : element,
+        ),
+      }
+    : createDefaultVerticalAlignment(totalLength, draft.z ?? 0, alignmentId);
+  const crossSlopeIntervals = draft.crossSlopeIntervals?.map((interval, index) =>
+    index === 0 ? { ...interval, endPhysicalDistance: totalLength } : interval,
+  );
+  const gridDefinitions = draft.gridDefinitions?.map((definition) => ({
+    ...definition,
+    stationRange: {
+      ...definition.stationRange,
+      endPhysicalDistance: totalLength,
+    },
+  }));
+
+  return {
+    ...draft,
+    verticalAlignment,
+    ...(crossSlopeIntervals ? { crossSlopeIntervals } : {}),
+    ...(gridDefinitions ? { gridDefinitions } : {}),
+  };
+}
+
 export function loadActiveBundleIntoDraft(
   draft: BuildIntermediateInput,
   bundle: AlignmentBundleDraft,
@@ -647,13 +679,20 @@ export function updateLinerAlignmentMetadata(
           }
         : bundle;
     });
-    return {
+    const nextDraft = {
       ...current,
       alignment: nextAlignment,
       activeAlignmentId: patch.id ?? activeId,
       ...(renamed ? { activeLineId: deriveLinerCenterlineId(patch.id!) } : {}),
       linerAlignments: nextLinerAlignments,
     };
+    if (renamed) {
+      const renamedBundle = nextLinerAlignments.find((bundle) => bundle.id === patch.id);
+      if (renamedBundle) {
+        return loadActiveBundleIntoDraft(nextDraft, renamedBundle);
+      }
+    }
+    return nextDraft;
   });
 }
 
@@ -704,11 +743,11 @@ export function updateLinerVerticalAlignment(
   verticalAlignment: VerticalAlignmentDraft,
 ): BuildIntermediateInput {
   const firstGrade = verticalAlignment.elements.find((element) => element.type === "grade");
-  return {
-    ...draft,
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
     verticalAlignment,
-    z: firstGrade?.type === "grade" ? firstGrade.startElevation : draft.z,
-  };
+    z: firstGrade?.type === "grade" ? firstGrade.startElevation : current.z,
+  }));
 }
 
 export function updateLinerCrossSectionTemplate(
@@ -869,11 +908,12 @@ export function updateLinerAlignmentElement(
   targetElementId: string,
   patch: LinerAlignmentElementPatch,
 ): BuildIntermediateInput {
-  return withActiveBundleSync(draft, (current) => ({
-    ...current,
-    alignment: {
-      ...current.alignment,
-      elements: current.alignment.elements.map((element): AlignmentElement => {
+  return withActiveBundleSync(draft, (current) =>
+    resyncAlignmentLengthDependents({
+      ...current,
+      alignment: {
+        ...current.alignment,
+        elements: current.alignment.elements.map((element): AlignmentElement => {
         if (element.id !== targetElementId) {
           return element;
         }
@@ -919,9 +959,10 @@ export function updateLinerAlignmentElement(
           endRadius: patch.endRadius !== undefined ? patch.endRadius : element.endRadius,
           turn: patch.turn ?? element.turn,
         };
-      }),
-    },
-  }));
+        }),
+      },
+    }),
+  );
 }
 
 export function updateLinerAlignmentElementAtIndex(
