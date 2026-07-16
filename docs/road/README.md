@@ -17,6 +17,14 @@ This is the canonical documentation entry point for the Road Design Tool. `RoadD
 | [Verification](verification/README.md) | Geometry and output verification plans |
 | [Legacy integration](legacy-integration/README.md) | Compatibility evidence for prior persistence and direct frame-generation designs |
 
+## Phase 4 (authoritative)
+
+Road Advanced Calculation & Utilities — canonical freeze set (approved 2026-07-16):
+
+- [Planning freeze](phase4/phase4_planning_freeze.md)
+- [Design document](phase4/phase4_design_document.md)
+- [Completion gate](phase4/phase4_completion_gate.md)
+
 ## Governing Boundaries
 
 - [Current capability crosswalk](current-capability.md)
