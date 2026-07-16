@@ -12,6 +12,7 @@ import {
   createProfileDrawingBuilder,
 } from "../../drawing";
 import { exportFormalDrawingDxf } from "../export/exportFormalDrawingDxf";
+import { ja } from "../../../i18n/ja";
 
 const OUT_DIR = "/tmp/phase5-japanese-drawing-remediation";
 
@@ -138,6 +139,16 @@ describe("Phase 5 Japanese remediation DXF artifacts", () => {
           centers.set(key, (centers.get(key) ?? 0) + 1);
         }
         expect([...centers.values()].some((count) => count >= 2)).toBe(true);
+      }
+
+      if (entry.kind === "plan-type-a" || entry.kind === "plan-type-b-centerline") {
+        expect(exported.dxf).toContain("座標表");
+      }
+
+      if (entry.kind === "profile-band") {
+        expect(exported.dxf).toContain(ja.liner.formalDrawing.bandRows.additionalDistance);
+        expect(exported.dxf).toContain(ja.liner.formalDrawing.bandRows.designElevation);
+        expect(exported.dxf).toContain(ja.liner.formalDrawing.bandRows.crossfall);
       }
     }
   });

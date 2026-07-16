@@ -1,6 +1,8 @@
 import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
+import { BridgeLayoutDiagnosticsPanel } from "../components/BridgeLayoutDiagnosticsPanel";
+import { BridgeLayoutEditor } from "../components/BridgeLayoutEditor";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionDiagnosticsPanel } from "../components/CrossSectionDiagnosticsPanel";
@@ -12,7 +14,6 @@ import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
 import { PlanElevationTable } from "../components/PlanElevationTable";
-import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
 import { VerticalDiagnosticsPanel } from "../components/VerticalDiagnosticsPanel";
 import { VerticalElementEditor } from "../components/VerticalElementEditor";
 import { VerticalProfileChart } from "../components/VerticalProfileChart";
@@ -25,6 +26,8 @@ import {
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlopeIntervals,
   updateLinerSelectedCrossSectionStation,
+  updateLinerPiers,
+  updateLinerSpans,
   updateLinerVerticalAlignment,
   updateLinerWidthChangePoints,
   type LinerDraft,
@@ -323,7 +326,22 @@ export function LinerEditPage({
           )}
 
           {activeTab === "review" && (
-            <SetupTabPlaceholder tabId="review" variant="review" />
+            <div className="liner-tab-review">
+              <BridgeLayoutEditor
+                draft={draft}
+                piers={draft.piers ?? []}
+                spans={draft.spans ?? []}
+                onPiersChange={(nextPiers) =>
+                  changeDraft((current) => updateLinerPiers(current, nextPiers))
+                }
+                onSpansChange={(nextSpans) =>
+                  changeDraft((current) => updateLinerSpans(current, nextSpans))
+                }
+                onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <BridgeLayoutDiagnosticsPanel draft={draft} />
+            </div>
           )}
         </LinerSetupTabs>
 

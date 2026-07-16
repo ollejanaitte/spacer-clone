@@ -452,7 +452,7 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
-  it("renders plan elevation table on height tab and placeholder on review tab", () => {
+  it("renders plan elevation table on height tab and bridge layout editor on review tab", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
@@ -465,8 +465,10 @@ describe("LinerEditPage", () => {
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-review]")).not.toBeNull();
-    expect(document.body.textContent).toContain(ja.liner.setupTabPlaceholder.review.title);
+    expect(document.querySelector("[data-testid=add-bridge-pier]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=add-bridge-span]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=bridge-layout-diagnostics-panel]")).not.toBeNull();
+    expect(document.body.textContent).toContain(ja.liner.editor.bridgePierSection);
     expect(document.querySelector("[data-testid=cross-section-template-id]")).toBeNull();
   });
 });

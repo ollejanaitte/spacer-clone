@@ -66,6 +66,15 @@ import {
   sheetRegionsForKind,
   stationColumnPaperX,
 } from "./formalPaperLayout";
+import {
+  appendBridgeLayoutBandRows,
+  appendBridgeLayoutPaperAnnotations,
+  bridgeLayoutGeometryPoints,
+  createBridgeLayoutGeometryLayer,
+  hasBridgeLayout,
+} from "./bridgeLayoutDrawing";
+import { appendAlignmentSegmentDimensions } from "../dimensions/alignmentSegmentDimensions";
+import { appendPlanCoordinateTablePaper } from "../tables/planCoordinateTable";
 
 function expandBounds(bounds: Bounds2, paddingX: number, paddingY: number): Bounds2 {
   if (bounds.isEmpty) {
@@ -301,6 +310,9 @@ function planGeometryModelBounds(
   for (const piPoint of result.horizontal.piPoints) {
     points.push(createPoint2(piPoint.x, piPoint.y));
   }
+  for (const bridgePoint of bridgeLayoutGeometryPoints(result)) {
+    points.push(bridgePoint);
+  }
   const bounds = boundsFromPoints2(points);
   if (bounds.isEmpty) {
     return bounds;
@@ -410,7 +422,12 @@ function planGeometryLayer(context: BuildDrawingContext): DrawingLayer {
     });
   }
   appendPlanCurveBoundaryMarkers(layer, context.result);
+  appendAlignmentSegmentDimensions(layer, context.result);
   return layer;
+}
+
+function planBridgeLayoutLayer(context: BuildDrawingContext): DrawingLayer | null {
+  return createBridgeLayoutGeometryLayer(context.result);
 }
 
 type PlanTextLayoutContext = {
@@ -628,6 +645,53 @@ function buildPlanAnnotationLayerPaper(
     });
   }
 
+  for (const [index, piPoint] of result.horizontal.piPoints.entries()) {
+    const paperPosition = transformPoint2(geometryTransform, createPoint2(piPoint.x, piPoint.y + 4));
+    const ipLabel = ja.liner.formalDrawing.planCurvePoints.ip;
+    const preferredY = paperPosition.y + layoutMajorHeight * 0.9;
+    const resolvedY = resolvePlanTextBaselineY(
+      paperPosition.x,
+      preferredY,
+      ipLabel,
+      layoutMajorHeight,
+      placedBoxes,
+      yStepMm,
+      6,
+    );
+    const clampedX = clampPlanTextAnchorX(
+      paperPosition.x,
+      resolvedY,
+      ipLabel,
+      layoutMajorHeight,
+      geometryPaperBounds,
+    );
+    const clampedY = clampPlanTextBaselineY(
+      clampedX,
+      resolvedY + index * 0.2,
+      ipLabel,
+      layoutMajorHeight,
+      geometryPaperBounds,
+    );
+    placedBoxes.push(planTextBoxFromAnchor(clampedX, clampedY, ipLabel, layoutMajorHeight));
+    layer.primitives.push({
+      kind: "text",
+      id: `plan-ip-${piPoint.id}`,
+      position: createPoint2(clampedX, clampedY),
+      value: ipLabel,
+      heightMm: annotationHeight,
+      alignment: "center",
+    });
+  }
+
+  appendBridgeLayoutPaperAnnotations(
+    layer,
+    result,
+    geometryTransform,
+    geometryPaperBounds,
+    layout,
+    placedBoxes,
+  );
+
   const firstPoint = result.horizontal.sampledPoints[0];
   if (firstPoint) {
     const northX = geometryPaperBounds.minX + FORMAL_DRAWING_LAYOUT.geometryInsetMm;
@@ -662,6 +726,8 @@ function buildPlanAnnotationLayerPaper(
     });
   }
 
+  appendPlanCoordinateTablePaper(layer, result, geometryPaperBounds);
+
   return layer;
 }
 
@@ -682,10 +748,14 @@ function buildPlanBandLayerPaper(
   const valueHeight = FORMAL_DRAWING_LAYOUT.bandValueTextHeightMm;
   const rowLabels = [
     ja.liner.formalDrawing.planBandRows.station,
-    ja.liner.formalDrawing.planBandRows.physicalDistance,
+    ja.liner.formalDrawing.bandRows.additionalDistance,
+    ja.liner.formalDrawing.bandRows.cumulativeDistance,
+    ja.liner.formalDrawing.bandRows.singleDistance,
     ja.liner.formalDrawing.planBandRows.element,
     ja.liner.formalDrawing.planBandRows.radius,
   ];
+  const bridgeRowCount = hasBridgeLayout(result) ? 3 : 0;
+  const totalRowCount = rowLabels.length + bridgeRowCount;
   const startDistance = result.stations.entries[0]?.physicalDistance ?? 0;
   const endDistance = result.stations.entries.at(-1)?.physicalDistance ?? result.horizontal.totalLength;
   const dataRight = geometryDataOriginX(bandBounds) + (endDistance - startDistance) * mmPerMeter;
@@ -747,8 +817,20 @@ function buildPlanBandLayerPaper(
         && station.physicalDistance <= entry.endPhysicalDistance,
     );
     const values = [
-      formatStationDisplay(station.displayedStation),
+      formatStationPlanNotation(station.physicalDistance),
+      stationIndex === 0
+        ? "0.00"
+        : (
+            station.physicalDistance
+            - (result.stations.entries[stationIndex - 1]?.physicalDistance ?? station.physicalDistance)
+          ).toFixed(2),
       station.physicalDistance.toFixed(2),
+      stationIndex === 0
+        ? "0.00"
+        : (
+            station.physicalDistance
+            - (result.stations.entries[stationIndex - 1]?.physicalDistance ?? station.physicalDistance)
+          ).toFixed(2),
       segment ? segmentAnnotation(segment) : ja.liner.formalDrawing.bandRows.unavailable,
       segment?.type === "arc"
         ? segmentAnnotation(segment)
@@ -759,7 +841,7 @@ function buildPlanBandLayerPaper(
       id: `plan-band-station-line-${station.entryId}`,
       points: [
         createPoint2(x, bandBounds.minY),
-        createPoint2(x, bandBounds.minY + rowLabels.length * rowHeight),
+        createPoint2(x, bandBounds.minY + totalRowCount * rowHeight),
       ],
     });
     if (stationIndex % bandValueThinStride !== 0) {
@@ -780,14 +862,16 @@ function buildPlanBandLayerPaper(
     });
   }
 
+  appendBridgeLayoutBandRows(layer, result, bandBounds, mmPerMeter, layout, startDistance, rowLabels.length);
+
   layer.primitives.push({
     kind: "polyline",
     id: "plan-band-data-frame",
     points: [
       createPoint2(geometryDataOriginX(bandBounds), bandBounds.minY),
       createPoint2(dataRight, bandBounds.minY),
-      createPoint2(dataRight, bandBounds.minY + rowLabels.length * rowHeight),
-      createPoint2(geometryDataOriginX(bandBounds), bandBounds.minY + rowLabels.length * rowHeight),
+      createPoint2(dataRight, bandBounds.minY + totalRowCount * rowHeight),
+      createPoint2(geometryDataOriginX(bandBounds), bandBounds.minY + totalRowCount * rowHeight),
       createPoint2(geometryDataOriginX(bandBounds), bandBounds.minY),
     ],
   });
@@ -821,6 +905,10 @@ function buildPlanViewports(context: BuildDrawingContext): DrawingViewport[] {
     layout,
   );
   const bandLayer = buildPlanBandLayerPaper(context.result, bandBounds, mmPerMeter, layout);
+  const bridgeLayer = planBridgeLayoutLayer(context);
+  const planLayers = bridgeLayer
+    ? [planLayer, bridgeLayer, annotationLayer]
+    : [planLayer, annotationLayer];
   const stationAxisId = context.settings.stationAxes[0]?.id;
   return [
     {
@@ -829,7 +917,7 @@ function buildPlanViewports(context: BuildDrawingContext): DrawingViewport[] {
       modelBounds: planModelBounds,
       paperBounds: geometryBounds,
       transform: geometryTransform,
-      layers: [planLayer, annotationLayer],
+      layers: planLayers,
       stationAxisId,
     },
     {

@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, Minus, Plus, RefreshCw } from "lucide-react";
+import { ArrowLeft, Download, Minus, Plus, Printer, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { buildIntermediateResult } from "../core/pipeline/pipeline";
@@ -11,15 +11,18 @@ import {
 } from "../adapters/linerUiAdapter";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import {
-  buildDrawingDocument,
+  buildMultiPageDrawingDocument,
   createCrossSectionDrawingBuilder,
   createDrawingSettingsFromDraft,
   createPlanDrawingBuilder,
   createProfileDrawingBuilder,
+  resolveFormalDrawingPageByRoute,
+  selectDrawingDocumentSheet,
 } from "../drawing";
 import type { DrawingDocument } from "../drawing/model/document";
 import type { FormalPlanType } from "../drawing/builders/types";
 import { DrawingDocumentSvg } from "../drawing/rendering/DrawingDocumentSvg";
+import { printFormalDrawing } from "../drawing/print/printFormalDrawing";
 import { formatStationDisplay } from "../core/station/stationFormat";
 import {
   canExportFormalDrawingDxf,
@@ -56,18 +59,6 @@ function resolveDiagnosticMessage(
     return ja.liner.errors[errorKey] ?? message;
   }
   return message;
-}
-
-function buildPlanDocument(
-  intermediate: ReturnType<typeof buildIntermediateResult>,
-  baseSettings: ReturnType<typeof createDrawingSettingsFromDraft> & {
-    selectedCrossSectionStation?: number;
-  },
-  planType: FormalPlanType,
-): DrawingDocument {
-  const settings = { ...baseSettings, planType };
-  const planOutput = createPlanDrawingBuilder().build({ result: intermediate, settings });
-  return buildDrawingDocument(planOutput.sheet, settings, planOutput.diagnostics);
 }
 
 export function LinerFormalDrawingWorkspacePage({
@@ -107,35 +98,41 @@ export function LinerFormalDrawingWorkspacePage({
     return createCrossSectionDrawingBuilder(settings.selectedCrossSectionStation);
   }, [kind, settings.selectedCrossSectionStation]);
   const output = useMemo(() => builder.build({ result: intermediate, settings }), [builder, intermediate, settings]);
-  const document = useMemo(() => buildDrawingDocument(output.sheet, settings, output.diagnostics), [output, settings]);
-
-  const planTypeADocument = useMemo(
-    () => buildPlanDocument(intermediate, settings, "road_shape"),
+  const multiPageDocument = useMemo(
+    () => buildMultiPageDrawingDocument({ result: intermediate, settings }),
     [intermediate, settings],
   );
-  const planTypeBDocument = useMemo(
-    () => buildPlanDocument(intermediate, settings, "centerline_only"),
-    [intermediate, settings],
+  const activePage = useMemo(() => resolveFormalDrawingPageByRoute(kind), [kind]);
+  const document = useMemo(
+    () => selectDrawingDocumentSheet(multiPageDocument, activePage.sheetId),
+    [multiPageDocument, activePage.sheetId],
+  );
+  const activeSheet = document.sheets[0];
+
+  const planTypeADocument = useMemo(() => {
+    const planSettings = { ...settings, planType: "road_shape" as const };
+    return selectDrawingDocumentSheet(
+      buildMultiPageDrawingDocument({ result: intermediate, settings: planSettings }),
+      "plan-sheet",
+    );
+  }, [intermediate, settings]);
+  const planTypeBDocument = useMemo(() => {
+    const planSettings = { ...settings, planType: "centerline_only" as const };
+    return selectDrawingDocumentSheet(
+      buildMultiPageDrawingDocument({ result: intermediate, settings: planSettings }),
+      "plan-sheet",
+    );
+  }, [intermediate, settings]);
+
+  const profileDocument = useMemo(
+    () => selectDrawingDocumentSheet(multiPageDocument, "profile-sheet"),
+    [multiPageDocument],
   );
 
-  const profileDocument = useMemo(() => {
-    if (kind === "profile") {
-      return document;
-    }
-    const profileOutput = createProfileDrawingBuilder().build({ result: intermediate, settings });
-    return buildDrawingDocument(profileOutput.sheet, settings, profileOutput.diagnostics);
-  }, [document, intermediate, kind, settings]);
-
-  const crossSectionDocument = useMemo(() => {
-    if (kind === "cross-section") {
-      return document;
-    }
-    const crossOutput = createCrossSectionDrawingBuilder(settings.selectedCrossSectionStation).build({
-      result: intermediate,
-      settings,
-    });
-    return buildDrawingDocument(crossOutput.sheet, settings, crossOutput.diagnostics);
-  }, [document, intermediate, kind, settings]);
+  const crossSectionDocument = useMemo(
+    () => selectDrawingDocumentSheet(multiPageDocument, "cross_section-sheet"),
+    [multiPageDocument],
+  );
 
   const handleExportDxf = useCallback(
     (exportKind: FormalDrawingDxfKind, source: DrawingDocument) => {
@@ -167,6 +164,13 @@ export function LinerFormalDrawingWorkspacePage({
     },
     [exportBusy, projectId],
   );
+
+  const handlePrint = useCallback(() => {
+    printFormalDrawing({
+      document,
+      title: ROUTE_LABELS[kind],
+    });
+  }, [document, kind]);
 
   const measureFitZoom = useCallback(() => {
     const canvas = canvasRef.current;
@@ -272,6 +276,22 @@ export function LinerFormalDrawingWorkspacePage({
         })}
       </div>
 
+      <div
+        className="liner-formal-workspace-page-nav"
+        role="navigation"
+        aria-label={ja.liner.formalDrawing.pageNavigationLabel}
+      >
+        <p data-testid="formal-drawing-page-indicator">
+          {ja.liner.formalDrawing.pageIndicator(
+            activeSheet?.page?.pageNumber ?? 1,
+            activeSheet?.page?.pageCount ?? 3,
+          )}
+        </p>
+        {activeSheet?.page?.scaleLabel ? (
+          <p data-testid="formal-drawing-scale-indicator">{activeSheet.page.scaleLabel}</p>
+        ) : null}
+      </div>
+
       <div className="liner-formal-workspace-layout">
         <aside className="liner-formal-workspace-sidebar">
           <section className="liner-formal-workspace-panel">
@@ -358,6 +378,21 @@ export function LinerFormalDrawingWorkspacePage({
               >
                 <RefreshCw size={14} />
                 {ja.liner.formalDrawing.fitView}
+              </button>
+            </div>
+          </section>
+
+          <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-print-title">
+            <h2 id="formal-drawing-print-title">{ja.liner.formalDrawing.printSectionTitle}</h2>
+            <div className="liner-formal-workspace-dxf-actions">
+              <button
+                type="button"
+                data-testid="formal-drawing-print-active-sheet"
+                aria-label={ja.liner.formalDrawing.printActiveSheet}
+                onClick={handlePrint}
+              >
+                <Printer size={14} />
+                {ja.liner.formalDrawing.printActiveSheet}
               </button>
             </div>
           </section>
@@ -452,11 +487,13 @@ export function LinerFormalDrawingWorkspacePage({
             className="liner-formal-workspace-canvas-transform"
             style={{ transform: `translate(${panX}px, ${panY}px) scale(${zoom})` }}
           >
+          <div data-testid="formal-drawing-preview-document" data-drawing-document-ref="preview">
             <DrawingDocumentSvg
               document={document}
               screenScale={zoom}
               viewportWidthPx={canvasWidthPx}
             />
+          </div>
           </div>
         </section>
       </div>

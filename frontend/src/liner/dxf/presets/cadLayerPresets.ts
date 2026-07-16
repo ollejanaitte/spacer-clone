@@ -169,6 +169,7 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   "plan-annotation-layer": "PLAN_TEXT",
   "plan-band": "PLAN_BAND",
   "plan-band-layer": "PLAN_BAND",
+  "plan-bridge-layer": "PLAN_STATION",
   profile: "PROFILE_DESIGN",
   "profile-layer": "PROFILE_DESIGN",
   "profile-annotation": "PROFILE_TEXT",
@@ -195,6 +196,8 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   CROSS_TEXT: "CROSS_TEXT",
   SHEET_FRAME: "SHEET_FRAME",
   SHEET_TEXT: "SHEET_TEXT",
+  "sheet-frame-layer": "SHEET_FRAME",
+  "sheet-text-layer": "SHEET_TEXT",
 };
 
 export function resolveCadLayerPreset(

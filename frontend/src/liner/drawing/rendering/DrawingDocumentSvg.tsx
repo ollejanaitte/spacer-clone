@@ -251,6 +251,7 @@ function renderViewport(
   paperWidthMm: number,
 ): ReactElement {
   const clipId = `clip-${viewport.id}`;
+  const isSheetOverlay = viewport.kind === "sheet";
   const planTextLayout = shouldFilterPlanViewportTexts(viewport)
     ? selectReadablePlanTexts(collectPlanTextCandidates(viewport), {
         viewportWidthPx: viewportWidthPx ?? 1366,
@@ -260,24 +261,28 @@ function renderViewport(
     : undefined;
   return (
     <g key={viewport.id} data-testid={`drawing-viewport-${viewport.id}`}>
-      <clipPath id={clipId}>
-        <rect
-          x={viewport.paperBounds.minX}
-          y={viewport.paperBounds.minY}
-          width={viewport.paperBounds.maxX - viewport.paperBounds.minX}
-          height={viewport.paperBounds.maxY - viewport.paperBounds.minY}
-        />
-      </clipPath>
-      <rect
-        x={viewport.paperBounds.minX}
-        y={viewport.paperBounds.minY}
-        width={viewport.paperBounds.maxX - viewport.paperBounds.minX}
-        height={viewport.paperBounds.maxY - viewport.paperBounds.minY}
-        fill="#ffffff"
-        stroke="#cbd5e1"
-        strokeWidth={0.4}
-      />
-      <g clipPath={`url(#${clipId})`}>
+      {!isSheetOverlay ? (
+        <>
+          <clipPath id={clipId}>
+            <rect
+              x={viewport.paperBounds.minX}
+              y={viewport.paperBounds.minY}
+              width={viewport.paperBounds.maxX - viewport.paperBounds.minX}
+              height={viewport.paperBounds.maxY - viewport.paperBounds.minY}
+            />
+          </clipPath>
+          <rect
+            x={viewport.paperBounds.minX}
+            y={viewport.paperBounds.minY}
+            width={viewport.paperBounds.maxX - viewport.paperBounds.minX}
+            height={viewport.paperBounds.maxY - viewport.paperBounds.minY}
+            fill="#ffffff"
+            stroke="#cbd5e1"
+            strokeWidth={0.4}
+          />
+        </>
+      ) : null}
+      <g clipPath={isSheetOverlay ? undefined : `url(#${clipId})`}>
         {viewport.layers.filter((layer) => layer.visible).map((layer) => (
           <g key={layer.id}>
             {layer.primitives.map((primitive) =>

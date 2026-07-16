@@ -112,9 +112,11 @@ export function buildIntermediateInputFromDomainDraft(
     ...(domainDraft.widthChangePoints?.length
       ? { widthChangePoints: domainDraft.widthChangePoints }
       : {}),
-    ...(domainDraft.crossSections.length > 1 || domainDraft.gridDefinitions.length > 1
+    ...(domainDraft.gridDefinitions.length > 1 || domainDraft.crossSections.length > 1
       ? { gridDefinitions: domainDraft.gridDefinitions }
       : {}),
+    ...(domainDraft.spans.length ? { spans: domainDraft.spans } : {}),
+    ...(domainDraft.piers.length ? { piers: domainDraft.piers } : {}),
   };
 }
 
@@ -130,6 +132,8 @@ function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<st
     measuredGrid: draft.measuredGrid,
     offsets: draft.offsets ?? [0],
     z: draft.z ?? 0,
+    ...(draft.spans?.length ? { spans: draft.spans } : {}),
+    ...(draft.piers?.length ? { piers: draft.piers } : {}),
   };
 }
 

@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ja } from "../../i18n/ja";
 import { createDefaultLinerDraft } from "../adapters/linerUiAdapter";
+import { buildFormalDrawingWorkspaceDocuments } from "../drawing/formalDrawingWorkspaceDocuments";
 import { LinerFormalDrawingWorkspacePage } from "./LinerFormalDrawingWorkspacePage";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -112,5 +113,54 @@ describe("LinerFormalDrawingWorkspacePage", () => {
     const width = Number(viewBoxParts[2]);
     const height = Number(viewBoxParts[3]);
     expect(width).toBeGreaterThan(height);
+  });
+
+  it("shows page indicator and scale for the active sheet", () => {
+    render(
+      <LinerFormalDrawingWorkspacePage
+        kind="profile"
+        draft={createDefaultLinerDraft()}
+        onClose={() => undefined}
+        onBackToSetup={() => undefined}
+        onNavigate={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=formal-drawing-page-indicator]")?.textContent).toContain("2/3");
+    expect(document.querySelector("[data-testid=formal-drawing-scale-indicator]")?.textContent).toContain("H 1:500");
+    expect(document.querySelector("[data-testid=drawing-viewport-sheet-decoration-viewport]")).not.toBeNull();
+  });
+
+  it("prints the same DrawingDocument shown in preview", () => {
+    const printSpy = vi.spyOn(window, "print").mockImplementation(() => undefined);
+    const draft = createDefaultLinerDraft();
+    const bundle = buildFormalDrawingWorkspaceDocuments(draft, "profile");
+
+    render(
+      <LinerFormalDrawingWorkspacePage
+        kind="profile"
+        draft={draft}
+        onClose={() => undefined}
+        onBackToSetup={() => undefined}
+        onNavigate={() => undefined}
+      />,
+    );
+
+    const button = document.querySelector(
+      "[data-testid=formal-drawing-print-active-sheet]",
+    ) as HTMLButtonElement;
+    expect(button).not.toBeNull();
+    expect(button.disabled).toBe(false);
+    expect(document.body.textContent).toContain(ja.liner.formalDrawing.printActiveSheet);
+    expect(document.querySelector("[data-testid=formal-drawing-preview-document]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=drawing-sheet-profile-sheet]")).not.toBeNull();
+
+    act(() => {
+      button.click();
+    });
+
+    expect(printSpy).toHaveBeenCalledTimes(1);
+    expect(bundle.previewDocument.sheets[0]?.id).toBe("profile-sheet");
+    expect(bundle.printDocument).toBe(bundle.previewDocument);
   });
 });

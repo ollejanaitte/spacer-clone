@@ -1,3 +1,4 @@
+import { evaluateBridgeLayout } from "../bridge/bridgeLayoutEvaluation";
 import { hasFatalIssues } from "../diagnostics";
 import {
   resolveCrossSectionTemplateById,
@@ -41,12 +42,10 @@ import type {
   HorizontalPiPointResult,
   HorizontalSegmentResult,
   LinearAlignment,
-  PierResult,
   ProfileSamplePoint,
   ProfileSegmentResult,
   GradeBreakResult,
   SectionSliceResult,
-  SpanResult,
   StationDefinition,
   StationTableEntry,
   StationTableResult,
@@ -62,6 +61,7 @@ import type {
   VerticalAlignmentDraft,
   WidthChangePointDraft,
 } from "../../schema/types";
+import type { PierDraft, SpanDraft } from "../../schema/types";
 
 export type BuildIntermediateInput = {
   alignment: LinearAlignment;
@@ -77,6 +77,8 @@ export type BuildIntermediateInput = {
   z?: number;
   selectedCrossSectionStation?: number;
   drawingSettings?: LinerDrawingSettingsDraft;
+  spans?: SpanDraft[];
+  piers?: PierDraft[];
   computedAt?: string;
 };
 
@@ -519,6 +521,8 @@ export function buildIntermediateResult(
     offsets: input.offsets ?? [0],
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
+    ...(input.spans?.length ? { spans: input.spans } : {}),
+    ...(input.piers?.length ? { piers: input.piers } : {}),
   });
   const diagnostics: ComputationDiagnostic[] = validateAlignment(input.alignment);
   const totalLength = totalAlignmentLength(input.alignment);
@@ -589,8 +593,18 @@ export function buildIntermediateResult(
         : { gridPoints: [], issues: [] };
   diagnostics.push(...gridGeneration.issues);
   const grid = buildGridResult(gridGeneration.gridPoints, input.alignment.linerModelId);
-  const spans: SpanResult[] = [];
-  const piers: PierResult[] = [];
+  const bridgeLayout = canEvaluate
+    ? evaluateBridgeLayout({
+        spans: input.spans ?? [],
+        piers: input.piers ?? [],
+        alignmentTotalLength: totalLength,
+        stationDefinition: input.stationDefinition,
+        gridPoints: gridGeneration.gridPoints,
+      })
+    : { spans: [], piers: [], issues: [] };
+  diagnostics.push(...bridgeLayout.issues);
+  const spans = bridgeLayout.spans;
+  const piers = bridgeLayout.piers;
   const sections = buildSectionResult(gridGeneration.gridPoints, input);
 
   return {

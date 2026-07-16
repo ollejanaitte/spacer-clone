@@ -1,20 +1,22 @@
 import DxfParser from "dxf-parser";
 import { describe, expect, it } from "vitest";
 import { createDefaultLinerDraft, updateLinerDraftSettings } from "../adapters/linerUiAdapter";
+import { exportFormalDrawingDxf } from "../dxf";
+import { buildProfileDrawingDocumentFromDraft } from "./formalDrawingFromDraft";
 import { buildLinerProfileDxf } from "./linerProfileDxf";
-import { dxfHeaderVariableValue } from "./makerDxfSpike";
 
 describe("buildLinerProfileDxf", () => {
-  it("exports ground and design profile layers in meters", () => {
+  it("exports formal profile layers via DrawingDocument", () => {
     const draft = updateLinerDraftSettings(createDefaultLinerDraft(), { z: 12 });
+    const document = buildProfileDrawingDocumentFromDraft(draft);
     const dxf = buildLinerProfileDxf(draft);
     const parsed = new DxfParser().parseSync(dxf);
 
-    expect(dxfHeaderVariableValue(dxf, "$INSUNITS")).toBe("6");
-    expect(dxfHeaderVariableValue(dxf, "$MEASUREMENT")).toBe("1");
+    expect(exportFormalDrawingDxf("profile-band", document).dxf).toBe(dxf);
     expect(parsed).not.toBeNull();
     if (!parsed) return;
-    expect(parsed.entities.some((entity) => entity.layer === "PROFILE_GROUND")).toBe(true);
     expect(parsed.entities.some((entity) => entity.layer === "PROFILE_DESIGN")).toBe(true);
+    expect(parsed.entities.some((entity) => entity.layer === "PROFILE_BAND")).toBe(true);
+    expect(dxf).toContain("9\n$ACADVER\n1\nAC1021");
   });
 });
