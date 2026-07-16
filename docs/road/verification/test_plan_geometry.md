@@ -194,8 +194,14 @@ Parabolic formula: Z(s) = Z_PVC + g_in·s + (g_out − g_in)·s²/(2L) for s ∈
 1. Author domain input JSON in `examples/liner/gc-NN-domain.json`.
 2. Run pipeline in test to produce intermediate JSON.
 3. Compare to committed `gc-NN-intermediate.expected.json`.
-4. Run mapper for GC-06 → `gc-06-project.generated.json`; validate against schema.
+4. Run mapper for GC-06 and validate generated project shape against schema.
 5. On intentional algorithm change, update expected with review.
+
+P1-D03 status: GC-01 through GC-07 intermediate snapshots use the committed
+`gc-NN-intermediate.expected.json` naming convention. A committed
+`gc-06-project.generated.json` remains deferred; GC-06 mapper/project validation
+is currently covered by focused Vitest tests rather than an on-disk generated
+project fixture.
 
 ### 6. Inverse projection tests
 
@@ -232,8 +238,9 @@ frontend/src/liner/mapper/
 examples/liner/
   gc-01-domain.json
   gc-01-intermediate.expected.json
-  gc-06-intermediate.json
-  gc-06-project.generated.json
+  gc-06-domain.json
+  gc-06-intermediate.expected.json
+  # gc-06-project.generated.json is planned separately; P1-D03 uses Vitest coverage.
   ...
 ```
 

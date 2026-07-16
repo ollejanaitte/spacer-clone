@@ -52,12 +52,16 @@ Format: `LINER_{DOMAIN}_{DESCRIPTION}`
 | `LINER_GEOM_POSITION_DISCONTINUITY` | error | `liner.errors.geom_position_gap` | Yes | No | Yes |
 | `LINER_GEOM_AZIMUTH_DISCONTINUITY` | error | `liner.errors.geom_azimuth_gap` | Yes | No | Yes |
 | `LINER_GEOM_CLOTHOID_INVALID_RADIUS` | error | `liner.errors.geom_clothoid_radius` | Yes | No | Yes |
+| `LINER_GEOM_CLOTHOID_ACCURACY_EXCEEDED` | error | `liner.errors.geom_clothoid_accuracy` | Yes | No | Yes |
 | `LINER_GEOM_CLOTHOID_LONG_SPIRAL` | warning | `liner.errors.geom_clothoid_long` | No | No | No |
 | `LINER_GEOM_INVERSE_PROJECTION_FAILED` | error | `liner.errors.geom_inverse_failed` | Yes | No | Yes |
 | `LINER_STATION_DUPLICATE_EQUATION` | warning | `liner.errors.station_duplicate` | No | No | No |
 | `LINER_STATION_OUT_OF_RANGE` | error | `liner.errors.station_range` | Yes | No | Yes |
-| `LINER_PROFILE_OVERLAP` | error | `liner.errors.profile_overlap` | Yes | No | Yes |
-| `LINER_PROFILE_GRADE_EXCEEDS_LIMIT` | warning | `liner.errors.profile_grade` | No | No | No |
+| `LINER_PROFILE_ELEVATION_DISCONTINUITY` | error | `liner.errors.profile_elevation_gap` | Yes | No | Yes |
+| `LINER_PROFILE_GRADE_DISCONTINUITY` | error | `liner.errors.profile_grade_gap` | Yes | No | Yes |
+| `LINER_PROFILE_COVERAGE_GAP` | error | `liner.errors.profile_coverage_gap` | Yes | No | Yes |
+| `LINER_PROFILE_ADJACENCY_GAP` | error | `liner.errors.profile_adjacency_gap` | Yes | No | Yes |
+| `LINER_PROFILE_END_COVERAGE_GAP` | warning | `liner.errors.profile_end_coverage_gap` | No | No | No |
 | `LINER_GRID_SPACING_INVALID` | error | `liner.errors.grid_spacing` | Yes | No | Yes |
 | `LINER_FRAME_MISSING_NODE` | error | `liner.errors.frame_missing_node` | N/A | N/A | Yes |
 | `LINER_FRAME_MISSING_SECTION` | error | `liner.errors.frame_missing_section` | N/A | N/A | Yes |
@@ -65,11 +69,21 @@ Format: `LINER_{DOMAIN}_{DESCRIPTION}`
 | `LINER_FRAME_DISCONNECTED` | warning | `liner.errors.frame_disconnected` | N/A | N/A | No |
 | `LINER_FRAME_DUPLICATE_ID` | error | `liner.errors.frame_duplicate_id` | N/A | N/A | Yes |
 | `LINER_FRAME_SCHEMA_INVALID` | error | `liner.errors.frame_schema` | N/A | N/A | Yes |
+| `LINER_SPAN_END_EXCEEDS_ALIGNMENT` | error | `liner.errors.span_end_exceeds_alignment` | Yes | No | Yes |
+| `LINER_ORIGIN_STATION_AMBIGUOUS` | error | `liner.errors.origin_station_ambiguous` | Yes | No | Yes |
+| `LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED` | warning | `liner.errors.profile_parabolic_z_merge_deferred` | No | No | No |
+| `LINER_CROSSFALL_INTERVAL_OVERLAP` | error | `liner.errors.crossfall_interval_overlap` | Yes | No | Yes |
+| `LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED` | error | `liner.errors.crossfall_pivot_change_unsupported` | Yes | No | Yes |
+| `LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE` | warning | `liner.errors.crossfall_measured_grid_precedence` | No | No | No |
 | `LINER_SCHEMA_INVALID` | error | `liner.errors.schema_invalid` | No | Yes | Yes |
 | `LINER_IO_CORRUPT_FILE` | error | `liner.errors.io_corrupt` | Yes | Yes | Yes |
 | `LINER_IO_VERSION_MISMATCH` | error | `liner.errors.io_version` | Yes | Yes | Yes |
 
 Rules in [validation_rules.md](validation_rules.md) reference these codes.
+
+P1-D03 implementation note: core diagnostics use `createIssue()` to attach the
+stable `liner.errors.*` key for every `LinerDiagnosticCode`. Call sites may still
+provide an explicit `messageKey`, which is preserved for compatibility.
 
 ### 3. Diagnostic shape
 

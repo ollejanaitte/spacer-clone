@@ -278,3 +278,16 @@ Complete before starting liner React UI (Phase 2):
 | Automatic BLOCKER fixes applied | **None** (gaps are fixture/test deliverables, not minimal code defects) |
 
 **Report: FAIL**
+
+## P1-D02 / P1-D03 Closeout Addendum
+
+This section records post-gate remediation evidence without rewriting the original gate findings above.
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| GC-01 through GC-07 committed intermediate fixtures | **Closed by P1-D02** | `examples/liner/gc-0N-domain.json` and `gc-0N-intermediate.expected.json`; `frontend/src/liner/core/__tests__/goldenFixture.test.ts` loads committed expected data. |
+| Stale GC-01 / GC-06 expected shape | **Closed by P1-D02** | Both expected files now use canonical `LinerIntermediateResult` shape with fixed `computedAt`. |
+| Fixture naming mismatch | **Closed by P1-D03 docs alignment** | Canonical naming is `gc-NN-domain.json` and `gc-NN-intermediate.expected.json`; older `gc-06-intermediate.json` wording is obsolete. |
+| `gc-06-project.generated.json` | **Deferred** | Still not committed in P1-D03. GC-06 mapper/project schema coverage remains in Vitest (`createHeadlessLinerFrameProject`) until a later generated-project-fixture step. |
+| `frameMappingPreview` in canonical public API | **Closed by P1-D03** | Legacy preview helpers remain importable by direct module path only; top-level `frontend/src/liner/index.ts` exports canonical mapper/pipeline APIs. |
+| Diagnostic `messageKey` defaults | **Closed by P1-D03** | Core `createIssue()` supplies stable `liner.errors.*` defaults for every `LinerDiagnosticCode`; explicit call-site overrides are preserved. |
