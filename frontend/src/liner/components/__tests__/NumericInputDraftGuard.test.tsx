@@ -74,9 +74,9 @@ describe("liner numeric input draft guards", () => {
       />,
     );
 
-    act(() => setInputValue("cross-section-offset-line-offset-OL-0", ""));
+    act(() => setInputValue("cross-section-offset-line-offset-OL-alignment-1-0", ""));
     expect(onTemplateChange).not.toHaveBeenCalled();
-    act(() => setInputValue("cross-section-offset-line-offset-OL-0", "2.5"));
+    act(() => setInputValue("cross-section-offset-line-offset-OL-alignment-1-0", "2.5"));
     expect(onTemplateChange).toHaveBeenCalledTimes(1);
   });
 

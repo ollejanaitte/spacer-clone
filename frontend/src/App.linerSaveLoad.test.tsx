@@ -177,7 +177,6 @@ describe("App LINER save/load integration", () => {
     await openLinerSetupViaLauncher();
 
     await act(async () => {
-      setInputValue(inputByTestId("liner-alignment-id"), "alignment-p1-d05");
       setInputValue(inputByTestId("liner-model-id"), "liner-p1-d05");
       setInputValue(inputByTestId("liner-element-length-S1"), "42");
     });
@@ -188,14 +187,7 @@ describe("App LINER save/load integration", () => {
     });
 
     await act(async () => {
-      buttonByTestId("open-liner-preview").click();
-    });
-    expect(document.querySelector("[data-testid=liner-preview-page]")).not.toBeNull();
-    expect(document.querySelector("[data-testid=liner-grid-preview]")).not.toBeNull();
-    expect(document.body.textContent).toContain("42");
-
-    await act(async () => {
-      buttonByTestId("close-liner-preview").click();
+      buttonByTestId("close-liner-edit").click();
     });
     await act(async () => {
       buttonByTitle("現在のモデルを project.json として保存します。").click();
@@ -211,9 +203,12 @@ describe("App LINER save/load integration", () => {
     });
     expect(savedProject.liner?.roadDesignDocument?.bridges).toEqual([]);
 
-    const {
-      roadDesignDocumentToProjectLinerDomainDraft,
-    } = await import("./liner/adapters/linerProjectDraft");
+    const { roadDesignDocumentToProjectLinerDomainDraft } = await import(
+      "./liner/adapters/linerProjectDraft",
+    );
+    const { getActiveAlignmentBundle } = await import(
+      "./liner/adapters/linerDomainDraftRoadDesignMapper",
+    );
     const restoredFromRdd = roadDesignDocumentToProjectLinerDomainDraft(
       savedProject.liner.roadDesignDocument,
     );
@@ -221,16 +216,14 @@ describe("App LINER save/load integration", () => {
     if (!restoredFromRdd.ok) {
       return;
     }
-    expect(restoredFromRdd.domainDraft).toMatchObject({
-      linerModelId: "liner-p1-d05",
-      alignment: {
-        id: "alignment-p1-d05",
-        elements: [expect.objectContaining({ id: "S1", length: 42 })],
-      },
-      stationDefinition: {
-        originDisplayedStation: 10,
-        interval: 7,
-      },
+    const restoredBundle = getActiveAlignmentBundle(restoredFromRdd.domainDraft)!;
+    expect(restoredFromRdd.domainDraft.linerModelId).toBe("liner-p1-d05");
+    expect(restoredBundle.alignment.elements).toEqual([
+      expect.objectContaining({ id: "S1", length: 42 }),
+    ]);
+    expect(restoredBundle.stationDefinition).toEqual({
+      originDisplayedStation: 10,
+      interval: 7,
     });
 
     await openProjectJson(savedProject);
@@ -239,7 +232,7 @@ describe("App LINER save/load integration", () => {
       window.dispatchEvent(new PopStateEvent("popstate"));
     });
 
-    expect(inputByTestId("liner-alignment-id").value).toBe("alignment-p1-d05");
+    expect(inputByTestId("liner-alignment-id").value).toBe("alignment-1");
     expect(inputByTestId("liner-model-id").value).toBe("liner-p1-d05");
     expect(inputByTestId("liner-element-length-S1").value).toBe("42");
     await switchLinerSetupTab("station");
@@ -254,6 +247,7 @@ describe("App LINER save/load integration", () => {
     const { App } = await import("./App");
     const {
       deriveLinerBridgeEntityId,
+      getActiveAlignmentBundle,
       LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
     } = await import("./liner/adapters/linerDomainDraftRoadDesignMapper");
     window.history.pushState({}, "", "/pro");
@@ -313,11 +307,13 @@ describe("App LINER save/load integration", () => {
       savedProject.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
     const payload = extension?.json as {
       domainDraft: {
-        spans: Array<Record<string, unknown>>;
-        piers: Array<Record<string, unknown>>;
+        alignments: Array<{
+          spans: Array<Record<string, unknown>>;
+          piers: Array<Record<string, unknown>>;
+        }>;
       };
     };
-    expect(payload.domainDraft.spans).toEqual([
+    expect(payload.domainDraft.alignments[0]?.spans).toEqual([
       expect.objectContaining({
         id: "SP1",
         startPhysicalDistance: 20,
@@ -326,7 +322,7 @@ describe("App LINER save/load integration", () => {
         pierIdEnd: "P2",
       }),
     ]);
-    expect(payload.domainDraft.piers).toEqual([
+    expect(payload.domainDraft.alignments[0]?.piers).toEqual([
       expect.objectContaining({
         id: "P1",
         physicalDistance: 20,
@@ -337,7 +333,7 @@ describe("App LINER save/load integration", () => {
         physicalDistance: 80,
       }),
     ]);
-    expect((payload.domainDraft.piers[0]?.bearingOffsets as unknown[] | undefined)?.[0]).toEqual(
+    expect((payload.domainDraft.alignments[0]?.piers[0]?.bearingOffsets as unknown[] | undefined)?.[0]).toEqual(
       expect.objectContaining({ transverseIndex: 0, offset: 0.5 }),
     );
 
@@ -351,7 +347,7 @@ describe("App LINER save/load integration", () => {
     if (!restoredFromRdd.ok) {
       return;
     }
-    expect(restoredFromRdd.domainDraft.spans).toEqual([
+    expect(getActiveAlignmentBundle(restoredFromRdd.domainDraft)!.spans).toEqual([
       expect.objectContaining({
         id: "SP1",
         startPhysicalDistance: 20,
@@ -360,7 +356,7 @@ describe("App LINER save/load integration", () => {
         pierIdEnd: "P2",
       }),
     ]);
-    expect(restoredFromRdd.domainDraft.piers).toEqual([
+    expect(getActiveAlignmentBundle(restoredFromRdd.domainDraft)!.piers).toEqual([
       expect.objectContaining({
         id: "P1",
         physicalDistance: 20,

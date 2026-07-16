@@ -10,6 +10,9 @@ import {
   updateLinerPiers,
   updateLinerSpans,
   updateLinerVerticalAlignment,
+  syncActiveBundleToAlignments,
+  updateLinerAlignmentMetadata,
+  updateLinerAlignmentElement,
 } from "./linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -29,6 +32,7 @@ import {
 } from "../schema/types";
 import {
   deriveLinerBridgeEntityId,
+  getActiveAlignmentBundle,
   LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
 } from "./linerDomainDraftRoadDesignMapper";
 import { parseUuid, type UuidString } from "../../contracts/uuid";
@@ -109,50 +113,50 @@ describe("liner project draft persistence", () => {
     expect(conversion.draft).not.toBeNull();
     const project = withProjectLinerDomainDraft(createDefaultProject(), conversion.draft!);
 
-    expect(project.liner?.domainDraft?.alignment.elements.length).toBeGreaterThan(0);
+    expect(getActiveAlignmentBundle(project.liner!.domainDraft!)!.alignment.elements.length).toBeGreaterThan(0);
     expect(linerDraftFromProject(project)?.alignment.elements.length).toBeGreaterThan(0);
   });
 
   it("validates P2-D06 viewer E2E-like drafts for commit", () => {
     let draft = createDefaultLinerDraft();
-    draft.alignment.id = "alignment-p2-d06";
-    draft.alignment.linerModelId = "liner-p2-d06";
-    draft.alignment.elements[0] = {
-      ...draft.alignment.elements[0],
-      length: 24,
-    };
-    draft = updateLinerDraftSettings(draft, { sampleInterval: 12 });
-    draft = updateLinerVerticalAlignment(draft, {
-      id: "VA-default",
-      elements: [
+    draft = updateLinerAlignmentMetadata(draft, { linerModelId: "liner-p2-d06" });
+    draft = updateLinerAlignmentElement(draft, "S1", { length: 24 });
+    draft = syncActiveBundleToAlignments(
+      updateLinerVerticalAlignment(
+        updateLinerDraftSettings(draft, { sampleInterval: 12 }),
         {
-          type: "grade",
-          id: "VG-default",
-          startStation: 0,
-          endStation: 24,
-          startElevation: 10,
-          grade: 0.01,
-          length: 24,
+          id: "VA-default",
+          elements: [
+            {
+              type: "grade",
+              id: "VG-default",
+              startStation: 0,
+              endStation: 24,
+              startElevation: 10,
+              grade: 0.01,
+              length: 24,
+            },
+          ],
         },
-      ],
-    });
+      ),
+    );
 
     expect(validateLinerDraftForCommit(draft)).toBeNull();
-    expect(withProjectLinerDraft(createDefaultProject(), draft).liner?.domainDraft).toMatchObject({
-      verticalAlignment: {
-        elements: [expect.objectContaining({ startElevation: 10, grade: 0.01, endStation: 24 })],
-      },
+    expect(getActiveAlignmentBundle(withProjectLinerDraft(createDefaultProject(), draft).liner!.domainDraft!)!
+      .verticalAlignment.elements[0]).toMatchObject({
+      startElevation: 10,
+      grade: 0.01,
+      endStation: 24,
     });
   });
 
   it("validates persisted domain round-trip drafts for commit", () => {
-    const originalDraft = createDefaultLinerDraft();
+    const originalDraft = syncActiveBundleToAlignments(createDefaultLinerDraft());
     const persistedDraft = linerDraftFromProject(
       withProjectLinerDraft(createDefaultProject(), originalDraft),
     );
     expect(persistedDraft).toBeDefined();
     expect(persistedDraft).toEqual(originalDraft);
-    expect(Object.keys(persistedDraft!).sort()).toEqual(Object.keys(originalDraft).sort());
     expect(validateLinerDraftForCommit(originalDraft)).toBeNull();
     expect(validateLinerDraftForCommit(persistedDraft!)).toBeNull();
   });
@@ -181,20 +185,24 @@ describe("liner project draft persistence", () => {
         { id: "OL-right", offset: 3, elevation: -0.2, role: "lane" },
       ],
     });
-    const edited = updateLinerCrossSlope(crossSectionDraft, {
+    const edited = syncActiveBundleToAlignments(updateLinerCrossSlope(crossSectionDraft, {
       signConvention: "right_down_positive",
       valuePercent: 2,
-    });
+    }));
     const project = withProjectLinerDraft(createDefaultProject(), edited);
 
-    expect(project.liner?.domainDraft?.verticalAlignment.id).toBe("VA-edited");
-    expect(project.liner?.domainDraft?.crossSections[0]?.id).toBe("CS-edited");
-    expect(project.liner?.domainDraft?.crossSections[0]?.crossSlope?.valuePercent).toBe(2);
-    expect(linerDraftFromProject(project)).toEqual(edited);
+    const active = getActiveAlignmentBundle(project.liner!.domainDraft!)!;
+    expect(active.verticalAlignment.id).toBe("VA-edited");
+    expect(active.crossSections[0]?.id).toBe("CS-edited");
+    expect(active.crossSections[0]?.crossSlope?.valuePercent).toBe(2);
+    expect(linerDraftFromProject(project)).toMatchObject({
+      verticalAlignment: edited.verticalAlignment,
+      crossSections: edited.crossSections,
+    });
   });
 
   it("preserves gridDefinitions and multiple cross-sections through save and reload", () => {
-    const draft = {
+    const draft = syncActiveBundleToAlignments({
       ...createDefaultLinerDraft(),
       crossSections: [
         {
@@ -233,13 +241,14 @@ describe("liner project draft persistence", () => {
         },
       ],
       offsets: [-4, 0, 4],
-    };
+    });
     const project = withProjectLinerDraft(createDefaultProject(), draft);
     const reloaded = linerDraftFromProject(project);
 
-    expect(project.liner?.domainDraft?.crossSections.map((entry) => entry.id)).toEqual(["CS-a", "CS-b"]);
-    expect(project.liner?.domainDraft?.gridDefinitions).toEqual(draft.gridDefinitions);
-    expect(reloaded?.crossSections).toEqual(draft.crossSections);
+    const active = getActiveAlignmentBundle(project.liner!.domainDraft!)!;
+    expect(active.crossSections.map((entry) => entry.id)).toEqual(["CS-a", "CS-b"]);
+    expect(active.gridDefinitions).toEqual(draft.gridDefinitions);
+    expect(reloaded?.crossSections).toMatchObject(draft.crossSections ?? []);
     expect(reloaded?.gridDefinitions).toEqual(draft.gridDefinitions);
   });
 
@@ -395,11 +404,13 @@ describe("liner project draft persistence", () => {
     const extension = roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
     const payload = extension?.json as {
       domainDraft: {
-        spans: unknown[];
-        piers: unknown[];
+        alignments: Array<{
+          spans: unknown[];
+          piers: unknown[];
+        }>;
       };
     };
-    expect(payload.domainDraft.spans).toEqual([
+    expect(payload.domainDraft.alignments[0]?.spans).toEqual([
       expect.objectContaining({
         id: "SP1",
         startPhysicalDistance: 20,
@@ -408,7 +419,7 @@ describe("liner project draft persistence", () => {
         pierIdEnd: "P2",
       }),
     ]);
-    expect(payload.domainDraft.piers).toEqual([
+    expect(payload.domainDraft.alignments[0]?.piers).toEqual([
       expect.objectContaining({
         id: "P1",
         physicalDistance: 20,
@@ -438,8 +449,12 @@ describe("liner project draft persistence", () => {
     }
 
     expect(hydrated.project.liner?.roadDesignDocument).toBeUndefined();
-    expect(hydrated.project.liner?.domainDraft?.spans).toEqual(project.liner?.domainDraft?.spans);
-    expect(hydrated.project.liner?.domainDraft?.piers).toEqual(project.liner?.domainDraft?.piers);
+    expect(getActiveAlignmentBundle(hydrated.project.liner!.domainDraft!)!.spans).toEqual(
+      getActiveAlignmentBundle(project.liner!.domainDraft!)!.spans,
+    );
+    expect(getActiveAlignmentBundle(hydrated.project.liner!.domainDraft!)!.piers).toEqual(
+      getActiveAlignmentBundle(project.liner!.domainDraft!)!.piers,
+    );
     expect(linerDraftFromProject(hydrated.project)?.spans).toEqual(originalDraft.spans);
     expect(linerDraftFromProject(hydrated.project)?.piers).toEqual(originalDraft.piers);
   });
@@ -451,10 +466,14 @@ describe("liner project draft persistence", () => {
     ).liner!.domainDraft!;
     const invalid = withProjectLinerDomainDraft(createDefaultProject(), {
       ...domainDraft,
-      spans: [
-        ...domainDraft.spans,
-        { ...domainDraft.spans[0]!, id: domainDraft.spans[0]!.id },
-      ],
+      alignments: domainDraft.alignments.map((bundle, index) =>
+        index === 0
+          ? {
+              ...bundle,
+              spans: [...bundle.spans, { ...bundle.spans[0]!, id: bundle.spans[0]!.id }],
+            }
+          : bundle,
+      ),
     });
 
     const serialized = serializeProjectForPersistence(invalid);

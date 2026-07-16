@@ -1,5 +1,6 @@
 import { LINER_DRAFT_SCHEMA_VERSION } from "../../schema/version";
-import type { LinerDomainDraftVNext } from "../../schema/types";
+import type { AlignmentBundleDraft, LinerDomainDraftVNext } from "../../schema/types";
+import { deriveLinerCenterlineId } from "../../adapters/linerDomainDraftRoadDesignMapper";
 import {
   evaluateProjectRenderability,
   renderabilityDiagnostics,
@@ -89,10 +90,10 @@ function pushNormalizationDiagnostics(
 
 function applyPostConditionResults(
   diagnostics: AdapterDiagnostic[],
-  draft: LinerDomainDraftVNext,
+  bundle: AlignmentBundleDraft,
   ctx: ReturnType<typeof buildNormalizationContext>,
 ): void {
-  const postResults = runPostConditions(ctx, draft);
+  const postResults = runPostConditions(ctx, bundle);
   const errors = postResults.filter((result) => result.severity === "error");
   const warnings = postResults.filter((result) => result.severity === "warning");
 
@@ -147,13 +148,24 @@ function buildDomainDraft(
 
   pushNormalizationDiagnostics(diagnostics, ctx);
 
-  const crossSections = normalizeCrossSections(bridge, ctx);
-  const draft: LinerDomainDraftVNext = {
-    id: createUniqueId("domain-draft"),
-    linerModelId,
-    coordinatePolicyId: project.coordinateSystem.horizontal.datum || "default",
+  const alignmentId = createUniqueId("alignment");
+  const centerlineId = deriveLinerCenterlineId(alignmentId);
+  const crossSections = normalizeCrossSections(bridge, ctx).map((section) => ({
+    ...section,
+    offsetLines: section.offsetLines.map((line, index) => ({
+      ...line,
+      enabled: line.enabled ?? true,
+      sortIndex: line.sortIndex ?? index,
+      baseLineId: line.baseLineId ?? centerlineId,
+    })),
+  }));
+  const bundle: AlignmentBundleDraft = {
+    id: alignmentId,
+    name: alignmentId,
+    enabled: true,
+    sortIndex: 0,
     alignment: {
-      id: createUniqueId("alignment"),
+      id: alignmentId,
       elements: planElements.map((element) => ({ ...element })),
     },
     stationDefinition: normalizeStationDefinition(sectionStations, ctx),
@@ -164,6 +176,15 @@ function buildDomainDraft(
     piers: normalizeSupports(bridge, ctx),
     crossBeams: normalizeCrossBeams(bridge, ctx),
     widthChangePoints: normalizeWidthPoints(bridge, ctx),
+  };
+
+  const draft: LinerDomainDraftVNext = {
+    id: createUniqueId("domain-draft"),
+    linerModelId,
+    coordinatePolicyId: project.coordinateSystem.horizontal.datum || "default",
+    alignments: [bundle],
+    activeAlignmentId: alignmentId,
+    activeLineId: deriveLinerCenterlineId(alignmentId),
     generationSettings: {
       connectivityMode: "grid_full",
     },
@@ -190,7 +211,7 @@ function buildDomainDraft(
     }
   }
 
-  applyPostConditionResults(diagnostics, draft, ctx);
+  applyPostConditionResults(diagnostics, bundle, ctx);
   return draft;
 }
 

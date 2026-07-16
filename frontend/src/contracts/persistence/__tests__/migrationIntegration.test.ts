@@ -11,7 +11,7 @@ import {
 } from "../../../liner/adapters/linerUiAdapter";
 import { withProjectLinerDraft } from "../../../liner/adapters/linerProjectDraft";
 import { createDefaultProject } from "../../../data/defaultProject";
-import { roadDesignDocumentToDomainDraft } from "../../../liner/adapters/linerDomainDraftRoadDesignMapper";
+import { roadDesignDocumentToDomainDraft, getActiveAlignmentBundle } from "../../../liner/adapters/linerDomainDraftRoadDesignMapper";
 import { createValidBridgeFrameAnalysisDocument, createValidRoadDesignDocument } from "../../repository/__tests__/fixtures";
 import {
   createDocumentPersistenceGateway,
@@ -397,15 +397,19 @@ describe("phase 0 D03 migration integration", () => {
     if (!restored.ok) {
       return;
     }
-    expect(restored.domainDraft.spans).toEqual(domainDraft!.spans);
-    expect(restored.domainDraft.piers).toEqual(domainDraft!.piers);
+    expect(getActiveAlignmentBundle(restored.domainDraft)!.spans).toEqual(
+      getActiveAlignmentBundle(domainDraft!)!.spans,
+    );
+    expect(getActiveAlignmentBundle(restored.domainDraft)!.piers).toEqual(
+      getActiveAlignmentBundle(domainDraft!)!.piers,
+    );
     expect(restored.domainDraft.drawingSettings).toEqual(domainDraft!.drawingSettings);
   });
 
   it("round-trips importer-derived bridge layout through domainDraft projection", () => {
     const conversion = convertImporterToPhase35Draft(createSampleImporterProject());
     expect(conversion.draft).not.toBeNull();
-    expect(conversion.draft!.spans.length).toBeGreaterThan(0);
+    expect(getActiveAlignmentBundle(conversion.draft!)!.spans.length).toBeGreaterThan(0);
 
     const projected = projectLinerDomainDraftToRoadDesignDocument(conversion.draft!, {
       createdAt: "2026-07-16T04:00:00.000Z",
@@ -414,14 +418,20 @@ describe("phase 0 D03 migration integration", () => {
     if (!projected.ok) {
       return;
     }
-    expect(projected.document.bridges.length).toBe(conversion.draft!.spans.length);
+    expect(projected.document.bridges.length).toBe(
+      getActiveAlignmentBundle(conversion.draft!)!.spans.length,
+    );
 
     const restored = roadDesignDocumentToDomainDraft(projected.document);
     expect(restored.ok).toBe(true);
     if (!restored.ok) {
       return;
     }
-    expect(restored.domainDraft.spans).toEqual(conversion.draft!.spans);
-    expect(restored.domainDraft.piers).toEqual(conversion.draft!.piers);
+    expect(getActiveAlignmentBundle(restored.domainDraft)!.spans).toEqual(
+      getActiveAlignmentBundle(conversion.draft!)!.spans,
+    );
+    expect(getActiveAlignmentBundle(restored.domainDraft)!.piers).toEqual(
+      getActiveAlignmentBundle(conversion.draft!)!.piers,
+    );
   });
 });

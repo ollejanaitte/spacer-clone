@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../../../data/defaultProject";
+import { getActiveAlignmentBundle } from "../../adapters/linerDomainDraftRoadDesignMapper";
 import { linerDraftFromProject } from "../../adapters/linerProjectDraft";
 import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
 import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
@@ -18,11 +19,12 @@ describe("importerPhase35Bridge", () => {
 
     const stored = storeImporterDomainDraftInProject(createDefaultProject(), conversion.draft!);
 
+    const storedBundle = getActiveAlignmentBundle(stored.project.liner?.domainDraft!)!;
     expect(stored.project.liner?.domainDraft).toBeDefined();
     expect(stored.project.liner?.draft).toBeUndefined();
-    expect(stored.project.liner?.domainDraft?.alignment.elements.length).toBeGreaterThan(0);
-    expect(stored.project.liner?.domainDraft?.verticalAlignment.elements.length).toBeGreaterThan(0);
-    expect(stored.project.liner?.domainDraft?.crossSections.length).toBeGreaterThan(0);
+    expect(storedBundle.alignment.elements.length).toBeGreaterThan(0);
+    expect(storedBundle.verticalAlignment.elements.length).toBeGreaterThan(0);
+    expect(storedBundle.crossSections.length).toBeGreaterThan(0);
     expect(linerDraftFromProject(stored.project)).toEqual(stored.draft);
   });
 
@@ -36,12 +38,13 @@ describe("importerPhase35Bridge", () => {
       return;
     }
 
-    expect(result.bridge.domainDraft.alignment.elements).toEqual(
+    const bridgeBundle = getActiveAlignmentBundle(result.bridge.domainDraft)!;
+    expect(bridgeBundle.alignment.elements).toEqual(
       importerProject.bridges[0]!.alignmentMetadata!.plan!.elements.map((element) => ({
         ...element,
       })),
     );
-    expect(result.bridge.domainDraft.verticalAlignment.elements[0]).toMatchObject({
+    expect(bridgeBundle.verticalAlignment.elements[0]).toMatchObject({
       type: "grade",
       startStation: 0,
       endStation: 40.286699999999996,
