@@ -2,7 +2,13 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { createSampleImporterProject } from "../../../liner/importer/__tests__/fixtures/sampleProject";
+import { convertImporterToPhase35Draft } from "../../../liner/importer/export/ImporterToPhase35Adapter";
 import { createDefaultLinerDraft } from "../../../liner/adapters/linerUiAdapter";
+import {
+  updateLinerDrawingSettings,
+  updateLinerPiers,
+  updateLinerSpans,
+} from "../../../liner/adapters/linerUiAdapter";
 import { withProjectLinerDraft } from "../../../liner/adapters/linerProjectDraft";
 import { createDefaultProject } from "../../../data/defaultProject";
 import { roadDesignDocumentToDomainDraft } from "../../../liner/adapters/linerDomainDraftRoadDesignMapper";
@@ -340,5 +346,82 @@ describe("phase 0 D03 migration integration", () => {
       return;
     }
     expect(restored.domainDraft).toEqual(domainDraft);
+  });
+
+  it("projects bridge layout domainDraft to RoadDesignDocument and preserves spans/piers", () => {
+    let draft = createDefaultLinerDraft();
+    draft = updateLinerPiers(draft, [
+      { id: "P1", physicalDistance: 10, kind: "abutment" },
+      { id: "P2", physicalDistance: 90, kind: "pier" },
+    ]);
+    draft = updateLinerSpans(draft, [
+      {
+        id: "SP1",
+        startPhysicalDistance: 10,
+        endPhysicalDistance: 90,
+        pierIdStart: "P1",
+        pierIdEnd: "P2",
+      },
+    ]);
+    draft = updateLinerDrawingSettings(draft, {
+      version: "0.1.0",
+      planPaperSize: "A2",
+      marginMm: 10,
+    });
+
+    const domainDraft = withProjectLinerDraft(createDefaultProject(), draft).liner?.domainDraft;
+    expect(domainDraft).toBeDefined();
+
+    const projected = projectLinerDomainDraftToRoadDesignDocument(domainDraft!, {
+      createdAt: "2026-07-16T04:00:00.000Z",
+    });
+    expect(projected.ok).toBe(true);
+    if (!projected.ok) {
+      return;
+    }
+    expect(projected.document.bridges).toHaveLength(1);
+
+    const store = createInMemoryAtomicJsonStore();
+    const path = `${FIXED_CLOCK_PATH}/liner-bridge-layout.json`;
+    const saved = saveRoadDesignDocument(projected.document, path, store, { createOnly: true });
+    expect(saved.ok).toBe(true);
+
+    const reloaded = loadRoadDesignDocument(store.read(path));
+    expect(reloaded.ok).toBe(true);
+    if (!reloaded.ok) {
+      return;
+    }
+
+    const restored = roadDesignDocumentToDomainDraft(reloaded.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.spans).toEqual(domainDraft!.spans);
+    expect(restored.domainDraft.piers).toEqual(domainDraft!.piers);
+    expect(restored.domainDraft.drawingSettings).toEqual(domainDraft!.drawingSettings);
+  });
+
+  it("round-trips importer-derived bridge layout through domainDraft projection", () => {
+    const conversion = convertImporterToPhase35Draft(createSampleImporterProject());
+    expect(conversion.draft).not.toBeNull();
+    expect(conversion.draft!.spans.length).toBeGreaterThan(0);
+
+    const projected = projectLinerDomainDraftToRoadDesignDocument(conversion.draft!, {
+      createdAt: "2026-07-16T04:00:00.000Z",
+    });
+    expect(projected.ok).toBe(true);
+    if (!projected.ok) {
+      return;
+    }
+    expect(projected.document.bridges.length).toBe(conversion.draft!.spans.length);
+
+    const restored = roadDesignDocumentToDomainDraft(projected.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.spans).toEqual(conversion.draft!.spans);
+    expect(restored.domainDraft.piers).toEqual(conversion.draft!.piers);
   });
 });

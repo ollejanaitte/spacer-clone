@@ -234,4 +234,71 @@ describe("App LINER save/load integration", () => {
     expect(restored.domainDraft.verticalAlignment).toEqual(savedProject.liner.domainDraft.verticalAlignment);
     expect(restored.domainDraft.crossSections).toEqual(savedProject.liner.domainDraft.crossSections);
   }, 40000);
+
+  it("preserves bridge layout spans and piers through project.json save and reload", async () => {
+    installObjectURLMocks();
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await openLinerSetupViaLauncher();
+
+    await switchLinerSetupTab("review");
+    await act(async () => {
+      buttonByTestId("add-bridge-pier").click();
+      buttonByTestId("add-bridge-span").click();
+    });
+
+    expect(document.querySelector("[data-testid=bridge-pier-row-P1]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=bridge-span-row-SP1]")).not.toBeNull();
+
+    await act(async () => {
+      buttonByTestId("close-liner-edit").click();
+    });
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+    const savedProject = await readDownloadedProjectJson();
+
+    expect(savedProject.liner?.draft).toBeUndefined();
+    expect(savedProject.liner?.domainDraft?.spans).toEqual([
+      expect.objectContaining({ id: "SP1" }),
+    ]);
+    expect(savedProject.liner?.domainDraft?.piers).toEqual([
+      expect.objectContaining({ id: "P1" }),
+    ]);
+
+    await openProjectJson(savedProject);
+    await act(async () => {
+      window.history.pushState({}, "", "/pro/liner/setup");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+
+    await switchLinerSetupTab("review");
+    expect(document.querySelector("[data-testid=bridge-pier-row-P1]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=bridge-span-row-SP1]")).not.toBeNull();
+
+    const {
+      projectLinerDomainDraftToRoadDesignDocument,
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const projected = projectLinerDomainDraftToRoadDesignDocument(savedProject.liner.domainDraft, {
+      createdAt: "2026-07-16T10:00:00.000Z",
+    });
+    expect(projected.ok).toBe(true);
+    if (!projected.ok) {
+      return;
+    }
+    expect(projected.document.bridges.length).toBe(savedProject.liner.domainDraft.spans.length);
+
+    const restored = roadDesignDocumentToProjectLinerDomainDraft(projected.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.spans).toEqual(savedProject.liner.domainDraft.spans);
+    expect(restored.domainDraft.piers).toEqual(savedProject.liner.domainDraft.piers);
+  }, 40000);
 });

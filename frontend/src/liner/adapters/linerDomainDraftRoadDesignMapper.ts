@@ -119,6 +119,8 @@ function isLinerDomainDraftGeometryPayload(value: unknown): value is LinerDomain
     && isPlainObject(value.domainDraft.verticalAlignment)
     && Array.isArray(value.domainDraft.crossSections)
     && Array.isArray(value.domainDraft.gridDefinitions)
+    && Array.isArray(value.domainDraft.spans)
+    && Array.isArray(value.domainDraft.piers)
     && isPlainObject(value.domainDraft.generationSettings)
     && isPlainObject(value.domainDraft.sampling)
   );
@@ -173,6 +175,16 @@ function validateDomainDraftForMapping(domainDraft: LinerDomainDraftVNext): read
   for (const [index, crossSection] of domainDraft.crossSections.entries()) {
     if (requireNonEmptyString(crossSection.id, `crossSections[${index}].id`) === undefined) {
       issues.push(`crossSections[${index}].id is required.`);
+    }
+  }
+  for (const [index, span] of domainDraft.spans.entries()) {
+    if (requireNonEmptyString(span.id, `spans[${index}].id`) === undefined) {
+      issues.push(`spans[${index}].id is required.`);
+    }
+  }
+  for (const [index, pier] of domainDraft.piers.entries()) {
+    if (requireNonEmptyString(pier.id, `piers[${index}].id`) === undefined) {
+      issues.push(`piers[${index}].id is required.`);
     }
   }
   return issues;
@@ -431,6 +443,12 @@ export function roadDesignDocumentToDomainDraft(
   const actualCrossSectionIds = document.crossSections.map((entry) => entry.entityId);
   if (actualCrossSectionIds.join("|") !== expectedCrossSectionIds.join("|")) {
     return diagnostic("RoadDesignDocument cross-section stable ids do not match domainDraft.crossSections.");
+  }
+
+  const expectedBridgeIds = domainDraft.spans.map((entry) => deriveLinerBridgeEntityId(entry.id));
+  const actualBridgeIds = document.bridges.map((entry) => entry.entityId);
+  if (actualBridgeIds.join("|") !== expectedBridgeIds.join("|")) {
+    return diagnostic("RoadDesignDocument bridge stable ids do not match domainDraft.spans.");
   }
 
   return { ok: true, domainDraft };
