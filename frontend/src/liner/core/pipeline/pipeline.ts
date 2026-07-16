@@ -3,9 +3,11 @@ import {
   resolveCrossSectionTemplateById,
   resolveCrossSectionTemplateForPhysicalDistance,
 } from "../crossSectionTemplateResolution";
+import { validateCrossSectionTemplates } from "../crossSectionTemplateValidation";
 import { generateGridPoints } from "../grid/gridGeneration";
-import { resolveCrossfallState } from "../grid/crossfallResolution";
+import { resolveCrossfallState, validateCrossSlopeIntervals } from "../grid/crossfallResolution";
 import { generateMeasuredGridPoints } from "../grid/measuredGridGeneration";
+import { validateWidthChangePoints } from "../width/widthResolution";
 import {
   evaluateAlignmentAtDistance,
   totalAlignmentLength,
@@ -14,7 +16,7 @@ import {
 import { elevationAt } from "../elevationAt";
 import { SAMPLING_INTERVAL_DISPLAY, sampleDisplay } from "../sampling";
 import { displayedStationAtPhysicalDistance, generateStations } from "../station/stationRules";
-import { checkVerticalProfileEndCoverage } from "../validateVerticalCoverage";
+import { validateVerticalAlignment } from "../validateVerticalAlignment";
 import {
   sampleVerticalDisplay,
   type VerticalSamplePoint,
@@ -58,6 +60,7 @@ import type {
   LinerDrawingSettingsDraft,
   MeasuredGridDraft,
   VerticalAlignmentDraft,
+  WidthChangePointDraft,
 } from "../../schema/types";
 
 export type BuildIntermediateInput = {
@@ -67,6 +70,7 @@ export type BuildIntermediateInput = {
   crossSections?: CrossSectionTemplateDraft[];
   gridDefinitions?: GridDefinitionDraft[];
   crossSlopeIntervals?: CrossSlopeIntervalDraft[];
+  widthChangePoints?: WidthChangePointDraft[];
   measuredGrid?: MeasuredGridDraft;
   offsets?: number[];
   sampleInterval?: number;
@@ -509,12 +513,23 @@ export function buildIntermediateResult(
     crossSections: input.crossSections,
     gridDefinitions: input.gridDefinitions,
     crossSlopeIntervals: input.crossSlopeIntervals,
+    ...(input.widthChangePoints?.length
+      ? { widthChangePoints: input.widthChangePoints }
+      : {}),
     offsets: input.offsets ?? [0],
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
   });
   const diagnostics: ComputationDiagnostic[] = validateAlignment(input.alignment);
   const totalLength = totalAlignmentLength(input.alignment);
+  diagnostics.push(...validateVerticalAlignment(input.verticalAlignment, totalLength));
+  diagnostics.push(...validateCrossSlopeIntervals(input.crossSlopeIntervals, totalLength));
+  diagnostics.push(...validateWidthChangePoints(input.widthChangePoints, totalLength));
+  diagnostics.push(...validateCrossSectionTemplates({
+    crossSections: input.crossSections,
+    gridDefinitions: input.gridDefinitions,
+    alignmentTotalLength: totalLength,
+  }));
   const stationGeneration = generateStations(input.stationDefinition, totalLength);
   diagnostics.push(...stationGeneration.issues);
 
@@ -529,7 +544,6 @@ export function buildIntermediateResult(
   );
   const z = input.z ?? 0;
   const verticalAlignment = input.verticalAlignment;
-  diagnostics.push(...checkVerticalProfileEndCoverage(verticalAlignment, totalLength));
   const vertical = buildVerticalResult(
     verticalAlignment,
     stationGeneration.stations,
@@ -548,6 +562,8 @@ export function buildIntermediateResult(
     crossSections: input.crossSections,
     gridDefinitions: input.gridDefinitions,
     crossSlopeIntervals: input.crossSlopeIntervals,
+    widthChangePoints: input.widthChangePoints,
+    alignmentTotalLength: totalLength,
   };
   if (canEvaluate && input.measuredGrid && (input.crossSlopeIntervals?.length ?? 0) > 0) {
     diagnostics.push(

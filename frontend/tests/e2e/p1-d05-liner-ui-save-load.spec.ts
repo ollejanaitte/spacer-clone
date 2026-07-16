@@ -30,6 +30,12 @@ test.describe("P1-D05 liner UI save/load integration", () => {
     await page.locator("[data-testid=liner-origin-displayed-station]").fill("5");
     await page.locator("[data-testid=liner-station-interval]").fill("6");
 
+    await page.locator("[data-testid=liner-setup-tab-vertical]").click();
+    await page.locator("[data-testid=liner-vertical-element-end-station-VG-default]").fill("36");
+
+    await page.locator("[data-testid=liner-setup-tab-crossSection]").click();
+    await page.locator("[data-testid=crossfall-interval-row-CF-1] [data-testid=crossfall-interval-end-CF-1]").fill("36");
+
     await page.locator("[data-testid=open-liner-preview]").click();
     await expect(page).toHaveURL("/pro/liner/preview");
     await expect(page.locator("[data-testid=liner-grid-preview]")).toBeVisible();

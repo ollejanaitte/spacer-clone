@@ -6,7 +6,15 @@ import {
   migrateLinerDraftToVNext,
   type MigrateLinerDraftToVNextResult,
 } from "../schema/projectLinerMigration";
+import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
 import type { HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
+import {
+  domainDraftToRoadDesignDocument,
+  roadDesignDocumentToDomainDraft,
+  type DomainDraftRoadDesignMapResult,
+  type LinerDomainDraftRoadDesignMapperOptions,
+  type RoadDesignDomainDraftMapResult,
+} from "./linerDomainDraftRoadDesignMapper";
 import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
@@ -95,12 +103,15 @@ export function buildIntermediateInputFromDomainDraft(
     verticalAlignment: domainDraft.verticalAlignment,
     crossSections: domainDraft.crossSections,
     crossSlopeIntervals: domainDraft.crossSlopeIntervals,
-    measuredGrid: domainDraft.measuredGrid,
     offsets,
     sampleInterval: domainDraft.sampling.display.maxChordLength,
     selectedCrossSectionStation: domainDraft.selectedCrossSectionStation,
-    drawingSettings: domainDraft.drawingSettings,
     z,
+    ...(domainDraft.measuredGrid ? { measuredGrid: domainDraft.measuredGrid } : {}),
+    ...(domainDraft.drawingSettings ? { drawingSettings: domainDraft.drawingSettings } : {}),
+    ...(domainDraft.widthChangePoints?.length
+      ? { widthChangePoints: domainDraft.widthChangePoints }
+      : {}),
     ...(domainDraft.crossSections.length > 1 || domainDraft.gridDefinitions.length > 1
       ? { gridDefinitions: domainDraft.gridDefinitions }
       : {}),
@@ -115,6 +126,7 @@ function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<st
     crossSections: draft.crossSections,
     gridDefinitions: draft.gridDefinitions,
     crossSlopeIntervals: draft.crossSlopeIntervals,
+    ...(draft.widthChangePoints?.length ? { widthChangePoints: draft.widthChangePoints } : {}),
     measuredGrid: draft.measuredGrid,
     offsets: draft.offsets ?? [0],
     z: draft.z ?? 0,
@@ -149,6 +161,19 @@ export function tryWithProjectLinerDraft(project: ProjectModel, draft: LinerDraf
     return project;
   }
   return withProjectLinerDomainDraft(project, migration.domainDraft);
+}
+
+export function projectLinerDomainDraftToRoadDesignDocument(
+  domainDraft: LinerDomainDraftVNext,
+  options: LinerDomainDraftRoadDesignMapperOptions = {},
+): DomainDraftRoadDesignMapResult {
+  return domainDraftToRoadDesignDocument(domainDraft, options);
+}
+
+export function roadDesignDocumentToProjectLinerDomainDraft(
+  document: RoadDesignDocument,
+): RoadDesignDomainDraftMapResult {
+  return roadDesignDocumentToDomainDraft(document);
 }
 
 export function withProjectLinerDomainDraft(

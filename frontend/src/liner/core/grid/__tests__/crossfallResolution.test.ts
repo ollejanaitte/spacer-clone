@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  resolveCrossfallOffset,
   resolveCrossfallState,
   validateCrossSlopeIntervals,
 } from "../crossfallResolution";
@@ -134,5 +135,56 @@ describe("crossfall resolution", () => {
     expect(state.source).toBe("flat");
     expect(state.leftSlopePercent).toBe(0);
     expect(state.rightSlopePercent).toBe(0);
+  });
+
+  it("flags invalid interval ranges and alignment bounds", () => {
+    const issues = validateCrossSlopeIntervals(
+      [
+        {
+          id: "CF-invalid",
+          startPhysicalDistance: 20,
+          endPhysicalDistance: 10,
+          mode: "flat",
+          leftSlopePercent: 0,
+          rightSlopePercent: 0,
+        },
+        {
+          id: "CF-out",
+          startPhysicalDistance: 90,
+          endPhysicalDistance: 110,
+          mode: "flat",
+          leftSlopePercent: 0,
+          rightSlopePercent: 0,
+        },
+      ],
+      100,
+    );
+
+    expect(issues.every((issue) => issue.code === "LINER_CROSSFALL_INTERVAL_INVALID_RANGE")).toBe(true);
+    expect(issues).toHaveLength(2);
+  });
+
+  it("applies crown mode slopes by offset side", () => {
+    const state = resolveCrossfallState(
+      {
+        crossSlopeIntervals: [
+          {
+            id: "CF-crown",
+            startPhysicalDistance: 0,
+            endPhysicalDistance: 100,
+            mode: "crown",
+            leftSlopePercent: -2,
+            rightSlopePercent: 2,
+            pivotDistance: 0,
+          },
+        ],
+      },
+      50,
+      50,
+    );
+
+    expect(state.mode).toBe("crown");
+    expect(resolveCrossfallOffset(state, -10)).toBeCloseTo(-0.2, 6);
+    expect(resolveCrossfallOffset(state, 10)).toBeCloseTo(-0.2, 6);
   });
 });

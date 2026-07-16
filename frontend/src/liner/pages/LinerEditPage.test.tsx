@@ -5,6 +5,8 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ja } from "../../i18n/ja";
 import { createDefaultLinerDraft } from "../adapters/linerUiAdapter";
+import { linerDraftFromProject, withProjectLinerDraft } from "../adapters/linerProjectDraft";
+import { createDefaultProject } from "../../data/defaultProject";
 import { LinerEditPage } from "./LinerEditPage";
 
 vi.mock("recharts", () => ({
@@ -221,6 +223,57 @@ describe("LinerEditPage", () => {
     expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("2.5");
   });
 
+  it("commits P2-D06 viewer draft edits and opens preview", () => {
+    const onDraftChange = vi.fn();
+    const onOpenPreview = vi.fn();
+    const persistedDraft = linerDraftFromProject(
+      withProjectLinerDraft(createDefaultProject(), createDefaultLinerDraft()),
+    )!;
+    expect(persistedDraft).toBeDefined();
+    render(
+      <LinerEditPage
+        draft={persistedDraft}
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onDraftChange={onDraftChange}
+        onOpenPreview={onOpenPreview}
+      />,
+    );
+
+    act(() => {
+      setInputValue(inputByTestId("liner-alignment-id"), "alignment-p2-d06");
+      setInputValue(inputByTestId("liner-model-id"), "liner-p2-d06");
+      setInputValue(inputByTestId("liner-element-length-S1"), "24");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-station]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("liner-sample-interval"), "12");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-vertical]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      setInputValue(inputByTestId("liner-vertical-element-end-station-VG-default"), "24");
+      setInputValue(inputByTestId("liner-vertical-element-start-elevation-VG-default"), "10");
+      setInputValue(inputByTestId("liner-vertical-element-grade-VG-default"), "1");
+    });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=liner-draft-commit-error]")).toBeNull();
+    expect(onDraftChange).toHaveBeenCalledTimes(1);
+    expect(onOpenPreview).toHaveBeenCalledTimes(1);
+    const committedDraft = onDraftChange.mock.calls[0]?.[0];
+    expect(committedDraft.verticalAlignment?.elements[0]).toMatchObject({
+      endStation: 24,
+      startElevation: 10,
+      grade: 0.01,
+    });
+  });
+
   it("does not commit NaN and blocks navigation while a numeric input is empty", () => {
     const onDraftChange = vi.fn();
     const onOpenPreview = vi.fn();
@@ -399,14 +452,14 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
-  it("renders placeholders on height and review tabs", () => {
+  it("renders plan elevation table on height tab and placeholder on review tab", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-height]")).not.toBeNull();
-    expect(document.body.textContent).toContain(ja.liner.setupTabPlaceholder.height.title);
+    expect(document.querySelector("[data-testid=plan-elevation-table]")).not.toBeNull();
+    expect(document.body.textContent).toContain(ja.liner.planElevation.sectionTitle);
     expect(document.querySelector("[data-testid=add-liner-grade-element]")).toBeNull();
 
     act(() => {

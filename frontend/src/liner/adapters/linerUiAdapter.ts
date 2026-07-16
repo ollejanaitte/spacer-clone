@@ -17,6 +17,7 @@ import type {
   CrossfallMode,
   LinerDrawingSettingsDraft,
   VerticalAlignmentDraft,
+  WidthChangePointDraft,
 } from "../schema/types";
 
 export type LinerDraft = BuildIntermediateInput;
@@ -299,6 +300,30 @@ export function updateLinerCrossSlopeIntervals(
     ...(crossSlopeIntervals.length > 0
       ? { crossSlopeIntervals: [...crossSlopeIntervals] }
       : { crossSlopeIntervals: undefined }),
+  };
+}
+
+export function createDefaultWidthChangePoint(
+  draft: BuildIntermediateInput,
+  patch: Partial<WidthChangePointDraft> = {},
+): WidthChangePointDraft {
+  return {
+    id: patch.id ?? `WP-${(draft.widthChangePoints?.length ?? 0) + 1}`,
+    physicalDistance: patch.physicalDistance ?? 0,
+    leftOffset: patch.leftOffset ?? 0,
+    rightOffset: patch.rightOffset ?? 0,
+  };
+}
+
+export function updateLinerWidthChangePoints(
+  draft: BuildIntermediateInput,
+  widthChangePoints: readonly WidthChangePointDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(widthChangePoints.length > 0
+      ? { widthChangePoints: [...widthChangePoints] }
+      : { widthChangePoints: undefined }),
   };
 }
 

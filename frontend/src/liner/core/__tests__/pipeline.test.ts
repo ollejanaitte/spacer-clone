@@ -201,6 +201,90 @@ describe("liner intermediate result builder", () => {
     expect(endRightPoint?.zProvenance.crossfallOffset).toBeCloseTo(0.12, 6);
   });
 
+  it("applies width change points to grid offsets and source revision", () => {
+    const baseInput = {
+      alignment,
+      stationDefinition: {
+        originDisplayedStation: 0,
+        explicitStations: [0, 20],
+      },
+      crossSections: [
+        {
+          id: "CS-default",
+          name: "Default",
+          offsetLines: [
+            { id: "OL-l", offset: -2, elevation: 0, role: "lane" as const },
+            { id: "OL-c", offset: 0, elevation: 0, role: "lane" as const },
+            { id: "OL-r", offset: 4, elevation: 0, role: "lane" as const },
+          ],
+        },
+      ],
+      offsets: [-2, 0, 4],
+      z: 10,
+      computedAt: "2026-01-01T00:00:00.000Z",
+    };
+
+    const withoutWidth = buildIntermediateResult(baseInput);
+    const withWidth = buildIntermediateResult({
+      ...baseInput,
+      widthChangePoints: [
+        {
+          id: "WP-1",
+          physicalDistance: 0,
+          leftOffset: 4,
+          rightOffset: 8,
+        },
+      ],
+    });
+
+    const startRightPoint = withWidth.grid.points.find(
+      (point) => point.physicalDistance === 0 && point.labels.transverseIndex === 2,
+    );
+    expect(startRightPoint?.offset).toBeCloseTo(8, 6);
+    expect(withWidth.sourceRevision).not.toBe(withoutWidth.sourceRevision);
+    expect(
+      withWidth.diagnostics.some((diagnostic) => diagnostic.code === "LINER_WIDTH_CHANGE_POINT_OVERLAP"),
+    ).toBe(false);
+  });
+
+  it("fails closed when width change points overlap", () => {
+    const result = buildIntermediateResult({
+      alignment,
+      stationDefinition: {
+        originDisplayedStation: 0,
+        explicitStations: [0],
+      },
+      crossSections: [
+        {
+          id: "CS-default",
+          name: "Default",
+          offsetLines: [{ id: "OL-c", offset: 0, elevation: 0, role: "lane" as const }],
+        },
+      ],
+      widthChangePoints: [
+        {
+          id: "WP-1",
+          physicalDistance: 0,
+          leftOffset: 4,
+          rightOffset: 4,
+        },
+        {
+          id: "WP-2",
+          physicalDistance: 0,
+          leftOffset: 5,
+          rightOffset: 5,
+        },
+      ],
+      offsets: [0],
+      z: 10,
+    });
+
+    expect(
+      result.diagnostics.some((diagnostic) => diagnostic.code === "LINER_WIDTH_CHANGE_POINT_OVERLAP"),
+    ).toBe(true);
+    expect(result.grid.points).toHaveLength(0);
+  });
+
   it("includes gridDefinitions in the source revision hash", () => {
     const base = {
       alignment,
@@ -243,5 +327,40 @@ describe("liner intermediate result builder", () => {
     });
 
     expect(left.sourceRevision).not.toBe(right.sourceRevision);
+  });
+
+  it("fails closed when grid definitions reference an unknown cross-section template", () => {
+    const result = buildIntermediateResult({
+      alignment,
+      stationDefinition: {
+        originDisplayedStation: 0,
+        explicitStations: [0],
+      },
+      crossSections: [
+        {
+          id: "CS-default",
+          name: "Default",
+          offsetLines: [{ id: "OL-0", offset: 0, elevation: 0, role: "lane" as const }],
+        },
+      ],
+      gridDefinitions: [
+        {
+          id: "GRID-bad",
+          crossSectionTemplateId: "CS-missing",
+          stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 20 },
+        },
+      ],
+      offsets: [0],
+      z: 0,
+    });
+
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({
+        level: "error",
+        code: "LINER_CROSS_SECTION_TEMPLATE_REFERENCE_MISSING",
+        entityId: "GRID-bad",
+      }),
+    );
+    expect(result.grid.points).toHaveLength(0);
   });
 });

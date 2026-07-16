@@ -49,6 +49,8 @@ export {
   type DocumentPersistenceGatewayOptions,
 } from "./documentGateway";
 
+export { projectLinerDomainDraftToRoadDesignDocument } from "./linerDomainDraftBridge";
+
 export type {
   AtomicJsonStorePort,
   DocumentGatewayClock,

@@ -3,13 +3,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
+import { CrossSectionDiagnosticsPanel } from "../components/CrossSectionDiagnosticsPanel";
 import { CrossSectionPreview } from "../components/CrossSectionPreview";
 import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEditor";
+import { WidthChangePointEditor } from "../components/WidthChangePointEditor";
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
+import { PlanElevationTable } from "../components/PlanElevationTable";
 import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
+import { VerticalDiagnosticsPanel } from "../components/VerticalDiagnosticsPanel";
 import { VerticalElementEditor } from "../components/VerticalElementEditor";
 import { VerticalProfileChart } from "../components/VerticalProfileChart";
 import {
@@ -20,7 +24,9 @@ import {
   updateLinerAlignmentMetadata,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlopeIntervals,
+  updateLinerSelectedCrossSectionStation,
   updateLinerVerticalAlignment,
+  updateLinerWidthChangePoints,
   type LinerDraft,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
@@ -121,6 +127,7 @@ export function LinerEditPage({
     draft.verticalAlignment ?? createDefaultVerticalAlignment(summary.totalDeclaredLength, draft.z ?? 0);
   const crossSectionTemplate =
     draft.crossSections?.[0] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0]);
+  const crossSectionPreviewDistance = draft.selectedCrossSectionStation ?? 0;
 
   return (
     <main className="liner-edit-page" data-testid="liner-edit-page">
@@ -238,7 +245,7 @@ export function LinerEditPage({
           )}
 
           {activeTab === "height" && (
-            <SetupTabPlaceholder tabId="height" variant="height" />
+            <PlanElevationTable draft={draft} />
           )}
 
           {activeTab === "vertical" && (
@@ -251,6 +258,7 @@ export function LinerEditPage({
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}
               />
+              <VerticalDiagnosticsPanel draft={draft} />
               <VerticalProfileChart verticalAlignment={verticalAlignment} />
             </div>
           )}
@@ -274,10 +282,42 @@ export function LinerEditPage({
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}
               />
+              <WidthChangePointEditor
+                draft={draft}
+                widthChangePoints={draft.widthChangePoints ?? []}
+                onWidthChangePointsChange={(nextPoints) =>
+                  changeDraft((current) => updateLinerWidthChangePoints(current, nextPoints))
+                }
+                onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <CrossSectionDiagnosticsPanel draft={draft} />
+              <section className="liner-edit-panel" aria-labelledby="liner-cross-section-preview-station-title">
+                <h2 id="liner-cross-section-preview-station-title">{ja.liner.editor.crossSectionPreviewStation}</h2>
+                <label>
+                  <CompositionAwareInput
+                    type="number"
+                    value={String(crossSectionPreviewDistance)}
+                    onCompositionStateChange={reportCompositionState}
+                    onValueChange={(text) => {
+                      const parsed = Number(text);
+                      const valid = text.trim() !== "" && Number.isFinite(parsed);
+                      reportInputValidity("crossSection:previewStation", valid);
+                      if (valid) {
+                        changeDraft((current) =>
+                          updateLinerSelectedCrossSectionStation(current, parsed),
+                        );
+                      }
+                    }}
+                    data-testid="cross-section-preview-station"
+                  />
+                </label>
+              </section>
               <CrossSectionPreview
                 template={crossSectionTemplate}
                 crossSlopeIntervals={draft.crossSlopeIntervals}
-                previewPhysicalDistance={0}
+                widthChangePoints={draft.widthChangePoints}
+                previewPhysicalDistance={crossSectionPreviewDistance}
               />
             </div>
           )}

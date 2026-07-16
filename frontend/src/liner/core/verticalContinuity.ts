@@ -77,8 +77,9 @@ export function checkVerticalContinuity(
       );
     }
 
+    const requiresGradeContinuity = prev.type === "parabolic" || next.type === "parabolic";
     const gradeGap = Math.abs(prevEnd.grade - nextStart.grade);
-    if (gradeGap > GRADE_CONTINUITY_TOLERANCE) {
+    if (requiresGradeContinuity && gradeGap > GRADE_CONTINUITY_TOLERANCE) {
       issues.push(
         createIssue("error", LINER_DIAGNOSTIC_CODES.profileGradeDiscontinuity, {
           entityType: "verticalElement",
