@@ -23,6 +23,7 @@ import {
 } from "../../roadDesignDocument";
 import { requireStableIdNamespace, type StableEntityId } from "../../stableEntityId";
 import { UNIT_CONTEXT_SCHEMA_VERSION, type UnitContext } from "../../unitContext";
+import type { UuidString } from "../../uuid";
 import {
   createValidationIssue,
   hasValidationErrors,
@@ -323,6 +324,80 @@ function mapAsJsonValue(value: unknown): JsonValue | undefined {
   return undefined;
 }
 
+function importerProfileLabel(project: LegacyImporterProject): string {
+  for (const bridge of project.bridges) {
+    const metadata = bridge.alignmentMetadata;
+    if (!isPlainLegacyObject(metadata)) {
+      continue;
+    }
+    const profile = metadata.profile;
+    if (!isPlainLegacyObject(profile) || !Array.isArray(profile.elements)) {
+      continue;
+    }
+    if (profile.elements.length > 0) {
+      return `${bridge.name} vertical (${profile.elements.length} elements)`;
+    }
+  }
+  return "Importer profile stub";
+}
+
+function buildImporterCrossSections(
+  project: LegacyImporterProject,
+  profileId: UuidString,
+  defaultCrossSectionId: UuidString,
+  idMappings: MigrationIdMapping[],
+): RoadCrossSectionEntry[] {
+  const entries: RoadCrossSectionEntry[] = [];
+
+  for (const bridge of project.bridges) {
+    const metadata = bridge.alignmentMetadata;
+    if (!isPlainLegacyObject(metadata)) {
+      continue;
+    }
+    const crossSlope = metadata.crossSlope;
+    if (!isPlainLegacyObject(crossSlope) || !Array.isArray(crossSlope.definitions)) {
+      continue;
+    }
+
+    for (const [index, definition] of crossSlope.definitions.entries()) {
+      if (!isPlainLegacyObject(definition)) {
+        continue;
+      }
+      const sourceId =
+        typeof definition.id === "string" && definition.id.trim().length > 0
+          ? definition.id
+          : `${bridge.id}:cross-slope:${index}`;
+      const entityId = deriveStableUuid(
+        "legacy.road.cross-section",
+        `${project.id}:${sourceId}`,
+      );
+      idMappings.push({
+        sourceId,
+        targetId: entityId,
+        disposition: "committed",
+      });
+      const station = typeof definition.station === "number" ? definition.station : undefined;
+      entries.push({
+        entityId,
+        profileId,
+        label: station !== undefined ? `CrossSlope @ ${station}` : sourceId,
+      });
+    }
+  }
+
+  if (entries.length === 0) {
+    return [
+      {
+        entityId: defaultCrossSectionId,
+        profileId,
+        label: "Importer cross-section stub",
+      },
+    ];
+  }
+
+  return entries;
+}
+
 /**
  * Adapts an evidenced JIP LINER importer project (schema 0.1.0) into RoadDesignDocument v0.1.0.
  * Geometry payloads that have no home in the skeleton contract are preserved under extensions.
@@ -578,16 +653,15 @@ export function adaptLegacyRoadInput(
     {
       entityId: profileId,
       alignmentId,
-      label: "Importer profile stub",
+      label: importerProfileLabel(project),
     },
   ];
-  const crossSections: RoadCrossSectionEntry[] = [
-    {
-      entityId: crossSectionId,
-      profileId,
-      label: "Importer cross-section stub",
-    },
-  ];
+  const crossSections = buildImporterCrossSections(
+    project,
+    profileId,
+    crossSectionId,
+    idMappings,
+  );
 
   const bridges: RoadBridgeEntry[] = [];
   for (const bridge of project.bridges) {
@@ -608,11 +682,15 @@ export function adaptLegacyRoadInput(
     { namespace: ROAD_NAMESPACE, id: alignmentId, entityKind: "alignment" },
     { namespace: ROAD_NAMESPACE, id: stationingId, entityKind: "stationing" },
     { namespace: ROAD_NAMESPACE, id: profileId, entityKind: "profile" },
-    { namespace: ROAD_NAMESPACE, id: crossSectionId, entityKind: "cross-section" },
+    ...crossSections.map((crossSection) => ({
+      namespace: ROAD_NAMESPACE,
+      id: crossSection.entityId,
+      entityKind: "cross-section" as const,
+    })),
     ...bridges.map((bridge) => ({
       namespace: ROAD_NAMESPACE,
       id: bridge.entityId,
-      entityKind: "bridge",
+      entityKind: "bridge" as const,
     })),
   ];
 

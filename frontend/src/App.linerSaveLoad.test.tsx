@@ -214,5 +214,24 @@ describe("App LINER save/load integration", () => {
     await switchLinerSetupTab("station");
     expect(inputByTestId("liner-origin-displayed-station").value).toBe("10");
     expect(inputByTestId("liner-station-interval").value).toBe("7");
+
+    const {
+      projectLinerDomainDraftToRoadDesignDocument,
+      roadDesignDocumentToProjectLinerDomainDraft,
+    } = await import("./liner/adapters/linerProjectDraft");
+    const projected = projectLinerDomainDraftToRoadDesignDocument(savedProject.liner.domainDraft, {
+      createdAt: "2026-07-16T10:00:00.000Z",
+    });
+    expect(projected.ok).toBe(true);
+    if (!projected.ok) {
+      return;
+    }
+    const restored = roadDesignDocumentToProjectLinerDomainDraft(projected.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.verticalAlignment).toEqual(savedProject.liner.domainDraft.verticalAlignment);
+    expect(restored.domainDraft.crossSections).toEqual(savedProject.liner.domainDraft.crossSections);
   }, 40000);
 });

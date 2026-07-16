@@ -6,7 +6,15 @@ import {
   migrateLinerDraftToVNext,
   type MigrateLinerDraftToVNextResult,
 } from "../schema/projectLinerMigration";
+import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
 import type { HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
+import {
+  domainDraftToRoadDesignDocument,
+  roadDesignDocumentToDomainDraft,
+  type DomainDraftRoadDesignMapResult,
+  type LinerDomainDraftRoadDesignMapperOptions,
+  type RoadDesignDomainDraftMapResult,
+} from "./linerDomainDraftRoadDesignMapper";
 import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
@@ -153,6 +161,19 @@ export function tryWithProjectLinerDraft(project: ProjectModel, draft: LinerDraf
     return project;
   }
   return withProjectLinerDomainDraft(project, migration.domainDraft);
+}
+
+export function projectLinerDomainDraftToRoadDesignDocument(
+  domainDraft: LinerDomainDraftVNext,
+  options: LinerDomainDraftRoadDesignMapperOptions = {},
+): DomainDraftRoadDesignMapResult {
+  return domainDraftToRoadDesignDocument(domainDraft, options);
+}
+
+export function roadDesignDocumentToProjectLinerDomainDraft(
+  document: RoadDesignDocument,
+): RoadDesignDomainDraftMapResult {
+  return roadDesignDocumentToDomainDraft(document);
 }
 
 export function withProjectLinerDomainDraft(

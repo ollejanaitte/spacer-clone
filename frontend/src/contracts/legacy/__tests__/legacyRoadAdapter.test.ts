@@ -30,6 +30,8 @@ describe("legacy road adapter", () => {
     expect(result.document.schemaVersion).toBe("0.1.0");
     expect(result.document.bridges.length).toBe(1);
     expect(result.document.coordinateContexts[0]?.confidenceStatus).toBe("unknown");
+    expect(result.document.profiles[0]?.label).toContain("vertical");
+    expect(result.document.crossSections[0]?.label).toContain("CrossSlope @");
     expect(result.document.extensions?.["spacer.legacy/jip-liner-importer-geometry"]).toBeDefined();
     expect(hasValidationErrors(validateRoadDesignDocument(result.document))).toBe(false);
   });

@@ -2,12 +2,17 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { createSampleImporterProject } from "../../../liner/importer/__tests__/fixtures/sampleProject";
+import { createDefaultLinerDraft } from "../../../liner/adapters/linerUiAdapter";
+import { withProjectLinerDraft } from "../../../liner/adapters/linerProjectDraft";
+import { createDefaultProject } from "../../../data/defaultProject";
+import { roadDesignDocumentToDomainDraft } from "../../../liner/adapters/linerDomainDraftRoadDesignMapper";
 import { createValidBridgeFrameAnalysisDocument, createValidRoadDesignDocument } from "../../repository/__tests__/fixtures";
 import {
   createDocumentPersistenceGateway,
   createInMemoryAtomicJsonStore,
   loadBridgeFrameAnalysisDocument,
   loadRoadDesignDocument,
+  projectLinerDomainDraftToRoadDesignDocument,
   saveBridgeFrameAnalysisDocument,
   saveRoadDesignDocument,
 } from "../index";
@@ -300,5 +305,40 @@ describe("phase 0 D03 migration integration", () => {
       return;
     }
     expect(result.error.code).toBe("legacy-write-forbidden");
+  });
+
+  it("projects liner domainDraft to RoadDesignDocument and round-trips through persistence", () => {
+    const domainDraft = withProjectLinerDraft(createDefaultProject(), createDefaultLinerDraft()).liner
+      ?.domainDraft;
+    expect(domainDraft).toBeDefined();
+
+    const projected = projectLinerDomainDraftToRoadDesignDocument(domainDraft!, {
+      createdAt: "2026-07-16T04:00:00.000Z",
+    });
+    expect(projected.ok).toBe(true);
+    if (!projected.ok) {
+      return;
+    }
+    expect(projected.sourceFormatId).toBe("liner-domain-draft-vnext");
+
+    const gateway = createDocumentPersistenceGateway({
+      createdAt: "2026-07-16T04:00:00.000Z",
+    });
+    const path = `${FIXED_CLOCK_PATH}/liner-domain-draft-road.json`;
+    const saved = gateway.saveRoad(projected.document, path, { createOnly: true });
+    expect(saved.ok).toBe(true);
+
+    const reloaded = gateway.readRoadFromStore(path);
+    expect(reloaded.ok).toBe(true);
+    if (!reloaded.ok) {
+      return;
+    }
+
+    const restored = roadDesignDocumentToDomainDraft(reloaded.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft).toEqual(domainDraft);
   });
 });
