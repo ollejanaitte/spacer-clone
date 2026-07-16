@@ -10,7 +10,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "npx concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000\" \"npm run dev -- --host 127.0.0.1 --port 4173\"",
+      "npx concurrently -k \"cd .. && .venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000\" \"npm run dev -- --host 127.0.0.1 --port 4173\"",
     env: {
       VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL: "true",
     },
