@@ -20,7 +20,7 @@ describe("pipeline vertical integration (PR-C)", () => {
   };
 
   const verticalAlignment: VerticalAlignmentDraft = {
-    id: "VA-20pct",
+    id: "VA-10pct",
     elements: [
       {
         type: "grade",
@@ -28,13 +28,13 @@ describe("pipeline vertical integration (PR-C)", () => {
         startStation: 0,
         endStation: 100,
         startElevation: 0,
-        grade: 0.2,
+        grade: 0.1,
         length: 100,
       },
     ],
   };
 
-  it("case 1: 100 m plan with 20% grade yields 20 m rise at end", () => {
+  it("case 1: 100 m plan with 10% grade yields 10 m rise at end", () => {
     const result = buildIntermediateResult({
       alignment,
       stationDefinition: { originDisplayedStation: 0, interval: 50 },
@@ -46,13 +46,48 @@ describe("pipeline vertical integration (PR-C)", () => {
     const endSample = result.vertical.sampledPoints.find(
       (point) => point.physicalDistance === 100,
     );
-    expect(endSample?.profileElevation).toBeCloseTo(20, 6);
+    expect(endSample?.profileElevation).toBeCloseTo(10, 6);
 
     const endGrid = result.grid.points.find(
       (point) => point.offset === 0 && point.physicalDistance === 100,
     );
-    expect(endGrid?.z).toBeCloseTo(20, 6);
-    expect(endGrid?.zProvenance.profileElevation).toBeCloseTo(20, 6);
+    expect(endGrid?.z).toBeCloseTo(10, 6);
+    expect(endGrid?.zProvenance.profileElevation).toBeCloseTo(10, 6);
+  });
+
+  it("case 2: grade above hard limit blocks grid evaluation", () => {
+    const steepVertical: VerticalAlignmentDraft = {
+      id: "VA-20pct",
+      elements: [
+        {
+          type: "grade",
+          id: "VG-steep",
+          startStation: 0,
+          endStation: 100,
+          startElevation: 0,
+          grade: 0.2,
+          length: 100,
+        },
+      ],
+    };
+
+    const result = buildIntermediateResult({
+      alignment,
+      stationDefinition: { originDisplayedStation: 0, interval: 50 },
+      verticalAlignment: steepVertical,
+      offsets: [0],
+      z: 0,
+    });
+
+    expect(result.diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          level: "error",
+          code: "LINER_PROFILE_GRADE_EXCEEDS_LIMIT",
+        }),
+      ]),
+    );
+    expect(result.grid.points).toHaveLength(0);
   });
 
   it("case 3: short vertical profile emits end-coverage warning", () => {
@@ -85,5 +120,48 @@ describe("pipeline vertical integration (PR-C)", () => {
         diagnostic.code === "LINER_PROFILE_END_COVERAGE_GAP",
     );
     expect(endCoverageWarnings.length).toBeGreaterThan(0);
+  });
+
+  it("case 4: overlapping vertical segments emit fail-closed overlap errors", () => {
+    const overlappingVertical: VerticalAlignmentDraft = {
+      id: "VA-overlap",
+      elements: [
+        {
+          type: "grade",
+          id: "VG-a",
+          startStation: 0,
+          endStation: 60,
+          startElevation: 0,
+          grade: 0,
+          length: 60,
+        },
+        {
+          type: "grade",
+          id: "VG-b",
+          startStation: 50,
+          endStation: 100,
+          startElevation: 0,
+          grade: 0,
+          length: 50,
+        },
+      ],
+    };
+
+    const result = buildIntermediateResult({
+      alignment,
+      stationDefinition: { originDisplayedStation: 0, interval: 50 },
+      verticalAlignment: overlappingVertical,
+      offsets: [0],
+      z: 0,
+    });
+
+    expect(result.diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          level: "error",
+          code: "LINER_PROFILE_OVERLAP",
+        }),
+      ]),
+    );
   });
 });

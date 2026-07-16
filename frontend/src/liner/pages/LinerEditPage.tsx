@@ -9,7 +9,9 @@ import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
 import { LinerStationProfilePanel } from "../components/LinerStationProfilePanel";
+import { PlanElevationTable } from "../components/PlanElevationTable";
 import { SetupTabPlaceholder } from "../components/SetupTabPlaceholder";
+import { VerticalDiagnosticsPanel } from "../components/VerticalDiagnosticsPanel";
 import { VerticalElementEditor } from "../components/VerticalElementEditor";
 import { VerticalProfileChart } from "../components/VerticalProfileChart";
 import {
@@ -238,7 +240,7 @@ export function LinerEditPage({
           )}
 
           {activeTab === "height" && (
-            <SetupTabPlaceholder tabId="height" variant="height" />
+            <PlanElevationTable draft={draft} />
           )}
 
           {activeTab === "vertical" && (
@@ -251,6 +253,7 @@ export function LinerEditPage({
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}
               />
+              <VerticalDiagnosticsPanel draft={draft} />
               <VerticalProfileChart verticalAlignment={verticalAlignment} />
             </div>
           )}

@@ -22,6 +22,8 @@ export * from "./stationAtPoint";
 export * from "./tolerances";
 export * from "./types";
 export * from "./validateVerticalCoverage";
+export * from "./validateVerticalAlignment";
+export * from "./verticalContinuity";
 export * from "./verticalContinuity";
 export * from "./verticalSampling";
 export * from "./vector";

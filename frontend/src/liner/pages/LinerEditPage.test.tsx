@@ -399,14 +399,14 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=cross-section-preview]")).not.toBeNull();
   });
 
-  it("renders placeholders on height and review tabs", () => {
+  it("renders plan elevation table on height tab and placeholder on review tab", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-height]") as HTMLButtonElement).click();
     });
-    expect(document.querySelector("[data-testid=liner-setup-tab-placeholder-height]")).not.toBeNull();
-    expect(document.body.textContent).toContain(ja.liner.setupTabPlaceholder.height.title);
+    expect(document.querySelector("[data-testid=plan-elevation-table]")).not.toBeNull();
+    expect(document.body.textContent).toContain(ja.liner.planElevation.sectionTitle);
     expect(document.querySelector("[data-testid=add-liner-grade-element]")).toBeNull();
 
     act(() => {

@@ -14,7 +14,7 @@ import {
 import { elevationAt } from "../elevationAt";
 import { SAMPLING_INTERVAL_DISPLAY, sampleDisplay } from "../sampling";
 import { displayedStationAtPhysicalDistance, generateStations } from "../station/stationRules";
-import { checkVerticalProfileEndCoverage } from "../validateVerticalCoverage";
+import { validateVerticalAlignment } from "../validateVerticalAlignment";
 import {
   sampleVerticalDisplay,
   type VerticalSamplePoint,
@@ -515,6 +515,7 @@ export function buildIntermediateResult(
   });
   const diagnostics: ComputationDiagnostic[] = validateAlignment(input.alignment);
   const totalLength = totalAlignmentLength(input.alignment);
+  diagnostics.push(...validateVerticalAlignment(input.verticalAlignment, totalLength));
   const stationGeneration = generateStations(input.stationDefinition, totalLength);
   diagnostics.push(...stationGeneration.issues);
 
@@ -529,7 +530,6 @@ export function buildIntermediateResult(
   );
   const z = input.z ?? 0;
   const verticalAlignment = input.verticalAlignment;
-  diagnostics.push(...checkVerticalProfileEndCoverage(verticalAlignment, totalLength));
   const vertical = buildVerticalResult(
     verticalAlignment,
     stationGeneration.stations,
