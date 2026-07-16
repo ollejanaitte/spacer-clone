@@ -1910,6 +1910,14 @@ export const ja = {
         radius: "半径",
         clothoid: "緩和曲線",
         majorPoint: "主要点",
+        pier: "支承",
+        span: "スパン",
+        skewAngle: "交角",
+      },
+      bridgeLayout: {
+        pierLabel: (id: string) => id,
+        spanLength: (length: string) => `L=${length}`,
+        skewDegrees: (degrees: string) => `θ=${degrees}°`,
       },
       planCurvePoints: {
         bc: "BC",

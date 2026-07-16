@@ -169,6 +169,7 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   "plan-annotation-layer": "PLAN_TEXT",
   "plan-band": "PLAN_BAND",
   "plan-band-layer": "PLAN_BAND",
+  "plan-bridge-layer": "PLAN_STATION",
   profile: "PROFILE_DESIGN",
   "profile-layer": "PROFILE_DESIGN",
   "profile-annotation": "PROFILE_TEXT",

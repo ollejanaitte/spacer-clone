@@ -19,6 +19,13 @@ import { paperContentBoundsMm } from "../model/paper";
 import type { DrawingPrimitive } from "../model/primitives";
 import { fitViewportTransform2 } from "../transforms/viewportTransform";
 import { FORMAL_DRAWING_LAYOUT, sheetRegionsForKind } from "./formalPaperLayout";
+import {
+  appendBridgeLayoutBandRows,
+  appendBridgeLayoutGeometry,
+  appendBridgeLayoutModelAnnotations,
+  bridgeLayoutGeometryPoints,
+  hasBridgeLayout,
+} from "./bridgeLayoutDrawing";
 import type { BuildDrawingContext, DrawingBuilderOutput } from "./types";
 import { getPaperForKind } from "./types";
 
@@ -55,7 +62,7 @@ export function buildCenterlineOnlyPlanOutput(context: BuildDrawingContext): Dra
   const bandLayer = buildCenterlineBandLayer(context.result, bandBounds);
 
   const modelPoints = geometryLayer.primitives.flatMap((primitive) => primitivePoints(primitive));
-  const modelBounds = expandBounds(boundsFromPoints2(modelPoints), 4, 4);
+  const modelBounds = expandBounds(boundsFromPoints2([...modelPoints, ...bridgeLayoutGeometryPoints(context.result)]), 4, 4);
   const geometryTransform = fitViewportTransform2(modelBounds, geometryBounds, {
     marginMm: paper.marginMm,
     invertY: true,
@@ -149,6 +156,24 @@ function buildCenterlineGeometryLayer(
   }
 
   appendCurveMarkers(layer, result, toLocal);
+  if (hasBridgeLayout(result)) {
+    const bridgeLayer = createEmptyDrawingLayer("plan-bridge-layer");
+    appendBridgeLayoutGeometry(bridgeLayer, result);
+    for (const primitive of bridgeLayer.primitives) {
+      if (primitive.kind === "line") {
+        layer.primitives.push({
+          ...primitive,
+          start: toLocal(primitive.start),
+          end: toLocal(primitive.end),
+        });
+      } else if (primitive.kind === "polyline") {
+        layer.primitives.push({
+          ...primitive,
+          points: primitive.points.map((point) => toLocal(point)),
+        });
+      }
+    }
+  }
   return layer;
 }
 
@@ -220,6 +245,19 @@ function buildCenterlineAnnotationLayer(
       value: ja.liner.formalDrawing.planCurvePoints.ep,
       heightMm: FORMAL_DRAWING_LAYOUT.planAnnotationTextHeightMm,
     });
+  }
+
+  if (hasBridgeLayout(result)) {
+    const bridgeLayer = createEmptyDrawingLayer("plan-bridge-annotation-layer");
+    appendBridgeLayoutModelAnnotations(bridgeLayer, result);
+    for (const primitive of bridgeLayer.primitives) {
+      if (primitive.kind === "text") {
+        layer.primitives.push({
+          ...primitive,
+          position: toLocal(primitive.position),
+        });
+      }
+    }
   }
 
   return layer;
