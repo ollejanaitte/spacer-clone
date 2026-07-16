@@ -73,6 +73,8 @@ import {
   createBridgeLayoutGeometryLayer,
   hasBridgeLayout,
 } from "./bridgeLayoutDrawing";
+import { appendAlignmentSegmentDimensions } from "../dimensions/alignmentSegmentDimensions";
+import { appendPlanCoordinateTablePaper } from "../tables/planCoordinateTable";
 
 function expandBounds(bounds: Bounds2, paddingX: number, paddingY: number): Bounds2 {
   if (bounds.isEmpty) {
@@ -420,6 +422,7 @@ function planGeometryLayer(context: BuildDrawingContext): DrawingLayer {
     });
   }
   appendPlanCurveBoundaryMarkers(layer, context.result);
+  appendAlignmentSegmentDimensions(layer, context.result);
   return layer;
 }
 
@@ -723,6 +726,8 @@ function buildPlanAnnotationLayerPaper(
     });
   }
 
+  appendPlanCoordinateTablePaper(layer, result, geometryPaperBounds);
+
   return layer;
 }
 
@@ -743,7 +748,9 @@ function buildPlanBandLayerPaper(
   const valueHeight = FORMAL_DRAWING_LAYOUT.bandValueTextHeightMm;
   const rowLabels = [
     ja.liner.formalDrawing.planBandRows.station,
-    ja.liner.formalDrawing.planBandRows.physicalDistance,
+    ja.liner.formalDrawing.bandRows.additionalDistance,
+    ja.liner.formalDrawing.bandRows.cumulativeDistance,
+    ja.liner.formalDrawing.bandRows.singleDistance,
     ja.liner.formalDrawing.planBandRows.element,
     ja.liner.formalDrawing.planBandRows.radius,
   ];
@@ -810,8 +817,20 @@ function buildPlanBandLayerPaper(
         && station.physicalDistance <= entry.endPhysicalDistance,
     );
     const values = [
-      formatStationDisplay(station.displayedStation),
+      formatStationPlanNotation(station.physicalDistance),
+      stationIndex === 0
+        ? "0.00"
+        : (
+            station.physicalDistance
+            - (result.stations.entries[stationIndex - 1]?.physicalDistance ?? station.physicalDistance)
+          ).toFixed(2),
       station.physicalDistance.toFixed(2),
+      stationIndex === 0
+        ? "0.00"
+        : (
+            station.physicalDistance
+            - (result.stations.entries[stationIndex - 1]?.physicalDistance ?? station.physicalDistance)
+          ).toFixed(2),
       segment ? segmentAnnotation(segment) : ja.liner.formalDrawing.bandRows.unavailable,
       segment?.type === "arc"
         ? segmentAnnotation(segment)

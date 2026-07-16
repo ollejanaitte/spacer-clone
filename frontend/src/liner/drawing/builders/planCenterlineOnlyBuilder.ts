@@ -26,6 +26,8 @@ import {
   bridgeLayoutGeometryPoints,
   hasBridgeLayout,
 } from "./bridgeLayoutDrawing";
+import { appendAlignmentSegmentDimensions } from "../dimensions/alignmentSegmentDimensions";
+import { appendPlanCoordinateTablePaper } from "../tables/planCoordinateTable";
 import type { BuildDrawingContext, DrawingBuilderOutput } from "./types";
 import { getPaperForKind } from "./types";
 
@@ -58,7 +60,15 @@ export function buildCenterlineOnlyPlanOutput(context: BuildDrawingContext): Dra
   const { geometryBounds, bandBounds } = sheetRegionsForKind(paper, "plan");
 
   const geometryLayer = buildCenterlineGeometryLayer(context.result, toLocal);
+  appendAlignmentSegmentDimensions(geometryLayer, context.result, toLocal);
   const annotationLayer = buildCenterlineAnnotationLayer(context.result, toLocal);
+  const coordinateLayer = createEmptyDrawingLayer(
+    "plan-coordinate-table-layer",
+    CAD_LAYER_PRESETS.PLAN_TEXT.name,
+  );
+  coordinateLayer.coordinateSpace = "paper";
+  coordinateLayer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_TEXT);
+  appendPlanCoordinateTablePaper(coordinateLayer, context.result, geometryBounds, toLocal);
   const bandLayer = buildCenterlineBandLayer(context.result, bandBounds);
 
   const modelPoints = geometryLayer.primitives.flatMap((primitive) => primitivePoints(primitive));
@@ -75,7 +85,7 @@ export function buildCenterlineOnlyPlanOutput(context: BuildDrawingContext): Dra
       modelBounds,
       paperBounds: geometryBounds,
       transform: geometryTransform,
-      layers: [geometryLayer, annotationLayer],
+      layers: [geometryLayer, annotationLayer, coordinateLayer],
       stationAxisId: context.settings.stationAxes[0]?.id,
     },
     {

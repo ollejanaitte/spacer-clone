@@ -1930,6 +1930,15 @@ export const ja = {
         ep: "EP",
       },
       centerlineLabel: "中心線",
+      coordinateTable: {
+        title: "座標表",
+        columns: {
+          point: "点",
+          station: "測点",
+          x: "X",
+          y: "Y",
+        },
+      },
     },
   },
 
