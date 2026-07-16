@@ -27,6 +27,8 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "selectedCrossSectionStation",
   "drawingSettings",
   "widthChangePoints",
+  "spans",
+  "piers",
   "z",
   "computedAt",
 ]);
@@ -160,6 +162,12 @@ function isFixedZDraft(value: unknown): value is BuildIntermediateInput {
     return false;
   }
   if (value.computedAt !== undefined && !isNonEmptyString(value.computedAt)) {
+    return false;
+  }
+  if (value.spans !== undefined && !Array.isArray(value.spans)) {
+    return false;
+  }
+  if (value.piers !== undefined && !Array.isArray(value.piers)) {
     return false;
   }
   return true;
@@ -336,8 +344,8 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
       : {}),
     ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     gridDefinitions,
-    spans: [],
-    piers: [],
+    spans: draft.spans?.length ? structuredClone(draft.spans) : [],
+    piers: draft.piers?.length ? structuredClone(draft.piers) : [],
     selectedCrossSectionStation,
     ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
     generationSettings: {
