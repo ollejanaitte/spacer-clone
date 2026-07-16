@@ -1,3 +1,4 @@
+import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
 import type { LinerTraceEntry } from "../mapper/frameModelMapper";
 import type { BuildIntermediateInput } from "../core/pipeline/pipeline";
 import type { Vec2 } from "../core/types";
@@ -31,7 +32,10 @@ export type ProjectLinerMetadata = {
   source?: ProjectLinerSourceRef;
   /** Read-only legacy input from older projects; not written by the vNext save path. */
   draft?: BuildIntermediateInput;
+  /** In-memory working copy; not written by the persistence save path (use roadDesignDocument). */
   domainDraft?: LinerDomainDraftVNext;
+  /** Embedded RoadDesignDocument — sole persistence write-target for road design data. */
+  roadDesignDocument?: RoadDesignDocument;
 };
 
 export interface ProjectLinerMetadataVNext {

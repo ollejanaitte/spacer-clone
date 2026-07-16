@@ -47,6 +47,8 @@ import {
   tryWithProjectLinerDraft,
   withProjectLinerDomainDraft,
   withProjectLinerDraft,
+  hydrateProjectLinerFromPersistence,
+  serializeProjectForPersistence,
 } from "./liner/adapters/linerProjectDraft";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
@@ -520,8 +522,12 @@ export function App() {
 
   const openFile = async (file: File) => {
     try {
-      const loaded = migrateProject(JSON.parse(await file.text()));
-      commitProject(loaded);
+      const parsed = migrateProject(JSON.parse(await file.text()));
+      const hydration = hydrateProjectLinerFromPersistence(parsed);
+      if (!hydration.ok) {
+        throw new Error(hydration.diagnostics.join("; "));
+      }
+      commitProject(hydration.project);
       setDirty(false);
       log(`${file.name} opened.`);
     } catch (error) {
@@ -532,7 +538,18 @@ export function App() {
   };
 
   const saveProject = () => {
-    downloadText("project.json", `${JSON.stringify(project, null, 2)}\n`, "application/json");
+    const serialized = serializeProjectForPersistence(project);
+    if (!serialized.ok) {
+      log(`Failed to save project.json: ${serialized.diagnostics.join("; ")}`);
+      pushApiError(new Error(serialized.diagnostics.join("; ")), "PROJECT_SAVE_ERROR", setApiErrors);
+      setBottomTab("errors");
+      return;
+    }
+    downloadText(
+      "project.json",
+      `${JSON.stringify(serialized.project, null, 2)}\n`,
+      "application/json",
+    );
     setDirty(false);
     log("Current model saved to project.json.");
   };
