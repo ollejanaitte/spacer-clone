@@ -4,6 +4,7 @@ import type {
   CrossSectionTemplateDraft,
   GridDefinitionDraft,
   VerticalAlignmentDraft,
+  WidthChangePointDraft,
 } from "../schema/types";
 
 export type Vec2 = {
@@ -64,8 +65,12 @@ export type LinerDiagnosticCode =
   | "LINER_ORIGIN_STATION_AMBIGUOUS"
   | "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED"
   | "LINER_CROSSFALL_INTERVAL_OVERLAP"
+  | "LINER_CROSSFALL_INTERVAL_INVALID_RANGE"
   | "LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED"
-  | "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE";
+  | "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE"
+  | "LINER_WIDTH_CHANGE_POINT_OVERLAP"
+  | "LINER_WIDTH_CHANGE_POINT_OUT_OF_RANGE"
+  | "LINER_WIDTH_CHANGE_POINT_INVALID";
 
 export type ComputationDiagnostic = {
   level: DiagnosticLevel;
@@ -531,4 +536,6 @@ export type GridPreparationInput = {
   crossSections?: CrossSectionTemplateDraft[];
   gridDefinitions?: GridDefinitionDraft[];
   crossSlopeIntervals?: CrossSlopeIntervalDraft[];
+  widthChangePoints?: WidthChangePointDraft[];
+  alignmentTotalLength?: number;
 };

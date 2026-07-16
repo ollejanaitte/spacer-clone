@@ -154,6 +154,7 @@ function buildTransitionState(
 
 export function validateCrossSlopeIntervals(
   intervals: readonly CrossSlopeIntervalDraft[] | undefined,
+  totalLength?: number,
 ): ValidationIssue[] {
   if (!intervals || intervals.length === 0) {
     return [];
@@ -163,6 +164,32 @@ export function validateCrossSlopeIntervals(
   let baselinePivot = pivotDistanceOf(ordered[0]!);
   for (let index = 0; index < ordered.length; index += 1) {
     const interval = ordered[index]!;
+    if (interval.endPhysicalDistance + DEFAULT_TOLERANCES.station < interval.startPhysicalDistance) {
+      issues.push(
+        createIssue("error", LINER_DIAGNOSTIC_CODES.crossfallIntervalInvalidRange, {
+          entityType: "crossSlopeInterval",
+          entityId: interval.id,
+          physicalDistance: interval.startPhysicalDistance,
+          detail: "Crossfall interval end station must be at or after the start station.",
+        }),
+      );
+    }
+    if (
+      totalLength !== undefined
+      && (
+        interval.startPhysicalDistance < -DEFAULT_TOLERANCES.station
+        || interval.endPhysicalDistance > totalLength + DEFAULT_TOLERANCES.station
+      )
+    ) {
+      issues.push(
+        createIssue("error", LINER_DIAGNOSTIC_CODES.crossfallIntervalInvalidRange, {
+          entityType: "crossSlopeInterval",
+          entityId: interval.id,
+          physicalDistance: interval.startPhysicalDistance,
+          detail: "Crossfall interval is outside the alignment length.",
+        }),
+      );
+    }
     const pivot = pivotDistanceOf(interval);
     if (!nearlyEqual(pivot, baselinePivot)) {
       issues.push(

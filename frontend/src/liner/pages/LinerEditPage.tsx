@@ -5,6 +5,7 @@ import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsP
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionPreview } from "../components/CrossSectionPreview";
 import { CrossSectionTemplateEditor } from "../components/CrossSectionTemplateEditor";
+import { WidthChangePointEditor } from "../components/WidthChangePointEditor";
 import { CurveSamplingControl } from "../components/CurveSamplingControl";
 import { CompositionAwareInput } from "../components/CompositionAwareInput";
 import { HorizontalElementEditor } from "../components/HorizontalElementEditor";
@@ -23,6 +24,7 @@ import {
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlopeIntervals,
   updateLinerVerticalAlignment,
+  updateLinerWidthChangePoints,
   type LinerDraft,
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
@@ -273,6 +275,15 @@ export function LinerEditPage({
                 intervals={draft.crossSlopeIntervals ?? []}
                 onIntervalsChange={(nextIntervals) =>
                   changeDraft((current) => updateLinerCrossSlopeIntervals(current, nextIntervals))
+                }
+                onInputValidityChange={reportInputValidity}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <WidthChangePointEditor
+                draft={draft}
+                widthChangePoints={draft.widthChangePoints ?? []}
+                onWidthChangePointsChange={(nextPoints) =>
+                  changeDraft((current) => updateLinerWidthChangePoints(current, nextPoints))
                 }
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}

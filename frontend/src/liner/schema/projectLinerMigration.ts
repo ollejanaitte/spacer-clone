@@ -330,6 +330,9 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     verticalAlignment,
     crossSections,
     crossSlopeIntervals,
+    ...(draft.widthChangePoints?.length
+      ? { widthChangePoints: structuredClone(draft.widthChangePoints) }
+      : {}),
     ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     gridDefinitions,
     spans: [],

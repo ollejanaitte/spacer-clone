@@ -32,8 +32,12 @@ export const LINER_DIAGNOSTIC_CODES = {
   originStationAmbiguous: "LINER_ORIGIN_STATION_AMBIGUOUS",
   profileParabolicZMergeDeferred: "LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED",
   crossfallIntervalOverlap: "LINER_CROSSFALL_INTERVAL_OVERLAP",
+  crossfallIntervalInvalidRange: "LINER_CROSSFALL_INTERVAL_INVALID_RANGE",
   crossfallPivotChangeUnsupported: "LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED",
   crossfallMeasuredGridPrecedence: "LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE",
+  widthChangePointOverlap: "LINER_WIDTH_CHANGE_POINT_OVERLAP",
+  widthChangePointOutOfRange: "LINER_WIDTH_CHANGE_POINT_OUT_OF_RANGE",
+  widthChangePointInvalid: "LINER_WIDTH_CHANGE_POINT_INVALID",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
@@ -64,8 +68,12 @@ export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
   LINER_ORIGIN_STATION_AMBIGUOUS: "liner.errors.origin_station_ambiguous",
   LINER_PROFILE_PARABOLIC_Z_MERGE_DEFERRED: "liner.errors.profile_parabolic_z_merge_deferred",
   LINER_CROSSFALL_INTERVAL_OVERLAP: "liner.errors.crossfall_interval_overlap",
+  LINER_CROSSFALL_INTERVAL_INVALID_RANGE: "liner.errors.crossfall_interval_invalid_range",
   LINER_CROSSFALL_PIVOT_CHANGE_UNSUPPORTED: "liner.errors.crossfall_pivot_change_unsupported",
   LINER_CROSSFALL_MEASURED_GRID_PRECEDENCE: "liner.errors.crossfall_measured_grid_precedence",
+  LINER_WIDTH_CHANGE_POINT_OVERLAP: "liner.errors.width_change_point_overlap",
+  LINER_WIDTH_CHANGE_POINT_OUT_OF_RANGE: "liner.errors.width_change_point_out_of_range",
+  LINER_WIDTH_CHANGE_POINT_INVALID: "liner.errors.width_change_point_invalid",
 } as const satisfies Record<LinerDiagnosticCode, `liner.errors.${string}`>;
 
 export function createIssue(

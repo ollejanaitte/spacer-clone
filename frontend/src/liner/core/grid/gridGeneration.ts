@@ -18,6 +18,10 @@ import {
   resolveCrossfallState,
   validateCrossSlopeIntervals,
 } from "./crossfallResolution";
+import {
+  resolveStationOffsetLines,
+  validateWidthChangePoints,
+} from "../width/widthResolution";
 import type { CrossSectionOffsetLineDraft } from "../../schema/types";
 
 function padIndex(index: number): string {
@@ -63,7 +67,10 @@ export function generateGridPoints(input: GridPreparationInput): {
   gridPoints: GridPointPreparation[];
   issues: ValidationIssue[];
 } {
-  const issues: ValidationIssue[] = validateCrossSlopeIntervals(input.crossSlopeIntervals);
+  const issues: ValidationIssue[] = [
+    ...validateCrossSlopeIntervals(input.crossSlopeIntervals, input.alignmentTotalLength),
+    ...validateWidthChangePoints(input.widthChangePoints, input.alignmentTotalLength ?? 0),
+  ];
   const sortedStations = [...input.stations].sort(
     (a, b) => a.physicalDistance - b.physicalDistance,
   );
@@ -111,7 +118,11 @@ export function generateGridPoints(input: GridPreparationInput): {
       station.displayedStation,
     );
     const stationOffsetLines: CrossSectionOffsetLineDraft[] = resolvedTemplate?.offsetLines.length
-      ? [...resolvedTemplate.offsetLines].sort((left, right) => left.offset - right.offset)
+      ? resolveStationOffsetLines(
+        resolvedTemplate,
+        input.widthChangePoints,
+        station.physicalDistance,
+      ).sort((left, right) => left.offset - right.offset)
       : [...input.offsets].sort((a, b) => a - b).map((offset, index) => ({
           id: `offset-${index}`,
           offset,

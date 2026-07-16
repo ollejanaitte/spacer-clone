@@ -4,8 +4,9 @@ import {
   resolveCrossSectionTemplateForPhysicalDistance,
 } from "../crossSectionTemplateResolution";
 import { generateGridPoints } from "../grid/gridGeneration";
-import { resolveCrossfallState } from "../grid/crossfallResolution";
+import { resolveCrossfallState, validateCrossSlopeIntervals } from "../grid/crossfallResolution";
 import { generateMeasuredGridPoints } from "../grid/measuredGridGeneration";
+import { validateWidthChangePoints } from "../width/widthResolution";
 import {
   evaluateAlignmentAtDistance,
   totalAlignmentLength,
@@ -58,6 +59,7 @@ import type {
   LinerDrawingSettingsDraft,
   MeasuredGridDraft,
   VerticalAlignmentDraft,
+  WidthChangePointDraft,
 } from "../../schema/types";
 
 export type BuildIntermediateInput = {
@@ -67,6 +69,7 @@ export type BuildIntermediateInput = {
   crossSections?: CrossSectionTemplateDraft[];
   gridDefinitions?: GridDefinitionDraft[];
   crossSlopeIntervals?: CrossSlopeIntervalDraft[];
+  widthChangePoints?: WidthChangePointDraft[];
   measuredGrid?: MeasuredGridDraft;
   offsets?: number[];
   sampleInterval?: number;
@@ -509,6 +512,7 @@ export function buildIntermediateResult(
     crossSections: input.crossSections,
     gridDefinitions: input.gridDefinitions,
     crossSlopeIntervals: input.crossSlopeIntervals,
+    widthChangePoints: input.widthChangePoints,
     offsets: input.offsets ?? [0],
     measuredGrid: input.measuredGrid,
     z: input.z ?? 0,
@@ -516,6 +520,8 @@ export function buildIntermediateResult(
   const diagnostics: ComputationDiagnostic[] = validateAlignment(input.alignment);
   const totalLength = totalAlignmentLength(input.alignment);
   diagnostics.push(...validateVerticalAlignment(input.verticalAlignment, totalLength));
+  diagnostics.push(...validateCrossSlopeIntervals(input.crossSlopeIntervals, totalLength));
+  diagnostics.push(...validateWidthChangePoints(input.widthChangePoints, totalLength));
   const stationGeneration = generateStations(input.stationDefinition, totalLength);
   diagnostics.push(...stationGeneration.issues);
 
@@ -548,6 +554,8 @@ export function buildIntermediateResult(
     crossSections: input.crossSections,
     gridDefinitions: input.gridDefinitions,
     crossSlopeIntervals: input.crossSlopeIntervals,
+    widthChangePoints: input.widthChangePoints,
+    alignmentTotalLength: totalLength,
   };
   if (canEvaluate && input.measuredGrid && (input.crossSlopeIntervals?.length ?? 0) > 0) {
     diagnostics.push(
