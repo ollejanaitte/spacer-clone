@@ -12,6 +12,29 @@ const SHA256_K = [
 type HashEncoding = "hex";
 type TextEncoding = "utf8" | "utf-8";
 
+class BrowserHashDigest {
+  private readonly bytes: Uint8Array;
+
+  constructor(hex: string) {
+    this.bytes = new Uint8Array(hex.length / 2);
+    for (let index = 0; index < this.bytes.length; index += 1) {
+      this.bytes[index] = Number.parseInt(hex.slice(index * 2, index * 2 + 2), 16);
+    }
+  }
+
+  get buffer(): ArrayBuffer {
+    return this.bytes.slice().buffer;
+  }
+
+  get byteOffset(): number {
+    return this.bytes.byteOffset;
+  }
+
+  get byteLength(): number {
+    return this.bytes.byteLength;
+  }
+}
+
 export function createHash(algorithm: string) {
   if (algorithm !== "sha256") {
     throw new Error(`Unsupported browser hash algorithm: ${algorithm}`);
@@ -27,11 +50,15 @@ export function createHash(algorithm: string) {
       input += value;
       return this;
     },
-    digest(encoding: HashEncoding) {
+    digest(encoding?: HashEncoding) {
+      const hex = sha256Hex(input);
+      if (encoding === undefined) {
+        return new BrowserHashDigest(hex);
+      }
       if (encoding !== "hex") {
         throw new Error(`Unsupported browser hash digest encoding: ${encoding}`);
       }
-      return sha256Hex(input);
+      return hex;
     },
   };
 }
