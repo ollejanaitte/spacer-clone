@@ -16,6 +16,8 @@ import type {
   CrossSlopeDraft,
   CrossfallMode,
   LinerDrawingSettingsDraft,
+  PierDraft,
+  SpanDraft,
   VerticalAlignmentDraft,
   WidthChangePointDraft,
 } from "../schema/types";
@@ -336,6 +338,59 @@ export function updateLinerSelectedCrossSectionStation(
     ...(Number.isFinite(selectedCrossSectionStation)
       ? { selectedCrossSectionStation }
       : { selectedCrossSectionStation: undefined }),
+  };
+}
+
+export function createDefaultPier(
+  draft: BuildIntermediateInput,
+  patch: Partial<PierDraft> = {},
+): PierDraft {
+  const piers = draft.piers ?? [];
+  return {
+    id: patch.id ?? nextPierId(piers),
+    physicalDistance: patch.physicalDistance ?? piers.at(-1)?.physicalDistance ?? 0,
+    kind: patch.kind ?? "pier",
+    ...(patch.skewAngleRad !== undefined ? { skewAngleRad: patch.skewAngleRad } : {}),
+    ...(patch.bearingOffsets !== undefined ? { bearingOffsets: patch.bearingOffsets } : {}),
+  };
+}
+
+export function createDefaultSpan(
+  draft: BuildIntermediateInput,
+  patch: Partial<SpanDraft> = {},
+): SpanDraft {
+  const spans = draft.spans ?? [];
+  const totalLength = totalDraftLength(draft);
+  const lastSpan = spans.at(-1);
+  const startPhysicalDistance =
+    patch.startPhysicalDistance ?? lastSpan?.endPhysicalDistance ?? 0;
+  const endPhysicalDistance = patch.endPhysicalDistance ?? totalLength;
+  return {
+    id: patch.id ?? nextSpanId(spans),
+    startPhysicalDistance,
+    endPhysicalDistance,
+    ...(patch.pierIdStart !== undefined ? { pierIdStart: patch.pierIdStart } : {}),
+    ...(patch.pierIdEnd !== undefined ? { pierIdEnd: patch.pierIdEnd } : {}),
+  };
+}
+
+export function updateLinerPiers(
+  draft: BuildIntermediateInput,
+  piers: readonly PierDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(piers.length > 0 ? { piers: [...piers] } : { piers: undefined }),
+  };
+}
+
+export function updateLinerSpans(
+  draft: BuildIntermediateInput,
+  spans: readonly SpanDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(spans.length > 0 ? { spans: [...spans] } : { spans: undefined }),
   };
 }
 
@@ -680,6 +735,28 @@ function nextStationEquationId(equations: readonly StationEquation[]): string {
   while (ids.has(candidate)) {
     index += 1;
     candidate = `EQ${index}`;
+  }
+  return candidate;
+}
+
+function nextPierId(piers: readonly PierDraft[]): string {
+  const ids = new Set(piers.map((pier) => pier.id));
+  let index = piers.length + 1;
+  let candidate = `P${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `P${index}`;
+  }
+  return candidate;
+}
+
+function nextSpanId(spans: readonly SpanDraft[]): string {
+  const ids = new Set(spans.map((span) => span.id));
+  let index = spans.length + 1;
+  let candidate = `SP${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `SP${index}`;
   }
   return candidate;
 }
