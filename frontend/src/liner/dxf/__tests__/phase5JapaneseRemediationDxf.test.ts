@@ -17,6 +17,10 @@ const OUT_DIR = "/tmp/phase5-japanese-drawing-remediation";
 
 function buildDocs() {
   const draft = createDefaultLinerDraft();
+  const straight = draft.alignment.elements[0];
+  if (straight && straight.type === "straight") {
+    straight.length = 120;
+  }
   draft.offsets = [-5.5, -3.25, 0, 3.25, 5.5];
   draft.crossSections = [
     {
@@ -48,6 +52,7 @@ function buildDocs() {
           id: "VP1",
           startStation: 40,
           endStation: 80,
+          startElevation: 10.8,
           startGrade: 0.02,
           endGrade: -0.01,
           length: 40,
@@ -57,7 +62,7 @@ function buildDocs() {
           id: "VG2",
           startStation: 80,
           endStation: 120,
-          startElevation: 10.6,
+          startElevation: 11,
           grade: -0.01,
           length: 40,
         },
