@@ -6,6 +6,8 @@ import {
   updateLinerDraftSettings,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlope,
+  updateLinerPiers,
+  updateLinerSpans,
   updateLinerVerticalAlignment,
 } from "./linerUiAdapter";
 import {
@@ -24,6 +26,38 @@ import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
 } from "../schema/types";
+import {
+  deriveLinerBridgeEntityId,
+  LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
+} from "./linerDomainDraftRoadDesignMapper";
+import { parseUuid, type UuidString } from "../../contracts/uuid";
+
+function createBridgeLayoutDraft() {
+  let draft = addLinerOffset(createDefaultLinerDraft());
+  draft = updateLinerPiers(draft, [
+    {
+      id: "P1",
+      physicalDistance: 20,
+      kind: "abutment",
+      skewAngleRad: Math.PI / 12,
+      bearingOffsets: [{ transverseIndex: 0, offset: 0.5 }],
+    },
+    {
+      id: "P2",
+      physicalDistance: 80,
+      kind: "pier",
+    },
+  ]);
+  return updateLinerSpans(draft, [
+    {
+      id: "SP1",
+      startPhysicalDistance: 20,
+      endPhysicalDistance: 80,
+      pierIdStart: "P1",
+      pierIdEnd: "P2",
+    },
+  ]);
+}
 
 describe("liner project draft persistence", () => {
   it("keeps the previous project when a draft cannot be migrated", () => {
@@ -278,5 +312,135 @@ describe("liner project draft persistence", () => {
 
   it("returns undefined when the project has no LINER metadata", () => {
     expect(linerDraftFromProject(createDefaultProject())).toBeUndefined();
+  });
+
+  it("serializes bridge layout spans and piers into roadDesignDocument without domainDraft", () => {
+    const project = withProjectLinerDraft(createDefaultProject(), createBridgeLayoutDraft());
+    const serialized = serializeProjectForPersistence(project);
+
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    expect(serialized.project.liner?.draft).toBeUndefined();
+
+    const roadDesignDocument = serialized.project.liner?.roadDesignDocument;
+    expect(roadDesignDocument).toBeDefined();
+    expect(roadDesignDocument?.bridges).toEqual([
+      expect.objectContaining({
+        entityId: deriveLinerBridgeEntityId("SP1"),
+        label: "SP1",
+      }),
+    ]);
+
+    const extension = roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as {
+      domainDraft: {
+        spans: unknown[];
+        piers: unknown[];
+      };
+    };
+    expect(payload.domainDraft.spans).toEqual([
+      expect.objectContaining({
+        id: "SP1",
+        startPhysicalDistance: 20,
+        endPhysicalDistance: 80,
+        pierIdStart: "P1",
+        pierIdEnd: "P2",
+      }),
+    ]);
+    expect(payload.domainDraft.piers).toEqual([
+      expect.objectContaining({
+        id: "P1",
+        physicalDistance: 20,
+        skewAngleRad: Math.PI / 12,
+        bearingOffsets: [{ transverseIndex: 0, offset: 0.5 }],
+      }),
+      expect.objectContaining({
+        id: "P2",
+        physicalDistance: 80,
+      }),
+    ]);
+  });
+
+  it("hydrates bridge layout spans and piers from roadDesignDocument with stable ids", () => {
+    const originalDraft = createBridgeLayoutDraft();
+    const project = withProjectLinerDraft(createDefaultProject(), originalDraft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+
+    expect(hydrated.project.liner?.roadDesignDocument).toBeUndefined();
+    expect(hydrated.project.liner?.domainDraft?.spans).toEqual(project.liner?.domainDraft?.spans);
+    expect(hydrated.project.liner?.domainDraft?.piers).toEqual(project.liner?.domainDraft?.piers);
+    expect(linerDraftFromProject(hydrated.project)?.spans).toEqual(originalDraft.spans);
+    expect(linerDraftFromProject(hydrated.project)?.piers).toEqual(originalDraft.piers);
+  });
+
+  it("fails closed when serializing bridge layout with duplicate span ids", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createBridgeLayoutDraft(),
+    ).liner!.domainDraft!;
+    const invalid = withProjectLinerDomainDraft(createDefaultProject(), {
+      ...domainDraft,
+      spans: [
+        ...domainDraft.spans,
+        { ...domainDraft.spans[0]!, id: domainDraft.spans[0]!.id },
+      ],
+    });
+
+    const serialized = serializeProjectForPersistence(invalid);
+    expect(serialized.ok).toBe(false);
+    if (serialized.ok) {
+      return;
+    }
+    expect(serialized.diagnostics.join(" ")).toContain("LINER_SPAN_DUPLICATE_ID");
+  });
+
+  it("fails closed when hydrating roadDesignDocument with tampered bridge stable ids", () => {
+    const serialized = serializeProjectForPersistence(
+      withProjectLinerDraft(createDefaultProject(), createBridgeLayoutDraft()),
+    );
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const roadDesignDocument = serialized.project.liner!.roadDesignDocument!;
+    const wrongBridgeId = parseUuid("11111111-1111-4111-8111-111111111111") as UuidString;
+    const tampered = {
+      ...serialized.project,
+      liner: {
+        ...serialized.project.liner!,
+        roadDesignDocument: {
+          ...roadDesignDocument,
+          bridges: roadDesignDocument.bridges.map((entry) => ({
+            ...entry,
+            entityId: wrongBridgeId,
+          })),
+          stableIdRegistry: roadDesignDocument.stableIdRegistry.map((entry) =>
+            entry.entityKind === "bridge" ? { ...entry, id: wrongBridgeId } : entry,
+          ),
+        },
+      },
+    };
+
+    const hydrated = hydrateProjectLinerFromPersistence(tampered);
+    expect(hydrated.ok).toBe(false);
+    if (hydrated.ok) {
+      return;
+    }
+    expect(hydrated.diagnostics.join(" ")).toContain("bridge stable ids");
   });
 });

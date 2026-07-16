@@ -22,6 +22,7 @@ import { requireStableIdNamespace, type StableEntityId } from "../../contracts/s
 import { UNIT_CONTEXT_SCHEMA_VERSION } from "../../contracts/unitContext";
 import { hasValidationErrors } from "../../contracts/validation";
 import type { UuidString } from "../../contracts/uuid";
+import { validateBridgeLayout } from "../core/bridge/bridgeLayoutEvaluation";
 import type { LinerDomainDraftVNext } from "../schema/types";
 
 export const LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY =
@@ -158,6 +159,31 @@ export function deriveLinerUnitContextId(domainDraftId: string): UuidString {
   return deriveStableUuid("liner.domain-draft.unit-context", `${domainDraftId}:units`);
 }
 
+function domainDraftAlignmentTotalLength(domainDraft: LinerDomainDraftVNext): number {
+  return domainDraft.alignment.elements.reduce((total, element) => total + element.length, 0);
+}
+
+function validateBridgeLayoutForMapping(domainDraft: LinerDomainDraftVNext): readonly string[] {
+  if (domainDraft.spans.length === 0 && domainDraft.piers.length === 0) {
+    return [];
+  }
+
+  const bridgeIssues = validateBridgeLayout({
+    spans: domainDraft.spans,
+    piers: domainDraft.piers,
+    alignmentTotalLength: domainDraftAlignmentTotalLength(domainDraft),
+    stationDefinition: domainDraft.stationDefinition,
+    gridPoints: [],
+  });
+
+  return bridgeIssues
+    .filter((issue) => issue.level === "error")
+    .map((issue) => {
+      const entity = issue.entityId ? ` (${issue.entityId})` : "";
+      return `Bridge layout: ${issue.code}${entity}`;
+    });
+}
+
 function validateDomainDraftForMapping(domainDraft: LinerDomainDraftVNext): readonly string[] {
   const issues: string[] = [];
   if (requireNonEmptyString(domainDraft.id, "id") === undefined) {
@@ -187,6 +213,7 @@ function validateDomainDraftForMapping(domainDraft: LinerDomainDraftVNext): read
       issues.push(`piers[${index}].id is required.`);
     }
   }
+  issues.push(...validateBridgeLayoutForMapping(domainDraft));
   return issues;
 }
 
