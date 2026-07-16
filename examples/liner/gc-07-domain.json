@@ -1,0 +1,22 @@
+{
+  "alignment": {
+    "id": "gc07-alignment",
+    "linerModelId": "gc07",
+    "coordinatePolicyId": "global",
+    "elements": [
+      {
+        "type": "straight",
+        "id": "L1",
+        "start": { "x": 0, "y": 0 },
+        "azimuth": 0.7853981633974483,
+        "length": 100
+      }
+    ]
+  },
+  "stationDefinition": {
+    "originDisplayedStation": 0,
+    "interval": 50
+  },
+  "offsets": [5],
+  "z": 0
+}

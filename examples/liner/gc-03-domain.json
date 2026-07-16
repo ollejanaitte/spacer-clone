@@ -1,0 +1,31 @@
+{
+  "alignment": {
+    "id": "gc03-alignment",
+    "linerModelId": "gc03",
+    "coordinatePolicyId": "global",
+    "elements": [
+      {
+        "type": "straight",
+        "id": "L1",
+        "start": { "x": 0, "y": 0 },
+        "azimuth": 0,
+        "length": 100
+      },
+      {
+        "type": "arc",
+        "id": "A1",
+        "start": { "x": 100, "y": 0 },
+        "azimuth": 0,
+        "radius": 500,
+        "turn": "left",
+        "length": 261.7993877991494
+      }
+    ]
+  },
+  "stationDefinition": {
+    "originDisplayedStation": 0,
+    "interval": 50
+  },
+  "offsets": [0],
+  "z": 0
+}

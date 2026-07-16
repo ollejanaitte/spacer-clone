@@ -225,12 +225,6 @@ export type HorizontalGeometryResult = {
   piPoints: HorizontalPiPointResult[];
 };
 
-export type Phase0HorizontalGeometryResult = {
-  totalLength: number;
-  sampledPoints: AlignmentSamplePoint[];
-  issues: ValidationIssue[];
-};
-
 export type ProfileSegmentResult = {
   id: string;
   startPhysicalDistance: number;
@@ -509,23 +503,6 @@ export type MemberPreparation = {
   direction: "longitudinal" | "transverse";
   provenance: IntermediateProvenance;
 };
-
-export type Phase0LinerIntermediateResult = {
-  schemaVersion: "0.2.0";
-  sourceRevision: string;
-  linerModelId: string;
-  coordinatePolicyId: string;
-  horizontal: Phase0HorizontalGeometryResult;
-  stations: GeneratedStation[];
-  gridPoints: GridPointPreparation[];
-  nodeCandidates: NodePreparation[];
-  memberCandidates: MemberPreparation[];
-  issues: ValidationIssue[];
-};
-
-export type LinerIntermediateResult =
-  | CanonicalLinerIntermediateResult
-  | Phase0LinerIntermediateResult;
 
 export type ElementEvaluation = {
   point: Vec2;
