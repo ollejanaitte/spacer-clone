@@ -3,6 +3,7 @@ import {
   resolveCrossSectionTemplateById,
   resolveCrossSectionTemplateForPhysicalDistance,
 } from "../crossSectionTemplateResolution";
+import { validateCrossSectionTemplates } from "../crossSectionTemplateValidation";
 import { generateGridPoints } from "../grid/gridGeneration";
 import { resolveCrossfallState, validateCrossSlopeIntervals } from "../grid/crossfallResolution";
 import { generateMeasuredGridPoints } from "../grid/measuredGridGeneration";
@@ -524,6 +525,11 @@ export function buildIntermediateResult(
   diagnostics.push(...validateVerticalAlignment(input.verticalAlignment, totalLength));
   diagnostics.push(...validateCrossSlopeIntervals(input.crossSlopeIntervals, totalLength));
   diagnostics.push(...validateWidthChangePoints(input.widthChangePoints, totalLength));
+  diagnostics.push(...validateCrossSectionTemplates({
+    crossSections: input.crossSections,
+    gridDefinitions: input.gridDefinitions,
+    alignmentTotalLength: totalLength,
+  }));
   const stationGeneration = generateStations(input.stationDefinition, totalLength);
   diagnostics.push(...stationGeneration.issues);
 

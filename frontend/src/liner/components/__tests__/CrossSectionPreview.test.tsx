@@ -71,4 +71,35 @@ describe("CrossSectionPreview (PR-D)", () => {
     expect(rightPoint).not.toBeNull();
     expect(rightPoint?.querySelector("title")?.textContent).toContain("0.40");
   });
+
+  it("applies width change points to preview offset positions", () => {
+    const template = {
+      id: "CS-width",
+      name: "Width",
+      offsetLines: [
+        { id: "left", offset: -4, elevation: 0 },
+        { id: "right", offset: 4, elevation: 0 },
+      ],
+    };
+    const widthChangePoints = [
+      {
+        id: "WP-1",
+        physicalDistance: 0,
+        leftOffset: 6,
+        rightOffset: 6,
+      },
+    ];
+
+    render(
+      <CrossSectionPreview
+        template={template}
+        widthChangePoints={widthChangePoints}
+        previewPhysicalDistance={0}
+      />,
+    );
+
+    const rightPoint = document.querySelector("[data-testid=cross-section-preview-point-right]");
+    expect(rightPoint).not.toBeNull();
+    expect(rightPoint?.querySelector("title")?.textContent).toContain("6.00");
+  });
 });

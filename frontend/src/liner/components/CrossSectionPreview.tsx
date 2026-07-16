@@ -1,16 +1,19 @@
 import { useMemo } from "react";
 import { ja } from "../../i18n/ja";
 import { resolveCrossfallOffset, resolveCrossfallState } from "../core/grid/crossfallResolution";
+import { resolveStationOffsetLines } from "../core/width/widthResolution";
 import type {
   CrossSectionOffsetLineDraft,
   CrossSectionOffsetLineRole,
   CrossSectionTemplateDraft,
   CrossSlopeIntervalDraft,
+  WidthChangePointDraft,
 } from "../schema/types";
 
 export type CrossSectionPreviewProps = {
   template: CrossSectionTemplateDraft;
   crossSlopeIntervals?: readonly CrossSlopeIntervalDraft[];
+  widthChangePoints?: readonly WidthChangePointDraft[];
   previewPhysicalDistance?: number;
 };
 
@@ -170,10 +173,15 @@ function buildTickValues(min: number, max: number, count: number): number[] {
 export function CrossSectionPreview({
   template,
   crossSlopeIntervals,
+  widthChangePoints,
   previewPhysicalDistance = 0,
 }: CrossSectionPreviewProps) {
-  const hasInvalidOffset = template.offsetLines.some((line) => !Number.isFinite(line.offset));
-  const offsetLines = template.offsetLines.filter((line) => Number.isFinite(line.offset));
+  const resolvedOffsetLines = useMemo(
+    () => resolveStationOffsetLines(template, widthChangePoints, previewPhysicalDistance),
+    [template, widthChangePoints, previewPhysicalDistance],
+  );
+  const hasInvalidOffset = resolvedOffsetLines.some((line) => !Number.isFinite(line.offset));
+  const offsetLines = resolvedOffsetLines.filter((line) => Number.isFinite(line.offset));
   const isEmpty = offsetLines.length === 0;
 
   const plotWidth = VIEW_WIDTH - PLOT_PADDING * 2;

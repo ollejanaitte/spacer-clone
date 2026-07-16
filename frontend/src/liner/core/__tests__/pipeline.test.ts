@@ -328,4 +328,39 @@ describe("liner intermediate result builder", () => {
 
     expect(left.sourceRevision).not.toBe(right.sourceRevision);
   });
+
+  it("fails closed when grid definitions reference an unknown cross-section template", () => {
+    const result = buildIntermediateResult({
+      alignment,
+      stationDefinition: {
+        originDisplayedStation: 0,
+        explicitStations: [0],
+      },
+      crossSections: [
+        {
+          id: "CS-default",
+          name: "Default",
+          offsetLines: [{ id: "OL-0", offset: 0, elevation: 0, role: "lane" as const }],
+        },
+      ],
+      gridDefinitions: [
+        {
+          id: "GRID-bad",
+          crossSectionTemplateId: "CS-missing",
+          stationRange: { startPhysicalDistance: 0, endPhysicalDistance: 20 },
+        },
+      ],
+      offsets: [0],
+      z: 0,
+    });
+
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({
+        level: "error",
+        code: "LINER_CROSS_SECTION_TEMPLATE_REFERENCE_MISSING",
+        entityId: "GRID-bad",
+      }),
+    );
+    expect(result.grid.points).toHaveLength(0);
+  });
 });

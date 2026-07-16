@@ -38,6 +38,17 @@ export const LINER_DIAGNOSTIC_CODES = {
   widthChangePointOverlap: "LINER_WIDTH_CHANGE_POINT_OVERLAP",
   widthChangePointOutOfRange: "LINER_WIDTH_CHANGE_POINT_OUT_OF_RANGE",
   widthChangePointInvalid: "LINER_WIDTH_CHANGE_POINT_INVALID",
+  crossSectionTemplateDuplicateId: "LINER_CROSS_SECTION_TEMPLATE_DUPLICATE_ID",
+  crossSectionTemplateMissingId: "LINER_CROSS_SECTION_TEMPLATE_MISSING_ID",
+  crossSectionOffsetLineDuplicateId: "LINER_CROSS_SECTION_OFFSET_LINE_DUPLICATE_ID",
+  crossSectionOffsetLineMissingId: "LINER_CROSS_SECTION_OFFSET_LINE_MISSING_ID",
+  crossSectionOffsetLineMissing: "LINER_CROSS_SECTION_OFFSET_LINE_MISSING",
+  crossSectionGridDefinitionDuplicateId: "LINER_CROSS_SECTION_GRID_DEFINITION_DUPLICATE_ID",
+  crossSectionGridDefinitionMissingId: "LINER_CROSS_SECTION_GRID_DEFINITION_MISSING_ID",
+  crossSectionTemplateReferenceMissing: "LINER_CROSS_SECTION_TEMPLATE_REFERENCE_MISSING",
+  crossSectionOffsetLineReferenceMissing: "LINER_CROSS_SECTION_OFFSET_LINE_REFERENCE_MISSING",
+  crossSectionGridDefinitionInvalidRange: "LINER_CROSS_SECTION_GRID_DEFINITION_INVALID_RANGE",
+  crossSectionGridDefinitionOverlap: "LINER_CROSS_SECTION_GRID_DEFINITION_OVERLAP",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
@@ -74,6 +85,17 @@ export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
   LINER_WIDTH_CHANGE_POINT_OVERLAP: "liner.errors.width_change_point_overlap",
   LINER_WIDTH_CHANGE_POINT_OUT_OF_RANGE: "liner.errors.width_change_point_out_of_range",
   LINER_WIDTH_CHANGE_POINT_INVALID: "liner.errors.width_change_point_invalid",
+  LINER_CROSS_SECTION_TEMPLATE_DUPLICATE_ID: "liner.errors.cross_section_template_duplicate_id",
+  LINER_CROSS_SECTION_TEMPLATE_MISSING_ID: "liner.errors.cross_section_template_missing_id",
+  LINER_CROSS_SECTION_OFFSET_LINE_DUPLICATE_ID: "liner.errors.cross_section_offset_line_duplicate_id",
+  LINER_CROSS_SECTION_OFFSET_LINE_MISSING_ID: "liner.errors.cross_section_offset_line_missing_id",
+  LINER_CROSS_SECTION_OFFSET_LINE_MISSING: "liner.errors.cross_section_offset_line_missing",
+  LINER_CROSS_SECTION_GRID_DEFINITION_DUPLICATE_ID: "liner.errors.cross_section_grid_definition_duplicate_id",
+  LINER_CROSS_SECTION_GRID_DEFINITION_MISSING_ID: "liner.errors.cross_section_grid_definition_missing_id",
+  LINER_CROSS_SECTION_TEMPLATE_REFERENCE_MISSING: "liner.errors.cross_section_template_reference_missing",
+  LINER_CROSS_SECTION_OFFSET_LINE_REFERENCE_MISSING: "liner.errors.cross_section_offset_line_reference_missing",
+  LINER_CROSS_SECTION_GRID_DEFINITION_INVALID_RANGE: "liner.errors.cross_section_grid_definition_invalid_range",
+  LINER_CROSS_SECTION_GRID_DEFINITION_OVERLAP: "liner.errors.cross_section_grid_definition_overlap",
 } as const satisfies Record<LinerDiagnosticCode, `liner.errors.${string}`>;
 
 export function createIssue(

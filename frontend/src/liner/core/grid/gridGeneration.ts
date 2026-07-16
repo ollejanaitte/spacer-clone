@@ -1,5 +1,6 @@
 import { elevationAt } from "../elevationAt";
 import { resolveCrossSectionTemplateForPhysicalDistance } from "../crossSectionTemplateResolution";
+import { validateCrossSectionTemplates } from "../crossSectionTemplateValidation";
 import { createIssue, LINER_DIAGNOSTIC_CODES } from "../diagnostics";
 import { evaluateAlignmentAtDistance } from "../geometry/horizontal";
 import { formatStationDisplay } from "../station/stationFormat";
@@ -70,6 +71,11 @@ export function generateGridPoints(input: GridPreparationInput): {
   const issues: ValidationIssue[] = [
     ...validateCrossSlopeIntervals(input.crossSlopeIntervals, input.alignmentTotalLength),
     ...validateWidthChangePoints(input.widthChangePoints, input.alignmentTotalLength ?? 0),
+    ...validateCrossSectionTemplates({
+      crossSections: input.crossSections,
+      gridDefinitions: input.gridDefinitions,
+      alignmentTotalLength: input.alignmentTotalLength,
+    }),
   ];
   const sortedStations = [...input.stations].sort(
     (a, b) => a.physicalDistance - b.physicalDistance,
