@@ -12,6 +12,7 @@ import { validateImporterProjectSchema } from "../storage/validateImporterProjec
 import { importProjectJson, exportProjectJson } from "../storage/jsonImportExport";
 import { IMPORTER_SCHEMA_VERSION } from "../version";
 import { convertImporterToPhase35Draft } from "../export/ImporterToPhase35Adapter";
+import { getActiveAlignmentBundle } from "../../adapters/linerDomainDraftRoadDesignMapper";
 import { POST_CONDITION_CODES } from "../export/normalize/postConditions";
 import { validateBridge } from "../diagnostics/validateImporter";
 import {
@@ -76,7 +77,9 @@ describe("buildBuiltInSampleProject", () => {
     const result = convertImporterToPhase35Draft(project);
     expect(result.draft).not.toBeNull();
 
-    const offsets = result.draft!.crossSections[0]!.offsetLines.map((line) => line.offset);
+    const offsets = getActiveAlignmentBundle(result.draft!)!.crossSections[0]!.offsetLines.map(
+      (line) => line.offset,
+    );
     expect(offsets).toContain(7.5707);
     expect(offsets).toContain(-11.9577);
     expect(offsets).not.toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);

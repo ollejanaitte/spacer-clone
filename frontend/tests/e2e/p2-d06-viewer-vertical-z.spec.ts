@@ -101,19 +101,18 @@ test.describe("P2-D06 viewer vertical Z integration", () => {
     expect(saved.liner?.domainDraft).toBeUndefined();
     expect(saved.liner?.roadDesignDocument?.documentKind).toBe("road-design");
     expect(saved.liner?.roadDesignDocument?.alignments?.[0]?.label).toBe(ALIGNMENT_ID);
-    expect(saved.liner?.roadDesignDocument?.profiles?.[0]?.label).toBe("VA-default");
+    expect(saved.liner?.roadDesignDocument?.profiles?.[0]?.label).toBe("VA-alignment-p2-d06");
     expect(saved.liner?.sourceRevision).toMatch(/^[a-f0-9]{64}$/);
 
     const geometryDraft = readGeometryDomainDraft(saved);
     expect(geometryDraft?.linerModelId).toBe(MODEL_ID);
-    expect(geometryDraft?.alignment).toMatchObject({ id: ALIGNMENT_ID });
-    const verticalAlignment = geometryDraft?.verticalAlignment as
-      | { elements?: Array<{ startElevation?: number; grade?: number }> }
-      | undefined;
-    expect(verticalAlignment?.elements?.[0]).toMatchObject({
-      startElevation: 10,
-      grade: 0.01,
-    });
+    const activeBundle = (geometryDraft?.alignments as Array<{
+      id: string;
+      verticalAlignment?: { elements?: Array<{ startElevation?: number; grade?: number }> };
+    }> | undefined)?.find((bundle) => bundle.id === ALIGNMENT_ID);
+    expect(activeBundle?.id).toBe(ALIGNMENT_ID);
+    expect(activeBundle?.verticalAlignment?.elements?.[0]?.startElevation).toBe(10);
+    expect(activeBundle?.verticalAlignment?.elements?.[0]?.grade).toBeCloseTo(0.01, 5);
 
     const endNode = saved.nodes?.find((node) => node.id === END_NODE_ID);
     expect(endNode?.x).toBeCloseTo(100, 3);

@@ -1,10 +1,20 @@
 ﻿import { describe, expect, it } from "vitest";
+import { getActiveAlignmentBundle } from "../../adapters/linerDomainDraftRoadDesignMapper";
+import type { LinerDomainDraftVNext } from "../../schema/types";
 import { convertImporterToPhase35Draft } from "./ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../__tests__/fixtures/sampleProject";
 import { buildBuiltInSampleProject, BUILT_IN_SAMPLE_ALIGNMENT_LENGTH } from "../sample/builtInSampleDataset";
 import type { LinerBridge, JipLinerImporterProject, Section } from "../types";
 import { buildNormalizationContext } from "./normalize/normalizationContext";
 import { POST_CONDITION_CODES } from "./normalize/postConditions";
+
+function activeBundle(draft: LinerDomainDraftVNext) {
+  const bundle = getActiveAlignmentBundle(draft);
+  if (!bundle) {
+    throw new Error("expected active alignment bundle");
+  }
+  return bundle;
+}
 
 function createBridgeForStationNormalization(): LinerBridge {
   const bridgeId = "bridge-station-normalization";
@@ -157,8 +167,8 @@ describe("ImporterToPhase35Adapter", () => {
     const result = convertImporterToPhase35Draft(project);
     expect(result.draft).not.toBeNull();
     expect(result.conversionLog).not.toBeNull();
-    expect(result.draft?.alignment.elements.length).toBeGreaterThan(0);
-    expect(result.draft?.verticalAlignment.elements.length).toBeGreaterThan(0);
+    expect(activeBundle(result.draft!).alignment.elements.length).toBeGreaterThan(0);
+    expect(activeBundle(result.draft!).verticalAlignment.elements.length).toBeGreaterThan(0);
   });
 
   it("blocks export without plan alignment", () => {
@@ -173,7 +183,7 @@ describe("ImporterToPhase35Adapter", () => {
     const result = convertImporterToPhase35Draft(project);
     expect(result.draft).not.toBeNull();
 
-    const stationDefinition = result.draft!.stationDefinition;
+    const stationDefinition = activeBundle(result.draft!).stationDefinition;
     expect(stationDefinition.originDisplayedStation).toBeCloseTo(259.8142, 4);
     const expected = [0, 9.6858, 19.6858, 29.6858];
     expect(stationDefinition.explicitStations).toHaveLength(expected.length);
@@ -181,7 +191,7 @@ describe("ImporterToPhase35Adapter", () => {
       expect(value).toBeCloseTo(expected[index]!, 6);
     });
     // Each explicit station must fall inside the alignment's [0, totalLength] range.
-    const totalLength = result.draft!.alignment.elements.reduce(
+    const totalLength = activeBundle(result.draft!).alignment.elements.reduce(
       (sum, element) => sum + element.length,
       0,
     );
@@ -195,7 +205,7 @@ describe("ImporterToPhase35Adapter", () => {
     const project = createProjectForStationNormalization();
     const result = convertImporterToPhase35Draft(project);
     expect(result.draft).not.toBeNull();
-    const span = result.draft!.spans[0]!;
+    const span = activeBundle(result.draft!).spans[0]!;
     expect(span.startPhysicalDistance).toBeCloseTo(0, 4);
     expect(span.endPhysicalDistance).toBeCloseTo(135.6518, 4);
   });
@@ -380,8 +390,8 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
-    const element = result.draft!.verticalAlignment.elements[0]!;
-    const totalLength = result.draft!.alignment.elements.reduce(
+    const element = activeBundle(result.draft!).verticalAlignment.elements[0]!;
+    const totalLength = activeBundle(result.draft!).alignment.elements.reduce(
       (sum, alignmentElement) => sum + alignmentElement.length,
       0,
     );
@@ -454,7 +464,7 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
       (diagnostic) => diagnostic.code === POST_CONDITION_CODES.SPAN_END_EXCEEDS_ALIGNMENT,
     );
     expect(spanOverflow).toHaveLength(0);
-    expect(result.draft!.spans[0]!.endPhysicalDistance).toBeCloseTo(
+    expect(activeBundle(result.draft!).spans[0]!.endPhysicalDistance).toBeCloseTo(
       BUILT_IN_SAMPLE_ALIGNMENT_LENGTH,
       4,
     );
@@ -464,7 +474,7 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     const sample = buildBuiltInSampleProject();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
-    const crossSection = result.draft!.crossSections[0]!;
+    const crossSection = activeBundle(result.draft!).crossSections[0]!;
     expect(crossSection.station).toBeCloseTo(0, 6);
     expect(crossSection.name).toBe("CrossSlope @ 0");
   });
@@ -474,9 +484,9 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
 
-    const templateIds = new Set(result.draft!.crossSections.map((section) => section.id));
-    expect(result.draft!.gridDefinitions.length).toBeGreaterThan(0);
-    for (const definition of result.draft!.gridDefinitions) {
+    const templateIds = new Set(activeBundle(result.draft!).crossSections.map((section) => section.id));
+    expect(activeBundle(result.draft!).gridDefinitions.length).toBeGreaterThan(0);
+    for (const definition of activeBundle(result.draft!).gridDefinitions) {
       expect(templateIds.has(definition.crossSectionTemplateId)).toBe(true);
       expect(definition.stationRange.endPhysicalDistance).toBeGreaterThanOrEqual(
         definition.stationRange.startPhysicalDistance,
@@ -493,8 +503,8 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
       59.8385, 69.2395, 78.6403, 88.041, 97.4416, 102.7325, 108.022, 117.5223, 127.0224,
       136.5224, 146.0224, 155.5224, 163.3996, 163.9996, 164.2476,
     ];
-    expect(result.draft!.stationDefinition.explicitStations).toHaveLength(expected.length);
-    result.draft!.stationDefinition.explicitStations!.forEach((value, index) => {
+    expect(activeBundle(result.draft!).stationDefinition.explicitStations).toHaveLength(expected.length);
+    activeBundle(result.draft!).stationDefinition.explicitStations!.forEach((value, index) => {
       expect(value).toBeCloseTo(expected[index]!, 3);
     });
   });
@@ -517,9 +527,9 @@ describe("Phase 3.7 NormalizationContext pipeline", () => {
     expect(sample.bridges[0]!.substructure).toBeUndefined();
     const result = convertImporterToPhase35Draft(sample);
     expect(result.draft).not.toBeNull();
-    expect(result.draft!.piers).toEqual([]);
-    expect(result.draft!.crossBeams).toBeUndefined();
-    expect(result.draft!.widthChangePoints).toBeUndefined();
+    expect(activeBundle(result.draft!).piers).toEqual([]);
+    expect(activeBundle(result.draft!).crossBeams).toBeUndefined();
+    expect(activeBundle(result.draft!).widthChangePoints).toBeUndefined();
     expect(result.diagnostics.some((d) => d.level === "error")).toBe(false);
   });
 });

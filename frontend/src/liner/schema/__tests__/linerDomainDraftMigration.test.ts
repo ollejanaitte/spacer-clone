@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildIntermediateInputFromDomainDraft } from "../../adapters/linerProjectDraft";
+import { getActiveAlignmentBundle } from "../../adapters/linerDomainDraftRoadDesignMapper";
 import { createDefaultLinerDraft } from "../../adapters/linerUiAdapter";
 import type { BuildIntermediateInput } from "../../core/pipeline/pipeline";
 import {
@@ -72,7 +73,9 @@ describe("migrateLinerDraftToVNext", () => {
 
     const { domainDraft } = result;
 
-    expect(domainDraft.alignment).toEqual({
+    const bundle = getActiveAlignmentBundle(domainDraft)!;
+
+    expect(bundle.alignment).toEqual({
       id: "alignment-test",
       elements: [
         {
@@ -84,9 +87,9 @@ describe("migrateLinerDraftToVNext", () => {
         },
       ],
     });
-    expect(domainDraft.stationDefinition).toEqual(draft.stationDefinition);
+    expect(bundle.stationDefinition).toEqual(draft.stationDefinition);
 
-    expect(domainDraft.verticalAlignment.elements).toEqual([
+    expect(bundle.verticalAlignment.elements).toEqual([
       {
         type: "grade",
         id: "VG-default",
@@ -98,28 +101,28 @@ describe("migrateLinerDraftToVNext", () => {
       },
     ]);
 
-    expect(domainDraft.crossSections).toEqual([
+    expect(bundle.crossSections).toEqual([
       {
-        id: "CS-default",
+        id: "CS-alignment-test",
         name: "Default",
         offsetLines: [
-          { id: "OL-0", offset: -2, elevation: 0, role: "custom" },
-          { id: "OL-1", offset: 0, elevation: 0, role: "custom" },
-          { id: "OL-2", offset: 2, elevation: 0, role: "custom" },
+          expect.objectContaining({ id: "OL-alignment-test-0", offset: -2, elevation: 0, role: "custom" }),
+          expect.objectContaining({ id: "OL-alignment-test-1", offset: 0, elevation: 0, role: "custom" }),
+          expect.objectContaining({ id: "OL-alignment-test-2", offset: 2, elevation: 0, role: "custom" }),
         ],
       },
     ]);
 
-    expect(domainDraft.gridDefinitions).toEqual([
+    expect(bundle.gridDefinitions).toEqual([
       {
         id: "GRID-default",
-        crossSectionTemplateId: "CS-default",
+        crossSectionTemplateId: "CS-alignment-test",
         stationRange: {
           startPhysicalDistance: 0,
           endPhysicalDistance: 50,
         },
         stationInterval: 1.5,
-        offsetLineIds: ["OL-0", "OL-1", "OL-2"],
+        offsetLineIds: ["OL-alignment-test-0", "OL-alignment-test-1", "OL-alignment-test-2"],
       },
     ]);
 
@@ -196,7 +199,7 @@ describe("migrateLinerDraftToVNext", () => {
       return;
     }
 
-    expect(result.domainDraft.verticalAlignment.elements[0]).toMatchObject({
+    expect(getActiveAlignmentBundle(result.domainDraft)!.verticalAlignment.elements[0]).toMatchObject({
       type: "grade",
       grade: 0,
       startElevation: 0,
@@ -204,8 +207,13 @@ describe("migrateLinerDraftToVNext", () => {
       endStation: 100,
       length: 100,
     });
-    expect(result.domainDraft.crossSections[0]?.offsetLines).toEqual([
-      { id: "OL-0", offset: 0, elevation: 0, role: "custom" },
+    expect(getActiveAlignmentBundle(result.domainDraft)!.crossSections[0]?.offsetLines).toEqual([
+      expect.objectContaining({
+        id: "OL-alignment-1-0",
+        offset: 0,
+        elevation: 0,
+        role: "custom",
+      }),
     ]);
     expect(result.diagnostics).toEqual([]);
   });

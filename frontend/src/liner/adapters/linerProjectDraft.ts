@@ -7,9 +7,12 @@ import {
   type MigrateLinerDraftToVNextResult,
 } from "../schema/projectLinerMigration";
 import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
-import type { HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
+import type { AlignmentBundleDraft, HorizontalElementDraft, LinerDomainDraftVNext } from "../schema/types";
 import {
+  deriveLinerCenterlineId,
   domainDraftToRoadDesignDocument,
+  getActiveAlignmentBundle,
+  normalizeLinerDomainDraft,
   roadDesignDocumentToDomainDraft,
   type DomainDraftRoadDesignMapResult,
   type LinerDomainDraftRoadDesignMapperOptions,
@@ -19,7 +22,11 @@ import {
   LINER_DRAFT_SCHEMA_VERSION,
   PROJECT_LINER_METADATA_SCHEMA_VERSION,
 } from "../schema/types";
-import type { LinerDraft } from "./linerUiAdapter";
+import {
+  createAlignmentBundleFromDraft,
+  syncActiveBundleToAlignments,
+  type LinerDraft,
+} from "./linerUiAdapter";
 
 export function linerDraftFromProject(project: ProjectModel): LinerDraft | undefined {
   if (!project.liner) {
@@ -215,39 +222,53 @@ function toAlignmentElement(element: HorizontalElementDraft): AlignmentElement {
 export function buildIntermediateInputFromDomainDraft(
   domainDraft: LinerDomainDraftVNext,
 ): BuildIntermediateInput {
-  const defaultTemplate = domainDraft.crossSections[0];
+  const normalized = normalizeLinerDomainDraft(domainDraft) ?? domainDraft;
+  const activeBundle = getActiveAlignmentBundle(normalized);
+  if (!activeBundle) {
+    throw new Error("domainDraft has no active alignment bundle.");
+  }
+
+  const defaultTemplate = activeBundle.crossSections[0];
   const offsets = defaultTemplate?.offsetLines.map((line) => line.offset) ?? [0];
-  const gradeElement = domainDraft.verticalAlignment.elements.find(
+  const gradeElement = activeBundle.verticalAlignment.elements.find(
     (element) => element.type === "grade",
   );
   const z = gradeElement?.type === "grade" ? gradeElement.startElevation : 0;
 
-  return {
+  const base: BuildIntermediateInput = {
     alignment: {
-      id: domainDraft.alignment.id,
-      linerModelId: domainDraft.linerModelId,
-      coordinatePolicyId: domainDraft.coordinatePolicyId,
-      elements: domainDraft.alignment.elements.map(toAlignmentElement),
+      id: activeBundle.id,
+      linerModelId: normalized.linerModelId,
+      coordinatePolicyId: normalized.coordinatePolicyId,
+      elements: activeBundle.alignment.elements.map(toAlignmentElement),
     },
-    stationDefinition: domainDraft.stationDefinition,
-    verticalAlignment: domainDraft.verticalAlignment,
-    crossSections: domainDraft.crossSections,
-    crossSlopeIntervals: domainDraft.crossSlopeIntervals,
+    stationDefinition: activeBundle.stationDefinition,
+    verticalAlignment: activeBundle.verticalAlignment,
+    crossSections: activeBundle.crossSections,
+    crossSlopeIntervals: activeBundle.crossSlopeIntervals,
     offsets,
-    sampleInterval: domainDraft.sampling.display.maxChordLength,
-    selectedCrossSectionStation: domainDraft.selectedCrossSectionStation,
+    sampleInterval: normalized.sampling.display.maxChordLength,
+    selectedCrossSectionStation: normalized.selectedCrossSectionStation,
     z,
-    ...(domainDraft.measuredGrid ? { measuredGrid: domainDraft.measuredGrid } : {}),
-    ...(domainDraft.drawingSettings ? { drawingSettings: domainDraft.drawingSettings } : {}),
-    ...(domainDraft.widthChangePoints?.length
-      ? { widthChangePoints: domainDraft.widthChangePoints }
+    linerAlignments: structuredClone(normalized.alignments),
+    activeAlignmentId: normalized.activeAlignmentId ?? activeBundle.id,
+    activeLineId:
+      normalized.activeLineId ?? deriveLinerCenterlineId(activeBundle.id),
+    ...(normalized.measuredGrid ? { measuredGrid: normalized.measuredGrid } : {}),
+    ...(normalized.drawingSettings ? { drawingSettings: normalized.drawingSettings } : {}),
+    ...(activeBundle.widthChangePoints?.length
+      ? { widthChangePoints: activeBundle.widthChangePoints }
       : {}),
-    ...(domainDraft.gridDefinitions.length > 1 || domainDraft.crossSections.length > 1
-      ? { gridDefinitions: domainDraft.gridDefinitions }
-      : {}),
-    ...(domainDraft.spans.length ? { spans: domainDraft.spans } : {}),
-    ...(domainDraft.piers.length ? { piers: domainDraft.piers } : {}),
+    ...(activeBundle.gridDefinitions.length > 1 || activeBundle.crossSections.length > 1
+      ? { gridDefinitions: activeBundle.gridDefinitions }
+      : activeBundle.gridDefinitions.length
+        ? { gridDefinitions: activeBundle.gridDefinitions }
+        : {}),
+    ...(activeBundle.spans.length ? { spans: activeBundle.spans } : {}),
+    ...(activeBundle.piers.length ? { piers: activeBundle.piers } : {}),
   };
+
+  return base;
 }
 
 function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<string, unknown> {
@@ -267,25 +288,81 @@ function linerDraftSourceRevisionInput(draft: BuildIntermediateInput): Record<st
   };
 }
 
-function domainDraftFromLinerDraft(draft: LinerDraft): LinerDomainDraftVNext {
-  const migration = migrateLinerDraftToVNext({ draft });
-  if (!migration.ok) {
-    const messages = migration.diagnostics.map((diagnostic) => diagnostic.message).join("; ");
-    throw new Error(`Cannot convert liner draft to vNext domain draft: ${messages}`);
-  }
-  return migration.domainDraft;
+function domainDraftFromLinerDraft(
+  draft: LinerDraft,
+  existingDocumentId?: string,
+): LinerDomainDraftVNext {
+  const synced = syncActiveBundleToAlignments(draft);
+  const activeId = synced.activeAlignmentId ?? synced.alignment.id;
+  const existingActive = synced.linerAlignments?.find((entry) => entry.id === activeId);
+  const activeBundle: AlignmentBundleDraft = {
+    ...createAlignmentBundleFromDraft(
+      synced,
+      activeId,
+      existingActive?.name,
+      existingActive?.sortIndex ?? 0,
+    ),
+    enabled: existingActive?.enabled ?? true,
+  };
+  const alignments =
+    synced.linerAlignments?.map((bundle) =>
+      bundle.id === activeBundle.id ? activeBundle : bundle,
+    ) ?? [activeBundle];
+  const sortedBundles = [...alignments].sort((left, right) => left.sortIndex - right.sortIndex);
+  const documentId = existingDocumentId ?? sortedBundles[0]?.id ?? synced.alignment.id;
+
+  return {
+    id: documentId,
+    linerModelId: synced.alignment.linerModelId,
+    coordinatePolicyId: synced.alignment.coordinatePolicyId,
+    alignments,
+    activeAlignmentId: activeId,
+    activeLineId: synced.activeLineId ?? deriveLinerCenterlineId(activeId),
+    ...(synced.measuredGrid ? { measuredGrid: synced.measuredGrid } : {}),
+    ...(synced.selectedCrossSectionStation !== undefined
+      ? { selectedCrossSectionStation: synced.selectedCrossSectionStation }
+      : {}),
+    ...(synced.drawingSettings ? { drawingSettings: synced.drawingSettings } : {}),
+    generationSettings: {
+      defaultMemberGroupKey: "default",
+      connectivityMode: "grid_full",
+    },
+    sampling: {
+      display: {
+        maxChordLength: synced.sampleInterval ?? 0.5,
+        maxSagitta: 0.005,
+        minSegmentsPerElement: 1,
+      },
+      dxf: {
+        maxChordLength: 0.1,
+        maxSagitta: 0.001,
+        minSegmentsPerElement: 1,
+      },
+      frame: {
+        maxMemberLength: 0.25,
+        maxSagitta: 0.0025,
+        stationIntervalFallback: synced.sampleInterval ?? 0.25,
+      },
+    },
+  };
 }
 
 export function validateLinerDraftForCommit(draft: LinerDraft): string | null {
-  const migration = migrateLinerDraftToVNext({ draft });
-  if (migration.ok) {
+  try {
+    const domainDraft = domainDraftFromLinerDraft(draft);
+    const mapped = domainDraftToRoadDesignDocument(domainDraft);
+    if (!mapped.ok) {
+      return mapped.diagnostics.join("; ");
+    }
     return null;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return message;
   }
-  return migration.diagnostics.map((diagnostic) => diagnostic.message).join("; ");
 }
 
 export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
-  const domainDraft = domainDraftFromLinerDraft(draft);
+  const domainDraft = domainDraftFromLinerDraft(draft, project.liner?.domainDraft?.id);
   return withProjectLinerDomainDraft(project, domainDraft);
 }
 
@@ -314,7 +391,8 @@ export function withProjectLinerDomainDraft(
   project: ProjectModel,
   domainDraft: LinerDomainDraftVNext,
 ): ProjectModel {
-  const linerDraft = buildIntermediateInputFromDomainDraft(domainDraft);
+  const normalized = normalizeLinerDomainDraft(domainDraft) ?? domainDraft;
+  const linerDraft = buildIntermediateInputFromDomainDraft(normalized);
   const { draft: _legacyDraft, ...existingLiner } = project.liner ?? {};
 
   return {
@@ -324,10 +402,10 @@ export function withProjectLinerDomainDraft(
       schemaVersion: PROJECT_LINER_METADATA_SCHEMA_VERSION,
       draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
       sourceRevision: sourceRevisionFor(linerDraftSourceRevisionInput(linerDraft)),
-      linerModelId: domainDraft.linerModelId,
-      coordinatePolicyId: domainDraft.coordinatePolicyId,
+      linerModelId: normalized.linerModelId,
+      coordinatePolicyId: normalized.coordinatePolicyId,
       intermediateSchemaVersion: "0.2.0",
-      domainDraft: structuredClone(domainDraft),
+      domainDraft: structuredClone(normalized),
     },
   };
 }

@@ -56,6 +56,16 @@ export const LINER_DIAGNOSTIC_CODES = {
   crossSectionOffsetLineReferenceMissing: "LINER_CROSS_SECTION_OFFSET_LINE_REFERENCE_MISSING",
   crossSectionGridDefinitionInvalidRange: "LINER_CROSS_SECTION_GRID_DEFINITION_INVALID_RANGE",
   crossSectionGridDefinitionOverlap: "LINER_CROSS_SECTION_GRID_DEFINITION_OVERLAP",
+  activeAlignmentRequired: "LINER_ACTIVE_ALIGNMENT_REQUIRED",
+  activeLineRequired: "LINER_ACTIVE_LINE_REQUIRED",
+  alignmentDuplicateId: "LINER_ALIGNMENT_DUPLICATE_ID",
+  alignmentEmptyName: "LINER_ALIGNMENT_EMPTY_NAME",
+  alignmentLastDeleteForbidden: "LINER_ALIGNMENT_LAST_DELETE_FORBIDDEN",
+  alignmentReferenceMissing: "LINER_ALIGNMENT_REFERENCE_MISSING",
+  lineBaselineCycle: "LINER_LINE_BASELINE_CYCLE",
+  lineBaselineSelfReference: "LINER_LINE_BASELINE_SELF_REFERENCE",
+  lineReferenceMissing: "LINER_LINE_REFERENCE_MISSING",
+  crossAlignmentIdCollision: "LINER_CROSS_ALIGNMENT_ID_COLLISION",
 } as const satisfies Record<string, LinerDiagnosticCode>;
 
 export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
@@ -110,6 +120,16 @@ export const LINER_DIAGNOSTIC_MESSAGE_KEYS = {
   LINER_CROSS_SECTION_OFFSET_LINE_REFERENCE_MISSING: "liner.errors.cross_section_offset_line_reference_missing",
   LINER_CROSS_SECTION_GRID_DEFINITION_INVALID_RANGE: "liner.errors.cross_section_grid_definition_invalid_range",
   LINER_CROSS_SECTION_GRID_DEFINITION_OVERLAP: "liner.errors.cross_section_grid_definition_overlap",
+  LINER_ACTIVE_ALIGNMENT_REQUIRED: "liner.errors.active_alignment_required",
+  LINER_ACTIVE_LINE_REQUIRED: "liner.errors.active_line_required",
+  LINER_ALIGNMENT_DUPLICATE_ID: "liner.errors.alignment_duplicate_id",
+  LINER_ALIGNMENT_EMPTY_NAME: "liner.errors.alignment_empty_name",
+  LINER_ALIGNMENT_LAST_DELETE_FORBIDDEN: "liner.errors.alignment_last_delete_forbidden",
+  LINER_ALIGNMENT_REFERENCE_MISSING: "liner.errors.alignment_reference_missing",
+  LINER_LINE_BASELINE_CYCLE: "liner.errors.line_baseline_cycle",
+  LINER_LINE_BASELINE_SELF_REFERENCE: "liner.errors.line_baseline_self_reference",
+  LINER_LINE_REFERENCE_MISSING: "liner.errors.line_reference_missing",
+  LINER_CROSS_ALIGNMENT_ID_COLLISION: "liner.errors.cross_alignment_id_collision",
 } as const satisfies Record<LinerDiagnosticCode, `liner.errors.${string}`>;
 
 export function createIssue(

@@ -8,9 +8,11 @@ import type {
   HorizontalAlignmentDraft,
   HorizontalElementDraft,
   LinerDomainDraftVNext,
+  AlignmentBundleDraft,
   ProjectLinerExtension,
   ProjectLinerValidationDiagnostic,
 } from "./types";
+import { deriveLinerCenterlineId } from "../adapters/linerDomainDraftRoadDesignMapper";
 
 type ProjectLike = Record<string, unknown> & Partial<ProjectLinerExtension>;
 
@@ -31,6 +33,9 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "piers",
   "z",
   "computedAt",
+  "linerAlignments",
+  "activeAlignmentId",
+  "activeLineId",
 ]);
 
 export type MigrateLinerDraftToVNextResult =
@@ -56,6 +61,62 @@ function hasOnlyAllowedKeys(object: Record<string, unknown>, allowedKeys: Set<st
 
 function cloneDomainDraft(domainDraft: LinerDomainDraftVNext): LinerDomainDraftVNext {
   return structuredClone(domainDraft);
+}
+
+function normalizeDomainDraftFromMetadata(
+  domainDraft: LinerDomainDraftVNext | Record<string, unknown>,
+): LinerDomainDraftVNext {
+  if (Array.isArray((domainDraft as LinerDomainDraftVNext).alignments)) {
+    const typed = domainDraft as LinerDomainDraftVNext;
+    const activeAlignmentId = typed.activeAlignmentId ?? typed.alignments[0]?.id;
+    return {
+      ...structuredClone(typed),
+      activeAlignmentId,
+      activeLineId:
+        typed.activeLineId
+        ?? (activeAlignmentId ? deriveLinerCenterlineId(activeAlignmentId) : undefined),
+    };
+  }
+
+  const legacy = domainDraft as Record<string, unknown>;
+  const alignment = legacy.alignment as HorizontalAlignmentDraft;
+  const bundle: AlignmentBundleDraft = {
+    id: alignment.id,
+    name: alignment.id,
+    enabled: true,
+    sortIndex: 0,
+    alignment,
+    stationDefinition: legacy.stationDefinition as AlignmentBundleDraft["stationDefinition"],
+    verticalAlignment: legacy.verticalAlignment as AlignmentBundleDraft["verticalAlignment"],
+    crossSections: legacy.crossSections as AlignmentBundleDraft["crossSections"],
+    ...(legacy.crossSlopeIntervals
+      ? { crossSlopeIntervals: legacy.crossSlopeIntervals as CrossSlopeIntervalDraft[] }
+      : {}),
+    gridDefinitions: legacy.gridDefinitions as AlignmentBundleDraft["gridDefinitions"],
+    spans: legacy.spans as AlignmentBundleDraft["spans"],
+    piers: legacy.piers as AlignmentBundleDraft["piers"],
+    ...(legacy.widthChangePoints
+      ? { widthChangePoints: legacy.widthChangePoints as AlignmentBundleDraft["widthChangePoints"] }
+      : {}),
+  };
+
+  return {
+    id: legacy.id as string,
+    linerModelId: legacy.linerModelId as string,
+    coordinatePolicyId: legacy.coordinatePolicyId as string,
+    alignments: [bundle],
+    activeAlignmentId: alignment.id,
+    activeLineId: deriveLinerCenterlineId(alignment.id),
+    ...(legacy.measuredGrid ? { measuredGrid: legacy.measuredGrid as LinerDomainDraftVNext["measuredGrid"] } : {}),
+    ...(legacy.selectedCrossSectionStation !== undefined
+      ? { selectedCrossSectionStation: legacy.selectedCrossSectionStation as number }
+      : {}),
+    ...(legacy.drawingSettings
+      ? { drawingSettings: legacy.drawingSettings as LinerDomainDraftVNext["drawingSettings"] }
+      : {}),
+    generationSettings: legacy.generationSettings as LinerDomainDraftVNext["generationSettings"],
+    sampling: legacy.sampling as LinerDomainDraftVNext["sampling"],
+  };
 }
 
 function isNonEmptyString(value: unknown): value is string {
@@ -177,6 +238,29 @@ function isLinerDomainDraftVNext(value: unknown): value is LinerDomainDraftVNext
   if (!isPlainObject(value)) {
     return false;
   }
+  if (
+    isNonEmptyString(value.id)
+    && isNonEmptyString(value.linerModelId)
+    && isNonEmptyString(value.coordinatePolicyId)
+    && Array.isArray(value.alignments)
+    && value.alignments.length > 0
+    && isPlainObject(value.generationSettings)
+    && isPlainObject(value.sampling)
+  ) {
+    return value.alignments.every(
+      (entry) =>
+        isPlainObject(entry)
+        && isNonEmptyString(entry.id)
+        && isNonEmptyString(entry.name)
+        && isPlainObject(entry.alignment)
+        && isPlainObject(entry.stationDefinition)
+        && isPlainObject(entry.verticalAlignment)
+        && Array.isArray(entry.crossSections)
+        && Array.isArray(entry.gridDefinitions)
+        && Array.isArray(entry.spans)
+        && Array.isArray(entry.piers),
+    );
+  }
   return (
     isNonEmptyString(value.id)
     && isNonEmptyString(value.linerModelId)
@@ -234,12 +318,13 @@ function toHorizontalAlignmentDraft(alignment: LinearAlignment): HorizontalAlign
   };
 }
 
-function buildOffsetLines(offsets: number[]): CrossSectionOffsetLineDraft[] {
+function buildOffsetLines(offsets: number[], alignmentId?: string): CrossSectionOffsetLineDraft[] {
   return offsets.map((offset, index) => ({
-    id: `OL-${index}`,
+    id: alignmentId ? `OL-${alignmentId}-${index}` : `OL-${index}`,
     offset,
     elevation: 0,
     role: "custom" as const,
+    ...(alignmentId ? { baseLineId: deriveLinerCenterlineId(alignmentId) } : {}),
   }));
 }
 
@@ -272,14 +357,54 @@ function buildDefaultCrossSlopeIntervals(
 
 function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDraftVNext {
   const alignment = draft.alignment;
+  if (draft.linerAlignments?.length) {
+    const activeAlignmentId = draft.activeAlignmentId ?? draft.linerAlignments[0]!.id;
+    const activeLineId = draft.activeLineId ?? deriveLinerCenterlineId(activeAlignmentId);
+    const selectedCrossSectionStation = Number.isFinite(draft.selectedCrossSectionStation)
+      ? draft.selectedCrossSectionStation
+      : draft.stationDefinition.explicitStations?.[0] ?? 0;
+    return {
+      id: alignment.id,
+      linerModelId: alignment.linerModelId,
+      coordinatePolicyId: alignment.coordinatePolicyId,
+      alignments: structuredClone(draft.linerAlignments),
+      activeAlignmentId,
+      activeLineId,
+      ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
+      selectedCrossSectionStation,
+      ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
+      generationSettings: {
+        defaultMemberGroupKey: "default",
+        connectivityMode: "grid_full",
+      },
+      sampling: {
+        display: {
+          maxChordLength: draft.sampleInterval ?? 0.5,
+          maxSagitta: 0.005,
+          minSegmentsPerElement: 1,
+        },
+        dxf: {
+          maxChordLength: 0.1,
+          maxSagitta: 0.001,
+          minSegmentsPerElement: 1,
+        },
+        frame: {
+          maxMemberLength: 0.25,
+          maxSagitta: 0.0025,
+          stationIntervalFallback: draft.sampleInterval ?? 0.25,
+        },
+      },
+    };
+  }
+
   const totalLength = totalAlignmentLength(alignment);
   const stationInterval = draft.sampleInterval ?? draft.stationDefinition.interval;
-  const fallbackOffsetLines = buildOffsetLines(draft.offsets ?? [0]);
+  const fallbackOffsetLines = buildOffsetLines(draft.offsets ?? [0], alignment.id);
   const crossSections = draft.crossSections?.length
     ? draft.crossSections
     : [
         {
-          id: "CS-default",
+          id: alignment.id ? `CS-${alignment.id}` : "CS-default",
           name: "Default",
           offsetLines: fallbackOffsetLines,
         },
@@ -288,7 +413,7 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
   const offsetLines = defaultTemplate?.offsetLines ?? fallbackOffsetLines;
   const z = draft.z ?? 0;
   const verticalAlignment = draft.verticalAlignment ?? {
-    id: "VA-default",
+    id: alignment.id ? `VA-${alignment.id}` : "VA-default",
     elements: [
       {
         type: "grade" as const,
@@ -320,7 +445,7 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     : [
         {
           id: "GRID-default",
-          crossSectionTemplateId: defaultTemplate?.id ?? "CS-default",
+          crossSectionTemplateId: defaultTemplate?.id ?? (alignment.id ? `CS-${alignment.id}` : "CS-default"),
           stationRange: {
             startPhysicalDistance: 0,
             endPhysicalDistance: totalLength,
@@ -330,22 +455,32 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
         },
       ];
 
-  return {
+  const bundle: AlignmentBundleDraft = {
     id: alignment.id,
-    linerModelId: alignment.linerModelId,
-    coordinatePolicyId: alignment.coordinatePolicyId,
+    name: alignment.id,
+    enabled: true,
+    sortIndex: 0,
     alignment: toHorizontalAlignmentDraft(alignment),
     stationDefinition: draft.stationDefinition,
     verticalAlignment,
     crossSections,
     crossSlopeIntervals,
-    ...(draft.widthChangePoints?.length
-      ? { widthChangePoints: structuredClone(draft.widthChangePoints) }
-      : {}),
-    ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     gridDefinitions,
     spans: draft.spans?.length ? structuredClone(draft.spans) : [],
     piers: draft.piers?.length ? structuredClone(draft.piers) : [],
+    ...(draft.widthChangePoints?.length
+      ? { widthChangePoints: structuredClone(draft.widthChangePoints) }
+      : {}),
+  };
+
+  return {
+    id: alignment.id,
+    linerModelId: alignment.linerModelId,
+    coordinatePolicyId: alignment.coordinatePolicyId,
+    alignments: [bundle],
+    activeAlignmentId: alignment.id,
+    activeLineId: deriveLinerCenterlineId(alignment.id),
+    ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     selectedCrossSectionStation,
     ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
     generationSettings: {
@@ -393,7 +528,7 @@ export function migrateLinerDraftToVNext(metadata: unknown): MigrateLinerDraftTo
     if (isLinerDomainDraftVNext(domainDraft)) {
       return {
         ok: true,
-        domainDraft: cloneDomainDraft(domainDraft),
+        domainDraft: normalizeDomainDraftFromMetadata(domainDraft),
         diagnostics: [],
       };
     }
@@ -428,12 +563,19 @@ export function migrateLinerDraftToVNext(metadata: unknown): MigrateLinerDraftTo
   }
 
   if (isPlainObject(legacyDraft) && "alignments" in legacyDraft) {
+    if (!isLinerDomainDraftVNext(legacyDraft)) {
+      return {
+        ok: false,
+        domainDraft: null,
+        diagnostics: [
+          schemaInvalid("/liner/draft/alignments", "malformed multi-alignment draft."),
+        ],
+      };
+    }
     return {
-      ok: false,
-      domainDraft: null,
-      diagnostics: [
-        schemaInvalid("/liner/draft/alignments", "multiple alignment drafts are not supported."),
-      ],
+      ok: true,
+      domainDraft: normalizeDomainDraftFromMetadata(legacyDraft),
+      diagnostics: [],
     };
   }
 

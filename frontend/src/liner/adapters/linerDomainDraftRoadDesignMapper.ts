@@ -23,20 +23,63 @@ import { UNIT_CONTEXT_SCHEMA_VERSION } from "../../contracts/unitContext";
 import { hasValidationErrors } from "../../contracts/validation";
 import type { UuidString } from "../../contracts/uuid";
 import { validateBridgeLayout } from "../core/bridge/bridgeLayoutEvaluation";
-import type { LinerDomainDraftVNext } from "../schema/types";
+import { LINER_DIAGNOSTIC_CODES } from "../core/diagnostics";
+import type {
+  AlignmentBundleDraft,
+  CrossSectionOffsetLineDraft,
+  CrossSectionTemplateDraft,
+  LinerDomainDraftVNext,
+} from "../schema/types";
 
 export const LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY =
   "spacer.liner/domain-draft-vnext-geometry" as const;
 export const LINER_DOMAIN_DRAFT_MAPPER_ID = "spacer.liner/domain-draft-road-design-mapper" as const;
 export const LINER_DOMAIN_DRAFT_MAPPER_VERSION = "0.1.0" as const;
-export const LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION = "0.1.0" as const;
+export const LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V1 = "0.1.0" as const;
+export const LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2 = "0.2.0" as const;
+/** @deprecated Use V2 for writes; V1 is accepted on read. */
+export const LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION =
+  LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2;
 
 const ROAD_NAMESPACE = requireStableIdNamespace("road.geometry");
 
-export interface LinerDomainDraftGeometryPayload {
-  readonly payloadVersion: typeof LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION;
+/** Legacy flat domain draft shape (payload 0.1.0). */
+type LegacyFlatDomainDraft = {
+  id: string;
+  linerModelId: string;
+  coordinatePolicyId: string;
+  alignment: LinerDomainDraftVNext["alignments"][0]["alignment"];
+  stationDefinition: AlignmentBundleDraft["stationDefinition"];
+  verticalAlignment: AlignmentBundleDraft["verticalAlignment"];
+  crossSections: CrossSectionTemplateDraft[];
+  crossSlopeIntervals?: AlignmentBundleDraft["crossSlopeIntervals"];
+  gridDefinitions: AlignmentBundleDraft["gridDefinitions"];
+  spans: AlignmentBundleDraft["spans"];
+  piers: AlignmentBundleDraft["piers"];
+  widthChangePoints?: AlignmentBundleDraft["widthChangePoints"];
+  measuredGrid?: LinerDomainDraftVNext["measuredGrid"];
+  selectedCrossSectionStation?: number;
+  drawingSettings?: LinerDomainDraftVNext["drawingSettings"];
+  generationSettings: LinerDomainDraftVNext["generationSettings"];
+  sampling: LinerDomainDraftVNext["sampling"];
+  alignments?: AlignmentBundleDraft[];
+  activeAlignmentId?: string;
+  activeLineId?: string;
+};
+
+export type LinerDomainDraftGeometryPayloadV1 = {
+  readonly payloadVersion: typeof LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V1;
+  readonly domainDraft: LegacyFlatDomainDraft;
+};
+
+export type LinerDomainDraftGeometryPayloadV2 = {
+  readonly payloadVersion: typeof LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2;
   readonly domainDraft: LinerDomainDraftVNext;
-}
+};
+
+export type LinerDomainDraftGeometryPayload =
+  | LinerDomainDraftGeometryPayloadV1
+  | LinerDomainDraftGeometryPayloadV2;
 
 export interface LinerDomainDraftRoadDesignMapperOptions {
   readonly createdAt?: string;
@@ -105,34 +148,16 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isLinerDomainDraftGeometryPayload(value: unknown): value is LinerDomainDraftGeometryPayload {
-  if (!isPlainObject(value)) {
-    return false;
-  }
-  return (
-    value.payloadVersion === LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION
-    && isPlainObject(value.domainDraft)
-    && typeof value.domainDraft.id === "string"
-    && typeof value.domainDraft.linerModelId === "string"
-    && typeof value.domainDraft.coordinatePolicyId === "string"
-    && isPlainObject(value.domainDraft.alignment)
-    && isPlainObject(value.domainDraft.stationDefinition)
-    && isPlainObject(value.domainDraft.verticalAlignment)
-    && Array.isArray(value.domainDraft.crossSections)
-    && Array.isArray(value.domainDraft.gridDefinitions)
-    && Array.isArray(value.domainDraft.spans)
-    && Array.isArray(value.domainDraft.piers)
-    && isPlainObject(value.domainDraft.generationSettings)
-    && isPlainObject(value.domainDraft.sampling)
-  );
-}
-
 export function deriveLinerDomainDraftDocumentId(domainDraft: LinerDomainDraftVNext): UuidString {
   return deriveStableUuid("liner.domain-draft.document", domainDraft.id);
 }
 
 export function deriveLinerAlignmentEntityId(alignmentId: string): UuidString {
   return deriveStableUuid("liner.domain-draft.alignment", alignmentId);
+}
+
+export function deriveLinerCenterlineId(alignmentId: string): string {
+  return deriveStableUuid("liner.domain-draft.centerline", alignmentId);
 }
 
 export function deriveLinerProfileEntityId(profileId: string): UuidString {
@@ -143,8 +168,8 @@ export function deriveLinerCrossSectionEntityId(crossSectionId: string): UuidStr
   return deriveStableUuid("liner.domain-draft.cross-section", crossSectionId);
 }
 
-export function deriveLinerStationingEntityId(domainDraftId: string): UuidString {
-  return deriveStableUuid("liner.domain-draft.stationing", domainDraftId);
+export function deriveLinerStationingEntityId(alignmentId: string): UuidString {
+  return deriveStableUuid("liner.domain-draft.stationing", alignmentId);
 }
 
 export function deriveLinerBridgeEntityId(spanId: string): UuidString {
@@ -159,38 +184,237 @@ export function deriveLinerUnitContextId(domainDraftId: string): UuidString {
   return deriveStableUuid("liner.domain-draft.unit-context", `${domainDraftId}:units`);
 }
 
-function domainDraftAlignmentTotalLength(domainDraft: LinerDomainDraftVNext): number {
-  return domainDraft.alignment.elements.reduce((total, element) => total + element.length, 0);
+function normalizeOffsetLine(
+  line: CrossSectionOffsetLineDraft,
+  index: number,
+): CrossSectionOffsetLineDraft {
+  return {
+    ...line,
+    enabled: line.enabled ?? true,
+    sortIndex: line.sortIndex ?? index,
+  };
 }
 
-function domainDraftBridgeAlignmentLength(domainDraft: LinerDomainDraftVNext): number {
-  const elementLength = domainDraftAlignmentTotalLength(domainDraft);
-  const spanReach = domainDraft.spans.reduce(
-    (max, span) => Math.max(max, span.endPhysicalDistance),
-    0,
-  );
+function normalizeCrossSections(crossSections: CrossSectionTemplateDraft[]): CrossSectionTemplateDraft[] {
+  return crossSections.map((template) => ({
+    ...template,
+    offsetLines: template.offsetLines.map((line, index) => normalizeOffsetLine(line, index)),
+  }));
+}
+
+function bundleFromLegacyFlat(flat: LegacyFlatDomainDraft): AlignmentBundleDraft {
+  const alignmentId = flat.alignment.id;
+  return {
+    id: alignmentId,
+    name: alignmentId,
+    enabled: true,
+    sortIndex: 0,
+    alignment: flat.alignment,
+    stationDefinition: flat.stationDefinition,
+    verticalAlignment: flat.verticalAlignment,
+    crossSections: normalizeCrossSections(flat.crossSections),
+    crossSlopeIntervals: flat.crossSlopeIntervals,
+    gridDefinitions: flat.gridDefinitions,
+    spans: flat.spans,
+    piers: flat.piers,
+    ...(flat.widthChangePoints?.length ? { widthChangePoints: flat.widthChangePoints } : {}),
+  };
+}
+
+/**
+ * Normalizes legacy flat or mixed payloads into the v2 multi-alignment domain draft.
+ */
+export function normalizeLinerDomainDraft(raw: unknown): LinerDomainDraftVNext | null {
+  if (!isPlainObject(raw)) {
+    return null;
+  }
+  if (
+    isNonEmptyString(raw.id)
+    && isNonEmptyString(raw.linerModelId)
+    && isNonEmptyString(raw.coordinatePolicyId)
+    && Array.isArray(raw.alignments)
+    && raw.alignments.length > 0
+    && isPlainObject(raw.generationSettings)
+    && isPlainObject(raw.sampling)
+  ) {
+    const alignments = (raw.alignments as AlignmentBundleDraft[]).map((bundle, index) => ({
+      ...bundle,
+      name: bundle.name?.trim() || bundle.id,
+      enabled: bundle.enabled ?? true,
+      sortIndex: bundle.sortIndex ?? index,
+      crossSections: normalizeCrossSections(bundle.crossSections ?? []),
+    }));
+    const activeAlignmentId =
+      typeof raw.activeAlignmentId === "string" && raw.activeAlignmentId.length > 0
+        ? raw.activeAlignmentId
+        : alignments[0]?.id;
+    const activeLineId =
+      typeof raw.activeLineId === "string" && raw.activeLineId.length > 0
+        ? raw.activeLineId
+        : activeAlignmentId
+          ? deriveLinerCenterlineId(activeAlignmentId)
+          : undefined;
+    return {
+      id: raw.id,
+      linerModelId: raw.linerModelId,
+      coordinatePolicyId: raw.coordinatePolicyId,
+      alignments,
+      activeAlignmentId,
+      activeLineId,
+      ...(raw.measuredGrid ? { measuredGrid: raw.measuredGrid as LinerDomainDraftVNext["measuredGrid"] } : {}),
+      ...(raw.selectedCrossSectionStation !== undefined
+        ? { selectedCrossSectionStation: raw.selectedCrossSectionStation as number }
+        : {}),
+      ...(raw.drawingSettings
+        ? { drawingSettings: raw.drawingSettings as LinerDomainDraftVNext["drawingSettings"] }
+        : {}),
+      generationSettings: raw.generationSettings as LinerDomainDraftVNext["generationSettings"],
+      sampling: raw.sampling as unknown as LinerDomainDraftVNext["sampling"],
+    };
+  }
+
+  if (
+    isNonEmptyString(raw.id)
+    && isNonEmptyString(raw.linerModelId)
+    && isNonEmptyString(raw.coordinatePolicyId)
+    && isPlainObject(raw.alignment)
+    && isPlainObject(raw.stationDefinition)
+    && isPlainObject(raw.verticalAlignment)
+    && Array.isArray(raw.crossSections)
+    && Array.isArray(raw.gridDefinitions)
+    && Array.isArray(raw.spans)
+    && Array.isArray(raw.piers)
+    && isPlainObject(raw.generationSettings)
+    && isPlainObject(raw.sampling)
+  ) {
+    const flat = raw as LegacyFlatDomainDraft;
+    const bundle = bundleFromLegacyFlat(flat);
+    const activeAlignmentId = bundle.id;
+    return {
+      id: flat.id,
+      linerModelId: flat.linerModelId,
+      coordinatePolicyId: flat.coordinatePolicyId,
+      alignments: [bundle],
+      activeAlignmentId,
+      activeLineId: deriveLinerCenterlineId(activeAlignmentId),
+      ...(flat.measuredGrid ? { measuredGrid: flat.measuredGrid } : {}),
+      ...(flat.selectedCrossSectionStation !== undefined
+        ? { selectedCrossSectionStation: flat.selectedCrossSectionStation }
+        : {}),
+      ...(flat.drawingSettings ? { drawingSettings: flat.drawingSettings } : {}),
+      generationSettings: flat.generationSettings,
+      sampling: flat.sampling,
+    };
+  }
+
+  return null;
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+export function getActiveAlignmentBundle(
+  domainDraft: LinerDomainDraftVNext,
+): AlignmentBundleDraft | undefined {
+  if (domainDraft.activeAlignmentId) {
+    const found = domainDraft.alignments.find((entry) => entry.id === domainDraft.activeAlignmentId);
+    if (found) {
+      return found;
+    }
+  }
+  return domainDraft.alignments[0];
+}
+
+function collectLineIdsForBundle(bundle: AlignmentBundleDraft): Set<string> {
+  const ids = new Set<string>();
+  ids.add(deriveLinerCenterlineId(bundle.id));
+  for (const template of bundle.crossSections) {
+    for (const line of template.offsetLines) {
+      ids.add(line.id);
+    }
+  }
+  return ids;
+}
+
+function detectBaseLineCycle(
+  lineIds: Set<string>,
+  centerlineId: string,
+  baseLineId: string,
+  visited: Set<string>,
+): boolean {
+  if (baseLineId === centerlineId) {
+    return false;
+  }
+  if (visited.has(baseLineId)) {
+    return true;
+  }
+  visited.add(baseLineId);
+  return false;
+}
+
+function bundleAlignmentTotalLength(bundle: AlignmentBundleDraft): number {
+  return bundle.alignment.elements.reduce((total, element) => total + element.length, 0);
+}
+
+function bundleBridgeAlignmentLength(bundle: AlignmentBundleDraft): number {
+  const elementLength = bundleAlignmentTotalLength(bundle);
+  const spanReach = bundle.spans.reduce((max, span) => Math.max(max, span.endPhysicalDistance), 0);
   return Math.max(elementLength, spanReach);
 }
 
-function validateBridgeLayoutForMapping(domainDraft: LinerDomainDraftVNext): readonly string[] {
-  if (domainDraft.spans.length === 0 && domainDraft.piers.length === 0) {
+function validateBridgeLayoutForBundle(bundle: AlignmentBundleDraft): readonly string[] {
+  if (bundle.spans.length === 0 && bundle.piers.length === 0) {
     return [];
   }
-
   const bridgeIssues = validateBridgeLayout({
-    spans: domainDraft.spans,
-    piers: domainDraft.piers,
-    alignmentTotalLength: domainDraftBridgeAlignmentLength(domainDraft),
-    stationDefinition: domainDraft.stationDefinition,
+    spans: bundle.spans,
+    piers: bundle.piers,
+    alignmentTotalLength: bundleBridgeAlignmentLength(bundle),
+    stationDefinition: bundle.stationDefinition,
     gridPoints: [],
   });
-
   return bridgeIssues
     .filter((issue) => issue.level === "error")
     .map((issue) => {
       const entity = issue.entityId ? ` (${issue.entityId})` : "";
-      return `Bridge layout: ${issue.code}${entity}`;
+      return `Bridge layout [${bundle.id}]: ${issue.code}${entity}`;
     });
+}
+
+function validateOffsetLineReferences(
+  bundle: AlignmentBundleDraft,
+): readonly string[] {
+  const issues: string[] = [];
+  const lineIds = collectLineIdsForBundle(bundle);
+  const centerlineId = deriveLinerCenterlineId(bundle.id);
+
+  for (const template of bundle.crossSections) {
+    for (const line of template.offsetLines) {
+      const baseLineId = line.baseLineId ?? centerlineId;
+      if (baseLineId === line.id) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.lineBaselineSelfReference}: offset line ${line.id} references itself.`,
+        );
+        continue;
+      }
+      if (!lineIds.has(baseLineId)) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.lineReferenceMissing}: offset line ${line.id} baseLineId ${baseLineId} is missing.`,
+        );
+        continue;
+      }
+      if (baseLineId !== centerlineId) {
+        const visited = new Set<string>([line.id]);
+        if (detectBaseLineCycle(lineIds, centerlineId, baseLineId, visited)) {
+          issues.push(
+            `${LINER_DIAGNOSTIC_CODES.lineBaselineCycle}: offset line ${line.id} has cyclic baseLineId chain.`,
+          );
+        }
+      }
+    }
+  }
+  return issues;
 }
 
 function validateDomainDraftForMapping(domainDraft: LinerDomainDraftVNext): readonly string[] {
@@ -198,111 +422,192 @@ function validateDomainDraftForMapping(domainDraft: LinerDomainDraftVNext): read
   if (requireNonEmptyString(domainDraft.id, "id") === undefined) {
     issues.push("domainDraft.id is required.");
   }
-  if (requireNonEmptyString(domainDraft.alignment.id, "alignment.id") === undefined) {
-    issues.push("domainDraft.alignment.id is required.");
+  if (domainDraft.alignments.length === 0) {
+    issues.push("domainDraft.alignments must contain at least one entry.");
   }
-  if (requireNonEmptyString(domainDraft.verticalAlignment.id, "verticalAlignment.id") === undefined) {
-    issues.push("domainDraft.verticalAlignment.id is required.");
-  }
-  if (domainDraft.crossSections.length === 0) {
-    issues.push("domainDraft.crossSections must contain at least one entry.");
-  }
-  for (const [index, crossSection] of domainDraft.crossSections.entries()) {
-    if (requireNonEmptyString(crossSection.id, `crossSections[${index}].id`) === undefined) {
-      issues.push(`crossSections[${index}].id is required.`);
+
+  const seenAlignmentIds = new Set<string>();
+  const globalEntityIds = new Map<string, string>();
+
+  for (const [index, bundle] of domainDraft.alignments.entries()) {
+    if (requireNonEmptyString(bundle.id, `alignments[${index}].id`) === undefined) {
+      issues.push(`alignments[${index}].id is required.`);
+      continue;
     }
-  }
-  for (const [index, span] of domainDraft.spans.entries()) {
-    if (requireNonEmptyString(span.id, `spans[${index}].id`) === undefined) {
-      issues.push(`spans[${index}].id is required.`);
+    if (requireNonEmptyString(bundle.name, `alignments[${index}].name`) === undefined) {
+      issues.push(`${LINER_DIAGNOSTIC_CODES.alignmentEmptyName}: alignments[${index}].name is required.`);
     }
-  }
-  for (const [index, pier] of domainDraft.piers.entries()) {
-    if (requireNonEmptyString(pier.id, `piers[${index}].id`) === undefined) {
-      issues.push(`piers[${index}].id is required.`);
+    if (requireNonEmptyString(bundle.alignment.id, `alignments[${index}].alignment.id`) === undefined) {
+      issues.push(`${LINER_DIAGNOSTIC_CODES.alignmentEmptyName}: alignments[${index}].alignment.id is required.`);
     }
+    if (seenAlignmentIds.has(bundle.id)) {
+      issues.push(`${LINER_DIAGNOSTIC_CODES.alignmentDuplicateId}: duplicate alignment id ${bundle.id}.`);
+    }
+    seenAlignmentIds.add(bundle.id);
+
+    if (requireNonEmptyString(bundle.verticalAlignment.id, `alignments[${index}].verticalAlignment.id`) === undefined) {
+      issues.push(`alignments[${index}].verticalAlignment.id is required.`);
+    }
+    if (bundle.crossSections.length === 0) {
+      issues.push(`alignments[${index}].crossSections must contain at least one entry.`);
+    }
+    for (const crossSection of bundle.crossSections) {
+      if (requireNonEmptyString(crossSection.id, `crossSections[].id`) === undefined) {
+        issues.push(`alignments[${index}] cross-section id is required.`);
+      } else if (globalEntityIds.has(crossSection.id)) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.crossAlignmentIdCollision}: cross-section id ${crossSection.id} collides with alignment ${globalEntityIds.get(crossSection.id)}.`,
+        );
+      } else {
+        globalEntityIds.set(crossSection.id, bundle.id);
+      }
+    }
+    for (const span of bundle.spans) {
+      if (globalEntityIds.has(span.id)) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.crossAlignmentIdCollision}: span id ${span.id} collides across alignments.`,
+        );
+      } else {
+        globalEntityIds.set(span.id, bundle.id);
+      }
+    }
+    for (const pier of bundle.piers) {
+      if (globalEntityIds.has(pier.id)) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.crossAlignmentIdCollision}: pier id ${pier.id} collides across alignments.`,
+        );
+      } else {
+        globalEntityIds.set(pier.id, bundle.id);
+      }
+    }
+    issues.push(...validateBridgeLayoutForBundle(bundle));
+    issues.push(...validateOffsetLineReferences(bundle));
   }
-  issues.push(...validateBridgeLayoutForMapping(domainDraft));
+
+  if (domainDraft.activeAlignmentId) {
+    if (!seenAlignmentIds.has(domainDraft.activeAlignmentId)) {
+      issues.push(
+        `${LINER_DIAGNOSTIC_CODES.alignmentReferenceMissing}: activeAlignmentId ${domainDraft.activeAlignmentId} is missing.`,
+      );
+    }
+  } else if (domainDraft.alignments.length > 0) {
+    issues.push(`${LINER_DIAGNOSTIC_CODES.activeAlignmentRequired}: activeAlignmentId is required.`);
+  }
+
+  if (domainDraft.activeLineId) {
+    const activeBundle = getActiveAlignmentBundle(domainDraft);
+    if (activeBundle) {
+      const lineIds = collectLineIdsForBundle(activeBundle);
+      if (!lineIds.has(domainDraft.activeLineId)) {
+        issues.push(
+          `${LINER_DIAGNOSTIC_CODES.lineReferenceMissing}: activeLineId ${domainDraft.activeLineId} is missing.`,
+        );
+      }
+    }
+  } else if (domainDraft.alignments.length > 0) {
+    issues.push(`${LINER_DIAGNOSTIC_CODES.activeLineRequired}: activeLineId is required.`);
+  }
+
   return issues;
 }
 
-function buildGeometryPayload(domainDraft: LinerDomainDraftVNext): LinerDomainDraftGeometryPayload {
+function buildGeometryPayload(domainDraft: LinerDomainDraftVNext): LinerDomainDraftGeometryPayloadV2 {
   return {
-    payloadVersion: LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION,
+    payloadVersion: LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2,
     domainDraft: structuredClone(domainDraft),
   };
+}
+
+function isGeometryPayload(value: unknown): value is LinerDomainDraftGeometryPayload {
+  if (!isPlainObject(value)) {
+    return false;
+  }
+  if (
+    value.payloadVersion === LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V1
+    || value.payloadVersion === LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2
+  ) {
+    return isPlainObject(value.domainDraft);
+  }
+  return false;
 }
 
 export function domainDraftToRoadDesignDocument(
   domainDraft: LinerDomainDraftVNext,
   options: LinerDomainDraftRoadDesignMapperOptions = {},
 ): DomainDraftRoadDesignMapResult {
-  const validationIssues = validateDomainDraftForMapping(domainDraft);
+  const normalized = normalizeLinerDomainDraft(domainDraft) ?? domainDraft;
+  const validationIssues = validateDomainDraftForMapping(normalized);
   if (validationIssues.length > 0) {
     return { ok: false, diagnostics: validationIssues };
   }
 
   const createdAt = options.createdAt ?? new Date().toISOString();
   const revisionId = requireRevisionId(options.revisionId ?? 1);
-  const documentId = deriveLinerDomainDraftDocumentId(domainDraft);
-  const contextId = deriveLinerCoordinateContextId(domainDraft.id);
-  const alignmentId = deriveLinerAlignmentEntityId(domainDraft.alignment.id);
-  const profileId = deriveLinerProfileEntityId(domainDraft.verticalAlignment.id);
-  const stationingId = deriveLinerStationingEntityId(domainDraft.id);
+  const documentId = deriveLinerDomainDraftDocumentId(normalized);
+  const contextId = deriveLinerCoordinateContextId(normalized.id);
 
-  const alignments: RoadAlignmentEntry[] = [
-    {
-      entityId: alignmentId,
-      coordinateContextId: contextId,
-      label: domainDraft.alignment.id,
-    },
-  ];
-
-  const stationingEntries: RoadStationingEntry[] = [
-    {
-      entityId: stationingId,
-      alignmentId,
-      originStation: domainDraft.stationDefinition.originDisplayedStation,
-    },
-  ];
-
-  const profiles: RoadProfileEntry[] = [
-    {
-      entityId: profileId,
-      alignmentId,
-      label: domainDraft.verticalAlignment.id,
-    },
-  ];
-
-  const crossSections: RoadCrossSectionEntry[] = domainDraft.crossSections.map((template) => ({
-    entityId: deriveLinerCrossSectionEntityId(template.id),
-    profileId,
-    label: template.name || template.id,
+  const alignments: RoadAlignmentEntry[] = normalized.alignments.map((bundle) => ({
+    entityId: deriveLinerAlignmentEntityId(bundle.id),
+    coordinateContextId: contextId,
+    label: bundle.name || bundle.id,
   }));
 
-  const bridges: RoadBridgeEntry[] = domainDraft.spans.map((span) => ({
-    entityId: deriveLinerBridgeEntityId(span.id),
-    alignmentId,
-    label: span.id,
+  const stationingEntries: RoadStationingEntry[] = normalized.alignments.map((bundle) => ({
+    entityId: deriveLinerStationingEntityId(bundle.id),
+    alignmentId: deriveLinerAlignmentEntityId(bundle.id),
+    originStation: bundle.stationDefinition.originDisplayedStation,
   }));
+
+  const profiles: RoadProfileEntry[] = normalized.alignments.map((bundle) => ({
+    entityId: deriveLinerProfileEntityId(bundle.verticalAlignment.id),
+    alignmentId: deriveLinerAlignmentEntityId(bundle.id),
+    label: bundle.verticalAlignment.id,
+  }));
+
+  const crossSections: RoadCrossSectionEntry[] = normalized.alignments.flatMap((bundle) => {
+    const profileId = deriveLinerProfileEntityId(bundle.verticalAlignment.id);
+    return bundle.crossSections.map((template) => ({
+      entityId: deriveLinerCrossSectionEntityId(template.id),
+      profileId,
+      label: template.name || template.id,
+    }));
+  });
+
+  const bridges: RoadBridgeEntry[] = normalized.alignments.flatMap((bundle) => {
+    const alignmentEntityId = deriveLinerAlignmentEntityId(bundle.id);
+    return bundle.spans.map((span) => ({
+      entityId: deriveLinerBridgeEntityId(span.id),
+      alignmentId: alignmentEntityId,
+      label: span.id,
+    }));
+  });
 
   const stableIdRegistry: StableEntityId[] = [
-    { namespace: ROAD_NAMESPACE, id: alignmentId, entityKind: "alignment" },
-    { namespace: ROAD_NAMESPACE, id: stationingId, entityKind: "stationing" },
-    { namespace: ROAD_NAMESPACE, id: profileId, entityKind: "profile" },
-    ...crossSections.map((entry) => ({
-      namespace: ROAD_NAMESPACE,
-      id: entry.entityId,
-      entityKind: "cross-section" as const,
-    })),
-    ...bridges.map((entry) => ({
-      namespace: ROAD_NAMESPACE,
-      id: entry.entityId,
-      entityKind: "bridge" as const,
-    })),
+    ...normalized.alignments.flatMap((bundle) => {
+      const alignmentEntityId = deriveLinerAlignmentEntityId(bundle.id);
+      const stationingId = deriveLinerStationingEntityId(bundle.id);
+      const profileId = deriveLinerProfileEntityId(bundle.verticalAlignment.id);
+      const centerlineId = deriveLinerCenterlineId(bundle.id);
+      return [
+        { namespace: ROAD_NAMESPACE, id: alignmentEntityId, entityKind: "alignment" as const },
+        { namespace: ROAD_NAMESPACE, id: stationingId, entityKind: "stationing" as const },
+        { namespace: ROAD_NAMESPACE, id: profileId, entityKind: "profile" as const },
+        { namespace: ROAD_NAMESPACE, id: centerlineId as UuidString, entityKind: "centerline" as const },
+        ...bundle.crossSections.map((entry) => ({
+          namespace: ROAD_NAMESPACE,
+          id: deriveLinerCrossSectionEntityId(entry.id),
+          entityKind: "cross-section" as const,
+        })),
+        ...bundle.spans.map((entry) => ({
+          namespace: ROAD_NAMESPACE,
+          id: deriveLinerBridgeEntityId(entry.id),
+          entityKind: "bridge" as const,
+        })),
+      ];
+    }),
   ];
 
-  const geometryPayload = mapAsJsonValue(buildGeometryPayload(domainDraft));
+  const geometryPayload = mapAsJsonValue(buildGeometryPayload(normalized));
   if (geometryPayload === undefined) {
     return diagnostic("domainDraft geometry payload contains non-JSON values.");
   }
@@ -315,13 +620,18 @@ export function domainDraftToRoadDesignDocument(
 
   const validationRefId = deriveStableUuid(
     "liner.domain-draft.validation-ref",
-    `${domainDraft.id}:validation`,
+    `${normalized.id}:validation`,
   );
   const placeholderChecksum = computeContentChecksum({
     documentKind: ROAD_DESIGN_DOCUMENT_KIND,
     documentId,
     revisionId,
   });
+
+  const topologyCapability =
+    normalized.alignments.length >= 2
+      ? ({ state: "supported" as const })
+      : ({ state: "absent" as const });
 
   const draftWithoutChecksum = {
     schemaId: ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
@@ -335,7 +645,7 @@ export function domainDraftToRoadDesignDocument(
       producer: {
         toolId: LINER_DOMAIN_DRAFT_MAPPER_ID,
         toolVersion: LINER_DOMAIN_DRAFT_MAPPER_VERSION,
-        algorithmVersion: LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION,
+        algorithmVersion: LINER_DOMAIN_DRAFT_GEOMETRY_PAYLOAD_VERSION_V2,
       },
     },
     coordinateContexts: [
@@ -343,7 +653,7 @@ export function domainDraftToRoadDesignDocument(
         schemaVersion: COORDINATE_CONTEXT_SCHEMA_VERSION,
         contextId,
         referenceType: "project" as const,
-        referenceName: domainDraft.coordinatePolicyId,
+        referenceName: normalized.coordinatePolicyId,
         origin: { x: 0, y: 0, z: 0 },
         axisOrder: ["x", "y", "z"] as const,
         axisDirections: { x: "+x" as const, y: "+y" as const, z: "+z" as const },
@@ -369,7 +679,7 @@ export function domainDraftToRoadDesignDocument(
     ],
     unitContext: {
       schemaVersion: UNIT_CONTEXT_SCHEMA_VERSION,
-      contextId: deriveLinerUnitContextId(domainDraft.id),
+      contextId: deriveLinerUnitContextId(normalized.id),
       length: "m" as const,
       angle: "rad" as const,
       conversionVersion: "liner-domain-draft-si-v1",
@@ -391,7 +701,7 @@ export function domainDraftToRoadDesignDocument(
       contentChecksum: placeholderChecksum,
     },
     extensions,
-    topologyCapability: { state: "absent" as const },
+    topologyCapability,
     bridgeGeometryCapability: { state: "absent" as const },
     ldistCapability: { state: "absent" as const },
     haunchCapability: { state: "absent" as const },
@@ -446,11 +756,16 @@ export function roadDesignDocumentToDomainDraft(
     );
   }
 
-  if (!isLinerDomainDraftGeometryPayload(extension.json)) {
+  if (!isGeometryPayload(extension.json)) {
     return diagnostic("Liner domain-draft geometry extension payload is invalid.");
   }
 
-  const domainDraft = structuredClone(extension.json.domainDraft);
+  const normalized = normalizeLinerDomainDraft(extension.json.domainDraft);
+  if (!normalized) {
+    return diagnostic("Liner domain-draft geometry extension payload is invalid.");
+  }
+
+  const domainDraft = structuredClone(normalized);
   const mappingIssues = validateDomainDraftForMapping(domainDraft);
   if (mappingIssues.length > 0) {
     return { ok: false, diagnostics: mappingIssues };
@@ -461,31 +776,47 @@ export function roadDesignDocumentToDomainDraft(
     return diagnostic("RoadDesignDocument documentId does not match the derived liner domain draft id.");
   }
 
-  const expectedAlignmentId = deriveLinerAlignmentEntityId(domainDraft.alignment.id);
-  if (document.alignments[0]?.entityId !== expectedAlignmentId) {
-    return diagnostic("RoadDesignDocument alignment stable id does not match domainDraft.alignment.id.");
-  }
+  for (const bundle of domainDraft.alignments) {
+    const expectedAlignmentId = deriveLinerAlignmentEntityId(bundle.id);
+    const rddEntry = document.alignments.find((entry) => entry.entityId === expectedAlignmentId);
+    if (!rddEntry) {
+      return diagnostic(
+        `RoadDesignDocument alignment stable id does not match domainDraft alignment ${bundle.id}.`,
+      );
+    }
 
-  const expectedProfileId = deriveLinerProfileEntityId(domainDraft.verticalAlignment.id);
-  if (document.profiles[0]?.entityId !== expectedProfileId) {
-    return diagnostic(
-      "RoadDesignDocument profile stable id does not match domainDraft.verticalAlignment.id.",
+    const expectedProfileId = deriveLinerProfileEntityId(bundle.verticalAlignment.id);
+    const profileEntry = document.profiles.find((entry) => entry.entityId === expectedProfileId);
+    if (!profileEntry) {
+      return diagnostic(
+        "RoadDesignDocument profile stable id does not match domainDraft.verticalAlignment.id.",
+      );
+    }
+
+    const expectedCrossSectionIds = bundle.crossSections.map((entry) =>
+      deriveLinerCrossSectionEntityId(entry.id),
     );
-  }
+    const actualCrossSectionIds = document.crossSections
+      .filter((entry) => entry.profileId === expectedProfileId)
+      .map((entry) => entry.entityId);
+    if (actualCrossSectionIds.join("|") !== expectedCrossSectionIds.join("|")) {
+      return diagnostic("RoadDesignDocument cross-section stable ids do not match domainDraft.crossSections.");
+    }
 
-  const expectedCrossSectionIds = domainDraft.crossSections.map((entry) =>
-    deriveLinerCrossSectionEntityId(entry.id),
-  );
-  const actualCrossSectionIds = document.crossSections.map((entry) => entry.entityId);
-  if (actualCrossSectionIds.join("|") !== expectedCrossSectionIds.join("|")) {
-    return diagnostic("RoadDesignDocument cross-section stable ids do not match domainDraft.crossSections.");
-  }
-
-  const expectedBridgeIds = domainDraft.spans.map((entry) => deriveLinerBridgeEntityId(entry.id));
-  const actualBridgeIds = document.bridges.map((entry) => entry.entityId);
-  if (actualBridgeIds.join("|") !== expectedBridgeIds.join("|")) {
-    return diagnostic("RoadDesignDocument bridge stable ids do not match domainDraft.spans.");
+    const expectedBridgeIds = bundle.spans.map((entry) => deriveLinerBridgeEntityId(entry.id));
+    const alignmentEntityId = deriveLinerAlignmentEntityId(bundle.id);
+    const actualBridgeIds = document.bridges
+      .filter((entry) => entry.alignmentId === alignmentEntityId)
+      .map((entry) => entry.entityId);
+    if (actualBridgeIds.join("|") !== expectedBridgeIds.join("|")) {
+      return diagnostic("RoadDesignDocument bridge stable ids do not match domainDraft.spans.");
+    }
   }
 
   return { ok: true, domainDraft };
+}
+
+/** @deprecated Use isGeometryPayload via roadDesignDocumentToDomainDraft. */
+export function isLinerDomainDraftGeometryPayload(value: unknown): boolean {
+  return isGeometryPayload(value);
 }

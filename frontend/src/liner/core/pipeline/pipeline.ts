@@ -80,6 +80,10 @@ export type BuildIntermediateInput = {
   spans?: SpanDraft[];
   piers?: PierDraft[];
   computedAt?: string;
+  /** P4-D01: all alignment bundles when multi-alignment is active. */
+  linerAlignments?: import("../../schema/types").AlignmentBundleDraft[];
+  activeAlignmentId?: string;
+  activeLineId?: string;
 };
 
 function toSamplePoint(evaluation: AlignmentEvaluation): AlignmentSamplePoint {

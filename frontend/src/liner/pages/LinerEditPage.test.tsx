@@ -123,15 +123,14 @@ describe("LinerEditPage", () => {
 
     act(() => {
       setInputValue(inputByTestId("liner-alignment-id"), "");
-    });
-    act(() => {
       (document.querySelector("[data-testid=open-liner-preview]") as HTMLButtonElement).click();
     });
 
     expect(onDraftChange).not.toHaveBeenCalled();
     expect(onOpenPreview).not.toHaveBeenCalled();
-    expect(document.querySelector("[data-testid=liner-draft-commit-error]")?.textContent)
-      .toContain("legacy draft is not a supported");
+    expect(document.querySelector("[data-testid=liner-draft-commit-error]")?.textContent).toContain(
+      "LINER_ALIGNMENT_EMPTY_NAME",
+    );
   });
 
   it("does not overwrite a composing value when the controlled draft changes", () => {
@@ -214,13 +213,13 @@ describe("LinerEditPage", () => {
       (document.querySelector("[data-testid=liner-setup-tab-crossSection]") as HTMLButtonElement).click();
     });
     act(() => {
-      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-0"), "");
+      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-alignment-1-0"), "");
     });
-    expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("");
+    expect(inputByTestId("cross-section-offset-line-offset-OL-alignment-1-0").value).toBe("");
     act(() => {
-      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-0"), "2.5");
+      setInputValue(inputByTestId("cross-section-offset-line-offset-OL-alignment-1-0"), "2.5");
     });
-    expect(inputByTestId("cross-section-offset-line-offset-OL-0").value).toBe("2.5");
+    expect(inputByTestId("cross-section-offset-line-offset-OL-alignment-1-0").value).toBe("2.5");
   });
 
   it("commits P2-D06 viewer draft edits and opens preview", () => {
@@ -241,7 +240,6 @@ describe("LinerEditPage", () => {
     );
 
     act(() => {
-      setInputValue(inputByTestId("liner-alignment-id"), "alignment-p2-d06");
       setInputValue(inputByTestId("liner-model-id"), "liner-p2-d06");
       setInputValue(inputByTestId("liner-element-length-S1"), "24");
     });

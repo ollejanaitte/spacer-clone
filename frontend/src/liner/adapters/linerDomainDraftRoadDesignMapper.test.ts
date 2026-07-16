@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addLinerOffset,
   createDefaultLinerDraft,
+  addLinerAlignmentBundle,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlope,
   updateLinerDrawingSettings,
@@ -18,9 +19,11 @@ import {
   deriveLinerDomainDraftDocumentId,
   deriveLinerProfileEntityId,
   domainDraftToRoadDesignDocument,
+  getActiveAlignmentBundle,
   LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY,
   roadDesignDocumentToDomainDraft,
 } from "./linerDomainDraftRoadDesignMapper";
+import type { LinerDomainDraftVNext } from "../schema/types";
 import { validateRoadDesignDocument, type RoadDesignDocument } from "../../contracts/roadDesignDocument";
 import type { JsonValue } from "../../contracts";
 import { hasValidationErrors } from "../../contracts/validation";
@@ -33,6 +36,14 @@ import { createInMemoryAtomicJsonStore } from "../../contracts/persistence/atomi
 import { loadRoadDesignDocument } from "../../contracts/persistence/loadDocument";
 
 const FIXED_CREATED_AT = "2026-07-16T10:00:00.000Z";
+
+function activeBundle(domainDraft: LinerDomainDraftVNext) {
+  const bundle = getActiveAlignmentBundle(domainDraft);
+  if (!bundle) {
+    throw new Error("missing active alignment bundle");
+  }
+  return bundle;
+}
 
 function createVerticalCrossSectionDraft() {
   let draft = addLinerOffset(createDefaultLinerDraft());
@@ -115,13 +126,13 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     expect(mapped.document.schemaVersion).toBe("0.1.0");
     expect(mapped.document.documentId).toBe(deriveLinerDomainDraftDocumentId(domainDraft!));
     expect(mapped.document.alignments[0]?.entityId).toBe(
-      deriveLinerAlignmentEntityId(domainDraft!.alignment.id),
+      deriveLinerAlignmentEntityId(activeBundle(domainDraft!).id),
     );
     expect(mapped.document.profiles[0]?.entityId).toBe(
-      deriveLinerProfileEntityId(domainDraft!.verticalAlignment.id),
+      deriveLinerProfileEntityId(activeBundle(domainDraft!).verticalAlignment.id),
     );
     expect(mapped.document.crossSections[0]?.entityId).toBe(
-      deriveLinerCrossSectionEntityId(domainDraft!.crossSections[0]!.id),
+      deriveLinerCrossSectionEntityId(activeBundle(domainDraft!).crossSections[0]!.id),
     );
     expect(
       mapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY]?.json,
@@ -193,14 +204,12 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       return;
     }
 
-    expect(restored.domainDraft.verticalAlignment).toEqual(domainDraft!.verticalAlignment);
-    expect(restored.domainDraft.crossSections).toEqual(domainDraft!.crossSections);
-    expect(restored.domainDraft.crossSlopeIntervals).toEqual(domainDraft!.crossSlopeIntervals);
-    expect(restored.domainDraft.widthChangePoints).toEqual(domainDraft!.widthChangePoints);
-    expect(restored.domainDraft.gridDefinitions).toEqual(domainDraft!.gridDefinitions);
+    expect(restored.domainDraft.alignments).toEqual(domainDraft!.alignments);
     expect(mapped.document.documentId).toBe(deriveLinerDomainDraftDocumentId(restored.domainDraft));
     expect(mapped.document.crossSections.map((entry) => entry.entityId)).toEqual(
-      restored.domainDraft.crossSections.map((entry) => deriveLinerCrossSectionEntityId(entry.id)),
+      activeBundle(restored.domainDraft).crossSections.map((entry) =>
+        deriveLinerCrossSectionEntityId(entry.id),
+      ),
     );
   });
 
@@ -293,8 +302,7 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     if (!restored.ok) {
       return;
     }
-    expect(restored.domainDraft.verticalAlignment).toEqual(domainDraft!.verticalAlignment);
-    expect(restored.domainDraft.crossSections).toEqual(domainDraft!.crossSections);
+    expect(restored.domainDraft.alignments).toEqual(domainDraft!.alignments);
   });
 
   it("round-trips bridge layout and drawing settings with stable bridge ids", () => {
@@ -318,11 +326,10 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       return;
     }
 
-    expect(restored.domainDraft.spans).toEqual(domainDraft!.spans);
-    expect(restored.domainDraft.piers).toEqual(domainDraft!.piers);
+    expect(restored.domainDraft.alignments).toEqual(domainDraft!.alignments);
     expect(restored.domainDraft.drawingSettings).toEqual(domainDraft!.drawingSettings);
     expect(mapped.document.bridges.map((entry) => entry.entityId)).toEqual(
-      restored.domainDraft.spans.map((entry) => deriveLinerBridgeEntityId(entry.id)),
+      activeBundle(restored.domainDraft).spans.map((entry) => deriveLinerBridgeEntityId(entry.id)),
     );
   });
 
@@ -360,12 +367,16 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       createDefaultProject(),
       createBridgeLayoutDraft(),
     ).liner!.domainDraft!;
-    const duplicateSpans = {
+    const duplicateSpans: LinerDomainDraftVNext = {
       ...domainDraft,
-      spans: [
-        ...domainDraft.spans,
-        { ...domainDraft.spans[0]!, id: domainDraft.spans[0]!.id },
-      ],
+      alignments: domainDraft.alignments.map((bundle, index) =>
+        index === 0
+          ? {
+              ...bundle,
+              spans: [...bundle.spans, { ...bundle.spans[0]!, id: bundle.spans[0]!.id }],
+            }
+          : bundle,
+      ),
     };
 
     const mapped = domainDraftToRoadDesignDocument(duplicateSpans, { createdAt: FIXED_CREATED_AT });
@@ -381,12 +392,19 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       createDefaultProject(),
       createBridgeLayoutDraft(),
     ).liner!.domainDraft!;
-    const missingRef = {
+    const missingRef: LinerDomainDraftVNext = {
       ...domainDraft,
-      spans: domainDraft.spans.map((span) => ({
-        ...span,
-        pierIdEnd: "missing-pier",
-      })),
+      alignments: domainDraft.alignments.map((bundle, index) =>
+        index === 0
+          ? {
+              ...bundle,
+              spans: bundle.spans.map((span) => ({
+                ...span,
+                pierIdEnd: "missing-pier",
+              })),
+            }
+          : bundle,
+      ),
     };
 
     const mapped = domainDraftToRoadDesignDocument(missingRef, { createdAt: FIXED_CREATED_AT });
@@ -402,10 +420,17 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       createDefaultProject(),
       createBridgeLayoutDraft(),
     ).liner!.domainDraft!;
-    const invalidStation = {
+    const invalidStation: LinerDomainDraftVNext = {
       ...domainDraft,
-      piers: domainDraft.piers.map((pier) =>
-        pier.id === "P1" ? { ...pier, physicalDistance: 999 } : pier,
+      alignments: domainDraft.alignments.map((bundle, index) =>
+        index === 0
+          ? {
+              ...bundle,
+              piers: bundle.piers.map((pier) =>
+                pier.id === "P1" ? { ...pier, physicalDistance: 999 } : pier,
+              ),
+            }
+          : bundle,
       ),
     };
 
@@ -434,7 +459,12 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       domainDraft: Record<string, unknown>;
     };
 
-    const { spans: _removed, ...domainDraftWithoutSpans } = payload.domainDraft;
+    const domainDraftWithoutSpans = {
+      ...payload.domainDraft,
+      alignments: (payload.domainDraft.alignments as LinerDomainDraftVNext["alignments"]).map(
+        (bundle) => ({ ...bundle, spans: [] }),
+      ),
+    };
 
     const withoutSpans: RoadDesignDocument = {
       ...mapped.document,
@@ -443,7 +473,7 @@ describe("linerDomainDraftRoadDesignMapper", () => {
           json: {
             ...payload,
             domainDraft: domainDraftWithoutSpans,
-          } as JsonValue,
+          } as unknown as JsonValue,
         },
       },
     };
@@ -452,6 +482,54 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     if (restored.ok) {
       return;
     }
-    expect(restored.diagnostics.join(" ")).toContain("invalid");
+    expect(restored.diagnostics.join(" ")).toMatch(/invalid|do not match/i);
+  });
+
+  it("round-trips multi-alignment domainDraft with topologyCapability supported", () => {
+    let draft = createDefaultLinerDraft();
+    draft = addLinerAlignmentBundle(draft);
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const domainDraft = project.liner?.domainDraft;
+    expect(domainDraft?.alignments).toHaveLength(2);
+
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.topologyCapability).toEqual({ state: "supported" });
+    expect(mapped.document.alignments).toHaveLength(2);
+
+    const extension = mapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as {
+      payloadVersion: string;
+      domainDraft: LinerDomainDraftVNext;
+    };
+    expect(payload.payloadVersion).toBe("0.2.0");
+    expect(payload.domainDraft.alignments).toHaveLength(2);
+    expect(payload.domainDraft.activeAlignmentId).toBeDefined();
+    expect(payload.domainDraft.activeLineId).toBeDefined();
+
+    const restored = roadDesignDocumentToDomainDraft(mapped.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.alignments).toHaveLength(2);
+    expect(restored.domainDraft.activeAlignmentId).toEqual(domainDraft!.activeAlignmentId);
+    expect(restored.domainDraft.activeLineId).toEqual(domainDraft!.activeLineId);
+  });
+
+  it("reports absent topologyCapability for single alignment", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createVerticalCrossSectionDraft(),
+    ).liner?.domainDraft;
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.topologyCapability).toEqual({ state: "absent" });
   });
 });

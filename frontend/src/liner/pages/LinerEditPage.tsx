@@ -1,6 +1,8 @@
 import { ArrowLeft, Eye, FilePlus2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
+import { AlignmentManager } from "../components/AlignmentManager";
+import { AlignmentLineManager } from "../components/AlignmentLineManager";
 import { BridgeLayoutDiagnosticsPanel } from "../components/BridgeLayoutDiagnosticsPanel";
 import { BridgeLayoutEditor } from "../components/BridgeLayoutEditor";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
@@ -177,6 +179,16 @@ export function LinerEditPage({
         <LinerSetupTabs activeTab={activeTab} onTabChange={setActiveTab}>
           {activeTab === "line" && (
             <>
+              <AlignmentManager
+                draft={draft}
+                onDraftChange={changeDraft}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <AlignmentLineManager
+                draft={draft}
+                onDraftChange={changeDraft}
+                onCompositionStateChange={reportCompositionState}
+              />
               <section className="liner-edit-panel" aria-labelledby="liner-edit-metadata-title">
                 <h2 id="liner-edit-metadata-title">{ja.liner.editor.metadataSection}</h2>
                 <div className="liner-edit-form-grid">
@@ -347,6 +359,9 @@ export function LinerEditPage({
 
         <aside className="liner-edit-summary" aria-label={ja.liner.editor.summarySection}>
           <h2>{ja.liner.editor.summarySection}</h2>
+          <p className="liner-edit-help" data-testid="liner-active-alignment-summary">
+            {ja.liner.alignmentManager.activeIndicator(draft.activeAlignmentId ?? draft.alignment.id)}
+          </p>
           <dl>
             <div>
               <dt>{ja.liner.editor.summaryElements}</dt>

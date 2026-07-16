@@ -1,4 +1,4 @@
-import type { LinerDomainDraftVNext } from "../../../schema/types";
+import type { AlignmentBundleDraft, LinerDomainDraftVNext } from "../../../schema/types";
 import type { LinerBridge } from "../../types";
 import { createUniqueId } from "../../utils/importerUtils";
 import type { NormalizationContext } from "./normalizationContext";
@@ -6,7 +6,7 @@ import type { NormalizationContext } from "./normalizationContext";
 export function normalizeVerticalAlignment(
   bridge: LinerBridge,
   ctx: NormalizationContext,
-): LinerDomainDraftVNext["verticalAlignment"] {
+): AlignmentBundleDraft["verticalAlignment"] {
   const profileElements = bridge.alignmentMetadata?.profile?.elements ?? [];
   return {
     id: createUniqueId("vertical-alignment"),

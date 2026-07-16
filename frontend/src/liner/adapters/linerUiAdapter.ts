@@ -10,9 +10,10 @@ import type {
   StraightElement,
 } from "../core/types";
 import type {
-  CrossSlopeIntervalDraft,
+  AlignmentBundleDraft,
   CrossSectionOffsetLineDraft,
   CrossSectionTemplateDraft,
+  CrossSlopeIntervalDraft,
   CrossSlopeDraft,
   CrossfallMode,
   LinerDrawingSettingsDraft,
@@ -20,7 +21,12 @@ import type {
   SpanDraft,
   VerticalAlignmentDraft,
   WidthChangePointDraft,
+  HorizontalElementDraft,
+  StationDefinitionDraft,
 } from "../schema/types";
+import {
+  deriveLinerCenterlineId,
+} from "./linerDomainDraftRoadDesignMapper";
 
 export type LinerDraft = BuildIntermediateInput;
 export type LinerDraftAlignmentElement = AlignmentElement;
@@ -74,9 +80,10 @@ export type LinerStationEquationPatch = Partial<
 export function createDefaultVerticalAlignment(
   totalLength: number,
   z = 0,
+  alignmentId?: string,
 ): VerticalAlignmentDraft {
   return {
-    id: "VA-default",
+    id: alignmentId ? `VA-${alignmentId}` : "VA-default",
     elements: [
       {
         type: "grade",
@@ -94,14 +101,22 @@ export function createDefaultVerticalAlignment(
 function offsetLinesFromOffsets(
   offsets: readonly number[],
   existingOffsetLines: readonly CrossSectionOffsetLineDraft[] = [],
+  alignmentId?: string,
 ): CrossSectionOffsetLineDraft[] {
   return offsets.map((offset, index) => {
     const existingLine = existingOffsetLines[index];
     return {
-      id: existingLine?.id ?? `OL-${index}`,
+      id: existingLine?.id ?? (alignmentId ? `OL-${alignmentId}-${index}` : `OL-${index}`),
       offset,
       elevation: existingLine?.elevation ?? 0,
       role: existingLine?.role ?? "custom",
+      enabled: existingLine?.enabled ?? true,
+      sortIndex: existingLine?.sortIndex ?? index,
+      ...(existingLine?.baseLineId
+        ? { baseLineId: existingLine.baseLineId }
+        : alignmentId
+          ? { baseLineId: deriveLinerCenterlineId(alignmentId) }
+          : {}),
       ...(existingLine?.label ? { label: existingLine.label } : {}),
     };
   });
@@ -109,12 +124,444 @@ function offsetLinesFromOffsets(
 
 export function createDefaultCrossSectionTemplate(
   offsets: readonly number[] = [0],
+  alignmentId?: string,
 ): CrossSectionTemplateDraft {
   return {
-    id: "CS-default",
+    id: alignmentId ? `CS-${alignmentId}` : "CS-default",
     name: "Default",
-    offsetLines: offsetLinesFromOffsets(offsets),
+    offsetLines: offsetLinesFromOffsets(offsets, [], alignmentId),
   };
+}
+
+function toHorizontalElementDraft(element: AlignmentElement): HorizontalElementDraft {
+  if (element.type === "straight") {
+    return {
+      type: "straight",
+      id: element.id,
+      start: element.start,
+      azimuth: element.azimuth,
+      length: element.length,
+    };
+  }
+  if (element.type === "arc") {
+    return {
+      type: "arc",
+      id: element.id,
+      start: element.start,
+      azimuth: element.azimuth,
+      radius: element.radius,
+      turn: element.turn,
+      length: element.length,
+    };
+  }
+  return {
+    type: "clothoid",
+    id: element.id,
+    start: element.start,
+    azimuth: element.azimuth,
+    clothoidParameter: element.clothoidParameter,
+    startRadius: element.startRadius,
+    endRadius: element.endRadius,
+    turn: element.turn ?? "left",
+    length: element.length,
+  };
+}
+
+function remapCrossSectionsForBundle(
+  sections: readonly CrossSectionTemplateDraft[],
+  bundleId: string,
+): CrossSectionTemplateDraft[] {
+  const centerlineId = deriveLinerCenterlineId(bundleId);
+  return sections.map((section) => ({
+    ...section,
+    id: `CS-${bundleId}`,
+    offsetLines: section.offsetLines.map((line, index) => ({
+      ...line,
+      id: `OL-${bundleId}-${index}`,
+      baseLineId: centerlineId,
+      enabled: line.enabled ?? true,
+      sortIndex: line.sortIndex ?? index,
+    })),
+  }));
+}
+
+export function createAlignmentBundleFromDraft(
+  draft: BuildIntermediateInput,
+  bundleId?: string,
+  name?: string,
+  sortIndex = 0,
+): AlignmentBundleDraft {
+  const id = bundleId ?? draft.alignment.id;
+  const totalLength = totalDraftLength(draft);
+  const stationInterval = draft.sampleInterval ?? draft.stationDefinition.interval;
+  const crossSections = draft.crossSections?.length
+    ? id !== draft.alignment.id
+      ? remapCrossSectionsForBundle(draft.crossSections, id)
+      : structuredClone(draft.crossSections)
+    : [createDefaultCrossSectionTemplate(draft.offsets ?? [0], id)];
+  const defaultTemplate = crossSections[0];
+  const offsetLines = defaultTemplate?.offsetLines ?? offsetLinesFromOffsets(draft.offsets ?? [0], [], id);
+  const crossSectionTemplateIds = new Set(crossSections.map((section) => section.id));
+  const gridDefinitions =
+    draft.gridDefinitions?.length
+    && draft.gridDefinitions.every((definition) =>
+      crossSectionTemplateIds.has(definition.crossSectionTemplateId),
+    )
+      ? draft.gridDefinitions.map((definition) =>
+          definition.crossSectionTemplateId === defaultTemplate?.id
+            ? {
+                ...definition,
+                offsetLineIds: offsetLines.map((line) => line.id),
+              }
+            : definition,
+        )
+      : [
+          {
+            id: `GRID-${id}`,
+            crossSectionTemplateId: defaultTemplate?.id ?? (id ? `CS-${id}` : "CS-default"),
+            stationRange: { startPhysicalDistance: 0, endPhysicalDistance: totalLength },
+            stationInterval,
+            offsetLineIds: offsetLines.map((line) => line.id),
+          },
+        ];
+
+  return {
+    id,
+    name: name ?? id,
+    enabled: true,
+    sortIndex,
+    alignment: {
+      id: draft.alignment.id,
+      elements: draft.alignment.elements.map(toHorizontalElementDraft),
+    },
+    stationDefinition: structuredClone(draft.stationDefinition),
+    verticalAlignment: structuredClone({
+      ...(draft.verticalAlignment ?? createDefaultVerticalAlignment(totalLength, draft.z ?? 0, id)),
+      id:
+        draft.verticalAlignment?.id && id === draft.alignment.id
+          ? draft.verticalAlignment.id
+          : `VA-${id}`,
+    }),
+    crossSections: structuredClone(crossSections),
+    ...(draft.crossSlopeIntervals?.length
+      ? { crossSlopeIntervals: structuredClone(draft.crossSlopeIntervals) }
+      : {}),
+    gridDefinitions,
+    spans: draft.spans?.length ? [...draft.spans] : [],
+    piers: draft.piers?.length ? [...draft.piers] : [],
+    ...(draft.widthChangePoints?.length
+      ? { widthChangePoints: structuredClone(draft.widthChangePoints) }
+      : {}),
+  };
+}
+
+function resyncAlignmentLengthDependents(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const totalLength = totalDraftLength(draft);
+  const alignmentId = draft.activeAlignmentId ?? draft.alignment.id;
+  const verticalAlignment = draft.verticalAlignment
+    ? {
+        ...draft.verticalAlignment,
+        elements: draft.verticalAlignment.elements.map((element) =>
+          element.type === "grade"
+            ? { ...element, endStation: totalLength, length: totalLength }
+            : element,
+        ),
+      }
+    : createDefaultVerticalAlignment(totalLength, draft.z ?? 0, alignmentId);
+  const crossSlopeIntervals = draft.crossSlopeIntervals?.map((interval, index) =>
+    index === 0 ? { ...interval, endPhysicalDistance: totalLength } : interval,
+  );
+  const gridDefinitions = draft.gridDefinitions?.map((definition) => ({
+    ...definition,
+    stationRange: {
+      ...definition.stationRange,
+      endPhysicalDistance: totalLength,
+    },
+  }));
+
+  return {
+    ...draft,
+    verticalAlignment,
+    ...(crossSlopeIntervals ? { crossSlopeIntervals } : {}),
+    ...(gridDefinitions ? { gridDefinitions } : {}),
+  };
+}
+
+export function loadActiveBundleIntoDraft(
+  draft: BuildIntermediateInput,
+  bundle: AlignmentBundleDraft,
+): BuildIntermediateInput {
+  const defaultTemplate = bundle.crossSections[0];
+  const offsets = defaultTemplate?.offsetLines.map((line) => line.offset) ?? [0];
+  const gradeElement = bundle.verticalAlignment.elements.find((element) => element.type === "grade");
+  const z = gradeElement?.type === "grade" ? gradeElement.startElevation : draft.z ?? 0;
+
+  return {
+    ...draft,
+    alignment: {
+      id: bundle.id,
+      linerModelId: draft.alignment.linerModelId,
+      coordinatePolicyId: draft.alignment.coordinatePolicyId,
+      elements: bundle.alignment.elements.map((element) => {
+        if (element.type === "straight") {
+          return {
+            type: "straight" as const,
+            id: element.id,
+            start: element.start,
+            azimuth: element.azimuth,
+            length: element.length,
+          };
+        }
+        if (element.type === "arc") {
+          return {
+            type: "arc" as const,
+            id: element.id,
+            start: element.start,
+            azimuth: element.azimuth,
+            radius: element.radius,
+            turn: element.turn,
+            length: element.length,
+          };
+        }
+        return {
+          type: "clothoid" as const,
+          id: element.id,
+          start: element.start,
+          azimuth: element.azimuth,
+          clothoidParameter: element.clothoidParameter,
+          startRadius: element.startRadius,
+          endRadius: element.endRadius,
+          turn: element.turn,
+          length: element.length,
+        };
+      }),
+    },
+    stationDefinition: structuredClone(bundle.stationDefinition),
+    verticalAlignment: structuredClone(bundle.verticalAlignment),
+    crossSections: structuredClone(bundle.crossSections),
+    crossSlopeIntervals: bundle.crossSlopeIntervals
+      ? structuredClone(bundle.crossSlopeIntervals)
+      : draft.crossSlopeIntervals,
+    gridDefinitions: structuredClone(bundle.gridDefinitions),
+    spans: bundle.spans.length ? [...bundle.spans] : undefined,
+    piers: bundle.piers.length ? [...bundle.piers] : undefined,
+    widthChangePoints: bundle.widthChangePoints?.length
+      ? structuredClone(bundle.widthChangePoints)
+      : undefined,
+    offsets,
+    z,
+    activeAlignmentId: bundle.id,
+    activeLineId: draft.activeLineId ?? deriveLinerCenterlineId(bundle.id),
+    linerAlignments: draft.linerAlignments,
+  };
+}
+
+export function syncActiveBundleToAlignments(draft: BuildIntermediateInput): BuildIntermediateInput {
+  if (!draft.linerAlignments?.length) {
+    return draft;
+  }
+  const activeId = draft.activeAlignmentId ?? draft.alignment.id;
+  const updatedBundle = createAlignmentBundleFromDraft(
+    draft,
+    activeId,
+    draft.linerAlignments.find((entry) => entry.id === activeId)?.name,
+    draft.linerAlignments.find((entry) => entry.id === activeId)?.sortIndex ?? 0,
+  );
+  const existingBundle = draft.linerAlignments.find((entry) => entry.id === activeId);
+  const activeBundle: AlignmentBundleDraft = {
+    ...updatedBundle,
+    enabled: existingBundle?.enabled ?? true,
+    sortIndex: existingBundle?.sortIndex ?? 0,
+    name: existingBundle?.name ?? updatedBundle.name,
+  };
+  return {
+    ...draft,
+    linerAlignments: draft.linerAlignments.map((bundle) =>
+      bundle.id === activeId ? activeBundle : bundle,
+    ),
+    crossSections: activeBundle.crossSections,
+    gridDefinitions: activeBundle.gridDefinitions,
+    verticalAlignment: activeBundle.verticalAlignment,
+    stationDefinition: activeBundle.stationDefinition,
+    ...(activeBundle.spans.length ? { spans: activeBundle.spans } : { spans: undefined }),
+    ...(activeBundle.piers.length ? { piers: activeBundle.piers } : { piers: undefined }),
+    ...(activeBundle.crossSlopeIntervals?.length
+      ? { crossSlopeIntervals: activeBundle.crossSlopeIntervals }
+      : {}),
+    ...(activeBundle.widthChangePoints?.length
+      ? { widthChangePoints: activeBundle.widthChangePoints }
+      : {}),
+  };
+}
+
+function withActiveBundleSync(
+  draft: BuildIntermediateInput,
+  updater: (current: BuildIntermediateInput) => BuildIntermediateInput,
+): BuildIntermediateInput {
+  const next = updater(draft);
+  return syncActiveBundleToAlignments(next);
+}
+
+export function switchActiveAlignment(
+  draft: BuildIntermediateInput,
+  alignmentId: string,
+): BuildIntermediateInput {
+  const synced = syncActiveBundleToAlignments(draft);
+  const bundles = synced.linerAlignments ?? [];
+  const target = bundles.find((entry) => entry.id === alignmentId);
+  if (!target) {
+    return synced;
+  }
+  const loaded = loadActiveBundleIntoDraft(synced, target);
+  return {
+    ...loaded,
+    activeAlignmentId: alignmentId,
+    activeLineId: deriveLinerCenterlineId(alignmentId),
+    linerAlignments: bundles,
+  };
+}
+
+export function setActiveLineId(draft: BuildIntermediateInput, lineId: string): BuildIntermediateInput {
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
+    activeLineId: lineId,
+  }));
+}
+
+function nextAlignmentBundleId(bundles: readonly AlignmentBundleDraft[]): string {
+  const ids = new Set(bundles.map((bundle) => bundle.id));
+  let index = bundles.length + 1;
+  let candidate = `alignment-${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `alignment-${index}`;
+  }
+  return candidate;
+}
+
+export function addLinerAlignmentBundle(draft: BuildIntermediateInput): BuildIntermediateInput {
+  const synced = syncActiveBundleToAlignments(draft);
+  const bundles = synced.linerAlignments ?? [
+    createAlignmentBundleFromDraft(synced, synced.alignment.id, synced.alignment.id, 0),
+  ];
+  const newId = nextAlignmentBundleId(bundles);
+  const seed = createDefaultLinerDraft();
+  const newBundle: AlignmentBundleDraft = {
+    ...createAlignmentBundleFromDraft(
+      {
+        ...seed,
+        crossSections: undefined,
+        gridDefinitions: undefined,
+      },
+      newId,
+      newId,
+      bundles.length,
+    ),
+    id: newId,
+    name: newId,
+    sortIndex: bundles.length,
+  };
+  const nextBundles = [...bundles, newBundle];
+  return switchActiveAlignment({ ...synced, linerAlignments: nextBundles }, newId);
+}
+
+export function removeLinerAlignmentBundle(
+  draft: BuildIntermediateInput,
+  alignmentId: string,
+): BuildIntermediateInput {
+  const synced = syncActiveBundleToAlignments(draft);
+  const bundles = synced.linerAlignments ?? [];
+  if (bundles.length <= 1) {
+    return synced;
+  }
+  const nextBundles = bundles
+    .filter((bundle) => bundle.id !== alignmentId)
+    .map((bundle, index) => ({ ...bundle, sortIndex: index }));
+  const wasActive = (synced.activeAlignmentId ?? synced.alignment.id) === alignmentId;
+  const next: BuildIntermediateInput = {
+    ...synced,
+    linerAlignments: nextBundles,
+    ...(wasActive
+      ? {
+          activeAlignmentId: undefined,
+          activeLineId: undefined,
+        }
+      : {}),
+  };
+  if (wasActive) {
+    return next;
+  }
+  return next;
+}
+
+export function renameLinerAlignmentBundle(
+  draft: BuildIntermediateInput,
+  alignmentId: string,
+  name: string,
+): BuildIntermediateInput {
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
+    linerAlignments: (current.linerAlignments ?? []).map((bundle) =>
+      bundle.id === alignmentId ? { ...bundle, name } : bundle,
+    ),
+  }));
+}
+
+export function setLinerAlignmentEnabled(
+  draft: BuildIntermediateInput,
+  alignmentId: string,
+  enabled: boolean,
+): BuildIntermediateInput {
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
+    linerAlignments: (current.linerAlignments ?? []).map((bundle) =>
+      bundle.id === alignmentId ? { ...bundle, enabled } : bundle,
+    ),
+  }));
+}
+
+export function reorderLinerAlignmentBundles(
+  draft: BuildIntermediateInput,
+  orderedIds: readonly string[],
+): BuildIntermediateInput {
+  const synced = syncActiveBundleToAlignments(draft);
+  const bundleById = new Map((synced.linerAlignments ?? []).map((bundle) => [bundle.id, bundle]));
+  const nextBundles = orderedIds
+    .map((id, index) => {
+      const bundle = bundleById.get(id);
+      return bundle ? { ...bundle, sortIndex: index } : null;
+    })
+    .filter((bundle): bundle is AlignmentBundleDraft => bundle !== null);
+  return { ...synced, linerAlignments: nextBundles };
+}
+
+export function listOffsetLinesForActiveAlignment(
+  draft: BuildIntermediateInput,
+): CrossSectionOffsetLineDraft[] {
+  const template = draft.crossSections?.[0];
+  if (!template) {
+    return [];
+  }
+  return [...template.offsetLines].sort(
+    (left, right) => (left.sortIndex ?? 0) - (right.sortIndex ?? 0),
+  );
+}
+
+export function updateActiveAlignmentOffsetLines(
+  draft: BuildIntermediateInput,
+  offsetLines: readonly CrossSectionOffsetLineDraft[],
+): BuildIntermediateInput {
+  const template = draft.crossSections?.[0] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0], draft.alignment.id);
+  return withActiveBundleSync(draft, (current) =>
+    updateLinerCrossSectionTemplate(current, {
+      ...template,
+      offsetLines: offsetLines.map((line, index) => ({
+        ...line,
+        sortIndex: line.sortIndex ?? index,
+        enabled: line.enabled ?? true,
+      })),
+    }),
+  );
 }
 
 function totalDraftLength(draft: BuildIntermediateInput): number {
@@ -171,17 +618,24 @@ export function createDefaultLinerDraft(): BuildIntermediateInput {
       originDisplayedStation: 0,
       interval: 10,
     },
-    verticalAlignment: createDefaultVerticalAlignment(totalLength, 0),
-    crossSections: [createDefaultCrossSectionTemplate(offsets)],
+    verticalAlignment: createDefaultVerticalAlignment(totalLength, 0, alignment.id),
+    crossSections: [createDefaultCrossSectionTemplate(offsets, alignment.id)],
     offsets,
     sampleInterval: 10,
     z: 0,
   };
 
-  return {
+  const withIntervals = {
     ...draft,
     crossSlopeIntervals: [createDefaultCrossSlopeInterval(draft)],
     selectedCrossSectionStation: 0,
+  };
+  const bundle = createAlignmentBundleFromDraft(withIntervals, alignment.id, alignment.id, 0);
+  return {
+    ...withIntervals,
+    linerAlignments: [bundle],
+    activeAlignmentId: alignment.id,
+    activeLineId: deriveLinerCenterlineId(alignment.id),
   };
 }
 
@@ -189,26 +643,70 @@ export function updateLinerAlignmentMetadata(
   draft: BuildIntermediateInput,
   patch: LinerAlignmentMetadataPatch,
 ): BuildIntermediateInput {
-  return {
-    ...draft,
-    alignment: {
-      ...draft.alignment,
-      ...patch,
-    },
-  };
+  const nextAlignment = { ...draft.alignment, ...patch };
+  if (patch.id !== undefined && patch.id.trim().length === 0) {
+    return {
+      ...draft,
+      alignment: nextAlignment,
+    };
+  }
+
+  return withActiveBundleSync(draft, (current) => {
+    const activeId = current.activeAlignmentId ?? current.alignment.id;
+    const renamed = patch.id !== undefined && patch.id !== activeId;
+    const nextLinerAlignments = (current.linerAlignments ?? []).map((bundle) => {
+      if (bundle.id !== activeId) {
+        return bundle;
+      }
+      return renamed
+        ? {
+            ...bundle,
+            id: patch.id!,
+            name: bundle.name === activeId ? patch.id! : bundle.name,
+            crossSections: remapCrossSectionsForBundle(bundle.crossSections, patch.id!),
+            verticalAlignment: {
+              ...bundle.verticalAlignment,
+              id: `VA-${patch.id!}`,
+            },
+            gridDefinitions: bundle.gridDefinitions.map((definition) => ({
+              ...definition,
+              id: definition.id === `GRID-${activeId}` ? `GRID-${patch.id!}` : definition.id,
+              crossSectionTemplateId: `CS-${patch.id!}`,
+              offsetLineIds: remapCrossSectionsForBundle(bundle.crossSections, patch.id!)[0]?.offsetLines.map(
+                (line) => line.id,
+              ) ?? definition.offsetLineIds,
+            })),
+          }
+        : bundle;
+    });
+    const nextDraft = {
+      ...current,
+      alignment: nextAlignment,
+      activeAlignmentId: patch.id ?? activeId,
+      ...(renamed ? { activeLineId: deriveLinerCenterlineId(patch.id!) } : {}),
+      linerAlignments: nextLinerAlignments,
+    };
+    if (renamed) {
+      const renamedBundle = nextLinerAlignments.find((bundle) => bundle.id === patch.id);
+      if (renamedBundle) {
+        return loadActiveBundleIntoDraft(nextDraft, renamedBundle);
+      }
+    }
+    return nextDraft;
+  });
 }
 
 export function updateLinerStationDefinition(
   draft: BuildIntermediateInput,
   patch: Partial<StationDefinition>,
 ): BuildIntermediateInput {
-  return {
-    ...draft,
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
     stationDefinition: {
-      ...draft.stationDefinition,
+      ...current.stationDefinition,
       ...patch,
     },
-  };
+  }));
 }
 
 export function updateLinerDraftSettings(
@@ -223,16 +721,17 @@ export function updateLinerDraftSettings(
     return nextDraft;
   }
 
+  const alignmentId = draft.activeAlignmentId ?? draft.alignment.id;
   const currentTemplates = draft.crossSections?.length
     ? draft.crossSections
-    : [createDefaultCrossSectionTemplate(draft.offsets ?? [0])];
-  const firstTemplate = currentTemplates[0] ?? createDefaultCrossSectionTemplate(patch.offsets);
+    : [createDefaultCrossSectionTemplate(draft.offsets ?? [0], alignmentId)];
+  const firstTemplate = currentTemplates[0] ?? createDefaultCrossSectionTemplate(patch.offsets, alignmentId);
   return {
     ...nextDraft,
     crossSections: [
       {
         ...firstTemplate,
-        offsetLines: offsetLinesFromOffsets(patch.offsets, firstTemplate.offsetLines),
+        offsetLines: offsetLinesFromOffsets(patch.offsets, firstTemplate.offsetLines, alignmentId),
       },
       ...currentTemplates.slice(1),
     ],
@@ -244,11 +743,11 @@ export function updateLinerVerticalAlignment(
   verticalAlignment: VerticalAlignmentDraft,
 ): BuildIntermediateInput {
   const firstGrade = verticalAlignment.elements.find((element) => element.type === "grade");
-  return {
-    ...draft,
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
     verticalAlignment,
-    z: firstGrade?.type === "grade" ? firstGrade.startElevation : draft.z,
-  };
+    z: firstGrade?.type === "grade" ? firstGrade.startElevation : current.z,
+  }));
 }
 
 export function updateLinerCrossSectionTemplate(
@@ -378,20 +877,20 @@ export function updateLinerPiers(
   draft: BuildIntermediateInput,
   piers: readonly PierDraft[],
 ): BuildIntermediateInput {
-  return {
-    ...draft,
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
     ...(piers.length > 0 ? { piers: [...piers] } : { piers: undefined }),
-  };
+  }));
 }
 
 export function updateLinerSpans(
   draft: BuildIntermediateInput,
   spans: readonly SpanDraft[],
 ): BuildIntermediateInput {
-  return {
-    ...draft,
+  return withActiveBundleSync(draft, (current) => ({
+    ...current,
     ...(spans.length > 0 ? { spans: [...spans] } : { spans: undefined }),
-  };
+  }));
 }
 
 export function updateLinerDrawingSettings(
@@ -409,11 +908,12 @@ export function updateLinerAlignmentElement(
   targetElementId: string,
   patch: LinerAlignmentElementPatch,
 ): BuildIntermediateInput {
-  return {
-    ...draft,
-    alignment: {
-      ...draft.alignment,
-      elements: draft.alignment.elements.map((element): AlignmentElement => {
+  return withActiveBundleSync(draft, (current) =>
+    resyncAlignmentLengthDependents({
+      ...current,
+      alignment: {
+        ...current.alignment,
+        elements: current.alignment.elements.map((element): AlignmentElement => {
         if (element.id !== targetElementId) {
           return element;
         }
@@ -459,9 +959,10 @@ export function updateLinerAlignmentElement(
           endRadius: patch.endRadius !== undefined ? patch.endRadius : element.endRadius,
           turn: patch.turn ?? element.turn,
         };
-      }),
-    },
-  };
+        }),
+      },
+    }),
+  );
 }
 
 export function updateLinerAlignmentElementAtIndex(
@@ -473,21 +974,7 @@ export function updateLinerAlignmentElementAtIndex(
   if (!target) {
     return draft;
   }
-  return {
-    ...draft,
-    alignment: {
-      ...draft.alignment,
-      elements: draft.alignment.elements.map((element, elementIndex) =>
-        elementIndex === targetElementIndex
-          ? updateLinerAlignmentElement(
-              { ...draft, alignment: { ...draft.alignment, elements: [element] } },
-              element.id,
-              patch,
-            ).alignment.elements[0] ?? element
-          : element,
-      ),
-    },
-  };
+  return updateLinerAlignmentElement(draft, target.id, patch);
 }
 
 export function updateLinerStraightElement(
@@ -582,7 +1069,9 @@ export function removeLinerStationEquation(
 
 export function addLinerOffset(draft: BuildIntermediateInput): BuildIntermediateInput {
   const offsets = draft.offsets ?? [];
-  return updateLinerDraftSettings(draft, { offsets: [...offsets, 0] });
+  return syncActiveBundleToAlignments(
+    updateLinerDraftSettings(draft, { offsets: [...offsets, 0] }),
+  );
 }
 
 export function updateLinerOffset(draft: BuildIntermediateInput, index: number, value: number): BuildIntermediateInput {

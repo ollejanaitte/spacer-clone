@@ -84,14 +84,17 @@ test.describe("P1-D05 liner UI save/load integration", () => {
 
     const geometryDraft = readGeometryDomainDraft(saved);
     expect(geometryDraft?.linerModelId).toBe("liner-e2e-p1-d05");
-    expect(geometryDraft?.alignment).toMatchObject({ id: "alignment-e2e-p1-d05" });
-    const alignmentElements = geometryDraft?.alignment as { elements?: Array<{ length?: number }> } | undefined;
-    expect(alignmentElements?.elements?.[0]?.length).toBe(36);
-    const stationDefinition = geometryDraft?.stationDefinition as
-      | { originDisplayedStation?: number; interval?: number }
+    const alignments = geometryDraft?.alignments as
+      | Array<{
+          id: string;
+          alignment?: { elements?: Array<{ length?: number }> };
+          stationDefinition?: { originDisplayedStation?: number; interval?: number };
+        }>
       | undefined;
-    expect(stationDefinition?.originDisplayedStation).toBe(5);
-    expect(stationDefinition?.interval).toBe(6);
+    expect(alignments?.[0]?.id).toBe("alignment-e2e-p1-d05");
+    expect(alignments?.[0]?.alignment?.elements?.[0]?.length).toBe(36);
+    expect(alignments?.[0]?.stationDefinition?.originDisplayedStation).toBe(5);
+    expect(alignments?.[0]?.stationDefinition?.interval).toBe(6);
     expect(saved.liner?.sourceRevision).toMatch(/^[a-f0-9]{64}$/);
 
     const roundTripPath = join(OUT_DIR, "project-roundtrip.json");

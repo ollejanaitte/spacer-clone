@@ -139,11 +139,16 @@ function assertPersistedProjectShape(saved: SavedProject) {
 
   const geometryDraft = readGeometryDomainDraft(saved);
   expect(geometryDraft?.linerModelId).toBe(MODEL_ID);
-  expect(geometryDraft?.alignment).toMatchObject({ id: ALIGNMENT_ID });
+  const activeBundle = (geometryDraft?.alignments as Array<{
+    id: string;
+    spans?: Array<Record<string, unknown>>;
+    piers?: Array<Record<string, unknown>>;
+  }> | undefined)?.find((bundle) => bundle.id === ALIGNMENT_ID);
+  expect(activeBundle?.id).toBe(ALIGNMENT_ID);
   expect(geometryDraft?.selectedCrossSectionStation).toBeGreaterThan(0);
 
-  const spans = geometryDraft?.spans as Array<Record<string, unknown>> | undefined;
-  const piers = geometryDraft?.piers as Array<Record<string, unknown>> | undefined;
+  const spans = activeBundle?.spans;
+  const piers = activeBundle?.piers;
   expect(spans).toEqual([
     expect.objectContaining({
       id: "SP1",

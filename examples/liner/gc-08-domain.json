@@ -1,0 +1,130 @@
+{
+  "id": "gc08-domain",
+  "linerModelId": "gc08",
+  "coordinatePolicyId": "global",
+  "activeAlignmentId": "gc08-alignment-a",
+  "activeLineId": "4e16b0ea-96e7-5449-a6e7-b441d484f573",
+  "alignments": [
+    {
+      "id": "gc08-alignment-a",
+      "name": "Alignment A",
+      "enabled": true,
+      "sortIndex": 0,
+      "alignment": {
+        "id": "gc08-alignment-a",
+        "elements": [
+          {
+            "type": "straight",
+            "id": "L1",
+            "start": { "x": 0, "y": 0 },
+            "azimuth": 0,
+            "length": 80
+          }
+        ]
+      },
+      "stationDefinition": {
+        "originDisplayedStation": 0,
+        "interval": 20
+      },
+      "verticalAlignment": {
+        "id": "VA-gc08-alignment-a",
+        "elements": [
+          {
+            "type": "grade",
+            "id": "VG-a",
+            "startStation": 0,
+            "endStation": 80,
+            "startElevation": 0,
+            "grade": 0,
+            "length": 80
+          }
+        ]
+      },
+      "crossSections": [
+        {
+          "id": "CS-gc08-alignment-a",
+          "name": "Default A",
+          "offsetLines": [
+            { "id": "OL-gc08-alignment-a-0", "offset": 0, "elevation": 0, "role": "custom", "enabled": true, "sortIndex": 0 }
+          ]
+        }
+      ],
+      "gridDefinitions": [
+        {
+          "id": "GRID-gc08-alignment-a",
+          "crossSectionTemplateId": "CS-gc08-alignment-a",
+          "stationRange": { "startPhysicalDistance": 0, "endPhysicalDistance": 80 },
+          "stationInterval": 20,
+          "offsetLineIds": ["OL-gc08-alignment-a-0"]
+        }
+      ],
+      "spans": [],
+      "piers": []
+    },
+    {
+      "id": "gc08-alignment-b",
+      "name": "Alignment B",
+      "enabled": true,
+      "sortIndex": 1,
+      "alignment": {
+        "id": "gc08-alignment-b",
+        "elements": [
+          {
+            "type": "straight",
+            "id": "L1",
+            "start": { "x": 100, "y": 0 },
+            "azimuth": 0.7853981633974483,
+            "length": 60
+          }
+        ]
+      },
+      "stationDefinition": {
+        "originDisplayedStation": 0,
+        "interval": 20
+      },
+      "verticalAlignment": {
+        "id": "VA-gc08-alignment-b",
+        "elements": [
+          {
+            "type": "grade",
+            "id": "VG-b",
+            "startStation": 0,
+            "endStation": 60,
+            "startElevation": 2,
+            "grade": 0,
+            "length": 60
+          }
+        ]
+      },
+      "crossSections": [
+        {
+          "id": "CS-gc08-alignment-b",
+          "name": "Default B",
+          "offsetLines": [
+            { "id": "OL-gc08-alignment-b-0", "offset": 0, "elevation": 0, "role": "custom", "enabled": true, "sortIndex": 0 }
+          ]
+        }
+      ],
+      "gridDefinitions": [
+        {
+          "id": "GRID-gc08-alignment-b",
+          "crossSectionTemplateId": "CS-gc08-alignment-b",
+          "stationRange": { "startPhysicalDistance": 0, "endPhysicalDistance": 60 },
+          "stationInterval": 20,
+          "offsetLineIds": ["OL-gc08-alignment-b-0"]
+        }
+      ],
+      "spans": [],
+      "piers": []
+    }
+  ],
+  "generationSettings": {
+    "defaultMemberGroupKey": "default",
+    "connectivityMode": "grid_full"
+  },
+  "sampling": {
+    "display": { "maxChordLength": 10, "maxSagitta": 0.005, "minSegmentsPerElement": 1 },
+    "dxf": { "maxChordLength": 0.1, "maxSagitta": 0.001, "minSegmentsPerElement": 1 },
+    "frame": { "maxMemberLength": 0.25, "maxSagitta": 0.0025, "stationIntervalFallback": 10 }
+  }
+}
