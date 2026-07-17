@@ -23,6 +23,7 @@ import type {
   WidthChangePointDraft,
   HorizontalElementDraft,
   StationDefinitionDraft,
+  LdistJobDraft,
 } from "../schema/types";
 import {
   deriveLinerCenterlineId,
@@ -1248,4 +1249,68 @@ function nextSpanId(spans: readonly SpanDraft[]): string {
     candidate = `SP${index}`;
   }
   return candidate;
+}
+
+function nextLdistJobId(jobs: readonly LdistJobDraft[]): string {
+  const ids = new Set(jobs.map((job) => job.id));
+  let index = jobs.length + 1;
+  let candidate = `ldist-job-${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `ldist-job-${index}`;
+  }
+  return candidate;
+}
+
+export function updateLinerLdistJobs(
+  draft: BuildIntermediateInput,
+  jobs: readonly LdistJobDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(jobs.length > 0 ? { ldistJobs: [...jobs] } : { ldistJobs: undefined }),
+  };
+}
+
+export function addLdistJob(
+  draft: BuildIntermediateInput,
+  partial: Partial<LdistJobDraft> = {},
+): BuildIntermediateInput {
+  const existing = draft.ldistJobs ?? [];
+  const alignmentId = draft.activeAlignmentId ?? draft.alignment.id;
+  const offsetLines = draft.crossSections?.[0]?.offsetLines ?? [];
+  const defaultPair =
+    offsetLines.length >= 2
+      ? { fromLineId: offsetLines[0]!.id, toLineId: offsetLines[1]!.id }
+      : undefined;
+  const job: LdistJobDraft = {
+    id: partial.id ?? nextLdistJobId(existing),
+    alignmentId: partial.alignmentId ?? alignmentId,
+    kind: partial.kind ?? "grid_distance",
+    stationScope: partial.stationScope ?? "all_generated",
+    pairs: partial.pairs ?? (defaultPair ? [defaultPair] : []),
+    distanceMode: partial.distanceMode ?? "mode_a",
+    ...partial,
+  };
+  return updateLinerLdistJobs(draft, [...existing, job]);
+}
+
+export function updateLdistJob(
+  draft: BuildIntermediateInput,
+  jobId: string,
+  patch: Partial<LdistJobDraft>,
+): BuildIntermediateInput {
+  const existing = draft.ldistJobs ?? [];
+  return updateLinerLdistJobs(
+    draft,
+    existing.map((job) => (job.id === jobId ? { ...job, ...patch } : job)),
+  );
+}
+
+export function removeLdistJob(draft: BuildIntermediateInput, jobId: string): BuildIntermediateInput {
+  const existing = draft.ldistJobs ?? [];
+  return updateLinerLdistJobs(
+    draft,
+    existing.filter((job) => job.id !== jobId),
+  );
 }

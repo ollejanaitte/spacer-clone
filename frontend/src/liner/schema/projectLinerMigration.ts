@@ -36,6 +36,7 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "linerAlignments",
   "activeAlignmentId",
   "activeLineId",
+  "ldistJobs",
 ]);
 
 export type MigrateLinerDraftToVNextResult =
@@ -373,6 +374,7 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
       ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
       selectedCrossSectionStation,
       ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
+      ...(draft.ldistJobs?.length ? { ldistJobs: structuredClone(draft.ldistJobs) } : {}),
       generationSettings: {
         defaultMemberGroupKey: "default",
         connectivityMode: "grid_full",
@@ -483,6 +485,7 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     selectedCrossSectionStation,
     ...(draft.drawingSettings ? { drawingSettings: structuredClone(draft.drawingSettings) } : {}),
+    ...(draft.ldistJobs?.length ? { ldistJobs: structuredClone(draft.ldistJobs) } : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",
       connectivityMode: "grid_full",

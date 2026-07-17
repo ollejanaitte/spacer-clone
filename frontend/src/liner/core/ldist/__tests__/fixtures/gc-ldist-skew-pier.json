@@ -1,0 +1,24 @@
+{
+  "description": "Skewed pier; left/right lines — overhang perpendicular to pier line",
+  "draft": {
+    "offsets": [-4, 4],
+    "offsetLineIds": ["OL-left", "OL-right"],
+    "pier": {
+      "id": "P-skew",
+      "physicalDistance": 50,
+      "skewAngleRad": 0.25
+    },
+    "stationPhysicalDistance": 50
+  },
+  "job": {
+    "id": "ldist-job-skew",
+    "kind": "overhang",
+    "leftLineId": "OL-left",
+    "rightLineId": "OL-right",
+    "stationScope": { "physicalDistances": [50] }
+  },
+  "expected": {
+    "leftOverhangM": 4.918333,
+    "rightOverhangM": 4.918333
+  }
+}

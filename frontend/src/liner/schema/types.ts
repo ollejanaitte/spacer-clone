@@ -110,6 +110,35 @@ export interface AlignmentBundleDraft {
   widthChangePoints?: WidthChangePointDraft[];
 }
 
+export type LdistJobKind = "grid_distance" | "overhang";
+export type LdistDistanceMode = "mode_a" | "mode_b";
+export type LdistStationScope =
+  | "all_generated"
+  | { stationIds: string[] }
+  | { physicalDistances: number[] };
+
+export interface LdistLinePairDraft {
+  fromLineId: string;
+  toLineId: string;
+}
+
+export interface LdistJobDraft {
+  id: string;
+  alignmentId: string;
+  kind: LdistJobKind;
+  label?: string;
+  spanId?: string;
+  stationScope: LdistStationScope;
+  sectionIds?: string[];
+  distanceMode?: LdistDistanceMode;
+  referenceLineId?: string;
+  pairs: LdistLinePairDraft[];
+  enabled?: boolean;
+  leftLineId?: string;
+  rightLineId?: string;
+  pierId?: string;
+}
+
 export interface LinerDomainDraftVNext {
   id: string;
   linerModelId: string;
@@ -121,6 +150,7 @@ export interface LinerDomainDraftVNext {
   measuredGrid?: MeasuredGridDraft;
   selectedCrossSectionStation?: number;
   drawingSettings?: LinerDrawingSettingsDraft;
+  ldistJobs?: LdistJobDraft[];
   generationSettings: GenerationSettingsDraft;
   sampling: SamplingSettingsDraft;
 }

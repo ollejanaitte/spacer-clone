@@ -13,6 +13,7 @@ import {
   syncActiveBundleToAlignments,
   updateLinerAlignmentMetadata,
   updateLinerAlignmentElement,
+  addLdistJob,
 } from "./linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -518,5 +519,78 @@ describe("liner project draft persistence", () => {
       return;
     }
     expect(hydrated.diagnostics.join(" ")).toContain("bridge stable ids");
+  });
+
+  it("serializes ldistJobs into roadDesignDocument extensions and hydrates on reload", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-left", offset: -3, elevation: 0, role: "custom" },
+        { id: "OL-right", offset: 3, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addLdistJob(draft, {
+      pairs: [{ fromLineId: "OL-left", toLineId: "OL-right" }],
+    });
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const extension =
+      serialized.project.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as { domainDraft: { ldistJobs?: typeof draft.ldistJobs } };
+    expect(payload.domainDraft.ldistJobs).toEqual(draft.ldistJobs);
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+    expect(hydrated.project.liner?.domainDraft?.ldistJobs).toEqual(draft.ldistJobs);
+    expect(linerDraftFromProject(hydrated.project)?.ldistJobs).toEqual(draft.ldistJobs);
+  });
+
+  it("round-trips cross-section offset lines referenced by ldistJobs", () => {
+    let draft = createDefaultLinerDraft();
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-alignment-1-0", offset: -5, elevation: 0, role: "custom" },
+        { id: "OL-2", offset: 5, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addLdistJob(draft, {
+      pairs: [{ fromLineId: "OL-alignment-1-0", toLineId: "OL-2" }],
+      distanceMode: "mode_b",
+      referenceLineId: "OL-alignment-1-0",
+    });
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+
+    const reloaded = linerDraftFromProject(hydrated.project);
+    expect(reloaded?.crossSections?.[0]?.offsetLines).toHaveLength(2);
+    expect(reloaded?.crossSections?.[0]?.offsetLines?.map((line) => line.id)).toEqual([
+      "OL-alignment-1-0",
+      "OL-2",
+    ]);
+    expect(reloaded?.ldistJobs?.[0]?.pairs[0]?.toLineId).toBe("OL-2");
   });
 });
