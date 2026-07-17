@@ -1,0 +1,21 @@
+{
+  "description": "Mode B — d_base × sin(theta_ref); straight section with sin(theta)=1",
+  "draft": {
+    "offsets": [-3, 3],
+    "offsetLineIds": ["OL-left", "OL-right"],
+    "referenceLineId": "OL-left",
+    "stationPhysicalDistance": 0
+  },
+  "job": {
+    "id": "ldist-job-mode-b",
+    "kind": "grid_distance",
+    "distanceMode": "mode_b",
+    "referenceLineId": "OL-left",
+    "pairs": [{ "fromLineId": "OL-left", "toLineId": "OL-right" }],
+    "stationScope": "all_generated"
+  },
+  "expected": {
+    "distanceM": 6,
+    "signConvention": "mode_b_sin_theta_ref"
+  }
+}

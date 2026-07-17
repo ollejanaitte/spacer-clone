@@ -256,6 +256,7 @@ export function buildIntermediateInputFromDomainDraft(
       normalized.activeLineId ?? deriveLinerCenterlineId(activeBundle.id),
     ...(normalized.measuredGrid ? { measuredGrid: normalized.measuredGrid } : {}),
     ...(normalized.drawingSettings ? { drawingSettings: normalized.drawingSettings } : {}),
+    ...(normalized.ldistJobs?.length ? { ldistJobs: normalized.ldistJobs } : {}),
     ...(activeBundle.widthChangePoints?.length
       ? { widthChangePoints: activeBundle.widthChangePoints }
       : {}),
@@ -323,6 +324,7 @@ function domainDraftFromLinerDraft(
       ? { selectedCrossSectionStation: synced.selectedCrossSectionStation }
       : {}),
     ...(synced.drawingSettings ? { drawingSettings: synced.drawingSettings } : {}),
+    ...(synced.ldistJobs?.length ? { ldistJobs: structuredClone(synced.ldistJobs) } : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",
       connectivityMode: "grid_full",
@@ -367,7 +369,8 @@ export function withProjectLinerDraft(project: ProjectModel, draft: LinerDraft):
 }
 
 export function tryWithProjectLinerDraft(project: ProjectModel, draft: LinerDraft): ProjectModel {
-  const migration = migrateLinerDraftToVNext({ draft });
+  const synced = syncActiveBundleToAlignments(draft);
+  const migration = migrateLinerDraftToVNext({ draft: synced });
   if (!migration.ok) {
     return project;
   }

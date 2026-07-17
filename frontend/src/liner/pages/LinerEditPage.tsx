@@ -5,6 +5,9 @@ import { AlignmentManager } from "../components/AlignmentManager";
 import { AlignmentLineManager } from "../components/AlignmentLineManager";
 import { BridgeLayoutDiagnosticsPanel } from "../components/BridgeLayoutDiagnosticsPanel";
 import { BridgeLayoutEditor } from "../components/BridgeLayoutEditor";
+import { LdistDiagnosticsPanel } from "../components/LdistDiagnosticsPanel";
+import { LdistJobEditor } from "../components/LdistJobEditor";
+import { LdistResultsPanel } from "../components/LdistResultsPanel";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionDiagnosticsPanel } from "../components/CrossSectionDiagnosticsPanel";
@@ -24,6 +27,7 @@ import {
   createDefaultLinerDraft,
   createDefaultVerticalAlignment,
   summarizeLinerDraft,
+  syncActiveBundleToAlignments,
   updateLinerAlignmentMetadata,
   updateLinerCrossSectionTemplate,
   updateLinerCrossSlopeIntervals,
@@ -36,6 +40,8 @@ import {
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
 import { validateLinerDraftForCommit } from "../adapters/linerProjectDraft";
+import { buildIntermediateResult } from "../core/pipeline/pipeline";
+import { computeLdistResults } from "../core/ldist";
 import type { LinerSetupTabId } from "../uiPreparation";
 import { LinerSetupTabs } from "./LinerSetupTabs";
 
@@ -133,6 +139,28 @@ export function LinerEditPage({
   const crossSectionTemplate =
     draft.crossSections?.[0] ?? createDefaultCrossSectionTemplate(draft.offsets ?? [0]);
   const crossSectionPreviewDistance = draft.selectedCrossSectionStation ?? 0;
+  const syncedDraft = useMemo(() => syncActiveBundleToAlignments(draft), [draft]);
+  const intermediate = useMemo(() => buildIntermediateResult(syncedDraft), [syncedDraft]);
+  const ldistOutput = useMemo(
+    () =>
+      computeLdistResults({
+        jobs: syncedDraft.ldistJobs ?? [],
+        intermediate,
+        sourceRevision: intermediate.sourceRevision,
+        linerAlignments: syncedDraft.linerAlignments,
+        activeAlignmentId: syncedDraft.activeAlignmentId ?? syncedDraft.alignment.id,
+        crossSections: syncedDraft.crossSections,
+        fallbackAlignmentId: syncedDraft.alignment.id,
+      }),
+    [
+      syncedDraft.ldistJobs,
+      syncedDraft.linerAlignments,
+      syncedDraft.crossSections,
+      syncedDraft.activeAlignmentId,
+      syncedDraft.alignment.id,
+      intermediate,
+    ],
+  );
 
   return (
     <main className="liner-edit-page" data-testid="liner-edit-page">
@@ -334,6 +362,18 @@ export function LinerEditPage({
                 widthChangePoints={draft.widthChangePoints}
                 previewPhysicalDistance={crossSectionPreviewDistance}
               />
+            </div>
+          )}
+
+          {activeTab === "utilities" && (
+            <div className="liner-tab-utilities">
+              <LdistJobEditor
+                draft={draft}
+                onDraftChange={changeDraft}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <LdistResultsPanel rows={ldistOutput.rows} />
+              <LdistDiagnosticsPanel diagnostics={ldistOutput.diagnostics} />
             </div>
           )}
 

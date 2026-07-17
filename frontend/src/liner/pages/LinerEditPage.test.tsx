@@ -381,19 +381,20 @@ describe("LinerEditPage", () => {
     expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
   });
 
-  it("renders six setup tabs in JIP-LINER display order", () => {
+  it("renders seven setup tabs in JIP-LINER display order", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 
     const tabButtons = Array.from(document.querySelectorAll("[data-testid^=liner-setup-tab-]")).filter(
       (element) => element.getAttribute("role") === "tab",
     );
-    expect(tabButtons).toHaveLength(6);
+    expect(tabButtons).toHaveLength(7);
     expect(tabButtons.map((button) => button.textContent)).toEqual([
       "ライン",
       "測点",
       "高さ",
       "縦断",
       "横断",
+      "ユーティリティ",
       "確認図",
     ]);
     expect(document.querySelector("[data-testid=liner-setup-tabpanel-line]")).not.toBeNull();
@@ -468,5 +469,22 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=bridge-layout-diagnostics-panel]")).not.toBeNull();
     expect(document.body.textContent).toContain(ja.liner.editor.bridgePierSection);
     expect(document.querySelector("[data-testid=cross-section-template-id]")).toBeNull();
+  });
+
+  it("renders LDIST utilities tab without changing review tab bridge layout", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-utilities]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-utilities]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=ldist-job-editor]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=ldist-results-panel]")).not.toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=add-bridge-pier]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=ldist-job-editor]")).toBeNull();
   });
 });

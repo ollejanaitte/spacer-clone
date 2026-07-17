@@ -1,0 +1,20 @@
+{
+  "description": "Mode B degenerate — reference line parallel to section traverse yields LINER_LDIST_DEGENERATE_GEOMETRY",
+  "draft": {
+    "offsets": [-2, 2],
+    "offsetLineIds": ["OL-left", "OL-right"],
+    "referenceLineId": "OL-left",
+    "stationPhysicalDistance": 0
+  },
+  "job": {
+    "id": "ldist-job-degenerate",
+    "kind": "grid_distance",
+    "distanceMode": "mode_b",
+    "referenceLineId": "OL-left",
+    "pairs": [{ "fromLineId": "OL-left", "toLineId": "OL-right" }],
+    "stationScope": { "physicalDistances": [0] }
+  },
+  "expected": {
+    "diagnosticCode": "LINER_LDIST_DEGENERATE_GEOMETRY"
+  }
+}

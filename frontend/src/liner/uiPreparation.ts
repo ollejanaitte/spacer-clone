@@ -210,6 +210,7 @@ export type LinerSetupTabId =
   | "height"
   | "vertical"
   | "crossSection"
+  | "utilities"
   | "review";
 
 export const LINER_SETUP_TAB_IDS = [
@@ -218,6 +219,7 @@ export const LINER_SETUP_TAB_IDS = [
   "height",
   "vertical",
   "crossSection",
+  "utilities",
   "review",
 ] as const satisfies readonly LinerSetupTabId[];
 
@@ -228,6 +230,7 @@ export const LINER_SETUP_TAB_LABEL_KEYS: Record<LinerSetupTabId, `liner.setupTab
   height: "liner.setupTabs.height",
   vertical: "liner.setupTabs.vertical",
   crossSection: "liner.setupTabs.crossSection",
+  utilities: "liner.setupTabs.utilities",
   review: "liner.setupTabs.review",
 };
 

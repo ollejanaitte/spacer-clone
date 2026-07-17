@@ -9,6 +9,7 @@ import {
   updateLinerPiers,
   updateLinerSpans,
   updateLinerVerticalAlignment,
+  addLdistJob,
 } from "./linerUiAdapter";
 import { withProjectLinerDraft } from "./linerProjectDraft";
 import { createDefaultProject } from "../../data/defaultProject";
@@ -531,5 +532,56 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       return;
     }
     expect(mapped.document.topologyCapability).toEqual({ state: "absent" });
+  });
+
+  it("round-trips ldistJobs and sets ldistCapability supported when jobs exist", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-left", offset: -3, elevation: 0, role: "custom" },
+        { id: "OL-right", offset: 3, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addLdistJob(draft, {
+      pairs: [{ fromLineId: "OL-left", toLineId: "OL-right" }],
+    });
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const domainDraft = project.liner?.domainDraft;
+    expect(domainDraft?.ldistJobs).toHaveLength(1);
+
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.schemaVersion).toBe("0.1.0");
+    expect(mapped.document.ldistCapability).toEqual({ state: "supported" });
+
+    const extension = mapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as { domainDraft: LinerDomainDraftVNext };
+    expect(payload.domainDraft.ldistJobs).toHaveLength(1);
+
+    const restored = roadDesignDocumentToDomainDraft(mapped.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.ldistJobs).toEqual(domainDraft!.ldistJobs);
+  });
+
+  it("reports absent ldistCapability when no jobs are stored", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createVerticalCrossSectionDraft(),
+    ).liner?.domainDraft;
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.ldistCapability).toEqual({ state: "absent" });
   });
 });

@@ -1,0 +1,19 @@
+{
+  "description": "Straight alignment; two parallel offset lines; orthogonal section — Mode A distance = 10 m",
+  "draft": {
+    "offsets": [-5, 5],
+    "offsetLineIds": ["OL-left", "OL-right"],
+    "stationPhysicalDistance": 0
+  },
+  "job": {
+    "id": "ldist-job-straight",
+    "kind": "grid_distance",
+    "distanceMode": "mode_a",
+    "pairs": [{ "fromLineId": "OL-left", "toLineId": "OL-right" }],
+    "stationScope": "all_generated"
+  },
+  "expected": {
+    "distanceM": 10,
+    "signConvention": "mode_a_unsigned"
+  }
+}
