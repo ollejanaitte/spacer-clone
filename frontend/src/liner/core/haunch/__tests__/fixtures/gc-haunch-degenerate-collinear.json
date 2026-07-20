@@ -1,0 +1,44 @@
+{
+  "description": "Collinear three-point anchors — fail-closed degenerate geometry",
+  "draft": {
+    "offsets": [0],
+    "offsetLineIds": ["OL-center"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-degenerate-collinear",
+      "alignmentId": "alignment-1",
+      "family": "three_point",
+      "variant": "affine_plane_three_points",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "lineIds": ["OL-center"],
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10,
+          "lineId": "OL-center"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 50,
+          "mode": "elevation",
+          "valueM": 11,
+          "lineId": "OL-center"
+        },
+        {
+          "id": "a3",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 12,
+          "lineId": "OL-center"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "diagnosticCode": "LINER_HAUNCH_DEGENERATE_GEOMETRY"
+  }
+}

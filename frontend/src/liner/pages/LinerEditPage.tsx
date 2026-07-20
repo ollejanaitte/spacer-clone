@@ -8,6 +8,9 @@ import { BridgeLayoutEditor } from "../components/BridgeLayoutEditor";
 import { LdistDiagnosticsPanel } from "../components/LdistDiagnosticsPanel";
 import { LdistJobEditor } from "../components/LdistJobEditor";
 import { LdistResultsPanel } from "../components/LdistResultsPanel";
+import { HaunchDefinitionEditor } from "../components/HaunchDefinitionEditor";
+import { HaunchDiagnosticsPanel } from "../components/HaunchDiagnosticsPanel";
+import { HaunchResultsPanel } from "../components/HaunchResultsPanel";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionDiagnosticsPanel } from "../components/CrossSectionDiagnosticsPanel";
@@ -42,6 +45,7 @@ import {
 import { validateLinerDraftForCommit } from "../adapters/linerProjectDraft";
 import { buildIntermediateResult } from "../core/pipeline/pipeline";
 import { computeLdistResults } from "../core/ldist";
+import { computeHaunchResults } from "../core/haunch";
 import type { LinerSetupTabId } from "../uiPreparation";
 import { LinerSetupTabs } from "./LinerSetupTabs";
 
@@ -154,6 +158,26 @@ export function LinerEditPage({
       }),
     [
       syncedDraft.ldistJobs,
+      syncedDraft.linerAlignments,
+      syncedDraft.crossSections,
+      syncedDraft.activeAlignmentId,
+      syncedDraft.alignment.id,
+      intermediate,
+    ],
+  );
+  const haunchOutput = useMemo(
+    () =>
+      computeHaunchResults({
+        definitions: syncedDraft.haunchDefinitions ?? [],
+        intermediate,
+        sourceRevision: intermediate.sourceRevision,
+        linerAlignments: syncedDraft.linerAlignments,
+        activeAlignmentId: syncedDraft.activeAlignmentId ?? syncedDraft.alignment.id,
+        crossSections: syncedDraft.crossSections,
+        fallbackAlignmentId: syncedDraft.alignment.id,
+      }),
+    [
+      syncedDraft.haunchDefinitions,
       syncedDraft.linerAlignments,
       syncedDraft.crossSections,
       syncedDraft.activeAlignmentId,
@@ -374,6 +398,13 @@ export function LinerEditPage({
               />
               <LdistResultsPanel rows={ldistOutput.rows} />
               <LdistDiagnosticsPanel diagnostics={ldistOutput.diagnostics} />
+              <HaunchDefinitionEditor
+                draft={draft}
+                onDraftChange={changeDraft}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <HaunchResultsPanel rows={haunchOutput.rows} />
+              <HaunchDiagnosticsPanel diagnostics={haunchOutput.diagnostics} />
             </div>
           )}
 

@@ -1,0 +1,47 @@
+{
+  "description": "Type 6 — affine plane through three non-collinear plan anchors",
+  "draft": {
+    "offsets": [-5, 0, 5],
+    "offsetLineIds": ["OL-left", "OL-center", "OL-right"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-three-point-plane",
+      "alignmentId": "alignment-1",
+      "family": "three_point",
+      "variant": "affine_plane_three_points",
+      "stationRange": { "fromM": 50, "toM": 50 },
+      "lineIds": ["OL-center"],
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10,
+          "lineId": "OL-left"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 50,
+          "mode": "elevation",
+          "valueM": 14,
+          "lineId": "OL-right"
+        },
+        {
+          "id": "a3",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 12,
+          "lineId": "OL-left"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "lineId": "OL-center",
+    "haunchTopElevationM": 12.5,
+    "haunchThicknessM": 12.5
+  }
+}

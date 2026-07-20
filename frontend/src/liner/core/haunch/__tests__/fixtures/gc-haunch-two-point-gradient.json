@@ -1,0 +1,31 @@
+{
+  "description": "Type 2 — one anchor + longitudinal gradient",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-two-point-gradient",
+      "alignmentId": "alignment-1",
+      "family": "two_point",
+      "variant": "one_point_longitudinal_gradient",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "lineIds": ["OL-girder"],
+      "anchor": {
+        "id": "a1",
+        "stationPhysicalDistanceM": 0,
+        "mode": "elevation",
+        "valueM": 10,
+        "lineId": "OL-girder"
+      },
+      "longitudinalGradient": 0.05
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "haunchTopElevationM": 12.5,
+    "haunchThicknessM": 12.5
+  }
+}

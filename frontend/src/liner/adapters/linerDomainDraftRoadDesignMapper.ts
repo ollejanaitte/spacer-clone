@@ -271,6 +271,9 @@ export function normalizeLinerDomainDraft(raw: unknown): LinerDomainDraftVNext |
       ...(Array.isArray(raw.ldistJobs)
         ? { ldistJobs: raw.ldistJobs as LinerDomainDraftVNext["ldistJobs"] }
         : {}),
+      ...(Array.isArray(raw.haunchDefinitions)
+        ? { haunchDefinitions: raw.haunchDefinitions as LinerDomainDraftVNext["haunchDefinitions"] }
+        : {}),
       generationSettings: raw.generationSettings as LinerDomainDraftVNext["generationSettings"],
       sampling: raw.sampling as unknown as LinerDomainDraftVNext["sampling"],
     };
@@ -641,6 +644,11 @@ export function domainDraftToRoadDesignDocument(
       ? ({ state: "supported" as const })
       : ({ state: "absent" as const });
 
+  const haunchCapability =
+    (normalized.haunchDefinitions?.length ?? 0) > 0
+      ? ({ state: "supported" as const })
+      : ({ state: "absent" as const });
+
   const draftWithoutChecksum = {
     schemaId: ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
     schemaVersion: ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION,
@@ -712,7 +720,7 @@ export function domainDraftToRoadDesignDocument(
     topologyCapability,
     bridgeGeometryCapability: { state: "absent" as const },
     ldistCapability,
-    haunchCapability: { state: "absent" as const },
+    haunchCapability,
     hosoCapability: { state: "absent" as const },
     drawingCapability: { state: "absent" as const },
   };

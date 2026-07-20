@@ -1,0 +1,35 @@
+{
+  "description": "Legacy JIP type 12 — fail-closed liner height required",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-type-12",
+      "alignmentId": "alignment-1",
+      "jipType": 12,
+      "family": "two_point",
+      "variant": "two_support_points",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 20
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "diagnosticCode": "LINER_HAUNCH_LINER_HEIGHT_REQUIRED"
+  }
+}

@@ -480,11 +480,14 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=liner-setup-tabpanel-utilities]")).not.toBeNull();
     expect(document.querySelector("[data-testid=ldist-job-editor]")).not.toBeNull();
     expect(document.querySelector("[data-testid=ldist-results-panel]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=haunch-definition-editor]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=haunch-results-panel]")).not.toBeNull();
 
     act(() => {
       (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
     });
     expect(document.querySelector("[data-testid=add-bridge-pier]")).not.toBeNull();
     expect(document.querySelector("[data-testid=ldist-job-editor]")).toBeNull();
+    expect(document.querySelector("[data-testid=haunch-definition-editor]")).toBeNull();
   });
 });

@@ -257,6 +257,7 @@ export function buildIntermediateInputFromDomainDraft(
     ...(normalized.measuredGrid ? { measuredGrid: normalized.measuredGrid } : {}),
     ...(normalized.drawingSettings ? { drawingSettings: normalized.drawingSettings } : {}),
     ...(normalized.ldistJobs?.length ? { ldistJobs: normalized.ldistJobs } : {}),
+    ...(normalized.haunchDefinitions?.length ? { haunchDefinitions: normalized.haunchDefinitions } : {}),
     ...(activeBundle.widthChangePoints?.length
       ? { widthChangePoints: activeBundle.widthChangePoints }
       : {}),
@@ -325,6 +326,9 @@ function domainDraftFromLinerDraft(
       : {}),
     ...(synced.drawingSettings ? { drawingSettings: synced.drawingSettings } : {}),
     ...(synced.ldistJobs?.length ? { ldistJobs: structuredClone(synced.ldistJobs) } : {}),
+    ...(synced.haunchDefinitions?.length
+      ? { haunchDefinitions: structuredClone(synced.haunchDefinitions) }
+      : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",
       connectivityMode: "grid_full",
