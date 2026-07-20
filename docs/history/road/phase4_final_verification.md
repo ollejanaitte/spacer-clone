@@ -35,7 +35,7 @@
 | P4-D05 | #161 | `206b81d` | Review diagrams and utilities UI |
 | P4-D06 | #162 | `1e2e099` | Reports and CSV |
 | P4-D07 | #163 | `0fb30fb` | Persistence / legacy / migration |
-| P4-D08 | #164 | (squash merge on main) | E2E and final verification |
+| P4-D08 | #164 | `4b06bb2` | E2E and final verification |
 
 **Baseline for D08 work:** `0fb30fb` (`origin/main` at verification start).
 
