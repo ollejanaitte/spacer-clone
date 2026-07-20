@@ -21,7 +21,7 @@
 | P4-D05 | Review Diagrams and Utilities UI | #161 | `206b81d` | COMPLETE |
 | P4-D06 | Reports and CSV | #162 | `1e2e099` | COMPLETE |
 | P4-D07 | Persistence / Legacy / Migration | #163 | `0fb30fb` | COMPLETE |
-| P4-D08 | E2E and Final Verification | #164 | (squash merge on main) | COMPLETE (candidate) |
+| P4-D08 | E2E and Final Verification | #164 | `4b06bb2` | COMPLETE (candidate) |
 
 ---
 
@@ -52,7 +52,7 @@
 | `206b81d` | P4-D05 |
 | `1e2e099` | P4-D06 |
 | `0fb30fb` | P4-D07 |
-| (squash merge on main) | P4-D08 |
+| `4b06bb2` | P4-D08 |
 
 ---
 
