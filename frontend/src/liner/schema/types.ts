@@ -139,6 +139,83 @@ export interface LdistJobDraft {
   pierId?: string;
 }
 
+export type HaunchTypeFamily = "two_point" | "three_point" | "plane" | "range";
+
+export type HaunchSide = "left" | "right" | "both";
+
+export type HaunchAnchorMode = "elevation" | "haunch";
+
+export interface HaunchAnchorDraft {
+  id: string;
+  stationPhysicalDistanceM: number;
+  /** Lateral offset d along section traverse (three_point / plane). */
+  lateralOffsetM?: number;
+  mode: HaunchAnchorMode;
+  /** Signed value per mode: elevation (m) or haunch thickness (m). */
+  valueM: number;
+  lineId?: string;
+  supportSectionId?: string;
+}
+
+export interface HaunchDefinitionBase {
+  id: string;
+  alignmentId: string;
+  label?: string;
+  stationRange: { fromM: number; toM: number };
+  side?: HaunchSide;
+  spanId?: string;
+  lineIds?: string[];
+  deckRefId?: string;
+  pavementPlusDeckThicknessM?: number;
+  enabled?: boolean;
+  /** Legacy JIP import marker — fail-closed at validation; not used in native API. */
+  jipType?: number;
+}
+
+export type HaunchDefinitionDraft =
+  | (HaunchDefinitionBase & {
+      family: "two_point";
+      variant: "two_support_points";
+      anchors: [HaunchAnchorDraft, HaunchAnchorDraft];
+    })
+  | (HaunchDefinitionBase & {
+      family: "two_point";
+      variant: "one_point_longitudinal_gradient";
+      anchor: HaunchAnchorDraft;
+      longitudinalGradient: number;
+    })
+  | (HaunchDefinitionBase & {
+      family: "three_point";
+      variant: "affine_plane_three_points";
+      anchors: [HaunchAnchorDraft, HaunchAnchorDraft, HaunchAnchorDraft];
+    })
+  | (HaunchDefinitionBase & {
+      family: "three_point";
+      variant: "parabola_three_points";
+      anchors: [HaunchAnchorDraft, HaunchAnchorDraft, HaunchAnchorDraft];
+      girderLineId: string;
+    })
+  | (HaunchDefinitionBase & {
+      family: "plane";
+      variant: "one_point_two_gradients";
+      anchor: HaunchAnchorDraft;
+      longitudinalGradient: number;
+      transverseGradient: number;
+      referenceLineId?: string;
+    })
+  | (HaunchDefinitionBase & {
+      family: "plane";
+      variant: "two_points_normal_gradient";
+      anchors: [HaunchAnchorDraft, HaunchAnchorDraft];
+      normalGradient: number;
+    })
+  | (HaunchDefinitionBase & {
+      family: "range";
+      variant: "section_range_modifier";
+      supportSectionFromId?: string;
+      supportSectionToId?: string;
+    });
+
 export interface LinerDomainDraftVNext {
   id: string;
   linerModelId: string;
@@ -151,6 +228,7 @@ export interface LinerDomainDraftVNext {
   selectedCrossSectionStation?: number;
   drawingSettings?: LinerDrawingSettingsDraft;
   ldistJobs?: LdistJobDraft[];
+  haunchDefinitions?: HaunchDefinitionDraft[];
   generationSettings: GenerationSettingsDraft;
   sampling: SamplingSettingsDraft;
 }

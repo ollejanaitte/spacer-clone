@@ -1,0 +1,45 @@
+{
+  "description": "Type 8 — range modifier limits subsequent two-point rows to 20–80 m",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-range",
+      "alignmentId": "alignment-1",
+      "family": "range",
+      "variant": "section_range_modifier",
+      "stationRange": { "fromM": 20, "toM": 80 }
+    },
+    {
+      "id": "haunch-two-point-inner",
+      "alignmentId": "alignment-1",
+      "family": "two_point",
+      "variant": "two_support_points",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "lineIds": ["OL-girder"],
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 20,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "includedStations": [20, 30, 40, 50, 60, 70, 80],
+    "excludedStations": [0, 10, 90, 100]
+  }
+}

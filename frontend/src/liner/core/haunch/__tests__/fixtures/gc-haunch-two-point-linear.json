@@ -1,0 +1,39 @@
+{
+  "description": "Type 1 — linear z(s) between two support elevations",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-two-point-linear",
+      "alignmentId": "alignment-1",
+      "family": "two_point",
+      "variant": "two_support_points",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "lineIds": ["OL-girder"],
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 20,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "haunchTopElevationM": 15,
+    "haunchThicknessM": 15
+  }
+}

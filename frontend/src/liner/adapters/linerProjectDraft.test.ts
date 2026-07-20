@@ -14,6 +14,7 @@ import {
   updateLinerAlignmentMetadata,
   updateLinerAlignmentElement,
   addLdistJob,
+  addHaunchDefinition,
 } from "./linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -592,5 +593,41 @@ describe("liner project draft persistence", () => {
       "OL-2",
     ]);
     expect(reloaded?.ldistJobs?.[0]?.pairs[0]?.toLineId).toBe("OL-2");
+  });
+
+  it("serializes haunchDefinitions into roadDesignDocument extensions and hydrates on reload", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-left", offset: -3, elevation: 0, role: "custom" },
+        { id: "OL-right", offset: 3, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addHaunchDefinition(draft);
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.roadDesignDocument?.haunchCapability?.state).toBe("supported");
+    const extension =
+      serialized.project.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as {
+      domainDraft: { haunchDefinitions?: typeof draft.haunchDefinitions };
+    };
+    expect(payload.domainDraft.haunchDefinitions).toEqual(draft.haunchDefinitions);
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+    expect(hydrated.project.liner?.domainDraft?.haunchDefinitions).toEqual(draft.haunchDefinitions);
+    expect(linerDraftFromProject(hydrated.project)?.haunchDefinitions).toEqual(draft.haunchDefinitions);
   });
 });

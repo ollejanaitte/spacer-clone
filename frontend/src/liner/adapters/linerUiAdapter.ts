@@ -24,6 +24,9 @@ import type {
   HorizontalElementDraft,
   StationDefinitionDraft,
   LdistJobDraft,
+  HaunchDefinitionDraft,
+  HaunchAnchorDraft,
+  HaunchTypeFamily,
 } from "../schema/types";
 import {
   deriveLinerCenterlineId,
@@ -1312,5 +1315,153 @@ export function removeLdistJob(draft: BuildIntermediateInput, jobId: string): Bu
   return updateLinerLdistJobs(
     draft,
     existing.filter((job) => job.id !== jobId),
+  );
+}
+
+function alignmentTotalLength(draft: BuildIntermediateInput): number {
+  return draft.alignment.elements.reduce((total, element) => total + element.length, 0);
+}
+
+function nextHaunchDefinitionId(definitions: readonly HaunchDefinitionDraft[]): string {
+  const ids = new Set(definitions.map((definition) => definition.id));
+  let index = definitions.length + 1;
+  let candidate = `haunch-def-${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `haunch-def-${index}`;
+  }
+  return candidate;
+}
+
+function defaultAnchor(
+  id: string,
+  stationPhysicalDistanceM: number,
+  lineId?: string,
+): HaunchAnchorDraft {
+  return {
+    id,
+    stationPhysicalDistanceM,
+    mode: "elevation",
+    valueM: 0,
+    ...(lineId ? { lineId } : {}),
+  };
+}
+
+function createDefaultHaunchDefinition(
+  draft: BuildIntermediateInput,
+  partial: Partial<HaunchDefinitionDraft> = {},
+): HaunchDefinitionDraft {
+  const alignmentId = partial.alignmentId ?? draft.activeAlignmentId ?? draft.alignment.id;
+  const totalLength = alignmentTotalLength(draft);
+  const offsetLines = draft.crossSections?.[0]?.offsetLines ?? [];
+  const lineA = offsetLines[0]?.id;
+  const lineB = offsetLines[1]?.id ?? lineA;
+  const family: HaunchTypeFamily = partial.family ?? "two_point";
+  const base = {
+    id: partial.id ?? nextHaunchDefinitionId(draft.haunchDefinitions ?? []),
+    alignmentId,
+    stationRange: partial.stationRange ?? { fromM: 0, toM: totalLength },
+    enabled: partial.enabled ?? true,
+    ...partial,
+  };
+
+  if (family === "three_point") {
+    return {
+      ...base,
+      family: "three_point",
+      variant: partial.variant === "parabola_three_points" ? "parabola_three_points" : "affine_plane_three_points",
+      anchors: [
+        defaultAnchor("a1", 0, lineA),
+        defaultAnchor("a2", totalLength / 2, lineB),
+        defaultAnchor("a3", totalLength, lineA),
+      ],
+      ...(partial.variant === "parabola_three_points" || "girderLineId" in partial
+        ? { girderLineId: (partial as { girderLineId?: string }).girderLineId ?? lineA ?? "OL-0" }
+        : {}),
+    } as HaunchDefinitionDraft;
+  }
+  if (family === "plane") {
+    return {
+      ...base,
+      family: "plane",
+      variant: "one_point_two_gradients",
+      anchor: defaultAnchor("a1", 0, lineA),
+      longitudinalGradient: 0,
+      transverseGradient: 0,
+    } as HaunchDefinitionDraft;
+  }
+  if (family === "range") {
+    return {
+      ...base,
+      family: "range",
+      variant: "section_range_modifier",
+    } as HaunchDefinitionDraft;
+  }
+  if (partial.variant === "one_point_longitudinal_gradient") {
+    return {
+      ...base,
+      family: "two_point",
+      variant: "one_point_longitudinal_gradient",
+      anchor: defaultAnchor("a1", 0, lineA),
+      longitudinalGradient: 0,
+    } as HaunchDefinitionDraft;
+  }
+  return {
+    ...base,
+    family: "two_point",
+    variant: "two_support_points",
+    anchors: [defaultAnchor("a1", 0, lineA), defaultAnchor("a2", totalLength, lineB)],
+  } as HaunchDefinitionDraft;
+}
+
+export function updateLinerHaunchDefinitions(
+  draft: BuildIntermediateInput,
+  definitions: readonly HaunchDefinitionDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(definitions.length > 0
+      ? { haunchDefinitions: [...definitions] }
+      : { haunchDefinitions: undefined }),
+  };
+}
+
+export function addHaunchDefinition(
+  draft: BuildIntermediateInput,
+  partial: Partial<HaunchDefinitionDraft> = {},
+): BuildIntermediateInput {
+  const existing = draft.haunchDefinitions ?? [];
+  const definition = createDefaultHaunchDefinition(draft, partial);
+  return updateLinerHaunchDefinitions(draft, [...existing, definition]);
+}
+
+export function updateHaunchDefinition(
+  draft: BuildIntermediateInput,
+  definitionId: string,
+  patch: Partial<HaunchDefinitionDraft>,
+): BuildIntermediateInput {
+  const existing = draft.haunchDefinitions ?? [];
+  return updateLinerHaunchDefinitions(
+    draft,
+    existing.map((definition) => {
+      if (definition.id !== definitionId) {
+        return definition;
+      }
+      if (patch.family && patch.family !== definition.family) {
+        return createDefaultHaunchDefinition(draft, { ...patch, id: definitionId });
+      }
+      return { ...definition, ...patch } as HaunchDefinitionDraft;
+    }),
+  );
+}
+
+export function removeHaunchDefinition(
+  draft: BuildIntermediateInput,
+  definitionId: string,
+): BuildIntermediateInput {
+  const existing = draft.haunchDefinitions ?? [];
+  return updateLinerHaunchDefinitions(
+    draft,
+    existing.filter((definition) => definition.id !== definitionId),
   );
 }

@@ -1,0 +1,46 @@
+{
+  "description": "Type 9 — parabola z(u)=0.001*u^2+0.1*u+10",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-three-point-parabola",
+      "alignmentId": "alignment-1",
+      "family": "three_point",
+      "variant": "parabola_three_points",
+      "stationRange": { "fromM": 20, "toM": 20 },
+      "girderLineId": "OL-girder",
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "mode": "elevation",
+          "valueM": 10,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 50,
+          "mode": "elevation",
+          "valueM": 17.5,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a3",
+          "stationPhysicalDistanceM": 100,
+          "mode": "elevation",
+          "valueM": 30,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 20,
+    "haunchTopElevationM": 12.4,
+    "haunchThicknessM": 12.4
+  }
+}

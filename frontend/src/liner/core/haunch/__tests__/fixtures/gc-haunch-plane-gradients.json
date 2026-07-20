@@ -1,0 +1,33 @@
+{
+  "description": "Type 7 — one point + longitudinal and transverse gradients",
+  "draft": {
+    "offsets": [0, 5],
+    "offsetLineIds": ["OL-center", "OL-right"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "haunch-plane-gradients",
+      "alignmentId": "alignment-1",
+      "family": "plane",
+      "variant": "one_point_two_gradients",
+      "stationRange": { "fromM": 50, "toM": 50 },
+      "referenceLineId": "OL-center",
+      "anchor": {
+        "id": "a1",
+        "stationPhysicalDistanceM": 0,
+        "mode": "elevation",
+        "valueM": 10,
+        "lineId": "OL-center"
+      },
+      "longitudinalGradient": 0.01,
+      "transverseGradient": 0.02
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "lineId": "OL-right",
+    "haunchTopElevationM": 10.6,
+    "haunchThicknessM": 10.6
+  }
+}
