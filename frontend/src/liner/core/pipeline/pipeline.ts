@@ -61,7 +61,7 @@ import type {
   VerticalAlignmentDraft,
   WidthChangePointDraft,
 } from "../../schema/types";
-import type { PierDraft, SpanDraft, LdistJobDraft, HaunchDefinitionDraft } from "../../schema/types";
+import type { PierDraft, SpanDraft, LdistJobDraft, HaunchDefinitionDraft, HosoDefinitionDraft } from "../../schema/types";
 
 export type BuildIntermediateInput = {
   alignment: LinearAlignment;
@@ -86,6 +86,7 @@ export type BuildIntermediateInput = {
   activeLineId?: string;
   ldistJobs?: LdistJobDraft[];
   haunchDefinitions?: HaunchDefinitionDraft[];
+  hosoDefinitions?: HosoDefinitionDraft[];
 };
 
 function toSamplePoint(evaluation: AlignmentEvaluation): AlignmentSamplePoint {

@@ -1,0 +1,37 @@
+{
+  "description": "Transverse — linear t(d) between offset anchors",
+  "draft": {
+    "offsets": [-5, 0, 5],
+    "offsetLineIds": ["OL-left", "OL-center", "OL-right"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-transverse-linear",
+      "alignmentId": "alignment-1",
+      "family": "transverse",
+      "variant": "transverse_only",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "referenceLineId": "OL-center",
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "lateralOffsetM": -5,
+          "thicknessM": 0.2
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 0,
+          "lateralOffsetM": 5,
+          "thicknessM": 0.3
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "lineId": "OL-center",
+    "pavementThicknessM": 0.25
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "description": "Three-point — affine plane t(s,d)",
+  "draft": {
+    "offsets": [-5, 5],
+    "offsetLineIds": ["OL-left", "OL-right"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-three-point-plane",
+      "alignmentId": "alignment-1",
+      "family": "three_point",
+      "variant": "three_point_non_collinear",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "referenceLineId": "OL-left",
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "lateralOffsetM": 0,
+          "thicknessM": 0.2
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "lateralOffsetM": 0,
+          "thicknessM": 0.3
+        },
+        {
+          "id": "a3",
+          "stationPhysicalDistanceM": 0,
+          "lateralOffsetM": 10,
+          "thicknessM": 0.25
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "lineId": "OL-left",
+    "pavementThicknessM": 0.25
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "description": "Auto — cross-section line elevation as direct pavement thickness rule",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "lineElevations": [0.15],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-auto-pipeline",
+      "alignmentId": "alignment-1",
+      "family": "auto",
+      "variant": "auto_converge_pipeline",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "lineIds": ["OL-girder"]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "pavementThicknessM": 0.15
+  }
+}

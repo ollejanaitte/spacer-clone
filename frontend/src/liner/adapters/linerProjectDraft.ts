@@ -258,6 +258,7 @@ export function buildIntermediateInputFromDomainDraft(
     ...(normalized.drawingSettings ? { drawingSettings: normalized.drawingSettings } : {}),
     ...(normalized.ldistJobs?.length ? { ldistJobs: normalized.ldistJobs } : {}),
     ...(normalized.haunchDefinitions?.length ? { haunchDefinitions: normalized.haunchDefinitions } : {}),
+    ...(normalized.hosoDefinitions?.length ? { hosoDefinitions: normalized.hosoDefinitions } : {}),
     ...(activeBundle.widthChangePoints?.length
       ? { widthChangePoints: activeBundle.widthChangePoints }
       : {}),
@@ -328,6 +329,9 @@ function domainDraftFromLinerDraft(
     ...(synced.ldistJobs?.length ? { ldistJobs: structuredClone(synced.ldistJobs) } : {}),
     ...(synced.haunchDefinitions?.length
       ? { haunchDefinitions: structuredClone(synced.haunchDefinitions) }
+      : {}),
+    ...(synced.hosoDefinitions?.length
+      ? { hosoDefinitions: structuredClone(synced.hosoDefinitions) }
       : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",

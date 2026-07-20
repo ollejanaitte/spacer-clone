@@ -27,6 +27,9 @@ import type {
   HaunchDefinitionDraft,
   HaunchAnchorDraft,
   HaunchTypeFamily,
+  HosoDefinitionDraft,
+  HosoAnchorDraft,
+  HosoTypeFamily,
 } from "../schema/types";
 import {
   deriveLinerCenterlineId,
@@ -1461,6 +1464,162 @@ export function removeHaunchDefinition(
 ): BuildIntermediateInput {
   const existing = draft.haunchDefinitions ?? [];
   return updateLinerHaunchDefinitions(
+    draft,
+    existing.filter((definition) => definition.id !== definitionId),
+  );
+}
+
+function nextHosoDefinitionId(definitions: readonly HosoDefinitionDraft[]): string {
+  const ids = new Set(definitions.map((definition) => definition.id));
+  let index = definitions.length + 1;
+  let candidate = `hoso-def-${index}`;
+  while (ids.has(candidate)) {
+    index += 1;
+    candidate = `hoso-def-${index}`;
+  }
+  return candidate;
+}
+
+function defaultHosoAnchor(
+  id: string,
+  stationPhysicalDistanceM: number,
+  lineId?: string,
+): HosoAnchorDraft {
+  return {
+    id,
+    stationPhysicalDistanceM,
+    thicknessM: 0.2,
+    ...(lineId ? { lineId } : {}),
+  };
+}
+
+function createDefaultHosoDefinition(
+  draft: BuildIntermediateInput,
+  partial: Partial<HosoDefinitionDraft> = {},
+): HosoDefinitionDraft {
+  const alignmentId = partial.alignmentId ?? draft.activeAlignmentId ?? draft.alignment.id;
+  const totalLength = alignmentTotalLength(draft);
+  const offsetLines = draft.crossSections?.[0]?.offsetLines ?? [];
+  const lineA = offsetLines[0]?.id;
+  const lineB = offsetLines[1]?.id ?? lineA;
+  const family: HosoTypeFamily = partial.family ?? "longitudinal";
+  const base = {
+    id: partial.id ?? nextHosoDefinitionId(draft.hosoDefinitions ?? []),
+    alignmentId,
+    stationRange: partial.stationRange ?? { fromM: 0, toM: totalLength },
+    enabled: partial.enabled ?? true,
+    ...partial,
+  };
+
+  if (family === "auto") {
+    return {
+      ...base,
+      family: "auto",
+      variant: "auto_converge_pipeline",
+    } as HosoDefinitionDraft;
+  }
+  if (family === "transverse") {
+    return {
+      ...base,
+      family: "transverse",
+      variant: "transverse_only",
+      anchors: [
+        { ...defaultHosoAnchor("a1", 0, lineA), lateralOffsetM: -5, thicknessM: 0.2 },
+        { ...defaultHosoAnchor("a2", 0, lineB), lateralOffsetM: 5, thicknessM: 0.3 },
+      ],
+    } as HosoDefinitionDraft;
+  }
+  if (family === "two_point") {
+    return {
+      ...base,
+      family: "two_point",
+      variant: "two_point_girder_end",
+      anchors: [
+        defaultHosoAnchor("a1", 0, lineA),
+        defaultHosoAnchor("a2", totalLength, lineB),
+      ],
+    } as HosoDefinitionDraft;
+  }
+  if (family === "three_point") {
+    return {
+      ...base,
+      family: "three_point",
+      variant: "three_point_non_collinear",
+      anchors: [
+        defaultHosoAnchor("a1", 0, lineA),
+        defaultHosoAnchor("a2", totalLength / 2, lineB),
+        defaultHosoAnchor("a3", totalLength, lineA),
+      ],
+    } as HosoDefinitionDraft;
+  }
+  if (family === "longitudinal" && partial.variant === "both_gradients") {
+    return {
+      ...base,
+      family: "longitudinal",
+      variant: "both_gradients",
+      anchor: defaultHosoAnchor("a0", 0, lineA),
+      longitudinalGradient: 0,
+      transverseGradient: 0,
+    } as HosoDefinitionDraft;
+  }
+  return {
+    ...base,
+    family: "longitudinal",
+    variant: "longitudinal_only",
+    anchors: [
+      defaultHosoAnchor("a1", 0, lineA),
+      defaultHosoAnchor("a2", totalLength, lineB),
+    ],
+  } as HosoDefinitionDraft;
+}
+
+export function updateLinerHosoDefinitions(
+  draft: BuildIntermediateInput,
+  definitions: readonly HosoDefinitionDraft[],
+): BuildIntermediateInput {
+  return {
+    ...draft,
+    ...(definitions.length > 0
+      ? { hosoDefinitions: [...definitions] }
+      : { hosoDefinitions: undefined }),
+  };
+}
+
+export function addHosoDefinition(
+  draft: BuildIntermediateInput,
+  partial: Partial<HosoDefinitionDraft> = {},
+): BuildIntermediateInput {
+  const existing = draft.hosoDefinitions ?? [];
+  const definition = createDefaultHosoDefinition(draft, partial);
+  return updateLinerHosoDefinitions(draft, [...existing, definition]);
+}
+
+export function updateHosoDefinition(
+  draft: BuildIntermediateInput,
+  definitionId: string,
+  patch: Partial<HosoDefinitionDraft>,
+): BuildIntermediateInput {
+  const existing = draft.hosoDefinitions ?? [];
+  return updateLinerHosoDefinitions(
+    draft,
+    existing.map((definition) => {
+      if (definition.id !== definitionId) {
+        return definition;
+      }
+      if (patch.family && patch.family !== definition.family) {
+        return createDefaultHosoDefinition(draft, { ...patch, id: definitionId });
+      }
+      return { ...definition, ...patch } as HosoDefinitionDraft;
+    }),
+  );
+}
+
+export function removeHosoDefinition(
+  draft: BuildIntermediateInput,
+  definitionId: string,
+): BuildIntermediateInput {
+  const existing = draft.hosoDefinitions ?? [];
+  return updateLinerHosoDefinitions(
     draft,
     existing.filter((definition) => definition.id !== definitionId),
   );
