@@ -169,16 +169,23 @@ export function serializeProjectForPersistence(
     ...linerRest
   } = project.liner;
 
+  const persistedProject = {
+    ...project,
+    liner: {
+      ...linerRest,
+      draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
+      roadDesignDocument: mapped.document,
+    },
+  } as ProjectModel;
+
+  delete (persistedProject as Record<string, unknown>).drawingDocument;
+  if (persistedProject.liner) {
+    delete (persistedProject.liner as Record<string, unknown>).drawingDocument;
+  }
+
   return {
     ok: true,
-    project: {
-      ...project,
-      liner: {
-        ...linerRest,
-        draftSchemaVersion: LINER_DRAFT_SCHEMA_VERSION,
-        roadDesignDocument: mapped.document,
-      },
-    },
+    project: persistedProject,
   };
 }
 

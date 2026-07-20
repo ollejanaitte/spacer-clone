@@ -684,4 +684,103 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     }
     expect(mapped.document.hosoCapability).toEqual({ state: "absent" });
   });
+
+  it("reads legacy geometry payload v0.1.0 and normalizes to v2 idempotently (D07-C03)", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createVerticalCrossSectionDraft(),
+    ).liner?.domainDraft;
+    expect(domainDraft).toBeDefined();
+
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+
+    const extension = mapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const v2Payload = extension?.json as unknown as {
+      payloadVersion: string;
+      domainDraft: LinerDomainDraftVNext;
+    };
+    const activeBundle = getActiveAlignmentBundle(v2Payload.domainDraft)!;
+    const legacyFlat = {
+      id: v2Payload.domainDraft.id,
+      linerModelId: v2Payload.domainDraft.linerModelId,
+      coordinatePolicyId: v2Payload.domainDraft.coordinatePolicyId,
+      alignment: activeBundle.alignment,
+      stationDefinition: activeBundle.stationDefinition,
+      verticalAlignment: activeBundle.verticalAlignment,
+      crossSections: activeBundle.crossSections,
+      crossSlopeIntervals: activeBundle.crossSlopeIntervals,
+      gridDefinitions: activeBundle.gridDefinitions,
+      spans: activeBundle.spans,
+      piers: activeBundle.piers,
+      generationSettings: v2Payload.domainDraft.generationSettings,
+      sampling: v2Payload.domainDraft.sampling,
+      ...(v2Payload.domainDraft.drawingSettings
+        ? { drawingSettings: v2Payload.domainDraft.drawingSettings }
+        : {}),
+    };
+    const legacyDocument: RoadDesignDocument = {
+      ...mapped.document,
+      extensions: {
+        [LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY]: {
+          json: {
+            payloadVersion: "0.1.0",
+            domainDraft: legacyFlat,
+          } as unknown as JsonValue,
+        },
+      },
+    };
+
+    const first = roadDesignDocumentToDomainDraft(legacyDocument);
+    expect(first.ok).toBe(true);
+    if (!first.ok) {
+      return;
+    }
+
+    const remapped = domainDraftToRoadDesignDocument(first.domainDraft, { createdAt: FIXED_CREATED_AT });
+    expect(remapped.ok).toBe(true);
+    if (!remapped.ok) {
+      return;
+    }
+
+    const second = roadDesignDocumentToDomainDraft(remapped.document);
+    expect(second.ok).toBe(true);
+    if (!second.ok) {
+      return;
+    }
+
+    expect(second.domainDraft).toEqual(first.domainDraft);
+    expect(remapped.document.schemaVersion).toBe("0.1.0");
+    expect(
+      remapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY]?.json,
+    ).toMatchObject({
+      payloadVersion: "0.2.0",
+    });
+  });
+
+  it("keeps ROAD_DESIGN_DOCUMENT schemaVersion at 0.1.0 for P4 persistence (D07-C06)", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = addLinerAlignmentBundle(draft);
+    draft = addLdistJob(draft, {
+      pairs: [{ fromLineId: "OL-alignment-1-0", toLineId: "OL-alignment-1-1" }],
+    });
+    draft = addHaunchDefinition(draft);
+    draft = addHosoDefinition(draft);
+
+    const domainDraft = withProjectLinerDraft(createDefaultProject(), draft).liner?.domainDraft;
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+
+    expect(mapped.document.schemaVersion).toBe("0.1.0");
+    expect(mapped.document.ldistCapability?.state).toBe("supported");
+    expect(mapped.document.haunchCapability?.state).toBe("supported");
+    expect(mapped.document.hosoCapability?.state).toBe("supported");
+    expect(mapped.document.topologyCapability?.state).toBe("supported");
+  });
 });
