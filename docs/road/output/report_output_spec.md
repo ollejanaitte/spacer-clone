@@ -38,6 +38,9 @@ Define structured report content (HTML, CSV; PDF post-MVP) generated from interm
 | `stationCoordinates` | `stations.entries` + samples | Chainage table |
 | `profileElevations` | `vertical.sampledPoints` | Profile samples |
 | `gridPoints` | `grid.points` | Full grid coordinate listing |
+| `ldistResults` | P4-D02 `ldistResults` rows | Grid distance / overhang results |
+| `haunchResults` | P4-D03 `haunchResults` rows | Haunch elevation / thickness results |
+| `hosoResults` | P4-D04 `hosoResults` rows | Pavement thickness / elevation results |
 | `frameMappingTrace` | `linerTrace` or derived from grid + mapping | Frame entity trace |
 | `diagnostics` | `diagnostics[]` | Warnings and errors |
 
@@ -112,11 +115,53 @@ Define structured report content (HTML, CSV; PDF post-MVP) generated from interm
 | `entityPath` | string? |
 | `station` | number? |
 
+#### ldistResults (P4-D02)
+
+| Column key | Type | Source field |
+| --- | --- | --- |
+| `jobId` | string | `jobId` |
+| `fromLineId` | string? | `fromLineId` |
+| `toLineId` | string? | `toLineId` |
+| `stationPhysicalDistance` | number | m |
+| `displayedStation` | number | m |
+| `distanceM` | number? | m |
+| `overhangM` | number? | m |
+| `side` | enum? | left / right |
+| `signConvention` | string? | algorithm sign metadata |
+
+#### haunchResults (P4-D03)
+
+| Column key | Type | Source field |
+| --- | --- | --- |
+| `definitionId` | string | `definitionId` |
+| `type` | enum | haunch family |
+| `stationPhysicalDistance` | number | m |
+| `haunchTopElevationM` | number | m |
+| `haunchThicknessM` | number? | m |
+| `side` | enum? | left / right / both |
+
+#### hosoResults (P4-D04)
+
+| Column key | Type | Source field |
+| --- | --- | --- |
+| `definitionId` | string | `definitionId` |
+| `type` | enum | hoso family |
+| `stationPhysicalDistance` | number | m |
+| `offsetM` | number? | m |
+| `pavementThicknessM` | number | m |
+| `pavementElevationM` | number? | m |
+
 ### 3. CSV export
 
 - One file per table or combined workbook (implementation choice).
 - Header row uses English keys; HTML report shows localized column headers.
 - Grid CSV: columns match `gridPoints` table.
+- Required CSV files (P4-D06):
+  - `grid_points.csv` — `gridPoints` schema
+  - `ldist_results.csv` — when LDIST rows present
+  - `haunch_results.csv` — when HAUNCH rows present
+  - `hoso_results.csv` — when HOSO rows present
+- Export is **fail-closed** when error-level diagnostics are present or P4 row `sourceRevision` ≠ intermediate `sourceRevision`.
 
 ### 4. HTML template
 
@@ -128,6 +173,9 @@ Define structured report content (HTML, CSV; PDF post-MVP) generated from interm
 ```text
 {projectName}_liner_report_{date}.html
 {projectName}_liner_grid_{date}.csv
+{projectName}_ldist_results_{date}.csv
+{projectName}_haunch_results_{date}.csv
+{projectName}_hoso_results_{date}.csv
 ```
 
 ## Open Questions
@@ -147,5 +195,6 @@ Define structured report content (HTML, CSV; PDF post-MVP) generated from interm
 
 - [x] Section list and column schemas defined.
 - [x] English keys documented for all tables.
+- [x] P4 sections (`ldistResults`, `haunchResults`, `hosoResults`) documented.
 - [ ] Sample report reviewed against originality policy.
-- [ ] CSV column tests in test_plan_cad_report.
+- [x] CSV column tests in test_plan_cad_report (Vitest: `roadReportExport.test.ts`).

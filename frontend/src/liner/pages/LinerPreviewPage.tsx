@@ -4,10 +4,12 @@ import { ja } from "../../i18n/ja";
 import { buildLinerPreviewFromDraft } from "../adapters/linerPreviewAdapter";
 import type { LinerDraft } from "../adapters/linerUiAdapter";
 import { LinerGridPreview } from "../components/LinerGridPreview";
+import { LinerRoadExportControls } from "../components/LinerRoadExportControls";
 import type { LinerUiDiagnosticDisplay } from "../uiPreparation";
 
 export type LinerPreviewPageProps = {
   draft: LinerDraft;
+  projectName?: string;
   onClose: () => void;
   onBackToList: () => void;
   onBackToSetup: () => void;
@@ -17,6 +19,7 @@ export type LinerPreviewPageProps = {
 
 export function LinerPreviewPage({
   draft,
+  projectName = "liner",
   onClose,
   onBackToList,
   onBackToSetup,
@@ -109,6 +112,12 @@ export function LinerPreviewPage({
               </ul>
             )}
           </section>
+
+          <LinerRoadExportControls
+            draft={draft}
+            projectName={projectName}
+            testIdPrefix="liner-preview-road-export"
+          />
         </aside>
       </div>
     </main>
