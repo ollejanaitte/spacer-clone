@@ -493,4 +493,19 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=haunch-definition-editor]")).toBeNull();
     expect(document.querySelector("[data-testid=hoso-definition-editor]")).toBeNull();
   });
+
+  it("keeps review tab free of formal confirmation drawing canvas (D05-C01)", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=liner-setup-tabpanel-review]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=add-bridge-pier]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=formal-drawing-preview-document]")).toBeNull();
+    expect(document.querySelector("[data-testid=drawing-sheet-plan-sheet]")).toBeNull();
+    expect(document.querySelector("[data-testid=liner-preview-formal-drawing-notice]")).toBeNull();
+    expect(document.body.textContent).not.toContain("Phase 4.0-2");
+  });
 });

@@ -61,6 +61,20 @@ export function LinerPreviewPage({
         </div>
       </header>
 
+      {onOpenDrawings && (
+        <aside
+          className="liner-preview-formal-notice"
+          aria-label={ja.liner.preview.formalDrawingNotice}
+          data-testid="liner-preview-formal-drawing-notice"
+        >
+          <p>{ja.liner.preview.formalDrawingNotice}</p>
+          <button type="button" onClick={onOpenDrawings} data-testid="liner-preview-open-formal-drawings">
+            <Eye size={16} />
+            {ja.liner.preview.openFormalDrawing}
+          </button>
+        </aside>
+      )}
+
       <div className="liner-preview-layout">
         <section className="liner-preview-canvas-panel" aria-label={ja.liner.preview.canvasLabel}>
           <LinerGridPreview viewModel={viewModel} />

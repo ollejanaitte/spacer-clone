@@ -3,6 +3,7 @@
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ja } from "../../i18n/ja";
 import { createDefaultLinerDraft } from "../adapters/linerUiAdapter";
 import { LinerPreviewPage } from "./LinerPreviewPage";
 
@@ -77,5 +78,46 @@ describe("LinerPreviewPage", () => {
     expect(onBackToSetup).toHaveBeenCalledTimes(1);
     expect(onBackToList).toHaveBeenCalledTimes(1);
     expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows formal drawing notice and wires secondary entry (D05-C06)", () => {
+    const onOpenDrawings = vi.fn();
+    render(
+      <LinerPreviewPage
+        draft={createDefaultLinerDraft()}
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onBackToSetup={() => undefined}
+        onOpenDrawings={onOpenDrawings}
+      />,
+    );
+
+    const notice = document.querySelector("[data-testid=liner-preview-formal-drawing-notice]");
+    expect(notice).not.toBeNull();
+    expect(notice?.textContent).toContain(ja.liner.preview.formalDrawingNotice);
+    expect(document.querySelector("[data-testid=open-liner-drawings]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-preview-open-formal-drawings]")).not.toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-preview-open-formal-drawings]") as HTMLButtonElement).click();
+    });
+    act(() => {
+      (document.querySelector("[data-testid=open-liner-drawings]") as HTMLButtonElement).click();
+    });
+
+    expect(onOpenDrawings).toHaveBeenCalledTimes(2);
+  });
+
+  it("omits formal drawing notice when open handler is not provided", () => {
+    render(
+      <LinerPreviewPage
+        draft={createDefaultLinerDraft()}
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onBackToSetup={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=liner-preview-formal-drawing-notice]")).toBeNull();
   });
 });
