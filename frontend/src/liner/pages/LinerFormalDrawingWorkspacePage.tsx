@@ -10,6 +10,7 @@ import {
   type LinerDraftUpdate,
 } from "../adapters/linerUiAdapter";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
+import { LinerRoadExportControls } from "../components/LinerRoadExportControls";
 import {
   buildMultiPageDrawingDocument,
   createCrossSectionDrawingBuilder,
@@ -35,6 +36,7 @@ export type LinerFormalDrawingWorkspacePageProps = {
   kind: LinerDrawingWorkspaceKind;
   draft: LinerDraft;
   projectId?: string;
+  projectName?: string;
   onDraftChange?: (update: LinerDraftUpdate) => void;
   onClose: () => void;
   onBackToSetup: () => void;
@@ -65,6 +67,7 @@ export function LinerFormalDrawingWorkspacePage({
   kind,
   draft,
   projectId,
+  projectName,
   onDraftChange,
   onClose,
   onBackToSetup,
@@ -454,6 +457,14 @@ export function LinerFormalDrawingWorkspacePage({
             {exportMessage ? (
               <p data-testid="formal-drawing-export-message">{exportMessage}</p>
             ) : null}
+          </section>
+
+          <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-report-export-title">
+            <LinerRoadExportControls
+              draft={draft}
+              projectName={projectName ?? projectId ?? "liner"}
+              testIdPrefix="formal-drawing-road-export"
+            />
           </section>
 
           <section className="liner-formal-workspace-panel" aria-labelledby="formal-drawing-diagnostics-title">

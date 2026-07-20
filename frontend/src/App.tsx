@@ -881,6 +881,7 @@ export function App() {
     return (
       <LinerPreviewPage
         draft={linerDraft}
+        projectName={project.project.name || project.project.id}
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
@@ -909,6 +910,7 @@ export function App() {
         kind={drawingWorkspaceKind}
         draft={linerDraft}
         projectId={project.project.id}
+        projectName={project.project.name || project.project.id}
         onDraftChange={commitLinerDraft}
         onClose={() => navigatePro("/pro")}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}

@@ -1935,6 +1935,15 @@ export const ja = {
       bounds: (minX: number, maxX: number, minY: number, maxY: number) =>
         `X ${minX.toFixed(2)} - ${maxX.toFixed(2)} / Y ${minY.toFixed(2)} - ${maxY.toFixed(2)}`,
     },
+    reportExport: {
+      sectionTitle: "計算書・CSV出力",
+      exportHtml: "HTML計算書を出力",
+      exportCsv: "CSVを出力",
+      successHtml: "HTML計算書をダウンロードしました。",
+      successCsv: "CSVファイルをダウンロードしました。",
+      blockedErrors: "エラー診断があるため出力できません。",
+      blockedStaleRevision: "計算結果が古いため出力できません。再計算後に再度お試しください。",
+    },
     mappingReview: {
       title: "マッピング確認",
       lead: "現在の下書きから生成したフレームモデルを確認してからプロジェクトへ反映します。",

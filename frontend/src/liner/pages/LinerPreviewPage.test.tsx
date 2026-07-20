@@ -120,4 +120,37 @@ describe("LinerPreviewPage", () => {
 
     expect(document.querySelector("[data-testid=liner-preview-formal-drawing-notice]")).toBeNull();
   });
+
+  it("renders road export controls and downloads HTML report (D06-C05)", () => {
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:mock-report");
+    const revokeObjectURL = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+
+    render(
+      <LinerPreviewPage
+        draft={createDefaultLinerDraft()}
+        projectName="preview-project"
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onBackToSetup={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=liner-preview-road-export-html]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=liner-preview-road-export-csv]")).not.toBeNull();
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-preview-road-export-html]") as HTMLButtonElement).click();
+    });
+
+    expect(createObjectURL).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(document.querySelector("[data-testid=liner-preview-road-export-message]")?.textContent).toContain(
+      ja.liner.reportExport.successHtml,
+    );
+
+    createObjectURL.mockRestore();
+    revokeObjectURL.mockRestore();
+    clickSpy.mockRestore();
+  });
 });
