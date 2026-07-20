@@ -4040,6 +4040,34 @@ button:disabled {
   font-weight: 700;
 }
 
+.liner-preview-formal-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin: 0 1.25rem 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #c5d4f0;
+  border-radius: 8px;
+  background: #f3f7ff;
+  color: #1a2b4a;
+}
+
+.liner-preview-formal-notice p {
+  margin: 0;
+  flex: 1 1 16rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.liner-preview-formal-notice button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
 .liner-preview-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);

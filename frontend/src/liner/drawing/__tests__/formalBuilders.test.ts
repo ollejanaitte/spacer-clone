@@ -551,4 +551,86 @@ describe("formal drawing builders (redline)", () => {
     expect(crownPolyline).not.toBeNull();
     expect(flatPolyline).not.toBe(crownPolyline);
   });
+
+  it("marks widening band row unavailable for every station (D05-C05)", () => {
+    const output = createProfileDrawingBuilder().build({ result: intermediate, settings });
+    const bandViewport = output.sheet.viewports[1]!;
+    const bandTexts = collectPaperText(bandViewport);
+    const wideningValues = bandTexts.filter((text) => text.id.startsWith("band-value-widening-"));
+
+    expect(wideningValues.length).toBe(intermediate.stations.entries.length);
+    expect(
+      wideningValues.every((text) => text.value === ja.liner.formalDrawing.bandRows.unavailable),
+    ).toBe(true);
+    expect(
+      bandTexts.some((text) => text.value === ja.liner.formalDrawing.bandRows.widening),
+    ).toBe(true);
+  });
+
+  it("exposes crossfall values in profile band rows (D05 plan)", () => {
+    const output = createProfileDrawingBuilder().build({ result: intermediate, settings });
+    const bandTexts = collectPaperText(output.sheet.viewports[1]!);
+    const crossfallValues = bandTexts.filter((text) => text.id.startsWith("band-value-crossfall-"));
+
+    expect(crossfallValues.length).toBeGreaterThan(0);
+    expect(
+      crossfallValues.every((text) => text.value !== ja.liner.formalDrawing.bandRows.unavailable),
+    ).toBe(true);
+    expect(bandTexts.some((text) => text.value === ja.liner.formalDrawing.bandRows.crossfall)).toBe(true);
+  });
+
+  it("renders vertical curve indicators in profile band when vertical segments exist", () => {
+    const draft = createDefaultLinerDraft();
+    const verticalAlignment = draft.verticalAlignment!;
+    draft.verticalAlignment = {
+      id: verticalAlignment.id,
+      elements: [
+        {
+          type: "grade",
+          id: "VG1",
+          startStation: 0,
+          endStation: 40,
+          startElevation: 10,
+          grade: 0.02,
+          length: 40,
+        },
+        {
+          type: "parabolic",
+          id: "VP1",
+          startStation: 40,
+          endStation: 80,
+          startElevation: 10.8,
+          startGrade: 0.02,
+          endGrade: -0.01,
+          length: 40,
+        },
+        {
+          type: "grade",
+          id: "VG2",
+          startStation: 80,
+          endStation: 100,
+          startElevation: 11,
+          grade: -0.01,
+          length: 20,
+        },
+      ],
+    };
+    const vclResult = buildIntermediateResult(draft);
+    const vclSettings = createDrawingSettingsFromDraft(vclResult, undefined);
+    const output = createProfileDrawingBuilder().build({ result: vclResult, settings: vclSettings });
+    const bandViewport = output.sheet.viewports[1];
+    expect(bandViewport).toBeDefined();
+    const bandPrimitives = collectPrimitives(bandViewport!);
+
+    expect(
+      bandPrimitives.some(
+        (primitive) => primitive.kind === "polyline" && primitive.id.startsWith("band-vc-baseline-"),
+      ),
+    ).toBe(true);
+    expect(
+      bandPrimitives.some(
+        (primitive) => primitive.kind === "text" && primitive.id.startsWith("band-vc-pvi-"),
+      ),
+    ).toBe(true);
+  });
 });
