@@ -16,7 +16,7 @@ async function openLinerSetup(page: Page) {
 }
 
 test.describe("P4-D05 review diagrams and utilities UI", () => {
-  test("review tab shows bridge layout only without confirmation drawing canvas (D05-C01)", async ({
+  test("P4-E2E-05: review tab shows bridge layout only without confirmation drawing canvas (D05-C01)", async ({
     page,
   }) => {
     await openLinerSetup(page);

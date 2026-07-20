@@ -62,7 +62,7 @@ async function saveProjectJson(page: Page, savedPath: string) {
   await download.saveAs(savedPath);
 }
 
-test.describe("P4-D01 multi-alignment and line management", () => {
+test.describe("P4-D01 multi-alignment and line management (P4-E2E-01)", () => {
   test.beforeAll(() => {
     mkdirSync(OUT_DIR, { recursive: true });
   });
