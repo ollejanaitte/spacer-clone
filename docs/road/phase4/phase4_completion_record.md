@@ -21,7 +21,7 @@
 | P4-D05 | Review Diagrams and Utilities UI | #161 | `206b81d` | COMPLETE |
 | P4-D06 | Reports and CSV | #162 | `1e2e099` | COMPLETE |
 | P4-D07 | Persistence / Legacy / Migration | #163 | `0fb30fb` | COMPLETE |
-| P4-D08 | E2E and Final Verification | (pending) | (pending) | COMPLETE (candidate) |
+| P4-D08 | E2E and Final Verification | #164 | (squash merge on main) | COMPLETE (candidate) |
 
 ---
 
@@ -34,7 +34,7 @@
 5. #161 — P4-D05 review / formal drawing UI
 6. #162 — P4-D06 reports / CSV
 7. #163 — P4-D07 persistence / migration
-8. (pending) — P4-D08 E2E and final verification
+8. #164 — P4-D08 E2E and final verification
 
 **Branch (D08):** `feat/phase4-p4-d08-e2e-final-verification`
 **Baseline:** `0fb30fb` (main = origin/main at D08 start)
@@ -52,7 +52,7 @@
 | `206b81d` | P4-D05 |
 | `1e2e099` | P4-D06 |
 | `0fb30fb` | P4-D07 |
-| (pending) | P4-D08 |
+| (squash merge on main) | P4-D08 |
 
 ---
 
@@ -121,5 +121,5 @@
 ## Supervisor action
 
 - [ ] Review `phase4_final_verification.md`
-- [ ] Approve PR # (D08)
+- [ ] Approve PR #164 (D08)
 - [ ] Issue final Phase 4 COMPLETE verdict (remove "candidate")
