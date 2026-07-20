@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Download, type Page } from "@playwright/test";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -64,6 +64,25 @@ async function saveProjectJson(page: Page, savedPath: string) {
   await download.saveAs(savedPath);
 }
 
+async function collectCsvDownloads(page: Page, trigger: () => Promise<void>): Promise<Download[]> {
+  const downloads: Download[] = [];
+  const listener = (download: Download) => {
+    downloads.push(download);
+  };
+  page.on("download", listener);
+  try {
+    await trigger();
+    await expect(page.locator("[data-testid=liner-preview-road-export-message]")).toContainText(
+      "CSVファイルをダウンロードしました",
+      { timeout: 15000 },
+    );
+    await page.waitForTimeout(500);
+  } finally {
+    page.off("download", listener);
+  }
+  return downloads;
+}
+
 async function ensureDistinctOffsetLines(page: Page): Promise<{ leftLineId: string; rightLineId: string }> {
   await page.locator("[data-testid=liner-setup-tab-line]").click();
   const lineRows = page.locator("[data-testid^=liner-line-row-OL-]");
@@ -85,9 +104,50 @@ async function ensureDistinctOffsetLines(page: Page): Promise<{ leftLineId: stri
   return { leftLineId, rightLineId };
 }
 
-test.describe("P4-D02 LDIST utilities", () => {
+test.describe("P4-D02 LDIST utilities (P4-E2E-02)", () => {
   test.beforeAll(() => {
     mkdirSync(OUT_DIR, { recursive: true });
+  });
+
+  test("P4-E2E-02: LDIST results visible and CSV download includes ldist_results.csv", async ({ page }) => {
+    test.setTimeout(180000);
+    await openLinerSetup(page);
+    const { leftLineId, rightLineId } = await ensureDistinctOffsetLines(page);
+
+    await page.locator("[data-testid=liner-setup-tab-utilities]").click();
+    await page.locator("[data-testid=ldist-job-add]").click();
+    const jobRow = page.locator("[data-testid^=ldist-job-row-]").first();
+    const jobId = ((await jobRow.getAttribute("data-testid")) ?? "").replace("ldist-job-row-", "");
+    expect(jobId.length).toBeGreaterThan(0);
+
+    await page.locator(`[data-testid=ldist-pair-from-${jobId}-0]`).selectOption(leftLineId);
+    await page.locator(`[data-testid=ldist-pair-to-${jobId}-0]`).selectOption(rightLineId);
+    await expect(page.locator("[data-testid=ldist-result-row]").first()).toBeVisible({ timeout: 15000 });
+
+    await page.locator("[data-testid=open-liner-preview]").click();
+    await expect(page.locator("[data-testid=liner-preview-page]")).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("[data-testid=liner-preview-road-export-csv]")).toBeVisible();
+
+    const downloads = await collectCsvDownloads(page, async () => {
+      await page.locator("[data-testid=liner-preview-road-export-csv]").click();
+    });
+    expect(downloads.length).toBeGreaterThan(0);
+
+    const csvDir = join(OUT_DIR, "csv-export");
+    mkdirSync(csvDir, { recursive: true });
+    let ldistCsvFound = false;
+    for (const [index, download] of downloads.entries()) {
+      const fileName = download.suggestedFilename();
+      const targetPath = join(csvDir, fileName || `export-${index}.csv`);
+      await download.saveAs(targetPath);
+      const content = readFileSync(targetPath, "utf8");
+      if (fileName.includes("ldist_results") || content.includes("jobId")) {
+        ldistCsvFound = true;
+        expect(content).toContain(jobId);
+        expect(content).toContain("jobId");
+      }
+    }
+    expect(ldistCsvFound).toBe(true);
   });
 
   test("Mode A/B results, save/reload recalc, and alignment switch", async ({ page }) => {
