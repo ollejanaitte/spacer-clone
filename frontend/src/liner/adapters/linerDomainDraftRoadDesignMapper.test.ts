@@ -11,6 +11,7 @@ import {
   updateLinerVerticalAlignment,
   addLdistJob,
   addHaunchDefinition,
+  addHosoDefinition,
 } from "./linerUiAdapter";
 import { withProjectLinerDraft } from "./linerProjectDraft";
 import { createDefaultProject } from "../../data/defaultProject";
@@ -622,6 +623,42 @@ describe("linerDomainDraftRoadDesignMapper", () => {
     expect(restored.domainDraft.haunchDefinitions).toEqual(domainDraft!.haunchDefinitions);
   });
 
+  it("round-trips hosoDefinitions and sets hosoCapability supported when definitions exist", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-left", offset: -3, elevation: 0, role: "custom" },
+        { id: "OL-right", offset: 3, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addHosoDefinition(draft);
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const domainDraft = project.liner?.domainDraft;
+    expect(domainDraft?.hosoDefinitions).toHaveLength(1);
+
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.schemaVersion).toBe("0.1.0");
+    expect(mapped.document.hosoCapability).toEqual({ state: "supported" });
+
+    const extension = mapped.document.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as { domainDraft: LinerDomainDraftVNext };
+    expect(payload.domainDraft.hosoDefinitions).toHaveLength(1);
+
+    const restored = roadDesignDocumentToDomainDraft(mapped.document);
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) {
+      return;
+    }
+    expect(restored.domainDraft.hosoDefinitions).toEqual(domainDraft!.hosoDefinitions);
+  });
+
   it("reports absent haunchCapability when no definitions are stored", () => {
     const domainDraft = withProjectLinerDraft(
       createDefaultProject(),
@@ -633,5 +670,18 @@ describe("linerDomainDraftRoadDesignMapper", () => {
       return;
     }
     expect(mapped.document.haunchCapability).toEqual({ state: "absent" });
+  });
+
+  it("reports absent hosoCapability when no definitions are stored", () => {
+    const domainDraft = withProjectLinerDraft(
+      createDefaultProject(),
+      createVerticalCrossSectionDraft(),
+    ).liner?.domainDraft;
+    const mapped = domainDraftToRoadDesignDocument(domainDraft!, { createdAt: FIXED_CREATED_AT });
+    expect(mapped.ok).toBe(true);
+    if (!mapped.ok) {
+      return;
+    }
+    expect(mapped.document.hosoCapability).toEqual({ state: "absent" });
   });
 });

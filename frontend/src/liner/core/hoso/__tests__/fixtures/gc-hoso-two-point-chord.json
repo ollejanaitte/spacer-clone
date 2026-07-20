@@ -1,0 +1,37 @@
+{
+  "description": "Two-point — plan chord linear interpolation (§6.5 S5)",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-two-point-chord",
+      "alignmentId": "alignment-1",
+      "family": "two_point",
+      "variant": "two_point_girder_end",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "lateralOffsetM": -5,
+          "thicknessM": 0.2,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "lateralOffsetM": 5,
+          "thicknessM": 0.3,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "pavementThicknessM": 0.25
+  }
+}

@@ -15,6 +15,7 @@ import {
   updateLinerAlignmentElement,
   addLdistJob,
   addHaunchDefinition,
+  addHosoDefinition,
 } from "./linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -629,5 +630,41 @@ describe("liner project draft persistence", () => {
     }
     expect(hydrated.project.liner?.domainDraft?.haunchDefinitions).toEqual(draft.haunchDefinitions);
     expect(linerDraftFromProject(hydrated.project)?.haunchDefinitions).toEqual(draft.haunchDefinitions);
+  });
+
+  it("serializes hosoDefinitions into roadDesignDocument extensions and hydrates on reload", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = updateLinerCrossSectionTemplate(draft, {
+      id: draft.crossSections?.[0]?.id ?? `CS-${draft.alignment.id}`,
+      name: draft.crossSections?.[0]?.name ?? "Test",
+      offsetLines: [
+        { id: "OL-left", offset: -3, elevation: 0, role: "custom" },
+        { id: "OL-right", offset: 3, elevation: 0, role: "custom" },
+      ],
+    });
+    draft = addHosoDefinition(draft);
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.roadDesignDocument?.hosoCapability?.state).toBe("supported");
+    const extension =
+      serialized.project.liner?.roadDesignDocument?.extensions?.[LINER_DOMAIN_DRAFT_GEOMETRY_EXTENSION_KEY];
+    const payload = extension?.json as unknown as {
+      domainDraft: { hosoDefinitions?: typeof draft.hosoDefinitions };
+    };
+    expect(payload.domainDraft.hosoDefinitions).toEqual(draft.hosoDefinitions);
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+    expect(hydrated.project.liner?.domainDraft?.hosoDefinitions).toEqual(draft.hosoDefinitions);
+    expect(linerDraftFromProject(hydrated.project)?.hosoDefinitions).toEqual(draft.hosoDefinitions);
   });
 });

@@ -1,0 +1,35 @@
+{
+  "description": "Longitudinal — linear t(s) between two station anchors",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-longitudinal-linear",
+      "alignmentId": "alignment-1",
+      "family": "longitudinal",
+      "variant": "longitudinal_only",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "thicknessM": 0.2,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "thicknessM": 0.3,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 50,
+    "pavementThicknessM": 0.25
+  }
+}

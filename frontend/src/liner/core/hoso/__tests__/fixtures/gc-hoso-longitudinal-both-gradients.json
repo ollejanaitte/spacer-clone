@@ -1,0 +1,31 @@
+{
+  "description": "Longitudinal both_gradients — §7.3.4 variant",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-longitudinal-both-gradients",
+      "alignmentId": "alignment-1",
+      "family": "longitudinal",
+      "variant": "both_gradients",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "anchor": {
+        "id": "a0",
+        "stationPhysicalDistanceM": 0,
+        "lateralOffsetM": 0,
+        "thicknessM": 0.2,
+        "lineId": "OL-girder"
+      },
+      "longitudinalGradient": 0.001,
+      "transverseGradient": 0,
+      "referenceLineId": "OL-girder"
+    }
+  ],
+  "expected": {
+    "stationPhysicalDistance": 100,
+    "pavementThicknessM": 0.3
+  }
+}

@@ -216,6 +216,74 @@ export type HaunchDefinitionDraft =
       supportSectionToId?: string;
     });
 
+export type HosoTypeFamily = "auto" | "longitudinal" | "transverse" | "two_point" | "three_point";
+
+export interface HosoOffsetBandDraft {
+  id: string;
+  upperLineId: string;
+  lowerLineId: string;
+  minPavementThicknessM?: number;
+}
+
+export interface HosoAnchorDraft {
+  id: string;
+  stationPhysicalDistanceM: number;
+  /** Lateral offset d along section traverse. */
+  lateralOffsetM?: number;
+  /** Pavement thickness at anchor (m). */
+  thicknessM: number;
+  lineId?: string;
+}
+
+export interface HosoDefinitionBase {
+  id: string;
+  alignmentId: string;
+  label?: string;
+  stationRange: { fromM: number; toM: number };
+  offsetBands?: HosoOffsetBandDraft[];
+  referenceLineId?: string;
+  spanId?: string;
+  deckRefId?: string;
+  enabled?: boolean;
+  /** Legacy JIP import marker — fail-closed at validation. */
+  jipType?: number;
+}
+
+export type HosoDefinitionDraft =
+  | (HosoDefinitionBase & {
+      family: "auto";
+      variant: "auto_converge_pipeline";
+    })
+  | (HosoDefinitionBase & {
+      family: "longitudinal";
+      variant: "longitudinal_only";
+      anchors: [HosoAnchorDraft, HosoAnchorDraft];
+    })
+  | (HosoDefinitionBase & {
+      family: "longitudinal";
+      variant: "both_gradients";
+      anchor: HosoAnchorDraft;
+      longitudinalGradient: number;
+      transverseGradient: number;
+      referenceLineId?: string;
+    })
+  | (HosoDefinitionBase & {
+      family: "transverse";
+      variant: "transverse_only";
+      anchors: [HosoAnchorDraft, HosoAnchorDraft];
+      referenceLineId?: string;
+    })
+  | (HosoDefinitionBase & {
+      family: "two_point";
+      variant: "two_point_girder_end";
+      anchors: [HosoAnchorDraft, HosoAnchorDraft];
+    })
+  | (HosoDefinitionBase & {
+      family: "three_point";
+      variant: "three_point_non_collinear";
+      anchors: [HosoAnchorDraft, HosoAnchorDraft, HosoAnchorDraft];
+    });
+
 export interface LinerDomainDraftVNext {
   id: string;
   linerModelId: string;
@@ -229,6 +297,7 @@ export interface LinerDomainDraftVNext {
   drawingSettings?: LinerDrawingSettingsDraft;
   ldistJobs?: LdistJobDraft[];
   haunchDefinitions?: HaunchDefinitionDraft[];
+  hosoDefinitions?: HosoDefinitionDraft[];
   generationSettings: GenerationSettingsDraft;
   sampling: SamplingSettingsDraft;
 }

@@ -11,6 +11,9 @@ import { LdistResultsPanel } from "../components/LdistResultsPanel";
 import { HaunchDefinitionEditor } from "../components/HaunchDefinitionEditor";
 import { HaunchDiagnosticsPanel } from "../components/HaunchDiagnosticsPanel";
 import { HaunchResultsPanel } from "../components/HaunchResultsPanel";
+import { HosoDefinitionEditor } from "../components/HosoDefinitionEditor";
+import { HosoDiagnosticsPanel } from "../components/HosoDiagnosticsPanel";
+import { HosoResultsPanel } from "../components/HosoResultsPanel";
 import { ContinuityDiagnosticsPanel } from "../components/ContinuityDiagnosticsPanel";
 import { CrossfallIntervalEditor } from "../components/CrossfallIntervalEditor";
 import { CrossSectionDiagnosticsPanel } from "../components/CrossSectionDiagnosticsPanel";
@@ -46,6 +49,7 @@ import { validateLinerDraftForCommit } from "../adapters/linerProjectDraft";
 import { buildIntermediateResult } from "../core/pipeline/pipeline";
 import { computeLdistResults } from "../core/ldist";
 import { computeHaunchResults } from "../core/haunch";
+import { computeHosoResults } from "../core/hoso";
 import type { LinerSetupTabId } from "../uiPreparation";
 import { LinerSetupTabs } from "./LinerSetupTabs";
 
@@ -180,6 +184,28 @@ export function LinerEditPage({
       syncedDraft.haunchDefinitions,
       syncedDraft.linerAlignments,
       syncedDraft.crossSections,
+      syncedDraft.activeAlignmentId,
+      syncedDraft.alignment.id,
+      intermediate,
+    ],
+  );
+  const hosoOutput = useMemo(
+    () =>
+      computeHosoResults({
+        definitions: syncedDraft.hosoDefinitions ?? [],
+        intermediate,
+        sourceRevision: intermediate.sourceRevision,
+        linerAlignments: syncedDraft.linerAlignments,
+        activeAlignmentId: syncedDraft.activeAlignmentId ?? syncedDraft.alignment.id,
+        crossSections: syncedDraft.crossSections,
+        crossSlopeIntervals: syncedDraft.crossSlopeIntervals,
+        fallbackAlignmentId: syncedDraft.alignment.id,
+      }),
+    [
+      syncedDraft.hosoDefinitions,
+      syncedDraft.linerAlignments,
+      syncedDraft.crossSections,
+      syncedDraft.crossSlopeIntervals,
       syncedDraft.activeAlignmentId,
       syncedDraft.alignment.id,
       intermediate,
@@ -405,6 +431,13 @@ export function LinerEditPage({
               />
               <HaunchResultsPanel rows={haunchOutput.rows} />
               <HaunchDiagnosticsPanel diagnostics={haunchOutput.diagnostics} />
+              <HosoDefinitionEditor
+                draft={draft}
+                onDraftChange={changeDraft}
+                onCompositionStateChange={reportCompositionState}
+              />
+              <HosoResultsPanel rows={hosoOutput.rows} />
+              <HosoDiagnosticsPanel diagnostics={hosoOutput.diagnostics} />
             </div>
           )}
 

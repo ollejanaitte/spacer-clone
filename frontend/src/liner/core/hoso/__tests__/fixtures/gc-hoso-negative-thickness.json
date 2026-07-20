@@ -1,0 +1,34 @@
+{
+  "description": "Negative thickness rejection (D04-C04)",
+  "draft": {
+    "offsets": [-5],
+    "offsetLineIds": ["OL-girder"],
+    "profileElevation": 0
+  },
+  "definitions": [
+    {
+      "id": "hoso-negative-thickness",
+      "alignmentId": "alignment-1",
+      "family": "longitudinal",
+      "variant": "longitudinal_only",
+      "stationRange": { "fromM": 0, "toM": 100 },
+      "anchors": [
+        {
+          "id": "a1",
+          "stationPhysicalDistanceM": 0,
+          "thicknessM": 0.2,
+          "lineId": "OL-girder"
+        },
+        {
+          "id": "a2",
+          "stationPhysicalDistanceM": 100,
+          "thicknessM": -0.1,
+          "lineId": "OL-girder"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "diagnosticCode": "LINER_HOSO_NEGATIVE_THICKNESS"
+  }
+}

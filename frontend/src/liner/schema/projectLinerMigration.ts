@@ -38,6 +38,7 @@ const FIXED_Z_DRAFT_KEYS = new Set([
   "activeLineId",
   "ldistJobs",
   "haunchDefinitions",
+  "hosoDefinitions",
 ]);
 
 export type MigrateLinerDraftToVNextResult =
@@ -379,6 +380,9 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
       ...(draft.haunchDefinitions?.length
         ? { haunchDefinitions: structuredClone(draft.haunchDefinitions) }
         : {}),
+      ...(draft.hosoDefinitions?.length
+        ? { hosoDefinitions: structuredClone(draft.hosoDefinitions) }
+        : {}),
       generationSettings: {
         defaultMemberGroupKey: "default",
         connectivityMode: "grid_full",
@@ -492,6 +496,9 @@ function migrateFixedZDraftToVNext(draft: BuildIntermediateInput): LinerDomainDr
     ...(draft.ldistJobs?.length ? { ldistJobs: structuredClone(draft.ldistJobs) } : {}),
     ...(draft.haunchDefinitions?.length
       ? { haunchDefinitions: structuredClone(draft.haunchDefinitions) }
+      : {}),
+    ...(draft.hosoDefinitions?.length
+      ? { hosoDefinitions: structuredClone(draft.hosoDefinitions) }
       : {}),
     generationSettings: {
       defaultMemberGroupKey: "default",
