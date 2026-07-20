@@ -3,13 +3,22 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { createSampleImporterProject } from "../../../liner/importer/__tests__/fixtures/sampleProject";
 import { convertImporterToPhase35Draft } from "../../../liner/importer/export/ImporterToPhase35Adapter";
-import { createDefaultLinerDraft } from "../../../liner/adapters/linerUiAdapter";
 import {
+  addHaunchDefinition,
+  addHosoDefinition,
+  addLdistJob,
+  addLinerAlignmentBundle,
+  addLinerOffset,
+  createDefaultLinerDraft,
   updateLinerDrawingSettings,
   updateLinerPiers,
   updateLinerSpans,
 } from "../../../liner/adapters/linerUiAdapter";
-import { withProjectLinerDraft } from "../../../liner/adapters/linerProjectDraft";
+import {
+  hydrateProjectLinerFromPersistence,
+  serializeProjectForPersistence,
+  withProjectLinerDraft,
+} from "../../../liner/adapters/linerProjectDraft";
 import { createDefaultProject } from "../../../data/defaultProject";
 import { roadDesignDocumentToDomainDraft, getActiveAlignmentBundle } from "../../../liner/adapters/linerDomainDraftRoadDesignMapper";
 import { createValidBridgeFrameAnalysisDocument, createValidRoadDesignDocument } from "../../repository/__tests__/fixtures";
@@ -22,6 +31,8 @@ import {
   saveBridgeFrameAnalysisDocument,
   saveRoadDesignDocument,
 } from "../index";
+import { ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION } from "../../contractVersionRegistry";
+import type { RoadDesignDocument } from "../../roadDesignDocument";
 
 const FIXED_CLOCK_PATH = "documents/test";
 
@@ -433,5 +444,84 @@ describe("phase 0 D03 migration integration", () => {
     expect(getActiveAlignmentBundle(restored.domainDraft)!.piers).toEqual(
       getActiveAlignmentBundle(conversion.draft!)!.piers,
     );
+  });
+
+  it("keeps project liner save/load idempotent for P4 payloads (D07-C03)", () => {
+    let draft = addLinerOffset(createDefaultLinerDraft());
+    draft = addLinerAlignmentBundle(draft);
+    draft = addLdistJob(draft, {
+      pairs: [{ fromLineId: "OL-alignment-1-0", toLineId: "OL-alignment-1-1" }],
+    });
+    draft = addHaunchDefinition(draft);
+    draft = addHosoDefinition(draft);
+
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    const firstSave = serializeProjectForPersistence(project);
+    expect(firstSave.ok).toBe(true);
+    if (!firstSave.ok) {
+      return;
+    }
+
+    const firstHydrate = hydrateProjectLinerFromPersistence(firstSave.project);
+    expect(firstHydrate.ok).toBe(true);
+    if (!firstHydrate.ok) {
+      return;
+    }
+
+    const secondSave = serializeProjectForPersistence(firstHydrate.project);
+    expect(secondSave.ok).toBe(true);
+    if (!secondSave.ok) {
+      return;
+    }
+
+    const secondHydrate = hydrateProjectLinerFromPersistence(secondSave.project);
+    expect(secondHydrate.ok).toBe(true);
+    if (!secondHydrate.ok) {
+      return;
+    }
+
+    expect(secondHydrate.project.liner?.domainDraft).toEqual(
+      firstHydrate.project.liner?.domainDraft,
+    );
+    expect(firstSave.project.liner?.roadDesignDocument?.schemaVersion).toBe("0.1.0");
+    expect(secondSave.project.liner?.roadDesignDocument?.schemaVersion).toBe("0.1.0");
+    expect(firstSave.project.liner?.roadDesignDocument?.ldistCapability?.state).toBe("supported");
+    expect(secondSave.project.liner?.roadDesignDocument?.topologyCapability?.state).toBe("supported");
+  });
+
+  it("rejects unapproved RDD schemaVersion bumps during save (D07-C06)", () => {
+    const store = createInMemoryAtomicJsonStore();
+    const document = {
+      ...createValidRoadDesignDocument(),
+      schemaVersion: "0.2.0",
+    } as RoadDesignDocument;
+    const saved = saveRoadDesignDocument(document, "documents/unapproved-bump.json", store);
+    expect(saved.ok).toBe(false);
+    if (saved.ok) {
+      return;
+    }
+    expect(saved.error.code).toBe("validation-failed");
+    expect(ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION).toBe("0.1.0");
+  });
+
+  it("leaves legacy importer source unchanged after target projection (D07-C05)", () => {
+    const sample = createSampleImporterProject();
+    const before = structuredClone(sample);
+    const gateway = createDocumentPersistenceGateway({
+      clock: FIXED_CLOCK,
+      createdAt: "2026-07-16T04:00:00.000Z",
+    });
+
+    const loaded = gateway.loadRoad(sample);
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) {
+      return;
+    }
+
+    const path = `${FIXED_CLOCK_PATH}/legacy-unchanged.json`;
+    expect(gateway.saveRoad(loaded.document, path, { createOnly: true }).ok).toBe(true);
+    expect(sample).toEqual(before);
+    expect(sample.liner).toBeDefined();
+    expect("roadDesignDocument" in (sample.liner ?? {})).toBe(false);
   });
 });

@@ -16,6 +16,7 @@ import {
   addLdistJob,
   addHaunchDefinition,
   addHosoDefinition,
+  addLinerAlignmentBundle,
 } from "./linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -666,5 +667,78 @@ describe("liner project draft persistence", () => {
     }
     expect(hydrated.project.liner?.domainDraft?.hosoDefinitions).toEqual(draft.hosoDefinitions);
     expect(linerDraftFromProject(hydrated.project)?.hosoDefinitions).toEqual(draft.hosoDefinitions);
+  });
+
+  it("strips top-level and liner drawingDocument from persisted JSON (D07-C01)", () => {
+    const project = withProjectLinerDraft(createDefaultProject(), createDrawingSettingsDraft());
+    const withDrawingDocument = {
+      ...project,
+      drawingDocument: { documentKind: "drawing", sheets: [] },
+      liner: {
+        ...project.liner!,
+        drawingDocument: { documentKind: "drawing", sheets: [] },
+      },
+    } as typeof project & {
+      drawingDocument?: unknown;
+      liner: (typeof project.liner & { drawingDocument?: unknown }) | undefined;
+    };
+
+    const serialized = serializeProjectForPersistence(withDrawingDocument);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    const persisted = serialized.project as Record<string, unknown>;
+    const persistedLiner = persisted.liner as Record<string, unknown> | undefined;
+    expect(persisted.drawingDocument).toBeUndefined();
+    expect(persistedLiner?.drawingDocument).toBeUndefined();
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    expect(serialized.project.liner?.draft).toBeUndefined();
+    expect(serialized.project.liner?.roadDesignDocument).toBeDefined();
+  });
+
+  it("does not dual-write domainDraft when serializing in-memory working copy (D07-C05)", () => {
+    const project = withProjectLinerDraft(createDefaultProject(), addLinerOffset(createDefaultLinerDraft()));
+    expect(project.liner?.domainDraft).toBeDefined();
+
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    expect(serialized.project.liner?.draft).toBeUndefined();
+    expect(serialized.project.liner?.roadDesignDocument?.documentKind).toBe("road-design");
+  });
+
+  it("round-trips multi-alignment domainDraft through serialize and hydrate (D07-C02)", () => {
+    let draft = createDefaultLinerDraft();
+    draft = addLinerAlignmentBundle(draft);
+    const project = withProjectLinerDraft(createDefaultProject(), draft);
+    expect(project.liner?.domainDraft?.alignments).toHaveLength(2);
+
+    const serialized = serializeProjectForPersistence(project);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+
+    expect(serialized.project.liner?.roadDesignDocument?.topologyCapability).toEqual({
+      state: "supported",
+    });
+
+    const hydrated = hydrateProjectLinerFromPersistence(serialized.project);
+    expect(hydrated.ok).toBe(true);
+    if (!hydrated.ok) {
+      return;
+    }
+
+    expect(hydrated.project.liner?.domainDraft?.alignments).toHaveLength(2);
+    expect(hydrated.project.liner?.domainDraft?.activeAlignmentId).toEqual(
+      project.liner?.domainDraft?.activeAlignmentId,
+    );
+    expect(linerDraftFromProject(hydrated.project)?.linerAlignments).toHaveLength(2);
   });
 });
