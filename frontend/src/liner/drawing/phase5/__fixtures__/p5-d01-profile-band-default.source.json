@@ -1,0 +1,8 @@
+{
+  "fixtureId": "p5-d01-profile-band-default",
+  "sourceAuthority": "phase5-freeze-default-liner-draft",
+  "draftFactory": "createDefaultLinerDraft",
+  "routeKind": "profile",
+  "planType": "not_applicable",
+  "notes": "Representative P5-D01 source fixture for profile and band DrawingDocument route validation."
+}

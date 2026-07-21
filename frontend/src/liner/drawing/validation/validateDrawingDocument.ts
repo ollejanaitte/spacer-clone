@@ -70,6 +70,16 @@ function validatePrimitive(primitive: DrawingPrimitive, source: string): Drawing
         : [invalidValueDiagnostic("DRAWING_TEXT_INVALID_HEIGHT", "Text height must be a finite positive number.", source)]),
     ];
   }
+  if (primitive.kind === "dimension") {
+    return [
+      ...validatePoint(primitive.start, `${source}.start`),
+      ...validatePoint(primitive.end, `${source}.end`),
+      ...(Number.isFinite(primitive.offset)
+        ? []
+        : [invalidValueDiagnostic("DRAWING_DIMENSION_INVALID_OFFSET", "Dimension offset must be finite.", source)]),
+      ...(primitive.textPosition ? validatePoint(primitive.textPosition, `${source}.textPosition`) : []),
+    ];
+  }
   return [
     invalidValueDiagnostic("DRAWING_UNSUPPORTED_PRIMITIVE", `Unsupported primitive: ${(primitive as DrawingPrimitive).kind}`, source),
   ];

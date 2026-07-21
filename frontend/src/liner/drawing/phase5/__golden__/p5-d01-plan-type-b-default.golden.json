@@ -1,0 +1,6 @@
+{
+  "fixtureId": "p5-d01-plan-type-b-default",
+  "goldenAuthority": "P5-D01 manifest expectedPreview and expectedDxf fields",
+  "drawingDocumentPolicy": "preview, print, and DXF share one runtime DrawingDocument",
+  "updateRule": "Only update with a P5-D01+ completion record that explains source, preview, and DXF impact."
+}

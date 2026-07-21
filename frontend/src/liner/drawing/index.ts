@@ -17,3 +17,4 @@ export * from "./sheet/multiPageDocument";
 export * from "./formalDrawingWorkspaceDocuments";
 export * from "./print/printFormalDrawing";
 export * from "./print/formalDrawingPrintStyles";
+export * from "./phase5/formalDrawingFixtureManifest";

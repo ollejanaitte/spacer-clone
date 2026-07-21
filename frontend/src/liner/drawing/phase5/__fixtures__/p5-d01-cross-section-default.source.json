@@ -1,0 +1,8 @@
+{
+  "fixtureId": "p5-d01-cross-section-default",
+  "sourceAuthority": "phase5-freeze-default-liner-draft",
+  "draftFactory": "createDefaultLinerDraft",
+  "routeKind": "cross-section",
+  "planType": "not_applicable",
+  "notes": "Representative P5-D01 source fixture for cross-section DrawingDocument route validation."
+}
