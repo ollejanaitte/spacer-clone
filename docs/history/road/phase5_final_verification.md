@@ -1,7 +1,7 @@
 # Phase 5 Final Verification
 
 **Date:** 2026-07-22
-**Status:** COMPLETE CANDIDATE
+**Status:** COMPLETE
 **Phase:** Road Formal Drawing Completion and JIP-LINER Parity
 **Baseline:** `76cb9f738fbf49bebd51672083c874c4da85db65`
 
@@ -26,13 +26,13 @@ P5-D05 does not add new drawing semantics, persistence behavior, schema versions
 | P5-D02 | #170 | `feca3bf` | COMPLETE |
 | P5-D03 | #171 | `612f8b4` | COMPLETE |
 | P5-D04 | #172 | `76cb9f7` | COMPLETE |
-| P5-D05 | pending | pending | COMPLETE CANDIDATE |
+| P5-D05 | #173 | `3f72d22` | COMPLETE |
 
 ## Completion Gate Evidence
 
 | Gate | Evidence | Result |
 | --- | --- | --- |
-| P5-D01..P5-D05 sequence | P5-D01..D04 merged; P5-D05 final verification candidate created from D04 squash commit. | PASS |
+| P5-D01..P5-D05 sequence | P5-D01..D05 merged by squash PR. | PASS |
 | Schema version policy | No schemaVersion change in Phase 5 implementation. | PASS |
 | Payload version policy | No payloadVersion change in Phase 5 implementation. | PASS |
 | Runtime `DrawingDocument` only | P5-D04 verifies no generated `DrawingDocument` persistence. | PASS |
@@ -112,6 +112,6 @@ P5_D01_VERDICT: COMPLETE
 P5_D02_VERDICT: COMPLETE
 P5_D03_VERDICT: COMPLETE
 P5_D04_VERDICT: COMPLETE
-P5_D05_VERDICT: COMPLETE_CANDIDATE
-PHASE5_VERDICT: COMPLETE_CANDIDATE
+P5_D05_VERDICT: COMPLETE
+PHASE5_VERDICT: COMPLETE
 ```

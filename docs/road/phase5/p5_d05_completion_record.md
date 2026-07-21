@@ -1,7 +1,7 @@
 # P5-D05 Completion Record
 
 **Date:** 2026-07-22
-**Status:** COMPLETE CANDIDATE
+**Status:** COMPLETE
 **Phase:** Road Formal Drawing Completion and JIP-LINER Parity
 **D-step:** P5-D05 Visual E2E and Phase 5 Final Verification
 
@@ -82,10 +82,10 @@ The evidence covers both required viewport sizes:
 
 ## Next Step
 
-Phase 5 implementation is complete after this P5-D05 record is squash-merged. The next phase must start from the final merged `origin/main` and must not reopen Phase 5 scope without a new planning record.
+Phase 5 implementation is complete after PR #173 (`3f72d22`) and this final ledger update. The next phase must start from the final merged `origin/main` and must not reopen Phase 5 scope without a new planning record.
 
 ## Verdict
 
 ```
-P5_D05_VERDICT: COMPLETE_CANDIDATE
+P5_D05_VERDICT: COMPLETE
 ```
