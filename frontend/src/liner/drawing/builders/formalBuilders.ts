@@ -73,7 +73,10 @@ import {
   createBridgeLayoutGeometryLayer,
   hasBridgeLayout,
 } from "./bridgeLayoutDrawing";
-import { appendAlignmentSegmentDimensions } from "../dimensions/alignmentSegmentDimensions";
+import {
+  appendAlignmentSegmentDimensions,
+  appendPlanLineSpacingDimensions,
+} from "../dimensions/alignmentSegmentDimensions";
 import { appendPlanCoordinateTablePaper } from "../tables/planCoordinateTable";
 
 function expandBounds(bounds: Bounds2, paddingX: number, paddingY: number): Bounds2 {
@@ -423,6 +426,7 @@ function planGeometryLayer(context: BuildDrawingContext): DrawingLayer {
   }
   appendPlanCurveBoundaryMarkers(layer, context.result);
   appendAlignmentSegmentDimensions(layer, context.result);
+  appendPlanLineSpacingDimensions(layer, context.result);
   return layer;
 }
 
@@ -1462,6 +1466,14 @@ function buildCrossSectionViewport(
       value: `${ja.liner.fields.crossfallPivotDistance}: ${section.crossfall.pivotDistance.toFixed(2)}`,
       heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
     });
+    geometryLayer.primitives.push({
+      kind: "text",
+      id: `cross-section-skew-angle-${section.id}`,
+      position: createPoint2(section.rightEdge.offset, section.rightEdge.z + 1.5),
+      value: `${ja.liner.formalDrawing.planBandRows.skewAngle} 90.00°`,
+      heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
+      alignment: "right",
+    });
     for (const point of section.points) {
       geometryLayer.primitives.push({
         kind: "text",
@@ -1471,6 +1483,7 @@ function buildCrossSectionViewport(
         heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
       });
     }
+    appendCrossSectionDimensions(geometryLayer, section);
   }
 
   const centerlinePadding = 1.5;
@@ -1500,6 +1513,9 @@ function buildCrossSectionViewport(
     if (primitive.kind === "text") {
       return [primitive.position];
     }
+    if (primitive.kind === "dimension") {
+      return [primitive.start, primitive.end, primitive.textPosition ?? primitive.start];
+    }
     return [];
   });
   const rawBounds = boundsFromPoints2(primitivePoints);
@@ -1513,6 +1529,30 @@ function buildCrossSectionViewport(
     transform: fitTransform(modelBounds, paperBounds),
     layers: [centerlineLayer, geometryLayer],
   };
+}
+
+function appendCrossSectionDimensions(layer: DrawingLayer, section: SectionSliceResult): void {
+  const points = [...section.points].sort(
+    (left, right) => left.offset - right.offset || left.id.localeCompare(right.id),
+  );
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const startPoint = points[index]!;
+    const endPoint = points[index + 1]!;
+    const widthM = Math.abs(endPoint.offset - startPoint.offset);
+    if (!(widthM > 0)) {
+      continue;
+    }
+    const textY = Math.min(startPoint.z, endPoint.z) - 0.75;
+    layer.primitives.push({
+      kind: "dimension",
+      id: `cross-section-section-dimension-${section.id}-${startPoint.id}-${endPoint.id}`,
+      start: createPoint2(startPoint.offset, startPoint.z),
+      end: createPoint2(endPoint.offset, endPoint.z),
+      offset: -0.75,
+      text: widthM.toFixed(2),
+      textPosition: createPoint2((startPoint.offset + endPoint.offset) / 2, textY),
+    });
+  }
 }
 
 function buildProfileViewports(context: BuildDrawingContext): DrawingViewport[] {
