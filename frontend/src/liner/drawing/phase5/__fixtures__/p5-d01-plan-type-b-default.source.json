@@ -1,0 +1,8 @@
+{
+  "fixtureId": "p5-d01-plan-type-b-default",
+  "sourceAuthority": "phase5-freeze-default-liner-draft",
+  "draftFactory": "createDefaultLinerDraft",
+  "routeKind": "plan",
+  "planType": "centerline_only",
+  "notes": "Representative P5-D01 source fixture for Plan Type B centerline and coordinate-table DrawingDocument route validation."
+}

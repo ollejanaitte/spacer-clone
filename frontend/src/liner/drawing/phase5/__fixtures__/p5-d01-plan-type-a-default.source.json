@@ -1,0 +1,8 @@
+{
+  "fixtureId": "p5-d01-plan-type-a-default",
+  "sourceAuthority": "phase5-freeze-default-liner-draft",
+  "draftFactory": "createDefaultLinerDraft",
+  "routeKind": "plan",
+  "planType": "road_shape",
+  "notes": "Representative P5-D01 source fixture for Plan Type A road-shape DrawingDocument route validation."
+}
