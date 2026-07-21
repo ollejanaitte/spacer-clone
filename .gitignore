@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 node_modules/
 frontend/dist/
+frontend/.tmp-runtime/
 
 # local/mac/python
 .DS_Store
