@@ -26,7 +26,10 @@ import {
   bridgeLayoutGeometryPoints,
   hasBridgeLayout,
 } from "./bridgeLayoutDrawing";
-import { appendAlignmentSegmentDimensions } from "../dimensions/alignmentSegmentDimensions";
+import {
+  appendAlignmentSegmentDimensions,
+  appendPlanLineSpacingDimensions,
+} from "../dimensions/alignmentSegmentDimensions";
 import { appendPlanCoordinateTablePaper } from "../tables/planCoordinateTable";
 import type { BuildDrawingContext, DrawingBuilderOutput } from "./types";
 import { getPaperForKind } from "./types";
@@ -61,6 +64,7 @@ export function buildCenterlineOnlyPlanOutput(context: BuildDrawingContext): Dra
 
   const geometryLayer = buildCenterlineGeometryLayer(context.result, toLocal);
   appendAlignmentSegmentDimensions(geometryLayer, context.result, toLocal);
+  appendPlanLineSpacingDimensions(geometryLayer, context.result, toLocal);
   const annotationLayer = buildCenterlineAnnotationLayer(context.result, toLocal);
   const coordinateLayer = createEmptyDrawingLayer(
     "plan-coordinate-table-layer",
