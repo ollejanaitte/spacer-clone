@@ -75,6 +75,9 @@ export function buildFormalDrawingDxfFileName(
 }
 
 export function canExportFormalDrawingDxf(document: DrawingDocument): boolean {
+  if (document.diagnostics.some((diagnostic) => diagnostic.severity === "error")) {
+    return false;
+  }
   for (const sheet of document.sheets) {
     for (const viewport of sheet.viewports) {
       for (const layer of viewport.layers) {
