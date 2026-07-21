@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node"],
     "rootDir": "./src",
-    "outDir": "./.tmp/parity-cli"
+    "outDir": "./.tmp-runtime/parity-cli"
   },
   "include": ["src/bridgeDefinition/semanticParity/parityCli.ts", "src/bridgeDefinition/semanticParity/parityCli.entry.ts"]
 }

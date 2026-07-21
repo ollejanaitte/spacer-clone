@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "parity:cli:build": "tsc -p tsconfig.parity-cli.json",
-    "parity:cli": "npm run parity:cli:build && node ./.tmp/parity-cli/bridgeDefinition/semanticParity/parityCli.entry.js",
+    "parity:cli": "npm run parity:cli:build && node ./.tmp-runtime/parity-cli/bridgeDefinition/semanticParity/parityCli.entry.js",
     "lint": "tsc -b --pretty false && node ../scripts/check_frontend_source_hygiene.mjs src && node ../scripts/check_frontend_japanese_strings.mjs src",
     "test": "vitest run",
     "test:parity-cli": "vitest run src/bridgeDefinition/__tests__/parityCli.test.ts",

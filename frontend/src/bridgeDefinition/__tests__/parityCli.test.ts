@@ -1,6 +1,6 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { execFileSync, spawnSync } from "node:child_process";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -13,13 +13,39 @@ import packageJson from "../../../package.json";
 const testDir = dirname(fileURLToPath(import.meta.url));
 const frontendRoot = resolve(testDir, "../../..");
 const repoRoot = resolve(frontendRoot, "..");
-const builtCli = resolve(frontendRoot, ".tmp/parity-cli/bridgeDefinition/semanticParity/parityCli.entry.js");
 const exampleProjectPath = resolve(repoRoot, "examples/project.json");
 
 const tempDirs: string[] = [];
+let buildOutputDir: string | undefined;
+let builtCli: string | undefined;
 
 beforeAll(() => {
-  execFileSync("npm", ["run", "parity:cli:build"], { cwd: frontendRoot, stdio: "inherit" });
+  buildOutputDir = mkdtempSync(join(tmpdir(), "spacer-parity-cli-build-"));
+  execFileSync(
+    "npx",
+    [
+      "tsc",
+      "-p",
+      "tsconfig.parity-cli.json",
+      "--outDir",
+      buildOutputDir,
+      "--tsBuildInfoFile",
+      join(buildOutputDir, "tsconfig.parity-cli.tsbuildinfo"),
+    ],
+    { cwd: frontendRoot, stdio: "inherit" },
+  );
+  builtCli = resolve(buildOutputDir, "bridgeDefinition/semanticParity/parityCli.entry.js");
+  if (!existsSync(builtCli)) {
+    throw new Error(`Built parity CLI entrypoint was not found: ${builtCli}`);
+  }
+});
+
+afterAll(() => {
+  if (buildOutputDir) {
+    rmSync(buildOutputDir, { recursive: true, force: true });
+    buildOutputDir = undefined;
+    builtCli = undefined;
+  }
 });
 
 afterEach(() => {
@@ -48,6 +74,9 @@ function loadExampleProject(): ProjectModel {
 }
 
 function runBuiltCli(args: string[]) {
+  if (!builtCli) {
+    throw new Error("Built parity CLI entrypoint is not available.");
+  }
   return spawnSync("node", [builtCli, ...args], {
     cwd: frontendRoot,
     encoding: "utf8",
