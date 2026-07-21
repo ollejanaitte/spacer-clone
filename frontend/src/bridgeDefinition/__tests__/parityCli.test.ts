@@ -80,6 +80,10 @@ function runBuiltCli(args: string[]) {
   return spawnSync("node", [builtCli, ...args], {
     cwd: frontendRoot,
     encoding: "utf8",
+    env: {
+      ...process.env,
+      NODE_PATH: resolve(frontendRoot, "node_modules"),
+    },
   });
 }
 
