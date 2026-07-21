@@ -44,7 +44,14 @@ export function generateUuid(randomBytesSource?: RandomBytesSource): UuidString 
   }
 
   if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-    return generateUuidFromBytesSource(crypto);
+    return generateUuidFromBytesSource({
+      getRandomValues(bytes) {
+        const generated = new Uint8Array(bytes.byteLength);
+        crypto.getRandomValues(generated);
+        bytes.set(generated);
+        return bytes;
+      },
+    });
   }
 
   throw new UuidGenerationUnavailableError();
