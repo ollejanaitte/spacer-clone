@@ -1,7 +1,7 @@
 # Phase 5 Completion Record
 
 **Date:** 2026-07-22
-**Status:** COMPLETE CANDIDATE
+**Status:** COMPLETE
 **Phase:** Road Formal Drawing Completion and JIP-LINER Parity
 
 ## Authoritative Inputs
@@ -39,13 +39,13 @@ Phase 5 completed the approved Road Formal Drawing scope:
 | P5-D02 | JIP section 8 Drawing Semantics Completion | #170 | `feca3bf` | COMPLETE |
 | P5-D03 | Preview / Print / DXF Parity and CAD Gate | #171 | `612f8b4` | COMPLETE |
 | P5-D04 | Persistence, Reload, Migration, and Fail-Closed Hardening | #172 | `76cb9f7` | COMPLETE |
-| P5-D05 | Visual E2E and Phase 5 Final Verification | pending | pending | COMPLETE CANDIDATE |
+| P5-D05 | Visual E2E and Phase 5 Final Verification | #173 | `3f72d22` | COMPLETE |
 
 ## Completion Gate
 
 | Gate | Result |
 | --- | --- |
-| P5-D01..P5-D05 complete | PASS after P5-D05 merge |
+| P5-D01..P5-D05 complete | PASS |
 | JIP section 8 supported scope complete | PASS |
 | AC-RD / OD-01..19 resolution honored | PASS |
 | AC-RD-16..20 visual evidence | PASS |
@@ -102,5 +102,5 @@ Phase 5 does not claim:
 ## Final Verdict
 
 ```
-PHASE5_VERDICT: COMPLETE_CANDIDATE
+PHASE5_VERDICT: COMPLETE
 ```
