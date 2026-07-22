@@ -5,16 +5,19 @@ export type CadLayerPresetId =
   | "PLAN_OFFSET"
   | "PLAN_STATION"
   | "PLAN_TEXT"
+  | "PLAN_CURVE"
   | "PLAN_BAND"
   | "PROFILE_GRID"
   | "PROFILE_DESIGN"
   | "PROFILE_GROUND"
   | "PROFILE_TEXT"
+  | "PROFILE_VCURVE"
   | "PROFILE_BAND"
   | "CROSS_SHAPE"
   | "CROSS_CENTER"
   | "CROSS_DIM"
   | "CROSS_TEXT"
+  | "CROSS_SLOPE"
   | "SHEET_FRAME"
   | "SHEET_TEXT";
 
@@ -63,6 +66,14 @@ export const CAD_LAYER_PRESETS: Record<CadLayerPresetId, CadLayerPreset> = {
     lineweight: 25,
     strokeWidthMm: 0.25,
   },
+  PLAN_CURVE: {
+    id: "PLAN_CURVE",
+    name: "PLAN_CURVE",
+    aciColor: 5,
+    lineType: "CENTER",
+    lineweight: 25,
+    strokeWidthMm: 0.25,
+  },
   PLAN_BAND: {
     id: "PLAN_BAND",
     name: "PLAN_BAND",
@@ -100,6 +111,14 @@ export const CAD_LAYER_PRESETS: Record<CadLayerPresetId, CadLayerPreset> = {
     name: "PROFILE_TEXT",
     aciColor: 7,
     lineType: "CONTINUOUS",
+    lineweight: 25,
+    strokeWidthMm: 0.25,
+  },
+  PROFILE_VCURVE: {
+    id: "PROFILE_VCURVE",
+    name: "PROFILE_VCURVE",
+    aciColor: 5,
+    lineType: "CENTER",
     lineweight: 25,
     strokeWidthMm: 0.25,
   },
@@ -143,6 +162,14 @@ export const CAD_LAYER_PRESETS: Record<CadLayerPresetId, CadLayerPreset> = {
     lineweight: 25,
     strokeWidthMm: 0.25,
   },
+  CROSS_SLOPE: {
+    id: "CROSS_SLOPE",
+    name: "CROSS_SLOPE",
+    aciColor: 3,
+    lineType: "CONTINUOUS",
+    lineweight: 25,
+    strokeWidthMm: 0.25,
+  },
   SHEET_FRAME: {
     id: "SHEET_FRAME",
     name: "SHEET_FRAME",
@@ -167,6 +194,8 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   "plan-layer": "PLAN_CENTER",
   "plan-annotation": "PLAN_TEXT",
   "plan-annotation-layer": "PLAN_TEXT",
+  "plan-curve-annotation-layer": "PLAN_CURVE",
+  "plan-curve": "PLAN_CURVE",
   "plan-band": "PLAN_BAND",
   "plan-band-layer": "PLAN_BAND",
   "plan-bridge-layer": "PLAN_STATION",
@@ -174,26 +203,33 @@ export const DRAWING_LAYER_TO_CAD_PRESET: Record<string, CadLayerPresetId> = {
   "profile-layer": "PROFILE_DESIGN",
   "profile-annotation": "PROFILE_TEXT",
   "profile-annotation-layer": "PROFILE_TEXT",
+  "profile-vertical-curve-layer": "PROFILE_VCURVE",
+  "profile-vertical-curve": "PROFILE_VCURVE",
   band: "PROFILE_BAND",
   "band-layer": "PROFILE_BAND",
   "cross-section": "CROSS_SHAPE",
   "cross-section-layer": "CROSS_SHAPE",
   "cross-section-centerline": "CROSS_CENTER",
   "cross-section-centerline-layer": "CROSS_CENTER",
+  "cross-section-slope-layer": "CROSS_SLOPE",
+  "cross-section-slope": "CROSS_SLOPE",
   PLAN_CENTER: "PLAN_CENTER",
   PLAN_OFFSET: "PLAN_OFFSET",
   PLAN_STATION: "PLAN_STATION",
   PLAN_TEXT: "PLAN_TEXT",
+  PLAN_CURVE: "PLAN_CURVE",
   PLAN_BAND: "PLAN_BAND",
   PROFILE_GRID: "PROFILE_GRID",
   PROFILE_DESIGN: "PROFILE_DESIGN",
   PROFILE_GROUND: "PROFILE_GROUND",
   PROFILE_TEXT: "PROFILE_TEXT",
+  PROFILE_VCURVE: "PROFILE_VCURVE",
   PROFILE_BAND: "PROFILE_BAND",
   CROSS_SHAPE: "CROSS_SHAPE",
   CROSS_CENTER: "CROSS_CENTER",
   CROSS_DIM: "CROSS_DIM",
   CROSS_TEXT: "CROSS_TEXT",
+  CROSS_SLOPE: "CROSS_SLOPE",
   SHEET_FRAME: "SHEET_FRAME",
   SHEET_TEXT: "SHEET_TEXT",
   "sheet-frame-layer": "SHEET_FRAME",

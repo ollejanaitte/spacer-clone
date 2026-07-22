@@ -5,6 +5,7 @@ import type {
   GridLineResult,
   GridPointResult,
   HorizontalSegmentResult,
+  ProfileSegmentResult,
   ResolvedCrossfallState,
   SectionSliceResult,
 } from "../../core/types";
@@ -221,6 +222,18 @@ function crossfallModeLabel(crossfall: ResolvedCrossfallState): string {
   return `${modeLabel} ${crossfall.leftSlopePercent.toFixed(2)} / ${crossfall.rightSlopePercent.toFixed(2)} %`;
 }
 
+function crossfallSideSlopeLabel(
+  side: "left" | "right",
+  crossfall: ResolvedCrossfallState,
+): string {
+  const label =
+    side === "left"
+      ? ja.liner.fields.crossfallLeftSlopePercent
+      : ja.liner.fields.crossfallRightSlopePercent;
+  const slope = side === "left" ? crossfall.leftSlopePercent : crossfall.rightSlopePercent;
+  return `${label}: ${slope.toFixed(2)}%`;
+}
+
 function longitudinalFitBounds(
   startDistance: number,
   endDistance: number,
@@ -384,14 +397,39 @@ function appendPlanCurveBoundaryMarkers(
 }
 
 function segmentAnnotation(segment: HorizontalSegmentResult): string {
+  const length = Math.max(segment.endPhysicalDistance - segment.startPhysicalDistance, 0);
   if (segment.type === "arc") {
     const radius = segment.startCurvature === 0 ? "∞" : (1 / Math.abs(segment.startCurvature)).toFixed(0);
-    return `R=${radius}`;
+    return `${ja.liner.fields.elementTypes.arc} R=${radius} L=${length.toFixed(1)}`;
   }
   if (segment.type === "clothoid") {
-    return ja.liner.fields.elementTypes.clothoid;
+    const startRadius = curvatureRadiusLabel(segment.startCurvature);
+    const endRadius = curvatureRadiusLabel(segment.endCurvature);
+    return `${ja.liner.fields.elementTypes.clothoid} R=${startRadius}->${endRadius} L=${length.toFixed(1)}`;
   }
-  return ja.liner.fields.elementTypes.straight;
+  return `${ja.liner.fields.elementTypes.straight} L=${length.toFixed(1)}`;
+}
+
+function curvatureRadiusLabel(curvature: number): string {
+  return curvature === 0 ? "∞" : (1 / Math.abs(curvature)).toFixed(0);
+}
+
+function gradePercentLabel(grade: number): string {
+  return `${(grade * 100).toFixed(2)}%`;
+}
+
+function verticalCurveLength(segment: ProfileSegmentResult): number {
+  return Math.max(segment.endPhysicalDistance - segment.startPhysicalDistance, 0);
+}
+
+function verticalCurveAnnotation(segment: ProfileSegmentResult): string {
+  return [
+    ja.liner.fields.elementTypes.parabolic,
+    `L=${verticalCurveLength(segment).toFixed(1)}`,
+    `${gradePercentLabel(segment.startGrade)}->${gradePercentLabel(segment.endGrade)}`,
+    `BVC=${formatStationPlanNotation(segment.pvcPhysicalDistance ?? segment.startPhysicalDistance)}`,
+    `EVC=${formatStationPlanNotation(segment.pvtPhysicalDistance ?? segment.endPhysicalDistance)}`,
+  ].join(" ");
 }
 
 function planGeometryLayer(context: BuildDrawingContext): DrawingLayer {
@@ -462,10 +500,13 @@ function buildPlanAnnotationLayerPaper(
   geometryTransform: DrawingViewport["transform"],
   geometryPaperBounds: Bounds2,
   layout: PlanTextLayoutContext,
-): DrawingLayer {
+): DrawingLayer[] {
   const layer = createEmptyDrawingLayer("plan-annotation-layer", CAD_LAYER_PRESETS.PLAN_TEXT.name);
   layer.coordinateSpace = "paper";
   layer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_TEXT);
+  const curveLayer = createEmptyDrawingLayer("plan-curve-annotation-layer", CAD_LAYER_PRESETS.PLAN_CURVE.name);
+  curveLayer.coordinateSpace = "paper";
+  curveLayer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PLAN_CURVE);
   const annotationHeight = FORMAL_DRAWING_LAYOUT.planAnnotationTextHeightMm;
   const northHeight = FORMAL_DRAWING_LAYOUT.planNorthTextHeightMm;
   const layoutAnnotationHeight = planLayoutTextHeightMm(annotationHeight, "station", layout);
@@ -520,7 +561,7 @@ function buildPlanAnnotationLayerPaper(
         geometryPaperBounds,
       );
       placedBoxes.push(planTextBoxFromAnchor(clampedX, clampedY, label, layoutMajorHeight));
-      layer.primitives.push({
+      curveLayer.primitives.push({
         kind: "text",
         id: `plan-curve-point-${segment.id}-${boundary}`,
         position: createPoint2(clampedX, clampedY),
@@ -639,7 +680,7 @@ function buildPlanAnnotationLayerPaper(
       geometryPaperBounds,
     );
     placedBoxes.push(planTextBoxFromAnchor(clampedX, clampedY, segmentValue, layoutCurveHeight));
-    layer.primitives.push({
+    curveLayer.primitives.push({
       kind: "text",
       id: `plan-segment-${segment.id}`,
       position: createPoint2(clampedX, clampedY),
@@ -677,7 +718,7 @@ function buildPlanAnnotationLayerPaper(
       geometryPaperBounds,
     );
     placedBoxes.push(planTextBoxFromAnchor(clampedX, clampedY, ipLabel, layoutMajorHeight));
-    layer.primitives.push({
+    curveLayer.primitives.push({
       kind: "text",
       id: `plan-ip-${piPoint.id}`,
       position: createPoint2(clampedX, clampedY),
@@ -732,7 +773,7 @@ function buildPlanAnnotationLayerPaper(
 
   appendPlanCoordinateTablePaper(layer, result, geometryPaperBounds);
 
-  return layer;
+  return curveLayer.primitives.length > 0 ? [curveLayer, layer] : [layer];
 }
 
 function buildPlanBandLayerPaper(
@@ -902,7 +943,7 @@ function buildPlanViewports(context: BuildDrawingContext): DrawingViewport[] {
     drawableWidthMm,
     paperWidthMm: paper.widthMm,
   };
-  const annotationLayer = buildPlanAnnotationLayerPaper(
+  const annotationLayers = buildPlanAnnotationLayerPaper(
     context.result,
     geometryTransform,
     geometryBounds,
@@ -911,8 +952,8 @@ function buildPlanViewports(context: BuildDrawingContext): DrawingViewport[] {
   const bandLayer = buildPlanBandLayerPaper(context.result, bandBounds, mmPerMeter, layout);
   const bridgeLayer = planBridgeLayoutLayer(context);
   const planLayers = bridgeLayer
-    ? [planLayer, bridgeLayer, annotationLayer]
-    : [planLayer, annotationLayer];
+    ? [planLayer, bridgeLayer, ...annotationLayers]
+    : [planLayer, ...annotationLayers];
   const stationAxisId = context.settings.stationAxes[0]?.id;
   return [
     {
@@ -1019,10 +1060,16 @@ function buildProfileAnnotationLayerPaper(
   result: CanonicalLinerIntermediateResult,
   geometryTransform: DrawingViewport["transform"],
   geometryPaperBounds: Bounds2,
-): DrawingLayer {
+): DrawingLayer[] {
   const layer = createEmptyDrawingLayer("profile-annotation-layer", CAD_LAYER_PRESETS.PROFILE_TEXT.name);
   layer.coordinateSpace = "paper";
   layer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PROFILE_TEXT);
+  const verticalCurveLayer = createEmptyDrawingLayer(
+    "profile-vertical-curve-layer",
+    CAD_LAYER_PRESETS.PROFILE_VCURVE.name,
+  );
+  verticalCurveLayer.coordinateSpace = "paper";
+  verticalCurveLayer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.PROFILE_VCURVE);
   const annotationHeight = FORMAL_DRAWING_LAYOUT.profileAnnotationTextHeightMm;
   const { minY, maxY } = profileElevationBounds(result);
   const minX = result.stations.entries[0]?.physicalDistance ?? 0;
@@ -1065,7 +1112,10 @@ function buildProfileAnnotationLayerPaper(
   layer.primitives.push({
     kind: "text",
     id: "profile-datum-label",
-    position: createPoint2(chartTopLeft.x + 2, transformPoint2(geometryTransform, createPoint2(minX, result.vertical.profileElevation)).y - 1),
+    position: createPoint2(
+      chartTopLeft.x + 2,
+      transformPoint2(geometryTransform, createPoint2(minX, result.vertical.profileElevation)).y - 1,
+    ),
     value: `EL=${result.vertical.profileElevation.toFixed(2)}`,
     heightMm: annotationHeight,
   });
@@ -1101,7 +1151,63 @@ function buildProfileAnnotationLayerPaper(
       alignment: "center",
     });
   }
-  return layer;
+  for (const segment of result.vertical.segments) {
+    if (segment.pvcPhysicalDistance === undefined || segment.pvtPhysicalDistance === undefined) {
+      continue;
+    }
+    const bvcPosition = transformPoint2(
+      geometryTransform,
+      createPoint2(segment.pvcPhysicalDistance, segment.startElevation),
+    );
+    const evcPosition = transformPoint2(
+      geometryTransform,
+      createPoint2(segment.pvtPhysicalDistance, segment.endElevation),
+    );
+    const labelX = (bvcPosition.x + evcPosition.x) / 2;
+    const labelY = Math.max(
+      geometryPaperBounds.minY + annotationHeight,
+      Math.min(bvcPosition.y, evcPosition.y) - 2,
+    );
+    verticalCurveLayer.primitives.push({
+      kind: "text",
+      id: `profile-vc-label-${segment.id}`,
+      position: createPoint2(labelX, labelY),
+      value: verticalCurveAnnotation(segment),
+      heightMm: annotationHeight,
+      alignment: "center",
+    });
+    verticalCurveLayer.primitives.push({
+      kind: "text",
+      id: `profile-vc-bvc-${segment.id}`,
+      position: createPoint2(bvcPosition.x, bvcPosition.y - 1),
+      value: `BVC ${formatStationPlanNotation(segment.pvcPhysicalDistance)}`,
+      heightMm: annotationHeight,
+      alignment: "center",
+    });
+    verticalCurveLayer.primitives.push({
+      kind: "text",
+      id: `profile-vc-evc-${segment.id}`,
+      position: createPoint2(evcPosition.x, evcPosition.y - 1),
+      value: `EVC ${formatStationPlanNotation(segment.pvtPhysicalDistance)}`,
+      heightMm: annotationHeight,
+      alignment: "center",
+    });
+    if (segment.pviPhysicalDistance !== undefined) {
+      const pviX = transformPoint2(
+        geometryTransform,
+        createPoint2(segment.pviPhysicalDistance, segment.startElevation),
+      ).x;
+      verticalCurveLayer.primitives.push({
+        kind: "text",
+        id: `profile-vc-pvi-${segment.id}`,
+        position: createPoint2(pviX, geometryPaperBounds.minY + annotationHeight * 2.2),
+        value: `PVI ${formatStationPlanNotation(segment.pviPhysicalDistance)}`,
+        heightMm: annotationHeight,
+        alignment: "center",
+      });
+    }
+  }
+  return verticalCurveLayer.primitives.length > 0 ? [layer, verticalCurveLayer] : [layer];
 }
 
 function buildProfileBandLayerPaper(
@@ -1424,6 +1530,8 @@ function buildCrossSectionViewport(
     ...drawingStyleFromCadPreset(CAD_LAYER_PRESETS.CROSS_CENTER),
     strokeWidthMm: FORMAL_DRAWING_LAYOUT.crossSectionCenterlineStrokeWidthMm,
   };
+  const slopeLayer = createEmptyDrawingLayer("cross-section-slope-layer", CAD_LAYER_PRESETS.CROSS_SLOPE.name);
+  slopeLayer.style = drawingStyleFromCadPreset(CAD_LAYER_PRESETS.CROSS_SLOPE);
 
   const section = closestSection(context.result.sections, selectedStation);
   let sectionZMin = 0;
@@ -1474,6 +1582,55 @@ function buildCrossSectionViewport(
       heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
       alignment: "right",
     });
+    const pivotPoint = section.points.find(
+      (point) => Math.abs(point.offset - section.crossfall.pivotDistance) <= 1e-6,
+    );
+    const leftSlopeMid = pivotPoint
+      ? createPoint2(
+          (section.leftEdge.offset + pivotPoint.offset) / 2,
+          (section.leftEdge.z + pivotPoint.z) / 2 + 0.65,
+        )
+      : createPoint2(section.leftEdge.offset, section.leftEdge.z + 0.65);
+    const rightSlopeMid = pivotPoint
+      ? createPoint2(
+          (section.rightEdge.offset + pivotPoint.offset) / 2,
+          (section.rightEdge.z + pivotPoint.z) / 2 + 0.65,
+        )
+      : createPoint2(section.rightEdge.offset, section.rightEdge.z + 0.65);
+    if (pivotPoint) {
+      slopeLayer.primitives.push({
+        kind: "polyline",
+        id: `cross-section-slope-guide-left-${section.id}`,
+        points: [
+          createPoint2(section.leftEdge.offset, section.leftEdge.z),
+          createPoint2(pivotPoint.offset, pivotPoint.z),
+        ],
+      });
+      slopeLayer.primitives.push({
+        kind: "polyline",
+        id: `cross-section-slope-guide-right-${section.id}`,
+        points: [
+          createPoint2(pivotPoint.offset, pivotPoint.z),
+          createPoint2(section.rightEdge.offset, section.rightEdge.z),
+        ],
+      });
+    }
+    slopeLayer.primitives.push({
+      kind: "text",
+      id: `cross-section-slope-left-${section.id}`,
+      position: leftSlopeMid,
+      value: crossfallSideSlopeLabel("left", section.crossfall),
+      heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
+      alignment: "center",
+    });
+    slopeLayer.primitives.push({
+      kind: "text",
+      id: `cross-section-slope-right-${section.id}`,
+      position: rightSlopeMid,
+      value: crossfallSideSlopeLabel("right", section.crossfall),
+      heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
+      alignment: "center",
+    });
     for (const point of section.points) {
       geometryLayer.primitives.push({
         kind: "text",
@@ -1503,7 +1660,11 @@ function buildCrossSectionViewport(
     heightMm: FORMAL_DRAWING_LAYOUT.crossSectionAnnotationTextHeightMm,
   });
 
-  const primitivePoints = [...geometryLayer.primitives, ...centerlineLayer.primitives].flatMap((primitive) => {
+  const primitivePoints = [
+    ...geometryLayer.primitives,
+    ...centerlineLayer.primitives,
+    ...slopeLayer.primitives,
+  ].flatMap((primitive) => {
     if (primitive.kind === "polyline") {
       return primitive.points;
     }
@@ -1527,7 +1688,9 @@ function buildCrossSectionViewport(
     modelBounds,
     paperBounds,
     transform: fitTransform(modelBounds, paperBounds),
-    layers: [centerlineLayer, geometryLayer],
+    layers: slopeLayer.primitives.length > 0
+      ? [centerlineLayer, geometryLayer, slopeLayer]
+      : [centerlineLayer, geometryLayer],
   };
 }
 
@@ -1578,7 +1741,7 @@ function buildProfileViewports(context: BuildDrawingContext): DrawingViewport[] 
       minModelHeightM: FORMAL_DRAWING_LAYOUT.minElevationSpanM,
     },
   );
-  const annotationLayer = buildProfileAnnotationLayerPaper(
+  const annotationLayers = buildProfileAnnotationLayerPaper(
     context.result,
     geometryTransform,
     geometryBounds,
@@ -1591,7 +1754,7 @@ function buildProfileViewports(context: BuildDrawingContext): DrawingViewport[] 
       modelBounds: profileBounds,
       paperBounds: geometryBounds,
       transform: geometryTransform,
-      layers: [profileLayer, annotationLayer],
+      layers: [profileLayer, ...annotationLayers],
       stationAxisId: context.settings.stationAxes[0]?.id,
     },
     {
