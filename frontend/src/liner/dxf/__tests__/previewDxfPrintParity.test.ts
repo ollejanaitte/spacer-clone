@@ -220,6 +220,7 @@ describe("CAD smoke — DXF parser layer / text / dimension", () => {
     const { entities, layers } = parseExportedDxf(bundle.previewDocument, "cross-section");
 
     expect(layers.some((layer) => layer.startsWith("CROSS_"))).toBe(true);
+    expect(layers).toContain("CROSS_SLOPE");
     expect(entities.some((entity) => (entity as { type?: string }).type === "LINE")).toBe(true);
     expect(entities.some((entity) => (entity as { type?: string }).type === "TEXT")).toBe(true);
   });

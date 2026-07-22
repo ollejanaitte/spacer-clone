@@ -153,6 +153,10 @@ function collectPrimitives(viewport: DrawingViewport) {
   return viewport.layers.flatMap((layer) => layer.primitives);
 }
 
+function collectLayerIds(viewport: DrawingViewport): string[] {
+  return viewport.layers.map((layer) => layer.id);
+}
+
 function collectPaperText(viewport: DrawingViewport): DrawingText[] {
   return viewport.layers
     .filter((layer) => layer.coordinateSpace === "paper")
@@ -379,16 +383,32 @@ describe("formal drawing builders (redline)", () => {
       settings: createDrawingSettingsFromDraft(buildCurveIntermediate("arc"), undefined),
     });
     const arcTexts = collectAllText(arcOutput.sheet.viewports[0]!);
+    const arcLayerIds = collectLayerIds(arcOutput.sheet.viewports[0]!);
+    expect(arcLayerIds).toContain("plan-curve-annotation-layer");
     expect(arcTexts.some((text) => text.value === ja.liner.formalDrawing.planCurvePoints.bc)).toBe(true);
     expect(arcTexts.some((text) => text.value === ja.liner.formalDrawing.planCurvePoints.ec)).toBe(true);
+    expect(arcTexts.some((text) => text.value.includes(`${ja.liner.fields.elementTypes.arc} R=50 L=80.0`))).toBe(
+      true,
+    );
 
     const clothoidOutput = createPlanDrawingBuilder().build({
       result: buildCurveIntermediate("clothoid"),
       settings: createDrawingSettingsFromDraft(buildCurveIntermediate("clothoid"), undefined),
     });
     const clothoidTexts = collectAllText(clothoidOutput.sheet.viewports[0]!);
+    const clothoidLayerIds = collectLayerIds(clothoidOutput.sheet.viewports[0]!);
+    expect(clothoidLayerIds).toContain("plan-curve-annotation-layer");
     expect(clothoidTexts.some((text) => text.value === ja.liner.formalDrawing.planCurvePoints.ka)).toBe(true);
     expect(clothoidTexts.some((text) => text.value === ja.liner.formalDrawing.planCurvePoints.ke)).toBe(true);
+    expect(
+      clothoidTexts.some(
+        (text) =>
+          text.value.includes(ja.liner.fields.elementTypes.clothoid)
+          && text.value.includes("R=∞->500")
+          && text.value.includes("L=60.0")
+          && !text.value.includes("A="),
+      ),
+    ).toBe(true);
   });
 
   it("uses readable text heights and staggered plan station labels without horizontal overlap", () => {
@@ -550,6 +570,18 @@ describe("formal drawing builders (redline)", () => {
     expect(flatPolyline).not.toBeNull();
     expect(crownPolyline).not.toBeNull();
     expect(flatPolyline).not.toBe(crownPolyline);
+
+    const slopeLayer = crownViewport.layers.find((layer) => layer.id === "cross-section-slope-layer");
+    expect(slopeLayer?.name).toBe("CROSS_SLOPE");
+    expect(slopeLayer?.primitives.some((primitive) => primitive.id.startsWith("cross-section-slope-guide-"))).toBe(
+      true,
+    );
+    const slopeTexts = slopeLayer?.primitives.filter(
+      (primitive): primitive is DrawingText => primitive.kind === "text",
+    ) ?? [];
+    expect(slopeTexts.some((text) => text.value.includes(ja.liner.fields.crossfallLeftSlopePercent))).toBe(true);
+    expect(slopeTexts.some((text) => text.value.includes(ja.liner.fields.crossfallRightSlopePercent))).toBe(true);
+    expect(slopeTexts.every((text) => text.value.includes("2.00%"))).toBe(true);
   });
 
   it("marks widening band row unavailable for every station (D05-C05)", () => {
@@ -618,6 +650,29 @@ describe("formal drawing builders (redline)", () => {
     const vclResult = buildIntermediateResult(draft);
     const vclSettings = createDrawingSettingsFromDraft(vclResult, undefined);
     const output = createProfileDrawingBuilder().build({ result: vclResult, settings: vclSettings });
+    const profileViewport = output.sheet.viewports[0];
+    expect(profileViewport).toBeDefined();
+    const profileLayers = profileViewport!.layers;
+    const verticalCurveLayer = profileLayers.find((layer) => layer.id === "profile-vertical-curve-layer");
+    expect(verticalCurveLayer?.name).toBe("PROFILE_VCURVE");
+    const verticalCurveTexts = verticalCurveLayer?.primitives.filter(
+      (primitive): primitive is DrawingText => primitive.kind === "text",
+    ) ?? [];
+    expect(
+      verticalCurveTexts.some(
+        (text) =>
+          text.id === "profile-vc-label-VP1"
+          && text.value.includes(ja.liner.fields.elementTypes.parabolic)
+          && text.value.includes("L=40.0")
+          && text.value.includes("2.00%->-1.00%")
+          && text.value.includes("BVC=")
+          && text.value.includes("EVC="),
+      ),
+    ).toBe(true);
+    expect(verticalCurveTexts.some((text) => text.id === "profile-vc-bvc-VP1")).toBe(true);
+    expect(verticalCurveTexts.some((text) => text.id === "profile-vc-evc-VP1")).toBe(true);
+    expect(verticalCurveTexts.some((text) => text.id === "profile-vc-pvi-VP1")).toBe(true);
+
     const bandViewport = output.sheet.viewports[1];
     expect(bandViewport).toBeDefined();
     const bandPrimitives = collectPrimitives(bandViewport!);

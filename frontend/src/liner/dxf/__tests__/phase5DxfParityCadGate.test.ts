@@ -8,7 +8,7 @@ import { exportFormalDrawingDxf, type FormalDrawingDxfKind } from "../export/exp
 import { mapDrawingDocumentToDxf } from "../mapper/mapDrawingDocumentToDxf";
 import { DEFAULT_DXF_HEADER } from "../model/defaults";
 import { validateDxfDocument } from "../validation/validateDxfDocument";
-import { CAD_LAYER_PRESETS } from "../presets/cadLayerPresets";
+import { CAD_LAYER_PRESETS, DRAWING_LAYER_TO_CAD_PRESET } from "../presets/cadLayerPresets";
 import { getSheetPreset } from "../presets/sheetPresets";
 
 type DxfGateCase = {
@@ -48,7 +48,7 @@ const DXF_GATE_CASES: readonly DxfGateCase[] = [
     title: "Cross-section",
     routeKind: "cross-section",
     exportKind: "cross-section",
-    requiredLayers: ["CROSS_CENTER", "CROSS_SHAPE"],
+    requiredLayers: ["CROSS_CENTER", "CROSS_SHAPE", "CROSS_SLOPE"],
     requiredTextSnippets: ["中心線", "交角"],
   },
 ];
@@ -137,6 +137,9 @@ describe("P5-D03 preview / print / DXF CAD gate", () => {
       "SHEET_FRAME",
       "SHEET_TEXT",
     ]);
+    expect(DRAWING_LAYER_TO_CAD_PRESET["plan-curve-annotation-layer"]).toBe("PLAN_CURVE");
+    expect(DRAWING_LAYER_TO_CAD_PRESET["profile-vertical-curve-layer"]).toBe("PROFILE_VCURVE");
+    expect(DRAWING_LAYER_TO_CAD_PRESET["cross-section-slope-layer"]).toBe("CROSS_SLOPE");
     expect(DEFAULT_DXF_HEADER.acadVer).toBe("AC1021");
   });
 });
