@@ -1,7 +1,4 @@
-import {
-  pierLineDirectionFromSkew,
-  pierLinePointAtOffset,
-} from "../../core/bridge/pierLineGeometry";
+import { pierLineDirectionFromSkew } from "../../core/bridge/pierLineGeometry";
 import type {
   AlignmentSamplePoint,
   CanonicalLinerIntermediateResult,
@@ -31,9 +28,6 @@ import {
   resolvePlanTextBaselineY,
 } from "../rendering/screenTextLayout";
 import { PLAN_LAYOUT_VIEWPORT_PX } from "../rendering/screenTextLayout";
-
-const DEFAULT_SUPPORT_HALF_WIDTH_M = 8;
-const SUPPORT_LINE_EXTENSION_M = 0.5;
 
 export type PlanTextLayoutContext = {
   viewportWidthPx: number;
@@ -91,21 +85,13 @@ function gridPointById(
   return new Map(result.grid.points.map((point) => [point.id, point]));
 }
 
-function transverseHalfWidthM(result: CanonicalLinerIntermediateResult): number {
-  const offsets = result.grid.points.map((point) => Math.abs(point.offset));
-  if (offsets.length === 0) {
-    return DEFAULT_SUPPORT_HALF_WIDTH_M;
-  }
-  return Math.max(...offsets, DEFAULT_SUPPORT_HALF_WIDTH_M / 2) + SUPPORT_LINE_EXTENSION_M;
-}
-
 function pierSupportEndpoints(
   result: CanonicalLinerIntermediateResult,
   pier: PierResult,
   pointMap: Map<string, GridPointResult>,
 ): [Point2, Point2] | null {
   const sample = sampleAlignmentAt(result, pier.physicalDistance);
-  if (!sample) {
+  if (!sample || !Number.isFinite(pier.skewAngleRad)) {
     return null;
   }
 
@@ -126,15 +112,7 @@ function pierSupportEndpoints(
     return [createPoint2(first.x, first.y), createPoint2(last.x, last.y)];
   }
 
-  const halfWidth = transverseHalfWidthM(result);
-  const start = pierLinePointAtOffset(
-    sample,
-    sample.azimuth,
-    pier.skewAngleRad,
-    -halfWidth,
-  );
-  const end = pierLinePointAtOffset(sample, sample.azimuth, pier.skewAngleRad, halfWidth);
-  return [createPoint2(start.x, start.y), createPoint2(end.x, end.y)];
+  return null;
 }
 
 function skewAngleDegrees(skewAngleRad: number): string {
@@ -149,7 +127,50 @@ function pierAtDistance(
   piers: readonly PierResult[],
   physicalDistance: number,
 ): PierResult | undefined {
-  return piers.find((pier) => Math.abs(pier.physicalDistance - physicalDistance) <= 1e-6);
+  return sortedUniquePiers(piers).find((pier) => Math.abs(pier.physicalDistance - physicalDistance) <= 1e-6);
+}
+
+function isValidSpan(span: SpanResult): boolean {
+  return (
+    Number.isFinite(span.startPhysicalDistance)
+    && Number.isFinite(span.endPhysicalDistance)
+    && span.endPhysicalDistance > span.startPhysicalDistance
+  );
+}
+
+function sortedUniquePiers(piers: readonly PierResult[]): PierResult[] {
+  const seen = new Set<string>();
+  return [...piers]
+    .filter((pier) => Number.isFinite(pier.physicalDistance))
+    .sort((left, right) =>
+      left.physicalDistance - right.physicalDistance
+      || left.id.localeCompare(right.id),
+    )
+    .filter((pier) => {
+      if (seen.has(pier.id)) {
+        return false;
+      }
+      seen.add(pier.id);
+      return true;
+    });
+}
+
+function sortedUniqueSpans(spans: readonly SpanResult[]): SpanResult[] {
+  const seen = new Set<string>();
+  return [...spans]
+    .filter(isValidSpan)
+    .sort((left, right) =>
+      left.startPhysicalDistance - right.startPhysicalDistance
+      || left.endPhysicalDistance - right.endPhysicalDistance
+      || left.id.localeCompare(right.id),
+    )
+    .filter((span) => {
+      if (seen.has(span.id)) {
+        return false;
+      }
+      seen.add(span.id);
+      return true;
+    });
 }
 
 export function bridgeLayoutGeometryPoints(
@@ -160,7 +181,7 @@ export function bridgeLayoutGeometryPoints(
   }
   const pointMap = gridPointById(result);
   const points: Point2[] = [];
-  for (const pier of result.piers) {
+  for (const pier of sortedUniquePiers(result.piers)) {
     const endpoints = pierSupportEndpoints(result, pier, pointMap);
     if (endpoints) {
       points.push(...endpoints);
@@ -170,7 +191,7 @@ export function bridgeLayoutGeometryPoints(
       points.push(createPoint2(sample.x, sample.y));
     }
   }
-  for (const span of result.spans) {
+  for (const span of sortedUniqueSpans(result.spans)) {
     const midpoint = (span.startPhysicalDistance + span.endPhysicalDistance) / 2;
     const sample = sampleAlignmentAt(result, midpoint);
     if (sample) {
@@ -189,29 +210,30 @@ export function appendBridgeLayoutGeometry(
   }
 
   const pointMap = gridPointById(result);
-  for (const pier of result.piers) {
+  for (const pier of sortedUniquePiers(result.piers)) {
     const endpoints = pierSupportEndpoints(result, pier, pointMap);
     const sample = sampleAlignmentAt(result, pier.physicalDistance);
-    if (!endpoints || !sample) {
-      continue;
+    if (endpoints) {
+      layer.primitives.push({
+        kind: "line",
+        id: `plan-pier-support-${pier.id}`,
+        start: endpoints[0],
+        end: endpoints[1],
+      });
     }
-    layer.primitives.push({
-      kind: "line",
-      id: `plan-pier-support-${pier.id}`,
-      start: endpoints[0],
-      end: endpoints[1],
-    });
-    layer.primitives.push({
-      kind: "polyline",
-      id: `plan-pier-center-tick-${pier.id}`,
-      points: [
-        createPoint2(sample.x, sample.y - 2.5),
-        createPoint2(sample.x, sample.y + 2.5),
-      ],
-    });
+    if (sample) {
+      layer.primitives.push({
+        kind: "polyline",
+        id: `plan-pier-center-tick-${pier.id}`,
+        points: [
+          createPoint2(sample.x, sample.y - 2.5),
+          createPoint2(sample.x, sample.y + 2.5),
+        ],
+      });
+    }
   }
 
-  for (const span of result.spans) {
+  for (const span of sortedUniqueSpans(result.spans)) {
     const start = sampleAlignmentAt(result, span.startPhysicalDistance);
     const end = sampleAlignmentAt(result, span.endPhysicalDistance);
     if (!start || !end) {
@@ -276,7 +298,7 @@ export function appendBridgeLayoutPaperAnnotations(
   const layoutCurveHeight = planLayoutTextHeightMm(annotationHeight, "curve", layout);
   const yStepMm = layoutMajorHeight + 1.5;
 
-  for (const pier of result.piers) {
+  for (const pier of sortedUniquePiers(result.piers)) {
     const sample = sampleAlignmentAt(result, pier.physicalDistance);
     if (!sample) {
       continue;
@@ -319,6 +341,9 @@ export function appendBridgeLayoutPaperAnnotations(
       alignment: "center",
     });
 
+    if (!Number.isFinite(pier.skewAngleRad)) {
+      continue;
+    }
     const skewValue = ja.liner.formalDrawing.bridgeLayout.skewDegrees(skewAngleDegrees(pier.skewAngleRad));
     const skewAnchor = transformPoint2(
       geometryTransform,
@@ -358,7 +383,7 @@ export function appendBridgeLayoutPaperAnnotations(
     });
   }
 
-  for (const span of result.spans) {
+  for (const span of sortedUniqueSpans(result.spans)) {
     const midpoint = (span.startPhysicalDistance + span.endPhysicalDistance) / 2;
     const sample = sampleAlignmentAt(result, midpoint);
     if (!sample) {
@@ -424,7 +449,7 @@ function spanBandValue(
   result: CanonicalLinerIntermediateResult,
   physicalDistance: number,
 ): string {
-  const span = result.spans.find(
+  const span = sortedUniqueSpans(result.spans).find(
     (entry) =>
       physicalDistance >= entry.startPhysicalDistance - 1e-6
       && physicalDistance <= entry.endPhysicalDistance + 1e-6,
@@ -449,7 +474,7 @@ function skewBandValue(
   physicalDistance: number,
 ): string {
   const pier = pierAtDistance(result.piers, physicalDistance);
-  if (!pier) {
+  if (!pier || !Number.isFinite(pier.skewAngleRad)) {
     return ja.liner.formalDrawing.bandRows.unavailable;
   }
   return skewAngleDegrees(pier.skewAngleRad);
@@ -526,7 +551,7 @@ export function appendBridgeLayoutBandRows(
         alignment: "center",
       });
       if (rowOffset === 0) {
-        const span = result.spans.find(
+        const span = sortedUniqueSpans(result.spans).find(
           (entry) =>
             Math.abs(station.physicalDistance - (entry.startPhysicalDistance + entry.endPhysicalDistance) / 2)
             <= 1e-3,
@@ -585,7 +610,7 @@ export function appendBridgeLayoutModelAnnotations(
   }
 
   const annotationHeight = FORMAL_DRAWING_LAYOUT.planAnnotationTextHeightMm;
-  for (const pier of result.piers) {
+  for (const pier of sortedUniquePiers(result.piers)) {
     const sample = sampleAlignmentAt(result, pier.physicalDistance);
     if (!sample) {
       continue;
@@ -598,6 +623,9 @@ export function appendBridgeLayoutModelAnnotations(
       heightMm: annotationHeight,
       alignment: "center",
     });
+    if (!Number.isFinite(pier.skewAngleRad)) {
+      continue;
+    }
     layer.primitives.push({
       kind: "text",
       id: `plan-pier-skew-${pier.id}`,
@@ -608,7 +636,7 @@ export function appendBridgeLayoutModelAnnotations(
     });
   }
 
-  for (const span of result.spans) {
+  for (const span of sortedUniqueSpans(result.spans)) {
     const midpoint = (span.startPhysicalDistance + span.endPhysicalDistance) / 2;
     const sample = sampleAlignmentAt(result, midpoint);
     if (!sample) {
