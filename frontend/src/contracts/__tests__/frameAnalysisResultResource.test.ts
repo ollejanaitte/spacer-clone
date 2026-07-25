@@ -145,6 +145,96 @@ describe("FrameAnalysisResultResource contract", () => {
     );
   });
 
+  it("accepts an IF3-B1 backend-produced linear static resource shape", () => {
+    const backendResource: FrameAnalysisResultResource = {
+      schemaId: FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID,
+      schemaVersion: FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_VERSION,
+      resultId: uuid(RESULT_ID),
+      analysisRunId: uuid(RUN_ID),
+      sourceDocumentId: uuid(SOURCE_DOCUMENT_ID),
+      sourceDocumentVersion: requireRevisionId(3),
+      sourceContentChecksum: checksum(),
+      status: "SUCCEEDED",
+      generatedAt: "2026-07-25T00:00:00.000Z",
+      solverName: "scipy_sparse",
+      solverVersion: "0.3.0",
+      analysisSettingsChecksum: checksum("b".repeat(64)),
+      loadContext: {
+        entries: [
+          {
+            kind: "loadCase",
+            id: uuid(LOAD_CONTEXT_ID),
+            label: "Verification Load",
+            checksum: checksum("c".repeat(64)),
+          },
+        ],
+        requestChecksum: checksum("d".repeat(64)),
+      },
+      provenance: {
+        createdAt: "2026-07-25T00:00:00.000Z",
+        createdBy: { actorId: "backend.if3.normalizer", actorType: "tool" },
+        producer: {
+          toolId: "scipy_sparse",
+          toolVersion: "0.3.0",
+          algorithmVersion: "if3-b1-linear-static-normalizer",
+        },
+      },
+      diagnostics: [],
+      payload: {
+        nodeDisplacement: {
+          schemaVersion: requireSchemaVersion("0.1.0"),
+          rows: [
+            {
+              rowId: uuid(ROW_ID),
+              entityKind: "node",
+              entityId: uuid("550e8400-e29b-41d4-a716-446655440006"),
+              loadContextId: uuid(LOAD_CONTEXT_ID),
+              quantity: "displacement",
+              unit: "m/rad",
+              values: { ux: 0, uy: -0.01040650406504065, uz: 0, rx: 0, ry: 0, rz: -0.003902439024390244 },
+            },
+          ],
+        },
+        supportReaction: {
+          schemaVersion: requireSchemaVersion("0.1.0"),
+          rows: [
+            {
+              rowId: uuid("550e8400-e29b-41d4-a716-446655440007"),
+              entityKind: "support",
+              entityId: uuid("550e8400-e29b-41d4-a716-446655440008"),
+              loadContextId: uuid(LOAD_CONTEXT_ID),
+              quantity: "reaction",
+              unit: "kN/kN_m",
+              values: { fx: 0, fy: 10, fz: 0, mx: 0, my: 0, mz: 40 },
+            },
+          ],
+        },
+        memberForce: {
+          schemaVersion: requireSchemaVersion("0.1.0"),
+          rows: [
+            {
+              rowId: uuid("550e8400-e29b-41d4-a716-446655440009"),
+              entityKind: "member",
+              entityId: uuid(MEMBER_ID),
+              loadContextId: uuid(LOAD_CONTEXT_ID),
+              quantity: "memberEndForce",
+              unit: "kN/kN_m",
+              values: { "i.fx": 0, "i.fy": 10, "i.fz": 0, "i.mx": 0, "i.my": 0, "i.mz": 40, "j.fx": 0, "j.fy": -10, "j.fz": 0, "j.mx": 0, "j.my": 0, "j.mz": 0 },
+            },
+          ],
+        },
+      },
+      resultKinds: ["nodeDisplacement", "supportReaction", "memberForce"],
+      resultChecksum: checksum("f".repeat(64)),
+    };
+
+    expect(validateFrameAnalysisResultResource(backendResource, "", validSourceDocument()).status).toBe(
+      "valid",
+    );
+    expect(isFrameAnalysisResultResource(backendResource, validSourceDocument())).toBe(true);
+    expect(parseContractValue(frameAnalysisResultResourceSchema, backendResource).success).toBe(true);
+  });
+
   it("rejects invalid resource identity", () => {
     const codes = issueCodes({
       ...validResource(),
