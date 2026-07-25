@@ -29,6 +29,7 @@ from backend.engine import (
 )
 from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
 from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
+from backend.engine.if3_normalizer import normalize_linear_static_result_resource
 
 APP_VERSION = "0.3.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -122,7 +123,10 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
         )
         csv_exports = None
 
-    return safe_json_response({"result": result, "csv": csv_exports})
+    if3_metadata = extract_if3_metadata(payload)
+    if3_result = normalize_linear_static_result_resource(result, if3_metadata)
+
+    return safe_json_response({"result": result, "csv": csv_exports, "if3Result": if3_result})
 
 
 @app.post("/api/analysis/eigen")
@@ -419,6 +423,13 @@ def extract_project(payload: dict[str, Any]) -> dict[str, Any]:
             detail={"code": "SCHEMA_ERROR", "message": "project is required."},
         )
     return project
+
+
+def extract_if3_metadata(payload: dict[str, Any]) -> dict[str, Any]:
+    metadata = payload.get("if3", payload.get("sourceBinding", {}))
+    if isinstance(metadata, dict):
+        return copy.deepcopy(metadata)
+    return {}
 
 
 def extract_file_name(payload: dict[str, Any]) -> str:
