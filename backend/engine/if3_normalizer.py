@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from .if3_checksum import sha256_content_checksum, validate_content_checksum
-from .if3_diagnostics import diagnostic, sort_diagnostics
+from .if3_diagnostics import dedupe_diagnostics, diagnostic, sort_diagnostics
 
 
 IF3_SCHEMA_ID = "spacer.contracts.frame-analysis-result-resource"
@@ -29,6 +29,118 @@ UUID_PATTERN = re.compile(
     r"00000000-0000-0000-0000-000000000000|"
     r"ffffffff-ffff-ffff-ffff-ffffffffffff)$"
 )
+
+
+def build_unsupported_result_resource(
+    raw_result: dict[str, Any],
+    metadata: dict[str, Any] | None,
+    *,
+    result_kind: str,
+    generated_at: str | None = None,
+    result_id: str | None = None,
+    analysis_run_id: str | None = None,
+) -> dict[str, Any]:
+    raw = copy.deepcopy(raw_result)
+    meta = copy.deepcopy(metadata or {})
+    diagnostics: list[dict[str, Any]] = []
+    generated = generated_at or _iso_now_millis()
+    solver_name = _non_empty_string(meta.get("solverName")) or _raw_solver(raw) or "unknown"
+    solver_version = _non_empty_string(meta.get("solverVersion")) or "0.3.0"
+    if not SEMVER_PATTERN.match(solver_version):
+        diagnostics.append(
+            diagnostic(
+                "FRAME_RESULT_SOLVER_VERSION_INVALID",
+                "solverVersion must be explicit SemVer metadata.",
+                path="/solverVersion",
+            )
+        )
+        solver_version = "0.0.0"
+
+    source_document_id = _uuid_or_diagnostic(
+        meta.get("sourceDocumentId"),
+        diagnostics,
+        "/sourceDocumentId",
+        "MISSING_SOURCE_BINDING",
+        "sourceDocumentId is required and must be a UUID.",
+    )
+    source_document_version = _positive_int_or_diagnostic(
+        meta.get("sourceDocumentVersion"),
+        diagnostics,
+        "/sourceDocumentVersion",
+        "MISSING_SOURCE_BINDING",
+        "sourceDocumentVersion is required and must be a positive integer.",
+    )
+    source_checksum = _checksum_or_diagnostic(
+        meta.get("sourceContentChecksum"),
+        diagnostics,
+        "/sourceContentChecksum",
+        "MISSING_SOURCE_BINDING",
+        "sourceContentChecksum is required and must be a sha256 content checksum.",
+    )
+    source_binding_complete = (
+        _is_uuid(meta.get("sourceDocumentId"))
+        and isinstance(meta.get("sourceDocumentVersion"), int)
+        and meta.get("sourceDocumentVersion", 0) > 0
+        and validate_content_checksum(meta.get("sourceContentChecksum"))
+    )
+
+    if "analysisSettings" not in meta:
+        diagnostics.append(
+            diagnostic(
+                "MISSING_ANALYSIS_SETTINGS",
+                "analysisSettings metadata is required for IF3 normalization.",
+                path="/analysisSettings",
+            )
+        )
+        analysis_settings = None
+    else:
+        analysis_settings = meta["analysisSettings"]
+    analysis_settings_checksum = sha256_content_checksum(analysis_settings)
+
+    load_context, _, load_context_diagnostics = _normalize_load_context(meta.get("loadContext"))
+    diagnostics.extend(load_context_diagnostics)
+
+    if source_binding_complete:
+        diagnostics.append(
+            diagnostic(
+                "UNSUPPORTED_RESULT_KIND",
+                f"IF3-B2 does not normalize {result_kind} raw results.",
+                path="/analysisSummary/analysisType",
+                result_kind=result_kind,
+            )
+        )
+
+    resource: dict[str, Any] = {
+        "schemaId": IF3_SCHEMA_ID,
+        "schemaVersion": IF3_SCHEMA_VERSION,
+        "resultId": result_id or str(uuid.uuid4()),
+        "analysisRunId": analysis_run_id or str(uuid.uuid4()),
+        "sourceDocumentId": source_document_id,
+        "sourceDocumentVersion": source_document_version,
+        "sourceContentChecksum": source_checksum,
+        "status": "UNSUPPORTED",
+        "generatedAt": generated,
+        "solverName": solver_name,
+        "solverVersion": solver_version,
+        "analysisSettingsChecksum": analysis_settings_checksum,
+        "loadContext": load_context,
+        "provenance": _provenance(meta, generated, solver_name, solver_version),
+        "diagnostics": [],
+        "payload": {},
+        "resultKinds": [],
+    }
+
+    diagnostics.extend(validate_if3_result_resource(resource))
+    resource["status"] = (
+        "UNSUPPORTED"
+        if source_binding_complete
+        else _status_for(raw.get("analysisSummary", {}).get("status"), diagnostics, {})
+    )
+    resource["diagnostics"] = sort_diagnostics(dedupe_diagnostics(diagnostics))
+    checksum_target = copy.deepcopy(resource)
+    checksum_target.pop("resultChecksum", None)
+    resource["resultChecksum"] = sha256_content_checksum(checksum_target)
+    return resource
 
 
 def normalize_linear_static_result_resource(
@@ -155,7 +267,7 @@ def normalize_linear_static_result_resource(
 
     diagnostics.extend(validate_if3_result_resource(resource))
     resource["status"] = _status_for(raw_status, diagnostics, payload)
-    resource["diagnostics"] = sort_diagnostics(_dedupe_diagnostics(diagnostics))
+    resource["diagnostics"] = sort_diagnostics(dedupe_diagnostics(diagnostics))
     checksum_target = copy.deepcopy(resource)
     checksum_target.pop("resultChecksum", None)
     resource["resultChecksum"] = sha256_content_checksum(checksum_target)
@@ -539,18 +651,6 @@ def load_if3_json_schema() -> dict[str, Any]:
 
     with schema_path.open(encoding="utf-8") as file:
         return _escape_local_def_refs(json.load(file))
-
-
-def _dedupe_diagnostics(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    seen: set[tuple[Any, ...]] = set()
-    deduped: list[dict[str, Any]] = []
-    for item in items:
-        key = (item.get("code"), item.get("severity"), item.get("path"), item.get("message"))
-        if key in seen:
-            continue
-        seen.add(key)
-        deduped.append(item)
-    return deduped
 
 
 def _escape_local_def_refs(value: Any) -> Any:

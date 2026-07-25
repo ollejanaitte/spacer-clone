@@ -10,6 +10,7 @@ from backend.engine.if3_checksum import sha256_content_checksum
 from backend.engine.if3_normalizer import (
     IF3_SCHEMA_ID,
     IF3_SCHEMA_VERSION,
+    build_unsupported_result_resource,
     normalize_linear_static_result_resource,
 )
 from backend.engine.if3_staleness import evaluate_if3_staleness
@@ -265,3 +266,183 @@ def test_normalizer_does_not_mutate_raw_result_or_metadata() -> None:
 
     assert raw == raw_before
     assert metadata == metadata_before
+
+
+def test_unsupported_result_resource_passes_json_schema() -> None:
+    project = cantilever_tip_load()
+    raw = run_analysis(copy.deepcopy(project))
+    raw["analysisSummary"]["analysisType"] = "eigen"
+
+    resource = build_unsupported_result_resource(
+        raw,
+        explicit_metadata(project),
+        result_kind="eigen",
+        generated_at="2026-07-25T00:00:00.000Z",
+    )
+
+    assert resource["status"] == "UNSUPPORTED"
+    assert resource["payload"] == {}
+    assert any(item["code"] == "UNSUPPORTED_RESULT_KIND" for item in resource["diagnostics"])
+    assert_contract_valid(resource)
+
+
+def test_unsupported_result_resource_fails_closed_without_source_metadata() -> None:
+    project = cantilever_tip_load()
+    raw = run_analysis(copy.deepcopy(project))
+    raw["analysisSummary"]["analysisType"] = "response_spectrum"
+
+    resource = build_unsupported_result_resource(raw, None, result_kind="responseSpectrum")
+
+    assert resource["status"] == "INVALID"
+    assert resource["payload"] == {}
+    assert any(item["code"] == "MISSING_SOURCE_BINDING" for item in resource["diagnostics"])
+    assert not any(item["code"] == "UNSUPPORTED_RESULT_KIND" for item in resource["diagnostics"])
+    assert_contract_valid(resource)
+
+
+def test_staleness_rejects_non_dict_resource() -> None:
+    stale = evaluate_if3_staleness(
+        "not-a-resource",
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=7,
+        source_content_checksum=sha256_content_checksum({"x": 1}),
+        analysis_settings_checksum=sha256_content_checksum({"y": 1}),
+        load_context={"entries": []},
+    )
+
+    assert stale["status"] == "INVALID"
+    assert any(item["code"] == "FRAME_RESULT_RESOURCE_INVALID" for item in stale["diagnostics"])
+
+
+def test_staleness_reports_missing_envelope_fields() -> None:
+    stale = evaluate_if3_staleness(
+        {"schemaVersion": "0.1.0"},
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=7,
+        source_content_checksum=sha256_content_checksum({"x": 1}),
+        analysis_settings_checksum=sha256_content_checksum({"y": 1}),
+        load_context={"entries": []},
+    )
+
+    assert stale["status"] == "INVALID"
+    assert any(item["code"] == "RESULT_CHECKSUM_MISSING" for item in stale["diagnostics"])
+    assert any(item["code"] == "FRAME_RESULT_UUID_INVALID" for item in stale["diagnostics"])
+
+
+def test_staleness_reports_result_checksum_mismatch() -> None:
+    _, _, resource = normalized_success()
+    resource = copy.deepcopy(resource)
+    resource["resultChecksum"] = sha256_content_checksum({"tampered": True})
+
+    stale = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=resource["sourceDocumentVersion"],
+        source_content_checksum=resource["sourceContentChecksum"],
+        analysis_settings_checksum=resource["analysisSettingsChecksum"],
+        load_context=resource["loadContext"],
+    )
+
+    assert stale["status"] == "INVALID"
+    assert any(item["code"] == "RESULT_CHECKSUM_MISMATCH" for item in stale["diagnostics"])
+
+
+def test_staleness_reports_unsupported_schema_version() -> None:
+    _, _, resource = normalized_success()
+    resource = copy.deepcopy(resource)
+    resource["schemaVersion"] = "9.9.9"
+
+    stale = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=resource["sourceDocumentVersion"],
+        source_content_checksum=resource["sourceContentChecksum"],
+        analysis_settings_checksum=resource["analysisSettingsChecksum"],
+        load_context=resource["loadContext"],
+    )
+
+    assert stale["status"] == "UNSUPPORTED"
+    assert any(item["code"] == "UNSUPPORTED_RESULT_VERSION" for item in stale["diagnostics"])
+
+
+def test_staleness_reports_unsupported_solver_version() -> None:
+    _, _, resource = normalized_success()
+    resource = copy.deepcopy(resource)
+    resource["solverVersion"] = "99.0.0"
+
+    stale = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=resource["sourceDocumentVersion"],
+        source_content_checksum=resource["sourceContentChecksum"],
+        analysis_settings_checksum=resource["analysisSettingsChecksum"],
+        load_context=resource["loadContext"],
+    )
+
+    assert stale["status"] == "UNSUPPORTED"
+    assert any(
+        item["code"] == "UNSUPPORTED_RESULT_VERSION" and item["path"] == "/solverVersion"
+        for item in stale["diagnostics"]
+    )
+
+
+def test_staleness_handles_malformed_checksums_without_raising() -> None:
+    _, _, resource = normalized_success()
+    resource = copy.deepcopy(resource)
+    resource["sourceContentChecksum"] = {"algorithm": "sha256", "hexDigest": "not-valid"}
+    resource["analysisSettingsChecksum"] = "bad"
+
+    stale = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=resource["sourceDocumentVersion"],
+        source_content_checksum={"algorithm": "sha256", "hexDigest": "also-bad"},
+        analysis_settings_checksum={"algorithm": "sha256", "hexDigest": "still-bad"},
+        load_context=resource["loadContext"],
+    )
+
+    assert stale["status"] == "INVALID"
+    assert any(item["code"] == "CONTENT_CHECKSUM_INVALID" for item in stale["diagnostics"])
+    assert any(item["code"] == "CURRENT_SOURCE_BINDING_INVALID" for item in stale["diagnostics"])
+
+
+def test_staleness_diagnostics_are_deduped_and_deterministically_ordered() -> None:
+    _, _, resource = normalized_success()
+
+    stale = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=8,
+        source_content_checksum=sha256_content_checksum({"changed": True}),
+        analysis_settings_checksum=sha256_content_checksum({"changed": "settings"}),
+        load_context=resource["loadContext"],
+    )
+    duplicate = evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=8,
+        source_content_checksum=sha256_content_checksum({"changed": True}),
+        analysis_settings_checksum=sha256_content_checksum({"changed": "settings"}),
+        load_context=resource["loadContext"],
+    )
+
+    comparable = [(item["path"], item["code"], item["message"]) for item in stale["diagnostics"]]
+    assert comparable == sorted(comparable)
+    assert stale == duplicate
+    assert len(stale["diagnostics"]) == len({(item["path"], item["code"], item["message"]) for item in stale["diagnostics"]})
+
+
+def test_staleness_evaluator_does_not_mutate_resource_input() -> None:
+    _, _, resource = normalized_success()
+    before = copy.deepcopy(resource)
+
+    evaluate_if3_staleness(
+        resource,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        source_document_version=resource["sourceDocumentVersion"],
+        source_content_checksum=resource["sourceContentChecksum"],
+        analysis_settings_checksum=resource["analysisSettingsChecksum"],
+        load_context=resource["loadContext"],
+    )
+
+    assert resource == before
