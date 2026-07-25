@@ -3,6 +3,19 @@ export {
   type BridgeFrameAnalysisDocumentValue,
 } from "./bridgeFrameAnalysisDocument";
 export {
+  frameAnalysisLoadContextEntrySchema,
+  frameAnalysisLoadContextKindSchema,
+  frameAnalysisLoadContextSchema,
+  frameAnalysisResultDiagnosticSchema,
+  frameAnalysisResultKindSchema,
+  frameAnalysisResultPayloadCatalogSchema,
+  frameAnalysisResultPayloadEntrySchema,
+  frameAnalysisResultResourceSchema,
+  frameAnalysisResultRowSchema,
+  frameAnalysisResultStatusSchema,
+  type FrameAnalysisResultResourceValue,
+} from "./frameAnalysisResultResource";
+export {
   packageArtifactReferenceSchema,
   policyReferenceSchema,
   transferRecordArtifactReferenceSchema,

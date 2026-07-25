@@ -168,6 +168,8 @@ export {
   COMMON_ENVELOPE_SHAPE_ID,
   BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID,
   BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION,
+  FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID,
+  FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_VERSION,
   CONTRACT_VERSION_SUPPORT_MATRIX,
   DOCUMENT_REFERENCE_SCHEMA_ID,
   ENGINEERING_PROJECT_SCHEMA_ID,
@@ -187,6 +189,25 @@ export {
   validateSupportedContractVersion,
   type ContractVersionSupport,
 } from "./contractVersionRegistry";
+
+export {
+  FRAME_ANALYSIS_LOAD_CONTEXT_KINDS,
+  FRAME_ANALYSIS_RESULT_KINDS,
+  FRAME_ANALYSIS_RESULT_STATUSES,
+  isFrameAnalysisResultResource,
+  validateFrameAnalysisResultResource,
+  type FrameAnalysisLoadContext,
+  type FrameAnalysisLoadContextEntry,
+  type FrameAnalysisLoadContextKind,
+  type FrameAnalysisNumericValueMap,
+  type FrameAnalysisResultDiagnostic,
+  type FrameAnalysisResultKind,
+  type FrameAnalysisResultPayloadCatalog,
+  type FrameAnalysisResultPayloadEntry,
+  type FrameAnalysisResultResource,
+  type FrameAnalysisResultRow,
+  type FrameAnalysisResultStatus,
+} from "./frameAnalysisResultResource";
 
 export {
   validateCommonEnvelope,
