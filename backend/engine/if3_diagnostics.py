@@ -43,3 +43,15 @@ def sort_diagnostics(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             str(item.get("message", "")),
         ),
     )
+
+
+def dedupe_diagnostics(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[tuple[Any, ...]] = set()
+    deduped: list[dict[str, Any]] = []
+    for item in items:
+        key = (item.get("code"), item.get("severity"), item.get("path"), item.get("message"))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(item)
+    return deduped

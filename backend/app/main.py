@@ -29,7 +29,10 @@ from backend.engine import (
 )
 from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
 from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
-from backend.engine.if3_normalizer import normalize_linear_static_result_resource
+from backend.engine.if3_normalizer import (
+    build_unsupported_result_resource,
+    normalize_linear_static_result_resource,
+)
 
 APP_VERSION = "0.3.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -169,7 +172,9 @@ def run_eigen_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
             mass_case_id=mass_case_id,
             mode_count=mode_count,
         )
-    return safe_json_response({"result": result})
+    return safe_json_response(
+        attach_if3_unsupported_result({"result": result}, payload, result, "eigen")
+    )
 
 
 @app.post("/api/analysis/response-spectrum")
@@ -197,7 +202,14 @@ def run_response_spectrum_analysis_endpoint(payload: dict[str, Any]) -> JSONResp
         )
     else:
         result = run_response_spectrum_analysis(copy.deepcopy(project), request)
-    return safe_json_response({"result": result})
+    return safe_json_response(
+        attach_if3_unsupported_result(
+            {"result": result},
+            payload,
+            result,
+            "responseSpectrum",
+        )
+    )
 
 
 @app.post("/api/analysis/time-history")
@@ -234,7 +246,9 @@ def run_time_history_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     assert set(result.keys()) == TIME_HISTORY_ENVELOPE_KEYS, (
         "time-history envelope key set does not match the TH-5c contract"
     )
-    return safe_json_response({"result": result})
+    return safe_json_response(
+        attach_if3_unsupported_result({"result": result}, payload, result, "timeHistory")
+    )
 
 @app.post("/api/influence/run")
 def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
@@ -261,7 +275,9 @@ def run_influence_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
         )
     else:
         result = run_influence_analysis(copy.deepcopy(project), request)
-    return safe_json_response({"result": result})
+    return safe_json_response(
+        attach_if3_unsupported_result({"result": result}, payload, result, "influenceLine")
+    )
 
 
 @app.post("/api/moving-load/run")
@@ -311,7 +327,14 @@ def run_moving_load_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
             analysis_type="moving_load",
         )
         csv_exports = None
-    return safe_json_response({"result": result, "csv": csv_exports})
+    return safe_json_response(
+        attach_if3_unsupported_result(
+            {"result": result, "csv": csv_exports},
+            payload,
+            result,
+            "movingLoad",
+        )
+    )
 
 
 @app.post("/api/projects/save")
@@ -430,6 +453,20 @@ def extract_if3_metadata(payload: dict[str, Any]) -> dict[str, Any]:
     if isinstance(metadata, dict):
         return copy.deepcopy(metadata)
     return {}
+
+
+def attach_if3_unsupported_result(
+    response: dict[str, Any],
+    payload: dict[str, Any],
+    result: dict[str, Any],
+    result_kind: str,
+) -> dict[str, Any]:
+    response["if3Result"] = build_unsupported_result_resource(
+        result,
+        extract_if3_metadata(payload),
+        result_kind=result_kind,
+    )
+    return response
 
 
 def extract_file_name(payload: dict[str, Any]) -> str:
