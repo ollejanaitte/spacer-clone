@@ -5,6 +5,7 @@ import { contentChecksumSchema } from "../schemas/contentChecksum";
 import { coordinateContextSchema } from "../schemas/coordinateContext";
 import { documentReferenceSchema } from "../schemas/documentReference";
 import { engineeringProjectSchema } from "../schemas/engineeringProject";
+import { frameAnalysisResultResourceSchema } from "../schemas/frameAnalysisResultResource";
 import { immutableResourceReferenceSchema } from "../schemas/immutableResourceReference";
 import { jsonValueSchema } from "../schemas/jsonValue";
 import { migrationRecordSchema } from "../schemas/migrationRecord";
@@ -41,6 +42,7 @@ export const CONTRACT_JSON_SCHEMA_DEFINITIONS: readonly ContractJsonSchemaDefini
   { slug: "engineering-project", schema: engineeringProjectSchema },
   { slug: "road-design-document", schema: roadDesignDocumentSchema },
   { slug: "bridge-frame-analysis-document", schema: bridgeFrameAnalysisDocumentSchema },
+  { slug: "frame-analysis-result-resource", schema: frameAnalysisResultResourceSchema },
   { slug: "unknown-field-store", schema: unknownFieldStoreSchema },
   { slug: "migration-record", schema: migrationRecordSchema },
   { slug: "road-to-frame-transfer-package", schema: roadToFrameTransferPackageSchema },

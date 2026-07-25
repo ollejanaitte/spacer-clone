@@ -200,6 +200,23 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
     ],
   },
+  "frame-analysis-result-resource": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates FrameAnalysisResultResource shape. Exact source binding, schema version support, deterministic diagnostics, result kind catalog consistency, and finite result numeric semantics require runtime semantic validation.",
+    runtimeRules: [
+      "FRAME_RESULT_SCHEMA_ID_INVALID",
+      "FRAME_RESULT_SOURCE_DOCUMENT_MISMATCH",
+      "FRAME_RESULT_SOURCE_VERSION_MISMATCH",
+      "FRAME_RESULT_SOURCE_CHECKSUM_MISMATCH",
+      "FRAME_RESULT_STATUS_INVALID",
+      "FRAME_RESULT_KIND_PAYLOAD_MISSING",
+      "FRAME_RESULT_NUMERIC_VALUE_INVALID",
+      "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
+    ],
+  },
   "road-to-frame-transfer-package": {
     scope: "structural-plus-semantic",
     completeValidator: false,
