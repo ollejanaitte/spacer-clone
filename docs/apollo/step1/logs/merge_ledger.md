@@ -12,4 +12,5 @@
 | P04 | #194 | `docs/apollo-step1-p04-gap-analysis` | `7240f1818d6de9bfbf1dbbc56113cef700ccad16` | MERGED | READY 69 gap analysis + feature 281 disposition |
 | P05 | #195 | `docs/apollo-step1-p05-scope-boundary` | `849fef17a62a63994394cfddd11b71c1f76c1350` | MERGED | Phase 1 scope freeze + responsibility/interface boundaries |
 | P06 | #196 | `docs/apollo-step1-p06-architecture` | `a559871e3eb09e3c4e35b810d0a903be091dc4f2` | MERGED | Architecture ADRs + Apollo data model + design-draft schema |
-| P07 | — | `docs/apollo-step1-p07-interface-if3` | *(pending)* | STAGED | Interface contract + IF3 binding + stale rules + export authority matrix |
+| P07 | #197 | `docs/apollo-step1-p07-interface-if3` | `bf3d9dc22e027e1de661c0271ff6ba2a003e7d20` | MERGED | Interface contract + IF3 binding + stale rules + export authority matrix |
+| P08 | — | `docs/apollo-step1-p08-validation` | *(pending)* | STAGED | Reference Bridge RB-P1-001 + validation catalog + test strategy + traceability + acceptance plan |

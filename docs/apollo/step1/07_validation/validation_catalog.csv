@@ -1,0 +1,65 @@
+validation_id,layer,description,phase1_in_scope,method
+VAL-S1-L01-001,1,BSDD design-draft JSON parses and required envelope fields present,yes,schema_validation
+VAL-S1-L01-002,1,BFAD / ProjectModel contract shape for Frame export path,yes,contract_validation
+VAL-S1-L01-003,1,IF3 FrameAnalysisResultResource schema conformance,yes,schema_validation
+VAL-S1-L01-004,1,RoadToFrameTransferPackage schema when road import present,partial,schema_validation
+VAL-S1-L02-001,2,BSDD lifecycleStatus transitions per document_lifecycle.md,yes,unit_test
+VAL-S1-L02-002,2,Revision immutability — new edit creates new revisionId + checksum,yes,unit_test
+VAL-S1-L02-003,2,STALE binding when source checksum mismatch,yes,integration_test
+VAL-S1-L02-004,2,Export blocked when lifecycle below VALIDATED (authoritative path),yes,fail_closed_test
+VAL-S1-L03-001,3,Phase1 scope preflight rejects curved/skewed/continuous/composite intent,yes,negative_test
+VAL-S1-L03-002,3,Single span cardinality (exactly one span),yes,unit_test
+VAL-S1-L03-003,3,Girder count within 4–6 range when specified,yes,unit_test
+VAL-S1-L03-004,3,Equal-depth girder profile enforcement,yes,unit_test
+VAL-S1-L03-005,3,Non-composite RC deck kind only,yes,unit_test
+VAL-S1-L03-006,3,Skew angle 90° assertion,yes,unit_test
+VAL-S1-L04-001,4,BSDD export produces BFAD or ProjectModel with nodes/members,yes,integration_test
+VAL-S1-L04-002,4,Bridge FEM generator maps girder lines to members (CAP-FRM-008),partial,integration_test
+VAL-S1-L04-004,4,OUT_OF_PHASE1 entities absent from required Phase1 export surface,yes,negative_test
+VAL-S1-L05-001,5,UnitContext canonical units (m rad kN kPa),yes,contract_validation
+VAL-S1-L05-002,5,CoordinateContext axis convention x-longitudinal-y-transverse-z-up,yes,contract_validation
+VAL-S1-L05-003,5,unknown coordinate confidence blocks mutation/export,yes,fail_closed_test
+VAL-S1-L05-004,5,Display vs canonical unit separation,yes,unit_test
+VAL-S1-L06-001,6,Load case kinds dead/slab/live present as shells,yes,schema_validation
+VAL-S1-L06-002,6,Null magnitude loads do not auto-fill numerics,yes,fail_closed_test
+VAL-S1-L06-003,6,Live load blocked until Target Standard ADOPTED,no,negative_test
+VAL-S1-L06-004,6,Slab load input module shell (REQ-5C-0002),yes,acceptance_test
+VAL-S1-L06-005,6,Load combination entities deferred (ENT-DEF-0001),no,deferred
+VAL-S1-L07-001,7,Analysis input includes materials sections supports load cases,yes,integration_test
+VAL-S1-L07-002,7,Static linear analysis type only for Phase1,yes,negative_test
+VAL-S1-L07-003,7,Analyzer physical I/O not required for Phase1 path,yes,scope_assertion
+VAL-S1-L07-004,7,Analysis input generation traceability (REQ-5C-0079),partial,integration_test
+VAL-S1-L08-001,8,Linear static solver executes on RB-P1-001 shell model,partial,integration_test
+VAL-S1-L08-002,8,Solver failure surfaces FAILED state not authoritative export,yes,fail_closed_test
+VAL-S1-L08-003,8,Dynamic/eigen/RS/TH requests rejected or OUT_OF_PHASE1,no,negative_test
+VAL-S1-L08-004,8,Golden numeric comparison against RB-P1-001,no,blocked_until_adopted
+VAL-S1-L09-001,9,Section forces mapped to IF3 resource (CAP-IF3-001),partial,contract_validation
+VAL-S1-L09-002,9,Reactions and displacements in normalized resource,yes,contract_validation
+VAL-S1-L09-003,9,Section force assignment partial path (REQ-5C-0034),partial,integration_test
+VAL-S1-L09-004,9,Result mapping without invented provenance,yes,fail_closed_test
+VAL-S1-L10-001,10,AnalysisBinding persisted with source BSDD ref,yes,integration_test
+VAL-S1-L10-002,10,Run-time IF3 metadata on runAnalysis (CAP-IF3-005 gap),yes,integration_test
+VAL-S1-L10-003,10,Layers 1+2 agreement at run time,yes,contract_validation
+VAL-S1-L10-004,10,UNBOUND state when binding incomplete,yes,fail_closed_test
+VAL-S1-L11-001,11,Staleness when BSDD checksum changes post-run,yes,integration_test
+VAL-S1-L11-002,11,Reanalysis invalidates prior authoritative result,yes,integration_test
+VAL-S1-L11-003,11,STALE blocks export per stale_and_reanalysis_rules.md,yes,fail_closed_test
+VAL-S1-L12-001,12,Export authority matrix VALID allows JSON/CSV/PDF/PRINT,yes,unit_test
+VAL-S1-L12-002,12,UNBOUND/STALE/INVALID block all authoritative exports,yes,fail_closed_test
+VAL-S1-L12-003,12,Raw AnalysisResult download non-authoritative when unbound,yes,negative_test
+VAL-S1-L12-004,12,PRINT catalog gate (PR-40) aligned with IF3 state,partial,contract_validation
+VAL-S1-L13-001,13,Existing frame verification suite passes on main,yes,regression_test
+VAL-S1-L13-002,13,IF3 normalizer and gate unit tests pass,yes,regression_test
+VAL-S1-L13-003,13,Repository conformance / migration framework tests pass,yes,regression_test
+VAL-S1-L13-004,13,RB-P1-001 regression fixture after numeric adoption,partial,regression_test
+VAL-S1-L14-001,14,No handoff package mutation in Step1 PRs,yes,source_hygiene_check
+VAL-S1-L14-002,14,No secrets or absolute paths in staged docs,yes,source_hygiene_check
+VAL-S1-L14-003,14,git diff --check clean on doc-only PRs,yes,source_hygiene_check
+VAL-S1-L15-001,15,Electron launches without crash (existing app),partial,e2e_manual
+VAL-S1-L15-002,15,Frame analysis UI reachable with ProjectModel path,partial,e2e_manual
+VAL-S1-L15-003,15,IF3 export controls visible; unbound path blocked,partial,e2e_manual
+VAL-S1-L15-004,15,Apollo workspace UI,deferred,deferred_until_ap_implementation
+VAL-S1-READY-001,6,READY 69 requirement_id to validation_rule_id chain intact,yes,traceability_audit
+VAL-S1-READY-002,6,SOURCE_IMAGE_REVIEW_REQUIRED rules block numeric auto-determination,yes,fail_closed_test
+VAL-S1-RB-001,3,RB-P1-001 reference_bridge_input.json parses as planning draft,yes,schema_validation
+VAL-S1-RB-002,3,RB-P1-001 goldenExpectations remain NOT_AUTHORIZED,yes,fail_closed_test
