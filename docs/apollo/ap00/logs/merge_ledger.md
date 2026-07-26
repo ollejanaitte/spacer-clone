@@ -19,3 +19,4 @@ Step 1 merge history: [step1/logs/merge_ledger.md](../../step1/logs/merge_ledger
 | PR unit | GitHub PR | Branch | Merge SHA | Status | Notes |
 |---------|-----------|--------|-----------|--------|-------|
 | AP00-P00 | #201 | `docs/apollo-ap00-p00-governance` | `58ad0c1cd204af2208450322f7993b27585cd77b` | **MERGED** | Governance bootstrap; docs only |
+| AP00-P01 | #202 | `feat/apollo-ap00-p01-feature-flag` | `512edbfe7cfb81af52f321811e09e9d96fbe38b6` | **MERGED** | Feature flag + entry guard; default OFF |

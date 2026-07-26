@@ -7,6 +7,7 @@
 | DEC-AP00-0001 | 2026-07-27 | **Adopt AP-00 implementation governance tree** under `docs/apollo/ap00/` as the operational frame for Apollo Phase 1 production PRs (AP-00..AP-18) | Step 1 closed with `CONDITIONAL_GO` (DEC-S1-0012); implementation requires enforceable authorization boundaries, forbidden scope, branch/PR rules, and logs separate from Step 1 planning artifacts | ACCEPTED |
 | DEC-AP00-0002 | 2026-07-27 | **Freeze AP-* numbering AP-00..AP-18** as defined in Step 1 P09 `implementation_roadmap.md` and `implementation_pr_breakdown.csv`; no renumbering or insertion without new DEC-AP00-* entry and supervisor approval | Preserves traceability from Step 1 roadmap to merge ledger; prevents scope drift via ad-hoc PR IDs | ACCEPTED |
 | DEC-AP00-0003 | 2026-07-27 | **Adopt `VITE_APOLLO_PHASE1_ENABLED` default OFF** with fail-closed parse (`true` only); gates `/pro/apollo` entry and toolbar control; ON exposes guarded shell only (no workspace body) | P01 entry guard must not allocate Apollo state or expose design-input UI; matches authorization matrix feature-flag default off | ACCEPTED |
+| DEC-AP00-0004 | 2026-07-27 | **Adopt pure TypeScript scope and numeric fail-closed guards** under `frontend/src/apollo/` with stable `AP00_*` error codes, Vitest table-driven coverage, and P02 contract docs | AP-01/AP-02 require reusable enforcement of DEC-S1-0008 narrow archetype and DEC-S1-0004/0011 numeric freeze before BSDD promotion or validation hooks | ACCEPTED |
 
 ## Inherited Step 1 decisions (reference only)
 
