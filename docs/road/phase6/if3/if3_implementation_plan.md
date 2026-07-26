@@ -1,11 +1,12 @@
 # IF3 Implementation Plan
 
-**Date:** 2026-07-25
-**Status:** DESIGN_DEFINED_IMPLEMENTATION_NOT_STARTED
+**Date:** 2026-07-26
+**Status:** IF3_A_THROUGH_E_IMPLEMENTED_FOR_SEMANTIC_GATES
 
 ## Implementation Rule
 
-This document defines implementation slices only. It does not claim IF3 is implemented.
+This document defines implementation slices. IF3-A through IF3-E semantic gates are recorded as
+implemented with tests. PR-40/41/42 feature completeness remains separately gated.
 
 Each slice must start from the design in this package, stage explicit paths only, and run the relevant
 typecheck/test gates. Stop immediately if dependencies differ from the expected design, if tests
@@ -208,42 +209,33 @@ Stop conditions:
 
 Purpose: finish read-old/write-target compatibility and freeze IF3 gates.
 
-Scope:
+Status: COMPLETE for semantic IF3-E scope.
 
-- Implement `OLD_ANALYSIS_RESULT_POLICY: READ_OLD_WRITE_TARGET`.
-- Quarantine legacy results missing identity/binding/provenance as non-authoritative.
-- Add migration diagnostics.
-- Update PR readiness gates after IF3-A through IF3-D evidence.
-- Record command/test evidence.
+Implemented:
 
-Non-scope:
+- `OLD_ANALYSIS_RESULT_POLICY: READ_OLD_WRITE_TARGET`
+- Compatibility classification and consumer capability matrix
+- Quarantine for insufficient provenance / malformed / missing members / stale
+- WRITE_TARGET eligibility only when explicit metadata is complete (never invented)
+- Legacy `analysisResults.timeHistory` treated as compatibility/display input only
+- Completion gate / evidence / dependency docs synced to implementation evidence
+
+Files:
+
+- `frontend/src/results/if3LegacyCompatibility.ts`
+- `frontend/src/results/if3LegacyCompatibility.test.ts`
+- `backend/engine/if3_legacy_compatibility.py`
+- `backend/tests/test_if3_legacy_compatibility.py`
+- Phase 6 IF3 readiness docs under `docs/road/phase6/if3/` and dependency/readiness sync docs
+
+Non-scope retained:
 
 - No final visual release while OD8-04 remains open.
 - No claim that transient legacy results are losslessly migrated.
-
-Likely files:
-
-- migration registry/schema files
-- result compatibility adapters
-- Phase 6 readiness docs after implementation evidence exists
-
-Schema/migration impact: migration registry required for result resource and likely frame-document
-result refs.
-
-Tests:
-
-- Old raw result is readable as compatibility input only.
-- Unknown version fails closed.
-- Migration does not invent missing result identity or provenance.
-- Save/reload/migration idempotence.
-- Completion gate records exact commands and results.
+- No PR-40 PRINT catalog implementation in IF3-E.
 
 Completion gate:
 
-- IF3 implementation evidence can be used to reopen PR-40/41/42 conditions.
-
-Stop conditions:
-
-- Legacy result migration would require invented binding/provenance.
-- Full validation commands fail.
+- IF3-A through IF3-E semantic evidence supports `PR-40 CONDITIONAL_GO`, `PR-41 NOGO`, and
+  `PR-42 CONDITIONAL_GO`.
 

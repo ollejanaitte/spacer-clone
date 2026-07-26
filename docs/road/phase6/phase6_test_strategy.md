@@ -58,7 +58,7 @@ PR-39A readiness is GO before implementation. Conditions before implementation c
 
 ## PR-40 PRINT Tests
 
-Current readiness: NOGO until IF3 is verified and PRINT source contract/catalog/staleness handling exist.
+Current readiness: `CONDITIONAL_GO` — IF3 A–E semantic gates satisfied; PRINT catalog/DTO completeness and stale/legacy fail-closed behavior remain.
 
 Required targets:
 
@@ -70,7 +70,7 @@ Required targets:
 
 ## PR-41 Frame DRAFT Tests
 
-Current readiness: NOGO until SP1 neutral/shared Frame drawing path and IF3 are verified.
+Current readiness: `NOGO` — SP1 neutral/shared Frame drawing path remains unverified.
 
 Required targets:
 
@@ -82,7 +82,7 @@ Required targets:
 
 ## PR-42 Viewer Tests
 
-Current readiness: NOGO until IF3 viewer input/staleness/result adapter contract is verified.
+Current readiness: `CONDITIONAL_GO` — IF3 viewer input/staleness/result adapters satisfied; P6-D06 completeness checklist remains.
 
 Required targets:
 
@@ -103,6 +103,16 @@ cd frontend && npm run lint
 ```
 
 Run E2E relevant to the changed output. Run full E2E before final P6 completion if runtime permits, but classify unrelated failures clearly.
+
+## Current Readiness (post IF3-E)
+
+```text
+IF3_STATUS: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PR40_READINESS: CONDITIONAL_GO
+PR41_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
+OD8_04_STATUS: OPEN_NONBLOCKING_FOR_IMPLEMENTATION
+```
 
 ```text
 PHASE6_TEST_STRATEGY_VERDICT: PR39_BASELINE_GATE_PASS

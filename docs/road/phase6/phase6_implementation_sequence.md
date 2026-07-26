@@ -22,16 +22,14 @@ PR-39A Road GDRAW annotations/layers
 
 PR-40..42 may prepare docs/fixtures in parallel only if IF3 contracts are not bypassed.
 
-Current readiness from MiMo audit:
+Current readiness after IF3-E:
 
 ```text
-PR39_SPLIT_DECISION: ACCEPTED
-PR39A_READINESS: GO
-PR39B_READINESS: GO_AFTER_PR39A
-PR39C_READINESS: CONDITIONAL_GO
-PR40_READINESS: NOGO
+PR39_STATUS: COMPLETE
+IF3_STATUS: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PR40_READINESS: CONDITIONAL_GO
 PR41_READINESS: NOGO
-PR42_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
 ```
 
 ## Branch Pattern
@@ -67,19 +65,20 @@ For each PR:
 - run typecheck and targeted tests before broad tests
 - record commands and results in the PR completion note
 - do not claim PASS for commands not run
-- do not start PR-40..42 implementation until IF3 gates are verified
+- do not claim PR-40 catalog completeness until the PR-40 body lands
+- treat OD8-04 as blocking final visual-release claims only
 - treat `.venv` setup failure as environment setup, not implementation failure, and resolve before full-test gate
 
 ## PR Readiness Rules
 
 | PR | Current readiness | Required before GO |
 | --- | --- | --- |
-| PR-39A | GO | Implement builder annotations, crossfall, vertical curve, coordinate table, and DXF layer presets |
-| PR-39B | GO_AFTER_PR39A | Implement dimensions and section dimension tests on top of PR-39A layer/settings baseline |
-| PR-39C | CONDITIONAL_GO | Implement Road-owned bridge/structure markers only where Road source data exists; otherwise defer |
-| PR-40 | NOGO | Verify IF3 and define PRINT source contract, catalog, and staleness handling |
-| PR-41 | NOGO | Verify SP1 neutral/shared Frame drawing path and IF3 |
-| PR-42 | NOGO | Verify IF3 viewer input, staleness, and result adapter contract |
+| PR-39A | COMPLETE | Merged on main |
+| PR-39B | COMPLETE | Merged on main |
+| PR-39C | COMPLETE | Merged on main |
+| PR-40 | CONDITIONAL_GO | IF3 A–E verified; implement PRINT catalog completeness while retaining stale/legacy fail-closed behavior |
+| PR-41 | NOGO | Verify SP1 neutral/shared Frame drawing path |
+| PR-42 | CONDITIONAL_GO | IF3 viewer adapters verified; complete remaining P6-D06 checklist items |
 
 ## Rollback
 
@@ -93,5 +92,5 @@ For each PR:
 | PR-42 | keep old Viewer adapter; no state migration rollback |
 
 ```text
-PHASE6_SEQUENCE_VERDICT: PR39_SPLIT_ACCEPTED_AND_PR39A_READY
+PHASE6_SEQUENCE_VERDICT: PR39_COMPLETE_READY_FOR_PR40_CONDITIONAL
 ```

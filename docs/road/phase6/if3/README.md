@@ -1,18 +1,16 @@
 # IF3 Result / Output Contract Design Package
 
-**Date:** 2026-07-25
-**Status:** DESIGN_DEFINED_REVIEW_READY
-**Scope:** Phase 6 IF3 semantic result/output contract only
+**Date:** 2026-07-26
+**Status:** DESIGN_DEFINED_AND_IF3_A_THROUGH_E_IMPLEMENTED
+**Scope:** Phase 6 IF3 semantic result/output contract and IF3-A through IF3-E implementation gates
 
 ## Purpose
 
-This package promotes the IF3 investigation into review-ready design docs for Frame result resources,
-result lifecycle, staleness, and output consumers.
+This package defines and records the IF3 Frame result resource contract, lifecycle/staleness,
+consumer boundaries, and implementation slices.
 
-IF3 was `NOGO` before this design package. The repository contains conceptual persisted-result
-requirements and partial contract infrastructure, but it does not currently implement the concrete
-IF3 result resource, stable result identity, authoritative result binding, result staleness, or
-result provenance.
+IF3 was `NOGO` before the design package. IF3-A through IF3-D landed on `origin/main` before
+`3f24b98`. IF3-E adds READ_OLD_WRITE_TARGET compatibility classification and completion-gate sync.
 
 ## Documents
 
@@ -40,9 +38,13 @@ Report, Viewer, and DRAFT must not directly consume raw solver results as the au
 Old `AnalysisResult` values are compatibility input only until wrapped, validated, checksummed, and
 bound into a supported IF3 result resource.
 
-## Post-Design Readiness
+## Post-Implementation Readiness
 
-Design freeze can change IF3 from "missing design" to "design-defined", but it does not by itself
-make PR-40, PR-41, or PR-42 implementation-ready. Those PRs become `CONDITIONAL_GO` only after the
-relevant implementation slices are completed and validated.
+| PR | Verdict after IF3-E |
+| --- | --- |
+| PR-40 Frame PRINT | `CONDITIONAL_GO` — IF3 semantic adapters exist; PRINT catalog completeness remains |
+| PR-41 Frame DRAFT | `NOGO` — SP1 neutral/shared Frame drawing path still unverified |
+| PR-42 Viewer adapters | `CONDITIONAL_GO` — IF3 viewer adapters exist; P6-D06 completeness checklist remains |
+
+OD8-04 remains open and continues to block final visual-release claims.
 
