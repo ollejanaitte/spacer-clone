@@ -1,0 +1,11 @@
+source_id,kind,path_or_ref,authority,notes
+SRC-001,github_handoff_tree,docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/,Rank 1 authoritative,Immutable intake on main; 126 files; SHA256SUMS 124/124 OK; do not mutate
+SRC-002,github_pr,https://github.com/ollejanaitte/spacer-clone/pull/189,Rank 1 intake record,Merge SHA 0034786ef1848e69877b1e2357a453bad40059e5; handoff package intake
+SRC-003,github_commit,0034786ef1848e69877b1e2357a453bad40059e5,Rank 1,PR #189 merge commit for handoff directory
+SRC-004,package_manifest,docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/MANIFEST.csv,Rank 1,126 rows; repo-relative paths only
+SRC-005,package_checksums,docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/SHA256SUMS.txt,Rank 1,124 hashed entries; self-excludes MANIFEST.csv and SHA256SUMS.txt
+SRC-006,package_provenance,docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/source-location-map.md,Rank 2,Maps package paths to manual-research source paths
+SRC-007,local_zip_ref,manual-research/handoffs/APOLLO-FRAME-HANDOFF-20260726-001.zip,Rank 3 local-derived if present,Referenced in reports/handoff_review.md; not present in spacer-clone-main repo workspace; ZIP SHA 1f29b0729c7eea642422f5151c114612a230b7ae5dc0d42dd07d04191dd83953 per review report
+SRC-008,local_research_tree,~/Projects/apollo/manual-research/,Rank 3 local-derived,Environment-dependent; may be absent; GitHub handoff tree supersedes when missing
+SRC-009,step1_acceptance,docs/apollo/step1/01_acceptance/,Step 1 output,P01 mechanical and semantic acceptance artifacts; not authoritative over Rank 1 package content
+SRC-010,github_main_base,1a534c9f0b84867b5e7d3974085c546d5f3e7fb8,Step 1 baseline,P00 squash merge on main; P01 branch base

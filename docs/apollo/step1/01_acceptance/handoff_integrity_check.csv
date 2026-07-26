@@ -1,0 +1,27 @@
+check_id,category,description,expected,actual,verdict,notes
+CHK-001,filesystem,file_count,126,126,PASS,All regular files under package root
+CHK-002,filesystem,directory_count,10,10,PASS,Includes root and nine subdirectories
+CHK-003,filesystem,symlink_count,0,0,PASS,No symlinks present
+CHK-004,filesystem,special_file_count,0,0,PASS,No pipes/sockets/devices
+CHK-005,checksum,sha256sums_verified,124/124 OK,124/124 OK,PASS,sha256sum -c SHA256SUMS.txt
+CHK-006,checksum,self_exclusion,MANIFEST.csv and SHA256SUMS.txt excluded,2 files excluded by design,PASS,Documented in PACKAGE_INFO.md; not a defect
+CHK-007,manifest,manifest_row_count,126,126,PASS,tail -n +2 MANIFEST.csv
+CHK-008,manifest,manifest_vs_disk,126 files bijection,126 matched,PASS,MANIFEST.csv and SHA256SUMS.txt included in manifest only
+CHK-009,manifest,absolute_paths,0,0,PASS,No /home/ /Users/ or drive-letter paths
+CHK-010,manifest,path_traversal,0 ../ segments,0,PASS,No parent-directory references
+CHK-011,secrets,text_secret_pattern_scan,0 hits,0,PASS,AKIA/ghp_/sk- patterns in .md/.csv/.txt
+CHK-012,counts,feature_catalog_rows,281,281,PASS,features/feature_catalog.csv
+CHK-013,counts,ready_requirements_rows,69,69,PASS,standards/ready_requirements.csv
+CHK-014,counts,open_items_rows,32,32,PASS,standards/open_items.csv
+CHK-015,counts,jis_source_gaps_rows,34,34,PASS,standards/jis_source_gaps.csv
+CHK-016,counts,apollo_return_rows,4,4,PASS,standards/apollo_return_remaining.csv
+CHK-017,counts,unknown_items_rows,15,15,PASS,standards/unknown_items.csv
+CHK-018,counts,conflicts_rows,2,2,PASS,standards/conflicts.csv
+CHK-019,counts,evidence_index_rows,69,69,PASS,evidence/index.csv
+CHK-020,counts,evidence_png_on_disk,69,69,PASS,evidence/images/*.png
+CHK-021,traceability,ready_evidence_basename_resolvable,69/69,69/69,PASS,stage5b/evidence/* basename matches evidence/images/*
+CHK-022,semantic,target_standard,NOT_SELECTED,NOT_SELECTED,PASS_WITH_NOTE,Constraint not defect; blocks numeric freeze
+CHK-023,historical_report,package_validation_files_hashed,126 or documented delta,122,INFO,Historical build-time snapshot; see ISS-S1-002
+CHK-024,historical_report,package_validation_manifest_rows,126 or documented delta,124,INFO,Historical build-time snapshot; see ISS-S1-002
+CHK-025,historical_report,final_verification_zip_entries,126 or documented delta,125,INFO,Historical ZIP snapshot; see ISS-S1-003
+CHK-026,interpretation,package_status_draft_vs_reports_passed,consistent or documented,DRAFT vs PASSED/ACCEPTED,PASS_WITH_ACTION,See ISS-S1-001; package not rewritten

@@ -1,0 +1,21 @@
+legacy_or_stale_name,canonical_package_path,mapping_type,notes
+standards/stage5_open_items.csv,standards/open_items.csv,rename,Referenced in docs/08_open_items_and_blockers.md L7; source-location-map.md L16
+standards/stage5_jis_source_gaps.csv,standards/jis_source_gaps.csv,rename,Referenced in docs/08_open_items_and_blockers.md L8; source-location-map.md L17
+standards/stage5_apollo_return_resolution.csv,standards/apollo_return_remaining.csv,rename,Referenced in docs/08_open_items_and_blockers.md L9; canonical file apollo_return_remaining.csv
+standards/stage5_unknown_resolution.csv,standards/unknown_items.csv,rename,Referenced in docs/08_open_items_and_blockers.md L10; source-location-map.md L18
+standards/stage5_conflicts.csv,standards/conflicts.csv,rename,Referenced in docs/08_open_items_and_blockers.md L57; source-location-map.md L19
+standards/stage5_open_items_management.md,standards/open_items_management.md,rename,Referenced in docs/08_open_items_and_blockers.md L61; source-location-map.md L23
+standards/stage5_ready_requirements.csv,standards/ready_requirements.csv,rename,source-location-map.md L14
+standards/stage5_external_traceability_crosswalk.csv,standards/external_traceability_crosswalk.csv,rename,source-location-map.md L15
+standards/stage5_traceability_data_model.md,standards/traceability_data_model.md,rename,source-location-map.md L20
+standards/stage5_standard_traceability_report.md,standards/standard_traceability_report.md,rename,source-location-map.md L21
+standards/stage5_design_freeze_assessment.md,standards/design_freeze_assessment.md,rename,source-location-map.md L22
+stage5b/evidence/<filename>.png,evidence/images/<filename>.png,path_alias,ready_requirements.csv evidence_image column; basename match 69/69; see ISS-S1-006
+README.md,README.md,identity,Package entry point
+PACKAGE_INFO.md,PACKAGE_INFO.md,identity,Package metadata and frozen counts
+MANIFEST.csv,MANIFEST.csv,identity,126-row file inventory
+SHA256SUMS.txt,SHA256SUMS.txt,identity,124-entry content hashes; self-excluded
+evidence/index.csv,evidence/index.csv,identity,69 evidence index rows
+features/feature_catalog.csv,features/feature_catalog.csv,identity,281 feature rows
+standards/ready_requirements.csv,standards/ready_requirements.csv,identity,69 READY rows
+analysis-input/input_output_candidates.csv,analysis-input/input_output_candidates.csv,identity,Analyzer I/O UNKNOWN candidates IO-CAND-0003 IO-CAND-0004
