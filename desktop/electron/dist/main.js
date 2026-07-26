@@ -8,6 +8,11 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_child_process_1 = require("node:child_process");
 const gpuMode_1 = require("./gpuMode");
 const aboutConfig_1 = require("./aboutConfig");
+const dialogIpc_1 = require("./dialogIpc");
+const gotTheLock = electron_1.app.requestSingleInstanceLock();
+if (!gotTheLock) {
+    electron_1.app.quit();
+}
 const gpuMode = (0, gpuMode_1.resolveGpuModeFromArgs)(process.argv, process.env.GPU_MODE);
 let backendProcess;
 let splashWindow;
@@ -348,8 +353,14 @@ async function createMainWindow(version) {
             preload: getPreloadPath(),
         },
     });
-    mainWindow.removeMenu();
-    mainWindow.setMenuBarVisibility(false);
+    if (process.platform === "linux") {
+        mainWindow.autoHideMenuBar = true;
+        mainWindow.setMenuBarVisibility(false);
+    }
+    else {
+        mainWindow.removeMenu();
+        mainWindow.setMenuBarVisibility(false);
+    }
     mainWindow.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
         console.error("Failed to load:", {
             errorCode,
@@ -399,21 +410,38 @@ async function runWithSplash() {
         electron_1.app.quit();
     }
 }
-electron_1.app.whenReady().then(() => {
-    buildAppMenu();
-    void runWithSplash();
-    electron_1.app.on("activate", () => {
-        if (electron_1.BrowserWindow.getAllWindows().length === 0) {
-            void runWithSplash();
+if (gotTheLock) {
+    electron_1.app.on("second-instance", () => {
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+            }
+            if (!mainWindow.isVisible()) {
+                mainWindow.show();
+            }
+            mainWindow.focus();
+        }
+        else if (splashWindow && !splashWindow.isDestroyed()) {
+            splashWindow.focus();
         }
     });
-});
-electron_1.app.on("before-quit", () => {
-    stopBackend();
-});
-electron_1.app.on("window-all-closed", () => {
-    closeSplash();
-    if (process.platform !== "darwin") {
-        electron_1.app.quit();
-    }
-});
+    electron_1.app.whenReady().then(() => {
+        (0, dialogIpc_1.registerDialogIpc)(() => mainWindow, showAboutDialog);
+        buildAppMenu();
+        void runWithSplash();
+        electron_1.app.on("activate", () => {
+            if (electron_1.BrowserWindow.getAllWindows().length === 0) {
+                void runWithSplash();
+            }
+        });
+    });
+    electron_1.app.on("before-quit", () => {
+        stopBackend();
+    });
+    electron_1.app.on("window-all-closed", () => {
+        closeSplash();
+        if (process.platform !== "darwin") {
+            electron_1.app.quit();
+        }
+    });
+}

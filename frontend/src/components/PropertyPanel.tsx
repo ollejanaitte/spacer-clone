@@ -1,5 +1,7 @@
 ﻿import { Plus, Trash2 } from "lucide-react";
+import { useCallback, useRef } from "react";
 import { ja } from "../i18n/ja";
+import { DraftNumericInput } from "./DraftNumericInput";
 import type {
   AnalysisSettings,
   LoadCase,
@@ -37,7 +39,10 @@ type PropertyPanelProps = {
   selected: SectionKey;
   validationPaths: Set<string>;
   onChange: (project: ProjectModel) => void;
+  onInvalidNumericDraftsChange?: (hasInvalid: boolean) => void;
 };
+
+type ReportNumericValidity = (fieldId: string, isInvalid: boolean) => void;
 
 type FieldType = "text" | "number" | "boolean" | "static" | "linear_static" | "coord";
 type Column<T> = {
@@ -54,7 +59,19 @@ export function PropertyPanel({
   selected,
   validationPaths,
   onChange,
+  onInvalidNumericDraftsChange,
 }: PropertyPanelProps) {
+  const invalidDraftIdsRef = useRef(new Set<string>());
+  const reportNumericValidity = useCallback<ReportNumericValidity>((fieldId, isInvalid) => {
+    const ids = invalidDraftIdsRef.current;
+    if (isInvalid) {
+      ids.add(fieldId);
+    } else {
+      ids.delete(fieldId);
+    }
+    onInvalidNumericDraftsChange?.(ids.size > 0);
+  }, [onInvalidNumericDraftsChange]);
+
   const update = <K extends keyof ProjectModel>(key: K, value: ProjectModel[K]) => {
     onChange({ ...project, [key]: value });
   };
@@ -71,6 +88,7 @@ export function PropertyPanel({
           columns={projectColumns}
           pathPrefix="/project"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           onChange={(value) => update("project", value)}
         />
       )}
@@ -80,6 +98,7 @@ export function PropertyPanel({
           columns={nodeColumns}
           pathPrefix="/nodes"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({ id: nextId("N", project.nodes.length), x: 0, y: 0, z: 0 })}
           onChange={(items) => update("nodes", items)}
         />
@@ -90,6 +109,7 @@ export function PropertyPanel({
           columns={memberColumns}
           pathPrefix="/members"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({
             id: nextId("M", project.members.length),
             nodeI: project.nodes[0]?.id ?? "",
@@ -107,6 +127,7 @@ export function PropertyPanel({
           columns={materialColumns}
           pathPrefix="/materials"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({
             id: nextId("MAT", project.materials.length),
             name: ja.defaults.newMaterialName,
@@ -124,6 +145,7 @@ export function PropertyPanel({
           columns={sectionColumns}
           pathPrefix="/sections"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({
             id: nextId("SEC", project.sections.length),
             name: ja.defaults.newSectionName,
@@ -141,6 +163,7 @@ export function PropertyPanel({
           columns={supportColumns}
           pathPrefix="/supports"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({
             nodeId: project.nodes[0]?.id ?? "",
             ux: true,
@@ -159,6 +182,7 @@ export function PropertyPanel({
           columns={loadCaseColumns}
           pathPrefix="/loadCases"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={(): LoadCase => ({
             id: nextId("LC", project.loadCases.length),
             name: ja.defaults.newLoadCaseName,
@@ -173,6 +197,7 @@ export function PropertyPanel({
           columns={nodalLoadColumns}
           pathPrefix="/nodalLoads"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={() => ({
             id: nextId("NL", project.nodalLoads.length),
             loadCaseId: project.loadCases[0]?.id ?? "",
@@ -193,6 +218,7 @@ export function PropertyPanel({
           columns={memberLoadColumns}
           pathPrefix="/memberLoads"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           createItem={(): MemberLoad => ({
             id: nextId("ML", project.memberLoads.length),
             loadCaseId: project.loadCases[0]?.id ?? "",
@@ -210,6 +236,7 @@ export function PropertyPanel({
         <MassCaseEditor
           project={project}
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           onChange={(massCases) => update("massCases", massCases)}
         />
       )}
@@ -220,11 +247,13 @@ export function PropertyPanel({
             columns={analysisColumns}
             pathPrefix="/analysisSettings"
             validationPaths={validationPaths}
+            reportNumericValidity={reportNumericValidity}
             onChange={(value) => update("analysisSettings", value)}
           />
           <ResponseSpectrumEditor
             project={project}
             validationPaths={validationPaths}
+            reportNumericValidity={reportNumericValidity}
             onChange={(analysisSettings) => update("analysisSettings", analysisSettings)}
           />
         </>
@@ -241,12 +270,14 @@ function ObjectEditor<T>({
   columns,
   pathPrefix,
   validationPaths,
+  reportNumericValidity,
   onChange,
 }: {
   value: T;
   columns: Column<T>[];
   pathPrefix: string;
   validationPaths: Set<string>;
+  reportNumericValidity: ReportNumericValidity;
   onChange: (value: T) => void;
 }) {
   return (
@@ -260,6 +291,8 @@ function ObjectEditor<T>({
           <FieldInput
             column={column}
             value={column.get(value)}
+            fieldId={`${pathPrefix}/${column.key}`}
+            reportNumericValidity={reportNumericValidity}
             onChange={(nextValue) => onChange(column.set(value, nextValue))}
           />
         </label>
@@ -273,6 +306,7 @@ function ArrayEditor<T>({
   columns,
   pathPrefix,
   validationPaths,
+  reportNumericValidity,
   createItem,
   minimumItems = 0,
   onChange,
@@ -281,6 +315,7 @@ function ArrayEditor<T>({
   columns: Column<T>[];
   pathPrefix: string;
   validationPaths: Set<string>;
+  reportNumericValidity: ReportNumericValidity;
   createItem: () => T;
   minimumItems?: number;
   onChange: (items: T[]) => void;
@@ -319,6 +354,8 @@ function ArrayEditor<T>({
                   <FieldInput
                     column={column}
                     value={column.get(item)}
+                    fieldId={`${pathPrefix}/${rowIndex}/${column.key}`}
+                    reportNumericValidity={reportNumericValidity}
                     onChange={(value) => setCell(rowIndex, column, value)}
                   />
                 </td>
@@ -346,10 +383,12 @@ function ArrayEditor<T>({
 function MassCaseEditor({
   project,
   validationPaths,
+  reportNumericValidity,
   onChange,
 }: {
   project: ProjectModel;
   validationPaths: Set<string>;
+  reportNumericValidity: ReportNumericValidity;
   onChange: (massCases: ProjectModel["massCases"]) => void;
 }) {
   const massCase = project.massCases?.[0] ?? {
@@ -369,6 +408,7 @@ function MassCaseEditor({
         columns={massCaseColumns}
         pathPrefix="/massCases/0"
         validationPaths={validationPaths}
+        reportNumericValidity={reportNumericValidity}
         onChange={(value) => onChange([{ ...value, items: massCase.items }])}
       />
       <ArrayEditor
@@ -376,6 +416,7 @@ function MassCaseEditor({
         columns={massItemColumns}
         pathPrefix="/massCases/0/items"
         validationPaths={validationPaths}
+        reportNumericValidity={reportNumericValidity}
         createItem={() => ({
           nodeId: project.nodes[0]?.id ?? "",
           mx: 1,
@@ -394,10 +435,12 @@ function MassCaseEditor({
 function ResponseSpectrumEditor({
   project,
   validationPaths,
+  reportNumericValidity,
   onChange,
 }: {
   project: ProjectModel;
   validationPaths: Set<string>;
+  reportNumericValidity: ReportNumericValidity;
   onChange: (analysisSettings: AnalysisSettings) => void;
 }) {
   const massCases = project.massCases ?? [];
@@ -455,14 +498,13 @@ function ResponseSpectrumEditor({
       )}
       <label className="field">
         <span>{ja.propertyPanel.modeCountLabel}</span>
-        <input
+        <DraftNumericInput
           aria-label={ja.propertyPanel.modeCountAriaLabel}
-          type="number"
-          min="1"
-          step="1"
           value={settings.modeCount}
-          onChange={(event) => {
-            const value = Number(event.currentTarget.value);
+          onValidityChange={(isInvalid) =>
+            reportNumericValidity("/analysisSettings/responseSpectrum/modeCount", isInvalid)
+          }
+          onChange={(value) => {
             if (Number.isInteger(value) && value >= 1) updateSettings({ modeCount: value });
           }}
         />
@@ -483,30 +525,30 @@ function ResponseSpectrumEditor({
       </label>
       <label className="field">
         <span>{ja.propertyPanel.dampingRatioLabel}</span>
-        <input
+        <DraftNumericInput
           aria-label={ja.propertyPanel.dampingRatioAriaLabel}
-          type="number"
-          min="0"
-          step="any"
           value={settings.dampingRatio}
-          onChange={(event) => {
-            const value = Number(event.currentTarget.value);
-            if (Number.isFinite(value) && value >= 0) updateSettings({ dampingRatio: value });
+          onValidityChange={(isInvalid) =>
+            reportNumericValidity("/analysisSettings/responseSpectrum/dampingRatio", isInvalid)
+          }
+          onChange={(value) => {
+            if (value >= 0) updateSettings({ dampingRatio: value });
           }}
         />
       </label>
       <label className="field">
         <span>{ja.propertyPanel.targetCumulativeMassRatioLabel}</span>
-        <input
+        <DraftNumericInput
           aria-label={ja.propertyPanel.targetCumulativeMassRatioAriaLabel}
-          type="number"
-          min="0"
-          max="1"
-          step="any"
           value={settings.targetCumulativeMassRatio}
-          onChange={(event) => {
-            const value = Number(event.currentTarget.value);
-            if (Number.isFinite(value) && value > 0 && value <= 1) {
+          onValidityChange={(isInvalid) =>
+            reportNumericValidity(
+              "/analysisSettings/responseSpectrum/targetCumulativeMassRatio",
+              isInvalid,
+            )
+          }
+          onChange={(value) => {
+            if (value > 0 && value <= 1) {
               updateSettings({ targetCumulativeMassRatio: value });
             }
           }}
@@ -558,6 +600,7 @@ function ResponseSpectrumEditor({
           columns={spectrumPointColumns}
           pathPrefix="/analysisSettings/responseSpectrum/spectrumPoints"
           validationPaths={validationPaths}
+          reportNumericValidity={reportNumericValidity}
           minimumItems={2}
           createItem={() => {
             const last = settings.spectrumPoints.at(-1);
@@ -576,10 +619,14 @@ function ResponseSpectrumEditor({
 function FieldInput<T>({
   column,
   value,
+  fieldId,
+  reportNumericValidity,
   onChange,
 }: {
   column: Column<T>;
   value: string | number | boolean;
+  fieldId: string;
+  reportNumericValidity: ReportNumericValidity;
   onChange: (value: string | number | boolean) => void;
 }) {
   if (column.type === "boolean") {
@@ -603,15 +650,13 @@ function FieldInput<T>({
     );
   }
   if (column.type === "number") {
+    const numericValue = typeof value === "number" ? value : Number(value);
     return (
-      <input
-        type="number"
-        step="any"
-        value={String(value)}
-        onChange={(event) => {
-          const next = Number(event.currentTarget.value);
-          if (Number.isFinite(next)) onChange(next);
-        }}
+      <DraftNumericInput
+        aria-label={column.label}
+        value={Number.isFinite(numericValue) ? numericValue : 0}
+        onValidityChange={(isInvalid) => reportNumericValidity(fieldId, isInvalid)}
+        onChange={(next) => onChange(next)}
       />
     );
   }
@@ -660,9 +705,9 @@ const projectColumns: Column<ProjectInfo>[] = [
 
 const nodeColumns: Column<NodeItem>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
-  { key: "x", label: ja.propertyPanel.columns.x, type: "number", get: (x) => x.x, set: (x, v) => ({ ...x, x: Number(v) }) },
-  { key: "y", label: ja.propertyPanel.columns.y, type: "number", get: (x) => x.y, set: (x, v) => ({ ...x, y: Number(v) }) },
-  { key: "z", label: ja.propertyPanel.columns.z, type: "number", get: (x) => x.z, set: (x, v) => ({ ...x, z: Number(v) }) },
+  { key: "x", label: ja.propertyPanel.columns.x, type: "number", get: (x) => x.x, set: (x, v) => (typeof v === "number" ? { ...x, x: v } : x) },
+  { key: "y", label: ja.propertyPanel.columns.y, type: "number", get: (x) => x.y, set: (x, v) => (typeof v === "number" ? { ...x, y: v } : x) },
+  { key: "z", label: ja.propertyPanel.columns.z, type: "number", get: (x) => x.z, set: (x, v) => (typeof v === "number" ? { ...x, z: v } : x) },
   { key: "label", label: ja.propertyPanel.columns.displayName, type: "text", get: (x) => x.label ?? "", set: (x, v) => ({ ...x, label: String(v) }) },
 ];
 
@@ -672,25 +717,25 @@ const memberColumns: Column<Member>[] = [
   { key: "nodeJ", label: ja.propertyPanel.columns.memberNodeJ, type: "text", get: (x) => x.nodeJ, set: (x, v) => ({ ...x, nodeJ: String(v) }) },
   { key: "materialId", label: ja.propertyPanel.columns.materialId, type: "text", get: (x) => x.materialId, set: (x, v) => ({ ...x, materialId: String(v) }) },
   { key: "sectionId", label: ja.propertyPanel.columns.sectionId, type: "text", get: (x) => x.sectionId, set: (x, v) => ({ ...x, sectionId: String(v) }) },
-  { key: "orientationVector", label: ja.propertyPanel.columns.orientationVector, type: "number", help: ja.propertyPanel.help.orientationVector, get: (x) => x.orientationVector?.y ?? 0, set: (x, v) => ({ ...x, orientationVector: { x: x.orientationVector?.x ?? 0, y: Number(v), z: x.orientationVector?.z ?? 1 } }) },
+  { key: "orientationVector", label: ja.propertyPanel.columns.orientationVector, type: "number", help: ja.propertyPanel.help.orientationVector, get: (x) => x.orientationVector?.y ?? 0, set: (x, v) => (typeof v === "number" ? { ...x, orientationVector: { x: x.orientationVector?.x ?? 0, y: v, z: x.orientationVector?.z ?? 1 } } : x) },
 ];
 
 const materialColumns: Column<Material>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
   { key: "name", label: ja.propertyPanel.columns.materialName, type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "elasticModulus", label: ja.propertyPanel.columns.elasticModulus, type: "number", help: ja.propertyPanel.help.kNm2, get: (x) => x.elasticModulus, set: (x, v) => ({ ...x, elasticModulus: Number(v) }) },
-  { key: "shearModulus", label: ja.propertyPanel.columns.shearModulus, type: "number", help: ja.propertyPanel.help.kNm2, get: (x) => x.shearModulus, set: (x, v) => ({ ...x, shearModulus: Number(v) }) },
-  { key: "poissonRatio", label: ja.propertyPanel.columns.poissonRatio, type: "number", get: (x) => x.poissonRatio, set: (x, v) => ({ ...x, poissonRatio: Number(v) }) },
-  { key: "density", label: ja.propertyPanel.columns.density, type: "number", get: (x) => x.density, set: (x, v) => ({ ...x, density: Number(v) }) },
+  { key: "elasticModulus", label: ja.propertyPanel.columns.elasticModulus, type: "number", help: ja.propertyPanel.help.kNm2, get: (x) => x.elasticModulus, set: (x, v) => (typeof v === "number" ? { ...x, elasticModulus: v } : x) },
+  { key: "shearModulus", label: ja.propertyPanel.columns.shearModulus, type: "number", help: ja.propertyPanel.help.kNm2, get: (x) => x.shearModulus, set: (x, v) => (typeof v === "number" ? { ...x, shearModulus: v } : x) },
+  { key: "poissonRatio", label: ja.propertyPanel.columns.poissonRatio, type: "number", get: (x) => x.poissonRatio, set: (x, v) => (typeof v === "number" ? { ...x, poissonRatio: v } : x) },
+  { key: "density", label: ja.propertyPanel.columns.density, type: "number", get: (x) => x.density, set: (x, v) => (typeof v === "number" ? { ...x, density: v } : x) },
 ];
 
 const sectionColumns: Column<Section>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
   { key: "name", label: ja.propertyPanel.columns.sectionName, type: "text", get: (x) => x.name, set: (x, v) => ({ ...x, name: String(v) }) },
-  { key: "area", label: ja.propertyPanel.columns.area, type: "number", help: ja.propertyPanel.help.m2, get: (x) => x.area, set: (x, v) => ({ ...x, area: Number(v) }) },
-  { key: "iy", label: ja.propertyPanel.columns.iy, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.iy, set: (x, v) => ({ ...x, iy: Number(v) }) },
-  { key: "iz", label: ja.propertyPanel.columns.iz, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.iz, set: (x, v) => ({ ...x, iz: Number(v) }) },
-  { key: "j", label: ja.propertyPanel.columns.j, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.j, set: (x, v) => ({ ...x, j: Number(v) }) },
+  { key: "area", label: ja.propertyPanel.columns.area, type: "number", help: ja.propertyPanel.help.m2, get: (x) => x.area, set: (x, v) => (typeof v === "number" ? { ...x, area: v } : x) },
+  { key: "iy", label: ja.propertyPanel.columns.iy, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.iy, set: (x, v) => (typeof v === "number" ? { ...x, iy: v } : x) },
+  { key: "iz", label: ja.propertyPanel.columns.iz, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.iz, set: (x, v) => (typeof v === "number" ? { ...x, iz: v } : x) },
+  { key: "j", label: ja.propertyPanel.columns.j, type: "number", help: ja.propertyPanel.help.m4, get: (x) => x.j, set: (x, v) => (typeof v === "number" ? { ...x, j: v } : x) },
 ];
 
 const supportColumns: Column<Support>[] = [
@@ -713,12 +758,12 @@ const nodalLoadColumns: Column<NodalLoad>[] = [
   { key: "id", label: "ID", type: "text", get: (x) => x.id, set: (x, v) => ({ ...x, id: String(v) }) },
   { key: "loadCaseId", label: ja.propertyPanel.columns.loadCaseRefId, type: "text", get: (x) => x.loadCaseId, set: (x, v) => ({ ...x, loadCaseId: String(v) }) },
   { key: "nodeId", label: ja.propertyPanel.columns.supportNodeId, type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
-  { key: "fx", label: ja.propertyPanel.columns.nodalFx, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fx, set: (x, v) => ({ ...x, fx: Number(v) }) },
-  { key: "fy", label: ja.propertyPanel.columns.nodalFy, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fy, set: (x, v) => ({ ...x, fy: Number(v) }) },
-  { key: "fz", label: ja.propertyPanel.columns.nodalFz, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fz, set: (x, v) => ({ ...x, fz: Number(v) }) },
-  { key: "mx", label: ja.propertyPanel.columns.nodalMx, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.mx, set: (x, v) => ({ ...x, mx: Number(v) }) },
-  { key: "my", label: ja.propertyPanel.columns.nodalMy, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.my, set: (x, v) => ({ ...x, my: Number(v) }) },
-  { key: "mz", label: ja.propertyPanel.columns.nodalMz, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.mz, set: (x, v) => ({ ...x, mz: Number(v) }) },
+  { key: "fx", label: ja.propertyPanel.columns.nodalFx, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fx, set: (x, v) => (typeof v === "number" ? { ...x, fx: v } : x) },
+  { key: "fy", label: ja.propertyPanel.columns.nodalFy, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fy, set: (x, v) => (typeof v === "number" ? { ...x, fy: v } : x) },
+  { key: "fz", label: ja.propertyPanel.columns.nodalFz, type: "number", help: ja.propertyPanel.help.kN, get: (x) => x.fz, set: (x, v) => (typeof v === "number" ? { ...x, fz: v } : x) },
+  { key: "mx", label: ja.propertyPanel.columns.nodalMx, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.mx, set: (x, v) => (typeof v === "number" ? { ...x, mx: v } : x) },
+  { key: "my", label: ja.propertyPanel.columns.nodalMy, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.my, set: (x, v) => (typeof v === "number" ? { ...x, my: v } : x) },
+  { key: "mz", label: ja.propertyPanel.columns.nodalMz, type: "number", help: ja.propertyPanel.help.kNm, get: (x) => x.mz, set: (x, v) => (typeof v === "number" ? { ...x, mz: v } : x) },
 ];
 
 const memberLoadColumns: Column<MemberLoad>[] = [
@@ -727,9 +772,9 @@ const memberLoadColumns: Column<MemberLoad>[] = [
   { key: "memberId", label: ja.propertyPanel.columns.memberName, type: "text", get: (x) => x.memberId, set: (x, v) => ({ ...x, memberId: String(v) }) },
   { key: "coordinateSystem", label: ja.propertyPanel.columns.memberLoadCoordSystem, type: "coord", get: (x) => x.coordinateSystem, set: (x, v) => ({ ...x, coordinateSystem: String(v) === "global" ? "global" : "local" }) },
   { key: "type", label: ja.propertyPanel.columns.loadCaseType, type: "static", get: (x) => x.type, set: (x) => x },
-  { key: "wx", label: ja.propertyPanel.columns.memberLoadWx, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wx, set: (x, v) => ({ ...x, wx: Number(v) }) },
-  { key: "wy", label: ja.propertyPanel.columns.memberLoadWy, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wy, set: (x, v) => ({ ...x, wy: Number(v) }) },
-  { key: "wz", label: ja.propertyPanel.columns.memberLoadWz, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wz, set: (x, v) => ({ ...x, wz: Number(v) }) },
+  { key: "wx", label: ja.propertyPanel.columns.memberLoadWx, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wx, set: (x, v) => (typeof v === "number" ? { ...x, wx: v } : x) },
+  { key: "wy", label: ja.propertyPanel.columns.memberLoadWy, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wy, set: (x, v) => (typeof v === "number" ? { ...x, wy: v } : x) },
+  { key: "wz", label: ja.propertyPanel.columns.memberLoadWz, type: "number", help: ja.propertyPanel.help.kNPerM, get: (x) => x.wz, set: (x, v) => (typeof v === "number" ? { ...x, wz: v } : x) },
 ];
 
 const massCaseColumns: Column<NonNullable<ProjectModel["massCases"]>[number]>[] = [
@@ -741,19 +786,19 @@ const massCaseColumns: Column<NonNullable<ProjectModel["massCases"]>[number]>[] 
 
 const massItemColumns: Column<MassItem>[] = [
   { key: "nodeId", label: ja.propertyPanel.columns.supportNodeId, type: "text", get: (x) => x.nodeId, set: (x, v) => ({ ...x, nodeId: String(v) }) },
-  { key: "mx", label: ja.propertyPanel.columns.massItemMx, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.mx, set: (x, v) => ({ ...x, mx: Number(v) }) },
-  { key: "my", label: ja.propertyPanel.columns.massItemMy, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.my, set: (x, v) => ({ ...x, my: Number(v) }) },
-  { key: "mz", label: ja.propertyPanel.columns.massItemMz, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.mz, set: (x, v) => ({ ...x, mz: Number(v) }) },
-  { key: "irx", label: "IRX", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.irx, set: (x, v) => ({ ...x, irx: Number(v) }) },
-  { key: "iry", label: "IRY", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.iry, set: (x, v) => ({ ...x, iry: Number(v) }) },
-  { key: "irz", label: "IRZ", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.irz, set: (x, v) => ({ ...x, irz: Number(v) }) },
+  { key: "mx", label: ja.propertyPanel.columns.massItemMx, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.mx, set: (x, v) => (typeof v === "number" ? { ...x, mx: v } : x) },
+  { key: "my", label: ja.propertyPanel.columns.massItemMy, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.my, set: (x, v) => (typeof v === "number" ? { ...x, my: v } : x) },
+  { key: "mz", label: ja.propertyPanel.columns.massItemMz, type: "number", help: ja.propertyPanel.help.massCoef, get: (x) => x.mz, set: (x, v) => (typeof v === "number" ? { ...x, mz: v } : x) },
+  { key: "irx", label: "IRX", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.irx, set: (x, v) => (typeof v === "number" ? { ...x, irx: v } : x) },
+  { key: "iry", label: "IRY", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.iry, set: (x, v) => (typeof v === "number" ? { ...x, iry: v } : x) },
+  { key: "irz", label: "IRZ", type: "number", help: ja.propertyPanel.help.massItemIrZero, get: (x) => x.irz, set: (x, v) => (typeof v === "number" ? { ...x, irz: v } : x) },
 ];
 
 const analysisColumns: Column<AnalysisSettings>[] = [
   { key: "analysisType", label: ja.propertyPanel.columns.analysisType, type: "linear_static", get: (x) => x.analysisType, set: (x) => x },
   { key: "includeShearDeformation", label: ja.propertyPanel.columns.includeShearDeformation, type: "boolean", help: ja.propertyPanel.help.shearDeformationLocked, get: (x) => x.includeShearDeformation, set: (x) => x },
   { key: "largeDisplacement", label: ja.propertyPanel.columns.largeDisplacement, type: "boolean", help: ja.propertyPanel.help.shearDeformationLocked, get: (x) => x.largeDisplacement, set: (x) => x },
-  { key: "tolerance", label: ja.propertyPanel.columns.tolerance, type: "number", get: (x) => x.tolerance, set: (x, v) => ({ ...x, tolerance: Number(v) }) },
+  { key: "tolerance", label: ja.propertyPanel.columns.tolerance, type: "number", get: (x) => x.tolerance, set: (x, v) => (typeof v === "number" ? { ...x, tolerance: v } : x) },
 ];
 
 const spectrumPointColumns: Column<{ period: number; value: number }>[] = [
@@ -763,7 +808,7 @@ const spectrumPointColumns: Column<{ period: number; value: number }>[] = [
     type: "number",
     help: ja.propertyPanel.help.period,
     get: (x) => x.period,
-    set: (x, v) => ({ ...x, period: Math.max(0, Number(v)) }),
+    set: (x, v) => (typeof v === "number" ? { ...x, period: Math.max(0, v) } : x),
   },
   {
     key: "value",
@@ -771,6 +816,6 @@ const spectrumPointColumns: Column<{ period: number; value: number }>[] = [
     type: "number",
     help: ja.propertyPanel.help.spectrumValue,
     get: (x) => x.value,
-    set: (x, v) => ({ ...x, value: Math.max(0, Number(v)) }),
+    set: (x, v) => (typeof v === "number" ? { ...x, value: Math.max(0, v) } : x),
   },
 ];

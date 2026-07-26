@@ -4,7 +4,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import { createDefaultProject } from "../data/defaultProject";
-import type { ProjectModel } from "../types";
+import type { ProjectModel, SectionKey } from "../types";
 import { ja } from "../i18n/ja";
 import { PropertyPanel } from "./PropertyPanel";
 
@@ -93,11 +93,11 @@ describe("PropertyPanel response spectrum settings", () => {
 
     const lastRow = spectrumRows().at(-1);
     if (!lastRow) throw new Error("Spectrum row not found");
-    const lastInputs = lastRow.querySelectorAll<HTMLInputElement>('input[type="number"]');
+    const lastInputs = lastRow.querySelectorAll<HTMLInputElement>('input[inputmode="decimal"]');
     change(lastInputs[0], "2");
     renderPanel(current, onChange);
     const editedLastRow = spectrumRows().at(-1);
-    const editedInputs = editedLastRow?.querySelectorAll<HTMLInputElement>('input[type="number"]');
+    const editedInputs = editedLastRow?.querySelectorAll<HTMLInputElement>('input[inputmode="decimal"]');
     if (!editedInputs) throw new Error("Edited spectrum row not found");
     change(editedInputs[1], "0.4");
     renderPanel(current, onChange);
@@ -123,9 +123,56 @@ describe("PropertyPanel response spectrum settings", () => {
     expect(select(ja.propertyPanel.massCaseAriaLabel).disabled).toBe(true);
     expect(document.body.textContent).toContain(ja.propertyPanel.emptyState);
   });
+
+  it("does not commit zero when a node coordinate is cleared", () => {
+    const project = createDefaultProject();
+    project.nodes = [{ id: "N1", x: 5, y: 6, z: 7 }];
+    let current = project;
+    renderPanelSection(project, "nodes", (next) => {
+      current = next;
+    });
+
+    const xInput = document.querySelector<HTMLInputElement>(
+      'input[aria-label="' + ja.propertyPanel.columns.x + '"]',
+    );
+    if (!xInput) throw new Error("x input not found");
+    change(xInput, "");
+    expect(current.nodes[0]?.x).toBe(5);
+    change(xInput, "0");
+    expect(current.nodes[0]?.x).toBe(0);
+  });
+
+  it("reports invalid numeric drafts to the parent callback", () => {
+    const project = createDefaultProject();
+    project.nodes = [{ id: "N1", x: 1, y: 2, z: 3 }];
+    const invalidStates: boolean[] = [];
+    renderPanelWithInvalidTracking(project, () => undefined, (hasInvalid) => {
+      invalidStates.push(hasInvalid);
+    });
+
+    const xInput = document.querySelector<HTMLInputElement>(
+      'input[aria-label="' + ja.propertyPanel.columns.x + '"]',
+    );
+    if (!xInput) throw new Error("x input not found");
+    change(xInput, "abc");
+    expect(invalidStates.at(-1)).toBe(true);
+    act(() => {
+      xInput.focus();
+      xInput.blur();
+    });
+    expect(invalidStates.at(-1)).toBe(false);
+  });
 });
 
 function renderPanel(project: ProjectModel, onChange: (project: ProjectModel) => void) {
+  renderPanelSection(project, "analysisSettings", onChange);
+}
+
+function renderPanelSection(
+  project: ProjectModel,
+  selected: SectionKey,
+  onChange: (project: ProjectModel) => void,
+) {
   if (!root) {
     const host = document.createElement("div");
     document.body.appendChild(host);
@@ -135,9 +182,32 @@ function renderPanel(project: ProjectModel, onChange: (project: ProjectModel) =>
     root?.render(
       <PropertyPanel
         project={project}
-        selected="analysisSettings"
+        selected={selected}
         validationPaths={new Set()}
         onChange={onChange}
+      />,
+    );
+  });
+}
+
+function renderPanelWithInvalidTracking(
+  project: ProjectModel,
+  onChange: (project: ProjectModel) => void,
+  onInvalidNumericDraftsChange: (hasInvalid: boolean) => void,
+) {
+  if (!root) {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+  }
+  act(() => {
+    root?.render(
+      <PropertyPanel
+        project={project}
+        selected="nodes"
+        validationPaths={new Set()}
+        onChange={onChange}
+        onInvalidNumericDraftsChange={onInvalidNumericDraftsChange}
       />,
     );
   });
@@ -151,6 +221,9 @@ function change(element: HTMLInputElement | HTMLSelectElement, value: string) {
         : HTMLInputElement.prototype,
       "value",
     );
+    if (!(element instanceof HTMLSelectElement)) {
+      element.focus();
+    }
     descriptor?.set?.call(element, value);
     element.dispatchEvent(
       new Event(element instanceof HTMLSelectElement ? "change" : "input", {

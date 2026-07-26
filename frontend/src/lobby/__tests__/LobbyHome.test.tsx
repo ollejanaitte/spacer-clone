@@ -3,6 +3,7 @@ import { describe, test, expect, vi } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { LobbyHome } from "../pages/LobbyHome";
+import styles from "../pages/LobbyHome.module.css";
 
 function renderComponent(ui: React.ReactNode) {
   const container = document.createElement("div");
@@ -33,6 +34,17 @@ describe("LobbyHome", () => {
   test("renders the footer", () => {
     const { container } = renderComponent(<LobbyHome onNavigate={() => {}} />);
     expect(container.textContent).toContain("いつでも他の編に切り替えできます");
+  });
+
+  test("renders the about link", () => {
+    const { container } = renderComponent(<LobbyHome onNavigate={() => {}} />);
+    expect(container.querySelector('[data-testid="lobby-about-link"]')).not.toBeNull();
+  });
+
+  test("uses a scrollable page container", () => {
+    const { container } = renderComponent(<LobbyHome onNavigate={() => {}} />);
+    const page = container.firstElementChild as HTMLElement;
+    expect(page.className).toBe(styles.page);
   });
 
   test("navigates to /learn when the learn mode is clicked", () => {
