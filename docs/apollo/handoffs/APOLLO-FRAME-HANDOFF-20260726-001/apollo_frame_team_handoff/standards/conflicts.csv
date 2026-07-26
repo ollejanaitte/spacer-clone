@@ -1,0 +1,3 @@
+conflict_id,feature_id,apollo_statement,external_statement,historical_edition,external_edition,conflict_type,impact,resolution_required,owner,status,notes
+CFL-001,MULTI,APOLLO manual defaults / software behavior,External package READY requirements cite RBS/DDB pages,UNKNOWN,stated in package rows where present; many UNKNOWN,POTENTIAL_EDITION_OR_SCOPE_GAP,Do not treat APOLLO as wrong; separate Historical vs Target,YES_BEFORE_FULL_DESIGN_FREEZE,APOLLO_SUPERVISOR,OPEN,No forced resolution in Stage5
+CFL-002,META,N/A,SHA256SUMS self-hash for MANIFEST.csv and SHA256SUMS.txt stale,N/A,N/A,PACKAGE_META_SELFHASH,Documented; payload 135 files match,NO,PACKAGE_AUTHOR,ACCEPTED_WITH_NOTE,Not research content conflict

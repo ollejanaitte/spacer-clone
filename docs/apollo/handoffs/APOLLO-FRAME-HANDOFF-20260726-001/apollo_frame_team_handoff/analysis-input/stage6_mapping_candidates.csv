@@ -1,0 +1,8 @@
+apollo_area,candidate_oss_responsibility,evidence_basis,adoption_note
+geometry/align,線形・座標入力モジュール,Part1 Align/フォルダ,mapping only
+analysis,構造解析エンジン連携,Part5 Analyzer,format Unknown
+section/splice,断面・添接計算,Part3,edition undecided
+reports,帳票生成(RTF相当),Part6,Word依存は必須化しない
+drawings,図面生成(DWG/DXF/中間),Part6,AutoCAD必須化しない
+materials,材料集計連携,Part6 NPDATA/y-Mater,schema Unknown
+audit,設計履歴・版管理,Part6 ISO9000的管理,mapping only

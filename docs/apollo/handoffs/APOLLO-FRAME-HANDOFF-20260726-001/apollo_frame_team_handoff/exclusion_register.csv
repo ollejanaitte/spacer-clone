@@ -1,0 +1,5 @@
+path_or_pattern,reason,status
+ユーザーズマニュアル/**/*.pdf,APOLLO original manuals,EXCLUDED_SOURCE_ORIGINAL
+RBS/JIS/DDB originals,external standards originals not packaged,EXCLUDED_SOURCE_ORIGINAL
+stage5b/evidence not in READY set,immutable has 97 png; READY unique 69 included,EXCLUDED_NOT_READY
+.git / binaries / mdb / alg,code and runtime artifacts,EXCLUDED_LICENSE_CAUTION
