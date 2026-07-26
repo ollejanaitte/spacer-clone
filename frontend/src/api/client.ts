@@ -1,24 +1,31 @@
+import type { DocumentReference } from "../contracts/documentReference";
+import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
 import type { AnalysisResult, MovingLoadCase, ProjectModel, ResultExports, ValidationResponse } from "../types";
 
-type AnalysisRunResponse = {
+export type If3AnalysisSidecar = {
+  if3Result?: FrameAnalysisResultResource;
+  persistedResultRef?: DocumentReference;
+};
+
+export type AnalysisRunResponse = If3AnalysisSidecar & {
   result: AnalysisResult;
   csv: ResultExports | null;
 };
 
-type EigenRunResponse = {
+export type EigenRunResponse = If3AnalysisSidecar & {
   result: AnalysisResult;
 };
 
-type InfluenceRunResponse = {
+export type InfluenceRunResponse = If3AnalysisSidecar & {
   result: AnalysisResult;
 };
 
-type MovingLoadRunResponse = {
+export type MovingLoadRunResponse = If3AnalysisSidecar & {
   result: AnalysisResult;
   csv: ResultExports | null;
 };
 
-type ResponseSpectrumRunResponse = {
+export type ResponseSpectrumRunResponse = If3AnalysisSidecar & {
   result: AnalysisResult;
 };
 
