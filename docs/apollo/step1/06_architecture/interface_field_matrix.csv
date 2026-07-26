@@ -1,0 +1,70 @@
+field_id,direction,contract_layer,entity_or_envelope,field_name,required_phase1,type_or_enum,units,owner,traceability_ref,physical_analyzer_status,logical_contract_status,notes
+IF-IN-0001,APOLLO_TO_FRAME,logical,BSDD envelope,schemaId,yes,string,spacer.contracts.bridge-superstructure-design-document,Apollo Superstructure,BSDD documentId,UNKNOWN,REQUIRED,Design draft 0.0.0-design-draft; not production registry
+IF-IN-0002,APOLLO_TO_FRAME,logical,BSDD envelope,schemaVersion,yes,string semver,0.0.0-design-draft,Apollo Superstructure,BSDD revisionId,UNKNOWN,REQUIRED,Unknown major fails closed
+IF-IN-0003,APOLLO_TO_FRAME,logical,BSDD envelope,documentId,yes,uuid,,Apollo Superstructure,stable identity,UNKNOWN,REQUIRED,Never changes across revisions
+IF-IN-0004,APOLLO_TO_FRAME,logical,BSDD envelope,revisionId,yes,positive integer,,Apollo Superstructure,monotonic,UNKNOWN,REQUIRED,Immutable per revision
+IF-IN-0005,APOLLO_TO_FRAME,logical,BSDD envelope,contentChecksum,yes,sha256 checksum,,Apollo Superstructure,checksum pin,UNKNOWN,REQUIRED,Mismatch triggers STALE
+IF-IN-0006,APOLLO_TO_FRAME,logical,BSDD envelope,lifecycleStatus,yes,DRAFT|VALIDATED|APPROVED|SUPERSEDED|STALE|ARCHIVED,,Apollo Superstructure,lifecycle,UNKNOWN,REQUIRED,Export needs VALIDATED or APPROVED
+IF-IN-0007,APOLLO_TO_FRAME,logical,BSDD envelope,provenance,yes,object,,Apollo Superstructure,audit,UNKNOWN,REQUIRED,createdAt createdBy producer
+IF-IN-0008,APOLLO_TO_FRAME,logical,CoordinateContext,contextId,yes,uuid,,Shared,BSDD revision,UNKNOWN,REQUIRED,confidence unknown blocks export
+IF-IN-0009,APOLLO_TO_FRAME,logical,CoordinateContext,referenceType,yes,string,bridge-local,Shared,BSDD revision,UNKNOWN,REQUIRED,x-longitudinal-y-transverse-z-up
+IF-IN-0010,APOLLO_TO_FRAME,logical,CoordinateContext,confidence,yes,known|unknown,,Shared,BSDD revision,UNKNOWN,REQUIRED,unknown blocks mutation
+IF-IN-0011,APOLLO_TO_FRAME,logical,UnitContext,linearUnits,yes,string,m,Shared,BSDD revision,UNKNOWN,REQUIRED,Canonical engineering units
+IF-IN-0012,APOLLO_TO_FRAME,logical,UnitContext,angularUnits,yes,string,rad,Shared,BSDD revision,UNKNOWN,REQUIRED,
+IF-IN-0013,APOLLO_TO_FRAME,logical,UnitContext,forceUnits,yes,string,kN,Shared,BSDD revision,UNKNOWN,REQUIRED,
+IF-IN-0014,APOLLO_TO_FRAME,logical,UnitContext,stressUnits,yes,string,kPa,Shared,BSDD revision,UNKNOWN,REQUIRED,
+IF-IN-0015,APOLLO_TO_FRAME,logical,Bridge,bridgeId,yes,uuid,,Apollo Superstructure,girderLineId parent,UNKNOWN,REQUIRED,Single bridge Phase1
+IF-IN-0016,APOLLO_TO_FRAME,logical,Span,cardinality,yes,integer,1,Apollo Superstructure,ASM-P1-001,UNKNOWN,REQUIRED,Exactly one span
+IF-IN-0017,APOLLO_TO_FRAME,logical,GirderLine,girderLineId,yes,uuid,,Apollo Superstructure,stable entity id,UNKNOWN,REQUIRED,Equal-depth plate girders
+IF-IN-0018,APOLLO_TO_FRAME,logical,GirderLine,stationRange,yes,object,m,Apollo Superstructure,layout,UNKNOWN,REQUIRED,Along bridge axis
+IF-IN-0019,APOLLO_TO_FRAME,logical,Deck,deckId,yes,uuid,,Apollo Superstructure,stable entity id,UNKNOWN,REQUIRED,Non-composite RC only
+IF-IN-0020,APOLLO_TO_FRAME,logical,Deck,modelingKind,yes,enum,non_composite_rc,Apollo Superstructure,scope freeze,UNKNOWN,REQUIRED,Composite rejected
+IF-IN-0021,APOLLO_TO_FRAME,logical,Support,supportId,yes,uuid,,Apollo Superstructure,stable entity id,UNKNOWN,REQUIRED,Fixed/movable
+IF-IN-0022,APOLLO_TO_FRAME,logical,Support,fixity,yes,enum,fixed|pinned|roller,Apollo Superstructure,layout,UNKNOWN,REQUIRED,
+IF-IN-0023,APOLLO_TO_FRAME,logical,MaterialDefinition,materialId,yes,uuid,,Apollo Superstructure,governance,UNKNOWN,REQUIRED,Numerics null until ADOPTED
+IF-IN-0024,APOLLO_TO_FRAME,logical,MaterialDefinition,adoptionStatus,yes,enum,PENDING|PLACEHOLDER|ADOPTED,Apollo Superstructure,BLK-S1-001,UNKNOWN,REQUIRED,No invented yield constants
+IF-IN-0025,APOLLO_TO_FRAME,logical,LoadCase,loadCaseId,yes,uuid,,Apollo Superstructure,stable entity id,UNKNOWN,REQUIRED,dead slab live kinds
+IF-IN-0026,APOLLO_TO_FRAME,logical,LoadCase,kind,yes,enum,dead|slab|live,Apollo Superstructure,REQ-5C,UNKNOWN,REQUIRED,
+IF-IN-0027,APOLLO_TO_FRAME,logical,Load,loadId,yes,uuid,,Apollo Superstructure,stable entity id,UNKNOWN,REQUIRED,
+IF-IN-0028,APOLLO_TO_FRAME,logical,Load,magnitude,conditional,number,null until ADOPTED,Apollo Superstructure,BLK-S1-001,UNKNOWN,CONDITIONAL,No Target Standard numerics
+IF-IN-0029,APOLLO_TO_FRAME,logical,Load,magnitudeUnits,yes,string,kN/m|kPa|kN,Apollo Superstructure,UnitContext,UNKNOWN,REQUIRED,
+IF-IN-0030,APOLLO_TO_FRAME,logical,AnalysisBinding,bindingId,yes,uuid,,Apollo Superstructure,cross-SoR,UNKNOWN,REQUIRED,ADR-APO-006
+IF-IN-0031,APOLLO_TO_FRAME,logical,AnalysisBinding,analysisType,yes,enum,static_linear,Apollo Superstructure,scope freeze,UNKNOWN,REQUIRED,Only Phase1 analysis
+IF-IN-0032,APOLLO_TO_FRAME,logical,AnalysisBinding,sourceBsdDocumentRef,yes,documentReference,,Apollo Superstructure,BSDD triple,UNKNOWN,REQUIRED,schemaId documentId revisionId checksum
+IF-IN-0033,APOLLO_TO_FRAME,logical,AnalysisBinding,targetBfadDocumentRef,post_export,documentReference,,Frame Analysis,BFAD triple,UNKNOWN,REQUIRED,Populated after export
+IF-IN-0034,APOLLO_TO_FRAME,logical,RoadDesignRef,documentReference,on_import,documentReference,,Road Design Tool,RDD triple,UNKNOWN,OPTIONAL,Read-only in Apollo
+IF-IN-0035,APOLLO_TO_FRAME,logical,TransferPackageRef,packageChecksum,on_transfer,sha256,,Road Design Tool,transfer audit,UNKNOWN,OPTIONAL,Immutable package blob
+IF-IN-0036,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,nodes,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,Frame-owned topology
+IF-IN-0037,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,members,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,Frame-owned
+IF-IN-0038,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,sections,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,Analysis sections not member design
+IF-IN-0039,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,materials,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,Mapped from BSDD materials
+IF-IN-0040,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,supports,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,From BSDD support intent
+IF-IN-0041,APOLLO_TO_FRAME,logical,BFAD/ProjectModel,loadCases,post_export,array,,Frame Analysis,BFAD revision,UNKNOWN,REQUIRED,From BSDD load cases
+IF-IN-0042,APOLLO_TO_FRAME,logical,runAnalysis request,project,yes,ProjectModel,,Frame Analysis,operational wire,UNKNOWN,REQUIRED,Interim operational SoR
+IF-IN-0043,APOLLO_TO_FRAME,logical,runAnalysis request,if3,required_for_authoritative,object,,Frame Analysis,LIM-P03-001,UNKNOWN,GAP,Client omits today — BLK-S1-012
+IF-IN-0044,APOLLO_TO_FRAME,physical,Analyzer input,analyzer_input_file,unknown,UNKNOWN,UNKNOWN,Historical Apollo,IO-CAND-0003,UNKNOWN,NOT_PHASE1,Use OSS API not legacy files
+IF-IN-0045,APOLLO_TO_FRAME,physical,Slab load table,slab_load_table,unknown,UNKNOWN,UNKNOWN,Historical Apollo,IO-CAND-0006,UNKNOWN,CONCEPT_ONLY,Format TBD; REQ concept required
+IF-IN-0046,APOLLO_TO_FRAME,physical,Live load definition,live_load_definition,unknown,UNKNOWN,UNKNOWN,Historical Apollo,IO-CAND-0007,UNKNOWN,BLOCKED_NUMERICS,Blocked by BLK-S1-001
+IF-OUT-0001,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,schemaId,yes,string,spacer.contracts.frame-analysis-result-resource,Frame Analysis,resultId,UNKNOWN,REQUIRED,IF3 contract family
+IF-OUT-0002,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,schemaVersion,yes,string semver,0.1.0,Frame Analysis,resultId,UNKNOWN,REQUIRED,
+IF-OUT-0003,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,resultId,yes,uuid,,Frame Analysis,stable result,UNKNOWN,REQUIRED,One per normalized resource
+IF-OUT-0004,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,analysisRunId,yes,uuid,,Frame Analysis,run audit,UNKNOWN,REQUIRED,One per solver attempt
+IF-OUT-0005,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,sourceDocumentId,yes,uuid,,Frame Analysis,BFAD documentId,UNKNOWN,REQUIRED,Binding to BFAD
+IF-OUT-0006,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,sourceDocumentVersion,yes,positive integer,,Frame Analysis,BFAD revisionId,UNKNOWN,REQUIRED,
+IF-OUT-0007,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,sourceContentChecksum,yes,sha256 checksum,,Frame Analysis,BFAD checksum,UNKNOWN,REQUIRED,Mismatch → STALE
+IF-OUT-0008,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,status,yes,IF3 status enum,,Frame Analysis,availability,UNKNOWN,REQUIRED,SUCCEEDED maps to consumer VALID
+IF-OUT-0009,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,generatedAt,yes,ISO-8601 UTC,,Frame Analysis,audit,UNKNOWN,REQUIRED,Normalizer timestamp
+IF-OUT-0010,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,solverName,yes,string,,Frame Analysis,engine identity,UNKNOWN,REQUIRED,e.g. scipy_sparse
+IF-OUT-0011,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,solverVersion,yes,string semver,,Frame Analysis,compatibility,UNKNOWN,REQUIRED,
+IF-OUT-0012,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,analysisSettingsChecksum,yes,sha256 checksum,,Frame Analysis,settings pin,UNKNOWN,REQUIRED,Stale on settings change
+IF-OUT-0013,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,loadContext,yes,object,,Frame Analysis,load case ids,UNKNOWN,REQUIRED,Active load checksums
+IF-OUT-0014,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,provenance,yes,object,,Frame Analysis,result audit,UNKNOWN,REQUIRED,Distinct from document provenance
+IF-OUT-0015,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,diagnostics,yes,array,,Frame Analysis,gate input,UNKNOWN,REQUIRED,Includes MISSING_SOURCE_BINDING
+IF-OUT-0016,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,payload,conditional,object,,Frame Analysis,result kinds,UNKNOWN,CONDITIONAL,Required for success states
+IF-OUT-0017,FRAME_TO_APOLLO,logical,payload,displacements,on_success,array,m,Frame Analysis,node results,UNKNOWN,REQUIRED,Read-only in Apollo
+IF-OUT-0018,FRAME_TO_APOLLO,logical,payload,memberForces,on_success,array,kN,Frame Analysis,member results,UNKNOWN,REQUIRED,Component count ISS-S1-007
+IF-OUT-0019,FRAME_TO_APOLLO,logical,payload,reactions,on_success,array,kN,Frame Analysis,support results,UNKNOWN,REQUIRED,Read-only in Apollo
+IF-OUT-0020,FRAME_TO_APOLLO,logical,FrameAnalysisResultResource,resultChecksum,optional,sha256 checksum,,Frame Analysis,resource pin,UNKNOWN,OPTIONAL,Canonical resource checksum
+IF-OUT-0021,FRAME_TO_APOLLO,logical,AnalysisBinding,resultResourceRef,post_analysis,documentReference,,Apollo Superstructure,result triple,UNKNOWN,REQUIRED,Links BSDD to result
+IF-OUT-0022,FRAME_TO_APOLLO,physical,Analyzer output,analyzer_output_file,unknown,UNKNOWN,UNKNOWN,Historical Apollo,IO-CAND-0004,UNKNOWN,NOT_PHASE1,Use IF3 resource not legacy files
+IF-OUT-0023,FRAME_TO_APOLLO,physical,Section check input,section_check_input,unknown,UNKNOWN,UNKNOWN,Historical Apollo,IO-CAND-0012,UNKNOWN,OUT_OF_PHASE1,Member design deferred

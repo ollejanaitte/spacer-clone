@@ -1,10 +1,10 @@
-# Architecture Decisions — P06
+# Architecture Decisions — P06 / P07
 
 **Authority:** DESIGN PLANNING / STEP 1  
 **Date:** 2026-07-27  
-**Decision:** DEC-S1-0009  
-**Base commit:** `849fef17a62a63994394cfddd11b71c1f76c1350` (main @ P05 merge)  
-**Branch:** `docs/apollo-step1-p06-architecture`
+**Decision:** DEC-S1-0009 (P06), DEC-S1-0010 (P07)  
+**Base commit:** `a559871e3eb09e3c4e35b810d0a903be091dc4f2` (main @ P06 merge)  
+**Branch:** `docs/apollo-step1-p07-interface-if3` (P07)
 
 ## Purpose
 
@@ -209,6 +209,47 @@ This closes the P03 IF3 client binding gap at the **data model** level; wiring i
 | BLK-S1-012 | IF3 client binding gap | AnalysisBinding defined; runtime wiring deferred |
 | ENT-CAND-0010 | Load combination rules | LoadCombination deferred; Frame may own in BFAD |
 
+---
+
+## P07 — Interface & IF3 binding (DEC-S1-0010)
+
+### ADR-APO-007 — Separate physical Analyzer I/O from logical IF3/BFAD contracts
+
+| Field | Value |
+|-------|-------|
+| **Status** | ACCEPTED (planning) |
+| **Date** | 2026-07-27 |
+| **Relates to** | BLK-S1-011, LIM-P03-004 |
+
+**Decision:** Document Apollo physical Analyzer file exchange (IO-CAND-0003/0004) as **UNKNOWN** and **not** Phase 1 dependency. All designable interface work targets spacer-clone logical contracts: BSDD → BFAD/ProjectModel → `FrameAnalysisResultResource`.
+
+**Consequences:** No field mapping from Analyzer physical format to OSS types until manual research resolves BLK-S1-011. OSS `ProjectModel` is interim wire only.
+
+### ADR-APO-008 — Adopt input/output interface contract draft with field matrix
+
+| Field | Value |
+|-------|-------|
+| **Status** | ACCEPTED (planning) |
+| **Date** | 2026-07-27 |
+
+**Decision:** Freeze planning-level input contract (IDs, revisions, units, coords, nodes/members/materials/sections/supports/loads, requested outputs, mapping, traceability) and output contract (run ID, engine/version, hashes, status, displacement/force/reaction components, diagnostics, binding) in `interface_contract_draft.md` + `interface_field_matrix.csv`.
+
+**Consequences:** Implementation adapters must conform to matrix; numerics remain null until Target Standard ADOPTED.
+
+### ADR-APO-009 — IF3 binding fields and fail-closed export authority
+
+| Field | Value |
+|-------|-------|
+| **Status** | ACCEPTED (planning) |
+| **Date** | 2026-07-27 |
+| **Relates to** | DEC-S1-0006, LIM-P03-001, BLK-S1-012 |
+
+**Decision:** Specify `AnalysisBinding` + run-time `if3` metadata fields in `if3_binding_design.md`. Adopt export authority matrix in `export_authority_rules.md`: JSON/CSV/PDF/PRINT authoritative only when consumer **VALID**; **UNBOUND** (missing binding) blocks all authoritative export.
+
+**Consequences:** Client wiring in `apiClient.runAnalysis` is implementation prerequisite (not P07 scope). Stale triggers documented in `stale_and_reanalysis_rules.md`.
+
+---
+
 ## Related artifacts
 
 | Artifact | Path |
@@ -218,6 +259,11 @@ This closes the P03 IF3 client binding gap at the **data model** level; wiring i
 | Document lifecycle | `document_lifecycle.md` |
 | ID / versioning | `id_and_versioning_rules.md` |
 | Schema design draft | `schema_draft.json` |
+| Interface contract (P07) | `interface_contract_draft.md` |
+| Field matrix (P07) | `interface_field_matrix.csv` |
+| IF3 binding (P07) | `if3_binding_design.md` |
+| Stale rules (P07) | `stale_and_reanalysis_rules.md` |
+| Export authority (P07) | `export_authority_rules.md` |
 | P03 dual SoR | `../03_existing_capability/current_document_and_interface_map.md` |
 | P05 scope freeze | `../05_scope_boundary/phase1_scope_freeze.md` |
 | P05 interfaces | `../05_scope_boundary/apollo_to_frame_interface.md` |

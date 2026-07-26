@@ -11,4 +11,5 @@
 | P03 | #193 | `docs/apollo-step1-p03-existing-capability` | `563c4c705eb26899a7fecfd49f65541aa2ae3d15` | MERGED | Existing capability inventory + document/interface map |
 | P04 | #194 | `docs/apollo-step1-p04-gap-analysis` | `7240f1818d6de9bfbf1dbbc56113cef700ccad16` | MERGED | READY 69 gap analysis + feature 281 disposition |
 | P05 | #195 | `docs/apollo-step1-p05-scope-boundary` | `849fef17a62a63994394cfddd11b71c1f76c1350` | MERGED | Phase 1 scope freeze + responsibility/interface boundaries |
-| P06 | — | `docs/apollo-step1-p06-architecture` | *(pending)* | STAGED | Architecture ADRs + Apollo data model + design-draft schema |
+| P06 | #196 | `docs/apollo-step1-p06-architecture` | `a559871e3eb09e3c4e35b810d0a903be091dc4f2` | MERGED | Architecture ADRs + Apollo data model + design-draft schema |
+| P07 | — | `docs/apollo-step1-p07-interface-if3` | *(pending)* | STAGED | Interface contract + IF3 binding + stale rules + export authority matrix |
