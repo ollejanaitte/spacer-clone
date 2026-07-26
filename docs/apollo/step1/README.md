@@ -33,7 +33,7 @@ Step 1 は、GitHub 上の不変ハンドオフパッケージ [APOLLO-FRAME-HAN
 | **P06** | Data flow & interface boundaries | MERGED (#196 @ `a559871`) |
 | **P07** | Validation & test strategy alignment | MERGED (#197 @ `bf3d9dc`) |
 | **P08** | Reference Bridge & validation strategy | MERGED (#198 @ `555a3c5`) |
-| **P09** | Step 1 completion & implementation-readiness verdict | STAGED |
+| **P09** | Step 1 completion & implementation-readiness verdict | MERGED (#199 @ `1451c4c`) |
 
 ## Scope boundaries
 
@@ -47,7 +47,7 @@ APOLLO_STEP1_COMPLETION_VERDICT: COMPLETE_WITH_BLOCKERS
 APOLLO_IMPLEMENTATION_READINESS_VERDICT: CONDITIONAL_GO
 ```
 
-**COMPLETE_WITH_BLOCKERS** — P00–P08 merged; P09 closure artifacts staged. HIGH blockers (Target Standard NOT_SELECTED, JIS gaps, Analyzer I/O UNKNOWN, IF3 client binding) documented with owners.
+**COMPLETE_WITH_BLOCKERS** — P00–P09 merged. HIGH blockers (Target Standard NOT_SELECTED, JIS gaps, Analyzer I/O UNKNOWN, IF3 client binding) documented with owners.
 
 **CONDITIONAL_GO** — AP-00..AP-03 schema foundation and AP-11 IF3 client binding may proceed; design-check numerics and golden expected values forbidden until blockers clear.
 
