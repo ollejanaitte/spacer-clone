@@ -180,3 +180,57 @@ def test_missing_required_members_are_blocked() -> None:
 
     assert assessment["compatibilityClass"] == "MISSING_REQUIRED_MEMBERS"
     assert assessment["gate"]["authoritativeOutputAllowed"] is False
+
+
+def test_succeeded_resource_without_result_id_is_not_authoritative() -> None:
+    resource = valid_resource()
+    del resource["resultId"]
+    assessment = classify_if3_compatibility(resource=resource, availability_status="VALID")
+
+    assert assessment["compatibilityClass"] != "IF3_COMPATIBLE_CURRENT"
+    assert assessment["gate"]["authoritativeOutputAllowed"] is False
+    assert any(item["code"] == "MISSING_RESULT_ID" for item in assessment["diagnostics"])
+
+
+def test_succeeded_resource_with_binding_mismatch_is_not_authoritative() -> None:
+    resource = valid_resource()
+    assessment = classify_if3_compatibility(
+        resource=resource,
+        availability_status="VALID",
+        source_document={
+            "documentId": "6ba7b810-9dad-11d1-80b4-00c04fd430c9",
+            "revisionId": 99,
+            "contentChecksum": checksum("f" * 64),
+        },
+    )
+
+    assert assessment["compatibilityClass"] != "IF3_COMPATIBLE_CURRENT"
+    assert assessment["gate"]["authoritativeOutputAllowed"] is False
+    assert any(
+        item["code"] in {"SOURCE_DOCUMENT_MISMATCH", "STALE_RESULT", "SOURCE_CHECKSUM_MISMATCH"}
+        for item in assessment["diagnostics"]
+    )
+
+
+def test_legacy_time_history_with_write_target_keeps_missing_gate_state() -> None:
+    assessment = classify_if3_compatibility(
+        legacy_time_history={
+            "meta": {
+                "analysisId": "th-legacy",
+                "status": "success",
+                "method": "newmark_beta",
+                "timeStep": 0.01,
+                "duration": 1,
+                "sampleCount": 2,
+            },
+            "time": [0, 0.01],
+            "displacements": {},
+            "velocities": {},
+            "accelerations": {},
+        },
+        write_target_metadata=complete_write_target_metadata(),
+    )
+
+    assert assessment["compatibilityClass"] == "LEGACY_SAFELY_CONSUMABLE"
+    assert assessment["gate"]["authoritativeOutputAllowed"] is False
+    assert assessment["gate"]["state"] == "MISSING"

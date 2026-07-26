@@ -260,12 +260,41 @@ describe("if3LegacyCompatibility", () => {
 
     expect(assessment.compatibilityClass).toBe("LEGACY_INSUFFICIENT_PROVENANCE");
     expect(assessment.gate.authoritativeOutputAllowed).toBe(false);
+    expect(assessment.gate.state).toBe("INVALID");
     expect(assessment.consumerCapabilities.viewer.displayable).toBe(true);
     expect(assessment.consumerCapabilities.print.formalPrintable).toBe(false);
     expect(assessment.writeTarget.eligible).toBe(false);
     expect(
       assessment.diagnostics.some((item) => item.code === "LEGACY_TIME_HISTORY_COMPATIBILITY"),
     ).toBe(true);
+  });
+
+  it("keeps MISSING gate state for legacy timeHistory with complete WRITE_TARGET metadata", () => {
+    const assessment = classifyIf3Compatibility({
+      legacyTimeHistory: legacyTimeHistory(),
+      writeTargetMetadata: completeWriteTargetMetadata(),
+    });
+
+    expect(assessment.compatibilityClass).toBe("LEGACY_SAFELY_CONSUMABLE");
+    expect(assessment.gate.authoritativeOutputAllowed).toBe(false);
+    expect(assessment.gate.state).toBe("MISSING");
+  });
+
+  it("does not mark incomplete SUCCEEDED resources as IF3_COMPATIBLE_CURRENT", () => {
+    const resource = validResource();
+    const assessment = classifyIf3Compatibility({
+      resource,
+      availabilityStatus: "VALID",
+      sourceDocument: {
+        documentId: uuid("6ba7b810-9dad-11d1-80b4-00c04fd430c9"),
+        revisionId: requireRevisionId(99),
+        contentChecksum: checksum("f".repeat(64)),
+      },
+    });
+
+    expect(assessment.compatibilityClass).not.toBe("IF3_COMPATIBLE_CURRENT");
+    expect(assessment.gate.authoritativeOutputAllowed).toBe(false);
+    expect(assessment.diagnostics.length).toBeGreaterThan(0);
   });
 
   it("flags missing required result members without inventing payload rows", () => {

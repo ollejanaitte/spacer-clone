@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from backend.app.reports import evaluate_if3_authoritative_export_gate
+
 
 OLD_ANALYSIS_RESULT_POLICY = "READ_OLD_WRITE_TARGET"
 
@@ -80,6 +82,7 @@ def classify_if3_compatibility(
     legacy_time_history: dict[str, Any] | None = None,
     required_result_kinds: tuple[str, ...] | list[str] | None = None,
     write_target_metadata: dict[str, Any] | None = None,
+    source_document: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if raw_result is not None and resource is None:
         return _assess_legacy_raw(raw_result, write_target_metadata)
@@ -89,7 +92,11 @@ def classify_if3_compatibility(
 
     if resource is None:
         if legacy_time_history is not None:
-            return _assess_legacy_time_history(legacy_time_history, write_target_metadata)
+            return _assess_legacy_time_history(
+                legacy_time_history,
+                write_target_metadata,
+                availability_status=availability_status,
+            )
         return _assessment(
             compatibility_class="MALFORMED_UNSUPPORTED",
             authoritative=False,
@@ -188,11 +195,16 @@ def classify_if3_compatibility(
             result_ref=_result_ref(resource),
         )
 
-    if availability == "VALID" and status == "SUCCEEDED":
+    authoritative_gate = evaluate_if3_authoritative_export_gate(
+        resource,
+        availability if availability else "INVALID",
+        source_document=source_document,
+    )
+    if authoritative_gate["authoritativeOutputAllowed"] and authoritative_gate["state"] == "VALID":
         return _assessment(
             compatibility_class="IF3_COMPATIBLE_CURRENT",
             authoritative=True,
-            state="VALID",
+            state=authoritative_gate["state"],
             write_target={
                 "eligible": False,
                 "policy": OLD_ANALYSIS_RESULT_POLICY,
@@ -205,23 +217,25 @@ def classify_if3_compatibility(
                     )
                 ],
             },
-            diagnostics=[],
-            result_ref=_result_ref(resource),
+            diagnostics=authoritative_gate.get("diagnostics", []),
+            result_ref=authoritative_gate.get("resultRef") or _result_ref(resource),
         )
 
     write_target = evaluate_write_target_eligibility(write_target_metadata)
+    gate_diagnostics = list(authoritative_gate.get("diagnostics", []))
     return _assessment(
         compatibility_class="LEGACY_INSUFFICIENT_PROVENANCE",
         authoritative=False,
-        state=availability if availability else "INVALID",
+        state=authoritative_gate.get("state") or (availability if availability else "INVALID"),
         write_target=write_target,
         diagnostics=[
+            *gate_diagnostics,
             _diagnostic(
                 "LEGACY_QUARANTINED",
                 "Candidate is not authoritative IF3-compatible; quarantine for authoritative consumers.",
-            )
+            ),
         ],
-        result_ref=_result_ref(resource),
+        result_ref=authoritative_gate.get("resultRef") or _result_ref(resource),
     )
 
 
@@ -322,6 +336,8 @@ def _assess_legacy_raw(
 def _assess_legacy_time_history(
     legacy: dict[str, Any],
     write_target_metadata: dict[str, Any] | None,
+    *,
+    availability_status: str | None = None,
 ) -> dict[str, Any]:
     readable = isinstance(legacy, dict) and isinstance(legacy.get("meta"), dict) and isinstance(
         legacy.get("time"), list
@@ -361,10 +377,15 @@ def _assess_legacy_time_history(
                 "Legacy timeHistory is quarantined for authoritative Frame consumers.",
             )
         )
+    missing_resource_gate = evaluate_if3_authoritative_export_gate(
+        None,
+        availability_status or "MISSING",
+    )
+    gate_state = missing_resource_gate["state"] if write_target["eligible"] else "INVALID"
     return _assessment(
         compatibility_class=compatibility_class,
         authoritative=False,
-        state="INVALID",
+        state=gate_state,
         write_target=write_target,
         diagnostics=diagnostics,
     )

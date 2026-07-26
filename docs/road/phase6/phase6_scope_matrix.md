@@ -8,9 +8,9 @@
 | PR | In scope | Out of scope | Depends on |
 | --- | --- | --- | --- |
 | PR-39 Road GDRAW completeness | Road formal drawing enhancements, dimensions, coordinate table, bridge markers, DXF parity | Frame PRINT, Frame DRAFT, Viewer adapters, persisted drawing docs | P5, SP1_PARTIAL_ACCEPTABLE_FOR_PR39 |
-| PR-40 Frame PRINT completeness | report/CSV/PDF catalog for valid Frame result outputs | Road GDRAW changes, formal Frame DRAFT, Viewer session migration | IF3_PARTIAL_BLOCKING_PR40_PR41_PR42 means NOGO until verified |
-| PR-41 formal Frame DRAFT | Frame formal drawing builders and DXF/print where supported | Road builder mutation, PRINT catalog, Viewer adapter replacement | SP1 neutral/shared Frame path and IF3 both unverified: NOGO |
-| PR-42 Viewer target adapters/staleness/output UI | Viewer consumes target Frame/result state and reports staleness | Solver changes, result recomputation in adapter, output visual release claim | IF3 viewer contract unverified: NOGO |
+| PR-40 Frame PRINT completeness | report/CSV/PDF catalog for valid Frame result outputs | Road GDRAW changes, formal Frame DRAFT, Viewer session migration | IF3 A–E semantic gates satisfied (`CONDITIONAL_GO`); PRINT catalog completeness remains |
+| PR-41 formal Frame DRAFT | Frame formal drawing builders and DXF/print where supported | Road builder mutation, PRINT catalog, Viewer adapter replacement | SP1 neutral/shared Frame path unverified: `NOGO` |
+| PR-42 Viewer target adapters/staleness/output UI | Viewer consumes target Frame/result state and reports staleness | Solver changes, result recomputation in adapter, output visual release claim | IF3 viewer adapters satisfied (`CONDITIONAL_GO`); P6-D06 completeness checklist remains |
 
 ## P6-D to PR Mapping
 
@@ -48,6 +48,16 @@
 - No final visual release claim while OD8-04 is open.
 - No source-of-truth mutation from any output adapter.
 - No PR-40/41/42 implementation GO until IF3 evidence is verified.
+
+## Current Readiness (post IF3-E)
+
+```text
+IF3_STATUS: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PR40_READINESS: CONDITIONAL_GO
+PR41_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
+OD8_04_STATUS: OPEN_NONBLOCKING_FOR_IMPLEMENTATION
+```
 
 ```text
 PHASE6_SCOPE_VERDICT: DRAFT_READY_WITH_MIMO_FINDINGS
