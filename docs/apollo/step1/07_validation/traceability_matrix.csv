@@ -1,0 +1,44 @@
+trace_id,ready_requirement_id,capability_id,validation_ids,phase1_in_scope,notes
+TRC-RB-001,,CAP-SCH-001,VAL-S1-L01-001;VAL-S1-RB-001,yes,RB-P1-001 parses against design-draft schema family
+TRC-RB-002,,CAP-SCH-001,VAL-S1-L02-001;VAL-S1-L02-002,yes,BSDD lifecycle rules on reference document
+TRC-RB-003,,,VAL-S1-L03-001;VAL-S1-L03-002;VAL-S1-L03-006,yes,Phase1 archetype preflight on RB-P1-001
+TRC-RB-004,,CAP-FRM-008,VAL-S1-L04-001;VAL-S1-L04-002,partial,Frame generation from superstructure intent
+TRC-RB-005,REQ-5C-0001,CAP-ENG-002,VAL-S1-L05-001;VAL-S1-L05-004,yes,Unit system / UnitContext
+TRC-RB-006,REQ-5C-0002,CAP-FRM-007,VAL-S1-L06-001;VAL-S1-L06-004,yes,Slab load input shell
+TRC-RB-007,REQ-5C-0003,CAP-FRM-005;CAP-FRM-007,VAL-S1-L06-002;VAL-S1-L06-003,partial,Live load blocked until standard
+TRC-RB-008,REQ-5C-0013,CAP-EXT-003,VAL-S1-L06-002,partial,Material constants governance
+TRC-RB-009,REQ-5C-0034,CAP-FRM-001;CAP-IF3-001,VAL-S1-L09-003,partial,Section force assignment existing partial
+TRC-RB-010,REQ-5C-0043,CAP-EXT-003,VAL-S1-L06-002,partial,Girder material blocked by standard
+TRC-RB-011,REQ-5C-0079,CAP-FRM-001;CAP-FRM-008;CAP-EXT-001,VAL-S1-L07-003;VAL-S1-L07-004,partial,Internal solver path not Analyzer I/O
+TRC-RB-012,REQ-5C-0083,CAP-RDD-002,VAL-S1-L03-005;VAL-S1-L06-004,yes,Slab thickness NEW_MODULE
+TRC-RB-013,REQ-5C-0084,CAP-RDD-002,VAL-S1-L03-005,partial,Haunch height NEW_MODULE
+TRC-RB-014,REQ-5C-0085,REQ-5C-0001,VAL-S1-L05-001,partial,Haunch unit ties to unit system
+TRC-RB-015,REQ-5C-0086,CAP-RDD-002,VAL-S1-L03-005,partial,Haunch geometry NEW_MODULE
+TRC-RB-016,REQ-5C-0088,,VAL-S1-L06-004,partial,RC slab check position NEW_MODULE
+TRC-RB-017,REQ-5C-0089,,VAL-S1-L06-004,partial,RC cover depth NEW_MODULE
+TRC-RB-018,REQ-5C-0090,CAP-OUT-002,VAL-S1-L12-001,partial,Slab rebar report output deferred
+TRC-RB-019,REQ-5C-0091,,VAL-S1-L06-004,partial,Flange/haunch rebar NEW_MODULE
+TRC-RB-020,REQ-5C-0092,,VAL-S1-L06-004,partial,Slab reinforcement input NEW_MODULE
+TRC-RB-021,REQ-5C-0093,CAP-OUT-002,VAL-S1-L12-001,partial,RC slab calculation report
+TRC-RB-022,REQ-5C-0095,CAP-RDD-002,VAL-S1-L03-005,partial,Slab geometry NEW_MODULE
+TRC-RB-023,REQ-5C-0096,,VAL-S1-L06-004,partial,Slab support condition NEW_MODULE
+TRC-RB-024,REQ-5C-0098,REQ-5C-0013,VAL-S1-READY-001,partial,DDB duplicate of material constants
+TRC-RB-025,REQ-5C-0099,REQ-5C-0083,VAL-S1-READY-001,partial,DDB duplicate of slab thickness
+TRC-RB-026,REQ-5C-0101,,VAL-S1-L06-001,partial,Steel weight PHASE1_SUPPORTING
+TRC-IF3-001,,CAP-IF3-001,VAL-S1-L09-001;VAL-S1-L09-002,yes,IF3 normalized result resource
+TRC-IF3-002,,CAP-IF3-002,VAL-S1-L11-001;VAL-S1-L11-002,yes,Staleness detection
+TRC-IF3-003,,CAP-IF3-003,VAL-S1-L12-001;VAL-S1-L12-004,partial,Consumer export gates
+TRC-IF3-004,,CAP-IF3-005,VAL-S1-L10-002;VAL-S1-L10-004,yes,Client binding gap — fail-closed
+TRC-IF3-005,,CAP-OUT-004,VAL-S1-L12-002,yes,Backend authoritative gate
+TRC-XFR-001,,CAP-XFR-004,VAL-S1-L01-002;VAL-S1-L04-001,yes,BFAD target SoR infra
+TRC-XFR-002,,CAP-XFR-002,VAL-S1-L01-004,partial,Transfer package schema only
+TRC-VER-001,,CAP-VER-001,VAL-S1-L13-001;VAL-S1-L13-004,yes,Frame verification regression
+TRC-VER-002,,CAP-VER-003,VAL-S1-L15-001,deferred,Visual baseline OD8-04 blocked
+TRC-GOV-001,,,VAL-S1-READY-001;VAL-S1-READY-002,yes,READY 69 validation rule chain
+TRC-GOV-002,,,VAL-S1-L14-001;VAL-S1-L14-002,yes,Source hygiene Step1 PRs
+TRC-GOV-003,,,VAL-S1-RB-002,yes,RB golden numerics remain NOT_AUTHORIZED
+TRC-OUT-001,,CAP-OUT-001;CAP-OUT-003,VAL-S1-L12-001;VAL-S1-L12-003,partial,CSV/JSON export paths
+TRC-OUT-002,,CAP-OUT-002,VAL-S1-L12-001,partial,PDF report IF3-gated
+TRC-OUT-003,,CAP-OUT-005,VAL-S1-L12-004,partial,PRINT catalog PR-40
+TRC-SLV-001,,CAP-FRM-001,VAL-S1-L08-001;VAL-S1-L08-002,yes,Linear static solver path
+TRC-SLV-002,,CAP-FRM-002;CAP-FRM-003,VAL-S1-L08-003,no,Dynamic analysis OUT_OF_PHASE1

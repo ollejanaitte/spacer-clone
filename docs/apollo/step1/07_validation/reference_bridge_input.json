@@ -1,0 +1,304 @@
+{
+  "_notice": "DESIGN DRAFT — NOT A PRODUCTION FIXTURE. Apollo Step 1 P08 planning artifact only. Do not use in CI golden tests, migration fixtures, or schemas/contracts/ without governance review.",
+  "schemaDraftVersion": "0.0.0-design-draft",
+  "schemaDraftNote": "Aligns with ../06_architecture/schema_draft.json (P06). schemaVersion 0.0.0-design-draft is not registered in the production migration registry.",
+  "referenceBridgeId": "RB-P1-001",
+  "referenceBridgeStatus": "DRAFT_PLANNING_ONLY",
+  "goldenNumericsAuthorized": false,
+  "targetStandard": "NOT_SELECTED",
+  "schemaId": "spacer.contracts.bridge-superstructure-design-document",
+  "schemaVersion": "0.0.0-design-draft",
+  "documentId": "00000000-0000-0000-0000-000000000100",
+  "documentKind": "bridge-superstructure-design",
+  "revisionId": 1,
+  "contentChecksum": {
+    "algorithm": "sha256",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "lifecycleStatus": "DRAFT",
+  "provenance": {
+    "createdAt": "2026-07-27T00:00:00Z",
+    "createdBy": "apollo-step1-p08-planning",
+    "updatedAt": null,
+    "updatedBy": null,
+    "producer": "apollo-step1-p08-planning"
+  },
+  "coordinateContexts": [
+    {
+      "contextId": "00000000-0000-0000-0000-000000000110",
+      "referenceType": "bridge-local",
+      "axisConvention": "x-longitudinal-y-transverse-z-up",
+      "confidence": "unknown"
+    }
+  ],
+  "unitContext": {
+    "linearUnits": "m",
+    "angularUnits": "rad",
+    "forceUnits": "kN",
+    "stressUnits": "kPa",
+    "conversionVersion": null
+  },
+  "projectContext": {
+    "projectId": "00000000-0000-0000-0000-000000000120",
+    "name": "RB-P1-001 Phase 1 Reference Bridge (planning draft)",
+    "clientName": null,
+    "phaseTag": "step1-p08-validation"
+  },
+  "bridge": {
+    "bridgeId": "00000000-0000-0000-0000-000000000130",
+    "name": "RB-P1-001 straight plate girder bridge",
+    "spans": [
+      {
+        "spanId": "00000000-0000-0000-0000-000000000140",
+        "index": 0,
+        "length": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "startSupportId": "00000000-0000-0000-0000-000000000170",
+        "endSupportId": "00000000-0000-0000-0000-000000000171"
+      }
+    ],
+    "girderLines": [
+      {
+        "girderLineId": "00000000-0000-0000-0000-000000000150",
+        "index": 0,
+        "label": "G1",
+        "offsetFromCenterline": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "depthProfile": "equal",
+        "materialRefId": null,
+        "sectionIntentRefId": null
+      },
+      {
+        "girderLineId": "00000000-0000-0000-0000-000000000151",
+        "index": 1,
+        "label": "G2",
+        "offsetFromCenterline": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "depthProfile": "equal",
+        "materialRefId": null,
+        "sectionIntentRefId": null
+      },
+      {
+        "girderLineId": "00000000-0000-0000-0000-000000000152",
+        "index": 2,
+        "label": "G3",
+        "offsetFromCenterline": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "depthProfile": "equal",
+        "materialRefId": null,
+        "sectionIntentRefId": null
+      },
+      {
+        "girderLineId": "00000000-0000-0000-0000-000000000153",
+        "index": 3,
+        "label": "G4",
+        "offsetFromCenterline": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "depthProfile": "equal",
+        "materialRefId": null,
+        "sectionIntentRefId": null
+      }
+    ],
+    "girderCountIntent": {
+      "min": 4,
+      "max": 6,
+      "adoptionStatus": "ADOPTED",
+      "sourceLocator": "DEC-S1-0008; handoff RB-001 profile"
+    },
+    "deck": {
+      "deckId": "00000000-0000-0000-0000-000000000160",
+      "deckKind": "rc_non_composite",
+      "width": {
+        "value": null,
+        "units": "m",
+        "adoptionStatus": "UNKNOWN",
+        "sourceLocator": null
+      },
+      "thickness": {
+        "value": null,
+        "units": "m",
+        "adoptionStatus": "UNKNOWN",
+        "sourceLocator": null
+      },
+      "unitWeight": {
+        "value": null,
+        "units": "kN/m3",
+        "adoptionStatus": "UNKNOWN",
+        "sourceLocator": null
+      },
+      "crossSlope": {
+        "value": "unknown",
+        "units": "ratio",
+        "adoptionStatus": "UNKNOWN",
+        "sourceLocator": null
+      }
+    },
+    "crossBeams": {
+      "layout": "standard_transverse",
+      "adoptionStatus": "PENDING",
+      "detailDesign": "not_applicable"
+    },
+    "supports": [
+      {
+        "supportId": "00000000-0000-0000-0000-000000000170",
+        "station": {
+          "value": 0,
+          "units": "m",
+          "adoptionStatus": "ADOPTED",
+          "sourceLocator": "layout-origin"
+        },
+        "fixity": "pinned",
+        "role": "abutment"
+      },
+      {
+        "supportId": "00000000-0000-0000-0000-000000000171",
+        "station": {
+          "value": null,
+          "units": "m",
+          "adoptionStatus": "UNKNOWN",
+          "sourceLocator": null
+        },
+        "fixity": "roller",
+        "role": "bearing"
+      }
+    ],
+    "phase1ScopeAssertion": {
+      "alignmentClass": "straight",
+      "skewAngleDeg": {
+        "value": 90,
+        "units": "deg",
+        "adoptionStatus": "ADOPTED",
+        "sourceLocator": "DEC-S1-0008"
+      },
+      "spanSystem": "simple",
+      "superstructureKind": "plate_girder_rc_slab_non_composite",
+      "analysisType": "static_linear"
+    }
+  },
+  "materialDefinitions": [
+    {
+      "materialId": "00000000-0000-0000-0000-000000000180",
+      "designation": "SN400B",
+      "yieldStrength": {
+        "value": null,
+        "units": "MPa",
+        "adoptionStatus": "PENDING",
+        "sourceLocator": null
+      },
+      "elasticModulus": {
+        "value": null,
+        "units": "MPa",
+        "adoptionStatus": "PENDING",
+        "sourceLocator": null
+      },
+      "unitWeight": {
+        "value": null,
+        "units": "kN/m3",
+        "adoptionStatus": "PENDING",
+        "sourceLocator": null
+      }
+    }
+  ],
+  "loadCases": [
+    {
+      "loadCaseId": "00000000-0000-0000-0000-0000000001a0",
+      "name": "Dead load",
+      "kind": "dead",
+      "loads": []
+    },
+    {
+      "loadCaseId": "00000000-0000-0000-0000-0000000001b0",
+      "name": "Slab load",
+      "kind": "slab",
+      "loads": [
+        {
+          "loadId": "00000000-0000-0000-0000-0000000001c0",
+          "pattern": "uniform",
+          "magnitude": {
+            "value": null,
+            "units": "kN/m2",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "direction": "-Z",
+          "targetRef": {
+            "kind": "deck",
+            "refId": "00000000-0000-0000-0000-000000000160"
+          }
+        }
+      ]
+    },
+    {
+      "loadCaseId": "00000000-0000-0000-0000-0000000001d0",
+      "name": "Live load",
+      "kind": "live",
+      "loads": [
+        {
+          "loadId": "00000000-0000-0000-0000-0000000001e0",
+          "pattern": "unknown",
+          "magnitude": {
+            "value": null,
+            "units": "kN/m2",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "direction": null,
+          "targetRef": {
+            "kind": "deck",
+            "refId": "00000000-0000-0000-0000-000000000160"
+          }
+        }
+      ]
+    }
+  ],
+  "analysisBindings": [],
+  "roadImportProvenance": null,
+  "phase1ScopeAssertion": {
+    "alignmentClass": "straight",
+    "skewAngleDeg": {
+      "value": 90,
+      "units": "deg",
+      "adoptionStatus": "ADOPTED",
+      "sourceLocator": "DEC-S1-0008"
+    },
+    "spanSystem": "simple",
+    "superstructureKind": "plate_girder_rc_slab_non_composite",
+    "analysisType": "static_linear"
+  },
+  "deferredOutOfPhase1": {
+    "spliceDesign": "not_applicable",
+    "bracingDesign": "not_applicable",
+    "stiffenerDesign": "not_applicable",
+    "girderDetailedDesign": "not_applicable",
+    "sectionDetailedDesign": "not_applicable",
+    "compositeDeck": "not_applicable",
+    "legacyAnalyzerIo": "not_applicable"
+  },
+  "goldenExpectations": {
+    "sectionForces": null,
+    "reactions": null,
+    "displacements": null,
+    "status": "NOT_AUTHORIZED",
+    "note": "Per handoff docs/07_validation_and_test_strategy.md — expected analysis numerics 未確定"
+  }
+}
