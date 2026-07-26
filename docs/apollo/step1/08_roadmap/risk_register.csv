@@ -1,0 +1,15 @@
+risk_id,severity,category,description,linked_blocker,linked_ap,mitigation,owner,status
+RSK-AP-001,HIGH,standards,Target Standard NOT_SELECTED prevents numeric freeze and golden validation,BLK-S1-001,AP-07;AP-08;AP-14;AP-17,Proceed with PLACEHOLDER shells only; record DEC-S1-xxxx before adoption,supervisor,OPEN
+RSK-AP-002,HIGH,source_gap,34 JIS SOURCE GAP rows block steel/rebar/bolt material authority,BLK-S1-002,AP-07,Acquire primaries or scoped deferral per DTR-03; fail-closed on substitution,external_jis_research,OPEN
+RSK-AP-003,HIGH,governance,Developers auto-fill 道示 loads/factors from examples or LLM inference,BLK-S1-004,AP-08;AP-14,CI guard + schema null enforcement + code review checklist,supervisor,OPEN
+RSK-AP-004,HIGH,integration,Default UI path lacks IF3 binding — authoritative export permanently blocked,BLK-S1-012;LIM-P03-001,AP-11,Prioritize AP-11 early; extend test_if3_api parity to frontend,frame_ui,OPEN
+RSK-AP-005,HIGH,scope_creep,Catalog Phase1_required labels pull splice/bracing/stiffener into build,CFL-003,AP-05;AP-09,Enforce phase1ScopeAssertion preflight; P04 disposition in CI,step1_planner,MITIGATED_PLAN
+RSK-AP-006,MEDIUM,architecture,Dual SoR (ProjectModel vs BFAD/BSDD) causes export/analysis drift,DEC-S1-0005,AP-09;AP-10,Explicit adapter provenance; checksum gates; migration plan in AP-02,frame_team,OPEN
+RSK-AP-007,MEDIUM,external,Analyzer physical I/O UNKNOWN — stakeholder expects legacy file parity,BLK-S1-011,AP-09,Document internal-solver-only Phase 1; no Analyzer claims,analysis_integration,OPEN
+RSK-AP-008,MEDIUM,validation,RB-P1-001 draft misused as production golden fixture,DEC-S1-0011,AP-17,CI ban production fixture paths; ATP-0-03 audit,step1_planner,MITIGATED_PLAN
+RSK-AP-009,MEDIUM,traceability,HISTORICAL_BASELINE_UNKNOWN_EDITION mislabels adopted constants,BLK-S1-007,AP-07;AP-08,PROVISIONAL labels until DTR-04; no ADOPTED without decision_id,supervisor,OPEN
+RSK-AP-010,MEDIUM,license,Evidence PNG redistribution blocked for external publication,BLK-S1-009,AP-16,Internal use only; no extract republication,receiving_org,OPEN
+RSK-AP-011,MEDIUM,output,PRINT/OD8-04 blocks visual release claims,LIM-P03-003,AP-15;AP-16,Semantic exports only; label previews non-authoritative,frame_team,OPEN
+RSK-AP-012,LOW,road_integration,Road-to-Frame apply not operational blocks integrated workflow,LIM-P03-006,AP-04,Manual RDD ref import for Phase 1; defer apply to Road track,road_team,OPEN
+RSK-AP-013,LOW,edition,Supporting manual edition map (R7 道示 vs H29 alignment) unresolved,BLK-S1-003,AP-07;AP-08,DTR-02 before numeric adoption,step1_planner,OPEN
+RSK-AP-014,MEDIUM,schedule,AP-14..AP-18 blocked long while foundation proceeds — integration debt,BLK-S1-001,AP-14..AP-18,Time-box AP-00..AP-03 + AP-11; defer numeric PRs explicitly,supervisor,OPEN
