@@ -1,0 +1,18 @@
+entity_id,entity_name,purpose,candidate_fields,upstream_entity,downstream_entity,source_feature_ids,ready_status,open_dependency,notes
+ENT-CAND-0001,Alignment,Road alignment and stationing,centerline;station_pitch;cross_sections,UNKNOWN,BridgeGeometry,F4-P1-004;F4-P1-005;F4-P1-024,PARTIAL_READY,UNKNOWN,Align .alg format not in package
+ENT-CAND-0002,BridgeGeometry,Bridge layout and girder arrangement,span;skew;girder_count;cross_lines,Alignment,Member,F4-P1-012;F4-P1-014;F4-P1-018,PARTIAL_READY,UNKNOWN,Phase1 constraints in AGENTS.md
+ENT-CAND-0003,Node,Structural model nodes,node_id;coordinates;restraints,BridgeGeometry,Member,F4-P5-UNKNOWN,NOT_CONFIRMED,OPEN,Lattice model details in MAN-002/007
+ENT-CAND-0004,Member,Frame members,girder;floor_beam;bracing,BridgeGeometry;Section,Load,UNKNOWN,NOT_CONFIRMED,UNKNOWN,Member types from MAN-021 flow
+ENT-CAND-0005,Section,Cross-section properties,area;Ix;Iy;J;Zp,Material,Member,F4-P3-008;F4-P3-019,PARTIAL_READY,UNKNOWN,Section app exists; analysis props UNKNOWN
+ENT-CAND-0006,Material,Material definitions,yield_strength;unit_weight;E,UNKNOWN,Section,F4-P1-051,READY,NONE,READY RDY-004; no auto numeric
+ENT-CAND-0007,Support,Bearing and fixity,support_type;stiffness,BridgeGeometry,AnalysisResult,F4-P1-UNKNOWN,NOT_CONFIRMED,UNKNOWN,Fixed/movable per Phase1 scope
+ENT-CAND-0008,LoadCase,Individual load cases,dead;live;other,Load,LoadCombination,F4-P5-015,READY,NONE,READY RDY-003 live load
+ENT-CAND-0009,Load,Load magnitudes and patterns,dead_load;live_load;slab_load,LoadCase,Member,F4-P2-010;F4-P5-015,READY,OPEN,Slab load RDY-002; combination rules OPEN
+ENT-CAND-0010,LoadCombination,Load combination rules,factors;cases,LoadCase,AnalysisResult,UNKNOWN,NOT_CONFIRMED,OPEN;JIS_GAP,Combination rules not READY
+ENT-CAND-0011,AnalysisResult,Raw analysis output,displacements;forces;reactions,Member;LoadCombination,SectionForce,UNKNOWN,NOT_CONFIRMED,UNKNOWN,Analyzer output format UNKNOWN
+ENT-CAND-0012,SectionForce,Member internal forces,N;Vy;Vz;Mx;My;Mz,AnalysisResult,DesignCheck,UNKNOWN,NOT_CONFIRMED,UNKNOWN,3 vs 6 components UNKNOWN
+ENT-CAND-0013,Reaction,Support reactions,Rx;Ry;Rz;Mx;My;Mz,AnalysisResult,DesignCheck,UNKNOWN,NOT_CONFIRMED,UNKNOWN,No READY-specific row
+ENT-CAND-0014,Displacement,Node/member displacements,dx;dy;dz;rx;ry;rz,AnalysisResult,DesignCheck,UNKNOWN,NOT_CONFIRMED,UNKNOWN,Deflection check linkage UNKNOWN
+ENT-CAND-0015,DesignCheck,Code checks utilization,ratio;status,SectionForce;Material,DrawingInput,F4-P3-008;F4-P3-010,PARTIAL_READY,OPEN,Likely APOLLO-side not frame engine
+ENT-CAND-0016,DrawingInput,Inputs for drafting,members;dimensions,DesignCheck,MaterialQuantity,F4-P6-UNKNOWN,NOT_CONFIRMED,UNKNOWN,SuperDrawing boundary
+ENT-CAND-0017,MaterialQuantity,Steel weight and BOM,weight;profiles,DesignCheck,UNKNOWN,F4-P6-UNKNOWN,NOT_CONFIRMED,UNKNOWN,y-Mater NPDATA boundary

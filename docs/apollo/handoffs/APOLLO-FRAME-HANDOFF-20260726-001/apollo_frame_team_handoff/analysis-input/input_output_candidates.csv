@@ -1,0 +1,13 @@
+io_id,io_name,direction,format_candidate,producer,consumer,source_feature_id,ready_status,unknowns,notes
+IO-CAND-0001,alignment_file,APOLLO_TO_FRAME,.alg_candidate,Align,SuperDesigner,F4-P1-004,NOT_CONFIRMED,alg schema; not in package,Evidence for .alg import exists
+IO-CAND-0002,design_database,INTERNAL,.mdb_candidate,SuperDesigner,SuperDesigner,F4-P1-019,NOT_CONFIRMED,mdb schema; not in package,Access DB center per MAN-021
+IO-CAND-0003,analyzer_input,APOLLO_TO_FRAME,UNKNOWN,SuperDesigner,Analyzer,F4-P1-018,NOT_CONFIRMED,physical format,feature_data_flow.md UNKNOWN
+IO-CAND-0004,analyzer_output,FRAME_TO_APOLLO,UNKNOWN,Analyzer,SuperDesigner,UNKNOWN,NOT_CONFIRMED,physical format; force components,Post-process to section forces
+IO-CAND-0005,unit_system_setting,BIDIRECTIONAL,config_enum_candidate,SuperDesigner,frame_team,F4-P1-007,READY,propagation rules,READY RDY-001
+IO-CAND-0006,slab_load_table,APOLLO_TO_FRAME,table_or_db_candidate,SuperDesigner,frame_team,F4-P2-010,READY,distribution to members,READY RDY-002
+IO-CAND-0007,live_load_definition,APOLLO_TO_FRAME,table_or_scalar_candidate,SuperDesigner,frame_team,F4-P5-015,READY,load case mapping,READY RDY-003
+IO-CAND-0008,calculation_report_rtf,APOLLO_INTERNAL,.rtf_candidate,SuperDesigner,MS-Word,UNKNOWN,NOT_CONFIRMED,rtf schema,Not frame boundary
+IO-CAND-0009,drawing_gsp,APOLLO_INTERNAL,.gsp_candidate,SuperDrawing,AutoCAD,UNKNOWN,NOT_CONFIRMED,gsp format,Out of frame scope
+IO-CAND-0010,npdata_material,APOLLO_TO_EXTERNAL,NPDATA.txt_candidate,SuperDesigner,y-Mater,UNKNOWN,NOT_CONFIRMED,npdata format,Material calc boundary
+IO-CAND-0011,splice_session,APOLLO_INTERNAL,.spl_candidate,Splice,SuperDesigner,F4-P3-010,PARTIAL_READY,spl schema,MAN-063; splice likely APOLLO-side
+IO-CAND-0012,section_check_input,FRAME_TO_APOLLO,struct_candidate,frame_team,Section,F4-P3-008,PARTIAL_READY,force component set,READY RDY-005 section check
