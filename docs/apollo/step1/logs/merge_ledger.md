@@ -13,4 +13,5 @@
 | P05 | #195 | `docs/apollo-step1-p05-scope-boundary` | `849fef17a62a63994394cfddd11b71c1f76c1350` | MERGED | Phase 1 scope freeze + responsibility/interface boundaries |
 | P06 | #196 | `docs/apollo-step1-p06-architecture` | `a559871e3eb09e3c4e35b810d0a903be091dc4f2` | MERGED | Architecture ADRs + Apollo data model + design-draft schema |
 | P07 | #197 | `docs/apollo-step1-p07-interface-if3` | `bf3d9dc22e027e1de661c0271ff6ba2a003e7d20` | MERGED | Interface contract + IF3 binding + stale rules + export authority matrix |
-| P08 | — | `docs/apollo-step1-p08-validation` | *(pending)* | STAGED | Reference Bridge RB-P1-001 + validation catalog + test strategy + traceability + acceptance plan |
+| P08 | #198 | `docs/apollo-step1-p08-validation` | `555a3c5d9a4242cc8ea838973a0ce41a5ec1613b` | MERGED | Reference Bridge RB-P1-001 + validation catalog + test strategy + traceability + acceptance plan |
+| P09 | — | `docs/apollo-step1-p09-final-closure` | *(pending)* | STAGED | Step 1 closure; implementation roadmap AP-00..AP-18; final report; verdicts |
