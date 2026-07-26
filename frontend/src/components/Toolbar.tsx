@@ -36,6 +36,7 @@ type ToolbarProps = {
   onOpenBridgeWizard: () => void;
   onOpenModelComparison?: () => void;
   onOpenLinerList?: () => void;
+  onOpenApolloPhase1?: () => void;
 };
 
 const t = ja.toolbar;
@@ -74,6 +75,7 @@ export function Toolbar({
   onOpenBridgeWizard,
   onOpenModelComparison = () => undefined,
   onOpenLinerList,
+  onOpenApolloPhase1,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -143,6 +145,16 @@ export function Toolbar({
             >
               <Map size={16} />
               {ja.liner.toolbar.openButton}
+            </button>
+          )}
+          {onOpenApolloPhase1 && (
+            <button
+              type="button"
+              onClick={onOpenApolloPhase1}
+              title="Apollo Phase 1 (foundation shell)"
+              data-testid="open-apollo-phase1"
+            >
+              Apollo
             </button>
           )}
           <button

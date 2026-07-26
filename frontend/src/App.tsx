@@ -92,6 +92,10 @@ import {
   openProjectFile,
   saveProjectFile,
 } from "./desktop/projectFileDialog";
+import { ApolloPhase1Shell } from "./apollo/ApolloPhase1Shell";
+import { redirectDeniedApolloRoute } from "./apollo/entryGuard";
+import { isApolloPhase1Enabled } from "./apollo/featureFlag";
+import { APOLLO_PHASE1_ROUTE_PATH, isApolloRoute } from "./apollo/routes";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -114,6 +118,10 @@ function applyIf3AnalysisSidecar(
 
 export function App() {
   redirectLegacyRoutes();
+  redirectDeniedApolloRoute();
+  const apolloPhase1Enabled = isApolloPhase1Enabled();
+  const pathnameForRouting =
+    typeof window !== "undefined" ? window.location.pathname : "/pro";
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
@@ -771,6 +779,12 @@ export function App() {
     log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
 
+  if (isApolloRoute(pathnameForRouting) && apolloPhase1Enabled) {
+    return (
+      <ApolloPhase1Shell onReturnToPro={() => navigatePro("/pro")} />
+    );
+  }
+
   if (comparisonOpen) {
     return (
       <ModelComparisonWorkspace
@@ -1145,6 +1159,9 @@ export function App() {
           setComparisonOpen(true);
         }}
         onOpenLinerList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
+        onOpenApolloPhase1={
+          apolloPhase1Enabled ? () => navigatePro(APOLLO_PHASE1_ROUTE_PATH) : undefined
+        }
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge
