@@ -10,4 +10,5 @@
 | 2026-07-27 | P03 | Composer 2.5 (worker) | Read-only capability inventory; matrix CSV; document/interface map; limitations; merge_ledger P02 update | COMPLETE — merged PR #193 @ `563c4c7` |
 | 2026-07-27 | P04 | Composer 2.5 (worker) | Full-coverage READY 69 gap analysis; feature 281 disposition; blocker/conflict/unresolved registers; verification | COMPLETE — merged PR #194 @ `7240f18` |
 | 2026-07-27 | P05 | Composer 2.5 (worker) | Phase 1 scope freeze; responsibility matrix; road/apollo/frame interfaces; phase1 feature subset; DEC-S1-0008 | COMPLETE — merged PR #195 @ `849fef1` |
-| 2026-07-27 | P06 | Composer 2.5 (worker) | Architecture ADRs; Apollo data model; entity catalog; document lifecycle; ID/versioning rules; schema_draft.json; DEC-S1-0009 | STAGED — 6 artifacts + governance/log updates; supervisor review pending |
+| 2026-07-27 | P06 | Composer 2.5 (worker) | Architecture ADRs; Apollo data model; entity catalog; document lifecycle; ID/versioning rules; schema_draft.json; DEC-S1-0009 | COMPLETE — merged PR #196 @ `a559871` |
+| 2026-07-27 | P07 | Composer 2.5 (worker) | Interface contract draft; field matrix CSV; IF3 binding design; stale/reanalysis rules; export authority matrix; DEC-S1-0010 | STAGED — 5 artifacts + governance/log updates; supervisor review pending |
