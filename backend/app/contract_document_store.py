@@ -11,9 +11,12 @@ from backend.app.atomic_json import (
     read_json,
 )
 from backend.engine.if3_persistence import (
+    If3PersistenceError,
     load_if3_result_resource,
+    persist_if3_result_with_ref,
     save_if3_result_resource,
 )
+from backend.engine.if3_availability import build_if3_availability_catalog
 
 TARGET_ROAD_SCHEMA_ID = "spacer.contracts.road-design-document"
 TARGET_FRAME_SCHEMA_ID = "spacer.contracts.bridge-frame-analysis-document"
@@ -128,10 +131,35 @@ class ContractDocumentStore:
     ) -> Any:
         return load_if3_result_resource(frame_document_path, result_id)
 
+    def persist_if3_result_with_ref(
+        self,
+        frame_document_path: Path,
+        resource: Any,
+        frame_document: Any,
+        *,
+        expected_frame_checksum: str,
+    ) -> Any:
+        return persist_if3_result_with_ref(
+            self,
+            frame_document_path,
+            resource,
+            frame_document,
+            expected_frame_checksum=expected_frame_checksum,
+        )
+
+    def build_if3_availability_catalog(
+        self,
+        frame_document_path: Path,
+        frame_document: Any | None = None,
+    ) -> list[dict[str, Any]]:
+        document = frame_document if frame_document is not None else self.read_document(frame_document_path)
+        return build_if3_availability_catalog(document, frame_document_path)
+
 
 __all__ = [
     "ContractDocumentStore",
     "ContractDocumentStoreError",
+    "If3PersistenceError",
     "LegacyWriteForbiddenError",
     "TARGET_FRAME_SCHEMA_ID",
     "TARGET_ROAD_SCHEMA_ID",

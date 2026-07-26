@@ -4,7 +4,7 @@ import copy
 import uuid
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from backend.app.atomic_json import (
     AtomicJsonStore,
@@ -24,6 +24,25 @@ from backend.engine.if3_normalizer import (
 )
 
 IF3_RESULT_SIDECAR_SUFFIX = ".if3.json"
+PERSISTED_RESULT_DOCUMENT_KIND = "persisted-result"
+PERSISTED_RESULT_REVISION_ID = 1
+
+
+class If3FramePersistenceStore(Protocol):
+    def save_if3_result_resource(
+        self,
+        frame_document_path: Path,
+        resource: dict[str, Any],
+    ) -> StoreResult: ...
+
+    def save_frame_document(
+        self,
+        path: Path,
+        document: Any,
+        *,
+        create_only: bool = False,
+        expected_checksum: str | None = None,
+    ) -> StoreResult: ...
 
 
 class If3PersistenceError(Exception):
@@ -83,6 +102,14 @@ class If3PersistenceUnsupportedSchemaVersionError(If3PersistenceError):
 
 class If3PersistenceStorageError(If3PersistenceError):
     code = "STORAGE_ERROR"
+
+
+class If3PersistenceDuplicateRefError(If3PersistenceError):
+    code = "DUPLICATE_REFERENCE"
+
+
+class If3PersistenceFrameConflictError(If3PersistenceError):
+    code = "FRAME_CHECKSUM_CONFLICT"
 
 
 def build_if3_results_directory(frame_document_path: Path) -> Path:
@@ -257,13 +284,113 @@ def _verify_result_checksum(resource: dict[str, Any]) -> None:
         )
 
 
+def build_persisted_result_uri(result_id: str) -> str:
+    validated_id = validate_if3_result_id(result_id)
+    return f"results/{validated_id}{IF3_RESULT_SIDECAR_SUFFIX}"
+
+
+def build_persisted_result_document_reference(
+    resource: dict[str, Any],
+    frame_document_path: Path,
+) -> dict[str, Any]:
+    del frame_document_path  # URI is relative to the frame document directory.
+    result_id = resource.get("resultId")
+    if not isinstance(result_id, str):
+        raise If3PersistenceMalformedIdError("resultId must be present on the resource envelope.")
+    validate_if3_result_id(result_id)
+    result_checksum = resource.get("resultChecksum")
+    if not validate_content_checksum(result_checksum):
+        raise If3PersistenceChecksumMissingError(
+            "resultChecksum is required for persisted result references."
+        )
+    return {
+        "documentKind": PERSISTED_RESULT_DOCUMENT_KIND,
+        "documentId": result_id,
+        "revisionId": PERSISTED_RESULT_REVISION_ID,
+        "contentChecksum": copy.deepcopy(result_checksum),
+        "uri": build_persisted_result_uri(result_id),
+    }
+
+
+def validate_no_duplicate_ref(
+    existing_refs: list[dict[str, Any]] | None,
+    new_ref: dict[str, Any],
+) -> None:
+    refs = existing_refs if isinstance(existing_refs, list) else []
+    new_document_id = new_ref.get("documentId")
+    new_uri = new_ref.get("uri")
+    for index, ref in enumerate(refs):
+        if not isinstance(ref, dict):
+            continue
+        if isinstance(new_document_id, str) and ref.get("documentId") == new_document_id:
+            raise If3PersistenceDuplicateRefError(
+                f"Duplicate persisted result documentId at persistedResultRefs[{index}]."
+            )
+        if isinstance(new_uri, str) and ref.get("uri") == new_uri:
+            raise If3PersistenceDuplicateRefError(
+                f"Duplicate persisted result uri at persistedResultRefs[{index}]."
+            )
+
+
+def persist_if3_result_with_ref(
+    store: If3FramePersistenceStore,
+    frame_document_path: Path,
+    resource: dict[str, Any],
+    frame_document: dict[str, Any],
+    *,
+    expected_frame_checksum: str,
+) -> dict[str, Any]:
+    resource_before = copy.deepcopy(resource)
+    frame_before = copy.deepcopy(frame_document)
+
+    reference = build_persisted_result_document_reference(resource, frame_document_path)
+    existing_refs = frame_document.get("persistedResultRefs")
+    if existing_refs is None:
+        refs: list[dict[str, Any]] = []
+    elif isinstance(existing_refs, list):
+        refs = copy.deepcopy(existing_refs)
+    else:
+        refs = []
+    validate_no_duplicate_ref(refs, reference)
+
+    store.save_if3_result_resource(frame_document_path, resource)
+
+    updated_frame = copy.deepcopy(frame_document)
+    refs.append(reference)
+    updated_frame["persistedResultRefs"] = refs
+
+    try:
+        store.save_frame_document(
+            frame_document_path,
+            updated_frame,
+            expected_checksum=expected_frame_checksum,
+        )
+    except JsonStoreConflictError as exc:
+        if exc.code == "CHECKSUM_MISMATCH":
+            raise If3PersistenceFrameConflictError(exc.message, cause=exc) from exc
+        raise If3PersistenceStorageError(exc.message, cause=exc) from exc
+    except (JsonStoreIoError, JsonSerializationError) as exc:
+        raise If3PersistenceStorageError(str(exc), cause=exc) from exc
+    except AtomicJsonError as exc:
+        raise If3PersistenceStorageError(str(exc), cause=exc) from exc
+
+    if resource != resource_before or frame_document != frame_before:
+        raise If3PersistenceInvalidResourceError("Persistence must not mutate caller input.")
+    return reference
+
+
 __all__ = [
     "IF3_RESULT_SIDECAR_SUFFIX",
+    "PERSISTED_RESULT_DOCUMENT_KIND",
+    "PERSISTED_RESULT_REVISION_ID",
+    "If3FramePersistenceStore",
     "If3PersistenceChecksumMalformedError",
     "If3PersistenceChecksumMismatchError",
     "If3PersistenceChecksumMissingError",
     "If3PersistenceDuplicateError",
+    "If3PersistenceDuplicateRefError",
     "If3PersistenceError",
+    "If3PersistenceFrameConflictError",
     "If3PersistenceInvalidResourceError",
     "If3PersistenceMalformedIdError",
     "If3PersistenceMalformedJsonError",
@@ -274,8 +401,12 @@ __all__ = [
     "If3PersistenceUnsupportedSchemaVersionError",
     "build_if3_result_sidecar_path",
     "build_if3_results_directory",
+    "build_persisted_result_document_reference",
+    "build_persisted_result_uri",
     "load_if3_result_resource",
+    "persist_if3_result_with_ref",
     "save_if3_result_resource",
     "validate_if3_result_id",
     "validate_if3_result_resource_for_persistence",
+    "validate_no_duplicate_ref",
 ]

@@ -33,6 +33,12 @@ from backend.engine.if3_normalizer import (
     build_unsupported_result_resource,
     normalize_linear_static_result_resource,
 )
+from backend.app.contract_document_store import ContractDocumentStore
+from backend.engine.if3_persistence import (
+    If3PersistenceError,
+    If3PersistenceFrameConflictError,
+    validate_if3_result_resource_for_persistence,
+)
 
 APP_VERSION = "0.3.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -129,7 +135,12 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
     if3_metadata = extract_if3_metadata(payload)
     if3_result = normalize_linear_static_result_resource(result, if3_metadata)
 
-    return safe_json_response({"result": result, "csv": csv_exports, "if3Result": if3_result})
+    response: dict[str, Any] = {"result": result, "csv": csv_exports, "if3Result": if3_result}
+    persisted_ref = maybe_persist_linear_static_if3_result(if3_metadata, if3_result)
+    if persisted_ref is not None:
+        response["persistedResultRef"] = persisted_ref
+
+    return safe_json_response(response)
 
 
 @app.post("/api/analysis/eigen")
@@ -453,6 +464,102 @@ def extract_if3_metadata(payload: dict[str, Any]) -> dict[str, Any]:
     if isinstance(metadata, dict):
         return copy.deepcopy(metadata)
     return {}
+
+
+def extract_if3_persistence_context(metadata: dict[str, Any]) -> tuple[Path, str] | None:
+    frame_path_value = metadata.get("frameDocumentPath")
+    frame_checksum = metadata.get("frameDocumentChecksum")
+    if not isinstance(frame_path_value, str) or not frame_path_value.strip():
+        return None
+    if not isinstance(frame_checksum, str) or not frame_checksum.strip():
+        return None
+    return Path(frame_path_value.strip()), frame_checksum.strip()
+
+
+def maybe_persist_linear_static_if3_result(
+    if3_metadata: dict[str, Any],
+    if3_result: dict[str, Any],
+) -> dict[str, Any] | None:
+    context = extract_if3_persistence_context(if3_metadata)
+    if context is None:
+        return None
+
+    frame_path, expected_checksum = context
+    if not frame_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "FRAME_DOCUMENT_NOT_FOUND",
+                "message": f"Frame document does not exist: {frame_path}",
+            },
+        )
+
+    store = ContractDocumentStore()
+    actual_checksum = store.checksum_for(frame_path)
+    if actual_checksum != expected_checksum.lower():
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "FRAME_CHECKSUM_MISMATCH",
+                "message": "Frame document checksum does not match the requested persistence context.",
+            },
+        )
+
+    frame_document = store.read_document(frame_path)
+    try:
+        validate_if3_result_resource_for_persistence(if3_result)
+    except If3PersistenceError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": exc.code, "message": exc.message},
+        ) from exc
+
+    try:
+        return store.persist_if3_result_with_ref(
+            frame_path,
+            if3_result,
+            frame_document,
+            expected_frame_checksum=expected_checksum.lower(),
+        )
+    except If3PersistenceFrameConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": exc.code, "message": exc.message},
+        ) from exc
+    except If3PersistenceError as exc:
+        raise HTTPException(
+            status_code=500,
+            detail={"code": exc.code, "message": exc.message},
+        ) from exc
+
+
+@app.post("/api/if3/availability")
+def if3_availability_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    frame_path_value = payload.get("frameDocumentPath")
+    if not isinstance(frame_path_value, str) or not frame_path_value.strip():
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCHEMA_ERROR", "message": "frameDocumentPath is required."},
+        )
+    frame_path = Path(frame_path_value.strip())
+    if not frame_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "FRAME_DOCUMENT_NOT_FOUND",
+                "message": f"Frame document does not exist: {frame_path}",
+            },
+        )
+
+    store = ContractDocumentStore()
+    frame_document = payload.get("frameDocument")
+    if frame_document is not None and not isinstance(frame_document, dict):
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCHEMA_ERROR", "message": "frameDocument must be an object."},
+        )
+    catalog = store.build_if3_availability_catalog(frame_path, frame_document)
+    return safe_json_response({"catalog": catalog})
 
 
 def attach_if3_unsupported_result(
