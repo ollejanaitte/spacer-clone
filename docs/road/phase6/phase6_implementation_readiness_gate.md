@@ -1,52 +1,36 @@
 # Phase 6 Implementation Readiness Gate
 
-**Date:** 2026-07-23
-**Status:** PR39_START_CONDITIONS_RESOLVED
+**Date:** 2026-07-26
+**Status:** UPDATED_AFTER_IF3_E
 
 ## Readiness Summary
 
 | Area | Status | Reason |
 | --- | --- | --- |
-| Docs package | READY_FOR_REVIEW | Planning docs and D-step specs define scope/gates |
-| Docs package | PASS_WITH_FINDINGS | Required docs exist, regular, non-empty; candidate references partly verified; prior D02 source has temporal snapshot issue |
-| PR-39A implementation | GO | Branch `phase6/pr39-road-gdraw` exists; PR split accepted; full validation gate passed |
-| PR-39B implementation | GO_AFTER_PR39A | Depends on PR-39A layer/settings baseline |
-| PR-39C implementation | CONDITIONAL_GO | Road source data must support requested markers; otherwise defer |
-| PR-40 implementation | NOGO_UNTIL_IF3_VERIFIED | Frame PRINT depends on valid bound result/output contract plus PRINT source contract/catalog/staleness handling |
-| PR-41 implementation | NOGO_UNTIL_SP1_AND_IF3_VERIFIED | Frame DRAFT needs neutral/shared Frame drawing path and result binding |
-| PR-42 implementation | NOGO_UNTIL_IF3_VERIFIED | Viewer target adapter depends on viewer input, staleness, and result adapter contract |
+| Docs package | READY_WITH_IF3_E_SYNC | Planning docs updated for IF3-E evidence |
+| PR-39A/B/C implementation | COMPLETE | Merged on main |
+| PR-40 implementation | CONDITIONAL_GO | IF3 A–E semantic gates satisfied; PRINT catalog completeness remains |
+| PR-41 implementation | NOGO | SP1 neutral/shared Frame drawing path unverified |
+| PR-42 implementation | CONDITIONAL_GO | IF3 viewer adapters satisfied; P6-D06 completeness checklist remains |
 | Final visual release | NOGO_UNTIL_OD8_04_RESOLVED | controlled visual baseline environment remains open |
-| Full-test gate | PASS | root `.venv` setup complete; typecheck, lint, test, and build passed |
-
-## GO Conditions for PR-39
-
-- Implementation branch is `phase6/pr39-road-gdraw`.
-- PR-39 split is accepted: PR-39A -> PR-39B -> PR-39C.
-- P6-D03 final design resolves dimension/settings/DXF layer design.
-- P6-D03 final design resolves bridge marker ownership, with PR-39C defer allowed when Road source data is insufficient.
-- Candidate files are checked against current repository state before edit.
-- Recheck `frontend/src/liner/drawing/dimensions/alignmentSegmentDimensions.ts` because it already exists.
-- Tests are mapped before implementation.
-- Output remains runtime-only and source truth remains Road document/intermediate result.
-- OD8-04 wording is preserved.
+| IF3 semantic gates | PASS | IF3-A through IF3-E complete for semantic authoritative adapters |
 
 ## NOGO Conditions
 
 - Any plan claims SP1 COMPLETE without neutral shared evidence.
-- Any Frame output claims authoritative result export before IF3 evidence.
+- Any Frame PRINT catalog completeness claim before PR-40 body lands.
 - Any final visual release claim appears while OD8-04 is open.
 - Any output adapter writes source documents or persists derived artifacts.
 - Required tests fail once run.
-- Full-test gate regresses after implementation.
+- Legacy WRITE_TARGET invents missing provenance/binding/identity.
 
 ## Readiness Verdict
 
 ```text
-PR39_READINESS: GO_FOR_PR39A
-PR39B_READINESS: GO_AFTER_PR39A
-PR39C_READINESS: CONDITIONAL_GO
-PR40_READINESS: NOGO
+PR39_STATUS: COMPLETE
+PR40_READINESS: CONDITIONAL_GO
 PR41_READINESS: NOGO
-PR42_READINESS: NOGO
-PHASE6_IMPLEMENTATION_READINESS: GO_FOR_PR39A_ONLY
+PR42_READINESS: CONDITIONAL_GO
+IF3_STATUS: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PHASE6_IMPLEMENTATION_READINESS: READY_FOR_PR40_CONDITIONAL_AND_PR42_CONDITIONAL
 ```

@@ -1,60 +1,54 @@
 # IF3 Evidence Matrix
 
-**Date:** 2026-07-25
-**Status:** DESIGN_EVIDENCE_RECORDED
+**Date:** 2026-07-26
+**Status:** IMPLEMENTATION_EVIDENCE_RECORDED
 
 ## Authoritative Evidence
 
 | Source | Evidence used |
 | --- | --- |
-| `docs/road/phase6/phase6_dependency_status.md` | IF3 is partial and blocks PR-40/41/42; missing binding, staleness, provenance, source contracts |
-| `docs/road/phase6/phase6_sp1_if3_evidence_matrix.md` | `BridgeFrameAnalysisDocument` exists; versioning partial; IF3 result binding/staleness/provenance/source contracts not found |
-| `docs/planning/stage6-10/target_data_model.md` | Conceptual Persisted Result Resource fields and fail-closed binding rules |
-| `docs/road/phase6/d04/p6_d04_print_design.md` | PRINT consumes valid IF3-bound result resources and must not export stale results |
-| `docs/road/phase6/d05/p6_d05_frame_draft_design.md` | DRAFT result sheets require valid bound result resources |
-| `docs/road/phase6/d06/p6_d06_viewer_design.md` | Viewer adapters require result resource ID/checksum binding and staleness diagnostics |
-| `docs/road/phase6/phase6_pr_readiness_matrix.md` | PR-40/41/42 are NOGO until IF3 is verified |
-| `docs/road/phase6/phase6_scope_matrix.md` | PR scopes and non-scope guardrails prohibit source-of-truth mutation and PR-40/41/42 GO before IF3 |
-| `docs/road/phase6/phase6_implementation_sequence.md` | PR-40/41/42 may prepare only without bypassing IF3 contracts |
-| `docs/road/phase6/phase6_implementation_readiness_gate.md` | Authoritative Frame outputs remain NOGO until IF3 evidence exists |
+| `docs/road/phase6/if3/*` design package | IF3 contract, lifecycle, consumer, and implementation plan |
+| Merged IF3-A..D work on `origin/main` through `3f24b98` | Result schema, normalizer/staleness, persistence/reload, consumer adapters |
+| IF3-E compatibility modules | `if3LegacyCompatibility.ts`, `if3_legacy_compatibility.py` |
 
 ## Implementation Evidence
 
 | Source | Evidence used | IF3 implication |
 | --- | --- | --- |
-| `frontend/src/types.ts` | `AnalysisResult` has `projectId`, `schemaVersion`, summary, rows, warnings, errors | Raw result shape lacks stable `resultId`, source checksum, binding, provenance |
-| `frontend/src/types.ts` | `ProjectModel.analysisResults` persists only MVP time-history block | Existing persistence is narrow and not IF3 resource persistence |
-| `frontend/src/contracts/bridgeFrameAnalysisDocument.ts` | Document envelope, provenance, checksum, revision, validation exist | Source document can support binding inputs |
-| `frontend/src/contracts/bridgeFrameAnalysisDocument.ts` | `persistedResultRefs?: DocumentReference[]` exists and validates kind `persisted-result` | Reference field exists but is optional and not populated as authoritative IF3 registry |
-| `frontend/src/contracts/provenance.ts` | Shared `Provenance` type and validator exist | Reusable for result provenance, but result provenance is absent today |
-| `frontend/src/contracts/contentChecksum.ts` | SHA-256 checksum type and validator exist | Reusable for source/result/settings checksums |
-| `frontend/src/results/resultViewModel.ts` | View model consumes `AnalysisResult` and derives IDs from `projectId` and load case | Viewer path needs IF3 adapter and stable `resultId` |
-| `frontend/src/exports/resultCsvExport.ts` | CSV export consumes `AnalysisResult` directly | PRINT/export path needs IF3 validation gate |
-| `frontend/src/exports/resultPdfReport.ts` | PDF report consumes `ProjectModel` and `AnalysisResult` directly | Report source contract not IF3-authoritative yet |
-| `frontend/src/exports/memberForceReport.ts` | Member force CSV consumes `AnalysisResult` directly | Report sub-path needs IF3 adapter |
-| `backend/engine/solver.py` | Solver returns raw dict from `build_success_result` or `error_result` | Normalizer/resource layer missing |
-| `backend/engine/results.py` | Success result builds raw `projectId`/summary/result rows | No result ID, provenance, source checksum, or resource checksum |
-| `backend/app/main.py` | Analysis endpoints return `{ result }` raw payloads; optional CSV generated from raw result | API boundary currently exposes raw solver result as authoritative-looking payload |
-| `backend/app/reports.py` | Backend CSV export builds directly from raw result dict | Backend export path needs IF3 validation gate |
+| `frontend/src/contracts/frameAnalysisResultResource.ts` | Stable identity, binding, provenance, payload catalog | IF3-A contract present |
+| `backend/engine/if3_normalizer.py` | Raw solver wrap into IF3 resource | IF3-B normalizer present |
+| `backend/engine/if3_staleness.py` / availability | Stale/missing/unsupported states | IF3-B/C availability present |
+| `backend/engine/if3_persistence.py` | Immutable resource persistence and refs | IF3-C present |
+| `frontend/src/results/if3ResultGate.ts` | Authoritative consumer gate | IF3-D present |
+| `frontend/src/exports/if3ExportGate.ts` | CSV/PDF/member-force authoritative export gate | IF3-D Report/PRINT boundary present |
+| `frontend/src/draft/if3DraftEligibility.ts` | DRAFT sheet eligibility + SP1 remaining blocker | IF3-D DRAFT adapter present; SP1 still blocks PR-41 |
+| `frontend/src/results/if3LegacyCompatibility.ts` | READ_OLD_WRITE_TARGET classification and consumer capability matrix | IF3-E present |
+| `backend/engine/if3_legacy_compatibility.py` | Backend parity for legacy quarantine / WRITE_TARGET eligibility | IF3-E present |
 
 ## Gap Matrix
 
 | Requirement | Current evidence | Design resolution | Implementation status |
 | --- | --- | --- | --- |
-| Stable result identity | Not found | `resultId` required | Missing |
-| Run identity | Not found | `analysisRunId` required | Missing |
-| Model/result binding | `projectId` only in raw result | Source document ID/version/checksum/settings/load binding | Missing |
-| Result provenance | Document provenance only | Result provenance required | Missing |
-| Staleness | Not found | State machine and checksum comparison | Missing |
-| Persisted resource | Conceptual docs only | Hybrid persistence with `persistedResultRefs` | Missing |
-| Consumer source contract | D04/D05/D06 draft gates only | Unified Report/Viewer/DRAFT contract | Missing |
-| Raw result compatibility | Existing implementation uses raw result | Read-old/write-target, non-authoritative | Missing |
-| Schema/migration | Partial contract registry for source docs | IF3 schema change required | Missing |
+| Stable result identity | `resultId` generated/validated | Required | Implemented |
+| Run identity | `analysisRunId` generated/validated | Required | Implemented |
+| Model/result binding | source document ID/version/checksum binding | Required | Implemented |
+| Result provenance | required provenance + missing-provenance blocks | Required | Implemented |
+| Staleness | availability/staleness + consumer blocks | Required | Implemented |
+| Persisted resource | hybrid persistence + refs | Required | Implemented |
+| Consumer source contract | Report/Viewer/DRAFT/PRINT adapters | Required | Implemented for semantic gates |
+| Raw result compatibility | READ_OLD_WRITE_TARGET classifier | Quarantine; never invent provenance | Implemented (IF3-E) |
+| Schema/migration | result resource schema + WRITE_TARGET eligibility | No invented provenance migration | Implemented for IF3 semantic gates |
+| PRINT catalog completeness | existing CSV/PDF adapters + IF3 gates | P6-D04 / PR-40 catalog work | Remaining for PR-40 body |
+| SP1 Frame drawing path | DRAFT still reports SP1 blocker | Required for PR-41 | Remaining |
+| OD8-04 visual baseline | still OPEN | Visual release blocker | Remaining |
 
 ## Evidence Verdict
 
 ```text
-IF3_EVIDENCE_BASELINE_VERDICT: NOGO_BEFORE_DESIGN
-IF3_DESIGN_EVIDENCE_VERDICT: DESIGN_DEFINED_IMPLEMENTATION_MISSING
+IF3_EVIDENCE_BASELINE_VERDICT: SUPERSEDED_BY_IMPLEMENTATION
+IF3_DESIGN_EVIDENCE_VERDICT: DESIGN_DEFINED
+IF3_IMPLEMENTATION_EVIDENCE_VERDICT: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PR40_READINESS: CONDITIONAL_GO
+PR41_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
 ```
-

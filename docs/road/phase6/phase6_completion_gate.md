@@ -1,7 +1,7 @@
 # Phase 6 Completion Gate
 
-**Date:** 2026-07-23
-**Status:** DRAFT_UPDATED_BY_MIMO_AUDIT
+**Date:** 2026-07-26
+**Status:** DRAFT_UPDATED_AFTER_IF3_E
 **Phase:** P6 - Reports, Drawings, and Viewer Completion
 
 ## Global Gates
@@ -17,7 +17,21 @@ Phase6 is COMPLETE only when:
 - Error-level output diagnostics block export completion.
 - Local typecheck and applicable tests pass on the implementation branch.
 - GitHub checks are recorded as configured, passing, failing, or not configured.
-- Environment setup is present for the full-test gate; current MiMo audit classified the root `.venv` failure as ENVIRONMENT_SETUP_MISSING and unrelated to docs changes.
+
+## Current Progress Snapshot (IF3-E)
+
+```text
+PR39_STATUS: COMPLETE
+IF3_STATUS: IF3_A_THROUGH_E_PASS_FOR_SEMANTIC_GATES
+PR40_READINESS: CONDITIONAL_GO
+PR41_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
+OD8_04_STATUS: OPEN_NONBLOCKING_FOR_IMPLEMENTATION
+PHASE6_COMPLETE: NO
+```
+
+IF3 semantic authoritative consumer gates are resolved. Phase6 overall completion still requires
+PR-40/41/42 feature completeness and OD8-04 for final visual release claims.
 
 ## Per-Step Gates
 
@@ -70,9 +84,13 @@ Stop and report without cleanup when:
 - implementation touches schema/package/source files outside approved PR scope
 - output source-of-truth boundary is violated
 - OD8-04 is still open and a final visual release claim is attempted
-- IF3 remains partial and PR-40/41/42 implementation is attempted
+- IF3 remains unresolved and PR-40/41/42 authoritative claims are attempted without the documented readiness verdict
 - `.venv` remains missing at full-test gate
 
 ```text
-PHASE6_COMPLETION_GATE_VERDICT: DRAFT_READY_WITH_FINDINGS
+PHASE6_COMPLETION_GATE_VERDICT: DRAFT_READY_WITH_IF3_E_PROGRESS
+IF3_E_COMPLETE: PASS
+PR40_READINESS: CONDITIONAL_GO
+PR41_READINESS: NOGO
+PR42_READINESS: CONDITIONAL_GO
 ```
