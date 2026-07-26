@@ -10,6 +10,10 @@ from backend.app.atomic_json import (
     checksum_for_path,
     read_json,
 )
+from backend.engine.if3_persistence import (
+    load_if3_result_resource,
+    save_if3_result_resource,
+)
 
 TARGET_ROAD_SCHEMA_ID = "spacer.contracts.road-design-document"
 TARGET_FRAME_SCHEMA_ID = "spacer.contracts.bridge-frame-analysis-document"
@@ -109,6 +113,20 @@ class ContractDocumentStore:
 
     def checksum_for(self, path: Path) -> str:
         return checksum_for_path(path)
+
+    def save_if3_result_resource(
+        self,
+        frame_document_path: Path,
+        resource: Any,
+    ) -> StoreResult:
+        return save_if3_result_resource(self._store, frame_document_path, resource)
+
+    def load_if3_result_resource(
+        self,
+        frame_document_path: Path,
+        result_id: str,
+    ) -> Any:
+        return load_if3_result_resource(frame_document_path, result_id)
 
 
 __all__ = [
