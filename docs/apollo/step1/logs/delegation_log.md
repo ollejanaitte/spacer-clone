@@ -8,4 +8,5 @@
 | 2026-07-27 | P01 | Composer 2.5 (worker) | Handoff mechanical + semantic acceptance; source register; integrity CSVs; issue register | COMPLETE — merged PR #191 @ `b0913a8` |
 | 2026-07-27 | P02 | Composer 2.5 (worker) | Standards source inventory; applicability matrix; Target Standard decision record; material/numeric governance; blocker register | COMPLETE — merged PR #192 @ `5102c91` |
 | 2026-07-27 | P03 | Composer 2.5 (worker) | Read-only capability inventory; matrix CSV; document/interface map; limitations; merge_ledger P02 update | COMPLETE — merged PR #193 @ `563c4c7` |
-| 2026-07-27 | P04 | Composer 2.5 (worker) | Full-coverage READY 69 gap analysis; feature 281 disposition; blocker/conflict/unresolved registers; verification | STAGED — 69/281 rows verified; supervisor review pending |
+| 2026-07-27 | P04 | Composer 2.5 (worker) | Full-coverage READY 69 gap analysis; feature 281 disposition; blocker/conflict/unresolved registers; verification | COMPLETE — merged PR #194 @ `7240f18` |
+| 2026-07-27 | P05 | Composer 2.5 (worker) | Phase 1 scope freeze; responsibility matrix; road/apollo/frame interfaces; phase1 feature subset; DEC-S1-0008 | STAGED — 7 artifacts + governance/log updates; supervisor review pending |
