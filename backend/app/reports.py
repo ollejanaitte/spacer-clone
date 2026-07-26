@@ -114,6 +114,73 @@ class If3AuthoritativeExportBlockedError(RuntimeError):
 
 
 _AUTHORITATIVE_ALLOW_STATUSES = frozenset({"VALID"})
+_IF3_PRINT_SUPPORTED_RESULT_KINDS = (
+    "nodeDisplacement",
+    "supportReaction",
+    "memberForce",
+)
+
+
+def evaluate_if3_print_catalog(resource: dict[str, Any]) -> dict[str, Any]:
+    payload = resource.get("payload")
+    payload_catalog = payload if isinstance(payload, dict) else {}
+    declared = resource.get("resultKinds")
+    declared_kinds = (
+        [kind for kind in declared if isinstance(kind, str)]
+        if isinstance(declared, list)
+        else [kind for kind in payload_catalog if isinstance(kind, str)]
+    )
+    catalog_kinds = list(
+        dict.fromkeys([*_IF3_PRINT_SUPPORTED_RESULT_KINDS, *declared_kinds, *payload_catalog.keys()])
+    )
+    entries: list[dict[str, Any]] = []
+    diagnostics: list[dict[str, Any]] = []
+
+    for result_kind in catalog_kinds:
+        is_present = (
+            result_kind in declared_kinds
+            and isinstance(payload_catalog.get(result_kind), dict)
+            and isinstance(payload_catalog[result_kind].get("rows"), list)
+        )
+        if result_kind in _IF3_PRINT_SUPPORTED_RESULT_KINDS and is_present:
+            entry_diagnostics: list[dict[str, Any]] = []
+            status = "SUPPORTED"
+            consumers = ["report", "print", "csv", "pdf"]
+        elif result_kind in _IF3_PRINT_SUPPORTED_RESULT_KINDS:
+            entry_diagnostics = [
+                _if3_print_catalog_diagnostic(
+                    "PRINT_CATALOG_REQUIRED_RESULT_MISSING",
+                    f"PRINT catalog requires the {result_kind} payload member.",
+                    result_kind,
+                )
+            ]
+            status = "MISSING"
+            consumers = []
+        else:
+            entry_diagnostics = [
+                _if3_print_catalog_diagnostic(
+                    "PRINT_CATALOG_RESULT_KIND_UNSUPPORTED",
+                    f"PRINT catalog does not support the declared {result_kind} result kind.",
+                    result_kind,
+                )
+            ]
+            status = "UNSUPPORTED"
+            consumers = []
+        entries.append(
+            {
+                "resultKind": result_kind,
+                "status": status,
+                "consumers": consumers,
+                "diagnostics": entry_diagnostics,
+            }
+        )
+        diagnostics.extend(entry_diagnostics)
+
+    return {
+        "entries": entries,
+        "diagnostics": _sort_gate_diagnostics(diagnostics),
+        "ready": not any(item.get("severity") == "error" for item in diagnostics),
+    }
 
 
 def evaluate_if3_authoritative_export_gate(
@@ -234,11 +301,26 @@ def build_authoritative_result_exports_from_if3(
     )
     if not gate["authoritativeOutputAllowed"]:
         raise If3AuthoritativeExportBlockedError(gate)
+    catalog = evaluate_if3_print_catalog(resource)
+    if not catalog["ready"]:
+        raise If3AuthoritativeExportBlockedError(
+            {
+                **gate,
+                "authoritativeOutputAllowed": False,
+                "diagnostics": _sort_gate_diagnostics(
+                    [*gate["diagnostics"], *catalog["diagnostics"]]
+                ),
+            }
+        )
     legacy_result = extract_linear_static_analysis_result_from_if3_resource(
         resource,
         load_case_labels=load_case_labels,
     )
-    return build_result_exports(legacy_result)
+    exports = build_result_exports(legacy_result)
+    exports["result.json"] = (
+        json.dumps(resource, ensure_ascii=False, allow_nan=False, indent=2) + "\n"
+    )
+    return exports
 
 
 def extract_linear_static_analysis_result_from_if3_resource(
@@ -369,6 +451,21 @@ def _parse_end_force(values: dict[str, Any], end: str) -> dict[str, float]:
         "mx": float(values.get(f"{end}.mx", 0) or 0),
         "my": float(values.get(f"{end}.my", 0) or 0),
         "mz": float(values.get(f"{end}.mz", 0) or 0),
+    }
+
+
+def _if3_print_catalog_diagnostic(
+    code: str,
+    message: str,
+    result_kind: str,
+) -> dict[str, Any]:
+    return {
+        "code": code,
+        "severity": "error",
+        "producer": "pr40.print-catalog",
+        "message": message,
+        "path": f"/payload/{result_kind}",
+        "resultKind": result_kind,
     }
 
 

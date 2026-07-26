@@ -58,7 +58,9 @@ PR-39A readiness is GO before implementation. Conditions before implementation c
 
 ## PR-40 PRINT Tests
 
-Current readiness: `CONDITIONAL_GO` — IF3 A–E semantic gates satisfied; PRINT catalog/DTO completeness and stale/legacy fail-closed behavior remain.
+Current readiness: `IMPLEMENTED_PENDING_REVIEW` — the PR-40 catalog and IF3-derived DTO boundary are
+implemented for node displacement, support reaction, and member force. Unsupported/missing kinds
+fail closed. OD8-04 still blocks final visual-release claims.
 
 Required targets:
 
@@ -66,6 +68,8 @@ Required targets:
 - CSV column/order tests
 - PDF/print layout semantic tests
 - stale/missing result blocking tests
+- unsupported kind and missing catalog member diagnostics
+- `result.json` remains the IF3 resource rather than a raw compatibility DTO
 - manual print visual evidence when OD8-04 environment exists
 
 ## PR-41 Frame DRAFT Tests

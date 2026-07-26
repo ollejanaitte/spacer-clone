@@ -1,6 +1,8 @@
 import { buildMemberForceReportCsv } from "./memberForceReport";
 import { buildResultCsvExports } from "./resultCsvExport";
 import { buildResultPdfReport, type ResultPdfReport } from "./resultPdfReport";
+import { buildIf3PrintDto, type If3PrintDto } from "./if3PrintDto";
+import { evaluateIf3PrintCatalog } from "./if3PrintCatalog";
 import {
   evaluateIf3ResultGate,
   isRawAnalysisResultCandidate,
@@ -9,7 +11,6 @@ import {
   type If3ResultGateInput,
   type If3ResultGateResult,
 } from "../results/if3ResultGate";
-import { extractLinearStaticAnalysisResultFromResource } from "../results/if3ResultViewModel";
 import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
 import type { AnalysisResult, ProjectModel, ResultExports } from "../types";
 
@@ -32,7 +33,21 @@ export class If3ExportBlockedError extends Error {
 }
 
 export function evaluateIf3ExportGate(input: If3ExportGateInput): If3ExportGateResult {
-  return evaluateIf3ResultGate(input);
+  const gate = evaluateIf3ResultGate(input);
+  if (
+    !gate.authoritativeOutputAllowed ||
+    input.resource == null ||
+    isRawAnalysisResultCandidate(input.resource)
+  ) {
+    return gate;
+  }
+
+  const catalog = evaluateIf3PrintCatalog(input.resource);
+  return {
+    ...gate,
+    diagnostics: [...gate.diagnostics, ...catalog.diagnostics],
+    authoritativeOutputAllowed: gate.authoritativeOutputAllowed && catalog.ready,
+  };
 }
 
 export function buildAppIf3ExportGateInput(input: {
@@ -70,14 +85,16 @@ export function isRawOnlyAppExportState(input: {
 
 export function buildIf3ResultCsvExports(input: If3ExportGateInput): ResultExports {
   requireAuthoritativeExportGate(input);
-  const legacyResult = extractLegacyResult(input.resource!, input.loadCaseIdByContextId);
-  return buildResultCsvExports(legacyResult);
+  const dto = buildPrintDto(input);
+  return {
+    ...buildResultCsvExports(dto.tableResult),
+    "result.json": `${JSON.stringify(input.resource, null, 2)}\n`,
+  };
 }
 
 export function buildIf3MemberForceReportCsv(input: If3ExportGateInput): string {
   requireAuthoritativeExportGate(input);
-  const legacyResult = extractLegacyResult(input.resource!, input.loadCaseIdByContextId);
-  return buildMemberForceReportCsv(legacyResult);
+  return buildMemberForceReportCsv(buildPrintDto(input).tableResult);
 }
 
 export function buildIf3ResultPdfReport(
@@ -99,10 +116,10 @@ export function buildIf3ResultPdfReport(
       ],
     });
   }
-  const legacyResult = extractLegacyResult(input.resource!, input.loadCaseIdByContextId);
+  const dto = buildPrintDto(input);
   return buildResultPdfReport(
     input.project,
-    legacyResult,
+    dto.tableResult,
     input.activeLoadCase ?? "",
     input.generatedAt,
   );
@@ -126,9 +143,6 @@ function requireAuthoritativeExportGate(input: If3ExportGateInput): If3ExportGat
   return gate;
 }
 
-function extractLegacyResult(
-  resource: FrameAnalysisResultResource,
-  loadCaseIdByContextId?: Readonly<Record<string, string>>,
-): AnalysisResult {
-  return extractLinearStaticAnalysisResultFromResource(resource, loadCaseIdByContextId);
+function buildPrintDto(input: If3ExportGateInput): If3PrintDto {
+  return buildIf3PrintDto(input.resource!, input.loadCaseIdByContextId);
 }
