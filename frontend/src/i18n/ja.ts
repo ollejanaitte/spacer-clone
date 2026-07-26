@@ -35,6 +35,12 @@ export const ja = {
   app: {
     appMark: "SC",
     versionPrefix: "Version",
+    aboutLink: "このアプリについて",
+  },
+
+  input: {
+    numericInvalid: "数値を入力してください。",
+    numericDraftBlocked: "未確定の数値入力があるため、この操作は実行できません。",
   },
 
   toolbar: {
@@ -52,9 +58,13 @@ export const ja = {
     bridgeWizardTitle: "橋梁3D骨組モデルをウィザード形式で作成します。",
     bridgeWizardButton: "橋梁モデル作成",
     saveTitle: "現在のモデルを project.json として保存します。",
+    saveBlockedTitle: "未確定の数値入力があるため保存できません。",
     saveButton: "保存",
+    openNativeTitle: "ネイティブのファイルダイアログで project.json を開きます。",
     validateTitle: "入力データに不足や誤りがないか確認します。",
+    validateBlockedTitle: "未確定の数値入力があるため入力チェックできません。",
     validateButton: "入力チェック",
+    runBlockedTitle: "未確定の数値入力があるため解析を実行できません。",
     runStaticTitle: "線形静的解析を実行します。",
     runStaticButton: "静的解析",
     runEigenTitle: "固有値解析を実行します。",

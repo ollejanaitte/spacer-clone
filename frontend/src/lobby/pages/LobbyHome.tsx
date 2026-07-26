@@ -1,5 +1,7 @@
 import { L0_STRINGS } from "../data/lobbyStrings";
 import { ModeCard } from "../components/ModeCard";
+import { ja } from "../../i18n/ja";
+import { showAboutDialog } from "../../desktop/projectFileDialog";
 import styles from "./LobbyHome.module.css";
 
 type LobbyHomeProps = {
@@ -42,7 +44,18 @@ export function LobbyHome({ onNavigate }: LobbyHomeProps) {
           onClick={() => onNavigate("/pro")}
         />
       </div>
-      <p className={styles.footer}>{text.footer}</p>
+      <p className={styles.footer}>
+        {text.footer}
+        <br />
+        <button
+          type="button"
+          className={styles.aboutLink}
+          onClick={() => void showAboutDialog()}
+          data-testid="lobby-about-link"
+        >
+          {ja.app.aboutLink}
+        </button>
+      </p>
     </div>
   );
 }

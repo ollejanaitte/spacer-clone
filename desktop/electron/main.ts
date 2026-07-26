@@ -13,6 +13,12 @@ import {
   buildAboutDetail,
   describeReleaseCheckStatus,
 } from "./aboutConfig";
+import { registerDialogIpc } from "./dialogIpc";
+
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+}
 
 const gpuMode = resolveGpuModeFromArgs(process.argv, process.env.GPU_MODE);
 let backendProcess: ChildProcessWithoutNullStreams | undefined;
@@ -385,8 +391,13 @@ async function createMainWindow(version: string): Promise<void> {
     },
   });
 
-  mainWindow.removeMenu();
-  mainWindow.setMenuBarVisibility(false);
+  if (process.platform === "linux") {
+    mainWindow.autoHideMenuBar = true;
+    mainWindow.setMenuBarVisibility(false);
+  } else {
+    mainWindow.removeMenu();
+    mainWindow.setMenuBarVisibility(false);
+  }
 
   mainWindow.webContents.on(
     "did-fail-load",
@@ -442,25 +453,42 @@ async function runWithSplash(): Promise<void> {
   }
 }
 
-app.whenReady().then(() => {
-  buildAppMenu();
-  void runWithSplash();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      void runWithSplash();
+if (gotTheLock) {
+  app.on("second-instance", () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      if (!mainWindow.isVisible()) {
+        mainWindow.show();
+      }
+      mainWindow.focus();
+    } else if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.focus();
     }
   });
-});
 
-app.on("before-quit", () => {
-  stopBackend();
-});
+  app.whenReady().then(() => {
+    registerDialogIpc(() => mainWindow, showAboutDialog);
+    buildAppMenu();
+    void runWithSplash();
 
-app.on("window-all-closed", () => {
-  closeSplash();
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
+    app.on("activate", () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        void runWithSplash();
+      }
+    });
+  });
+
+  app.on("before-quit", () => {
+    stopBackend();
+  });
+
+  app.on("window-all-closed", () => {
+    closeSplash();
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
+  });
+}
 export {};

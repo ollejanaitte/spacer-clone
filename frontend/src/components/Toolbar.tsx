@@ -9,6 +9,8 @@ type ToolbarProps = {
   validationStatus: string;
   analysisStatus: string;
   canRun: boolean;
+  canSave?: boolean;
+  nativeFileDialogs?: boolean;
   canExportResults: boolean;
   canExportCsv: boolean;
   canExportPdf: boolean;
@@ -16,6 +18,7 @@ type ToolbarProps = {
   onNew: () => void;
   onResetModel: () => void;
   onOpen: (file: File) => void;
+  onOpenClick?: () => void;
   onSave: () => void;
   onValidate: () => void;
   onRun: () => void;
@@ -44,6 +47,8 @@ export function Toolbar({
   validationStatus,
   analysisStatus,
   canRun,
+  canSave = true,
+  nativeFileDialogs = false,
   canExportResults,
   canExportCsv,
   canExportPdf,
@@ -51,6 +56,7 @@ export function Toolbar({
   onNew,
   onResetModel,
   onOpen,
+  onOpenClick,
   onSave,
   onValidate,
   onRun,
@@ -94,19 +100,31 @@ export function Toolbar({
             <Trash2 size={16} />
             {t.resetButton}
           </button>
-          <label className="button-like" title={t.openTitle}>
-            <FolderOpen size={16} />
-            {t.openButton}
-            <input
-              type="file"
-              accept="application/json,.json"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) onOpen(file);
-                event.currentTarget.value = "";
-              }}
-            />
-          </label>
+          {nativeFileDialogs ? (
+            <button
+              type="button"
+              onClick={onOpenClick}
+              title={t.openNativeTitle}
+              data-testid="open-project-native"
+            >
+              <FolderOpen size={16} />
+              {t.openButton}
+            </button>
+          ) : (
+            <label className="button-like" title={t.openTitle}>
+              <FolderOpen size={16} />
+              {t.openButton}
+              <input
+                type="file"
+                accept="application/json,.json"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) onOpen(file);
+                  event.currentTarget.value = "";
+                }}
+              />
+            </label>
+          )}
           <button
             type="button"
             onClick={onOpenBridgeWizard}
@@ -127,7 +145,12 @@ export function Toolbar({
               {ja.liner.toolbar.openButton}
             </button>
           )}
-          <button type="button" onClick={onSave} title={t.saveTitle}>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={!canSave}
+            title={canSave ? t.saveTitle : t.saveBlockedTitle}
+          >
             <Save size={16} />
             {t.saveButton}
           </button>
@@ -147,27 +170,57 @@ export function Toolbar({
           </button>
         </div>
         <div className="toolbar-group">
-          <button type="button" onClick={onValidate} title={t.validateTitle}>
+          <button
+            type="button"
+            onClick={onValidate}
+            disabled={!canSave}
+            title={canSave ? t.validateTitle : t.validateBlockedTitle}
+          >
             <ShieldCheck size={16} />
             {t.validateButton}
           </button>
-          <button type="button" onClick={onRun} disabled={!canRun} title={t.runStaticTitle}>
+          <button
+            type="button"
+            onClick={onRun}
+            disabled={!canRun}
+            title={canRun ? t.runStaticTitle : t.runBlockedTitle}
+          >
             <Play size={16} />
             {t.runStaticButton}
           </button>
-          <button type="button" onClick={onRunEigen} disabled={!canRun} title={t.runEigenTitle}>
+          <button
+            type="button"
+            onClick={onRunEigen}
+            disabled={!canRun}
+            title={canRun ? t.runEigenTitle : t.runBlockedTitle}
+          >
             <Waves size={16} />
             {t.runEigenButton}
           </button>
-          <button type="button" onClick={onRunResponseSpectrum} disabled={!canRun} title={t.runResponseTitle}>
+          <button
+            type="button"
+            onClick={onRunResponseSpectrum}
+            disabled={!canRun}
+            title={canRun ? t.runResponseTitle : t.runBlockedTitle}
+          >
             <Activity size={16} />
             {t.runResponseButton}
           </button>
-          <button type="button" onClick={onRunInfluence} disabled={!canRun} title={t.runInfluenceTitle}>
+          <button
+            type="button"
+            onClick={onRunInfluence}
+            disabled={!canRun}
+            title={canRun ? t.runInfluenceTitle : t.runBlockedTitle}
+          >
             <LineChart size={16} />
             {t.runInfluenceButton}
           </button>
-          <button type="button" onClick={onRunMovingLoad} disabled={!canRun} title={t.movingLoadTitle}>
+          <button
+            type="button"
+            onClick={onRunMovingLoad}
+            disabled={!canRun}
+            title={canRun ? t.movingLoadTitle : t.runBlockedTitle}
+          >
             <LineChart size={16} />
             {t.movingLoadButton}
           </button>

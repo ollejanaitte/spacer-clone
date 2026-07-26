@@ -87,6 +87,11 @@ import {
 } from "./liner/importer/routes";
 import { ja } from "./i18n/ja";
 import type { LinerDomainDraftVNext } from "./liner/schema/types";
+import {
+  isNativeProjectFileDialogAvailable,
+  openProjectFile,
+  saveProjectFile,
+} from "./desktop/projectFileDialog";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -147,6 +152,7 @@ export function App() {
   );
   const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
+  const [hasInvalidNumericDrafts, setHasInvalidNumericDrafts] = useState(false);
   const linerDraft = useMemo(() => linerDraftFromProject(project), [project]);
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
   const importerRouteActive = resolveImporterRoute(currentPathname);
@@ -177,7 +183,9 @@ export function App() {
     [if3Result, project, activeLoadCase],
   );
   const canExportAuthoritative = if3ExportGate.authoritativeOutputAllowed;
-  const canRun = !running && validation?.valid !== false;
+  const canRun = !running && validation?.valid !== false && !hasInvalidNumericDrafts;
+  const canSave = !hasInvalidNumericDrafts;
+  const nativeFileDialogs = isNativeProjectFileDialogAvailable();
   const timeHistoryAnalysis = useTimeHistoryAnalysis({
     onSuccess: (analysisResult) => {
       setProject((current) => ({
@@ -340,6 +348,10 @@ export function App() {
   }, [project]);
 
   const validate = async (): Promise<ValidationResponse | null> => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return null;
+    }
     setApiErrors([]);
     try {
       const response = await apiClient.validateProject(project);
@@ -373,6 +385,10 @@ export function App() {
   };
 
   const runAnalysis = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     setRunning(true);
     setApiErrors([]);
     try {
@@ -403,6 +419,10 @@ export function App() {
   };
 
   const runEigenAnalysis = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     setRunning(true);
     setApiErrors([]);
     try {
@@ -441,6 +461,10 @@ export function App() {
   };
 
   const runResponseSpectrumAnalysis = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     setRunning(true);
     setApiErrors([]);
     try {
@@ -488,6 +512,10 @@ export function App() {
   };
 
   const runMovingLoadAnalysis = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     setRunning(true);
     setApiErrors([]);
     try {
@@ -520,6 +548,10 @@ export function App() {
   };
 
   const runInfluenceAnalysis = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     setRunning(true);
     setApiErrors([]);
     try {
@@ -579,7 +611,30 @@ export function App() {
     }
   };
 
-  const saveProject = () => {
+  const openProjectViaDialog = async () => {
+    const result = await openProjectFile();
+    if (result.canceled) return;
+    try {
+      const parsed = migrateProject(JSON.parse(result.content));
+      const hydration = hydrateProjectLinerFromPersistence(parsed);
+      if (!hydration.ok) {
+        throw new Error(hydration.diagnostics.join("; "));
+      }
+      commitProject(hydration.project);
+      setDirty(false);
+      log(`${result.fileName} opened.`);
+    } catch (error) {
+      pushApiError(error, "PROJECT_OPEN_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("Failed to open project.json.");
+    }
+  };
+
+  const saveProject = async () => {
+    if (hasInvalidNumericDrafts) {
+      log(ja.input.numericDraftBlocked);
+      return;
+    }
     const serialized = serializeProjectForPersistence(project);
     if (!serialized.ok) {
       log(`Failed to save project.json: ${serialized.diagnostics.join("; ")}`);
@@ -587,11 +642,15 @@ export function App() {
       setBottomTab("errors");
       return;
     }
-    downloadText(
-      "project.json",
-      `${JSON.stringify(serialized.project, null, 2)}\n`,
-      "application/json",
-    );
+    const payload = `${JSON.stringify(serialized.project, null, 2)}\n`;
+    if (nativeFileDialogs) {
+      const result = await saveProjectFile(payload, "project.json");
+      if (result.canceled) return;
+      setDirty(false);
+      log(`Current model saved to ${result.filePath}.`);
+      return;
+    }
+    downloadText("project.json", payload, "application/json");
     setDirty(false);
     log("Current model saved to project.json.");
   };
@@ -1052,6 +1111,8 @@ export function App() {
         validationStatus={validation ? (validation.valid ? "OK" : "Has errors") : "Not validated"}
         analysisStatus={running ? "Running" : result ? analysisStatusLabel(result.analysisSummary.status) : "Not run"}
         canRun={canRun}
+        canSave={canSave}
+        nativeFileDialogs={nativeFileDialogs}
         onBackToTop={navigateTop}
         onNew={() => {
           commitProject(createDefaultProject());
@@ -1060,7 +1121,8 @@ export function App() {
         }}
         onResetModel={resetModelContents}
         onOpen={openFile}
-        onSave={saveProject}
+        onOpenClick={() => void openProjectViaDialog()}
+        onSave={() => void saveProject()}
         onValidate={() => void validate()}
         onRun={() => void runAnalysis()}
         onRunEigen={() => void runEigenAnalysis()}
@@ -1152,6 +1214,7 @@ export function App() {
               selected={selectedSection}
               validationPaths={validationPaths}
               onChange={commitProject}
+              onInvalidNumericDraftsChange={setHasInvalidNumericDrafts}
             />
             <button
               type="button"
