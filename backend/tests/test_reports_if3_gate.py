@@ -9,6 +9,7 @@ from backend.app.reports import (
     build_authoritative_result_exports_from_if3,
     build_result_exports,
     evaluate_if3_authoritative_export_gate,
+    evaluate_if3_print_catalog,
 )
 from backend.engine.if3_checksum import sha256_content_checksum
 
@@ -128,6 +129,7 @@ def test_build_authoritative_result_exports_from_if3_matches_transient_csv_shape
     assert set(authoritative_exports.keys()) == set(transient_exports.keys())
     assert "displacements.csv" in authoritative_exports
     assert authoritative_exports["displacements.csv"].startswith("case_id,node_id")
+    assert '"schemaId": "spacer.contracts.frame-analysis-result-resource"' in authoritative_exports["result.json"]
 
 
 def test_build_authoritative_result_exports_from_if3_fail_closed_for_stale() -> None:
@@ -140,6 +142,41 @@ def test_build_authoritative_result_exports_from_if3_fail_closed_for_stale() -> 
         )
 
     assert exc_info.value.gate["authoritativeOutputAllowed"] is False
+
+
+def test_if3_print_catalog_reports_missing_required_member() -> None:
+    resource = normalized_resource()
+    resource["resultKinds"] = ["nodeDisplacement", "supportReaction"]
+    resource["payload"].pop("memberForce")
+
+    catalog = evaluate_if3_print_catalog(resource)
+
+    assert catalog["ready"] is False
+    assert any(
+        item["code"] == "PRINT_CATALOG_REQUIRED_RESULT_MISSING"
+        for item in catalog["diagnostics"]
+    )
+    with pytest.raises(If3AuthoritativeExportBlockedError) as exc_info:
+        build_authoritative_result_exports_from_if3(
+            resource,
+            "VALID",
+            source_document=frame_source_document(resource),
+        )
+    assert exc_info.value.gate["authoritativeOutputAllowed"] is False
+
+
+def test_if3_print_catalog_reports_unsupported_declared_kind() -> None:
+    resource = normalized_resource()
+    resource["resultKinds"] = [*resource["resultKinds"], "modal"]
+    resource["payload"]["modal"] = {"schemaVersion": "0.1.0", "rows": []}
+
+    catalog = evaluate_if3_print_catalog(resource)
+
+    assert catalog["ready"] is False
+    assert any(
+        item["code"] == "PRINT_CATALOG_RESULT_KIND_UNSUPPORTED"
+        for item in catalog["diagnostics"]
+    )
 
 
 def test_authoritative_export_gate_does_not_mutate_inputs() -> None:

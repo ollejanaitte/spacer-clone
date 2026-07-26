@@ -1,7 +1,7 @@
 # P6-D07 Validation Plan
 
-**Date:** 2026-07-23
-**Status:** DRAFT_UPDATED_BY_MIMO_AUDIT
+**Date:** 2026-07-26
+**Status:** UPDATED_FOR_PR40_IMPLEMENTATION
 
 ## Purpose
 
@@ -14,7 +14,7 @@ No tests were run during this docs-only audit.
 | PR | Semantic evidence | Visual evidence |
 | --- | --- | --- |
 | PR-39 | Road drawing primitives, DXF entities, tables, diagnostics | local screenshots/export review; final claim blocked by OD8-04 |
-| PR-40 | NOGO until IF3 verified; then report/CSV/PDF DTO correctness, PRINT source contract/catalog/stale blocking | print/PDF layout review; final claim blocked by OD8-04 |
+| PR-40 | IF3-derived report/CSV/PDF DTO correctness, supported/unsupported/missing PRINT catalog diagnostics, IF3 `result.json`, stale/legacy blocking | print/PDF layout review; final claim blocked by OD8-04 |
 | PR-41 | NOGO until SP1 neutral/shared Frame drawing path and IF3 verified; then Frame drawing primitives and result-bound sheets | drawing screenshot/DXF review; final claim blocked by OD8-04 |
 | PR-42 | NOGO until IF3 viewer input/staleness/result adapter contract verified; then Viewer adapter state and staleness behavior | Viewer screenshot review; final claim blocked by OD8-04 |
 

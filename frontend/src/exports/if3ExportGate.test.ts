@@ -207,6 +207,10 @@ describe("if3ExportGate", () => {
     const exports = buildIf3ResultCsvExports(gateInput);
     expect(exports["displacements.csv"]).toContain("LC1");
     expect(exports["member_section_forces.csv"]).toContain("member_id");
+    expect(JSON.parse(exports["result.json"])).toMatchObject({
+      schemaId: FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID,
+      resultId: RESULT_ID,
+    });
   });
 
   it("builds authoritative PDF and member-force reports for VALID IF3 resources", () => {
@@ -231,6 +235,63 @@ describe("if3ExportGate", () => {
       ).toThrow(If3ExportBlockedError);
     },
   );
+
+  it("blocks exports when a required PRINT catalog member is missing", () => {
+    const resource = validResource();
+    const incompleteResource = {
+      ...resource,
+      resultKinds: ["nodeDisplacement", "supportReaction"] as const,
+      payload: {
+        nodeDisplacement: resource.payload.nodeDisplacement,
+        supportReaction: resource.payload.supportReaction,
+      },
+    };
+
+    try {
+      buildIf3ResultCsvExports({
+        ...gateInput,
+        resource: incompleteResource,
+      });
+      throw new Error("Expected IF3 PRINT catalog to block export.");
+    } catch (error) {
+      expect(error).toBeInstanceOf(If3ExportBlockedError);
+      expect(
+        (error as If3ExportBlockedError).gate.diagnostics.map(
+          (item) => item.code,
+        ),
+      ).toContain("PRINT_CATALOG_REQUIRED_RESULT_MISSING");
+    }
+  });
+
+  it("blocks exports for declared unsupported PRINT result kinds", () => {
+    const resource = validResource();
+    const unsupportedResource = {
+      ...resource,
+      resultKinds: [...(resource.resultKinds ?? []), "modal"] as const,
+      payload: {
+        ...resource.payload,
+        modal: {
+          schemaVersion: requireSchemaVersion("0.1.0"),
+          rows: [],
+        },
+      },
+    };
+
+    try {
+      buildIf3ResultPdfReport({
+        ...gateInput,
+        resource: unsupportedResource,
+      });
+      throw new Error("Expected unsupported PRINT result kind to block export.");
+    } catch (error) {
+      expect(error).toBeInstanceOf(If3ExportBlockedError);
+      expect(
+        (error as If3ExportBlockedError).gate.diagnostics.map(
+          (item) => item.code,
+        ),
+      ).toContain("PRINT_CATALOG_RESULT_KIND_UNSUPPORTED");
+    }
+  });
 
   it("rejects raw AnalysisResult on authoritative export paths", () => {
     const gate = rejectRawAnalysisResultForExport(rawAnalysisResult());
