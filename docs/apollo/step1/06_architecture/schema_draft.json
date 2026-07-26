@@ -1,0 +1,580 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacer.local/schemas/design-draft/bridge-superstructure-design-document.schema.json",
+  "title": "BridgeSuperstructureDesignDocument",
+  "description": "DESIGN DRAFT — NOT A PRODUCTION SCHEMA. Apollo Step 1 P06 planning artifact only. Do not commit to schemas/contracts/ without governance review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaId",
+    "schemaVersion",
+    "documentId",
+    "documentKind",
+    "revisionId",
+    "contentChecksum",
+    "lifecycleStatus",
+    "provenance",
+    "coordinateContexts",
+    "unitContext",
+    "projectContext",
+    "bridge",
+    "materialDefinitions",
+    "loadCases"
+  ],
+  "properties": {
+    "schemaId": {
+      "type": "string",
+      "const": "spacer.contracts.bridge-superstructure-design-document"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.0.0-design-draft",
+      "description": "DESIGN DRAFT version marker — not registered in production migration registry"
+    },
+    "documentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "documentKind": {
+      "type": "string",
+      "const": "bridge-superstructure-design"
+    },
+    "revisionId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "contentChecksum": {
+      "type": "object",
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "type": "string", "const": "sha256" },
+        "value": { "type": "string", "minLength": 64, "maxLength": 64 }
+      },
+      "additionalProperties": false
+    },
+    "lifecycleStatus": {
+      "type": "string",
+      "enum": ["DRAFT", "VALIDATED", "APPROVED", "SUPERSEDED", "STALE", "ARCHIVED"]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["createdAt", "createdBy", "producer"],
+      "properties": {
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" },
+        "updatedAt": { "type": ["string", "null"], "format": "date-time" },
+        "updatedBy": { "type": ["string", "null"] },
+        "producer": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "coordinateContexts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/coordinateContext" }
+    },
+    "unitContext": { "$ref": "#/$defs/unitContext" },
+    "projectContext": { "$ref": "#/$defs/projectContext" },
+    "bridge": { "$ref": "#/$defs/bridge" },
+    "materialDefinitions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/materialDefinition" }
+    },
+    "loadCases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/loadCase" }
+    },
+    "analysisBindings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/analysisBinding" }
+    },
+    "roadImportProvenance": {
+      "oneOf": [
+        { "$ref": "#/$defs/documentReference" },
+        { "type": "null" }
+      ]
+    },
+    "phase1ScopeAssertion": { "$ref": "#/$defs/phase1ScopeAssertion" },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Namespaced extensions preserved per target_data_model.md"
+    }
+  },
+  "$defs": {
+    "quantityWithUnits": {
+      "type": "object",
+      "required": ["value", "units"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "units": { "type": "string" },
+        "adoptionStatus": {
+          "type": "string",
+          "enum": ["PENDING", "ADOPTED", "UNKNOWN"]
+        },
+        "sourceLocator": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "documentReference": {
+      "type": "object",
+      "required": ["schemaId", "documentId", "revisionId", "contentChecksum"],
+      "properties": {
+        "schemaId": { "type": "string" },
+        "documentId": { "type": "string", "format": "uuid" },
+        "revisionId": { "type": "integer", "minimum": 1 },
+        "contentChecksum": {
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "type": "string" },
+            "value": { "type": "string" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "coordinateContext": {
+      "type": "object",
+      "required": ["contextId", "confidence"],
+      "properties": {
+        "contextId": { "type": "string", "format": "uuid" },
+        "referenceType": { "type": ["string", "null"] },
+        "axisConvention": {
+          "type": ["string", "null"],
+          "const": "x-longitudinal-y-transverse-z-up"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["verified", "unknown", "conflicted"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "unitContext": {
+      "type": "object",
+      "required": ["linearUnits", "angularUnits", "forceUnits"],
+      "properties": {
+        "linearUnits": { "type": "string", "const": "m" },
+        "angularUnits": { "type": "string", "const": "rad" },
+        "forceUnits": { "type": "string", "const": "kN" },
+        "stressUnits": { "type": "string", "const": "kPa" },
+        "conversionVersion": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "projectContext": {
+      "type": "object",
+      "required": ["projectId", "name"],
+      "properties": {
+        "projectId": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "clientName": { "type": ["string", "null"] },
+        "phaseTag": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "phase1ScopeAssertion": {
+      "type": "object",
+      "required": [
+        "alignmentClass",
+        "skewAngleDeg",
+        "spanSystem",
+        "superstructureKind",
+        "analysisType"
+      ],
+      "properties": {
+        "alignmentClass": { "type": "string", "enum": ["straight"] },
+        "skewAngleDeg": { "$ref": "#/$defs/quantityWithUnits" },
+        "spanSystem": { "type": "string", "enum": ["simple"] },
+        "superstructureKind": {
+          "type": "string",
+          "enum": ["plate_girder_rc_slab_non_composite"]
+        },
+        "analysisType": { "type": "string", "enum": ["static_linear"] }
+      },
+      "additionalProperties": false
+    },
+    "bridge": {
+      "type": "object",
+      "required": ["bridgeId", "name", "spans", "girderLines", "deck", "supports", "phase1ScopeAssertion"],
+      "properties": {
+        "bridgeId": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "spans": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "$ref": "#/$defs/span" }
+        },
+        "girderLines": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/girderLine" }
+        },
+        "deck": { "$ref": "#/$defs/deck" },
+        "supports": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/support" }
+        },
+        "phase1ScopeAssertion": { "$ref": "#/$defs/phase1ScopeAssertion" }
+      },
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "required": ["spanId", "index", "length", "startSupportId", "endSupportId"],
+      "properties": {
+        "spanId": { "type": "string", "format": "uuid" },
+        "index": { "type": "integer", "minimum": 0 },
+        "length": { "$ref": "#/$defs/quantityWithUnits" },
+        "startSupportId": { "type": "string", "format": "uuid" },
+        "endSupportId": { "type": "string", "format": "uuid" }
+      },
+      "additionalProperties": false
+    },
+    "girderLine": {
+      "type": "object",
+      "required": ["girderLineId", "index", "offsetFromCenterline", "depthProfile"],
+      "properties": {
+        "girderLineId": { "type": "string", "format": "uuid" },
+        "index": { "type": "integer", "minimum": 0 },
+        "label": { "type": ["string", "null"] },
+        "offsetFromCenterline": { "$ref": "#/$defs/quantityWithUnits" },
+        "depthProfile": { "type": "string", "enum": ["equal"] },
+        "materialRefId": { "type": ["string", "null"], "format": "uuid" },
+        "sectionIntentRefId": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "deck": {
+      "type": "object",
+      "required": ["deckId", "deckKind", "width"],
+      "properties": {
+        "deckId": { "type": "string", "format": "uuid" },
+        "deckKind": { "type": "string", "enum": ["rc_non_composite"] },
+        "width": { "$ref": "#/$defs/quantityWithUnits" },
+        "thickness": { "$ref": "#/$defs/quantityWithUnits" },
+        "unitWeight": { "$ref": "#/$defs/quantityWithUnits" }
+      },
+      "additionalProperties": false
+    },
+    "support": {
+      "type": "object",
+      "required": ["supportId", "station", "fixity", "role"],
+      "properties": {
+        "supportId": { "type": "string", "format": "uuid" },
+        "station": { "$ref": "#/$defs/quantityWithUnits" },
+        "fixity": {
+          "type": "string",
+          "enum": ["fixed", "pinned", "roller"]
+        },
+        "role": {
+          "type": "string",
+          "enum": ["abutment", "bearing"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "materialDefinition": {
+      "type": "object",
+      "required": ["materialId", "designation", "yieldStrength", "elasticModulus", "unitWeight"],
+      "properties": {
+        "materialId": { "type": "string", "format": "uuid" },
+        "designation": { "type": "string" },
+        "yieldStrength": { "$ref": "#/$defs/quantityWithUnits" },
+        "elasticModulus": { "$ref": "#/$defs/quantityWithUnits" },
+        "unitWeight": { "$ref": "#/$defs/quantityWithUnits" }
+      },
+      "additionalProperties": false
+    },
+    "loadCase": {
+      "type": "object",
+      "required": ["loadCaseId", "name", "kind", "loads"],
+      "properties": {
+        "loadCaseId": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": ["dead", "slab", "live", "other"]
+        },
+        "loads": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/load" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "load": {
+      "type": "object",
+      "required": ["loadId", "pattern", "magnitude", "targetRef"],
+      "properties": {
+        "loadId": { "type": "string", "format": "uuid" },
+        "pattern": {
+          "type": "string",
+          "enum": ["uniform", "point", "line", "unknown"]
+        },
+        "magnitude": { "$ref": "#/$defs/quantityWithUnits" },
+        "direction": {
+          "type": ["string", "null"],
+          "enum": ["+Z", "-Z", "+Y", "-Y", "+X", "-X", null]
+        },
+        "targetRef": {
+          "type": "object",
+          "required": ["kind", "refId"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["girderLine", "deck", "supportRegion"]
+            },
+            "refId": { "type": "string", "format": "uuid" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "analysisBinding": {
+      "type": "object",
+      "required": ["bindingId", "analysisType", "bindingStatus", "sourceBsdDocumentRef"],
+      "properties": {
+        "bindingId": { "type": "string", "format": "uuid" },
+        "analysisType": { "type": "string", "enum": ["static_linear"] },
+        "bindingStatus": {
+          "type": "string",
+          "enum": ["pending", "exported", "analyzed", "stale"]
+        },
+        "sourceBsdDocumentRef": { "$ref": "#/$defs/documentReference" },
+        "targetBfadDocumentRef": {
+          "oneOf": [
+            { "$ref": "#/$defs/documentReference" },
+            { "type": "null" }
+          ]
+        },
+        "resultResourceRef": {
+          "oneOf": [
+            { "$ref": "#/$defs/documentReference" },
+            { "type": "null" }
+          ]
+        },
+        "if3Metadata": {
+          "type": ["object", "null"],
+          "properties": {
+            "sourceDocumentId": { "type": "string" },
+            "sourceDocumentVersion": { "type": ["string", "integer"] },
+            "sourceContentChecksum": { "type": "string" },
+            "analysisSettings": { "type": ["object", "null"] },
+            "loadContext": { "type": ["object", "null"] },
+            "solverName": { "type": ["string", "null"] },
+            "solverVersion": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "schemaId": "spacer.contracts.bridge-superstructure-design-document",
+      "schemaVersion": "0.0.0-design-draft",
+      "documentId": "00000000-0000-0000-0000-000000000010",
+      "documentKind": "bridge-superstructure-design",
+      "revisionId": 1,
+      "contentChecksum": {
+        "algorithm": "sha256",
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "lifecycleStatus": "DRAFT",
+      "provenance": {
+        "createdAt": "2026-07-27T00:00:00Z",
+        "createdBy": "planning-only",
+        "updatedAt": null,
+        "updatedBy": null,
+        "producer": "apollo-step1-p06-design-draft"
+      },
+      "coordinateContexts": [
+        {
+          "contextId": "00000000-0000-0000-0000-000000000020",
+          "referenceType": "bridge-local",
+          "axisConvention": "x-longitudinal-y-transverse-z-up",
+          "confidence": "unknown"
+        }
+      ],
+      "unitContext": {
+        "linearUnits": "m",
+        "angularUnits": "rad",
+        "forceUnits": "kN",
+        "stressUnits": "kPa",
+        "conversionVersion": null
+      },
+      "projectContext": {
+        "projectId": "00000000-0000-0000-0000-000000000030",
+        "name": "Phase 1 exemplar bridge",
+        "clientName": null,
+        "phaseTag": "step1-planning"
+      },
+      "bridge": {
+        "bridgeId": "00000000-0000-0000-0000-000000000040",
+        "name": "Exemplar straight plate girder bridge",
+        "spans": [
+          {
+            "spanId": "00000000-0000-0000-0000-000000000050",
+            "index": 0,
+            "length": {
+              "value": null,
+              "units": "m",
+              "adoptionStatus": "UNKNOWN",
+              "sourceLocator": null
+            },
+            "startSupportId": "00000000-0000-0000-0000-000000000070",
+            "endSupportId": "00000000-0000-0000-0000-000000000071"
+          }
+        ],
+        "girderLines": [
+          {
+            "girderLineId": "00000000-0000-0000-0000-000000000060",
+            "index": 0,
+            "label": "G1",
+            "offsetFromCenterline": {
+              "value": null,
+              "units": "m",
+              "adoptionStatus": "PENDING",
+              "sourceLocator": null
+            },
+            "depthProfile": "equal",
+            "materialRefId": null,
+            "sectionIntentRefId": null
+          }
+        ],
+        "deck": {
+          "deckId": "00000000-0000-0000-0000-000000000080",
+          "deckKind": "rc_non_composite",
+          "width": {
+            "value": null,
+            "units": "m",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "thickness": {
+            "value": null,
+            "units": "m",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "unitWeight": {
+            "value": null,
+            "units": "kN/m3",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          }
+        },
+        "supports": [
+          {
+            "supportId": "00000000-0000-0000-0000-000000000070",
+            "station": {
+              "value": 0,
+              "units": "m",
+              "adoptionStatus": "ADOPTED",
+              "sourceLocator": "layout-origin"
+            },
+            "fixity": "pinned",
+            "role": "abutment"
+          },
+          {
+            "supportId": "00000000-0000-0000-0000-000000000071",
+            "station": {
+              "value": null,
+              "units": "m",
+              "adoptionStatus": "UNKNOWN",
+              "sourceLocator": null
+            },
+            "fixity": "roller",
+            "role": "bearing"
+          }
+        ],
+        "phase1ScopeAssertion": {
+          "alignmentClass": "straight",
+          "skewAngleDeg": {
+            "value": 90,
+            "units": "deg",
+            "adoptionStatus": "ADOPTED",
+            "sourceLocator": "DEC-S1-0008"
+          },
+          "spanSystem": "simple",
+          "superstructureKind": "plate_girder_rc_slab_non_composite",
+          "analysisType": "static_linear"
+        }
+      },
+      "materialDefinitions": [
+        {
+          "materialId": "00000000-0000-0000-0000-000000000090",
+          "designation": "SN400B",
+          "yieldStrength": {
+            "value": null,
+            "units": "MPa",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "elasticModulus": {
+            "value": null,
+            "units": "MPa",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          },
+          "unitWeight": {
+            "value": null,
+            "units": "kN/m3",
+            "adoptionStatus": "PENDING",
+            "sourceLocator": null
+          }
+        }
+      ],
+      "loadCases": [
+        {
+          "loadCaseId": "00000000-0000-0000-0000-0000000000a0",
+          "name": "Dead load",
+          "kind": "dead",
+          "loads": []
+        },
+        {
+          "loadCaseId": "00000000-0000-0000-0000-0000000000b0",
+          "name": "Slab load",
+          "kind": "slab",
+          "loads": [
+            {
+              "loadId": "00000000-0000-0000-0000-0000000000c0",
+              "pattern": "uniform",
+              "magnitude": {
+                "value": null,
+                "units": "kN/m2",
+                "adoptionStatus": "PENDING",
+                "sourceLocator": null
+              },
+              "direction": "-Z",
+              "targetRef": {
+                "kind": "deck",
+                "refId": "00000000-0000-0000-0000-000000000080"
+              }
+            }
+          ]
+        }
+      ],
+      "analysisBindings": [],
+      "roadImportProvenance": null,
+      "phase1ScopeAssertion": {
+        "alignmentClass": "straight",
+        "skewAngleDeg": {
+          "value": 90,
+          "units": "deg",
+          "adoptionStatus": "ADOPTED",
+          "sourceLocator": "DEC-S1-0008"
+        },
+        "spanSystem": "simple",
+        "superstructureKind": "plate_girder_rc_slab_non_composite",
+        "analysisType": "static_linear"
+      }
+    }
+  ]
+}
