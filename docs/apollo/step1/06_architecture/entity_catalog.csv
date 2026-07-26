@@ -1,0 +1,37 @@
+entity_id,name,ownership,lifecycle,required_phase1,source,versioning,immutable_mutable,notes
+ENT-APO-0001,EngineeringProject,Shared manifest (reference only),DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,optional,schemas/contracts/v0.1/engineering-project.schema.json,schemaVersion + revisionId,revision_immutable,Reference container; does not copy domain payloads
+ENT-APO-0002,BridgeSuperstructureDesignDocument,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW (schema_draft.json),schemaVersion + revisionId + contentChecksum,revision_immutable,Apollo SoR candidate per ADR-APO-001; not operational
+ENT-APO-0003,Project,Apollo Superstructure Design (context block),DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW,embedded in BSDD revision,mutable_within_revision,User label and metadata; documentId is identity root
+ENT-APO-0004,Bridge,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; maps BridgeDefinition,embedded in BSDD,mutable_until_APPROVED,Phase1: straight/90deg skew/simple span only
+ENT-APO-0005,Span,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; maps BridgeDefinitionSpan,cardinality 1 in Phase1,mutable_until_APPROVED,ASM-P1-001 single span
+ENT-APO-0006,GirderLine,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; maps BridgeDefinitionGirder,stable girderLineId,mutable_until_APPROVED,Equal-depth plate girders; 4-6 typical
+ENT-APO-0007,Deck,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; maps BridgeDefinitionDeck,stable deckId,mutable_until_APPROVED,Non-composite RC slab only; composite deferred
+ENT-APO-0008,MaterialDefinition,Apollo Superstructure Design (governance-gated),DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required_shell,PLANNING_NEW; handoff ENT-CAND-0006,stable materialId,mutable_until_ADOPTED,Numerics null until ADOPTED; BLK-S1-001
+ENT-APO-0009,LoadCase,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; handoff ENT-CAND-0008; ProjectModel.loadCases,stable loadCaseId,mutable_until_APPROVED,dead/slab/live kinds Phase1
+ENT-APO-0010,Load,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; handoff ENT-CAND-0009,stable loadId,mutable_until_ADOPTED,magnitude null until governance unblock
+ENT-APO-0011,AnalysisBinding,Apollo Superstructure Design (cross-SoR),DRAFT|VALIDATED|STALE|ARCHIVED,required_before_result_use,PLANNING_NEW,stable bindingId,binding_status_mutable,Links BSDD to BFAD and IF3 result; ADR-APO-006
+ENT-APO-0012,Support,Apollo Superstructure Design,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,PLANNING_NEW; maps BridgeDefinitionSupport,stable supportId,mutable_until_APPROVED,Fixed/movable; detailed bearing design deferred
+ENT-APO-0013,CoordinateContext,Shared contract,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,schemas/contracts/v0.1/coordinate-context.schema.json,contextId + version,immutable_per_revision,unknown confidence blocks mutation
+ENT-APO-0014,UnitContext,Shared contract,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required,schemas/contracts/v0.1/unit-context.schema.json,version field,immutable_per_revision,Canonical m/rad; display units separate
+ENT-APO-0015,RoadDesignRef,Road Design Tool (read-only in Apollo),VALIDATED|APPROVED|SUPERSEDED|STALE,required_on_import,schemas/contracts/v0.1/road-design-document.schema.json,exact revision ref,immutable_ref,Apollo consumes; does not mutate RDD
+ENT-APO-0016,TransferPackageRef,Road Design Tool (read-only in Apollo),VALIDATED|APPROVED|SUPERSEDED|STALE,optional,schemas/contracts/v0.1/road-to-frame-transfer-package.schema.json,package checksum,immutable_ref,Immutable blob; append-only TransferRecord audit
+ENT-APO-0017,BridgeFrameAnalysisDocument,Frame Analysis Tool,DRAFT|VALIDATED|APPROVED|SUPERSEDED|ARCHIVED,required_post_export,schemas/contracts/v0.1/bridge-frame-analysis-document.schema.json,schemaVersion + revisionId + contentChecksum,revision_immutable,Frame target SoR; infra only today
+ENT-APO-0018,ProjectModel,Frame Analysis Tool (operational interim),legacy_file_lifecycle,operational_interim,schemas/project.schema.json,projectInfo.schemaVersion,mutable_file,Operational SoR per DEC-S1-0005; not Apollo SoR
+ENT-APO-0019,FrameAnalysisResultResource,Frame Analysis Tool (read-only in Apollo),completed|failed|partial|STALE,required_post_analysis,schemas/contracts/v0.1/frame-analysis-result-resource.schema.json,result revision + checksum,immutable_result,STALE aligns IF3; Apollo read-only
+ENT-APO-0020,BridgeDefinition,Legacy intermediate,legacy,operational_interim_only,frontend/src/bridgeDefinition/types.ts,schemaVersion 1.0.0,mutable,Migration source; not promoted to Apollo SoR
+ENT-DEF-0001,LoadCombination,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0010,unknown,deferred,OPEN/JIS_GAP; Frame may own in BFAD
+ENT-DEF-0002,Node,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0003; BFAD,stable nodeId in BFAD,frame_owned,Apollo references post-export only
+ENT-DEF-0003,Member,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0004; BFAD,stable memberId in BFAD,frame_owned,Apollo references post-export only
+ENT-DEF-0004,Section,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0005; BFAD,stable sectionId,frame_owned,Section design app OUT_OF_PHASE1
+ENT-DEF-0005,SectionForce,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0012; IF3 resource,result-bound,read_only,3 vs 6 components UNKNOWN ISS-S1-007
+ENT-DEF-0006,Reaction,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0013,result-bound,read_only,Consumed via IF3
+ENT-DEF-0007,Displacement,Frame Analysis Tool,DEFERRED,deferred,handoff ENT-CAND-0014,result-bound,read_only,Consumed via IF3
+ENT-DEF-0008,DesignCheck,Apollo/Frame boundary,DEFERRED,deferred,handoff ENT-CAND-0015,unknown,deferred,Member design OUT_OF_PHASE1
+ENT-DEF-0009,CrossBeam,Apollo Superstructure Design,DEFERRED,deferred,BridgeDefinitionCrossBeam,unknown,deferred,Bracing family OUT_OF_PHASE1
+ENT-DEF-0010,Bracing,Apollo Superstructure Design,DEFERRED,deferred,P04 OUT_OF_PHASE1,unknown,deferred,Not in Phase1 BSDD minimum
+ENT-DEF-0011,Stiffener,Apollo Superstructure Design,DEFERRED,deferred,P04 OUT_OF_PHASE1,unknown,deferred,Not in Phase1 BSDD minimum
+ENT-DEF-0012,Splice,Apollo Superstructure Design,DEFERRED,deferred,P04 OUT_OF_PHASE1,unknown,deferred,88 features deferred LATER_PHASE
+ENT-DEF-0013,DrawingInput,SuperDrawing boundary,DEFERRED,deferred,handoff ENT-CAND-0016,unknown,deferred,CAD parity LATER_PHASE
+ENT-DEF-0014,MaterialQuantity,y-Mater boundary,DEFERRED,deferred,handoff ENT-CAND-0017,unknown,deferred,Approximate weight PHASE1_SUPPORTING only
+ENT-DEF-0015,ModalCase,Frame Analysis Tool,DEFERRED,deferred,BFAD optional blocks,unknown,deferred,Dynamic analysis OUT_OF_PHASE1
+ENT-DEF-0016,ResponseSpectrumCase,Frame Analysis Tool,DEFERRED,deferred,BFAD optional blocks,unknown,deferred,Seismic OUT_OF_PHASE1

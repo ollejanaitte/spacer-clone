@@ -10,4 +10,5 @@
 | P02 | #192 | `docs/apollo-step1-p02-standards-baseline` | `5102c918acbc4da5e8570c4606b723b73979ea91` | MERGED | Standards baseline + numeric/material governance |
 | P03 | #193 | `docs/apollo-step1-p03-existing-capability` | `563c4c705eb26899a7fecfd49f65541aa2ae3d15` | MERGED | Existing capability inventory + document/interface map |
 | P04 | #194 | `docs/apollo-step1-p04-gap-analysis` | `7240f1818d6de9bfbf1dbbc56113cef700ccad16` | MERGED | READY 69 gap analysis + feature 281 disposition |
-| P05 | — | `docs/apollo-step1-p05-scope-boundary` | *(pending)* | STAGED | Phase 1 scope freeze + responsibility/interface boundaries |
+| P05 | #195 | `docs/apollo-step1-p05-scope-boundary` | `849fef17a62a63994394cfddd11b71c1f76c1350` | MERGED | Phase 1 scope freeze + responsibility/interface boundaries |
+| P06 | — | `docs/apollo-step1-p06-architecture` | *(pending)* | STAGED | Architecture ADRs + Apollo data model + design-draft schema |
