@@ -1,0 +1,115 @@
+feature_id,disposition,feature_category,feature_name,catalog_phase_class,phase_note,blocker_ids,authoritative_source
+F4-P1-001,PHASE1_REQUIRED,project_management,工事名フォルダ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-002,PHASE1_REQUIRED,project_management,新規作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-003,PHASE1_REQUIRED,project_management,既存データ選択,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-004,PHASE1_REQUIRED,alignment_import,線形データ取込,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-005,PHASE1_REQUIRED,longitudinal_alignment,縦断線定義,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-006,PHASE1_REQUIRED,cross_section_lines,横断線定義,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-007,PHASE1_REQUIRED,unit_system,単位系選択,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-008,PHASE1_REQUIRED,unit_system,単位系自動変換なし,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-009,PHASE1_REQUIRED,unit_system,ハンチ単位伝播,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-010,PHASE1_SUPPORTING,unit_system,単体プログラム単位設定,Phase1_optional,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-011,PHASE1_SUPPORTING,unit_system,デフォルト単位ルト単位値,Phase1_optional,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-012,PHASE1_REQUIRED,bridge_basic_conditions,適用規模_主桁本数,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-013,PHASE1_REQUIRED,bridge_basic_conditions,適用規模_主桁本数_鋼床版,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-014,PHASE1_REQUIRED,bridge_basic_conditions,適用規模_横断線数,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-015,PHASE1_SUPPORTING,bridge_basic_conditions,適用規模_格点数_RC鈑桁,Phase1_optional,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-016,PHASE1_REQUIRED,alignment,線形計算実行,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-017,PHASE1_REQUIRED,project_management,フォルダ構成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-018,PHASE1_REQUIRED,girder_layout,コントロールプログラム,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-020,PHASE1_SUPPORTING,bridge_basic_conditions,単位系ヘルプ記載,Phase1_optional,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-021,PHASE1_REQUIRED,alignment,線形計算起動,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-023,PHASE1_REQUIRED,alignment,座標系指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-024,PHASE1_REQUIRED,alignment,中心線作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-028,PHASE1_REQUIRED,cross_slope,幅員線作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-029,PHASE1_REQUIRED,alignment,橋台橋脚線作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-030,PHASE1_REQUIRED,longitudinal_alignment,縦断勾配指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-031,PHASE1_REQUIRED,cross_slope,横断勾配指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-032,PHASE1_REQUIRED,cross_slope,高さ形状指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-033,PHASE1_REQUIRED,member_line_assignment,橋形状設定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-034,PHASE1_REQUIRED,member_line_assignment,橋形状入力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-035,PHASE1_REQUIRED,cross_section_lines,横桁線作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-036,PHASE1_REQUIRED,girder_layout,桁作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-037,PHASE1_REQUIRED,alignment,座標変換,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-038,PHASE1_REQUIRED,cross_section_lines,出力指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-040,PHASE1_REQUIRED,cross_section_lines,線属性指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-041,PHASE1_REQUIRED,longitudinal_alignment,線形計算変換,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-047,PHASE1_REQUIRED,bearing,支承条件データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-049,PHASE1_REQUIRED,bearing,支承線作成,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-051,PHASE1_REQUIRED,standard_section,単位重量・物理定数データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-052,PHASE1_REQUIRED,standard_section,使用材料データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-053,PHASE1_REQUIRED,standard_section,許容応力度データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-054,PHASE1_SUPPORTING,standard_section,主桁全体データ,Phase1_optional,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-055,PHASE1_REQUIRED,standard_section,主桁桁高データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-057,PHASE1_REQUIRED,standard_section,主桁断面データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-059,PHASE1_REQUIRED,standard_section,補剛材データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-062,PHASE1_REQUIRED,standard_section,床組データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-063,PHASE1_REQUIRED,standard_section,部材名称データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-064,PHASE1_REQUIRED,girder_layout,主桁桁端長データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-065,PHASE1_REQUIRED,cross_slope,床版形状データ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-069,PHASE1_REQUIRED,bridge_type_selection,bridge_type_selection,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P1-072,PHASE1_REQUIRED,road_width,road_width,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-001,PHASE1_REQUIRED,slab_thickness,床版厚の指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-002,PHASE1_REQUIRED,haunch,ハンチ高の設定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-003,PHASE1_REQUIRED,haunch,単位系指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-004,PHASE1_REQUIRED,haunch_geometry,ハンチ形状の設定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-005,PHASE1_REQUIRED,haunch_calculation,ハンチ計算結果の設計情報への反映,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-006,PHASE1_REQUIRED,rc_slab,床版照査位置決定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-007,PHASE1_REQUIRED,rc_slab,かぶり量の指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-008,PHASE1_REQUIRED,rc_slab,配力筋照査の出力方法,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-009,PHASE1_REQUIRED,haunch,フランジ厚およびハンチ内鉄筋の指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-010,PHASE1_REQUIRED,slab_load_input,床版設計荷重指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-011,PHASE1_REQUIRED,slab_reinforcement_input,主鉄筋および配力鉄筋の指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-012,PHASE1_REQUIRED,rc_slab,計算書出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-013,PHASE1_REQUIRED,slab_result_output,支点補強筋 計算書出力（国土交通省形式）,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-014,PHASE1_REQUIRED,slab_result_output,支点補強筋 計算書出力（道路公団形式）,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P2-015,PHASE1_REQUIRED,slab_reinforcement_input,支点補強筋 鉄筋径および本数の指定,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P3-024,PHASE1_REQUIRED,section_force_assignment,断面力の適用,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-002,PHASE1_REQUIRED,analysis_input_generation,主桁仮定剛度,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-003,PHASE1_REQUIRED,analysis_input_generation,横桁・対傾構仮定剛度,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-004,PHASE1_REQUIRED,analysis_input_generation,仮定鋼重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-006,PHASE1_REQUIRED,analysis_model,節点変更,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-007,PHASE1_REQUIRED,analysis_model,要素変更,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-008,PHASE1_REQUIRED,analysis_model,支点変更,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-010,PHASE1_REQUIRED,section_force_conversion,断面力変換,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-011,PHASE1_REQUIRED,section_force_conversion,断面力計算書出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-012,PHASE1_REQUIRED,output_or_report,荷重強度図,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-013,PHASE1_REQUIRED,output_or_report,格子結果出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-015,PHASE1_REQUIRED,live_load,路面荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-016,PHASE1_REQUIRED,live_load,片持部荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-017,PHASE1_REQUIRED,arbitrary_load,その他面荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-018,PHASE1_REQUIRED,arbitrary_load,その他線荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-019,PHASE1_REQUIRED,arbitrary_load,その他点荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-020,PHASE1_REQUIRED,arbitrary_load,支点沈下バネ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-021,PHASE1_REQUIRED,arbitrary_load,水平荷重,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-022,PHASE1_REQUIRED,analysis_input_generation,ハンチ・中分,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-023,PHASE1_REQUIRED,deflection_check,たわみ剛比,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-024,PHASE1_REQUIRED,deflection_check,活荷重たわみ,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-025,PHASE1_REQUIRED,analysis_execution,実剛度格子計算,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-026,PHASE1_REQUIRED,output_or_report,キャンバー図,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-027,PHASE1_REQUIRED,analysis_model,格子解析ボタン,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-030,PHASE1_REQUIRED,section_force_conversion,断面力変換ボタン,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-031,PHASE1_REQUIRED,stress_check,許容応力度,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-032,PHASE1_REQUIRED,analysis_input_generation,有効モーメント最小量,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-034,PHASE1_REQUIRED,point_load,point_load (covered under arbitrary_load),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-035,PHASE1_REQUIRED,line_load,line_load (covered under arbitrary_load),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-036,PHASE1_REQUIRED,surface_load,surface_load (covered under arbitrary_load),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-039,PHASE1_REQUIRED,grid_model,grid_model (covered under analysis_model),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-040,PHASE1_REQUIRED,node,node (covered under analysis_model),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-041,PHASE1_REQUIRED,member,member (covered under analysis_model),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-042,PHASE1_REQUIRED,support,support (covered under analysis_model),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-043,PHASE1_REQUIRED,analyzer_link,analyzer_link (covered under analysis_execution),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-044,PHASE1_REQUIRED,analysis_result_import,analysis_result_import (covered under section_force_conversion),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-045,PHASE1_REQUIRED,section_force_import,section_force_import (covered under section_force_conversion),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P5-049,PHASE1_REQUIRED,strength_check,strength_check (covered under stress_check),Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P6-019,PHASE1_SUPPORTING,steel_weight,鋼重計算機能,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-032,PHASE1_SUPPORTING,steel_weight,鋼重計算プログラム起動,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-033,PHASE1_SUPPORTING,steel_weight,全体鋼重概算計算,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-034,PHASE1_SUPPORTING,steel_weight,ブロック鋼重,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-035,PHASE1_SUPPORTING,steel_weight,鋼重算出-主桁断面/添接板/ボルト本数/補剛材断面,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-036,PHASE1_SUPPORTING,steel_weight,割増係数ユーザー指定,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-040,PHASE1_SUPPORTING,steel_weight,実鋼重(概算値)の反映,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-048,PHASE1_SUPPORTING,steel_weight,鋼重計算,Phase1_required,1,,../04_gap_analysis/feature281_disposition.csv
+F4-P6-049,PHASE1_REQUIRED,calculation_report,荷重強度図出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P6-053,PHASE1_REQUIRED,rtf_output,荷重強度図RTF出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv
+F4-P6-054,PHASE1_REQUIRED,dxf_output,荷重強度図DXF出力,Phase1_required,1,BLK-S1-001,../04_gap_analysis/feature281_disposition.csv

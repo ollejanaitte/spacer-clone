@@ -1,0 +1,3 @@
+pointer_type,authoritative_path,description,phase1_required_count,phase1_supporting_count,last_sync_commit,notes
+AUTHORITATIVE_FULL_SET,../04_gap_analysis/feature281_disposition.csv,Complete 281-feature disposition from P04 gap analysis; all PHASE1 labels authoritative here,101,13,7240f1818d6de9bfbf1dbbc56113cef700ccad16,Do not duplicate or contradict disposition values in this directory
+PHASE1_SUBSET,phase1_feature_set.csv,Slim extract of PHASE1_REQUIRED + PHASE1_SUPPORTING feature_ids only,101,13,7240f1818d6de9bfbf1dbbc56113cef700ccad16,Derived view; regenerate from feature281_disposition.csv if P04 updates
