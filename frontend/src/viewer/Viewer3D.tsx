@@ -8,6 +8,11 @@ import {
   type MemberSectionForceComponent,
   type ResponseSpectrumSelection,
 } from "../results/resultViewModel";
+import { extractLinearStaticAnalysisResultFromResource } from "../results/if3ResultViewModel";
+import {
+  evaluateIf3ResultGate,
+  resolveTransientIf3AvailabilityStatus,
+} from "../results/if3ResultGate";
 import type { AnalysisResult, ProjectModel } from "../types";
 import { Fallback2DViewport } from "./Fallback2DViewport";
 import { createSuspendedDeckProject } from "../data/defaultProject";
@@ -42,6 +47,7 @@ export const webglFallbackMessage =
 export function Viewer3D({
   project,
   result,
+  if3Result = null,
   selectedSection,
   selection,
   activeLoadCase,
@@ -98,28 +104,45 @@ export function Viewer3D({
     [project.loadCases],
   );
   const selectedLoadCaseId = activeLoadCase || loadCaseIds[0] || "";
+  const if3ViewerGate = useMemo(
+    () =>
+      if3Result == null
+        ? null
+        : evaluateIf3ResultGate({
+            resource: if3Result,
+            availabilityStatus: resolveTransientIf3AvailabilityStatus(if3Result),
+          }),
+    [if3Result],
+  );
+  const authoritativeOverlayResult = useMemo(() => {
+    if (if3Result == null || if3ViewerGate?.authoritativeOutputAllowed !== true) {
+      return null;
+    }
+    return extractLinearStaticAnalysisResultFromResource(if3Result);
+  }, [if3Result, if3ViewerGate]);
+  const overlayResult = authoritativeOverlayResult;
   const forceColorRange = useMemo(() => {
-    if (!forceColorMap || !result) return { min: 0, max: 0 };
-    const values = computeMemberForceColorValues(project, result, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult);
+    if (!forceColorMap || !overlayResult) return { min: 0, max: 0 };
+    const values = computeMemberForceColorValues(project, overlayResult, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult);
     return computeForceColorRange(values);
-  }, [forceColorMap, result, project, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult]);
+  }, [forceColorMap, overlayResult, project, selectedLoadCaseId, forceColorComponent, forceColorValueType, selectedResponseSpectrumResult]);
   const eigenModeNos = useMemo(
-    () => result?.eigenResult?.modes.map((mode) => mode.modeNo) ?? [],
-    [result],
+    () => overlayResult?.eigenResult?.modes.map((mode) => mode.modeNo) ?? [],
+    [overlayResult],
   );
   const responseSpectrumViewModel = useMemo(
-    () => buildResponseSpectrumViewModel(result, selectedResponseSpectrumResult),
-    [result, selectedResponseSpectrumResult],
+    () => buildResponseSpectrumViewModel(overlayResult, selectedResponseSpectrumResult),
+    [overlayResult, selectedResponseSpectrumResult],
   );
   const responseSpectrumOptions = responseSpectrumViewModel?.modeOptions ?? [];
   const hasResult = Boolean(
-    result &&
-      result.errors.length === 0 &&
-      (result.displacements.length > 0 || eigenModeNos.length > 0 || hasResponseSpectrumResult(result)),
+    overlayResult &&
+      overlayResult.errors.length === 0 &&
+      (overlayResult.displacements.length > 0 || eigenModeNos.length > 0 || hasResponseSpectrumResult(overlayResult)),
   );
   const resultDiagramFeedback = useMemo(
-    () => buildResultDiagramFeedback(result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility),
-    [result, selectedLoadCaseId, selectedResponseSpectrumResult, visibility],
+    () => buildResultDiagramFeedback(overlayResult, selectedLoadCaseId, selectedResponseSpectrumResult, visibility),
+    [overlayResult, selectedLoadCaseId, selectedResponseSpectrumResult, visibility],
   );
 
   useEffect(() => {
@@ -239,7 +262,7 @@ export function Viewer3D({
 
   const viewportProps = {
     project,
-    result,
+    result: overlayResult,
     selectedSection,
     selection,
     activeLoadCase,
@@ -266,7 +289,7 @@ export function Viewer3D({
       return (
         <CompareShell
           slots={compareSlots}
-          leftResult={result}
+          leftResult={overlayResult}
           rightResult={rightAnalysisResult}
           selectedSection={selectedSection}
           selection={selection}

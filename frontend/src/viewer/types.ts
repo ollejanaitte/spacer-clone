@@ -1,6 +1,7 @@
 import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
+import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
 import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
@@ -66,6 +67,7 @@ export type ViewerSelection =
 export type Viewer3DProps = {
   project: ProjectModel;
   result: AnalysisResult | null;
+  if3Result?: FrameAnalysisResultResource | null;
   selectedSection: SectionKey;
   selection: ViewerSelection;
   activeLoadCase: string;

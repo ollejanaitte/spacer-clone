@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { ApiClientError, apiClient, resolveApiUrl } from "./api/client";
+import { ApiClientError, apiClient, resolveApiUrl, type If3AnalysisSidecar } from "./api/client";
+import type { DocumentReference } from "./contracts/documentReference";
+import type { FrameAnalysisResultResource } from "./contracts/frameAnalysisResultResource";
 import { ProjectTree } from "./components/ProjectTree";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PropertyPanel } from "./components/PropertyPanel";
@@ -9,9 +11,15 @@ import { Toolbar } from "./components/Toolbar";
 import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
 import { resetProjectModelContents } from "./modelReset";
 import { migrateProject } from "./projectMigration";
-import { buildResultCsvExports } from "./exports/resultCsvExport";
-import { buildMemberForceReportCsv } from "./exports/memberForceReport";
-import { openResultPdfReport } from "./exports/resultPdfReport";
+import {
+  buildAppIf3ExportGateInput,
+  buildIf3MemberForceReportCsv,
+  buildIf3ResultCsvExports,
+  buildIf3ResultPdfReport,
+  evaluateIf3ExportGate,
+  If3ExportBlockedError,
+} from "./exports/if3ExportGate";
+import { buildResultPdfReportHtml } from "./exports/resultPdfReport";
 import type { ResponseSpectrumSelection } from "./results/resultViewModel";
 import { Viewer3D } from "./viewer/Viewer3D";
 import { BridgeWizard } from "./bridge/BridgeWizard";
@@ -90,6 +98,15 @@ type ValidationNotice = {
 // place so the feature can be restored by flipping this flag.
 const AUTOSAVE_ENABLED = false;
 
+function applyIf3AnalysisSidecar(
+  sidecar: If3AnalysisSidecar | undefined,
+  setIf3Result: (value: FrameAnalysisResultResource | null) => void,
+  setPersistedResultRef: (value: DocumentReference | null) => void,
+) {
+  setIf3Result(sidecar?.if3Result ?? null);
+  setPersistedResultRef(sidecar?.persistedResultRef ?? null);
+}
+
 export function App() {
   redirectLegacyRoutes();
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
@@ -103,6 +120,8 @@ export function App() {
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [if3Result, setIf3Result] = useState<FrameAnalysisResultResource | null>(null);
+  const [persistedResultRef, setPersistedResultRef] = useState<DocumentReference | null>(null);
   const [rightResult, setRightResult] = useState<AnalysisResult | null>(null);
   const [resultExports, setResultExports] = useState<ResultExports | null>(null);
   const [selectedEigenMode, setSelectedEigenMode] = useState<number>(1);
@@ -146,6 +165,18 @@ export function App() {
   );
   const errors = [...(validation?.errors ?? []), ...(result?.errors ?? []), ...apiErrors, ...viewerErrors];
   const warnings = [...(validation?.warnings ?? []), ...(result?.warnings ?? [])];
+  const if3ExportGate = useMemo(
+    () =>
+      evaluateIf3ExportGate(
+        buildAppIf3ExportGateInput({
+          if3Result,
+          project,
+          activeLoadCase,
+        }),
+      ),
+    [if3Result, project, activeLoadCase],
+  );
+  const canExportAuthoritative = if3ExportGate.authoritativeOutputAllowed;
   const canRun = !running && validation?.valid !== false;
   const timeHistoryAnalysis = useTimeHistoryAnalysis({
     onSuccess: (analysisResult) => {
@@ -166,6 +197,8 @@ export function App() {
     setValidation(null);
     setValidationNotice(null);
     setResult(null);
+    setIf3Result(null);
+    setPersistedResultRef(null);
     setRightResult(null);
     setResultExports(null);
     setSelectedEigenMode(1);
@@ -192,6 +225,8 @@ export function App() {
     setValidation(null);
     setValidationNotice(null);
     setResult(null);
+    setIf3Result(null);
+    setPersistedResultRef(null);
     setRightResult(null);
     setResultExports(null);
     setSelectedEigenMode(1);
@@ -354,6 +389,7 @@ export function App() {
       }
       const response = await apiClient.runAnalysis(project, true);
       setResult(response.result);
+      applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setResultExports(response.csv);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
       log(`Analysis complete. Status: ${analysisStatusLabel(response.result.analysisSummary.status)}`);
@@ -389,6 +425,7 @@ export function App() {
         }),
       ]);
       setResult(response.result);
+      applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setRightResult(suspendedResponse?.result ?? null);
       setResultExports(null);
       setSelectedEigenMode(response.result.eigenResult?.modes[0]?.modeNo ?? 1);
@@ -420,6 +457,7 @@ export function App() {
       }
       const response = await apiClient.runResponseSpectrumAnalysis(project);
       setResult(response.result);
+      applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setResultExports(null);
       setSelectedResponseSpectrumResult("SRSS");
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
@@ -437,6 +475,8 @@ export function App() {
     try {
       const response = await timeHistoryAnalysis.run(project);
       setResult(response);
+      setIf3Result(null);
+      setPersistedResultRef(null);
       setResultExports(null);
       setBottomTab(response.errors.length > 0 ? "errors" : "timeHistory");
       log(`Time history analysis complete. Status: ${analysisStatusLabel(response.analysisSummary.status)}`);
@@ -466,6 +506,7 @@ export function App() {
       const movingLoadCase = buildDefaultMovingLoadCase(project, memberId);
       const response = await apiClient.runMovingLoadAnalysis(project, movingLoadCase);
       setResult(response.result);
+      applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setResultExports(response.csv);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
       log(`Moving load analysis complete. Member: ${memberId || "n/a"}`);
@@ -508,6 +549,7 @@ export function App() {
       }
       const response = await apiClient.runInfluenceAnalysis(analysisProject);
       setResult(response.result);
+      applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setResultExports(null);
       setBottomTab(response.result.errors.length > 0 ? "errors" : "results");
       log(`Influence line analysis complete. Member: ${memberId || "n/a"}`);
@@ -561,26 +603,65 @@ export function App() {
   };
 
   const exportResultCsv = () => {
-    if (!result) return;
-    const csvExports = resultExports ?? buildResultCsvExports(result);
-    downloadText("displacements.csv", csvExports["displacements.csv"], "text/csv");
-    downloadText("reactions.csv", csvExports["reactions.csv"], "text/csv");
-    downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
-    downloadText("eigen_modes.csv", csvExports["eigen_modes.csv"], "text/csv");
-    downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
-    if (csvExports["moving_load.csv"]) {
-      downloadText("moving_load.csv", csvExports["moving_load.csv"], "text/csv");
+    if (!canExportAuthoritative || !if3Result) {
+      log(`IF3 export blocked (${if3ExportGate.state}). Authoritative CSV export requires a validated IF3 result resource.`);
+      return;
     }
-    downloadText("member_force_report.csv", buildMemberForceReportCsv(result), "text/csv");
-    log("Result CSV downloaded.");
+    try {
+      const gateInput = buildAppIf3ExportGateInput({
+        if3Result,
+        project,
+        activeLoadCase,
+      });
+      const csvExports = buildIf3ResultCsvExports(gateInput);
+      downloadText("displacements.csv", csvExports["displacements.csv"], "text/csv");
+      downloadText("reactions.csv", csvExports["reactions.csv"], "text/csv");
+      downloadText("member_section_forces.csv", csvExports["member_section_forces.csv"], "text/csv");
+      downloadText("eigen_modes.csv", csvExports["eigen_modes.csv"], "text/csv");
+      downloadText("influence_lines.csv", csvExports["influence_lines.csv"], "text/csv");
+      if (csvExports["moving_load.csv"]) {
+        downloadText("moving_load.csv", csvExports["moving_load.csv"], "text/csv");
+      }
+      downloadText("member_force_report.csv", buildIf3MemberForceReportCsv(gateInput), "text/csv");
+      log("Result CSV downloaded.");
+    } catch (error) {
+      if (error instanceof If3ExportBlockedError) {
+        log(`IF3 export blocked (${error.gate.state}).`);
+        return;
+      }
+      pushApiError(error, "REPORT_ERROR", setApiErrors);
+      setBottomTab("errors");
+      log("Failed to export result CSV.");
+    }
   };
 
   const exportResultPdf = () => {
-    if (!result) return;
+    if (!canExportAuthoritative || !if3Result) {
+      log(`IF3 export blocked (${if3ExportGate.state}). Authoritative PDF export requires a validated IF3 result resource.`);
+      return;
+    }
     try {
-      openResultPdfReport(project, result, activeLoadCase);
+      const report = buildIf3ResultPdfReport(
+        buildAppIf3ExportGateInput({
+          if3Result,
+          project,
+          activeLoadCase,
+        }),
+      );
+      const html = buildResultPdfReportHtml(report);
+      const reportUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+      const printWindow = window.open(reportUrl, "_blank", "width=1024,height=768");
+      if (!printWindow) {
+        URL.revokeObjectURL(reportUrl);
+        throw new Error("PDF report window could not be opened.");
+      }
+      setTimeout(() => URL.revokeObjectURL(reportUrl), 60000);
       log("Result PDF report opened.");
     } catch (error) {
+      if (error instanceof If3ExportBlockedError) {
+        log(`IF3 export blocked (${error.gate.state}).`);
+        return;
+      }
       pushApiError(error, "REPORT_ERROR", setApiErrors);
       setBottomTab("errors");
       log("Failed to open result PDF report.");
@@ -993,8 +1074,8 @@ export function App() {
         onExportLinerProfileDxf={exportLinerProfileDxf}
         onExportLinerFrameStl={exportLinerFrameStl}
         canExportResults={Boolean(result)}
-        canExportCsv={Boolean(result)}
-        canExportPdf={Boolean(result)}
+        canExportCsv={canExportAuthoritative}
+        canExportPdf={canExportAuthoritative}
         onOpenBridgeWizard={() => setBridgeWizardOpen(true)}
         onOpenTimeHistoryWizard={() => setTimeHistoryWizardOpen(true)}
         onOpenModelComparison={() => {
@@ -1048,6 +1129,7 @@ export function App() {
         <Viewer3D
           project={project}
           result={result}
+          if3Result={if3Result}
           rightResult={rightResult}
           selectedSection={selectedSection}
           selection={selection}

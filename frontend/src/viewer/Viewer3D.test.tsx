@@ -80,7 +80,7 @@ describe("Viewer3D WebGL fallback", () => {
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
   });
 
-  it("enables the deformed-shape display when an eigen result arrives", async () => {
+  it("does not auto-enable deformed-shape display for raw eigen results without IF3 authority", async () => {
     render(
       <Viewer3D
         project={createDefaultProject()}
@@ -98,7 +98,7 @@ describe("Viewer3D WebGL fallback", () => {
     const label = [...document.querySelectorAll("label")]
       .find((item) => item.textContent?.includes(ja.viewer.controls.deformedShape));
     const checkbox = label?.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
-    expect(checkbox?.checked).toBe(true);
+    expect(checkbox?.checked).toBe(false);
   });
 });
 

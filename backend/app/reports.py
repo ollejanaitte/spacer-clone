@@ -107,6 +107,284 @@ def build_result_exports(result: dict[str, Any]) -> dict[str, str]:
     }
 
 
+class If3AuthoritativeExportBlockedError(RuntimeError):
+    def __init__(self, gate: dict[str, Any]) -> None:
+        super().__init__("IF3 authoritative export is blocked.")
+        self.gate = gate
+
+
+_AUTHORITATIVE_ALLOW_STATUSES = frozenset({"VALID"})
+
+
+def evaluate_if3_authoritative_export_gate(
+    resource: dict[str, Any] | None,
+    availability_status: str,
+    *,
+    source_document: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    diagnostics: list[dict[str, Any]] = []
+    if resource is None:
+        diagnostics.append(
+            {
+                "code": "MISSING_RESULT_ID",
+                "severity": "error",
+                "producer": "if3-d.reports-gate",
+                "message": "FrameAnalysisResultResource is required for authoritative export.",
+            }
+        )
+        return _authoritative_gate_result(
+            state=availability_status if availability_status else "MISSING",
+            diagnostics=diagnostics,
+            authoritative_output_allowed=False,
+            result_ref=None,
+        )
+
+    if _is_raw_analysis_result_candidate(resource):
+        diagnostics.append(
+            {
+                "code": "RAW_ANALYSIS_RESULT_REJECTED",
+                "severity": "error",
+                "producer": "if3-d.reports-gate",
+                "message": "Raw AnalysisResult cannot be used as an authoritative IF3 export input.",
+            }
+        )
+        return _authoritative_gate_result(
+            state="INVALID",
+            diagnostics=diagnostics,
+            authoritative_output_allowed=False,
+            result_ref=None,
+        )
+
+    result_ref = {
+        "resultId": resource.get("resultId"),
+        "analysisRunId": resource.get("analysisRunId"),
+        "resultChecksum": (resource.get("resultChecksum") or {}).get("hexDigest")
+        if isinstance(resource.get("resultChecksum"), dict)
+        else resource.get("resultChecksum"),
+    }
+    if not isinstance(resource.get("resultId"), str) or not resource.get("resultId"):
+        diagnostics.append(
+            {
+                "code": "MISSING_RESULT_ID",
+                "severity": "error",
+                "producer": "if3-d.reports-gate",
+                "message": "resultId is required for authoritative export.",
+            }
+        )
+    if resource.get("status") != "SUCCEEDED":
+        diagnostics.append(
+            {
+                "code": "INVALID_RESULT_STATUS",
+                "severity": "error",
+                "producer": "if3-d.reports-gate",
+                "message": "Authoritative export requires a SUCCEEDED IF3 resource.",
+            }
+        )
+    if resource.get("provenance") in (None, {}):
+        diagnostics.append(
+            {
+                "code": "MISSING_PROVENANCE",
+                "severity": "error",
+                "producer": "if3-d.reports-gate",
+                "message": "Authoritative export requires result provenance.",
+            }
+        )
+    if source_document is not None:
+        for field, code, message in (
+            ("sourceDocumentId", "SOURCE_DOCUMENT_MISMATCH", "sourceDocumentId must match the current frame document."),
+            ("sourceDocumentVersion", "STALE_RESULT", "sourceDocumentVersion must match the current frame document."),
+            ("sourceContentChecksum", "SOURCE_CHECKSUM_MISMATCH", "sourceContentChecksum must match the current frame document."),
+        ):
+            if resource.get(field) != source_document.get(
+                "documentId" if field == "sourceDocumentId" else "revisionId" if field == "sourceDocumentVersion" else "contentChecksum"
+            ):
+                diagnostics.append(
+                    {
+                        "code": code,
+                        "severity": "error",
+                        "producer": "if3-d.reports-gate",
+                        "message": message,
+                    }
+                )
+
+    authoritative_output_allowed = (
+        availability_status in _AUTHORITATIVE_ALLOW_STATUSES
+        and resource.get("status") == "SUCCEEDED"
+        and not diagnostics
+    )
+    return _authoritative_gate_result(
+        state=availability_status,
+        diagnostics=_sort_gate_diagnostics(diagnostics),
+        authoritative_output_allowed=authoritative_output_allowed,
+        result_ref=result_ref if isinstance(resource.get("resultId"), str) else None,
+    )
+
+
+def build_authoritative_result_exports_from_if3(
+    resource: dict[str, Any],
+    availability_status: str,
+    *,
+    source_document: dict[str, Any] | None = None,
+    load_case_labels: dict[str, str] | None = None,
+) -> dict[str, str]:
+    gate = evaluate_if3_authoritative_export_gate(
+        resource,
+        availability_status,
+        source_document=source_document,
+    )
+    if not gate["authoritativeOutputAllowed"]:
+        raise If3AuthoritativeExportBlockedError(gate)
+    legacy_result = extract_linear_static_analysis_result_from_if3_resource(
+        resource,
+        load_case_labels=load_case_labels,
+    )
+    return build_result_exports(legacy_result)
+
+
+def extract_linear_static_analysis_result_from_if3_resource(
+    resource: dict[str, Any],
+    *,
+    load_case_labels: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    payload = resource.get("payload", {})
+    load_context_lookup = _build_load_case_label_lookup(resource, load_case_labels)
+    displacements = [
+        {
+            "loadCaseId": _resolve_load_case_id(row.get("loadContextId"), load_context_lookup),
+            "nodeId": row.get("entityId", ""),
+            "ux": (row.get("values") or {}).get("ux", 0),
+            "uy": (row.get("values") or {}).get("uy", 0),
+            "uz": (row.get("values") or {}).get("uz", 0),
+            "rx": (row.get("values") or {}).get("rx", 0),
+            "ry": (row.get("values") or {}).get("ry", 0),
+            "rz": (row.get("values") or {}).get("rz", 0),
+        }
+        for row in (payload.get("nodeDisplacement") or {}).get("rows", [])
+        if isinstance(row, dict)
+    ]
+    reactions = [
+        {
+            "loadCaseId": _resolve_load_case_id(row.get("loadContextId"), load_context_lookup),
+            "nodeId": row.get("entityId", ""),
+            "fx": (row.get("values") or {}).get("fx", 0),
+            "fy": (row.get("values") or {}).get("fy", 0),
+            "fz": (row.get("values") or {}).get("fz", 0),
+            "mx": (row.get("values") or {}).get("mx", 0),
+            "my": (row.get("values") or {}).get("my", 0),
+            "mz": (row.get("values") or {}).get("mz", 0),
+            "constrainedDofs": [],
+        }
+        for row in (payload.get("supportReaction") or {}).get("rows", [])
+        if isinstance(row, dict)
+    ]
+    member_end_forces = [
+        {
+            "loadCaseId": _resolve_load_case_id(row.get("loadContextId"), load_context_lookup),
+            "memberId": row.get("entityId", ""),
+            "coordinateSystem": "local",
+            "i": _parse_end_force(row.get("values") or {}, "i"),
+            "j": _parse_end_force(row.get("values") or {}, "j"),
+        }
+        for row in (payload.get("memberForce") or {}).get("rows", [])
+        if isinstance(row, dict)
+    ]
+    return {
+        "projectId": resource.get("sourceDocumentId", ""),
+        "schemaVersion": "1.0.0",
+        "analysisSummary": {
+            "analysisType": "linear_static",
+            "status": "success",
+            "startedAt": resource.get("generatedAt", ""),
+            "finishedAt": resource.get("generatedAt", ""),
+            "durationMs": 0,
+            "nodeCount": len(displacements),
+            "memberCount": len(member_end_forces),
+            "loadCaseCount": len((resource.get("loadContext") or {}).get("entries", [])),
+            "totalDof": 0,
+            "freeDof": 0,
+            "constrainedDof": 0,
+            "solver": resource.get("solverName", "scipy_sparse"),
+        },
+        "displacements": displacements,
+        "reactions": reactions,
+        "memberEndForces": member_end_forces,
+        "warnings": [],
+        "errors": [],
+    }
+
+
+def _authoritative_gate_result(
+    *,
+    state: str,
+    diagnostics: list[dict[str, Any]],
+    authoritative_output_allowed: bool,
+    result_ref: dict[str, Any] | None,
+) -> dict[str, Any]:
+    return {
+        "state": state,
+        "diagnostics": diagnostics,
+        "authoritativeOutputAllowed": authoritative_output_allowed,
+        "resultRef": result_ref,
+    }
+
+
+def _is_raw_analysis_result_candidate(value: dict[str, Any]) -> bool:
+    return (
+        isinstance(value.get("projectId"), str)
+        and "resultId" not in value
+        and "schemaId" not in value
+        and isinstance(value.get("displacements"), list)
+    )
+
+
+def _build_load_case_label_lookup(
+    resource: dict[str, Any],
+    load_case_labels: dict[str, str] | None,
+) -> dict[str, str]:
+    lookup: dict[str, str] = {}
+    entries = (resource.get("loadContext") or {}).get("entries", [])
+    if isinstance(entries, list):
+        for entry in entries:
+            if not isinstance(entry, dict) or entry.get("kind") != "loadCase":
+                continue
+            entry_id = entry.get("id")
+            if not isinstance(entry_id, str):
+                continue
+            explicit = (load_case_labels or {}).get(entry_id)
+            lookup[entry_id] = explicit or entry.get("label") or entry_id
+    return lookup
+
+
+def _resolve_load_case_id(load_context_id: Any, lookup: dict[str, str]) -> str:
+    if not isinstance(load_context_id, str):
+        return ""
+    return lookup.get(load_context_id, load_context_id)
+
+
+def _parse_end_force(values: dict[str, Any], end: str) -> dict[str, float]:
+    return {
+        "fx": float(values.get(f"{end}.fx", 0) or 0),
+        "fy": float(values.get(f"{end}.fy", 0) or 0),
+        "fz": float(values.get(f"{end}.fz", 0) or 0),
+        "mx": float(values.get(f"{end}.mx", 0) or 0),
+        "my": float(values.get(f"{end}.my", 0) or 0),
+        "mz": float(values.get(f"{end}.mz", 0) or 0),
+    }
+
+
+def _sort_gate_diagnostics(diagnostics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return sorted(
+        diagnostics,
+        key=lambda item: (
+            str(item.get("code", "")),
+            str(item.get("severity", "")),
+            str(item.get("producer", "")),
+            str(item.get("message", "")),
+            str(item.get("path", "")),
+        ),
+    )
+
+
 def displacements_csv(result: dict[str, Any]) -> str:
     rows = [
         displacement_row(row.get("loadCaseId", ""), row)
