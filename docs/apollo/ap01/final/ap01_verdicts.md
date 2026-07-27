@@ -2,7 +2,7 @@
 
 **Authority:** IMPLEMENTATION GOVERNANCE / AP-01  
 **Date:** 2026-07-27  
-**Checkpoint SHA:** TBD (filled at direct-main push)  
+**Checkpoint SHA:** `5f8c781a48c6b75ba7c9e78301c1dc0a75ea41f7` (tip docs `9d6fe7226774c7be2ded93b3733881cba94ff85e`)  
 **Depends on:** AP-11 on `main` (`7f73c4c` / tip pre-AP-01 `b4658e2`)
 
 ## Governance verdicts
