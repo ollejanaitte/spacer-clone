@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "apollo.parity.mismatch.v1",
+  "title": "EA-04 Parity Mismatch Classification Report",
+  "type": "object",
+  "required": ["schema_version", "harness_version", "classification_count", "rows"],
+  "properties": {
+    "schema_version": { "const": "apollo.parity.mismatch.v1" },
+    "harness_version": { "type": "string" },
+    "classification_count": { "type": "integer", "minimum": 0 },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["schema_version", "quantity_key", "classification", "evidence_basis", "comparison_row"],
+        "properties": {
+          "schema_version": { "const": "apollo.parity.mismatch.v1" },
+          "quantity_key": { "type": "string" },
+          "classification": {
+            "enum": [
+              "MODEL_MAPPING_ERROR",
+              "UNIT_CONVERSION_ERROR",
+              "SIGN_CONVENTION_ERROR",
+              "MEMBER_END_ERROR",
+              "COORDINATE_TRANSFORM_ERROR",
+              "LOAD_CASE_MAPPING_ERROR",
+              "COMBINATION_RULE_ERROR",
+              "SOLVER_NUMERIC_DIFFERENCE",
+              "ROUNDING_DISPLAY_DIFFERENCE",
+              "MISSING_OUTPUT",
+              "EXTRA_OUTPUT",
+              "STALE_OUTPUT",
+              "UNSUPPORTED_FEATURE",
+              "UNKNOWN_REQUIRES_EVIDENCE"
+            ]
+          },
+          "evidence_basis": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "comparison_row": { "type": "object" }
+        }
+      }
+    }
+  }
+}

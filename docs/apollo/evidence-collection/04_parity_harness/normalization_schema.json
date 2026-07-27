@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "apollo.parity.schemas.v1",
+  "title": "EA-04 Parity Raw and Canonical Result Documents",
+  "oneOf": [
+    { "$ref": "#/$defs/rawDocument" },
+    { "$ref": "#/$defs/canonicalDocument" }
+  ],
+  "$defs": {
+    "parityRow": {
+      "type": "object",
+      "required": [
+        "entity_type",
+        "entity_id",
+        "load_case_id",
+        "combination_id",
+        "coordinate_context",
+        "dof",
+        "member_end",
+        "quantity",
+        "unit",
+        "internal_value",
+        "display_value",
+        "internal_precision",
+        "display_precision",
+        "feature"
+      ],
+      "properties": {
+        "entity_type": { "enum": ["node", "member", "material", "support"] },
+        "entity_id": { "type": "string" },
+        "load_case_id": { "type": "string" },
+        "combination_id": { "type": "string" },
+        "coordinate_context": { "enum": ["global", "local", "support"] },
+        "dof": { "type": "string" },
+        "member_end": { "enum": ["", "I", "J"] },
+        "quantity": { "type": "string" },
+        "unit": { "type": "string" },
+        "internal_value": { "type": "string" },
+        "display_value": { "type": "string" },
+        "internal_precision": { "type": "integer", "minimum": 0 },
+        "display_precision": { "type": "integer", "minimum": 0 },
+        "feature": { "type": "string" }
+      }
+    },
+    "exclusionRecord": {
+      "type": "object",
+      "required": ["side", "source_key", "canonical_key", "reason", "classification"],
+      "properties": {
+        "side": { "enum": ["spacer", "apollo"] },
+        "source_key": { "type": "string" },
+        "canonical_key": { "type": "string" },
+        "reason": { "type": "string" },
+        "classification": { "const": "UNSUPPORTED_FEATURE" }
+      }
+    },
+    "rawDocument": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "producer",
+        "producer_version",
+        "producer_build",
+        "executable_sha256",
+        "model_identity",
+        "model_version",
+        "source_artifact_sha256",
+        "stale",
+        "evidence_label",
+        "rows"
+      ],
+      "properties": {
+        "schema_version": { "const": "apollo.parity.raw.v1" },
+        "producer": { "enum": ["spacer", "apollo"] },
+        "producer_version": { "type": "string", "minLength": 1 },
+        "producer_build": { "type": "string", "minLength": 1 },
+        "executable_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "model_identity": { "type": "string", "minLength": 1 },
+        "model_version": { "type": "string", "minLength": 1 },
+        "source_artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "stale": { "type": "boolean" },
+        "evidence_label": { "type": "string" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/parityRow" }
+        }
+      }
+    },
+    "canonicalDocument": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "producer",
+        "producer_version",
+        "producer_build",
+        "executable_sha256",
+        "model_identity",
+        "model_version",
+        "source_artifact_sha256",
+        "raw_sha256",
+        "mapping_sha256",
+        "raw_file_byte_sha256",
+        "mapping_file_byte_sha256",
+        "stale",
+        "evidence_label",
+        "rows",
+        "exclusions"
+      ],
+      "properties": {
+        "schema_version": { "const": "apollo.parity.canonical.v1" },
+        "producer": { "enum": ["spacer", "apollo"] },
+        "producer_version": { "type": "string" },
+        "producer_build": { "type": "string" },
+        "executable_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "model_identity": { "type": "string" },
+        "model_version": { "type": "string" },
+        "source_artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "mapping_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "raw_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "mapping_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "stale": { "type": "boolean" },
+        "evidence_label": { "type": "string" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/parityRow" }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/exclusionRecord" }
+        }
+      }
+    }
+  }
+}

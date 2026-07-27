@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "apollo.parity.mapping.v1",
+  "title": "EA-04 Parity Mapping Document",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "mapping_id",
+    "spacer_model_identity",
+    "apollo_model_identity",
+    "spacer_model_version",
+    "apollo_model_version",
+    "spacer_source_artifact_sha256",
+    "apollo_source_artifact_sha256",
+    "spacer_producer_version",
+    "spacer_producer_build",
+    "spacer_executable_sha256",
+    "apollo_producer_version",
+    "apollo_producer_build",
+    "apollo_executable_sha256",
+    "node_map",
+    "member_map",
+    "material_map",
+    "support_map",
+    "load_case_map",
+    "combination_map",
+    "quantity_map",
+    "coordinate_transforms",
+    "dof_permutation",
+    "member_end_transform",
+    "sign_transform",
+    "quantity_sign_transform",
+    "unit_conversion",
+    "exclusions"
+  ],
+  "properties": {
+    "schema_version": { "const": "apollo.parity.mapping.v1" },
+    "mapping_id": { "type": "string" },
+    "spacer_model_identity": { "type": "string" },
+    "apollo_model_identity": { "type": "string" },
+    "spacer_model_version": { "type": "string" },
+    "apollo_model_version": { "type": "string" },
+    "spacer_source_artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "apollo_source_artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "spacer_producer_version": { "type": "string" },
+    "spacer_producer_build": { "type": "string" },
+    "spacer_executable_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "apollo_producer_version": { "type": "string" },
+    "apollo_producer_build": { "type": "string" },
+    "apollo_executable_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "node_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "member_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "material_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "support_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "load_case_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "combination_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "quantity_map": { "$ref": "#/$defs/sideBijectiveMap" },
+    "coordinate_transforms": { "$ref": "#/$defs/perSideCoordinateTransforms" },
+    "dof_permutation": { "$ref": "#/$defs/perSideDofPermutation" },
+    "member_end_transform": { "$ref": "#/$defs/perSideMemberEndTransform" },
+    "sign_transform": { "$ref": "#/$defs/perSideSignTransform" },
+    "quantity_sign_transform": { "$ref": "#/$defs/perSideQuantitySignTransform" },
+    "unit_conversion": { "$ref": "#/$defs/perSideUnitConversion" },
+    "canonical_display_precision": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["side", "source_key", "reason", "classification"],
+        "properties": {
+          "side": { "enum": ["spacer", "apollo"] },
+          "source_key": { "type": "string" },
+          "reason": { "type": "string" },
+          "classification": { "const": "UNSUPPORTED_FEATURE" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "matrix3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": { "type": "string" }
+      }
+    },
+    "sideBijectiveMap": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": { "type": "object", "additionalProperties": { "type": "string" } },
+        "apollo": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "perSideCoordinateTransforms": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": {
+          "type": "object",
+          "required": ["global", "local", "support"],
+          "properties": {
+            "global": { "$ref": "#/$defs/matrix3" },
+            "local": { "$ref": "#/$defs/matrix3" },
+            "support": { "$ref": "#/$defs/matrix3" }
+          }
+        },
+        "apollo": {
+          "type": "object",
+          "required": ["global", "local", "support"],
+          "properties": {
+            "global": { "$ref": "#/$defs/matrix3" },
+            "local": { "$ref": "#/$defs/matrix3" },
+            "support": { "$ref": "#/$defs/matrix3" }
+          }
+        }
+      }
+    },
+    "perSideDofPermutation": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": {
+          "type": "array",
+          "items": { "enum": ["ux", "uy", "uz", "rx", "ry", "rz"] },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "apollo": {
+          "type": "array",
+          "items": { "enum": ["ux", "uy", "uz", "rx", "ry", "rz"] },
+          "minItems": 6,
+          "maxItems": 6
+        }
+      }
+    },
+    "perSideMemberEndTransform": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": { "$ref": "#/$defs/memberEndSide" },
+        "apollo": { "$ref": "#/$defs/memberEndSide" }
+      }
+    },
+    "memberEndSide": {
+      "type": "object",
+      "required": ["end_map"],
+      "properties": {
+        "swap_ij": { "type": "boolean" },
+        "end_map": {
+          "type": "object",
+          "required": ["I", "J"],
+          "properties": {
+            "I": { "enum": ["I", "J"] },
+            "J": { "enum": ["I", "J"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "description": "end_map must be bijective on I/J (distinct targets)"
+    },
+    "perSideSignTransform": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": { "$ref": "#/$defs/signMap" },
+        "apollo": { "$ref": "#/$defs/signMap" }
+      }
+    },
+    "signMap": {
+      "type": "object",
+      "required": ["ux", "uy", "uz", "rx", "ry", "rz", "fx", "fy", "fz", "mx", "my", "mz"],
+      "properties": {
+        "ux": { "enum": [-1, 1] },
+        "uy": { "enum": [-1, 1] },
+        "uz": { "enum": [-1, 1] },
+        "rx": { "enum": [-1, 1] },
+        "ry": { "enum": [-1, 1] },
+        "rz": { "enum": [-1, 1] },
+        "fx": { "enum": [-1, 1] },
+        "fy": { "enum": [-1, 1] },
+        "fz": { "enum": [-1, 1] },
+        "mx": { "enum": [-1, 1] },
+        "my": { "enum": [-1, 1] },
+        "mz": { "enum": [-1, 1] }
+      },
+      "additionalProperties": false
+    },
+    "perSideQuantitySignTransform": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": { "type": "object", "additionalProperties": { "enum": [-1, 1] } },
+        "apollo": { "type": "object", "additionalProperties": { "enum": [-1, 1] } }
+      }
+    },
+    "unitConversionRule": {
+      "type": "object",
+      "required": ["from_unit", "to_unit", "scale", "offset"],
+      "properties": {
+        "from_unit": { "type": "string" },
+        "to_unit": { "type": "string" },
+        "scale": { "type": "string" },
+        "offset": { "type": "string" }
+      }
+    },
+    "perSideUnitConversion": {
+      "type": "object",
+      "required": ["spacer", "apollo"],
+      "properties": {
+        "spacer": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/unitConversionRule" }
+        },
+        "apollo": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/unitConversionRule" }
+        }
+      },
+      "description": "Keyed by canonical quantity from quantity_map; each side must be non-empty and cover all declared canonical quantities with matching to_unit"
+    }
+  }
+}

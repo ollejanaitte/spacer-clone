@@ -1,0 +1,68 @@
+test_id,test_name,module,requirement_ref,expected_result,notes
+PH-01,tolerance_sha256_binding,test_parity_harness.ToleranceRegisterTest,EA-04 tolerance freeze,committed raw SHA equals canonical sorted SHA,fail-closed on mutation
+PH-02,duplicate_tolerance_key,test_parity_harness.ToleranceRegisterTest,EA-04 tolerance freeze,ParityValidationError on duplicate quantity_key,reject duplicate tolerance rows
+PH-03,unit_conversion,test_parity_harness.UnitConversionTest,EA-04 unit conversion,mm to m scale applied in normalization,explicit from_unit match required
+PH-04,wrong_unit_rejected,test_parity_harness.UnitConversionTest,EA-04 unit conversion,ParityNormalizationError when from_unit mismatches,never infer from magnitude
+PH-05,per_side_sign_inversion,test_parity_harness.SignInversionTest,EA-04 sign transform,per-side sign_transform applied to spacer ux,explicit sign vector only
+PH-06,per_side_dof_permutation,test_parity_harness.DofPermutationTest,EA-04 DOF permutation,per-side dof_permutation reorders source to canonical,ux/uy swap evidence
+PH-07,per_side_ij_swap,test_parity_harness.MemberEndTest,EA-04 member-end transform,swap_ij true with consistent end_map,topology evidence required
+PH-08,swap_ij_inconsistent,test_parity_harness.MemberEndTest,EA-04 member-end transform,ParityValidationError when swap_ij conflicts with end_map,fail-closed
+PH-09,invalid_coordinate_transform,test_parity_harness.CoordinateTransformTest,EA-04 coordinate transform,non-orthonormal matrix rejected,det(R)=+1 gate
+PH-10,valid_identity_transform,test_parity_harness.CoordinateTransformTest,EA-04 coordinate transform,identity matrix passes validation,round-trip orthonormal check
+PH-11,90deg_displacement,test_parity_harness.CoordinateTransformTest,EA-04 vector rotation,non-identity R applied to ux/uy/uz group,complete triplet required
+PH-12,90deg_rotation,test_parity_harness.CoordinateTransformTest,EA-04 vector rotation,non-identity R applied to rx/ry/rz group,complete triplet required
+PH-13,90deg_force,test_parity_harness.CoordinateTransformTest,EA-04 vector rotation,non-identity R applied to fx/fy/fz group,complete triplet required
+PH-14,90deg_moment,test_parity_harness.CoordinateTransformTest,EA-04 vector rotation,non-identity R applied to mx/my/mz group,complete triplet required
+PH-15,incomplete_vector_reject,test_parity_harness.CoordinateTransformTest,EA-04 vector rotation,ParityNormalizationError on incomplete non-identity group,fail-closed
+PH-16,node_member_reorder,test_parity_harness.ReorderMappingTest,EA-04 entity mapping,per-side node_map reorders to canonical N1,bijective maps per producer
+PH-17,full_fixture_pass,test_parity_harness.ComparisonBehaviorTest,EA-04 exact coverage,PASS when spacer==apollo==tolerance keys,exact set equality
+PH-18,near_zero_absolute,test_parity_harness.ComparisonBehaviorTest,EA-04 zero threshold,absolute tolerance when |expected| <= zero_threshold,synthetic near_zero feature
+PH-19,absolute_tolerance_pass,test_parity_harness.ComparisonBehaviorTest,EA-04 absolute tolerance,PASS within 1E-12 absolute bound,internal precision comparison
+PH-20,relative_tolerance_fail,test_parity_harness.ComparisonBehaviorTest,EA-04 relative tolerance,FAIL when relative error exceeds bound,away from zero rule
+PH-21,worst_case_utilization,test_parity_harness.ComparisonBehaviorTest,EA-04 worst case,highest utilization_ratio quantity reported,not dimensional absolute error
+PH-22,exact_tolerance_coverage,test_parity_harness.ComparisonBehaviorTest,EA-04 exact coverage,FAIL when spacer keys != tolerance keys,reject partial coverage false PASS
+PH-23,unused_tolerance_reject,test_parity_harness.ComparisonBehaviorTest,EA-04 exact coverage,FAIL when tolerance has unused rows,reject unused tolerance
+PH-24,missing_output,test_parity_harness.ComparisonBehaviorTest,EA-04 symmetric coverage,MISSING_OUTPUT when apollo lacks spacer key,left-only fails
+PH-25,extra_output,test_parity_harness.ComparisonBehaviorTest,EA-04 symmetric coverage,EXTRA_OUTPUT when apollo has spacer-only key,right-only fails
+PH-26,display_rounding_diff,test_parity_harness.ComparisonBehaviorTest,EA-04 display precision,ROUNDING_DISPLAY_DIFFERENCE with rounding_difference field,internal PASS display FAIL
+PH-27,deterministic_sorted_rerun,test_parity_harness.ComparisonBehaviorTest,EA-04 deterministic rerun,same sorted quantity_key order regardless of input order,sorted keys
+PH-28,exclusion_blocks_compare,test_parity_harness.ExclusionPropagationTest,EA-04 exclusions,parity_pass false when exclusions propagate from normalization,exact source_key
+PH-29,exclusion_exact_source_key,test_parity_harness.ExclusionPropagationTest,EA-04 exclusions,wrong source_key does not exclude row,exact key match only
+PH-30,duplicate_raw_key,test_parity_harness.ValidationRejectionTest,EA-04 duplicate rejection,ParityValidationError on duplicate raw keys,fail-closed
+PH-31,version_mismatch,test_parity_harness.ValidationRejectionTest,EA-04 version binding,ParityValidationError when model_version mismatches mapping,hash/version gate
+PH-32,executable_sha_mismatch,test_parity_harness.ValidationRejectionTest,EA-04 executable binding,ParityValidationError when executable_sha256 mismatches mapping,per-side binding
+PH-33,producer_build_mismatch,test_parity_harness.ValidationRejectionTest,EA-04 build binding,ParityValidationError when producer_build mismatches mapping,per-side binding
+PH-34,stale_raw_rejected,test_parity_harness.ValidationRejectionTest,EA-04 stale output,ParityNormalizationError when stale true,STALE_OUTPUT gate
+PH-35,tolerance_mutation_rejected,test_parity_harness.ValidationRejectionTest,EA-04 tolerance freeze,ParityComparisonError on wrong tolerance SHA,exact --tolerance-freeze-sha256
+PH-36,mapping_sha_mismatch,test_parity_harness.ValidationRejectionTest,EA-04 mapping identity,ParityComparisonError when spacer/apollo mapping_sha256 differ,reject version mixing
+PH-37,classifier_no_unit_guess,test_parity_harness.ClassifierTest,EA-04 classifier,never UNIT_CONVERSION_ERROR without unit_evidence,magnitude alone insufficient
+PH-38,unit_classification_evidence,test_parity_harness.ClassifierTest,EA-04 classifier,UNIT_CONVERSION_ERROR only with unit_evidence fields,explicit evidence basis
+PH-39,exclusive_write,test_parity_harness.NegativePathTest,EA-04 exclusive writes,ExclusiveWriteError on second write,no overwrite
+PH-40,symlink_input_reject,test_parity_harness.NegativePathTest,EA-04 source read-only,PathSafetyError on symlink input path,symlink rejected
+PH-41,hash_binding_mismatch,test_parity_harness.NegativePathTest,EA-04 raw SHA binding,ParityValidationError on expected SHA mismatch,document SHA binding
+PH-42,noninvertible_coordinate,test_parity_harness.NegativePathTest,EA-04 coordinate transform,det(R)=-1 matrix rejected,COORDINATE_TRANSFORM_ERROR precursor
+PH-43,compare_cli_tolerance_required,test_parity_harness.CliTest,EA-04 compare CLI,nonzero exit when validation fails,--tolerance-freeze-sha256 required
+PH-44,normalize_cli_byte_shas,test_parity_harness.CliTest,EA-04 normalize CLI,--expected-raw-sha256 and --expected-mapping-sha256 required,required byte SHA flags
+PH-45,render_verdicts,test_parity_harness.RenderReportTest,EA-04 verdicts,parity_harness COMPLETE and actual parity BLOCKED,verdict separation
+PH-46,zero_threshold_eval,test_parity_harness.EvaluateComparisonTest,EA-04 zero threshold,absolute rule when |expected| <= zero_threshold,Decimal evaluation with utilization
+PH-47,tolerance_raw_canonical_equal,test_parity_harness.ToleranceRegisterTest,EA-04 tolerance register,on-disk bytes SHA equals canonical CSV SHA,sorted register
+PH-48,per_side_unit_conversion,test_parity_harness.UnitConversionTest,EA-04 per-side unit conversion,spacer kN and apollo N normalize to same canonical N,per-side from_unit
+PH-49,internal_value_not_quantized,test_parity_harness.ComparisonBehaviorTest,EA-04 normalization precision,internal_value preserves full Decimal string,internal_precision metadata only
+PH-50,sub_internal_precision_tolerance,test_parity_harness.ComparisonBehaviorTest,EA-04 internal comparison,sub-precision difference tolerance-evaluated not rounded,false equality prevented
+PH-51,display_precision_mismatch,test_parity_harness.ComparisonBehaviorTest,EA-04 display precision,FAIL when spacer/apollo display_precision differ without mapping override,no min() selection
+PH-52,min_precision_hidden_mismatch,test_parity_harness.ComparisonBehaviorTest,EA-04 display precision,ROUNDING_DISPLAY_DIFFERENCE at canonical precision 6,min precision no longer hides mismatch
+PH-53,exclusion_per_side,test_parity_harness.ExclusionPropagationTest,EA-04 per-side exclusions,apollo exclusion does not exclude spacer rows,side+source_key
+PH-54,exclusion_merge_both_sides,test_parity_harness.ExclusionPropagationTest,EA-04 exclusion merge,identical source_key on both sides yields two exclusion records,merge key includes side
+PH-55,canonical_byte_sha_required,test_parity_harness.ValidationRejectionTest,EA-04 canonical SHA fields,ParityValidationError when raw_file_byte_sha256 missing,required canonical fields
+PH-56,solver_numeric_requires_mapping,test_parity_harness.ClassifierTest,EA-04 classifier,SOLVER_NUMERIC_DIFFERENCE requires mapping binding evidence,no unbound inference
+PH-57,compare_cli_byte_shas,test_parity_harness.CliTest,EA-04 compare CLI,nonzero exit without expected canonical/mapping/raw byte SHAs,required compare byte SHA flags
+PH-58,quantity_map_alias,test_parity_harness.QuantityMapTest,EA-04 quantity_map,different producer quantity names map to same canonical quantity,bijective per-side quantity_map
+PH-59,provenance_forged_transform,test_parity_harness.ProvenanceSealTest,EA-04 provenance seal,ParityComparisonError on post-normalize value mutation,mandatory re-normalization
+PH-60,provenance_model_mutation,test_parity_harness.ProvenanceSealTest,EA-04 provenance seal,ParityComparisonError on canonical model_identity mutation,identity binding in compare
+PH-61,provenance_source_mutation,test_parity_harness.ProvenanceSealTest,EA-04 provenance seal,ParityComparisonError on source_artifact_sha256 mutation,source binding in compare
+PH-62,provenance_raw_hash_mismatch,test_parity_harness.ProvenanceSealTest,EA-04 provenance seal,ParityComparisonError on raw byte SHA mismatch,fail-closed byte binding
+PH-63,input_checksums_raw_shas,test_parity_harness.ProvenanceSealTest,EA-04 comparison report,input_checksums records raw and canonical byte SHAs,provenance audit trail
+PH-64,non_bijective_member_end,test_parity_harness.MemberEndTest,EA-04 member-end transform,ParityValidationError on non-bijective end_map,bijective I/J required
+PH-65,dof_swap_distinct_values,test_parity_harness.DofPermutationTest,EA-04 DOF permutation,ux/uy values swap with distinct inputs,movement asserted
+PH-66,ij_swap_distinct_values,test_parity_harness.MemberEndTest,EA-04 member-end transform,I/J values swap with distinct inputs,movement asserted
+PH-67,e2e_cli_pretty_json,test_parity_harness.CliTest,EA-04 end-to-end CLI,pretty JSON normalize both sides then compare PASS,synthetic NOT_ACTUAL_SPACER_PARITY

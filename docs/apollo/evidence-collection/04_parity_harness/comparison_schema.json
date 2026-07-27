@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "apollo.parity.comparison.v1",
+  "title": "EA-04 Parity Comparison Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "harness_version",
+    "overall_verdict",
+    "parity_pass",
+    "tolerance_freeze_sha256",
+    "input_checksums",
+    "rows",
+    "exclusions",
+    "exclusion_blocks_pass"
+  ],
+  "properties": {
+    "schema_version": { "const": "apollo.parity.comparison.v1" },
+    "harness_version": { "type": "string" },
+    "overall_verdict": { "enum": ["PASS", "FAIL"] },
+    "parity_pass": { "type": "boolean" },
+    "actual_spacer_parity_verdict": { "type": "string" },
+    "tolerance_freeze_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "input_checksums": {
+      "type": "object",
+      "required": [
+        "spacer_canonical_file_byte_sha256",
+        "apollo_canonical_file_byte_sha256",
+        "spacer_raw_file_byte_sha256",
+        "apollo_raw_file_byte_sha256",
+        "mapping_file_byte_sha256"
+      ],
+      "properties": {
+        "spacer_canonical_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "apollo_canonical_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "spacer_raw_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "apollo_raw_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "mapping_file_byte_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "comparison_count": { "type": "integer", "minimum": 0 },
+    "failures": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_key", "reason", "classification", "side"],
+        "properties": {
+          "source_key": { "type": "string" },
+          "canonical_key": { "type": "string" },
+          "reason": { "type": "string" },
+          "classification": { "const": "UNSUPPORTED_FEATURE" },
+          "side": { "enum": ["spacer", "apollo"] }
+        }
+      }
+    },
+    "exclusion_blocks_pass": { "type": "boolean" },
+    "worst_case": {
+      "type": ["object", "null"],
+      "properties": {
+        "quantity_key": { "type": "string" },
+        "absolute_error": { "type": "string" },
+        "relative_error": { "type": "string" },
+        "utilization_ratio": { "type": "string" }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["quantity_key", "verdict"],
+        "properties": {
+          "quantity_key": { "type": "string" },
+          "verdict": { "enum": ["PASS", "FAIL"] },
+          "spacer_present": { "type": "boolean" },
+          "apollo_present": { "type": "boolean" },
+          "internal_verdict": { "enum": ["PASS", "FAIL"] },
+          "display_verdict": { "enum": ["PASS", "FAIL"] },
+          "canonical_display_precision": { "type": "integer" },
+          "rounding_difference": { "type": "string" },
+          "utilization_ratio": { "type": "string" },
+          "tolerance_bound": { "type": "string" },
+          "classification_hint": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
