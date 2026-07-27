@@ -1,11 +1,26 @@
-# Apollo Design Standards — DS-00 / DS-01 / DS-02 / DS-03 / DS-04 / DS-05 Integration Authority
+# Apollo Design Standards — DS-00 through DS-09 Final Integration Authority
 
 **Authority:** CURRENT INTEGRATION AUTHORITY (design standards)
-**Stage:** DS-00 governance baseline + DS-01 Target Standard freeze + DS-02 JIS gap classification + DS-03 Material Properties freeze + DS-04 Loads / Factors / Combinations freeze + DS-05 Performance Verification / Limit State freeze
+**Stage:** DS-00 governance through DS-09 final design freeze and numeric-release decision
 **Date:** 2026-07-27
-**Repository baseline:** `274a2f20bd794f396d9ed09741b26974374a84e4`
+**DS-09 authoring baseline:** `3791630414f5f81e34ef5808b16cbc9c5145eefa`
 
-`docs/apollo/design-standards/` is the **single current integration authority** for Apollo design-standard governance, adoption status, source priority, and evidence requirements. DS-00 establishes rules and pointers; DS-01 freezes Target Standard identity, edition/errata baseline, philosophy, and Phase 1 volume roles; DS-02 classifies JIS gap placeholders into a governed register without resolving identities; DS-05 classifies performance requirements and verification shells without adopting equations or resistance numerics. No stage copies standards text, adopts numerics, or amends historical artifacts.
+`docs/apollo/design-standards/` is the **single current integration authority** for Apollo design-standard governance, adoption status, source priority, and evidence requirements. DS-00 establishes rules and pointers; DS-01 through DS-05 freeze the source-governance and engineering-design shells without adopting blocked numerics; DS-06 defines the external Analyzer machine-evidence contract; DS-07 governs Golden cases; DS-08 freezes SPACER comparison rules; and DS-09 integrates traceability, independent review, unresolved evidence, and the release decision. No stage copies standards text, invents machine evidence, approves circular expected values, or amends historical artifacts.
+
+## Final design-freeze decision
+
+```text
+DS06_FINAL_VERDICT: DOCUMENT_COMPLETE_WITH_MACHINE_EVIDENCE_BLOCKERS
+DS07_FINAL_VERDICT: DOCUMENT_COMPLETE_WITH_GOLDEN_EVIDENCE_BLOCKERS
+DS08_FINAL_VERDICT: DOCUMENT_COMPLETE_WITH_PARITY_EVIDENCE_BLOCKERS
+DS09_FINAL_VERDICT: COMPLETE_WITH_EVIDENCE_BLOCKERS
+DOCUMENT_COMPLETION_VERDICT: COMPLETE
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+DIRECT_MAIN_GOVERNANCE_VERDICT: PASS
+OVERALL_VERDICT: DESIGN_FREEZE_COMPLETE_WITH_EVIDENCE_BLOCKERS
+```
+
+Document completion and numeric release are separate decisions. The current design-document system is complete, but product numeric implementation remains prohibited until the conjunctive [numeric release gate](09_verification/numeric_release_gate.md) passes. Every open source or machine fact is retained in the [unresolved evidence requirements](09_verification/unresolved_evidence_requirements.csv) with the required artifact, acquisition method, tool/license, acceptance criteria, owner, and implementation impact.
 
 ## DS-00 proceed verdict
 
@@ -88,7 +103,7 @@ DS05_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
 
 DS-05 creates performance requirement (28 rows), limit state (23 rows), verification equation (23 rows), limit value (11 rows), and deemed-to-satisfy (2 rows) registers for Phase 1 under R7 Ver2.00+20260331 partial-factor method. **Zero** adopted verification numerics or equations; no R7 verification clause/table visually confirmed. Phase 1A analysis separated from Phase 1B verification; user formal DS-05 primary structure vs Step1 narrow boundary conflict recorded unresolved (ready_requirements.csv has no phase column). See [phase1_verification_scope.md](05_verification/phase1_verification_scope.md).
 
-Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, DS-04, or DS-05; full freeze gate is **DS-09**. See [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md), [target_standard_freeze.md](01_target_standard/target_standard_freeze.md), [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md), [material_source_report.md](03_materials/material_source_report.md), [load_governance_report.md](04_loads/load_governance_report.md), and [phase1_verification_scope.md](05_verification/phase1_verification_scope.md).
+DS-09 authorizes the **document freeze only**. It does not close the DS-01 through DS-08 evidence blockers and does not authorize numeric implementation. See [final_design_freeze_report.md](09_verification/final_design_freeze_report.md) and [final_verdicts.md](09_verification/final_verdicts.md).
 
 ## Governance documents
 
@@ -149,9 +164,59 @@ Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, D
 | [deemed_to_satisfy_register.csv](05_verification/deemed_to_satisfy_register.csv) | Generic blocked deemed-to-satisfy shells (2 rows) |
 | [phase1_verification_scope.md](05_verification/phase1_verification_scope.md) | DS-05 scope, Phase 1A/1B separation, evidence packages, conflict record, and verdict set |
 
+## DS-06 Analyzer Physical I/O documents
+
+| Document | Role |
+|----------|------|
+| [analyzer_physical_io_spec.md](06_analyzer/analyzer_physical_io_spec.md) | Fail-closed physical invocation, file, process, failure, cleanup, and authority specification |
+| [analyzer_identity_register.csv](06_analyzer/analyzer_identity_register.csv) | Seven non-conflated repository, IF3, external, SPACER, and placeholder identities |
+| [analyzer_probe_matrix.csv](06_analyzer/analyzer_probe_matrix.csv) | Twenty-two positive, negative, locale, concurrency, recovery, and mapping probes |
+| [analyzer_evidence_register.csv](06_analyzer/analyzer_evidence_register.csv) | Evidence authority and machine-observation register |
+| [unit_coordinate_dof_convention.md](06_analyzer/unit_coordinate_dof_convention.md) | Unit, coordinate, DOF, I/J-end, force, moment, and reaction evidence rules |
+| [analyzer_error_exit_license_matrix.csv](06_analyzer/analyzer_error_exit_license_matrix.csv) | Sixteen success/failure/license scenarios |
+| [analyzer_blocker_register.csv](06_analyzer/analyzer_blocker_register.csv) | Ten exact machine-evidence packages |
+
+## DS-07 Golden governance documents
+
+| Document | Role |
+|----------|------|
+| [golden_governance.md](07_golden/golden_governance.md) | Golden types, purposes, custody, independence, reproducibility, and approval rules |
+| [golden_case_catalog.csv](07_golden/golden_case_catalog.csv) | Sixteen candidate analytical, reference, regression, export, and negative cases |
+| [analytical_golden_spec.md](07_golden/analytical_golden_spec.md) | Independent analytical derivation requirements |
+| [reference_software_golden_spec.md](07_golden/reference_software_golden_spec.md) | Fixed-version reference-software evidence requirements |
+| [approved_regression_golden_spec.md](07_golden/approved_regression_golden_spec.md) | Parent-oracle and immutable regression promotion requirements |
+| [tolerance_policy.md](07_golden/tolerance_policy.md) | Separate absolute, relative, zero, display, internal, rounding, and conversion rules |
+| [golden_approval_register.csv](07_golden/golden_approval_register.csv) | One approval row per candidate; all remain not approved |
+| [golden_blocker_register.csv](07_golden/golden_blocker_register.csv) | Eight exact Golden evidence packages |
+
+## DS-08 SPACER parity documents
+
+| Document | Role |
+|----------|------|
+| [spacer_parity_scope.md](08_spacer_parity/spacer_parity_scope.md) | Fifteen parity classifications and comparison boundary |
+| [semantic_parity_spec.md](08_spacer_parity/semantic_parity_spec.md) | Identity, topology, material, support, load, and combination semantics |
+| [numeric_parity_spec.md](08_spacer_parity/numeric_parity_spec.md) | Fail-closed symmetric numeric comparison algorithm |
+| [sign_coordinate_member_end_conventions.md](08_spacer_parity/sign_coordinate_member_end_conventions.md) | Predeclared coordinate, DOF, I/J, sign, unit, and equilibrium transformations |
+| [spacer_version_evidence_register.csv](08_spacer_parity/spacer_version_evidence_register.csv) | SPACER, STATICS, Analyzer, Apollo, and comparator identity evidence |
+| [parity_case_catalog.csv](08_spacer_parity/parity_case_catalog.csv) | One case per parity classification; actual comparisons remain blocked |
+| [parity_approval_register.csv](08_spacer_parity/parity_approval_register.csv) | Separate semantic/numeric approval controls |
+| [parity_blocker_register.csv](08_spacer_parity/parity_blocker_register.csv) | Eight exact parity evidence packages |
+
+## DS-09 Final verification documents
+
+| Document | Role |
+|----------|------|
+| [requirement_traceability_matrix.csv](09_verification/requirement_traceability_matrix.csv) | DS-00 through DS-09 source, implementation aperture, validation, Golden, parity, and blocker traceability |
+| [independent_review_matrix.csv](09_verification/independent_review_matrix.csv) | Adverse-hypothesis review and residual-blocker record |
+| [source_gap_register.csv](09_verification/source_gap_register.csv) | Non-additive source-gap roll-ups |
+| [unresolved_evidence_requirements.csv](09_verification/unresolved_evidence_requirements.csv) | Exact remaining evidence artifacts, acquisition, tools/licenses, acceptance, owners, and impact |
+| [numeric_release_gate.md](09_verification/numeric_release_gate.md) | Conjunctive numeric-release predicates and allowed/prohibited next work |
+| [final_design_freeze_report.md](09_verification/final_design_freeze_report.md) | Integrated coverage, review, validation, and document-freeze decision |
+| [final_verdicts.md](09_verification/final_verdicts.md) | Canonical DS-06 through DS-09 and final verdict tokens |
+
 ## User-supervisor decision (summary)
 
-Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001), material properties classified at DS-03 by [DEC-DS03-0001](00_governance/decision_ledger.md#dec-ds03-0001), loads classified at DS-04 by [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001), verification classified at DS-05 by [DEC-DS05-0001](00_governance/decision_ledger.md#dec-ds05-0001):
+Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001), material properties classified at DS-03 by [DEC-DS03-0001](00_governance/decision_ledger.md#dec-ds03-0001), loads classified at DS-04 by [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001), and verification classified at DS-05 by [DEC-DS05-0001](00_governance/decision_ledger.md#dec-ds05-0001). DS-06 through DS-09 add evidence acquisition and release governance without changing those decisions:
 
 | Field | Value | DS-01 adoption status |
 |-------|-------|----------------------|
@@ -163,7 +228,7 @@ TARGET_STANDARD **selection** is `ADOPTED`. Official naming strings and ISBN fac
 
 ## Historical artifacts (immutable — do not edit)
 
-| Artifact class | Path | Integration role (DS-00 / DS-01 / DS-02 / DS-03 / DS-04 / DS-05) |
+| Artifact class | Path | Integration role (DS-00 through DS-09) |
 |----------------|------|------------------|
 | Handoff package | [../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/](../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/README.md) | Rank-1 immutable intake evidence |
 | Step 1 planning | [../step1/README.md](../step1/README.md) | Historical planning synthesis (pre–DS-00 standards baseline) |
