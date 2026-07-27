@@ -40,7 +40,7 @@ Full blocker mapping: [00_governance/blocker_dependency_matrix.md](00_governance
 
 ```text
 AP00_PHASE_STATUS: COMPLETE
-AP00_P04_STATUS: PENDING_STAGING
+AP00_P04_STATUS: MERGED (#205 @ 570fd73)
 ```
 
 Final closure: [final/ap00_final_report.md](final/ap00_final_report.md) | [final/ap00_verdicts.md](final/ap00_verdicts.md)
