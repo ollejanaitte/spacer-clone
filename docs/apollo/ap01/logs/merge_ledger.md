@@ -15,4 +15,4 @@
 
 | Unit | Mode | Commit SHA | Status | Notes |
 |------|------|------------|--------|-------|
-| AP-01 | direct-main push | TBD | PENDING | Non-numeric BSDD contracts |
+| AP-01 | direct-main push | `5f8c781a48c6b75ba7c9e78301c1dc0a75ea41f7` | **PUSHED** | Non-numeric BSDD contracts |
