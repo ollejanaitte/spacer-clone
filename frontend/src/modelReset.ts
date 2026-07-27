@@ -1,8 +1,21 @@
 import type { ProjectModel } from "./types";
 
 export function resetProjectModelContents(project: ProjectModel): ProjectModel {
+  const {
+    analysisResults: _analysisResults,
+    liner: _liner,
+    ...projectWithoutOptionalResults
+  } = project;
+  const {
+    eigen: _eigen,
+    responseSpectrum: _responseSpectrum,
+    influence: _influence,
+    timeHistory: _timeHistory,
+    ...analysisSettings
+  } = project.analysisSettings;
+
   return {
-    ...project,
+    ...projectWithoutOptionalResults,
     nodes: [],
     materials: [],
     sections: [],
@@ -13,15 +26,7 @@ export function resetProjectModelContents(project: ProjectModel): ProjectModel {
     memberLoads: [],
     massCases: [],
     groundMotions: [],
-    analysisSettings: {
-      ...project.analysisSettings,
-      eigen: undefined,
-      responseSpectrum: undefined,
-      influence: undefined,
-      timeHistory: undefined,
-    },
-    analysisResults: undefined,
-    liner: undefined,
+    analysisSettings,
     linerTrace: [],
   };
 }

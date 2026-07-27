@@ -344,7 +344,8 @@ export function App() {
 
   const deleteLinerModel = useCallback((modelId: string) => {
     if (!window.confirm(ja.liner.list.deleteConfirm)) return;
-    commitProject({ ...project, liner: undefined, linerTrace: [] });
+    const { liner: _liner, ...projectWithoutLiner } = project;
+    commitProject({ ...projectWithoutLiner, linerTrace: [] });
     navigatePro(resolveLinerUiRoutePath("liner.list"));
     log(`LINER model ${modelId} deleted.`);
   }, [project, navigatePro]);

@@ -55,6 +55,12 @@ describe("resetProjectModelContents", () => {
     expect(reset.sections).toEqual([]);
     expect(reset.linerTrace).toEqual([]);
     expect(reset.liner).toBeUndefined();
+    expect("liner" in reset).toBe(false);
+    expect("analysisResults" in reset).toBe(false);
+    expect("eigen" in reset.analysisSettings).toBe(false);
+    expect("responseSpectrum" in reset.analysisSettings).toBe(false);
+    expect("influence" in reset.analysisSettings).toBe(false);
+    expect("timeHistory" in reset.analysisSettings).toBe(false);
     expect(linerDraftFromProject(reset)).toBeUndefined();
   });
 

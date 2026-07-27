@@ -47,6 +47,17 @@ describe("saved analysis request builders", () => {
     );
   });
 
+  it("omits nested undefined object properties from the backend payload", () => {
+    const project = createDefaultProject();
+    project.analysisResults = { timeHistory: undefined };
+
+    const backendProject = buildBackendProject(project);
+
+    expect(backendProject.analysisResults).toEqual({});
+    expect("timeHistory" in (backendProject.analysisResults ?? {})).toBe(false);
+    expect(project.analysisResults).toEqual({ timeHistory: undefined });
+  });
+
   it("sends response spectrum options at the endpoint top level with a backend-compatible project", () => {
     const project = createDefaultProject();
     project.analysisSettings.responseSpectrum = {
