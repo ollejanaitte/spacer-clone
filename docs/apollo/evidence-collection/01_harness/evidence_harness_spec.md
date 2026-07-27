@@ -1,8 +1,8 @@
 # EA-01 Evidence Acquisition Harness Specification
 
-**Work item:** EA-01 (STAGE-00 evidence tooling)  
-**Checkpoint context:** EA-00 inventory at `7386bdf8be5b11cb38d445e32ddce16464fdb3c1`  
-**Harness version:** `1.0.0`  
+**Work item:** EA-01 (STAGE-00 evidence tooling)
+**Checkpoint context:** EA-00 inventory at `7386bdf8be5b11cb38d445e32ddce16464fdb3c1`
+**Harness version:** `1.0.0`
 **Schema version:** `apollo.evidence.bundle.v1`
 
 ## Purpose

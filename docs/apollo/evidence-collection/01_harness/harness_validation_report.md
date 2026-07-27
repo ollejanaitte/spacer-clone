@@ -1,8 +1,8 @@
 # EA-01 Harness Validation Report
 
-**Validation completed (UTC):** 2026-07-27T14:59:40Z  
-**Validators:** Codex Supervisor, Composer 2.5 Worker, Cursor Grok 4.5 independent reviewer  
-**Harness version:** `1.0.0`  
+**Validation completed (UTC):** 2026-07-27T14:59:40Z
+**Validators:** Codex Supervisor, Composer 2.5 Worker, Cursor Grok 4.5 independent reviewer
+**Harness version:** `1.0.0`
 **Schema version:** `apollo.evidence.bundle.v1`
 
 ## Validation scope
