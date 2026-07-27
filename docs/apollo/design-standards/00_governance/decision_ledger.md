@@ -1,6 +1,6 @@
-# Decision Ledger — DS-00 / DS-01 / DS-02 / DS-03
+# Decision Ledger — DS-00 / DS-01 / DS-02 / DS-03 / DS-04
 
-**Authority:** DS-00 / DS-01 / DS-02 / DS-03 / CURRENT INTEGRATION
+**Authority:** DS-00 / DS-01 / DS-02 / DS-03 / DS-04 / CURRENT INTEGRATION
 **Date:** 2026-07-27
 
 All DS-stage decisions are recorded here. Historical Step 1 decisions remain in [step1 decision_log.md](../../step1/00_governance/decision_log.md) unchanged.
@@ -309,3 +309,79 @@ User-supervisor direction requires DS-03 to classify Phase 1 material property r
 | BLK-S1-005 | Material property adoption | **Register established** — adoption forbidden until per-row JIS + 道示 chain |
 
 DTR-02, DTR-04 remain open. DTR-03 disposition unchanged from DS-02.
+
+---
+
+## DEC-DS04-0001
+
+| Field | Value |
+|-------|-------|
+| **ID** | DEC-DS04-0001 |
+| **Date** | 2026-07-27 |
+| **Decider** | User-supervisor |
+| **Authored by** | Composer 2.5 (DS-04 documentation worker, supervisor-directed) |
+| **Decision effect** | `ADOPTED` — applies only to load model, load-side factor, combination, and simultaneity register structure and classification; **no load numeric value adopted** |
+
+### Decision
+
+Establish governed DS-04 loads / factors / combinations freeze for Phase 1 archetype (straight, constant-depth, non-composite RC deck on steel plate girder, simple single span, 90° skew, ~4–6 main girders, static linear). Record fail-closed disposition: all load-side numeric fields blank; zero R7 load clause/table locators visually confirmed; RBS/handoff evidence `REFERENCE_ONLY` for numerics and model identities.
+
+| Facet | DS-04 status | Conditions / remaining blockers |
+|-------|--------------|----------------------------------|
+| Load model register (14 rows) | `ADOPTED` | Register structure and classification only; `phase1_status` exact enum + separate `adoption_status` |
+| Load factor register (10 rows) | `ADOPTED` | One candidate shell per physical load + one impact adjustment; all `factor_value` blank; `design_situation_unspecified` / `limit_state_unspecified` |
+| Load combination register (1 shell row) | `ADOPTED` | Generic blocked shell; no `component_load_id` or `coefficient` at DS-04 |
+| Simultaneity/exclusivity rules (5 rule-class shells) | `ADOPTED` | No load-pair assumptions; all coefficients blocked |
+| Structural self-weight / RC deck dead | `PHASE1_REQUIRED` phase1_status | `adoption_status` blocked — DS-03 unit-weight chain + DS-06 I/O |
+| Live load model | `PHASE1_REQUIRED` phase1_status | Model identity and magnitudes `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` |
+| Dynamic/impact adjustment | `REFERENCE_ONLY` phase1_status (LM-DS04-007 pointer) | Sole numeric owner LF-DS04-010 on LM-DS04-006; double application forbidden |
+| Temperature / wind / support movement | `PHASE1_OPTIONAL` phase1_status | Evidence-gated — static linear does not exclude |
+| Construction-stage taxonomy | `FUTURE_PHASE` phase1_status | Distinct from erection-stage `OUT_OF_SCOPE` |
+| Seismic / fatigue / erection-stage analysis | `OUT_OF_SCOPE` phase1_status | Phase 1 archetype exclusion |
+| Load-side partial factors | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | All LF rows blocked |
+| Combination coefficients | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | All COMB rows blocked |
+| Simultaneity / exclusivity / favorability | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | All SX rows blocked |
+| Sign / max-min / zero-inclusion policies | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-06 sign mapping also blocked (BLK-S1-011) |
+| Resistance partial factors | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-05 — separately gated |
+| Adopted sourced load numerics | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Count = 0 at DS-04 |
+| Full design freeze | `OUT_OF_SCOPE` for DS-04 | DS-09 gate |
+
+### DS-04 verdict tokens
+
+```text
+DS04_LOAD_MODEL_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS04_LOAD_FACTOR_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS04_COMBINATION_FACTOR_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS04_SIMULTANEITY_EXCLUSIVITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS04_SIGN_RULE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS04_PERFORMANCE_TRACEABILITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS04_UNSOURCED_NUMERICS_VERDICT: PASS
+DS04_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+### Rationale
+
+User-supervisor direction requires DS-04 to classify Phase 1 load requirements without inventing live-load model identities, magnitudes, impact/dynamic factors, load factors, combination coefficients, simultaneity rules, or favorable/unfavorable provisions. DS-04 creates the registers, taxonomy, fail-closed policies, and evidence packages; preserves fail-closed discipline from BLK-S1-004 and DEC-DS01-0001 partial-factor method. No row receives an adopted numeric value at DS-04. Post-audit correction: `phase1_status`/`adoption_status` separated; dynamic/impact single ownership via LF-DS04-010; generic combination and rule-class shells only; DS-05 resistance mapping blocks performance traceability.
+
+### Evidence anchors
+
+| Evidence | Locator | SHA256 / note |
+|----------|---------|---------------|
+| DS-04 load model register | [load_model_register.csv](../04_loads/load_model_register.csv) | 14 rows; 0 non-empty numerics |
+| DS-04 load factor register | [load_factor_register.csv](../04_loads/load_factor_register.csv) | 10 rows; 0 non-empty factor_value |
+| DS-04 combination register | [load_combination_register.csv](../04_loads/load_combination_register.csv) | 1 shell row; no component_load_id or coefficient |
+| DS-04 simultaneity rules | [simultaneity_and_exclusivity_rules.csv](../04_loads/simultaneity_and_exclusivity_rules.csv) | 5 rule-class shells |
+| DS-04 governance report | [load_governance_report.md](../04_loads/load_governance_report.md) | — |
+| DS-03 material register | [material_properties_register.csv](../03_materials/material_properties_register.csv) | Unit weights for dead loads — not factors |
+| DS-01 edition baseline | [edition_and_errata_register.csv](../01_target_standard/edition_and_errata_register.csv) | Ver2.00 + 20260331 overlay |
+| Handoff READY RDY-002/003 | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) | Location memos only |
+| Repository baseline | `c89d2cecf0877334668b9cea109121887c206896` | DS-04 authoring baseline |
+
+### DTR disposition at DS-04
+
+| Ref | Topic | DS-04 disposition |
+|-----|-------|-------------------|
+| DTR-05 | Numeric freeze scope per READY topic | **Load registers created** — load numerics remain blocked; resistance factors still DS-05 |
+| BLK-S1-004 | Numeric auto-determination | **Registers established** — adoption forbidden until per-row 道示 chain |
+
+DTR-02, DTR-04 remain open. JIS identities (DTR-03) unchanged from DS-02. Material numerics (DS-03) unchanged.
