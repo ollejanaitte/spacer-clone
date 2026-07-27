@@ -1,0 +1,9 @@
+{
+  "apollo_from_unit": "m",
+  "apollo_internal_value": "0.001",
+  "canonical_unit": "m",
+  "case_id": "DR-13",
+  "conversion_ok": true,
+  "spacer_from_unit": "mm",
+  "spacer_internal_value": "0.001"
+}

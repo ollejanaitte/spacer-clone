@@ -1,0 +1,5 @@
+{
+  "case_id": "DR-07",
+  "error": "schema_version must be 'apollo.evidence.bundle.v1'; harness_version is required; missing or invalid string field: run_id; missing or invalid string field: created_at_utc; missing or invalid string field: completed_at_utc; workspace_path must be a non-empty string; software_identity must be an object; invocation must be an object; process_result must be an object; input_artifacts must be a list; manifests must be an object; output_artifacts must be a list; stale_detection must be an object",
+  "rejected": true
+}

@@ -1,0 +1,7 @@
+{
+  "case_id": "DR-12",
+  "i_internal_value": "200",
+  "j_internal_value": "100",
+  "swap_ij": true,
+  "swap_observed": true
+}

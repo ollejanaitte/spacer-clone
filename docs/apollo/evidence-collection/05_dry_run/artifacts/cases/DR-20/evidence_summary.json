@@ -1,0 +1,12 @@
+{
+  "cancelled": false,
+  "comparison_verdict": null,
+  "exit_code": 0,
+  "harness_version": "1.0.0",
+  "input_count": 1,
+  "output_count": 1,
+  "schema_version": "apollo.evidence.bundle.v1",
+  "stale_detected": false,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "331d26d6d8f862e46ba900811be8a7a1e4dbaa229b14c99becfd5e5151490d95"
+}

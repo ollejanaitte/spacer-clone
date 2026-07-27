@@ -1,0 +1,6 @@
+{
+  "case_id": "DR-18",
+  "classification_count": 1,
+  "comparison_overall_verdict": "FAIL",
+  "first_classification": "SOLVER_NUMERIC_DIFFERENCE"
+}

@@ -1,0 +1,5 @@
+{
+  "case_id": "DR-15",
+  "overall_verdict": "FAIL",
+  "worst_case_quantity_key": "node|N1|LC1||global|ux||displacement|"
+}

@@ -1,0 +1,78 @@
+{
+  "case_id": "DR-02",
+  "deterministic": true,
+  "differences": [],
+  "projection_a": {
+    "cancellation_reason": null,
+    "cancelled": false,
+    "command": [
+      "/usr/bin/python3",
+      "-c",
+      "print('deterministic')"
+    ],
+    "cwd": "workspace",
+    "exit_code": 0,
+    "harness_version": "1.0.0",
+    "input_artifacts": [
+      [
+        "inputs/fixture_input.txt",
+        "ad833b19752e92e4eabb4a8f2cdec28ecb071665c09829baf1fe1de63b2ebf08"
+      ]
+    ],
+    "output_artifacts": [
+      [
+        "outputs/result.txt",
+        "5ae3ebfa2655d3db1626b245e1679c458ba0e779c2ddb6c7715bfa1ebf41de42"
+      ]
+    ],
+    "software_identity": {
+      "harness_version": "1.0.0",
+      "platform_machine": "x86_64",
+      "platform_release": "6.8.0-134-generic",
+      "platform_system": "Linux",
+      "platform_version": "#134~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 30 14:05:04 UTC ",
+      "python_implementation": "CPython",
+      "python_version": "3.10.12"
+    },
+    "stale_detected": false,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "d7db64ea975b7b358e3d68dcbc82437869a410a29b9da7de119c422abf61c3d0"
+  },
+  "projection_b": {
+    "cancellation_reason": null,
+    "cancelled": false,
+    "command": [
+      "/usr/bin/python3",
+      "-c",
+      "print('deterministic')"
+    ],
+    "cwd": "workspace",
+    "exit_code": 0,
+    "harness_version": "1.0.0",
+    "input_artifacts": [
+      [
+        "inputs/fixture_input.txt",
+        "ad833b19752e92e4eabb4a8f2cdec28ecb071665c09829baf1fe1de63b2ebf08"
+      ]
+    ],
+    "output_artifacts": [
+      [
+        "outputs/result.txt",
+        "5ae3ebfa2655d3db1626b245e1679c458ba0e779c2ddb6c7715bfa1ebf41de42"
+      ]
+    ],
+    "software_identity": {
+      "harness_version": "1.0.0",
+      "platform_machine": "x86_64",
+      "platform_release": "6.8.0-134-generic",
+      "platform_system": "Linux",
+      "platform_version": "#134~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 30 14:05:04 UTC ",
+      "python_implementation": "CPython",
+      "python_version": "3.10.12"
+    },
+    "stale_detected": false,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "d7db64ea975b7b358e3d68dcbc82437869a410a29b9da7de119c422abf61c3d0"
+  },
+  "verdict": "deterministic"
+}

@@ -1,0 +1,11 @@
+{
+  "case_id": "DR-06",
+  "stale_detected": true,
+  "stale_entries": [
+    {
+      "reason": "unchanged_since_before_manifest",
+      "relative_path": "outputs/preexisting.out",
+      "sha256": "4a6689419b00b11700c9b6246bcfa8936c8f5e1e824db3a7e57030e2d1c1a684"
+    }
+  ]
+}

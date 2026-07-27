@@ -1,0 +1,9 @@
+{
+  "case_id": "DR-08",
+  "comparison_count": 26,
+  "failure_count": 0,
+  "independent_review_sha256": "65cec6d7370ccdb35b13961632d9e0e20a5687a2e575af183679727d6a363cf4",
+  "independent_review_source": "docs/apollo/evidence-collection/02_analytical_golden/independent_review_expected.csv",
+  "overall_verdict": "PASS",
+  "tolerance_freeze_sha256": "4dd51a92df802a94fec4629858019afc451b90605e68ce56185aa083abbd910a"
+}

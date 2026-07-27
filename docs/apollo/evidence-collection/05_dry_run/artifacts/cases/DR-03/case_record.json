@@ -1,0 +1,17 @@
+{
+  "case_id": "DR-03",
+  "deterministic": false,
+  "differences": [
+    "field:command",
+    "field:stdout_sha256"
+  ],
+  "normalized_representation": {
+    "deterministic": false,
+    "differences": [
+      "field:command",
+      "field:stdout_sha256"
+    ],
+    "verdict": "nondeterministic"
+  },
+  "verdict": "nondeterministic"
+}

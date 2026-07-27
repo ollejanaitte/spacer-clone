@@ -1,0 +1,8 @@
+{
+  "actual_spacer_parity_verdict": "BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT",
+  "case_id": "DR-20",
+  "evidence_exit_code": 0,
+  "evidence_summary_path": "docs/apollo/evidence-collection/05_dry_run/artifacts/cases/DR-20/evidence_summary.json",
+  "parity_harness_verdict": "COMPLETE",
+  "parity_report_path": "docs/apollo/evidence-collection/05_dry_run/artifacts/cases/DR-20/parity_report.json"
+}

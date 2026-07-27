@@ -1,0 +1,8 @@
+{
+  "cancellation_reason": "timeout",
+  "cancelled": true,
+  "case_id": "DR-05",
+  "cleanup_attempted": true,
+  "cleanup_succeeded": true,
+  "exit_code": 124
+}

@@ -1,0 +1,13 @@
+{
+  "case_id": "DR-16",
+  "classification_hints": [
+    null,
+    null,
+    null,
+    null,
+    "MISSING_OUTPUT",
+    null,
+    null
+  ],
+  "overall_verdict": "FAIL"
+}
