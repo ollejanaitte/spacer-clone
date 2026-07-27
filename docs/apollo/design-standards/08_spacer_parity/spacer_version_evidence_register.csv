@@ -1,0 +1,6 @@
+version_evidence_id,identity,role,version,build,executable_or_service,checksum,evidence,adoption_status,blocker_id
+SPV-001,SPACER product shell,Reference product,REQUIRED,REQUIRED,REQUIRED,REQUIRED,Local manual is reference-only,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,PAR-BLK-001
+SPV-002,SPACER STATICS module,Reference analysis module,REQUIRED,REQUIRED,REQUIRED,REQUIRED,Local manual names the module but provides no installed-machine identity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,PAR-BLK-001
+SPV-003,Historical APOLLO Analyzer,Historical analysis subsystem,REQUIRED,REQUIRED,REQUIRED,REQUIRED,DS-06 identity remains blocked,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,PAR-BLK-001
+SPV-004,Apollo repository,Comparison implementation,98778e9054c0003be9b7eedf3e53ab48ace222fe,Git commit,Repository source tree,98778e9054c0003be9b7eedf3e53ab48ace222fe,Git baseline,PROJECT_SPECIFIC,
+SPV-005,Repository semantic parity tool,Implementation candidate,spacer-clone-semantic-parity-8.4,Git baseline,TypeScript module,98778e9054c0003be9b7eedf3e53ab48ace222fe,frontend/src/bridgeDefinition/semanticParity/generatedModelParity.ts,REFERENCE_ONLY,PAR-BLK-006

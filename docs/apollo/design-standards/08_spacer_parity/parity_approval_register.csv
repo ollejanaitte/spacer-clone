@@ -1,0 +1,16 @@
+parity_approval_id,parity_case_id,proposal_status,reviewer_and_approver,approval_status,decision_id,primary_blocker_id,review_date,notes,proposer,evidence_manifest_id,evidence_manifest_checksum
+PAR-APR-001,PAR-001,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-002,NOT_APPLICABLE,Native semantic evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-002,PAR-002,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-002,NOT_APPLICABLE,Topology evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-003,PAR-003,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-007,NOT_APPLICABLE,Material evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-004,PAR-004,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-003,NOT_APPLICABLE,Support basis evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-005,PAR-005,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-003,NOT_APPLICABLE,Stiffness and member mapping evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-006,PAR-006,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-004,NOT_APPLICABLE,Load-case evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-007,PAR-007,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-004,NOT_APPLICABLE,Combination evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-008,PAR-008,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-005,NOT_APPLICABLE,Full numeric evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-009,PAR-009,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-005,NOT_APPLICABLE,Displacement evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-010,PAR-010,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-005,NOT_APPLICABLE,Member-force evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-011,PAR-011,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-005,NOT_APPLICABLE,Reaction evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-012,PAR-012,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-003,NOT_APPLICABLE,Sign transformation evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-013,PAR-013,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-008,NOT_APPLICABLE,Report evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-014,PAR-014,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-008,NOT_APPLICABLE,Drawing evidence required,Documentation Worker,REQUIRED,REQUIRED
+PAR-APR-015,PAR-015,EVIDENCE_INCOMPLETE,Independent Reviewer,NOT_APPROVED,NONE,PAR-BLK-008,NOT_APPLICABLE,File evidence required,Documentation Worker,REQUIRED,REQUIRED
