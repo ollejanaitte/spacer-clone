@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apollo.local/schemas/evidence_bundle_schema.json",
+  "title": "Apollo Evidence Bundle Manifest",
+  "description": "Schema for EA-01 evidence acquisition harness bundle manifests. Semantic validation is enforced by validate_evidence_bundle.py; this schema documents required structure.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "harness_version",
+    "run_id",
+    "created_at_utc",
+    "completed_at_utc",
+    "workspace_path",
+    "software_identity",
+    "input_artifacts",
+    "invocation",
+    "process_result",
+    "manifests",
+    "output_artifacts",
+    "stale_detection"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "apollo.evidence.bundle.v1"
+    },
+    "harness_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "completed_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "software_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "harness_version",
+        "python_version",
+        "python_implementation",
+        "platform_system",
+        "platform_release",
+        "platform_machine",
+        "platform_version"
+      ],
+      "properties": {
+        "harness_version": { "type": "string" },
+        "python_version": { "type": "string" },
+        "python_implementation": { "type": "string" },
+        "platform_system": { "type": "string" },
+        "platform_release": { "type": "string" },
+        "platform_machine": { "type": "string" },
+        "platform_version": { "type": "string" }
+      }
+    },
+    "input_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/input_artifact" }
+    },
+    "invocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "cwd", "environment"],
+      "properties": {
+        "command": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "cwd": { "type": "string" },
+        "environment": { "type": "object" }
+      }
+    },
+    "process_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "cwd",
+        "environment",
+        "started_at_utc",
+        "ended_at_utc",
+        "exit_code",
+        "cancelled",
+        "cleanup_attempted",
+        "cleanup_succeeded",
+        "stdout",
+        "stderr"
+      ],
+      "properties": {
+        "command": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "cwd": { "type": "string" },
+        "environment": { "type": "object" },
+        "started_at_utc": { "type": "string" },
+        "ended_at_utc": { "type": "string" },
+        "exit_code": { "type": "integer" },
+        "cancelled": { "type": "boolean" },
+        "timeout_seconds": { "type": ["number", "null"] },
+        "cancellation_reason": { "type": ["string", "null"] },
+        "cleanup_attempted": { "type": "boolean" },
+        "cleanup_succeeded": { "type": "boolean" },
+        "cleanup_detail": { "type": ["string", "null"] },
+        "stdout": { "$ref": "#/$defs/stream_capture" },
+        "stderr": { "$ref": "#/$defs/stream_capture" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "cancelled": { "const": true } }, "required": ["cancelled"] },
+          "then": {
+            "required": ["cancellation_reason", "cleanup_attempted", "cleanup_succeeded"],
+            "properties": {
+              "cancellation_reason": { "type": "string", "minLength": 1 },
+              "cleanup_attempted": { "const": true }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "cleanup_succeeded": { "const": true } }, "required": ["cleanup_succeeded"] },
+          "then": {
+            "properties": {
+              "cleanup_attempted": { "const": true }
+            }
+          }
+        }
+      ]
+    },
+    "manifests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "after"],
+      "properties": {
+        "before": { "$ref": "#/$defs/file_manifest" },
+        "after": { "$ref": "#/$defs/file_manifest" }
+      }
+    },
+    "output_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/output_artifact" }
+    },
+    "stale_detection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluated_at_utc", "outputs_prefix", "stale_detected", "stale_entries"],
+      "properties": {
+        "evaluated_at_utc": { "type": "string" },
+        "outputs_prefix": { "type": "string", "const": "outputs/" },
+        "stale_detected": { "type": "boolean" },
+        "stale_entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["relative_path", "sha256", "reason"],
+            "properties": {
+              "relative_path": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "input_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_path",
+        "workspace_relative_path",
+        "sha256",
+        "size_bytes",
+        "read_only"
+      ],
+      "properties": {
+        "source_path": { "type": "string" },
+        "workspace_relative_path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "read_only": { "type": "boolean" }
+      }
+    },
+    "output_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_relative_path", "sha256", "size_bytes"],
+      "properties": {
+        "workspace_relative_path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "stream_capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relative_path", "sha256", "size_bytes", "utf8_summary"],
+      "properties": {
+        "relative_path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "utf8_summary": { "type": "string" }
+      }
+    },
+    "file_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "root_path", "captured_at_utc", "entries"],
+      "properties": {
+        "label": { "type": "string" },
+        "root_path": { "type": "string" },
+        "captured_at_utc": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["relative_path", "sha256", "size_bytes", "mtime_utc"],
+            "properties": {
+              "relative_path": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+              "size_bytes": { "type": "integer", "minimum": 0 },
+              "mtime_utc": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

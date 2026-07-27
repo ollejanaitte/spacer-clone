@@ -1,0 +1,28 @@
+test_id,test_name,module,requirement_ref,expected_result,notes
+T-01,run_id_uniqueness,test_harness.RunIdUniquenessTest,EA-01 run_id,cryptographically unique 64-hex ids across 256 draws,secrets.token_hex(32)
+T-02,input_checksum,test_harness.InputChecksumTest,EA-01 input SHA-256,copied read-only input checksum matches manifest record,chmod removes owner write bit
+T-03,output_checksum,test_harness.OutputChecksumTest,EA-01 output SHA-256,output artifact checksum matches on-disk file after validation,validate_evidence_bundle workspace check
+T-04,empty_output,test_harness.EmptyOutputTest,EA-01 empty output,valid bundle with zero output artifacts,exit code may still be zero
+T-05,missing_command,test_harness.MissingCommandTest,EA-01 command capture,ValueError when command list is empty,fail-closed before subprocess
+T-06,nonzero_exit,test_harness.NonzeroExitTest,EA-01 exit code,exit_code 7 recorded for failing child process,no success inference from capture alone
+T-07,stdout_stderr,test_harness.StdoutStderrTest,EA-01 byte-preserving streams,stdout and stderr bytes and sha256 preserved separately,stderr captured independently
+T-08,stale_output,test_harness.StaleOutputTest,EA-01 stale detection,pre-seeded outputs/ file flagged unchanged_since_before_manifest even when mtime changes,sha256-only stale rule
+T-09,repeated_identical,test_harness.RepeatedIdenticalTest,EA-01 repeated-run comparison,verdict deterministic for identical command argv cwd-policy outputs and harness identity,projection normalizes workspace cwd
+T-10,repeated_different,test_harness.RepeatedDifferentTest,EA-01 repeated-run comparison,verdict nondeterministic when command argv differs even if stdout matches,projection compares exact command list
+T-11,malformed_manifest,test_harness.MalformedManifestTest,EA-01 fail-closed validation,BundleValidationError for wrong schema and malformed JSON,no third-party schema library
+T-12,path_traversal_rejection,test_harness.PathTraversalRejectionTest,EA-01 path safety,PathSafetyError for .. segments absolute paths and escape paths,resolve_within_root guard
+T-13,overwrite_rejection,test_harness.OverwriteRejectionTest,EA-01 non-overwriting workspace,WorkspaceExistsError on duplicate 64-hex run_id directory,destructive overwrite rejected
+T-14,encoding_handling,test_harness.EncodingHandlingTest,EA-01 UTF-8-safe summaries,invalid UTF-8 replaced in summaries without altering raw bytes,stdout.bin remains byte-preserving
+T-15,cancellation_record,test_harness.CancellationRecordTest,EA-01 timeout/cancellation,cancelled true with cancellation_reason timeout exit_code 124 cleanup_attempted and cleanup_succeeded,Popen process-group termination
+T-16,run_id_format,test_harness.RunIdFormatTest,EA-01 run_id validation,ValueError for non-64-hex or uppercase run_id,validate_run_id enforced at create and validate
+T-17,symlink_input_rejection,test_harness.SymlinkInputRejectionTest,EA-01 input containment,PathSafetyError when input source is a symlink,assert_regular_file rejects symlinks
+T-18,symlink_escape_rejection,test_harness.SymlinkEscapeRejectionTest,EA-01 workspace path safety,PathSafetyError when workspace artifact resolves outside root via symlink,resolve_workspace_artifact_path before hashing
+T-19,exclusive_writes,test_harness.ExclusiveWriteTest,EA-01 exclusive evidence writes,ExclusiveWriteError on JSON bytes CSV finalize summary and recapture paths,no-overwrite fail-closed
+T-20,duplicate_path_rejection,test_harness.DuplicatePathRejectionTest,EA-01 manifest and artifact uniqueness,BundleValidationError for duplicate relative_path or workspace_relative_path,manifest_index and artifact list guards
+T-21,harness_version_validation,test_harness.HarnessVersionValidationTest,EA-01 harness_version binding,BundleValidationError when harness_version or software_identity.harness_version mismatch,semantic validator enforces constant
+T-22,invocation_command_consistency,test_harness.InvocationCommandConsistencyTest,EA-01 invocation/process binding,BundleValidationError when invocation.command differs from process_result.command,semantic consistency check
+T-23,workspace_direct_child,test_harness.WorkspaceDirectChildTest,EA-01 workspace layout,BundleValidationError when run_id does not match workspace directory name,resolved workspace must be direct child of base
+T-24,orphan_child_cleanup,test_harness.OrphanChildCleanupTest,EA-01 process-group cleanup,bounded wait for child pid file cleanup_succeeded true and no /proc child PID remains on Linux,scoped temp child PID check
+T-25,secret_redaction,test_harness.SecretRedactionTest,EA-01 secret-safe environment,secret-pattern keys redacted even when allowlisted,PASSWORD TOKEN API_KEY patterns always [REDACTED]
+T-26,forged_stale_detection,test_harness.ForgedStaleDetectionTest,EA-01 stale binding,BundleValidationError when stale_detected false or outputs_prefix nope/ contradicts before/after manifest recomputation with fixed outputs/ prefix,evaluated_at_utc may differ
+T-27,validate_cli_fail_closed,test_harness.ValidateCliFailClosedTest,EA-01 validator CLI,exit code 1 writes exclusive --output valid false without traceback on path safety failure,PathSafetyError and BundleValidationError both handled
