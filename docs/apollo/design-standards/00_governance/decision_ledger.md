@@ -1,6 +1,6 @@
-# Decision Ledger — DS-00 / DS-01 / DS-02
+# Decision Ledger — DS-00 / DS-01 / DS-02 / DS-03
 
-**Authority:** DS-00 / DS-01 / DS-02 / CURRENT INTEGRATION
+**Authority:** DS-00 / DS-01 / DS-02 / DS-03 / CURRENT INTEGRATION
 **Date:** 2026-07-27
 
 All DS-stage decisions are recorded here. Historical Step 1 decisions remain in [step1 decision_log.md](../../step1/00_governance/decision_log.md) unchanged.
@@ -236,3 +236,76 @@ User-supervisor direction requires DS-02 to disposition JIS gaps without inventi
 | DTR-03 | JIS gap disposition (JIS-001…JIS-034 rows) | **Classified with evidence blockers** — register created; identities unresolved |
 
 DTR-02, DTR-04, DTR-05 remain open for later DS stages.
+
+---
+
+## DEC-DS03-0001
+
+| Field | Value |
+|-------|-------|
+| **ID** | DEC-DS03-0001 |
+| **Date** | 2026-07-27 |
+| **Decider** | User-supervisor |
+| **Authored by** | Composer 2.5 (DS-03 documentation worker, supervisor-directed) |
+| **Decision effect** | `ADOPTED` — applies only to material property register, applicability matrix, source hierarchy, and E–G–ν consistency policy; **no material numeric value adopted** |
+
+### Decision
+
+Establish governed DS-03 material properties freeze for Phase 1 archetype (straight, constant-depth, non-composite RC deck on steel plate girder, simple single span, 90° skew, ~4–6 main girders, static linear). Record fail-closed disposition: all numeric material property rows `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` with blank `value` and blank `unit`; zero JIS identities inferred beyond DS-02; RBS/handoff/schema evidence `REFERENCE_ONLY` for numerics.
+
+| Facet | DS-03 status | Conditions / remaining blockers |
+|-------|--------------|----------------------------------|
+| Material properties register (44 rows) | `ADOPTED` | Register structure and classification only |
+| Applicability matrix (18 groups) | `ADOPTED` | Phase 1A/1B mapping recorded |
+| Steel properties (E, G, ν, γ, strengths, grade, thickness) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | JIS + 道示 II chain; BLK-S1-002; BLK-S1-005 |
+| RC deck concrete properties | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | 道示 III clause map blocked; human visual confirmation |
+| Reinforcing steel properties | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | JIS rebar identity blocked per DS-02 |
+| High-strength bolt properties | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | JIS + 道示 II/V; handoff splice_bolt memos location-only |
+| Welding material matching | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | JIS welding standards + base metal grade |
+| Bearing boundary materials | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | 道示 V boundary topics; clause map blocked |
+| Corrosion / protection | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | 道示 I/II durability/coating locators blocked |
+| Creep / shrinkage (static linear Phase 1) | Phase 1A matrix `NOT_APPLICABLE`; register `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` pending DS-05 applicability |
+| Weld toughness (`MAT-DS03-033`) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` pending DS-05 applicability and R7/JIS evidence |
+| Fatigue / composite connector materials | `OUT_OF_SCOPE` | Phase 1 archetype exclusion |
+| R2 鋼便覧 / DDB / schema_draft.json | `REFERENCE_ONLY` | Not numeric authority |
+| JIS chain (JIS-001…JIS-034) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Unchanged from DEC-DS02-0001 |
+| Adopted sourced material numerics | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Count = 0 at DS-03 |
+| Resistance partial factors on materials | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-05 — separately gated from DS-03 source adoption |
+| Full design freeze | `OUT_OF_SCOPE` for DS-03 | DS-09 gate |
+
+### DS-03 verdict tokens
+
+```text
+DS03_MATERIAL_COVERAGE_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_VALUE_SOURCE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS03_UNIT_VERDICT: PASS_FOR_GOVERNANCE_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_APPLICABILITY_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_INTERNAL_CONSISTENCY_VERDICT: PASS
+DS03_UNSOURCED_NUMERICS_VERDICT: PASS
+DS03_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+### Rationale
+
+User-supervisor direction requires DS-03 to classify Phase 1 material property requirements without inventing JIS identities, edition-specific clause locators, or numeric constants. DS-03 creates the register, applicability matrix, and source report; records exact evidence packages per material category; and preserves fail-closed discipline from BLK-S1-005 and DEC-DS02-0001. No row receives an adopted numeric value at DS-03.
+
+### Evidence anchors
+
+| Evidence | Locator | SHA256 / note |
+|----------|---------|---------------|
+| DS-03 material register | [material_properties_register.csv](../03_materials/material_properties_register.csv) | 44 rows; 0 non-empty value |
+| DS-03 applicability matrix | [material_applicability_matrix.csv](../03_materials/material_applicability_matrix.csv) | 18 groups |
+| DS-03 source report | [material_source_report.md](../03_materials/material_source_report.md) | — |
+| DS-02 JIS register | [jis_source_register.csv](../02_jis/jis_source_register.csv) | All rows blocked |
+| DS-01 edition baseline | [edition_and_errata_register.csv](../01_target_standard/edition_and_errata_register.csv) | Ver2.00 + 20260331 overlay |
+| Immutable handoff gap CSV | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) | `6172927555afe28f442d6ea94c938452bceedfa6809d62d09d6e83f2afdb98fd` |
+| Repository baseline | `9b86881396e806f51d815a4b3308c09bd2d73bc6` | DS-03 authoring baseline |
+
+### DTR disposition at DS-03
+
+| Ref | Topic | DS-03 disposition |
+|-----|-------|-------------------|
+| DTR-05 | Numeric freeze scope per READY topic | **Material register created** — material numerics remain blocked; loads still DS-04 |
+| BLK-S1-005 | Material property adoption | **Register established** — adoption forbidden until per-row JIS + 道示 chain |
+
+DTR-02, DTR-04 remain open. DTR-03 disposition unchanged from DS-02.

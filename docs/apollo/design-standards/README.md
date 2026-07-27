@@ -1,9 +1,9 @@
-# Apollo Design Standards — DS-00 / DS-01 / DS-02 Integration Authority
+# Apollo Design Standards — DS-00 / DS-01 / DS-02 / DS-03 Integration Authority
 
 **Authority:** CURRENT INTEGRATION AUTHORITY (design standards)
-**Stage:** DS-00 governance baseline + DS-01 Target Standard freeze + DS-02 JIS gap classification
+**Stage:** DS-00 governance baseline + DS-01 Target Standard freeze + DS-02 JIS gap classification + DS-03 Material Properties freeze
 **Date:** 2026-07-27
-**Repository baseline:** `128c0cb724270f59ada88b45a11bc1b264a57be4`
+**Repository baseline:** `9b86881396e806f51d815a4b3308c09bd2d73bc6`
 
 `docs/apollo/design-standards/` is the **single current integration authority** for Apollo design-standard governance, adoption status, source priority, and evidence requirements. DS-00 establishes rules and pointers; DS-01 freezes Target Standard identity, edition/errata baseline, philosophy, and Phase 1 volume roles; DS-02 classifies JIS gap placeholders into a governed register without resolving identities. No stage copies standards text, adopts numerics, or amends historical artifacts.
 
@@ -44,7 +44,21 @@ DS02_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
 
 All 34 historical JIS gap rows (JIS-001…JIS-034) are **undifferentiated placeholder slots** in immutable handoff `jis_source_gaps.csv` — not evidence of 34 distinct JIS standards. DS-02 classifies every row as `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` with zero identified JIS numbers. No gap row is resolved at DS-02.
 
-Full design-standard freeze remains **not authorized** at DS-01 or DS-02; full freeze gate is **DS-09**. See [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md), [target_standard_freeze.md](01_target_standard/target_standard_freeze.md), and [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md).
+## DS-03 completion verdict
+
+```text
+DS03_MATERIAL_COVERAGE_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_VALUE_SOURCE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS03_UNIT_VERDICT: PASS_FOR_GOVERNANCE_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_APPLICABILITY_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS03_INTERNAL_CONSISTENCY_VERDICT: PASS
+DS03_UNSOURCED_NUMERICS_VERDICT: PASS
+DS03_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+DS-03 creates the material properties register (44 rows; **zero** adopted numerics) and applicability matrix (18 groups) for Phase 1 steel, RC deck, rebar, bolts, welding, bearing boundary, and corrosion/protection. JIS chain remains blocked per DS-02; RBS/handoff evidence remains location-only. See [material_source_report.md](03_materials/material_source_report.md).
+
+Full design-standard freeze remains **not authorized** at DS-01, DS-02, or DS-03; full freeze gate is **DS-09**. See [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md), [target_standard_freeze.md](01_target_standard/target_standard_freeze.md), [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md), and [material_source_report.md](03_materials/material_source_report.md).
 
 ## Governance documents
 
@@ -54,7 +68,7 @@ Full design-standard freeze remains **not authorized** at DS-01 or DS-02; full f
 | [source_priority_policy.md](00_governance/source_priority_policy.md) | Authority stack; historical vs current integration paths |
 | [adoption_status_model.md](00_governance/adoption_status_model.md) | Allowed adoption statuses and fail-closed rules |
 | [copyright_and_evidence_policy.md](00_governance/copyright_and_evidence_policy.md) | Evidence handling, redistribution, no standards copying |
-| [decision_ledger.md](00_governance/decision_ledger.md) | Supervisor decisions including DEC-DS00-0001, DEC-DS01-0001, and DEC-DS02-0001 |
+| [decision_ledger.md](00_governance/decision_ledger.md) | Supervisor decisions including DEC-DS00-0001, DEC-DS01-0001, DEC-DS02-0001, and DEC-DS03-0001 |
 | [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md) | Integrity anchors, audit summaries, blocker evidence matrix |
 
 ## DS-01 Target Standard documents
@@ -76,9 +90,17 @@ Full design-standard freeze remains **not authorized** at DS-01 or DS-02; full f
 | [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md) | DS-02 gap classification, counts, and verdict set |
 | [jis_version_policy.md](02_jis/jis_version_policy.md) | JIS edition classes; forbids automatic newest-version adoption |
 
+## DS-03 Material Properties documents
+
+| Document | Role |
+|----------|------|
+| [material_properties_register.csv](03_materials/material_properties_register.csv) | Governed per-property material register (44 rows; all numeric values blocked) |
+| [material_applicability_matrix.csv](03_materials/material_applicability_matrix.csv) | Phase 1A/1B property-group applicability (18 groups) |
+| [material_source_report.md](03_materials/material_source_report.md) | DS-03 source hierarchy, policies, evidence packages, and verdict set |
+
 ## User-supervisor decision (summary)
 
-Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001):
+Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001), material properties classified at DS-03 by [DEC-DS03-0001](00_governance/decision_ledger.md#dec-ds03-0001):
 
 | Field | Value | DS-01 adoption status |
 |-------|-------|----------------------|
@@ -90,7 +112,7 @@ TARGET_STANDARD **selection** is `ADOPTED`. Official naming strings and ISBN fac
 
 ## Historical artifacts (immutable — do not edit)
 
-| Artifact class | Path | Integration role (DS-00 / DS-01 / DS-02) |
+| Artifact class | Path | Integration role (DS-00 / DS-01 / DS-02 / DS-03) |
 |----------------|------|------------------|
 | Handoff package | [../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/](../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/README.md) | Rank-1 immutable intake evidence |
 | Step 1 planning | [../step1/README.md](../step1/README.md) | Historical planning synthesis (pre–DS-00 standards baseline) |
