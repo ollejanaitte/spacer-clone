@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { apiClient } from "../api/client";
+import { buildRunAnalysisIf3Metadata } from "../if3";
 import { PropertyPanel } from "../components/PropertyPanel";
 import { ProjectTree } from "../components/ProjectTree";
 import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
@@ -31,7 +32,8 @@ export function ModelComparisonWorkspace({ modelA, onClose }: ModelComparisonWor
     if (!project) return;
     setRunning(side);
     try {
-      const response = await apiClient.runAnalysis(project);
+      const if3 = buildRunAnalysisIf3Metadata(project, { authoritative: true });
+      const response = await apiClient.runAnalysis(project, false, if3);
       if (side === "A") setResultA(response.result);
       else setResultB(response.result);
     } finally {

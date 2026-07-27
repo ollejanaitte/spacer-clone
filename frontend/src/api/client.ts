@@ -1,6 +1,15 @@
 import type { DocumentReference } from "../contracts/documentReference";
 import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
+import {
+  assertAuthoritativeIf3Binding,
+  assertBindingAgainstProject,
+  type RunAnalysisIf3Metadata,
+} from "../if3";
 import type { AnalysisResult, MovingLoadCase, ProjectModel, ResultExports, ValidationResponse } from "../types";
+import { buildBackendProject } from "./buildBackendProject";
+
+export type { RunAnalysisIf3Metadata } from "../if3";
+export { buildBackendProject } from "./buildBackendProject";
 
 export type If3AnalysisSidecar = {
   if3Result?: FrameAnalysisResultResource;
@@ -59,15 +68,6 @@ type AutosaveCandidateResponse = {
 };
 
 const PACKAGED_BACKEND_ORIGIN = "http://127.0.0.1:8000";
-
-export function buildBackendProject(project: ProjectModel): ProjectModel {
-  const { responseSpectrum: _responseSpectrum, ...analysisSettings } =
-    project.analysisSettings;
-  return {
-    ...project,
-    analysisSettings,
-  };
-}
 
 export function resolveApiUrl(
   url: string,
@@ -184,11 +184,32 @@ export const apiClient = {
     });
   },
 
-  runAnalysis(project: ProjectModel, returnCsv = false): Promise<AnalysisRunResponse> {
-    return postJson<AnalysisRunResponse>("/api/analysis/run", {
+  /**
+   * Authoritative App paths must pass `if3` metadata from `buildRunAnalysisIf3Metadata`.
+   * When omitted, the request body stays `{ project, options }` and the backend remains
+   * fail-closed for IF3 normalization (no client-side silent defaults).
+   */
+  runAnalysis(
+    project: ProjectModel,
+    returnCsv = false,
+    if3?: RunAnalysisIf3Metadata,
+  ): Promise<AnalysisRunResponse> {
+    const body: {
+      project: ProjectModel;
+      options: { returnCsv: boolean };
+      if3?: RunAnalysisIf3Metadata;
+    } = {
       project: buildBackendProject(project),
       options: { returnCsv },
-    });
+    };
+
+    if (if3 !== undefined) {
+      assertAuthoritativeIf3Binding(if3);
+      assertBindingAgainstProject(if3, project);
+      body.if3 = if3;
+    }
+
+    return postJson<AnalysisRunResponse>("/api/analysis/run", body);
   },
 
   runEigenAnalysis(project: ProjectModel): Promise<EigenRunResponse> {

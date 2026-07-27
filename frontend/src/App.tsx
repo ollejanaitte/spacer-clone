@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ApiClientError, apiClient, resolveApiUrl, type If3AnalysisSidecar } from "./api/client";
+import { buildRunAnalysisIf3Metadata } from "./if3";
 import type { DocumentReference } from "./contracts/documentReference";
 import type { FrameAnalysisResultResource } from "./contracts/frameAnalysisResultResource";
 import { ProjectTree } from "./components/ProjectTree";
@@ -411,7 +412,8 @@ export function App() {
         log("Input check NG. Analysis cannot be run.");
         return;
       }
-      const response = await apiClient.runAnalysis(project, true);
+      const if3 = buildRunAnalysisIf3Metadata(project, { authoritative: true });
+      const response = await apiClient.runAnalysis(project, true, if3);
       setResult(response.result);
       applyIf3AnalysisSidecar(response, setIf3Result, setPersistedResultRef);
       setResultExports(response.csv);

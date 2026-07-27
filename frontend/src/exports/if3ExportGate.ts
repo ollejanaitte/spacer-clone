@@ -12,6 +12,7 @@ import {
   type If3ResultGateResult,
 } from "../results/if3ResultGate";
 import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
+import { resolveProjectModelSourceDocument } from "../if3";
 import type { AnalysisResult, ProjectModel, ResultExports } from "../types";
 
 export type If3ExportGateInput = If3ResultGateInput & {
@@ -61,6 +62,7 @@ export function buildAppIf3ExportGateInput(input: {
     availabilityStatus:
       input.availabilityStatus ??
       (input.if3Result ? resolveTransientIf3AvailabilityStatus(input.if3Result) : "MISSING"),
+    sourceDocument: resolveProjectModelSourceDocument(input.project),
     project: input.project,
     activeLoadCase: input.activeLoadCase,
   };

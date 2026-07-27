@@ -1,3 +1,4 @@
+import { denyLegacyOpenResultPdfReport } from "../if3/legacyPdfBypassGuard";
 import { buildResultViewModel } from "../results/resultViewModel";
 import type { AnalysisResult, ProjectModel } from "../types";
 
@@ -438,16 +439,12 @@ export function buildResultPdfReportHtml(report: ResultPdfReport): string {
 </html>`;
 }
 
-export function openResultPdfReport(project: ProjectModel, result: AnalysisResult, activeLoadCase: string): void {
-  const report = buildResultPdfReport(project, result, activeLoadCase);
-  const html = buildResultPdfReportHtml(report);
-  const reportUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-  const printWindow = window.open(reportUrl, "_blank", "width=1024,height=768");
-  if (!printWindow) {
-    URL.revokeObjectURL(reportUrl);
-    throw new Error("PDF report window could not be opened.");
-  }
-  setTimeout(() => URL.revokeObjectURL(reportUrl), 60000);
+export function openResultPdfReport(
+  _project: ProjectModel,
+  _result: AnalysisResult,
+  _activeLoadCase: string,
+): void {
+  denyLegacyOpenResultPdfReport();
 }
 
 function renderSection(section: ReportSection): string {
