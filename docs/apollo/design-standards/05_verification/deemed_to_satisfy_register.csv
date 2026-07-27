@@ -1,0 +1,3 @@
+rule_id,requirement_id,rule_summary,prerequisites,limitations,alternative_method_allowed,approval_requirement,source,adoption_status,evidence_package,notes
+DTS-DS05-001,PR-DS05-001,,,,,,道路橋示方書・同解説,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,PKG-R7-V; PKG-SCOPE-P1B,All fields blank intentionally — no deemed-to-satisfy rule adopted; do not imply alternative method exists
+DTS-DS05-002,PR-DS05-019,,,,,,道路橋示方書・同解説,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,PKG-R7-V; PKG-DS03,All fields blank intentionally — no deemed-to-satisfy rule adopted; do not imply alternative method exists

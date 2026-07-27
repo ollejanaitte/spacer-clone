@@ -1,11 +1,11 @@
-# Apollo Design Standards — DS-00 / DS-01 / DS-02 / DS-03 / DS-04 Integration Authority
+# Apollo Design Standards — DS-00 / DS-01 / DS-02 / DS-03 / DS-04 / DS-05 Integration Authority
 
 **Authority:** CURRENT INTEGRATION AUTHORITY (design standards)
-**Stage:** DS-00 governance baseline + DS-01 Target Standard freeze + DS-02 JIS gap classification + DS-03 Material Properties freeze + DS-04 Loads / Factors / Combinations freeze
+**Stage:** DS-00 governance baseline + DS-01 Target Standard freeze + DS-02 JIS gap classification + DS-03 Material Properties freeze + DS-04 Loads / Factors / Combinations freeze + DS-05 Performance Verification / Limit State freeze
 **Date:** 2026-07-27
-**Repository baseline:** `c89d2cecf0877334668b9cea109121887c206896`
+**Repository baseline:** `274a2f20bd794f396d9ed09741b26974374a84e4`
 
-`docs/apollo/design-standards/` is the **single current integration authority** for Apollo design-standard governance, adoption status, source priority, and evidence requirements. DS-00 establishes rules and pointers; DS-01 freezes Target Standard identity, edition/errata baseline, philosophy, and Phase 1 volume roles; DS-02 classifies JIS gap placeholders into a governed register without resolving identities. No stage copies standards text, adopts numerics, or amends historical artifacts.
+`docs/apollo/design-standards/` is the **single current integration authority** for Apollo design-standard governance, adoption status, source priority, and evidence requirements. DS-00 establishes rules and pointers; DS-01 freezes Target Standard identity, edition/errata baseline, philosophy, and Phase 1 volume roles; DS-02 classifies JIS gap placeholders into a governed register without resolving identities; DS-05 classifies performance requirements and verification shells without adopting equations or resistance numerics. No stage copies standards text, adopts numerics, or amends historical artifacts.
 
 ## DS-00 proceed verdict
 
@@ -73,7 +73,22 @@ DS04_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
 
 DS-04 creates load model (14 rows), load-side factor (10 rows), combination shell (1 row), and simultaneity/exclusivity rule-class shells (5 rows) for Phase 1 under R7 Ver2.00+20260331 partial-factor method. **Zero** adopted load numerics; no R7 load clause/table visually confirmed. `phase1_status` and `adoption_status` are separate columns on load models. See [load_governance_report.md](04_loads/load_governance_report.md).
 
-Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, or DS-04; full freeze gate is **DS-09**. See [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md), [target_standard_freeze.md](01_target_standard/target_standard_freeze.md), [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md), [material_source_report.md](03_materials/material_source_report.md), and [load_governance_report.md](04_loads/load_governance_report.md).
+## DS-05 completion verdict
+
+```text
+DS05_PERFORMANCE_REQUIREMENT_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS05_LIMIT_STATE_COVERAGE_VERDICT: PASS_FOR_SUPERVISOR_CANDIDATE_SET_WITH_EXACT_EVIDENCE_BLOCKERS
+DS05_VERIFICATION_EQUATION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_LIMIT_VALUE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_PARTIAL_FACTOR_APPLICATION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_DEEMED_TO_SATISFY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_PHASE1_SCOPE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+DS-05 creates performance requirement (28 rows), limit state (23 rows), verification equation (23 rows), limit value (11 rows), and deemed-to-satisfy (2 rows) registers for Phase 1 under R7 Ver2.00+20260331 partial-factor method. **Zero** adopted verification numerics or equations; no R7 verification clause/table visually confirmed. Phase 1A analysis separated from Phase 1B verification; user formal DS-05 primary structure vs Step1 narrow boundary conflict recorded unresolved (ready_requirements.csv has no phase column). See [phase1_verification_scope.md](05_verification/phase1_verification_scope.md).
+
+Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, DS-04, or DS-05; full freeze gate is **DS-09**. See [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md), [target_standard_freeze.md](01_target_standard/target_standard_freeze.md), [jis_gap_resolution_report.md](02_jis/jis_gap_resolution_report.md), [material_source_report.md](03_materials/material_source_report.md), [load_governance_report.md](04_loads/load_governance_report.md), and [phase1_verification_scope.md](05_verification/phase1_verification_scope.md).
 
 ## Governance documents
 
@@ -83,7 +98,7 @@ Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, o
 | [source_priority_policy.md](00_governance/source_priority_policy.md) | Authority stack; historical vs current integration paths |
 | [adoption_status_model.md](00_governance/adoption_status_model.md) | Allowed adoption statuses and fail-closed rules |
 | [copyright_and_evidence_policy.md](00_governance/copyright_and_evidence_policy.md) | Evidence handling, redistribution, no standards copying |
-| [decision_ledger.md](00_governance/decision_ledger.md) | Supervisor decisions including DEC-DS00-0001, DEC-DS01-0001, DEC-DS02-0001, DEC-DS03-0001, and DEC-DS04-0001 |
+| [decision_ledger.md](00_governance/decision_ledger.md) | Supervisor decisions including DEC-DS00-0001, DEC-DS01-0001, DEC-DS02-0001, DEC-DS03-0001, DEC-DS04-0001, and DEC-DS05-0001 |
 | [ds00_evidence_baseline.md](00_governance/ds00_evidence_baseline.md) | Integrity anchors, audit summaries, blocker evidence matrix |
 
 ## DS-01 Target Standard documents
@@ -123,9 +138,20 @@ Full design-standard freeze remains **not authorized** at DS-01, DS-02, DS-03, o
 | [simultaneity_and_exclusivity_rules.csv](04_loads/simultaneity_and_exclusivity_rules.csv) | Five rule-class shells (simultaneity, exclusivity, favorability, envelope, zero-inclusion) |
 | [load_governance_report.md](04_loads/load_governance_report.md) | DS-04 taxonomy, fail-closed policies, evidence packages, and verdict set |
 
+## DS-05 Performance Verification / Limit State documents
+
+| Document | Role |
+|----------|------|
+| [performance_requirement_register.csv](05_verification/performance_requirement_register.csv) | Governed per-requirement register (28 rows; `adoption_status` blocked for PR001–023; OUT_OF_SCOPE for PR024–028) |
+| [limit_state_register.csv](05_verification/limit_state_register.csv) | Limit state coverage per requirement (23 rows) |
+| [verification_equation_register.csv](05_verification/verification_equation_register.csv) | Blocked partial-factor verification shells (23 rows; blank equation forms) |
+| [limit_value_register.csv](05_verification/limit_value_register.csv) | Blocked SLS/limit shells (11 rows; zero limit numerics) |
+| [deemed_to_satisfy_register.csv](05_verification/deemed_to_satisfy_register.csv) | Generic blocked deemed-to-satisfy shells (2 rows) |
+| [phase1_verification_scope.md](05_verification/phase1_verification_scope.md) | DS-05 scope, Phase 1A/1B separation, evidence packages, conflict record, and verdict set |
+
 ## User-supervisor decision (summary)
 
-Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001), material properties classified at DS-03 by [DEC-DS03-0001](00_governance/decision_ledger.md#dec-ds03-0001), loads classified at DS-04 by [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001):
+Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-ds00-0001), closed at DS-01 by [DEC-DS01-0001](00_governance/decision_ledger.md#dec-ds01-0001), JIS gaps classified at DS-02 by [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001), material properties classified at DS-03 by [DEC-DS03-0001](00_governance/decision_ledger.md#dec-ds03-0001), loads classified at DS-04 by [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001), verification classified at DS-05 by [DEC-DS05-0001](00_governance/decision_ledger.md#dec-ds05-0001):
 
 | Field | Value | DS-01 adoption status |
 |-------|-------|----------------------|
@@ -133,11 +159,11 @@ Recorded **2026-07-27** as [DEC-DS00-0001](00_governance/decision_ledger.md#dec-
 | DESIGN_PHILOSOPHY | 性能規定型設計 | `ADOPTED` |
 | VERIFICATION_FORMAT | 部分係数法 | `ADOPTED` |
 
-TARGET_STANDARD **selection** is `ADOPTED`. Official naming strings and ISBN facets are `ADOPTED_WITH_CONDITION` at DS-01 (Ver2.00 + 2026-03-31 errata overlay; Volume V title variance explicit; LOCAL-I print ISBN blocked pending colophon confirmation). **Clause-level mapping** remains `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` (image-export PDFs require human visual confirmation). **JIS identities** (JIS-001…JIS-034) are classified at DS-02 per [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001): all 34 rows `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT`; zero JIS numbers identified. Partial-factor **method** is adopted; load-side numeric partial factors and combination coefficients are classified at DS-04 per [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001) — all blocked with zero adopted numerics; resistance/verification-side factors remain DS-05. Prior `NOT_SELECTED` labels in handoff and Step 1 artifacts are preserved as `REFERENCE_ONLY` historical evidence.
+TARGET_STANDARD **selection** is `ADOPTED`. Official naming strings and ISBN facets are `ADOPTED_WITH_CONDITION` at DS-01 (Ver2.00 + 2026-03-31 errata overlay; Volume V title variance explicit; LOCAL-I print ISBN blocked pending colophon confirmation). **Clause-level mapping** remains `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` (image-export PDFs require human visual confirmation). **JIS identities** (JIS-001…JIS-034) are classified at DS-02 per [DEC-DS02-0001](00_governance/decision_ledger.md#dec-ds02-0001): all 34 rows `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT`; zero JIS numbers identified. Partial-factor **method** is adopted; load-side numeric partial factors and combination coefficients are classified at DS-04 per [DEC-DS04-0001](00_governance/decision_ledger.md#dec-ds04-0001) — all blocked with zero adopted numerics; resistance/verification-side factors and equations are classified at DS-05 per [DEC-DS05-0001](00_governance/decision_ledger.md#dec-ds05-0001) — all blocked with zero adopted numerics. Prior `NOT_SELECTED` labels in handoff and Step 1 artifacts are preserved as `REFERENCE_ONLY` historical evidence.
 
 ## Historical artifacts (immutable — do not edit)
 
-| Artifact class | Path | Integration role (DS-00 / DS-01 / DS-02 / DS-03 / DS-04) |
+| Artifact class | Path | Integration role (DS-00 / DS-01 / DS-02 / DS-03 / DS-04 / DS-05) |
 |----------------|------|------------------|
 | Handoff package | [../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/](../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/README.md) | Rank-1 immutable intake evidence |
 | Step 1 planning | [../step1/README.md](../step1/README.md) | Historical planning synthesis (pre–DS-00 standards baseline) |

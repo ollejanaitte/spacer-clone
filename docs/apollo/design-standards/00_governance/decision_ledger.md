@@ -385,3 +385,83 @@ User-supervisor direction requires DS-04 to classify Phase 1 load requirements w
 | BLK-S1-004 | Numeric auto-determination | **Registers established** — adoption forbidden until per-row 道示 chain |
 
 DTR-02, DTR-04 remain open. JIS identities (DTR-03) unchanged from DS-02. Material numerics (DS-03) unchanged.
+
+---
+
+## DEC-DS05-0001
+
+| Field | Value |
+|-------|-------|
+| **ID** | DEC-DS05-0001 |
+| **Date** | 2026-07-27 |
+| **Decider** | User-supervisor |
+| **Authored by** | Composer 2.5 (DS-05 documentation worker, supervisor-directed) |
+| **Decision effect** | `ADOPTED` — applies only to performance requirement, limit state, verification equation, limit value, and deemed-to-satisfy register structure and classification; **no verification numeric value or equation adopted** |
+
+### Decision
+
+Establish governed DS-05 performance verification / limit state freeze for Phase 1 archetype (straight, constant-depth, non-composite RC deck on steel plate girder, simple single span, 90° skew, ~4–6 main girders, static linear). Record fail-closed disposition: all verification equation forms, resistance partial factors, limit numerics, deemed-to-satisfy rules, and comparison rules blocked; zero R7 verification clause/table locators visually confirmed; RBS/handoff evidence `REFERENCE_ONLY` for equations and numerics. Separate Phase 1A static-linear analysis from Phase 1B design verification — analysis response availability does not authorize a check.
+
+| Facet | DS-05 status | Conditions / remaining blockers |
+|-------|--------------|----------------------------------|
+| Performance requirement register (28 rows) | `ADOPTED` | Register structure and classification only |
+| Limit state register (23 rows) | `ADOPTED` | Coverage linked to requirements; all adoption blocked |
+| Verification equation register (23 rows) | `ADOPTED` | All `equation_summary` and `comparison_rule` blank; zero numerics |
+| Limit value register (11 rows) | `ADOPTED` | All `limit_value`, `unit`, and `comparison_rule` blank |
+| Deemed-to-satisfy register (2 shells) | `ADOPTED` | Generic blocked shells — no invented prerequisites |
+| Main girder verification candidates | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | User formal DS-05 primary structure vs Step1 narrow boundary conflict unresolved (PKG-SCOPE-P1B) |
+| Cross girder / sway / lateral bracing candidates | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Pending supervisor Phase1B member table — not split by Step1 roadmap alone |
+| RC deck verification candidates | `PHASE1_REQUIRED` | Phase 1B shell within narrow scope — adoption blocked |
+| Bearing / connection boundary candidates | `PHASE1_REFERENCE` | Boundary-only reference posture — adoption blocked |
+| Fatigue / seismic / composite / nonlinear / erection | `OUT_OF_SCOPE` | Phase 1 archetype exclusion |
+| Resistance partial factors | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Plain blocked token only; zero adopted numerics; no orphan resistance-factor register IDs |
+| Verification equations / comparison rules | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | PKG-R7-V |
+| Limit values | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | PKG-R7-V |
+| Response-to-check conversion | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-06 PKG-DS06 |
+| Double factor application | `ADOPTED` policy | Prohibited unless evidenced R7 structure |
+| Allowable-stress substitution | `OUT_OF_SCOPE` | Performance-based partial-factor method only |
+| Adopted sourced verification numerics | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Count = 0 at DS-05 |
+| Full design freeze | `OUT_OF_SCOPE` for DS-05 | DS-09 gate |
+
+### DS-05 verdict tokens
+
+```text
+DS05_PERFORMANCE_REQUIREMENT_VERDICT: PASS_WITH_EXACT_EVIDENCE_BLOCKERS
+DS05_LIMIT_STATE_COVERAGE_VERDICT: PASS_FOR_SUPERVISOR_CANDIDATE_SET_WITH_EXACT_EVIDENCE_BLOCKERS
+DS05_VERIFICATION_EQUATION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_LIMIT_VALUE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_PARTIAL_FACTOR_APPLICATION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_DEEMED_TO_SATISFY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_PHASE1_SCOPE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS05_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+### Rationale
+
+User-supervisor direction requires DS-05 to classify Phase 1 performance verification requirements without inventing R7 equation forms, resistance factors, limit values, deemed-to-satisfy rules, or comparison operators. DS-05 creates the registers, Phase 1A/1B separation policy, evidence packages, and scope-conflict record; preserves fail-closed discipline from DEC-DS01-0001 partial-factor method and DEC-DS04-0001 load-side deferral. No row receives an adopted numeric value or normative equation at DS-05. User formal DS-05 primary structure vs Step1 `FROZEN_NARROW` boundary is **not** silently resolved — PKG-SCOPE-P1B remains open. `ready_requirements.csv` has no phase column.
+
+### Evidence anchors
+
+| Evidence | Locator | SHA256 / note |
+|----------|---------|---------------|
+| DS-05 performance register | [performance_requirement_register.csv](../05_verification/performance_requirement_register.csv) | 28 rows |
+| DS-05 limit state register | [limit_state_register.csv](../05_verification/limit_state_register.csv) | 23 rows |
+| DS-05 verification register | [verification_equation_register.csv](../05_verification/verification_equation_register.csv) | 23 rows; 0 equation numerics |
+| DS-05 limit value register | [limit_value_register.csv](../05_verification/limit_value_register.csv) | 11 rows; 0 limit numerics |
+| DS-05 deemed-to-satisfy register | [deemed_to_satisfy_register.csv](../05_verification/deemed_to_satisfy_register.csv) | 2 shell rows |
+| DS-05 scope report | [phase1_verification_scope.md](../05_verification/phase1_verification_scope.md) | — |
+| DS-04 load registers | [load_governance_report.md](../04_loads/load_governance_report.md) | Load-side chain — not resistance |
+| DS-03 material register | [material_properties_register.csv](../03_materials/material_properties_register.csv) | Resistance input chain blocked |
+| DS-01 edition baseline | [edition_and_errata_register.csv](../01_target_standard/edition_and_errata_register.csv) | Ver2.00 + 20260331 overlay |
+| Handoff READY girder/splice/bracing rows | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) | Location memos only; no phase column; scope conflict unresolved |
+| Step1 scope freeze | [phase1_scope_freeze.md](../../step1/05_scope_boundary/phase1_scope_freeze.md) | DEC-S1-0008 FROZEN_NARROW |
+| Repository baseline | `274a2f20bd794f396d9ed09741b26974374a84e4` | DS-05 authoring baseline |
+
+### DTR disposition at DS-05
+
+| Ref | Topic | DS-05 disposition |
+|-----|-------|-------------------|
+| DTR-05 | Numeric freeze scope per READY topic | **Verification registers created** — verification numerics remain blocked; DS-06 response mapping still blocked |
+| BLK-S1-004 | Numeric auto-determination | **Registers established** — adoption forbidden until per-row 道示 chain |
+
+DTR-02, DTR-04 remain open. JIS identities (DTR-03) unchanged from DS-02. Load numerics (DS-04) and material numerics (DS-03) unchanged.
