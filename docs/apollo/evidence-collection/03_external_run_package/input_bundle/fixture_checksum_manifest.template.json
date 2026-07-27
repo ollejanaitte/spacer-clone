@@ -1,0 +1,15 @@
+{
+  "fixtures": [
+    {
+      "fixture_id": "REQUIRED_OPERATOR_INPUT",
+      "read_only": true,
+      "sha256": "REQUIRED_OPERATOR_INPUT",
+      "size_bytes": "REQUIRED_OPERATOR_INPUT",
+      "source_path": "REQUIRED_OPERATOR_INPUT",
+      "workspace_relative_path": "REQUIRED_OPERATOR_INPUT"
+    }
+  ],
+  "manifest_id": "REQUIRED_OPERATOR_INPUT",
+  "schema_version": "apollo.external_run.package.v1",
+  "status": "BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT"
+}

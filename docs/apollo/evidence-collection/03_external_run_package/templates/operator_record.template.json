@@ -1,0 +1,10 @@
+{
+  "authorized_machine_id": "REQUIRED_OPERATOR_INPUT",
+  "capture_completed_at_utc": "REQUIRED_OPERATOR_INPUT",
+  "capture_started_at_utc": "REQUIRED_OPERATOR_INPUT",
+  "notes": "Operator attestation that no licensed program files were modified and no secrets were retained.",
+  "operator_id": "REQUIRED_OPERATOR_INPUT",
+  "operator_name": "REQUIRED_OPERATOR_INPUT",
+  "organization": "REQUIRED_OPERATOR_INPUT",
+  "schema_version": "apollo.external_run.package.v1"
+}

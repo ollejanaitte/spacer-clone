@@ -1,0 +1,15 @@
+{
+  "fixture_binding_sha256": "REQUIRED_OPERATOR_INPUT",
+  "frozen_identity_bundle_id": "REQUIRED_OPERATOR_INPUT",
+  "invocation_command": [
+    "REQUIRED_OPERATOR_INPUT"
+  ],
+  "invocation_cwd": "REQUIRED_OPERATOR_INPUT",
+  "invocation_environment_allowlist": [
+    "REQUIRED_OPERATOR_INPUT"
+  ],
+  "invocation_notes": "Vendor-supported command or GUI/service operation captured verbatim and checksum-bound before probe execution.",
+  "schema_version": "apollo.external_run.package.v1",
+  "selected_identity_id": "REQUIRED_OPERATOR_INPUT",
+  "status": "BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT"
+}

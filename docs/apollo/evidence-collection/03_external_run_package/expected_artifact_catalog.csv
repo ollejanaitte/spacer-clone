@@ -1,0 +1,21 @@
+artifact_id,relative_path,artifact_type,required,description,checksum_required,operator_input_marker
+ART-001,package_manifest.json,json,true,Top-level package manifest with verdict separation,true,REQUIRED_OPERATOR_INPUT
+ART-002,operator_record.json,json,true,Operator attestation and capture window,true,REQUIRED_OPERATOR_INPUT
+ART-003,software_identities/AN-ID-004.json,json,true,Historical APOLLO Analyzer identity,true,REQUIRED_OPERATOR_INPUT
+ART-004,software_identities/AN-ID-005.json,json,true,SPACER product shell identity,true,REQUIRED_OPERATOR_INPUT
+ART-005,software_identities/AN-ID-006.json,json,true,SPACER STATICS module identity,true,REQUIRED_OPERATOR_INPUT
+ART-006,run_request.json,json,true,Frozen verbatim invocation request,true,REQUIRED_OPERATOR_INPUT
+ART-007,input_bundle/fixture_checksum_manifest.json,json,true,Immutable input fixture binding,true,REQUIRED_OPERATOR_INPUT
+ART-008,license_preflight.json,json,true,Entitlement state without key capture,true,REQUIRED_OPERATOR_INPUT
+ART-009,machine_preflight.json,json,true,Host OS arch locale discovery record,true,REQUIRED_OPERATOR_INPUT
+ART-010,probe_executions/<probe_id>/bundle_manifest.json,json,false,Per-probe EA-01 evidence bundle,true,REQUIRED_OPERATOR_INPUT
+ART-011,repeat_runs/repeat_01/<run_id>/bundle_manifest.json,json,false,First reproducibility run EA-01 bundle,true,REQUIRED_OPERATOR_INPUT
+ART-012,repeat_runs/repeat_02/<run_id>/bundle_manifest.json,json,false,Second reproducibility run EA-01 bundle,true,REQUIRED_OPERATOR_INPUT
+ART-013,repeat_runs/repeat_03/<run_id>/bundle_manifest.json,json,false,Third reproducibility run EA-01 bundle,true,REQUIRED_OPERATOR_INPUT
+ART-014,import_manifest.json,json,false,Import record with content_hashes for edit detection,true,REQUIRED_OPERATOR_INPUT
+ART-015,verification_report.json,json,false,Fail-closed verification output,true,REQUIRED_OPERATOR_INPUT
+ART-016,external_run_summary.json,json,false,Operator-facing summary JSON,false,REQUIRED_OPERATOR_INPUT
+ART-017,templates/operator_record.template.json,json,true,Machine-readable operator template,false,REQUIRED_OPERATOR_INPUT
+ART-018,templates/software_identity.template.json,json,true,Machine-readable identity template,false,REQUIRED_OPERATOR_INPUT
+ART-019,templates/run_request.template.json,json,true,Machine-readable run request template,false,REQUIRED_OPERATOR_INPUT
+ART-020,input_bundle/fixture_checksum_manifest.template.json,json,true,Machine-readable fixture manifest template,false,REQUIRED_OPERATOR_INPUT
