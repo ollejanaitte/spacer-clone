@@ -1,6 +1,6 @@
-# Decision Ledger — DS-00
+# Decision Ledger — DS-00 / DS-01
 
-**Authority:** DS-00 / CURRENT INTEGRATION
+**Authority:** DS-00 / DS-01 / CURRENT INTEGRATION
 **Date:** 2026-07-27
 
 All DS-stage decisions are recorded here. Historical Step 1 decisions remain in [step1 decision_log.md](../../step1/00_governance/decision_log.md) unchanged.
@@ -30,11 +30,11 @@ TARGET_STANDARD **selection** is adopted. The following facets remain independen
 
 | Facet | Status until DS stage |
 |-------|----------------------|
-| Official naming strings (exact 道示 titles) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-01 |
-| Publication metadata (publisher, date, colophon/ISBN) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-01 |
-| Edition verification (令和7年10月版 Ver.2.00 vs 改訂版) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-01 |
-| Errata / 正誤表 | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-01 |
-| Applicable volumes/clauses per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-01/DS-02 |
+| Official naming strings (exact 道示 titles) | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 |
+| Publication metadata (publisher, date, colophon/ISBN) | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 (LOCAL-I print ISBN blocked) |
+| Edition verification (令和7年10月版 Ver.2.00 vs 改訂版) | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 |
+| Errata / 正誤表 | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 |
+| Applicable volumes/clauses per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-02 |
 
 ### Historical evidence preservation
 
@@ -91,11 +91,83 @@ These remain `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — see [ds00_evidence_ba
 
 | Ref | Topic | Historical Step 1 ID |
 |-----|-------|---------------------|
-| DTR-01 | Confirm binding 道示 edition under 令和7年改訂版 label | [target_standard_decision.md](../../step1/02_standards_baseline/target_standard_decision.md) |
+| DTR-01 | Confirm binding 道示 edition under 令和7年改訂版 label | [target_standard_decision.md](../../step1/02_standards_baseline/target_standard_decision.md) — **closed at DS-01** |
 | DTR-02 | Supporting manual edition map | same |
 | DTR-03 | JIS gap disposition (JIS-001…JIS-034 rows) | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) |
 | DTR-04 | Historical APOLLO baseline vs Target | BLK-S1-007 |
 | DTR-05 | Numeric freeze scope per READY topic | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) |
-| DTR-06 | Errata / 正誤表 status for R7 volumes | [standards_source_inventory.md](../../step1/02_standards_baseline/standards_source_inventory.md) |
+| DTR-06 | Errata / 正誤表 status for R7 volumes | [standards_source_inventory.md](../../step1/02_standards_baseline/standards_source_inventory.md) — **closed with condition at DS-01** |
 
-DEC-DS00-0001 satisfies the **selection** intent of DTR-01 at label level only; DTR-01 evidentiary closure remains open for DS-01.
+DEC-DS00-0001 satisfies the **selection** intent of DTR-01 at label level only; evidentiary closure completed at DS-01 by DEC-DS01-0001.
+
+---
+
+## DEC-DS01-0001
+
+| Field | Value |
+|-------|-------|
+| **ID** | DEC-DS01-0001 |
+| **Date** | 2026-07-27 |
+| **Decider** | User-supervisor |
+| **Authored by** | Composer 2.5 (DS-01 documentation worker, supervisor-directed) |
+| **Evidence reviewed by** | Codex (2026-07-27) |
+| **Decision effect** | `ADOPTED` |
+
+### Decision
+
+Close DS-00 blocker facets for Target Standard metadata, edition/errata baseline, design philosophy framework, partial-factor method roles, and Phase 1 volume applicability. Record adopted reference baseline as **Ver2.00 plus 2026-03-31 official errata overlay** (checked 2026-07-27).
+
+| Facet | DS-01 status | Conditions / remaining blockers |
+|-------|--------------|----------------------------------|
+| TARGET_STANDARD selection (令和7年改訂版) | `ADOPTED` | Application start 2026-04-01 recorded per MLIT official press release (報道発表資料) |
+| Official naming strings and ISBNs (volumes I–V) | `ADOPTED_WITH_CONDITION` | Volume V title variance; e-book ISBN 801–805 on RBS rows only; LOCAL-I print ISBN blocked; LOCAL-II–V print ISBN 812-3/813-0/814-7/815-4 |
+| Publication metadata and edition baseline | `ADOPTED_WITH_CONDITION` | Ver2.00 (2025-12-19); local image-export PDFs Ver2.00-compatible; 20260331 overlay separate |
+| Errata / 正誤表 | `ADOPTED_WITH_CONDITION` | ERR-20251212 reflected in Ver2.00; ERR-20260331 active overlay; some entries not yet in electronic/paper |
+| DESIGN_PHILOSOPHY (性能規定型設計) | `ADOPTED` | Hierarchy and deemed-to-satisfy rules in [performance_based_design_philosophy.md](../01_target_standard/performance_based_design_philosophy.md) |
+| VERIFICATION_FORMAT method (部分係数法) | `ADOPTED` | Numeric factors and exact equations `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-04 / DS-05 |
+| Phase 1 volume I | `ADOPTED_WITH_CONDITION` | Primary; clause map blocked |
+| Phase 1 volume II | `ADOPTED_WITH_CONDITION` | Primary; clause map blocked |
+| Phase 1 volume III | `ADOPTED_WITH_CONDITION` | Primary; clause map blocked |
+| Phase 1 volume IV | `REFERENCE_ONLY` | Substructure body OUT_OF_SCOPE; interface evidence only |
+| Phase 1 volume V (selected topics) | `ADOPTED_WITH_CONDITION` | Bearings/connections/unseating boundaries; title variance; clause map blocked |
+| H29 道示 as numeric authority | `OUT_OF_SCOPE` | Legacy exclusion per DS-01 |
+| Supporting manuals (R2 鋼便覧, H31 支承便覧, DDB) | `REFERENCE_ONLY` | Not co-equal with Target Standard |
+| Clause/chapter mapping per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-02; human visual confirmation required |
+
+### DS-01 verdict tokens
+
+```text
+DS01_TARGET_STANDARD_VERDICT: PASS_WITH_CONDITION
+DS01_EDITION_ERRATA_VERDICT: PASS_WITH_CONDITION
+DS01_PERFORMANCE_BASED_DESIGN_VERDICT: PASS
+DS01_PARTIAL_FACTOR_METHOD_VERDICT: PASS
+DS01_PHASE1_APPLICABILITY_VERDICT: PASS_WITH_EVIDENCE_BLOCKERS
+DS01_LEGACY_VERSION_EXCLUSION_VERDICT: PASS
+DS01_COMPLETION_VERDICT: COMPLETE_WITH_EVIDENCE_BLOCKERS
+```
+
+### Rationale
+
+User-supervisor direction closes DS-00 metadata facets at DS-01 using verified official evidence (MLIT press release PDF, JRA publication announcement, errata SHA256 anchors, verified JRA e-book product URLs, local licensed PDF checksums) while preserving fail-closed discipline for LOCAL-I print ISBN, image-export clause citations, numeric partial factors, and exact verification equations. Volume V title variance is recorded explicitly as `ADOPTED_WITH_CONDITION`.
+
+### Evidence anchors
+
+| Evidence | Locator | SHA256 / note |
+|----------|---------|---------------|
+| DS-01 evidence register | [ds01_evidence_register.md](../01_target_standard/ds01_evidence_register.md) | `EVD-DS01-001` … `EVD-DS01-014` |
+| MLIT official press release | https://www.mlit.go.jp/report/press/content/001906067.pdf | `60ef4608873161151720ae8038b7d63b84ade064538f67e0169d04c5268049a8` |
+| JRA publication announcement | https://e-book.road.or.jp/blogs/news/%E9%9B%BB%E5%AD%90%E7%89%88-%E9%81%93%E8%B7%AF%E6%A9%8B%E7%A4%BA%E6%96%B9%E6%9B%B8-%E5%90%8C%E8%A7%A3%E8%AA%AC-%E4%BB%A4%E5%92%8C%EF%BC%97%E5%B9%B4%E6%94%B9%E8%A8%82%E7%89%88-%E3%82%92%EF%BC%91%EF%BC%91%E6%9C%88%EF%BC%95%E6%97%A5%E3%81%AB%E7%99%BA%E5%88%8A%E3%81%97%E3%81%BE%E3%81%99 | URL verified 2026-07-27 |
+| Errata 20251212 | https://www.road.or.jp/img/books/corrigenda/pdf/20251212.pdf | `50c3a1f0ef2b05251d4791c426ac333a5e3d0bc5496995682766069f4ed23c7f` |
+| Errata 20260331 | https://www.road.or.jp/img/books/corrigenda/pdf/20260331.pdf | `22b8767d46041f5521820736419e5425a4d501f2698aec1cc6553f684809b4e5` |
+| Edition register | [edition_and_errata_register.csv](../01_target_standard/edition_and_errata_register.csv) | — |
+| DS-01 freeze document | [target_standard_freeze.md](../01_target_standard/target_standard_freeze.md) | — |
+| Repository baseline | `f56b520a451f95bc67d544b04a5153d0439f8193` | DS-01 authoring baseline |
+
+### DTR disposition at DS-01
+
+| Ref | Topic | DS-01 disposition |
+|-----|-------|-------------------|
+| DTR-01 | Binding 道示 edition under 令和7年改訂版 label | **Closed** — Ver2.00 + 20260331 overlay |
+| DTR-06 | Errata / 正誤表 status for R7 volumes | **Closed with condition** — overlay model recorded |
+
+DTR-02, DTR-03, DTR-04, DTR-05 remain open for DS-02+.
