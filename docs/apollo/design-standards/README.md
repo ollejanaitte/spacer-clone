@@ -105,6 +105,32 @@ DS-05 creates performance requirement (28 rows), limit state (23 rows), verifica
 
 DS-09 authorizes the **document freeze only**. It does not close the DS-01 through DS-08 evidence blockers and does not authorize numeric implementation. See [final_design_freeze_report.md](09_verification/final_design_freeze_report.md) and [final_verdicts.md](09_verification/final_verdicts.md).
 
+## EA evidence-acquisition integration (EA-06)
+
+EA-00 through EA-05 built executable harnesses, analytical golden tooling, external run packages, parity comparison tooling, and synthetic dry-run validation. EA-06 integrates those results without rewriting DS-00..09 decisions. Enablement completion is distinct from canonical blocker closure: **76 snapshot rows remain open** (`45 BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT`, `31 NOT_APPROVED`; resolved `0`).
+
+| Artifact | Role |
+|----------|------|
+| [final evidence execution report](../evidence-collection/final_evidence_execution_report.md) | EA-06 14-section integration report |
+| [EA final verdicts](../evidence-collection/final_verdicts.md) | Harness, golden, external-run, parity, and overall acquisition tokens |
+| [unresolved evidence register (76 rows)](../evidence-collection/unresolved_evidence_register.csv) | Operational blocker snapshot with EA enablement references |
+| [evidence traceability matrix](../evidence-collection/evidence_traceability_matrix.csv) | EA deliverable-to-blocker traceability |
+| [numeric release gate (EA reassessment)](../evidence-collection/numeric_release_gate.md) | Enablement vs GATE-NR-01..07 closure |
+
+```text
+EVIDENCE_HARNESS_VERDICT: COMPLETE
+ANALYTICAL_GOLDEN_PACKAGE_VERDICT: COMPLETE
+EXTERNAL_RUN_PACKAGE_VERDICT: COMPLETE
+PARITY_HARNESS_VERDICT: COMPLETE
+EXTERNAL_MACHINE_EVIDENCE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+REFERENCE_SOFTWARE_GOLDEN_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+SPACER_ACTUAL_NUMERIC_PARITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
+```
+
+[unresolved_evidence_requirements.csv](09_verification/unresolved_evidence_requirements.csv) adds `ea_enablement_reference` and `ea_status_note` per row; statuses are not closed by EA-06.
+
 ## Governance documents
 
 | Document | Role |

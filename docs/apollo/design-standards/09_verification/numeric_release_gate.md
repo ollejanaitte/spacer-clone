@@ -44,6 +44,34 @@ The current conjunction is `BLOCKED`. Passing GATE-NR-06 and GATE-NR-07 cannot c
 - Widen tolerance, exclude a case, or change rounding after observing a mismatch.
 - Weaken live-source, stale-output, failure, license, or authority guards.
 
+## EA-06 evidence-acquisition reassessment (2026-07-27)
+
+EA-00 through EA-05 delivered repository enablement only. EA-06 integration confirms tooling completion without closing any canonical blocker.
+
+```text
+EVIDENCE_HARNESS_VERDICT: COMPLETE
+ANALYTICAL_GOLDEN_PACKAGE_VERDICT: COMPLETE
+EXTERNAL_RUN_PACKAGE_VERDICT: COMPLETE
+PARITY_HARNESS_VERDICT: COMPLETE
+EXTERNAL_MACHINE_EVIDENCE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+REFERENCE_SOFTWARE_GOLDEN_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+SPACER_ACTUAL_NUMERIC_PARITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
+```
+
+| Gate | DS-09 state (unchanged) | EA-06 enablement note |
+|---|---|---|
+| GATE-NR-01 | `BLOCKED` | DS-02..05 numerics remain source-blocked; licensed capture still required |
+| GATE-NR-02 | `BLOCKED` | EA-01 harness and EA-03 run package COMPLETE; no machine bundles imported |
+| GATE-NR-03 | `BLOCKED` | EA-02 package COMPLETE / `TOOLING_REVIEWED_NOT_GOLD_APPROVED`; GOLD-001..016 `NOT_APPROVED` |
+| GATE-NR-04 | `BLOCKED` | EA-04 parity harness COMPLETE; actual SPACER capture unavailable |
+| GATE-NR-05 | `BLOCKED` | 76 snapshot rows; resolved canonical blockers `0` |
+| GATE-NR-06 | `PASS` | Independent EA audits; false-PASS proposals rejected |
+| GATE-NR-07 | `PASS` | Evidence tests 200 PASS; section 11 full suite is latest EA-06 pre-commit validation; final git cleanliness receipt-gated |
+
+Enablement completion does not satisfy GATE-NR-01 through GATE-NR-05. Detailed EA-06 records: [evidence-collection numeric release gate](../../evidence-collection/numeric_release_gate.md), [final evidence execution report](../../evidence-collection/final_evidence_execution_report.md), and [unresolved evidence register](../../evidence-collection/unresolved_evidence_register.csv). DS [unresolved evidence requirements](unresolved_evidence_requirements.csv) rows now include `ea_enablement_reference` and `ea_status_note` columns; no row status was closed.
+
 ## Re-evaluation
 
 Each blocker is closed only against its own acceptance criteria. After all blockers are closed, the complete Golden and parity approvals, independent review, and the latest full repository validation must be repeated as one release decision. Historical DS-00 through DS-09 records are not silently rewritten.
