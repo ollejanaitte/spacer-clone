@@ -53,7 +53,7 @@ Volume V is adopted **with conditions** for Phase 1 **boundary and connection to
 | Bearing boundary / bearing design references | In scope as boundary topic | `ADOPTED_WITH_CONDITION` — clause map blocked |
 | Connection boundary / splice-adjacent connection rules | In scope where Phase 1 features require | `ADOPTED_WITH_CONDITION` — clause map blocked |
 | Unseating prevention | In scope as auxiliary boundary check | `ADOPTED_WITH_CONDITION` — clause map blocked |
-| Full connection design catalog beyond Phase 1 features | Not automatically in scope | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` until DS-02 feature map |
+| Full connection design catalog beyond Phase 1 features | Not automatically in scope | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — open exact-evidence blocker; later applicable DS mapping |
 
 **Title variance:** Integration records must use the official title string from the evidence source being cited (MLIT label, FAQ, local print, or JRA product page) and must not silently normalize 上下部接続部編 ↔ 上下部接続部構造編.
 
@@ -63,9 +63,9 @@ Volume V is adopted **with conditions** for Phase 1 **boundary and connection to
 
 | Blocker | Reason | Unlock |
 |---------|--------|--------|
-| Exact chapter numbers per READY requirement | Local PDFs are image exports; OCR/automation not authoritative | DS-02 with human visual confirmation |
-| Exact clause / table / figure locators | Same | DS-02 `EVD-DS02-*` entries |
-| Per-requirement volume split beyond Rank-1 aggregate | DS-00 forbids unverified READY volume splits | DS-02 supervised mapping |
+| Exact chapter numbers per READY requirement | Local PDFs are image exports; OCR/automation not authoritative | Open exact-evidence blocker; later applicable DS mapping with human visual confirmation |
+| Exact clause / table / figure locators | Same | Open exact-evidence blocker; later applicable DS mapping |
+| Per-requirement volume split beyond Rank-1 aggregate | DS-00 forbids unverified READY volume splits | Open exact-evidence blocker; later applicable DS mapping |
 
 **Rule:** DS-01 **must not** declare precise clause numbers, table numbers, or page-level bindings without human visual confirmation against the adopted edition baseline (Ver2.00 + 2026-03-31 errata overlay).
 
@@ -104,4 +104,4 @@ Supporting manuals do not override Target Standard volume I–V adoption posture
 | DS-01 evidence register | [ds01_evidence_register.md](ds01_evidence_register.md) |
 | Local licensed PDF checksums | Register rows `LOCAL-I` … `LOCAL-V` (external path; not in repo) |
 | Phase 1 scope freeze | [phase1_scope_freeze.md](../../step1/05_scope_boundary/phase1_scope_freeze.md) (`REFERENCE_ONLY`) |
-| READY aggregate (69 rows) | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) (`REFERENCE_ONLY` until DS-02 remap) |
+| READY aggregate (69 rows) | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) (`REFERENCE_ONLY` until later applicable DS mapping) |

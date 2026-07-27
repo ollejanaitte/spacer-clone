@@ -93,7 +93,7 @@ If the Target Standard permits a verification format other than 部分係数法 
 |-------|-------------|
 | DS-04 | Load-side partial factors, action combinations, load model factoring |
 | DS-05 | Resistance-side partial factors, member verification equations, coefficient placement |
-| DS-02 | Clause-level mapping linking limit states to volumes I–III and selected V topics |
+| Later applicable DS stage | Clause-level mapping linking limit states to volumes I–III and selected V topics |
 
 ---
 

@@ -1,6 +1,6 @@
-# Decision Ledger — DS-00 / DS-01
+# Decision Ledger — DS-00 / DS-01 / DS-02
 
-**Authority:** DS-00 / DS-01 / CURRENT INTEGRATION
+**Authority:** DS-00 / DS-01 / DS-02 / CURRENT INTEGRATION
 **Date:** 2026-07-27
 
 All DS-stage decisions are recorded here. Historical Step 1 decisions remain in [step1 decision_log.md](../../step1/00_governance/decision_log.md) unchanged.
@@ -34,7 +34,7 @@ TARGET_STANDARD **selection** is adopted. The following facets remain independen
 | Publication metadata (publisher, date, colophon/ISBN) | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 (LOCAL-I print ISBN blocked) |
 | Edition verification (令和7年10月版 Ver.2.00 vs 改訂版) | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 |
 | Errata / 正誤表 | Closed at DS-01 → `ADOPTED_WITH_CONDITION` per DEC-DS01-0001 |
-| Applicable volumes/clauses per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-02 |
+| Applicable volumes/clauses per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — open exact-evidence blocker; later applicable DS mapping (human visual confirmation) |
 
 ### Historical evidence preservation
 
@@ -48,7 +48,7 @@ TARGET_STANDARD **selection** is adopted. The following facets remain independen
 
 | Facet | Status until DS stage |
 |-------|----------------------|
-| JIS identities (JIS-001…JIS-034 gap rows) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-02 |
+| JIS identities (JIS-001…JIS-034 gap rows) | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — classified at DS-02 per DEC-DS02-0001; zero identified |
 | Numeric partial factors | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-04 (loads) / DS-05 (resistance/verification) |
 | DS-05 member applicability classification | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-05 |
 | Analyzer physical I/O evidence | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-06 (BLK-S1-011) |
@@ -132,7 +132,7 @@ Close DS-00 blocker facets for Target Standard metadata, edition/errata baseline
 | Phase 1 volume V (selected topics) | `ADOPTED_WITH_CONDITION` | Bearings/connections/unseating boundaries; title variance; clause map blocked |
 | H29 道示 as numeric authority | `OUT_OF_SCOPE` | Legacy exclusion per DS-01 |
 | Supporting manuals (R2 鋼便覧, H31 支承便覧, DDB) | `REFERENCE_ONLY` | Not co-equal with Target Standard |
-| Clause/chapter mapping per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | DS-02; human visual confirmation required |
+| Clause/chapter mapping per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Open exact-evidence blocker; later applicable DS mapping (human visual confirmation required) |
 
 ### DS-01 verdict tokens
 
@@ -170,4 +170,69 @@ User-supervisor direction closes DS-00 metadata facets at DS-01 using verified o
 | DTR-01 | Binding 道示 edition under 令和7年改訂版 label | **Closed** — Ver2.00 + 20260331 overlay |
 | DTR-06 | Errata / 正誤表 status for R7 volumes | **Closed with condition** — overlay model recorded |
 
-DTR-02, DTR-03, DTR-04, DTR-05 remain open for DS-02+.
+DTR-02, DTR-04, DTR-05 remain open for DS-02+.
+
+---
+
+## DEC-DS02-0001
+
+| Field | Value |
+|-------|-------|
+| **ID** | DEC-DS02-0001 |
+| **Date** | 2026-07-27 |
+| **Decider** | User-supervisor |
+| **Authored by** | Composer 2.5 (DS-02 documentation worker, supervisor-directed) |
+| **Evidence reviewed by** | Codex — final approved 2026-07-27 after Grok 4.5 independent re-audit |
+| **Decision effect** | `ADOPTED` — applies only to the 34-row blocked classification and JIS version policy; no JIS identity or numeric value adopted |
+
+### Decision
+
+Classify all 34 historical JIS SOURCE GAP placeholder rows (JIS-001…JIS-034) from immutable handoff [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) into governed [jis_source_register.csv](../02_jis/jis_source_register.csv). Record honest fail-closed disposition: every row `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT`; zero JIS identities resolved; no automatic newest-version JIS adoption.
+
+| Facet | DS-02 status | Conditions / remaining blockers |
+|-------|--------------|----------------------------------|
+| Gap row count (34 placeholders) | `PASS_AS_HISTORICAL_PLACEHOLDER_COUNT` | Matches immutable handoff SHA256 `6172927555afe28f442d6ea94c938452bceedfa6809d62d09d6e83f2afdb98fd` |
+| JIS identity per row | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | All `jis_number`/`jis_title` blank; historical rows undifferentiated |
+| JIS edition per row | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Cited edition not confirmed |
+| Primary-standard citation locators | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | All `citing_*` fields blank |
+| Equivalence / replacement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | No supervisor equivalence decisions |
+| Applicability / material scope | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Per-row acceptance blocker conditions stored in register `applicability` column; future material/product/test scope must populate `material_or_product` (or a schema split / `notes` field) — must not overwrite blocker conditions without explicit schema change |
+| Licensed JIS primary source | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | Owner EXTERNAL_JIS_RESEARCH; no 道示/DDB substitution |
+| JIS version policy | `ADOPTED` | [jis_version_policy.md](../02_jis/jis_version_policy.md) — forbids automatic newest-version adoption |
+| Clause/chapter mapping per requirement | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` (unchanged) | Open exact-evidence blocker; later applicable DS mapping (human visual confirmation) — **out of DS-02 scope** |
+
+### DS-02 verdict tokens
+
+```text
+DS02_GAP_COUNT_VERDICT: PASS_AS_HISTORICAL_PLACEHOLDER_COUNT
+DS02_JIS_IDENTITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_JIS_EDITION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_CITATION_RELATION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_EQUIVALENCE_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_APPLICABILITY_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_SOURCE_GAP_RESOLUTION_VERDICT: BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT
+DS02_COMPLETION_VERDICT: COMPLETE_WITH_EXACT_EVIDENCE_BLOCKERS
+```
+
+### Rationale
+
+User-supervisor direction requires DS-02 to disposition JIS gaps without inventing standard identities. Historical handoff rows share identical unresolved `UNKNOWN` fields and empty `requirement_id` — they are placeholder slots, not evidence of 34 distinct JIS standards. DS-02 creates the governed register, version policy, and gap resolution report; classifies every row; and records exact evidence blockers. No row is marked resolved.
+
+### Evidence anchors
+
+| Evidence | Locator | SHA256 / note |
+|----------|---------|---------------|
+| Immutable handoff gap CSV | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) | `6172927555afe28f442d6ea94c938452bceedfa6809d62d09d6e83f2afdb98fd` |
+| DS-02 JIS register | [jis_source_register.csv](../02_jis/jis_source_register.csv) | `4b5be44b10fba67a660a34b6c535b4cbf38cd72401cfdd94ef83bd34aaf59e1c` |
+| DS-02 gap report | [jis_gap_resolution_report.md](../02_jis/jis_gap_resolution_report.md) | — |
+| DS-02 version policy | [jis_version_policy.md](../02_jis/jis_version_policy.md) | — |
+| DS-01 edition baseline | [edition_and_errata_register.csv](../01_target_standard/edition_and_errata_register.csv) | Ver2.00 + 20260331 overlay |
+| Repository baseline | `128c0cb724270f59ada88b45a11bc1b264a57be4` | DS-02 authoring baseline |
+
+### DTR disposition at DS-02
+
+| Ref | Topic | DS-02 disposition |
+|-----|-------|-------------------|
+| DTR-03 | JIS gap disposition (JIS-001…JIS-034 rows) | **Classified with evidence blockers** — register created; identities unresolved |
+
+DTR-02, DTR-04, DTR-05 remain open for later DS stages.

@@ -37,7 +37,7 @@ The JRA product URLs use opaque Shopify handles whose encoded slug text does not
 | EVD ID | Blocker | Exact acquisition / acceptance requirement |
 |--------|---------|---------------------------------------------|
 | EVD-DS01-010 | LOCAL-I print ISBN | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — Human visual confirmation of print colophon / 奥付 ISBN from licensed LOCAL-I image-export PDF; do **not** infer from e-book ISBN 978-4-88950-801-7 or from other volumes |
-| — | Clause / chapter mapping | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — DS-02; human visual confirmation against adopted edition baseline (Ver2.00 + 2026-03-31 errata overlay) |
+| — | Clause / chapter mapping | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — open exact-evidence blocker; later applicable DS mapping (human visual confirmation against adopted edition baseline Ver2.00 + 2026-03-31 errata overlay) |
 
 ---
 

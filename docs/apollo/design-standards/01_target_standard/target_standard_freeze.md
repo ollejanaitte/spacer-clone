@@ -25,7 +25,7 @@ DS-01 closes the Target Standard **selection** and metadata facets that DS-00 le
 | **Volume V title string** | JRA product page: 上下部接続部**構造**編 vs MLIT/JRA FAQ/local print: 上下部接続部編 | `ADOPTED_WITH_CONDITION` — **not normalized** |
 | **Numeric partial factors** | Load-side and resistance-side coefficients | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-04 / DS-05 |
 | **Exact verification equations** | Coefficient placement and equation forms | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-04 / DS-05 |
-| **Clause-level applicability map** | Per-chapter / per-clause binding | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` → DS-02 (visual confirmation required) |
+| **Clause-level applicability map** | Per-chapter / per-clause binding | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` — open exact-evidence blocker; later applicable DS mapping (human visual confirmation required) |
 
 ---
 

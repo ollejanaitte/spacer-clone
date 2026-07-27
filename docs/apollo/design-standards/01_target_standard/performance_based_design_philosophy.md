@@ -16,7 +16,7 @@ This document defines the **integration hierarchy** and the boundary between per
 | Item | Status | Binding for computation? |
 |------|--------|---------------------------|
 | 性能規定型設計 as Apollo design philosophy | `ADOPTED` | Yes — as structural framework for verification workflow |
-| Specific performance levels and limit-state criteria per member | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | No until DS-02+ with visual clause evidence |
+| Specific performance levels and limit-state criteria per member | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | No until later applicable DS mapping with visual clause evidence |
 | Deemed-to-satisfy provision tables and shortcuts | `BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT` | No until cited with visual evidence |
 
 ---

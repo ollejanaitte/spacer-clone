@@ -27,7 +27,8 @@
 |----------|----------------|----------------|
 | Handoff package files | **Authoritative (immutable intake)** | `docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/` |
 | `PACKAGE_INFO.md` | **Authoritative (historical verdicts)** | [PACKAGE_INFO.md](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/PACKAGE_INFO.md) |
-| `jis_source_gaps.csv` | **Authoritative (34 managed gaps)** | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) |
+| `jis_source_gaps.csv` | **Authoritative (immutable intake — historical provenance)** | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) |
+| `jis_source_register.csv` | **Current integration (live governed disposition)** | [jis_source_register.csv](../02_jis/jis_source_register.csv) |
 | `ready_requirements.csv` | **Authoritative (69 READY rows)** | [ready_requirements.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/ready_requirements.csv) |
 | Step 1 `target_standard_decision.md` | **Derived historical record** (pre–DS-00) | [target_standard_decision.md](../../step1/02_standards_baseline/target_standard_decision.md) |
 | Step 1 `numeric_value_governance.md` | **Derived historical policy** | [numeric_value_governance.md](../../step1/02_standards_baseline/numeric_value_governance.md) |
@@ -55,7 +56,7 @@
 | Copying 道示 / JIS / DDB text into DS documents | Copyright; use locators only ([copyright_and_evidence_policy.md](copyright_and_evidence_policy.md)) |
 | Editing handoff, Step 1, AP-00, AP-01, or AP-11 artifacts to “fix” DS-00 conflicts | Preservation rule; amend DS-00 only |
 | Treating bridge-standards-research paths as in-repo authority | Repo-external; cite as `REFERENCE_ONLY` |
-| Substituting 道示 for missing JIS primaries | [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) HOLD policy |
+| Substituting 道示 for missing JIS primaries | Immutable handoff [jis_source_gaps.csv](../../handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff/standards/jis_source_gaps.csv) HOLD policy; live disposition in [jis_source_register.csv](../02_jis/jis_source_register.csv) |
 | Promoting evidence PNG OCR to numeric authority | Location memos only per handoff |
 | Inventing per-volume READY row splits without verified evidence | Use Rank-1 aggregate 69 only at DS-00 |
 
