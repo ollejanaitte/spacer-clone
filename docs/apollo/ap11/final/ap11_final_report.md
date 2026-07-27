@@ -4,7 +4,7 @@
 **Date:** 2026-07-27  
 **Supervisor:** Grok 4.5  
 **Worker:** Composer 2.5  
-**Checkpoint SHA:** TBD (filled at direct-main push)  
+**Checkpoint SHA:** `7f73c4c624c2c12dd972cb0291aa9d320f88028a`  
 **Operation:** direct `main` checkpoint (no PR / no feature branch)
 
 ## Summary

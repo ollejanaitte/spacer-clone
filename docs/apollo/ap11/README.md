@@ -2,7 +2,7 @@
 
 **Authority:** IMPLEMENTATION GOVERNANCE / AP-11  
 **Date:** 2026-07-27  
-**Base commit:** TBD (direct-main checkpoint)
+**Base commit:** `7f73c4c624c2c12dd972cb0291aa9d320f88028a`
 
 ## Purpose
 

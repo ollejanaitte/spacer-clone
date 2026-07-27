@@ -14,4 +14,4 @@
 
 | Unit | Mode | Commit SHA | Status | Notes |
 |------|------|------------|--------|-------|
-| AP-11 | direct-main push | TBD | PENDING | IF3 client binding (LIM-P03-001) |
+| AP-11 | direct-main push | `7f73c4c624c2c12dd972cb0291aa9d320f88028a` | **PUSHED** | IF3 client binding (LIM-P03-001) |
