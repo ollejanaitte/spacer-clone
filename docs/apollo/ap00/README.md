@@ -39,9 +39,11 @@ Full blocker mapping: [00_governance/blocker_dependency_matrix.md](00_governance
 ## Status
 
 ```text
-AP00_PHASE_STATUS: IN_PROGRESS
-AP00_P00_STATUS: PENDING_STAGING
+AP00_PHASE_STATUS: COMPLETE
+AP00_P04_STATUS: PENDING_STAGING
 ```
+
+Final closure: [final/ap00_final_report.md](final/ap00_final_report.md) | [final/ap00_verdicts.md](final/ap00_verdicts.md)
 
 ## Entry points
 
@@ -69,8 +71,8 @@ AP00_P00_STATUS: PENDING_STAGING
 
 | PR | Scope | Status |
 |----|-------|--------|
-| **P00** | Governance bootstrap (this tree) | IN_PROGRESS |
-| P01 | Feature flag registry | NOT_STARTED |
-| P02 | Scope guards | NOT_STARTED |
-| P03 | Validation hooks | NOT_STARTED |
-| final | AP-00 closure | NOT_STARTED |
+| **P00** | Governance bootstrap (this tree) | MERGED (#201) |
+| P01 | Feature flag + entry guard | MERGED (#202) |
+| P02 | Scope + numeric guards | MERGED (#203) |
+| P03 | Validation / merge gates | MERGED (#204) |
+| P04 | AP-00 closure + AP-01 readiness | PENDING_STAGING |
