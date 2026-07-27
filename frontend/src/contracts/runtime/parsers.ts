@@ -12,6 +12,10 @@ import {
 import { validateEngineeringProject, type EngineeringProject } from "../engineeringProject";
 import { deepFreeze } from "../deepFreeze";
 import { validateBridgeFrameAnalysisDocument, type BridgeFrameAnalysisDocument } from "../bridgeFrameAnalysisDocument";
+import {
+  validateBridgeSuperstructureDesignDocument,
+  type BridgeSuperstructureDesignDocument,
+} from "../bridgeSuperstructureDesignDocument";
 import { validateRoadDesignDocument, type RoadDesignDocument } from "../roadDesignDocument";
 import { validateRoadToFrameTransferPackage, type RoadToFrameTransferPackage } from "../roadToFrameTransferPackage";
 import { validateTransferRecord, type TransferRecord } from "../transferRecord";
@@ -35,6 +39,7 @@ import {
   mapCoordinateContextValue,
   mapDocumentReferenceValue,
   mapBridgeFrameAnalysisDocumentValue,
+  mapBridgeSuperstructureDesignDocumentValue,
   mapEngineeringProjectValue,
   mapMigrationRecordValue,
   mapProvenanceValue,
@@ -52,6 +57,7 @@ import {
 import { parseContractValue, type ContractParseResult } from "./parseContract";
 import {
   bridgeFrameAnalysisDocumentSchema,
+  bridgeSuperstructureDesignDocumentSchema,
   commonEnvelopeSchema,
   contentChecksumSchema,
   coordinateContextSchema,
@@ -381,6 +387,27 @@ export function parseBridgeFrameAnalysisDocumentValue(
   }
 
   const semanticResult = validateBridgeFrameAnalysisDocument(mapped.data, basePath);
+  return finalizeSemanticParse(mapped, semanticResult);
+}
+
+export function parseBridgeSuperstructureDesignDocumentValue(
+  value: unknown,
+  path?: string,
+): ContractParseResult<BridgeSuperstructureDesignDocument> {
+  const basePath = path ?? "";
+  const structural = parseContractValue(bridgeSuperstructureDesignDocumentSchema, value, {
+    path: basePath,
+  });
+  if (!structural.success) {
+    return structural;
+  }
+
+  const mapped = mapBridgeSuperstructureDesignDocumentValue(structural.data, basePath);
+  if (!mapped.ok) {
+    return domainMapFailureToParseFailure(mapped);
+  }
+
+  const semanticResult = validateBridgeSuperstructureDesignDocument(mapped.data, basePath);
   return finalizeSemanticParse(mapped, semanticResult);
 }
 

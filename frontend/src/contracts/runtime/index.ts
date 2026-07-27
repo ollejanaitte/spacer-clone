@@ -15,6 +15,7 @@ export {
 export { jsonSchemaSemanticallyEqual, normalizeJsonSchema } from "./jsonSchema/normalize";
 export {
   parseBridgeFrameAnalysisDocumentValue,
+  parseBridgeSuperstructureDesignDocumentValue,
   parseCommonEnvelopeValue,
   parseContentChecksumValue,
   parseCoordinateContextValue,
@@ -48,6 +49,7 @@ export {
 } from "./constants";
 export {
   bridgeFrameAnalysisDocumentSchema,
+  bridgeSuperstructureDesignDocumentSchema,
   commonEnvelopeSchema,
   createCommonEnvelopeSchema,
   contentChecksumSchema,
@@ -64,6 +66,8 @@ export {
   frameAnalysisResultResourceSchema,
   frameAnalysisResultRowSchema,
   frameAnalysisResultStatusSchema,
+  governedQuantityAdoptionStatusSchema,
+  governedQuantitySchema,
   migrationRecordSchema,
   provenanceSchema,
   roadDesignDocumentSchema,
@@ -78,6 +82,7 @@ export {
   validationIssueSchema,
   validationResultSchema,
   type BridgeFrameAnalysisDocumentValue,
+  type BridgeSuperstructureDesignDocumentValue,
   type CommonEnvelopeValue,
   type ContentChecksumValue,
   type CreateCommonEnvelopeSchemaOptions,
@@ -85,6 +90,8 @@ export {
   type DocumentReferenceValue,
   type EngineeringProjectValue,
   type FrameAnalysisResultResourceValue,
+  type GovernedQuantityAdoptionStatusValue,
+  type GovernedQuantityValue,
   type MigrationRecordValue,
   type ProvenanceValue,
   type RoadDesignDocumentValue,

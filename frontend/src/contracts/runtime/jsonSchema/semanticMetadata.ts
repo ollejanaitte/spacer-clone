@@ -200,6 +200,26 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "CONTRACT_SCHEMA_VERSION_MAJOR_UNSUPPORTED",
     ],
   },
+  "bridge-superstructure-design-document": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "This JSON Schema validates BridgeSuperstructureDesignDocument v0.1.0 structural envelope. GovernedQuantity adoption authority (fail-closed under NOT_SELECTED), production provenance/checksum shapes, analysis binding IF3 metadata, and coordinate/unit context semantics require runtime validation.",
+    runtimeRules: [
+      "BSDD_SCHEMA_ID_INVALID",
+      "BSDD_DOCUMENT_KIND_INVALID",
+      "BSDD_DOCUMENT_ID_INVALID",
+      "GOVERNED_QUANTITY_ADOPTION_STATUS_INVALID",
+      "AP00_NUMERIC_ADOPTION_WITHOUT_STANDARD",
+      "BSDD_ANALYSIS_BINDING_IF3_METADATA_INVALID",
+      "CONTRACT_SCHEMA_VERSION_UNSUPPORTED",
+      "CONTENT_CHECKSUM_HEX_INVALID",
+      "PROVENANCE_CREATED_AT_INVALID",
+      "COORDINATE_AXIS_ORDER_INVALID",
+      "UNIT_FORCE_INVALID",
+    ],
+  },
   "frame-analysis-result-resource": {
     scope: "structural-plus-semantic",
     completeValidator: false,

@@ -10,6 +10,8 @@ export const ENGINEERING_PROJECT_SCHEMA_ID = "spacer.contracts.engineering-proje
 export const ROAD_DESIGN_DOCUMENT_SCHEMA_ID = "spacer.contracts.road-design-document" as SchemaId;
 export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID =
   "spacer.contracts.bridge-frame-analysis-document" as SchemaId;
+export const BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID =
+  "spacer.contracts.bridge-superstructure-design-document" as SchemaId;
 export const FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID =
   "spacer.contracts.frame-analysis-result-resource" as SchemaId;
 export const UNKNOWN_FIELD_STORE_SCHEMA_ID = "spacer.contracts.unknown-field-store" as SchemaId;
@@ -25,6 +27,7 @@ export const COMMON_ENVELOPE_SHAPE_ID = "spacer.contracts.common-envelope-shape"
 export const ENGINEERING_PROJECT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const UNKNOWN_FIELD_STORE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const MIGRATION_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
@@ -62,6 +65,11 @@ export const CONTRACT_VERSION_SUPPORT_MATRIX: Readonly<
     schemaId: BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID,
     supportedVersions: [BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION],
     currentVersion: BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION,
+  },
+  [BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID]: {
+    schemaId: BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID,
+    supportedVersions: [BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION],
+    currentVersion: BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION,
   },
   [FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID]: {
     schemaId: FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID,

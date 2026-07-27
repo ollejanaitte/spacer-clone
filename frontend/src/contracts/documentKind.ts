@@ -2,6 +2,7 @@ export const DOCUMENT_KINDS = [
   "engineering-project",
   "road-design",
   "bridge-frame-analysis",
+  "bridge-superstructure-design",
   "road-to-frame-transfer-package",
   "transfer-record",
   "persisted-result",

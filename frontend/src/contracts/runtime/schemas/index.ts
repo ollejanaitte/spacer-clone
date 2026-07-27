@@ -3,6 +3,16 @@ export {
   type BridgeFrameAnalysisDocumentValue,
 } from "./bridgeFrameAnalysisDocument";
 export {
+  bridgeSuperstructureDesignDocumentSchema,
+  type BridgeSuperstructureDesignDocumentValue,
+} from "./bridgeSuperstructureDesignDocument";
+export {
+  governedQuantityAdoptionStatusSchema,
+  governedQuantitySchema,
+  type GovernedQuantityAdoptionStatusValue,
+  type GovernedQuantityValue,
+} from "./governedQuantity";
+export {
   frameAnalysisLoadContextEntrySchema,
   frameAnalysisLoadContextKindSchema,
   frameAnalysisLoadContextSchema,

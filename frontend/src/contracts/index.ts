@@ -165,9 +165,42 @@ export {
 } from "./bridgeFrameAnalysisDocument";
 
 export {
+  BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND,
+  validateBridgeSuperstructureDesignDocument,
+  type BridgeSuperstructureDesignDocument,
+  type BsddAnalysisBinding,
+  type BsddBridge,
+  type BsddDeck,
+  type BsddGirderLine,
+  type BsddLifecycleStatus,
+  type BsddLoad,
+  type BsddLoadCase,
+  type BsddMaterialDefinition,
+  type BsddPhase1ScopeAssertion,
+  type BsddProjectContext,
+  type BsddSpan,
+  type BsddSupport,
+  type BsddValidationStatus,
+  type ValidateBridgeSuperstructureDesignDocumentOptions,
+} from "./bridgeSuperstructureDesignDocument";
+
+export {
+  adoptionStatusToNumericAuthority,
+  governedQuantityToNumericRecord,
+  isGovernedQuantityAdoptionStatus,
+  validateGovernedQuantity,
+  GOVERNED_QUANTITY_ADOPTION_STATUSES,
+  type GovernedQuantity,
+  type GovernedQuantityAdoptionStatus,
+  type ValidateGovernedQuantityOptions,
+} from "./governedQuantity";
+
+export {
   COMMON_ENVELOPE_SHAPE_ID,
   BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_ID,
   BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION,
+  BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID,
+  BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION,
   FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_ID,
   FRAME_ANALYSIS_RESULT_RESOURCE_SCHEMA_VERSION,
   CONTRACT_VERSION_SUPPORT_MATRIX,
@@ -575,6 +608,7 @@ export {
   jsonSchemaSemanticallyEqual,
   normalizeJsonSchema,
   parseBridgeFrameAnalysisDocumentValue,
+  parseBridgeSuperstructureDesignDocumentValue,
   parseCommonEnvelopeValue,
   parseContentChecksumValue,
   parseContractValue,
@@ -609,6 +643,8 @@ export {
   zodIssueToValidationIssue,
   zodIssuesToValidationResult,
   bridgeFrameAnalysisDocumentSchema,
+  bridgeSuperstructureDesignDocumentSchema,
+  governedQuantitySchema,
   commonEnvelopeSchema,
   createCommonEnvelopeSchema,
   contentChecksumSchema,
@@ -616,6 +652,8 @@ export {
   engineeringProjectSchema,
   migrationRecordSchema,
   type BridgeFrameAnalysisDocumentValue,
+  type BridgeSuperstructureDesignDocumentValue,
+  type GovernedQuantityValue,
   type CommonEnvelopeValue,
   type ContentChecksumValue,
   type CreateCommonEnvelopeSchemaOptions,

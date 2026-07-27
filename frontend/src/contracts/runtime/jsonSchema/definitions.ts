@@ -1,5 +1,6 @@
 import type { ZodType } from "zod";
 import { bridgeFrameAnalysisDocumentSchema } from "../schemas/bridgeFrameAnalysisDocument";
+import { bridgeSuperstructureDesignDocumentSchema } from "../schemas/bridgeSuperstructureDesignDocument";
 import { commonEnvelopeSchema } from "../schemas/commonEnvelope";
 import { contentChecksumSchema } from "../schemas/contentChecksum";
 import { coordinateContextSchema } from "../schemas/coordinateContext";
@@ -42,6 +43,10 @@ export const CONTRACT_JSON_SCHEMA_DEFINITIONS: readonly ContractJsonSchemaDefini
   { slug: "engineering-project", schema: engineeringProjectSchema },
   { slug: "road-design-document", schema: roadDesignDocumentSchema },
   { slug: "bridge-frame-analysis-document", schema: bridgeFrameAnalysisDocumentSchema },
+  {
+    slug: "bridge-superstructure-design-document",
+    schema: bridgeSuperstructureDesignDocumentSchema,
+  },
   { slug: "frame-analysis-result-resource", schema: frameAnalysisResultResourceSchema },
   { slug: "unknown-field-store", schema: unknownFieldStoreSchema },
   { slug: "migration-record", schema: migrationRecordSchema },

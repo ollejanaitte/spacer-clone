@@ -6,6 +6,8 @@ import type { CoordinateContext } from "../coordinateContext";
 import type { DocumentReference } from "../documentReference";
 import type { BridgeFrameAnalysisDocument, TransferBinding } from "../bridgeFrameAnalysisDocument";
 import { BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND } from "../bridgeFrameAnalysisDocument";
+import type { BridgeSuperstructureDesignDocument } from "../bridgeSuperstructureDesignDocument";
+import { BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND } from "../bridgeSuperstructureDesignDocument";
 import type {
   PackageArtifactReference,
   PolicyReference,
@@ -51,6 +53,7 @@ import type { CoordinateContextValue } from "./schemas/coordinateContext";
 import type { DocumentReferenceValue } from "./schemas/documentReference";
 import type { EngineeringProjectValue } from "./schemas/engineeringProject";
 import type { BridgeFrameAnalysisDocumentValue } from "./schemas/bridgeFrameAnalysisDocument";
+import type { BridgeSuperstructureDesignDocumentValue } from "./schemas/bridgeSuperstructureDesignDocument";
 import type { CapabilityBlockValue } from "./schemas/capabilityBlock";
 import type {
   AnalysisSettingsValue,
@@ -2993,6 +2996,180 @@ export function mapTransferRecordValue(
       ...(unknownFieldStoreRefMapped?.ok === true
         ? { unknownFieldStoreRef: unknownFieldStoreRefMapped.data }
         : {}),
+      ...(value.extensions !== undefined ? { extensions: mapExtensionsValue(value.extensions) } : {}),
+    },
+  };
+}
+
+export function mapBridgeSuperstructureDesignDocumentValue(
+  value: BridgeSuperstructureDesignDocumentValue,
+  basePath = "",
+): DomainMapResult<BridgeSuperstructureDesignDocument> {
+  const envelopeMapped = mapCommonEnvelopeValue(value, basePath);
+  if (!envelopeMapped.ok) {
+    return envelopeMapped;
+  }
+
+  const issues: ValidationIssue[] = [];
+  const coordinateContexts: CoordinateContext[] = [];
+  value.coordinateContexts.forEach((context, index) => {
+    const mapped = mapCoordinateContextValue(
+      context,
+      joinIndexedPath(joinFieldPath(basePath, "coordinateContexts"), index),
+    );
+    if (!mapped.ok) {
+      issues.push(...mapped.validation.issues);
+    } else {
+      coordinateContexts.push(mapped.data);
+    }
+  });
+
+  const unitContextMapped = mapUnitContextValue(
+    value.unitContext,
+    joinFieldPath(basePath, "unitContext"),
+  );
+  if (!unitContextMapped.ok) {
+    issues.push(...unitContextMapped.validation.issues);
+  }
+
+  const roadImportMapped =
+    value.roadImportProvenance !== undefined && value.roadImportProvenance !== null
+      ? mapDocumentReferenceValue(
+          value.roadImportProvenance,
+          joinFieldPath(basePath, "roadImportProvenance"),
+        )
+      : undefined;
+  if (roadImportMapped !== undefined && !roadImportMapped.ok) {
+    issues.push(...roadImportMapped.validation.issues);
+  }
+
+  const exportAuthorityMapped =
+    value.exportAuthorityRef !== undefined && value.exportAuthorityRef !== null
+      ? mapDocumentReferenceValue(
+          value.exportAuthorityRef,
+          joinFieldPath(basePath, "exportAuthorityRef"),
+        )
+      : undefined;
+  if (exportAuthorityMapped !== undefined && !exportAuthorityMapped.ok) {
+    issues.push(...exportAuthorityMapped.validation.issues);
+  }
+
+  const analysisBindings = value.analysisBindings.map((binding, index) => {
+    const bindingPath = joinIndexedPath(joinFieldPath(basePath, "analysisBindings"), index);
+    const sourceMapped = mapDocumentReferenceValue(
+      binding.sourceBsdDocumentRef,
+      joinFieldPath(bindingPath, "sourceBsdDocumentRef"),
+    );
+    if (!sourceMapped.ok) {
+      issues.push(...sourceMapped.validation.issues);
+    }
+    const targetMapped =
+      binding.targetBfadDocumentRef !== null
+        ? mapDocumentReferenceValue(
+            binding.targetBfadDocumentRef,
+            joinFieldPath(bindingPath, "targetBfadDocumentRef"),
+          )
+        : undefined;
+    if (targetMapped !== undefined && !targetMapped.ok) {
+      issues.push(...targetMapped.validation.issues);
+    }
+    const resultMapped =
+      binding.resultResourceRef !== null
+        ? mapDocumentReferenceValue(
+            binding.resultResourceRef,
+            joinFieldPath(bindingPath, "resultResourceRef"),
+          )
+        : undefined;
+    if (resultMapped !== undefined && !resultMapped.ok) {
+      issues.push(...resultMapped.validation.issues);
+    }
+    const bindingExportMapped =
+      binding.exportAuthorityRef !== undefined && binding.exportAuthorityRef !== null
+        ? mapDocumentReferenceValue(
+            binding.exportAuthorityRef,
+            joinFieldPath(bindingPath, "exportAuthorityRef"),
+          )
+        : undefined;
+    if (bindingExportMapped !== undefined && !bindingExportMapped.ok) {
+      issues.push(...bindingExportMapped.validation.issues);
+    }
+
+    return {
+      bindingId: binding.bindingId as UuidString,
+      analysisType: binding.analysisType,
+      bindingStatus: binding.bindingStatus,
+      sourceBsdDocumentRef:
+        sourceMapped.ok === true ? sourceMapped.data : (binding.sourceBsdDocumentRef as DocumentReference),
+      targetBfadDocumentRef:
+        binding.targetBfadDocumentRef === null
+          ? null
+          : targetMapped?.ok === true
+            ? targetMapped.data
+            : (binding.targetBfadDocumentRef as DocumentReference),
+      resultResourceRef:
+        binding.resultResourceRef === null
+          ? null
+          : resultMapped?.ok === true
+            ? resultMapped.data
+            : (binding.resultResourceRef as DocumentReference),
+      if3Metadata: (binding.if3Metadata ?? null) as BridgeSuperstructureDesignDocument["analysisBindings"][number]["if3Metadata"],
+      ...(bindingExportMapped?.ok === true
+        ? { exportAuthorityRef: bindingExportMapped.data }
+        : binding.exportAuthorityRef !== undefined
+          ? { exportAuthorityRef: binding.exportAuthorityRef as DocumentReference | null }
+          : {}),
+    };
+  });
+
+  if (issues.length > 0 || !unitContextMapped.ok) {
+    return domainMapFailure(issues);
+  }
+
+  const envelope = envelopeMapped.data;
+  return {
+    ok: true,
+    data: {
+      schemaId: envelope.schemaId,
+      schemaVersion: envelope.schemaVersion,
+      documentKind: BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND,
+      documentId: envelope.documentId,
+      revisionId: envelope.revisionId,
+      contentChecksum: envelope.contentChecksum,
+      provenance: envelope.provenance,
+      ...(envelope.extensions !== undefined ? { extensions: envelope.extensions } : {}),
+      ...(envelope.unknownFieldStoreRef !== undefined
+        ? { unknownFieldStoreRef: envelope.unknownFieldStoreRef }
+        : {}),
+      ...(envelope.migrationProvenanceRef !== undefined
+        ? { migrationProvenanceRef: envelope.migrationProvenanceRef }
+        : {}),
+      lifecycleStatus: value.lifecycleStatus,
+      coordinateContexts,
+      unitContext: unitContextMapped.data,
+      projectContext: {
+        projectId: value.projectContext.projectId as UuidString,
+        name: value.projectContext.name,
+        ...(value.projectContext.clientName !== undefined
+          ? { clientName: value.projectContext.clientName }
+          : {}),
+        ...(value.projectContext.phaseTag !== undefined
+          ? { phaseTag: value.projectContext.phaseTag }
+          : {}),
+      },
+      bridge: value.bridge as unknown as BridgeSuperstructureDesignDocument["bridge"],
+      materialDefinitions:
+        value.materialDefinitions as unknown as BridgeSuperstructureDesignDocument["materialDefinitions"],
+      loadCases: value.loadCases as unknown as BridgeSuperstructureDesignDocument["loadCases"],
+      analysisBindings,
+      phase1ScopeAssertion:
+        value.phase1ScopeAssertion as BridgeSuperstructureDesignDocument["phase1ScopeAssertion"],
+      ...(value.validationStatus !== undefined ? { validationStatus: value.validationStatus } : {}),
+      ...(roadImportMapped?.ok === true ? { roadImportProvenance: roadImportMapped.data } : {}),
+      ...(value.roadImportProvenance === null ? { roadImportProvenance: null } : {}),
+      ...(exportAuthorityMapped?.ok === true
+        ? { exportAuthorityRef: exportAuthorityMapped.data }
+        : {}),
+      ...(value.exportAuthorityRef === null ? { exportAuthorityRef: null } : {}),
       ...(value.extensions !== undefined ? { extensions: mapExtensionsValue(value.extensions) } : {}),
     },
   };
