@@ -1,0 +1,17 @@
+approval_id,golden_id,proposal_status,proposer,independent_reviewer_and_approver,approval_status,decision_id,evidence_reviewed,review_date,supersedes,notes
+GOLD-APR-001,GOLD-001,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-001,NOT_APPLICABLE,NONE,Independent derivation and tolerance approval required
+GOLD-APR-002,GOLD-002,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-001,NOT_APPLICABLE,NONE,Independent derivation and tolerance approval required
+GOLD-APR-003,GOLD-003,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-001,NOT_APPLICABLE,NONE,Independent derivation and tolerance approval required
+GOLD-APR-004,GOLD-004,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-001,NOT_APPLICABLE,NONE,Input and independent derivation required
+GOLD-APR-005,GOLD-005,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-001,NOT_APPLICABLE,NONE,Independent derivation and tolerance approval required
+GOLD-APR-006,GOLD-006,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-003,NOT_APPLICABLE,NONE,Fixed reference identity and three runs required
+GOLD-APR-007,GOLD-007,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-005,NOT_APPLICABLE,NONE,Approved four-girder source model and reference runs required
+GOLD-APR-008,GOLD-008,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-005,NOT_APPLICABLE,NONE,Approved five-girder source model and reference runs required
+GOLD-APR-009,GOLD-009,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-005,NOT_APPLICABLE,NONE,Approved six-girder source model and reference runs required
+GOLD-APR-010,GOLD-010,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-003,NOT_APPLICABLE,NONE,Combination mapping and fixed reference runs required
+GOLD-APR-011,GOLD-011,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-004,NOT_APPLICABLE,NONE,Parent oracle and canonicalization approval required
+GOLD-APR-012,GOLD-012,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-006,NOT_APPLICABLE,NONE,Independent negative contract and checksummed artifacts required
+GOLD-APR-013,GOLD-013,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-006,NOT_APPLICABLE,NONE,Independent negative contract and checksummed artifacts required
+GOLD-APR-014,GOLD-014,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-006,NOT_APPLICABLE,NONE,Independent negative contract and checksummed artifacts required
+GOLD-APR-015,GOLD-015,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-007,NOT_APPLICABLE,NONE,DS-02 through DS-05 source blockers and independent derivation required
+GOLD-APR-016,GOLD-016,EVIDENCE_INCOMPLETE,Documentation Worker,Independent Reviewer,NOT_APPROVED,NONE,GOLD-BLK-008,NOT_APPLICABLE,NONE,Parent numeric oracle live IF3 and independently approved exports required
