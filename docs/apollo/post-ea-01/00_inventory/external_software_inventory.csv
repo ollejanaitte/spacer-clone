@@ -1,0 +1,5 @@
+software_id,product,module_or_role,evidence_type,path_or_source,version_or_build,sha256,status,license_status,notes
+ESI-001,SPACER,product shell,manual_reference,/home/masaharu/Projects/spacer-clone-main/マニュアル/SPACER操作マニュアル.pdf,manual dated 2008-03-24,e08681a290904c13c702ed864e0753d85e5c43201a5881c48766c0417aa7d012,AVAILABLE_REFERENCE_ONLY,LICENSE_REQUIRED,実行ファイル未確認。manual のみ。
+ESI-002,STATICS,module name,manual_reference,/home/masaharu/Projects/spacer-clone-main/マニュアル/SPACER操作マニュアル.pdf,manual dated 2008-03-24,e08681a290904c13c702ed864e0753d85e5c43201a5881c48766c0417aa7d012,AVAILABLE_REFERENCE_ONLY,LICENSE_REQUIRED,ホスト実行ファイル・version・checksum 未確認。
+ESI-003,Historical APOLLO Analyzer,external analyzer,handoff_and_ds_register,docs/apollo/design-standards/06_analyzer/analyzer_identity_register.csv,not machine confirmed,NOT_APPLICABLE,AVAILABLE_REQUIRES_VERIFICATION,LICENSE_REQUIRED,ローカル executable / service 不在。
+ESI-004,Analyzer executable,required probe target,file_system_search,/home/masaharu/Projects,NOT_FOUND,NOT_FOUND,NOT_FOUND,LICENSE_REQUIRED,`.exe`/vendor binary を確認できず。

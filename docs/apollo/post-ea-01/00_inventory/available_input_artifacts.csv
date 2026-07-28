@@ -1,0 +1,3 @@
+artifact_id,artifact_type,path,sha256,status,notes
+AIN-001,readme_fixture,examples/spacer-reference/README.md,NOT_CAPTURED,AVAILABLE_REFERENCE_ONLY,実機入力ではない。reference directory の説明のみ。
+AIN-002,template_manifest,docs/apollo/evidence-collection/03_external_run_package/input_bundle/fixture_checksum_manifest.template.json,NOT_CAPTURED,AVAILABLE_REFERENCE_ONLY,EA-03 template。native input artifact ではない。

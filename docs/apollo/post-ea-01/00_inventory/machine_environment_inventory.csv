@@ -1,0 +1,2 @@
+machine_id,host,os,architecture,locale,wine_present,powershell_present,pdfinfo_present,sha256sum_present,7z_present,status,notes
+MEI-001,masaharu-DAIV-NG5500,Ubuntu 22.04 kernel 6.8.0-134-generic,x86_64,LANG=ja_JP.UTF-8; LC_ALL=C.UTF-8,no,no,yes,yes,yes,AVAILABLE_REFERENCE_ONLY,ローカル Linux host。Windows native 実行環境・license manager・Wine は未確認。

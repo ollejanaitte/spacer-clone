@@ -1,0 +1,8 @@
+blocker_id,stage,required_evidence,current_local_state,status,next_required_action
+BLK-S1-001,POST-EA-01-01,R7 per-volume title/colophon/errata evidence,PDF files found but edition facets not human-fixed,AVAILABLE_REQUIRES_VERIFICATION,Human-read licensed copies and capture colophon/errata metadata.
+BLK-S1-002,POST-EA-01-01,JIS identities and editions,No primary JIS packages found,NOT_FOUND,Acquire official JIS copies and map JIS-001..034.
+AN-BLK-001,POST-EA-01-02,Analyzer/SPACER/STATICS installed identity bundle,Manual only; no executable found,LICENSE_REQUIRED,Access licensed machine and capture executable identity and checksums.
+AN-BLK-002,POST-EA-01-03,Minimal valid external run bundle,No executable or invocation available,EXTERNAL_MACHINE_REQUIRED,Run EA-03 package on authorized machine.
+AN-BLK-008,POST-EA-01-03,Three-run reproducibility bundle,No executable or output available,EXTERNAL_MACHINE_REQUIRED,Run same fixed fixture three times on licensed machine.
+GOLD-BLK-003,POST-EA-01-04,Reference software golden three-run bundle,Reference software not runnable locally,EXTERNAL_MACHINE_REQUIRED,Capture native reference outputs on licensed machine.
+PAR-BLK-005,POST-EA-01-05,Actual SPACER numeric parity bundle,No native SPACER outputs or fixed identity,EXTERNAL_MACHINE_REQUIRED,Capture SPACER/STATICS runs and compare with Apollo.
