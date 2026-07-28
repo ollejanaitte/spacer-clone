@@ -1,0 +1,11 @@
+gate_id,gate_requirement,current_state,verdict
+NN-GATE-001,Scope freeze explicit,PASS,PASS
+NN-GATE-002,Numeric prohibited scope explicit,PASS,PASS
+NN-GATE-003,First implementation unit explicit,PASS,PASS
+NN-GATE-004,Feature flags explicit,PASS,PASS
+NN-GATE-005,Publication guard explicit,PASS,PASS
+NN-GATE-006,Provisional status explicit,PASS,PASS
+NN-GATE-007,Rollback/disable path explicit,PASS,PASS
+NN-GATE-008,No unsupported numeric need,PASS,PASS
+NN-GATE-009,No hidden solver dependency,PASS_WITH_CONTROL,PASS
+NN-GATE-010,Repository governance clean at gate,PASS,PASS
