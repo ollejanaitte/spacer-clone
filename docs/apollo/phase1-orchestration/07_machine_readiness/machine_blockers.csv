@@ -1,0 +1,4 @@
+blocker_id,status,exact_requirement
+AN-BLK-001,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Licensed Windows identity bundle
+AN-BLK-002,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Minimal valid native run bundle
+AN-BLK-008,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three isolated native run bundles

@@ -1,0 +1,5 @@
+license_id,subject,status,notes
+LIC-M-001,Windows runtime entitlement,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No licensed Windows runtime evidence captured
+LIC-M-002,SPACER entitlement,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Secrets not captured and no runtime observed
+LIC-M-003,Analyzer entitlement,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Secrets not captured and no runtime observed
+LIC-M-004,STATICS entitlement,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Secrets not captured and no runtime observed

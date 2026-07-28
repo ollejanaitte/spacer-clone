@@ -1,0 +1,4 @@
+software_id,product,status,notes
+MID-001,SPACER,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No licensed Windows identity bundle captured
+MID-002,Analyzer,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No licensed Windows identity bundle captured
+MID-003,STATICS,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No licensed Windows identity bundle captured

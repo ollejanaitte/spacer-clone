@@ -1,0 +1,8 @@
+{
+  "verdict": "BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT",
+  "as_of_date": "2026-07-28",
+  "notes": [
+    "No licensed Windows machine evidence was captured in-repo on Tuesday, July 28, 2026.",
+    "Synthetic machine manifests are prohibited."
+  ]
+}
