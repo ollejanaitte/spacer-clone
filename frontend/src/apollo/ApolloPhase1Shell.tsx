@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ProjectModel } from "../types";
 import type { ApolloPhase1FeatureFlags } from "./featureFlag";
 
@@ -89,12 +89,23 @@ export function ApolloPhase1Shell({
   onReturnToPro,
   onAuditEvent,
 }: ApolloPhase1ShellProps) {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(project.nodes[0]?.id ?? null);
   const [auditTrail, setAuditTrail] = useState<string[]>([
     "Apollo Phase 1-NN shell opened.",
   ]);
   const [interactionMessage, setInteractionMessage] = useState<string | null>(null);
 
   const validations = useMemo(() => buildShellValidations(project), [project]);
+  const selectedNode =
+    project.nodes.find((node) => node.id === selectedNodeId) ?? project.nodes[0] ?? null;
+
+  useEffect(() => {
+    if (selectedNode) {
+      setSelectedNodeId(selectedNode.id);
+      return;
+    }
+    setSelectedNodeId(null);
+  }, [selectedNode]);
 
   const pushAudit = (message: string) => {
     setAuditTrail((current) => [message, ...current].slice(0, MAX_AUDIT_ENTRIES));
@@ -161,6 +172,7 @@ export function ApolloPhase1Shell({
       },
       `Topology shell appended node ${id}.`,
     );
+    setSelectedNodeId(id);
   };
 
   const addTopologyMember = () => {
@@ -235,6 +247,40 @@ export function ApolloPhase1Shell({
       "Authoritative result publication remains blocked. This shell may show provisional structure state only.";
     setInteractionMessage(message);
     pushAudit("Result publication request denied by Phase 1-NN guard.");
+  };
+
+  const updateSelectedNodeLabel = (label: string) => {
+    if (!selectedNode) return;
+    commitProject(
+      {
+        ...project,
+        nodes: project.nodes.map((node) =>
+          node.id === selectedNode.id ? { ...node, label } : node,
+        ),
+      },
+      `Topology shell updated node ${selectedNode.id} label.`,
+    );
+  };
+
+  const updateSelectedNodeCoordinate = (axis: "x" | "y" | "z", raw: string) => {
+    if (!selectedNode) return;
+    const nextValue = Number(raw);
+    if (raw.trim() === "" || !Number.isFinite(nextValue)) {
+      const message = `Node shell rejected invalid ${axis.toUpperCase()} coordinate for ${selectedNode.id}.`;
+      setInteractionMessage(message);
+      pushAudit(message);
+      return;
+    }
+
+    commitProject(
+      {
+        ...project,
+        nodes: project.nodes.map((node) =>
+          node.id === selectedNode.id ? { ...node, [axis]: nextValue } : node,
+        ),
+      },
+      `Topology shell updated node ${selectedNode.id} ${axis.toUpperCase()} coordinate to ${nextValue}.`,
+    );
   };
 
   return (
@@ -343,6 +389,82 @@ export function ApolloPhase1Shell({
               </li>
             ))}
           </ul>
+        </div>
+        <div data-testid="apollo-node-editor">
+          <h3>Node editor shell</h3>
+          {selectedNode ? (
+            <>
+              <label>
+                Selected node
+                <select
+                  data-testid="apollo-node-select"
+                  value={selectedNode.id}
+                  onChange={(event) => setSelectedNodeId(event.target.value)}
+                >
+                  {project.nodes.map((node) => (
+                    <option key={node.id} value={node.id}>
+                      {node.id}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Node label
+                <input
+                  data-testid="apollo-node-label-input"
+                  value={selectedNode.label ?? ""}
+                  onInput={(event) =>
+                    updateSelectedNodeLabel((event.target as HTMLInputElement).value)
+                  }
+                  onChange={(event) => updateSelectedNodeLabel(event.target.value)}
+                />
+              </label>
+              <label>
+                X
+                <input
+                  data-testid="apollo-node-x-input"
+                  value={String(selectedNode.x)}
+                  onInput={(event) =>
+                    updateSelectedNodeCoordinate(
+                      "x",
+                      (event.target as HTMLInputElement).value,
+                    )
+                  }
+                  onChange={(event) => updateSelectedNodeCoordinate("x", event.target.value)}
+                />
+              </label>
+              <label>
+                Y
+                <input
+                  data-testid="apollo-node-y-input"
+                  value={String(selectedNode.y)}
+                  onInput={(event) =>
+                    updateSelectedNodeCoordinate(
+                      "y",
+                      (event.target as HTMLInputElement).value,
+                    )
+                  }
+                  onChange={(event) => updateSelectedNodeCoordinate("y", event.target.value)}
+                />
+              </label>
+              <label>
+                Z
+                <input
+                  data-testid="apollo-node-z-input"
+                  value={String(selectedNode.z)}
+                  onInput={(event) =>
+                    updateSelectedNodeCoordinate(
+                      "z",
+                      (event.target as HTMLInputElement).value,
+                    )
+                  }
+                  onChange={(event) => updateSelectedNodeCoordinate("z", event.target.value)}
+                />
+              </label>
+            </>
+          ) : (
+            <p>No node is available for shell editing.</p>
+          )}
         </div>
         <label>
           Primary material shell

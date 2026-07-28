@@ -2,8 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: "./",
+  define: {
+    __APOLLO_PHASE1_MODE__: JSON.stringify(mode === "apollo"),
+  },
   resolve: {
     alias: {
       "node:crypto": fileURLToPath(new URL("./src/polyfills/nodeCrypto.ts", import.meta.url)),
@@ -33,4 +36,4 @@ export default defineConfig({
       "/health": "http://127.0.0.1:8000",
     },
   },
-});
+}));

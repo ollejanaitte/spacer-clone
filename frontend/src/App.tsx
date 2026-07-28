@@ -1172,6 +1172,11 @@ export function App() {
         onOpenApolloPhase1={
           apolloPhase1Enabled ? () => navigatePro(APOLLO_PHASE1_ROUTE_PATH) : undefined
         }
+        apolloPhase1EntryTitle={
+          apolloPhase1Enabled
+            ? "Apollo Phase 1-NN shell"
+            : "Apollo Phase 1-NN shell is installed but disabled until Apollo mode or VITE_APOLLO_PHASE1_NN_ENABLED=true is enabled."
+        }
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge

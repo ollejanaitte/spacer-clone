@@ -9,6 +9,8 @@ export const APOLLO_PHASE1_DISABLE_RESULT_PUBLICATION_FLAG_NAME =
 export const APOLLO_PHASE1_DISABLE_NUMERIC_EXECUTION_FLAG_NAME =
   "VITE_APOLLO_PHASE1_DISABLE_NUMERIC_EXECUTION";
 
+declare const __APOLLO_PHASE1_MODE__: boolean;
+
 export type ApolloPhase1FeatureFlags = {
   readonly nnEnabled: boolean;
   readonly numericReleaseBlocked: boolean;
@@ -38,29 +40,44 @@ function getApolloPhase1Env(): Record<string, string | undefined> {
   return meta.env ?? {};
 }
 
+function getApolloPhase1ModeDefaults(env: Record<string, string | undefined>): ApolloPhase1FeatureFlags {
+  const apolloMode =
+    env.MODE === "apollo" ||
+    (typeof __APOLLO_PHASE1_MODE__ !== "undefined" && __APOLLO_PHASE1_MODE__);
+  return {
+    nnEnabled: apolloMode,
+    numericReleaseBlocked: true,
+    showProvisionalStatus: true,
+    disableResultPublication: true,
+    disableNumericExecution: true,
+  };
+}
+
 export function resolveApolloPhase1FeatureFlags(): ApolloPhase1FeatureFlags {
   const env = getApolloPhase1Env();
+  const modeDefaults = getApolloPhase1ModeDefaults(env);
   const nnEnabled =
     parseApolloPhase1Flag(env[APOLLO_PHASE1_NN_ENABLED_FLAG_NAME]) ||
-    parseApolloPhase1Flag(env[APOLLO_PHASE1_FLAG_NAME]);
+    parseApolloPhase1Flag(env[APOLLO_PHASE1_FLAG_NAME]) ||
+    modeDefaults.nnEnabled;
 
   return {
     nnEnabled,
     numericReleaseBlocked: parseFailClosedApolloPhase1Guard(
       env[APOLLO_PHASE1_NUMERIC_RELEASE_BLOCKED_FLAG_NAME],
-      true,
+      modeDefaults.numericReleaseBlocked,
     ),
     showProvisionalStatus: parseFailClosedApolloPhase1Guard(
       env[APOLLO_PHASE1_SHOW_PROVISIONAL_STATUS_FLAG_NAME],
-      true,
+      modeDefaults.showProvisionalStatus,
     ),
     disableResultPublication: parseFailClosedApolloPhase1Guard(
       env[APOLLO_PHASE1_DISABLE_RESULT_PUBLICATION_FLAG_NAME],
-      true,
+      modeDefaults.disableResultPublication,
     ),
     disableNumericExecution: parseFailClosedApolloPhase1Guard(
       env[APOLLO_PHASE1_DISABLE_NUMERIC_EXECUTION_FLAG_NAME],
-      true,
+      modeDefaults.disableNumericExecution,
     ),
   };
 }

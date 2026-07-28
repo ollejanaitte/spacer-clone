@@ -59,4 +59,14 @@ describe("Toolbar", () => {
     expect(onBackToTop).toHaveBeenCalledTimes(1);
     expect(onResetModel).toHaveBeenCalledTimes(1);
   });
+
+  test("shows Apollo entry as disabled when the shell is gated OFF", () => {
+    const { container } = renderToolbar({
+      apolloPhase1EntryTitle:
+        "Apollo Phase 1-NN shell is installed but disabled until Apollo mode or VITE_APOLLO_PHASE1_NN_ENABLED=true is enabled.",
+    });
+    const button = container.querySelector('[data-testid="open-apollo-phase1"]') as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    expect(button.getAttribute("aria-disabled")).toBe("true");
+  });
 });

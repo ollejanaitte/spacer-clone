@@ -1,0 +1,9 @@
+{
+  "date": "Tuesday, July 28, 2026",
+  "frontendDir": "/home/masaharu/Projects/spacer-clone-main/frontend",
+  "repoRoot": "/home/masaharu/Projects/spacer-clone-main",
+  "electronMainPath": "/home/masaharu/Projects/spacer-clone-main/desktop/electron/dist/main.js",
+  "backendCommand": "/home/masaharu/Projects/spacer-clone-main/.venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000",
+  "vitePort": 5173,
+  "backendPort": 8000
+}

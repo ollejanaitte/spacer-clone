@@ -84,7 +84,7 @@ describe("ApolloPhase1Shell", () => {
     });
 
     expect(updates[0]?.project.name).toBe("Apollo NN Draft");
-    expect(updates.at(-1)?.nodes.length).toBe(project.nodes.length + 1);
+    expect(updates[1]?.nodes.length).toBe(project.nodes.length + 1);
   });
 
   it("blocks numeric execution and result publication while recording audit events", () => {
@@ -147,5 +147,23 @@ describe("ApolloPhase1Shell", () => {
     expect(container.textContent).toContain("NN-PROJECT-NAME-REQUIRED");
     expect(container.textContent).toContain("NN-MEMBER-NODE-REFERENCE");
     expect(container.textContent).toContain("NN-SUPPORT-NODE-REFERENCE");
+  });
+
+  it("rejects invalid node coordinate edits", () => {
+    const onAuditEvent = vi.fn();
+    const { container } = renderShell({ onAuditEvent });
+    const nodeXInput = container.querySelector(
+      "[data-testid='apollo-node-x-input']",
+    ) as HTMLInputElement;
+
+    act(() => {
+      nodeXInput.value = "invalid";
+      nodeXInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain("Node shell rejected invalid X coordinate");
+    expect(onAuditEvent).toHaveBeenCalledWith(
+      expect.stringContaining("Node shell rejected invalid X coordinate"),
+    );
   });
 });

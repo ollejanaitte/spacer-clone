@@ -37,6 +37,7 @@ type ToolbarProps = {
   onOpenModelComparison?: () => void;
   onOpenLinerList?: () => void;
   onOpenApolloPhase1?: () => void;
+  apolloPhase1EntryTitle?: string;
 };
 
 const t = ja.toolbar;
@@ -76,6 +77,7 @@ export function Toolbar({
   onOpenModelComparison = () => undefined,
   onOpenLinerList,
   onOpenApolloPhase1,
+  apolloPhase1EntryTitle,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -147,11 +149,13 @@ export function Toolbar({
               {ja.liner.toolbar.openButton}
             </button>
           )}
-          {onOpenApolloPhase1 && (
+          {(onOpenApolloPhase1 || apolloPhase1EntryTitle) && (
             <button
               type="button"
               onClick={onOpenApolloPhase1}
-              title="Apollo Phase 1 (foundation shell)"
+              disabled={!onOpenApolloPhase1}
+              title={apolloPhase1EntryTitle ?? "Apollo Phase 1-NN shell"}
+              aria-disabled={onOpenApolloPhase1 ? "false" : "true"}
               data-testid="open-apollo-phase1"
             >
               Apollo
