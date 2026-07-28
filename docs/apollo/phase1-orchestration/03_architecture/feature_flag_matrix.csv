@@ -1,0 +1,6 @@
+flag_name,default_state,purpose
+apollo.phase1_nn_enabled,OFF,Hide route unless explicitly enabled
+apollo.phase1_numeric_release_blocked,ON,Keep numeric release visually and logically blocked
+apollo.phase1_show_provisional_status,ON,Ensure provisional banner is visible by default
+apollo.phase1_disable_result_publication,ON,Keep result publication blocked
+apollo.phase1_disable_numeric_execution,ON,Keep numeric execution blocked

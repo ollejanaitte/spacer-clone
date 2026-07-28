@@ -1,0 +1,6 @@
+guard_id,guard_name,enforcement
+NN-GRD-001,Entry guard,Deny route when NN enabled flag is OFF
+NN-GRD-002,Numeric execution guard,Record blocked action instead of executing numerics
+NN-GRD-003,Result publication guard,Record blocked action instead of publishing output
+NN-GRD-004,Verified badge guard,No verified wording rendered in shell
+NN-GRD-005,Fail-closed flag parsing,Invalid env values preserve blocking defaults
