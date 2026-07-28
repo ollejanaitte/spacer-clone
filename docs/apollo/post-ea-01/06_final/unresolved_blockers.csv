@@ -1,0 +1,11 @@
+blocker_id,area,status,exact_required_artifact,notes
+BLK-S1-001,R7 metadata facets,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-volume title/colophon/errata manifest,Local PDFs exist but metadata not human-fixed from official pages/colophons.
+BLK-S1-002,JIS identities and editions,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-row official JIS packages and citation map,No primary JIS texts acquired.
+BLK-S1-004,DS-04/05 numeric adoption,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Verified R7 clause/table package per engineering quantity,No adopted DS-04/05 numerics.
+BLK-S1-005,Material property adoption,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-property R7+JIS manifest,DS-03 remains unsourced for adoption.
+DTR-06,R7 errata,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Official per-volume errata manifest,Errata state not fixed.
+AN-BLK-001,Analyzer/SPACER/STATICS identity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Authorized identity bundle with executable SHA-256,No installed product captured.
+AN-BLK-002,Analyzer invocation and physical files,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Minimal valid isolated run bundle,No executable or licensed host.
+AN-BLK-008,Analyzer reproducibility,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three isolated identical-setting run bundles,No native runs captured.
+GOLD-BLK-003,Reference software Goldens,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Licensed native input/output bundle with three runs,No reference software outputs.
+PAR-BLK-005,Actual numeric parity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three native SPACER runs plus Apollo comparison manifest,No actual SPACER results captured.

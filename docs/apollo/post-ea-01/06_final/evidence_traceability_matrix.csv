@@ -1,0 +1,8 @@
+trace_id,post_ea_stage,deliverable_path,linked_blocker_ids,closure_verdict,status_note
+PETM-001,POST-EA-01-00,docs/apollo/post-ea-01/00_inventory/inventory_report.md,BLK-S1-001;BLK-S1-002;AN-BLK-001;EXT-ID-001;EXT-ID-002;EXT-ID-003,BLOCKED,Local artifact inventory fixed; no external machine/license closure.
+PETM-002,POST-EA-01-01,docs/apollo/post-ea-01/01_sources/source_closure_report.md,BLK-S1-001;BLK-S1-002;BLK-S1-004;BLK-S1-005;DTR-06;PKG-R7-V;PKG-DS03;PKG-DS04,BLOCKED,R7 file identities fixed; clause/table adoption still blocked.
+PETM-003,POST-EA-01-02,docs/apollo/post-ea-01/02_identity/identity_validation_report.md,AN-BLK-001;EXT-ID-001;EXT-ID-002;EXT-ID-003,BLOCKED,Reference host fixed; installed product identity still blocked.
+PETM-004,POST-EA-01-03,docs/apollo/post-ea-01/03_machine_runs/machine_probe_report.md,AN-BLK-002;AN-BLK-005;AN-BLK-007;AN-BLK-008,BLOCKED,EA-03 package present; no machine execution performed.
+PETM-005,POST-EA-01-04,docs/apollo/post-ea-01/04_golden/golden_integrity_report.md,GOLD-BLK-001;GOLD-BLK-002;GOLD-BLK-003;GOLD-BLK-007,BLOCKED,No actual or approved reference goldens captured.
+PETM-006,POST-EA-01-05,docs/apollo/post-ea-01/05_parity/actual_parity_report.md,PAR-BLK-001;PAR-BLK-002;PAR-BLK-003;PAR-BLK-004;PAR-BLK-005,BLOCKED,No actual SPACER/STATICS parity data captured.
+PETM-007,POST-EA-01-06,docs/apollo/post-ea-01/06_final/final_post_ea_01_report.md,BLK-S1-001;BLK-S1-002;BLK-S1-004;BLK-S1-005;DTR-06;PKG-R7-V;PKG-DS03;PKG-DS04;AN-BLK-001;AN-BLK-002;AN-BLK-005;AN-BLK-007;AN-BLK-008;GOLD-BLK-001;GOLD-BLK-002;GOLD-BLK-003;GOLD-BLK-007;PAR-BLK-001;PAR-BLK-002;PAR-BLK-003;PAR-BLK-004;PAR-BLK-005,BLOCKED,Final consolidation keeps numeric release blocked.

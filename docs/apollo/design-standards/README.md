@@ -131,6 +131,10 @@ OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
 
 [unresolved_evidence_requirements.csv](09_verification/unresolved_evidence_requirements.csv) adds `ea_enablement_reference` and `ea_status_note` per row; statuses are not closed by EA-06.
 
+## POST-EA-01 local evidence consolidation (2026-07-28)
+
+POST-EA-01 adds a new local authority set at [docs/apollo/post-ea-01/](../post-ea-01/) for checksum-bound local source inventory, source-closure blocker consolidation, identity blocker fixation, non-promoted machine/golden/parity placeholders, and the final blocked reassessment. It does not reopen DS or EA stages and does not change the release decision.
+
 ## Governance documents
 
 | Document | Role |

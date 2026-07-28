@@ -23,6 +23,7 @@ Navigation for Apollo-related research inputs and immutable handoff snapshots st
 - [Unresolved evidence register (76 rows)](evidence-collection/unresolved_evidence_register.csv) — operational snapshot with EA enablement references; 0 resolved
 - [Evidence traceability matrix](evidence-collection/evidence_traceability_matrix.csv) — EA deliverable to blocker linkage
 - [Numeric release gate (EA reassessment)](evidence-collection/numeric_release_gate.md) — enablement vs closure; GATE-NR-01..07 unchanged blocked posture
+- [POST-EA-01 consolidation](post-ea-01/06_final/final_post_ea_01_report.md) — local licensed-source and external-machine evidence consolidation; numeric release still blocked
 - Stage deliverables: [EA-00 inventory](evidence-collection/00_inventory/), [EA-01 harness](evidence-collection/01_harness/), [EA-02 analytical golden](evidence-collection/02_analytical_golden/), [EA-03 external run package](evidence-collection/03_external_run_package/), [EA-04 parity harness](evidence-collection/04_parity_harness/), [EA-05 dry run](evidence-collection/05_dry_run/)
 
 ```text

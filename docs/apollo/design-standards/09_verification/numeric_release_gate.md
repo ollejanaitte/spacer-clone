@@ -75,3 +75,13 @@ Enablement completion does not satisfy GATE-NR-01 through GATE-NR-05. Detailed E
 ## Re-evaluation
 
 Each blocker is closed only against its own acceptance criteria. After all blockers are closed, the complete Golden and parity approvals, independent review, and the latest full repository validation must be repeated as one release decision. Historical DS-00 through DS-09 records are not silently rewritten.
+
+## POST-EA-01 local evidence consolidation (2026-07-28)
+
+POST-EA-01 added checksum-bound local artifact inventories under `docs/apollo/post-ea-01/` and confirmed that no external machine, official JIS, approved Golden, or actual SPACER parity evidence was captured in-repo on 2026-07-28.
+
+```text
+POST_EA_01_COMPLETION_VERDICT: COMPLETE
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+OVERALL_VERDICT: POST_EA_01_COMPLETE_NUMERIC_RELEASE_BLOCKED
+```
