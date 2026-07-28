@@ -1,0 +1,18 @@
+blocker_id,reason
+BLK-S1-001,R7 metadata and errata not fully fixed
+BLK-S1-002,Official JIS packages absent
+BLK-S1-004,Load and verification numerics unresolved
+BLK-S1-005,Material numeric adoption unresolved
+DTR-06,Errata state unresolved
+AN-BLK-001,Native software identity absent
+AN-BLK-002,Minimal machine run absent
+AN-BLK-008,Three-run reproducibility absent
+GOLD-BLK-001,Analytical Golden approval absent
+GOLD-BLK-002,Tolerance approval absent
+GOLD-BLK-003,Reference Golden bundle absent
+GOLD-BLK-007,Design verification Golden absent
+PAR-BLK-001,Reference identity absent
+PAR-BLK-002,Semantic mapping absent
+PAR-BLK-003,Coordinate/sign/I-J evidence absent
+PAR-BLK-004,Load/combination mapping absent
+PAR-BLK-005,Actual numeric parity absent

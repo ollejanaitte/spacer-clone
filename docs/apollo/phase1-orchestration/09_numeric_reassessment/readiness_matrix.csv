@@ -1,0 +1,12 @@
+area,required_state,current_state,verdict
+R7 source closure,COMPLETE,PARTIAL,NOT_READY
+JIS source closure,COMPLETE,BLOCKED,NOT_READY
+Material values,COMPLETE,BLOCKED,NOT_READY
+Load and combination factors,COMPLETE,BLOCKED,NOT_READY
+Licensed Windows machine,COMPLETE,BLOCKED,NOT_READY
+SPACER Analyzer STATICS identity,COMPLETE,BLOCKED,NOT_READY
+Three-run reproducibility,COMPLETE,BLOCKED,NOT_READY
+Analytical Golden,APPROVED,BLOCKED,NOT_READY
+Reference Golden,APPROVED,BLOCKED,NOT_READY
+Actual parity,COMPLETE,BLOCKED,NOT_READY
+Full validation,PASS,NOT_FULLY_PASSING,NOT_READY
