@@ -1,0 +1,9 @@
+responsibility_id,scope_area,owner,boundary,acceptance_focus
+NN-RSP-001,Project shell,Codex+Composer,UI and route shell only,Route can open and close without numeric side effects
+NN-RSP-002,Topology shell,Composer,Edits project nodes/members/supports only,Edits remain provisional
+NN-RSP-003,Material shell,Composer,Rename/display only in first unit,No engineering numeric authority implied
+NN-RSP-004,Feature flags,Codex,Fail-closed defaults and route gating,NN route hidden unless enabled
+NN-RSP-005,Numeric execution block,Codex,No solver path from NN shell,Blocked interaction recorded
+NN-RSP-006,Result publication block,Codex,No authoritative export/publication from NN shell,Blocked interaction recorded
+NN-RSP-007,Audit trail shell,Composer,Shell actions only,Recent blocked and edit events visible
+NN-RSP-008,Scope review,Codex with Grok attempt,Independent freeze and creep control,No numeric contamination

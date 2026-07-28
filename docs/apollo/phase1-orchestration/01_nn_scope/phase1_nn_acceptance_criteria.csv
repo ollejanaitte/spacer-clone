@@ -1,0 +1,11 @@
+criteria_id,criterion,required_state
+NN-AC-001,Route hidden when NN flag OFF,PASS
+NN-AC-002,Route accessible when NN flag ON,PASS
+NN-AC-003,Provisional banner visible by default,PASS
+NN-AC-004,Numeric execution request blocked,PASS
+NN-AC-005,Result publication request blocked,PASS
+NN-AC-006,Verified wording absent from shell,PASS
+NN-AC-007,Project metadata editable through shell,PASS
+NN-AC-008,Topology shell can append node/member/support placeholders,PASS
+NN-AC-009,Shell-level validation issues visible,PASS
+NN-AC-010,Audit trail records shell actions,PASS

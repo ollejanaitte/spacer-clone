@@ -1,0 +1,7 @@
+prohibited_id,prohibited_scope,reason,required_unlock
+NUM-PRO-001,Solver implementation,Numeric evidence blocked,Source+machine+Golden+parity closure
+NUM-PRO-002,Stiffness matrix assembly,Numeric evidence blocked,Source+machine+Golden+parity closure
+NUM-PRO-003,Load and combination numerics,Source closure blocked,R7/JIS adoption completion
+NUM-PRO-004,Verification equations and limits,Source closure blocked,R7/JIS adoption completion
+NUM-PRO-005,Actual SPACER parity behavior,Machine and parity blocked,Licensed runs plus parity PASS
+NUM-PRO-006,Authoritative report publication,Numeric release blocked,Numeric release gate PASS
