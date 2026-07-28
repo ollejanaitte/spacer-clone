@@ -1,0 +1,5 @@
+blocker_id,subject,status,exact_required_artifact,notes
+AN-BLK-001,Analyzer/SPACER/STATICS identity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Authorized identity bundle with executable SHA-256 and product/module relationship,Manual and DS register are not sufficient.
+EXT-ID-001,External machine identity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Named machine manifest from licensed host,Current host is reference-only.
+EXT-ID-002,License state capture,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Read-only vendor license evidence with secrets redacted,No runtime entitlement observed locally.
+EXT-ID-003,Version/build freeze,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Fixed version/build evidence from installed product,No installed product observed locally.

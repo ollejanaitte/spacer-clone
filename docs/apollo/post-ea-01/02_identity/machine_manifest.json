@@ -1,0 +1,25 @@
+{
+  "manifest_id": "POST-EA-01-02-MANIFEST-001",
+  "acquisition_date": "2026-07-28",
+  "host": "masaharu-DAIV-NG5500",
+  "os": "Linux 6.8.0-134-generic",
+  "architecture": "x86_64",
+  "locale": {
+    "LANG": "ja_JP.UTF-8",
+    "LC_ALL": "C.UTF-8"
+  },
+  "tool_presence": {
+    "wine": false,
+    "powershell": false,
+    "pdfinfo": true,
+    "sha256sum": true,
+    "7z": true
+  },
+  "reference_only_artifacts": [
+    {
+      "path": "/home/masaharu/Projects/spacer-clone-main/マニュアル/SPACER操作マニュアル.pdf",
+      "sha256": "e08681a290904c13c702ed864e0753d85e5c43201a5881c48766c0417aa7d012"
+    }
+  ],
+  "verdict": "REFERENCE_HOST_ONLY_NOT_EXTERNAL_MACHINE_EVIDENCE"
+}

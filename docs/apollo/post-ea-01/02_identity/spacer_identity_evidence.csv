@@ -1,0 +1,2 @@
+identity_id,product,module,executable_path,version,build,architecture,os,locale,license_state,executable_sha256,install_directory,configuration,dependencies,operator,machine,acquisition_date,status,notes
+SPID-001,SPACER,product shell,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,Codex,local survey only,2026-07-28,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,SPACER manual はあるが installed product identity は固定不可。

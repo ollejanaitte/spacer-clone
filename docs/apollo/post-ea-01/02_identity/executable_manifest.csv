@@ -1,0 +1,5 @@
+manifest_id,subject,path,sha256,status,notes
+EXE-001,SPACER operation manual,/home/masaharu/Projects/spacer-clone-main/マニュアル/SPACER操作マニュアル.pdf,e08681a290904c13c702ed864e0753d85e5c43201a5881c48766c0417aa7d012,REFERENCE_ONLY,Executable ではない。
+EXE-002,Analyzer executable,NOT_FOUND,NOT_FOUND,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,ローカル survey で vendor binary 不在。
+EXE-003,SPACER executable,NOT_FOUND,NOT_FOUND,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,ローカル survey で vendor binary 不在。
+EXE-004,STATICS executable or hosted module,NOT_FOUND,NOT_FOUND,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,ホスト process / module boundary 未取得。

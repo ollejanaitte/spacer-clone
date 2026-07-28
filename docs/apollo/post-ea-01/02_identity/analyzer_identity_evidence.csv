@@ -1,0 +1,2 @@
+identity_id,product,module,executable_path,version,build,architecture,os,locale,license_state,executable_sha256,install_directory,configuration,dependencies,operator,machine,acquisition_date,status,notes
+ANID-001,Historical APOLLO Analyzer,external analyzer,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,Codex,local survey only,2026-07-28,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,ローカル実行ファイル不在。DS-06 AN-BLK-001 継続。

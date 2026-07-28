@@ -1,0 +1,3 @@
+license_id,subject,evidence_source,license_type,license_state,secret_redaction_status,acquisition_date,status,notes
+LIC-001,SPACER manual PDF,/home/masaharu/Projects/spacer-clone-main/マニュアル/SPACER操作マニュアル.pdf,manual reference,no runtime license evidence,NOT_APPLICABLE,2026-07-28,REFERENCE_ONLY,manual は license entitlement の証拠ではない。
+LIC-002,Analyzer/SPACER/STATICS runtime entitlement,local filesystem survey,UNKNOWN,UNKNOWN,NO_SECRET_CAPTURED,2026-07-28,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,serial/token/key/server 情報は未取得かつ未表示。
