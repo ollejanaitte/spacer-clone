@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Fail-closed numeric authority guards reusable by AP-01 (BSDD contracts) and AP-02 (validation foundation). Aligns with Step 1 [numeric_value_governance.md](../../../step1/02_standards_baseline/numeric_value_governance.md) and DEC-S1-0004 / DEC-S1-0011.
+Fail-closed numeric authority guards reusable by AP-01 (BSDD contracts) and AP-02 (validation foundation). Aligns with Step 1 [numeric_value_governance.md](../../step1/02_standards_baseline/numeric_value_governance.md) and DEC-S1-0004 / DEC-S1-0011.
 
 ## Authority ladder
 

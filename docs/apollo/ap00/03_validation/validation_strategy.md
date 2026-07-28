@@ -80,4 +80,4 @@ See [source_hygiene_gate.md](source_hygiene_gate.md).
 - [merge_gate.md](merge_gate.md)
 - [P02 scope guard contract](../02_scope_guards/phase1_scope_guard_contract.md)
 - [P02 numeric authority model](../02_scope_guards/numeric_authority_model.md)
-- Step 1 [test_strategy.md](../../../step1/07_validation/test_strategy.md)
+- Step 1 [test_strategy.md](../../step1/07_validation/test_strategy.md)

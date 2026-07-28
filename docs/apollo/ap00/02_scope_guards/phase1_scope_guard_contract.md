@@ -62,6 +62,6 @@ See [fail_closed_error_catalog.md](fail_closed_error_catalog.md) — prefix `AP0
 
 ## Source precedence
 
-1. [phase1_scope_freeze.md](../../../step1/05_scope_boundary/phase1_scope_freeze.md) (DEC-S1-0008)
-2. [forbidden_scope.md](../../00_governance/forbidden_scope.md)
+1. [phase1_scope_freeze.md](../../step1/05_scope_boundary/phase1_scope_freeze.md) (DEC-S1-0008)
+2. [forbidden_scope.md](../00_governance/forbidden_scope.md)
 3. This contract
