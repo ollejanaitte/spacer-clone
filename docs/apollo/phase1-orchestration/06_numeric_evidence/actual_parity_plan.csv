@@ -1,0 +1,5 @@
+parity_id,requirement,acceptance_criteria
+APL-001,Semantic mapping,Node/member/material/support/load/combination mapping approved
+APL-002,Coordinate and sign evidence,DOF coordinate sign and I/J correspondence justified
+APL-003,Actual numeric parity,Three-run native results compared with frozen mapping/tolerance
+APL-004,Worst error disclosure,All mismatches and worst errors disclosed without exclusion

@@ -1,0 +1,6 @@
+run_plan_id,requirement,acceptance_criteria
+TRP-001,Same machine,All three runs execute on one named Windows host
+TRP-002,Same software version,Version/build/executable SHA identical across runs
+TRP-003,Same input checksum,Input bundle checksum identical across runs
+TRP-004,Same locale and license state,Locale and license capture identical across runs
+TRP-005,Output reproducibility,Native outputs compare deterministically or differences are explicitly classified

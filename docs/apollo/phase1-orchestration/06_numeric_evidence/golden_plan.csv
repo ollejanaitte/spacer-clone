@@ -1,0 +1,5 @@
+golden_id,requirement,acceptance_criteria
+GPL-001,Analytical Golden,Independent derivation approved
+GPL-002,Reference Golden,Licensed reference outputs captured and approved
+GPL-003,Tolerance freeze,Tolerance fixed before comparison
+GPL-004,No circularity,Apollo output not used as sole expected value

@@ -1,0 +1,9 @@
+priority,blocker_id,why_first
+1,BLK-S1-001,All adopted numerics depend on fixed R7 identity and errata
+2,BLK-S1-002,JIS chain blocks materials and fabrication-related values
+3,AN-BLK-001,No native identity claim can be made without installed product evidence
+4,AN-BLK-002,Machine execution must be demonstrated before reproducibility
+5,AN-BLK-008,Three-run reproducibility unlocks Golden and parity confidence
+6,GOLD-BLK-001,Independent expected values required before trusted comparison
+7,GOLD-BLK-003,Reference outputs required for non-Apollo oracle
+8,PAR-BLK-005,Actual parity is the final numeric release blocker

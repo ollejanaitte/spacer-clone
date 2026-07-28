@@ -1,0 +1,4 @@
+software_id,product,required_fields,acceptance_criteria
+SID-001,SPACER,product module executable path version build architecture locale license state executable SHA-256,All fields fixed from licensed Windows host
+SID-002,Analyzer,product module executable path version build architecture locale license state executable SHA-256,All fields fixed from licensed Windows host
+SID-003,STATICS,product module executable path version build architecture locale license state executable SHA-256,All fields fixed from licensed Windows host
