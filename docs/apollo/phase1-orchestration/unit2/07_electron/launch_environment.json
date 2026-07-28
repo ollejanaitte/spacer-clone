@@ -1,0 +1,8 @@
+{
+  "verificationDate": "Tuesday, July 28, 2026",
+  "repoRoot": "/home/masaharu/Projects/spacer-clone-main",
+  "frontendDir": "/home/masaharu/Projects/spacer-clone-main/frontend",
+  "electronMainPath": "/home/masaharu/Projects/spacer-clone-main/desktop/electron/dist/main.js",
+  "backendCommand": "/home/masaharu/Projects/spacer-clone-main/.venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000",
+  "automationProjectPath": "/home/masaharu/Projects/spacer-clone-main/docs/apollo/phase1-orchestration/unit2/07_electron/apollo-unit2-roundtrip.json"
+}

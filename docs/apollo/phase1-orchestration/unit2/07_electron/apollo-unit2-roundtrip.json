@@ -1,0 +1,920 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "id": "bridge-continuous",
+    "name": "Apollo Unit2 Electron Saved",
+    "schemaVersion": "1.0.0",
+    "description": "Continuous deck across 5 spans / 150m / P1,P2 rock; P3,P4 soft",
+    "createdAt": "2026-06-15T00:00:00Z",
+    "updatedAt": "2026-07-28T22:06:58.329Z"
+  },
+  "units": {
+    "length": "m",
+    "force": "kN",
+    "moment": "kN_m",
+    "modulus": "kN_per_m2",
+    "area": "m2",
+    "inertia": "m4"
+  },
+  "nodes": [
+    {
+      "id": "G0",
+      "x": 0,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "G1",
+      "x": 30,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "G2",
+      "x": 60,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "G3",
+      "x": 90,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "G4",
+      "x": 120,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "G5",
+      "x": 150,
+      "y": 20,
+      "z": 0
+    },
+    {
+      "id": "B1",
+      "x": 30,
+      "y": 0,
+      "z": 0
+    },
+    {
+      "id": "B2",
+      "x": 60,
+      "y": 0,
+      "z": 0
+    },
+    {
+      "id": "B3",
+      "x": 90,
+      "y": 0,
+      "z": 0
+    },
+    {
+      "id": "B4",
+      "x": 120,
+      "y": 0,
+      "z": 0
+    }
+  ],
+  "materials": [
+    {
+      "id": "MAT_DECK",
+      "name": "Deck Concrete",
+      "elasticModulus": 25000000,
+      "shearModulus": 10000000,
+      "poissonRatio": 0.2,
+      "density": 0
+    },
+    {
+      "id": "MAT_PIER",
+      "name": "RC Pier",
+      "elasticModulus": 25000000,
+      "shearModulus": 10000000,
+      "poissonRatio": 0.2,
+      "density": 0
+    }
+  ],
+  "sections": [
+    {
+      "id": "SEC_DECK",
+      "name": "Deck Section",
+      "area": 2.5,
+      "iy": 1.2,
+      "iz": 8.5,
+      "j": 4
+    },
+    {
+      "id": "SEC_PIER",
+      "name": "Pier Section",
+      "area": 4,
+      "iy": 1.4,
+      "iz": 1.4,
+      "j": 2
+    }
+  ],
+  "members": [
+    {
+      "id": "MG0",
+      "nodeI": "G0",
+      "nodeJ": "G1",
+      "materialId": "MAT_DECK",
+      "sectionId": "SEC_DECK"
+    },
+    {
+      "id": "MG1",
+      "nodeI": "G1",
+      "nodeJ": "G2",
+      "materialId": "MAT_DECK",
+      "sectionId": "SEC_DECK"
+    },
+    {
+      "id": "MG2",
+      "nodeI": "G2",
+      "nodeJ": "G3",
+      "materialId": "MAT_DECK",
+      "sectionId": "SEC_DECK"
+    },
+    {
+      "id": "MG3",
+      "nodeI": "G3",
+      "nodeJ": "G4",
+      "materialId": "MAT_DECK",
+      "sectionId": "SEC_DECK"
+    },
+    {
+      "id": "MG4",
+      "nodeI": "G4",
+      "nodeJ": "G5",
+      "materialId": "MAT_DECK",
+      "sectionId": "SEC_DECK"
+    },
+    {
+      "id": "MP1",
+      "nodeI": "G1",
+      "nodeJ": "B1",
+      "materialId": "MAT_PIER",
+      "sectionId": "SEC_PIER"
+    },
+    {
+      "id": "MP2",
+      "nodeI": "G2",
+      "nodeJ": "B2",
+      "materialId": "MAT_PIER",
+      "sectionId": "SEC_PIER"
+    },
+    {
+      "id": "MP3",
+      "nodeI": "G3",
+      "nodeJ": "B3",
+      "materialId": "MAT_PIER",
+      "sectionId": "SEC_PIER"
+    },
+    {
+      "id": "MP4",
+      "nodeI": "G4",
+      "nodeJ": "B4",
+      "materialId": "MAT_PIER",
+      "sectionId": "SEC_PIER"
+    }
+  ],
+  "supports": [
+    {
+      "nodeId": "G0",
+      "ux": true,
+      "uy": true,
+      "uz": true,
+      "rx": true,
+      "ry": true,
+      "rz": true
+    },
+    {
+      "nodeId": "G5",
+      "ux": true,
+      "uy": true,
+      "uz": true,
+      "rx": true,
+      "ry": true,
+      "rz": true
+    },
+    {
+      "nodeId": "B1",
+      "ux": true,
+      "uy": true,
+      "uz": true,
+      "rx": true,
+      "ry": true,
+      "rz": true
+    },
+    {
+      "nodeId": "B2",
+      "ux": true,
+      "uy": true,
+      "uz": true,
+      "rx": true,
+      "ry": true,
+      "rz": true
+    },
+    {
+      "nodeId": "B3",
+      "ux": false,
+      "uy": true,
+      "uz": false,
+      "rx": false,
+      "ry": false,
+      "rz": false
+    },
+    {
+      "nodeId": "B4",
+      "ux": false,
+      "uy": true,
+      "uz": false,
+      "rx": false,
+      "ry": false,
+      "rz": false
+    }
+  ],
+  "loadCases": [
+    {
+      "id": "LC_DEAD",
+      "name": "Dead Load",
+      "type": "static"
+    },
+    {
+      "id": "LC_LIVE",
+      "name": "Live Load",
+      "type": "static"
+    }
+  ],
+  "nodalLoads": [
+    {
+      "id": "NL_DEAD_1",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G0",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_DEAD_2",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G1",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_DEAD_3",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G2",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_DEAD_4",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G3",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_DEAD_5",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G4",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_DEAD_6",
+      "loadCaseId": "LC_DEAD",
+      "nodeId": "G5",
+      "fx": 0,
+      "fy": -120,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_1",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G0",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_2",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G1",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_3",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G2",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_4",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G3",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_5",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G4",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    },
+    {
+      "id": "NL_LIVE_6",
+      "loadCaseId": "LC_LIVE",
+      "nodeId": "G5",
+      "fx": 0,
+      "fy": -60,
+      "fz": 0,
+      "mx": 0,
+      "my": 0,
+      "mz": 0
+    }
+  ],
+  "memberLoads": [],
+  "massCases": [
+    {
+      "id": "mass-1",
+      "name": "Eigen Mass",
+      "method": "lumped",
+      "source": "manual",
+      "items": [
+        {
+          "nodeId": "G0",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        },
+        {
+          "nodeId": "G1",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        },
+        {
+          "nodeId": "G2",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        },
+        {
+          "nodeId": "G3",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        },
+        {
+          "nodeId": "G4",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        },
+        {
+          "nodeId": "G5",
+          "mx": 1,
+          "my": 1,
+          "mz": 1,
+          "irx": 0,
+          "iry": 0,
+          "irz": 0
+        }
+      ]
+    }
+  ],
+  "analysisSettings": {
+    "analysisType": "linear_static",
+    "includeShearDeformation": false,
+    "largeDisplacement": false,
+    "tolerance": 1e-9,
+    "eigen": {
+      "massCaseId": "mass-1",
+      "modeCount": 3
+    },
+    "influence": {
+      "caseId": "influence-line-1",
+      "line": {
+        "id": "line-MG0",
+        "memberId": "MG0",
+        "stationCount": 21,
+        "direction": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "magnitude": 1
+      },
+      "targets": [
+        {
+          "id": "disp-G2-uy",
+          "type": "displacement",
+          "nodeId": "G2",
+          "component": "uy"
+        },
+        {
+          "id": "react-G0-fy",
+          "type": "reaction",
+          "nodeId": "G0",
+          "component": "fy"
+        },
+        {
+          "id": "member-MG0-Mz-i",
+          "type": "memberEndForce",
+          "memberId": "MG0",
+          "component": "Mz",
+          "end": "i"
+        }
+      ]
+    }
+  },
+  "apolloPhase1Unit2": {
+    "schemaVersion": "2.0.0",
+    "metadata": {
+      "projectId": "bridge-continuous",
+      "name": "Apollo Unit2 Electron Saved",
+      "description": "Continuous deck across 5 spans / 150m / P1,P2 rock; P3,P4 soft",
+      "createdAt": "2026-06-15T00:00:00Z",
+      "updatedAt": "2026-07-28T22:06:58.329Z",
+      "provisionalStatus": "unverified",
+      "localDraftStatus": "saved"
+    },
+    "nodes": [
+      {
+        "id": "G0",
+        "label": "G0",
+        "x": 0,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "G1",
+        "label": "G1",
+        "x": 30,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "G2",
+        "label": "G2",
+        "x": 60,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "G3",
+        "label": "G3",
+        "x": 90,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "G4",
+        "label": "G4",
+        "x": 120,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "G5",
+        "label": "G5",
+        "x": 150,
+        "y": 20,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "B1",
+        "label": "B1",
+        "x": 30,
+        "y": 0,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "B2",
+        "label": "B2",
+        "x": 60,
+        "y": 0,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "B3",
+        "label": "B3",
+        "x": 90,
+        "y": 0,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "B4",
+        "label": "B4",
+        "x": 120,
+        "y": 0,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "APN-1",
+        "label": "QA Node A",
+        "x": 12.5,
+        "y": 3.25,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "APN-2",
+        "label": "APN-2",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "active": true,
+        "comment": ""
+      }
+    ],
+    "materialReferences": [
+      {
+        "id": "MAT_DECK",
+        "displayName": "Deck Concrete",
+        "category": "legacy-import",
+        "sourceStatus": "blocked_by_numeric_evidence",
+        "provisionalStatus": "unverified",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MAT_PIER",
+        "displayName": "RC Pier",
+        "category": "legacy-import",
+        "sourceStatus": "blocked_by_numeric_evidence",
+        "provisionalStatus": "unverified",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MAT-REF-1",
+        "displayName": "QA Material Ref",
+        "category": "general",
+        "sourceStatus": "blocked_by_numeric_evidence",
+        "provisionalStatus": "unverified",
+        "active": true,
+        "comment": ""
+      }
+    ],
+    "members": [
+      {
+        "id": "MG0",
+        "label": "MG0",
+        "nodeI": "G0",
+        "nodeJ": "G1",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MG1",
+        "label": "MG1",
+        "nodeI": "G1",
+        "nodeJ": "G2",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MG2",
+        "label": "MG2",
+        "nodeI": "G2",
+        "nodeJ": "G3",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MG3",
+        "label": "MG3",
+        "nodeI": "G3",
+        "nodeJ": "G4",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MG4",
+        "label": "MG4",
+        "nodeI": "G4",
+        "nodeJ": "G5",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MP1",
+        "label": "MP1",
+        "nodeI": "G1",
+        "nodeJ": "B1",
+        "materialRefId": "MAT_PIER",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MP2",
+        "label": "MP2",
+        "nodeI": "G2",
+        "nodeJ": "B2",
+        "materialRefId": "MAT_PIER",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MP3",
+        "label": "MP3",
+        "nodeI": "G3",
+        "nodeJ": "B3",
+        "materialRefId": "MAT_PIER",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "MP4",
+        "label": "MP4",
+        "nodeI": "G4",
+        "nodeJ": "B4",
+        "materialRefId": "MAT_PIER",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "APM-1",
+        "label": "APM-1",
+        "nodeI": "G0",
+        "nodeJ": "G1",
+        "materialRefId": "MAT_DECK",
+        "active": true,
+        "comment": ""
+      }
+    ],
+    "supports": [
+      {
+        "id": "SUP-1",
+        "nodeId": "G0",
+        "label": "G0",
+        "ux": "FIXED",
+        "uy": "FIXED",
+        "uz": "FIXED",
+        "rx": "FIXED",
+        "ry": "FIXED",
+        "rz": "FIXED",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-2",
+        "nodeId": "G5",
+        "label": "G5",
+        "ux": "FIXED",
+        "uy": "FIXED",
+        "uz": "FIXED",
+        "rx": "FIXED",
+        "ry": "FIXED",
+        "rz": "FIXED",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-3",
+        "nodeId": "B1",
+        "label": "B1",
+        "ux": "FIXED",
+        "uy": "FIXED",
+        "uz": "FIXED",
+        "rx": "FIXED",
+        "ry": "FIXED",
+        "rz": "FIXED",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-4",
+        "nodeId": "B2",
+        "label": "B2",
+        "ux": "FIXED",
+        "uy": "FIXED",
+        "uz": "FIXED",
+        "rx": "FIXED",
+        "ry": "FIXED",
+        "rz": "FIXED",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-5",
+        "nodeId": "B3",
+        "label": "B3",
+        "ux": "FREE",
+        "uy": "FIXED",
+        "uz": "FREE",
+        "rx": "FREE",
+        "ry": "FREE",
+        "rz": "FREE",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-6",
+        "nodeId": "B4",
+        "label": "B4",
+        "ux": "FREE",
+        "uy": "FIXED",
+        "uz": "FREE",
+        "rx": "FREE",
+        "ry": "FREE",
+        "rz": "FREE",
+        "active": true,
+        "comment": ""
+      },
+      {
+        "id": "SUP-7",
+        "nodeId": "G1",
+        "label": "G1",
+        "ux": "FIXED",
+        "uy": "FIXED",
+        "uz": "FIXED",
+        "rx": "FREE",
+        "ry": "FREE",
+        "rz": "FREE",
+        "active": true,
+        "comment": ""
+      }
+    ],
+    "audit": [
+      {
+        "id": "AUD-11",
+        "timestamp": "2026-07-28T22:06:58.329Z",
+        "action": "project.update",
+        "entityType": "project",
+        "entityId": "bridge-continuous",
+        "message": "Project name updated to Apollo Unit2 Electron Saved."
+      },
+      {
+        "id": "AUD-10",
+        "timestamp": "2026-07-28T22:06:57.711Z",
+        "action": "reject",
+        "entityType": "node",
+        "entityId": "G0",
+        "message": "Node G0 cannot be deleted while referenced by members (MG0, APM-1) or supports (SUP-1)."
+      },
+      {
+        "id": "AUD-9",
+        "timestamp": "2026-07-28T22:06:56.615Z",
+        "action": "support.add",
+        "entityType": "support",
+        "entityId": "SUP-7",
+        "message": "Support SUP-7 added for node G1."
+      },
+      {
+        "id": "AUD-8",
+        "timestamp": "2026-07-28T22:06:56.152Z",
+        "action": "member.add",
+        "entityType": "member",
+        "entityId": "APM-1",
+        "message": "Member APM-1 added to the topology shell."
+      },
+      {
+        "id": "AUD-7",
+        "timestamp": "2026-07-28T22:06:55.673Z",
+        "action": "node.update",
+        "entityType": "node",
+        "entityId": "APN-1",
+        "message": "Node APN-1 Y coordinate updated to 3.25."
+      },
+      {
+        "id": "AUD-6",
+        "timestamp": "2026-07-28T22:06:55.617Z",
+        "action": "node.update",
+        "entityType": "node",
+        "entityId": "APN-1",
+        "message": "Node APN-1 X coordinate updated to 12.5."
+      },
+      {
+        "id": "AUD-5",
+        "timestamp": "2026-07-28T22:06:55.592Z",
+        "action": "node.update",
+        "entityType": "node",
+        "entityId": "APN-1",
+        "message": "Node APN-1 label updated."
+      },
+      {
+        "id": "AUD-4",
+        "timestamp": "2026-07-28T22:06:55.465Z",
+        "action": "node.add",
+        "entityType": "node",
+        "entityId": "APN-2",
+        "message": "Node APN-2 added to the topology shell."
+      },
+      {
+        "id": "AUD-3",
+        "timestamp": "2026-07-28T22:06:55.399Z",
+        "action": "node.add",
+        "entityType": "node",
+        "entityId": "APN-1",
+        "message": "Node APN-1 added to the topology shell."
+      },
+      {
+        "id": "AUD-2",
+        "timestamp": "2026-07-28T22:06:55.017Z",
+        "action": "material.update",
+        "entityType": "material",
+        "entityId": "MAT-REF-1",
+        "message": "Material reference MAT-REF-1 display name updated."
+      },
+      {
+        "id": "AUD-1",
+        "timestamp": "2026-07-28T22:06:54.901Z",
+        "action": "material.add",
+        "entityType": "material",
+        "entityId": "MAT-REF-1",
+        "message": "Material reference MAT-REF-1 added to the shell."
+      }
+    ]
+  }
+}

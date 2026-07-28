@@ -1,0 +1,45 @@
+Verification started on 2026-07-28T22:06:49.003Z (Tuesday, July 28, 2026)
+[electron-compile:stdout]
+
+> spacer-clone-frontend@0.3.0-preview electron:compile
+> tsc -p ../desktop/electron/tsconfig.json
+
+
+[renderer-console] warning: %cElectron Security Warning (Insecure Content-Security-Policy) font-weight: bold; This renderer process has either no Content Security
+  Policy set or a policy with "unsafe-eval" enabled. This exposes users of
+  this app to unnecessary security risks.
+
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[vite-apollo:stdout]
+
+> spacer-clone-frontend@0.3.0-preview dev:apollo
+> vite --mode apollo --host 127.0.0.1 --port 5173 --strictPort
+
+
+  VITE v7.3.5   apollo   ready in 132 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+
+[backend:stderr]
+INFO:     Started server process [655490]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+

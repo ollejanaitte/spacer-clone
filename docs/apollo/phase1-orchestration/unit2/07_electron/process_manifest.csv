@@ -1,0 +1,5 @@
+label,pid,command,cwd,start_time,end_time,exit_code
+"electron-compile",655471,"npm run electron:compile","/home/masaharu/Projects/spacer-clone-main/frontend",2026-07-28T22:06:49.007Z,2026-07-28T22:06:49.947Z,0
+"backend",655490,"/home/masaharu/Projects/spacer-clone-main/.venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000","/home/masaharu/Projects/spacer-clone-main",2026-07-28T22:06:49.950Z,2026-07-28T22:07:02.295Z,3
+"vite-apollo",655491,"npm run dev:apollo -- --host 127.0.0.1 --port 5173 --strictPort","/home/masaharu/Projects/spacer-clone-main/frontend",2026-07-28T22:06:49.964Z,2026-07-28T22:07:02.294Z,
+"electron",655544,"electron /home/masaharu/Projects/spacer-clone-main/desktop/electron/dist/main.js","/home/masaharu/Projects/spacer-clone-main/frontend",2026-07-28T22:07:01.192Z,2026-07-28T22:07:01.192Z,0
