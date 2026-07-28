@@ -95,7 +95,7 @@ import {
 } from "./desktop/projectFileDialog";
 import { ApolloPhase1Shell } from "./apollo/ApolloPhase1Shell";
 import { redirectDeniedApolloRoute } from "./apollo/entryGuard";
-import { isApolloPhase1Enabled } from "./apollo/featureFlag";
+import { resolveApolloPhase1FeatureFlags } from "./apollo/featureFlag";
 import { APOLLO_PHASE1_ROUTE_PATH, isApolloRoute } from "./apollo/routes";
 
 type ValidationNotice = {
@@ -120,7 +120,8 @@ function applyIf3AnalysisSidecar(
 export function App() {
   redirectLegacyRoutes();
   redirectDeniedApolloRoute();
-  const apolloPhase1Enabled = isApolloPhase1Enabled();
+  const apolloPhase1Flags = resolveApolloPhase1FeatureFlags();
+  const apolloPhase1Enabled = apolloPhase1Flags.nnEnabled;
   const pathnameForRouting =
     typeof window !== "undefined" ? window.location.pathname : "/pro";
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
@@ -784,7 +785,13 @@ export function App() {
 
   if (isApolloRoute(pathnameForRouting) && apolloPhase1Enabled) {
     return (
-      <ApolloPhase1Shell onReturnToPro={() => navigatePro("/pro")} />
+      <ApolloPhase1Shell
+        project={project}
+        flags={apolloPhase1Flags}
+        onProjectChange={commitProject}
+        onReturnToPro={() => navigatePro("/pro")}
+        onAuditEvent={(message) => log(`[Apollo NN] ${message}`)}
+      />
     );
   }
 
