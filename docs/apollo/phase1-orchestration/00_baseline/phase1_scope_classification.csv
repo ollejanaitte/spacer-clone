@@ -1,0 +1,19 @@
+scope_id,scope_name,classification,basis,notes
+ORCH-SCP-001,Project shell,PHASE1_NN_REQUIRED,Non-numeric workflow shell only,No solver execution
+ORCH-SCP-002,Navigation and route entry,PHASE1_NN_REQUIRED,Guarded route only,Feature-flagged
+ORCH-SCP-003,Project metadata editing,PHASE1_NN_REQUIRED,Non-numeric editing shell only,Provisional state only
+ORCH-SCP-004,Topology editor shell,PHASE1_NN_REQUIRED,Node/member/support shell permitted,No verified structural result
+ORCH-SCP-005,Visualization shell,PHASE1_NN_REQUIRED,Viewport and layout only,No parity claim
+ORCH-SCP-006,Adapter status shell,PHASE1_NN_REQUIRED,Interface definition and status only,No native compatibility claim
+ORCH-SCP-007,Import/export shell,PHASE1_NN_OPTIONAL,Boundary shell permitted,Authoritative publication blocked
+ORCH-SCP-008,Result viewer shell,PHASE1_NN_REQUIRED,Placeholder and blocked state only,No verified badge
+ORCH-SCP-009,Feature flags and guards,PHASE1_NN_REQUIRED,Fail-closed governance required,NN enabling and Numeric blocking
+ORCH-SCP-010,Audit trail shell,PHASE1_NN_REQUIRED,Guard and UI event logging only,Append-only UI shell
+ORCH-SCP-011,Validation message shell,PHASE1_NN_REQUIRED,Shell-level issues only,No numeric approval
+ORCH-SCP-012,Solver and stiffness assembly,PHASE1_NUMERIC_PROHIBITED,Requires blocked numeric evidence,Implementation forbidden
+ORCH-SCP-013,Load and combination numerics,PHASE1_NUMERIC_PROHIBITED,Requires adopted factors and formulas,Implementation forbidden
+ORCH-SCP-014,Verification equations and limits,PHASE1_NUMERIC_PROHIBITED,Requires source closure and Goldens,Implementation forbidden
+ORCH-SCP-015,SPACER parity dependent behavior,PHASE1_NUMERIC_PROHIBITED,Requires actual parity evidence,Implementation forbidden
+ORCH-SCP-016,Production result release,PHASE1_NUMERIC_PROHIBITED,Requires numeric release gate PASS,Implementation forbidden
+ORCH-SCP-017,Manual and handoff evidence images,REFERENCE_ONLY,Research and scope reference only,Not machine evidence
+ORCH-SCP-018,Future richer editor/report UX,DEFERRED,Can follow after stable NN shell,Not required for first unit

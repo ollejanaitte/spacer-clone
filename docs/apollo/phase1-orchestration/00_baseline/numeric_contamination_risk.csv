@@ -1,0 +1,7 @@
+risk_id,risk_area,trigger,impact,control,verdict
+NCR-001,Apollo route accidentally imports solver path,Direct numeric execution from NN shell,High,Keep NN shell limited to project metadata and topology shell code,PASS_WITH_CONTROL
+NCR-002,Result export path reused without guard,Authoritative publication leak,High,Display blocked shell and reuse export-gate semantics,PASS_WITH_CONTROL
+NCR-003,Verified wording appears in NN UI,False evidence promotion,High,Provisional banner required and verified badge prohibited,PASS_WITH_CONTROL
+NCR-004,Hardcoded engineering values shown as results,False numeric impression,High,No numeric result rendering in NN shell,PASS_WITH_CONTROL
+NCR-005,Parity fixtures mistaken for machine evidence,False parity claim,High,Classify all bridgeDefinition parity assets as reference-only,PASS_WITH_CONTROL
+NCR-006,Flag defaults accidentally permissive,Fail-open route exposure,High,Fail-closed parsing defaults,PASS_WITH_CONTROL

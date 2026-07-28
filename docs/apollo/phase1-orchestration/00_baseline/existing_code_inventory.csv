@@ -1,0 +1,12 @@
+inventory_id,path,area,current_role,stream_fit,notes
+ECI-001,frontend/src/apollo/featureFlag.ts,feature flags,Existing Apollo route flag parsing,PHASE1_NN_REQUIRED,Expanded to multi-flag fail-closed governance
+ECI-002,frontend/src/apollo/entryGuard.ts,entry guard,Existing route deny/shell gate,PHASE1_NN_REQUIRED,Reused
+ECI-003,frontend/src/apollo/ApolloPhase1Shell.tsx,NN shell,Guarded shell component,PHASE1_NN_REQUIRED,Expanded in this orchestration
+ECI-004,frontend/src/apollo/numericAuthorityGuard.ts,numeric guard,Adoption and placeholder guard primitives,REFERENCE_ONLY,Not exposed as numeric implementation
+ECI-005,frontend/src/results/if3ResultGate.ts,result authority gate,Authoritative result gating,PHASE1_NN_REQUIRED,Relevant to publication block design
+ECI-006,frontend/src/exports/if3ExportGate.ts,export authority gate,Authoritative export gating,PHASE1_NN_REQUIRED,Existing publication gate reused by policy
+ECI-007,frontend/src/App.tsx,top-level route integration,Main pro workspace routing and toolbar,PHASE1_NN_REQUIRED,Apollo route integrated here
+ECI-008,frontend/src/types.ts,project model contract,Shared project shell data model,PHASE1_NN_REQUIRED,Used for shell editing only
+ECI-009,frontend/src/data/defaultProject.ts,default project seed,Existing persisted project shape,REFERENCE_ONLY,No new numeric adoption
+ECI-010,frontend/src/bridgeDefinition/semanticParity/*,parity tooling,Synthetic and comparison tooling,PHASE1_NUMERIC_PROHIBITED,Do not use as actual parity evidence
+ECI-011,docs/apollo/post-ea-01/phase1_gate/*,prior gate docs,Existing overall gate baseline,REFERENCE_ONLY,Reused as authority input
