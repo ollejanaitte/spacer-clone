@@ -1,0 +1,12 @@
+delegation_id=ORCH-GROK-0001
+assigned_model=grok4.5
+task=phase1_nn_scope_freeze_and_numeric_prohibited_audit
+mode=noninteractive-plan
+input_paths=/home/masaharu/Projects/spacer-clone-main/docs/apollo/post-ea-01;/home/masaharu/Projects/spacer-clone-main/docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff;/home/masaharu/Projects/spacer-clone-main/frontend/src/apollo;/home/masaharu/Projects/spacer-clone-main/frontend/src/bridgeDefinition;/home/masaharu/Projects/spacer-clone-main/frontend/src/results;/home/masaharu/Projects/spacer-clone-main/frontend/src/exports
+output_paths=/home/masaharu/Projects/spacer-clone-main/.codex-delegation-logs/orch_grok4.5_scope_review.txt
+start_time=2026-07-29T00:55:43+09:00
+end_time=2026-07-29T00:55:47+09:00
+exit_status=1
+review_status=MODEL_NAME_REJECTED_BY_CURSOR_CLI
+rejected_scope=NO_FALLBACK_TO_DISALLOWED_CURSOR_MODEL_VARIANTS
+follow_up_required=SUPERVISOR_COMPLETED_SCOPE_REVIEW_LOCALLY
