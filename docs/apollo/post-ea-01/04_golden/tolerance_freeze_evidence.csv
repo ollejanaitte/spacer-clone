@@ -1,0 +1,3 @@
+tolerance_id,scope,source,status,notes
+TOL-001,analytical tooling,docs/apollo/evidence-collection/02_analytical_golden/tolerance_freeze_register.csv,REFERENCE_ONLY,Existing tolerance register is tooling evidence and not an approved golden.
+TOL-002,parity tooling,docs/apollo/evidence-collection/04_parity_harness/tolerance_freeze_register.csv,REFERENCE_ONLY,Existing tolerance register is NOT_ACTUAL_SPACER_PARITY evidence.

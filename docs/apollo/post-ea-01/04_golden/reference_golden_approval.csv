@@ -1,0 +1,2 @@
+approval_id,golden_case,source,status,reviewer,approval_date,notes
+RGA-001,GOLD-006 and GOLD-010,licensed reference software run,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Codex,2026-07-28,No reference software identity or three-run native outputs available.

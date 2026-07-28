@@ -1,0 +1,3 @@
+golden_run_id,golden_type,parent_identity,input_checksum,output_checksum,repeated_runs,tolerance_frozen,independent_review,status,notes
+GR-001,analytical_candidate,EA-02 tooling package,NOT_APPLICABLE,NOT_APPLICABLE,0,tooling_only,not organizationally approved,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,EA-02 package exists but is explicitly TOOLING_REVIEWED_NOT_GOLD_APPROVED.
+GR-002,reference_software_candidate,UNCONFIRMED,UNCONFIRMED,UNCONFIRMED,0,no,no,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No licensed reference software run captured.

@@ -1,0 +1,2 @@
+approval_id,golden_case,source,status,reviewer,approval_date,notes
+AGA-001,GOLD-001..GOLD-005,docs/apollo/evidence-collection/02_analytical_golden,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Codex,2026-07-28,Tooling exists; organizational two-person approval and immutable approved package not captured in POST-EA-01.

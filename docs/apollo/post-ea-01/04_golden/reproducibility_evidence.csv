@@ -1,0 +1,2 @@
+repro_id,golden_scope,status,required_artifact,notes
+GREP-001,analytical and reference goldens,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three-run approved golden bundles,No approved reference or analytical golden bundles were captured in this stage.

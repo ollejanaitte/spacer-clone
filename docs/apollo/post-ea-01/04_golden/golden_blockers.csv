@@ -1,0 +1,5 @@
+blocker_id,subject,status,exact_required_artifact,notes
+GOLD-BLK-001,Analytical Goldens,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Immutable independently approved derivation package,EA-02 tooling is not approval.
+GOLD-BLK-002,Golden tolerance,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Approved tolerance worksheet linked to every case,Tooling tolerance freeze is insufficient.
+GOLD-BLK-003,Reference software Goldens,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Licensed native input/output bundle with three runs,No reference software identity or outputs.
+GOLD-BLK-007,Design verification Golden,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Independent design derivation using adopted DS-02..05 numerics,DS-02..05 remain blocked.
