@@ -60,7 +60,7 @@ The gate remains blocked because source closure, external identity/probe evidenc
 - JSON parse: PASS for `02_identity/machine_manifest.json`
 - Frontend typecheck: PASS
 - Frontend lint: PASS
-- Frontend full tests: FAIL (`src/bridgeDefinition/__tests__/parityCli.test.ts` `beforeAll` hook timeout on 2026-07-28)
+- Frontend full tests: PASS (240 files / 1902 tests passed on 2026-07-28 after `parityCli.test.ts` hook-timeout adjustment)
 - Frontend regression tests: PASS (6 passed on 2026-07-28)
 - Frontend build: PASS
 - Backend pytest: PASS (652 passed on 2026-07-28)

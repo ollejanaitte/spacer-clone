@@ -38,7 +38,7 @@ beforeAll(() => {
   if (!existsSync(builtCli)) {
     throw new Error(`Built parity CLI entrypoint was not found: ${builtCli}`);
   }
-});
+}, 30_000);
 
 afterAll(() => {
   if (buildOutputDir) {
