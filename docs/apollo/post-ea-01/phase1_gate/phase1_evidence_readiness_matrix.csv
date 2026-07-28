@@ -1,0 +1,15 @@
+gate_area,phase1_class,required_for_overall_go,current_state,blocking_artifacts_or_gaps,verdict
+Repository governance,FOUNDATION,YES,PASS,branch=main HEAD=origin/main worktree clean at preflight,PASS
+DS-00 through DS-09 reuse,FOUNDATION,YES,PASS,Design Freeze documents committed and reused without rerun,PASS
+EA-00 through EA-06 reuse,FOUNDATION,YES,PASS,Evidence Acquisition tooling committed and reused without rerun,PASS
+POST-EA-01-00 inventory,FOUNDATION,YES,COMPLETE_PUSHED,docs/apollo/post-ea-01/00_inventory/*,PASS
+POST-EA-01-01 licensed sources,NUMERIC,YES,BLOCKED,BLK-S1-001 BLK-S1-002 BLK-S1-004 BLK-S1-005 DTR-06,NOGO
+POST-EA-01-02 identity and license,NUMERIC,YES,BLOCKED,AN-BLK-001 EXT-ID-001 EXT-ID-002 EXT-ID-003,NOGO
+POST-EA-01-03 machine probe,NUMERIC,YES,BLOCKED,AN-BLK-002 AN-BLK-008,NOGO
+POST-EA-01-04 Golden approval,NUMERIC,YES,BLOCKED,GOLD-BLK-001 GOLD-BLK-002 GOLD-BLK-003 GOLD-BLK-007,NOGO
+POST-EA-01-05 actual parity,NUMERIC,YES,BLOCKED,PAR-BLK-001 PAR-BLK-002 PAR-BLK-003 PAR-BLK-004 PAR-BLK-005,NOGO
+POST-EA-01-06 gate reassessment,FOUNDATION,YES,COMPLETE_PUSHED,docs/apollo/post-ea-01/06_final/*,PASS
+Handoff package scope mapping,FOUNDATION,YES,PASS,READY subset exists but package explicitly denies implementation permission,PASS
+Non-numeric Phase 1 shells,NON_NUMERIC,NO,GO,Can proceed only in isolation under feature flags and provisional labels,GO
+Numeric Phase 1 implementation,NUMERIC,YES,NOGO,Would require unsupported source and machine evidence,NOGO
+Overall Phase 1 implementation permission,INTEGRATED,YES,NOGO,Conjunctive GO rule fails on source Golden parity and machine evidence,NOGO

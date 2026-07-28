@@ -1,0 +1,10 @@
+delegation_id=DEL-GROK-POSTEA-01
+assigned_model=grok4.5
+mode=noninteractive-plan
+task=scope_audit_and_gate_review
+input_paths=/home/masaharu/Projects/spacer-clone-main/docs/apollo/post-ea-01;/home/masaharu/Projects/spacer-clone-main/docs/apollo/design-standards;/home/masaharu/Projects/spacer-clone-main/docs/apollo/handoffs/APOLLO-FRAME-HANDOFF-20260726-001/apollo_frame_team_handoff
+output_path=/home/masaharu/Projects/spacer-clone-main/.codex-delegation-logs/grok4.5_scope_review.txt
+start_time=2026-07-29T00:27:34+09:00
+end_time=2026-07-29T00:27:38+09:00
+exit_status=1
+review_status=REVIEWED_BY_CODEX_MODEL_LABEL_REJECTED
