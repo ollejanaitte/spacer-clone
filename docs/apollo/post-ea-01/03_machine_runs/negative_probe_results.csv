@@ -1,0 +1,2 @@
+probe_id,probe_name,status,required_artifact,notes
+NP-001,negative_probe_suite,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Approved negative-probe run bundles,Missing input through malformed output suite not executed.

@@ -1,0 +1,5 @@
+blocker_id,probe_group,status,exact_required_artifact,notes
+AN-BLK-002,minimal_valid,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Minimal valid isolated run bundle with before/after manifest and all SHA-256 values,No licensed executable or host.
+AN-BLK-005,error_exit_and_license,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Complete valid and negative license-failure bundle,No runtime entitlement or executable.
+AN-BLK-007,timeout_cancel_concurrency_recovery,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Approved timeout/cancel/concurrent/crash-recovery bundles,No executable or approved host.
+AN-BLK-008,reproducibility,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three isolated identical-setting run bundles,No run artifacts captured.

@@ -1,0 +1,2 @@
+artifact_id,artifact_type,path,sha256,status,notes
+NA-001,native_output_bundle,NOT_CAPTURED,NOT_CAPTURED,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No native output was captured in POST-EA-01.

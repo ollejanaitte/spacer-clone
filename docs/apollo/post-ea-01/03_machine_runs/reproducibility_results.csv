@@ -1,0 +1,2 @@
+repro_id,subject,status,required_artifact,notes
+REP-001,Analyzer three-run reproducibility,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three checksum-bound native runs,No run artifacts exist.
