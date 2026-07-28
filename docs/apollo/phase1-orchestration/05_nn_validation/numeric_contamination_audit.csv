@@ -1,0 +1,8 @@
+audit_id,area,check,result,evidence,notes
+NN-AUD-001,frontend/src/apollo,solver imports,PASS,Manual source review plus rg scan,No solver module imported into Apollo shell
+NN-AUD-002,frontend/src/apollo,numeric execution entry,PASS,ApolloPhase1Shell blocked action handlers,Execution requests produce denial audit only
+NN-AUD-003,frontend/src/apollo,result publication entry,PASS,ApolloPhase1Shell blocked publication handler,Publication requests produce denial audit only
+NN-AUD-004,frontend/src/App.tsx,Apollo route gating,PASS,resolveApolloPhase1FeatureFlags nnEnabled gate,Route remains hidden unless enabled
+NN-AUD-005,frontend/src/apollo,verified status exposure,PASS,Rendered shell review,No verified badge element is rendered
+NN-AUD-006,frontend/src/apollo,hardcoded engineering result,PASS,Shell copy and handlers review,Topology drafts are non-authoritative only
+NN-AUD-007,docs,Phase 1 numeric scope separation,PASS,01_nn_scope and 06-09 docs,Numeric implementation remains prohibited

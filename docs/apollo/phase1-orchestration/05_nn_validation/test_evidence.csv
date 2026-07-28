@@ -1,0 +1,11 @@
+evidence_id,scope,command,exit_code,result,notes
+NN-VAL-001,workspace,git diff --check,0,PASS,No whitespace or conflict markers detected
+NN-VAL-002,frontend,cd frontend && npm run typecheck,0,PASS,TypeScript build graph clean
+NN-VAL-003,frontend,cd frontend && npm run lint,0,PASS,Source hygiene and Japanese string scan included
+NN-VAL-004,frontend,cd frontend && npm run test -- src/apollo/__tests__/featureFlag.test.ts src/apollo/__tests__/ApolloPhase1Shell.test.tsx,0,PASS,Targeted Apollo shell tests
+NN-VAL-005,frontend,cd frontend && npm run test,0,PASS,240 files / 1909 tests
+NN-VAL-006,frontend,cd frontend && npm run test:regression,0,PASS,6 regression tests
+NN-VAL-007,backend,.venv/bin/python -m pytest backend/tests -q,0,PASS,652 backend tests
+NN-VAL-008,frontend,cd frontend && npm run build,0,PASS,Vite production build succeeded
+NN-VAL-009,docs,python3 CSV/JSON parse scan for docs/apollo/phase1-orchestration,0,PASS,Authoritative orchestration artifacts parsed
+NN-VAL-010,docs,python3 TODO/TBD/TBC/UNKNOWN scan for docs/apollo/phase1-orchestration,0,PASS,No unresolved placeholders

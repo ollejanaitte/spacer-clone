@@ -1,0 +1,11 @@
+criterion_id,criterion,result,evidence_id,notes
+NN-AC-001,Feature flag OFF keeps Apollo shell unavailable,PASS,NN-VAL-002,Fail-closed env parsing retained
+NN-AC-002,Feature flag ON enables Apollo shell route,PASS,NN-VAL-004,Apollo shell renders in targeted tests
+NN-AC-003,Provisional banner always visible by default,PASS,NN-VAL-004,Guard defaults true when unset
+NN-AC-004,Numeric execution requests are denied,PASS,NN-AUD-002,Blocked action and audit recorded
+NN-AC-005,Result publication requests are denied,PASS,NN-AUD-003,Blocked action and audit recorded
+NN-AC-006,Verified status must not render,PASS,NN-AUD-005,No verified badge element
+NN-AC-007,Topology shell can append draft entities,PASS,NN-VAL-004,Node/member/support shell interactions tested
+NN-AC-008,Project shell persists edits through callback boundary,PASS,NN-VAL-004,Project metadata callback exercised
+NN-AC-009,Invalid shell state surfaces validation messages,PASS,NN-VAL-004,Targeted invalid project fixture exercised
+NN-AC-010,No backend regression introduced,PASS,NN-VAL-007,Backend full suite passed
