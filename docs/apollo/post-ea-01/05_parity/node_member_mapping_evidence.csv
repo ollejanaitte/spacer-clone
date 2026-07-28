@@ -1,0 +1,2 @@
+mapping_id,entity_scope,status,required_artifact,notes
+NMM-001,node_member_topology,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Checksum-fixed native/Apollo model pair with bijective mapping,No native SPACER input/export pair available.

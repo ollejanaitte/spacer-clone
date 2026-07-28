@@ -1,0 +1,6 @@
+blocker_id,subject,status,exact_required_artifact,notes
+PAR-BLK-001,Reference identity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Authorized version/build/executable/service manifest,No licensed SPACER/STATICS identity captured.
+PAR-BLK-002,Input and topology semantics,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Checksum-fixed native/Apollo model pairs and mapping spec,No native model pair available.
+PAR-BLK-003,Coordinates DOF I-J and signs,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Positive-component transformation/equilibrium bundle,No native result bundle available.
+PAR-BLK-004,Load cases and combinations,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,One-case and asymmetric combination evidence bundles,No native input/output pair available.
+PAR-BLK-005,Actual numeric results,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three native runs and full comparison manifest,No actual SPACER outputs captured.

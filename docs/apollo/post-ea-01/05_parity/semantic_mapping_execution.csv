@@ -1,0 +1,2 @@
+mapping_run_id,scope,source_identity,target_identity,status,notes
+SME-001,model_node_member_material_support_load_combination,UNCONFIRMED_SPACER,apollo_repository,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,No checksum-fixed native SPACER model pair exists.

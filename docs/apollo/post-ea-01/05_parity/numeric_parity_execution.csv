@@ -1,0 +1,2 @@
+parity_run_id,scope,status,required_artifact,notes
+NPE-001,actual_spacer_numeric_parity,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Three native runs plus Apollo comparison manifest,No SPACER/STATICS native results captured.

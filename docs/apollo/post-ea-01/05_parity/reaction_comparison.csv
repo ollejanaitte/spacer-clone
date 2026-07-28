@@ -1,0 +1,2 @@
+comparison_id,quantity_scope,status,max_abs_error,max_rel_error,notes
+RC-001,support_reaction,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NOT_COMPUTED,NOT_COMPUTED,No native reference values.
