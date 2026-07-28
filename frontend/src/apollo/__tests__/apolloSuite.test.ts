@@ -13,6 +13,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "numericAuthorityGuard.test.ts",
   "phase1ScopeGuard.test.ts",
   "testingHelpers.test.ts",
+  "unit2Draft.test.ts",
 ] as const;
 
 describe("apollo AP-00 test suite discoverability", () => {

@@ -6,8 +6,26 @@ import { createDefaultProject } from "../../data/defaultProject";
 import { ApolloPhase1Shell } from "../ApolloPhase1Shell";
 import type { ApolloPhase1FeatureFlags } from "../featureFlag";
 import type { ProjectModel } from "../../types";
+vi.mock("../../viewer/Viewer3D", () => ({
+  Viewer3D: ({ project }: { project: { nodes: unknown[]; members: unknown[] } }) => (
+    <div data-testid="mock-viewer3d">
+      {project.nodes.length}/{project.members.length}
+    </div>
+  ),
+}));
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  const prototype =
+    input instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype;
+  const valueSetter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+  valueSetter?.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+}
 
 const DEFAULT_FLAGS: ApolloPhase1FeatureFlags = {
   nnEnabled: true,
@@ -24,6 +42,8 @@ function renderShell(
     flags: ApolloPhase1FeatureFlags;
     onProjectChange: (nextProject: ProjectModel) => void;
     onAuditEvent: (message: string) => void;
+    onSaveProject: () => Promise<boolean>;
+    onReloadProject: () => Promise<boolean>;
   }>,
 ) {
   const container = document.createElement("div");
@@ -38,6 +58,9 @@ function renderShell(
         onProjectChange={props?.onProjectChange ?? (() => undefined)}
         onReturnToPro={onReturnToPro}
         onAuditEvent={props?.onAuditEvent}
+        dirty={false}
+        onSaveProject={props?.onSaveProject ?? (async () => true)}
+        onReloadProject={props?.onReloadProject ?? (async () => true)}
       />,
     );
   });
@@ -45,11 +68,12 @@ function renderShell(
 }
 
 describe("ApolloPhase1Shell", () => {
-  it("shows guarded placeholder only", () => {
+  it("shows the practical topology shell with guards", () => {
     const { container } = renderShell();
     expect(container.querySelector("[data-testid='apollo-phase1-shell']")).not.toBeNull();
     expect(container.textContent).toContain("Apollo Phase 1-NN");
     expect(container.textContent).toContain("Provisional / unverified status");
+    expect(container.querySelector("[data-testid='apollo-node-editor']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-verified-badge']")).toBeNull();
   });
 
@@ -73,9 +97,7 @@ describe("ApolloPhase1Shell", () => {
 
     const nameInput = container.querySelector("[data-testid='apollo-project-name-input']") as HTMLInputElement;
     act(() => {
-      nameInput.value = "Apollo NN Draft";
-      nameInput.dispatchEvent(new Event("input", { bubbles: true }));
-      nameInput.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputValue(nameInput, "Apollo NN Draft");
     });
 
     const addNodeButton = container.querySelector("[data-testid='apollo-add-node']") as HTMLButtonElement;
@@ -84,7 +106,8 @@ describe("ApolloPhase1Shell", () => {
     });
 
     expect(updates[0]?.project.name).toBe("Apollo NN Draft");
-    expect(updates[1]?.nodes.length).toBe(project.nodes.length + 1);
+    expect(updates[0]?.apolloPhase1Unit2?.metadata.name).toBe("Apollo NN Draft");
+    expect(updates[1]?.apolloPhase1Unit2?.nodes.length).toBe(project.nodes.length + 1);
   });
 
   it("blocks numeric execution and result publication while recording audit events", () => {
@@ -94,24 +117,22 @@ describe("ApolloPhase1Shell", () => {
     const numericGuard = container.querySelector("[data-testid='apollo-numeric-execution-guard']") as HTMLButtonElement;
     const publicationGuard = container.querySelector("[data-testid='apollo-result-publication-guard']") as HTMLButtonElement;
 
-    expect(numericGuard.getAttribute("aria-disabled")).toBe("true");
-    expect(publicationGuard.getAttribute("aria-disabled")).toBe("true");
+    expect(numericGuard.getAttribute("data-guard-blocked")).toBe("true");
+    expect(publicationGuard.getAttribute("data-guard-blocked")).toBe("true");
 
     act(() => {
       numericGuard.click();
       publicationGuard.click();
     });
 
-    expect(container.textContent).toContain("Numeric execution request denied by Phase 1-NN guard.");
-    expect(container.textContent).toContain("Result publication request denied by Phase 1-NN guard.");
     expect(container.textContent).toContain(
       "Authoritative result publication remains blocked. This shell may show provisional structure state only.",
     );
     expect(onAuditEvent).toHaveBeenCalledWith(
-      "Numeric execution request denied by Phase 1-NN guard.",
+      expect.stringContaining("Numeric execution remains blocked"),
     );
     expect(onAuditEvent).toHaveBeenCalledWith(
-      "Result publication request denied by Phase 1-NN guard.",
+      "Authoritative result publication remains blocked. This shell may show provisional structure state only.",
     );
   });
 
@@ -144,9 +165,9 @@ describe("ApolloPhase1Shell", () => {
       ],
     };
     const { container } = renderShell({ project });
-    expect(container.textContent).toContain("NN-PROJECT-NAME-REQUIRED");
-    expect(container.textContent).toContain("NN-MEMBER-NODE-REFERENCE");
-    expect(container.textContent).toContain("NN-SUPPORT-NODE-REFERENCE");
+    expect(container.textContent).toContain("APOLLO_PROJECT_NAME_REQUIRED");
+    expect(container.textContent).toContain("APOLLO_MEMBER_NODE_REFERENCE_INVALID");
+    expect(container.textContent).toContain("APOLLO_SUPPORT_NODE_REFERENCE_INVALID");
   });
 
   it("rejects invalid node coordinate edits", () => {
@@ -157,13 +178,11 @@ describe("ApolloPhase1Shell", () => {
     ) as HTMLInputElement;
 
     act(() => {
-      nodeXInput.value = "invalid";
-      nodeXInput.dispatchEvent(new Event("input", { bubbles: true }));
+      setInputValue(nodeXInput, "invalid");
     });
 
-    expect(container.textContent).toContain("Node shell rejected invalid X coordinate");
     expect(onAuditEvent).toHaveBeenCalledWith(
-      expect.stringContaining("Node shell rejected invalid X coordinate"),
+      expect.stringContaining("Node G0 rejected invalid X coordinate input."),
     );
   });
 });

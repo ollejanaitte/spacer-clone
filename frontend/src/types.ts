@@ -9,12 +9,96 @@ export type ProjectInfo = {
   updatedAt: string;
 };
 
+export type ApolloPhase1Unit2SourceStatus =
+  | "licensed_source_pending"
+  | "reference_only"
+  | "blocked_by_numeric_evidence";
+
+export type ApolloPhase1Unit2ProvisionalStatus = "provisional" | "unverified";
+
+export type ApolloPhase1Unit2Node = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  z: number;
+  active: boolean;
+  comment: string;
+};
+
+export type ApolloPhase1Unit2MaterialReference = {
+  id: string;
+  displayName: string;
+  category: string;
+  sourceStatus: ApolloPhase1Unit2SourceStatus;
+  provisionalStatus: ApolloPhase1Unit2ProvisionalStatus;
+  active: boolean;
+  comment: string;
+};
+
+export type ApolloPhase1Unit2Member = {
+  id: string;
+  label: string;
+  nodeI: string;
+  nodeJ: string;
+  materialRefId: string;
+  active: boolean;
+  comment: string;
+};
+
+export type ApolloPhase1Unit2SupportState = "FREE" | "FIXED" | "UNDEFINED";
+
+export type ApolloPhase1Unit2Support = {
+  id: string;
+  nodeId: string;
+  label: string;
+  ux: ApolloPhase1Unit2SupportState;
+  uy: ApolloPhase1Unit2SupportState;
+  uz: ApolloPhase1Unit2SupportState;
+  rx: ApolloPhase1Unit2SupportState;
+  ry: ApolloPhase1Unit2SupportState;
+  rz: ApolloPhase1Unit2SupportState;
+  active: boolean;
+  comment: string;
+};
+
+export type ApolloPhase1Unit2AuditRecord = {
+  id: string;
+  timestamp: string;
+  action: string;
+  entityType: "project" | "node" | "member" | "support" | "material";
+  entityId: string | null;
+  message: string;
+};
+
+export type ApolloPhase1Unit2ProjectMetadata = {
+  projectId: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  provisionalStatus: ApolloPhase1Unit2ProvisionalStatus;
+  localDraftStatus: "saved" | "dirty";
+};
+
+export type ApolloPhase1Unit2Draft = {
+  schemaVersion: "2.0.0";
+  metadata: ApolloPhase1Unit2ProjectMetadata;
+  nodes: ApolloPhase1Unit2Node[];
+  materialReferences: ApolloPhase1Unit2MaterialReference[];
+  members: ApolloPhase1Unit2Member[];
+  supports: ApolloPhase1Unit2Support[];
+  audit: ApolloPhase1Unit2AuditRecord[];
+};
+
 export type NodeItem = {
   id: string;
   x: number;
   y: number;
   z: number;
   label?: string;
+  active?: boolean;
+  comment?: string;
 };
 
 export type Material = {
@@ -44,16 +128,22 @@ export type Member = {
   orientationVector?: { x: number; y: number; z: number };
   orientationNode?: string;
   label?: string;
+  active?: boolean;
+  comment?: string;
 };
 
 export type Support = {
+  id?: string;
   nodeId: string;
+  label?: string;
   ux: boolean;
   uy: boolean;
   uz: boolean;
   rx: boolean;
   ry: boolean;
   rz: boolean;
+  active?: boolean;
+  comment?: string;
 };
 
 export type LoadCase = {
@@ -193,6 +283,8 @@ export type ProjectModel = {
   liner?: ProjectLinerMetadata;
   /** Optional trace table linking generated frame entities to liner grid sources. */
   linerTrace?: PersistedLinerTraceEntry[];
+  /** Optional Apollo Phase 1-NN unit 2 non-numeric draft payload. */
+  apolloPhase1Unit2?: ApolloPhase1Unit2Draft;
 };
 
 export type StructuredMessage = {

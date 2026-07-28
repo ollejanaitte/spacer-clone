@@ -16,6 +16,16 @@ export type SaveProjectResult =
   | { canceled: true }
   | { canceled: false; filePath: string };
 
+function getAutomationOpenPath(): string | null {
+  const candidate = process.env.SPACER_AUTOMATION_OPEN_PATH;
+  return isNonEmptyString(candidate) ? candidate : null;
+}
+
+function getAutomationSavePath(): string | null {
+  const candidate = process.env.SPACER_AUTOMATION_SAVE_PATH;
+  return isNonEmptyString(candidate) ? candidate : null;
+}
+
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.length > 0;
 }
@@ -40,6 +50,11 @@ function ensureJsonExtension(filePath: string): string {
 export async function handleOpenProject(
   parent: Electron.BrowserWindow | undefined,
 ): Promise<OpenProjectResult> {
+  const automationPath = getAutomationOpenPath();
+  if (automationPath) {
+    const content = await fs.readFile(automationPath, "utf8");
+    return { canceled: false, fileName: path.basename(automationPath), content };
+  }
   const options: Electron.OpenDialogOptions = {
     title: "プロジェクトを開く",
     properties: ["openFile"],
@@ -63,6 +78,12 @@ export async function handleSaveProject(
   parent: Electron.BrowserWindow | undefined,
   payload: SaveProjectPayload,
 ): Promise<SaveProjectResult> {
+  const automationPath = getAutomationSavePath();
+  if (automationPath) {
+    const filePath = ensureJsonExtension(automationPath);
+    await fs.writeFile(filePath, payload.content, "utf8");
+    return { canceled: false, filePath };
+  }
   const options: Electron.SaveDialogOptions = {
     title: "プロジェクトを保存",
     defaultPath: payload.suggestedName ?? "project.json",

@@ -69,6 +69,11 @@ function setInputValue(input: HTMLInputElement, value: string) {
   input.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
+function clickButtonByTestId(testId: string) {
+  const button = buttonByTestId(testId);
+  button.click();
+}
+
 afterEach(() => {
   if (root) {
     act(() => root?.unmount());
@@ -102,7 +107,7 @@ describe("App Apollo navigation", () => {
     await render(<App />);
 
     await act(async () => {
-      buttonByTestId("open-apollo-phase1").click();
+      clickButtonByTestId("open-apollo-phase1");
     });
 
     expect(window.location.pathname).toBe("/pro/apollo");
@@ -110,10 +115,11 @@ describe("App Apollo navigation", () => {
 
     await act(async () => {
       setInputValue(inputByTestId("apollo-project-name-input"), "Apollo Route Persistence");
-      buttonByTestId("apollo-add-node").click();
+      clickButtonByTestId("apollo-add-node");
     });
 
     await act(async () => {
+      clickButtonByTestId("apollo-node-select-APN-1");
       setInputValue(inputByTestId("apollo-node-label-input"), "Apollo Edited Node");
       setInputValue(inputByTestId("apollo-node-x-input"), "12.5");
     });
@@ -124,28 +130,23 @@ describe("App Apollo navigation", () => {
     expect(inputByTestId("apollo-node-x-input").value).toBe("12.5");
 
     await act(async () => {
-      buttonByTestId("apollo-return-to-pro").click();
+      clickButtonByTestId("apollo-return-to-pro");
     });
 
     expect(window.location.pathname).toBe("/pro");
     expect(document.body.textContent).toContain("Apollo Route Persistence");
 
     await act(async () => {
-      buttonByTestId("open-apollo-phase1").click();
+      clickButtonByTestId("open-apollo-phase1");
     });
 
     expect(window.location.pathname).toBe("/pro/apollo");
     expect(inputByTestId("apollo-project-name-input").value).toBe("Apollo Route Persistence");
     expect(document.body.textContent).toContain("11");
     await act(async () => {
-      setSelectValue(selectByTestId("apollo-node-select"), "APN-1");
+      clickButtonByTestId("apollo-node-select-APN-1");
     });
     expect(inputByTestId("apollo-node-label-input").value).toBe("Apollo Edited Node");
     expect(inputByTestId("apollo-node-x-input").value).toBe("12.5");
   }, 40000);
 });
-function setSelectValue(select: HTMLSelectElement, value: string) {
-  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, "value")?.set;
-  valueSetter?.call(select, value);
-  select.dispatchEvent(new Event("change", { bubbles: true }));
-}
