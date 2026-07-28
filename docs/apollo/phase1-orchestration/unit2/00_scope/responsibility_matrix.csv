@@ -1,0 +1,9 @@
+area,implemented_in,owner,verdict
+scope_freeze,docs/apollo/phase1-orchestration/unit2/00_scope,Codex,PASS
+node_editor,frontend/src/apollo/ApolloPhase1Shell.tsx,Codex,PASS
+member_editor,frontend/src/apollo/ApolloPhase1Shell.tsx,Codex,PASS
+support_editor,frontend/src/apollo/ApolloPhase1Shell.tsx,Codex,PASS
+material_reference_editor,frontend/src/apollo/ApolloPhase1Shell.tsx,Codex,PASS
+persistence_contract,frontend/src/apollo/unit2Draft.ts,Codex,PASS
+electron_runtime_verification,frontend/scripts/verifyApolloUnit2Electron.mjs,Codex,PASS
+numeric_scope_guard,frontend/src/apollo/ApolloPhase1Shell.tsx,Codex,PASS

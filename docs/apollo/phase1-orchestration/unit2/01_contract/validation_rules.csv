@@ -1,0 +1,10 @@
+rule_id,rule,severity,enforced_in
+U2-V-01,Project name is required,error,frontend/src/apollo/unit2Draft.ts
+U2-V-02,Node coordinates must be finite,error,frontend/src/apollo/unit2Draft.ts
+U2-V-03,Duplicate IDs are rejected,error,frontend/src/apollo/unit2Draft.ts
+U2-V-04,Member node references must exist,error,frontend/src/apollo/unit2Draft.ts
+U2-V-05,Member I-end and J-end cannot match,error,frontend/src/apollo/unit2Draft.ts
+U2-V-06,Member material reference must exist,error,frontend/src/apollo/unit2Draft.ts
+U2-V-07,Support node reference must exist,error,frontend/src/apollo/unit2Draft.ts
+U2-V-08,All support DOFs undefined raises warning,warning,frontend/src/apollo/unit2Draft.ts
+U2-V-09,Deleting in-use nodes/materials is rejected,error,frontend/src/apollo/ApolloPhase1Shell.tsx

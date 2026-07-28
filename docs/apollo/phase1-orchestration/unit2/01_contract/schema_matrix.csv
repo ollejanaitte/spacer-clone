@@ -1,0 +1,7 @@
+entity,required_fields,notes
+metadata,projectId;name;description;createdAt;updatedAt;provisionalStatus;localDraftStatus,Top-level non-numeric shell metadata
+node,id;label;x;y;z;active;comment,Finite coordinates only
+material_reference,id;displayName;category;sourceStatus;provisionalStatus;active;comment,Reference shell only
+member,id;label;nodeI;nodeJ;materialRefId;active;comment,I-end and J-end must differ
+support,id;nodeId;label;ux;uy;uz;rx;ry;rz;active;comment,DOF states limited to FREE/FIXED/UNDEFINED
+audit,id;timestamp;action;entityType;entityId;message,Bounded history for shell events

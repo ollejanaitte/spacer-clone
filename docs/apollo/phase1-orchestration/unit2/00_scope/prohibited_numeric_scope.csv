@@ -1,0 +1,7 @@
+prohibited_area,reason,enforcement
+solver,Phase 1-Numeric remains NOGO,Apollo guard buttons and no solver imports
+material_constants,Non-numeric shell only,Apollo material reference fields exclude numeric constants
+section_properties,Non-numeric shell only,No section property editor added
+verified_results,Unverified status required,Provisional banner plus no verified badge
+result_publication,Production publication prohibited,Publication guard button remains blocked
+spacer_parity,No machine parity evidence in Unit 2,No parity code paths added

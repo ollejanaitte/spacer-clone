@@ -1,0 +1,9 @@
+criterion_id,criterion,result,evidence
+U2-AC-01,Node editor supports add/edit/duplicate/reorder/select,PASS,frontend/src/apollo/ApolloPhase1Shell.tsx
+U2-AC-02,Member editor preserves node/material reference integrity,PASS,frontend/src/apollo/unit2Draft.ts
+U2-AC-03,Support editor remains non-numeric,PASS,frontend/src/apollo/ApolloPhase1Shell.tsx
+U2-AC-04,Material shell excludes engineering constants,PASS,frontend/src/types.ts
+U2-AC-05,Save/reload round-trip is deterministic,PASS,docs/apollo/phase1-orchestration/unit2/07_electron/apollo-unit2-roundtrip.json
+U2-AC-06,Visualization and selection synchronization work in Electron,PASS,docs/apollo/phase1-orchestration/unit2/07_electron/selection_sync.png
+U2-AC-07,Numeric execution remains blocked,PASS,docs/apollo/phase1-orchestration/unit2/07_electron/numeric_guard.png
+U2-AC-08,Result publication remains blocked,PASS,docs/apollo/phase1-orchestration/unit2/07_electron/publication_guard.png
