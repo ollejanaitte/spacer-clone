@@ -1,0 +1,2 @@
+evidence_id,source_document,edition,clause,table,applicability,value_or_formula_identifier,unit,adoption_status,evidence_location,checksum,reviewer,approval_date,notes
+COMB-001,道路橋示方書・同解説,UNFIXED,,,,load_combination_coefficients,various,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,docs/apollo/design-standards/04_loads/load_combination_register.csv,NOT_APPLICABLE,Codex,2026-07-28,Combination shell exists only as blocked governance placeholder.

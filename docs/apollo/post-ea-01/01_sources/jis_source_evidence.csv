@@ -1,0 +1,2 @@
+evidence_id,source_document,edition,clause,table,applicability,value_or_formula_identifier,unit,adoption_status,evidence_location,checksum,reviewer,approval_date,notes
+JIS-POSTEA01-001,Official JIS packages for DS-02 gap rows,UNACQUIRED,,,,JIS-001..034 identities,,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,docs/apollo/design-standards/02_jis/jis_source_register.csv,NOT_APPLICABLE,Codex,2026-07-28,ローカルに正式 JIS 本文なし。既存 DS-02 register は 34 placeholder gap rows すべて blocked のまま。

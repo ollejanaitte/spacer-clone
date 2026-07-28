@@ -1,0 +1,2 @@
+evidence_id,source_document,edition,clause,table,applicability,value_or_formula_identifier,unit,adoption_status,evidence_location,checksum,reviewer,approval_date,notes
+LIM-001,道路橋示方書・同解説,UNFIXED,,,,limit_values,various,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,docs/apollo/design-standards/05_verification/limit_value_register.csv,NOT_APPLICABLE,Codex,2026-07-28,DS-05 limit shells remain blocked; no limit numerics adopted.

@@ -1,0 +1,3 @@
+evidence_id,source_document,edition,clause,table,applicability,value_or_formula_identifier,unit,adoption_status,evidence_location,checksum,reviewer,approval_date,notes
+LOAD-001,道路橋示方書・同解説,UNFIXED,,,,load_partial_factors,various,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,docs/apollo/design-standards/04_loads/load_factor_register.csv,NOT_APPLICABLE,Codex,2026-07-28,DS-04 factor shells exist but no R7 clause/table or numeric values have been visually confirmed.
+LOAD-002,道路橋示方書・同解説,UNFIXED,,,,dynamic_impact_adjustment,various,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,docs/apollo/design-standards/04_loads/load_factor_register.csv,NOT_APPLICABLE,Codex,2026-07-28,Dynamic/impact single-owner rule is documented; actual numeric source not closed.

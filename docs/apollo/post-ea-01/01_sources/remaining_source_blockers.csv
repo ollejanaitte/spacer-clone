@@ -1,0 +1,9 @@
+blocker_id,affected_area,current_status,exact_required_artifact,notes
+BLK-S1-001,R7 metadata facets,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-volume title and colophon manifest with checksums,PDF files exist but official edition/issuing-body/errata metadata not yet human-fixed.
+BLK-S1-002,JIS identities and editions,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-row primary JIS packages and citation mapping,No primary JIS text found locally.
+BLK-S1-004,Numeric adoption for DS-04/05,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Verified R7 clause/table package for every engineering quantity,No DS-04/05 value has clause+table fixed in POST-EA-01.
+BLK-S1-005,Material property adoption,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-property primary-source manifest for MAT-DS03 rows,Requires JIS closure plus R7 citation chain.
+DTR-06,R7 errata,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Official per-volume errata manifest,Errata state not captured from official publisher/issuing site.
+PKG-R7-V,Verification provisions,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Per-row R7 verification evidence package,No adopted equation/limit/factor package.
+PKG-DS03,Adopted material inputs,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Closed DS-03 source packages linked to DS-05,DS-03 remains blocked.
+PKG-DS04,Adopted load inputs,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,Closed DS-04 source packages linked to DS-05,DS-04 remains blocked.
