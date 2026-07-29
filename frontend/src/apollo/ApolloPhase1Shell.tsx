@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Viewer3D } from "../viewer/Viewer3D";
 import type { ViewerSelection } from "../viewer/types";
-import type {
-  ApolloPhase1FeatureFlags,
-} from "./featureFlag";
+import type { ApolloPhase1FeatureFlags } from "./featureFlag";
 import {
   appendApolloPhase1Unit2Audit,
   APOLLO_PHASE1_UNIT2_SCHEMA_VERSION,
@@ -24,6 +22,7 @@ import {
   renameApolloWorkspaceEntry,
   saveApolloWorkspaceEntry,
 } from "./workspace";
+import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
 import type {
   ApolloPhase1Unit2Draft,
   ApolloPhase1Unit2MaterialReference,
@@ -32,6 +31,7 @@ import type {
   ApolloPhase1Unit2Support,
   ProjectModel,
   SectionKey,
+  StructuredMessage,
 } from "../types";
 
 type ApolloPhase1ShellProps = {
@@ -46,8 +46,46 @@ type ApolloPhase1ShellProps = {
 };
 
 type EditorPane = "project" | "nodes" | "members" | "supports" | "materials";
+type ApolloMode = "guided" | "list";
+type GuidedStep = "start" | "sample" | "sampleLoaded" | "basics" | "editor" | "validation";
+type ValidationIssueTarget = {
+  readonly step: GuidedStep;
+  readonly pane: EditorPane;
+  readonly selection: ApolloPhase1Unit2ViewSelection;
+  readonly focusKey?: string;
+};
+type StepKey = "start" | "basics" | "nodes" | "members" | "supportsMaterials" | "validation";
+type StepStatus = "current" | "complete" | "error" | "available" | "locked";
 
-const VERIFICATION_DATE = "Tuesday, July 28, 2026";
+const VERIFICATION_DATE = "Wednesday, July 29, 2026";
+const APOLLO_GUIDE_DISMISSED_KEY = "apollo_phase1_sample_guide_dismissed";
+const APOLLO_ONBOARDING_DISMISSED_KEY = "apollo_phase1_onboarding_dismissed";
+const STEP_DEFINITIONS = [
+  { key: "start", label: "開始方法" },
+  { key: "basics", label: "基本情報" },
+  { key: "nodes", label: "節点" },
+  { key: "members", label: "部材" },
+  { key: "supportsMaterials", label: "支点・材料" },
+  { key: "validation", label: "入力チェック" },
+] as const;
+const ONBOARDING_SLIDES = [
+  {
+    title: "まずはサンプル橋梁",
+    body: "初めての方は 200m級 5径間連続橋を読み込み、節点・部材・支点の見方を確認してください。",
+  },
+  {
+    title: "1画面1目的で進行",
+    body: "ガイド付きモードでは、開始方法から入力チェックまで順番に進めます。",
+  },
+  {
+    title: "一覧編集にも切替可能",
+    body: "慣れた方は一覧編集モードで節点・部材・支点・材料をまとめて確認できます。",
+  },
+  {
+    title: "計算機能は停止中",
+    body: "現在は入力・確認機能のみ利用できます。構造計算と計算結果出力は利用できません。",
+  },
+] as const;
 
 function nowIsoString(): string {
   return new Date().toISOString();
@@ -57,30 +95,111 @@ function summarizeList(items: readonly string[]): string {
   return items.length > 0 ? items.join(", ") : "none";
 }
 
-function reorderRows<T>(rows: readonly T[], currentIndex: number, nextIndex: number): T[] {
-  if (currentIndex === nextIndex || currentIndex < 0 || nextIndex < 0) return [...rows];
-  if (currentIndex >= rows.length || nextIndex >= rows.length) return [...rows];
-  const nextRows = [...rows];
-  const [target] = nextRows.splice(currentIndex, 1);
-  nextRows.splice(nextIndex, 0, target);
-  return nextRows;
+function getStoredBoolean(key: string, fallback: boolean): boolean {
+  if (typeof window === "undefined") return fallback;
+  const raw = window.localStorage.getItem(key);
+  if (raw === null) return fallback;
+  return raw === "true";
 }
 
-function tableSelectionKeyDown(
-  event: KeyboardEvent<HTMLElement>,
-  ids: readonly string[],
-  selectedId: string | null,
-  onSelect: (id: string) => void,
-) {
-  if (ids.length === 0) return;
-  const currentIndex = selectedId ? ids.indexOf(selectedId) : 0;
-  if (event.key === "ArrowDown") {
-    event.preventDefault();
-    onSelect(ids[Math.min(ids.length - 1, Math.max(0, currentIndex) + 1)]);
+function setStoredBoolean(key: string, value: boolean): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(key, value ? "true" : "false");
+}
+
+function statusText(dirty: boolean): "保存済み" | "変更あり" {
+  return dirty ? "変更あり" : "保存済み";
+}
+
+function formatSupportState(value: ApolloPhase1Unit2Support["ux"]): string {
+  if (value === "FIXED") return "固定";
+  if (value === "FREE") return "自由";
+  return "未定義";
+}
+
+function parseFiniteNumber(value: string): number | null {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function hasBlockingIssueForEntityTypes(
+  validation: ReturnType<typeof validateApolloPhase1Unit2Draft>,
+  entityTypes: readonly StructuredMessage["entityType"][],
+): boolean {
+  return validation.errors.some((entry) => entityTypes.includes(entry.entityType));
+}
+
+function validationTarget(entry: StructuredMessage): ValidationIssueTarget {
+  if (entry.entityType === "project") {
+    return {
+      step: "basics",
+      pane: "project",
+      selection: null,
+      focusKey: entry.path === "/apolloPhase1Unit2/metadata/name" ? "project-name" : "project-id",
+    };
   }
-  if (event.key === "ArrowUp") {
-    event.preventDefault();
-    onSelect(ids[Math.max(0, currentIndex <= 0 ? 0 : currentIndex - 1)]);
+  if (entry.entityType === "node") {
+    return {
+      step: "editor",
+      pane: "nodes",
+      selection: entry.entityId ? { kind: "node", id: entry.entityId } : null,
+      focusKey: "node-id",
+    };
+  }
+  if (entry.entityType === "member") {
+    return {
+      step: "editor",
+      pane: "members",
+      selection: entry.entityId ? { kind: "member", id: entry.entityId } : null,
+      focusKey: entry.code === "APOLLO_MEMBER_MATERIAL_REFERENCE_INVALID" ? "member-material" : "member-id",
+    };
+  }
+  if (entry.entityType === "support") {
+    return {
+      step: "editor",
+      pane: "supports",
+      selection: entry.entityId ? { kind: "support", id: entry.entityId } : null,
+      focusKey: "support-node",
+    };
+  }
+  return {
+    step: "editor",
+    pane: "materials",
+    selection: entry.entityId ? { kind: "material", id: entry.entityId } : null,
+    focusKey: "material-id",
+  };
+}
+
+function localizeValidationMessage(entry: StructuredMessage): string {
+  switch (entry.code) {
+    case "APOLLO_PROJECT_NAME_REQUIRED":
+      return "橋梁名を入力してください。";
+    case "APOLLO_NODE_COORDINATE_INVALID":
+      return `節点 ${entry.entityId ?? ""} の座標が不正です。`;
+    case "APOLLO_NODE_DUPLICATE_ID":
+      return `節点IDが重複しています: ${entry.entityId ?? ""}`;
+    case "APOLLO_MEMBER_DUPLICATE_ID":
+      return `部材IDが重複しています: ${entry.entityId ?? ""}`;
+    case "APOLLO_SUPPORT_DUPLICATE_ID":
+      return `支点IDが重複しています: ${entry.entityId ?? ""}`;
+    case "APOLLO_MATERIAL_DUPLICATE_ID":
+      return `材料IDが重複しています: ${entry.entityId ?? ""}`;
+    case "APOLLO_MEMBER_NODE_REFERENCE_INVALID":
+      return `部材 ${entry.entityId ?? ""} の接続節点に参照切れがあります。`;
+    case "APOLLO_MEMBER_SELF_REFERENCE":
+      return `部材 ${entry.entityId ?? ""} の始点と終点が同じです。`;
+    case "APOLLO_MEMBER_MATERIAL_REFERENCE_INVALID":
+      return `部材 ${entry.entityId ?? ""} の材料参照に参照切れがあります。`;
+    case "APOLLO_SUPPORT_NODE_REFERENCE_INVALID":
+      return `支点 ${entry.entityId ?? ""} の節点参照に参照切れがあります。`;
+    case "APOLLO_SUPPORT_ALL_UNDEFINED":
+      return `支点 ${entry.entityId ?? ""} は支持条件が未定義です。`;
+    case "APOLLO_MEMBER_INACTIVE_MATERIAL":
+      return `有効な部材 ${entry.entityId ?? ""} が無効な材料を参照しています。`;
+    case "APOLLO_NODE_INACTIVE_IN_USE":
+      return `無効な節点 ${entry.entityId ?? ""} が部材または支点から参照されています。`;
+    default:
+      return entry.message;
   }
 }
 
@@ -105,6 +224,13 @@ export function ApolloPhase1Shell({
   const [persisting, setPersisting] = useState<"save" | "reload" | null>(null);
   const [workspaceEntries, setWorkspaceEntries] = useState(() => listApolloWorkspaceEntries());
   const [workspaceSelection, setWorkspaceSelection] = useState<string | null>(null);
+  const [mode, setMode] = useState<ApolloMode>("guided");
+  const [guidedStep, setGuidedStep] = useState<GuidedStep>("start");
+  const [showOnboarding, setShowOnboarding] = useState(() => !getStoredBoolean(APOLLO_ONBOARDING_DISMISSED_KEY, false));
+  const [sampleGuideDismissed, setSampleGuideDismissed] = useState(() => getStoredBoolean(APOLLO_GUIDE_DISMISSED_KEY, false));
+  const [onboardingIndex, setOnboardingIndex] = useState(0);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
+  const [focusKey, setFocusKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (selection?.kind === "node" && draft.nodes.some((node) => node.id === selection.id)) return;
@@ -134,24 +260,22 @@ export function ApolloPhase1Shell({
       setWorkspaceSelection(null);
       return;
     }
-    if (workspaceSelection && workspaceEntries.some((entry) => entry.workspaceId === workspaceSelection)) {
-      return;
-    }
+    if (workspaceSelection && workspaceEntries.some((entry) => entry.workspaceId === workspaceSelection)) return;
     setWorkspaceSelection(workspaceEntries[0]?.workspaceId ?? null);
   }, [workspaceEntries, workspaceSelection]);
 
-  const selectedNode =
-    selection?.kind === "node"
-      ? draft.nodes.find((node) => node.id === selection.id) ?? null
-      : null;
-  const selectedMember =
-    selection?.kind === "member"
-      ? draft.members.find((member) => member.id === selection.id) ?? null
-      : null;
-  const selectedSupport =
-    selection?.kind === "support"
-      ? draft.supports.find((support) => support.id === selection.id) ?? null
-      : null;
+  useEffect(() => {
+    if (!focusKey) return;
+    const timer = window.setTimeout(() => {
+      const target = document.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`);
+      target?.focus();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [focusKey, guidedStep, editorPane, draft]);
+
+  const selectedNode = selection?.kind === "node" ? draft.nodes.find((node) => node.id === selection.id) ?? null : null;
+  const selectedMember = selection?.kind === "member" ? draft.members.find((member) => member.id === selection.id) ?? null : null;
+  const selectedSupport = selection?.kind === "support" ? draft.supports.find((support) => support.id === selection.id) ?? null : null;
   const selectedMaterial =
     selection?.kind === "material"
       ? draft.materialReferences.find((material) => material.id === selection.id) ?? null
@@ -182,15 +306,14 @@ export function ApolloPhase1Shell({
     const timestamp = nowIsoString();
     const nextProject = withApolloPhase1Unit2Draft(project, (currentDraft) => {
       const updatedDraft = updater(currentDraft);
-      const withMetadata = {
-        ...updatedDraft,
-        metadata: {
-          ...updatedDraft.metadata,
-          updatedAt: timestamp,
-        },
-      };
       return appendApolloPhase1Unit2Audit(
-        withMetadata,
+        {
+          ...updatedDraft,
+          metadata: {
+            ...updatedDraft.metadata,
+            updatedAt: timestamp,
+          },
+        },
         timestamp,
         action,
         entityType,
@@ -216,11 +339,7 @@ export function ApolloPhase1Shell({
     onAuditEvent?.(message);
   };
 
-  const updateProjectField = (
-    field: "projectId" | "name" | "description",
-    value: string,
-    message: string,
-  ) => {
+  const updateProjectField = (field: "projectId" | "name" | "description", value: string, message: string) => {
     applyDraftChange(message, "project.update", "project", draft.metadata.projectId, (currentDraft) => ({
       ...currentDraft,
       metadata: {
@@ -241,148 +360,41 @@ export function ApolloPhase1Shell({
     }));
   };
 
-  const renameNode = (nodeId: string, nextId: string) => {
+  const updateNodeId = (nodeId: string, nextId: string) => {
     const trimmed = nextId.trim();
     if (trimmed.length === 0) {
-      rejectOperation("Node id cannot be empty.", "node", nodeId);
+      rejectOperation(`Node ${nodeId} rejected an empty id.`, "node", nodeId);
       return;
     }
     if (trimmed !== nodeId && draft.nodes.some((node) => node.id === trimmed)) {
-      rejectOperation(`Node id ${trimmed} is already in use.`, "node", nodeId);
+      rejectOperation(`Node ${nodeId} rejected duplicate id ${trimmed}.`, "node", nodeId);
       return;
     }
-    applyDraftChange(`Node ${nodeId} renamed to ${trimmed}.`, "node.rename", "node", nodeId, (currentDraft) => ({
+    applyDraftChange(`節点IDを ${trimmed} に更新しました。`, "node.rename", "node", nodeId, (currentDraft) => ({
       ...currentDraft,
-      nodes: currentDraft.nodes.map((node) =>
-        node.id === nodeId ? { ...node, id: trimmed } : node,
-      ),
+      nodes: currentDraft.nodes.map((node) => (node.id === nodeId ? { ...node, id: trimmed } : node)),
       members: currentDraft.members.map((member) => ({
         ...member,
         nodeI: member.nodeI === nodeId ? trimmed : member.nodeI,
         nodeJ: member.nodeJ === nodeId ? trimmed : member.nodeJ,
       })),
       supports: currentDraft.supports.map((support) =>
-        support.nodeId === nodeId ? { ...support, nodeId: trimmed } : support,
+        support.nodeId === nodeId ? { ...support, nodeId: trimmed, label: support.label || trimmed } : support,
       ),
     }));
     setSelection({ kind: "node", id: trimmed });
   };
 
-  const updateMaterial = (
-    materialId: string,
-    updater: (material: ApolloPhase1Unit2MaterialReference) => ApolloPhase1Unit2MaterialReference,
-    message: string,
-  ) => {
-    applyDraftChange(message, "material.update", "material", materialId, (currentDraft) => ({
-      ...currentDraft,
-      materialReferences: currentDraft.materialReferences.map((material) =>
-        material.id === materialId ? updater(material) : material,
-      ),
-    }));
-  };
-
-  const renameMaterial = (materialId: string, nextId: string) => {
-    const trimmed = nextId.trim();
-    if (trimmed.length === 0) {
-      rejectOperation("Material reference id cannot be empty.", "material", materialId);
-      return;
-    }
-    if (trimmed !== materialId && draft.materialReferences.some((material) => material.id === trimmed)) {
-      rejectOperation(`Material reference id ${trimmed} is already in use.`, "material", materialId);
-      return;
-    }
-    applyDraftChange(
-      `Material reference ${materialId} renamed to ${trimmed}.`,
-      "material.rename",
-      "material",
-      materialId,
-      (currentDraft) => ({
-        ...currentDraft,
-        materialReferences: currentDraft.materialReferences.map((material) =>
-          material.id === materialId ? { ...material, id: trimmed } : material,
-        ),
-        members: currentDraft.members.map((member) =>
-          member.materialRefId === materialId ? { ...member, materialRefId: trimmed } : member,
-        ),
-      }),
-    );
-    setSelection({ kind: "material", id: trimmed });
-  };
-
-  const updateMember = (
-    memberId: string,
-    updater: (member: ApolloPhase1Unit2Member) => ApolloPhase1Unit2Member,
-    message: string,
-  ) => {
-    applyDraftChange(message, "member.update", "member", memberId, (currentDraft) => ({
-      ...currentDraft,
-      members: currentDraft.members.map((member) =>
-        member.id === memberId ? updater(member) : member,
-      ),
-    }));
-  };
-
-  const renameMember = (memberId: string, nextId: string) => {
-    const trimmed = nextId.trim();
-    if (trimmed.length === 0) {
-      rejectOperation("Member id cannot be empty.", "member", memberId);
-      return;
-    }
-    if (trimmed !== memberId && draft.members.some((member) => member.id === trimmed)) {
-      rejectOperation(`Member id ${trimmed} is already in use.`, "member", memberId);
-      return;
-    }
-    applyDraftChange(`Member ${memberId} renamed to ${trimmed}.`, "member.rename", "member", memberId, (currentDraft) => ({
-      ...currentDraft,
-      members: currentDraft.members.map((member) =>
-        member.id === memberId ? { ...member, id: trimmed } : member,
-      ),
-    }));
-    setSelection({ kind: "member", id: trimmed });
-  };
-
-  const updateSupport = (
-    supportId: string,
-    updater: (support: ApolloPhase1Unit2Support) => ApolloPhase1Unit2Support,
-    message: string,
-  ) => {
-    applyDraftChange(message, "support.update", "support", supportId, (currentDraft) => ({
-      ...currentDraft,
-      supports: currentDraft.supports.map((support) =>
-        support.id === supportId ? updater(support) : support,
-      ),
-    }));
-  };
-
-  const renameSupport = (supportId: string, nextId: string) => {
-    const trimmed = nextId.trim();
-    if (trimmed.length === 0) {
-      rejectOperation("Support id cannot be empty.", "support", supportId);
-      return;
-    }
-    if (trimmed !== supportId && draft.supports.some((support) => support.id === trimmed)) {
-      rejectOperation(`Support id ${trimmed} is already in use.`, "support", supportId);
-      return;
-    }
-    applyDraftChange(`Support ${supportId} renamed to ${trimmed}.`, "support.rename", "support", supportId, (currentDraft) => ({
-      ...currentDraft,
-      supports: currentDraft.supports.map((support) =>
-        support.id === supportId ? { ...support, id: trimmed } : support,
-      ),
-    }));
-    setSelection({ kind: "support", id: trimmed });
-  };
-
   const addNode = () => {
     const id = nextApolloUnit2Id("APN-", draft.nodes.map((node) => node.id));
-    applyDraftChange(`Node ${id} added to the topology shell.`, "node.add", "node", id, (currentDraft) => ({
+    applyDraftChange(`節点 ${id} を追加しました。`, "node.add", "node", id, (currentDraft) => ({
       ...currentDraft,
       nodes: [
         ...currentDraft.nodes,
         {
           id,
           label: id,
-          x: 0,
+          x: currentDraft.nodes.length * 10,
           y: 0,
           z: 0,
           active: true,
@@ -398,16 +410,9 @@ export function ApolloPhase1Shell({
     const source = draft.nodes.find((node) => node.id === nodeId);
     if (!source) return;
     const id = nextApolloUnit2Id("APN-", draft.nodes.map((node) => node.id));
-    applyDraftChange(`Node ${nodeId} duplicated to ${id}.`, "node.duplicate", "node", nodeId, (currentDraft) => ({
+    applyDraftChange(`節点 ${nodeId} を複製しました。`, "node.duplicate", "node", id, (currentDraft) => ({
       ...currentDraft,
-      nodes: [
-        ...currentDraft.nodes,
-        {
-          ...source,
-          id,
-          label: `${source.label} Copy`,
-        },
-      ],
+      nodes: [...currentDraft.nodes, { ...source, id, label: `${source.label} copy` }],
     }));
     setSelection({ kind: "node", id });
   };
@@ -423,38 +428,64 @@ export function ApolloPhase1Shell({
       );
       return;
     }
-    applyDraftChange(`Node ${nodeId} deleted from the topology shell.`, "node.delete", "node", nodeId, (currentDraft) => ({
+    applyDraftChange(`節点 ${nodeId} を削除しました。`, "node.delete", "node", nodeId, (currentDraft) => ({
       ...currentDraft,
       nodes: currentDraft.nodes.filter((node) => node.id !== nodeId),
     }));
-    if (selection?.kind === "node" && selection.id === nodeId) {
-      setSelection(null);
+  };
+
+  const updateMaterial = (
+    materialId: string,
+    updater: (material: ApolloPhase1Unit2MaterialReference) => ApolloPhase1Unit2MaterialReference,
+    message: string,
+  ) => {
+    applyDraftChange(message, "material.update", "material", materialId, (currentDraft) => ({
+      ...currentDraft,
+      materialReferences: currentDraft.materialReferences.map((material) =>
+        material.id === materialId ? updater(material) : material,
+      ),
+    }));
+  };
+
+  const updateMaterialId = (materialId: string, nextId: string) => {
+    const trimmed = nextId.trim();
+    if (trimmed.length === 0) {
+      rejectOperation(`Material ${materialId} rejected an empty id.`, "material", materialId);
+      return;
     }
+    if (trimmed !== materialId && draft.materialReferences.some((material) => material.id === trimmed)) {
+      rejectOperation(`Material ${materialId} rejected duplicate id ${trimmed}.`, "material", materialId);
+      return;
+    }
+    applyDraftChange(`材料IDを ${trimmed} に更新しました。`, "material.rename", "material", materialId, (currentDraft) => ({
+      ...currentDraft,
+      materialReferences: currentDraft.materialReferences.map((material) =>
+        material.id === materialId ? { ...material, id: trimmed } : material,
+      ),
+      members: currentDraft.members.map((member) =>
+        member.materialRefId === materialId ? { ...member, materialRefId: trimmed } : member,
+      ),
+    }));
+    setSelection({ kind: "material", id: trimmed });
   };
 
   const addMaterial = () => {
-    const id = nextApolloUnit2Id("MAT-REF-", draft.materialReferences.map((material) => material.id));
-    applyDraftChange(
-      `Material reference ${id} added to the shell.`,
-      "material.add",
-      "material",
-      id,
-      (currentDraft) => ({
-        ...currentDraft,
-        materialReferences: [
-          ...currentDraft.materialReferences,
-          {
-            id,
-            displayName: id,
-            category: "general",
-            sourceStatus: "blocked_by_numeric_evidence",
-            provisionalStatus: "unverified",
-            active: true,
-            comment: "",
-          },
-        ],
-      }),
-    );
+    const id = nextApolloUnit2Id("MAT-", draft.materialReferences.map((material) => material.id));
+    applyDraftChange(`材料 ${id} を追加しました。`, "material.add", "material", id, (currentDraft) => ({
+      ...currentDraft,
+      materialReferences: [
+        ...currentDraft.materialReferences,
+        {
+          id,
+          displayName: id,
+          category: "reference",
+          sourceStatus: "blocked_by_numeric_evidence",
+          provisionalStatus: "unverified",
+          active: true,
+          comment: "",
+        },
+      ],
+    }));
     setSelection({ kind: "material", id });
     setEditorPane("materials");
   };
@@ -462,20 +493,11 @@ export function ApolloPhase1Shell({
   const duplicateMaterial = (materialId: string) => {
     const source = draft.materialReferences.find((material) => material.id === materialId);
     if (!source) return;
-    const id = nextApolloUnit2Id("MAT-REF-", draft.materialReferences.map((material) => material.id));
-    applyDraftChange(
-      `Material reference ${materialId} duplicated to ${id}.`,
-      "material.duplicate",
-      "material",
-      materialId,
-      (currentDraft) => ({
-        ...currentDraft,
-        materialReferences: [
-          ...currentDraft.materialReferences,
-          { ...source, id, displayName: `${source.displayName} Copy` },
-        ],
-      }),
-    );
+    const id = nextApolloUnit2Id("MAT-", draft.materialReferences.map((material) => material.id));
+    applyDraftChange(`材料 ${materialId} を複製しました。`, "material.duplicate", "material", id, (currentDraft) => ({
+      ...currentDraft,
+      materialReferences: [...currentDraft.materialReferences, { ...source, id, displayName: `${source.displayName} copy` }],
+    }));
     setSelection({ kind: "material", id });
   };
 
@@ -489,19 +511,38 @@ export function ApolloPhase1Shell({
       );
       return;
     }
-    applyDraftChange(
-      `Material reference ${materialId} deleted from the shell.`,
-      "material.delete",
-      "material",
-      materialId,
-      (currentDraft) => ({
-        ...currentDraft,
-        materialReferences: currentDraft.materialReferences.filter((material) => material.id !== materialId),
-      }),
-    );
-    if (selection?.kind === "material" && selection.id === materialId) {
-      setSelection(null);
+    applyDraftChange(`材料 ${materialId} を削除しました。`, "material.delete", "material", materialId, (currentDraft) => ({
+      ...currentDraft,
+      materialReferences: currentDraft.materialReferences.filter((material) => material.id !== materialId),
+    }));
+  };
+
+  const updateMember = (
+    memberId: string,
+    updater: (member: ApolloPhase1Unit2Member) => ApolloPhase1Unit2Member,
+    message: string,
+  ) => {
+    applyDraftChange(message, "member.update", "member", memberId, (currentDraft) => ({
+      ...currentDraft,
+      members: currentDraft.members.map((member) => (member.id === memberId ? updater(member) : member)),
+    }));
+  };
+
+  const updateMemberId = (memberId: string, nextId: string) => {
+    const trimmed = nextId.trim();
+    if (trimmed.length === 0) {
+      rejectOperation(`Member ${memberId} rejected an empty id.`, "member", memberId);
+      return;
     }
+    if (trimmed !== memberId && draft.members.some((member) => member.id === trimmed)) {
+      rejectOperation(`Member ${memberId} rejected duplicate id ${trimmed}.`, "member", memberId);
+      return;
+    }
+    applyDraftChange(`部材IDを ${trimmed} に更新しました。`, "member.rename", "member", memberId, (currentDraft) => ({
+      ...currentDraft,
+      members: currentDraft.members.map((member) => (member.id === memberId ? { ...member, id: trimmed } : member)),
+    }));
+    setSelection({ kind: "member", id: trimmed });
   };
 
   const addMember = () => {
@@ -509,24 +550,17 @@ export function ApolloPhase1Shell({
       rejectOperation("Member shell requires at least two nodes.", "member", null);
       return;
     }
-    if (draft.materialReferences.length === 0) {
-      rejectOperation("Member shell requires at least one material reference.", "member", null);
-      return;
-    }
     const id = nextApolloUnit2Id("APM-", draft.members.map((member) => member.id));
-    const nodeI = draft.nodes[0].id;
-    const nodeJ = draft.nodes[1].id;
-    const materialRefId = draft.materialReferences[0].id;
-    applyDraftChange(`Member ${id} added to the topology shell.`, "member.add", "member", id, (currentDraft) => ({
+    applyDraftChange(`部材 ${id} を追加しました。`, "member.add", "member", id, (currentDraft) => ({
       ...currentDraft,
       members: [
         ...currentDraft.members,
         {
           id,
           label: id,
-          nodeI,
-          nodeJ,
-          materialRefId,
+          nodeI: currentDraft.nodes[0].id,
+          nodeJ: currentDraft.nodes[1].id,
+          materialRefId: currentDraft.materialReferences[0]?.id ?? "",
           active: true,
           comment: "",
         },
@@ -540,53 +574,84 @@ export function ApolloPhase1Shell({
     const source = draft.members.find((member) => member.id === memberId);
     if (!source) return;
     const id = nextApolloUnit2Id("APM-", draft.members.map((member) => member.id));
-    applyDraftChange(`Member ${memberId} duplicated to ${id}.`, "member.duplicate", "member", memberId, (currentDraft) => ({
+    applyDraftChange(`部材 ${memberId} を複製しました。`, "member.duplicate", "member", id, (currentDraft) => ({
       ...currentDraft,
-      members: [
-        ...currentDraft.members,
-        {
-          ...source,
-          id,
-          label: `${source.label} Copy`,
-        },
-      ],
+      members: [...currentDraft.members, { ...source, id, label: `${source.label} copy` }],
     }));
     setSelection({ kind: "member", id });
   };
 
   const deleteMember = (memberId: string) => {
-    applyDraftChange(`Member ${memberId} deleted from the topology shell.`, "member.delete", "member", memberId, (currentDraft) => ({
+    applyDraftChange(`部材 ${memberId} を削除しました。`, "member.delete", "member", memberId, (currentDraft) => ({
       ...currentDraft,
       members: currentDraft.members.filter((member) => member.id !== memberId),
     }));
-    if (selection?.kind === "member" && selection.id === memberId) {
-      setSelection(null);
+  };
+
+  const changeMemberNode = (memberId: string, end: "nodeI" | "nodeJ", nextNodeId: string) => {
+    const member = draft.members.find((item) => item.id === memberId);
+    if (!member) return;
+    const candidate = { ...member, [end]: nextNodeId };
+    if (candidate.nodeI === candidate.nodeJ) {
+      rejectOperation(`Member ${memberId} cannot use the same node at both ends.`, "member", memberId);
+      return;
     }
+    updateMember(
+      memberId,
+      (item) => ({ ...item, [end]: nextNodeId }),
+      `Member ${memberId} ${end === "nodeI" ? "I-end" : "J-end"} updated to ${nextNodeId}.`,
+    );
+  };
+
+  const updateSupport = (
+    supportId: string,
+    updater: (support: ApolloPhase1Unit2Support) => ApolloPhase1Unit2Support,
+    message: string,
+  ) => {
+    applyDraftChange(message, "support.update", "support", supportId, (currentDraft) => ({
+      ...currentDraft,
+      supports: currentDraft.supports.map((support) => (support.id === supportId ? updater(support) : support)),
+    }));
+  };
+
+  const updateSupportId = (supportId: string, nextId: string) => {
+    const trimmed = nextId.trim();
+    if (trimmed.length === 0) {
+      rejectOperation(`Support ${supportId} rejected an empty id.`, "support", supportId);
+      return;
+    }
+    if (trimmed !== supportId && draft.supports.some((support) => support.id === trimmed)) {
+      rejectOperation(`Support ${supportId} rejected duplicate id ${trimmed}.`, "support", supportId);
+      return;
+    }
+    applyDraftChange(`支点IDを ${trimmed} に更新しました。`, "support.rename", "support", supportId, (currentDraft) => ({
+      ...currentDraft,
+      supports: currentDraft.supports.map((support) => (support.id === supportId ? { ...support, id: trimmed } : support)),
+    }));
+    setSelection({ kind: "support", id: trimmed });
   };
 
   const addSupport = () => {
-    const candidateNode = draft.nodes.find(
-      (node) => !draft.supports.some((support) => support.nodeId === node.id),
-    );
+    const candidateNode = draft.nodes.find((node) => !draft.supports.some((support) => support.nodeId === node.id));
     if (!candidateNode) {
-      rejectOperation("Support shell requires at least one node without an assigned support.", "support", null);
+      rejectOperation("Support shell requires at least one unused node.", "support", null);
       return;
     }
     const id = nextApolloUnit2Id("SUP-", draft.supports.map((support) => support.id));
-    applyDraftChange(`Support ${id} added for node ${candidateNode.id}.`, "support.add", "support", id, (currentDraft) => ({
+    applyDraftChange(`支点 ${id} を追加しました。`, "support.add", "support", id, (currentDraft) => ({
       ...currentDraft,
       supports: [
         ...currentDraft.supports,
         {
           id,
           nodeId: candidateNode.id,
-          label: candidateNode.id,
+          label: candidateNode.label,
           ux: "FIXED",
           uy: "FIXED",
           uz: "FIXED",
-          rx: "FREE",
-          ry: "FREE",
-          rz: "FREE",
+          rx: "UNDEFINED",
+          ry: "UNDEFINED",
+          rz: "UNDEFINED",
           active: true,
           comment: "",
         },
@@ -600,82 +665,29 @@ export function ApolloPhase1Shell({
     const source = draft.supports.find((support) => support.id === supportId);
     if (!source) return;
     const candidateNode = draft.nodes.find(
-      (node) =>
-        node.id !== source.nodeId && !draft.supports.some((support) => support.nodeId === node.id),
+      (node) => node.id !== source.nodeId && !draft.supports.some((support) => support.nodeId === node.id),
     );
     if (!candidateNode) {
-      rejectOperation(
-        `Support ${supportId} cannot be duplicated because every node already has a support shell.`,
-        "support",
-        supportId,
-      );
+      rejectOperation(`Support ${supportId} cannot be duplicated because no unused node is available.`, "support", supportId);
       return;
     }
     const id = nextApolloUnit2Id("SUP-", draft.supports.map((support) => support.id));
-    applyDraftChange(`Support ${supportId} duplicated to ${id}.`, "support.duplicate", "support", supportId, (currentDraft) => ({
+    applyDraftChange(`支点 ${supportId} を複製しました。`, "support.duplicate", "support", id, (currentDraft) => ({
       ...currentDraft,
-      supports: [
-        ...currentDraft.supports,
-        {
-          ...source,
-          id,
-          nodeId: candidateNode.id,
-          label: candidateNode.id,
-        },
-      ],
+      supports: [...currentDraft.supports, { ...source, id, nodeId: candidateNode.id, label: candidateNode.label }],
     }));
     setSelection({ kind: "support", id });
   };
 
   const deleteSupport = (supportId: string) => {
-    applyDraftChange(`Support ${supportId} deleted from the shell.`, "support.delete", "support", supportId, (currentDraft) => ({
+    applyDraftChange(`支点 ${supportId} を削除しました。`, "support.delete", "support", supportId, (currentDraft) => ({
       ...currentDraft,
       supports: currentDraft.supports.filter((support) => support.id !== supportId),
     }));
-    if (selection?.kind === "support" && selection.id === supportId) {
-      setSelection(null);
-    }
-  };
-
-  const changeCoordinate = (nodeId: string, axis: "x" | "y" | "z", raw: string) => {
-    const nextValue = Number(raw);
-    if (raw.trim().length === 0 || !Number.isFinite(nextValue)) {
-      rejectOperation(
-        `Node ${nodeId} rejected invalid ${axis.toUpperCase()} coordinate input.`,
-        "node",
-        nodeId,
-      );
-      return;
-    }
-    updateNode(
-      nodeId,
-      (node) => ({ ...node, [axis]: nextValue }),
-      `Node ${nodeId} ${axis.toUpperCase()} coordinate updated to ${nextValue}.`,
-    );
-  };
-
-  const changeMemberNode = (memberId: string, end: "nodeI" | "nodeJ", nextNodeId: string) => {
-    const member = draft.members.find((item) => item.id === memberId);
-    if (!member) return;
-    const candidate = {
-      ...member,
-      [end]: nextNodeId,
-    };
-    if (candidate.nodeI === candidate.nodeJ) {
-      rejectOperation(`Member ${memberId} cannot use the same node at both ends.`, "member", memberId);
-      return;
-    }
-    updateMember(
-      memberId,
-      (item) => ({ ...item, [end]: nextNodeId }),
-      `Member ${memberId} ${end === "nodeI" ? "I-end" : "J-end"} updated to ${nextNodeId}.`,
-    );
   };
 
   const changeSupportNode = (supportId: string, nextNodeId: string) => {
-    if (
-      draft.supports.some((support) => support.id !== supportId && support.nodeId === nextNodeId)
-    ) {
+    if (draft.supports.some((support) => support.id !== supportId && support.nodeId === nextNodeId)) {
       rejectOperation(`Node ${nextNodeId} already has a support shell.`, "support", supportId);
       return;
     }
@@ -686,31 +698,10 @@ export function ApolloPhase1Shell({
     );
   };
 
-  const moveRow = <T extends { id: string }>(
-    items: readonly T[],
-    itemId: string,
-    direction: -1 | 1,
-    kind: "node" | "member" | "support" | "material",
-    update: (rows: T[]) => ApolloPhase1Unit2Draft,
-  ) => {
-    const index = items.findIndex((item) => item.id === itemId);
-    if (index < 0) return;
-    const nextIndex = index + direction;
-    if (nextIndex < 0 || nextIndex >= items.length) return;
-    const reordered = reorderRows(items, index, nextIndex);
-    applyDraftChange(
-      `${kind[0].toUpperCase()}${kind.slice(1)} ${itemId} reordered.`,
-      `${kind}.reorder`,
-      kind,
-      itemId,
-      () => update(reordered as T[]),
-    );
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (): Promise<boolean> => {
     setPersisting("save");
     const timestamp = nowIsoString();
-    const message = "Apollo Phase 1-NN unit 2 draft save requested.";
+    const message = "Apollo 入力データのファイル保存を開始しました。";
     onProjectChange(
       withApolloPhase1Unit2Draft(project, (currentDraft) =>
         appendApolloPhase1Unit2Audit(
@@ -732,17 +723,19 @@ export function ApolloPhase1Shell({
     onAuditEvent?.(message);
     const ok = await onSaveProject();
     setPersisting(null);
-    setInteractionMessage(ok ? "Project save completed." : "Project save was canceled or failed.");
+    setInteractionMessage(ok ? "ファイル保存が完了しました。" : "ファイル保存を中止したか、保存に失敗しました。");
+    return ok;
   };
 
-  const handleReload = async () => {
+  const handleReload = async (): Promise<boolean> => {
     setPersisting("reload");
     const ok = await onReloadProject();
     setPersisting(null);
-    setInteractionMessage(ok ? "Project reload completed." : "Project reload was canceled or failed.");
+    setInteractionMessage(ok ? "ファイル読込が完了しました。" : "ファイル読込を中止したか、読込に失敗しました。");
     if (ok) {
-      onAuditEvent?.("Apollo Phase 1-NN unit 2 reload completed.");
+      onAuditEvent?.("Apollo 入力データのファイル読込が完了しました。");
     }
+    return ok;
   };
 
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
@@ -776,24 +769,24 @@ export function ApolloPhase1Shell({
       nextEntries[0]?.workspaceId ??
       null;
     setWorkspaceSelection(nextSelection);
-    announce(`Workspace snapshot saved for ${project.project.name || project.project.id}.`);
+    announce(`作業中データを保存しました: ${project.project.name || project.project.id}`);
   };
 
   const handleWorkspaceOpen = () => {
     if (!workspaceSelection) return;
     const nextProject = loadApolloWorkspaceProject(workspaceSelection);
     if (!nextProject) {
-      announce("Workspace snapshot could not be opened.");
+      announce("作業中データを開けませんでした。");
       return;
     }
     onProjectChange(nextProject);
-    announce(`Workspace snapshot ${nextProject.project.name || nextProject.project.id} opened.`);
+    announce(`作業中データを開きました: ${nextProject.project.name || nextProject.project.id}`);
   };
 
   const handleWorkspaceNew = () => {
     const nextProject = createApolloWorkspaceProject();
     onProjectChange(nextProject);
-    announce(`Workspace draft ${nextProject.project.name} created.`);
+    announce(`新しい橋梁データを作成しました: ${nextProject.project.name}`);
   };
 
   const handleWorkspaceDuplicate = () => {
@@ -801,1051 +794,951 @@ export function ApolloPhase1Shell({
     const nextEntries = duplicateApolloWorkspaceEntry(workspaceSelection);
     refreshWorkspaceEntries(nextEntries);
     setWorkspaceSelection(nextEntries[0]?.workspaceId ?? null);
-    announce("Workspace snapshot duplicated.");
+    announce("作業中データを複製しました。");
   };
 
   const handleWorkspaceRename = () => {
     if (!selectedWorkspaceEntry || typeof window === "undefined") return;
-    const proposed = window.prompt("Rename workspace draft", selectedWorkspaceEntry.name);
+    const proposed = window.prompt("作業中データ名を変更", selectedWorkspaceEntry.name);
     if (proposed === null) return;
     const nextEntries = renameApolloWorkspaceEntry(selectedWorkspaceEntry.workspaceId, proposed);
     refreshWorkspaceEntries(nextEntries);
-    announce(`Workspace snapshot renamed to ${proposed.trim() || selectedWorkspaceEntry.name}.`);
+    announce(`作業中データ名を変更しました: ${proposed.trim() || selectedWorkspaceEntry.name}`);
   };
 
   const handleWorkspaceDelete = () => {
     if (!selectedWorkspaceEntry) return;
     const nextEntries = deleteApolloWorkspaceEntry(selectedWorkspaceEntry.workspaceId);
     refreshWorkspaceEntries(nextEntries);
-    announce(`Workspace snapshot ${selectedWorkspaceEntry.name} deleted.`);
+    announce(`作業中データを削除しました: ${selectedWorkspaceEntry.name}`);
   };
+
+  const confirmDiscard = (message: string): boolean => {
+    if (!dirty) return true;
+    if (typeof window === "undefined") return true;
+    return window.confirm(message);
+  };
+
+  const setPaneAndSelection = (pane: EditorPane) => {
+    setEditorPane(pane);
+    if (pane === "nodes" && draft.nodes[0]) setSelection({ kind: "node", id: draft.nodes[0].id });
+    if (pane === "members" && draft.members[0]) setSelection({ kind: "member", id: draft.members[0].id });
+    if (pane === "supports" && draft.supports[0]) setSelection({ kind: "support", id: draft.supports[0].id });
+    if (pane === "materials" && draft.materialReferences[0]) {
+      setSelection({ kind: "material", id: draft.materialReferences[0].id });
+    }
+  };
+
+  const openOnboarding = () => {
+    setShowOnboarding(true);
+    setOnboardingIndex(0);
+  };
+
+  const closeOnboarding = () => {
+    setShowOnboarding(false);
+    setStoredBoolean(APOLLO_ONBOARDING_DISMISSED_KEY, true);
+  };
+
+  const saveToFile = async () => {
+    const ok = await handleSave();
+    if (ok) setSaveNotice("ファイルに保存しました。");
+  };
+
+  const openFromFile = async () => {
+    if (!confirmDiscard("未保存の変更があります。保存済みデータを開くと現在の編集内容は失われます。続行しますか。")) {
+      return;
+    }
+    const ok = await handleReload();
+    if (ok) {
+      setMode("guided");
+      setGuidedStep("basics");
+      setSaveNotice(null);
+    }
+  };
+
+  const startNewProject = () => {
+    if (!confirmDiscard("未保存の変更があります。新しい橋梁を作成すると現在の編集内容は失われます。続行しますか。")) {
+      return;
+    }
+    handleWorkspaceNew();
+    setMode("guided");
+    setGuidedStep("basics");
+    setPaneAndSelection("nodes");
+    setSaveNotice(null);
+  };
+
+  const loadStandardSample = () => {
+    if (!confirmDiscard("未保存の変更があります。サンプルを読み込むと現在の編集内容は失われます。続行しますか。")) {
+      return;
+    }
+    const sample = createApollo200mContinuousBridgeSample();
+    onProjectChange(sample);
+    setMode("guided");
+    setGuidedStep(sampleGuideDismissed ? "basics" : "sampleLoaded");
+    setSelection({ kind: "node", id: "N-A1" });
+    setEditorPane("nodes");
+    setSaveNotice(null);
+    announce("200m級 5径間連続橋サンプルを読み込みました。");
+  };
+
+  const openWorkspaceSnapshot = () => {
+    if (!confirmDiscard("未保存の変更があります。作業中データを開くと現在の編集内容は失われます。続行しますか。")) {
+      return;
+    }
+    handleWorkspaceOpen();
+    setMode("guided");
+    setGuidedStep("basics");
+  };
+
+  const navigateValidationIssue = (entry: StructuredMessage) => {
+    const target = validationTarget(entry);
+    setMode("guided");
+    setGuidedStep(target.step);
+    setEditorPane(target.pane);
+    setSelection(target.selection);
+    setFocusKey(target.focusKey ?? null);
+  };
+
+  const toggleSampleGuideDismissed = () => {
+    const nextValue = !sampleGuideDismissed;
+    setSampleGuideDismissed(nextValue);
+    setStoredBoolean(APOLLO_GUIDE_DISMISSED_KEY, nextValue);
+  };
+
+  const validationItems = [
+    ...validation.errors.map((entry) => ({ severity: "error" as const, entry })),
+    ...validation.warnings.map((entry) => ({ severity: "warning" as const, entry })),
+  ];
+  const validationComplete = validation.errors.length === 0;
+  const basicsComplete = draft.metadata.projectId.trim().length > 0 && draft.metadata.name.trim().length > 0;
+  const nodesComplete = draft.nodes.length > 0 && !hasBlockingIssueForEntityTypes(validation, ["node"]);
+  const membersComplete = draft.members.length > 0 && !hasBlockingIssueForEntityTypes(validation, ["member"]);
+  const supportsMaterialsComplete =
+    draft.supports.length > 0 &&
+    draft.materialReferences.length > 0 &&
+    !hasBlockingIssueForEntityTypes(validation, ["support", "material"]);
+  const currentStepIndex =
+    guidedStep === "start"
+      ? 0
+      : guidedStep === "sample" || guidedStep === "sampleLoaded" || guidedStep === "basics"
+        ? 1
+        : guidedStep === "editor" && editorPane === "nodes"
+          ? 2
+          : guidedStep === "editor" && editorPane === "members"
+            ? 3
+        : guidedStep === "editor"
+              ? 4
+              : 5;
+
+  const stepCompletion = {
+    start: guidedStep !== "start",
+    basics: basicsComplete,
+    nodes: nodesComplete,
+    members: membersComplete,
+    supportsMaterials: supportsMaterialsComplete,
+    validation: validationComplete,
+  } satisfies Record<StepKey, boolean>;
+
+  const stepHasError = {
+    start: false,
+    basics: hasBlockingIssueForEntityTypes(validation, ["project"]),
+    nodes: hasBlockingIssueForEntityTypes(validation, ["node"]),
+    members: hasBlockingIssueForEntityTypes(validation, ["member"]),
+    supportsMaterials: hasBlockingIssueForEntityTypes(validation, ["support", "material"]),
+    validation: validation.errors.length > 0,
+  } satisfies Record<StepKey, boolean>;
+
+  const furthestStepIndex = stepCompletion.basics
+    ? stepCompletion.nodes
+      ? stepCompletion.members
+        ? stepCompletion.supportsMaterials
+          ? STEP_DEFINITIONS.length - 1
+          : 4
+        : 3
+      : 2
+    : 1;
+
+  const navigateStep = (step: StepKey) => {
+    if (step === "start") {
+      setGuidedStep("start");
+      return;
+    }
+    if (step === "basics") {
+      setGuidedStep("basics");
+      return;
+    }
+    if (step === "nodes") {
+      setGuidedStep("editor");
+      setPaneAndSelection("nodes");
+      return;
+    }
+    if (step === "members") {
+      setGuidedStep("editor");
+      setPaneAndSelection("members");
+      return;
+    }
+    if (step === "supportsMaterials") {
+      setGuidedStep("editor");
+      setPaneAndSelection(editorPane === "materials" ? "materials" : "supports");
+      return;
+    }
+    setGuidedStep("validation");
+  };
+
+  const resolveStepStatus = (step: StepKey, index: number): StepStatus => {
+    if (index === currentStepIndex) return "current";
+    if (stepHasError[step]) return "error";
+    if (stepCompletion[step]) return "complete";
+    if (index <= furthestStepIndex) return "available";
+    return "locked";
+  };
+
+  const stepStatusLabel = (status: StepStatus): string => {
+    if (status === "current") return "現在";
+    if (status === "complete") return "完了";
+    if (status === "error") return "要修正";
+    if (status === "available") return "移動可能";
+    return "未着手";
+  };
+
+  const stepStatusSymbol = (status: StepStatus, index: number): string => {
+    if (status === "complete") return "✓";
+    if (status === "error") return "!";
+    if (status === "current") return "●";
+    if (status === "available") return "→";
+    return `${index + 1}`;
+  };
+
+  const renderStepBar = () => (
+    <ol className="apollo-stepbar" aria-label="Apollo guided steps">
+      {STEP_DEFINITIONS.map(({ key, label }, index) => {
+        const status = resolveStepStatus(key, index);
+        return (
+          <li
+            key={label}
+            className={`apollo-stepbar-item apollo-stepbar-${status}`}
+            data-step-status={status}
+          >
+            <button
+              type="button"
+              onClick={() => navigateStep(key)}
+              disabled={status === "locked"}
+              aria-current={status === "current" ? "step" : undefined}
+            >
+              <span className="apollo-stepbar-symbol" aria-hidden="true">{stepStatusSymbol(status, index)}</span>
+              <span className="apollo-stepbar-label">{label}</span>
+              <span className="apollo-stepbar-state">{stepStatusLabel(status)}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+
+  const renderCompletionPanel = () =>
+    validationComplete ? (
+      <article className="apollo-editor-card apollo-completion-card" data-testid="apollo-completion-card">
+        <h2>橋梁モデルの作成が完了しました</h2>
+        <p>基本情報、節点、部材、支点、材料の入力確認が完了しています。</p>
+        <ul>
+          <li>保存を行う場合は、共有用の「ファイルに保存」または同じPCで再開するための「作業中データを保存」を選べます。</li>
+          <li>次の操作として、一覧編集モードで最終確認するか、メニューへ戻れます。</li>
+          <li>現在は橋梁モデル入力まで利用できます。構造解析および解析結果の表示は未実装です。</li>
+        </ul>
+      </article>
+    ) : null;
+
+  const renderProjectForm = () => (
+    <article data-testid="apollo-project-shell" className="apollo-editor-card">
+      <div className="apollo-editor-card-header">
+        <div>
+          <h2>基本情報</h2>
+          <p>橋梁の識別情報と保存状態を確認します。</p>
+        </div>
+        <div className="apollo-applied-summary">
+          <span>保存状態: {statusText(dirty)}</span>
+        </div>
+      </div>
+      <div className="apollo-project-form-grid">
+        <label>
+          プロジェクトID <span aria-hidden="true">必須</span>
+          <input
+            data-testid="apollo-project-id-input"
+            data-focus-key="project-id"
+            placeholder="bridge-200m-001"
+            value={draft.metadata.projectId}
+            onChange={(event) => updateProjectField("projectId", event.currentTarget.value, "プロジェクトIDを更新しました。")}
+          />
+          <small>半角英数字とハイフンを使用してください。他のプロジェクトと重複しないIDを設定します。</small>
+        </label>
+        <label>
+          橋梁名 <span aria-hidden="true">必須</span>
+          <input
+            data-testid="apollo-project-name-input"
+            data-focus-key="project-name"
+            placeholder="200m級 5径間連続橋"
+            value={draft.metadata.name}
+            onChange={(event) => updateProjectField("name", event.currentTarget.value, "橋梁名を更新しました。")}
+          />
+        </label>
+        <label className="apollo-project-form-wide">
+          概要・備考 <span aria-hidden="true">任意</span>
+          <textarea
+            data-testid="apollo-project-description-input"
+            placeholder="橋長200m、5径間連続橋、Apollo操作確認用サンプル"
+            value={draft.metadata.description}
+            onChange={(event) => updateProjectField("description", event.currentTarget.value, "概要・備考を更新しました。")}
+          />
+        </label>
+      </div>
+    </article>
+  );
+
+  const renderModelView = () => (
+    <section data-testid="apollo-topology-shell" className="apollo-editor-card">
+      <div className="apollo-editor-card-header">
+        <div>
+          <h2>橋梁モデル表示</h2>
+          <p>一覧選択とモデル表示を連動させています。</p>
+        </div>
+      </div>
+      <div className="apollo-topology-summary" data-testid="apollo-topology-summary">
+        <span>節点数 {draft.nodes.length}</span>
+        <span>部材数 {draft.members.length}</span>
+        <span>支点数 {draft.supports.length}</span>
+        <span>材料数 {draft.materialReferences.length}</span>
+      </div>
+      <div data-testid="apollo-topology-view" className="apollo-topology-view">
+        {draft.nodes.length === 0 ? (
+          <div className="apollo-empty-state">
+            <p>まだモデルがありません。</p>
+            <p>サンプル橋梁を読み込むか、新規作成してください。</p>
+          </div>
+        ) : (
+          <Viewer3D
+            project={viewProject}
+            result={null}
+            selectedSection={viewerSection}
+            selection={viewerSelection}
+            activeLoadCase=""
+            onSelectionChange={handleViewerSelection}
+            onActiveLoadCaseChange={() => undefined}
+            onViewerError={setViewerMessage}
+          />
+        )}
+      </div>
+    </section>
+  );
+
+  const renderWorkspaceCard = () => (
+    <article data-testid="apollo-workspace-shell" className="apollo-editor-card">
+      <div className="apollo-editor-card-header">
+        <div>
+          <h2>作業中データ</h2>
+          <p>このパソコン内に一時保存したデータを管理します。</p>
+        </div>
+      </div>
+      <div className="apollo-workspace-actions">
+        <button type="button" data-testid="apollo-workspace-new" onClick={startNewProject}>新規作成</button>
+        <button
+          type="button"
+          data-testid="apollo-workspace-save"
+          onClick={() => {
+            handleWorkspaceSave();
+            setSaveNotice("作業中データを保存しました。");
+          }}
+        >
+          作業中データを保存
+        </button>
+        <button type="button" data-testid="apollo-workspace-open" onClick={openWorkspaceSnapshot} disabled={!selectedWorkspaceEntry}>作業中データを開く</button>
+        <button type="button" data-testid="apollo-workspace-duplicate" onClick={handleWorkspaceDuplicate} disabled={!selectedWorkspaceEntry}>複製</button>
+        <button type="button" data-testid="apollo-workspace-rename" onClick={handleWorkspaceRename} disabled={!selectedWorkspaceEntry}>名前変更</button>
+        <button type="button" data-testid="apollo-workspace-delete" onClick={handleWorkspaceDelete} disabled={!selectedWorkspaceEntry}>削除</button>
+      </div>
+      <label className="apollo-workspace-select">
+        保存済み一覧
+        <select
+          data-testid="apollo-workspace-select"
+          value={workspaceSelection ?? ""}
+          onChange={(event) => setWorkspaceSelection(event.currentTarget.value || null)}
+        >
+          <option value="">保存済みデータなし</option>
+          {workspaceEntries.map((entry) => (
+            <option key={entry.workspaceId} value={entry.workspaceId}>
+              {entry.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {selectedWorkspaceEntry ? (
+        <dl className="apollo-project-meta-list">
+          <div>
+            <dt>プロジェクトID</dt>
+            <dd>{selectedWorkspaceEntry.projectId}</dd>
+          </div>
+          <div>
+            <dt>更新日時</dt>
+            <dd>{selectedWorkspaceEntry.updatedAt}</dd>
+          </div>
+        </dl>
+      ) : (
+        <p data-testid="apollo-workspace-empty">まだ保存済みの作業中データはありません。</p>
+      )}
+    </article>
+  );
+
+  const renderEditor = () => (
+    <section className="apollo-unit2-layout">
+      <div className="apollo-unit2-editor">
+        <nav className="apollo-unit2-tabs" aria-label="Apollo editor sections">
+          {([
+            ["nodes", "節点"],
+            ["members", "部材"],
+            ["supports", "支点"],
+            ["materials", "材料"],
+          ] as const).map(([pane, label]) => (
+            <button
+              key={pane}
+              type="button"
+              className={editorPane === pane ? "active" : undefined}
+              onClick={() => setPaneAndSelection(pane)}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
+        {editorPane === "nodes" ? (
+          <section data-testid="apollo-node-editor" className="apollo-editor-card">
+            <div className="apollo-editor-card-header">
+              <div>
+                <h2>節点</h2>
+                <p>節点は、橋台・橋脚位置など、骨組みモデルの基準点です。</p>
+              </div>
+              <button type="button" data-testid="apollo-add-node" onClick={addNode}>節点を追加</button>
+            </div>
+            <div className="apollo-table-wrap">
+              <table className="apollo-edit-table">
+                <thead>
+                  <tr><th>ID</th><th>名称</th><th>X(m)</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  {draft.nodes.map((node) => {
+                    const active = selection?.kind === "node" && selection.id === node.id;
+                    return (
+                      <tr key={node.id} className={active ? "selected" : undefined}>
+                        <td>{node.id}</td>
+                        <td>{node.label}</td>
+                        <td>{node.x}</td>
+                        <td className="apollo-row-actions">
+                          <button type="button" data-testid={`apollo-node-select-${node.id}`} onClick={() => setSelection({ kind: "node", id: node.id })}>選択</button>
+                          <button type="button" onClick={() => duplicateNode(node.id)}>複製</button>
+                          <button type="button" onClick={() => deleteNode(node.id)}>削除</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {selectedNode ? (
+              <div className="apollo-detail-grid">
+                <label>ID<input data-focus-key="node-id" value={selectedNode.id} onChange={(event) => updateNodeId(selectedNode.id, event.currentTarget.value)} /></label>
+                <label>名称<input data-testid="apollo-node-label-input" value={selectedNode.label} onChange={(event) => updateNode(selectedNode.id, (node) => ({ ...node, label: event.currentTarget.value }), "節点名称を更新しました。")} /></label>
+                <label>X座標<input data-testid="apollo-node-x-input" value={String(selectedNode.x)} onChange={(event) => { const next = parseFiniteNumber(event.currentTarget.value); if (next === null) { rejectOperation(`Node ${selectedNode.id} rejected invalid X coordinate input.`, "node", selectedNode.id); return; } updateNode(selectedNode.id, (node) => ({ ...node, x: next }), "節点X座標を更新しました。"); }} /></label>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {editorPane === "members" ? (
+          <section data-testid="apollo-member-editor" className="apollo-editor-card">
+            <div className="apollo-editor-card-header">
+              <div>
+                <h2>部材</h2>
+                <p>部材は、2つの節点を結ぶ骨組み要素です。</p>
+              </div>
+              <button type="button" data-testid="apollo-add-member" onClick={addMember}>部材を追加</button>
+            </div>
+            <div className="apollo-table-wrap">
+              <table className="apollo-edit-table">
+                <thead>
+                  <tr><th>ID</th><th>名称</th><th>始点</th><th>終点</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  {draft.members.map((member) => {
+                    const active = selection?.kind === "member" && selection.id === member.id;
+                    return (
+                      <tr key={member.id} className={active ? "selected" : undefined}>
+                        <td>{member.id}</td>
+                        <td>{member.label}</td>
+                        <td>{member.nodeI}</td>
+                        <td>{member.nodeJ}</td>
+                        <td className="apollo-row-actions">
+                          <button type="button" data-testid={`apollo-member-select-${member.id}`} onClick={() => setSelection({ kind: "member", id: member.id })}>選択</button>
+                          <button type="button" onClick={() => duplicateMember(member.id)}>複製</button>
+                          <button type="button" onClick={() => deleteMember(member.id)}>削除</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {selectedMember ? (
+              <div className="apollo-detail-grid">
+                <label>ID<input data-focus-key="member-id" value={selectedMember.id} onChange={(event) => updateMemberId(selectedMember.id, event.currentTarget.value)} /></label>
+                <label>名称<input value={selectedMember.label} onChange={(event) => updateMember(selectedMember.id, (item) => ({ ...item, label: event.currentTarget.value }), "部材名称を更新しました。")} /></label>
+                <label>始点<select value={selectedMember.nodeI} onChange={(event) => changeMemberNode(selectedMember.id, "nodeI", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
+                <label>終点<select value={selectedMember.nodeJ} onChange={(event) => changeMemberNode(selectedMember.id, "nodeJ", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
+                <label>材料<select data-focus-key="member-material" value={selectedMember.materialRefId} onChange={(event) => updateMember(selectedMember.id, (item) => ({ ...item, materialRefId: event.currentTarget.value }), "部材の材料参照を更新しました。")}>{draft.materialReferences.map((material) => <option key={material.id} value={material.id}>{material.id}</option>)}</select></label>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {editorPane === "supports" ? (
+          <section data-testid="apollo-support-editor" className="apollo-editor-card">
+            <div className="apollo-editor-card-header">
+              <div>
+                <h2>支点</h2>
+                <p>支点は橋台・橋脚位置に設定する支持情報です。現在は非数値入力用の確認情報のみ扱います。</p>
+              </div>
+              <button type="button" data-testid="apollo-add-support" onClick={addSupport}>支点を追加</button>
+            </div>
+            <div className="apollo-table-wrap">
+              <table className="apollo-edit-table">
+                <thead>
+                  <tr><th>ID</th><th>節点</th><th>Ux</th><th>Uy</th><th>Uz</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  {draft.supports.map((support) => {
+                    const active = selection?.kind === "support" && selection.id === support.id;
+                    return (
+                      <tr key={support.id} className={active ? "selected" : undefined}>
+                        <td>{support.id}</td>
+                        <td>{support.nodeId}</td>
+                        <td>{formatSupportState(support.ux)}</td>
+                        <td>{formatSupportState(support.uy)}</td>
+                        <td>{formatSupportState(support.uz)}</td>
+                        <td className="apollo-row-actions">
+                          <button type="button" data-testid={`apollo-support-select-${support.id}`} onClick={() => setSelection({ kind: "support", id: support.id })}>選択</button>
+                          <button type="button" onClick={() => duplicateSupport(support.id)}>複製</button>
+                          <button type="button" onClick={() => deleteSupport(support.id)}>削除</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {selectedSupport ? (
+              <div className="apollo-detail-grid">
+                <label>ID<input value={selectedSupport.id} onChange={(event) => updateSupportId(selectedSupport.id, event.currentTarget.value)} /></label>
+                <label>節点<select data-focus-key="support-node" value={selectedSupport.nodeId} onChange={(event) => changeSupportNode(selectedSupport.id, event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
+                <label>名称<input value={selectedSupport.label} onChange={(event) => updateSupport(selectedSupport.id, (item) => ({ ...item, label: event.currentTarget.value }), "支点名称を更新しました。")} /></label>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {editorPane === "materials" ? (
+          <section data-testid="apollo-material-editor" className="apollo-editor-card">
+            <div className="apollo-editor-card-header">
+              <div>
+                <h2>材料</h2>
+                <p>現在は材料名称と参照情報のみ確認できます。ヤング係数、断面諸元、荷重数値、計算結果は利用できません。</p>
+              </div>
+              <button type="button" data-testid="apollo-add-material" onClick={addMaterial}>材料を追加</button>
+            </div>
+            <div className="apollo-table-wrap">
+              <table className="apollo-edit-table">
+                <thead>
+                  <tr><th>ID</th><th>名称</th><th>区分</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  {draft.materialReferences.map((material) => {
+                    const active = selection?.kind === "material" && selection.id === material.id;
+                    return (
+                      <tr key={material.id} className={active ? "selected" : undefined}>
+                        <td>{material.id}</td>
+                        <td>{material.displayName}</td>
+                        <td>{material.category}</td>
+                        <td className="apollo-row-actions">
+                          <button type="button" data-testid={`apollo-material-select-${material.id}`} onClick={() => setSelection({ kind: "material", id: material.id })}>選択</button>
+                          <button type="button" onClick={() => duplicateMaterial(material.id)}>複製</button>
+                          <button type="button" onClick={() => deleteMaterial(material.id)}>削除</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {selectedMaterial ? (
+              <div className="apollo-detail-grid">
+                <label>ID<input data-focus-key="material-id" value={selectedMaterial.id} onChange={(event) => updateMaterialId(selectedMaterial.id, event.currentTarget.value)} /></label>
+                <label>名称<input value={selectedMaterial.displayName} onChange={(event) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, displayName: event.currentTarget.value }), "材料名称を更新しました。")} /></label>
+                <label>区分<input value={selectedMaterial.category} onChange={(event) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, category: event.currentTarget.value }), "材料区分を更新しました。")} /></label>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+      </div>
+
+      <div className="apollo-unit2-visual-panel">
+        {renderModelView()}
+      </div>
+    </section>
+  );
+
+  const renderValidation = () => (
+    <section data-testid="apollo-validation-shell" className="apollo-editor-card">
+      <div className="apollo-editor-card-header">
+        <div>
+          <h2>入力チェック</h2>
+          <p>内容を確認し、必要であれば該当箇所へ移動してください。</p>
+        </div>
+      </div>
+      <div className="apollo-topology-summary">
+        <span>エラー件数 {validation.errors.length}</span>
+        <span>注意件数 {validation.warnings.length}</span>
+        <span>節点数 {draft.nodes.length}</span>
+        <span>部材数 {draft.members.length}</span>
+        <span>支点数 {draft.supports.length}</span>
+        <span>材料数 {draft.materialReferences.length}</span>
+      </div>
+      {validationItems.length === 0 ? (
+        <p data-testid="apollo-validation-ok">入力内容に重大な問題はありません。</p>
+      ) : (
+        <ul data-testid="apollo-validation-list" className="apollo-validation-list">
+          {validationItems.map(({ severity, entry }) => (
+            <li key={`${severity}-${entry.code}-${entry.entityId ?? "none"}`} className={severity === "error" ? "apollo-validation-error" : "apollo-validation-warning"}>
+              <span>{severity === "error" ? "エラー" : "注意"}</span>
+              <span>{localizeValidationMessage(entry)}</span>
+              <span>{entry.entityId ?? "共通"}</span>
+              <button type="button" onClick={() => navigateValidationIssue(entry)}>該当箇所へ移動</button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+
+  const renderDeveloperInfo = () => (
+    <details className="apollo-editor-card apollo-developer-info">
+      <summary>開発者情報</summary>
+      <article data-testid="apollo-flag-matrix">
+        <p>通常利用では不要な内部状態です。調査が必要な場合のみ確認してください。</p>
+        <ul>
+          <li>スキーマ版: {APOLLO_PHASE1_UNIT2_SCHEMA_VERSION}</li>
+          <li>非数値入力モード: {String(flags.nnEnabled)}</li>
+          <li>数値計算の公開停止: {String(flags.numericReleaseBlocked)}</li>
+          <li>計算結果出力の停止: {String(flags.disableResultPublication)}</li>
+          <li>構造計算実行の停止: {String(flags.disableNumericExecution)}</li>
+        </ul>
+        <div className="apollo-workspace-actions">
+          <button type="button" data-testid="apollo-numeric-execution-guard" data-guard-blocked={flags.disableNumericExecution ? "true" : "false"} onClick={() => announce("構造計算は現在利用できません。")}>構造計算は現在利用できません</button>
+          <button type="button" data-testid="apollo-result-publication-guard" data-guard-blocked={flags.disableResultPublication ? "true" : "false"} onClick={() => announce("計算結果出力は現在利用できません。")}>計算結果出力は現在利用できません</button>
+        </div>
+        {interactionMessage ? <p data-testid="apollo-interaction-message">{interactionMessage}</p> : null}
+        {viewerMessage ? <p data-testid="apollo-viewer-message">{viewerMessage}</p> : null}
+      </article>
+    </details>
+  );
 
   return (
     <main className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
         <div>
-          <p data-testid="apollo-shell-kicker">Apollo Phase 1-NN Unit 2</p>
-          <h1>Apollo Phase 1 non-numeric practical topology shell</h1>
+          <p data-testid="apollo-shell-kicker">Apollo Phase 1-NN</p>
+          <h1>Apollo 橋梁骨組み入力</h1>
           <p>
-            This route edits non-numeric topology drafts only. Solver execution, verified
-            outputs, and production publication remain prohibited on {VERIFICATION_DATE}.
+            橋梁の骨組みモデルを入力・編集します。現在は入力・確認機能のみ利用できます。
+            構造計算と計算結果出力は利用できません。
           </p>
         </div>
         <div className="apollo-unit2-header-actions">
-          <button
-            type="button"
-            data-testid="apollo-save-project"
-            onClick={() => void handleSave()}
-            disabled={persisting !== null}
-          >
-            {persisting === "save" ? "Saving..." : "Save draft"}
-          </button>
-          <button
-            type="button"
-            data-testid="apollo-reload-project"
-            onClick={() => void handleReload()}
-            disabled={persisting !== null}
-          >
-            {persisting === "reload" ? "Reloading..." : "Reload draft"}
-          </button>
-          <button type="button" onClick={onReturnToPro} data-testid="apollo-return-to-pro">
-            Return to workspace
-          </button>
+          <button type="button" onClick={() => setMode("guided")}>ガイド付きモード</button>
+          <button type="button" onClick={() => setMode("list")}>一覧編集モード</button>
+          <button type="button" onClick={openOnboarding}>操作ガイド</button>
+          <button type="button" data-testid="apollo-reload-project" onClick={() => void openFromFile()} disabled={persisting !== null}>ファイルを開く</button>
+          <button type="button" data-testid="apollo-save-project" onClick={() => void saveToFile()} disabled={persisting !== null}>{persisting === "save" ? "保存中..." : "保存"}</button>
+          <button type="button" onClick={onReturnToPro} data-testid="apollo-return-to-pro">メニューへ戻る</button>
         </div>
       </header>
 
       {flags.showProvisionalStatus ? (
-        <section
-          className="apollo-phase1-banner"
-          data-testid="apollo-provisional-banner"
-          aria-label="provisional-status-banner"
-        >
-          <strong>Provisional / unverified status</strong>
-          <p>
-            Any topology or metadata edited here is non-authoritative. Verified numeric results are
-            unavailable on {VERIFICATION_DATE}.
-          </p>
+        <section className="apollo-phase1-banner" data-testid="apollo-provisional-banner" aria-label="provisional-status-banner">
+          <strong>非数値入力モード</strong>
+          <p>構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。({VERIFICATION_DATE})</p>
         </section>
       ) : null}
 
-      <section className="apollo-unit2-summary-grid">
-        <article data-testid="apollo-project-shell">
-          <h2>Project metadata and persistence</h2>
-          <dl className="apollo-project-meta-list">
+      {showOnboarding ? (
+        <section className="apollo-editor-card" data-testid="apollo-onboarding">
+          <div className="apollo-editor-card-header">
             <div>
-              <dt>Draft schema</dt>
-              <dd>{APOLLO_PHASE1_UNIT2_SCHEMA_VERSION}</dd>
+              <h2>{ONBOARDING_SLIDES[onboardingIndex].title}</h2>
+              <p>{ONBOARDING_SLIDES[onboardingIndex].body}</p>
             </div>
-            <div>
-              <dt>Local draft status</dt>
-              <dd>{dirty ? "dirty" : draft.metadata.localDraftStatus}</dd>
-            </div>
-            <div>
-              <dt>Created</dt>
-              <dd>{draft.metadata.createdAt}</dd>
-            </div>
-            <div>
-              <dt>Updated</dt>
-              <dd>{draft.metadata.updatedAt}</dd>
-            </div>
-          </dl>
-          <div className="apollo-project-form-grid">
-            <label>
-              Project ID
-              <input
-                data-testid="apollo-project-id-input"
-                value={draft.metadata.projectId}
-                onChange={(event) =>
-                  updateProjectField(
-                    "projectId",
-                    event.currentTarget.value,
-                    `Project id updated to ${event.currentTarget.value || "(empty)"}.`,
-                  )
-                }
-              />
-            </label>
-            <label>
-              Project name
-              <input
-                data-testid="apollo-project-name-input"
-                value={draft.metadata.name}
-                onChange={(event) =>
-                  updateProjectField(
-                    "name",
-                    event.currentTarget.value,
-                    `Project name updated to ${event.currentTarget.value || "(empty)"}.`,
-                  )
-                }
-              />
-            </label>
-            <label className="apollo-project-form-wide">
-              Description
-              <textarea
-                data-testid="apollo-project-description-input"
-                value={draft.metadata.description}
-                onChange={(event) =>
-                  updateProjectField(
-                    "description",
-                    event.currentTarget.value,
-                    "Project description updated.",
-                  )
-                }
-              />
-            </label>
           </div>
-        </article>
-
-        <article data-testid="apollo-flag-matrix">
-          <h2>Feature flags and guards</h2>
-          <ul>
-            <li>`apollo.phase1_nn_enabled`: {flags.nnEnabled ? "ON" : "OFF"}</li>
-            <li>`apollo.phase1_numeric_release_blocked`: {flags.numericReleaseBlocked ? "ON" : "OFF"}</li>
-            <li>`apollo.phase1_show_provisional_status`: {flags.showProvisionalStatus ? "ON" : "OFF"}</li>
-            <li>`apollo.phase1_disable_result_publication`: {flags.disableResultPublication ? "ON" : "OFF"}</li>
-            <li>`apollo.phase1_disable_numeric_execution`: {flags.disableNumericExecution ? "ON" : "OFF"}</li>
-          </ul>
-          <p>
-            Materials are reference shells only. No Young&apos;s modulus, density, section
-            properties, load numerics, or verified results are edited here.
-          </p>
-        </article>
-
-        <article data-testid="apollo-workspace-shell">
-          <h2>Workspace drafts</h2>
-          <p>Local non-numeric draft workspace for new, open, duplicate, rename, and delete flows.</p>
           <div className="apollo-workspace-actions">
-            <button type="button" data-testid="apollo-workspace-new" onClick={handleWorkspaceNew}>
-              New draft
-            </button>
-            <button type="button" data-testid="apollo-workspace-save" onClick={handleWorkspaceSave}>
-              Save snapshot
-            </button>
-            <button
-              type="button"
-              data-testid="apollo-workspace-open"
-              onClick={handleWorkspaceOpen}
-              disabled={!selectedWorkspaceEntry}
-            >
-              Open draft
-            </button>
-            <button
-              type="button"
-              data-testid="apollo-workspace-duplicate"
-              onClick={handleWorkspaceDuplicate}
-              disabled={!selectedWorkspaceEntry}
-            >
-              Duplicate draft
-            </button>
-            <button
-              type="button"
-              data-testid="apollo-workspace-rename"
-              onClick={handleWorkspaceRename}
-              disabled={!selectedWorkspaceEntry}
-            >
-              Rename draft
-            </button>
-            <button
-              type="button"
-              data-testid="apollo-workspace-delete"
-              onClick={handleWorkspaceDelete}
-              disabled={!selectedWorkspaceEntry}
-            >
-              Delete draft
-            </button>
+            <button type="button" onClick={() => setOnboardingIndex((current) => Math.max(0, current - 1))} disabled={onboardingIndex === 0}>前へ</button>
+            <button type="button" onClick={() => setOnboardingIndex((current) => Math.min(ONBOARDING_SLIDES.length - 1, current + 1))} disabled={onboardingIndex === ONBOARDING_SLIDES.length - 1}>次へ</button>
+            <button type="button" onClick={closeOnboarding}>閉じる</button>
           </div>
-          <label className="apollo-workspace-select">
-            Saved drafts
-            <select
-              data-testid="apollo-workspace-select"
-              value={workspaceSelection ?? ""}
-              onChange={(event) => setWorkspaceSelection(event.currentTarget.value || null)}
-            >
-              <option value="">No saved workspace draft</option>
-              {workspaceEntries.map((entry) => (
-                <option key={entry.workspaceId} value={entry.workspaceId}>
-                  {entry.name} ({entry.updatedAt})
-                </option>
-              ))}
-            </select>
-          </label>
-          {selectedWorkspaceEntry ? (
-            <dl className="apollo-project-meta-list">
-              <div>
-                <dt>Project ID</dt>
-                <dd>{selectedWorkspaceEntry.projectId}</dd>
-              </div>
-              <div>
-                <dt>Updated</dt>
-                <dd>{selectedWorkspaceEntry.updatedAt}</dd>
-              </div>
-            </dl>
-          ) : (
-            <p data-testid="apollo-workspace-empty">No saved workspace draft yet.</p>
-          )}
-        </article>
-      </section>
+        </section>
+      ) : null}
 
-      <section className="apollo-unit2-layout">
-        <div className="apollo-unit2-editor">
-          <nav className="apollo-unit2-tabs" aria-label="Apollo editor sections">
-            {(["nodes", "members", "supports", "materials"] as const).map((pane) => (
+      {saveNotice ? <section className="apollo-editor-card"><p>{saveNotice}</p></section> : null}
+
+      {mode === "guided" && guidedStep === "start" ? (
+        <section className="apollo-screen-grid" data-testid="apollo-start-screen">
+          <article className="apollo-editor-card">
+            <h2>開始方法を選択</h2>
+            <p>初めての方はサンプル橋梁から始めてください。入力済みの橋梁モデルで操作の流れを確認できます。</p>
+          </article>
+          <div className="apollo-start-cards">
+            <article className="apollo-editor-card apollo-start-card-recommended">
+              <p className="apollo-recommend-badge">おすすめ</p>
+              <h3>1. サンプル橋梁から始める</h3>
+              <p>初めて操作する方におすすめです。入力済みの橋梁モデルで基本操作を学べます。</p>
               <button
-                key={pane}
                 type="button"
-                className={editorPane === pane ? "active" : ""}
-                onClick={() => setEditorPane(pane)}
+                className="apollo-button-primary"
+                data-testid="apollo-open-sample-selection"
+                onClick={() => setGuidedStep("sample")}
               >
-                {pane}
+                サンプルを選ぶ
               </button>
-            ))}
-          </nav>
+            </article>
+            <article className="apollo-editor-card">
+              <h3>2. 新しい橋梁を作成</h3>
+              <p>空のプロジェクトを作成し、自分で橋梁情報を入力します。</p>
+              <button type="button" onClick={startNewProject}>新規作成</button>
+            </article>
+            <article className="apollo-editor-card">
+              <h3>3. 保存済みデータを開く</h3>
+              <p>以前保存した Apollo データを開き、作業を再開します。</p>
+              <button type="button" onClick={() => void openFromFile()}>ファイルを開く</button>
+            </article>
+          </div>
+        </section>
+      ) : null}
 
-          {editorPane === "nodes" ? (
-            <section data-testid="apollo-node-editor" className="apollo-editor-card">
-              <div className="apollo-editor-card-header">
-                <div>
-                  <h2>Node editor</h2>
-                  <p>Stable node IDs, coordinates, activity, comments, reference usage, and table selection.</p>
-                </div>
-                <button type="button" data-testid="apollo-add-node" onClick={addNode}>
-                  Add node
-                </button>
-              </div>
-              <div
-                className="apollo-table-wrap"
-                tabIndex={0}
-                onKeyDown={(event) =>
-                  tableSelectionKeyDown(
-                    event,
-                    draft.nodes.map((node) => node.id),
-                    selectedNode?.id ?? null,
-                    (id) => setSelection({ kind: "node", id }),
-                  )
-                }
+      {mode === "guided" && guidedStep === "sample" ? (
+        <section data-testid="apollo-sample-selection" className="apollo-screen-grid">
+          <article className="apollo-editor-card">
+            <h2>サンプル橋梁を選択</h2>
+            <p>操作確認に使用する橋梁を選択してください。サンプルは非数値入力用で、構造計算結果は含まれていません。</p>
+          </article>
+          <article className="apollo-editor-card apollo-start-card-recommended">
+            <p className="apollo-recommend-badge">標準サンプル</p>
+            <h3>200m級 5径間連続橋（標準サンプル）</h3>
+            <p>A1 ──35m── P1 ──40m── P2 ──50m── P3 ──40m── P4 ──35m── A2</p>
+            <ul>
+              <li>橋長: 200m</li>
+              <li>径間数: 5径間</li>
+              <li>支点数: 6</li>
+              <li>橋台: A1, A2</li>
+              <li>橋脚: P1, P2, P3, P4</li>
+              <li>線形: 直線</li>
+              <li>用途: Apollo基本操作確認用</li>
+            </ul>
+            <div className="apollo-workspace-actions">
+              <button
+                type="button"
+                className="apollo-button-primary"
+                data-testid="apollo-load-standard-sample"
+                aria-label="このサンプルを読み込む"
+                onClick={loadStandardSample}
               >
-                <table className="apollo-edit-table">
-                  <thead>
-                    <tr>
-                      <th>Select</th>
-                      <th>ID</th>
-                      <th>Label</th>
-                      <th>X</th>
-                      <th>Y</th>
-                      <th>Z</th>
-                      <th>Active</th>
-                      <th>Comment</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {draft.nodes.map((node, index) => {
-                      const selected = selectedNode?.id === node.id;
-                      const memberRefs = referenceUsage.nodeToMemberIds.get(node.id) ?? [];
-                      const supportRefs = referenceUsage.nodeToSupportIds.get(node.id) ?? [];
-                      return (
-                        <tr
-                          key={node.id}
-                          className={selected ? "selected" : ""}
-                          data-testid={selected ? "apollo-node-row-selected" : undefined}
-                        >
-                          <td>
-                            <button
-                              type="button"
-                              data-testid={`apollo-node-select-${node.id}`}
-                              onClick={() => setSelection({ kind: "node", id: node.id })}
-                            >
-                              {selected ? "Selected" : "Select"}
-                            </button>
-                          </td>
-                          <td>
-                          <input
-                            data-testid={selected ? `apollo-node-id-input-${node.id}` : undefined}
-                            value={node.id}
-                            onChange={(event) => renameNode(node.id, event.currentTarget.value)}
-                          />
-                          </td>
-                          <td>
-                            <input
-                              data-testid={selected ? "apollo-node-label-input" : undefined}
-                              value={node.label}
-                              onChange={(event) =>
-                                updateNode(
-                                  node.id,
-                                  (currentNode) => ({ ...currentNode, label: event.currentTarget.value }),
-                                  `Node ${node.id} label updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              data-testid={selected ? "apollo-node-x-input" : undefined}
-                              value={String(node.x)}
-                              onChange={(event) => changeCoordinate(node.id, "x", event.currentTarget.value)}
-                            />
-                          </td>
-                          <td>
-                            <input
-                              data-testid={selected ? "apollo-node-y-input" : undefined}
-                              value={String(node.y)}
-                              onChange={(event) => changeCoordinate(node.id, "y", event.currentTarget.value)}
-                            />
-                          </td>
-                          <td>
-                            <input
-                              data-testid={selected ? "apollo-node-z-input" : undefined}
-                              value={String(node.z)}
-                              onChange={(event) => changeCoordinate(node.id, "z", event.currentTarget.value)}
-                            />
-                          </td>
-                          <td>
-                            <input
-                              type="checkbox"
-                              checked={node.active}
-                              onChange={(event) =>
-                                updateNode(
-                                  node.id,
-                                  (currentNode) => ({ ...currentNode, active: event.currentTarget.checked }),
-                                  `Node ${node.id} active state updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              value={node.comment}
-                              onChange={(event) =>
-                                updateNode(
-                                  node.id,
-                                  (currentNode) => ({ ...currentNode, comment: event.currentTarget.value }),
-                                  `Node ${node.id} comment updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td className="apollo-row-actions">
-                            <button type="button" onClick={() => duplicateNode(node.id)}>Duplicate</button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveRow(draft.nodes, node.id, -1, "node", (rows) => ({
-                                  ...draft,
-                                  nodes: rows as ApolloPhase1Unit2Node[],
-                                }))
-                              }
-                              disabled={index === 0}
-                            >
-                              Up
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveRow(draft.nodes, node.id, 1, "node", (rows) => ({
-                                  ...draft,
-                                  nodes: rows as ApolloPhase1Unit2Node[],
-                                }))
-                              }
-                              disabled={index === draft.nodes.length - 1}
-                            >
-                              Down
-                            </button>
-                            <button type="button" onClick={() => deleteNode(node.id)}>Delete</button>
-                            <span className="apollo-row-usage">
-                              refs M:{memberRefs.length} / S:{supportRefs.length}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              {selectedNode ? (
-                <p className="apollo-reference-summary">
-                  Selected node {selectedNode.id}: member refs {summarizeList(referenceUsage.nodeToMemberIds.get(selectedNode.id) ?? [])}; support refs {summarizeList(referenceUsage.nodeToSupportIds.get(selectedNode.id) ?? [])}
-                </p>
-              ) : null}
-            </section>
-          ) : null}
+                このサンプルを読み込む
+              </button>
+              <button type="button" onClick={() => setSaveNotice("標準サンプルです。節点6、部材5、支点6、材料1で構成されています。")}>内容を詳しく見る</button>
+              <button type="button" onClick={() => setGuidedStep("start")}>戻る</button>
+              <button type="button" onClick={startNewProject}>空のプロジェクトを作成</button>
+            </div>
+          </article>
+        </section>
+      ) : null}
 
-          {editorPane === "members" ? (
-            <section data-testid="apollo-member-editor" className="apollo-editor-card">
-              <div className="apollo-editor-card-header">
-                <div>
-                  <h2>Member editor</h2>
-                  <p>I/J references, material references, activity, comments, and orphan prevention.</p>
-                </div>
-                <button type="button" data-testid="apollo-add-member" onClick={addMember}>
-                  Add member
-                </button>
-              </div>
-              <div
-                className="apollo-table-wrap"
-                tabIndex={0}
-                onKeyDown={(event) =>
-                  tableSelectionKeyDown(
-                    event,
-                    draft.members.map((member) => member.id),
-                    selectedMember?.id ?? null,
-                    (id) => setSelection({ kind: "member", id }),
-                  )
-                }
+      {mode === "guided" && guidedStep === "sampleLoaded" ? (
+        <section data-testid="apollo-sample-loaded-guide" className="apollo-screen-grid">
+          <article className="apollo-editor-card">
+            <h2>200m級 5径間連続橋を読み込みました</h2>
+            <p>サンプル橋梁の準備ができました。次の順番で内容を確認してください。</p>
+            <ol>
+              <li>橋梁の基本情報</li>
+              <li>節点</li>
+              <li>部材</li>
+              <li>支点</li>
+              <li>材料</li>
+              <li>入力チェック</li>
+              <li>保存</li>
+            </ol>
+            <div className="apollo-workflow-actions">
+              <button
+                type="button"
+                className="apollo-button-primary"
+                data-testid="apollo-sample-guide-primary-next"
+                onClick={() => setGuidedStep("basics")}
               >
-                <table className="apollo-edit-table">
-                  <thead>
-                    <tr>
-                      <th>Select</th>
-                      <th>ID</th>
-                      <th>Label</th>
-                      <th>I-end</th>
-                      <th>J-end</th>
-                      <th>Material ref</th>
-                      <th>Active</th>
-                      <th>Comment</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {draft.members.map((member, index) => (
-                      <tr key={member.id} className={selectedMember?.id === member.id ? "selected" : ""}>
-                        <td>
-                          <button
-                            type="button"
-                            data-testid={`apollo-member-select-${member.id}`}
-                            onClick={() => setSelection({ kind: "member", id: member.id })}
-                          >
-                            {selectedMember?.id === member.id ? "Selected" : "Select"}
-                          </button>
-                        </td>
-                        <td>
-                          <input value={member.id} onChange={(event) => renameMember(member.id, event.currentTarget.value)} />
-                        </td>
-                        <td>
-                          <input
-                            value={member.label}
-                            onChange={(event) =>
-                              updateMember(
-                                member.id,
-                                (currentMember) => ({ ...currentMember, label: event.currentTarget.value }),
-                                `Member ${member.id} label updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <select
-                            value={member.nodeI}
-                            onChange={(event) => changeMemberNode(member.id, "nodeI", event.currentTarget.value)}
-                          >
-                            {draft.nodes.map((node) => (
-                              <option key={node.id} value={node.id}>
-                                {node.id}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <select
-                            value={member.nodeJ}
-                            onChange={(event) => changeMemberNode(member.id, "nodeJ", event.currentTarget.value)}
-                          >
-                            {draft.nodes.map((node) => (
-                              <option key={node.id} value={node.id}>
-                                {node.id}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <select
-                            value={member.materialRefId}
-                            onChange={(event) =>
-                              updateMember(
-                                member.id,
-                                (currentMember) => ({
-                                  ...currentMember,
-                                  materialRefId: event.currentTarget.value,
-                                }),
-                                `Member ${member.id} material reference updated.`,
-                              )
-                            }
-                          >
-                            {draft.materialReferences.map((material) => (
-                              <option key={material.id} value={material.id}>
-                                {material.id}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={member.active}
-                            onChange={(event) =>
-                              updateMember(
-                                member.id,
-                                (currentMember) => ({ ...currentMember, active: event.currentTarget.checked }),
-                                `Member ${member.id} active state updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            value={member.comment}
-                            onChange={(event) =>
-                              updateMember(
-                                member.id,
-                                (currentMember) => ({ ...currentMember, comment: event.currentTarget.value }),
-                                `Member ${member.id} comment updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        <td className="apollo-row-actions">
-                          <button type="button" onClick={() => duplicateMember(member.id)}>Duplicate</button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveRow(draft.members, member.id, -1, "member", (rows) => ({
-                                ...draft,
-                                members: rows as ApolloPhase1Unit2Member[],
-                              }))
-                            }
-                            disabled={index === 0}
-                          >
-                            Up
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveRow(draft.members, member.id, 1, "member", (rows) => ({
-                                ...draft,
-                                members: rows as ApolloPhase1Unit2Member[],
-                              }))
-                            }
-                            disabled={index === draft.members.length - 1}
-                          >
-                            Down
-                          </button>
-                          <button type="button" onClick={() => deleteMember(member.id)}>Delete</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          ) : null}
+                次へ（基本情報）
+              </button>
+              <button type="button" onClick={() => setMode("list")}>一覧編集モードへ進む</button>
+              <button type="button" onClick={toggleSampleGuideDismissed}>この案内を次回から表示しない: {sampleGuideDismissed ? "ON" : "OFF"}</button>
+            </div>
+            <div className="apollo-sample-jump-links">
+              <button type="button" onClick={() => setGuidedStep("basics")}>基本情報を見る</button>
+              <button type="button" onClick={() => { setGuidedStep("editor"); setPaneAndSelection("nodes"); }}>節点を見る</button>
+              <button type="button" onClick={() => { setGuidedStep("editor"); setPaneAndSelection("members"); }}>部材を見る</button>
+              <button type="button" onClick={() => { setGuidedStep("editor"); setPaneAndSelection("supports"); }}>支点を見る</button>
+              <button type="button" onClick={() => { setGuidedStep("editor"); setPaneAndSelection("materials"); }}>材料を見る</button>
+              <button type="button" onClick={() => setGuidedStep("validation")}>入力チェックを見る</button>
+            </div>
+          </article>
+        </section>
+      ) : null}
 
-          {editorPane === "supports" ? (
-            <section data-testid="apollo-support-editor" className="apollo-editor-card">
-              <div className="apollo-editor-card-header">
-                <div>
-                  <h2>Support editor</h2>
-                  <p>Non-numeric restraint states only. Spring constants and stiffness values remain prohibited.</p>
-                </div>
-                <button type="button" data-testid="apollo-add-support" onClick={addSupport}>
-                  Add support
-                </button>
-              </div>
-              <div
-                className="apollo-table-wrap"
-                tabIndex={0}
-                onKeyDown={(event) =>
-                  tableSelectionKeyDown(
-                    event,
-                    draft.supports.map((support) => support.id),
-                    selectedSupport?.id ?? null,
-                    (id) => setSelection({ kind: "support", id }),
-                  )
-                }
-              >
-                <table className="apollo-edit-table">
-                  <thead>
-                    <tr>
-                      <th>Select</th>
-                      <th>ID</th>
-                      <th>Node</th>
-                      <th>Label</th>
-                      <th>UX</th>
-                      <th>UY</th>
-                      <th>UZ</th>
-                      <th>RX</th>
-                      <th>RY</th>
-                      <th>RZ</th>
-                      <th>Active</th>
-                      <th>Comment</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {draft.supports.map((support, index) => (
-                      <tr key={support.id} className={selectedSupport?.id === support.id ? "selected" : ""}>
-                        <td>
-                          <button
-                            type="button"
-                            data-testid={`apollo-support-select-${support.id}`}
-                            onClick={() => setSelection({ kind: "support", id: support.id })}
-                          >
-                            {selectedSupport?.id === support.id ? "Selected" : "Select"}
-                          </button>
-                        </td>
-                        <td>
-                          <input value={support.id} onChange={(event) => renameSupport(support.id, event.currentTarget.value)} />
-                        </td>
-                        <td>
-                          <select value={support.nodeId} onChange={(event) => changeSupportNode(support.id, event.currentTarget.value)}>
-                            {draft.nodes.map((node) => (
-                              <option key={node.id} value={node.id}>
-                                {node.id}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            value={support.label}
-                            onChange={(event) =>
-                              updateSupport(
-                                support.id,
-                                (currentSupport) => ({ ...currentSupport, label: event.currentTarget.value }),
-                                `Support ${support.id} label updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        {(["ux", "uy", "uz", "rx", "ry", "rz"] as const).map((dof) => (
-                          <td key={`${support.id}-${dof}`}>
-                            <select
-                              value={support[dof]}
-                              onChange={(event) =>
-                                updateSupport(
-                                  support.id,
-                                  (currentSupport) => ({
-                                    ...currentSupport,
-                                    [dof]: event.currentTarget.value as ApolloPhase1Unit2Support["ux"],
-                                  }),
-                                  `Support ${support.id} ${dof.toUpperCase()} state updated.`,
-                                )
-                              }
-                            >
-                              <option value="FREE">FREE</option>
-                              <option value="FIXED">FIXED</option>
-                              <option value="UNDEFINED">UNDEFINED</option>
-                            </select>
-                          </td>
-                        ))}
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={support.active}
-                            onChange={(event) =>
-                              updateSupport(
-                                support.id,
-                                (currentSupport) => ({ ...currentSupport, active: event.currentTarget.checked }),
-                                `Support ${support.id} active state updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            value={support.comment}
-                            onChange={(event) =>
-                              updateSupport(
-                                support.id,
-                                (currentSupport) => ({ ...currentSupport, comment: event.currentTarget.value }),
-                                `Support ${support.id} comment updated.`,
-                              )
-                            }
-                          />
-                        </td>
-                        <td className="apollo-row-actions">
-                          <button type="button" onClick={() => duplicateSupport(support.id)}>Duplicate</button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveRow(draft.supports, support.id, -1, "support", (rows) => ({
-                                ...draft,
-                                supports: rows as ApolloPhase1Unit2Support[],
-                              }))
-                            }
-                            disabled={index === 0}
-                          >
-                            Up
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveRow(draft.supports, support.id, 1, "support", (rows) => ({
-                                ...draft,
-                                supports: rows as ApolloPhase1Unit2Support[],
-                              }))
-                            }
-                            disabled={index === draft.supports.length - 1}
-                          >
-                            Down
-                          </button>
-                          <button type="button" onClick={() => deleteSupport(support.id)}>Delete</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          ) : null}
-
-          {editorPane === "materials" ? (
-            <section data-testid="apollo-material-editor" className="apollo-editor-card">
-              <div className="apollo-editor-card-header">
-                <div>
-                  <h2>Material reference shell</h2>
-                  <p>Reference-only material identities. Numeric constants remain outside Phase 1-NN.</p>
-                </div>
-                <button type="button" data-testid="apollo-add-material" onClick={addMaterial}>
-                  Add material ref
-                </button>
-              </div>
-              <div
-                className="apollo-table-wrap"
-                tabIndex={0}
-                onKeyDown={(event) =>
-                  tableSelectionKeyDown(
-                    event,
-                    draft.materialReferences.map((material) => material.id),
-                    selectedMaterial?.id ?? null,
-                    (id) => setSelection({ kind: "material", id }),
-                  )
-                }
-              >
-                <table className="apollo-edit-table">
-                  <thead>
-                    <tr>
-                      <th>Select</th>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Category</th>
-                      <th>Source status</th>
-                      <th>Provisional</th>
-                      <th>Active</th>
-                      <th>Usage</th>
-                      <th>Comment</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {draft.materialReferences.map((material, index) => {
-                      const usageCount = (referenceUsage.materialToMemberIds.get(material.id) ?? []).length;
-                      return (
-                        <tr key={material.id} className={selectedMaterial?.id === material.id ? "selected" : ""}>
-                          <td>
-                          <button
-                            type="button"
-                            data-testid={`apollo-material-select-${material.id}`}
-                            onClick={() => setSelection({ kind: "material", id: material.id })}
-                          >
-                              {selectedMaterial?.id === material.id ? "Selected" : "Select"}
-                            </button>
-                          </td>
-                          <td>
-                            <input value={material.id} onChange={(event) => renameMaterial(material.id, event.currentTarget.value)} />
-                          </td>
-                          <td>
-                            <input
-                              value={material.displayName}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    displayName: event.currentTarget.value,
-                                  }),
-                                  `Material reference ${material.id} display name updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              value={material.category}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    category: event.currentTarget.value,
-                                  }),
-                                  `Material reference ${material.id} category updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <select
-                              value={material.sourceStatus}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    sourceStatus: event.currentTarget.value as ApolloPhase1Unit2MaterialReference["sourceStatus"],
-                                  }),
-                                  `Material reference ${material.id} source status updated.`,
-                                )
-                              }
-                            >
-                              <option value="blocked_by_numeric_evidence">blocked_by_numeric_evidence</option>
-                              <option value="licensed_source_pending">licensed_source_pending</option>
-                              <option value="reference_only">reference_only</option>
-                            </select>
-                          </td>
-                          <td>
-                            <select
-                              value={material.provisionalStatus}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    provisionalStatus: event.currentTarget.value as ApolloPhase1Unit2MaterialReference["provisionalStatus"],
-                                  }),
-                                  `Material reference ${material.id} provisional status updated.`,
-                                )
-                              }
-                            >
-                              <option value="unverified">unverified</option>
-                              <option value="provisional">provisional</option>
-                            </select>
-                          </td>
-                          <td>
-                            <input
-                              type="checkbox"
-                              checked={material.active}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    active: event.currentTarget.checked,
-                                  }),
-                                  `Material reference ${material.id} active state updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td>{usageCount}</td>
-                          <td>
-                            <input
-                              value={material.comment}
-                              onChange={(event) =>
-                                updateMaterial(
-                                  material.id,
-                                  (currentMaterial) => ({
-                                    ...currentMaterial,
-                                    comment: event.currentTarget.value,
-                                  }),
-                                  `Material reference ${material.id} comment updated.`,
-                                )
-                              }
-                            />
-                          </td>
-                          <td className="apollo-row-actions">
-                            <button type="button" onClick={() => duplicateMaterial(material.id)}>Duplicate</button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveRow(draft.materialReferences, material.id, -1, "material", (rows) => ({
-                                  ...draft,
-                                  materialReferences: rows as ApolloPhase1Unit2MaterialReference[],
-                                }))
-                              }
-                              disabled={index === 0}
-                            >
-                              Up
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveRow(draft.materialReferences, material.id, 1, "material", (rows) => ({
-                                  ...draft,
-                                  materialReferences: rows as ApolloPhase1Unit2MaterialReference[],
-                                }))
-                              }
-                              disabled={index === draft.materialReferences.length - 1}
-                            >
-                              Down
-                            </button>
-                            <button type="button" onClick={() => deleteMaterial(material.id)}>Delete</button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          ) : null}
-        </div>
-
-        <div className="apollo-unit2-visual-panel">
-          <section data-testid="apollo-topology-shell" className="apollo-editor-card">
-            <div className="apollo-editor-card-header">
-              <div>
-                <h2>Topology view and selection sync</h2>
-                <p>Table selection syncs to model selection. Node and member picks from the viewer sync back to the tables.</p>
+      {mode === "guided" && guidedStep === "basics" ? (
+        <section className="apollo-screen-grid" data-testid="apollo-basics-screen">
+          {renderStepBar()}
+          <div className="apollo-unit2-layout">
+            <div className="apollo-unit2-editor">
+              {renderProjectForm()}
+              <article className="apollo-editor-card">
+                <h2>サンプル概要</h2>
+                <ul>
+                  <li>橋長: 200m</li>
+                  <li>径間: 35 + 40 + 50 + 40 + 35m</li>
+                  <li>支点: A1, P1, P2, P3, P4, A2</li>
+                </ul>
+              </article>
+              <div className="apollo-workflow-actions">
+                <button type="button" onClick={() => setGuidedStep("start")}>前へ</button>
+                <button type="button" onClick={() => { setGuidedStep("editor"); setPaneAndSelection("nodes"); }}>次へ: 節点を確認</button>
+                <button type="button" onClick={() => void saveToFile()}>保存</button>
               </div>
             </div>
-            <div className="apollo-topology-summary" data-testid="apollo-topology-summary">
-              <span>Nodes {draft.nodes.length}</span>
-              <span>Members {draft.members.length}</span>
-              <span>Supports {draft.supports.length}</span>
-              <span>Material refs {draft.materialReferences.length}</span>
+            <div className="apollo-unit2-visual-panel">
+              {renderModelView()}
             </div>
-            <div data-testid="apollo-topology-view" className="apollo-topology-view">
-              <Viewer3D
-                project={viewProject}
-                result={null}
-                selectedSection={viewerSection}
-                selection={viewerSelection}
-                activeLoadCase=""
-                onSelectionChange={handleViewerSelection}
-                onActiveLoadCaseChange={() => undefined}
-                onViewerError={(message) => setViewerMessage(message)}
-              />
-            </div>
-          </section>
+          </div>
+        </section>
+      ) : null}
 
-          <section data-testid="apollo-validation-shell" className="apollo-editor-card">
-            <h2>Validation and reference integrity</h2>
-            {validation.errors.length === 0 && validation.warnings.length === 0 ? (
-              <p data-testid="apollo-validation-ok">No shell-level validation issues detected.</p>
-            ) : (
-              <ul data-testid="apollo-validation-list">
-                {validation.errors.map((entry) => (
-                  <li key={`${entry.code}-${entry.entityId ?? "none"}`} className="apollo-validation-error">
-                    ERROR {entry.code}: {entry.message}
-                  </li>
-                ))}
-                {validation.warnings.map((entry) => (
-                  <li key={`${entry.code}-${entry.entityId ?? "none"}`} className="apollo-validation-warning">
-                    WARNING {entry.code}: {entry.message}
-                  </li>
-                ))}
+      {mode === "guided" && guidedStep === "editor" ? (
+        <section className="apollo-screen-grid" data-testid="apollo-editor-screen">
+          {renderStepBar()}
+          {renderEditor()}
+          <div className="apollo-workflow-actions">
+            <button
+              type="button"
+              onClick={() => {
+                if (editorPane === "nodes") {
+                  setGuidedStep("basics");
+                  return;
+                }
+                if (editorPane === "members") {
+                  setPaneAndSelection("nodes");
+                  return;
+                }
+                if (editorPane === "supports") {
+                  setPaneAndSelection("members");
+                  return;
+                }
+                setPaneAndSelection("supports");
+              }}
+            >
+              前へ
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (editorPane === "nodes") {
+                  setPaneAndSelection("members");
+                  return;
+                }
+                if (editorPane === "members") {
+                  setPaneAndSelection("supports");
+                  return;
+                }
+                if (editorPane === "supports") {
+                  setPaneAndSelection("materials");
+                  return;
+                }
+                setGuidedStep("validation");
+              }}
+            >
+              次へ: 入力チェック
+            </button>
+            <button type="button" onClick={() => void saveToFile()}>保存</button>
+            <button type="button" onClick={openOnboarding}>ガイドを表示</button>
+          </div>
+        </section>
+      ) : null}
+
+      {mode === "guided" && guidedStep === "validation" ? (
+        <section className="apollo-screen-grid" data-testid="apollo-validation-screen">
+          {renderStepBar()}
+          {renderValidation()}
+          {renderCompletionPanel()}
+          <div className="apollo-unit2-summary-grid">
+            <article className="apollo-editor-card">
+              <h2>ファイルに保存</h2>
+              <p>現在の橋梁モデル全体をJSONファイルとして保存します。保存先は保存時に選択し、他のPCへ持ち出せます。</p>
+              <ul>
+                <li>ブラウザやアプリを閉じても、保存したファイルは残ります。</li>
+                <li>共有やバックアップを取りたい場合はこちらを使います。</li>
               </ul>
-            )}
+              <button type="button" className="apollo-button-primary" onClick={() => void saveToFile()}>ファイルに保存</button>
+            </article>
+            <article className="apollo-editor-card">
+              <h2>作業中データを保存</h2>
+              <p>現在の橋梁モデルをこのパソコンのブラウザ保存領域へ一時保存します。後で同じPCから作業を再開できます。</p>
+              <ul>
+                <li>保存先はこのPC内のみで、他のPCへは持ち出せません。</li>
+                <li>ブラウザやアプリを閉じても通常は残りますが、保存領域を削除すると消えます。</li>
+                <li>短時間の中断や、同じPCでの再開時はこちらを使います。</li>
+              </ul>
+              <button
+                type="button"
+                onClick={() => {
+                  handleWorkspaceSave();
+                  setSaveNotice("作業中データを保存しました。必要に応じてファイル保存も行ってください。");
+                }}
+              >
+                作業中データを保存
+              </button>
+            </article>
+          </div>
+          <section className="apollo-editor-card" data-testid="apollo-scope-notice">
+            <h2>現在利用できる範囲</h2>
+            <p>現在は橋梁モデル入力まで利用できます。構造解析および解析結果の表示は未実装です。</p>
           </section>
+          <div className="apollo-workflow-actions">
+            <button type="button" onClick={() => setGuidedStep("editor")}>編集へ戻る</button>
+            <button type="button" onClick={onReturnToPro}>メニューへ戻る</button>
+            <button type="button" onClick={startNewProject}>新しい橋梁を作成</button>
+          </div>
+          {renderWorkspaceCard()}
+        </section>
+      ) : null}
 
-          <section data-testid="apollo-adapter-shell" className="apollo-editor-card">
-            <h2>Adapter shell</h2>
-            <ul>
-              <li>Geometry view reuses the existing viewer with non-numeric draft adapters only.</li>
-              <li>Persistence reuses existing project open/save flows with Apollo draft serialization layered on top.</li>
-              <li>Native Analyzer / SPACER compatibility remains blocked pending licensed numeric evidence.</li>
-            </ul>
-          </section>
+      {mode === "list" ? (
+        <section className="apollo-screen-grid" data-testid="apollo-list-mode">
+          <div className="apollo-unit2-summary-grid">
+            {renderProjectForm()}
+            {renderWorkspaceCard()}
+          </div>
+          {renderEditor()}
+          {renderValidation()}
+        </section>
+      ) : null}
 
-          <section data-testid="apollo-result-shell" className="apollo-editor-card">
-            <h2>Result viewer shell and guards</h2>
-            <p>No verified status badge is available in this route.</p>
-            <button
-              type="button"
-              data-guard-blocked={flags.disableNumericExecution ? "true" : "false"}
-              data-testid="apollo-numeric-execution-guard"
-              onClick={() =>
-                rejectOperation(
-                  `Numeric execution remains blocked on ${VERIFICATION_DATE}. Phase 1-Numeric is NOGO until licensed source, machine, Golden, and parity evidence are complete.`,
-                  "project",
-                  draft.metadata.projectId,
-                )
-              }
-            >
-              Numeric execution blocked
-            </button>
-            <button
-              type="button"
-              data-guard-blocked={flags.disableResultPublication ? "true" : "false"}
-              data-testid="apollo-result-publication-guard"
-              onClick={() =>
-                rejectOperation(
-                  "Authoritative result publication remains blocked. This shell may show provisional structure state only.",
-                  "project",
-                  draft.metadata.projectId,
-                )
-              }
-            >
-              Result publication blocked
-            </button>
-          </section>
-
-          <section data-testid="apollo-audit-shell" className="apollo-editor-card">
-            <h2>Audit trail shell</h2>
-            <ul>
-              {draft.audit.length === 0 ? <li>No audit records yet.</li> : null}
-              {draft.audit.map((entry) => (
-                <li key={entry.id}>
-                  {entry.timestamp} / {entry.action} / {entry.message}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {interactionMessage ? (
-            <section data-testid="apollo-interaction-message" className="apollo-editor-card">
-              <strong>Latest shell message</strong>
-              <p>{interactionMessage}</p>
-            </section>
-          ) : null}
-
-          {viewerMessage ? (
-            <section data-testid="apollo-viewer-message" className="apollo-editor-card">
-              <strong>Viewer message</strong>
-              <p>{viewerMessage}</p>
-            </section>
-          ) : null}
-        </div>
-      </section>
+      {renderDeveloperInfo()}
     </main>
   );
 }

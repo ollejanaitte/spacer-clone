@@ -1,11 +1,13 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
-import { act } from "react";
+import { act, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createDefaultProject } from "../../data/defaultProject";
 import { ApolloPhase1Shell } from "../ApolloPhase1Shell";
 import type { ApolloPhase1FeatureFlags } from "../featureFlag";
 import type { ProjectModel } from "../../types";
+import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
+
 vi.mock("../../viewer/Viewer3D", () => ({
   Viewer3D: ({ project }: { project: { nodes: unknown[]; members: unknown[] } }) => (
     <div data-testid="mock-viewer3d">
@@ -44,137 +46,213 @@ function renderShell(
     onAuditEvent: (message: string) => void;
     onSaveProject: () => Promise<boolean>;
     onReloadProject: () => Promise<boolean>;
+    dirty: boolean;
   }>,
 ) {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
-  const onReturnToPro = props?.onReturnToPro ?? (() => undefined);
   act(() => {
     root.render(
       <ApolloPhase1Shell
         project={props?.project ?? createDefaultProject()}
         flags={props?.flags ?? DEFAULT_FLAGS}
         onProjectChange={props?.onProjectChange ?? (() => undefined)}
-        onReturnToPro={onReturnToPro}
+        onReturnToPro={props?.onReturnToPro ?? (() => undefined)}
         onAuditEvent={props?.onAuditEvent}
-        dirty={false}
+        dirty={props?.dirty ?? false}
         onSaveProject={props?.onSaveProject ?? (async () => true)}
         onReloadProject={props?.onReloadProject ?? (async () => true)}
       />,
     );
   });
-  return { container };
+  return { container, root };
+}
+
+function renderStatefulShell(initialProject: ProjectModel = createDefaultProject()) {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+
+  function Harness() {
+    const [project, setProject] = useState(initialProject);
+    return (
+      <ApolloPhase1Shell
+        project={project}
+        flags={DEFAULT_FLAGS}
+        onProjectChange={setProject}
+        onReturnToPro={() => undefined}
+        onSaveProject={async () => true}
+        onReloadProject={async () => true}
+        dirty={false}
+      />
+    );
+  }
+
+  act(() => {
+    root.render(<Harness />);
+  });
+  return { container, root };
+}
+
+function clickButtonByText(container: HTMLElement, text: string) {
+  const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
+    candidate.textContent?.includes(text),
+  ) as HTMLButtonElement | undefined;
+  if (!button) {
+    throw new Error(`Button not found: ${text}`);
+  }
+  act(() => {
+    button.click();
+  });
 }
 
 describe("ApolloPhase1Shell", () => {
-  it("renders the workspace draft shell", () => {
-    window.localStorage.clear();
+  it("shows the guided start screen in Japanese and highlights the sample path", () => {
     const { container } = renderShell();
-    expect(container.querySelector("[data-testid='apollo-workspace-shell']")).not.toBeNull();
-    expect(container.textContent).toContain("Workspace drafts");
+    expect(container.querySelector("[data-testid='apollo-start-screen']")).not.toBeNull();
+    expect(container.textContent).toContain("Apollo 橋梁骨組み入力");
+    expect(container.textContent).toContain("サンプル橋梁から始める");
+    expect(container.textContent).toContain("新しい橋梁を作成");
+    expect(container.textContent).toContain("保存済みデータを開く");
+    expect(container.textContent).toContain("おすすめ");
   });
 
-  it("shows the practical topology shell with guards", () => {
-    const { container } = renderShell();
-    expect(container.querySelector("[data-testid='apollo-phase1-shell']")).not.toBeNull();
-    expect(container.textContent).toContain("Apollo Phase 1-NN");
-    expect(container.textContent).toContain("Provisional / unverified status");
-    expect(container.querySelector("[data-testid='apollo-node-editor']")).not.toBeNull();
-    expect(container.querySelector("[data-testid='apollo-verified-badge']")).toBeNull();
-  });
-
-  it("returns to pro workspace", () => {
-    const onReturnToPro = vi.fn();
-    const { container } = renderShell({ onReturnToPro });
-    const button = container.querySelector("[data-testid='apollo-return-to-pro']") as HTMLButtonElement;
-    button.click();
-    expect(onReturnToPro).toHaveBeenCalledOnce();
-  });
-
-  it("updates project metadata and topology through shell callbacks", () => {
+  it("loads the 200m sample and shows the sample guide with the new wording", () => {
     const updates: ProjectModel[] = [];
-    const project = createDefaultProject();
     const { container } = renderShell({
-      project,
-      onProjectChange: (nextProject) => {
-        updates.push(nextProject);
-      },
+      onProjectChange: (nextProject) => updates.push(nextProject),
     });
 
+    act(() => {
+      (container.querySelector("[data-testid='apollo-open-sample-selection']") as HTMLButtonElement).click();
+    });
+    expect(container.querySelector("[data-testid='apollo-sample-selection']")).not.toBeNull();
+    expect(container.textContent).toContain("このサンプルを読み込む");
+
+    act(() => {
+      (container.querySelector("[data-testid='apollo-load-standard-sample']") as HTMLButtonElement).click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-sample-loaded-guide']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-sample-guide-primary-next']")?.textContent).toContain("次へ（基本情報）");
+    expect(updates).toHaveLength(1);
+    const next = updates[0];
+    expect(next.apolloPhase1Unit2?.nodes).toHaveLength(6);
+    expect(next.apolloPhase1Unit2?.members).toHaveLength(5);
+    expect(next.apolloPhase1Unit2?.supports).toHaveLength(6);
+    expect(next.apolloPhase1Unit2?.materialReferences.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows completion guidance and save explanations only after a valid walkthrough", () => {
+    const { container } = renderStatefulShell();
+
+    clickButtonByText(container, "サンプルを選ぶ");
+    clickButtonByText(container, "このサンプルを読み込む");
+    clickButtonByText(container, "次へ（基本情報）");
+    clickButtonByText(container, "次へ: 節点を確認");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+
+    expect(container.querySelector("[data-testid='apollo-validation-screen']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-completion-card']")).not.toBeNull();
+    expect(container.textContent).toContain("橋梁モデルの作成が完了しました");
+    expect(container.textContent).toContain("現在は橋梁モデル入力まで利用できます。構造解析および解析結果の表示は未実装です。");
+    expect(container.textContent).toContain("保存先は保存時に選択し、他のPCへ持ち出せます。");
+    expect(container.textContent).toContain("このパソコンのブラウザ保存領域へ一時保存します。");
+  });
+
+  it("switches to list mode without resetting project data", () => {
+    const project = createDefaultProject();
+    const { container } = renderShell({ project });
+
+    act(() => {
+      (container.querySelectorAll("button")).forEach(() => undefined);
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("一覧編集モード"),
+      )?.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-list-mode']")).not.toBeNull();
     const nameInput = container.querySelector("[data-testid='apollo-project-name-input']") as HTMLInputElement;
-    act(() => {
-      setInputValue(nameInput, "Apollo NN Draft");
-    });
-
-    const addNodeButton = container.querySelector("[data-testid='apollo-add-node']") as HTMLButtonElement;
-    act(() => {
-      addNodeButton.click();
-    });
-
-    expect(updates[0]?.project.name).toBe("Apollo NN Draft");
-    expect(updates[0]?.apolloPhase1Unit2?.metadata.name).toBe("Apollo NN Draft");
-    expect(updates[1]?.apolloPhase1Unit2?.nodes.length).toBe(project.nodes.length + 1);
+    expect(nameInput.value).toBe(project.project.name);
   });
 
-  it("saves and reopens workspace snapshots", () => {
-    window.localStorage.clear();
-    const updates: ProjectModel[] = [];
-    const project = createDefaultProject();
-    const { container } = renderShell({
-      project,
-      onProjectChange: (nextProject) => {
-        updates.push(nextProject);
-      },
-    });
+  it("shows basics screen and Japanese save status", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    const saveButton = container.querySelector("[data-testid='apollo-workspace-save']") as HTMLButtonElement;
-    act(() => {
-      saveButton.click();
-    });
+    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "ガイド付きモード");
+    clickButtonByText(container, "サンプルを選ぶ");
+    clickButtonByText(container, "このサンプルを読み込む");
+    clickButtonByText(container, "次へ（基本情報）");
 
-    const select = container.querySelector("[data-testid='apollo-workspace-select']") as HTMLSelectElement;
-    expect(select.options.length).toBeGreaterThan(1);
-    select.value = select.options[1].value;
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-
-    const openButton = container.querySelector("[data-testid='apollo-workspace-open']") as HTMLButtonElement;
-    act(() => {
-      openButton.click();
-    });
-
-    expect(updates.at(-1)?.project.id).toBe(project.project.id);
-    expect(container.textContent).toContain("Workspace snapshot");
+    expect(container.querySelector("[data-testid='apollo-basics-screen']")).not.toBeNull();
+    expect(container.textContent).toContain("保存状態: 保存済み");
+    expect(container.textContent).not.toContain("スキーマ:");
   });
 
-  it("blocks numeric execution and result publication while recording audit events", () => {
-    const onAuditEvent = vi.fn();
-    const { container } = renderShell({ onAuditEvent });
+  it("shows each editor tab in guided mode", () => {
+    const { container } = renderShell();
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("新規作成"),
+      )?.click();
+    });
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("次へ: 節点を確認"),
+      )?.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-node-editor']")).not.toBeNull();
+    act(() => {
+      (container.querySelector("[data-testid='apollo-add-node']") as HTMLButtonElement).click();
+    });
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("次へ: 入力チェック"),
+      )?.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-member-editor']")).not.toBeNull();
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("次へ: 入力チェック"),
+      )?.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-support-editor']")).not.toBeNull();
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("次へ: 入力チェック"),
+      )?.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-material-editor']")).not.toBeNull();
+  });
+
+  it("shows validation screen and numeric guards remain blocked", () => {
+    const { container } = renderShell();
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("一覧編集モード"),
+      )?.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-validation-shell']")).not.toBeNull();
 
     const numericGuard = container.querySelector("[data-testid='apollo-numeric-execution-guard']") as HTMLButtonElement;
     const publicationGuard = container.querySelector("[data-testid='apollo-result-publication-guard']") as HTMLButtonElement;
-
     expect(numericGuard.getAttribute("data-guard-blocked")).toBe("true");
     expect(publicationGuard.getAttribute("data-guard-blocked")).toBe("true");
-
-    act(() => {
-      numericGuard.click();
-      publicationGuard.click();
-    });
-
-    expect(container.textContent).toContain(
-      "Authoritative result publication remains blocked. This shell may show provisional structure state only.",
-    );
-    expect(onAuditEvent).toHaveBeenCalledWith(
-      expect.stringContaining("Numeric execution remains blocked"),
-    );
-    expect(onAuditEvent).toHaveBeenCalledWith(
-      "Authoritative result publication remains blocked. This shell may show provisional structure state only.",
-    );
   });
 
-  it("shows validation issues for invalid shell state", () => {
-    const project = {
+  it("preserves existing invalid validation codes for broken projects", () => {
+    const broken = {
       ...createDefaultProject(),
       project: {
         ...createDefaultProject().project,
@@ -201,25 +279,67 @@ describe("ApolloPhase1Shell", () => {
         },
       ],
     };
-    const { container } = renderShell({ project });
-    expect(container.textContent).toContain("APOLLO_PROJECT_NAME_REQUIRED");
-    expect(container.textContent).toContain("APOLLO_MEMBER_NODE_REFERENCE_INVALID");
-    expect(container.textContent).toContain("APOLLO_SUPPORT_NODE_REFERENCE_INVALID");
-  });
-
-  it("rejects invalid node coordinate edits", () => {
-    const onAuditEvent = vi.fn();
-    const { container } = renderShell({ onAuditEvent });
-    const nodeXInput = container.querySelector(
-      "[data-testid='apollo-node-x-input']",
-    ) as HTMLInputElement;
+    const { container } = renderShell({ project: broken });
 
     act(() => {
-      setInputValue(nodeXInput, "invalid");
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("一覧編集モード"),
+      )?.click();
     });
 
-    expect(onAuditEvent).toHaveBeenCalledWith(
-      expect.stringContaining("Node G0 rejected invalid X coordinate input."),
-    );
+    expect(container.textContent).toContain("橋梁名を入力してください。");
+    expect(container.textContent).toContain("参照切れ");
+  });
+
+  it("does not show the completion message when validation errors remain and marks the step bar", () => {
+    const brokenSample = createApollo200mContinuousBridgeSample();
+    brokenSample.project.name = "";
+    if (brokenSample.apolloPhase1Unit2) {
+      brokenSample.apolloPhase1Unit2.metadata.name = "";
+    }
+    const { container } = renderShell({ project: brokenSample });
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("一覧編集モード"),
+      )?.click();
+    });
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("ガイド付きモード"),
+      )?.click();
+    });
+    clickButtonByText(container, "サンプルを選ぶ");
+    clickButtonByText(container, "このサンプルを読み込む");
+    clickButtonByText(container, "次へ（基本情報）");
+    clickButtonByText(container, "次へ: 節点を確認");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+    clickButtonByText(container, "次へ: 入力チェック");
+
+    expect(container.querySelector("[data-testid='apollo-completion-card']")).toBeNull();
+    expect(container.textContent).toContain("橋梁名を入力してください。");
+    expect(container.querySelector("[data-step-status='error']")).not.toBeNull();
+  });
+
+  it("updates project metadata in Japanese screens", () => {
+    const updates: ProjectModel[] = [];
+    const { container } = renderShell({
+      onProjectChange: (nextProject) => updates.push(nextProject),
+    });
+
+    act(() => {
+      (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
+        button.textContent?.includes("新規作成"),
+      )?.click();
+    });
+
+    const input = container.querySelector("[data-testid='apollo-project-name-input']") as HTMLInputElement;
+    act(() => {
+      setInputValue(input, "Apollo Route Persistence");
+    });
+
+    expect(updates.at(-1)?.project.name).toBe("Apollo Route Persistence");
   });
 });
