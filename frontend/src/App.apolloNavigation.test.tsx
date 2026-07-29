@@ -55,6 +55,16 @@ function inputByTestId(testId: string): HTMLInputElement {
   return input;
 }
 
+function clickButtonByText(pattern: string) {
+  const button = Array.from(document.querySelectorAll("button")).find((candidate) =>
+    candidate.textContent?.includes(pattern),
+  ) as HTMLButtonElement | undefined;
+  if (!button) {
+    throw new Error(`Button not found by text: ${pattern}`);
+  }
+  button.click();
+}
+
 function selectByTestId(testId: string): HTMLSelectElement {
   const select = document.querySelector(`[data-testid="${testId}"]`) as HTMLSelectElement | null;
   if (!select) {
@@ -114,7 +124,18 @@ describe("App Apollo navigation", () => {
     expect(document.querySelector("[data-testid='apollo-phase1-shell']")).not.toBeNull();
 
     await act(async () => {
+      clickButtonByText("新規作成");
+    });
+
+    await act(async () => {
       setInputValue(inputByTestId("apollo-project-name-input"), "Apollo Route Persistence");
+    });
+
+    await act(async () => {
+      clickButtonByText("次へ: 節点を確認");
+    });
+
+    await act(async () => {
       clickButtonByTestId("apollo-add-node");
     });
 
@@ -141,6 +162,9 @@ describe("App Apollo navigation", () => {
     });
 
     expect(window.location.pathname).toBe("/pro/apollo");
+    await act(async () => {
+      clickButtonByText("一覧編集モード");
+    });
     expect(inputByTestId("apollo-project-name-input").value).toBe("Apollo Route Persistence");
     expect(document.body.textContent).toContain("11");
     await act(async () => {

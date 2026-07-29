@@ -5662,11 +5662,11 @@ button:disabled {
 }
 .apollo-phase1-shell {
   display: grid;
-  gap: 20px;
-  padding: 24px;
+  gap: 16px;
+  padding: 18px;
   background:
     radial-gradient(circle at top right, rgba(31, 111, 235, 0.12), transparent 28%),
-    linear-gradient(180deg, #f6f9fc 0%, #eef3f8 100%);
+    linear-gradient(180deg, #f7f6ef 0%, #edf3f7 100%);
   color: #162233;
 }
 
@@ -5675,9 +5675,9 @@ button:disabled {
 .apollo-editor-card,
 .apollo-unit2-summary-grid > article {
   border: 1px solid #d7e2ee;
-  border-radius: 16px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 14px 30px rgba(22, 34, 51, 0.08);
+  box-shadow: 0 10px 24px rgba(22, 34, 51, 0.08);
 }
 
 .apollo-unit2-header {
@@ -5685,29 +5685,42 @@ button:disabled {
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  padding: 20px 24px;
+  padding: 16px 18px;
 }
 
 .apollo-unit2-header h1 {
   margin: 4px 0 8px;
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 .apollo-unit2-header-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 
 .apollo-unit2-header-actions button,
 .apollo-unit2-tabs button,
 .apollo-editor-card button {
   border: 1px solid #9ab4d0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: #f8fbff;
   color: #19314d;
-  padding: 9px 14px;
+  min-height: 34px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 600;
+}
+
+.apollo-phase1-shell button.apollo-button-primary {
+  background: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+}
+
+.apollo-phase1-shell button.apollo-button-primary:disabled {
+  background: #9ab4d0;
+  border-color: #9ab4d0;
 }
 
 .apollo-unit2-header-actions button:disabled,
@@ -5717,7 +5730,7 @@ button:disabled {
 }
 
 .apollo-phase1-banner {
-  padding: 16px 20px;
+  padding: 14px 16px;
   border-left: 6px solid #d17a00;
 }
 
@@ -5728,7 +5741,7 @@ button:disabled {
 }
 
 .apollo-unit2-summary-grid > article {
-  padding: 18px 20px;
+  padding: 16px;
 }
 
 .apollo-project-meta-list {
@@ -5785,7 +5798,7 @@ button:disabled {
   width: 100%;
   margin-top: 6px;
   border: 1px solid #bfd0e2;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 8px 10px;
   background: #fff;
   color: #162233;
@@ -5802,14 +5815,14 @@ button:disabled {
 
 .apollo-unit2-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(360px, 1fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.95fr);
+  gap: 16px;
 }
 
 .apollo-unit2-editor,
 .apollo-unit2-visual-panel {
   display: grid;
-  gap: 18px;
+  gap: 14px;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -5818,7 +5831,7 @@ button:disabled {
 .apollo-unit2-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .apollo-unit2-tabs button.active {
@@ -5828,15 +5841,15 @@ button:disabled {
 }
 
 .apollo-editor-card {
-  padding: 18px;
+  padding: 16px;
 }
 
 .apollo-editor-card-header {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   align-items: flex-start;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .apollo-editor-card-header h2,
@@ -5853,12 +5866,12 @@ button:disabled {
 .apollo-edit-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 620px;
 }
 
 .apollo-edit-table th,
 .apollo-edit-table td {
-  padding: 10px;
+  padding: 8px 10px;
   border-bottom: 1px solid #e6edf5;
   vertical-align: top;
   text-align: left;
@@ -5896,11 +5909,178 @@ button:disabled {
 }
 
 .apollo-topology-view {
-  min-height: 520px;
+  min-height: 420px;
   border: 1px solid #d7e2ee;
   border-radius: 14px;
   overflow: hidden;
   background: #f8fbff;
+}
+
+.apollo-screen-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.apollo-start-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.apollo-start-card-recommended {
+  position: relative;
+  border-color: #1f6feb;
+  box-shadow: 0 16px 28px rgba(31, 111, 235, 0.12);
+}
+
+.apollo-recommend-badge {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e8f1ff;
+  color: #1f4f98;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.apollo-stepbar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-stepbar-item button {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7e2ee;
+  background: #edf3f7;
+  color: #5a6b7d;
+  font-size: 13px;
+  text-align: center;
+}
+
+.apollo-stepbar-symbol {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.apollo-stepbar-label {
+  font-weight: 700;
+}
+
+.apollo-stepbar-state {
+  font-size: 11px;
+}
+
+.apollo-stepbar-current button {
+  background: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+}
+
+.apollo-stepbar-complete button {
+  background: #eaf6ef;
+  border-color: #81c995;
+  color: #215c34;
+}
+
+.apollo-stepbar-error button {
+  background: #fff1f2;
+  border-color: #e59aa5;
+  color: #a11d2d;
+}
+
+.apollo-stepbar-available button {
+  background: #f8fbff;
+  border-color: #9ab4d0;
+  color: #19314d;
+}
+
+.apollo-stepbar-locked button {
+  background: #f4f6f8;
+  border-color: #d7e2ee;
+  color: #8392a3;
+}
+
+.apollo-workflow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.apollo-sample-jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.apollo-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.apollo-detail-grid label,
+.apollo-project-form-grid label {
+  display: grid;
+  gap: 4px;
+}
+
+.apollo-validation-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-validation-list li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 120px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f5f9fd;
+}
+
+.apollo-empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: #57697d;
+}
+
+.apollo-applied-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.apollo-applied-summary span {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f3f7fb;
+  font-size: 13px;
+}
+
+.apollo-completion-card {
+  border-left: 6px solid #2f855a;
+}
+
+.apollo-developer-info summary {
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .apollo-validation-error {
@@ -5916,7 +6096,11 @@ button:disabled {
   .apollo-unit2-summary-grid,
   .apollo-project-form-grid,
   .apollo-topology-summary,
-  .apollo-project-meta-list {
+  .apollo-project-meta-list,
+  .apollo-start-cards,
+  .apollo-stepbar,
+  .apollo-detail-grid,
+  .apollo-validation-list li {
     grid-template-columns: 1fr;
   }
 }
