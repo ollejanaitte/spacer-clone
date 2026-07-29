@@ -3982,6 +3982,282 @@ button:disabled {
   border-bottom: 0;
 }
 
+/* Line tab (activeTab === "line") — scoped UI improvements */
+.liner-tab-line {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.liner-tab-line .liner-line-card {
+  margin-bottom: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.liner-tab-line .liner-line-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.liner-tab-line .liner-line-card-heading {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.liner-tab-line .liner-line-card-heading h2 {
+  margin-bottom: 4px;
+}
+
+.liner-tab-line .liner-line-card-lead {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.liner-tab-line .liner-line-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+
+.liner-tab-line .liner-line-active-indicator {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid #c5d8ea;
+  border-radius: 6px;
+  background: #f4f9fd;
+  color: #1f4f78;
+  font-weight: 600;
+}
+
+.liner-tab-line .liner-line-table-wrap {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  background: #ffffff;
+  -webkit-overflow-scrolling: touch;
+}
+
+.liner-tab-line .liner-edit-table {
+  min-width: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.liner-tab-line .liner-alignment-table {
+  min-width: 640px;
+}
+
+.liner-tab-line .liner-line-table {
+  min-width: 720px;
+}
+
+.liner-tab-line .liner-horizontal-element-table {
+  min-width: 1080px;
+}
+
+.liner-tab-line .liner-edit-table th,
+.liner-tab-line .liner-edit-table td {
+  min-height: 40px;
+  padding: 6px 8px;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.liner-tab-line .liner-edit-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.liner-tab-line .liner-line-name-cell {
+  width: 18%;
+  min-width: 120px;
+}
+
+.liner-tab-line .liner-line-id-cell,
+.liner-tab-line .liner-line-base-cell {
+  width: 14%;
+  min-width: 96px;
+}
+
+.liner-tab-line .liner-line-toggle-cell {
+  width: 72px;
+  text-align: center;
+}
+
+.liner-tab-line .liner-line-select-cell {
+  width: 96px;
+}
+
+.liner-tab-line .liner-line-actions-cell {
+  width: auto;
+  min-width: 168px;
+}
+
+.liner-tab-line .liner-line-id-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.liner-tab-line .liner-line-protected-note {
+  display: block;
+  color: #6b7c8f;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.liner-tab-line .liner-alignment-row.is-selected,
+.liner-tab-line .liner-line-row.is-selected {
+  background: #edf5fc;
+}
+
+.liner-tab-line .liner-line-row.base-line {
+  background: #f8fafc;
+}
+
+.liner-tab-line .liner-line-row.base-line.is-selected {
+  background: #e8f2fa;
+}
+
+.liner-tab-line .liner-line-select-btn {
+  min-height: 32px;
+  min-width: 72px;
+  padding: 0 10px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #eef5fb;
+  color: #243447;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.liner-tab-line .liner-line-select-btn.is-current {
+  border-color: #3d7ab8;
+  background: #dbeaf7;
+  color: #1f4f78;
+}
+
+.liner-tab-line .liner-line-row-btn {
+  min-height: 30px;
+  padding: 0 8px;
+  border: 1px solid #9eb1c4;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #243447;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.liner-tab-line .liner-line-row-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 0;
+}
+
+.liner-tab-line .liner-line-row-btn-danger {
+  border-color: #d4a0a0;
+  background: #fff5f5;
+  color: #8b2e2e;
+}
+
+.liner-tab-line .liner-line-row-btn:disabled,
+.liner-tab-line .liner-line-select-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.liner-tab-line .liner-line-row-btn:focus-visible,
+.liner-tab-line .liner-line-select-btn:focus-visible,
+.liner-tab-line .liner-action-btn:focus-visible,
+.liner-tab-line .liner-edit-table input:focus-visible,
+.liner-tab-line .liner-edit-table select:focus-visible {
+  outline: 2px solid #3d7ab8;
+  outline-offset: 2px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:nth-child(1),
+.liner-tab-line .liner-horizontal-element-table td:nth-child(1) {
+  width: 88px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:nth-child(2),
+.liner-tab-line .liner-horizontal-element-table td:nth-child(2) {
+  width: 72px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:nth-child(n + 3):nth-child(-n + 7),
+.liner-tab-line .liner-horizontal-element-table td:nth-child(n + 3):nth-child(-n + 7) {
+  width: 88px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:nth-child(8),
+.liner-tab-line .liner-horizontal-element-table td:nth-child(8) {
+  width: 72px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:nth-child(n + 9):nth-child(-n + 11),
+.liner-tab-line .liner-horizontal-element-table td:nth-child(n + 9):nth-child(-n + 11) {
+  width: 96px;
+}
+
+.liner-tab-line .liner-horizontal-element-table th:last-child,
+.liner-tab-line .liner-horizontal-element-table td:last-child {
+  width: 48px;
+  text-align: center;
+}
+
+.liner-tab-line .liner-line-metadata-card .liner-line-card-header h2 {
+  margin-bottom: 0;
+}
+
+.liner-tab-line .liner-line-metadata-grid {
+  margin-top: 4px;
+}
+
+@media (max-width: 1400px) {
+  .liner-tab-line .liner-line-metadata-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .liner-tab-line .liner-section-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1100px) {
+  .liner-tab-line .liner-line-metadata-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .liner-tab-line .liner-line-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .liner-tab-line .liner-line-card-actions {
+    justify-content: flex-start;
+  }
+}
+
 .liner-preview-page {
   min-height: 100vh;
   padding: 12px;

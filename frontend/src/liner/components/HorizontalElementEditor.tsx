@@ -95,10 +95,13 @@ export function HorizontalElementEditor({
     }
   };
   return (
-    <section className="liner-edit-panel" aria-labelledby="liner-edit-elements-title">
-      <div className="liner-edit-section-header">
+    <section
+      className="liner-edit-panel liner-line-card liner-line-elements-card"
+      aria-labelledby="liner-edit-elements-title"
+    >
+      <div className="liner-line-card-header liner-edit-section-header">
         <h2 id="liner-edit-elements-title">{ja.liner.editor.elementSection}</h2>
-        <div className="liner-section-actions">
+        <div className="liner-line-card-actions liner-section-actions">
           <button
             type="button"
             className="liner-action-btn"
@@ -128,23 +131,23 @@ export function HorizontalElementEditor({
           </button>
         </div>
       </div>
-      <div className="liner-edit-table-wrap">
+      <div className="liner-line-table-wrap liner-edit-table-wrap">
         <table className="liner-edit-table liner-horizontal-element-table">
           <caption>{ja.liner.editor.elementTableCaption}</caption>
           <thead>
             <tr>
-              <th>{ja.liner.fields.elementId}</th>
-              <th>{ja.liner.fields.elementType}</th>
-              <th>{ja.liner.fields.startX}</th>
-              <th>{ja.liner.fields.startY}</th>
-              <th>{ja.liner.fields.azimuth}</th>
-              <th>{ja.liner.fields.length}</th>
-              <th>{ja.liner.fields.radius}</th>
-              <th>{ja.liner.fields.turn}</th>
-              <th>{ja.liner.fields.clothoidParameter}</th>
-              <th>{ja.liner.fields.startRadius}</th>
-              <th>{ja.liner.fields.endRadius}</th>
-              <th>{ja.liner.fields.actions}</th>
+              <th scope="col">{ja.liner.fields.elementId}</th>
+              <th scope="col">{ja.liner.fields.elementType}</th>
+              <th scope="col">{ja.liner.fields.startX}</th>
+              <th scope="col">{ja.liner.fields.startY}</th>
+              <th scope="col">{ja.liner.fields.azimuth}</th>
+              <th scope="col">{ja.liner.fields.length}</th>
+              <th scope="col">{ja.liner.fields.radius}</th>
+              <th scope="col">{ja.liner.fields.turn}</th>
+              <th scope="col">{ja.liner.fields.clothoidParameter}</th>
+              <th scope="col">{ja.liner.fields.startRadius}</th>
+              <th scope="col">{ja.liner.fields.endRadius}</th>
+              <th scope="col">{ja.liner.fields.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -335,18 +338,20 @@ export function HorizontalElementEditor({
                     <span aria-hidden="true">—</span>
                   )}
                 </td>
-                <td>
+                <td className="liner-line-actions-cell">
                   <button
                     type="button"
+                    className="liner-line-row-btn liner-line-row-btn-icon liner-line-row-btn-danger"
                     onClick={() => {
                       rowKeys.current.splice(elementIndex, 1);
                       onDraftChange(removeLinerAlignmentElementAtIndex(draft, elementIndex));
                     }}
                     disabled={draft.alignment.elements.length <= 1}
                     data-testid={`remove-liner-element-${element.id}`}
+                    aria-label={`${ja.liner.editor.removeElement}: ${element.id}`}
                     title={ja.liner.editor.removeElement}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} aria-hidden="true" />
                   </button>
                 </td>
               </tr>

@@ -381,6 +381,24 @@ describe("LinerEditPage", () => {
     expect(onOpenMappingReview).toHaveBeenCalledTimes(1);
   });
 
+  it("renders line tab with scoped layout wrapper and card sections", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    const lineTab = document.querySelector("[data-testid=liner-tab-line]");
+    expect(lineTab).not.toBeNull();
+    expect(lineTab?.classList.contains("liner-tab-line")).toBe(true);
+
+    expect(document.querySelector(".liner-line-alignment-card")).not.toBeNull();
+    expect(document.querySelector(".liner-line-offset-card")).not.toBeNull();
+    expect(document.querySelector(".liner-line-metadata-card")).not.toBeNull();
+    expect(document.querySelector(".liner-line-elements-card")).not.toBeNull();
+
+    const removeButton = document.querySelector(
+      "[data-testid=remove-liner-element-S1]",
+    ) as HTMLButtonElement;
+    expect(removeButton.getAttribute("aria-label")).toContain(ja.liner.editor.removeElement);
+  });
+
   it("renders seven setup tabs in JIP-LINER display order", () => {
     render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
 

@@ -256,7 +256,7 @@ export function LinerEditPage({
       <div className="liner-edit-layout">
         <LinerSetupTabs activeTab={activeTab} onTabChange={setActiveTab}>
           {activeTab === "line" && (
-            <>
+            <div className="liner-tab-line" data-testid="liner-tab-line">
               <AlignmentManager
                 draft={draft}
                 onDraftChange={changeDraft}
@@ -267,9 +267,14 @@ export function LinerEditPage({
                 onDraftChange={changeDraft}
                 onCompositionStateChange={reportCompositionState}
               />
-              <section className="liner-edit-panel" aria-labelledby="liner-edit-metadata-title">
-                <h2 id="liner-edit-metadata-title">{ja.liner.editor.metadataSection}</h2>
-                <div className="liner-edit-form-grid">
+              <section
+                className="liner-edit-panel liner-line-card liner-line-metadata-card"
+                aria-labelledby="liner-edit-metadata-title"
+              >
+                <div className="liner-line-card-header">
+                  <h2 id="liner-edit-metadata-title">{ja.liner.editor.metadataSection}</h2>
+                </div>
+                <div className="liner-edit-form-grid liner-line-metadata-grid">
                   <label>
                     <span>{ja.liner.fields.alignmentId}</span>
                     <CompositionAwareInput
@@ -316,7 +321,7 @@ export function LinerEditPage({
                 onInputValidityChange={reportInputValidity}
                 onCompositionStateChange={reportCompositionState}
               />
-            </>
+            </div>
           )}
 
           {activeTab === "station" && (

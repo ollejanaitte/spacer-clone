@@ -56,141 +56,192 @@ export function AlignmentLineManager({
     updateLines(next.map((line, sortIndex) => ({ ...line, sortIndex })));
   };
 
+  const addOffsetLine = () => {
+    const newId = nextOffsetLineId(offsetLines);
+    const newLine: CrossSectionOffsetLineDraft = {
+      id: newId,
+      offset: 0,
+      elevation: 0,
+      role: "custom",
+      enabled: true,
+      sortIndex: offsetLines.length,
+      baseLineId: centerlineId,
+    };
+    updateLines([...offsetLines, newLine]);
+  };
+
+  const centerlineSelected = activeLineId === centerlineId;
+
   return (
-    <section className="liner-edit-panel" aria-labelledby="liner-line-manager-title">
-      <h2 id="liner-line-manager-title">{ja.liner.lineManager.title}</h2>
-      <p className="liner-edit-help">{ja.liner.lineManager.lead}</p>
-      <table className="liner-line-table" data-testid="liner-line-table">
-        <caption>{ja.liner.lineManager.tableCaption}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{ja.liner.lineManager.label}</th>
-            <th scope="col">{ja.liner.lineManager.id}</th>
-            <th scope="col">{ja.liner.lineManager.base}</th>
-            <th scope="col">{ja.liner.lineManager.enabled}</th>
-            <th scope="col">{ja.liner.lineManager.active}</th>
-            <th scope="col">{ja.liner.lineManager.actions}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr data-testid="liner-line-row-centerline" className="liner-line-row base-line">
-            <td>{ja.liner.lineManager.centerlineLabel}</td>
-            <td>{centerlineId}</td>
-            <td>{ja.liner.lineManager.baseSelf}</td>
-            <td>—</td>
-            <td>
-              <button
-                type="button"
-                aria-pressed={activeLineId === centerlineId}
-                data-testid="liner-line-select-centerline"
-                onClick={() => onDraftChange((current) => setActiveLineId(current, centerlineId))}
-              >
-                {activeLineId === centerlineId
-                  ? ja.liner.lineManager.current
-                  : ja.liner.lineManager.select}
-              </button>
-            </td>
-            <td>{ja.liner.lineManager.centerlineProtected}</td>
-          </tr>
-          {offsetLines.map((line) => (
-            <tr key={line.id} data-testid={`liner-line-row-${line.id}`} className="liner-line-row">
-              <td>
-                <CompositionAwareInput
-                  value={line.label ?? ""}
-                  data-testid={`liner-line-label-${line.id}`}
-                  onCompositionStateChange={onCompositionStateChange}
-                  onValueChange={(value) =>
-                    updateLines(
-                      offsetLines.map((entry) =>
-                        entry.id === line.id ? { ...entry, label: value } : entry,
-                      ),
-                    )
-                  }
-                />
+    <section
+      className="liner-edit-panel liner-line-card liner-line-offset-card"
+      aria-labelledby="liner-line-manager-title"
+    >
+      <div className="liner-line-card-header">
+        <div className="liner-line-card-heading">
+          <h2 id="liner-line-manager-title">{ja.liner.lineManager.title}</h2>
+          <p className="liner-edit-help liner-line-card-lead">{ja.liner.lineManager.lead}</p>
+        </div>
+        <div className="liner-line-card-actions">
+          <button
+            type="button"
+            className="liner-action-btn"
+            data-testid="liner-line-add"
+            onClick={addOffsetLine}
+          >
+            {ja.liner.lineManager.add}
+          </button>
+        </div>
+      </div>
+      <div className="liner-line-table-wrap">
+        <table className="liner-edit-table liner-line-table" data-testid="liner-line-table">
+          <caption>{ja.liner.lineManager.tableCaption}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{ja.liner.lineManager.label}</th>
+              <th scope="col">{ja.liner.lineManager.id}</th>
+              <th scope="col">{ja.liner.lineManager.base}</th>
+              <th scope="col">{ja.liner.lineManager.enabled}</th>
+              <th scope="col">{ja.liner.lineManager.active}</th>
+              <th scope="col">{ja.liner.lineManager.actions}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              data-testid="liner-line-row-centerline"
+              className={centerlineSelected ? "liner-line-row base-line is-selected" : "liner-line-row base-line"}
+              aria-selected={centerlineSelected}
+            >
+              <td className="liner-line-name-cell">{ja.liner.lineManager.centerlineLabel}</td>
+              <td className="liner-line-id-cell" title={centerlineId}>
+                <span className="liner-line-id-text">{centerlineId}</span>
               </td>
-              <td>{line.id}</td>
-              <td>{line.baseLineId ?? centerlineId}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={line.enabled !== false}
-                  data-testid={`liner-line-enabled-${line.id}`}
-                  onChange={(event) =>
-                    updateLines(
-                      offsetLines.map((entry) =>
-                        entry.id === line.id ? { ...entry, enabled: event.target.checked } : entry,
-                      ),
-                    )
-                  }
-                />
+              <td className="liner-line-base-cell">{ja.liner.lineManager.baseSelf}</td>
+              <td className="liner-line-toggle-cell" aria-hidden="true">
+                —
               </td>
-              <td>
+              <td className="liner-line-select-cell">
                 <button
                   type="button"
-                  aria-pressed={activeLineId === line.id}
-                  data-testid={`liner-line-select-${line.id}`}
-                  onClick={() => onDraftChange((current) => setActiveLineId(current, line.id))}
+                  className={centerlineSelected ? "liner-line-select-btn is-current" : "liner-line-select-btn"}
+                  aria-pressed={centerlineSelected}
+                  data-testid="liner-line-select-centerline"
+                  onClick={() => onDraftChange((current) => setActiveLineId(current, centerlineId))}
                 >
-                  {activeLineId === line.id
+                  {centerlineSelected
                     ? ja.liner.lineManager.current
                     : ja.liner.lineManager.select}
                 </button>
               </td>
-              <td>
-                <button
-                  type="button"
-                  data-testid={`liner-line-move-up-${line.id}`}
-                  onClick={() => moveLine(line.id, -1)}
-                >
-                  {ja.liner.editor.moveUp}
-                </button>
-                <button
-                  type="button"
-                  data-testid={`liner-line-move-down-${line.id}`}
-                  onClick={() => moveLine(line.id, 1)}
-                >
-                  {ja.liner.editor.moveDown}
-                </button>
-                <button
-                  type="button"
-                  data-testid={`liner-line-remove-${line.id}`}
-                  onClick={() => {
-                    const nextLines = offsetLines.filter((entry) => entry.id !== line.id);
-                    onDraftChange((current) => {
-                      const updated = updateActiveAlignmentOffsetLines(current, nextLines);
-                      if (updated.activeLineId === line.id) {
-                        return { ...updated, activeLineId: undefined };
-                      }
-                      return updated;
-                    });
-                  }}
-                >
-                  {ja.liner.editor.remove}
-                </button>
+              <td className="liner-line-actions-cell">
+                <span className="liner-line-protected-note">{ja.liner.lineManager.centerlineProtected}</span>
               </td>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button
-        type="button"
-        data-testid="liner-line-add"
-        onClick={() => {
-          const newId = nextOffsetLineId(offsetLines);
-          const newLine: CrossSectionOffsetLineDraft = {
-            id: newId,
-            offset: 0,
-            elevation: 0,
-            role: "custom",
-            enabled: true,
-            sortIndex: offsetLines.length,
-            baseLineId: centerlineId,
-          };
-          updateLines([...offsetLines, newLine]);
-        }}
-      >
-        {ja.liner.lineManager.add}
-      </button>
+            {offsetLines.map((line) => {
+              const selected = activeLineId === line.id;
+              const lineLabel = line.label ?? line.id;
+              return (
+                <tr
+                  key={line.id}
+                  data-testid={`liner-line-row-${line.id}`}
+                  className={selected ? "liner-line-row is-selected" : "liner-line-row"}
+                  aria-selected={selected}
+                >
+                  <td className="liner-line-name-cell">
+                    <CompositionAwareInput
+                      value={line.label ?? ""}
+                      data-testid={`liner-line-label-${line.id}`}
+                      onCompositionStateChange={onCompositionStateChange}
+                      onValueChange={(value) =>
+                        updateLines(
+                          offsetLines.map((entry) =>
+                            entry.id === line.id ? { ...entry, label: value } : entry,
+                          ),
+                        )
+                      }
+                    />
+                  </td>
+                  <td className="liner-line-id-cell" title={line.id}>
+                    <span className="liner-line-id-text">{line.id}</span>
+                  </td>
+                  <td className="liner-line-base-cell" title={line.baseLineId ?? centerlineId}>
+                    <span className="liner-line-id-text">{line.baseLineId ?? centerlineId}</span>
+                  </td>
+                  <td className="liner-line-toggle-cell">
+                    <input
+                      type="checkbox"
+                      checked={line.enabled !== false}
+                      data-testid={`liner-line-enabled-${line.id}`}
+                      aria-label={`${ja.liner.lineManager.enabled}: ${lineLabel}`}
+                      onChange={(event) =>
+                        updateLines(
+                          offsetLines.map((entry) =>
+                            entry.id === line.id ? { ...entry, enabled: event.target.checked } : entry,
+                          ),
+                        )
+                      }
+                    />
+                  </td>
+                  <td className="liner-line-select-cell">
+                    <button
+                      type="button"
+                      className={selected ? "liner-line-select-btn is-current" : "liner-line-select-btn"}
+                      aria-pressed={selected}
+                      data-testid={`liner-line-select-${line.id}`}
+                      onClick={() => onDraftChange((current) => setActiveLineId(current, line.id))}
+                    >
+                      {activeLineId === line.id
+                        ? ja.liner.lineManager.current
+                        : ja.liner.lineManager.select}
+                    </button>
+                  </td>
+                  <td className="liner-line-actions-cell">
+                    <div className="liner-row-actions" role="group" aria-label={ja.liner.lineManager.actions}>
+                      <button
+                        type="button"
+                        className="liner-line-row-btn"
+                        data-testid={`liner-line-move-up-${line.id}`}
+                        onClick={() => moveLine(line.id, -1)}
+                        aria-label={`${ja.liner.editor.moveUp}: ${lineLabel}`}
+                      >
+                        {ja.liner.editor.moveUp}
+                      </button>
+                      <button
+                        type="button"
+                        className="liner-line-row-btn"
+                        data-testid={`liner-line-move-down-${line.id}`}
+                        onClick={() => moveLine(line.id, 1)}
+                        aria-label={`${ja.liner.editor.moveDown}: ${lineLabel}`}
+                      >
+                        {ja.liner.editor.moveDown}
+                      </button>
+                      <button
+                        type="button"
+                        className="liner-line-row-btn liner-line-row-btn-danger"
+                        data-testid={`liner-line-remove-${line.id}`}
+                        onClick={() => {
+                          const nextLines = offsetLines.filter((entry) => entry.id !== line.id);
+                          onDraftChange((current) => {
+                            const updated = updateActiveAlignmentOffsetLines(current, nextLines);
+                            if (updated.activeLineId === line.id) {
+                              return { ...updated, activeLineId: undefined };
+                            }
+                            return updated;
+                          });
+                        }}
+                        aria-label={`${ja.liner.editor.remove}: ${lineLabel}`}
+                        title={ja.liner.editor.remove}
+                      >
+                        {ja.liner.editor.remove}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
