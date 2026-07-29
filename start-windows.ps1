@@ -8,6 +8,10 @@ $ErrorActionPreference = "Stop"
 $RootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $FrontendDir = Join-Path $RootDir "frontend"
 $LogDir = Join-Path $RootDir ".local_projects"
+$FrontendPackageJson = Join-Path $FrontendDir "package.json"
+$FrontendLockFile = Join-Path $FrontendDir "package-lock.json"
+$FrontendNodeModules = Join-Path $FrontendDir "node_modules"
+$FrontendDependencyStamp = Join-Path $LogDir "frontend-deps.lockstamp"
 $BackendOutLog = Join-Path $LogDir "backend-start.out.log"
 $BackendErrLog = Join-Path $LogDir "backend-start.err.log"
 $BackendProcess = $null
@@ -21,6 +25,104 @@ function Write-Info {
 function Write-UserError {
   param([string]$Message)
   Write-Host "[エラー] $Message" -ForegroundColor Red
+}
+
+function Get-DependencyStampValue {
+  param([string[]]$Paths)
+
+  $HashParts = foreach ($Path in $Paths) {
+    if (Test-Path $Path) {
+      (Get-FileHash -Algorithm SHA256 -Path $Path).Hash
+    }
+  }
+
+  return ($HashParts -join ":")
+}
+
+function Test-FrontendDependencyResolution {
+  param(
+    [string]$NodeExecutable,
+    [string]$NpmExecutable
+  )
+
+  Push-Location $FrontendDir
+  try {
+    & $NodeExecutable -e "require.resolve('zod/package.json')" *> $null
+    if ($LASTEXITCODE -ne 0) {
+      return $false
+    }
+
+    & $NpmExecutable ls --depth=0 --json *> $null
+    return $LASTEXITCODE -eq 0
+  } finally {
+    Pop-Location
+  }
+}
+
+function Repair-FrontendDependencies {
+  param(
+    [string]$NpmExecutable,
+    [string]$NodeExecutable
+  )
+
+  $InstallCommand = "npm install"
+  if (Test-Path $FrontendLockFile) {
+    $InstallCommand = "npm ci"
+  }
+
+  Write-Info "依存関係が不足しているか古くなっています。$InstallCommand を実行します..."
+  Push-Location $FrontendDir
+  try {
+    if (Test-Path $FrontendLockFile) {
+      & $NpmExecutable ci
+    } else {
+      & $NpmExecutable install
+    }
+    if ($LASTEXITCODE -ne 0) {
+      throw "フロントエンド依存関係の復旧に失敗しました。frontend で $InstallCommand を実行し、成功を確認してから再実行してください。"
+    }
+  } finally {
+    Pop-Location
+  }
+
+  if (-not (Test-FrontendDependencyResolution -NodeExecutable $NodeExecutable -NpmExecutable $NpmExecutable)) {
+    throw "フロントエンド依存関係の復旧後も zod を解決できません。frontend で $InstallCommand を再実行し、ログを確認してください。"
+  }
+}
+
+function Ensure-FrontendDependencies {
+  param(
+    [string]$NpmExecutable,
+    [string]$NodeExecutable
+  )
+
+  Write-Info "フロントエンド依存関係を確認しています..."
+
+  if (-not (Test-Path $FrontendPackageJson)) {
+    throw "frontend/package.json が見つかりません。リポジトリの内容を確認してください。"
+  }
+
+  if (-not (Test-Path $FrontendLockFile)) {
+    Write-Info "frontend/package-lock.json が見つかりません。npm install を使用します。"
+  }
+
+  $ExpectedStamp = Get-DependencyStampValue @($FrontendPackageJson, $FrontendLockFile)
+  $StoredStamp = ""
+  if (Test-Path $FrontendDependencyStamp) {
+    $StoredStamp = (Get-Content $FrontendDependencyStamp -Raw).Trim()
+  }
+
+  $HasNodeModules = Test-Path $FrontendNodeModules
+  $DependenciesOk = $HasNodeModules -and (Test-FrontendDependencyResolution -NodeExecutable $NodeExecutable -NpmExecutable $NpmExecutable)
+  $StampMatches = $HasNodeModules -and $StoredStamp -eq $ExpectedStamp
+
+  if (-not $HasNodeModules -or -not $DependenciesOk -or -not $StampMatches) {
+    Repair-FrontendDependencies -NpmExecutable $NpmExecutable -NodeExecutable $NodeExecutable
+    $ExpectedStamp = Get-DependencyStampValue @($FrontendPackageJson, $FrontendLockFile)
+  }
+
+  Set-Content -Path $FrontendDependencyStamp -Value $ExpectedStamp -NoNewline
+  Write-Info "フロントエンド依存関係: OK"
 }
 
 function Stop-Backend {
@@ -80,16 +182,19 @@ try {
     throw "frontend フォルダが見つかりません。リポジトリのルートで実行してください。"
   }
 
+  New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+
   $NpmCommand = Get-Command npm.cmd -ErrorAction SilentlyContinue
   if ($null -eq $NpmCommand) {
     throw 'npm コマンドが見つかりません。Node.js をインストールしてください。'
   }
 
-  if (-not (Test-Path (Join-Path $FrontendDir "node_modules"))) {
-    throw 'frontend/node_modules が見つかりません。先に cd frontend して npm install を実行してください。'
+  $NodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
+  if ($null -eq $NodeCommand) {
+    throw 'node コマンドが見つかりません。Node.js をインストールしてください。'
   }
 
-  New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+  Ensure-FrontendDependencies -NpmExecutable $NpmCommand.Source -NodeExecutable $NodeCommand.Source
 
   if (Test-SpacerBackend) {
     Write-Info "既に起動している Spacer Backend を使用します: http://127.0.0.1:8000"
@@ -100,7 +205,7 @@ try {
       throw "ポート8000は別のプロセスが使用しています。使用中のサービスを終了してから再実行してください。"
     }
 
-    Write-Info "バックエンドを起動しています: http://127.0.0.1:8000"
+    Write-Info "バックエンドを起動しています..."
     Remove-Item $BackendOutLog, $BackendErrLog -Force -ErrorAction SilentlyContinue
     $BackendArgs = @(
       "-m", "uvicorn",
@@ -139,7 +244,7 @@ try {
     }
   }
 
-  Write-Info "Electron を起動しています。GPU_MODE=$GpuMode"
+  Write-Info "Electron を起動しています..."
   [Environment]::SetEnvironmentVariable("GPU_MODE", $GpuMode, "Process")
   Push-Location $FrontendDir
   try {

@@ -1,7 +1,7 @@
 # Ubuntu / WSL Startup Guide
 
 This is a one-command startup guide for `spacer-clone` on Ubuntu 20.04 or later / WSL2 (Ubuntu).
-It is positioned as the equivalent of `start-windows.ps1` / `start-mac.sh` and automatically sets up the Python venv, npm dependencies, and Electron.
+It is positioned as the equivalent of `start-windows.ps1` / `start-mac.sh` and automatically sets up the Python venv, synchronizes npm dependencies, and launches Electron.
 
 ## Requirements
 
@@ -19,7 +19,7 @@ sudo apt update
 sudo apt install -y python3 python3-venv python3-pip nodejs npm
 ```
 
-> When `python3` and `node` / `npm` are already on `PATH`, no manual preparation is required because the script creates the venv and `frontend/node_modules` automatically.
+> When `python3` and `node` / `npm` are already on `PATH`, no manual preparation is required because the script creates the venv and repairs `frontend/node_modules` automatically when dependencies are missing or outdated.
 
 ## Quick Start
 
@@ -33,7 +33,7 @@ What it does:
 1. Moves to the repository root.
 2. Creates `.venv` if missing.
 3. Auto-installs Python dependencies such as `fastapi`, `uvicorn`, `numpy`, and `scipy`.
-4. Creates `frontend/node_modules` via `npm install` if missing.
+4. Verifies `frontend/package.json` and `frontend/package-lock.json`, then runs `npm ci` when `frontend/node_modules` is missing, stale, or cannot resolve required packages such as `zod`.
 5. Builds `desktop/electron/dist/main.js` with `tsc` if missing.
 6. Generates `build/icon.png` with `scripts/build_icons.py` if missing.
 7. Starts the FastAPI backend on `http://127.0.0.1:8000`.
@@ -106,13 +106,13 @@ ss -ltn | grep 8000
 fuser -k 8000/tcp
 ```
 
-### "frontend/node_modules not found"
+### "frontend dependency recovery failed"
 
-This happens when the automatic `npm install` fails, for example in an offline environment. Run it manually:
+This happens when the automatic `npm ci` cannot complete, for example in an offline environment or when the lockfile and package manifest are out of sync. Run it manually:
 
 ```bash
 cd frontend
-npm install
+npm ci
 cd ..
 ./start-ubuntu.sh
 ```

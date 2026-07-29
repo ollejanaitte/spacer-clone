@@ -54,6 +54,10 @@ done
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 LOG_DIR="$ROOT_DIR/.local_projects"
+FRONTEND_PACKAGE_JSON="$FRONTEND_DIR/package.json"
+FRONTEND_LOCK_FILE="$FRONTEND_DIR/package-lock.json"
+FRONTEND_NODE_MODULES="$FRONTEND_DIR/node_modules"
+FRONTEND_DEPENDENCY_STAMP="$LOG_DIR/frontend-deps.lockstamp"
 BACKEND_OUT_LOG="$LOG_DIR/backend-start.out.log"
 BACKEND_ERR_LOG="$LOG_DIR/backend-start.err.log"
 VENV_DIR="$ROOT_DIR/.venv"
@@ -77,11 +81,87 @@ FRONTEND_PID=""
 info() { echo "[起動] $*"; }
 err()  { echo "[エラー] $*" >&2; }
 
+dependency_stamp_value() {
+  node -e '
+    const crypto = require("node:crypto");
+    const fs = require("node:fs");
+    const paths = process.argv.slice(1);
+    const hashes = [];
+    for (const filePath of paths) {
+      if (fs.existsSync(filePath)) {
+        hashes.push(crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex"));
+      }
+    }
+    process.stdout.write(hashes.join(":"));
+  ' "$@"
+}
+
+frontend_dependency_resolution_ok() {
+  (
+    cd "$FRONTEND_DIR"
+    node -e "require.resolve('zod/package.json')" >/dev/null 2>&1 &&
+    npm ls --depth=0 --json >/dev/null 2>&1
+  )
+}
+
+repair_frontend_dependencies() {
+  local install_command="npm install"
+  if [[ -f "$FRONTEND_LOCK_FILE" ]]; then
+    install_command="npm ci"
+  fi
+
+  info "依存関係が不足しているか古くなっています。${install_command} を実行します..."
+  if [[ -f "$FRONTEND_LOCK_FILE" ]]; then
+    ( cd "$FRONTEND_DIR" && npm ci )
+  else
+    ( cd "$FRONTEND_DIR" && npm install )
+  fi
+
+  if ! frontend_dependency_resolution_ok; then
+    err "フロントエンド依存関係の復旧後も zod を解決できません。frontend で ${install_command} を再実行し、ログを確認してください。"
+    exit 1
+  fi
+}
+
+ensure_frontend_dependencies() {
+  info "フロントエンド依存関係を確認しています..."
+
+  if [[ ! -f "$FRONTEND_PACKAGE_JSON" ]]; then
+    err "frontend/package.json が見つかりません。リポジトリの内容を確認してください。"
+    exit 1
+  fi
+
+  if [[ ! -f "$FRONTEND_LOCK_FILE" ]]; then
+    info "frontend/package-lock.json が見つかりません。npm install を使用します。"
+  fi
+
+  local expected_stamp=""
+  expected_stamp="$(dependency_stamp_value "$FRONTEND_PACKAGE_JSON" "$FRONTEND_LOCK_FILE")"
+  local stored_stamp=""
+  if [[ -f "$FRONTEND_DEPENDENCY_STAMP" ]]; then
+    stored_stamp="$(<"$FRONTEND_DEPENDENCY_STAMP")"
+  fi
+
+  local deps_ok="0"
+  if [[ -d "$FRONTEND_NODE_MODULES" ]] && frontend_dependency_resolution_ok; then
+    deps_ok="1"
+  fi
+
+  if [[ ! -d "$FRONTEND_NODE_MODULES" || "$deps_ok" != "1" || "$stored_stamp" != "$expected_stamp" ]]; then
+    repair_frontend_dependencies
+    expected_stamp="$(dependency_stamp_value "$FRONTEND_PACKAGE_JSON" "$FRONTEND_LOCK_FILE")"
+  fi
+
+  printf '%s' "$expected_stamp" > "$FRONTEND_DEPENDENCY_STAMP"
+  info "フロントエンド依存関係: OK"
+}
+
 # --------------------------------------------------------------
 # 必須コマンドの存在確認
 # --------------------------------------------------------------
 command -v node >/dev/null 2>&1 || { err "node が見つかりません。Node.js をインストールしてください。"; exit 1; }
 command -v npm  >/dev/null 2>&1 || { err "npm が見つかりません。Node.js をインストールしてください。"; exit 1; }
+ensure_frontend_dependencies
 
 # --------------------------------------------------------------
 # Python venv の用意
@@ -101,14 +181,6 @@ if ! "$VENV_PY" -c "import fastapi, uvicorn" >/dev/null 2>&1; then
   info "バックエンドの Python 依存をインストールしています..."
   "$VENV_PY" -m pip install --upgrade pip >/dev/null
   "$VENV_PY" -m pip install fastapi "uvicorn[standard]" numpy scipy pydantic jsonschema httpx pytest >/dev/null
-fi
-
-# --------------------------------------------------------------
-# frontend / electron の依存
-# --------------------------------------------------------------
-if [[ ! -d "$FRONTEND_DIR/node_modules" ]]; then
-  info "frontend の npm 依存をインストールしています..."
-  ( cd "$FRONTEND_DIR" && npm install )
 fi
 
 # electron 本体バイナリが存在するか確認（postinstall のダウンロード失敗対策）
