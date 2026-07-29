@@ -68,6 +68,13 @@ function renderShell(
 }
 
 describe("ApolloPhase1Shell", () => {
+  it("renders the workspace draft shell", () => {
+    window.localStorage.clear();
+    const { container } = renderShell();
+    expect(container.querySelector("[data-testid='apollo-workspace-shell']")).not.toBeNull();
+    expect(container.textContent).toContain("Workspace drafts");
+  });
+
   it("shows the practical topology shell with guards", () => {
     const { container } = renderShell();
     expect(container.querySelector("[data-testid='apollo-phase1-shell']")).not.toBeNull();
@@ -108,6 +115,36 @@ describe("ApolloPhase1Shell", () => {
     expect(updates[0]?.project.name).toBe("Apollo NN Draft");
     expect(updates[0]?.apolloPhase1Unit2?.metadata.name).toBe("Apollo NN Draft");
     expect(updates[1]?.apolloPhase1Unit2?.nodes.length).toBe(project.nodes.length + 1);
+  });
+
+  it("saves and reopens workspace snapshots", () => {
+    window.localStorage.clear();
+    const updates: ProjectModel[] = [];
+    const project = createDefaultProject();
+    const { container } = renderShell({
+      project,
+      onProjectChange: (nextProject) => {
+        updates.push(nextProject);
+      },
+    });
+
+    const saveButton = container.querySelector("[data-testid='apollo-workspace-save']") as HTMLButtonElement;
+    act(() => {
+      saveButton.click();
+    });
+
+    const select = container.querySelector("[data-testid='apollo-workspace-select']") as HTMLSelectElement;
+    expect(select.options.length).toBeGreaterThan(1);
+    select.value = select.options[1].value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+
+    const openButton = container.querySelector("[data-testid='apollo-workspace-open']") as HTMLButtonElement;
+    act(() => {
+      openButton.click();
+    });
+
+    expect(updates.at(-1)?.project.id).toBe(project.project.id);
+    expect(container.textContent).toContain("Workspace snapshot");
   });
 
   it("blocks numeric execution and result publication while recording audit events", () => {

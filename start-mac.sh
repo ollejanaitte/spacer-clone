@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GPU_MODE_VALUE="${1:-compat-gpu-blocklist}"
+GPU_MODE_VALUE="compat-gpu-blocklist"
+APOLLO_MODE="0"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 LOG_DIR="$ROOT_DIR/.local_projects"
@@ -10,14 +11,22 @@ BACKEND_ERR_LOG="$LOG_DIR/backend-start.err.log"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 BACKEND_PID=""
 
-case "$GPU_MODE_VALUE" in
-  normal|compat-gpu-blocklist|compat-angle-gl|legacy-desktop-gl)
-    ;;
-  *)
-    echo "[エラー] GPU_MODE は normal, compat-gpu-blocklist, compat-angle-gl, legacy-desktop-gl のいずれかを指定してください。" >&2
-    exit 1
-    ;;
-esac
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    normal|compat-gpu-blocklist|compat-angle-gl|legacy-desktop-gl)
+      GPU_MODE_VALUE="$1"
+      shift
+      ;;
+    --apollo)
+      APOLLO_MODE="1"
+      shift
+      ;;
+    *)
+      echo "[エラー] GPU_MODE は normal, compat-gpu-blocklist, compat-angle-gl, legacy-desktop-gl のいずれか、または --apollo を指定してください。" >&2
+      exit 1
+      ;;
+  esac
+done
 
 cleanup() {
   if [[ -n "$BACKEND_PID" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
@@ -71,6 +80,10 @@ if [[ "$BACKEND_READY" != "1" ]]; then
   exit 1
 fi
 
-echo "[起動] Electron を起動しています。GPU_MODE=$GPU_MODE_VALUE"
+echo "[起動] Electron を起動しています。GPU_MODE=$GPU_MODE_VALUE APOLLO_MODE=$APOLLO_MODE"
 cd "$FRONTEND_DIR"
-GPU_MODE="$GPU_MODE_VALUE" npm run electron:dev
+if [[ "$APOLLO_MODE" == "1" ]]; then
+  GPU_MODE="$GPU_MODE_VALUE" npm run electron:dev:apollo
+else
+  GPU_MODE="$GPU_MODE_VALUE" npm run electron:dev
+fi

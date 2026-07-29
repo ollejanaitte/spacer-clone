@@ -1,0 +1,5 @@
+"element_label","selector","visible","enabled","clickable","receives_pointer","receives_focus","handler_attached","state_changed","result","console_error","verdict"
+"Apollo entry","[data-testid=open-apollo-phase1]","true","true","true","true","true","true","route -> /pro/apollo","clicked under Electron","none beyond WebGL fallback","PASS"
+"Add material","[data-testid=apollo-add-material]","true","true","true","true","true","true","material row count increased","clicked under Electron","none beyond WebGL fallback","PASS"
+"Add node","[data-testid=apollo-add-node]","true","true","true","sampled center hit was not the button itself but click still changed state","true","true","node row count increased","clicked under Electron","none beyond WebGL fallback","PASS"
+"Return to workspace","[data-testid=apollo-return-to-pro]","true","true","true","true","true","true","route -> /pro","clicked under Electron","none beyond WebGL fallback","PASS"

@@ -1,4 +1,4 @@
-Verification started on 2026-07-28T17:00:04.444Z (Tuesday, July 28, 2026)
+Verification started on 2026-07-29T01:17:43.748Z (Tuesday, July 28, 2026)
 [electron-compile:stdout]
 
 > spacer-clone-frontend@0.3.0-preview electron:compile
@@ -11,7 +11,7 @@ Verification started on 2026-07-28T17:00:04.444Z (Tuesday, July 28, 2026)
 > vite --host 127.0.0.1 --port 5173 --strictPort
 
 
-  VITE v7.3.5  ready in 129 ms
+  VITE v7.3.5  ready in 186 ms
 
   ➜  Local:   http://127.0.0.1:5173/
 
@@ -35,32 +35,44 @@ once the app is packaged.
 [renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
 [renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
 [renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0x10de, DEVICE = 0x1c8d, GL_VENDOR = Google Inc. (Mesa), GL_RENDERER = ANGLE (Mesa, llvmpipe (LLVM 15.0.7 256 bits), OpenGL 4.5 (Core Profile) Mesa 23.2.1-1ubuntu3.1~22.04.4), GL_VERSION = 23.2.1, Sandboxed = no, Optimus = yes, AMD switchable = no, Reset notification strategy = 0x8261, ErrorMessage = BindToCurrentSequence failed: .
+[renderer-console] error: THREE.WebGLRenderer: Error creating WebGL context.
 [vite-on:stdout]
 
 > spacer-clone-frontend@0.3.0-preview dev:apollo
 > vite --mode apollo --host 127.0.0.1 --port 5173 --strictPort
 
 
-  VITE v7.3.5   apollo   ready in 127 ms
+  VITE v7.3.5   apollo   ready in 172 ms
 
   ➜  Local:   http://127.0.0.1:5173/
 
 [backend:stdout]
-INFO:     127.0.0.1:56634 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56646 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56266 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56276 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56278 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56292 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56304 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34382 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34392 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56408 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56424 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56428 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56432 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56444 - "GET /health HTTP/1.1" 200 OK
 
 [backend:stderr]
-INFO:     Started server process [638090]
+INFO:     Started server process [680523]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [638090]
+INFO:     Finished server process [680523]
 

@@ -1,0 +1,23 @@
+[起動] バックエンドを起動しています: http://127.0.0.1:8000  (GPU_MODE=compat-gpu-blocklist, ログ: /home/masaharu/Projects/spacer-clone-main/.local_projects/backend-start.err.log)
+[起動] バックエンド OK: http://127.0.0.1:8000
+[起動] Electron を起動しています。GPU_MODE=compat-gpu-blocklist APOLLO_MODE=1
+
+> spacer-clone-frontend@0.3.0-preview electron:dev:apollo
+> concurrently -k "vite --mode apollo --host 127.0.0.1 --strictPort" "wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js"
+
+[0]
+[0]   VITE v7.3.5   apollo   ready in 193 ms
+[0]
+[0]   ➜  Local:   http://127.0.0.1:5173/
+[1]
+[1] > spacer-clone-frontend@0.3.0-preview electron:compile
+[1] > tsc -p ../desktop/electron/tsconfig.json
+[1]
+[1] [666465:0729/084218.565925:ERROR:media/gpu/vaapi/vaapi_wrapper.cc:1680] Installed VAAPI version is too old. min supported version: 1.17 installed version: 1.14
+Terminated
+[起動] バックエンド (pgid=666306, pid=666306) を終了しています...
+[1] /home/masaharu/Projects/spacer-clone-main/frontend/node_modules/electron/dist/electron exited with signal SIGTERM
+[1] wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js exited with code SIGTERM
+--> Sending SIGTERM to other processes..
+[0] vite --mode apollo --host 127.0.0.1 --strictPort exited with code SIGTERM
+[起動] ユーザー割り込み (TERM) を受け取りました。終了します。

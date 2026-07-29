@@ -271,32 +271,46 @@ async function captureOnState() {
     const projectName = page.getByTestId("apollo-project-name-input");
     await projectName.fill("Apollo Electron Reachability");
     await page.getByTestId("apollo-add-node").click();
+    await page.getByRole("button", { name: "members" }).click();
+    await page.getByTestId("apollo-member-editor").waitFor({ state: "visible", timeout: 30000 });
     await page.getByTestId("apollo-add-member").click();
+    await page.getByRole("button", { name: "supports" }).click();
+    await page.getByTestId("apollo-support-editor").waitFor({ state: "visible", timeout: 30000 });
     await page.getByTestId("apollo-add-support").click();
+    await page.getByRole("button", { name: "nodes" }).click();
+    await page.getByTestId("apollo-node-editor").waitFor({ state: "visible", timeout: 30000 });
+    await page.getByTestId("apollo-node-select-APN-1").click();
+    await page.getByTestId("apollo-node-label-input").waitFor({ state: "visible", timeout: 30000 });
     await page.getByTestId("apollo-node-label-input").fill("Electron Draft Node");
     await page.getByTestId("apollo-node-x-input").fill("12.5");
     await page.getByTestId("apollo-node-x-input").fill("invalid");
     await page
       .getByTestId("apollo-interaction-message")
-      .getByText("Node shell rejected invalid X coordinate", { exact: false })
+      .getByText("rejected invalid X coordinate input.", { exact: false })
       .waitFor({
         state: "visible",
         timeout: 30000,
       });
     await page.screenshot({ path: path.join(artifactDir, "invalid_input_rejection.png"), fullPage: true });
 
-    await page.getByTestId("apollo-numeric-execution-guard").dispatchEvent("click");
-    await page.getByText("Numeric execution remains blocked on Tuesday, July 28, 2026.", { exact: false }).waitFor({
-      state: "visible",
-      timeout: 30000,
-    });
+    await page.getByTestId("apollo-numeric-execution-guard").click();
+    await page
+      .getByTestId("apollo-interaction-message")
+      .getByText("Numeric execution remains blocked on Tuesday, July 28, 2026.", { exact: false })
+      .waitFor({
+        state: "visible",
+        timeout: 30000,
+      });
     await page.screenshot({ path: path.join(artifactDir, "numeric_guard.png"), fullPage: true });
 
-    await page.getByTestId("apollo-result-publication-guard").dispatchEvent("click");
-    await page.getByText("Authoritative result publication remains blocked.", { exact: false }).waitFor({
-      state: "visible",
-      timeout: 30000,
-    });
+    await page.getByTestId("apollo-result-publication-guard").click();
+    await page
+      .getByTestId("apollo-interaction-message")
+      .getByText("Authoritative result publication remains blocked.", { exact: false })
+      .waitFor({
+        state: "visible",
+        timeout: 30000,
+      });
     await page.screenshot({ path: path.join(artifactDir, "publication_guard.png"), fullPage: true });
 
     await page.getByTestId("apollo-return-to-pro").click();

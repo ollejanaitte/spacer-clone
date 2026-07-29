@@ -184,7 +184,13 @@ scripts/            build and source hygiene helper scripts
 ### Ubuntu / WSL
 
 ```bash
-./start-ubuntu.sh
+./start
+```
+
+明示的に Apollo Phase 1-NN を指定する場合:
+
+```bash
+./start --apollo
 ```
 
 Web UI のみを起動する場合:

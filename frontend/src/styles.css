@@ -5765,6 +5765,19 @@ button:disabled {
   grid-column: 1 / -1;
 }
 
+.apollo-workspace-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.apollo-workspace-select {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
 .apollo-project-form-grid input,
 .apollo-project-form-grid textarea,
 .apollo-edit-table input,
@@ -5776,6 +5789,10 @@ button:disabled {
   padding: 8px 10px;
   background: #fff;
   color: #162233;
+}
+
+.apollo-phase1-shell :where(button, input, select, textarea, label, summary, [role="button"]) {
+  -webkit-app-region: no-drag;
 }
 
 .apollo-project-form-grid textarea {

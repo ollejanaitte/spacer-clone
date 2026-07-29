@@ -466,8 +466,13 @@ async function main() {
 
     await step("U2-E-10", "Invalid destructive reference action is rejected", async () => {
       await page.getByRole("button", { name: "nodes" }).click();
-      await page.getByText("refs M:1 / S:1", { exact: false }).first().waitFor({ state: "visible", timeout: 30000 });
-      await page.getByRole("button", { name: "Delete" }).first().click();
+      const referencedNodeRow = page
+        .getByTestId("apollo-node-editor")
+        .locator("tbody tr")
+        .filter({ has: page.getByText("refs M:1 / S:1", { exact: false }) })
+        .first();
+      await referencedNodeRow.waitFor({ state: "visible", timeout: 30000 });
+      await referencedNodeRow.getByRole("button", { name: "Delete" }).click();
       await page.getByTestId("apollo-interaction-message").getByText("cannot be deleted", { exact: false }).waitFor({
         state: "visible",
         timeout: 30000,

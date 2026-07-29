@@ -1,0 +1,4 @@
+"test_id","title","expected","actual","verdict","evidence"
+"U2.1-H-01","Default ./start launches Apollo-capable runtime","root ./start enters Apollo mode by default","start_default_launch.log shows APOLLO_MODE=1 and electron:dev:apollo","PASS","start_default_launch.log"
+"U2.1-H-02","Explicit ./start --apollo launches Apollo-capable runtime","root ./start --apollo enters Apollo mode","start_apollo_launch.log shows APOLLO_MODE=1 and electron:dev:apollo","PASS","start_apollo_launch.log"
+"U2.1-H-03","Electron pointer path remains operable after start-path correction","Apollo entry and sampled editor actions complete under Electron","verifyApolloUnit2Electron.mjs completed; manual_test_cases.csv shows PASS on click-through, add, save, reload, guards","PASS","../../unit2/07_electron/manual_test_cases.csv"

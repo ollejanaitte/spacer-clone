@@ -15,6 +15,15 @@ import {
   withApolloPhase1Unit2Draft,
   type ApolloPhase1Unit2ViewSelection,
 } from "./unit2Draft";
+import {
+  createApolloWorkspaceProject,
+  deleteApolloWorkspaceEntry,
+  duplicateApolloWorkspaceEntry,
+  listApolloWorkspaceEntries,
+  loadApolloWorkspaceProject,
+  renameApolloWorkspaceEntry,
+  saveApolloWorkspaceEntry,
+} from "./workspace";
 import type {
   ApolloPhase1Unit2Draft,
   ApolloPhase1Unit2MaterialReference,
@@ -94,6 +103,8 @@ export function ApolloPhase1Shell({
   const [interactionMessage, setInteractionMessage] = useState<string | null>(null);
   const [viewerMessage, setViewerMessage] = useState<string | null>(null);
   const [persisting, setPersisting] = useState<"save" | "reload" | null>(null);
+  const [workspaceEntries, setWorkspaceEntries] = useState(() => listApolloWorkspaceEntries());
+  const [workspaceSelection, setWorkspaceSelection] = useState<string | null>(null);
 
   useEffect(() => {
     if (selection?.kind === "node" && draft.nodes.some((node) => node.id === selection.id)) return;
@@ -117,6 +128,17 @@ export function ApolloPhase1Shell({
     }
     setSelection(null);
   }, [draft, selection]);
+
+  useEffect(() => {
+    if (workspaceEntries.length === 0) {
+      setWorkspaceSelection(null);
+      return;
+    }
+    if (workspaceSelection && workspaceEntries.some((entry) => entry.workspaceId === workspaceSelection)) {
+      return;
+    }
+    setWorkspaceSelection(workspaceEntries[0]?.workspaceId ?? null);
+  }, [workspaceEntries, workspaceSelection]);
 
   const selectedNode =
     selection?.kind === "node"
@@ -187,6 +209,11 @@ export function ApolloPhase1Shell({
     entityId: string | null,
   ) => {
     applyDraftChange(message, "reject", entityType, entityId, (currentDraft) => currentDraft);
+  };
+
+  const announce = (message: string) => {
+    setInteractionMessage(message);
+    onAuditEvent?.(message);
   };
 
   const updateProjectField = (
@@ -732,6 +759,67 @@ export function ApolloPhase1Shell({
     setSelection(null);
   };
 
+  const selectedWorkspaceEntry =
+    workspaceSelection === null
+      ? null
+      : workspaceEntries.find((entry) => entry.workspaceId === workspaceSelection) ?? null;
+
+  const refreshWorkspaceEntries = (nextEntries?: ReturnType<typeof listApolloWorkspaceEntries>) => {
+    setWorkspaceEntries(nextEntries ? [...nextEntries] : listApolloWorkspaceEntries());
+  };
+
+  const handleWorkspaceSave = () => {
+    const nextEntries = saveApolloWorkspaceEntry(project, selectedWorkspaceEntry?.workspaceId);
+    refreshWorkspaceEntries(nextEntries);
+    const nextSelection =
+      nextEntries.find((entry) => entry.projectId === project.project.id)?.workspaceId ??
+      nextEntries[0]?.workspaceId ??
+      null;
+    setWorkspaceSelection(nextSelection);
+    announce(`Workspace snapshot saved for ${project.project.name || project.project.id}.`);
+  };
+
+  const handleWorkspaceOpen = () => {
+    if (!workspaceSelection) return;
+    const nextProject = loadApolloWorkspaceProject(workspaceSelection);
+    if (!nextProject) {
+      announce("Workspace snapshot could not be opened.");
+      return;
+    }
+    onProjectChange(nextProject);
+    announce(`Workspace snapshot ${nextProject.project.name || nextProject.project.id} opened.`);
+  };
+
+  const handleWorkspaceNew = () => {
+    const nextProject = createApolloWorkspaceProject();
+    onProjectChange(nextProject);
+    announce(`Workspace draft ${nextProject.project.name} created.`);
+  };
+
+  const handleWorkspaceDuplicate = () => {
+    if (!workspaceSelection) return;
+    const nextEntries = duplicateApolloWorkspaceEntry(workspaceSelection);
+    refreshWorkspaceEntries(nextEntries);
+    setWorkspaceSelection(nextEntries[0]?.workspaceId ?? null);
+    announce("Workspace snapshot duplicated.");
+  };
+
+  const handleWorkspaceRename = () => {
+    if (!selectedWorkspaceEntry || typeof window === "undefined") return;
+    const proposed = window.prompt("Rename workspace draft", selectedWorkspaceEntry.name);
+    if (proposed === null) return;
+    const nextEntries = renameApolloWorkspaceEntry(selectedWorkspaceEntry.workspaceId, proposed);
+    refreshWorkspaceEntries(nextEntries);
+    announce(`Workspace snapshot renamed to ${proposed.trim() || selectedWorkspaceEntry.name}.`);
+  };
+
+  const handleWorkspaceDelete = () => {
+    if (!selectedWorkspaceEntry) return;
+    const nextEntries = deleteApolloWorkspaceEntry(selectedWorkspaceEntry.workspaceId);
+    refreshWorkspaceEntries(nextEntries);
+    announce(`Workspace snapshot ${selectedWorkspaceEntry.name} deleted.`);
+  };
+
   return (
     <main className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
@@ -860,6 +948,80 @@ export function ApolloPhase1Shell({
             Materials are reference shells only. No Young&apos;s modulus, density, section
             properties, load numerics, or verified results are edited here.
           </p>
+        </article>
+
+        <article data-testid="apollo-workspace-shell">
+          <h2>Workspace drafts</h2>
+          <p>Local non-numeric draft workspace for new, open, duplicate, rename, and delete flows.</p>
+          <div className="apollo-workspace-actions">
+            <button type="button" data-testid="apollo-workspace-new" onClick={handleWorkspaceNew}>
+              New draft
+            </button>
+            <button type="button" data-testid="apollo-workspace-save" onClick={handleWorkspaceSave}>
+              Save snapshot
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-workspace-open"
+              onClick={handleWorkspaceOpen}
+              disabled={!selectedWorkspaceEntry}
+            >
+              Open draft
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-workspace-duplicate"
+              onClick={handleWorkspaceDuplicate}
+              disabled={!selectedWorkspaceEntry}
+            >
+              Duplicate draft
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-workspace-rename"
+              onClick={handleWorkspaceRename}
+              disabled={!selectedWorkspaceEntry}
+            >
+              Rename draft
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-workspace-delete"
+              onClick={handleWorkspaceDelete}
+              disabled={!selectedWorkspaceEntry}
+            >
+              Delete draft
+            </button>
+          </div>
+          <label className="apollo-workspace-select">
+            Saved drafts
+            <select
+              data-testid="apollo-workspace-select"
+              value={workspaceSelection ?? ""}
+              onChange={(event) => setWorkspaceSelection(event.currentTarget.value || null)}
+            >
+              <option value="">No saved workspace draft</option>
+              {workspaceEntries.map((entry) => (
+                <option key={entry.workspaceId} value={entry.workspaceId}>
+                  {entry.name} ({entry.updatedAt})
+                </option>
+              ))}
+            </select>
+          </label>
+          {selectedWorkspaceEntry ? (
+            <dl className="apollo-project-meta-list">
+              <div>
+                <dt>Project ID</dt>
+                <dd>{selectedWorkspaceEntry.projectId}</dd>
+              </div>
+              <div>
+                <dt>Updated</dt>
+                <dd>{selectedWorkspaceEntry.updatedAt}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p data-testid="apollo-workspace-empty">No saved workspace draft yet.</p>
+          )}
         </article>
       </section>
 

@@ -1,0 +1,11 @@
+{
+  "verificationDate": "Tuesday, July 28, 2026",
+  "reportedSymptom": "Apollo screen is visible but all buttons are unclickable.",
+  "currentHeadReproduction": "no_exact_repro_on_current_head",
+  "primaryDifferenceFound": "formal_start_path_did_not_enter_apollo_mode",
+  "notes": [
+    "Root-level ./start launcher was missing before the recovery pass.",
+    "start-ubuntu.sh used electron:dev instead of electron:dev:apollo.",
+    "Older verification evidence did not match the user's launch path."
+  ]
+}

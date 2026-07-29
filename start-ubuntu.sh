@@ -4,6 +4,7 @@
 #
 # Usage:
 #   ./start-ubuntu.sh                       既定 (compat-gpu-blocklist で Electron 起動)
+#   ./start-ubuntu.sh --apollo             Apollo Phase 1-NN 用の Vite mode で起動
 #   ./start-ubuntu.sh --safe-gpu            互換 GPU モード + ANGLE GL fallback
 #   ./start-ubuntu.sh --legacy-gl           legacy desktop GL を使う
 #   ./start-ubuntu.sh --normal              通常 GPU モード
@@ -22,6 +23,7 @@ set -eo pipefail
 # --------------------------------------------------------------
 GPU_MODE="compat-gpu-blocklist"
 LAUNCH_MODE="electron"  # electron | web | backend-only
+APOLLO_MODE="0"
 
 print_help() {
   sed -n '2,20p' "$0"
@@ -34,6 +36,7 @@ while [[ $# -gt 0 ]]; do
     --legacy-gl)  GPU_MODE="legacy-desktop-gl"; shift ;;
     --normal)     GPU_MODE="normal"; shift ;;
     --blocklist)  GPU_MODE="compat-gpu-blocklist"; shift ;;
+    --apollo)     APOLLO_MODE="1"; shift ;;
     --web)        LAUNCH_MODE="web"; shift ;;
     --backend-only) LAUNCH_MODE="backend-only"; shift ;;
     --help|-h)    print_help ;;
@@ -256,12 +259,24 @@ export GPU_MODE
 
 if [[ "$LAUNCH_MODE" == "web" ]]; then
   info "Vite 開発サーバを起動しています (Electron は使いません)。ブラウザで http://127.0.0.1:5173 を開いてください。"
-  npm run dev
-else
-  info "Electron を起動しています。GPU_MODE=$GPU_MODE"
-  if [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
-    npm run electron:dev
+  if [[ "$APOLLO_MODE" == "1" ]]; then
+    npm run dev:apollo -- --host 127.0.0.1 --strictPort
   else
-    GPU_MODE="$GPU_MODE" npm run electron:dev
+    npm run dev -- --host 127.0.0.1 --strictPort
+  fi
+else
+  info "Electron を起動しています。GPU_MODE=$GPU_MODE APOLLO_MODE=$APOLLO_MODE"
+  if [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
+    if [[ "$APOLLO_MODE" == "1" ]]; then
+      npm run electron:dev:apollo
+    else
+      npm run electron:dev
+    fi
+  else
+    if [[ "$APOLLO_MODE" == "1" ]]; then
+      GPU_MODE="$GPU_MODE" npm run electron:dev:apollo
+    else
+      GPU_MODE="$GPU_MODE" npm run electron:dev
+    fi
   fi
 fi
