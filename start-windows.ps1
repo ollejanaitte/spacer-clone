@@ -244,11 +244,11 @@ try {
     }
   }
 
-  Write-Info "Electron を起動しています..."
+  Write-Info "Electron を起動しています... (Apollo Phase 1-NN 非Numeric入口を標準有効化)"
   [Environment]::SetEnvironmentVariable("GPU_MODE", $GpuMode, "Process")
   Push-Location $FrontendDir
   try {
-    & $NpmCommand.Source run electron:dev
+    & $NpmCommand.Source run electron:dev:apollo
     if ($LASTEXITCODE -ne 0) {
       throw "Electron 開発環境が終了コード $LASTEXITCODE で停止しました。"
     }

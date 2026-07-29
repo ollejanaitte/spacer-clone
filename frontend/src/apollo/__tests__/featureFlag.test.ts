@@ -21,6 +21,15 @@ describe("apollo feature flag", () => {
     expect(isApolloPhase1Enabled()).toBe(false);
   });
 
+  it("defaults ON in apollo mode while keeping blocking guards ON", () => {
+    vi.stubEnv("MODE", "apollo");
+    const flags = resolveApolloPhase1FeatureFlags();
+    expect(flags.nnEnabled).toBe(true);
+    expect(flags.numericReleaseBlocked).toBe(true);
+    expect(flags.disableResultPublication).toBe(true);
+    expect(flags.disableNumericExecution).toBe(true);
+  });
+
   it("is ON only for literal true", () => {
     vi.stubEnv(APOLLO_PHASE1_FLAG_NAME, "true");
     expect(isApolloPhase1Enabled()).toBe(true);

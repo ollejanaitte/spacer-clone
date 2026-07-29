@@ -69,4 +69,17 @@ describe("Toolbar", () => {
     expect(button.disabled).toBe(true);
     expect(button.getAttribute("aria-disabled")).toBe("true");
   });
+
+  test("shows Apollo entry as enabled when the shell is available", () => {
+    const onOpenApolloPhase1 = vi.fn();
+    const { container } = renderToolbar({
+      onOpenApolloPhase1,
+      apolloPhase1EntryTitle: "Apollo Phase 1-NN shell",
+    });
+    const button = container.querySelector('[data-testid="open-apollo-phase1"]') as HTMLButtonElement;
+    expect(button.disabled).toBe(false);
+    expect(button.getAttribute("aria-disabled")).toBe("false");
+    button.click();
+    expect(onOpenApolloPhase1).toHaveBeenCalledTimes(1);
+  });
 });

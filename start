@@ -6,9 +6,6 @@ OS_NAME="$(uname -s)"
 
 case "$OS_NAME" in
   Linux)
-    if [[ $# -eq 0 ]]; then
-      exec "$ROOT_DIR/start-ubuntu.sh" --apollo
-    fi
     exec "$ROOT_DIR/start-ubuntu.sh" "$@"
     ;;
   Darwin)

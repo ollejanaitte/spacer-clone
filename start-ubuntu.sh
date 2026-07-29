@@ -3,8 +3,8 @@
 # Windows の start-windows.ps1 / macOS の start-mac.sh と同等の役割。
 #
 # Usage:
-#   ./start-ubuntu.sh                       既定 (compat-gpu-blocklist で Electron 起動)
-#   ./start-ubuntu.sh --apollo             Apollo Phase 1-NN 用の Vite mode で起動
+#   ./start-ubuntu.sh                       既定 (Apollo Phase 1-NN 非Numeric入口 + compat-gpu-blocklist で Electron 起動)
+#   ./start-ubuntu.sh --apollo             Apollo Phase 1-NN 用の既定起動を明示
 #   ./start-ubuntu.sh --safe-gpu            互換 GPU モード + ANGLE GL fallback
 #   ./start-ubuntu.sh --legacy-gl           legacy desktop GL を使う
 #   ./start-ubuntu.sh --normal              通常 GPU モード
@@ -23,7 +23,7 @@ set -eo pipefail
 # --------------------------------------------------------------
 GPU_MODE="compat-gpu-blocklist"
 LAUNCH_MODE="electron"  # electron | web | backend-only
-APOLLO_MODE="0"
+APOLLO_MODE="1"
 
 print_help() {
   sed -n '2,20p' "$0"

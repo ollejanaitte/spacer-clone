@@ -37,14 +37,14 @@ What it does:
 5. Builds `desktop/electron/dist/main.js` with `tsc` if missing.
 6. Generates `build/icon.png` with `scripts/build_icons.py` if missing.
 7. Starts the FastAPI backend on `http://127.0.0.1:8000`.
-8. Starts the Electron development environment in `compat-gpu-blocklist` mode.
+8. Starts the Electron development environment in `compat-gpu-blocklist` mode with the Apollo Phase 1-NN non-numeric entry enabled by default.
 
 Stop with **Ctrl+C**. The backend, Electron, and related process groups are all stopped.
 
 ## Launch Options
 
 ```bash
-./start-ubuntu.sh                   # Default: Electron + compat-gpu-blocklist
+./start-ubuntu.sh                   # Default: Apollo Phase 1-NN non-numeric entry + Electron + compat-gpu-blocklist
 ./start-ubuntu.sh --safe-gpu        # ANGLE GL fallback
 ./start-ubuntu.sh --legacy-gl       # Legacy desktop GL
 ./start-ubuntu.sh --normal          # Normal GPU (for Linux standard drivers)
@@ -54,6 +54,11 @@ Stop with **Ctrl+C**. The backend, Electron, and related process groups are all 
 ```
 
 The GPU mode values match `GPU_MODES` in `desktop/electron/gpuMode.ts`.
+
+Apollo notes:
+
+- The standard launcher enables the Apollo Phase 1-NN non-numeric workspace entry by default.
+- Numeric execution and authoritative publication remain fail-closed unless separately verified and released.
 
 ## Environment Variables
 

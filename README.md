@@ -185,12 +185,14 @@ scripts/            build and source hygiene helper scripts
 
 ```bash
 ./start
+./start-ubuntu.sh
 ```
 
-明示的に Apollo Phase 1-NN を指定する場合:
+既定で Apollo Phase 1-NN の非Numeric入口を含む標準起動になります。互換目的で明示する場合:
 
 ```bash
 ./start --apollo
+./start-ubuntu.sh --apollo
 ```
 
 Web UI のみを起動する場合:
