@@ -16,6 +16,7 @@ vi.mock("../../viewer/Viewer3D", () => ({
     apolloVisualizationModel,
     apolloSelectionKeys,
     apolloValidationHighlight,
+    viewPanelOpen,
     onSelectionChange,
   }: {
     project: { nodes: unknown[]; members: unknown[] };
@@ -23,6 +24,7 @@ vi.mock("../../viewer/Viewer3D", () => ({
     apolloVisualizationModel?: ApolloVisualizationModel | null;
     apolloSelectionKeys?: readonly string[];
     apolloValidationHighlight?: { targetKey: string; severity: string } | null;
+    viewPanelOpen?: boolean;
     onSelectionChange?: (selection: { type: "node" | "member" | "support"; id: string } | null) => void;
   }) => (
     <div
@@ -35,6 +37,7 @@ vi.mock("../../viewer/Viewer3D", () => ({
           : "none"
       }
       data-visualization-elements={apolloVisualizationModel?.elements.length ?? 0}
+      data-view-panel-open={viewPanelOpen === false ? "false" : "true"}
     >
       {project.nodes.length}/{project.members.length}
       <button type="button" data-testid="mock-viewer-select-node" onClick={() => onSelectionChange?.({ type: "node", id: "N-A1" })}>
@@ -262,8 +265,11 @@ describe("ApolloPhase1Shell", () => {
 
   it("passes the derived Apollo visualization model to Viewer3D", () => {
     const { container } = renderShell({ project: createApollo200mContinuousBridgeSample() });
+    clickButtonByText(container, "一覧編集モード");
     const viewer = container.querySelector("[data-testid='mock-viewer3d']");
+    expect(viewer).not.toBeNull();
     expect(viewer?.getAttribute("data-visualization-elements")).not.toBe("0");
+    expect(viewer?.getAttribute("data-view-panel-open")).toBe("false");
   });
 
   it("shows basics screen and Japanese save status", () => {

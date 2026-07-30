@@ -6,8 +6,10 @@ import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from
 import { applyViewerDisplayTransform, type SpacerAxisSwap, type ViewerDisplayCoordinatePolicy } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
 import type { ApolloSolidGeometryParameter, ApolloVisualizationGeometry, ApolloVisualizationModel } from "../apollo/visualization";
+import type { CameraPreset, ViewerVisibility } from "./types";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
+export const APOLLO_MODEL_UP = new THREE.Vector3(0, 0, 1);
 
 export function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -222,12 +224,40 @@ export function computeModelBox(
   return box;
 }
 
-export function computeApolloVisualizationBox(model: ApolloVisualizationModel): THREE.Box3 {
+type ApolloVisualizationBoxOptions = {
+  readonly includeLabels?: boolean;
+  readonly includeMarkers?: boolean;
+  readonly visibility?: ViewerVisibility | null;
+};
+
+export function computeApolloVisualizationBox(
+  model: ApolloVisualizationModel,
+  options: ApolloVisualizationBoxOptions = {},
+): THREE.Box3 {
+  const includeLabels = options.includeLabels ?? false;
+  const includeMarkers = options.includeMarkers ?? false;
+  const visibility = options.visibility ?? null;
+  const lineVisible = visibility?.apolloLineModel !== false;
+  const solidVisible = visibility?.apolloSolidModel !== false;
   const box = new THREE.Box3();
   for (const element of model.elements) {
+    if (!lineVisible) continue;
+    if (element.elementKind === "node" && visibility?.nodes === false) continue;
+    if (element.elementKind === "member" && visibility?.members === false) continue;
+    if (element.elementKind === "support" && visibility?.supports === false) continue;
+    if ((element.elementKind === "node-label" || element.elementKind === "member-label") && !includeLabels) continue;
     expandBoxForApolloGeometry(box, element.geometry);
   }
   for (const solid of model.solidGeometryParameters) {
+    if (!solidVisible) continue;
+    if (solid.kind === "girder" && visibility?.apolloGirders === false) continue;
+    if (solid.kind === "cross_beam" && visibility?.apolloCrossBeams === false) continue;
+    if (solid.kind === "bracing" && visibility?.apolloBracings === false) continue;
+    if (solid.kind === "deck" && visibility?.apolloDeck === false) continue;
+    if (solid.kind === "bearing" && visibility?.apolloBearings === false) continue;
+    if ((solid.kind === "pier_marker" || solid.kind === "abutment_marker") && (!includeMarkers || visibility?.apolloMarkers === false)) {
+      continue;
+    }
     expandBoxForApolloSolid(box, solid);
   }
   if (box.isEmpty()) {
@@ -303,17 +333,36 @@ function finiteDimension(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) && value > 1e-9 ? value : null;
 }
 
+export function resolveCameraViewForPreset(
+  preset: CameraPreset,
+  apolloView = false,
+): { direction: THREE.Vector3; up: THREE.Vector3 } {
+  if (!apolloView) {
+    if (preset === "xy") return { direction: new THREE.Vector3(0, 0, 1), up: MODEL_UP.clone() };
+    if (preset === "yz") return { direction: new THREE.Vector3(1, 0, 0), up: MODEL_UP.clone() };
+    if (preset === "xz") return { direction: new THREE.Vector3(0, 1, 0), up: MODEL_UP.clone() };
+    return { direction: new THREE.Vector3(1, 0.75, 1), up: MODEL_UP.clone() };
+  }
+  if (preset === "xy") return { direction: new THREE.Vector3(0, 0, 1), up: new THREE.Vector3(0, 1, 0) };
+  if (preset === "yz") return { direction: new THREE.Vector3(1, 0, 0), up: APOLLO_MODEL_UP.clone() };
+  if (preset === "xz") return { direction: new THREE.Vector3(0, 1, 0), up: APOLLO_MODEL_UP.clone() };
+  return { direction: new THREE.Vector3(1, -0.8, 0.6), up: APOLLO_MODEL_UP.clone() };
+}
+
 export function fitCameraToBox(
   camera: THREE.PerspectiveCamera,
   controls: { target: THREE.Vector3; update: () => void },
   box: THREE.Box3,
-  direction = new THREE.Vector3(1, 0.8, 1),
+  view: THREE.Vector3 | { direction: THREE.Vector3; up?: THREE.Vector3 } = new THREE.Vector3(1, 0.8, 1),
 ): void {
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
   const radius = Math.max(size.length() * 0.5, 1);
   const distance = radius / Math.sin(THREE.MathUtils.degToRad(camera.fov * 0.5));
+  const direction = view instanceof THREE.Vector3 ? view : view.direction;
+  const up = view instanceof THREE.Vector3 ? MODEL_UP : view.up ?? MODEL_UP;
   const viewDirection = direction.clone().normalize();
+  camera.up.copy(up);
   camera.position.copy(center).addScaledVector(viewDirection, distance * 1.18);
   camera.near = Math.max(distance / 1000, 0.01);
   camera.far = Math.max(distance * 100, 1000);

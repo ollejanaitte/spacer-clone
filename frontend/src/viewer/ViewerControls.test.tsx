@@ -46,6 +46,7 @@ function render(node: ReactNode) {
 }
 
 function buildProps(overrides: Partial<{
+  apolloView: boolean;
   visibility: ViewerVisibility;
   scales: ViewerScales;
   loadCaseIds: string[];
@@ -78,6 +79,7 @@ function buildProps(overrides: Partial<{
   onCameraPreset: (preset: CameraPreset) => void;
 }> = {}) {
   return {
+    apolloView: false,
     visibility: {
       nodes: true,
       members: true,
@@ -173,6 +175,16 @@ describe("ViewerControls UI surface", () => {
   it("renders the SPACER Axis Swap checkbox", () => {
     render(<ViewerControls {...buildProps()} />);
     expect(document.querySelector('[data-testid="spacer-axis-swap-toggle"]')).not.toBeNull();
+  });
+
+  it("renders Apollo view labels and hides SPACER Axis Swap in Apollo mode", () => {
+    render(<ViewerControls {...buildProps({ apolloView: true })} />);
+    expect(document.body.textContent).toContain("全体");
+    expect(document.body.textContent).toContain("アイソメ");
+    expect(document.body.textContent).toContain("平面");
+    expect(document.body.textContent).toContain("正面");
+    expect(document.body.textContent).toContain("側面");
+    expect(document.querySelector('[data-testid="spacer-axis-swap-toggle"]')).toBeNull();
   });
 
   it("renders Apollo line/solid visibility toggles", () => {

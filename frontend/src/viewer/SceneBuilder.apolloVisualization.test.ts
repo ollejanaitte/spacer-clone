@@ -54,6 +54,26 @@ describe("SceneBuilder Apollo visualization path", () => {
     disposeObject(groups.root);
   });
 
+  it("positions Apollo support glyphs below the support in Z-up space", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+    const sourceSupport = model.elements.find((entry) => entry.elementKind === "support" && entry.sourceEntityId === "SUP-1");
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+    });
+
+    const support = groups.supports.children.find((child) => child.userData?.id === "SUP-1");
+    expect(sourceSupport?.geometry.type).toBe("point");
+    expect(support).toBeDefined();
+    const sourcePosition = (sourceSupport?.geometry.type === "point" ? sourceSupport.geometry.position : null) ?? [0, 0, 0];
+    expect(support?.position.y).toBeCloseTo(sourcePosition[1]);
+    expect(support?.position.z).toBeLessThan(sourcePosition[2]);
+
+    disposeObject(groups.root);
+  });
+
   it("applies validation highlight color to Apollo node objects", () => {
     const groups = createSceneGroups();
     const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
@@ -119,6 +139,26 @@ describe("SceneBuilder Apollo visualization path", () => {
 
     expect(groups.nodes.children.length).toBeGreaterThan(0);
     expect(groups.apolloGirders.children).toHaveLength(0);
+
+    disposeObject(groups.root);
+  });
+
+  it("offsets Apollo labels upward in Z-up space", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+    const sourceLabel = model.elements.find((entry) => entry.elementKind === "node-label" && entry.sourceEntityId === "G0");
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+    });
+
+    const label = groups.labels.children.find((child) => child.userData?.ownerId === "G0");
+    expect(sourceLabel?.geometry.type).toBe("label-anchor");
+    expect(label).toBeDefined();
+    const sourcePosition = (sourceLabel?.geometry.type === "label-anchor" ? sourceLabel.geometry.position : null) ?? [0, 0, 0];
+    expect(label?.position.y).toBeCloseTo(sourcePosition[1]);
+    expect(label?.position.z).toBeGreaterThan(sourcePosition[2]);
 
     disposeObject(groups.root);
   });
