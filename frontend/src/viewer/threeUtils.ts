@@ -5,7 +5,7 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import { applyViewerDisplayTransform, type SpacerAxisSwap, type ViewerDisplayCoordinatePolicy } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
-import type { ApolloVisualizationGeometry, ApolloVisualizationModel } from "../apollo/visualization";
+import type { ApolloSolidGeometryParameter, ApolloVisualizationGeometry, ApolloVisualizationModel } from "../apollo/visualization";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
 
@@ -227,6 +227,9 @@ export function computeApolloVisualizationBox(model: ApolloVisualizationModel): 
   for (const element of model.elements) {
     expandBoxForApolloGeometry(box, element.geometry);
   }
+  for (const solid of model.solidGeometryParameters) {
+    expandBoxForApolloSolid(box, solid);
+  }
   if (box.isEmpty()) {
     box.expandByPoint(new THREE.Vector3(-1, -1, -1));
     box.expandByPoint(new THREE.Vector3(1, 1, 1));
@@ -243,6 +246,61 @@ function expandBoxForApolloGeometry(box: THREE.Box3, geometry: ApolloVisualizati
     box.expandByPoint(new THREE.Vector3(...geometry.start));
     box.expandByPoint(new THREE.Vector3(...geometry.end));
   }
+}
+
+function expandBoxForApolloSolid(box: THREE.Box3, solid: ApolloSolidGeometryParameter): void {
+  const length = finiteDimension(
+    solid.dimensionsM.length ??
+      solid.dimensionsM.diameter ??
+      solid.dimensionsM.width,
+  );
+  const width = finiteDimension(
+    solid.dimensionsM.width ??
+      solid.dimensionsM.flangeWidth ??
+      solid.dimensionsM.diameter,
+  );
+  const height = finiteDimension(
+    solid.dimensionsM.height ??
+      solid.dimensionsM.depth ??
+      solid.dimensionsM.thickness ??
+      solid.dimensionsM.diameter,
+  );
+  if (!length || !width || !height) return;
+  const halfLength = length / 2;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const corners: Array<readonly [number, number, number]> = [
+    [-halfLength, -halfWidth, -halfHeight],
+    [-halfLength, -halfWidth, halfHeight],
+    [-halfLength, halfWidth, -halfHeight],
+    [-halfLength, halfWidth, halfHeight],
+    [halfLength, -halfWidth, -halfHeight],
+    [halfLength, -halfWidth, halfHeight],
+    [halfLength, halfWidth, -halfHeight],
+    [halfLength, halfWidth, halfHeight],
+  ];
+  for (const corner of corners) {
+    box.expandByPoint(
+      new THREE.Vector3(
+        solid.localFrame.origin[0] +
+          solid.localFrame.xAxis[0] * corner[0] +
+          solid.localFrame.yAxis[0] * corner[1] +
+          solid.localFrame.zAxis[0] * corner[2],
+        solid.localFrame.origin[1] +
+          solid.localFrame.xAxis[1] * corner[0] +
+          solid.localFrame.yAxis[1] * corner[1] +
+          solid.localFrame.zAxis[1] * corner[2],
+        solid.localFrame.origin[2] +
+          solid.localFrame.xAxis[2] * corner[0] +
+          solid.localFrame.yAxis[2] * corner[1] +
+          solid.localFrame.zAxis[2] * corner[2],
+      ),
+    );
+  }
+}
+
+function finiteDimension(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) && value > 1e-9 ? value : null;
 }
 
 export function fitCameraToBox(

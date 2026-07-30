@@ -5,6 +5,7 @@ import type {
   ApolloVisualizationLineGeometry,
   ApolloVisualizationModel,
   ApolloVisualizationPointGeometry,
+  ApolloSolidGeometryParameter,
 } from "../../apollo/visualization";
 import type { SectionKey } from "../../types";
 import { assignLabelPriority } from "../labelCollisionAvoidance";
@@ -23,6 +24,12 @@ const supportMaterial = new THREE.MeshStandardMaterial({ color: "#444444", rough
 const selectedSupportMaterial = new THREE.MeshStandardMaterial({ color: "#f2c94c", roughness: 0.4 });
 const warningSupportMaterial = new THREE.MeshStandardMaterial({ color: "#d5a021", roughness: 0.4 });
 const errorSupportMaterial = new THREE.MeshStandardMaterial({ color: "#d14343", roughness: 0.4 });
+const deckMaterial = new THREE.MeshStandardMaterial({ color: "#9fbe7a", roughness: 0.55, transparent: true, opacity: 0.78 });
+const girderMaterial = new THREE.MeshStandardMaterial({ color: "#6f7783", roughness: 0.45 });
+const crossBeamMaterial = new THREE.MeshStandardMaterial({ color: "#8b7f6b", roughness: 0.5 });
+const bracingMaterial = new THREE.MeshStandardMaterial({ color: "#537188", roughness: 0.4 });
+const bearingMaterial = new THREE.MeshStandardMaterial({ color: "#5b4b3a", roughness: 0.55 });
+const markerMaterial = new THREE.MeshStandardMaterial({ color: "#4d6174", roughness: 0.5, transparent: true, opacity: 0.45 });
 
 type ApolloSelectionRenderState = {
   readonly primarySelection: ViewerSelection;
@@ -197,6 +204,40 @@ export function renderApolloVisualizationLabels(
   return objects;
 }
 
+export function renderApolloVisualizationSolids(
+  model: ApolloVisualizationModel,
+  selectionState: ApolloSelectionRenderState,
+): Record<"girders" | "crossBeams" | "bracings" | "deck" | "bearings" | "markers", THREE.Object3D[]> {
+  const result = {
+    girders: [] as THREE.Object3D[],
+    crossBeams: [] as THREE.Object3D[],
+    bracings: [] as THREE.Object3D[],
+    deck: [] as THREE.Object3D[],
+    bearings: [] as THREE.Object3D[],
+    markers: [] as THREE.Object3D[],
+  };
+
+  for (const solid of model.solidGeometryParameters) {
+    const object = renderApolloSolid(solid, selectionState);
+    if (!object) continue;
+    if (solid.kind === "girder") {
+      result.girders.push(object);
+    } else if (solid.kind === "cross_beam") {
+      result.crossBeams.push(object);
+    } else if (solid.kind === "bracing") {
+      result.bracings.push(object);
+    } else if (solid.kind === "deck") {
+      result.deck.push(object);
+    } else if (solid.kind === "bearing") {
+      result.bearings.push(object);
+    } else {
+      result.markers.push(object);
+    }
+  }
+
+  return result;
+}
+
 function resolveElementRenderState(
   entry: ApolloVisualizationElement,
   selectionState: ApolloSelectionRenderState,
@@ -210,6 +251,25 @@ function resolveElementRenderState(
       isPrimarySelectionMatch(selectionState.primarySelection, entry),
     validationSeverity:
       selectionState.validationHighlight?.targetKey === entry.validationTargetKey
+        ? selectionState.validationHighlight.severity
+        : null,
+  };
+}
+
+function resolveSolidRenderState(
+  solid: ApolloSolidGeometryParameter,
+  selectionState: ApolloSelectionRenderState,
+): {
+  readonly selected: boolean;
+  readonly validationSeverity: ApolloViewerValidationHighlight["severity"] | null;
+} {
+  return {
+    selected:
+      selectionState.selectedKeys.has(solid.selectionKey) ||
+      (selectionState.primarySelection?.type === solid.sourceEntityKind &&
+        selectionState.primarySelection.id === solid.sourceEntityId),
+    validationSeverity:
+      selectionState.validationHighlight?.targetKey === solid.validationTargetKey
         ? selectionState.validationHighlight.severity
         : null,
   };
@@ -237,4 +297,125 @@ function materialForState(
 
 function isLabelElement(entry: ApolloVisualizationElement): boolean {
   return entry.elementKind === "node-label" || entry.elementKind === "member-label";
+}
+
+function renderApolloSolid(
+  solid: ApolloSolidGeometryParameter,
+  selectionState: ApolloSelectionRenderState,
+): THREE.Object3D | null {
+  const state = resolveSolidRenderState(solid, selectionState);
+  if (solid.kind === "girder") {
+    return renderGirderSolid(solid, state);
+  }
+  if (solid.kind === "cross_beam") {
+    return renderBoxLikeSolid(solid, state, crossBeamMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.depth);
+  }
+  if (solid.kind === "deck") {
+    return renderBoxLikeSolid(solid, state, deckMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.thickness);
+  }
+  if (solid.kind === "bearing") {
+    return renderBoxLikeSolid(solid, state, bearingMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
+  }
+  if (solid.kind === "bracing") {
+    return renderBracingSolid(solid, state);
+  }
+  return renderBoxLikeSolid(solid, state, markerMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
+}
+
+function renderGirderSolid(
+  solid: ApolloSolidGeometryParameter,
+  state: { readonly selected: boolean; readonly validationSeverity: ApolloViewerValidationHighlight["severity"] | null },
+): THREE.Object3D | null {
+  const length = finiteOrNull(solid.dimensionsM.length);
+  const depth = finiteOrNull(solid.dimensionsM.depth);
+  const flangeWidth = finiteOrNull(solid.dimensionsM.flangeWidth);
+  const flangeThickness = finiteOrNull(solid.dimensionsM.flangeThickness);
+  const webThickness = finiteOrNull(solid.dimensionsM.webThickness);
+  if (!length || !depth || !flangeWidth || !flangeThickness || !webThickness) return null;
+
+  if (solid.dimensionsM.shape === 0) {
+    return renderBoxLikeSolid(solid, state, girderMaterial, length, flangeWidth, depth);
+  }
+
+  const group = new THREE.Group();
+  const material = materialForState(state, girderMaterial, selectedNodeMaterial, warningNodeMaterial, errorNodeMaterial);
+  const halfDepth = depth / 2;
+  const halfCoreDepth = Math.max(halfDepth - flangeThickness / 2, flangeThickness / 2);
+  const topFlange = new THREE.Mesh(new THREE.BoxGeometry(length, flangeWidth, flangeThickness), material.clone());
+  topFlange.position.z = halfDepth - flangeThickness / 2;
+  const bottomFlange = new THREE.Mesh(new THREE.BoxGeometry(length, flangeWidth, flangeThickness), material.clone());
+  bottomFlange.position.z = -halfDepth + flangeThickness / 2;
+  const web = new THREE.Mesh(
+    new THREE.BoxGeometry(length, webThickness, Math.max(depth - flangeThickness * 2, flangeThickness)),
+    material.clone(),
+  );
+  web.position.z = 0;
+  group.add(topFlange, bottomFlange, web);
+  applySolidFrame(group, solid.localFrame);
+  applySolidMetadata(group, solid);
+  for (const child of group.children) {
+    child.userData = { ...group.userData };
+  }
+  return group;
+}
+
+function renderBracingSolid(
+  solid: ApolloSolidGeometryParameter,
+  state: { readonly selected: boolean; readonly validationSeverity: ApolloViewerValidationHighlight["severity"] | null },
+): THREE.Object3D | null {
+  const length = finiteOrNull(solid.dimensionsM.length);
+  const diameter = finiteOrNull(solid.dimensionsM.diameter);
+  if (!length || !diameter) return null;
+  const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 14);
+  geometry.rotateZ(Math.PI / 2);
+  const material = materialForState(state, bracingMaterial, selectedNodeMaterial, warningNodeMaterial, errorNodeMaterial);
+  const mesh = new THREE.Mesh(geometry, material);
+  applySolidFrame(mesh, solid.localFrame);
+  applySolidMetadata(mesh, solid);
+  return mesh;
+}
+
+function renderBoxLikeSolid(
+  solid: ApolloSolidGeometryParameter,
+  state: { readonly selected: boolean; readonly validationSeverity: ApolloViewerValidationHighlight["severity"] | null },
+  baseMaterial: THREE.MeshStandardMaterial,
+  lengthValue: unknown,
+  widthValue: unknown,
+  heightValue: unknown,
+): THREE.Object3D | null {
+  const length = finiteOrNull(lengthValue);
+  const width = finiteOrNull(widthValue);
+  const height = finiteOrNull(heightValue);
+  if (!length || !width || !height) return null;
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(length, width, height),
+    materialForState(state, baseMaterial, selectedNodeMaterial, warningNodeMaterial, errorNodeMaterial),
+  );
+  applySolidFrame(mesh, solid.localFrame);
+  applySolidMetadata(mesh, solid);
+  return mesh;
+}
+
+function applySolidFrame(object: THREE.Object3D, frame: ApolloSolidGeometryParameter["localFrame"]): void {
+  object.position.set(frame.origin[0], frame.origin[1], frame.origin[2]);
+  const basis = new THREE.Matrix4().makeBasis(
+    new THREE.Vector3(...frame.xAxis),
+    new THREE.Vector3(...frame.yAxis),
+    new THREE.Vector3(...frame.zAxis),
+  );
+  object.quaternion.setFromRotationMatrix(basis);
+}
+
+function applySolidMetadata(object: THREE.Object3D, solid: ApolloSolidGeometryParameter): void {
+  object.userData = {
+    selectable: true,
+    type: solid.sourceEntityKind,
+    id: solid.sourceEntityId,
+    apolloVisualizationSolidId: solid.id,
+    apolloSolidKind: solid.kind,
+  };
+}
+
+function finiteOrNull(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) && value > 1e-9 ? value : null;
 }

@@ -14,6 +14,14 @@ export type ViewerVisibility = {
   nodes: boolean;
   members: boolean;
   supports: boolean;
+  apolloLineModel?: boolean;
+  apolloSolidModel?: boolean;
+  apolloGirders?: boolean;
+  apolloCrossBeams?: boolean;
+  apolloBracings?: boolean;
+  apolloDeck?: boolean;
+  apolloBearings?: boolean;
+  apolloMarkers?: boolean;
   loads: boolean;
   labels: boolean;
   nodeLabels: boolean;
@@ -151,6 +159,14 @@ export const defaultVisibility: ViewerVisibility = {
   nodes: true,
   members: true,
   supports: true,
+  apolloLineModel: true,
+  apolloSolidModel: true,
+  apolloGirders: true,
+  apolloCrossBeams: true,
+  apolloBracings: true,
+  apolloDeck: true,
+  apolloBearings: true,
+  apolloMarkers: true,
   loads: true,
   labels: true,
   nodeLabels: true,
@@ -224,6 +240,12 @@ export type SceneGroups = {
   nodes: THREE.Group;
   members: THREE.Group;
   supports: THREE.Group;
+  apolloGirders: THREE.Group;
+  apolloCrossBeams: THREE.Group;
+  apolloBracings: THREE.Group;
+  apolloDeck: THREE.Group;
+  apolloBearings: THREE.Group;
+  apolloMarkers: THREE.Group;
   loads: THREE.Group;
   resultDiagrams: THREE.Group;
   labels: THREE.Group;

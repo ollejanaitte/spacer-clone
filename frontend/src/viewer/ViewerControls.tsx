@@ -337,6 +337,8 @@ export function ViewerControls({
           <Toggle label={ja.viewer.controls.node} checked={visibility.nodes} onChange={(value) => setFlag("nodes", value)} />
           <Toggle label={ja.viewer.controls.member} checked={visibility.members} onChange={(value) => setFlag("members", value)} />
           <Toggle label={ja.viewer.controls.support} checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
+          <Toggle label="Apollo Line" checked={visibility.apolloLineModel !== false} onChange={(value) => setFlag("apolloLineModel", value)} />
+          <Toggle label="Apollo Solid" checked={visibility.apolloSolidModel !== false} onChange={(value) => setFlag("apolloSolidModel", value)} />
           <Toggle label={ja.viewer.controls.load} checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
           <Toggle label={ja.viewer.controls.label} checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
           <Toggle label={ja.viewer.controls.grid} checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
@@ -345,6 +347,12 @@ export function ViewerControls({
         <div className="viewer-toggle-grid compact">
           <Toggle label={ja.viewer.controls.nodeId} checked={visibility.nodeLabels} onChange={(value) => setFlag("nodeLabels", value)} icon={<Tag size={14} />} />
           <Toggle label={ja.viewer.controls.memberId} checked={visibility.memberLabels} onChange={(value) => setFlag("memberLabels", value)} icon={<Tag size={14} />} />
+          <Toggle label="Girders" checked={visibility.apolloGirders !== false} onChange={(value) => setFlag("apolloGirders", value)} />
+          <Toggle label="Cross Beams" checked={visibility.apolloCrossBeams !== false} onChange={(value) => setFlag("apolloCrossBeams", value)} />
+          <Toggle label="Bracing" checked={visibility.apolloBracings !== false} onChange={(value) => setFlag("apolloBracings", value)} />
+          <Toggle label="Deck" checked={visibility.apolloDeck !== false} onChange={(value) => setFlag("apolloDeck", value)} />
+          <Toggle label="Bearings" checked={visibility.apolloBearings !== false} onChange={(value) => setFlag("apolloBearings", value)} />
+          <Toggle label="Markers" checked={visibility.apolloMarkers !== false} onChange={(value) => setFlag("apolloMarkers", value)} />
         </div>
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.resultDiagrams}>

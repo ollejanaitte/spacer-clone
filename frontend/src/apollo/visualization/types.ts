@@ -13,7 +13,9 @@ export type ApolloVisualizationWarningClassification =
   | "missing-node-reference"
   | "zero-length-member"
   | "non-finite-coordinate"
-  | "invalid-support-reference";
+  | "invalid-support-reference"
+  | "missing-bridge-geometry"
+  | "invalid-solid-dimension";
 
 export type ApolloVisualizationEntityKind = "node" | "member" | "support";
 export type ApolloVisualizationElementKind =
@@ -29,6 +31,12 @@ export type ApolloVisualizationVisibilityGroup =
   | "members"
   | "supports"
   | "labels"
+  | "girders"
+  | "cross-beams"
+  | "bracings"
+  | "deck"
+  | "bearings"
+  | "markers"
   | "bridge-solids"
   | "validation"
   | "export-only";
@@ -113,10 +121,12 @@ export type ApolloBridgeGeometryDefaultsProvider = {
     readonly flangeWidthM: number;
     readonly flangeThicknessM: number;
     readonly webThicknessM: number;
+    readonly transverseOffsetsM?: readonly number[];
   };
   readonly crossBeam: {
     readonly depthM: number;
     readonly widthM: number;
+    readonly stationFractions?: readonly number[];
   };
   readonly bracing: {
     readonly pattern: "x_single" | "single_diagonal" | "none";
@@ -125,6 +135,7 @@ export type ApolloBridgeGeometryDefaultsProvider = {
   readonly deck: {
     readonly thicknessM: number;
     readonly overhangM: number;
+    readonly widthM?: number;
   };
   readonly bearing: {
     readonly widthM: number;
@@ -139,7 +150,12 @@ export type ApolloBridgeGeometryDefaultsProvider = {
 };
 
 export type ApolloSolidGeometryParameter = {
+  readonly id: string;
+  readonly sourceEntityKind: ApolloVisualizationEntityKind;
   readonly sourceEntityId: string;
+  readonly selectionKey: string;
+  readonly validationTargetKey: string;
+  readonly displayLabel: string;
   readonly kind:
     | "girder"
     | "cross_beam"
@@ -196,10 +212,12 @@ export const DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS: ApolloBridgeGeometryDefaul
     flangeWidthM: 0.55,
     flangeThicknessM: 0.03,
     webThicknessM: 0.02,
+    transverseOffsetsM: [-4.5, -1.5, 1.5, 4.5],
   },
   crossBeam: {
     depthM: 0.8,
     widthM: 0.35,
+    stationFractions: [0.25, 0.5, 0.75],
   },
   bracing: {
     pattern: "x_single",
@@ -208,6 +226,7 @@ export const DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS: ApolloBridgeGeometryDefaul
   deck: {
     thicknessM: 0.24,
     overhangM: 0.5,
+    widthM: 10.0,
   },
   bearing: {
     widthM: 0.6,
