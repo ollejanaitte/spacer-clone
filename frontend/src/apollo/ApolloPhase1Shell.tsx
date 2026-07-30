@@ -324,6 +324,7 @@ export function ApolloPhase1Shell({
   const [bulkEditActiveValue, setBulkEditActiveValue] = useState(true);
   const [validationIssueIndex, setValidationIssueIndex] = useState(0);
   const [validationFocusToken, setValidationFocusToken] = useState(0);
+  const [validationHighlightIssueKey, setValidationHighlightIssueKey] = useState<string | null>(null);
   const shellRootRef = useRef<HTMLElement | null>(null);
   const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
   const clipboardHandlersRef = useRef<{ copy: () => void; paste: () => void }>({
@@ -347,6 +348,25 @@ export function ApolloPhase1Shell({
   const currentValidationIssue =
     validationIssueIndex >= 0 && validationIssueIndex < validationIssues.length
       ? validationIssues[validationIssueIndex]!
+      : null;
+  const viewerSelectionKeys = useMemo(
+    () =>
+      selectedRefs
+        .filter((ref) => ref.kind === "node" || ref.kind === "member" || ref.kind === "support")
+        .map((ref) => `${ref.kind}:${ref.id}`),
+    [selectedRefs],
+  );
+  const viewerValidationHighlight =
+    currentValidationIssue &&
+    validationHighlightIssueKey === currentValidationIssue.issueKey &&
+    (currentValidationIssue.entityType === "node" ||
+      currentValidationIssue.entityType === "member" ||
+      currentValidationIssue.entityType === "support") &&
+    currentValidationIssue.entityId
+      ? {
+          targetKey: `${currentValidationIssue.entityType}:${currentValidationIssue.entityId}`,
+          severity: currentValidationIssue.severity,
+        }
       : null;
   const visibleNodes = useMemo(
     () => draft.nodes.filter((node) => matchesApolloSearchFilter(searchFilter, "node", [node.id, node.label])),
@@ -539,7 +559,8 @@ export function ApolloPhase1Shell({
       ? draft.materialReferences.find((material) => material.id === selection.id) ?? null
       : null;
   const viewerSelectionRef =
-    selectedRefs.length === 1 && (selection?.kind === "node" || selection?.kind === "member")
+    selectedRefs.length === 1 &&
+    (selection?.kind === "node" || selection?.kind === "member" || selection?.kind === "support")
       ? selection
       : null;
 
@@ -548,6 +569,8 @@ export function ApolloPhase1Shell({
       ? { type: "node", id: viewerSelectionRef.id }
       : viewerSelectionRef?.kind === "member"
         ? { type: "member", id: viewerSelectionRef.id }
+        : viewerSelectionRef?.kind === "support"
+          ? { type: "support", id: viewerSelectionRef.id }
         : null;
   const viewerSection: SectionKey =
     selection?.kind === "member"
@@ -612,20 +635,24 @@ export function ApolloPhase1Shell({
     setSelectionState(clearApolloSelection());
     setSearchFilter(createApolloSearchFilterState());
     setValidationIssueIndex(0);
+    setValidationHighlightIssueKey(null);
     setBulkEditTextValue("");
     setBulkEditActiveValue(true);
   };
 
   const setSingleSelection = (ref: ApolloEntityRef | null) => {
     setSelectionState(replaceApolloSelection(ref));
+    setValidationHighlightIssueKey(null);
   };
 
   const handleRowSelection = (ref: ApolloEntityRef, event?: { shiftKey?: boolean; metaKey?: boolean; ctrlKey?: boolean }) => {
     if (event?.shiftKey) {
+      setValidationHighlightIssueKey(null);
       setSelectionState((current) => selectApolloRange(current, ref, visibleEditorRefs));
       return;
     }
     if (event?.metaKey || event?.ctrlKey) {
+      setValidationHighlightIssueKey(null);
       setSelectionState((current) => toggleApolloSelection(current, ref));
       return;
     }
@@ -1153,6 +1180,11 @@ export function ApolloPhase1Shell({
       setEditorPane("members");
       return;
     }
+    if (nextSelection?.type === "support") {
+      setSingleSelection({ kind: "support", id: nextSelection.id });
+      setEditorPane("supports");
+      return;
+    }
     setSingleSelection(null);
   };
 
@@ -1331,6 +1363,7 @@ export function ApolloPhase1Shell({
     }
     setFocusKey(issue.focusLocator);
     setValidationFocusToken((token) => token + 1);
+    setValidationHighlightIssueKey(issue.issueKey);
     if (typeof nextIndex === "number") {
       setValidationIssueIndex(nextIndex);
     }
@@ -1556,6 +1589,8 @@ export function ApolloPhase1Shell({
         ) : (
           <Viewer3D
             apolloVisualizationModel={apolloVisualizationBuild.ok ? apolloVisualizationBuild.model : null}
+            apolloSelectionKeys={viewerSelectionKeys}
+            apolloValidationHighlight={viewerValidationHighlight}
             project={viewProject}
             result={null}
             selectedSection={viewerSection}

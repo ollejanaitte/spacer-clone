@@ -63,11 +63,19 @@ export type ViewerScales = {
 export type ViewerSelection =
   | { type: "node"; id: string }
   | { type: "member"; id: string }
+  | { type: "support"; id: string }
   | null;
+
+export type ApolloViewerValidationHighlight = {
+  readonly targetKey: string;
+  readonly severity: "warning" | "error";
+};
 
 export type Viewer3DProps = {
   project: ProjectModel;
   apolloVisualizationModel?: ApolloVisualizationModel | null;
+  apolloSelectionKeys?: readonly string[];
+  apolloValidationHighlight?: ApolloViewerValidationHighlight | null;
   result: AnalysisResult | null;
   if3Result?: FrameAnalysisResultResource | null;
   selectedSection: SectionKey;

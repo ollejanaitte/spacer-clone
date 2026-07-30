@@ -150,22 +150,27 @@ function rebuildApolloVisualizationScene(
   model: ApolloVisualizationModel,
   props: ThreeViewportProps,
 ): void {
+  const apolloSelectionState = {
+    primarySelection: props.selection,
+    selectedKeys: new Set(props.apolloSelectionKeys ?? []),
+    validationHighlight: props.apolloValidationHighlight ?? null,
+  };
   replaceGroupContents(
     groups.nodes,
     props.visibility.nodes
-      ? renderApolloVisualizationNodes(model, props.selectedSection, props.selection, props.scales)
+      ? renderApolloVisualizationNodes(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
   );
   replaceGroupContents(
     groups.members,
     props.visibility.members
-      ? renderApolloVisualizationMembers(model, props.selectedSection, props.selection, props.scales)
+      ? renderApolloVisualizationMembers(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
   );
   replaceGroupContents(
     groups.supports,
     props.visibility.supports
-      ? renderApolloVisualizationSupports(model, props.selectedSection, props.scales)
+      ? renderApolloVisualizationSupports(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
   );
   replaceGroupContents(groups.loads, []);
@@ -174,7 +179,7 @@ function rebuildApolloVisualizationScene(
   replaceGroupContents(
     groups.labels,
     props.visibility.labels
-      ? renderApolloVisualizationLabels(model, props.scales, props.selection)
+      ? renderApolloVisualizationLabels(model, props.scales, apolloSelectionState)
       : [],
   );
 }

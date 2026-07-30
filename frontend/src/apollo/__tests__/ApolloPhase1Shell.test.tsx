@@ -14,17 +14,38 @@ vi.mock("../../viewer/Viewer3D", () => ({
     project,
     selection,
     apolloVisualizationModel,
+    apolloSelectionKeys,
+    apolloValidationHighlight,
+    onSelectionChange,
   }: {
     project: { nodes: unknown[]; members: unknown[] };
     selection?: { type: string; id: string } | null;
     apolloVisualizationModel?: ApolloVisualizationModel | null;
+    apolloSelectionKeys?: readonly string[];
+    apolloValidationHighlight?: { targetKey: string; severity: string } | null;
+    onSelectionChange?: (selection: { type: "node" | "member" | "support"; id: string } | null) => void;
   }) => (
     <div
       data-testid="mock-viewer3d"
       data-selection={selection ? `${selection.type}:${selection.id}` : "none"}
+      data-selection-keys={apolloSelectionKeys?.join(",") ?? ""}
+      data-validation-highlight={
+        apolloValidationHighlight
+          ? `${apolloValidationHighlight.targetKey}:${apolloValidationHighlight.severity}`
+          : "none"
+      }
       data-visualization-elements={apolloVisualizationModel?.elements.length ?? 0}
     >
       {project.nodes.length}/{project.members.length}
+      <button type="button" data-testid="mock-viewer-select-node" onClick={() => onSelectionChange?.({ type: "node", id: "N-A1" })}>
+        select node
+      </button>
+      <button type="button" data-testid="mock-viewer-select-member" onClick={() => onSelectionChange?.({ type: "member", id: "MG0" })}>
+        select member
+      </button>
+      <button type="button" data-testid="mock-viewer-select-support" onClick={() => onSelectionChange?.({ type: "support", id: "SUP-1" })}>
+        select support
+      </button>
     </div>
   ),
 }));
@@ -425,7 +446,31 @@ describe("ApolloPhase1Shell", () => {
       second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
     });
     expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("none");
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection-keys")).toContain("node:N-A1");
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection-keys")).toContain("node:N-P1");
     expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("2");
+  });
+
+  it("projects a support selection to the viewer and accepts support picks from the viewer", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "支点");
+
+    const supportSelect = container.querySelector("[data-testid='apollo-support-select-SUP-1']") as HTMLButtonElement;
+    act(() => {
+      supportSelect.click();
+    });
+
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("support:SUP-1");
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection-keys")).toBe("support:SUP-1");
+
+    act(() => {
+      (container.querySelector("[data-testid='mock-viewer-select-support']") as HTMLButtonElement).click();
+    });
+
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("support:SUP-1");
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("1");
   });
 
   it("filters visible rows with normalized search and clears back to the full set", () => {
@@ -610,8 +655,44 @@ describe("ApolloPhase1Shell", () => {
 
     expect(container.querySelector("[data-testid='apollo-member-editor']")).not.toBeNull();
     expect(container.querySelector("[data-focus-key='member-material']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-validation-highlight")).toBe(
+      "member:M-01:error",
+    );
     expect(focusSpy).toHaveBeenCalled();
     focusSpy.mockRestore();
+  });
+
+  it("clears validation highlight after a normal row selection", async () => {
+    const brokenSample = createApollo200mContinuousBridgeSample();
+    if (brokenSample.apolloPhase1Unit2) {
+      brokenSample.apolloPhase1Unit2.members[0]!.materialRefId = "MISSING-MATERIAL";
+    }
+    const { container } = renderStatefulShell(brokenSample);
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const navigateButton = Array.from(
+      container.querySelectorAll("[data-testid='apollo-validation-list'] li"),
+    ).find((item) => item.textContent?.includes("材料参照"))?.querySelector("button") as
+      | HTMLButtonElement
+      | undefined;
+    expect(navigateButton).toBeTruthy();
+
+    await act(async () => {
+      navigateButton?.click();
+    });
+
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-validation-highlight")).toBe(
+      "member:M-01:error",
+    );
+
+    act(() => {
+      (container.querySelector("[data-testid='apollo-member-select-M-01']") as HTMLButtonElement).click();
+    });
+
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-validation-highlight")).toBe(
+      "none",
+    );
   });
 
   it("copies only visible selected rows while filter-hidden selection is retained", () => {

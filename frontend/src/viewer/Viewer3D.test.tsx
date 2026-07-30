@@ -10,6 +10,8 @@ import { Fallback2DViewport } from "./Fallback2DViewport";
 import { ja } from "../i18n/ja";
 import { Viewer3D, webglFallbackMessage } from "./Viewer3D";
 import type { ThreeViewportProps } from "./types";
+import { buildApolloPhase1Unit2ViewProject, getApolloPhase1Unit2Draft } from "../apollo/unit2Draft";
+import { createApollo200mContinuousBridgeSample } from "../apollo/sampleProjects";
 
 vi.mock("three", async (importOriginal) => {
   const actual = await importOriginal<typeof import("three")>();
@@ -168,6 +170,28 @@ describe("Fallback2DViewport", () => {
     expect(document.querySelectorAll('[data-testid="fallback-member"]')).toHaveLength(9);
     expect(document.querySelectorAll('[data-testid="fallback-support"]')).toHaveLength(6);
     expect(document.querySelectorAll('[data-testid="fallback-nodal-load"]')).toHaveLength(6);
+  });
+
+  it("emits support ids when fallback support glyphs are clicked", () => {
+    const onSelectionChange = vi.fn();
+    const apolloViewProject = buildApolloPhase1Unit2ViewProject(createApollo200mContinuousBridgeSample());
+    const apolloDraft = getApolloPhase1Unit2Draft(apolloViewProject);
+    render(
+      <Fallback2DViewport
+        {...fallbackProps(apolloViewProject)}
+        selection={{ type: "support", id: "SUP-1" }}
+        onSelectionChange={onSelectionChange}
+      />,
+    );
+
+    act(() => {
+      (document.querySelector('[data-testid="fallback-support"]') as SVGElement).dispatchEvent(
+        new MouseEvent("click", { bubbles: true }),
+      );
+    });
+
+    expect(apolloDraft.supports[0]?.id).toBe("SUP-1");
+    expect(onSelectionChange).toHaveBeenCalledWith({ type: "support", id: "SUP-1" });
   });
 });
 

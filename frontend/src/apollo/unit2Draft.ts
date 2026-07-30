@@ -639,6 +639,7 @@ export function buildApolloPhase1Unit2ViewProject(project: ProjectModel): Projec
       label: member.label,
     })),
     supports: draft.supports.map((support) => ({
+      id: support.id,
       nodeId: support.nodeId,
       ux: supportBooleanFromState(support.ux),
       uy: supportBooleanFromState(support.uy),
