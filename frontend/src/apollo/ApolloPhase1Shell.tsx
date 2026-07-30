@@ -32,11 +32,18 @@ import {
 } from "./components/CompositionAwareInput";
 import { isApolloCompositionActive } from "./compositionRegistry";
 import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
+import { applyApolloBulkEdit, resolveApolloBulkEditSelection, type ApolloBulkEditInput } from "./bulkEdit";
 import {
   applyApolloClipboardPaste,
   buildApolloClipboardPayload,
   type ApolloClipboardPayload,
 } from "./clipboard";
+import {
+  buildApolloVisibleRefs,
+  createApolloSearchFilterState,
+  matchesApolloSearchFilter,
+  type ApolloSearchFilterState,
+} from "./searchFilter";
 import {
   clearApolloSelection,
   createApolloSelectionState,
@@ -44,12 +51,20 @@ import {
   primaryApolloSelection,
   pruneApolloSelection,
   replaceApolloSelection,
+  filterApolloRefsToVisible,
   selectAllVisibleApolloRefs,
   selectApolloRange,
   toggleApolloSelection,
   type ApolloEntityKind,
   type ApolloEntityRef,
 } from "./selection";
+import {
+  buildApolloValidationIssues,
+  nextApolloValidationIssueIndex,
+  previousApolloValidationIssueIndex,
+  reconcileApolloValidationIssueIndex,
+  type ApolloValidationIssue,
+} from "./validationNavigator";
 import type {
   ApolloPhase1Unit2Draft,
   ApolloPhase1Unit2MaterialReference,
@@ -147,6 +162,10 @@ function sameApolloRef(left: ApolloEntityRef | null, right: ApolloEntityRef | nu
 
 function includesApolloRef(refs: readonly ApolloEntityRef[], target: ApolloEntityRef): boolean {
   return refs.some((ref) => sameApolloRef(ref, target));
+}
+
+function entityKindForPane(pane: EditorPane): ApolloEntityKind {
+  return pane === "materials" ? "material" : pane.slice(0, -1) as ApolloEntityKind;
 }
 
 function summarizeList(items: readonly string[]): string {
@@ -295,24 +314,67 @@ export function ApolloPhase1Shell({
   const [onboardingIndex, setOnboardingIndex] = useState(0);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
+  const [searchFilter, setSearchFilter] = useState<ApolloSearchFilterState>(() =>
+    createApolloSearchFilterState(),
+  );
+  const [bulkEditField, setBulkEditField] = useState<"label" | "displayName" | "active">("label");
+  const [bulkEditTextValue, setBulkEditTextValue] = useState("");
+  const [bulkEditActiveValue, setBulkEditActiveValue] = useState(true);
+  const [validationIssueIndex, setValidationIssueIndex] = useState(0);
+  const [validationFocusToken, setValidationFocusToken] = useState(0);
   const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
+  const clipboardHandlersRef = useRef<{ copy: () => void; paste: () => void }>({
+    copy: () => undefined,
+    paste: () => undefined,
+  });
   const selectedRefs = selectionState.orderedRefs;
   const primarySelection = primaryApolloSelection(selectedRefs);
   const selection: ApolloPhase1Unit2ViewSelection = primarySelection
     ? { kind: primarySelection.kind, id: primarySelection.id }
     : null;
-  const visibleEditorRefs = useMemo<readonly ApolloEntityRef[]>(() => {
-    if (editorPane === "nodes") {
-      return draft.nodes.map((node) => ({ kind: "node" as const, id: node.id }));
-    }
-    if (editorPane === "members") {
-      return draft.members.map((member) => ({ kind: "member" as const, id: member.id }));
-    }
-    if (editorPane === "supports") {
-      return draft.supports.map((support) => ({ kind: "support" as const, id: support.id }));
-    }
-    return draft.materialReferences.map((material) => ({ kind: "material" as const, id: material.id }));
-  }, [draft, editorPane]);
+  const visibleRefs = useMemo(() => buildApolloVisibleRefs(draft, searchFilter), [draft, searchFilter]);
+  const visibleEditorRefs = useMemo<readonly ApolloEntityRef[]>(
+    () => visibleRefs.filter((ref) => ref.kind === entityKindForPane(editorPane)),
+    [editorPane, visibleRefs],
+  );
+  const validationIssues = useMemo(
+    () => buildApolloValidationIssues(validation.errors, validation.warnings),
+    [validation.errors, validation.warnings],
+  );
+  const currentValidationIssue =
+    validationIssueIndex >= 0 && validationIssueIndex < validationIssues.length
+      ? validationIssues[validationIssueIndex]!
+      : null;
+  const visibleNodes = useMemo(
+    () => draft.nodes.filter((node) => matchesApolloSearchFilter(searchFilter, "node", [node.id, node.label])),
+    [draft.nodes, searchFilter],
+  );
+  const visibleMembers = useMemo(
+    () =>
+      draft.members.filter((member) =>
+        matchesApolloSearchFilter(searchFilter, "member", [member.id, member.label]),
+      ),
+    [draft.members, searchFilter],
+  );
+  const visibleSupports = useMemo(
+    () =>
+      draft.supports.filter((support) =>
+        matchesApolloSearchFilter(searchFilter, "support", [support.id, support.label]),
+      ),
+    [draft.supports, searchFilter],
+  );
+  const visibleMaterials = useMemo(
+    () =>
+      draft.materialReferences.filter((material) =>
+        matchesApolloSearchFilter(searchFilter, "material", [material.id, material.displayName]),
+      ),
+    [draft.materialReferences, searchFilter],
+  );
+  const visibleSelectedEditorRefs = useMemo(
+    () => filterApolloRefsToVisible(selectedRefs, visibleEditorRefs),
+    [selectedRefs, visibleEditorRefs],
+  );
+  const bulkEditSelection = resolveApolloBulkEditSelection(visibleSelectedEditorRefs);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -343,17 +405,17 @@ export function ApolloPhase1Shell({
       }
       if (key === "c") {
         event.preventDefault();
-        handleCopySelection();
+        clipboardHandlersRef.current.copy();
         return;
       }
       if (key === "v") {
         event.preventDefault();
-        handlePasteSelection();
+        clipboardHandlersRef.current.paste();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onRedo, onUndo, selectedRefs, editorPane, draft]);
+  }, [onRedo, onUndo, visibleEditorRefs]);
 
   useEffect(() => {
     const existingRefs: ApolloEntityRef[] = [
@@ -386,6 +448,32 @@ export function ApolloPhase1Shell({
     setSelectionState(clearApolloSelection());
   }, [draft, selectionState]);
 
+  const activeValidationIssueKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    activeValidationIssueKeyRef.current = validationIssues[validationIssueIndex]?.issueKey ?? null;
+  }, [validationIssueIndex, validationIssues]);
+
+  useEffect(() => {
+    const nextIndex = reconcileApolloValidationIssueIndex(
+      validationIssueIndex,
+      activeValidationIssueKeyRef.current,
+      validationIssues,
+    );
+    if (nextIndex !== validationIssueIndex) {
+      setValidationIssueIndex(nextIndex);
+    }
+  }, [validationIssues, validationIssueIndex]);
+
+  useEffect(() => {
+    if (!bulkEditSelection.ok) {
+      return;
+    }
+    if (!bulkEditSelection.allowedFields.includes(bulkEditField)) {
+      setBulkEditField(bulkEditSelection.allowedFields[0] ?? "label");
+    }
+  }, [bulkEditField, bulkEditSelection]);
+
   useEffect(() => {
     if (workspaceEntries.length === 0) {
       setWorkspaceSelection(null);
@@ -402,7 +490,7 @@ export function ApolloPhase1Shell({
       target?.focus();
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [focusKey, guidedStep, editorPane, draft]);
+  }, [focusKey, guidedStep, editorPane, draft, validationFocusToken]);
 
   const selectedNode = selection?.kind === "node" ? draft.nodes.find((node) => node.id === selection.id) ?? null : null;
   const selectedMember = selection?.kind === "member" ? draft.members.find((member) => member.id === selection.id) ?? null : null;
@@ -483,6 +571,10 @@ export function ApolloPhase1Shell({
   const clearTransientEditingState = () => {
     clipboardRef.current = null;
     setSelectionState(clearApolloSelection());
+    setSearchFilter(createApolloSearchFilterState());
+    setValidationIssueIndex(0);
+    setBulkEditTextValue("");
+    setBulkEditActiveValue(true);
   };
 
   const setSingleSelection = (ref: ApolloEntityRef | null) => {
@@ -528,6 +620,47 @@ export function ApolloPhase1Shell({
       orderedRefs: result.selectedRefs,
       anchorRef: result.selectedRefs[0] ?? null,
     });
+  };
+
+  clipboardHandlersRef.current = {
+    copy: handleCopySelection,
+    paste: handlePasteSelection,
+  };
+
+  const clearSearchFilter = () => {
+    setSearchFilter(createApolloSearchFilterState());
+  };
+
+  const applyBulkEdit = () => {
+    if (!bulkEditSelection.ok) {
+      announce(bulkEditSelection.message);
+      return;
+    }
+    const input: ApolloBulkEditInput =
+      bulkEditField === "active"
+        ? { field: "active", value: bulkEditActiveValue }
+        : {
+            field: bulkEditField,
+            value: bulkEditTextValue,
+          };
+    const result = applyApolloBulkEdit(draft, visibleSelectedEditorRefs, input);
+    if (!result.ok) {
+      announce(result.message);
+      return;
+    }
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(`${result.affectedCount}件に一括編集を適用します。続行しますか？`)
+    ) {
+      return;
+    }
+    applyDraftChange(
+      `${result.affectedCount}件へ一括編集を適用しました。`,
+      `${bulkEditSelection.kind}.bulkEdit`,
+      bulkEditSelection.kind,
+      bulkEditSelection.refs[0]?.id ?? null,
+      () => result.draft,
+    );
   };
 
   const updateProjectField = (field: "name" | "description", value: string, message: string) => {
@@ -1138,13 +1271,30 @@ export function ApolloPhase1Shell({
     if (ok) setSaveNotice("ファイルに保存しました。");
   };
 
-  const navigateValidationIssue = (entry: StructuredMessage) => {
-    const target = validationTarget(entry);
+  const navigateValidationIssue = (issue: ApolloValidationIssue, nextIndex?: number) => {
+    clearSearchFilter();
     setMode("guided");
-    setGuidedStep(target.step);
-    setEditorPane(target.pane);
-    setSingleSelection(target.selection);
-    setFocusKey(target.focusKey ?? null);
+    if (issue.entityType === "project") {
+      setGuidedStep("basics");
+      setEditorPane("project");
+      setSingleSelection(null);
+    } else {
+      setGuidedStep("editor");
+      setEditorPane(issue.paneId === "project" ? "project" : issue.paneId);
+      if (!issue.entityId) {
+        setSingleSelection(null);
+      } else {
+        setSingleSelection({
+          kind: issue.entityType as ApolloEntityKind,
+          id: issue.entityId,
+        });
+      }
+    }
+    setFocusKey(issue.focusLocator);
+    setValidationFocusToken((token) => token + 1);
+    if (typeof nextIndex === "number") {
+      setValidationIssueIndex(nextIndex);
+    }
   };
 
   const toggleSampleGuideDismissed = () => {
@@ -1153,10 +1303,6 @@ export function ApolloPhase1Shell({
     setStoredBoolean(APOLLO_GUIDE_DISMISSED_KEY, nextValue);
   };
 
-  const validationItems = [
-    ...validation.errors.map((entry) => ({ severity: "error" as const, entry })),
-    ...validation.warnings.map((entry) => ({ severity: "warning" as const, entry })),
-  ];
   const validationComplete = validation.errors.length === 0;
   const basicsComplete = draft.metadata.projectId.trim().length > 0 && draft.metadata.name.trim().length > 0;
   const nodesComplete = draft.nodes.length > 0 && !hasBlockingIssueForEntityTypes(validation, ["node"]);
@@ -1458,6 +1604,7 @@ export function ApolloPhase1Shell({
       <div className="apollo-unit2-editor">
         <div className="apollo-applied-summary">
           <span data-testid="apollo-selection-count">選択 {selectedRefs.length} 件</span>
+          <span data-testid="apollo-visible-count">表示 {visibleEditorRefs.length} 件</span>
           <button
             type="button"
             data-testid="apollo-copy-selection"
@@ -1473,6 +1620,100 @@ export function ApolloPhase1Shell({
             <span className="apollo-inline-hint">異なる種類の行は同時にコピーできません。</span>
           ) : null}
         </div>
+        <div className="apollo-applied-summary">
+          <label>
+            検索
+            <CompositionAwareInput
+              data-testid="apollo-search-query"
+              value={searchFilter.query}
+              onValueChange={(value) => setSearchFilter((current) => ({ ...current, query: value }))}
+            />
+          </label>
+          <label>
+            種類
+            <select
+              data-testid="apollo-search-type"
+              value={searchFilter.entityType}
+              onChange={(event) =>
+                setSearchFilter((current) => ({
+                  ...current,
+                  entityType: event.currentTarget.value as ApolloSearchFilterState["entityType"],
+                }))
+              }
+            >
+              <option value="all">全て</option>
+              <option value="node">節点</option>
+              <option value="member">部材</option>
+              <option value="support">支点</option>
+              <option value="material">材料</option>
+            </select>
+          </label>
+          <button type="button" data-testid="apollo-search-clear" onClick={clearSearchFilter}>
+            Clear
+          </button>
+        </div>
+        <section className="apollo-editor-card" data-testid="apollo-bulk-edit-panel">
+          <div className="apollo-editor-card-header">
+            <div>
+              <h2>一括編集</h2>
+              <p>同じ種類の行を2件以上選択した場合のみ適用できます。</p>
+            </div>
+          </div>
+          <div className="apollo-topology-summary">
+            <span data-testid="apollo-bulk-edit-count">対象件数 {visibleSelectedEditorRefs.length}</span>
+            <span data-testid="apollo-bulk-edit-kind">
+              対象種類 {bulkEditSelection.ok ? bulkEditSelection.kind : "未選択"}
+            </span>
+          </div>
+          {bulkEditSelection.ok ? (
+            <div className="apollo-detail-grid">
+              <label>
+                項目
+                <select
+                  data-testid="apollo-bulk-edit-field"
+                  value={bulkEditField}
+                  onChange={(event) =>
+                    setBulkEditField(event.currentTarget.value as "label" | "displayName" | "active")
+                  }
+                >
+                  {bulkEditSelection.allowedFields.map((field) => (
+                    <option key={field} value={field}>
+                      {field === "label" ? "名称" : field === "displayName" ? "表示名" : "有効"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {bulkEditField === "active" ? (
+                <label>
+                  値
+                  <select
+                    data-testid="apollo-bulk-edit-active"
+                    value={bulkEditActiveValue ? "true" : "false"}
+                    onChange={(event) => setBulkEditActiveValue(event.currentTarget.value === "true")}
+                  >
+                    <option value="true">有効</option>
+                    <option value="false">無効</option>
+                  </select>
+                </label>
+              ) : (
+                <label>
+                  値
+                  <CompositionAwareInput
+                    data-testid="apollo-bulk-edit-text"
+                    value={bulkEditTextValue}
+                    onValueChange={setBulkEditTextValue}
+                    onBlur={onCloseHistoryTransaction}
+                  />
+                </label>
+              )}
+              <button type="button" data-testid="apollo-bulk-edit-apply" onClick={applyBulkEdit}>
+                適用
+              </button>
+            </div>
+          ) : (
+            <p data-testid="apollo-bulk-edit-blocked">{bulkEditSelection.message}</p>
+          )}
+        </section>
         <nav className="apollo-unit2-tabs" aria-label="Apollo editor sections">
           {([
             ["nodes", "節点"],
@@ -1506,7 +1747,7 @@ export function ApolloPhase1Shell({
                   <tr><th>ID</th><th>名称</th><th>X(m)</th><th>操作</th></tr>
                 </thead>
                 <tbody>
-                  {draft.nodes.map((node) => {
+                  {visibleNodes.map((node) => {
                     const active = includesApolloRef(selectedRefs, { kind: "node", id: node.id });
                     return (
                       <tr key={node.id} className={active ? "selected" : undefined}>
@@ -1524,6 +1765,7 @@ export function ApolloPhase1Shell({
                 </tbody>
               </table>
             </div>
+            {visibleNodes.length === 0 ? <p data-testid="apollo-no-results">一致する行がありません。</p> : null}
             {selectedNode ? (
               <div className="apollo-detail-grid">
                 <label>ID<CompositionAwareInput data-focus-key="node-id" value={selectedNode.id} onValueChange={(value) => updateNodeId(selectedNode.id, value)} onBlur={onCloseHistoryTransaction} /></label>
@@ -1549,7 +1791,7 @@ export function ApolloPhase1Shell({
                   <tr><th>ID</th><th>名称</th><th>始点</th><th>終点</th><th>操作</th></tr>
                 </thead>
                 <tbody>
-                  {draft.members.map((member) => {
+                  {visibleMembers.map((member) => {
                     const active = includesApolloRef(selectedRefs, { kind: "member", id: member.id });
                     return (
                       <tr key={member.id} className={active ? "selected" : undefined}>
@@ -1568,12 +1810,13 @@ export function ApolloPhase1Shell({
                 </tbody>
               </table>
             </div>
+            {visibleMembers.length === 0 ? <p data-testid="apollo-no-results">一致する行がありません。</p> : null}
             {selectedMember ? (
               <div className="apollo-detail-grid">
                 <label>ID<CompositionAwareInput data-focus-key="member-id" value={selectedMember.id} onValueChange={(value) => updateMemberId(selectedMember.id, value)} onBlur={onCloseHistoryTransaction} /></label>
                 <label>名称<CompositionAwareInput value={selectedMember.label} onValueChange={(value) => updateMember(selectedMember.id, (item) => ({ ...item, label: value }), "部材名称を更新しました。", coalescedFieldMode(`member:${selectedMember.id}:label`))} onBlur={onCloseHistoryTransaction} /></label>
-                <label>始点<select value={selectedMember.nodeI} onChange={(event) => changeMemberNode(selectedMember.id, "nodeI", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
-                <label>終点<select value={selectedMember.nodeJ} onChange={(event) => changeMemberNode(selectedMember.id, "nodeJ", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
+                <label>始点<select data-focus-key="member-node-i" value={selectedMember.nodeI} onChange={(event) => changeMemberNode(selectedMember.id, "nodeI", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
+                <label>終点<select data-focus-key="member-node-j" value={selectedMember.nodeJ} onChange={(event) => changeMemberNode(selectedMember.id, "nodeJ", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
                 <label>材料<select data-focus-key="member-material" value={selectedMember.materialRefId} onChange={(event) => updateMember(selectedMember.id, (item) => ({ ...item, materialRefId: event.currentTarget.value }), "部材の材料参照を更新しました。")}>{draft.materialReferences.map((material) => <option key={material.id} value={material.id}>{material.id}</option>)}</select></label>
               </div>
             ) : null}
@@ -1595,7 +1838,7 @@ export function ApolloPhase1Shell({
                   <tr><th>ID</th><th>節点</th><th>Ux</th><th>Uy</th><th>Uz</th><th>操作</th></tr>
                 </thead>
                 <tbody>
-                  {draft.supports.map((support) => {
+                  {visibleSupports.map((support) => {
                     const active = includesApolloRef(selectedRefs, { kind: "support", id: support.id });
                     return (
                       <tr key={support.id} className={active ? "selected" : undefined}>
@@ -1615,6 +1858,7 @@ export function ApolloPhase1Shell({
                 </tbody>
               </table>
             </div>
+            {visibleSupports.length === 0 ? <p data-testid="apollo-no-results">一致する行がありません。</p> : null}
             {selectedSupport ? (
               <div className="apollo-detail-grid">
                 <label>ID<CompositionAwareInput value={selectedSupport.id} onValueChange={(value) => updateSupportId(selectedSupport.id, value)} onBlur={onCloseHistoryTransaction} /></label>
@@ -1640,7 +1884,7 @@ export function ApolloPhase1Shell({
                   <tr><th>ID</th><th>名称</th><th>区分</th><th>操作</th></tr>
                 </thead>
                 <tbody>
-                  {draft.materialReferences.map((material) => {
+                  {visibleMaterials.map((material) => {
                     const active = includesApolloRef(selectedRefs, { kind: "material", id: material.id });
                     return (
                       <tr key={material.id} className={active ? "selected" : undefined}>
@@ -1658,6 +1902,7 @@ export function ApolloPhase1Shell({
                 </tbody>
               </table>
             </div>
+            {visibleMaterials.length === 0 ? <p data-testid="apollo-no-results">一致する行がありません。</p> : null}
             {selectedMaterial ? (
               <div className="apollo-detail-grid">
                 <label>ID<CompositionAwareInput data-focus-key="material-id" value={selectedMaterial.id} onValueChange={(value) => updateMaterialId(selectedMaterial.id, value)} onBlur={onCloseHistoryTransaction} /></label>
@@ -1686,24 +1931,90 @@ export function ApolloPhase1Shell({
       <div className="apollo-topology-summary">
         <span>エラー件数 {validation.errors.length}</span>
         <span>注意件数 {validation.warnings.length}</span>
+        <span data-testid="apollo-validation-issue-count">総件数 {validationIssues.length}</span>
         <span>節点数 {draft.nodes.length}</span>
         <span>部材数 {draft.members.length}</span>
         <span>支点数 {draft.supports.length}</span>
         <span>材料数 {draft.materialReferences.length}</span>
       </div>
-      {validationItems.length === 0 ? (
+      {validationIssues.length === 0 ? (
         <p data-testid="apollo-validation-ok">入力内容に重大な問題はありません。</p>
       ) : (
-        <ul data-testid="apollo-validation-list" className="apollo-validation-list">
-          {validationItems.map(({ severity, entry }) => (
-            <li key={`${severity}-${entry.code}-${entry.entityId ?? "none"}`} className={severity === "error" ? "apollo-validation-error" : "apollo-validation-warning"}>
-              <span>{severity === "error" ? "エラー" : "注意"}</span>
-              <span>{localizeValidationMessage(entry)}</span>
-              <span>{entry.entityId ?? "共通"}</span>
-              <button type="button" onClick={() => navigateValidationIssue(entry)}>該当箇所へ移動</button>
-            </li>
-          ))}
-        </ul>
+        <>
+          <div className="apollo-applied-summary">
+            <button
+              type="button"
+              data-testid="apollo-validation-previous"
+              onClick={() => {
+                const nextIndex = previousApolloValidationIssueIndex(
+                  validationIssueIndex,
+                  validationIssues.length,
+                );
+                const issue = validationIssues[nextIndex];
+                if (issue) {
+                  navigateValidationIssue(issue, nextIndex);
+                }
+              }}
+            >
+              前へ
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-validation-next"
+              onClick={() => {
+                const nextIndex = nextApolloValidationIssueIndex(
+                  validationIssueIndex,
+                  validationIssues.length,
+                );
+                const issue = validationIssues[nextIndex];
+                if (issue) {
+                  navigateValidationIssue(issue, nextIndex);
+                }
+              }}
+            >
+              次へ
+            </button>
+            <button
+              type="button"
+              data-testid="apollo-validation-navigate-current"
+              onClick={() => {
+                if (currentValidationIssue) {
+                  navigateValidationIssue(currentValidationIssue, validationIssueIndex);
+                }
+              }}
+            >
+              現在の項目へ移動
+            </button>
+            <span data-testid="apollo-validation-current-index">
+              {validationIssues.length === 0 ? "0 / 0" : `${validationIssueIndex + 1} / ${validationIssues.length}`}
+            </span>
+          </div>
+          <ul data-testid="apollo-validation-list" className="apollo-validation-list">
+            {validationIssues.map((issue, index) => {
+              const entry: StructuredMessage = {
+                code: issue.ruleId,
+                entityType: issue.entityType as StructuredMessage["entityType"],
+                entityId: issue.entityId,
+                path: issue.fieldPath,
+                message: issue.message,
+              };
+              return (
+                <li
+                  key={issue.issueKey}
+                  className={issue.severity === "error" ? "apollo-validation-error" : "apollo-validation-warning"}
+                  data-current={index === validationIssueIndex ? "true" : "false"}
+                >
+                  <span>{issue.severity === "error" ? "エラー" : "注意"}</span>
+                  <span>{localizeValidationMessage(entry)}</span>
+                  <span>{issue.entityId ?? "共通"}</span>
+                  <button type="button" onClick={() => navigateValidationIssue(issue, index)}>
+                    該当箇所へ移動
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
     </section>
   );

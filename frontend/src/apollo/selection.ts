@@ -80,6 +80,13 @@ export function selectAllVisibleApolloRefs(
   };
 }
 
+export function filterApolloRefsToVisible(
+  refs: readonly ApolloEntityRef[],
+  visibleRefs: readonly ApolloEntityRef[],
+): ApolloEntityRef[] {
+  return refs.filter((ref) => containsRef(visibleRefs, ref));
+}
+
 export function pruneApolloSelection(
   state: ApolloSelectionState,
   existingRefs: readonly ApolloEntityRef[],

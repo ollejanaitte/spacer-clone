@@ -404,4 +404,188 @@ describe("ApolloPhase1Shell", () => {
     expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("none");
     expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("2");
   });
+
+  it("filters visible rows with normalized search and clears back to the full set", () => {
+    const project = createApollo200mContinuousBridgeSample();
+    if (project.apolloPhase1Unit2) {
+      project.apolloPhase1Unit2.members[0]!.label = "主桁Ｇ１";
+    }
+    const { container } = renderStatefulShell(project);
+
+    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "部材");
+
+    const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
+    act(() => {
+      setInputValue(query, " g1 ");
+    });
+
+    expect(container.textContent).toContain("主桁Ｇ１");
+    expect(container.querySelector("[data-testid='apollo-visible-count']")?.textContent).toContain("1");
+
+    act(() => {
+      (container.querySelector("[data-testid='apollo-search-clear']") as HTMLButtonElement).click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-visible-count']")?.textContent).toContain("5");
+  });
+
+  it("applies bulk edit to a homogeneous selection", () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
+    const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
+
+    act(() => {
+      first.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+    });
+
+    const field = container.querySelector("[data-testid='apollo-bulk-edit-field']") as HTMLSelectElement;
+    const value = container.querySelector("[data-testid='apollo-bulk-edit-text']") as HTMLInputElement;
+    act(() => {
+      field.value = "label";
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputValue(value, "新河川橋");
+    });
+    act(() => {
+      (container.querySelector("[data-testid='apollo-bulk-edit-apply']") as HTMLButtonElement).click();
+    });
+
+    expect(confirmSpy).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain("新河川橋");
+    confirmSpy.mockRestore();
+  });
+
+  it("blocks bulk edit when fewer than two selected rows are visible while keeping hidden selection", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
+    const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
+    const third = container.querySelector("[data-testid='apollo-node-select-N-P2']") as HTMLButtonElement;
+
+    act(() => {
+      first.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+      third.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+    });
+
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("3");
+
+    const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
+    act(() => {
+      setInputValue(query, "A1");
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bulk-edit-count']")?.textContent).toContain("1");
+    expect(container.querySelector("[data-testid='apollo-bulk-edit-blocked']")?.textContent).toContain(
+      "2件以上",
+    );
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("3");
+  });
+
+  it("applies bulk edit only to visible selected rows", () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
+    const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
+    const third = container.querySelector("[data-testid='apollo-node-select-N-P2']") as HTMLButtonElement;
+
+    act(() => {
+      first.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+      third.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+    });
+
+    const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
+    act(() => {
+      setInputValue(query, "P");
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bulk-edit-count']")?.textContent).toContain("2");
+
+    const field = container.querySelector("[data-testid='apollo-bulk-edit-field']") as HTMLSelectElement;
+    const value = container.querySelector("[data-testid='apollo-bulk-edit-text']") as HTMLInputElement;
+    act(() => {
+      field.value = "label";
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputValue(value, "一括名称");
+    });
+    act(() => {
+      (container.querySelector("[data-testid='apollo-bulk-edit-apply']") as HTMLButtonElement).click();
+    });
+
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("2件"));
+
+    act(() => {
+      (container.querySelector("[data-testid='apollo-search-clear']") as HTMLButtonElement).click();
+    });
+
+    const nodeLabelCell = (nodeId: string) => {
+      const row = container
+        .querySelector(`[data-testid='apollo-node-select-${nodeId}']`)
+        ?.closest("tr");
+      return row?.querySelectorAll("td")[1]?.textContent ?? "";
+    };
+
+    expect(nodeLabelCell("N-A1")).toBe("A1");
+    expect(nodeLabelCell("N-P1")).toBe("一括名称");
+    expect(nodeLabelCell("N-P2")).toBe("一括名称");
+    confirmSpy.mockRestore();
+  });
+
+  it("selects only visible rows with Ctrl/Cmd+A after filtering", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
+    act(() => {
+      setInputValue(query, "A1");
+    });
+
+    expect(container.querySelector("[data-testid='apollo-visible-count']")?.textContent).toContain("1");
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "a", ctrlKey: true, bubbles: true }));
+    });
+
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("1");
+  });
+
+  it("navigates validation issues and moves focus to the target field", async () => {
+    const brokenSample = createApollo200mContinuousBridgeSample();
+    if (brokenSample.apolloPhase1Unit2) {
+      brokenSample.apolloPhase1Unit2.members[0]!.materialRefId = "MISSING-MATERIAL";
+    }
+    const { container } = renderStatefulShell(brokenSample);
+    const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const navigateButton = Array.from(
+      container.querySelectorAll("[data-testid='apollo-validation-list'] li"),
+    ).find((item) => item.textContent?.includes("材料参照"))?.querySelector("button") as
+      | HTMLButtonElement
+      | undefined;
+    expect(navigateButton).toBeTruthy();
+
+    await act(async () => {
+      navigateButton?.click();
+      await new Promise((resolve) => window.setTimeout(resolve, 10));
+    });
+
+    expect(container.querySelector("[data-testid='apollo-member-editor']")).not.toBeNull();
+    expect(container.querySelector("[data-focus-key='member-material']")).not.toBeNull();
+    expect(focusSpy).toHaveBeenCalled();
+    focusSpy.mockRestore();
+  });
 });

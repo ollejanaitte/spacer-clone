@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createApolloSelectionState,
+  filterApolloRefsToVisible,
   isApolloSelectionHomogeneous,
   primaryApolloSelection,
   replaceApolloSelection,
@@ -57,5 +58,22 @@ describe("apollo selection", () => {
         { kind: "member", id: "M1" },
       ]),
     ).toBe(false);
+  });
+
+  it("keeps only refs that are currently visible", () => {
+    const selected = [
+      { kind: "node" as const, id: "N1" },
+      { kind: "node" as const, id: "N2" },
+      { kind: "node" as const, id: "N3" },
+    ];
+    const visible = [
+      { kind: "node" as const, id: "N1" },
+      { kind: "node" as const, id: "N3" },
+    ];
+
+    expect(filterApolloRefsToVisible(selected, visible)).toEqual([
+      { kind: "node", id: "N1" },
+      { kind: "node", id: "N3" },
+    ]);
   });
 });
