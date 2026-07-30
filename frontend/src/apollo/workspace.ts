@@ -1,4 +1,6 @@
 import { createDefaultProject } from "../data/defaultProject";
+import { buildDuplicateProjectName } from "./duplicateNaming";
+import { generateApolloProjectId } from "./projectId";
 import {
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
@@ -6,6 +8,7 @@ import {
 import type { ProjectModel } from "../types";
 
 export const APOLLO_WORKSPACE_STORAGE_KEY = "apollo_phase1_nn_workspace_v1";
+export const APOLLO_WORKSPACE_STORE_MALFORMED_ID = "apollo-workspace-store";
 const MAX_WORKSPACE_PROJECTS = 12;
 
 export type ApolloWorkspaceEntry = {
@@ -18,9 +21,20 @@ export type ApolloWorkspaceEntry = {
   readonly project: ProjectModel;
 };
 
+export type ApolloWorkspaceMalformedEntry = {
+  readonly workspaceId: string;
+  readonly diagnostics: readonly string[];
+  readonly raw: unknown;
+};
+
+export type ApolloWorkspaceSnapshot = {
+  readonly valid: readonly ApolloWorkspaceEntry[];
+  readonly malformed: readonly ApolloWorkspaceMalformedEntry[];
+};
+
 type ApolloWorkspaceStore = {
   readonly version: 1;
-  readonly projects: readonly ApolloWorkspaceEntry[];
+  readonly projects: readonly unknown[];
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -48,10 +62,23 @@ function nextWorkspaceId(entries: readonly ApolloWorkspaceEntry[]): string {
   return `apollo-workspace-${counter}`;
 }
 
-function normalizeEntry(value: unknown): ApolloWorkspaceEntry | null {
-  if (!isRecord(value)) return null;
+function readWorkspaceId(value: unknown): string | null {
+  if (!isRecord(value) || typeof value.workspaceId !== "string") {
+    return null;
+  }
+  return value.workspaceId;
+}
+
+function normalizeEntry(value: unknown): ApolloWorkspaceEntry | ApolloWorkspaceMalformedEntry {
+  const workspaceId = readWorkspaceId(value) ?? "apollo-workspace-unknown";
+  if (!isRecord(value)) {
+    return {
+      workspaceId,
+      diagnostics: ["Workspace entry is not an object."],
+      raw: value,
+    };
+  }
   if (
-    typeof value.workspaceId !== "string" ||
     typeof value.projectId !== "string" ||
     typeof value.name !== "string" ||
     typeof value.description !== "string" ||
@@ -59,14 +86,24 @@ function normalizeEntry(value: unknown): ApolloWorkspaceEntry | null {
     typeof value.updatedAt !== "string" ||
     !isRecord(value.project)
   ) {
-    return null;
+    return {
+      workspaceId,
+      diagnostics: ["Workspace entry is missing required metadata fields."],
+      raw: value,
+    };
   }
 
   const hydrated = hydrateApolloPhase1Unit2FromPersistence(value.project as ProjectModel);
-  if (!hydrated.ok) return null;
+  if (!hydrated.ok) {
+    return {
+      workspaceId,
+      diagnostics: hydrated.diagnostics,
+      raw: value,
+    };
+  }
 
   return {
-    workspaceId: value.workspaceId,
+    workspaceId,
     projectId: value.projectId,
     name: value.name,
     description: value.description,
@@ -76,27 +113,58 @@ function normalizeEntry(value: unknown): ApolloWorkspaceEntry | null {
   };
 }
 
-function readStore(): ApolloWorkspaceStore {
+function readSnapshot(): ApolloWorkspaceSnapshot {
   if (!canUseStorage()) {
-    return { version: 1, projects: [] };
+    return { valid: [], malformed: [] };
   }
+  const raw = window.localStorage.getItem(APOLLO_WORKSPACE_STORAGE_KEY);
+  if (!raw) return { valid: [], malformed: [] };
+  let parsed: { version?: unknown; projects?: unknown };
   try {
-    const raw = window.localStorage.getItem(APOLLO_WORKSPACE_STORAGE_KEY);
-    if (!raw) return { version: 1, projects: [] };
-    const parsed = JSON.parse(raw) as { version?: unknown; projects?: unknown };
-    const projects = Array.isArray(parsed.projects)
-      ? parsed.projects
-          .map(normalizeEntry)
-          .filter((entry): entry is ApolloWorkspaceEntry => entry !== null)
-      : [];
-    return { version: 1, projects };
+    parsed = JSON.parse(raw) as { version?: unknown; projects?: unknown };
   } catch {
-    return { version: 1, projects: [] };
+    return {
+      valid: [],
+      malformed: [
+        {
+          workspaceId: APOLLO_WORKSPACE_STORE_MALFORMED_ID,
+          diagnostics: ["Workspace store JSON could not be parsed."],
+          raw,
+        },
+      ],
+    };
   }
+  const projects = Array.isArray(parsed.projects) ? parsed.projects : [];
+  const valid: ApolloWorkspaceEntry[] = [];
+  const malformed: ApolloWorkspaceMalformedEntry[] = [];
+  for (const entry of projects) {
+    const normalized = normalizeEntry(entry);
+    if ("project" in normalized) {
+      valid.push(normalized);
+    } else {
+      malformed.push(normalized);
+    }
+  }
+  return { valid, malformed };
 }
 
-function writeStore(store: ApolloWorkspaceStore): void {
+function writeStore(snapshot: ApolloWorkspaceSnapshot): void {
   if (!canUseStorage()) return;
+  const store: ApolloWorkspaceStore = {
+    version: 1,
+    projects: [
+      ...snapshot.valid.map((entry) => ({
+        workspaceId: entry.workspaceId,
+        projectId: entry.projectId,
+        name: entry.name,
+        description: entry.description,
+        createdAt: entry.createdAt,
+        updatedAt: entry.updatedAt,
+        project: entry.project,
+      })),
+      ...snapshot.malformed.map((entry) => entry.raw),
+    ],
+  };
   window.localStorage.setItem(APOLLO_WORKSPACE_STORAGE_KEY, JSON.stringify(store));
 }
 
@@ -105,19 +173,31 @@ function normalizeProjectForWorkspace(project: ProjectModel): ProjectModel {
   return cloneProject(serialized.ok ? serialized.project : project);
 }
 
+function sortEntries(entries: readonly ApolloWorkspaceEntry[]): ApolloWorkspaceEntry[] {
+  return [...entries].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+}
+
+export function listApolloWorkspaceSnapshot(): ApolloWorkspaceSnapshot {
+  return readSnapshot();
+}
+
 export function listApolloWorkspaceEntries(): ApolloWorkspaceEntry[] {
-  return [...readStore().projects].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+  return sortEntries(readSnapshot().valid);
+}
+
+export function listApolloWorkspaceMalformedEntries(): ApolloWorkspaceMalformedEntry[] {
+  return [...readSnapshot().malformed];
 }
 
 export function saveApolloWorkspaceEntry(project: ProjectModel, workspaceId?: string): ApolloWorkspaceEntry[] {
-  const store = readStore();
+  const snapshot = readSnapshot();
   const normalizedProject = normalizeProjectForWorkspace(project);
   const timestamp = nowIsoString();
   const existing = workspaceId
-    ? store.projects.find((entry) => entry.workspaceId === workspaceId) ?? null
-    : store.projects.find((entry) => entry.projectId === project.project.id) ?? null;
+    ? snapshot.valid.find((entry) => entry.workspaceId === workspaceId) ?? null
+    : snapshot.valid.find((entry) => entry.projectId === project.project.id) ?? null;
   const nextEntry: ApolloWorkspaceEntry = {
-    workspaceId: existing?.workspaceId ?? nextWorkspaceId(store.projects),
+    workspaceId: existing?.workspaceId ?? nextWorkspaceId(snapshot.valid),
     projectId: normalizedProject.project.id,
     name: normalizedProject.project.name || normalizedProject.project.id,
     description: normalizedProject.project.description,
@@ -125,79 +205,109 @@ export function saveApolloWorkspaceEntry(project: ProjectModel, workspaceId?: st
     updatedAt: timestamp,
     project: normalizedProject,
   };
-  const filtered = store.projects.filter((entry) => entry.workspaceId !== nextEntry.workspaceId);
-  const projects = [nextEntry, ...filtered]
-    .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
-    .slice(0, MAX_WORKSPACE_PROJECTS);
-  writeStore({ version: 1, projects });
-  return projects;
+  const filtered = snapshot.valid.filter((entry) => entry.workspaceId !== nextEntry.workspaceId);
+  const valid = sortEntries([nextEntry, ...filtered]).slice(0, MAX_WORKSPACE_PROJECTS);
+  writeStore({ valid, malformed: snapshot.malformed });
+  return valid;
 }
 
 export function deleteApolloWorkspaceEntry(workspaceId: string): ApolloWorkspaceEntry[] {
-  const projects = readStore().projects.filter((entry) => entry.workspaceId !== workspaceId);
-  writeStore({ version: 1, projects });
-  return [...projects];
+  const snapshot = readSnapshot();
+  const valid = snapshot.valid.filter((entry) => entry.workspaceId !== workspaceId);
+  const malformed = snapshot.malformed.filter((entry) => entry.workspaceId !== workspaceId);
+  writeStore({ valid, malformed });
+  return sortEntries(valid);
 }
 
 export function renameApolloWorkspaceEntry(workspaceId: string, name: string): ApolloWorkspaceEntry[] {
+  const snapshot = readSnapshot();
   const trimmed = name.trim();
   const timestamp = nowIsoString();
-  const projects = readStore().projects.map((entry) =>
-    entry.workspaceId === workspaceId
-      ? {
-          ...entry,
-          name: trimmed.length > 0 ? trimmed : entry.name,
-          updatedAt: timestamp,
-        }
-      : entry,
+  const valid = sortEntries(
+    snapshot.valid.map((entry) =>
+      entry.workspaceId === workspaceId
+        ? {
+            ...entry,
+            name: trimmed.length > 0 ? trimmed : entry.name,
+            updatedAt: timestamp,
+          }
+        : entry,
+    ),
   );
-  writeStore({ version: 1, projects });
-  return [...projects];
+  writeStore({ valid, malformed: snapshot.malformed });
+  return valid;
 }
 
 export function duplicateApolloWorkspaceEntry(workspaceId: string): ApolloWorkspaceEntry[] {
-  const store = readStore();
-  const source = store.projects.find((entry) => entry.workspaceId === workspaceId);
-  if (!source) return [...store.projects];
+  const snapshot = readSnapshot();
+  const source = snapshot.valid.find((entry) => entry.workspaceId === workspaceId);
+  if (!source) return sortEntries(snapshot.valid);
   const timestamp = nowIsoString();
   const duplicateProject = cloneProject(source.project);
+  const nextProjectId = generateApolloProjectId();
+  const nextName = buildDuplicateProjectName(
+    source.name,
+    snapshot.valid.map((entry) => entry.name),
+  );
   duplicateProject.project = {
     ...duplicateProject.project,
-    id: `${duplicateProject.project.id}-copy`,
-    name: `${duplicateProject.project.name} Copy`,
+    id: nextProjectId,
+    name: nextName,
     createdAt: timestamp,
     updatedAt: timestamp,
   };
-  const projects = [
+  if (duplicateProject.apolloPhase1Unit2) {
+    duplicateProject.apolloPhase1Unit2 = {
+      ...duplicateProject.apolloPhase1Unit2,
+      metadata: {
+        ...duplicateProject.apolloPhase1Unit2.metadata,
+        projectId: nextProjectId,
+        name: nextName,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+    };
+  }
+  const valid = sortEntries([
     {
-      workspaceId: nextWorkspaceId(store.projects),
-      projectId: duplicateProject.project.id,
-      name: duplicateProject.project.name,
+      workspaceId: nextWorkspaceId(snapshot.valid),
+      projectId: nextProjectId,
+      name: nextName,
       description: duplicateProject.project.description,
       createdAt: timestamp,
       updatedAt: timestamp,
       project: duplicateProject,
     },
-    ...store.projects,
-  ].slice(0, MAX_WORKSPACE_PROJECTS);
-  writeStore({ version: 1, projects });
-  return [...projects];
+    ...snapshot.valid,
+  ]).slice(0, MAX_WORKSPACE_PROJECTS);
+  writeStore({ valid, malformed: snapshot.malformed });
+  return valid;
 }
 
 export function loadApolloWorkspaceProject(workspaceId: string): ProjectModel | null {
-  const entry = readStore().projects.find((item) => item.workspaceId === workspaceId);
+  const malformed = readSnapshot().malformed.some((entry) => entry.workspaceId === workspaceId);
+  if (malformed) {
+    return null;
+  }
+  const entry = readSnapshot().valid.find((item) => item.workspaceId === workspaceId);
   return entry ? cloneProject(entry.project) : null;
 }
 
-export function createApolloWorkspaceProject(): ProjectModel {
+export function isApolloWorkspaceEntryMalformed(workspaceId: string): ApolloWorkspaceMalformedEntry | null {
+  return readSnapshot().malformed.find((entry) => entry.workspaceId === workspaceId) ?? null;
+}
+
+export function createApolloWorkspaceProject(name = "Apollo NN Draft"): ProjectModel {
   const created = createDefaultProject();
+  const timestamp = nowIsoString();
+  const projectId = generateApolloProjectId();
   created.project = {
     ...created.project,
-    id: `apollo-nn-${Date.now()}`,
-    name: "Apollo NN Draft",
+    id: projectId,
+    name,
     description: "Non-numeric Apollo workspace draft.",
-    createdAt: nowIsoString(),
-    updatedAt: nowIsoString(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
   };
   const hydrated = hydrateApolloPhase1Unit2FromPersistence(created);
   return hydrated.ok ? hydrated.project : created;

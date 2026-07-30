@@ -6091,6 +6091,65 @@ button:disabled {
   color: #8c5b00;
 }
 
+.apollo-guard-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 16px;
+}
+
+.apollo-guard-dialog {
+  width: min(480px, 100%);
+  background: #fff;
+  border: 1px solid #bfd0e2;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+}
+
+.apollo-guard-dialog h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.apollo-guard-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.apollo-workspace-warning {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e0b35a;
+  background: #fff8e8;
+  color: #7a4d00;
+}
+
+.apollo-input-error {
+  display: block;
+  margin-top: 4px;
+  color: #b00020;
+}
+
+.apollo-project-form-grid output {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  border: 1px solid #d5dee8;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #f5f8fb;
+  color: #526273;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 @media (max-width: 1200px) {
   .apollo-unit2-layout,
   .apollo-unit2-summary-grid,
