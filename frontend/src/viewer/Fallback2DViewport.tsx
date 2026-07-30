@@ -74,7 +74,17 @@ export function Fallback2DViewport({
           project.supports.map((support) => {
             const node = nodeMap.get(support.nodeId);
             if (!node) return null;
-            return <SupportGlyph key={support.nodeId} x={node.sx} y={node.sy} fixed={isFullyFixed(support)} />;
+            const supportId = support.id ?? support.nodeId;
+            return (
+              <SupportGlyph
+                key={supportId}
+                x={node.sx}
+                y={node.sy}
+                fixed={isFullyFixed(support)}
+                selected={isSelected(selection, "support", supportId)}
+                onClick={() => onSelectionChange({ type: "support", id: supportId })}
+              />
+            );
           })}
         {visibility.loads &&
           project.nodalLoads
@@ -132,11 +142,40 @@ function FallbackAxes({ axis }: { axis: ProjectionAxis }) {
   );
 }
 
-function SupportGlyph({ x, y, fixed }: { x: number; y: number; fixed: boolean }) {
+function SupportGlyph({
+  x,
+  y,
+  fixed,
+  selected,
+  onClick,
+}: {
+  x: number;
+  y: number;
+  fixed: boolean;
+  selected: boolean;
+  onClick: () => void;
+}) {
   if (fixed) {
-    return <rect data-testid="fallback-support" className="fallback-support fixed" x={x - 13} y={y + 11} width={26} height={13} />;
+    return (
+      <rect
+        data-testid="fallback-support"
+        className={selected ? "fallback-support fixed selected" : "fallback-support fixed"}
+        x={x - 13}
+        y={y + 11}
+        width={26}
+        height={13}
+        onClick={onClick}
+      />
+    );
   }
-  return <polygon data-testid="fallback-support" className="fallback-support" points={`${x},${y + 11} ${x - 15},${y + 33} ${x + 15},${y + 33}`} />;
+  return (
+    <polygon
+      data-testid="fallback-support"
+      className={selected ? "fallback-support selected" : "fallback-support"}
+      points={`${x},${y + 11} ${x - 15},${y + 33} ${x + 15},${y + 33}`}
+      onClick={onClick}
+    />
+  );
 }
 
 function NodalLoadGlyph({
@@ -225,7 +264,7 @@ function isFullyFixed(support: { ux: boolean; uy: boolean; uz: boolean; rx: bool
   return support.ux && support.uy && support.uz && support.rx && support.ry && support.rz;
 }
 
-function isSelected(selection: ViewerSelection, type: "node" | "member", id: string): boolean {
+function isSelected(selection: ViewerSelection, type: "node" | "member" | "support", id: string): boolean {
   return selection?.type === type && selection.id === id;
 }
 

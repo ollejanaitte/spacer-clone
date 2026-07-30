@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
+import * as THREE from "three";
 import { createDefaultProject } from "../data/defaultProject";
 import { buildApolloVisualizationModelOrThrow } from "../apollo/visualization";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
@@ -27,6 +28,43 @@ describe("SceneBuilder Apollo visualization path", () => {
     expect(groups.loads.children).toHaveLength(0);
     expect(groups.resultDiagrams.children).toHaveLength(0);
     expect(groups.deformed.children).toHaveLength(0);
+
+    disposeObject(groups.root);
+  });
+
+  it("marks Apollo support objects selectable for viewer picking", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+      selection: { type: "support", id: "SUP-1" },
+      apolloSelectionKeys: ["support:SUP-1"],
+    });
+
+    const support = groups.supports.children.find((child) => child.userData?.id === "SUP-1");
+    expect(support?.userData?.selectable).toBe(true);
+    const supportCone = (support?.children[0] ?? null) as THREE.Mesh | null;
+    expect(supportCone?.userData?.selectable).toBe(true);
+    expect(supportCone?.userData?.id).toBe("SUP-1");
+
+    disposeObject(groups.root);
+  });
+
+  it("applies validation highlight color to Apollo node objects", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+      apolloValidationHighlight: { targetKey: "node:G0", severity: "error" },
+    });
+
+    const nodeMesh = groups.nodes.children.find((child) => child.userData?.id === "G0") as THREE.Mesh | undefined;
+    expect(nodeMesh).toBeDefined();
+    expect((nodeMesh?.material as THREE.MeshStandardMaterial).color.getHexString()).toBe("d14343");
 
     disposeObject(groups.root);
   });

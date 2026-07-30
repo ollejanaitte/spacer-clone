@@ -47,6 +47,8 @@ export const webglFallbackMessage =
 export function Viewer3D({
   project,
   apolloVisualizationModel = null,
+  apolloSelectionKeys = [],
+  apolloValidationHighlight = null,
   result,
   if3Result = null,
   selectedSection,
@@ -264,6 +266,8 @@ export function Viewer3D({
   const viewportProps = {
     project,
     apolloVisualizationModel,
+    apolloSelectionKeys,
+    apolloValidationHighlight,
     result: overlayResult,
     selectedSection,
     selection,
@@ -435,7 +439,9 @@ function statusText(selection: ViewerSelection, hasResult: boolean): string {
   const typeLabel = selection
     ? selection.type === "node"
       ? ja.viewer.messages.nodeLabel
-      : ja.viewer.messages.memberLabel
+      : selection.type === "member"
+        ? ja.viewer.messages.memberLabel
+        : "Support"
     : "";
   const selected = selection ? `${typeLabel} ${selection.id}` : ja.viewer.messages.unselected;
   const suffix = hasResult
