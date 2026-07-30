@@ -1,0 +1,24 @@
+APOLLO_3D_STEP4_TO_STEP8_TRACEABILITY_VERDICT: PASS
+
+# 13. Traceability Matrix
+
+| 要件 | 正本設計書 | 実装予定PR | 実装予定ファイル | 検証方法 | completion gate |
+|---|---|---|---|---|---|
+| node display | `07_poc_a_line_model_design.md` | PR-2 | `frontend/src/apollo/visualization/*`, `frontend/src/viewer/*` | viewer mapping test | node表示 |
+| member display | `07_poc_a_line_model_design.md` | PR-2 | 同上 | viewer mapping test | member表示 |
+| support display | `07_poc_a_line_model_design.md`, `08_selection_validation_integration_design.md` | PR-2, PR-3 | `frontend/src/viewer/*`, `ApolloPhase1Shell.tsx` | support mapping + selection test | support表示 |
+| camera controls | `07_poc_a_line_model_design.md` | PR-2 | `frontend/src/viewer/*` | camera preset / fit tests | top/front/side/isometric |
+| selection sync | `08_selection_validation_integration_design.md` | PR-3 | `ApolloPhase1Shell.tsx`, `selection.ts`, `viewer/*` | selection integration tests | table<->3D sync |
+| validation highlight | `08_selection_validation_integration_design.md` | PR-3 | `validationNavigator.ts`, `ApolloPhase1Shell.tsx`, `viewer/*` | validation navigation tests | severity highlight |
+| girder solids | `09_simple_solid_model_design.md` | PR-4 | `frontend/src/apollo/visualization/*` | solid dimension tests | girder solids |
+| cross beam solids | `09_simple_solid_model_design.md` | PR-4 | 同上 | station/girder pair tests | cross beam solids |
+| bracing | `09_simple_solid_model_design.md` | PR-4 | 同上 | pattern/default tests | bracing fallback |
+| deck | `09_simple_solid_model_design.md` | PR-4 | 同上 | width/thickness tests | deck solid |
+| bearings | `09_simple_solid_model_design.md` | PR-4 | 同上 | support/bearing placement tests | bearing blocks |
+| STL binary | `10_stl_export_design.md` | PR-5 | `frontend/src/apollo/export/*` | byte length / header tests | binary STL |
+| manifest | `10_stl_export_design.md`, `11_persistence_reload_electron_design.md` | PR-5, PR-6 | `frontend/src/apollo/export/*` | schema / metadata tests | companion JSON |
+| save/reload | `11_persistence_reload_electron_design.md` | PR-6 | `importExport.ts`, `desktop/projectFileDialog.ts` | reproducibility tests | same bbox / entity count |
+| browser save | `10_stl_export_design.md`, `11_persistence_reload_electron_design.md` | PR-6 | `frontend/src/desktop/projectFileDialog.ts` | download behavior test | browser save |
+| Electron save | `11_persistence_reload_electron_design.md` | PR-6 | `desktop/electron/*` | IPC/save/cancel tests | Electron save |
+| Unit 3 regression | `03_implementation_plan_and_scope_freeze.md`, `12_step4_to_step8_design_readiness_gate.md` | PR-7 | tests + docs | regression suite | Unit 3副作用なし |
+| deterministic output | `01_visualization_contract_freeze.md`, `10_stl_export_design.md`, `11_persistence_reload_electron_design.md` | PR-1, PR-5, PR-6 | visualization/export/tests | deterministic tests | repeatable output |
