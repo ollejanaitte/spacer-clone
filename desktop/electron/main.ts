@@ -13,6 +13,7 @@ import {
   buildAboutDetail,
   describeReleaseCheckStatus,
 } from "./aboutConfig";
+import { shouldPromptCloseGuardFromUrl } from "./closeGuard";
 import { registerDialogIpc } from "./dialogIpc";
 import { IPC_CHANNELS } from "./ipcChannels";
 
@@ -48,6 +49,9 @@ function registerCloseGuardIpc(): void {
 function attachCloseGuard(window: BrowserWindow): void {
   window.on("close", (event) => {
     if (closeGuardBypass) {
+      return;
+    }
+    if (!shouldPromptCloseGuardFromUrl(window.webContents.getURL())) {
       return;
     }
     event.preventDefault();
@@ -519,6 +523,10 @@ if (gotTheLock) {
       return;
     }
     if (!mainWindow || mainWindow.isDestroyed()) {
+      stopBackend();
+      return;
+    }
+    if (!shouldPromptCloseGuardFromUrl(mainWindow.webContents.getURL())) {
       stopBackend();
       return;
     }

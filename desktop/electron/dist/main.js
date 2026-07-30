@@ -8,7 +8,9 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_child_process_1 = require("node:child_process");
 const gpuMode_1 = require("./gpuMode");
 const aboutConfig_1 = require("./aboutConfig");
+const closeGuard_1 = require("./closeGuard");
 const dialogIpc_1 = require("./dialogIpc");
+const ipcChannels_1 = require("./ipcChannels");
 const gotTheLock = electron_1.app.requestSingleInstanceLock();
 if (!gotTheLock) {
     electron_1.app.quit();
@@ -17,6 +19,36 @@ const gpuMode = (0, gpuMode_1.resolveGpuModeFromArgs)(process.argv, process.env.
 let backendProcess;
 let splashWindow;
 let mainWindow;
+let closeGuardBypass = false;
+let pendingAppQuit = false;
+function registerCloseGuardIpc() {
+    electron_1.ipcMain.on(ipcChannels_1.IPC_CHANNELS.CLOSE_GUARD_RESPONSE, (_event, payload) => {
+        const allow = payload?.allow === true;
+        if (!allow || !mainWindow || mainWindow.isDestroyed()) {
+            pendingAppQuit = false;
+            return;
+        }
+        closeGuardBypass = true;
+        if (pendingAppQuit) {
+            pendingAppQuit = false;
+            electron_1.app.quit();
+            return;
+        }
+        mainWindow.close();
+    });
+}
+function attachCloseGuard(window) {
+    window.on("close", (event) => {
+        if (closeGuardBypass) {
+            return;
+        }
+        if (!(0, closeGuard_1.shouldPromptCloseGuardFromUrl)(window.webContents.getURL())) {
+            return;
+        }
+        event.preventDefault();
+        window.webContents.send(ipcChannels_1.IPC_CHANNELS.CLOSE_GUARD_PROMPT, { kind: "window-close" });
+    });
+}
 for (const gpuSwitch of (0, gpuMode_1.getGpuSwitches)(gpuMode)) {
     electron_1.app.commandLine.appendSwitch(gpuSwitch.name, gpuSwitch.value);
 }
@@ -374,6 +406,7 @@ async function createMainWindow(version) {
             closeSplash();
         }
     });
+    attachCloseGuard(mainWindow);
     if (electron_1.app.isPackaged) {
         await mainWindow.loadFile(getProductionIndexPath());
     }
@@ -427,6 +460,7 @@ if (gotTheLock) {
     });
     electron_1.app.whenReady().then(() => {
         (0, dialogIpc_1.registerDialogIpc)(() => mainWindow, showAboutDialog);
+        registerCloseGuardIpc();
         buildAppMenu();
         void runWithSplash();
         electron_1.app.on("activate", () => {
@@ -435,8 +469,22 @@ if (gotTheLock) {
             }
         });
     });
-    electron_1.app.on("before-quit", () => {
-        stopBackend();
+    electron_1.app.on("before-quit", (event) => {
+        if (closeGuardBypass) {
+            stopBackend();
+            return;
+        }
+        if (!mainWindow || mainWindow.isDestroyed()) {
+            stopBackend();
+            return;
+        }
+        if (!(0, closeGuard_1.shouldPromptCloseGuardFromUrl)(mainWindow.webContents.getURL())) {
+            stopBackend();
+            return;
+        }
+        event.preventDefault();
+        pendingAppQuit = true;
+        mainWindow.webContents.send(ipcChannels_1.IPC_CHANNELS.CLOSE_GUARD_PROMPT, { kind: "app-quit" });
     });
     electron_1.app.on("window-all-closed", () => {
         closeSplash();
