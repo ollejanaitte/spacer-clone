@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Viewer3D } from "../viewer/Viewer3D";
 import type { ViewerSelection } from "../viewer/types";
 import type { ApolloPhase1FeatureFlags } from "./featureFlag";
+import type { ApolloHistoryCommitMode } from "./history";
 import {
   appendApolloPhase1Unit2Audit,
   APOLLO_PHASE1_UNIT2_SCHEMA_VERSION,
@@ -29,7 +30,26 @@ import {
   CompositionAwareInput,
   CompositionAwareTextarea,
 } from "./components/CompositionAwareInput";
+import { isApolloCompositionActive } from "./compositionRegistry";
 import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
+import {
+  applyApolloClipboardPaste,
+  buildApolloClipboardPayload,
+  type ApolloClipboardPayload,
+} from "./clipboard";
+import {
+  clearApolloSelection,
+  createApolloSelectionState,
+  isApolloSelectionHomogeneous,
+  primaryApolloSelection,
+  pruneApolloSelection,
+  replaceApolloSelection,
+  selectAllVisibleApolloRefs,
+  selectApolloRange,
+  toggleApolloSelection,
+  type ApolloEntityKind,
+  type ApolloEntityRef,
+} from "./selection";
 import type {
   ApolloPhase1Unit2Draft,
   ApolloPhase1Unit2MaterialReference,
@@ -44,8 +64,14 @@ import type {
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
   isDirty: boolean;
+  canUndo: boolean;
+  canRedo: boolean;
   flags: ApolloPhase1FeatureFlags;
-  onProjectChange: (nextProject: ProjectModel) => void;
+  onProjectChange: (nextProject: ProjectModel, mode?: ApolloHistoryCommitMode) => void;
+  onResetProjectHistory: (nextProject: ProjectModel) => void;
+  onCloseHistoryTransaction: () => void;
+  onUndo: () => void;
+  onRedo: () => void;
   onReturnToPro: () => void;
   onSaveProject: () => Promise<boolean>;
   onReloadProject: () => Promise<boolean>;
@@ -102,6 +128,25 @@ const ONBOARDING_SLIDES = [
 
 function nowIsoString(): string {
   return new Date().toISOString();
+}
+
+function isEditableShortcutTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  const tagName = target.tagName.toLowerCase();
+  return tagName === "input" || tagName === "textarea" || tagName === "select";
+}
+
+function sameApolloRef(left: ApolloEntityRef | null, right: ApolloEntityRef | null): boolean {
+  return left?.kind === right?.kind && left?.id === right?.id;
+}
+
+function includesApolloRef(refs: readonly ApolloEntityRef[], target: ApolloEntityRef): boolean {
+  return refs.some((ref) => sameApolloRef(ref, target));
 }
 
 function summarizeList(items: readonly string[]): string {
@@ -214,8 +259,14 @@ function localizeValidationMessage(entry: StructuredMessage): string {
 export function ApolloPhase1Shell({
   project,
   isDirty,
+  canUndo,
+  canRedo,
   flags,
   onProjectChange,
+  onResetProjectHistory,
+  onCloseHistoryTransaction,
+  onUndo,
+  onRedo,
   onReturnToPro,
   onSaveProject,
   onReloadProject,
@@ -228,7 +279,7 @@ export function ApolloPhase1Shell({
   const validation = useMemo(() => validateApolloPhase1Unit2Draft(draft), [draft]);
   const referenceUsage = useMemo(() => buildApolloPhase1Unit2ReferenceUsage(draft), [draft]);
   const [editorPane, setEditorPane] = useState<EditorPane>("nodes");
-  const [selection, setSelection] = useState<ApolloPhase1Unit2ViewSelection>(null);
+  const [selectionState, setSelectionState] = useState(() => createApolloSelectionState());
   const [interactionMessage, setInteractionMessage] = useState<string | null>(null);
   const [viewerMessage, setViewerMessage] = useState<string | null>(null);
   const [persisting, setPersisting] = useState<"save" | "reload" | null>(null);
@@ -244,29 +295,96 @@ export function ApolloPhase1Shell({
   const [onboardingIndex, setOnboardingIndex] = useState(0);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
+  const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
+  const selectedRefs = selectionState.orderedRefs;
+  const primarySelection = primaryApolloSelection(selectedRefs);
+  const selection: ApolloPhase1Unit2ViewSelection = primarySelection
+    ? { kind: primarySelection.kind, id: primarySelection.id }
+    : null;
+  const visibleEditorRefs = useMemo<readonly ApolloEntityRef[]>(() => {
+    if (editorPane === "nodes") {
+      return draft.nodes.map((node) => ({ kind: "node" as const, id: node.id }));
+    }
+    if (editorPane === "members") {
+      return draft.members.map((member) => ({ kind: "member" as const, id: member.id }));
+    }
+    if (editorPane === "supports") {
+      return draft.supports.map((support) => ({ kind: "support" as const, id: support.id }));
+    }
+    return draft.materialReferences.map((material) => ({ kind: "material" as const, id: material.id }));
+  }, [draft, editorPane]);
 
   useEffect(() => {
-    if (selection?.kind === "node" && draft.nodes.some((node) => node.id === selection.id)) return;
-    if (selection?.kind === "member" && draft.members.some((member) => member.id === selection.id)) return;
-    if (selection?.kind === "support" && draft.supports.some((support) => support.id === selection.id)) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey) {
+        return;
+      }
+      if (isApolloCompositionActive() || event.isComposing) {
+        return;
+      }
+      if (isEditableShortcutTarget(event.target)) {
+        return;
+      }
+      const key = event.key.toLowerCase();
+      if (key === "z" && !event.shiftKey) {
+        event.preventDefault();
+        onUndo();
+        return;
+      }
+      if (key === "y" || (key === "z" && event.shiftKey)) {
+        event.preventDefault();
+        onRedo();
+        return;
+      }
+      if (key === "a") {
+        event.preventDefault();
+        setSelectionState(selectAllVisibleApolloRefs(visibleEditorRefs));
+        return;
+      }
+      if (key === "c") {
+        event.preventDefault();
+        handleCopySelection();
+        return;
+      }
+      if (key === "v") {
+        event.preventDefault();
+        handlePasteSelection();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onRedo, onUndo, selectedRefs, editorPane, draft]);
+
+  useEffect(() => {
+    const existingRefs: ApolloEntityRef[] = [
+      ...draft.nodes.map((node) => ({ kind: "node" as const, id: node.id })),
+      ...draft.members.map((member) => ({ kind: "member" as const, id: member.id })),
+      ...draft.supports.map((support) => ({ kind: "support" as const, id: support.id })),
+      ...draft.materialReferences.map((material) => ({ kind: "material" as const, id: material.id })),
+    ];
+    const nextSelection = pruneApolloSelection(selectionState, existingRefs);
     if (
-      selection?.kind === "material" &&
-      draft.materialReferences.some((material) => material.id === selection.id)
+      nextSelection.orderedRefs.length !== selectionState.orderedRefs.length ||
+      !sameApolloRef(nextSelection.anchorRef, selectionState.anchorRef)
     ) {
+      setSelectionState(nextSelection);
+      return;
+    }
+    if (nextSelection.orderedRefs.length > 0) {
       return;
     }
     if (draft.nodes.length > 0) {
-      setSelection({ kind: "node", id: draft.nodes[0].id });
+      setSelectionState(replaceApolloSelection({ kind: "node", id: draft.nodes[0].id }));
       setEditorPane("nodes");
       return;
     }
     if (draft.materialReferences.length > 0) {
-      setSelection({ kind: "material", id: draft.materialReferences[0].id });
+      setSelectionState(replaceApolloSelection({ kind: "material", id: draft.materialReferences[0].id }));
       setEditorPane("materials");
       return;
     }
-    setSelection(null);
-  }, [draft, selection]);
+    setSelectionState(clearApolloSelection());
+  }, [draft, selectionState]);
 
   useEffect(() => {
     if (workspaceEntries.length === 0) {
@@ -293,12 +411,16 @@ export function ApolloPhase1Shell({
     selection?.kind === "material"
       ? draft.materialReferences.find((material) => material.id === selection.id) ?? null
       : null;
+  const viewerSelectionRef =
+    selectedRefs.length === 1 && (selection?.kind === "node" || selection?.kind === "member")
+      ? selection
+      : null;
 
   const viewerSelection: ViewerSelection =
-    selection?.kind === "node"
-      ? { type: "node", id: selection.id }
-      : selection?.kind === "member"
-        ? { type: "member", id: selection.id }
+    viewerSelectionRef?.kind === "node"
+      ? { type: "node", id: viewerSelectionRef.id }
+      : viewerSelectionRef?.kind === "member"
+        ? { type: "member", id: viewerSelectionRef.id }
         : null;
   const viewerSection: SectionKey =
     selection?.kind === "member"
@@ -315,6 +437,7 @@ export function ApolloPhase1Shell({
     entityType: "project" | "node" | "member" | "support" | "material",
     entityId: string | null,
     updater: (currentDraft: ApolloPhase1Unit2Draft) => ApolloPhase1Unit2Draft,
+    historyMode: ApolloHistoryCommitMode = { kind: "snapshot" },
   ) => {
     const timestamp = nowIsoString();
     const nextProject = withApolloPhase1Unit2Draft(project, (currentDraft) => {
@@ -334,7 +457,7 @@ export function ApolloPhase1Shell({
         message,
       );
     });
-    onProjectChange(nextProject);
+    onProjectChange(nextProject, historyMode);
     setInteractionMessage(message);
     onAuditEvent?.(message);
   };
@@ -352,25 +475,88 @@ export function ApolloPhase1Shell({
     onAuditEvent?.(message);
   };
 
+  const coalescedFieldMode = (fieldKey: string): ApolloHistoryCommitMode => ({
+    kind: "coalesced",
+    key: fieldKey,
+  });
+
+  const clearTransientEditingState = () => {
+    clipboardRef.current = null;
+    setSelectionState(clearApolloSelection());
+  };
+
+  const setSingleSelection = (ref: ApolloEntityRef | null) => {
+    setSelectionState(replaceApolloSelection(ref));
+  };
+
+  const handleRowSelection = (ref: ApolloEntityRef, event?: { shiftKey?: boolean; metaKey?: boolean; ctrlKey?: boolean }) => {
+    if (event?.shiftKey) {
+      setSelectionState((current) => selectApolloRange(current, ref, visibleEditorRefs));
+      return;
+    }
+    if (event?.metaKey || event?.ctrlKey) {
+      setSelectionState((current) => toggleApolloSelection(current, ref));
+      return;
+    }
+    setSingleSelection(ref);
+  };
+
+  const handleCopySelection = () => {
+    const result = buildApolloClipboardPayload(draft, selectedRefs, nowIsoString());
+    if (!result.ok) {
+      announce(result.message);
+      return;
+    }
+    clipboardRef.current = result.payload;
+    announce(`${result.payload.entities.length}件の${result.payload.entityKind}をApollo内部クリップボードへコピーしました。`);
+  };
+
+  const handlePasteSelection = () => {
+    const result = applyApolloClipboardPaste(draft, clipboardRef.current);
+    if (!result.ok) {
+      announce(result.message);
+      return;
+    }
+    applyDraftChange(
+      `${result.selectedRefs.length}件を貼り付けました。`,
+      `${result.selectedRefs[0]?.kind ?? "entity"}.paste`,
+      result.selectedRefs[0]?.kind ?? "project",
+      result.selectedRefs[0]?.id ?? draft.metadata.projectId,
+      () => result.draft,
+    );
+    setSelectionState({
+      orderedRefs: result.selectedRefs,
+      anchorRef: result.selectedRefs[0] ?? null,
+    });
+  };
+
   const updateProjectField = (field: "name" | "description", value: string, message: string) => {
-    applyDraftChange(message, "project.update", "project", draft.metadata.projectId, (currentDraft) => ({
-      ...currentDraft,
-      metadata: {
-        ...currentDraft.metadata,
-        [field]: value,
-      },
-    }));
+    applyDraftChange(
+      message,
+      "project.update",
+      "project",
+      draft.metadata.projectId,
+      (currentDraft) => ({
+        ...currentDraft,
+        metadata: {
+          ...currentDraft.metadata,
+          [field]: value,
+        },
+      }),
+      { kind: "coalesced", key: `project:${field}` },
+    );
   };
 
   const updateNode = (
     nodeId: string,
     updater: (node: ApolloPhase1Unit2Node) => ApolloPhase1Unit2Node,
     message: string,
+    historyMode: ApolloHistoryCommitMode = { kind: "snapshot" },
   ) => {
     applyDraftChange(message, "node.update", "node", nodeId, (currentDraft) => ({
       ...currentDraft,
       nodes: currentDraft.nodes.map((node) => (node.id === nodeId ? updater(node) : node)),
-    }));
+    }), historyMode);
   };
 
   const updateNodeId = (nodeId: string, nextId: string) => {
@@ -383,19 +569,26 @@ export function ApolloPhase1Shell({
       rejectOperation(`Node ${nodeId} rejected duplicate id ${trimmed}.`, "node", nodeId);
       return;
     }
-    applyDraftChange(`節点IDを ${trimmed} に更新しました。`, "node.rename", "node", nodeId, (currentDraft) => ({
-      ...currentDraft,
-      nodes: currentDraft.nodes.map((node) => (node.id === nodeId ? { ...node, id: trimmed } : node)),
-      members: currentDraft.members.map((member) => ({
-        ...member,
-        nodeI: member.nodeI === nodeId ? trimmed : member.nodeI,
-        nodeJ: member.nodeJ === nodeId ? trimmed : member.nodeJ,
-      })),
-      supports: currentDraft.supports.map((support) =>
-        support.nodeId === nodeId ? { ...support, nodeId: trimmed, label: support.label || trimmed } : support,
-      ),
-    }));
-    setSelection({ kind: "node", id: trimmed });
+    applyDraftChange(
+      `節点IDを ${trimmed} に更新しました。`,
+      "node.rename",
+      "node",
+      nodeId,
+      (currentDraft) => ({
+        ...currentDraft,
+        nodes: currentDraft.nodes.map((node) => (node.id === nodeId ? { ...node, id: trimmed } : node)),
+        members: currentDraft.members.map((member) => ({
+          ...member,
+          nodeI: member.nodeI === nodeId ? trimmed : member.nodeI,
+          nodeJ: member.nodeJ === nodeId ? trimmed : member.nodeJ,
+        })),
+        supports: currentDraft.supports.map((support) =>
+          support.nodeId === nodeId ? { ...support, nodeId: trimmed, label: support.label || trimmed } : support,
+        ),
+      }),
+      coalescedFieldMode(`node:${nodeId}:id`),
+    );
+    setSingleSelection({ kind: "node", id: trimmed });
   };
 
   const addNode = () => {
@@ -415,7 +608,7 @@ export function ApolloPhase1Shell({
         },
       ],
     }));
-    setSelection({ kind: "node", id });
+    setSingleSelection({ kind: "node", id });
     setEditorPane("nodes");
   };
 
@@ -427,7 +620,7 @@ export function ApolloPhase1Shell({
       ...currentDraft,
       nodes: [...currentDraft.nodes, { ...source, id, label: `${source.label} copy` }],
     }));
-    setSelection({ kind: "node", id });
+    setSingleSelection({ kind: "node", id });
   };
 
   const deleteNode = (nodeId: string) => {
@@ -451,13 +644,14 @@ export function ApolloPhase1Shell({
     materialId: string,
     updater: (material: ApolloPhase1Unit2MaterialReference) => ApolloPhase1Unit2MaterialReference,
     message: string,
+    historyMode: ApolloHistoryCommitMode = { kind: "snapshot" },
   ) => {
     applyDraftChange(message, "material.update", "material", materialId, (currentDraft) => ({
       ...currentDraft,
       materialReferences: currentDraft.materialReferences.map((material) =>
         material.id === materialId ? updater(material) : material,
       ),
-    }));
+    }), historyMode);
   };
 
   const updateMaterialId = (materialId: string, nextId: string) => {
@@ -470,16 +664,23 @@ export function ApolloPhase1Shell({
       rejectOperation(`Material ${materialId} rejected duplicate id ${trimmed}.`, "material", materialId);
       return;
     }
-    applyDraftChange(`材料IDを ${trimmed} に更新しました。`, "material.rename", "material", materialId, (currentDraft) => ({
-      ...currentDraft,
-      materialReferences: currentDraft.materialReferences.map((material) =>
-        material.id === materialId ? { ...material, id: trimmed } : material,
-      ),
-      members: currentDraft.members.map((member) =>
-        member.materialRefId === materialId ? { ...member, materialRefId: trimmed } : member,
-      ),
-    }));
-    setSelection({ kind: "material", id: trimmed });
+    applyDraftChange(
+      `材料IDを ${trimmed} に更新しました。`,
+      "material.rename",
+      "material",
+      materialId,
+      (currentDraft) => ({
+        ...currentDraft,
+        materialReferences: currentDraft.materialReferences.map((material) =>
+          material.id === materialId ? { ...material, id: trimmed } : material,
+        ),
+        members: currentDraft.members.map((member) =>
+          member.materialRefId === materialId ? { ...member, materialRefId: trimmed } : member,
+        ),
+      }),
+      coalescedFieldMode(`material:${materialId}:id`),
+    );
+    setSingleSelection({ kind: "material", id: trimmed });
   };
 
   const addMaterial = () => {
@@ -499,7 +700,7 @@ export function ApolloPhase1Shell({
         },
       ],
     }));
-    setSelection({ kind: "material", id });
+    setSingleSelection({ kind: "material", id });
     setEditorPane("materials");
   };
 
@@ -511,7 +712,7 @@ export function ApolloPhase1Shell({
       ...currentDraft,
       materialReferences: [...currentDraft.materialReferences, { ...source, id, displayName: `${source.displayName} copy` }],
     }));
-    setSelection({ kind: "material", id });
+    setSingleSelection({ kind: "material", id });
   };
 
   const deleteMaterial = (materialId: string) => {
@@ -534,11 +735,12 @@ export function ApolloPhase1Shell({
     memberId: string,
     updater: (member: ApolloPhase1Unit2Member) => ApolloPhase1Unit2Member,
     message: string,
+    historyMode: ApolloHistoryCommitMode = { kind: "snapshot" },
   ) => {
     applyDraftChange(message, "member.update", "member", memberId, (currentDraft) => ({
       ...currentDraft,
       members: currentDraft.members.map((member) => (member.id === memberId ? updater(member) : member)),
-    }));
+    }), historyMode);
   };
 
   const updateMemberId = (memberId: string, nextId: string) => {
@@ -551,11 +753,18 @@ export function ApolloPhase1Shell({
       rejectOperation(`Member ${memberId} rejected duplicate id ${trimmed}.`, "member", memberId);
       return;
     }
-    applyDraftChange(`部材IDを ${trimmed} に更新しました。`, "member.rename", "member", memberId, (currentDraft) => ({
-      ...currentDraft,
-      members: currentDraft.members.map((member) => (member.id === memberId ? { ...member, id: trimmed } : member)),
-    }));
-    setSelection({ kind: "member", id: trimmed });
+    applyDraftChange(
+      `部材IDを ${trimmed} に更新しました。`,
+      "member.rename",
+      "member",
+      memberId,
+      (currentDraft) => ({
+        ...currentDraft,
+        members: currentDraft.members.map((member) => (member.id === memberId ? { ...member, id: trimmed } : member)),
+      }),
+      coalescedFieldMode(`member:${memberId}:id`),
+    );
+    setSingleSelection({ kind: "member", id: trimmed });
   };
 
   const addMember = () => {
@@ -579,7 +788,7 @@ export function ApolloPhase1Shell({
         },
       ],
     }));
-    setSelection({ kind: "member", id });
+    setSingleSelection({ kind: "member", id });
     setEditorPane("members");
   };
 
@@ -591,7 +800,7 @@ export function ApolloPhase1Shell({
       ...currentDraft,
       members: [...currentDraft.members, { ...source, id, label: `${source.label} copy` }],
     }));
-    setSelection({ kind: "member", id });
+    setSingleSelection({ kind: "member", id });
   };
 
   const deleteMember = (memberId: string) => {
@@ -620,11 +829,12 @@ export function ApolloPhase1Shell({
     supportId: string,
     updater: (support: ApolloPhase1Unit2Support) => ApolloPhase1Unit2Support,
     message: string,
+    historyMode: ApolloHistoryCommitMode = { kind: "snapshot" },
   ) => {
     applyDraftChange(message, "support.update", "support", supportId, (currentDraft) => ({
       ...currentDraft,
       supports: currentDraft.supports.map((support) => (support.id === supportId ? updater(support) : support)),
-    }));
+    }), historyMode);
   };
 
   const updateSupportId = (supportId: string, nextId: string) => {
@@ -637,11 +847,18 @@ export function ApolloPhase1Shell({
       rejectOperation(`Support ${supportId} rejected duplicate id ${trimmed}.`, "support", supportId);
       return;
     }
-    applyDraftChange(`支点IDを ${trimmed} に更新しました。`, "support.rename", "support", supportId, (currentDraft) => ({
-      ...currentDraft,
-      supports: currentDraft.supports.map((support) => (support.id === supportId ? { ...support, id: trimmed } : support)),
-    }));
-    setSelection({ kind: "support", id: trimmed });
+    applyDraftChange(
+      `支点IDを ${trimmed} に更新しました。`,
+      "support.rename",
+      "support",
+      supportId,
+      (currentDraft) => ({
+        ...currentDraft,
+        supports: currentDraft.supports.map((support) => (support.id === supportId ? { ...support, id: trimmed } : support)),
+      }),
+      coalescedFieldMode(`support:${supportId}:id`),
+    );
+    setSingleSelection({ kind: "support", id: trimmed });
   };
 
   const addSupport = () => {
@@ -670,7 +887,7 @@ export function ApolloPhase1Shell({
         },
       ],
     }));
-    setSelection({ kind: "support", id });
+    setSingleSelection({ kind: "support", id });
     setEditorPane("supports");
   };
 
@@ -689,7 +906,7 @@ export function ApolloPhase1Shell({
       ...currentDraft,
       supports: [...currentDraft.supports, { ...source, id, nodeId: candidateNode.id, label: candidateNode.label }],
     }));
-    setSelection({ kind: "support", id });
+    setSingleSelection({ kind: "support", id });
   };
 
   const deleteSupport = (supportId: string) => {
@@ -731,8 +948,8 @@ export function ApolloPhase1Shell({
         message,
       ),
     );
-    onProjectChange(nextProject);
-    onAuditEvent?.(message);
+    onProjectChange(nextProject, { kind: "none" });
+        onAuditEvent?.(message);
     const ok = await onSaveProject();
     if (ok) {
       onEstablishBaseline(nextProject);
@@ -755,16 +972,16 @@ export function ApolloPhase1Shell({
 
   const handleViewerSelection = (nextSelection: ViewerSelection) => {
     if (nextSelection?.type === "node") {
-      setSelection({ kind: "node", id: nextSelection.id });
+      setSingleSelection({ kind: "node", id: nextSelection.id });
       setEditorPane("nodes");
       return;
     }
     if (nextSelection?.type === "member") {
-      setSelection({ kind: "member", id: nextSelection.id });
+      setSingleSelection({ kind: "member", id: nextSelection.id });
       setEditorPane("members");
       return;
     }
-    setSelection(null);
+    setSingleSelection(null);
   };
 
   const selectedWorkspaceEntry =
@@ -803,7 +1020,8 @@ export function ApolloPhase1Shell({
           announce("作業中データを開けませんでした。");
           throw new Error("workspace-open-failed");
         }
-        onProjectChange(nextProject);
+        onResetProjectHistory(nextProject);
+        clearTransientEditingState();
         onEstablishBaseline(nextProject);
         announce(`作業中データを開きました: ${nextProject.project.name || nextProject.project.id}`);
         setMode("guided");
@@ -815,7 +1033,8 @@ export function ApolloPhase1Shell({
 
   const handleWorkspaceNew = () => {
     const nextProject = createApolloWorkspaceProject();
-    onProjectChange(nextProject);
+    onResetProjectHistory(nextProject);
+    clearTransientEditingState();
     onEstablishBaseline(nextProject);
     announce(`新しい橋梁データを作成しました: ${nextProject.project.name}`);
   };
@@ -850,6 +1069,7 @@ export function ApolloPhase1Shell({
   const openFromFile = async () => {
     const ok = await onReloadProject();
     if (ok) {
+      clearTransientEditingState();
       setMode("guided");
       setGuidedStep("basics");
       setSaveNotice(null);
@@ -875,11 +1095,12 @@ export function ApolloPhase1Shell({
       "未保存の変更があります。サンプルを読み込むと現在の編集内容は失われます。続行しますか。",
       async () => {
         const sample = createApollo200mContinuousBridgeSample();
-        onProjectChange(sample);
+        onResetProjectHistory(sample);
+        clearTransientEditingState();
         onEstablishBaseline(sample);
         setMode("guided");
         setGuidedStep(sampleGuideDismissed ? "basics" : "sampleLoaded");
-        setSelection({ kind: "node", id: "N-A1" });
+        setSingleSelection({ kind: "node", id: "N-A1" });
         setEditorPane("nodes");
         setSaveNotice(null);
         announce("200m級 5径間連続橋サンプルを読み込みました。");
@@ -894,11 +1115,11 @@ export function ApolloPhase1Shell({
 
   const setPaneAndSelection = (pane: EditorPane) => {
     setEditorPane(pane);
-    if (pane === "nodes" && draft.nodes[0]) setSelection({ kind: "node", id: draft.nodes[0].id });
-    if (pane === "members" && draft.members[0]) setSelection({ kind: "member", id: draft.members[0].id });
-    if (pane === "supports" && draft.supports[0]) setSelection({ kind: "support", id: draft.supports[0].id });
+    if (pane === "nodes" && draft.nodes[0]) setSingleSelection({ kind: "node", id: draft.nodes[0].id });
+    if (pane === "members" && draft.members[0]) setSingleSelection({ kind: "member", id: draft.members[0].id });
+    if (pane === "supports" && draft.supports[0]) setSingleSelection({ kind: "support", id: draft.supports[0].id });
     if (pane === "materials" && draft.materialReferences[0]) {
-      setSelection({ kind: "material", id: draft.materialReferences[0].id });
+      setSingleSelection({ kind: "material", id: draft.materialReferences[0].id });
     }
   };
 
@@ -922,7 +1143,7 @@ export function ApolloPhase1Shell({
     setMode("guided");
     setGuidedStep(target.step);
     setEditorPane(target.pane);
-    setSelection(target.selection);
+    setSingleSelection(target.selection);
     setFocusKey(target.focusKey ?? null);
   };
 
@@ -1084,6 +1305,14 @@ export function ApolloPhase1Shell({
         </div>
         <div className="apollo-applied-summary">
           <span>保存状態: {statusText(isDirty)}</span>
+          <div className="apollo-inline-actions">
+            <button type="button" data-testid="apollo-undo" onClick={onUndo} disabled={!canUndo}>
+              Undo
+            </button>
+            <button type="button" data-testid="apollo-redo" onClick={onRedo} disabled={!canRedo}>
+              Redo
+            </button>
+          </div>
         </div>
       </div>
       <div className="apollo-project-form-grid">
@@ -1102,6 +1331,7 @@ export function ApolloPhase1Shell({
             placeholder="200m級 5径間連続橋"
             value={draft.metadata.name}
             onValueChange={(value) => updateProjectField("name", value, "橋梁名を更新しました。")}
+            onBlur={onCloseHistoryTransaction}
           />
         </label>
         <label className="apollo-project-form-wide">
@@ -1111,6 +1341,7 @@ export function ApolloPhase1Shell({
             placeholder="橋長200m、5径間連続橋、Apollo操作確認用サンプル"
             value={draft.metadata.description}
             onValueChange={(value) => updateProjectField("description", value, "概要・備考を更新しました。")}
+            onBlur={onCloseHistoryTransaction}
           />
         </label>
       </div>
@@ -1225,6 +1456,23 @@ export function ApolloPhase1Shell({
   const renderEditor = () => (
     <section className="apollo-unit2-layout">
       <div className="apollo-unit2-editor">
+        <div className="apollo-applied-summary">
+          <span data-testid="apollo-selection-count">選択 {selectedRefs.length} 件</span>
+          <button
+            type="button"
+            data-testid="apollo-copy-selection"
+            onClick={handleCopySelection}
+            disabled={selectedRefs.length === 0 || !isApolloSelectionHomogeneous(selectedRefs)}
+          >
+            Copy
+          </button>
+          <button type="button" data-testid="apollo-paste-selection" onClick={handlePasteSelection}>
+            Paste
+          </button>
+          {!isApolloSelectionHomogeneous(selectedRefs) && selectedRefs.length > 1 ? (
+            <span className="apollo-inline-hint">異なる種類の行は同時にコピーできません。</span>
+          ) : null}
+        </div>
         <nav className="apollo-unit2-tabs" aria-label="Apollo editor sections">
           {([
             ["nodes", "節点"],
@@ -1259,14 +1507,14 @@ export function ApolloPhase1Shell({
                 </thead>
                 <tbody>
                   {draft.nodes.map((node) => {
-                    const active = selection?.kind === "node" && selection.id === node.id;
+                    const active = includesApolloRef(selectedRefs, { kind: "node", id: node.id });
                     return (
                       <tr key={node.id} className={active ? "selected" : undefined}>
                         <td>{node.id}</td>
                         <td>{node.label}</td>
                         <td>{node.x}</td>
                         <td className="apollo-row-actions">
-                          <button type="button" data-testid={`apollo-node-select-${node.id}`} onClick={() => setSelection({ kind: "node", id: node.id })}>選択</button>
+                          <button type="button" data-testid={`apollo-node-select-${node.id}`} onClick={(event) => handleRowSelection({ kind: "node", id: node.id }, event)}>選択</button>
                           <button type="button" onClick={() => duplicateNode(node.id)}>複製</button>
                           <button type="button" onClick={() => deleteNode(node.id)}>削除</button>
                         </td>
@@ -1278,8 +1526,8 @@ export function ApolloPhase1Shell({
             </div>
             {selectedNode ? (
               <div className="apollo-detail-grid">
-                <label>ID<input data-focus-key="node-id" value={selectedNode.id} onChange={(event) => updateNodeId(selectedNode.id, event.currentTarget.value)} /></label>
-                <label>名称<CompositionAwareInput data-testid="apollo-node-label-input" value={selectedNode.label} onValueChange={(value) => updateNode(selectedNode.id, (node) => ({ ...node, label: value }), "節点名称を更新しました。")} /></label>
+                <label>ID<CompositionAwareInput data-focus-key="node-id" value={selectedNode.id} onValueChange={(value) => updateNodeId(selectedNode.id, value)} onBlur={onCloseHistoryTransaction} /></label>
+                <label>名称<CompositionAwareInput data-testid="apollo-node-label-input" value={selectedNode.label} onValueChange={(value) => updateNode(selectedNode.id, (node) => ({ ...node, label: value }), "節点名称を更新しました。", coalescedFieldMode(`node:${selectedNode.id}:label`))} onBlur={onCloseHistoryTransaction} /></label>
                 <label>X座標<ApolloNumericInput data-testid="apollo-node-x-input" value={selectedNode.x} onCommit={(next) => updateNode(selectedNode.id, (node) => ({ ...node, x: next }), "節点X座標を更新しました。")} onReject={(message) => rejectOperation(`Node ${selectedNode.id} rejected invalid X coordinate input: ${message}`, "node", selectedNode.id)} /></label>
               </div>
             ) : null}
@@ -1302,7 +1550,7 @@ export function ApolloPhase1Shell({
                 </thead>
                 <tbody>
                   {draft.members.map((member) => {
-                    const active = selection?.kind === "member" && selection.id === member.id;
+                    const active = includesApolloRef(selectedRefs, { kind: "member", id: member.id });
                     return (
                       <tr key={member.id} className={active ? "selected" : undefined}>
                         <td>{member.id}</td>
@@ -1310,7 +1558,7 @@ export function ApolloPhase1Shell({
                         <td>{member.nodeI}</td>
                         <td>{member.nodeJ}</td>
                         <td className="apollo-row-actions">
-                          <button type="button" data-testid={`apollo-member-select-${member.id}`} onClick={() => setSelection({ kind: "member", id: member.id })}>選択</button>
+                          <button type="button" data-testid={`apollo-member-select-${member.id}`} onClick={(event) => handleRowSelection({ kind: "member", id: member.id }, event)}>選択</button>
                           <button type="button" onClick={() => duplicateMember(member.id)}>複製</button>
                           <button type="button" onClick={() => deleteMember(member.id)}>削除</button>
                         </td>
@@ -1322,8 +1570,8 @@ export function ApolloPhase1Shell({
             </div>
             {selectedMember ? (
               <div className="apollo-detail-grid">
-                <label>ID<input data-focus-key="member-id" value={selectedMember.id} onChange={(event) => updateMemberId(selectedMember.id, event.currentTarget.value)} /></label>
-                <label>名称<input value={selectedMember.label} onChange={(event) => updateMember(selectedMember.id, (item) => ({ ...item, label: event.currentTarget.value }), "部材名称を更新しました。")} /></label>
+                <label>ID<CompositionAwareInput data-focus-key="member-id" value={selectedMember.id} onValueChange={(value) => updateMemberId(selectedMember.id, value)} onBlur={onCloseHistoryTransaction} /></label>
+                <label>名称<CompositionAwareInput value={selectedMember.label} onValueChange={(value) => updateMember(selectedMember.id, (item) => ({ ...item, label: value }), "部材名称を更新しました。", coalescedFieldMode(`member:${selectedMember.id}:label`))} onBlur={onCloseHistoryTransaction} /></label>
                 <label>始点<select value={selectedMember.nodeI} onChange={(event) => changeMemberNode(selectedMember.id, "nodeI", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
                 <label>終点<select value={selectedMember.nodeJ} onChange={(event) => changeMemberNode(selectedMember.id, "nodeJ", event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
                 <label>材料<select data-focus-key="member-material" value={selectedMember.materialRefId} onChange={(event) => updateMember(selectedMember.id, (item) => ({ ...item, materialRefId: event.currentTarget.value }), "部材の材料参照を更新しました。")}>{draft.materialReferences.map((material) => <option key={material.id} value={material.id}>{material.id}</option>)}</select></label>
@@ -1348,7 +1596,7 @@ export function ApolloPhase1Shell({
                 </thead>
                 <tbody>
                   {draft.supports.map((support) => {
-                    const active = selection?.kind === "support" && selection.id === support.id;
+                    const active = includesApolloRef(selectedRefs, { kind: "support", id: support.id });
                     return (
                       <tr key={support.id} className={active ? "selected" : undefined}>
                         <td>{support.id}</td>
@@ -1357,7 +1605,7 @@ export function ApolloPhase1Shell({
                         <td>{formatSupportState(support.uy)}</td>
                         <td>{formatSupportState(support.uz)}</td>
                         <td className="apollo-row-actions">
-                          <button type="button" data-testid={`apollo-support-select-${support.id}`} onClick={() => setSelection({ kind: "support", id: support.id })}>選択</button>
+                          <button type="button" data-testid={`apollo-support-select-${support.id}`} onClick={(event) => handleRowSelection({ kind: "support", id: support.id }, event)}>選択</button>
                           <button type="button" onClick={() => duplicateSupport(support.id)}>複製</button>
                           <button type="button" onClick={() => deleteSupport(support.id)}>削除</button>
                         </td>
@@ -1369,9 +1617,9 @@ export function ApolloPhase1Shell({
             </div>
             {selectedSupport ? (
               <div className="apollo-detail-grid">
-                <label>ID<input value={selectedSupport.id} onChange={(event) => updateSupportId(selectedSupport.id, event.currentTarget.value)} /></label>
+                <label>ID<CompositionAwareInput value={selectedSupport.id} onValueChange={(value) => updateSupportId(selectedSupport.id, value)} onBlur={onCloseHistoryTransaction} /></label>
                 <label>節点<select data-focus-key="support-node" value={selectedSupport.nodeId} onChange={(event) => changeSupportNode(selectedSupport.id, event.currentTarget.value)}>{draft.nodes.map((node) => <option key={node.id} value={node.id}>{node.id}</option>)}</select></label>
-                <label>名称<input value={selectedSupport.label} onChange={(event) => updateSupport(selectedSupport.id, (item) => ({ ...item, label: event.currentTarget.value }), "支点名称を更新しました。")} /></label>
+                <label>名称<CompositionAwareInput value={selectedSupport.label} onValueChange={(value) => updateSupport(selectedSupport.id, (item) => ({ ...item, label: value }), "支点名称を更新しました。", coalescedFieldMode(`support:${selectedSupport.id}:label`))} onBlur={onCloseHistoryTransaction} /></label>
               </div>
             ) : null}
           </section>
@@ -1393,14 +1641,14 @@ export function ApolloPhase1Shell({
                 </thead>
                 <tbody>
                   {draft.materialReferences.map((material) => {
-                    const active = selection?.kind === "material" && selection.id === material.id;
+                    const active = includesApolloRef(selectedRefs, { kind: "material", id: material.id });
                     return (
                       <tr key={material.id} className={active ? "selected" : undefined}>
                         <td>{material.id}</td>
                         <td>{material.displayName}</td>
                         <td>{material.category}</td>
                         <td className="apollo-row-actions">
-                          <button type="button" data-testid={`apollo-material-select-${material.id}`} onClick={() => setSelection({ kind: "material", id: material.id })}>選択</button>
+                          <button type="button" data-testid={`apollo-material-select-${material.id}`} onClick={(event) => handleRowSelection({ kind: "material", id: material.id }, event)}>選択</button>
                           <button type="button" onClick={() => duplicateMaterial(material.id)}>複製</button>
                           <button type="button" onClick={() => deleteMaterial(material.id)}>削除</button>
                         </td>
@@ -1412,9 +1660,9 @@ export function ApolloPhase1Shell({
             </div>
             {selectedMaterial ? (
               <div className="apollo-detail-grid">
-                <label>ID<input data-focus-key="material-id" value={selectedMaterial.id} onChange={(event) => updateMaterialId(selectedMaterial.id, event.currentTarget.value)} /></label>
-                <label>名称<input value={selectedMaterial.displayName} onChange={(event) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, displayName: event.currentTarget.value }), "材料名称を更新しました。")} /></label>
-                <label>区分<input value={selectedMaterial.category} onChange={(event) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, category: event.currentTarget.value }), "材料区分を更新しました。")} /></label>
+                <label>ID<CompositionAwareInput data-focus-key="material-id" value={selectedMaterial.id} onValueChange={(value) => updateMaterialId(selectedMaterial.id, value)} onBlur={onCloseHistoryTransaction} /></label>
+                <label>名称<CompositionAwareInput value={selectedMaterial.displayName} onValueChange={(value) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, displayName: value }), "材料名称を更新しました。", coalescedFieldMode(`material:${selectedMaterial.id}:displayName`))} onBlur={onCloseHistoryTransaction} /></label>
+                <label>区分<CompositionAwareInput value={selectedMaterial.category} onValueChange={(value) => updateMaterial(selectedMaterial.id, (item) => ({ ...item, category: value }), "材料区分を更新しました。", coalescedFieldMode(`material:${selectedMaterial.id}:category`))} onBlur={onCloseHistoryTransaction} /></label>
               </div>
             ) : null}
           </section>

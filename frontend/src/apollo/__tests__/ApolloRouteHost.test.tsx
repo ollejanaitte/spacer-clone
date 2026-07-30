@@ -9,8 +9,17 @@ import type { ProjectModel } from "../../types";
 import { withApolloPhase1Unit2Draft } from "../unit2Draft";
 
 vi.mock("../../viewer/Viewer3D", () => ({
-  Viewer3D: ({ project }: { project: { nodes: unknown[]; members: unknown[] } }) => (
-    <div data-testid="mock-viewer3d">
+  Viewer3D: ({
+    project,
+    selection,
+  }: {
+    project: { nodes: unknown[]; members: unknown[] };
+    selection?: { type: string; id: string } | null;
+  }) => (
+    <div
+      data-testid="mock-viewer3d"
+      data-selection={selection ? `${selection.type}:${selection.id}` : "none"}
+    >
       {project.nodes.length}/{project.members.length}
     </div>
   ),
@@ -168,5 +177,52 @@ describe("ApolloRouteHost", () => {
     expect(onSaveProject).toHaveBeenCalledTimes(1);
     expect(dirtyStatusText(container)).toBe("保存状態: 保存済み");
     expect(onReloadProject).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns to clean on undo back to baseline and dirty again on redo", async () => {
+    const initialProject = withApolloPhase1Unit2Draft(createDefaultProject(), (draft) => ({
+      ...draft,
+      metadata: {
+        ...draft.metadata,
+        name: "Baseline bridge",
+      },
+    }));
+    const { container } = renderRouteHost({ initialProject });
+
+    const listModeButton = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("一覧編集モード"),
+    ) as HTMLButtonElement | undefined;
+    act(() => {
+      listModeButton?.click();
+    });
+
+    const nameInput = container.querySelector(
+      '[data-testid="apollo-project-name-input"]',
+    ) as HTMLInputElement;
+    act(() => {
+      const valueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      )?.set;
+      valueSetter?.call(nameInput, "Edited bridge name");
+      nameInput.dispatchEvent(new Event("input", { bubbles: true }));
+      nameInput.dispatchEvent(new Event("change", { bubbles: true }));
+      nameInput.dispatchEvent(new Event("blur", { bubbles: true }));
+    });
+
+    expect(dirtyStatusText(container)).toBe("保存状態: 変更あり");
+
+    const undoButton = container.querySelector('[data-testid="apollo-undo"]') as HTMLButtonElement;
+    const redoButton = container.querySelector('[data-testid="apollo-redo"]') as HTMLButtonElement;
+
+    act(() => {
+      undoButton.click();
+    });
+    expect(dirtyStatusText(container)).toBe("保存状態: 保存済み");
+
+    act(() => {
+      redoButton.click();
+    });
+    expect(dirtyStatusText(container)).toBe("保存状態: 変更あり");
   });
 });

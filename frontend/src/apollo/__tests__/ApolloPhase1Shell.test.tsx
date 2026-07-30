@@ -9,8 +9,17 @@ import type { ProjectModel } from "../../types";
 import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
 
 vi.mock("../../viewer/Viewer3D", () => ({
-  Viewer3D: ({ project }: { project: { nodes: unknown[]; members: unknown[] } }) => (
-    <div data-testid="mock-viewer3d">
+  Viewer3D: ({
+    project,
+    selection,
+  }: {
+    project: { nodes: unknown[]; members: unknown[] };
+    selection?: { type: string; id: string } | null;
+  }) => (
+    <div
+      data-testid="mock-viewer3d"
+      data-selection={selection ? `${selection.type}:${selection.id}` : "none"}
+    >
       {project.nodes.length}/{project.members.length}
     </div>
   ),
@@ -50,6 +59,10 @@ function renderShell(
     project: ProjectModel;
     flags: ApolloPhase1FeatureFlags;
     onProjectChange: (nextProject: ProjectModel) => void;
+    onResetProjectHistory: (nextProject: ProjectModel) => void;
+    onCloseHistoryTransaction: () => void;
+    onUndo: () => void;
+    onRedo: () => void;
     onAuditEvent: (message: string) => void;
     onSaveProject: () => Promise<boolean>;
     onReloadProject: () => Promise<boolean>;
@@ -70,7 +83,13 @@ function renderShell(
       <ApolloPhase1Shell
         project={props?.project ?? createDefaultProject()}
         flags={props?.flags ?? DEFAULT_FLAGS}
+        canUndo={false}
+        canRedo={false}
         onProjectChange={props?.onProjectChange ?? (() => undefined)}
+        onResetProjectHistory={props?.onResetProjectHistory ?? props?.onProjectChange ?? (() => undefined)}
+        onCloseHistoryTransaction={props?.onCloseHistoryTransaction ?? (() => undefined)}
+        onUndo={props?.onUndo ?? (() => undefined)}
+        onRedo={props?.onRedo ?? (() => undefined)}
         onReturnToPro={props?.onReturnToPro ?? (() => undefined)}
         onAuditEvent={props?.onAuditEvent}
         isDirty={props?.isDirty ?? false}
@@ -95,7 +114,13 @@ function renderStatefulShell(initialProject: ProjectModel = createDefaultProject
       <ApolloPhase1Shell
         project={project}
         flags={DEFAULT_FLAGS}
+        canUndo={false}
+        canRedo={false}
         onProjectChange={setProject}
+        onResetProjectHistory={setProject}
+        onCloseHistoryTransaction={() => undefined}
+        onUndo={() => undefined}
+        onRedo={() => undefined}
         onReturnToPro={() => undefined}
         onSaveProject={async () => true}
         onReloadProject={async () => true}
@@ -358,5 +383,25 @@ describe("ApolloPhase1Shell", () => {
     });
 
     expect(updates.at(-1)?.project.name).toBe("Apollo Route Persistence");
+  });
+
+  it("clears viewer focus when multiple rows are selected", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+
+    clickButtonByText(container, "一覧編集モード");
+
+    const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
+    const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
+
+    act(() => {
+      first.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("node:N-A1");
+
+    act(() => {
+      second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+    });
+    expect(container.querySelector("[data-testid='mock-viewer3d']")?.getAttribute("data-selection")).toBe("none");
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("2");
   });
 });

@@ -8,6 +8,14 @@ import {
 import { flushApolloCompositionSessions } from "./compositionRegistry";
 import { computeApolloDirtyFingerprint, isApolloProjectDirty } from "./dirtyFingerprint";
 import type { ApolloPhase1FeatureFlags } from "./featureFlag";
+import {
+  clearApolloHistoryCoalescing,
+  createApolloHistoryState,
+  pushApolloHistory,
+  redoApolloHistory,
+  undoApolloHistory,
+  type ApolloHistoryCommitMode,
+} from "./history";
 import { resolveUnsavedChangesGuard } from "./unsavedChangesGuard";
 import { useElectronCloseGuard } from "./useElectronCloseGuard";
 
@@ -36,10 +44,12 @@ export function ApolloRouteHost({
 }: ApolloRouteHostProps) {
   const baselineProjectRef = useRef(cloneProject(project));
   const pendingBaselineSyncRef = useRef(false);
+  const historyStateRef = useRef(createApolloHistoryState());
   const [baselineFingerprint, setBaselineFingerprint] = useState(() =>
     computeApolloDirtyFingerprint(project),
   );
   const guardPrompt = useUnsavedGuardPrompt();
+  const [, setHistoryVersion] = useState(0);
 
   const isDirty = useMemo(
     () => isApolloProjectDirty(project, baselineFingerprint),
@@ -49,14 +59,41 @@ export function ApolloRouteHost({
   const projectRef = useRef(project);
   projectRef.current = project;
 
+  const notifyHistoryChanged = useCallback(() => {
+    setHistoryVersion((version) => version + 1);
+  }, []);
+
+  const commitProjectChange = useCallback(
+    (nextProject: ProjectModel, mode: ApolloHistoryCommitMode = { kind: "snapshot" }) => {
+      historyStateRef.current = pushApolloHistory(historyStateRef.current, projectRef.current, nextProject, mode);
+      onProjectChange(nextProject);
+      notifyHistoryChanged();
+    },
+    [notifyHistoryChanged, onProjectChange],
+  );
+
+  const resetProjectHistory = useCallback(
+    (nextProject: ProjectModel) => {
+      historyStateRef.current = createApolloHistoryState();
+      onProjectChange(nextProject);
+      notifyHistoryChanged();
+    },
+    [notifyHistoryChanged, onProjectChange],
+  );
+
+  const closeHistoryTransaction = useCallback(() => {
+    historyStateRef.current = clearApolloHistoryCoalescing(historyStateRef.current);
+    notifyHistoryChanged();
+  }, [notifyHistoryChanged]);
+
   const establishBaseline = useCallback((nextProject: ProjectModel) => {
     baselineProjectRef.current = cloneProject(nextProject);
     setBaselineFingerprint(computeApolloDirtyFingerprint(nextProject));
   }, []);
 
   const revertToBaseline = useCallback(() => {
-    onProjectChange(cloneProject(baselineProjectRef.current));
-  }, [onProjectChange]);
+    resetProjectHistory(cloneProject(baselineProjectRef.current));
+  }, [resetProjectHistory]);
 
   const handleSaveProject = useCallback(async () => {
     const saved = await onSaveProject();
@@ -117,9 +154,33 @@ export function ApolloRouteHost({
     const loaded = await onReloadProject();
     if (loaded) {
       pendingBaselineSyncRef.current = true;
+      historyStateRef.current = createApolloHistoryState();
+      notifyHistoryChanged();
     }
     return loaded;
-  }, [onReloadProject, runGuardedAction]);
+  }, [notifyHistoryChanged, onReloadProject, runGuardedAction]);
+
+  const handleUndo = useCallback(() => {
+    flushApolloCompositionSessions();
+    const result = undoApolloHistory(historyStateRef.current, projectRef.current);
+    if (!result.project) {
+      return;
+    }
+    historyStateRef.current = result.state;
+    onProjectChange(result.project);
+    notifyHistoryChanged();
+  }, [notifyHistoryChanged, onProjectChange]);
+
+  const handleRedo = useCallback(() => {
+    flushApolloCompositionSessions();
+    const result = redoApolloHistory(historyStateRef.current, projectRef.current);
+    if (!result.project) {
+      return;
+    }
+    historyStateRef.current = result.state;
+    onProjectChange(result.project);
+    notifyHistoryChanged();
+  }, [notifyHistoryChanged, onProjectChange]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -148,8 +209,14 @@ export function ApolloRouteHost({
       <ApolloPhase1Shell
         project={project}
         isDirty={isDirty}
+        canUndo={historyStateRef.current.past.length > 0}
+        canRedo={historyStateRef.current.future.length > 0}
         flags={flags}
-        onProjectChange={onProjectChange}
+        onProjectChange={commitProjectChange}
+        onResetProjectHistory={resetProjectHistory}
+        onCloseHistoryTransaction={closeHistoryTransaction}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
         onReturnToPro={() => {
           void handleReturnToPro();
         }}
