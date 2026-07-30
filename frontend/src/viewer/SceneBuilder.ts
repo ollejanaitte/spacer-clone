@@ -10,6 +10,7 @@ import {
   renderApolloVisualizationLabels,
   renderApolloVisualizationMembers,
   renderApolloVisualizationNodes,
+  renderApolloVisualizationSolids,
   renderApolloVisualizationSupports,
 } from "./renderers/ApolloVisualizationRenderer";
 import type { SceneGroups, ThreeViewportProps } from "./types";
@@ -23,6 +24,12 @@ export function createSceneGroups(): SceneGroups {
     nodes: new THREE.Group(),
     members: new THREE.Group(),
     supports: new THREE.Group(),
+    apolloGirders: new THREE.Group(),
+    apolloCrossBeams: new THREE.Group(),
+    apolloBracings: new THREE.Group(),
+    apolloDeck: new THREE.Group(),
+    apolloBearings: new THREE.Group(),
+    apolloMarkers: new THREE.Group(),
     loads: new THREE.Group(),
     resultDiagrams: new THREE.Group(),
     labels: new THREE.Group(),
@@ -31,11 +38,31 @@ export function createSceneGroups(): SceneGroups {
   groups.nodes.name = "Nodes";
   groups.members.name = "Members";
   groups.supports.name = "Supports";
+  groups.apolloGirders.name = "ApolloGirders";
+  groups.apolloCrossBeams.name = "ApolloCrossBeams";
+  groups.apolloBracings.name = "ApolloBracings";
+  groups.apolloDeck.name = "ApolloDeck";
+  groups.apolloBearings.name = "ApolloBearings";
+  groups.apolloMarkers.name = "ApolloMarkers";
   groups.loads.name = "Loads";
   groups.resultDiagrams.name = "ResultDiagrams";
   groups.labels.name = "Labels";
   groups.deformed.name = "DeformedShape";
-  root.add(groups.members, groups.nodes, groups.supports, groups.loads, groups.deformed, groups.resultDiagrams, groups.labels);
+  root.add(
+    groups.members,
+    groups.nodes,
+    groups.supports,
+    groups.apolloGirders,
+    groups.apolloCrossBeams,
+    groups.apolloBracings,
+    groups.apolloDeck,
+    groups.apolloBearings,
+    groups.apolloMarkers,
+    groups.loads,
+    groups.deformed,
+    groups.resultDiagrams,
+    groups.labels,
+  );
   return groups;
 }
 
@@ -155,23 +182,48 @@ function rebuildApolloVisualizationScene(
     selectedKeys: new Set(props.apolloSelectionKeys ?? []),
     validationHighlight: props.apolloValidationHighlight ?? null,
   };
+  const solidObjects = renderApolloVisualizationSolids(model, apolloSelectionState);
   replaceGroupContents(
     groups.nodes,
-    props.visibility.nodes
+    props.visibility.nodes && props.visibility.apolloLineModel !== false
       ? renderApolloVisualizationNodes(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
   );
   replaceGroupContents(
     groups.members,
-    props.visibility.members
+    props.visibility.members && props.visibility.apolloLineModel !== false
       ? renderApolloVisualizationMembers(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
   );
   replaceGroupContents(
     groups.supports,
-    props.visibility.supports
+    props.visibility.supports && props.visibility.apolloLineModel !== false
       ? renderApolloVisualizationSupports(model, props.selectedSection, apolloSelectionState, props.scales)
       : [],
+  );
+  replaceGroupContents(
+    groups.apolloGirders,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloGirders !== false ? solidObjects.girders : [],
+  );
+  replaceGroupContents(
+    groups.apolloCrossBeams,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloCrossBeams !== false ? solidObjects.crossBeams : [],
+  );
+  replaceGroupContents(
+    groups.apolloBracings,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloBracings !== false ? solidObjects.bracings : [],
+  );
+  replaceGroupContents(
+    groups.apolloDeck,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloDeck !== false ? solidObjects.deck : [],
+  );
+  replaceGroupContents(
+    groups.apolloBearings,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloBearings !== false ? solidObjects.bearings : [],
+  );
+  replaceGroupContents(
+    groups.apolloMarkers,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloMarkers !== false ? solidObjects.markers : [],
   );
   replaceGroupContents(groups.loads, []);
   replaceGroupContents(groups.deformed, []);

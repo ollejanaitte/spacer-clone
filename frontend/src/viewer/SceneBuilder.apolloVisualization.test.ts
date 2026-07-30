@@ -24,6 +24,8 @@ describe("SceneBuilder Apollo visualization path", () => {
     expect(groups.nodes.children.length).toBeGreaterThan(0);
     expect(groups.members.children.length).toBeGreaterThan(0);
     expect(groups.supports.children.length).toBeGreaterThan(0);
+    expect(groups.apolloGirders.children.length).toBeGreaterThan(0);
+    expect(groups.apolloDeck.children.length).toBeGreaterThan(0);
     expect(groups.labels.children.length).toBeGreaterThan(0);
     expect(groups.loads.children).toHaveLength(0);
     expect(groups.resultDiagrams.children).toHaveLength(0);
@@ -68,6 +70,58 @@ describe("SceneBuilder Apollo visualization path", () => {
 
     disposeObject(groups.root);
   });
+
+  it("renders selectable bearing solids for support-derived picks", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+      selection: { type: "support", id: "SUP-1" },
+      apolloSelectionKeys: ["support:SUP-1"],
+    });
+
+    const bearing = groups.apolloBearings.children.find((child) => child.userData?.id === "SUP-1");
+    expect(bearing?.userData?.selectable).toBe(true);
+    expect((bearing as THREE.Mesh | undefined)?.material).toBeDefined();
+
+    disposeObject(groups.root);
+  });
+
+  it("supports line-only and solid-only Apollo visibility modes", () => {
+    const groups = createSceneGroups();
+    const model = buildApolloVisualizationModelOrThrow({ project: createDefaultProject() });
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+      visibility: {
+        ...baseProps().visibility,
+        apolloLineModel: false,
+        apolloSolidModel: true,
+      },
+    });
+
+    expect(groups.nodes.children).toHaveLength(0);
+    expect(groups.members.children).toHaveLength(0);
+    expect(groups.apolloGirders.children.length).toBeGreaterThan(0);
+
+    rebuildModelScene(groups, {
+      ...baseProps(),
+      apolloVisualizationModel: model,
+      visibility: {
+        ...baseProps().visibility,
+        apolloLineModel: true,
+        apolloSolidModel: false,
+      },
+    });
+
+    expect(groups.nodes.children.length).toBeGreaterThan(0);
+    expect(groups.apolloGirders.children).toHaveLength(0);
+
+    disposeObject(groups.root);
+  });
 });
 
 function baseProps(): ThreeViewportProps {
@@ -84,6 +138,14 @@ function baseProps(): ThreeViewportProps {
       nodes: true,
       members: true,
       supports: true,
+      apolloLineModel: true,
+      apolloSolidModel: true,
+      apolloGirders: true,
+      apolloCrossBeams: true,
+      apolloBracings: true,
+      apolloDeck: true,
+      apolloBearings: true,
+      apolloMarkers: true,
       loads: true,
       labels: true,
       nodeLabels: true,

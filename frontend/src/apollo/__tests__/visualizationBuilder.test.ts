@@ -8,6 +8,8 @@ import {
 } from "../visualization";
 import { hydrateApolloPhase1Unit2FromPersistence } from "../unit2Draft";
 import type { ProjectModel } from "../../types";
+import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
+import { computeApolloVisualizationBox } from "../../viewer/threeUtils";
 
 function withProjectDraft(
   project: ProjectModel,
@@ -56,6 +58,8 @@ describe("Apollo visualization builder", () => {
     expect(model.elements.some((entry) => entry.id === "member:MG0")).toBe(true);
     expect(model.elements.some((entry) => entry.id === "support:SUP-1")).toBe(true);
     expect(model.commonGeometryParameters.some((entry) => entry.id === "geom-member:MG0")).toBe(true);
+    expect(model.solidGeometryParameters.some((entry) => entry.kind === "girder")).toBe(true);
+    expect(model.solidGeometryParameters.some((entry) => entry.kind === "deck")).toBe(true);
   });
 
   it("returns a warning for a missing node reference", () => {
@@ -185,7 +189,79 @@ describe("Apollo visualization builder", () => {
       project: createDefaultProject(),
       defaultsProvider: customDefaults,
     });
-    expect(model.assumptions[0]?.message).toContain("3.25");
+    expect(model.assumptions.some((entry) => entry.message.includes("3.25"))).toBe(true);
     expect(JSON.stringify(customDefaults)).toBe(before);
+  });
+
+  it("builds deterministic simple solid geometry for the Apollo bridge sample", () => {
+    const model = buildApolloVisualizationModelOrThrow({
+      project: createApollo200mContinuousBridgeSample(),
+    });
+    const girders = model.solidGeometryParameters.filter((entry) => entry.kind === "girder");
+    const crossBeams = model.solidGeometryParameters.filter((entry) => entry.kind === "cross_beam");
+    const bracings = model.solidGeometryParameters.filter((entry) => entry.kind === "bracing");
+    const bearings = model.solidGeometryParameters.filter((entry) => entry.kind === "bearing");
+    const markers = model.solidGeometryParameters.filter((entry) =>
+      entry.kind === "pier_marker" || entry.kind === "abutment_marker");
+    expect(girders).toHaveLength(20);
+    expect(crossBeams).toHaveLength(15);
+    expect(bracings).toHaveLength(10);
+    expect(bearings).toHaveLength(24);
+    expect(markers).toHaveLength(6);
+    expect(model.solidGeometryParameters[0]?.id).toBe("solid:bearing:SUP-1:0");
+
+    const firstGirder = girders[0]!;
+    const firstDeck = model.solidGeometryParameters.find((entry) => entry.kind === "deck")!;
+    const firstBearing = bearings[0]!;
+    expect(firstGirder.dimensionsM.length).toBe(35);
+    expect(firstGirder.dimensionsM.depth).toBe(2);
+    expect(firstGirder.dimensionsM.offset).toBe(-4.5);
+    expect(firstDeck.dimensionsM.width).toBe(10);
+    expect(firstDeck.dimensionsM.thickness).toBe(0.24);
+    expect(firstBearing.localFrame.origin).toEqual([0, -4.5, -0.06]);
+  });
+
+  it("assigns visibility groups and selection keys to simple solids", () => {
+    const model = buildApolloVisualizationModelOrThrow({
+      project: createApollo200mContinuousBridgeSample(),
+    });
+    const girder = model.solidGeometryParameters.find((entry) => entry.kind === "girder");
+    const bearing = model.solidGeometryParameters.find((entry) => entry.kind === "bearing");
+    const marker = model.solidGeometryParameters.find((entry) => entry.kind === "pier_marker");
+    expect(girder?.visibilityGroup).toBe("girders");
+    expect(girder?.selectionKey).toBe("member:M-01");
+    expect(bearing?.visibilityGroup).toBe("bearings");
+    expect(bearing?.selectionKey).toBe("support:SUP-1");
+    expect(marker?.visibilityGroup).toBe("markers");
+    expect(marker?.exportable).toBe(false);
+  });
+
+  it("falls back to a single girder and omits cross beams when transverse offsets are absent", () => {
+    const model = buildApolloVisualizationModelOrThrow({
+      project: createApollo200mContinuousBridgeSample(),
+      defaultsProvider: {
+        ...DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS,
+        girder: {
+          ...DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS.girder,
+          transverseOffsetsM: [],
+        },
+      },
+    });
+    expect(model.warnings.map((entry) => entry.code)).toContain("missing-bridge-geometry");
+    expect(model.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(5);
+    expect(model.solidGeometryParameters.filter((entry) => entry.kind === "cross_beam")).toHaveLength(0);
+  });
+
+  it("expands the Apollo visualization bounding box to include simple solids", () => {
+    const model = buildApolloVisualizationModelOrThrow({
+      project: createApollo200mContinuousBridgeSample(),
+    });
+    const box = computeApolloVisualizationBox(model);
+    expect(box.min.x).toBeCloseTo(-0.75, 6);
+    expect(box.max.x).toBeCloseTo(200.75, 6);
+    expect(box.min.y).toBeCloseTo(-5, 6);
+    expect(box.max.y).toBeCloseTo(5, 6);
+    expect(box.min.z).toBeCloseTo(-2.12, 6);
+    expect(box.max.z).toBeCloseTo(0.24, 6);
   });
 });

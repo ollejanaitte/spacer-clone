@@ -21,6 +21,14 @@ RECOMMENDED_NEXT_STEP: STEP7_STL_EXPORT_DESIGN
 - `ASSUMED_FOR_POC`: bracing は station 群と pattern を defaults provider または fixture で与え、SoR へ逆流させない。
 - `NON_BLOCKING_FOR_IMPLEMENTATION`: pier/abutment は marker block とし、構造的ソリッドではなく locator 表示に留める。
 
+## 2.1 PR-4 implementation update
+
+- `CONFIRMED`: Thursday, July 30, 2026 時点の `origin/main` では Apollo runtime path に persisted `BridgeDefinition` は存在しない。
+- `CONFIRMED`: PR-4 実装は `apolloPhase1Unit2 ?? ProjectModel` から longitudinal topology を read-only で取得し、`ApolloBridgeGeometryDefaultsProvider` から transverse / section / bearing / marker 寸法を注入する。
+- `PROVISIONAL`: girder offsets、deck width、cross beam station fractions は current implementation で defaults provider へ隔離した。
+- `ASSUMED_FOR_POC`: bearing と pier/abutment marker は support anchor を基準に派生し、正式 substructure SoR は導入していない。
+- `NON_BLOCKING`: current implementation は `BridgeDefinition` persistence を追加していないため、本書 5章 source data map の `BridgeDefinition.*` 参照は Apollo runtime では「同等責務の derived rule」として解釈する。
+
 ## 3. current implementation evidence
 
 参照パス:
@@ -122,10 +130,12 @@ type ApolloBridgeGeometryDefaultsProvider = {
     flangeWidthM: number;
     flangeThicknessM: number;
     webThicknessM: number;
+    transverseOffsetsM?: readonly number[];
   };
   crossBeam: {
     depthM: number;
     widthM: number;
+    stationFractions?: readonly number[];
   };
   bracing: {
     pattern: "x_single" | "single_diagonal" | "none";
@@ -134,6 +144,7 @@ type ApolloBridgeGeometryDefaultsProvider = {
   deck: {
     thicknessM: number;
     overhangM: number;
+    widthM?: number;
   };
   bearing: {
     widthM: number;
@@ -148,7 +159,12 @@ type ApolloBridgeGeometryDefaultsProvider = {
 };
 
 type ApolloSolidGeometryParameters = {
+  id: string;
+  sourceEntityKind: "member" | "support";
   sourceEntityId: string;
+  selectionKey: string;
+  validationTargetKey: string;
+  displayLabel: string;
   kind:
     | "girder"
     | "cross_beam"
@@ -169,6 +185,12 @@ type ApolloSolidGeometryParameters = {
   path?: Array<[number, number, number]>;
 };
 ```
+
+実装結果メモ:
+
+- PR-4 では `transverseOffsetsM = [-4.5, -1.5, 1.5, 4.5]`、`stationFractions = [0.25, 0.5, 0.75]`、`deck.widthM = 10.0` を default 化した。
+- line-model と simple solid は同一 `ApolloVisualizationModel` に共存し、viewer visibility で line/solid と subgroup を切替可能にした。
+- selection / validation highlight は `selectionKey` / `validationTargetKey` を solid 側へ持たせて継承した。
 
 ## 7. shape catalog
 

@@ -82,6 +82,14 @@ function buildProps(overrides: Partial<{
       nodes: true,
       members: true,
       supports: true,
+      apolloLineModel: true,
+      apolloSolidModel: true,
+      apolloGirders: true,
+      apolloCrossBeams: true,
+      apolloBracings: true,
+      apolloDeck: true,
+      apolloBearings: true,
+      apolloMarkers: true,
       loads: true,
       labels: true,
       nodeLabels: true,
@@ -165,6 +173,14 @@ describe("ViewerControls UI surface", () => {
   it("renders the SPACER Axis Swap checkbox", () => {
     render(<ViewerControls {...buildProps()} />);
     expect(document.querySelector('[data-testid="spacer-axis-swap-toggle"]')).not.toBeNull();
+  });
+
+  it("renders Apollo line/solid visibility toggles", () => {
+    render(<ViewerControls {...buildProps()} />);
+    expect(document.body.textContent).toContain("Apollo Line");
+    expect(document.body.textContent).toContain("Apollo Solid");
+    expect(document.body.textContent).toContain("Girders");
+    expect(document.body.textContent).toContain("Deck");
   });
 });
 
