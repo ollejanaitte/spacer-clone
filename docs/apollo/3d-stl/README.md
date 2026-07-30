@@ -22,5 +22,14 @@
 
 - `APOLLO_3D_STEP0_TO_STEP3_COMPLETION_VERDICT: COMPLETE`
 - `APOLLO_3D_STEP4_TO_STEP8_IMPLEMENTATION_READINESS: READY_WITH_PROVISIONAL_POC_ASSUMPTIONS`
-- `APOLLO_3D_PRODUCTION_IMPLEMENTATION_VERDICT: NOT_STARTED`
-- `RECOMMENDED_NEXT_STEP: IMPLEMENTATION_PR_1_CONTRACT_TYPES_AND_DERIVED_BUILDER`
+- `APOLLO_3D_PRODUCTION_IMPLEMENTATION_VERDICT: IN_PROGRESS`
+- `RECOMMENDED_NEXT_STEP: IMPLEMENTATION_PR_5_BINARY_STL_AND_MANIFEST`
+
+Thursday, July 30, 2026 status snapshot:
+
+- PR-1 contract + derived builder: merged
+- PR-2 line-model viewer: merged
+- PR-3 selection + validation integration: merged
+- PR-4 simple bridge solids: merged
+- axis / camera / main viewer correction PRs: merged
+- PR-5 binary STL + companion manifest: implementation in progress on current branch

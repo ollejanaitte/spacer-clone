@@ -11,11 +11,13 @@ export {
   type ApolloVisualizationElement,
   type ApolloVisualizationEntityKind,
   type ApolloVisualizationGeometry,
+  type ApolloVisualizationAssumption,
   type ApolloVisualizationLabelAnchorGeometry,
   type ApolloVisualizationLineGeometry,
   type ApolloVisualizationModel,
   type ApolloVisualizationPointGeometry,
   type ApolloVisualizationUnits,
+  type ApolloVisualizationVisibilityGroup,
   type ApolloVisualizationWarning,
 } from "./types";
 export {

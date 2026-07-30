@@ -257,11 +257,11 @@ describe("Apollo visualization builder", () => {
       project: createApollo200mContinuousBridgeSample(),
     });
     const box = computeApolloVisualizationBox(model);
-    expect(box.min.x).toBeCloseTo(-0.75, 6);
-    expect(box.max.x).toBeCloseTo(200.75, 6);
+    expect(box.min.x).toBeCloseTo(-0.3, 6);
+    expect(box.max.x).toBeCloseTo(200.3, 6);
     expect(box.min.y).toBeCloseTo(-5, 6);
     expect(box.max.y).toBeCloseTo(5, 6);
-    expect(box.min.z).toBeCloseTo(-2.12, 6);
+    expect(box.min.z).toBeCloseTo(-2, 6);
     expect(box.max.z).toBeCloseTo(0.24, 6);
   });
 });

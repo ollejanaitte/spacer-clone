@@ -49,3 +49,14 @@ APOLLO_3D_STEP4_TO_STEP8_TRACEABILITY_VERDICT: PASS
 - Thursday, July 30, 2026 の browser repro で、simple solid 自体は renderer まで届いていることを確認した。
 - 補正対象は `solid drop` ではなく、Apollo Z-up 契約と shared viewer camera / helper / fit 契約の整合である。
 - docs PR-A では axis / camera / fit / prop flow 契約を修正し、fix PR-B で production code と tests を更新する。
+
+## PR-5 implementation note
+
+- Thursday, July 30, 2026 時点の actual implementation では、Binary STL export は `frontend/src/apollo/export/apolloStlExport.ts` から `ApolloVisualizationModel.solidGeometryParameters` を直接消費する。
+- manifest schema は `frontend/src/apollo/export/apolloExportManifest.ts` に定義し、`digest` / `triangleCount` / `boundingBoxMm` / `includedGroups` / `excludedGroups` を export result と一致させる。
+- browser save は PR-5 で `ApolloPhase1Shell.tsx` へ導入し、preset は `full / girders / deck / visible` を持つ。
+- Step 8 scope である Electron save dialog / IPC / reload reproducibility はこの PR では未実装である。
+- representative verification:
+  - unit test: `src/apollo/__tests__/apolloStlExport.test.ts`
+  - shell integration: `src/apollo/__tests__/ApolloPhase1Shell.test.tsx`
+  - browser smoke: `/pro/apollo` で `STL + .apollo.json` download を確認

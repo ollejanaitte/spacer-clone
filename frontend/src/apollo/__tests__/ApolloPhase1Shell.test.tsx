@@ -64,6 +64,8 @@ afterEach(() => {
     });
     entry.container.remove();
   }
+  vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
@@ -270,6 +272,27 @@ describe("ApolloPhase1Shell", () => {
     expect(viewer).not.toBeNull();
     expect(viewer?.getAttribute("data-visualization-elements")).not.toBe("0");
     expect(viewer?.getAttribute("data-view-panel-open")).toBe("false");
+  });
+
+  it("downloads Apollo STL and manifest from the list mode topology shell", () => {
+    vi.useFakeTimers();
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:apollo");
+    const revokeObjectURL = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+    const { container } = renderShell({ project: createApollo200mContinuousBridgeSample() });
+
+    clickButtonByText(container, "一覧編集モード");
+    const exportButton = container.querySelector("[data-testid='apollo-export-stl']") as HTMLButtonElement | null;
+    expect(exportButton).not.toBeNull();
+    act(() => {
+      exportButton?.click();
+      vi.runAllTimers();
+    });
+
+    expect(createObjectURL).toHaveBeenCalledTimes(2);
+    expect(revokeObjectURL).toHaveBeenCalledTimes(2);
+    expect(click).toHaveBeenCalledTimes(2);
+    expect(container.textContent).toContain("Apollo STL出力を開始しました");
   });
 
   it("shows basics screen and Japanese save status", () => {
