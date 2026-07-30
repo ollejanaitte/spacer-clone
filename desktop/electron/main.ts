@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItemConstructorOptions, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions, shell } from "electron";
 import path from "node:path";
 import {
   spawn,
@@ -14,6 +14,7 @@ import {
   describeReleaseCheckStatus,
 } from "./aboutConfig";
 import { registerDialogIpc } from "./dialogIpc";
+import { IPC_CHANNELS } from "./ipcChannels";
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -24,6 +25,35 @@ const gpuMode = resolveGpuModeFromArgs(process.argv, process.env.GPU_MODE);
 let backendProcess: ChildProcessWithoutNullStreams | undefined;
 let splashWindow: BrowserWindow | undefined;
 let mainWindow: BrowserWindow | undefined;
+let closeGuardBypass = false;
+let pendingAppQuit = false;
+
+function registerCloseGuardIpc(): void {
+  ipcMain.on(IPC_CHANNELS.CLOSE_GUARD_RESPONSE, (_event, payload: { allow?: unknown }) => {
+    const allow = payload?.allow === true;
+    if (!allow || !mainWindow || mainWindow.isDestroyed()) {
+      pendingAppQuit = false;
+      return;
+    }
+    closeGuardBypass = true;
+    if (pendingAppQuit) {
+      pendingAppQuit = false;
+      app.quit();
+      return;
+    }
+    mainWindow.close();
+  });
+}
+
+function attachCloseGuard(window: BrowserWindow): void {
+  window.on("close", (event) => {
+    if (closeGuardBypass) {
+      return;
+    }
+    event.preventDefault();
+    window.webContents.send(IPC_CHANNELS.CLOSE_GUARD_PROMPT, { kind: "window-close" });
+  });
+}
 
 for (const gpuSwitch of getGpuSwitches(gpuMode)) {
   app.commandLine.appendSwitch(gpuSwitch.name, gpuSwitch.value);
@@ -417,6 +447,8 @@ async function createMainWindow(version: string): Promise<void> {
     }
   });
 
+  attachCloseGuard(mainWindow);
+
   if (app.isPackaged) {
     await mainWindow.loadFile(getProductionIndexPath());
   } else {
@@ -470,6 +502,7 @@ if (gotTheLock) {
 
   app.whenReady().then(() => {
     registerDialogIpc(() => mainWindow, showAboutDialog);
+    registerCloseGuardIpc();
     buildAppMenu();
     void runWithSplash();
 
@@ -480,8 +513,18 @@ if (gotTheLock) {
     });
   });
 
-  app.on("before-quit", () => {
-    stopBackend();
+  app.on("before-quit", (event) => {
+    if (closeGuardBypass) {
+      stopBackend();
+      return;
+    }
+    if (!mainWindow || mainWindow.isDestroyed()) {
+      stopBackend();
+      return;
+    }
+    event.preventDefault();
+    pendingAppQuit = true;
+    mainWindow.webContents.send(IPC_CHANNELS.CLOSE_GUARD_PROMPT, { kind: "app-quit" });
   });
 
   app.on("window-all-closed", () => {

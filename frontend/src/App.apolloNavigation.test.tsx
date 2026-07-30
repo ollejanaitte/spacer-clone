@@ -74,9 +74,11 @@ function selectByTestId(testId: string): HTMLSelectElement {
 }
 
 function setInputValue(input: HTMLInputElement, value: string) {
+  input.focus();
   const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
   valueSetter?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.blur();
 }
 
 function clickButtonByTestId(testId: string) {
@@ -152,6 +154,13 @@ describe("App Apollo navigation", () => {
 
     await act(async () => {
       clickButtonByTestId("apollo-return-to-pro");
+    });
+
+    await act(async () => {
+      const discardButton = document.querySelector(
+        '[data-testid="apollo-guard-discard"]',
+      ) as HTMLButtonElement | null;
+      discardButton?.click();
     });
 
     expect(window.location.pathname).toBe("/pro");

@@ -17,11 +17,18 @@ import {
   createApolloWorkspaceProject,
   deleteApolloWorkspaceEntry,
   duplicateApolloWorkspaceEntry,
+  isApolloWorkspaceEntryMalformed,
   listApolloWorkspaceEntries,
+  listApolloWorkspaceMalformedEntries,
   loadApolloWorkspaceProject,
   renameApolloWorkspaceEntry,
   saveApolloWorkspaceEntry,
 } from "./workspace";
+import { ApolloNumericInput } from "./components/ApolloNumericInput";
+import {
+  CompositionAwareInput,
+  CompositionAwareTextarea,
+} from "./components/CompositionAwareInput";
 import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
 import type {
   ApolloPhase1Unit2Draft,
@@ -36,13 +43,19 @@ import type {
 
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
-  dirty: boolean;
+  isDirty: boolean;
   flags: ApolloPhase1FeatureFlags;
   onProjectChange: (nextProject: ProjectModel) => void;
   onReturnToPro: () => void;
   onSaveProject: () => Promise<boolean>;
   onReloadProject: () => Promise<boolean>;
   onAuditEvent?: (message: string) => void;
+  runGuardedAction: (
+    message: string,
+    action: () => void | Promise<void>,
+    options?: { readonly revertOnDiscard?: boolean },
+  ) => Promise<boolean>;
+  onEstablishBaseline: (nextProject: ProjectModel) => void;
 };
 
 type EditorPane = "project" | "nodes" | "members" | "supports" | "materials";
@@ -107,19 +120,14 @@ function setStoredBoolean(key: string, value: boolean): void {
   window.localStorage.setItem(key, value ? "true" : "false");
 }
 
-function statusText(dirty: boolean): "保存済み" | "変更あり" {
-  return dirty ? "変更あり" : "保存済み";
+function statusText(isDirty: boolean): "保存済み" | "変更あり" {
+  return isDirty ? "変更あり" : "保存済み";
 }
 
 function formatSupportState(value: ApolloPhase1Unit2Support["ux"]): string {
   if (value === "FIXED") return "固定";
   if (value === "FREE") return "自由";
   return "未定義";
-}
-
-function parseFiniteNumber(value: string): number | null {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function hasBlockingIssueForEntityTypes(
@@ -205,13 +213,15 @@ function localizeValidationMessage(entry: StructuredMessage): string {
 
 export function ApolloPhase1Shell({
   project,
-  dirty,
+  isDirty,
   flags,
   onProjectChange,
   onReturnToPro,
   onSaveProject,
   onReloadProject,
   onAuditEvent,
+  runGuardedAction,
+  onEstablishBaseline,
 }: ApolloPhase1ShellProps) {
   const draft = useMemo(() => getApolloPhase1Unit2Draft(project), [project]);
   const viewProject = useMemo(() => buildApolloPhase1Unit2ViewProject(project), [project]);
@@ -223,6 +233,9 @@ export function ApolloPhase1Shell({
   const [viewerMessage, setViewerMessage] = useState<string | null>(null);
   const [persisting, setPersisting] = useState<"save" | "reload" | null>(null);
   const [workspaceEntries, setWorkspaceEntries] = useState(() => listApolloWorkspaceEntries());
+  const [malformedWorkspaceEntries, setMalformedWorkspaceEntries] = useState(() =>
+    listApolloWorkspaceMalformedEntries(),
+  );
   const [workspaceSelection, setWorkspaceSelection] = useState<string | null>(null);
   const [mode, setMode] = useState<ApolloMode>("guided");
   const [guidedStep, setGuidedStep] = useState<GuidedStep>("start");
@@ -339,7 +352,7 @@ export function ApolloPhase1Shell({
     onAuditEvent?.(message);
   };
 
-  const updateProjectField = (field: "projectId" | "name" | "description", value: string, message: string) => {
+  const updateProjectField = (field: "name" | "description", value: string, message: string) => {
     applyDraftChange(message, "project.update", "project", draft.metadata.projectId, (currentDraft) => ({
       ...currentDraft,
       metadata: {
@@ -702,26 +715,28 @@ export function ApolloPhase1Shell({
     setPersisting("save");
     const timestamp = nowIsoString();
     const message = "Apollo 入力データのファイル保存を開始しました。";
-    onProjectChange(
-      withApolloPhase1Unit2Draft(project, (currentDraft) =>
-        appendApolloPhase1Unit2Audit(
-          {
-            ...currentDraft,
-            metadata: {
-              ...currentDraft.metadata,
-              updatedAt: timestamp,
-            },
+    const nextProject = withApolloPhase1Unit2Draft(project, (currentDraft) =>
+      appendApolloPhase1Unit2Audit(
+        {
+          ...currentDraft,
+          metadata: {
+            ...currentDraft.metadata,
+            updatedAt: timestamp,
           },
-          timestamp,
-          "project.save.request",
-          "project",
-          currentDraft.metadata.projectId,
-          message,
-        ),
+        },
+        timestamp,
+        "project.save.request",
+        "project",
+        currentDraft.metadata.projectId,
+        message,
       ),
     );
+    onProjectChange(nextProject);
     onAuditEvent?.(message);
     const ok = await onSaveProject();
+    if (ok) {
+      onEstablishBaseline(nextProject);
+    }
     setPersisting(null);
     setInteractionMessage(ok ? "ファイル保存が完了しました。" : "ファイル保存を中止したか、保存に失敗しました。");
     return ok;
@@ -759,6 +774,7 @@ export function ApolloPhase1Shell({
 
   const refreshWorkspaceEntries = (nextEntries?: ReturnType<typeof listApolloWorkspaceEntries>) => {
     setWorkspaceEntries(nextEntries ? [...nextEntries] : listApolloWorkspaceEntries());
+    setMalformedWorkspaceEntries(listApolloWorkspaceMalformedEntries());
   };
 
   const handleWorkspaceSave = () => {
@@ -772,20 +788,35 @@ export function ApolloPhase1Shell({
     announce(`作業中データを保存しました: ${project.project.name || project.project.id}`);
   };
 
-  const handleWorkspaceOpen = () => {
+  const handleWorkspaceOpen = async () => {
     if (!workspaceSelection) return;
-    const nextProject = loadApolloWorkspaceProject(workspaceSelection);
-    if (!nextProject) {
-      announce("作業中データを開けませんでした。");
+    const malformed = isApolloWorkspaceEntryMalformed(workspaceSelection);
+    if (malformed) {
+      announce(`作業中データを開けませんでした: ${malformed.diagnostics.join(" ")}`);
       return;
     }
-    onProjectChange(nextProject);
-    announce(`作業中データを開きました: ${nextProject.project.name || nextProject.project.id}`);
+    const proceed = await runGuardedAction(
+      "未保存の変更があります。作業中データを開くと現在の編集内容は失われます。続行しますか。",
+      async () => {
+        const nextProject = loadApolloWorkspaceProject(workspaceSelection);
+        if (!nextProject) {
+          announce("作業中データを開けませんでした。");
+          throw new Error("workspace-open-failed");
+        }
+        onProjectChange(nextProject);
+        onEstablishBaseline(nextProject);
+        announce(`作業中データを開きました: ${nextProject.project.name || nextProject.project.id}`);
+        setMode("guided");
+        setGuidedStep("basics");
+      },
+    );
+    return proceed;
   };
 
   const handleWorkspaceNew = () => {
     const nextProject = createApolloWorkspaceProject();
     onProjectChange(nextProject);
+    onEstablishBaseline(nextProject);
     announce(`新しい橋梁データを作成しました: ${nextProject.project.name}`);
   };
 
@@ -807,16 +838,58 @@ export function ApolloPhase1Shell({
   };
 
   const handleWorkspaceDelete = () => {
-    if (!selectedWorkspaceEntry) return;
+    if (!selectedWorkspaceEntry || typeof window === "undefined") return;
+    if (!window.confirm(`作業中データ「${selectedWorkspaceEntry.name}」を削除しますか？`)) {
+      return;
+    }
     const nextEntries = deleteApolloWorkspaceEntry(selectedWorkspaceEntry.workspaceId);
     refreshWorkspaceEntries(nextEntries);
     announce(`作業中データを削除しました: ${selectedWorkspaceEntry.name}`);
   };
 
-  const confirmDiscard = (message: string): boolean => {
-    if (!dirty) return true;
-    if (typeof window === "undefined") return true;
-    return window.confirm(message);
+  const openFromFile = async () => {
+    const ok = await onReloadProject();
+    if (ok) {
+      setMode("guided");
+      setGuidedStep("basics");
+      setSaveNotice(null);
+    }
+  };
+
+  const startNewProject = async () => {
+    const proceed = await runGuardedAction(
+      "未保存の変更があります。新しい橋梁を作成すると現在の編集内容は失われます。続行しますか。",
+      async () => {
+        handleWorkspaceNew();
+        setMode("guided");
+        setGuidedStep("basics");
+        setPaneAndSelection("nodes");
+        setSaveNotice(null);
+      },
+    );
+    return proceed;
+  };
+
+  const loadStandardSample = async () => {
+    const proceed = await runGuardedAction(
+      "未保存の変更があります。サンプルを読み込むと現在の編集内容は失われます。続行しますか。",
+      async () => {
+        const sample = createApollo200mContinuousBridgeSample();
+        onProjectChange(sample);
+        onEstablishBaseline(sample);
+        setMode("guided");
+        setGuidedStep(sampleGuideDismissed ? "basics" : "sampleLoaded");
+        setSelection({ kind: "node", id: "N-A1" });
+        setEditorPane("nodes");
+        setSaveNotice(null);
+        announce("200m級 5径間連続橋サンプルを読み込みました。");
+      },
+    );
+    return proceed;
+  };
+
+  const openWorkspaceSnapshot = async () => {
+    await handleWorkspaceOpen();
   };
 
   const setPaneAndSelection = (pane: EditorPane) => {
@@ -842,52 +915,6 @@ export function ApolloPhase1Shell({
   const saveToFile = async () => {
     const ok = await handleSave();
     if (ok) setSaveNotice("ファイルに保存しました。");
-  };
-
-  const openFromFile = async () => {
-    if (!confirmDiscard("未保存の変更があります。保存済みデータを開くと現在の編集内容は失われます。続行しますか。")) {
-      return;
-    }
-    const ok = await handleReload();
-    if (ok) {
-      setMode("guided");
-      setGuidedStep("basics");
-      setSaveNotice(null);
-    }
-  };
-
-  const startNewProject = () => {
-    if (!confirmDiscard("未保存の変更があります。新しい橋梁を作成すると現在の編集内容は失われます。続行しますか。")) {
-      return;
-    }
-    handleWorkspaceNew();
-    setMode("guided");
-    setGuidedStep("basics");
-    setPaneAndSelection("nodes");
-    setSaveNotice(null);
-  };
-
-  const loadStandardSample = () => {
-    if (!confirmDiscard("未保存の変更があります。サンプルを読み込むと現在の編集内容は失われます。続行しますか。")) {
-      return;
-    }
-    const sample = createApollo200mContinuousBridgeSample();
-    onProjectChange(sample);
-    setMode("guided");
-    setGuidedStep(sampleGuideDismissed ? "basics" : "sampleLoaded");
-    setSelection({ kind: "node", id: "N-A1" });
-    setEditorPane("nodes");
-    setSaveNotice(null);
-    announce("200m級 5径間連続橋サンプルを読み込みました。");
-  };
-
-  const openWorkspaceSnapshot = () => {
-    if (!confirmDiscard("未保存の変更があります。作業中データを開くと現在の編集内容は失われます。続行しますか。")) {
-      return;
-    }
-    handleWorkspaceOpen();
-    setMode("guided");
-    setGuidedStep("basics");
   };
 
   const navigateValidationIssue = (entry: StructuredMessage) => {
@@ -1056,38 +1083,34 @@ export function ApolloPhase1Shell({
           <p>橋梁の識別情報と保存状態を確認します。</p>
         </div>
         <div className="apollo-applied-summary">
-          <span>保存状態: {statusText(dirty)}</span>
+          <span>保存状態: {statusText(isDirty)}</span>
         </div>
       </div>
       <div className="apollo-project-form-grid">
         <label>
-          プロジェクトID <span aria-hidden="true">必須</span>
-          <input
-            data-testid="apollo-project-id-input"
-            data-focus-key="project-id"
-            placeholder="bridge-200m-001"
-            value={draft.metadata.projectId}
-            onChange={(event) => updateProjectField("projectId", event.currentTarget.value, "プロジェクトIDを更新しました。")}
-          />
-          <small>半角英数字とハイフンを使用してください。他のプロジェクトと重複しないIDを設定します。</small>
+          プロジェクトID
+          <output data-testid="apollo-project-id-display" data-focus-key="project-id">
+            {draft.metadata.projectId}
+          </output>
+          <small>内部識別子です。編集できません。</small>
         </label>
         <label>
           橋梁名 <span aria-hidden="true">必須</span>
-          <input
+          <CompositionAwareInput
             data-testid="apollo-project-name-input"
             data-focus-key="project-name"
             placeholder="200m級 5径間連続橋"
             value={draft.metadata.name}
-            onChange={(event) => updateProjectField("name", event.currentTarget.value, "橋梁名を更新しました。")}
+            onValueChange={(value) => updateProjectField("name", value, "橋梁名を更新しました。")}
           />
         </label>
         <label className="apollo-project-form-wide">
           概要・備考 <span aria-hidden="true">任意</span>
-          <textarea
+          <CompositionAwareTextarea
             data-testid="apollo-project-description-input"
             placeholder="橋長200m、5径間連続橋、Apollo操作確認用サンプル"
             value={draft.metadata.description}
-            onChange={(event) => updateProjectField("description", event.currentTarget.value, "概要・備考を更新しました。")}
+            onValueChange={(value) => updateProjectField("description", value, "概要・備考を更新しました。")}
           />
         </label>
       </div>
@@ -1139,7 +1162,7 @@ export function ApolloPhase1Shell({
         </div>
       </div>
       <div className="apollo-workspace-actions">
-        <button type="button" data-testid="apollo-workspace-new" onClick={startNewProject}>新規作成</button>
+        <button type="button" data-testid="apollo-workspace-new" onClick={() => void startNewProject()}>新規作成</button>
         <button
           type="button"
           data-testid="apollo-workspace-save"
@@ -1150,7 +1173,7 @@ export function ApolloPhase1Shell({
         >
           作業中データを保存
         </button>
-        <button type="button" data-testid="apollo-workspace-open" onClick={openWorkspaceSnapshot} disabled={!selectedWorkspaceEntry}>作業中データを開く</button>
+        <button type="button" data-testid="apollo-workspace-open" onClick={() => void openWorkspaceSnapshot()} disabled={!selectedWorkspaceEntry}>作業中データを開く</button>
         <button type="button" data-testid="apollo-workspace-duplicate" onClick={handleWorkspaceDuplicate} disabled={!selectedWorkspaceEntry}>複製</button>
         <button type="button" data-testid="apollo-workspace-rename" onClick={handleWorkspaceRename} disabled={!selectedWorkspaceEntry}>名前変更</button>
         <button type="button" data-testid="apollo-workspace-delete" onClick={handleWorkspaceDelete} disabled={!selectedWorkspaceEntry}>削除</button>
@@ -1170,6 +1193,18 @@ export function ApolloPhase1Shell({
           ))}
         </select>
       </label>
+      {malformedWorkspaceEntries.length > 0 ? (
+        <div className="apollo-workspace-warning" data-testid="apollo-workspace-malformed-warning">
+          <p>破損した作業中データが {malformedWorkspaceEntries.length} 件あります。開くことはできません。</p>
+          <ul>
+            {malformedWorkspaceEntries.map((entry) => (
+              <li key={entry.workspaceId}>
+                {entry.workspaceId}: {entry.diagnostics.join(" / ")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {selectedWorkspaceEntry ? (
         <dl className="apollo-project-meta-list">
           <div>
@@ -1244,8 +1279,8 @@ export function ApolloPhase1Shell({
             {selectedNode ? (
               <div className="apollo-detail-grid">
                 <label>ID<input data-focus-key="node-id" value={selectedNode.id} onChange={(event) => updateNodeId(selectedNode.id, event.currentTarget.value)} /></label>
-                <label>名称<input data-testid="apollo-node-label-input" value={selectedNode.label} onChange={(event) => updateNode(selectedNode.id, (node) => ({ ...node, label: event.currentTarget.value }), "節点名称を更新しました。")} /></label>
-                <label>X座標<input data-testid="apollo-node-x-input" value={String(selectedNode.x)} onChange={(event) => { const next = parseFiniteNumber(event.currentTarget.value); if (next === null) { rejectOperation(`Node ${selectedNode.id} rejected invalid X coordinate input.`, "node", selectedNode.id); return; } updateNode(selectedNode.id, (node) => ({ ...node, x: next }), "節点X座標を更新しました。"); }} /></label>
+                <label>名称<CompositionAwareInput data-testid="apollo-node-label-input" value={selectedNode.label} onValueChange={(value) => updateNode(selectedNode.id, (node) => ({ ...node, label: value }), "節点名称を更新しました。")} /></label>
+                <label>X座標<ApolloNumericInput data-testid="apollo-node-x-input" value={selectedNode.x} onCommit={(next) => updateNode(selectedNode.id, (node) => ({ ...node, x: next }), "節点X座標を更新しました。")} onReject={(message) => rejectOperation(`Node ${selectedNode.id} rejected invalid X coordinate input: ${message}`, "node", selectedNode.id)} /></label>
               </div>
             ) : null}
           </section>
@@ -1516,7 +1551,7 @@ export function ApolloPhase1Shell({
             <article className="apollo-editor-card">
               <h3>2. 新しい橋梁を作成</h3>
               <p>空のプロジェクトを作成し、自分で橋梁情報を入力します。</p>
-              <button type="button" onClick={startNewProject}>新規作成</button>
+              <button type="button" onClick={() => void startNewProject()}>新規作成</button>
             </article>
             <article className="apollo-editor-card">
               <h3>3. 保存済みデータを開く</h3>
@@ -1552,7 +1587,7 @@ export function ApolloPhase1Shell({
                 className="apollo-button-primary"
                 data-testid="apollo-load-standard-sample"
                 aria-label="このサンプルを読み込む"
-                onClick={loadStandardSample}
+                onClick={() => void loadStandardSample()}
               >
                 このサンプルを読み込む
               </button>

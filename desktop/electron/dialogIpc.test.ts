@@ -64,4 +64,9 @@ describe("dialog IPC helpers", () => {
       expect(preloadSource).toContain(channel);
     }
   });
+
+  it("registers close-guard channels in ipcChannels", () => {
+    expect(IPC_CHANNELS.CLOSE_GUARD_PROMPT).toBe("spacer:close-guard:prompt");
+    expect(IPC_CHANNELS.CLOSE_GUARD_RESPONSE).toBe("spacer:close-guard:response");
+  });
 });

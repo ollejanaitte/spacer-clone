@@ -37,6 +37,13 @@ const DEFAULT_FLAGS: ApolloPhase1FeatureFlags = {
   disableNumericExecution: true,
 };
 
+function defaultGuardedAction(
+  _message: string,
+  action: () => void | Promise<void>,
+): Promise<boolean> {
+  return Promise.resolve(action()).then(() => true);
+}
+
 function renderShell(
   props?: Partial<{
     onReturnToPro: () => void;
@@ -46,7 +53,13 @@ function renderShell(
     onAuditEvent: (message: string) => void;
     onSaveProject: () => Promise<boolean>;
     onReloadProject: () => Promise<boolean>;
-    dirty: boolean;
+    isDirty: boolean;
+    runGuardedAction: (
+      message: string,
+      action: () => void | Promise<void>,
+      options?: { readonly revertOnDiscard?: boolean },
+    ) => Promise<boolean>;
+    onEstablishBaseline: (nextProject: ProjectModel) => void;
   }>,
 ) {
   const container = document.createElement("div");
@@ -60,9 +73,11 @@ function renderShell(
         onProjectChange={props?.onProjectChange ?? (() => undefined)}
         onReturnToPro={props?.onReturnToPro ?? (() => undefined)}
         onAuditEvent={props?.onAuditEvent}
-        dirty={props?.dirty ?? false}
+        isDirty={props?.isDirty ?? false}
         onSaveProject={props?.onSaveProject ?? (async () => true)}
         onReloadProject={props?.onReloadProject ?? (async () => true)}
+        runGuardedAction={props?.runGuardedAction ?? defaultGuardedAction}
+        onEstablishBaseline={props?.onEstablishBaseline ?? (() => undefined)}
       />,
     );
   });
@@ -84,7 +99,9 @@ function renderStatefulShell(initialProject: ProjectModel = createDefaultProject
         onReturnToPro={() => undefined}
         onSaveProject={async () => true}
         onReloadProject={async () => true}
-        dirty={false}
+        isDirty={false}
+        runGuardedAction={defaultGuardedAction}
+        onEstablishBaseline={() => undefined}
       />
     );
   }

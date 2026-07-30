@@ -93,7 +93,7 @@ import {
   openProjectFile,
   saveProjectFile,
 } from "./desktop/projectFileDialog";
-import { ApolloPhase1Shell } from "./apollo/ApolloPhase1Shell";
+import { ApolloRouteHost } from "./apollo/ApolloRouteHost";
 import { redirectDeniedApolloRoute } from "./apollo/entryGuard";
 import { resolveApolloPhase1FeatureFlags } from "./apollo/featureFlag";
 import { APOLLO_PHASE1_ROUTE_PATH, isApolloRoute } from "./apollo/routes";
@@ -817,9 +817,8 @@ export function App() {
 
   if (isApolloRoute(pathnameForRouting) && apolloPhase1Enabled) {
     return (
-      <ApolloPhase1Shell
+      <ApolloRouteHost
         project={project}
-        dirty={dirty}
         flags={apolloPhase1Flags}
         onProjectChange={commitProject}
         onReturnToPro={() => navigatePro("/pro")}
