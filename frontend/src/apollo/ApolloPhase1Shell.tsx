@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Viewer3D } from "../viewer/Viewer3D";
-import type { ViewerSelection } from "../viewer/types";
+import { defaultVisibility, type ViewerSelection, type ViewerVisibility } from "../viewer/types";
 import type { ApolloPhase1FeatureFlags } from "./featureFlag";
 import type { ApolloHistoryCommitMode } from "./history";
 import {
@@ -32,6 +32,7 @@ import {
 } from "./components/CompositionAwareInput";
 import { isApolloCompositionActive } from "./compositionRegistry";
 import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
+import { downloadApolloBinaryStlBundle, type ApolloStlExportOptions } from "./export";
 import { buildApolloVisualizationModel } from "./visualization";
 import { applyApolloBulkEdit, resolveApolloBulkEditSelection, type ApolloBulkEditInput } from "./bulkEdit";
 import {
@@ -189,6 +190,49 @@ function statusText(isDirty: boolean): "保存済み" | "変更あり" {
   return isDirty ? "変更あり" : "保存済み";
 }
 
+function resolveApolloStlExportOptions(
+  preset: "full" | "girders" | "deck" | "visible",
+  visibility: ViewerVisibility,
+): ApolloStlExportOptions {
+  if (preset === "girders") {
+    return {
+      includedGroups: ["girders"],
+      includeCrossBeams: false,
+      includeBracing: false,
+      includeDeck: false,
+      includeBearings: false,
+    };
+  }
+  if (preset === "deck") {
+    return {
+      includedGroups: ["deck"],
+      includeGirders: false,
+      includeCrossBeams: false,
+      includeBracing: false,
+      includeBearings: false,
+    };
+  }
+  if (preset === "visible") {
+    return {
+      visibleOnly: true,
+      includedGroups: resolveVisibleApolloExportGroups(visibility),
+      includeMarkers: visibility.apolloMarkers === true,
+    };
+  }
+  return {};
+}
+
+function resolveVisibleApolloExportGroups(visibility: ViewerVisibility) {
+  const groups: Array<"girders" | "cross-beams" | "bracings" | "deck" | "bearings" | "markers"> = [];
+  if (visibility.apolloGirders !== false) groups.push("girders");
+  if (visibility.apolloCrossBeams !== false) groups.push("cross-beams");
+  if (visibility.apolloBracings !== false) groups.push("bracings");
+  if (visibility.apolloDeck !== false) groups.push("deck");
+  if (visibility.apolloBearings !== false) groups.push("bearings");
+  if (visibility.apolloMarkers === true) groups.push("markers");
+  return groups;
+}
+
 function formatSupportState(value: ApolloPhase1Unit2Support["ux"]): string {
   if (value === "FIXED") return "固定";
   if (value === "FREE") return "自由";
@@ -294,6 +338,7 @@ export function ApolloPhase1Shell({
   runGuardedAction,
   onEstablishBaseline,
 }: ApolloPhase1ShellProps) {
+  type ApolloStlExportPreset = "full" | "girders" | "deck" | "visible";
   const draft = useMemo(() => getApolloPhase1Unit2Draft(project), [project]);
   const viewProject = useMemo(() => buildApolloPhase1Unit2ViewProject(project), [project]);
   const apolloVisualizationBuild = useMemo(() => buildApolloVisualizationModel({ project, draft }), [draft, project]);
@@ -325,6 +370,8 @@ export function ApolloPhase1Shell({
   const [validationIssueIndex, setValidationIssueIndex] = useState(0);
   const [validationFocusToken, setValidationFocusToken] = useState(0);
   const [topologyViewPanelOpen, setTopologyViewPanelOpen] = useState(false);
+  const [stlExportPreset, setStlExportPreset] = useState<ApolloStlExportPreset>("full");
+  const [apolloViewerVisibility, setApolloViewerVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [validationHighlightIssueKey, setValidationHighlightIssueKey] = useState<string | null>(null);
   const shellRootRef = useRef<HTMLElement | null>(null);
   const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
@@ -1189,6 +1236,23 @@ export function ApolloPhase1Shell({
     setSingleSelection(null);
   };
 
+  const handleStlExport = () => {
+    if (!apolloVisualizationBuild.ok) {
+      setInteractionMessage("STL出力に必要な Apollo Visualization Model を生成できませんでした。");
+      return;
+    }
+
+    try {
+      const options = resolveApolloStlExportOptions(stlExportPreset, apolloViewerVisibility);
+      const result = downloadApolloBinaryStlBundle(apolloVisualizationBuild.model, options);
+      const message = `Apollo STL出力を開始しました: ${result.stlFileName} / ${result.manifestFileName}`;
+      setInteractionMessage(message);
+      onAuditEvent?.(message);
+    } catch (error) {
+      setInteractionMessage(`STL出力に失敗しました: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
   const selectedWorkspaceEntry =
     workspaceSelection === null
       ? null
@@ -1574,6 +1638,29 @@ export function ApolloPhase1Shell({
           <h2>橋梁モデル表示</h2>
           <p>一覧選択とモデル表示を連動させています。</p>
         </div>
+        <div className="apollo-topology-export-actions">
+          <label>
+            STL出力
+            <select
+              data-testid="apollo-stl-export-preset"
+              value={stlExportPreset}
+              onChange={(event) => setStlExportPreset(event.currentTarget.value as ApolloStlExportPreset)}
+            >
+              <option value="full">全体</option>
+              <option value="girders">主桁のみ</option>
+              <option value="deck">床版のみ</option>
+              <option value="visible">表示中のみ</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            data-testid="apollo-export-stl"
+            onClick={handleStlExport}
+            disabled={!apolloVisualizationBuild.ok}
+          >
+            STL + Manifest
+          </button>
+        </div>
       </div>
       <div className="apollo-topology-summary" data-testid="apollo-topology-summary">
         <span>節点数 {draft.nodes.length}</span>
@@ -1602,6 +1689,7 @@ export function ApolloPhase1Shell({
             onViewerError={setViewerMessage}
             viewPanelOpen={topologyViewPanelOpen}
             onViewPanelToggle={() => setTopologyViewPanelOpen((current) => !current)}
+            onVisibilityChange={setApolloViewerVisibility}
           />
         )}
       </div>

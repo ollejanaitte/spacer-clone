@@ -258,6 +258,75 @@ type ApolloExportManifest = {
 - visible-only off/on で entity count が deterministic
 - empty / invalid model は reject
 
+## 12. Implementation Update
+
+Thursday, July 30, 2026 時点の current implementation:
+
+- `frontend/src/apollo/export/apolloStlExport.ts` が `ApolloVisualizationModel` から Binary STL を pure export する。
+- `frontend/src/apollo/export/apolloExportManifest.ts` が companion manifest schema を定義する。
+- serializer は `@jscad/stl-serializer` を `binary: true` で使用し、`@jscad/modeling` の geometry adapter を介して Box / Cylinder / Plate / SimpleISectionExtrusion 相当を triangulate する。
+- viewer mesh は STL 正本ではなく、`solidGeometryParameters` から別経路で再構成する。
+- browser save は `Blob` + `URL.createObjectURL()` + anchor download を使用する。
+- Electron save dialog / IPC は本Stepでは未実装のままとする。
+
+### 12.1 Actual manifest fields
+
+- `schemaVersion`
+- `exportKind`
+- `projectId`
+- `projectName`
+- `exportedAt`
+- `sourceSchemaVersions`
+- `sourceRevision`
+- `visualizationContractVersion`
+- `axisConvention`
+- `sourceUnit`
+- `exportUnit`
+- `originShiftMm`
+- `includedGroups`
+- `excludedGroups`
+- `entityCounts`
+- `triangleCount`
+- `boundingBoxMm`
+- `assumptions`
+- `warnings`
+- `digest`
+
+### 12.2 Supported export groups
+
+- `girders`
+- `cross-beams`
+- `bracings`
+- `deck`
+- `bearings`
+- `markers`
+
+既定値:
+
+- girders: ON
+- cross-beams: ON
+- bracings: ON
+- deck: ON
+- bearings: ON
+- markers: OFF
+
+### 12.3 Browser smoke evidence
+
+- Thursday, July 30, 2026 の browser smoke では `/pro/apollo` 上で `full / girders / deck / visible` の 4 preset について `STL + .apollo.json` の 2 本組 download を確認した。
+- representative files:
+  - `full`: `2528` triangles, `126484` bytes
+  - `girders`: `1040` triangles, `52084` bytes
+  - `deck`: `60` triangles, `3084` bytes
+- full export bbox(mm):
+  - min: `[-300.0018, -5000.0688, -2000.0530]`
+  - max: `[200300, 5000.0688, 240.0736]`
+
+### 12.4 Remaining gaps
+
+- external desktop reader import は current environment に Blender / FreeCAD / MeshLab / trimesh が存在しないため `NOT_VERIFIED_EXTERNAL_APP` とする。
+- duplicate triangle / manifold の完全検査は PoC 範囲外のまま維持する。
+- Electron save dialog / overwrite / partial failure は Step 8 で扱う。
+
 ### 11.2 duplicate / non-manifold 方針
 
 - duplicate triangle:

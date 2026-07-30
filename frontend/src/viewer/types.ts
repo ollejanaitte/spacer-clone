@@ -127,6 +127,8 @@ export type Viewer3DProps = {
   onViewPanelToggle?: () => void;
   /** Called when the user clicks the fit-to-view button inside ViewerControls. */
   onFitRequest?: () => void;
+  /** Mirrors current viewer visibility state for browser export flows. */
+  onVisibilityChange?: (visibility: ViewerVisibility) => void;
 };
 
 export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | "onAnimationOptionsChange"> & {

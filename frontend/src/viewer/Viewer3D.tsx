@@ -71,6 +71,7 @@ export function Viewer3D({
   viewPanelOpen = true,
   onViewPanelToggle,
   onFitRequest,
+  onVisibilityChange,
 }: Viewer3DProps) {
   const [visibility, setVisibility] = useState<ViewerVisibility>(defaultVisibility);
   const [scales, setScales] = useState<ViewerScales>(defaultScales);
@@ -332,6 +333,10 @@ export function Viewer3D({
   useEffect(() => {
     setFitRequest((value) => value + 1);
   }, [viewPanelOpen]);
+
+  useEffect(() => {
+    onVisibilityChange?.(visibility);
+  }, [onVisibilityChange, visibility]);
 
   return (
     <main className="viewer-shell">
