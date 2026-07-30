@@ -98,6 +98,10 @@ import { redirectDeniedApolloRoute } from "./apollo/entryGuard";
 import { resolveApolloPhase1FeatureFlags } from "./apollo/featureFlag";
 import { APOLLO_PHASE1_ROUTE_PATH, isApolloRoute } from "./apollo/routes";
 import {
+  exportApolloProjectToText,
+  importApolloProjectFromText,
+} from "./apollo/importExport";
+import {
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
 } from "./apollo/unit2Draft";
@@ -610,18 +614,34 @@ export function App() {
     }
   };
 
+  const apolloImportExportActive = isApolloRoute(pathnameForRouting) && apolloPhase1Enabled;
+
+  const hydrateProjectFromJsonText = (content: string) => {
+    const parsed = migrateProject(JSON.parse(content));
+    const linerHydration = hydrateProjectLinerFromPersistence(parsed);
+    if (!linerHydration.ok) {
+      throw new Error(linerHydration.diagnostics.join("; "));
+    }
+    const apolloHydration = hydrateApolloPhase1Unit2FromPersistence(linerHydration.project);
+    if (!apolloHydration.ok) {
+      throw new Error(apolloHydration.diagnostics.join("; "));
+    }
+    return apolloHydration.project;
+  };
+
   const openFile = async (file: File) => {
     try {
-      const parsed = migrateProject(JSON.parse(await file.text()));
-      const linerHydration = hydrateProjectLinerFromPersistence(parsed);
-      if (!linerHydration.ok) {
-        throw new Error(linerHydration.diagnostics.join("; "));
-      }
-      const apolloHydration = hydrateApolloPhase1Unit2FromPersistence(linerHydration.project);
-      if (!apolloHydration.ok) {
-        throw new Error(apolloHydration.diagnostics.join("; "));
-      }
-      commitProject(apolloHydration.project);
+      const content = await file.text();
+      const nextProject = apolloImportExportActive
+        ? (() => {
+            const imported = importApolloProjectFromText(content);
+            if (!imported.ok) {
+              throw new Error(imported.diagnostics.join("; "));
+            }
+            return imported.project;
+          })()
+        : hydrateProjectFromJsonText(content);
+      commitProject(nextProject);
       setDirty(false);
       log(`${file.name} opened.`);
     } catch (error) {
@@ -635,16 +655,15 @@ export function App() {
     const result = await openProjectFile();
     if (result.canceled) return false;
     try {
-      const parsed = migrateProject(JSON.parse(result.content));
-      const linerHydration = hydrateProjectLinerFromPersistence(parsed);
-      if (!linerHydration.ok) {
-        throw new Error(linerHydration.diagnostics.join("; "));
+      if (apolloImportExportActive) {
+        const imported = importApolloProjectFromText(result.content);
+        if (!imported.ok) {
+          throw new Error(imported.diagnostics.join("; "));
+        }
+        commitProject(imported.project);
+      } else {
+        commitProject(hydrateProjectFromJsonText(result.content));
       }
-      const apolloHydration = hydrateApolloPhase1Unit2FromPersistence(linerHydration.project);
-      if (!apolloHydration.ok) {
-        throw new Error(apolloHydration.diagnostics.join("; "));
-      }
-      commitProject(apolloHydration.project);
       setDirty(false);
       log(`${result.fileName} opened.`);
       return true;
@@ -661,39 +680,58 @@ export function App() {
       log(ja.input.numericDraftBlocked);
       return false;
     }
-    const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(project);
-    if (!apolloSerialized.ok) {
-      log(`Failed to save project.json: ${apolloSerialized.diagnostics.join("; ")}`);
-      pushApiError(
-        new Error(apolloSerialized.diagnostics.join("; ")),
-        "PROJECT_SAVE_ERROR",
-        setApiErrors,
-      );
-      setBottomTab("errors");
-      return false;
+    let payload: string;
+    let serializedProject: ProjectModel;
+    if (apolloImportExportActive) {
+      const exported = exportApolloProjectToText(project);
+      if (!exported.ok) {
+        log(`Failed to save project.json: ${exported.diagnostics.join("; ")}`);
+        pushApiError(
+          new Error(exported.diagnostics.join("; ")),
+          "PROJECT_SAVE_ERROR",
+          setApiErrors,
+        );
+        setBottomTab("errors");
+        return false;
+      }
+      payload = exported.content;
+      serializedProject = exported.project;
+    } else {
+      const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(project);
+      if (!apolloSerialized.ok) {
+        log(`Failed to save project.json: ${apolloSerialized.diagnostics.join("; ")}`);
+        pushApiError(
+          new Error(apolloSerialized.diagnostics.join("; ")),
+          "PROJECT_SAVE_ERROR",
+          setApiErrors,
+        );
+        setBottomTab("errors");
+        return false;
+      }
+      const serialized = serializeProjectForPersistence(apolloSerialized.project);
+      if (!serialized.ok) {
+        log(`Failed to save project.json: ${serialized.diagnostics.join("; ")}`);
+        pushApiError(
+          new Error(serialized.diagnostics.join("; ")),
+          "PROJECT_SAVE_ERROR",
+          setApiErrors,
+        );
+        setBottomTab("errors");
+        return false;
+      }
+      payload = `${JSON.stringify(serialized.project, null, 2)}\n`;
+      serializedProject = serialized.project;
     }
-    const serialized = serializeProjectForPersistence(apolloSerialized.project);
-    if (!serialized.ok) {
-      log(`Failed to save project.json: ${serialized.diagnostics.join("; ")}`);
-      pushApiError(
-        new Error(serialized.diagnostics.join("; ")),
-        "PROJECT_SAVE_ERROR",
-        setApiErrors,
-      );
-      setBottomTab("errors");
-      return false;
-    }
-    const payload = `${JSON.stringify(serialized.project, null, 2)}\n`;
     if (nativeFileDialogs) {
       const result = await saveProjectFile(payload, "project.json");
       if (result.canceled) return false;
-      setProject(serialized.project);
+      setProject(serializedProject);
       setDirty(false);
       log(`Current model saved to ${result.filePath}.`);
       return true;
     }
     downloadText("project.json", payload, "application/json");
-    setProject(serialized.project);
+    setProject(serializedProject);
     setDirty(false);
     log("Current model saved to project.json.");
     return true;
