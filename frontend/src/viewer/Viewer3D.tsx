@@ -46,6 +46,7 @@ export const webglFallbackMessage =
 
 export function Viewer3D({
   project,
+  apolloVisualizationModel = null,
   result,
   if3Result = null,
   selectedSection,
@@ -262,6 +263,7 @@ export function Viewer3D({
 
   const viewportProps = {
     project,
+    apolloVisualizationModel,
     result: overlayResult,
     selectedSection,
     selection,

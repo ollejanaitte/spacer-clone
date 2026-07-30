@@ -5,6 +5,7 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { getResponseSpectrumDisplacements, type ResponseSpectrumSelection } from "../results/resultViewModel";
 import { applyViewerDisplayTransform, type SpacerAxisSwap, type ViewerDisplayCoordinatePolicy } from "./coordinateTransform";
 import type { AnalysisResult, Member, NodeItem, ProjectModel } from "../types";
+import type { ApolloVisualizationGeometry, ApolloVisualizationModel } from "../apollo/visualization";
 
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
 
@@ -219,6 +220,29 @@ export function computeModelBox(
     box.expandByPoint(new THREE.Vector3(1, 1, 1));
   }
   return box;
+}
+
+export function computeApolloVisualizationBox(model: ApolloVisualizationModel): THREE.Box3 {
+  const box = new THREE.Box3();
+  for (const element of model.elements) {
+    expandBoxForApolloGeometry(box, element.geometry);
+  }
+  if (box.isEmpty()) {
+    box.expandByPoint(new THREE.Vector3(-1, -1, -1));
+    box.expandByPoint(new THREE.Vector3(1, 1, 1));
+  }
+  return box;
+}
+
+function expandBoxForApolloGeometry(box: THREE.Box3, geometry: ApolloVisualizationGeometry): void {
+  if (geometry.type === "point" || geometry.type === "label-anchor") {
+    box.expandByPoint(new THREE.Vector3(...geometry.position));
+    return;
+  }
+  if (geometry.type === "line") {
+    box.expandByPoint(new THREE.Vector3(...geometry.start));
+    box.expandByPoint(new THREE.Vector3(...geometry.end));
+  }
 }
 
 export function fitCameraToBox(

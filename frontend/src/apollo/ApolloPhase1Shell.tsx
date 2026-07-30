@@ -32,6 +32,7 @@ import {
 } from "./components/CompositionAwareInput";
 import { isApolloCompositionActive } from "./compositionRegistry";
 import { createApollo200mContinuousBridgeSample } from "./sampleProjects";
+import { buildApolloVisualizationModel } from "./visualization";
 import { applyApolloBulkEdit, resolveApolloBulkEditSelection, type ApolloBulkEditInput } from "./bulkEdit";
 import {
   applyApolloClipboardPaste,
@@ -295,6 +296,7 @@ export function ApolloPhase1Shell({
 }: ApolloPhase1ShellProps) {
   const draft = useMemo(() => getApolloPhase1Unit2Draft(project), [project]);
   const viewProject = useMemo(() => buildApolloPhase1Unit2ViewProject(project), [project]);
+  const apolloVisualizationBuild = useMemo(() => buildApolloVisualizationModel({ project, draft }), [draft, project]);
   const validation = useMemo(() => validateApolloPhase1Unit2Draft(draft), [draft]);
   const referenceUsage = useMemo(() => buildApolloPhase1Unit2ReferenceUsage(draft), [draft]);
   const [editorPane, setEditorPane] = useState<EditorPane>("nodes");
@@ -376,6 +378,27 @@ export function ApolloPhase1Shell({
     [selectedRefs, visibleEditorRefs],
   );
   const bulkEditSelection = resolveApolloBulkEditSelection(visibleSelectedEditorRefs);
+
+  useEffect(() => {
+    if (apolloVisualizationBuild.ok) {
+      const warningSummary = apolloVisualizationBuild.model.warnings
+        .filter((entry) => entry.severity !== "info")
+        .map((entry) => entry.message)
+        .slice(0, 3);
+      setViewerMessage(
+        warningSummary.length > 0
+          ? `3D表示は暫定データを含みます: ${warningSummary.join(" / ")}`
+          : null,
+      );
+      return;
+    }
+    const diagnostics = apolloVisualizationBuild.diagnostics.map((entry) => entry.message).slice(0, 3);
+    setViewerMessage(
+      diagnostics.length > 0
+        ? `3D表示データの生成で一部問題があります: ${diagnostics.join(" / ")}`
+        : "3D表示データの生成で一部問題があります。",
+    );
+  }, [apolloVisualizationBuild]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -1532,6 +1555,7 @@ export function ApolloPhase1Shell({
           </div>
         ) : (
           <Viewer3D
+            apolloVisualizationModel={apolloVisualizationBuild.ok ? apolloVisualizationBuild.model : null}
             project={viewProject}
             result={null}
             selectedSection={viewerSection}

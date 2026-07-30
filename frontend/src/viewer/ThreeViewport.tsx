@@ -4,7 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
 import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
-import { computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
+import { computeApolloVisualizationBox, computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
 import type { ForceColorModeData } from "./memberForceColorMap";
 import { cullOverlappingLabels, type LabelCandidate } from "./labelCollisionAvoidance";
 
@@ -193,6 +193,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     safeRebuildModelScene(context, props, override);
     applyVisibility(context, props);
   }, [
+    props.apolloVisualizationModel,
     props.project,
     props.result,
     props.selectedSection,
@@ -347,19 +348,21 @@ function activateViewerFallback(context: ThreeContext, error: unknown): void {
 
 function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: CameraPreset): void {
   const direction = directionForPreset(preset);
-  const box = computeModelBox(
-    props.project,
-    props.result,
-    props.result?.eigenResult && !props.result.responseSpectrumResult
-      ? props.scales.modeScale
-      : props.scales.deformationScale,
-    props.selectedLoadCaseId,
-    props.selectedEigenMode ?? 1,
-    props.selectedResponseSpectrumResult ?? "SRSS",
-    props.spacerAxisSwap ?? "off",
-    undefined,
-    props.viewerDisplayPolicy ?? "general",
-  );
+  const box = props.apolloVisualizationModel
+    ? computeApolloVisualizationBox(props.apolloVisualizationModel)
+    : computeModelBox(
+        props.project,
+        props.result,
+        props.result?.eigenResult && !props.result.responseSpectrumResult
+          ? props.scales.modeScale
+          : props.scales.deformationScale,
+        props.selectedLoadCaseId,
+        props.selectedEigenMode ?? 1,
+        props.selectedResponseSpectrumResult ?? "SRSS",
+        props.spacerAxisSwap ?? "off",
+        undefined,
+        props.viewerDisplayPolicy ?? "general",
+      );
   fitCameraToBox(context.camera, context.controls, box, direction);
 }
 
