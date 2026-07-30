@@ -28,6 +28,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "unit2Draft.test.ts",
   "unsavedChangesGuard.test.ts",
   "validationNavigator.test.ts",
+  "visualizationBuilder.test.ts",
   "workspace.test.ts",
 ] as const;
 
