@@ -29,6 +29,13 @@ RECOMMENDED_NEXT_STEP: STEP7_STL_EXPORT_DESIGN
 - `ASSUMED_FOR_POC`: bearing と pier/abutment marker は support anchor を基準に派生し、正式 substructure SoR は導入していない。
 - `NON_BLOCKING`: current implementation は `BridgeDefinition` persistence を追加していないため、本書 5章 source data map の `BridgeDefinition.*` 参照は Apollo runtime では「同等責務の derived rule」として解釈する。
 
+## 2.2 post-PR-4 integration bug findings
+
+- `CONFIRMED`: Thursday, July 30, 2026 の browser repro では simple solid 自体は main viewer に描画されていた。
+- `CONFIRMED`: user が「solid が表示されない」と認識した主因候補は、solid drop ではなく、camera preset・camera.up・fit bbox の不整合である。
+- `CONFIRMED`: Apollo path の model-space 契約は `X=橋軸 / Y=横断 / Z=上` であり、line-model と solid-model で別 transform を持ち込んではならない。
+- `PROVISIONAL`: shared viewer の Y-up 前提 helper が残ると、deck は正しく水平でも viewer 全体の見え方が不自然になる。
+
 ## 3. current implementation evidence
 
 参照パス:
@@ -214,6 +221,9 @@ type ApolloSolidGeometryParameters = {
 - Z: 鉛直上向き
 - 単位: display model は m
 - origin: model-space origin
+- `FROZEN`: Apollo simple solid は Apollo line-model と同一 model-space を共有する。
+- `FROZEN`: bbox、camera preset、selection raycast、validation highlight は同じ座標規約から計算する。
+- `FROZEN`: Apollo path では display-only の `Y/Z` swap を暗黙適用しない。
 
 ### 8.2 主桁中心線
 
@@ -231,6 +241,22 @@ path = [(0, 0, 0), (totalSpanLength, 0, 0)]
 kind = centerline fallback girder
 warning = BRIDGE_GEOMETRY_GIRDER_FALLBACK
 ```
+
+### 8.2.1 main viewer integration contract
+
+```text
+ApolloPhase1Shell
+  -> buildApolloVisualizationModel()
+  -> Viewer3D
+  -> ThreeViewport
+  -> SceneBuilder
+  -> ApolloVisualizationRenderer
+```
+
+- `FROZEN`: main Apollo screen では line elements と `solidGeometryParameters` を同じ `ApolloVisualizationModel` で渡す。
+- `FROZEN`: `solidGeometryParameters` は renderer 手前で drop してはならない。
+- `FROZEN`: default visibility は line/solid 両方を ON とし、solid 初期表示を壊さない。
+- `FROZEN`: subgroup default は `girders`, `crossBeams`, `bracings`, `deck`, `bearings` を ON とし、`markers` は OFF または低優先でよい。
 
 ### 8.3 transverse offsets
 
@@ -393,6 +419,7 @@ ApolloVisualizationModel
 - display color / opacity / hover / outline
 - STL triangle tessellation
 - label / marker 表示
+- fit bbox inclusion policy
 
 ### 9.1 display-only simplification
 
@@ -400,6 +427,14 @@ ApolloVisualizationModel
 - translucent deck
 - helper axis / grid
 - pier/abutment marker
+- Apollo path `camera.up = (0, 0, 1)`
+- user-facing preset `全体 / アイソメ / 平面 / 側面 / 正面`
+
+### 9.1.1 fit bbox contract
+
+- `FROZEN`: Apollo simple solid fit bbox の既定対象は line-model、girders、cross beams、bracing、deck、bearings とする。
+- `FROZEN`: Apollo simple solid fit bbox から labels、helper、axis、grid、pier marker、abutment marker を既定で除外する。
+- `PROVISIONAL`: marker を fit に含める必要が出た場合は明示 opt-in として設計する。
 
 ### 9.2 export-only simplification
 
@@ -413,17 +448,18 @@ ApolloVisualizationModel
 - `line-model`
 - `main-girders`
 - `cross-beams`
-- `bracing`
+- `bracings`
 - `deck`
 - `bearings`
-- `substructure-markers`
+- `markers`
 - `labels`
+- `FROZEN`: Apollo main viewer の初期値は line/solid をともに ON とし、solid 初期表示を壊さない。
 
 初期表示:
 
-- girders, deck: on
-- cross-beams, bracing, bearings: on
-- substructure-markers, labels: viewer option
+- girders, cross-beams, bracings, deck, bearings: on
+- markers: off or low priority
+- labels: viewer option
 
 ## 11. performance budget
 
