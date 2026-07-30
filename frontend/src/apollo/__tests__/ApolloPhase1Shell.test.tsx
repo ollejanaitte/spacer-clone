@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { createDefaultProject } from "../../data/defaultProject";
 import { ApolloPhase1Shell } from "../ApolloPhase1Shell";
 import type { ApolloPhase1FeatureFlags } from "../featureFlag";
+import type { ApolloVisualizationModel } from "../visualization";
 import type { ProjectModel } from "../../types";
 import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
 
@@ -12,13 +13,16 @@ vi.mock("../../viewer/Viewer3D", () => ({
   Viewer3D: ({
     project,
     selection,
+    apolloVisualizationModel,
   }: {
     project: { nodes: unknown[]; members: unknown[] };
     selection?: { type: string; id: string } | null;
+    apolloVisualizationModel?: ApolloVisualizationModel | null;
   }) => (
     <div
       data-testid="mock-viewer3d"
       data-selection={selection ? `${selection.type}:${selection.id}` : "none"}
+      data-visualization-elements={apolloVisualizationModel?.elements.length ?? 0}
     >
       {project.nodes.length}/{project.members.length}
     </div>
@@ -233,6 +237,12 @@ describe("ApolloPhase1Shell", () => {
     expect(container.querySelector("[data-testid='apollo-list-mode']")).not.toBeNull();
     const nameInput = container.querySelector("[data-testid='apollo-project-name-input']") as HTMLInputElement;
     expect(nameInput.value).toBe(project.project.name);
+  });
+
+  it("passes the derived Apollo visualization model to Viewer3D", () => {
+    const { container } = renderShell({ project: createApollo200mContinuousBridgeSample() });
+    const viewer = container.querySelector("[data-testid='mock-viewer3d']");
+    expect(viewer?.getAttribute("data-visualization-elements")).not.toBe("0");
   });
 
   it("shows basics screen and Japanese save status", () => {

@@ -6,6 +6,7 @@ import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
 import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
 import type { ForceColorComponent, ForceColorValueType, ForceColorModeData } from "./memberForceColorMap";
+import type { ApolloVisualizationModel } from "../apollo/visualization";
 
 export type ViewerMode = "three" | "fallback2d";
 
@@ -66,6 +67,7 @@ export type ViewerSelection =
 
 export type Viewer3DProps = {
   project: ProjectModel;
+  apolloVisualizationModel?: ApolloVisualizationModel | null;
   result: AnalysisResult | null;
   if3Result?: FrameAnalysisResultResource | null;
   selectedSection: SectionKey;

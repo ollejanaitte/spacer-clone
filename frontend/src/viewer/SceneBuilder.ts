@@ -1,10 +1,17 @@
 import * as THREE from "three";
+import type { ApolloVisualizationModel } from "../apollo/visualization";
 import { renderDeformedShape } from "./renderers/DeformedShapeRenderer";
 import { renderLoads } from "./renderers/LoadRenderer";
 import { renderMemberLabels, renderMembers } from "./renderers/MemberRenderer";
 import { renderNodeLabels, renderNodes } from "./renderers/NodeRenderer";
 import { renderResultDiagrams } from "./renderers/ResultDiagramRenderer";
 import { renderSupports } from "./renderers/SupportRenderer";
+import {
+  renderApolloVisualizationLabels,
+  renderApolloVisualizationMembers,
+  renderApolloVisualizationNodes,
+  renderApolloVisualizationSupports,
+} from "./renderers/ApolloVisualizationRenderer";
 import type { SceneGroups, ThreeViewportProps } from "./types";
 import { replaceGroupContents } from "./threeUtils";
 import type { ForceColorModeData } from "./memberForceColorMap";
@@ -49,6 +56,7 @@ export function rebuildModelScene(
   forceColorMode?: ForceColorModeData,
 ): void {
   const {
+    apolloVisualizationModel,
     project,
     result,
     selectedSection,
@@ -61,6 +69,10 @@ export function rebuildModelScene(
     spacerAxisSwap = "off",
     viewerDisplayPolicy = "general",
   } = props;
+  if (apolloVisualizationModel) {
+    rebuildApolloVisualizationScene(groups, apolloVisualizationModel, props);
+    return;
+  }
   replaceGroupContents(
     groups.nodes,
     visibility.nodes
@@ -129,6 +141,40 @@ export function rebuildModelScene(
             ? renderMemberLabels(project, scales, spacerAxisSwap, nodePositionOverride, selection, viewerDisplayPolicy)
             : []),
         ]
+      : [],
+  );
+}
+
+function rebuildApolloVisualizationScene(
+  groups: SceneGroups,
+  model: ApolloVisualizationModel,
+  props: ThreeViewportProps,
+): void {
+  replaceGroupContents(
+    groups.nodes,
+    props.visibility.nodes
+      ? renderApolloVisualizationNodes(model, props.selectedSection, props.selection, props.scales)
+      : [],
+  );
+  replaceGroupContents(
+    groups.members,
+    props.visibility.members
+      ? renderApolloVisualizationMembers(model, props.selectedSection, props.selection, props.scales)
+      : [],
+  );
+  replaceGroupContents(
+    groups.supports,
+    props.visibility.supports
+      ? renderApolloVisualizationSupports(model, props.selectedSection, props.scales)
+      : [],
+  );
+  replaceGroupContents(groups.loads, []);
+  replaceGroupContents(groups.deformed, []);
+  replaceGroupContents(groups.resultDiagrams, []);
+  replaceGroupContents(
+    groups.labels,
+    props.visibility.labels
+      ? renderApolloVisualizationLabels(model, props.scales, props.selection)
       : [],
   );
 }
