@@ -17,6 +17,10 @@ APOLLO_3D_STEP4_TO_STEP8_TRACEABILITY_VERDICT: PASS
 | bearings | `09_simple_solid_model_design.md` | PR-4 | `frontend/src/apollo/visualization/*`, `frontend/src/viewer/*` | support/bearing placement tests | bearing blocks |
 | line/solid toggle | `09_simple_solid_model_design.md` | PR-4 | `frontend/src/viewer/SceneBuilder.ts`, `frontend/src/viewer/ThreeViewport.tsx`, `frontend/src/viewer/ViewerControls.tsx` | viewer visibility tests | line + solid coexistence |
 | solid selection/validation highlight | `08_selection_validation_integration_design.md`, `09_simple_solid_model_design.md` | PR-4 | `frontend/src/viewer/renderers/ApolloVisualizationRenderer.ts` | support/member highlight tests | solid highlight inheritance |
+| Apollo axis contract | `07_poc_a_line_model_design.md`, `09_simple_solid_model_design.md` | fix PR-B | `frontend/src/viewer/*`, `frontend/src/apollo/ApolloPhase1Shell.tsx` | axis mapping / no double swap tests | bridge longitudinal orientation |
+| Apollo camera presets | `07_poc_a_line_model_design.md`, `09_simple_solid_model_design.md` | fix PR-B | `frontend/src/viewer/ThreeViewport.tsx`, `frontend/src/viewer/ViewerControls.tsx`, `frontend/src/viewer/threeUtils.ts` | preset direction / camera.up tests | plan/side/front/isometric |
+| Apollo fit bbox exclusions | `07_poc_a_line_model_design.md`, `09_simple_solid_model_design.md`, `12_step4_to_step8_design_readiness_gate.md` | fix PR-B | `frontend/src/viewer/threeUtils.ts` | bbox / marker exclusion tests | fit-to-model |
+| Apollo main viewer solid presentation | `09_simple_solid_model_design.md`, `12_step4_to_step8_design_readiness_gate.md` | fix PR-B | `frontend/src/apollo/ApolloPhase1Shell.tsx`, `frontend/src/viewer/*` | shell integration + browser/electron smoke | main screen solid visible |
 | STL binary | `10_stl_export_design.md` | PR-5 | `frontend/src/apollo/export/*` | byte length / header tests | binary STL |
 | manifest | `10_stl_export_design.md`, `11_persistence_reload_electron_design.md` | PR-5, PR-6 | `frontend/src/apollo/export/*` | schema / metadata tests | companion JSON |
 | save/reload | `11_persistence_reload_electron_design.md` | PR-6 | `importExport.ts`, `desktop/projectFileDialog.ts` | reproducibility tests | same bbox / entity count |
@@ -39,3 +43,9 @@ APOLLO_3D_STEP4_TO_STEP8_TRACEABILITY_VERDICT: PASS
   - `frontend/src/apollo/__tests__/visualizationBuilder.test.ts`
   - `frontend/src/viewer/SceneBuilder.apolloVisualization.test.ts`
   - `frontend/src/viewer/ViewerControls.test.tsx`
+
+## Post-PR-4 correction note
+
+- Thursday, July 30, 2026 の browser repro で、simple solid 自体は renderer まで届いていることを確認した。
+- 補正対象は `solid drop` ではなく、Apollo Z-up 契約と shared viewer camera / helper / fit 契約の整合である。
+- docs PR-A では axis / camera / fit / prop flow 契約を修正し、fix PR-B で production code と tests を更新する。

@@ -16,6 +16,7 @@
 - `11_persistence_reload_electron_design.md`
 - `12_step4_to_step8_design_readiness_gate.md`
 - `13_traceability_matrix.md`
+- `14_axis_camera_main_viewer_bug_report.md`
 
 現在の全体判定:
 

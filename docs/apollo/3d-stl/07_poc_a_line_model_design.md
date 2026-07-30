@@ -119,13 +119,18 @@ Viewer camera state -> apolloPhase1Unit2
 
 - `CONFIRMED`: existing preset は `iso | xy | yz | xz`。`frontend/src/viewer/types.ts`, `frontend/src/viewer/ThreeViewport.tsx`
 - `FROZEN`: PoC-A preset alias は以下とする。
-  - `top` = `xy`
-  - `front` = `xz`
-  - `side` = `yz`
+  - `plan` = `xy`
+  - `front` = `yz`
+  - `side` = `xz`
   - `isometric` = `iso`
 - `CONFIRMED`: controls は existing `OrbitControls` を再利用する。
 - `FROZEN`: orbit, zoom, pan, damping は existing viewer behavior を維持する。
-- `FROZEN`: initial fit と resize fit は current `fitCameraToBox()` ベースとする。
+- `FROZEN`: Apollo path の `camera.up` は `Z-up = (0, 0, 1)` とする。
+- `FROZEN`: `plan` は `+Z` 方向から `XY` 平面を見る。
+- `FROZEN`: `side` は `+Y` 方向から `XZ` 平面を見る。
+- `FROZEN`: `front` は `+X` 方向から `YZ` 平面を見る。
+- `FROZEN`: initial fit と resize fit は Apollo 専用 bbox 契約に従う。
+- `NON_BLOCKING`: shared viewer 実装の `XY / YZ / XZ` 表示は残してよいが、Apollo path では上記 user-facing alias との対応を UI 上で明示する。
 
 ## 9. fit-to-model / model bounding box
 
@@ -133,6 +138,8 @@ Viewer camera state -> apolloPhase1Unit2
 - `FROZEN`: PoC-A の bounding box は node positions を唯一の authoritative source とする。
 - `FROZEN`: invalid node を除いた finite node set から box を計算する。
 - `FROZEN`: empty box 時は existing fallback box `[-1,1]` を継承する。
+- `FROZEN`: Apollo path の fit bbox は label sprite を含めない。
+- `FROZEN`: Apollo path の fit bbox は helper / axis / grid を含めない。
 
 ## 10. label 生成方式
 
@@ -146,6 +153,14 @@ Viewer camera state -> apolloPhase1Unit2
 - `CONFIRMED`: display coordinate transform は `createNodeMap()` と `applyViewerDisplayTransform()` で適用される。`frontend/src/viewer/threeUtils.ts`
 - `FROZEN`: PoC-A は Step 1 座標契約に反しない display-only transform として現行実装を利用する。
 - `FROZEN`: source node 座標を mutation しない。
+- `FROZEN`: Apollo line-model path は `ApolloVisualizationModel` に入った時点で `X=橋軸 / Y=横断 / Z=上` を満たすものとし、Apollo renderer では追加の `Y/Z` swap を行わない。
+- `FROZEN`: shared viewer の `spacerAxisSwap` は Apollo path の camera preset 説明を上書きしない。
+
+## 11.1 post-PR-4 runtime correction
+
+- `CONFIRMED`: Thursday, July 30, 2026 の browser repro では、Apollo line-model 自体は renderer まで到達するが、shared viewer の Y-up 前提が残ると橋梁ビューが不自然になる。
+- `FROZEN`: Apollo path の support glyph、label offset、raycaster target、bbox、camera target は line-model と solid-model で同一の Z-up 規約を共有する。
+- `FROZEN`: Apollo path で line-model と solid-model が共存する場合も、camera preset と fit は共通の Apollo bbox 契約を使う。
 
 ## 12. rebuild lifecycle
 

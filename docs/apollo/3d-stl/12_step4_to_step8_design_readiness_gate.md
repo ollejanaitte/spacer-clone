@@ -60,6 +60,15 @@ ApolloVisualizationModel
 | persistence / derived separation | `PASS` | Step 8 で generated mesh/STL bytes 保存禁止 |
 | Electron security boundary | `PASS` | renderer 直 filesystem access を禁止 |
 
+## 4.1 post-PR-4 corrective findings
+
+- `CONFIRMED`: Thursday, July 30, 2026 の browser repro では Apollo simple solid は main viewer path を通過していた。
+- `CONFIRMED`: PR-4 完了後に残った不具合は、主として Apollo Z-up 契約と shared viewer の camera / helper / fit 契約のずれである。
+- `FROZEN`: Apollo path の `camera.up` は `Z-up = (0, 0, 1)` とする。
+- `FROZEN`: Apollo path の user-facing preset は `全体 / アイソメ / 平面 / 側面 / 正面` とし、それぞれ `fit / iso / XY / XZ / YZ` に対応づける。
+- `FROZEN`: Apollo path の fit bbox は line-model、girders、cross beams、bracing、deck、bearings を含み、labels / helper / markers は既定で除外する。
+- `FROZEN`: Apollo path では `ApolloPhase1Shell -> buildApolloVisualizationModel -> Viewer3D -> ThreeViewport -> SceneBuilder -> ApolloVisualizationRenderer` の prop flow を正本とする。
+
 ## 5. blocking / non-blocking
 
 ### 5.1 BLOCKING_FOR_IMPLEMENTATION
@@ -74,6 +83,7 @@ ApolloVisualizationModel
 - bearing 寸法の PoC 仮定
 - camera/visibility persistence の deferred
 - non-manifold 完全検査の deferred
+- Electron manual smoke の仮想 X 依存
 
 ## 6. 実装PR再確定
 
@@ -179,5 +189,10 @@ ApolloVisualizationModel
 - `APOLLO_3D_STEP4_TO_STEP8_SCOPE_GUARD_VERDICT: PASS`
 - `APOLLO_3D_STEP4_TO_STEP8_IMPLEMENTATION_READINESS: READY_WITH_PROVISIONAL_POC_ASSUMPTIONS`
 - `APOLLO_3D_PRODUCTION_IMPLEMENTATION_VERDICT: NOT_STARTED`
+
+追記:
+
+- Thursday, July 30, 2026 時点では PR-5 着手前に、Apollo 3D axis / camera / fit / main viewer solid presentation の補正 PR を入れることを許容する。
+- この補正 PR は STL/export/persistence scope を含めず、PR-4 実装済みの line/solid/selection/validation path を回帰させないことを前提とする。
 
 Step 4〜Step 8 は、PoC 仮定値を残しつつも、実装不足や資料不足を明示した状態で Implementation PR-1 を安全に開始できる。
