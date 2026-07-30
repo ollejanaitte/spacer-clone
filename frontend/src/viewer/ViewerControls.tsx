@@ -15,6 +15,7 @@ import type { ForceColorComponent, ForceColorValueType } from "./memberForceColo
 import { FORCE_COLOR_COMPONENTS, FORCE_COLOR_COMPONENT_LABELS, FORCE_COLOR_VALUE_TYPE_LABELS } from "./memberForceColorMap";
 
 type ViewerControlsProps = {
+  apolloView?: boolean;
   visibility: ViewerVisibility;
   scales: ViewerScales;
   displaySize?: ViewerDisplaySizeSettings;
@@ -54,6 +55,7 @@ type ViewerControlsProps = {
 };
 
 export function ViewerControls({
+  apolloView = false,
   visibility,
   scales,
   displaySize = DEFAULT_VIEWER_DISPLAY_SIZE,
@@ -104,25 +106,28 @@ export function ViewerControls({
   const setDisplaySize = (key: keyof ViewerDisplaySizeSettings, value: number) => {
     onDisplaySizeChange({ ...displaySize, [key]: clampViewerDisplaySize(key, value) });
   };
+  const viewLabels = apolloView
+    ? { fit: "全体", iso: "アイソメ", xy: "平面", yz: "正面", xz: "側面" }
+    : { fit: "", iso: "", xy: "XY", yz: "YZ", xz: "XZ" };
 
   return (
     <div className="viewer-controls" aria-label={ja.viewer.controls.ariaLabel}>
       <ControlGroup title={ja.viewer.controls.view}>
         <div className="viewer-control-row icon-row">
           <button type="button" title={ja.viewer.controls.viewFit} data-testid="view-fit" onClick={onFit}>
-            <LocateFixed size={16} />
+            {apolloView ? viewLabels.fit : <LocateFixed size={16} />}
           </button>
           <button type="button" title={ja.viewer.controls.viewIso} data-testid="view-iso" onClick={() => onCameraPreset("iso")}>
-            <Box size={16} />
+            {apolloView ? viewLabels.iso : <Box size={16} />}
           </button>
           <button type="button" title={ja.viewer.controls.viewXy} data-testid="view-xy" onClick={() => onCameraPreset("xy")}>
-            XY
+            {viewLabels.xy}
           </button>
           <button type="button" title={ja.viewer.controls.viewYz} data-testid="view-yz" onClick={() => onCameraPreset("yz")}>
-            YZ
+            {viewLabels.yz}
           </button>
           <button type="button" title={ja.viewer.controls.viewXz} data-testid="view-xz" onClick={() => onCameraPreset("xz")}>
-            XZ
+            {viewLabels.xz}
           </button>
         </div>
       </ControlGroup>
@@ -266,24 +271,26 @@ export function ViewerControls({
           </label>
         </div>
       </ControlGroup>
-      <ControlGroup title={ja.viewer.controls.coordinate}>
-        <div className="viewer-control-row">
-          <label className="viewer-toggle">
-            <input
-              type="checkbox"
-              data-testid="spacer-axis-swap-toggle"
-              checked={spacerAxisSwap === "on"}
-              onChange={(event) => onSpacerAxisSwapChange(event.currentTarget.checked ? "on" : "off")}
-            />
-            <span>{ja.viewer.controls.spacerAxisSwap}</span>
-          </label>
-        </div>
-        {spacerAxisSwapHint ? (
-          <p className="viewer-control-hint" data-testid="spacer-axis-swap-hint">
-            {spacerAxisSwapHint}
-          </p>
-        ) : null}
-      </ControlGroup>
+      {apolloView ? null : (
+        <ControlGroup title={ja.viewer.controls.coordinate}>
+          <div className="viewer-control-row">
+            <label className="viewer-toggle">
+              <input
+                type="checkbox"
+                data-testid="spacer-axis-swap-toggle"
+                checked={spacerAxisSwap === "on"}
+                onChange={(event) => onSpacerAxisSwapChange(event.currentTarget.checked ? "on" : "off")}
+              />
+              <span>{ja.viewer.controls.spacerAxisSwap}</span>
+            </label>
+          </div>
+          {spacerAxisSwapHint ? (
+            <p className="viewer-control-hint" data-testid="spacer-axis-swap-hint">
+              {spacerAxisSwapHint}
+            </p>
+          ) : null}
+        </ControlGroup>
+      )}
       <ControlGroup title={ja.viewer.controls.analysisResults}>
         <div className="viewer-control-row">
           <label>

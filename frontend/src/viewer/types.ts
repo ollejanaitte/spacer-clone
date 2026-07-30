@@ -166,7 +166,7 @@ export const defaultVisibility: ViewerVisibility = {
   apolloBracings: true,
   apolloDeck: true,
   apolloBearings: true,
-  apolloMarkers: true,
+  apolloMarkers: false,
   loads: true,
   labels: true,
   nodeLabels: true,

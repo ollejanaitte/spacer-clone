@@ -4,7 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
 import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
-import { computeApolloVisualizationBox, computeModelBox, disposeObject, fitCameraToBox } from "./threeUtils";
+import { APOLLO_MODEL_UP, computeApolloVisualizationBox, computeModelBox, disposeObject, fitCameraToBox, MODEL_UP, resolveCameraViewForPreset } from "./threeUtils";
 import type { ForceColorModeData } from "./memberForceColorMap";
 import { cullOverlappingLabels, type LabelCandidate } from "./labelCollisionAvoidance";
 
@@ -270,6 +270,7 @@ function animationOverrideFor(
 }
 
 function applyVisibility(context: ThreeContext, props: ThreeViewportProps): void {
+  applyApolloPresentation(context, props);
   context.grid.visible = props.visibility.grid;
   context.axes.visible = props.visibility.axes;
 }
@@ -359,9 +360,14 @@ function activateViewerFallback(context: ThreeContext, error: unknown): void {
 }
 
 function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: CameraPreset): void {
-  const direction = directionForPreset(preset);
+  const apolloView = Boolean(props.apolloVisualizationModel);
+  const view = resolveCameraViewForPreset(preset, apolloView);
   const box = props.apolloVisualizationModel
-    ? computeApolloVisualizationBox(props.apolloVisualizationModel)
+    ? computeApolloVisualizationBox(props.apolloVisualizationModel, {
+        includeLabels: false,
+        includeMarkers: false,
+        visibility: props.visibility,
+      })
     : computeModelBox(
         props.project,
         props.result,
@@ -375,14 +381,19 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
         undefined,
         props.viewerDisplayPolicy ?? "general",
       );
-  fitCameraToBox(context.camera, context.controls, box, direction);
+  fitCameraToBox(context.camera, context.controls, box, view);
 }
 
-function directionForPreset(preset: CameraPreset): THREE.Vector3 {
-  if (preset === "xy") return new THREE.Vector3(0, 0, 1);
-  if (preset === "yz") return new THREE.Vector3(1, 0, 0);
-  if (preset === "xz") return new THREE.Vector3(0, 1, 0);
-  return new THREE.Vector3(1, 0.75, 1);
+function applyApolloPresentation(context: ThreeContext, props: ThreeViewportProps): void {
+  const apolloView = Boolean(props.apolloVisualizationModel);
+  context.grid.rotation.x = apolloView ? Math.PI / 2 : 0;
+  if (apolloView) {
+    if (props.cameraRequest !== "xy") {
+      context.camera.up.copy(APOLLO_MODEL_UP);
+    }
+  } else {
+    context.camera.up.copy(MODEL_UP);
+  }
 }
 
 export const ThreeViewport = forwardRef<ImperativeHandle, ThreeViewportProps>(ThreeViewportInner);

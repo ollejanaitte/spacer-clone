@@ -140,7 +140,7 @@ export function renderApolloVisualizationSupports(
     .map((entry) => {
       const position = new THREE.Vector3(entry.geometry.position[0], entry.geometry.position[1], entry.geometry.position[2]);
       const group = new THREE.Group();
-      group.position.copy(position).add(new THREE.Vector3(0, -size * 1.7, 0));
+      group.position.copy(position).add(new THREE.Vector3(0, 0, -size * 1.7));
       const renderState = resolveElementRenderState(entry, selectionState);
       const cone = new THREE.Mesh(
         new THREE.ConeGeometry(size * 0.9, size * 1.35, 4),
@@ -187,7 +187,7 @@ export function renderApolloVisualizationLabels(
     const renderState = resolveElementRenderState(entry, selectionState);
     const label = createLabelSprite(geometry.text, "#222222", scales.labelSize);
     label.position.set(geometry.position[0], geometry.position[1], geometry.position[2]);
-    label.position.add(new THREE.Vector3(0, scales.nodeSize * 2.4 + 0.08, 0));
+    label.position.add(new THREE.Vector3(0, 0, scales.nodeSize * 2.4 + 0.08));
     assignLabelPriority(
       label,
       renderState.selected ? "selected" : entry.elementKind === "node-label" ? "node" : "member",

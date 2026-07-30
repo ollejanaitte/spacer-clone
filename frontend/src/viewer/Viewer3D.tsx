@@ -375,7 +375,7 @@ export function Viewer3D({
               <PanelRightClose size={16} />
             </button>
             <ViewerControls
-
+            apolloView={apolloVisualizationModel != null}
             visibility={visibility}
             scales={scales}
             displaySize={displaySize}
@@ -412,9 +412,8 @@ export function Viewer3D({
             onForceColorMapChange={setForceColorMap}
             onForceColorComponentChange={setForceColorComponent}
             onForceColorValueTypeChange={setForceColorValueType}
-              onFit={handleFit}
+            onFit={handleFit}
             onCameraPreset={runCameraPreset}
-
             />
           </>
         ) : (

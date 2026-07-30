@@ -324,6 +324,7 @@ export function ApolloPhase1Shell({
   const [bulkEditActiveValue, setBulkEditActiveValue] = useState(true);
   const [validationIssueIndex, setValidationIssueIndex] = useState(0);
   const [validationFocusToken, setValidationFocusToken] = useState(0);
+  const [topologyViewPanelOpen, setTopologyViewPanelOpen] = useState(false);
   const [validationHighlightIssueKey, setValidationHighlightIssueKey] = useState<string | null>(null);
   const shellRootRef = useRef<HTMLElement | null>(null);
   const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
@@ -1599,6 +1600,8 @@ export function ApolloPhase1Shell({
             onSelectionChange={handleViewerSelection}
             onActiveLoadCaseChange={() => undefined}
             onViewerError={setViewerMessage}
+            viewPanelOpen={topologyViewPanelOpen}
+            onViewPanelToggle={() => setTopologyViewPanelOpen((current) => !current)}
           />
         )}
       </div>
