@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createDefaultProject } from "../../data/defaultProject";
@@ -26,6 +26,17 @@ vi.mock("../../viewer/Viewer3D", () => ({
 }));
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+const mountedRoots: Array<{ root: ReturnType<typeof createRoot>; container: HTMLElement }> = [];
+
+afterEach(() => {
+  for (const entry of mountedRoots.splice(0)) {
+    act(() => {
+      entry.root.unmount();
+    });
+    entry.container.remove();
+  }
+});
 
 function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
   const prototype =
@@ -78,6 +89,7 @@ function renderShell(
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
+  mountedRoots.push({ root, container });
   act(() => {
     root.render(
       <ApolloPhase1Shell
@@ -107,6 +119,7 @@ function renderStatefulShell(initialProject: ProjectModel = createDefaultProject
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
+  mountedRoots.push({ root, container });
 
   function Harness() {
     const [project, setProject] = useState(initialProject);
@@ -580,12 +593,39 @@ describe("ApolloPhase1Shell", () => {
 
     await act(async () => {
       navigateButton?.click();
-      await new Promise((resolve) => window.setTimeout(resolve, 10));
+      for (let attempt = 0; attempt < 20 && focusSpy.mock.calls.length === 0; attempt += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 0));
+      }
     });
 
     expect(container.querySelector("[data-testid='apollo-member-editor']")).not.toBeNull();
     expect(container.querySelector("[data-focus-key='member-material']")).not.toBeNull();
     expect(focusSpy).toHaveBeenCalled();
     focusSpy.mockRestore();
+  });
+
+  it("copies only visible selected rows while filter-hidden selection is retained", () => {
+    const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
+    clickButtonByText(container, "一覧編集モード");
+
+    const first = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
+    const second = container.querySelector("[data-testid='apollo-node-select-N-P2']") as HTMLButtonElement;
+    act(() => {
+      first.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      second.dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true }));
+    });
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("2");
+
+    const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
+    act(() => {
+      setInputValue(query, "P1");
+    });
+    expect(container.querySelector("[data-testid='apollo-visible-count']")?.textContent).toContain("1");
+    expect(container.querySelector("[data-testid='apollo-selection-count']")?.textContent).toContain("2");
+
+    act(() => {
+      (container.querySelector("[data-testid='apollo-copy-selection']") as HTMLButtonElement).click();
+    });
+    expect(container.textContent).toContain("1件のnodeをApollo内部クリップボードへコピーしました。");
   });
 });

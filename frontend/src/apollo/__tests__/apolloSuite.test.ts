@@ -4,16 +4,31 @@ import { describe, expect, it } from "vitest";
 
 const APOLLO_TESTS_DIR = join(import.meta.dirname);
 const EXPECTED_APOLLO_TEST_MODULES = [
+  "ApolloNumericInput.test.tsx",
   "ApolloPhase1Shell.test.tsx",
+  "ApolloRouteHost.test.tsx",
+  "CompositionAwareInput.test.tsx",
   "apolloSourceHygiene.test.ts",
   "apolloSuite.test.ts",
+  "bulkEdit.test.ts",
+  "clipboard.test.ts",
+  "dirtyFingerprint.test.ts",
   "entryGuard.test.ts",
   "errors.test.ts",
   "featureFlag.test.ts",
+  "history.test.ts",
+  "importExport.test.ts",
   "numericAuthorityGuard.test.ts",
+  "numericInput.test.ts",
   "phase1ScopeGuard.test.ts",
+  "projectId.test.ts",
+  "searchFilter.test.ts",
+  "selection.test.ts",
   "testingHelpers.test.ts",
   "unit2Draft.test.ts",
+  "unsavedChangesGuard.test.ts",
+  "validationNavigator.test.ts",
+  "workspace.test.ts",
 ] as const;
 
 describe("apollo AP-00 test suite discoverability", () => {

@@ -322,6 +322,7 @@ export function ApolloPhase1Shell({
   const [bulkEditActiveValue, setBulkEditActiveValue] = useState(true);
   const [validationIssueIndex, setValidationIssueIndex] = useState(0);
   const [validationFocusToken, setValidationFocusToken] = useState(0);
+  const shellRootRef = useRef<HTMLElement | null>(null);
   const clipboardRef = useRef<ApolloClipboardPayload | null>(null);
   const clipboardHandlersRef = useRef<{ copy: () => void; paste: () => void }>({
     copy: () => undefined,
@@ -485,11 +486,26 @@ export function ApolloPhase1Shell({
 
   useEffect(() => {
     if (!focusKey) return;
-    const timer = window.setTimeout(() => {
-      const target = document.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`);
-      target?.focus();
-    }, 0);
-    return () => window.clearTimeout(timer);
+    let cancelled = false;
+    let attempts = 0;
+    const tryFocus = () => {
+      if (cancelled) return;
+      const root = shellRootRef.current ?? document;
+      const target = root.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`);
+      if (target) {
+        target.focus();
+        return;
+      }
+      attempts += 1;
+      if (attempts < 16) {
+        window.setTimeout(tryFocus, 0);
+      }
+    };
+    const timer = window.setTimeout(tryFocus, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [focusKey, guidedStep, editorPane, draft, validationFocusToken]);
 
   const selectedNode = selection?.kind === "node" ? draft.nodes.find((node) => node.id === selection.id) ?? null : null;
@@ -594,7 +610,7 @@ export function ApolloPhase1Shell({
   };
 
   const handleCopySelection = () => {
-    const result = buildApolloClipboardPayload(draft, selectedRefs, nowIsoString());
+    const result = buildApolloClipboardPayload(draft, visibleSelectedEditorRefs, nowIsoString());
     if (!result.ok) {
       announce(result.message);
       return;
@@ -1609,7 +1625,10 @@ export function ApolloPhase1Shell({
             type="button"
             data-testid="apollo-copy-selection"
             onClick={handleCopySelection}
-            disabled={selectedRefs.length === 0 || !isApolloSelectionHomogeneous(selectedRefs)}
+            disabled={
+              visibleSelectedEditorRefs.length === 0 ||
+              !isApolloSelectionHomogeneous(visibleSelectedEditorRefs)
+            }
           >
             Copy
           </button>
@@ -2042,7 +2061,7 @@ export function ApolloPhase1Shell({
   );
 
   return (
-    <main className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
+    <main ref={shellRootRef} className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
         <div>
           <p data-testid="apollo-shell-kicker">Apollo Phase 1-NN</p>
