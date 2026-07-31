@@ -17,6 +17,37 @@ type CloseGuardResponsePayload = {
   allow: boolean;
 };
 
+type GpuMode = "normal" | "compat-gpu-blocklist" | "compat-angle-gl" | "legacy-desktop-gl";
+
+function resolveGpuModeFromArgs(argv: string[], envValue: string | undefined): GpuMode {
+  return resolveGpuMode(envValue ?? findGpuModeArg(argv));
+}
+
+function resolveGpuMode(input: string | undefined): GpuMode {
+  switch (input) {
+    case "compat-gpu-blocklist":
+    case "compat-angle-gl":
+    case "legacy-desktop-gl":
+    case "normal":
+      return input;
+    default:
+      return "normal";
+  }
+}
+
+function findGpuModeArg(argv: string[]): string | undefined {
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg.startsWith("--gpu-mode=")) {
+      return arg.slice("--gpu-mode=".length);
+    }
+    if (arg === "--gpu-mode") {
+      return argv[index + 1];
+    }
+  }
+  return undefined;
+}
+
 contextBridge.exposeInMainWorld("spacerDesktop", {
   openProjectFile: () => ipcRenderer.invoke(OPEN_PROJECT_CHANNEL),
   saveProjectFile: (content: string, suggestedName?: string) =>
@@ -36,4 +67,6 @@ contextBridge.exposeInMainWorld("spacerDesktop", {
     ipcRenderer.send(CLOSE_GUARD_RESPONSE_CHANNEL, payload);
   },
   platform: process.platform,
+  gpuMode: resolveGpuModeFromArgs(process.argv, process.env.GPU_MODE),
+  appVersion: process.env.npm_package_version ?? "0.0.0",
 });

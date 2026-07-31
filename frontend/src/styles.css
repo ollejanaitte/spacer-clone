@@ -336,6 +336,43 @@ button:disabled {
   box-shadow: 0 4px 16px rgba(31, 41, 51, 0.12);
 }
 
+.viewer-compat-banner {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  max-width: min(440px, calc(100% - 24px));
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #c26f1f;
+  border-radius: 6px;
+  background: rgba(255, 251, 235, 0.97);
+  color: #7c3f00;
+  font-size: 12px;
+  line-height: 1.45;
+  box-shadow: 0 4px 16px rgba(31, 41, 51, 0.12);
+}
+
+.viewer-compat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.viewer-compat-actions button,
+.viewer-diagnostics > button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #b7c5d3;
+  border-radius: 5px;
+  background: #eef5fb;
+  color: #243447;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .fallback2d-viewport {
   position: relative;
   width: 100%;
@@ -530,6 +567,13 @@ button:disabled {
   font-weight: 700;
 }
 
+.viewer-control-hint {
+  margin: 0;
+  color: #526173;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .viewer-control-row select {
   width: 100%;
   height: 30px;
@@ -601,6 +645,43 @@ button:disabled {
   color: #526173;
   font-size: 11px;
   line-height: 1.45;
+}
+
+.viewer-diagnostics {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #d8e0e8;
+  background: #f8fafc;
+}
+
+.viewer-diagnostics-body {
+  max-height: 280px;
+  overflow: auto;
+  border: 1px solid #d8e0e8;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.viewer-diagnostics-body dl {
+  display: grid;
+  grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
+  gap: 6px 8px;
+  margin: 0;
+}
+
+.viewer-diagnostics-body dt {
+  color: #526173;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.viewer-diagnostics-body dd {
+  margin: 0;
+  color: #243447;
+  font-size: 11px;
+  word-break: break-word;
 }
 
 .force-color-legend {

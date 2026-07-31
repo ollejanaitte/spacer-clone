@@ -4,11 +4,61 @@ import type { AnalysisResult, ProjectModel, SectionKey } from "../types";
 import type { FrameAnalysisResultResource } from "../contracts/frameAnalysisResultResource";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
 import type * as THREE from "three";
+import type { GpuMode } from "../../../desktop/electron/gpuMode";
 import type { ViewerDisplaySizeSettings } from "./settings/displaySize";
 import type { ForceColorComponent, ForceColorValueType, ForceColorModeData } from "./memberForceColorMap";
 import type { ApolloVisualizationModel } from "../apollo/visualization";
 
-export type ViewerMode = "three" | "fallback2d";
+export type ViewerMode = "three" | "line-only" | "fallback2d";
+
+export type ViewerFallbackReason =
+  | "none"
+  | "webgl-init-failed"
+  | "renderer-error"
+  | "line-only-compatibility";
+
+export type ViewerCameraDiagnostics = {
+  readonly position: { x: number; y: number; z: number };
+  readonly target: { x: number; y: number; z: number };
+  readonly up: { x: number; y: number; z: number };
+  readonly preset: CameraPreset | "free";
+};
+
+export type ViewerWebGlDiagnostics = {
+  readonly available: boolean;
+  readonly renderer: string;
+  readonly vendor: string;
+  readonly version: string;
+  readonly shadingLanguageVersion: string;
+  readonly unmaskedRenderer: string;
+  readonly unmaskedVendor: string;
+};
+
+export type ViewerGpuMode = GpuMode | "browser" | "Unavailable";
+
+export type ApolloVisualizationCounts = {
+  readonly lineElementCount: number;
+  readonly solidCount: number;
+  readonly girderCount: number;
+  readonly crossBeamCount: number;
+  readonly bracingCount: number;
+  readonly deckCount: number;
+  readonly bearingCount: number;
+  readonly markerCount: number;
+  readonly warningCount: number;
+};
+
+export type ViewerRuntimeDiagnostics = {
+  readonly viewerMode: ViewerMode;
+  readonly fallbackReason: ViewerFallbackReason;
+  readonly webgl: ViewerWebGlDiagnostics;
+  readonly camera: ViewerCameraDiagnostics | null;
+  readonly gpuMode: ViewerGpuMode;
+  readonly appVersion: string;
+  readonly currentViewPreset: CameraPreset | "free";
+  readonly apolloCounts: ApolloVisualizationCounts | null;
+  readonly visibility: ViewerVisibility;
+};
 
 export type ViewerVisibility = {
   nodes: boolean;
@@ -154,6 +204,7 @@ export type ThreeViewportProps = Omit<Viewer3DProps, "onSpacerAxisSwapChange" | 
   onSpacerAxisSwapChange?: (swap: SpacerAxisSwap) => void;
   onAnimationOptionsChange?: (options: import("./animation").AnimationOptions) => void;
   onInitializationError: (error: unknown) => void;
+  onRuntimeDiagnosticsChange?: (diagnostics: Pick<ViewerRuntimeDiagnostics, "viewerMode" | "fallbackReason" | "webgl" | "camera" | "currentViewPreset">) => void;
   forceColorMode?: ForceColorModeData;
 };
 

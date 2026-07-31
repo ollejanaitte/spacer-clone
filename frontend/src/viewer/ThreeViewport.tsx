@@ -4,9 +4,10 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createSceneGroups, rebuildModelScene } from "./SceneBuilder";
 import { withNodeDisplacement } from "./animation";
 import type { CameraPreset, SceneGroups, ThreeViewportProps } from "./types";
-import { APOLLO_MODEL_UP, computeApolloVisualizationBox, computeModelBox, disposeObject, fitCameraToBox, MODEL_UP, resolveCameraViewForPreset } from "./threeUtils";
+import { APOLLO_MODEL_UP, computeApolloVisualizationBox, computeModelBox, disposeObject, fitCameraToBox, MODEL_UP, resolveCameraViewForPreset, resolveOrbitControlsBindings } from "./threeUtils";
 import type { ForceColorModeData } from "./memberForceColorMap";
 import { cullOverlappingLabels, type LabelCandidate } from "./labelCollisionAvoidance";
+import { createUnavailableWebGlDiagnostics } from "./runtimeDiagnostics";
 
 type ThreeContext = {
   scene: THREE.Scene;
@@ -20,6 +21,7 @@ type ThreeContext = {
   fallbackActive: boolean;
   raycaster: THREE.Raycaster;
   pointer: THREE.Vector2;
+  lastPreset: CameraPreset | "free";
 };
 
 type ImperativeHandle = {
@@ -94,7 +96,13 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.screenSpacePanning = false;
+    const initialBindings = resolveOrbitControlsBindings(Boolean(propsRef.current.apolloVisualizationModel));
+    controls.screenSpacePanning = initialBindings.screenSpacePanning;
+    controls.mouseButtons.LEFT = initialBindings.mouseButtons.LEFT;
+    controls.mouseButtons.MIDDLE = initialBindings.mouseButtons.MIDDLE;
+    controls.mouseButtons.RIGHT = initialBindings.mouseButtons.RIGHT;
+    controls.touches.ONE = initialBindings.touches.ONE;
+    controls.touches.TWO = initialBindings.touches.TWO;
 
     const ambient = new THREE.HemisphereLight(0xffffff, 0x9aa7b3, 2.4);
     scene.add(ambient);
@@ -119,8 +127,10 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
       fallbackActive: false,
       raycaster: new THREE.Raycaster(),
       pointer: new THREE.Vector2(),
+      lastPreset: "iso",
     };
     contextRef.current = context;
+    emitRuntimeDiagnostics(context, propsRef.current, "three", "none");
 
     const resize = () => {
       const rect = host.getBoundingClientRect();
@@ -144,7 +154,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
         controls.update();
         renderer.render(scene, camera);
       } catch (error) {
-        activateViewerFallback(context, error);
+        activateViewerFallback(context, propsRef.current, error);
       }
     };
     animate();
@@ -168,12 +178,23 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
         id: hit.object.userData.id,
       });
     };
+    const handleControlsStart = () => {
+      context.lastPreset = "free";
+      emitRuntimeDiagnostics(context, propsRef.current, context.fallbackActive ? "line-only" : "three", context.fallbackActive ? "renderer-error" : "none");
+    };
+    const handleControlsChange = () => {
+      emitRuntimeDiagnostics(context, propsRef.current, context.fallbackActive ? "line-only" : "three", context.fallbackActive ? "renderer-error" : "none");
+    };
     renderer.domElement.addEventListener("pointermove", handlePointer);
     renderer.domElement.addEventListener("click", handleClick);
+    controls.addEventListener("start", handleControlsStart);
+    controls.addEventListener("change", handleControlsChange);
 
     return () => {
       renderer.domElement.removeEventListener("pointermove", handlePointer);
       renderer.domElement.removeEventListener("click", handleClick);
+      controls.removeEventListener("start", handleControlsStart);
+      controls.removeEventListener("change", handleControlsChange);
       observer.disconnect();
       window.cancelAnimationFrame(context.frameId);
       controls.dispose();
@@ -273,6 +294,7 @@ function applyVisibility(context: ThreeContext, props: ThreeViewportProps): void
   applyApolloPresentation(context, props);
   context.grid.visible = props.visibility.grid;
   context.axes.visible = props.visibility.axes;
+  emitRuntimeDiagnostics(context, props, context.fallbackActive ? "line-only" : "three", context.fallbackActive ? "renderer-error" : "none");
 }
 
 function safeRebuildModelScene(
@@ -299,8 +321,9 @@ function safeRebuildModelScene(
     context.groups.resultDiagrams.visible = true;
     applyLabelCollisionAvoidance(context, props);
     context.fallbackActive = false;
+    emitRuntimeDiagnostics(context, props, "three", "none");
   } catch (error) {
-    activateViewerFallback(context, error);
+    activateViewerFallback(context, props, error);
   }
 }
 
@@ -346,7 +369,7 @@ function updateWideLineResolution(root: THREE.Object3D, width: number, height: n
   });
 }
 
-function activateViewerFallback(context: ThreeContext, error: unknown): void {
+function activateViewerFallback(context: ThreeContext, props: ThreeViewportProps, error: unknown): void {
   console.error("ThreeViewport rendering failed; switching to line-only fallback.", error);
   if (context.fallbackActive) return;
   context.fallbackActive = true;
@@ -357,6 +380,7 @@ function activateViewerFallback(context: ThreeContext, error: unknown): void {
   context.groups.deformed.visible = false;
   context.groups.resultDiagrams.visible = false;
   context.groups.members.visible = true;
+  emitRuntimeDiagnostics(context, props, "line-only", "renderer-error");
 }
 
 function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: CameraPreset): void {
@@ -382,11 +406,20 @@ function fitCamera(context: ThreeContext, props: ThreeViewportProps, preset: Cam
         props.viewerDisplayPolicy ?? "general",
       );
   fitCameraToBox(context.camera, context.controls, box, view);
+  context.lastPreset = preset;
+  emitRuntimeDiagnostics(context, props, "three", context.fallbackActive ? "renderer-error" : "none");
 }
 
 function applyApolloPresentation(context: ThreeContext, props: ThreeViewportProps): void {
   const apolloView = Boolean(props.apolloVisualizationModel);
   context.grid.rotation.x = apolloView ? Math.PI / 2 : 0;
+  const bindings = resolveOrbitControlsBindings(apolloView);
+  context.controls.screenSpacePanning = bindings.screenSpacePanning;
+  context.controls.mouseButtons.LEFT = bindings.mouseButtons.LEFT;
+  context.controls.mouseButtons.MIDDLE = bindings.mouseButtons.MIDDLE;
+  context.controls.mouseButtons.RIGHT = bindings.mouseButtons.RIGHT;
+  context.controls.touches.ONE = bindings.touches.ONE;
+  context.controls.touches.TWO = bindings.touches.TWO;
   if (apolloView) {
     if (props.cameraRequest !== "xy") {
       context.camera.up.copy(APOLLO_MODEL_UP);
@@ -394,6 +427,56 @@ function applyApolloPresentation(context: ThreeContext, props: ThreeViewportProp
   } else {
     context.camera.up.copy(MODEL_UP);
   }
+}
+
+function emitRuntimeDiagnostics(
+  context: ThreeContext,
+  props: ThreeViewportProps,
+  viewerMode: "three" | "line-only",
+  fallbackReason: "none" | "renderer-error",
+): void {
+  props.onRuntimeDiagnosticsChange?.({
+    viewerMode,
+    fallbackReason,
+    webgl: readWebGlDiagnostics(context.renderer),
+    camera: {
+      position: vectorToObject(context.camera.position),
+      target: vectorToObject(context.controls.target),
+      up: vectorToObject(context.camera.up),
+      preset: context.lastPreset,
+    },
+    currentViewPreset: context.lastPreset,
+  });
+}
+
+function vectorToObject(vector: THREE.Vector3) {
+  return { x: vector.x, y: vector.y, z: vector.z };
+}
+
+function readWebGlDiagnostics(renderer: THREE.WebGLRenderer) {
+  const context = renderer.getContext();
+  if (!context) {
+    return createUnavailableWebGlDiagnostics();
+  }
+  const gl = context as WebGLRenderingContext;
+  const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+  const safeGet = (name: number) => {
+    try {
+      const value = gl.getParameter(name);
+      return typeof value === "string" && value.length > 0 ? value : String(value ?? "Unavailable");
+    } catch {
+      return "Unavailable";
+    }
+  };
+  return {
+    available: true,
+    renderer: safeGet(gl.RENDERER),
+    vendor: safeGet(gl.VENDOR),
+    version: safeGet(gl.VERSION),
+    shadingLanguageVersion: safeGet(gl.SHADING_LANGUAGE_VERSION),
+    unmaskedRenderer: debugInfo ? safeGet(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unavailable",
+    unmaskedVendor: debugInfo ? safeGet(debugInfo.UNMASKED_VENDOR_WEBGL) : "Unavailable",
+  };
 }
 
 export const ThreeViewport = forwardRef<ImperativeHandle, ThreeViewportProps>(ThreeViewportInner);
