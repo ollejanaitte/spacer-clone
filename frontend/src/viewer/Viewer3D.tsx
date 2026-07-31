@@ -26,9 +26,10 @@ import {
 } from "./coordinateTransform";
 import { DEFAULT_ANIMATION_OPTIONS, type AnimationOptions } from "./animation";
 import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps, type ViewerMode, type ViewerScales, type ViewerSelection, type ViewerVisibility } from "./types";
-import { CompareShell, defaultCompareAnimationOptions, type CompareSlotDescriptor } from "./CompareShell";
+import { CompareShell, type CompareSlotDescriptor } from "./CompareShell";
 import { ThreeViewport } from "./ThreeViewport";
 import { ViewerControls } from "./ViewerControls";
+import { ViewerDiagnostics } from "./ViewerDiagnostics";
 import {
   DEFAULT_VIEWER_DISPLAY_SIZE,
   loadViewerDisplaySize,
@@ -36,7 +37,16 @@ import {
   type ViewerDisplaySizeSettings,
 } from "./settings/displaySize";
 import type { ForceColorModeData } from "./memberForceColorMap";
-import { DEFAULT_FORCE_COLOR_MODE, type ForceColorComponent, type ForceColorValueType, computeMemberForceColorValues, computeForceColorRange } from "./memberForceColorMap";
+import { type ForceColorComponent, type ForceColorValueType, computeMemberForceColorValues, computeForceColorRange } from "./memberForceColorMap";
+import {
+  classifyFallbackReason,
+  createUnavailableWebGlDiagnostics,
+  deriveApolloVisualizationCounts,
+  describeFallbackReason,
+  describeViewerMode,
+  normalizeViewerGpuMode,
+} from "./runtimeDiagnostics";
+import type { ViewerRuntimeDiagnostics } from "./types";
 
 export const webglFallbackMessage =
   ja.viewer.messages.webglInitFailed + "\n" +
@@ -83,6 +93,8 @@ export function Viewer3D({
   }, [displaySizeSettings, onDisplaySizeSettingsChange]);
   const [mode, setMode] = useState<ViewerMode>("three");
   const [viewerError, setViewerError] = useState<string | null>(null);
+  const [viewportEpoch, setViewportEpoch] = useState(0);
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [fitRequest, setFitRequest] = useState(0);
   const [cameraRequest, setCameraRequest] = useState<CameraPreset | null>(null);
   const isLinerDerived = isLinerDerivedProject(project);
@@ -139,6 +151,19 @@ export function Viewer3D({
     [overlayResult, selectedResponseSpectrumResult],
   );
   const responseSpectrumOptions = responseSpectrumViewModel?.modeOptions ?? [];
+  const apolloCounts = useMemo(
+    () => deriveApolloVisualizationCounts(apolloVisualizationModel),
+    [apolloVisualizationModel],
+  );
+  const [viewportDiagnostics, setViewportDiagnostics] = useState<
+    Pick<ViewerRuntimeDiagnostics, "viewerMode" | "fallbackReason" | "webgl" | "camera" | "currentViewPreset">
+  >({
+    viewerMode: "three",
+    fallbackReason: "none",
+    webgl: createUnavailableWebGlDiagnostics(),
+    camera: null,
+    currentViewPreset: "iso",
+  });
   const hasResult = Boolean(
     overlayResult &&
       overlayResult.errors.length === 0 &&
@@ -214,9 +239,31 @@ export function Viewer3D({
       const message = `${webglFallbackMessage}${detail}`;
       setMode("fallback2d");
       setViewerError(message);
+      setDiagnosticsOpen(true);
+      setViewportDiagnostics((current) => ({
+        ...current,
+        viewerMode: "fallback2d",
+        fallbackReason: "webgl-init-failed",
+      }));
       onViewerError?.(message);
     },
     [onViewerError],
+  );
+
+  const handleRuntimeDiagnosticsChange = useCallback(
+    (
+      diagnostics: Pick<
+        ViewerRuntimeDiagnostics,
+        "viewerMode" | "fallbackReason" | "webgl" | "camera" | "currentViewPreset"
+      >,
+    ) => {
+      setViewportDiagnostics(diagnostics);
+      setMode((current) => (current === "fallback2d" ? current : diagnostics.viewerMode));
+      if (diagnostics.viewerMode !== "three") {
+        setDiagnosticsOpen(true);
+      }
+    },
+    [],
   );
 
   const handleSpacerAxisSwapChange = useCallback((next: SpacerAxisSwap) => {
@@ -286,10 +333,24 @@ export function Viewer3D({
     viewerDisplayPolicy,
     animationOptions,
     onInitializationError: handleInitializationError,
+    onRuntimeDiagnosticsChange: handleRuntimeDiagnosticsChange,
     timeHistoryNodeOverride,
     forceColorMode,
   };
   const gpuMode = getGpuModeLabel();
+  const appVersion = getAppVersionLabel();
+  const fallbackReason = classifyFallbackReason(mode, viewportDiagnostics.fallbackReason);
+  const diagnostics: ViewerRuntimeDiagnostics = {
+    viewerMode: mode,
+    fallbackReason,
+    webgl: viewportDiagnostics.webgl,
+    camera: viewportDiagnostics.camera,
+    gpuMode,
+    appVersion,
+    currentViewPreset: viewportDiagnostics.currentViewPreset,
+    apolloCounts,
+    visibility,
+  };
 
   const renderViewport = () => {
     if (compareMode) {
@@ -317,7 +378,7 @@ export function Viewer3D({
         />
       );
     }
-    if (mode === "three") return <ThreeViewport {...viewportProps} />;
+    if (mode !== "fallback2d") return <ThreeViewport key={viewportEpoch} {...viewportProps} />;
     return <Fallback2DViewport {...viewportProps} />;
   };
 
@@ -329,6 +390,17 @@ export function Viewer3D({
     setFitRequest((value) => value + 1);
     onFitRequest?.();
   }, [onFitRequest]);
+
+  const handleRetry3D = useCallback(() => {
+    setMode("three");
+    setViewerError(null);
+    setViewportDiagnostics((current) => ({
+      ...current,
+      viewerMode: "three",
+      fallbackReason: "none",
+    }));
+    setViewportEpoch((value) => value + 1);
+  }, []);
 
   useEffect(() => {
     setFitRequest((value) => value + 1);
@@ -346,12 +418,14 @@ export function Viewer3D({
           <p>{statusText(selection, hasResult)}</p>
         </div>
         <div className="viewer-stats">
-          <span>{ja.viewer.messages.displayMode(mode === "three" ? "3D" : ja.viewer.messages.fallback)}</span>
+          <span>{ja.viewer.messages.displayMode(mode === "three" ? "3D" : describeViewerMode(mode))}</span>
           <span>GPU: {gpuMode}</span>
+          <span>WebGL: {diagnostics.webgl.available ? "available" : "Unavailable"}</span>
           <span>{ja.viewer.messages.nodeCount(project.nodes.length)}</span>
           <span>{ja.viewer.messages.memberCount(project.members.length)}</span>
           <span>{ja.viewer.messages.supportCount(project.supports.length)}</span>
           <span>{ja.viewer.messages.loadCount(project.nodalLoads.length + project.memberLoads.length)}</span>
+          {apolloCounts ? <span>Apollo Solid: {apolloCounts.solidCount}</span> : null}
           {animationOptions.enabled ? <span>{ja.viewer.messages.animationOn}</span> : null}
         </div>
       </div>
@@ -364,6 +438,23 @@ export function Viewer3D({
               ))}
             </div>
           )}
+          {mode !== "three" ? (
+            <div className="viewer-compat-banner" role="status" data-testid="viewer-compat-banner">
+              <strong>3Dソリッド表示を利用できないため、互換表示モードで表示しています。</strong>
+              <div>GPUまたはWebGLの設定を確認してください。</div>
+              <div>現在の表示: {describeViewerMode(mode)}</div>
+              <div>原因: {describeFallbackReason(fallbackReason)}</div>
+              {apolloCounts ? <div>ソリッドデータ: {apolloCounts.solidCount}件</div> : null}
+              <div className="viewer-compat-actions">
+                <button type="button" data-testid="viewer-retry-3d" onClick={handleRetry3D}>
+                  3Dを再試行
+                </button>
+                <button type="button" data-testid="viewer-open-diagnostics" onClick={() => setDiagnosticsOpen((current) => !current)}>
+                  診断を{diagnosticsOpen ? "閉じる" : "開く"}
+                </button>
+              </div>
+            </div>
+          ) : null}
           {renderViewport()}
         </div>
         {viewPanelOpen ? (
@@ -419,6 +510,11 @@ export function Viewer3D({
             onForceColorValueTypeChange={setForceColorValueType}
             onFit={handleFit}
             onCameraPreset={runCameraPreset}
+            />
+            <ViewerDiagnostics
+              diagnostics={diagnostics}
+              open={diagnosticsOpen}
+              onToggle={() => setDiagnosticsOpen((current) => !current)}
             />
           </>
         ) : (
@@ -489,10 +585,18 @@ function buildResultDiagramFeedback(
     : [];
 }
 
-function getGpuModeLabel(): string {
+function getGpuModeLabel() {
   const maybeWindow = window as Window & {
     spacerDesktop?: { gpuMode?: string };
     desktop?: { gpuMode?: string };
   };
-  return maybeWindow.spacerDesktop?.gpuMode ?? maybeWindow.desktop?.gpuMode ?? "browser";
+  return normalizeViewerGpuMode(maybeWindow.spacerDesktop?.gpuMode ?? maybeWindow.desktop?.gpuMode ?? "browser");
+}
+
+function getAppVersionLabel(): string {
+  const maybeWindow = window as Window & {
+    spacerDesktop?: { appVersion?: string };
+    desktop?: { appVersion?: string };
+  };
+  return maybeWindow.spacerDesktop?.appVersion ?? maybeWindow.desktop?.appVersion ?? "Unavailable";
 }

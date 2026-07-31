@@ -130,6 +130,11 @@ export function ViewerControls({
             {viewLabels.xz}
           </button>
         </div>
+        {apolloView ? (
+          <p className="viewer-control-hint" data-testid="apollo-mouse-help">
+            左ドラッグ: 回転 / 右ドラッグ・中ドラッグ: 平行移動 / ホイール: 拡大・縮小
+          </p>
+        ) : null}
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.compare}>
         <div className="viewer-control-row">

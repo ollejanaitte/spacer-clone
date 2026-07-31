@@ -11,6 +11,35 @@ import type { CameraPreset, ViewerVisibility } from "./types";
 export const MODEL_UP = new THREE.Vector3(0, 1, 0);
 export const APOLLO_MODEL_UP = new THREE.Vector3(0, 0, 1);
 
+export function resolveOrbitControlsBindings(apolloView: boolean) {
+  if (!apolloView) {
+    return {
+      screenSpacePanning: false,
+      mouseButtons: {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN,
+      },
+      touches: {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN,
+      },
+    };
+  }
+  return {
+    screenSpacePanning: true,
+    mouseButtons: {
+      LEFT: THREE.MOUSE.ROTATE,
+      MIDDLE: THREE.MOUSE.PAN,
+      RIGHT: THREE.MOUSE.PAN,
+    },
+    touches: {
+      ONE: THREE.TOUCH.ROTATE,
+      TWO: THREE.TOUCH.DOLLY_PAN,
+    },
+  };
+}
+
 export function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -346,7 +375,7 @@ export function resolveCameraViewForPreset(
   if (preset === "xy") return { direction: new THREE.Vector3(0, 0, 1), up: new THREE.Vector3(0, 1, 0) };
   if (preset === "yz") return { direction: new THREE.Vector3(1, 0, 0), up: APOLLO_MODEL_UP.clone() };
   if (preset === "xz") return { direction: new THREE.Vector3(0, 1, 0), up: APOLLO_MODEL_UP.clone() };
-  return { direction: new THREE.Vector3(1, -0.8, 0.6), up: APOLLO_MODEL_UP.clone() };
+  return { direction: new THREE.Vector3(1, 0.8, 0.6), up: APOLLO_MODEL_UP.clone() };
 }
 
 export function fitCameraToBox(

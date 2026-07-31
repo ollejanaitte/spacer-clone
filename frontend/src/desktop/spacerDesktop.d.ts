@@ -17,6 +17,8 @@ export type SpacerDesktopBridge = {
   onCloseGuardPrompt?: (listener: (payload: CloseGuardPromptPayload) => void) => () => void;
   respondCloseGuard?: (allow: boolean) => void;
   platform: NodeJS.Platform;
+  gpuMode?: string;
+  appVersion?: string;
 };
 
 declare global {

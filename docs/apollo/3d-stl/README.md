@@ -17,6 +17,7 @@
 - `12_step4_to_step8_design_readiness_gate.md`
 - `13_traceability_matrix.md`
 - `14_axis_camera_main_viewer_bug_report.md`
+- `15_windows_viewer_controls_fallback_diagnostics.md`
 
 現在の全体判定:
 
@@ -33,3 +34,10 @@ Thursday, July 30, 2026 status snapshot:
 - PR-4 simple bridge solids: merged
 - axis / camera / main viewer correction PRs: merged
 - PR-5 binary STL + companion manifest: implementation in progress on current branch
+
+Friday, July 31, 2026 Windows viewer follow-up:
+
+- Apollo viewer control labels updated to bridge-domain terms
+- Apollo default isometric direction updated for Windows operator expectation
+- fallback disclosure + runtime diagnostics implemented in viewer layer
+- Electron preload bridge extended with GPU mode / app version in a sandbox-safe way

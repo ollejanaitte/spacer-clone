@@ -95,3 +95,34 @@ RECOMMENDED_NEXT_STEP: FIX_PR_B_AXIS_CAMERA_FIT_AND_MAIN_VIEWER_PRESENTATION
 - Electron save/export IPC
 - Apollo persistence schema change
 - BridgeDefinition 正式 SoR 拡張
+## 8. Friday, July 31, 2026 implementation addendum
+
+- viewer-layer follow-up implemented on `fix/apollo-windows-3d-viewer-controls`
+- Apollo operator-facing labels were normalized to:
+  - `全体`
+  - `アイソメ`
+  - `平面`
+  - `正面`
+  - `側面`
+- Apollo default isometric direction was changed from `(1, -0.8, 0.6)` to `(1, 0.8, 0.6)`
+- OrbitControls mapping was made explicit for Apollo view:
+  - left drag = rotate
+  - right drag = pan
+  - middle drag = pan
+- fallback disclosure now distinguishes:
+  - WebGL 3D
+  - line-only compatibility
+  - 2D fallback
+- runtime diagnostics now expose:
+  - viewer mode
+  - fallback reason
+  - WebGL renderer/vendor/version
+  - GPU mode
+  - app version
+  - Apollo line/solid subgroup counts
+  - camera position/target/up/current preset
+- Electron follow-up found one concrete runtime defect:
+  - sandboxed preload imported `./gpuMode`, which is not resolvable in preload bundle context
+  - fix: inline GPU mode normalization in `desktop/electron/preload.ts`
+- remaining limitation:
+  - automated Electron attach smoke remained unstable after splash/main window handoff, so final Electron verdict should distinguish runtime fix confirmation from full interaction confirmation
