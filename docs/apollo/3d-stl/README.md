@@ -18,6 +18,7 @@
 - `13_traceability_matrix.md`
 - `14_axis_camera_main_viewer_bug_report.md`
 - `15_windows_viewer_controls_fallback_diagnostics.md`
+- `16_linux_electron_launcher_smoke_solid_verification.md`
 
 現在の全体判定:
 
@@ -41,3 +42,9 @@ Friday, July 31, 2026 Windows viewer follow-up:
 - Apollo default isometric direction updated for Windows operator expectation
 - fallback disclosure + runtime diagnostics implemented in viewer layer
 - Electron preload bridge extended with GPU mode / app version in a sandbox-safe way
+
+Friday, July 31, 2026 Linux Electron / wrapper follow-up:
+
+- `start-ubuntu.sh` now installs traps before backend launch, tracks frontend PGID, and avoids killing reused backends
+- `desktop/electron/main.ts` now aligns the dev URL to `http://127.0.0.1:5173` and can skip splash under `SPACER_AUTOMATION=1`
+- direct wrapper failure-path checks confirmed backend teardown and port release on Ubuntu

@@ -73,13 +73,93 @@ mkdir -p "$LOG_DIR"
 # --------------------------------------------------------------
 BACKEND_PID=""
 BACKEND_PGID=""
+BACKEND_STARTED_BY_SCRIPT="0"
 FRONTEND_PID=""
+FRONTEND_PGID=""
+FRONTEND_STARTED_BY_SCRIPT="0"
+LAST_SIGNAL=""
 
 # --------------------------------------------------------------
 # ログ用ユーティリティ
 # --------------------------------------------------------------
 info() { echo "[起動] $*"; }
 err()  { echo "[エラー] $*" >&2; }
+
+terminate_process_group() {
+  local label="$1"
+  local pid="$2"
+  local pgid="$3"
+  if [[ -n "$pgid" ]] && kill -0 "-$pgid" 2>/dev/null; then
+    info "${label} (pgid=$pgid, pid=$pid) を終了しています..."
+    kill -TERM "-$pgid" 2>/dev/null || true
+    for _ in $(seq 1 50); do
+      kill -0 "-$pgid" 2>/dev/null || return 0
+      sleep 0.1
+    done
+    kill -KILL "-$pgid" 2>/dev/null || true
+    return 0
+  fi
+  if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
+    info "${label} (pid=$pid) を終了しています..."
+    kill -TERM "$pid" 2>/dev/null || true
+    sleep 0.3
+    kill -KILL "$pid" 2>/dev/null || true
+  fi
+}
+
+cleanup() {
+  local exit_code=$?
+  trap - EXIT INT TERM HUP
+
+  if [[ "$FRONTEND_STARTED_BY_SCRIPT" == "1" ]]; then
+    terminate_process_group "フロントエンド" "$FRONTEND_PID" "$FRONTEND_PGID"
+    pkill -TERM -f "$ROOT_DIR/frontend/node_modules/.bin/vite" 2>/dev/null || true
+    pkill -TERM -f "$ROOT_DIR/desktop/electron/dist/main.js" 2>/dev/null || true
+    pkill -TERM -f "$ROOT_DIR/frontend/node_modules/electron/dist/electron" 2>/dev/null || true
+    sleep 0.3
+    pkill -KILL -f "$ROOT_DIR/frontend/node_modules/.bin/vite" 2>/dev/null || true
+    pkill -KILL -f "$ROOT_DIR/desktop/electron/dist/main.js" 2>/dev/null || true
+    pkill -KILL -f "$ROOT_DIR/frontend/node_modules/electron/dist/electron" 2>/dev/null || true
+  fi
+
+  if [[ "$BACKEND_STARTED_BY_SCRIPT" == "1" ]]; then
+    terminate_process_group "バックエンド" "$BACKEND_PID" "$BACKEND_PGID"
+    pkill -TERM -f "$ROOT_DIR/.venv/bin/python -m uvicorn backend.app.main:app" 2>/dev/null || true
+    sleep 0.3
+    pkill -KILL -f "$ROOT_DIR/.venv/bin/python -m uvicorn backend.app.main:app" 2>/dev/null || true
+  fi
+
+  case "$LAST_SIGNAL" in
+    INT) exit_code=130 ;;
+    TERM) exit_code=143 ;;
+    HUP) exit_code=129 ;;
+  esac
+
+  if [[ -n "$LAST_SIGNAL" ]]; then
+    info "ユーザー割り込み (${LAST_SIGNAL}) を受け取りました。終了します。"
+  elif [[ "$exit_code" -ne 0 ]]; then
+    err "異常終了 (code=$exit_code)"
+  else
+    info "正常終了"
+  fi
+
+  exit "$exit_code"
+}
+
+on_signal() {
+  LAST_SIGNAL="$1"
+  case "$1" in
+    INT) exit 130 ;;
+    TERM) exit 143 ;;
+    HUP) exit 129 ;;
+    *) exit 1 ;;
+  esac
+}
+
+trap cleanup EXIT
+trap 'on_signal INT' INT
+trap 'on_signal TERM' TERM
+trap 'on_signal HUP' HUP
 
 dependency_stamp_value() {
   node -e '
@@ -237,6 +317,7 @@ else
   ' bash "$ROOT_DIR" "$VENV_PY" "$HOST" "$PORT" "$BACKEND_OUT_LOG" "$BACKEND_ERR_LOG" &
   BACKEND_PID=$!
   BACKEND_PGID=$(ps -o pgid= -p "$BACKEND_PID" 2>/dev/null | tr -d ' ')
+  BACKEND_STARTED_BY_SCRIPT="1"
 fi
 
 # ヘルスチェック
@@ -261,62 +342,6 @@ fi
 info "バックエンド OK: ${BACKEND_URL}"
 
 # --------------------------------------------------------------
-# クリーンアップ
-# --------------------------------------------------------------
-LAST_SIGNAL=""
-on_signal() {
-  # SIGINT / SIGTERM を受けたことを記録 (cleanup で利用)
-  LAST_SIGNAL="$1"
-  trap '' INT TERM  # 多重発火を防ぐ
-  kill -INT $$ 2>/dev/null || true
-}
-trap 'on_signal INT'  INT
-trap 'on_signal TERM' TERM
-
-cleanup() {
-  local exit_code=$?
-  # バックエンドプロセスグループを SIGTERM
-  if [[ -n "$BACKEND_PGID" ]] && kill -0 "$BACKEND_PGID" 2>/dev/null; then
-    info "バックエンド (pgid=$BACKEND_PGID, pid=$BACKEND_PID) を終了しています..."
-    kill -TERM -"$BACKEND_PGID" 2>/dev/null || true
-    for _ in $(seq 1 50); do
-      kill -0 "$BACKEND_PID" 2>/dev/null || break
-      sleep 0.1
-    done
-    kill -KILL -"$BACKEND_PGID" 2>/dev/null || true
-  elif [[ -n "$BACKEND_PID" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
-    info "バックエンド (pid=$BACKEND_PID) を終了しています..."
-    kill "$BACKEND_PID" 2>/dev/null || true
-    pkill -TERM -P "$BACKEND_PID" 2>/dev/null || true
-    sleep 0.3
-    kill -KILL "$BACKEND_PID" 2>/dev/null || true
-  fi
-  # 念のため同じ uvicorn を listen しているプロセスも停止
-  pkill -f "uvicorn backend.app.main:app" 2>/dev/null || true
-  # vite / electron 残骸があれば pgid ベースで停止
-  pkill -TERM -f "frontend/node_modules/.bin/vite" 2>/dev/null || true
-  pkill -TERM -f "desktop/electron/dist/main.js" 2>/dev/null || true
-  pkill -TERM -f "node_modules/electron/dist/electron" 2>/dev/null || true
-  sleep 0.3
-  pkill -KILL -f "frontend/node_modules/.bin/vite" 2>/dev/null || true
-  pkill -KILL -f "desktop/electron/dist/main.js" 2>/dev/null || true
-  pkill -KILL -f "node_modules/electron/dist/electron" 2>/dev/null || true
-
-  if [[ -n "$LAST_SIGNAL" ]]; then
-    info "ユーザー割り込み (${LAST_SIGNAL}) を受け取りました。終了します。"
-    # シグナルを受けた終了は慣習的に 128+signal
-    if [[ "$LAST_SIGNAL" == "INT" ]]; then exit 130; fi
-    if [[ "$LAST_SIGNAL" == "TERM" ]]; then exit 143; fi
-  elif [[ "$exit_code" -ne 0 ]]; then
-    err "異常終了 (code=$exit_code)"
-  else
-    info "正常終了"
-  fi
-  exit $exit_code
-}
-trap cleanup EXIT
-
-# --------------------------------------------------------------
 # フロント側
 # --------------------------------------------------------------
 if [[ "$LAUNCH_MODE" == "backend-only" ]]; then
@@ -329,26 +354,49 @@ fi
 cd "$FRONTEND_DIR"
 export GPU_MODE
 
-if [[ "$LAUNCH_MODE" == "web" ]]; then
-  info "Vite 開発サーバを起動しています (Electron は使いません)。ブラウザで http://127.0.0.1:5173 を開いてください。"
-  if [[ "$APOLLO_MODE" == "1" ]]; then
-    npm run dev:apollo -- --host 127.0.0.1 --strictPort
-  else
-    npm run dev -- --host 127.0.0.1 --strictPort
-  fi
-else
-  info "Electron を起動しています。GPU_MODE=$GPU_MODE APOLLO_MODE=$APOLLO_MODE"
-  if [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
+launch_frontend() {
+  local -a command
+  if [[ "$LAUNCH_MODE" == "web" ]]; then
+    info "Vite 開発サーバを起動しています (Electron は使いません)。ブラウザで http://127.0.0.1:5173 を開いてください。"
     if [[ "$APOLLO_MODE" == "1" ]]; then
-      npm run electron:dev:apollo
+      command=(npm run dev:apollo -- --host 127.0.0.1 --strictPort)
     else
-      npm run electron:dev
+      command=(npm run dev -- --host 127.0.0.1 --strictPort)
     fi
   else
-    if [[ "$APOLLO_MODE" == "1" ]]; then
-      GPU_MODE="$GPU_MODE" npm run electron:dev:apollo
+    info "Electron を起動しています。GPU_MODE=$GPU_MODE APOLLO_MODE=$APOLLO_MODE"
+    if [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
+      if [[ "$APOLLO_MODE" == "1" ]]; then
+        command=(npm run electron:dev:apollo)
+      else
+        command=(npm run electron:dev)
+      fi
     else
-      GPU_MODE="$GPU_MODE" npm run electron:dev
+      if [[ "$APOLLO_MODE" == "1" ]]; then
+        command=(env GPU_MODE="$GPU_MODE" npm run electron:dev:apollo)
+      else
+        command=(env GPU_MODE="$GPU_MODE" npm run electron:dev)
+      fi
     fi
   fi
-fi
+
+  setsid bash -lc '
+    cd "$1"
+    shift
+    exec "$@"
+  ' bash "$FRONTEND_DIR" "${command[@]}" &
+  FRONTEND_PID=$!
+  FRONTEND_PGID=$(ps -o pgid= -p "$FRONTEND_PID" 2>/dev/null | tr -d ' ')
+  FRONTEND_STARTED_BY_SCRIPT="1"
+  info "フロントエンド監視を開始しました: pid=$FRONTEND_PID pgid=${FRONTEND_PGID:-unknown}"
+  wait "$FRONTEND_PID"
+  local exit_code=$?
+  FRONTEND_STARTED_BY_SCRIPT="0"
+  if [[ "$BACKEND_STARTED_BY_SCRIPT" == "1" ]]; then
+    terminate_process_group "バックエンド" "$BACKEND_PID" "$BACKEND_PGID"
+    BACKEND_STARTED_BY_SCRIPT="0"
+  fi
+  return "$exit_code"
+}
+
+launch_frontend
