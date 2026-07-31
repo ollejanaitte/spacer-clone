@@ -28,6 +28,7 @@ let splashWindow: BrowserWindow | undefined;
 let mainWindow: BrowserWindow | undefined;
 let closeGuardBypass = false;
 let pendingAppQuit = false;
+const automationSkipSplash = process.env.SPACER_AUTOMATION === "1";
 
 function registerCloseGuardIpc(): void {
   ipcMain.on(IPC_CHANNELS.CLOSE_GUARD_RESPONSE, (_event, payload: { allow?: unknown }) => {
@@ -456,13 +457,15 @@ async function createMainWindow(version: string): Promise<void> {
   if (app.isPackaged) {
     await mainWindow.loadFile(getProductionIndexPath());
   } else {
-    await mainWindow.loadURL("http://localhost:5173");
+    await mainWindow.loadURL("http://127.0.0.1:5173");
   }
 }
 
 async function runWithSplash(): Promise<void> {
   const version = getAppVersion();
-  splashWindow = createSplashWindow(version);
+  if (!automationSkipSplash) {
+    splashWindow = createSplashWindow(version);
+  }
 
   try {
     updateSplash("backend", "バックエンドの起動を待っています。初回は数秒かかる場合があります。", version);

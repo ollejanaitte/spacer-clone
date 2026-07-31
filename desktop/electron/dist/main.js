@@ -21,6 +21,7 @@ let splashWindow;
 let mainWindow;
 let closeGuardBypass = false;
 let pendingAppQuit = false;
+const automationSkipSplash = process.env.SPACER_AUTOMATION === "1";
 function registerCloseGuardIpc() {
     electron_1.ipcMain.on(ipcChannels_1.IPC_CHANNELS.CLOSE_GUARD_RESPONSE, (_event, payload) => {
         const allow = payload?.allow === true;
@@ -411,12 +412,14 @@ async function createMainWindow(version) {
         await mainWindow.loadFile(getProductionIndexPath());
     }
     else {
-        await mainWindow.loadURL("http://localhost:5173");
+        await mainWindow.loadURL("http://127.0.0.1:5173");
     }
 }
 async function runWithSplash() {
     const version = getAppVersion();
-    splashWindow = createSplashWindow(version);
+    if (!automationSkipSplash) {
+        splashWindow = createSplashWindow(version);
+    }
     try {
         updateSplash("backend", "バックエンドの起動を待っています。初回は数秒かかる場合があります。", version);
         await startBackend();
