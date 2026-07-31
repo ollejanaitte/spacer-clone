@@ -48,3 +48,7 @@ Friday, July 31, 2026 Linux Electron / wrapper follow-up:
 - `start-ubuntu.sh` now installs traps before backend launch, tracks frontend PGID, and avoids killing reused backends
 - `desktop/electron/main.ts` now aligns the dev URL to `http://127.0.0.1:5173` and can skip splash under `SPACER_AUTOMATION=1`
 - direct wrapper failure-path checks confirmed backend teardown and port release on Ubuntu
+- fallback banner `診断を開く` now opens the view panel path that actually contains diagnostics
+- `frontend/scripts/verifyApolloElectron.mjs` now records attach, route, sample load, fallback, diagnostics, screenshots, window URLs, and cleanup artifacts
+- browser Apollo sample confirmed `WebGL 3D` with `solidCount=80`
+- Linux Electron under `xvfb-run` confirmed `2D fallback` with `solidCount=80` and `fallbackReason=WebGL renderer initialization failed`

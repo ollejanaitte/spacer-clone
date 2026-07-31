@@ -402,6 +402,19 @@ export function Viewer3D({
     setViewportEpoch((value) => value + 1);
   }, []);
 
+  const handleDiagnosticsToggle = useCallback(() => {
+    setDiagnosticsOpen((current) => !current);
+  }, []);
+
+  const handleCompatDiagnosticsOpen = useCallback(() => {
+    if (!viewPanelOpen) {
+      onViewPanelToggle?.();
+      setDiagnosticsOpen(true);
+      return;
+    }
+    setDiagnosticsOpen((current) => !current);
+  }, [onViewPanelToggle, viewPanelOpen]);
+
   useEffect(() => {
     setFitRequest((value) => value + 1);
   }, [viewPanelOpen]);
@@ -449,7 +462,7 @@ export function Viewer3D({
                 <button type="button" data-testid="viewer-retry-3d" onClick={handleRetry3D}>
                   3Dを再試行
                 </button>
-                <button type="button" data-testid="viewer-open-diagnostics" onClick={() => setDiagnosticsOpen((current) => !current)}>
+                <button type="button" data-testid="viewer-open-diagnostics" onClick={handleCompatDiagnosticsOpen}>
                   診断を{diagnosticsOpen ? "閉じる" : "開く"}
                 </button>
               </div>
@@ -514,7 +527,7 @@ export function Viewer3D({
             <ViewerDiagnostics
               diagnostics={diagnostics}
               open={diagnosticsOpen}
-              onToggle={() => setDiagnosticsOpen((current) => !current)}
+              onToggle={handleDiagnosticsToggle}
             />
           </>
         ) : (

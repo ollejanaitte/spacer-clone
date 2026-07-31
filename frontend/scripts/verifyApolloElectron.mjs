@@ -6,6 +6,7 @@ import process from "node:process";
 import { setTimeout as delay } from "node:timers/promises";
 import { _electron as electron } from "playwright";
 
+const verificationDate = "Friday, July 31, 2026";
 const frontendDir = process.cwd();
 const repoRoot = path.resolve(frontendDir, "..");
 const artifactDir = path.join(
@@ -21,40 +22,30 @@ const processManifestPath = path.join(artifactDir, "process_manifest.csv");
 const launchEnvironmentPath = path.join(artifactDir, "launch_environment.json");
 const electronMainPath = path.join(repoRoot, "desktop", "electron", "dist", "main.js");
 const backendPython = path.join(repoRoot, ".venv", "bin", "python");
-const appVersionDate = "Tuesday, July 28, 2026";
 
 const processManifest = [];
-const launchSummary = {
-  date: appVersionDate,
-  repoRoot,
-  frontendDir,
-  checks: {},
-  screenshots: {},
-  logs: [],
-};
+const consoleMessages = [];
 
 async function appendLog(line) {
   await fs.appendFile(logPath, `${line}\n`, "utf8");
-  launchSummary.logs.push(line);
 }
 
-function spawnProcess(label, command, args, options = {}) {
+async function ensureArtifactsDir() {
+  await fs.mkdir(artifactDir, { recursive: true });
+  await fs.writeFile(logPath, "", "utf8");
+}
+
+function trackProcess(label, command, args, options = {}) {
   const child = spawn(command, args, {
     cwd: options.cwd ?? frontendDir,
     env: options.env ?? process.env,
     detached: true,
     stdio: ["ignore", "pipe", "pipe"],
   });
-  const stdoutLines = [];
-  const stderrLines = [];
-  child.stdout.on("data", (chunk) => {
-    const text = chunk.toString();
-    stdoutLines.push(text);
-  });
-  child.stderr.on("data", (chunk) => {
-    const text = chunk.toString();
-    stderrLines.push(text);
-  });
+  const stdout = [];
+  const stderr = [];
+  child.stdout.on("data", (chunk) => stdout.push(chunk.toString()));
+  child.stderr.on("data", (chunk) => stderr.push(chunk.toString()));
   processManifest.push({
     label,
     pid: child.pid ?? -1,
@@ -64,33 +55,27 @@ function spawnProcess(label, command, args, options = {}) {
     endTime: "",
     exitCode: "",
   });
-  return { child, stdoutLines, stderrLines, label };
+  return { label, child, stdout, stderr };
 }
 
-async function stopProcess(record) {
+async function stopTrackedProcess(record) {
   if (!record) return;
-  const { child, label } = record;
+  const { child, label, stdout, stderr } = record;
   if (child.exitCode === null) {
-    if (child.pid) {
-      try {
-        process.kill(-child.pid, "SIGTERM");
-      } catch {
-        child.kill("SIGTERM");
-      }
-    } else {
+    try {
+      if (child.pid) process.kill(-child.pid, "SIGTERM");
+      else child.kill("SIGTERM");
+    } catch {
       child.kill("SIGTERM");
     }
     await delay(1000);
-    if (child.exitCode === null) {
-      if (child.pid) {
-        try {
-          process.kill(-child.pid, "SIGKILL");
-        } catch {
-          child.kill("SIGKILL");
-        }
-      } else {
-        child.kill("SIGKILL");
-      }
+  }
+  if (child.exitCode === null) {
+    try {
+      if (child.pid) process.kill(-child.pid, "SIGKILL");
+      else child.kill("SIGKILL");
+    } catch {
+      child.kill("SIGKILL");
     }
   }
   const manifestEntry = processManifest.find((entry) => entry.label === label && entry.pid === (child.pid ?? -1));
@@ -98,13 +83,11 @@ async function stopProcess(record) {
     manifestEntry.endTime = new Date().toISOString();
     manifestEntry.exitCode = String(child.exitCode ?? "");
   }
-  const stdout = record.stdoutLines.join("");
-  const stderr = record.stderrLines.join("");
-  if (stdout.trim()) {
-    await appendLog(`[${label}:stdout]\n${stdout}`);
+  if (stdout.length > 0) {
+    await appendLog(`[${label}:stdout]\n${stdout.join("")}`);
   }
-  if (stderr.trim()) {
-    await appendLog(`[${label}:stderr]\n${stderr}`);
+  if (stderr.length > 0) {
+    await appendLog(`[${label}:stderr]\n${stderr.join("")}`);
   }
 }
 
@@ -122,24 +105,17 @@ async function waitForHttp(url, timeoutMs) {
   throw new Error(`Timed out waiting for ${url}`);
 }
 
-async function ensureArtifactsDir() {
-  await fs.mkdir(artifactDir, { recursive: true });
-  await fs.writeFile(logPath, "", "utf8");
-}
-
 async function compileElectron() {
-  const compile = spawnProcess("electron-compile", "npm", ["run", "electron:compile"]);
-  const exitCode = await new Promise((resolve) => {
-    compile.child.on("exit", resolve);
-  });
-  await stopProcess(compile);
+  const compile = trackProcess("electron-compile", "npm", ["run", "electron:compile"]);
+  const exitCode = await new Promise((resolve) => compile.child.on("exit", resolve));
+  await stopTrackedProcess(compile);
   if (exitCode !== 0) {
     throw new Error(`electron:compile failed with exit code ${exitCode}`);
   }
 }
 
 async function startBackend() {
-  const backend = spawnProcess(
+  const backend = trackProcess(
     "backend",
     backendPython,
     ["-m", "uvicorn", "backend.app.main:app", "--host", "127.0.0.1", "--port", "8000"],
@@ -149,17 +125,30 @@ async function startBackend() {
   return backend;
 }
 
-async function startVite(apolloEnabled) {
-  const vite = spawnProcess(
-    apolloEnabled ? "vite-on" : "vite-off",
+async function startVite() {
+  const vite = trackProcess(
+    "vite-apollo",
     "npm",
-    apolloEnabled
-      ? ["run", "dev:apollo", "--", "--host", "127.0.0.1", "--port", "5173", "--strictPort"]
-      : ["run", "dev", "--", "--host", "127.0.0.1", "--port", "5173", "--strictPort"],
-    { cwd: frontendDir, env: process.env },
+    ["run", "dev:apollo", "--", "--host", "127.0.0.1", "--port", "5173", "--strictPort"],
+    { cwd: frontendDir },
   );
   await waitForHttp("http://127.0.0.1:5173", 60000);
   return vite;
+}
+
+async function waitForMainWindow(electronApp) {
+  const deadline = Date.now() + 60000;
+  while (Date.now() < deadline) {
+    for (const windowPage of electronApp.windows()) {
+      const url = windowPage.url();
+      if (url.startsWith("http://127.0.0.1:5173") || url.startsWith("http://localhost:5173")) {
+        await windowPage.waitForLoadState("domcontentloaded");
+        return windowPage;
+      }
+    }
+    await delay(250);
+  }
+  throw new Error("Timed out waiting for the Electron main window.");
 }
 
 async function openProfessionalWorkspace(page) {
@@ -170,237 +159,256 @@ async function openProfessionalWorkspace(page) {
   }
   const professionalButton = page.getByRole("button", { name: /実務編で詳しく見る|実務編/ });
   await professionalButton.waitFor({ state: "visible", timeout: 30000 });
-  await page.screenshot({ path: path.join(artifactDir, "initial_screen.png"), fullPage: true });
   await professionalButton.click();
   await page.waitForFunction(() => window.location.pathname === "/pro");
 }
 
-async function waitForMainWindow(electronApp) {
-  const deadline = Date.now() + 60000;
+async function openApolloSampleTopology(page) {
+  const apolloEntry = page.getByTestId("open-apollo-phase1");
+  await apolloEntry.waitFor({ state: "visible", timeout: 30000 });
+  await apolloEntry.click();
+  await page.waitForFunction(() => window.location.pathname === "/pro/apollo");
+  await page.getByTestId("apollo-phase1-shell").waitFor({ state: "visible", timeout: 30000 });
+  await page.getByTestId("apollo-open-sample-selection").click();
+  await page.getByTestId("apollo-load-standard-sample").click();
+  await page.getByRole("button", { name: "一覧編集モード", exact: true }).click();
+  await page.getByTestId("apollo-topology-shell").waitFor({ state: "visible", timeout: 30000 });
+}
+
+async function ensureViewPanelOpen(page) {
+  const openButton = page.getByTestId("open-view-panel");
+  if (await openButton.count()) {
+    await openButton.click();
+  }
+  await page.getByTestId("viewer-diagnostics-toggle").waitFor({ state: "visible", timeout: 10000 });
+}
+
+async function openDiagnosticsPanel(page, compatVisible) {
+  const deadline = Date.now() + 10000;
   while (Date.now() < deadline) {
-    const windows = electronApp.windows();
-    for (const windowPage of windows) {
-      const url = windowPage.url();
-      if (url.startsWith("http://localhost:5173") || url.startsWith("http://127.0.0.1:5173")) {
-        await windowPage.waitForLoadState("domcontentloaded");
-        return windowPage;
+    const diagnostics = await readDiagnostics(page);
+    if (diagnostics) {
+      return diagnostics;
+    }
+    const diagnosticsToggle = page.getByTestId("viewer-diagnostics-toggle");
+    if (await diagnosticsToggle.count()) {
+      await diagnosticsToggle.click().catch(() => undefined);
+    }
+    if (compatVisible) {
+      const compatButton = page.getByTestId("viewer-open-diagnostics");
+      if (await compatButton.count()) {
+        await compatButton.click().catch(() => undefined);
       }
     }
     await delay(250);
   }
-  throw new Error("Timed out waiting for the Electron main window.");
+  return null;
 }
 
-async function captureOffState() {
-  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "apollo-electron-off-"));
-  const vite = await startVite(false);
-  const electronApp = await electron.launch({
-    args: ["--disable-http-cache", `--user-data-dir=${userDataDir}`, electronMainPath],
-    cwd: frontendDir,
-    env: process.env,
+async function readDiagnostics(page) {
+  return page.evaluate(() => {
+    const panel = document.querySelector("[data-testid='viewer-diagnostics-panel']");
+    if (!panel) return null;
+    const rows = {};
+    const dts = panel.querySelectorAll("dt");
+    const dds = panel.querySelectorAll("dd");
+    for (let index = 0; index < Math.min(dts.length, dds.length); index += 1) {
+      rows[dts[index].textContent ?? `row-${index}`] = dds[index].textContent ?? "";
+    }
+    return rows;
   });
-  try {
-    const page = await waitForMainWindow(electronApp);
-    await openProfessionalWorkspace(page);
-    await page.screenshot({ path: path.join(artifactDir, "launch_screenshot.png"), fullPage: true });
-    const apolloButton = page.getByTestId("open-apollo-phase1");
-    await apolloButton.waitFor({ state: "visible", timeout: 30000 });
-    launchSummary.checks.featureFlagOffButtonVisible = await apolloButton.isVisible();
-    launchSummary.checks.featureFlagOffButtonEnabled = await apolloButton.isEnabled();
-    await page.screenshot({ path: path.join(artifactDir, "feature_flag_off_entry.png"), fullPage: true });
-    launchSummary.rootCauseBefore = "FEATURE_FLAG_OFF";
-    launchSummary.userReachabilityBefore = "FAIL";
-    launchSummary.electronRenderingBefore = "PASS";
-    launchSummary.featureFlagBefore = "OFF";
-  } finally {
-    const electronPid = electronApp.process()?.pid ?? -1;
-    processManifest.push({
-      label: "electron-off",
-      pid: electronPid,
-      command: `electron ${electronMainPath}`,
-      cwd: frontendDir,
-      startTime: new Date().toISOString(),
-      endTime: new Date().toISOString(),
-      exitCode: "0",
+}
+
+async function waitForViewerReadiness(page) {
+  const deadline = Date.now() + 30000;
+  while (Date.now() < deadline) {
+    const compatVisible = await page.getByTestId("viewer-compat-banner").isVisible().catch(() => false);
+    const canvasVisible = await page.locator(".three-viewport canvas").isVisible().catch(() => false);
+    const viewerStats = await page.locator(".viewer-stats").textContent().catch(() => "");
+    if (compatVisible || (canvasVisible && viewerStats.includes("Apollo Solid:"))) {
+      return { compatVisible, canvasVisible, viewerStats };
+    }
+    await delay(250);
+  }
+  throw new Error("Timed out waiting for the Apollo viewer to reach a stable state.");
+}
+
+async function captureWindowUrls(electronApp) {
+  const windows = [];
+  for (const windowPage of electronApp.windows()) {
+    windows.push({
+      url: windowPage.url(),
+      title: await windowPage.title().catch(() => ""),
     });
-    await electronApp.close();
-    await stopProcess(vite);
-    await fs.rm(userDataDir, { recursive: true, force: true });
+  }
+  return windows;
+}
+
+async function closeElectronApp(electronApp, page) {
+  try {
+    const returnButton = page.getByTestId("apollo-return-to-pro");
+    if (await returnButton.isVisible().catch(() => false)) {
+      await returnButton.click().catch(() => undefined);
+      await page.waitForFunction(() => window.location.pathname === "/pro", { timeout: 5000 }).catch(() => undefined);
+    }
+  } catch {
+    // best effort only
+  }
+
+  const closePromise = electronApp.close();
+  await Promise.race([closePromise, delay(5000)]);
+  if (electronApp.process()?.exitCode == null) {
+    electronApp.process()?.kill("SIGKILL");
   }
 }
 
-async function captureOnState() {
-  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "apollo-electron-on-"));
-  const vite = await startVite(true);
-  const electronApp = await electron.launch({
-    args: ["--disable-http-cache", `--user-data-dir=${userDataDir}`, electronMainPath],
-    cwd: frontendDir,
-    env: process.env,
-  });
-  const consoleMessages = [];
-  try {
-    const page = await waitForMainWindow(electronApp);
-    page.on("console", (message) => {
-      consoleMessages.push(`[renderer-console] ${message.type()}: ${message.text()}`);
-    });
-    page.on("pageerror", (error) => {
-      consoleMessages.push(`[renderer-pageerror] ${error.message}`);
-    });
-
-    launchSummary.appVersion = await electronApp.evaluate(({ app }) => app.getVersion());
-    launchSummary.appName = await electronApp.evaluate(({ app }) => app.getName());
-
-    await openProfessionalWorkspace(page);
-    const apolloButton = page.getByTestId("open-apollo-phase1");
-    await apolloButton.waitFor({ state: "visible", timeout: 30000 });
-    await page.screenshot({ path: path.join(artifactDir, "apollo_entry_visible.png"), fullPage: true });
-
-    launchSummary.checks.apolloEntryEnabled = await apolloButton.isEnabled();
-    await apolloButton.click();
-    await page.waitForFunction(() => window.location.pathname === "/pro/apollo");
-    await page.getByTestId("apollo-phase1-shell").waitFor({ state: "visible", timeout: 30000 });
-    await page.screenshot({ path: path.join(artifactDir, "apollo_screen_loaded.png"), fullPage: true });
-
-    await page.getByTestId("apollo-provisional-banner").screenshot({
-      path: path.join(artifactDir, "provisional_banner.png"),
-    });
-    await page.getByTestId("apollo-topology-shell").screenshot({
-      path: path.join(artifactDir, "topology_shell.png"),
-    });
-
-    const projectName = page.getByTestId("apollo-project-name-input");
-    await projectName.fill("Apollo Electron Reachability");
-    await page.getByTestId("apollo-add-node").click();
-    await page.getByRole("button", { name: "members" }).click();
-    await page.getByTestId("apollo-member-editor").waitFor({ state: "visible", timeout: 30000 });
-    await page.getByTestId("apollo-add-member").click();
-    await page.getByRole("button", { name: "supports" }).click();
-    await page.getByTestId("apollo-support-editor").waitFor({ state: "visible", timeout: 30000 });
-    await page.getByTestId("apollo-add-support").click();
-    await page.getByRole("button", { name: "nodes" }).click();
-    await page.getByTestId("apollo-node-editor").waitFor({ state: "visible", timeout: 30000 });
-    await page.getByTestId("apollo-node-select-APN-1").click();
-    await page.getByTestId("apollo-node-label-input").waitFor({ state: "visible", timeout: 30000 });
-    await page.getByTestId("apollo-node-label-input").fill("Electron Draft Node");
-    await page.getByTestId("apollo-node-x-input").fill("12.5");
-    await page.getByTestId("apollo-node-x-input").fill("invalid");
-    await page
-      .getByTestId("apollo-interaction-message")
-      .getByText("rejected invalid X coordinate input.", { exact: false })
-      .waitFor({
-        state: "visible",
-        timeout: 30000,
-      });
-    await page.screenshot({ path: path.join(artifactDir, "invalid_input_rejection.png"), fullPage: true });
-
-    await page.getByTestId("apollo-numeric-execution-guard").click();
-    await page
-      .getByTestId("apollo-interaction-message")
-      .getByText("Numeric execution remains blocked on Tuesday, July 28, 2026.", { exact: false })
-      .waitFor({
-        state: "visible",
-        timeout: 30000,
-      });
-    await page.screenshot({ path: path.join(artifactDir, "numeric_guard.png"), fullPage: true });
-
-    await page.getByTestId("apollo-result-publication-guard").click();
-    await page
-      .getByTestId("apollo-interaction-message")
-      .getByText("Authoritative result publication remains blocked.", { exact: false })
-      .waitFor({
-        state: "visible",
-        timeout: 30000,
-      });
-    await page.screenshot({ path: path.join(artifactDir, "publication_guard.png"), fullPage: true });
-
-    await page.getByTestId("apollo-return-to-pro").click();
-    await page.waitForFunction(() => window.location.pathname === "/pro");
-    await page.screenshot({ path: path.join(artifactDir, "workspace_return.png"), fullPage: true });
-
-    await page.getByTestId("open-apollo-phase1").click();
-    await page.waitForFunction(() => window.location.pathname === "/pro/apollo");
-    await page.getByTestId("apollo-phase1-shell").waitFor({ state: "visible", timeout: 30000 });
-    await page.getByTestId("apollo-node-select").selectOption("APN-1");
-
-    launchSummary.checks.projectNamePersisted = (await projectName.inputValue()) === "Apollo Electron Reachability";
-    launchSummary.checks.nodeLabelPersisted =
-      (await page.getByTestId("apollo-node-label-input").inputValue()) === "Electron Draft Node";
-    launchSummary.checks.numericGuardVisible = true;
-    launchSummary.checks.publicationGuardVisible = true;
-    launchSummary.checks.provisionalBannerVisible = await page.getByTestId("apollo-provisional-banner").isVisible();
-    launchSummary.checks.topologyShellVisible = await page.getByTestId("apollo-topology-shell").isVisible();
-    launchSummary.checks.apolloHeading = await page.locator("h1").textContent();
-    launchSummary.finalRoute = await page.evaluate(() => window.location.pathname);
-    launchSummary.windowTitle = await page.title();
-    launchSummary.consoleMessages = consoleMessages;
-  } finally {
-    const electronPid = electronApp.process()?.pid ?? -1;
-    processManifest.push({
-      label: "electron-on",
-      pid: electronPid,
-      command: `electron ${electronMainPath}`,
-      cwd: frontendDir,
-      startTime: new Date().toISOString(),
-      endTime: new Date().toISOString(),
-      exitCode: "0",
-    });
-    await appendLog(consoleMessages.join("\n"));
-    await electronApp.close();
-    await stopProcess(vite);
-    await fs.rm(userDataDir, { recursive: true, force: true });
-  }
-}
-
-async function writeArtifacts() {
-  await fs.writeFile(
-    processManifestPath,
-    [
-      "label,pid,command,cwd,start_time,end_time,exit_code",
-      ...processManifest.map((entry) =>
-        [
-          entry.label,
-          entry.pid,
-          JSON.stringify(entry.command),
-          JSON.stringify(entry.cwd),
-          entry.startTime,
-          entry.endTime,
-          entry.exitCode,
-        ].join(","),
-      ),
-    ].join("\n"),
-    "utf8",
-  );
-  await fs.writeFile(
-    launchEnvironmentPath,
-    JSON.stringify(
-      {
-        date: appVersionDate,
-        frontendDir,
-        repoRoot,
-        electronMainPath,
-        backendCommand: `${backendPython} -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000`,
-        vitePort: 5173,
-        backendPort: 8000,
-      },
-      null,
-      2,
-    ),
-    "utf8",
-  );
-  await fs.writeFile(summaryPath, JSON.stringify(launchSummary, null, 2), "utf8");
+function parsePositiveInt(value) {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 async function main() {
   await ensureArtifactsDir();
-  await appendLog(`Verification started on ${new Date().toISOString()} (${appVersionDate})`);
+  await appendLog(`Verification started on ${new Date().toISOString()} (${verificationDate})`);
   await compileElectron();
   const backend = await startBackend();
+  const vite = await startVite();
+  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "apollo-electron-"));
+  const summary = {
+    verificationDate,
+    repoRoot,
+    frontendDir,
+    checks: {},
+    diagnostics: null,
+    screenshots: {},
+    logs: [],
+    windowUrls: [],
+  };
+
+  let electronApp;
+  let page;
   try {
-    await captureOffState();
-    await captureOnState();
+    electronApp = await electron.launch({
+      args: ["--disable-http-cache", `--user-data-dir=${userDataDir}`, electronMainPath],
+      cwd: frontendDir,
+      env: {
+        ...process.env,
+        SPACER_AUTOMATION: "1",
+      },
+    });
+    page = await waitForMainWindow(electronApp);
+    page.on("console", (message) => {
+      const line = `[renderer-console] ${message.type()}: ${message.text()}`;
+      consoleMessages.push(line);
+      summary.logs.push(line);
+    });
+    page.on("pageerror", (error) => {
+      const line = `[renderer-pageerror] ${error.message}`;
+      consoleMessages.push(line);
+      summary.logs.push(line);
+    });
+
+    summary.checks.mainWindowAttached = true;
+    summary.windowUrls = await captureWindowUrls(electronApp);
+    summary.checks.initialWindowCount = summary.windowUrls.length;
+    summary.checks.appVersion = await electronApp.evaluate(({ app }) => app.getVersion());
+
+    await openProfessionalWorkspace(page);
+    summary.checks.professionalWorkspace = await page.evaluate(() => window.location.pathname);
+
+    await openApolloSampleTopology(page);
+    const viewerState = await waitForViewerReadiness(page);
+    summary.checks.routeLoaded = await page.evaluate(() => window.location.pathname);
+    summary.checks.viewerState = viewerState;
+
+    await ensureViewPanelOpen(page);
+    summary.diagnostics = await openDiagnosticsPanel(page, viewerState.compatVisible);
+    if (!summary.diagnostics) {
+      throw new Error("Viewer diagnostics panel did not render.");
+    }
+
+    summary.checks.viewerMode = summary.diagnostics["Viewer mode"] ?? "Unavailable";
+    summary.checks.fallbackReason = summary.diagnostics["Fallback reason"] ?? "Unavailable";
+    summary.checks.solidCount = parsePositiveInt(summary.diagnostics["Solid count"]);
+    summary.checks.lineCount = parsePositiveInt(summary.diagnostics["Line element count"]);
+    summary.checks.webglAvailable = summary.diagnostics["WebGL available"] ?? "false";
+    summary.checks.compatBannerVisible = viewerState.compatVisible;
+    summary.checks.consoleErrorCount = consoleMessages.filter((line) => line.includes("error:")).length;
+    summary.checks.selectionSmoke = false;
+
+    if (summary.checks.solidCount <= 0 || summary.checks.lineCount <= 0) {
+      throw new Error(`Unexpected Apollo counts: line=${summary.checks.lineCount} solid=${summary.checks.solidCount}`);
+    }
+
+    await page.getByTestId("view-fit").click();
+    await page.getByTestId("view-iso").click();
+    const canvas = page.locator(".three-viewport canvas");
+    if (await canvas.count()) {
+      const box = await canvas.boundingBox();
+      if (box) {
+        await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.6);
+        await page.mouse.down();
+        await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5, { steps: 8 });
+        await page.mouse.up();
+        summary.checks.selectionSmoke = true;
+      }
+    }
+
+    summary.screenshots.viewer = path.join(artifactDir, "apollo_viewer_smoke.png");
+    await page.screenshot({ path: summary.screenshots.viewer, fullPage: true });
+  } catch (error) {
+    summary.checks.failure = error instanceof Error ? error.message : String(error);
+    if (page) {
+      const failureShot = path.join(artifactDir, "apollo_viewer_smoke_failure.png");
+      summary.screenshots.failure = failureShot;
+      await page.screenshot({ path: failureShot, fullPage: true }).catch(() => undefined);
+      summary.windowUrls = electronApp ? await captureWindowUrls(electronApp).catch(() => summary.windowUrls) : summary.windowUrls;
+    }
+    throw error;
   } finally {
-    await stopProcess(backend);
-    await writeArtifacts();
+    if (electronApp && page) {
+      await closeElectronApp(electronApp, page).catch(() => undefined);
+    }
+    await stopTrackedProcess(vite);
+    await stopTrackedProcess(backend);
+    await fs.rm(userDataDir, { recursive: true, force: true });
+    await fs.writeFile(
+      processManifestPath,
+      [
+        "label,pid,command,cwd,start_time,end_time,exit_code",
+        ...processManifest.map((entry) =>
+          [
+            entry.label,
+            entry.pid,
+            JSON.stringify(entry.command),
+            JSON.stringify(entry.cwd),
+            entry.startTime,
+            entry.endTime,
+            entry.exitCode,
+          ].join(","),
+        ),
+      ].join("\n"),
+      "utf8",
+    );
+    await fs.writeFile(
+      launchEnvironmentPath,
+      JSON.stringify(
+        {
+          verificationDate,
+          frontendDir,
+          repoRoot,
+          electronMainPath,
+          backendCommand: `${backendPython} -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000`,
+          vitePort: 5173,
+          backendPort: 8000,
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+    summary.logs.push(...consoleMessages);
+    await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2), "utf8");
   }
 }
 
