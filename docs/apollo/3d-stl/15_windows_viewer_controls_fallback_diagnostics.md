@@ -130,6 +130,31 @@ Electron limitation on the same date:
 - Playwright attach to Electron remained unstable across splash/main window handoff
 - full automated Electron interaction smoke should be treated as partial unless a manual interactive check is also completed
 
+## Linux cross-check on Friday, July 31, 2026
+
+- `start-ubuntu.sh` was updated so trap registration happens before backend launch, frontend PGID is tracked explicitly, and reused backends are not killed by blanket cleanup.
+- fallback banner action `診断を開く` now opens the view panel path that contains `ViewerDiagnostics`, so diagnostics are reachable even in compatibility mode.
+- `frontend/scripts/verifyApolloElectron.mjs` now runs as a fallback-aware smoke harness under `xvfb-run`, captures all window URLs, records diagnostics, and writes a deterministic summary artifact.
+
+Measured Friday, July 31, 2026 Linux results:
+
+- browser Apollo sample:
+  - `Viewer mode = WebGL 3D`
+  - `Fallback reason = None`
+  - `Solid count = 80`
+  - `Solid display assessment = Visible expected in current 3D mode`
+- Linux Electron under `xvfb-run`:
+  - `Viewer mode = 2D fallback`
+  - `Fallback reason = WebGL renderer initialization failed`
+  - `Solid count = 80`
+  - `Solid display assessment = C. solid data count > 0, WebGL fallback`
+
+Interpretation:
+
+- the standard sample still produces solid data on Linux
+- browser and Electron differ at the WebGL/runtime layer, not at the builder / prop-flow layer
+- Linux Electron “solid missing” should be classified as fallback when the diagnostics above are present
+
 ## Remaining risk
 
 - headless automation did not produce reliable camera-delta evidence for drag operations
