@@ -13,12 +13,13 @@ integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
 |-------|-------|
 | Execution timestamp (Phase 1) | 2026-08-01 18:40:14 JST |
 | Execution timestamp (Phase 2) | 2026-08-01 18:42:00 JST |
+| Execution timestamp (Phase 3) | 2026-08-01 18:43:26 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
 | Branch | `docs/apollo-refreeze-local-verification` |
-| HEAD SHA (Phase 2 start) | `dc8bfc9745fe9f7d0ff27d3cd306184388466048` |
-| Origin branch SHA (Phase 2 start) | `dc8bfc9745fe9f7d0ff27d3cd306184388466048` |
+| HEAD SHA (Phase 3 start) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
+| Origin branch SHA (Phase 3 start) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
 | Origin/main SHA | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
 | Design freeze baseline (documented) | `1fbcb3ea804f965b8f262284573f4f4d42dc2411` |
 
@@ -191,6 +192,141 @@ git diff --check
 
 `PHASE2_DOC_VALIDATION_VERDICT: PASS` (after CSV column correction).
 
+## Phase 3 test-command discovery
+
+Scope: inspect repository scripts, configs, and test file layout only. No application
+tests executed in this phase. Commands below are planned for LV-04/LV-05 execution;
+none were run to produce PASS/FAIL counts here.
+
+### Configuration inventory
+
+| Item | Finding |
+|------|---------|
+| Root `package.json` | Not present |
+| Frontend `package.json` | `frontend/package.json` — scripts: `typecheck`, `lint`, `test`, `test:regression`, `test:all`, `test:e2e`, `build`, `dev:apollo`, `electron:dev:apollo`, `app:dev:apollo`, `contracts:schema:generate`, `electron:test`, `test:parity-cli` |
+| Vitest default config | `frontend/vitest.config.ts` — excludes `tests/e2e/**`, `regression.golden.test.ts` |
+| Vitest regression config | `frontend/vitest.regression.config.ts` — includes only `regression.golden.test.ts` |
+| Playwright default config | `frontend/playwright.config.ts` — `testDir: ./tests/e2e`, starts backend + Vite dev server |
+| Playwright phase configs | `frontend/playwright.phase5-step3.config.ts`, `frontend/playwright.phase5-japanese.config.ts` |
+| pytest project config | Not present (`pytest.ini`, `setup.cfg`, `pyproject.toml` absent) |
+| GitHub Actions workflows | Not present (no `.github/workflows/`) |
+| Backend test harness | `backend/tests/conftest.py` — loads `schemas/` and `examples/` from repo root |
+| README canonical backend test | `python -m pytest backend/tests -q` (repo root) |
+
+### Test file counts (inventory only)
+
+| Area | Path pattern | Count |
+|------|--------------|------:|
+| Apollo frontend vitest | `frontend/src/apollo/__tests__/*.test.ts(x)` | 27 |
+| Apollo navigation vitest | `frontend/src/App.apolloNavigation.test.tsx` | 1 |
+| 3D viewer vitest | `frontend/src/viewer/*.test.ts(x)` | 22 |
+| IF3 frontend vitest | `frontend/src/if3/__tests__/`, `src/results/if3*.test.ts`, `src/exports/if3*.test.ts`, `src/draft/if3DraftEligibility.test.ts`, `src/api/client.if3.test.ts` | 9 |
+| IF3 backend pytest | `backend/tests/test_if3_*.py`, `backend/tests/test_reports_if3_gate.py` | 7 |
+| Backend general pytest | `backend/tests/test_*.py` (excl. `conftest.py`) | 37 |
+| Apollo evidence pytest | `scripts/apollo/evidence/tests/test_*.py` | 7 |
+| Playwright e2e | `frontend/tests/e2e/*.spec.ts` | 16 |
+| Schema pytest (backend) | `backend/tests/test_*_schema.py` | 5 |
+
+### Planned commands by area
+
+Working directory is repo root unless noted. Prerequisites for execution (not run in
+Phase 3): `cd frontend && npm ci`; Python deps available (`python3` or `.venv/bin/python`
+per local setup; Playwright configs reference `.venv/bin/python`).
+
+#### Apollo frontend
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run test -- src/apollo` | 27 vitest files under `frontend/src/apollo/__tests__/`; default `vitest.config.ts` |
+| `cd frontend && npm run test -- src/App.apolloNavigation.test.tsx` | Apollo route/navigation coverage (`App.apolloNavigation.test.tsx`) |
+| `node scripts/check_apollo_source_hygiene.mjs frontend/src/apollo` | `scripts/check_apollo_source_hygiene.mjs`; also exercised by `apolloSourceHygiene.test.ts` inside Apollo suite |
+
+#### Main viewer / 3D
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run test -- src/viewer` | 22 vitest files including `Viewer3D.test.tsx`, `threeUtils.apolloVisualization.test.ts`, `SceneBuilder.apolloVisualization.test.ts` |
+
+#### IF3 frontend
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run test -- src/if3 src/results/if3 src/exports/if3 src/draft/if3DraftEligibility.test.ts src/api/client.if3.test.ts` | 9 IF3-related vitest modules across `if3/`, `results/`, `exports/`, `draft/`, `api/` |
+
+#### IF3 backend / API
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q` | 7 IF3 pytest modules named in inventory |
+
+#### Backend general
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `python3 -m pytest backend/tests -q` | All 37 `backend/tests/test_*.py` modules; documented in root `README.md` Development section |
+| `python3 -m pytest scripts/apollo/evidence/tests -q` | 7 Apollo evidence harness pytest modules (`test_harness.py`, `test_analytical_golden.py`, etc.) |
+
+#### Schema / doc checks
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `python3 -m pytest backend/tests/test_project_schema.py backend/tests/test_result_schema.py backend/tests/test_bridge_definition_schema.py backend/tests/test_engine_result_schema.py backend/tests/test_time_history_schema.py -q` | Backend JSON Schema validation tests; fixtures via `backend/tests/conftest.py` → `schemas/`, `examples/` |
+| `cd frontend && npm run test -- src/contracts/runtime/__tests__/contractJsonSchema.test.ts` | Frontend contract schema parity against `schemas/contracts/v0.1/` |
+| `cd frontend && npm run contracts:schema:generate` | `frontend/scripts/generate-contract-schemas.mjs`; generation helper (compare mode is in `contractJsonSchema.test.ts` with `CONTRACTS_GENERATE_SCHEMAS=1`) |
+| `git diff --check` | LV-08 whitespace check per `local_verification_plan.md` |
+| Phase 2 doc validation scripts (ad-hoc `python3` / `rg`) | Refreeze markdown/CSV checks documented in Phase 2 section — no `package.json` script |
+
+Apollo evidence validators under `scripts/apollo/evidence/validate_*.py` exist but
+require bundle/fixture inputs; they are not standalone CI smoke commands.
+
+#### Typecheck
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run typecheck` | `tsc -b --pretty false` in `frontend/package.json` |
+
+#### Lint
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run lint` | `tsc -b` + `scripts/check_frontend_source_hygiene.mjs src` + `scripts/check_frontend_japanese_strings.mjs src` per `frontend/package.json` |
+
+#### Build
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run build` | `tsc -b && vite build` in `frontend/package.json`; documented in `README.md` and Apollo merge gates |
+
+#### E2E / manual (LV-05)
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run test:e2e` | Playwright suite in `frontend/tests/e2e/` (16 specs); `playwright.config.ts` starts uvicorn + Vite |
+| `cd frontend && npx playwright test --config playwright.phase5-step3.config.ts` | Targeted `phase5-step3-dxf-export.spec.ts` per `playwright.phase5-step3.config.ts` |
+| `cd frontend && npx playwright test --config playwright.phase5-japanese.config.ts` | Targeted `phase5-japanese-drawing-remediation.spec.ts` per `playwright.phase5-japanese.config.ts` |
+| `python3 -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000` | Backend for manual / smoke runs; documented in `README.md` and `docs/apollo/pr5-smoke/README.md` |
+| `cd frontend && npm run dev:apollo -- --host 127.0.0.1 --strictPort` | Apollo Vite dev server; PR5 smoke and LV-05 3D display checks |
+| `cd frontend && npm run electron:dev:apollo` | Apollo Electron shell; `frontend/package.json` |
+| `cd frontend && npm run app:dev:apollo` | Backend uvicorn + Apollo Electron concurrently; `frontend/package.json` |
+| `./start-ubuntu.sh --apollo` | Repo launcher script for Apollo mode on Ubuntu/WSL (`README.md`) |
+
+#### Full regression bundles (LV-04)
+
+| Planned command | Maps to |
+|-----------------|---------|
+| `cd frontend && npm run test` | Full default vitest run (`vitest run`; excludes e2e and golden regression) |
+| `cd frontend && npm run test:regression` | Golden regression only (`vitest.regression.config.ts`) |
+| `cd frontend && npm run test:all` | `npm run test` + `npm run test:regression` per `frontend/package.json` |
+
+### Phase 3 verdict
+
+`PHASE3_TEST_COMMAND_DISCOVERY_VERDICT: COMPLETE` — all planned commands traced to
+existing `package.json` scripts, `README.md`, pytest modules, vitest configs, or
+launcher scripts. Application tests remain NOT_STARTED until LV-04/LV-05 execution.
+
 ## Next action
 
-Proceed to LV-01 full verification per `local_verification_plan.md`: run `git fetch --all --prune`, confirm `origin/main` contains documented design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411`, then continue LV-02 through LV-07 and remaining LV-08 items. Do not run application tests until LV-04/LV-05.
+Proceed to LV-01 per `local_verification_plan.md` (`git fetch --all --prune`, baseline
+SHA containment), then LV-02/LV-03 inventory. Execute LV-04 using the Phase 3 planned
+commands above (record exit codes and counts). LV-05 uses manual/e2e commands from the
+E2E/manual table. Do not invent commands outside this inventory.

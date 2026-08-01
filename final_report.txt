@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:42:00 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:43:26 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 2 — documentation, CSV, and link validation (on verification branch)
+CURRENT_PHASE: Phase 3 — test-command discovery (on verification branch)
 
 ================================================================================
 1. Executive Summary
@@ -13,10 +13,10 @@ CURRENT_PHASE: Phase 2 — documentation, CSV, and link validation (on verificat
 
 Apollo Phase 1 Design Expansion Refreeze local verification continues on a
 dedicated branch bootstrapped from integrated main. Phase 1 recorded environment
-and repository metadata. Phase 2 validated refreeze documentation: README file
-inventory, Markdown links, heading/code-block structure, CSV integrity, and
-cross-document consistency. One CSV column-alignment defect (MT-140, MT-150) was
-corrected. Mandatory LV-01 through LV-07 and application tests remain
+and repository metadata. Phase 2 validated refreeze documentation. Phase 3
+inspected package.json scripts, vitest/playwright configs, pytest layout, and
+test file inventories to produce a verified LV-04/LV-05 command plan (no tests
+executed). Mandatory LV-01 through LV-07 and application test execution remain
 NOT_STARTED; LV-08 is PARTIAL (Phase 2 doc checks only).
 
 ================================================================================
@@ -27,8 +27,8 @@ TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: docs/apollo-refreeze-local-verification
-HEAD_SHA: dc8bfc9745fe9f7d0ff27d3cd306184388466048
-ORIGIN_BRANCH_SHA: dc8bfc9745fe9f7d0ff27d3cd306184388466048
+HEAD_SHA: 18cfdcd87b034c1a5bec2ea64a40398408ad4470
+ORIGIN_BRANCH_SHA: 18cfdcd87b034c1a5bec2ea64a40398408ad4470
 ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
@@ -86,15 +86,14 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 6. Next Exact Action
 ================================================================================
 
-Phase 2 documentation validation is complete on branch
-docs/apollo-refreeze-local-verification. Findings are in
-local_verification_report.md (Phase 2 section) and final_report.txt section 10.
-Application tests were not executed in Phase 2.
+Phase 3 test-command discovery is complete on branch
+docs/apollo-refreeze-local-verification. Verified commands are listed in
+local_verification_report.md (Phase 3 section) and final_report.txt section 11.
+No application tests were executed in Phase 3.
 
-Next: execute LV-01 per local_verification_plan.md — run git fetch --all --prune,
-confirm origin/main contains documented design-freeze baseline
-1fbcb3ea804f965b8f262284573f4f4d42dc2411, record merge-base and branch
-containment results in local_verification_report.md, then proceed to LV-02.
+Next: execute LV-01 per local_verification_plan.md (git fetch, baseline SHA
+containment), then LV-02/LV-03. Run LV-04 using only the Phase 3 planned
+commands; LV-05 uses the manual/e2e command table.
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -158,6 +157,35 @@ Fix applied: manual_traceability.csv rows MT-140 and MT-150 — restored missing
 planned_module column (value mirrors phase1_target).
 
 ================================================================================
+11. Phase 3 Test-Command Discovery
+================================================================================
+
+Discovery recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:43:26 JST. Configuration and test paths inspected; no tests run.
+
+Config findings:
+  Root package.json: NOT PRESENT
+  Frontend scripts: typecheck, lint, test, test:regression, test:all, test:e2e,
+    build, dev:apollo, electron:dev:apollo, app:dev:apollo, contracts:schema:generate
+  pytest.ini / pyproject.toml / setup.cfg: NOT PRESENT
+  GitHub Actions workflows: NOT PRESENT
+  Backend canonical: python3 -m pytest backend/tests -q (README.md)
+
+Verified planned command groups (see local_verification_report.md Phase 3):
+  Apollo frontend: cd frontend && npm run test -- src/apollo; navigation test;
+    node scripts/check_apollo_source_hygiene.mjs frontend/src/apollo
+  Viewer/3D: cd frontend && npm run test -- src/viewer (22 vitest files)
+  IF3 frontend: cd frontend && npm run test -- src/if3 ... (9 vitest files)
+  IF3 backend: python3 -m pytest backend/tests/test_if3_*.py ... (7 modules)
+  Backend general: python3 -m pytest backend/tests -q; scripts/apollo/evidence/tests
+  Schema/doc: backend test_*_schema.py; contractJsonSchema vitest; git diff --check
+  Typecheck/lint/build: npm run typecheck / lint / build (frontend/)
+  E2E/manual: npm run test:e2e; playwright phase5 configs; dev:apollo; start-ubuntu.sh
+  LV-04 bundles: npm run test / test:regression / test:all
+
+PHASE3_TEST_COMMAND_DISCOVERY_VERDICT: COMPLETE
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -202,9 +230,9 @@ REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 20. Final Verdict (Placeholder)
 ================================================================================
 
-Phase 2 documentation validation: COMPLETE.
+Phase 3 test-command discovery: COMPLETE.
 LV-01 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
-Application test execution: NOT_STARTED (deferred to LV-04/LV-05).
+Application test execution: NOT_STARTED (deferred to LV-04/LV-05 per Phase 3 plan).
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
