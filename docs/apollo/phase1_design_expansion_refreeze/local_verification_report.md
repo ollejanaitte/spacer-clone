@@ -20,6 +20,7 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Execution timestamp (Phase 4 bundle 4) | 2026-08-01 18:57:44 JST |
 | Execution timestamp (Phase 4 static check bundle 1) | 2026-08-01 18:59:09 JST |
 | Execution timestamp (Phase 4 static check bundle 2) | 2026-08-01 19:00:33 JST |
+| Execution timestamp (Phase 4 static check bundle 3) | 2026-08-01 19:01:41 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
@@ -710,13 +711,45 @@ Verified command matches Phase 3 planned entry: `cd frontend && npm run lint .`
 
 `SC_B02_LINT_VERDICT: PASS` — frontend lint exited 0 under the Phase 3 planned command.
 
+## Phase 4 static check execution (bundle 3 — build)
+
+**Execution timestamp:** 2026-08-01 19:01:41 JST
+**Verdict:** PASS
+
+Scope: third planned static-check bundle only (frontend production build). No typecheck,
+lint, or test commands executed separately. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+Verified command matches Phase 3 planned entry: `cd frontend && npm run build`
+(`tsc -b && vite build` in `frontend/package.json`).
+
+### Static check bundle 3 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | SC-B03-BUILD |
+| COMMAND | `cd frontend && npm run build` |
+| START_TIME | 2026-08-01 19:01:41 JST |
+| END_TIME | 2026-08-01 19:02:07 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend production build (`tsc -b && vite build`); `dist/` artifacts generated (index.html, CSS, JS bundles) |
+| EVIDENCE | `tsc -b` completed; Vite v7.3.5: `3926 modules transformed`; built in 10.57s; `dist/index.html` 0.40 kB, `dist/assets/index-BkjMxd5x.css` 101.47 kB, `dist/assets/index-FCi1lvIH.js` 3,131.18 kB; chunk size >500 kB warning (informational only); exit 0; total duration ~26s |
+| ACTION | Proceed to LV-03 implementation inventory if not yet done, then LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+
+### Phase 4 static check bundle 3 verdict
+
+`SC_B03_BUILD_VERDICT: PASS` — frontend production build exited 0 under the Phase 3 planned
+command.
+
 ## Next action
 
 LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
 LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). LV-04 bundle 3 (IF3 frontend)
 recorded PASS. LV-04 bundle 4 (IF3 backend) recorded PASS. Static check bundle 1
-(typecheck) recorded PASS. Static check bundle 2 (lint) recorded PASS. Proceed to LV-03
-per `local_verification_plan.md` if not yet done, then LV-04 bundle 5 (backend general)
-or static check bundle 3 (build) using Phase 3 planned commands only. LV-05 uses
+(typecheck) recorded PASS. Static check bundle 2 (lint) recorded PASS. Static check bundle 3
+(build) recorded PASS. Proceed to LV-03 per `local_verification_plan.md` if not yet done,
+then LV-04 bundle 5 (backend general) using Phase 3 planned commands only. LV-05 uses
 manual/e2e commands from the E2E/manual table. Do not invent commands outside this
 inventory.
