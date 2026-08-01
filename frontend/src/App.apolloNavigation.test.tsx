@@ -18,9 +18,50 @@ vi.mock("./api/client", () => ({
 }));
 
 vi.mock("./viewer/Viewer3D", () => ({
-  Viewer3D: ({ project }: { project: { nodes: unknown[]; members: unknown[] } }) => (
-    <div data-testid="mock-viewer3d">
+  Viewer3D: ({
+    project,
+    displayModel,
+    apolloDisplayModelAvailable,
+    apolloVisualizationModel,
+    onDisplayModelChange,
+  }: {
+    project: { nodes: unknown[]; members: unknown[] };
+    displayModel?: string;
+    apolloDisplayModelAvailable?: boolean;
+    apolloVisualizationModel?: { elements: readonly unknown[] } | null;
+    onDisplayModelChange?: (model: string) => void;
+  }) => (
+    <div
+      data-testid="mock-viewer3d"
+      data-display-model={displayModel ?? "frame"}
+      data-apollo-available={apolloDisplayModelAvailable ? "true" : "false"}
+      data-apollo-visualization={
+        apolloVisualizationModel ? String(apolloVisualizationModel.elements.length) : "none"
+      }
+    >
       {project.nodes.length}/{project.members.length}
+      {onDisplayModelChange ? (
+        <>
+          <select
+            data-testid="viewer-display-model"
+            value={displayModel ?? "frame"}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+              if (value === "frame" || value === "apollo") {
+                onDisplayModelChange(value);
+              }
+            }}
+          >
+            <option value="frame">フレーム</option>
+            <option value="apollo" disabled={!apolloDisplayModelAvailable}>
+              Apollo
+            </option>
+          </select>
+          {!apolloDisplayModelAvailable ? (
+            <p data-testid="viewer-display-model-unavailable">Apollo モデルは利用できません。</p>
+          ) : null}
+        </>
+      ) : null}
     </div>
   ),
 }));
@@ -79,6 +120,43 @@ function setInputValue(input: HTMLInputElement, value: string) {
   valueSetter?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
   input.blur();
+}
+
+function setSelectValue(select: HTMLSelectElement, value: string) {
+  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, "value")?.set;
+  valueSetter?.call(select, value);
+  select.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function mockViewer3D(): HTMLElement {
+  const viewer = document.querySelector("[data-testid='mock-viewer3d']") as HTMLElement | null;
+  if (!viewer) {
+    throw new Error("mock-viewer3d not found");
+  }
+  return viewer;
+}
+
+async function loadApolloStandardSample() {
+  await act(async () => {
+    clickButtonByTestId("apollo-open-sample-selection");
+  });
+  await act(async () => {
+    clickButtonByTestId("apollo-load-standard-sample");
+  });
+}
+
+async function returnToProFromApollo() {
+  await act(async () => {
+    clickButtonByTestId("apollo-return-to-pro");
+  });
+  const discardButton = document.querySelector(
+    '[data-testid="apollo-guard-discard"]',
+  ) as HTMLButtonElement | null;
+  if (discardButton) {
+    await act(async () => {
+      discardButton.click();
+    });
+  }
 }
 
 function clickButtonByTestId(testId: string) {
@@ -181,5 +259,86 @@ describe("App Apollo navigation", () => {
     });
     expect(inputByTestId("apollo-node-label-input").value).toBe("Apollo Edited Node");
     expect(inputByTestId("apollo-node-x-input").value).toBe("12.5");
+  }, 40000);
+
+  it("keeps frame as the active display model when Apollo sidecar data is absent", async () => {
+    vi.stubEnv(APOLLO_PHASE1_NN_ENABLED_FLAG_NAME, "true");
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+
+    const viewer = mockViewer3D();
+    expect(viewer.getAttribute("data-apollo-available")).toBe("false");
+    expect(viewer.getAttribute("data-display-model")).toBe("frame");
+    expect(viewer.getAttribute("data-apollo-visualization")).toBe("none");
+
+    const modelSelect = selectByTestId("viewer-display-model");
+    expect(modelSelect.value).toBe("frame");
+    const apolloOption = modelSelect.querySelector('option[value="apollo"]') as HTMLOptionElement;
+    expect(apolloOption.disabled).toBe(true);
+    expect(document.querySelector("[data-testid='viewer-display-model-unavailable']")).not.toBeNull();
+  }, 40000);
+
+  it("passes Apollo display-model availability to Viewer3D and hands off the Apollo model when selected", async () => {
+    vi.stubEnv(APOLLO_PHASE1_NN_ENABLED_FLAG_NAME, "true");
+    vi.stubEnv(APOLLO_PHASE1_SHOW_PROVISIONAL_STATUS_FLAG_NAME, "true");
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+
+    await act(async () => {
+      clickButtonByTestId("open-apollo-phase1");
+    });
+    await loadApolloStandardSample();
+    await returnToProFromApollo();
+
+    expect(window.location.pathname).toBe("/pro");
+
+    const viewer = mockViewer3D();
+    expect(viewer.getAttribute("data-apollo-available")).toBe("true");
+    expect(viewer.getAttribute("data-display-model")).toBe("frame");
+    expect(viewer.getAttribute("data-apollo-visualization")).toBe("none");
+
+    const modelSelect = selectByTestId("viewer-display-model");
+    const apolloOption = modelSelect.querySelector('option[value="apollo"]') as HTMLOptionElement;
+    expect(apolloOption.disabled).toBe(false);
+    expect(document.querySelector("[data-testid='viewer-display-model-unavailable']")).toBeNull();
+
+    await act(async () => {
+      setSelectValue(modelSelect, "apollo");
+    });
+
+    expect(mockViewer3D().getAttribute("data-display-model")).toBe("apollo");
+    expect(mockViewer3D().getAttribute("data-apollo-visualization")).not.toBe("none");
+    expect(Number(mockViewer3D().getAttribute("data-apollo-visualization"))).toBeGreaterThan(0);
+  }, 40000);
+
+  it("exposes Apollo display-model availability on the main screen after an Apollo sample round-trip", async () => {
+    vi.stubEnv(APOLLO_PHASE1_NN_ENABLED_FLAG_NAME, "true");
+    vi.stubEnv(APOLLO_PHASE1_SHOW_PROVISIONAL_STATUS_FLAG_NAME, "true");
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+
+    await act(async () => {
+      clickButtonByTestId("open-apollo-phase1");
+    });
+    expect(window.location.pathname).toBe("/pro/apollo");
+
+    await loadApolloStandardSample();
+    await returnToProFromApollo();
+
+    expect(window.location.pathname).toBe("/pro");
+    expect(mockViewer3D().getAttribute("data-apollo-available")).toBe("true");
+
+    expect(document.querySelector("[data-testid='viewer-display-model']")).not.toBeNull();
+
+    const modelSelect = selectByTestId("viewer-display-model");
+    const apolloOption = modelSelect.querySelector('option[value="apollo"]') as HTMLOptionElement;
+    expect(apolloOption.disabled).toBe(false);
+    expect(document.querySelector("[data-testid='viewer-display-model-unavailable']")).toBeNull();
   }, 40000);
 });

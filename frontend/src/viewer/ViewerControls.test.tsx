@@ -1,11 +1,11 @@
-﻿﻿// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { act } from "react";
 import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ViewerControls } from "./ViewerControls";
-import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
+import type { CameraPreset, ViewerDisplayModel, ViewerScales, ViewerVisibility } from "./types";
 import type { SpacerAxisSwap } from "./coordinateTransform";
 import { DEFAULT_ANIMATION_OPTIONS, type AnimationOptions } from "./animation";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
@@ -47,6 +47,9 @@ function render(node: ReactNode) {
 
 function buildProps(overrides: Partial<{
   apolloView: boolean;
+  displayModel: ViewerDisplayModel;
+  apolloDisplayModelAvailable: boolean;
+  onDisplayModelChange: (model: ViewerDisplayModel) => void;
   visibility: ViewerVisibility;
   scales: ViewerScales;
   loadCaseIds: string[];
@@ -194,6 +197,18 @@ describe("ViewerControls UI surface", () => {
     expect(document.body.textContent).toContain("Girders");
     expect(document.body.textContent).toContain("Deck");
   });
+
+  it("renders the display-model selector when onDisplayModelChange is provided", () => {
+    render(<ViewerControls {...buildProps({ onDisplayModelChange: () => undefined })} />);
+    expect(document.querySelector('[data-testid="viewer-display-model"]')).not.toBeNull();
+    expect(document.body.textContent).toContain("フレーム");
+    expect(document.body.textContent).toContain("Apollo");
+  });
+
+  it("hides the display-model selector when onDisplayModelChange is omitted", () => {
+    render(<ViewerControls {...buildProps()} />);
+    expect(document.querySelector('[data-testid="viewer-display-model"]')).toBeNull();
+  });
 });
 
 describe("ViewerControls wiring", () => {
@@ -326,6 +341,65 @@ describe("ViewerControls wiring", () => {
     });
     expect(onFit).toHaveBeenCalledTimes(1);
     expect(onCameraPreset).toHaveBeenCalledTimes(cases.length);
+  });
+});
+
+describe("ViewerControls display model selector", () => {
+  it("disables the Apollo option and shows an unavailable hint when Apollo data is absent", () => {
+    render(
+      <ViewerControls
+        {...buildProps({
+          apolloDisplayModelAvailable: false,
+          onDisplayModelChange: () => undefined,
+        })}
+      />,
+    );
+
+    const select = document.querySelector('[data-testid="viewer-display-model"]') as HTMLSelectElement;
+    const apolloOption = select.querySelector('option[value="apollo"]') as HTMLOptionElement;
+    expect(select.value).toBe("frame");
+    expect(apolloOption.disabled).toBe(true);
+    expect(document.querySelector('[data-testid="viewer-display-model-unavailable"]')).not.toBeNull();
+    expect(document.body.textContent).toContain("Apollo モデルは利用できません。");
+  });
+
+  it("enables the Apollo option and hides the unavailable hint when Apollo data is present", () => {
+    render(
+      <ViewerControls
+        {...buildProps({
+          apolloDisplayModelAvailable: true,
+          onDisplayModelChange: () => undefined,
+        })}
+      />,
+    );
+
+    const select = document.querySelector('[data-testid="viewer-display-model"]') as HTMLSelectElement;
+    const apolloOption = select.querySelector('option[value="apollo"]') as HTMLOptionElement;
+    expect(apolloOption.disabled).toBe(false);
+    expect(document.querySelector('[data-testid="viewer-display-model-unavailable"]')).toBeNull();
+  });
+
+  it("forwards display-model changes through onDisplayModelChange", () => {
+    const onDisplayModelChange = vi.fn();
+    render(
+      <ViewerControls
+        {...buildProps({
+          apolloDisplayModelAvailable: true,
+          onDisplayModelChange,
+        })}
+      />,
+    );
+
+    const select = document.querySelector('[data-testid="viewer-display-model"]') as HTMLSelectElement;
+    act(() => {
+      setValue(select, "apollo");
+    });
+    expect(onDisplayModelChange).toHaveBeenCalledWith("apollo");
+
+    act(() => {
+      setValue(select, "frame");
+    });
+    expect(onDisplayModelChange).toHaveBeenCalledWith("frame");
   });
 });
 
