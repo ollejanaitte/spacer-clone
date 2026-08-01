@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase E parser/mapper/validator completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Phase E parser/mapper/validator COMPLETE; Phase F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase E — structuralDesignModel runtime parse/map/semantic validation completed; Phase F pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Block 2 contract tests completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Block 2 contract tests COMPLETE; Phase F typecheck/lint/build bundle PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase F — Block 2 design-entity contract tests completed; remaining Phase F verification bundle pending
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 AP_DX_01_PHASE_A_STATUS: COMPLETED
@@ -13,7 +13,7 @@ AP_DX_01_PHASE_B_STATUS: COMPLETED
 AP_DX_01_PHASE_C_STATUS: COMPLETED
 AP_DX_01_PHASE_D_STATUS: COMPLETED
 AP_DX_01_PHASE_E_STATUS: COMPLETED
-AP_DX_01_PHASE_F_STATUS: PENDING
+AP_DX_01_PHASE_F_STATUS: IN_PROGRESS — Block 2 contract tests COMPLETE
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
 AP_DX_01_VERSION_BUMP_REQUIRED: NO — additive optional structuralDesignModel at 0.1.0 (Phase B sign-off)
 AP_DX_01_MIGRATION_REQUIRED: NO — absent section defaults; no migration steps for AP-DX-01
@@ -1214,9 +1214,9 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 | C | TypeScript contract types (design entity interfaces) | COMPLETED |
 | D | Zod schema + JSON Schema artifact (design entity structural schema) | COMPLETED |
 | E | Parser, domain mapper, semantic validator for structuralDesignModel | COMPLETED |
-| F | Tests + typecheck/lint/build verification | PENDING |
+| F | Tests + typecheck/lint/build verification | IN_PROGRESS — Block 2 contract tests COMPLETE |
 
-AP_DX_01_OVERALL_STATUS: PHASE_E_COMPLETE — PHASE_F_PENDING
+AP_DX_01_OVERALL_STATUS: PHASE_F_IN_PROGRESS — Block 2 contract tests complete; verification bundle pending
 
 --------------------------------------------------------------------------------
 24.1a Phase B design decisions (2026-08-01 JST)
@@ -1353,15 +1353,15 @@ Open questions:
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
 AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
-AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase E parser/mapper/validator complete; Phase F tests/bookkeeping pending)
-AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript + Zod/JSON Schema + parser/mapper/validator present; Phase F test expansion pending)
+AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase F Block 2 contract tests complete; typecheck/lint/build bundle pending)
+AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (runtime + Block 2 contract tests present; Phase F verification bundle pending)
 AP_DX_01_READY_FOR_PHASE_D: YES
 AP_DX_01_READY_FOR_PHASE_E: YES
 AP_DX_01_READY_FOR_PHASE_F: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
 
 NEXT_EXACT_ACTION:
-  - Phase F: expand entity-graph and NOT_AUTHORIZED tests; run typecheck/lint/build verification bundle
+  - Phase F remainder: run typecheck/lint/build verification bundle
   - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
 
 --------------------------------------------------------------------------------
@@ -1483,6 +1483,37 @@ VERIFICATION:
   - git diff --check — PASS
 
 AP_DX_01_PHASE_C_COMMIT_MESSAGE: feat(apollo): add AP-DX-01 design entity contract types
+
+--------------------------------------------------------------------------------
+24.11 Block 2 — AP-DX-01 contract tests (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+SCOPE: Contract tests only for optional structuralDesignModel / AP-DX-01 design entities (no runtime contract code changes).
+
+FILES_MODIFIED:
+  - frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
+  - final_report.txt
+
+TEST_COVERAGE_ADDED (describe: AP-DX-01 structuralDesignModel contracts):
+  - structuralDesignModel Zod shape validation (complete model + negative cases)
+  - parser round-trip with all 11 AP-DX-01 entity collections
+  - stable ID preservation across JSON parse round-trip
+  - BSDD_DUPLICATE_ENTITY_ID rejection (bridge primitive collision)
+  - BSDD_DANGLING_REFERENCE rejection (entity cross-ref + geometry anchor)
+  - null placeholder boundary (unbound geometryRef / null cross-refs valid; non-null dangling rejected)
+  - ZOD_UNRECOGNIZED_KEYS on strict entity objects (unknown key retention boundary)
+  - explicit null preservation through parse round-trip
+  - BSDD_COMPOSITE_CONNECTOR_FORBIDDEN (extensions compositeShearConnector)
+  - DeckAnchorage independent non-composite entity (uplift_restraint; no compositeAction field)
+  - NOT_AUTHORIZED fail-closed default acceptance
+  - BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED for OK + NOT_SELECTED authority
+  - legacy createMinimalDraftDocument non-regression (no structuralDesignModel)
+
+VERIFICATION:
+  - cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts — PASS (35/35)
+
+AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
+AP_DX_01_BLOCK_2_COMMIT_MESSAGE: test(apollo): cover AP-DX-01 design entity contracts
 
 ================================================================================
 23. Final Merge Readiness Bookkeeping (2026-08-01 JST)

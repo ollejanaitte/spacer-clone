@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { isTreatableAsAdopted } from "../../apollo/numericAuthorityGuard";
+import { TargetStandardStatus } from "../../apollo/types";
 import { createDefaultProject } from "../../data/defaultProject";
 import { buildRunAnalysisIf3Metadata } from "../../if3";
 import {
@@ -10,16 +11,20 @@ import {
   BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND,
   BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID,
   BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION,
+  bridgeSuperstructureDesignDocumentSchema,
   CONTENT_CHECKSUM_ALGORITHM,
   COORDINATE_CONTEXT_SCHEMA_VERSION,
   parseBridgeSuperstructureDesignDocumentValue,
+  parseContractValue,
   parseUuid,
   requireRevisionId,
   UNIT_CONTEXT_SCHEMA_VERSION,
   validateBridgeSuperstructureDesignDocument,
   validateGovernedQuantity,
   type BridgeSuperstructureDesignDocument,
+  type DesignEntityMetadata,
   type GovernedQuantity,
+  type StructuralDesignModel,
 } from "../index";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
@@ -42,6 +47,19 @@ const MATERIAL_ID = parseUuid("a7508400-e29b-41d4-a716-446655440008")!;
 const LOAD_CASE_ID = parseUuid("a8508400-e29b-41d4-a716-446655440009")!;
 const BINDING_ID = parseUuid("a9508400-e29b-41d4-a716-446655440010")!;
 const EXPORT_AUTHORITY_DOC_ID = parseUuid("b0508400-e29b-41d4-a716-446655440011")!;
+const SDM_MODEL_ID = parseUuid("b0508400-e29b-41d4-a716-446655440020")!;
+const MAIN_GIRDER_ID = parseUuid("b1508400-e29b-41d4-a716-446655440021")!;
+const GIRDER_SECTION_SEGMENT_ID = parseUuid("b2508400-e29b-41d4-a716-446655440022")!;
+const RC_DECK_ID = parseUuid("b3508400-e29b-41d4-a716-446655440023")!;
+const HAUNCH_ID = parseUuid("b4508400-e29b-41d4-a716-446655440024")!;
+const CROSS_BEAM_ID = parseUuid("b5508400-e29b-41d4-a716-446655440025")!;
+const SWAY_BRACING_ID = parseUuid("b6508400-e29b-41d4-a716-446655440026")!;
+const LATERAL_BRACING_ID = parseUuid("b7508400-e29b-41d4-a716-446655440027")!;
+const BRACE_MEMBER_ID = parseUuid("b8508400-e29b-41d4-a716-446655440028")!;
+const STIFFENER_ID = parseUuid("b9508400-e29b-41d4-a716-446655440029")!;
+const SPLICE_ID = parseUuid("c0508400-e29b-41d4-a716-446655440030")!;
+const DECK_ANCHORAGE_ID = parseUuid("c1508400-e29b-41d4-a716-446655440031")!;
+const DANGLING_REF_ID = parseUuid("c2508400-e29b-41d4-a716-446655440099")!;
 
 const IDENTITY_MATRIX = [
   1, 0, 0, 0,
@@ -212,6 +230,134 @@ function createMinimalDraftDocument(
   };
 }
 
+function createDesignEntityMetadata(
+  overrides: Partial<DesignEntityMetadata> = {},
+): DesignEntityMetadata {
+  return {
+    entityRevisionId: 1,
+    provenance: createProvenance(),
+    geometryRef: { geometryRefId: null, bindingStatus: "unbound" },
+    analysisMapping: {
+      analysisMemberRefId: null,
+      bindingStatus: "unbound",
+      analysisBindingId: null,
+    },
+    designStatus: "NOT_AUTHORIZED",
+    adoptionStatus: "UNKNOWN",
+    ...overrides,
+  };
+}
+
+function createMinimalStructuralDesignModel(
+  overrides: Partial<StructuralDesignModel> = {},
+): StructuralDesignModel {
+  return {
+    modelId: SDM_MODEL_ID,
+    nonCompositeAssertion: { compositeAction: false },
+    mainGirders: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "MainGirder",
+        mainGirderId: MAIN_GIRDER_ID,
+        girderLineRefId: GIRDER_LINE_ID,
+        materialRefId: MATERIAL_ID,
+      },
+    ],
+    girderSectionSegments: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "GirderSectionSegment",
+        girderSectionSegmentId: GIRDER_SECTION_SEGMENT_ID,
+        mainGirderRefId: MAIN_GIRDER_ID,
+        materialRefId: null,
+      },
+    ],
+    rcDecks: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "RcDeck",
+        rcDeckId: RC_DECK_ID,
+        deckRefId: DECK_ID,
+      },
+    ],
+    haunches: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "Haunch",
+        haunchId: HAUNCH_ID,
+        mainGirderRefId: MAIN_GIRDER_ID,
+      },
+    ],
+    crossBeams: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "CrossBeam",
+        crossBeamId: CROSS_BEAM_ID,
+        materialRefId: null,
+      },
+    ],
+    swayBracings: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "SwayBracing",
+        swayBracingId: SWAY_BRACING_ID,
+      },
+    ],
+    lateralBracings: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "LateralBracing",
+        lateralBracingId: LATERAL_BRACING_ID,
+      },
+    ],
+    braceMembers: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "BraceMember",
+        braceMemberId: BRACE_MEMBER_ID,
+        parentBracingRefId: SWAY_BRACING_ID,
+      },
+    ],
+    stiffeners: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "Stiffener",
+        stiffenerId: STIFFENER_ID,
+        mainGirderRefId: MAIN_GIRDER_ID,
+      },
+    ],
+    splices: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "Splice",
+        spliceId: SPLICE_ID,
+        mainGirderRefId: null,
+      },
+    ],
+    deckAnchorages: [
+      {
+        ...createDesignEntityMetadata(),
+        entityKind: "DeckAnchorage",
+        deckAnchorageId: DECK_ANCHORAGE_ID,
+        anchorageRole: "slab_to_girder",
+        girderRefId: MAIN_GIRDER_ID,
+        rcDeckRefId: RC_DECK_ID,
+      },
+    ],
+    ...overrides,
+  };
+}
+
+function createMinimalDraftDocumentWithSdm(
+  sdmOverrides: Partial<StructuralDesignModel> = {},
+  documentOverrides: Partial<BridgeSuperstructureDesignDocument> = {},
+): BridgeSuperstructureDesignDocument {
+  return createMinimalDraftDocument({
+    structuralDesignModel: createMinimalStructuralDesignModel(sdmOverrides),
+    ...documentOverrides,
+  });
+}
+
 describe("validateBridgeSuperstructureDesignDocument", () => {
   it("accepts a minimal DRAFT document with non-adopted null quantities", () => {
     const document = createMinimalDraftDocument();
@@ -375,5 +521,328 @@ describe("validateBridgeSuperstructureDesignDocument", () => {
           material.elasticModulus.adoptionStatus !== "ADOPTED",
       ),
     ).toBe(true);
+  });
+});
+
+describe("AP-DX-01 structuralDesignModel contracts", () => {
+  it("structurally validates a complete structuralDesignModel shape", () => {
+    const document = createMinimalDraftDocumentWithSdm();
+    const structural = parseContractValue(bridgeSuperstructureDesignDocumentSchema, document, {
+      path: "",
+    });
+    expect(structural.success).toBe(true);
+  });
+
+  it.each([
+    ["missing nonCompositeAssertion", { nonCompositeAssertion: undefined }],
+    ["missing mainGirders array", { mainGirders: undefined }],
+    ["invalid modelId", { modelId: "not-a-uuid" }],
+    ["wrong entityKind literal", { mainGirders: [{ entityKind: "BraceMember" }] }],
+  ] as const)("rejects structuralDesignModel with %s", (_label, patch) => {
+    const sdm = {
+      ...createMinimalStructuralDesignModel(),
+      ...patch,
+    };
+    const document = createMinimalDraftDocument({ structuralDesignModel: sdm as StructuralDesignModel });
+    const structural = parseContractValue(bridgeSuperstructureDesignDocumentSchema, document, {
+      path: "",
+    });
+    expect(structural.success).toBe(false);
+  });
+
+  it("round-trips AP-DX-01 entities through parse without dropping fields", () => {
+    const source = createMinimalDraftDocumentWithSdm();
+    const serialized = JSON.parse(JSON.stringify(source)) as unknown;
+    const parsed = parseBridgeSuperstructureDesignDocumentValue(serialized);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) {
+      return;
+    }
+
+    const sdm = parsed.data.structuralDesignModel;
+    expect(sdm).toBeDefined();
+    expect(sdm?.modelId).toBe(SDM_MODEL_ID);
+    expect(sdm?.mainGirders).toHaveLength(1);
+    expect(sdm?.mainGirders[0]?.mainGirderId).toBe(MAIN_GIRDER_ID);
+    expect(sdm?.girderSectionSegments[0]?.mainGirderRefId).toBe(MAIN_GIRDER_ID);
+    expect(sdm?.rcDecks[0]?.deckRefId).toBe(DECK_ID);
+    expect(sdm?.deckAnchorages[0]?.anchorageRole).toBe("slab_to_girder");
+    expect(sdm?.deckAnchorages[0]?.girderRefId).toBe(MAIN_GIRDER_ID);
+    expect(sdm?.deckAnchorages[0]?.rcDeckRefId).toBe(RC_DECK_ID);
+    expect(sdm?.nonCompositeAssertion.compositeAction).toBe(false);
+  });
+
+  it("preserves stable entity IDs across JSON serialization and parse", () => {
+    const source = createMinimalDraftDocumentWithSdm();
+    const expectedIds = [
+      SDM_MODEL_ID,
+      MAIN_GIRDER_ID,
+      GIRDER_SECTION_SEGMENT_ID,
+      RC_DECK_ID,
+      HAUNCH_ID,
+      CROSS_BEAM_ID,
+      SWAY_BRACING_ID,
+      LATERAL_BRACING_ID,
+      BRACE_MEMBER_ID,
+      STIFFENER_ID,
+      SPLICE_ID,
+      DECK_ANCHORAGE_ID,
+    ];
+    const parsed = parseBridgeSuperstructureDesignDocumentValue(JSON.parse(JSON.stringify(source)));
+    expect(parsed.success).toBe(true);
+    if (!parsed.success || parsed.data.structuralDesignModel === undefined) {
+      return;
+    }
+
+    const sdm = parsed.data.structuralDesignModel;
+    const actualIds = [
+      sdm.modelId,
+      sdm.mainGirders[0]?.mainGirderId,
+      sdm.girderSectionSegments[0]?.girderSectionSegmentId,
+      sdm.rcDecks[0]?.rcDeckId,
+      sdm.haunches[0]?.haunchId,
+      sdm.crossBeams[0]?.crossBeamId,
+      sdm.swayBracings[0]?.swayBracingId,
+      sdm.lateralBracings[0]?.lateralBracingId,
+      sdm.braceMembers[0]?.braceMemberId,
+      sdm.stiffeners[0]?.stiffenerId,
+      sdm.splices[0]?.spliceId,
+      sdm.deckAnchorages[0]?.deckAnchorageId,
+    ];
+    expect(actualIds).toEqual(expectedIds);
+  });
+
+  it("rejects duplicate stable IDs across bridge primitives and design entities", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata(),
+          entityKind: "MainGirder",
+          mainGirderId: SPAN_ID,
+          girderLineRefId: GIRDER_LINE_ID,
+          materialRefId: MATERIAL_ID,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document);
+    expect(result.status).toBe("invalid");
+    expect(result.issues.some((issue) => issue.code === "BSDD_DUPLICATE_ENTITY_ID")).toBe(true);
+  });
+
+  it("rejects dangling non-null entity cross-references", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      girderSectionSegments: [
+        {
+          ...createDesignEntityMetadata(),
+          entityKind: "GirderSectionSegment",
+          girderSectionSegmentId: GIRDER_SECTION_SEGMENT_ID,
+          mainGirderRefId: DANGLING_REF_ID,
+          materialRefId: null,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document);
+    expect(result.status).toBe("invalid");
+    expect(result.issues.some((issue) => issue.code === "BSDD_DANGLING_REFERENCE")).toBe(true);
+  });
+
+  it("rejects dangling non-null geometryRef anchors while allowing null placeholders", () => {
+    const unboundDocument = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({
+            geometryRef: { geometryRefId: null, bindingStatus: "unbound" },
+            adoptionStatus: "PLACEHOLDER",
+          }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: null,
+          materialRefId: null,
+        },
+      ],
+    });
+    expect(validateBridgeSuperstructureDesignDocument(unboundDocument).status).toBe("valid");
+
+    const danglingDocument = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({
+            geometryRef: { geometryRefId: DANGLING_REF_ID, bindingStatus: "bound" },
+          }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: null,
+          materialRefId: null,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(danglingDocument);
+    expect(result.status).toBe("invalid");
+    expect(result.issues.some((issue) => issue.code === "BSDD_DANGLING_REFERENCE")).toBe(true);
+  });
+
+  it("rejects unknown keys on strict design entity objects at structural parse", () => {
+    const document = createMinimalDraftDocumentWithSdm();
+    const serialized = JSON.parse(JSON.stringify(document)) as Record<string, unknown>;
+    const sdm = serialized.structuralDesignModel as Record<string, unknown>;
+    const mainGirders = sdm.mainGirders as Record<string, unknown>[];
+    mainGirders[0] = {
+      ...mainGirders[0],
+      compositeShearConnector: { count: 4 },
+    };
+
+    const parsed = parseBridgeSuperstructureDesignDocumentValue(serialized);
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      expect(
+        parsed.validation.issues.some((issue) => issue.code === "ZOD_UNRECOGNIZED_KEYS"),
+      ).toBe(true);
+    }
+  });
+
+  it("preserves explicit null references through parse round-trip", () => {
+    const source = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({ sourceRef: null }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: null,
+          materialRefId: null,
+        },
+      ],
+      splices: [
+        {
+          ...createDesignEntityMetadata(),
+          entityKind: "Splice",
+          spliceId: SPLICE_ID,
+          mainGirderRefId: null,
+        },
+      ],
+    });
+    const parsed = parseBridgeSuperstructureDesignDocumentValue(JSON.parse(JSON.stringify(source)));
+    expect(parsed.success).toBe(true);
+    if (!parsed.success || parsed.data.structuralDesignModel === undefined) {
+      return;
+    }
+
+    const mainGirder = parsed.data.structuralDesignModel.mainGirders[0];
+    expect(mainGirder?.girderLineRefId).toBeNull();
+    expect(mainGirder?.materialRefId).toBeNull();
+    expect(mainGirder?.sourceRef).toBeNull();
+    expect(parsed.data.structuralDesignModel.splices[0]?.mainGirderRefId).toBeNull();
+    expect(mainGirder?.geometryRef.geometryRefId).toBeNull();
+    expect(mainGirder?.analysisMapping.analysisMemberRefId).toBeNull();
+  });
+
+  it("rejects composite connector contamination in entity extensions", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({
+            extensions: {
+              "spacer.vendor/compositeShearConnector": { json: { count: 3 } },
+            },
+          }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: GIRDER_LINE_ID,
+          materialRefId: MATERIAL_ID,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document);
+    expect(result.status).toBe("invalid");
+    expect(result.issues.some((issue) => issue.code === "BSDD_COMPOSITE_CONNECTOR_FORBIDDEN")).toBe(
+      true,
+    );
+  });
+
+  it("accepts DeckAnchorage as an independent non-composite entity", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      deckAnchorages: [
+        {
+          ...createDesignEntityMetadata({
+            designStatus: "NOT_AUTHORIZED",
+            adoptionStatus: "PENDING",
+          }),
+          entityKind: "DeckAnchorage",
+          deckAnchorageId: DECK_ANCHORAGE_ID,
+          anchorageRole: "uplift_restraint",
+          girderRefId: MAIN_GIRDER_ID,
+          rcDeckRefId: RC_DECK_ID,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document);
+    expect(result.status).toBe("valid");
+    expect(document.structuralDesignModel?.deckAnchorages[0]?.anchorageRole).toBe("uplift_restraint");
+    expect(
+      Object.prototype.hasOwnProperty.call(
+        document.structuralDesignModel?.deckAnchorages[0] ?? {},
+        "compositeAction",
+      ),
+    ).toBe(false);
+  });
+
+  it("accepts NOT_AUTHORIZED design entities fail-closed by default", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({
+            designStatus: "NOT_AUTHORIZED",
+            adoptionStatus: "UNKNOWN",
+          }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: GIRDER_LINE_ID,
+          materialRefId: MATERIAL_ID,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document);
+    expect(result.status).toBe("valid");
+  });
+
+  it("rejects check-result designStatus when numeric authority is NOT_SELECTED", () => {
+    const document = createMinimalDraftDocumentWithSdm({
+      mainGirders: [
+        {
+          ...createDesignEntityMetadata({
+            designStatus: "OK",
+            adoptionStatus: "ADOPTED",
+          }),
+          entityKind: "MainGirder",
+          mainGirderId: MAIN_GIRDER_ID,
+          girderLineRefId: GIRDER_LINE_ID,
+          materialRefId: MATERIAL_ID,
+        },
+      ],
+    });
+    const result = validateBridgeSuperstructureDesignDocument(document, {
+      numericAuthorityContext: {
+        targetStandardStatus: TargetStandardStatus.NOT_SELECTED,
+      },
+    });
+    expect(result.status).toBe("invalid");
+    expect(
+      result.issues.some((issue) => issue.code === "BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED"),
+    ).toBe(true);
+  });
+
+  it("keeps legacy BSDD fixture valid without structuralDesignModel (non-regression)", () => {
+    const legacyDocument = createMinimalDraftDocument();
+    expect(legacyDocument.structuralDesignModel).toBeUndefined();
+
+    const validation = validateBridgeSuperstructureDesignDocument(legacyDocument);
+    expect(validation.status).toBe("valid");
+
+    const parsed = parseBridgeSuperstructureDesignDocumentValue(
+      JSON.parse(JSON.stringify(legacyDocument)),
+    );
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.structuralDesignModel).toBeUndefined();
+    }
   });
 });
