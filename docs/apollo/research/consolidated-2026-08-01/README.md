@@ -9,9 +9,9 @@
 | Metric | Count |
 | --- | ---: |
 | Selected source artifacts | 112 |
-| `CANONICAL` copies (this tree + handoffs tree) | 81 |
-| `DUPLICATE_SKIPPED` (SHA match on `main`) | 31 |
-| Git-tracked files under this directory (excl. README) | 69 |
+| `CANONICAL` copies (this tree + handoffs tree) | 79 |
+| `DUPLICATE_SKIPPED` (SHA match on `main`) | 33 |
+| Git-tracked files under this directory (excl. README) | 67 |
 
 Handoff acceptance/review metadata (12 `CANONICAL` files) lives at [handoffs/consolidated-2026-08-01/](../../handoffs/consolidated-2026-08-01/).
 
@@ -24,7 +24,7 @@ Git-tracked copies preserve the source relative tree under `manual-research/` (e
 | Stage summaries | `summaries/*.md` | 15 | 3 |
 | Feature extraction | `features/*.{md,csv}` | 33 | 6 |
 | Manual inventory | `inventory/*.{md,csv}` | 12 | 0 |
-| Standards / traceability | `standards/*.{md,csv}` | 9 | 12 |
+| Standards / traceability | `standards/*.{md,csv}` | 7 | 14 |
 | Validation plans | `validation/*.md` | 0 | 3 |
 | OSS mapping | `oss-mapping/*.csv` | 0 | 1 |
 
@@ -103,7 +103,7 @@ NUMERIC_RELEASE_READINESS: BLOCKED (unchanged — Step 1 / DS-09 authority)
 
 ### Features and standards
 
-See `features/` (33 files) and `standards/` (9 copied files) for stage 4–5 extraction catalogs, traceability registers, and Stage 5A research handoff CSVs.
+See `features/` (33 files) and `standards/` (7 copied files) for stage 4–5 extraction catalogs and traceability registers. Stage 5A external research handoff CSV is canonical at [design-standards consolidated research](../../design-standards/research/consolidated-2026-08-01/stage5a_external_research_handoff.csv); Apollo return resolution is canonical at [handoffs consolidated review](../../handoffs/consolidated-2026-08-01/external-handoffs/SC-20260726-001/review/apollo_return_review.csv).
 
 ## Related navigation
 

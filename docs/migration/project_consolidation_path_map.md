@@ -138,7 +138,7 @@ Row-level provenance for every file copied into tracked `docs/`. `DUPLICATE_SKIP
 | `apollo/manual-research/inventory/revision_matrix.md` | `docs/apollo/research/consolidated-2026-08-01/inventory/revision_matrix.md` | A_MAIN | CANONICAL |
 | `apollo/manual-research/oss-mapping/stage6_mapping_candidates.csv` | `docs/apollo/research/consolidated-2026-08-01/oss-mapping/stage6_mapping_candidates.csv` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5_acceptance_design.md` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_acceptance_design.md` | A_MAIN | CANONICAL |
-| `apollo/manual-research/standards/stage5_apollo_return_resolution.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_apollo_return_resolution.csv` | A_MAIN | CANONICAL |
+| `apollo/manual-research/standards/stage5_apollo_return_resolution.csv` | `docs/apollo/handoffs/consolidated-2026-08-01/external-handoffs/SC-20260726-001/review/apollo_return_review.csv` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5_conflicts.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_conflicts.csv` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5_design_freeze_assessment.md` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_design_freeze_assessment.md` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5_external_traceability_crosswalk.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_external_traceability_crosswalk.csv` | A_MAIN | DUPLICATE_SKIPPED |
@@ -150,7 +150,7 @@ Row-level provenance for every file copied into tracked `docs/`. `DUPLICATE_SKIP
 | `apollo/manual-research/standards/stage5_traceability_data_model.md` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_traceability_data_model.md` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5_unknown_resolution.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5_unknown_resolution.csv` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5a_explicit_standard_references.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5a_explicit_standard_references.csv` | A_MAIN | CANONICAL |
-| `apollo/manual-research/standards/stage5a_external_research_handoff.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5a_external_research_handoff.csv` | A_MAIN | CANONICAL |
+| `apollo/manual-research/standards/stage5a_external_research_handoff.csv` | `docs/apollo/design-standards/research/consolidated-2026-08-01/stage5a_external_research_handoff.csv` | A_MAIN | DUPLICATE_SKIPPED |
 | `apollo/manual-research/standards/stage5a_external_source_matrix.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5a_external_source_matrix.csv` | A_MAIN | CANONICAL |
 | `apollo/manual-research/standards/stage5a_manual_defined_items.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5a_manual_defined_items.csv` | A_MAIN | CANONICAL |
 | `apollo/manual-research/standards/stage5a_priority_matrix.csv` | `docs/apollo/research/consolidated-2026-08-01/standards/stage5a_priority_matrix.csv` | A_MAIN | CANONICAL |

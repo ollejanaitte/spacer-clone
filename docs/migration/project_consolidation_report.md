@@ -1,12 +1,12 @@
 # Project Consolidation Report
 
 **Report date:** 2026-08-01
-**Branch:** `agent/finalize-project-consolidation-index`
+**Branch:** `agent/deduplicate-consolidated-csv-records`
 **Overall Phase 2 verdict:** `IN_PROGRESS`
 
 ## Executive summary
 
-Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), PR-D (#232), and PR-E (#233) are merged to `main` (`e569f3f`). PR-F (final manifest/repository index) is on this branch: path map, old-folder disposition, and consolidation summary documents; migration README and `docs/README.md` navigation updates. Central manifest remains **145 data rows** (unchanged). Local manifest records **118389** `local-archive/` rows. Active worktrees `spacer-clone-main` and `spacer-clone-apollo-u3` are `KEEP_WORKTREE`. Integrated `Projects/` sources are `DELETE_SAFE` candidates pending individual approval. Empty `line-tab-ui-integration-temp` is `D_EXCLUDED`.
+Phase 2 canonical clone is complete through PR-G. PR-A (#229), PR-B (#230), PR-C (#231), PR-D (#232), PR-E (#233), PR-F (#234), and PR-G (#235) are merged to `main` (`2533ca3`). Exact-SHA deduplication follow-up is on this branch: removes two tracked duplicate CSVs discovered in final audit, updates two central-manifest provenance rows to `DUPLICATE_SKIPPED`, and aligns path map and apollo research README counts. Central manifest remains **145 data rows** with **112** `CANONICAL` and **33** `DUPLICATE_SKIPPED`. Local manifest records **118389** `local-archive/` rows (SHA `2da55c3d…` after immutable README snapshot remediation; zero verification errors). Active worktrees `spacer-clone-main` and `spacer-clone-apollo-u3` are `KEEP_WORKTREE`. Integrated `Projects/` sources are `DELETE_SAFE` candidates pending individual approval. Empty `line-tab-ui-integration-temp` is `D_EXCLUDED`.
 
 ## SHA anchors
 
@@ -18,7 +18,9 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), PR-D
 | PR-C merge (`main`) | `beb942bfc09f0669b04dd70c6e38ef32ade18e97` | #231 apollo handoff/research consolidation |
 | PR-D merge (`main`) | `e4552901c67b2a504a5fe7ac1efee3b66969f076` | #232 verification/operator evidence |
 | PR-E merge (`main`) | `e569f3f27a5a59f5d5cae133bfd5478f51eba81c` | #233 UI preservation/legacy indexes |
-| PR-F working tree base | `e569f3f` | Base = PR-E merge; PR-F docs uncommitted |
+| PR-F merge (`main`) | `bafe168fe37b8df786728bfb88c84c545aab8d0e` | #234 final manifest/repository index |
+| PR-G merge (`main`) | `2533ca3dd73fe07fed90f473edda10de46b3f718` | #235 newly consolidated docs path normalization |
+| Follow-up working tree base | `2533ca3` | Base = PR-G merge; exact-SHA deduplication uncommitted |
 
 ## Phase status
 
@@ -29,12 +31,14 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), PR-D
 | Step 2 | PR-A local-archive boundary | `PASS` |
 | Step 2b | Raw archive bulk copy + hash | `PASS` (`118389` files verified) |
 | Step 3 | Selective copy + hash (PR-B) | `PASS` (31 artifacts, #230 merged) |
-| Step 3b | Selective copy + hash (PR-C) | `PASS` (112 selected; 81 canonical, 31 duplicate skipped; #231 merged) |
+| Step 3b | Selective copy + hash (PR-C) | `PASS` (112 selected; 79 canonical in research tree + handoffs; 33 duplicate skipped after follow-up; #231 merged) |
 | Step 3c | Selective copy + hash (PR-D) | `PASS` (111 selected source rows; 1 byte-exact PNG; derived summaries; #232 merged) |
 | Step 3d | Index-only archive packages (PR-E) | `PASS` (28 indexed source/segment rows; 0 byte-exact copies; #233 merged) |
-| Step 3e | Final manifest/repository index (PR-F) | `READY_FOR_REVIEW` (path map, disposition, summary on branch) |
+| Step 3e | Final manifest/repository index (PR-F) | `PASS` (#234 merged, `bafe168`) |
+| Step 3f | Newly consolidated docs path normalization (PR-G) | `PASS` (#235 merged, `2533ca3`) |
+| Step 3g | Exact-SHA deduplication follow-up | `READY_FOR_REVIEW` (2 tracked duplicates removed; manifest/path map/README on branch) |
 | Step 4 | Secret scan | `PASS` (PR-D/E derived artifacts — no patterns detected) |
-| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A/B/C/D/E merged; PR-F working tree) |
+| Step 5 | Docs PR merge sequence (A→G; follow-up when approved) | `IN_PROGRESS` (PR-A/B/C/D/E/F/G merged; follow-up working tree) |
 | Step 6 | Old folder disposition | `DOCUMENTED` (labels in `old_folder_disposition.md`; physical delete not started) |
 | Step 7 | Final verification | `NOT_STARTED` |
 
@@ -47,12 +51,18 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), PR-D
 | PR-C | Apollo handoff/research materials | `PASS` (#231, `beb942b`) |
 | PR-D | Verification/operator evidence | `PASS` (#232, `e455290`) |
 | PR-E | UI preservation/legacy indexes | `PASS` (#233, `e569f3f`) |
-| PR-F | Final manifest/repository index | `READY_FOR_REVIEW` (uncommitted on branch) |
-| PR-G | Newly consolidated docs path normalization | `REQUIRED` — one machine-local provenance example remains in `local_archive_policy.md` |
+| PR-F | Final manifest/repository index | `PASS` (#234, `bafe168`) |
+| PR-G | Newly consolidated docs path normalization | `PASS` (#235, `2533ca3`) |
+| Follow-up | Exact-SHA deduplication (2 CSV copies) | `READY_FOR_REVIEW` (uncommitted on branch) |
 
 ## PR-A / PR-B / PR-C
 
-Merged deliverables unchanged from prior reports (#229 / #230 / #231).
+Merged deliverables unchanged from prior reports (#229 / #230 / #231), except follow-up removes two exact-duplicate tracked copies under `docs/apollo/research/consolidated-2026-08-01/standards/`:
+
+| Removed duplicate | Canonical retained path | Git SHA (normalized) |
+| --- | --- | --- |
+| `standards/stage5a_external_research_handoff.csv` | `docs/apollo/design-standards/research/consolidated-2026-08-01/stage5a_external_research_handoff.csv` | `8bd562da80674abedbef260c93fa5b550fa8ca7f1035e842012f6c543dd5edca` |
+| `standards/stage5_apollo_return_resolution.csv` | `docs/apollo/handoffs/consolidated-2026-08-01/external-handoffs/SC-20260726-001/review/apollo_return_review.csv` | `b3683eb0631faec53aa8099741231ccac3c037c30309b393a94af34dac81174e` |
 
 ## PR-D deliverables (#232 merged)
 
@@ -98,16 +108,33 @@ Merged deliverables unchanged from prior reports (#229 / #230 / #231).
 | `Projects/docs` | 1 | startup-records README + source_manifest | 0 | 1 startup log (536 bytes) |
 | `Projects/line-tab-ui-integration-temp` | 0 | — | 0 | `D_EXCLUDED` empty scratch |
 
-## PR-F deliverables (this branch)
+## PR-F deliverables (#234 merged)
 
 | Item | Status |
 | --- | --- |
-| [project_consolidation_path_map.md](project_consolidation_path_map.md) | Done — all source → Git / local-archive / excluded mappings |
-| [old_folder_disposition.md](old_folder_disposition.md) | Done — `KEEP_WORKTREE`, `KEEP_EXTERNAL`, `DELETE_SAFE` candidate labels |
-| [project_consolidation_summary.md](project_consolidation_summary.md) | Done — PR A–E rollup, central/local manifest aggregates |
-| [README.md](README.md) | Updated — PR-F document index |
-| [../README.md](../README.md) | Updated — Apollo/archive/migration navigation |
-| `project_consolidation_manifest.csv` | Unchanged — 145 data rows |
+| [project_consolidation_path_map.md](project_consolidation_path_map.md) | Merged — all source → Git / local-archive / excluded mappings |
+| [old_folder_disposition.md](old_folder_disposition.md) | Merged — `KEEP_WORKTREE`, `KEEP_EXTERNAL`, `DELETE_SAFE` candidate labels |
+| [project_consolidation_summary.md](project_consolidation_summary.md) | Merged — PR A–E rollup, central/local manifest aggregates |
+| [README.md](README.md) | Merged — PR-F document index |
+| [../README.md](../README.md) | Merged — Apollo/archive/migration navigation |
+| `project_consolidation_manifest.csv` | Unchanged row count — 145 data rows at merge |
+
+## PR-G deliverables (#235 merged)
+
+| Item | Status |
+| --- | --- |
+| `local_archive_policy.md` machine-local provenance example | Normalized |
+| Immutable README snapshot remediation | Completed locally after PR-G merge (Git-ignored) — local manifest SHA `2da55c3d131f3c2fee85ee04a816c73446e18e333e58361a012d7e816a522a18`; 118389 rows; zero verification errors |
+
+## Follow-up deliverables (this branch)
+
+| Item | Status |
+| --- | --- |
+| Remove duplicate `standards/stage5a_external_research_handoff.csv` | Done |
+| Remove duplicate `standards/stage5_apollo_return_resolution.csv` | Done |
+| `project_consolidation_manifest.csv` | Done — 2 provenance rows `DUPLICATE_SKIPPED`; central SHA `61fdbf98106065c2243452128b114ce85900d9a3ae42956e2b955d6376d6b460` |
+| [project_consolidation_path_map.md](project_consolidation_path_map.md) | Done — 2 rows aligned |
+| [../apollo/research/consolidated-2026-08-01/README.md](../apollo/research/consolidated-2026-08-01/README.md) | Done — 79/33 canonical/skipped; 67 tracked files; standards 7/14 |
 
 ### Disposition summary
 
@@ -138,15 +165,15 @@ Merged deliverables unchanged from prior reports (#229 / #230 / #231).
 - Docs-only integration PRs; no functional code PRs.
 - `local-archive/` and ≥50 MiB / rights-unknown / raw binary bulk: Git prohibited.
 - Old worktree deletion prohibited; physical delete requires individual path approval.
-- Phase 1 external inventory / `final_report.txt` are not modified by PR-D/E/F worker tasks.
+- Phase 1 external inventory / `final_report.txt` are not modified by PR-D/E/F/G or follow-up worker tasks.
 
 ## Next actions
 
-1. Open PR for PR-F index artifacts when authorized.
-2. Merge PR-F to `main` when approved.
+1. Open PR for exact-SHA deduplication follow-up when authorized.
+2. Merge follow-up to `main` when approved.
 3. Run Step 7 final verification when authorized.
 4. Process individual delete approvals for `DELETE_SAFE` candidates if requested.
 
 ## External authority
 
-Phase 1 inventory and integration plan live in the repository parent directory (`KEEP_EXTERNAL`) and are not modified by PR-F. Source trees under `Projects/` are read-only for consolidation passes; disposition labels are in [old_folder_disposition.md](old_folder_disposition.md).
+Phase 1 inventory and integration plan live in the repository parent directory (`KEEP_EXTERNAL`) and are not modified by follow-up. Source trees under `Projects/` are read-only for consolidation passes; disposition labels are in [old_folder_disposition.md](old_folder_disposition.md).
