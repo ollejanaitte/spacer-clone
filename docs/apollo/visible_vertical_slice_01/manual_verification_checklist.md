@@ -1,19 +1,20 @@
 # Apollo Visible Vertical Slice 01 — Manual GUI Verification Checklist
 
 **Status:** PENDING — operator visual confirmation required
-**Prepared:** 2026-08-01 22:26 JST
+**Prepared:** 2026-08-01
+**Updated:** 2026-08-01 (Block 3 — PR #245 review follow-up GUI items)
 **Target branch:** `feat/ap-dx-visible-vertical-slice-01`
-**Block D baseline SHA:** `26d8b5627ab2c19cd87a78e0b2185cab6df106b3`
-**Artifact role:** Visible Vertical Slice 01 end-to-end GUI confirmation — bridge structure input → SDM → 3D solids → save/reload
+**Review follow-up baseline SHA:** `560c9e1ed09c65691e8a47a0a542201c6c73208b`
+**Artifact role:** Visible Vertical Slice 01 end-to-end GUI confirmation — bridge structure input → SDM → 3D solids → save/reload, including stale-gate and validation UX
 
 ## Automated vs manual verdict policy
 
 Codex, Cursor, and other non-visual agents **cannot** certify GUI/3D display correctness.
-Automated vitest PASS results (Block D bundle: 204 Apollo + 22 viewer + slice-specific tests) are
+Automated vitest PASS results (218 Apollo + 22 viewer + slice-specific tests as of 2026-08-01) are
 **supporting evidence only** and do **not** substitute for this checklist.
 
 ```text
-MANUAL_GUI_VERDICT: PENDING
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
 VISIBLE_SLICE_3D_RENDERING_VERDICT (manual): PENDING
 ```
 
@@ -25,7 +26,7 @@ VISIBLE_SLICE_3D_RENDERING_VERDICT (manual): PENDING
 |--------------|-------------|----------------|
 | Repository | `/home/masaharu/Projects/spacer-clone` | Path exists |
 | Branch | `feat/ap-dx-visible-vertical-slice-01` | `git branch --show-current` |
-| Worktree | Clean after Block D commits | `git status --short` |
+| Worktree | Clean after Block 3 commits | `git status --short` |
 | Node.js | v24.x recommended | `node --version` |
 | Frontend deps | `frontend/node_modules` installed | `cd frontend && npm ci` if missing |
 | Backend deps | `python3 -c "import backend.app.main"` from repo root | Import succeeds |
@@ -106,6 +107,8 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 | VVS-MV-12 | **3D after reload** | After reload, confirm 3D panel | Girders/deck/cross-beams regenerate visually without re-clicking 構造を生成 | PENDING |
 | VVS-MV-13 | **STL non-regression** | Load 200m級 sample (optional); export STL preset 全体 | Download succeeds; STL non-empty (sample path unchanged) | PENDING |
 | VVS-MV-14 | **Console errors** | DevTools console during steps VVS-MV-01–12 | No red Error entries during input, generation, 3D toggles, save/reload | PENDING |
+| VVS-MV-15 | **Stale gate after edit** | Generate structure (VVS-MV-04), then change 主桁本数 without clicking 構造を生成 | `apollo-bridge-structure-stale-message` visible with 「入力が変更されました」; SDM summary hidden; 概算数量 shows INCOMPLETE; 3D BSDD solids disappear until re-generation | PENDING |
+| VVS-MV-16 | **Validation errors** | Enter 橋長100 / 径間30 → attempt generate; then enter 幅8 / 主桁4 / 間隔3 → attempt generate | Generation blocked with 「割り切れる」 and 「主桁配置幅」 field errors respectively; no silent span correction | PENDING |
 
 ---
 
@@ -114,10 +117,10 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 | Field | Value |
 |-------|-------|
 | Checklist artifact | `docs/apollo/visible_vertical_slice_01/manual_verification_checklist.md` |
-| Automated Block D tests | PASS — supporting evidence only |
+| Automated Block 3 tests | PASS — 40 slice + 218 Apollo (supporting evidence only) |
 | Operator completion date | _not recorded_ |
 | All VVS-MV rows PASS? | **NO** — pending operator execution |
-| `MANUAL_GUI_VERDICT` | **PENDING** |
+| `MANUAL_GUI_VERDICT` | **PENDING_USER_CONFIRMATION** |
 | `VISIBLE_SLICE_3D_RENDERING_VERDICT` (manual) | **PENDING** |
 
 ### Recording procedure
@@ -125,7 +128,7 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 1. Execute startup commands (Section 2) and navigation (Section 4).
 2. For each VVS-MV row, set PASS or FAIL and attach evidence (screenshot path or note).
 3. When all rows PASS, set `MANUAL_GUI_VERDICT: PASS` and update `local_implementation_report.md` and `final_report.txt`.
-4. If any row FAIL, set `MANUAL_GUI_VERDICT: FAIL` and file a defect note before merge.
+4. If any row FAIL, set `MANUAL_GUI_VERDICT: FAIL` and file a defect note.
 
 ---
 
@@ -133,8 +136,8 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 
 | TEST_ID | Scope | Result |
 |---------|-------|--------|
-| VVS-01-D-01 | BridgeStructureInputPanel UI (4 tests) | PASS |
-| VVS-01-D-04 | bridgeStructureVisualization 3D model (8 tests) | PASS |
-| VVS-01-D-05 | importExport save/reload (7 tests) | PASS |
-| VVS-01-D-06 | Full Apollo regression (204 tests) | PASS |
-| VVS-01-D-07 | Viewer + STL regression (22 tests) | PASS |
+| VVS-01-B3-01 | Slice tests incl. stale/validation negatives (40 tests) | PASS |
+| VVS-01-B3-02 | Full Apollo regression (218 tests) | PASS |
+| VVS-01-B3-03 | Viewer + STL regression (22 tests) | PASS |
+| VVS-01-D-04 | bridgeStructureVisualization 3D model | PASS |
+| VVS-01-D-05 | importExport save/reload | PASS |
