@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:42:15 JST
-WORK_STATUS: ACTIVE — Phase C schema/doc PASS; LV-01 PASS; verification may proceed to LV-04 bundle 5
-CURRENT_PHASE: Phase C schema/doc verification PASS (8/8 commands exit 0)
+UPDATE_TIMESTAMP: 2026-08-01 19:45:40 JST
+WORK_STATUS: ACTIVE — LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
+CURRENT_PHASE: LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0)
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
 ================================================================================
@@ -35,8 +35,10 @@ Phase 4 static check bundle 3 (build): PASS (exit 0; `tsc -b && vite build` comp
 3926 modules transformed; dist/ artifacts generated; chunk size warning informational only).
 Phase C schema/doc verification (2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands
 exit 0 — backend schema pytest 36/36; contract JSON Schema vitest 5/5; four Apollo evidence
-validators PASS). LV-03 (implementation inventory) is PASS (code inspection; see
-implementation_inventory.md). LV-04 is IN_PROGRESS (4/9 bundles; Phase C schema/doc PASS).
+validators PASS). LV-04 bundle 5 (backend general, 2026-08-01 19:45:37 JST): PASS (exit 0;
+14/14 modules, 189/189 tests; IF3 backend bundle and schema-only bundle already covered
+separately). LV-03 (implementation inventory) is PASS (code inspection; see
+implementation_inventory.md). LV-04 is IN_PROGRESS (5/9 bundles; backend general PASS).
 LV-05 through LV-07 remain NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C
 git diff --check PASS).
 TYPECHECK_VERDICT: PASS
@@ -110,7 +112,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-01 | Git sync / worktree | PASS — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 4 PASS — IF3 backend; Phase C schema/doc PASS) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 5 PASS — backend general; IF3 backend and schema-only bundles covered separately) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -121,13 +123,15 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 ================================================================================
 
 LV-01 re-run (2026-08-01 19:38:37 JST): PASS. Phase C schema/doc verification
-(2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands exit 0). origin/main and local main
+(2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands exit 0). LV-04 bundle 5 (backend
+general, 2026-08-01 19:45:37 JST): PASS (14/14 modules, 189/189 tests; IF3 backend bundle
+and schema-only bundle already covered separately). origin/main and local main
 are both f0983878ccbb816f591214b6242c3688ecb5a060. Verification branch HEAD cccf4c3… contains
 origin/main and matches origin/docs/apollo-refreeze-local-verification. Prior FAIL re-run
 (2026-08-01 19:32:32 JST) retained as historical evidence. Prior Phase 2–4 recorded
-results preserved; Phase C schema/doc bundle recorded.
+results preserved; Phase C schema/doc bundle and LV-04 bundle 5 recorded.
 
-Proceed to LV-04 bundle 5 (backend general) per local_verification_plan.md; LV-05
+Proceed to remaining LV-04 bundles per local_verification_plan.md; LV-05
 manual/e2e table. Full LV-02 findings remain in local_verification_report.md.
 
 ================================================================================
@@ -631,6 +635,33 @@ PHASE_C_SCHEMA_DOC_STATUS: PASS (8/8 commands exit 0)
 PHASE_C_SCHEMA_DOC_VERDICT: PASS
 
 ================================================================================
+15f. Phase 4 LV-04 Regression — Backend General (Bundle 5)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 19:45:37 JST.
+
+Scope: minimal backend general verification set (14 pytest modules). IF3 backend bundle
+(LV-04 bundle 4) and schema-only bundle (Phase C PHASE-C-03) were already covered
+separately and are not duplicated in this run.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B05-BE-GENERAL |
+| COMMAND | python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q |
+| START_TIME | 2026-08-01 19:45:37 JST |
+| END_TIME | 2026-08-01 19:45:40 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 14/14 backend general test modules passed (189/189 tests); excludes IF3 modules (bundle 4) and schema modules (Phase C) already covered separately |
+| EVIDENCE | pytest 9.1.1: 189 passed in 3.00s |
+| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+
+BACKEND_GENERAL_REGRESSION_STATUS: PASS
+LV04_B05_BE_GENERAL_VERDICT: PASS
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -674,12 +705,14 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 ================================================================================
 
 Stopped on branch docs/apollo-refreeze-local-verification at cccf4c3….
-Phase C schema/doc verification PASS (2026-08-01 19:42:07–19:42:15 JST; 8/8 commands exit 0).
+LV-04 bundle 5 backend general PASS (2026-08-01 19:45:37 JST; 14/14 modules, 189/189 tests;
+IF3 backend bundle and schema-only bundle already covered separately). Phase C schema/doc
+verification PASS (2026-08-01 19:42:07–19:42:15 JST; 8/8 commands exit 0).
 LV-01 re-run PASS (2026-08-01 19:38:37 JST): origin/main and local main f0983878….
 Verification branch contains origin/main. Prior FAIL re-run (19:32:32 JST) retained as
 historical evidence. Prior recorded results preserved: LV-04 bundle 1 FAIL (pre-existing);
-bundles 2–4 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. Proceed
-to LV-04 bundle 5 per local_verification_plan.md.
+bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. Proceed
+to remaining LV-04 bundles per local_verification_plan.md.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -709,14 +742,15 @@ baseline ancestry holds; prior FAIL 19:32:32 JST retained as historical).
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: PASS (implementation inventory — 5 IMPLEMENTED, 11 PARTIALLY_IMPLEMENTED, 1
 SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
-LV-04: IN_PROGRESS (bundle 4/9 PASS — IF3 backend).
+LV-04: IN_PROGRESS (bundle 5/9 PASS — backend general).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
 187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D PASS (corrected
 rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
 76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
-Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
+LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0; IF3 backend
+bundle and schema-only bundle already covered separately). Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
 Static check bundle 3 build PASS (exit 0; 3926 modules transformed; dist/ generated).
 Phase C schema/doc verification PASS (8/8 commands exit 0; backend schema 36/36; contract
 vitest 5/5; design-standards 40 files; evidence-collection 21 files; traceability 76
@@ -733,9 +767,9 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:42:15 JST
-WORK_STATUS: ACTIVE — Phase C schema/doc PASS; LV-01 PASS; verification may proceed
-STOP_REASON: None — Phase C schema/doc verification completed 2026-08-01 19:42:15 JST (PASS).
+UPDATE_TIMESTAMP: 2026-08-01 19:45:40 JST
+WORK_STATUS: ACTIVE — LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
+STOP_REASON: None — LV-04 bundle 5 backend general completed 2026-08-01 19:45:40 JST (PASS).
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
@@ -752,7 +786,7 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — proceed to LV-04 bundle 5
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — proceed to remaining LV-04 bundles
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
-  - LV-04 bundle 5 (backend general) per local_verification_plan.md
+  - Remaining LV-04 bundles per local_verification_plan.md

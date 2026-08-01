@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -160,7 +160,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | **PASS** — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed; Phase C schema/doc bundle PASS) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 5/9 executed; backend general PASS; IF3 backend and schema-only bundles covered separately) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -822,6 +822,47 @@ Verified command matches Phase 3 planned entry (no trailing `.` path argument):
 `LV04_B04_IF3_BE_VERDICT: PASS` — IF3 backend/API regression bundle exited 0 under the
 Phase 3 planned command.
 
+## Phase 4 LV-04 test execution (bundle 5 — backend general)
+
+**Execution timestamp:** 2026-08-01 19:45:37 JST
+**Verdict:** PASS
+
+Scope: fifth planned LV-04 bundle — minimal backend general verification set (14 pytest
+modules excluding IF3 and schema-only tests, which were already covered separately as
+LV-04 bundle 4 and Phase C PHASE-C-03). No other test categories executed. Doc branch
+`docs/apollo-refreeze-local-verification` has zero diff vs `origin/main` under `backend/`
+(docs-only commits since branch bootstrap).
+
+**Prior coverage (not re-run in this bundle):**
+
+- IF3 backend bundle — LV-04 bundle 4 (2026-08-01 18:57:44 JST): 7/7 modules, 123/123 tests PASS
+- Schema-only bundle — Phase C PHASE-C-03 (2026-08-01 19:42:07 JST): 5/5 schema pytest modules, 36/36 tests PASS
+
+Verified command (minimal backend general set per task specification):
+
+`python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q`
+
+### LV-04 bundle 5 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B05-BE-GENERAL |
+| COMMAND | `python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q` |
+| START_TIME | 2026-08-01 19:45:37 JST |
+| END_TIME | 2026-08-01 19:45:40 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 14/14 backend general test modules passed (189/189 tests); excludes IF3 modules (bundle 4) and schema modules (Phase C) already covered separately |
+| EVIDENCE | pytest 9.1.1: `189 passed in 3.00s`; no failures or errors |
+| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+
+### Phase 4 bundle 5 verdict
+
+`LV04_B05_BE_GENERAL_VERDICT: PASS` — minimal backend general regression bundle exited 0.
+IF3 backend bundle (LV-04 bundle 4) and schema-only bundle (Phase C PHASE-C-03) were
+already covered separately and are not duplicated in this run.
+
 ## Phase 4 static check execution (bundle 1 — typecheck)
 
 **Execution timestamp:** 2026-08-01 18:59:09 JST
@@ -1038,11 +1079,13 @@ No failures attributable to the verification branch; no application or validator
 ## Next action
 
 LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
-(2026-08-01 19:42:07–19:42:15 JST): **PASS** (8/8 commands). `origin/main` and local `main`
+(2026-08-01 19:42:07–19:42:15 JST): **PASS** (8/8 commands). LV-04 bundle 5 (backend
+general, 2026-08-01 19:45:37 JST): **PASS** (14/14 modules, 189/189 tests; IF3 backend
+bundle and schema-only bundle already covered separately). `origin/main` and local `main`
 are both `f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…`
 contains `origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior
 FAIL re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded
-results preserved: LV-03 PASS; LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS; static
-checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** LV-04 bundle 5 (backend
-general). LV-05 uses manual/e2e commands from the E2E/manual table. Do not invent commands
-outside this inventory.
+results preserved: LV-03 PASS; LV-04 bundle 1 FAIL (pre-existing); bundles 2–5 PASS; static
+checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** remaining LV-04 bundles
+per Phase 3 planned commands. LV-05 uses manual/e2e commands from the E2E/manual table.
+Do not invent commands outside this inventory.
