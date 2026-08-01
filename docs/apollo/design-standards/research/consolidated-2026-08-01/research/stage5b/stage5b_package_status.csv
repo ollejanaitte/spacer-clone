@@ -1,0 +1,6 @@
+package_id,sequence,status,primary_expected,primary_completed,handoff_expected,handoff_completed,supervisor_review,checkpoint,notes
+PKG-003-RBS-I,1,COMPLETE,12,12,16,16,APPROVED,checkpoints/checkpoint_PKG-003-RBS-I.json,Pilot gate PASSED
+PKG-004-RBS-II,2,COMPLETE,70,70,119,119,APPROVED,checkpoints/checkpoint_PKG-004-RBS-II.json,Stage5B execution complete
+PKG-005-RBS-III,3,COMPLETE,14,14,16,16,APPROVED,checkpoints/checkpoint_PKG-005-RBS-III.json,Stage5B execution complete
+PKG-006-DESIGN-MANUAL,4,COMPLETE,1,1,1,1,APPROVED,checkpoints/checkpoint_PKG-006-DESIGN-MANUAL.json,Stage5B execution complete
+PKG-007-DDB,5,COMPLETE,4,4,46,46,APPROVED,checkpoints/checkpoint_PKG-007-DDB.json,Stage5B execution complete
