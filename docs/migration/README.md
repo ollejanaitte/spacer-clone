@@ -1,6 +1,6 @@
 # Project Consolidation Migration
 
-**Status:** Phase 2 in progress — PR-C (apollo handoff/research)
+**Status:** Phase 2 in progress — PR-D (verification/operator evidence)
 **Scope:** Documentation and local-archive layout only. No application source changes.
 
 This directory holds provenance manifests and reports for consolidating external project folders into the canonical `spacer-clone` repository.
@@ -23,10 +23,10 @@ Operational manifest for local-archive copies: `local-archive/manifests/local_ar
 
 | PR | Focus |
 | --- | --- |
-| PR-A | Local-archive boundary (this step) |
-| PR-B | Bridge research |
-| PR-C | Apollo handoff/research materials |
-| PR-D | Verification/operator evidence |
+| PR-A | Local-archive boundary (merged) |
+| PR-B | Bridge research (merged) |
+| PR-C | Apollo handoff/research materials (merged) |
+| PR-D | Verification/operator evidence (this step) |
 | PR-E | UI preservation/legacy indexes |
 | PR-F | Final manifest/repository index |
 | PR-G | Newly consolidated docs path normalization (only when required) |

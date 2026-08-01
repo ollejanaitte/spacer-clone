@@ -1,0 +1,13 @@
+{
+  "verifiedAt": "Thursday, July 30, 2026",
+  "route": "/pro/apollo",
+  "backend": "python3 -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000",
+  "frontend": "npm run dev:apollo -- --host 127.0.0.1 --strictPort",
+  "presets": ["full", "girders", "deck", "visible"],
+  "downloads": "STL + .apollo.json confirmed for all presets",
+  "httpFailures": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "WebGL ReadPixels GPU stall warnings under headless Chromium"
+  ]
+}
