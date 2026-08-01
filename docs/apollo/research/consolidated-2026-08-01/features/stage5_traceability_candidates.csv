@@ -1,0 +1,77 @@
+feature_id,category,name,manual_id,hint,notes
+F4-P1-001,project_management,工事名フォルダ,MAN-021,MAN-021 2-2-2 ②,numeric/formula/year TBD in Stage5
+F4-P1-002,project_management,新規作成,MAN-021,MAN-021 2-2-2 ①; MAN-002 1.2,numeric/formula/year TBD in Stage5
+F4-P1-003,project_management,既存データ選択,MAN-002,MAN-002 1.3,numeric/formula/year TBD in Stage5
+F4-P1-004,alignment_import,線形データ取込,MAN-021,MAN-021 2-2-2 ④,numeric/formula/year TBD in Stage5
+F4-P1-005,longitudinal_alignment,縦断線定義,MAN-021,MAN-021 2-2-2 ⑤,numeric/formula/year TBD in Stage5
+F4-P1-006,cross_section_lines,横断線定義,MAN-021,MAN-021 2-2-2 ⑤,numeric/formula/year TBD in Stage5
+F4-P1-007,unit_system,単位系選択,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-008,unit_system,単位系自動変換なし,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-009,unit_system,ハンチ単位伝播,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-010,unit_system,単体プログラム単位設定,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-011,unit_system,デフォルト単位ルト単位値,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-012,bridge_basic_conditions,適用規模_主桁本数,MAN-021,MAN-021 3-2,numeric/formula/year TBD in Stage5
+F4-P1-013,bridge_basic_conditions,適用規模_主桁本数_鋼床版,MAN-021,MAN-021 3-2,numeric/formula/year TBD in Stage5
+F4-P1-014,bridge_basic_conditions,適用規模_横断線数,MAN-021,MAN-021 3-2,numeric/formula/year TBD in Stage5
+F4-P1-015,bridge_basic_conditions,適用規模_格点数_RC鈑桁,MAN-021,MAN-021 3-2,numeric/formula/year TBD in Stage5
+F4-P1-016,alignment,線形計算実行,MAN-021,MAN-021 2-2-1,numeric/formula/year TBD in Stage5
+F4-P1-017,project_management,フォルダ構成,MAN-021,MAN-021 4-1 (5),numeric/formula/year TBD in Stage5
+F4-P1-018,girder_layout,コントロールプログラム,MAN-021; MAN-002,左上から右下へガイドに沿って実行,numeric/formula/year TBD in Stage5
+F4-P1-019,project_management,設計DB,MAN-021; MAN-002,設計データはMS-Accessに保存される,numeric/formula/year TBD in Stage5
+F4-P1-020,bridge_basic_conditions,単位系ヘルプ記載,MAN-021,MAN-021 4-2-1,numeric/formula/year TBD in Stage5
+F4-P1-021,alignment,線形計算起動,MAN-003,MAN-003 1-1-1,numeric/formula/year TBD in Stage5
+F4-P1-022,alignment,線形計算起動,MAN-003,MAN-003 1-1-1,numeric/formula/year TBD in Stage5
+F4-P1-023,alignment,座標系指定,MAN-003,MAN-003 2-1,numeric/formula/year TBD in Stage5
+F4-P1-024,alignment,中心線作成,MAN-003,MAN-003 2-2,numeric/formula/year TBD in Stage5
+F4-P1-025,alignment,中心線作成,MAN-003,MAN-003 2-2,numeric/formula/year TBD in Stage5
+F4-P1-026,alignment,中心線作成,MAN-003,MAN-003 2-2,numeric/formula/year TBD in Stage5
+F4-P1-027,alignment,中心線作成,MAN-003,MAN-003 2-2,numeric/formula/year TBD in Stage5
+F4-P1-028,cross_slope,幅員線作成,MAN-003,MAN-003 2-3,numeric/formula/year TBD in Stage5
+F4-P1-029,alignment,橋台橋脚線作成,MAN-003,MAN-003 2-4,numeric/formula/year TBD in Stage5
+F4-P1-030,longitudinal_alignment,縦断勾配指定,MAN-003,MAN-003 3-1,numeric/formula/year TBD in Stage5
+F4-P1-031,cross_slope,横断勾配指定,MAN-003,MAN-003 3-2,numeric/formula/year TBD in Stage5
+F4-P1-032,cross_slope,高さ形状指定,MAN-003,MAN-003 3-3,numeric/formula/year TBD in Stage5
+F4-P1-033,member_line_assignment,橋形状設定,MAN-003,MAN-003 4-1,numeric/formula/year TBD in Stage5
+F4-P1-034,member_line_assignment,橋形状入力,MAN-003,MAN-003 4-2-2,numeric/formula/year TBD in Stage5
+F4-P1-035,cross_section_lines,横桁線作成,MAN-003,MAN-003 4-2-3,numeric/formula/year TBD in Stage5
+F4-P1-036,girder_layout,桁作成,MAN-003,MAN-003 4-2-4,numeric/formula/year TBD in Stage5
+F4-P1-037,alignment,座標変換,MAN-003,MAN-003 4-2-5,numeric/formula/year TBD in Stage5
+F4-P1-038,cross_section_lines,出力指定,MAN-003,MAN-003 4-2-6,numeric/formula/year TBD in Stage5
+F4-P1-039,cross_section_lines,出力指定,MAN-003,MAN-003 4-2-6,numeric/formula/year TBD in Stage5
+F4-P1-040,cross_section_lines,線属性指定,MAN-003,MAN-003 4-2-7,numeric/formula/year TBD in Stage5
+F4-P1-041,longitudinal_alignment,線形計算変換,MAN-003,MAN-003 5-1-1,numeric/formula/year TBD in Stage5
+F4-P1-042,cross_section_lines,線形計算変換,MAN-003,MAN-003 5-1-2,numeric/formula/year TBD in Stage5
+F4-P1-043,cross_section_lines,線形計算変換,MAN-003,MAN-003 5-1-2,numeric/formula/year TBD in Stage5
+F4-P1-044,bridge_basic_conditions,適用規模_主桁本数,MAN-003,MAN-003 3-2,numeric/formula/year TBD in Stage5
+F4-P1-045,bridge_basic_conditions,適用規模_横断線数,MAN-003,MAN-003 3-2,numeric/formula/year TBD in Stage5
+F4-P1-046,girder_layout,コントロールプログラム,MAN-003,左上から右下へガイドに沿って実行,numeric/formula/year TBD in Stage5
+F4-P1-047,bearing,支承条件データ,MAN-005,MAN-005 3-4-1,numeric/formula/year TBD in Stage5
+F4-P1-048,bearing,支承条件データ,MAN-005,MAN-005 4-4,numeric/formula/year TBD in Stage5
+F4-P1-049,bearing,支承線作成,MAN-003,MAN-003 4-2-2,numeric/formula/year TBD in Stage5
+F4-P1-050,bearing,支承線作成,MAN-003,MAN-003 4-2-2,numeric/formula/year TBD in Stage5
+F4-P1-051,standard_section,単位重量・物理定数データ,MAN-005,MAN-005 2-3-1,numeric/formula/year TBD in Stage5
+F4-P1-052,standard_section,使用材料データ,MAN-005,MAN-005 2-3-2,numeric/formula/year TBD in Stage5
+F4-P1-053,standard_section,許容応力度データ,MAN-005,MAN-005 2-3-3,numeric/formula/year TBD in Stage5
+F4-P1-054,standard_section,主桁全体データ,MAN-005,MAN-005 5-1-1,numeric/formula/year TBD in Stage5
+F4-P1-055,standard_section,主桁桁高データ,MAN-005,MAN-005 5-2-1,numeric/formula/year TBD in Stage5
+F4-P1-056,standard_section,主桁桁高データ,MAN-005,MAN-005 5-2-2,numeric/formula/year TBD in Stage5
+F4-P1-057,standard_section,主桁断面データ,MAN-005,MAN-005 5-3-1,numeric/formula/year TBD in Stage5
+F4-P1-058,standard_section,主桁断面データ,MAN-005,MAN-005 5-3-1,numeric/formula/year TBD in Stage5
+F4-P1-059,standard_section,補剛材データ,MAN-005,MAN-005 5-4-1,numeric/formula/year TBD in Stage5
+F4-P1-060,standard_section,補剛材データ,MAN-005,MAN-005 5-4-1,numeric/formula/year TBD in Stage5
+F4-P1-061,standard_section,補剛材データ,MAN-005,MAN-005 5-4-2,numeric/formula/year TBD in Stage5
+F4-P1-062,standard_section,床組データ,MAN-005,MAN-005 5-5-1,numeric/formula/year TBD in Stage5
+F4-P1-063,standard_section,部材名称データ,MAN-005,MAN-005 3-3,numeric/formula/year TBD in Stage5
+F4-P1-064,girder_layout,主桁桁端長データ,MAN-005,主桁桁端長は基本的に線形計算より連動,numeric/formula/year TBD in Stage5
+F4-P1-065,cross_slope,床版形状データ,MAN-005,MAN-005 3-2-1,numeric/formula/year TBD in Stage5
+F4-P1-066,cross_slope,床版形状データ,MAN-005,MAN-005 3-2-2,numeric/formula/year TBD in Stage5
+F4-P1-067,cross_slope,床版形状データ,MAN-005,MAN-005 3-2-3,numeric/formula/year TBD in Stage5
+F4-P1-068,standard_section,床組データ,MAN-005,MAN-005 5-5-1,numeric/formula/year TBD in Stage5
+F4-P2-013,slab_result_output,支点補強筋 計算書出力（国土交通省形式）,MAN-006,NONE,numeric/formula/year TBD in Stage5
+F4-P2-014,slab_result_output,支点補強筋 計算書出力（道路公団形式）,MAN-006,NONE,numeric/formula/year TBD in Stage5
+F4-P3-021,section_definition,断面設計（Section）の機能,MAN-062,NONE,numeric/formula/year TBD in Stage5
+F4-P5-023,deflection_check,たわみ剛比,MAN-010,許容値を確認,numeric/formula/year TBD in Stage5
+F4-P5-024,deflection_check,活荷重たわみ,MAN-010,許容値を超過した場合は仮定主桁剛度を高くし再度格子解析を実行,numeric/formula/year TBD in Stage5
+F4-P5-031,stress_check,許容応力度,MAN-005,許容応力度,numeric/formula/year TBD in Stage5
+F4-P5-*,deflection_check,たわみ許容値,MAN-010,許容値,Stage5
+F4-P5-*,stress_check,許容応力度,MAN-005,許容応力度データ,Stage5

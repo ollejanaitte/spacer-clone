@@ -38,6 +38,11 @@ NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
 ```
 
+## Manual research (consolidated 2026-08-01)
+
+- [Consolidated Apollo manual research](research/consolidated-2026-08-01/README.md) — PR-C selective integration from external `apollo` source; summaries, feature/standards CSV, inventory indexes
+- [Consolidated Apollo handoffs](handoffs/consolidated-2026-08-01/README.md) — external SC-20260726-001 acceptance/review metadata
+
 ## Handoffs
 
 - [APOLLO-FRAME-HANDOFF-20260726-001](handoffs/APOLLO-FRAME-HANDOFF-20260726-001/README.md)

@@ -1,6 +1,6 @@
 # Project Consolidation Migration
 
-**Status:** Phase 2 in progress — PR-A (local-archive boundary)
+**Status:** Phase 2 in progress — PR-C (apollo handoff/research)
 **Scope:** Documentation and local-archive layout only. No application source changes.
 
 This directory holds provenance manifests and reports for consolidating external project folders into the canonical `spacer-clone` repository.

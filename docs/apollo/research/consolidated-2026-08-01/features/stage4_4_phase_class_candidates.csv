@@ -1,0 +1,9 @@
+feature_category,phase_class_candidate,basis,final_decision,notes
+cross_girder,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定
+sway_bracing,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定
+lateral_bracing,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定
+support_stiffener,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定
+intermediate_stiffener,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定
+diaphragm,unknown,単体一覧にSdia/Idia。鈑桁必須性未断定,defer_part7,箱桁寄り可能性
+bearing,unknown,支承条件入力はあるが設計未使用の記載,defer_part7,支承設計推測禁止
+support_condition,Phase1_required,非合成コントロール/分冊に存在,candidate,Part7で確定

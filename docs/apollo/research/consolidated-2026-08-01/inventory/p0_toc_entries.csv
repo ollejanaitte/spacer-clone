@@ -1,0 +1,43 @@
+manual_id,section_no,title,pdf_page_in_text,source_file
+MAN-001,第１章,第１章   はじめに,UNKNOWN,MAN-001_head.txt
+MAN-001,第２章,第２章   線形計算,UNKNOWN,MAN-001_head.txt
+MAN-001,第３章,第３章   ハンチ計算,UNKNOWN,MAN-001_head.txt
+MAN-001,第４章,第４章   設計データ入力・変更,UNKNOWN,MAN-001_head.txt
+MAN-001,第５章,第５章   ＲＣ床版,UNKNOWN,MAN-001_head.txt
+MAN-001,第６章,第６章   格子解析,UNKNOWN,MAN-001_head.txt
+MAN-001,第７章,第７章   断面計算,UNKNOWN,MAN-001_head.txt
+MAN-001,第８章,第８章   添接計算,UNKNOWN,MAN-001_head.txt
+MAN-001,第９章,第９章   たわみ剛比,UNKNOWN,MAN-001_head.txt
+MAN-001,第１０章,第１０章    床組設計,UNKNOWN,MAN-001_head.txt
+MAN-001,第１１章,第１１章    主桁補剛材,UNKNOWN,MAN-001_head.txt
+MAN-001,第１２章,第１２章    鋼重計算,UNKNOWN,MAN-001_head.txt
+MAN-001,第１３章,第１３章    疲労照査,UNKNOWN,MAN-001_head.txt
+MAN-002,第１章,第１章   はじめに,UNKNOWN,MAN-002_head.txt
+MAN-003,第２章,第２章   線形計算,UNKNOWN,MAN-003_head.txt
+MAN-004,第３章,第３章   ハンチ計算,UNKNOWN,MAN-004_head.txt
+MAN-005,第４章,第４章   設計データ入力・変更,UNKNOWN,MAN-005_head.txt
+MAN-006,第５章,第５章   ＲＣ床版,UNKNOWN,MAN-006_head.txt
+MAN-007,第６章,第６章   格子解析,UNKNOWN,MAN-007_head.txt
+MAN-008,第７章,第７章   断面計算,UNKNOWN,MAN-008_head.txt
+MAN-009,第８章,第８章   添接計算,UNKNOWN,MAN-009_head.txt
+MAN-010,第９章,第９章   たわみ剛比,UNKNOWN,MAN-010_head.txt
+MAN-011,第１０章,第１０章   床組設計,UNKNOWN,MAN-011_head.txt
+MAN-012,第１１章,第１１章   主桁補剛材,UNKNOWN,MAN-012_head.txt
+MAN-013,第１２章,第１２章   鋼重計算,UNKNOWN,MAN-013_head.txt
+MAN-014,第１３章,第１３章   疲労照査,UNKNOWN,MAN-014_head.txt
+MAN-021,１,１ システムの動作環境と起動 ,UNKNOWN,MAN-021_head.txt
+MAN-021,２,２ システムの基本操作 ,UNKNOWN,MAN-021_head.txt
+MAN-021,３,３ 適用範囲と設計機能 ,UNKNOWN,MAN-021_head.txt
+MAN-021,４,４ 運用上での補足事項 ,UNKNOWN,MAN-021_head.txt
+MAN-061,1,1 システムの動作環境と起動,3,MAN-061_head.txt
+MAN-061,2,2 制限事項,4,MAN-061_head.txt
+MAN-061,3,3 APOLLO システムの入力について,6,MAN-061_head.txt
+MAN-061,4,4 断面計算（SECTION）,7,MAN-061_head.txt
+MAN-061,5,5 I 断面計算（I-SECTION）,23,MAN-061_head.txt
+MAN-062,1,1 システムの動作環境と起動,1,MAN-062_head.txt
+MAN-062,2,2 システムの説明,2,MAN-062_head.txt
+MAN-062,3,3 システムの利用方法,10,MAN-062_head.txt
+MAN-063,１,１ システムの動作環境と起動 ,UNKNOWN,MAN-063_head.txt
+MAN-063,２,２ システムの基本操作 ,UNKNOWN,MAN-063_head.txt
+MAN-063,３,３ 適用範囲と設計機能 ,UNKNOWN,MAN-063_head.txt
+MAN-063,４,４ 計算書例 ,UNKNOWN,MAN-063_head.txt
