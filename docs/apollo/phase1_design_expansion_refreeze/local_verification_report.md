@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-05 manual 3D/GUI checklist prepared 2026-08-01 19:49 JST (`manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION`; manual user visual confirmation required before final readiness/PR judgment). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 remains **FAIL**). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 remains **FAIL**). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -161,7 +161,7 @@ pytest --version  # pytest 9.1.1
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 1 **FAIL** — PD-001 manifest stale; bundle 5/9 executed; backend general PASS; IF3 backend and schema-only bundles covered separately) |
-| LV-05 | 3D display non-regression | CHECKLIST_PREPARED — `manual_verification_checklist.md`; operator visual confirmation **required**; `THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION` (automated LV-04-B02 PASS does not substitute) |
+| LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
 | LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
@@ -1117,22 +1117,42 @@ No failures attributable to the verification branch; no application or validator
 
 `LV05_MANUAL_CHECKLIST_VERDICT: CHECKLIST_PREPARED` — manual user visual confirmation is now the gating step for LV-05 PASS and refreeze final readiness.
 
+## LV-05 manual 3D/GUI operator completion
+
+**Completion date:** 2026-08-01 JST (exact time not provided by operator)
+**Operator:** masaharu
+**Artifact:** `manual_verification_checklist.md` (this directory)
+**Verdict:** **PASS** — all MV rows completed by human operator.
+
+| Field | Value |
+|-------|-------|
+| Operator | masaharu |
+| Completion date | 2026-08-01 JST (exact time not provided by operator) |
+| MV-01 .. MV-13 | **PASS** (all rows) |
+| Console errors | None observed |
+| STL export | PASS |
+| Download | PASS |
+| Reload | PASS |
+| Evidence note | Apollo画面およびメイン画面で床版・主桁等の3Dソリッド表示、回転・ズーム、STL出力、再読込を確認 |
+| Automated substitute policy | **Rejected** — LV-04 bundle 2 viewer vitest PASS (228/228) is supporting evidence only |
+| `THREED_VIEWER_VERDICT` | **PASS** |
+| `LV05_3D_DISPLAY_VERDICT` | **PASS** |
+
+`LV05_3D_DISPLAY_VERDICT: PASS` — operator manual GUI verification complete; automated viewer tests remain non-substituting supporting evidence.
+
 ## Next action
 
 LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
 (2026-08-01 19:42:07–19:42:15 JST): **PASS** (8/8 commands). LV-04 bundle 5 (backend
 general, 2026-08-01 19:45:37 JST): **PASS** (14/14 modules, 189/189 tests; IF3 backend
-bundle and schema-only bundle already covered separately). LV-05 checklist prepared
-(2026-08-01 19:49 JST): `manual_verification_checklist.md` — **operator must execute**
-Sections 2–6 and sign off; `THREED_VIEWER_VERDICT` remains
-`PENDING_USER_VISUAL_CONFIRMATION`. `origin/main` and local `main` are both
+bundle and schema-only bundle already covered separately). LV-05 manual GUI verification
+**PASS** (operator masaharu, 2026-08-01 JST; exact time not provided; MV-01..MV-13 PASS;
+`THREED_VIEWER_VERDICT: PASS`). `origin/main` and local `main` are both
 `f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…` contains
 `origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior FAIL
 re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded results
 preserved: LV-03 PASS; LV-04 bundle 1 FAIL (PD-001 `SEPARATE_DEFECT_REQUIRED`; manifest
 stale — 26 expected / 27 discovered; missing `apolloStlExport.test.ts`; drift at
-`f89fe11` / #225; unrelated to #239/#240); bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** (1) human operator completes
-`manual_verification_checklist.md`; (2) remaining LV-04 bundles per Phase 3 planned commands;
-PD-001 fix deferred to implementation branch. Do not invent commands outside the checklist
-and Phase 3 inventory. Do not mark refreeze final readiness or PR judgment PASS until manual
-visual confirmation completes.
+`f89fe11` / #225; unrelated to #239/#240); bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** remaining LV-04 bundles per Phase 3 planned commands;
+PD-001 fix deferred to implementation branch. LV-06 through LV-08 per
+`local_verification_plan.md`.
