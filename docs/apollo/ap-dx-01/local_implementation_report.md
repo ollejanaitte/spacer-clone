@@ -5,7 +5,8 @@
 **Date:** 2026-08-01  
 **Baseline SHA:** `178768871545ab36aaea019916a492a051373496`  
 **Branch:** `feat/ap-dx-01-design-entity-contracts`
-**HEAD SHA (pre-finalize):** `3c031f8c735b0b6b3d9b8dc964717e33549a9cd9`
+**Final SHA:** `b1b49380bf2b1a711bb65d46600e223f9048793f`
+**PR:** https://github.com/ollejanaitte/spacer-clone/pull/244
 **Numeric design authorization:** NOT_GRANTED
 **Schema version decision:** NO bump — remain `0.1.0` additive backward-compatible
 **Migration decision:** NO migration required
@@ -341,6 +342,11 @@ Ordered by dependency; exact file splits to be confirmed in Phase B design.
 | `a804c38` | feat(apollo): extend BSDD schema for design entities |
 | `832ab10` | feat(apollo): validate AP-DX-01 entity references and governance |
 | `3c031f8` | test(apollo): cover AP-DX-01 design entity contracts |
+| `ff5c421` | fix(apollo): pass validator path argument in AP-DX-01 fail-closed test |
+| `b1b4938` | docs(apollo): finalize AP-DX-01 implementation report |
+
+History note: branch retains full phase commit history; corrective commit `ff5c421` was
+required because rebase/history rewrite was prohibited under repository agent rules.
 
 ## 13. Files modified (implementation scope)
 
