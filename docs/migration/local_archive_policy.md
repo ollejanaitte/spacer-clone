@@ -120,7 +120,7 @@ Same header. Rows describe copies under `local-archive/` (`git_managed=false`).
 ### Provenance example (`notes` column only)
 
 ```text
-provenance example: /home/masaharu/Projects/bridge-standards-research/handoffs/stage-01.md
+provenance example: source://bridge-standards-research/handoffs/stage-01.md
 ```
 
 Do not use absolute paths in `destination_path` or links inside policy documents.
