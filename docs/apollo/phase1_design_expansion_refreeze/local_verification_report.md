@@ -16,6 +16,7 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Execution timestamp (Phase 3) | 2026-08-01 18:43:26 JST |
 | Execution timestamp (Phase 4 bundle 1) | 2026-08-01 18:51:14 JST |
 | Execution timestamp (Phase 4 bundle 2) | 2026-08-01 18:52:38 JST |
+| Execution timestamp (Phase 4 bundle 3) | 2026-08-01 18:56:31 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
@@ -133,7 +134,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 2/9 executed) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 3/9 executed) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -578,10 +579,42 @@ accidentally appended an extra `.` argument and broadened scope.
 Phase 3 planned command. Supersedes superseded FAIL record from erroneous command with
 trailing `.` argument.
 
+## Phase 4 LV-04 test execution (bundle 3 — IF3 frontend)
+
+**Execution timestamp:** 2026-08-01 18:56:31 JST
+**Verdict:** PASS
+
+Scope: third planned LV-04 bundle only (IF3 frontend vitest per Phase 3 planned command).
+No other test categories executed. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+Verified command matches Phase 3 planned entry:
+`cd frontend && npm run test -- src/if3 src/results/if3 src/exports/if3 src/draft/if3DraftEligibility.test.ts src/api/client.if3.test.ts`
+
+### LV-04 bundle 3 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B03-IF3-FE |
+| COMMAND | `cd frontend && npm run test -- src/if3 src/results/if3 src/exports/if3 src/draft/if3DraftEligibility.test.ts src/api/client.if3.test.ts` |
+| START_TIME | 2026-08-01 18:56:31 JST |
+| END_TIME | 2026-08-01 18:56:33 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 12/12 IF3 frontend test files passed (76/76 tests) |
+| EVIDENCE | Vitest v4.1.8: `Test Files 12 passed (12)`; `Tests 76 passed (76)`; Duration 1.36s |
+| ACTION | Proceed to LV-04 bundle 4 (IF3 backend) per Phase 3 planned commands |
+
+### Phase 4 bundle 3 verdict
+
+`LV04_B03_IF3_FE_VERDICT: PASS` — IF3 frontend regression bundle exited 0 under the
+Phase 3 planned command.
+
 ## Next action
 
 LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
-LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). Proceed to LV-03 per
-`local_verification_plan.md` if not yet done, then LV-04 bundle 3 (IF3 frontend) using
-Phase 3 planned commands only. LV-05 uses manual/e2e commands from the E2E/manual table.
-Do not invent commands outside this inventory.
+LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). LV-04 bundle 3 (IF3 frontend)
+recorded PASS. Proceed to LV-03 per `local_verification_plan.md` if not yet done, then
+LV-04 bundle 4 (IF3 backend) using Phase 3 planned commands only. LV-05 uses manual/e2e
+commands from the E2E/manual table. Do not invent commands outside this inventory.
