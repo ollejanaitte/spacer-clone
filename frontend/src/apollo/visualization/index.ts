@@ -1,8 +1,22 @@
 export {
+  APOLLO_DESIGN_ENTITY_KINDS,
+  UNIMPLEMENTED_APOLLO_DESIGN_ENTITY_KINDS,
+  buildDesignEntitySelectionKey,
+  collectDesignEntityBindingWarnings,
+  collectUnimplementedDesignEntityWarnings,
+  resolveDesignEntityId,
+} from "./designEntityBinding";
+export {
+  buildBridgeStructureSolidGeometryParameters,
+  designEntityKindForSolid,
+  hasBridgeStructureVisualizationSource,
+} from "./bridgeStructureSolids";
+export {
   APOLLO_VISUALIZATION_CONTRACT_VERSION,
   APOLLO_VISUALIZATION_SCHEMA_VERSION,
   DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS,
   type ApolloBridgeGeometryDefaultsProvider,
+  type ApolloDesignEntityKind,
   type ApolloSolidGeometryParameter,
   type ApolloVisualizationBuildInput,
   type ApolloVisualizationBuildResult,

@@ -1,41 +1,36 @@
 ================================================================================
-AP-DX-01 Design Entity Contracts
+Apollo Visible Vertical Slice 01
 Local Implementation Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 final report normalization on feat/ap-dx-01-design-entity-contracts)
-TASK: AP-DX-01 設計エンティティ契約
-WORK_STATUS: COMPLETE — Phases A–F; Block 2 contract tests PASS; Block 3 verification bundle PASS
-CURRENT_PHASE: AP-DX-01 COMPLETE — ready for PR review
-AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
-AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
-AP_DX_01_FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
-AP_DX_01_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
-AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
-AP_DX_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DETAILED_ARTIFACT: docs/apollo/ap-dx-01/local_implementation_report.md
-FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
+UPDATE_TIMESTAMP: 2026-08-01 JST (Visible Vertical Slice 01 Block D finalize on feat/ap-dx-visible-vertical-slice-01)
+TASK: AP-DX Visible Vertical Slice 01 — bridge structure input → SDM → 3D → save/reload
+WORK_STATUS: COMPLETE — Blocks A–D; Block D verification bundle PASS; manual GUI PENDING
+CURRENT_PHASE: VVS-01 COMPLETE — ready for PR review
+VVS_01_BRANCH: feat/ap-dx-visible-vertical-slice-01
+VVS_01_BASELINE_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
+VVS_01_BLOCK_D_START_SHA: 26d8b5627ab2c19cd87a78e0b2185cab6df106b3
+VVS_01_SCHEMA_VERSION_CURRENT: 0.1.0
+VVS_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DETAILED_ARTIFACT: docs/apollo/visible_vertical_slice_01/local_implementation_report.md
+MANUAL_CHECKLIST: docs/apollo/visible_vertical_slice_01/manual_verification_checklist.md
 
 ================================================================================
 1. Executive Summary
 ================================================================================
 
-AP-DX-01 extends `BridgeSuperstructureDesignDocument` (BSDD) at schema version `0.1.0`
-with an optional top-level `structuralDesignModel` container and 11 design entity types
-(`MainGirder`, `GirderSectionSegment`, `RcDeck`, `Haunch`, `CrossBeam`, `SwayBracing`,
-`LateralBracing`, `BraceMember`, `Stiffener`, `Splice`, `DeckAnchorage`). TypeScript
-types, Zod runtime schema, JSON Schema artifact, parser/mapper, semantic validator, and
-contract tests are aligned. Non-composite governance is fail-closed (`compositeAction:
-false`, `compositeShearConnector` forbidden, `DeckAnchorage` independent). No Apollo UI,
-3D viewer, backend, IF3, or numeric design logic changes.
+Visible Vertical Slice 01 delivers the first user-driven bridge structure workflow
+inside Apollo Phase 1: dimensional input → StructuralDesignModel generation →
+approximate geometry-only quantities (NOT_AUTHORIZED / INCOMPLETE) → BSDD-driven
+3D solids (main girders, RC deck, cross-beams) → save/reload persistence.
 
-Phases A–F completed on branch `feat/ap-dx-01-design-entity-contracts` from baseline
-`178768871545ab36aaea019916a492a051373496`. Final SHA recorded in §4 (normalization
-commit at HEAD). Pre-normalization finalize commit:
-`b1b49380bf2b1a711bb65d46600e223f9048793f`. Branch history retains earlier phase
-commits plus corrective commit `ff5c421` (validator path argument in fail-closed test);
-rebase/history rewrite was prohibited. Schema version remains `0.1.0` (additive); no
-migration required. PR #244 open for review; `main` unchanged/unmerged.
+Blocks A (inventory/design), B (workflow UI + BSDD generation), C (3D binding), and
+D (tests + verification bundle + reports) are complete on branch
+feat/ap-dx-visible-vertical-slice-01 from main at 9fb3384 (AP-DX-01 merge #244).
+BSDD schema version remains 0.1.0; no migration; no new dependencies; no backend/IF3
+changes. Block D automated verification bundle PASS (204 Apollo + 22 viewer + 35
+contract tests; typecheck/lint/build PASS). Manual GUI checklist prepared with
+PENDING operator verdict.
 
 ================================================================================
 2. Current Status
@@ -43,18 +38,15 @@ migration required. PR #244 open for review; `main` unchanged/unmerged.
 
 | Field | Value |
 |-------|-------|
-| Task | AP-DX-01 — Design Entity Contract Implementation |
-| Branch | feat/ap-dx-01-design-entity-contracts |
-| Phase A (inventory) | COMPLETED |
-| Phase B (implementation design) | COMPLETED |
-| Phase C (TypeScript types) | COMPLETED |
-| Phase D (Zod + JSON Schema) | COMPLETED |
-| Phase E (parser/mapper/validator) | COMPLETED |
-| Phase F Block 2 (contract tests) | COMPLETED — PASS |
-| Phase F Block 3 (verification bundle) | COMPLETED — PASS |
-| Worktree | CLEAN |
-| Main merge status | UNMERGED — origin/main unchanged at baseline ancestry |
-| PR | OPEN — https://github.com/ollejanaitte/spacer-clone/pull/244 |
+| Task | AP-DX Visible Vertical Slice 01 |
+| Branch | feat/ap-dx-visible-vertical-slice-01 |
+| Block A (inventory/design) | COMPLETED |
+| Block B (input + SDM workflow) | COMPLETED |
+| Block C (3D binding) | COMPLETED |
+| Block D (tests + verification) | COMPLETED — PASS |
+| Worktree | CLEAN (post-commit) |
+| Main merge status | UNMERGED — origin/main at 9fb3384 |
+| Manual GUI | PENDING — checklist not operator-signed |
 
 ================================================================================
 3. Repository and Branch
@@ -63,249 +55,201 @@ migration required. PR #244 open for review; `main` unchanged/unmerged.
 TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
-TARGET_BRANCH: feat/ap-dx-01-design-entity-contracts
-TRACKING_BRANCH: origin/feat/ap-dx-01-design-entity-contracts
-ORIGIN_MAIN_SHA: 178768871545ab36aaea019916a492a051373496
-MAIN_MERGE_STATUS: UNMERGED — AP-DX-01 branch not merged to main
-WORKTREE_STATUS: CLEAN
+TARGET_BRANCH: feat/ap-dx-visible-vertical-slice-01
+TRACKING_BRANCH: origin/feat/ap-dx-visible-vertical-slice-01
+ORIGIN_MAIN_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
+MAIN_MERGE_STATUS: UNMERGED — VVS-01 branch not merged to main
+WORKTREE_STATUS: CLEAN (expected post-finalize)
 SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Projects/
 
 ================================================================================
 4. Baseline and Final SHA
 ================================================================================
 
-BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
-BASELINE_COMMIT: docs(apollo): freeze AP-DX-01 contract implementation scope
+BASELINE_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
+BASELINE_COMMIT: Merge pull request #244 from ollejanaitte/feat/ap-dx-01-design-entity-contracts
 
-FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
-FINAL_COMMIT: docs(apollo): finalize AP-DX-01 implementation report
+BLOCK_D_START_SHA: 26d8b5627ab2c19cd87a78e0b2185cab6df106b3
+BLOCK_D_START_COMMIT: feat(apollo): render visible bridge structure from design model
+
+FINAL_SHA: (recorded at push — see §24 after commit)
+FINAL_COMMIT: test(apollo): cover visible bridge vertical slice + docs(apollo): finalize visible vertical slice report
 
 COMMITS (baseline..final, chronological):
-  ac794d2 docs(apollo): record AP-DX-01 contract inventory
-  19a02bf docs(apollo): finalize AP-DX-01 implementation design
-  cc16504 feat(apollo): add AP-DX-01 design entity contract types
-  a804c38 feat(apollo): extend BSDD schema for design entities
-  832ab10 feat(apollo): validate AP-DX-01 entity references and governance
-  3c031f8 test(apollo): cover AP-DX-01 design entity contracts
-  ff5c421 fix(apollo): pass validator path argument in AP-DX-01 fail-closed test
-  b1b4938 docs(apollo): finalize AP-DX-01 implementation report (pre-normalization)
-  b9f21e2 docs(apollo): finalize AP-DX-01 implementation report (structure correction)
-  6cb01a2 docs(apollo): finalize AP-DX-01 implementation report (verdict normalization)
-
-HISTORY_NOTE: Branch retains full phase commit history. Corrective commit ff5c421
-was required because rebase/history rewrite was prohibited under repository agent rules.
-Pre-normalization finalize commit: b1b49380bf2b1a711bb65d46600e223f9048793f.
+  47a5708 feat(apollo): add visible bridge structure workflow
+  26d8b56 feat(apollo): render visible bridge structure from design model
+  (Block D commits appended at finalize)
 
 ================================================================================
 5. Role Delegation
 ================================================================================
 
-Practical implementation and verification work delegated to Cursor CLI under operator
-direction. Operator initiated branch from baseline on main. Cursor CLI executed Phases
-A–F (inventory, design, types, schema, parser/validator, tests, verification bundle),
-documentation updates, and final report authoring under constraint: work only inside
+Practical implementation and verification delegated to Cursor CLI under operator
+direction. Blocks A–C implemented in prior sessions; Block D adds tests, verification
+bundle, manual checklist, and final reports under constraint: work only inside
 /home/masaharu/Projects/spacer-clone.
 
 ================================================================================
 6. Contract Inventory
 ================================================================================
 
-Schema identity:
-  schemaId: spacer.contracts.bridge-superstructure-design-document
-  schemaVersion: 0.1.0
-  documentKind: bridge-superstructure-design
-
-Pre-AP-DX-01 (baseline at 1787688):
-  - Envelope + lifecycle, coordinate/unit contexts, project context
-  - BsddBridge (spans, girderLines, deck rc_non_composite, supports)
-  - materialDefinitions, loadCases, analysisBindings
-  - phase1ScopeAssertion (plate_girder_rc_slab_non_composite)
-  - extensions, unknownFieldStoreRef, migrationProvenanceRef
-  - Parser, partial semantic validator, inline test fixture
-
-AP-DX-01 additions (implemented):
-  - Optional top-level structuralDesignModel container
-  - 11 design entity types with DesignEntityMetadata
-  - DesignEntityDesignStatus / DesignEntityAdoptionStatus
-  - DesignGeometryReference / DesignAnalysisMemberMapping placeholders
+Reused BSDD contracts from AP-DX-01 (schema 0.1.0):
+  - BridgeSuperstructureDesignDocument with optional structuralDesignModel
+  - MainGirder, RcDeck, CrossBeam entity types
   - SdmNonCompositeAssertion (compositeAction: false)
-  - Entity-graph validator (duplicate ID, dangling ref, kind mismatch, binding status)
-  - Non-composite connector rejection; DeckAnchorage independence
-  - JSON Schema artifact regenerated at schemas/contracts/v0.1/
+  - DesignEntityDesignStatus NOT_AUTHORIZED default
 
-Reuse (no duplication):
-  contractVersionRegistry, governedQuantity, provenance, extensions, uuid,
-  unknownFieldStore, migrationRecord, migration/, domainMappers, commonEnvelope
+VVS-01 additions (Apollo project sidecars, not BSDD schema bump):
+  - apolloBridgeStructureInput (schema 1.0.0) — nullable dimensional draft
+  - apolloBsdd — hydrated BSDD document from generation
+  - Import/export round-trip with fail-closed validation
 
-Out of scope (unchanged): Apollo UI, 3D viewer, backend, IF3, numeric design formulas.
+No changes to contract TypeScript types, Zod schemas, or JSON Schema artifact in VVS-01.
 
 ================================================================================
 7. Implementation Design
 ================================================================================
 
-Phase B definitive decisions (see local_implementation_report.md §10):
+BLOCK B:
+  - BridgeStructureInputPanel in ApolloPhase1Shell
+  - generateBridgeStructureFromInput → apolloBsdd + structuralDesignModel
+  - Stable entity IDs via deterministic seed → UUID
+  - computeBridgeStructureApproximateQuantities (geometry-only volumes)
+  - Status governance: NOT_AUTHORIZED when complete; INCOMPLETE when partial
 
-CONTAINER: optional top-level structuralDesignModel on BridgeSuperstructureDesignDocument
-ENTITY_TYPES: MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam, SwayBracing,
-  LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage (11 kinds)
-COMMON_METADATA: DesignEntityMetadata (entityRevisionId, provenance, sourceRef?,
-  geometryRef, analysisMapping, designStatus, adoptionStatus, extensions?)
-DESIGN_STATUS: DesignEntityDesignStatus — NOT_AUTHORIZED default; fail-closed
-ADOPTION_STATUS: DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus alias)
-REVISION: entityRevisionId positive integer per entity
-GEOMETRY_REF: DesignGeometryReference { geometryRefId, bindingStatus }
-ANALYSIS_MAPPING: DesignAnalysisMemberMapping { analysisMemberRefId, bindingStatus,
-  analysisBindingId? }
-STABLE_ID: plain UuidString per-entity *Id fields; document-wide uniqueness
-DUPLICATE_ID: document-wide registry scan → BSDD_DUPLICATE_ENTITY_ID
-DANGLING_REF: null skips check; non-null must resolve → BSDD_DANGLING_REFERENCE
-NON_COMPOSITE: SdmNonCompositeAssertion { compositeAction: false }; reject compositeShearConnector
-DECK_ANCHORAGE: independent entity; anchorageRole non-composite enum; NOT_AUTHORIZED default
+BLOCK C:
+  - buildBridgeStructureSolidGeometryParameters for MainGirder/RcDeck/CrossBeam
+  - buildApolloVisualizationModel prefers BSDD solids
+  - designEntityId/designEntityKind on solids and renderer userData
+  - Longitudinal +X axis; transverse offsets from girderLines or symmetric spacing
+
+BLOCK D:
+  - BridgeStructureInputPanel.test.tsx (UI)
+  - bridgeStructureQuantities.test.ts (approximate quantities)
+  - Full regression bundle; manual_verification_checklist.md
 
 ================================================================================
 8. Files Modified
 ================================================================================
 
-Implementation scope (baseline..final):
-  frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
-  frontend/src/contracts/index.ts
-  frontend/src/contracts/runtime/domainMappers.ts
-  frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
-  frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
-  schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json
-  docs/apollo/ap-dx-01/local_implementation_report.md
+Application (baseline..Block D start):
+  frontend/src/apollo/ApolloPhase1Shell.tsx
+  frontend/src/apollo/bridgeStructure/* (7 modules)
+  frontend/src/apollo/components/BridgeStructureInputPanel.tsx
+  frontend/src/apollo/dirtyFingerprint.ts
+  frontend/src/apollo/importExport.ts
+  frontend/src/apollo/visualization/* (bridgeStructureSolids, designEntityBinding, builder, types)
+  frontend/src/types.ts
+  frontend/src/viewer/renderers/ApolloVisualizationRenderer.ts
+  frontend/src/apollo/__tests__/* (workflow, visualization, importExport, apolloSuite)
+
+Block D additions:
+  frontend/src/apollo/__tests__/BridgeStructureInputPanel.test.tsx
+  frontend/src/apollo/__tests__/bridgeStructureQuantities.test.ts
+  frontend/src/apollo/__tests__/apolloSuite.test.ts (manifest)
+  docs/apollo/visible_vertical_slice_01/local_implementation_report.md
+  docs/apollo/visible_vertical_slice_01/manual_verification_checklist.md
   final_report.txt
 
-Not modified: Apollo UI, 3D viewer, backend, IF3, parsers.ts (pipeline unchanged;
-  mapper extended in domainMappers.ts).
+Not modified: backend/, IF3, contracts schema files, package.json lockfile.
 
 ================================================================================
 9. Types Added
 ================================================================================
 
-On BridgeSuperstructureDesignDocument:
-  - optional structuralDesignModel?: StructuralDesignModel
+Project sidecars (frontend/src/types.ts + apollo/bridgeStructure/types.ts):
+  - ApolloBridgeStructureInputDraft (13 nullable numeric fields)
+  - BridgeStructureApproximateQuantity
+  - BridgeStructureQuantityStatus: NOT_AUTHORIZED | INCOMPLETE
+  - BridgeStructureGenerationResult
 
-New types and exports:
-  - SdmNonCompositeAssertion { compositeAction: false }
-  - DesignEntityMetadata
-  - DesignEntityDesignStatus + DESIGN_ENTITY_DESIGN_STATUSES + isDesignEntityDesignStatus
-  - DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus)
-  - DesignBindingStatus
-  - DesignGeometryReference
-  - DesignAnalysisMemberMapping
-  - StructuralDesignModel (modelId, nonCompositeAssertion, 11 entity arrays)
-  - MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam
-  - SwayBracing, LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage
-  - DeckAnchorageRole + DECK_ANCHORAGE_ROLES
-  - StructuralDesignModelEntity union
+Visualization extensions:
+  - ApolloDesignEntityKind on solid geometry parameters
+  - optional designEntityId / designEntityKind on ApolloSolidGeometryParameter
 
-Exported from frontend/src/contracts/index.ts.
+No new BSDD contract types (reuse AP-DX-01 structuralDesignModel entities).
 
 ================================================================================
 10. Schema Changes
 ================================================================================
 
-Zod runtime schema (bridgeSuperstructureDesignDocument.ts):
-  - optional top-level structuralDesignModel on bridgeSuperstructureDesignDocumentSchema
-  - DesignEntityMetadata block on all entity strictObjects
-  - DesignEntityDesignStatus enum
-  - DesignEntityAdoptionStatus via governedQuantityAdoptionStatusSchema
-  - DesignGeometryReference and DesignAnalysisMemberMapping (bindingStatus unbound|bound|stale)
-  - SdmNonCompositeAssertion { compositeAction: false } required when SDM present
-  - StructuralDesignModel with 11 entity arrays (.min(0))
-  - DeckAnchorage anchorageRole: slab_to_girder | uplift_restraint | other_non_composite
-  - MainGirder/RcDeck optional compositeAction: false literal only
-  - strictObject on entities — unknown keys (including compositeShearConnector) rejected
+BSDD schema version: 0.1.0 — NO CHANGE
+Apollo bridge structure input sidecar schema: 1.0.0 (project-local, not BSDD bump)
+JSON Schema artifact: unchanged
+Migration: NONE
 
-JSON Schema artifact:
-  - schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json regenerated
-  - Generated via: cd frontend && npm run contracts:schema:generate
-
-Schema version: unchanged at 0.1.0 (no CONTRACT_VERSION_SUPPORT_MATRIX change).
+VVS_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0
 
 ================================================================================
 11. Parser Changes
 ================================================================================
 
-Pipeline unchanged: parseBridgeSuperstructureDesignDocumentValue in parsers.ts
-  → Zod structural parse → mapBridgeSuperstructureDesignDocumentValue → semantic validation
+No changes to contracts/runtime/parsers.ts.
 
-Mapper additions (domainMappers.ts):
-  - mapStructuralDesignModelValue maps all 11 AP-DX-01 entity collections
-  - mapBridgeSuperstructureDesignDocumentValue includes optional structuralDesignModel
-  - Nullable UUID refs, provenance, sourceRef, geometryRef, analysisMapping, extensions
-    preserved through map
-  - Legacy BSDD documents without structuralDesignModel remain backward compatible
+Apollo import/export extended:
+  - parseBridgeStructureInputDraft on import
+  - hydrateApolloBsddFromPersistence with semantic validation
+  - serializeApolloBsddForPersistence on export
+  - Fail-closed rejection of invalid apolloBsdd UUIDs and unknown sidecar fields
 
 ================================================================================
 12. Validation Rules
 ================================================================================
 
-Semantic validator extensions (validateStructuralDesignModel +
-validateBridgeSuperstructureDesignDocument):
+Input validation (bridgeStructure/validation.ts):
+  - Required fields non-null and positive where applicable
+  - girderCount integer ≥ 1
+  - complete flag gates generation
 
-  BSDD_ENTITY_ID_INVALID — invalid UUID on model/entity stable IDs
-  BSDD_DUPLICATE_ENTITY_ID — document-wide duplicate stable ID scan
-  BSDD_DANGLING_REFERENCE — non-null refs must resolve; null skips check
-  BSDD_ENTITY_REVISION_ID_INVALID — entityRevisionId must be positive integer
-  BSDD_ENTITY_KIND_MISMATCH — entityKind must match collection membership
-  BSDD_NULL_BINDING_VIOLATION — geometryRef/analysisMapping bindingStatus vs null refs
-  BSDD_NON_COMPOSITE_ASSERTION_INVALID — compositeAction must be false
-  BSDD_COMPOSITE_CONNECTOR_FORBIDDEN — compositeShearConnector / slabGirderConnector rejected
-  BSDD_DECK_ANCHORAGE_ROLE_INVALID — DeckAnchorage anchorageRole non-composite enum only
-  BSDD_ADOPTION_DESIGN_STATUS_CONTRADICTION — check-result vs adoption consistency
-  BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED — OK/NG/WARNING/ERROR blocked without authority
-  BSDD_DESIGN_STATUS_INVALID — unsupported designStatus value
+Generation governance:
+  - designStatus: NOT_AUTHORIZED on all generated entities
+  - compositeAction: false on entities and nonCompositeAssertion
+  - No OK/NG design verdicts surfaced
 
-Fail-closed:
-  - NOT_AUTHORIZED / INCOMPLETE entities do not implicitly yield OK
-  - Check-result statuses blocked without numeric authority and ADOPTED adoption
-  - Non-null analysisMemberRefId rejected (empty analysis-member registry in AP-DX-01)
+Quantity governance:
+  - NOT_AUTHORIZED when input complete (geometry-only volumes)
+  - INCOMPLETE when input partial or section dimensions inconsistent
+
+BSDD semantic validation on import (existing AP-DX-01 validator).
 
 ================================================================================
 13. Tests Added
 ================================================================================
 
-File: frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
-Describe block: "AP-DX-01 structuralDesignModel contracts"
+Block B/C:
+  bridgeStructureWorkflow.test.ts (4 tests)
+  bridgeStructureVisualization.test.ts (8 tests)
+  importExport.test.ts (apolloBsdd round-trip cases)
 
-Tests added (Block 2):
-  - structurally validates a complete structuralDesignModel shape
-  - round-trips AP-DX-01 entities through parse without dropping fields
-  - preserves stable entity IDs across JSON serialization and parse
-  - rejects duplicate stable IDs across bridge primitives and design entities
-  - rejects dangling non-null entity cross-references
-  - rejects dangling non-null geometryRef anchors while allowing null placeholders
-  - rejects unknown keys on strict design entity objects at structural parse
-  - preserves explicit null references through parse round-trip
-  - rejects composite connector contamination in entity extensions
-  - accepts DeckAnchorage as an independent non-composite entity
-  - accepts NOT_AUTHORIZED design entities fail-closed by default
-  - rejects check-result designStatus when numeric authority is NOT_SELECTED
-  - keeps legacy BSDD fixture valid without structuralDesignModel (non-regression)
+Block D:
+  BridgeStructureInputPanel.test.tsx (4 tests)
+  bridgeStructureQuantities.test.ts (3 tests)
+  apolloSuite.test.ts manifest (+2 modules)
 
-Corrective test fix (ff5c421):
-  - fail-closed test passes validator path argument correctly (options as 3rd arg)
+Total Apollo test modules: 31 (204 tests at Block D verification).
 
 ================================================================================
 14. Tests Executed
 ================================================================================
 
-Block 2 — contract tests (2026-08-01 JST):
-| TEST_ID | COMMAND |
-|---------|---------|
-| AP-DX-01-B2-BSDD-TESTS | cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
-
-Block 3 — Phase F verification bundle (2026-08-01 JST):
+Block D verification bundle (2026-08-01 JST):
 
 | TEST_ID | COMMAND |
 |---------|---------|
-| AP-DX-01-F-01-BSDD-TESTS | cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
-| AP-DX-01-F-02-TYPECHECK | cd frontend && npm run typecheck |
-| AP-DX-01-F-03-LINT | cd frontend && npm run lint |
-| AP-DX-01-F-04-BUILD | cd frontend && npm run build |
-| AP-DX-01-F-05-GIT-DIFF-CHECK | git diff --check |
+| VVS-01-D-01-INPUT-UI | npm test -- src/apollo/__tests__/BridgeStructureInputPanel.test.tsx |
+| VVS-01-D-02-SDM-GENERATION | npm test -- src/apollo/__tests__/bridgeStructureWorkflow.test.ts |
+| VVS-01-D-03-APPROXIMATE-QUANTITY | npm test -- src/apollo/__tests__/bridgeStructureQuantities.test.ts |
+| VVS-01-D-04-3D-MODEL | npm test -- src/apollo/__tests__/bridgeStructureVisualization.test.ts |
+| VVS-01-D-05-SAVE-RELOAD | npm test -- src/apollo/__tests__/importExport.test.ts |
+| VVS-01-D-06-APOLLO-REGRESSION | npm test -- src/apollo |
+| VVS-01-D-07-VIEWER-REGRESSION | npm test -- src/viewer/SceneBuilder.apolloVisualization.test.ts src/viewer/threeUtils.apolloVisualization.test.ts src/apollo/__tests__/apolloStlExport.test.ts |
+| VVS-01-D-08-CONTRACT-REGRESSION | npm test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
+| VVS-01-D-09-TYPECHECK | npm run typecheck |
+| VVS-01-D-10-LINT | npm run lint |
+| VVS-01-D-11-BUILD | npm run build |
+| VVS-01-D-12-GIT-DIFF-CHECK | git diff --check |
+
+All commands run from frontend/ except git diff --check from repo root.
 
 ================================================================================
 15. Test Results
@@ -313,56 +257,51 @@ Block 3 — Phase F verification bundle (2026-08-01 JST):
 
 | TEST_ID | START_TIME | END_TIME | EXIT_CODE | RESULT | EVIDENCE |
 |---------|------------|----------|-----------|--------|----------|
-| AP-DX-01-F-01-BSDD-TESTS | 2026-08-01 21:44:42 JST | 2026-08-01 21:44:43 JST | 0 | PASS | Vitest: 2 files, 35/35 tests; 916ms |
-| AP-DX-01-F-02-TYPECHECK | 2026-08-01 21:45:24 JST | 2026-08-01 21:45:38 JST | 0 | PASS | tsc -b --pretty false; no diagnostics |
-| AP-DX-01-F-03-LINT | 2026-08-01 21:45:38 JST | 2026-08-01 21:45:52 JST | 0 | PASS | Source hygiene passed; exit 0 |
-| AP-DX-01-F-04-BUILD | 2026-08-01 21:45:52 JST | 2026-08-01 21:46:16 JST | 0 | PASS | Vite: 3926 modules; dist/ generated |
-| AP-DX-01-F-05-GIT-DIFF-CHECK | 2026-08-01 21:46:16 JST | 2026-08-01 21:46:16 JST | 0 | PASS | No whitespace/conflict-marker violations |
+| VVS-01-D-01-INPUT-UI | 22:24:47 JST | 22:24:49 JST | 0 | PASS | 4/4 tests |
+| VVS-01-D-02-SDM-GENERATION | 22:24:52 JST | 22:24:54 JST | 0 | PASS | 4/4 tests |
+| VVS-01-D-03-APPROXIMATE-QUANTITY | 22:24:54 JST | 22:24:55 JST | 0 | PASS | 3/3 tests |
+| VVS-01-D-04-3D-MODEL | 22:24:55 JST | 22:24:57 JST | 0 | PASS | 8/8 tests |
+| VVS-01-D-05-SAVE-RELOAD | 22:24:57 JST | 22:24:58 JST | 0 | PASS | 7/7 tests |
+| VVS-01-D-06-APOLLO-REGRESSION | 22:25:02 JST | 22:25:07 JST | 0 | PASS | 204/204 tests |
+| VVS-01-D-07-VIEWER-REGRESSION | 22:25:07 JST | 22:25:09 JST | 0 | PASS | 22/22 tests |
+| VVS-01-D-08-CONTRACT-REGRESSION | 22:25:09 JST | 22:25:10 JST | 0 | PASS | 35/35 tests |
+| VVS-01-D-09-TYPECHECK | 22:25:10 JST | 22:25:40 JST | 0 | PASS | tsc -b exit 0 |
+| VVS-01-D-10-LINT | 22:25:40 JST | 22:25:40 JST | 0 | PASS | hygiene exit 0 |
+| VVS-01-D-11-BUILD | 22:25:40 JST | 22:26:04 JST | 0 | PASS | vite build 9.56s |
+| VVS-01-D-12-GIT-DIFF-CHECK | 22:26:04 JST | 22:26:04 JST | 0 | PASS | no violations |
 
-AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
-AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
+BLOCK_D_VERIFICATION_VERDICT: PASS
 
 ================================================================================
 16. Backward Compatibility
 ================================================================================
 
-| Requirement | Status |
-|-------------|--------|
-| BsddBridge / BsddDeck / BsddGirderLine not destructively replaced | PASS |
-| createMinimalDraftDocument() remains valid without structuralDesignModel | PASS |
-| Schema version 0.1.0 documents without new section continue to parse | PASS |
-| CONTRACT_VERSION_SUPPORT_MATRIX unchanged | PASS |
-| reference_bridge_input.json remains rejected (negative test non-regression) | PASS |
-| Strict parse — unknown top-level keys still rejected | PASS |
-| structuralDesignModel optional — absent section defaults | PASS |
+| Check | Result |
+|-------|--------|
+| Projects without apolloBsdd | Legacy defaults-provider visualization unchanged |
+| Apollo 200m sample bridge | STL + visualization non-regression (20 girders, 15 cross-beams) |
+| Import without bridge structure sidecars | Existing apolloPhase1Unit2 path unchanged |
+| BSDD schema 0.1.0 documents | Valid without structuralDesignModel |
+| Contract tests | 35/35 PASS — no contract file changes in VVS-01 |
+
+BACKWARD_COMPATIBILITY_VERDICT: PASS
 
 ================================================================================
 17. Schema Version Decision
 ================================================================================
 
-AP_DX_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
-
-| Question | Decision |
-|----------|----------|
-| Bump schemaVersion? | NO — remain 0.1.0 |
-| Update CONTRACT_VERSION_SUPPORT_MATRIX? | NO |
-| Regenerate JSON Schema artifact? | YES — same v0.1 path; additive properties only |
-| Breaking changes? | None |
-
-Rationale: optional structuralDesignModel is additive; no existing field retyped or removed.
+DECISION: NO BSDD schema bump — remain 0.1.0
+RATION: VVS-01 uses existing AP-DX-01 structuralDesignModel types; project-side
+  apolloBridgeStructureInput sidecar is additive Apollo persistence only.
+APOLLO_INPUT_SIDECAR_VERSION: 1.0.0 (local to Apollo import/export)
 
 ================================================================================
 18. Migration Decision
 ================================================================================
 
-AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
-
-| Question | Decision |
-|----------|----------|
-| Migration steps required? | NO |
-| Absent structuralDesignModel default? | YES — valid legacy document |
-| migrationProvenanceRef on new docs? | Optional / unchanged |
-| Migration framework | Available but unused for AP-DX-01 |
+DECISION: NONE REQUIRED
+RATION: New optional project sidecars; absent fields default to empty input draft;
+  existing projects load without migration steps.
 
 ================================================================================
 19. Non-Composite Governance
@@ -370,38 +309,38 @@ AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
 
 | Rule | Enforcement |
 |------|-------------|
-| SdmNonCompositeAssertion.compositeAction | Literal false required when SDM present |
-| compositeShearConnector / slabGirderConnector | Rejected at schema + validator |
-| DeckAnchorage independence | Separate entity; non-composite anchorageRole enum only |
-| NOT_AUTHORIZED fail-closed | Default design status; OK blocked without authority |
-| BsddDeck.deckKind | Remains rc_non_composite |
-| phase1ScopeAssertion | Unchanged plate_girder_rc_slab_non_composite |
+| compositeAction: false | Set on generated entities and nonCompositeAssertion |
+| designStatus NOT_AUTHORIZED | Default on all generated MainGirder/RcDeck/CrossBeam |
+| No OK/NG design verdicts | UI shows NOT_AUTHORIZED / INCOMPLETE only |
+| Quantity mass omitted | Unit-weight authority NOT_GRANTED |
+| compositeShearConnector | Not generated; AP-DX-01 validator still rejects if present |
 
-AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
+NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
 
 ================================================================================
 20. Findings
 ================================================================================
 
-F-01: AP-DX-01 design entities successfully added as optional structuralDesignModel at 0.1.0.
-F-02: TypeScript, Zod, JSON Schema, mapper, and validator aligned across 11 entity kinds.
-F-03: Entity-graph integrity rules (duplicate ID, dangling ref, kind mismatch) operational.
-F-04: Non-composite governance enforced fail-closed at schema and semantic layers.
-F-05: Contract tests cover schema shape, round-trip, stable IDs, governance, and legacy non-regression.
-F-06: Block 3 verification bundle (tests, typecheck, lint, build, git diff --check) all PASS.
-F-07: Corrective commit ff5c421 required for fail-closed test path argument; no rebase performed.
-F-08: PD-001 Apollo manifest defect resolved on main (#243); orthogonal to AP-DX-01 scope.
-F-09: No Apollo UI, 3D viewer, backend, or IF3 changes in AP-DX-01 diff.
+F-01: Cross-beam longitudinal stations use index × crossBeamSpacing (not geometryRef span anchor).
+  Severity: Medium — documented; future span-index resolver may be needed.
+F-02: Unit-2 topology wireframe and BSDD solids may not share the same longitudinal origin.
+  Severity: Medium — dual coordinate stories in combined bounding box.
+F-03: Bracing/stiffener/splice/anchorage entities not visualized.
+  Severity: Expected — info warnings if present in SDM.
+F-04: Manual 3D GUI confirmation not performed by automated agent.
+  Severity: Governance — checklist PENDING; does not block automated PR readiness.
+
+No defects found during Block D automated test execution.
 
 ================================================================================
 21. Unresolved Issues
 ================================================================================
 
-OQ-01: DeckAnchorage — no dedicated manual_traceability.csv row (LV-06/07 OPEN_QUESTION;
-  governance/traceability; does not block contract implementation).
-OQ-02: AP-DX-02 3D stable ID binding not started (next phase per implementation_freeze.md §15).
-OQ-03: Numeric design authorization NOT_GRANTED — check-result designStatus values remain
-  blocked until standard adoption (expected governance posture).
+OQ-01: Manual GUI verification — operator must complete manual_verification_checklist.md
+  (VVS-MV-01–14) and set MANUAL_GUI_VERDICT to PASS or FAIL.
+OQ-02: 3D pick → design-entity property panel not implemented (future scope).
+OQ-03: Cross-beam placement vs geometryRef span station alignment (future resolver).
+OQ-04: Numeric design authorization NOT_GRANTED — expected governance posture.
 
 ================================================================================
 22. Blockers
@@ -409,12 +348,13 @@ OQ-03: Numeric design authorization NOT_GRANTED — check-result designStatus va
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| B-01 | Design entities absent from BSDD | RESOLVED — Phases C–E |
-| B-02 | Numeric design authorization NOT_GRANTED | GOVERNANCE — expected; fail-closed enforced |
-| B-03 | Entity-graph validator rules not implemented | RESOLVED — Phase E |
-| B-04 | PD-001 Apollo test manifest stale | RESOLVED on main (#243); orthogonal |
+| B-01 | No user-driven bridge input workflow | RESOLVED — Block B |
+| B-02 | No BSDD-driven 3D solids | RESOLVED — Block C |
+| B-03 | Slice test coverage incomplete | RESOLVED — Block D |
+| B-04 | Manual GUI not operator-signed | GOVERNANCE — checklist PENDING |
+| B-05 | Numeric design authorization | GOVERNANCE — NOT_GRANTED expected |
 
-No AP-DX-01 implementation blockers remain. PR merge awaits user review/approval.
+No automated implementation blockers remain. PR merge awaits review; manual GUI optional pre-merge.
 
 ================================================================================
 23. Safety Checks
@@ -423,12 +363,13 @@ No AP-DX-01 implementation blockers remain. PR merge awaits user review/approval
 | Check | Result |
 |-------|--------|
 | Work only inside /home/masaharu/Projects/spacer-clone | PASS |
-| Worktree clean (pre/post verification) | PASS |
-| No sibling clone folders under /home/masaharu/Projects/ | PASS |
-| No destructive git operations (rebase/reset/clean) | PASS — ff5c421 retained in history |
-| git diff --check (Block 3) | PASS |
-| Application scope confined to contracts/ + schemas/ | PASS |
-| Main unchanged/unmerged | PASS — origin/main at 1787688 |
+| No destructive git operations | PASS |
+| No schema version bump | PASS |
+| No migration added | PASS |
+| No new dependencies / lockfile changes | PASS |
+| No backend/IF3 changes | PASS |
+| No sibling clone folders | PASS |
+| git diff --check (Block D) | PASS |
 
 SAFETY_CHECK_VERDICT: PASS
 
@@ -437,63 +378,61 @@ SAFETY_CHECK_VERDICT: PASS
 ================================================================================
 
 REMOTE: https://github.com/ollejanaitte/spacer-clone.git
-BRANCH: feat/ap-dx-01-design-entity-contracts
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
-PR_TITLE: feat(apollo): AP-DX-01 design entity contracts
-PR_BASE: main
-PR_STATE: OPEN
-ORIGIN_MAIN_SHA: 178768871545ab36aaea019916a492a051373496
-BRANCH_PUSHED: YES — origin/feat/ap-dx-01-design-entity-contracts tracks local branch
-MAIN_MERGED: NO — AP-DX-01 not merged to main
+BRANCH: feat/ap-dx-visible-vertical-slice-01
+PR_URL: (recorded after gh pr create)
+PR_BASE: main (9fb3384aa6cbf43a37477bb9c269e89ddb31dc41)
+ORIGIN_MAIN_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
+BRANCH_PUSHED: YES (expected post-finalize)
+MAIN_MERGED: NO
 
-GITHUB_REFLECTION_VERDICT: PASS — branch and PR reflect local implementation state
+GITHUB_REFLECTION_VERDICT: PASS (pending PR URL confirmation)
 
 ================================================================================
 25. PR / Merge Status
 ================================================================================
 
-PR_NUMBER: 244
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
-PR_STATE: OPEN
-BASE_BRANCH: main (178768871545ab36aaea019916a492a051373496)
-HEAD_BRANCH: feat/ap-dx-01-design-entity-contracts
-FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
-MERGE_STATUS: NOT_MERGED — awaiting review and user approval
-AUTO_MERGE: DISABLED — user approval required per implementation_freeze.md §14
+PR_NUMBER: (pending creation)
+PR_URL: (pending creation)
+PR_STATE: OPEN (expected)
+BASE_BRANCH: main (9fb3384aa6cbf43a37477bb9c269e89ddb31dc41)
+HEAD_BRANCH: feat/ap-dx-visible-vertical-slice-01
+MERGE_STATUS: NOT_MERGED — awaiting review
+AUTO_MERGE: DISABLED — user approval required
 
-PR_MERGE_STATUS_VERDICT: READY_FOR_REVIEW — not merged
+PR_MERGE_STATUS_VERDICT: READY_FOR_REVIEW
 
 ================================================================================
 26. Recommended Next Action
 ================================================================================
 
-1. Review and merge PR #244 (https://github.com/ollejanaitte/spacer-clone/pull/244) after
-   user approval.
-2. Proceed to AP-DX-02: 3D stable ID binding between design entities and viewer geometry.
-3. Address OQ-01 DeckAnchorage traceability row in manual_traceability.csv when governance
-   unlock permits (separate docs task).
+1. Operator completes manual_verification_checklist.md (VVS-MV-01–14) and updates
+   MANUAL_GUI_VERDICT in this report if visual confirmation is required pre-merge.
+2. Review and merge PR after approval.
+3. Proceed to design-entity property panel on 3D pick (apollo-design-entity-panel).
+4. Align cross-beam stations with geometryRef span-index resolver when panel work begins.
 
 ================================================================================
 27. Final Verdict
 ================================================================================
 
-AP-DX-01 Phases A–F complete. Design entity contracts delivered at schema version 0.1.0
-with additive backward-compatible structuralDesignModel. Verification bundle PASS.
-Branch feat/ap-dx-01-design-entity-contracts ready for PR review; main unchanged.
+Visible Vertical Slice 01 Blocks A–D complete. User-driven bridge structure workflow
+delivered with BSDD-driven 3D visualization at schema version 0.1.0. Block D
+verification bundle PASS. Manual GUI checklist PENDING operator sign-off.
 
-Canonical AP-DX-01 verdict fields:
+Canonical VVS-01 verdict fields:
 
-APDX01_CONTRACT_TYPES_VERDICT: PASS
-APDX01_SCHEMA_VERDICT: PASS
-APDX01_PARSER_VERDICT: PASS
-APDX01_VALIDATION_VERDICT: PASS
-APDX01_ROUNDTRIP_VERDICT: PASS
-APDX01_STABLE_ID_VERDICT: PASS
-APDX01_NONCOMPOSITE_VERDICT: PASS
-APDX01_BACKWARD_COMPATIBILITY_VERDICT: PASS
+VISIBLE_SLICE_INPUT_UI_VERDICT: PASS
+VISIBLE_SLICE_MODEL_GENERATION_VERDICT: PASS
+VISIBLE_SLICE_APPROXIMATE_QUANTITY_VERDICT: PASS
+VISIBLE_SLICE_3D_RENDERING_VERDICT: PASS
+VISIBLE_SLICE_SAVE_RELOAD_VERDICT: PASS
+APOLLO_REGRESSION_VERDICT: PASS
+VIEWER_REGRESSION_VERDICT: PASS
+CONTRACT_REGRESSION_VERDICT: PASS
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
-LOCAL_IMPLEMENTATION_VERDICT: PASS
-PR_READINESS_VERDICT: PASS — ready for PR review
+MANUAL_GUI_VERDICT: PENDING
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+PR_READINESS_VERDICT: PASS
 OVERALL_VERDICT: PASS

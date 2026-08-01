@@ -26,6 +26,7 @@ import {
   saveApolloWorkspaceEntry,
 } from "./workspace";
 import { ApolloNumericInput } from "./components/ApolloNumericInput";
+import { BridgeStructureInputPanel } from "./components/BridgeStructureInputPanel";
 import {
   CompositionAwareInput,
   CompositionAwareTextarea,
@@ -1768,6 +1769,11 @@ export function ApolloPhase1Shell({
   const renderEditor = () => (
     <section className="apollo-unit2-layout">
       <div className="apollo-unit2-editor">
+        <BridgeStructureInputPanel
+          project={project}
+          onProjectChange={(nextProject) => onProjectChange(nextProject)}
+          onAuditEvent={onAuditEvent}
+        />
         <div className="apollo-applied-summary">
           <span data-testid="apollo-selection-count">選択 {selectedRefs.length} 件</span>
           <span data-testid="apollo-visible-count">表示 {visibleEditorRefs.length} 件</span>
@@ -2371,6 +2377,11 @@ export function ApolloPhase1Shell({
           <div className="apollo-unit2-layout">
             <div className="apollo-unit2-editor">
               {renderProjectForm()}
+              <BridgeStructureInputPanel
+                project={project}
+                onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                onAuditEvent={onAuditEvent}
+              />
               <article className="apollo-editor-card">
                 <h2>サンプル概要</h2>
                 <ul>

@@ -1,0 +1,143 @@
+// @vitest-environment jsdom
+import { afterEach, describe, expect, it } from "vitest";
+import { act, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { createDefaultProject } from "../../data/defaultProject";
+import type { ProjectModel } from "../../types";
+import {
+  getBridgeStructureInputDraft,
+  withBridgeStructureField,
+} from "../bridgeStructure";
+import { BridgeStructureInputPanel } from "../components/BridgeStructureInputPanel";
+
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+const mountedRoots: Array<{ root: ReturnType<typeof createRoot>; container: HTMLElement }> = [];
+
+afterEach(() => {
+  for (const entry of mountedRoots.splice(0)) {
+    act(() => {
+      entry.root.unmount();
+    });
+    entry.container.remove();
+  }
+});
+
+function setInputValue(input: HTMLInputElement, value: string) {
+  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+  valueSetter?.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+  input.dispatchEvent(new Event("blur", { bubbles: true }));
+}
+
+function fillValidInput(project: ProjectModel): ProjectModel {
+  let next = project;
+  const values: Record<string, number> = {
+    spanLength: 40,
+    bridgeLength: 200,
+    width: 12,
+    girderCount: 4,
+    girderSpacing: 3,
+    girderDepth: 2.5,
+    topFlangeWidth: 0.5,
+    topFlangeThickness: 0.02,
+    bottomFlangeWidth: 0.6,
+    bottomFlangeThickness: 0.025,
+    webThickness: 0.012,
+    deckThickness: 0.25,
+    crossBeamSpacing: 5,
+  };
+  for (const [key, value] of Object.entries(values)) {
+    next = withBridgeStructureField(
+      next,
+      key as keyof ReturnType<typeof getBridgeStructureInputDraft>,
+      value,
+    );
+  }
+  return next;
+}
+
+function renderPanel(initialProject: ProjectModel = createDefaultProject()) {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  mountedRoots.push({ root, container });
+
+  function Harness() {
+    const [project, setProject] = useState(initialProject);
+    return (
+      <BridgeStructureInputPanel
+        project={project}
+        onProjectChange={setProject}
+      />
+    );
+  }
+
+  act(() => {
+    root.render(<Harness />);
+  });
+  return container;
+}
+
+describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
+  it("renders all required bridge structure input fields", () => {
+    const container = renderPanel();
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-panel']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-generate-structure']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-quantities']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-spanLength']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-bridgeLength']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-width']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-girderCount']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-girderSpacing']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-girderDepth']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-deckThickness']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-input-crossBeamSpacing']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-not-generated']")).not.toBeNull();
+  });
+
+  it("shows INCOMPLETE quantity status before input is complete", () => {
+    const container = renderPanel();
+    const incompleteRow = container.querySelector("[data-testid='apollo-quantity-row-概算数量']");
+    expect(incompleteRow).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-quantity-status-概算数量']")?.textContent).toBe(
+      "INCOMPLETE",
+    );
+  });
+
+  it("generates StructuralDesignModel and NOT_AUTHORIZED quantities from the panel", () => {
+    const container = renderPanel(fillValidInput(createDefaultProject()));
+
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-not-generated']")).toBeNull();
+    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
+    expect(container.textContent).toContain("RC床版: 1 件（designStatus: NOT_AUTHORIZED）");
+    expect(container.textContent).toContain("nonCompositeAssertion.compositeAction: false");
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-main-girder-status']")?.textContent).toBe(
+      "主桁1: NOT_AUTHORIZED",
+    );
+    expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
+      "NOT_AUTHORIZED",
+    );
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-message']")?.textContent).toContain(
+      "構造設計モデルを生成しました",
+    );
+  });
+
+  it("commits nullable field edits through CompositionAwareInput blur", () => {
+    const container = renderPanel();
+    const bridgeLengthInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-bridgeLength']",
+    ) as HTMLInputElement;
+    act(() => {
+      setInputValue(bridgeLengthInput, "200");
+    });
+    expect(bridgeLengthInput.value).toBe("200");
+  });
+});

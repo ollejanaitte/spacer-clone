@@ -413,6 +413,8 @@ function applySolidMetadata(object: THREE.Object3D, solid: ApolloSolidGeometryPa
     id: solid.sourceEntityId,
     apolloVisualizationSolidId: solid.id,
     apolloSolidKind: solid.kind,
+    ...(solid.designEntityId ? { designEntityId: solid.designEntityId } : {}),
+    ...(solid.designEntityKind ? { designEntityKind: solid.designEntityKind } : {}),
   };
 }
 
