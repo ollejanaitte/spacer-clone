@@ -1108,7 +1108,7 @@ STOP_REASON: N/A — main sync merge complete; docs-only conflict resolution; ca
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (historical baseline f0983878…; retained as authoritative LV-01 evidence)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
-CURRENT_COMMIT: 2297f682f6028252970d4c9a8d955fa671838b3a
+CURRENT_COMMIT: 4c5fbadbbff8a8359c8906fc1281784c1215ccdd
 CURRENT_REMOTE_BRANCH: origin/docs/apollo-refreeze-local-verification
 ORIGIN_MAIN_CURRENT: f826d32a224f4e4c464a3669e1dcba60a58c4d63
 ORIGIN_MAIN_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
