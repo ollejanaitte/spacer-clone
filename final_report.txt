@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:47 JST
-WORK_STATUS: ACTIVE — PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
-CURRENT_PHASE: PD-001 pre-existing defect classification complete; LV-04 bundle 1 Apollo frontend remains FAIL (26 expected / 27 discovered manifest drift)
+UPDATE_TIMESTAMP: 2026-08-01 19:49 JST
+WORK_STATUS: ACTIVE — LV-05 manual 3D/GUI checklist prepared (manual_verification_checklist.md; THREED_VIEWER_VERDICT PENDING_USER_VISUAL_CONFIRMATION); PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
+CURRENT_PHASE: LV-05 checklist prepared — manual user visual confirmation required before final readiness/PR judgment; LV-04 bundle 1 Apollo frontend remains FAIL (26 expected / 27 discovered manifest drift)
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
 ================================================================================
@@ -41,7 +41,9 @@ validators PASS). LV-04 bundle 5 (backend general, 2026-08-01 19:45:37 JST): PAS
 14/14 modules, 189/189 tests; IF3 backend bundle and schema-only bundle already covered
 separately). LV-03 (implementation inventory) is PASS (code inspection; see
 implementation_inventory.md). LV-04 is IN_PROGRESS (5/9 bundles; backend general PASS).
-LV-05 through LV-07 remain NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C
+LV-05 manual checklist prepared 2026-08-01 19:49 JST — operator visual confirmation required
+(`manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION`).
+LV-06 through LV-07 remain NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C
 git diff --check PASS).
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
@@ -115,7 +117,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 5 PASS — backend general; IF3 backend and schema-only bundles covered separately) |
-| LV-05 | 3D display non-regression | NOT_STARTED |
+| LV-05 | 3D display non-regression | CHECKLIST_PREPARED — manual_verification_checklist.md; operator visual confirmation required; THREED_VIEWER_VERDICT PENDING_USER_VISUAL_CONFIRMATION (LV-04-B02 automated PASS does not substitute) |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
 | LV-08 | Document quality | PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS) |
@@ -127,14 +129,17 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 LV-01 re-run (2026-08-01 19:38:37 JST): PASS. Phase C schema/doc verification
 (2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands exit 0). LV-04 bundle 5 (backend
 general, 2026-08-01 19:45:37 JST): PASS (14/14 modules, 189/189 tests; IF3 backend bundle
-and schema-only bundle already covered separately). origin/main and local main
-are both f0983878ccbb816f591214b6242c3688ecb5a060. Verification branch HEAD cccf4c3… contains
+and schema-only bundle already covered separately). LV-05 manual checklist prepared
+(2026-08-01 19:49 JST): docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md
+— operator must execute visual checks; THREED_VIEWER_VERDICT remains
+PENDING_USER_VISUAL_CONFIRMATION; final readiness/PR judgment BLOCKED until human sign-off.
+origin/main and local main are both f0983878ccbb816f591214b6242c3688ecb5a060. Verification branch HEAD cccf4c3… contains
 origin/main and matches origin/docs/apollo-refreeze-local-verification. Prior FAIL re-run
 (2026-08-01 19:32:32 JST) retained as historical evidence. Prior Phase 2–4 recorded
 results preserved; Phase C schema/doc bundle and LV-04 bundle 5 recorded.
 
-Proceed to remaining LV-04 bundles per local_verification_plan.md; LV-05
-manual/e2e table. Full LV-02 findings remain in local_verification_report.md.
+Proceed to: (1) human operator completes manual_verification_checklist.md; (2) remaining
+LV-04 bundles per local_verification_plan.md. Full LV-02 findings remain in local_verification_report.md.
 
 ================================================================================
 7. LV-03 Implementation Inventory
@@ -164,6 +169,27 @@ Maintenance check: d3f1ec6 (main viewer solid handoff) and 1fbcb3e (test coverag
 confirmed present in App.tsx, Viewer3D, ViewerControls, and test files.
 
 LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
+
+================================================================================
+7a. LV-05 Manual 3D/GUI Checklist Preparation
+================================================================================
+
+Preparation recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 19:49 JST. Operator execution NOT performed by Codex/Cursor.
+
+| Field | Value |
+|-------|-------|
+| ARTIFACT | docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md |
+| CHECKLIST_STATUS | CHECKLIST_PREPARED |
+| STARTUP | uvicorn 127.0.0.1:8000; npm run dev:apollo -- --host 127.0.0.1 --strictPort |
+| URLS | http://127.0.0.1:5173/pro ; http://127.0.0.1:5173/pro/apollo |
+| MV_ROWS | MV-01..MV-13 (solids, deck, girders, cross-beams, frame-only regression, camera, console, STL, downloads, reload, main-screen solids) |
+| AUTOMATED_SUBSTITUTE | REJECTED — LV-04-B02 viewer vitest PASS (228/228) is supporting evidence only |
+| THREED_VIEWER_VERDICT | PENDING_USER_VISUAL_CONFIRMATION |
+| LV05_3D_DISPLAY_VERDICT | PENDING_USER_VISUAL_CONFIRMATION |
+| REFREEZE_FINAL_READINESS | BLOCKED — manual user visual confirmation required before PR/final judgment |
+
+LV05_MANUAL_CHECKLIST_VERDICT: CHECKLIST_PREPARED
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -731,7 +757,9 @@ PD001_APOLLO_SUITE_MANIFEST_VERDICT: FAIL (do not mark PASS until fixed on imple
 ================================================================================
 
 Stopped on branch docs/apollo-refreeze-local-verification at cccf4c3….
-LV-04 bundle 5 backend general PASS (2026-08-01 19:45:37 JST; 14/14 modules, 189/189 tests;
+LV-05 manual checklist prepared (2026-08-01 19:49 JST; manual_verification_checklist.md;
+THREED_VIEWER_VERDICT PENDING_USER_VISUAL_CONFIRMATION; final readiness BLOCKED until human
+operator completes visual checks). LV-04 bundle 5 backend general PASS (2026-08-01 19:45:37 JST; 14/14 modules, 189/189 tests;
 IF3 backend bundle and schema-only bundle already covered separately). Phase C schema/doc
 verification PASS (2026-08-01 19:42:07–19:42:15 JST; 8/8 commands exit 0).
 LV-01 re-run PASS (2026-08-01 19:38:37 JST): origin/main and local main f0983878….
@@ -770,7 +798,8 @@ LV-02: PASS (README status-enum alignment fix applied).
 LV-03: PASS (implementation inventory — 5 IMPLEMENTED, 11 PARTIALLY_IMPLEMENTED, 1
 SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
 LV-04: IN_PROGRESS (bundle 5/9 PASS — backend general).
-LV-05 through LV-07: NOT_STARTED.
+LV-05: CHECKLIST_PREPARED — manual user visual confirmation required (THREED_VIEWER_VERDICT PENDING_USER_VISUAL_CONFIRMATION).
+LV-06 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (PD-001
 SEPARATE_DEFECT_REQUIRED; 187/188 pass; manifest stale 26 expected / 27 discovered;
@@ -788,6 +817,9 @@ Remaining LV-04 bundles NOT_STARTED.
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
+THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION
+LV05_3D_DISPLAY_VERDICT: PENDING_USER_VISUAL_CONFIRMATION
+REFREEZE_FINAL_READINESS: BLOCKED — manual user visual confirmation required
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
@@ -796,9 +828,9 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:47 JST
-WORK_STATUS: ACTIVE — PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 backend general PASS; Phase C schema/doc PASS; LV-01 PASS
-STOP_REASON: None — PD-001 classification recorded 2026-08-01 19:47 JST; LV-04-B01 remains FAIL.
+UPDATE_TIMESTAMP: 2026-08-01 19:49 JST
+WORK_STATUS: ACTIVE — LV-05 manual checklist prepared; THREED_VIEWER_VERDICT PENDING_USER_VISUAL_CONFIRMATION; PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 backend general PASS; Phase C schema/doc PASS; LV-01 PASS
+STOP_REASON: None — LV-05 checklist prepared 2026-08-01 19:49 JST; awaiting human operator visual confirmation.
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
@@ -815,7 +847,8 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — PD-001 FAIL (blocks LV-04-B01) — proceed to remaining LV-04 bundles
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — LV-05 checklist prepared (operator visual confirmation required) — PD-001 FAIL (blocks LV-04-B01) — proceed to remaining LV-04 bundles
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
+  - Human operator: execute docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md and record PASS/FAIL with evidence
   - Remaining LV-04 bundles per local_verification_plan.md
