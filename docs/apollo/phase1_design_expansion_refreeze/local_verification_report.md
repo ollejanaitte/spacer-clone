@@ -128,7 +128,7 @@ pytest --version  # pytest 9.1.1
 
 | ID | Description | Status |
 |----|-------------|--------|
-| LV-01 | Git sync / worktree | NOT_STARTED |
+| LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | NOT_STARTED |
 | LV-03 | Implementation inventory | NOT_STARTED |
 | LV-04 | Regression tests | NOT_STARTED |
@@ -324,9 +324,73 @@ require bundle/fixture inputs; they are not standalone CI smoke commands.
 existing `package.json` scripts, `README.md`, pytest modules, vitest configs, or
 launcher scripts. Application tests remain NOT_STARTED until LV-04/LV-05 execution.
 
+## LV-01 Git sync / worktree
+
+**Execution timestamp:** 2026-08-01 18:45:04 JST
+**Verdict:** PASS
+
+Scope: `git fetch --all --prune`, repository sync, design-freeze baseline containment,
+and verification-branch ancestry relative to `origin/main`. No application tests executed.
+
+### Recorded commands
+
+```text
+git fetch --all --prune
+# Fetching origin (exit 0)
+
+git status --short --branch
+# ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification
+
+git rev-parse HEAD
+# 96a1febf9524e23c47ea187a73d0bd02ba287469
+
+git rev-parse origin/main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git rev-parse main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git merge-base HEAD origin/main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git branch --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   docs/apollo-phase1-design-expansion-refreeze
+# * docs/apollo-refreeze-local-verification
+#   fix/apollo-3d-viewer
+#   main
+
+git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   origin/HEAD -> origin/main
+#   origin/docs/apollo-phase1-design-expansion-refreeze
+#   origin/docs/apollo-refreeze-local-verification
+#   origin/fix/apollo-3d-viewer
+#   origin/main
+
+git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+# 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+```
+
+### LV-01 checks
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
+| Local `main` SHA equals `origin/main` | PASS | Both `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| `origin/main` contains documented design-freeze baseline | PASS | `origin/main` listed in `git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411`; `git merge-base --is-ancestor` confirms |
+| Verification branch is descendant of `origin/main` | PASS | `git merge-base HEAD origin/main` equals `origin/main` SHA |
+| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
+| Working tree clean | PASS | `git status --short` empty |
+| HEAD matches origin tracking branch (pre-edit) | PASS | HEAD `96a1febf…` equals `origin/docs/apollo-refreeze-local-verification` |
+
+### LV-01 verdict
+
+`LV01_GIT_SYNC_VERDICT: PASS` — repository is synced; `origin/main` contains the
+documented design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411`; current
+verification branch remains a descendant of `origin/main`.
+
 ## Next action
 
-Proceed to LV-01 per `local_verification_plan.md` (`git fetch --all --prune`, baseline
-SHA containment), then LV-02/LV-03 inventory. Execute LV-04 using the Phase 3 planned
-commands above (record exit codes and counts). LV-05 uses manual/e2e commands from the
-E2E/manual table. Do not invent commands outside this inventory.
+Proceed to LV-02 per `local_verification_plan.md` (existing Apollo document consistency),
+then LV-03 implementation inventory. Execute LV-04 using the Phase 3 planned commands
+above (record exit codes and counts). LV-05 uses manual/e2e commands from the E2E/manual
+table. Do not invent commands outside this inventory.
