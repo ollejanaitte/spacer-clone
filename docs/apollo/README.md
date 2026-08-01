@@ -43,6 +43,13 @@ OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
 - [Consolidated Apollo manual research](research/consolidated-2026-08-01/README.md) — PR-C selective integration from external `apollo` source; summaries, feature/standards CSV, inventory indexes
 - [Consolidated Apollo handoffs](handoffs/consolidated-2026-08-01/README.md) — external SC-20260726-001 acceptance/review metadata
 
+## Verification / operator evidence (consolidated 2026-08-01)
+
+- [Verification evidence index](index/README.md) — PR-D package map and local-archive pointers
+- [U3 evidence summary](u3-evidence/summary/summary.md) — checkpoint summary / selected result (raw txt excluded)
+- [PR5 smoke summary](pr5-smoke/README.md) — browser smoke summary + JSON要約 (STL/PNG/log/raw JSON excluded)
+- [Operator smoke formal summary](operator-smoke/report.md) — formal summary + one representative PNG
+
 ## Handoffs
 
 - [APOLLO-FRAME-HANDOFF-20260726-001](handoffs/APOLLO-FRAME-HANDOFF-20260726-001/README.md)

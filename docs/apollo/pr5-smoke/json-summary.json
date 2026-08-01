@@ -1,0 +1,56 @@
+{
+  "title": "Apollo PR5 smoke JSON summary",
+  "source": "source://apollo-pr5-smoke/",
+  "migration": "PR-D",
+  "derivedFrom": [
+    "source://apollo-pr5-smoke/browser-smoke-summary.json",
+    "source://apollo-pr5-smoke/result.json"
+  ],
+  "verifiedAt": "Thursday, July 30, 2026",
+  "route": "/pro/apollo",
+  "presets": ["full", "girders", "deck", "visible"],
+  "downloadsConfirmed": "STL + .apollo.json for all presets",
+  "httpFailures": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "WebGL ReadPixels GPU stall warnings under headless Chromium"
+  ],
+  "downloadResults": [
+    {
+      "preset": "full",
+      "files": [
+        "full-1-200m級-5径間連続橋.stl",
+        "full-2-200m級-5径間連続橋.apollo.json"
+      ]
+    },
+    {
+      "preset": "girders",
+      "files": [
+        "girders-1-200m級-5径間連続橋.stl",
+        "girders-2-200m級-5径間連続橋.apollo.json"
+      ]
+    },
+    {
+      "preset": "deck",
+      "files": [
+        "deck-1-200m級-5径間連続橋.stl",
+        "deck-2-200m級-5径間連続橋.apollo.json"
+      ]
+    },
+    {
+      "preset": "visible",
+      "files": [
+        "visible-1-200m級-5径間連続橋.stl",
+        "visible-2-200m級-5径間連続橋.apollo.json"
+      ]
+    }
+  ],
+  "gitExclusions": {
+    "stl": 8,
+    "apolloJson": 4,
+    "png": 1,
+    "consoleLog": 1,
+    "rawResultJson": 1
+  },
+  "localArchive": "local-archive/smoke-artifacts/apollo-pr5/"
+}

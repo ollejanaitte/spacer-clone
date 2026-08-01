@@ -1,0 +1,17 @@
+original_path,relative_path,sha256,size_bytes,selection,destination_or_retention,notes
+apollo-pr5-smoke/apollo-stl-list-mode.png,apollo-stl-list-mode.png,7e91cccda923f415fc1c10dc0fa454714fa49221ca464355982b2efdaee8eabb,400731,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/browser-smoke-summary.json,browser-smoke-summary.json,10bd7b1c4b5c16b10edd4740ebf049c5c5ca3f00c47b2523ce54891d74f9e4d3,481,GIT_CANONICAL_COPY,docs/apollo/pr5-smoke/browser-smoke-summary.json,Byte-exact copy
+apollo-pr5-smoke/console.log,console.log,273f95c9050f0d1999a97f09ae9cbd37dc97039837e1e039368f5a2897b25917,913,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/deck-1-200m級-5径間連続橋.stl,deck-1-200m級-5径間連続橋.stl,1381f9df5015b646df68dae8716d1c18789913b0a9caf140088ec371c31973b5,3084,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/deck-2-200m級-5径間連続橋.apollo.json,deck-2-200m級-5径間連続橋.apollo.json,b57c8259202b563c9d79f59ebe0bd4e383a541521d58166214d73be4f8844c8a,1612,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/deck-2-200m級-5径間連続橋.stl,deck-2-200m級-5径間連続橋.stl,1381f9df5015b646df68dae8716d1c18789913b0a9caf140088ec371c31973b5,3084,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/full-1-200m級-5径間連続橋.stl,full-1-200m級-5径間連続橋.stl,a5a2052dd39c9469b8d1da4de750e3c13694a368b2f749abdd88522a3effc482,126484,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/full-2-200m級-5径間連続橋.apollo.json,full-2-200m級-5径間連続橋.apollo.json,f45a3631bacb32e43ecd8d43debec85d0895d673f00903db67eb199e75bba5c7,1646,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/full-2-200m級-5径間連続橋.stl,full-2-200m級-5径間連続橋.stl,a5a2052dd39c9469b8d1da4de750e3c13694a368b2f749abdd88522a3effc482,126484,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/girders-1-200m級-5径間連続橋.stl,girders-1-200m級-5径間連続橋.stl,8024b9c9c75a21f4c409794092359e7aa35757b6d1be25808c91e568a2d1b7e0,52084,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/girders-2-200m級-5径間連続橋.apollo.json,girders-2-200m級-5径間連続橋.apollo.json,5ae33647c71bba855dc197925ce33ef70040bccf18dde9bf2901655ec921c01a,1616,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/girders-2-200m級-5径間連続橋.stl,girders-2-200m級-5径間連続橋.stl,8024b9c9c75a21f4c409794092359e7aa35757b6d1be25808c91e568a2d1b7e0,52084,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/result.json,result.json,cfe2d34538a491d566c1fc1524c191b1bda8c10094e8a36729e228f8727c54f0,687,FOLDED_INTO_JSON_SUMMARY,docs/apollo/pr5-smoke/json-summary.json,Summarized
+apollo-pr5-smoke/visible-1-200m級-5径間連続橋.stl,visible-1-200m級-5径間連続橋.stl,a5a2052dd39c9469b8d1da4de750e3c13694a368b2f749abdd88522a3effc482,126484,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/visible-2-200m級-5径間連続橋.apollo.json,visible-2-200m級-5径間連続橋.apollo.json,607cb8aecb4c4822a7ae3fbeb58ce60557928461cb5bc55479e31cd8ee47c552,1646,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
+apollo-pr5-smoke/visible-2-200m級-5径間連続橋.stl,visible-2-200m級-5径間連続橋.stl,a5a2052dd39c9469b8d1da4de750e3c13694a368b2f749abdd88522a3effc482,126484,RAW_EXCLUDED_FROM_GIT,local-archive/smoke-artifacts/apollo-pr5/,Excluded
