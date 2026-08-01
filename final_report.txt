@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:53:10 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:55:18 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 2 viewer/3D COMPLETE — FAIL)
+CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 2 viewer/3D COMPLETE — PASS)
 
 ================================================================================
 1. Executive Summary
@@ -18,8 +18,9 @@ inspected package.json scripts, vitest/playwright configs, pytest layout, and
 test file inventories to produce a verified LV-04/LV-05 command plan (no tests
 executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
 Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
-origin/main). Phase 4 bundle 2 (viewer/3D vitest) executed: FAIL (exit 1, pre-existing
-apolloSuite drift in expanded run; all 22 viewer test files / 228 viewer tests PASS).
+origin/main). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
+files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
+that broadened scope and is superseded.
 LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
 IN_PROGRESS (2/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
 
@@ -81,7 +82,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 2 FAIL — pre-existing apolloSuite in expanded run) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 2 PASS — viewer/3D corrected rerun) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -248,27 +249,54 @@ APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
 LV04_B01_APOLLO_FE_VERDICT: FAIL
 
 ================================================================================
-14. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2)
+14. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2) — SUPERSEDED
 ================================================================================
 
 Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:52:38 JST.
+2026-08-01 18:52:38 JST. SUPERSEDED by corrected rerun in section 14a.
+
+Command error: run accidentally appended an extra `.` argument after `src/viewer`,
+broadening vitest scope to the full frontend/ tree instead of the Phase 3 planned
+viewer bundle (`cd frontend && npm run test -- src/viewer`).
 
 | Field | Value |
 |-------|-------|
 | TEST_ID | LV-04-B02-VIEWER-3D |
-| COMMAND | cd frontend && npm run test -- src/viewer . |
+| COMMAND | cd frontend && npm run test -- src/viewer . (ERRONEOUS — extra `.` argument) |
 | START_TIME | 2026-08-01 18:52:38 JST |
 | END_TIME | 2026-08-01 18:53:10 JST |
 | EXIT_CODE | 1 |
-| RESULT | FAIL |
+| RESULT | FAIL (SUPERSEDED) |
 | FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale; failure outside src/viewer/) |
 | AFFECTED_SCOPE | apolloSuite.test.ts — 1/2047 tests failed; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed |
-| EVIDENCE | Vitest: 2046 pass, 1 fail; verified command `.` expands to full frontend suite; viewer-only rerun (src/viewer) exits 0 with 228/228 pass |
-| ACTION | Record only; fix deferred to implementation branch |
+| EVIDENCE | Vitest: 2046 pass, 1 fail; erroneous `.` argument expanded scope beyond viewer bundle |
+| ACTION | Superseded by corrected rerun (section 14a) |
 
-VIEWER_3D_REGRESSION_STATUS: FAIL (verified command exit 1; viewer tests themselves PASS — 22/22 files, 228/228 tests)
-LV04_B02_VIEWER_3D_VERDICT: FAIL (pre-existing apolloSuite drift in expanded run)
+VIEWER_3D_REGRESSION_STATUS: FAIL (SUPERSEDED — erroneous command)
+LV04_B02_VIEWER_3D_VERDICT: FAIL (SUPERSEDED)
+
+================================================================================
+14a. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2, Corrected Rerun)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:55:15 JST. Authoritative result; supersedes section 14.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D-CORRECTED |
+| COMMAND | cd frontend && npm run test -- src/viewer |
+| START_TIME | 2026-08-01 18:55:15 JST |
+| END_TIME | 2026-08-01 18:55:18 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 22/22 viewer test files passed (228/228 viewer tests) |
+| EVIDENCE | Vitest v4.1.8: Test Files 22 passed (22); Tests 228 passed (228); Duration 3.19s |
+| ACTION | Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
+
+VIEWER_3D_REGRESSION_STATUS: PASS
+LV04_B02_VIEWER_3D_VERDICT: PASS
 
 ================================================================================
 16. Safety Check — Sibling Folder Policy
@@ -313,11 +341,11 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 17. Recommended Next Action
 ================================================================================
 
-On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend)
-and bundle 2 (viewer/3D) are FAIL (pre-existing apolloSuite drift). Next: LV-03
-implementation inventory if not done, then LV-04 bundle 3 (IF3 frontend) per
-local_verification_plan.md. Record results in local_verification_report.md without
-inventing test outcomes.
+On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend) is
+FAIL (pre-existing apolloSuite drift). LV-04 bundle 2 (viewer/3D) is PASS (corrected
+rerun). Next: LV-03 implementation inventory if not done, then LV-04 bundle 3 (IF3
+frontend) per local_verification_plan.md. Record results in local_verification_report.md
+without inventing test outcomes.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -344,13 +372,12 @@ Phase 3 test-command discovery: COMPLETE.
 LV-01: PASS.
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: NOT_STARTED.
-LV-04: IN_PROGRESS (bundle 2/9 FAIL — pre-existing apolloSuite in expanded viewer run; viewer tests PASS).
+LV-04: IN_PROGRESS (bundle 2/9 PASS — viewer/3D corrected rerun).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
-187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D FAIL (verified
-command exit 1; 22/22 viewer files and 228/228 viewer tests PASS; failure is pre-existing
-apolloSuite in expanded run). Remaining LV-04 bundles NOT_STARTED.
+187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D PASS (corrected
+rerun; 22/22 files, 228/228 tests, exit 0). Remaining LV-04 bundles NOT_STARTED.
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING

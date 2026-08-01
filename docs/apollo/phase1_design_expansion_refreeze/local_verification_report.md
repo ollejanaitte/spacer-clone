@@ -509,45 +509,79 @@ diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstra
 stale suite-discoverability manifest; failure predates verification branch and is
 attributable to `origin/main` code, not refreeze documentation edits.
 
-## Phase 4 LV-04 test execution (bundle 2 — viewer / 3D)
+## Phase 4 LV-04 test execution (bundle 2 — viewer / 3D) — SUPERSEDED
 
 **Execution timestamp:** 2026-08-01 18:52:38 JST
-**Verdict:** FAIL (1 test; pre-existing on `origin/main`, not introduced by doc branch)
+**Verdict:** FAIL (SUPERSEDED — erroneous command; see corrected rerun below)
 
-Scope: second planned LV-04 bundle only (viewer/3D vitest per verified command).
-No other test categories executed. Doc branch `docs/apollo-refreeze-local-verification`
-has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+Scope: second planned LV-04 bundle only (viewer/3D vitest). No other test categories
+executed. Doc branch `docs/apollo-refreeze-local-verification` has zero diff vs
+`origin/main` under `frontend/` (docs-only commits since branch bootstrap).
 
-Note: verified command includes `.` after `src/viewer`, so vitest also scans the full
-`frontend/` tree (263 test files). All 22 viewer test files passed (228/228 viewer tests);
-the sole failure is `apolloSuite.test.ts` (Apollo discoverability), same as bundle 1.
+**Command error:** This run accidentally appended an extra `.` argument after
+`src/viewer`, broadening vitest scope to the full `frontend/` tree (263 test files)
+instead of the Phase 3 planned viewer bundle (`cd frontend && npm run test -- src/viewer`).
+The correct planned command has no trailing `.` path/filter.
 
-### LV-04 bundle 2 result record
+### LV-04 bundle 2 result record (superseded)
 
 | Field | Value |
 |-------|-------|
 | TEST_ID | LV-04-B02-VIEWER-3D |
-| COMMAND | `cd frontend && npm run test -- src/viewer .` |
+| COMMAND | `cd frontend && npm run test -- src/viewer .` (ERRONEOUS — extra `.` argument) |
 | START_TIME | 2026-08-01 18:52:38 JST |
 | END_TIME | 2026-08-01 18:53:10 JST |
 | EXIT_CODE | 1 |
-| RESULT | FAIL |
+| RESULT | FAIL (SUPERSEDED) |
 | FAILURE_CLASS | PRE_EXISTING — `apolloSuite.test.ts` discoverability drift (`apolloStlExport.test.ts` on `origin/main` but omitted from `EXPECTED_APOLLO_TEST_MODULES`); doc branch did not modify application code; failure is outside `src/viewer/` |
 | AFFECTED_SCOPE | `frontend/src/apollo/__tests__/apolloSuite.test.ts` — 1 failed test in 1 file; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed; 2046/2047 total tests passed |
-| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 262 passed (263)`; `Tests 1 failed \| 2046 passed (2047)`; Duration 30.51s; failure: `includes every expected AP-00 test module under __tests__` — received array includes `apolloStlExport.test.ts` not in expected list; viewer-only rerun (`npm run test -- src/viewer`) passes 22/22 files (228/228 tests, exit 0) |
-| ACTION | Record only; do not fix in this doc-only task. Viewer tests themselves are green; overall verified command fails due to pre-existing Apollo suite manifest drift expanded by `.` argument. Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
+| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 262 passed (263)`; `Tests 1 failed \| 2046 passed (2047)`; Duration 30.51s; failure: `includes every expected AP-00 test module under __tests__` — received array includes `apolloStlExport.test.ts` not in expected list; erroneous `.` argument expanded scope beyond viewer bundle |
+| ACTION | Superseded by corrected rerun below using Phase 3 planned command without trailing `.` |
 
-### Phase 4 bundle 2 verdict
+### Phase 4 bundle 2 verdict (superseded)
 
-`LV04_B02_VIEWER_3D_VERDICT: FAIL` — verified viewer/3D bundle command exited 1 due to
-pre-existing `apolloSuite.test.ts` failure in the expanded run; all `src/viewer/` tests
-passed. Failure predates verification branch and is attributable to `origin/main` code,
-not refreeze documentation edits.
+`LV04_B02_VIEWER_3D_VERDICT: FAIL (SUPERSEDED)` — run used erroneous command with
+extra `.` argument; failure is not attributable to viewer/3D bundle under the planned
+command. Corrected rerun recorded below.
+
+## Phase 4 LV-04 test execution (bundle 2 — viewer / 3D, corrected rerun)
+
+**Execution timestamp:** 2026-08-01 18:55:15 JST
+**Verdict:** PASS
+
+Scope: second planned LV-04 bundle only (viewer/3D vitest per Phase 3 planned command).
+No other test categories executed. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+Verified command matches Phase 3 planned entry: `cd frontend && npm run test -- src/viewer`
+(no trailing `.` path/filter). Supersedes the erroneous 2026-08-01 18:52:38 JST run that
+accidentally appended an extra `.` argument and broadened scope.
+
+### LV-04 bundle 2 result record (corrected — authoritative)
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D-CORRECTED |
+| COMMAND | `cd frontend && npm run test -- src/viewer` |
+| START_TIME | 2026-08-01 18:55:15 JST |
+| END_TIME | 2026-08-01 18:55:18 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 22/22 viewer test files passed (228/228 viewer tests) |
+| EVIDENCE | Vitest v4.1.8: `Test Files 22 passed (22)`; `Tests 228 passed (228)`; Duration 3.19s |
+| ACTION | Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
+
+### Phase 4 bundle 2 verdict (corrected — authoritative)
+
+`LV04_B02_VIEWER_3D_VERDICT: PASS` — viewer/3D regression bundle exited 0 under the
+Phase 3 planned command. Supersedes superseded FAIL record from erroneous command with
+trailing `.` argument.
 
 ## Next action
 
-LV-04 bundle 1 (Apollo frontend) and bundle 2 (viewer/3D) recorded FAIL (pre-existing
-`apolloSuite.test.ts` drift). Proceed to LV-03 per `local_verification_plan.md` if not
-yet done, then LV-04 bundle 3 (IF3 frontend) using Phase 3 planned commands only.
-LV-05 uses manual/e2e commands from the E2E/manual table. Do not invent commands
-outside this inventory.
+LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
+LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). Proceed to LV-03 per
+`local_verification_plan.md` if not yet done, then LV-04 bundle 3 (IF3 frontend) using
+Phase 3 planned commands only. LV-05 uses manual/e2e commands from the E2E/manual table.
+Do not invent commands outside this inventory.
