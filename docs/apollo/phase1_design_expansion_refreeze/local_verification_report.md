@@ -1,26 +1,27 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** STOPPED — re-baselined 2026-08-01 19:24:00 JST; LV-01 re-run required before resume
+**Status:** STOPPED — LV-01 re-run 2026-08-01 19:32:32 JST: FAIL (local `main` behind `origin/main`; verification branch not descendant of current `origin/main`)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
-(HEAD `88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4` at stop/re-baseline)
+(HEAD `ef93b735c23dc3b88d473a07a9440824b8e7a198` at LV-01 re-run)
 bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`
-(at branch bootstrap; frozen snapshot). `origin/main` has since advanced to
-`f0983878ccbb816f591214b6242c3688ecb5a060` — prior LV-01 PASS is STALE; re-run LV-01
-before any further verification. Prior Phase 2–4 results below are preserved unchanged.
+(at branch bootstrap; frozen snapshot). `origin/main` is `f0983878ccbb816f591214b6242c3688ecb5a060`
+(LV-01 re-run baseline). Prior Phase 2–4 results below are preserved unchanged.
 
 ## Re-baseline (safe resume)
 
 | Field | Value |
 |-------|-------|
 | Re-baseline timestamp | 2026-08-01 19:24:00 JST |
+| LV-01 re-run timestamp | 2026-08-01 19:32:32 JST |
 | Branch | `docs/apollo-refreeze-local-verification` |
-| HEAD at stop/re-baseline | `88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4` |
+| HEAD at LV-01 re-run | `ef93b735c23dc3b88d473a07a9440824b8e7a198` |
+| Local `main` at LV-01 re-run | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
 | `origin/main` at prior LV-01 | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
-| `origin/main` current | `f0983878ccbb816f591214b6242c3688ecb5a060` |
-| LV-01 status | STALE — prior PASS preserved; re-run required |
-| Action | Documentation re-baseline only; no new verification PASS/FAIL claimed |
+| `origin/main` current (LV-01 baseline) | `f0983878ccbb816f591214b6242c3688ecb5a060` |
+| LV-01 status | FAIL — local `main` ≠ `origin/main`; `git merge-base HEAD origin/main` is `86e81d35…`, not current `origin/main` |
+| Action | Sync local `main` to `origin/main` and reconcile branch ancestry before further verification |
 
 ## Baseline
 
@@ -151,7 +152,7 @@ pytest --version  # pytest 9.1.1
 
 | ID | Description | Status |
 |----|-------------|--------|
-| LV-01 | Git sync / worktree | STALE — prior PASS; re-run required (`origin/main` advanced) |
+| LV-01 | Git sync / worktree | FAIL — re-run 2026-08-01 19:32:32 JST (`main` behind `origin/main`; branch not descendant of current `origin/main`) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
@@ -349,17 +350,95 @@ launcher scripts. Application tests remain NOT_STARTED until LV-04/LV-05 executi
 
 ## LV-01 Git sync / worktree
 
-**Execution timestamp:** 2026-08-01 18:45:04 JST
-**Verdict:** PASS (STALE — superseded by re-baseline 2026-08-01 19:24:00 JST)
-
-Prior PASS recorded when `origin/main` was `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
-`origin/main` has since advanced to `f0983878ccbb816f591214b6242c3688ecb5a060`.
-Re-run LV-01 before any further verification. Record below is preserved unchanged.
+**Execution timestamp (prior run):** 2026-08-01 18:45:04 JST — PASS at `origin/main` `86e81d35…` (superseded)
+**Execution timestamp (re-run):** 2026-08-01 19:32:32 JST
+**Verdict:** FAIL
 
 Scope: `git fetch --all --prune`, repository sync, design-freeze baseline containment,
 and verification-branch ancestry relative to `origin/main`. No application tests executed.
+Worktree checked clean before and after the re-run.
 
-### Recorded commands
+### Recorded commands (re-run 2026-08-01 19:32:32 JST)
+
+```text
+# Pre-check
+git status --short
+# (empty — worktree clean)
+
+git fetch --all --prune
+# Fetching origin (exit 0)
+
+git status --short --branch
+# ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification
+
+git rev-parse HEAD
+# ef93b735c23dc3b88d473a07a9440824b8e7a198
+
+git rev-parse origin/main
+# f0983878ccbb816f591214b6242c3688ecb5a060
+
+git rev-parse main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git rev-parse origin/docs/apollo-refreeze-local-verification
+# ef93b735c23dc3b88d473a07a9440824b8e7a198
+
+git merge-base HEAD origin/main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+# 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+
+git merge-base --is-ancestor 1fbcb3ea804f965b8f262284573f4f4d42dc2411 origin/main
+# exit 0 (YES)
+
+git merge-base --is-ancestor origin/main HEAD
+# exit 1 (NO)
+
+git log --oneline HEAD..origin/main
+# f098387 Docs/apollo refreeze local verification (#240)
+
+git branch --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   docs/apollo-phase1-design-expansion-refreeze
+# * docs/apollo-refreeze-local-verification
+#   fix/apollo-3d-viewer
+#   main
+
+git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   origin/HEAD -> origin/main
+#   origin/docs/apollo-phase1-design-expansion-refreeze
+#   origin/docs/apollo-refreeze-local-verification
+#   origin/fix/apollo-3d-viewer
+#   origin/main
+
+# Post-check
+git status --short
+# (empty — worktree clean)
+```
+
+### LV-01 checks (re-run)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Worktree clean (pre-check) | PASS | `git status --short` empty before fetch |
+| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
+| Local `main` SHA equals `origin/main` | FAIL | `main` `86e81d35…` ≠ `origin/main` `f0983878…` |
+| `origin/main` contains documented design-freeze baseline | PASS | `git merge-base --is-ancestor 1fbcb3ea… origin/main` exit 0; `origin/main` in `git branch -r --contains` |
+| Verification branch is descendant of current `origin/main` | FAIL | `git merge-base HEAD origin/main` is `86e81d35…`, not `f0983878…`; `origin/main` is not ancestor of HEAD |
+| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
+| HEAD matches origin tracking branch | PASS | HEAD `ef93b735…` equals `origin/docs/apollo-refreeze-local-verification` |
+| Worktree clean (post-check) | PASS | `git status --short` empty after checks |
+
+### LV-01 verdict
+
+`LV01_GIT_SYNC_VERDICT: FAIL` — re-run 2026-08-01 19:32:32 JST against `origin/main`
+`f0983878ccbb816f591214b6242c3688ecb5a060`. Local `main` remains at bootstrap SHA
+`86e81d35…` (1 commit behind `origin/main`). Verification branch tip `ef93b735…` does not
+contain `origin/main` tip `f098387` (`Docs/apollo refreeze local verification (#240)`).
+Prior PASS at `86e81d35…` is superseded. Sync local `main` to `origin/main` and reconcile
+branch ancestry before resuming LV-04 or other verification.
+
+### Recorded commands (prior run 2026-08-01 18:45:04 JST — superseded)
 
 ```text
 git fetch --all --prune
@@ -397,22 +476,8 @@ git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 # 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 ```
 
-### LV-01 checks
-
-| Check | Result | Evidence |
-|-------|--------|----------|
-| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
-| Local `main` SHA equals `origin/main` | PASS | Both `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
-| `origin/main` contains documented design-freeze baseline | PASS | `origin/main` listed in `git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411`; `git merge-base --is-ancestor` confirms |
-| Verification branch is descendant of `origin/main` | PASS | `git merge-base HEAD origin/main` equals `origin/main` SHA |
-| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
-| Working tree clean | PASS | `git status --short` empty |
-| HEAD matches origin tracking branch (pre-edit) | PASS | HEAD `96a1febf…` equals `origin/docs/apollo-refreeze-local-verification` |
-
-### LV-01 verdict
-
-`LV01_GIT_SYNC_VERDICT: PASS (STALE)` — prior run passed at `86e81d35…`; re-run required
-after `origin/main` advanced to `f0983878…`. No new LV-01 execution in re-baseline.
+Prior run checks (all PASS at `86e81d35…`): fetch, main==origin/main, baseline containment,
+branch descendant of `origin/main`, HEAD baseline, clean worktree, HEAD==origin tracking branch.
 
 ## LV-02 Existing Apollo document consistency
 
@@ -837,8 +902,10 @@ Previously BLOCKED in LV-02; resolved in LV-03.
 
 ## Next action
 
-Re-baseline (2026-08-01 19:24:00 JST): `origin/main` is `f0983878ccbb816f591214b6242c3688ecb5a060`.
-Re-run LV-01 before resuming. Prior recorded results preserved: LV-03 PASS; LV-04 bundle 1 FAIL
-(pre-existing); bundles 2–4 PASS; static checks typecheck/lint/build PASS. After LV-01
-re-run: LV-04 bundle 5 (backend general). LV-05 uses manual/e2e commands from the E2E/manual
-table. Do not invent commands outside this inventory.
+LV-01 re-run (2026-08-01 19:32:32 JST): FAIL. `origin/main` is
+`f0983878ccbb816f591214b6242c3688ecb5a060`; local `main` is `86e81d35…` (behind by 1 commit).
+Verification branch does not contain current `origin/main`. Sync local `main` to `origin/main`
+and reconcile branch ancestry, then re-run LV-01 before resuming. Prior recorded results
+preserved: LV-03 PASS; LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS; static checks
+typecheck/lint/build PASS. After LV-01 PASS: LV-04 bundle 5 (backend general). LV-05 uses
+manual/e2e commands from the E2E/manual table. Do not invent commands outside this inventory.
