@@ -1,0 +1,16 @@
+original_path,sha256,size_bytes,classification,git_managed,retention
+line-tab-ui-preservation-20260729-092526/MANIFEST.txt,18713286f9c8a672705960e27ac1b9acb52b63169073ac7459ad993270850f51,89,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/PRESERVATION_DIRECTORY.txt,948c67a378ba9bd85bcafe827602cc0160cf03bf1e2ea89e392a0708f11c79fc,65,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/SHA256SUMS.txt,f2b95c13442bebb567c3e9cc5a2b4d1c05bd40c38cccccb480b44264f5847286,1412,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/current-head.txt,bd00401d2bd48a4a7f7c9d5765a87eccfac83c15734c2a2dde197f052665c3f6,41,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/current-origin-main.txt,bd00401d2bd48a4a7f7c9d5765a87eccfac83c15734c2a2dde197f052665c3f6,41,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/git-diff-stat.txt,394b61a0bb1be5b457ace75b9606b933072070a3509e6bbc420553faa0c1762e,2210,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/git-status.txt,5dd2c51c188bc1d76237ac1788cfe65db67303ac1fe9341d1102c7f20d5485ab,2927,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/styles-full.diff,f0a5dc85d7412f8f7bad530d91726c23e2df3fa0bf927960e284e7200c1141c7,7017,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/ui-files.diff,fb91ee0f52f07d0e3e4ebba2a6f4a83c19b19165135ff8414cc317f4f78e37cb,39761,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/liner/components/AlignmentLineManager.tsx,d7299cd62f8683aee3f871eafc73668d4ee88b49ddd83026488373db1dc94e24,10513,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/liner/components/AlignmentManager.tsx,933bf2c9c8a0adb7b78b55a827fab10e04d8fa811a0dc32c924d6b4d898efe93,7669,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/liner/components/HorizontalElementEditor.tsx,a84e856fc3c676fa078099b3b7a4b0f770fa8cd5e8f6a2a324bb28cd43c9bda7,15578,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/liner/pages/LinerEditPage.test.tsx,d69d9d75a089769447de760e58c958891a52b9c21d2a6e1137cb6c50817a00a4,21827,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/liner/pages/LinerEditPage.tsx,1cc7ff8f76747f7635dbcbd0d8142846df6aa5f3a4c73478f7471bbbbb49fb28,20650,B_ARCHIVE,false,local-archive/ui-preservation/
+line-tab-ui-preservation-20260729-092526/files/frontend/src/styles.css,293ebcb6cc8ca6d28f41497de4ae55264c49d7f429a73630b8db6f19c8e52ff9,106076,B_ARCHIVE,false,local-archive/ui-preservation/

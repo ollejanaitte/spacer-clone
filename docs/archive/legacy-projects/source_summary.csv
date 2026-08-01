@@ -1,0 +1,13 @@
+segment_path,segment_type,file_count,symlink_count,regular_bytes,approx_size,classification,git_managed,notes
+archive/spacer-clone-20260726-224112,archive_bundle,116833,193,2104662779,2.0G,B_ARCHIVE,false,Symlinks not dereferenced; external + local-archive/legacy-archive/
+archive/spacer-clone-20260726-224112/manifests,directory,3,0,16925,16.5K,B_ARCHIVE,false,pre-consolidation.txt archive-tree.txt archive-sizes.txt
+archive/spacer-clone-20260726-224112/from-legacy-primary,directory,3438,7,50665848,48.3M,B_ARCHIVE,false,Legacy primary extract; tracked.diff untracked.list docs frontend .mimocode
+archive/spacer-clone-20260726-224112/from-spacer-clone-latest,directory,115,0,4830552,4.6M,B_ARCHIVE,false,Agent-run electron-ui-verify evidence docs/road phase6 frontend-tmp-scripts
+archive/spacer-clone-20260726-224112/from-spacer-clone-main,directory,60,0,2269459,2.2M,B_ARCHIVE,false,Agent-run electron-ui-fix screenshots
+archive/spacer-clone-20260726-224112/from-spacer-clone-if3-e,directory,2,0,114,114B,B_ARCHIVE,false,HEAD.txt LOG.txt stubs
+archive/spacer-clone-20260726-224112/from-spacer-clone-pr40,directory,2,0,94,94B,B_ARCHIVE,false,status.txt NOTE.txt stubs
+archive/spacer-clone-20260726-224112/retired-worktrees,directory,113212,186,2045998923,1.9G,B_ARCHIVE,false,Four full retired worktree copies; bulk of archive size
+archive/spacer-clone-20260726-224112/retired-worktrees/spacer-clone-latest,worktree_archive,42375,64,1092572021,1.0G,B_ARCHIVE,false,Branch phase6/pr39-road-gdraw @ 1031001
+archive/spacer-clone-20260726-224112/retired-worktrees/spacer-clone-pr40,worktree_archive,34604,62,461961312,440.6M,B_ARCHIVE,false,Branch feat/phase6-pr40-print-catalog @ 4020a04
+archive/spacer-clone-20260726-224112/retired-worktrees/spacer-clone-if3-e,worktree_archive,34564,60,458277042,437.0M,B_ARCHIVE,false,Branch feat/phase6-if3-e-completion @ 858620b
+archive/spacer-clone-20260726-224112/retired-worktrees/spacer-clone-main,worktree_archive,1669,0,33188548,31.7M,B_ARCHIVE,false,Branch main-sync @ dd6b316
