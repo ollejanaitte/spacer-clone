@@ -3,20 +3,24 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:02:07 JST
-WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 4 — static check bundle 3 (build COMPLETE — PASS)
+UPDATE_TIMESTAMP: 2026-08-01 19:24:00 JST
+WORK_STATUS: STOPPED_BY_USER
+CURRENT_PHASE: Re-baselined for safe resume — LV-01 re-run required before further verification
+ORIGIN_MAIN_ADVANCED: YES — f0983878ccbb816f591214b6242c3688ecb5a060 (was 86e81d35ba36c1ddeb774286676d62a8f03e9085 at prior LV-01)
 
 ================================================================================
 1. Executive Summary
 ================================================================================
 
-Apollo Phase 1 Design Expansion Refreeze local verification continues on a
-dedicated branch bootstrapped from integrated main. Phase 1 recorded environment
+Apollo Phase 1 Design Expansion Refreeze local verification is recorded on a
+dedicated branch bootstrapped from integrated main. Work is STOPPED_BY_USER
+(re-baselined for safe resume 2026-08-01 19:24:00 JST; LV-01 re-run required
+before further verification). Phase 1 recorded environment
 and repository metadata. Phase 2 validated refreeze documentation. Phase 3
 inspected package.json scripts, vitest/playwright configs, pytest layout, and
 test file inventories to produce a verified LV-04/LV-05 command plan (no tests
-executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
+executed). LV-01 (git sync / worktree) was PASS at 86e81d35… but is STALE — re-run required
+(origin/main advanced). LV-02 (Apollo document consistency) is PASS (recorded).
 Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
 origin/main). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
 files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
@@ -44,7 +48,9 @@ TARGET_BRANCH: docs/apollo-refreeze-local-verification
 HEAD_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
 ORIGIN_BRANCH_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
   (stable baseline as of verification-branch creation; frozen — not updated per commit)
-ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
+ORIGIN_MAIN_SHA_AT_PRIOR_LV01: 86e81d35ba36c1ddeb774286676d62a8f03e9085
+ORIGIN_MAIN_SHA_CURRENT: f0983878ccbb816f591214b6242c3688ecb5a060
+  (advanced since prior LV-01; re-baseline 2026-08-01 19:24:00 JST — LV-01 must be re-run)
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
 UNCOMMITTED_CHANGES: NO (prior to Phase 2 validation commit)
@@ -88,7 +94,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 
 | ID | Description | Status |
 |----|-------------|--------|
-| LV-01 | Git sync / worktree | PASS |
+| LV-01 | Git sync / worktree | STALE — prior PASS; re-run required (origin/main advanced) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 4 PASS — IF3 backend) |
@@ -101,20 +107,14 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 6. Next Exact Action
 ================================================================================
 
-LV-02 Apollo document consistency is PASS on branch
-docs/apollo-refreeze-local-verification. Full findings are in
-local_verification_report.md (LV-02 section).
+Re-baseline (2026-08-01 19:24:00 JST): origin/main advanced to
+f0983878ccbb816f591214b6242c3688ecb5a060. Prior LV-01 PASS (at 86e81d35…) is STALE.
+Re-run LV-01 before any further verification. Prior Phase 2–4 recorded results are
+preserved below; no new test execution in this re-baseline.
 
-LV-02 summary: refreeze docs align with Step 1 roadmap, ap00/ap01/ap11 governance,
-non-composite deck rules, NOT_GRANTED implementation posture, and documented 3D viewer
-evidence (d3f1ec6/1fbcb3e on main; pr5-smoke and operator-smoke summaries). Explicit
-AP-DX design expansion beyond ap00 forbidden_scope OUT_OF_PHASE1 rows is acknowledged;
-governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
-OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
-§5.5.
-
-Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general)
-per local_verification_plan.md; LV-05 manual/e2e table.
+If resumed after LV-01 re-run: LV-03 implementation inventory if not done, then LV-04
+bundle 5 (backend general) per local_verification_plan.md; LV-05 manual/e2e table.
+Full LV-02 findings remain in local_verification_report.md.
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -232,7 +232,24 @@ Verification recorded on branch docs/apollo-refreeze-local-verification at
 | Working tree clean | PASS |
 | Application tests | NOT_STARTED |
 
-LV01_GIT_SYNC_VERDICT: PASS
+LV01_GIT_SYNC_VERDICT: PASS (STALE — recorded 2026-08-01 18:45:04 JST at origin/main
+86e81d35…; superseded by re-baseline — origin/main now f0983878…; re-run required)
+
+================================================================================
+12a. Re-baseline — Safe Resume (2026-08-01 19:24:00 JST)
+================================================================================
+
+| Field | Value |
+|-------|-------|
+| ACTION | Re-baseline stop/resume state only; no new verification executed |
+| CURRENT_BRANCH | docs/apollo-refreeze-local-verification |
+| CURRENT_COMMIT | 88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4 |
+| ORIGIN_MAIN_AT_PRIOR_LV01 | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| ORIGIN_MAIN_CURRENT | f0983878ccbb816f591214b6242c3688ecb5a060 |
+| LV-01_STATUS | STALE — prior PASS preserved; must re-run before further verification |
+| PRIOR_RESULTS | Phase 2–4 records below unchanged |
+
+REBASELINE_VERDICT: DOCUMENTATION_ONLY — no new PASS/FAIL claimed
 
 ================================================================================
 13. Phase 4 LV-04 Regression — Apollo Frontend (Bundle 1)
@@ -465,16 +482,11 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 17. Recommended Next Action
 ================================================================================
 
-On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend) is
-FAIL (pre-existing apolloSuite drift). LV-04 bundle 2 (viewer/3D) is PASS (corrected
-rerun). LV-04 bundle 3 (IF3 frontend) is PASS (12/12 files, 76/76 tests, exit 0).
-LV-04 bundle 4 (IF3 backend) is PASS (7/7 modules, 123/123 tests, exit 0).
-Static check bundle 1 (typecheck) is PASS (exit 0; tsc -b completed with no errors).
-Static check bundle 2 (lint) is PASS (exit 0; source hygiene passed).
-Static check bundle 3 (build) is PASS (exit 0; tsc -b && vite build completed; dist/ generated).
-Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general)
-per local_verification_plan.md. Record results in local_verification_report.md without
-inventing test outcomes.
+Stopped on branch docs/apollo-refreeze-local-verification at 88b7f092….
+origin/main advanced to f0983878… since prior LV-01. Re-run LV-01 before resuming.
+Prior recorded results preserved: LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS;
+static checks typecheck/lint/build PASS. After LV-01 re-run: LV-03 if not done, then
+LV-04 bundle 5 per local_verification_plan.md.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -498,7 +510,7 @@ REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 ================================================================================
 
 Phase 3 test-command discovery: COMPLETE.
-LV-01: PASS.
+LV-01: STALE — prior PASS at 86e81d35…; re-run required (origin/main now f0983878…).
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: NOT_STARTED.
 LV-04: IN_PROGRESS (bundle 4/9 PASS — IF3 backend).
@@ -517,3 +529,29 @@ BUILD_VERDICT: PASS
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
+
+================================================================================
+21. Stop Status
+================================================================================
+
+UPDATE_TIMESTAMP: 2026-08-01 19:24:00 JST
+WORK_STATUS: STOPPED_BY_USER
+STOP_REASON: User explicitly requested complete work stop on Saturday, August 1, 2026.
+REBASELINE: 2026-08-01 19:24:00 JST — stop/resume state aligned; origin/main advance recorded
+CURRENT_BRANCH: docs/apollo-refreeze-local-verification
+CURRENT_COMMIT: 88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4
+CURRENT_REMOTE_BRANCH: origin/docs/apollo-refreeze-local-verification
+ORIGIN_MAIN_CURRENT: f0983878ccbb816f591214b6242c3688ecb5a060
+ORIGIN_MAIN_AT_PRIOR_LV01: 86e81d35ba36c1ddeb774286676d62a8f03e9085
+UNCOMMITTED_CHANGES: NONE (prior to this re-baseline doc edit)
+PUSH_STATUS: Last verified branch state was pushed; local worktree remained clean at stop.
+MAIN_MERGE_STATUS: NOT ATTEMPTED IN THIS FINAL-VERIFICATION RUN
+SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
+SAFE_RESUME_POINT:
+  - branch docs/apollo-refreeze-local-verification at commit 88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4
+  - prior Phase 2–4 results preserved; LV-01 STALE until re-run
+NEXT_EXACT_ACTION_IF_RESUMED:
+  - cd /home/masaharu/Projects/spacer-clone
+  - git fetch --all --prune && git status --short --branch
+  - re-run LV-01 (origin/main is f0983878…; prior PASS was at 86e81d35…)
+  - then LV-03 implementation inventory if not done, then LV-04 bundle 5 per local_verification_plan.md

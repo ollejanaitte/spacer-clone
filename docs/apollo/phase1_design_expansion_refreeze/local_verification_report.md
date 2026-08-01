@@ -1,11 +1,26 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** IN_PROGRESS  
+**Status:** STOPPED — re-baselined 2026-08-01 19:24:00 JST; LV-01 re-run required before resume
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
-(HEAD `f147efa3b9ea108320848ccf2bb80f7b5790f7af` at branch bootstrap; frozen snapshot)
-bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
+(HEAD `88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4` at stop/re-baseline)
+bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`
+(at branch bootstrap; frozen snapshot). `origin/main` has since advanced to
+`f0983878ccbb816f591214b6242c3688ecb5a060` — prior LV-01 PASS is STALE; re-run LV-01
+before any further verification. Prior Phase 2–4 results below are preserved unchanged.
+
+## Re-baseline (safe resume)
+
+| Field | Value |
+|-------|-------|
+| Re-baseline timestamp | 2026-08-01 19:24:00 JST |
+| Branch | `docs/apollo-refreeze-local-verification` |
+| HEAD at stop/re-baseline | `88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4` |
+| `origin/main` at prior LV-01 | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| `origin/main` current | `f0983878ccbb816f591214b6242c3688ecb5a060` |
+| LV-01 status | STALE — prior PASS preserved; re-run required |
+| Action | Documentation re-baseline only; no new verification PASS/FAIL claimed |
 
 ## Baseline
 
@@ -27,7 +42,8 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Branch | `docs/apollo-refreeze-local-verification` |
 | HEAD SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
 | Origin branch SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
-| Origin/main SHA | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| Origin/main SHA (at prior LV-01) | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| Origin/main SHA (current; re-baseline) | `f0983878ccbb816f591214b6242c3688ecb5a060` |
 | Design freeze baseline (documented) | `1fbcb3ea804f965b8f262284573f4f4d42dc2411` |
 
 ### Tool versions
@@ -135,7 +151,7 @@ pytest --version  # pytest 9.1.1
 
 | ID | Description | Status |
 |----|-------------|--------|
-| LV-01 | Git sync / worktree | PASS |
+| LV-01 | Git sync / worktree | STALE — prior PASS; re-run required (`origin/main` advanced) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
@@ -334,7 +350,11 @@ launcher scripts. Application tests remain NOT_STARTED until LV-04/LV-05 executi
 ## LV-01 Git sync / worktree
 
 **Execution timestamp:** 2026-08-01 18:45:04 JST
-**Verdict:** PASS
+**Verdict:** PASS (STALE — superseded by re-baseline 2026-08-01 19:24:00 JST)
+
+Prior PASS recorded when `origin/main` was `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
+`origin/main` has since advanced to `f0983878ccbb816f591214b6242c3688ecb5a060`.
+Re-run LV-01 before any further verification. Record below is preserved unchanged.
 
 Scope: `git fetch --all --prune`, repository sync, design-freeze baseline containment,
 and verification-branch ancestry relative to `origin/main`. No application tests executed.
@@ -391,9 +411,8 @@ git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 
 ### LV-01 verdict
 
-`LV01_GIT_SYNC_VERDICT: PASS` — repository is synced; `origin/main` contains the
-documented design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411`; current
-verification branch remains a descendant of `origin/main`.
+`LV01_GIT_SYNC_VERDICT: PASS (STALE)` — prior run passed at `86e81d35…`; re-run required
+after `origin/main` advanced to `f0983878…`. No new LV-01 execution in re-baseline.
 
 ## LV-02 Existing Apollo document consistency
 
@@ -745,11 +764,9 @@ command.
 
 ## Next action
 
-LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
-LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). LV-04 bundle 3 (IF3 frontend)
-recorded PASS. LV-04 bundle 4 (IF3 backend) recorded PASS. Static check bundle 1
-(typecheck) recorded PASS. Static check bundle 2 (lint) recorded PASS. Static check bundle 3
-(build) recorded PASS. Proceed to LV-03 per `local_verification_plan.md` if not yet done,
-then LV-04 bundle 5 (backend general) using Phase 3 planned commands only. LV-05 uses
-manual/e2e commands from the E2E/manual table. Do not invent commands outside this
-inventory.
+Re-baseline (2026-08-01 19:24:00 JST): `origin/main` is `f0983878ccbb816f591214b6242c3688ecb5a060`.
+Re-run LV-01 before resuming. Prior recorded results preserved: LV-04 bundle 1 FAIL
+(pre-existing); bundles 2–4 PASS; static checks typecheck/lint/build PASS. After LV-01
+re-run: LV-03 per `local_verification_plan.md` if not yet done, then LV-04 bundle 5
+(backend general). LV-05 uses manual/e2e commands from the E2E/manual table. Do not
+invent commands outside this inventory.
