@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:38:00 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:40:14 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Branch bootstrap — local verification branch initialized
+CURRENT_PHASE: Phase 1 — environment and repository discovery (recorded on verification branch)
 
 ================================================================================
 1. Executive Summary
@@ -24,14 +24,20 @@ Mandatory LV-01 through LV-08 verification items remain NOT_STARTED.
 
 TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
+REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: docs/apollo-refreeze-local-verification
-BASELINE_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
+HEAD_SHA: f147efa3b9ea108320848ccf2bb80f7b5790f7af
+ORIGIN_BRANCH_SHA: f147efa3b9ea108320848ccf2bb80f7b5790f7af
 ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
-UNCOMMITTED_CHANGES: NO
+UNCOMMITTED_CHANGES: NO (prior to this Phase 1 report commit)
 
-Required documents (on main baseline):
+Root package.json: NOT PRESENT
+Frontend package.json: PRESENT (frontend/package.json, version 0.3.0-preview)
+GitHub Actions workflows: NOT PRESENT (.github/workflows/ absent on this branch)
+
+Required documents (on verification branch):
   - docs/apollo/phase1_design_expansion_refreeze/README.md
   - docs/apollo/phase1_design_expansion_refreeze/scope_and_architecture_freeze.md
   - docs/apollo/phase1_design_expansion_refreeze/implementation_sequence.md
@@ -79,24 +85,64 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 6. Next Exact Action
 ================================================================================
 
-Execute LV-01 per local_verification_plan.md on branch
-docs/apollo-refreeze-local-verification: run git fetch --all --prune, confirm
-origin/main contains documented design-freeze baseline
+Phase 1 environment and repository discovery is complete on branch
+docs/apollo-refreeze-local-verification. Recorded values are in
+local_verification_report.md and final_report.txt section 9. Application tests
+were not executed in Phase 1.
+
+Next: execute LV-01 per local_verification_plan.md — run git fetch --all --prune,
+confirm origin/main contains documented design-freeze baseline
 1fbcb3ea804f965b8f262284573f4f4d42dc2411, record merge-base and branch
 containment results in local_verification_report.md, then proceed to LV-02.
+
+================================================================================
+9. Environment and Tool Discovery (Phase 1)
+================================================================================
+
+Discovery recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:40:14 JST. Commands executed; outputs captured in
+local_verification_report.md.
+
+| Command | Recorded result |
+|---------|-----------------|
+| pwd | /home/masaharu/Projects/spacer-clone |
+| git remote -v | origin https://github.com/ollejanaitte/spacer-clone.git |
+| git status --short --branch | ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification |
+| git branch --show-current | docs/apollo-refreeze-local-verification |
+| git rev-parse HEAD | f147efa3b9ea108320848ccf2bb80f7b5790f7af |
+| git rev-parse origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| uname -a | Linux 6.8.0-136-generic x86_64 GNU/Linux |
+| cat /etc/os-release | Zorin OS 17.3 (jammy) |
+| node --version | v24.5.0 |
+| npm --version | 10.9.8 |
+| python3 --version | Python 3.10.12 |
+| pytest --version | pytest 9.1.1 |
+| git --version | 2.34.1 |
+| gh --version | 2.4.0+dfsg1 |
+
+Test location inventory (metadata only; not executed):
+  Apollo frontend: frontend/src/apollo/__tests__/, frontend/src/App.apolloNavigation.test.tsx
+  Apollo evidence: scripts/apollo/evidence/tests/
+  3D viewer: frontend/src/viewer/*.test.ts(x)
+  IF3 frontend: frontend/src/if3/__tests__/, frontend/src/results/if3*.test.ts, frontend/src/exports/if3*.test.ts
+  IF3/backend: backend/tests/test_if3_*.py, backend/tests/test_reports_if3_gate.py
+  Backend general: backend/tests/
+
+PHASE1_DISCOVERY_VERDICT: COMPLETE (environment/repository metadata recorded; no tests run)
 
 ================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
 Checked /home/masaharu/Projects/ for unauthorized sibling repository folders
-created during this bootstrap.
+during Phase 1 discovery on docs/apollo-refreeze-local-verification.
 
 | Check | Result |
 |-------|--------|
 | spacer-clone present | YES (expected canonical repo) |
 | New sibling clone folders created | NO |
 | Unauthorized worktree siblings | NONE DETECTED |
+| Phase 1 scope confined to canonical repo | YES |
 
 SAFETY_CHECK_VERDICT: PASS
 
@@ -118,10 +164,20 @@ APOLLO_REFREEZE_LV_VERDICT: PENDING
 19. Repository Cleanliness Verdict (Placeholder)
 ================================================================================
 
-REPOSITORY_CLEANLINESS_VERDICT: PENDING
+Phase 1 discovery started from a clean worktree on
+docs/apollo-refreeze-local-verification. Only report files were modified for
+environment/repository metadata recording. No application code or new folders
+were created. Full cleanliness verdict remains pending until LV-01 through
+LV-08 complete.
+
+REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1 report edits only)
 
 ================================================================================
 20. Final Verdict (Placeholder)
 ================================================================================
+
+Phase 1 environment and repository discovery: COMPLETE.
+LV-01 through LV-08: NOT_STARTED.
+Application test execution: NOT_STARTED (deferred to LV-04/LV-05).
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
