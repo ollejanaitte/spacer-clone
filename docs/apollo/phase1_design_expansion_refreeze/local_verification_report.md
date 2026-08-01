@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -160,7 +160,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | **PASS** — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | IN_PROGRESS (bundles 1 and 7 **FAIL** — PD-001 manifest stale; bundle 9 pending; golden regression PASS; frontend general FAIL sole PD-001; Apollo evidence PASS; backend general PASS; IF3 backend and schema-only bundles covered separately) |
+| LV-04 | Regression tests | **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — B01/B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; no separate execution); B05 minimal backend general scope (14 modules; IF3 and schema covered separately) |
 | LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -947,7 +947,7 @@ Verified command matches Phase 3 planned entry:
 | FAILURE_CLASS | PRE_EXISTING — PD-001 `SEPARATE_DEFECT_REQUIRED` (manifest update omission at `f89fe11` / #225; same defect as LV-04-B01; see `preexisting_defects.md`) |
 | AFFECTED_SCOPE | Full default vitest run (`vitest run`; 263 test files); 262/263 test files passed; 2046/2047 tests passed; sole failure `frontend/src/apollo/__tests__/apolloSuite.test.ts` manifest discoverability (expected 26 modules, discovered 27; missing from manifest: `apolloStlExport.test.ts`); excludes golden regression (`test:regression`, bundle 8) |
 | EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 262 passed (263)`; `Tests 1 failed \| 2046 passed (2047)`; Duration 30.12s; failure: `includes every expected AP-00 test module under __tests__` — expected 26 modules, discovered 27; missing from manifest: `apolloStlExport.test.ts`; extra in manifest: none; identical PD-001 signature to LV-04-B01 |
-| ACTION | Record only; do not fix in doc-only task. PD-001 blocks LV-04-B07 PASS; proceed to remaining LV-04 bundle 9 per Phase 3 planned commands |
+| ACTION | Record only; do not fix in doc-only task. PD-001 blocks LV-04-B07 PASS |
 
 ### Phase 4 bundle 7 verdict
 
@@ -982,12 +982,60 @@ Verified command matches Phase 3 planned entry:
 | FAILURE_CLASS | N/A |
 | AFFECTED_SCOPE | 1/1 golden regression vitest file passed (`regression.golden.test.ts`; 6/6 tests); independent of PD-001 Apollo manifest issue |
 | EVIDENCE | Vitest v4.1.8: `Test Files 1 passed (1)`; `Tests 6 passed (6)`; Duration 2.35s; no failures or errors |
-| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+| ACTION | Record; LV-04 bundle 9 bookkeeping closure per union-of-B07+B08 rationale |
 
 ### Phase 4 bundle 8 verdict
 
 `LV04_B08_GOLDEN_REGRESSION_VERDICT: PASS` — golden regression vitest bundle exited 0
 under the Phase 3 planned command.
+
+## Phase 4 LV-04 test execution (bundle 9 — full regression union)
+
+**Bookkeeping closure timestamp:** 2026-08-01 JST (exact time not provided)
+**Verdict:** NOT_APPLICABLE (no separate execution)
+
+Scope: ninth planned LV-04 bundle — `npm run test:all` per Phase 3 planned command
+(`npm run test` + `npm run test:regression` per `frontend/package.json`). No separate
+execution performed; bookkeeping closure only. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+**Rationale:** `npm run test:all` is exactly the union of LV-04 bundle 7 (`npm run test`)
+and LV-04 bundle 8 (`npm run test:regression`), both now formally recorded. A separate
+B09 execution would add no new coverage and would only duplicate the same known PD-001
+failure on the `npm run test` portion (262/263 files, 2046/2047 tests; sole failure
+`apolloSuite.test.ts` manifest discoverability).
+
+### LV-04 bundle 9 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B09-FE-ALL |
+| COMMAND | `cd frontend && npm run test:all` |
+| START_TIME | N/A — not executed |
+| END_TIME | N/A — not executed |
+| EXIT_CODE | N/A — not executed |
+| RESULT | NOT_APPLICABLE |
+| FAILURE_CLASS | N/A — union coverage satisfied by B07 (FAIL, PD-001) + B08 (PASS) |
+| AFFECTED_SCOPE | Union of B07 full default vitest (`npm run test`; 263 test files) and B08 golden regression (`npm run test:regression`; 1 file); no incremental scope beyond B07+B08 |
+| EVIDENCE | `frontend/package.json` defines `test:all` as `npm run test && npm run test:regression`; B07 formally recorded 2026-08-01 20:27:31 JST (FAIL, PD-001); B08 formally recorded 2026-08-01 20:25:49 JST (PASS, 6/6 tests) |
+| ACTION | Record NOT_APPLICABLE; LV-04 bundle bookkeeping complete |
+
+### Phase 4 bundle 9 verdict
+
+`LV04_B09_FE_ALL_VERDICT: NOT_APPLICABLE` — separate execution deferred because
+`npm run test:all` is the union of formally recorded B07 and B08; no new coverage;
+would only re-encounter PD-001 on the `npm run test` portion.
+
+## LV-04 overall verdict
+
+`LV04_REGRESSION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE` — all nine LV-04
+bundles recorded. B01 Apollo frontend **FAIL** (PD-001). B02 viewer/3D **PASS**.
+B03 IF3 frontend **PASS**. B04 IF3 backend **PASS**. B05 backend general **PASS**
+(minimal 14-module scope; IF3 and schema modules covered separately). B06 Apollo
+evidence **PASS**. B07 frontend general **FAIL** (PD-001; same manifest defect as B01).
+B08 golden regression **PASS**. B09 full regression union **NOT_APPLICABLE** (union of
+B07+B08; no separate execution). Known pre-existing failure PD-001 (`SEPARATE_DEFECT_REQUIRED`)
+blocks B01 and B07 PASS only; all other executed bundles PASS.
 
 ## Phase 4 static check execution (bundle 1 — typecheck)
 
@@ -1255,10 +1303,10 @@ bundle and schema-only bundle already covered separately). LV-05 manual GUI veri
 `f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…` contains
 `origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior FAIL
 re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded results
-preserved: LV-03 PASS; LV-04 bundle 1 FAIL (PD-001 `SEPARATE_DEFECT_REQUIRED`; manifest
-stale — 26 expected / 27 discovered; missing `apolloStlExport.test.ts`; drift at
-`f89fe11` / #225; unrelated to #239/#240); LV-04 bundle 7 FAIL (same PD-001; 262/263
-files, 2046/2047 tests); bundles 2–6 and 8 PASS; static checks typecheck/lint/build PASS;
-Phase C schema/doc PASS. **Next:** remaining LV-04 bundle 9 per Phase 3 planned commands;
-PD-001 fix deferred to implementation branch. LV-06 through LV-08 per
-`local_verification_plan.md`.
+preserved: LV-03 PASS; LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — bundle 1 FAIL
+(PD-001 `SEPARATE_DEFECT_REQUIRED`; manifest stale — 26 expected / 27 discovered; missing
+`apolloStlExport.test.ts`; drift at `f89fe11` / #225; unrelated to #239/#240); bundle 7
+FAIL (same PD-001; 262/263 files, 2046/2047 tests); bundles 2–6 and 8 PASS; bundle 9
+NOT_APPLICABLE (union of B07+B08; no separate execution); static checks typecheck/lint/build
+PASS; Phase C schema/doc PASS. **Next:** LV-06 through LV-08 per `local_verification_plan.md`;
+PD-001 fix deferred to implementation branch.
