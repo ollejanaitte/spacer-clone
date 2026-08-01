@@ -31,6 +31,12 @@ import type { UnitContext } from "./unitContext";
 import { validateUnitContext } from "./unitContext";
 import { isValidUuid, type UuidString } from "./uuid";
 import {
+  collectEntityIdIssues,
+  findDuplicateEntityIds,
+  validateEntityIdReference,
+  type EntityIdRef,
+} from "./contractEntityRefs";
+import {
   createValidationIssue,
   createValidationResult,
   mergeValidationResults,
@@ -353,6 +359,732 @@ function joinPath(basePath: string, suffix: string): string {
   return `${basePath}/${suffix}`;
 }
 
+const DESIGN_ENTITY_CHECK_RESULT_STATUSES = new Set<DesignEntityDesignStatus>([
+  "OK",
+  "NG",
+  "WARNING",
+  "ERROR",
+]);
+
+const COMPOSITE_CONNECTOR_EXTENSION_KEY_PATTERN =
+  /(?:^|\/)compositeShearConnector$|(?:^|\/)slabGirderConnector$/i;
+
+interface BsddEntityIdRegistry {
+  readonly knownIds: ReadonlySet<UuidString>;
+  readonly geometryAnchorIds: ReadonlySet<UuidString>;
+  readonly mainGirderIds: ReadonlySet<UuidString>;
+  readonly rcDeckIds: ReadonlySet<UuidString>;
+  readonly swayBracingIds: ReadonlySet<UuidString>;
+  readonly lateralBracingIds: ReadonlySet<UuidString>;
+  readonly materialIds: ReadonlySet<UuidString>;
+  readonly girderLineIds: ReadonlySet<UuidString>;
+  readonly deckId: UuidString | undefined;
+  readonly analysisBindingIds: ReadonlySet<UuidString>;
+}
+
+function collectEntityIdRef(
+  id: UuidString | undefined,
+  path: string,
+  entries: EntityIdRef[],
+): void {
+  if (id !== undefined && isValidUuid(id)) {
+    entries.push({ id, path });
+  }
+}
+
+function buildBsddEntityIdRegistry(
+  document: Partial<BridgeSuperstructureDesignDocument>,
+  basePath: string,
+): { readonly entries: readonly EntityIdRef[]; readonly registry: BsddEntityIdRegistry } {
+  const entries: EntityIdRef[] = [];
+
+  collectEntityIdRef(
+    document.bridge?.bridgeId,
+    joinPath(basePath, "/bridge/bridgeId"),
+    entries,
+  );
+  document.bridge?.spans?.forEach((span, index) => {
+    collectEntityIdRef(
+      span.spanId,
+      joinPath(basePath, `/bridge/spans/${index}/spanId`),
+      entries,
+    );
+  });
+  document.bridge?.girderLines?.forEach((line, index) => {
+    collectEntityIdRef(
+      line.girderLineId,
+      joinPath(basePath, `/bridge/girderLines/${index}/girderLineId`),
+      entries,
+    );
+  });
+  collectEntityIdRef(
+    document.bridge?.deck?.deckId,
+    joinPath(basePath, "/bridge/deck/deckId"),
+    entries,
+  );
+  document.bridge?.supports?.forEach((support, index) => {
+    collectEntityIdRef(
+      support.supportId,
+      joinPath(basePath, `/bridge/supports/${index}/supportId`),
+      entries,
+    );
+  });
+  document.materialDefinitions?.forEach((material, index) => {
+    collectEntityIdRef(
+      material.materialId,
+      joinPath(basePath, `/materialDefinitions/${index}/materialId`),
+      entries,
+    );
+  });
+  document.loadCases?.forEach((loadCase, caseIndex) => {
+    collectEntityIdRef(
+      loadCase.loadCaseId,
+      joinPath(basePath, `/loadCases/${caseIndex}/loadCaseId`),
+      entries,
+    );
+    loadCase.loads.forEach((load, loadIndex) => {
+      collectEntityIdRef(
+        load.loadId,
+        joinPath(basePath, `/loadCases/${caseIndex}/loads/${loadIndex}/loadId`),
+        entries,
+      );
+    });
+  });
+  document.analysisBindings?.forEach((binding, index) => {
+    collectEntityIdRef(
+      binding.bindingId,
+      joinPath(basePath, `/analysisBindings/${index}/bindingId`),
+      entries,
+    );
+  });
+
+  const sdm = document.structuralDesignModel;
+  const sdmPath = joinPath(basePath, "/structuralDesignModel");
+  if (sdm !== undefined) {
+    collectEntityIdRef(sdm.modelId, joinPath(sdmPath, "/modelId"), entries);
+    sdm.mainGirders.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.mainGirderId,
+        joinPath(sdmPath, `/mainGirders/${index}/mainGirderId`),
+        entries,
+      );
+    });
+    sdm.girderSectionSegments.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.girderSectionSegmentId,
+        joinPath(sdmPath, `/girderSectionSegments/${index}/girderSectionSegmentId`),
+        entries,
+      );
+    });
+    sdm.rcDecks.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.rcDeckId,
+        joinPath(sdmPath, `/rcDecks/${index}/rcDeckId`),
+        entries,
+      );
+    });
+    sdm.haunches.forEach((entity, index) => {
+      collectEntityIdRef(entity.haunchId, joinPath(sdmPath, `/haunches/${index}/haunchId`), entries);
+    });
+    sdm.crossBeams.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.crossBeamId,
+        joinPath(sdmPath, `/crossBeams/${index}/crossBeamId`),
+        entries,
+      );
+    });
+    sdm.swayBracings.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.swayBracingId,
+        joinPath(sdmPath, `/swayBracings/${index}/swayBracingId`),
+        entries,
+      );
+    });
+    sdm.lateralBracings.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.lateralBracingId,
+        joinPath(sdmPath, `/lateralBracings/${index}/lateralBracingId`),
+        entries,
+      );
+    });
+    sdm.braceMembers.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.braceMemberId,
+        joinPath(sdmPath, `/braceMembers/${index}/braceMemberId`),
+        entries,
+      );
+    });
+    sdm.stiffeners.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.stiffenerId,
+        joinPath(sdmPath, `/stiffeners/${index}/stiffenerId`),
+        entries,
+      );
+    });
+    sdm.splices.forEach((entity, index) => {
+      collectEntityIdRef(entity.spliceId, joinPath(sdmPath, `/splices/${index}/spliceId`), entries);
+    });
+    sdm.deckAnchorages.forEach((entity, index) => {
+      collectEntityIdRef(
+        entity.deckAnchorageId,
+        joinPath(sdmPath, `/deckAnchorages/${index}/deckAnchorageId`),
+        entries,
+      );
+    });
+  }
+
+  const knownIds = new Set<UuidString>(entries.map((entry) => entry.id));
+  const geometryAnchorIds = new Set<UuidString>();
+  document.bridge?.spans?.forEach((span) => {
+    if (isValidUuid(span.spanId)) {
+      geometryAnchorIds.add(span.spanId);
+    }
+  });
+  document.bridge?.girderLines?.forEach((line) => {
+    if (isValidUuid(line.girderLineId)) {
+      geometryAnchorIds.add(line.girderLineId);
+    }
+  });
+  if (document.bridge?.deck?.deckId !== undefined && isValidUuid(document.bridge.deck.deckId)) {
+    geometryAnchorIds.add(document.bridge.deck.deckId);
+  }
+  document.bridge?.supports?.forEach((support) => {
+    if (isValidUuid(support.supportId)) {
+      geometryAnchorIds.add(support.supportId);
+    }
+  });
+
+  const mainGirderIds = new Set<UuidString>(
+    sdm?.mainGirders
+      .map((entity) => entity.mainGirderId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+  const rcDeckIds = new Set<UuidString>(
+    sdm?.rcDecks.map((entity) => entity.rcDeckId).filter((id): id is UuidString => isValidUuid(id)) ??
+      [],
+  );
+  const swayBracingIds = new Set<UuidString>(
+    sdm?.swayBracings
+      .map((entity) => entity.swayBracingId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+  const lateralBracingIds = new Set<UuidString>(
+    sdm?.lateralBracings
+      .map((entity) => entity.lateralBracingId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+  const materialIds = new Set<UuidString>(
+    document.materialDefinitions
+      ?.map((material) => material.materialId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+  const girderLineIds = new Set<UuidString>(
+    document.bridge?.girderLines
+      ?.map((line) => line.girderLineId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+  const analysisBindingIds = new Set<UuidString>(
+    document.analysisBindings
+      ?.map((binding) => binding.bindingId)
+      .filter((id): id is UuidString => isValidUuid(id)) ?? [],
+  );
+
+  return {
+    entries,
+    registry: {
+      knownIds,
+      geometryAnchorIds,
+      mainGirderIds,
+      rcDeckIds,
+      swayBracingIds,
+      lateralBracingIds,
+      materialIds,
+      girderLineIds,
+      deckId:
+        document.bridge?.deck?.deckId !== undefined && isValidUuid(document.bridge.deck.deckId)
+          ? document.bridge.deck.deckId
+          : undefined,
+      analysisBindingIds,
+    },
+  };
+}
+
+function validateEntityUuidField(
+  id: UuidString | undefined,
+  path: string,
+  issues: ValidationIssue[],
+): void {
+  if (id === undefined || !isValidUuid(id)) {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_ENTITY_ID_INVALID",
+        severity: "error",
+        message: "Entity ID must be a valid UUID.",
+        path,
+      }),
+    );
+  }
+}
+
+function validateEntityRevisionId(
+  entityRevisionId: number | undefined,
+  path: string,
+  issues: ValidationIssue[],
+): void {
+  if (
+    entityRevisionId === undefined ||
+    !Number.isInteger(entityRevisionId) ||
+    entityRevisionId <= 0
+  ) {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_ENTITY_REVISION_ID_INVALID",
+        severity: "error",
+        message: "entityRevisionId must be a positive integer.",
+        path,
+      }),
+    );
+  }
+}
+
+function validateNullableBindingConsistency(
+  refId: UuidString | null | undefined,
+  bindingStatus: DesignBindingStatus | undefined,
+  refPath: string,
+  statusPath: string,
+  issues: ValidationIssue[],
+): void {
+  if (refId === undefined || bindingStatus === undefined) {
+    return;
+  }
+
+  if (refId === null && bindingStatus !== "unbound") {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_NULL_BINDING_VIOLATION",
+        severity: "error",
+        message: "bindingStatus must be unbound when the reference ID is null.",
+        path: statusPath,
+      }),
+    );
+  }
+
+  if (refId !== null && bindingStatus === "unbound") {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_NULL_BINDING_VIOLATION",
+        severity: "error",
+        message: "bindingStatus cannot be unbound when a reference ID is present.",
+        path: refPath,
+      }),
+    );
+  }
+}
+
+function validateDesignEntityExtensionsForCompositeContamination(
+  extensions: Extensions | undefined,
+  basePath: string,
+  issues: ValidationIssue[],
+): void {
+  if (extensions === undefined) {
+    return;
+  }
+
+  for (const key of Object.keys(extensions)) {
+    if (COMPOSITE_CONNECTOR_EXTENSION_KEY_PATTERN.test(key)) {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_COMPOSITE_CONNECTOR_FORBIDDEN",
+          severity: "error",
+          message: "Composite shear connector extensions are forbidden in Phase 1 non-composite scope.",
+          path: joinPath(basePath, `/${key}`),
+        }),
+      );
+    }
+  }
+}
+
+function validateDesignStatusGovernance(
+  metadata: DesignEntityMetadata,
+  entityPath: string,
+  options: ValidateGovernedQuantityOptions,
+  issues: ValidationIssue[],
+): void {
+  const { designStatus, adoptionStatus } = metadata;
+  const designStatusPath = joinPath(entityPath, "/designStatus");
+  const adoptionStatusPath = joinPath(entityPath, "/adoptionStatus");
+  const numericContext =
+    options.numericAuthorityContext ?? {
+      targetStandardStatus: TargetStandardStatus.NOT_SELECTED,
+    };
+
+  if (!isDesignEntityDesignStatus(designStatus)) {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_DESIGN_STATUS_INVALID",
+        severity: "error",
+        message: "designStatus must be a supported DesignEntityDesignStatus value.",
+        path: designStatusPath,
+      }),
+    );
+    return;
+  }
+
+  if (DESIGN_ENTITY_CHECK_RESULT_STATUSES.has(designStatus)) {
+    if (adoptionStatus !== "ADOPTED") {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_ADOPTION_DESIGN_STATUS_CONTRADICTION",
+          severity: "error",
+          message: `${designStatus} designStatus requires adoptionStatus ADOPTED.`,
+          path: adoptionStatusPath,
+        }),
+      );
+    }
+
+    if (numericContext.targetStandardStatus === TargetStandardStatus.NOT_SELECTED) {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED",
+          severity: "error",
+          message: `${designStatus} designStatus is not permitted while numeric design authority is NOT_SELECTED.`,
+          path: designStatusPath,
+        }),
+      );
+    }
+  }
+
+  if (designStatus === "INCOMPLETE" && adoptionStatus === "ADOPTED") {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_ADOPTION_DESIGN_STATUS_CONTRADICTION",
+        severity: "error",
+        message: "INCOMPLETE designStatus cannot coexist with adoptionStatus ADOPTED.",
+        path: adoptionStatusPath,
+      }),
+    );
+  }
+}
+
+function validateDanglingReference(
+  refId: UuidString | null | undefined,
+  knownIds: ReadonlySet<UuidString>,
+  path: string,
+  issues: ValidationIssue[],
+): void {
+  if (refId === null || refId === undefined) {
+    return;
+  }
+
+  collectEntityIdIssues(
+    issues,
+    validateEntityIdReference(
+      refId,
+      knownIds,
+      path,
+      "BSDD_DANGLING_REFERENCE",
+      "Referenced entity ID does not resolve within the document.",
+    ),
+  );
+}
+
+function validateDesignEntityMetadata(
+  metadata: DesignEntityMetadata & { readonly entityKind: StructuralDesignModelEntity["entityKind"] },
+  entityPath: string,
+  expectedKind: StructuralDesignModelEntity["entityKind"],
+  registry: BsddEntityIdRegistry,
+  options: ValidateGovernedQuantityOptions,
+  issues: ValidationIssue[],
+): void {
+  const entityKindPath = joinPath(entityPath, "/entityKind");
+  if (metadata.entityKind !== expectedKind) {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_ENTITY_KIND_MISMATCH",
+        severity: "error",
+        message: `entityKind must be "${expectedKind}" for entities in this collection.`,
+        path: entityKindPath,
+      }),
+    );
+  }
+
+  validateEntityRevisionId(
+    metadata.entityRevisionId,
+    joinPath(entityPath, "/entityRevisionId"),
+    issues,
+  );
+  issues.push(...validateProvenance(metadata.provenance, joinPath(entityPath, "/provenance")).issues);
+  if (metadata.sourceRef !== undefined && metadata.sourceRef !== null) {
+    issues.push(
+      ...validateDocumentReference(metadata.sourceRef, joinPath(entityPath, "/sourceRef")).issues,
+    );
+  }
+  issues.push(
+    ...validateExtensions(metadata.extensions, joinPath(entityPath, "/extensions")).issues,
+  );
+  validateDesignEntityExtensionsForCompositeContamination(
+    metadata.extensions,
+    joinPath(entityPath, "/extensions"),
+    issues,
+  );
+  validateNullableBindingConsistency(
+    metadata.geometryRef.geometryRefId,
+    metadata.geometryRef.bindingStatus,
+    joinPath(entityPath, "/geometryRef/geometryRefId"),
+    joinPath(entityPath, "/geometryRef/bindingStatus"),
+    issues,
+  );
+  validateNullableBindingConsistency(
+    metadata.analysisMapping.analysisMemberRefId,
+    metadata.analysisMapping.bindingStatus,
+    joinPath(entityPath, "/analysisMapping/analysisMemberRefId"),
+    joinPath(entityPath, "/analysisMapping/bindingStatus"),
+    issues,
+  );
+  validateDanglingReference(
+    metadata.geometryRef.geometryRefId,
+    registry.geometryAnchorIds,
+    joinPath(entityPath, "/geometryRef/geometryRefId"),
+    issues,
+  );
+  validateDanglingReference(
+    metadata.analysisMapping.analysisMemberRefId,
+    new Set<UuidString>(),
+    joinPath(entityPath, "/analysisMapping/analysisMemberRefId"),
+    issues,
+  );
+  validateDanglingReference(
+    metadata.analysisMapping.analysisBindingId ?? null,
+    registry.analysisBindingIds,
+    joinPath(entityPath, "/analysisMapping/analysisBindingId"),
+    issues,
+  );
+  validateDesignStatusGovernance(metadata, entityPath, options, issues);
+}
+
+function validateStructuralDesignModel(
+  model: StructuralDesignModel | undefined,
+  registry: BsddEntityIdRegistry,
+  basePath: string,
+  options: ValidateGovernedQuantityOptions,
+): ValidationResult {
+  if (model === undefined) {
+    return createValidationResult([]);
+  }
+
+  const issues: ValidationIssue[] = [];
+
+  validateEntityUuidField(model.modelId, joinPath(basePath, "/modelId"), issues);
+
+  if (model.nonCompositeAssertion.compositeAction !== false) {
+    issues.push(
+      createValidationIssue({
+        code: "BSDD_NON_COMPOSITE_ASSERTION_INVALID",
+        severity: "error",
+        message: "nonCompositeAssertion.compositeAction must be false.",
+        path: joinPath(basePath, "/nonCompositeAssertion/compositeAction"),
+      }),
+    );
+  }
+
+  model.mainGirders.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/mainGirders/${index}`);
+    validateEntityUuidField(entity.mainGirderId, joinPath(entityPath, "/mainGirderId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "MainGirder", registry, options, issues);
+    if (entity.compositeAction !== undefined && entity.compositeAction !== false) {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_NON_COMPOSITE_ASSERTION_INVALID",
+          severity: "error",
+          message: "MainGirder compositeAction must be false when present.",
+          path: joinPath(entityPath, "/compositeAction"),
+        }),
+      );
+    }
+    validateDanglingReference(
+      entity.girderLineRefId,
+      registry.girderLineIds,
+      joinPath(entityPath, "/girderLineRefId"),
+      issues,
+    );
+    validateDanglingReference(
+      entity.materialRefId ?? null,
+      registry.materialIds,
+      joinPath(entityPath, "/materialRefId"),
+      issues,
+    );
+  });
+
+  model.girderSectionSegments.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/girderSectionSegments/${index}`);
+    validateEntityUuidField(
+      entity.girderSectionSegmentId,
+      joinPath(entityPath, "/girderSectionSegmentId"),
+      issues,
+    );
+    validateDesignEntityMetadata(
+      entity,
+      entityPath,
+      "GirderSectionSegment",
+      registry,
+      options,
+      issues,
+    );
+    validateDanglingReference(
+      entity.mainGirderRefId,
+      registry.mainGirderIds,
+      joinPath(entityPath, "/mainGirderRefId"),
+      issues,
+    );
+    validateDanglingReference(
+      entity.materialRefId ?? null,
+      registry.materialIds,
+      joinPath(entityPath, "/materialRefId"),
+      issues,
+    );
+  });
+
+  model.rcDecks.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/rcDecks/${index}`);
+    validateEntityUuidField(entity.rcDeckId, joinPath(entityPath, "/rcDeckId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "RcDeck", registry, options, issues);
+    if (entity.compositeAction !== undefined && entity.compositeAction !== false) {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_NON_COMPOSITE_ASSERTION_INVALID",
+          severity: "error",
+          message: "RcDeck compositeAction must be false when present.",
+          path: joinPath(entityPath, "/compositeAction"),
+        }),
+      );
+    }
+    const deckRefTargets =
+      registry.deckId !== undefined
+        ? new Set<UuidString>([registry.deckId, ...registry.rcDeckIds])
+        : registry.rcDeckIds;
+    validateDanglingReference(
+      entity.deckRefId,
+      deckRefTargets,
+      joinPath(entityPath, "/deckRefId"),
+      issues,
+    );
+  });
+
+  model.haunches.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/haunches/${index}`);
+    validateEntityUuidField(entity.haunchId, joinPath(entityPath, "/haunchId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "Haunch", registry, options, issues);
+    validateDanglingReference(
+      entity.mainGirderRefId,
+      registry.mainGirderIds,
+      joinPath(entityPath, "/mainGirderRefId"),
+      issues,
+    );
+  });
+
+  model.crossBeams.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/crossBeams/${index}`);
+    validateEntityUuidField(entity.crossBeamId, joinPath(entityPath, "/crossBeamId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "CrossBeam", registry, options, issues);
+    validateDanglingReference(
+      entity.materialRefId ?? null,
+      registry.materialIds,
+      joinPath(entityPath, "/materialRefId"),
+      issues,
+    );
+  });
+
+  model.swayBracings.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/swayBracings/${index}`);
+    validateEntityUuidField(entity.swayBracingId, joinPath(entityPath, "/swayBracingId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "SwayBracing", registry, options, issues);
+  });
+
+  model.lateralBracings.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/lateralBracings/${index}`);
+    validateEntityUuidField(
+      entity.lateralBracingId,
+      joinPath(entityPath, "/lateralBracingId"),
+      issues,
+    );
+    validateDesignEntityMetadata(entity, entityPath, "LateralBracing", registry, options, issues);
+  });
+
+  model.braceMembers.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/braceMembers/${index}`);
+    validateEntityUuidField(entity.braceMemberId, joinPath(entityPath, "/braceMemberId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "BraceMember", registry, options, issues);
+    const parentBracingIds = new Set<UuidString>([
+      ...registry.swayBracingIds,
+      ...registry.lateralBracingIds,
+    ]);
+    validateDanglingReference(
+      entity.parentBracingRefId,
+      parentBracingIds,
+      joinPath(entityPath, "/parentBracingRefId"),
+      issues,
+    );
+  });
+
+  model.stiffeners.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/stiffeners/${index}`);
+    validateEntityUuidField(entity.stiffenerId, joinPath(entityPath, "/stiffenerId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "Stiffener", registry, options, issues);
+    validateDanglingReference(
+      entity.mainGirderRefId,
+      registry.mainGirderIds,
+      joinPath(entityPath, "/mainGirderRefId"),
+      issues,
+    );
+  });
+
+  model.splices.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/splices/${index}`);
+    validateEntityUuidField(entity.spliceId, joinPath(entityPath, "/spliceId"), issues);
+    validateDesignEntityMetadata(entity, entityPath, "Splice", registry, options, issues);
+    validateDanglingReference(
+      entity.mainGirderRefId,
+      registry.mainGirderIds,
+      joinPath(entityPath, "/mainGirderRefId"),
+      issues,
+    );
+  });
+
+  model.deckAnchorages.forEach((entity, index) => {
+    const entityPath = joinPath(basePath, `/deckAnchorages/${index}`);
+    validateEntityUuidField(
+      entity.deckAnchorageId,
+      joinPath(entityPath, "/deckAnchorageId"),
+      issues,
+    );
+    validateDesignEntityMetadata(entity, entityPath, "DeckAnchorage", registry, options, issues);
+    if (!DECK_ANCHORAGE_ROLES.includes(entity.anchorageRole)) {
+      issues.push(
+        createValidationIssue({
+          code: "BSDD_DECK_ANCHORAGE_ROLE_INVALID",
+          severity: "error",
+          message: "DeckAnchorage anchorageRole must be a non-composite role.",
+          path: joinPath(entityPath, "/anchorageRole"),
+        }),
+      );
+    }
+    validateDanglingReference(
+      entity.girderRefId,
+      registry.mainGirderIds,
+      joinPath(entityPath, "/girderRefId"),
+      issues,
+    );
+    validateDanglingReference(
+      entity.rcDeckRefId,
+      registry.rcDeckIds,
+      joinPath(entityPath, "/rcDeckRefId"),
+      issues,
+    );
+  });
+
+  return createValidationResult(issues);
+}
+
 function validateGovernedQuantityAt(
   quantity: GovernedQuantity | undefined,
   itemPath: string,
@@ -644,6 +1376,15 @@ export function validateBridgeSuperstructureDesignDocument(
     );
   }
 
+  const { entries: entityIdEntries, registry } = buildBsddEntityIdRegistry(document, basePath);
+  issues.push(
+    ...findDuplicateEntityIds(
+      entityIdEntries,
+      "BSDD_DUPLICATE_ENTITY_ID",
+      "Stable entity IDs must be unique across the document.",
+    ),
+  );
+
   return mergeValidationResults(
     createValidationResult(issues),
     validateSupportedContractVersion(
@@ -658,6 +1399,12 @@ export function validateBridgeSuperstructureDesignDocument(
       profile: "generic",
     }),
     validateBridgeSection(document.bridge, joinPath(basePath, "/bridge"), quantityOptions),
+    validateStructuralDesignModel(
+      document.structuralDesignModel,
+      registry,
+      joinPath(basePath, "/structuralDesignModel"),
+      quantityOptions,
+    ),
     ...coordinateContextResults,
     ...bindingResults,
     ...optionalRefResults,

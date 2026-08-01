@@ -3,16 +3,16 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase D JSON Schema completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Phase D JSON Schema COMPLETE; Phases E–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase D — Zod runtime schema + JSON Schema artifact completed; Phases E–F pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase E parser/mapper/validator completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Phase E parser/mapper/validator COMPLETE; Phase F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase E — structuralDesignModel runtime parse/map/semantic validation completed; Phase F pending
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 AP_DX_01_PHASE_A_STATUS: COMPLETED
 AP_DX_01_PHASE_B_STATUS: COMPLETED
 AP_DX_01_PHASE_C_STATUS: COMPLETED
 AP_DX_01_PHASE_D_STATUS: COMPLETED
-AP_DX_01_PHASE_E_STATUS: PENDING
+AP_DX_01_PHASE_E_STATUS: COMPLETED
 AP_DX_01_PHASE_F_STATUS: PENDING
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
 AP_DX_01_VERSION_BUMP_REQUIRED: NO — additive optional structuralDesignModel at 0.1.0 (Phase B sign-off)
@@ -1213,10 +1213,10 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 | B | Type/schema design + schema version decision | COMPLETED |
 | C | TypeScript contract types (design entity interfaces) | COMPLETED |
 | D | Zod schema + JSON Schema artifact (design entity structural schema) | COMPLETED |
-| E | Tests + typecheck/lint/build verification | PENDING |
-| F | Implementation completion bookkeeping | PENDING |
+| E | Parser, domain mapper, semantic validator for structuralDesignModel | COMPLETED |
+| F | Tests + typecheck/lint/build verification | PENDING |
 
-AP_DX_01_OVERALL_STATUS: PHASE_D_COMPLETE — PHASE_E_PENDING
+AP_DX_01_OVERALL_STATUS: PHASE_E_COMPLETE — PHASE_F_PENDING
 
 --------------------------------------------------------------------------------
 24.1a Phase B design decisions (2026-08-01 JST)
@@ -1353,14 +1353,15 @@ Open questions:
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
 AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
-AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase D Zod/JSON Schema complete; validator/parser/tests pending Phase E)
-AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript + Zod/JSON Schema design entities present; validator/parser/tests pending)
+AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase E parser/mapper/validator complete; Phase F tests/bookkeeping pending)
+AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript + Zod/JSON Schema + parser/mapper/validator present; Phase F test expansion pending)
 AP_DX_01_READY_FOR_PHASE_D: YES
 AP_DX_01_READY_FOR_PHASE_E: YES
+AP_DX_01_READY_FOR_PHASE_F: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
 
 NEXT_EXACT_ACTION:
-  - Phase E: extend semantic validator, domain mapper, parser for structuralDesignModel; add entity-graph and NOT_AUTHORIZED tests
+  - Phase F: expand entity-graph and NOT_AUTHORIZED tests; run typecheck/lint/build verification bundle
   - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
 
 --------------------------------------------------------------------------------
@@ -1404,6 +1405,49 @@ VERIFICATION:
 
 AP_DX_01_PHASE_D_SCHEMA_VERDICT: PASS
 AP_DX_01_PHASE_D_COMMIT_MESSAGE: feat(apollo): extend BSDD schema for design entities
+
+--------------------------------------------------------------------------------
+24.10 Phase E completion summary (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+SCOPE: Runtime parser/mapper path + semantic validator for optional structuralDesignModel only (no schema version bump, no test expansion in this phase).
+
+FILES_MODIFIED:
+  - frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+  - frontend/src/contracts/runtime/domainMappers.ts
+  - final_report.txt
+
+PARSER_MAPPER:
+  - mapStructuralDesignModelValue maps all 11 AP-DX-01 entity collections without dropping known fields
+  - mapBridgeSuperstructureDesignDocumentValue includes optional structuralDesignModel on success path
+  - Nullable UUID refs, provenance, sourceRef, geometryRef, analysisMapping, extensions preserved through map
+  - Legacy BSDD documents without structuralDesignModel remain backward compatible
+
+SEMANTIC_VALIDATOR_RULES (validateStructuralDesignModel + validateBridgeSuperstructureDesignDocument):
+  - BSDD_ENTITY_ID_INVALID — invalid UUID format on model/entity stable IDs
+  - BSDD_DUPLICATE_ENTITY_ID — document-wide duplicate stable ID scan (bridge + materials + loads + bindings + SDM)
+  - BSDD_DANGLING_REFERENCE — non-null refs must resolve (geometry anchors, materials, girder lines, entity cross-refs, analysis bindings); null skips check
+  - BSDD_ENTITY_REVISION_ID_INVALID — entityRevisionId must be positive integer
+  - BSDD_ENTITY_KIND_MISMATCH — entityKind must match collection membership
+  - BSDD_NULL_BINDING_VIOLATION — geometryRef/analysisMapping bindingStatus inconsistent with null/non-null ref IDs
+  - BSDD_NON_COMPOSITE_ASSERTION_INVALID — nonCompositeAssertion.compositeAction must be false; entity compositeAction literal false only
+  - BSDD_COMPOSITE_CONNECTOR_FORBIDDEN — compositeShearConnector / slabGirderConnector extension keys rejected
+  - BSDD_DECK_ANCHORAGE_ROLE_INVALID — DeckAnchorage anchorageRole must be non-composite enum
+  - BSDD_ADOPTION_DESIGN_STATUS_CONTRADICTION — check-result designStatus requires ADOPTED adoptionStatus; INCOMPLETE vs ADOPTED conflict
+  - BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED — OK/NG/WARNING/ERROR rejected when TargetStandardStatus NOT_SELECTED
+  - BSDD_DESIGN_STATUS_INVALID — unsupported designStatus value
+
+FAIL_CLOSED:
+  - NOT_AUTHORIZED / INCOMPLETE entities do not implicitly yield OK
+  - Check-result statuses blocked without numeric authority and ADOPTED adoption
+  - Non-null analysisMemberRefId rejected (empty analysis-member registry in AP-DX-01)
+
+VERIFICATION:
+  - cd frontend && npm run typecheck — PASS
+  - cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts — PASS (18/18)
+
+AP_DX_01_PHASE_E_PARSER_MAPPER_VALIDATOR_VERDICT: PASS
+AP_DX_01_PHASE_E_COMMIT_MESSAGE: feat(apollo): validate AP-DX-01 entity references and governance
 
 --------------------------------------------------------------------------------
 24.8 Phase C completion summary (2026-08-01 JST)
