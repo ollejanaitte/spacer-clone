@@ -1,24 +1,26 @@
 # AP-DX-01 — Local Implementation Report
 
 **Task:** AP-DX-01 設計エンティティ契約  
-**Phase:** B — Implementation design (completed)
+**Phase:** F — Implementation complete (Block 3 verification passed)
 **Date:** 2026-08-01  
 **Baseline SHA:** `178768871545ab36aaea019916a492a051373496`  
-**Branch:** `feat/ap-dx-01-design-entity-contracts`  
-**Numeric design authorization:** NOT_GRANTED  
-**Application code changes in Phase A:** None (docs only)
+**Branch:** `feat/ap-dx-01-design-entity-contracts`
+**HEAD SHA (pre-finalize):** `3c031f8c735b0b6b3d9b8dc964717e33549a9cd9`
+**Numeric design authorization:** NOT_GRANTED
+**Schema version decision:** NO bump — remain `0.1.0` additive backward-compatible
+**Migration decision:** NO migration required
 
 ## 1. Executive summary
 
-Phase A inventory confirms that `BridgeSuperstructureDesignDocument` (BSDD) exists as a production contract at schema version `0.1.0` with aligned TypeScript types, Zod runtime schema, JSON Schema artifact, parser, and semantic validator. The contract covers bridge geometry primitives (`BsddBridge`, `BsddGirderLine`, `BsddDeck`, supports, materials, loads, analysis bindings) but does **not** yet model the AP-DX-01 design entities (`MainGirder`, `GirderSectionSegment`, `RcDeck`, `Haunch`, `CrossBeam`, `SwayBracing`, `LateralBracing`, `BraceMember`, `Stiffener`, `Splice`, `DeckAnchorage`) or a `StructuralDesignModel` container.
+AP-DX-01 extends `BridgeSuperstructureDesignDocument` (BSDD) at schema version `0.1.0` with an optional top-level `structuralDesignModel` container and 11 design entity types (`MainGirder`, `GirderSectionSegment`, `RcDeck`, `Haunch`, `CrossBeam`, `SwayBracing`, `LateralBracing`, `BraceMember`, `Stiffener`, `Splice`, `DeckAnchorage`). TypeScript types, Zod runtime schema, JSON Schema artifact, parser/mapper, semantic validator, and contract tests are aligned. Non-composite governance is fail-closed (`compositeAction: false`, `compositeShearConnector` forbidden, `DeckAnchorage` independent). No Apollo UI, 3D viewer, backend, IF3, or numeric design logic changes.
 
-Implementation should extend BSDD additively without destructively replacing existing `BsddBridge` / `BsddDeck` / `BsddGirderLine` types. Reusable infrastructure (`UuidString`, `GovernedQuantity`, `Provenance`, `Extensions`, unknown-field store, migration record/registry) is present and should be reused.
-
-| Assessment | Phase A conclusion |
-|------------|-------------------|
-| Schema version bump | **Not required** — additive optional `structuralDesignModel` at `0.1.0` (Phase B sign-off) |
-| Migration | **Not required** — absent section defaults; existing fixtures remain valid |
-| Blockers | Design entities absent; numeric authority NOT_GRANTED; validator gaps for entity graph rules; PD-001 pre-existing test manifest defect (orthogonal to contract work) |
+| Assessment | Final conclusion |
+|------------|------------------|
+| Schema version bump | **NO** — additive optional `structuralDesignModel` at `0.1.0` |
+| Migration | **NO** — absent section defaults; existing fixtures remain valid |
+| Non-composite governance | **PASS** — validator + schema + tests enforce fail-closed posture |
+| Blockers remaining | B-02 numeric authority NOT_GRANTED (governance, expected); B-04 PD-001 resolved on main (#243) |
+| AP-DX-01 implementation | **COMPLETE** — Phases A–F; Block 3 verification bundle PASS |
 
 ## 2. Target files
 
@@ -303,10 +305,10 @@ Ordered by dependency; exact file splits to be confirmed in Phase B design.
 
 | ID | Blocker | Severity |
 |----|---------|----------|
-| B-01 | Required design entities not present in BSDD | **Implementation** — expected; addressed in Phase C–E |
+| B-01 | Required design entities not present in BSDD | **RESOLVED** — Phase C–E |
 | B-02 | Numeric design authorization NOT_GRANTED | **Governance** — contract may define shapes; must not emit `OK` design checks |
-| B-03 | Validator lacks entity-graph integrity rules | **Implementation** — Phase D |
-| B-04 | PD-001 Apollo test manifest stale (`apolloStlExport.test.ts` missing from manifest) | **Pre-existing** — blocks full frontend green suite; orthogonal to BSDD contract; fix on separate track |
+| B-03 | Validator lacks entity-graph integrity rules | **RESOLVED** — Phase E |
+| B-04 | PD-001 Apollo test manifest stale | **RESOLVED on main** (#243); orthogonal to BSDD contract |
 
 ### 8.2 Open questions
 
@@ -324,10 +326,132 @@ Ordered by dependency; exact file splits to be confirmed in Phase B design.
 |-------|-------------|--------|
 | A | Inventory | **COMPLETED** |
 | B | Type/schema design + version decision (§10) | **COMPLETED** |
-| C | TypeScript + Zod + JSON Schema implementation | PENDING |
-| D | Validator + parser/mapper updates | PENDING |
-| E | Tests + typecheck/lint/build verification | PENDING |
-| F | `final_report.txt` implementation completion | PENDING |
+| C | TypeScript contract types | **COMPLETED** |
+| D | Zod schema + JSON Schema artifact | **COMPLETED** |
+| E | Parser, mapper, semantic validator | **COMPLETED** |
+| F | Contract tests + verification bundle | **COMPLETED** |
+
+## 12. Implementation commits (Phases C–F)
+
+| SHA | Message |
+|-----|---------|
+| `ac794d2` | docs(apollo): record AP-DX-01 contract inventory |
+| `19a02bf` | docs(apollo): finalize AP-DX-01 implementation design |
+| `cc16504` | feat(apollo): add AP-DX-01 design entity contract types |
+| `a804c38` | feat(apollo): extend BSDD schema for design entities |
+| `832ab10` | feat(apollo): validate AP-DX-01 entity references and governance |
+| `3c031f8` | test(apollo): cover AP-DX-01 design entity contracts |
+
+## 13. Files modified (implementation scope)
+
+| Path | Role |
+|------|------|
+| `frontend/src/contracts/bridgeSuperstructureDesignDocument.ts` | Types + semantic validator |
+| `frontend/src/contracts/index.ts` | Export barrel |
+| `frontend/src/contracts/runtime/domainMappers.ts` | structuralDesignModel mapper |
+| `frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts` | Zod schema |
+| `frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts` | Contract tests |
+| `schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json` | JSON Schema artifact |
+| `docs/apollo/ap-dx-01/local_implementation_report.md` | This report |
+| `final_report.txt` | Canonical verification record |
+
+**Out of scope (unchanged):** Apollo UI, 3D viewer, backend, IF3, numeric design formulas.
+
+## 14. Non-composite governance confirmation
+
+| Rule | Enforcement |
+|------|-------------|
+| `SdmNonCompositeAssertion.compositeAction` | Literal `false` required when `structuralDesignModel` present |
+| `compositeShearConnector` / `slabGirderConnector` | Rejected at schema (strictObject) and validator (`BSDD_COMPOSITE_CONNECTOR_FORBIDDEN`) |
+| `DeckAnchorage` independence | Separate entity; `anchorageRole` non-composite enum only; no `compositeAction` field |
+| `NOT_AUTHORIZED` fail-closed | Default design status; `OK` rejected without numeric authority (`BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED`) |
+| `BsddDeck.deckKind` | Remains `"rc_non_composite"`; `phase1ScopeAssertion` unchanged |
+
+## 15. Block 3 — Phase F verification bundle (2026-08-01 JST)
+
+| Field | AP-DX-01-F-01-BSDD-TESTS |
+|-------|--------------------------|
+| TEST_ID | AP-DX-01-F-01-BSDD-TESTS |
+| COMMAND | `cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts` |
+| START_TIME | 2026-08-01 21:44:42 JST |
+| END_TIME | 2026-08-01 21:44:43 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 2/2 contract test files (35/35 tests) |
+| EVIDENCE | Vitest v4.1.8: Test Files 2 passed; Tests 35 passed; Duration 916ms |
+| ACTION | Proceed to AP-DX-01-F-02-TYPECHECK |
+
+| Field | AP-DX-01-F-02-TYPECHECK |
+|-------|---------------------------|
+| TEST_ID | AP-DX-01-F-02-TYPECHECK |
+| COMMAND | `cd frontend && npm run typecheck` |
+| START_TIME | 2026-08-01 21:45:24 JST |
+| END_TIME | 2026-08-01 21:45:38 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend TypeScript project (`tsc -b --pretty false`) |
+| EVIDENCE | No diagnostic output; exit 0 |
+| ACTION | Proceed to AP-DX-01-F-03-LINT |
+
+| Field | AP-DX-01-F-03-LINT |
+|-------|----------------------|
+| TEST_ID | AP-DX-01-F-03-LINT |
+| COMMAND | `cd frontend && npm run lint` |
+| START_TIME | 2026-08-01 21:45:38 JST |
+| END_TIME | 2026-08-01 21:45:52 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | tsc -b + source hygiene + Japanese-string audit |
+| EVIDENCE | Frontend source hygiene check passed; exit 0 |
+| ACTION | Proceed to AP-DX-01-F-04-BUILD |
+
+| Field | AP-DX-01-F-04-BUILD |
+|-------|---------------------|
+| TEST_ID | AP-DX-01-F-04-BUILD |
+| COMMAND | `cd frontend && npm run build` |
+| START_TIME | 2026-08-01 21:45:52 JST |
+| END_TIME | 2026-08-01 21:46:16 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Production build (`tsc -b && vite build`); dist/ artifacts |
+| EVIDENCE | Vite v7.3.5: 3926 modules transformed; built in 9.94s; chunk size warning informational |
+| ACTION | Proceed to AP-DX-01-F-05-GIT-DIFF-CHECK |
+
+| Field | AP-DX-01-F-05-GIT-DIFF-CHECK |
+|-------|--------------------------------|
+| TEST_ID | AP-DX-01-F-05-GIT-DIFF-CHECK |
+| COMMAND | `git diff --check` |
+| START_TIME | 2026-08-01 21:46:16 JST |
+| END_TIME | 2026-08-01 21:46:16 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Working tree whitespace |
+| EVIDENCE | No trailing-whitespace or conflict-marker violations |
+| ACTION | Block 3 verification bundle complete |
+
+## 16. AP-DX-01 verdict fields
+
+| Field | Verdict |
+|-------|---------|
+| AP_DX_01_PHASE_A_INVENTORY_VERDICT | PASS |
+| AP_DX_01_PHASE_B_DESIGN_VERDICT | PASS |
+| AP_DX_01_PHASE_C_TYPES_VERDICT | PASS |
+| AP_DX_01_PHASE_D_SCHEMA_VERDICT | PASS |
+| AP_DX_01_PHASE_E_PARSER_MAPPER_VALIDATOR_VERDICT | PASS |
+| AP_DX_01_BLOCK_2_TEST_VERDICT | PASS |
+| AP_DX_01_BLOCK_3_VERIFICATION_VERDICT | PASS |
+| AP_DX_01_SCHEMA_VERSION_DECISION | REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE |
+| AP_DX_01_MIGRATION_DECISION | NONE_REQUIRED |
+| AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT | PASS |
+| AP_DX_01_CONTRACT_COMPLETENESS | COMPLETE |
+| AP_DX_01_IMPLEMENTATION_VERDICT | PASS |
+| AP_DX_01_NUMERIC_AUTHORIZATION | NOT_GRANTED |
+| AP_DX_01_OVERALL_VERDICT | PASS — ready for PR review |
 
 ## 10. Phase B — Implementation design (COMPLETED)
 

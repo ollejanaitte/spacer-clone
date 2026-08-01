@@ -3,17 +3,18 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Block 2 contract tests completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Block 2 contract tests COMPLETE; Phase F typecheck/lint/build bundle PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase F — Block 2 design-entity contract tests completed; remaining Phase F verification bundle pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Block 3 verification COMPLETE on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: COMPLETE — AP-DX-01 Phases A–F; Block 3 verification bundle PASS; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 COMPLETE — ready for PR review (feat/ap-dx-01-design-entity-contracts → main)
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+AP_DX_01_HEAD_SHA: 3c031f8c735b0b6b3d9b8dc964717e33549a9cd9
 AP_DX_01_PHASE_A_STATUS: COMPLETED
 AP_DX_01_PHASE_B_STATUS: COMPLETED
 AP_DX_01_PHASE_C_STATUS: COMPLETED
 AP_DX_01_PHASE_D_STATUS: COMPLETED
 AP_DX_01_PHASE_E_STATUS: COMPLETED
-AP_DX_01_PHASE_F_STATUS: IN_PROGRESS — Block 2 contract tests COMPLETE
+AP_DX_01_PHASE_F_STATUS: COMPLETED — Block 2 contract tests + Block 3 verification bundle PASS
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
 AP_DX_01_VERSION_BUMP_REQUIRED: NO — additive optional structuralDesignModel at 0.1.0 (Phase B sign-off)
 AP_DX_01_MIGRATION_REQUIRED: NO — absent section defaults; no migration steps for AP-DX-01
@@ -1214,9 +1215,9 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 | C | TypeScript contract types (design entity interfaces) | COMPLETED |
 | D | Zod schema + JSON Schema artifact (design entity structural schema) | COMPLETED |
 | E | Parser, domain mapper, semantic validator for structuralDesignModel | COMPLETED |
-| F | Tests + typecheck/lint/build verification | IN_PROGRESS — Block 2 contract tests COMPLETE |
+| F | Tests + typecheck/lint/build verification | COMPLETED — Block 2 + Block 3 PASS |
 
-AP_DX_01_OVERALL_STATUS: PHASE_F_IN_PROGRESS — Block 2 contract tests complete; verification bundle pending
+AP_DX_01_OVERALL_STATUS: COMPLETE — Phases A–F; Block 3 verification bundle PASS; ready for PR
 
 --------------------------------------------------------------------------------
 24.1a Phase B design decisions (2026-08-01 JST)
@@ -1353,16 +1354,22 @@ Open questions:
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
 AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
-AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase F Block 2 contract tests complete; typecheck/lint/build bundle pending)
-AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (runtime + Block 2 contract tests present; Phase F verification bundle pending)
+AP_DX_01_PHASE_D_SCHEMA_VERDICT: PASS
+AP_DX_01_PHASE_E_PARSER_MAPPER_VALIDATOR_VERDICT: PASS
+AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
+AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
+AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
+AP_DX_01_IMPLEMENTATION_VERDICT: PASS
+AP_DX_01_CONTRACT_COMPLETENESS: COMPLETE
 AP_DX_01_READY_FOR_PHASE_D: YES
 AP_DX_01_READY_FOR_PHASE_E: YES
 AP_DX_01_READY_FOR_PHASE_F: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
+AP_DX_01_OVERALL_VERDICT: PASS — ready for PR review
 
 NEXT_EXACT_ACTION:
-  - Phase F remainder: run typecheck/lint/build verification bundle
-  - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
+  - Push feat/ap-dx-01-design-entity-contracts and open PR into main
+  - AP-DX-02: 3D stable ID binding (out of scope for AP-DX-01)
 
 --------------------------------------------------------------------------------
 24.9 Phase D completion summary (2026-08-01 JST)
@@ -1514,6 +1521,136 @@ VERIFICATION:
 
 AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
 AP_DX_01_BLOCK_2_COMMIT_MESSAGE: test(apollo): cover AP-DX-01 design entity contracts
+
+--------------------------------------------------------------------------------
+24.12 Block 3 — AP-DX-01 Phase F verification bundle (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+SCOPE: Final verification bundle — BSDD target tests, typecheck, lint, build, git diff --check.
+No Apollo UI, 3D viewer, backend, IF3, or numeric design logic changes.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | AP-DX-01-F-01-BSDD-TESTS |
+| COMMAND | cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
+| START_TIME | 2026-08-01 21:44:42 JST |
+| END_TIME | 2026-08-01 21:44:43 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 2/2 contract test files (35/35 tests) |
+| EVIDENCE | Vitest v4.1.8: Test Files 2 passed; Tests 35 passed; Duration 916ms |
+| ACTION | Proceed to AP-DX-01-F-02-TYPECHECK |
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | AP-DX-01-F-02-TYPECHECK |
+| COMMAND | cd frontend && npm run typecheck |
+| START_TIME | 2026-08-01 21:45:24 JST |
+| END_TIME | 2026-08-01 21:45:38 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend TypeScript project (tsc -b --pretty false) |
+| EVIDENCE | No diagnostic output; exit 0 |
+| ACTION | Proceed to AP-DX-01-F-03-LINT |
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | AP-DX-01-F-03-LINT |
+| COMMAND | cd frontend && npm run lint |
+| START_TIME | 2026-08-01 21:45:38 JST |
+| END_TIME | 2026-08-01 21:45:52 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | tsc -b + source hygiene + Japanese-string audit |
+| EVIDENCE | Frontend source hygiene check passed; exit 0 |
+| ACTION | Proceed to AP-DX-01-F-04-BUILD |
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | AP-DX-01-F-04-BUILD |
+| COMMAND | cd frontend && npm run build |
+| START_TIME | 2026-08-01 21:45:52 JST |
+| END_TIME | 2026-08-01 21:46:16 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Production build (tsc -b && vite build); dist/ artifacts |
+| EVIDENCE | Vite v7.3.5: 3926 modules transformed; built in 9.94s; chunk size warning informational |
+| ACTION | Proceed to AP-DX-01-F-05-GIT-DIFF-CHECK |
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | AP-DX-01-F-05-GIT-DIFF-CHECK |
+| COMMAND | git diff --check |
+| START_TIME | 2026-08-01 21:46:16 JST |
+| END_TIME | 2026-08-01 21:46:16 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Working tree whitespace |
+| EVIDENCE | No trailing-whitespace or conflict-marker violations |
+| ACTION | Block 3 verification bundle complete |
+
+AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
+
+--------------------------------------------------------------------------------
+24.13 AP-DX-01 final implementation summary
+--------------------------------------------------------------------------------
+
+BRANCH: feat/ap-dx-01-design-entity-contracts
+BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+HEAD_SHA: 3c031f8c735b0b6b3d9b8dc964717e33549a9cd9
+
+COMMITS (baseline..HEAD):
+  ac794d2 docs(apollo): record AP-DX-01 contract inventory
+  19a02bf docs(apollo): finalize AP-DX-01 implementation design
+  cc16504 feat(apollo): add AP-DX-01 design entity contract types
+  a804c38 feat(apollo): extend BSDD schema for design entities
+  832ab10 feat(apollo): validate AP-DX-01 entity references and governance
+  3c031f8 test(apollo): cover AP-DX-01 design entity contracts
+
+FILES_MODIFIED:
+  frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+  frontend/src/contracts/index.ts
+  frontend/src/contracts/runtime/domainMappers.ts
+  frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
+  frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
+  schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json
+  docs/apollo/ap-dx-01/local_implementation_report.md
+  final_report.txt
+
+SCOPE_DELIVERED:
+  - AP-DX-01 design entity contract types (11 entity kinds + StructuralDesignModel)
+  - TypeScript types, Zod schema, JSON Schema artifact alignment
+  - Parser/mapper + semantic validator (duplicate ID, dangling ref, non-composite, DeckAnchorage)
+  - Contract tests (schema, round-trip, stable ID, fail-closed, legacy non-regression)
+  - Schema version decision: NO bump (remain 0.1.0 additive backward-compatible)
+  - Migration decision: NO migration required
+
+OUT_OF_SCOPE_CONFIRMED:
+  - Apollo UI — no changes
+  - 3D viewer — no changes
+  - Backend — no changes
+  - IF3 — no changes
+  - Numeric design logic / formulas — NOT_GRANTED
+
+NON_COMPOSITE_GOVERNANCE:
+  - SdmNonCompositeAssertion.compositeAction literal false required
+  - compositeShearConnector / slabGirderConnector forbidden
+  - DeckAnchorage independent entity with non-composite anchorageRole enum
+  - NOT_AUTHORIZED fail-closed; OK rejected without numeric authority
+
+CANONICAL AP-DX-01 VERDICT FIELDS:
+  AP_DX_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
+  AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
+  AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
+  AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
+  AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
+  AP_DX_01_IMPLEMENTATION_VERDICT: PASS
+  AP_DX_01_OVERALL_VERDICT: PASS — ready for PR review
 
 ================================================================================
 23. Final Merge Readiness Bookkeeping (2026-08-01 JST)
