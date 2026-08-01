@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-06 manual traceability **PASS** recorded 2026-08-01 JST (50 CSV rows; AP-DX-00..21 covered; Grider 第1章〜第13章 mapped; duplicate `trace_id` none; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` row absence). LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -162,7 +162,7 @@ pytest --version  # pytest 9.1.1
 | LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — B01/B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; no separate execution); B05 minimal backend general scope (14 modules; IF3 and schema covered separately) |
 | LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
-| LV-06 | Manual traceability review | NOT_STARTED |
+| LV-06 | Manual traceability review | **PASS** — 2026-08-01 JST; 50 rows; AP-DX-00..21 covered; Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER; no duplicate `trace_id`; inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` trace row |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
 | LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
 
@@ -1292,6 +1292,88 @@ No failures attributable to the verification branch; no application or validator
 
 `LV05_3D_DISPLAY_VERDICT: PASS` — operator manual GUI verification complete; automated viewer tests remain non-substituting supporting evidence.
 
+## LV-06 manual traceability review
+
+**Execution timestamp:** 2026-08-01 JST (exact time not recorded)
+**Verdict:** **PASS**
+**Artifacts reviewed:** `manual_traceability.csv`; `implementation_inventory.md`; `scope_and_architecture_freeze.md`; `implementation_sequence.md`; `local_verification_plan.md` LV-06 §; prior LV-02 OPEN_QUESTIONS.
+
+Scope: cross-read the 50-row traceability matrix against refreeze planning documents and LV-03 implementation inventory. No uploaded manual PDFs re-opened; review uses CSV `source` / `chapter_or_page` / `source_function` fields and planning-doc semantics only. CSV content not modified.
+
+### LV-06 structural checks
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| CSV column schema (9 columns) | PASS | `trace_id`, `source`, `chapter_or_page`, `source_function`, `phase1_target`, `planned_module`, `status`, `numeric_authority`, `notes` — all 50 data rows parse; Phase 2 MT-140/MT-150 `planned_module` restoration holds |
+| Duplicate `trace_id` | PASS | 50 rows; zero duplicates (`Counter` over `trace_id`) |
+| `trace_id` sequence gaps | INFO | Intentional banding: MT-000..006 (SuperDesigner), MT-007 (index), MT-010..091 (Grider by chapter), MT-140 (JIP-SPACER), MT-150 (JIP-LINER); 100 numeric gaps between bands — not missing rows |
+| AP-DX-00..21 presence | PASS | All 22 module IDs referenced in `planned_module` and/or `phase1_target`; MT-007 index row `AP-DX-00〜21`; MT-005 range `AP-DX-11〜18` expands AP-DX-11..18 |
+| SuperDesigner/SuperDrawing | PASS | MT-000..MT-006 — pp.7-8 through p.24 |
+| Grider_I chapter coverage | PASS | `Grider_I_00`..`Grider_I_13` each represented; 第1章〜第13章 rows present; MT-007 全体目次 indexes full flow |
+| JIP-SPACER | PASS | MT-140 — `REFERENCE_ONLY`; notes deny SPACER compatibility requirement |
+| JIP-LINER | PASS | MT-150 — `REFERENCE_ONLY`; notes require reusing existing Road, no Apollo duplication |
+| `planned_module` populated | PASS | No empty `planned_module` values; MT-063 uses `将来拡張` with `DEFERRED` (骨組任意指定) |
+| `numeric_authority` enum | PASS | `NOT_APPLICABLE`, `NOT_AUTHORIZED` only; no row claims adopted numerics |
+
+Note: CSV column is `status` (not `implementation_status`). Values: `PLANNED` (36), `PARTIAL` (7), `FROZEN` (4), `REFERENCE_ONLY` (2), `DEFERRED` (1).
+
+### LV-06 feature-group coverage (`local_verification_plan.md` LV-06)
+
+| Feature group | Representative `trace_id` rows | Result |
+|---------------|-------------------------------|--------|
+| RC床版 | MT-030, MT-041, MT-050..053 | PASS |
+| 格子解析 | MT-060, MT-061, MT-064, MT-100 | PASS |
+| 主桁断面 | MT-043, MT-070..072 | PASS |
+| 添接 | MT-046, MT-080..082 | PASS |
+| たわみ・剛比・キャンバー | MT-090, MT-091 | PASS |
+| 横桁・対傾構・横構・斜材 | MT-045, MT-101..103 | PASS |
+| 支点上・中間・水平補剛材 | MT-044, MT-110..112 | PASS |
+| 鋼重 | MT-062, MT-120, MT-121 | PASS |
+| 疲労 | MT-130..132 | PASS (trace rows present; timing OPEN_QUESTION) |
+| 自動製図 | MT-003, MT-006, MT-091, MT-103 | PASS |
+| 計算書・照査一覧 | MT-000, MT-002, MT-072, MT-082 | PASS |
+
+### LV-06 policy checks (composite, compatibility, drawing scope)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| 合成／非合成の混同 | PASS | MT-051 notes fix 非合成属性; no row maps RC deck into girder composite stiffness; refreeze §3 aligns |
+| 旧APOLLOファイル形式の過剰互換 | PASS | MT-000 (Access/RTF reference only), MT-003 (GSP/DWG not compatibility target), MT-140 (no SPACER compat) |
+| 製作図と設計一般図の混同 | PASS | MT-006 — 製作詳細図完全自動化は対象外; MT-103/AP-DX-19 bracing layout drawing separate from shop detail |
+| 計算書・図面・材料集計の依存 | PASS | MT-000/002/072/082 tie ReportModel/AP-DX-20; MT-003/091/103 tie Drawing Semantic Model/AP-DX-19; MT-120..121 tie AP-DX-16 steel weight before reanalysis |
+
+### LV-06 inventory reconciliation (`implementation_inventory.md`)
+
+| Topic | Result | Notes |
+|-------|--------|-------|
+| PLANNED AP-DX modules (03, 04, 06, 07, 16) | PASS | CSV `PLANNED` + `NOT_AUTHORIZED`; inventory `PLANNED` with no premature code — aligned |
+| PARTIAL rows vs platform reuse | PASS | MT-010/020/021/040/042/060/064 `PARTIAL` match inventory `PARTIALLY_IMPLEMENTED` / `IMPLEMENTED` (workspace, Road, 3D, IF3) without claiming design-check completion |
+| Visualization-only floor system | INFO | Inventory row 20 notes bracing heuristic only; CSV MT-102/103 remain `PLANNED` for design model — forward-looking, not contradiction |
+| Fatigue AP-DX-18 | OPEN_QUESTION | CSV MT-130..132 `PLANNED`; inventory row 22 `OUT_OF_SCOPE` for **current code** — inventory explicitly notes forward-looking trace vs code scope (same tension as LV-02) |
+| Drawing preview | PASS | Inventory `OUT_OF_SCOPE` for Apollo drawing workspace; CSV AP-DX-19 rows are semantic-model / preview boundary, not LINER drawing workspace claim |
+
+### LV-06 mapping omissions and contradictions
+
+| Item | Severity | Finding |
+|------|----------|---------|
+| `DeckAnchorage` / 床版接合要素 | OPEN_QUESTION | `scope_and_architecture_freeze.md` §3.1 and AP-DX-01 entity list include `DeckAnchorage`; no dedicated `manual_traceability.csv` row — defer explicit trace to LV-07 or future CSV row; not guessed here |
+| AP-DX-18 fatigue timing | OPEN_QUESTION | Step 1 analysis scope excludes fatigue; refreeze and CSV include fatigue data boundary — supervisor gate criteria not in repo (LV-02 OPEN_QUESTION retained) |
+| AP-DX governance unlock | OPEN_QUESTION | When AP-DX-06..08/14/15/18 implementation is authorized, decision log vs `ap00/forbidden_scope.md` not derivable (LV-02 OPEN_QUESTION retained) |
+| `trace_id` band gaps | INFO | Documented intentional numbering; duplicate `trace_id` handling: uniqueness enforced, no merge/dedup policy needed |
+| `source` field vs repo paths | INFO | `source` uses manual document identifiers (`Grider_I_04`, `SuperDesigner/...`) not filesystem paths — consistent across CSV; not an evidence-path error |
+
+No mapping contradiction requiring CSV edit was found. CSV not modified.
+
+### LV-06 OPEN_QUESTIONS (recorded; not guessed)
+
+1. **AP-DX-18 fatigue** — CSV forward `PLANNED` vs Step 1 / current code `OUT_OF_SCOPE`: timing and governance unlock criteria not recorded in repository docs.
+2. **`DeckAnchorage` trace row** — Entity frozen in scope/sequence docs but absent from `manual_traceability.csv`; whether a dedicated MT row is required before implementation authorization is undecided.
+3. **AP-DX member-design governance unlock** — Same as LV-02 OPEN_QUESTION #1 (stiffener/splice/bracing/fatigue vs `ap00/forbidden_scope.md`).
+
+### LV-06 verdict
+
+`LV06_MANUAL_TRACEABILITY_VERDICT: PASS` — Matrix is structurally valid (50 rows, unique `trace_id`, full AP-DX-00..21 and Grider chapter coverage, SuperDesigner/JIP-SPACER/JIP-LINER references present). Feature groups in `local_verification_plan.md` LV-06 are mapped. `planned_module`, `phase1_target`, `status`, and `numeric_authority` are consistent with refreeze NOT GRANTED authorization and LV-03 inventory for PLANNED/PARTIAL layers. OPEN_QUESTIONS remain on fatigue timing, `DeckAnchorage` row absence, and AP-DX governance unlock; these do not invalidate the matrix for refreeze documentation purposes.
+
 ## Next action
 
 LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
@@ -1308,5 +1390,5 @@ preserved: LV-03 PASS; LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — bun
 `apolloStlExport.test.ts`; drift at `f89fe11` / #225; unrelated to #239/#240); bundle 7
 FAIL (same PD-001; 262/263 files, 2046/2047 tests); bundles 2–6 and 8 PASS; bundle 9
 NOT_APPLICABLE (union of B07+B08; no separate execution); static checks typecheck/lint/build
-PASS; Phase C schema/doc PASS. **Next:** LV-06 through LV-08 per `local_verification_plan.md`;
-PD-001 fix deferred to implementation branch.
+PASS; Phase C schema/doc PASS; LV-06 manual traceability PASS (2026-08-01 JST). **Next:** LV-07
+and LV-08 per `local_verification_plan.md`; PD-001 fix deferred to implementation branch.

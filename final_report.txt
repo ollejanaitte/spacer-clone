@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (exact time not provided by operator)
-WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-CURRENT_PHASE: LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — all 9 bundles recorded; LV-05 PASS; LV-06..LV-08 pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (LV-06 manual traceability PASS recorded)
+WORK_STATUS: ACTIVE — LV-06 manual traceability PASS recorded (2026-08-01 JST; 50 CSV rows; AP-DX-00..21 covered; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row); LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
+CURRENT_PHASE: LV-06 PASS — LV-07..LV-08 pending
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
 ================================================================================
@@ -49,8 +49,11 @@ LV-05 **PASS** 2026-08-01 JST — operator masaharu completed manual GUI verific
 (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL
 export/download/reload PASS; evidence note recorded in manual_verification_checklist.md;
 `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only).
-LV-06 through LV-07 remain NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C
-git diff --check PASS).
+LV-06 manual traceability review PASS (2026-08-01 JST): 50 CSV rows; AP-DX-00..21 covered;
+Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER mapped; no duplicate trace_id;
+inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing, DeckAnchorage
+trace row absence, and AP-DX governance unlock (LV-02 retained). CSV not modified.
+LV-07 remains NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS).
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
@@ -124,7 +127,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — B01/B07 FAIL (PD-001); B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE (union of B07+B08); B05 minimal 14-module scope (IF3 and schema covered separately) |
 | LV-05 | 3D display non-regression | PASS — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note in manual_verification_checklist.md; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
-| LV-06 | Manual traceability review | NOT_STARTED |
+| LV-06 | Manual traceability review | PASS — 2026-08-01 JST; 50 rows; AP-DX-00..21; Grider chapters 1-13; no duplicate trace_id; OPEN_QUESTIONS AP-DX-18 timing, DeckAnchorage row, governance unlock |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
 | LV-08 | Document quality | PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS) |
 
@@ -143,9 +146,10 @@ origin/main and matches origin/docs/apollo-refreeze-local-verification. Prior FA
 (2026-08-01 19:32:32 JST) retained as historical evidence. Prior Phase 2–4 recorded
 results preserved; Phase C schema/doc bundle and LV-04 bundle 5 recorded.
 
-Proceed to: LV-06 through LV-08 per local_verification_plan.md. LV-04 bundle bookkeeping
+Proceed to: LV-07 and LV-08 per local_verification_plan.md. LV-04 bundle bookkeeping
 complete (B09 NOT_APPLICABLE; overall verdict COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE).
-Full LV-02 findings remain in local_verification_report.md.
+LV-06 manual traceability PASS recorded. Full LV-02 findings remain in
+local_verification_report.md.
 
 ================================================================================
 7. LV-03 Implementation Inventory
@@ -220,6 +224,38 @@ provided by operator).
 | LV05_3D_DISPLAY_VERDICT | PASS |
 
 LV05_3D_DISPLAY_VERDICT: PASS
+
+================================================================================
+7b. LV-06 Manual Traceability Review (2026-08-01 JST)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 JST (exact time not recorded). Artifacts: manual_traceability.csv (50 rows);
+implementation_inventory.md; scope_and_architecture_freeze.md; implementation_sequence.md;
+local_verification_plan.md LV-06 section. CSV not modified.
+
+| Check | Result |
+|-------|--------|
+| CSV 9-column schema / quoting | PASS |
+| Duplicate trace_id | PASS — zero duplicates across 50 rows |
+| trace_id sequence gaps | INFO — intentional banding (000-006, 007, 010-091, 140, 150) |
+| AP-DX-00..21 coverage | PASS — all 22 module IDs referenced |
+| SuperDesigner/SuperDrawing | PASS — MT-000..MT-006 |
+| Grider_I 第1章..第13章 | PASS — Grider_I_00..13 + per-chapter rows |
+| JIP-SPACER / JIP-LINER | PASS — MT-140/MT-150 REFERENCE_ONLY |
+| LV-06 feature groups (RC slab, grid, girder, splice, camber, bracing, stiffener, steel weight, fatigue, drawing, reports) | PASS |
+| Composite vs non-composite policy | PASS — MT-051 非合成; no composite stiffness mixing |
+| Old APOLLO format over-compat | PASS — GSP/DWG/SPACER compat explicitly denied in notes |
+| Shop detail vs design drawing | PASS — MT-006 shop-detail automation out of scope |
+| Inventory PLANNED modules | PASS — CSV PLANNED/NOT_AUTHORIZED aligns with inventory PLANNED |
+| PARTIAL rows vs platform reuse | PASS — workspace/Road/3D/IF3 PARTIAL without design-check claims |
+
+OPEN_QUESTIONS (not guessed):
+  1. AP-DX-18 fatigue — CSV PLANNED vs inventory OUT_OF_SCOPE (current code); timing/gate not in repo
+  2. DeckAnchorage — entity in scope freeze but no dedicated CSV row; LV-07 may address
+  3. AP-DX governance unlock vs ap00/forbidden_scope.md (LV-02 OPEN_QUESTION retained)
+
+LV06_MANUAL_TRACEABILITY_VERDICT: PASS
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -962,7 +998,9 @@ LV-05: PASS — operator masaharu manual GUI verification (2026-08-01 JST; exact
 provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS;
 evidence note recorded; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest
 supporting evidence only — does not substitute).
-LV-06 through LV-07: NOT_STARTED.
+LV-06: PASS — manual traceability review (2026-08-01 JST; 50 CSV rows; AP-DX-00..21;
+no duplicate trace_id; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row).
+LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (PD-001
 SEPARATE_DEFECT_REQUIRED; 187/188 pass; manifest stale 26 expected / 27 discovered;
@@ -984,8 +1022,8 @@ LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
 THREED_VIEWER_VERDICT: PASS
 LV05_3D_DISPLAY_VERDICT: PASS
-REFREEZE_FINAL_READINESS: PARTIAL — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 blocks B01/B07 only); LV-05 manual GUI PASS; LV-06..LV-08 pending
-OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
+REFREEZE_FINAL_READINESS: PARTIAL — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 blocks B01/B07 only); LV-05 manual GUI PASS; LV-06 manual traceability PASS; LV-07..LV-08 pending
+OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing; DeckAnchorage CSV row absence.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 
@@ -993,9 +1031,9 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (exact time not provided by operator)
-WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-STOP_REASON: N/A — LV-05 formal PASS recorded per operator confirmation (masaharu, 2026-08-01 JST; exact time not provided; MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in manual_verification_checklist.md).
+UPDATE_TIMESTAMP: 2026-08-01 JST (LV-06 manual traceability PASS recorded)
+WORK_STATUS: ACTIVE — LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
+STOP_REASON: N/A — LV-06 formal PASS recorded (2026-08-01 JST; traceability matrix review; CSV not modified).
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
@@ -1012,7 +1050,7 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE) — LV-05 PASS (operator masaharu, 2026-08-01 JST) — proceed to LV-06..LV-08
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE) — LV-05 PASS (operator masaharu, 2026-08-01 JST) — LV-06 PASS (2026-08-01 JST) — proceed to LV-07..LV-08
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
-  - LV-06 through LV-08 per local_verification_plan.md
+  - LV-07 and LV-08 per local_verification_plan.md
