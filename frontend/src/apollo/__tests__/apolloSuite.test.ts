@@ -9,6 +9,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "ApolloRouteHost.test.tsx",
   "CompositionAwareInput.test.tsx",
   "apolloSourceHygiene.test.ts",
+  "apolloStlExport.test.ts",
   "apolloSuite.test.ts",
   "bulkEdit.test.ts",
   "clipboard.test.ts",
