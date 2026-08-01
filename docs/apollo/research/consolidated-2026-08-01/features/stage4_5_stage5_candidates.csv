@@ -1,0 +1,6 @@
+feature_id,topic,hint_from_manual,source_manual,notes
+F4-5-023,たわみ剛比,許容値を確認,MAN-010,Stage5 formal check needed
+F4-5-024,活荷重たわみ,許容値を超過した場合は仮定主桁剛度を高くし再度格子解析を実行,MAN-010,Stage5 formal check needed
+F4-5-031,許容応力度,許容応力度,MAN-005,Stage5 formal check needed
+F4-5-023,たわみ許容値,許容値を確認,MAN-010,数値・基準年版はStage5
+F4-5-031,許容応力度,許容応力度データ,MAN-005,数値・基準年版はStage5

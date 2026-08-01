@@ -1,0 +1,51 @@
+# APOLLO Frame Team Handoff Review
+
+## Package ID
+`APOLLO-FRAME-HANDOFF-20260726-001`
+
+## ZIP path
+`manual-research/handoffs/APOLLO-FRAME-HANDOFF-20260726-001.zip`
+
+## ZIP size
+23458417 bytes
+
+## ZIP SHA-256
+`5039fecd45691da16846f0ea5c7eaa4e4be73d1109936a54dd0a87b68690db69`
+
+## Total files (zip entries)
+126
+
+## Document count (docs/*.md)
+13
+
+## CSV count
+19
+
+## Evidence image count
+69
+
+## READY requirements count
+69
+
+## OPEN / JIS / RETURN rem / UNKNOWN
+32 / 34 / 4 / 15
+
+## Target Standard
+NOT_SELECTED
+
+## Design Freeze
+NOT_READY
+
+## Stage 6 allowed scope
+Gap analysis only — implementation NOT authorized
+
+## Verdicts
+```text
+APOLLO_FRAME_TEAM_HANDOFF_SCOPE_VERDICT: COMPLETE
+APOLLO_FRAME_TEAM_HANDOFF_PACKAGE_VERDICT: PASSED
+APOLLO_FRAME_TEAM_HANDOFF_ZIP_INTEGRITY_VERDICT: PASSED
+APOLLO_FRAME_TEAM_HANDOFF_TRACEABILITY_VERDICT: PASSED
+APOLLO_FRAME_TEAM_HANDOFF_SOURCE_INTEGRITY_VERDICT: PASSED
+APOLLO_FRAME_TEAM_STAGE6_GAP_ANALYSIS_HANDOFF: READY
+APOLLO_FRAME_TEAM_IMPLEMENTATION_START: NOT_AUTHORIZED
+```

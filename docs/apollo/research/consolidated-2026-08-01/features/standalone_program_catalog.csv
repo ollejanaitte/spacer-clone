@@ -1,0 +1,16 @@
+program_id,program_name,purpose,feature_text,phase1_relevance,evidence_manual_id,evidence_pdf_page,evidence_section,classification,notes
+PROG-SLAB,Slab,ＲＣ床版の設計,鈑桁・箱桁に適用可能,high,MAN-021,23,3-4,Evidence,Phase1 RC床版で必要候補
+PROG-STDECK,Stdeck,鋼床版の設計,任意モデルを等価格子法により解析等,low,MAN-021,23,3-4,Evidence,Phase1初期は対象外寄り
+PROG-PREFLOOR,Prefloor,床組断面力の計算,桁構造物・骨組構造物に対応,high,MAN-021,23,3-4,Evidence,床組関連
+PROG-FLOOR,Floor,床組部材の設計,断面・添接・補剛材・たわみの一連設計が可能,high,MAN-021,23,3-4,Evidence,横桁等
+PROG-GIRDER,Girder,主桁断面の設計,断面力は構造解析とリンクし補間計算に対応,high,MAN-021,23,3-4,Evidence,主桁
+PROG-SECTION,Section,汎用断面計算,鋼部材の汎用形状に対応。CADライクな形状定義が可能,high,MAN-021;MAN-061;MAN-062,23,3-4,Evidence,単体マニュアルあり
+PROG-ISECTION,Isection,Ｉ型断面計算,非合成・合成桁・鋼床版横リブなどに適用可能,high,MAN-021;MAN-061,23,3-4,Evidence,非合成に適用可能と明記
+PROG-RIBSECTION,Ribsection,縦リブ断面計算,（機能説明欄空白）,UNKNOWN,MAN-021,23,3-4,Evidence,feature_text_blank_in_source
+PROG-SPLICE,Splice,添接計算,鈑桁・箱桁・骨組部材に対応。単体で.spl,high,MAN-021;MAN-063,23,3-4,Evidence,単体マニュアルあり
+PROG-RIBCHK,Ribchk,圧縮補剛版の設計,（機能説明欄空白）,UNKNOWN,MAN-021,23,3-4,Evidence,feature_text_blank_in_source
+PROG-SUPSTIF,Supstif,支点上補剛材の設計,（機能説明欄空白）,high,MAN-021,23,3-4,Evidence,非合成コントロールに支点補剛材ボタンあり
+PROG-STIF,Stif,中間補剛材の設計,（機能説明欄空白）,high,MAN-021,23,3-4,Evidence,非合成コントロールに補剛材ボタンあり
+PROG-SDIA,Sdia,支点ダイヤフラムの設計,（機能説明欄空白）,low,MAN-021,23,3-4,Evidence,鈑桁Phase1では要否 UNKNOWN
+PROG-IDIA,Idia,中間ダイヤフラムの設計,充腹・ラーメン・トラス形式に適用可能,low,MAN-021,23,3-4,Evidence,箱桁寄り
+PROG-SWAYLATE,SwayLate,対傾構・横構の設計,端・中間支点・中間対傾構に対応,high,MAN-021,23,3-4,Evidence,非合成コントロールに対傾構･横構

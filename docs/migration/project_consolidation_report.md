@@ -1,12 +1,12 @@
 # Project Consolidation Report
 
 **Report date:** 2026-08-01
-**Branch:** `agent/consolidate-bridge-research`
+**Branch:** `agent/consolidate-apollo-handoff-research`
 **Overall Phase 2 verdict:** `IN_PROGRESS`
 
 ## Executive summary
 
-Phase 2 canonical clone is complete. PR-A (local-archive boundary) merged to `main` (#229, `36f7034`). Raw archive bulk copy verified (`118389` files, hash PASS). PR-B (bridge research selective Git integration) is in progress on this branch: 31 source artifacts copied with SHA verification; manifest rows appended.
+Phase 2 canonical clone is complete. PR-A (local-archive boundary) merged to `main` (#229, `36f7034`). Raw archive bulk copy verified (`118389` files, hash PASS). PR-B (bridge research selective Git integration) merged to `main` (#230). PR-C (apollo manual-research selective Git integration) is ready for review on this branch: 112 source artifacts selected, 81 `CANONICAL` copies verified (69 research + 12 handoffs), 31 `DUPLICATE_SKIPPED` (SHA match on `main`); manifest, link, secret, and hash gates PASS.
 
 ## SHA anchors
 
@@ -14,9 +14,10 @@ Phase 2 canonical clone is complete. PR-A (local-archive boundary) merged to `ma
 | --- | --- | --- |
 | Phase 1 observation (`origin/main` at inventory) | `146f6786c9790440504f05c2f33a551ab91ed537` | Short: `146f678` — observation value, not a permanent pin |
 | PR-A merge (`main`) | `36f70341f1e9c6913a745d0645a2f619b20f6a50` | #229 local-archive boundary |
-| PR-B working tree | `36f70341f1e9c6913a745d0645a2f619b20f6a50` | Base = PR-A merge; integration uncommitted |
+| PR-B merge (`main`) | `1cd4f51d53b795ab1b78d85dd9592869b3b2b3da` | #230 bridge research consolidation |
+| PR-C working tree | `1cd4f51d53b795ab1b78d85dd9592869b3b2b3da` | Base = PR-B merge; integration uncommitted |
 
-Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
+Commit message at PR-B anchor: squash merge of bridge research consolidation PR (#230).
 
 ## Phase status
 
@@ -26,9 +27,10 @@ Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 | Step 1 | Canonical clone (`spacer-clone`) | `PASS` |
 | Step 2 | PR-A local-archive boundary | `PASS` |
 | Step 2b | Raw archive bulk copy + hash | `PASS` (`118389` files verified) |
-| Step 3 | Selective copy + hash (PR-B) | `IN_PROGRESS` |
-| Step 4 | Secret scan | `IN_PROGRESS` (PR-B gate run on copied artifacts) |
-| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A merged; PR-B open) |
+| Step 3 | Selective copy + hash (PR-B) | `PASS` (31 artifacts, #230 merged) |
+| Step 3b | Selective copy + hash (PR-C) | `PASS` (112 selected; 81 canonical, 31 duplicate skipped; hash verified) |
+| Step 4 | Secret scan | `PASS` (PR-C copied artifacts — no patterns detected) |
+| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A/B merged; PR-C working tree) |
 | Step 6 | Old folder disposition | `NOT_STARTED` |
 | Step 7 | Final verification | `NOT_STARTED` |
 
@@ -37,8 +39,8 @@ Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 | PR | Scope | Verdict |
 | --- | --- | --- |
 | PR-A | Local-archive boundary | `PASS` (#229, `36f7034`) |
-| PR-B | Bridge research | `IN_PROGRESS` |
-| PR-C | Apollo handoff/research materials | `NOT_STARTED` |
+| PR-B | Bridge research | `PASS` (#230, `1cd4f51`) |
+| PR-C | Apollo handoff/research materials | `READY_FOR_REVIEW` (uncommitted on branch) |
 | PR-D | Verification/operator evidence | `NOT_STARTED` |
 | PR-E | UI preservation/legacy indexes | `NOT_STARTED` |
 | PR-F | Final manifest/repository index | `NOT_STARTED` |
@@ -55,7 +57,7 @@ Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 | `local-archive/` directory skeleton | Done |
 | `local-archive/manifests/local_archive_manifest.csv` (header) | Done |
 
-## PR-B deliverables (this branch)
+## PR-B deliverables (merged #230)
 
 | Item | Status |
 | --- | --- |
@@ -65,6 +67,20 @@ Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 | `project_consolidation_manifest.csv` rows (31) | Done |
 | Design-standards README consolidated section | Done |
 | Duplicate SHA skip vs `main` | 0 skipped (no prior canonical match) |
+
+## PR-C deliverables (this branch)
+
+| Item | Status |
+| --- | --- |
+| `docs/apollo/research/consolidated-2026-08-01/` (69 artifacts + README) | Done — verified |
+| `docs/apollo/handoffs/consolidated-2026-08-01/` (12 artifacts + README) | Done — verified |
+| Consolidated README files (counts, exclusions, local-archive paths) | Done |
+| `docs/apollo/README.md` consolidated section | Done |
+| `docs/apollo/handoffs/README.md` consolidated section | Done |
+| `project_consolidation_manifest.csv` rows (112 selected; 81 `CANONICAL`, 31 `DUPLICATE_SKIPPED`) | Done — source/dest hash verified |
+| Path normalization (`source://apollo/`) in copied bodies | Done (3 destinations; manifest `notes` recorded) |
+| Duplicate SHA skip vs `main` | 31 skipped — target hash verified |
+| Quality gates (links, secrets, >50 MiB, binaries, lockfiles, `git diff --check`) | PASS |
 
 ## Local archive structure
 
@@ -92,12 +108,12 @@ Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 
 ## Next actions
 
-1. Review PR-B consolidated artifacts and manifest.
-2. Merge PR-B to `main` when approved.
-3. Open PR-C for remaining Apollo handoff/research materials.
+1. Open PR for PR-C consolidated artifacts (verification complete on branch).
+2. Merge PR-C to `main` when approved.
+3. Open PR-D for verification/operator evidence materials.
 4. Continue manifest population; mark `DUPLICATE_SKIPPED` where SHA matches `main`.
 5. Run secret scan before each docs PR merge touching integrated content.
 
 ## External authority
 
-Phase 1 inventory and integration plan live in the repository parent directory and are not modified by PR-B. Source tree `bridge-standards-research` is read-only for this pass.
+Phase 1 inventory and integration plan live in the repository parent directory and are not modified by PR-C. Source tree `apollo` is read-only for this pass.

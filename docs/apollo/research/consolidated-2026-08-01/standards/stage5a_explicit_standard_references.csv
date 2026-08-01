@@ -1,0 +1,3 @@
+traceability_id,feature_id,manual_id,pdf_page,explicit_standard_name,explicit_standard_edition,manual_evidence_summary
+T5A-0127,F4-P2-013,MAN-006,10,鋼道路橋設計便覧,NONE,設計基準が道路公団以外の場合、以下のダイヤログが表示され、「計算書出力」により、鋼道路橋設計便覧方法（死荷重曲げ変局点を算出）の計算書を出力します。
+T5A-0128,F4-P2-013,MAN-006,10,鋼道路橋設計便覧,NONE,設計基準が道路公団以外の場合、以下のダイヤログが表示され、「計算書出力」により、鋼道路橋設計便覧方法（死荷重曲げ変局点を算出）の計算書を出力します。
