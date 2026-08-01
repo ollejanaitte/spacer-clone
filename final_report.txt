@@ -9,7 +9,7 @@ WORK_STATUS: COMPLETE — Phases A–F; Block 2 contract tests PASS; Block 3 ver
 CURRENT_PHASE: AP-DX-01 COMPLETE — ready for PR review
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
-AP_DX_01_FINAL_SHA: ae7b6d0ea009218921a78a1762dc39c647c5d68a
+AP_DX_01_FINAL_SHA: 0e92130a9dabb2594f294225f990ab59327bf00b
 AP_DX_01_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
 AP_DX_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
@@ -77,7 +77,7 @@ SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Proje
 BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 BASELINE_COMMIT: docs(apollo): freeze AP-DX-01 contract implementation scope
 
-FINAL_SHA: ae7b6d0ea009218921a78a1762dc39c647c5d68a
+FINAL_SHA: 0e92130a9dabb2594f294225f990ab59327bf00b
 FINAL_COMMIT: docs(apollo): finalize AP-DX-01 implementation report
 
 COMMITS (baseline..final, chronological):
@@ -90,7 +90,7 @@ COMMITS (baseline..final, chronological):
   ff5c421 fix(apollo): pass validator path argument in AP-DX-01 fail-closed test
   b1b4938 docs(apollo): finalize AP-DX-01 implementation report (pre-normalization)
   b9f21e2 docs(apollo): finalize AP-DX-01 implementation report (structure correction)
-  ae7b6d0 docs(apollo): finalize AP-DX-01 implementation report (verdict normalization)
+  0e92130 docs(apollo): finalize AP-DX-01 implementation report (verdict normalization)
 
 HISTORY_NOTE: Branch retains full phase commit history. Corrective commit ff5c421
 was required because rebase/history rewrite was prohibited under repository agent rules.
@@ -457,7 +457,7 @@ PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
 PR_STATE: OPEN
 BASE_BRANCH: main (178768871545ab36aaea019916a492a051373496)
 HEAD_BRANCH: feat/ap-dx-01-design-entity-contracts
-FINAL_SHA: ae7b6d0ea009218921a78a1762dc39c647c5d68a
+FINAL_SHA: 0e92130a9dabb2594f294225f990ab59327bf00b
 MERGE_STATUS: NOT_MERGED — awaiting review and user approval
 AUTO_MERGE: DISABLED — user approval required per implementation_freeze.md §14
 
