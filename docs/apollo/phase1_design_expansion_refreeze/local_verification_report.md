@@ -153,7 +153,7 @@ pytest --version  # pytest 9.1.1
 |----|-------------|--------|
 | LV-01 | Git sync / worktree | STALE — prior PASS; re-run required (`origin/main` advanced) |
 | LV-02 | Existing Apollo document consistency | PASS |
-| LV-03 | Implementation inventory | NOT_STARTED |
+| LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
@@ -762,11 +762,83 @@ Verified command matches Phase 3 planned entry: `cd frontend && npm run build`
 `SC_B03_BUILD_VERDICT: PASS` — frontend production build exited 0 under the Phase 3 planned
 command.
 
+## LV-03 implementation inventory
+
+**Execution timestamp:** 2026-08-01 (docs-only; code inspection)
+**Verdict:** PASS
+**Artifact:** `implementation_inventory.md` (this directory)
+
+### Method
+
+- Inspected `frontend/src/apollo/`, `frontend/src/contracts/`, `frontend/src/bridgeDefinition/`,
+  `frontend/src/if3/`, `frontend/src/results/`, `frontend/src/exports/`, `frontend/src/viewer/`,
+  and `backend/engine/if3_*.py` via search and file reads.
+- Classifications use enum: `IMPLEMENTED`, `PARTIALLY_IMPLEMENTED`, `SCAFFOLD_ONLY`, `PLANNED`,
+  `BLOCKED`, `OUT_OF_SCOPE`, `UNKNOWN`.
+- Did not infer implementation from refreeze docs or UI labels alone.
+
+### Summary counts
+
+| Classification | Count |
+|----------------|------:|
+| IMPLEMENTED | 5 |
+| PARTIALLY_IMPLEMENTED | 11 |
+| SCAFFOLD_ONLY | 1 |
+| PLANNED | 5 |
+| OUT_OF_SCOPE | 2 |
+
+### Minimum target verdicts (abbreviated)
+
+| Target | Classification |
+|--------|----------------|
+| Apollo route/workspace | IMPLEMENTED |
+| BSDD contracts | PARTIALLY_IMPLEMENTED |
+| Lifecycle/stale/validation | PARTIALLY_IMPLEMENTED |
+| Bridge basic conditions | PARTIALLY_IMPLEMENTED |
+| Span/support/girder geometry | PARTIALLY_IMPLEMENTED |
+| Deck definition | PARTIALLY_IMPLEMENTED |
+| Cross beam/floor system shell | PARTIALLY_IMPLEMENTED |
+| Material/section registry | PARTIALLY_IMPLEMENTED |
+| Load shell | SCAFFOLD_ONLY |
+| Frame generation | PARTIALLY_IMPLEMENTED |
+| IF3 binding | IMPLEMENTED |
+| Result import | PARTIALLY_IMPLEMENTED |
+| Export gates | IMPLEMENTED |
+| 3D solid viewer | IMPLEMENTED |
+| STL export | IMPLEMENTED |
+| RC slab design shell | PLANNED |
+| Girder design shell | PLANNED |
+| Stiffener model | PLANNED |
+| Splice model | PLANNED |
+| Floor system/bracing model | PARTIALLY_IMPLEMENTED |
+| Steel weight | PLANNED |
+| Fatigue | OUT_OF_SCOPE |
+| Drawing preview | OUT_OF_SCOPE |
+| Report model/exports | PARTIALLY_IMPLEMENTED |
+
+### Maintenance check (`d3f1ec6` / `1fbcb3e`)
+
+| Check | Result |
+|-------|--------|
+| Main viewer Apollo solid handoff in `App.tsx` | PASS — `viewerDisplayModel`, `apolloVisualizationBuild`, conditional `apolloVisualizationModel` |
+| Viewer controls / types | PASS — `Viewer3D.tsx`, `ViewerControls.tsx`, `viewer/types.ts` |
+| Regression tests | PASS — `App.apolloNavigation.test.tsx`, `ViewerControls.test.tsx` |
+
+Previously BLOCKED in LV-02; resolved in LV-03.
+
+### Key findings
+
+1. Apollo Phase 1 is an **input + visualization shell**; calculation and authoritative export are disabled in the Apollo route UI.
+2. BSDD contracts, IF3 gates, and `BridgeDefinition` frame generation exist as **platform code** but are largely **not wired to Apollo UI**.
+3. Cross-beam, bracing, and deck solids are **visualization heuristics**, not persisted design entities.
+4. No premature AP-DX design modules (stiffener, splice, RC slab design, steel weight, fatigue) found in code.
+
+`LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS`
+
 ## Next action
 
 Re-baseline (2026-08-01 19:24:00 JST): `origin/main` is `f0983878ccbb816f591214b6242c3688ecb5a060`.
-Re-run LV-01 before resuming. Prior recorded results preserved: LV-04 bundle 1 FAIL
+Re-run LV-01 before resuming. Prior recorded results preserved: LV-03 PASS; LV-04 bundle 1 FAIL
 (pre-existing); bundles 2–4 PASS; static checks typecheck/lint/build PASS. After LV-01
-re-run: LV-03 per `local_verification_plan.md` if not yet done, then LV-04 bundle 5
-(backend general). LV-05 uses manual/e2e commands from the E2E/manual table. Do not
-invent commands outside this inventory.
+re-run: LV-04 bundle 5 (backend general). LV-05 uses manual/e2e commands from the E2E/manual
+table. Do not invent commands outside this inventory.

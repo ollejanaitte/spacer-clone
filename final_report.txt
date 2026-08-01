@@ -3,7 +3,7 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:24:00 JST
+UPDATE_TIMESTAMP: 2026-08-01 19:30:00 JST
 WORK_STATUS: STOPPED_BY_USER
 CURRENT_PHASE: Re-baselined for safe resume — LV-01 re-run required before further verification
 ORIGIN_MAIN_ADVANCED: YES — f0983878ccbb816f591214b6242c3688ecb5a060 (was 86e81d35ba36c1ddeb774286676d62a8f03e9085 at prior LV-01)
@@ -31,8 +31,9 @@ that broadened scope and is superseded. Phase 4 bundle 3 (IF3 frontend vitest): 
 (lint): PASS (exit 0; source hygiene passed; Japanese-string audit informational only).
 Phase 4 static check bundle 3 (build): PASS (exit 0; `tsc -b && vite build` completed;
 3926 modules transformed; dist/ artifacts generated; chunk size warning informational only).
-LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
-IN_PROGRESS (4/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
+LV-03 (implementation inventory) is PASS (code inspection; see
+implementation_inventory.md). LV-04 is IN_PROGRESS (4/9 bundles). LV-05 through LV-07
+remain NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks only).
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
@@ -96,7 +97,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 |----|-------------|--------|
 | LV-01 | Git sync / worktree | STALE — prior PASS; re-run required (origin/main advanced) |
 | LV-02 | Existing Apollo document consistency | PASS |
-| LV-03 | Implementation inventory | NOT_STARTED |
+| LV-03 | Implementation inventory | PASS |
 | LV-04 | Regression tests | IN_PROGRESS (bundle 4 PASS — IF3 backend) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
@@ -112,9 +113,38 @@ f0983878ccbb816f591214b6242c3688ecb5a060. Prior LV-01 PASS (at 86e81d35…) is S
 Re-run LV-01 before any further verification. Prior Phase 2–4 recorded results are
 preserved below; no new test execution in this re-baseline.
 
-If resumed after LV-01 re-run: LV-03 implementation inventory if not done, then LV-04
-bundle 5 (backend general) per local_verification_plan.md; LV-05 manual/e2e table.
+If resumed after LV-01 re-run: LV-04 bundle 5 (backend general) per
+local_verification_plan.md; LV-05 manual/e2e table.
 Full LV-02 findings remain in local_verification_report.md.
+
+================================================================================
+7. LV-03 Implementation Inventory
+================================================================================
+
+Execution: 2026-08-01 (code search and file inspection; docs-only commit).
+Artifact: docs/apollo/phase1_design_expansion_refreeze/implementation_inventory.md
+
+| Classification | Count |
+|----------------|------:|
+| IMPLEMENTED | 5 |
+| PARTIALLY_IMPLEMENTED | 11 |
+| SCAFFOLD_ONLY | 1 |
+| PLANNED | 5 |
+| OUT_OF_SCOPE | 2 |
+| UNKNOWN | 0 |
+
+IMPLEMENTED targets: Apollo route/workspace, IF3 binding, export gates, 3D solid viewer,
+STL export.
+
+Key gaps: BSDD contracts and frame generation exist as platform code but are not wired to
+Apollo UI; cross-beam/bracing/deck solids are visualization heuristics; load shell is
+SCAFFOLD_ONLY; AP-DX design modules (RC slab, girder design, stiffener, splice, steel
+weight) are PLANNED with no code.
+
+Maintenance check: d3f1ec6 (main viewer solid handoff) and 1fbcb3e (test coverage)
+confirmed present in App.tsx, Viewer3D, ViewerControls, and test files.
+
+LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -434,7 +464,7 @@ Execution recorded on branch docs/apollo-refreeze-local-verification at
 | FAILURE_CLASS | N/A |
 | AFFECTED_SCOPE | Full frontend production build (tsc -b && vite build); dist/ artifacts generated |
 | EVIDENCE | Vite v7.3.5: 3926 modules transformed; built in 10.57s; dist/index.html, CSS, JS bundles; chunk size >500 kB warning (informational); exit 0 |
-| ACTION | Proceed to LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
 
 BUILD_STATUS: PASS
 SC_B03_BUILD_VERDICT: PASS
@@ -485,8 +515,8 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 Stopped on branch docs/apollo-refreeze-local-verification at 88b7f092….
 origin/main advanced to f0983878… since prior LV-01. Re-run LV-01 before resuming.
 Prior recorded results preserved: LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS;
-static checks typecheck/lint/build PASS. After LV-01 re-run: LV-03 if not done, then
-LV-04 bundle 5 per local_verification_plan.md.
+static checks typecheck/lint/build PASS. After LV-01 re-run: LV-04 bundle 5 per
+local_verification_plan.md.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -512,7 +542,8 @@ REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 Phase 3 test-command discovery: COMPLETE.
 LV-01: STALE — prior PASS at 86e81d35…; re-run required (origin/main now f0983878…).
 LV-02: PASS (README status-enum alignment fix applied).
-LV-03: NOT_STARTED.
+LV-03: PASS (implementation inventory — 5 IMPLEMENTED, 11 PARTIALLY_IMPLEMENTED, 1
+SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
 LV-04: IN_PROGRESS (bundle 4/9 PASS — IF3 backend).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
@@ -534,7 +565,7 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:24:00 JST
+UPDATE_TIMESTAMP: 2026-08-01 19:30:00 JST
 WORK_STATUS: STOPPED_BY_USER
 STOP_REASON: User explicitly requested complete work stop on Saturday, August 1, 2026.
 REBASELINE: 2026-08-01 19:24:00 JST — stop/resume state aligned; origin/main advance recorded
@@ -554,4 +585,4 @@ NEXT_EXACT_ACTION_IF_RESUMED:
   - cd /home/masaharu/Projects/spacer-clone
   - git fetch --all --prune && git status --short --branch
   - re-run LV-01 (origin/main is f0983878…; prior PASS was at 86e81d35…)
-  - then LV-03 implementation inventory if not done, then LV-04 bundle 5 per local_verification_plan.md
+  - then LV-04 bundle 5 per local_verification_plan.md
