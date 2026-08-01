@@ -1,7 +1,8 @@
 # Apollo Phase 1 — Final Manual 3D/GUI Verification Checklist
 
-**Status:** CHECKLIST_PREPARED — user visual confirmation required  
-**Prepared:** 2026-08-01 19:49 JST  
+**Status:** MANUAL_VERIFICATION_COMPLETED — operator visual confirmation recorded
+**Prepared:** 2026-08-01 19:49 JST
+**Completed:** 2026-08-01 JST (exact time not provided by operator)
 **Target branch:** `docs/apollo-refreeze-local-verification`  
 **Baseline:** `1fbcb3ea804f965b8f262284573f4f4d42dc2411`  
 **Artifact role:** LV-05 manual 3D/GUI non-regression — operator-facing visual confirmation only
@@ -13,11 +14,13 @@ Automated vitest/Playwright PASS results (e.g. LV-04 bundle 2 viewer/3D: 228/228
 are **supporting evidence only** and do **not** substitute for this checklist.
 
 ```text
-THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION
+THREED_VIEWER_VERDICT: PASS
 ```
 
-Do not upgrade `THREED_VIEWER_VERDICT` to PASS until a human operator completes every row
-below and records evidence. Do not treat automated test PASS as manual GUI PASS.
+Operator masaharu completed every MV row below on 2026-08-01 JST (exact time not provided).
+Automated vitest/Playwright PASS (e.g. LV-04-B02 viewer/3D: 228/228 tests PASS) remains
+**supporting evidence only** and does **not** substitute for this checklist — manual PASS
+is recorded separately via operator sign-off in Section 7 and Section 9.
 
 ---
 
@@ -128,19 +131,19 @@ Complete each row on **both** Apollo embedded viewer and main screen (after roun
 
 | ID | Check | Expected result | Evidence | PASS / FAIL / PENDING_USER_VISUAL_CONFIRMATION |
 |----|-------|-----------------|----------|-----------------------------------------------|
-| MV-01 | **3D solid display** (Apollo viewer) | **Apollo Solid** toggle on; visible mass geometry (not empty canvas); **Apollo Line** may also show but solids must be present | Screenshot + note solid count impression | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-02 | **Deck display** | **Deck** visibility on → deck slab solids visible; off → deck hidden | Screenshot on/off | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-03 | **Main girder display** | **Girders** on → main-girder solids visible; off → girders hidden | Screenshot on/off | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-04 | **Cross-beam / floor members** | **Cross Beams** (and bracing if present) on → transverse/floor-related members visible as solids or defined geometry; off → hidden | Screenshot on/off | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-05 | **No regression to frame lines only** | With **Apollo Solid** on, display is **not** limited to wireframe/frame lines only; main screen `apollo` display model shows solid visualization (`data-apollo-visualization` > 0 equivalent visually) | Screenshot comparing frame-only vs solid | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-06 | **Camera rotate** | Drag in viewer rotates model; no stuck or blank view | Short note or screen recording | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-07 | **Camera zoom** | Scroll or zoom control changes scale smoothly | Short note | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-08 | **Console errors** | Browser DevTools console: **no** red `Error` entries during sample load, view toggles, STL export, and round-trip (WebGL stall **warnings** alone are informational) | Console log export or screenshot | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-09 | **STL export** | Preset `全体` (`full`) → **STL + Manifest** (`apollo-export-stl`) triggers download without UI error | Screenshot of export UI + download bar | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-10 | **Downloaded file verification** | Files land in download folder; e.g. `full-1-200m級-5径間連続橋.stl` and matching `.apollo.json` manifest; STL size > 0 bytes; open STL in external viewer if desired | File paths, sizes, optional `ls -l` output | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-11 | **STL presets** (optional depth) | Presets `主桁のみ` / `床版のみ` / `表示中のみ` (`girders`, `deck`, `visible`) each download distinct non-empty STL + manifest | File list per preset | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-12 | **Reload existing data** | **作業中データを保存** (`apollo-workspace-save`) then reload via **作業中データを開く** (`apollo-workspace-open`) or **ファイルを開く**; model and 3D view restore without corruption | Screenshot after reload | PENDING_USER_VISUAL_CONFIRMATION |
-| MV-13 | **Main screen solid after reload** | After workspace reload + return to `/pro`, `viewer-display-model` = `apollo` still shows solids (MV-05 on main screen) | Screenshot on `/pro` | PENDING_USER_VISUAL_CONFIRMATION |
+| MV-01 | **3D solid display** (Apollo viewer) | **Apollo Solid** toggle on; visible mass geometry (not empty canvas); **Apollo Line** may also show but solids must be present | Operator note (2026-08-01 JST) | PASS |
+| MV-02 | **Deck display** | **Deck** visibility on → deck slab solids visible; off → deck hidden | Operator note (2026-08-01 JST) | PASS |
+| MV-03 | **Main girder display** | **Girders** on → main-girder solids visible; off → girders hidden | Operator note (2026-08-01 JST) | PASS |
+| MV-04 | **Cross-beam / floor members** | **Cross Beams** (and bracing if present) on → transverse/floor-related members visible as solids or defined geometry; off → hidden | Operator note (2026-08-01 JST) | PASS |
+| MV-05 | **No regression to frame lines only** | With **Apollo Solid** on, display is **not** limited to wireframe/frame lines only; main screen `apollo` display model shows solid visualization (`data-apollo-visualization` > 0 equivalent visually) | Operator note (2026-08-01 JST) | PASS |
+| MV-06 | **Camera rotate** | Drag in viewer rotates model; no stuck or blank view | Operator note (2026-08-01 JST) | PASS |
+| MV-07 | **Camera zoom** | Scroll or zoom control changes scale smoothly | Operator note (2026-08-01 JST) | PASS |
+| MV-08 | **Console errors** | Browser DevTools console: **no** red `Error` entries during sample load, view toggles, STL export, and round-trip (WebGL stall **warnings** alone are informational) | None observed (operator, 2026-08-01 JST) | PASS |
+| MV-09 | **STL export** | Preset `全体` (`full`) → **STL + Manifest** (`apollo-export-stl`) triggers download without UI error | Operator confirmation (2026-08-01 JST) | PASS |
+| MV-10 | **Downloaded file verification** | Files land in download folder; e.g. `full-1-200m級-5径間連続橋.stl` and matching `.apollo.json` manifest; STL size > 0 bytes; open STL in external viewer if desired | Operator confirmation (2026-08-01 JST) | PASS |
+| MV-11 | **STL presets** (optional depth) | Presets `主桁のみ` / `床版のみ` / `表示中のみ` (`girders`, `deck`, `visible`) each download distinct non-empty STL + manifest | Operator note (2026-08-01 JST) | PASS |
+| MV-12 | **Reload existing data** | **作業中データを保存** (`apollo-workspace-save`) then reload via **作業中データを開く** (`apollo-workspace-open`) or **ファイルを開く**; model and 3D view restore without corruption | Operator confirmation (2026-08-01 JST) | PASS |
+| MV-13 | **Main screen solid after reload** | After workspace reload + return to `/pro`, `viewer-display-model` = `apollo` still shows solids (MV-05 on main screen) | Operator note (2026-08-01 JST) | PASS |
 
 ### Visibility control reference (viewer panel)
 
@@ -171,13 +174,17 @@ Manifest sibling: same prefix with `.apollo.json` (e.g. `full-2-200m級-5径間�
 | Field | Value |
 |-------|-------|
 | Checklist artifact | `manual_verification_checklist.md` (this file) |
-| Automated viewer tests (LV-04-B02) | PASS (228/228 vitest) — **does not** constitute manual GUI PASS |
-| Operator completion date | *(fill when done)* |
-| Operator name | *(fill when done)* |
-| Evidence location | *(screenshots, logs, file paths)* |
-| All MV rows PASS? | *(fill when done)* |
-| `THREED_VIEWER_VERDICT` | **PENDING_USER_VISUAL_CONFIRMATION** |
-| `LV05_3D_DISPLAY_VERDICT` | **PENDING_USER_VISUAL_CONFIRMATION** (until all MV rows PASS) |
+| Automated viewer tests (LV-04-B02) | PASS (228/228 vitest) — **supporting evidence only**; does **not** substitute for manual GUI PASS |
+| Operator completion date | 2026-08-01 JST (exact time not provided by operator) |
+| Operator name | masaharu |
+| Console errors | None observed |
+| STL export | PASS |
+| Download | PASS |
+| Reload | PASS |
+| Evidence note | Apollo画面およびメイン画面で床版・主桁等の3Dソリッド表示、回転・ズーム、STL出力、再読込を確認 |
+| All MV rows PASS? | **YES** — MV-01 through MV-13 all PASS |
+| `THREED_VIEWER_VERDICT` | **PASS** |
+| `LV05_3D_DISPLAY_VERDICT` | **PASS** |
 
 ### Recording procedure
 
@@ -203,11 +210,15 @@ Manifest sibling: same prefix with `.apollo.json` (e.g. `full-2-200m級-5径間�
 ## 9. Sign-off block (operator)
 
 ```text
-MANUAL_VERIFICATION_COMPLETED: NO
-THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION
-LV05_3D_DISPLAY_VERDICT: PENDING_USER_VISUAL_CONFIRMATION
-REFREEZE_FINAL_READINESS: BLOCKED — manual user visual confirmation required
-OPERATOR: 
-DATE: 
-EVIDENCE_PATH: 
+MANUAL_VERIFICATION_COMPLETED: YES
+THREED_VIEWER_VERDICT: PASS
+LV05_3D_DISPLAY_VERDICT: PASS
+REFREEZE_FINAL_READINESS: LV-05 manual GUI PASS recorded; other LV items may still block final readiness
+OPERATOR: masaharu
+DATE: 2026-08-01 JST (exact time not provided by operator)
+EVIDENCE_NOTE: Apollo画面およびメイン画面で床版・主桁等の3Dソリッド表示、回転・ズーム、STL出力、再読込を確認
+CONSOLE_ERRORS: none observed
+STL_EXPORT: PASS
+DOWNLOAD: PASS
+RELOAD: PASS
 ```
