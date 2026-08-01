@@ -230,7 +230,7 @@ Existing slice tests (Block B/C) retained:
 | Artifact | Status |
 |----------|--------|
 | `manual_verification_checklist.md` | Created — operator steps VVS-MV-01–14 |
-| `MANUAL_GUI_VERDICT` | **PENDING** — automated agents cannot confirm WebGL display |
+| `MANUAL_GUI_VERDICT` | **PENDING_USER_CONFIRMATION** — automated agents cannot confirm WebGL display |
 | Startup | `npm run dev:apollo` or `npm run app:dev:apollo` |
 | URL | `http://127.0.0.1:5173/pro/apollo` |
 
@@ -259,7 +259,7 @@ Existing slice tests (Block B/C) retained:
 | TYPECHECK_VERDICT | PASS |
 | LINT_VERDICT | PASS |
 | BUILD_VERDICT | PASS |
-| MANUAL_GUI_VERDICT | PENDING |
+| MANUAL_GUI_VERDICT | PENDING_USER_CONFIRMATION |
 | NUMERIC_DESIGN_AUTHORIZATION | NOT_GRANTED |
 | PR_READINESS_VERDICT | PASS — automated bundle complete; manual GUI pending |
 | OVERALL_VERDICT | PASS — ready for PR review (manual GUI checklist outstanding) |
@@ -269,3 +269,32 @@ Existing slice tests (Block B/C) retained:
 - `docs/apollo/ap-dx-01/local_implementation_report.md`
 - `frontend/src/contracts/bridgeSuperstructureDesignDocument.ts`
 - `docs/apollo/visible_vertical_slice_01/manual_verification_checklist.md`
+
+## 9. Stop state (2026-08-02 JST)
+
+**Stop reason:** PR #245 is already **MERGED**, not OPEN; therefore requested work cannot proceed under the stated constraints.
+
+| Field | Value |
+|-------|-------|
+| Stop date | 2026-08-02 JST |
+| Working directory | `/home/masaharu/Projects/spacer-clone` |
+| Branch | `feat/ap-dx-visible-vertical-slice-01` |
+| Baseline SHA | `560c9e1ed09c65691e8a47a0a542201c6c73208b` |
+| Local HEAD | `560c9e1ed09c65691e8a47a0a542201c6c73208b` (= `origin/feat/ap-dx-visible-vertical-slice-01`) |
+| PR URL | https://github.com/ollejanaitte/spacer-clone/pull/245 |
+| PR state | MERGED |
+| PR base | `main` |
+| `origin/main` SHA | `7873ef452e3e469b12881c0bb350b0306744783a` |
+| Worktree at stop | CLEAN |
+| Sibling folders | No new sibling folders under `/home/masaharu/Projects/` |
+| `main` modified by stop action | NO |
+| `MANUAL_GUI_VERDICT` | PENDING_USER_CONFIRMATION |
+
+### Restart conditions
+
+Work may resume only when **all** of the following are true:
+
+1. A new task brief explicitly authorizes continuation on a defined branch (may be a new branch from `origin/main` post-merge, or a follow-up slice).
+2. The operator confirms PR #245 merge state is acceptable and any new work is scoped against `origin/main` at `7873ef452e3e469b12881c0bb350b0306744783a` or later.
+3. Constraints are restated: work only inside `/home/masaharu/Projects/spacer-clone`; no destructive git operations; no sibling folders; branch policy as specified in the brief.
+4. If manual GUI confirmation is required, operator completes `manual_verification_checklist.md` and updates `MANUAL_GUI_VERDICT` from PENDING_USER_CONFIRMATION.

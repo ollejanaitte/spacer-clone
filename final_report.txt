@@ -3,12 +3,14 @@ Apollo Visible Vertical Slice 01
 Local Implementation Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (Visible Vertical Slice 01 Block D finalize on feat/ap-dx-visible-vertical-slice-01)
+UPDATE_TIMESTAMP: 2026-08-02 JST (stop-state documentation — PR #245 already MERGED)
 TASK: AP-DX Visible Vertical Slice 01 — bridge structure input → SDM → 3D → save/reload
-WORK_STATUS: COMPLETE — Blocks A–D; Block D verification bundle PASS; manual GUI PENDING
-CURRENT_PHASE: VVS-01 COMPLETE — ready for PR review
+WORK_STATUS: STOPPED — PR #245 is MERGED, not OPEN; requested work cannot proceed under stated constraints
+CURRENT_PHASE: VVS-01 STOP — no further implementation on this brief
+STOP_REASON: PR #245 is already MERGED, not OPEN; therefore requested work cannot proceed under the stated constraints
+STOP_DATE: 2026-08-02 JST
 VVS_01_BRANCH: feat/ap-dx-visible-vertical-slice-01
-VVS_01_BASELINE_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
+VVS_01_BASELINE_SHA: 560c9e1ed09c65691e8a47a0a542201c6c73208b
 VVS_01_BLOCK_D_START_SHA: 26d8b5627ab2c19cd87a78e0b2185cab6df106b3
 VVS_01_SCHEMA_VERSION_CURRENT: 0.1.0
 VVS_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
@@ -44,9 +46,29 @@ PENDING operator verdict.
 | Block B (input + SDM workflow) | COMPLETED |
 | Block C (3D binding) | COMPLETED |
 | Block D (tests + verification) | COMPLETED — PASS |
-| Worktree | CLEAN (post-commit) |
-| Main merge status | UNMERGED — origin/main at 9fb3384 |
-| Manual GUI | PENDING — checklist not operator-signed |
+| Worktree | CLEAN (at stop) |
+| Main merge status | PR #245 MERGED to main — origin/main at 7873ef4 |
+| Manual GUI | PENDING_USER_CONFIRMATION — checklist not operator-signed |
+
+================================================================================
+2a. Stop State (2026-08-02 JST)
+================================================================================
+
+STOP_REASON: PR #245 is already MERGED, not OPEN; therefore requested work cannot
+  proceed under the stated constraints.
+WORKING_DIRECTORY: /home/masaharu/Projects/spacer-clone
+BRANCH: feat/ap-dx-visible-vertical-slice-01
+BASELINE_SHA: 560c9e1ed09c65691e8a47a0a542201c6c73208b
+LOCAL_HEAD_SHA: 560c9e1ed09c65691e8a47a0a542201c6c73208b
+LOCAL_HEAD_EQUALS_ORIGIN: YES — equals origin/feat/ap-dx-visible-vertical-slice-01
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/245
+PR_STATE: MERGED
+PR_BASE: main
+ORIGIN_MAIN_SHA: 7873ef452e3e469b12881c0bb350b0306744783a
+WORKTREE_AT_STOP: CLEAN
+SIBLING_FOLDERS: No new sibling folders under /home/masaharu/Projects/
+MAIN_MODIFIED_BY_STOP_ACTION: NO
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
 
 ================================================================================
 3. Repository and Branch
@@ -57,10 +79,13 @@ WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: feat/ap-dx-visible-vertical-slice-01
 TRACKING_BRANCH: origin/feat/ap-dx-visible-vertical-slice-01
-ORIGIN_MAIN_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
-MAIN_MERGE_STATUS: UNMERGED — VVS-01 branch not merged to main
-WORKTREE_STATUS: CLEAN (expected post-finalize)
+ORIGIN_MAIN_SHA: 7873ef452e3e469b12881c0bb350b0306744783a
+MAIN_MERGE_STATUS: MERGED — PR #245 merged feat/ap-dx-visible-vertical-slice-01 into main
+WORKTREE_STATUS: CLEAN (at stop)
 SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Projects/
+LOCAL_HEAD_SHA: 560c9e1ed09c65691e8a47a0a542201c6c73208b
+LOCAL_HEAD_EQUALS_ORIGIN: YES — local HEAD equals origin/feat/ap-dx-visible-vertical-slice-01
+MAIN_MODIFIED_BY_STOP_ACTION: NO
 
 ================================================================================
 4. Baseline and Final SHA
@@ -379,45 +404,62 @@ SAFETY_CHECK_VERDICT: PASS
 
 REMOTE: https://github.com/ollejanaitte/spacer-clone.git
 BRANCH: feat/ap-dx-visible-vertical-slice-01
-PR_URL: (recorded after gh pr create)
-PR_BASE: main (9fb3384aa6cbf43a37477bb9c269e89ddb31dc41)
-ORIGIN_MAIN_SHA: 9fb3384aa6cbf43a37477bb9c269e89ddb31dc41
-BRANCH_PUSHED: YES (expected post-finalize)
-MAIN_MERGED: NO
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/245
+PR_BASE: main
+ORIGIN_MAIN_SHA: 7873ef452e3e469b12881c0bb350b0306744783a
+BRANCH_PUSHED: YES
+MAIN_MERGED: YES — PR #245 MERGED
 
-GITHUB_REFLECTION_VERDICT: PASS (pending PR URL confirmation)
+GITHUB_REFLECTION_VERDICT: PASS — PR #245 merged; stop documented
 
 ================================================================================
 25. PR / Merge Status
 ================================================================================
 
-PR_NUMBER: (pending creation)
-PR_URL: (pending creation)
-PR_STATE: OPEN (expected)
-BASE_BRANCH: main (9fb3384aa6cbf43a37477bb9c269e89ddb31dc41)
+PR_NUMBER: 245
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/245
+PR_STATE: MERGED
+BASE_BRANCH: main
 HEAD_BRANCH: feat/ap-dx-visible-vertical-slice-01
-MERGE_STATUS: NOT_MERGED — awaiting review
-AUTO_MERGE: DISABLED — user approval required
+MERGE_STATUS: MERGED
+AUTO_MERGE: N/A — already merged
 
-PR_MERGE_STATUS_VERDICT: READY_FOR_REVIEW
+PR_MERGE_STATUS_VERDICT: MERGED — work stopped; no further action on this brief
 
 ================================================================================
-26. Recommended Next Action
+26. Restart Conditions
 ================================================================================
+
+Work may resume only when ALL of the following are true:
+
+1. A new task brief explicitly authorizes continuation on a defined branch (may be a
+   new branch from origin/main post-merge, or a follow-up slice).
+2. Operator confirms PR #245 merge state is acceptable and any new work is scoped
+   against origin/main at 7873ef452e3e469b12881c0bb350b0306744783a or later.
+3. Constraints are restated: work only inside /home/masaharu/Projects/spacer-clone;
+   no destructive git operations; no sibling folders; branch policy as specified.
+4. If manual GUI confirmation is required, operator completes
+   manual_verification_checklist.md and updates MANUAL_GUI_VERDICT from
+   PENDING_USER_CONFIRMATION.
+
+================================================================================
+27. Recommended Next Action
+================================================================================
+
+STOP — no implementation work under this brief. Optional follow-ups (new brief required):
 
 1. Operator completes manual_verification_checklist.md (VVS-MV-01–14) and updates
-   MANUAL_GUI_VERDICT in this report if visual confirmation is required pre-merge.
-2. Review and merge PR after approval.
-3. Proceed to design-entity property panel on 3D pick (apollo-design-entity-panel).
-4. Align cross-beam stations with geometryRef span-index resolver when panel work begins.
+   MANUAL_GUI_VERDICT from PENDING_USER_CONFIRMATION if visual confirmation needed.
+2. Open a new brief/branch from origin/main for post-merge follow-up (e.g.
+   design-entity property panel on 3D pick, cross-beam geometryRef resolver).
 
 ================================================================================
-27. Final Verdict
+28. Final Verdict
 ================================================================================
 
-Visible Vertical Slice 01 Blocks A–D complete. User-driven bridge structure workflow
-delivered with BSDD-driven 3D visualization at schema version 0.1.0. Block D
-verification bundle PASS. Manual GUI checklist PENDING operator sign-off.
+Visible Vertical Slice 01 Blocks A–D complete and PR #245 MERGED. Stop recorded
+2026-08-02 JST: requested work cannot proceed under stated constraints because PR
+#245 is already MERGED, not OPEN. Manual GUI checklist remains PENDING_USER_CONFIRMATION.
 
 Canonical VVS-01 verdict fields:
 
@@ -432,7 +474,7 @@ CONTRACT_REGRESSION_VERDICT: PASS
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
-MANUAL_GUI_VERDICT: PENDING
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-PR_READINESS_VERDICT: PASS
-OVERALL_VERDICT: PASS
+PR_READINESS_VERDICT: N/A — PR #245 MERGED
+OVERALL_VERDICT: STOPPED — PR #245 MERGED; await new brief for follow-up work
