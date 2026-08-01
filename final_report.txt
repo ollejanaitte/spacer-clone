@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:51:24 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:53:10 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 1 Apollo frontend COMPLETE — FAIL)
+CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 2 viewer/3D COMPLETE — FAIL)
 
 ================================================================================
 1. Executive Summary
@@ -18,8 +18,10 @@ inspected package.json scripts, vitest/playwright configs, pytest layout, and
 test file inventories to produce a verified LV-04/LV-05 command plan (no tests
 executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
 Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
-origin/main). LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
-IN_PROGRESS (1/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
+origin/main). Phase 4 bundle 2 (viewer/3D vitest) executed: FAIL (exit 1, pre-existing
+apolloSuite drift in expanded run; all 22 viewer test files / 228 viewer tests PASS).
+LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
+IN_PROGRESS (2/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
 
 ================================================================================
 2. Repository and Branch Information
@@ -79,7 +81,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 1 FAIL — pre-existing) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 2 FAIL — pre-existing apolloSuite in expanded run) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -101,8 +103,8 @@ governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
 OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
 §5.5.
 
-Next: LV-03 implementation inventory if not done, then LV-04 bundle 2 (viewer/3D:
-`cd frontend && npm run test -- src/viewer`) per local_verification_plan.md; LV-05 manual/e2e table.
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 3 (IF3 frontend)
+per local_verification_plan.md; LV-05 manual/e2e table.
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -246,6 +248,29 @@ APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
 LV04_B01_APOLLO_FE_VERDICT: FAIL
 
 ================================================================================
+14. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:52:38 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D |
+| COMMAND | cd frontend && npm run test -- src/viewer . |
+| START_TIME | 2026-08-01 18:52:38 JST |
+| END_TIME | 2026-08-01 18:53:10 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale; failure outside src/viewer/) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1/2047 tests failed; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed |
+| EVIDENCE | Vitest: 2046 pass, 1 fail; verified command `.` expands to full frontend suite; viewer-only rerun (src/viewer) exits 0 with 228/228 pass |
+| ACTION | Record only; fix deferred to implementation branch |
+
+VIEWER_3D_REGRESSION_STATUS: FAIL (verified command exit 1; viewer tests themselves PASS — 22/22 files, 228/228 tests)
+LV04_B02_VIEWER_3D_VERDICT: FAIL (pre-existing apolloSuite drift in expanded run)
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -289,9 +314,10 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 ================================================================================
 
 On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend)
-is FAIL (pre-existing). Next: LV-03 implementation inventory if not done, then LV-04
-bundle 2 (viewer/3D) per local_verification_plan.md. Record results in
-local_verification_report.md without inventing test outcomes.
+and bundle 2 (viewer/3D) are FAIL (pre-existing apolloSuite drift). Next: LV-03
+implementation inventory if not done, then LV-04 bundle 3 (IF3 frontend) per
+local_verification_plan.md. Record results in local_verification_report.md without
+inventing test outcomes.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -318,11 +344,13 @@ Phase 3 test-command discovery: COMPLETE.
 LV-01: PASS.
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: NOT_STARTED.
-LV-04: IN_PROGRESS (bundle 1/9 FAIL — pre-existing).
+LV-04: IN_PROGRESS (bundle 2/9 FAIL — pre-existing apolloSuite in expanded viewer run; viewer tests PASS).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
-187/188 pass; apolloSuite discoverability drift). Remaining LV-04 bundles NOT_STARTED.
+187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D FAIL (verified
+command exit 1; 22/22 viewer files and 228/228 viewer tests PASS; failure is pre-existing
+apolloSuite in expanded run). Remaining LV-04 bundles NOT_STARTED.
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING

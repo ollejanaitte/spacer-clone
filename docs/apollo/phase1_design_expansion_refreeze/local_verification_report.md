@@ -14,7 +14,8 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Execution timestamp (Phase 1) | 2026-08-01 18:40:14 JST |
 | Execution timestamp (Phase 2) | 2026-08-01 18:42:00 JST |
 | Execution timestamp (Phase 3) | 2026-08-01 18:43:26 JST |
-| Execution timestamp (Phase 4) | 2026-08-01 18:51:14 JST |
+| Execution timestamp (Phase 4 bundle 1) | 2026-08-01 18:51:14 JST |
+| Execution timestamp (Phase 4 bundle 2) | 2026-08-01 18:52:38 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
@@ -132,7 +133,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 1/9 executed) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 2/9 executed) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -508,10 +509,45 @@ diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstra
 stale suite-discoverability manifest; failure predates verification branch and is
 attributable to `origin/main` code, not refreeze documentation edits.
 
+## Phase 4 LV-04 test execution (bundle 2 — viewer / 3D)
+
+**Execution timestamp:** 2026-08-01 18:52:38 JST
+**Verdict:** FAIL (1 test; pre-existing on `origin/main`, not introduced by doc branch)
+
+Scope: second planned LV-04 bundle only (viewer/3D vitest per verified command).
+No other test categories executed. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+Note: verified command includes `.` after `src/viewer`, so vitest also scans the full
+`frontend/` tree (263 test files). All 22 viewer test files passed (228/228 viewer tests);
+the sole failure is `apolloSuite.test.ts` (Apollo discoverability), same as bundle 1.
+
+### LV-04 bundle 2 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D |
+| COMMAND | `cd frontend && npm run test -- src/viewer .` |
+| START_TIME | 2026-08-01 18:52:38 JST |
+| END_TIME | 2026-08-01 18:53:10 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING — `apolloSuite.test.ts` discoverability drift (`apolloStlExport.test.ts` on `origin/main` but omitted from `EXPECTED_APOLLO_TEST_MODULES`); doc branch did not modify application code; failure is outside `src/viewer/` |
+| AFFECTED_SCOPE | `frontend/src/apollo/__tests__/apolloSuite.test.ts` — 1 failed test in 1 file; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed; 2046/2047 total tests passed |
+| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 262 passed (263)`; `Tests 1 failed \| 2046 passed (2047)`; Duration 30.51s; failure: `includes every expected AP-00 test module under __tests__` — received array includes `apolloStlExport.test.ts` not in expected list; viewer-only rerun (`npm run test -- src/viewer`) passes 22/22 files (228/228 tests, exit 0) |
+| ACTION | Record only; do not fix in this doc-only task. Viewer tests themselves are green; overall verified command fails due to pre-existing Apollo suite manifest drift expanded by `.` argument. Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
+
+### Phase 4 bundle 2 verdict
+
+`LV04_B02_VIEWER_3D_VERDICT: FAIL` — verified viewer/3D bundle command exited 1 due to
+pre-existing `apolloSuite.test.ts` failure in the expanded run; all `src/viewer/` tests
+passed. Failure predates verification branch and is attributable to `origin/main` code,
+not refreeze documentation edits.
+
 ## Next action
 
-LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing). Proceed to LV-03 per
-`local_verification_plan.md` if not yet done, then LV-04 bundle 2 (viewer/3D:
-`cd frontend && npm run test -- src/viewer`) using Phase 3 planned commands only.
+LV-04 bundle 1 (Apollo frontend) and bundle 2 (viewer/3D) recorded FAIL (pre-existing
+`apolloSuite.test.ts` drift). Proceed to LV-03 per `local_verification_plan.md` if not
+yet done, then LV-04 bundle 3 (IF3 frontend) using Phase 3 planned commands only.
 LV-05 uses manual/e2e commands from the E2E/manual table. Do not invent commands
 outside this inventory.
