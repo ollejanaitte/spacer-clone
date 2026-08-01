@@ -11,6 +11,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "apolloSourceHygiene.test.ts",
   "apolloStlExport.test.ts",
   "apolloSuite.test.ts",
+  "bridgeStructureVisualization.test.ts",
   "bridgeStructureWorkflow.test.ts",
   "bulkEdit.test.ts",
   "clipboard.test.ts",

@@ -1,7 +1,7 @@
 # Visible Vertical Slice 01 — Local Implementation Report
 
-**Task:** AP-DX Visible Vertical Slice 01 — bridge structure input → StructuralDesignModel workflow  
-**Phase:** B — Bridge structure workflow (Block B complete)  
+**Task:** AP-DX Visible Vertical Slice 01 — bridge structure input → StructuralDesignModel → 3D visualization  
+**Phase:** C — BSDD-driven 3D binding (Block C complete)  
 **Date:** 2026-08-01  
 **Branch:** `feat/ap-dx-visible-vertical-slice-01`  
 **BSDD schema version:** `0.1.0` (no bump)  
@@ -10,132 +10,117 @@
 
 ## 1. Executive summary
 
-Block B delivers the first **user-driven** bridge structure workflow inside the existing Apollo Phase 1 shell:
+Block C connects the existing Apollo / Three.js visualization path to the Block B `apolloBsdd` + `apolloBridgeStructureInput` sidecars:
 
-1. Minimal **橋梁構造入力** panel with all required dimensional fields and nullable input state.
-2. **構造を生成** generates a validating `BridgeSuperstructureDesignDocument` sidecar (`apolloBsdd`) with `structuralDesignModel`.
-3. Entities: `MainGirder`, `RcDeck`, `CrossBeam` with deterministic stable UUIDs, `nonCompositeAssertion.compositeAction=false`, and `designStatus: NOT_AUTHORIZED` (never OK/NG).
-4. Approximate geometry quantities (m³ / m² / counts) with `NOT_AUTHORIZED` / `INCOMPLETE` status — no mass from unit weight.
-5. Save/reload round-trip via Apollo import/export and dirty fingerprint extension.
+1. **構造を生成** (or reload after save) causes RC deck, main girders, and cross-beams to appear in the Apollo 3D viewer immediately via `buildApolloVisualizationModel`.
+2. Input changes followed by regeneration update solid counts, spacing, depth, deck thickness, and cross-beam stations.
+3. Save/reload preserves input values, `StructuralDesignModel`, stable entity IDs, and allows 3D regeneration on reload (covered by import/export + visualization tests).
+4. `ApolloSolidGeometryParameter` extended with optional `designEntityId` / `designEntityKind`; renderer `userData` carries binding metadata.
+5. Stiffener / Splice / SwayBracing / LateralBracing / DeckAnchorage remain explicitly unimplemented (info warnings if present in SDM).
 
-Block C (3D binding + pick panel) remains deferred.
-
-| Assessment | Block B conclusion |
+| Assessment | Block C conclusion |
 |------------|-------------------|
 | BSDD schema bump | **NO** |
 | New dependencies | **NO** |
-| Backend / IF3 | **NO** |
-| Apollo shell redesign | **NO** — panel added to basics + list editor |
-| Block B verdict | **PASS** |
+| Three.js / viewer redesign | **NO** — extended existing builder + renderer |
+| STL export non-regression | **PASS** — sample bridge path unchanged |
+| Main viewer non-regression | **PASS** — no BSDD → legacy defaults-provider solids |
+| Block C verdict | **PASS** |
 
 ## 2. Commands run
 
 ```bash
 cd /home/masaharu/Projects/spacer-clone/frontend && npm run typecheck
 cd /home/masaharu/Projects/spacer-clone/frontend && npm test -- src/apollo
+cd /home/masaharu/Projects/spacer-clone/frontend && npm test -- src/viewer/SceneBuilder.apolloVisualization.test.ts src/viewer/threeUtils.apolloVisualization.test.ts src/apollo/__tests__/apolloStlExport.test.ts
 cd /home/masaharu/Projects/spacer-clone && git diff --check
 ```
 
 | Command | Result |
 |---------|--------|
 | `npm run typecheck` | PASS |
-| `npm test -- src/apollo` | 28 files, 189 tests PASS |
+| `npm test -- src/apollo` | 29 files, 197 tests PASS |
+| STL / SceneBuilder focused tests | 22 tests PASS |
 | `git diff --check` | (run at commit) |
 
-## 3. Files changed (Block B)
+## 3. Files changed (Block C)
 
 ### New
 
 | Path | Role |
 |------|------|
-| `frontend/src/apollo/bridgeStructure/types.ts` | Input draft type, field definitions, quantity types |
-| `frontend/src/apollo/bridgeStructure/stableIds.ts` | Deterministic UUID from SHA-256 seed |
-| `frontend/src/apollo/bridgeStructure/validation.ts` | Input validation + persistence strictness |
-| `frontend/src/apollo/bridgeStructure/quantities.ts` | Geometry-only approximate quantities |
-| `frontend/src/apollo/bridgeStructure/generateBsdd.ts` | BSDD + SDM generation from input |
-| `frontend/src/apollo/bridgeStructure/projectBsdd.ts` | Hydrate / serialize / fingerprint helpers |
-| `frontend/src/apollo/bridgeStructure/index.ts` | Public barrel |
-| `frontend/src/apollo/components/BridgeStructureInputPanel.tsx` | UI panel |
-| `frontend/src/apollo/__tests__/bridgeStructureWorkflow.test.ts` | Generation + stable ID tests |
+| `frontend/src/apollo/visualization/bridgeStructureSolids.ts` | BSDD + input → girder/deck/cross-beam solids |
+| `frontend/src/apollo/visualization/designEntityBinding.ts` | Selection keys, binding warnings, unimplemented-entity notices |
+| `frontend/src/apollo/__tests__/bridgeStructureVisualization.test.ts` | Block C visualization + round-trip tests |
 
 ### Modified
 
 | Path | Role |
 |------|------|
-| `frontend/src/types.ts` | `apolloBsdd`, `apolloBridgeStructureInput` on `ProjectModel` |
-| `frontend/src/apollo/importExport.ts` | BSDD + input sidecar import/export |
-| `frontend/src/apollo/dirtyFingerprint.ts` | Fingerprint includes BSDD binding subset |
-| `frontend/src/apollo/ApolloPhase1Shell.tsx` | Panel in basics screen + list editor |
-| `frontend/src/apollo/__tests__/importExport.test.ts` | BSDD round-trip + invalid import |
+| `frontend/src/apollo/visualization/types.ts` | `ApolloDesignEntityKind`, `designEntityId` / `designEntityKind` on solids |
+| `frontend/src/apollo/visualization/builder.ts` | Prefer BSDD solids; retain legacy bearings/markers |
+| `frontend/src/apollo/visualization/index.ts` | Export new modules |
+| `frontend/src/viewer/renderers/ApolloVisualizationRenderer.ts` | `userData.designEntityId` / `designEntityKind` |
 | `frontend/src/apollo/__tests__/apolloSuite.test.ts` | Test manifest |
+| `frontend/src/apollo/__tests__/bridgeStructureWorkflow.test.ts` | Typecheck-safe quantity status assertion |
 
-## 4. Implementation design (Block B)
+## 4. Implementation design (Block C)
 
-### 4.1 Project sidecar fields
+### 4.1 Routing
 
-```typescript
-apolloBsdd?: BridgeSuperstructureDesignDocument;          // AP-DX-01 @ 0.1.0
-apolloBridgeStructureInput?: ApolloBridgeStructureInputDraft; // schema 1.0.0
-```
+When `project.apolloBsdd.structuralDesignModel` exists and bridge structure input validates as complete:
 
-Input fields (all `number | null`, never coerced to 0):
+- `buildBridgeStructureSolidGeometryParameters` emits solids for `MainGirder`, `RcDeck`, and `CrossBeam` entities.
+- Legacy `buildSolidGeometryParameters` still runs for unit-2 topology wireframe; only **bearings** and **markers** are merged from the legacy path (girders/deck/cross-beams/bracing from defaults provider are replaced).
+- Without BSDD, behavior is unchanged (defaults-provider PoC solids).
 
-- spanLength, bridgeLength, width, girderCount, girderSpacing, girderDepth
-- topFlangeWidth, topFlangeThickness, bottomFlangeWidth, bottomFlangeThickness
-- webThickness, deckThickness, crossBeamSpacing
+### 4.2 Geometry conventions
 
-### 4.2 Generation rules
+- Longitudinal axis: **+X**, bridge length `0 … bridgeLength`.
+- Transverse girder offsets from BSDD `girderLines[].offsetFromCenterline` (fallback: symmetric spacing from input).
+- Deck slab: width × bridge length × thickness; top at `z = deckThickness`.
+- Cross-beam stations: `index × crossBeamSpacing` (documented assumption; `geometryRef` span anchor is **not** used for transverse placement in Block C).
+- Cross-beam span: outer-girder transverse distance `(girderCount - 1) × girderSpacing`.
 
-- **Stable IDs:** `stableUuidFromSeed("apollo-vvs01:{projectId}:{entityKind}:{key}")` — regeneration preserves entity IDs.
-- **Spans:** `spanCount = max(1, round(bridgeLength / spanLength))`, equal span lengths summing to bridge length.
-- **Girder lines:** `girderCount` lines with symmetric offsets from centerline at `girderSpacing`.
-- **Cross-beams:** `floor(bridgeLength / crossBeamSpacing) + 1` entities; `geometryRef` anchors to containing `spanId`.
-- **Governed quantities:** user numerics as `PENDING` with values; deck/material unit weights `UNKNOWN` with `null` value.
-- **Design status:** all SDM entities `NOT_AUTHORIZED`; `adoptionStatus: PENDING`; no OK/NG/WARNING/ERROR.
-- **Non-composite:** `nonCompositeAssertion.compositeAction=false` on model; `compositeAction: false` on girders/decks.
-- **Validation:** `validateBridgeSuperstructureDesignDocument` before attach; import re-parses via `parseBridgeSuperstructureDesignDocumentValue`.
+### 4.3 Design entity binding
 
-### 4.3 UI integration
-
-- `BridgeStructureInputPanel` in guided **基本情報** screen and list-mode editor column.
-- `data-testid="apollo-bridge-structure-panel"`, `apollo-generate-structure`, per-field `apollo-bridge-input-*`.
-- Quantity table shows `NOT_AUTHORIZED` / `INCOMPLETE`; SDM summary lists entity counts and statuses.
+- Selection / validation keys: `design-entity:{Kind}:{entityId}`.
+- Stable IDs from Block B generation are preserved on solids via `designEntityId`.
+- `collectDesignEntityBindingWarnings` reports count mismatches; `collectUnimplementedDesignEntityWarnings` surfaces unimplemented SDM entity kinds at info severity.
 
 ### 4.4 Persistence
 
-- Export: `serializeApolloBsddForPersistence` → unit-2 serialize → project JSON.
-- Import: strict input validation → unit-2 hydrate → BSDD hydrate (fail-closed on invalid BSDD).
-- Dirty fingerprint: `apolloBsddBinding` subset (model IDs, geometry refs, design statuses, input draft).
+No new persistence fields. Block B import/export + fail-closed BSDD hydration unchanged. Reload → `buildApolloVisualizationModel` rebuilds BSDD solids from hydrated sidecars.
 
-## 5. Risks carried into Block C
+## 5. Residual risks for Block D
 
 | Risk | Severity | Notes |
 |------|----------|-------|
-| Cross-beam `geometryRef` uses span anchor, not transverse station | Medium | Block C binding resolver must document span-index convention |
-| No 3D solid ↔ entity binding yet | Expected | Visualization builder unchanged; Block C scope |
-| Unit-2 topology vs generated girder count may diverge | Medium | Sample 200 m bridge still uses unit-2 topology; structure input is parallel state |
-| Quantity formulas are simplified geometry | Low | Explicitly NOT_AUTHORIZED; no structural authority |
-| Dual panel in basics + list mode | Low | Same component; acceptable for Block B minimal slice |
+| Cross-beam station uses index × spacing, not `geometryRef` span station | Medium | Block D pick panel / alignment may need span-index resolver |
+| Unit-2 topology vs BSDD bridge axis not aligned | Medium | Wireframe members may not coincide with BSDD solids; dual coordinate stories |
+| No 3D pick → design-entity property panel yet | Expected | Block D scope (`apollo-design-entity-panel`) |
+| Bracing / stiffener / splice / anchorage unimplemented | Expected | Explicitly deferred; info warning if SDM contains entities |
+| Bearing/marker legacy solids may overlap BSDD bridge | Low | Only when unit-2 supports exist alongside BSDD |
+| Bounding box mixes unit-2 wireframe + BSDD solids | Low | Camera fit may include unrelated default-project nodes |
 
-## 6. Block C preview (not implemented)
+## 6. Block D preview (not implemented)
 
-- Extend `ApolloSolidGeometryParameter` with `designEntityId` / `designEntityKind`
-- `designEntityBinding.ts` resolver + stale/unbound warnings
-- `apollo-design-entity-panel` on 3D pick
-- Extend `ApolloVisualizationRenderer` `userData`
+- `apollo-design-entity-panel` on 3D pick using `userData.designEntityId`
+- Span-index cross-beam resolver aligned with `geometryRef`
+- Optional alignment of unit-2 longitudinal axis with BSDD bridge length
 
 ## 7. Verdict fields
 
 | Field | Verdict |
 |-------|---------|
-| VVS_01_BLOCK_B_IMPLEMENTATION_VERDICT | PASS |
+| VVS_01_BLOCK_C_IMPLEMENTATION_VERDICT | PASS |
 | VVS_01_SCHEMA_VERSION_DECISION | REMAIN_0_1_0 |
 | VVS_01_MIGRATION_DECISION | NONE_REQUIRED |
 | VVS_01_NUMERIC_AUTHORIZATION | NOT_GRANTED |
-| VVS_01_OVERALL_BLOCK_B_VERDICT | PASS — ready for Block C |
+| VVS_01_OVERALL_BLOCK_C_VERDICT | PASS — ready for Block D |
 
 ## 8. References
 
+- Block B report (prior revision of this file)
 - `docs/apollo/ap-dx-01/local_implementation_report.md`
 - `frontend/src/contracts/bridgeSuperstructureDesignDocument.ts`
-- Block A inventory in prior revision of this report (architecture baseline unchanged)

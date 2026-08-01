@@ -66,7 +66,11 @@ describe("bridgeStructure workflow", () => {
     }
 
     expect(result.quantities.some((entry) => entry.status === "NOT_AUTHORIZED")).toBe(true);
-    expect(result.quantities.every((entry) => entry.status !== "OK")).toBe(true);
+    expect(
+      result.quantities.every(
+        (entry) => entry.status === "NOT_AUTHORIZED" || entry.status === "INCOMPLETE",
+      ),
+    ).toBe(true);
   });
 
   it("preserves stable entity IDs across regeneration", () => {

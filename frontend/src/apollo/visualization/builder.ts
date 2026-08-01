@@ -22,6 +22,7 @@ import {
   type ApolloSolidGeometryParameter,
   type ApolloVisualizationWarning,
 } from "./types";
+import { buildBridgeStructureSolidGeometryParameters } from "./bridgeStructureSolids";
 
 const MODEL_AXIS_CONVENTION = "x-longitudinal-y-transverse-z-up";
 
@@ -958,7 +959,8 @@ export function buildApolloVisualizationModel(
     commonGeometryParameters.push(...built.commonGeometryParameters);
   }
 
-  const solidGeometryParameters = buildSolidGeometryParameters(
+  const bridgeStructureSolids = buildBridgeStructureSolidGeometryParameters(project, warnings, assumptions);
+  const legacySolidGeometryParameters = buildSolidGeometryParameters(
     members,
     supports,
     nodeById,
@@ -966,6 +968,15 @@ export function buildApolloVisualizationModel(
     warnings,
     assumptions,
   );
+  const solidGeometryParameters =
+    bridgeStructureSolids.length > 0
+      ? [
+          ...bridgeStructureSolids,
+          ...legacySolidGeometryParameters.filter((solid) =>
+            solid.kind === "bearing" || solid.kind === "pier_marker" || solid.kind === "abutment_marker",
+          ),
+        ].sort((left, right) => left.id.localeCompare(right.id))
+      : legacySolidGeometryParameters;
 
   const model: ApolloVisualizationModel = {
     schemaVersion: APOLLO_VISUALIZATION_SCHEMA_VERSION,

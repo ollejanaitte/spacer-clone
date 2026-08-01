@@ -149,6 +149,16 @@ export type ApolloBridgeGeometryDefaultsProvider = {
   };
 };
 
+export type ApolloDesignEntityKind =
+  | "MainGirder"
+  | "RcDeck"
+  | "CrossBeam"
+  | "Stiffener"
+  | "Splice"
+  | "SwayBracing"
+  | "LateralBracing"
+  | "DeckAnchorage";
+
 export type ApolloSolidGeometryParameter = {
   readonly id: string;
   readonly sourceEntityKind: ApolloVisualizationEntityKind;
@@ -166,6 +176,8 @@ export type ApolloSolidGeometryParameter = {
     | "abutment_marker";
   readonly visibilityGroup: ApolloVisualizationVisibilityGroup;
   readonly exportable: boolean;
+  readonly designEntityId?: string;
+  readonly designEntityKind?: ApolloDesignEntityKind;
   readonly dimensionsM: Readonly<Record<string, number>>;
   readonly localFrame: {
     readonly origin: readonly [number, number, number];
