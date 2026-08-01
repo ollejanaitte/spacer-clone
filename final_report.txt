@@ -3,10 +3,10 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (LV-08 document quality PASS recorded; local verification LV-01..LV-08 complete)
-WORK_STATUS: COMPLETE — LV-08 PASS recorded (2026-08-01 JST; git diff --check clean; verdict fields finalized); LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-CURRENT_PHASE: LV-08 PASS — local verification LV-01..LV-08 complete
-ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
+UPDATE_TIMESTAMP: 2026-08-01 JST (main sync merge complete; LV-01..LV-08 verdicts authoritative)
+WORK_STATUS: COMPLETE — main sync merge resolved (docs-only conflicts); LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS (historical baseline f0983878…; post-merge contains f826d32…)
+CURRENT_PHASE: Main sync complete — PR #242 ready for merge subject to PD-001 tracking on implementation branch
+ORIGIN_MAIN_ADVANCED: YES — origin/main advanced to f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241); merged into verification branch 2026-08-01 JST
 
 ================================================================================
 1. Executive Summary
@@ -1102,25 +1102,73 @@ OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigu
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (LV-08 document quality PASS recorded; local verification LV-01..LV-08 complete)
-WORK_STATUS: COMPLETE — LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-STOP_REASON: N/A — LV-08 formal PASS recorded (2026-08-01 JST; document quality review; docs only). Local verification LV-01..LV-08 complete.
-LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
+UPDATE_TIMESTAMP: 2026-08-01 JST (main sync merge complete; LV-01..LV-08 verdicts authoritative)
+WORK_STATUS: COMPLETE — main sync merge resolved (docs-only conflicts); LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS (historical)
+STOP_REASON: N/A — main sync merge complete; docs-only conflict resolution; canonical verdicts unchanged.
+LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (historical baseline f0983878…; retained as authoritative LV-01 evidence)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
-CURRENT_COMMIT: cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
+CURRENT_COMMIT: 2297f682f6028252970d4c9a8d955fa671838b3a
 CURRENT_REMOTE_BRANCH: origin/docs/apollo-refreeze-local-verification
-ORIGIN_MAIN_CURRENT: f0983878ccbb816f591214b6242c3688ecb5a060
+ORIGIN_MAIN_CURRENT: f826d32a224f4e4c464a3669e1dcba60a58c4d63
+ORIGIN_MAIN_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
 LOCAL_MAIN_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
 LOCAL_MAIN_AT_FAILED_LV01_RERUN: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 ORIGIN_MAIN_AT_PRIOR_LV01: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
-UNCOMMITTED_CHANGES: NONE (prior to this LV-01 re-run doc edit)
-PUSH_STATUS: Branch tip cccf4c3… matches origin/docs/apollo-refreeze-local-verification
-MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verification (cccf4c3)
+UNCOMMITTED_CHANGES: NONE (prior to main sync merge commit)
+PUSH_STATUS: Pending push after main sync merge commit
+MAIN_MERGE_STATUS: origin/main f826d32a224f4e4c464a3669e1dcba60a58c4d63 merged into docs/apollo-refreeze-local-verification via git merge --no-ff (2026-08-01 JST)
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
-  - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE) — LV-05 PASS (operator masaharu, 2026-08-01 JST) — LV-06 PASS (2026-08-01 JST) — LV-07 PASS (2026-08-01 JST) — LV-08 PASS (2026-08-01 JST) — local verification complete
+  - branch docs/apollo-refreeze-local-verification at post-merge HEAD (see section 22 SYNCHRONIZED_BRANCH_SHA_AFTER_MERGE)
+  - LV-01..LV-08 complete — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 preexisting, unfixed) — canonical verdicts unchanged after main sync
 NEXT_EXACT_ACTION:
+  - Push docs/apollo-refreeze-local-verification and merge PR #242
   - PD-001 fix on implementation branch (preexisting_defects.md); add apolloStlExport.test.ts to EXPECTED_APOLLO_TEST_MODULES; re-run LV-04-B01 and LV-04-B07
+
+================================================================================
+22. Main Sync Review (origin/main merge — 2026-08-01 JST)
+================================================================================
+
+MAIN_SYNC_REVIEW: Reviewed origin/main f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241) against completed verification branch c6aa007 (docs(apollo): finalize refreeze verification documentation). Merge command: git merge --no-ff origin/main. No application code, test, config, dependency, or lockfile changes introduced by conflict resolution.
+
+CONFLICT_ANALYSIS:
+  - Conflicts occurred: YES (4 documentation files only)
+  - docs/apollo/phase1_design_expansion_refreeze/implementation_inventory.md — add/add (LV-01 sync note: completed PASS vs main staleness warning)
+  - docs/apollo/phase1_design_expansion_refreeze/local_verification_report.md — content (completed LV-01..LV-08 vs main in-progress LV-04/LV-05)
+  - docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md — add/add (operator PASS vs PENDING_USER_VISUAL_CONFIRMATION)
+  - final_report.txt — content (COMPLETE verdicts vs ACTIVE/in-progress state)
+  - Non-document conflicts: NONE
+
+CONFLICT_RESOLUTION:
+  - Kept completed branch verification (HEAD) as authoritative for all LV-01..LV-08 verdicts and canonical verdict fields
+  - Preserved useful main/historical context: LV-01 staleness awareness recorded; post-merge main SHA documented; prior f0983878… LV-01 baseline retained as historical evidence
+  - PD-001 remains explicitly classified preexisting and unfixed (SEPARATE_DEFECT_REQUIRED)
+  - All conflict markers removed
+
+LATEST_MAIN_SHA: f826d32a224f4e4c464a3669e1dcba60a58c4d63
+SYNCHRONIZED_BRANCH_SHA_AFTER_MERGE: 2297f682f6028252970d4c9a8d955fa671838b3a
+MERGE_STRATEGY: git merge --no-ff origin/main
+CONFLICTS_OCCURRED: YES (documentation only; 4 files)
+
+MINIMAL_RECHECK_REASONING:
+  - Merge integrated docs-only delta from #241; conflict resolution touched documentation artifacts only
+  - Zero diff in frontend/, backend/, scripts/ (application), tests, configs, or lockfiles attributable to this resolution
+  - Prior LV-04..LV-08 results executed against origin/main application tree; PD-001 preexisting on main unchanged
+  - No full LV re-execution required; canonical verdicts remain valid
+
+SIBLING_FOLDER_POLICY: PASS — no new sibling folders under /home/masaharu/Projects/
+
+CANONICAL_VERDICTS (unchanged):
+  LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
+  REFREEZE_READINESS_VERDICT: READY_FOR_PR
+  IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
+  OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
+  PD-001: preexisting, unfixed (SEPARATE_DEFECT_REQUIRED)
+
+PR_242_STATUS: final_report.txt remains included in PR #242 deliverables
+
+NEXT_ACTION:
+  - Push synchronized branch and complete PR #242 merge
+  - Track PD-001 fix on separate implementation branch
