@@ -3,14 +3,14 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase B implementation design completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Phase B design COMPLETE (docs only); Phases C–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase B — implementation design completed; Phases C–F pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase C TypeScript contract types completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Phase C TypeScript types COMPLETE; Phases D–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase C — TypeScript contract types completed; Phases D–F pending
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 AP_DX_01_PHASE_A_STATUS: COMPLETED
 AP_DX_01_PHASE_B_STATUS: COMPLETED
-AP_DX_01_PHASE_C_STATUS: PENDING
+AP_DX_01_PHASE_C_STATUS: COMPLETED
 AP_DX_01_PHASE_D_STATUS: PENDING
 AP_DX_01_PHASE_E_STATUS: PENDING
 AP_DX_01_PHASE_F_STATUS: PENDING
@@ -1211,12 +1211,12 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 |-------|-------------|--------|
 | A | Contract inventory (repo scan, gap analysis, version/migration assessment) | COMPLETED |
 | B | Type/schema design + schema version decision | COMPLETED |
-| C | TypeScript + Zod + JSON Schema implementation | PENDING |
-| D | Validator + parser/domain mapper updates | PENDING |
+| C | TypeScript contract types (design entity interfaces) | COMPLETED |
+| D | Zod schema + JSON Schema + validator + parser/domain mapper updates | PENDING |
 | E | Tests + typecheck/lint/build verification | PENDING |
 | F | Implementation completion bookkeeping | PENDING |
 
-AP_DX_01_OVERALL_STATUS: PHASE_B_COMPLETE — PHASE_C_PENDING
+AP_DX_01_OVERALL_STATUS: PHASE_C_COMPLETE — PHASE_D_PENDING
 
 --------------------------------------------------------------------------------
 24.1a Phase B design decisions (2026-08-01 JST)
@@ -1244,7 +1244,8 @@ Phase B definitive decisions (docs only; see local_implementation_report.md §10
   MIGRATION: NONE REQUIRED
 
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
-AP_DX_01_READY_FOR_PHASE_C: YES
+AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
+AP_DX_01_READY_FOR_PHASE_D: YES
 
 --------------------------------------------------------------------------------
 24.2 Target files (implementation scope)
@@ -1351,14 +1352,50 @@ Open questions:
 
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
-AP_DX_01_IMPLEMENTATION_VERDICT: NOT_STARTED
-AP_DX_01_CONTRACT_COMPLETENESS: INCOMPLETE (expected pre-Phase C)
-AP_DX_01_READY_FOR_PHASE_C: YES
+AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
+AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase C types complete; runtime schema/validator pending Phase D)
+AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript design entities present; Zod/validator/tests pending)
+AP_DX_01_READY_FOR_PHASE_D: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
 
 NEXT_EXACT_ACTION:
-  - Phase C: implement StructuralDesignModel types, Zod schema, JSON Schema regen at 0.1.0
+  - Phase D: extend Zod schema, domain mapper, semantic validator for structuralDesignModel
   - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
+
+--------------------------------------------------------------------------------
+24.8 Phase C completion summary (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+SCOPE: TypeScript contract types only (no Zod/schema/parser/validator/test changes).
+
+FILES_MODIFIED:
+  - frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+  - frontend/src/contracts/index.ts
+  - final_report.txt
+
+TYPES_ADDED:
+  - optional top-level structuralDesignModel?: StructuralDesignModel on BridgeSuperstructureDesignDocument
+  - SdmNonCompositeAssertion { compositeAction: false }
+  - DesignEntityMetadata (entityRevisionId, provenance, sourceRef?, geometryRef, analysisMapping,
+    designStatus, adoptionStatus, extensions?)
+  - DesignEntityDesignStatus + DESIGN_ENTITY_DESIGN_STATUSES + isDesignEntityDesignStatus
+  - DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus alias)
+  - DesignGeometryReference, DesignAnalysisMemberMapping, DesignBindingStatus
+  - StructuralDesignModel container with 11 entity collections
+  - Entity interfaces: MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam, SwayBracing,
+    LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage
+  - DeckAnchorageRole + DECK_ANCHORAGE_ROLES (non-composite roles only)
+  - StructuralDesignModelEntity union
+
+BACKWARD_COMPATIBILITY: structuralDesignModel optional; existing documents without section remain valid at type level.
+SCHEMA_VERSION: unchanged at 0.1.0 (no CONTRACT_VERSION_SUPPORT_MATRIX change).
+COMPOSITE_SHEAR_CONNECTOR: not introduced as supported type.
+
+VERIFICATION:
+  - cd frontend && npm run typecheck — PASS (Phase C gate)
+  - git diff --check — PASS
+
+AP_DX_01_PHASE_C_COMMIT_MESSAGE: feat(apollo): add AP-DX-01 design entity contract types
 
 ================================================================================
 23. Final Merge Readiness Bookkeeping (2026-08-01 JST)

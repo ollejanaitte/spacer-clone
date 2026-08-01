@@ -19,6 +19,7 @@ import { validateExtensions } from "./extensions";
 import {
   validateGovernedQuantity,
   type GovernedQuantity,
+  type GovernedQuantityAdoptionStatus,
   type ValidateGovernedQuantityOptions,
 } from "./governedQuantity";
 import type { Provenance } from "./provenance";
@@ -156,6 +157,162 @@ export interface BsddPhase1ScopeAssertion {
   readonly analysisType: "static_linear";
 }
 
+export const DESIGN_ENTITY_DESIGN_STATUSES = [
+  "NOT_AUTHORIZED",
+  "INCOMPLETE",
+  "READY",
+  "STALE",
+  "OK",
+  "NG",
+  "WARNING",
+  "ERROR",
+] as const;
+
+export type DesignEntityDesignStatus = (typeof DESIGN_ENTITY_DESIGN_STATUSES)[number];
+
+export type DesignEntityAdoptionStatus = GovernedQuantityAdoptionStatus;
+
+export type DesignBindingStatus = "unbound" | "bound" | "stale";
+
+export interface DesignGeometryReference {
+  readonly geometryRefId: UuidString | null;
+  readonly bindingStatus: DesignBindingStatus;
+}
+
+export interface DesignAnalysisMemberMapping {
+  readonly analysisMemberRefId: UuidString | null;
+  readonly bindingStatus: DesignBindingStatus;
+  readonly analysisBindingId?: UuidString | null;
+}
+
+export interface DesignEntityMetadata {
+  readonly entityRevisionId: number;
+  readonly provenance: Provenance;
+  readonly sourceRef?: DocumentReference | null;
+  readonly geometryRef: DesignGeometryReference;
+  readonly analysisMapping: DesignAnalysisMemberMapping;
+  readonly designStatus: DesignEntityDesignStatus;
+  readonly adoptionStatus: DesignEntityAdoptionStatus;
+  readonly extensions?: Extensions;
+}
+
+export interface SdmNonCompositeAssertion {
+  readonly compositeAction: false;
+}
+
+export interface MainGirder extends DesignEntityMetadata {
+  readonly entityKind: "MainGirder";
+  readonly mainGirderId: UuidString;
+  readonly girderLineRefId: UuidString | null;
+  readonly materialRefId?: UuidString | null;
+  readonly compositeAction?: false;
+}
+
+export interface GirderSectionSegment extends DesignEntityMetadata {
+  readonly entityKind: "GirderSectionSegment";
+  readonly girderSectionSegmentId: UuidString;
+  readonly mainGirderRefId: UuidString | null;
+  readonly materialRefId?: UuidString | null;
+}
+
+export interface RcDeck extends DesignEntityMetadata {
+  readonly entityKind: "RcDeck";
+  readonly rcDeckId: UuidString;
+  readonly deckRefId: UuidString | null;
+  readonly compositeAction?: false;
+}
+
+export interface Haunch extends DesignEntityMetadata {
+  readonly entityKind: "Haunch";
+  readonly haunchId: UuidString;
+  readonly mainGirderRefId: UuidString | null;
+}
+
+export interface CrossBeam extends DesignEntityMetadata {
+  readonly entityKind: "CrossBeam";
+  readonly crossBeamId: UuidString;
+  readonly materialRefId?: UuidString | null;
+}
+
+export interface SwayBracing extends DesignEntityMetadata {
+  readonly entityKind: "SwayBracing";
+  readonly swayBracingId: UuidString;
+}
+
+export interface LateralBracing extends DesignEntityMetadata {
+  readonly entityKind: "LateralBracing";
+  readonly lateralBracingId: UuidString;
+}
+
+export interface BraceMember extends DesignEntityMetadata {
+  readonly entityKind: "BraceMember";
+  readonly braceMemberId: UuidString;
+  readonly parentBracingRefId: UuidString | null;
+}
+
+export interface Stiffener extends DesignEntityMetadata {
+  readonly entityKind: "Stiffener";
+  readonly stiffenerId: UuidString;
+  readonly mainGirderRefId: UuidString | null;
+}
+
+export interface Splice extends DesignEntityMetadata {
+  readonly entityKind: "Splice";
+  readonly spliceId: UuidString;
+  readonly mainGirderRefId: UuidString | null;
+}
+
+export const DECK_ANCHORAGE_ROLES = [
+  "slab_to_girder",
+  "uplift_restraint",
+  "other_non_composite",
+] as const;
+
+export type DeckAnchorageRole = (typeof DECK_ANCHORAGE_ROLES)[number];
+
+export interface DeckAnchorage extends DesignEntityMetadata {
+  readonly entityKind: "DeckAnchorage";
+  readonly deckAnchorageId: UuidString;
+  readonly anchorageRole: DeckAnchorageRole;
+  readonly girderRefId: UuidString | null;
+  readonly rcDeckRefId: UuidString | null;
+}
+
+export interface StructuralDesignModel {
+  readonly modelId: UuidString;
+  readonly nonCompositeAssertion: SdmNonCompositeAssertion;
+  readonly mainGirders: readonly MainGirder[];
+  readonly girderSectionSegments: readonly GirderSectionSegment[];
+  readonly rcDecks: readonly RcDeck[];
+  readonly haunches: readonly Haunch[];
+  readonly crossBeams: readonly CrossBeam[];
+  readonly swayBracings: readonly SwayBracing[];
+  readonly lateralBracings: readonly LateralBracing[];
+  readonly braceMembers: readonly BraceMember[];
+  readonly stiffeners: readonly Stiffener[];
+  readonly splices: readonly Splice[];
+  readonly deckAnchorages: readonly DeckAnchorage[];
+}
+
+export type StructuralDesignModelEntity =
+  | MainGirder
+  | GirderSectionSegment
+  | RcDeck
+  | Haunch
+  | CrossBeam
+  | SwayBracing
+  | LateralBracing
+  | BraceMember
+  | Stiffener
+  | Splice
+  | DeckAnchorage;
+
+const DESIGN_ENTITY_DESIGN_STATUS_SET = new Set<string>(DESIGN_ENTITY_DESIGN_STATUSES);
+
+export function isDesignEntityDesignStatus(value: string): value is DesignEntityDesignStatus {
+  return DESIGN_ENTITY_DESIGN_STATUS_SET.has(value);
+}
+
 export interface BridgeSuperstructureDesignDocument {
   readonly schemaId: SchemaId;
   readonly schemaVersion: SchemaVersion;
@@ -172,6 +329,7 @@ export interface BridgeSuperstructureDesignDocument {
   readonly materialDefinitions: readonly BsddMaterialDefinition[];
   readonly loadCases: readonly BsddLoadCase[];
   readonly analysisBindings: readonly BsddAnalysisBinding[];
+  readonly structuralDesignModel?: StructuralDesignModel;
   readonly roadImportProvenance?: DocumentReference | null;
   readonly phase1ScopeAssertion: BsddPhase1ScopeAssertion;
   readonly validationStatus?: BsddValidationStatus;
