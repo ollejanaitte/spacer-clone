@@ -3,9 +3,21 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (final merge readiness bookkeeping; LV-01..LV-08 verdicts authoritative)
-WORK_STATUS: COMPLETE — main sync merge resolved (docs-only conflicts); LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS (historical baseline f0983878…; post-merge contains f826d32…)
-CURRENT_PHASE: Final merge readiness — PR #242 push authorized; merge subject to PD-001 tracking on implementation branch
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase A inventory completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Phase A inventory COMPLETE (docs only); Phases B–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase A — inventory completed; implementation phases B–F pending
+AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
+AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+AP_DX_01_PHASE_A_STATUS: COMPLETED
+AP_DX_01_PHASE_B_STATUS: PENDING
+AP_DX_01_PHASE_C_STATUS: PENDING
+AP_DX_01_PHASE_D_STATUS: PENDING
+AP_DX_01_PHASE_E_STATUS: PENDING
+AP_DX_01_PHASE_F_STATUS: PENDING
+AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
+AP_DX_01_VERSION_BUMP_REQUIRED: LIKELY_NO (additive optional sections; Phase B sign-off required)
+AP_DX_01_MIGRATION_REQUIRED: LIKELY_NO (additive at 0.1.0; framework ready if version bump approved)
+AP_DX_01_ARTIFACT: docs/apollo/ap-dx-01/local_implementation_report.md
 ORIGIN_MAIN_ADVANCED: YES — origin/main advanced to f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241); merged into verification branch 2026-08-01 JST
 
 ================================================================================
@@ -1174,6 +1186,149 @@ PR_242_STATUS: final_report.txt remains included in PR #242 deliverables
 NEXT_ACTION:
   - Complete push of synchronized branch and merge PR #242
   - Track PD-001 fix on separate implementation branch
+
+================================================================================
+24. AP-DX-01 — Design Entity Contract Implementation
+================================================================================
+
+UPDATE_TIMESTAMP: 2026-08-01 JST
+TASK: AP-DX-01 設計エンティティ契約
+BRANCH: feat/ap-dx-01-design-entity-contracts
+BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+BASELINE_COMMIT: docs(apollo): freeze AP-DX-01 contract implementation scope
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DETAILED_ARTIFACT: docs/apollo/ap-dx-01/local_implementation_report.md
+FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
+
+--------------------------------------------------------------------------------
+24.1 Phase status
+--------------------------------------------------------------------------------
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| A | Contract inventory (repo scan, gap analysis, version/migration assessment) | COMPLETED |
+| B | Type/schema design + schema version decision | PENDING |
+| C | TypeScript + Zod + JSON Schema implementation | PENDING |
+| D | Validator + parser/domain mapper updates | PENDING |
+| E | Tests + typecheck/lint/build verification | PENDING |
+| F | Implementation completion bookkeeping | PENDING |
+
+AP_DX_01_OVERALL_STATUS: PHASE_A_COMPLETE — LATER_PHASES_PENDING
+
+--------------------------------------------------------------------------------
+24.2 Target files (implementation scope)
+--------------------------------------------------------------------------------
+
+Primary:
+  - frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+  - frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
+  - frontend/src/contracts/runtime/parsers.ts
+  - frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
+  - frontend/src/contracts/index.ts (exports)
+  - schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json
+
+Reuse (no duplication):
+  - frontend/src/contracts/contractVersionRegistry.ts
+  - frontend/src/contracts/governedQuantity.ts
+  - frontend/src/contracts/provenance.ts
+  - frontend/src/contracts/extensions.ts
+  - frontend/src/contracts/uuid.ts
+  - frontend/src/contracts/unknownFieldStore.ts
+  - frontend/src/contracts/migrationRecord.ts
+  - frontend/src/contracts/migration/
+  - frontend/src/contracts/runtime/domainMappers.ts
+
+Out of scope: Apollo UI, 3D viewer, backend, IF3, numeric design formulas.
+
+--------------------------------------------------------------------------------
+24.3 Current BSDD contract inventory (Phase A findings)
+--------------------------------------------------------------------------------
+
+Schema identity:
+  schemaId: spacer.contracts.bridge-superstructure-design-document
+  schemaVersion: 0.1.0
+  documentKind: bridge-superstructure-design
+
+Implemented today:
+  - Envelope + lifecycle, coordinate/unit contexts, project context
+  - BsddBridge (spans, girderLines, deck rc_non_composite, supports)
+  - materialDefinitions, loadCases, analysisBindings
+  - phase1ScopeAssertion (plate_girder_rc_slab_non_composite)
+  - extensions, unknownFieldStoreRef, migrationProvenanceRef (envelope)
+
+Not implemented (AP-DX-01 required):
+  - MainGirder, GirderSectionSegment, RcDeck (full), Haunch, CrossBeam
+  - SwayBracing, LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage
+  - StructuralDesignModel container
+  - Design-check status fields (NOT_AUTHORIZED fail-closed)
+  - compositeAction / compositeShearConnector validator rules
+  - Entity duplicate-ID and dangling-reference validation
+
+Artifact alignment:
+  TypeScript types: PRESENT (geometry-level BSDD only)
+  Zod runtime schema: PRESENT (strictObject; aligned to current types)
+  JSON Schema artifact: PRESENT (schemas/contracts/v0.1/...)
+  Parser: PRESENT (parseBridgeSuperstructureDesignDocumentValue)
+  Validator: PARTIAL (envelope + governed quantities; missing entity-graph rules)
+  Fixture: INLINE TEST FIXTURE ONLY (createMinimalDraftDocument)
+  Round-trip tests: PARTIAL (one parse round-trip; missing entity/stable-ID cases)
+  Unknown field retention: ENVELOPE MECHANISM PRESENT; strict parse rejects unknown keys
+  Migration framework: PRESENT (no BSDD-specific steps)
+  Stable ID rules: UUID on primitives; duplicate/dangling checks absent
+  Numeric authority: GovernedQuantity + NOT_SELECTED gate enforced
+
+--------------------------------------------------------------------------------
+24.4 Change candidates (summary)
+--------------------------------------------------------------------------------
+
+  - Add optional StructuralDesignModel with AP-DX-01 entity types (additive)
+  - Extend Zod schema, domain mapper, semantic validator in parallel
+  - Add non-composite fail-closed rules and DeckAnchorage independence
+  - Add duplicate-ID, dangling-ref, round-trip, and NOT_AUTHORIZED tests
+  - Regenerate JSON Schema; export new types from contracts barrel
+  - Preserve BsddBridge/BsddDeck/BsddGirderLine backward compatibility
+
+--------------------------------------------------------------------------------
+24.5 Version bump and migration assessment
+--------------------------------------------------------------------------------
+
+VERSION_BUMP_REQUIRED: LIKELY_NO — additive optional sections at 0.1.0
+  Phase B must confirm before any contractVersionRegistry change.
+  Do not bump schema version without migration plan presentation (freeze §9).
+
+MIGRATION_REQUIRED: LIKELY_NO — existing 0.1.0 documents valid if new sections optional.
+  MigrationRecord + migration registry available if future version bump approved.
+
+--------------------------------------------------------------------------------
+24.6 Blockers and open questions
+--------------------------------------------------------------------------------
+
+Blockers:
+  B-01 Design entities absent from BSDD (expected; Phase B+ work)
+  B-02 Numeric design authorization NOT_GRANTED (governance)
+  B-03 Entity-graph validator rules not implemented
+  B-04 PD-001 pre-existing Apollo test manifest defect (orthogonal; SEPARATE_DEFECT_REQUIRED)
+
+Open questions:
+  OQ-01 DeckAnchorage manual_traceability.csv row absence (LV-06/07 retained)
+  OQ-02 UuidString vs StableEntityId for new entities
+  OQ-03 Geometry/analysis reference placeholder shape before AP-DX-02
+  OQ-04 StructuralDesignModel placement (top-level vs under bridge)
+  OQ-05 Phase B schema version sign-off (0.1.0 additive vs bump)
+
+--------------------------------------------------------------------------------
+24.7 AP-DX-01 verdict fields
+--------------------------------------------------------------------------------
+
+AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
+AP_DX_01_IMPLEMENTATION_VERDICT: NOT_STARTED
+AP_DX_01_CONTRACT_COMPLETENESS: INCOMPLETE (expected pre-Phase B)
+AP_DX_01_READY_FOR_PHASE_B: YES (inventory complete; freeze doc READY_FOR_LOCAL_IMPLEMENTATION)
+AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
+
+NEXT_EXACT_ACTION:
+  - Phase B: design StructuralDesignModel types and confirm 0.1.0 additive strategy
+  - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
 
 ================================================================================
 23. Final Merge Readiness Bookkeeping (2026-08-01 JST)
