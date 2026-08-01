@@ -16,6 +16,18 @@ export type BridgeStructureValidationResult = {
   readonly complete: boolean;
 };
 
+/** Tolerance for bridgeLength / spanLength integer divisibility checks. */
+export const SPAN_LENGTH_RATIO_TOLERANCE = 1e-9;
+
+export function resolveSpanCount(bridgeLength: number, spanLength: number): number | null {
+  const ratio = bridgeLength / spanLength;
+  const spanCount = Math.round(ratio);
+  if (spanCount < 1 || Math.abs(ratio - spanCount) > SPAN_LENGTH_RATIO_TOLERANCE) {
+    return null;
+  }
+  return spanCount;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -85,6 +97,29 @@ export function validateBridgeStructureInputDraft(
   ) {
     const message = "径間長は橋長以下である必要があります。";
     fieldErrors.push({ key: "spanLength", message });
+    diagnostics.push(message);
+  }
+
+  if (
+    draft.spanLength !== null &&
+    draft.bridgeLength !== null &&
+    draft.spanLength <= draft.bridgeLength &&
+    resolveSpanCount(draft.bridgeLength, draft.spanLength) === null
+  ) {
+    const message = "橋長を径間長で割り切れる値を入力してください。";
+    fieldErrors.push({ key: "spanLength", message });
+    diagnostics.push(message);
+  }
+
+  if (
+    draft.girderCount !== null &&
+    draft.girderSpacing !== null &&
+    draft.width !== null &&
+    draft.girderCount > 1 &&
+    (draft.girderCount - 1) * draft.girderSpacing > draft.width
+  ) {
+    const message = "主桁配置幅が床版幅を超えています。";
+    fieldErrors.push({ key: "girderSpacing", message });
     diagnostics.push(message);
   }
 

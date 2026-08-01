@@ -3,6 +3,7 @@ export {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
+  isBridgeStructureGenerationCurrent,
   withBridgeStructureField,
   withBridgeStructureInputDraft,
 } from "./generateBsdd";
@@ -29,6 +30,8 @@ export {
 export {
   createEmptyBridgeStructureInputDraft,
   parseBridgeStructureInputDraft,
+  resolveSpanCount,
+  SPAN_LENGTH_RATIO_TOLERANCE,
   validateBridgeStructureInputDraft,
   validateBridgeStructureInputPersistence,
   type BridgeStructureFieldValidation,

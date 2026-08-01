@@ -3,8 +3,10 @@ import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
 import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
+  isBridgeStructureGenerationCurrent,
   withBridgeStructureField,
 } from "../bridgeStructure";
+import { hasBridgeStructureVisualizationSource } from "../visualization";
 import {
   decodeApolloImportText,
   exportApolloProjectToText,
@@ -145,6 +147,69 @@ describe("importExport", () => {
     bsdd.documentId = "not-a-uuid";
     const result = importApolloProjectFromText(JSON.stringify(parsed));
     expect(result.ok).toBe(false);
+  });
+
+  function fillAndGenerateBridgeStructure(project: ReturnType<typeof createApollo200mContinuousBridgeSample>) {
+    let next = withBridgeStructureField(project, "spanLength", 40);
+    next = withBridgeStructureField(next, "bridgeLength", 200);
+    next = withBridgeStructureField(next, "width", 12);
+    next = withBridgeStructureField(next, "girderCount", 4);
+    next = withBridgeStructureField(next, "girderSpacing", 3);
+    next = withBridgeStructureField(next, "girderDepth", 2.5);
+    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
+    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
+    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
+    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
+    next = withBridgeStructureField(next, "webThickness", 0.012);
+    next = withBridgeStructureField(next, "deckThickness", 0.25);
+    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) {
+      throw new Error("generation failed");
+    }
+    return generated.project;
+  }
+
+  it("preserves bridge structure generation currency through save/reload", () => {
+    const generated = fillAndGenerateBridgeStructure(createApollo200mContinuousBridgeSample());
+    expect(isBridgeStructureGenerationCurrent(generated)).toBe(true);
+    expect(generated.apolloBridgeStructureInput?.generatedAt).not.toBeNull();
+
+    const exported = exportApolloProjectToText(generated);
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+
+    const imported = importApolloProjectFromText(exported.content);
+    expect(imported.ok).toBe(true);
+    if (!imported.ok) return;
+
+    expect(imported.project.apolloBridgeStructureInput?.generatedAt).toBe(
+      generated.apolloBridgeStructureInput?.generatedAt,
+    );
+    expect(isBridgeStructureGenerationCurrent(imported.project)).toBe(true);
+    expect(hasBridgeStructureVisualizationSource(imported.project)).toBe(true);
+    expect(imported.project.apolloBsdd?.structuralDesignModel?.mainGirders).toHaveLength(4);
+  });
+
+  it("preserves stale input gate when edited project is round-tripped before regeneration", () => {
+    const generated = fillAndGenerateBridgeStructure(createApollo200mContinuousBridgeSample());
+    const stale = withBridgeStructureField(generated, "girderCount", 5);
+    expect(isBridgeStructureGenerationCurrent(stale)).toBe(false);
+    expect(stale.apolloBridgeStructureInput?.generatedAt).toBeNull();
+
+    const exported = exportApolloProjectToText(stale);
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+
+    const imported = importApolloProjectFromText(exported.content);
+    expect(imported.ok).toBe(true);
+    if (!imported.ok) return;
+
+    expect(imported.project.apolloBridgeStructureInput?.generatedAt).toBeNull();
+    expect(isBridgeStructureGenerationCurrent(imported.project)).toBe(false);
+    expect(hasBridgeStructureVisualizationSource(imported.project)).toBe(false);
+    expect(imported.project.apolloBsdd?.structuralDesignModel?.mainGirders).toHaveLength(4);
   });
 
   it("rejects unknown Apollo sidecar fields fail-closed", () => {

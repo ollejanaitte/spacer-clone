@@ -24,11 +24,13 @@ afterEach(() => {
 });
 
 function setInputValue(input: HTMLInputElement, value: string) {
-  const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-  valueSetter?.call(input, value);
-  input.dispatchEvent(new Event("input", { bubbles: true }));
-  input.dispatchEvent(new Event("change", { bubbles: true }));
-  input.dispatchEvent(new Event("blur", { bubbles: true }));
+  act(() => {
+    input.focus();
+    const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+    valueSetter?.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.blur();
+  });
 }
 
 function fillValidInput(project: ProjectModel): ProjectModel {
@@ -139,5 +141,59 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       setInputValue(bridgeLengthInput, "200");
     });
     expect(bridgeLengthInput.value).toBe("200");
+  });
+
+  it("shows stale message and INCOMPLETE quantities after generate-then-edit", () => {
+    const container = renderPanel(fillValidInput(createDefaultProject()));
+
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).toBeNull();
+    expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
+      "NOT_AUTHORIZED",
+    );
+
+    const girderCountInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-girderCount']",
+    ) as HTMLInputElement;
+    act(() => {
+      setInputValue(girderCountInput, "5");
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")?.textContent).toContain(
+      "入力が変更されました",
+    );
+    expect(container.querySelector("[data-testid='apollo-quantity-status-概算数量']")?.textContent).toBe(
+      "INCOMPLETE",
+    );
+  });
+
+  it("recovers NOT_AUTHORIZED quantities after regenerating stale input", () => {
+    const container = renderPanel(fillValidInput(createDefaultProject()));
+
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    const girderCountInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-girderCount']",
+    ) as HTMLInputElement;
+    act(() => {
+      setInputValue(girderCountInput, "2");
+    });
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).toBeNull();
+    expect(container.textContent).toContain("主桁: 2 件");
+    expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
+      "NOT_AUTHORIZED",
+    );
   });
 });

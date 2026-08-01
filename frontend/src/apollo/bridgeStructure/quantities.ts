@@ -3,6 +3,7 @@ import type {
   BridgeStructureApproximateQuantity,
   BridgeStructureQuantityStatus,
 } from "./types";
+import { resolveSpanCount } from "./validation";
 
 type ResolvedBridgeStructureInput = {
   readonly spanLength: number;
@@ -100,7 +101,18 @@ export function computeBridgeStructureApproximateQuantities(
     ];
   }
 
-  const spanCount = Math.max(1, Math.round(resolved.bridgeLength / resolved.spanLength));
+  const spanCount = resolveSpanCount(resolved.bridgeLength, resolved.spanLength);
+  if (spanCount === null) {
+    return [
+      quantityEntry(
+        "概算数量",
+        null,
+        "—",
+        "INCOMPLETE",
+        "橋長を径間長で割り切れる値を入力してください。",
+      ),
+    ];
+  }
   const crossBeamCount = Math.floor(resolved.bridgeLength / resolved.crossBeamSpacing) + 1;
   const sectionArea = girderSectionArea(resolved);
   const crossBeamLength =

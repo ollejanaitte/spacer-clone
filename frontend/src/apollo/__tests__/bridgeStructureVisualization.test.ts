@@ -3,6 +3,7 @@ import { createDefaultProject } from "../../data/defaultProject";
 import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
+  isBridgeStructureGenerationCurrent,
   withBridgeStructureField,
 } from "../bridgeStructure";
 import {
@@ -169,6 +170,33 @@ describe("bridge structure visualization (Block C)", () => {
     expect(girder?.dimensionsM.offset).toBe(-4.5);
     expect(deck?.dimensionsM.thickness).toBe(0.25);
     expect(deck?.localFrame.origin[2]).toBeCloseTo(0.125, 3);
+  });
+
+  it("omits BSDD-driven 3D solids when input is stale after post-generate edit", () => {
+    let project = generateStructure(createDefaultProject());
+    expect(hasBridgeStructureVisualizationSource(project)).toBe(true);
+
+    project = withBridgeStructureField(project, "girderCount", 2);
+    expect(isBridgeStructureGenerationCurrent(project)).toBe(false);
+    expect(hasBridgeStructureVisualizationSource(project)).toBe(false);
+
+    const model = buildApolloVisualizationModelOrThrow({ project });
+    expect(model.solidGeometryParameters.filter((entry) => entry.id.startsWith("solid:bsdd:"))).toHaveLength(0);
+  });
+
+  it("restores BSDD-driven 3D solids after stale input is regenerated", () => {
+    let project = generateStructure(createDefaultProject());
+    project = withBridgeStructureField(project, "girderCount", 2);
+    project = withBridgeStructureField(project, "girderSpacing", 4);
+
+    const regen = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(regen.ok).toBe(true);
+    if (!regen.ok) return;
+
+    const model = buildApolloVisualizationModelOrThrow({ project: regen.project });
+    const girders = model.solidGeometryParameters.filter((entry) => entry.kind === "girder");
+    expect(girders).toHaveLength(2);
+    expect(model.solidGeometryParameters.some((entry) => entry.id.startsWith("solid:bsdd:"))).toBe(true);
   });
 
   it("returns no BSDD solids when structure input is incomplete", () => {

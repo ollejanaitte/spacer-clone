@@ -2,6 +2,7 @@ import type { BridgeSuperstructureDesignDocument } from "../../contracts";
 import type { ProjectModel } from "../../types";
 import {
   getBridgeStructureInputDraft,
+  isBridgeStructureGenerationCurrent,
   validateBridgeStructureInputDraft,
 } from "../bridgeStructure";
 import {
@@ -220,6 +221,10 @@ export function buildBridgeStructureSolidGeometryParameters(
   warnings: ApolloVisualizationWarning[],
   assumptions: ApolloVisualizationAssumption[],
 ): ApolloSolidGeometryParameter[] {
+  if (!isBridgeStructureGenerationCurrent(project)) {
+    return [];
+  }
+
   const document = project.apolloBsdd;
   const input = resolveInput(project);
   if (!document?.structuralDesignModel || !input) {
@@ -287,7 +292,7 @@ export function buildBridgeStructureSolidGeometryParameters(
 }
 
 export function hasBridgeStructureVisualizationSource(project: ProjectModel): boolean {
-  return Boolean(project.apolloBsdd?.structuralDesignModel && resolveInput(project));
+  return isBridgeStructureGenerationCurrent(project) && resolveInput(project) !== null;
 }
 
 export function designEntityKindForSolid(
