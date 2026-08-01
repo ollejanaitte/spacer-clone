@@ -14,6 +14,7 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Execution timestamp (Phase 1) | 2026-08-01 18:40:14 JST |
 | Execution timestamp (Phase 2) | 2026-08-01 18:42:00 JST |
 | Execution timestamp (Phase 3) | 2026-08-01 18:43:26 JST |
+| Execution timestamp (Phase 4) | 2026-08-01 18:51:14 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
@@ -131,7 +132,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | NOT_STARTED |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 1/9 executed) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -477,9 +478,40 @@ AP-02..AP-18 scope remains in Step 1 roadmap and completion gate only (not a ref
 
 `LV02_APOLLO_DOC_CONSISTENCY_VERDICT: PASS` — refreeze documents are path-accurate, terminology-aligned with AP-00/AP-01/AP-11 and Step 1 planning artifacts, and consistent with documented 3D viewer evidence. Explicit design-expansion scope beyond current implementation guards is acknowledged and blocked by NOT GRANTED implementation authorization; governance unlock path for AP-DX remains OPEN_QUESTION.
 
+## Phase 4 LV-04 test execution (bundle 1 — Apollo frontend)
+
+**Execution timestamp:** 2026-08-01 18:51:14 JST
+**Verdict:** FAIL (1 test; pre-existing on `origin/main`, not introduced by doc branch)
+
+Scope: first planned LV-04 bundle only (Apollo frontend vitest). No other test
+categories executed. Doc branch `docs/apollo-refreeze-local-verification` has zero
+diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+### LV-04 bundle 1 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B01-APOLLO-FE |
+| COMMAND | `cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx` |
+| START_TIME | 2026-08-01 18:51:14 JST |
+| END_TIME | 2026-08-01 18:51:24 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING — `apolloStlExport.test.ts` present on `origin/main` (feat #225) but omitted from `EXPECTED_APOLLO_TEST_MODULES` in `apolloSuite.test.ts`; doc branch did not modify application code |
+| AFFECTED_SCOPE | `frontend/src/apollo/__tests__/apolloSuite.test.ts` — 1 failed test in 1 file; 27 other Apollo test files passed; 187/188 tests passed overall |
+| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 27 passed (28)`; `Tests 1 failed \| 187 passed (188)`; Duration 9.68s; failure: `includes every expected AP-00 test module under __tests__` — received array includes `apolloStlExport.test.ts` not in expected list |
+| ACTION | Record only; do not fix in this doc-only task. Reconcile `apolloSuite.test.ts` manifest on an implementation branch before LV-04 can PASS for this bundle. Proceed to LV-04 bundle 2 (viewer/3D) only after supervisor approval |
+
+### Phase 4 bundle 1 verdict
+
+`LV04_B01_APOLLO_FE_VERDICT: FAIL` — Apollo frontend regression bundle exited 1 due to
+stale suite-discoverability manifest; failure predates verification branch and is
+attributable to `origin/main` code, not refreeze documentation edits.
+
 ## Next action
 
-Proceed to LV-03 per `local_verification_plan.md` (implementation inventory, including
-`d3f1ec6` / `1fbcb3e` 3D handoff code check). Execute LV-04 using the Phase 3 planned
-commands above (record exit codes and counts). LV-05 uses manual/e2e commands from the
-E2E/manual table. Do not invent commands outside this inventory.
+LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing). Proceed to LV-03 per
+`local_verification_plan.md` if not yet done, then LV-04 bundle 2 (viewer/3D:
+`cd frontend && npm run test -- src/viewer`) using Phase 3 planned commands only.
+LV-05 uses manual/e2e commands from the E2E/manual table. Do not invent commands
+outside this inventory.

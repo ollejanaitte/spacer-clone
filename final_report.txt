@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:50:00 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:51:24 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: LV-02 — Existing Apollo document consistency (COMPLETE)
+CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 1 Apollo frontend COMPLETE — FAIL)
 
 ================================================================================
 1. Executive Summary
@@ -17,8 +17,9 @@ and repository metadata. Phase 2 validated refreeze documentation. Phase 3
 inspected package.json scripts, vitest/playwright configs, pytest layout, and
 test file inventories to produce a verified LV-04/LV-05 command plan (no tests
 executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
-LV-03 through LV-07 and application test execution remain NOT_STARTED; LV-08 is PARTIAL
-(Phase 2 doc checks only).
+Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
+origin/main). LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
+IN_PROGRESS (1/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
 
 ================================================================================
 2. Repository and Branch Information
@@ -78,7 +79,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | NOT_STARTED |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 1 FAIL — pre-existing) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -100,9 +101,8 @@ governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
 OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
 §5.5.
 
-Next: execute LV-03 per local_verification_plan.md (implementation inventory,
-including code-level confirmation that d3f1ec6/1fbcb3e main-viewer solid handoff
-remains present). Then LV-04 using Phase 3 planned commands only; LV-05 manual/e2e table.
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 2 (viewer/3D:
+`cd frontend && npm run test -- src/viewer`) per local_verification_plan.md; LV-05 manual/e2e table.
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -223,6 +223,29 @@ Verification recorded on branch docs/apollo-refreeze-local-verification at
 LV01_GIT_SYNC_VERDICT: PASS
 
 ================================================================================
+13. Phase 4 LV-04 Regression — Apollo Frontend (Bundle 1)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:51:14 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B01-APOLLO-FE |
+| COMMAND | cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx |
+| START_TIME | 2026-08-01 18:51:14 JST |
+| END_TIME | 2026-08-01 18:51:24 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite discoverability drift on origin/main) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1/188 tests failed; 27/28 test files passed |
+| EVIDENCE | Vitest: 187 pass, 1 fail; apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES |
+| ACTION | Record only; fix deferred to implementation branch |
+
+APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
+LV04_B01_APOLLO_FE_VERDICT: FAIL
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -239,13 +262,36 @@ during Phase 1 discovery on docs/apollo-refreeze-local-verification.
 SAFETY_CHECK_VERDICT: PASS
 
 ================================================================================
+13. Phase 4 LV-04 Test Execution (Bundle 1 — Apollo Frontend)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:51:14 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B01-APOLLO-FE |
+| COMMAND | cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx |
+| START_TIME | 2026-08-01 18:51:14 JST |
+| END_TIME | 2026-08-01 18:51:24 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale vs apolloStlExport.test.ts on origin/main) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1 failed / 188 total tests; 27/28 test files passed |
+| EVIDENCE | Vitest: Test Files 1 failed \| 27 passed (28); Tests 1 failed \| 187 passed (188) |
+| ACTION | Record only; fix deferred to implementation branch |
+
+APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing on origin/main; not introduced by doc branch)
+LV04_B01_APOLLO_FE_VERDICT: FAIL
+
+================================================================================
 17. Recommended Next Action
 ================================================================================
 
-On branch docs/apollo-refreeze-local-verification, begin LV-03 per
-docs/apollo/phase1_design_expansion_refreeze/local_verification_plan.md
-(implementation inventory). Record results in local_verification_report.md without
-inventing test outcomes.
+On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend)
+is FAIL (pre-existing). Next: LV-03 implementation inventory if not done, then LV-04
+bundle 2 (viewer/3D) per local_verification_plan.md. Record results in
+local_verification_report.md without inventing test outcomes.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -271,9 +317,12 @@ REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 Phase 3 test-command discovery: COMPLETE.
 LV-01: PASS.
 LV-02: PASS (README status-enum alignment fix applied).
-LV-03 through LV-07: NOT_STARTED.
+LV-03: NOT_STARTED.
+LV-04: IN_PROGRESS (bundle 1/9 FAIL — pre-existing).
+LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
-Application test execution: NOT_STARTED (deferred to LV-04/LV-05 per Phase 3 plan).
+Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
+187/188 pass; apolloSuite discoverability drift). Remaining LV-04 bundles NOT_STARTED.
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
