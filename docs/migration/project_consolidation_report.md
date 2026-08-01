@@ -1,12 +1,12 @@
 # Project Consolidation Report
 
 **Report date:** 2026-08-01
-**Branch:** `agent/archive-ui-preservation-legacy-indexes`
+**Branch:** `agent/finalize-project-consolidation-index`
 **Overall Phase 2 verdict:** `IN_PROGRESS`
 
 ## Executive summary
 
-Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), and PR-D (#232) are merged to `main` (`e455290`). PR-E (UI preservation/legacy indexes) is on this branch: **9 Git-tracked archive package files** (archive README + three index packages), **0 byte-exact source copies**, and **28 source/segment rows indexed** in package `source_manifest.csv` / `source_summary.csv` files (15 UI preservation + 1 startup log + 12 legacy segments). Raw preservation bodies, legacy archive bulk (116833 files), and startup log text remain outside Git in `Projects/` and `local-archive/`. Empty `line-tab-ui-integration-temp` is recorded as `D_EXCLUDED`. No new rows were added to `project_consolidation_manifest.csv` for PR-E index-only work.
+Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), PR-D (#232), and PR-E (#233) are merged to `main` (`e569f3f`). PR-F (final manifest/repository index) is on this branch: path map, old-folder disposition, and consolidation summary documents; migration README and `docs/README.md` navigation updates. Central manifest remains **145 data rows** (unchanged). Local manifest records **118389** `local-archive/` rows. Active worktrees `spacer-clone-main` and `spacer-clone-apollo-u3` are `KEEP_WORKTREE`. Integrated `Projects/` sources are `DELETE_SAFE` candidates pending individual approval. Empty `line-tab-ui-integration-temp` is `D_EXCLUDED`.
 
 ## SHA anchors
 
@@ -17,7 +17,8 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), and 
 | PR-B merge (`main`) | `1cd4f51d53b795ab1b78d85dd9592869b3b2b3da` | #230 bridge research consolidation |
 | PR-C merge (`main`) | `beb942bfc09f0669b04dd70c6e38ef32ade18e97` | #231 apollo handoff/research consolidation |
 | PR-D merge (`main`) | `e4552901c67b2a504a5fe7ac1efee3b66969f076` | #232 verification/operator evidence |
-| PR-E working tree base | `e455290` | Base = PR-D merge; integration uncommitted |
+| PR-E merge (`main`) | `e569f3f27a5a59f5d5cae133bfd5478f51eba81c` | #233 UI preservation/legacy indexes |
+| PR-F working tree base | `e569f3f` | Base = PR-E merge; PR-F docs uncommitted |
 
 ## Phase status
 
@@ -30,10 +31,11 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), and 
 | Step 3 | Selective copy + hash (PR-B) | `PASS` (31 artifacts, #230 merged) |
 | Step 3b | Selective copy + hash (PR-C) | `PASS` (112 selected; 81 canonical, 31 duplicate skipped; #231 merged) |
 | Step 3c | Selective copy + hash (PR-D) | `PASS` (111 selected source rows; 1 byte-exact PNG; derived summaries; #232 merged) |
-| Step 3d | Index-only archive packages (PR-E) | `PASS` (28 indexed source/segment rows; 0 byte-exact copies) |
+| Step 3d | Index-only archive packages (PR-E) | `PASS` (28 indexed source/segment rows; 0 byte-exact copies; #233 merged) |
+| Step 3e | Final manifest/repository index (PR-F) | `READY_FOR_REVIEW` (path map, disposition, summary on branch) |
 | Step 4 | Secret scan | `PASS` (PR-D/E derived artifacts — no patterns detected) |
-| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A/B/C/D merged; PR-E working tree) |
-| Step 6 | Old folder disposition | `NOT_STARTED` |
+| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A/B/C/D/E merged; PR-F working tree) |
+| Step 6 | Old folder disposition | `DOCUMENTED` (labels in `old_folder_disposition.md`; physical delete not started) |
 | Step 7 | Final verification | `NOT_STARTED` |
 
 ## PR verdicts
@@ -44,9 +46,9 @@ Phase 2 canonical clone is complete. PR-A (#229), PR-B (#230), PR-C (#231), and 
 | PR-B | Bridge research | `PASS` (#230, `1cd4f51`) |
 | PR-C | Apollo handoff/research materials | `PASS` (#231, `beb942b`) |
 | PR-D | Verification/operator evidence | `PASS` (#232, `e455290`) |
-| PR-E | UI preservation/legacy indexes | `READY_FOR_REVIEW` (uncommitted on branch) |
-| PR-F | Final manifest/repository index | `NOT_STARTED` |
-| PR-G | Newly consolidated docs path normalization (only when required) | `NOT_REQUIRED_YET` |
+| PR-E | UI preservation/legacy indexes | `PASS` (#233, `e569f3f`) |
+| PR-F | Final manifest/repository index | `READY_FOR_REVIEW` (uncommitted on branch) |
+| PR-G | Newly consolidated docs path normalization | `REQUIRED` — one machine-local provenance example remains in `local_archive_policy.md` |
 
 ## PR-A / PR-B / PR-C
 
@@ -74,29 +76,14 @@ Merged deliverables unchanged from prior reports (#229 / #230 / #231).
 | `Projects/apollo-pr5-smoke` | 16 | README + json-summary + source_manifest + manifest + browser-smoke-summary.json | 1 (`browser-smoke-summary.json`) | 8 STL + 4 `.apollo.json` + 1 PNG + 1 log + 1 `result.json` (folded into json-summary) |
 | `Projects/apollo_operator_smoke_evidence` | 61 | report + source_manifest + manifest + README + 1 PNG | 1 (`17_sample_loaded.png`) | 59 PNG + 1 XWD |
 
-### Representative PNG
-
-| File | SHA-256 | Size | Rights / value |
-| --- | --- | ---: | --- |
-| `docs/apollo/operator-smoke/evidence/17_sample_loaded.png` | `fecece95cd4c10333e4d11e3e2e9213ded655760177868052ece72af6c0cfe24` | 148257 | Internal UI smoke capture; no secrets/PII; long-term value = sample 200m 5-span bridge loaded guided state |
-
-### Deterministic text transformations
-
-| Transformation | Notes |
-| --- | --- |
-| Machine-local source prefix → `source://<folder>/` | Applied in U3/PR5/operator derived Markdown |
-| Raw JSON → JSON要約 + README tables | `result.json` folded into json-summary; `browser-smoke-summary.json` byte-exact copy retained in Git |
-| Checkpoint transcripts → selected_result / summary | Exit codes and pass/fail lines extracted; raw `.txt` not Git-tracked |
-| LF / Markdown EOF | Normalized for Git text docs |
-
-## PR-E deliverables (this branch)
+## PR-E deliverables (#233 merged)
 
 | Item | Status |
 | --- | --- |
-| `docs/archive/README.md` | Done |
-| `docs/archive/ui-preservation/` (README + integration_note + source_manifest) | Done — 15 files indexed |
-| `docs/archive/legacy-projects/` (README + archive_tree_summary + source_summary) | Done — 12 segment rows; symlinks not dereferenced |
-| `docs/archive/startup-records/` (README + source_manifest) | Done — 1 log indexed; no raw copy |
+| `docs/archive/README.md` | Merged |
+| `docs/archive/ui-preservation/` (README + integration_note + source_manifest) | Merged — 15 files indexed |
+| `docs/archive/legacy-projects/` (README + archive_tree_summary + source_summary) | Merged — 12 segment rows; symlinks not dereferenced |
+| `docs/archive/startup-records/` (README + source_manifest) | Merged — 1 log indexed; no raw copy |
 | `line-tab-ui-integration-temp` disposition | `D_EXCLUDED` — empty directory (0 files) |
 | `project_consolidation_manifest.csv` PR-E rows | None — index-only work; no fake source-copy rows |
 | Path normalization | `source://line-tab-ui-preservation-20260729-092526/`, `source://archive/`, `source://docs/` |
@@ -111,21 +98,38 @@ Merged deliverables unchanged from prior reports (#229 / #230 / #231).
 | `Projects/docs` | 1 | startup-records README + source_manifest | 0 | 1 startup log (536 bytes) |
 | `Projects/line-tab-ui-integration-temp` | 0 | — | 0 | `D_EXCLUDED` empty scratch |
 
-### D_EXCLUDED sources
+## PR-F deliverables (this branch)
 
-| Source folder | Classification | Reason |
-| --- | --- | --- |
-| `line-tab-ui-integration-temp` | `D_EXCLUDED` | Empty temporary integration directory; no files to copy or index |
+| Item | Status |
+| --- | --- |
+| [project_consolidation_path_map.md](project_consolidation_path_map.md) | Done — all source → Git / local-archive / excluded mappings |
+| [old_folder_disposition.md](old_folder_disposition.md) | Done — `KEEP_WORKTREE`, `KEEP_EXTERNAL`, `DELETE_SAFE` candidate labels |
+| [project_consolidation_summary.md](project_consolidation_summary.md) | Done — PR A–E rollup, central/local manifest aggregates |
+| [README.md](README.md) | Updated — PR-F document index |
+| [../README.md](../README.md) | Updated — Apollo/archive/migration navigation |
+| `project_consolidation_manifest.csv` | Unchanged — 145 data rows |
+
+### Disposition summary
+
+| Label | Paths |
+| --- | --- |
+| `CANONICAL` | `spacer-clone` |
+| `KEEP_WORKTREE` | `spacer-clone-main`, `spacer-clone-apollo-u3` |
+| `KEEP_EXTERNAL` | `project_inventory.txt`, `project_integration_plan.txt`, `final_report.txt` |
+| `DELETE_SAFE` candidate (pending approval) | Integrated `Projects/` sources (bridge research, apollo, evidence, archive, UI preservation, startup log) |
+| `D_EXCLUDED` | `line-tab-ui-integration-temp` (empty) |
 
 ## Local archive structure
 
 | Directory | Purpose |
 | --- | --- |
-| `local-archive/raw-evidence/` | Raw verification and trace files (`apollo-u3/`) |
+| `local-archive/raw-evidence/` | Raw verification and trace files (`apollo-u3/`, `top-level-docs/`) |
 | `local-archive/smoke-artifacts/` | Smoke STL/PNG/JSON (`apollo-pr5/`) |
 | `local-archive/operator-evidence/` | Operator smoke captures (`apollo/`) |
-| `local-archive/manifests/` | Local manifest (`local_archive_manifest.csv`) |
-| (other PR-A dirs) | research-originals, restricted-pdf, unknown-rights, legacy-archive, ui-preservation |
+| `local-archive/manifests/` | Local manifest (`local_archive_manifest.csv`, 118389 rows) |
+| `local-archive/legacy-archive/` | External archive bulk (`archive/`) |
+| `local-archive/ui-preservation/` | UI preservation bodies |
+| (other PR-A dirs) | research-originals, restricted-pdf, unknown-rights |
 
 `LOCAL_ARCHIVE_STRUCTURE_VERDICT`: `BOUNDARY_DEFINED` (PR-A). Raw archive copy: `VERIFIED` (`118389` files).
 
@@ -134,14 +138,15 @@ Merged deliverables unchanged from prior reports (#229 / #230 / #231).
 - Docs-only integration PRs; no functional code PRs.
 - `local-archive/` and ≥50 MiB / rights-unknown / raw binary bulk: Git prohibited.
 - Old worktree deletion prohibited; physical delete requires individual path approval.
-- Phase 1 external inventory / `final_report.txt` are not modified by PR-D/E worker tasks.
+- Phase 1 external inventory / `final_report.txt` are not modified by PR-D/E/F worker tasks.
 
 ## Next actions
 
-1. Open PR for PR-E archive index artifacts when authorized.
-2. Merge PR-E to `main` when approved.
-3. Continue with PR-F when authorized.
+1. Open PR for PR-F index artifacts when authorized.
+2. Merge PR-F to `main` when approved.
+3. Run Step 7 final verification when authorized.
+4. Process individual delete approvals for `DELETE_SAFE` candidates if requested.
 
 ## External authority
 
-Phase 1 inventory and integration plan live in the repository parent directory and are not modified by PR-E. Source trees `line-tab-ui-preservation-20260729-092526`, `archive`, `docs`, and empty `line-tab-ui-integration-temp` are read-only for this pass.
+Phase 1 inventory and integration plan live in the repository parent directory (`KEEP_EXTERNAL`) and are not modified by PR-F. Source trees under `Projects/` are read-only for consolidation passes; disposition labels are in [old_folder_disposition.md](old_folder_disposition.md).

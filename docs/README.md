@@ -63,6 +63,9 @@ Target rule: `RoadDesignDocument` and `BridgeFrameAnalysisDocument` are separate
 | Manual | [manual/](manual/README.md) | User docs (many manuals still future work) |
 | Images | [images/](images/README.md) | Shared media |
 | History | [history/](history/README.md) | Canonical HISTORICAL index for relocated evidence; other historical material may remain in topic directories |
+| Apollo (research / evidence) | [apollo/](apollo/README.md) | HISTORICAL / RESEARCH INPUT; verification index at [apollo/index/](apollo/index/README.md) |
+| Archive (external indexes) | [archive/](archive/README.md) | Git-tracked indexes for UI preservation and legacy archive segments (PR-E) |
+| Project consolidation | [migration/](migration/README.md) | Phase 2 manifests, path map, disposition, and status reports |
 | Legacy LINER namespace | [liner/README.md](liner/README.md) | Compatibility index and required redirect stubs only |
 | Legacy MVP specs | [architecture/](architecture/README.md) and [frame/](frame/README.md) | SEMANTIC REFERENCE / LEGACY MVP — not Stage 6-10 target contracts |
 | Legacy Frame paths | [design/](design/README.md), [verification/](verification/README.md) | Required redirect stubs only; canonical navigation is [frame/](frame/README.md) |
