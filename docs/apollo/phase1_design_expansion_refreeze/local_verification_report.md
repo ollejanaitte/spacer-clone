@@ -129,7 +129,7 @@ pytest --version  # pytest 9.1.1
 | ID | Description | Status |
 |----|-------------|--------|
 | LV-01 | Git sync / worktree | PASS |
-| LV-02 | Existing Apollo document consistency | NOT_STARTED |
+| LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
 | LV-04 | Regression tests | NOT_STARTED |
 | LV-05 | 3D display non-regression | NOT_STARTED |
@@ -388,9 +388,98 @@ git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 documented design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411`; current
 verification branch remains a descendant of `origin/main`.
 
+## LV-02 Existing Apollo document consistency
+
+**Execution timestamp:** 2026-08-01 18:50:00 JST
+**Verdict:** PASS
+
+Scope: cross-read refreeze documents against `docs/apollo/step1/08_roadmap/implementation_roadmap.md`,
+`docs/apollo/ap00/`, `docs/apollo/ap01/`, `docs/apollo/ap11/`, Step 1 verdicts/scope freeze,
+design-standards posture, and Apollo verification evidence paths cited by the refreeze plan.
+No application tests executed.
+
+### LV-02 target documents (existence)
+
+| Path | Result |
+|------|--------|
+| `docs/apollo/step1/08_roadmap/implementation_roadmap.md` | PASS — present |
+| `docs/apollo/ap00/` | PASS — present (governance, scope guards, validation) |
+| `docs/apollo/ap01/` | PASS — present (BSDD contract final report) |
+| `docs/apollo/ap11/` | PASS — present (IF3 binding final report) |
+| `docs/apollo/step1/final/step1_verdicts.md` | PASS — present |
+| `docs/apollo/step1/05_scope_boundary/phase1_scope_freeze.md` | PASS — present |
+| `docs/apollo/design-standards/README.md` | PASS — present |
+| `docs/apollo/pr5-smoke/README.md` | PASS — present (3D smoke summary) |
+| `docs/apollo/operator-smoke/report.md` | PASS — present (operator UI evidence) |
+
+Note: `docs/apollo/ap02/` … `ap10/`, `ap12/` … `ap18/` directories are not present;
+AP-02..AP-18 scope remains in Step 1 roadmap and completion gate only (not a refreeze path error).
+
+### Repository-path and branch wording
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Refreeze internal paths | PASS | `docs/apollo/phase1_design_expansion_refreeze/` paths resolve; `implementation_sequence.md` working path matches repo root |
+| LV-02 cross-reference paths | PASS | `implementation_roadmap.md`, ap00/ap01/ap11 trees exist |
+| Design vs verification branch names | PASS | `docs/apollo-phase1-design-expansion-refreeze` (design/handoff in `github_scope_verification.md`, `local_verification_plan.md`) vs `docs/apollo-refreeze-local-verification` (active verification) — distinct roles, not contradictory |
+| Baseline SHA across refreeze set | PASS | All six refreeze docs use `1fbcb3ea804f965b8f262284573f4f4d42dc2411`; contained in `origin/main` (LV-01) |
+| AP numbering | PASS | `implementation_sequence.md` §2 preserves AP-00..AP-18; AP-DX-00..21 is additive decomposition |
+
+### Terminology consistency
+
+| Topic | Result | Notes |
+|-------|--------|-------|
+| Implementation authorization | PASS | Refreeze README/scope: NOT GRANTED; aligns with Step 1 `IMPLEMENTATION_AUTHORIZATION: NOT_GRANTED` and ap00 `CONDITIONAL_GO` |
+| Numeric authority vs check status | PASS | AP-00 `numeric_authority_model.md`: PLACEHOLDER/ADOPTED ladder; refreeze design-check `NOT_AUTHORIZED` — complementary layers (same as AP-14 scaffolding wording) |
+| Non-composite deck | PASS | `compositeAction = false` (refreeze §3); `NON_COMPOSITE_RC_SLAB` / `rc_slab_non_composite` (roadmap AP-06); ASM-P1-003 (scope freeze) — consistent |
+| Composite shear connector ban | PASS | Refreeze §3.2 `compositeShearConnector` forbidden; AP-06 non-scope and phase1 scope freeze OUT rows align |
+| Blocker tokens | PASS | BLK-S1-001/004/005 referenced in roadmap; refreeze forbids adopted numerics and auto-fill — no conflict |
+| Design-check status enum | PASS (after fix) | `scope_and_architecture_freeze.md` §5.5 full set; README item 4 previously omitted READY/RUNNING/WARNING/STALE/ERROR — corrected to match §5.5 |
+
+### Scope consistency (refreeze vs Step 1 / AP-00)
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| Narrow archetype (straight, single span, skew 90°, plate girder, static linear) | PASS | Refreeze §2.1 matches `phase1_scope_freeze.md` frozen archetype and `phase1_scope_guard_contract.md` |
+| Implicit Phase 1 expansion | PASS | Refreeze title and README state **設計機能拡張** explicitly; does not claim current implementation guards already allow expanded member design |
+| Explicit design envelope expansion | INFO | Refreeze §2.1 / AP-DX series include stiffener, splice, bracing, fatigue **design data boundaries** that Step 1 `phase1_scope_freeze.md` and `ap00/forbidden_scope.md` list as OUT_OF_PHASE1 for **current implementation PRs** — reconciled by refreeze NOT GRANTING implementation authorization and AP-DX as future gated modules |
+| AP-09 frame-generation boundary | INFO | Roadmap AP-09 non-scope excludes splice/bracing/stiffener **members** today; AP-DX-08 plans extension — documented as downstream AP-DX work depending on AP-09..AP-11, not as already-shipped scope |
+| Fatigue / dynamic analysis | OPEN_QUESTION | Step 1 excludes fatigue/seismic from Phase 1 analysis scope; refreeze includes fatigue data boundary and AP-DX-18 — timing/governance unlock path not recorded in ap00/step1 (supervisor decision required before AP-DX-18) |
+
+### 3D viewer state (documented repo evidence)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| “3D表示完了” / “完成済み3D表示” premise | PASS | Baseline ancestry includes `d3f1ec6` (`fix(apollo): expose solid bridge model in main viewer`) and `1fbcb3e` (`test(apollo): cover main viewer model handoff`) on `origin/main` |
+| Apollo route 3D smoke | PASS | `docs/apollo/pr5-smoke/README.md`: route `/pro/apollo`, presets `full/girders/deck/visible`, STL downloads — `PR5_SMOKE_SUMMARY_VERDICT: PASS_PER_SOURCE_SUMMARY` |
+| Operator sample load UI | PASS | `docs/apollo/operator-smoke/report.md`: sample loaded in guided mode (`17_sample_loaded.png`) |
+| Display vs design data separation | PASS | Refreeze §5.2/§7/§11 matches roadmap separation of geometry shell vs authoritative numerics; no refreeze doc claims 3D mesh is analysis source of truth |
+| LV-03 maintenance check | BLOCKED | `local_verification_plan.md` LV-03 requires confirming `d3f1ec6` / `1fbcb3e` fixes remain in code — deferred to LV-03 (code inventory), not validated in LV-02 |
+
+### Contradictions with implementation-complete claims
+
+| Check | Result |
+|-------|--------|
+| Refreeze does not claim AP-DX or expanded design is implemented | PASS |
+| Refreeze does not claim numeric release readiness | PASS — aligns with `docs/apollo/README.md` and evidence-collection BLOCKED posture |
+| Refreeze does not overwrite AP-00..AP-18 numbering | PASS |
+
+### LV-02 fixes applied
+
+- `README.md`: design-check status list aligned with `scope_and_architecture_freeze.md` §5.5.
+
+### LV-02 OPEN_QUESTIONS
+
+1. **Governance unlock for AP-DX member-design modules** — When AP-DX-06..08/14/15/18 implementation is authorized, which decision log entry supersedes `ap00/forbidden_scope.md` OUT_OF_PHASE1 rows for stiffener/splice/bracing/fatigue? Not derivable from repository docs alone.
+2. **Fatigue scope timing** — AP-DX-18 vs Step 1 Phase 1 analysis exclusion: supervisor gate criteria not recorded in repo.
+
+### LV-02 verdict
+
+`LV02_APOLLO_DOC_CONSISTENCY_VERDICT: PASS` — refreeze documents are path-accurate, terminology-aligned with AP-00/AP-01/AP-11 and Step 1 planning artifacts, and consistent with documented 3D viewer evidence. Explicit design-expansion scope beyond current implementation guards is acknowledged and blocked by NOT GRANTED implementation authorization; governance unlock path for AP-DX remains OPEN_QUESTION.
+
 ## Next action
 
-Proceed to LV-02 per `local_verification_plan.md` (existing Apollo document consistency),
-then LV-03 implementation inventory. Execute LV-04 using the Phase 3 planned commands
-above (record exit codes and counts). LV-05 uses manual/e2e commands from the E2E/manual
-table. Do not invent commands outside this inventory.
+Proceed to LV-03 per `local_verification_plan.md` (implementation inventory, including
+`d3f1ec6` / `1fbcb3e` 3D handoff code check). Execute LV-04 using the Phase 3 planned
+commands above (record exit codes and counts). LV-05 uses manual/e2e commands from the
+E2E/manual table. Do not invent commands outside this inventory.

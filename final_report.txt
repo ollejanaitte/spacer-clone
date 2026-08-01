@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:45:04 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:50:00 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: LV-01 — Git sync / worktree (COMPLETE)
+CURRENT_PHASE: LV-02 — Existing Apollo document consistency (COMPLETE)
 
 ================================================================================
 1. Executive Summary
@@ -16,8 +16,9 @@ dedicated branch bootstrapped from integrated main. Phase 1 recorded environment
 and repository metadata. Phase 2 validated refreeze documentation. Phase 3
 inspected package.json scripts, vitest/playwright configs, pytest layout, and
 test file inventories to produce a verified LV-04/LV-05 command plan (no tests
-executed). LV-01 (git sync / worktree) is PASS. LV-02 through LV-07 and application test
-execution remain NOT_STARTED; LV-08 is PARTIAL (Phase 2 doc checks only).
+executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
+LV-03 through LV-07 and application test execution remain NOT_STARTED; LV-08 is PARTIAL
+(Phase 2 doc checks only).
 
 ================================================================================
 2. Repository and Branch Information
@@ -27,8 +28,8 @@ TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: docs/apollo-refreeze-local-verification
-HEAD_SHA: 96a1febf9524e23c47ea187a73d0bd02ba287469
-ORIGIN_BRANCH_SHA: 96a1febf9524e23c47ea187a73d0bd02ba287469
+HEAD_SHA: 642df48bb5c60130b17b61e24a1c3741bffe5ebc
+ORIGIN_BRANCH_SHA: 642df48bb5c60130b17b61e24a1c3741bffe5ebc
 ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
@@ -74,7 +75,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | ID | Description | Status |
 |----|-------------|--------|
 | LV-01 | Git sync / worktree | PASS |
-| LV-02 | Existing Apollo document consistency | NOT_STARTED |
+| LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
 | LV-04 | Regression tests | NOT_STARTED |
 | LV-05 | 3D display non-regression | NOT_STARTED |
@@ -86,14 +87,21 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 6. Next Exact Action
 ================================================================================
 
-LV-01 git sync verification is PASS on branch docs/apollo-refreeze-local-verification.
-Recorded command outputs are in local_verification_report.md (LV-01 section).
-`origin/main` contains design-freeze baseline 1fbcb3ea804f965b8f262284573f4f4d42dc2411;
-verification branch remains a descendant of origin/main (merge-base equals origin/main SHA).
+LV-02 Apollo document consistency is PASS on branch
+docs/apollo-refreeze-local-verification. Full findings are in
+local_verification_report.md (LV-02 section).
 
-Next: execute LV-02 per local_verification_plan.md (existing Apollo document
-consistency), then LV-03 implementation inventory. Run LV-04 using only the Phase 3
-planned commands; LV-05 uses the manual/e2e command table.
+LV-02 summary: refreeze docs align with Step 1 roadmap, ap00/ap01/ap11 governance,
+non-composite deck rules, NOT_GRANTED implementation posture, and documented 3D viewer
+evidence (d3f1ec6/1fbcb3e on main; pr5-smoke and operator-smoke summaries). Explicit
+AP-DX design expansion beyond ap00 forbidden_scope OUT_OF_PHASE1 rows is acknowledged;
+governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
+OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
+§5.5.
+
+Next: execute LV-03 per local_verification_plan.md (implementation inventory,
+including code-level confirmation that d3f1ec6/1fbcb3e main-viewer solid handoff
+remains present). Then LV-04 using Phase 3 planned commands only; LV-05 manual/e2e table.
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -233,9 +241,10 @@ SAFETY_CHECK_VERDICT: PASS
 17. Recommended Next Action
 ================================================================================
 
-On branch docs/apollo-refreeze-local-verification, begin LV-02 per
-docs/apollo/phase1_design_expansion_refreeze/local_verification_plan.md.
-Record results in local_verification_report.md without inventing test outcomes.
+On branch docs/apollo-refreeze-local-verification, begin LV-03 per
+docs/apollo/phase1_design_expansion_refreeze/local_verification_plan.md
+(implementation inventory). Record results in local_verification_report.md without
+inventing test outcomes.
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -260,8 +269,10 @@ REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 
 Phase 3 test-command discovery: COMPLETE.
 LV-01: PASS.
-LV-02 through LV-07: NOT_STARTED.
+LV-02: PASS (README status-enum alignment fix applied).
+LV-03 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: NOT_STARTED (deferred to LV-04/LV-05 per Phase 3 plan).
+OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
