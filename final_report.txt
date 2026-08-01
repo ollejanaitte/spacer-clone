@@ -4,7 +4,7 @@ Local Verification Final Report
 ================================================================================
 
 UPDATE_TIMESTAMP: 2026-08-01 JST (exact time not provided by operator)
-WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
+WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 6 (Apollo evidence) PASS; LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
 CURRENT_PHASE: LV-05 PASS — operator manual GUI verification recorded; LV-04 bundle 1 Apollo frontend remains FAIL (26 expected / 27 discovered manifest drift); remaining LV-04 bundles and LV-06..LV-08 pending
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
@@ -715,6 +715,32 @@ BACKEND_GENERAL_REGRESSION_STATUS: PASS
 LV04_B05_BE_GENERAL_VERDICT: PASS
 
 ================================================================================
+15g. Phase 4 LV-04 Regression — Apollo Evidence (Bundle 6)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 20:21:53 JST.
+
+Scope: Apollo evidence harness pytest (7 modules per Phase 3 inventory). No other test
+categories executed in this bundle.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B06-APOLLO-EVIDENCE |
+| COMMAND | python3 -m pytest scripts/apollo/evidence/tests -q |
+| START_TIME | 2026-08-01 20:21:53 JST |
+| END_TIME | 2026-08-01 20:22:07 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 7/7 Apollo evidence harness pytest modules passed (200/200 tests, 8 subtests passed) |
+| EVIDENCE | pytest 9.1.1: 200 passed, 8 subtests passed in 13.83s |
+| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+
+APOLLO_EVIDENCE_REGRESSION_STATUS: PASS
+LV04_B06_APOLLO_EVIDENCE_VERDICT: PASS
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -821,7 +847,7 @@ baseline ancestry holds; prior FAIL 19:32:32 JST retained as historical).
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: PASS (implementation inventory — 5 IMPLEMENTED, 11 PARTIALLY_IMPLEMENTED, 1
 SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
-LV-04: IN_PROGRESS (bundle 5/9 PASS — backend general).
+LV-04: IN_PROGRESS (bundle 6/9 PASS — Apollo evidence; backend general).
 LV-05: PASS — operator masaharu manual GUI verification (2026-08-01 JST; exact time not
 provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS;
 evidence note recorded; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest
@@ -835,12 +861,12 @@ unrelated to #239/#240; test-only fix sufficient). LV-04 bundle 2 viewer/3D PASS
 rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
 76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
 LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0; IF3 backend
-bundle and schema-only bundle already covered separately). Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
+bundle and schema-only bundle already covered separately). LV-04 bundle 6 Apollo evidence PASS (7/7 modules, 200/200 tests, 8 subtests, exit 0). Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
 Static check bundle 3 build PASS (exit 0; 3926 modules transformed; dist/ generated).
 Phase C schema/doc verification PASS (8/8 commands exit 0; backend schema 36/36; contract
 vitest 5/5; design-standards 40 files; evidence-collection 21 files; traceability 76
 blockers; section12 register 76 rows baseline byte-exact).
-Remaining LV-04 bundles NOT_STARTED.
+Remaining LV-04 bundles NOT_STARTED (bundles 7–9).
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
@@ -856,7 +882,7 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 ================================================================================
 
 UPDATE_TIMESTAMP: 2026-08-01 JST (exact time not provided by operator)
-WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 backend general PASS; Phase C schema/doc PASS; LV-01 PASS
+WORK_STATUS: ACTIVE — LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 6 Apollo evidence PASS; LV-04 bundle 5 backend general PASS; Phase C schema/doc PASS; LV-01 PASS
 STOP_REASON: N/A — LV-05 formal PASS recorded per operator confirmation (masaharu, 2026-08-01 JST; exact time not provided; MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in manual_verification_checklist.md).
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
@@ -874,7 +900,7 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — LV-05 PASS (operator masaharu, 2026-08-01 JST) — PD-001 FAIL (blocks LV-04-B01) — proceed to remaining LV-04 bundles and LV-06..LV-08
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 6 Apollo evidence PASS — LV-04 bundle 5 backend general PASS — LV-05 PASS (operator masaharu, 2026-08-01 JST) — PD-001 FAIL (blocks LV-04-B01) — proceed to remaining LV-04 bundles and LV-06..LV-08
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
   - Remaining LV-04 bundles per local_verification_plan.md
