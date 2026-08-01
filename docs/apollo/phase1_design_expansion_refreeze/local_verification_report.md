@@ -1,7 +1,10 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
 **Status:** IN_PROGRESS  
-**Target branch:** `docs/apollo-phase1-design-expansion-refreeze`
+**Target branch:** `docs/apollo-refreeze-local-verification`
+
+Active verification now proceeds on branch `docs/apollo-refreeze-local-verification`
+from baseline main SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
 
 ## Baseline
 
