@@ -819,7 +819,7 @@ describe("AP-DX-01 structuralDesignModel contracts", () => {
         },
       ],
     });
-    const result = validateBridgeSuperstructureDesignDocument(document, {
+    const result = validateBridgeSuperstructureDesignDocument(document, "", {
       numericAuthorityContext: {
         targetStandardStatus: TargetStandardStatus.NOT_SELECTED,
       },
