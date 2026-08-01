@@ -3,15 +3,15 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase C TypeScript contract types completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Phase C TypeScript types COMPLETE; Phases D–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase C — TypeScript contract types completed; Phases D–F pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase D JSON Schema completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Phase D JSON Schema COMPLETE; Phases E–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase D — Zod runtime schema + JSON Schema artifact completed; Phases E–F pending
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 AP_DX_01_PHASE_A_STATUS: COMPLETED
 AP_DX_01_PHASE_B_STATUS: COMPLETED
 AP_DX_01_PHASE_C_STATUS: COMPLETED
-AP_DX_01_PHASE_D_STATUS: PENDING
+AP_DX_01_PHASE_D_STATUS: COMPLETED
 AP_DX_01_PHASE_E_STATUS: PENDING
 AP_DX_01_PHASE_F_STATUS: PENDING
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
@@ -1212,11 +1212,11 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 | A | Contract inventory (repo scan, gap analysis, version/migration assessment) | COMPLETED |
 | B | Type/schema design + schema version decision | COMPLETED |
 | C | TypeScript contract types (design entity interfaces) | COMPLETED |
-| D | Zod schema + JSON Schema + validator + parser/domain mapper updates | PENDING |
+| D | Zod schema + JSON Schema artifact (design entity structural schema) | COMPLETED |
 | E | Tests + typecheck/lint/build verification | PENDING |
 | F | Implementation completion bookkeeping | PENDING |
 
-AP_DX_01_OVERALL_STATUS: PHASE_C_COMPLETE — PHASE_D_PENDING
+AP_DX_01_OVERALL_STATUS: PHASE_D_COMPLETE — PHASE_E_PENDING
 
 --------------------------------------------------------------------------------
 24.1a Phase B design decisions (2026-08-01 JST)
@@ -1353,14 +1353,57 @@ Open questions:
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
 AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
 AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
-AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase C types complete; runtime schema/validator pending Phase D)
-AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript design entities present; Zod/validator/tests pending)
+AP_DX_01_IMPLEMENTATION_VERDICT: IN_PROGRESS (Phase D Zod/JSON Schema complete; validator/parser/tests pending Phase E)
+AP_DX_01_CONTRACT_COMPLETENESS: PARTIAL (TypeScript + Zod/JSON Schema design entities present; validator/parser/tests pending)
 AP_DX_01_READY_FOR_PHASE_D: YES
+AP_DX_01_READY_FOR_PHASE_E: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
 
 NEXT_EXACT_ACTION:
-  - Phase D: extend Zod schema, domain mapper, semantic validator for structuralDesignModel
+  - Phase E: extend semantic validator, domain mapper, parser for structuralDesignModel; add entity-graph and NOT_AUTHORIZED tests
   - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
+
+--------------------------------------------------------------------------------
+24.9 Phase D completion summary (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+SCOPE: Zod runtime schema + JSON Schema artifact only (no parser/validator/test changes).
+
+FILES_MODIFIED:
+  - frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
+  - schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json
+  - final_report.txt
+
+SCHEMA_ADDITIONS:
+  - optional top-level structuralDesignModel on bridgeSuperstructureDesignDocumentSchema
+  - DesignEntityMetadata block (entityRevisionId, provenance, sourceRef?, geometryRef,
+    analysisMapping, designStatus, adoptionStatus, extensions?)
+  - DesignEntityDesignStatus enum (NOT_AUTHORIZED, INCOMPLETE, READY, STALE, OK, NG, WARNING, ERROR)
+  - DesignEntityAdoptionStatus via governedQuantityAdoptionStatusSchema (PENDING, PLACEHOLDER, UNKNOWN, ADOPTED)
+  - DesignGeometryReference and DesignAnalysisMemberMapping placeholders (bindingStatus unbound|bound|stale)
+  - SdmNonCompositeAssertion { compositeAction: false } required on structuralDesignModel
+  - StructuralDesignModel container with 11 entity arrays:
+    mainGirders, girderSectionSegments, rcDecks, haunches, crossBeams, swayBracings,
+    lateralBracings, braceMembers, stiffeners, splices, deckAnchorages
+  - DeckAnchorage anchorageRole enum: slab_to_girder | uplift_restraint | other_non_composite
+  - MainGirder/RcDeck optional compositeAction: false literal only
+
+STRICT_UNKNOWN_RETENTION:
+  - All entity objects use strictObject / strict extend — unknown keys (including compositeShearConnector)
+    rejected at structural parse; backward compatible when structuralDesignModel absent
+
+SCHEMA_VERSION: unchanged at 0.1.0 (no CONTRACT_VERSION_SUPPORT_MATRIX change).
+
+ARTIFACT_REGENERATION:
+  - cd frontend && npm run contracts:schema:generate — PASS
+  - schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json regenerated at repo root
+
+VERIFICATION:
+  - cd frontend && npm run typecheck — PASS
+  - cd frontend && npm run test -- src/contracts/runtime/__tests__/contractJsonSchema.test.ts — PASS (5/5)
+
+AP_DX_01_PHASE_D_SCHEMA_VERDICT: PASS
+AP_DX_01_PHASE_D_COMMIT_MESSAGE: feat(apollo): extend BSDD schema for design entities
 
 --------------------------------------------------------------------------------
 24.8 Phase C completion summary (2026-08-01 JST)
