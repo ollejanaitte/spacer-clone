@@ -28,8 +28,8 @@ TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: docs/apollo-refreeze-local-verification
-HEAD_SHA: 9ec4c666bbf5cbefef407ee3b426f7aef306b9d3
-ORIGIN_BRANCH_SHA: 9ec4c666bbf5cbefef407ee3b426f7aef306b9d3
+HEAD_SHA: a35a25e323c8f0e14c63f9ae0c26278fa569f08e
+ORIGIN_BRANCH_SHA: a35a25e323c8f0e14c63f9ae0c26278fa569f08e
 ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
