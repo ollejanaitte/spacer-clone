@@ -47,5 +47,5 @@ MT-121,Grider_I_12,第12章,実鋼重の解析反映,reanalysis loop,AP-DX-16,PL
 MT-130,Grider_I_13,第13章,疲労用荷重・解析,Fatigue analysis input,AP-DX-18,PLANNED,NOT_AUTHORIZED,"疲労荷重と交通量の採択が必要"
 MT-131,Grider_I_13,第13章,主桁疲労照査,Main girder fatigue,AP-DX-18,PLANNED,NOT_AUTHORIZED,"detail categoryと応力範囲抽出が必要"
 MT-132,Grider_I_13,第13章,横桁疲労照査,Cross beam fatigue,AP-DX-18,PLANNED,NOT_AUTHORIZED,"Phase 1後半の独立ゲート"
-MT-140,JIP-SPACER操作マニュアル,解析データ作成・描画・帳票,Frame解析・結果・図形の参考,既存Frame/AP-DX-08/AP-DX-09,REFERENCE_ONLY,NOT_APPLICABLE,"SPACER互換を要求しない。入力・結果構造の参考"
-MT-150,JIP-LINERマニュアル,線形・ハンチ・図面,道路線形・高さ・ハンチの参考,既存Road/AP-DX-04,REFERENCE_ONLY,NOT_APPLICABLE,"既存Road機能を再利用しApollo側で重複しない"
+MT-140,JIP-SPACER操作マニュアル,解析データ作成・描画・帳票,Frame解析・結果・図形の参考,既存Frame/AP-DX-08/AP-DX-09,既存Frame/AP-DX-08/AP-DX-09,REFERENCE_ONLY,NOT_APPLICABLE,"SPACER互換を要求しない。入力・結果構造の参考"
+MT-150,JIP-LINERマニュアル,線形・ハンチ・図面,道路線形・高さ・ハンチの参考,既存Road/AP-DX-04,既存Road/AP-DX-04,REFERENCE_ONLY,NOT_APPLICABLE,"既存Road機能を再利用しApollo側で重複しない"

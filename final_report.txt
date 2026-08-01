@@ -3,20 +3,21 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:40:14 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:42:00 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 1 — environment and repository discovery (recorded on verification branch)
+CURRENT_PHASE: Phase 2 — documentation, CSV, and link validation (on verification branch)
 
 ================================================================================
 1. Executive Summary
 ================================================================================
 
 Apollo Phase 1 Design Expansion Refreeze local verification continues on a
-dedicated branch bootstrapped from integrated main. The working tree was clean,
-HEAD matched origin/main at baseline SHA 86e81d35ba36c1ddeb774286676d62a8f03e9085,
-branch docs/apollo-refreeze-local-verification was created and pushed with
-upstream tracking, and bootstrap artifacts were committed on that branch.
-Mandatory LV-01 through LV-08 verification items remain NOT_STARTED.
+dedicated branch bootstrapped from integrated main. Phase 1 recorded environment
+and repository metadata. Phase 2 validated refreeze documentation: README file
+inventory, Markdown links, heading/code-block structure, CSV integrity, and
+cross-document consistency. One CSV column-alignment defect (MT-140, MT-150) was
+corrected. Mandatory LV-01 through LV-07 and application tests remain
+NOT_STARTED; LV-08 is PARTIAL (Phase 2 doc checks only).
 
 ================================================================================
 2. Repository and Branch Information
@@ -26,12 +27,12 @@ TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
 TARGET_BRANCH: docs/apollo-refreeze-local-verification
-HEAD_SHA: f147efa3b9ea108320848ccf2bb80f7b5790f7af
-ORIGIN_BRANCH_SHA: f147efa3b9ea108320848ccf2bb80f7b5790f7af
+HEAD_SHA: dc8bfc9745fe9f7d0ff27d3cd306184388466048
+ORIGIN_BRANCH_SHA: dc8bfc9745fe9f7d0ff27d3cd306184388466048
 ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
 DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 WORKTREE_CLEAN_AT_START: YES
-UNCOMMITTED_CHANGES: NO (prior to this Phase 1 report commit)
+UNCOMMITTED_CHANGES: NO (prior to Phase 2 validation commit)
 
 Root package.json: NOT PRESENT
 Frontend package.json: PRESENT (frontend/package.json, version 0.3.0-preview)
@@ -79,16 +80,16 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
-| LV-08 | Document quality | NOT_STARTED |
+| LV-08 | Document quality | PARTIAL (Phase 2 doc/CSV/link checks) |
 
 ================================================================================
 6. Next Exact Action
 ================================================================================
 
-Phase 1 environment and repository discovery is complete on branch
-docs/apollo-refreeze-local-verification. Recorded values are in
-local_verification_report.md and final_report.txt section 9. Application tests
-were not executed in Phase 1.
+Phase 2 documentation validation is complete on branch
+docs/apollo-refreeze-local-verification. Findings are in
+local_verification_report.md (Phase 2 section) and final_report.txt section 10.
+Application tests were not executed in Phase 2.
 
 Next: execute LV-01 per local_verification_plan.md — run git fetch --all --prune,
 confirm origin/main contains documented design-freeze baseline
@@ -131,6 +132,32 @@ Test location inventory (metadata only; not executed):
 PHASE1_DISCOVERY_VERDICT: COMPLETE (environment/repository metadata recorded; no tests run)
 
 ================================================================================
+10. Phase 2 Documentation Validation
+================================================================================
+
+Validation recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:42:00 JST.
+
+| Check | Result |
+|-------|--------|
+| README 正本 file inventory | PASS |
+| Markdown relative links | PASS (none found) |
+| Backtick file references | PASS |
+| Heading structure | PASS |
+| Fenced code block balance | PASS |
+| CSV column count (9 cols) | PASS (after MT-140/MT-150 fix) |
+| CSV duplicate trace_id | PASS |
+| AP-DX-00..21 coverage | PASS |
+| Baseline SHA consistency | PASS |
+| Branch name context | PASS (design vs verification branches distinct) |
+| Application tests | NOT_STARTED |
+
+PHASE2_DOC_VALIDATION_VERDICT: PASS
+
+Fix applied: manual_traceability.csv rows MT-140 and MT-150 — restored missing
+planned_module column (value mirrors phase1_target).
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -164,20 +191,20 @@ APOLLO_REFREEZE_LV_VERDICT: PENDING
 19. Repository Cleanliness Verdict (Placeholder)
 ================================================================================
 
-Phase 1 discovery started from a clean worktree on
-docs/apollo-refreeze-local-verification. Only report files were modified for
-environment/repository metadata recording. No application code or new folders
+Phase 1 discovery and Phase 2 documentation validation edits only on
+docs/apollo-refreeze-local-verification. No application code or new folders
 were created. Full cleanliness verdict remains pending until LV-01 through
 LV-08 complete.
 
-REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1 report edits only)
+REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
 
 ================================================================================
 20. Final Verdict (Placeholder)
 ================================================================================
 
-Phase 1 environment and repository discovery: COMPLETE.
-LV-01 through LV-08: NOT_STARTED.
+Phase 2 documentation validation: COMPLETE.
+LV-01 through LV-07: NOT_STARTED.
+LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: NOT_STARTED (deferred to LV-04/LV-05).
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
