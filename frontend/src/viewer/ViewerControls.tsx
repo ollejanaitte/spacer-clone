@@ -2,7 +2,7 @@ import { Activity, Box, Grid3X3, LocateFixed, Move3D, Rotate3D, Tag, Target, Wav
 import { ja } from "../i18n/ja";
 import type React from "react";
 import type { ResponseSpectrumSelection } from "../results/resultViewModel";
-import type { CameraPreset, ViewerScales, ViewerVisibility } from "./types";
+import type { CameraPreset, ViewerDisplayModel, ViewerScales, ViewerVisibility } from "./types";
 import type { SpacerAxisSwap } from "./coordinateTransform";
 import type { AnimationOptions } from "./animation";
 import {
@@ -16,6 +16,9 @@ import { FORCE_COLOR_COMPONENTS, FORCE_COLOR_COMPONENT_LABELS, FORCE_COLOR_VALUE
 
 type ViewerControlsProps = {
   apolloView?: boolean;
+  displayModel?: ViewerDisplayModel;
+  apolloDisplayModelAvailable?: boolean;
+  onDisplayModelChange?: (model: ViewerDisplayModel) => void;
   visibility: ViewerVisibility;
   scales: ViewerScales;
   displaySize?: ViewerDisplaySizeSettings;
@@ -56,6 +59,9 @@ type ViewerControlsProps = {
 
 export function ViewerControls({
   apolloView = false,
+  displayModel = "frame",
+  apolloDisplayModelAvailable = false,
+  onDisplayModelChange,
   visibility,
   scales,
   displaySize = DEFAULT_VIEWER_DISPLAY_SIZE,
@@ -112,6 +118,35 @@ export function ViewerControls({
 
   return (
     <div className="viewer-controls" aria-label={ja.viewer.controls.ariaLabel}>
+      {onDisplayModelChange ? (
+        <ControlGroup title="表示モデル">
+          <div className="viewer-control-row">
+            <label>
+              <span>モデル</span>
+              <select
+                data-testid="viewer-display-model"
+                value={displayModel}
+                onChange={(event) => {
+                  const value = event.currentTarget.value;
+                  if (value === "frame" || value === "apollo") {
+                    onDisplayModelChange(value);
+                  }
+                }}
+              >
+                <option value="frame">フレーム</option>
+                <option value="apollo" disabled={!apolloDisplayModelAvailable}>
+                  Apollo
+                </option>
+              </select>
+            </label>
+          </div>
+          {!apolloDisplayModelAvailable ? (
+            <p className="viewer-control-hint" data-testid="viewer-display-model-unavailable">
+              Apollo モデルは利用できません。
+            </p>
+          ) : null}
+        </ControlGroup>
+      ) : null}
       <ControlGroup title={ja.viewer.controls.view}>
         <div className="viewer-control-row icon-row">
           <button type="button" title={ja.viewer.controls.viewFit} data-testid="view-fit" onClick={onFit}>

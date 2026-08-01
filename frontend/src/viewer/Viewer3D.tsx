@@ -25,7 +25,7 @@ import {
   type SpacerAxisSwap,
 } from "./coordinateTransform";
 import { DEFAULT_ANIMATION_OPTIONS, type AnimationOptions } from "./animation";
-import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps, type ViewerMode, type ViewerScales, type ViewerSelection, type ViewerVisibility } from "./types";
+import { defaultScales, defaultVisibility, type CameraPreset, type Viewer3DProps, type ViewerDisplayModel, type ViewerMode, type ViewerScales, type ViewerSelection, type ViewerVisibility } from "./types";
 import { CompareShell, type CompareSlotDescriptor } from "./CompareShell";
 import { ThreeViewport } from "./ThreeViewport";
 import { ViewerControls } from "./ViewerControls";
@@ -56,6 +56,9 @@ export const webglFallbackMessage =
 
 export function Viewer3D({
   project,
+  displayModel = "frame",
+  onDisplayModelChange,
+  apolloDisplayModelAvailable = false,
   apolloVisualizationModel = null,
   apolloSelectionKeys = [],
   apolloValidationHighlight = null,
@@ -485,6 +488,9 @@ export function Viewer3D({
             </button>
             <ViewerControls
             apolloView={apolloVisualizationModel != null}
+            displayModel={displayModel}
+            apolloDisplayModelAvailable={apolloDisplayModelAvailable}
+            onDisplayModelChange={onDisplayModelChange}
             visibility={visibility}
             scales={scales}
             displaySize={displaySize}

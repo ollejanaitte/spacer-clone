@@ -105,6 +105,8 @@ import {
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
 } from "./apollo/unit2Draft";
+import { buildApolloVisualizationModel } from "./apollo/visualization";
+import type { ViewerDisplayModel } from "./viewer/types";
 
 type ValidationNotice = {
   kind: "ok" | "ng";
@@ -170,8 +172,18 @@ export function App() {
   );
   const [viewPanelOpen, setViewPanelOpen] = useState<boolean>(false);
   const [dataPanelOpen, setDataPanelOpen] = useState<boolean>(false);
+  const [viewerDisplayModel, setViewerDisplayModel] = useState<ViewerDisplayModel>("frame");
   const [hasInvalidNumericDrafts, setHasInvalidNumericDrafts] = useState(false);
   const linerDraft = useMemo(() => linerDraftFromProject(project), [project]);
+  const persistedApolloDraft = project.apolloPhase1Unit2;
+  const apolloVisualizationBuild = useMemo(
+    () =>
+      persistedApolloDraft
+        ? buildApolloVisualizationModel({ project, draft: persistedApolloDraft })
+        : { ok: false as const, diagnostics: [] },
+    [persistedApolloDraft, project],
+  );
+  const apolloDisplayModelAvailable = apolloVisualizationBuild.ok;
   const linerRouteId = resolveLinerUiRouteId(currentPathname);
   const importerRouteActive = resolveImporterRoute(currentPathname);
   const importerRoute = matchImporterRoute(currentPathname);
@@ -320,6 +332,12 @@ export function App() {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  useEffect(() => {
+    if (viewerDisplayModel === "apollo" && !apolloDisplayModelAvailable) {
+      setViewerDisplayModel("frame");
+    }
+  }, [viewerDisplayModel, apolloDisplayModelAvailable]);
 
   const navigatePro = useCallback((path: string) => {
     window.history.pushState({}, "", path);
@@ -1294,6 +1312,14 @@ export function App() {
         <ProjectTree project={project} selected={selectedSection} onSelect={setSelectedSection} />
         <Viewer3D
           project={project}
+          displayModel={viewerDisplayModel}
+          onDisplayModelChange={setViewerDisplayModel}
+          apolloDisplayModelAvailable={apolloDisplayModelAvailable}
+          apolloVisualizationModel={
+            viewerDisplayModel === "apollo" && apolloVisualizationBuild.ok
+              ? apolloVisualizationBuild.model
+              : null
+          }
           result={result}
           if3Result={if3Result}
           rightResult={rightResult}

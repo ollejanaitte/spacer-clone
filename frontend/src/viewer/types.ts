@@ -11,6 +11,8 @@ import type { ApolloVisualizationModel } from "../apollo/visualization";
 
 export type ViewerMode = "three" | "line-only" | "fallback2d";
 
+export type ViewerDisplayModel = "frame" | "apollo";
+
 export type ViewerFallbackReason =
   | "none"
   | "webgl-init-failed"
@@ -131,6 +133,9 @@ export type ApolloViewerValidationHighlight = {
 
 export type Viewer3DProps = {
   project: ProjectModel;
+  displayModel?: ViewerDisplayModel;
+  onDisplayModelChange?: (model: ViewerDisplayModel) => void;
+  apolloDisplayModelAvailable?: boolean;
   apolloVisualizationModel?: ApolloVisualizationModel | null;
   apolloSelectionKeys?: readonly string[];
   apolloValidationHighlight?: ApolloViewerValidationHighlight | null;
