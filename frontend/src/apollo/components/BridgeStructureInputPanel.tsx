@@ -5,6 +5,7 @@ import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
+  isBridgeStructureGenerationCurrent,
   validateBridgeStructureInputDraft,
   withBridgeStructureField,
   type BridgeStructureApproximateQuantity,
@@ -100,6 +101,8 @@ export function BridgeStructureInputPanel({
   const validation = useMemo(() => validateBridgeStructureInputDraft(inputDraft), [inputDraft]);
   const quantities = useMemo(() => getBridgeStructureQuantities(project), [project]);
   const sdm = project.apolloBsdd?.structuralDesignModel;
+  const isGenerationCurrent = isBridgeStructureGenerationCurrent(project);
+  const isStale = Boolean(sdm && !isGenerationCurrent);
   const [generationMessage, setGenerationMessage] = useState<string | null>(null);
 
   const fieldErrorMap = useMemo(() => {
@@ -167,7 +170,17 @@ export function BridgeStructureInputPanel({
         <p data-testid="apollo-bridge-structure-message">{generationMessage}</p>
       ) : null}
 
-      {sdm ? (
+      {isStale ? (
+        <p
+          className="apollo-input-error"
+          data-testid="apollo-bridge-structure-stale-message"
+          role="alert"
+        >
+          入力が変更されました。「構造を生成」を押して再生成してください。3D表示と概算数量は再生成後に更新されます。
+        </p>
+      ) : null}
+
+      {sdm && isGenerationCurrent ? (
         <section data-testid="apollo-bridge-structure-sdm-summary">
           <h3>生成済み設計エンティティ</h3>
           <ul>

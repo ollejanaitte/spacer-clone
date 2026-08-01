@@ -22,6 +22,7 @@ import { computeBridgeStructureApproximateQuantities } from "./quantities";
 import { stableEntitySeed, stableUuidFromSeed } from "./stableIds";
 import {
   createEmptyBridgeStructureInputDraft,
+  resolveSpanCount,
   validateBridgeStructureInputDraft,
   type BridgeStructureValidationResult,
 } from "./validation";
@@ -94,8 +95,11 @@ export function buildBridgeSuperstructureDesignDocument(
   const deckThickness = input.deckThickness!;
   const crossBeamSpacing = input.crossBeamSpacing!;
 
-  const spanCount = Math.max(1, Math.round(bridgeLength / spanLength));
-  const effectiveSpanLength = bridgeLength / spanCount;
+  const spanCount = resolveSpanCount(bridgeLength, spanLength);
+  if (spanCount === null) {
+    return { document: null, diagnostics: ["橋長を径間長で割り切れる値を入力してください。"] };
+  }
+  const effectiveSpanLength = spanLength;
   const crossBeamCount = Math.floor(bridgeLength / crossBeamSpacing) + 1;
 
   const documentId = stableId(projectScopeId, "BsddDocument", "document");
@@ -358,9 +362,25 @@ export function getBridgeStructureInputDraft(project: ProjectModel): ApolloBridg
   return project.apolloBridgeStructureInput ?? createEmptyBridgeStructureInputDraft();
 }
 
+export function isBridgeStructureGenerationCurrent(project: ProjectModel): boolean {
+  const input = getBridgeStructureInputDraft(project);
+  return input.generatedAt !== null && Boolean(project.apolloBsdd?.structuralDesignModel);
+}
+
 export function getBridgeStructureQuantities(project: ProjectModel): readonly BridgeStructureApproximateQuantity[] {
   const input = getBridgeStructureInputDraft(project);
   const validation = validateBridgeStructureInputDraft(input);
+  if (project.apolloBsdd?.structuralDesignModel && input.generatedAt === null) {
+    return [
+      {
+        label: "概算数量",
+        value: null,
+        units: "—",
+        status: "INCOMPLETE",
+        note: "入力が変更されました。「構造を生成」を押して再生成してください。",
+      },
+    ];
+  }
   if (!project.apolloBsdd?.structuralDesignModel) {
     return computeBridgeStructureApproximateQuantities(input, validation.complete);
   }

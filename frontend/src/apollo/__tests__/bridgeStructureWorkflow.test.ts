@@ -3,6 +3,8 @@ import { createDefaultProject } from "../../data/defaultProject";
 import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
+  isBridgeStructureGenerationCurrent,
+  resolveSpanCount,
   stableUuidFromSeed,
   validateBridgeStructureInputDraft,
   withBridgeStructureField,
@@ -108,5 +110,106 @@ describe("bridgeStructure workflow", () => {
     const other = stableUuidFromSeed("project-a:MainGirder:girder-1");
     expect(left).toBe(right);
     expect(left).not.toBe(other);
+  });
+
+  it("rejects non-divisible bridgeLength/spanLength without silent correction", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "bridgeLength", 100);
+    project = withBridgeStructureField(project, "spanLength", 30);
+    const input = getBridgeStructureInputDraft(project);
+
+    expect(resolveSpanCount(100, 30)).toBeNull();
+    const validation = validateBridgeStructureInputDraft(input);
+    expect(validation.complete).toBe(false);
+    expect(validation.diagnostics.join(" ")).toContain("割り切れる");
+
+    const result = generateBridgeStructureFromInput(project, input);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.diagnostics.join(" ")).toContain("割り切れる");
+    }
+  });
+
+  it("accepts divisible bridgeLength/spanLength and derives four spans", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "bridgeLength", 120);
+    project = withBridgeStructureField(project, "spanLength", 30);
+    const input = getBridgeStructureInputDraft(project);
+
+    expect(resolveSpanCount(120, 30)).toBe(4);
+    expect(validateBridgeStructureInputDraft(input).complete).toBe(true);
+
+    const result = generateBridgeStructureFromInput(project, input);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.project.apolloBsdd?.bridge.spans).toHaveLength(4);
+  });
+
+  it("rejects girder layout that exceeds deck width", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "width", 8);
+    project = withBridgeStructureField(project, "girderCount", 4);
+    project = withBridgeStructureField(project, "girderSpacing", 3);
+    const input = getBridgeStructureInputDraft(project);
+
+    const validation = validateBridgeStructureInputDraft(input);
+    expect(validation.complete).toBe(false);
+    expect(validation.diagnostics.join(" ")).toContain("主桁配置幅");
+    expect(generateBridgeStructureFromInput(project, input).ok).toBe(false);
+  });
+
+  it("accepts girder layout at exact deck width equality", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "width", 9);
+    project = withBridgeStructureField(project, "girderCount", 4);
+    project = withBridgeStructureField(project, "girderSpacing", 3);
+    const input = getBridgeStructureInputDraft(project);
+
+    expect(validateBridgeStructureInputDraft(input).complete).toBe(true);
+    expect(generateBridgeStructureFromInput(project, input).ok).toBe(true);
+  });
+
+  it("marks structure generation stale after post-generate input edits", () => {
+    const project = fillValidInput(createDefaultProject());
+    const input = getBridgeStructureInputDraft(project);
+    const generated = generateBridgeStructureFromInput(project, input);
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) return;
+
+    expect(isBridgeStructureGenerationCurrent(generated.project)).toBe(true);
+    expect(getBridgeStructureInputDraft(generated.project).generatedAt).not.toBeNull();
+
+    const edited = withBridgeStructureField(generated.project, "girderCount", 5);
+    expect(getBridgeStructureInputDraft(edited).generatedAt).toBeNull();
+    expect(isBridgeStructureGenerationCurrent(edited)).toBe(false);
+    expect(edited.apolloBsdd?.structuralDesignModel).toBeDefined();
+  });
+
+  it("recovers updated girder count after regeneration", () => {
+    let project = fillValidInput(createDefaultProject());
+    let input = getBridgeStructureInputDraft(project);
+    const first = generateBridgeStructureFromInput(project, input);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+
+    project = withBridgeStructureField(first.project, "girderCount", 2);
+    project = withBridgeStructureField(project, "girderSpacing", 4);
+    input = getBridgeStructureInputDraft(project);
+    expect(isBridgeStructureGenerationCurrent(project)).toBe(false);
+
+    const second = generateBridgeStructureFromInput(project, input);
+    expect(second.ok).toBe(true);
+    if (!second.ok) return;
+
+    expect(second.project.apolloBsdd?.structuralDesignModel?.mainGirders).toHaveLength(2);
+    expect(isBridgeStructureGenerationCurrent(second.project)).toBe(true);
+    const firstIds = first.project.apolloBsdd?.structuralDesignModel?.mainGirders.map(
+      (entity) => entity.mainGirderId,
+    );
+    const secondIds = second.project.apolloBsdd?.structuralDesignModel?.mainGirders.map(
+      (entity) => entity.mainGirderId,
+    );
+    expect(secondIds?.[0]).toBe(firstIds?.[0]);
+    expect(secondIds?.[1]).toBe(firstIds?.[1]);
   });
 });

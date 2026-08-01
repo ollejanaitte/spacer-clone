@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../../data/defaultProject";
 import {
   computeBridgeStructureApproximateQuantities,
+  generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
+  getBridgeStructureQuantities,
   withBridgeStructureField,
 } from "../bridgeStructure";
 
@@ -78,5 +80,35 @@ describe("bridge structure approximate quantities", () => {
     const girderVolume = quantities.find((entry) => entry.label === "主桁鋼体積（概算）");
     expect(girderVolume?.status).toBe("INCOMPLETE");
     expect(girderVolume?.value).toBeNull();
+  });
+
+  it("returns INCOMPLETE summary when SDM exists but input is stale", () => {
+    const project = fillValidInput(createDefaultProject());
+    const generated = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) return;
+
+    const stale = withBridgeStructureField(generated.project, "bridgeLength", 180);
+    const quantities = getBridgeStructureQuantities(stale);
+    expect(quantities).toHaveLength(1);
+    expect(quantities[0]).toMatchObject({
+      label: "概算数量",
+      status: "INCOMPLETE",
+      value: null,
+    });
+    expect(quantities[0]?.note).toContain("再生成");
+  });
+
+  it("returns INCOMPLETE for non-divisible span ratio instead of rounding", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "bridgeLength", 100);
+    project = withBridgeStructureField(project, "spanLength", 30);
+    const draft = getBridgeStructureInputDraft(project);
+    const quantities = computeBridgeStructureApproximateQuantities(draft, true);
+
+    expect(quantities).toHaveLength(1);
+    expect(quantities[0]?.status).toBe("INCOMPLETE");
+    expect(quantities[0]?.value).toBeNull();
+    expect(quantities[0]?.note).toContain("割り切れる");
   });
 });
