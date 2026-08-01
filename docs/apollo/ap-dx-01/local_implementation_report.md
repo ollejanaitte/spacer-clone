@@ -5,7 +5,7 @@
 **Date:** 2026-08-01  
 **Baseline SHA:** `178768871545ab36aaea019916a492a051373496`  
 **Branch:** `feat/ap-dx-01-design-entity-contracts`
-**Final SHA:** `684a88924b3f25ee6d32ed35e55a49f0230777c1`
+**Final SHA:** `ae7b6d0ea009218921a78a1762dc39c647c5d68a`
 **PR:** https://github.com/ollejanaitte/spacer-clone/pull/244
 **Numeric design authorization:** NOT_GRANTED
 **Schema version decision:** NO bump — remain `0.1.0` additive backward-compatible
@@ -345,7 +345,7 @@ Ordered by dependency; exact file splits to be confirmed in Phase B design.
 | `ff5c421` | fix(apollo): pass validator path argument in AP-DX-01 fail-closed test |
 | `b1b4938` | docs(apollo): finalize AP-DX-01 implementation report (pre-normalization) |
 | `b9f21e2` | docs(apollo): finalize AP-DX-01 implementation report (structure correction) |
-| `684a889` | docs(apollo): finalize AP-DX-01 implementation report (verdict normalization) |
+| `ae7b6d0` | docs(apollo): finalize AP-DX-01 implementation report (verdict normalization) |
 
 History note: branch retains full phase commit history; corrective commit `ff5c421` was
 required because rebase/history rewrite was prohibited under repository agent rules.
