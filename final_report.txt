@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 18:56:33 JST
+UPDATE_TIMESTAMP: 2026-08-01 18:57:51 JST
 WORK_STATUS: IN_PROGRESS
-CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 3 IF3 frontend COMPLETE — PASS)
+CURRENT_PHASE: Phase 4 — LV-04 regression tests (bundle 4 IF3 backend COMPLETE — PASS)
 
 ================================================================================
 1. Executive Summary
@@ -21,9 +21,10 @@ Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing o
 origin/main). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
 files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
 that broadened scope and is superseded. Phase 4 bundle 3 (IF3 frontend vitest): PASS
-(exit 0; 12/12 files, 76/76 tests).
+(exit 0; 12/12 files, 76/76 tests). Phase 4 bundle 4 (IF3 backend pytest): PASS
+(exit 0; 7/7 modules, 123/123 tests).
 LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
-IN_PROGRESS (3/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
+IN_PROGRESS (4/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
 
 ================================================================================
 2. Repository and Branch Information
@@ -83,7 +84,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 3 PASS — IF3 frontend) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 4 PASS — IF3 backend) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -105,7 +106,7 @@ governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
 OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
 §5.5.
 
-Next: LV-03 implementation inventory if not done, then LV-04 bundle 4 (IF3 backend)
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general)
 per local_verification_plan.md; LV-05 manual/e2e table.
 
 ================================================================================
@@ -323,6 +324,29 @@ IF3_FRONTEND_REGRESSION_STATUS: PASS
 LV04_B03_IF3_FE_VERDICT: PASS
 
 ================================================================================
+15a. Phase 4 LV-04 Regression — IF3 Backend / API (Bundle 4)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:57:44 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B04-IF3-BE |
+| COMMAND | python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q |
+| START_TIME | 2026-08-01 18:57:44 JST |
+| END_TIME | 2026-08-01 18:57:51 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 7/7 IF3 backend test modules passed (123/123 tests) |
+| EVIDENCE | pytest 9.1.1: 123 passed in 6.68s |
+| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+
+IF3_BACKEND_REGRESSION_STATUS: PASS
+LV04_B04_IF3_BE_VERDICT: PASS
+
+================================================================================
 16. Safety Check — Sibling Folder Policy
 ================================================================================
 
@@ -368,7 +392,8 @@ LV04_B01_APOLLO_FE_VERDICT: FAIL
 On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend) is
 FAIL (pre-existing apolloSuite drift). LV-04 bundle 2 (viewer/3D) is PASS (corrected
 rerun). LV-04 bundle 3 (IF3 frontend) is PASS (12/12 files, 76/76 tests, exit 0).
-Next: LV-03 implementation inventory if not done, then LV-04 bundle 4 (IF3 backend) per
+LV-04 bundle 4 (IF3 backend) is PASS (7/7 modules, 123/123 tests, exit 0).
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general) per
 local_verification_plan.md. Record results in local_verification_report.md without
 inventing test outcomes.
 
@@ -397,13 +422,14 @@ Phase 3 test-command discovery: COMPLETE.
 LV-01: PASS.
 LV-02: PASS (README status-enum alignment fix applied).
 LV-03: NOT_STARTED.
-LV-04: IN_PROGRESS (bundle 3/9 PASS — IF3 frontend).
+LV-04: IN_PROGRESS (bundle 4/9 PASS — IF3 backend).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
 187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D PASS (corrected
 rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
-76/76 tests, exit 0). Remaining LV-04 bundles NOT_STARTED.
+76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
+Remaining LV-04 bundles NOT_STARTED.
 OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING

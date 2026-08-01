@@ -17,6 +17,7 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Execution timestamp (Phase 4 bundle 1) | 2026-08-01 18:51:14 JST |
 | Execution timestamp (Phase 4 bundle 2) | 2026-08-01 18:52:38 JST |
 | Execution timestamp (Phase 4 bundle 3) | 2026-08-01 18:56:31 JST |
+| Execution timestamp (Phase 4 bundle 4) | 2026-08-01 18:57:44 JST |
 | OS | Zorin OS 17.3 (jammy; Ubuntu-based) |
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
@@ -134,7 +135,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | PASS |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 3/9 executed) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -611,10 +612,43 @@ Verified command matches Phase 3 planned entry:
 `LV04_B03_IF3_FE_VERDICT: PASS` — IF3 frontend regression bundle exited 0 under the
 Phase 3 planned command.
 
+## Phase 4 LV-04 test execution (bundle 4 — IF3 backend / API)
+
+**Execution timestamp:** 2026-08-01 18:57:44 JST
+**Verdict:** PASS
+
+Scope: fourth planned LV-04 bundle only (IF3 backend/API pytest per Phase 3 planned
+command). No other test categories executed. Doc branch `docs/apollo-refreeze-local-verification`
+has zero diff vs `origin/main` under `backend/` (docs-only commits since branch bootstrap).
+
+Verified command matches Phase 3 planned entry (no trailing `.` path argument):
+`python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q`
+
+### LV-04 bundle 4 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B04-IF3-BE |
+| COMMAND | `python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q` |
+| START_TIME | 2026-08-01 18:57:44 JST |
+| END_TIME | 2026-08-01 18:57:51 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 7/7 IF3 backend test modules passed (123/123 tests) |
+| EVIDENCE | pytest 9.1.1: `123 passed in 6.68s`; no failures or errors |
+| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+
+### Phase 4 bundle 4 verdict
+
+`LV04_B04_IF3_BE_VERDICT: PASS` — IF3 backend/API regression bundle exited 0 under the
+Phase 3 planned command.
+
 ## Next action
 
 LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
 LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). LV-04 bundle 3 (IF3 frontend)
-recorded PASS. Proceed to LV-03 per `local_verification_plan.md` if not yet done, then
-LV-04 bundle 4 (IF3 backend) using Phase 3 planned commands only. LV-05 uses manual/e2e
-commands from the E2E/manual table. Do not invent commands outside this inventory.
+recorded PASS. LV-04 bundle 4 (IF3 backend) recorded PASS. Proceed to LV-03 per
+`local_verification_plan.md` if not yet done, then LV-04 bundle 5 (backend general)
+using Phase 3 planned commands only. LV-05 uses manual/e2e commands from the E2E/manual
+table. Do not invent commands outside this inventory.
