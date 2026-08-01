@@ -23,6 +23,11 @@
 - `scope_and_architecture_freeze.md`: 対象範囲、設計ワークフロー、データモデル、禁止事項
 - `implementation_sequence.md`: 実装PRの推奨順序、依存関係、完了条件
 - `manual_traceability.csv`: APOLLOマニュアル機能と本計画の対応
+- `local_verification_plan.md`: ローカル環境で行う必須検証、コマンド選定方針、記録方法、合格条件
+
+## ローカル検証
+
+GitHub上の文書だけで再凍結完了とは判定しない。マージ前に `local_verification_plan.md` のLV-01〜LV-08をローカル正本で実施し、対象SHA、コマンド、exit code、PASS/FAIL、残課題をGit管理された検証レポートへ保存する。
 
 ## 結論
 
