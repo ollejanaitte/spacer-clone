@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (LV-06 manual traceability PASS recorded)
-WORK_STATUS: ACTIVE — LV-06 manual traceability PASS recorded (2026-08-01 JST; 50 CSV rows; AP-DX-00..21 covered; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row); LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-CURRENT_PHASE: LV-06 PASS — LV-07..LV-08 pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (LV-07 non-composite deck / connection governance PASS recorded)
+WORK_STATUS: ACTIVE — LV-07 PASS recorded (2026-08-01 JST; non-composite deck governance OK; DeckAnchorage CSV trace OPEN_QUESTION); LV-06 manual traceability PASS recorded (2026-08-01 JST; 50 CSV rows; AP-DX-00..21 covered; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row); LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided); LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
+CURRENT_PHASE: LV-07 PASS — LV-08 pending
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
 ================================================================================
@@ -53,7 +53,9 @@ LV-06 manual traceability review PASS (2026-08-01 JST): 50 CSV rows; AP-DX-00..2
 Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER mapped; no duplicate trace_id;
 inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing, DeckAnchorage
 trace row absence, and AP-DX governance unlock (LV-02 retained). CSV not modified.
-LV-07 remains NOT_STARTED. LV-08 is PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS).
+LV-07 non-composite deck / connection governance PASS (2026-08-01 JST): docs + Apollo/BSDD
+code signals aligned; no governance NG; DeckAnchorage entity/trace OPEN_QUESTION; AP-DX-01
+contract INCOMPLETE (expected). LV-08 is PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS).
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
@@ -128,7 +130,7 @@ update under the constraint: work only inside /home/masaharu/Projects/spacer-clo
 | LV-04 | Regression tests | COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — B01/B07 FAIL (PD-001); B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE (union of B07+B08); B05 minimal 14-module scope (IF3 and schema covered separately) |
 | LV-05 | 3D display non-regression | PASS — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note in manual_verification_checklist.md; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | PASS — 2026-08-01 JST; 50 rows; AP-DX-00..21; Grider chapters 1-13; no duplicate trace_id; OPEN_QUESTIONS AP-DX-18 timing, DeckAnchorage row, governance unlock |
-| LV-07 | Non-composite deck / anchorage | NOT_STARTED |
+| LV-07 | Non-composite deck / anchorage | PASS — 2026-08-01 JST; non-composite posture OK; connector ban OK; deckAnchorage policy OK; numerics NOT_AUTHORIZED; fail-closed OK; DeckAnchorage CSV trace OPEN_QUESTION; AP-DX-01 contract INCOMPLETE (expected) |
 | LV-08 | Document quality | PARTIAL (Phase 2 doc checks; Phase C git diff --check PASS) |
 
 ================================================================================
@@ -146,7 +148,8 @@ origin/main and matches origin/docs/apollo-refreeze-local-verification. Prior FA
 (2026-08-01 19:32:32 JST) retained as historical evidence. Prior Phase 2–4 recorded
 results preserved; Phase C schema/doc bundle and LV-04 bundle 5 recorded.
 
-Proceed to: LV-07 and LV-08 per local_verification_plan.md. LV-04 bundle bookkeeping
+Proceed to: LV-08 per local_verification_plan.md. LV-07 non-composite deck governance PASS
+recorded (2026-08-01 JST). LV-04 bundle bookkeeping
 complete (B09 NOT_APPLICABLE; overall verdict COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE).
 LV-06 manual traceability PASS recorded. Full LV-02 findings remain in
 local_verification_report.md.
@@ -256,6 +259,42 @@ OPEN_QUESTIONS (not guessed):
   3. AP-DX governance unlock vs ap00/forbidden_scope.md (LV-02 OPEN_QUESTION retained)
 
 LV06_MANUAL_TRACEABILITY_VERDICT: PASS
+
+================================================================================
+7d. LV-07 Non-Composite Deck / Connection Governance (2026-08-01 JST)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 JST (exact time not recorded). Artifacts: scope_and_architecture_freeze.md;
+implementation_sequence.md; manual_traceability.csv (MT-030/041/050-053); implementation_inventory.md;
+preexisting_defects.md; local_verification_plan.md LV-07 section; Apollo/BSDD code paths.
+No application code or CSV modified.
+
+| Signal | Status |
+|--------|--------|
+| Non-composite RC slab posture | OK |
+| compositeAction=false equivalent intent | OK |
+| RC slab not in composite girder strength | OK (governance) / INCOMPLETE (implementation) |
+| Stud/composite girder design not mixed in | OK |
+| Slab anchorage vs connectors separate | OK (policy) / INCOMPLETE (BSDD contract) |
+| deckAnchorage / slabGirderConnector handling | OK (docs) / INCOMPLETE (code) / OPEN_QUESTION (CSV trace) |
+| Numerics still not authorized | NOT_AUTHORIZED (correct posture) |
+| Fail-closed behavior | OK |
+| Stale propagation | OK (rules) / INCOMPLETE (Apollo wiring) |
+| Drawing/report responsibility separation | OK |
+| Implementation-start gating | OK |
+
+Code paths inspected: phase1ScopeGuard.ts, errors.ts, types.ts,
+bridgeSuperstructureDesignDocument.ts, visualization/builder.ts, bridgeDefinition/types.ts
+(platform steel_composite enum — not Apollo-wired; INFO).
+
+OPEN_QUESTIONS (not guessed):
+  1. DeckAnchorage — no dedicated manual_traceability.csv row (LV-06 retained)
+  2. AP-DX-08 — reject steel_composite when BridgeDefinition path wired to Apollo
+
+No governance NG found.
+
+LV07_NON_COMPOSITE_DECK_GOVERNANCE_VERDICT: PASS
 
 ================================================================================
 9. Environment and Tool Discovery (Phase 1)
@@ -1000,7 +1039,8 @@ evidence note recorded; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 
 supporting evidence only — does not substitute).
 LV-06: PASS — manual traceability review (2026-08-01 JST; 50 CSV rows; AP-DX-00..21;
 no duplicate trace_id; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row).
-LV-07: NOT_STARTED.
+LV-07: PASS — non-composite deck / connection governance review (2026-08-01 JST;
+DeckAnchorage CSV trace OPEN_QUESTION; AP-DX-01 contract INCOMPLETE expected).
 LV-08: PARTIAL (Phase 2 doc checks only).
 Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (PD-001
 SEPARATE_DEFECT_REQUIRED; 187/188 pass; manifest stale 26 expected / 27 discovered;
@@ -1022,8 +1062,8 @@ LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
 THREED_VIEWER_VERDICT: PASS
 LV05_3D_DISPLAY_VERDICT: PASS
-REFREEZE_FINAL_READINESS: PARTIAL — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 blocks B01/B07 only); LV-05 manual GUI PASS; LV-06 manual traceability PASS; LV-07..LV-08 pending
-OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing; DeckAnchorage CSV row absence.
+REFREEZE_FINAL_READINESS: PARTIAL — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 blocks B01/B07 only); LV-05 manual GUI PASS; LV-06 manual traceability PASS; LV-07 non-composite deck governance PASS; LV-08 pending
+OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing; DeckAnchorage CSV row absence; AP-DX-08 steel_composite rejection at BridgeDefinition wire-up.
 
 APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 
@@ -1031,9 +1071,9 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (LV-06 manual traceability PASS recorded)
-WORK_STATUS: ACTIVE — LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
-STOP_REASON: N/A — LV-06 formal PASS recorded (2026-08-01 JST; traceability matrix review; CSV not modified).
+UPDATE_TIMESTAMP: 2026-08-01 JST (LV-07 non-composite deck / connection governance PASS recorded)
+WORK_STATUS: ACTIVE — LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS
+STOP_REASON: N/A — LV-07 formal PASS recorded (2026-08-01 JST; non-composite deck governance review; docs only).
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
@@ -1050,7 +1090,7 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE) — LV-05 PASS (operator masaharu, 2026-08-01 JST) — LV-06 PASS (2026-08-01 JST) — proceed to LV-07..LV-08
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE) — LV-05 PASS (operator masaharu, 2026-08-01 JST) — LV-06 PASS (2026-08-01 JST) — LV-07 PASS (2026-08-01 JST) — proceed to LV-08
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
-  - LV-07 and LV-08 per local_verification_plan.md
+  - LV-08 per local_verification_plan.md

@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-06 manual traceability **PASS** recorded 2026-08-01 JST (50 CSV rows; AP-DX-00..21 covered; Grider 第1章〜第13章 mapped; duplicate `trace_id` none; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` row absence). LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-07 non-composite deck / connection governance **PASS** recorded 2026-08-01 JST (docs + code signals aligned; `DeckAnchorage` CSV trace row remains OPEN_QUESTION). LV-06 manual traceability **PASS** recorded 2026-08-01 JST (50 CSV rows; AP-DX-00..21 covered; Grider 第1章〜第13章 mapped; duplicate `trace_id` none; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` row absence). LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -163,7 +163,7 @@ pytest --version  # pytest 9.1.1
 | LV-04 | Regression tests | **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — B01/B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; no separate execution); B05 minimal backend general scope (14 modules; IF3 and schema covered separately) |
 | LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | **PASS** — 2026-08-01 JST; 50 rows; AP-DX-00..21 covered; Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER; no duplicate `trace_id`; inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` trace row |
-| LV-07 | Non-composite deck / anchorage | NOT_STARTED |
+| LV-07 | Non-composite deck / anchorage | **PASS** — 2026-08-01 JST; non-composite posture and connector-ban governance OK across refreeze docs, traceability, and Apollo/BSDD code signals; `DeckAnchorage` entity/trace row OPEN_QUESTION; AP-DX-01 contract work INCOMPLETE (expected) |
 | LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
 
 ## Phase 2 documentation validation
@@ -1374,6 +1374,61 @@ No mapping contradiction requiring CSV edit was found. CSV not modified.
 
 `LV06_MANUAL_TRACEABILITY_VERDICT: PASS` — Matrix is structurally valid (50 rows, unique `trace_id`, full AP-DX-00..21 and Grider chapter coverage, SuperDesigner/JIP-SPACER/JIP-LINER references present). Feature groups in `local_verification_plan.md` LV-06 are mapped. `planned_module`, `phase1_target`, `status`, and `numeric_authority` are consistent with refreeze NOT GRANTED authorization and LV-03 inventory for PLANNED/PARTIAL layers. OPEN_QUESTIONS remain on fatigue timing, `DeckAnchorage` row absence, and AP-DX governance unlock; these do not invalidate the matrix for refreeze documentation purposes.
 
+## LV-07 non-composite deck and connection governance review
+
+**Execution timestamp:** 2026-08-01 JST (exact time not recorded)
+**Verdict:** **PASS**
+**Artifacts reviewed:** `scope_and_architecture_freeze.md` §2–3, §5.5, §8–11; `implementation_sequence.md` (AP-DX-00..01, AP-DX-04/08/12, AP-DX-19/20); `manual_traceability.csv` (MT-030, MT-041, MT-050..053, MT-051); `implementation_inventory.md` rows 6, 16, 24; `preexisting_defects.md` (PD-001 — unrelated to deck governance); `local_verification_plan.md` LV-07 §; Apollo/BSDD code paths cited below. No application code or CSV modified.
+
+Scope: cross-read refreeze planning documents and inspect Apollo scope guards, BSDD contracts, and related platform types for non-composite deck posture, connector/anchorage separation, numeric authority, fail-closed behavior, STALE rules, drawing/report boundaries, and implementation-start gating. No numerics executed; no new tests run.
+
+### LV-07 governance signal matrix
+
+| Signal | Status | Evidence |
+|--------|--------|----------|
+| Non-composite RC slab posture | **OK** | `scope_and_architecture_freeze.md` §2.1/§3.1 — 非合成RC床版鋼鈑桁橋; `README.md` — Implementation authorization NOT GRANTED; `Phase1DeckType.NON_COMPOSITE_RC_SLAB` in `frontend/src/apollo/types.ts`; `phase1ScopeGuard.ts` accepts only non-composite RC slab among deck types |
+| `compositeAction = false` equivalent intent | **OK** | Refreeze §3.1 explicit; code equivalent via `BsddDeck.deckKind: "rc_non_composite"` and `BsddPhase1ScopeAssertion.superstructureKind: "plate_girder_rc_slab_non_composite"` (`bridgeSuperstructureDesignDocument.ts`, Zod schema); Step 1 `schema_draft.json` / `reference_bridge_input.json` same literals |
+| RC slab not in composite girder strength | **OK** (governance) / **INCOMPLETE** (implementation) | Refreeze §2.2 OUT rows and §3.1 — no deck stiffness add to girder bending; AP-DX-08 requires `non-composite stiffness` test; no girder strength/check module in code (inventory row 17 `PLANNED`); Apollo visualization builds deck as separate `solid:deck:*` solids (`visualization/builder.ts`) — display-only, not girder composite section; platform `BridgeDefinitionDeck.kind` allows `steel_composite` but **zero** `BridgeDefinition` references under `apollo/**` (LV-03) — forward gate for AP-DX-08, not current Apollo leakage |
+| Stud / composite girder design not mixed in | **OK** | Refreeze §3.2 — `compositeShearConnector` Phase 1 forbidden; `phase1ScopeGuard.ts` + `errors.ts` `AP00_SCOPE_COMPOSITE_DECK` fail-closed; roadmap AP-06 acceptance “no shear connector modeling”; no `compositeShearConnector` / stud types in `frontend/src` |
+| Slab anchorage vs connectors as separate concepts | **OK** (policy) / **INCOMPLETE** (contract) | Refreeze §3.1 — `DeckAnchorage` independent of composite action; §3.2 — `deckAnchorage` definable, `compositeShearConnector` forbidden; `slabGirderConnector` identifier **not present** in repository (no conflation); `DeckAnchorage` listed in AP-DX-01 entity set (`implementation_sequence.md`) but **not yet** in BSDD TypeScript contract (AP-DX-01 `PLANNED`) |
+| `deckAnchorage` / `slabGirderConnector` handling | **OK** (docs) / **INCOMPLETE** (code) / **OPEN_QUESTION** (trace) | §3.2: `deckAnchorage` definable, numerics `NOT_AUTHORIZED`; `temporaryErectionConnector` / `upliftRestraint` deferred; no auto count/spacing/capacity without standard (LV-07 plan §); `slabGirderConnector` N/A (absent); `DeckAnchorage` no dedicated `manual_traceability.csv` row (LV-06 OPEN_QUESTION retained — not resolved here; CSV not edited) |
+| Numerics still not authorized | **NOT_AUTHORIZED** (correct) | README + scope §1 — NOT GRANTED; MT-050..053 `NOT_AUTHORIZED`; `unit2Draft.ts` `blocked_by_numeric_evidence`; `numericAuthorityGuard.ts` + `featureFlag.ts` default `numericReleaseBlocked` / `disableNumericExecution`; Apollo shell blocks calculation/export UI (`ApolloPhase1Shell.tsx`); no deck check returning `OK` |
+| Fail-closed behavior | **OK** | `errors.ts` stable AP00 guard catalog; unknown deck type → `AP00_SCOPE_DECK_UNKNOWN` / `UNRESOLVED`; import/validation reject unknown fields (`importExport.test.ts`); invalid feature-flag values fail-closed (`featureFlag.test.ts`) |
+| Stale propagation | **OK** (rules) / **INCOMPLETE** (Apollo wiring) | Refreeze §10 — geometry/load/section changes STALE analysis; drawing-only cosmetic STALE; AP-DX-03/06/09/10 STALE tests specified; BSDD `BsddLifecycleStatus` includes `STALE`; IF3 staleness in `backend/engine/if3_staleness.py` + `if3ResultGate.ts`; Apollo route not integrated (LV-03) — expected before AP-DX |
+| Drawing / report responsibility separation | **OK** | Refreeze §8–9 — Drawing Semantic Model vs `ReportModel`; §8.2 preview ≠ formal output; §9 — no HTML print-as-report; MT-006 shop-detail automation out of scope; inventory row 23 drawing `OUT_OF_SCOPE` for Apollo; row 24 IF3 PDF/CSV separate from RC slab design (`PLANNED` AP-DX-20) |
+| Implementation-start gating | **OK** | README — NOT GRANTED; `implementation_sequence.md` §4 — AP-DX-01 first code candidate with prerequisite checklist; AP-DX-11..18 numeric gates (`Target Standard ADOPTED`, etc.); refreeze does not authorize numerics or AP-DX implementation from docs alone |
+
+### LV-07 code paths inspected (governance signals only)
+
+| Path | Finding |
+|------|---------|
+| `frontend/src/apollo/phase1ScopeGuard.ts` | Rejects `COMPOSITE`, `STEEL_DECK`, `PC_SLAB`, `UNKNOWN` deck types |
+| `frontend/src/apollo/errors.ts` | `AP00_SCOPE_COMPOSITE_DECK` message enforces non-composite RC on plate girder |
+| `frontend/src/apollo/types.ts` | `Phase1DeckType.NON_COMPOSITE_RC_SLAB`; `DesignCheckStatus` includes `NOT_AUTHORIZED` |
+| `frontend/src/contracts/bridgeSuperstructureDesignDocument.ts` | `deckKind: "rc_non_composite"`; `superstructureKind: "plate_girder_rc_slab_non_composite"`; no composite connector fields |
+| `frontend/src/apollo/visualization/builder.ts` | Deck solids for 3D only; separate from girder member stiffness |
+| `frontend/src/bridgeDefinition/types.ts` | Platform `BridgeDefinitionDeck.kind` optional `steel_composite` — not consumed by Apollo route (INFO) |
+
+### LV-07 contradictions and gaps
+
+| Item | Severity | Finding |
+|------|----------|---------|
+| `DeckAnchorage` trace row | **OPEN_QUESTION** | Entity frozen in scope/sequence; absent from `manual_traceability.csv` — whether dedicated MT row required before AP-DX-01 authorization undecided; does not contradict non-composite policy |
+| `DeckAnchorage` BSDD contract | **INCOMPLETE** | AP-DX-01 planned; entity not in current TypeScript contract — expected pre-implementation |
+| Platform `BridgeDefinitionDeck.kind` | **INFO** | `steel_composite` enum exists on shared platform type; Apollo/BSDD path locked to non-composite; AP-DX-08 must enforce rejection if BridgeDefinition path is wired |
+| Girder strength / deck composite mixing | **INCOMPLETE** | No strength calculation to violate rule yet; governance and visualization boundaries sufficient for refreeze review |
+
+No governance **NG** (policy violation) found in docs or inspected code.
+
+### LV-07 OPEN_QUESTIONS (recorded; not guessed)
+
+1. **`DeckAnchorage` CSV row** — Same as LV-06 #2; LV-07 confirms policy separation in docs but does not add a trace row (CSV not modified).
+2. **AP-DX-08 platform bridge** — When `BridgeDefinition` generator is wired to Apollo, confirm `steel_composite` deck kind is rejected at export (forward gate; not blocking refreeze doc governance PASS).
+
+### LV-07 verdict
+
+`LV07_NON_COMPOSITE_DECK_GOVERNANCE_VERDICT: PASS` — Refreeze documents, manual traceability rows MT-030/041/050–053, and Apollo/BSDD code signals consistently enforce non-composite RC slab posture, forbid composite shear-connector design in Phase 1, treat deck anchorage as a separate definable concept with numerics `NOT_AUTHORIZED`, and block implementation/numeric release until gated AP-DX work. Expected **INCOMPLETE** items (DeckAnchorage contract, girder strength module, Apollo STALE integration) reflect NOT GRANTED implementation status, not governance failure. **OPEN_QUESTION** on `DeckAnchorage` trace row remains.
+
 ## Next action
 
 LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
@@ -1390,5 +1445,6 @@ preserved: LV-03 PASS; LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — bun
 `apolloStlExport.test.ts`; drift at `f89fe11` / #225; unrelated to #239/#240); bundle 7
 FAIL (same PD-001; 262/263 files, 2046/2047 tests); bundles 2–6 and 8 PASS; bundle 9
 NOT_APPLICABLE (union of B07+B08; no separate execution); static checks typecheck/lint/build
-PASS; Phase C schema/doc PASS; LV-06 manual traceability PASS (2026-08-01 JST). **Next:** LV-07
-and LV-08 per `local_verification_plan.md`; PD-001 fix deferred to implementation branch.
+PASS; Phase C schema/doc PASS; LV-06 manual traceability PASS (2026-08-01 JST); LV-07 non-composite
+deck / connection governance PASS (2026-08-01 JST; `DeckAnchorage` CSV trace OPEN_QUESTION).
+**Next:** LV-08 per `local_verification_plan.md`; PD-001 fix deferred to implementation branch.
