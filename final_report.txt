@@ -3,20 +3,23 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase A inventory completed on feat/ap-dx-01-design-entity-contracts)
-WORK_STATUS: ACTIVE — AP-DX-01 Phase A inventory COMPLETE (docs only); Phases B–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
-CURRENT_PHASE: AP-DX-01 Phase A — inventory completed; implementation phases B–F pending
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 Phase B implementation design completed on feat/ap-dx-01-design-entity-contracts)
+WORK_STATUS: ACTIVE — AP-DX-01 Phase B design COMPLETE (docs only); Phases C–F PENDING; prior refreeze LV-01..LV-08 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE retained below
+CURRENT_PHASE: AP-DX-01 Phase B — implementation design completed; Phases C–F pending
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 AP_DX_01_PHASE_A_STATUS: COMPLETED
-AP_DX_01_PHASE_B_STATUS: PENDING
+AP_DX_01_PHASE_B_STATUS: COMPLETED
 AP_DX_01_PHASE_C_STATUS: PENDING
 AP_DX_01_PHASE_D_STATUS: PENDING
 AP_DX_01_PHASE_E_STATUS: PENDING
 AP_DX_01_PHASE_F_STATUS: PENDING
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
-AP_DX_01_VERSION_BUMP_REQUIRED: LIKELY_NO (additive optional sections; Phase B sign-off required)
-AP_DX_01_MIGRATION_REQUIRED: LIKELY_NO (additive at 0.1.0; framework ready if version bump approved)
+AP_DX_01_VERSION_BUMP_REQUIRED: NO — additive optional structuralDesignModel at 0.1.0 (Phase B sign-off)
+AP_DX_01_MIGRATION_REQUIRED: NO — absent section defaults; no migration steps for AP-DX-01
+AP_DX_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
+AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
+AP_DX_01_READY_FOR_PHASE_C: YES
 AP_DX_01_ARTIFACT: docs/apollo/ap-dx-01/local_implementation_report.md
 ORIGIN_MAIN_ADVANCED: YES — origin/main advanced to f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241); merged into verification branch 2026-08-01 JST
 
@@ -1207,13 +1210,41 @@ FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 | Phase | Description | Status |
 |-------|-------------|--------|
 | A | Contract inventory (repo scan, gap analysis, version/migration assessment) | COMPLETED |
-| B | Type/schema design + schema version decision | PENDING |
+| B | Type/schema design + schema version decision | COMPLETED |
 | C | TypeScript + Zod + JSON Schema implementation | PENDING |
 | D | Validator + parser/domain mapper updates | PENDING |
 | E | Tests + typecheck/lint/build verification | PENDING |
 | F | Implementation completion bookkeeping | PENDING |
 
-AP_DX_01_OVERALL_STATUS: PHASE_A_COMPLETE — LATER_PHASES_PENDING
+AP_DX_01_OVERALL_STATUS: PHASE_B_COMPLETE — PHASE_C_PENDING
+
+--------------------------------------------------------------------------------
+24.1a Phase B design decisions (2026-08-01 JST)
+--------------------------------------------------------------------------------
+
+Phase B definitive decisions (docs only; see local_implementation_report.md §10):
+
+  CONTAINER: optional top-level structuralDesignModel on BridgeSuperstructureDesignDocument
+  ENTITY_TYPES: MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam, SwayBracing,
+    LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage (11 kinds)
+  COMMON_METADATA: DesignEntityMetadata (entityRevisionId, provenance, sourceRef?,
+    geometryRef, analysisMapping, designStatus, adoptionStatus, extensions?)
+  DESIGN_STATUS: DesignEntityDesignStatus — NOT_AUTHORIZED default; OK fail-closed
+  ADOPTION_STATUS: DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus alias)
+  REVISION: entityRevisionId positive integer per entity (separate from document revisionId)
+  GEOMETRY_REF: DesignGeometryReference { geometryRefId: UuidString|null, bindingStatus }
+  ANALYSIS_MAPPING: DesignAnalysisMemberMapping { analysisMemberRefId: UuidString|null,
+    bindingStatus, analysisBindingId? }
+  STABLE_ID: plain UuidString per-entity *Id fields; global document-wide uniqueness
+  DUPLICATE_ID: document-wide registry scan → BSDD_DUPLICATE_ENTITY_ID
+  DANGLING_REF: null skips check; non-null must resolve → BSDD_DANGLING_REFERENCE
+  NON_COMPOSITE: SdmNonCompositeAssertion { compositeAction: false }; reject compositeShearConnector
+  DECK_ANCHORAGE: independent entity; anchorageRole non-composite enum; NOT_AUTHORIZED default
+  SCHEMA_VERSION: REMAIN 0.1.0 — additive backward-compatible extension
+  MIGRATION: NONE REQUIRED
+
+AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
+AP_DX_01_READY_FOR_PHASE_C: YES
 
 --------------------------------------------------------------------------------
 24.2 Target files (implementation scope)
@@ -1292,12 +1323,10 @@ Artifact alignment:
 24.5 Version bump and migration assessment
 --------------------------------------------------------------------------------
 
-VERSION_BUMP_REQUIRED: LIKELY_NO — additive optional sections at 0.1.0
-  Phase B must confirm before any contractVersionRegistry change.
-  Do not bump schema version without migration plan presentation (freeze §9).
-
-MIGRATION_REQUIRED: LIKELY_NO — existing 0.1.0 documents valid if new sections optional.
-  MigrationRecord + migration registry available if future version bump approved.
+VERSION_BUMP_REQUIRED: NO — additive optional structuralDesignModel at schemaVersion 0.1.0 (Phase B sign-off)
+MIGRATION_REQUIRED: NO — absent structuralDesignModel defaults; no BSDD migration steps
+SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
+MIGRATION_DECISION: NONE_REQUIRED
 
 --------------------------------------------------------------------------------
 24.6 Blockers and open questions
@@ -1311,23 +1340,24 @@ Blockers:
 
 Open questions:
   OQ-01 DeckAnchorage manual_traceability.csv row absence (LV-06/07 retained)
-  OQ-02 UuidString vs StableEntityId for new entities
-  OQ-03 Geometry/analysis reference placeholder shape before AP-DX-02
-  OQ-04 StructuralDesignModel placement (top-level vs under bridge)
-  OQ-05 Phase B schema version sign-off (0.1.0 additive vs bump)
+  OQ-02 RESOLVED Phase B — plain UuidString *Id fields (not StableEntityId)
+  OQ-03 RESOLVED Phase B — DesignGeometryReference / DesignAnalysisMemberMapping
+  OQ-04 RESOLVED Phase B — structuralDesignModel top-level sibling
+  OQ-05 RESOLVED Phase B — remain 0.1.0; no migration
 
 --------------------------------------------------------------------------------
 24.7 AP-DX-01 verdict fields
 --------------------------------------------------------------------------------
 
 AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
+AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
 AP_DX_01_IMPLEMENTATION_VERDICT: NOT_STARTED
-AP_DX_01_CONTRACT_COMPLETENESS: INCOMPLETE (expected pre-Phase B)
-AP_DX_01_READY_FOR_PHASE_B: YES (inventory complete; freeze doc READY_FOR_LOCAL_IMPLEMENTATION)
+AP_DX_01_CONTRACT_COMPLETENESS: INCOMPLETE (expected pre-Phase C)
+AP_DX_01_READY_FOR_PHASE_C: YES
 AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
 
 NEXT_EXACT_ACTION:
-  - Phase B: design StructuralDesignModel types and confirm 0.1.0 additive strategy
+  - Phase C: implement StructuralDesignModel types, Zod schema, JSON Schema regen at 0.1.0
   - Do not modify application UI, 3D, IF3, or backend in AP-DX-01 scope
 
 ================================================================================
