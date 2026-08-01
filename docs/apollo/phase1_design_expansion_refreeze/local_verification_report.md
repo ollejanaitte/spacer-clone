@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -160,11 +160,11 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | **PASS** — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed; Phase C schema/doc bundle PASS) |
 | LV-05 | 3D display non-regression | NOT_STARTED |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
-| LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; full LV-08 git checks deferred |
+| LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
 
 ## Phase 2 documentation validation
 
@@ -991,12 +991,58 @@ Previously BLOCKED in LV-02; resolved in LV-03.
 
 `LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS`
 
+## Phase C schema / document verification
+
+**Execution timestamp:** 2026-08-01 19:42:07–19:42:15 JST
+**Verdict:** **PASS** (8/8 commands exit 0)
+
+Scope: minimal schema round-trip and Apollo evidence/document validator set per Phase 3
+"Schema / doc checks" inventory. Commands executed in order from repo root; command 4 uses
+`cd frontend &&` (subshell). Doc branch `docs/apollo-refreeze-local-verification` has zero
+diff vs `origin/main` under `schemas/`, `backend/tests/test_*_schema.py`,
+`frontend/src/contracts/`, and `scripts/apollo/evidence/` (docs-only commits since bootstrap).
+
+### Phase C result records
+
+| Field | PHASE-C-01 | PHASE-C-02 | PHASE-C-03 | PHASE-C-04 |
+|-------|------------|------------|------------|------------|
+| TEST_ID | PHASE-C-01-GIT-DIFF-CHECK | PHASE-C-02-GIT-STATUS | PHASE-C-03-BACKEND-SCHEMA | PHASE-C-04-FRONTEND-CONTRACT-SCHEMA |
+| COMMAND | `git diff --check` | `git status --short` | `python3 -m pytest backend/tests/test_project_schema.py backend/tests/test_result_schema.py backend/tests/test_bridge_definition_schema.py backend/tests/test_engine_result_schema.py backend/tests/test_time_history_schema.py -q` | `cd frontend && npm run test -- src/contracts/runtime/__tests__/contractJsonSchema.test.ts` |
+| START_TIME | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:08 JST |
+| END_TIME | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:08 JST | 2026-08-01 19:42:09 JST |
+| EXIT_CODE | 0 | 0 | 0 | 0 |
+| RESULT | PASS | PASS | PASS | PASS |
+| FAILURE_CLASS | N/A | N/A | N/A | N/A |
+| AFFECTED_SCOPE | Working tree whitespace (unstaged diff) | Working tree status lines | 5/5 backend schema pytest modules (36/36 tests) | 1/1 contract JSON Schema vitest file (5/5 tests) |
+| EVIDENCE | No trailing-whitespace or conflict-marker violations reported | Empty output — clean worktree | pytest 9.1.1: `36 passed in 0.71s` | Vitest v4.1.8: `Test Files 1 passed (1)`; `Tests 5 passed (5)`; Duration 807ms |
+| ACTION | Record; proceed to PHASE-C-03 | Record; proceed to PHASE-C-03 | Record; proceed to PHASE-C-04 | Record; proceed to PHASE-C-05 |
+
+| Field | PHASE-C-05 | PHASE-C-06 | PHASE-C-07 | PHASE-C-08 |
+|-------|------------|------------|------------|------------|
+| TEST_ID | PHASE-C-05-VALIDATE-DESIGN-STANDARDS | PHASE-C-06-VALIDATE-EVIDENCE-COLLECTION | PHASE-C-07-VALIDATE-TRACEABILITY | PHASE-C-08-VALIDATE-SECTION12 |
+| COMMAND | `python3 scripts/apollo/evidence/validate_design_standards_csv.py` | `python3 scripts/apollo/evidence/validate_evidence_collection_csv.py` | `python3 scripts/apollo/evidence/validate_evidence_traceability_matrix.py` | `python3 scripts/apollo/evidence/validate_report_section12_register.py` |
+| START_TIME | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST |
+| END_TIME | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST |
+| EXIT_CODE | 0 | 0 | 0 | 0 |
+| RESULT | PASS | PASS | PASS | PASS |
+| FAILURE_CLASS | N/A | N/A | N/A | N/A |
+| AFFECTED_SCOPE | `docs/apollo/design-standards/` CSV registers (40 files) | `docs/apollo/evidence-collection/` CSV manifests (21 files) | Evidence traceability matrix (76 blockers) | Section 12 register (76 rows; baseline byte-exact) |
+| EVIDENCE | `DESIGN_STANDARDS_CSV_VALIDATION: PASS (40 files; exact header widths)` | `EVIDENCE_COLLECTION_CSV_VALIDATION: PASS (21 files; exact header widths)` | `TRACEABILITY_MATRIX_VALIDATION: PASS (76 blockers covered; exact IDs; paths exist; no pseudo syntax)` | `SECTION12_REGISTER_VALIDATION: PASS (76 rows; baseline byte-exact; no truncation; procedure/tool distinct)`; `baseline_mismatch_count=0`; `snapshot_sha256=e89fae89…`; `register_sha256=5bad1c04…` |
+| ACTION | Record; proceed to PHASE-C-06 | Record; proceed to PHASE-C-07 | Record; proceed to PHASE-C-08 | Phase C complete; proceed to LV-04 bundle 5 |
+
+### Phase C verdict
+
+`PHASE_C_SCHEMA_DOC_VERDICT: PASS` — all eight schema/document verification commands exited 0.
+No failures attributable to the verification branch; no application or validator code modified.
+
 ## Next action
 
-LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. `origin/main` and local `main` are both
-`f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…` contains
-`origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior FAIL re-run
-(2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded results preserved:
-LV-03 PASS; LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS; static checks
-typecheck/lint/build PASS. **Next:** LV-04 bundle 5 (backend general). LV-05 uses
-manual/e2e commands from the E2E/manual table. Do not invent commands outside this inventory.
+LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
+(2026-08-01 19:42:07–19:42:15 JST): **PASS** (8/8 commands). `origin/main` and local `main`
+are both `f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…`
+contains `origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior
+FAIL re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded
+results preserved: LV-03 PASS; LV-04 bundle 1 FAIL (pre-existing); bundles 2–4 PASS; static
+checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** LV-04 bundle 5 (backend
+general). LV-05 uses manual/e2e commands from the E2E/manual table. Do not invent commands
+outside this inventory.
