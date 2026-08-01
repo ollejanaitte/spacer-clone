@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-07 non-composite deck / connection governance **PASS** recorded 2026-08-01 JST (docs + code signals aligned; `DeckAnchorage` CSV trace row remains OPEN_QUESTION). LV-06 manual traceability **PASS** recorded 2026-08-01 JST (50 CSV rows; AP-DX-00..21 covered; Grider 第1章〜第13章 mapped; duplicate `trace_id` none; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` row absence). LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** COMPLETE — LV-08 document quality **PASS** recorded 2026-08-01 JST (git diff --check clean; Phase 2 doc/CSV/link checks reaffirmed; verdict fields finalized in `final_report.txt`). LV-07 non-composite deck / connection governance **PASS** recorded 2026-08-01 JST (docs + code signals aligned; `DeckAnchorage` CSV trace row remains OPEN_QUESTION). LV-06 manual traceability **PASS** recorded 2026-08-01 JST (50 CSV rows; AP-DX-00..21 covered; Grider 第1章〜第13章 mapped; duplicate `trace_id` none; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` row absence). LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). LV-04 **COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE** — all 9 bundles recorded; B01 and B07 **FAIL** (PD-001); B02/B03/B04/B05/B06/B08 **PASS**; B09 **NOT_APPLICABLE** (union of B07+B08; separate execution adds no coverage). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 and LV-04-B07 remain **FAIL**). LV-04 bundle 9 (full regression union) 2026-08-01 JST: **NOT_APPLICABLE** (bookkeeping closure; `npm run test:all` = B07 + B08). LV-04 bundle 7 (frontend general) 2026-08-01 20:27:31 JST: **FAIL** (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0; minimal scope — excludes IF3 and schema modules covered separately). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -164,7 +164,7 @@ pytest --version  # pytest 9.1.1
 | LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | **PASS** — 2026-08-01 JST; 50 rows; AP-DX-00..21 covered; Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER; no duplicate `trace_id`; inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing and `DeckAnchorage` trace row |
 | LV-07 | Non-composite deck / anchorage | **PASS** — 2026-08-01 JST; non-composite posture and connector-ban governance OK across refreeze docs, traceability, and Apollo/BSDD code signals; `DeckAnchorage` entity/trace row OPEN_QUESTION; AP-DX-01 contract work INCOMPLETE (expected) |
-| LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
+| LV-08 | Document quality | **PASS** — 2026-08-01 JST; `git diff --check` clean; Phase 2 markdown/CSV/link checks reaffirmed; no secrets or copyright-risk content; absolute paths intentional; verdict fields finalized |
 
 ## Phase 2 documentation validation
 
@@ -1427,7 +1427,91 @@ No governance **NG** (policy violation) found in docs or inspected code.
 
 ### LV-07 verdict
 
-`LV07_NON_COMPOSITE_DECK_GOVERNANCE_VERDICT: PASS` — Refreeze documents, manual traceability rows MT-030/041/050–053, and Apollo/BSDD code signals consistently enforce non-composite RC slab posture, forbid composite shear-connector design in Phase 1, treat deck anchorage as a separate definable concept with numerics `NOT_AUTHORIZED`, and block implementation/numeric release until gated AP-DX work. Expected **INCOMPLETE** items (DeckAnchorage contract, girder strength module, Apollo STALE integration) reflect NOT GRANTED implementation status, not governance failure. **OPEN_QUESTION** on `DeckAnchorage` trace row remains.
+`LV07_NONCOMPOSITE_DECK_VERDICT: PASS` — Refreeze documents, manual traceability rows MT-030/041/050–053, and Apollo/BSDD code signals consistently enforce non-composite RC slab posture, forbid composite shear-connector design in Phase 1, treat deck anchorage as a separate definable concept with numerics `NOT_AUTHORIZED`, and block implementation/numeric release until gated AP-DX work. Expected **INCOMPLETE** items (DeckAnchorage contract, girder strength module, Apollo STALE integration) reflect NOT GRANTED implementation status, not governance failure. **OPEN_QUESTION** on `DeckAnchorage` trace row remains.
+
+## LV-08 document quality review
+
+**Execution timestamp:** 2026-08-01 JST (exact time not recorded)
+**Verdict:** **PASS**
+**Artifacts reviewed:** `local_verification_report.md`; `final_report.txt`; `implementation_inventory.md`; `preexisting_defects.md`; `manual_verification_checklist.md`; `manual_traceability.csv`; all markdown files in `docs/apollo/phase1_design_expansion_refreeze/`. No application code, tests, configs, or lockfiles modified.
+
+Scope: final document quality review per `local_verification_plan.md` LV-08 — whitespace/conflict-marker check, working-tree status, markdown structure, CSV integrity, link resolution, verdict consistency across reports, historical FAIL vs current PASS distinction, branch/SHA semantics, section numbering, secrets, and copyright-risk content. Reaffirms Phase 2 documentation validation (no duplicate CSV fix required).
+
+### LV-08 recorded commands
+
+```text
+git diff --check
+# exit 0 — no trailing-whitespace or conflict-marker violations
+
+git status --short
+# (empty — clean worktree at LV-08 review start)
+```
+
+### LV-08 checks
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| `git diff --check` | PASS | Exit 0 at LV-08 review; Phase C PHASE-C-01 also PASS |
+| `git status --short` | PASS | Empty output — clean worktree |
+| Markdown relative links `[text](path)` | PASS | Zero relative markdown links in refreeze set; Phase 2 reaffirmed |
+| Backtick file references | PASS | All resolved paths exist (Phase 2 + LV-02 cross-read) |
+| Heading structure (h1–h6 skips) | PASS | Same pattern as Phase 2 PASS (### subsections under ## without intermediate ## — not a structural defect) |
+| Fenced code block balance | PASS | Even ``` count in all refreeze markdown files |
+| CSV column count (9 columns) | PASS | 50 data rows; MT-140/MT-150 `planned_module` restoration holds (Phase 2 fix) |
+| CSV duplicate `trace_id` | PASS | Zero duplicates across 50 rows (LV-06 reaffirmed) |
+| CSV UTF-8 / quoting | PASS | `csv.reader` parses all rows; no encoding anomalies |
+| Baseline SHA consistency | PASS | Design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411` consistent across refreeze docs |
+| Branch name references | PASS | `docs/apollo-phase1-design-expansion-refreeze` (design/handoff) vs `docs/apollo-refreeze-local-verification` (active verification) — distinct roles |
+| HEAD SHA semantics | PASS | Bootstrap SHA `f147efa…` frozen at branch creation; LV-01 current HEAD `cccf4c3…` at re-run; `origin/main` current `f0983878…` — no self-referential SHA loop (each SHA tied to explicit timestamp/context) |
+| Historical FAIL vs current PASS | PASS | LV-01 failed re-run 2026-08-01 19:32:32 JST retained as historical; current re-run 19:38:37 JST authoritative PASS; LV-04-B02 erroneous run SUPERSEDED; corrected rerun authoritative |
+| Verdict consistency (`local_verification_report` vs `final_report.txt`) | PASS (after LV-08 finalize) | LV-01..LV-07 verdicts aligned; LV-08 and overall final verdict fields updated together |
+| Section numbering (`final_report.txt`) | PASS (after fix) | Duplicate section 13 (bundle 1) removed; PD-001 retained under section 13a |
+| Absolute local paths | INFO | `/home/masaharu/Projects/spacer-clone` in handoff/checklist sections — intentional local-verification context per Phase 2 |
+| Secrets / credentials | PASS | No API keys, tokens, or private-key blocks in reviewed artifacts |
+| Copyright-risk content | PASS | Manual traceability cites document identifiers and functional mappings only; no full manual text reproduction |
+| PD-001 classification | PASS | `preexisting_defects.md` — `SEPARATE_DEFECT_REQUIRED`; blocks LV-04-B01/B07 and full green suite; does **not** block docs-only refreeze or LV-08 |
+| Sibling-folder policy | PASS | `final_report.txt` section 16 — no unauthorized clones under `/home/masaharu/Projects/` |
+
+### LV-08 fixes applied
+
+- `final_report.txt`: removed duplicate section 13 (bundle 1 re-record); finalized LV-08 and overall verdict fields; updated stop status and executive summary.
+- `local_verification_report.md`: LV-08 section and summary table (this file).
+- `implementation_inventory.md`: removed stale LV-01 STALE note; current LV-01 PASS cross-reference added.
+
+### LV-08 verdict
+
+`LV08_DOCUMENT_QUALITY_VERDICT: PASS` — Required LV-08 checks complete. Refreeze documentation set is structurally sound, internally consistent, and aligned with recorded LV-01..LV-07 evidence. PD-001 remains classified as known pre-existing test manifest defect (`SEPARATE_DEFECT_REQUIRED`); fix deferred to implementation branch.
+
+## Overall local verification verdict
+
+Canonical final verdict fields (2026-08-01 JST; aligned with `final_report.txt` section 20):
+
+```
+GITHUB_SYNC_VERDICT: PASS
+DOCUMENT_SCOPE_VERDICT: PASS
+LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
+LV04_REGRESSION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
+LV05_3D_DISPLAY_VERDICT: PASS
+LV06_MANUAL_TRACEABILITY_VERDICT: PASS
+LV07_NONCOMPOSITE_DECK_VERDICT: PASS
+LV08_DOCUMENT_QUALITY_VERDICT: PASS
+SCHEMA_DOC_VERDICT: PASS
+BACKEND_GENERAL_VERDICT: PASS
+APOLLO_REGRESSION_VERDICT: FAIL_KNOWN_PREEXISTING_PD001
+APOLLO_MANIFEST_FAILURE_CLASSIFICATION: KNOWN_PREEXISTING_TEST_MANIFEST_DEFECT_SEPARATE_DEFECT_REQUIRED
+THREED_VIEWER_AUTOMATED_VERDICT: PASS
+THREED_VIEWER_MANUAL_VERDICT: PASS
+TYPECHECK_VERDICT: PASS
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+IF3_VERDICT: PASS
+LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
+REFREEZE_READINESS_VERDICT: READY_FOR_PR
+IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
+OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
+```
+
+PD-001: known pre-existing test manifest defect (`SEPARATE_DEFECT_REQUIRED`); blocks full LV-04 green suite (B01/B07) but does **not** block docs-only refreeze deliverables (#239/#240). OPEN_QUESTIONS on AP-DX governance unlock, AP-DX-18 fatigue timing, and `DeckAnchorage` CSV row remain recorded; they do not invalidate document quality PASS.
 
 ## Next action
 
@@ -1447,4 +1531,5 @@ FAIL (same PD-001; 262/263 files, 2046/2047 tests); bundles 2–6 and 8 PASS; bu
 NOT_APPLICABLE (union of B07+B08; no separate execution); static checks typecheck/lint/build
 PASS; Phase C schema/doc PASS; LV-06 manual traceability PASS (2026-08-01 JST); LV-07 non-composite
 deck / connection governance PASS (2026-08-01 JST; `DeckAnchorage` CSV trace OPEN_QUESTION).
-**Next:** LV-08 per `local_verification_plan.md`; PD-001 fix deferred to implementation branch.
+LV-08 document quality PASS (2026-08-01 JST; `LV08_DOCUMENT_QUALITY_VERDICT: PASS`).
+**Local verification complete** — LV-01..LV-08 recorded. PD-001 fix deferred to implementation branch (`preexisting_defects.md`).

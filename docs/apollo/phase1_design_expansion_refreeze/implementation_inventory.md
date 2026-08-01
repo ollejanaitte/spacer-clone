@@ -75,7 +75,7 @@ Commits `d3f1ec6` (fix: expose solid bridge model in main viewer) and `1fbcb3e` 
 2. **Section intent registry** — `sectionIntentRefId` on BSDD girder lines has no registry implementation; only placeholder `ProjectModel.sections`.
 3. **Cross-beam / bracing identity** — Solid IDs (`solid:cross-beam:…`, `solid:bracing:…`) are visualization-derived, not stable design IDs for traceability (refreeze AP-DX-05).
 4. **Governance** — Refreeze AP-DX modules (stiffener, splice, fatigue, steel weight) remain `PLANNED` / `NOT_AUTHORIZED` per `manual_traceability.csv`; inventory confirms no premature implementation.
-5. **LV-01 staleness** — This inventory was recorded on `docs/apollo-refreeze-local-verification`; `origin/main` advanced since prior LV-01 (see `final_report.txt`). Re-run LV-01 before treating branch sync as current.
+5. **LV-01 sync** — LV-01 re-run 2026-08-01 19:38:37 JST **PASS** — local `main` = `origin/main` `f0983878ccbb816f591214b6242c3688ecb5a060`; verification branch HEAD `cccf4c3…` contains `origin/main` (see `local_verification_report.md` LV-01).
 
 ## Refreeze reconciliation
 
