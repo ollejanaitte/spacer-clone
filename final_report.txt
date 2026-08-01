@@ -1,15 +1,15 @@
 ================================================================================
-AP-DX-01 — Design Entity Contract Implementation
-Local Verification Final Report
+AP-DX-01 Design Entity Contracts
+Local Implementation Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 report structure correction on feat/ap-dx-01-design-entity-contracts)
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 final report normalization on feat/ap-dx-01-design-entity-contracts)
 TASK: AP-DX-01 設計エンティティ契約
 WORK_STATUS: COMPLETE — Phases A–F; Block 2 contract tests PASS; Block 3 verification bundle PASS
 CURRENT_PHASE: AP-DX-01 COMPLETE — ready for PR review
 AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
 AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
-AP_DX_01_FINAL_SHA: b1b49380bf2b1a711bb65d46600e223f9048793f
+AP_DX_01_FINAL_SHA: 381c3d705080a7892c4881a5cdf9b9dba18b153c
 AP_DX_01_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
 AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
 AP_DX_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
@@ -30,7 +30,8 @@ false`, `compositeShearConnector` forbidden, `DeckAnchorage` independent). No Ap
 3D viewer, backend, IF3, or numeric design logic changes.
 
 Phases A–F completed on branch `feat/ap-dx-01-design-entity-contracts` from baseline
-`178768871545ab36aaea019916a492a051373496`. Final SHA
+`178768871545ab36aaea019916a492a051373496`. Final SHA recorded in §4 (normalization
+commit at HEAD). Pre-normalization finalize commit:
 `b1b49380bf2b1a711bb65d46600e223f9048793f`. Branch history retains earlier phase
 commits plus corrective commit `ff5c421` (validator path argument in fail-closed test);
 rebase/history rewrite was prohibited. Schema version remains `0.1.0` (additive); no
@@ -76,7 +77,7 @@ SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Proje
 BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
 BASELINE_COMMIT: docs(apollo): freeze AP-DX-01 contract implementation scope
 
-FINAL_SHA: b1b49380bf2b1a711bb65d46600e223f9048793f
+FINAL_SHA: 381c3d705080a7892c4881a5cdf9b9dba18b153c
 FINAL_COMMIT: docs(apollo): finalize AP-DX-01 implementation report
 
 COMMITS (baseline..final, chronological):
@@ -87,10 +88,13 @@ COMMITS (baseline..final, chronological):
   832ab10 feat(apollo): validate AP-DX-01 entity references and governance
   3c031f8 test(apollo): cover AP-DX-01 design entity contracts
   ff5c421 fix(apollo): pass validator path argument in AP-DX-01 fail-closed test
-  b1b4938 docs(apollo): finalize AP-DX-01 implementation report
+  b1b4938 docs(apollo): finalize AP-DX-01 implementation report (pre-normalization)
+  b9f21e2 docs(apollo): finalize AP-DX-01 implementation report (structure correction)
+  381c3d7 docs(apollo): finalize AP-DX-01 implementation report (verdict normalization)
 
 HISTORY_NOTE: Branch retains full phase commit history. Corrective commit ff5c421
 was required because rebase/history rewrite was prohibited under repository agent rules.
+Pre-normalization finalize commit: b1b49380bf2b1a711bb65d46600e223f9048793f.
 
 ================================================================================
 5. Role Delegation
@@ -453,7 +457,7 @@ PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
 PR_STATE: OPEN
 BASE_BRANCH: main (178768871545ab36aaea019916a492a051373496)
 HEAD_BRANCH: feat/ap-dx-01-design-entity-contracts
-FINAL_SHA: b1b49380bf2b1a711bb65d46600e223f9048793f
+FINAL_SHA: 381c3d705080a7892c4881a5cdf9b9dba18b153c
 MERGE_STATUS: NOT_MERGED — awaiting review and user approval
 AUTO_MERGE: DISABLED — user approval required per implementation_freeze.md §14
 
@@ -479,22 +483,17 @@ Branch feat/ap-dx-01-design-entity-contracts ready for PR review; main unchanged
 
 Canonical AP-DX-01 verdict fields:
 
-AP_DX_01_PHASE_A_INVENTORY_VERDICT: PASS
-AP_DX_01_PHASE_B_DESIGN_VERDICT: PASS
-AP_DX_01_PHASE_C_TYPES_VERDICT: PASS
-AP_DX_01_PHASE_D_SCHEMA_VERDICT: PASS
-AP_DX_01_PHASE_E_PARSER_MAPPER_VALIDATOR_VERDICT: PASS
-AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
-AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
-AP_DX_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
-AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
-AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
-AP_DX_01_CONTRACT_COMPLETENESS: COMPLETE
-AP_DX_01_IMPLEMENTATION_VERDICT: PASS
-AP_DX_01_NUMERIC_AUTHORIZATION: NOT_GRANTED
-AP_DX_01_READY_FOR_PHASE_D: YES
-AP_DX_01_READY_FOR_PHASE_E: YES
-AP_DX_01_READY_FOR_PHASE_F: YES
-AP_DX_01_OVERALL_VERDICT: PASS — ready for PR review
-
+APDX01_CONTRACT_TYPES_VERDICT: PASS
+APDX01_SCHEMA_VERDICT: PASS
+APDX01_PARSER_VERDICT: PASS
+APDX01_VALIDATION_VERDICT: PASS
+APDX01_ROUNDTRIP_VERDICT: PASS
+APDX01_STABLE_ID_VERDICT: PASS
+APDX01_NONCOMPOSITE_VERDICT: PASS
+APDX01_BACKWARD_COMPATIBILITY_VERDICT: PASS
+TYPECHECK_VERDICT: PASS
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+LOCAL_IMPLEMENTATION_VERDICT: PASS
+PR_READINESS_VERDICT: PASS — ready for PR review
 OVERALL_VERDICT: PASS
