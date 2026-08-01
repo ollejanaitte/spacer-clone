@@ -2,6 +2,7 @@
 
 **Status:** REQUIRED BEFORE MERGE  
 **Target branch:** `docs/apollo-phase1-design-expansion-refreeze`  
+**Active local verification branch:** `docs/apollo-refreeze-local-verification`
 **Baseline:** `1fbcb3ea804f965b8f262284573f4f4d42dc2411`
 
 ## 目的
@@ -178,4 +179,18 @@ git status --short
 
 ## 実施結果
 
-未実施。ローカル環境での検証後に、実施者、日時、対象SHA、各LV判定、コマンド結果、残課題を追記する。
+ローカル検証は `docs/apollo-refreeze-local-verification` で実施中（HEAD `88b7f092…`、停止状態）。
+詳細は `local_verification_report.md` およびリポジトリ直下 `final_report.txt` を参照。
+
+**再ベースライン（2026-08-01 19:24:00 JST）:** `origin/main` は `f0983878ccbb816f591214b6242c3688ecb5a060` に進行。
+LV-01 は再実行必須（従来の PASS は STALE）。再開前に LV-01 を実施すること。Phase 2–4 の記録結果は保持。
+本再ベースラインでは新規の検証 PASS/FAIL は記録しない。
+
+| LV | 状態（再ベースライン時点） |
+|----|---------------------------|
+| LV-01 | STALE — 再実行必須 |
+| LV-02 | PASS（記録済み） |
+| LV-03 | NOT_STARTED |
+| LV-04 | IN_PROGRESS（bundle 4/9 まで記録済み） |
+| LV-05〜LV-07 | NOT_STARTED |
+| LV-08 | PARTIAL（Phase 2 文書チェックのみ） |

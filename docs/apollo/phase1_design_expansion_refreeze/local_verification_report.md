@@ -1,11 +1,32 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** IN_PROGRESS  
+**Status:** ACTIVE — LV-05 manual 3D/GUI checklist prepared 2026-08-01 19:49 JST (`manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION`; manual user visual confirmation required before final readiness/PR judgment). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 remains **FAIL**). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
-(HEAD `f147efa3b9ea108320848ccf2bb80f7b5790f7af` at branch bootstrap; frozen snapshot)
-bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
+(HEAD `cccf4c3e7a1418f6b30f02bc0ba54a744554a38c` at latest LV-01 re-run)
+bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`
+(at branch bootstrap; frozen snapshot). `origin/main` is `f0983878ccbb816f591214b6242c3688ecb5a060`
+(current LV-01 baseline). Prior Phase 2–4 results below are preserved unchanged.
+Prior LV-01 re-run 2026-08-01 19:32:32 JST (FAIL) retained as historical evidence below.
+
+## Re-baseline (safe resume)
+
+| Field | Value |
+|-------|-------|
+| Re-baseline timestamp | 2026-08-01 19:24:00 JST |
+| LV-01 re-run timestamp (failed; historical) | 2026-08-01 19:32:32 JST |
+| LV-01 re-run timestamp (current) | 2026-08-01 19:38:37 JST |
+| Branch | `docs/apollo-refreeze-local-verification` |
+| HEAD at latest LV-01 re-run | `cccf4c3e7a1418f6b30f02bc0ba54a744554a38c` |
+| HEAD at failed LV-01 re-run | `ef93b735c23dc3b88d473a07a9440824b8e7a198` |
+| Local `main` at latest LV-01 re-run | `f0983878ccbb816f591214b6242c3688ecb5a060` |
+| Local `main` at failed LV-01 re-run | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| `origin/main` at prior LV-01 | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| `origin/main` current (LV-01 baseline) | `f0983878ccbb816f591214b6242c3688ecb5a060` |
+| LV-01 status (current) | **PASS** — local `main` = `origin/main`; `git merge-base HEAD origin/main` = `f0983878…`; HEAD matches `origin/docs/apollo-refreeze-local-verification` |
+| LV-01 status (failed re-run; historical) | FAIL — local `main` ≠ `origin/main`; `git merge-base HEAD origin/main` is `86e81d35…`, not current `origin/main` |
+| Action | LV-01 PASS; proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
 
 ## Baseline
 
@@ -27,7 +48,8 @@ bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8
 | Branch | `docs/apollo-refreeze-local-verification` |
 | HEAD SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
 | Origin branch SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
-| Origin/main SHA | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| Origin/main SHA (at prior LV-01) | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
+| Origin/main SHA (current; re-baseline) | `f0983878ccbb816f591214b6242c3688ecb5a060` |
 | Design freeze baseline (documented) | `1fbcb3ea804f965b8f262284573f4f4d42dc2411` |
 
 ### Tool versions
@@ -135,14 +157,14 @@ pytest --version  # pytest 9.1.1
 
 | ID | Description | Status |
 |----|-------------|--------|
-| LV-01 | Git sync / worktree | PASS |
+| LV-01 | Git sync / worktree | **PASS** — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
-| LV-03 | Implementation inventory | NOT_STARTED |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 4/9 executed) |
-| LV-05 | 3D display non-regression | NOT_STARTED |
+| LV-03 | Implementation inventory | PASS |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 1 **FAIL** — PD-001 manifest stale; bundle 5/9 executed; backend general PASS; IF3 backend and schema-only bundles covered separately) |
+| LV-05 | 3D display non-regression | CHECKLIST_PREPARED — `manual_verification_checklist.md`; operator visual confirmation **required**; `THREED_VIEWER_VERDICT: PENDING_USER_VISUAL_CONFIRMATION` (automated LV-04-B02 PASS does not substitute) |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
-| LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; full LV-08 git checks deferred |
+| LV-08 | Document quality | PARTIAL — Phase 2 doc/CSV/link checks complete; Phase C `git diff --check` PASS; full LV-08 deferred |
 
 ## Phase 2 documentation validation
 
@@ -333,13 +355,181 @@ launcher scripts. Application tests remain NOT_STARTED until LV-04/LV-05 executi
 
 ## LV-01 Git sync / worktree
 
-**Execution timestamp:** 2026-08-01 18:45:04 JST
-**Verdict:** PASS
+**Execution timestamp (prior run):** 2026-08-01 18:45:04 JST — PASS at `origin/main` `86e81d35…` (superseded)
+**Execution timestamp (failed re-run; historical):** 2026-08-01 19:32:32 JST — FAIL (superseded)
+**Execution timestamp (current re-run):** 2026-08-01 19:38:37 JST
+**Verdict:** **PASS**
 
 Scope: `git fetch --all --prune`, repository sync, design-freeze baseline containment,
 and verification-branch ancestry relative to `origin/main`. No application tests executed.
+Worktree checked clean before and after the re-run.
 
-### Recorded commands
+### Recorded commands (failed re-run 2026-08-01 19:32:32 JST — historical)
+
+```text
+# Pre-check
+git status --short
+# (empty — worktree clean)
+
+git fetch --all --prune
+# Fetching origin (exit 0)
+
+git status --short --branch
+# ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification
+
+git rev-parse HEAD
+# ef93b735c23dc3b88d473a07a9440824b8e7a198
+
+git rev-parse origin/main
+# f0983878ccbb816f591214b6242c3688ecb5a060
+
+git rev-parse main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git rev-parse origin/docs/apollo-refreeze-local-verification
+# ef93b735c23dc3b88d473a07a9440824b8e7a198
+
+git merge-base HEAD origin/main
+# 86e81d35ba36c1ddeb774286676d62a8f03e9085
+
+git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+# 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+
+git merge-base --is-ancestor 1fbcb3ea804f965b8f262284573f4f4d42dc2411 origin/main
+# exit 0 (YES)
+
+git merge-base --is-ancestor origin/main HEAD
+# exit 1 (NO)
+
+git log --oneline HEAD..origin/main
+# f098387 Docs/apollo refreeze local verification (#240)
+
+git branch --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   docs/apollo-phase1-design-expansion-refreeze
+# * docs/apollo-refreeze-local-verification
+#   fix/apollo-3d-viewer
+#   main
+
+git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   origin/HEAD -> origin/main
+#   origin/docs/apollo-phase1-design-expansion-refreeze
+#   origin/docs/apollo-refreeze-local-verification
+#   origin/fix/apollo-3d-viewer
+#   origin/main
+
+# Post-check
+git status --short
+# (empty — worktree clean)
+```
+
+### LV-01 checks (failed re-run — historical)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Worktree clean (pre-check) | PASS | `git status --short` empty before fetch |
+| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
+| Local `main` SHA equals `origin/main` | FAIL | `main` `86e81d35…` ≠ `origin/main` `f0983878…` |
+| `origin/main` contains documented design-freeze baseline | PASS | `git merge-base --is-ancestor 1fbcb3ea… origin/main` exit 0; `origin/main` in `git branch -r --contains` |
+| Verification branch is descendant of current `origin/main` | FAIL | `git merge-base HEAD origin/main` is `86e81d35…`, not `f0983878…`; `origin/main` is not ancestor of HEAD |
+| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
+| HEAD matches origin tracking branch | PASS | HEAD `ef93b735…` equals `origin/docs/apollo-refreeze-local-verification` |
+| Worktree clean (post-check) | PASS | `git status --short` empty after checks |
+
+### LV-01 verdict (failed re-run — historical)
+
+`LV01_GIT_SYNC_VERDICT: FAIL` — re-run 2026-08-01 19:32:32 JST against `origin/main`
+`f0983878ccbb816f591214b6242c3688ecb5a060`. Local `main` remains at bootstrap SHA
+`86e81d35…` (1 commit behind `origin/main`). Verification branch tip `ef93b735…` does not
+contain `origin/main` tip `f098387` (`Docs/apollo refreeze local verification (#240)`).
+Prior PASS at `86e81d35…` is superseded. Superseded by current re-run 2026-08-01 19:38:37 JST.
+
+### Recorded commands (current re-run 2026-08-01 19:38:37 JST — authoritative)
+
+```text
+# Pre-check
+git status --short
+# (empty — worktree clean)
+
+git fetch --all --prune
+# Fetching origin (exit 0)
+
+git status --short --branch
+# ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification
+
+git rev-parse HEAD
+# cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
+
+git rev-parse origin/main
+# f0983878ccbb816f591214b6242c3688ecb5a060
+
+git rev-parse main
+# f0983878ccbb816f591214b6242c3688ecb5a060
+
+git rev-parse origin/docs/apollo-refreeze-local-verification
+# cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
+
+git merge-base HEAD origin/main
+# f0983878ccbb816f591214b6242c3688ecb5a060
+
+git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+# 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+
+git merge-base --is-ancestor 1fbcb3ea804f965b8f262284573f4f4d42dc2411 origin/main
+# exit 0 (YES)
+
+git merge-base --is-ancestor origin/main HEAD
+# exit 0 (YES)
+
+git log --oneline HEAD..origin/main
+# (empty — HEAD contains origin/main)
+
+git log --oneline origin/main..HEAD
+# cccf4c3 Merge origin/main into docs/apollo-refreeze-local-verification
+# e5c188d docs(apollo): record lv01 rerun against latest main
+# ef93b73 docs(apollo): record verified Apollo implementation inventory
+# … (doc-only commits on verification branch)
+
+git branch --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   docs/apollo-phase1-design-expansion-refreeze
+# * docs/apollo-refreeze-local-verification
+#   fix/apollo-3d-viewer
+#   main
+
+git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+#   origin/HEAD -> origin/main
+#   origin/docs/apollo-phase1-design-expansion-refreeze
+#   origin/docs/apollo-refreeze-local-verification
+#   origin/fix/apollo-3d-viewer
+#   origin/main
+
+# Post-check
+git status --short
+# (empty — worktree clean)
+```
+
+### LV-01 checks (current re-run)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Worktree clean (pre-check) | PASS | `git status --short` empty before fetch |
+| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
+| Local `main` SHA equals `origin/main` | PASS | Both `f0983878ccbb816f591214b6242c3688ecb5a060` |
+| `origin/main` contains documented design-freeze baseline | PASS | `git merge-base --is-ancestor 1fbcb3ea… origin/main` exit 0; `origin/main` in `git branch -r --contains` |
+| Verification branch is descendant of current `origin/main` | PASS | `git merge-base HEAD origin/main` is `f0983878…`; `origin/main` is ancestor of HEAD |
+| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
+| HEAD matches origin tracking branch | PASS | HEAD `cccf4c3…` equals `origin/docs/apollo-refreeze-local-verification` |
+| Worktree clean (post-check) | PASS | `git status --short` empty after checks |
+
+### LV-01 verdict (current — authoritative)
+
+`LV01_GIT_SYNC_VERDICT: PASS` — re-run 2026-08-01 19:38:37 JST against `origin/main`
+`f0983878ccbb816f591214b6242c3688ecb5a060`. Local `main` fast-forwarded to match
+`origin/main`. Verification branch tip `cccf4c3…` contains `origin/main` (merge commit
+`cccf4c3 Merge origin/main into docs/apollo-refreeze-local-verification`). Design-freeze
+baseline `1fbcb3ea…` ancestry holds on `origin/main` and HEAD. Prior FAIL re-run
+2026-08-01 19:32:32 JST retained as historical evidence. Proceed to LV-04 bundle 5.
+
+### Recorded commands (prior run 2026-08-01 18:45:04 JST — superseded)
 
 ```text
 git fetch --all --prune
@@ -377,23 +567,8 @@ git merge-base HEAD 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 # 1fbcb3ea804f965b8f262284573f4f4d42dc2411
 ```
 
-### LV-01 checks
-
-| Check | Result | Evidence |
-|-------|--------|----------|
-| `git fetch --all --prune` | PASS | Exit 0; `origin` fetched |
-| Local `main` SHA equals `origin/main` | PASS | Both `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
-| `origin/main` contains documented design-freeze baseline | PASS | `origin/main` listed in `git branch -r --contains 1fbcb3ea804f965b8f262284573f4f4d42dc2411`; `git merge-base --is-ancestor` confirms |
-| Verification branch is descendant of `origin/main` | PASS | `git merge-base HEAD origin/main` equals `origin/main` SHA |
-| HEAD contains design-freeze baseline | PASS | `git merge-base HEAD 1fbcb3ea…` equals baseline SHA |
-| Working tree clean | PASS | `git status --short` empty |
-| HEAD matches origin tracking branch (pre-edit) | PASS | HEAD `96a1febf…` equals `origin/docs/apollo-refreeze-local-verification` |
-
-### LV-01 verdict
-
-`LV01_GIT_SYNC_VERDICT: PASS` — repository is synced; `origin/main` contains the
-documented design-freeze baseline `1fbcb3ea804f965b8f262284573f4f4d42dc2411`; current
-verification branch remains a descendant of `origin/main`.
+Prior run checks (all PASS at `86e81d35…`): fetch, main==origin/main, baseline containment,
+branch descendant of `origin/main`, HEAD baseline, clean worktree, HEAD==origin tracking branch.
 
 ## LV-02 Existing Apollo document consistency
 
@@ -503,16 +678,38 @@ diff vs `origin/main` under `frontend/` (docs-only commits since branch bootstra
 | END_TIME | 2026-08-01 18:51:24 JST |
 | EXIT_CODE | 1 |
 | RESULT | FAIL |
-| FAILURE_CLASS | PRE_EXISTING — `apolloStlExport.test.ts` present on `origin/main` (feat #225) but omitted from `EXPECTED_APOLLO_TEST_MODULES` in `apolloSuite.test.ts`; doc branch did not modify application code |
+| FAILURE_CLASS | PRE_EXISTING — PD-001 `SEPARATE_DEFECT_REQUIRED` (manifest update omission at `f89fe11` / #225; see `preexisting_defects.md`) |
 | AFFECTED_SCOPE | `frontend/src/apollo/__tests__/apolloSuite.test.ts` — 1 failed test in 1 file; 27 other Apollo test files passed; 187/188 tests passed overall |
-| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 27 passed (28)`; `Tests 1 failed \| 187 passed (188)`; Duration 9.68s; failure: `includes every expected AP-00 test module under __tests__` — received array includes `apolloStlExport.test.ts` not in expected list |
-| ACTION | Record only; do not fix in this doc-only task. Reconcile `apolloSuite.test.ts` manifest on an implementation branch before LV-04 can PASS for this bundle. Proceed to LV-04 bundle 2 (viewer/3D) only after supervisor approval |
+| EVIDENCE | Vitest v4.1.8: `Test Files 1 failed \| 27 passed (28)`; `Tests 1 failed \| 187 passed (188)`; Duration 9.68s; failure: `includes every expected AP-00 test module under __tests__` — expected 26 modules, discovered 27; missing from manifest: `apolloStlExport.test.ts`; extra in manifest: none; `apolloStlExport.test.ts` passes alone (11/11) |
+| ACTION | Record only; do not fix in this doc-only task. Reconcile `EXPECTED_APOLLO_TEST_MODULES` on an implementation branch before LV-04-B01 can PASS. Blocks full refreeze LV-04 completion; unrelated to #239/#240 |
 
 ### Phase 4 bundle 1 verdict
 
 `LV04_B01_APOLLO_FE_VERDICT: FAIL` — Apollo frontend regression bundle exited 1 due to
 stale suite-discoverability manifest; failure predates verification branch and is
-attributable to `origin/main` code, not refreeze documentation edits.
+attributable to `origin/main` code, not refreeze documentation edits. Classified as
+PD-001 (`SEPARATE_DEFECT_REQUIRED`; manifest update omission; test-only fix sufficient).
+
+## Pre-existing defects classification (PD-001)
+
+**Investigation timestamp:** 2026-08-01 19:47 JST
+**Artifact:** `preexisting_defects.md` (this directory)
+
+| Field | Value |
+|-------|-------|
+| Defect ID | PD-001 |
+| Classification | `SEPARATE_DEFECT_REQUIRED` |
+| Stale manifest | `EXPECTED_APOLLO_TEST_MODULES` in `frontend/src/apollo/__tests__/apolloSuite.test.ts` |
+| Expected vs discovered | 26 vs 27 modules |
+| Missing from manifest | `apolloStlExport.test.ts` |
+| Extra in manifest | *(none)* |
+| Drift introduced | `f89fe11` (2026-07-31) — `feat(apollo): add binary stl export and manifest (#225)` |
+| Root cause | Manifest update omission (not code regression; STL export tests pass 11/11) |
+| Related to #239 / #240 | **No** — docs-only; zero `frontend/` diff vs `origin/main` |
+| Test-only fix | **Yes** — add `apolloStlExport.test.ts` to manifest array |
+| Blocks refreeze readiness | **Yes** for LV-04-B01 PASS and full LV-04 completion; **no** for docs-only refreeze or other PASS bundles |
+
+`PD001_APOLLO_SUITE_MANIFEST_VERDICT: FAIL` — remains FAIL; do not upgrade to PASS on this branch.
 
 ## Phase 4 LV-04 test execution (bundle 2 — viewer / 3D) — SUPERSEDED
 
@@ -647,6 +844,47 @@ Verified command matches Phase 3 planned entry (no trailing `.` path argument):
 `LV04_B04_IF3_BE_VERDICT: PASS` — IF3 backend/API regression bundle exited 0 under the
 Phase 3 planned command.
 
+## Phase 4 LV-04 test execution (bundle 5 — backend general)
+
+**Execution timestamp:** 2026-08-01 19:45:37 JST
+**Verdict:** PASS
+
+Scope: fifth planned LV-04 bundle — minimal backend general verification set (14 pytest
+modules excluding IF3 and schema-only tests, which were already covered separately as
+LV-04 bundle 4 and Phase C PHASE-C-03). No other test categories executed. Doc branch
+`docs/apollo-refreeze-local-verification` has zero diff vs `origin/main` under `backend/`
+(docs-only commits since branch bootstrap).
+
+**Prior coverage (not re-run in this bundle):**
+
+- IF3 backend bundle — LV-04 bundle 4 (2026-08-01 18:57:44 JST): 7/7 modules, 123/123 tests PASS
+- Schema-only bundle — Phase C PHASE-C-03 (2026-08-01 19:42:07 JST): 5/5 schema pytest modules, 36/36 tests PASS
+
+Verified command (minimal backend general set per task specification):
+
+`python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q`
+
+### LV-04 bundle 5 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B05-BE-GENERAL |
+| COMMAND | `python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q` |
+| START_TIME | 2026-08-01 19:45:37 JST |
+| END_TIME | 2026-08-01 19:45:40 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 14/14 backend general test modules passed (189/189 tests); excludes IF3 modules (bundle 4) and schema modules (Phase C) already covered separately |
+| EVIDENCE | pytest 9.1.1: `189 passed in 3.00s`; no failures or errors |
+| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+
+### Phase 4 bundle 5 verdict
+
+`LV04_B05_BE_GENERAL_VERDICT: PASS` — minimal backend general regression bundle exited 0.
+IF3 backend bundle (LV-04 bundle 4) and schema-only bundle (Phase C PHASE-C-03) were
+already covered separately and are not duplicated in this run.
+
 ## Phase 4 static check execution (bundle 1 — typecheck)
 
 **Execution timestamp:** 2026-08-01 18:59:09 JST
@@ -743,13 +981,158 @@ Verified command matches Phase 3 planned entry: `cd frontend && npm run build`
 `SC_B03_BUILD_VERDICT: PASS` — frontend production build exited 0 under the Phase 3 planned
 command.
 
+## LV-03 implementation inventory
+
+**Execution timestamp:** 2026-08-01 (docs-only; code inspection)
+**Verdict:** PASS
+**Artifact:** `implementation_inventory.md` (this directory)
+
+### Method
+
+- Inspected `frontend/src/apollo/`, `frontend/src/contracts/`, `frontend/src/bridgeDefinition/`,
+  `frontend/src/if3/`, `frontend/src/results/`, `frontend/src/exports/`, `frontend/src/viewer/`,
+  and `backend/engine/if3_*.py` via search and file reads.
+- Classifications use enum: `IMPLEMENTED`, `PARTIALLY_IMPLEMENTED`, `SCAFFOLD_ONLY`, `PLANNED`,
+  `BLOCKED`, `OUT_OF_SCOPE`, `UNKNOWN`.
+- Did not infer implementation from refreeze docs or UI labels alone.
+
+### Summary counts
+
+| Classification | Count |
+|----------------|------:|
+| IMPLEMENTED | 5 |
+| PARTIALLY_IMPLEMENTED | 11 |
+| SCAFFOLD_ONLY | 1 |
+| PLANNED | 5 |
+| OUT_OF_SCOPE | 2 |
+
+### Minimum target verdicts (abbreviated)
+
+| Target | Classification |
+|--------|----------------|
+| Apollo route/workspace | IMPLEMENTED |
+| BSDD contracts | PARTIALLY_IMPLEMENTED |
+| Lifecycle/stale/validation | PARTIALLY_IMPLEMENTED |
+| Bridge basic conditions | PARTIALLY_IMPLEMENTED |
+| Span/support/girder geometry | PARTIALLY_IMPLEMENTED |
+| Deck definition | PARTIALLY_IMPLEMENTED |
+| Cross beam/floor system shell | PARTIALLY_IMPLEMENTED |
+| Material/section registry | PARTIALLY_IMPLEMENTED |
+| Load shell | SCAFFOLD_ONLY |
+| Frame generation | PARTIALLY_IMPLEMENTED |
+| IF3 binding | IMPLEMENTED |
+| Result import | PARTIALLY_IMPLEMENTED |
+| Export gates | IMPLEMENTED |
+| 3D solid viewer | IMPLEMENTED |
+| STL export | IMPLEMENTED |
+| RC slab design shell | PLANNED |
+| Girder design shell | PLANNED |
+| Stiffener model | PLANNED |
+| Splice model | PLANNED |
+| Floor system/bracing model | PARTIALLY_IMPLEMENTED |
+| Steel weight | PLANNED |
+| Fatigue | OUT_OF_SCOPE |
+| Drawing preview | OUT_OF_SCOPE |
+| Report model/exports | PARTIALLY_IMPLEMENTED |
+
+### Maintenance check (`d3f1ec6` / `1fbcb3e`)
+
+| Check | Result |
+|-------|--------|
+| Main viewer Apollo solid handoff in `App.tsx` | PASS — `viewerDisplayModel`, `apolloVisualizationBuild`, conditional `apolloVisualizationModel` |
+| Viewer controls / types | PASS — `Viewer3D.tsx`, `ViewerControls.tsx`, `viewer/types.ts` |
+| Regression tests | PASS — `App.apolloNavigation.test.tsx`, `ViewerControls.test.tsx` |
+
+Previously BLOCKED in LV-02; resolved in LV-03.
+
+### Key findings
+
+1. Apollo Phase 1 is an **input + visualization shell**; calculation and authoritative export are disabled in the Apollo route UI.
+2. BSDD contracts, IF3 gates, and `BridgeDefinition` frame generation exist as **platform code** but are largely **not wired to Apollo UI**.
+3. Cross-beam, bracing, and deck solids are **visualization heuristics**, not persisted design entities.
+4. No premature AP-DX design modules (stiffener, splice, RC slab design, steel weight, fatigue) found in code.
+
+`LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS`
+
+## Phase C schema / document verification
+
+**Execution timestamp:** 2026-08-01 19:42:07–19:42:15 JST
+**Verdict:** **PASS** (8/8 commands exit 0)
+
+Scope: minimal schema round-trip and Apollo evidence/document validator set per Phase 3
+"Schema / doc checks" inventory. Commands executed in order from repo root; command 4 uses
+`cd frontend &&` (subshell). Doc branch `docs/apollo-refreeze-local-verification` has zero
+diff vs `origin/main` under `schemas/`, `backend/tests/test_*_schema.py`,
+`frontend/src/contracts/`, and `scripts/apollo/evidence/` (docs-only commits since bootstrap).
+
+### Phase C result records
+
+| Field | PHASE-C-01 | PHASE-C-02 | PHASE-C-03 | PHASE-C-04 |
+|-------|------------|------------|------------|------------|
+| TEST_ID | PHASE-C-01-GIT-DIFF-CHECK | PHASE-C-02-GIT-STATUS | PHASE-C-03-BACKEND-SCHEMA | PHASE-C-04-FRONTEND-CONTRACT-SCHEMA |
+| COMMAND | `git diff --check` | `git status --short` | `python3 -m pytest backend/tests/test_project_schema.py backend/tests/test_result_schema.py backend/tests/test_bridge_definition_schema.py backend/tests/test_engine_result_schema.py backend/tests/test_time_history_schema.py -q` | `cd frontend && npm run test -- src/contracts/runtime/__tests__/contractJsonSchema.test.ts` |
+| START_TIME | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:08 JST |
+| END_TIME | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:07 JST | 2026-08-01 19:42:08 JST | 2026-08-01 19:42:09 JST |
+| EXIT_CODE | 0 | 0 | 0 | 0 |
+| RESULT | PASS | PASS | PASS | PASS |
+| FAILURE_CLASS | N/A | N/A | N/A | N/A |
+| AFFECTED_SCOPE | Working tree whitespace (unstaged diff) | Working tree status lines | 5/5 backend schema pytest modules (36/36 tests) | 1/1 contract JSON Schema vitest file (5/5 tests) |
+| EVIDENCE | No trailing-whitespace or conflict-marker violations reported | Empty output — clean worktree | pytest 9.1.1: `36 passed in 0.71s` | Vitest v4.1.8: `Test Files 1 passed (1)`; `Tests 5 passed (5)`; Duration 807ms |
+| ACTION | Record; proceed to PHASE-C-03 | Record; proceed to PHASE-C-03 | Record; proceed to PHASE-C-04 | Record; proceed to PHASE-C-05 |
+
+| Field | PHASE-C-05 | PHASE-C-06 | PHASE-C-07 | PHASE-C-08 |
+|-------|------------|------------|------------|------------|
+| TEST_ID | PHASE-C-05-VALIDATE-DESIGN-STANDARDS | PHASE-C-06-VALIDATE-EVIDENCE-COLLECTION | PHASE-C-07-VALIDATE-TRACEABILITY | PHASE-C-08-VALIDATE-SECTION12 |
+| COMMAND | `python3 scripts/apollo/evidence/validate_design_standards_csv.py` | `python3 scripts/apollo/evidence/validate_evidence_collection_csv.py` | `python3 scripts/apollo/evidence/validate_evidence_traceability_matrix.py` | `python3 scripts/apollo/evidence/validate_report_section12_register.py` |
+| START_TIME | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST |
+| END_TIME | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST | 2026-08-01 19:42:15 JST |
+| EXIT_CODE | 0 | 0 | 0 | 0 |
+| RESULT | PASS | PASS | PASS | PASS |
+| FAILURE_CLASS | N/A | N/A | N/A | N/A |
+| AFFECTED_SCOPE | `docs/apollo/design-standards/` CSV registers (40 files) | `docs/apollo/evidence-collection/` CSV manifests (21 files) | Evidence traceability matrix (76 blockers) | Section 12 register (76 rows; baseline byte-exact) |
+| EVIDENCE | `DESIGN_STANDARDS_CSV_VALIDATION: PASS (40 files; exact header widths)` | `EVIDENCE_COLLECTION_CSV_VALIDATION: PASS (21 files; exact header widths)` | `TRACEABILITY_MATRIX_VALIDATION: PASS (76 blockers covered; exact IDs; paths exist; no pseudo syntax)` | `SECTION12_REGISTER_VALIDATION: PASS (76 rows; baseline byte-exact; no truncation; procedure/tool distinct)`; `baseline_mismatch_count=0`; `snapshot_sha256=e89fae89…`; `register_sha256=5bad1c04…` |
+| ACTION | Record; proceed to PHASE-C-06 | Record; proceed to PHASE-C-07 | Record; proceed to PHASE-C-08 | Phase C complete; proceed to LV-04 bundle 5 |
+
+### Phase C verdict
+
+`PHASE_C_SCHEMA_DOC_VERDICT: PASS` — all eight schema/document verification commands exited 0.
+No failures attributable to the verification branch; no application or validator code modified.
+
+## LV-05 manual 3D/GUI checklist preparation
+
+**Preparation timestamp:** 2026-08-01 19:49 JST
+**Artifact:** `manual_verification_checklist.md` (this directory)
+**Verdict:** Checklist prepared; operator execution **not** performed by Codex/Cursor.
+
+| Field | Value |
+|-------|-------|
+| Checklist status | CHECKLIST_PREPARED |
+| Startup commands documented | Backend uvicorn `127.0.0.1:8000`; `npm run dev:apollo -- --host 127.0.0.1 --strictPort`; optional `npm run app:dev:apollo` |
+| URLs documented | `http://127.0.0.1:5173/pro`, `http://127.0.0.1:5173/pro/apollo` |
+| MV rows | MV-01 … MV-13 (solids, deck, girders, cross-beams, frame-only regression, camera, console, STL, downloads, workspace reload, main-screen solids) |
+| Automated substitute policy | **Rejected** — LV-04 bundle 2 viewer vitest PASS (228/228) is supporting evidence only |
+| `THREED_VIEWER_VERDICT` | **PENDING_USER_VISUAL_CONFIRMATION** |
+| `LV05_3D_DISPLAY_VERDICT` | **PENDING_USER_VISUAL_CONFIRMATION** |
+| Final readiness / PR judgment | **BLOCKED** until human operator completes checklist and records PASS/FAIL with evidence |
+
+`LV05_MANUAL_CHECKLIST_VERDICT: CHECKLIST_PREPARED` — manual user visual confirmation is now the gating step for LV-05 PASS and refreeze final readiness.
+
 ## Next action
 
-LV-04 bundle 1 (Apollo frontend) recorded FAIL (pre-existing `apolloSuite.test.ts` drift).
-LV-04 bundle 2 (viewer/3D) recorded PASS (corrected rerun). LV-04 bundle 3 (IF3 frontend)
-recorded PASS. LV-04 bundle 4 (IF3 backend) recorded PASS. Static check bundle 1
-(typecheck) recorded PASS. Static check bundle 2 (lint) recorded PASS. Static check bundle 3
-(build) recorded PASS. Proceed to LV-03 per `local_verification_plan.md` if not yet done,
-then LV-04 bundle 5 (backend general) using Phase 3 planned commands only. LV-05 uses
-manual/e2e commands from the E2E/manual table. Do not invent commands outside this
-inventory.
+LV-01 re-run (2026-08-01 19:38:37 JST): **PASS**. Phase C schema/doc verification
+(2026-08-01 19:42:07–19:42:15 JST): **PASS** (8/8 commands). LV-04 bundle 5 (backend
+general, 2026-08-01 19:45:37 JST): **PASS** (14/14 modules, 189/189 tests; IF3 backend
+bundle and schema-only bundle already covered separately). LV-05 checklist prepared
+(2026-08-01 19:49 JST): `manual_verification_checklist.md` — **operator must execute**
+Sections 2–6 and sign off; `THREED_VIEWER_VERDICT` remains
+`PENDING_USER_VISUAL_CONFIRMATION`. `origin/main` and local `main` are both
+`f0983878ccbb816f591214b6242c3688ecb5a060`. Verification branch HEAD `cccf4c3…` contains
+`origin/main` and matches `origin/docs/apollo-refreeze-local-verification`. Prior FAIL
+re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded results
+preserved: LV-03 PASS; LV-04 bundle 1 FAIL (PD-001 `SEPARATE_DEFECT_REQUIRED`; manifest
+stale — 26 expected / 27 discovered; missing `apolloStlExport.test.ts`; drift at
+`f89fe11` / #225; unrelated to #239/#240); bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** (1) human operator completes
+`manual_verification_checklist.md`; (2) remaining LV-04 bundles per Phase 3 planned commands;
+PD-001 fix deferred to implementation branch. Do not invent commands outside the checklist
+and Phase 3 inventory. Do not mark refreeze final readiness or PR judgment PASS until manual
+visual confirmation completes.
