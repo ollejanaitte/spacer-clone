@@ -3,9 +3,9 @@ Apollo Phase 1 Design Expansion Refreeze
 Local Verification Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:45:40 JST
-WORK_STATUS: ACTIVE — LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
-CURRENT_PHASE: LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0)
+UPDATE_TIMESTAMP: 2026-08-01 19:47 JST
+WORK_STATUS: ACTIVE — PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
+CURRENT_PHASE: PD-001 pre-existing defect classification complete; LV-04 bundle 1 Apollo frontend remains FAIL (26 expected / 27 discovered manifest drift)
 ORIGIN_MAIN_ADVANCED: NO — local main equals origin/main at f0983878ccbb816f591214b6242c3688ecb5a060
 
 ================================================================================
@@ -24,7 +24,9 @@ current re-run PASS at origin/main f0983878… (local main f0983878…; merge-ba
 origin/main is f0983878…; HEAD cccf4c3… matches origin tracking branch). Prior LV-01
 FAIL at 19:32:32 JST superseded. LV-02 (Apollo document consistency) is PASS (recorded).
 Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
-origin/main). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
+origin/main; classified PD-001 SEPARATE_DEFECT_REQUIRED — manifest update omission at
+f89fe11/#225; expected 26 modules, discovered 27; missing apolloStlExport.test.ts from
+EXPECTED_APOLLO_TEST_MODULES; unrelated to docs-only #239/#240; test-only fix sufficient). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
 files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
 that broadened scope and is superseded. Phase 4 bundle 3 (IF3 frontend vitest): PASS
 (exit 0; 12/12 files, 76/76 tests). Phase 4 bundle 4 (IF3 backend pytest): PASS
@@ -347,10 +349,10 @@ Execution recorded on branch docs/apollo-refreeze-local-verification at
 | END_TIME | 2026-08-01 18:51:24 JST |
 | EXIT_CODE | 1 |
 | RESULT | FAIL |
-| FAILURE_CLASS | PRE_EXISTING (apolloSuite discoverability drift on origin/main) |
-| AFFECTED_SCOPE | apolloSuite.test.ts — 1/188 tests failed; 27/28 test files passed |
-| EVIDENCE | Vitest: 187 pass, 1 fail; apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES |
-| ACTION | Record only; fix deferred to implementation branch |
+| FAILURE_CLASS | PRE_EXISTING — PD-001 SEPARATE_DEFECT_REQUIRED (manifest update omission f89fe11/#225) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1/188 tests failed; 27/28 test files passed; expected 26 modules, discovered 27 |
+| EVIDENCE | Vitest: 187 pass, 1 fail; apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES; apolloStlExport.test.ts alone 11/11 pass |
+| ACTION | Record only; fix deferred to implementation branch (see preexisting_defects.md) |
 
 APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
 LV04_B01_APOLLO_FE_VERDICT: FAIL
@@ -692,13 +694,37 @@ Execution recorded on branch docs/apollo-refreeze-local-verification at
 | END_TIME | 2026-08-01 18:51:24 JST |
 | EXIT_CODE | 1 |
 | RESULT | FAIL |
-| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale vs apolloStlExport.test.ts on origin/main) |
-| AFFECTED_SCOPE | apolloSuite.test.ts — 1 failed / 188 total tests; 27/28 test files passed |
-| EVIDENCE | Vitest: Test Files 1 failed \| 27 passed (28); Tests 1 failed \| 187 passed (188) |
-| ACTION | Record only; fix deferred to implementation branch |
+| FAILURE_CLASS | PRE_EXISTING — PD-001 SEPARATE_DEFECT_REQUIRED (manifest update omission f89fe11/#225) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1 failed / 188 total tests; 27/28 test files passed; expected 26 modules, discovered 27 |
+| EVIDENCE | Vitest: Test Files 1 failed \| 27 passed (28); Tests 1 failed \| 187 passed (188); apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES; apolloStlExport.test.ts alone 11/11 pass |
+| ACTION | Record only; fix deferred to implementation branch (see preexisting_defects.md) |
 
-APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing on origin/main; not introduced by doc branch)
+APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (PD-001 pre-existing on origin/main; SEPARATE_DEFECT_REQUIRED; not introduced by doc branch)
 LV04_B01_APOLLO_FE_VERDICT: FAIL
+
+================================================================================
+13a. Pre-existing Defect PD-001 — Apollo Suite Manifest Stale
+================================================================================
+
+Investigation recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 19:47 JST. Artifact: docs/apollo/phase1_design_expansion_refreeze/preexisting_defects.md
+
+| Field | Value |
+|-------|-------|
+| DEFECT_ID | PD-001 |
+| CLASSIFICATION | SEPARATE_DEFECT_REQUIRED |
+| STALE_MANIFEST | EXPECTED_APOLLO_TEST_MODULES in frontend/src/apollo/__tests__/apolloSuite.test.ts |
+| EXPECTED_COUNT | 26 |
+| DISCOVERED_COUNT | 27 |
+| MISSING_FROM_MANIFEST | apolloStlExport.test.ts |
+| EXTRA_IN_MANIFEST | (none) |
+| DRIFT_COMMIT | f89fe11 (2026-07-31) feat(apollo): add binary stl export and manifest (#225) |
+| ROOT_CAUSE | Manifest update omission — not code regression; apolloStlExport.test.ts passes 11/11 |
+| RELATED_TO_239_240 | NO — docs-only PRs; zero frontend/ diff vs origin/main |
+| TEST_ONLY_FIX | YES — add apolloStlExport.test.ts to EXPECTED_APOLLO_TEST_MODULES |
+| BLOCKS_REFREEZE_READINESS | YES for LV-04-B01 PASS and full LV-04 completion; NO for docs-only refreeze or other PASS bundles |
+
+PD001_APOLLO_SUITE_MANIFEST_VERDICT: FAIL (do not mark PASS until fixed on implementation branch)
 
 ================================================================================
 17. Recommended Next Action
@@ -710,9 +736,10 @@ IF3 backend bundle and schema-only bundle already covered separately). Phase C s
 verification PASS (2026-08-01 19:42:07–19:42:15 JST; 8/8 commands exit 0).
 LV-01 re-run PASS (2026-08-01 19:38:37 JST): origin/main and local main f0983878….
 Verification branch contains origin/main. Prior FAIL re-run (19:32:32 JST) retained as
-historical evidence. Prior recorded results preserved: LV-04 bundle 1 FAIL (pre-existing);
-bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. Proceed
-to remaining LV-04 bundles per local_verification_plan.md.
+historical evidence. Prior recorded results preserved: LV-04 bundle 1 FAIL (PD-001
+SEPARATE_DEFECT_REQUIRED); bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C
+schema/doc PASS. Proceed to remaining LV-04 bundles per local_verification_plan.md. PD-001
+fix deferred to implementation branch (preexisting_defects.md).
 
 ================================================================================
 18. LV Verification Verdict (Placeholder)
@@ -745,8 +772,10 @@ SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
 LV-04: IN_PROGRESS (bundle 5/9 PASS — backend general).
 LV-05 through LV-07: NOT_STARTED.
 LV-08: PARTIAL (Phase 2 doc checks only).
-Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
-187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D PASS (corrected
+Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (PD-001
+SEPARATE_DEFECT_REQUIRED; 187/188 pass; manifest stale 26 expected / 27 discovered;
+apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES; drift at f89fe11/#225;
+unrelated to #239/#240; test-only fix sufficient). LV-04 bundle 2 viewer/3D PASS (corrected
 rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
 76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
 LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0; IF3 backend
@@ -767,9 +796,9 @@ APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING
 21. Stop Status
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 19:45:40 JST
-WORK_STATUS: ACTIVE — LV-04 bundle 5 (backend general) PASS; Phase C schema/doc PASS; LV-01 PASS
-STOP_REASON: None — LV-04 bundle 5 backend general completed 2026-08-01 19:45:40 JST (PASS).
+UPDATE_TIMESTAMP: 2026-08-01 19:47 JST
+WORK_STATUS: ACTIVE — PD-001 classified (SEPARATE_DEFECT_REQUIRED; LV-04-B01 remains FAIL); LV-04 bundle 5 backend general PASS; Phase C schema/doc PASS; LV-01 PASS
+STOP_REASON: None — PD-001 classification recorded 2026-08-01 19:47 JST; LV-04-B01 remains FAIL.
 LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (local main synced; branch contains origin/main)
 LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
 CURRENT_BRANCH: docs/apollo-refreeze-local-verification
@@ -786,7 +815,7 @@ MAIN_MERGE_STATUS: origin/main merged into docs/apollo-refreeze-local-verificati
 SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
 SAFE_RESUME_POINT:
   - branch docs/apollo-refreeze-local-verification at commit cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — proceed to remaining LV-04 bundles
+  - LV-01 PASS — Phase C schema/doc PASS — LV-04 bundle 5 backend general PASS — PD-001 FAIL (blocks LV-04-B01) — proceed to remaining LV-04 bundles
 NEXT_EXACT_ACTION:
   - cd /home/masaharu/Projects/spacer-clone
   - Remaining LV-04 bundles per local_verification_plan.md
