@@ -2,14 +2,22 @@ import { z } from "zod";
 import {
   BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID,
 } from "../../contractVersionRegistry";
-import { BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND } from "../../bridgeSuperstructureDesignDocument";
+import {
+  BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND,
+  DECK_ANCHORAGE_ROLES,
+  DESIGN_ENTITY_DESIGN_STATUSES,
+} from "../../bridgeSuperstructureDesignDocument";
 import { contractSchemaId, SHARED_CONTRACT_VERSION } from "../constants";
 import { createCommonEnvelopeSchema } from "./commonEnvelope";
 import { coordinateContextSchema } from "./coordinateContext";
 import { documentReferenceSchema } from "./documentReference";
 import { extensionsSchema } from "./extensions";
-import { governedQuantitySchema } from "./governedQuantity";
-import { nonEmptyStringSchema, uuidStringSchema } from "./primitives";
+import {
+  governedQuantityAdoptionStatusSchema,
+  governedQuantitySchema,
+} from "./governedQuantity";
+import { nonEmptyStringSchema, positiveIntegerSchema, uuidStringSchema } from "./primitives";
+import { provenanceSchema } from "./provenance";
 import { unitContextSchema } from "./unitContext";
 
 const projectContextSchema = z.strictObject({
@@ -113,6 +121,122 @@ const phase1ScopeAssertionSchema = z.strictObject({
   analysisType: z.literal("static_linear"),
 });
 
+const designEntityDesignStatusSchema = z.enum(DESIGN_ENTITY_DESIGN_STATUSES);
+
+const designBindingStatusSchema = z.enum(["unbound", "bound", "stale"]);
+
+const designGeometryReferenceSchema = z.strictObject({
+  geometryRefId: uuidStringSchema.nullable(),
+  bindingStatus: designBindingStatusSchema,
+});
+
+const designAnalysisMemberMappingSchema = z.strictObject({
+  analysisMemberRefId: uuidStringSchema.nullable(),
+  bindingStatus: designBindingStatusSchema,
+  analysisBindingId: uuidStringSchema.nullable().optional(),
+});
+
+const designEntityMetadataSchema = z.strictObject({
+  entityRevisionId: positiveIntegerSchema,
+  provenance: provenanceSchema,
+  sourceRef: documentReferenceSchema.nullable().optional(),
+  geometryRef: designGeometryReferenceSchema,
+  analysisMapping: designAnalysisMemberMappingSchema,
+  designStatus: designEntityDesignStatusSchema,
+  adoptionStatus: governedQuantityAdoptionStatusSchema,
+  extensions: extensionsSchema.optional(),
+});
+
+const mainGirderSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("MainGirder"),
+  mainGirderId: uuidStringSchema,
+  girderLineRefId: uuidStringSchema.nullable(),
+  materialRefId: uuidStringSchema.nullable().optional(),
+  compositeAction: z.literal(false).optional(),
+});
+
+const girderSectionSegmentSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("GirderSectionSegment"),
+  girderSectionSegmentId: uuidStringSchema,
+  mainGirderRefId: uuidStringSchema.nullable(),
+  materialRefId: uuidStringSchema.nullable().optional(),
+});
+
+const rcDeckSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("RcDeck"),
+  rcDeckId: uuidStringSchema,
+  deckRefId: uuidStringSchema.nullable(),
+  compositeAction: z.literal(false).optional(),
+});
+
+const haunchSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("Haunch"),
+  haunchId: uuidStringSchema,
+  mainGirderRefId: uuidStringSchema.nullable(),
+});
+
+const crossBeamSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("CrossBeam"),
+  crossBeamId: uuidStringSchema,
+  materialRefId: uuidStringSchema.nullable().optional(),
+});
+
+const swayBracingSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("SwayBracing"),
+  swayBracingId: uuidStringSchema,
+});
+
+const lateralBracingSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("LateralBracing"),
+  lateralBracingId: uuidStringSchema,
+});
+
+const braceMemberSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("BraceMember"),
+  braceMemberId: uuidStringSchema,
+  parentBracingRefId: uuidStringSchema.nullable(),
+});
+
+const stiffenerSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("Stiffener"),
+  stiffenerId: uuidStringSchema,
+  mainGirderRefId: uuidStringSchema.nullable(),
+});
+
+const spliceSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("Splice"),
+  spliceId: uuidStringSchema,
+  mainGirderRefId: uuidStringSchema.nullable(),
+});
+
+const deckAnchorageSchema = designEntityMetadataSchema.extend({
+  entityKind: z.literal("DeckAnchorage"),
+  deckAnchorageId: uuidStringSchema,
+  anchorageRole: z.enum(DECK_ANCHORAGE_ROLES),
+  girderRefId: uuidStringSchema.nullable(),
+  rcDeckRefId: uuidStringSchema.nullable(),
+});
+
+const sdmNonCompositeAssertionSchema = z.strictObject({
+  compositeAction: z.literal(false),
+});
+
+const structuralDesignModelSchema = z.strictObject({
+  modelId: uuidStringSchema,
+  nonCompositeAssertion: sdmNonCompositeAssertionSchema,
+  mainGirders: z.array(mainGirderSchema),
+  girderSectionSegments: z.array(girderSectionSegmentSchema),
+  rcDecks: z.array(rcDeckSchema),
+  haunches: z.array(haunchSchema),
+  crossBeams: z.array(crossBeamSchema),
+  swayBracings: z.array(swayBracingSchema),
+  lateralBracings: z.array(lateralBracingSchema),
+  braceMembers: z.array(braceMemberSchema),
+  stiffeners: z.array(stiffenerSchema),
+  splices: z.array(spliceSchema),
+  deckAnchorages: z.array(deckAnchorageSchema),
+});
+
 export const bridgeSuperstructureDesignDocumentSchema = createCommonEnvelopeSchema({
   fixedSchemaId: BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_ID,
   fixedDocumentKind: BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND,
@@ -133,6 +257,7 @@ export const bridgeSuperstructureDesignDocumentSchema = createCommonEnvelopeSche
     materialDefinitions: z.array(materialDefinitionSchema),
     loadCases: z.array(loadCaseSchema),
     analysisBindings: z.array(analysisBindingSchema),
+    structuralDesignModel: structuralDesignModelSchema.optional(),
     roadImportProvenance: documentReferenceSchema.nullable().optional(),
     phase1ScopeAssertion: phase1ScopeAssertionSchema,
     validationStatus: z

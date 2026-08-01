@@ -6,7 +6,24 @@ import type { CoordinateContext } from "../coordinateContext";
 import type { DocumentReference } from "../documentReference";
 import type { BridgeFrameAnalysisDocument, TransferBinding } from "../bridgeFrameAnalysisDocument";
 import { BRIDGE_FRAME_ANALYSIS_DOCUMENT_KIND } from "../bridgeFrameAnalysisDocument";
-import type { BridgeSuperstructureDesignDocument } from "../bridgeSuperstructureDesignDocument";
+import type {
+  BraceMember,
+  BridgeSuperstructureDesignDocument,
+  CrossBeam,
+  DeckAnchorage,
+  DesignAnalysisMemberMapping,
+  DesignEntityMetadata,
+  DesignGeometryReference,
+  GirderSectionSegment,
+  Haunch,
+  LateralBracing,
+  MainGirder,
+  RcDeck,
+  Splice,
+  Stiffener,
+  StructuralDesignModel,
+  SwayBracing,
+} from "../bridgeSuperstructureDesignDocument";
 import { BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_KIND } from "../bridgeSuperstructureDesignDocument";
 import type {
   PackageArtifactReference,
@@ -3001,6 +3018,538 @@ export function mapTransferRecordValue(
   };
 }
 
+type StructuralDesignModelValue = NonNullable<
+  BridgeSuperstructureDesignDocumentValue["structuralDesignModel"]
+>;
+type DesignEntityMetadataValue = Pick<
+  StructuralDesignModelValue["mainGirders"][number],
+  | "entityRevisionId"
+  | "provenance"
+  | "sourceRef"
+  | "geometryRef"
+  | "analysisMapping"
+  | "designStatus"
+  | "adoptionStatus"
+  | "extensions"
+>;
+
+function requireUuidFieldOrCollect(
+  value: string,
+  fieldPath: string,
+  code: string,
+  message: string,
+  issues: ValidationIssue[],
+): UuidString | undefined {
+  const parsed = requireUuidField(value, fieldPath, code, message);
+  if (parsed.issue !== undefined) {
+    issues.push(parsed.issue);
+    return undefined;
+  }
+  return parsed.uuid;
+}
+
+function mapNullableUuidField(
+  value: string | null,
+  fieldPath: string,
+  code: string,
+  message: string,
+  issues: ValidationIssue[],
+): UuidString | null {
+  if (value === null) {
+    return null;
+  }
+  const parsed = requireUuidField(value, fieldPath, code, message);
+  if (parsed.issue !== undefined) {
+    issues.push(parsed.issue);
+    return null;
+  }
+  return parsed.uuid ?? null;
+}
+
+function mapOptionalNullableUuidField(
+  value: string | null | undefined,
+  fieldPath: string,
+  code: string,
+  message: string,
+  issues: ValidationIssue[],
+): UuidString | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  return mapNullableUuidField(value, fieldPath, code, message, issues);
+}
+
+function mapDesignGeometryReferenceValue(
+  value: DesignEntityMetadataValue["geometryRef"],
+  basePath: string,
+  issues: ValidationIssue[],
+): DesignGeometryReference {
+  return {
+    geometryRefId: mapNullableUuidField(
+      value.geometryRefId,
+      joinFieldPath(basePath, "geometryRefId"),
+      "DOMAIN_BSDD_GEOMETRY_REF_ID_INVALID",
+      "geometryRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+    bindingStatus: value.bindingStatus,
+  };
+}
+
+function mapDesignAnalysisMemberMappingValue(
+  value: DesignEntityMetadataValue["analysisMapping"],
+  basePath: string,
+  issues: ValidationIssue[],
+): DesignAnalysisMemberMapping {
+  const analysisMemberRefId = mapNullableUuidField(
+    value.analysisMemberRefId,
+    joinFieldPath(basePath, "analysisMemberRefId"),
+    "DOMAIN_BSDD_ANALYSIS_MEMBER_REF_ID_INVALID",
+    "analysisMemberRefId could not be converted to a domain UuidString.",
+    issues,
+  );
+  const analysisBindingId = mapOptionalNullableUuidField(
+    value.analysisBindingId,
+    joinFieldPath(basePath, "analysisBindingId"),
+    "DOMAIN_BSDD_ANALYSIS_BINDING_ID_INVALID",
+    "analysisBindingId could not be converted to a domain UuidString.",
+    issues,
+  );
+
+  return {
+    analysisMemberRefId,
+    bindingStatus: value.bindingStatus,
+    ...(analysisBindingId !== undefined ? { analysisBindingId } : {}),
+  };
+}
+
+function mapDesignEntityMetadataValue(
+  value: DesignEntityMetadataValue,
+  entityPath: string,
+  issues: ValidationIssue[],
+): DesignEntityMetadata {
+  const provenanceMapped = mapProvenanceValue(value.provenance);
+  if (!provenanceMapped.ok) {
+    issues.push(...provenanceMapped.validation.issues);
+  }
+
+  const sourceRefMapped =
+    value.sourceRef !== undefined && value.sourceRef !== null
+      ? mapDocumentReferenceValue(value.sourceRef, joinFieldPath(entityPath, "sourceRef"))
+      : undefined;
+  if (sourceRefMapped !== undefined && !sourceRefMapped.ok) {
+    issues.push(...sourceRefMapped.validation.issues);
+  }
+
+  return {
+    entityRevisionId: value.entityRevisionId,
+    provenance: provenanceMapped.ok ? provenanceMapped.data : value.provenance,
+    ...(value.sourceRef !== undefined
+      ? {
+          sourceRef:
+            value.sourceRef === null
+              ? null
+              : sourceRefMapped?.ok === true
+                ? sourceRefMapped.data
+                : null,
+        }
+      : {}),
+    geometryRef: mapDesignGeometryReferenceValue(
+      value.geometryRef,
+      joinFieldPath(entityPath, "geometryRef"),
+      issues,
+    ),
+    analysisMapping: mapDesignAnalysisMemberMappingValue(
+      value.analysisMapping,
+      joinFieldPath(entityPath, "analysisMapping"),
+      issues,
+    ),
+    designStatus: value.designStatus,
+    adoptionStatus: value.adoptionStatus,
+    ...(value.extensions !== undefined ? { extensions: mapExtensionsValue(value.extensions) } : {}),
+  };
+}
+
+function mapMainGirderValue(
+  value: StructuralDesignModelValue["mainGirders"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): MainGirder {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    mainGirderId: requireUuidFieldOrCollect(
+      value.mainGirderId,
+      joinFieldPath(entityPath, "mainGirderId"),
+      "DOMAIN_BSDD_MAIN_GIRDER_ID_INVALID",
+      "mainGirderId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    girderLineRefId: mapNullableUuidField(
+      value.girderLineRefId,
+      joinFieldPath(entityPath, "girderLineRefId"),
+      "DOMAIN_BSDD_GIRDER_LINE_REF_ID_INVALID",
+      "girderLineRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+    ...(value.materialRefId !== undefined
+      ? {
+          materialRefId: mapNullableUuidField(
+            value.materialRefId,
+            joinFieldPath(entityPath, "materialRefId"),
+            "DOMAIN_BSDD_MATERIAL_REF_ID_INVALID",
+            "materialRefId could not be converted to a domain UuidString.",
+            issues,
+          ),
+        }
+      : {}),
+    ...(value.compositeAction !== undefined ? { compositeAction: value.compositeAction } : {}),
+  };
+}
+
+function mapGirderSectionSegmentValue(
+  value: StructuralDesignModelValue["girderSectionSegments"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): GirderSectionSegment {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    girderSectionSegmentId: requireUuidFieldOrCollect(
+      value.girderSectionSegmentId,
+      joinFieldPath(entityPath, "girderSectionSegmentId"),
+      "DOMAIN_BSDD_GIRDER_SECTION_SEGMENT_ID_INVALID",
+      "girderSectionSegmentId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    mainGirderRefId: mapNullableUuidField(
+      value.mainGirderRefId,
+      joinFieldPath(entityPath, "mainGirderRefId"),
+      "DOMAIN_BSDD_MAIN_GIRDER_REF_ID_INVALID",
+      "mainGirderRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+    ...(value.materialRefId !== undefined
+      ? {
+          materialRefId: mapNullableUuidField(
+            value.materialRefId,
+            joinFieldPath(entityPath, "materialRefId"),
+            "DOMAIN_BSDD_MATERIAL_REF_ID_INVALID",
+            "materialRefId could not be converted to a domain UuidString.",
+            issues,
+          ),
+        }
+      : {}),
+  };
+}
+
+function mapRcDeckValue(
+  value: StructuralDesignModelValue["rcDecks"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): RcDeck {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    rcDeckId: requireUuidFieldOrCollect(
+      value.rcDeckId,
+      joinFieldPath(entityPath, "rcDeckId"),
+      "DOMAIN_BSDD_RC_DECK_ID_INVALID",
+      "rcDeckId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    deckRefId: mapNullableUuidField(
+      value.deckRefId,
+      joinFieldPath(entityPath, "deckRefId"),
+      "DOMAIN_BSDD_DECK_REF_ID_INVALID",
+      "deckRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+    ...(value.compositeAction !== undefined ? { compositeAction: value.compositeAction } : {}),
+  };
+}
+
+function mapHaunchValue(
+  value: StructuralDesignModelValue["haunches"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): Haunch {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    haunchId: requireUuidFieldOrCollect(
+      value.haunchId,
+      joinFieldPath(entityPath, "haunchId"),
+      "DOMAIN_BSDD_HAUNCH_ID_INVALID",
+      "haunchId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    mainGirderRefId: mapNullableUuidField(
+      value.mainGirderRefId,
+      joinFieldPath(entityPath, "mainGirderRefId"),
+      "DOMAIN_BSDD_MAIN_GIRDER_REF_ID_INVALID",
+      "mainGirderRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+  };
+}
+
+function mapCrossBeamValue(
+  value: StructuralDesignModelValue["crossBeams"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): CrossBeam {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    crossBeamId: requireUuidFieldOrCollect(
+      value.crossBeamId,
+      joinFieldPath(entityPath, "crossBeamId"),
+      "DOMAIN_BSDD_CROSS_BEAM_ID_INVALID",
+      "crossBeamId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    ...(value.materialRefId !== undefined
+      ? {
+          materialRefId: mapNullableUuidField(
+            value.materialRefId,
+            joinFieldPath(entityPath, "materialRefId"),
+            "DOMAIN_BSDD_MATERIAL_REF_ID_INVALID",
+            "materialRefId could not be converted to a domain UuidString.",
+            issues,
+          ),
+        }
+      : {}),
+  };
+}
+
+function mapSwayBracingValue(
+  value: StructuralDesignModelValue["swayBracings"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): SwayBracing {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    swayBracingId: requireUuidFieldOrCollect(
+      value.swayBracingId,
+      joinFieldPath(entityPath, "swayBracingId"),
+      "DOMAIN_BSDD_SWAY_BRACING_ID_INVALID",
+      "swayBracingId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+  };
+}
+
+function mapLateralBracingValue(
+  value: StructuralDesignModelValue["lateralBracings"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): LateralBracing {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    lateralBracingId: requireUuidFieldOrCollect(
+      value.lateralBracingId,
+      joinFieldPath(entityPath, "lateralBracingId"),
+      "DOMAIN_BSDD_LATERAL_BRACING_ID_INVALID",
+      "lateralBracingId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+  };
+}
+
+function mapBraceMemberValue(
+  value: StructuralDesignModelValue["braceMembers"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): BraceMember {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    braceMemberId: requireUuidFieldOrCollect(
+      value.braceMemberId,
+      joinFieldPath(entityPath, "braceMemberId"),
+      "DOMAIN_BSDD_BRACE_MEMBER_ID_INVALID",
+      "braceMemberId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    parentBracingRefId: mapNullableUuidField(
+      value.parentBracingRefId,
+      joinFieldPath(entityPath, "parentBracingRefId"),
+      "DOMAIN_BSDD_PARENT_BRACING_REF_ID_INVALID",
+      "parentBracingRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+  };
+}
+
+function mapStiffenerValue(
+  value: StructuralDesignModelValue["stiffeners"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): Stiffener {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    stiffenerId: requireUuidFieldOrCollect(
+      value.stiffenerId,
+      joinFieldPath(entityPath, "stiffenerId"),
+      "DOMAIN_BSDD_STIFFENER_ID_INVALID",
+      "stiffenerId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    mainGirderRefId: mapNullableUuidField(
+      value.mainGirderRefId,
+      joinFieldPath(entityPath, "mainGirderRefId"),
+      "DOMAIN_BSDD_MAIN_GIRDER_REF_ID_INVALID",
+      "mainGirderRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+  };
+}
+
+function mapSpliceValue(
+  value: StructuralDesignModelValue["splices"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): Splice {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    spliceId: requireUuidFieldOrCollect(
+      value.spliceId,
+      joinFieldPath(entityPath, "spliceId"),
+      "DOMAIN_BSDD_SPLICE_ID_INVALID",
+      "spliceId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    mainGirderRefId: mapNullableUuidField(
+      value.mainGirderRefId,
+      joinFieldPath(entityPath, "mainGirderRefId"),
+      "DOMAIN_BSDD_MAIN_GIRDER_REF_ID_INVALID",
+      "mainGirderRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+  };
+}
+
+function mapDeckAnchorageValue(
+  value: StructuralDesignModelValue["deckAnchorages"][number],
+  entityPath: string,
+  issues: ValidationIssue[],
+): DeckAnchorage {
+  const metadata = mapDesignEntityMetadataValue(value, entityPath, issues);
+  return {
+    ...metadata,
+    entityKind: value.entityKind,
+    deckAnchorageId: requireUuidFieldOrCollect(
+      value.deckAnchorageId,
+      joinFieldPath(entityPath, "deckAnchorageId"),
+      "DOMAIN_BSDD_DECK_ANCHORAGE_ID_INVALID",
+      "deckAnchorageId could not be converted to a domain UuidString.",
+      issues,
+    )!,
+    anchorageRole: value.anchorageRole,
+    girderRefId: mapNullableUuidField(
+      value.girderRefId,
+      joinFieldPath(entityPath, "girderRefId"),
+      "DOMAIN_BSDD_GIRDER_REF_ID_INVALID",
+      "girderRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+    rcDeckRefId: mapNullableUuidField(
+      value.rcDeckRefId,
+      joinFieldPath(entityPath, "rcDeckRefId"),
+      "DOMAIN_BSDD_RC_DECK_REF_ID_INVALID",
+      "rcDeckRefId could not be converted to a domain UuidString.",
+      issues,
+    ),
+  };
+}
+
+function mapStructuralDesignModelValue(
+  value: StructuralDesignModelValue,
+  basePath: string,
+  issues: ValidationIssue[],
+): StructuralDesignModel {
+  const modelId = requireUuidFieldOrCollect(
+    value.modelId,
+    joinFieldPath(basePath, "modelId"),
+    "DOMAIN_BSDD_MODEL_ID_INVALID",
+    "modelId could not be converted to a domain UuidString.",
+    issues,
+  );
+
+  return {
+    modelId: modelId!,
+    nonCompositeAssertion: value.nonCompositeAssertion,
+    mainGirders: value.mainGirders.map((entry, index) =>
+      mapMainGirderValue(entry, joinIndexedPath(joinFieldPath(basePath, "mainGirders"), index), issues),
+    ),
+    girderSectionSegments: value.girderSectionSegments.map((entry, index) =>
+      mapGirderSectionSegmentValue(
+        entry,
+        joinIndexedPath(joinFieldPath(basePath, "girderSectionSegments"), index),
+        issues,
+      ),
+    ),
+    rcDecks: value.rcDecks.map((entry, index) =>
+      mapRcDeckValue(entry, joinIndexedPath(joinFieldPath(basePath, "rcDecks"), index), issues),
+    ),
+    haunches: value.haunches.map((entry, index) =>
+      mapHaunchValue(entry, joinIndexedPath(joinFieldPath(basePath, "haunches"), index), issues),
+    ),
+    crossBeams: value.crossBeams.map((entry, index) =>
+      mapCrossBeamValue(entry, joinIndexedPath(joinFieldPath(basePath, "crossBeams"), index), issues),
+    ),
+    swayBracings: value.swayBracings.map((entry, index) =>
+      mapSwayBracingValue(
+        entry,
+        joinIndexedPath(joinFieldPath(basePath, "swayBracings"), index),
+        issues,
+      ),
+    ),
+    lateralBracings: value.lateralBracings.map((entry, index) =>
+      mapLateralBracingValue(
+        entry,
+        joinIndexedPath(joinFieldPath(basePath, "lateralBracings"), index),
+        issues,
+      ),
+    ),
+    braceMembers: value.braceMembers.map((entry, index) =>
+      mapBraceMemberValue(
+        entry,
+        joinIndexedPath(joinFieldPath(basePath, "braceMembers"), index),
+        issues,
+      ),
+    ),
+    stiffeners: value.stiffeners.map((entry, index) =>
+      mapStiffenerValue(entry, joinIndexedPath(joinFieldPath(basePath, "stiffeners"), index), issues),
+    ),
+    splices: value.splices.map((entry, index) =>
+      mapSpliceValue(entry, joinIndexedPath(joinFieldPath(basePath, "splices"), index), issues),
+    ),
+    deckAnchorages: value.deckAnchorages.map((entry, index) =>
+      mapDeckAnchorageValue(
+        entry,
+        joinIndexedPath(joinFieldPath(basePath, "deckAnchorages"), index),
+        issues,
+      ),
+    ),
+  };
+}
+
 export function mapBridgeSuperstructureDesignDocumentValue(
   value: BridgeSuperstructureDesignDocumentValue,
   basePath = "",
@@ -3121,6 +3670,15 @@ export function mapBridgeSuperstructureDesignDocumentValue(
     };
   });
 
+  let structuralDesignModel: StructuralDesignModel | undefined;
+  if (value.structuralDesignModel !== undefined) {
+    structuralDesignModel = mapStructuralDesignModelValue(
+      value.structuralDesignModel,
+      joinFieldPath(basePath, "structuralDesignModel"),
+      issues,
+    );
+  }
+
   if (issues.length > 0 || !unitContextMapped.ok) {
     return domainMapFailure(issues);
   }
@@ -3161,6 +3719,7 @@ export function mapBridgeSuperstructureDesignDocumentValue(
         value.materialDefinitions as unknown as BridgeSuperstructureDesignDocument["materialDefinitions"],
       loadCases: value.loadCases as unknown as BridgeSuperstructureDesignDocument["loadCases"],
       analysisBindings,
+      ...(structuralDesignModel !== undefined ? { structuralDesignModel } : {}),
       phase1ScopeAssertion:
         value.phase1ScopeAssertion as BridgeSuperstructureDesignDocument["phase1ScopeAssertion"],
       ...(value.validationStatus !== undefined ? { validationStatus: value.validationStatus } : {}),

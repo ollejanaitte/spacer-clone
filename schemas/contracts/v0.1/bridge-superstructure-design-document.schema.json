@@ -528,6 +528,1964 @@
         "additionalProperties": false
       }
     },
+    "structuralDesignModel": {
+      "type": "object",
+      "properties": {
+        "modelId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "nonCompositeAssertion": {
+          "type": "object",
+          "properties": {
+            "compositeAction": {
+              "type": "boolean",
+              "const": false
+            }
+          },
+          "required": [
+            "compositeAction"
+          ],
+          "additionalProperties": false
+        },
+        "mainGirders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "MainGirder"
+              },
+              "mainGirderId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "girderLineRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "materialRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "compositeAction": {
+                "type": "boolean",
+                "const": false
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "mainGirderId",
+              "girderLineRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "girderSectionSegments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "GirderSectionSegment"
+              },
+              "girderSectionSegmentId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "mainGirderRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "materialRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "girderSectionSegmentId",
+              "mainGirderRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rcDecks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "RcDeck"
+              },
+              "rcDeckId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "deckRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "compositeAction": {
+                "type": "boolean",
+                "const": false
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "rcDeckId",
+              "deckRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "haunches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "Haunch"
+              },
+              "haunchId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "mainGirderRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "haunchId",
+              "mainGirderRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "crossBeams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "CrossBeam"
+              },
+              "crossBeamId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "materialRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "crossBeamId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "swayBracings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "SwayBracing"
+              },
+              "swayBracingId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "swayBracingId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "lateralBracings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "LateralBracing"
+              },
+              "lateralBracingId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "lateralBracingId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "braceMembers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "BraceMember"
+              },
+              "braceMemberId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "parentBracingRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "braceMemberId",
+              "parentBracingRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "stiffeners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "Stiffener"
+              },
+              "stiffenerId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "mainGirderRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "stiffenerId",
+              "mainGirderRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "splices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "Splice"
+              },
+              "spliceId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "mainGirderRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "spliceId",
+              "mainGirderRefId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "deckAnchorages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entityRevisionId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/provenance.schema.json"
+              },
+              "sourceRef": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/document-reference.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "geometryRef": {
+                "type": "object",
+                "properties": {
+                  "geometryRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  }
+                },
+                "required": [
+                  "geometryRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "analysisMapping": {
+                "type": "object",
+                "properties": {
+                  "analysisMemberRefId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bindingStatus": {
+                    "type": "string",
+                    "enum": [
+                      "unbound",
+                      "bound",
+                      "stale"
+                    ]
+                  },
+                  "analysisBindingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisMemberRefId",
+                  "bindingStatus"
+                ],
+                "additionalProperties": false
+              },
+              "designStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_AUTHORIZED",
+                  "INCOMPLETE",
+                  "READY",
+                  "STALE",
+                  "OK",
+                  "NG",
+                  "WARNING",
+                  "ERROR"
+                ]
+              },
+              "adoptionStatus": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "PLACEHOLDER",
+                  "UNKNOWN",
+                  "ADOPTED"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+\\/[a-zA-Z][a-zA-Z0-9._-]*$"
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "json": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/json-value.schema.json"
+                    },
+                    "resourceRef": {
+                      "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/immutable-resource-reference.schema.json"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "entityKind": {
+                "type": "string",
+                "const": "DeckAnchorage"
+              },
+              "deckAnchorageId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "anchorageRole": {
+                "type": "string",
+                "enum": [
+                  "slab_to_girder",
+                  "uplift_restraint",
+                  "other_non_composite"
+                ]
+              },
+              "girderRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "rcDeckRefId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "entityRevisionId",
+              "provenance",
+              "geometryRef",
+              "analysisMapping",
+              "designStatus",
+              "adoptionStatus",
+              "entityKind",
+              "deckAnchorageId",
+              "anchorageRole",
+              "girderRefId",
+              "rcDeckRefId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "modelId",
+        "nonCompositeAssertion",
+        "mainGirders",
+        "girderSectionSegments",
+        "rcDecks",
+        "haunches",
+        "crossBeams",
+        "swayBracings",
+        "lateralBracings",
+        "braceMembers",
+        "stiffeners",
+        "splices",
+        "deckAnchorages"
+      ],
+      "additionalProperties": false
+    },
     "roadImportProvenance": {
       "anyOf": [
         {

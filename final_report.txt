@@ -1,1199 +1,499 @@
 ================================================================================
-Apollo Phase 1 Design Expansion Refreeze
-Local Verification Final Report
+AP-DX-01 Design Entity Contracts
+Local Implementation Final Report
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-01 JST (final merge readiness bookkeeping; LV-01..LV-08 verdicts authoritative)
-WORK_STATUS: COMPLETE — main sync merge resolved (docs-only conflicts); LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS (historical baseline f0983878…; post-merge contains f826d32…)
-CURRENT_PHASE: Final merge readiness — PR #242 push authorized; merge subject to PD-001 tracking on implementation branch
-ORIGIN_MAIN_ADVANCED: YES — origin/main advanced to f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241); merged into verification branch 2026-08-01 JST
+UPDATE_TIMESTAMP: 2026-08-01 JST (AP-DX-01 final report normalization on feat/ap-dx-01-design-entity-contracts)
+TASK: AP-DX-01 設計エンティティ契約
+WORK_STATUS: COMPLETE — Phases A–F; Block 2 contract tests PASS; Block 3 verification bundle PASS
+CURRENT_PHASE: AP-DX-01 COMPLETE — ready for PR review
+AP_DX_01_BRANCH: feat/ap-dx-01-design-entity-contracts
+AP_DX_01_BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+AP_DX_01_FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
+AP_DX_01_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
+AP_DX_01_SCHEMA_VERSION_CURRENT: 0.1.0
+AP_DX_01_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DETAILED_ARTIFACT: docs/apollo/ap-dx-01/local_implementation_report.md
+FREEZE_DOC: docs/apollo/ap-dx-01/implementation_freeze.md
 
 ================================================================================
 1. Executive Summary
 ================================================================================
 
-Apollo Phase 1 Design Expansion Refreeze local verification is recorded on a
-dedicated branch bootstrapped from integrated main. LV-01 re-run 2026-08-01 19:38:37 JST:
-PASS (local main synced to origin/main; verification branch contains origin/main;
-design-freeze baseline ancestry holds). Prior LV-01 re-run 2026-08-01 19:32:32 JST FAIL
-retained as historical evidence. Phase 1 recorded environment and repository metadata.
-Phase 2 validated refreeze documentation. Phase 3 inspected package.json scripts,
-vitest/playwright configs, pytest layout, and test file inventories to produce a
-verified LV-04/LV-05 command plan (no tests executed). LV-01 (git sync / worktree)
-current re-run PASS at origin/main f0983878… (local main f0983878…; merge-base HEAD
-origin/main is f0983878…; HEAD cccf4c3… matches origin tracking branch). Prior LV-01
-FAIL at 19:32:32 JST superseded. LV-02 (Apollo document consistency) is PASS (recorded).
-Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
-origin/main; classified PD-001 SEPARATE_DEFECT_REQUIRED — manifest update omission at
-f89fe11/#225; expected 26 modules, discovered 27; missing apolloStlExport.test.ts from
-EXPECTED_APOLLO_TEST_MODULES; unrelated to docs-only #239/#240; test-only fix sufficient). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
-files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
-that broadened scope and is superseded. Phase 4 bundle 3 (IF3 frontend vitest): PASS
-(exit 0; 12/12 files, 76/76 tests). Phase 4 bundle 4 (IF3 backend pytest): PASS
-(exit 0; 7/7 modules, 123/123 tests). Phase 4 static check bundle 1 (typecheck): PASS
-(exit 0; `tsc -b --pretty false` completed with no errors). Phase 4 static check bundle 2
-(lint): PASS (exit 0; source hygiene passed; Japanese-string audit informational only).
-Phase 4 static check bundle 3 (build): PASS (exit 0; `tsc -b && vite build` completed;
-3926 modules transformed; dist/ artifacts generated; chunk size warning informational only).
-Phase C schema/doc verification (2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands
-exit 0 — backend schema pytest 36/36; contract JSON Schema vitest 5/5; four Apollo evidence
-validators PASS). LV-04 bundle 5 (backend general, 2026-08-01 19:45:37 JST): PASS (exit 0;
-14/14 modules, 189/189 tests; IF3 backend bundle and schema-only bundle already covered
-separately). LV-03 (implementation inventory) is PASS (code inspection; see
-implementation_inventory.md). LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — all 9/9
-bundles recorded; B01/B07 FAIL (PD-001); B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE
-(union of B07+B08; separate execution adds no coverage; would only duplicate PD-001 on
-npm run test portion). B05 minimal 14-module backend general scope (IF3 and schema covered
-separately).
-LV-05 **PASS** 2026-08-01 JST — operator masaharu completed manual GUI verification
-(exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL
-export/download/reload PASS; evidence note recorded in manual_verification_checklist.md;
-`THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only).
-LV-06 manual traceability review PASS (2026-08-01 JST): 50 CSV rows; AP-DX-00..21 covered;
-Grider 第1章〜第13章 + SuperDesigner + JIP-SPACER/LINER mapped; no duplicate trace_id;
-inventory-aligned for PLANNED modules; OPEN_QUESTIONS on AP-DX-18 timing, DeckAnchorage
-trace row absence, and AP-DX governance unlock (LV-02 retained). CSV not modified.
-LV-07 non-composite deck / connection governance PASS (2026-08-01 JST): docs + Apollo/BSDD
-code signals aligned; no governance NG; DeckAnchorage entity/trace OPEN_QUESTION; AP-DX-01
-contract INCOMPLETE (expected). LV-08 document quality PASS (2026-08-01 JST): git diff --check
-clean; Phase 2 markdown/CSV/link checks reaffirmed; no secrets or copyright-risk content;
-verdict fields finalized. Local verification LV-01..LV-08 complete.
+AP-DX-01 extends `BridgeSuperstructureDesignDocument` (BSDD) at schema version `0.1.0`
+with an optional top-level `structuralDesignModel` container and 11 design entity types
+(`MainGirder`, `GirderSectionSegment`, `RcDeck`, `Haunch`, `CrossBeam`, `SwayBracing`,
+`LateralBracing`, `BraceMember`, `Stiffener`, `Splice`, `DeckAnchorage`). TypeScript
+types, Zod runtime schema, JSON Schema artifact, parser/mapper, semantic validator, and
+contract tests are aligned. Non-composite governance is fail-closed (`compositeAction:
+false`, `compositeShearConnector` forbidden, `DeckAnchorage` independent). No Apollo UI,
+3D viewer, backend, IF3, or numeric design logic changes.
 
-Canonical final verdict fields (2026-08-01 JST):
-GITHUB_SYNC_VERDICT: PASS
-DOCUMENT_SCOPE_VERDICT: PASS
-LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
-LV04_REGRESSION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-LV05_3D_DISPLAY_VERDICT: PASS
-LV06_MANUAL_TRACEABILITY_VERDICT: PASS
-LV07_NONCOMPOSITE_DECK_VERDICT: PASS
-LV08_DOCUMENT_QUALITY_VERDICT: PASS
-SCHEMA_DOC_VERDICT: PASS
-BACKEND_GENERAL_VERDICT: PASS
-APOLLO_REGRESSION_VERDICT: FAIL_KNOWN_PREEXISTING_PD001
-APOLLO_MANIFEST_FAILURE_CLASSIFICATION: KNOWN_PREEXISTING_TEST_MANIFEST_DEFECT_SEPARATE_DEFECT_REQUIRED
-THREED_VIEWER_AUTOMATED_VERDICT: PASS
-THREED_VIEWER_MANUAL_VERDICT: PASS
-TYPECHECK_VERDICT: PASS
-LINT_VERDICT: PASS
-BUILD_VERDICT: PASS
-IF3_VERDICT: PASS
-LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-REFREEZE_READINESS_VERDICT: READY_FOR_PR
-IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
-OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-
-PD-001: known pre-existing test manifest defect (SEPARATE_DEFECT_REQUIRED); blocks full green suite (LV-04-B01/B07) but not docs-only refreeze.
+Phases A–F completed on branch `feat/ap-dx-01-design-entity-contracts` from baseline
+`178768871545ab36aaea019916a492a051373496`. Final SHA recorded in §4 (normalization
+commit at HEAD). Pre-normalization finalize commit:
+`b1b49380bf2b1a711bb65d46600e223f9048793f`. Branch history retains earlier phase
+commits plus corrective commit `ff5c421` (validator path argument in fail-closed test);
+rebase/history rewrite was prohibited. Schema version remains `0.1.0` (additive); no
+migration required. PR #244 open for review; `main` unchanged/unmerged.
 
 ================================================================================
-2. Repository and Branch Information
+2. Current Status
+================================================================================
+
+| Field | Value |
+|-------|-------|
+| Task | AP-DX-01 — Design Entity Contract Implementation |
+| Branch | feat/ap-dx-01-design-entity-contracts |
+| Phase A (inventory) | COMPLETED |
+| Phase B (implementation design) | COMPLETED |
+| Phase C (TypeScript types) | COMPLETED |
+| Phase D (Zod + JSON Schema) | COMPLETED |
+| Phase E (parser/mapper/validator) | COMPLETED |
+| Phase F Block 2 (contract tests) | COMPLETED — PASS |
+| Phase F Block 3 (verification bundle) | COMPLETED — PASS |
+| Worktree | CLEAN |
+| Main merge status | UNMERGED — origin/main unchanged at baseline ancestry |
+| PR | OPEN — https://github.com/ollejanaitte/spacer-clone/pull/244 |
+
+================================================================================
+3. Repository and Branch
 ================================================================================
 
 TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
-TARGET_BRANCH: docs/apollo-refreeze-local-verification
-HEAD_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
-ORIGIN_BRANCH_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
-  (stable baseline as of verification-branch creation; frozen — not updated per commit)
-ORIGIN_MAIN_SHA_AT_PRIOR_LV01: 86e81d35ba36c1ddeb774286676d62a8f03e9085
-ORIGIN_MAIN_SHA_CURRENT: f0983878ccbb816f591214b6242c3688ecb5a060
-  (LV-01 current re-run baseline 2026-08-01 19:38:37 JST)
-LOCAL_MAIN_SHA_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
-  (synced to origin/main — matches f098387 Docs/apollo refreeze local verification #240)
-LOCAL_MAIN_SHA_AT_FAILED_LV01_RERUN: 86e81d35ba36c1ddeb774286676d62a8f03e9085
-  (historical — failed re-run 2026-08-01 19:32:32 JST; 1 commit behind origin/main)
-HEAD_SHA_AT_LV01_RERUN: cccf4c3e7a1418f6b30f02bc0ba54a744554a38c
-HEAD_SHA_AT_FAILED_LV01_RERUN: ef93b735c23dc3b88d473a07a9440824b8e7a198
-  (historical — failed re-run 2026-08-01 19:32:32 JST)
-DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
-WORKTREE_CLEAN_AT_START: YES
-UNCOMMITTED_CHANGES: NO (prior to Phase 2 validation commit)
-
-Root package.json: NOT PRESENT
-Frontend package.json: PRESENT (frontend/package.json, version 0.3.0-preview)
-GitHub Actions workflows: NOT PRESENT (.github/workflows/ absent on this branch)
-
-Required documents (on verification branch):
-  - docs/apollo/phase1_design_expansion_refreeze/README.md
-  - docs/apollo/phase1_design_expansion_refreeze/scope_and_architecture_freeze.md
-  - docs/apollo/phase1_design_expansion_refreeze/implementation_sequence.md
-  - docs/apollo/phase1_design_expansion_refreeze/manual_traceability.csv
-  - docs/apollo/phase1_design_expansion_refreeze/local_verification_plan.md
-  - docs/apollo/phase1_design_expansion_refreeze/github_scope_verification.md
+TARGET_BRANCH: feat/ap-dx-01-design-entity-contracts
+TRACKING_BRANCH: origin/feat/ap-dx-01-design-entity-contracts
+ORIGIN_MAIN_SHA: 178768871545ab36aaea019916a492a051373496
+MAIN_MERGE_STATUS: UNMERGED — AP-DX-01 branch not merged to main
+WORKTREE_STATUS: CLEAN
+SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Projects/
 
 ================================================================================
-3. Role Delegation
+4. Baseline and Final SHA
 ================================================================================
 
-Practical verification work is delegated to Cursor CLI. The local operator
-initiated branch bootstrap; Cursor CLI executed git branch creation, upstream
-push, final_report.txt creation, and minimal local_verification_report.md
-update under the constraint: work only inside /home/masaharu/Projects/spacer-clone.
+BASELINE_SHA: 178768871545ab36aaea019916a492a051373496
+BASELINE_COMMIT: docs(apollo): freeze AP-DX-01 contract implementation scope
+
+FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
+FINAL_COMMIT: docs(apollo): finalize AP-DX-01 implementation report
+
+COMMITS (baseline..final, chronological):
+  ac794d2 docs(apollo): record AP-DX-01 contract inventory
+  19a02bf docs(apollo): finalize AP-DX-01 implementation design
+  cc16504 feat(apollo): add AP-DX-01 design entity contract types
+  a804c38 feat(apollo): extend BSDD schema for design entities
+  832ab10 feat(apollo): validate AP-DX-01 entity references and governance
+  3c031f8 test(apollo): cover AP-DX-01 design entity contracts
+  ff5c421 fix(apollo): pass validator path argument in AP-DX-01 fail-closed test
+  b1b4938 docs(apollo): finalize AP-DX-01 implementation report (pre-normalization)
+  b9f21e2 docs(apollo): finalize AP-DX-01 implementation report (structure correction)
+  6cb01a2 docs(apollo): finalize AP-DX-01 implementation report (verdict normalization)
+
+HISTORY_NOTE: Branch retains full phase commit history. Corrective commit ff5c421
+was required because rebase/history rewrite was prohibited under repository agent rules.
+Pre-normalization finalize commit: b1b49380bf2b1a711bb65d46600e223f9048793f.
 
 ================================================================================
-4. Branch Bootstrap Results
+5. Role Delegation
 ================================================================================
 
-| Step | Action | Result |
-|------|--------|--------|
-| 1 | Confirm git status clean and HEAD == origin/main | PASS |
-| 2 | Create branch docs/apollo-refreeze-local-verification from main | PASS |
-| 3 | Push branch with upstream tracking to origin | PASS |
-| 4 | Create final_report.txt (sections 1-6, 16-20) | PASS |
-| 5 | Update local_verification_report.md (active branch note) | PASS |
+Practical implementation and verification work delegated to Cursor CLI under operator
+direction. Operator initiated branch from baseline on main. Cursor CLI executed Phases
+A–F (inventory, design, types, schema, parser/validator, tests, verification bundle),
+documentation updates, and final report authoring under constraint: work only inside
+/home/masaharu/Projects/spacer-clone.
 
 ================================================================================
-5. Verification Status (LV-01 through LV-08)
+6. Contract Inventory
 ================================================================================
 
-| ID | Description | Status |
-|----|-------------|--------|
-| LV-01 | Git sync / worktree | PASS — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
-| LV-02 | Existing Apollo document consistency | PASS |
-| LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — B01/B07 FAIL (PD-001); B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE (union of B07+B08); B05 minimal 14-module scope (IF3 and schema covered separately) |
-| LV-05 | 3D display non-regression | PASS — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note in manual_verification_checklist.md; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
-| LV-06 | Manual traceability review | PASS — 2026-08-01 JST; 50 rows; AP-DX-00..21; Grider chapters 1-13; no duplicate trace_id; OPEN_QUESTIONS AP-DX-18 timing, DeckAnchorage row, governance unlock |
-| LV-07 | Non-composite deck / anchorage | PASS — 2026-08-01 JST; non-composite posture OK; connector ban OK; deckAnchorage policy OK; numerics NOT_AUTHORIZED; fail-closed OK; DeckAnchorage CSV trace OPEN_QUESTION; AP-DX-01 contract INCOMPLETE (expected) |
-| LV-08 | Document quality | PASS — 2026-08-01 JST; git diff --check clean; Phase 2 markdown/CSV/link checks reaffirmed; no secrets or copyright-risk content; verdict fields finalized |
+Schema identity:
+  schemaId: spacer.contracts.bridge-superstructure-design-document
+  schemaVersion: 0.1.0
+  documentKind: bridge-superstructure-design
+
+Pre-AP-DX-01 (baseline at 1787688):
+  - Envelope + lifecycle, coordinate/unit contexts, project context
+  - BsddBridge (spans, girderLines, deck rc_non_composite, supports)
+  - materialDefinitions, loadCases, analysisBindings
+  - phase1ScopeAssertion (plate_girder_rc_slab_non_composite)
+  - extensions, unknownFieldStoreRef, migrationProvenanceRef
+  - Parser, partial semantic validator, inline test fixture
+
+AP-DX-01 additions (implemented):
+  - Optional top-level structuralDesignModel container
+  - 11 design entity types with DesignEntityMetadata
+  - DesignEntityDesignStatus / DesignEntityAdoptionStatus
+  - DesignGeometryReference / DesignAnalysisMemberMapping placeholders
+  - SdmNonCompositeAssertion (compositeAction: false)
+  - Entity-graph validator (duplicate ID, dangling ref, kind mismatch, binding status)
+  - Non-composite connector rejection; DeckAnchorage independence
+  - JSON Schema artifact regenerated at schemas/contracts/v0.1/
+
+Reuse (no duplication):
+  contractVersionRegistry, governedQuantity, provenance, extensions, uuid,
+  unknownFieldStore, migrationRecord, migration/, domainMappers, commonEnvelope
+
+Out of scope (unchanged): Apollo UI, 3D viewer, backend, IF3, numeric design formulas.
 
 ================================================================================
-6. Next Exact Action
+7. Implementation Design
 ================================================================================
 
-LV-01 re-run (2026-08-01 19:38:37 JST): PASS. Phase C schema/doc verification
-(2026-08-01 19:42:07–19:42:15 JST): PASS (8/8 commands exit 0). LV-04 bundle 5 (backend
-general, 2026-08-01 19:45:37 JST): PASS (14/14 modules, 189/189 tests; IF3 backend bundle
-and schema-only bundle already covered separately). LV-05 manual GUI verification PASS
-(operator masaharu, 2026-08-01 JST; exact time not provided; MV-01..MV-13 PASS;
-THREED_VIEWER_VERDICT PASS; evidence note recorded in manual_verification_checklist.md).
-origin/main and local main are both f0983878ccbb816f591214b6242c3688ecb5a060. Verification branch HEAD cccf4c3… contains
-origin/main and matches origin/docs/apollo-refreeze-local-verification. Prior FAIL re-run
-(2026-08-01 19:32:32 JST) retained as historical evidence. Prior Phase 2–4 recorded
-results preserved; Phase C schema/doc bundle and LV-04 bundle 5 recorded.
+Phase B definitive decisions (see local_implementation_report.md §10):
 
-Proceed to: PD-001 fix on implementation branch (preexisting_defects.md). Local verification
-LV-01..LV-08 complete. LV-08 document quality PASS recorded (2026-08-01 JST).
-LV-07 non-composite deck governance PASS recorded (2026-08-01 JST). LV-04 bundle bookkeeping
-complete (B09 NOT_APPLICABLE; overall verdict COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE).
-LV-06 manual traceability PASS recorded. Full LV-02 findings remain in
-local_verification_report.md.
-
-================================================================================
-7. LV-03 Implementation Inventory
-================================================================================
-
-Execution: 2026-08-01 (code search and file inspection; docs-only commit).
-Artifact: docs/apollo/phase1_design_expansion_refreeze/implementation_inventory.md
-
-| Classification | Count |
-|----------------|------:|
-| IMPLEMENTED | 5 |
-| PARTIALLY_IMPLEMENTED | 11 |
-| SCAFFOLD_ONLY | 1 |
-| PLANNED | 5 |
-| OUT_OF_SCOPE | 2 |
-| UNKNOWN | 0 |
-
-IMPLEMENTED targets: Apollo route/workspace, IF3 binding, export gates, 3D solid viewer,
-STL export.
-
-Key gaps: BSDD contracts and frame generation exist as platform code but are not wired to
-Apollo UI; cross-beam/bracing/deck solids are visualization heuristics; load shell is
-SCAFFOLD_ONLY; AP-DX design modules (RC slab, girder design, stiffener, splice, steel
-weight) are PLANNED with no code.
-
-Maintenance check: d3f1ec6 (main viewer solid handoff) and 1fbcb3e (test coverage)
-confirmed present in App.tsx, Viewer3D, ViewerControls, and test files.
-
-LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
+CONTAINER: optional top-level structuralDesignModel on BridgeSuperstructureDesignDocument
+ENTITY_TYPES: MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam, SwayBracing,
+  LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage (11 kinds)
+COMMON_METADATA: DesignEntityMetadata (entityRevisionId, provenance, sourceRef?,
+  geometryRef, analysisMapping, designStatus, adoptionStatus, extensions?)
+DESIGN_STATUS: DesignEntityDesignStatus — NOT_AUTHORIZED default; fail-closed
+ADOPTION_STATUS: DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus alias)
+REVISION: entityRevisionId positive integer per entity
+GEOMETRY_REF: DesignGeometryReference { geometryRefId, bindingStatus }
+ANALYSIS_MAPPING: DesignAnalysisMemberMapping { analysisMemberRefId, bindingStatus,
+  analysisBindingId? }
+STABLE_ID: plain UuidString per-entity *Id fields; document-wide uniqueness
+DUPLICATE_ID: document-wide registry scan → BSDD_DUPLICATE_ENTITY_ID
+DANGLING_REF: null skips check; non-null must resolve → BSDD_DANGLING_REFERENCE
+NON_COMPOSITE: SdmNonCompositeAssertion { compositeAction: false }; reject compositeShearConnector
+DECK_ANCHORAGE: independent entity; anchorageRole non-composite enum; NOT_AUTHORIZED default
 
 ================================================================================
-7a. LV-05 Manual 3D/GUI Checklist Preparation
+8. Files Modified
 ================================================================================
 
-Preparation recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:49 JST. Operator execution NOT performed by Codex/Cursor.
+Implementation scope (baseline..final):
+  frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+  frontend/src/contracts/index.ts
+  frontend/src/contracts/runtime/domainMappers.ts
+  frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
+  frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
+  schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json
+  docs/apollo/ap-dx-01/local_implementation_report.md
+  final_report.txt
 
-| Field | Value |
-|-------|-------|
-| ARTIFACT | docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md |
-| CHECKLIST_STATUS | CHECKLIST_PREPARED |
-| STARTUP | uvicorn 127.0.0.1:8000; npm run dev:apollo -- --host 127.0.0.1 --strictPort |
-| URLS | http://127.0.0.1:5173/pro ; http://127.0.0.1:5173/pro/apollo |
-| MV_ROWS | MV-01..MV-13 (solids, deck, girders, cross-beams, frame-only regression, camera, console, STL, downloads, reload, main-screen solids) |
-| AUTOMATED_SUBSTITUTE | REJECTED — LV-04-B02 viewer vitest PASS (228/228) is supporting evidence only |
-| THREED_VIEWER_VERDICT | PENDING_USER_VISUAL_CONFIRMATION |
-| LV05_3D_DISPLAY_VERDICT | PENDING_USER_VISUAL_CONFIRMATION |
-| REFREEZE_FINAL_READINESS | BLOCKED — manual user visual confirmation required before PR/final judgment |
-
-LV05_MANUAL_CHECKLIST_VERDICT: CHECKLIST_PREPARED
+Not modified: Apollo UI, 3D viewer, backend, IF3, parsers.ts (pipeline unchanged;
+  mapper extended in domainMappers.ts).
 
 ================================================================================
-7c. LV-05 Manual 3D/GUI Operator Completion (2026-08-01 JST)
+9. Types Added
 ================================================================================
 
-Completion recorded on branch docs/apollo-refreeze-local-verification.
-Operator masaharu confirmed manual GUI verification on 2026-08-01 JST (exact time not
-provided by operator).
+On BridgeSuperstructureDesignDocument:
+  - optional structuralDesignModel?: StructuralDesignModel
 
-| Field | Value |
-|-------|-------|
-| OPERATOR | masaharu |
-| COMPLETION_DATE | 2026-08-01 JST (exact time not provided by operator) |
-| MV-01_THROUGH_MV-13 | PASS (all rows) |
-| CONSOLE_ERRORS | None observed |
-| STL_EXPORT | PASS |
-| DOWNLOAD | PASS |
-| RELOAD | PASS |
-| EVIDENCE_NOTE | Apollo画面およびメイン画面で床版・主桁等の3Dソリッド表示、回転・ズーム、STL出力、再読込を確認 |
-| AUTOMATED_SUBSTITUTE | REJECTED — LV-04-B02 viewer vitest PASS (228/228) is supporting evidence only |
-| THREED_VIEWER_VERDICT | PASS |
-| LV05_3D_DISPLAY_VERDICT | PASS |
+New types and exports:
+  - SdmNonCompositeAssertion { compositeAction: false }
+  - DesignEntityMetadata
+  - DesignEntityDesignStatus + DESIGN_ENTITY_DESIGN_STATUSES + isDesignEntityDesignStatus
+  - DesignEntityAdoptionStatus (= GovernedQuantityAdoptionStatus)
+  - DesignBindingStatus
+  - DesignGeometryReference
+  - DesignAnalysisMemberMapping
+  - StructuralDesignModel (modelId, nonCompositeAssertion, 11 entity arrays)
+  - MainGirder, GirderSectionSegment, RcDeck, Haunch, CrossBeam
+  - SwayBracing, LateralBracing, BraceMember, Stiffener, Splice, DeckAnchorage
+  - DeckAnchorageRole + DECK_ANCHORAGE_ROLES
+  - StructuralDesignModelEntity union
 
-LV05_3D_DISPLAY_VERDICT: PASS
+Exported from frontend/src/contracts/index.ts.
 
 ================================================================================
-7b. LV-06 Manual Traceability Review (2026-08-01 JST)
+10. Schema Changes
 ================================================================================
 
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 JST (exact time not recorded). Artifacts: manual_traceability.csv (50 rows);
-implementation_inventory.md; scope_and_architecture_freeze.md; implementation_sequence.md;
-local_verification_plan.md LV-06 section. CSV not modified.
+Zod runtime schema (bridgeSuperstructureDesignDocument.ts):
+  - optional top-level structuralDesignModel on bridgeSuperstructureDesignDocumentSchema
+  - DesignEntityMetadata block on all entity strictObjects
+  - DesignEntityDesignStatus enum
+  - DesignEntityAdoptionStatus via governedQuantityAdoptionStatusSchema
+  - DesignGeometryReference and DesignAnalysisMemberMapping (bindingStatus unbound|bound|stale)
+  - SdmNonCompositeAssertion { compositeAction: false } required when SDM present
+  - StructuralDesignModel with 11 entity arrays (.min(0))
+  - DeckAnchorage anchorageRole: slab_to_girder | uplift_restraint | other_non_composite
+  - MainGirder/RcDeck optional compositeAction: false literal only
+  - strictObject on entities — unknown keys (including compositeShearConnector) rejected
+
+JSON Schema artifact:
+  - schemas/contracts/v0.1/bridge-superstructure-design-document.schema.json regenerated
+  - Generated via: cd frontend && npm run contracts:schema:generate
+
+Schema version: unchanged at 0.1.0 (no CONTRACT_VERSION_SUPPORT_MATRIX change).
+
+================================================================================
+11. Parser Changes
+================================================================================
+
+Pipeline unchanged: parseBridgeSuperstructureDesignDocumentValue in parsers.ts
+  → Zod structural parse → mapBridgeSuperstructureDesignDocumentValue → semantic validation
+
+Mapper additions (domainMappers.ts):
+  - mapStructuralDesignModelValue maps all 11 AP-DX-01 entity collections
+  - mapBridgeSuperstructureDesignDocumentValue includes optional structuralDesignModel
+  - Nullable UUID refs, provenance, sourceRef, geometryRef, analysisMapping, extensions
+    preserved through map
+  - Legacy BSDD documents without structuralDesignModel remain backward compatible
+
+================================================================================
+12. Validation Rules
+================================================================================
+
+Semantic validator extensions (validateStructuralDesignModel +
+validateBridgeSuperstructureDesignDocument):
+
+  BSDD_ENTITY_ID_INVALID — invalid UUID on model/entity stable IDs
+  BSDD_DUPLICATE_ENTITY_ID — document-wide duplicate stable ID scan
+  BSDD_DANGLING_REFERENCE — non-null refs must resolve; null skips check
+  BSDD_ENTITY_REVISION_ID_INVALID — entityRevisionId must be positive integer
+  BSDD_ENTITY_KIND_MISMATCH — entityKind must match collection membership
+  BSDD_NULL_BINDING_VIOLATION — geometryRef/analysisMapping bindingStatus vs null refs
+  BSDD_NON_COMPOSITE_ASSERTION_INVALID — compositeAction must be false
+  BSDD_COMPOSITE_CONNECTOR_FORBIDDEN — compositeShearConnector / slabGirderConnector rejected
+  BSDD_DECK_ANCHORAGE_ROLE_INVALID — DeckAnchorage anchorageRole non-composite enum only
+  BSDD_ADOPTION_DESIGN_STATUS_CONTRADICTION — check-result vs adoption consistency
+  BSDD_DESIGN_STATUS_NOT_AUTHORIZED_FAIL_CLOSED — OK/NG/WARNING/ERROR blocked without authority
+  BSDD_DESIGN_STATUS_INVALID — unsupported designStatus value
+
+Fail-closed:
+  - NOT_AUTHORIZED / INCOMPLETE entities do not implicitly yield OK
+  - Check-result statuses blocked without numeric authority and ADOPTED adoption
+  - Non-null analysisMemberRefId rejected (empty analysis-member registry in AP-DX-01)
+
+================================================================================
+13. Tests Added
+================================================================================
+
+File: frontend/src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts
+Describe block: "AP-DX-01 structuralDesignModel contracts"
+
+Tests added (Block 2):
+  - structurally validates a complete structuralDesignModel shape
+  - round-trips AP-DX-01 entities through parse without dropping fields
+  - preserves stable entity IDs across JSON serialization and parse
+  - rejects duplicate stable IDs across bridge primitives and design entities
+  - rejects dangling non-null entity cross-references
+  - rejects dangling non-null geometryRef anchors while allowing null placeholders
+  - rejects unknown keys on strict design entity objects at structural parse
+  - preserves explicit null references through parse round-trip
+  - rejects composite connector contamination in entity extensions
+  - accepts DeckAnchorage as an independent non-composite entity
+  - accepts NOT_AUTHORIZED design entities fail-closed by default
+  - rejects check-result designStatus when numeric authority is NOT_SELECTED
+  - keeps legacy BSDD fixture valid without structuralDesignModel (non-regression)
+
+Corrective test fix (ff5c421):
+  - fail-closed test passes validator path argument correctly (options as 3rd arg)
+
+================================================================================
+14. Tests Executed
+================================================================================
+
+Block 2 — contract tests (2026-08-01 JST):
+| TEST_ID | COMMAND |
+|---------|---------|
+| AP-DX-01-B2-BSDD-TESTS | cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
+
+Block 3 — Phase F verification bundle (2026-08-01 JST):
+
+| TEST_ID | COMMAND |
+|---------|---------|
+| AP-DX-01-F-01-BSDD-TESTS | cd frontend && npm run test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
+| AP-DX-01-F-02-TYPECHECK | cd frontend && npm run typecheck |
+| AP-DX-01-F-03-LINT | cd frontend && npm run lint |
+| AP-DX-01-F-04-BUILD | cd frontend && npm run build |
+| AP-DX-01-F-05-GIT-DIFF-CHECK | git diff --check |
+
+================================================================================
+15. Test Results
+================================================================================
+
+| TEST_ID | START_TIME | END_TIME | EXIT_CODE | RESULT | EVIDENCE |
+|---------|------------|----------|-----------|--------|----------|
+| AP-DX-01-F-01-BSDD-TESTS | 2026-08-01 21:44:42 JST | 2026-08-01 21:44:43 JST | 0 | PASS | Vitest: 2 files, 35/35 tests; 916ms |
+| AP-DX-01-F-02-TYPECHECK | 2026-08-01 21:45:24 JST | 2026-08-01 21:45:38 JST | 0 | PASS | tsc -b --pretty false; no diagnostics |
+| AP-DX-01-F-03-LINT | 2026-08-01 21:45:38 JST | 2026-08-01 21:45:52 JST | 0 | PASS | Source hygiene passed; exit 0 |
+| AP-DX-01-F-04-BUILD | 2026-08-01 21:45:52 JST | 2026-08-01 21:46:16 JST | 0 | PASS | Vite: 3926 modules; dist/ generated |
+| AP-DX-01-F-05-GIT-DIFF-CHECK | 2026-08-01 21:46:16 JST | 2026-08-01 21:46:16 JST | 0 | PASS | No whitespace/conflict-marker violations |
+
+AP_DX_01_BLOCK_2_TEST_VERDICT: PASS
+AP_DX_01_BLOCK_3_VERIFICATION_VERDICT: PASS
+
+================================================================================
+16. Backward Compatibility
+================================================================================
+
+| Requirement | Status |
+|-------------|--------|
+| BsddBridge / BsddDeck / BsddGirderLine not destructively replaced | PASS |
+| createMinimalDraftDocument() remains valid without structuralDesignModel | PASS |
+| Schema version 0.1.0 documents without new section continue to parse | PASS |
+| CONTRACT_VERSION_SUPPORT_MATRIX unchanged | PASS |
+| reference_bridge_input.json remains rejected (negative test non-regression) | PASS |
+| Strict parse — unknown top-level keys still rejected | PASS |
+| structuralDesignModel optional — absent section defaults | PASS |
+
+================================================================================
+17. Schema Version Decision
+================================================================================
+
+AP_DX_01_SCHEMA_VERSION_DECISION: REMAIN_0_1_0_ADDITIVE_BACKWARD_COMPATIBLE
+
+| Question | Decision |
+|----------|----------|
+| Bump schemaVersion? | NO — remain 0.1.0 |
+| Update CONTRACT_VERSION_SUPPORT_MATRIX? | NO |
+| Regenerate JSON Schema artifact? | YES — same v0.1 path; additive properties only |
+| Breaking changes? | None |
+
+Rationale: optional structuralDesignModel is additive; no existing field retyped or removed.
+
+================================================================================
+18. Migration Decision
+================================================================================
+
+AP_DX_01_MIGRATION_DECISION: NONE_REQUIRED
+
+| Question | Decision |
+|----------|----------|
+| Migration steps required? | NO |
+| Absent structuralDesignModel default? | YES — valid legacy document |
+| migrationProvenanceRef on new docs? | Optional / unchanged |
+| Migration framework | Available but unused for AP-DX-01 |
+
+================================================================================
+19. Non-Composite Governance
+================================================================================
+
+| Rule | Enforcement |
+|------|-------------|
+| SdmNonCompositeAssertion.compositeAction | Literal false required when SDM present |
+| compositeShearConnector / slabGirderConnector | Rejected at schema + validator |
+| DeckAnchorage independence | Separate entity; non-composite anchorageRole enum only |
+| NOT_AUTHORIZED fail-closed | Default design status; OK blocked without authority |
+| BsddDeck.deckKind | Remains rc_non_composite |
+| phase1ScopeAssertion | Unchanged plate_girder_rc_slab_non_composite |
+
+AP_DX_01_NON_COMPOSITE_GOVERNANCE_VERDICT: PASS
+
+================================================================================
+20. Findings
+================================================================================
+
+F-01: AP-DX-01 design entities successfully added as optional structuralDesignModel at 0.1.0.
+F-02: TypeScript, Zod, JSON Schema, mapper, and validator aligned across 11 entity kinds.
+F-03: Entity-graph integrity rules (duplicate ID, dangling ref, kind mismatch) operational.
+F-04: Non-composite governance enforced fail-closed at schema and semantic layers.
+F-05: Contract tests cover schema shape, round-trip, stable IDs, governance, and legacy non-regression.
+F-06: Block 3 verification bundle (tests, typecheck, lint, build, git diff --check) all PASS.
+F-07: Corrective commit ff5c421 required for fail-closed test path argument; no rebase performed.
+F-08: PD-001 Apollo manifest defect resolved on main (#243); orthogonal to AP-DX-01 scope.
+F-09: No Apollo UI, 3D viewer, backend, or IF3 changes in AP-DX-01 diff.
+
+================================================================================
+21. Unresolved Issues
+================================================================================
+
+OQ-01: DeckAnchorage — no dedicated manual_traceability.csv row (LV-06/07 OPEN_QUESTION;
+  governance/traceability; does not block contract implementation).
+OQ-02: AP-DX-02 3D stable ID binding not started (next phase per implementation_freeze.md §15).
+OQ-03: Numeric design authorization NOT_GRANTED — check-result designStatus values remain
+  blocked until standard adoption (expected governance posture).
+
+================================================================================
+22. Blockers
+================================================================================
+
+| ID | Blocker | Status |
+|----|---------|--------|
+| B-01 | Design entities absent from BSDD | RESOLVED — Phases C–E |
+| B-02 | Numeric design authorization NOT_GRANTED | GOVERNANCE — expected; fail-closed enforced |
+| B-03 | Entity-graph validator rules not implemented | RESOLVED — Phase E |
+| B-04 | PD-001 Apollo test manifest stale | RESOLVED on main (#243); orthogonal |
+
+No AP-DX-01 implementation blockers remain. PR merge awaits user review/approval.
+
+================================================================================
+23. Safety Checks
+================================================================================
 
 | Check | Result |
 |-------|--------|
-| CSV 9-column schema / quoting | PASS |
-| Duplicate trace_id | PASS — zero duplicates across 50 rows |
-| trace_id sequence gaps | INFO — intentional banding (000-006, 007, 010-091, 140, 150) |
-| AP-DX-00..21 coverage | PASS — all 22 module IDs referenced |
-| SuperDesigner/SuperDrawing | PASS — MT-000..MT-006 |
-| Grider_I 第1章..第13章 | PASS — Grider_I_00..13 + per-chapter rows |
-| JIP-SPACER / JIP-LINER | PASS — MT-140/MT-150 REFERENCE_ONLY |
-| LV-06 feature groups (RC slab, grid, girder, splice, camber, bracing, stiffener, steel weight, fatigue, drawing, reports) | PASS |
-| Composite vs non-composite policy | PASS — MT-051 非合成; no composite stiffness mixing |
-| Old APOLLO format over-compat | PASS — GSP/DWG/SPACER compat explicitly denied in notes |
-| Shop detail vs design drawing | PASS — MT-006 shop-detail automation out of scope |
-| Inventory PLANNED modules | PASS — CSV PLANNED/NOT_AUTHORIZED aligns with inventory PLANNED |
-| PARTIAL rows vs platform reuse | PASS — workspace/Road/3D/IF3 PARTIAL without design-check claims |
-
-OPEN_QUESTIONS (not guessed):
-  1. AP-DX-18 fatigue — CSV PLANNED vs inventory OUT_OF_SCOPE (current code); timing/gate not in repo
-  2. DeckAnchorage — entity in scope freeze but no dedicated CSV row; LV-07 may address
-  3. AP-DX governance unlock vs ap00/forbidden_scope.md (LV-02 OPEN_QUESTION retained)
-
-LV06_MANUAL_TRACEABILITY_VERDICT: PASS
-
-================================================================================
-7d. LV-07 Non-Composite Deck / Connection Governance (2026-08-01 JST)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 JST (exact time not recorded). Artifacts: scope_and_architecture_freeze.md;
-implementation_sequence.md; manual_traceability.csv (MT-030/041/050-053); implementation_inventory.md;
-preexisting_defects.md; local_verification_plan.md LV-07 section; Apollo/BSDD code paths.
-No application code or CSV modified.
-
-| Signal | Status |
-|--------|--------|
-| Non-composite RC slab posture | OK |
-| compositeAction=false equivalent intent | OK |
-| RC slab not in composite girder strength | OK (governance) / INCOMPLETE (implementation) |
-| Stud/composite girder design not mixed in | OK |
-| Slab anchorage vs connectors separate | OK (policy) / INCOMPLETE (BSDD contract) |
-| deckAnchorage / slabGirderConnector handling | OK (docs) / INCOMPLETE (code) / OPEN_QUESTION (CSV trace) |
-| Numerics still not authorized | NOT_AUTHORIZED (correct posture) |
-| Fail-closed behavior | OK |
-| Stale propagation | OK (rules) / INCOMPLETE (Apollo wiring) |
-| Drawing/report responsibility separation | OK |
-| Implementation-start gating | OK |
-
-Code paths inspected: phase1ScopeGuard.ts, errors.ts, types.ts,
-bridgeSuperstructureDesignDocument.ts, visualization/builder.ts, bridgeDefinition/types.ts
-(platform steel_composite enum — not Apollo-wired; INFO).
-
-OPEN_QUESTIONS (not guessed):
-  1. DeckAnchorage — no dedicated manual_traceability.csv row (LV-06 retained)
-  2. AP-DX-08 — reject steel_composite when BridgeDefinition path wired to Apollo
-
-No governance NG found.
-
-LV07_NONCOMPOSITE_DECK_VERDICT: PASS
-
-================================================================================
-9. Environment and Tool Discovery (Phase 1)
-================================================================================
-
-Discovery recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:40:14 JST. Commands executed; outputs captured in
-local_verification_report.md.
-
-| Command | Recorded result |
-|---------|-----------------|
-| pwd | /home/masaharu/Projects/spacer-clone |
-| git remote -v | origin https://github.com/ollejanaitte/spacer-clone.git |
-| git status --short --branch | ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification |
-| git branch --show-current | docs/apollo-refreeze-local-verification |
-| git rev-parse HEAD | f147efa3b9ea108320848ccf2bb80f7b5790f7af |
-| git rev-parse origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
-| uname -a | Linux 6.8.0-136-generic x86_64 GNU/Linux |
-| cat /etc/os-release | Zorin OS 17.3 (jammy) |
-| node --version | v24.5.0 |
-| npm --version | 10.9.8 |
-| python3 --version | Python 3.10.12 |
-| pytest --version | pytest 9.1.1 |
-| git --version | 2.34.1 |
-| gh --version | 2.4.0+dfsg1 |
-
-Test location inventory (metadata only; not executed):
-  Apollo frontend: frontend/src/apollo/__tests__/, frontend/src/App.apolloNavigation.test.tsx
-  Apollo evidence: scripts/apollo/evidence/tests/
-  3D viewer: frontend/src/viewer/*.test.ts(x)
-  IF3 frontend: frontend/src/if3/__tests__/, frontend/src/results/if3*.test.ts, frontend/src/exports/if3*.test.ts
-  IF3/backend: backend/tests/test_if3_*.py, backend/tests/test_reports_if3_gate.py
-  Backend general: backend/tests/
-
-PHASE1_DISCOVERY_VERDICT: COMPLETE (environment/repository metadata recorded; no tests run)
-
-================================================================================
-10. Phase 2 Documentation Validation
-================================================================================
-
-Validation recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:42:00 JST.
-
-| Check | Result |
-|-------|--------|
-| README 正本 file inventory | PASS |
-| Markdown relative links | PASS (none found) |
-| Backtick file references | PASS |
-| Heading structure | PASS |
-| Fenced code block balance | PASS |
-| CSV column count (9 cols) | PASS (after MT-140/MT-150 fix) |
-| CSV duplicate trace_id | PASS |
-| AP-DX-00..21 coverage | PASS |
-| Baseline SHA consistency | PASS |
-| Branch name context | PASS (design vs verification branches distinct) |
-| Application tests | NOT_STARTED |
-
-PHASE2_DOC_VALIDATION_VERDICT: PASS
-
-Fix applied: manual_traceability.csv rows MT-140 and MT-150 — restored missing
-planned_module column (value mirrors phase1_target).
-
-================================================================================
-11. Phase 3 Test-Command Discovery
-================================================================================
-
-Discovery recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:43:26 JST. Configuration and test paths inspected; no tests run.
-
-Config findings:
-  Root package.json: NOT PRESENT
-  Frontend scripts: typecheck, lint, test, test:regression, test:all, test:e2e,
-    build, dev:apollo, electron:dev:apollo, app:dev:apollo, contracts:schema:generate
-  pytest.ini / pyproject.toml / setup.cfg: NOT PRESENT
-  GitHub Actions workflows: NOT PRESENT
-  Backend canonical: python3 -m pytest backend/tests -q (README.md)
-
-Verified planned command groups (see local_verification_report.md Phase 3):
-  Apollo frontend: cd frontend && npm run test -- src/apollo; navigation test;
-    node scripts/check_apollo_source_hygiene.mjs frontend/src/apollo
-  Viewer/3D: cd frontend && npm run test -- src/viewer (22 vitest files)
-  IF3 frontend: cd frontend && npm run test -- src/if3 ... (9 vitest files)
-  IF3 backend: python3 -m pytest backend/tests/test_if3_*.py ... (7 modules)
-  Backend general: python3 -m pytest backend/tests -q; scripts/apollo/evidence/tests
-  Schema/doc: backend test_*_schema.py; contractJsonSchema vitest; git diff --check
-  Typecheck/lint/build: npm run typecheck / lint / build (frontend/)
-  E2E/manual: npm run test:e2e; playwright phase5 configs; dev:apollo; start-ubuntu.sh
-  LV-04 bundles: npm run test / test:regression / test:all
-
-PHASE3_TEST_COMMAND_DISCOVERY_VERDICT: COMPLETE
-
-================================================================================
-12. LV-01 Git Sync / Worktree
-================================================================================
-
-Prior run recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:45:04 JST — PASS at origin/main 86e81d35… (superseded).
-
-Failed re-run recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:32:32 JST — FAIL (historical; superseded).
-
-Current re-run recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:38:37 JST.
-
-| Command | Recorded result |
-|---------|-----------------|
-| git status --short (pre-check) | Empty — worktree clean |
-| git fetch --all --prune | Exit 0; origin fetched |
-| git status --short --branch | ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification |
-| git rev-parse HEAD | cccf4c3e7a1418f6b30f02bc0ba54a744554a38c |
-| git rev-parse origin/main | f0983878ccbb816f591214b6242c3688ecb5a060 |
-| git rev-parse main | f0983878ccbb816f591214b6242c3688ecb5a060 |
-| git rev-parse origin/docs/apollo-refreeze-local-verification | cccf4c3e7a1418f6b30f02bc0ba54a744554a38c |
-| git merge-base HEAD origin/main | f0983878ccbb816f591214b6242c3688ecb5a060 |
-| git merge-base HEAD 1fbcb3ea… | 1fbcb3ea804f965b8f262284573f4f4d42dc2411 |
-| git merge-base --is-ancestor 1fbcb3ea… origin/main | Exit 0 (YES) |
-| git merge-base --is-ancestor origin/main HEAD | Exit 0 (YES) |
-| git log --oneline HEAD..origin/main | (empty — HEAD contains origin/main) |
-| git branch -r --contains 1fbcb3ea… | origin/main listed (baseline contained) |
-| git status --short (post-check) | Empty — worktree clean |
-
-| Check | Result |
-|-------|--------|
-| Worktree clean (pre/post) | PASS |
-| git fetch --all --prune | PASS |
-| Local main equals origin/main | PASS — both f0983878… |
-| origin/main contains design-freeze baseline | PASS |
-| Verification branch descendant of current origin/main | PASS — merge-base is f0983878… |
-| HEAD contains design-freeze baseline | PASS |
-| HEAD matches origin tracking branch | PASS |
-| Application tests | NOT_STARTED |
-
-LV01_GIT_SYNC_VERDICT: PASS (current re-run 2026-08-01 19:38:37 JST against origin/main
-f0983878ccbb816f591214b6242c3688ecb5a060; prior FAIL 19:32:32 JST retained as historical)
-
---------------------------------------------------------------------------------
-12.0 LV-01 Failed Re-run (2026-08-01 19:32:32 JST — historical)
---------------------------------------------------------------------------------
-
-| Command | Recorded result |
-|---------|-----------------|
-| git rev-parse HEAD | ef93b735c23dc3b88d473a07a9440824b8e7a198 |
-| git rev-parse main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
-| git merge-base HEAD origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
-| git merge-base --is-ancestor origin/main HEAD | Exit 1 (NO) |
-| git log --oneline HEAD..origin/main | f098387 Docs/apollo refreeze local verification (#240) |
-
-| Check | Result |
-|-------|--------|
-| Local main equals origin/main | FAIL — main 86e81d35… ≠ origin/main f0983878… |
-| Verification branch descendant of current origin/main | FAIL — merge-base is 86e81d35…, not f0983878… |
-
-LV01_GIT_SYNC_VERDICT: FAIL (historical re-run 2026-08-01 19:32:32 JST; superseded)
-
-================================================================================
-12a. Re-baseline — Safe Resume (2026-08-01 19:24:00 JST)
-================================================================================
-
-| Field | Value |
-|-------|-------|
-| ACTION | Re-baseline stop/resume state only; no new verification executed |
-| CURRENT_BRANCH | docs/apollo-refreeze-local-verification |
-| CURRENT_COMMIT | 88b7f0928ba85d29dbf8e09fa444d4c7ad8f0db4 |
-| ORIGIN_MAIN_AT_PRIOR_LV01 | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
-| ORIGIN_MAIN_CURRENT | f0983878ccbb816f591214b6242c3688ecb5a060 |
-| LV-01_STATUS | PASS — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
-| PRIOR_RESULTS | Phase 2–4 records below unchanged |
-
-REBASELINE_VERDICT: DOCUMENTATION_ONLY — no new PASS/FAIL claimed
-
-================================================================================
-13. Phase 4 LV-04 Regression — Apollo Frontend (Bundle 1)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:51:14 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B01-APOLLO-FE |
-| COMMAND | cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx |
-| START_TIME | 2026-08-01 18:51:14 JST |
-| END_TIME | 2026-08-01 18:51:24 JST |
-| EXIT_CODE | 1 |
-| RESULT | FAIL |
-| FAILURE_CLASS | PRE_EXISTING — PD-001 SEPARATE_DEFECT_REQUIRED (manifest update omission f89fe11/#225) |
-| AFFECTED_SCOPE | apolloSuite.test.ts — 1/188 tests failed; 27/28 test files passed; expected 26 modules, discovered 27 |
-| EVIDENCE | Vitest: 187 pass, 1 fail; apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES; apolloStlExport.test.ts alone 11/11 pass |
-| ACTION | Record only; fix deferred to implementation branch (see preexisting_defects.md) |
-
-APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
-LV04_B01_APOLLO_FE_VERDICT: FAIL
-
-================================================================================
-14. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2) — SUPERSEDED
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:52:38 JST. SUPERSEDED by corrected rerun in section 14a.
-
-Command error: run accidentally appended an extra `.` argument after `src/viewer`,
-broadening vitest scope to the full frontend/ tree instead of the Phase 3 planned
-viewer bundle (`cd frontend && npm run test -- src/viewer`).
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B02-VIEWER-3D |
-| COMMAND | cd frontend && npm run test -- src/viewer . (ERRONEOUS — extra `.` argument) |
-| START_TIME | 2026-08-01 18:52:38 JST |
-| END_TIME | 2026-08-01 18:53:10 JST |
-| EXIT_CODE | 1 |
-| RESULT | FAIL (SUPERSEDED) |
-| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale; failure outside src/viewer/) |
-| AFFECTED_SCOPE | apolloSuite.test.ts — 1/2047 tests failed; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed |
-| EVIDENCE | Vitest: 2046 pass, 1 fail; erroneous `.` argument expanded scope beyond viewer bundle |
-| ACTION | Superseded by corrected rerun (section 14a) |
-
-VIEWER_3D_REGRESSION_STATUS: FAIL (SUPERSEDED — erroneous command)
-LV04_B02_VIEWER_3D_VERDICT: FAIL (SUPERSEDED)
-
-================================================================================
-14a. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2, Corrected Rerun)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:55:15 JST. Authoritative result; supersedes section 14.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B02-VIEWER-3D-CORRECTED |
-| COMMAND | cd frontend && npm run test -- src/viewer |
-| START_TIME | 2026-08-01 18:55:15 JST |
-| END_TIME | 2026-08-01 18:55:18 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 22/22 viewer test files passed (228/228 viewer tests) |
-| EVIDENCE | Vitest v4.1.8: Test Files 22 passed (22); Tests 228 passed (228); Duration 3.19s |
-| ACTION | Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
-
-VIEWER_3D_REGRESSION_STATUS: PASS
-LV04_B02_VIEWER_3D_VERDICT: PASS
-
-================================================================================
-15. Phase 4 LV-04 Regression — IF3 Frontend (Bundle 3)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:56:31 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B03-IF3-FE |
-| COMMAND | cd frontend && npm run test -- src/if3 src/results/if3 src/exports/if3 src/draft/if3DraftEligibility.test.ts src/api/client.if3.test.ts |
-| START_TIME | 2026-08-01 18:56:31 JST |
-| END_TIME | 2026-08-01 18:56:33 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 12/12 IF3 frontend test files passed (76/76 tests) |
-| EVIDENCE | Vitest v4.1.8: Test Files 12 passed (12); Tests 76 passed (76); Duration 1.36s |
-| ACTION | Proceed to LV-04 bundle 4 (IF3 backend) per Phase 3 planned commands |
-
-IF3_FRONTEND_REGRESSION_STATUS: PASS
-LV04_B03_IF3_FE_VERDICT: PASS
-
-================================================================================
-15a. Phase 4 LV-04 Regression — IF3 Backend / API (Bundle 4)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:57:44 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B04-IF3-BE |
-| COMMAND | python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q |
-| START_TIME | 2026-08-01 18:57:44 JST |
-| END_TIME | 2026-08-01 18:57:51 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 7/7 IF3 backend test modules passed (123/123 tests) |
-| EVIDENCE | pytest 9.1.1: 123 passed in 6.68s |
-| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
-
-IF3_BACKEND_REGRESSION_STATUS: PASS
-LV04_B04_IF3_BE_VERDICT: PASS
-
-================================================================================
-15b. Phase 4 Static Check — Typecheck (Bundle 1)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 18:59:09 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | SC-B01-TYPECHECK |
-| COMMAND | cd frontend && npm run typecheck |
-| START_TIME | 2026-08-01 18:59:09 JST |
-| END_TIME | 2026-08-01 18:59:24 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Full frontend TypeScript project build (tsc -b); no errors reported |
-| EVIDENCE | tsc -b --pretty false completed in ~15s; exit 0; no diagnostic output |
-| ACTION | Proceed to static check bundle 2 (lint) per Phase 3 planned commands when authorized |
-
-TYPECHECK_STATUS: PASS
-SC_B01_TYPECHECK_VERDICT: PASS
-
-================================================================================
-15c. Phase 4 Static Check — Lint (Bundle 2)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:00:33 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | SC-B02-LINT |
-| COMMAND | cd frontend && npm run lint . |
-| START_TIME | 2026-08-01 19:00:33 JST |
-| END_TIME | 2026-08-01 19:00:47 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Full frontend lint pipeline (tsc -b, source hygiene, Japanese-string audit); no errors reported |
-| EVIDENCE | tsc -b completed; Frontend source hygiene check passed.; Japanese-string audit: Total 3045 occurrence(s) across 134 file(s) (informational); exit 0; duration ~14s |
-| ACTION | Proceed to static check bundle 3 (build) per Phase 3 planned commands when authorized |
-
-LINT_STATUS: PASS
-SC_B02_LINT_VERDICT: PASS
-
-================================================================================
-15d. Phase 4 Static Check — Build (Bundle 3)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:01:41 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | SC-B03-BUILD |
-| COMMAND | cd frontend && npm run build |
-| START_TIME | 2026-08-01 19:01:41 JST |
-| END_TIME | 2026-08-01 19:02:07 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Full frontend production build (tsc -b && vite build); dist/ artifacts generated |
-| EVIDENCE | Vite v7.3.5: 3926 modules transformed; built in 10.57s; dist/index.html, CSS, JS bundles; chunk size >500 kB warning (informational); exit 0 |
-| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
-
-BUILD_STATUS: PASS
-SC_B03_BUILD_VERDICT: PASS
-
-================================================================================
-15e. Phase C Schema / Document Verification
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:42:07–19:42:15 JST.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-01-GIT-DIFF-CHECK |
-| COMMAND | git diff --check |
-| START_TIME | 2026-08-01 19:42:07 JST |
-| END_TIME | 2026-08-01 19:42:07 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Working tree whitespace (unstaged diff) |
-| EVIDENCE | No trailing-whitespace or conflict-marker violations |
-| ACTION | Proceed to PHASE-C-02 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-02-GIT-STATUS |
-| COMMAND | git status --short |
-| START_TIME | 2026-08-01 19:42:07 JST |
-| END_TIME | 2026-08-01 19:42:07 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Working tree status |
-| EVIDENCE | Empty output — clean worktree |
-| ACTION | Proceed to PHASE-C-03 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-03-BACKEND-SCHEMA |
-| COMMAND | python3 -m pytest backend/tests/test_project_schema.py backend/tests/test_result_schema.py backend/tests/test_bridge_definition_schema.py backend/tests/test_engine_result_schema.py backend/tests/test_time_history_schema.py -q |
-| START_TIME | 2026-08-01 19:42:07 JST |
-| END_TIME | 2026-08-01 19:42:08 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 5/5 backend schema pytest modules (36/36 tests) |
-| EVIDENCE | pytest 9.1.1: 36 passed in 0.71s |
-| ACTION | Proceed to PHASE-C-04 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-04-FRONTEND-CONTRACT-SCHEMA |
-| COMMAND | cd frontend && npm run test -- src/contracts/runtime/__tests__/contractJsonSchema.test.ts |
-| START_TIME | 2026-08-01 19:42:08 JST |
-| END_TIME | 2026-08-01 19:42:09 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 1/1 contract JSON Schema vitest file (5/5 tests) |
-| EVIDENCE | Vitest v4.1.8: Test Files 1 passed (1); Tests 5 passed (5); Duration 807ms |
-| ACTION | Proceed to PHASE-C-05 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-05-VALIDATE-DESIGN-STANDARDS |
-| COMMAND | python3 scripts/apollo/evidence/validate_design_standards_csv.py |
-| START_TIME | 2026-08-01 19:42:15 JST |
-| END_TIME | 2026-08-01 19:42:15 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | docs/apollo/design-standards/ CSV registers (40 files) |
-| EVIDENCE | DESIGN_STANDARDS_CSV_VALIDATION: PASS (40 files; exact header widths) |
-| ACTION | Proceed to PHASE-C-06 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-06-VALIDATE-EVIDENCE-COLLECTION |
-| COMMAND | python3 scripts/apollo/evidence/validate_evidence_collection_csv.py |
-| START_TIME | 2026-08-01 19:42:15 JST |
-| END_TIME | 2026-08-01 19:42:15 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | docs/apollo/evidence-collection/ CSV manifests (21 files) |
-| EVIDENCE | EVIDENCE_COLLECTION_CSV_VALIDATION: PASS (21 files; exact header widths) |
-| ACTION | Proceed to PHASE-C-07 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-07-VALIDATE-TRACEABILITY |
-| COMMAND | python3 scripts/apollo/evidence/validate_evidence_traceability_matrix.py |
-| START_TIME | 2026-08-01 19:42:15 JST |
-| END_TIME | 2026-08-01 19:42:15 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Evidence traceability matrix (76 blockers) |
-| EVIDENCE | TRACEABILITY_MATRIX_VALIDATION: PASS (76 blockers covered; exact IDs; paths exist; no pseudo syntax) |
-| ACTION | Proceed to PHASE-C-08 |
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | PHASE-C-08-VALIDATE-SECTION12 |
-| COMMAND | python3 scripts/apollo/evidence/validate_report_section12_register.py |
-| START_TIME | 2026-08-01 19:42:15 JST |
-| END_TIME | 2026-08-01 19:42:15 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | Section 12 register (76 rows; baseline byte-exact) |
-| EVIDENCE | SECTION12_REGISTER_VALIDATION: PASS (76 rows; baseline byte-exact; no truncation; procedure/tool distinct); baseline_mismatch_count=0; snapshot_sha256=e89fae89f58c4769ebeafcad55ade410d7bef7dcdd37f5e789c8322a0af0c95b; register_sha256=5bad1c0413fd994fca324ddfe5ab795b3307d9c3b334931162317cf6dfa058b4 |
-| ACTION | Phase C complete; proceed to LV-04 bundle 5 |
-
-PHASE_C_SCHEMA_DOC_STATUS: PASS (8/8 commands exit 0)
-PHASE_C_SCHEMA_DOC_VERDICT: PASS
-
-================================================================================
-15f. Phase 4 LV-04 Regression — Backend General (Bundle 5)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:45:37 JST.
-
-Scope: minimal backend general verification set (14 pytest modules). IF3 backend bundle
-(LV-04 bundle 4) and schema-only bundle (Phase C PHASE-C-03) were already covered
-separately and are not duplicated in this run.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B05-BE-GENERAL |
-| COMMAND | python3 -m pytest backend/tests/test_api.py backend/tests/test_bridge_api.py backend/tests/test_bridge_fem_generator.py backend/tests/test_bridge_validation.py backend/tests/test_contract_document_store.py backend/tests/test_atomic_json_persistence.py backend/tests/test_engine_verification_cases.py backend/tests/test_influence_analysis.py backend/tests/test_moving_load_analysis.py backend/tests/test_mass.py backend/tests/test_eigen_analysis.py backend/tests/test_response_spectrum_analysis.py backend/tests/test_regression_verification.py backend/tests/test_verification_framework.py -q |
-| START_TIME | 2026-08-01 19:45:37 JST |
-| END_TIME | 2026-08-01 19:45:40 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 14/14 backend general test modules passed (189/189 tests); excludes IF3 modules (bundle 4) and schema modules (Phase C) already covered separately |
-| EVIDENCE | pytest 9.1.1: 189 passed in 3.00s |
-| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
-
-BACKEND_GENERAL_REGRESSION_STATUS: PASS
-LV04_B05_BE_GENERAL_VERDICT: PASS
-
-================================================================================
-15g. Phase 4 LV-04 Regression — Apollo Evidence (Bundle 6)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 20:21:53 JST.
-
-Scope: Apollo evidence harness pytest (7 modules per Phase 3 inventory). No other test
-categories executed in this bundle.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B06-APOLLO-EVIDENCE |
-| COMMAND | python3 -m pytest scripts/apollo/evidence/tests -q |
-| START_TIME | 2026-08-01 20:21:53 JST |
-| END_TIME | 2026-08-01 20:22:07 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 7/7 Apollo evidence harness pytest modules passed (200/200 tests, 8 subtests passed) |
-| EVIDENCE | pytest 9.1.1: 200 passed, 8 subtests passed in 13.83s |
-| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
-
-APOLLO_EVIDENCE_REGRESSION_STATUS: PASS
-LV04_B06_APOLLO_EVIDENCE_VERDICT: PASS
-
-================================================================================
-15h. Phase 4 LV-04 Regression — Frontend General (Bundle 7)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 20:27:31 JST.
-
-Scope: full default frontend vitest (`vitest run`; excludes e2e and golden regression).
-No other test categories executed in this bundle.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B07-FE-GENERAL |
-| COMMAND | cd frontend && npm run test |
-| START_TIME | 2026-08-01 20:27:31 JST |
-| END_TIME | 2026-08-01 20:28:02 JST |
-| EXIT_CODE | 1 |
-| RESULT | FAIL |
-| FAILURE_CLASS | PRE_EXISTING — PD-001 SEPARATE_DEFECT_REQUIRED (manifest update omission at f89fe11/#225; same defect as LV-04-B01; see preexisting_defects.md) |
-| AFFECTED_SCOPE | Full default vitest run (263 test files); 262/263 test files passed; 2046/2047 tests passed; sole failure apolloSuite.test.ts manifest discoverability (expected 26 modules, discovered 27; missing apolloStlExport.test.ts); excludes golden regression (bundle 8) |
-| EVIDENCE | Vitest v4.1.8: Test Files 1 failed | 262 passed (263); Tests 1 failed | 2046 passed (2047); Duration 30.12s; identical PD-001 signature to LV-04-B01 |
-| ACTION | Record only; PD-001 blocks LV-04-B07 PASS |
-
-FRONTEND_GENERAL_REGRESSION_STATUS: FAIL
-LV04_B07_FE_GENERAL_VERDICT: FAIL
-
-================================================================================
-15i. Phase 4 LV-04 Regression — Golden Regression (Bundle 8)
-================================================================================
-
-Execution recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 20:25:49 JST.
-
-Scope: golden regression vitest only (`vitest.regression.config.ts`;
-`regression.golden.test.ts`). No other test categories executed in this bundle.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B08-GOLDEN-REGRESSION |
-| COMMAND | cd frontend && npm run test:regression |
-| START_TIME | 2026-08-01 20:25:49 JST |
-| END_TIME | 2026-08-01 20:25:51 JST |
-| EXIT_CODE | 0 |
-| RESULT | PASS |
-| FAILURE_CLASS | N/A |
-| AFFECTED_SCOPE | 1/1 golden regression vitest file passed (regression.golden.test.ts; 6/6 tests); independent of PD-001 Apollo manifest issue |
-| EVIDENCE | Vitest v4.1.8: Test Files 1 passed (1); Tests 6 passed (6); Duration 2.35s |
-| ACTION | Record; LV-04 bundle 9 bookkeeping closure per union-of-B07+B08 rationale |
-
-GOLDEN_REGRESSION_STATUS: PASS
-LV04_B08_GOLDEN_REGRESSION_VERDICT: PASS
-
-================================================================================
-15j. Phase 4 LV-04 Regression — Full Regression Union (Bundle 9)
-================================================================================
-
-Bookkeeping closure recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 JST (exact time not provided). No separate execution performed.
-
-Scope: ninth planned LV-04 bundle — npm run test:all (npm run test + npm run test:regression
-per frontend/package.json). Bookkeeping closure only; union coverage satisfied by formally
-recorded B07 and B08.
-
-Rationale: npm run test:all is exactly the union of LV-04 bundle 7 (npm run test) and
-LV-04 bundle 8 (npm run test:regression), both now formally recorded. A separate B09
-execution would add no new coverage and would only duplicate the same known PD-001 failure
-on the npm run test portion.
-
-| Field | Value |
-|-------|-------|
-| TEST_ID | LV-04-B09-FE-ALL |
-| COMMAND | cd frontend && npm run test:all |
-| START_TIME | N/A — not executed |
-| END_TIME | N/A — not executed |
-| EXIT_CODE | N/A — not executed |
-| RESULT | NOT_APPLICABLE |
-| FAILURE_CLASS | N/A — union coverage satisfied by B07 (FAIL, PD-001) + B08 (PASS) |
-| AFFECTED_SCOPE | Union of B07 full default vitest (263 test files) and B08 golden regression (1 file); no incremental scope beyond B07+B08 |
-| EVIDENCE | frontend/package.json defines test:all as npm run test && npm run test:regression; B07 formally recorded 2026-08-01 20:27:31 JST (FAIL, PD-001); B08 formally recorded 2026-08-01 20:25:49 JST (PASS, 6/6 tests) |
-| ACTION | Record NOT_APPLICABLE; LV-04 bundle bookkeeping complete |
-
-FULL_REGRESSION_UNION_STATUS: NOT_APPLICABLE
-LV04_B09_FE_ALL_VERDICT: NOT_APPLICABLE
-
-================================================================================
-15k. LV-04 Overall Verdict
-================================================================================
-
-LV04_REGRESSION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-
-| Bundle | ID | Result | Notes |
-|--------|-----|--------|-------|
-| 1 | LV-04-B01 Apollo frontend | FAIL | PD-001 manifest stale (26 expected / 27 discovered) |
-| 2 | LV-04-B02 Viewer/3D | PASS | Corrected rerun; 22/22 files, 228/228 tests |
-| 3 | LV-04-B03 IF3 frontend | PASS | 12/12 files, 76/76 tests |
-| 4 | LV-04-B04 IF3 backend | PASS | 7/7 modules, 123/123 tests |
-| 5 | LV-04-B05 Backend general | PASS | Minimal 14-module scope; 189/189 tests; IF3 and schema covered separately |
-| 6 | LV-04-B06 Apollo evidence | PASS | 7/7 modules, 200/200 tests, 8 subtests |
-| 7 | LV-04-B07 Frontend general | FAIL | PD-001; 262/263 files, 2046/2047 tests |
-| 8 | LV-04-B08 Golden regression | PASS | 1/1 file, 6/6 tests |
-| 9 | LV-04-B09 Full regression union | NOT_APPLICABLE | Union of B07+B08; no separate execution |
-
-Known pre-existing failure: PD-001 (SEPARATE_DEFECT_REQUIRED) blocks B01 and B07 PASS only.
-
-================================================================================
-16. Safety Check — Sibling Folder Policy
-================================================================================
-
-Checked /home/masaharu/Projects/ for unauthorized sibling repository folders
-during Phase 1 discovery on docs/apollo-refreeze-local-verification.
-
-| Check | Result |
-|-------|--------|
-| spacer-clone present | YES (expected canonical repo) |
-| New sibling clone folders created | NO |
-| Unauthorized worktree siblings | NONE DETECTED |
-| Phase 1 scope confined to canonical repo | YES |
+| Work only inside /home/masaharu/Projects/spacer-clone | PASS |
+| Worktree clean (pre/post verification) | PASS |
+| No sibling clone folders under /home/masaharu/Projects/ | PASS |
+| No destructive git operations (rebase/reset/clean) | PASS — ff5c421 retained in history |
+| git diff --check (Block 3) | PASS |
+| Application scope confined to contracts/ + schemas/ | PASS |
+| Main unchanged/unmerged | PASS — origin/main at 1787688 |
 
 SAFETY_CHECK_VERDICT: PASS
 
 ================================================================================
-13a. Pre-existing Defect PD-001 — Apollo Suite Manifest Stale
+24. GitHub Reflection
 ================================================================================
 
-Investigation recorded on branch docs/apollo-refreeze-local-verification at
-2026-08-01 19:47 JST. Artifact: docs/apollo/phase1_design_expansion_refreeze/preexisting_defects.md
+REMOTE: https://github.com/ollejanaitte/spacer-clone.git
+BRANCH: feat/ap-dx-01-design-entity-contracts
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
+PR_TITLE: feat(apollo): AP-DX-01 design entity contracts
+PR_BASE: main
+PR_STATE: OPEN
+ORIGIN_MAIN_SHA: 178768871545ab36aaea019916a492a051373496
+BRANCH_PUSHED: YES — origin/feat/ap-dx-01-design-entity-contracts tracks local branch
+MAIN_MERGED: NO — AP-DX-01 not merged to main
 
-| Field | Value |
-|-------|-------|
-| DEFECT_ID | PD-001 |
-| CLASSIFICATION | SEPARATE_DEFECT_REQUIRED |
-| STALE_MANIFEST | EXPECTED_APOLLO_TEST_MODULES in frontend/src/apollo/__tests__/apolloSuite.test.ts |
-| EXPECTED_COUNT | 26 |
-| DISCOVERED_COUNT | 27 |
-| MISSING_FROM_MANIFEST | apolloStlExport.test.ts |
-| EXTRA_IN_MANIFEST | (none) |
-| DRIFT_COMMIT | f89fe11 (2026-07-31) feat(apollo): add binary stl export and manifest (#225) |
-| ROOT_CAUSE | Manifest update omission — not code regression; apolloStlExport.test.ts passes 11/11 |
-| RELATED_TO_239_240 | NO — docs-only PRs; zero frontend/ diff vs origin/main |
-| TEST_ONLY_FIX | YES — add apolloStlExport.test.ts to EXPECTED_APOLLO_TEST_MODULES |
-| BLOCKS_REFREEZE_READINESS | YES for LV-04-B01 PASS and full LV-04 completion; NO for docs-only refreeze or other PASS bundles |
-
-PD001_APOLLO_SUITE_MANIFEST_VERDICT: FAIL (do not mark PASS until fixed on implementation branch)
+GITHUB_REFLECTION_VERDICT: PASS — branch and PR reflect local implementation state
 
 ================================================================================
-17. Recommended Next Action
+25. PR / Merge Status
 ================================================================================
 
-Stopped on branch docs/apollo-refreeze-local-verification at cccf4c3….
-LV-08 document quality PASS recorded (2026-08-01 JST; LV08_DOCUMENT_QUALITY_VERDICT PASS).
-Local verification LV-01..LV-08 complete. LV-05 manual GUI PASS recorded (operator masaharu, 2026-08-01 JST; exact time not provided;
-MV-01..MV-13 PASS; THREED_VIEWER_VERDICT PASS). LV-04 bundle 5 backend general PASS (2026-08-01 19:45:37 JST; 14/14 modules, 189/189 tests;
-IF3 backend bundle and schema-only bundle already covered separately). Phase C schema/doc
-verification PASS (2026-08-01 19:42:07–19:42:15 JST; 8/8 commands exit 0).
-LV-01 re-run PASS (2026-08-01 19:38:37 JST): origin/main and local main f0983878….
-Verification branch contains origin/main. Prior FAIL re-run (19:32:32 JST) retained as
-historical evidence. Prior recorded results preserved: LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-— bundle 1 FAIL (PD-001 SEPARATE_DEFECT_REQUIRED); bundle 7 FAIL (same PD-001); bundles
-2–6 and 8 PASS; bundle 9 NOT_APPLICABLE (union of B07+B08); static checks typecheck/lint/build
-PASS; Phase C schema/doc PASS. PD-001 fix deferred to implementation branch (preexisting_defects.md).
+PR_NUMBER: 244
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/244
+PR_STATE: OPEN
+BASE_BRANCH: main (178768871545ab36aaea019916a492a051373496)
+HEAD_BRANCH: feat/ap-dx-01-design-entity-contracts
+FINAL_SHA: 6cb01a2f3da271384211498001b55761ab898910
+MERGE_STATUS: NOT_MERGED — awaiting review and user approval
+AUTO_MERGE: DISABLED — user approval required per implementation_freeze.md §14
+
+PR_MERGE_STATUS_VERDICT: READY_FOR_REVIEW — not merged
 
 ================================================================================
-18. LV Verification Verdict
+26. Recommended Next Action
 ================================================================================
 
-OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-
-LV-01: PASS (current re-run 2026-08-01 19:38:37 JST; prior FAIL 19:32:32 JST historical)
-LV-02: PASS
-LV-03: PASS
-LV-04: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE)
-LV-05: PASS (operator masaharu, 2026-08-01 JST)
-LV-06: PASS (2026-08-01 JST; 50 CSV rows)
-LV-07: PASS (2026-08-01 JST; DeckAnchorage CSV trace OPEN_QUESTION)
-LV-08: PASS (2026-08-01 JST; LV08_DOCUMENT_QUALITY_VERDICT PASS)
-
-PD-001 (SEPARATE_DEFECT_REQUIRED) is the sole regression-layer blocker for full LV-04 green suite.
+1. Review and merge PR #244 (https://github.com/ollejanaitte/spacer-clone/pull/244) after
+   user approval.
+2. Proceed to AP-DX-02: 3D stable ID binding between design entities and viewer geometry.
+3. Address OQ-01 DeckAnchorage traceability row in manual_traceability.csv when governance
+   unlock permits (separate docs task).
 
 ================================================================================
-19. Repository Cleanliness Verdict
+27. Final Verdict
 ================================================================================
 
-Docs-only verification on docs/apollo-refreeze-local-verification. No application code or
-new unauthorized folders created. LV-01 worktree clean pre/post; Phase C git status clean;
-LV-08 git diff --check PASS at review. Sibling-folder policy check PASS (section 16).
+AP-DX-01 Phases A–F complete. Design entity contracts delivered at schema version 0.1.0
+with additive backward-compatible structuralDesignModel. Verification bundle PASS.
+Branch feat/ap-dx-01-design-entity-contracts ready for PR review; main unchanged.
 
-REPOSITORY_CLEANLINESS_VERDICT: PASS
+Canonical AP-DX-01 verdict fields:
 
-================================================================================
-20. Final Verdict
-================================================================================
-
-Phase 3 test-command discovery: COMPLETE.
-LV-01: PASS (current re-run 2026-08-01 19:38:37 JST — local main f0983878… equals
-origin/main f0983878…; verification branch cccf4c3… contains origin/main; design-freeze
-baseline ancestry holds; prior FAIL 19:32:32 JST retained as historical).
-LV-02: PASS (README status-enum alignment fix applied).
-LV-03: PASS (implementation inventory — 5 IMPLEMENTED, 11 PARTIALLY_IMPLEMENTED, 1
-SCAFFOLD_ONLY, 5 PLANNED, 2 OUT_OF_SCOPE; d3f1ec6/1fbcb3e handoff maintained).
-LV-04: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE — all 9 bundles recorded.
-LV-05: PASS — operator masaharu manual GUI verification (2026-08-01 JST; exact time not
-provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS;
-evidence note recorded; THREED_VIEWER_VERDICT PASS (LV-04-B02 automated 228/228 vitest
-supporting evidence only — does not substitute).
-LV-06: PASS — manual traceability review (2026-08-01 JST; 50 CSV rows; AP-DX-00..21;
-no duplicate trace_id; OPEN_QUESTIONS on AP-DX-18 timing and DeckAnchorage row).
-LV-07: PASS — non-composite deck / connection governance review (2026-08-01 JST;
-DeckAnchorage CSV trace OPEN_QUESTION; AP-DX-01 contract INCOMPLETE expected).
-LV-08: PASS — document quality review (2026-08-01 JST; git diff --check clean; Phase 2
-markdown/CSV/link checks reaffirmed; no secrets or copyright-risk content).
-Application test execution: COMPLETE — LV-04 bundle 1 Apollo frontend FAIL (PD-001
-SEPARATE_DEFECT_REQUIRED; 187/188 pass; manifest stale 26 expected / 27 discovered;
-apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES; drift at f89fe11/#225;
-unrelated to #239/#240; test-only fix sufficient). LV-04 bundle 2 viewer/3D PASS (corrected
-rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
-76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
-LV-04 bundle 5 backend general PASS (14/14 modules, 189/189 tests, exit 0; IF3 backend
-bundle and schema-only bundle already covered separately). LV-04 bundle 6 Apollo evidence PASS (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 7 frontend general FAIL (262/263 files, 2046/2047 tests, exit 1; sole failure PD-001 manifest — same defect as LV-04-B01). LV-04 bundle 8 golden regression PASS (1/1 file, 6/6 tests, exit 0). LV-04 bundle 9 full
-regression union NOT_APPLICABLE (union of B07+B08; no separate execution; would only duplicate
-PD-001 on npm run test portion). Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
-Static check bundle 3 build PASS (exit 0; 3926 modules transformed; dist/ generated).
-Phase C schema/doc verification PASS (8/8 commands exit 0; backend schema 36/36; contract
-vitest 5/5; design-standards 40 files; evidence-collection 21 files; traceability 76
-blockers; section12 register 76 rows baseline byte-exact).
-
-Canonical final verdict fields (2026-08-01 JST):
-GITHUB_SYNC_VERDICT: PASS
-DOCUMENT_SCOPE_VERDICT: PASS
-LV03_IMPLEMENTATION_INVENTORY_VERDICT: PASS
-LV04_REGRESSION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-LV05_3D_DISPLAY_VERDICT: PASS
-LV06_MANUAL_TRACEABILITY_VERDICT: PASS
-LV07_NONCOMPOSITE_DECK_VERDICT: PASS
-LV08_DOCUMENT_QUALITY_VERDICT: PASS
-SCHEMA_DOC_VERDICT: PASS
-BACKEND_GENERAL_VERDICT: PASS
-APOLLO_REGRESSION_VERDICT: FAIL_KNOWN_PREEXISTING_PD001
-APOLLO_MANIFEST_FAILURE_CLASSIFICATION: KNOWN_PREEXISTING_TEST_MANIFEST_DEFECT_SEPARATE_DEFECT_REQUIRED
-THREED_VIEWER_AUTOMATED_VERDICT: PASS
-THREED_VIEWER_MANUAL_VERDICT: PASS
+APDX01_CONTRACT_TYPES_VERDICT: PASS
+APDX01_SCHEMA_VERDICT: PASS
+APDX01_PARSER_VERDICT: PASS
+APDX01_VALIDATION_VERDICT: PASS
+APDX01_ROUNDTRIP_VERDICT: PASS
+APDX01_STABLE_ID_VERDICT: PASS
+APDX01_NONCOMPOSITE_VERDICT: PASS
+APDX01_BACKWARD_COMPATIBILITY_VERDICT: PASS
 TYPECHECK_VERDICT: PASS
 LINT_VERDICT: PASS
 BUILD_VERDICT: PASS
-IF3_VERDICT: PASS
-LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-REFREEZE_READINESS_VERDICT: READY_FOR_PR
-IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
-OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-
-PD-001: known pre-existing test manifest defect (SEPARATE_DEFECT_REQUIRED); blocks full green suite (LV-04-B01/B07) but not docs-only refreeze (#239/#240); fix deferred to implementation branch.
-OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing; DeckAnchorage CSV row absence; AP-DX-08 steel_composite rejection at BridgeDefinition wire-up.
-
-================================================================================
-21. Stop Status
-================================================================================
-
-UPDATE_TIMESTAMP: 2026-08-01 JST (final merge readiness bookkeeping; LV-01..LV-08 verdicts authoritative)
-WORK_STATUS: COMPLETE — main sync merge resolved (docs-only conflicts); LV-08 PASS; LV-07 PASS; LV-06 PASS; LV-05 PASS; LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (B01/B07 FAIL PD-001; B02/B03/B04/B05/B06/B08 PASS; B09 NOT_APPLICABLE); Phase C schema/doc PASS; LV-01 PASS (historical)
-STOP_REASON: N/A — final merge readiness bookkeeping; canonical verdicts unchanged.
-LV01_RERUN: 2026-08-01 19:38:37 JST — PASS (historical baseline f0983878…; retained as authoritative LV-01 evidence)
-LV01_FAILED_RERUN_HISTORICAL: 2026-08-01 19:32:32 JST — FAIL (retained as evidence)
-CURRENT_BRANCH: docs/apollo-refreeze-local-verification
-PRE_PUSH_HEAD_SHA: 8ad6efe4a09183c7bb00393d2f7133ccb24cc495
-SYNCHRONIZED_MERGE_COMMIT_SHA: 4c5fbadbbff8a8359c8906fc1281784c1215ccdd
-CURRENT_REMOTE_BRANCH: origin/docs/apollo-refreeze-local-verification
-ORIGIN_MAIN_CURRENT: f826d32a224f4e4c464a3669e1dcba60a58c4d63
-ORIGIN_MAIN_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
-LOCAL_MAIN_AT_LV01_RERUN: f0983878ccbb816f591214b6242c3688ecb5a060
-LOCAL_MAIN_AT_FAILED_LV01_RERUN: 86e81d35ba36c1ddeb774286676d62a8f03e9085
-ORIGIN_MAIN_AT_PRIOR_LV01: 86e81d35ba36c1ddeb774286676d62a8f03e9085
-DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
-WORKTREE_CLEAN_BEFORE_PUSH: YES (no uncommitted changes except final_report.txt merge-readiness edit)
-UNCOMMITTED_CHANGES: final_report.txt only (this bookkeeping commit)
-PUSH_STATUS: PUSH_AUTHORIZED — final merge readiness recorded; branch push in progress (2026-08-01 JST)
-MAIN_MERGE_STATUS: origin/main f826d32a224f4e4c464a3669e1dcba60a58c4d63 merged into docs/apollo-refreeze-local-verification via git merge --no-ff (2026-08-01 JST); synchronized merge commit 4c5fbadbbff8a8359c8906fc1281784c1215ccdd
-SIBLING_FOLDER_STATUS: No new sibling folders were created under /home/masaharu/Projects.
-SAFE_RESUME_POINT:
-  - branch docs/apollo-refreeze-local-verification at PRE_PUSH_HEAD_SHA 8ad6efe4a09183c7bb00393d2f7133ccb24cc495 (post-merge bookkeeping commits; see section 22)
-  - LV-01..LV-08 complete — LV-04 COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE (PD-001 preexisting, unfixed) — canonical verdicts unchanged after main sync
-NEXT_EXACT_ACTION:
-  - Complete push of docs/apollo-refreeze-local-verification and merge PR #242
-  - PD-001 fix on implementation branch (preexisting_defects.md); add apolloStlExport.test.ts to EXPECTED_APOLLO_TEST_MODULES; re-run LV-04-B01 and LV-04-B07
-
-================================================================================
-22. Main Sync Review (origin/main merge — 2026-08-01 JST)
-================================================================================
-
-MAIN_SYNC_REVIEW: Reviewed origin/main f826d32a224f4e4c464a3669e1dcba60a58c4d63 (Docs/apollo refreeze local verification #241) against completed verification branch c6aa007 (docs(apollo): finalize refreeze verification documentation). Merge command: git merge --no-ff origin/main. No application code, test, config, dependency, or lockfile changes introduced by conflict resolution.
-
-CONFLICT_ANALYSIS:
-  - Conflicts occurred: YES (4 documentation files only)
-  - docs/apollo/phase1_design_expansion_refreeze/implementation_inventory.md — add/add (LV-01 sync note: completed PASS vs main staleness warning)
-  - docs/apollo/phase1_design_expansion_refreeze/local_verification_report.md — content (completed LV-01..LV-08 vs main in-progress LV-04/LV-05)
-  - docs/apollo/phase1_design_expansion_refreeze/manual_verification_checklist.md — add/add (operator PASS vs PENDING_USER_VISUAL_CONFIRMATION)
-  - final_report.txt — content (COMPLETE verdicts vs ACTIVE/in-progress state)
-  - Non-document conflicts: NONE
-
-CONFLICT_RESOLUTION:
-  - Kept completed branch verification (HEAD) as authoritative for all LV-01..LV-08 verdicts and canonical verdict fields
-  - Preserved useful main/historical context: LV-01 staleness awareness recorded; post-merge main SHA documented; prior f0983878… LV-01 baseline retained as historical evidence
-  - PD-001 remains explicitly classified preexisting and unfixed (SEPARATE_DEFECT_REQUIRED)
-  - All conflict markers removed
-
-LATEST_MAIN_SHA: f826d32a224f4e4c464a3669e1dcba60a58c4d63
-SYNCHRONIZED_BRANCH_SHA_AFTER_MERGE: 4c5fbadbbff8a8359c8906fc1281784c1215ccdd
-MERGE_STRATEGY: git merge --no-ff origin/main
-CONFLICTS_OCCURRED: YES (documentation only; 4 files)
-
-MINIMAL_RECHECK_REASONING:
-  - Merge integrated docs-only delta from #241; conflict resolution touched documentation artifacts only
-  - Zero diff in frontend/, backend/, scripts/ (application), tests, configs, or lockfiles attributable to this resolution
-  - Prior LV-04..LV-08 results executed against origin/main application tree; PD-001 preexisting on main unchanged
-  - No full LV re-execution required; canonical verdicts remain valid
-
-SIBLING_FOLDER_POLICY: PASS — no new sibling folders under /home/masaharu/Projects/
-
-CANONICAL_VERDICTS (unchanged):
-  LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-  REFREEZE_READINESS_VERDICT: READY_FOR_PR
-  IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
-  OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-  PD-001: preexisting, unfixed (SEPARATE_DEFECT_REQUIRED)
-
-PR_242_STATUS: final_report.txt remains included in PR #242 deliverables
-
-NEXT_ACTION:
-  - Complete push of synchronized branch and merge PR #242
-  - Track PD-001 fix on separate implementation branch
-
-================================================================================
-23. Final Merge Readiness Bookkeeping (2026-08-01 JST)
-================================================================================
-
-FINAL_MERGE_READINESS: Recorded prior to authorized push of docs/apollo-refreeze-local-verification.
-
-| Field | Value |
-|-------|-------|
-| PRE_PUSH_HEAD_SHA | 8ad6efe4a09183c7bb00393d2f7133ccb24cc495 |
-| SYNCHRONIZED_MERGE_COMMIT_SHA | 4c5fbadbbff8a8359c8906fc1281784c1215ccdd |
-| ORIGIN_MAIN_AT_MERGE | f826d32a224f4e4c464a3669e1dcba60a58c4d63 |
-| WORKTREE_CLEAN_BEFORE_PUSH | YES |
-| SIBLING_FOLDER_POLICY | PASS — no new sibling folders under /home/masaharu/Projects/ |
-| PR_242_DELIVERABLE | final_report.txt included in PR #242 |
-| PUSH_STATUS | PUSH_AUTHORIZED — branch push in progress |
-
-CANONICAL_VERDICTS (unchanged):
-  LOCAL_VERIFICATION_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-  REFREEZE_READINESS_VERDICT: READY_FOR_PR
-  IMPLEMENTATION_START_READINESS: READY_AFTER_REFREEZE_MERGE_SUBJECT_TO_AP_DX_GATES
-  OVERALL_VERDICT: COMPLETE_WITH_KNOWN_PREEXISTING_FAILURE
-  PD-001: preexisting, unfixed (SEPARATE_DEFECT_REQUIRED)
+LOCAL_IMPLEMENTATION_VERDICT: PASS
+PR_READINESS_VERDICT: PASS — ready for PR review
+OVERALL_VERDICT: PASS
