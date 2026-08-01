@@ -5,6 +5,11 @@ import {
 } from "../liner/adapters/linerProjectDraft";
 import type { ProjectModel } from "../types";
 import {
+  hydrateApolloBsddFromPersistence,
+  serializeApolloBsddForPersistence,
+  validateBridgeStructureInputPersistence,
+} from "./bridgeStructure";
+import {
   APOLLO_PHASE1_UNIT2_SCHEMA_VERSION,
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
@@ -168,6 +173,13 @@ export function importApolloProjectFromText(text: string): ApolloProjectImportRe
     return { ok: false, diagnostics: sidecarDiagnostics };
   }
 
+  if (record.apolloBridgeStructureInput !== undefined) {
+    const inputDiagnostics = validateBridgeStructureInputPersistence(record.apolloBridgeStructureInput);
+    if (inputDiagnostics.length > 0) {
+      return { ok: false, diagnostics: inputDiagnostics };
+    }
+  }
+
   const migrated = migrateProject(parsed);
   const linerHydration = hydrateProjectLinerFromPersistence(migrated);
   if (!linerHydration.ok) {
@@ -179,7 +191,12 @@ export function importApolloProjectFromText(text: string): ApolloProjectImportRe
     return { ok: false, diagnostics: apolloHydration.diagnostics };
   }
 
-  const validation = validateApolloPhase1Unit2Draft(getApolloPhase1Unit2Draft(apolloHydration.project));
+  const bsddHydration = hydrateApolloBsddFromPersistence(apolloHydration.project);
+  if (!bsddHydration.ok) {
+    return { ok: false, diagnostics: bsddHydration.diagnostics };
+  }
+
+  const validation = validateApolloPhase1Unit2Draft(getApolloPhase1Unit2Draft(bsddHydration.project));
   if (validation.errors.length > 0) {
     return {
       ok: false,
@@ -187,11 +204,15 @@ export function importApolloProjectFromText(text: string): ApolloProjectImportRe
     };
   }
 
-  return { ok: true, project: apolloHydration.project };
+  return { ok: true, project: bsddHydration.project };
 }
 
 export function exportApolloProjectToText(project: ProjectModel): ApolloProjectExportResult {
-  const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(project);
+  const bsddSerialized = serializeApolloBsddForPersistence(project);
+  if (!bsddSerialized.ok) {
+    return { ok: false, diagnostics: bsddSerialized.diagnostics };
+  }
+  const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(bsddSerialized.project);
   if (!apolloSerialized.ok) {
     return { ok: false, diagnostics: apolloSerialized.diagnostics };
   }

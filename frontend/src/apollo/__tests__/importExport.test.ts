@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
 import {
+  generateBridgeStructureFromInput,
+  getBridgeStructureInputDraft,
+  withBridgeStructureField,
+} from "../bridgeStructure";
+import {
   decodeApolloImportText,
   exportApolloProjectToText,
   importApolloProjectFromText,
@@ -75,6 +80,71 @@ describe("importExport", () => {
     if (!brokenResult.ok) {
       expect(brokenResult.diagnostics.join(" ")).toMatch(/material|reference/i);
     }
+  });
+
+  it("round-trips apolloBsdd and bridge structure input sidecars", () => {
+    const project = createApollo200mContinuousBridgeSample();
+    let next = withBridgeStructureField(project, "spanLength", 40);
+    next = withBridgeStructureField(next, "bridgeLength", 200);
+    next = withBridgeStructureField(next, "width", 12);
+    next = withBridgeStructureField(next, "girderCount", 4);
+    next = withBridgeStructureField(next, "girderSpacing", 3);
+    next = withBridgeStructureField(next, "girderDepth", 2.5);
+    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
+    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
+    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
+    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
+    next = withBridgeStructureField(next, "webThickness", 0.012);
+    next = withBridgeStructureField(next, "deckThickness", 0.25);
+    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+
+    const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) return;
+
+    const exported = exportApolloProjectToText(generated.project);
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+
+    const imported = importApolloProjectFromText(exported.content);
+    expect(imported.ok).toBe(true);
+    if (!imported.ok) return;
+
+    const sdm = imported.project.apolloBsdd?.structuralDesignModel;
+    expect(sdm?.mainGirders[0]?.mainGirderId).toBe(
+      generated.project.apolloBsdd?.structuralDesignModel?.mainGirders[0]?.mainGirderId,
+    );
+    expect(imported.project.apolloBridgeStructureInput?.bridgeLength).toBe(200);
+  });
+
+  it("rejects invalid apolloBsdd on import fail-closed", () => {
+    const project = createApollo200mContinuousBridgeSample();
+    let next = withBridgeStructureField(project, "spanLength", 40);
+    next = withBridgeStructureField(next, "bridgeLength", 200);
+    next = withBridgeStructureField(next, "width", 12);
+    next = withBridgeStructureField(next, "girderCount", 4);
+    next = withBridgeStructureField(next, "girderSpacing", 3);
+    next = withBridgeStructureField(next, "girderDepth", 2.5);
+    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
+    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
+    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
+    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
+    next = withBridgeStructureField(next, "webThickness", 0.012);
+    next = withBridgeStructureField(next, "deckThickness", 0.25);
+    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) return;
+
+    const exported = exportApolloProjectToText(generated.project);
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+
+    const parsed = JSON.parse(exported.content) as Record<string, unknown>;
+    const bsdd = parsed.apolloBsdd as Record<string, unknown>;
+    bsdd.documentId = "not-a-uuid";
+    const result = importApolloProjectFromText(JSON.stringify(parsed));
+    expect(result.ok).toBe(false);
   });
 
   it("rejects unknown Apollo sidecar fields fail-closed", () => {

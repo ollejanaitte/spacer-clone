@@ -1,4 +1,5 @@
 import type { ProjectModel } from "../types";
+import { buildApolloBsddFingerprintPayload } from "./bridgeStructure";
 import { serializeApolloPhase1Unit2ForPersistence } from "./unit2Draft";
 
 type JsonPrimitive = string | number | boolean | null;
@@ -25,6 +26,7 @@ function buildFingerprintPayload(project: ProjectModel): JsonValue | null {
   if (!draft) {
     return null;
   }
+  const bsddPayload = buildApolloBsddFingerprintPayload(serialized.project);
   return {
     schemaVersion: draft.schemaVersion,
     metadata: {
@@ -40,6 +42,7 @@ function buildFingerprintPayload(project: ProjectModel): JsonValue | null {
     supports: draft.supports.map((support) => ({ ...support })),
     materialReferences: draft.materialReferences.map((material) => ({ ...material })),
     audit: draft.audit.map((entry) => ({ ...entry })),
+  ...(bsddPayload ? { apolloBsddBinding: bsddPayload as JsonValue } : {}),
   };
 }
 

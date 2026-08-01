@@ -1,4 +1,6 @@
+import type { BridgeSuperstructureDesignDocument } from "./contracts/bridgeSuperstructureDesignDocument";
 import type { PersistedLinerTraceEntry, ProjectLinerMetadata } from "./liner/schema/types";
+import type { ApolloBridgeStructureInputDraft } from "./apollo/bridgeStructure/types";
 
 export type ProjectInfo = {
   id: string;
@@ -285,6 +287,10 @@ export type ProjectModel = {
   linerTrace?: PersistedLinerTraceEntry[];
   /** Optional Apollo Phase 1-NN unit 2 non-numeric draft payload. */
   apolloPhase1Unit2?: ApolloPhase1Unit2Draft;
+  /** Optional AP-DX-01 bridge superstructure design document sidecar (schema 0.1.0). */
+  apolloBsdd?: BridgeSuperstructureDesignDocument;
+  /** Optional persisted bridge structure input for Visible Vertical Slice 01. */
+  apolloBridgeStructureInput?: ApolloBridgeStructureInputDraft;
 };
 
 export type StructuredMessage = {
