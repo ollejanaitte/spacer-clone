@@ -135,6 +135,17 @@ OVERALL_VERDICT: EVIDENCE_ACQUISITION_READY_EXTERNAL_RUN_REQUIRED
 
 POST-EA-01 adds a new local authority set at [docs/apollo/post-ea-01/](../post-ea-01/) for checksum-bound local source inventory, source-closure blocker consolidation, identity blocker fixation, non-promoted machine/golden/parity placeholders, and the final blocked reassessment. It does not reopen DS or EA stages and does not change the release decision.
 
+## Consolidated bridge research (2026-08-01)
+
+PR-B selectively integrates Stage 5A/5B bridge-standards research summaries and traceability from `bridge-standards-research` without amending DS-00..09 decisions or adopting blocked numerics.
+
+| Artifact | Role |
+|----------|------|
+| [research/consolidated-2026-08-01/](research/consolidated-2026-08-01/README.md) | Stage 5A handoff, PDF inventory metadata, Stage 5B research CSV/MD/JSON |
+| [handoffs/consolidated-2026-08-01/](handoffs/consolidated-2026-08-01/README.md) | Apollo Stage 5 decoding handoff manifest and review |
+
+Provenance and SHA-256 deduplication: [project_consolidation_manifest.csv](../../migration/project_consolidation_manifest.csv). PDFs and page-image evidence remain outside Git per [local archive policy](../../migration/local_archive_policy.md).
+
 ## Governance documents
 
 | Document | Role |

@@ -1,22 +1,22 @@
 # Project Consolidation Report
 
 **Report date:** 2026-08-01
-**Branch:** `agent/prepare-consolidated-local-archive-boundary`
+**Branch:** `agent/consolidate-bridge-research`
 **Overall Phase 2 verdict:** `IN_PROGRESS`
 
 ## Executive summary
 
-Phase 2 started after user approval. Canonical clone from GitHub `main` is complete. PR-A (local-archive boundary definition) is in progress on this branch. Archive bulk copy, selective integration, hash verification, and PR-B–F merges are not started.
+Phase 2 canonical clone is complete. PR-A (local-archive boundary) merged to `main` (#229, `36f7034`). Raw archive bulk copy verified (`118389` files, hash PASS). PR-B (bridge research selective Git integration) is in progress on this branch: 31 source artifacts copied with SHA verification; manifest rows appended.
 
 ## SHA anchors
 
 | Label | SHA | Notes |
 | --- | --- | --- |
 | Phase 1 observation (`origin/main` at inventory) | `146f6786c9790440504f05c2f33a551ab91ed537` | Short: `146f678` — observation value, not a permanent pin |
-| Canonical clone HEAD at Step 1 completion | `146f6786c9790440504f05c2f33a551ab91ed537` | Matches `origin/main` at clone time |
-| PR-A working tree | `146f6786c9790440504f05c2f33a551ab91ed537` | No integration commits yet |
+| PR-A merge (`main`) | `36f70341f1e9c6913a745d0645a2f619b20f6a50` | #229 local-archive boundary |
+| PR-B working tree | `36f70341f1e9c6913a745d0645a2f619b20f6a50` | Base = PR-A merge; integration uncommitted |
 
-Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#228)`.
+Commit message at PR-A anchor: merge of local-archive boundary PR (#229).
 
 ## Phase status
 
@@ -24,10 +24,11 @@ Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#
 | --- | --- | --- |
 | Gate 0 | Phase 2 user approval | `PASS` |
 | Step 1 | Canonical clone (`spacer-clone`) | `PASS` |
-| Step 2 | PR-A local-archive boundary | `IN_PROGRESS` |
-| Step 3 | Selective copy + hash | `NOT_STARTED` |
-| Step 4 | Secret scan | `NOT_STARTED` |
-| Step 5 | Docs PR merge sequence (A→F; G when required) | `NOT_STARTED` |
+| Step 2 | PR-A local-archive boundary | `PASS` |
+| Step 2b | Raw archive bulk copy + hash | `PASS` (`118389` files verified) |
+| Step 3 | Selective copy + hash (PR-B) | `IN_PROGRESS` |
+| Step 4 | Secret scan | `IN_PROGRESS` (PR-B gate run on copied artifacts) |
+| Step 5 | Docs PR merge sequence (A→F; G when required) | `IN_PROGRESS` (PR-A merged; PR-B open) |
 | Step 6 | Old folder disposition | `NOT_STARTED` |
 | Step 7 | Final verification | `NOT_STARTED` |
 
@@ -35,15 +36,15 @@ Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#
 
 | PR | Scope | Verdict |
 | --- | --- | --- |
-| PR-A | Local-archive boundary | `IN_PROGRESS` |
-| PR-B | Bridge research | `NOT_STARTED` |
+| PR-A | Local-archive boundary | `PASS` (#229, `36f7034`) |
+| PR-B | Bridge research | `IN_PROGRESS` |
 | PR-C | Apollo handoff/research materials | `NOT_STARTED` |
 | PR-D | Verification/operator evidence | `NOT_STARTED` |
 | PR-E | UI preservation/legacy indexes | `NOT_STARTED` |
 | PR-F | Final manifest/repository index | `NOT_STARTED` |
 | PR-G | Newly consolidated docs path normalization (only when required) | `NOT_REQUIRED_YET` |
 
-## PR-A deliverables (this branch)
+## PR-A deliverables (merged)
 
 | Item | Status |
 | --- | --- |
@@ -53,6 +54,17 @@ Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#
 | `project_consolidation_manifest.csv` (header) | Done |
 | `local-archive/` directory skeleton | Done |
 | `local-archive/manifests/local_archive_manifest.csv` (header) | Done |
+
+## PR-B deliverables (this branch)
+
+| Item | Status |
+| --- | --- |
+| `docs/apollo/design-standards/research/consolidated-2026-08-01/` (29 artifacts) | Done |
+| `docs/apollo/design-standards/handoffs/consolidated-2026-08-01/apollo-decoding/` (2 artifacts) | Done |
+| Consolidated README files | Done |
+| `project_consolidation_manifest.csv` rows (31) | Done |
+| Design-standards README consolidated section | Done |
+| Duplicate SHA skip vs `main` | 0 skipped (no prior canonical match) |
 
 ## Local archive structure
 
@@ -68,7 +80,7 @@ Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#
 | `local-archive/ui-preservation/` | UI preservation payloads |
 | `local-archive/manifests/` | Local manifest (`local_archive_manifest.csv`) |
 
-`LOCAL_ARCHIVE_STRUCTURE_VERDICT`: `BOUNDARY_DEFINED` (skeleton + policy; copies `NOT_STARTED`).
+`LOCAL_ARCHIVE_STRUCTURE_VERDICT`: `BOUNDARY_DEFINED` (PR-A). Raw archive copy: `VERIFIED` (`118389` files).
 
 ## Constraints (unchanged)
 
@@ -80,12 +92,12 @@ Commit message at anchor: `test(electron): stabilize Apollo interactive smoke (#
 
 ## Next actions
 
-1. Review PR-A boundary documents.
-2. Merge PR-A to `main`; then run approved archive bulk copy into `local-archive/legacy-archive/` (`cp -a`, symlink non-expansion, hash, manifest) as local work.
-3. Open PR-B for bridge research Git-tracked selection per [local_archive_policy.md](local_archive_policy.md).
-4. Populate manifest rows; mark `DUPLICATE_SKIPPED` where SHA matches `main`.
-5. Run secret scan before first docs PR merge touching integrated content.
+1. Review PR-B consolidated artifacts and manifest.
+2. Merge PR-B to `main` when approved.
+3. Open PR-C for remaining Apollo handoff/research materials.
+4. Continue manifest population; mark `DUPLICATE_SKIPPED` where SHA matches `main`.
+5. Run secret scan before each docs PR merge touching integrated content.
 
 ## External authority
 
-Phase 1 inventory and integration plan live in the repository parent directory and are not modified by PR-A. This report summarizes execution state only.
+Phase 1 inventory and integration plan live in the repository parent directory and are not modified by PR-B. Source tree `bridge-standards-research` is read-only for this pass.

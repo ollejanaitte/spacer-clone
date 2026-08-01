@@ -1,0 +1,50 @@
+# APOLLO Stage 5 Handoff Package Review
+
+date: 2026-07-26
+zip: apollo_stage5_handoff_SC-20260726-001.zip
+zip_sha256: 20c9c786f7522c3e45b4ad61dbaa7d060fe75873ce1f28256473e3b7f3495355
+zip_size_bytes: 39381254
+
+## Counts
+
+- total manifest entries: 139
+- INCLUDED files in ZIP: 137
+- stage5c files: 9
+- stage5b files (excl evidence): 22
+- evidence images: 97
+- package reports: 5
+- checkpoints: 5
+- logs: 5
+- excluded not referenced: 2
+
+## OPEN counts
+
+- READY: 69
+- OPEN PARTIALLY_LOCATED: 32
+- JIS GAP: 34
+- APOLLO RETURN: 41
+- UNKNOWN: 15
+
+## Verification
+
+```text
+ZIP_OPEN_TEST: PASSED
+MANIFEST_MATCH: PASSED
+SHA256_MATCH: PASSED
+REQUIRED_FILES: PASSED
+EVIDENCE_LINKAGE: PASSED
+ABSOLUTE_PATH_LEAK: NONE
+TEMPORARY_FILE_LEAK: NONE
+SOURCE_PDF_LEAK: NONE
+APOLLO_CODE_LEAK: NONE
+SOURCE_FILE_MODIFICATION: NONE
+```
+
+## Verdicts
+
+```text
+APOLLO_STAGE5_HANDOFF_PACKAGE_VERDICT: PASSED
+ZIP_INTEGRITY_VERDICT: PASSED
+TRACEABILITY_PACKAGE_VERDICT: PASSED
+SOURCE_INTEGRITY_VERDICT: PASSED
+```

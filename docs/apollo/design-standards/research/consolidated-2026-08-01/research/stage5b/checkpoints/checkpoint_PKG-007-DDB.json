@@ -1,0 +1,25 @@
+{
+  "run_id": "LR-20260726-001",
+  "package_id": "PKG-007-DDB",
+  "last_completed_primary_result_id": "R5B-PKG007-0004",
+  "last_completed_handoff_id": "H5A-0273",
+  "completed_primary_count": 4,
+  "completed_handoff_count": 46,
+  "output_file": "research/stage5b/stage5b_research_results.csv",
+  "output_sha256": "8854fa8197a959856cb889af7924419b19a6b951e0d5df937fca79de4211c8e3",
+  "disk_free_bytes": 78608310272,
+  "disk_usage_percent": 66,
+  "error_status": "NONE",
+  "resume_instruction": "Continue after PKG-007-DDB",
+  "timestamp": "2026-07-26T08:41:29.229026",
+  "validation_errors": [],
+  "pilot_gate": {
+    "PACKAGE_ACCEPTANCE": "PASSED",
+    "SCHEMA_DRIFT": "NO",
+    "TRACEABILITY_ERROR": 0,
+    "MISSING_EVIDENCE_FOR_LOCATED_RESULTS": 0,
+    "PDF_SHA_MISMATCH": 0,
+    "INPUT_SHA_MISMATCH": 0,
+    "DISK_STATUS": "OK"
+  }
+}
