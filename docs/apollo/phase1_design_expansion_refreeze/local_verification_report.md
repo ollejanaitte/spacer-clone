@@ -4,8 +4,8 @@
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
-(HEAD `dc8bfc9745fe9f7d0ff27d3cd306184388466048` at Phase 2 start) bootstrapped from
-integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
+(HEAD `f147efa3b9ea108320848ccf2bb80f7b5790f7af` at branch bootstrap; frozen snapshot)
+bootstrapped from integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
 
 ## Baseline
 
@@ -18,8 +18,8 @@ integrated `origin/main` SHA `86e81d35ba36c1ddeb774286676d62a8f03e9085`.
 | Working path | `/home/masaharu/Projects/spacer-clone` |
 | Remote | `origin` → `https://github.com/ollejanaitte/spacer-clone.git` |
 | Branch | `docs/apollo-refreeze-local-verification` |
-| HEAD SHA (Phase 3 start) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
-| Origin branch SHA (Phase 3 start) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
+| HEAD SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
+| Origin branch SHA (Phase 3 start; frozen snapshot) | `18cfdcd87b034c1a5bec2ea64a40398408ad4470` |
 | Origin/main SHA | `86e81d35ba36c1ddeb774286676d62a8f03e9085` |
 | Design freeze baseline (documented) | `1fbcb3ea804f965b8f262284573f4f4d42dc2411` |
 
