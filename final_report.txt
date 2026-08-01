@@ -1,0 +1,519 @@
+================================================================================
+Apollo Phase 1 Design Expansion Refreeze
+Local Verification Final Report
+================================================================================
+
+UPDATE_TIMESTAMP: 2026-08-01 19:02:07 JST
+WORK_STATUS: IN_PROGRESS
+CURRENT_PHASE: Phase 4 — static check bundle 3 (build COMPLETE — PASS)
+
+================================================================================
+1. Executive Summary
+================================================================================
+
+Apollo Phase 1 Design Expansion Refreeze local verification continues on a
+dedicated branch bootstrapped from integrated main. Phase 1 recorded environment
+and repository metadata. Phase 2 validated refreeze documentation. Phase 3
+inspected package.json scripts, vitest/playwright configs, pytest layout, and
+test file inventories to produce a verified LV-04/LV-05 command plan (no tests
+executed). LV-01 (git sync / worktree) and LV-02 (Apollo document consistency) are PASS.
+Phase 4 bundle 1 (Apollo frontend vitest) executed: FAIL (exit 1, pre-existing on
+origin/main). Phase 4 bundle 2 (viewer/3D vitest) corrected rerun: PASS (exit 0; 22/22
+files, 228/228 tests). An earlier bundle 2 run used an erroneous trailing `.` argument
+that broadened scope and is superseded. Phase 4 bundle 3 (IF3 frontend vitest): PASS
+(exit 0; 12/12 files, 76/76 tests). Phase 4 bundle 4 (IF3 backend pytest): PASS
+(exit 0; 7/7 modules, 123/123 tests). Phase 4 static check bundle 1 (typecheck): PASS
+(exit 0; `tsc -b --pretty false` completed with no errors). Phase 4 static check bundle 2
+(lint): PASS (exit 0; source hygiene passed; Japanese-string audit informational only).
+Phase 4 static check bundle 3 (build): PASS (exit 0; `tsc -b && vite build` completed;
+3926 modules transformed; dist/ artifacts generated; chunk size warning informational only).
+LV-03 through LV-07 remain NOT_STARTED or IN_PROGRESS; LV-04 is
+IN_PROGRESS (4/9 bundles). LV-08 is PARTIAL (Phase 2 doc checks only).
+TYPECHECK_VERDICT: PASS
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+
+================================================================================
+2. Repository and Branch Information
+================================================================================
+
+TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
+WORKING_PATH: /home/masaharu/Projects/spacer-clone
+REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
+TARGET_BRANCH: docs/apollo-refreeze-local-verification
+HEAD_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
+ORIGIN_BRANCH_SHA_AT_BRANCH_BOOTSTRAP: f147efa3b9ea108320848ccf2bb80f7b5790f7af
+  (stable baseline as of verification-branch creation; frozen — not updated per commit)
+ORIGIN_MAIN_SHA: 86e81d35ba36c1ddeb774286676d62a8f03e9085
+DOCUMENTED_DESIGN_FREEZE_BASELINE: 1fbcb3ea804f965b8f262284573f4f4d42dc2411
+WORKTREE_CLEAN_AT_START: YES
+UNCOMMITTED_CHANGES: NO (prior to Phase 2 validation commit)
+
+Root package.json: NOT PRESENT
+Frontend package.json: PRESENT (frontend/package.json, version 0.3.0-preview)
+GitHub Actions workflows: NOT PRESENT (.github/workflows/ absent on this branch)
+
+Required documents (on verification branch):
+  - docs/apollo/phase1_design_expansion_refreeze/README.md
+  - docs/apollo/phase1_design_expansion_refreeze/scope_and_architecture_freeze.md
+  - docs/apollo/phase1_design_expansion_refreeze/implementation_sequence.md
+  - docs/apollo/phase1_design_expansion_refreeze/manual_traceability.csv
+  - docs/apollo/phase1_design_expansion_refreeze/local_verification_plan.md
+  - docs/apollo/phase1_design_expansion_refreeze/github_scope_verification.md
+
+================================================================================
+3. Role Delegation
+================================================================================
+
+Practical verification work is delegated to Cursor CLI. The local operator
+initiated branch bootstrap; Cursor CLI executed git branch creation, upstream
+push, final_report.txt creation, and minimal local_verification_report.md
+update under the constraint: work only inside /home/masaharu/Projects/spacer-clone.
+
+================================================================================
+4. Branch Bootstrap Results
+================================================================================
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Confirm git status clean and HEAD == origin/main | PASS |
+| 2 | Create branch docs/apollo-refreeze-local-verification from main | PASS |
+| 3 | Push branch with upstream tracking to origin | PASS |
+| 4 | Create final_report.txt (sections 1-6, 16-20) | PASS |
+| 5 | Update local_verification_report.md (active branch note) | PASS |
+
+================================================================================
+5. Verification Status (LV-01 through LV-08)
+================================================================================
+
+| ID | Description | Status |
+|----|-------------|--------|
+| LV-01 | Git sync / worktree | PASS |
+| LV-02 | Existing Apollo document consistency | PASS |
+| LV-03 | Implementation inventory | NOT_STARTED |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 4 PASS — IF3 backend) |
+| LV-05 | 3D display non-regression | NOT_STARTED |
+| LV-06 | Manual traceability review | NOT_STARTED |
+| LV-07 | Non-composite deck / anchorage | NOT_STARTED |
+| LV-08 | Document quality | PARTIAL (Phase 2 doc/CSV/link checks) |
+
+================================================================================
+6. Next Exact Action
+================================================================================
+
+LV-02 Apollo document consistency is PASS on branch
+docs/apollo-refreeze-local-verification. Full findings are in
+local_verification_report.md (LV-02 section).
+
+LV-02 summary: refreeze docs align with Step 1 roadmap, ap00/ap01/ap11 governance,
+non-composite deck rules, NOT_GRANTED implementation posture, and documented 3D viewer
+evidence (d3f1ec6/1fbcb3e on main; pr5-smoke and operator-smoke summaries). Explicit
+AP-DX design expansion beyond ap00 forbidden_scope OUT_OF_PHASE1 rows is acknowledged;
+governance unlock for stiffener/splice/bracing/fatigue AP-DX modules remains
+OPEN_QUESTION. README design-check status enum aligned with scope_and_architecture_freeze
+§5.5.
+
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general)
+per local_verification_plan.md; LV-05 manual/e2e table.
+
+================================================================================
+9. Environment and Tool Discovery (Phase 1)
+================================================================================
+
+Discovery recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:40:14 JST. Commands executed; outputs captured in
+local_verification_report.md.
+
+| Command | Recorded result |
+|---------|-----------------|
+| pwd | /home/masaharu/Projects/spacer-clone |
+| git remote -v | origin https://github.com/ollejanaitte/spacer-clone.git |
+| git status --short --branch | ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification |
+| git branch --show-current | docs/apollo-refreeze-local-verification |
+| git rev-parse HEAD | f147efa3b9ea108320848ccf2bb80f7b5790f7af |
+| git rev-parse origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| uname -a | Linux 6.8.0-136-generic x86_64 GNU/Linux |
+| cat /etc/os-release | Zorin OS 17.3 (jammy) |
+| node --version | v24.5.0 |
+| npm --version | 10.9.8 |
+| python3 --version | Python 3.10.12 |
+| pytest --version | pytest 9.1.1 |
+| git --version | 2.34.1 |
+| gh --version | 2.4.0+dfsg1 |
+
+Test location inventory (metadata only; not executed):
+  Apollo frontend: frontend/src/apollo/__tests__/, frontend/src/App.apolloNavigation.test.tsx
+  Apollo evidence: scripts/apollo/evidence/tests/
+  3D viewer: frontend/src/viewer/*.test.ts(x)
+  IF3 frontend: frontend/src/if3/__tests__/, frontend/src/results/if3*.test.ts, frontend/src/exports/if3*.test.ts
+  IF3/backend: backend/tests/test_if3_*.py, backend/tests/test_reports_if3_gate.py
+  Backend general: backend/tests/
+
+PHASE1_DISCOVERY_VERDICT: COMPLETE (environment/repository metadata recorded; no tests run)
+
+================================================================================
+10. Phase 2 Documentation Validation
+================================================================================
+
+Validation recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:42:00 JST.
+
+| Check | Result |
+|-------|--------|
+| README 正本 file inventory | PASS |
+| Markdown relative links | PASS (none found) |
+| Backtick file references | PASS |
+| Heading structure | PASS |
+| Fenced code block balance | PASS |
+| CSV column count (9 cols) | PASS (after MT-140/MT-150 fix) |
+| CSV duplicate trace_id | PASS |
+| AP-DX-00..21 coverage | PASS |
+| Baseline SHA consistency | PASS |
+| Branch name context | PASS (design vs verification branches distinct) |
+| Application tests | NOT_STARTED |
+
+PHASE2_DOC_VALIDATION_VERDICT: PASS
+
+Fix applied: manual_traceability.csv rows MT-140 and MT-150 — restored missing
+planned_module column (value mirrors phase1_target).
+
+================================================================================
+11. Phase 3 Test-Command Discovery
+================================================================================
+
+Discovery recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:43:26 JST. Configuration and test paths inspected; no tests run.
+
+Config findings:
+  Root package.json: NOT PRESENT
+  Frontend scripts: typecheck, lint, test, test:regression, test:all, test:e2e,
+    build, dev:apollo, electron:dev:apollo, app:dev:apollo, contracts:schema:generate
+  pytest.ini / pyproject.toml / setup.cfg: NOT PRESENT
+  GitHub Actions workflows: NOT PRESENT
+  Backend canonical: python3 -m pytest backend/tests -q (README.md)
+
+Verified planned command groups (see local_verification_report.md Phase 3):
+  Apollo frontend: cd frontend && npm run test -- src/apollo; navigation test;
+    node scripts/check_apollo_source_hygiene.mjs frontend/src/apollo
+  Viewer/3D: cd frontend && npm run test -- src/viewer (22 vitest files)
+  IF3 frontend: cd frontend && npm run test -- src/if3 ... (9 vitest files)
+  IF3 backend: python3 -m pytest backend/tests/test_if3_*.py ... (7 modules)
+  Backend general: python3 -m pytest backend/tests -q; scripts/apollo/evidence/tests
+  Schema/doc: backend test_*_schema.py; contractJsonSchema vitest; git diff --check
+  Typecheck/lint/build: npm run typecheck / lint / build (frontend/)
+  E2E/manual: npm run test:e2e; playwright phase5 configs; dev:apollo; start-ubuntu.sh
+  LV-04 bundles: npm run test / test:regression / test:all
+
+PHASE3_TEST_COMMAND_DISCOVERY_VERDICT: COMPLETE
+
+================================================================================
+12. LV-01 Git Sync / Worktree
+================================================================================
+
+Verification recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:45:04 JST.
+
+| Command | Recorded result |
+|---------|-----------------|
+| git fetch --all --prune | Exit 0; origin fetched |
+| git status --short --branch | ## docs/apollo-refreeze-local-verification...origin/docs/apollo-refreeze-local-verification |
+| git rev-parse HEAD | 96a1febf9524e23c47ea187a73d0bd02ba287469 |
+| git rev-parse origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| git rev-parse main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| git merge-base HEAD origin/main | 86e81d35ba36c1ddeb774286676d62a8f03e9085 |
+| git branch -r --contains 1fbcb3ea… | origin/main listed (baseline contained) |
+| git merge-base HEAD 1fbcb3ea… | 1fbcb3ea804f965b8f262284573f4f4d42dc2411 |
+
+| Check | Result |
+|-------|--------|
+| Local main equals origin/main | PASS |
+| origin/main contains design-freeze baseline | PASS |
+| Verification branch descendant of origin/main | PASS |
+| Working tree clean | PASS |
+| Application tests | NOT_STARTED |
+
+LV01_GIT_SYNC_VERDICT: PASS
+
+================================================================================
+13. Phase 4 LV-04 Regression — Apollo Frontend (Bundle 1)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:51:14 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B01-APOLLO-FE |
+| COMMAND | cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx |
+| START_TIME | 2026-08-01 18:51:14 JST |
+| END_TIME | 2026-08-01 18:51:24 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite discoverability drift on origin/main) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1/188 tests failed; 27/28 test files passed |
+| EVIDENCE | Vitest: 187 pass, 1 fail; apolloStlExport.test.ts missing from EXPECTED_APOLLO_TEST_MODULES |
+| ACTION | Record only; fix deferred to implementation branch |
+
+APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing; 187/188 pass)
+LV04_B01_APOLLO_FE_VERDICT: FAIL
+
+================================================================================
+14. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2) — SUPERSEDED
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:52:38 JST. SUPERSEDED by corrected rerun in section 14a.
+
+Command error: run accidentally appended an extra `.` argument after `src/viewer`,
+broadening vitest scope to the full frontend/ tree instead of the Phase 3 planned
+viewer bundle (`cd frontend && npm run test -- src/viewer`).
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D |
+| COMMAND | cd frontend && npm run test -- src/viewer . (ERRONEOUS — extra `.` argument) |
+| START_TIME | 2026-08-01 18:52:38 JST |
+| END_TIME | 2026-08-01 18:53:10 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL (SUPERSEDED) |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale; failure outside src/viewer/) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1/2047 tests failed; 22/22 viewer test files passed (228/228 viewer tests); 262/263 total test files passed |
+| EVIDENCE | Vitest: 2046 pass, 1 fail; erroneous `.` argument expanded scope beyond viewer bundle |
+| ACTION | Superseded by corrected rerun (section 14a) |
+
+VIEWER_3D_REGRESSION_STATUS: FAIL (SUPERSEDED — erroneous command)
+LV04_B02_VIEWER_3D_VERDICT: FAIL (SUPERSEDED)
+
+================================================================================
+14a. Phase 4 LV-04 Regression — Viewer / 3D (Bundle 2, Corrected Rerun)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:55:15 JST. Authoritative result; supersedes section 14.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B02-VIEWER-3D-CORRECTED |
+| COMMAND | cd frontend && npm run test -- src/viewer |
+| START_TIME | 2026-08-01 18:55:15 JST |
+| END_TIME | 2026-08-01 18:55:18 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 22/22 viewer test files passed (228/228 viewer tests) |
+| EVIDENCE | Vitest v4.1.8: Test Files 22 passed (22); Tests 228 passed (228); Duration 3.19s |
+| ACTION | Proceed to LV-04 bundle 3 (IF3 frontend) per Phase 3 planned commands |
+
+VIEWER_3D_REGRESSION_STATUS: PASS
+LV04_B02_VIEWER_3D_VERDICT: PASS
+
+================================================================================
+15. Phase 4 LV-04 Regression — IF3 Frontend (Bundle 3)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:56:31 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B03-IF3-FE |
+| COMMAND | cd frontend && npm run test -- src/if3 src/results/if3 src/exports/if3 src/draft/if3DraftEligibility.test.ts src/api/client.if3.test.ts |
+| START_TIME | 2026-08-01 18:56:31 JST |
+| END_TIME | 2026-08-01 18:56:33 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 12/12 IF3 frontend test files passed (76/76 tests) |
+| EVIDENCE | Vitest v4.1.8: Test Files 12 passed (12); Tests 76 passed (76); Duration 1.36s |
+| ACTION | Proceed to LV-04 bundle 4 (IF3 backend) per Phase 3 planned commands |
+
+IF3_FRONTEND_REGRESSION_STATUS: PASS
+LV04_B03_IF3_FE_VERDICT: PASS
+
+================================================================================
+15a. Phase 4 LV-04 Regression — IF3 Backend / API (Bundle 4)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:57:44 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B04-IF3-BE |
+| COMMAND | python3 -m pytest backend/tests/test_if3_api.py backend/tests/test_if3_normalizer.py backend/tests/test_if3_persistence.py backend/tests/test_if3_ref_persistence.py backend/tests/test_if3_legacy_compatibility.py backend/tests/test_if3_availability.py backend/tests/test_reports_if3_gate.py -q |
+| START_TIME | 2026-08-01 18:57:44 JST |
+| END_TIME | 2026-08-01 18:57:51 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 7/7 IF3 backend test modules passed (123/123 tests) |
+| EVIDENCE | pytest 9.1.1: 123 passed in 6.68s |
+| ACTION | Proceed to LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+
+IF3_BACKEND_REGRESSION_STATUS: PASS
+LV04_B04_IF3_BE_VERDICT: PASS
+
+================================================================================
+15b. Phase 4 Static Check — Typecheck (Bundle 1)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:59:09 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | SC-B01-TYPECHECK |
+| COMMAND | cd frontend && npm run typecheck |
+| START_TIME | 2026-08-01 18:59:09 JST |
+| END_TIME | 2026-08-01 18:59:24 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend TypeScript project build (tsc -b); no errors reported |
+| EVIDENCE | tsc -b --pretty false completed in ~15s; exit 0; no diagnostic output |
+| ACTION | Proceed to static check bundle 2 (lint) per Phase 3 planned commands when authorized |
+
+TYPECHECK_STATUS: PASS
+SC_B01_TYPECHECK_VERDICT: PASS
+
+================================================================================
+15c. Phase 4 Static Check — Lint (Bundle 2)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 19:00:33 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | SC-B02-LINT |
+| COMMAND | cd frontend && npm run lint . |
+| START_TIME | 2026-08-01 19:00:33 JST |
+| END_TIME | 2026-08-01 19:00:47 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend lint pipeline (tsc -b, source hygiene, Japanese-string audit); no errors reported |
+| EVIDENCE | tsc -b completed; Frontend source hygiene check passed.; Japanese-string audit: Total 3045 occurrence(s) across 134 file(s) (informational); exit 0; duration ~14s |
+| ACTION | Proceed to static check bundle 3 (build) per Phase 3 planned commands when authorized |
+
+LINT_STATUS: PASS
+SC_B02_LINT_VERDICT: PASS
+
+================================================================================
+15d. Phase 4 Static Check — Build (Bundle 3)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 19:01:41 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | SC-B03-BUILD |
+| COMMAND | cd frontend && npm run build |
+| START_TIME | 2026-08-01 19:01:41 JST |
+| END_TIME | 2026-08-01 19:02:07 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | Full frontend production build (tsc -b && vite build); dist/ artifacts generated |
+| EVIDENCE | Vite v7.3.5: 3926 modules transformed; built in 10.57s; dist/index.html, CSS, JS bundles; chunk size >500 kB warning (informational); exit 0 |
+| ACTION | Proceed to LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general) per Phase 3 planned commands |
+
+BUILD_STATUS: PASS
+SC_B03_BUILD_VERDICT: PASS
+
+================================================================================
+16. Safety Check — Sibling Folder Policy
+================================================================================
+
+Checked /home/masaharu/Projects/ for unauthorized sibling repository folders
+during Phase 1 discovery on docs/apollo-refreeze-local-verification.
+
+| Check | Result |
+|-------|--------|
+| spacer-clone present | YES (expected canonical repo) |
+| New sibling clone folders created | NO |
+| Unauthorized worktree siblings | NONE DETECTED |
+| Phase 1 scope confined to canonical repo | YES |
+
+SAFETY_CHECK_VERDICT: PASS
+
+================================================================================
+13. Phase 4 LV-04 Test Execution (Bundle 1 — Apollo Frontend)
+================================================================================
+
+Execution recorded on branch docs/apollo-refreeze-local-verification at
+2026-08-01 18:51:14 JST.
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B01-APOLLO-FE |
+| COMMAND | cd frontend && npm run test -- src/apollo src/App.apolloNavigation.test.tsx |
+| START_TIME | 2026-08-01 18:51:14 JST |
+| END_TIME | 2026-08-01 18:51:24 JST |
+| EXIT_CODE | 1 |
+| RESULT | FAIL |
+| FAILURE_CLASS | PRE_EXISTING (apolloSuite.test.ts manifest stale vs apolloStlExport.test.ts on origin/main) |
+| AFFECTED_SCOPE | apolloSuite.test.ts — 1 failed / 188 total tests; 27/28 test files passed |
+| EVIDENCE | Vitest: Test Files 1 failed \| 27 passed (28); Tests 1 failed \| 187 passed (188) |
+| ACTION | Record only; fix deferred to implementation branch |
+
+APOLLO_FRONTEND_REGRESSION_STATUS: FAIL (pre-existing on origin/main; not introduced by doc branch)
+LV04_B01_APOLLO_FE_VERDICT: FAIL
+
+================================================================================
+17. Recommended Next Action
+================================================================================
+
+On branch docs/apollo-refreeze-local-verification, LV-04 bundle 1 (Apollo frontend) is
+FAIL (pre-existing apolloSuite drift). LV-04 bundle 2 (viewer/3D) is PASS (corrected
+rerun). LV-04 bundle 3 (IF3 frontend) is PASS (12/12 files, 76/76 tests, exit 0).
+LV-04 bundle 4 (IF3 backend) is PASS (7/7 modules, 123/123 tests, exit 0).
+Static check bundle 1 (typecheck) is PASS (exit 0; tsc -b completed with no errors).
+Static check bundle 2 (lint) is PASS (exit 0; source hygiene passed).
+Static check bundle 3 (build) is PASS (exit 0; tsc -b && vite build completed; dist/ generated).
+Next: LV-03 implementation inventory if not done, then LV-04 bundle 5 (backend general)
+per local_verification_plan.md. Record results in local_verification_report.md without
+inventing test outcomes.
+
+================================================================================
+18. LV Verification Verdict (Placeholder)
+================================================================================
+
+APOLLO_REFREEZE_LV_VERDICT: PENDING
+
+================================================================================
+19. Repository Cleanliness Verdict (Placeholder)
+================================================================================
+
+Phase 1 discovery and Phase 2 documentation validation edits only on
+docs/apollo-refreeze-local-verification. No application code or new folders
+were created. Full cleanliness verdict remains pending until LV-01 through
+LV-08 complete.
+
+REPOSITORY_CLEANLINESS_VERDICT: PENDING (Phase 1–2 report edits only)
+
+================================================================================
+20. Final Verdict (Placeholder)
+================================================================================
+
+Phase 3 test-command discovery: COMPLETE.
+LV-01: PASS.
+LV-02: PASS (README status-enum alignment fix applied).
+LV-03: NOT_STARTED.
+LV-04: IN_PROGRESS (bundle 4/9 PASS — IF3 backend).
+LV-05 through LV-07: NOT_STARTED.
+LV-08: PARTIAL (Phase 2 doc checks only).
+Application test execution: IN_PROGRESS — LV-04 bundle 1 Apollo frontend FAIL (pre-existing;
+187/188 pass; apolloSuite discoverability drift). LV-04 bundle 2 viewer/3D PASS (corrected
+rerun; 22/22 files, 228/228 tests, exit 0). LV-04 bundle 3 IF3 frontend PASS (12/12 files,
+76/76 tests, exit 0). LV-04 bundle 4 IF3 backend PASS (7/7 modules, 123/123 tests, exit 0).
+Static check bundle 1 typecheck PASS (exit 0). Static check bundle 2 lint PASS (exit 0).
+Static check bundle 3 build PASS (exit 0; 3926 modules transformed; dist/ generated).
+Remaining LV-04 bundles NOT_STARTED.
+TYPECHECK_VERDICT: PASS
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+OPEN_QUESTIONS: AP-DX governance unlock vs ap00 forbidden_scope; AP-DX-18 fatigue timing.
+
+APOLLO_REFREEZE_LOCAL_VERIFICATION_FINAL_VERDICT: PENDING

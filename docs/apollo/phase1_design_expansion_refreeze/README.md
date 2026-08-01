@@ -38,7 +38,7 @@ GitHub上の文書だけで再凍結完了とは判定しない。マージ前�
 1. 主桁断面・床版・床組・補剛材・添接の型と永続化
 2. 3D表示部材と設計エンティティのID対応
 3. 解析結果を設計部材へ戻す読み取りモデル
-4. NOT_AUTHORIZED / INCOMPLETE / OK / NG の判定状態
+4. NOT_AUTHORIZED / INCOMPLETE / READY / RUNNING / OK / NG / WARNING / STALE / ERROR の判定状態（`scope_and_architecture_freeze.md` §5.5 と同一）
 5. 非権威プレビューとしての標準断面・配置図
 
 採用基準、荷重、材料、許容値、抵抗値、疲労等級、溶接・ボルト条件が採択されるまでは、自動断面決定および正式な数値照査を禁止する。
