@@ -1,6 +1,6 @@
 # Apollo Phase 1 設計機能拡張 再凍結 — ローカル検証レポート
 
-**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 remains **FAIL**). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
+**Status:** ACTIVE — LV-05 manual 3D/GUI **PASS** recorded 2026-08-01 JST (operator masaharu; exact time not provided; `manual_verification_checklist.md`; MV-01..MV-13 PASS; `THREED_VIEWER_VERDICT: PASS`; LV-04-B02 automated 228/228 vitest remains supporting evidence only). PD-001 classified 2026-08-01 19:47 JST (`SEPARATE_DEFECT_REQUIRED`; LV-04-B01 remains **FAIL**). LV-04 bundle 8 (golden regression) 2026-08-01 20:25:49 JST: **PASS** (1/1 file, 6/6 tests, exit 0). LV-04 bundle 6 (Apollo evidence) 2026-08-01 20:21:53 JST: **PASS** (7/7 modules, 200/200 tests, 8 subtests, exit 0). LV-04 bundle 5 (backend general) 2026-08-01 19:45:37 JST: **PASS** (14/14 modules, 189/189 tests, exit 0). Phase C schema/doc verification 2026-08-01 19:42:15 JST: **PASS** (8/8 commands exit 0). LV-01 re-run 2026-08-01 19:38:37 JST: **PASS** (local `main` synced to `origin/main`; verification branch contains `origin/main`; design-freeze baseline ancestry holds)
 **Target branch:** `docs/apollo-refreeze-local-verification`
 
 Active verification proceeds on branch `docs/apollo-refreeze-local-verification`
@@ -160,7 +160,7 @@ pytest --version  # pytest 9.1.1
 | LV-01 | Git sync / worktree | **PASS** — re-run 2026-08-01 19:38:37 JST (prior FAIL 19:32:32 JST retained as historical) |
 | LV-02 | Existing Apollo document consistency | PASS |
 | LV-03 | Implementation inventory | PASS |
-| LV-04 | Regression tests | IN_PROGRESS (bundle 1 **FAIL** — PD-001 manifest stale; bundle 6/9 executed; Apollo evidence PASS; backend general PASS; IF3 backend and schema-only bundles covered separately) |
+| LV-04 | Regression tests | IN_PROGRESS (bundle 1 **FAIL** — PD-001 manifest stale; bundle 8/9 executed; golden regression PASS; Apollo evidence PASS; backend general PASS; IF3 backend and schema-only bundles covered separately) |
 | LV-05 | 3D display non-regression | **PASS** — operator masaharu, 2026-08-01 JST (exact time not provided); MV-01..MV-13 PASS; console errors none observed; STL export/download/reload PASS; evidence note recorded in `manual_verification_checklist.md`; `THREED_VIEWER_VERDICT: PASS` (LV-04-B02 automated 228/228 vitest supporting evidence only — does not substitute) |
 | LV-06 | Manual traceability review | NOT_STARTED |
 | LV-07 | Non-composite deck / anchorage | NOT_STARTED |
@@ -919,6 +919,40 @@ Verified command matches Phase 3 planned entry:
 `LV04_B06_APOLLO_EVIDENCE_VERDICT: PASS` — Apollo evidence harness regression bundle
 exited 0 under the Phase 3 planned command.
 
+## Phase 4 LV-04 test execution (bundle 8 — golden regression)
+
+**Execution timestamp:** 2026-08-01 20:25:49 JST
+**Verdict:** PASS
+
+Scope: eighth planned LV-04 bundle — golden regression vitest per Phase 3 planned
+command (`vitest.regression.config.ts`; `regression.golden.test.ts` only). No other test
+categories executed. Doc branch `docs/apollo-refreeze-local-verification` has zero diff
+vs `origin/main` under `frontend/` (docs-only commits since branch bootstrap).
+
+Verified command matches Phase 3 planned entry:
+
+`cd frontend && npm run test:regression`
+
+### LV-04 bundle 8 result record
+
+| Field | Value |
+|-------|-------|
+| TEST_ID | LV-04-B08-GOLDEN-REGRESSION |
+| COMMAND | `cd frontend && npm run test:regression` |
+| START_TIME | 2026-08-01 20:25:49 JST |
+| END_TIME | 2026-08-01 20:25:51 JST |
+| EXIT_CODE | 0 |
+| RESULT | PASS |
+| FAILURE_CLASS | N/A |
+| AFFECTED_SCOPE | 1/1 golden regression vitest file passed (`regression.golden.test.ts`; 6/6 tests); independent of PD-001 Apollo manifest issue |
+| EVIDENCE | Vitest v4.1.8: `Test Files 1 passed (1)`; `Tests 6 passed (6)`; Duration 2.35s; no failures or errors |
+| ACTION | Record; proceed to remaining LV-04 bundles per Phase 3 planned commands |
+
+### Phase 4 bundle 8 verdict
+
+`LV04_B08_GOLDEN_REGRESSION_VERDICT: PASS` — golden regression vitest bundle exited 0
+under the Phase 3 planned command.
+
 ## Phase 4 static check execution (bundle 1 — typecheck)
 
 **Execution timestamp:** 2026-08-01 18:59:09 JST
@@ -1187,6 +1221,6 @@ bundle and schema-only bundle already covered separately). LV-05 manual GUI veri
 re-run (2026-08-01 19:32:32 JST) retained as historical evidence. Prior recorded results
 preserved: LV-03 PASS; LV-04 bundle 1 FAIL (PD-001 `SEPARATE_DEFECT_REQUIRED`; manifest
 stale — 26 expected / 27 discovered; missing `apolloStlExport.test.ts`; drift at
-`f89fe11` / #225; unrelated to #239/#240); bundles 2–5 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** remaining LV-04 bundles per Phase 3 planned commands;
+`f89fe11` / #225; unrelated to #239/#240); bundles 2–6 and 8 PASS; static checks typecheck/lint/build PASS; Phase C schema/doc PASS. **Next:** remaining LV-04 bundles (7, 9) per Phase 3 planned commands;
 PD-001 fix deferred to implementation branch. LV-06 through LV-08 per
 `local_verification_plan.md`.
