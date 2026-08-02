@@ -46,6 +46,7 @@ type ResolvedBridgeStructureInput = {
   readonly stiffenerSpacing: number | null;
   readonly swayBracingInterval: number | null;
   readonly lateralBracingEnabled: boolean;
+  readonly upperLateralBracingEnabled: boolean;
 };
 
 const LONGITUDINAL_X: Axis3 = [1, 0, 0];
@@ -55,7 +56,23 @@ const VERTICAL_Z: Axis3 = [0, 0, 1];
 /** Documented pure-geometry assumptions for secondary-member visualization. */
 const STIFFENER_PLATE_DEPTH_M = 0.15;
 const BRACING_MEMBER_DIAMETER_M = 0.08;
-const LATERAL_BRACING_Z_CLEARANCE_M = 0.03;
+
+/** Bracing system tags stored on dimensionsM.bracingSystem for classification tests. */
+const BRACING_SYSTEM_SWAY = 1;
+const BRACING_SYSTEM_UPPER_LATERAL = 2;
+const BRACING_SYSTEM_LOWER_LATERAL = 3;
+
+function girderConnectionZs(input: ResolvedBridgeStructureInput): {
+  readonly girderCenterZ: number;
+  readonly topConnectionZ: number;
+  readonly bottomConnectionZ: number;
+} {
+  const girderCenterZ = -input.girderDepth / 2;
+  // Mid-thickness of flanges (existing flange thicknesses; no invented insets).
+  const topConnectionZ = girderCenterZ + input.girderDepth / 2 - input.topFlangeThickness / 2;
+  const bottomConnectionZ = girderCenterZ - input.girderDepth / 2 + input.bottomFlangeThickness / 2;
+  return { girderCenterZ, topConnectionZ, bottomConnectionZ };
+}
 
 /** Decorative substructure placeholders (non-design, visualization only). */
 const BEARING_WIDTH_M = 0.6;
@@ -99,6 +116,7 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     stiffenerSpacing: draft.stiffenerSpacing,
     swayBracingInterval: draft.swayBracingInterval,
     lateralBracingEnabled: draft.lateralBracingEnabled,
+    upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
   };
 }
 
@@ -431,6 +449,7 @@ function buildBracingMember(
   start: readonly [number, number, number],
   end: readonly [number, number, number],
   label: string,
+  bracingSystem: number,
 ): ApolloSolidGeometryParameter | null {
   const oriented = frameFromStartEnd(start, end);
   if (!oriented) {
@@ -451,6 +470,7 @@ function buildBracingMember(
     dimensionsM: {
       length: oriented.length,
       diameter: BRACING_MEMBER_DIAMETER_M,
+      bracingSystem,
     },
     localFrame: oriented.frame,
     path: [start, end],
@@ -612,25 +632,28 @@ export function buildBridgeStructureSolidGeometryParameters(
         swayStations.push(index);
       }
     }
+    const { topConnectionZ, bottomConnectionZ } = girderConnectionZs(input);
     model.swayBracings.forEach((swayBracing, swayIndex) => {
       const station = swayStations[swayIndex];
       if (station === undefined) {
         return;
       }
       const x = station * input.crossBeamSpacing;
-      // Match girder solid datum: localFrame origin is at z = -girderDepth/2.
-      // Sway diagonals must connect within the web height about that center, not world z=0.
-      const girderCenterZ = -input.girderDepth / 2;
-      const zTop = girderCenterZ + webHeight / 2;
-      const zBottom = girderCenterZ - webHeight / 2;
       const members = membersByParent.get(swayBracing.swayBracingId) ?? [];
       let memberIndex = 0;
       for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
-        const yA = offsets[pair] ?? 0;
-        const yB = offsets[pair + 1] ?? offsets[pair] ?? 0;
-        const diagonals: ReadonlyArray<readonly [readonly [number, number, number], readonly [number, number, number]]> = [
-          [[x, yA, zTop], [x, yB, zBottom]],
-          [[x, yA, zBottom], [x, yB, zTop]],
+        const leftY = offsets[pair] ?? 0;
+        const rightY = offsets[pair + 1] ?? offsets[pair] ?? 0;
+        const midY = (leftY + rightY) / 2;
+        // V-type sway bracing in the transverse vertical plane (constant X).
+        const leftTop: readonly [number, number, number] = [x, leftY, topConnectionZ];
+        const rightTop: readonly [number, number, number] = [x, rightY, topConnectionZ];
+        const midBottom: readonly [number, number, number] = [x, midY, bottomConnectionZ];
+        const diagonals: ReadonlyArray<
+          readonly [readonly [number, number, number], readonly [number, number, number]]
+        > = [
+          [leftTop, midBottom],
+          [rightTop, midBottom],
         ];
         for (const [start, end] of diagonals) {
           const member = members[memberIndex];
@@ -643,6 +666,7 @@ export function buildBridgeStructureSolidGeometryParameters(
             start,
             end,
             `Sway ${swayIndex + 1}`,
+            BRACING_SYSTEM_SWAY,
           );
           if (solid) {
             solids.push(solid);
@@ -652,41 +676,77 @@ export function buildBridgeStructureSolidGeometryParameters(
     });
   }
 
-  if (input.lateralBracingEnabled) {
-    const lateralBracing = model.lateralBracings[0];
-    if (lateralBracing) {
-      const bays = crossBeamCount - 1;
-      const members = membersByParent.get(lateralBracing.lateralBracingId) ?? [];
-      const zLat = -input.girderDepth / 2 + LATERAL_BRACING_Z_CLEARANCE_M;
-      let memberIndex = 0;
-      for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
-        const yA = offsets[pair] ?? 0;
-        const yB = offsets[pair + 1] ?? offsets[pair] ?? 0;
-        for (let bay = 0; bay < bays; bay += 1) {
-          const x1 = bay * input.crossBeamSpacing;
-          const x2 = Math.min((bay + 1) * input.crossBeamSpacing, input.bridgeLength);
-          const diagonals: ReadonlyArray<readonly [readonly [number, number, number], readonly [number, number, number]]> = [
-            [[x1, yA, zLat], [x2, yB, zLat]],
-            [[x1, yB, zLat], [x2, yA, zLat]],
-          ];
-          for (const [start, end] of diagonals) {
-            const member = members[memberIndex];
-            memberIndex += 1;
-            if (!member) {
-              continue;
-            }
-            const solid = buildBracingMember(
-              member.braceMemberId,
-              start,
-              end,
-              `Lateral ${pair + 1}-${bay + 1}`,
-            );
-            if (solid) {
-              solids.push(solid);
-            }
+  const appendLateralPlane = (
+    lateralBracingId: string | undefined,
+    planeZ: number,
+    labelPrefix: string,
+    bracingSystem: number,
+  ) => {
+    if (!lateralBracingId) {
+      return;
+    }
+    const members = membersByParent.get(lateralBracingId) ?? [];
+    const bays = crossBeamCount - 1;
+    let memberIndex = 0;
+    for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
+      const yA = offsets[pair] ?? 0;
+      const yB = offsets[pair + 1] ?? offsets[pair] ?? 0;
+      for (let bay = 0; bay < bays; bay += 1) {
+        const x1 = bay * input.crossBeamSpacing;
+        const x2 = Math.min((bay + 1) * input.crossBeamSpacing, input.bridgeLength);
+        const diagonals: ReadonlyArray<
+          readonly [readonly [number, number, number], readonly [number, number, number]]
+        > = [
+          [
+            [x1, yA, planeZ],
+            [x2, yB, planeZ],
+          ],
+          [
+            [x1, yB, planeZ],
+            [x2, yA, planeZ],
+          ],
+        ];
+        for (const [start, end] of diagonals) {
+          const member = members[memberIndex];
+          memberIndex += 1;
+          if (!member) {
+            continue;
+          }
+          const solid = buildBracingMember(
+            member.braceMemberId,
+            start,
+            end,
+            `${labelPrefix} ${pair + 1}-${bay + 1}`,
+            bracingSystem,
+          );
+          if (solid) {
+            solids.push(solid);
           }
         }
       }
+    }
+  };
+
+  {
+    const { topConnectionZ, bottomConnectionZ } = girderConnectionZs(input);
+    // Match generateBsdd seed order: bottom-flange first, then upper-flange.
+    let lateralIndex = 0;
+    if (input.lateralBracingEnabled) {
+      appendLateralPlane(
+        model.lateralBracings[lateralIndex]?.lateralBracingId,
+        bottomConnectionZ,
+        "Lower Lateral",
+        BRACING_SYSTEM_LOWER_LATERAL,
+      );
+      lateralIndex += 1;
+    }
+    if (input.upperLateralBracingEnabled) {
+      appendLateralPlane(
+        model.lateralBracings[lateralIndex]?.lateralBracingId,
+        topConnectionZ,
+        "Upper Lateral",
+        BRACING_SYSTEM_UPPER_LATERAL,
+      );
     }
   }
 

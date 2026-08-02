@@ -29,7 +29,10 @@ export const BRIDGE_STRUCTURE_INPUT_FIELD_KEYS = [
 
 export const BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS = ["bridgeSystem", "spans", "supports"] as const;
 
-export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = ["lateralBracingEnabled"] as const;
+export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = [
+  "lateralBracingEnabled",
+  "upperLateralBracingEnabled",
+] as const;
 
 export type BridgeStructureBooleanInputKey = (typeof BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS)[number];
 
@@ -58,7 +61,13 @@ export type ApolloBridgeStructureInputDraft = {
   readonly swayBracingInterval: number | null;
   readonly steelUnitWeight: number | null;
   readonly rcUnitWeight: number | null;
+  /** Legacy/lower lateral bracing (下横構). false→なし, true→下横構のみ. */
   readonly lateralBracingEnabled: boolean;
+  /**
+   * Upper lateral bracing (上横構). Additive; defaults false when absent.
+   * Independent of lower `lateralBracingEnabled` (legacy meaning preserved).
+   */
+  readonly upperLateralBracingEnabled: boolean;
   /** C1: defaults to SIMPLE_SINGLE when absent in persisted JSON. */
   readonly bridgeSystem: BridgeSystem;
   /** C1: per-span lengths; empty for legacy SIMPLE_SINGLE (derived from spanLength). */

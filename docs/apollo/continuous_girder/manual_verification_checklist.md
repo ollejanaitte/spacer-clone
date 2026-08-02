@@ -97,6 +97,27 @@
 | MV-11 | SIMPLE_SINGLE回帰 | 単径間 bounds 一致 | PENDING |
 | MV-12 | save/reload | 同期済み frame が復元 | PENDING |
 
+## 8b. 対傾構 V型・上下横構分離（2026-08-02 追記）
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-BR-01 | 3径間連続桁生成 | [30,35,30] 表示 | PENDING |
+| MV-BR-02 | 正面で対傾構がV型/三角形 | 上端2点→下端中点 | PENDING |
+| MV-BR-03 | 対傾構が同一station鉛直面 | 各斜材の X が一致 | PENDING |
+| MV-BR-04 | 隣接主桁間に収まる | outer girder 外へ出ない | PENDING |
+| MV-BR-05 | 平面で上横構が上部水平面 | Z=topConnectionZ | PENDING |
+| MV-BR-06 | 平面で下横構が下部水平面 | Z=bottomConnectionZ | PENDING |
+| MV-BR-07 | 正面で上下横構高さが主桁上下端一致 | フランジ中立面 | PENDING |
+| MV-BR-08 | 上横構/下横構ON-OFF | 独立切替 | PENDING |
+| MV-BR-09 | 対傾構間隔変更 | 横構と独立 | PENDING |
+| MV-BR-10 | SIMPLE_SINGLE | 回帰 | PENDING |
+| MV-BR-11 | CONTINUOUS 5径間 | 回帰 | PENDING |
+| MV-BR-12 | Demo Shape OFF | 基幾何 | PENDING |
+| MV-BR-13 | Demo Shape ON | 外挿なし | PENDING |
+| MV-BR-14 | save/reload | upper/lower flags 復元 | PENDING |
+| MV-BR-15 | STL | 三角面 > 0 | PENDING |
+| MV-BR-16 | selection/highlight | BraceMember 選択可 | PENDING |
+
 ## 9. 自動検証メモ（参考・GUI 代替ではない）
 
 - `continuousGirderLayout.test.ts`: CONTINUOUS 2/3/5、save/reload、invalid、SIMPLE_SINGLE 回帰 — PASS

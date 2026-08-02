@@ -16,6 +16,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "bridgeStructureQuantities.test.ts",
   "bridgeStructureVisualization.test.ts",
   "bridgeStructureWorkflow.test.ts",
+  "bracingSystemGeometry.test.ts",
   "bulkEdit.test.ts",
   "clipboard.test.ts",
   "continuousGirderLayout.test.ts",

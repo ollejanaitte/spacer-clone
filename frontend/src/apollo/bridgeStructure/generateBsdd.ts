@@ -251,31 +251,39 @@ export function buildBridgeSuperstructureDesignDocument(
 
   const lateralBracings: LateralBracing[] = [];
   const lateralBraceMembers: BraceMember[] = [];
-  if (input.lateralBracingEnabled) {
-    const lateralBracingId = stableId(projectScopeId, "LateralBracing", "bottom-flange");
+  const bays = crossBeamCount - 1;
+
+  const pushLateralPlane = (planeSeed: string, enabled: boolean) => {
+    if (!enabled) {
+      return;
+    }
+    const lateralBracingId = stableId(projectScopeId, "LateralBracing", planeSeed);
     lateralBracings.push({
       ...createEntityMetadata(null, designStatus),
       entityKind: "LateralBracing",
       lateralBracingId,
     });
-    const bays = crossBeamCount - 1;
     for (let pair = 0; pair < girderCount - 1; pair += 1) {
       for (let bay = 0; bay < bays; bay += 1) {
         for (let member = 0; member < 2; member += 1) {
+          const memberSeed =
+            planeSeed === "bottom-flange"
+              ? `lateral-pair-${pair}-bay-${bay}-member-${member}`
+              : `lateral-${planeSeed}-pair-${pair}-bay-${bay}-member-${member}`;
           lateralBraceMembers.push({
             ...createEntityMetadata(null, designStatus),
             entityKind: "BraceMember",
-            braceMemberId: stableId(
-              projectScopeId,
-              "BraceMember",
-              `lateral-pair-${pair}-bay-${bay}-member-${member}`,
-            ),
+            braceMemberId: stableId(projectScopeId, "BraceMember", memberSeed),
             parentBracingRefId: lateralBracingId,
           });
         }
       }
     }
-  }
+  };
+
+  // Legacy boolean keeps LOWER-only meaning. Upper is additive and independent.
+  pushLateralPlane("bottom-flange", input.lateralBracingEnabled);
+  pushLateralPlane("upper-flange", input.upperLateralBracingEnabled);
 
   const structuralDesignModel: StructuralDesignModel = {
     modelId: sdmModelId,
