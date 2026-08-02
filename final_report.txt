@@ -4,7 +4,7 @@ Apollo Step 1-A Development Reference + App Parity Report
 更新日時: 2026-08-02T21:40:00+09:00
 作業名: Step 1-A development-only reference + live Apollo GUI parity
 Step ID: STEP_1A_DEVELOPMENT_REFERENCE
-作業状態: PRIMARY_PR_PENDING
+作業状態: PRIMARY_PR_OPEN（#289）
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 START_MAIN_SHA: ced050e647d3b7b822722e668d8561d8b70ecb53
@@ -70,8 +70,8 @@ approval_register: AI_ASSISTED_REFERENCE_READY / NOT_APPROVED / decision_id=NONE
 --------------------------------------------------------------------------------
 GitHub (provisional)
 --------------------------------------------------------------------------------
-DEVREF_PRIMARY_PR_NUMBER: PENDING
-DEVREF_PRIMARY_PR_URL: PENDING
+DEVREF_PRIMARY_PR_NUMBER: 289
+DEVREF_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/289
 DEVREF_PRIMARY_PR_MERGED: NO
 DEVREF_PRIMARY_PR_MERGE_SHA: PENDING
 DEVREF_REPORT_PR_NUMBER: PENDING
