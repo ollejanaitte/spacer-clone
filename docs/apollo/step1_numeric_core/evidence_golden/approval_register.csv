@@ -1,0 +1,5 @@
+approval_id,golden_id,proposal_status,proposer,independent_reviewer,approver,approval_status,decision_id,evidence_reviewed,review_date,supersedes,notes
+GOLD-SP-APR-001,GOLD-SP-001,CANDIDATE_TEMPLATE,Cursor Auto (docs only),PENDING,PENDING,NOT_APPROVED,NONE,GOLD-SP-001.md + FIX-SP-001,NOT_APPLICABLE,NONE,PATH B: expected values PENDING_HUMAN_DERIVATION; do not treat as approved
+GOLD-SP-APR-002,GOLD-SP-002,CANDIDATE_TEMPLATE,Cursor Auto (docs only),PENDING,PENDING,NOT_APPROVED,NONE,GOLD-SP-002.md + FIX-SP-002,NOT_APPLICABLE,NONE,PATH B: expected values PENDING_HUMAN_DERIVATION; do not treat as approved
+GOLD-AN-APR-001,GOLD-AN-001,FUTURE_STUB,Cursor Auto (docs only),PENDING,PENDING,NOT_APPROVED,NONE,NONE,NOT_APPLICABLE,NONE,Step 1-C prerequisite stub only
+GOLD-AN-APR-002,GOLD-AN-002,FUTURE_STUB,Cursor Auto (docs only),PENDING,PENDING,NOT_APPROVED,NONE,NONE,NOT_APPLICABLE,NONE,Step 1-C prerequisite stub only

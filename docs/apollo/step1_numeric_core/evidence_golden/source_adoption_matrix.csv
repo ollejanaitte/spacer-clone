@@ -1,0 +1,12 @@
+source_id,source_class,title_or_path,adoption_status,binds_computation,decision_id,evidence_note
+SP-CELL-A,numeric_cell,geometric_section_properties / FIRST_RELEASE_CANDIDATE A,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NO,DEC-PB-0007,Phase B selected candidate; CURRENT_AUTHORIZATION NOT_AUTHORIZED
+DS-07-GOV,governance,docs/apollo/design-standards/07_golden/,ADOPTED,NO,DEC-DS07-BASE,Golden governance vocabulary; does not approve GOLD-SP cases
+PHA-08-GATE,authorization_gate,docs/apollo/phase_a_integrated_freeze/08_numeric_authorization_gate.md,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NO,DEC-PHA-A7,All member/check cells NOT_AUTHORIZED
+PB-05-PLAN,plan,docs/apollo/phase_b_release_preparation/05_golden_validation_execution_plan.md,REFERENCE_ONLY,NO,DEC-PB-0006,Plan only; GOLD-MG not approved
+PB-06-CAND,candidate,docs/apollo/phase_b_release_preparation/06_first_numeric_release_candidate.md,REFERENCE_ONLY,NO,DEC-PB-0007,Candidate A selected; not GRANTED
+PB-07-UA,human_action,docs/apollo/phase_b_release_preparation/07_user_action_required.md,REFERENCE_ONLY,NO,DEC-PB-0008,UA-P5-01 still waiting human derivation/signature
+R7-PRIMARY,design_standard,道路橋示方書・同解説 令和7年改訂版 (restricted PDF),BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NO,NONE,UA-P2-01 visual review pending; not required to invent geometry formulas but blocks design checks
+ERRATA-2026-03-31,errata,official errata PDF,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NO,NONE,UA-P2-03 content review pending
+JIS-STEEL,material,JIS material primary sources,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,NO,NONE,UA-P2-02 acquisition pending; out of scope for pure geometry cell
+IMPL-SECTION-PROP,implementation_candidate,frontend/src/apollo/bridgeStructure/sectionProperties.ts,REFERENCE_ONLY,NO,NONE,Existing NOT_AUTHORIZED implementation; must not seed Golden expected values
+TEST-SECTION-PROP,implementation_test,frontend/src/apollo/__tests__/sectionProperties.test.ts,REFERENCE_ONLY,NO,NONE,Automated smoke tests; not independent Golden approval

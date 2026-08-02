@@ -1,0 +1,5 @@
+golden_id,alias,case_class,title,status,approval_status,authorization_impact,input_fixture_id,expected_source,independent_reviewer,approver,decision_id,notes
+GOLD-SP-001,GOLD-MG-003S,SECTION_PROPERTIES,Symmetric I-section pure geometry,CANDIDATE_TEMPLATE,NOT_APPROVED,NONE_UNTIL_APPROVED,FIX-SP-001,PENDING_HUMAN_DERIVATION,PENDING,PENDING,NONE,Expected fields blank by design (PATH B)
+GOLD-SP-002,GOLD-MG-003A,SECTION_PROPERTIES,Asymmetric I-section pure geometry,CANDIDATE_TEMPLATE,NOT_APPROVED,NONE_UNTIL_APPROVED,FIX-SP-002,PENDING_HUMAN_DERIVATION,PENDING,PENDING,NONE,Expected fields blank by design (PATH B)
+GOLD-AN-001,GOLD-MG-001,ANALYTICAL,Simple span + UDL,FUTURE_STUB,NOT_APPROVED,NONE,PENDING,PENDING_HUMAN_DERIVATION,PENDING,PENDING,NONE,Step 1-C prerequisite; not opened in Step 1-A
+GOLD-AN-002,GOLD-MG-002,ANALYTICAL,Simple span + center point load,FUTURE_STUB,NOT_APPROVED,NONE,PENDING,PENDING_HUMAN_DERIVATION,PENDING,PENDING,NONE,Step 1-C prerequisite; not opened in Step 1-A

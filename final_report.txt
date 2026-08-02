@@ -1,165 +1,132 @@
 ================================================================================
-Apollo 3D Vertical Slice — Freeze Gate Audit Final Report
+Apollo Steel Plate Girder Numeric Core — Step 1-A Report
 ================================================================================
-更新日時: 2026-08-02T20:35:00+09:00
-作業名: Apollo 3D Vertical Slice 残存PENDING分類・凍結判定・GitHub main反映
-作業目的: 未確認項目をPASS化せず分類し、証拠に基づき凍結可否を判定し、docs-onlyでmainへ反映する
-作業状態: AUDIT_MERGED + REPORT_FINALIZATION_PR_OPEN（#285、merge前）
+更新日時: 2026-08-02T21:10:00+09:00
+作業名: APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION
+Step ID: STEP_1A
+作業目的: 主桁断面諸量（純幾何）セルの証拠・Golden候補・認可ゲート準備。人間承認の捏造禁止。
+作業状態: PATH_B_PRIMARY_PR_PENDING
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
-START_BRANCH: main
-START_MAIN_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
-START_ORIGIN_MAIN_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
-PR283_MERGED: YES
-PR283_MERGE_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
-WORKTREE_CLEAN_AT_START: YES
-作業ブランチ（第1）: docs/apollo-3d-freeze-gate-audit
-作業ブランチ（第2）: docs/apollo-3d-freeze-report-finalize
-変更ファイル（第1PR）:
-- docs/apollo/continuous_girder/manual_verification_checklist.md
-- final_report.txt
-変更ファイル（第2PR）:
-- final_report.txt
+START_MAIN_SHA: 6c3c0906f4ab2289c12ddbb0ec66de2964bcb902
+START_ORIGIN_MAIN_SHA: 6c3c0906f4ab2289c12ddbb0ec66de2964bcb902
+作業branch: docs/apollo-step1a-evidence-golden
 APPLICATION_CODE_CHANGED: NO
 
 --------------------------------------------------------------------------------
-PR #283 確認済み範囲（変更せず維持）
+Previous Phase Summary (Apollo 3D freeze — preserved)
 --------------------------------------------------------------------------------
-MANUAL_GUI_VERDICT: PASS
-MV-01..12: PASS
-MV-BR-01..08: PASS
-MV-BR-14..15: PASS
-SWAY_BRACING_MANUAL_VERDICT: PASS
-UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS
-LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS
-PR279_BOUNDS_MANUAL_REGRESSION: PASS
-SAVE_RELOAD_MANUAL_VERDICT: PASS
-STL_MANUAL_VERDICT: PASS
-
---------------------------------------------------------------------------------
-調査したPENDING項目と分類
---------------------------------------------------------------------------------
-調査対象:
-- MV-BR-09, MV-BR-10, MV-BR-11, MV-BR-12, MV-BR-13, MV-BR-16
-- MV-CG-01..35
-
-分類件数:
-- BLOCKING: 0
-- DEFERRED_NON_BLOCKING: 38（MV-BR-09/10/11/12/13 + MV-CG-01..32）
-- OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE: 4（MV-BR-16 + MV-CG-33..35）
-- PENDING_USER_CONFIRMATION: 41（全残存PENDING。PASS化なし。他分類と併記）
-
-BLOCKING項目一覧:
-- （なし）
-
-DEFERRED_NON_BLOCKING項目一覧:
-- MV-BR-09 対傾構間隔変更（横構と独立）— generateBsdd interval gate + bracing/workflow tests
-- MV-BR-10 SIMPLE_SINGLE回帰 — MV-11 PASS重複 + bounds/layout/viz tests
-- MV-BR-11 CONTINUOUS 5径間 — MV-01 PASS重複 + 5-span bounds test
-- MV-BR-12 Demo Shape OFF — MV-06 PASS重複
-- MV-BR-13 Demo Shape ON — MV-06/07 PASS重複
-- MV-CG-01..32 連続桁手動項目 — C4自動検証PASS、部分的にMV-01..12/MV-BR確認と重複
-
-OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE項目一覧:
-- MV-BR-16 selection/highlight BraceMember — visualization_spec選択対象は主桁・床版
-- MV-CG-33 断面力・利用率非表示 — 数値/照査境界（OUT_OF_SCOPE）
-- MV-CG-34 負曲げ・活荷重UI非存在 — analysis_boundary OUT
-- MV-CG-35 正式照査OK非出力 — NOT_AUTHORIZED / 認可未付与境界
-
-PENDING_USER_CONFIRMATION項目一覧:
-- 上記全41 PENDING行（Cursor環境で対話GUI未確認のためPENDING維持。PASS捏造なし）
-
-GUI確認を捏造していないこと: YES
-既存PASSをPENDINGへ戻していないこと: YES
-既存PENDINGを根拠なくPASSへ変更していないこと: YES
-
---------------------------------------------------------------------------------
-検証結果（自動・GUI代替ではない）
---------------------------------------------------------------------------------
-実行コマンド / 結果:
-1. npm test -- src/apollo/__tests__/continuousGirderLayout.test.ts
-     continuousGirderSample.test.ts continuousGirderVisualization.test.ts
-     visualizationBoundsBracing.test.ts bracingSystemGeometry.test.ts
-     BridgeStructureInputPanel.test.tsx bridgeStructureVisualization.test.ts
-     selection.test.ts importExport.test.ts apolloStlExport.test.ts
-   → PASS / exit 0 / 10 files / 91 tests
-2. npm test -- src/apollo
-   → PASS / exit 0 / 40 files / 300 tests
-3. npm run typecheck
-   → PASS / exit 0
-4. npm run lint
-   → PASS / exit 0（既存日本語文字列 review 警告 3271 occurrences / 148 files。今回の分類判断を阻害しない）
-5. npm run build
-   → PASS / exit 0（chunk size >500kB 警告のみ）
-
-TYPECHECK_RESULT: PASS
-TEST_RESULT: PASS (300 apollo)
-LINT_RESULT: PASS
-BUILD_RESULT: PASS
-GUI_VERIFICATION_LIMITATION: 対話的GUIは本環境で未実施。自動PASSを手動GUI PASSの代替にしていない。
-
---------------------------------------------------------------------------------
-Apollo 3D 凍結判定
---------------------------------------------------------------------------------
-APOLLO_3D_IMPLEMENTATION_VERDICT: PASS
-APOLLO_3D_AUTOMATED_VERIFICATION_VERDICT: PASS
-APOLLO_3D_CONFIRMED_MANUAL_SCOPE_VERDICT: PASS
-APOLLO_3D_REMAINING_MANUAL_ITEMS: MV-BR-09/10/11/12/13/16; MV-CG-01..35
 APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
-
-凍結範囲:
-- 連続桁純幾何ワークフロー（C0〜C4自動完了）
-- PR #279 bounds / Demo Shape / frame-solid整合（手動PASS）
-- PR #280 V型対傾構・上下横構分離（手動PASS）
-
-凍結対象外:
-- 残存PENDINGのitem-by-item GUI PASS化
-- 数値設計・Golden作成・主桁断面諸量正式実装
-- BraceMember専用選択GUI、断面力/利用率/正式照査
-
-次フェーズへ進む条件:
-- 数値ゲート解除は独立人間証跡が必要
-- 本CONDITIONAL_FREEZEは数値実装開始を許可しない
+APOLLO_3D_BLOCKING_REMAINING: 0
+PR284_MERGED: YES (e3751fbdc8b217c9d5e9090190cc8134ef83266d)
+PR285_MERGED: YES (6c3c0906f4ab2289c12ddbb0ec66de2964bcb902)
+REPORT_FINALIZATION_PR_NUMBER: 285
+REPORT_FINALIZATION_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/285
+REPORT_FINALIZATION_PR_MERGED: YES
+REPORT_FINALIZATION_PR_MERGE_SHA: 6c3c0906f4ab2289c12ddbb0ec66de2964bcb902
+NOTE: Prior final_report row REPORT_FINALIZATION_PR_MERGE_STATUS_AT_DOCUMENT_TIME=PENDING_MERGE
+      is historical document-time text; corrected here after confirmed merge of #285.
 
 --------------------------------------------------------------------------------
-数値ゲート（変更禁止・維持）
+PRE-FLIGHT
 --------------------------------------------------------------------------------
+REMOTE_URL: https://github.com/ollejanaitte/spacer-clone.git
+LOCAL_EQUALS_ORIGIN_AT_START: YES
+WORKTREE_CLEAN_AT_START: YES
+NODE_VERSION: v24.5.0
+NPM_VERSION: 10.9.8
+PYTHON_VERSION: 3.10.12
+GH_AUTH: YES (ollejanaitte)
+STEP_1A_STATUS_BEFORE: NOT_STARTED (no step1_numeric_core on main)
+STEP_1B_STATUS_BEFORE: NOT_STARTED
+STEP_1C_STATUS_BEFORE: NOT_STARTED
+STEP_1D_STATUS_BEFORE: NOT_STARTED
+HUMAN_GOLDEN_ON_MAIN: NO
+SECTION_PROPERTIES_IMPL_EXISTS: YES (NOT_AUTHORIZED semantics)
+PATH_SELECTED: B
+
+--------------------------------------------------------------------------------
+根拠資料
+--------------------------------------------------------------------------------
+- docs/apollo/phase_a_integrated_freeze/08_numeric_authorization_gate.md
+- docs/apollo/phase_b_release_preparation/{05,06,07,*.md,decision_log.md}
+- docs/apollo/design-standards/07_golden/
+- frontend/src/apollo/bridgeStructure/sectionProperties.ts (+ tests)
+- docs/apollo/step1_numeric_core/evidence_golden/* (this Step)
+
+--------------------------------------------------------------------------------
+採択 / Golden / Authorization 状態
+--------------------------------------------------------------------------------
+FIRST_RELEASE_CANDIDATE: A — geometric_section_properties
+GOLD-SP-001: CANDIDATE_TEMPLATE / NOT_APPROVED / PENDING_HUMAN_DERIVATION
+GOLD-SP-002: CANDIDATE_TEMPLATE / NOT_APPROVED / PENDING_HUMAN_DERIVATION
+GOLD-AN-001/002: FUTURE_STUB / NOT_APPROVED
+INDEPENDENT_HUMAN_EVIDENCE: MISSING
+GOLDEN_APPROVAL: NOT_APPROVED
+STEP_1A_SECTION_PROPERTIES_AUTHORIZATION: NOT_AUTHORIZED
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+STEP_1B_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 
 --------------------------------------------------------------------------------
-GitHub反映状態（第1PR merge確定 + 第2PR記録）
+実装内容（docs only）
 --------------------------------------------------------------------------------
-AUDIT_PR_NUMBER: 284
-AUDIT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/284
-AUDIT_PR_MERGED: YES
-AUDIT_PR_MERGE_SHA: e3751fbdc8b217c9d5e9090190cc8134ef83266d
-MAIN_SHA_AFTER_AUDIT_MERGE: e3751fbdc8b217c9d5e9090190cc8134ef83266d
-LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN_AT_AUDIT_MERGE: YES
+変更ファイル:
+- docs/apollo/step1_numeric_core/README.md
+- docs/apollo/step1_numeric_core/evidence_golden/* (package)
+- docs/apollo/phase_b_release_preparation/07_user_action_required.md (UA-P5-01 pointer)
+- final_report.txt
 
-APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
-未確認項目の扱い: PENDING維持（PASS化なし）。非ブロッカーとして後続GUI確認可。凍結再オープン条件ではない。
-次フェーズ開始可否: NO（数値ゲートBLOCKEDのため数値実装・Golden着手不可）
-数値ゲートはBLOCKEDのままであること: YES
+対象外:
+- Step 1-B/C/D application code
+- Cell GRANTED
+- Fabricated expected Golden values / approver names / GRANTED DEC-IDs
 
-REPORT_FINALIZATION_PR_NUMBER: 285
-REPORT_FINALIZATION_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/285
-REPORT_FINALIZATION_PR_MERGE_STATUS_AT_DOCUMENT_TIME: PENDING_MERGE
-（第2PR自身のmerge SHAは未来値を捏造しない）
+--------------------------------------------------------------------------------
+検証
+--------------------------------------------------------------------------------
+1. python JSON parse fixture_manifest.json → PASS
+2. CSV column presence / duplicate golden_id check → PASS (scripted)
+3. Fixture input SHA256 recorded:
+   FIX-SP-001: 16df2472c1603ea2560c52533e8d0b4412d14f791b51714244fcea28c9877e8d
+   FIX-SP-002: c732dd3e0968fcdc189a953b972cd024e9cbdc9a1cf4d17fcb8cefc6e47d9b97
+4. git diff --check → (recorded at commit time)
+5. npm test -- src/apollo/__tests__/sectionProperties.test.ts → (run before PR)
+6. Docs-only: full Apollo suite optional; reason: no application code change
 
-次の推奨作業:
-1. 本report-only PRをmainへマージ
-2. 数値ゲート解除用の人間証跡（Golden等）は別トラック
-3. 残存PENDING GUIは必要時のみ実施（凍結の再オープン条件ではない）
+GUI確認状態: N/A (docs)
+SAVE_RELOAD / STALE: N/A (no code change)
+FAIL_CLOSED: YES (gates remain blocked)
 
-GOLDEN_PHASE_START_READINESS: NO（数値ゲートBLOCKED維持）
-REMAINING_BLOCKERS: 数値認可未付与（NUMERIC_*）。Apollo 3D CONDITIONAL_FREEZE自体のBLOCKING項目は0。
+--------------------------------------------------------------------------------
+GitHub（provisional）
+--------------------------------------------------------------------------------
+STEP_1A_PRIMARY_PR_NUMBER: PENDING
+STEP_1A_PRIMARY_PR_URL: PENDING
+STEP_1A_PRIMARY_PR_MERGED: NO
+STEP_1A_PRIMARY_PR_MERGE_SHA: PENDING
+STEP_1A_REPORT_PR_NUMBER: PENDING
+STEP_1A_REPORT_PR_URL: PENDING
+STEP_1A_REPORT_PR_MERGED: NO
+STEP_1A_REPORT_PR_MERGE_SHA: PENDING
 
-================================================================================
-参考: 直前作業（PR #280/#283 bracing manual GUI）要約
-================================================================================
-対傾構V型・上下横構分離およびbounds回帰の手動GUI PASSをPR #283でmainへ記録済み。
-開始時main SHA（本audit）= PR #283 merge SHA = 06ea1587aaecf5db8d734a5a0196140a33be1346
+--------------------------------------------------------------------------------
+人間作業 / 再開
+--------------------------------------------------------------------------------
+HUMAN_ACTION_REQUIRED: YES
+EXPECTED_FILES:
+- docs/apollo/step1_numeric_core/evidence_golden/GOLD-SP-001.md
+- docs/apollo/step1_numeric_core/evidence_golden/GOLD-SP-002.md
+- docs/apollo/step1_numeric_core/evidence_golden/tolerance_and_rounding_freeze.md
+- docs/apollo/step1_numeric_core/evidence_golden/independent_review_checklist.md
+- docs/apollo/step1_numeric_core/evidence_golden/approval_register.csv
+- external independent derivation artifact (+ checksum)
+EXPECTED_FIELDS: see human_action_required.md
+RESTART_CONDITION: GOLD-SP-001/002 APPROVED + tolerance frozen + reviewer + DEC-ID cell GRANTED
+RESTART_FROM_STEP: STEP_1B
+NEXT_STEP_START_ALLOWED: NO
+
+OVERALL_VERDICT: BLOCKED
+BLOCKED_AT_STEP: STEP_1A
 ================================================================================
