@@ -85,13 +85,11 @@ describe("apollo visualization bounds and bracing alignment", () => {
     const outerMax = Math.max(...offsets);
     const draft = getBridgeStructureInputDraft(project);
     const girderDepth = draft.girderDepth ?? 0;
-    const webHeight =
-      girderDepth -
-      (draft.topFlangeThickness ?? 0) -
-      (draft.bottomFlangeThickness ?? 0);
     const girderCenterZ = -girderDepth / 2;
-    const zTop = girderCenterZ + webHeight / 2;
-    const zBottom = girderCenterZ - webHeight / 2;
+    const topConnectionZ =
+      girderCenterZ + girderDepth / 2 - (draft.topFlangeThickness ?? 0) / 2;
+    const bottomConnectionZ =
+      girderCenterZ - girderDepth / 2 + (draft.bottomFlangeThickness ?? 0) / 2;
 
     const sway = model.solidGeometryParameters.filter(
       (solid) => solid.kind === "bracing" && solid.displayLabel.startsWith("Sway"),
@@ -108,19 +106,19 @@ describe("apollo visualization bounds and bracing alignment", () => {
         expect(Number.isFinite(point![2])).toBe(true);
         expect(point![1]).toBeGreaterThanOrEqual(outerMin - EPSILON);
         expect(point![1]).toBeLessThanOrEqual(outerMax + EPSILON);
-        expect(point![2]).toBeGreaterThanOrEqual(zBottom - EPSILON);
-        expect(point![2]).toBeLessThanOrEqual(zTop + EPSILON);
       }
-      const yA = start![1]!;
-      const yB = end![1]!;
-      const bay = Math.abs(yA - yB);
-      expect(bay).toBeCloseTo(draft.girderSpacing ?? 0, 6);
+      expect(start![0]).toBeCloseTo(end![0]!, 6);
+      const zs = [start![2]!, end![2]!].sort((a, b) => a - b);
+      expect(zs[0]).toBeCloseTo(bottomConnectionZ, 6);
+      expect(zs[1]).toBeCloseTo(topConnectionZ, 6);
+      const bayHalf = Math.abs(start![1]! - end![1]!);
+      expect(bayHalf).toBeCloseTo((draft.girderSpacing ?? 0) / 2, 6);
       const length = Math.hypot(
         end![0]! - start![0]!,
         end![1]! - start![1]!,
         end![2]! - start![2]!,
       );
-      const expected = Math.hypot(bay, webHeight);
+      const expected = Math.hypot((draft.girderSpacing ?? 0) / 2, topConnectionZ - bottomConnectionZ);
       expect(length).toBeCloseTo(expected, 6);
     }
 

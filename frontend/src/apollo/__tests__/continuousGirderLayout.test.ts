@@ -40,6 +40,7 @@ function baseContinuousFields(): Omit<
     steelUnitWeight: null,
     rcUnitWeight: null,
     lateralBracingEnabled: false,
+    upperLateralBracingEnabled: false,
   };
 }
 

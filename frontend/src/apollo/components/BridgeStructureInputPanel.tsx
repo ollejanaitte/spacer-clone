@@ -538,6 +538,24 @@ export function BridgeStructureInputPanel({
       <label className="apollo-inline-checkbox">
         <input
           type="checkbox"
+          data-testid="apollo-bridge-input-upperLateralBracingEnabled"
+          checked={inputDraft.upperLateralBracingEnabled}
+          onChange={(event) => {
+            onProjectChange(
+              withBridgeStructureBooleanField(
+                project,
+                "upperLateralBracingEnabled",
+                event.currentTarget.checked,
+              ),
+            );
+          }}
+        />
+        上横構（上フランジ水平ブレース）を有効にする
+      </label>
+
+      <label className="apollo-inline-checkbox">
+        <input
+          type="checkbox"
           data-testid="apollo-bridge-input-lateralBracingEnabled"
           checked={inputDraft.lateralBracingEnabled}
           onChange={(event) => {
@@ -546,7 +564,7 @@ export function BridgeStructureInputPanel({
             );
           }}
         />
-        横繋（下フランジ水平ブレース）を有効にする
+        下横構（下フランジ水平ブレース）を有効にする
       </label>
 
       {sectionProperties ? (

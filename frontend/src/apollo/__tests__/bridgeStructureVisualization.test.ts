@@ -144,7 +144,10 @@ describe("bridge structure visualization (Block C)", () => {
       (entry) => entry.kind === "bracing" && entry.displayLabel.startsWith("Sway "),
     );
     const lateralMembers = model.solidGeometryParameters.filter(
-      (entry) => entry.kind === "bracing" && entry.displayLabel.startsWith("Lateral "),
+      (entry) =>
+        entry.kind === "bracing" &&
+        (entry.displayLabel.startsWith("Lower Lateral ") ||
+          entry.dimensionsM.bracingSystem === 3),
     );
 
     expect(stiffeners).toHaveLength(4 * 9);

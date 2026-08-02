@@ -177,18 +177,28 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     );
   });
 
-  it("renders the lateral bracing checkbox and toggles it", () => {
+  it("renders upper and lower lateral bracing checkboxes and toggles them", () => {
     const container = renderPanel();
-    const checkbox = container.querySelector(
+    const lower = container.querySelector(
       "[data-testid='apollo-bridge-input-lateralBracingEnabled']",
     ) as HTMLInputElement;
-    expect(checkbox).not.toBeNull();
-    expect(checkbox.checked).toBe(false);
+    const upper = container.querySelector(
+      "[data-testid='apollo-bridge-input-upperLateralBracingEnabled']",
+    ) as HTMLInputElement;
+    expect(lower).not.toBeNull();
+    expect(upper).not.toBeNull();
+    expect(lower.checked).toBe(false);
+    expect(upper.checked).toBe(false);
 
     act(() => {
-      checkbox.click();
+      lower.click();
     });
-    expect(checkbox.checked).toBe(true);
+    expect(lower.checked).toBe(true);
+
+    act(() => {
+      upper.click();
+    });
+    expect(upper.checked).toBe(true);
   });
 
   it("shows section properties when the input is complete and generation is current", () => {

@@ -26,6 +26,7 @@ type ResolvedBridgeStructureInput = {
   readonly steelUnitWeight: number | null;
   readonly rcUnitWeight: number | null;
   readonly lateralBracingEnabled: boolean;
+  readonly upperLateralBracingEnabled: boolean;
 };
 
 export type BridgeStructureUnitWeightAdoption = {
@@ -100,6 +101,7 @@ function resolveInput(draft: ApolloBridgeStructureInputDraft): ResolvedBridgeStr
     steelUnitWeight: draft.steelUnitWeight,
     rcUnitWeight: draft.rcUnitWeight,
     lateralBracingEnabled: draft.lateralBracingEnabled,
+    upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
   };
 }
 
@@ -176,20 +178,25 @@ function swayBracingVolumeM3(input: ResolvedBridgeStructureInput): number {
   if (stations === 0 || input.girderCount < 2) {
     return 0;
   }
-  const diagonalLength = Math.sqrt(input.girderSpacing ** 2 + input.girderDepth ** 2);
+  // V-type: each diagonal spans half bay width and full flange-to-flange height.
+  const height =
+    input.girderDepth - input.topFlangeThickness / 2 - input.bottomFlangeThickness / 2;
+  const diagonalLength = Math.sqrt((input.girderSpacing / 2) ** 2 + height ** 2);
   const memberArea = Math.PI * (BRACING_MEMBER_DIAMETER_M / 2) ** 2;
   return stations * (input.girderCount - 1) * 2 * memberArea * diagonalLength;
 }
 
 function lateralBracingVolumeM3(input: ResolvedBridgeStructureInput): number {
-  if (!input.lateralBracingEnabled || input.girderCount < 2) {
+  const planeCount =
+    (input.lateralBracingEnabled ? 1 : 0) + (input.upperLateralBracingEnabled ? 1 : 0);
+  if (planeCount === 0 || input.girderCount < 2) {
     return 0;
   }
   const crossBeamCount = Math.floor(input.bridgeLength / input.crossBeamSpacing) + 1;
   const bays = crossBeamCount - 1;
   const diagonalLength = Math.sqrt(input.girderSpacing ** 2 + input.crossBeamSpacing ** 2);
   const memberArea = Math.PI * (BRACING_MEMBER_DIAMETER_M / 2) ** 2;
-  return (input.girderCount - 1) * bays * 2 * memberArea * diagonalLength;
+  return planeCount * (input.girderCount - 1) * bays * 2 * memberArea * diagonalLength;
 }
 
 /**
@@ -313,11 +320,20 @@ export function computeBridgeStructureApproximateQuantities(
 
   quantities.push(
     quantityEntry(
-      "横繋（概算）",
+      "下横構（概算）",
       resolved.lateralBracingEnabled ? 1 : 0,
       "有/無",
       status,
       resolved.lateralBracingEnabled ? "下フランジ水平ブレース有" : "下フランジ水平ブレース無",
+    ),
+  );
+  quantities.push(
+    quantityEntry(
+      "上横構（概算）",
+      resolved.upperLateralBracingEnabled ? 1 : 0,
+      "有/無",
+      status,
+      resolved.upperLateralBracingEnabled ? "上フランジ水平ブレース有" : "上フランジ水平ブレース無",
     ),
   );
 

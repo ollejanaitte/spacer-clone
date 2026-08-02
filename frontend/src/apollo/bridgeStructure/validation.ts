@@ -87,6 +87,7 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     steelUnitWeight: null,
     rcUnitWeight: null,
     lateralBracingEnabled: false,
+    upperLateralBracingEnabled: false,
     bridgeSystem: DEFAULT_BRIDGE_SYSTEM,
     spans: [],
     supports: [],
@@ -225,6 +226,14 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
   }
 
   if (
+    raw.upperLateralBracingEnabled !== null &&
+    raw.upperLateralBracingEnabled !== undefined &&
+    typeof raw.upperLateralBracingEnabled !== "boolean"
+  ) {
+    diagnostics.push("apolloBridgeStructureInput.upperLateralBracingEnabled must be a boolean or null.");
+  }
+
+  if (
     raw.generatedAt !== null &&
     raw.generatedAt !== undefined &&
     typeof raw.generatedAt !== "string"
@@ -313,6 +322,7 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
 
   const generatedAt = raw.generatedAt;
   const lateralBracingRaw = raw.lateralBracingEnabled;
+  const upperLateralBracingRaw = raw.upperLateralBracingEnabled;
   const spans = parseBridgeLayoutSpans(raw.spans);
   if (spans === null) {
     return null;
@@ -325,6 +335,8 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   return {
     ...draft,
     lateralBracingEnabled: typeof lateralBracingRaw === "boolean" ? lateralBracingRaw : false,
+    upperLateralBracingEnabled:
+      typeof upperLateralBracingRaw === "boolean" ? upperLateralBracingRaw : false,
     bridgeSystem: parseBridgeSystemField(raw.bridgeSystem),
     spans,
     supports,
