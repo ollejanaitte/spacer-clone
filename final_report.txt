@@ -4,7 +4,7 @@ Apollo 3D Vertical Slice — Freeze Gate Audit Final Report
 更新日時: 2026-08-02T20:30:00+09:00
 作業名: Apollo 3D Vertical Slice 残存PENDING分類・凍結判定・GitHub main反映
 作業目的: 未確認項目をPASS化せず分類し、証拠に基づき凍結可否を判定し、docs-onlyでmainへ反映する
-作業状態: AUDIT_IN_PROGRESS（第1PR作成前）
+作業状態: AUDIT_PR_OPEN（#284、merge前）
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 START_BRANCH: main
@@ -128,8 +128,8 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 --------------------------------------------------------------------------------
 GitHub反映状態（第1PR時点・仮値）
 --------------------------------------------------------------------------------
-AUDIT_PR_NUMBER: PENDING
-AUDIT_PR_URL: PENDING
+AUDIT_PR_NUMBER: 284
+AUDIT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/284
 AUDIT_PR_MERGED: NO
 AUDIT_PR_MERGE_SHA: PENDING
 MAIN_SHA_AFTER_AUDIT_MERGE: PENDING
