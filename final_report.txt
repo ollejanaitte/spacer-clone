@@ -1,70 +1,67 @@
 ================================================================================
-Apollo Phase A+ — 進捗レポート（P6 完了）
+Apollo 単径間単純桁・連続桁 スライス実装 — 進捗レポート（S0 実行中）
 ================================================================================
 
 更新日時: 2026-08-02
-調査対象: Apollo Phase A+（Phase B 数値実装許可ゲート解除準備）
+調査対象: Apollo 単径間単純桁（SIMPLE_SINGLE）入力整理 → 連続桁（CONTINUOUS）スライス
 正本リポジトリ: https://github.com/ollejanaitte/spacer-clone
 作業場所: /home/masaharu/Projects/spacer-clone
 
-現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
-現在の到達Step: P6（統合判定・完了報告）
-作業状態: 実行中（P6 成果物作成済み・commit/push 前）
+現在のPhase: 単径間単純桁 入力補助 → 連続桁スライス（第1〜3段階）
+現在の到達Step: S0（単径間スコープ・サンプル仕様 docs）
+作業状態: 実行中（S0 成果物作成済み・commit/push 前）
 
-LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p6-final
-LOCAL_HEAD_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e（= origin/main、P5 マージ後）
-LOCAL_MAIN_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e
-ORIGIN_MAIN_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e
+LOCAL_CURRENT_BRANCH: docs/apollo-simple-single-scope
+LOCAL_HEAD_SHA: a72301cb639504cafcf8205ef970bd91582ff878（= origin/main、Phase A+ 完了後）
+LOCAL_MAIN_SHA: a72301cb639504cafcf8205ef970bd91582ff878
+ORIGIN_MAIN_SHA: a72301cb639504cafcf8205ef970bd91582ff878
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（P6 成果物の未コミット差分あり）
-LOCAL_UNCOMMITTED_WORK: phase_b_release_preparation_report.md / README.md / decision_log.md / final_report.txt
+WORKTREE_CLEAN: NO（S0 成果物の未コミット差分あり）
+LOCAL_UNCOMMITTED_WORK: docs/apollo/simple_single_span/ 4 ファイル、final_report.txt
 LOCAL_UNPUSHED_COMMITS: 0
 LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: なし（P6 PR 作成前）
-UNMERGED_BRANCH: docs/phase-b-prep-p6-final
-LATEST_MERGED_PR: #264（P5）
+OPEN_PR: なし（S0 PR 作成前）
+UNMERGED_BRANCH: docs/apollo-simple-single-scope
+LATEST_MERGED_PR: #265（Phase A+ P6）
 
-P0_STATUS: MERGED_COMPLETE
-P0_PR: #259（merge commit 4b44df4）
-P1_STATUS: MERGED_COMPLETE
-P1_PR: #260（merge commit f5e6cc7）
-P2_STATUS: MERGED_COMPLETE
-P2_PR: #261（merge commit db2d972）
-P3_STATUS: MERGED_COMPLETE
-P3_PR: #262（merge commit e2cf9c1）
-P4_STATUS: MERGED_COMPLETE
-P4_PR: #263（merge commit 0427941）
-P5_STATUS: MERGED_COMPLETE
-P5_PR: #264（merge commit a78e164）
-P6_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
-P6_PR: —
+S0_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
+S1_STATUS: NOT_STARTED
+S2_STATUS: NOT_STARTED
+C0_STATUS: NOT_STARTED
+C1_STATUS: NOT_STARTED
+C2_STATUS: NOT_STARTED
+C3_STATUS: NOT_STARTED
+C4_STATUS: NOT_STARTED
 
-MERGED_COMPLETE_STEPS: P0, P1, P2, P3, P4, P5
+MERGED_COMPLETE_STEPS: —（今回の新規 Step はまだなし。Phase A+ P0..P6 は完了済み）
 LOCAL_ONLY_STEPS: なし
-INCOMPLETE_STEPS: P6（PR 作成前）
-NEXT_RESUME_STEP: P6
-NEXT_RESUME_BRANCH: docs/phase-b-prep-p6-final
-NEXT_REQUIRED_ACTION: P6 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期
+INCOMPLETE_STEPS: S0（PR 作成前）, S1, S2, C0, C1, C2, C3, C4
+NEXT_RESUME_STEP: S0
+NEXT_RESUME_BRANCH: docs/apollo-simple-single-scope
+NEXT_REQUIRED_ACTION: S0 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → S1
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
-PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE（維持）
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED（維持）
 
 調査結果:
-- P5 は PR #264 で main マージ済み（merge commit a78e164）。local main = origin/main。
-- P6 で phase_b_release_preparation_report.md を作成。Phase A+（P0..P6）の統合判定と完了報告。
-  - NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（GATE-NR-01..05 全て BLOCKED、08 セル全 NOT_AUTHORIZED、GOLD-001..016 全 NOT_APPROVED）
-  - PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE（道示目視・JIS・正誤表・材料・外部実行・独立 Golden・承認が未完了）
-  - FIRST_RELEASE_CANDIDATE: A（主桁断面諸量・純幾何）、CURRENT_AUTHORIZATION: NOT_AUTHORIZED
-  - USER_NEXT_ACTION を明記（UA-P2-01..04 / UA-P3-01..02 / UA-P4-01..03 / UA-P5-01 → セル単位 GRANTED の DEC-ID で再評価）
-- DEC-PB-0008 を登録。README.md（phase_b_release_preparation）を P6 完了状態へ更新。
-- application code 変更なし。数値実装許可は全セル NOT_AUTHORIZED 維持。
+- 既存の橋梁構造入力（frontend/src/apollo/bridgeStructure/）を調査完了。
+  - types.ts: spanLength=「径間長」, bridgeLength=「橋長」のラベル。spanLength は 1 径間長、bridgeLength は総延長=構造モデル長。
+  - validation.ts resolveSpanCount(bridgeLength/spanLength) で径間数を導出。単径間は bridgeLength == spanLength。
+  - generateBsdd.ts: SDM 生成。spanIds=spanCount, supportIds=spanCount+1, spanSystem="simple"。全エンティティ NOT_AUTHORIZED。
+  - SDM は長さを直接持たず、BSDD の spans[].length / supports[].station に格納。
+- S0 で docs/apollo/simple_single_span/（README / field_semantics / sample_input_spec / manual_verification_checklist）を作成。
+  - 用語修正: 「径間長」→「支間長」、「橋長」→「構造モデル長」。
+  - 単径間では構造モデル長=支間長（内部導出候補）。legacy で bridgeLength != spanLength は黙って修正しない。
+  - サンプル: SIMPLE_SINGLE, 支間30.0m, 幅員10.5m, 主桁4本@3.0m, 主桁高2.0m, 上フランジ0.45x0.025, 下フランジ0.55x0.030, ウェブ0.012, 床版0.22, 横桁5.0m, 補剛材2.5m, 対傾構1本ごと, 横構OFF, 鋼77.0kN/m3, RC24.5kN/m3。
+  - 単位重量は USER_PROVIDED_UNVERIFIED、ADOPTED にしない。
 
 注意事項:
-- 本作業は application code を変更していない。変更範囲は docs/apollo/phase_b_release_preparation/ と final_report.txt のみ。
-- 外部 SPACER / 旧 Apollo を solver と同一と推定・記録していない。
-- 人間作業（UA-P2-01..04 / UA-P3-01..02 / UA-P4-01..03 / UA-P5-01）は 07_user_action_required.md に引き継ぎ。
+- 本作業は application code を変更していない（S0 は docs のみ）。
+- 数値状態（NUMERIC_RELEASE_READINESS / PHASE_B_START / NUMERIC_DESIGN_AUTHORIZATION）は変更しない。
+- S1 以降で frontend/src/apollo を変更するが、正式数値ロジック・backend/IF3/dependency は変更しない。
 
-OVERALL_VERDICT: IN_PROGRESS（P6、マージ後 COMPLETE へ）
+OVERALL_VERDICT: IN_PROGRESS（S0）
 ================================================================================
