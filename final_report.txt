@@ -4,11 +4,12 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のStep: A8 (統合レビュー・完了判定)
-作業状態: 完了報告作成中（PR #258）
-現在ブランチ: docs/phase-a-a8-final-integration
-開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
-現在HEAD SHA: 9f76183c5da1ce127c06e0d7a7b317f60c2fcfcf (A7マージ後)
+現在のPhase: A+ (Phase B 数値実装許可ゲート解除準備)
+現在のStep: P0 (Phase A 後処理・baseline)
+作業状態: Phase A 完了（PR #258 MERGED）、Phase A+ 開始
+現在ブランチ: docs/phase-b-prep-p0-baseline
+開始時main SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (Phase A 最終 main)
+現在HEAD SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (P0 開始時)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -41,6 +42,7 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Step A7: ブランチ docs/phase-a-a7-validation-authorization → PR #257 → main マージ済み (merge commit 9f76183)
 - Step A8: phase_a_completion_report.md を作成（完了判定・統合レビュー・Phase B 引き継ぎ）
 - Step A8: open_questions_and_blockers.md に A8 時点の状態を追記
+- Step A8: ブランチ docs/phase-a-a8-final-integration → PR #258 → main マージ済み (merge commit 8137c7a)
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -61,7 +63,9 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PHA-0016: 添接・支承境界は PHASE1_REFERENCE 維持、合成作用照査は OUT_OF_SCOPE 維持
 - DEC-PHA-0017: Phase B 数値実装許可は DS-09 連言ゲート上位 + 部材・照査単位で個別判定、全セル NOT_AUTHORIZED
 - DEC-PHA-0018: 検証ケースは DS-07 Golden と参照整合・全 BLOCKED、計算書出力は許可ゲート連動
-未決事項: (Phase A 完了。Phase B は 08_numeric_authorization_gate.md のブロッカー解除後)
+- DEC-PB-0001: Phase A+ は Phase A 成果物を上書きせず参照整合を保持。数値実装は行わずブロッカー整理・人間確認票・独立検証計画・最小セル選定を実施
+- DEC-PB-0002: ブロッカー解除レジスタ 01_blocker_resolution_register.csv を正本とし、状態変更は新しい DEC-ID と証拠を付けて行う
+未決事項: (Phase A+ P0..P6。全ブロッカー解除は完了条件ではなく、解除不能理由と人間の次操作を明確にすることが正式成果)
 ブロッカー:
 - PA-OQ-001 道示 R7 条文目視確認 BLOCKED
 - PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
@@ -74,14 +78,14 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
 - PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257)
-mainマージ状態: A0..A7 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183)。A8 は PR 作成前
-次の作業: A8 commit → A8 push → PR 作成 (#258) → 自己レビュー → main マージ → ローカル同期 → 最終報告確定
+PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257) / Step A8 → PR #258 (https://github.com/ollejanaitte/spacer-clone/pull/258)
+mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 は PR 作成前
+次の作業: P0 commit → P0 push → PR 作成 (#259) → 自己レビュー → main マージ → ローカル同期 → P1
 
 ================================================================================
 MODEL: DeepSeek V4 Flash
 ROLE_MODE: SINGLE_MODEL_FULL_EXECUTION
-STEP_PR_LIST: PR #250, #251, #252, #253, #254, #255, #256, #257
+STEP_PR_LIST: PR #250, #251, #252, #253, #254, #255, #256, #257, #258
 SOURCE_COUNT: 49
 ADOPTED_COUNT: 23（ADOPTED 14 + ADOPTED_WITH_CONDITION 9）
 NUMERIC_ADOPTED_COUNT: 0
