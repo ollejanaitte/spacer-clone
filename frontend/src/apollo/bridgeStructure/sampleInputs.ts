@@ -6,12 +6,21 @@
  */
 
 import type { ProjectModel } from "../../types";
+import { BridgeSystem, buildContinuousLayout, sumSpanLengths } from "../contracts";
 import { withBridgeStructureInputDraft } from "./generateBsdd";
 import { createEmptyBridgeStructureInputDraft } from "./validation";
 import type { ApolloBridgeStructureInputDraft } from "./types";
 
 export const SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER =
   "動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。";
+
+export const CONTINUOUS_GIRDER_SAMPLE_SPANS = [30, 35, 30] as const;
+
+export const CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER =
+  "連続桁の動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。";
+
+export const CONTINUOUS_ANALYSIS_DISCLAIMER =
+  "連続桁の解析・照査は未対応です。構造モデル生成と概算数量の確認のみ可能です。";
 
 export const SIMPLE_SINGLE_SPAN_SAMPLE_INPUT: ApolloBridgeStructureInputDraft = {
   schemaVersion: "1.0.0",
@@ -47,6 +56,31 @@ export const SIMPLE_SINGLE_SPAN_SAMPLE_INPUT: ApolloBridgeStructureInputDraft = 
 export function applySimpleSingleSpanSampleInput(project: ProjectModel): ProjectModel {
   return withBridgeStructureInputDraft(project, () => ({
     ...SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+    generatedAt: null,
+  }));
+}
+
+const CONTINUOUS_GIRDER_SAMPLE_INPUT: ApolloBridgeStructureInputDraft = (() => {
+  const layout = buildContinuousLayout(CONTINUOUS_GIRDER_SAMPLE_SPANS);
+  return {
+    ...SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+    bridgeSystem: BridgeSystem.CONTINUOUS,
+    spanLength: null,
+    bridgeLength: sumSpanLengths(layout.spans),
+    spans: layout.spans,
+    supports: layout.supports,
+    generatedAt: null,
+  };
+})();
+
+/**
+ * Fill the persisted bridge structure input with the continuous girder sample [30, 35, 30].
+ * Sets generatedAt to null so the structure is STALE until the user explicitly presses
+ * "構造を生成". Does NOT auto-generate.
+ */
+export function applyContinuousGirderSampleInput(project: ProjectModel): ProjectModel {
+  return withBridgeStructureInputDraft(project, () => ({
+    ...CONTINUOUS_GIRDER_SAMPLE_INPUT,
     generatedAt: null,
   }));
 }

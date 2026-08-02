@@ -7,6 +7,8 @@ import type { ProjectModel } from "../../types";
 import {
   getBridgeStructureInputDraft,
   withBridgeStructureField,
+  withBridgeStructureSystem,
+  BridgeSystem,
 } from "../bridgeStructure";
 import { BridgeStructureInputPanel } from "../components/BridgeStructureInputPanel";
 import { fillContinuousBridgeStructureInput } from "../testing/bridgeStructureFixtures";
@@ -289,5 +291,160 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       "[data-testid='apollo-bridge-input-bridgeLength']",
     ) as HTMLInputElement;
     expect(bridgeInput.value).toBe("30");
+  });
+});
+
+describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
+  function renderContinuousPanel(initialProject: ProjectModel = createDefaultProject()) {
+    return renderPanel(withBridgeStructureSystem(initialProject, BridgeSystem.CONTINUOUS));
+  }
+
+  it("renders bridge system select and continuous layout controls", () => {
+    const container = renderContinuousPanel();
+    expect(container.querySelector("[data-testid='apollo-bridge-system-select']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-continuous-layout-panel']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-continuous-span-table']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-continuous-support-table']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-continuous-analysis-disclaimer']")?.textContent).toContain(
+      "解析・照査は未対応",
+    );
+    expect(container.querySelector("[data-testid='apollo-bridge-input-spanLength']")).toBeNull();
+  });
+
+  it("shows cumulative support stations and abutment/pier roles", () => {
+    const container = renderContinuousPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-continuous-support-station-0']")?.textContent).toBe("0");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-station-1']")?.textContent).toBe("30");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-station-2']")?.textContent).toBe("65");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-station-3']")?.textContent).toBe("95");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-role-0']")?.textContent).toContain("橋台");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-role-1']")?.textContent).toContain("橋脚");
+    expect(container.querySelector("[data-testid='apollo-continuous-support-role-3']")?.textContent).toContain("橋台");
+  });
+
+  it("fills continuous sample [30,35,30] without auto-generating and derives bridgeLength", () => {
+    const container = renderContinuousPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+
+    const span0 = container.querySelector("[data-testid='apollo-continuous-span-length-0']") as HTMLInputElement;
+    const span1 = container.querySelector("[data-testid='apollo-continuous-span-length-1']") as HTMLInputElement;
+    const span2 = container.querySelector("[data-testid='apollo-continuous-span-length-2']") as HTMLInputElement;
+    expect(span0.value).toBe("30");
+    expect(span1.value).toBe("35");
+    expect(span2.value).toBe("30");
+
+    const bridgeInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-bridgeLength']",
+    ) as HTMLInputElement;
+    expect(bridgeInput.value).toBe("95");
+    expect(bridgeInput.readOnly).toBe(true);
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).toBeNull();
+    expect(container.querySelector("[data-testid='apollo-sample-disclaimer']")?.textContent).toContain(
+      "連続桁の動作確認用サンプル値",
+    );
+  });
+
+  it("adds and removes spans within 2-5 limits", () => {
+    const container = renderContinuousPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-continuous-span-count']")?.textContent).toContain("支間数: 3");
+
+    act(() => {
+      const add = container.querySelector("[data-testid='apollo-continuous-add-span']") as HTMLButtonElement;
+      add.click();
+    });
+    act(() => {
+      const add = container.querySelector("[data-testid='apollo-continuous-add-span']") as HTMLButtonElement;
+      add.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-continuous-span-count']")?.textContent).toContain("支間数: 5");
+    expect(
+      (container.querySelector("[data-testid='apollo-continuous-add-span']") as HTMLButtonElement).disabled,
+    ).toBe(true);
+
+    act(() => {
+      const remove = container.querySelector("[data-testid='apollo-continuous-remove-span']") as HTMLButtonElement;
+      remove.click();
+    });
+    act(() => {
+      const remove = container.querySelector("[data-testid='apollo-continuous-remove-span']") as HTMLButtonElement;
+      remove.click();
+    });
+    act(() => {
+      const remove = container.querySelector("[data-testid='apollo-continuous-remove-span']") as HTMLButtonElement;
+      remove.click();
+    });
+    expect(container.querySelector("[data-testid='apollo-continuous-span-count']")?.textContent).toContain("支間数: 2");
+    expect(
+      (container.querySelector("[data-testid='apollo-continuous-remove-span']") as HTMLButtonElement).disabled,
+    ).toBe(true);
+  });
+
+  it("shows stale message after editing a continuous span length post-generate", () => {
+    const container = renderPanel(fillValidInput(createDefaultProject()));
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    const spanInput = container.querySelector(
+      "[data-testid='apollo-continuous-span-length-0']",
+    ) as HTMLInputElement;
+    act(() => {
+      setInputValue(spanInput, "45");
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).not.toBeNull();
+    const bridgeInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-bridgeLength']",
+    ) as HTMLInputElement;
+    expect(bridgeInput.value).toBe("205");
+  });
+
+  it("generates continuous StructuralDesignModel with NOT_AUTHORIZED entities", () => {
+    const container = renderContinuousPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
+    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-main-girder-status']")?.textContent).toBe(
+      "主桁1: NOT_AUTHORIZED",
+    );
+  });
+
+  it("switches back to SIMPLE_SINGLE and restores span length input", () => {
+    const container = renderContinuousPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+    act(() => {
+      const select = container.querySelector("[data-testid='apollo-bridge-system-select']") as HTMLSelectElement;
+      select.value = BridgeSystem.SIMPLE_SINGLE;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-input-spanLength']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-continuous-layout-panel']")).toBeNull();
+    expect(
+      container.querySelector("[data-testid='apollo-current-bridge-system']")?.textContent,
+    ).toContain("単径間単純桁（現在対応）");
   });
 });

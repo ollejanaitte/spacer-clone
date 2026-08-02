@@ -19,6 +19,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "bulkEdit.test.ts",
   "clipboard.test.ts",
   "continuousGirderLayout.test.ts",
+  "continuousGirderSample.test.ts",
   "dirtyFingerprint.test.ts",
   "entryGuard.test.ts",
   "errors.test.ts",

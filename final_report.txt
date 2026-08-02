@@ -1,74 +1,74 @@
 ================================================================================
-Apollo 連続桁 — Step C1 実装レポート
+Apollo 連続桁 — Step C2 実装レポート
 ================================================================================
-更新日時: 2026-08-02T17:00:00+09:00
+更新日時: 2026-08-02T17:05:00+09:00
 実行モデル: TokenRouter KimK3
-現在のStep: C1（continuous girder layout contracts）
+現在のStep: C2（continuous girder input UI）
 作業状態: PR 作成・マージ実行中
-現在ブランチ: feat/apollo-continuous-girder-contract
+現在ブランチ: feat/apollo-continuous-girder-input-ui
 開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
-ベースmain SHA（C1開始時 origin/main）: 173396e
+ベースmain SHA（C2開始時 origin/main）: 042637a
 現在HEAD SHA: （コミット後更新）
 worktree状態: clean（コミット前は実装差分あり）
-未コミット差分: C1 実装一式
+未コミット差分: C2 実装一式
 未push commit: 0（コミット後更新）
 
-## 実施内容（C1）
+## 実施内容（C2）
 
-1. frontend/src/apollo/contracts/ 新設
-   - layoutTypes.ts: BridgeSystem (SIMPLE_SINGLE | CONTINUOUS | SIMPLE_MULTIPLE)
-   - layoutValidation.ts: spans[]/supports[] 検証、累積 station、ABUTMENT/PIER
-   - layoutParser.ts: 永続化パース
-2. bridgeStructure 統合
-   - types: bridgeSystem, spans[], supports[] 追加（schema 1.0.0 維持）
-   - validation/parser/persistence: レガシー欠落 → SIMPLE_SINGLE
-   - generateBsdd: 可変支間長 CONTINUOUS、spanSystem "continuous"
-   - quantities: レイアウト契約連動
-3. BSDD 契約（最小 additive）
-   - phase1ScopeAssertion.spanSystem に "continuous" 追加
-4. SIMPLE_SINGLE 回帰維持（sample/workflow テスト）
-5. SIMPLE_MULTIPLE fail-closed
-6. CONTINUOUS 2〜5 径間（C2 サンプル [30,35,30] 検証済み）
+1. BridgeStructureInputPanel UI 拡張
+   - 構造形式セレクト: SIMPLE_SINGLE / CONTINUOUS（ラベル: 単径間単純桁（現在対応） / 連続桁（試験対応））
+   - CONTINUOUS: 支間数 2〜5（追加/削除）、支間表、支点一覧（累積 station・ABUTMENT/PIER）
+   - 構造モデル長 = sum(spans) を読み取り専用表示（手入力で上書き不可）
+   - 連続桁サンプル [30,35,30] ボタン（generatedAt=null、自動生成なし、disclaimer）
+   - 入力クリア、構造生成ボタン既存流用
+   - STALE 既存挙動維持
+   - 「解析・照査は未対応」バナー明示
+   - SIMPLE_SINGLE 既存サンプル/用語/挙動維持
+2. bridgeStructure 最小拡張
+   - layoutInput.ts: bridgeSystem 切替、支間追加/削除/長さ更新
+   - sampleInputs.ts: applyContinuousGirderSampleInput、CONTINUOUS_* 定数
+3. テスト
+   - BridgeStructureInputPanel.test.tsx: C2 UI シナリオ追加
+   - continuousGirderSample.test.ts: サンプル投入・生成検証
+   - apolloSuite manifest 更新
 
 ## 変更ファイル要約
 
 新規:
-- frontend/src/apollo/contracts/* (4 files)
-- frontend/src/apollo/__tests__/continuousGirderLayout.test.ts
-- frontend/src/apollo/testing/bridgeStructureFixtures.ts
+- frontend/src/apollo/bridgeStructure/layoutInput.ts
+- frontend/src/apollo/__tests__/continuousGirderSample.test.ts
 
 変更:
-- frontend/src/apollo/bridgeStructure/{types,validation,generateBsdd,quantities,sampleInputs,index}.ts
-- frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
-- frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
-- 既存 apollo テスト（200m 多径間フィクスチャ → CONTINUOUS 明示化）
+- frontend/src/apollo/components/BridgeStructureInputPanel.tsx
+- frontend/src/apollo/bridgeStructure/{sampleInputs,index}.ts
+- frontend/src/apollo/__tests__/{BridgeStructureInputPanel.test,apolloSuite.test}.tsx
 
 ## schema bump
 
-- apolloBridgeStructureInput: 1.0.0 維持（additive フィールドのみ）
-- BSDD spanSystem: リテラル union 拡張（後方互換 "simple" 維持）
+- なし（C1 契約の UI 露出のみ。schema 1.0.0 維持）
 
 ## phase1ScopeGuard 判断
 
 - phase1ScopeGuard.ts は変更なし（旧 Phase1 entry は CONTINUOUS を AP00_SCOPE_CONTINUOUS で拒否継続）
-- bridgeStructure 垂直スライス経路のみ CONTINUOUS を許可（BSDD spanSystem=continuous を生成）
+- bridgeStructure 垂直スライス経路のみ CONTINUOUS UI を提供
 - 数値設計 designStatus は全エンティティ NOT_AUTHORIZED 固定（NOT_GRANTED 維持）
 
 ## ソースオブトゥルース
 
-- ユーザー C1/C2 仕様（可変 spans[]、total=sum(spans)、station=累積）をコード/テストで正とする
-- C0 data_model_spec の等支間記述はコードに固定しない（大規模 doc 改訂なし）
+- ユーザー C2 仕様（可変 spans[]、total=sum(spans)、station=累積）を UI で正とする
+- C0 ui_spec の等支間・spanLength×spanCount 記述は無視
 
 ## テスト結果
 
 - npm run typecheck: PASS
-- npm test -- src/apollo: 272/272 PASS
-- npm test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts: 30/30 PASS
+- npm test -- src/apollo: 281/281 PASS
+- npm run lint: PASS（既存日本語警告のみ）
+- npm run build: PASS
 - git diff --check: PASS
 
 ## 手動確認
 
-MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（C1 は契約層。UI 連続桁選択は C2）
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（連続桁 UI は自動テストでカバー。3D pier 幾何は C3）
 
 ## 数値ゲート（変更なし）
 
@@ -79,14 +79,14 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ## PR / マージ
 
 PR番号・URL: （作成後更新）
-C1_PR: （作成後更新）
+C2_PR: （作成後更新）
 merge SHA: （マージ後更新）
 MAIN_SHA: （main 同期後更新）
 
-## 次 C2 注意点
+## 次 C3 注意点
 
-- UI: bridgeSystem 切替、spans[] 編集パネル、C2 サンプル [30,35,30] ボタン
-- 3D: 橋台/橋脚簡易幾何（pier role 対応）
-- generateBsdd の spanLength フィールド CONTINUOUS 時の UI 表示整理
+- 3D: 橋台/橋脚簡易幾何（pier role 対応、supports station 反映）
+- CONTINUOUS 時の 3D ビューア表示と STALE 連動確認
 - phase1ScopeGuard は据え置き；bridgeStructure 経路のみ CONTINUOUS
+- 解析・照査パイプラインは引き続き未対応を明示
 ================================================================================

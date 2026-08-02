@@ -3,7 +3,16 @@ import type { ReactNode } from "react";
 import type { ProjectModel } from "../../types";
 import {
   BRIDGE_STRUCTURE_INPUT_FIELDS,
+  BRIDGE_SYSTEM_LABELS,
+  BridgeSystem,
+  CONTINUOUS_ANALYSIS_DISCLAIMER,
+  CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER,
+  CONTINUOUS_SPAN_COUNT_MAX,
+  CONTINUOUS_SPAN_COUNT_MIN,
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
+  SupportLayoutRole,
+  addContinuousSpan,
+  applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
@@ -12,16 +21,20 @@ import {
   getBridgeStructureQuantities,
   getBridgeStructureUnitWeightAdoption,
   isBridgeStructureGenerationCurrent,
+  removeContinuousSpan,
   validateBridgeStructureInputDraft,
   withAdoptedBridgeStructureUnitWeight,
   withBridgeStructureBooleanField,
   withBridgeStructureField,
+  withBridgeStructureSystem,
   withBridgeStructureUnitWeightReset,
+  withContinuousSpanLength,
   computeGirderSectionProperties,
   type BridgeStructureApproximateQuantity,
   type BridgeStructureInputFieldKey,
   type BridgeStructureUnitWeightKind,
   type GirderSectionProperties,
+  type SelectableBridgeSystem,
 } from "../bridgeStructure";
 import { commitApolloNumericDraft } from "../numericInput";
 import { CompositionAwareInput } from "./CompositionAwareInput";
@@ -36,6 +49,7 @@ type NullableFieldInputProps = {
   readonly fieldKey: BridgeStructureInputFieldKey;
   readonly value: number | null;
   readonly error?: string;
+  readonly readOnly?: boolean;
   readonly onCommit: (value: number | null) => void;
 };
 
@@ -43,6 +57,7 @@ function NullableBridgeStructureFieldInput({
   fieldKey,
   value,
   error,
+  readOnly = false,
   onCommit,
 }: NullableFieldInputProps) {
   const [draft, setDraft] = useState(value === null ? "" : String(value));
@@ -54,6 +69,9 @@ function NullableBridgeStructureFieldInput({
   }, [value]);
 
   const commitDraft = (nextDraft: string) => {
+    if (readOnly) {
+      return;
+    }
     const trimmed = nextDraft.trim();
     if (trimmed.length === 0) {
       setInputError(null);
@@ -78,8 +96,13 @@ function NullableBridgeStructureFieldInput({
         data-testid={`apollo-bridge-input-${fieldKey}`}
         value={draft}
         inputMode="decimal"
+        readOnly={readOnly}
         aria-invalid={error || inputError ? true : undefined}
-        onValueChange={(nextDraft) => setDraft(nextDraft)}
+        onValueChange={(nextDraft) => {
+          if (!readOnly) {
+            setDraft(nextDraft);
+          }
+        }}
         onBlur={(event) => commitDraft(event.currentTarget.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
@@ -95,6 +118,73 @@ function NullableBridgeStructureFieldInput({
       ) : null}
     </>
   );
+}
+
+type ContinuousSpanLengthInputProps = {
+  readonly index: number;
+  readonly value: number;
+  readonly onCommit: (length: number) => void;
+};
+
+function ContinuousSpanLengthInput({ index, value, onCommit }: ContinuousSpanLengthInputProps) {
+  const [draft, setDraft] = useState(String(value));
+  const [inputError, setInputError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDraft(String(value));
+    setInputError(null);
+  }, [value]);
+
+  const commitDraft = (nextDraft: string) => {
+    const trimmed = nextDraft.trim();
+    if (trimmed.length === 0) {
+      setInputError("支間長を入力してください。");
+      setDraft(String(value));
+      return;
+    }
+    const result = commitApolloNumericDraft(trimmed);
+    if (!result.ok) {
+      setInputError(result.message);
+      setDraft(String(value));
+      return;
+    }
+    if (result.value <= 0) {
+      setInputError("支間長は 0 より大きい値を入力してください。");
+      setDraft(String(value));
+      return;
+    }
+    setInputError(null);
+    onCommit(result.value);
+    setDraft(String(result.value));
+  };
+
+  return (
+    <>
+      <CompositionAwareInput
+        data-testid={`apollo-continuous-span-length-${index}`}
+        value={draft}
+        inputMode="decimal"
+        aria-invalid={inputError ? true : undefined}
+        onValueChange={setDraft}
+        onBlur={(event) => commitDraft(event.currentTarget.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            commitDraft(event.currentTarget.value);
+          }
+        }}
+      />
+      {inputError ? (
+        <small className="apollo-input-error" role="alert">{inputError}</small>
+      ) : null}
+    </>
+  );
+}
+
+function formatSupportRole(role: (typeof SupportLayoutRole)[keyof typeof SupportLayoutRole]): string {
+  if (role === SupportLayoutRole.ABUTMENT) {
+    return "橋台（端部）";
+  }
+  return "橋脚（中間）";
 }
 
 function formatQuantityValue(quantity: BridgeStructureApproximateQuantity): string {
@@ -167,6 +257,7 @@ export function BridgeStructureInputPanel({
   onAuditEvent,
 }: BridgeStructureInputPanelProps) {
   const inputDraft = getBridgeStructureInputDraft(project);
+  const isContinuous = inputDraft.bridgeSystem === BridgeSystem.CONTINUOUS;
   const validation = useMemo(() => validateBridgeStructureInputDraft(inputDraft), [inputDraft]);
   const quantities = useMemo(() => getBridgeStructureQuantities(project), [project]);
   const sdm = project.apolloBsdd?.structuralDesignModel;
@@ -175,12 +266,19 @@ export function BridgeStructureInputPanel({
   const [generationMessage, setGenerationMessage] = useState<string | null>(null);
 
   const sectionProperties = useMemo(() => {
-    if (!validation.complete) {
+    if (!validation.complete || inputDraft.bridgeLength === null) {
+      return null;
+    }
+    const representativeSpanLength =
+      inputDraft.bridgeSystem === BridgeSystem.CONTINUOUS
+        ? inputDraft.bridgeLength
+        : inputDraft.spanLength;
+    if (representativeSpanLength === null) {
       return null;
     }
     return computeGirderSectionProperties({
-      spanLength: inputDraft.spanLength!,
-      bridgeLength: inputDraft.bridgeLength!,
+      spanLength: representativeSpanLength,
+      bridgeLength: inputDraft.bridgeLength,
       width: inputDraft.width!,
       girderCount: inputDraft.girderCount!,
       girderSpacing: inputDraft.girderSpacing!,
@@ -208,6 +306,17 @@ export function BridgeStructureInputPanel({
     return map;
   }, [validation.fieldErrors]);
 
+  const visibleFields = useMemo(
+    () =>
+      BRIDGE_STRUCTURE_INPUT_FIELDS.filter((field) => {
+        if (isContinuous && field.key === "spanLength") {
+          return false;
+        }
+        return true;
+      }),
+    [isContinuous],
+  );
+
   const handleGenerate = () => {
     const result = generateBridgeStructureFromInput(project, inputDraft);
     if (!result.ok) {
@@ -220,6 +329,9 @@ export function BridgeStructureInputPanel({
   };
 
   const handleCommitField = (fieldKey: BridgeStructureInputFieldKey, nextValue: number | null) => {
+    if (isContinuous && fieldKey === "bridgeLength") {
+      return;
+    }
     let nextProject = withBridgeStructureField(project, fieldKey, nextValue);
     if (fieldKey === "spanLength" && nextValue !== null) {
       const nextInput = getBridgeStructureInputDraft(nextProject);
@@ -231,31 +343,76 @@ export function BridgeStructureInputPanel({
     onProjectChange(nextProject);
   };
 
+  const currentBridgeSystemLabel = BRIDGE_SYSTEM_LABELS[inputDraft.bridgeSystem as SelectableBridgeSystem]
+    ?? BRIDGE_SYSTEM_LABELS[BridgeSystem.SIMPLE_SINGLE];
+
   return (
     <article className="apollo-editor-card" data-testid="apollo-bridge-structure-panel">
       <div className="apollo-editor-card-header">
         <div>
           <h2>橋梁構造入力</h2>
           <p>
-            現在の対応形式: <strong data-testid="apollo-current-bridge-system">単径間単純桁（現在対応）</strong>
+            現在の対応形式: <strong data-testid="apollo-current-bridge-system">{currentBridgeSystemLabel}</strong>
           </p>
           <p>寸法を入力し「構造を生成」で StructuralDesignModel を作成します。設計判定は未許可のままです。</p>
         </div>
       </div>
 
-      <div className="apollo-workspace-actions">
-        <button
-          type="button"
-          className="apollo-button-secondary"
-          data-testid="apollo-sample-input"
-          onClick={() => {
-            onProjectChange(applySimpleSingleSpanSampleInput(project));
-            setGenerationMessage("動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
-            onAuditEvent?.("動作確認用サンプル値を入力しました。");
+      <label>
+        構造形式
+        <select
+          data-testid="apollo-bridge-system-select"
+          value={inputDraft.bridgeSystem}
+          onChange={(event) => {
+            const nextSystem = event.currentTarget.value as SelectableBridgeSystem;
+            onProjectChange(withBridgeStructureSystem(project, nextSystem));
+            setGenerationMessage(null);
+            onAuditEvent?.(`構造形式を ${BRIDGE_SYSTEM_LABELS[nextSystem]} に切り替えました。`);
           }}
         >
-          動作確認用サンプル値を入力
-        </button>
+          <option value={BridgeSystem.SIMPLE_SINGLE}>{BRIDGE_SYSTEM_LABELS[BridgeSystem.SIMPLE_SINGLE]}</option>
+          <option value={BridgeSystem.CONTINUOUS}>{BRIDGE_SYSTEM_LABELS[BridgeSystem.CONTINUOUS]}</option>
+        </select>
+      </label>
+
+      {isContinuous ? (
+        <p
+          className="apollo-input-error"
+          data-testid="apollo-continuous-analysis-disclaimer"
+          role="status"
+        >
+          {CONTINUOUS_ANALYSIS_DISCLAIMER}
+        </p>
+      ) : null}
+
+      <div className="apollo-workspace-actions">
+        {isContinuous ? (
+          <button
+            type="button"
+            className="apollo-button-secondary"
+            data-testid="apollo-continuous-sample-input"
+            onClick={() => {
+              onProjectChange(applyContinuousGirderSampleInput(project));
+              setGenerationMessage("連続桁の動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
+              onAuditEvent?.("連続桁の動作確認用サンプル値を入力しました。");
+            }}
+          >
+            連続桁サンプル [30, 35, 30] を入力
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="apollo-button-secondary"
+            data-testid="apollo-sample-input"
+            onClick={() => {
+              onProjectChange(applySimpleSingleSpanSampleInput(project));
+              setGenerationMessage("動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
+              onAuditEvent?.("動作確認用サンプル値を入力しました。");
+            }}
+          >
+            動作確認用サンプル値を入力
+          </button>
+        )}
         <button
           type="button"
           className="apollo-button-secondary"
@@ -271,20 +428,104 @@ export function BridgeStructureInputPanel({
       </div>
 
       <p className="apollo-inline-hint" data-testid="apollo-sample-disclaimer">
-        {SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER}
+        {isContinuous ? CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER : SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER}
       </p>
 
+      {isContinuous ? (
+        <section data-testid="apollo-continuous-layout-panel">
+          <h3>連続桁レイアウト</h3>
+          <div className="apollo-workspace-actions">
+            <span data-testid="apollo-continuous-span-count">
+              支間数: {inputDraft.spans.length}（{CONTINUOUS_SPAN_COUNT_MIN}〜{CONTINUOUS_SPAN_COUNT_MAX}）
+            </span>
+            <button
+              type="button"
+              className="apollo-button-secondary"
+              data-testid="apollo-continuous-add-span"
+              disabled={inputDraft.spans.length >= CONTINUOUS_SPAN_COUNT_MAX}
+              onClick={() => {
+                onProjectChange(addContinuousSpan(project));
+              }}
+            >
+              支間を追加
+            </button>
+            <button
+              type="button"
+              className="apollo-button-secondary"
+              data-testid="apollo-continuous-remove-span"
+              disabled={inputDraft.spans.length <= CONTINUOUS_SPAN_COUNT_MIN}
+              onClick={() => {
+                onProjectChange(removeContinuousSpan(project));
+              }}
+            >
+              支間を削除
+            </button>
+          </div>
+
+          <table className="apollo-detail-table" data-testid="apollo-continuous-span-table">
+            <thead>
+              <tr>
+                <th>支間</th>
+                <th>支間長 (m)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inputDraft.spans.map((span, index) => (
+                <tr key={span.id} data-testid={`apollo-continuous-span-row-${index}`}>
+                  <td>径間 {index + 1}</td>
+                  <td>
+                    <ContinuousSpanLengthInput
+                      index={index}
+                      value={span.length}
+                      onCommit={(length) => {
+                        onProjectChange(withContinuousSpanLength(project, index, length));
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <table className="apollo-detail-table" data-testid="apollo-continuous-support-table">
+            <thead>
+              <tr>
+                <th>支点</th>
+                <th>累積位置 (m)</th>
+                <th>種別</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inputDraft.supports.map((support, index) => (
+                <tr key={support.id} data-testid={`apollo-continuous-support-row-${index}`}>
+                  <td>支点 {index + 1}</td>
+                  <td data-testid={`apollo-continuous-support-station-${index}`}>
+                    {formatMetric(support.station, 4)}
+                  </td>
+                  <td data-testid={`apollo-continuous-support-role-${index}`}>
+                    {formatSupportRole(support.role)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      ) : null}
+
       <div className="apollo-detail-grid">
-        {BRIDGE_STRUCTURE_INPUT_FIELDS.map((field) => {
+        {visibleFields.map((field) => {
           const currentValue = inputDraft[field.key];
           const error = fieldErrorMap.get(field.key);
+          const readOnly = isContinuous && field.key === "bridgeLength";
           return (
             <label key={field.key}>
               {field.label} ({field.units}){field.optional ? "（任意）" : null}
+              {readOnly ? "（支間合計）" : null}
               <NullableBridgeStructureFieldInput
                 fieldKey={field.key}
                 value={currentValue}
                 error={error}
+                readOnly={readOnly}
                 onCommit={(nextValue) => {
                   handleCommitField(field.key, nextValue);
                 }}
