@@ -1,6 +1,6 @@
 # Apollo Visible Vertical Slice 02 — ローカル実装レポート
 
-**Status:** IMPLEMENTATION_COMPLETE — PENDING manual GUI + PR/merge
+**Status:** IMPLEMENTATION_COMPLETE — manual GUI confirmed, merged to main
 **Branch:** `feat/ap-dx-visible-vertical-slice-02`
 **Baseline:** `54e3c4ff0f21d737e1e2df356653859f3ae4ddb2` (main @ VVS01 merge PR #246)
 **Numeric design authorization:** NOT_GRANTED（VVS01 から維持）
@@ -79,7 +79,9 @@ Visible Vertical Slice 01 の「橋梁構造入力 → SDM → 3D → 保存/再
 
 ## 7. GUI（Block 6）
 
-手動 GUI 確認は非視覚エージェントでは認定不可。`manual_verification_checklist.md` を作成し、全項目を PENDING とする。自動テスト（vitest、可能なら Playwright）は補助証跡に留める。VVS01 と同様、`MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION` を維持する（PASS の捏造はしない）。
+`manual_verification_checklist.md`（VVS-MV-01〜20）を作成し、運用者による手動 GUI 確認を依頼した。自動テスト（vitest、Playwright 設定はあり）は補助証跡に留める。
+
+**2026-08-02: 運用者による GUI 確認完了。全 20 項目 PASS、`MANUAL_GUI_VERDICT: PASS` を記録した。**（PASS は運用者の確認に基づく認定であり、非視覚エージェントが捏造したものではない。）
 
 ## 8. 実装進捗（ブロック別）
 
@@ -92,7 +94,8 @@ Visible Vertical Slice 01 の「橋梁構造入力 → SDM → 3D → 保存/再
 | 4 | `1f484ac` | 結果 UI（断面特性表・数量/重量・採用ボタン・チェックボックス）＋永続化 | 226 Apollo PASS |
 | 5 | `c584bd3` | sectionProperties / adoption / 新規フィールド検証 / 永続化テスト | 244 Apollo PASS, lint 0, diff-check clean |
 | 6 | —（本 Block） | 手動 GUI チェックリスト作成 | `MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION` |
-| 7 | —（未実施） | PR / merge / `final_report.txt` 日本語上書き | マージ SHA 確定後 |
+| 7 | — | PR #247 merge（`569c8f6`）＋ `final_report.txt` 日本語上書き（`d2e9424`, PR #248） | マージ SHA 記録済 |
+| 8 | — | 運用者 GUI 確認記録（VVS-MV-01〜20 全 PASS、`MANUAL_GUI_VERDICT: PASS`） | チェックリスト更新 |
 
 ## 9. 最終検証サマリ（Block 5 時点）
 
@@ -104,6 +107,6 @@ Visible Vertical Slice 01 の「橋梁構造入力 → SDM → 3D → 保存/再
 ## 10. 既知の制約・未実施事項
 
 - 数値設計権限は NOT_GRANTED のまま。UI 上の採用操作は fail-closed（診断表示）で ADOPTED には到達しない。ADOPTED 経路はテスト注入コンテキストのみで検証。
-- 手動 GUI 確認は未実施（PENDING）。非視覚エージェントによる PASS 認定は行わない。
+- 手動 GUI 確認は 2026-08-02 に運用者完了。VVS-MV-01〜20 全 PASS、`MANUAL_GUI_VERDICT: PASS` を記録。
 - Playwright による e2e は未実行（既存設定を利用する場合は backend :8000 + vite :4173 + `VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL=true`）。
 - 追加フィールド・二次部材エンティティは全て additive。契約・スキーマ・依存・backend は無変更。
