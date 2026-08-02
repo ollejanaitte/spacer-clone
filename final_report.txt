@@ -1,12 +1,8 @@
 ================================================================================
-Apollo Step 1-D Development — Demand-Only Candidates
+Apollo Step 1 Development Track Closeout (1-A .. 1-D development-only)
 ================================================================================
-更新日時: 2026-08-02T21:55:00+09:00
-作業名: Step 1-D development-only demand candidates (no formal OK/NG)
-Step ID: STEP_1D_DEVELOPMENT
-作業状態: PRIMARY_READY
-START_MAIN_SHA: 26e749833ee6402cc56010fefbdfcc0c9af802f1
-作業branch: feat/apollo-step1d-demand-candidates-dev
+更新日時: 2026-08-02T22:00:00+09:00
+作業状態: STEP_1D_PRIMARY_MERGED + REPORT_FINALIZATION
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
 DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
@@ -14,22 +10,39 @@ DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-Demand candidates (GOLD-AN-001 × GOLD-SP-001 development refs):
-- bendingStressTop/Bottom = M/S
-- shearStressWeb = V/Aw
-- deflection = uy
-Status: CANDIDATE / UNVERIFIED / USER REVIEW REQUIRED
-formalOkNg: NOT_EMITTED
+GOLD_SP_001_DEVELOPMENT_PARITY: PASS
+GOLD_SP_002_DEVELOPMENT_PARITY: PASS
+GOLD_AN_001_DEVELOPMENT_PARITY: PASS
+GOLD_AN_002_DEVELOPMENT_PARITY: PASS
+APP_LAUNCH_VERDICT: PASS
+GUI_INPUT_VERDICT: PASS
+SAVE_RELOAD_VERDICT: PASS
+STALE_VERDICT: PASS
+DEMAND_CANDIDATE_GUI_VERDICT: PASS
+FORMAL_OK_NG_EMITTED: NO
 
-Prior track:
-- Step 1-A development reference parity PASS (#289/#290)
-- Step 1-B section properties disclosure PASS (#291/#292)
-- Step 1-C analysis probe PASS (#293/#294)
-
+STEP_1B_DEVELOPMENT_START_VERDICT: GO
+STEP_1B_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+STEP_1C_DEVELOPMENT_START_VERDICT: GO
+STEP_1C_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 STEP_1D_DEVELOPMENT_START_VERDICT: GO
 STEP_1D_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_STANDARDS_AND_GOLDEN
 
-STEP_1D_PRIMARY_PR_NUMBER: PENDING
-STEP_1D_PRIMARY_PR_URL: PENDING
-STEP_1D_PRIMARY_PR_MERGE_SHA: PENDING
+PRIMARY_PR (1-A refs): https://github.com/ollejanaitte/spacer-clone/pull/289
+REPORT_PR (1-A): https://github.com/ollejanaitte/spacer-clone/pull/290
+STEP_1B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/291
+STEP_1B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/292
+STEP_1C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/293
+STEP_1C_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/294
+STEP_1D_PRIMARY_PR_NUMBER: 295
+STEP_1D_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/295
+STEP_1D_PRIMARY_PR_MERGE_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b
+
+STEP_1D_REPORT_PR_NUMBER: PENDING
+STEP_1D_REPORT_PR_URL: PENDING
+STEP_1D_REPORT_PR_MERGE_SHA: PENDING
+
+FINAL_MAIN_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES (at primary merge; report branch dirty until merge)
 ================================================================================
