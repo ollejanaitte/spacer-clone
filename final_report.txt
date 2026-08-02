@@ -4,7 +4,7 @@ Apollo Step 1-B Development — Section Properties Warning/Provenance
 更新日時: 2026-08-02T21:35:00+09:00
 作業名: Step 1-B development-only section properties UI disclosure
 Step ID: STEP_1B_DEVELOPMENT
-作業状態: PRIMARY_PR_OPEN（#291）
+作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
 START_MAIN_SHA: 071a1f49a2a9c781a2f8590efe6d324c48253834
 作業branch: feat/apollo-step1b-section-properties-dev
 
@@ -29,5 +29,8 @@ STEP_1C_DEVELOPMENT_START_VERDICT: GO
 
 STEP_1B_PRIMARY_PR_NUMBER: 291
 STEP_1B_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/291
-STEP_1B_PRIMARY_PR_MERGE_SHA: PENDING
+STEP_1B_PRIMARY_PR_MERGE_SHA: a64000c7b56dc3a0b7ef7be9302ba2e5f877eece
 ================================================================================
+STEP_1B_REPORT_PR_NUMBER: 292
+STEP_1B_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/292
+STEP_1B_REPORT_PR_MERGE_SHA: PENDING
