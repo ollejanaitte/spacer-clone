@@ -4,11 +4,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のStep: A7 (検証・計算書・許可ゲート)
-作業状態: 実行中
-現在ブランチ: docs/phase-a-a7-validation-authorization
+現在のStep: A8 (統合レビュー・完了判定)
+作業状態: 完了報告作成中（PR #258）
+現在ブランチ: docs/phase-a-a8-final-integration
 開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
-現在HEAD SHA: 6f95f5b55e7b1ec93228877679f318002081be8f (A6マージ後)
+現在HEAD SHA: 9f76183c5da1ce127c06e0d7a7b317f60c2fcfcf (A7マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -38,6 +38,9 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Step A7: docs/apollo/phase_a_integrated_freeze/07_validation_cases.csv を作成（数値検証ケース: GOLD-001..016 と独立検証枠 VC-STD-001/002 を参照整合、全ケース BLOCKED）
 - Step A7: docs/apollo/phase_a_integrated_freeze/08_numeric_authorization_gate.md を作成（DS-09 連言ゲート上位 + 部材・照査単位の許可テーブル、全セル NOT_AUTHORIZED）
 - Step A7: docs/apollo/phase_a_integrated_freeze/09_report_output_spec.md を作成（ReportModel 章構成 + 出力可否連動 + STALE/監査）
+- Step A7: ブランチ docs/phase-a-a7-validation-authorization → PR #257 → main マージ済み (merge commit 9f76183)
+- Step A8: phase_a_completion_report.md を作成（完了判定・統合レビュー・Phase B 引き継ぎ）
+- Step A8: open_questions_and_blockers.md に A8 時点の状態を追記
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -58,7 +61,7 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PHA-0016: 添接・支承境界は PHASE1_REFERENCE 維持、合成作用照査は OUT_OF_SCOPE 維持
 - DEC-PHA-0017: Phase B 数値実装許可は DS-09 連言ゲート上位 + 部材・照査単位で個別判定、全セル NOT_AUTHORIZED
 - DEC-PHA-0018: 検証ケースは DS-07 Golden と参照整合・全 BLOCKED、計算書出力は許可ゲート連動
-未決事項: Step A8（統合レビュー・完了判定）
+未決事項: (Phase A 完了。Phase B は 08_numeric_authorization_gate.md のブロッカー解除後)
 ブロッカー:
 - PA-OQ-001 道示 R7 条文目視確認 BLOCKED
 - PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
@@ -71,7 +74,19 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
 - PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256)
-mainマージ状態: A0..A6 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b)。A7 は PR 前
-次の作業: A7 検証 → A7 commit → A7 push → PR 作成 → 自己レビュー → main マージ → Step A8 (統合レビュー・完了判定)
+PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257)
+mainマージ状態: A0..A7 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183)。A8 は PR 作成前
+次の作業: A8 commit → A8 push → PR 作成 (#258) → 自己レビュー → main マージ → ローカル同期 → 最終報告確定
+
+================================================================================
+MODEL: DeepSeek V4 Flash
+ROLE_MODE: SINGLE_MODEL_FULL_EXECUTION
+STEP_PR_LIST: PR #250, #251, #252, #253, #254, #255, #256, #257
+SOURCE_COUNT: 49
+ADOPTED_COUNT: 23（ADOPTED 14 + ADOPTED_WITH_CONDITION 9）
+NUMERIC_ADOPTED_COUNT: 0
+DOCUMENT_FREEZE_VERDICT: COMPLETE
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+OVERALL_VERDICT: COMPLETE（文書凍結。数値実装は Phase B 許可ゲート未開放）
+================================================================================
 ================================================================================

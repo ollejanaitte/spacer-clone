@@ -38,3 +38,9 @@
 - A1 (基準・版・適用範囲): 既存 DS-01 target_standard_freeze を統合し、上記ブロッカーを保持。
 - A2 (材料・単位・係数): 既存 DS-03 を統合。材料値は全 BLOCKED を維持。
 - A3 (荷重・組合せ): 既存 DS-04 を統合。荷重値・係数は全 BLOCKED を維持。
+
+## A8 時点の状態（2026-08-02）
+
+- A0..A7 の成果物（00..09・README・decision_log）はすべて main へマージ済み。数値・式・係数は全 BLOCKED を維持し、Phase B 実装許可は 08_numeric_authorization_gate.md の全セル NOT_AUTHORIZED のまま。
+- PA-OQ-001..010 は未解決のまま残る（Phase B の解除条件として 08 §4 に引き継ぎ）。
+- PA-OQ-002（外部参照パス）は実在パス `local-archive/restricted-pdf/bridge-standards/260726_設計基準/` に記録済みで継続監視。
