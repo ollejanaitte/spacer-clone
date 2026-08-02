@@ -1,7 +1,7 @@
 # Phase A+ — 07 人間作業指示書（User Action Required）
 
 **Authority:** Phase A+（P1 時点で初期化、P2〜P6 で更新）
-**Date:** 2026-08-02（P3 更新）
+**Date:** 2026-08-02（P4 更新）
 **Model:** DeepSeek V4 Flash（モデル単体で確認不能な作業を文書化）
 
 本ファイルは、DeepSeek（モデル）単体では完了できない人間作業を、対象・確認項目・記入欄・判定方法・再開条件としてまとめる。モデルはこのファイルの内容を捏造・省略せず、人間の確認が完了するまで数値を採択しない。
@@ -19,9 +19,9 @@
 | UA-P2-04 | PA-OQ-008 | 材料確認票（単位体積重量等）の確認（02_standard_visual_review_workbook.md VR-R7-I-003） | 道示 R7 II/III（restricted-pdf） | 中 | 確認票作成済み・人間確認待ち | P2 |
 | UA-P3-01 | PA-OQ-009 | 04_solver_identity_and_physical_contract.md の物理契約（DOF・座標・I/J・符号・部材端力）を設計要件と突合し、正単位荷重プローブ（Phase A A4 §4 の 6 項目）を承認 | なし（リポジトリ内コード・テスト） | 高 | 文書作成済み・人間確認待ち | P3 |
 | UA-P3-02 | GATE-NR-02 | 解析器機械証跡の取得（ビルド ID・ライブラリ版・チェックサム・実行記録・再現手順）と、浮動小数点再現性の確認 | 実行環境・証跡保存先 | 高 | 文書作成済み・外部実行待ち | P3 |
-| UA-P4-01 | PA-OQ-005 | 非合成鋼鈑桁 R7 正式計算例の入手 or 独立検算資料の作成（05_golden_validation_execution_plan.md） | 正式計算例・独立検算 | 高 | 未実施 | P4 |
-| UA-P4-02 | PA-OQ-006 | EA-03 外部実行パッケージの実行・証跡取得（05_golden_validation_execution_plan.md） | 外部実行環境・実行権限 | 高 | 未実施 | P4 |
-| UA-P4-03 | GATE-NR-03 | Golden の独立誘導・承認（07_validation_cases.csv の PASS 化） | 独立誘導成果物・承認者 | 高 | 未実施 | P4 |
+| UA-P4-01 | PA-OQ-005 | 非合成鋼鈑桁 R7 正式計算例の入手 or 独立検算資料の作成（05_golden_validation_execution_plan.md §5/§6） | 正式計算例・独立検算 | 高 | 計画作成済み・独立誘導待ち | P4 |
+| UA-P4-02 | PA-OQ-006 | EA-03 外部実行パッケージの実行・証跡取得（05_golden_validation_execution_plan.md §9/§10） | 外部実行環境・実行権限 | 高 | 計画作成済み・外部実行待ち | P4 |
+| UA-P4-03 | GATE-NR-03 | Golden の独立誘導・承認（GOLD-MG-001..007、07_validation_cases.csv の PASS 化） | 独立誘導成果物・承認者 | 高 | 計画作成済み・独立誘導/承認待ち | P4 |
 
 ## 記入方法
 
