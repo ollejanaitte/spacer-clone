@@ -1,25 +1,19 @@
 ================================================================================
 Previous Phase Summary
 ================================================================================
-STEP_1: #289–#298 COMPLETE
-STEP_2A: #299/#300 COMPLETE
-STEP_2B: #301/#302 COMPLETE
-STEP_2C: #303/#304 COMPLETE
+STEP_1: #289–#298 | STEP_2A: #299/#300 | STEP_2B: #301/#302 | STEP_2C: #303/#304
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
-DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 
 ================================================================================
-Apollo Step 2-D — Output Integration
+Step 2-D Output Integration — FINALIZED
 ================================================================================
-更新日時: 2026-08-02T23:10:00+09:00
-START_MAIN_SHA: 7eb7c68a6094764f029073e358e7ae875d65e0e1
-STEP_2D_UI_INTEGRATION_VERDICT: PASS
-OUTPUT_VALUE_CONSISTENCY: PASS
-REVISION_CHECKSUM_CONSISTENCY: PASS
+STEP_2D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/305
+STEP_2D_PRIMARY_PR_MERGE_SHA: 398c837addedac1c23bb6c3dfb6ee59c12f36d0a
+E2E_VERDICT: PASS
+OUTPUT_CONSISTENCY_VERDICT: PASS
 STALE_EXPORT_GUARD: PASS
-E2E_VERDICT: PASS (E2E-STEP2-001)
 BUNDLE_EXPORT_VERDICT: BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
 STEP_2_CLOSEOUT_READINESS: GO
-STEP_2D_PRIMARY_PR: PENDING
+STEP_2D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/306
 ================================================================================
