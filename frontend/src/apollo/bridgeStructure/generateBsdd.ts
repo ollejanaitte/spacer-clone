@@ -18,7 +18,7 @@ import {
 import type { UuidString } from "../../contracts/uuid";
 import { computeContentChecksum } from "../../contracts/legacy/checksum";
 import type { ProjectModel } from "../../types";
-import { computeBridgeStructureApproximateQuantities } from "./quantities";
+import { computeBridgeStructureApproximateQuantities, type BridgeStructureUnitWeightAdoption } from "./quantities";
 import { stableEntitySeed, stableUuidFromSeed } from "./stableIds";
 import {
   createEmptyBridgeStructureInputDraft,
@@ -29,6 +29,7 @@ import {
 import type {
   ApolloBridgeStructureInputDraft,
   BridgeStructureApproximateQuantity,
+  BridgeStructureBooleanInputKey,
   BridgeStructureGenerationResult,
 } from "./types";
 
@@ -42,8 +43,8 @@ const IDENTITY_MATRIX = [
 function createProvenance() {
   return {
     createdAt: new Date().toISOString(),
-    createdBy: { actorId: "apollo-vvs01", actorType: "system" as const },
-    producer: { toolId: "spacer-apollo", toolVersion: "vvs01-block-b" },
+    createdBy: { actorId: "apollo-vvs02", actorType: "system" as const },
+    producer: { toolId: "spacer-apollo", toolVersion: "vvs02-block-b" },
   };
 }
 
@@ -217,7 +218,7 @@ export function buildBridgeSuperstructureDesignDocument(
       projectId: projectContextId,
       name: "Apollo bridge structure",
       clientName: null,
-      phaseTag: "vvs01-block-b",
+      phaseTag: "vvs02-block-b",
     },
     bridge: {
       bridgeId,
@@ -247,9 +248,9 @@ export function buildBridgeSuperstructureDesignDocument(
         width: userInputQuantity(width, "m"),
         thickness: userInputQuantity(deckThickness, "m"),
         unitWeight: {
-          value: null,
+          value: input.rcUnitWeight,
           units: "kN/m3",
-          adoptionStatus: "UNKNOWN",
+          adoptionStatus: input.rcUnitWeight !== null ? "PENDING" : "UNKNOWN",
           sourceLocator: null,
         },
       },
@@ -277,9 +278,9 @@ export function buildBridgeSuperstructureDesignDocument(
           sourceLocator: null,
         },
         unitWeight: {
-          value: null,
+          value: input.steelUnitWeight,
           units: "kN/m3",
-          adoptionStatus: "UNKNOWN",
+          adoptionStatus: input.steelUnitWeight !== null ? "PENDING" : "UNKNOWN",
           sourceLocator: null,
         },
       },
@@ -347,7 +348,11 @@ export function generateBridgeStructureFromInput(
     generatedAt,
   };
 
-  const quantities = computeBridgeStructureApproximateQuantities(nextInput, true);
+  const adoption: BridgeStructureUnitWeightAdoption = {
+    steel: built.document.materialDefinitions[0]?.unitWeight.adoptionStatus ?? "UNKNOWN",
+    rc: built.document.bridge.deck.unitWeight.adoptionStatus ?? "UNKNOWN",
+  };
+  const quantities = computeBridgeStructureApproximateQuantities(nextInput, true, adoption);
 
   const nextProject: ProjectModel = {
     ...project,
@@ -406,6 +411,18 @@ export function withBridgeStructureField(
   if (key === "schemaVersion" || key === "generatedAt") {
     return project;
   }
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    [key]: value,
+    generatedAt: null,
+  }));
+}
+
+export function withBridgeStructureBooleanField(
+  project: ProjectModel,
+  key: BridgeStructureBooleanInputKey,
+  value: boolean,
+): ProjectModel {
   return withBridgeStructureInputDraft(project, (draft) => ({
     ...draft,
     [key]: value,
