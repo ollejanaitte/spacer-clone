@@ -31,6 +31,7 @@ import { AnalysisDevelopmentProbePanel } from "./components/AnalysisDevelopmentP
 import { DemandCheckDevelopmentPanel } from "./components/DemandCheckDevelopmentPanel";
 import { QuantityModelDevelopmentPanel } from "./components/QuantityModelDevelopmentPanel";
 import { ReportModelDevelopmentPanel } from "./components/ReportModelDevelopmentPanel";
+import { StandardSectionDrawingPanel } from "./components/StandardSectionDrawingPanel";
 import {
   CompositionAwareInput,
   CompositionAwareTextarea,
@@ -2390,6 +2391,7 @@ export function ApolloPhase1Shell({
               <DemandCheckDevelopmentPanel />
               <QuantityModelDevelopmentPanel project={project} />
               <ReportModelDevelopmentPanel project={project} />
+              <StandardSectionDrawingPanel project={project} />
               <article className="apollo-editor-card">
                 <h2>サンプル概要</h2>
                 <ul>
