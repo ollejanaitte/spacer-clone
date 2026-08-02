@@ -4,11 +4,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のStep: A6 (RC床版・床組・補剛材・添接)
+現在のStep: A7 (検証・計算書・許可ゲート)
 作業状態: 実行中
-現在ブランチ: docs/phase-a-a6-deck-secondary-connections
+現在ブランチ: docs/phase-a-a7-validation-authorization
 開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
-現在HEAD SHA: 6dd1477ad48a99f2cdc6c97ee817a95b2998d667 (A5マージ後)
+現在HEAD SHA: 6f95f5b55e7b1ec93228877679f318002081be8f (A6マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -33,6 +33,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Step A5: docs/apollo/phase_a_integrated_freeze/05_member_check_logic.md を作成（主桁7限界状態・たわみ・疲労データ境界・鋼重・Phase1B条件）
 - Step A5: ブランチ docs/phase-a-a5-main-girder-fatigue → PR #255 → main マージ済み (merge commit 6dd1477)
 - Step A6: 05_member_check_logic.md に Part 2 を追記（RC床版・床組・補剛材・添接・支承境界）
+- Step A6: ブランチ docs/phase-a-a6-deck-secondary-connections → PR #256 → main マージ済み (merge commit 6f95f5b)
+- Step A7: docs/apollo/phase_a_integrated_freeze/06_formula_registry.csv を作成（式レジストリ: LF/LM/SX/VER/LV/DTS/MT を DS-04/05 と参照整合、全数値 BLOCKED・全 NOT_AUTHORIZED）
+- Step A7: docs/apollo/phase_a_integrated_freeze/07_validation_cases.csv を作成（数値検証ケース: GOLD-001..016 と独立検証枠 VC-STD-001/002 を参照整合、全ケース BLOCKED）
+- Step A7: docs/apollo/phase_a_integrated_freeze/08_numeric_authorization_gate.md を作成（DS-09 連言ゲート上位 + 部材・照査単位の許可テーブル、全セル NOT_AUTHORIZED）
+- Step A7: docs/apollo/phase_a_integrated_freeze/09_report_output_spec.md を作成（ReportModel 章構成 + 出力可否連動 + STALE/監査）
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -51,7 +56,9 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PHA-0014: 疲労は OUT_OF_SCOPE、データ境界のみ定義。概算鋼重割増係数の既定化禁止
 - DEC-PHA-0015: RC床版・床組・補剛材・添接は DS-05 候補分類採用、BLOCKED 維持、画面例を正式値にしない
 - DEC-PHA-0016: 添接・支承境界は PHASE1_REFERENCE 維持、合成作用照査は OUT_OF_SCOPE 維持
-未決事項: Step A7〜A8 の各内容（各 Step で実施）
+- DEC-PHA-0017: Phase B 数値実装許可は DS-09 連言ゲート上位 + 部材・照査単位で個別判定、全セル NOT_AUTHORIZED
+- DEC-PHA-0018: 検証ケースは DS-07 Golden と参照整合・全 BLOCKED、計算書出力は許可ゲート連動
+未決事項: Step A8（統合レビュー・完了判定）
 ブロッカー:
 - PA-OQ-001 道示 R7 条文目視確認 BLOCKED
 - PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
@@ -64,7 +71,7 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
 - PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255)
-mainマージ状態: A0..A5 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477)。A6 は未マージ
-次の作業: A6 検証 → A6 commit → A6 push → PR 作成 → 自己レビュー → main マージ → Step A7 (検証・計算書・許可ゲート)
+PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256)
+mainマージ状態: A0..A6 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b)。A7 は PR 前
+次の作業: A7 検証 → A7 commit → A7 push → PR 作成 → 自己レビュー → main マージ → Step A8 (統合レビュー・完了判定)
 ================================================================================

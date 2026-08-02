@@ -1,0 +1,92 @@
+formula_id,category,phase_a_step,description,integration_state,adoption_status,numeric_value_status,authorization_status,source_document,evidence_location
+LM-DS04-001,load_model,A3,死荷重モデル,LM-DS04-001..014 を DS-04 レジスタから参照,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS03; PKG-DS04
+LM-DS04-002,load_model,A3,活荷重モデル,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS03; PKG-DS04
+LM-DS04-003,load_model,A3,衝撃（動的影響）ポインタ,LM-DS04-007 は LF-DS04-010 へのポインタのみ、二重適用禁止,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS04
+LM-DS04-004,load_model,A3,風荷重,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V
+LM-DS04-005,load_model,A3,温度荷重,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V
+LM-DS04-006,load_model,A3,プレストレス・施工時,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V
+LM-DS04-007,load_model,A3,動的影響（ポインタ）,LF-DS04-010 が単一数値オーナー,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS04
+LM-DS04-008,load_model,A3,主桁用荷重組合せ,汎用組合せシェル COMB-DS04-001 を参照,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS04
+LM-DS04-009,load_model,A3,床版用荷重組合せ,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V; PKG-DS04
+LM-DS04-010,load_model,A3,疲労用荷重（データ境界）,Phase 1 は OUT_OF_SCOPE、入力枠のみ定義,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-SCOPE-P1B
+LM-DS04-011,load_model,A3,地震荷重,OUT_OF_SCOPE（Phase 1）,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-SCOPE-P1B
+LM-DS04-012,load_model,A3,残留変位,OUT_OF_SCOPE（Phase 1）,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-SCOPE-P1B
+LM-DS04-013,load_model,A3,標準値,BLOCKED 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V
+LM-DS04-014,load_model,A3,特性値,BLOCKED 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_model_register.csv,PKG-R7-V
+LF-DS04-001,load_factor,A2,死荷重用部分係数,LF-DS04-001..010 を DS-04 レジスタから参照,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS03; PKG-DS04
+LF-DS04-002,load_factor,A2,活荷重用部分係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS04
+LF-DS04-003,load_factor,A2,衝撃用部分係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS04
+LF-DS04-004,load_factor,A2,風荷重用部分係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V
+LF-DS04-005,load_factor,A2,温度荷重用部分係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V
+LF-DS04-006,load_factor,A2,組合せ係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS04
+LF-DS04-007,load_factor,A2,抵抗側係数（DS-05 参照）,抵抗側は DS-05 で別途ゲート、A2 §3.3 と一致,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS05
+LF-DS04-008,load_factor,A2,その他係数,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V
+LF-DS04-009,load_factor,A2,動的影響係数（予備）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V
+LF-DS04-010,load_factor,A2,動的影響数値オーナー,LM-DS04-007 の数値オーナー。二重適用禁止、組合せ成分に含めない,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 load_factor_register.csv,PKG-R7-V; PKG-DS04
+SX-DS04-001,sign_unit_convention,A3,荷重符号,DS-04 レジスタ参照、符号は DS-06 と整合,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 sign_convention_register.csv,PKG-R7-V
+SX-DS04-002,sign_unit_convention,A3,荷重単位,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 sign_convention_register.csv,PKG-R7-V
+SX-DS04-003,sign_unit_convention,A3,座標系,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 sign_convention_register.csv,PKG-R7-V
+SX-DS04-004,sign_unit_convention,A3,I/J 端規則,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 sign_convention_register.csv,PKG-R7-V
+SX-DS04-005,sign_unit_convention,A3,変換則,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（数値 0）,NOT_AUTHORIZED,DS-04 sign_convention_register.csv,PKG-R7-V
+VER-DS05-001,verification_equation,A5,曲げ抵抗（主桁）,VER-DS05-001..023 を DS-05 レジスタから参照。equation_summary 全て空,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-002,verification_equation,A5,せん断抵抗（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-003,verification_equation,A5,軸力抵抗（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-004,verification_equation,A5,曲げ+軸力（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-005,verification_equation,A5,局部座屈（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-006,verification_equation,A5,全体座屈（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-007,verification_equation,A5,横倒れ座屈（主桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-008,verification_equation,A5,たわみ（供用性）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-009,verification_equation,A6,曲げ抵抗（横桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-010,verification_equation,A6,せん断抵抗（横桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-011,verification_equation,A6,安定抵抗（横桁）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-012,verification_equation,A6,圧縮安定（対傾構）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-013,verification_equation,A6,連結抵抗（対傾構）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-014,verification_equation,A6,引張抵抗（横構）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-015,verification_equation,A6,安定抵抗（横構）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-016,verification_equation,A6,曲げ抵抗（RC床版）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-017,verification_equation,A6,せん断抵抗（RC床版）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-018,verification_equation,A6,供用性（RC床版）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-019,verification_equation,A6,最小鉄筋（RC床版）,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-R7-V; PKG-DS06; PKG-SCOPE-P1B
+VER-DS05-020,verification_equation,A6,支承圧抵抗,PHASE1_REFERENCE 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-SCOPE-P1B
+VER-DS05-021,verification_equation,A6,支承移動回転,PHASE1_REFERENCE 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-SCOPE-P1B
+VER-DS05-022,verification_equation,A6,連結抵抗（添接）,PHASE1_REFERENCE 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-SCOPE-P1B
+VER-DS05-023,verification_equation,A6,力伝達（添接）,PHASE1_REFERENCE 維持,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（式形 0）,NOT_AUTHORIZED,DS-05 verification_equation_register.csv,PKG-SCOPE-P1B
+LV-DS05-005,limit_value,A5,細長比限界,LV-DS05-005..021 を DS-05 レジスタから参照。limit_value / unit 空,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-R7-V
+LV-DS05-008,limit_value,A5,たわみ限界,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-R7-V; PKG-DS06
+LV-DS05-011,limit_value,A6,安定限界,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-R7-V
+LV-DS05-018,limit_value,A6,RC床版限界,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-R7-V
+LV-DS05-019,limit_value,A6,RC床版最小鉄筋,同上,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-R7-V
+LV-DS05-020,limit_value,A6,支承限界,PHASE1_REFERENCE,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-SCOPE-P1B
+LV-DS05-021,limit_value,A6,支承限界,PHASE1_REFERENCE,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択（値 0）,NOT_AUTHORIZED,DS-05 limit_value_register.csv,PKG-SCOPE-P1B
+DTS-DS05-001,deemed_to_satisfy,A5,deemed-to-satisfy ルール 1,全フィールド空,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択,NOT_AUTHORIZED,DS-05 deemed_to_satisfy_register.csv,PKG-R7-V
+DTS-DS05-002,deemed_to_satisfy,A5,deemed-to-satisfy ルール 2,全フィールド空,BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT,未採択,NOT_AUTHORIZED,DS-05 deemed_to_satisfy_register.csv,PKG-R7-V
+MT-050,data_interface,A6,RC床版照査位置（Grider_I_05 §5）,NOT_AUTHORIZED（照査横断を stable ID で保存）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-051,data_interface,A6,かぶり・フランジ厚・ハンチ内鉄筋,NOT_AUTHORIZED（非合成属性を固定）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-052,data_interface,A6,床版荷重・主鉄筋・配力鉄筋,NOT_AUTHORIZED（採用基準と正解例が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V; PKG-SCOPE-P1B
+MT-053,data_interface,A6,支点補強筋,NOT_AUTHORIZED（設計方式の選定が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-060,data_interface,A4,支承位置（Grider_I_06 §6）,設計モデルから派生,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06
+MT-061,data_interface,A4,支点条件,同上,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06
+MT-062,data_interface,A4,支承種別・仕様,同上,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06
+MT-063,data_interface,A4,解析モデル生成,設計モデルから派生、IF3 出力,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06
+MT-064,data_interface,A4,解析結果受領,プローブ通過まで設計照査へ束縛しない,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06; AN-BLK-004
+MT-070,data_interface,A5,断面変化位置（Grider_I_07 §7）,NOT_APPLICABLE（PLANNED、位置編集を照査より先行）,NOT_APPLICABLE,未採択,NOT_AUTHORIZED,manual_traceability.csv,—
+MT-071,data_interface,A5,断面計算・断面推定,NOT_AUTHORIZED（推定と正式判定を区別）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-072,data_interface,A5,断面チェック・計算書,NOT_AUTHORIZED（入力・中間値・判定根拠を保存）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-080,data_interface,A6,フランジ・腹板ボルト配置（Grider_I_08 §8）,NOT_AUTHORIZED（配置成立性を先に検証）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-081,data_interface,A6,添接計算,NOT_AUTHORIZED（ボルト・摩擦・母材条件の採択が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-082,data_interface,A6,詳細計算書,NOT_AUTHORIZED（正式照査が許可された項目のみ出力）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-090,data_interface,A5,たわみ・剛比（Grider_I_09 §9）,NOT_AUTHORIZED（許容値の採択が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V; PKG-DS06
+MT-091,data_interface,A5,キャンバー集計・DXF,NOT_AUTHORIZED（Drawing Semantic Model へ出力）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-100,data_interface,A6,横桁断面力（Grider_I_10 §10）,NOT_AUTHORIZED（主桁解析結果との関係を明示）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V; PKG-DS06
+MT-101,data_interface,A6,横桁断面・添接・補剛材,NOT_AUTHORIZED（断面・連結・補剛材を分割）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-102,data_interface,A6,対傾構・横構・斜材,NOT_AUTHORIZED（配置・有効長・溶接方向を構造化）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-103,data_interface,A6,横構配置図,NOT_APPLICABLE（3Dと図面を共通IDで追跡）,NOT_APPLICABLE,未採択,NOT_AUTHORIZED,manual_traceability.csv,—
+MT-110,data_interface,A6,支点上補剛材（Grider_I_11 §11）,NOT_AUTHORIZED（支点反力・溶接条件が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-111,data_interface,A6,中間補剛材,NOT_AUTHORIZED（パネル寸法・せん断力と連携）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-112,data_interface,A6,水平補剛材ラップ,NOT_AUTHORIZED（照査方式の採択が必要）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-120,data_interface,A5,概算鋼重（Grider_I_12 §12）,NOT_AUTHORIZED（割増係数は根拠なしで既定化しない）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-121,data_interface,A5,実鋼重の解析反映,NOT_AUTHORIZED（差分と再解析要求を保存）,NOT_AUTHORIZED,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-R7-V
+MT-130,data_interface,A5,疲労用荷重・解析（Grider_I_13 §13）,OUT_OF_SCOPE（データ境界のみ）,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-131,data_interface,A5,主桁疲労照査,OUT_OF_SCOPE（detail category と応力範囲抽出が必要）,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-132,data_interface,A5,横桁疲労照査,OUT_OF_SCOPE（Phase 1 後半の独立ゲート）,OUT_OF_SCOPE,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-SCOPE-P1B
+MT-140,data_interface,A4,解析モデル用データ（Grider_I_14 §14）,設計モデルから派生、PROJECT_SPECIFIC,PROJECT_SPECIFIC,未採択,NOT_AUTHORIZED,manual_traceability.csv,PKG-DS06

@@ -25,3 +25,5 @@ Phase A の決定記録。既存 DS-00〜DS-09 の DEC-DS00-0001 等は書き換
 | DEC-PHA-0014 | 2026-08-02 | A5 | 疲労は Phase 1 で OUT_OF_SCOPE を維持し、照査ロジックは採択しない。Phase A ではデータ境界（疲労用荷重・応力範囲・detail category の入力枠）のみ定義する。概算鋼重の割増係数は根拠なき既定化を禁止する。 | ADOPTED | 05_member_check_logic.md に反映。 |
 | DEC-PHA-0015 | 2026-08-02 | A6 | Phase A の RC床版・床組・補剛材・添接の照査ロジックは DS-05 レジスタの候補分類をそのまま採用する。照査式・許容値・配筋・ボルト条件は BLOCKED を維持し、画面例を正式値にしない。 | ADOPTED | 05_member_check_logic.md Part 2 に反映。 |
 | DEC-PHA-0016 | 2026-08-02 | A6 | 添接・支承境界は PHASE1_REFERENCE を維持し、正式照査は PKG-SCOPE-P1B 等の決定後とする。非合成床版の合成作用照査（PR-DS05-026）は OUT_OF_SCOPE を維持する。 | ADOPTED | 05_member_check_logic.md Part 2 に反映。 |
+| DEC-PHA-0017 | 2026-08-02 | A7 | Phase B 数値実装許可は DS-09 連言ゲート（GATE-NR-01..07）を上位として、さらに部材・照査単位の許可テーブル（08_numeric_authorization_gate.md §2）で個別判定する。全セル NOT_AUTHORIZED を維持し、一括 GRANTED にしない。 | ADOPTED | 08_numeric_authorization_gate.md に反映。 |
+| DEC-PHA-0018 | 2026-08-02 | A7 | 数値検証ケースは DS-07 Golden カタログ（GOLD-001..016）と独立検証枠（VC-STD-001/002）を参照整合させる。全ケース BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT を維持し、期待値を捏造しない。計算書出力は ReportModel 章構成（phase1 §9）と 08 許可ゲートに連動し、未許可照査の数値を出力しない。 | ADOPTED | 07_validation_cases.csv / 09_report_output_spec.md に反映。 |
