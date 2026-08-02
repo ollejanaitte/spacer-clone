@@ -1,0 +1,11 @@
+{
+  "overall": "PASS",
+  "warning": "UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION",
+  "provenance": "status: CANDIDATE / UNVERIFIED / USER REVIEW REQUIRED / formalOkNg: NOT_EMITTED / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
+  "bendingStressTop": {
+    "expected": 82.93829271590795,
+    "actual": 82.93829271590795,
+    "absoluteDifference": 0
+  },
+  "formalOkNg": "NOT_EMITTED"
+}

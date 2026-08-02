@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "checkStatus": "CANDIDATE",
+  "verificationStatus": "UNVERIFIED",
+  "reviewerAction": "USER REVIEW REQUIRED",
+  "formalOkNg": "NOT_EMITTED",
+  "precision": 80,
+  "method": "demand-only σ=M/S, τ=V/Aw, δ=uy; no code limits; Decimal; no production imports",
+  "inputs": {
+    "sourceDemand": "GOLD-AN-001 closed-form",
+    "sourceSection": "GOLD-SP-001 development reference",
+    "Mmax_kNm": "4.0",
+    "Vmax_kN": "4.0",
+    "sectionModulusTop_m3": "0.0482286272",
+    "sectionModulusBottom_m3": "0.0482286272",
+    "webArea_m2": "0.029280",
+    "centerDeflection_uy_m": "-0.00032520325203252032520325203252032520325203252032520325203252032520325203252032520"
+  },
+  "candidates": {
+    "bendingStressTop_kNpm2": "82.938292715907949376589346503314944033903581647043024272521694335102285474134333",
+    "bendingStressBottom_kNpm2": "82.938292715907949376589346503314944033903581647043024272521694335102285474134333",
+    "shearStressWeb_kNpm2": "136.61202185792349726775956284153005464480874316939890710382513661202185792349727",
+    "deflection_uy_m": "-0.00032520325203252032520325203252032520325203252032520325203252032520325203252032520"
+  },
+  "notes": [
+    "No allowable stress / resistance factor applied.",
+    "No DEC-ID. No human Golden. Formal release NOT_GRANTED."
+  ]
+}
