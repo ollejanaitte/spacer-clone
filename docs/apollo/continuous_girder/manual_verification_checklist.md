@@ -2,10 +2,10 @@
 
 **Authority:** Step C0（文書凍結）/ Step C4（検証・チェックリスト拡充）
 **Date:** 2026-08-02
-**MANUAL_GUI_VERDICT:** `PENDING_USER_CONFIRMATION`
+**MANUAL_GUI_VERDICT:** `PASS`
 
-> 本環境では対話的 GUI 操作を実行できないため、手動項目はすべて PENDING とする。PASS を捏造しない。自動検証は C4 で PASS 済み（下記 §7 参照）。
-
+> 対傾構 V 型・上下横構分離（PR #280）および PR #279 bounds 回帰について、ユーザー手動 GUI 確認済み。
+> 下記のうち **PASS** は確認済み、**PENDING** は未確認のまま残す。PASS を捏造しない。
 ## 1. 構造形式・径間数
 
 | # | 確認項目 | 期待値 | 状態 |
@@ -82,40 +82,49 @@
 1. 対傾構斜材が主桁間・床版範囲外へ飛び出すように見える
 2. 骨組み橋軸延長が Apollo ソリッドより長く見える（200m サンプル + 連続桁サンプル生成時）
 
+**PR279_BOUNDS_MANUAL_REGRESSION:** `PASS`（ユーザー確認済み）
+
 | # | 確認項目 | 期待値 | 状態 |
 |---|----------|--------|------|
-| MV-01 | 5径間連続橋を表示 | 表示可能 | PENDING |
-| MV-02 | Demo Shape OFF で対傾構が隣接主桁間に収まる | outer girder centers 内 | PENDING |
-| MV-03 | 平面表示で最外主桁外側へ斜材が出ない | 外側 bay なし | PENDING |
-| MV-04 | 正面表示で対傾構端点が主桁ウェブ高さへ接続 | girder center Z ± web/2 | PENDING |
-| MV-05 | 側面表示で骨組み始終点と Apollo 主桁始終点が一致 | frame X = solid X | PENDING |
-| MV-06 | Demo Shape ON / Scale 1 | デモ表示のみ、全長外挿なし | PENDING |
-| MV-07 | Demo Shape ON / Scale 5 | 同上 | PENDING |
-| MV-08 | Animation ON/OFF | 不正 overlay なし | PENDING |
-| MV-09 | fit-to-view | 意図しない延長でズーム暴れない | PENDING |
-| MV-10 | STL出力 | 三角面 > 0 | PENDING |
-| MV-11 | SIMPLE_SINGLE回帰 | 単径間 bounds 一致 | PENDING |
-| MV-12 | save/reload | 同期済み frame が復元 | PENDING |
+| MV-01 | 5径間連続橋を表示 | 表示可能 | PASS |
+| MV-02 | Demo Shape OFF で対傾構が隣接主桁間に収まる | outer girder centers 内 | PASS |
+| MV-03 | 平面表示で最外主桁外側へ斜材が出ない | 外側 bay なし | PASS |
+| MV-04 | 正面表示で対傾構端点が主桁ウェブ高さへ接続 | girder center Z ± web/2 | PASS |
+| MV-05 | 側面表示で骨組み始終点と Apollo 主桁始終点が一致 | frame X = solid X | PASS |
+| MV-06 | Demo Shape ON / Scale 1 | デモ表示のみ、全長外挿なし | PASS |
+| MV-07 | Demo Shape ON / Scale 5 | 同上 | PASS |
+| MV-08 | Animation ON/OFF | 不正 overlay なし | PASS |
+| MV-09 | fit-to-view | 意図しない延長でズーム暴れない | PASS |
+| MV-10 | STL出力 | 三角面 > 0 | PASS |
+| MV-11 | SIMPLE_SINGLE回帰 | 単径間 bounds 一致 | PASS |
+| MV-12 | save/reload | 同期済み frame が復元 | PASS |
 
 ## 8b. 対傾構 V型・上下横構分離（2026-08-02 追記）
 
+手動確認 verdict（ユーザー確認済み）:
+- `SWAY_BRACING_MANUAL_VERDICT: PASS`
+- `UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS`
+- `LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS`
+- `SAVE_RELOAD_MANUAL_VERDICT: PASS`
+- `STL_MANUAL_VERDICT: PASS`
+
 | # | 確認項目 | 期待値 | 状態 |
 |---|----------|--------|------|
-| MV-BR-01 | 3径間連続桁生成 | [30,35,30] 表示 | PENDING |
-| MV-BR-02 | 正面で対傾構がV型/三角形 | 上端2点→下端中点 | PENDING |
-| MV-BR-03 | 対傾構が同一station鉛直面 | 各斜材の X が一致 | PENDING |
-| MV-BR-04 | 隣接主桁間に収まる | outer girder 外へ出ない | PENDING |
-| MV-BR-05 | 平面で上横構が上部水平面 | Z=topConnectionZ | PENDING |
-| MV-BR-06 | 平面で下横構が下部水平面 | Z=bottomConnectionZ | PENDING |
-| MV-BR-07 | 正面で上下横構高さが主桁上下端一致 | フランジ中立面 | PENDING |
-| MV-BR-08 | 上横構/下横構ON-OFF | 独立切替 | PENDING |
+| MV-BR-01 | 3径間連続桁生成 | [30,35,30] 表示 | PASS |
+| MV-BR-02 | 正面で対傾構がV型/三角形 | 上端2点→下端中点 | PASS |
+| MV-BR-03 | 対傾構が同一station鉛直面 | 各斜材の X が一致 | PASS |
+| MV-BR-04 | 隣接主桁間に収まる | outer girder 外へ出ない | PASS |
+| MV-BR-05 | 平面で上横構が上部水平面 | Z=topConnectionZ | PASS |
+| MV-BR-06 | 平面で下横構が下部水平面 | Z=bottomConnectionZ | PASS |
+| MV-BR-07 | 正面で上下横構高さが主桁上下端一致 | フランジ中立面 | PASS |
+| MV-BR-08 | 上横構/下横構ON-OFF | 独立切替 | PASS |
 | MV-BR-09 | 対傾構間隔変更 | 横構と独立 | PENDING |
 | MV-BR-10 | SIMPLE_SINGLE | 回帰 | PENDING |
 | MV-BR-11 | CONTINUOUS 5径間 | 回帰 | PENDING |
 | MV-BR-12 | Demo Shape OFF | 基幾何 | PENDING |
 | MV-BR-13 | Demo Shape ON | 外挿なし | PENDING |
-| MV-BR-14 | save/reload | upper/lower flags 復元 | PENDING |
-| MV-BR-15 | STL | 三角面 > 0 | PENDING |
+| MV-BR-14 | save/reload | upper/lower flags 復元 | PASS |
+| MV-BR-15 | STL | 三角面 > 0 | PASS |
 | MV-BR-16 | selection/highlight | BraceMember 選択可 | PENDING |
 
 ## 9. 自動検証メモ（参考・GUI 代替ではない）
@@ -136,4 +145,4 @@ PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ```
 
-ユーザー確認後、該当行を PASS に更新し `MANUAL_GUI_VERDICT: PASS` へ変更すること。
+確認済み行は PASS、未確認行は PENDING のまま残す。全体の `MANUAL_GUI_VERDICT` は本ドキュメント先頭を正本とする。

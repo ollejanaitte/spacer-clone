@@ -1,12 +1,12 @@
 ================================================================================
 Apollo 対傾構・上下横構3D配置修正 — 最終レポート
 ================================================================================
-更新日時: 2026-08-02T20:10:00+09:00
-作業: Apollo 対傾構・上下横構3D配置修正
-作業状態: COMPLETE（mainマージ済み）
-現在ブランチ: main
+更新日時: 2026-08-02T20:15:00+09:00
+作業: Apollo 対傾構・上下横構3D配置修正（手動GUI確認結果の文書記録）
+作業状態: COMPLETE（mainマージ済み）+ 手動GUI確認 PASS を文書化
+現在ブランチ: docs/apollo-bracing-manual-gui-pass
 開始時main SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-現在HEAD SHA: d809b971689497bb2241ea4cbf4093dae16eb146
+現在HEAD SHA: 601eceacec7422cf36ebc8b5a17d0ac0351b97af
 再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 下横構ON
 
 CURRENT_SWAY_BRACING_PLANE: 修正前=同一X鉛直面 / 修正後=同一X鉛直面（維持）
@@ -23,11 +23,12 @@ CURRENT_ENTITY_SEPARATION: SWAY / UPPER_LATERAL / LOWER_LATERAL を別entity・�
 根本原因:
 1. 対傾構がX形で三角形/V要件を満たさない
 2. 横構が上下未分離、かつZがフランジ中立面ではなくウェブ中心寄り
-変更ファイル:
+変更ファイル（実装 PR #280）:
 - frontend/src/apollo/visualization/bridgeStructureSolids.ts
 - frontend/src/apollo/bridgeStructure/{types,validation,generateBsdd,quantities,sampleInputs}.ts
 - frontend/src/apollo/components/BridgeStructureInputPanel.tsx
 - frontend/src/apollo/__tests__/{bracingSystemGeometry,visualizationBoundsBracing,bridgeStructureVisualization,BridgeStructureInputPanel,continuousGirderLayout,apolloSuite}.ts(x)
+本ターン変更ファイル（docs-only）:
 - docs/apollo/continuous_girder/manual_verification_checklist.md
 - final_report.txt
 他部材3D化の調査結果:
@@ -36,13 +37,19 @@ CURRENT_ENTITY_SEPARATION: SWAY / UPPER_LATERAL / LOWER_LATERAL を別entity・�
 | 主桁/床版/横桁/補剛材/支承/橋台橋脚 | あり | あり | あり | 既存済 | — | なし |
 | 添接・ボルト・端横桁特殊 | 部分 | 不足 | 不足 | 否 | 寸法創作禁止 | 入力拡充後 |
 自動テスト: typecheck PASS / apollo 300 PASS / lint PASS / build PASS / STL・bounds PASS
-手動GUI: MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+手動GUI: MANUAL_GUI_VERDICT: PASS
+SWAY_BRACING_MANUAL_VERDICT: PASS
+UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS
+LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS
+PR279_BOUNDS_MANUAL_REGRESSION: PASS
+SAVE_RELOAD_MANUAL_VERDICT: PASS
+STL_MANUAL_VERDICT: PASS
 PR番号・URL: #280 https://github.com/ollejanaitte/spacer-clone/pull/280
 mainマージ状態: MERGED（mergeCommit 5c055da）
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-次の作業: ユーザーによる MV-BR-01..16 GUI確認
+次の作業: 未確認 MV-BR-09/10/11/12/13/16 および MV-CG-* は必要時に別途確認
 
 ================================================================================
 最終サマリ
@@ -51,7 +58,7 @@ MODEL: Cursor Agent
 TASK: APOLLO_SWAY_UPPER_LOWER_LATERAL_BRACING_FIX
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 INITIAL_MAIN_SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-FINAL_MAIN_SHA: d809b971689497bb2241ea4cbf4093dae16eb146 (feature merge 5c055da; report docs #281)
+FINAL_MAIN_SHA: 601eceacec7422cf36ebc8b5a17d0ac0351b97af (feature merge 5c055da; report docs #281/#282)
 REPRODUCTION_VERDICT: CONFIRMED_FROM_CODE_AND_TESTS
 SWAY_BRACING_GEOMETRY_BEFORE: X-shape in constant-X vertical plane
 SWAY_BRACING_GEOMETRY_AFTER: V-type (leftTop/rightTop→midBottom) in constant-X vertical plane
@@ -63,7 +70,7 @@ ENTITY_SEPARATION_VERDICT: PASS
 UI_CONTRACT_VERDICT: PASS (legacy lower boolean + additive upper)
 LEGACY_COMPATIBILITY_VERDICT: PASS (false→none, true→LOWER_ONLY meaning unchanged)
 OTHER_COMPONENTS_3D_STATUS: SURVEY_ONLY_NO_NEW_INVENTED_MEMBERS
-FILES_CHANGED: 15
+FILES_CHANGED: 15 (feature) + docs-only manual GUI record
 TYPECHECK_VERDICT: PASS
 TEST_VERDICT: PASS (300 apollo)
 LINT_VERDICT: PASS
@@ -72,13 +79,19 @@ STL_REGRESSION: PASS
 SAVE_RELOAD_REGRESSION: PASS (automated)
 SELECTION_REGRESSION: PASS (automated)
 PR279_BOUNDS_REGRESSION: PASS
-MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+MANUAL_GUI_VERDICT: PASS
+SWAY_BRACING_MANUAL_VERDICT: PASS
+UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS
+LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS
+PR279_BOUNDS_MANUAL_REGRESSION: PASS
+SAVE_RELOAD_MANUAL_VERDICT: PASS
+STL_MANUAL_VERDICT: PASS
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 PR_NUMBER: 280
 PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/280
 PR_MERGED: YES
-LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: YES
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES（本docs PRマージ後に再確認）
+WORKTREE_CLEAN: YES（本docs PRマージ後に再確認）
 OVERALL_VERDICT: COMPLETE
-NEXT_RECOMMENDED_ACTION: 手動GUIで MV-BR-01..16 を確認する
+NEXT_RECOMMENDED_ACTION: 未確認チェックリスト項目は必要時に別途確認
 ================================================================================
