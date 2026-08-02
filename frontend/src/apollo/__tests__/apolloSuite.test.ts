@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const APOLLO_TESTS_DIR = join(import.meta.dirname);
 const EXPECTED_APOLLO_TEST_MODULES = [
+  "AnalysisDevelopmentProbePanel.test.tsx",
   "ApolloNumericInput.test.tsx",
   "ApolloPhase1Shell.test.tsx",
   "ApolloRouteHost.test.tsx",

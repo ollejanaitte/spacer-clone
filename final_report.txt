@@ -1,36 +1,43 @@
 ================================================================================
-Apollo Step 1-B Development — Section Properties Warning/Provenance
+Apollo Step 1-C Development — Loads / Analysis Probe
 ================================================================================
-更新日時: 2026-08-02T21:35:00+09:00
-作業名: Step 1-B development-only section properties UI disclosure
-Step ID: STEP_1B_DEVELOPMENT
-作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
-START_MAIN_SHA: 071a1f49a2a9c781a2f8590efe6d324c48253834
-作業branch: feat/apollo-step1b-section-properties-dev
+更新日時: 2026-08-02T21:45:00+09:00
+作業名: Step 1-C development-only simple-span analysis reference + GUI probe
+Step ID: STEP_1C_DEVELOPMENT
+作業状態: PRIMARY_READY
+START_MAIN_SHA: 740d91486c6aae464afe2595317e9d34cf3ec9b6
+作業branch: feat/apollo-step1c-loads-analysis-dev
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
+DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-Prior development reference (#289/#290) parity PASS for GOLD-SP-001/002.
+Closed-form Decimal reference fixed before engine/GUI comparison:
+- GOLD-AN-001 UDL L=4 w=2 E=205e6 I=1e-4
+- GOLD-AN-002 center P L=4 P=10 E=205e6 I=1e-4
 
-Changes:
-- BridgeStructureInputPanel: development warning + provenance (NOT_AUTHORIZED)
-- BridgeStructureInputPanel tests assert warning
-- docs/apollo/step1_numeric_core/step1b_development_gate.md
+Live engine compare_live_engine.py: OVERALL PASS
+GUI AnalysisDevelopmentProbePanel Playwright: OVERALL PASS (0 console errors)
 
-Tests: BridgeStructureInputPanel + sectionProperties PASS (24)
+UI:
+- AnalysisDevelopmentProbePanel mounted on Apollo basics
+- Warning: UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
+- Provenance: NOT_AUTHORIZED / NOT_GRANTED
+
+Tests: AnalysisDevelopmentProbePanel + apolloSuite PASS
 typecheck: PASS
 
-STEP_1B_DEVELOPMENT_START_VERDICT: GO (completed this PR)
-STEP_1B_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+GOLD_AN_001_DEVELOPMENT_PARITY: PASS
+GOLD_AN_002_DEVELOPMENT_PARITY: PASS
+APP_LAUNCH_VERDICT: PASS (uvicorn :8000 + vite apollo :5173)
+GUI_INPUT_VERDICT: PASS (probe buttons)
 STEP_1C_DEVELOPMENT_START_VERDICT: GO
+STEP_1C_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+STEP_1D_DEVELOPMENT_START_VERDICT: GO
 
-STEP_1B_PRIMARY_PR_NUMBER: 291
-STEP_1B_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/291
-STEP_1B_PRIMARY_PR_MERGE_SHA: a64000c7b56dc3a0b7ef7be9302ba2e5f877eece
+STEP_1C_PRIMARY_PR_NUMBER: PENDING
+STEP_1C_PRIMARY_PR_URL: PENDING
+STEP_1C_PRIMARY_PR_MERGE_SHA: PENDING
 ================================================================================
-STEP_1B_REPORT_PR_NUMBER: 292
-STEP_1B_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/292
-STEP_1B_REPORT_PR_MERGE_SHA: PENDING
