@@ -6,7 +6,7 @@ Apollo 対傾構・上下横構3D配置修正 — 最終レポート
 作業状態: COMPLETE（mainマージ済み）
 現在ブランチ: main
 開始時main SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-現在HEAD SHA: 5c055da7ff89c1e581c2507c89e7b7bfb38e2aaf
+現在HEAD SHA: d809b971689497bb2241ea4cbf4093dae16eb146
 再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 下横構ON
 
 CURRENT_SWAY_BRACING_PLANE: 修正前=同一X鉛直面 / 修正後=同一X鉛直面（維持）
@@ -51,7 +51,7 @@ MODEL: Cursor Agent
 TASK: APOLLO_SWAY_UPPER_LOWER_LATERAL_BRACING_FIX
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 INITIAL_MAIN_SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-FINAL_MAIN_SHA: 5c055da7ff89c1e581c2507c89e7b7bfb38e2aaf
+FINAL_MAIN_SHA: d809b971689497bb2241ea4cbf4093dae16eb146 (feature merge 5c055da; report docs #281)
 REPRODUCTION_VERDICT: CONFIRMED_FROM_CODE_AND_TESTS
 SWAY_BRACING_GEOMETRY_BEFORE: X-shape in constant-X vertical plane
 SWAY_BRACING_GEOMETRY_AFTER: V-type (leftTop/rightTop→midBottom) in constant-X vertical plane
@@ -78,7 +78,7 @@ PR_NUMBER: 280
 PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/280
 PR_MERGED: YES
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: YES（本レポート追記コミット後）
+WORKTREE_CLEAN: YES
 OVERALL_VERDICT: COMPLETE
 NEXT_RECOMMENDED_ACTION: 手動GUIで MV-BR-01..16 を確認する
 ================================================================================
