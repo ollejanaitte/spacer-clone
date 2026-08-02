@@ -22,6 +22,7 @@
 | UA-P4-01 | PA-OQ-005 | 非合成鋼鈑桁 R7 正式計算例の入手 or 独立検算資料の作成（05_golden_validation_execution_plan.md §5/§6） | 正式計算例・独立検算 | 高 | 計画作成済み・独立誘導待ち | P4 |
 | UA-P4-02 | PA-OQ-006 | EA-03 外部実行パッケージの実行・証跡取得（05_golden_validation_execution_plan.md §9/§10） | 外部実行環境・実行権限 | 高 | 計画作成済み・外部実行待ち | P4 |
 | UA-P4-03 | GATE-NR-03 | Golden の独立誘導・承認（GOLD-MG-001..007、07_validation_cases.csv の PASS 化） | 独立誘導成果物・承認者 | 高 | 計画作成済み・独立誘導/承認待ち | P4 |
+| UA-P5-01 | PB-RC-A | A（主桁断面諸量・純幾何）の独立表計算/手計算結果の作成・確認・署名（06_first_numeric_release_candidate.md §6。対称・非対称 I 断面の断面積・図心・断面二次モーメント・断面係数。丸め・許容誤差を凍結） | 独立表計算 or 手計算 | 高 | 候補選定済み・独立計算/署名待ち | P5 |
 
 ## 記入方法
 
