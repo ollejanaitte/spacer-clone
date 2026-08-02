@@ -9,10 +9,10 @@ Apollo Phase A+ — セッション復旧・進捗監査レポート
 
 現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
 現在の到達Step: P2（道示・正誤表・JIS 人間確認票）
-作業状態: 実行中（P2 成果物 commit 済み・未push、セッション切断 → 保全 commit + Draft PR で退避）
+作業状態: 実行中（P2 成果物 commit・push 済み、PR #261 自己レビュー完了・main マージ待ち）
 
 LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p2-standard-review
-LOCAL_HEAD_SHA: 0d3e022dd29894570c9b6ea2ab7cff94fcff4a86（保全 commit 後）
+LOCAL_HEAD_SHA: 145970cef90947b2244e2cacbe575a6ab72a0db0（PR #261 head、origin と一致）
 LOCAL_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
 ORIGIN_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
@@ -30,8 +30,8 @@ P0_STATUS: MERGED_COMPLETE
 P0_PR: #259（merge commit 4b44df4）
 P1_STATUS: MERGED_COMPLETE
 P1_PR: #260（merge commit f5e6cc7）
-P2_STATUS: LOCAL_COMMITTED_NOT_PUSHED → 保全 Draft PR へ
-P2_PR: （保全 Draft PR 作成後に追記）
+P2_STATUS: OPEN_PR（#261、自己レビュー完了・マージ待ち）
+P2_PR: #261（https://github.com/ollejanaitte/spacer-clone/pull/261）
 P3_STATUS: NOT_STARTED
 P3_PR: —
 P4_STATUS: NOT_STARTED
@@ -46,7 +46,7 @@ LOCAL_ONLY_STEPS: P2（commit 済み → 保全 Draft PR 経由）
 INCOMPLETE_STEPS: P2（main マージ未完了）, P3, P4, P5, P6
 NEXT_RESUME_STEP: P2
 NEXT_RESUME_BRANCH: docs/phase-b-prep-p2-standard-review
-NEXT_REQUIRED_ACTION: 保全 Draft PR の自己レビュー・承認後、main へマージ → ローカル main を同期 → P3（解析器同一性・物理契約）
+NEXT_REQUIRED_ACTION: P2（#261）を main へマージ → ローカル main を origin/main へ同期 → P3（解析器同一性・物理契約）
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO（人間証拠不足）
@@ -60,10 +60,10 @@ PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO（人間証拠不足）
 - その他のローカル branch は全て origin 追跡済みで、local-only の未マージ Phase A+ 作業は P2 のみ。
 
 注意事項:
-- 本作業は保全目的。P2 は未完了（main マージ未実施）であり、完了扱いしない。
+- 本作業は P2 の文書成果の保全と完了化。P2 の人間確認（目視）は未実施のまま継続対象。
 - 数値実装許可ゲートは全セル NOT_AUTHORIZED のまま。本作業で数値許可状態は変更していない。
 - application code は一切変更していない。変更範囲は final_report.txt と Phase A+ 成果物のみ。
-- 保全 push・Draft PR は現在ブランチ docs/phase-b-prep-p2-standard-review 上のみで実施し、main へはマージしない。
+- P2 は自己レビュー完了後、PR #261 経由で main へマージする。
 
-OVERALL_VERDICT: LOCAL_WORK_CHECKPOINTED
+OVERALL_VERDICT: LOCAL_WORK_CHECKPOINTED（→ P2 マージ後に更新）
 ================================================================================
