@@ -4,6 +4,7 @@ import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   isBridgeStructureGenerationCurrent,
+  withBridgeStructureBooleanField,
   withBridgeStructureField,
 } from "../bridgeStructure";
 import {
@@ -144,6 +145,67 @@ describe("bridge structure visualization (Block C)", () => {
     const model = buildApolloVisualizationModelOrThrow({ project: imported.project });
     expect(model.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(4);
     expect(model.solidGeometryParameters.filter((entry) => entry.kind === "deck")).toHaveLength(1);
+  });
+
+  it("renders stiffener, sway-bracing, and lateral-bracing solids when configured", () => {
+    let project = generateStructure(createDefaultProject());
+    project = withBridgeStructureField(project, "stiffenerSpacing", 25);
+    project = withBridgeStructureField(project, "swayBracingInterval", 2);
+    project = withBridgeStructureBooleanField(project, "lateralBracingEnabled", true);
+    const regen = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(regen.ok).toBe(true);
+    if (!regen.ok) return;
+
+    const model = buildApolloVisualizationModelOrThrow({ project: regen.project });
+    const stiffeners = model.solidGeometryParameters.filter((entry) => entry.kind === "stiffener");
+    const swayMembers = model.solidGeometryParameters.filter(
+      (entry) => entry.kind === "bracing" && entry.displayLabel.startsWith("Sway "),
+    );
+    const lateralMembers = model.solidGeometryParameters.filter(
+      (entry) => entry.kind === "bracing" && entry.displayLabel.startsWith("Lateral "),
+    );
+
+    expect(stiffeners).toHaveLength(4 * 9);
+    expect(stiffeners.every((entry) => entry.designEntityKind === "Stiffener")).toBe(true);
+    expect(stiffeners.every((entry) => entry.visibilityGroup === "girders")).toBe(true);
+    expect(swayMembers).toHaveLength(19 * 3 * 2);
+    expect(lateralMembers).toHaveLength(1 * 3 * 40 * 2);
+    expect(swayMembers.every((entry) => entry.designEntityKind === "BraceMember")).toBe(true);
+    expect(swayMembers.every((entry) => entry.visibilityGroup === "bracings")).toBe(true);
+    expect(
+      model.solidGeometryParameters.filter((entry) => entry.kind === "stiffener").every((entry) => entry.path == null),
+    ).toBe(true);
+  });
+
+  it("omits secondary-member solids when their inputs are unset or disabled", () => {
+    const project = generateStructure(createDefaultProject());
+    const model = buildApolloVisualizationModelOrThrow({ project });
+    expect(model.solidGeometryParameters.some((entry) => entry.kind === "stiffener")).toBe(false);
+    expect(model.solidGeometryParameters.filter((entry) => entry.kind === "bracing")).toHaveLength(0);
+    expect(model.solidGeometryParameters.some((entry) => entry.designEntityKind === "Stiffener")).toBe(false);
+  });
+
+  it("keeps sway-bracing and lateral-bracing solid IDs stable across regeneration", () => {
+    let project = generateStructure(createDefaultProject());
+    project = withBridgeStructureField(project, "stiffenerSpacing", 25);
+    project = withBridgeStructureField(project, "swayBracingInterval", 2);
+    project = withBridgeStructureBooleanField(project, "lateralBracingEnabled", true);
+    const regen = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(regen.ok).toBe(true);
+    if (!regen.ok) return;
+
+    const first = buildApolloVisualizationModelOrThrow({ project: regen.project });
+    const secondRegen = generateBridgeStructureFromInput(regen.project, getBridgeStructureInputDraft(regen.project));
+    expect(secondRegen.ok).toBe(true);
+    if (!secondRegen.ok) return;
+    const second = buildApolloVisualizationModelOrThrow({ project: secondRegen.project });
+
+    const bracingIds = (model: ReturnType<typeof buildApolloVisualizationModelOrThrow>) =>
+      model.solidGeometryParameters
+        .filter((entry) => entry.kind === "bracing" || entry.kind === "stiffener")
+        .map((entry) => entry.id)
+        .sort();
+    expect(bracingIds(second)).toEqual(bracingIds(first));
   });
 
   it("does not regress the Apollo sample bridge without BSDD", () => {

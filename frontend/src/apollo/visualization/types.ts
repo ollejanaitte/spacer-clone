@@ -157,6 +157,7 @@ export type ApolloDesignEntityKind =
   | "Splice"
   | "SwayBracing"
   | "LateralBracing"
+  | "BraceMember"
   | "DeckAnchorage";
 
 export type ApolloSolidGeometryParameter = {
@@ -170,6 +171,7 @@ export type ApolloSolidGeometryParameter = {
     | "girder"
     | "cross_beam"
     | "bracing"
+    | "stiffener"
     | "deck"
     | "bearing"
     | "pier_marker"

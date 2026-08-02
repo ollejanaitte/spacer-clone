@@ -16,6 +16,7 @@ export type ApolloStlEntityCounts = {
   readonly girders: number;
   readonly crossBeams: number;
   readonly bracings: number;
+  readonly stiffeners: number;
   readonly deck: number;
   readonly bearings: number;
   readonly markers: number;

@@ -7,13 +7,17 @@ import {
   UNIT_CONTEXT_SCHEMA_VERSION,
   validateBridgeSuperstructureDesignDocument,
   type BridgeSuperstructureDesignDocument,
+  type BraceMember,
   type CrossBeam,
   type DesignEntityDesignStatus,
   type DesignEntityMetadata,
   type GovernedQuantity,
+  type LateralBracing,
   type MainGirder,
   type RcDeck,
+  type Stiffener,
   type StructuralDesignModel,
+  type SwayBracing,
 } from "../../contracts";
 import type { UuidString } from "../../contracts/uuid";
 import { computeContentChecksum } from "../../contracts/legacy/checksum";
@@ -58,13 +62,16 @@ function userInputQuantity(value: number, units: string): GovernedQuantity {
 }
 
 function createEntityMetadata(
-  geometryRefId: UuidString,
+  geometryRefId: UuidString | null,
   designStatus: DesignEntityDesignStatus,
 ): DesignEntityMetadata {
   return {
     entityRevisionId: 1,
     provenance: createProvenance(),
-    geometryRef: { geometryRefId, bindingStatus: "bound" },
+    geometryRef:
+      geometryRefId === null
+        ? { geometryRefId: null, bindingStatus: "unbound" }
+        : { geometryRefId, bindingStatus: "bound" },
     analysisMapping: {
       analysisMemberRefId: null,
       bindingStatus: "unbound",
@@ -156,6 +163,83 @@ export function buildBridgeSuperstructureDesignDocument(
     };
   });
 
+  const stiffeners: Stiffener[] = [];
+  if (input.stiffenerSpacing !== null) {
+    const stationsPerGirder = Math.floor(bridgeLength / input.stiffenerSpacing) + 1;
+    for (const [girderIndex, girder] of mainGirders.entries()) {
+      for (let station = 0; station < stationsPerGirder; station += 1) {
+        stiffeners.push({
+          ...createEntityMetadata(null, designStatus),
+          entityKind: "Stiffener",
+          stiffenerId: stableId(
+            projectScopeId,
+            "Stiffener",
+            `girder-${girderIndex}-station-${station}`,
+          ),
+          mainGirderRefId: girder.mainGirderId,
+        });
+      }
+    }
+  }
+
+  const swayBracings: SwayBracing[] = [];
+  const swayBraceMembers: BraceMember[] = [];
+  if (input.swayBracingInterval !== null) {
+    for (let index = 1; index <= crossBeamCount - 2; index += 1) {
+      if (index % input.swayBracingInterval !== 0) {
+        continue;
+      }
+      const swayBracingId = stableId(projectScopeId, "SwayBracing", `sway-${index}`);
+      swayBracings.push({
+        ...createEntityMetadata(null, designStatus),
+        entityKind: "SwayBracing",
+        swayBracingId,
+      });
+      for (let pair = 0; pair < girderCount - 1; pair += 1) {
+        for (let member = 0; member < 2; member += 1) {
+          swayBraceMembers.push({
+            ...createEntityMetadata(null, designStatus),
+            entityKind: "BraceMember",
+            braceMemberId: stableId(
+              projectScopeId,
+              "BraceMember",
+              `sway-${index}-pair-${pair}-member-${member}`,
+            ),
+            parentBracingRefId: swayBracingId,
+          });
+        }
+      }
+    }
+  }
+
+  const lateralBracings: LateralBracing[] = [];
+  const lateralBraceMembers: BraceMember[] = [];
+  if (input.lateralBracingEnabled) {
+    const lateralBracingId = stableId(projectScopeId, "LateralBracing", "bottom-flange");
+    lateralBracings.push({
+      ...createEntityMetadata(null, designStatus),
+      entityKind: "LateralBracing",
+      lateralBracingId,
+    });
+    const bays = crossBeamCount - 1;
+    for (let pair = 0; pair < girderCount - 1; pair += 1) {
+      for (let bay = 0; bay < bays; bay += 1) {
+        for (let member = 0; member < 2; member += 1) {
+          lateralBraceMembers.push({
+            ...createEntityMetadata(null, designStatus),
+            entityKind: "BraceMember",
+            braceMemberId: stableId(
+              projectScopeId,
+              "BraceMember",
+              `lateral-pair-${pair}-bay-${bay}-member-${member}`,
+            ),
+            parentBracingRefId: lateralBracingId,
+          });
+        }
+      }
+    }
+  }
+
   const structuralDesignModel: StructuralDesignModel = {
     modelId: sdmModelId,
     nonCompositeAssertion: { compositeAction: false },
@@ -164,10 +248,10 @@ export function buildBridgeSuperstructureDesignDocument(
     rcDecks,
     haunches: [],
     crossBeams,
-    swayBracings: [],
-    lateralBracings: [],
-    braceMembers: [],
-    stiffeners: [],
+    swayBracings,
+    lateralBracings,
+    braceMembers: [...swayBraceMembers, ...lateralBraceMembers],
+    stiffeners,
     splices: [],
     deckAnchorages: [],
   };

@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createDefaultProject } from "../../data/defaultProject";
+import {
+  generateBridgeStructureFromInput,
+  getBridgeStructureInputDraft,
+  withBridgeStructureField,
+} from "../bridgeStructure";
 import { createApollo200mContinuousBridgeSample } from "../sampleProjects";
 import { buildApolloVisualizationModelOrThrow } from "../visualization";
 import {
@@ -188,5 +194,37 @@ describe("Apollo binary STL export", () => {
     expect(createObjectURL).toHaveBeenCalledTimes(2);
     expect(revokeObjectURL).toHaveBeenCalledTimes(2);
     expect(click).toHaveBeenCalledTimes(2);
+  });
+
+  it("exports stiffeners as girders-grouped boxes with a dedicated entity count", () => {
+    let project = createDefaultProject();
+    const values: Record<string, number> = {
+      spanLength: 40, bridgeLength: 200, width: 12, girderCount: 4, girderSpacing: 3,
+      girderDepth: 2.5, topFlangeWidth: 0.5, topFlangeThickness: 0.02,
+      bottomFlangeWidth: 0.6, bottomFlangeThickness: 0.025, webThickness: 0.012,
+      deckThickness: 0.25, crossBeamSpacing: 5,
+    };
+    for (const [key, value] of Object.entries(values)) {
+      project = withBridgeStructureField(project, key as never, value);
+    }
+    project = withBridgeStructureField(project, "stiffenerSpacing", 25);
+    const regen = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(regen.ok).toBe(true);
+    if (!regen.ok) return;
+
+    const model = buildApolloVisualizationModelOrThrow({ project: regen.project });
+    const result = exportApolloBinaryStl(model, {
+      includedGroups: ["girders"],
+      includeCrossBeams: false,
+      includeBracing: false,
+      includeDeck: false,
+      includeBearings: false,
+    });
+    expect(result.manifest.entityCounts.stiffeners).toBe(36);
+    expect(result.manifest.entityCounts.markers).toBe(0);
+    expect(validateApolloBinaryStlTriangles(parseBinaryStl(result.bytes).triangles)).toEqual({
+      invalidCoordinateCount: 0,
+      zeroAreaCount: 0,
+    });
   });
 });
