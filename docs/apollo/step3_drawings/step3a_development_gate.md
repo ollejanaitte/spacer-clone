@@ -22,7 +22,7 @@ STALE_VERDICT: PASS
 GUI_VERDICT: PASS
 PRIMARY_PR_MERGED: YES
 PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/308
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/309
 STEP_3B_START_VERDICT: GO
 
 Paper: A3 landscape (A1 deferred for HTML/PDF stability).
