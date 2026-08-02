@@ -1,93 +1,69 @@
 ================================================================================
-Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レポート
+Apollo Phase A+ — セッション復旧・進捗監査レポート
 ================================================================================
 
 更新日時: 2026-08-02
-現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のPhase: A+ (Phase B 数値実装許可ゲート解除準備)
-現在のStep: P1 (リポジトリ内で整理可能なブロッカー)
-作業状態: 実行中
-現在ブランチ: docs/phase-b-prep-p1-repository-blockers
-開始時main SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (Phase A 最終 main)
-現在HEAD SHA: 4b44df48ec4f035ffb7788a73d423092235d5254 (P0マージ後)
-実施済み:
-- プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
-- 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
-- phase1_design_expansion_refreeze: README / scope_and_architecture_freeze / implementation_sequence / manual_traceability.csv / local_verification_report
-- design-standards (DS-00..DS-09): README / adoption_status_model / target_standard_freeze / edition_and_errata_register / material_properties_register / load_model_register / load_factor_register / verification_equation_register / numeric_release_gate / unresolved_evidence_requirements
-- evidence-collection (EA-00..EA-06): numeric_release_gate / レジスタ
-- post-ea-01: final gate レポート
-- マニュアル調査: Grider_I_00..13 / SuperDesigner / CompGrd_I / Girder_Box / StDeck/Section/Splice/PcSlab (local-archive/unknown-rights)
-- JIP-SPACER / JIP-LINER マニュアル (リポジトリ内、テキスト抽出可能)
-- 道示 R7 I〜V PDF が local-archive/restricted-pdf に存在 (テキスト層なし=IMAGE_SCAN)
-- 外部参照パス /home/masaharu/Projects/bridge-standards-research が現環境に不在 → PA-OQ-002
-- docs/apollo/phase_a_integrated_freeze/ に README.md / 00_source_inventory.csv / decision_log.md / open_questions_and_blockers.md を作成
-- Step A0: ブランチ docs/phase-a-a0-source-inventory → PR #250 → main マージ済み (merge commit 2300411)
-- Step A1: docs/apollo/phase_a_integrated_freeze/01_standard_scope_freeze.md を作成（対象基準・版・正誤表・巻別役割・IN/OUT・状態）
-- Step A1: ブランチ docs/phase-a-a1-standard-scope → PR #251 → main マージ済み (merge commit b2b1ed3)
-- Step A2: docs/apollo/phase_a_integrated_freeze/02_materials_units_factors.md を作成（単位系・材料カテゴリ・係数・JIS連鎖）
-- Step A2: ブランチ docs/phase-a-a2-materials-units → PR #252 → main マージ済み (merge commit 4729720)
-- Step A3: docs/apollo/phase_a_integrated_freeze/03_loads_and_combinations.md を作成（荷重モデル・係数・組合せ）
-- Step A3: ブランチ docs/phase-a-a3-loads-combinations → PR #253 → main マージ済み (merge commit 42ebb7a)
-- Step A4: docs/apollo/phase_a_integrated_freeze/04_analysis_model_rules.md を作成（解析モデル生成規則・解析器同一性・物理契約ブロッカー・単位/座標/符号）
-- Step A4: ブランチ docs/phase-a-a4-analysis-model → PR #254 → main マージ済み (merge commit 0758891)
-- Step A5: docs/apollo/phase_a_integrated_freeze/05_member_check_logic.md を作成（主桁7限界状態・たわみ・疲労データ境界・鋼重・Phase1B条件）
-- Step A5: ブランチ docs/phase-a-a5-main-girder-fatigue → PR #255 → main マージ済み (merge commit 6dd1477)
-- Step A6: 05_member_check_logic.md に Part 2 を追記（RC床版・床組・補剛材・添接・支承境界）
-- Step A6: ブランチ docs/phase-a-a6-deck-secondary-connections → PR #256 → main マージ済み (merge commit 6f95f5b)
-- Step A7: docs/apollo/phase_a_integrated_freeze/06_formula_registry.csv を作成（式レジストリ: LF/LM/SX/VER/LV/DTS/MT を DS-04/05 と参照整合、全数値 BLOCKED・全 NOT_AUTHORIZED）
-- Step A7: docs/apollo/phase_a_integrated_freeze/07_validation_cases.csv を作成（数値検証ケース: GOLD-001..016 と独立検証枠 VC-STD-001/002 を参照整合、全ケース BLOCKED）
-- Step A7: docs/apollo/phase_a_integrated_freeze/08_numeric_authorization_gate.md を作成（DS-09 連言ゲート上位 + 部材・照査単位の許可テーブル、全セル NOT_AUTHORIZED）
-- Step A7: docs/apollo/phase_a_integrated_freeze/09_report_output_spec.md を作成（ReportModel 章構成 + 出力可否連動 + STALE/監査）
-- Step A7: ブランチ docs/phase-a-a7-validation-authorization → PR #257 → main マージ済み (merge commit 9f76183)
-- Step A8: phase_a_completion_report.md を作成（完了判定・統合レビュー・Phase B 引き継ぎ）
-- Step A8: open_questions_and_blockers.md に A8 時点の状態を追記
-- Step A8: ブランチ docs/phase-a-a8-final-integration → PR #258 → main マージ済み (merge commit 8137c7a)
-- Phase A+ P0: docs/apollo/phase_b_release_preparation/ に README.md / 00_baseline_and_gate_matrix.md / 01_blocker_resolution_register.csv (13行) / decision_log.md を作成。final_report.txt を Phase A 完了・Phase A+ 開始へ修正
-- Phase A+ P0: ブランチ docs/phase-b-prep-p0-baseline → PR #259 → main マージ済み (merge commit 4b44df4)
-- Phase A+ P1: 01_blocker_resolution_register.csv を更新（PA-OQ-002 RESOLVED / PA-OQ-010 RESOLVED / PA-OQ-007 PARTIALLY_RESOLVED）。07_user_action_required.md を作成
-調査中: (なし)
-決定事項:
-- DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
-- DEC-PHA-0002: DS-00 adoption_status 語彙を Phase A でも維持
-- DEC-PHA-0003: 数値実装許可は部材・照査単位、未採択は NOT_AUTHORIZED
-- DEC-PHA-0004: Step 毎にブランチ・PR・main マージ
-- DEC-PHA-0005: 対象基準・版・正誤表は DS-01 の採用基準をそのまま採用 (再凍結)
-- DEC-PHA-0006: 適用範囲は DS-00 / phase1 再凍結の IN/OUT を踏襲
-- DEC-PHA-0007: 材料物性・単位・係数は DS-03 レジスタを採用、数値は BLOCKED 維持
-- DEC-PHA-0008: 部分係数は DS-04 (荷重側) / DS-05 (抵抗側) 参照、実装許可は A7 で管理
-- DEC-PHA-0009: 荷重・組合せは DS-04 レジスタを採用、荷重同一性・数値は BLOCKED 維持
-- DEC-PHA-0010: 動的影響は LF-DS04-010 が単一オーナー、二重適用禁止。地震/疲労/架設は OUT_OF_SCOPE
-- DEC-PHA-0011: 解析モデルは設計モデルから派生、リポジトリ solver は PROJECT_SPECIFIC、外部解析器は BLOCKED
-- DEC-PHA-0012: 解析用の断面剛性・材料・荷重数値は BLOCKED 維持。旧Apollo仮定値は参考のみ
-- DEC-PHA-0013: 主桁・たわみ照査ロジックは DS-05 レジスタ採用、R7 目視確認 0 件のまま BLOCKED
-- DEC-PHA-0014: 疲労は OUT_OF_SCOPE、データ境界のみ定義。概算鋼重割増係数の既定化禁止
-- DEC-PHA-0015: RC床版・床組・補剛材・添接は DS-05 候補分類採用、BLOCKED 維持、画面例を正式値にしない
-- DEC-PHA-0016: 添接・支承境界は PHASE1_REFERENCE 維持、合成作用照査は OUT_OF_SCOPE 維持
-- DEC-PHA-0017: Phase B 数値実装許可は DS-09 連言ゲート上位 + 部材・照査単位で個別判定、全セル NOT_AUTHORIZED
-- DEC-PHA-0018: 検証ケースは DS-07 Golden と参照整合・全 BLOCKED、計算書出力は許可ゲート連動
-- DEC-PB-0001: Phase A+ は Phase A 成果物を上書きせず参照整合を保持。数値実装は行わずブロッカー整理・人間確認票・独立検証計画・最小セル選定を実施
-- DEC-PB-0002: ブロッカー解除レジスタ 01_blocker_resolution_register.csv を正本とし、状態変更は新しい DEC-ID と証拠を付けて行う
-- DEC-PB-0003: ライセンスPDF参照パスは実在パスを正本 (PA-OQ-002 RESOLVED)。旧Apollo は unknown-rights 21行パス存在確認・REFERENCE_ONLY 維持 (PA-OQ-010 RESOLVED)。refreeze の decision/open_questions 不在を捏造せず記録 (PA-OQ-007 PARTIALLY_RESOLVED)
-未決事項: (Phase A+ P1..P6。全ブロッカー解除は完了条件ではなく、解除不能理由と人間の次操作を明確にすることが正式成果)
-ブロッカー:
-- PA-OQ-002 ライセンスPDF参照パス → RESOLVED (実在パス正本化)
-- PA-OQ-007 refreeze decision/open_questions 不在 → PARTIALLY_RESOLVED
-- PA-OQ-010 旧Apollo版不明 → RESOLVED (REFERENCE_ONLY 維持)
-検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257) / Step A8 → PR #258 (https://github.com/ollejanaitte/spacer-clone/pull/258)
-mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 マージ済み (4b44df4)。P1 は PR 作成前
-次の作業: P1 commit → P1 push → PR 作成 (#260) → 自己レビュー → main マージ → ローカル同期 → P2 (道示・正誤表・JIS 人間確認票)
+調査対象: Apollo Phase A+（Phase B 数値実装許可ゲート解除準備）進捗監査
+正本リポジトリ: https://github.com/ollejanaitte/spacer-clone
+作業場所: /home/masaharu/Projects/spacer-clone
 
-================================================================================
-MODEL: DeepSeek V4 Flash
-ROLE_MODE: SINGLE_MODEL_FULL_EXECUTION
-STEP_PR_LIST: PR #250, #251, #252, #253, #254, #255, #256, #257, #258
-SOURCE_COUNT: 49
-ADOPTED_COUNT: 23（ADOPTED 14 + ADOPTED_WITH_CONDITION 9）
-NUMERIC_ADOPTED_COUNT: 0
-DOCUMENT_FREEZE_VERDICT: COMPLETE
-NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
-OVERALL_VERDICT: COMPLETE（文書凍結。数値実装は Phase B 許可ゲート未開放）
-================================================================================
+現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
+現在の到達Step: P2（道示・正誤表・JIS 人間確認票）
+作業状態: 実行中（P2 成果物 commit・push 済み、PR #261 自己レビュー完了・main マージ待ち）
+
+LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p2-standard-review
+LOCAL_HEAD_SHA: 145970cef90947b2244e2cacbe575a6ab72a0db0（PR #261 head、origin と一致）
+LOCAL_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
+ORIGIN_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+WORKTREE_CLEAN: YES
+LOCAL_UNCOMMITTED_WORK: なし
+LOCAL_UNPUSHED_COMMITS: 0
+LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0（origin/docs/phase-b-prep-p2-standard-review と一致）
+LOCAL_BRANCH_BEHIND_ORIGIN: 0
+
+OPEN_PR: #261（Draft 保全 PR、base: main / head: docs/phase-b-prep-p2-standard-review）
+UNMERGED_BRANCH: docs/phase-b-prep-p2-standard-review（#261 で公開・レビュー待ち）
+LATEST_MERGED_PR: #260（P1）
+
+P0_STATUS: MERGED_COMPLETE
+P0_PR: #259（merge commit 4b44df4）
+P1_STATUS: MERGED_COMPLETE
+P1_PR: #260（merge commit f5e6cc7）
+P2_STATUS: OPEN_PR（#261、自己レビュー完了・マージ待ち）
+P2_PR: #261（https://github.com/ollejanaitte/spacer-clone/pull/261）
+P3_STATUS: NOT_STARTED
+P3_PR: —
+P4_STATUS: NOT_STARTED
+P4_PR: —
+P5_STATUS: NOT_STARTED
+P5_PR: —
+P6_STATUS: NOT_STARTED
+P6_PR: —
+
+MERGED_COMPLETE_STEPS: P0, P1
+LOCAL_ONLY_STEPS: P2（commit 済み → 保全 Draft PR 経由）
+INCOMPLETE_STEPS: P2（main マージ未完了）, P3, P4, P5, P6
+NEXT_RESUME_STEP: P2
+NEXT_RESUME_BRANCH: docs/phase-b-prep-p2-standard-review
+NEXT_REQUIRED_ACTION: P2（#261）を main へマージ → ローカル main を origin/main へ同期 → P3（解析器同一性・物理契約）
+
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO（人間証拠不足）
+
+調査結果:
+- GitHub main = local main = origin/main（f5e6cc7）。P0（#259）・P1（#260）はマージ済み。open PR なし。PR #261 以降は存在しない。
+- 現在ブランチ docs/phase-b-prep-p2-standard-review に P2 成果物 commit d4e121a が存在。リモート branch なし・upstream なし = 未 push。
+- P2 成果物（d4e121a 内訳）: 02_standard_visual_review_workbook.md（道示 R7 目視確認票 23 件）/ 03_errata_and_jis_acquisition_plan.md / 01_blocker_resolution_register.csv 更新（DEC-PB-0004）/ decision_log.md / 07_user_action_required.md 更新。
+- docs/apollo/phase_b_release_preparation/ に 04/05/06 は未作成（P3/P4/P5 未着手）。phase_b_release_preparation_report.md（P6）も未作成。
+- 監査時、final_report.txt の作業ツリー内容が「aaaa」に置換されていたが、ユーザーが誤入力と確認し無視指示。本レポートで正規内容へ上書き。
+- その他のローカル branch は全て origin 追跡済みで、local-only の未マージ Phase A+ 作業は P2 のみ。
+
+注意事項:
+- 本作業は P2 の文書成果の保全と完了化。P2 の人間確認（目視）は未実施のまま継続対象。
+- 数値実装許可ゲートは全セル NOT_AUTHORIZED のまま。本作業で数値許可状態は変更していない。
+- application code は一切変更していない。変更範囲は final_report.txt と Phase A+ 成果物のみ。
+- P2 は自己レビュー完了後、PR #261 経由で main へマージする。
+
+OVERALL_VERDICT: LOCAL_WORK_CHECKPOINTED（→ P2 マージ後に更新）
 ================================================================================
