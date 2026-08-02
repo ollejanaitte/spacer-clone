@@ -1,29 +1,37 @@
 ================================================================================
-Apollo 対傾構・上下横構3D配置修正 — 進捗レポート
+Apollo 対傾構・上下横構3D配置修正 — 最終レポート
 ================================================================================
-更新日時: 2026-08-02T20:05:00+09:00
+更新日時: 2026-08-02T20:06:00+09:00
 作業: Apollo 対傾構・上下横構3D配置修正
-作業状態: 実装完了・検証中
+作業状態: 実装・自動テスト完了、PR作成・マージへ
 現在ブランチ: fix/apollo-bracing-system-geometry
 開始時main SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-現在HEAD SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 横構ON
-既存対傾構の分類: X字形・同一X鉛直面（CURRENT_SWAY_BRACING_SHAPE: X_TYPE）
-既存横構の分類: 単一 boolean（下側意味）だが Z がウェブ中心付近（LOWER intended）
-対傾構の正本座標: stationX固定、leftTop/rightTop@topConnectionZ、midBottom@bottomConnectionZ
-上横構の正本座標: Z=topConnectionZ（上フランジ中立）、水平面X形
-下横構の正本座標: Z=bottomConnectionZ（下フランジ中立）、水平面X形
+現在HEAD SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2（未commit差分あり）
+再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 下横構ON
+既存対傾構の分類: 同一X鉛直面だがX字形（CURRENT_SWAY_BRACING_SHAPE: X_TYPE）
+既存横構の分類: lateralBracingEnabled のみ（下側意味）、Zがウェブ中心付近
+対傾構の正本座標: stationX固定、leftTop/rightTop@topConnectionZ、midBottom@bottomConnectionZ（V型）
+上横構の正本座標: Z=topConnectionZ、隣接station×隣接主桁の水平面X形
+下横構の正本座標: Z=bottomConnectionZ、同上
 根本原因:
 1. 対傾構がX形で三角形/V要件を満たさない
-2. 横構が上下未分離、かつZがフランジではなくウェブ中心寄り
-変更ファイル: types/validation/generateBsdd/solids/quantities/UI/tests/checklist/final_report
+2. 横構が上下未分離、かつZがフランジ中立面ではなくウェブ中心寄り
+変更ファイル:
+- frontend/src/apollo/visualization/bridgeStructureSolids.ts
+- frontend/src/apollo/bridgeStructure/{types,validation,generateBsdd,quantities,sampleInputs}.ts
+- frontend/src/apollo/components/BridgeStructureInputPanel.tsx
+- frontend/src/apollo/__tests__/{bracingSystemGeometry,visualizationBoundsBracing,bridgeStructureVisualization,BridgeStructureInputPanel,continuousGirderLayout,apolloSuite}.ts(x)
+- docs/apollo/continuous_girder/manual_verification_checklist.md
+- final_report.txt
 他部材3D化の調査結果:
-- 主桁/床版/横桁/補剛材/支承/橋台橋脚: 既存3Dあり（追加不要）
-- 添接・ボルト・端横桁特殊形式: 寸法一意導出不可 → 未実装
-自動テスト: 部分PASS（全体実行予定）
-手動GUI: PENDING_USER_CONFIRMATION
-PR番号・URL: 未作成
+| 部材 | 既存entity | 位置情報 | 寸法情報 | 3D化可否 | ブロッカー | 推奨次Step |
+|------|------------|----------|----------|----------|------------|------------|
+| 主桁/床版/横桁/補剛材/支承/橋台橋脚 | あり | あり | あり | 既存済 | — | なし |
+| 添接・ボルト・端横桁特殊 | 部分 | 不足 | 不足 | 否 | 寸法創作禁止 | 入力拡充後 |
+自動テスト: typecheck PASS / apollo 300 PASS / lint PASS / build PASS / STL・bounds PASS
+手動GUI: MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+PR番号・URL: 作成予定
 mainマージ状態: 未着手
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-次の作業: 全体テスト → commit/PR/merge
+次の作業: commit → push → PR → 自己レビュー → merge → main同期
 ================================================================================
