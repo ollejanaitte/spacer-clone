@@ -1,11 +1,12 @@
 # Apollo Phase A+ — Phase B 数値実装許可ゲート解除準備
 
 **Authority:** CURRENT INTEGRATION AUTHORITY (Phase A+)
-**Status:** IN_PROGRESS (Step P0 〜 P6 を各Step毎に main へマージ)
+**Status:** COMPLETE (P0 〜 P6 を各Step毎に main へマージ済み)
 **Start:** 2026-08-02
 **Repository:** /home/masaharu/Projects/spacer-clone
 **Model:** DeepSeek V4 Flash (SINGLE_MODEL_FULL_EXECUTION)
 **Initial main SHA:** `8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea`（Phase A 最終 main）
+**Final main SHA:** `a78e1641d5877d6372a1acc0b1f6ee0913e2652e`（P5 マージ後、P6 で更新予定）
 
 ## 目的
 
@@ -59,15 +60,26 @@ Phase A+ は Phase A の成果物（`docs/apollo/phase_a_integrated_freeze/`）�
 
 ## Step 一覧
 
-| Step | ブランチ | 内容 |
-|------|----------|------|
-| P0 | docs/phase-b-prep-p0-baseline | Phase A 後処理・baseline |
-| P1 | docs/phase-b-prep-p1-repository-blockers | リポジトリ内で整理可能なブロッカー |
-| P2 | docs/phase-b-prep-p2-standard-review | 道示 R7・正誤表・JIS 人間確認票 |
-| P3 | docs/phase-b-prep-p3-solver-contract | 解析器同一性・物理契約 |
-| P4 | docs/phase-b-prep-p4-golden-plan | Golden・独立検証計画 |
-| P5 | docs/phase-b-prep-p5-first-candidate | 最初の数値実装候補選定 |
-| P6 | docs/phase-b-prep-p6-final | 統合判定 |
+| Step | ブランチ | PR | 内容 |
+|------|----------|-----|------|
+| P0 | docs/phase-b-prep-p0-baseline | #259 | Phase A 後処理・baseline |
+| P1 | docs/phase-b-prep-p1-repository-blockers | #260 | リポジトリ内で整理可能なブロッカー |
+| P2 | docs/phase-b-prep-p2-standard-review | #261 | 道示 R7・正誤表・JIS 人間確認票 |
+| P3 | docs/phase-b-prep-p3-solver-contract | #262 | 解析器同一性・物理契約 |
+| P4 | docs/phase-b-prep-p4-golden-plan | #263 | Golden・独立検証計画 |
+| P5 | docs/phase-b-prep-p5-first-candidate | #264 | 最初の数値実装候補選定 |
+| P6 | docs/phase-b-prep-p6-final | #265 | 統合判定・完了報告 |
+
+## 統合判定（P6）
+
+```
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+FIRST_RELEASE_CANDIDATE: A — 主桁断面諸量（純幾何）
+CURRENT_AUTHORIZATION: NOT_AUTHORIZED
+```
+
+詳細は [phase_b_release_preparation_report.md](phase_b_release_preparation_report.md) と [final_report.txt](../../../final_report.txt) を参照。人間作業は [07_user_action_required.md](07_user_action_required.md) に引き継ぎ、セル単位 GRANTED の DEC-ID を条件に Phase B 開始可否を再評価する。
 
 ## 変更許可範囲
 
