@@ -1,6 +1,6 @@
 # Step 1-A Completion Gate
 
-**Date:** 2026-08-02  
+**Date:** 2026-08-02
 **Path:** B
 
 ## Verdicts
@@ -37,12 +37,12 @@ OVERALL_STEP_1A_VERDICT: BLOCKED_PENDING_HUMAN_EVIDENCE
 
 ## Step 1-B start conditions (all required)
 
-- [ ] GOLD-SP-001 approved  
-- [ ] GOLD-SP-002 approved  
-- [ ] Checksums fixed for inputs + derivation artifacts  
-- [ ] Tolerance frozen before comparison  
-- [ ] Independent reviewer recorded  
-- [ ] DEC-ID valid for cell GRANTED  
-- [ ] Section-properties cell authorization GRANTED  
-- [ ] Step 1-A primary + report PRs merged  
-- [ ] Latest main synced and clean  
+- [ ] GOLD-SP-001 approved
+- [ ] GOLD-SP-002 approved
+- [ ] Checksums fixed for inputs + derivation artifacts
+- [ ] Tolerance frozen before comparison
+- [ ] Independent reviewer recorded
+- [ ] DEC-ID valid for cell GRANTED
+- [ ] Section-properties cell authorization GRANTED
+- [ ] Step 1-A primary + report PRs merged
+- [ ] Latest main synced and clean

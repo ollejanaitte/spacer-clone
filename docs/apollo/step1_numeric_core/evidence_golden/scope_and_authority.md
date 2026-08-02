@@ -1,7 +1,7 @@
 # Step 1-A — Scope and Authority
 
-**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION  
-**Date:** 2026-08-02  
+**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION
+**Date:** 2026-08-02
 **Parent authorities:** Phase A `08_numeric_authorization_gate.md`, Phase B `06_first_numeric_release_candidate.md`, DS-07 golden governance
 
 ## 1. First numeric cell

@@ -1,6 +1,6 @@
 # Step 1-A Decision Log
 
-**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION  
+**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION
 **Date:** 2026-08-02
 
 | DEC-ID | Date | Decision | Status |
@@ -13,6 +13,6 @@
 
 ## Explicitly not decided here
 
-- No DEC granting `geometric_section_properties` GRANTED  
-- No ADOPTED claim for R7 clause pages, errata content, or JIS material values  
-- No approval of GOLD-SP / GOLD-AN expected values  
+- No DEC granting `geometric_section_properties` GRANTED
+- No ADOPTED claim for R7 clause pages, errata content, or JIS material values
+- No approval of GOLD-SP / GOLD-AN expected values

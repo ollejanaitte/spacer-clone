@@ -1,8 +1,8 @@
 # Step 1-A — Evidence / Golden / Authorization Package
 
-**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION  
-**Date:** 2026-08-02  
-**Path:** B (human-approved evidence absent)  
+**Authority:** APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION
+**Date:** 2026-08-02
+**Path:** B (human-approved evidence absent)
 **Does NOT grant:** `NUMERIC_DESIGN_AUTHORIZATION` / cell `GRANTED`
 
 ## Purpose

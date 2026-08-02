@@ -1,153 +1,86 @@
 ================================================================================
-Apollo Steel Plate Girder Numeric Core — Step 1-A PATH B Seal
+Apollo Step 1-A Development Reference + App Parity Report
 ================================================================================
-更新日時: 2026-08-02T21:14:41+09:00
-作業名: APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION (PATH B seal)
-Step ID: STEP_1A
-作業目的: Step 1-A report PR merge SHA を確定記録し、人間証跡欠落による正常停止を封印する。
-作業状態: PATH_B_COMPLETE_SEALED — HUMAN_APPROVAL_REQUIRED（Step 1-B+ 開始禁止）
-APPLICATION_CODE_CHANGED: NO
+更新日時: 2026-08-02T21:40:00+09:00
+作業名: Step 1-A development-only reference + live Apollo GUI parity
+Step ID: STEP_1A_DEVELOPMENT_REFERENCE
+作業状態: PRIMARY_PR_PENDING
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
-SEAL_START_MAIN_SHA: caf5b64d39738318d04a62c4c11ae5cd37d3f900
-SEAL_START_ORIGIN_MAIN_SHA: caf5b64d39738318d04a62c4c11ae5cd37d3f900
-LOCAL_EQUALS_ORIGIN_AT_SEAL_START: YES
-WORKTREE_CLEAN_AT_SEAL_START: YES
-作業branch: docs/apollo-step1a-path-b-seal
+START_MAIN_SHA: ced050e647d3b7b822722e668d8561d8b70ecb53
+作業branch: docs/apollo-step1a-development-reference
+APPLICATION_CODE_CHANGED: NO (docs + development_reference harness only)
+
+USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
+DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 --------------------------------------------------------------------------------
-Previous Phase Summary (Apollo 3D freeze — preserved)
+Previous Phase Summary
 --------------------------------------------------------------------------------
 APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
-APOLLO_3D_BLOCKING_REMAINING: 0
-PR284_MERGED: YES (e3751fbdc8b217c9d5e9090190cc8134ef83266d)
-PR285_MERGED: YES (6c3c0906f4ab2289c12ddbb0ec66de2964bcb902)
-REPORT_FINALIZATION_PR_NUMBER: 285
-REPORT_FINALIZATION_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/285
-REPORT_FINALIZATION_PR_MERGED: YES
-REPORT_FINALIZATION_PR_MERGE_SHA: 6c3c0906f4ab2289c12ddbb0ec66de2964bcb902
+STEP_1A_PATH_B_SEAL_PR: #288 (ced050e...)
+STEP_1A_PRIMARY_PR: #286
+STEP_1A_REPORT_PR: #287
+Formal gates remain BLOCKED / NOT_GRANTED (not fabricated).
 
 --------------------------------------------------------------------------------
-PRE-FLIGHT (this session re-check)
+Development reference (fixed BEFORE app)
 --------------------------------------------------------------------------------
-REMOTE_URL: https://github.com/ollejanaitte/spacer-clone.git
-NODE_VERSION: v24.5.0
-NPM_VERSION: 10.9.8
-PYTHON_VERSION: 3.10.12
-GH_AUTH: YES (ollejanaitte)
-STEP_1A_STATUS: PRIMARY_AND_REPORT_MERGED_PATH_B
-STEP_1B_STATUS: NOT_STARTED (NO_GO)
-STEP_1C_STATUS: NOT_STARTED (NO_GO)
-STEP_1D_STATUS: NOT_STARTED (NO_GO)
-HUMAN_GOLDEN_ON_MAIN: NO
-PATH_SELECTED: B
-PATH_B_RATIONALE: GOLD-SP-001/002 expected values PENDING_HUMAN_DERIVATION; approval_register NOT_APPROVED; authorization gate all cells NOT_AUTHORIZED; no independent reviewer / DEC-ID GRANTED
+Script: docs/apollo/step1_numeric_core/evidence_golden/development_reference/independent_reference_calculator.py
+Decimal precision: 80
+No float intermediates; no frontend/backend production imports.
+SHA256:
+- calculator: 5941d4918cf0aa1261b47e5b9ad7f7efe90bd41af4cf9be5627916a0d421d6c6
+- canonical_inputs: 9a6134be32f1b7b7e6198f29fe8c54aa69a52fb4cbeb8594e9c7b621528975f9
+- reference_results.json: e24b30e27a940f429a089762759bcb63a9113b4bea52f23ed65e17f2359565d4
+
+DEVELOPMENT_TOLERANCE_STATUS: FROZEN_BEFORE_APP_COMPARISON
+A_display=5e-5 / R_display=1e-12 (UI maximumFractionDigits=4)
+Official human freeze: NOT_FROZEN_FOR_RELEASE / PENDING
 
 --------------------------------------------------------------------------------
-採択 / Golden / Authorization 状態（変更なし・fail-closed 維持）
+Live Apollo app
 --------------------------------------------------------------------------------
-FIRST_RELEASE_CANDIDATE: A — geometric_section_properties
-GOLD-SP-001: CANDIDATE_TEMPLATE / NOT_APPROVED / PENDING_HUMAN_DERIVATION
-GOLD-SP-002: CANDIDATE_TEMPLATE / NOT_APPROVED / PENDING_HUMAN_DERIVATION
-GOLD-AN-001/002: FUTURE_STUB / NOT_APPROVED
-INDEPENDENT_HUMAN_EVIDENCE: MISSING
-GOLDEN_APPROVAL: NOT_APPROVED
-STEP_1A_SECTION_PROPERTIES_AUTHORIZATION: NOT_AUTHORIZED
+APP_LAUNCH_VERDICT: PASS
+COMMANDS:
+- .venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+- npm run dev:apollo -- --host 127.0.0.1 --port 5173 --strictPort
+HEALTH: http://127.0.0.1:5173 → 200
+GUI_INPUT_VERDICT: PASS (Playwright real browser against live app; not unit-test substitute)
+GOLD_SP_001_DEVELOPMENT_PARITY: PASS
+GOLD_SP_002_DEVELOPMENT_PARITY: PASS
+SAVE_RELOAD_VERDICT: PASS (workspace save + open; props match)
+STALE_VERDICT: PASS
+CONSOLE_ERRORS: 0
+Screenshots: development_reference/screenshot_GOLD-SP-001.png / _002.png
+Comparison: development_reference/comparison_report.{json,md}
+
+--------------------------------------------------------------------------------
+Formal vs development gates
+--------------------------------------------------------------------------------
+STEP_1B_DEVELOPMENT_START_VERDICT: GO
+STEP_1B_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-STEP_1B_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+approval_register: AI_ASSISTED_REFERENCE_READY / NOT_APPROVED / decision_id=NONE
 
 --------------------------------------------------------------------------------
-Step 1-A GitHub closeout（確定）
+GitHub (provisional)
 --------------------------------------------------------------------------------
-STEP_1A_PRIMARY_PR_NUMBER: 286
-STEP_1A_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/286
-STEP_1A_PRIMARY_PR_MERGED: YES
-STEP_1A_PRIMARY_PR_MERGE_SHA: 395fbdb5bef2f19f49647fb7ee202afd7d9489cb
-MAIN_SHA_AFTER_STEP_1A_PRIMARY: 395fbdb5bef2f19f49647fb7ee202afd7d9489cb
+DEVREF_PRIMARY_PR_NUMBER: PENDING
+DEVREF_PRIMARY_PR_URL: PENDING
+DEVREF_PRIMARY_PR_MERGED: NO
+DEVREF_PRIMARY_PR_MERGE_SHA: PENDING
+DEVREF_REPORT_PR_NUMBER: PENDING
+DEVREF_REPORT_PR_URL: PENDING
+DEVREF_REPORT_PR_MERGE_SHA: PENDING
 
-STEP_1A_REPORT_PR_NUMBER: 287
-STEP_1A_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/287
-STEP_1A_REPORT_PR_MERGED: YES
-STEP_1A_REPORT_PR_MERGE_SHA: caf5b64d39738318d04a62c4c11ae5cd37d3f900
-NOTE: Prior row STEP_1A_REPORT_PR_MERGE_STATUS_AT_DOCUMENT_TIME=PENDING_MERGE
-      was document-time text in #287; corrected here after confirmed merge.
+LOCAL_MAIN_EQUALS_ORIGIN: PENDING
+WORKTREE_CLEAN: PENDING
+FINAL_MAIN_SHA: PENDING
 
-MAIN_SHA_AFTER_STEP_1A_REPORT: caf5b64d39738318d04a62c4c11ae5cd37d3f900
-
-STEP_1A_PATH_B_SEAL_PR_NUMBER: 288
-STEP_1A_PATH_B_SEAL_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/288
-STEP_1A_PATH_B_SEAL_PR_MERGED: NO
-STEP_1A_PATH_B_SEAL_PR_MERGE_STATUS_AT_DOCUMENT_TIME: PENDING_MERGE
-STEP_1A_PATH_B_SEAL_PR_MERGE_SHA: PENDING（未来値を捏造しない）
-
-STEP_1A_VERDICTS:
-STEP_1A_EVIDENCE_PACKAGE_VERDICT: COMPLETE_CANDIDATE_ONLY
-STEP_1A_GOLDEN_CANDIDATE_VERDICT: READY_FOR_HUMAN_DERIVATION
-STEP_1A_INDEPENDENT_HUMAN_EVIDENCE_VERDICT: MISSING
-STEP_1A_GOLDEN_APPROVAL_VERDICT: NOT_APPROVED
-STEP_1A_SECTION_PROPERTIES_AUTHORIZATION: NOT_AUTHORIZED
-STEP_1B_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-
---------------------------------------------------------------------------------
-実装範囲（本 seal）
---------------------------------------------------------------------------------
-変更ファイル:
-- final_report.txt（本ファイルのみ）
-
-対象外:
-- Step 1-B/C/D application code
-- Cell GRANTED
-- Fabricated expected Golden values / approver names / GRANTED DEC-IDs
-
---------------------------------------------------------------------------------
-検証
---------------------------------------------------------------------------------
-Docs-only seal: no application code change.
-git diff --check: (at commit time)
-Existing Step 1-A package on main unchanged by this seal.
-FAIL_CLOSED: YES
-
---------------------------------------------------------------------------------
-人間作業 / 再開
---------------------------------------------------------------------------------
-HUMAN_ACTION_REQUIRED: YES
-BLOCKED_AT_STEP: STEP_1A
-BLOCKER_IDS:
-- MISSING_INDEPENDENT_HUMAN_DERIVATION_GOLD_SP_001
-- MISSING_INDEPENDENT_HUMAN_DERIVATION_GOLD_SP_002
-- MISSING_TOLERANCE_FREEZE_SIGN_OFF
-- MISSING_INDEPENDENT_REVIEWER
-- MISSING_APPROVAL_DEC_ID
-- SECTION_PROPERTIES_CELL_NOT_AUTHORIZED
-EXPECTED_FILES:
-- docs/apollo/step1_numeric_core/evidence_golden/GOLD-SP-001.md
-- docs/apollo/step1_numeric_core/evidence_golden/GOLD-SP-002.md
-- docs/apollo/step1_numeric_core/evidence_golden/tolerance_and_rounding_freeze.md
-- docs/apollo/step1_numeric_core/evidence_golden/independent_review_checklist.md
-- docs/apollo/step1_numeric_core/evidence_golden/approval_register.csv
-- external independent derivation artifact (+ checksum)
-EXPECTED_FIELDS: see docs/apollo/step1_numeric_core/evidence_golden/human_action_required.md
-RESTART_CONDITION: GOLD-SP-001/002 APPROVED + tolerance frozen + reviewer + DEC-ID cell GRANTED
-RESTART_FROM_STEP: STEP_1B
-NEXT_STEP_START_ALLOWED: NO
-
-RESTART_COMMAND_SKETCH:
-  cd /home/masaharu/Projects/spacer-clone
-  git fetch origin && git checkout main && git pull --ff-only origin main
-  # Verify PATH A conditions in docs/apollo/step1_numeric_core/evidence_golden/
-  # Then open feat/apollo-step1b-section-properties from latest main
-
-WORK_COMPLETED:
-- Step 1-A evidence/Golden candidate package on main (#286)
-- Step 1-A report finalization on main (#287)
-- PATH B seal of report merge SHA (this PR)
-
-PR_MERGED:
-- #286 YES
-- #287 YES
-- PATH_B_SEAL: PENDING (this PR)
-
-OVERALL_VERDICT: BLOCKED
+OVERALL_VERDICT: DEVELOPMENT_PARITY_PASS_FORMAL_STILL_BLOCKED
 ================================================================================

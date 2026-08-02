@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-02T12:28:10.346Z",
+  "baseUrl": "http://127.0.0.1:5173",
+  "health": {
+    "ok": true,
+    "status": 200
+  },
+  "developmentTolerance": {
+    "status": "FROZEN_BEFORE_APP_COMPARISON",
+    "A_display": 0.00005,
+    "R_display": 1e-12,
+    "releaseUse": "PROHIBITED"
+  },
+  "referenceSha256": "e24b30e27a940f429a089762759bcb63a9113b4bea52f23ed65e17f2359565d4",
+  "cases": [
+    {
+      "caseId": "GOLD-SP-001",
+      "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+      "designOrConstructionUse": "PROHIBITED",
+      "numericDesignAuthorization": "NOT_GRANTED",
+      "inputsBefore": {
+        "spanLength": "40",
+        "bridgeLength": "40",
+        "girderDepth": "2.5",
+        "topFlangeWidth": "0.5",
+        "topFlangeThickness": "0.03",
+        "bottomFlangeWidth": "0.5",
+        "bottomFlangeThickness": "0.03",
+        "webThickness": "0.012",
+        "width": "10.5",
+        "girderCount": "4",
+        "girderSpacing": "3",
+        "deckThickness": "0.22",
+        "crossBeamSpacing": "5",
+        "bridgeSystem": "SIMPLE_SINGLE"
+      },
+      "sectionPropertiesDisplayed": {
+        "webHeight": "2.44",
+        "topFlangeArea": "0.015",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0293",
+        "totalArea": "0.0593",
+        "centroidFromBottom": "1.25",
+        "secondMomentOfArea": "0.0603",
+        "sectionModulusTop": "0.0482",
+        "sectionModulusBottom": "0.0482",
+        "steelVolumePerGirder": "2.3712"
+      },
+      "sectionPropertiesAfterReload": {
+        "webHeight": "2.44",
+        "topFlangeArea": "0.015",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0293",
+        "totalArea": "0.0593",
+        "centroidFromBottom": "1.25",
+        "secondMomentOfArea": "0.0603",
+        "sectionModulusTop": "0.0482",
+        "sectionModulusBottom": "0.0482",
+        "steelVolumePerGirder": "2.3712"
+      },
+      "sectionPropertiesAfterRegen": {
+        "webHeight": "2.44",
+        "topFlangeArea": "0.015",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0293",
+        "totalArea": "0.0593",
+        "centroidFromBottom": "1.25",
+        "secondMomentOfArea": "0.0603",
+        "sectionModulusTop": "0.0482",
+        "sectionModulusBottom": "0.0482",
+        "steelVolumePerGirder": "2.3712"
+      },
+      "panelTextSnippet": "断面特性（純幾何計算・設計判定なし）\n項目\t値\t単位\nウェブ高さ\t2.44\tm\n上フランジ断面積\t0.015\tm²\n下フランジ断面積\t0.015\tm²\nウェブ断面積\t0.0293\tm²\n断面積合計\t0.0593\tm²\n図心位置（下面基準）\t1.25\tm\n断面2次モーメント\t0.0603\tm⁴\n断面係数（上縁）\t0.0482\tm³\n断面係数（下縁）\t0.0482\tm³\n主桁1本当たり鋼体積\t2.3712\tm³\n\n寸法入力からの純幾何計算であり、設計判定や数値採用ではありません。",
+      "sdmVisible": true,
+      "authorizationSnippet": "生成済み設計エンティティ\n主桁: 4 件（designStatus: NOT_AUTHORIZED）\nRC床版: 1 件（designStatus: NOT_AUTHORIZED）\n横桁: 9 件（designStatus: NOT_AUTHORIZED）\n補剛材: 0 件（designStatus: NOT_AUTHORIZED）\n対傾構: 0 箇所 / 横繋: 0 箇所\n対傾構・横繋部材: 0 本（designStatus: NOT_AUTHORIZED）\nnonCompositeAssertion.compositeAction: false\n\n主桁1: NOT_AUTHORIZED",
+      "workspaceSaveOk": true,
+      "workspaceReloadOk": true,
+      "saveReloadPropsMatch": true,
+      "staleVisible": true,
+      "screenshot": "/home/masaharu/Projects/spacer-clone/docs/apollo/step1_numeric_core/evidence_golden/development_reference/screenshot_GOLD-SP-001.png",
+      "consoleErrors": [],
+      "comparisons": {
+        "webHeight": {
+          "expected": 2.44,
+          "actual": 2.44,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "topFlangeArea": {
+          "expected": 0.015,
+          "actual": 0.015,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "bottomFlangeArea": {
+          "expected": 0.015,
+          "actual": 0.015,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "webArea": {
+          "expected": 0.02928,
+          "actual": 0.0293,
+          "absoluteDifference": 0.000019999999999999185,
+          "relativeDifference": 0.0006830601092895896,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "totalArea": {
+          "expected": 0.05928,
+          "actual": 0.0593,
+          "absoluteDifference": 0.000019999999999999185,
+          "relativeDifference": 0.000337381916329271,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "centroidFromBottom": {
+          "expected": 1.25,
+          "actual": 1.25,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "secondMomentOfArea": {
+          "expected": 0.060285784,
+          "actual": 0.0603,
+          "absoluteDifference": 0.000014215999999997453,
+          "relativeDifference": 0.00023581015384982723,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "sectionModulusTop": {
+          "expected": 0.0482286272,
+          "actual": 0.0482,
+          "absoluteDifference": 0.00002862719999999902,
+          "relativeDifference": 0.0005935727733091897,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "sectionModulusBottom": {
+          "expected": 0.0482286272,
+          "actual": 0.0482,
+          "absoluteDifference": 0.00002862719999999902,
+          "relativeDifference": 0.0005935727733091897,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "steelVolumePerGirder": {
+          "expected": 2.3712,
+          "actual": 2.3712,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        }
+      },
+      "developmentParity": "PASS",
+      "tolerance": {
+        "A_display": 0.00005,
+        "R_display": 1e-12,
+        "status": "FROZEN_BEFORE_APP_COMPARISON"
+      }
+    },
+    {
+      "caseId": "GOLD-SP-002",
+      "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+      "designOrConstructionUse": "PROHIBITED",
+      "numericDesignAuthorization": "NOT_GRANTED",
+      "inputsBefore": {
+        "spanLength": "200",
+        "bridgeLength": "200",
+        "girderDepth": "2.5",
+        "topFlangeWidth": "0.5",
+        "topFlangeThickness": "0.02",
+        "bottomFlangeWidth": "0.6",
+        "bottomFlangeThickness": "0.025",
+        "webThickness": "0.012",
+        "width": "10.5",
+        "girderCount": "4",
+        "girderSpacing": "3",
+        "deckThickness": "0.22",
+        "crossBeamSpacing": "5",
+        "bridgeSystem": "SIMPLE_SINGLE"
+      },
+      "sectionPropertiesDisplayed": {
+        "webHeight": "2.455",
+        "topFlangeArea": "0.01",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0295",
+        "totalArea": "0.0545",
+        "centroidFromBottom": "1.1382",
+        "secondMomentOfArea": "0.0525",
+        "sectionModulusTop": "0.0385",
+        "sectionModulusBottom": "0.0461",
+        "steelVolumePerGirder": "10.892"
+      },
+      "sectionPropertiesAfterReload": {
+        "webHeight": "2.455",
+        "topFlangeArea": "0.01",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0295",
+        "totalArea": "0.0545",
+        "centroidFromBottom": "1.1382",
+        "secondMomentOfArea": "0.0525",
+        "sectionModulusTop": "0.0385",
+        "sectionModulusBottom": "0.0461",
+        "steelVolumePerGirder": "10.892"
+      },
+      "sectionPropertiesAfterRegen": {
+        "webHeight": "2.455",
+        "topFlangeArea": "0.01",
+        "bottomFlangeArea": "0.015",
+        "webArea": "0.0295",
+        "totalArea": "0.0545",
+        "centroidFromBottom": "1.1382",
+        "secondMomentOfArea": "0.0525",
+        "sectionModulusTop": "0.0385",
+        "sectionModulusBottom": "0.0461",
+        "steelVolumePerGirder": "10.892"
+      },
+      "panelTextSnippet": "断面特性（純幾何計算・設計判定なし）\n項目\t値\t単位\nウェブ高さ\t2.455\tm\n上フランジ断面積\t0.01\tm²\n下フランジ断面積\t0.015\tm²\nウェブ断面積\t0.0295\tm²\n断面積合計\t0.0545\tm²\n図心位置（下面基準）\t1.1382\tm\n断面2次モーメント\t0.0525\tm⁴\n断面係数（上縁）\t0.0385\tm³\n断面係数（下縁）\t0.0461\tm³\n主桁1本当たり鋼体積\t10.892\tm³\n\n寸法入力からの純幾何計算であり、設計判定や数値採用ではありません。",
+      "sdmVisible": true,
+      "authorizationSnippet": "生成済み設計エンティティ\n主桁: 4 件（designStatus: NOT_AUTHORIZED）\nRC床版: 1 件（designStatus: NOT_AUTHORIZED）\n横桁: 41 件（designStatus: NOT_AUTHORIZED）\n補剛材: 0 件（designStatus: NOT_AUTHORIZED）\n対傾構: 0 箇所 / 横繋: 0 箇所\n対傾構・横繋部材: 0 本（designStatus: NOT_AUTHORIZED）\nnonCompositeAssertion.compositeAction: false\n\n主桁1: NOT_AUTHORIZED",
+      "workspaceSaveOk": true,
+      "workspaceReloadOk": true,
+      "saveReloadPropsMatch": true,
+      "staleVisible": true,
+      "screenshot": "/home/masaharu/Projects/spacer-clone/docs/apollo/step1_numeric_core/evidence_golden/development_reference/screenshot_GOLD-SP-002.png",
+      "consoleErrors": [],
+      "comparisons": {
+        "webHeight": {
+          "expected": 2.455,
+          "actual": 2.455,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "topFlangeArea": {
+          "expected": 0.01,
+          "actual": 0.01,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "bottomFlangeArea": {
+          "expected": 0.015,
+          "actual": 0.015,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "webArea": {
+          "expected": 0.02946,
+          "actual": 0.0295,
+          "absoluteDifference": 0.00003999999999999837,
+          "relativeDifference": 0.0013577732518668829,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "totalArea": {
+          "expected": 0.05446,
+          "actual": 0.0545,
+          "absoluteDifference": 0.00003999999999999837,
+          "relativeDifference": 0.0007344840249724269,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "centroidFromBottom": {
+          "expected": 1.1381959236136614,
+          "actual": 1.1382,
+          "absoluteDifference": 0.0000040763863387027754,
+          "relativeDifference": 0.00000358144521003084,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "secondMomentOfArea": {
+          "expected": 0.052463980582828376,
+          "actual": 0.0525,
+          "absoluteDifference": 0.00003601941717162188,
+          "relativeDifference": 0.0006865551712141939,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "sectionModulusTop": {
+          "expected": 0.03852535140153637,
+          "actual": 0.0385,
+          "absoluteDifference": 0.00002535140153637344,
+          "relativeDifference": 0.0006580446540810122,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "sectionModulusBottom": {
+          "expected": 0.04609398038982633,
+          "actual": 0.0461,
+          "absoluteDifference": 0.000006019610173671475,
+          "relativeDifference": 0.00013059427983355714,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        },
+        "steelVolumePerGirder": {
+          "expected": 10.892,
+          "actual": 10.892,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 0.00005,
+          "R": 1e-12,
+          "threshold": 0.00005,
+          "verdict": "PASS"
+        }
+      },
+      "developmentParity": "PASS",
+      "tolerance": {
+        "A_display": 0.00005,
+        "R_display": 1e-12,
+        "status": "FROZEN_BEFORE_APP_COMPARISON"
+      }
+    }
+  ],
+  "overallDevelopmentParity": "PASS"
+}

@@ -1,7 +1,7 @@
 # Human Action Required — Step 1-A PATH B Stop
 
-**Status:** `HUMAN_APPROVAL_REQUIRED`  
-**Date:** 2026-08-02  
+**Status:** `HUMAN_APPROVAL_REQUIRED`
+**Date:** 2026-08-02
 **Blocks:** Step 1-B application authorization integration and all later numeric Steps
 
 This is a **governance-normal stop**, not an implementation failure. Cursor Auto prepared candidate fixtures and worksheets only.
@@ -34,11 +34,11 @@ Do **not** paste outputs from `computeGirderSectionProperties` into Expected cel
 
 ## 3. After human completion (restart conditions)
 
-1. Expected values filled and checksummed derivation artifacts present  
-2. Reviewer PASS on checklist  
-3. `approval_register.csv` → `APPROVED` with DEC-ID  
-4. Update `08_numeric_authorization_gate.md` **only** for pure-geometry section-properties cell (or equivalent explicit cell) to `GRANTED` via DEC  
-5. Keep loads / analysis / verification cells `NOT_AUTHORIZED`  
+1. Expected values filled and checksummed derivation artifacts present
+2. Reviewer PASS on checklist
+3. `approval_register.csv` → `APPROVED` with DEC-ID
+4. Update `08_numeric_authorization_gate.md` **only** for pure-geometry section-properties cell (or equivalent explicit cell) to `GRANTED` via DEC
+5. Keep loads / analysis / verification cells `NOT_AUTHORIZED`
 6. Sync main; restart from **Step 1-B**
 
 ## 4. Restart command sketch
