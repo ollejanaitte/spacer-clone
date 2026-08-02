@@ -1,15 +1,22 @@
 ================================================================================
 Apollo 対傾構・上下横構3D配置修正 — 最終レポート
 ================================================================================
-更新日時: 2026-08-02T20:06:00+09:00
+更新日時: 2026-08-02T20:10:00+09:00
 作業: Apollo 対傾構・上下横構3D配置修正
-作業状態: 実装・自動テスト完了、PR作成・マージへ
-現在ブランチ: fix/apollo-bracing-system-geometry
+作業状態: COMPLETE（mainマージ済み）
+現在ブランチ: main
 開始時main SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-現在HEAD SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2（未commit差分あり）
+現在HEAD SHA: 5c055da7ff89c1e581c2507c89e7b7bfb38e2aaf
 再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 下横構ON
-既存対傾構の分類: 同一X鉛直面だがX字形（CURRENT_SWAY_BRACING_SHAPE: X_TYPE）
-既存横構の分類: lateralBracingEnabled のみ（下側意味）、Zがウェブ中心付近
+
+CURRENT_SWAY_BRACING_PLANE: 修正前=同一X鉛直面 / 修正後=同一X鉛直面（維持）
+CURRENT_SWAY_BRACING_SHAPE: 修正前=X_TYPE / 修正後=V_TYPE（leftTop/rightTop→midBottom）
+CURRENT_UPPER_LATERAL_PLANE: 修正後=水平面 Z=topConnectionZ（upperLateralBracingEnabled）
+CURRENT_LOWER_LATERAL_PLANE: 修正後=水平面 Z=bottomConnectionZ（legacy lateralBracingEnabled）
+CURRENT_ENTITY_SEPARATION: SWAY / UPPER_LATERAL / LOWER_LATERAL を別entity・別label・bracingSystem寸法で分離
+
+既存対傾構の分類: 同一X鉛直面だがX字形（修正前）
+既存横構の分類: lateralBracingEnabled のみ（下側意味）、Zがウェブ中心付近（修正前）
 対傾構の正本座標: stationX固定、leftTop/rightTop@topConnectionZ、midBottom@bottomConnectionZ（V型）
 上横構の正本座標: Z=topConnectionZ、隣接station×隣接主桁の水平面X形
 下横構の正本座標: Z=bottomConnectionZ、同上
@@ -30,8 +37,48 @@ Apollo 対傾構・上下横構3D配置修正 — 最終レポート
 | 添接・ボルト・端横桁特殊 | 部分 | 不足 | 不足 | 否 | 寸法創作禁止 | 入力拡充後 |
 自動テスト: typecheck PASS / apollo 300 PASS / lint PASS / build PASS / STL・bounds PASS
 手動GUI: MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
-PR番号・URL: 作成予定
-mainマージ状態: 未着手
+PR番号・URL: #280 https://github.com/ollejanaitte/spacer-clone/pull/280
+mainマージ状態: MERGED（mergeCommit 5c055da）
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-次の作業: commit → push → PR → 自己レビュー → merge → main同期
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+次の作業: ユーザーによる MV-BR-01..16 GUI確認
+
+================================================================================
+最終サマリ
+================================================================================
+MODEL: Cursor Agent
+TASK: APOLLO_SWAY_UPPER_LOWER_LATERAL_BRACING_FIX
+WORKING_PATH: /home/masaharu/Projects/spacer-clone
+INITIAL_MAIN_SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
+FINAL_MAIN_SHA: 5c055da7ff89c1e581c2507c89e7b7bfb38e2aaf
+REPRODUCTION_VERDICT: CONFIRMED_FROM_CODE_AND_TESTS
+SWAY_BRACING_GEOMETRY_BEFORE: X-shape in constant-X vertical plane
+SWAY_BRACING_GEOMETRY_AFTER: V-type (leftTop/rightTop→midBottom) in constant-X vertical plane
+SWAY_BRACING_PLANE_VERDICT: PASS
+SWAY_BRACING_TRIANGULAR_VERDICT: PASS
+UPPER_LATERAL_BRACING_VERDICT: PASS (additive flag, Z=topConnectionZ)
+LOWER_LATERAL_BRACING_VERDICT: PASS (legacy flag, Z=bottomConnectionZ)
+ENTITY_SEPARATION_VERDICT: PASS
+UI_CONTRACT_VERDICT: PASS (legacy lower boolean + additive upper)
+LEGACY_COMPATIBILITY_VERDICT: PASS (false→none, true→LOWER_ONLY meaning unchanged)
+OTHER_COMPONENTS_3D_STATUS: SURVEY_ONLY_NO_NEW_INVENTED_MEMBERS
+FILES_CHANGED: 15
+TYPECHECK_VERDICT: PASS
+TEST_VERDICT: PASS (300 apollo)
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+STL_REGRESSION: PASS
+SAVE_RELOAD_REGRESSION: PASS (automated)
+SELECTION_REGRESSION: PASS (automated)
+PR279_BOUNDS_REGRESSION: PASS
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+PR_NUMBER: 280
+PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/280
+PR_MERGED: YES
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+WORKTREE_CLEAN: YES（本レポート追記コミット後）
+OVERALL_VERDICT: COMPLETE
+NEXT_RECOMMENDED_ACTION: 手動GUIで MV-BR-01..16 を確認する
 ================================================================================
