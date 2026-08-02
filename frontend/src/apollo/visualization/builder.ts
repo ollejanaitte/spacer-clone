@@ -968,13 +968,23 @@ export function buildApolloVisualizationModel(
     warnings,
     assumptions,
   );
+  const bsddHasSubstructure = bridgeStructureSolids.some(
+    (solid) =>
+      solid.kind === "bearing" ||
+      solid.kind === "pier_marker" ||
+      solid.kind === "abutment_marker",
+  );
   const solidGeometryParameters =
     bridgeStructureSolids.length > 0
       ? [
           ...bridgeStructureSolids,
-          ...legacySolidGeometryParameters.filter((solid) =>
-            solid.kind === "bearing" || solid.kind === "pier_marker" || solid.kind === "abutment_marker",
-          ),
+          ...(bsddHasSubstructure
+            ? []
+            : legacySolidGeometryParameters.filter((solid) =>
+                solid.kind === "bearing" ||
+                solid.kind === "pier_marker" ||
+                solid.kind === "abutment_marker",
+              )),
         ].sort((left, right) => left.id.localeCompare(right.id))
       : legacySolidGeometryParameters;
 
