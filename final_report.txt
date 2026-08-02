@@ -1,70 +1,56 @@
 ================================================================================
-Apollo 連続桁 — Step C3 実装レポート
+Apollo 連続桁垂直スライス — Step C4 検証レポート（最終）
 ================================================================================
-更新日時: 2026-08-02T17:07:00+09:00
+更新日時: 2026-08-02T17:12:00+09:00
 実行モデル: TokenRouter KimK3
-現在のStep: C3（continuous girder 3D visualization）
-作業状態: PR 作成・マージ実行中
-現在ブランチ: feat/apollo-continuous-girder-3d
-開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
-ベースmain SHA（C3開始時 origin/main）: a7b775685183b852fee3ec8e2778fdb940281e15
+MODEL: TokenRouter KimK3
+ROLE_MODE: Composer 2.5（作業員）
+WORKING_PATH: /home/masaharu/Projects/spacer-clone
+RECOVERY_BRANCH: test/apollo-continuous-girder-verification
+RECOVERY_STATUS: C4 検証完了・PR マージ待ち/実行中
+現在のStep: C4（continuous girder vertical slice verification）
+作業状態: 自動検証 PASS、手動 GUI PENDING
+現在ブランチ: test/apollo-continuous-girder-verification
+INITIAL_MAIN_SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
+C4_BASE_MAIN_SHA: 69cf99741ab20736eb57dda88752ca463f6363b2
 現在HEAD SHA: （コミット後更新）
-worktree状態: clean（コミット前は実装差分あり）
-未コミット差分: C3 実装一式
+FINAL_MAIN_SHA: （マージ後更新）
+worktree状態: clean（コミット前は文書差分のみ）
+未コミット差分: C4 文書・final_report
 未push commit: 0（コミット後更新）
 
-## 実施内容（C3）
+## Step 別 PR / STATUS
 
-1. bridgeStructureSolids.ts 拡張
-   - CONTINUOUS 時: 支点位置で主桁 segment ID 分割（物理ギャップなし、designEntityId は親 MainGirder 維持）
-   - SIMPLE_SINGLE: 従来どおり全長 1 ソリッド
-   - BSDD supports から橋台/橋脚マーカー・支承ソリッド生成（station/role 反映）
-   - 横桁に atSupport フラグ（支点横桁 vs 支間内横桁）
-   - 補剛材・対傾構・横構・床版は既存規則維持
-2. builder.ts
-   - BSDD 下部構造ソリッド存在時は legacy 支点マーカー/支承の重複を抑制
-3. テスト
-   - continuousGirderVisualization.test.ts 新規（[30,35,30] サンプル、ギャップなし、STALE、save/reload、STL、SIMPLE_SINGLE 回帰）
-   - bridgeStructureVisualization.test.ts: 5 径間 CONTINUOUS フィクスチャの segment 期待値更新
-   - apolloSuite manifest 更新
+| Step | PR | merge SHA | STATUS |
+|------|-----|-----------|--------|
+| S0 | #266 | c3d58ba3bdc7cc645442b68711b5fec73ba24e03 | MERGED |
+| S1 | #267 | 9da49a88f6ff13bd331eb8ec82591de1ce70dacb | MERGED |
+| S2 | #268 | 00f3e4f060cca861404e7f8189e66868d2f13d7d | MERGED |
+| C0 | #269 | 173396e92f89c42480d7deb8d2c437652f571ecd | MERGED |
+| C1 | #270 | 042637a446747379eb82f4fe92d6a609b2d2b858 | MERGED |
+| C2 | #271 | a7b775685183b852fee3ec8e2778fdb940281e15 | MERGED |
+| C3 | #272 | 69cf99741ab20736eb57dda88752ca463f6363b2 | MERGED |
+| C4 | （作成後更新） | （マージ後更新） | IN_PROGRESS |
 
-## 変更ファイル要約
+## 実施内容（C4）
 
-新規:
-- frontend/src/apollo/__tests__/continuousGirderVisualization.test.ts
-
-変更:
-- frontend/src/apollo/visualization/bridgeStructureSolids.ts
-- frontend/src/apollo/visualization/builder.ts
-- frontend/src/apollo/__tests__/bridgeStructureVisualization.test.ts
-- frontend/src/apollo/__tests__/apolloSuite.test.ts
-
-## schema bump
-
-- なし（可視化レイヤのみ。IF3/lockfile/backend 変更なし）
-
-## phase1ScopeGuard 判断
-
-- phase1ScopeGuard.ts は変更なし（旧 Phase1 entry は CONTINUOUS 拒否継続）
-- bridgeStructure 垂直スライス経路のみ CONTINUOUS 3D 可視化を提供
-- 数量は幾何のみ、重量は USER_PROVIDED_UNVERIFIED、designStatus は全エンティティ NOT_AUTHORIZED（NOT_GRANTED 維持）
-
-## ソースオブトゥルース
-
-- docs/apollo/continuous_girder/visualization_spec.md（C0 設計文書）
-- ユーザー C3 仕様: 連続主桁・支点 segment 分割・下部構造簡易 3D
-
-## テスト結果
-
-- npm run typecheck: PASS
-- npm test -- src/apollo: 287/287 PASS
-- npm run lint: PASS（既存日本語警告のみ）
-- npm run build: PASS
-- git diff --check: PASS
+1. main 同期（fetch --prune / pull --ff-only）後、ブランチ `test/apollo-continuous-girder-verification` で検証
+2. フロントエンド自動検証:
+   - npm run typecheck: PASS
+   - npm test -- src/apollo: 38 files / 287 tests PASS
+   - npm run lint: PASS（既存日本語警告のみ）
+   - npm run build: PASS
+   - contract / viewer / STL / import-export / suite manifest 関連 10 modules: 97 tests PASS
+   - git diff --check: PASS
+3. 文書:
+   - docs/apollo/continuous_girder/completion_report.md 新規
+   - docs/apollo/continuous_girder/manual_verification_checklist.md C4 向け拡充
+4. production code / schema / lockfile / backend / IF3: 変更なし
 
 ## 手動確認
 
-MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（3D 連続桁表示は自動テストでカバー。GUI 目視は C4 チェックリスト）
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+（本環境 GUI 操作不可。manual_verification_checklist.md MV-CG-01..35 すべて PENDING）
 
 ## 数値ゲート（変更なし）
 
@@ -75,14 +61,18 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ## PR / マージ
 
 PR番号・URL: （作成後更新）
-C3_PR: （作成後更新）
+C4_PR: （作成後更新）
 merge SHA: （マージ後更新）
-MAIN_SHA: （main 同期後更新）
+OPEN_PR_COUNT: （マージ後 0 想定）
 
-## 次 C4 注意点
+## OVERALL_VERDICT
 
-- 2/3/5 径間の網羅検証・手動チェックリスト（MV-CG-*）の実施
-- STL エクスポートの連続桁サンプル回帰強化
-- phase1ScopeGuard は据え置き
-- 解析・照査パイプラインは引き続き未対応を明示
+（C4 マージ・main 同期・worktree clean・open PR 0 後に COMPLETE へ更新）
+
+## NEXT_RECOMMENDED_ACTION
+
+1. ユーザーが manual_verification_checklist.md の GUI 目視を実施（任意だが推奨）
+2. 数値ゲートは Phase B 人間証跡待ち — BLOCKED / NOT_GRANTED 維持
+3. 連続桁垂直スライス完了後、Phase B 数値実装は別ゲート・別ブランチで開始
+
 ================================================================================

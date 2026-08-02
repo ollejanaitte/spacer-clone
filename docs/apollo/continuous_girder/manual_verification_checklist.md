@@ -1,56 +1,91 @@
 # 連続桁 — 手動確認チェックリスト
 
-**Authority:** Step C0（文書凍結。実行は C4）
+**Authority:** Step C0（文書凍結）/ Step C4（検証・チェックリスト拡充）
 **Date:** 2026-08-02
 **MANUAL_GUI_VERDICT:** `PENDING_USER_CONFIRMATION`
 
-> C0 は文書のみ。以下は C1〜C4 実装後の手動確認項目として凍結する。本環境では GUI 操作不可のため、現時点ですべて PENDING。
+> 本環境では対話的 GUI 操作を実行できないため、手動項目はすべて PENDING とする。PASS を捏造しない。自動検証は C4 で PASS 済み（下記 §7 参照）。
 
-## 1. 構造形式・入力
+## 1. 構造形式・径間数
 
 | # | 確認項目 | 期待値 | 状態 |
 |---|----------|--------|------|
 | MV-CG-01 | 構造形式選択 | 単径間 / 連続桁を切替可能 | PENDING |
-| MV-CG-02 | 径間数入力 | 2〜5 のみ受理 | PENDING |
-| MV-CG-03 | 支間長・構造モデル長 | `bridgeLength = spanLength × spanCount` | PENDING |
-| MV-CG-04 | 非整数倍拒否 | 割り切れない組合せで生成拒否 | PENDING |
-| MV-CG-05 | SIMPLE_SINGLE 回帰 | 単径間フローが S2 同等 | PENDING |
+| MV-CG-02 | CONTINUOUS 2 径間 | [30,30] 等で生成・3D 更新 | PENDING |
+| MV-CG-03 | CONTINUOUS 3 径間 | [30,35,30] サンプル同等 | PENDING |
+| MV-CG-04 | CONTINUOUS 5 径間 | [20,25,30,25,20] 等で受理 | PENDING |
+| MV-CG-05 | 径間数入力 | 2〜5 のみ受理 | PENDING |
+| MV-CG-06 | 支間長・構造モデル長 | `bridgeLength = Σ span.length` | PENDING |
+| MV-CG-07 | 非整数倍拒否 | 割り切れない組合せで生成拒否 | PENDING |
+| MV-CG-08 | SIMPLE_SINGLE 回帰 | 単径間フローが S2 同等 | PENDING |
 
-## 2. 生成・STALE
-
-| # | 確認項目 | 期待値 | 状態 |
-|---|----------|--------|------|
-| MV-CG-06 | 構造生成 | 主桁・支点・床版・3D 更新 | PENDING |
-| MV-CG-07 | 入力変更 STALE | `generatedAt` null、STALE 表示 | PENDING |
-| MV-CG-08 | 再生成 | STALE 解除、3D 復帰 | PENDING |
-| MV-CG-09 | NOT_AUTHORIZED | 設計ステータスが正式採用にならない | PENDING |
-
-## 3. 下部構造・3D
+## 2. 支間・支点操作
 
 | # | 確認項目 | 期待値 | 状態 |
 |---|----------|--------|------|
-| MV-CG-10 | 橋台表示 | 端部 2 箇所 | PENDING |
-| MV-CG-11 | 橋脚表示 | 中間 `spanCount - 1` 箇所 | PENDING |
-| MV-CG-12 | 主桁連続 | 径間継ぎ目なしの貫通表示 | PENDING |
-| MV-CG-13 | STL 出力 | 三角面 > 0 | PENDING |
+| MV-CG-09 | 支間追加 | 径間数増加・レイアウト再計算 | PENDING |
+| MV-CG-10 | 支間削除 | 径間数減少・レイアウト再計算 | PENDING |
+| MV-CG-11 | 支点位置 | cumulative station [0, L1, L1+L2, …] | PENDING |
+| MV-CG-12 | 橋台表示 | 端部 2 箇所（abutment） | PENDING |
+| MV-CG-13 | 橋脚表示 | 中間 `spanCount - 1` 箇所（pier） | PENDING |
 
-## 4. 保存・互換
-
-| # | 確認項目 | 期待値 | 状態 |
-|---|----------|--------|------|
-| MV-CG-14 | save/reload | 入力・SDM・generation current 復元 | PENDING |
-| MV-CG-15 | レガシー SIMPLE | `bridgeSystem` 欠落で単径間として開く | PENDING |
-| MV-CG-16 | VVS01/S2 互換 | 既存プロジェクト破綻なし | PENDING |
-
-## 5. 禁止境界（負の確認）
+## 3. 生成・STALE・NOT_AUTHORIZED
 
 | # | 確認項目 | 期待値 | 状態 |
 |---|----------|--------|------|
-| MV-CG-17 | 断面力・利用率 | 表示されない | PENDING |
-| MV-CG-18 | 負曲げ・活荷重 UI | 存在しない | PENDING |
-| MV-CG-19 | 正式照査 OK | 出力されない | PENDING |
+| MV-CG-14 | 構造生成 | 主桁・支点・床版・3D 更新 | PENDING |
+| MV-CG-15 | サンプル後 STALE | 自動生成なし、`generatedAt` null | PENDING |
+| MV-CG-16 | 入力変更 STALE | 生成後編集で STALE、BSDD 可視化停止 | PENDING |
+| MV-CG-17 | 再生成 | STALE 解除、3D 復帰 | PENDING |
+| MV-CG-18 | NOT_AUTHORIZED | 設計ステータスが正式採用にならない | PENDING |
 
-## 6. 数値ゲート（全 Step 共通）
+## 4. 連続主桁・部材 3D
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-CG-19 | 連続主桁 3D | 径間継ぎ目にギャップなしの貫通表示 | PENDING |
+| MV-CG-20 | 主桁 segment | 支点ごとに segment 分割（同一 MainGirder） | PENDING |
+| MV-CG-21 | 横桁 | 支点横桁（atSupport）と支間内横桁の区別 | PENDING |
+| MV-CG-22 | 補剛材 | 既存規則どおり表示（該当時） | PENDING |
+| MV-CG-23 | 対傾構 | 既存規則どおり表示（該当時） | PENDING |
+| MV-CG-24 | 横構 | 既存規則どおり表示（該当時） | PENDING |
+| MV-CG-25 | 床版 | 全長 1 ソリッド | PENDING |
+
+## 5. 保存・STL・互換
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-CG-26 | save/reload | 入力・SDM・generation current 復元 | PENDING |
+| MV-CG-27 | STL 出力 | 三角面 > 0 | PENDING |
+| MV-CG-28 | レガシー SIMPLE | `bridgeSystem` 欠落で単径間として開く | PENDING |
+| MV-CG-29 | VVS01/S2 互換 | 既存プロジェクト破綻なし | PENDING |
+
+## 6. invalid input（負の確認）
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-CG-30 | 重複 span ID | バリデーション拒否 | PENDING |
+| MV-CG-31 | SIMPLE_MULTIPLE | fail-close | PENDING |
+| MV-CG-32 | 不正レイアウト | 生成拒否・エラー表示 | PENDING |
+
+## 7. 禁止境界（負の確認）
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-CG-33 | 断面力・利用率 | 表示されない | PENDING |
+| MV-CG-34 | 負曲げ・活荷重 UI | 存在しない | PENDING |
+| MV-CG-35 | 正式照査 OK | 出力されない | PENDING |
+
+## 8. 自動検証メモ（参考・GUI 代替ではない）
+
+- `continuousGirderLayout.test.ts`: CONTINUOUS 2/3/5、save/reload、invalid、SIMPLE_SINGLE 回帰 — PASS
+- `continuousGirderSample.test.ts`: サンプル STALE / generate — PASS
+- `continuousGirderVisualization.test.ts`: 3D segment・STALE・STL・SIMPLE_SINGLE — PASS
+- `npm test -- src/apollo`: 38 files / 287 tests — PASS
+- contract / viewer / STL / import-export / suite manifest 関連 10 modules — PASS
+- typecheck / lint / build — PASS
+
+## 9. 数値ゲート（全 Step 共通）
 
 ```
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
