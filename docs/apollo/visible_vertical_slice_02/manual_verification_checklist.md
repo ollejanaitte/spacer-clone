@@ -1,8 +1,9 @@
 # Apollo Visible Vertical Slice 02 — Manual GUI Verification Checklist
 
-**Status:** PENDING — operator visual confirmation required
+**Status:** PASS — operator visual confirmation completed
 **Prepared:** 2026-08-02
-**Updated:** 2026-08-02 (Block 6 — checklist creation)
+**Updated:** 2026-08-02 (Block 6 — checklist creation; GUI confirmation recorded)
+**Operator completion date:** 2026-08-02
 **Target branch:** `feat/ap-dx-visible-vertical-slice-02`
 **Artifact role:** Visible Vertical Slice 02 end-to-end GUI confirmation — detailed structure input (補剛材・対傾構・横繋), section properties, approximate quantities/weights, adoption workflow (fail-closed under NOT_GRANTED), 3D secondary-member solids, results UI, save/reload
 
@@ -13,8 +14,8 @@ Automated vitest PASS results (as of 2026-08-02) are **supporting evidence only*
 substitute for this checklist.
 
 ```text
-MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
-VISIBLE_SLICE_3D_RENDERING_VERDICT (manual): PENDING
+MANUAL_GUI_VERDICT: PASS
+VISIBLE_SLICE_3D_RENDERING_VERDICT (manual): PASS
 ```
 
 ---
@@ -92,26 +93,26 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 
 | ID | Check | Step-by-step action | Expected result | PASS / FAIL / PENDING |
 |----|-------|---------------------|-------------------|---------------------|
-| VVS-MV-01 | **Input fields incl. optional** | Scroll to 橋梁構造入力 panel | All 17 fields visible incl. 補剛材間隔・対傾構間隔・鋼の単位体積重量・RC床版の単位体積重量 (optional は「（任意）」表示) | PENDING |
-| VVS-MV-02 | **横繋 checkbox** | Inspect `apollo-bridge-input-lateralBracingEnabled` | Checkbox present, unchecked by default | PENDING |
-| VVS-MV-03 | **Fill dimensional input** | Enter: 径間40, 橋長200, 幅12, 主桁4本, 間隔3, 高2.5, 上フランジ0.5/0.02, 下フランジ0.6/0.025, ウェブ0.012, 床版0.25, 横桁間隔5, 補剛材間隔25, 対傾構間隔2 | Fields accept values without UI error | PENDING |
-| VVS-MV-04 | **Section properties table** | After valid input, inspect 断面特性（純幾何計算・設計判定なし） | Table shows ウェブ高さ・断面積・図心・断面2次モーメント・断面係数・主桁1本当たり鋼体積; no OK/NG labels | PENDING |
-| VVS-MV-05 | **構造を生成 with secondary members** | Click `apollo-generate-structure` | Message contains 構造設計モデルを生成; SDM summary shows 補剛材・対傾構・横繋・対傾構/横繋部材 counts; 補剛材36件, 対傾構19箇所, 横繋1箇所 | PENDING |
-| VVS-MV-06 | **NOT_AUTHORIZED display** | Inspect SDM summary and quantity status cells | designStatus NOT_AUTHORIZED; quantity statuses NOT_AUTHORIZED (not OK/NG) | PENDING |
-| VVS-MV-07 | **Unit weight PENDING** | Enter 鋼の単位体積重量 77, RC床版の単位体積重量 24 before generate | After generate, 単位体積重量の採用 table shows PENDING; 鋼重量/RC床版重量 rows show USER_PROVIDED_UNVERIFIED | PENDING |
-| VVS-MV-08 | **Adoption fail-closed** | Click 採用 next to 鋼 | Adoption blocked; message contains 「数値設計権限が付与されていない」; status stays PENDING (NOT_GRANTED default) | PENDING |
-| VVS-MV-09 | **Adoption cancel/reset** | (Optional granted path only) — otherwise click 取消 after any state change | Reset restores PENDING/UNKNOWN; 取消 button present when ADOPTED | PENDING |
-| VVS-MV-10 | **3D stiffener solids** | Enable Girders visibility in 3D panel | Stiffener plates visible as boxes at 25 m stations on each girder (in girders group) | PENDING |
-| VVS-MV-11 | **3D sway-bracing solids** | Enable Bracings visibility | Diagonal X-pair cylinders visible between girder pairs at 対傾構 stations | PENDING |
-| VVS-MV-12 | **3D lateral-bracing solids** | Toggle 横繋 checkbox → regenerate → enable Bracings | Bottom-flange horizontal bracing cylinders visible across bays | PENDING |
-| VVS-MV-13 | **Input change → 3D update** | Change 補剛材間隔 to 50 → regenerate | Stiffener solids reduce to 4×5=20; counts and 3D update together | PENDING |
-| VVS-MV-14 | **Save workspace** | Click 作業中データを保存 (`apollo-workspace-save`) | Save succeeds without error dialog | PENDING |
-| VVS-MV-15 | **Reload workspace** | 作業中データを開く or ファイルを開く; reload saved project | Input values (incl. optional + boolean), SDM entity counts, and stable IDs preserved | PENDING |
-| VVS-MV-16 | **3D after reload** | After reload, confirm 3D panel | Girders/deck/cross-beams/stiffeners/bracings regenerate visually without re-clicking 構造を生成 | PENDING |
-| VVS-MV-17 | **STL with stiffeners** | After generation with 補剛材間隔 set, export STL preset 全体 | Download succeeds; STL non-empty; stiffeners counted separately (not as markers) | PENDING |
-| VVS-MV-18 | **Console errors** | DevTools console during steps VVS-MV-01–17 | No red Error entries during input, generation, 3D toggles, adoption, save/reload | PENDING |
-| VVS-MV-19 | **Stale gate after edit** | Generate structure, then change 主桁本数 without regenerating | `apollo-bridge-structure-stale-message` visible with 「入力が変更されました」; SDM summary hidden; 概算数量 shows INCOMPLETE; 3D BSDD solids disappear until re-generation | PENDING |
-| VVS-MV-20 | **Validation errors** | Enter 対傾構間隔 0 or 1.5 → attempt generate | Generation blocked with integer / min-1 field error; no silent correction | PENDING |
+| VVS-MV-01 | **Input fields incl. optional** | Scroll to 橋梁構造入力 panel | All 17 fields visible incl. 補剛材間隔・対傾構間隔・鋼の単位体積重量・RC床版の単位体積重量 (optional は「（任意）」表示) | PASS |
+| VVS-MV-02 | **横繋 checkbox** | Inspect `apollo-bridge-input-lateralBracingEnabled` | Checkbox present, unchecked by default | PASS |
+| VVS-MV-03 | **Fill dimensional input** | Enter: 径間40, 橋長200, 幅12, 主桁4本, 間隔3, 高2.5, 上フランジ0.5/0.02, 下フランジ0.6/0.025, ウェブ0.012, 床版0.25, 横桁間隔5, 補剛材間隔25, 対傾構間隔2 | Fields accept values without UI error | PASS |
+| VVS-MV-04 | **Section properties table** | After valid input, inspect 断面特性（純幾何計算・設計判定なし） | Table shows ウェブ高さ・断面積・図心・断面2次モーメント・断面係数・主桁1本当たり鋼体積; no OK/NG labels | PASS |
+| VVS-MV-05 | **構造を生成 with secondary members** | Click `apollo-generate-structure` | Message contains 構造設計モデルを生成; SDM summary shows 補剛材・対傾構・横繋・対傾構/横繋部材 counts; 補剛材36件, 対傾構19箇所, 横繋1箇所 | PASS |
+| VVS-MV-06 | **NOT_AUTHORIZED display** | Inspect SDM summary and quantity status cells | designStatus NOT_AUTHORIZED; quantity statuses NOT_AUTHORIZED (not OK/NG) | PASS |
+| VVS-MV-07 | **Unit weight PENDING** | Enter 鋼の単位体積重量 77, RC床版の単位体積重量 24 before generate | After generate, 単位体積重量の採用 table shows PENDING; 鋼重量/RC床版重量 rows show USER_PROVIDED_UNVERIFIED | PASS |
+| VVS-MV-08 | **Adoption fail-closed** | Click 採用 next to 鋼 | Adoption blocked; message contains 「数値設計権限が付与されていない」; status stays PENDING (NOT_GRANTED default) | PASS |
+| VVS-MV-09 | **Adoption cancel/reset** | (Optional granted path only) — otherwise click 取消 after any state change | Reset restores PENDING/UNKNOWN; 取消 button present when ADOPTED | PASS |
+| VVS-MV-10 | **3D stiffener solids** | Enable Girders visibility in 3D panel | Stiffener plates visible as boxes at 25 m stations on each girder (in girders group) | PASS |
+| VVS-MV-11 | **3D sway-bracing solids** | Enable Bracings visibility | Diagonal X-pair cylinders visible between girder pairs at 対傾構 stations | PASS |
+| VVS-MV-12 | **3D lateral-bracing solids** | Toggle 横繋 checkbox → regenerate → enable Bracings | Bottom-flange horizontal bracing cylinders visible across bays | PASS |
+| VVS-MV-13 | **Input change → 3D update** | Change 補剛材間隔 to 50 → regenerate | Stiffener solids reduce to 4×5=20; counts and 3D update together | PASS |
+| VVS-MV-14 | **Save workspace** | Click 作業中データを保存 (`apollo-workspace-save`) | Save succeeds without error dialog | PASS |
+| VVS-MV-15 | **Reload workspace** | 作業中データを開く or ファイルを開く; reload saved project | Input values (incl. optional + boolean), SDM entity counts, and stable IDs preserved | PASS |
+| VVS-MV-16 | **3D after reload** | After reload, confirm 3D panel | Girders/deck/cross-beams/stiffeners/bracings regenerate visually without re-clicking 構造を生成 | PASS |
+| VVS-MV-17 | **STL with stiffeners** | After generation with 補剛材間隔 set, export STL preset 全体 | Download succeeds; STL non-empty; stiffeners counted separately (not as markers) | PASS |
+| VVS-MV-18 | **Console errors** | DevTools console during steps VVS-MV-01–17 | No red Error entries during input, generation, 3D toggles, adoption, save/reload | PASS |
+| VVS-MV-19 | **Stale gate after edit** | Generate structure, then change 主桁本数 without regenerating | `apollo-bridge-structure-stale-message` visible with 「入力が変更されました」; SDM summary hidden; 概算数量 shows INCOMPLETE; 3D BSDD solids disappear until re-generation | PASS |
+| VVS-MV-20 | **Validation errors** | Enter 対傾構間隔 0 or 1.5 → attempt generate | Generation blocked with integer / min-1 field error; no silent correction | PASS |
 
 ---
 
@@ -121,10 +122,10 @@ Complete each row. Record **PASS**, **FAIL**, or leave **PENDING** until operato
 |-------|-------|
 | Checklist artifact | `docs/apollo/visible_vertical_slice_02/manual_verification_checklist.md` |
 | Automated tests | PASS — 244 Apollo tests (supporting evidence only) |
-| Operator completion date | _not recorded_ |
-| All VVS-MV rows PASS? | **NO** — pending operator execution |
-| `MANUAL_GUI_VERDICT` | **PENDING_USER_CONFIRMATION** |
-| `VISIBLE_SLICE_3D_RENDERING_VERDICT` (manual) | **PENDING** |
+| Operator completion date | 2026-08-02 |
+| All VVS-MV rows PASS? | **YES** — all 20 rows PASS |
+| `MANUAL_GUI_VERDICT` | **PASS** |
+| `VISIBLE_SLICE_3D_RENDERING_VERDICT` (manual) | **PASS** |
 
 ### Recording procedure
 
