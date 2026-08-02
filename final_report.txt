@@ -12,18 +12,18 @@ Apollo Phase A+ — セッション復旧・進捗監査レポート
 作業状態: 実行中（P2 成果物 commit 済み・未push、セッション切断 → 保全 commit + Draft PR で退避）
 
 LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p2-standard-review
-LOCAL_HEAD_SHA: d4e121aff61e230052be2b756201cce6fb13b652
+LOCAL_HEAD_SHA: 0d3e022dd29894570c9b6ea2ab7cff94fcff4a86（保全 commit 後）
 LOCAL_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
 ORIGIN_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（監査時: final_report.txt にユーザー誤入力差分「aaaa」。本レポートで上書き）
-LOCAL_UNCOMMITTED_WORK: なし（final_report.txt は本レポートへ上書き済み）
-LOCAL_UNPUSHED_COMMITS: 1（d4e121a = P2 成果物）
-LOCAL_BRANCH_AHEAD_OF_ORIGIN: 1
+WORKTREE_CLEAN: YES
+LOCAL_UNCOMMITTED_WORK: なし
+LOCAL_UNPUSHED_COMMITS: 0
+LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0（origin/docs/phase-b-prep-p2-standard-review と一致）
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: なし（監査時点）→ 保全 Draft PR 作成予定
-UNMERGED_BRANCH: docs/phase-b-prep-p2-standard-review
+OPEN_PR: #261（Draft 保全 PR、base: main / head: docs/phase-b-prep-p2-standard-review）
+UNMERGED_BRANCH: docs/phase-b-prep-p2-standard-review（#261 で公開・レビュー待ち）
 LATEST_MERGED_PR: #260（P1）
 
 P0_STATUS: MERGED_COMPLETE
