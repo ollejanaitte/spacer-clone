@@ -1,0 +1,17 @@
+{
+  "scenario": "E2E-STEP2-001",
+  "overall": "PASS",
+  "warning": "UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR DESIGN OR CONSTRUCTION — USER REVIEW REQUIRED",
+  "status": "stale: true / consistency: PASS / checksum: 00dcc0ef0cca9a73… / qty:STALE / report:STALE / drawing:STALE / formal:NOT_AUTHORIZED",
+  "panels": {
+    "quantity": true,
+    "report": true,
+    "drawing": true,
+    "section": false,
+    "demand": true,
+    "analysis": true
+  },
+  "staleBlocked": true,
+  "consoleErrors": [],
+  "bundle": "BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY"
+}
