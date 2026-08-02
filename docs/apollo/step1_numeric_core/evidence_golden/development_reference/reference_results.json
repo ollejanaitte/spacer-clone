@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "designOrConstructionUse": "PROHIBITED",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "precision": 80,
+  "method": "decimal.Decimal I-section composition; no float; no production imports",
+  "cases": {
+    "GOLD-SP-001": {
+      "inputs": {
+        "topFlangeWidth": "0.500",
+        "topFlangeThickness": "0.030",
+        "bottomFlangeWidth": "0.500",
+        "bottomFlangeThickness": "0.030",
+        "webThickness": "0.012",
+        "girderDepth": "2.500",
+        "bridgeLength": "40.000"
+      },
+      "results": {
+        "webHeight": "2.440",
+        "topFlangeArea": "0.015000",
+        "bottomFlangeArea": "0.015000",
+        "webArea": "0.029280",
+        "totalArea": "0.059280",
+        "topFlangeCentroidFromBottom": "2.485",
+        "bottomFlangeCentroidFromBottom": "0.015",
+        "webCentroidFromBottom": "1.250",
+        "firstMomentSum": "0.074100000",
+        "centroidFromBottom": "1.250",
+        "topFlangeLocalI": "0.000001125000",
+        "topFlangeParallelAxisI": "0.022878375000",
+        "I_tf": "0.022879500000",
+        "bottomFlangeLocalI": "0.000001125000",
+        "bottomFlangeParallelAxisI": "0.022878375000",
+        "I_bf": "0.022879500000",
+        "webLocalI": "0.014526784000",
+        "webParallelAxisI": "0.000000",
+        "I_w": "0.014526784000",
+        "secondMomentOfArea": "0.060285784000",
+        "topExtremeDistance": "1.250",
+        "bottomExtremeDistance": "1.250",
+        "sectionModulusTop": "0.0482286272",
+        "sectionModulusBottom": "0.0482286272",
+        "unitLengthVolume": "0.059280",
+        "steelVolumePerGirder": "2.371200000"
+      }
+    },
+    "GOLD-SP-002": {
+      "inputs": {
+        "topFlangeWidth": "0.500",
+        "topFlangeThickness": "0.020",
+        "bottomFlangeWidth": "0.600",
+        "bottomFlangeThickness": "0.025",
+        "webThickness": "0.012",
+        "girderDepth": "2.500",
+        "bridgeLength": "200.000"
+      },
+      "results": {
+        "webHeight": "2.455",
+        "topFlangeArea": "0.010000",
+        "bottomFlangeArea": "0.015000",
+        "webArea": "0.029460",
+        "totalArea": "0.054460",
+        "topFlangeCentroidFromBottom": "2.490",
+        "bottomFlangeCentroidFromBottom": "0.0125",
+        "webCentroidFromBottom": "1.2525",
+        "firstMomentSum": "0.0619861500",
+        "centroidFromBottom": "1.1381959236136614028644876973925817113477781858244583180315828130738156445097319",
+        "topFlangeLocalI": "0.00000033333333333333333333333333333333333333333333333333333333333333333333333333333333",
+        "topFlangeParallelAxisI": "0.018273742609347219567970724216623426156235784207352689491416341716602184651657532",
+        "I_tf": "0.018274075942680552901304057549956759489569117540686022824749675049935517984990865",
+        "bottomFlangeLocalI": "0.000000781250",
+        "bottomFlangeParallelAxisI": "0.019007869686606213119859134433638774930277289972431898724821905156614624755672122",
+        "I_bf": "0.019008650936606213119859134433638774930277289972431898724821905156614624755672122",
+        "webLocalI": "0.014796346375",
+        "webParallelAxisI": "0.00038490732854160954500157726600662006662684502697266481350835613816769297974342700",
+        "I_w": "0.015181253703541609545001577266006620066626845026972664813508356138167692979743427",
+        "secondMomentOfArea": "0.052463980582828375566164769249602154486473252540090586363079936344717835720406414",
+        "topExtremeDistance": "1.3618040763863385971355123026074182886522218141755416819684171869261843554902681",
+        "bottomExtremeDistance": "1.1381959236136614028644876973925817113477781858244583180315828130738156445097319",
+        "sectionModulusTop": "0.038525351401536372954388604870611940093904689863502681337785637252291154428111988",
+        "sectionModulusBottom": "0.046093980389826329483817487185981599653040773355553350761957845959675400606963545",
+        "unitLengthVolume": "0.054460",
+        "steelVolumePerGirder": "10.892000000"
+      }
+    }
+  }
+}
