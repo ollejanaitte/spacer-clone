@@ -34,6 +34,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "numericInput.test.ts",
   "phase1ScopeGuard.test.ts",
   "projectId.test.ts",
+  "quantityModel.test.ts",
   "searchFilter.test.ts",
   "sectionProperties.test.ts",
   "selection.test.ts",

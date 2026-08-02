@@ -1,8 +1,20 @@
 ================================================================================
-Apollo Step 1 Development Track Closeout (1-A .. 1-D development-only)
+Previous Phase Summary — Step 1 Development Track (retained)
 ================================================================================
-更新日時: 2026-08-02T22:05:00+09:00
-作業状態: COMPLETE_DEVELOPMENT_TRACK_MERGED
+STEP_1_CLOSEOUT: COMPLETE (PRs #289–#298)
+STEP_1_FINAL_TIP_AT_STEP2_START: 5d49d359f2b78960382ea790aad3626afbac690d
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
+
+================================================================================
+Apollo Step 2-A Development — Quantity Model
+================================================================================
+更新日時: 2026-08-02T22:40:00+09:00
+Step ID: APOLLO_STEP_2A_QUANTITY_MODEL
+作業状態: PRIMARY_READY
+START_MAIN_SHA: 5d49d359f2b78960382ea790aad3626afbac690d
+作業branch: feat/apollo-step2a-quantity-model
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
 DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
@@ -10,39 +22,28 @@ DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-GOLD_SP_001_DEVELOPMENT_PARITY: PASS
-GOLD_SP_002_DEVELOPMENT_PARITY: PASS
-GOLD_AN_001_DEVELOPMENT_PARITY: PASS
-GOLD_AN_002_DEVELOPMENT_PARITY: PASS
-APP_LAUNCH_VERDICT: PASS
-GUI_INPUT_VERDICT: PASS
-SAVE_RELOAD_VERDICT: PASS
+Implementation:
+- Structured QuantityModel (exact vs approximate vs user-weight vs incomplete)
+- Independent Decimal GOLD-QTY-001/002 references
+- CSV (UTF-8 BOM) / JSON export with STALE rejection
+- QuantityModelDevelopmentPanel UI
+
+Tests: quantityModel + apolloSuite PASS
+typecheck: PASS
+GUI probe: PASS
+
+STEP_2A_QUANTITY_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
+GOLD_QTY_001_PARITY: PASS
+GOLD_QTY_002_PARITY: PASS
+EXACT_APPROXIMATE_SEPARATION: PASS
+CSV_EXPORT_VERDICT: PASS
+JSON_EXPORT_VERDICT: PASS
 STALE_VERDICT: PASS
-DEMAND_CANDIDATE_GUI_VERDICT: PASS
-FORMAL_OK_NG_EMITTED: NO
+GUI_VERDICT: PASS
+NO_FORMAL_QUANTITY_CLAIM: PASS
+STEP_2B_START_VERDICT: GO
 
-STEP_1B_DEVELOPMENT_START_VERDICT: GO
-STEP_1B_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-STEP_1C_DEVELOPMENT_START_VERDICT: GO
-STEP_1C_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-STEP_1D_DEVELOPMENT_START_VERDICT: GO
-STEP_1D_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_STANDARDS_AND_GOLDEN
-
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/289
-REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/290
-STEP_1B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/291
-STEP_1B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/292
-STEP_1C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/293
-STEP_1C_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/294
-STEP_1D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/295
-STEP_1D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/296
-STEP_1D_PRIMARY_PR_MERGE_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b
-STEP_1D_REPORT_PR_MERGE_SHA: a82ab2bca64e518200167baecf663ce316001912
-
-CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/297
-
-FINAL_MAIN_SHA: f5576430ef7ea0556335eb43c79172c5a3a9e21c
-CLOSEOUT_PR_MERGE_SHA: f5576430ef7ea0556335eb43c79172c5a3a9e21c
-LOCAL_MAIN_EQUALS_ORIGIN: YES
-WORKTREE_CLEAN: YES
+STEP_2A_PRIMARY_PR_NUMBER: PENDING
+STEP_2A_PRIMARY_PR_URL: PENDING
+STEP_2A_PRIMARY_PR_MERGE_SHA: PENDING
 ================================================================================
