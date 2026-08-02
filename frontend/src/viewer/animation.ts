@@ -1,6 +1,5 @@
 import type { AnalysisResult, ProjectModel } from "../types";
 import {
-  BRIDGE_NUM_SPANS,
   BRIDGE_PIER_HEIGHT,
   BRIDGE_SOFT_PIERS,
 } from "../data/defaultProject";
@@ -75,9 +74,12 @@ export function computeAnimationPhase(elapsedSeconds: number, speed: number): nu
 }
 
 /**
- * Pseudo-mode shape that emphasizes horizontal sway on the soft-ground
- * side. The shape is normalized to a unit maximum magnitude so callers
- * can apply their own display scale.
+ * Pseudo-mode shape for display-only animation.
+ *
+ * Prefer the classic default-bridge soft/rock pier demo when those nodes exist.
+ * Otherwise synthesize a unit-amplitude shape from the actual node X range so
+ * Apollo / continuous layouts are not left with an empty map and never
+ * extrapolate past the model bounds (no hardcoded 150 m span length).
  */
 export function computeDemoModeShape(
   project: ProjectModel,
@@ -126,14 +128,38 @@ export function computeDemoModeShape(
 
   // The pseudo-mode also includes a tiny deck vertical breathing pattern so
   // the deck does not look completely frozen when the dominant axis is
-  // horizontal.
+  // horizontal. Normalize by the actual deck X span (not a hardcoded 150 m).
+  const deckXs = deckNodes.map((node) => node.x);
+  const deckSpan = deckXs.length >= 2 ? Math.max(...deckXs) - Math.min(...deckXs) : 0;
+  const deckDenom = Math.max(1, deckSpan);
   for (const node of deckNodes) {
     const current = map.get(node.id) ?? { ux: 0, uy: 0, uz: 0 };
-    current.uy +=
-      0.05 * Math.sin((node.x / Math.max(1, BRIDGE_NUM_SPANS * 30)) * Math.PI);
+    current.uy += 0.05 * Math.sin((node.x / deckDenom) * Math.PI);
     map.set(node.id, current);
   }
 
+  if (map.size > 0) {
+    return map;
+  }
+
+  // Apollo / generic models: synthesize from actual node coordinates only.
+  if (project.nodes.length === 0) {
+    return map;
+  }
+  const xs = project.nodes.map((node) => node.x);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const span = Math.max(1e-9, maxX - minX);
+  for (const node of project.nodes) {
+    const fraction = (node.x - minX) / span; // in [0, 1] for in-bound nodes
+    const clamped = Math.min(1, Math.max(0, fraction));
+    const amplitude = 0.2 + 0.8 * Math.sin(clamped * Math.PI);
+    map.set(node.id, {
+      ux: direction === "longitudinal" ? amplitude : 0,
+      uy: 0.05 * Math.sin(clamped * Math.PI),
+      uz: direction === "transverse" ? amplitude : 0,
+    });
+  }
   return map;
 }
 

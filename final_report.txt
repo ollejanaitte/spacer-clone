@@ -1,26 +1,41 @@
 ================================================================================
-README英語ファースト改訂 + MIT License追加 — 完了レポート
+Apollo 3D表示境界・対傾構修正 — 完了レポート
 ================================================================================
-更新日時: 2026-08-02T18:00:00+09:00
-作業: README英語ファースト改訂 + MIT License追加
-作業状態: COMPLETE
-現在ブランチ: main
-開始時main SHA: c7968c771c65ac302bb6e931c47606172930177b
-現在HEAD SHA: 511000cfa18d2a366bc0699e2ab36eaf5561345f
-変更ファイル: README.md / LICENSE / final_report.txt
-README_ENGLISH_FIRST_VERDICT: PASS
-MIT_LICENSE_VERDICT: PASS
-FACTUAL_ACCURACY_VERDICT: PASS
-MARKDOWN_VERDICT: PASS
-LICENSE_STATUS: MIT
-OSS_APPLICATION_BLOCKER: NONE
-検証結果:
-- LICENSE が main に存在（GitHub license API: MIT）
-- README 英語ファースト + Japanese/日本語保持
-- CAUTION で数値設計未承認を明示
-- アプリコード未変更
-- local main = origin/main、worktree clean、open PR 0
-PR番号・URL: #277 https://github.com/ollejanaitte/spacer-clone/pull/277
-mainマージ状態: MERGED
-次の作業: なし（本タスク完了）
+更新日時: 2026-08-02T18:40:00+09:00
+作業: Apollo 3D表示境界・対傾構修正
+作業状態: 修正完了・PR準備
+現在ブランチ: fix/apollo-visualization-bounds-bracing
+開始時main SHA: e7a40306da22554f3bd99f298836d31625a26c46
+現在HEAD SHA: e7a40306da22554f3bd99f298836d31625a26c46
+再現状態:
+- 200mサンプル + 連続桁サンプル[30,35,30]生成で frame 0..200 / solid 0..95
+- sway bracing Z が world 0 基準で主桁ウェブ（z=-girderDepth/2）から上方へずれ
+Demo Shape OFF結果: 両不具合は base geometry（A/D/E）
+Demo Shape ON結果: 旧実装は Apollo 節点で demo map 空。今回は実モデル X 範囲で合成（外挿なし）
+対傾構不具合分類: A+E（接続高さ誤り）
+骨組み延長不具合分類: D（layout 全長と project.nodes 全長の二重正本）
+根本原因:
+1. sway bracing / stiffener の垂直 datum が主桁 solid と不一致
+2. generate 後に FEM overlay を layout support stations へ同期していなかった
+変更ファイル:
+- frontend/src/apollo/visualization/bridgeStructureSolids.ts
+- frontend/src/apollo/bridgeStructure/syncOverlayFrame.ts（新規）
+- frontend/src/apollo/bridgeStructure/generateBsdd.ts
+- frontend/src/apollo/bridgeStructure/index.ts
+- frontend/src/viewer/animation.ts
+- frontend/src/apollo/__tests__/visualizationBoundsBracing.test.ts（新規）
+- frontend/src/apollo/__tests__/apolloSuite.test.ts
+- docs/apollo/continuous_girder/manual_verification_checklist.md
+- final_report.txt
+自動テスト:
+- typecheck PASS
+- npm test -- src/apollo: 39 files / 294 tests PASS
+- lint PASS（既存日本語警告のみ）
+- build PASS
+- STL/importExport/animation/bounds 関連 PASS
+手動GUI: MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+PR番号・URL: 作成予定
+mainマージ状態: 未着手
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+次の作業: commit → push → PR → merge
 ================================================================================
