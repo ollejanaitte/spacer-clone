@@ -51,7 +51,7 @@ describe("bridge structure approximate quantities", () => {
     const quantities = computeBridgeStructureApproximateQuantities(draft, true);
 
     const byLabel = new Map(quantities.map((entry) => [entry.label, entry]));
-    expect(byLabel.get("径間数（概算）")).toMatchObject({ value: 5, status: "NOT_AUTHORIZED" });
+    expect(byLabel.get("支間数（概算）")).toMatchObject({ value: 5, status: "NOT_AUTHORIZED" });
     expect(byLabel.get("横桁本数（概算）")).toMatchObject({ value: 41, status: "NOT_AUTHORIZED" });
     expect(byLabel.get("床版体積（概算）")).toMatchObject({
       value: 600,

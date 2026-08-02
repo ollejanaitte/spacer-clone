@@ -3,6 +3,10 @@ import type { ReactNode } from "react";
 import type { ProjectModel } from "../../types";
 import {
   BRIDGE_STRUCTURE_INPUT_FIELDS,
+  SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
+  applySimpleSingleSpanSampleInput,
+  clearBridgeStructureInput,
+  deriveSingleSpanModelLength,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
@@ -215,14 +219,60 @@ export function BridgeStructureInputPanel({
     onAuditEvent?.("構造を生成しました。");
   };
 
+  const handleCommitField = (fieldKey: BridgeStructureInputFieldKey, nextValue: number | null) => {
+    let nextProject = withBridgeStructureField(project, fieldKey, nextValue);
+    if (fieldKey === "spanLength" && nextValue !== null) {
+      const nextInput = getBridgeStructureInputDraft(nextProject);
+      const derived = deriveSingleSpanModelLength(nextInput);
+      if (derived !== null) {
+        nextProject = withBridgeStructureField(nextProject, "bridgeLength", derived);
+      }
+    }
+    onProjectChange(nextProject);
+  };
+
   return (
     <article className="apollo-editor-card" data-testid="apollo-bridge-structure-panel">
       <div className="apollo-editor-card-header">
         <div>
           <h2>橋梁構造入力</h2>
+          <p>
+            現在の対応形式: <strong data-testid="apollo-current-bridge-system">単径間単純桁（現在対応）</strong>
+          </p>
           <p>寸法を入力し「構造を生成」で StructuralDesignModel を作成します。設計判定は未許可のままです。</p>
         </div>
       </div>
+
+      <div className="apollo-workspace-actions">
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-sample-input"
+          onClick={() => {
+            onProjectChange(applySimpleSingleSpanSampleInput(project));
+            setGenerationMessage("動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
+            onAuditEvent?.("動作確認用サンプル値を入力しました。");
+          }}
+        >
+          動作確認用サンプル値を入力
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-clear-input"
+          onClick={() => {
+            onProjectChange(clearBridgeStructureInput(project));
+            setGenerationMessage("入力をクリアしました。");
+            onAuditEvent?.("入力をクリアしました。");
+          }}
+        >
+          入力をクリア
+        </button>
+      </div>
+
+      <p className="apollo-inline-hint" data-testid="apollo-sample-disclaimer">
+        {SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER}
+      </p>
 
       <div className="apollo-detail-grid">
         {BRIDGE_STRUCTURE_INPUT_FIELDS.map((field) => {
@@ -236,7 +286,7 @@ export function BridgeStructureInputPanel({
                 value={currentValue}
                 error={error}
                 onCommit={(nextValue) => {
-                  onProjectChange(withBridgeStructureField(project, field.key, nextValue));
+                  handleCommitField(field.key, nextValue);
                 }}
               />
             </label>

@@ -243,4 +243,73 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       "数値設計権限が付与されていない",
     );
   });
+
+  it("shows the current bridge system and sample disclaimer", () => {
+    const container = renderPanel();
+    expect(
+      container.querySelector("[data-testid='apollo-current-bridge-system']")?.textContent,
+    ).toContain("単径間単純桁（現在対応）");
+    expect(container.querySelector("[data-testid='apollo-sample-disclaimer']")?.textContent).toContain(
+      "動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。",
+    );
+  });
+
+  it("fills the sample values without auto-generating, then generates on demand", () => {
+    const container = renderPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+
+    const spanInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-spanLength']",
+    ) as HTMLInputElement;
+    const widthInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-width']",
+    ) as HTMLInputElement;
+    expect(spanInput.value).toBe("30");
+    expect(widthInput.value).toBe("10.5");
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).toBeNull();
+
+    act(() => {
+      const generate = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      generate.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
+    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
+  });
+
+  it("clears all inputs through the clear button", () => {
+    const container = renderPanel();
+    act(() => {
+      const sample = container.querySelector("[data-testid='apollo-sample-input']") as HTMLButtonElement;
+      sample.click();
+    });
+    act(() => {
+      const clear = container.querySelector("[data-testid='apollo-clear-input']") as HTMLButtonElement;
+      clear.click();
+    });
+
+    const spanInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-spanLength']",
+    ) as HTMLInputElement;
+    expect(spanInput.value).toBe("");
+    expect(container.textContent).toContain("入力をクリアしました");
+  });
+
+  it("derives the structural model length from the span length when unset", () => {
+    const container = renderPanel();
+    const spanInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-spanLength']",
+    ) as HTMLInputElement;
+    act(() => {
+      setInputValue(spanInput, "30");
+    });
+    const bridgeInput = container.querySelector(
+      "[data-testid='apollo-bridge-input-bridgeLength']",
+    ) as HTMLInputElement;
+    expect(bridgeInput.value).toBe("30");
+  });
 });

@@ -105,7 +105,7 @@ export function buildBridgeSuperstructureDesignDocument(
 
   const spanCount = resolveSpanCount(bridgeLength, spanLength);
   if (spanCount === null) {
-    return { document: null, diagnostics: ["橋長を径間長で割り切れる値を入力してください。"] };
+    return { document: null, diagnostics: ["構造モデル長を支間長で割り切れる値を入力してください。"] };
   }
   const effectiveSpanLength = spanLength;
   const crossBeamCount = Math.floor(bridgeLength / crossBeamSpacing) + 1;

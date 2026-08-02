@@ -31,6 +31,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "searchFilter.test.ts",
   "sectionProperties.test.ts",
   "selection.test.ts",
+  "simpleSingleSpanSample.test.ts",
   "testingHelpers.test.ts",
   "unit2Draft.test.ts",
   "unsavedChangesGuard.test.ts",
