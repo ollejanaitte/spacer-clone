@@ -1,0 +1,25 @@
+# Analytical Development Comparison
+
+UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
+
+Overall: **PASS**
+Tolerance frozen: A=1E-9, R=1E-9
+
+## GOLD-AN-001 — PASS
+
+| quantity | expected | actual | absDiff | threshold | verdict |
+|----------|----------|--------|---------|-----------|---------|
+| leftReaction_fy_kN | 4.00 | 4.000000000000001 | 0.000000000000001 | 0.00000000400 | PASS |
+| rightReaction_fy_kN | 4.00 | 4.000000000000001 | 0.000000000000001 | 0.00000000400 | PASS |
+| Mmax_kNm | 4.000 | 4.0 | 0.000 | 0.000000004000 | PASS |
+| centerDeflection_uy_m | -0.00032520325203252032520325203252032520325203252032520325203252032520325203252032520 | -0.0003252032520325203 | 0.00000000000000000002520325203252032520325203252 | 0.000000001 | PASS |
+
+## GOLD-AN-002 — PASS
+
+| quantity | expected | actual | absDiff | threshold | verdict |
+|----------|----------|--------|---------|-----------|---------|
+| leftReaction_fy_kN | 5.0 | 5.0 | 0.0 | 0.0000000050 | PASS |
+| rightReaction_fy_kN | 5.0 | 5.000000000000002 | 0.000000000000002 | 0.0000000050 | PASS |
+| Mmax_kNm | 10.00 | 10.000000000000002 | 0.000000000000002 | 0.00000001000 | PASS |
+| centerDeflection_uy_m | -0.00065040650406504065040650406504065040650406504065040650406504065040650406504065041 | -0.0006504065040650406 | 0.00000000000000000005040650406504065040650406504 | 0.000000001 | PASS |
+

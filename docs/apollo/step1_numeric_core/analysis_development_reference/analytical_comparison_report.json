@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0.0",
+  "baseUrl": "http://127.0.0.1:8000",
+  "tolerance": {
+    "A": "0.000000001",
+    "R": "0.000000001",
+    "status": "FROZEN_BEFORE_ENGINE_COMPARISON"
+  },
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "cases": [
+    {
+      "caseId": "GOLD-AN-001",
+      "status": "success",
+      "comparisons": [
+        {
+          "quantity": "leftReaction_fy_kN",
+          "expected": "4.00",
+          "actual": "4.000000000000001",
+          "absoluteDifference": "0.000000000000001",
+          "threshold": "0.00000000400",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "rightReaction_fy_kN",
+          "expected": "4.00",
+          "actual": "4.000000000000001",
+          "absoluteDifference": "0.000000000000001",
+          "threshold": "0.00000000400",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "Mmax_kNm",
+          "expected": "4.000",
+          "actual": "4.0",
+          "absoluteDifference": "0.000",
+          "threshold": "0.000000004000",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "centerDeflection_uy_m",
+          "expected": "-0.00032520325203252032520325203252032520325203252032520325203252032520325203252032520",
+          "actual": "-0.0003252032520325203",
+          "absoluteDifference": "0.00000000000000000002520325203252032520325203252",
+          "threshold": "0.000000001",
+          "verdict": "PASS"
+        }
+      ],
+      "developmentParity": "PASS",
+      "label": "UNVERIFIED_DEVELOPMENT_ONLY"
+    },
+    {
+      "caseId": "GOLD-AN-002",
+      "status": "success",
+      "comparisons": [
+        {
+          "quantity": "leftReaction_fy_kN",
+          "expected": "5.0",
+          "actual": "5.0",
+          "absoluteDifference": "0.0",
+          "threshold": "0.0000000050",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "rightReaction_fy_kN",
+          "expected": "5.0",
+          "actual": "5.000000000000002",
+          "absoluteDifference": "0.000000000000002",
+          "threshold": "0.0000000050",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "Mmax_kNm",
+          "expected": "10.00",
+          "actual": "10.000000000000002",
+          "absoluteDifference": "0.000000000000002",
+          "threshold": "0.00000001000",
+          "verdict": "PASS"
+        },
+        {
+          "quantity": "centerDeflection_uy_m",
+          "expected": "-0.00065040650406504065040650406504065040650406504065040650406504065040650406504065041",
+          "actual": "-0.0006504065040650406",
+          "absoluteDifference": "0.00000000000000000005040650406504065040650406504",
+          "threshold": "0.000000001",
+          "verdict": "PASS"
+        }
+      ],
+      "developmentParity": "PASS",
+      "label": "UNVERIFIED_DEVELOPMENT_ONLY"
+    }
+  ],
+  "overallDevelopmentParity": "PASS"
+}

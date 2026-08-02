@@ -1,0 +1,114 @@
+{
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "warning": "UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION",
+  "consoleErrors": [],
+  "overall": "PASS",
+  "cases": {
+    "GOLD-AN-001": {
+      "caseId": "GOLD-AN-001",
+      "pass": true,
+      "rows": {
+        "leftReaction_fy_kN": 4.000000000000001,
+        "rightReaction_fy_kN": 4.000000000000001,
+        "Mmax_kNm": 4,
+        "centerDeflection_uy_m": -0.0003252032520325203
+      },
+      "comparisons": {
+        "leftReaction_fy_kN": {
+          "expected": 4,
+          "actual": 4.000000000000001,
+          "absoluteDifference": 8.881784197001252e-16,
+          "relativeDifference": 2.220446049250313e-16,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 4e-9,
+          "verdict": "PASS"
+        },
+        "rightReaction_fy_kN": {
+          "expected": 4,
+          "actual": 4.000000000000001,
+          "absoluteDifference": 8.881784197001252e-16,
+          "relativeDifference": 2.220446049250313e-16,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 4e-9,
+          "verdict": "PASS"
+        },
+        "Mmax_kNm": {
+          "expected": 4,
+          "actual": 4,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 4e-9,
+          "verdict": "PASS"
+        },
+        "centerDeflection_uy_m": {
+          "expected": -0.0003252032520325203,
+          "actual": -0.0003252032520325203,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 1e-9,
+          "verdict": "PASS"
+        }
+      }
+    },
+    "GOLD-AN-002": {
+      "caseId": "GOLD-AN-002",
+      "pass": true,
+      "rows": {
+        "leftReaction_fy_kN": 5,
+        "rightReaction_fy_kN": 5.000000000000002,
+        "Mmax_kNm": 10.000000000000002,
+        "centerDeflection_uy_m": -0.0006504065040650406
+      },
+      "comparisons": {
+        "leftReaction_fy_kN": {
+          "expected": 5,
+          "actual": 5,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 5e-9,
+          "verdict": "PASS"
+        },
+        "rightReaction_fy_kN": {
+          "expected": 5,
+          "actual": 5.000000000000002,
+          "absoluteDifference": 1.7763568394002505e-15,
+          "relativeDifference": 3.552713678800501e-16,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 5e-9,
+          "verdict": "PASS"
+        },
+        "Mmax_kNm": {
+          "expected": 10,
+          "actual": 10.000000000000002,
+          "absoluteDifference": 1.7763568394002505e-15,
+          "relativeDifference": 1.7763568394002506e-16,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 1e-8,
+          "verdict": "PASS"
+        },
+        "centerDeflection_uy_m": {
+          "expected": -0.0006504065040650406,
+          "actual": -0.0006504065040650406,
+          "absoluteDifference": 0,
+          "relativeDifference": 0,
+          "A": 1e-9,
+          "R": 1e-9,
+          "threshold": 1e-9,
+          "verdict": "PASS"
+        }
+      }
+    }
+  }
+}

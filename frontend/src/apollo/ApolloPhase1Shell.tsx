@@ -27,6 +27,7 @@ import {
 } from "./workspace";
 import { ApolloNumericInput } from "./components/ApolloNumericInput";
 import { BridgeStructureInputPanel } from "./components/BridgeStructureInputPanel";
+import { AnalysisDevelopmentProbePanel } from "./components/AnalysisDevelopmentProbePanel";
 import {
   CompositionAwareInput,
   CompositionAwareTextarea,
@@ -2382,6 +2383,7 @@ export function ApolloPhase1Shell({
                 onProjectChange={(nextProject) => onProjectChange(nextProject)}
                 onAuditEvent={onAuditEvent}
               />
+              <AnalysisDevelopmentProbePanel />
               <article className="apollo-editor-card">
                 <h2>サンプル概要</h2>
                 <ul>

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "precision": 80,
+  "method": "closed-form Euler-Bernoulli simply-supported beam; Decimal; no engine import",
+  "cases": {
+    "GOLD-AN-001": {
+      "caseId": "GOLD-AN-001",
+      "title": "Simple span + UDL",
+      "L_m": "4.0",
+      "w_kNpm": "2.0",
+      "E_kNpm2": "205000000",
+      "I_m4": "0.0001",
+      "leftReaction_fy_kN": "4.00",
+      "rightReaction_fy_kN": "4.00",
+      "Mmax_kNm": "4.000",
+      "Mmax_position_m": "2.0",
+      "centerDeflection_uy_m": "-0.00032520325203252032520325203252032520325203252032520325203252032520325203252032520"
+    },
+    "GOLD-AN-002": {
+      "caseId": "GOLD-AN-002",
+      "title": "Simple span + center point load",
+      "L_m": "4.0",
+      "P_kN": "10.0",
+      "E_kNpm2": "205000000",
+      "I_m4": "0.0001",
+      "leftReaction_fy_kN": "5.0",
+      "rightReaction_fy_kN": "5.0",
+      "Mmax_kNm": "10.00",
+      "Mmax_position_m": "2.0",
+      "centerDeflection_uy_m": "-0.00065040650406504065040650406504065040650406504065040650406504065040650406504065041"
+    }
+  }
+}
