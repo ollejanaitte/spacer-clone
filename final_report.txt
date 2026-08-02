@@ -32,6 +32,6 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 STEP_2A_PRIMARY_PR_NUMBER: 299
 STEP_2A_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/299
 STEP_2A_PRIMARY_PR_MERGE_SHA: 547add4751f91b1e9e2615649797bfd6b78a3923
-STEP_2A_REPORT_PR_NUMBER: PENDING
-STEP_2A_REPORT_PR_URL: PENDING
+STEP_2A_REPORT_PR_NUMBER: 300
+STEP_2A_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/300
 ================================================================================
