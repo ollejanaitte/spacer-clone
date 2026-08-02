@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../../data/defaultProject";
 import {
+  createEmptyBridgeStructureInputDraft,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   isBridgeStructureGenerationCurrent,
+  parseBridgeStructureInputDraft,
   resolveSpanCount,
   stableUuidFromSeed,
   validateBridgeStructureInputDraft,
+  validateBridgeStructureInputPersistence,
   withBridgeStructureField,
 } from "../bridgeStructure";
 
@@ -211,5 +214,100 @@ describe("bridgeStructure workflow", () => {
     );
     expect(secondIds?.[0]).toBe(firstIds?.[0]);
     expect(secondIds?.[1]).toBe(firstIds?.[1]);
+  });
+
+  it("treats optional secondary-member and unit-weight fields as nullable without failing validation", () => {
+    const project = fillValidInput(createDefaultProject());
+    const draft = getBridgeStructureInputDraft(project);
+    expect(draft.stiffenerSpacing).toBeNull();
+    expect(draft.swayBracingInterval).toBeNull();
+    expect(draft.steelUnitWeight).toBeNull();
+    expect(draft.rcUnitWeight).toBeNull();
+    expect(validateBridgeStructureInputDraft(draft).complete).toBe(true);
+
+    const result = generateBridgeStructureFromInput(project, draft);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const sdm = result.project.apolloBsdd?.structuralDesignModel;
+    expect(sdm?.stiffeners).toHaveLength(0);
+    expect(sdm?.swayBracings).toHaveLength(0);
+    expect(sdm?.lateralBracings).toHaveLength(0);
+    expect(sdm?.braceMembers).toHaveLength(0);
+  });
+
+  it("validates swayBracingInterval as a positive integer when provided", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "swayBracingInterval", 0);
+    expect(validateBridgeStructureInputDraft(getBridgeStructureInputDraft(project)).complete).toBe(false);
+
+    project = withBridgeStructureField(project, "swayBracingInterval", 1.5);
+    expect(validateBridgeStructureInputDraft(getBridgeStructureInputDraft(project)).complete).toBe(false);
+
+    project = withBridgeStructureField(project, "swayBracingInterval", 2);
+    expect(validateBridgeStructureInputDraft(getBridgeStructureInputDraft(project)).complete).toBe(true);
+  });
+
+  it("generates sway and lateral entities only when their inputs are enabled", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "swayBracingInterval", 2);
+    project = withBridgeStructureField(project, "stiffenerSpacing", 25);
+    const result = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    const sdm = result.project.apolloBsdd?.structuralDesignModel;
+    expect(sdm?.stiffeners.length).toBeGreaterThan(0);
+    expect(sdm?.swayBracings.length).toBeGreaterThan(0);
+    expect(sdm?.lateralBracings).toHaveLength(0);
+    for (const member of sdm?.braceMembers ?? []) {
+      expect(member.geometryRef.geometryRefId).toBeNull();
+      expect(member.geometryRef.bindingStatus).toBe("unbound");
+      expect(member.designStatus).toBe("NOT_AUTHORIZED");
+    }
+  });
+
+  it("persistence validation accepts the new optional and boolean input fields", () => {
+    const raw = {
+      schemaVersion: "1.0.0",
+      spanLength: 40,
+      bridgeLength: 200,
+      width: 12,
+      girderCount: 4,
+      girderSpacing: 3,
+      girderDepth: 2.5,
+      topFlangeWidth: 0.5,
+      topFlangeThickness: 0.02,
+      bottomFlangeWidth: 0.6,
+      bottomFlangeThickness: 0.025,
+      webThickness: 0.012,
+      deckThickness: 0.25,
+      crossBeamSpacing: 5,
+      stiffenerSpacing: 25,
+      swayBracingInterval: 2,
+      steelUnitWeight: 77,
+      rcUnitWeight: 24,
+      lateralBracingEnabled: true,
+      generatedAt: null,
+    };
+    expect(validateBridgeStructureInputPersistence(raw)).toEqual([]);
+
+    expect(validateBridgeStructureInputPersistence({ ...raw, swayBracingInterval: "2" })).toContain(
+      "apolloBridgeStructureInput.swayBracingInterval must be a finite number or null.",
+    );
+    expect(validateBridgeStructureInputPersistence({ ...raw, lateralBracingEnabled: "yes" })).toContain(
+      "apolloBridgeStructureInput.lateralBracingEnabled must be a boolean or null.",
+    );
+    expect(validateBridgeStructureInputPersistence({ ...raw, unexpected: 1 })).toContain(
+      "apolloBridgeStructureInput contains unsupported field: unexpected.",
+    );
+  });
+
+  it("parses persisted draft defaults to false for lateralBracingEnabled when absent", () => {
+    const empty = createEmptyBridgeStructureInputDraft();
+    expect(empty.lateralBracingEnabled).toBe(false);
+    expect(parseBridgeStructureInputDraft({ schemaVersion: "1.0.0" })?.lateralBracingEnabled).toBe(false);
+    expect(parseBridgeStructureInputDraft({ schemaVersion: "1.0.0", lateralBracingEnabled: true })?.lateralBracingEnabled).toBe(
+      true,
+    );
   });
 });

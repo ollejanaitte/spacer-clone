@@ -226,6 +226,8 @@ export function renderApolloVisualizationSolids(
       result.crossBeams.push(object);
     } else if (solid.kind === "bracing") {
       result.bracings.push(object);
+    } else if (solid.kind === "stiffener") {
+      result.girders.push(object);
     } else if (solid.kind === "deck") {
       result.deck.push(object);
     } else if (solid.kind === "bearing") {
@@ -318,6 +320,9 @@ function renderApolloSolid(
   }
   if (solid.kind === "bracing") {
     return renderBracingSolid(solid, state);
+  }
+  if (solid.kind === "stiffener") {
+    return renderBoxLikeSolid(solid, state, girderMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
   }
   return renderBoxLikeSolid(solid, state, markerMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
 }

@@ -196,4 +196,51 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       "NOT_AUTHORIZED",
     );
   });
+
+  it("renders the lateral bracing checkbox and toggles it", () => {
+    const container = renderPanel();
+    const checkbox = container.querySelector(
+      "[data-testid='apollo-bridge-input-lateralBracingEnabled']",
+    ) as HTMLInputElement;
+    expect(checkbox).not.toBeNull();
+    expect(checkbox.checked).toBe(false);
+
+    act(() => {
+      checkbox.click();
+    });
+    expect(checkbox.checked).toBe(true);
+  });
+
+  it("shows section properties when the input is complete and generation is current", () => {
+    const container = renderPanel(fillValidInput(createDefaultProject()));
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-section-properties']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-section-property-ウェブ高さ']")?.textContent).toContain("2.455");
+    expect(container.querySelector("[data-testid='apollo-section-property-断面積合計']")).not.toBeNull();
+  });
+
+  it("keeps adoption buttons present and fail-closed under NOT_GRANTED authority", () => {
+    let project = fillValidInput(createDefaultProject());
+    project = withBridgeStructureField(project, "steelUnitWeight", 77);
+    const container = renderPanel(project);
+    act(() => {
+      const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
+      button.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("PENDING");
+    act(() => {
+      const adopt = container.querySelector("[data-testid='apollo-adopt-steel-unit-weight']") as HTMLButtonElement;
+      adopt.click();
+    });
+
+    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("PENDING");
+    expect(container.querySelector("[data-testid='apollo-bridge-structure-message']")?.textContent).toContain(
+      "数値設計権限が付与されていない",
+    );
+  });
 });

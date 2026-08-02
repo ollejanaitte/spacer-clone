@@ -17,10 +17,7 @@ export const APOLLO_DESIGN_ENTITY_KINDS = [
 ] as const satisfies readonly ApolloDesignEntityKind[];
 
 export const UNIMPLEMENTED_APOLLO_DESIGN_ENTITY_KINDS = [
-  "Stiffener",
   "Splice",
-  "SwayBracing",
-  "LateralBracing",
   "DeckAnchorage",
 ] as const satisfies readonly ApolloDesignEntityKind[];
 
@@ -74,10 +71,11 @@ export function collectDesignEntityBindingWarnings(
   if (!model) {
     return warnings;
   }
-  const boundByKind: Record<"MainGirder" | "RcDeck" | "CrossBeam", Set<string>> = {
+  const boundByKind: Record<"MainGirder" | "RcDeck" | "CrossBeam" | "Stiffener", Set<string>> = {
     MainGirder: new Set(),
     RcDeck: new Set(),
     CrossBeam: new Set(),
+    Stiffener: new Set(),
   };
 
   for (const solid of solids) {
@@ -102,6 +100,11 @@ export function collectDesignEntityBindingWarnings(
       kind: "CrossBeam",
       count: model.crossBeams.length,
       ids: model.crossBeams.map((entity) => entity.crossBeamId),
+    },
+    {
+      kind: "Stiffener",
+      count: model.stiffeners.length,
+      ids: model.stiffeners.map((entity) => entity.stiffenerId),
     },
   ];
 

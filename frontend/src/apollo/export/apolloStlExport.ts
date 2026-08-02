@@ -268,6 +268,9 @@ function buildGeometryForSolid(
     if (solid.kind === "bracing") {
       return buildBracingGeometry(solid, originShiftMm);
     }
+    if (solid.kind === "stiffener") {
+      return buildBoxGeometry(solid, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height, originShiftMm);
+    }
   } catch (error) {
     warnings.push(`unsupported solid ${solid.id}: ${error instanceof Error ? error.message : String(error)}`);
     return null;
@@ -506,6 +509,7 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
   let girders = 0;
   let crossBeams = 0;
   let bracings = 0;
+  let stiffeners = 0;
   let deck = 0;
   let bearings = 0;
   let markers = 0;
@@ -513,6 +517,7 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
     if (solid.kind === "girder") girders += 1;
     else if (solid.kind === "cross_beam") crossBeams += 1;
     else if (solid.kind === "bracing") bracings += 1;
+    else if (solid.kind === "stiffener") stiffeners += 1;
     else if (solid.kind === "deck") deck += 1;
     else if (solid.kind === "bearing") bearings += 1;
     else markers += 1;
@@ -522,6 +527,7 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
     girders,
     crossBeams,
     bracings,
+    stiffeners,
     deck,
     bearings,
     markers,

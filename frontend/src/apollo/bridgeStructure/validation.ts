@@ -1,4 +1,5 @@
 import {
+  BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELDS,
   type ApolloBridgeStructureInputDraft,
@@ -69,6 +70,11 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     webThickness: null,
     deckThickness: null,
     crossBeamSpacing: null,
+    stiffenerSpacing: null,
+    swayBracingInterval: null,
+    steelUnitWeight: null,
+    rcUnitWeight: null,
+    lateralBracingEnabled: false,
     generatedAt: null,
   };
 }
@@ -80,6 +86,10 @@ export function validateBridgeStructureInputDraft(
   const diagnostics: string[] = [];
 
   for (const field of BRIDGE_STRUCTURE_INPUT_FIELDS) {
+    if (field.optional && draft[field.key] === null) {
+      fieldErrors.push({ key: field.key, message: null });
+      continue;
+    }
     const message = validatePositiveNumber(draft[field.key], field.label, {
       integer: field.integer,
       min: field.min,
@@ -147,7 +157,12 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
   }
 
   const diagnostics: string[] = [];
-  const allowed = new Set<string>([...BRIDGE_STRUCTURE_INPUT_FIELD_KEYS, "schemaVersion", "generatedAt"]);
+  const allowed = new Set<string>([
+    ...BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
+    ...BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
+    "schemaVersion",
+    "generatedAt",
+  ]);
   for (const key of Object.keys(raw)) {
     if (!allowed.has(key)) {
       diagnostics.push(`apolloBridgeStructureInput contains unsupported field: ${key}.`);
@@ -163,6 +178,14 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
     if (value !== null && value !== undefined && (typeof value !== "number" || !Number.isFinite(value))) {
       diagnostics.push(`apolloBridgeStructureInput.${key} must be a finite number or null.`);
     }
+  }
+
+  if (
+    raw.lateralBracingEnabled !== null &&
+    raw.lateralBracingEnabled !== undefined &&
+    typeof raw.lateralBracingEnabled !== "boolean"
+  ) {
+    diagnostics.push("apolloBridgeStructureInput.lateralBracingEnabled must be a boolean or null.");
   }
 
   if (
@@ -200,8 +223,10 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   }
 
   const generatedAt = raw.generatedAt;
+  const lateralBracingRaw = raw.lateralBracingEnabled;
   return {
     ...draft,
+    lateralBracingEnabled: typeof lateralBracingRaw === "boolean" ? lateralBracingRaw : false,
     generatedAt:
       generatedAt === null || generatedAt === undefined
         ? null

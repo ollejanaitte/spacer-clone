@@ -1,4 +1,4 @@
-import type { BridgeSuperstructureDesignDocument } from "../../contracts";
+import type { BraceMember, BridgeSuperstructureDesignDocument } from "../../contracts";
 import type { ProjectModel } from "../../types";
 import {
   getBridgeStructureInputDraft,
@@ -38,11 +38,19 @@ type ResolvedBridgeStructureInput = {
   readonly webThickness: number;
   readonly deckThickness: number;
   readonly crossBeamSpacing: number;
+  readonly stiffenerSpacing: number | null;
+  readonly swayBracingInterval: number | null;
+  readonly lateralBracingEnabled: boolean;
 };
 
 const LONGITUDINAL_X: Axis3 = [1, 0, 0];
 const TRANSVERSE_Y: Axis3 = [0, 1, 0];
 const VERTICAL_Z: Axis3 = [0, 0, 1];
+
+/** Documented pure-geometry assumptions for secondary-member visualization. */
+const STIFFENER_PLATE_DEPTH_M = 0.15;
+const BRACING_MEMBER_DIAMETER_M = 0.08;
+const LATERAL_BRACING_Z_CLEARANCE_M = 0.03;
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -71,6 +79,9 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     webThickness: draft.webThickness!,
     deckThickness: draft.deckThickness!,
     crossBeamSpacing: draft.crossBeamSpacing!,
+    stiffenerSpacing: draft.stiffenerSpacing,
+    swayBracingInterval: draft.swayBracingInterval,
+    lateralBracingEnabled: draft.lateralBracingEnabled,
   };
 }
 
@@ -216,6 +227,115 @@ function buildCrossBeamSolid(
   };
 }
 
+function cross(left: Axis3, right: Axis3): Axis3 {
+  return [
+    left[1] * right[2] - left[2] * right[1],
+    left[2] * right[0] - left[0] * right[2],
+    left[0] * right[1] - left[1] * right[0],
+  ];
+}
+
+function frameFromStartEnd(
+  start: readonly number[],
+  end: readonly number[],
+): { frame: ApolloSolidGeometryParameter["localFrame"]; length: number } | null {
+  const delta = [end[0] - start[0], end[1] - start[1], end[2] - start[2]] as const;
+  const length = Math.hypot(delta[0], delta[1], delta[2]);
+  if (!Number.isFinite(length) || length <= 1e-9) return null;
+  const xAxis: Axis3 = [delta[0] / length, delta[1] / length, delta[2] / length];
+  let yAxis = cross(xAxis, VERTICAL_Z);
+  if (Math.hypot(yAxis[0], yAxis[1], yAxis[2]) <= 1e-9) {
+    yAxis = [1, 0, 0];
+  }
+  const zAxis = cross(xAxis, yAxis);
+  return {
+    length,
+    frame: {
+      origin: [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2, (start[2] + end[2]) / 2],
+      xAxis,
+      yAxis,
+      zAxis,
+    },
+  };
+}
+
+function buildStiffenerSolid(
+  entityId: string,
+  stationM: number,
+  offsetM: number,
+  webHeight: number,
+  input: ResolvedBridgeStructureInput,
+): ApolloSolidGeometryParameter {
+  return {
+    id: `solid:bsdd:stiffener:${entityId}`,
+    sourceEntityKind: "member",
+    sourceEntityId: entityId,
+    selectionKey: buildDesignEntitySelectionKey("Stiffener", entityId),
+    validationTargetKey: buildDesignEntitySelectionKey("Stiffener", entityId),
+    displayLabel: `Stiffener ${entityId.slice(0, 8)}`,
+    kind: "stiffener",
+    visibilityGroup: "girders",
+    exportable: true,
+    designEntityId: entityId,
+    designEntityKind: "Stiffener",
+    dimensionsM: {
+      length: Math.max(input.webThickness, 0.02),
+      width: STIFFENER_PLATE_DEPTH_M,
+      height: Math.max(webHeight, 0.02),
+      station: stationM,
+    },
+    localFrame: longitudinalFrame([stationM, offsetM, 0]),
+  };
+}
+
+function buildBracingMember(
+  entityId: string,
+  start: readonly [number, number, number],
+  end: readonly [number, number, number],
+  label: string,
+): ApolloSolidGeometryParameter | null {
+  const oriented = frameFromStartEnd(start, end);
+  if (!oriented) {
+    return null;
+  }
+  return {
+    id: `solid:bsdd:bracing:${entityId}`,
+    sourceEntityKind: "member",
+    sourceEntityId: entityId,
+    selectionKey: buildDesignEntitySelectionKey("BraceMember", entityId),
+    validationTargetKey: buildDesignEntitySelectionKey("BraceMember", entityId),
+    displayLabel: label,
+    kind: "bracing",
+    visibilityGroup: "bracings",
+    exportable: true,
+    designEntityId: entityId,
+    designEntityKind: "BraceMember",
+    dimensionsM: {
+      length: oriented.length,
+      diameter: BRACING_MEMBER_DIAMETER_M,
+    },
+    localFrame: oriented.frame,
+    path: [start, end],
+  };
+}
+
+function webHeightOf(input: ResolvedBridgeStructureInput): number {
+  return input.girderDepth - input.topFlangeThickness - input.bottomFlangeThickness;
+}
+
+function groupBraceMembersByParent(
+  model: { readonly braceMembers: readonly BraceMember[] },
+): Map<string, readonly BraceMember[]> {
+  const byParent = new Map<string, BraceMember[]>();
+  for (const member of model.braceMembers) {
+    const parent = member.parentBracingRefId ?? "";
+    const list = byParent.get(parent) ?? [];
+    list.push(member);
+    byParent.set(parent, list);
+  }
+  return byParent;
+}
+
 export function buildBridgeStructureSolidGeometryParameters(
   project: ProjectModel,
   warnings: ApolloVisualizationWarning[],
@@ -235,6 +355,9 @@ export function buildBridgeStructureSolidGeometryParameters(
   const offsets = girderOffsetsFromDocument(document, input);
   const useBoxFallback = girderUsesBoxFallback(input);
   const solids: ApolloSolidGeometryParameter[] = [];
+  const crossBeamCount = Math.floor(input.bridgeLength / input.crossBeamSpacing) + 1;
+  const webHeight = Math.max(webHeightOf(input), 0.02);
+  const membersByParent = groupBraceMembersByParent(model);
 
   if (useBoxFallback) {
     warnings.push({
@@ -275,9 +398,111 @@ export function buildBridgeStructureSolidGeometryParameters(
     }
   }
 
+  if (input.stiffenerSpacing !== null) {
+    const stiffenerSpacing = input.stiffenerSpacing;
+    const stationsPerGirder = Math.floor(input.bridgeLength / stiffenerSpacing) + 1;
+    model.stiffeners.forEach((stiffener, index) => {
+      const girderIndex = Math.floor(index / stationsPerGirder);
+      const station = index % stationsPerGirder;
+      const offsetM = offsets[girderIndex] ?? offsets[0] ?? 0;
+      solids.push(
+        buildStiffenerSolid(
+          stiffener.stiffenerId,
+          station * stiffenerSpacing,
+          offsetM,
+          webHeight,
+          input,
+        ),
+      );
+    });
+  }
+
+  if (input.swayBracingInterval !== null) {
+    const swayBracingInterval = input.swayBracingInterval;
+    const swayStations: number[] = [];
+    for (let index = 1; index <= crossBeamCount - 2; index += 1) {
+      if (index % swayBracingInterval === 0) {
+        swayStations.push(index);
+      }
+    }
+    model.swayBracings.forEach((swayBracing, swayIndex) => {
+      const station = swayStations[swayIndex];
+      if (station === undefined) {
+        return;
+      }
+      const x = station * input.crossBeamSpacing;
+      const zTop = webHeight / 2;
+      const zBottom = -webHeight / 2;
+      const members = membersByParent.get(swayBracing.swayBracingId) ?? [];
+      let memberIndex = 0;
+      for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
+        const yA = offsets[pair] ?? 0;
+        const yB = offsets[pair + 1] ?? offsets[pair] ?? 0;
+        const diagonals: ReadonlyArray<readonly [readonly [number, number, number], readonly [number, number, number]]> = [
+          [[x, yA, zTop], [x, yB, zBottom]],
+          [[x, yA, zBottom], [x, yB, zTop]],
+        ];
+        for (const [start, end] of diagonals) {
+          const member = members[memberIndex];
+          memberIndex += 1;
+          if (!member) {
+            continue;
+          }
+          const solid = buildBracingMember(
+            member.braceMemberId,
+            start,
+            end,
+            `Sway ${swayIndex + 1}`,
+          );
+          if (solid) {
+            solids.push(solid);
+          }
+        }
+      }
+    });
+  }
+
+  if (input.lateralBracingEnabled) {
+    const lateralBracing = model.lateralBracings[0];
+    if (lateralBracing) {
+      const bays = crossBeamCount - 1;
+      const members = membersByParent.get(lateralBracing.lateralBracingId) ?? [];
+      const zLat = -input.girderDepth / 2 + LATERAL_BRACING_Z_CLEARANCE_M;
+      let memberIndex = 0;
+      for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
+        const yA = offsets[pair] ?? 0;
+        const yB = offsets[pair + 1] ?? offsets[pair] ?? 0;
+        for (let bay = 0; bay < bays; bay += 1) {
+          const x1 = bay * input.crossBeamSpacing;
+          const x2 = Math.min((bay + 1) * input.crossBeamSpacing, input.bridgeLength);
+          const diagonals: ReadonlyArray<readonly [readonly [number, number, number], readonly [number, number, number]]> = [
+            [[x1, yA, zLat], [x2, yB, zLat]],
+            [[x1, yB, zLat], [x2, yA, zLat]],
+          ];
+          for (const [start, end] of diagonals) {
+            const member = members[memberIndex];
+            memberIndex += 1;
+            if (!member) {
+              continue;
+            }
+            const solid = buildBracingMember(
+              member.braceMemberId,
+              start,
+              end,
+              `Lateral ${pair + 1}-${bay + 1}`,
+            );
+            if (solid) {
+              solids.push(solid);
+            }
+          }
+        }
+      }
+    }
+  }
+
   assumptions.push({
     code: "bsdd-bridge-structure-solids",
-    message: `BSDD-driven solids: ${model.mainGirders.length} girders, ${model.rcDecks.length} deck(s), ${model.crossBeams.length} cross-beam(s); girder spacing ${input.girderSpacing}m, deck thickness ${input.deckThickness}m, cross-beam spacing ${input.crossBeamSpacing}m.`,
+    message: `BSDD-driven solids: ${model.mainGirders.length} girders, ${model.rcDecks.length} deck(s), ${model.crossBeams.length} cross-beam(s), ${model.stiffeners.length} stiffener(s), ${model.swayBracings.length} sway-bracing site(s), ${model.lateralBracings.length} lateral-bracing site(s); girder spacing ${input.girderSpacing}m, deck thickness ${input.deckThickness}m, cross-beam spacing ${input.crossBeamSpacing}m.`,
   });
 
   assumptions.push({

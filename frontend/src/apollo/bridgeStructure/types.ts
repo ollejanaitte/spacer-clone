@@ -16,7 +16,15 @@ export const BRIDGE_STRUCTURE_INPUT_FIELD_KEYS = [
   "webThickness",
   "deckThickness",
   "crossBeamSpacing",
+  "stiffenerSpacing",
+  "swayBracingInterval",
+  "steelUnitWeight",
+  "rcUnitWeight",
 ] as const;
+
+export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = ["lateralBracingEnabled"] as const;
+
+export type BridgeStructureBooleanInputKey = (typeof BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS)[number];
 
 export type BridgeStructureInputFieldKey = (typeof BRIDGE_STRUCTURE_INPUT_FIELD_KEYS)[number];
 
@@ -39,6 +47,11 @@ export type ApolloBridgeStructureInputDraft = {
   readonly webThickness: number | null;
   readonly deckThickness: number | null;
   readonly crossBeamSpacing: number | null;
+  readonly stiffenerSpacing: number | null;
+  readonly swayBracingInterval: number | null;
+  readonly steelUnitWeight: number | null;
+  readonly rcUnitWeight: number | null;
+  readonly lateralBracingEnabled: boolean;
   readonly generatedAt: string | null;
 };
 
@@ -48,6 +61,7 @@ export type BridgeStructureInputFieldDefinition = {
   readonly units: string;
   readonly integer?: boolean;
   readonly min?: number;
+  readonly optional?: boolean;
 };
 
 export const BRIDGE_STRUCTURE_INPUT_FIELDS: readonly BridgeStructureInputFieldDefinition[] = [
@@ -64,9 +78,17 @@ export const BRIDGE_STRUCTURE_INPUT_FIELDS: readonly BridgeStructureInputFieldDe
   { key: "webThickness", label: "ウェブ厚", units: "m", min: 0 },
   { key: "deckThickness", label: "床版厚", units: "m", min: 0 },
   { key: "crossBeamSpacing", label: "横桁間隔", units: "m", min: 0 },
+  { key: "stiffenerSpacing", label: "補剛材間隔", units: "m", min: 0, optional: true },
+  { key: "swayBracingInterval", label: "対傾構間隔（横桁N本ごと）", units: "本", integer: true, min: 1, optional: true },
+  { key: "steelUnitWeight", label: "鋼の単位体積重量", units: "kN/m³", min: 0, optional: true },
+  { key: "rcUnitWeight", label: "RC床版の単位体積重量", units: "kN/m³", min: 0, optional: true },
 ];
 
-export type BridgeStructureQuantityStatus = "NOT_AUTHORIZED" | "INCOMPLETE";
+export type BridgeStructureQuantityStatus =
+  | "NOT_AUTHORIZED"
+  | "INCOMPLETE"
+  | "USER_PROVIDED_UNVERIFIED"
+  | "ADOPTED";
 
 export type BridgeStructureApproximateQuantity = {
   readonly label: string;
