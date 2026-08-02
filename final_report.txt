@@ -1,10 +1,10 @@
 ================================================================================
 Apollo 3D Vertical Slice — Freeze Gate Audit Final Report
 ================================================================================
-更新日時: 2026-08-02T20:30:00+09:00
+更新日時: 2026-08-02T20:35:00+09:00
 作業名: Apollo 3D Vertical Slice 残存PENDING分類・凍結判定・GitHub main反映
 作業目的: 未確認項目をPASS化せず分類し、証拠に基づき凍結可否を判定し、docs-onlyでmainへ反映する
-作業状態: AUDIT_PR_OPEN（#284、merge前）
+作業状態: AUDIT_MERGED + REPORT_FINALIZATION_PR_OPEN（#285、merge前）
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 START_BRANCH: main
@@ -13,9 +13,12 @@ START_ORIGIN_MAIN_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
 PR283_MERGED: YES
 PR283_MERGE_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
 WORKTREE_CLEAN_AT_START: YES
-作業ブランチ: docs/apollo-3d-freeze-gate-audit
-変更ファイル（第1PR予定）:
+作業ブランチ（第1）: docs/apollo-3d-freeze-gate-audit
+作業ブランチ（第2）: docs/apollo-3d-freeze-report-finalize
+変更ファイル（第1PR）:
 - docs/apollo/continuous_girder/manual_verification_checklist.md
+- final_report.txt
+変更ファイル（第2PR）:
 - final_report.txt
 APPLICATION_CODE_CHANGED: NO
 
@@ -126,25 +129,30 @@ PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 
 --------------------------------------------------------------------------------
-GitHub反映状態（第1PR時点・仮値）
+GitHub反映状態（第1PR merge確定 + 第2PR記録）
 --------------------------------------------------------------------------------
 AUDIT_PR_NUMBER: 284
 AUDIT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/284
-AUDIT_PR_MERGED: NO
-AUDIT_PR_MERGE_SHA: PENDING
-MAIN_SHA_AFTER_AUDIT_MERGE: PENDING
-LOCAL_MAIN_EQUALS_ORIGIN_MAIN: PENDING
-WORKTREE_CLEAN_AT_AUDIT_MERGE: PENDING
+AUDIT_PR_MERGED: YES
+AUDIT_PR_MERGE_SHA: e3751fbdc8b217c9d5e9090190cc8134ef83266d
+MAIN_SHA_AFTER_AUDIT_MERGE: e3751fbdc8b217c9d5e9090190cc8134ef83266d
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+WORKTREE_CLEAN_AT_AUDIT_MERGE: YES
 
-REPORT_FINALIZATION_PR_NUMBER: PENDING
-REPORT_FINALIZATION_PR_URL: PENDING
+APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
+未確認項目の扱い: PENDING維持（PASS化なし）。非ブロッカーとして後続GUI確認可。凍結再オープン条件ではない。
+次フェーズ開始可否: NO（数値ゲートBLOCKEDのため数値実装・Golden着手不可）
+数値ゲートはBLOCKEDのままであること: YES
+
+REPORT_FINALIZATION_PR_NUMBER: 285
+REPORT_FINALIZATION_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/285
 REPORT_FINALIZATION_PR_MERGE_STATUS_AT_DOCUMENT_TIME: PENDING_MERGE
+（第2PR自身のmerge SHAは未来値を捏造しない）
 
 次の推奨作業:
-1. 本audit docs-only PRをmainへマージ
-2. report-only PRでmerge SHAを確定記録
-3. 数値ゲート解除用の人間証跡（Golden等）は別トラック
-4. 残存PENDING GUIは必要時のみ実施（凍結の再オープン条件ではない）
+1. 本report-only PRをmainへマージ
+2. 数値ゲート解除用の人間証跡（Golden等）は別トラック
+3. 残存PENDING GUIは必要時のみ実施（凍結の再オープン条件ではない）
 
 GOLDEN_PHASE_START_READINESS: NO（数値ゲートBLOCKED維持）
 REMAINING_BLOCKERS: 数値認可未付与（NUMERIC_*）。Apollo 3D CONDITIONAL_FREEZE自体のBLOCKING項目は0。
