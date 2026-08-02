@@ -5,11 +5,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
 現在のPhase: A+ (Phase B 数値実装許可ゲート解除準備)
-現在のStep: P0 (Phase A 後処理・baseline)
-作業状態: Phase A 完了（PR #258 MERGED）、Phase A+ 開始
-現在ブランチ: docs/phase-b-prep-p0-baseline
+現在のStep: P1 (リポジトリ内で整理可能なブロッカー)
+作業状態: 実行中
+現在ブランチ: docs/phase-b-prep-p1-repository-blockers
 開始時main SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (Phase A 最終 main)
-現在HEAD SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (P0 開始時)
+現在HEAD SHA: 4b44df48ec4f035ffb7788a73d423092235d5254 (P0マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -43,6 +43,9 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Step A8: phase_a_completion_report.md を作成（完了判定・統合レビュー・Phase B 引き継ぎ）
 - Step A8: open_questions_and_blockers.md に A8 時点の状態を追記
 - Step A8: ブランチ docs/phase-a-a8-final-integration → PR #258 → main マージ済み (merge commit 8137c7a)
+- Phase A+ P0: docs/apollo/phase_b_release_preparation/ に README.md / 00_baseline_and_gate_matrix.md / 01_blocker_resolution_register.csv (13行) / decision_log.md を作成。final_report.txt を Phase A 完了・Phase A+ 開始へ修正
+- Phase A+ P0: ブランチ docs/phase-b-prep-p0-baseline → PR #259 → main マージ済み (merge commit 4b44df4)
+- Phase A+ P1: 01_blocker_resolution_register.csv を更新（PA-OQ-002 RESOLVED / PA-OQ-010 RESOLVED / PA-OQ-007 PARTIALLY_RESOLVED）。07_user_action_required.md を作成
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -65,22 +68,16 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PHA-0018: 検証ケースは DS-07 Golden と参照整合・全 BLOCKED、計算書出力は許可ゲート連動
 - DEC-PB-0001: Phase A+ は Phase A 成果物を上書きせず参照整合を保持。数値実装は行わずブロッカー整理・人間確認票・独立検証計画・最小セル選定を実施
 - DEC-PB-0002: ブロッカー解除レジスタ 01_blocker_resolution_register.csv を正本とし、状態変更は新しい DEC-ID と証拠を付けて行う
-未決事項: (Phase A+ P0..P6。全ブロッカー解除は完了条件ではなく、解除不能理由と人間の次操作を明確にすることが正式成果)
+- DEC-PB-0003: ライセンスPDF参照パスは実在パスを正本 (PA-OQ-002 RESOLVED)。旧Apollo は unknown-rights 21行パス存在確認・REFERENCE_ONLY 維持 (PA-OQ-010 RESOLVED)。refreeze の decision/open_questions 不在を捏造せず記録 (PA-OQ-007 PARTIALLY_RESOLVED)
+未決事項: (Phase A+ P1..P6。全ブロッカー解除は完了条件ではなく、解除不能理由と人間の次操作を明確にすることが正式成果)
 ブロッカー:
-- PA-OQ-001 道示 R7 条文目視確認 BLOCKED
-- PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
-- PA-OQ-003 JIS 番号未確定 BLOCKED
-- PA-OQ-004 2026-03-31 正誤表未反映項目 BLOCKED
-- PA-OQ-005 非合成鋼鈑桁 R7 対応計算例なし BLOCKED
-- PA-OQ-006 独立計算結果なし BLOCKED
-- PA-OQ-007 phase1_design_expansion_refreeze の decision_log/open_questions 不在 BLOCKED
-- PA-OQ-008 VVS02 単位重量の正式値昇格禁止 DEFERRED
-- PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
-- PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
+- PA-OQ-002 ライセンスPDF参照パス → RESOLVED (実在パス正本化)
+- PA-OQ-007 refreeze decision/open_questions 不在 → PARTIALLY_RESOLVED
+- PA-OQ-010 旧Apollo版不明 → RESOLVED (REFERENCE_ONLY 維持)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
 PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257) / Step A8 → PR #258 (https://github.com/ollejanaitte/spacer-clone/pull/258)
-mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 は PR 作成前
-次の作業: P0 commit → P0 push → PR 作成 (#259) → 自己レビュー → main マージ → ローカル同期 → P1
+mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 マージ済み (4b44df4)。P1 は PR 作成前
+次の作業: P1 commit → P1 push → PR 作成 (#260) → 自己レビュー → main マージ → ローカル同期 → P2 (道示・正誤表・JIS 人間確認票)
 
 ================================================================================
 MODEL: DeepSeek V4 Flash
