@@ -13,3 +13,5 @@ Phase A の決定記録。既存 DS-00〜DS-09 の DEC-DS00-0001 等は書き換
 | DEC-PHA-0002 | 2026-08-02 | A0 | 数値・式・係数の採択状態は DS-00 adoption_status_model の語彙（ADOPTED / ADOPTED_WITH_CONDITION / BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT / REFERENCE_ONLY / NOT_APPLICABLE / OUT_OF_SCOPE 等）を Phase A でも維持する。 | ADOPTED | 一部揃っても全体を一括 GRANTED にしない。 |
 | DEC-PHA-0003 | 2026-08-02 | A0 | 数値実装許可は部材・照査単位で管理する。未採択項目は NOT_AUTHORIZED。 | ADOPTED | 08_numeric_authorization_gate.md で定義。 |
 | DEC-PHA-0004 | 2026-08-02 | A0 | 各 Step (A0〜A8) ごとに専用ブランチを作成し、PR を main へマージする。次 Step は最新 main から開始する。 | ADOPTED | 巨大 PR1本 にしない。 |
+| DEC-PHA-0005 | 2026-08-02 | A1 | Phase A の対象基準・版・正誤表は DS-01 の採用基準（道路橋示方書・同解説 令和7年改訂版 / Ver2.00 + 2026-03-31 正誤表 overlay）をそのまま採用し、再凍結する。 | ADOPTED | 01_standard_scope_freeze.md に反映。 |
+| DEC-PHA-0006 | 2026-08-02 | A1 | Phase A の適用範囲は DS-00 / phase1 再凍結の IN/OUT をそのまま踏襲する。Phase 1 では耐震・疲労照査・下部構造本体は OUT、疲労はデータ境界のみ定義する。 | ADOPTED | 01_standard_scope_freeze.md に反映。 |
