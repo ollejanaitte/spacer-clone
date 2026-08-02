@@ -158,7 +158,7 @@ export interface BsddAnalysisBinding {
 export interface BsddPhase1ScopeAssertion {
   readonly alignmentClass: "straight";
   readonly skewAngleDeg: GovernedQuantity;
-  readonly spanSystem: "simple";
+  readonly spanSystem: "simple" | "continuous";
   readonly superstructureKind: "plate_girder_rc_slab_non_composite";
   readonly analysisType: "static_linear";
 }

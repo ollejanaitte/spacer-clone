@@ -18,32 +18,10 @@ import {
   buildBridgeStructureSolidGeometryParameters,
   hasBridgeStructureVisualizationSource,
 } from "../visualization";
+import { fillContinuousBridgeStructureInput } from "../testing/bridgeStructureFixtures";
 
 function fillValidInput(project: ReturnType<typeof createDefaultProject>) {
-  let next = project;
-  const values: Record<string, number> = {
-    spanLength: 40,
-    bridgeLength: 200,
-    width: 12,
-    girderCount: 4,
-    girderSpacing: 3,
-    girderDepth: 2.5,
-    topFlangeWidth: 0.5,
-    topFlangeThickness: 0.02,
-    bottomFlangeWidth: 0.6,
-    bottomFlangeThickness: 0.025,
-    webThickness: 0.012,
-    deckThickness: 0.25,
-    crossBeamSpacing: 5,
-  };
-  for (const [key, value] of Object.entries(values)) {
-    next = withBridgeStructureField(
-      next,
-      key as keyof ReturnType<typeof getBridgeStructureInputDraft>,
-      value,
-    );
-  }
-  return next;
+  return fillContinuousBridgeStructureInput(project);
 }
 
 function generateStructure(project: ReturnType<typeof createDefaultProject>) {

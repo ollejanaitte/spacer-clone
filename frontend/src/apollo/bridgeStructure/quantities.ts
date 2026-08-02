@@ -1,10 +1,10 @@
 import type { GovernedQuantityAdoptionStatus } from "../../contracts";
+import { BridgeSystem, resolveEffectiveLayout, sumSpanLengths, validateBridgeLayoutContract } from "../contracts";
 import type {
   ApolloBridgeStructureInputDraft,
   BridgeStructureApproximateQuantity,
   BridgeStructureQuantityStatus,
 } from "./types";
-import { resolveSpanCount } from "./validation";
 import { computeGirderSectionProperties } from "./sectionProperties";
 
 type ResolvedBridgeStructureInput = {
@@ -47,8 +47,14 @@ const STIFFENER_PLATE_WIDTH_M = 0.15;
 const BRACING_MEMBER_DIAMETER_M = 0.08;
 
 function resolveInput(draft: ApolloBridgeStructureInputDraft): ResolvedBridgeStructureInput | null {
-  const coreValues = [
-    draft.spanLength,
+  const layout = resolveEffectiveLayout({
+    bridgeSystem: draft.bridgeSystem,
+    spanLength: draft.spanLength,
+    spans: draft.spans,
+    supports: draft.supports,
+  });
+
+  const requiredScalars = [
     draft.bridgeLength,
     draft.width,
     draft.girderCount,
@@ -62,11 +68,21 @@ function resolveInput(draft: ApolloBridgeStructureInputDraft): ResolvedBridgeStr
     draft.deckThickness,
     draft.crossBeamSpacing,
   ];
-  if (coreValues.some((value) => value === null)) {
+  if (requiredScalars.some((value) => value === null)) {
     return null;
   }
+
+  let spanLength = draft.spanLength;
+  if (spanLength === null) {
+    if (draft.bridgeSystem === BridgeSystem.CONTINUOUS && layout && layout.spans.length > 0) {
+      spanLength = sumSpanLengths(layout.spans) / layout.spans.length;
+    } else {
+      return null;
+    }
+  }
+
   return {
-    spanLength: draft.spanLength!,
+    spanLength,
     bridgeLength: draft.bridgeLength!,
     width: draft.width!,
     girderCount: draft.girderCount!,
@@ -186,6 +202,27 @@ export function computeBridgeStructureApproximateQuantities(
   adoption: BridgeStructureUnitWeightAdoption = DEFAULT_ADOPTION,
 ): readonly BridgeStructureApproximateQuantity[] {
   const status: BridgeStructureQuantityStatus = inputComplete ? "NOT_AUTHORIZED" : "INCOMPLETE";
+  if (inputComplete) {
+    const layoutDiagnostics = validateBridgeLayoutContract({
+      bridgeSystem: draft.bridgeSystem,
+      bridgeLength: draft.bridgeLength,
+      spanLength: draft.spanLength,
+      spans: draft.spans,
+      supports: draft.supports,
+    });
+    if (layoutDiagnostics.length > 0) {
+      return [
+        quantityEntry(
+          "概算数量",
+          null,
+          "—",
+          "INCOMPLETE",
+          layoutDiagnostics[0] ?? "レイアウト契約が不完全のため数量を算出できません。",
+        ),
+      ];
+    }
+  }
+
   const resolved = resolveInput(draft);
   if (!resolved) {
     return [
@@ -199,15 +236,21 @@ export function computeBridgeStructureApproximateQuantities(
     ];
   }
 
-  const spanCount = resolveSpanCount(resolved.bridgeLength, resolved.spanLength);
-  if (spanCount === null) {
+  const layout = resolveEffectiveLayout({
+    bridgeSystem: draft.bridgeSystem,
+    spanLength: draft.spanLength,
+    spans: draft.spans,
+    supports: draft.supports,
+  });
+  const spanCount = layout?.spans.length ?? null;
+  if (spanCount === null || spanCount < 1) {
     return [
       quantityEntry(
         "概算数量",
         null,
         "—",
         "INCOMPLETE",
-        "構造モデル長を支間長で割り切れる値を入力してください。",
+        "レイアウト契約が不完全のため数量を算出できません。",
       ),
     ];
   }

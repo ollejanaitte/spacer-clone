@@ -1,7 +1,19 @@
 import {
+  BridgeSystem,
+  resolveEffectiveLayout,
+  validateBridgeLayoutContract,
+} from "../contracts";
+import {
+  parseBridgeLayoutSpans,
+  parseBridgeLayoutSupports,
+  parseBridgeSystemField,
+} from "../contracts/layoutParser";
+import {
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELDS,
+  BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS,
+  DEFAULT_BRIDGE_SYSTEM,
   type ApolloBridgeStructureInputDraft,
   type BridgeStructureInputFieldKey,
 } from "./types";
@@ -75,6 +87,9 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     steelUnitWeight: null,
     rcUnitWeight: null,
     lateralBracingEnabled: false,
+    bridgeSystem: DEFAULT_BRIDGE_SYSTEM,
+    spans: [],
+    supports: [],
     generatedAt: null,
   };
 }
@@ -86,6 +101,14 @@ export function validateBridgeStructureInputDraft(
   const diagnostics: string[] = [];
 
   for (const field of BRIDGE_STRUCTURE_INPUT_FIELDS) {
+    if (
+      field.key === "spanLength" &&
+      draft.bridgeSystem === BridgeSystem.CONTINUOUS &&
+      draft.spans.length > 0
+    ) {
+      fieldErrors.push({ key: field.key, message: null });
+      continue;
+    }
     if (field.optional && draft[field.key] === null) {
       fieldErrors.push({ key: field.key, message: null });
       continue;
@@ -103,6 +126,7 @@ export function validateBridgeStructureInputDraft(
   if (
     draft.spanLength !== null &&
     draft.bridgeLength !== null &&
+    draft.bridgeSystem === BridgeSystem.SIMPLE_SINGLE &&
     draft.spanLength > draft.bridgeLength
   ) {
     const message = "支間長は構造モデル長以下である必要があります。";
@@ -111,6 +135,7 @@ export function validateBridgeStructureInputDraft(
   }
 
   if (
+    draft.bridgeSystem === BridgeSystem.SIMPLE_SINGLE &&
     draft.spanLength !== null &&
     draft.bridgeLength !== null &&
     draft.spanLength <= draft.bridgeLength &&
@@ -120,6 +145,16 @@ export function validateBridgeStructureInputDraft(
     fieldErrors.push({ key: "spanLength", message });
     diagnostics.push(message);
   }
+
+  diagnostics.push(
+    ...validateBridgeLayoutContract({
+      bridgeSystem: draft.bridgeSystem,
+      bridgeLength: draft.bridgeLength,
+      spanLength: draft.spanLength,
+      spans: draft.spans,
+      supports: draft.supports,
+    }),
+  );
 
   if (
     draft.girderCount !== null &&
@@ -160,6 +195,7 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
   const allowed = new Set<string>([
     ...BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
     ...BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
+    ...BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS,
     "schemaVersion",
     "generatedAt",
   ]);
@@ -196,6 +232,59 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
     diagnostics.push("apolloBridgeStructureInput.generatedAt must be a string or null.");
   }
 
+  if (
+    raw.bridgeSystem !== undefined &&
+    raw.bridgeSystem !== null &&
+    raw.bridgeSystem !== BridgeSystem.SIMPLE_SINGLE &&
+    raw.bridgeSystem !== BridgeSystem.CONTINUOUS &&
+    raw.bridgeSystem !== BridgeSystem.SIMPLE_MULTIPLE
+  ) {
+    diagnostics.push(
+      "apolloBridgeStructureInput.bridgeSystem must be SIMPLE_SINGLE, CONTINUOUS, or SIMPLE_MULTIPLE.",
+    );
+  }
+
+  if (raw.spans !== undefined && raw.spans !== null) {
+    if (!Array.isArray(raw.spans)) {
+      diagnostics.push("apolloBridgeStructureInput.spans must be an array.");
+    } else {
+      for (const [index, entry] of raw.spans.entries()) {
+        if (!isRecord(entry)) {
+          diagnostics.push(`apolloBridgeStructureInput.spans[${index}] must be an object.`);
+          continue;
+        }
+        if (typeof entry.id !== "string") {
+          diagnostics.push(`apolloBridgeStructureInput.spans[${index}].id must be a string.`);
+        }
+        if (typeof entry.length !== "number" || !Number.isFinite(entry.length)) {
+          diagnostics.push(`apolloBridgeStructureInput.spans[${index}].length must be a finite number.`);
+        }
+      }
+    }
+  }
+
+  if (raw.supports !== undefined && raw.supports !== null) {
+    if (!Array.isArray(raw.supports)) {
+      diagnostics.push("apolloBridgeStructureInput.supports must be an array.");
+    } else {
+      for (const [index, entry] of raw.supports.entries()) {
+        if (!isRecord(entry)) {
+          diagnostics.push(`apolloBridgeStructureInput.supports[${index}] must be an object.`);
+          continue;
+        }
+        if (typeof entry.id !== "string") {
+          diagnostics.push(`apolloBridgeStructureInput.supports[${index}].id must be a string.`);
+        }
+        if (typeof entry.station !== "number" || !Number.isFinite(entry.station)) {
+          diagnostics.push(`apolloBridgeStructureInput.supports[${index}].station must be a finite number.`);
+        }
+        if (entry.role !== "ABUTMENT" && entry.role !== "PIER") {
+          diagnostics.push(`apolloBridgeStructureInput.supports[${index}].role must be ABUTMENT or PIER.`);
+        }
+      }
+    }
+  }
+
   return diagnostics;
 }
 
@@ -224,9 +313,21 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
 
   const generatedAt = raw.generatedAt;
   const lateralBracingRaw = raw.lateralBracingEnabled;
+  const spans = parseBridgeLayoutSpans(raw.spans);
+  if (spans === null) {
+    return null;
+  }
+  const supports = parseBridgeLayoutSupports(raw.supports);
+  if (supports === null) {
+    return null;
+  }
+
   return {
     ...draft,
     lateralBracingEnabled: typeof lateralBracingRaw === "boolean" ? lateralBracingRaw : false,
+    bridgeSystem: parseBridgeSystemField(raw.bridgeSystem),
+    spans,
+    supports,
     generatedAt:
       generatedAt === null || generatedAt === undefined
         ? null

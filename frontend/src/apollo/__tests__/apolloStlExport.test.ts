@@ -14,6 +14,7 @@ import {
   parseBinaryStl,
   validateApolloBinaryStlTriangles,
 } from "../export";
+import { fillContinuousBridgeStructureInput } from "../testing/bridgeStructureFixtures";
 
 describe("Apollo binary STL export", () => {
   afterEach(() => {
@@ -197,16 +198,7 @@ describe("Apollo binary STL export", () => {
   });
 
   it("exports stiffeners as girders-grouped boxes with a dedicated entity count", () => {
-    let project = createDefaultProject();
-    const values: Record<string, number> = {
-      spanLength: 40, bridgeLength: 200, width: 12, girderCount: 4, girderSpacing: 3,
-      girderDepth: 2.5, topFlangeWidth: 0.5, topFlangeThickness: 0.02,
-      bottomFlangeWidth: 0.6, bottomFlangeThickness: 0.025, webThickness: 0.012,
-      deckThickness: 0.25, crossBeamSpacing: 5,
-    };
-    for (const [key, value] of Object.entries(values)) {
-      project = withBridgeStructureField(project, key as never, value);
-    }
+    let project = fillContinuousBridgeStructureInput(createDefaultProject());
     project = withBridgeStructureField(project, "stiffenerSpacing", 25);
     const regen = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
     expect(regen.ok).toBe(true);

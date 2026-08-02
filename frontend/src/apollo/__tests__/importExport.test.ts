@@ -14,6 +14,7 @@ import {
   importApolloProjectFromText,
 } from "../importExport";
 import { getApolloPhase1Unit2Draft } from "../unit2Draft";
+import { fillContinuousBridgeStructureInput } from "../testing/bridgeStructureFixtures";
 
 describe("importExport", () => {
   it("strips UTF-8 BOM and preserves Japanese string fidelity on round-trip", () => {
@@ -86,20 +87,7 @@ describe("importExport", () => {
   });
 
   it("round-trips apolloBsdd and bridge structure input sidecars", () => {
-    const project = createApollo200mContinuousBridgeSample();
-    let next = withBridgeStructureField(project, "spanLength", 40);
-    next = withBridgeStructureField(next, "bridgeLength", 200);
-    next = withBridgeStructureField(next, "width", 12);
-    next = withBridgeStructureField(next, "girderCount", 4);
-    next = withBridgeStructureField(next, "girderSpacing", 3);
-    next = withBridgeStructureField(next, "girderDepth", 2.5);
-    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
-    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
-    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
-    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
-    next = withBridgeStructureField(next, "webThickness", 0.012);
-    next = withBridgeStructureField(next, "deckThickness", 0.25);
-    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    const next = fillContinuousBridgeStructureInput(createApollo200mContinuousBridgeSample());
 
     const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
     expect(generated.ok).toBe(true);
@@ -121,20 +109,7 @@ describe("importExport", () => {
   });
 
   it("rejects invalid apolloBsdd on import fail-closed", () => {
-    const project = createApollo200mContinuousBridgeSample();
-    let next = withBridgeStructureField(project, "spanLength", 40);
-    next = withBridgeStructureField(next, "bridgeLength", 200);
-    next = withBridgeStructureField(next, "width", 12);
-    next = withBridgeStructureField(next, "girderCount", 4);
-    next = withBridgeStructureField(next, "girderSpacing", 3);
-    next = withBridgeStructureField(next, "girderDepth", 2.5);
-    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
-    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
-    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
-    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
-    next = withBridgeStructureField(next, "webThickness", 0.012);
-    next = withBridgeStructureField(next, "deckThickness", 0.25);
-    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    const next = fillContinuousBridgeStructureInput(createApollo200mContinuousBridgeSample());
     const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
     expect(generated.ok).toBe(true);
     if (!generated.ok) return;
@@ -151,19 +126,7 @@ describe("importExport", () => {
   });
 
   function fillAndGenerateBridgeStructure(project: ReturnType<typeof createApollo200mContinuousBridgeSample>) {
-    let next = withBridgeStructureField(project, "spanLength", 40);
-    next = withBridgeStructureField(next, "bridgeLength", 200);
-    next = withBridgeStructureField(next, "width", 12);
-    next = withBridgeStructureField(next, "girderCount", 4);
-    next = withBridgeStructureField(next, "girderSpacing", 3);
-    next = withBridgeStructureField(next, "girderDepth", 2.5);
-    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
-    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
-    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
-    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
-    next = withBridgeStructureField(next, "webThickness", 0.012);
-    next = withBridgeStructureField(next, "deckThickness", 0.25);
-    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    const next = fillContinuousBridgeStructureInput(project);
     const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
     expect(generated.ok).toBe(true);
     if (!generated.ok) {
@@ -214,19 +177,7 @@ describe("importExport", () => {
   });
 
   it("round-trips secondary-member and unit-weight input fields through save/reload", () => {
-    let next = withBridgeStructureField(createApollo200mContinuousBridgeSample(), "spanLength", 40);
-    next = withBridgeStructureField(next, "bridgeLength", 200);
-    next = withBridgeStructureField(next, "width", 12);
-    next = withBridgeStructureField(next, "girderCount", 4);
-    next = withBridgeStructureField(next, "girderSpacing", 3);
-    next = withBridgeStructureField(next, "girderDepth", 2.5);
-    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
-    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
-    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
-    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
-    next = withBridgeStructureField(next, "webThickness", 0.012);
-    next = withBridgeStructureField(next, "deckThickness", 0.25);
-    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    let next = fillContinuousBridgeStructureInput(createApollo200mContinuousBridgeSample());
     next = withBridgeStructureField(next, "stiffenerSpacing", 25);
     next = withBridgeStructureField(next, "swayBracingInterval", 2);
     next = withBridgeStructureField(next, "steelUnitWeight", 77);

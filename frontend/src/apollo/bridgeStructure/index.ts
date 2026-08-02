@@ -37,6 +37,7 @@ export {
   type BridgeStructureInputFieldKey,
   type BridgeStructureQuantityStatus,
 } from "./types";
+export { withBridgeStructureBooleanField } from "./generateBsdd";
 export {
   createEmptyBridgeStructureInputDraft,
   parseBridgeStructureInputDraft,
@@ -47,7 +48,14 @@ export {
   type BridgeStructureFieldValidation,
   type BridgeStructureValidationResult,
 } from "./validation";
-export { withBridgeStructureBooleanField } from "./generateBsdd";
+export {
+  buildContinuousLayout,
+  buildSimpleSingleLayout,
+  buildSupportsFromSpans,
+  BridgeSystem,
+  SupportLayoutRole,
+  validateBridgeLayoutContract,
+} from "../contracts";
 export {
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
   SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,

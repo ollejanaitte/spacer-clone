@@ -7,32 +7,13 @@ import {
   getBridgeStructureQuantities,
   withBridgeStructureField,
 } from "../bridgeStructure";
+import {
+  fillContinuousBridgeStructureInput,
+  fillSimpleSingleBridgeStructureInput,
+} from "../testing/bridgeStructureFixtures";
 
 function fillValidInput(project: ReturnType<typeof createDefaultProject>) {
-  let next = project;
-  const values: Record<string, number> = {
-    spanLength: 40,
-    bridgeLength: 200,
-    width: 12,
-    girderCount: 4,
-    girderSpacing: 3,
-    girderDepth: 2.5,
-    topFlangeWidth: 0.5,
-    topFlangeThickness: 0.02,
-    bottomFlangeWidth: 0.6,
-    bottomFlangeThickness: 0.025,
-    webThickness: 0.012,
-    deckThickness: 0.25,
-    crossBeamSpacing: 5,
-  };
-  for (const [key, value] of Object.entries(values)) {
-    next = withBridgeStructureField(
-      next,
-      key as keyof ReturnType<typeof getBridgeStructureInputDraft>,
-      value,
-    );
-  }
-  return next;
+  return fillContinuousBridgeStructureInput(project);
 }
 
 describe("bridge structure approximate quantities", () => {
@@ -88,7 +69,7 @@ describe("bridge structure approximate quantities", () => {
     expect(generated.ok).toBe(true);
     if (!generated.ok) return;
 
-    const stale = withBridgeStructureField(generated.project, "bridgeLength", 180);
+    const stale = withBridgeStructureField(generated.project, "girderCount", 5);
     const quantities = getBridgeStructureQuantities(stale);
     expect(quantities).toHaveLength(1);
     expect(quantities[0]).toMatchObject({
@@ -99,8 +80,8 @@ describe("bridge structure approximate quantities", () => {
     expect(quantities[0]?.note).toContain("再生成");
   });
 
-  it("returns INCOMPLETE for non-divisible span ratio instead of rounding", () => {
-    let project = fillValidInput(createDefaultProject());
+  it("returns INCOMPLETE for SIMPLE_SINGLE length mismatch instead of silent correction", () => {
+    let project = fillSimpleSingleBridgeStructureInput(createDefaultProject());
     project = withBridgeStructureField(project, "bridgeLength", 100);
     project = withBridgeStructureField(project, "spanLength", 30);
     const draft = getBridgeStructureInputDraft(project);
@@ -109,6 +90,6 @@ describe("bridge structure approximate quantities", () => {
     expect(quantities).toHaveLength(1);
     expect(quantities[0]?.status).toBe("INCOMPLETE");
     expect(quantities[0]?.value).toBeNull();
-    expect(quantities[0]?.note).toContain("割り切れる");
+    expect(quantities[0]?.note).toMatch(/一致|レイアウト/);
   });
 });

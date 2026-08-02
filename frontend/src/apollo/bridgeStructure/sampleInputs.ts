@@ -33,6 +33,9 @@ export const SIMPLE_SINGLE_SPAN_SAMPLE_INPUT: ApolloBridgeStructureInputDraft = 
   steelUnitWeight: 77.0,
   rcUnitWeight: 24.5,
   lateralBracingEnabled: false,
+  bridgeSystem: "SIMPLE_SINGLE",
+  spans: [],
+  supports: [],
   generatedAt: null,
 };
 

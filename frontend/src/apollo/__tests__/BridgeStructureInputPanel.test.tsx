@@ -9,6 +9,7 @@ import {
   withBridgeStructureField,
 } from "../bridgeStructure";
 import { BridgeStructureInputPanel } from "../components/BridgeStructureInputPanel";
+import { fillContinuousBridgeStructureInput } from "../testing/bridgeStructureFixtures";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -34,30 +35,7 @@ function setInputValue(input: HTMLInputElement, value: string) {
 }
 
 function fillValidInput(project: ProjectModel): ProjectModel {
-  let next = project;
-  const values: Record<string, number> = {
-    spanLength: 40,
-    bridgeLength: 200,
-    width: 12,
-    girderCount: 4,
-    girderSpacing: 3,
-    girderDepth: 2.5,
-    topFlangeWidth: 0.5,
-    topFlangeThickness: 0.02,
-    bottomFlangeWidth: 0.6,
-    bottomFlangeThickness: 0.025,
-    webThickness: 0.012,
-    deckThickness: 0.25,
-    crossBeamSpacing: 5,
-  };
-  for (const [key, value] of Object.entries(values)) {
-    next = withBridgeStructureField(
-      next,
-      key as keyof ReturnType<typeof getBridgeStructureInputDraft>,
-      value,
-    );
-  }
-  return next;
+  return fillContinuousBridgeStructureInput(project);
 }
 
 function renderPanel(initialProject: ProjectModel = createDefaultProject()) {

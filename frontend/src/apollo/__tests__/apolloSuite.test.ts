@@ -18,6 +18,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "bridgeStructureWorkflow.test.ts",
   "bulkEdit.test.ts",
   "clipboard.test.ts",
+  "continuousGirderLayout.test.ts",
   "dirtyFingerprint.test.ts",
   "entryGuard.test.ts",
   "errors.test.ts",
