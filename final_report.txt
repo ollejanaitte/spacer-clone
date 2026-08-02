@@ -1,5 +1,5 @@
 ================================================================================
-Apollo Phase A+ — 進捗レポート（P3 実行中）
+Apollo Phase A+ — 進捗レポート（P4 実行中）
 ================================================================================
 
 更新日時: 2026-08-02
@@ -8,23 +8,23 @@ Apollo Phase A+ — 進捗レポート（P3 実行中）
 作業場所: /home/masaharu/Projects/spacer-clone
 
 現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
-現在の到達Step: P3（解析器同一性・物理契約）
-作業状態: 実行中（P3 成果物作成済み・commit/push 前）
+現在の到達Step: P4（Golden・独立検証計画）
+作業状態: 実行中（P4 成果物作成済み・commit/push 前）
 
-LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p3-solver-contract
-LOCAL_HEAD_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d（= origin/main、P2 マージ後）
-LOCAL_MAIN_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d
-ORIGIN_MAIN_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d
+LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p4-golden-plan
+LOCAL_HEAD_SHA: e2cf9c17eeb58d64c19ceb7f1bb2fa262da4cd1c（= origin/main、P3 マージ後）
+LOCAL_MAIN_SHA: e2cf9c17eeb58d64c19ceb7f1bb2fa262da4cd1c
+ORIGIN_MAIN_SHA: e2cf9c17eeb58d64c19ceb7f1bb2fa262da4cd1c
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（P3 成果物の未コミット差分あり）
-LOCAL_UNCOMMITTED_WORK: 04_solver_identity_and_physical_contract.md / 01_blocker_resolution_register.csv / decision_log.md / 07_user_action_required.md / final_report.txt
+WORKTREE_CLEAN: NO（P4 成果物の未コミット差分あり）
+LOCAL_UNCOMMITTED_WORK: 05_golden_validation_execution_plan.md / 01_blocker_resolution_register.csv / decision_log.md / 07_user_action_required.md / final_report.txt
 LOCAL_UNPUSHED_COMMITS: 0
 LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: なし（P3 PR 作成前）
-UNMERGED_BRANCH: docs/phase-b-prep-p3-solver-contract
-LATEST_MERGED_PR: #261（P2）
+OPEN_PR: なし（P4 PR 作成前）
+UNMERGED_BRANCH: docs/phase-b-prep-p4-golden-plan
+LATEST_MERGED_PR: #262（P3）
 
 P0_STATUS: MERGED_COMPLETE
 P0_PR: #259（merge commit 4b44df4）
@@ -32,40 +32,40 @@ P1_STATUS: MERGED_COMPLETE
 P1_PR: #260（merge commit f5e6cc7）
 P2_STATUS: MERGED_COMPLETE
 P2_PR: #261（merge commit db2d972）
-P3_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
-P3_PR: —
-P4_STATUS: NOT_STARTED
+P3_STATUS: MERGED_COMPLETE
+P3_PR: #262（merge commit e2cf9c1）
+P4_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
 P4_PR: —
 P5_STATUS: NOT_STARTED
 P5_PR: —
 P6_STATUS: NOT_STARTED
 P6_PR: —
 
-MERGED_COMPLETE_STEPS: P0, P1, P2
+MERGED_COMPLETE_STEPS: P0, P1, P2, P3
 LOCAL_ONLY_STEPS: なし
-INCOMPLETE_STEPS: P3（PR 作成前）, P4, P5, P6
-NEXT_RESUME_STEP: P3
-NEXT_RESUME_BRANCH: docs/phase-b-prep-p3-solver-contract
-NEXT_REQUIRED_ACTION: P3 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → P4（Golden・独立検証計画）
+INCOMPLETE_STEPS: P4（PR 作成前）, P5, P6
+NEXT_RESUME_STEP: P4
+NEXT_RESUME_BRANCH: docs/phase-b-prep-p4-golden-plan
+NEXT_REQUIRED_ACTION: P4 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → P5（最初の数値リリース候補選定）
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO（人間証拠不足）
 
 調査結果:
-- P2 は PR #261 で main マージ済み（merge commit db2d972）。local main = origin/main。
-- P3 で 04_solver_identity_and_physical_contract.md を作成。リポジトリ solver（backend/engine）の同一性・物理契約をコード・テスト観察で文書化。
-  - 入出力・DOF（ux..rz 6DOF/節点）・座標・部材ローカル系（I→J）・要素剛性（Euler-Bernoulli）・荷重（等価固定端荷重）・反力（K·u−f）・部材端力（k_local·u_local−f_equiv）を CONFIRMED_BY_CODE
-  - 閉形式検証（片持ち・単純支持・ねじり・分布荷重・座標変換）は既存テスト PASS = CONFIRMED_BY_TEST
-  - IF3 チェックサム（sha256 canonical JSON）・STALE・solverVersion（0.3.x）・決定性・並行（単一スレッド）を PROJECT_SPECIFIC
-  - 浮動小数点再現性・単位束縛（AN-BLK-003）・外部解析器契約（AN-BLK-001..）・荷重組合せマッピング（AN-BLK-010）は BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT 維持
-  - 非合成断面の合成剛性は UNKNOWN（未実装・未採択）
-- PA-OQ-009・GATE-NR-02 は PARTIALLY_RESOLVED 相当（DEC-PB-0005）として READY_FOR_HUMAN_REVIEW 維持。
+- P3 は PR #262 で main マージ済み（merge commit e2cf9c1）。local main = origin/main = e2cf9c17。
+- P4 で 05_golden_validation_execution_plan.md を作成。Golden 独立検証の実行計画を策定。
+  - Golden 定義（ANALYTICAL / PARITY / APPROVED_REGRESSION / DESIGN_VERIFICATION）と独立性条件を固定
+  - 同一モデル生成値を独立証拠にしない規則・DeepSeek 再計算の非独立化・既存テスト PASS の代替禁止を明文化
+  - 最小候補 GOLD-MG-001..007（単純支持主桁・自重/集中荷重、断面諸量、反力、最大曲げ・せん断・たわみ）を定義（数値はプレースホルダ）
+  - 許容誤差は DS-07 既定（abs(a−e)<=max(A,R·|e|)）を基準。チェックサム・実行環境・ツール・出力ファイル・承認者・再現手順・差分判定・失敗時処理を定義
+  - 本計画策定は Golden 承認ではない。GOLD-001..016 は全 NOT_APPROVED、07_validation_cases.csv は全 BLOCKED 維持
+- PA-OQ-005 / PA-OQ-006 / GATE-NR-03 は DEC-PB-0006 で READY_FOR_HUMAN_REVIEW 維持（独立誘導・外部実行・承認は人間作業）。
 - 数値実装許可は全セル NOT_AUTHORIZED のまま。
 
 注意事項:
 - 本作業は application code を変更していない。変更範囲は docs/apollo/phase_b_release_preparation/ と final_report.txt のみ。
 - 外部 SPACER / 旧 Apollo を solver と同一と推定・記録していない。
-- P3 の人間作業（UA-P3-01/02）は 07_user_action_required.md に引き継ぎ。
+- P4 の人間作業（UA-P4-01/02/03）は 07_user_action_required.md に引き継ぎ。
 
-OVERALL_VERDICT: IN_PROGRESS（P3）
+OVERALL_VERDICT: IN_PROGRESS（P4）
 ================================================================================
