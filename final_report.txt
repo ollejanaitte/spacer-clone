@@ -1,37 +1,37 @@
 ================================================================================
-Previous Phase Summary — Step 1 Development Track (retained)
+Previous Phase Summary — Step 1 + Step 2-A (retained)
 ================================================================================
-STEP_1_CLOSEOUT: COMPLETE (PRs #289–#298)
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
-DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
-
-================================================================================
-Apollo Step 2-A Development — Quantity Model
-================================================================================
-更新日時: 2026-08-02T22:45:00+09:00
-Step ID: APOLLO_STEP_2A_QUANTITY_MODEL
-作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
-START_MAIN_SHA: 5d49d359f2b78960382ea790aad3626afbac690d
-PRIMARY_MERGE_SHA: 547add4751f91b1e9e2615649797bfd6b78a3923
-
-STEP_2A_QUANTITY_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
-GOLD_QTY_001_PARITY: PASS
-GOLD_QTY_002_PARITY: PASS
-EXACT_APPROXIMATE_SEPARATION: PASS
-CSV_EXPORT_VERDICT: PASS
-JSON_EXPORT_VERDICT: PASS
-STALE_VERDICT: PASS
-GUI_VERDICT: PASS
-NO_FORMAL_QUANTITY_CLAIM: PASS
-STEP_2B_START_VERDICT: GO
-
+STEP_1: COMPLETE (#289–#298)
+STEP_2A_PRIMARY: #299 MERGED
+STEP_2A_REPORT: #300 MERGED
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-STEP_2A_PRIMARY_PR_NUMBER: 299
-STEP_2A_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/299
-STEP_2A_PRIMARY_PR_MERGE_SHA: 547add4751f91b1e9e2615649797bfd6b78a3923
-STEP_2A_REPORT_PR_NUMBER: 300
-STEP_2A_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/300
+================================================================================
+Apollo Step 2-B Development — ReportModel / Calculation Report
+================================================================================
+更新日時: 2026-08-02T22:50:00+09:00
+Step ID: APOLLO_STEP_2B_REPORT_OUTPUT
+START_MAIN_SHA: fed407f740df00b3c8e7414d352f9a7d6c5da7ca
+作業branch: feat/apollo-step2b-report-output
+
+Implementation:
+- Structured ReportModel with fixed 16-chapter registry
+- Dedicated HTML renderer (not app-shell print)
+- Playwright A4 PDF from ReportModel HTML
+- calculation CSV (no zero-fill), report JSON, audit manifest
+- Formal export fail-closed; development watermark
+
+Tests: reportModel PASS / typecheck PASS
+PDF generation evidence: docs/apollo/step2_report/pdf_generation_report.json
+
+STEP_2B_REPORT_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
+CHAPTER_REGISTRY_VERDICT: PASS
+PDF_EXPORT_VERDICT: PASS
+FORMAL_EXPORT_FAIL_CLOSED: PASS
+NO_FORMAL_OK_NG: PASS
+STEP_2C_START_VERDICT: GO
+
+STEP_2B_PRIMARY_PR_NUMBER: PENDING
+STEP_2B_PRIMARY_PR_URL: PENDING
 ================================================================================
