@@ -1,97 +1,157 @@
 ================================================================================
-Apollo 対傾構・上下横構3D配置修正 — 最終レポート
+Apollo 3D Vertical Slice — Freeze Gate Audit Final Report
 ================================================================================
-更新日時: 2026-08-02T20:15:00+09:00
-作業: Apollo 対傾構・上下横構3D配置修正（手動GUI確認結果の文書記録）
-作業状態: COMPLETE（mainマージ済み）+ 手動GUI確認 PASS を文書化
-現在ブランチ: docs/apollo-bracing-manual-gui-pass
-開始時main SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-現在HEAD SHA: 601eceacec7422cf36ebc8b5a17d0ac0351b97af
-再現状態: [30,35,30] / 幅10.5 / 主桁4@3 / 高2 / 横桁5 / 対傾構間隔1 / 下横構ON
+更新日時: 2026-08-02T20:30:00+09:00
+作業名: Apollo 3D Vertical Slice 残存PENDING分類・凍結判定・GitHub main反映
+作業目的: 未確認項目をPASS化せず分類し、証拠に基づき凍結可否を判定し、docs-onlyでmainへ反映する
+作業状態: AUDIT_IN_PROGRESS（第1PR作成前）
 
-CURRENT_SWAY_BRACING_PLANE: 修正前=同一X鉛直面 / 修正後=同一X鉛直面（維持）
-CURRENT_SWAY_BRACING_SHAPE: 修正前=X_TYPE / 修正後=V_TYPE（leftTop/rightTop→midBottom）
-CURRENT_UPPER_LATERAL_PLANE: 修正後=水平面 Z=topConnectionZ（upperLateralBracingEnabled）
-CURRENT_LOWER_LATERAL_PLANE: 修正後=水平面 Z=bottomConnectionZ（legacy lateralBracingEnabled）
-CURRENT_ENTITY_SEPARATION: SWAY / UPPER_LATERAL / LOWER_LATERAL を別entity・別label・bracingSystem寸法で分離
-
-既存対傾構の分類: 同一X鉛直面だがX字形（修正前）
-既存横構の分類: lateralBracingEnabled のみ（下側意味）、Zがウェブ中心付近（修正前）
-対傾構の正本座標: stationX固定、leftTop/rightTop@topConnectionZ、midBottom@bottomConnectionZ（V型）
-上横構の正本座標: Z=topConnectionZ、隣接station×隣接主桁の水平面X形
-下横構の正本座標: Z=bottomConnectionZ、同上
-根本原因:
-1. 対傾構がX形で三角形/V要件を満たさない
-2. 横構が上下未分離、かつZがフランジ中立面ではなくウェブ中心寄り
-変更ファイル（実装 PR #280）:
-- frontend/src/apollo/visualization/bridgeStructureSolids.ts
-- frontend/src/apollo/bridgeStructure/{types,validation,generateBsdd,quantities,sampleInputs}.ts
-- frontend/src/apollo/components/BridgeStructureInputPanel.tsx
-- frontend/src/apollo/__tests__/{bracingSystemGeometry,visualizationBoundsBracing,bridgeStructureVisualization,BridgeStructureInputPanel,continuousGirderLayout,apolloSuite}.ts(x)
-本ターン変更ファイル（docs-only）:
+WORKING_PATH: /home/masaharu/Projects/spacer-clone
+START_BRANCH: main
+START_MAIN_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
+START_ORIGIN_MAIN_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
+PR283_MERGED: YES
+PR283_MERGE_SHA: 06ea1587aaecf5db8d734a5a0196140a33be1346
+WORKTREE_CLEAN_AT_START: YES
+作業ブランチ: docs/apollo-3d-freeze-gate-audit
+変更ファイル（第1PR予定）:
 - docs/apollo/continuous_girder/manual_verification_checklist.md
 - final_report.txt
-他部材3D化の調査結果:
-| 部材 | 既存entity | 位置情報 | 寸法情報 | 3D化可否 | ブロッカー | 推奨次Step |
-|------|------------|----------|----------|----------|------------|------------|
-| 主桁/床版/横桁/補剛材/支承/橋台橋脚 | あり | あり | あり | 既存済 | — | なし |
-| 添接・ボルト・端横桁特殊 | 部分 | 不足 | 不足 | 否 | 寸法創作禁止 | 入力拡充後 |
-自動テスト: typecheck PASS / apollo 300 PASS / lint PASS / build PASS / STL・bounds PASS
-手動GUI: MANUAL_GUI_VERDICT: PASS
+APPLICATION_CODE_CHANGED: NO
+
+--------------------------------------------------------------------------------
+PR #283 確認済み範囲（変更せず維持）
+--------------------------------------------------------------------------------
+MANUAL_GUI_VERDICT: PASS
+MV-01..12: PASS
+MV-BR-01..08: PASS
+MV-BR-14..15: PASS
 SWAY_BRACING_MANUAL_VERDICT: PASS
 UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS
 LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS
 PR279_BOUNDS_MANUAL_REGRESSION: PASS
 SAVE_RELOAD_MANUAL_VERDICT: PASS
 STL_MANUAL_VERDICT: PASS
-PR番号・URL: #280 https://github.com/ollejanaitte/spacer-clone/pull/280
-mainマージ状態: MERGED（mergeCommit 5c055da）
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+
+--------------------------------------------------------------------------------
+調査したPENDING項目と分類
+--------------------------------------------------------------------------------
+調査対象:
+- MV-BR-09, MV-BR-10, MV-BR-11, MV-BR-12, MV-BR-13, MV-BR-16
+- MV-CG-01..35
+
+分類件数:
+- BLOCKING: 0
+- DEFERRED_NON_BLOCKING: 38（MV-BR-09/10/11/12/13 + MV-CG-01..32）
+- OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE: 4（MV-BR-16 + MV-CG-33..35）
+- PENDING_USER_CONFIRMATION: 41（全残存PENDING。PASS化なし。他分類と併記）
+
+BLOCKING項目一覧:
+- （なし）
+
+DEFERRED_NON_BLOCKING項目一覧:
+- MV-BR-09 対傾構間隔変更（横構と独立）— generateBsdd interval gate + bracing/workflow tests
+- MV-BR-10 SIMPLE_SINGLE回帰 — MV-11 PASS重複 + bounds/layout/viz tests
+- MV-BR-11 CONTINUOUS 5径間 — MV-01 PASS重複 + 5-span bounds test
+- MV-BR-12 Demo Shape OFF — MV-06 PASS重複
+- MV-BR-13 Demo Shape ON — MV-06/07 PASS重複
+- MV-CG-01..32 連続桁手動項目 — C4自動検証PASS、部分的にMV-01..12/MV-BR確認と重複
+
+OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE項目一覧:
+- MV-BR-16 selection/highlight BraceMember — visualization_spec選択対象は主桁・床版
+- MV-CG-33 断面力・利用率非表示 — 数値/照査境界（OUT_OF_SCOPE）
+- MV-CG-34 負曲げ・活荷重UI非存在 — analysis_boundary OUT
+- MV-CG-35 正式照査OK非出力 — NOT_AUTHORIZED / 認可未付与境界
+
+PENDING_USER_CONFIRMATION項目一覧:
+- 上記全41 PENDING行（Cursor環境で対話GUI未確認のためPENDING維持。PASS捏造なし）
+
+GUI確認を捏造していないこと: YES
+既存PASSをPENDINGへ戻していないこと: YES
+既存PENDINGを根拠なくPASSへ変更していないこと: YES
+
+--------------------------------------------------------------------------------
+検証結果（自動・GUI代替ではない）
+--------------------------------------------------------------------------------
+実行コマンド / 結果:
+1. npm test -- src/apollo/__tests__/continuousGirderLayout.test.ts
+     continuousGirderSample.test.ts continuousGirderVisualization.test.ts
+     visualizationBoundsBracing.test.ts bracingSystemGeometry.test.ts
+     BridgeStructureInputPanel.test.tsx bridgeStructureVisualization.test.ts
+     selection.test.ts importExport.test.ts apolloStlExport.test.ts
+   → PASS / exit 0 / 10 files / 91 tests
+2. npm test -- src/apollo
+   → PASS / exit 0 / 40 files / 300 tests
+3. npm run typecheck
+   → PASS / exit 0
+4. npm run lint
+   → PASS / exit 0（既存日本語文字列 review 警告 3271 occurrences / 148 files。今回の分類判断を阻害しない）
+5. npm run build
+   → PASS / exit 0（chunk size >500kB 警告のみ）
+
+TYPECHECK_RESULT: PASS
+TEST_RESULT: PASS (300 apollo)
+LINT_RESULT: PASS
+BUILD_RESULT: PASS
+GUI_VERIFICATION_LIMITATION: 対話的GUIは本環境で未実施。自動PASSを手動GUI PASSの代替にしていない。
+
+--------------------------------------------------------------------------------
+Apollo 3D 凍結判定
+--------------------------------------------------------------------------------
+APOLLO_3D_IMPLEMENTATION_VERDICT: PASS
+APOLLO_3D_AUTOMATED_VERIFICATION_VERDICT: PASS
+APOLLO_3D_CONFIRMED_MANUAL_SCOPE_VERDICT: PASS
+APOLLO_3D_REMAINING_MANUAL_ITEMS: MV-BR-09/10/11/12/13/16; MV-CG-01..35
+APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
+
+凍結範囲:
+- 連続桁純幾何ワークフロー（C0〜C4自動完了）
+- PR #279 bounds / Demo Shape / frame-solid整合（手動PASS）
+- PR #280 V型対傾構・上下横構分離（手動PASS）
+
+凍結対象外:
+- 残存PENDINGのitem-by-item GUI PASS化
+- 数値設計・Golden作成・主桁断面諸量正式実装
+- BraceMember専用選択GUI、断面力/利用率/正式照査
+
+次フェーズへ進む条件:
+- 数値ゲート解除は独立人間証跡が必要
+- 本CONDITIONAL_FREEZEは数値実装開始を許可しない
+
+--------------------------------------------------------------------------------
+数値ゲート（変更禁止・維持）
+--------------------------------------------------------------------------------
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-次の作業: 未確認 MV-BR-09/10/11/12/13/16 および MV-CG-* は必要時に別途確認
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+
+--------------------------------------------------------------------------------
+GitHub反映状態（第1PR時点・仮値）
+--------------------------------------------------------------------------------
+AUDIT_PR_NUMBER: PENDING
+AUDIT_PR_URL: PENDING
+AUDIT_PR_MERGED: NO
+AUDIT_PR_MERGE_SHA: PENDING
+MAIN_SHA_AFTER_AUDIT_MERGE: PENDING
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: PENDING
+WORKTREE_CLEAN_AT_AUDIT_MERGE: PENDING
+
+REPORT_FINALIZATION_PR_NUMBER: PENDING
+REPORT_FINALIZATION_PR_URL: PENDING
+REPORT_FINALIZATION_PR_MERGE_STATUS_AT_DOCUMENT_TIME: PENDING_MERGE
+
+次の推奨作業:
+1. 本audit docs-only PRをmainへマージ
+2. report-only PRでmerge SHAを確定記録
+3. 数値ゲート解除用の人間証跡（Golden等）は別トラック
+4. 残存PENDING GUIは必要時のみ実施（凍結の再オープン条件ではない）
+
+GOLDEN_PHASE_START_READINESS: NO（数値ゲートBLOCKED維持）
+REMAINING_BLOCKERS: 数値認可未付与（NUMERIC_*）。Apollo 3D CONDITIONAL_FREEZE自体のBLOCKING項目は0。
 
 ================================================================================
-最終サマリ
+参考: 直前作業（PR #280/#283 bracing manual GUI）要約
 ================================================================================
-MODEL: Cursor Agent
-TASK: APOLLO_SWAY_UPPER_LOWER_LATERAL_BRACING_FIX
-WORKING_PATH: /home/masaharu/Projects/spacer-clone
-INITIAL_MAIN_SHA: 46b466419d8c2dabeaf3317767aa039d247f02e2
-FINAL_MAIN_SHA: 601eceacec7422cf36ebc8b5a17d0ac0351b97af (feature merge 5c055da; report docs #281/#282)
-REPRODUCTION_VERDICT: CONFIRMED_FROM_CODE_AND_TESTS
-SWAY_BRACING_GEOMETRY_BEFORE: X-shape in constant-X vertical plane
-SWAY_BRACING_GEOMETRY_AFTER: V-type (leftTop/rightTop→midBottom) in constant-X vertical plane
-SWAY_BRACING_PLANE_VERDICT: PASS
-SWAY_BRACING_TRIANGULAR_VERDICT: PASS
-UPPER_LATERAL_BRACING_VERDICT: PASS (additive flag, Z=topConnectionZ)
-LOWER_LATERAL_BRACING_VERDICT: PASS (legacy flag, Z=bottomConnectionZ)
-ENTITY_SEPARATION_VERDICT: PASS
-UI_CONTRACT_VERDICT: PASS (legacy lower boolean + additive upper)
-LEGACY_COMPATIBILITY_VERDICT: PASS (false→none, true→LOWER_ONLY meaning unchanged)
-OTHER_COMPONENTS_3D_STATUS: SURVEY_ONLY_NO_NEW_INVENTED_MEMBERS
-FILES_CHANGED: 15 (feature) + docs-only manual GUI record
-TYPECHECK_VERDICT: PASS
-TEST_VERDICT: PASS (300 apollo)
-LINT_VERDICT: PASS
-BUILD_VERDICT: PASS
-STL_REGRESSION: PASS
-SAVE_RELOAD_REGRESSION: PASS (automated)
-SELECTION_REGRESSION: PASS (automated)
-PR279_BOUNDS_REGRESSION: PASS
-MANUAL_GUI_VERDICT: PASS
-SWAY_BRACING_MANUAL_VERDICT: PASS
-UPPER_LATERAL_BRACING_MANUAL_VERDICT: PASS
-LOWER_LATERAL_BRACING_MANUAL_VERDICT: PASS
-PR279_BOUNDS_MANUAL_REGRESSION: PASS
-SAVE_RELOAD_MANUAL_VERDICT: PASS
-STL_MANUAL_VERDICT: PASS
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-PR_NUMBER: 280
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/280
-PR_MERGED: YES
-LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES（本docs PRマージ後に再確認）
-WORKTREE_CLEAN: YES（本docs PRマージ後に再確認）
-OVERALL_VERDICT: COMPLETE
-NEXT_RECOMMENDED_ACTION: 未確認チェックリスト項目は必要時に別途確認
+対傾構V型・上下横構分離およびbounds回帰の手動GUI PASSをPR #283でmainへ記録済み。
+開始時main SHA（本audit）= PR #283 merge SHA = 06ea1587aaecf5db8d734a5a0196140a33be1346
 ================================================================================
