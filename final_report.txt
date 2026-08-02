@@ -1,12 +1,12 @@
 ================================================================================
-Apollo Step 1-C Development — Loads / Analysis Probe
+Apollo Step 1-D Development — Demand-Only Candidates
 ================================================================================
-更新日時: 2026-08-02T21:52:00+09:00
-作業名: Step 1-C development-only simple-span analysis reference + GUI probe
-Step ID: STEP_1C_DEVELOPMENT
-作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
-START_MAIN_SHA: 740d91486c6aae464afe2595317e9d34cf3ec9b6
-作業branch: feat/apollo-step1c-loads-analysis-dev
+更新日時: 2026-08-02T21:55:00+09:00
+作業名: Step 1-D development-only demand candidates (no formal OK/NG)
+Step ID: STEP_1D_DEVELOPMENT
+作業状態: PRIMARY_READY
+START_MAIN_SHA: 26e749833ee6402cc56010fefbdfcc0c9af802f1
+作業branch: feat/apollo-step1d-demand-candidates-dev
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
 DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
@@ -14,33 +14,22 @@ DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-Closed-form Decimal reference fixed before engine/GUI comparison:
-- GOLD-AN-001 UDL L=4 w=2 E=205e6 I=1e-4
-- GOLD-AN-002 center P L=4 P=10 E=205e6 I=1e-4
+Demand candidates (GOLD-AN-001 × GOLD-SP-001 development refs):
+- bendingStressTop/Bottom = M/S
+- shearStressWeb = V/Aw
+- deflection = uy
+Status: CANDIDATE / UNVERIFIED / USER REVIEW REQUIRED
+formalOkNg: NOT_EMITTED
 
-Live engine compare_live_engine.py: OVERALL PASS
-GUI AnalysisDevelopmentProbePanel Playwright: OVERALL PASS (0 console errors)
+Prior track:
+- Step 1-A development reference parity PASS (#289/#290)
+- Step 1-B section properties disclosure PASS (#291/#292)
+- Step 1-C analysis probe PASS (#293/#294)
 
-UI:
-- AnalysisDevelopmentProbePanel mounted on Apollo basics
-- Warning: UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
-- Provenance: NOT_AUTHORIZED / NOT_GRANTED
-
-Tests: AnalysisDevelopmentProbePanel + apolloSuite PASS
-typecheck: PASS
-
-GOLD_AN_001_DEVELOPMENT_PARITY: PASS
-GOLD_AN_002_DEVELOPMENT_PARITY: PASS
-APP_LAUNCH_VERDICT: PASS (uvicorn :8000 + vite apollo :5173)
-GUI_INPUT_VERDICT: PASS (probe buttons)
-STEP_1C_DEVELOPMENT_START_VERDICT: GO
-STEP_1C_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 STEP_1D_DEVELOPMENT_START_VERDICT: GO
+STEP_1D_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_STANDARDS_AND_GOLDEN
 
-STEP_1C_PRIMARY_PR_NUMBER: 293
-STEP_1C_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/293
-STEP_1C_PRIMARY_PR_MERGE_SHA: 5bedec3783441009775113e5cea34a6a496063d2
+STEP_1D_PRIMARY_PR_NUMBER: PENDING
+STEP_1D_PRIMARY_PR_URL: PENDING
+STEP_1D_PRIMARY_PR_MERGE_SHA: PENDING
 ================================================================================
-STEP_1C_REPORT_PR_NUMBER: 294
-STEP_1C_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/294
-STEP_1C_REPORT_PR_MERGE_SHA: PENDING
