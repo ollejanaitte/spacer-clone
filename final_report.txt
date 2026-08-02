@@ -1,95 +1,49 @@
 ================================================================================
-Apollo 単径間単純桁・連続桁 スライス実装 — 進捗レポート（S1 実行中）
+Apollo 単径間単純桁 → 連続桁スライス — 進捗レポート
 ================================================================================
+更新日時: 2026-08-02T16:52:30+09:00
+実行モデル: TokenRouter KimK3（現場監督: Grok4.5 / 作業員: Composer2.5）
+現在のStep: S2（検証完了・commit/PR準備）
+作業状態: 実行中
+現在ブランチ: test/apollo-simple-single-verification
+開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
+現在HEAD SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
+worktree状態: dirty
+未コミット差分:
+  M frontend/src/apollo/__tests__/apolloSuite.test.ts
+  ?? frontend/src/apollo/__tests__/simpleSingleSpanWorkflow.test.ts
+  ?? docs/apollo/simple_single_span/completion_report.md
+  M docs/apollo/simple_single_span/manual_verification_checklist.md
+  M final_report.txt
+未push commit: なし
 
-更新日時: 2026-08-02
-調査対象: Apollo 単径間単純桁（SIMPLE_SINGLE）入力補助 → 連続桁（CONTINUOUS）スライス
-正本リポジトリ: https://github.com/ollejanaitte/spacer-clone
-作業場所: /home/masaharu/Projects/spacer-clone
+実施済み:
+- 復旧監査・Step判定
+- spanSystem 正本確認（phase1ScopeAssertion）
+- テスト参照修正（SDMへ重複追加せず）
+- suite manifest 更新
+- vitest / typecheck / apollo tests / lint / build / viewer+STL PASS
+- S2 completion_report / manual_verification_checklist 作成
 
-現在のPhase: 単径間単純桁 入力補助（S1）→ 連続桁スライス（C0〜C4）
-現在の到達Step: S1（サンプル入力 UI 実装）
-作業状態: 実行中（S1 実装済み・テスト通過・commit/push 前）
+変更ファイル: 上記未コミット差分参照
+テスト結果:
+- simpleSingleSpanWorkflow: 5/5 PASS
+- npm test -- src/apollo: 35 files PASS
+- typecheck PASS / lint PASS / build PASS
+- viewer/STL関連 4 files / 64 tests PASS
+手動確認: MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
+決定事項:
+- S0/S1 MERGED_COMPLETE
+- S2 自動検証完了、手動GUIはPENDING
+- production契約を正としテストのみ修正
 
-LOCAL_CURRENT_BRANCH: feat/apollo-simple-single-sample-input
-LOCAL_HEAD_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03（= origin/main、S0 完了後）
-LOCAL_MAIN_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03
-ORIGIN_MAIN_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03
-LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（S1 実装の未コミット差分あり）
-LOCAL_UNCOMMITTED_WORK: frontend/src/apollo 配下の source/test 変更、final_report.txt
-LOCAL_UNPUSHED_COMMITS: 0
-LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
-LOCAL_BRANCH_BEHIND_ORIGIN: 0
+未決事項: S2 PR番号、C0以降
+ブロッカー: なし
+PR番号・URL: S0=#266 / S1=#267 / S2=作成予定
+mainマージ状態: S0・S1のみ。local=origin/main=9da49a8
+次の作業: commit → push → PR → merge → C0
 
-OPEN_PR: なし（S1 PR 作成前）
-LATEST_MERGED_PR: #266（S0）
-
-S0_STATUS: MERGED（PR #266, merge commit c3d58ba）
-S1_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
-S2_STATUS: NOT_STARTED
-C0_STATUS: NOT_STARTED
-C1_STATUS: NOT_STARTED
-C2_STATUS: NOT_STARTED
-C3_STATUS: NOT_STARTED
-C4_STATUS: NOT_STARTED
-
-MERGED_COMPLETE_STEPS: S0（ほか Phase A+ P0..P6 は完了済み）
-LOCAL_ONLY_STEPS: なし
-INCOMPLETE_STEPS: S1（commit/push 前）, S2, C0, C1, C2, C3, C4
-NEXT_RESUME_STEP: S1
-NEXT_RESUME_BRANCH: feat/apollo-simple-single-sample-input
-NEXT_REQUIRED_ACTION: S1 を commit → push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → S2
-
-NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
-PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE（維持）
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED（維持）
-
-S1 実装状況:
-- 用語変更: types.ts で「径間長」→「支間長」、「橋長」→「構造モデル長」にラベル変更。
-- validation.ts / generateBsdd.ts / quantities.ts の文言を「支間長」「構造モデル長」「支間数（概算）」に更新。
-- sampleInputs.ts を新規作成:
-  - SIMPLE_SINGLE_SPAN_SAMPLE_INPUT（支間30.0m, 幅員10.5m, 主桁4本@3.0m など S0 仕様どおり）。
-  - applySimpleSingleSpanSampleInput: 入力全項目へサンプル反映。SDM は自動生成しない（generatedAt=null）。
-  - clearBridgeStructureInput: 入力を全クリアして STALE 状態へ。
-  - deriveSingleSpanModelLength: 単径間では構造モデル長=支間長。bridgeLength が未設定の場合のみ導出し、
-    legacy の既設定値（bridgeLength != spanLength）は黙って上書きしない。
-  - 単位重量は USER_PROVIDED_UNVERIFIED のまま。ADOPTED 化・SDM 自動生成・採用自動実行はしない。
-- index.ts に sampleInputs 系と deriveSingleSpanModelLength をエクスポート追加。
-- BridgeStructureInputPanel.tsx:
-  - 現在対応形式「単径間単純桁（現在対応）」を表示（data-testid=apollo-current-bridge-system）。
-  - 「動作確認用サンプル値を入力」（apollo-sample-input）／「入力をクリア」（apollo-clear-input）ボタン追加。
-  - サンプル反映時は自動生成しない旨の disclaimer（apollo-sample-disclaimer）を表示。
-  - handleCommitField で spanLength 入力時に deriveSingleSpanModelLength により bridgeLength を安全に導出。
-- テスト:
-  - simpleSingleSpanSample.test.ts を新規作成（サンプル反映・自動生成なし・クリア・単位重量非採用・導出 3 件）。
-  - BridgeStructureInputPanel.test.tsx に 5 テスト追記。
-  - bridgeStructureQuantities.test.ts のラベルを「径間数」→「支間数」へ更新。
-  - apolloSuite.test.ts の期待テストモジュール一覧へ simpleSingleSpanSample.test.ts を追加。
-
-S1 検証結果:
-- npm test -- src/apollo: 34 files / 257 tests PASSED。
-- npx tsc --noEmit: PASS（出力なし）。
-- npm run lint: PASS（既存の日本語文字列チェックの警告のみで、エラーなし）。
-
-調査結果（S1 中のバリデーション不整合の発見と解決）:
-- 症状: サンプル入力（対傾構 横桁1本ごと = swayBracingInterval=1）で検証が失敗した。
-  - validateBridgeStructureInputDraft → complete=false
-  - 診断: 「対傾構間隔（横桁N本ごと）は 1 より大きい値を入力してください。」
-- 原因: BRIDGE_STRUCTURE_INPUT_FIELDS の swayBracingInterval が min: 1 で定義されており、
-  validation.ts の validatePositiveNumber は value <= min をエラーとするため「1 より大きい」=2 以上を要求していた。
-- 矛盾: フィールド定義（横桁N本ごと）と S0 サンプル仕様（対傾構 1 本ごと）は N=1 を許容すべきだが、
-  既存バリデーションは 1 を拒否していた。
-- 解決: types.ts の swayBracingInterval を min: 1 → min: 0 に変更（1 以上を許容）。
-  - min: 0 により value=0 は引き続き拒否（0 より大きい、=整数で1以上）、value=1 を許可。
-  - 既存テスト（0 拒否 / 1.5 非整数拒否 / 2 許可）はすべて維持。
-  - generateBsdd.ts / quantities.ts の index % swayBracingInterval ロジックは 1 で全横桁に生成され問題なし。
-- 影響: 追加・既存含め全 257 テストが通過。
-
-注意事項:
-- 数値状態（NUMERIC_RELEASE_READINESS / PHASE_B_START / NUMERIC_DESIGN_AUTHORIZATION）は変更しない。
-- backend/IF3/dependency/lockfile・正式数値ロジックは変更していない。
-- 手動 GUI 検証は未実施（次 Step S2 で MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION の予定）。
-
-OVERALL_VERDICT: IN_PROGRESS（S1）
+NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ================================================================================
