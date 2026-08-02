@@ -10,43 +10,26 @@ STEP_2_CLOSEOUT: #307 MERGED @ 483e0753fce22f18d78eae0a1221aa9fd85f54b2
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
-BUNDLE_EXPORT_VERDICT (Step 2): BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
 
 ================================================================================
-Apollo Step 3-A Development — DrawingSetModel / General Arrangement
+Apollo Step 3-A Report Finalize — DrawingSetModel / General Arrangement
 ================================================================================
-更新日時: 2026-08-03T08:55:00+09:00
+更新日時: 2026-08-03T09:00:00+09:00
 Step ID: APOLLO_STEP_3A_GENERAL_ARRANGEMENT
-START_MAIN_SHA: 483e0753fce22f18d78eae0a1221aa9fd85f54b2
-作業branch: feat/apollo-step3a-general-arrangement
 
-作業目的:
-- DrawingSetModel 基盤導入
-- G-01 構造一般図（平面図・側面図・標準断面再利用）
-- 共通 station generator
-- GOLD-GA-001 独立 reference
-- SVG/DXF/A3-HTML export + GUI
+STEP_3A_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/308
+STEP_3A_PRIMARY_PR_MERGE_SHA: b37424543401d90e2bb6f131f79cf52e95b88b2f
+STEP_3A_PRIMARY_PR_STATE: MERGED
 
-Changed files (primary):
-- frontend/src/apollo/drawing/drawingSetModel.ts
-- frontend/src/apollo/drawing/drawingSetExport.ts
-- frontend/src/apollo/drawing/stationGenerator.ts
-- frontend/src/apollo/components/GeneralArrangementPanel.tsx
-- frontend/src/apollo/ApolloPhase1Shell.tsx
-- frontend/src/apollo/__tests__/drawingSetModel.test.ts
-- docs/apollo/step3_drawings/*
-
-Schema:
-- DRAWING_SET_SCHEMA_VERSION: 1.0.0-development
-- DRAWING_MODEL_VERSION (Step 2-C): 1.0.0-development (reused, not broken)
-
-Implemented sheets: G-01
-Output formats: SVG, DXF, A3 HTML (PDF via Playwright path)
-Paper: A3 landscape (A1 deferred for print stability)
-GOLD-GA-001 SHA256: c72e98336665011cd602dcbdbfcb16f9718779e0e2828b059389dfa2888f44f4
-
-Tests: drawingSetModel 13 PASS; Step2 drawing/quantity/report regression PASS; typecheck PASS
-GUI: E2E-STEP3A-001 PASS (docs/apollo/step3_drawings/e2e/e2e_step3a_report.json)
+DrawingSetModel: 1.0.0-development
+Sheets: G-01 構造一般図 (plan + elevation + standard section reuse)
+Formats: SVG / DXF / A3 HTML
+Paper: A3 landscape (A1 deferred)
+GOLD-GA-001: PASS (SHA256 c72e98336665011cd602dcbdbfcb16f9718779e0e2828b059389dfa2888f44f4)
+Tests: drawingSetModel PASS; Step2 regression PASS; typecheck PASS
+GUI E2E-STEP3A-001: PASS
+STALE guard: PASS
+STANDARD_SECTION_REUSE: PASS
 
 STEP_3A_DRAWING_SET_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
 GOLD_GA_001_PARITY: PASS
@@ -58,12 +41,13 @@ ENTITY_ID_CONSISTENCY: PASS
 SVG_EXPORT_VERDICT: PASS
 DXF_EXPORT_VERDICT: PASS
 PDF_EXPORT_VERDICT: PASS_HTML_SHEET
+SAVE_RELOAD_VERDICT: PASS_GUI_PATH
 STALE_VERDICT: PASS
 GUI_VERDICT: PASS
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/308
-PRIMARY_PR_MERGE_SHA: PENDING
-REPORT_PR: PENDING
-STEP_3B_START_VERDICT: PENDING_PRIMARY_MERGE
+PRIMARY_PR_MERGED: YES
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/309
+STEP_3B_START_VERDICT: GO
 
 FORMAL_OK_NG_EMITTED: NO
+LOCAL_EQUALS_ORIGIN: PENDING_REPORT_MERGE
 ================================================================================
