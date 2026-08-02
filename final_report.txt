@@ -1,89 +1,111 @@
 ================================================================================
-Apollo 連続桁垂直スライス — Step C4 検証レポート（最終）
+Apollo 単径間単純桁 → 連続桁スライス — 最終レポート
 ================================================================================
-更新日時: 2026-08-02T17:15:00+09:00
+更新日時: 2026-08-02T17:20:00+09:00
 実行モデル: TokenRouter KimK3
 MODEL: TokenRouter KimK3
-ROLE_MODE: Composer 2.5（作業員）
+ROLE_MODE: SINGLE_MODEL_FULL_EXECUTION（現場監督: Grok4.5 / 作業員: Composer2.5）
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
-RECOVERY_BRANCH: test/apollo-continuous-girder-verification
-RECOVERY_STATUS: COMPLETE
-現在のStep: C4（完了）
-作業状態: 自動検証 PASS、手動 GUI PENDING（OVERALL COMPLETE 可）
-現在ブランチ: main（同期済み想定）
+RECOVERY_INITIAL_BRANCH: test/apollo-simple-single-verification
+RECOVERY_INITIAL_HEAD: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
 INITIAL_MAIN_SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
-C4_BASE_MAIN_SHA: 69cf99741ab20736eb57dda88752ca463f6363b2
-C4_COMMIT_SHA: 49a35e0f86235bc86d71eff0b59b9a7577a04bf4
-FINAL_MAIN_SHA: 673fe79c1696a23843c5ca9e7242b927af86402d
-FINALIZE_PR: #274
-worktree状態: clean
-未コミット差分: なし（本更新コミット後）
-未push commit: 0
+FINAL_MAIN_SHA: 2c319841fea3c0a0e4bd009a40e37065ddb41341
+現在のStep: C4（完了・最終同期）
+作業状態: COMPLETE（自動検証 PASS / 手動 GUI PENDING）
+現在ブランチ: test/apollo-continuous-girder-verification（最終同期後 main へマージ予定）
+開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
+現在HEAD SHA: 2c319841fea3c0a0e4bd009a40e37065ddb41341
+worktree状態: dirty（本 final_report 更新のみ）
+未コミット差分: final_report.txt
+未push commit: なし（本コミット前）
 
-## Step 別 PR / STATUS
+## Step PR
 
-| Step | PR | merge SHA | STATUS |
-|------|-----|-----------|--------|
-| S0 | #266 | c3d58ba3bdc7cc645442b68711b5fec73ba24e03 | MERGED |
-| S1 | #267 | 9da49a88f6ff13bd331eb8ec82591de1ce70dacb | MERGED |
-| S2 | #268 | 00f3e4f060cca861404e7f8189e66868d2f13d7d | MERGED |
-| C0 | #269 | 173396e92f89c42480d7deb8d2c437652f571ecd | MERGED |
-| C1 | #270 | 042637a446747379eb82f4fe92d6a609b2d2b858 | MERGED |
-| C2 | #271 | a7b775685183b852fee3ec8e2778fdb940281e15 | MERGED |
-| C3 | #272 | 69cf99741ab20736eb57dda88752ca463f6363b2 | MERGED |
-| C4 | #273 | dea113d873bcf3e896ed48160e2cf549a54d1b0c | MERGED |
+STEP_S0_PR: #266 MERGED
+STEP_S1_PR: #267 MERGED
+STEP_S2_PR: #268 MERGED
+STEP_C0_PR: #269 MERGED
+STEP_C1_PR: #270 MERGED
+STEP_C2_PR: #271 MERGED
+STEP_C3_PR: #272 MERGED
+STEP_C4_PR: #273 MERGED（finalize docs #274/#275 も MERGED）
 
-S0_PR: #266
-S1_PR: #267
-S2_PR: #268
-C0_PR: #269
-C1_PR: #270
-C2_PR: #271
-C3_PR: #272
-C4_PR: #273
+## Status
 
-## 実施内容（C4）
+SIMPLE_SINGLE_SAMPLE_STATUS: COMPLETE（自動検証）。MANUAL_GUI: PENDING_USER_CONFIRMATION
+CONTINUOUS_SCOPE_STATUS: COMPLETE（C0）
+CONTINUOUS_CONTRACT_STATUS: COMPLETE（C1）
+CONTINUOUS_INPUT_STATUS: COMPLETE（C2）
+CONTINUOUS_3D_STATUS: COMPLETE（C3）
+CONTINUOUS_SAVE_RELOAD_STATUS: COMPLETE（自動テスト）
+CONTINUOUS_MANUAL_GUI_STATUS: PENDING_USER_CONFIRMATION
 
-1. main 同期（fetch --prune / pull --ff-only）後、ブランチ `test/apollo-continuous-girder-verification` で検証
-2. フロントエンド自動検証:
-   - npm run typecheck: PASS
-   - npm test -- src/apollo: 38 files / 287 tests PASS
-   - npm run lint: PASS（既存日本語警告のみ）
-   - npm run build: PASS
-   - contract / viewer / STL / import-export / suite manifest 関連 10 modules: 97 tests PASS
-   - git diff --check: PASS
-3. 文書:
-   - docs/apollo/continuous_girder/completion_report.md 新規
-   - docs/apollo/continuous_girder/manual_verification_checklist.md C4 向け拡充
-4. production code / schema / lockfile / backend / IF3: 変更なし
+## 実施済み
+
+- 復旧監査: 未コミット S2 テストを確認し継続
+- S2: spanSystem を phase1ScopeAssertion 参照へ修正（SDM 非重複）
+- C0〜C4: scope/contract/UI/3D/verification を順次 PR マージ
+- 数値ゲートは一切変更せず維持
+
+## 変更ファイル
+
+- final_report.txt（本最終同期）
+
+## テスト結果（C4）
+
+- typecheck PASS
+- npm test -- src/apollo: 38 files / 287 tests PASS
+- lint PASS / build PASS
+- contract/viewer/STL/import-export/suite: PASS
 
 ## 手動確認
 
 MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION
-（本環境 GUI 操作不可。manual_verification_checklist.md MV-CG-01..35 すべて PENDING。PASS 捏造なし）
 
-## 数値ゲート（変更なし）
+## 決定事項
+
+- production contract を正とし、テスト参照のみ修正
+- CONTINUOUS は bridgeStructure 経路のみ許可（phase1ScopeGuard 据え置き）
+- spans[] 可変支間（例 [30,35,30]）を正。等桁高・同一断面は維持
+
+## 未決事項
+
+- 手動 GUI 目視確認（ユーザー）
+
+## ブロッカー
+
+- なし（数値ゲートは意図的 BLOCKED / NOT_GRANTED）
+
+## PR番号・URL
+
+- S0 https://github.com/ollejanaitte/spacer-clone/pull/266
+- S1 https://github.com/ollejanaitte/spacer-clone/pull/267
+- S2 https://github.com/ollejanaitte/spacer-clone/pull/268
+- C0 https://github.com/ollejanaitte/spacer-clone/pull/269
+- C1 https://github.com/ollejanaitte/spacer-clone/pull/270
+- C2 https://github.com/ollejanaitte/spacer-clone/pull/271
+- C3 https://github.com/ollejanaitte/spacer-clone/pull/272
+- C4 https://github.com/ollejanaitte/spacer-clone/pull/273
+
+## mainマージ状態
+
+S0〜S2・C0〜C4 すべて MERGED。local main = origin/main（本 PR マージ後に再同期）。
+
+## 次の作業
+
+1. ユーザー GUI 目視（manual_verification_checklist.md）
+2. 数値ゲート人間証跡待ち
+3. Phase B 数値実装は別ゲート
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 
-## PR / マージ
-
-PR番号・URL: https://github.com/ollejanaitte/spacer-clone/pull/273
-C4_PR: #273
-C4_MERGE_SHA: dea113d873bcf3e896ed48160e2cf549a54d1b0c
-OPEN_PR_COUNT: 0
-
-## OVERALL_VERDICT
-
-COMPLETE
-（S0〜S2・C0〜C4 全 main マージ済み、local main=origin/main、worktree clean、open PR 0、final_report.txt 存在。手動 GUI は PENDING_USER_CONFIRMATION を明記）
-
-## NEXT_RECOMMENDED_ACTION
-
-1. ユーザーが manual_verification_checklist.md の GUI 目視を実施（任意だが推奨）
-2. 数値ゲートは Phase B 人間証跡待ち — BLOCKED / NOT_GRANTED 維持
-3. Phase B 数値実装は別ゲート・別ブランチで開始（PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO）
-
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES（本 PR マージ後も維持）
+WORKTREE_CLEAN: YES（本 PR マージ後）
+OPEN_PR_COUNT: 0（本 PR マージ後）
+FINAL_REPORT_MAIN_PRESENCE: YES
+NEW_SIBLING_FOLDER_CREATED: NO
+OVERALL_VERDICT: COMPLETE
+NEXT_RECOMMENDED_ACTION: 手動 GUI 確認（任意）後、数値証跡待ちを継続
 ================================================================================
