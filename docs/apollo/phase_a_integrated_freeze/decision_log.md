@@ -17,3 +17,5 @@ Phase A の決定記録。既存 DS-00〜DS-09 の DEC-DS00-0001 等は書き換
 | DEC-PHA-0006 | 2026-08-02 | A1 | Phase A の適用範囲は DS-00 / phase1 再凍結の IN/OUT をそのまま踏襲する。Phase 1 では耐震・疲労照査・下部構造本体は OUT、疲労はデータ境界のみ定義する。 | ADOPTED | 01_standard_scope_freeze.md に反映。 |
 | DEC-PHA-0007 | 2026-08-02 | A2 | Phase A の材料物性・単位系・係数の統合は DS-03 のレジスタ/ポリシー（44行、数値 0 採択、文書固有単位保存）をそのまま採用する。数値は BLOCKED を維持し、捏造しない。 | ADOPTED | 02_materials_units_factors.md に反映。 |
 | DEC-PHA-0008 | 2026-08-02 | A2 | 荷重側部分係数は DS-04 レジスタ（LF-DS04-001..010、全 BLOCKED）、抵抗側係数は DS-05 を参照する。数値実装許可は A7 の NOT_AUTHORIZED ゲートで部材・照査単位に管理する。 | ADOPTED | 02_materials_units_factors.md に反映。 |
+| DEC-PHA-0009 | 2026-08-02 | A3 | Phase A の荷重・組合せ統合は DS-04 レジスタ（LM-DS04-001..014 / LF-DS04-001..010 / 汎用組合せシェル / SX-DS04-001..005）をそのまま採用する。荷重同一性・分布・数値・係数は BLOCKED を維持し、捏造しない。 | ADOPTED | 03_loads_and_combinations.md に反映。 |
+| DEC-PHA-0010 | 2026-08-02 | A3 | 動的影響は LF-DS04-010 が唯一の数値オーナー、LM-DS04-007 はポインタのみ。組み合わせ成分に含めず二重適用しない。地震・疲労・架設段階は OUT_OF_SCOPE、施工時荷重は FUTURE_PHASE を維持する。 | ADOPTED | 03_loads_and_combinations.md に反映。 |
