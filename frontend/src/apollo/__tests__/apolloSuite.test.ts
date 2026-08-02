@@ -33,6 +33,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "importExport.test.ts",
   "numericAuthorityGuard.test.ts",
   "numericInput.test.ts",
+  "outputIntegration.test.ts",
   "phase1ScopeGuard.test.ts",
   "projectId.test.ts",
   "quantityModel.test.ts",
