@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0.0",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "precision": 80,
+  "tolerance": {
+    "A": "1e-9",
+    "R": "1e-12",
+    "status": "FROZEN_BEFORE_APP_COMPARISON"
+  },
+  "method": "Decimal I-section + deck prism; no production imports",
+  "cases": {
+    "GOLD-QTY-001": {
+      "caseId": "GOLD-QTY-001",
+      "title": "GOLD-SP-001 section, single-span sample geometry",
+      "inputs": {
+        "bridgeLength": "40.000",
+        "width": "10.500",
+        "girderCount": "4",
+        "girderSpacing": "3.000",
+        "deckThickness": "0.220",
+        "girderDepth": "2.500",
+        "topFlangeWidth": "0.500",
+        "topFlangeThickness": "0.030",
+        "bottomFlangeWidth": "0.500",
+        "bottomFlangeThickness": "0.030",
+        "webThickness": "0.012",
+        "crossBeamSpacing": "5.000",
+        "steelUnitWeight": "77.0",
+        "rcUnitWeight": "24.5",
+        "spanCount": "1"
+      },
+      "results": {
+        "webHeight": "2.440",
+        "topFlangeArea": "0.015000",
+        "webArea": "0.029280",
+        "bottomFlangeArea": "0.015000",
+        "totalSectionArea": "0.059280",
+        "topFlangeVolumePerGirder": "0.600000000",
+        "webVolumePerGirder": "1.171200000",
+        "bottomFlangeVolumePerGirder": "0.600000000",
+        "totalSteelVolumePerGirder": "2.371200000",
+        "topFlangeVolumeAllGirders": "2.400000000",
+        "webVolumeAllGirders": "4.684800000",
+        "bottomFlangeVolumeAllGirders": "2.400000000",
+        "totalMainGirderSteelVolume": "9.484800000",
+        "deckArea": "420.000000",
+        "deckVolume": "92.400000000",
+        "spanCount": "1",
+        "girderCount": "4",
+        "crossBeamCount": "9",
+        "overhang": "0.750",
+        "mainGirderSteelWeight": "730.3296000000",
+        "rcDeckWeight": "2263.8000000000",
+        "paintAreaGeometricEstimate": "1036.160000",
+        "pavementVolume": null
+      },
+      "classification": {
+        "exactGeometry": [
+          "topFlangeArea",
+          "webArea",
+          "bottomFlangeArea",
+          "totalMainGirderSteelVolume",
+          "deckVolume",
+          "girderCount",
+          "crossBeamCount"
+        ],
+        "userProvidedUnverified": [
+          "mainGirderSteelWeight",
+          "rcDeckWeight"
+        ],
+        "developmentGeometricSurfaceEstimate": [
+          "paintAreaGeometricEstimate"
+        ],
+        "incompleteInput": [
+          "pavementVolume"
+        ],
+        "approximateVisualizationAssumption": []
+      }
+    },
+    "GOLD-QTY-002": {
+      "caseId": "GOLD-QTY-002",
+      "title": "Asymmetric section (GOLD-SP-002), multi-girder",
+      "inputs": {
+        "bridgeLength": "200.000",
+        "width": "12.000",
+        "girderCount": "5",
+        "girderSpacing": "2.500",
+        "deckThickness": "0.250",
+        "girderDepth": "2.500",
+        "topFlangeWidth": "0.500",
+        "topFlangeThickness": "0.020",
+        "bottomFlangeWidth": "0.600",
+        "bottomFlangeThickness": "0.025",
+        "webThickness": "0.012",
+        "crossBeamSpacing": "5.000",
+        "steelUnitWeight": null,
+        "rcUnitWeight": null,
+        "spanCount": "1"
+      },
+      "results": {
+        "webHeight": "2.455",
+        "topFlangeArea": "0.010000",
+        "webArea": "0.029460",
+        "bottomFlangeArea": "0.015000",
+        "totalSectionArea": "0.054460",
+        "topFlangeVolumePerGirder": "2.000000000",
+        "webVolumePerGirder": "5.892000000",
+        "bottomFlangeVolumePerGirder": "3.000000000",
+        "totalSteelVolumePerGirder": "10.892000000",
+        "topFlangeVolumeAllGirders": "10.000000000",
+        "webVolumeAllGirders": "29.460000000",
+        "bottomFlangeVolumeAllGirders": "15.000000000",
+        "totalMainGirderSteelVolume": "54.460000000",
+        "deckArea": "2400.000000",
+        "deckVolume": "600.000000000",
+        "spanCount": "1",
+        "girderCount": "5",
+        "crossBeamCount": "41",
+        "overhang": "1.000",
+        "mainGirderSteelWeight": null,
+        "rcDeckWeight": null,
+        "paintAreaGeometricEstimate": "6676.000000",
+        "pavementVolume": null
+      },
+      "classification": {
+        "exactGeometry": [
+          "topFlangeArea",
+          "webArea",
+          "bottomFlangeArea",
+          "totalMainGirderSteelVolume",
+          "deckVolume",
+          "girderCount",
+          "crossBeamCount"
+        ],
+        "userProvidedUnverified": [
+          "mainGirderSteelWeight",
+          "rcDeckWeight"
+        ],
+        "developmentGeometricSurfaceEstimate": [
+          "paintAreaGeometricEstimate"
+        ],
+        "incompleteInput": [
+          "pavementVolume"
+        ],
+        "approximateVisualizationAssumption": []
+      }
+    }
+  }
+}

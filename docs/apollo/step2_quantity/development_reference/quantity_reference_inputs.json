@@ -1,0 +1,38 @@
+{
+  "GOLD-QTY-001": {
+    "title": "GOLD-SP-001 section, single-span sample geometry",
+    "bridgeLength": "40.000",
+    "width": "10.500",
+    "girderCount": "4",
+    "girderSpacing": "3.000",
+    "deckThickness": "0.220",
+    "girderDepth": "2.500",
+    "topFlangeWidth": "0.500",
+    "topFlangeThickness": "0.030",
+    "bottomFlangeWidth": "0.500",
+    "bottomFlangeThickness": "0.030",
+    "webThickness": "0.012",
+    "crossBeamSpacing": "5.000",
+    "steelUnitWeight": "77.0",
+    "rcUnitWeight": "24.5",
+    "spanCount": "1"
+  },
+  "GOLD-QTY-002": {
+    "title": "Asymmetric section (GOLD-SP-002), multi-girder",
+    "bridgeLength": "200.000",
+    "width": "12.000",
+    "girderCount": "5",
+    "girderSpacing": "2.500",
+    "deckThickness": "0.250",
+    "girderDepth": "2.500",
+    "topFlangeWidth": "0.500",
+    "topFlangeThickness": "0.020",
+    "bottomFlangeWidth": "0.600",
+    "bottomFlangeThickness": "0.025",
+    "webThickness": "0.012",
+    "crossBeamSpacing": "5.000",
+    "steelUnitWeight": null,
+    "rcUnitWeight": null,
+    "spanCount": "1"
+  }
+}
