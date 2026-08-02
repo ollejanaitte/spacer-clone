@@ -11,5 +11,5 @@ STEP_2C_DRAWING_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
 GOLD_DRW_001_PARITY: PASS
 SVG/DXF/PDF: PASS
 STEP_2D_START_VERDICT: GO
-STEP_2C_REPORT_PR: PENDING
+STEP_2C_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/304
 ================================================================================
