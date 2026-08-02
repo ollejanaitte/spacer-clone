@@ -1,33 +1,32 @@
 ================================================================================
-Apollo 単径間単純桁・連続桁 スライス実装 — 進捗レポート（S0 実行中）
+Apollo 単径間単純桁・連続桁 スライス実装 — 進捗レポート（S1 実行中）
 ================================================================================
 
 更新日時: 2026-08-02
-調査対象: Apollo 単径間単純桁（SIMPLE_SINGLE）入力整理 → 連続桁（CONTINUOUS）スライス
+調査対象: Apollo 単径間単純桁（SIMPLE_SINGLE）入力補助 → 連続桁（CONTINUOUS）スライス
 正本リポジトリ: https://github.com/ollejanaitte/spacer-clone
 作業場所: /home/masaharu/Projects/spacer-clone
 
-現在のPhase: 単径間単純桁 入力補助 → 連続桁スライス（第1〜3段階）
-現在の到達Step: S0（単径間スコープ・サンプル仕様 docs）
-作業状態: 実行中（S0 成果物作成済み・commit/push 前）
+現在のPhase: 単径間単純桁 入力補助（S1）→ 連続桁スライス（C0〜C4）
+現在の到達Step: S1（サンプル入力 UI 実装）
+作業状態: 実行中（S1 実装済み・テスト通過・commit/push 前）
 
-LOCAL_CURRENT_BRANCH: docs/apollo-simple-single-scope
-LOCAL_HEAD_SHA: a72301cb639504cafcf8205ef970bd91582ff878（= origin/main、Phase A+ 完了後）
-LOCAL_MAIN_SHA: a72301cb639504cafcf8205ef970bd91582ff878
-ORIGIN_MAIN_SHA: a72301cb639504cafcf8205ef970bd91582ff878
+LOCAL_CURRENT_BRANCH: feat/apollo-simple-single-sample-input
+LOCAL_HEAD_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03（= origin/main、S0 完了後）
+LOCAL_MAIN_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03
+ORIGIN_MAIN_SHA: c3d58ba3bdc7cc645442b68711b5fec73ba24e03
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（S0 成果物の未コミット差分あり）
-LOCAL_UNCOMMITTED_WORK: docs/apollo/simple_single_span/ 4 ファイル、final_report.txt
+WORKTREE_CLEAN: NO（S1 実装の未コミット差分あり）
+LOCAL_UNCOMMITTED_WORK: frontend/src/apollo 配下の source/test 変更、final_report.txt
 LOCAL_UNPUSHED_COMMITS: 0
 LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: なし（S0 PR 作成前）
-UNMERGED_BRANCH: docs/apollo-simple-single-scope
-LATEST_MERGED_PR: #265（Phase A+ P6）
+OPEN_PR: なし（S1 PR 作成前）
+LATEST_MERGED_PR: #266（S0）
 
-S0_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
-S1_STATUS: NOT_STARTED
+S0_STATUS: MERGED（PR #266, merge commit c3d58ba）
+S1_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
 S2_STATUS: NOT_STARTED
 C0_STATUS: NOT_STARTED
 C1_STATUS: NOT_STARTED
@@ -35,33 +34,62 @@ C2_STATUS: NOT_STARTED
 C3_STATUS: NOT_STARTED
 C4_STATUS: NOT_STARTED
 
-MERGED_COMPLETE_STEPS: —（今回の新規 Step はまだなし。Phase A+ P0..P6 は完了済み）
+MERGED_COMPLETE_STEPS: S0（ほか Phase A+ P0..P6 は完了済み）
 LOCAL_ONLY_STEPS: なし
-INCOMPLETE_STEPS: S0（PR 作成前）, S1, S2, C0, C1, C2, C3, C4
-NEXT_RESUME_STEP: S0
-NEXT_RESUME_BRANCH: docs/apollo-simple-single-scope
-NEXT_REQUIRED_ACTION: S0 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → S1
+INCOMPLETE_STEPS: S1（commit/push 前）, S2, C0, C1, C2, C3, C4
+NEXT_RESUME_STEP: S1
+NEXT_RESUME_BRANCH: feat/apollo-simple-single-sample-input
+NEXT_REQUIRED_ACTION: S1 を commit → push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → S2
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE（維持）
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED（維持）
 
-調査結果:
-- 既存の橋梁構造入力（frontend/src/apollo/bridgeStructure/）を調査完了。
-  - types.ts: spanLength=「径間長」, bridgeLength=「橋長」のラベル。spanLength は 1 径間長、bridgeLength は総延長=構造モデル長。
-  - validation.ts resolveSpanCount(bridgeLength/spanLength) で径間数を導出。単径間は bridgeLength == spanLength。
-  - generateBsdd.ts: SDM 生成。spanIds=spanCount, supportIds=spanCount+1, spanSystem="simple"。全エンティティ NOT_AUTHORIZED。
-  - SDM は長さを直接持たず、BSDD の spans[].length / supports[].station に格納。
-- S0 で docs/apollo/simple_single_span/（README / field_semantics / sample_input_spec / manual_verification_checklist）を作成。
-  - 用語修正: 「径間長」→「支間長」、「橋長」→「構造モデル長」。
-  - 単径間では構造モデル長=支間長（内部導出候補）。legacy で bridgeLength != spanLength は黙って修正しない。
-  - サンプル: SIMPLE_SINGLE, 支間30.0m, 幅員10.5m, 主桁4本@3.0m, 主桁高2.0m, 上フランジ0.45x0.025, 下フランジ0.55x0.030, ウェブ0.012, 床版0.22, 横桁5.0m, 補剛材2.5m, 対傾構1本ごと, 横構OFF, 鋼77.0kN/m3, RC24.5kN/m3。
-  - 単位重量は USER_PROVIDED_UNVERIFIED、ADOPTED にしない。
+S1 実装状況:
+- 用語変更: types.ts で「径間長」→「支間長」、「橋長」→「構造モデル長」にラベル変更。
+- validation.ts / generateBsdd.ts / quantities.ts の文言を「支間長」「構造モデル長」「支間数（概算）」に更新。
+- sampleInputs.ts を新規作成:
+  - SIMPLE_SINGLE_SPAN_SAMPLE_INPUT（支間30.0m, 幅員10.5m, 主桁4本@3.0m など S0 仕様どおり）。
+  - applySimpleSingleSpanSampleInput: 入力全項目へサンプル反映。SDM は自動生成しない（generatedAt=null）。
+  - clearBridgeStructureInput: 入力を全クリアして STALE 状態へ。
+  - deriveSingleSpanModelLength: 単径間では構造モデル長=支間長。bridgeLength が未設定の場合のみ導出し、
+    legacy の既設定値（bridgeLength != spanLength）は黙って上書きしない。
+  - 単位重量は USER_PROVIDED_UNVERIFIED のまま。ADOPTED 化・SDM 自動生成・採用自動実行はしない。
+- index.ts に sampleInputs 系と deriveSingleSpanModelLength をエクスポート追加。
+- BridgeStructureInputPanel.tsx:
+  - 現在対応形式「単径間単純桁（現在対応）」を表示（data-testid=apollo-current-bridge-system）。
+  - 「動作確認用サンプル値を入力」（apollo-sample-input）／「入力をクリア」（apollo-clear-input）ボタン追加。
+  - サンプル反映時は自動生成しない旨の disclaimer（apollo-sample-disclaimer）を表示。
+  - handleCommitField で spanLength 入力時に deriveSingleSpanModelLength により bridgeLength を安全に導出。
+- テスト:
+  - simpleSingleSpanSample.test.ts を新規作成（サンプル反映・自動生成なし・クリア・単位重量非採用・導出 3 件）。
+  - BridgeStructureInputPanel.test.tsx に 5 テスト追記。
+  - bridgeStructureQuantities.test.ts のラベルを「径間数」→「支間数」へ更新。
+  - apolloSuite.test.ts の期待テストモジュール一覧へ simpleSingleSpanSample.test.ts を追加。
+
+S1 検証結果:
+- npm test -- src/apollo: 34 files / 257 tests PASSED。
+- npx tsc --noEmit: PASS（出力なし）。
+- npm run lint: PASS（既存の日本語文字列チェックの警告のみで、エラーなし）。
+
+調査結果（S1 中のバリデーション不整合の発見と解決）:
+- 症状: サンプル入力（対傾構 横桁1本ごと = swayBracingInterval=1）で検証が失敗した。
+  - validateBridgeStructureInputDraft → complete=false
+  - 診断: 「対傾構間隔（横桁N本ごと）は 1 より大きい値を入力してください。」
+- 原因: BRIDGE_STRUCTURE_INPUT_FIELDS の swayBracingInterval が min: 1 で定義されており、
+  validation.ts の validatePositiveNumber は value <= min をエラーとするため「1 より大きい」=2 以上を要求していた。
+- 矛盾: フィールド定義（横桁N本ごと）と S0 サンプル仕様（対傾構 1 本ごと）は N=1 を許容すべきだが、
+  既存バリデーションは 1 を拒否していた。
+- 解決: types.ts の swayBracingInterval を min: 1 → min: 0 に変更（1 以上を許容）。
+  - min: 0 により value=0 は引き続き拒否（0 より大きい、=整数で1以上）、value=1 を許可。
+  - 既存テスト（0 拒否 / 1.5 非整数拒否 / 2 許可）はすべて維持。
+  - generateBsdd.ts / quantities.ts の index % swayBracingInterval ロジックは 1 で全横桁に生成され問題なし。
+- 影響: 追加・既存含め全 257 テストが通過。
 
 注意事項:
-- 本作業は application code を変更していない（S0 は docs のみ）。
 - 数値状態（NUMERIC_RELEASE_READINESS / PHASE_B_START / NUMERIC_DESIGN_AUTHORIZATION）は変更しない。
-- S1 以降で frontend/src/apollo を変更するが、正式数値ロジック・backend/IF3/dependency は変更しない。
+- backend/IF3/dependency/lockfile・正式数値ロジックは変更していない。
+- 手動 GUI 検証は未実施（次 Step S2 で MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION の予定）。
 
-OVERALL_VERDICT: IN_PROGRESS（S0）
+OVERALL_VERDICT: IN_PROGRESS（S1）
 ================================================================================

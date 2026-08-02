@@ -207,7 +207,7 @@ export function computeBridgeStructureApproximateQuantities(
         null,
         "—",
         "INCOMPLETE",
-        "橋長を径間長で割り切れる値を入力してください。",
+        "構造モデル長を支間長で割り切れる値を入力してください。",
       ),
     ];
   }
@@ -221,7 +221,7 @@ export function computeBridgeStructureApproximateQuantities(
   const swayStationCount = countSwayBracingStations(resolved);
 
   const quantities: BridgeStructureApproximateQuantity[] = [
-    quantityEntry("径間数（概算）", spanCount, "径間", status),
+    quantityEntry("支間数（概算）", spanCount, "支間", status),
     quantityEntry("横桁本数（概算）", crossBeamCount, "本", status),
     quantityEntry(
       "床版体積（概算）",

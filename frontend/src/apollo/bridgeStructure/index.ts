@@ -48,3 +48,10 @@ export {
   type BridgeStructureValidationResult,
 } from "./validation";
 export { withBridgeStructureBooleanField } from "./generateBsdd";
+export {
+  SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
+  SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+  applySimpleSingleSpanSampleInput,
+  clearBridgeStructureInput,
+  deriveSingleSpanModelLength,
+} from "./sampleInputs";

@@ -105,7 +105,7 @@ export function validateBridgeStructureInputDraft(
     draft.bridgeLength !== null &&
     draft.spanLength > draft.bridgeLength
   ) {
-    const message = "径間長は橋長以下である必要があります。";
+    const message = "支間長は構造モデル長以下である必要があります。";
     fieldErrors.push({ key: "spanLength", message });
     diagnostics.push(message);
   }
@@ -116,7 +116,7 @@ export function validateBridgeStructureInputDraft(
     draft.spanLength <= draft.bridgeLength &&
     resolveSpanCount(draft.bridgeLength, draft.spanLength) === null
   ) {
-    const message = "橋長を径間長で割り切れる値を入力してください。";
+    const message = "構造モデル長を支間長で割り切れる値を入力してください。";
     fieldErrors.push({ key: "spanLength", message });
     diagnostics.push(message);
   }

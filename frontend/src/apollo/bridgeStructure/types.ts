@@ -65,8 +65,8 @@ export type BridgeStructureInputFieldDefinition = {
 };
 
 export const BRIDGE_STRUCTURE_INPUT_FIELDS: readonly BridgeStructureInputFieldDefinition[] = [
-  { key: "spanLength", label: "径間長", units: "m", min: 0 },
-  { key: "bridgeLength", label: "橋長", units: "m", min: 0 },
+  { key: "spanLength", label: "支間長", units: "m", min: 0 },
+  { key: "bridgeLength", label: "構造モデル長", units: "m", min: 0 },
   { key: "width", label: "幅員", units: "m", min: 0 },
   { key: "girderCount", label: "主桁本数", units: "本", integer: true, min: 1 },
   { key: "girderSpacing", label: "主桁間隔", units: "m", min: 0 },
@@ -79,7 +79,7 @@ export const BRIDGE_STRUCTURE_INPUT_FIELDS: readonly BridgeStructureInputFieldDe
   { key: "deckThickness", label: "床版厚", units: "m", min: 0 },
   { key: "crossBeamSpacing", label: "横桁間隔", units: "m", min: 0 },
   { key: "stiffenerSpacing", label: "補剛材間隔", units: "m", min: 0, optional: true },
-  { key: "swayBracingInterval", label: "対傾構間隔（横桁N本ごと）", units: "本", integer: true, min: 1, optional: true },
+  { key: "swayBracingInterval", label: "対傾構間隔（横桁N本ごと）", units: "本", integer: true, min: 0, optional: true },
   { key: "steelUnitWeight", label: "鋼の単位体積重量", units: "kN/m³", min: 0, optional: true },
   { key: "rcUnitWeight", label: "RC床版の単位体積重量", units: "kN/m³", min: 0, optional: true },
 ];
