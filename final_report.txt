@@ -2,36 +2,19 @@
 Previous Phase Summary — Step 1 + Step 2-A (retained)
 ================================================================================
 STEP_1: COMPLETE (#289–#298)
-STEP_2A_PRIMARY: #299 MERGED
-STEP_2A_REPORT: #300 MERGED
+STEP_2A: #299/#300 MERGED
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
 Apollo Step 2-B Development — ReportModel / Calculation Report
 ================================================================================
-更新日時: 2026-08-02T22:50:00+09:00
-Step ID: APOLLO_STEP_2B_REPORT_OUTPUT
-START_MAIN_SHA: fed407f740df00b3c8e7414d352f9a7d6c5da7ca
-作業branch: feat/apollo-step2b-report-output
-
-Implementation:
-- Structured ReportModel with fixed 16-chapter registry
-- Dedicated HTML renderer (not app-shell print)
-- Playwright A4 PDF from ReportModel HTML
-- calculation CSV (no zero-fill), report JSON, audit manifest
-- Formal export fail-closed; development watermark
-
-Tests: reportModel PASS / typecheck PASS
-PDF generation evidence: docs/apollo/step2_report/pdf_generation_report.json
-
+更新日時: 2026-08-02T22:55:00+09:00
+STEP_2B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/301
+STEP_2B_PRIMARY_PR_MERGE_SHA: 0883572db122897d9fe5853b351d5afff684608c
 STEP_2B_REPORT_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
-CHAPTER_REGISTRY_VERDICT: PASS
 PDF_EXPORT_VERDICT: PASS
 FORMAL_EXPORT_FAIL_CLOSED: PASS
 NO_FORMAL_OK_NG: PASS
 STEP_2C_START_VERDICT: GO
-
-STEP_2B_PRIMARY_PR_NUMBER: PENDING
-STEP_2B_PRIMARY_PR_URL: PENDING
+STEP_2B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/302
 ================================================================================
