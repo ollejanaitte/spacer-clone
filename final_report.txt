@@ -1,20 +1,15 @@
-================================================================================
 Previous — Step1 + Step2A/B retained
-================================================================================
-STEP_2A: #299/#300 | STEP_2B: #301/#302
+STEP_2A #299/#300 | STEP_2B #301/#302
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 
 ================================================================================
-Apollo Step 2-C — Standard Section Drawing
+Step 2-C Standard Section Drawing — FINALIZED
 ================================================================================
-更新日時: 2026-08-02T23:00:00+09:00
-START_MAIN_SHA: f81a50c45ce92788b9d53ad18666919a01b52649
+STEP_2C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/303
+STEP_2C_PRIMARY_PR_MERGE_SHA: 0fecf894ac813a2a20bf65a8eeb56de736fa3732
 STEP_2C_DRAWING_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
 GOLD_DRW_001_PARITY: PASS
-SVG_EXPORT_VERDICT: PASS
-DXF_EXPORT_VERDICT: PASS
-DRAWING_PDF_VERDICT: PASS
-NOT_FABRICATION_DRAWING_DISCLOSURE: PASS
+SVG/DXF/PDF: PASS
 STEP_2D_START_VERDICT: GO
-STEP_2C_PRIMARY_PR: PENDING
+STEP_2C_REPORT_PR: PENDING
 ================================================================================
