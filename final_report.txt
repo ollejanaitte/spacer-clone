@@ -1,176 +1,46 @@
 ================================================================================
-Apollo Visible Vertical Slice 02 — ローカル実装最終レポート
+Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レポート
 ================================================================================
 
-UPDATE_TIMESTAMP: 2026-08-02
-TASK: AP-DX Visible Vertical Slice 02 — 詳細構造と結果（断面特性・数量/重量・採用・詳細3D・結果UI・永続化）
-WORK_STATUS: COMPLETE — 自動検証・手動 GUI 確認（PASS）完了
-VVS_02_BRANCH: feat/ap-dx-visible-vertical-slice-02
-VVS_02_BASELINE_SHA: 54e3c4ff0f21d737e1e2df356653859f3ae4ddb2 (main @ VVS01 merge PR #246)
-VVS_02_SCHEMA_VERSION_CURRENT: 1.0.0（変更なし — 追加フィールドは nullable・optional の additive 変更）
-VVS_02_NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DETAILED_ARTIFACT: docs/apollo/visible_vertical_slice_02/local_implementation_report.md
-MANUAL_CHECKLIST: docs/apollo/visible_vertical_slice_02/manual_verification_checklist.md
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/247
-PR_STATE: MERGED
-VVS_02_MERGE_SHA: 569c8f640e4337d25040bfef5ecb9f80af62f2cb
-SIBLING_FOLDERS: No new sibling folders under /home/masaharu/Projects/
-
+更新日時: 2026-08-02
+現在のPhase: A (設計基準・計算ロジック統合凍結)
+現在のStep: A0 (資料インベントリ・作業枠)
+作業状態: 実行中
+現在ブランチ: docs/phase-a-a0-source-inventory
+開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
+現在HEAD SHA: 309183bba0ad9529d0b47bc481a6768eb3894fe1
+実施済み:
+- プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
+- 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
+- phase1_design_expansion_refreeze: README / scope_and_architecture_freeze / implementation_sequence / manual_traceability.csv / local_verification_report
+- design-standards (DS-00..DS-09): README / adoption_status_model / target_standard_freeze / edition_and_errata_register / material_properties_register / load_model_register / load_factor_register / verification_equation_register / numeric_release_gate / unresolved_evidence_requirements
+- evidence-collection (EA-00..EA-06): numeric_release_gate / レジスタ
+- post-ea-01: final gate レポート
+- マニュアル調査: Grider_I_00..13 / SuperDesigner / CompGrd_I / Girder_Box / StDeck/Section/Splice/PcSlab (local-archive/unknown-rights)
+- JIP-SPACER / JIP-LINER マニュアル (リポジトリ内、テキスト抽出可能)
+- 道示 R7 I〜V PDF が local-archive/restricted-pdf に存在 (テキスト層なし=IMAGE_SCAN)
+- 外部参照パス /home/masaharu/Projects/bridge-standards-research が現環境に不在 → PA-OQ-002
+- docs/apollo/phase_a_integrated_freeze/ に README.md / 00_source_inventory.csv / decision_log.md / open_questions_and_blockers.md を作成
+調査中: (なし)
+決定事項:
+- DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
+- DEC-PHA-0002: DS-00 adoption_status 語彙を Phase A でも維持
+- DEC-PHA-0003: 数値実装許可は部材・照査単位、未採択は NOT_AUTHORIZED
+- DEC-PHA-0004: Step 毎にブランチ・PR・main マージ
+未決事項: Step A1〜A8 の各内容（各 Step で実施）
+ブロッカー:
+- PA-OQ-001 道示 R7 条文目視確認 BLOCKED
+- PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
+- PA-OQ-003 JIS 番号未確定 BLOCKED
+- PA-OQ-004 2026-03-31 正誤表未反映項目 BLOCKED
+- PA-OQ-005 非合成鋼鈑桁 R7 対応計算例なし BLOCKED
+- PA-OQ-006 独立計算結果なし BLOCKED
+- PA-OQ-007 phase1_design_expansion_refreeze の decision_log/open_questions 不在 BLOCKED
+- PA-OQ-008 VVS02 単位重量の正式値昇格禁止 DEFERRED
+- PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
+- PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
+検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
+PR番号・URL: (Step A0 PR 作成後に記入)
+mainマージ状態: 未マージ (Step A0 PR を main へマージ予定)
+次の作業: A0 PR を作成・自己レビュー・main マージ → Step A1 (基準・版・適用範囲)
 ================================================================================
-1. エグゼクティブサマリ
-================================================================================
-
-Visible Vertical Slice 01（橋梁構造入力 → SDM → 3D → 保存/再読込）を拡張し、詳細構造と結果を追加した。
-
-1. 主桁断面特性（純幾何）: フランジ/ウェブ面積、全断面積、図心、Ix、断面係数、主桁1本当たり鋼体積
-2. 見込み数量・重量: 補剛材本数、対傾構箇所数、横繋有無、鋼体積・重量。単位体積重量はユーザー入力（既定 null）
-3. 採用ワークフロー: 単位体積重量の adoptionStatus を遷移。NOT_GRANTED 既定下では ADOPTED を fail-closed で拒否
-4. 詳細 3D: 補剛材（新 kind `stiffener`）、対傾構・横繋（既存 kind `bracing` の円筒、X ペア配置）
-5. 結果 UI: 断面特性表、数量・重量表、横繋チェックボックス、採用/取消ボタン
-6. 永続化: 新規 optional・boolean フィールドと二次部材エンティティの save/reload ラウンドトリップ（VVS01 後方互換）
-
-設計判定（OK/NG）は行わない。backend/IF3、依存、schema bump はなし。
-
-================================================================================
-2. 設計判断
-================================================================================
-
-- 対傾構間隔: 横桁にリンク。`swayBracingInterval`（整数、N>=1）で中間横桁位置に配置。
-- 横繋: `lateralBracingEnabled`（boolean、既定 false）。既定オフで VVS01 の 3D ベース形状を維持。
-- 断面特性: `sectionProperties.ts` の純計算で算出し、結果 UI に表示。BSDD 契約変更なし。
-- 採用: `materialDefinitions[].unitWeight` / `bridge.deck.unitWeight` の adoptionStatus を遷移。
-  NOT_GRANTED（既定コンテキスト NOT_SELECTED）では ADOPTED を拒否（fail-closed）。採用ヘルパーは
-  権限付与コンテキストを注入可能にし、テストで ADOPTED 経路を検証。
-- 3D: `stiffener` kind を非永続化ビジュアライゼーション・モデルへ追加（レンダラ + STL + バインディング）。
-  UNIMPLEMENTED_APOLLO_DESIGN_ENTITY_KINDS を [Splice, DeckAnchorage] に縮小。
-
-================================================================================
-3. 追加フィールド（apolloBridgeStructureInput）
-================================================================================
-
-| フィールド | 型 | 既定 | 意味 |
-|-----------|----|------|------|
-| stiffenerSpacing | number \| null | null | 補剛材間隔（m）。null → 補剛材なし |
-| swayBracingInterval | number \| null | null | 対傾構間隔（整数、横桁 N 本ごと）。null → 対傾構なし |
-| lateralBracingEnabled | boolean | false | 横繋の有無 |
-| steelUnitWeight | number \| null | null | 鋼の単位体積重量（kN/m³）。null → 重量未算出 |
-| rcUnitWeight | number \| null | null | RC 床版の単位体積重量（kN/m³）。null → 重量未算出 |
-
-================================================================================
-4. 現在のステータス
-================================================================================
-
-| フィールド | 値 |
-|-----------|-----|
-| タスク | AP-DX Visible Vertical Slice 02 |
-| ブランチ | feat/ap-dx-visible-vertical-slice-02 |
-| Block 0–5 | COMPLETED |
-| Block 6（チェックリスト作成） | COMPLETED |
-| PR #247 状態 | MERGED |
-| マージ SHA | 569c8f640e4337d25040bfef5ecb9f80af62f2cb |
-| 自動テスト | 244 Apollo テスト PASS |
-| 手動 GUI | PASS（運用者確認 2026-08-02、VVS-MV-01〜20 全 PASS） |
-
-================================================================================
-5. リポジトリとブランチ
-================================================================================
-
-TARGET_REPOSITORY: /home/masaharu/Projects/spacer-clone
-REMOTE_ORIGIN: https://github.com/ollejanaitte/spacer-clone.git
-TARGET_BRANCH: feat/ap-dx-visible-vertical-slice-02
-BASELINE_SHA: 54e3c4ff0f21d737e1e2df356653859f3ae4ddb2
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/247
-PR_STATE: MERGED
-MERGE_COMMIT_SHA: 569c8f640e4337d25040bfef5ecb9f80af62f2cb
-SIBLING_FOLDER_STATUS: No new sibling folders created under /home/masaharu/Projects/
-
-================================================================================
-6. Block 毎のコミット
-================================================================================
-
-| Block | コミット | 内容 |
-|-------|----------|------|
-| 0 | 07f4712 | ドキュメント初期化（判定記録） |
-| 1 | f028ae3 | 断面特性・数量・フィールドモデル |
-| 2 | b498491 | 採用ワークフロー（adoption.ts, BSDD 書込） |
-| 3 | be2dd94 | 詳細 3D（補剛材・対傾構・横繋ソリッド、STL、バインディング） |
-| 4 | 1f484ac | 結果 UI ＋ 永続化 |
-| 5 | c584bd3 | sectionProperties / adoption / 新規フィールド検証テスト |
-| 6 | 3606008 | 手動 GUI チェックリスト作成 |
-| 7 | 569c8f6 | PR #247 マージ（本レポートは docs ブランチで追記） |
-
-================================================================================
-7. 検証（Block 5 時点）
-================================================================================
-
-| TEST_ID | コマンド | 結果 |
-|---------|---------|------|
-| VVS-02-B5-01 | npm run typecheck | PASS (exit 0) |
-| VVS-02-B5-02 | npm test -- src/apollo | PASS 33 ファイル / 244 テスト |
-| VVS-02-B5-03 | npm run lint | PASS (exit 0、既存の日本語文字列レビュー指摘のみ) |
-| VVS-02-B5-04 | git diff --check | PASS (no violations) |
-
-BLOCK_5_VERIFICATION_VERDICT: PASS
-
-================================================================================
-8. 手動 GUI
-================================================================================
-
-MANUAL_GUI_VERDICT: PASS
-CHECKLIST: docs/apollo/visible_vertical_slice_02/manual_verification_checklist.md
-NEW GUI ITEMS: VVS-MV-01～20（optional 入力、横繋チェックボックス、断面特性表、採用 fail-closed、
-  補剛材/対傾構/横繋 3D、STL カウント、stale gate、validation エラー）
-OPERATOR CONFIRMATION: 2026-08-02 運用者により VVS-MV-01～20 全 PASS 確認（捏造なし）
-
-================================================================================
-9. 安全チェック
-================================================================================
-
-| チェック | 結果 |
-|---------|------|
-| /home/masaharu/Projects/spacer-clone 内のみで作業 | PASS |
-| 破壊的 git 操作なし（reset --hard / clean / force push なし） | PASS |
-| schema version bump なし | PASS |
-| 移行コード追加なし | PASS |
-| 依存・lockfile 変更なし | PASS |
-| backend/IF3 変更なし | PASS |
-| 兄弟クローン フォルダなし | PASS |
-| 設計 OK/NG 判定なし、数値設計権限は NOT_GRANTED 維持 | PASS |
-
-SAFETY_CHECK_VERDICT: PASS
-
-================================================================================
-10. GitHub 反映
-================================================================================
-
-PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/247
-PR_STATE: MERGED
-BRANCH_PUSHED: YES (feat/ap-dx-visible-vertical-slice-02)
-BRANCH_DELETED_AFTER_MERGE: YES
-MERGE_COMMIT_SHA: 569c8f640e4337d25040bfef5ecb9f80af62f2cb
-
-================================================================================
-11. 最終判定
-================================================================================
-
-SECTION_PROPERTIES_VERDICT: PASS (自動)
-APPROXIMATE_QUANTITY_VERDICT: PASS (自動)
-ADOPTION_WORKFLOW_VERDICT: PASS (自動、fail-closed 確認込み)
-DETAILED_3D_RENDERING_VERDICT: PASS (自動)
-RESULTS_UI_VERDICT: PASS (自動)
-SAVE_RELOAD_VERDICT: PASS (自動)
-APOLLO_REGRESSION_VERDICT: PASS (244 テスト)
-TYPECHECK_VERDICT: PASS
-LINT_VERDICT: PASS
-MANUAL_GUI_VERDICT: PASS
-NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-OVERALL_VERDICT: PASS — 実装・自動検証・運用者 GUI 確認（2026-08-02）すべて完了
-
-================================================================================
-12. 最終 SHA（マージ後）
-================================================================================
-
-VVS_02_MERGE_SHA: 569c8f640e4337d25040bfef5ecb9f80af62f2cb
-DOCS_BRANCH: docs/vvs02-main-merge-final-report
-FINAL_REPORT_BRANCH_SHA: 9585822
-GUI_CONFIRMATION_BRANCH: docs/vvs02-gui-confirmation
