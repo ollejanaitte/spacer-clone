@@ -1,57 +1,69 @@
 ================================================================================
-Apollo Step 2 Development Track Closeout
+Previous Phase Summary — Step 1 + Step 2 (retained)
 ================================================================================
-更新日時: 2026-08-02T23:15:00+09:00
-作業状態: COMPLETE_DEVELOPMENT_TRACK
-
-USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
-DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
+STEP_1: COMPLETE (#289–#298)
+STEP_2A_VERDICT: COMPLETE (#299/#300)
+STEP_2B_VERDICT: COMPLETE (#301/#302)
+STEP_2C_VERDICT: COMPLETE (#303/#304)
+STEP_2D_VERDICT: COMPLETE (#305/#306)
+STEP_2_CLOSEOUT: #307 MERGED @ 483e0753fce22f18d78eae0a1221aa9fd85f54b2
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+BUNDLE_EXPORT_VERDICT (Step 2): BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
 
-STEP_2A_VERDICT: COMPLETE
-STEP_2B_VERDICT: COMPLETE
-STEP_2C_VERDICT: COMPLETE
-STEP_2D_VERDICT: COMPLETE
-APOLLO_STEP_2_DEVELOPMENT_TRACK_VERDICT: COMPLETE
+================================================================================
+Apollo Step 3-A Development — DrawingSetModel / General Arrangement
+================================================================================
+更新日時: 2026-08-03T08:55:00+09:00
+Step ID: APOLLO_STEP_3A_GENERAL_ARRANGEMENT
+START_MAIN_SHA: 483e0753fce22f18d78eae0a1221aa9fd85f54b2
+作業branch: feat/apollo-step3a-general-arrangement
 
-QUANTITY_OUTPUT_VERDICT: PASS_DEVELOPMENT_ONLY
-CALCULATION_REPORT_VERDICT: PASS_DEVELOPMENT_ONLY
-STANDARD_SECTION_DRAWING_VERDICT: PASS_DEVELOPMENT_ONLY
-OUTPUT_CONSISTENCY_VERDICT: PASS
-SAVE_RELOAD_VERDICT: PASS
+作業目的:
+- DrawingSetModel 基盤導入
+- G-01 構造一般図（平面図・側面図・標準断面再利用）
+- 共通 station generator
+- GOLD-GA-001 独立 reference
+- SVG/DXF/A3-HTML export + GUI
+
+Changed files (primary):
+- frontend/src/apollo/drawing/drawingSetModel.ts
+- frontend/src/apollo/drawing/drawingSetExport.ts
+- frontend/src/apollo/drawing/stationGenerator.ts
+- frontend/src/apollo/components/GeneralArrangementPanel.tsx
+- frontend/src/apollo/ApolloPhase1Shell.tsx
+- frontend/src/apollo/__tests__/drawingSetModel.test.ts
+- docs/apollo/step3_drawings/*
+
+Schema:
+- DRAWING_SET_SCHEMA_VERSION: 1.0.0-development
+- DRAWING_MODEL_VERSION (Step 2-C): 1.0.0-development (reused, not broken)
+
+Implemented sheets: G-01
+Output formats: SVG, DXF, A3 HTML (PDF via Playwright path)
+Paper: A3 landscape (A1 deferred for print stability)
+GOLD-GA-001 SHA256: c72e98336665011cd602dcbdbfcb16f9718779e0e2828b059389dfa2888f44f4
+
+Tests: drawingSetModel 13 PASS; Step2 drawing/quantity/report regression PASS; typecheck PASS
+GUI: E2E-STEP3A-001 PASS (docs/apollo/step3_drawings/e2e/e2e_step3a_report.json)
+
+STEP_3A_DRAWING_SET_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
+GOLD_GA_001_PARITY: PASS
+GENERAL_PLAN_VERDICT: PASS_DEVELOPMENT_ONLY
+GENERAL_ELEVATION_VERDICT: PASS_DEVELOPMENT_ONLY
+STANDARD_SECTION_REUSE_VERDICT: PASS
+DIMENSION_CONSISTENCY: PASS
+ENTITY_ID_CONSISTENCY: PASS
+SVG_EXPORT_VERDICT: PASS
+DXF_EXPORT_VERDICT: PASS
+PDF_EXPORT_VERDICT: PASS_HTML_SHEET
 STALE_VERDICT: PASS
-E2E_VERDICT: PASS
-BUNDLE_EXPORT_VERDICT: BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
+GUI_VERDICT: PASS
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/308
+PRIMARY_PR_MERGE_SHA: PENDING
+REPORT_PR: PENDING
+STEP_3B_START_VERDICT: PENDING_PRIMARY_MERGE
 
-STEP_2A_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/299
-STEP_2A_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/300
-STEP_2B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/301
-STEP_2B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/302
-STEP_2C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/303
-STEP_2C_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/304
-STEP_2D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/305
-STEP_2D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/306
-STEP_2D_PRIMARY_PR_MERGE_SHA: 398c837addedac1c23bb6c3dfb6ee59c12f36d0a
-STEP_2D_REPORT_PR_MERGE_SHA: bbee6e6970c39cb6efabfa65e0ae30d59478f0d9
-
-CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/307
-
-STEP_3_DEVELOPMENT_START_READINESS: GO
-
-Supported scope:
-- development quantity takeoff (exact vs approximate separated)
-- calculation result CSV/JSON + development report HTML/PDF path
-- standard section DrawingModel SVG/DXF/A3-HTML
-- UI integration + STALE + checksum alignment + E2E
-
-Unsupported:
-- formal authorization / formal OK/NG
-- formal quantity takeoff / fabrication drawings
-- plan/elevation/arrangement drawings (Step 3)
-- zip bundle (individual downloads only)
-
-LOCAL_MAIN_EQUALS_ORIGIN: YES (pre-closeout tip)
-WORKTREE_CLEAN: PENDING_CLOSEOUT_MERGE
+FORMAL_OK_NG_EMITTED: NO
 ================================================================================

@@ -1,0 +1,34 @@
+# Step 3 PRE-FLIGHT
+
+UPDATED: 2026-08-03T08:50:00+09:00
+
+WORKING_PATH: /home/masaharu/Projects/spacer-clone
+REMOTE_URL: https://github.com/ollejanaitte/spacer-clone.git
+START_BRANCH: main
+START_LOCAL_MAIN_SHA: 483e0753fce22f18d78eae0a1221aa9fd85f54b2
+START_ORIGIN_MAIN_SHA: 483e0753fce22f18d78eae0a1221aa9fd85f54b2
+LOCAL_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+PR299_TO_307_MERGED: YES
+PR307_MERGE_SHA: 483e0753fce22f18d78eae0a1221aa9fd85f54b2
+NODE_VERSION: v24.5.0
+NPM_VERSION: 10.9.8
+PYTHON_VERSION: Python 3.10.12
+FRONTEND_START_COMMAND: cd frontend && npm run dev:apollo
+BACKEND_START_COMMAND: python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+BROWSER_AUTOMATION: Playwright (chromium) + google-chrome available
+DRAWING_MODEL_VERSION: 1.0.0-development (STANDARD_SECTION only)
+QUANTITY_MODEL_VERSION: present (Step 2-A)
+REPORT_MODEL_VERSION: present (Step 2-B)
+INPUT_SCHEMA_VERSION: 1.0.0
+SVG_EXPORTER: frontend/src/apollo/drawing/drawingExport.ts
+DXF_EXPORTER: frontend/src/apollo/drawing/drawingExport.ts
+PDF_RENDERER: HTML sheet + Playwright PDF (Step 2 pattern)
+ZIP_UTILITY: NOT_PRESENT (fflate transitive only; Step 3-D)
+STEP_3A_STATUS: NOT_STARTED
+STEP_3B_STATUS: NOT_STARTED
+STEP_3C_STATUS: NOT_STARTED
+STEP_3D_STATUS: NOT_STARTED
+STEP_3E_STATUS: NOT_STARTED
+STEP_2_COMPLETION_GATE: GO
+STEP_3_DEVELOPMENT_START_READINESS: GO
