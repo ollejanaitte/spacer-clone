@@ -1,7 +1,7 @@
 ================================================================================
 Apollo Step 1 Development Track Closeout (1-A .. 1-D development-only)
 ================================================================================
-更新日時: 2026-08-02T22:00:00+09:00
+更新日時: 2026-08-02T22:02:00+09:00
 作業状態: STEP_1D_PRIMARY_MERGED + REPORT_FINALIZATION
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
@@ -38,11 +38,11 @@ STEP_1D_PRIMARY_PR_NUMBER: 295
 STEP_1D_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/295
 STEP_1D_PRIMARY_PR_MERGE_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b
 
-STEP_1D_REPORT_PR_NUMBER: PENDING
-STEP_1D_REPORT_PR_URL: PENDING
+STEP_1D_REPORT_PR_NUMBER: 296
+STEP_1D_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/296
 STEP_1D_REPORT_PR_MERGE_SHA: PENDING
 
-FINAL_MAIN_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b
+FINAL_MAIN_SHA: 82505ebee0b74b47b0accbd3f25721600139cf7b (pre-report; updated after report merge)
 LOCAL_MAIN_EQUALS_ORIGIN: YES
-WORKTREE_CLEAN: YES (at primary merge; report branch dirty until merge)
+WORKTREE_CLEAN: PENDING_REPORT_MERGE
 ================================================================================
