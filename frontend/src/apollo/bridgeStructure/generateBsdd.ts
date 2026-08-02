@@ -30,6 +30,7 @@ import {
   SupportLayoutRole,
   type BridgeLayoutSpan,
 } from "../contracts";
+import { syncOverlayFrameToLayout } from "./syncOverlayFrame";
 import {
   createEmptyBridgeStructureInputDraft,
   validateBridgeStructureInputDraft,
@@ -474,8 +475,25 @@ export function generateBridgeStructureFromInput(
   };
   const quantities = computeBridgeStructureApproximateQuantities(nextInput, true, adoption);
 
+  const layoutParts = resolveEffectiveLayout({
+    bridgeSystem: nextInput.bridgeSystem,
+    spanLength: nextInput.spanLength,
+    spans: nextInput.spans,
+    supports: nextInput.supports,
+  });
+  const frameOverlay = layoutParts
+    ? syncOverlayFrameToLayout(project, {
+        bridgeSystem: nextInput.bridgeSystem === BridgeSystem.CONTINUOUS
+          ? BridgeSystem.CONTINUOUS
+          : BridgeSystem.SIMPLE_SINGLE,
+        spans: layoutParts.spans,
+        supports: layoutParts.supports,
+      })
+    : { nodes: project.nodes, members: project.members, supports: project.supports };
+
   const nextProject: ProjectModel = {
     ...project,
+    ...frameOverlay,
     apolloBsdd: built.document,
     apolloBridgeStructureInput: nextInput,
   };

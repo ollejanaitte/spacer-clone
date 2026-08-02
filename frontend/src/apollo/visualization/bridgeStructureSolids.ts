@@ -422,7 +422,7 @@ function buildStiffenerSolid(
       height: Math.max(webHeight, 0.02),
       station: stationM,
     },
-    localFrame: longitudinalFrame([stationM, offsetM, 0]),
+    localFrame: longitudinalFrame([stationM, offsetM, -input.girderDepth / 2]),
   };
 }
 
@@ -618,8 +618,11 @@ export function buildBridgeStructureSolidGeometryParameters(
         return;
       }
       const x = station * input.crossBeamSpacing;
-      const zTop = webHeight / 2;
-      const zBottom = -webHeight / 2;
+      // Match girder solid datum: localFrame origin is at z = -girderDepth/2.
+      // Sway diagonals must connect within the web height about that center, not world z=0.
+      const girderCenterZ = -input.girderDepth / 2;
+      const zTop = girderCenterZ + webHeight / 2;
+      const zBottom = girderCenterZ - webHeight / 2;
       const members = membersByParent.get(swayBracing.swayBracingId) ?? [];
       let memberIndex = 0;
       for (let pair = 0; pair < input.girderCount - 1; pair += 1) {

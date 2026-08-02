@@ -15,6 +15,7 @@ export {
   withApolloBsdd,
 } from "./projectBsdd";
 export { computeBridgeStructureApproximateQuantities } from "./quantities";
+export { syncOverlayFrameToLayout } from "./syncOverlayFrame";
 export { stableEntitySeed, stableUuidFromSeed } from "./stableIds";
 export { computeGirderSectionProperties, type GirderSectionProperties } from "./sectionProperties";
 export {

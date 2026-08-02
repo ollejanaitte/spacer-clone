@@ -76,16 +76,38 @@
 | MV-CG-34 | 負曲げ・活荷重 UI | 存在しない | PENDING |
 | MV-CG-35 | 正式照査 OK | 出力されない | PENDING |
 
-## 8. 自動検証メモ（参考・GUI 代替ではない）
+## 8. 表示境界・対傾構（2026-08-02 GUI 発見不具合の回帰確認）
+
+発見症状:
+1. 対傾構斜材が主桁間・床版範囲外へ飛び出すように見える
+2. 骨組み橋軸延長が Apollo ソリッドより長く見える（200m サンプル + 連続桁サンプル生成時）
+
+| # | 確認項目 | 期待値 | 状態 |
+|---|----------|--------|------|
+| MV-01 | 5径間連続橋を表示 | 表示可能 | PENDING |
+| MV-02 | Demo Shape OFF で対傾構が隣接主桁間に収まる | outer girder centers 内 | PENDING |
+| MV-03 | 平面表示で最外主桁外側へ斜材が出ない | 外側 bay なし | PENDING |
+| MV-04 | 正面表示で対傾構端点が主桁ウェブ高さへ接続 | girder center Z ± web/2 | PENDING |
+| MV-05 | 側面表示で骨組み始終点と Apollo 主桁始終点が一致 | frame X = solid X | PENDING |
+| MV-06 | Demo Shape ON / Scale 1 | デモ表示のみ、全長外挿なし | PENDING |
+| MV-07 | Demo Shape ON / Scale 5 | 同上 | PENDING |
+| MV-08 | Animation ON/OFF | 不正 overlay なし | PENDING |
+| MV-09 | fit-to-view | 意図しない延長でズーム暴れない | PENDING |
+| MV-10 | STL出力 | 三角面 > 0 | PENDING |
+| MV-11 | SIMPLE_SINGLE回帰 | 単径間 bounds 一致 | PENDING |
+| MV-12 | save/reload | 同期済み frame が復元 | PENDING |
+
+## 9. 自動検証メモ（参考・GUI 代替ではない）
 
 - `continuousGirderLayout.test.ts`: CONTINUOUS 2/3/5、save/reload、invalid、SIMPLE_SINGLE 回帰 — PASS
 - `continuousGirderSample.test.ts`: サンプル STALE / generate — PASS
 - `continuousGirderVisualization.test.ts`: 3D segment・STALE・STL・SIMPLE_SINGLE — PASS
-- `npm test -- src/apollo`: 38 files / 287 tests — PASS
-- contract / viewer / STL / import-export / suite manifest 関連 10 modules — PASS
-- typecheck / lint / build — PASS
+- `visualizationBoundsBracing.test.ts`: 対傾構 Y/Z bounds、frame/solid X 一致、Demo Shape、STL — 追加
+- `npm test -- src/apollo`: 実行結果を PR に記載
+- contract / viewer / STL / import-export / suite manifest 関連 — 実行結果を PR に記載
+- typecheck / lint / build — 実行結果を PR に記載
 
-## 9. 数値ゲート（全 Step 共通）
+## 10. 数値ゲート（全 Step 共通）
 
 ```
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
