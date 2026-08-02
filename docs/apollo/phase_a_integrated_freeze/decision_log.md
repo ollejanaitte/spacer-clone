@@ -21,3 +21,5 @@ Phase A の決定記録。既存 DS-00〜DS-09 の DEC-DS00-0001 等は書き換
 | DEC-PHA-0010 | 2026-08-02 | A3 | 動的影響は LF-DS04-010 が唯一の数値オーナー、LM-DS04-007 はポインタのみ。組み合わせ成分に含めず二重適用しない。地震・疲労・架設段階は OUT_OF_SCOPE、施工時荷重は FUTURE_PHASE を維持する。 | ADOPTED | 03_loads_and_combinations.md に反映。 |
 | DEC-PHA-0011 | 2026-08-02 | A4 | Phase A の解析モデル化ルールは「設計モデルから派生」「リポジトリ solver は PROJECT_SPECIFIC」「外部解析器は BLOCKED」という DS-06 / phase1 再凍結の位置づけをそのまま採用する。解析結果はプローブ通過まで設計照査へ束縛しない。 | ADOPTED | 04_analysis_model_rules.md に反映。 |
 | DEC-PHA-0012 | 2026-08-02 | A4 | 解析に使う断面剛性・材料・荷重の数値は DS-03/DS-04 の BLOCKED を維持する。旧Apollo 仮定剛度・仮定鋼重・任意指定は処理順の参考のみとし、数値移植しない。 | ADOPTED | 04_analysis_model_rules.md に反映。 |
+| DEC-PHA-0013 | 2026-08-02 | A5 | Phase A の主桁・たわみ照査ロジックは DS-05 レジスタ（PR/LS/VER/LV/DTS、全 BLOCKED、R7 目視確認 0 件）をそのまま採用する。照査式・係数・許容値は BLOCKED を維持し、捏造しない。 | ADOPTED | 05_member_check_logic.md に反映。 |
+| DEC-PHA-0014 | 2026-08-02 | A5 | 疲労は Phase 1 で OUT_OF_SCOPE を維持し、照査ロジックは採択しない。Phase A ではデータ境界（疲労用荷重・応力範囲・detail category の入力枠）のみ定義する。概算鋼重の割増係数は根拠なき既定化を禁止する。 | ADOPTED | 05_member_check_logic.md に反映。 |

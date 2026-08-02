@@ -4,11 +4,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のStep: A4 (解析モデル化ルール)
+現在のStep: A5 (主桁・たわみ・疲労)
 作業状態: 実行中
-現在ブランチ: docs/phase-a-a4-analysis-model
+現在ブランチ: docs/phase-a-a5-main-girder-fatigue
 開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
-現在HEAD SHA: 42ebb7a85abd4cc262ac289281c0cd70bbe7db9c (A3マージ後)
+現在HEAD SHA: 0758891a05e3d7d6f4a83b8deb643010bbbec98f (A4マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -29,6 +29,8 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Step A3: docs/apollo/phase_a_integrated_freeze/03_loads_and_combinations.md を作成（荷重モデル・係数・組合せ）
 - Step A3: ブランチ docs/phase-a-a3-loads-combinations → PR #253 → main マージ済み (merge commit 42ebb7a)
 - Step A4: docs/apollo/phase_a_integrated_freeze/04_analysis_model_rules.md を作成（解析モデル生成規則・解析器同一性・物理契約ブロッカー・単位/座標/符号）
+- Step A4: ブランチ docs/phase-a-a4-analysis-model → PR #254 → main マージ済み (merge commit 0758891)
+- Step A5: docs/apollo/phase_a_integrated_freeze/05_member_check_logic.md を作成（主桁7限界状態・たわみ・疲労データ境界・鋼重・Phase1B条件）
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -43,7 +45,9 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PHA-0010: 動的影響は LF-DS04-010 が単一オーナー、二重適用禁止。地震/疲労/架設は OUT_OF_SCOPE
 - DEC-PHA-0011: 解析モデルは設計モデルから派生、リポジトリ solver は PROJECT_SPECIFIC、外部解析器は BLOCKED
 - DEC-PHA-0012: 解析用の断面剛性・材料・荷重数値は BLOCKED 維持。旧Apollo仮定値は参考のみ
-未決事項: Step A5〜A8 の各内容（各 Step で実施）
+- DEC-PHA-0013: 主桁・たわみ照査ロジックは DS-05 レジスタ採用、R7 目視確認 0 件のまま BLOCKED
+- DEC-PHA-0014: 疲労は OUT_OF_SCOPE、データ境界のみ定義。概算鋼重割増係数の既定化禁止
+未決事項: Step A6〜A8 の各内容（各 Step で実施）
 ブロッカー:
 - PA-OQ-001 道示 R7 条文目視確認 BLOCKED
 - PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
@@ -56,7 +60,7 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
 - PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253)
-mainマージ状態: A0 マージ済み (2300411)。A1 マージ済み (b2b1ed3)。A2 マージ済み (4729720)。A3 マージ済み (42ebb7a)。A4 は未マージ
-次の作業: A4 検証 → A4 commit → A4 push → PR 作成 → 自己レビュー → main マージ → Step A5 (主桁・たわみ・疲労)
+PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254)
+mainマージ状態: A0 マージ済み (2300411)。A1 マージ済み (b2b1ed3)。A2 マージ済み (4729720)。A3 マージ済み (42ebb7a)。A4 マージ済み (0758891)。A5 は未マージ
+次の作業: A5 検証 → A5 commit → A5 push → PR 作成 → 自己レビュー → main マージ → Step A6 (RC床版・床組・補剛材・添接)
 ================================================================================
