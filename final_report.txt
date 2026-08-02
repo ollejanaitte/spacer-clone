@@ -1,86 +1,33 @@
 ================================================================================
-Apollo Step 1-A Development Reference + App Parity Report
+Apollo Step 1-B Development — Section Properties Warning/Provenance
 ================================================================================
-更新日時: 2026-08-02T21:40:00+09:00
-作業名: Step 1-A development-only reference + live Apollo GUI parity
-Step ID: STEP_1A_DEVELOPMENT_REFERENCE
-作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
-
-WORKING_PATH: /home/masaharu/Projects/spacer-clone
-START_MAIN_SHA: ced050e647d3b7b822722e668d8561d8b70ecb53
-作業branch: docs/apollo-step1a-development-reference
-APPLICATION_CODE_CHANGED: NO (docs + development_reference harness only)
+更新日時: 2026-08-02T21:35:00+09:00
+作業名: Step 1-B development-only section properties UI disclosure
+Step ID: STEP_1B_DEVELOPMENT
+作業状態: PRIMARY_PR_PENDING
+START_MAIN_SHA: 071a1f49a2a9c781a2f8590efe6d324c48253834
+作業branch: feat/apollo-step1b-section-properties-dev
 
 USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
-DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
---------------------------------------------------------------------------------
-Previous Phase Summary
---------------------------------------------------------------------------------
-APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
-STEP_1A_PATH_B_SEAL_PR: #288 (ced050e...)
-STEP_1A_PRIMARY_PR: #286
-STEP_1A_REPORT_PR: #287
-Formal gates remain BLOCKED / NOT_GRANTED (not fabricated).
+Prior development reference (#289/#290) parity PASS for GOLD-SP-001/002.
 
---------------------------------------------------------------------------------
-Development reference (fixed BEFORE app)
---------------------------------------------------------------------------------
-Script: docs/apollo/step1_numeric_core/evidence_golden/development_reference/independent_reference_calculator.py
-Decimal precision: 80
-No float intermediates; no frontend/backend production imports.
-SHA256:
-- calculator: 5941d4918cf0aa1261b47e5b9ad7f7efe90bd41af4cf9be5627916a0d421d6c6
-- canonical_inputs: 9a6134be32f1b7b7e6198f29fe8c54aa69a52fb4cbeb8594e9c7b621528975f9
-- reference_results.json: e24b30e27a940f429a089762759bcb63a9113b4bea52f23ed65e17f2359565d4
+Changes:
+- BridgeStructureInputPanel: development warning + provenance (NOT_AUTHORIZED)
+- BridgeStructureInputPanel tests assert warning
+- docs/apollo/step1_numeric_core/step1b_development_gate.md
 
-DEVELOPMENT_TOLERANCE_STATUS: FROZEN_BEFORE_APP_COMPARISON
-A_display=5e-5 / R_display=1e-12 (UI maximumFractionDigits=4)
-Official human freeze: NOT_FROZEN_FOR_RELEASE / PENDING
+Tests: BridgeStructureInputPanel + sectionProperties PASS (24)
+typecheck: PASS
 
---------------------------------------------------------------------------------
-Live Apollo app
---------------------------------------------------------------------------------
-APP_LAUNCH_VERDICT: PASS
-COMMANDS:
-- .venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
-- npm run dev:apollo -- --host 127.0.0.1 --port 5173 --strictPort
-HEALTH: http://127.0.0.1:5173 → 200
-GUI_INPUT_VERDICT: PASS (Playwright real browser against live app; not unit-test substitute)
-GOLD_SP_001_DEVELOPMENT_PARITY: PASS
-GOLD_SP_002_DEVELOPMENT_PARITY: PASS
-SAVE_RELOAD_VERDICT: PASS (workspace save + open; props match)
-STALE_VERDICT: PASS
-CONSOLE_ERRORS: 0
-Screenshots: development_reference/screenshot_GOLD-SP-001.png / _002.png
-Comparison: development_reference/comparison_report.{json,md}
-
---------------------------------------------------------------------------------
-Formal vs development gates
---------------------------------------------------------------------------------
-STEP_1B_DEVELOPMENT_START_VERDICT: GO
+STEP_1B_DEVELOPMENT_START_VERDICT: GO (completed this PR)
 STEP_1B_FORMAL_RELEASE_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
-PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
-approval_register: AI_ASSISTED_REFERENCE_READY / NOT_APPROVED / decision_id=NONE
+STEP_1C_DEVELOPMENT_START_VERDICT: GO
 
---------------------------------------------------------------------------------
-GitHub (provisional)
---------------------------------------------------------------------------------
-DEVREF_PRIMARY_PR_NUMBER: 289
-DEVREF_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/289
-DEVREF_PRIMARY_PR_MERGED: YES
-DEVREF_PRIMARY_PR_MERGE_SHA: 551b5b288f3e4b891ce3000d7218f803fbe8bbe7
-DEVREF_REPORT_PR_NUMBER: 290
-DEVREF_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/290
-DEVREF_REPORT_PR_MERGE_SHA: PENDING
-
-LOCAL_MAIN_EQUALS_ORIGIN: YES
-WORKTREE_CLEAN: YES
-FINAL_MAIN_SHA: 551b5b288f3e4b891ce3000d7218f803fbe8bbe7
-
-OVERALL_VERDICT: DEVELOPMENT_PARITY_PASS_FORMAL_STILL_BLOCKED
+STEP_1B_PRIMARY_PR_NUMBER: PENDING
+STEP_1B_PRIMARY_PR_URL: PENDING
+STEP_1B_PRIMARY_PR_MERGE_SHA: PENDING
 ================================================================================
