@@ -1,7 +1,7 @@
 ================================================================================
 Apollo Step 1-C Development — Loads / Analysis Probe
 ================================================================================
-更新日時: 2026-08-02T21:50:00+09:00
+更新日時: 2026-08-02T21:52:00+09:00
 作業名: Step 1-C development-only simple-span analysis reference + GUI probe
 Step ID: STEP_1C_DEVELOPMENT
 作業状態: PRIMARY_MERGED + REPORT_FINALIZATION
@@ -41,6 +41,6 @@ STEP_1C_PRIMARY_PR_NUMBER: 293
 STEP_1C_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/293
 STEP_1C_PRIMARY_PR_MERGE_SHA: 5bedec3783441009775113e5cea34a6a496063d2
 ================================================================================
-STEP_1C_REPORT_PR_NUMBER: PENDING
-STEP_1C_REPORT_PR_URL: PENDING
+STEP_1C_REPORT_PR_NUMBER: 294
+STEP_1C_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/294
 STEP_1C_REPORT_PR_MERGE_SHA: PENDING
