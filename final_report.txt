@@ -36,7 +36,7 @@ STEP_2D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/306
 STEP_2D_PRIMARY_PR_MERGE_SHA: 398c837addedac1c23bb6c3dfb6ee59c12f36d0a
 STEP_2D_REPORT_PR_MERGE_SHA: bbee6e6970c39cb6efabfa65e0ae30d59478f0d9
 
-CLOSEOUT_PR: PENDING
+CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/307
 
 STEP_3_DEVELOPMENT_START_READINESS: GO
 
