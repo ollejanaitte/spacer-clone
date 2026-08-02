@@ -1,6 +1,6 @@
 # Apollo Visible Vertical Slice 02 — ローカル実装レポート
 
-**Status:** IN_PROGRESS
+**Status:** IMPLEMENTATION_COMPLETE — PENDING manual GUI + PR/merge
 **Branch:** `feat/ap-dx-visible-vertical-slice-02`
 **Baseline:** `54e3c4ff0f21d737e1e2df356653859f3ae4ddb2` (main @ VVS01 merge PR #246)
 **Numeric design authorization:** NOT_GRANTED（VVS01 から維持）
@@ -80,3 +80,30 @@ Visible Vertical Slice 01 の「橋梁構造入力 → SDM → 3D → 保存/再
 ## 7. GUI（Block 6）
 
 手動 GUI 確認は非視覚エージェントでは認定不可。`manual_verification_checklist.md` を作成し、全項目を PENDING とする。自動テスト（vitest、可能なら Playwright）は補助証跡に留める。VVS01 と同様、`MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION` を維持する（PASS の捏造はしない）。
+
+## 8. 実装進捗（ブロック別）
+
+| Block | コミット | 内容 | 検証 |
+|-------|----------|------|------|
+| 0 | `07f4712` | ドキュメント初期化（本レポート、判定記録） | — |
+| 1 | `f028ae3` | 断面特性・数量・フィールドモデル | typecheck / 218 Apollo PASS |
+| 2 | `b498491` | 採用ワークフロー（adoption.ts, BSDD 書込） | 218 Apollo PASS |
+| 3 | `be2dd94` | 詳細 3D（補剛材・対傾構・横繋ソリッド、STL、バインディング） | 222 Apollo PASS |
+| 4 | `1f484ac` | 結果 UI（断面特性表・数量/重量・採用ボタン・チェックボックス）＋永続化 | 226 Apollo PASS |
+| 5 | `c584bd3` | sectionProperties / adoption / 新規フィールド検証 / 永続化テスト | 244 Apollo PASS, lint 0, diff-check clean |
+| 6 | —（本 Block） | 手動 GUI チェックリスト作成 | `MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION` |
+| 7 | —（未実施） | PR / merge / `final_report.txt` 日本語上書き | マージ SHA 確定後 |
+
+## 9. 最終検証サマリ（Block 5 時点）
+
+- `npm run typecheck` — PASS
+- `npm test -- src/apollo` — 33 ファイル / 244 テスト PASS
+- `npm run lint` — exit 0（既存の日本語文字列レビュー指摘のみ、新規違反なし）
+- `git diff --check` — clean
+
+## 10. 既知の制約・未実施事項
+
+- 数値設計権限は NOT_GRANTED のまま。UI 上の採用操作は fail-closed（診断表示）で ADOPTED には到達しない。ADOPTED 経路はテスト注入コンテキストのみで検証。
+- 手動 GUI 確認は未実施（PENDING）。非視覚エージェントによる PASS 認定は行わない。
+- Playwright による e2e は未実行（既存設定を利用する場合は backend :8000 + vite :4173 + `VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL=true`）。
+- 追加フィールド・二次部材エンティティは全て additive。契約・スキーマ・依存・backend は無変更。
