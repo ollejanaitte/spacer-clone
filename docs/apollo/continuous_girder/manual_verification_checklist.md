@@ -1,11 +1,13 @@
 # 連続桁 — 手動確認チェックリスト
 
-**Authority:** Step C0（文書凍結）/ Step C4（検証・チェックリスト拡充）
+**Authority:** Step C0（文書凍結）/ Step C4（検証・チェックリスト拡充）/ Freeze-gate audit
 **Date:** 2026-08-02
 **MANUAL_GUI_VERDICT:** `PASS`
+**APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT:** `CONDITIONAL_FREEZE`（詳細は §9）
 
 > 対傾構 V 型・上下横構分離（PR #280）および PR #279 bounds 回帰について、ユーザー手動 GUI 確認済み。
 > 下記のうち **PASS** は確認済み、**PENDING** は未確認のまま残す。PASS を捏造しない。
+> 2026-08-02 freeze-gate audit は残存 PENDING を分類したのみで、PENDING→PASS 変更は行っていない。
 ## 1. 構造形式・径間数
 
 | # | 確認項目 | 期待値 | 状態 |
@@ -127,17 +129,102 @@
 | MV-BR-15 | STL | 三角面 > 0 | PASS |
 | MV-BR-16 | selection/highlight | BraceMember 選択可 | PENDING |
 
-## 9. 自動検証メモ（参考・GUI 代替ではない）
+## 9. 残存 PENDING 分類・凍結判定（2026-08-02 freeze-gate audit）
 
+**方針:** 既存の PASS / PENDING 状態は変更しない。未確認項目を PASS にしない。自動テスト PASS を手動 GUI PASS の代替にしない。
+
+### 9.1 PR #283 で確認済みの範囲
+
+| 範囲 | 状態 |
+|------|------|
+| `MANUAL_GUI_VERDICT` | PASS |
+| MV-01..12（bounds / Demo Shape / Animation / fit / STL / SIMPLE_SINGLE / save-reload） | PASS |
+| MV-BR-01..08（V型対傾構・上下横構・独立 ON/OFF） | PASS |
+| MV-BR-14..15（save/reload flags・STL） | PASS |
+| `SWAY_BRACING_MANUAL_VERDICT` / `UPPER_LATERAL_BRACING_MANUAL_VERDICT` / `LOWER_LATERAL_BRACING_MANUAL_VERDICT` | PASS |
+| `PR279_BOUNDS_MANUAL_REGRESSION` / `SAVE_RELOAD_MANUAL_VERDICT` / `STL_MANUAL_VERDICT` | PASS |
+
+### 9.2 現在も PENDING の範囲
+
+- MV-BR-09, MV-BR-10, MV-BR-11, MV-BR-12, MV-BR-13, MV-BR-16
+- MV-CG-01..35
+
+いずれも **状態列は PENDING のまま**（本 audit で PASS 化していない）。
+
+### 9.3 分類定義
+
+| 分類 | 意味 |
+|------|------|
+| BLOCKING | 現行 Apollo 3D Vertical Slice 完成条件に含まれ、未確認のまま凍結すると完成主張が不正確になる |
+| DEFERRED_NON_BLOCKING | Vertical Slice に関係するが、自動証拠または既存 PASS の重複確認で主要リスクが抑えられ、手動確認を後続へ延期しても凍結を妨げない |
+| OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE | 今回凍結する範囲の完成条件に含まれない |
+| PENDING_USER_CONFIRMATION | GUI 操作など人間確認が必要で、Cursor 環境では確認不能（PASS 化禁止）。他分類と併記可 |
+
+### 9.4 各 PENDING の分類
+
+| # | 分類 | 自動証拠（GUI 代替ではない） | 分類理由 / 次アクション |
+|---|------|------------------------------|-------------------------|
+| MV-BR-09 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | `generateBsdd.ts` で `swayBracingInterval` が対傾構サイトを独立ゲート; `bracingSystemGeometry` / `bridgeStructureWorkflow` / `bridgeStructureVisualization` が interval 1/2/null を検証 | 幾何本体は MV-BR-01..08 PASS。間隔変更の目視は後続。間隔 UI 操作を手動確認する |
+| MV-BR-10 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | `visualizationBoundsBracing` SIMPLE_SINGLE; `continuousGirderVisualization` / `continuousGirderLayout` SIMPLE_SINGLE 回帰 | MV-11 PASS と重複。対傾構付き SIMPLE_SINGLE の追加目視は後続 |
+| MV-BR-11 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | `visualizationBoundsBracing` 5-span bounds; layout 2/3/5 | MV-01 PASS（5径間表示）と重複。対傾構付き 5径間の追加目視は後続 |
+| MV-BR-12 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | `visualizationBoundsBracing` Demo Shape OFF/ON | MV-06 PASS と重複。チェックリスト冗長行として PENDING 維持 |
+| MV-BR-13 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | 同上 | MV-06/07 PASS と重複。PENDING 維持 |
+| MV-BR-16 | OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE + PENDING_USER_CONFIRMATION | solids に `selectionKey`/`BraceMember` 付与; `selection.test.ts` / shell selection は一般選択のみ。BraceMember 専用 GUI ピック未確認 | `visualization_spec.md` §4 の選択対象は主桁・床版。対傾構選択は今回 3D 完成条件外。必要時に別途 GUI 確認 |
+| MV-CG-01..08 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | `BridgeStructureInputPanel` C2 UI; `continuousGirderLayout` 2/3/5・SIMPLE_SINGLE・fail-close | C4 自動検証済。構造形式/径間の目視は後続 |
+| MV-CG-09..13 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | InputPanel 支間 add/remove; layout cumulative stations / abutment / pier | C4 自動検証済。支点・下部構造の目視は後続 |
+| MV-CG-14..18 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | sample STALE; visualization STALE omit/restore; NOT_AUTHORIZED panel/layout | C4 自動検証済。STALE/再生成の目視は後続 |
+| MV-CG-19..25 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | continuousGirderVisualization contiguous segments / pier / deck; bracing solids tests | MV-BR-01..08 / MV-01..05 で主要 3D 幾何は確認済。部材別目視は後続 |
+| MV-CG-26..29 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | layout/visualization save-reload; STL tests; legacy SIMPLE_SINGLE default | MV-12 / MV-BR-14/15 / MV-10 PASS と重複大。互換目視は後続 |
+| MV-CG-30..32 | DEFERRED_NON_BLOCKING + PENDING_USER_CONFIRMATION | layout duplicate span ID / SIMPLE_MULTIPLE fail-close; workflow validation | 負の確認は自動が主。GUI エラー表示の目視は後続 |
+| MV-CG-33..35 | OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE + PENDING_USER_CONFIRMATION | scope_freeze / analysis_boundary で断面力・負曲げ・正式照査は OUT; panel adoption fail-closed / NOT_AUTHORIZED | 数値・照査境界ガードであり、今回の 3D 幾何凍結条件外。漏えい目視は必要時 |
+
+**集計:** BLOCKING=0 / DEFERRED_NON_BLOCKING=38（MV-BR-09..13 + MV-CG-01..32） / OUT_OF_CURRENT_VERTICAL_SLICE_SCOPE=4（MV-BR-16 + MV-CG-33..35） / PENDING_USER_CONFIRMATION=41（全残存 PENDING。PASS 化なし）
+
+### 9.5 自動証拠と手動証拠の区別
+
+| 証拠種別 | 役割 | 制限 |
+|----------|------|------|
+| 自動テスト（vitest） | 契約・幾何数値・STALE・STL・save/reload・UI コンポーネント契約 | 対話的 3D 目視・カメラ操作・人間知覚の代替にならない |
+| 手動 GUI（PR #283） | MV-01..12 / MV-BR-01..08 / 14..15 の目視確認 | 上記以外の PENDING 行には適用しない |
+
+### 9.6 Vertical Slice 凍結判定
+
+```
+APOLLO_3D_IMPLEMENTATION_VERDICT: PASS
+APOLLO_3D_AUTOMATED_VERIFICATION_VERDICT: PASS
+APOLLO_3D_CONFIRMED_MANUAL_SCOPE_VERDICT: PASS
+APOLLO_3D_REMAINING_MANUAL_ITEMS: MV-BR-09/10/11/12/13/16; MV-CG-01..35
+APOLLO_3D_VERTICAL_SLICE_FREEZE_VERDICT: CONDITIONAL_FREEZE
+```
+
+判定理由:
+- 未解決 BLOCKING = 0（FROZEN 条件は満たすが、非ブロッカー PENDING を明示して凍結するため CONDITIONAL_FREEZE）
+- 凍結範囲: 連続桁純幾何ワークフロー（C0〜C4 自動完了）+ PR #279 bounds 手動確認 + PR #280 対傾構/上下横構手動確認
+- 凍結対象外: 残存 PENDING の item-by-item GUI PASS 化、数値設計、断面力/利用率、Golden 作成、主桁断面諸量の正式実装
+- 次フェーズへ進む条件: 数値ゲート解除用の独立人間証跡（Golden / 認可）。本 CONDITIONAL_FREEZE は数値ゲートを解除しない
+
+## 10. 自動検証メモ（参考・GUI 代替ではない）
+
+2026-08-02 freeze-gate audit 実行結果（`frontend/`）:
+
+| コマンド | 結果 |
+|----------|------|
+| `npm test -- src/apollo/__tests__/continuousGirderLayout.test.ts ...`（根拠テスト 10 files） | PASS（91 tests） |
+| `npm test -- src/apollo` | PASS（40 files / 300 tests） |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS（既存日本語文字列 review 警告のみ、exit 0） |
+| `npm run build` | PASS（chunk size 警告のみ） |
+
+個別メモ:
 - `continuousGirderLayout.test.ts`: CONTINUOUS 2/3/5、save/reload、invalid、SIMPLE_SINGLE 回帰 — PASS
 - `continuousGirderSample.test.ts`: サンプル STALE / generate — PASS
 - `continuousGirderVisualization.test.ts`: 3D segment・STALE・STL・SIMPLE_SINGLE — PASS
-- `visualizationBoundsBracing.test.ts`: 対傾構 Y/Z bounds、frame/solid X 一致、Demo Shape、STL — 追加
-- `npm test -- src/apollo`: 実行結果を PR に記載
-- contract / viewer / STL / import-export / suite manifest 関連 — 実行結果を PR に記載
-- typecheck / lint / build — 実行結果を PR に記載
+- `visualizationBoundsBracing.test.ts`: 対傾構 Y/Z bounds、frame/solid X、Demo Shape、5-span、SIMPLE_SINGLE、STL — PASS
+- `bracingSystemGeometry.test.ts`: V型対傾構・上下横構平面・entity 分離・save/reload — PASS
+- `BridgeStructureInputPanel.test.tsx`: 構造形式切替・支間 add/remove・STALE・NOT_AUTHORIZED — PASS
+- `selection.test.ts` / solids `BraceMember` selectionKey: 一般選択・キー付与のみ（GUI ピック代替ではない）
 
-## 10. 数値ゲート（全 Step 共通）
+## 11. 数値ゲート（全 Step 共通・変更禁止）
 
 ```
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
@@ -146,3 +233,4 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ```
 
 確認済み行は PASS、未確認行は PENDING のまま残す。全体の `MANUAL_GUI_VERDICT` は本ドキュメント先頭を正本とする。
+未確認項目を本 audit で PASS にしていない。数値ゲートは引き続き BLOCKED / NOT_GRANTED。
