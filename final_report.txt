@@ -4,11 +4,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
-現在のStep: A0 (資料インベントリ・作業枠)
+現在のStep: A1 (基準・版・適用範囲)
 作業状態: 実行中
-現在ブランチ: docs/phase-a-a0-source-inventory
+現在ブランチ: docs/phase-a-a1-standard-scope
 開始時main SHA: e540a38c06e3a9360c0cac4a632f8f1a599c8656
-現在HEAD SHA: 309183bba0ad9529d0b47bc481a6768eb3894fe1
+現在HEAD SHA: 23004116e3df4c43ee7f5565e81c01d6444ad70d (A0マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -21,13 +21,17 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - 道示 R7 I〜V PDF が local-archive/restricted-pdf に存在 (テキスト層なし=IMAGE_SCAN)
 - 外部参照パス /home/masaharu/Projects/bridge-standards-research が現環境に不在 → PA-OQ-002
 - docs/apollo/phase_a_integrated_freeze/ に README.md / 00_source_inventory.csv / decision_log.md / open_questions_and_blockers.md を作成
+- Step A0: ブランチ docs/phase-a-a0-source-inventory → PR #250 → main マージ済み (merge commit 2300411)
+- Step A1: docs/apollo/phase_a_integrated_freeze/01_standard_scope_freeze.md を作成（対象基準・版・正誤表・巻別役割・IN/OUT・状態）
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
 - DEC-PHA-0002: DS-00 adoption_status 語彙を Phase A でも維持
 - DEC-PHA-0003: 数値実装許可は部材・照査単位、未採択は NOT_AUTHORIZED
 - DEC-PHA-0004: Step 毎にブランチ・PR・main マージ
-未決事項: Step A1〜A8 の各内容（各 Step で実施）
+- DEC-PHA-0005: 対象基準・版・正誤表は DS-01 の採用基準をそのまま採用 (再凍結)
+- DEC-PHA-0006: 適用範囲は DS-00 / phase1 再凍結の IN/OUT を踏襲
+未決事項: Step A2〜A8 の各内容（各 Step で実施）
 ブロッカー:
 - PA-OQ-001 道示 R7 条文目視確認 BLOCKED
 - PA-OQ-002 ライセンスPDF参照パス不在 BLOCKED
@@ -40,7 +44,7 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - PA-OQ-009 解析方式未決定 BLOCKED (A4 で調査)
 - PA-OQ-010 旧Apollo版不明 (REFERENCE_ONLY)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
-PR番号・URL: (Step A0 PR 作成後に記入)
-mainマージ状態: 未マージ (Step A0 PR を main へマージ予定)
-次の作業: A0 PR を作成・自己レビュー・main マージ → Step A1 (基準・版・適用範囲)
+PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250)
+mainマージ状態: A0 マージ済み (2300411)。A1 は未マージ
+次の作業: A1 自己レビュー → main マージ → Step A2 (材料・単位・係数)
 ================================================================================
