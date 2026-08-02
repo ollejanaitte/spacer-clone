@@ -1,0 +1,21 @@
+{
+  "caseId": "GOLD-DRW-001",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "inputs": {
+    "width": "12.0",
+    "girderCount": "4",
+    "girderSpacing": "3.0"
+  },
+  "results": {
+    "overhang": "1.5",
+    "girderCentersX": [
+      "-4.5",
+      "-1.5",
+      "1.5",
+      "4.5"
+    ],
+    "deckLeft": "-6.0",
+    "deckRight": "6.0"
+  }
+}

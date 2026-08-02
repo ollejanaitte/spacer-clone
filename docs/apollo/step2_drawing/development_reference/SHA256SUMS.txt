@@ -1,0 +1,1 @@
+56bde55ad770b88f8029c2f4d583fb0e7dcb4b7d3d7e978191928130608879be  drawing_reference_results.json
