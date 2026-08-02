@@ -1,5 +1,5 @@
 ================================================================================
-Apollo Phase A+ — 進捗レポート（P5 実行中）
+Apollo Phase A+ — 進捗レポート（P6 完了）
 ================================================================================
 
 更新日時: 2026-08-02
@@ -8,23 +8,23 @@ Apollo Phase A+ — 進捗レポート（P5 実行中）
 作業場所: /home/masaharu/Projects/spacer-clone
 
 現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
-現在の到達Step: P5（最初の数値リリース候補選定）
-作業状態: 実行中（P5 成果物作成済み・commit/push 前）
+現在の到達Step: P6（統合判定・完了報告）
+作業状態: 実行中（P6 成果物作成済み・commit/push 前）
 
-LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p5-first-candidate
-LOCAL_HEAD_SHA: 0427941f8342dbc7797d58b1ac7a166ce7ab5d8f（= origin/main、P4 マージ後）
-LOCAL_MAIN_SHA: 0427941f8342dbc7797d58b1ac7a166ce7ab5d8f
-ORIGIN_MAIN_SHA: 0427941f8342dbc7797d58b1ac7a166ce7ab5d8f
+LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p6-final
+LOCAL_HEAD_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e（= origin/main、P5 マージ後）
+LOCAL_MAIN_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e
+ORIGIN_MAIN_SHA: a78e1641d5877d6372a1acc0b1f6ee0913e2652e
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: NO（P5 成果物の未コミット差分あり）
-LOCAL_UNCOMMITTED_WORK: 06_first_numeric_release_candidate.md / 01_blocker_resolution_register.csv / decision_log.md / 07_user_action_required.md / final_report.txt
+WORKTREE_CLEAN: NO（P6 成果物の未コミット差分あり）
+LOCAL_UNCOMMITTED_WORK: phase_b_release_preparation_report.md / README.md / decision_log.md / final_report.txt
 LOCAL_UNPUSHED_COMMITS: 0
 LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: なし（P5 PR 作成前）
-UNMERGED_BRANCH: docs/phase-b-prep-p5-first-candidate
-LATEST_MERGED_PR: #263（P4）
+OPEN_PR: なし（P6 PR 作成前）
+UNMERGED_BRANCH: docs/phase-b-prep-p6-final
+LATEST_MERGED_PR: #264（P5）
 
 P0_STATUS: MERGED_COMPLETE
 P0_PR: #259（merge commit 4b44df4）
@@ -36,39 +36,35 @@ P3_STATUS: MERGED_COMPLETE
 P3_PR: #262（merge commit e2cf9c1）
 P4_STATUS: MERGED_COMPLETE
 P4_PR: #263（merge commit 0427941）
-P5_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
-P5_PR: —
-P6_STATUS: NOT_STARTED
+P5_STATUS: MERGED_COMPLETE
+P5_PR: #264（merge commit a78e164）
+P6_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
 P6_PR: —
 
-MERGED_COMPLETE_STEPS: P0, P1, P2, P3, P4
+MERGED_COMPLETE_STEPS: P0, P1, P2, P3, P4, P5
 LOCAL_ONLY_STEPS: なし
-INCOMPLETE_STEPS: P5（PR 作成前）, P6
-NEXT_RESUME_STEP: P5
-NEXT_RESUME_BRANCH: docs/phase-b-prep-p5-first-candidate
-NEXT_REQUIRED_ACTION: P5 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → P6（統合判定・最終報告）
+INCOMPLETE_STEPS: P6（PR 作成前）
+NEXT_RESUME_STEP: P6
+NEXT_RESUME_BRANCH: docs/phase-b-prep-p6-final
+NEXT_REQUIRED_ACTION: P6 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
-PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_INDEPENDENT_GOLDEN（P5 から更新）
+PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 
 調査結果:
-- P4 は PR #263 で main マージ済み（merge commit 0427941）。local main = origin/main。
-- P5 で 06_first_numeric_release_candidate.md を作成。候補 A〜H を 8 項目（公式設計基準依存/解析器依存/既存実装/独立Golden容易/誤判定リスク/fail-closed/将来拡張性）で 1〜5 点評価。
-  - 評価結果: A=40, B=30, E=20, C=18, D=17, F=14, H=13, G=12
-  - A（主桁断面諸量・純幾何）を FIRST_RELEASE_CANDIDATE に選定。
-    - 根拠: sectionProperties.ts に既存実装（input 寸法のみ、基準参照なし・NOT_AUTHORIZED 表示）、sectionProperties.test.ts に対称/非対称/fail-closed(null) の検証、解析器不要、独立手計算可能（05 GOLD-MG-003）
-  - CURRENT_AUTHORIZATION: NOT_AUTHORIZED（既存語彙 types.ts の NOT_AUTHORIZED/CONDITIONAL/AUTHORIZED に整合。CONDITIONAL_CANDIDATE は語彙外のため不採用）
-  - B〜H は正式照査条件不足で BLOCKED 相当（C〜H: 道示条項・材料・正式計算例・独立 Golden が前提）
-  - A の GRANTED には REQUIRED_EVIDENCE E1..E9（入力/出力/単位仕様化、対称・非対称独立手計算 Golden、照合、丸め・許容誤差凍結、fail-closed/単位変換検証、独立確認者承認、セル単位 GRANTED の DEC-ID）が必要
-  - RESOLVED_EVIDENCE: sectionProperties.ts 実装・テスト・NOT_AUTHORIZED 語彙・型単位コメントのみ記録。独立手計算・承認は未実施
-  - GOLDEN_CASES: GOLD-MG-003 を中心（対称/非対称に分割可能）
-  - PHASE_B_START_VERDICT: NO_GO_PENDING_INDEPENDENT_GOLDEN
-- DEC-PB-0007、UA-P5-01 を登録。07_validation_cases.csv は全 BLOCKED 維持、GOLD-001..016 は全 NOT_APPROVED 維持。
+- P5 は PR #264 で main マージ済み（merge commit a78e164）。local main = origin/main。
+- P6 で phase_b_release_preparation_report.md を作成。Phase A+（P0..P6）の統合判定と完了報告。
+  - NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（GATE-NR-01..05 全て BLOCKED、08 セル全 NOT_AUTHORIZED、GOLD-001..016 全 NOT_APPROVED）
+  - PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE（道示目視・JIS・正誤表・材料・外部実行・独立 Golden・承認が未完了）
+  - FIRST_RELEASE_CANDIDATE: A（主桁断面諸量・純幾何）、CURRENT_AUTHORIZATION: NOT_AUTHORIZED
+  - USER_NEXT_ACTION を明記（UA-P2-01..04 / UA-P3-01..02 / UA-P4-01..03 / UA-P5-01 → セル単位 GRANTED の DEC-ID で再評価）
+- DEC-PB-0008 を登録。README.md（phase_b_release_preparation）を P6 完了状態へ更新。
+- application code 変更なし。数値実装許可は全セル NOT_AUTHORIZED 維持。
 
 注意事項:
 - 本作業は application code を変更していない。変更範囲は docs/apollo/phase_b_release_preparation/ と final_report.txt のみ。
 - 外部 SPACER / 旧 Apollo を solver と同一と推定・記録していない。
-- P5 の人間作業（UA-P5-01 ほか）は 07_user_action_required.md に引き継ぎ。
+- 人間作業（UA-P2-01..04 / UA-P3-01..02 / UA-P4-01..03 / UA-P5-01）は 07_user_action_required.md に引き継ぎ。
 
-OVERALL_VERDICT: IN_PROGRESS（P5）
+OVERALL_VERDICT: IN_PROGRESS（P6、マージ後 COMPLETE へ）
 ================================================================================
