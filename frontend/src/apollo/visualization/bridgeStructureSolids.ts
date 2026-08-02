@@ -1,6 +1,11 @@
 import type { BraceMember, BridgeSuperstructureDesignDocument } from "../../contracts";
 import type { ProjectModel } from "../../types";
 import {
+  BridgeSystem,
+  resolveEffectiveLayout,
+  type BridgeLayoutSpan,
+} from "../contracts";
+import {
   getBridgeStructureInputDraft,
   isBridgeStructureGenerationCurrent,
   validateBridgeStructureInputDraft,
@@ -51,6 +56,18 @@ const VERTICAL_Z: Axis3 = [0, 0, 1];
 const STIFFENER_PLATE_DEPTH_M = 0.15;
 const BRACING_MEMBER_DIAMETER_M = 0.08;
 const LATERAL_BRACING_Z_CLEARANCE_M = 0.03;
+
+/** Decorative substructure placeholders (non-design, visualization only). */
+const BEARING_WIDTH_M = 0.6;
+const BEARING_LENGTH_M = 0.6;
+const BEARING_HEIGHT_M = 0.12;
+const ABUTMENT_MARKER_WIDTH_M = 1.5;
+const ABUTMENT_MARKER_LENGTH_M = 1.5;
+const ABUTMENT_MARKER_HEIGHT_M = 2.0;
+const PIER_MARKER_WIDTH_M = 1.2;
+const PIER_MARKER_LENGTH_M = 1.2;
+const PIER_MARKER_HEIGHT_M = 3.0;
+const SUPPORT_STATION_TOLERANCE_M = 1e-6;
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -123,37 +140,156 @@ function girderUsesBoxFallback(input: ResolvedBridgeStructureInput): boolean {
   );
 }
 
-function buildGirderSolid(
+function buildGirderSegmentSolid(
   entityId: string,
   label: string,
   offsetM: number,
   input: ResolvedBridgeStructureInput,
   useBoxFallback: boolean,
+  segmentIndex: number,
+  segmentStartX: number,
+  segmentLength: number,
 ): ApolloSolidGeometryParameter {
-  const midpointX = input.bridgeLength / 2;
+  const midpointX = segmentStartX + segmentLength / 2;
+  const segmentSuffix = segmentIndex >= 0 ? `:seg-${segmentIndex}` : "";
   return {
-    id: `solid:bsdd:girder:${entityId}`,
+    id: `solid:bsdd:girder:${entityId}${segmentSuffix}`,
     sourceEntityKind: "member",
     sourceEntityId: entityId,
     selectionKey: buildDesignEntitySelectionKey("MainGirder", entityId),
     validationTargetKey: buildDesignEntitySelectionKey("MainGirder", entityId),
-    displayLabel: label,
+    displayLabel: segmentIndex >= 0 ? `${label} seg ${segmentIndex + 1}` : label,
     kind: "girder",
     visibilityGroup: "girders",
     exportable: true,
     designEntityId: entityId,
     designEntityKind: "MainGirder",
     dimensionsM: {
-      length: input.bridgeLength,
+      length: segmentLength,
       offset: offsetM,
       depth: Math.max(input.girderDepth, 0.1),
       flangeWidth: Math.max(input.topFlangeWidth, 0.1),
       flangeThickness: Math.max(input.topFlangeThickness, 0.02),
       webThickness: Math.max(input.webThickness, 0.02),
       shape: useBoxFallback ? 0 : 1,
+      segmentIndex: Math.max(segmentIndex, 0),
+      segmentStart: segmentStartX,
     },
     localFrame: longitudinalFrame([midpointX, offsetM, -Math.max(input.girderDepth, 0.1) / 2]),
   };
+}
+
+function girderSpanSegments(spans: readonly BridgeLayoutSpan[]): Array<{ startX: number; length: number }> {
+  const segments: Array<{ startX: number; length: number }> = [];
+  let startX = 0;
+  for (const span of spans) {
+    segments.push({ startX, length: span.length });
+    startX += span.length;
+  }
+  return segments;
+}
+
+function isAtSupportStation(stationM: number, supportStations: readonly number[]): boolean {
+  return supportStations.some(
+    (supportStation) => Math.abs(supportStation - stationM) <= SUPPORT_STATION_TOLERANCE_M,
+  );
+}
+
+function supportFixityIsFixed(fixity: string): boolean {
+  return fixity === "fixed";
+}
+
+function buildBsddBearingSolid(
+  supportId: string,
+  stationM: number,
+  offsetM: number,
+  fixed: boolean,
+  girderIndex: number,
+): ApolloSolidGeometryParameter {
+  return {
+    id: `solid:bsdd:bearing:${supportId}:${girderIndex}`,
+    sourceEntityKind: "support",
+    sourceEntityId: supportId,
+    selectionKey: `support:${supportId}`,
+    validationTargetKey: `support:${supportId}`,
+    displayLabel: `Bearing ${girderIndex + 1}`,
+    kind: "bearing",
+    visibilityGroup: "bearings",
+    exportable: true,
+    dimensionsM: {
+      width: BEARING_WIDTH_M,
+      length: BEARING_LENGTH_M,
+      height: BEARING_HEIGHT_M,
+      offset: offsetM,
+      fixed: fixed ? 1 : 0,
+      station: stationM,
+    },
+    localFrame: {
+      origin: [stationM, offsetM, -BEARING_HEIGHT_M / 2],
+      xAxis: LONGITUDINAL_X,
+      yAxis: TRANSVERSE_Y,
+      zAxis: VERTICAL_Z,
+    },
+  };
+}
+
+function buildBsddSubstructureMarkerSolid(
+  supportId: string,
+  stationM: number,
+  role: string,
+  deckThickness: number,
+): ApolloSolidGeometryParameter {
+  const isAbutment = role === "abutment";
+  const markerKind = isAbutment ? "abutment_marker" : "pier_marker";
+  const widthM = isAbutment ? ABUTMENT_MARKER_WIDTH_M : PIER_MARKER_WIDTH_M;
+  const lengthM = isAbutment ? ABUTMENT_MARKER_LENGTH_M : PIER_MARKER_LENGTH_M;
+  const heightM = isAbutment ? ABUTMENT_MARKER_HEIGHT_M : PIER_MARKER_HEIGHT_M;
+  return {
+    id: `solid:bsdd:marker:${supportId}`,
+    sourceEntityKind: "support",
+    sourceEntityId: supportId,
+    selectionKey: `support:${supportId}`,
+    validationTargetKey: `support:${supportId}`,
+    displayLabel: isAbutment ? "Abutment" : "Pier",
+    kind: markerKind,
+    visibilityGroup: "markers",
+    exportable: false,
+    dimensionsM: {
+      width: widthM,
+      length: lengthM,
+      height: heightM,
+      station: stationM,
+    },
+    localFrame: {
+      origin: [
+        stationM,
+        0,
+        -heightM / 2 - BEARING_HEIGHT_M - deckThickness,
+      ],
+      xAxis: LONGITUDINAL_X,
+      yAxis: TRANSVERSE_Y,
+      zAxis: VERTICAL_Z,
+    },
+  };
+}
+
+function buildBsddSubstructureSolids(
+  document: BridgeSuperstructureDesignDocument,
+  offsets: readonly number[],
+  deckThickness: number,
+): ApolloSolidGeometryParameter[] {
+  const solids: ApolloSolidGeometryParameter[] = [];
+  for (const support of document.bridge.supports) {
+    const stationM = support.station.value ?? 0;
+    const fixed = supportFixityIsFixed(support.fixity);
+    for (const [girderIndex, offsetM] of offsets.entries()) {
+      solids.push(
+        buildBsddBearingSolid(support.supportId, stationM, offsetM, fixed, girderIndex),
+      );
+    }
+    solids.push(buildBsddSubstructureMarkerSolid(support.supportId, stationM, support.role, deckThickness));
+  }
+  return solids;
 }
 
 function buildDeckSolid(
@@ -189,6 +325,7 @@ function buildCrossBeamSolid(
   beamLengthM: number,
   input: ResolvedBridgeStructureInput,
   index: number,
+  atSupport: boolean,
 ): ApolloSolidGeometryParameter {
   const crossBeamDepth = Math.max(input.girderDepth * 0.35, 0.1);
   const crossBeamWidth = Math.max(input.webThickness, 0.02);
@@ -205,7 +342,7 @@ function buildCrossBeamSolid(
     sourceEntityId: entityId,
     selectionKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
     validationTargetKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
-    displayLabel: `Cross beam ${index + 1}`,
+    displayLabel: atSupport ? `Cross beam ${index + 1} (support)` : `Cross beam ${index + 1}`,
     kind: "cross_beam",
     visibilityGroup: "cross-beams",
     exportable: true,
@@ -216,6 +353,7 @@ function buildCrossBeamSolid(
       width: crossBeamWidth,
       depth: crossBeamDepth,
       station: stationM,
+      atSupport: atSupport ? 1 : 0,
     },
     localFrame: {
       origin,
@@ -351,6 +489,22 @@ export function buildBridgeStructureSolidGeometryParameters(
     return [];
   }
 
+  const inputDraft = getBridgeStructureInputDraft(project);
+  const layout = resolveEffectiveLayout({
+    bridgeSystem: inputDraft.bridgeSystem,
+    spanLength: inputDraft.spanLength,
+    spans: inputDraft.spans,
+    supports: inputDraft.supports,
+  });
+  const layoutSpans = layout?.spans ?? [{ id: "span-0", length: input.bridgeLength }];
+  const supportStations =
+    document.bridge.supports
+      .map((support) => support.station.value)
+      .filter((value): value is number => isFiniteNumber(value))
+      .sort((left, right) => left - right) ??
+    layout?.supports.map((support) => support.station) ??
+    [];
+
   const model = document.structuralDesignModel;
   const offsets = girderOffsetsFromDocument(document, input);
   const useBoxFallback = girderUsesBoxFallback(input);
@@ -358,6 +512,8 @@ export function buildBridgeStructureSolidGeometryParameters(
   const crossBeamCount = Math.floor(input.bridgeLength / input.crossBeamSpacing) + 1;
   const webHeight = Math.max(webHeightOf(input), 0.02);
   const membersByParent = groupBraceMembersByParent(model);
+  const girderSegments = girderSpanSegments(layoutSpans);
+  const isContinuous = inputDraft.bridgeSystem === BridgeSystem.CONTINUOUS;
 
   if (useBoxFallback) {
     warnings.push({
@@ -373,7 +529,35 @@ export function buildBridgeStructureSolidGeometryParameters(
     );
     const offsetM = offsets[index] ?? offsets[0] ?? 0;
     const label = girderLine?.label ?? `G${index + 1}`;
-    solids.push(buildGirderSolid(girder.mainGirderId, label, offsetM, input, useBoxFallback));
+    if (isContinuous && girderSegments.length > 1) {
+      for (const [segmentIndex, segment] of girderSegments.entries()) {
+        solids.push(
+          buildGirderSegmentSolid(
+            girder.mainGirderId,
+            label,
+            offsetM,
+            input,
+            useBoxFallback,
+            segmentIndex,
+            segment.startX,
+            segment.length,
+          ),
+        );
+      }
+    } else {
+      solids.push(
+        buildGirderSegmentSolid(
+          girder.mainGirderId,
+          label,
+          offsetM,
+          input,
+          useBoxFallback,
+          -1,
+          0,
+          input.bridgeLength,
+        ),
+      );
+    }
   }
 
   for (const deck of model.rcDecks) {
@@ -392,11 +576,14 @@ export function buildBridgeStructureSolidGeometryParameters(
   } else {
     for (const [index, crossBeam] of model.crossBeams.entries()) {
       const stationM = Math.min(index * input.crossBeamSpacing, input.bridgeLength);
+      const atSupport = isAtSupportStation(stationM, supportStations);
       solids.push(
-        buildCrossBeamSolid(crossBeam.crossBeamId, stationM, crossBeamLength, input, index),
+        buildCrossBeamSolid(crossBeam.crossBeamId, stationM, crossBeamLength, input, index, atSupport),
       );
     }
   }
+
+  solids.push(...buildBsddSubstructureSolids(document, offsets, input.deckThickness));
 
   if (input.stiffenerSpacing !== null) {
     const stiffenerSpacing = input.stiffenerSpacing;
@@ -502,8 +689,16 @@ export function buildBridgeStructureSolidGeometryParameters(
 
   assumptions.push({
     code: "bsdd-bridge-structure-solids",
-    message: `BSDD-driven solids: ${model.mainGirders.length} girders, ${model.rcDecks.length} deck(s), ${model.crossBeams.length} cross-beam(s), ${model.stiffeners.length} stiffener(s), ${model.swayBracings.length} sway-bracing site(s), ${model.lateralBracings.length} lateral-bracing site(s); girder spacing ${input.girderSpacing}m, deck thickness ${input.deckThickness}m, cross-beam spacing ${input.crossBeamSpacing}m.`,
+    message: `BSDD-driven solids: ${model.mainGirders.length} girders (${girderSegments.length} segment(s) each when continuous), ${model.rcDecks.length} deck(s), ${model.crossBeams.length} cross-beam(s), ${document.bridge.supports.length} support(s), ${model.stiffeners.length} stiffener(s), ${model.swayBracings.length} sway-bracing site(s), ${model.lateralBracings.length} lateral-bracing site(s); girder spacing ${input.girderSpacing}m, deck thickness ${input.deckThickness}m, cross-beam spacing ${input.crossBeamSpacing}m.`,
   });
+
+  if (isContinuous) {
+    assumptions.push({
+      code: "bsdd-continuous-girder-segments",
+      message:
+        "Continuous girders are split into per-span segment solids at support stations with no physical gap; segment IDs differ but designEntityId remains the parent MainGirder.",
+    });
+  }
 
   assumptions.push({
     code: "bsdd-cross-beam-station-convention",

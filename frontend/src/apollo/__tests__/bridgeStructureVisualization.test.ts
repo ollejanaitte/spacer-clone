@@ -47,10 +47,11 @@ describe("bridge structure visualization (Block C)", () => {
       .filter((entry) => entry.kind === "cross_beam")
       .sort((left, right) => left.dimensionsM.station - right.dimensionsM.station);
 
-    expect(girders).toHaveLength(4);
+    expect(girders).toHaveLength(20);
     expect(decks).toHaveLength(1);
     expect(crossBeams).toHaveLength(41);
     expect(girders.every((entry) => entry.designEntityKind === "MainGirder")).toBe(true);
+    expect(new Set(girders.map((entry) => entry.designEntityId)).size).toBe(4);
     expect(decks.every((entry) => entry.designEntityKind === "RcDeck")).toBe(true);
     expect(crossBeams.every((entry) => entry.designEntityKind === "CrossBeam")).toBe(true);
     expect(model.assumptions.some((entry) => entry.code === "bsdd-bridge-structure-solids")).toBe(true);
@@ -65,8 +66,11 @@ describe("bridge structure visualization (Block C)", () => {
       .filter((entry) => entry.kind === "cross_beam")
       .sort((left, right) => left.dimensionsM.station - right.dimensionsM.station);
 
-    expect(girders.map((entry) => entry.dimensionsM.offset).sort((a, b) => a - b)).toEqual([-4.5, -1.5, 1.5, 4.5]);
+    expect([...new Set(girders.map((entry) => entry.dimensionsM.offset))].sort((a, b) => a - b)).toEqual(
+      [-4.5, -1.5, 1.5, 4.5],
+    );
     expect(girders[0]?.dimensionsM.depth).toBe(2.5);
+    expect(girders[0]?.dimensionsM.length).toBe(40);
     expect(deck?.dimensionsM.thickness).toBe(0.25);
     expect(deck?.dimensionsM.width).toBe(12);
     expect(crossBeams[1]?.dimensionsM.station).toBe(5);
@@ -76,7 +80,7 @@ describe("bridge structure visualization (Block C)", () => {
   it("updates 3D solids when input changes and structure is regenerated", () => {
     let project = generateStructure(createDefaultProject());
     const first = buildApolloVisualizationModelOrThrow({ project });
-    expect(first.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(4);
+    expect(first.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(20);
 
     project = withBridgeStructureField(project, "girderCount", 2);
     project = withBridgeStructureField(project, "girderSpacing", 4);
@@ -86,8 +90,8 @@ describe("bridge structure visualization (Block C)", () => {
 
     const second = buildApolloVisualizationModelOrThrow({ project: regen.project });
     const girders = second.solidGeometryParameters.filter((entry) => entry.kind === "girder");
-    expect(girders).toHaveLength(2);
-    expect(girders.map((entry) => entry.dimensionsM.offset).sort((a, b) => a - b)).toEqual([-2, 2]);
+    expect(girders).toHaveLength(10);
+    expect([...new Set(girders.map((entry) => entry.dimensionsM.offset))].sort((a, b) => a - b)).toEqual([-2, 2]);
   });
 
   it("preserves stable design entity IDs on solids across regeneration", () => {
@@ -121,7 +125,7 @@ describe("bridge structure visualization (Block C)", () => {
 
     expect(hasBridgeStructureVisualizationSource(imported.project)).toBe(true);
     const model = buildApolloVisualizationModelOrThrow({ project: imported.project });
-    expect(model.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(4);
+    expect(model.solidGeometryParameters.filter((entry) => entry.kind === "girder")).toHaveLength(20);
     expect(model.solidGeometryParameters.filter((entry) => entry.kind === "deck")).toHaveLength(1);
   });
 
@@ -202,11 +206,11 @@ describe("bridge structure visualization (Block C)", () => {
     expect(bsddSolids.length).toBeGreaterThan(0);
 
     const girder = bsddSolids
-      .filter((entry) => entry.kind === "girder")
+      .filter((entry) => entry.kind === "girder" && entry.dimensionsM.segmentIndex === 0)
       .sort((left, right) => left.dimensionsM.offset - right.dimensionsM.offset)[0];
     const deck = bsddSolids.find((entry) => entry.kind === "deck");
-    expect(girder?.dimensionsM.length).toBe(200);
-    expect(girder?.localFrame.origin[0]).toBeCloseTo(100, 3);
+    expect(girder?.dimensionsM.length).toBe(40);
+    expect(girder?.localFrame.origin[0]).toBeCloseTo(20, 3);
     expect(girder?.dimensionsM.offset).toBe(-4.5);
     expect(deck?.dimensionsM.thickness).toBe(0.25);
     expect(deck?.localFrame.origin[2]).toBeCloseTo(0.125, 3);
@@ -235,7 +239,7 @@ describe("bridge structure visualization (Block C)", () => {
 
     const model = buildApolloVisualizationModelOrThrow({ project: regen.project });
     const girders = model.solidGeometryParameters.filter((entry) => entry.kind === "girder");
-    expect(girders).toHaveLength(2);
+    expect(girders).toHaveLength(10);
     expect(model.solidGeometryParameters.some((entry) => entry.id.startsWith("solid:bsdd:"))).toBe(true);
   });
 

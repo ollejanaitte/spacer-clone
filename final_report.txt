@@ -1,74 +1,70 @@
 ================================================================================
-Apollo 連続桁 — Step C2 実装レポート
+Apollo 連続桁 — Step C3 実装レポート
 ================================================================================
-更新日時: 2026-08-02T17:05:00+09:00
+更新日時: 2026-08-02T17:07:00+09:00
 実行モデル: TokenRouter KimK3
-現在のStep: C2（continuous girder input UI）
+現在のStep: C3（continuous girder 3D visualization）
 作業状態: PR 作成・マージ実行中
-現在ブランチ: feat/apollo-continuous-girder-input-ui
+現在ブランチ: feat/apollo-continuous-girder-3d
 開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
-ベースmain SHA（C2開始時 origin/main）: 042637a
+ベースmain SHA（C3開始時 origin/main）: a7b775685183b852fee3ec8e2778fdb940281e15
 現在HEAD SHA: （コミット後更新）
 worktree状態: clean（コミット前は実装差分あり）
-未コミット差分: C2 実装一式
+未コミット差分: C3 実装一式
 未push commit: 0（コミット後更新）
 
-## 実施内容（C2）
+## 実施内容（C3）
 
-1. BridgeStructureInputPanel UI 拡張
-   - 構造形式セレクト: SIMPLE_SINGLE / CONTINUOUS（ラベル: 単径間単純桁（現在対応） / 連続桁（試験対応））
-   - CONTINUOUS: 支間数 2〜5（追加/削除）、支間表、支点一覧（累積 station・ABUTMENT/PIER）
-   - 構造モデル長 = sum(spans) を読み取り専用表示（手入力で上書き不可）
-   - 連続桁サンプル [30,35,30] ボタン（generatedAt=null、自動生成なし、disclaimer）
-   - 入力クリア、構造生成ボタン既存流用
-   - STALE 既存挙動維持
-   - 「解析・照査は未対応」バナー明示
-   - SIMPLE_SINGLE 既存サンプル/用語/挙動維持
-2. bridgeStructure 最小拡張
-   - layoutInput.ts: bridgeSystem 切替、支間追加/削除/長さ更新
-   - sampleInputs.ts: applyContinuousGirderSampleInput、CONTINUOUS_* 定数
+1. bridgeStructureSolids.ts 拡張
+   - CONTINUOUS 時: 支点位置で主桁 segment ID 分割（物理ギャップなし、designEntityId は親 MainGirder 維持）
+   - SIMPLE_SINGLE: 従来どおり全長 1 ソリッド
+   - BSDD supports から橋台/橋脚マーカー・支承ソリッド生成（station/role 反映）
+   - 横桁に atSupport フラグ（支点横桁 vs 支間内横桁）
+   - 補剛材・対傾構・横構・床版は既存規則維持
+2. builder.ts
+   - BSDD 下部構造ソリッド存在時は legacy 支点マーカー/支承の重複を抑制
 3. テスト
-   - BridgeStructureInputPanel.test.tsx: C2 UI シナリオ追加
-   - continuousGirderSample.test.ts: サンプル投入・生成検証
+   - continuousGirderVisualization.test.ts 新規（[30,35,30] サンプル、ギャップなし、STALE、save/reload、STL、SIMPLE_SINGLE 回帰）
+   - bridgeStructureVisualization.test.ts: 5 径間 CONTINUOUS フィクスチャの segment 期待値更新
    - apolloSuite manifest 更新
 
 ## 変更ファイル要約
 
 新規:
-- frontend/src/apollo/bridgeStructure/layoutInput.ts
-- frontend/src/apollo/__tests__/continuousGirderSample.test.ts
+- frontend/src/apollo/__tests__/continuousGirderVisualization.test.ts
 
 変更:
-- frontend/src/apollo/components/BridgeStructureInputPanel.tsx
-- frontend/src/apollo/bridgeStructure/{sampleInputs,index}.ts
-- frontend/src/apollo/__tests__/{BridgeStructureInputPanel.test,apolloSuite.test}.tsx
+- frontend/src/apollo/visualization/bridgeStructureSolids.ts
+- frontend/src/apollo/visualization/builder.ts
+- frontend/src/apollo/__tests__/bridgeStructureVisualization.test.ts
+- frontend/src/apollo/__tests__/apolloSuite.test.ts
 
 ## schema bump
 
-- なし（C1 契約の UI 露出のみ。schema 1.0.0 維持）
+- なし（可視化レイヤのみ。IF3/lockfile/backend 変更なし）
 
 ## phase1ScopeGuard 判断
 
-- phase1ScopeGuard.ts は変更なし（旧 Phase1 entry は CONTINUOUS を AP00_SCOPE_CONTINUOUS で拒否継続）
-- bridgeStructure 垂直スライス経路のみ CONTINUOUS UI を提供
-- 数値設計 designStatus は全エンティティ NOT_AUTHORIZED 固定（NOT_GRANTED 維持）
+- phase1ScopeGuard.ts は変更なし（旧 Phase1 entry は CONTINUOUS 拒否継続）
+- bridgeStructure 垂直スライス経路のみ CONTINUOUS 3D 可視化を提供
+- 数量は幾何のみ、重量は USER_PROVIDED_UNVERIFIED、designStatus は全エンティティ NOT_AUTHORIZED（NOT_GRANTED 維持）
 
 ## ソースオブトゥルース
 
-- ユーザー C2 仕様（可変 spans[]、total=sum(spans)、station=累積）を UI で正とする
-- C0 ui_spec の等支間・spanLength×spanCount 記述は無視
+- docs/apollo/continuous_girder/visualization_spec.md（C0 設計文書）
+- ユーザー C3 仕様: 連続主桁・支点 segment 分割・下部構造簡易 3D
 
 ## テスト結果
 
 - npm run typecheck: PASS
-- npm test -- src/apollo: 281/281 PASS
+- npm test -- src/apollo: 287/287 PASS
 - npm run lint: PASS（既存日本語警告のみ）
 - npm run build: PASS
 - git diff --check: PASS
 
 ## 手動確認
 
-MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（連続桁 UI は自動テストでカバー。3D pier 幾何は C3）
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（3D 連続桁表示は自動テストでカバー。GUI 目視は C4 チェックリスト）
 
 ## 数値ゲート（変更なし）
 
@@ -79,14 +75,14 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 ## PR / マージ
 
 PR番号・URL: （作成後更新）
-C2_PR: （作成後更新）
+C3_PR: （作成後更新）
 merge SHA: （マージ後更新）
 MAIN_SHA: （main 同期後更新）
 
-## 次 C3 注意点
+## 次 C4 注意点
 
-- 3D: 橋台/橋脚簡易幾何（pier role 対応、supports station 反映）
-- CONTINUOUS 時の 3D ビューア表示と STALE 連動確認
-- phase1ScopeGuard は据え置き；bridgeStructure 経路のみ CONTINUOUS
+- 2/3/5 径間の網羅検証・手動チェックリスト（MV-CG-*）の実施
+- STL エクスポートの連続桁サンプル回帰強化
+- phase1ScopeGuard は据え置き
 - 解析・照査パイプラインは引き続き未対応を明示
 ================================================================================
