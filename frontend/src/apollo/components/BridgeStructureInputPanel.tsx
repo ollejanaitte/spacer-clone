@@ -570,6 +570,18 @@ export function BridgeStructureInputPanel({
       {sectionProperties ? (
         <section data-testid="apollo-bridge-structure-section-properties">
           <h3>断面特性（純幾何計算・設計判定なし）</h3>
+          <p
+            className="apollo-input-error"
+            role="status"
+            data-testid="apollo-section-properties-development-warning"
+          >
+            UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
+          </p>
+          <p className="apollo-inline-hint" data-testid="apollo-section-properties-provenance">
+            authorization: NOT_AUTHORIZED / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED /
+            source: pure-geometry dimensions only / calculationState:{" "}
+            {isGenerationCurrent ? "GENERATION_CURRENT" : isStale ? "STALE" : "INPUT_ONLY"}
+          </p>
           <table className="apollo-detail-table">
             <thead>
               <tr>
@@ -582,7 +594,7 @@ export function BridgeStructureInputPanel({
               {sectionPropertyRows(sectionProperties).map((row) => (
                 <tr key={row.label} data-testid={`apollo-section-property-${row.label}`}>
                   <td>{row.label}</td>
-                  <td>{row.value}</td>
+                  <td data-testid={`apollo-section-property-value-${row.label}`}>{row.value}</td>
                   <td>{row.unit}</td>
                 </tr>
               ))}

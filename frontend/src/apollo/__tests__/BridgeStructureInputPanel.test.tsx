@@ -209,6 +209,12 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-bridge-structure-section-properties']")).not.toBeNull();
+    expect(
+      container.querySelector("[data-testid='apollo-section-properties-development-warning']")?.textContent,
+    ).toContain("UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION");
+    expect(
+      container.querySelector("[data-testid='apollo-section-properties-provenance']")?.textContent,
+    ).toContain("NOT_AUTHORIZED");
     expect(container.querySelector("[data-testid='apollo-section-property-ウェブ高さ']")?.textContent).toContain("2.455");
     expect(container.querySelector("[data-testid='apollo-section-property-断面積合計']")).not.toBeNull();
   });
