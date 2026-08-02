@@ -1,0 +1,120 @@
+{
+  "caseId": "GOLD-GA-001",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "numericDesignAuthorization": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "inputs": {
+    "spanLength": "30.0",
+    "bridgeLength": "30.0",
+    "width": "10.5",
+    "girderCount": "4",
+    "girderSpacing": "3.0",
+    "girderDepth": "2.0",
+    "deckThickness": "0.22",
+    "crossBeamSpacing": "5.0",
+    "stiffenerSpacing": "2.5",
+    "swayBracingInterval": "1",
+    "topFlangeWidth": "0.45",
+    "topFlangeThickness": "0.025",
+    "bottomFlangeWidth": "0.55",
+    "bottomFlangeThickness": "0.03",
+    "webThickness": "0.012"
+  },
+  "coordinateSystem": {
+    "x": "BRIDGE_AXIS_START_TO_END",
+    "y": "TRANSVERSE_LEFT_TO_RIGHT",
+    "z": "UPWARD",
+    "plan": "X-Y",
+    "elevation": "X-Z",
+    "section": "Y-Z",
+    "datum": "LOCAL DATUM — ABSOLUTE ELEVATION NOT PROVIDED"
+  },
+  "results": {
+    "overhang": "0.75",
+    "girderCentersY": [
+      "-4.5",
+      "-1.5",
+      "1.5",
+      "4.5"
+    ],
+    "planDeckBounds": {
+      "minX": "0",
+      "maxX": "30.0",
+      "minY": "-5.25",
+      "maxY": "5.25"
+    },
+    "supportStations": [
+      "0",
+      "30.0"
+    ],
+    "crossBeamStations": [
+      "0.0",
+      "5.0",
+      "10.0",
+      "15.0",
+      "20.0",
+      "25.0",
+      "30.0"
+    ],
+    "stiffenerStations": [
+      "0.0",
+      "2.5",
+      "5.0",
+      "7.5",
+      "10.0",
+      "12.5",
+      "15.0",
+      "17.5",
+      "20.0",
+      "22.5",
+      "25.0",
+      "27.5",
+      "30.0"
+    ],
+    "swayStations": [
+      "5.0",
+      "10.0",
+      "15.0",
+      "20.0",
+      "25.0"
+    ],
+    "elevationBounds": {
+      "minX": "0",
+      "maxX": "30.0",
+      "minZ": "0",
+      "maxZ": "2.22"
+    },
+    "dimensions": {
+      "spanLength": "30.0",
+      "bridgeLength": "30.0",
+      "width": "10.5",
+      "girderSpacing": "3.0",
+      "overhang": "0.75",
+      "girderDepth": "2.0",
+      "deckThickness": "0.22"
+    },
+    "entityCountHints": {
+      "girders": 4,
+      "crossBeams": 7,
+      "supports": 2,
+      "swayStations": 5,
+      "stiffenerStationsPerGirder": 13
+    },
+    "stableIdPattern": {
+      "girders": "G1..Gn",
+      "crossBeams": "C1..Cm",
+      "supports": "SUP-1..SUP-2",
+      "sway": "SW-1.."
+    },
+    "sheetViewCount": 3,
+    "viewTypes": [
+      "GENERAL_PLAN",
+      "GENERAL_ELEVATION",
+      "STANDARD_SECTION"
+    ],
+    "tolerances": {
+      "absolute": "1e-9",
+      "relative": "0"
+    }
+  }
+}

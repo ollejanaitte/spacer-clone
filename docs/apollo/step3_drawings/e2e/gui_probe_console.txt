@@ -1,0 +1,5 @@
+{
+  "overall": "PASS",
+  "staleBlocked": true,
+  "sheetStatus": "G-01 構造一般図 / GENERAL ARRANGEMENT (1/1) paper=A3 landscape"
+}

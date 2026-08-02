@@ -1,0 +1,20 @@
+{
+  "caseId": "GOLD-GA-001",
+  "inputs": {
+    "spanLength": "30.0",
+    "bridgeLength": "30.0",
+    "width": "10.5",
+    "girderCount": "4",
+    "girderSpacing": "3.0",
+    "girderDepth": "2.0",
+    "deckThickness": "0.22",
+    "crossBeamSpacing": "5.0",
+    "stiffenerSpacing": "2.5",
+    "swayBracingInterval": "1",
+    "topFlangeWidth": "0.45",
+    "topFlangeThickness": "0.025",
+    "bottomFlangeWidth": "0.55",
+    "bottomFlangeThickness": "0.03",
+    "webThickness": "0.012"
+  }
+}
