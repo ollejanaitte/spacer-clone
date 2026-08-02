@@ -53,13 +53,28 @@ export {
   buildSimpleSingleLayout,
   buildSupportsFromSpans,
   BridgeSystem,
+  CONTINUOUS_SPAN_COUNT_MAX,
+  CONTINUOUS_SPAN_COUNT_MIN,
   SupportLayoutRole,
   validateBridgeLayoutContract,
 } from "../contracts";
 export {
+  CONTINUOUS_ANALYSIS_DISCLAIMER,
+  CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER,
+  CONTINUOUS_GIRDER_SAMPLE_SPANS,
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
   SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+  applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
 } from "./sampleInputs";
+export {
+  BRIDGE_SYSTEM_LABELS,
+  addContinuousSpan,
+  removeContinuousSpan,
+  withBridgeStructureSystem,
+  withContinuousSpanCount,
+  withContinuousSpanLength,
+  type SelectableBridgeSystem,
+} from "./layoutInput";
