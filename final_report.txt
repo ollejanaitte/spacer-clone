@@ -41,7 +41,8 @@ STEP_1D_REPORT_PR_MERGE_SHA: a82ab2bca64e518200167baecf663ce316001912
 
 CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/297
 
-FINAL_MAIN_SHA: a82ab2bca64e518200167baecf663ce316001912
+FINAL_MAIN_SHA: f5576430ef7ea0556335eb43c79172c5a3a9e21c
+CLOSEOUT_PR_MERGE_SHA: f5576430ef7ea0556335eb43c79172c5a3a9e21c
 LOCAL_MAIN_EQUALS_ORIGIN: YES
 WORKTREE_CLEAN: YES
 ================================================================================
