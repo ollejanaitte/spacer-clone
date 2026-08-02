@@ -1,6 +1,11 @@
 /** Persisted bridge structure input draft for Visible Vertical Slice 01 (Block B). */
 
+import type { BridgeLayoutSpan, BridgeLayoutSupport, BridgeSystem } from "../contracts";
+import { BridgeSystem as BridgeSystemValues } from "../contracts";
+
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.0.0";
+
+export { BridgeSystem, type BridgeLayoutSpan, type BridgeLayoutSupport } from "../contracts";
 
 export const BRIDGE_STRUCTURE_INPUT_FIELD_KEYS = [
   "spanLength",
@@ -21,6 +26,8 @@ export const BRIDGE_STRUCTURE_INPUT_FIELD_KEYS = [
   "steelUnitWeight",
   "rcUnitWeight",
 ] as const;
+
+export const BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS = ["bridgeSystem", "spans", "supports"] as const;
 
 export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = ["lateralBracingEnabled"] as const;
 
@@ -52,8 +59,16 @@ export type ApolloBridgeStructureInputDraft = {
   readonly steelUnitWeight: number | null;
   readonly rcUnitWeight: number | null;
   readonly lateralBracingEnabled: boolean;
+  /** C1: defaults to SIMPLE_SINGLE when absent in persisted JSON. */
+  readonly bridgeSystem: BridgeSystem;
+  /** C1: per-span lengths; empty for legacy SIMPLE_SINGLE (derived from spanLength). */
+  readonly spans: readonly BridgeLayoutSpan[];
+  /** C1: support stations; empty for legacy SIMPLE_SINGLE (derived). */
+  readonly supports: readonly BridgeLayoutSupport[];
   readonly generatedAt: string | null;
 };
+
+export const DEFAULT_BRIDGE_SYSTEM = BridgeSystemValues.SIMPLE_SINGLE;
 
 export type BridgeStructureInputFieldDefinition = {
   readonly key: BridgeStructureInputFieldKey;

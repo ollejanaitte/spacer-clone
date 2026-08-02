@@ -25,8 +25,13 @@ import type { ProjectModel } from "../../types";
 import { computeBridgeStructureApproximateQuantities, type BridgeStructureUnitWeightAdoption } from "./quantities";
 import { stableEntitySeed, stableUuidFromSeed } from "./stableIds";
 import {
+  BridgeSystem,
+  resolveEffectiveLayout,
+  SupportLayoutRole,
+  type BridgeLayoutSpan,
+} from "../contracts";
+import {
   createEmptyBridgeStructureInputDraft,
-  resolveSpanCount,
   validateBridgeStructureInputDraft,
   type BridgeStructureValidationResult,
 } from "./validation";
@@ -82,6 +87,30 @@ function createEntityMetadata(
   };
 }
 
+function findSpanIndexAtStation(
+  station: number,
+  spans: readonly BridgeLayoutSpan[],
+): number {
+  let cumulative = 0;
+  for (let index = 0; index < spans.length; index += 1) {
+    cumulative += spans[index]!.length;
+    if (station <= cumulative) {
+      return index;
+    }
+  }
+  return spans.length - 1;
+}
+
+function mapSupportRoleToBsdd(
+  role: SupportLayoutRole,
+  bridgeSystem: BridgeSystem,
+): string {
+  if (role === SupportLayoutRole.ABUTMENT) {
+    return "abutment";
+  }
+  return bridgeSystem === BridgeSystem.CONTINUOUS ? "pier" : "bearing";
+}
+
 function stableId(projectScopeId: string, entityKind: string, key: string): UuidString {
   return stableUuidFromSeed(stableEntitySeed(projectScopeId, entityKind, key));
 }
@@ -95,19 +124,25 @@ export function buildBridgeSuperstructureDesignDocument(
     return { document: null, diagnostics: ["Input validation incomplete."] };
   }
 
-  const spanLength = input.spanLength!;
+  const layout = resolveEffectiveLayout({
+    bridgeSystem: input.bridgeSystem,
+    spanLength: input.spanLength,
+    spans: input.spans,
+    supports: input.supports,
+  });
+  if (!layout) {
+    return { document: null, diagnostics: ["レイアウト契約の解決に失敗しました。"] };
+  }
+
+  const layoutSpans = layout.spans;
+  const layoutSupports = layout.supports;
+  const spanCount = layoutSpans.length;
   const bridgeLength = input.bridgeLength!;
   const width = input.width!;
   const girderCount = input.girderCount!;
   const girderSpacing = input.girderSpacing!;
   const deckThickness = input.deckThickness!;
   const crossBeamSpacing = input.crossBeamSpacing!;
-
-  const spanCount = resolveSpanCount(bridgeLength, spanLength);
-  if (spanCount === null) {
-    return { document: null, diagnostics: ["構造モデル長を支間長で割り切れる値を入力してください。"] };
-  }
-  const effectiveSpanLength = spanLength;
   const crossBeamCount = Math.floor(bridgeLength / crossBeamSpacing) + 1;
 
   const documentId = stableId(projectScopeId, "BsddDocument", "document");
@@ -153,7 +188,8 @@ export function buildBridgeSuperstructureDesignDocument(
   ];
 
   const crossBeams: CrossBeam[] = Array.from({ length: crossBeamCount }, (_, index) => {
-    const spanIndex = Math.min(Math.floor((index * crossBeamSpacing) / effectiveSpanLength), spanCount - 1);
+    const station = index * crossBeamSpacing;
+    const spanIndex = findSpanIndexAtStation(station, layoutSpans);
     const geometryRefId = spanIds[spanIndex]!;
     return {
       ...createEntityMetadata(geometryRefId, designStatus),
@@ -312,7 +348,7 @@ export function buildBridgeSuperstructureDesignDocument(
         index,
         startSupportId: supportIds[index]!,
         endSupportId: supportIds[index + 1]!,
-        length: userInputQuantity(effectiveSpanLength, "m"),
+        length: userInputQuantity(layoutSpans[index]!.length, "m"),
       })),
       girderLines: girderLineIds.map((girderLineId, index) => {
         const offset = (index - (girderCount - 1) / 2) * girderSpacing;
@@ -340,9 +376,9 @@ export function buildBridgeSuperstructureDesignDocument(
       },
       supports: supportIds.map((supportId, index) => ({
         supportId,
-        station: userInputQuantity(index * effectiveSpanLength, "m"),
+        station: userInputQuantity(layoutSupports[index]!.station, "m"),
         fixity: index === 0 || index === supportIds.length - 1 ? "pinned" : "roller",
-        role: index === 0 || index === supportIds.length - 1 ? "abutment" : "bearing",
+        role: mapSupportRoleToBsdd(layoutSupports[index]!.role, input.bridgeSystem),
       })),
     },
     materialDefinitions: [
@@ -383,7 +419,7 @@ export function buildBridgeSuperstructureDesignDocument(
     phase1ScopeAssertion: {
       alignmentClass: "straight",
       skewAngleDeg: userInputQuantity(90, "deg"),
-      spanSystem: "simple",
+      spanSystem: input.bridgeSystem === BridgeSystem.CONTINUOUS ? "continuous" : "simple",
       superstructureKind: "plate_girder_rc_slab_non_composite",
       analysisType: "static_linear",
     },

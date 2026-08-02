@@ -116,7 +116,7 @@ const analysisBindingSchema = z.strictObject({
 const phase1ScopeAssertionSchema = z.strictObject({
   alignmentClass: z.literal("straight"),
   skewAngleDeg: governedQuantitySchema,
-  spanSystem: z.literal("simple"),
+  spanSystem: z.union([z.literal("simple"), z.literal("continuous")]),
   superstructureKind: z.literal("plate_girder_rc_slab_non_composite"),
   analysisType: z.literal("static_linear"),
 });

@@ -1,44 +1,92 @@
 ================================================================================
-Apollo 単径間単純桁 → 連続桁スライス — 進捗レポート
+Apollo 連続桁 — Step C1 実装レポート
 ================================================================================
-更新日時: 2026-08-02T16:53:44+09:00
+更新日時: 2026-08-02T17:00:00+09:00
 実行モデル: TokenRouter KimK3
-現在のStep: C0（scope freeze ドキュメント作成）
+現在のStep: C1（continuous girder layout contracts）
 作業状態: PR 作成・マージ実行中
-現在ブランチ: docs/apollo-continuous-girder-scope
+現在ブランチ: feat/apollo-continuous-girder-contract
 開始時main SHA: 9da49a88f6ff13bd331eb8ec82591de1ce70dacb
-現在HEAD SHA: 19695573db41f36d3454aeaf2abaf920c5bea716
-worktree状態: clean
-未コミット差分: なし
-未push commit: 1（C0 コミット）
+ベースmain SHA（C1開始時 origin/main）: 173396e
+現在HEAD SHA: （コミット後更新）
+worktree状態: clean（コミット前は実装差分あり）
+未コミット差分: C1 実装一式
+未push commit: 0（コミット後更新）
 
-実施済み:
-- main を 00f3e4f に同期（S0〜S2 MERGED 確認）
-- docs/apollo-continuous-girder-scope ブランチ作成
-- 連続桁 scope freeze ドキュメント 7 ファイル作成
-- 数値ゲート 3 項目を全ドキュメントに記載
-- final_report.txt 更新
+## 実施内容（C1）
 
-変更ファイル:
-- docs/apollo/continuous_girder/README.md
-- docs/apollo/continuous_girder/scope_freeze.md
-- docs/apollo/continuous_girder/data_model_spec.md
-- docs/apollo/continuous_girder/ui_spec.md
-- docs/apollo/continuous_girder/visualization_spec.md
-- docs/apollo/continuous_girder/analysis_boundary.md
-- docs/apollo/continuous_girder/manual_verification_checklist.md
-- final_report.txt
+1. frontend/src/apollo/contracts/ 新設
+   - layoutTypes.ts: BridgeSystem (SIMPLE_SINGLE | CONTINUOUS | SIMPLE_MULTIPLE)
+   - layoutValidation.ts: spans[]/supports[] 検証、累積 station、ABUTMENT/PIER
+   - layoutParser.ts: 永続化パース
+2. bridgeStructure 統合
+   - types: bridgeSystem, spans[], supports[] 追加（schema 1.0.0 維持）
+   - validation/parser/persistence: レガシー欠落 → SIMPLE_SINGLE
+   - generateBsdd: 可変支間長 CONTINUOUS、spanSystem "continuous"
+   - quantities: レイアウト契約連動
+3. BSDD 契約（最小 additive）
+   - phase1ScopeAssertion.spanSystem に "continuous" 追加
+4. SIMPLE_SINGLE 回帰維持（sample/workflow テスト）
+5. SIMPLE_MULTIPLE fail-closed
+6. CONTINUOUS 2〜5 径間（C2 サンプル [30,35,30] 検証済み）
 
-テスト結果: C0 は文書のみのためテスト未実行（コード変更なし）
-手動確認: MANUAL_GUI_VERDICT PENDING_USER_CONFIRMATION（C4 実装後）
-決定事項: 連続桁 2〜5 径間・等支間・同一断面・簡易下部構造を IN_SCOPE に凍結。正式解析・負曲げ・活荷重包絡は OUT_OF_SCOPE。
-未決事項: C1〜C4 実装、schema version 方針（C1 で決定）
-ブロッカー: なし
-PR番号・URL: （作成後更新）
-mainマージ状態: S0〜S2 MERGED。C0 PR マージ待ち
-次の作業: C1（feat/apollo-continuous-girder-data-model）SDM/BSDD 連続桁表現
+## 変更ファイル要約
+
+新規:
+- frontend/src/apollo/contracts/* (4 files)
+- frontend/src/apollo/__tests__/continuousGirderLayout.test.ts
+- frontend/src/apollo/testing/bridgeStructureFixtures.ts
+
+変更:
+- frontend/src/apollo/bridgeStructure/{types,validation,generateBsdd,quantities,sampleInputs,index}.ts
+- frontend/src/contracts/bridgeSuperstructureDesignDocument.ts
+- frontend/src/contracts/runtime/schemas/bridgeSuperstructureDesignDocument.ts
+- 既存 apollo テスト（200m 多径間フィクスチャ → CONTINUOUS 明示化）
+
+## schema bump
+
+- apolloBridgeStructureInput: 1.0.0 維持（additive フィールドのみ）
+- BSDD spanSystem: リテラル union 拡張（後方互換 "simple" 維持）
+
+## phase1ScopeGuard 判断
+
+- phase1ScopeGuard.ts は変更なし（旧 Phase1 entry は CONTINUOUS を AP00_SCOPE_CONTINUOUS で拒否継続）
+- bridgeStructure 垂直スライス経路のみ CONTINUOUS を許可（BSDD spanSystem=continuous を生成）
+- 数値設計 designStatus は全エンティティ NOT_AUTHORIZED 固定（NOT_GRANTED 維持）
+
+## ソースオブトゥルース
+
+- ユーザー C1/C2 仕様（可変 spans[]、total=sum(spans)、station=累積）をコード/テストで正とする
+- C0 data_model_spec の等支間記述はコードに固定しない（大規模 doc 改訂なし）
+
+## テスト結果
+
+- npm run typecheck: PASS
+- npm test -- src/apollo: 272/272 PASS
+- npm test -- src/contracts/__tests__/bridgeSuperstructureDesignDocument.test.ts: 30/30 PASS
+- git diff --check: PASS
+
+## 手動確認
+
+MANUAL_GUI_VERDICT: PENDING_USER_CONFIRMATION（C1 は契約層。UI 連続桁選択は C2）
+
+## 数値ゲート（変更なし）
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+
+## PR / マージ
+
+PR番号・URL: （作成後更新）
+C1_PR: （作成後更新）
+merge SHA: （マージ後更新）
+MAIN_SHA: （main 同期後更新）
+
+## 次 C2 注意点
+
+- UI: bridgeSystem 切替、spans[] 編集パネル、C2 サンプル [30,35,30] ボタン
+- 3D: 橋台/橋脚簡易幾何（pier role 対応）
+- generateBsdd の spanLength フィールド CONTINUOUS 時の UI 表示整理
+- phase1ScopeGuard は据え置き；bridgeStructure 経路のみ CONTINUOUS
 ================================================================================

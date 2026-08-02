@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../../data/defaultProject";
 import {
+  BridgeSystem,
+  buildContinuousLayout,
   createEmptyBridgeStructureInputDraft,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
@@ -11,13 +13,14 @@ import {
   validateBridgeStructureInputDraft,
   validateBridgeStructureInputPersistence,
   withBridgeStructureField,
+  withBridgeStructureInputDraft,
 } from "../bridgeStructure";
 
 function fillValidInput(project: ReturnType<typeof createDefaultProject>) {
   let next = project;
   const values: Record<string, number> = {
     spanLength: 40,
-    bridgeLength: 200,
+    bridgeLength: 40,
     width: 12,
     girderCount: 4,
     girderSpacing: 3,
@@ -115,7 +118,7 @@ describe("bridgeStructure workflow", () => {
     expect(left).not.toBe(other);
   });
 
-  it("rejects non-divisible bridgeLength/spanLength without silent correction", () => {
+  it("rejects non-matching bridgeLength/spanLength for SIMPLE_SINGLE without silent correction", () => {
     let project = fillValidInput(createDefaultProject());
     project = withBridgeStructureField(project, "bridgeLength", 100);
     project = withBridgeStructureField(project, "spanLength", 30);
@@ -124,22 +127,26 @@ describe("bridgeStructure workflow", () => {
     expect(resolveSpanCount(100, 30)).toBeNull();
     const validation = validateBridgeStructureInputDraft(input);
     expect(validation.complete).toBe(false);
-    expect(validation.diagnostics.join(" ")).toContain("割り切れる");
+    expect(validation.diagnostics.join(" ")).toMatch(/一致|割り切れる/);
 
     const result = generateBridgeStructureFromInput(project, input);
     expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.diagnostics.join(" ")).toContain("割り切れる");
-    }
   });
 
-  it("accepts divisible bridgeLength/spanLength and derives four spans", () => {
+  it("accepts CONTINUOUS layout with four spans", () => {
+    const layout = buildContinuousLayout([30, 30, 30, 30]);
     let project = fillValidInput(createDefaultProject());
-    project = withBridgeStructureField(project, "bridgeLength", 120);
-    project = withBridgeStructureField(project, "spanLength", 30);
+    project = withBridgeStructureInputDraft(project, (draft) => ({
+      ...draft,
+      bridgeSystem: BridgeSystem.CONTINUOUS,
+      bridgeLength: 120,
+      spanLength: null,
+      spans: layout.spans,
+      supports: layout.supports,
+      generatedAt: null,
+    }));
     const input = getBridgeStructureInputDraft(project);
 
-    expect(resolveSpanCount(120, 30)).toBe(4);
     expect(validateBridgeStructureInputDraft(input).complete).toBe(true);
 
     const result = generateBridgeStructureFromInput(project, input);
@@ -267,10 +274,14 @@ describe("bridgeStructure workflow", () => {
   });
 
   it("persistence validation accepts the new optional and boolean input fields", () => {
+    const layout = buildContinuousLayout([40, 40, 40, 40, 40]);
     const raw = {
       schemaVersion: "1.0.0",
-      spanLength: 40,
+      bridgeSystem: BridgeSystem.CONTINUOUS,
+      spanLength: null,
       bridgeLength: 200,
+      spans: layout.spans,
+      supports: layout.supports,
       width: 12,
       girderCount: 4,
       girderSpacing: 3,
