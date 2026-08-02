@@ -1,19 +1,57 @@
 ================================================================================
-Previous Phase Summary
+Apollo Step 2 Development Track Closeout
 ================================================================================
-STEP_1: #289–#298 | STEP_2A: #299/#300 | STEP_2B: #301/#302 | STEP_2C: #303/#304
+更新日時: 2026-08-02T23:15:00+09:00
+作業状態: COMPLETE_DEVELOPMENT_TRACK
+
+USER_DIRECTION: COMPLETE_SOFTWARE_FIRST_VALIDATE_OUTPUT_AFTERWARD
+DEVELOPMENT_IMPLEMENTATION_AUTHORIZATION: USER_DIRECTED_GO_FOR_COMPLETION_TESTING
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-================================================================================
-Step 2-D Output Integration — FINALIZED
-================================================================================
-STEP_2D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/305
-STEP_2D_PRIMARY_PR_MERGE_SHA: 398c837addedac1c23bb6c3dfb6ee59c12f36d0a
-E2E_VERDICT: PASS
+STEP_2A_VERDICT: COMPLETE
+STEP_2B_VERDICT: COMPLETE
+STEP_2C_VERDICT: COMPLETE
+STEP_2D_VERDICT: COMPLETE
+APOLLO_STEP_2_DEVELOPMENT_TRACK_VERDICT: COMPLETE
+
+QUANTITY_OUTPUT_VERDICT: PASS_DEVELOPMENT_ONLY
+CALCULATION_REPORT_VERDICT: PASS_DEVELOPMENT_ONLY
+STANDARD_SECTION_DRAWING_VERDICT: PASS_DEVELOPMENT_ONLY
 OUTPUT_CONSISTENCY_VERDICT: PASS
-STALE_EXPORT_GUARD: PASS
+SAVE_RELOAD_VERDICT: PASS
+STALE_VERDICT: PASS
+E2E_VERDICT: PASS
 BUNDLE_EXPORT_VERDICT: BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
-STEP_2_CLOSEOUT_READINESS: GO
+
+STEP_2A_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/299
+STEP_2A_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/300
+STEP_2B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/301
+STEP_2B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/302
+STEP_2C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/303
+STEP_2C_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/304
+STEP_2D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/305
 STEP_2D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/306
+STEP_2D_PRIMARY_PR_MERGE_SHA: 398c837addedac1c23bb6c3dfb6ee59c12f36d0a
+STEP_2D_REPORT_PR_MERGE_SHA: bbee6e6970c39cb6efabfa65e0ae30d59478f0d9
+
+CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/307
+
+STEP_3_DEVELOPMENT_START_READINESS: GO
+
+Supported scope:
+- development quantity takeoff (exact vs approximate separated)
+- calculation result CSV/JSON + development report HTML/PDF path
+- standard section DrawingModel SVG/DXF/A3-HTML
+- UI integration + STALE + checksum alignment + E2E
+
+Unsupported:
+- formal authorization / formal OK/NG
+- formal quantity takeoff / fabrication drawings
+- plan/elevation/arrangement drawings (Step 3)
+- zip bundle (individual downloads only)
+
+LOCAL_MAIN_EQUALS_ORIGIN: YES (pre-closeout tip)
+WORKTREE_CLEAN: PENDING_CLOSEOUT_MERGE
 ================================================================================
