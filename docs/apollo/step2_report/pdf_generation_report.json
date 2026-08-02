@@ -1,0 +1,7 @@
+{
+  "overall": "PASS",
+  "bytes": 65189,
+  "sha256": "4718cd9ddc76d370b6a03d7b28088c148294cc6c0c775227b79e04698bc3fe0e",
+  "outPath": "/tmp/apollo-development-report-sample.pdf",
+  "note": "PDF binary not committed to git; generated from ReportModel HTML"
+}
