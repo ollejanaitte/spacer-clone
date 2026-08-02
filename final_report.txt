@@ -1,11 +1,12 @@
 ================================================================================
 Apollo Steel Plate Girder Numeric Core — Step 1-A Report
 ================================================================================
-更新日時: 2026-08-02T21:10:00+09:00
+更新日時: 2026-08-02T21:20:00+09:00
 作業名: APOLLO_STEP_1A_EVIDENCE_GOLDEN_AUTHORIZATION
 Step ID: STEP_1A
 作業目的: 主桁断面諸量（純幾何）セルの証拠・Golden候補・認可ゲート準備。人間承認の捏造禁止。
-作業状態: PATH_B_PRIMARY_PR_OPEN（#286、merge前）
+作業状態: PATH_B_PRIMARY_MERGED + REPORT_FINALIZATION_IN_PROGRESS
+END_MAIN_SHA_AFTER_PRIMARY: 395fbdb5bef2f19f49647fb7ee202afd7d9489cb
 
 WORKING_PATH: /home/masaharu/Projects/spacer-clone
 START_MAIN_SHA: 6c3c0906f4ab2289c12ddbb0ec66de2964bcb902
@@ -92,24 +93,36 @@ STEP_1B_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
    FIX-SP-001: 16df2472c1603ea2560c52533e8d0b4412d14f791b51714244fcea28c9877e8d
    FIX-SP-002: c732dd3e0968fcdc189a953b972cd024e9cbdc9a1cf4d17fcb8cefc6e47d9b97
 4. git diff --check → (recorded at commit time)
-5. npm test -- src/apollo/__tests__/sectionProperties.test.ts → (run before PR)
-6. Docs-only: full Apollo suite optional; reason: no application code change
+5. npm test -- src/apollo/__tests__/sectionProperties.test.ts → PASS (4 tests)
+6. Docs-only: full Apollo suite not required (no application code change)
 
 GUI確認状態: N/A (docs)
 SAVE_RELOAD / STALE: N/A (no code change)
 FAIL_CLOSED: YES (gates remain blocked)
 
 --------------------------------------------------------------------------------
-GitHub（provisional）
+GitHub（primary merge confirmed; report PR provisional）
 --------------------------------------------------------------------------------
-STEP_1A_PRIMARY_PR_NUMBER: PENDING
-STEP_1A_PRIMARY_PR_URL: PENDING
-STEP_1A_PRIMARY_PR_MERGED: NO
-STEP_1A_PRIMARY_PR_MERGE_SHA: PENDING
+STEP_1A_PRIMARY_PR_NUMBER: 286
+STEP_1A_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/286
+STEP_1A_PRIMARY_PR_MERGED: YES
+STEP_1A_PRIMARY_PR_MERGE_SHA: 395fbdb5bef2f19f49647fb7ee202afd7d9489cb
+MAIN_SHA_AFTER_STEP_1A_PRIMARY: 395fbdb5bef2f19f49647fb7ee202afd7d9489cb
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN_AFTER_PRIMARY: YES
+WORKTREE_CLEAN_AFTER_PRIMARY: YES
+
 STEP_1A_REPORT_PR_NUMBER: PENDING
 STEP_1A_REPORT_PR_URL: PENDING
-STEP_1A_REPORT_PR_MERGED: NO
-STEP_1A_REPORT_PR_MERGE_SHA: PENDING
+STEP_1A_REPORT_PR_MERGE_STATUS_AT_DOCUMENT_TIME: PENDING_MERGE
+STEP_1A_REPORT_PR_MERGE_SHA: PENDING（未来値を捏造しない）
+
+STEP_1A_VERDICTS:
+STEP_1A_EVIDENCE_PACKAGE_VERDICT: COMPLETE_CANDIDATE_ONLY
+STEP_1A_GOLDEN_CANDIDATE_VERDICT: READY_FOR_HUMAN_DERIVATION
+STEP_1A_INDEPENDENT_HUMAN_EVIDENCE_VERDICT: MISSING
+STEP_1A_GOLDEN_APPROVAL_VERDICT: NOT_APPROVED
+STEP_1A_SECTION_PROPERTIES_AUTHORIZATION: NOT_AUTHORIZED
+STEP_1B_START_VERDICT: NO_GO_PENDING_HUMAN_EVIDENCE
 
 --------------------------------------------------------------------------------
 人間作業 / 再開
