@@ -15,5 +15,5 @@ OUTPUT_CONSISTENCY_VERDICT: PASS
 STALE_EXPORT_GUARD: PASS
 BUNDLE_EXPORT_VERDICT: BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY
 STEP_2_CLOSEOUT_READINESS: GO
-STEP_2D_REPORT_PR: PENDING
+STEP_2D_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/306
 ================================================================================
