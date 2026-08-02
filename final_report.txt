@@ -46,5 +46,5 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
 PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250)
 mainマージ状態: A0 マージ済み (2300411)。A1 は未マージ
-次の作業: A1 検証 → A1 commit → A1 push → PR #252 作成 → 自己レビュー → main マージ → Step A2 (材料・単位・係数)
+次の作業: A1 自己レビュー → main マージ → Step A2 (材料・単位・係数)
 ================================================================================
