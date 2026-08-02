@@ -1,38 +1,38 @@
 ================================================================================
-Apollo Phase A+ — セッション復旧・進捗監査レポート
+Apollo Phase A+ — 進捗レポート（P3 実行中）
 ================================================================================
 
 更新日時: 2026-08-02
-調査対象: Apollo Phase A+（Phase B 数値実装許可ゲート解除準備）進捗監査
+調査対象: Apollo Phase A+（Phase B 数値実装許可ゲート解除準備）
 正本リポジトリ: https://github.com/ollejanaitte/spacer-clone
 作業場所: /home/masaharu/Projects/spacer-clone
 
 現在のPhase: A+（Phase B 数値実装許可ゲート解除準備）
-現在の到達Step: P2（道示・正誤表・JIS 人間確認票）
-作業状態: 実行中（P2 成果物 commit・push 済み、PR #261 自己レビュー完了・main マージ待ち）
+現在の到達Step: P3（解析器同一性・物理契約）
+作業状態: 実行中（P3 成果物作成済み・commit/push 前）
 
-LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p2-standard-review
-LOCAL_HEAD_SHA: 145970cef90947b2244e2cacbe575a6ab72a0db0（PR #261 head、origin と一致）
-LOCAL_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
-ORIGIN_MAIN_SHA: f5e6cc75b4b6529583e0274c8c9a6e51f4e83ded
+LOCAL_CURRENT_BRANCH: docs/phase-b-prep-p3-solver-contract
+LOCAL_HEAD_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d（= origin/main、P2 マージ後）
+LOCAL_MAIN_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d
+ORIGIN_MAIN_SHA: db2d9727b20f2273e5e1c2f9f7f1ec46c5ae3f5d
 LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
-WORKTREE_CLEAN: YES
-LOCAL_UNCOMMITTED_WORK: なし
+WORKTREE_CLEAN: NO（P3 成果物の未コミット差分あり）
+LOCAL_UNCOMMITTED_WORK: 04_solver_identity_and_physical_contract.md / 01_blocker_resolution_register.csv / decision_log.md / 07_user_action_required.md / final_report.txt
 LOCAL_UNPUSHED_COMMITS: 0
-LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0（origin/docs/phase-b-prep-p2-standard-review と一致）
+LOCAL_BRANCH_AHEAD_OF_ORIGIN: 0
 LOCAL_BRANCH_BEHIND_ORIGIN: 0
 
-OPEN_PR: #261（Draft 保全 PR、base: main / head: docs/phase-b-prep-p2-standard-review）
-UNMERGED_BRANCH: docs/phase-b-prep-p2-standard-review（#261 で公開・レビュー待ち）
-LATEST_MERGED_PR: #260（P1）
+OPEN_PR: なし（P3 PR 作成前）
+UNMERGED_BRANCH: docs/phase-b-prep-p3-solver-contract
+LATEST_MERGED_PR: #261（P2）
 
 P0_STATUS: MERGED_COMPLETE
 P0_PR: #259（merge commit 4b44df4）
 P1_STATUS: MERGED_COMPLETE
 P1_PR: #260（merge commit f5e6cc7）
-P2_STATUS: OPEN_PR（#261、自己レビュー完了・マージ待ち）
-P2_PR: #261（https://github.com/ollejanaitte/spacer-clone/pull/261）
-P3_STATUS: NOT_STARTED
+P2_STATUS: MERGED_COMPLETE
+P2_PR: #261（merge commit db2d972）
+P3_STATUS: LOCAL_COMMITTED_PENDING（→ commit/push/PR 予定）
 P3_PR: —
 P4_STATUS: NOT_STARTED
 P4_PR: —
@@ -41,29 +41,31 @@ P5_PR: —
 P6_STATUS: NOT_STARTED
 P6_PR: —
 
-MERGED_COMPLETE_STEPS: P0, P1
-LOCAL_ONLY_STEPS: P2（commit 済み → 保全 Draft PR 経由）
-INCOMPLETE_STEPS: P2（main マージ未完了）, P3, P4, P5, P6
-NEXT_RESUME_STEP: P2
-NEXT_RESUME_BRANCH: docs/phase-b-prep-p2-standard-review
-NEXT_REQUIRED_ACTION: P2（#261）を main へマージ → ローカル main を origin/main へ同期 → P3（解析器同一性・物理契約）
+MERGED_COMPLETE_STEPS: P0, P1, P2
+LOCAL_ONLY_STEPS: なし
+INCOMPLETE_STEPS: P3（PR 作成前）, P4, P5, P6
+NEXT_RESUME_STEP: P3
+NEXT_RESUME_BRANCH: docs/phase-b-prep-p3-solver-contract
+NEXT_REQUIRED_ACTION: P3 を commit/push → PR 作成 → 自己レビュー → main マージ → ローカル同期 → P4（Golden・独立検証計画）
 
 NUMERIC_RELEASE_READINESS_VERDICT: BLOCKED（維持）
 PHASE_B_IMPLEMENTATION_START_VERDICT: NO_GO（人間証拠不足）
 
 調査結果:
-- GitHub main = local main = origin/main（f5e6cc7）。P0（#259）・P1（#260）はマージ済み。open PR なし。PR #261 以降は存在しない。
-- 現在ブランチ docs/phase-b-prep-p2-standard-review に P2 成果物 commit d4e121a が存在。リモート branch なし・upstream なし = 未 push。
-- P2 成果物（d4e121a 内訳）: 02_standard_visual_review_workbook.md（道示 R7 目視確認票 23 件）/ 03_errata_and_jis_acquisition_plan.md / 01_blocker_resolution_register.csv 更新（DEC-PB-0004）/ decision_log.md / 07_user_action_required.md 更新。
-- docs/apollo/phase_b_release_preparation/ に 04/05/06 は未作成（P3/P4/P5 未着手）。phase_b_release_preparation_report.md（P6）も未作成。
-- 監査時、final_report.txt の作業ツリー内容が「aaaa」に置換されていたが、ユーザーが誤入力と確認し無視指示。本レポートで正規内容へ上書き。
-- その他のローカル branch は全て origin 追跡済みで、local-only の未マージ Phase A+ 作業は P2 のみ。
+- P2 は PR #261 で main マージ済み（merge commit db2d972）。local main = origin/main。
+- P3 で 04_solver_identity_and_physical_contract.md を作成。リポジトリ solver（backend/engine）の同一性・物理契約をコード・テスト観察で文書化。
+  - 入出力・DOF（ux..rz 6DOF/節点）・座標・部材ローカル系（I→J）・要素剛性（Euler-Bernoulli）・荷重（等価固定端荷重）・反力（K·u−f）・部材端力（k_local·u_local−f_equiv）を CONFIRMED_BY_CODE
+  - 閉形式検証（片持ち・単純支持・ねじり・分布荷重・座標変換）は既存テスト PASS = CONFIRMED_BY_TEST
+  - IF3 チェックサム（sha256 canonical JSON）・STALE・solverVersion（0.3.x）・決定性・並行（単一スレッド）を PROJECT_SPECIFIC
+  - 浮動小数点再現性・単位束縛（AN-BLK-003）・外部解析器契約（AN-BLK-001..）・荷重組合せマッピング（AN-BLK-010）は BLOCKED_WITH_EXACT_EVIDENCE_REQUIREMENT 維持
+  - 非合成断面の合成剛性は UNKNOWN（未実装・未採択）
+- PA-OQ-009・GATE-NR-02 は PARTIALLY_RESOLVED 相当（DEC-PB-0005）として READY_FOR_HUMAN_REVIEW 維持。
+- 数値実装許可は全セル NOT_AUTHORIZED のまま。
 
 注意事項:
-- 本作業は P2 の文書成果の保全と完了化。P2 の人間確認（目視）は未実施のまま継続対象。
-- 数値実装許可ゲートは全セル NOT_AUTHORIZED のまま。本作業で数値許可状態は変更していない。
-- application code は一切変更していない。変更範囲は final_report.txt と Phase A+ 成果物のみ。
-- P2 は自己レビュー完了後、PR #261 経由で main へマージする。
+- 本作業は application code を変更していない。変更範囲は docs/apollo/phase_b_release_preparation/ と final_report.txt のみ。
+- 外部 SPACER / 旧 Apollo を solver と同一と推定・記録していない。
+- P3 の人間作業（UA-P3-01/02）は 07_user_action_required.md に引き継ぎ。
 
-OVERALL_VERDICT: LOCAL_WORK_CHECKPOINTED（→ P2 マージ後に更新）
+OVERALL_VERDICT: IN_PROGRESS（P3）
 ================================================================================
