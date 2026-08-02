@@ -16,5 +16,5 @@ PDF_EXPORT_VERDICT: PASS
 FORMAL_EXPORT_FAIL_CLOSED: PASS
 NO_FORMAL_OK_NG: PASS
 STEP_2C_START_VERDICT: GO
-STEP_2B_REPORT_PR: PENDING
+STEP_2B_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/302
 ================================================================================
