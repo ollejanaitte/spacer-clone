@@ -31,6 +31,6 @@ STEP_1B_PRIMARY_PR_NUMBER: 291
 STEP_1B_PRIMARY_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/291
 STEP_1B_PRIMARY_PR_MERGE_SHA: a64000c7b56dc3a0b7ef7be9302ba2e5f877eece
 ================================================================================
-STEP_1B_REPORT_PR_NUMBER: PENDING
-STEP_1B_REPORT_PR_URL: PENDING
+STEP_1B_REPORT_PR_NUMBER: 292
+STEP_1B_REPORT_PR_URL: https://github.com/ollejanaitte/spacer-clone/pull/292
 STEP_1B_REPORT_PR_MERGE_SHA: PENDING
