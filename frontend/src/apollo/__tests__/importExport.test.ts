@@ -4,6 +4,7 @@ import {
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   isBridgeStructureGenerationCurrent,
+  withBridgeStructureBooleanField,
   withBridgeStructureField,
 } from "../bridgeStructure";
 import { hasBridgeStructureVisualizationSource } from "../visualization";
@@ -210,6 +211,50 @@ describe("importExport", () => {
     expect(isBridgeStructureGenerationCurrent(imported.project)).toBe(false);
     expect(hasBridgeStructureVisualizationSource(imported.project)).toBe(false);
     expect(imported.project.apolloBsdd?.structuralDesignModel?.mainGirders).toHaveLength(4);
+  });
+
+  it("round-trips secondary-member and unit-weight input fields through save/reload", () => {
+    let next = withBridgeStructureField(createApollo200mContinuousBridgeSample(), "spanLength", 40);
+    next = withBridgeStructureField(next, "bridgeLength", 200);
+    next = withBridgeStructureField(next, "width", 12);
+    next = withBridgeStructureField(next, "girderCount", 4);
+    next = withBridgeStructureField(next, "girderSpacing", 3);
+    next = withBridgeStructureField(next, "girderDepth", 2.5);
+    next = withBridgeStructureField(next, "topFlangeWidth", 0.5);
+    next = withBridgeStructureField(next, "topFlangeThickness", 0.02);
+    next = withBridgeStructureField(next, "bottomFlangeWidth", 0.6);
+    next = withBridgeStructureField(next, "bottomFlangeThickness", 0.025);
+    next = withBridgeStructureField(next, "webThickness", 0.012);
+    next = withBridgeStructureField(next, "deckThickness", 0.25);
+    next = withBridgeStructureField(next, "crossBeamSpacing", 5);
+    next = withBridgeStructureField(next, "stiffenerSpacing", 25);
+    next = withBridgeStructureField(next, "swayBracingInterval", 2);
+    next = withBridgeStructureField(next, "steelUnitWeight", 77);
+    next = withBridgeStructureField(next, "rcUnitWeight", 24);
+    next = withBridgeStructureBooleanField(next, "lateralBracingEnabled", true);
+
+    const generated = generateBridgeStructureFromInput(next, getBridgeStructureInputDraft(next));
+    expect(generated.ok).toBe(true);
+    if (!generated.ok) return;
+
+    const exported = exportApolloProjectToText(generated.project);
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+
+    const imported = importApolloProjectFromText(exported.content);
+    expect(imported.ok).toBe(true);
+    if (!imported.ok) return;
+
+    const draft = imported.project.apolloBridgeStructureInput;
+    expect(draft?.stiffenerSpacing).toBe(25);
+    expect(draft?.swayBracingInterval).toBe(2);
+    expect(draft?.steelUnitWeight).toBe(77);
+    expect(draft?.rcUnitWeight).toBe(24);
+    expect(draft?.lateralBracingEnabled).toBe(true);
+    const sdm = imported.project.apolloBsdd?.structuralDesignModel;
+    expect(sdm?.stiffeners).toHaveLength(4 * 9);
+    expect(sdm?.swayBracings).toHaveLength(19);
+    expect(sdm?.lateralBracings).toHaveLength(1);
   });
 
   it("rejects unknown Apollo sidecar fields fail-closed", () => {

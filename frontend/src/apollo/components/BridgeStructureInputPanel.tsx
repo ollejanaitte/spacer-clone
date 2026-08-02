@@ -1,15 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type { ProjectModel } from "../../types";
 import {
   BRIDGE_STRUCTURE_INPUT_FIELDS,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
+  getBridgeStructureUnitWeightAdoption,
   isBridgeStructureGenerationCurrent,
   validateBridgeStructureInputDraft,
+  withAdoptedBridgeStructureUnitWeight,
+  withBridgeStructureBooleanField,
   withBridgeStructureField,
+  withBridgeStructureUnitWeightReset,
+  computeGirderSectionProperties,
   type BridgeStructureApproximateQuantity,
   type BridgeStructureInputFieldKey,
+  type BridgeStructureUnitWeightKind,
+  type GirderSectionProperties,
 } from "../bridgeStructure";
 import { commitApolloNumericDraft } from "../numericInput";
 import { CompositionAwareInput } from "./CompositionAwareInput";
@@ -92,6 +100,63 @@ function formatQuantityValue(quantity: BridgeStructureApproximateQuantity): stri
   return `${quantity.value.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${quantity.units}`;
 }
 
+function formatMetric(value: number | null, digits: number): string {
+  if (value === null || !Number.isFinite(value)) {
+    return "—";
+  }
+  return value.toLocaleString(undefined, { maximumFractionDigits: digits });
+}
+
+function sectionPropertyRows(
+  section: GirderSectionProperties,
+): Array<{ readonly label: string; readonly value: string; readonly unit: string }> {
+  return [
+    { label: "ウェブ高さ", value: formatMetric(section.webHeight, 4), unit: "m" },
+    { label: "上フランジ断面積", value: formatMetric(section.topFlangeArea, 4), unit: "m²" },
+    { label: "下フランジ断面積", value: formatMetric(section.bottomFlangeArea, 4), unit: "m²" },
+    { label: "ウェブ断面積", value: formatMetric(section.webArea, 4), unit: "m²" },
+    { label: "断面積合計", value: formatMetric(section.totalArea, 4), unit: "m²" },
+    { label: "図心位置（下面基準）", value: formatMetric(section.centroidFromBottom, 4), unit: "m" },
+    { label: "断面2次モーメント", value: formatMetric(section.secondMomentOfArea, 4), unit: "m⁴" },
+    { label: "断面係数（上縁）", value: formatMetric(section.sectionModulusTop, 4), unit: "m³" },
+    { label: "断面係数（下縁）", value: formatMetric(section.sectionModulusBottom, 4), unit: "m³" },
+    { label: "主桁1本当たり鋼体積", value: formatMetric(section.steelVolumePerGirder, 4), unit: "m³" },
+  ];
+}
+
+function adoptionButton(
+  kind: BridgeStructureUnitWeightKind,
+  project: ProjectModel,
+  onProjectChange: (nextProject: ProjectModel) => void,
+  setMessage: (message: string) => void,
+): ReactNode {
+  const status = getBridgeStructureUnitWeightAdoption(project, kind);
+  const isAdopted = status === "ADOPTED";
+  return (
+    <button
+      type="button"
+      className={isAdopted ? "apollo-button-secondary" : "apollo-button-primary"}
+      data-testid={`apollo-adopt-${kind}-unit-weight`}
+      onClick={() => {
+        if (isAdopted) {
+          onProjectChange(withBridgeStructureUnitWeightReset(project, kind));
+          setMessage(`${kind === "steel" ? "鋼" : "RC床版"}の単位体積重量を未採用に戻しました。`);
+          return;
+        }
+        const result = withAdoptedBridgeStructureUnitWeight(project, kind);
+        if (!result.ok) {
+          setMessage(result.diagnostics.join(" / "));
+          return;
+        }
+        onProjectChange(result.project);
+        setMessage(`${kind === "steel" ? "鋼" : "RC床版"}の単位体積重量を採用しました。`);
+      }}
+    >
+      {isAdopted ? "取消" : "採用"}
+    </button>
+  );
+}
+
 export function BridgeStructureInputPanel({
   project,
   onProjectChange,
@@ -104,6 +169,30 @@ export function BridgeStructureInputPanel({
   const isGenerationCurrent = isBridgeStructureGenerationCurrent(project);
   const isStale = Boolean(sdm && !isGenerationCurrent);
   const [generationMessage, setGenerationMessage] = useState<string | null>(null);
+
+  const sectionProperties = useMemo(() => {
+    if (!validation.complete) {
+      return null;
+    }
+    return computeGirderSectionProperties({
+      spanLength: inputDraft.spanLength!,
+      bridgeLength: inputDraft.bridgeLength!,
+      width: inputDraft.width!,
+      girderCount: inputDraft.girderCount!,
+      girderSpacing: inputDraft.girderSpacing!,
+      girderDepth: inputDraft.girderDepth!,
+      topFlangeWidth: inputDraft.topFlangeWidth!,
+      topFlangeThickness: inputDraft.topFlangeThickness!,
+      bottomFlangeWidth: inputDraft.bottomFlangeWidth!,
+      bottomFlangeThickness: inputDraft.bottomFlangeThickness!,
+      webThickness: inputDraft.webThickness!,
+      deckThickness: inputDraft.deckThickness!,
+      crossBeamSpacing: inputDraft.crossBeamSpacing!,
+    });
+  }, [validation.complete, inputDraft]);
+
+  const steelAdoption = getBridgeStructureUnitWeightAdoption(project, "steel");
+  const rcAdoption = getBridgeStructureUnitWeightAdoption(project, "rc");
 
   const fieldErrorMap = useMemo(() => {
     const map = new Map<BridgeStructureInputFieldKey, string>();
@@ -141,7 +230,7 @@ export function BridgeStructureInputPanel({
           const error = fieldErrorMap.get(field.key);
           return (
             <label key={field.key}>
-              {field.label} ({field.units})
+              {field.label} ({field.units}){field.optional ? "（任意）" : null}
               <NullableBridgeStructureFieldInput
                 fieldKey={field.key}
                 value={currentValue}
@@ -154,6 +243,45 @@ export function BridgeStructureInputPanel({
           );
         })}
       </div>
+
+      <label className="apollo-inline-checkbox">
+        <input
+          type="checkbox"
+          data-testid="apollo-bridge-input-lateralBracingEnabled"
+          checked={inputDraft.lateralBracingEnabled}
+          onChange={(event) => {
+            onProjectChange(
+              withBridgeStructureBooleanField(project, "lateralBracingEnabled", event.currentTarget.checked),
+            );
+          }}
+        />
+        横繋（下フランジ水平ブレース）を有効にする
+      </label>
+
+      {sectionProperties ? (
+        <section data-testid="apollo-bridge-structure-section-properties">
+          <h3>断面特性（純幾何計算・設計判定なし）</h3>
+          <table className="apollo-detail-table">
+            <thead>
+              <tr>
+                <th>項目</th>
+                <th>値</th>
+                <th>単位</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sectionPropertyRows(sectionProperties).map((row) => (
+                <tr key={row.label} data-testid={`apollo-section-property-${row.label}`}>
+                  <td>{row.label}</td>
+                  <td>{row.value}</td>
+                  <td>{row.unit}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="apollo-inline-hint">寸法入力からの純幾何計算であり、設計判定や数値採用ではありません。</p>
+        </section>
+      ) : null}
 
       <div className="apollo-workspace-actions">
         <button
@@ -187,6 +315,9 @@ export function BridgeStructureInputPanel({
             <li>主桁: {sdm.mainGirders.length} 件（designStatus: NOT_AUTHORIZED）</li>
             <li>RC床版: {sdm.rcDecks.length} 件（designStatus: NOT_AUTHORIZED）</li>
             <li>横桁: {sdm.crossBeams.length} 件（designStatus: NOT_AUTHORIZED）</li>
+            <li>補剛材: {sdm.stiffeners.length} 件（designStatus: NOT_AUTHORIZED）</li>
+            <li>対傾構: {sdm.swayBracings.length} 箇所 / 横繋: {sdm.lateralBracings.length} 箇所</li>
+            <li>対傾構・横繋部材: {sdm.braceMembers.length} 本（designStatus: NOT_AUTHORIZED）</li>
             <li>nonCompositeAssertion.compositeAction: {String(sdm.nonCompositeAssertion.compositeAction)}</li>
           </ul>
           {sdm.mainGirders.length > 0 ? (
@@ -199,8 +330,36 @@ export function BridgeStructureInputPanel({
         <p data-testid="apollo-bridge-structure-not-generated">まだ構造は生成されていません。</p>
       )}
 
+      <section data-testid="apollo-bridge-structure-unit-weight">
+        <h3>単位体積重量の採用</h3>
+        <table className="apollo-detail-table">
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>状態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>鋼（{inputDraft.steelUnitWeight ?? "未入力"} kN/m³）</td>
+              <td data-testid="apollo-steel-unit-weight-status">{steelAdoption}</td>
+              <td>{adoptionButton("steel", project, onProjectChange, setGenerationMessage)}</td>
+            </tr>
+            <tr>
+              <td>RC床版（{inputDraft.rcUnitWeight ?? "未入力"} kN/m³）</td>
+              <td data-testid="apollo-rc-unit-weight-status">{rcAdoption}</td>
+              <td>{adoptionButton("rc", project, onProjectChange, setGenerationMessage)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="apollo-inline-hint">
+          ADOPTED は数値設計権限（NOT_GRANTED が既定）のもとで拒否されます。現時点では採用操作は失敗し、NOT_AUTHORIZED のままです。
+        </p>
+      </section>
+
       <section data-testid="apollo-bridge-structure-quantities">
-        <h3>概算数量（体積のみ・重量は未採用）</h3>
+        <h3>概算数量・重量</h3>
         <table className="apollo-detail-table">
           <thead>
             <tr>
@@ -219,7 +378,9 @@ export function BridgeStructureInputPanel({
             ))}
           </tbody>
         </table>
-        <p className="apollo-inline-hint">単位重量は未採用のため、NOT_AUTHORIZED / INCOMPLETE を表示します。</p>
+        <p className="apollo-inline-hint">
+          単位重量が未設定の場合は NOT_AUTHORIZED / INCOMPLETE、入力済み未採用は USER_PROVIDED_UNVERIFIED、採用時のみ ADOPTED を表示します。
+        </p>
       </section>
     </article>
   );
