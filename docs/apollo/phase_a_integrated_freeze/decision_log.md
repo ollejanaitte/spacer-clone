@@ -19,3 +19,5 @@ Phase A の決定記録。既存 DS-00〜DS-09 の DEC-DS00-0001 等は書き換
 | DEC-PHA-0008 | 2026-08-02 | A2 | 荷重側部分係数は DS-04 レジスタ（LF-DS04-001..010、全 BLOCKED）、抵抗側係数は DS-05 を参照する。数値実装許可は A7 の NOT_AUTHORIZED ゲートで部材・照査単位に管理する。 | ADOPTED | 02_materials_units_factors.md に反映。 |
 | DEC-PHA-0009 | 2026-08-02 | A3 | Phase A の荷重・組合せ統合は DS-04 レジスタ（LM-DS04-001..014 / LF-DS04-001..010 / 汎用組合せシェル / SX-DS04-001..005）をそのまま採用する。荷重同一性・分布・数値・係数は BLOCKED を維持し、捏造しない。 | ADOPTED | 03_loads_and_combinations.md に反映。 |
 | DEC-PHA-0010 | 2026-08-02 | A3 | 動的影響は LF-DS04-010 が唯一の数値オーナー、LM-DS04-007 はポインタのみ。組み合わせ成分に含めず二重適用しない。地震・疲労・架設段階は OUT_OF_SCOPE、施工時荷重は FUTURE_PHASE を維持する。 | ADOPTED | 03_loads_and_combinations.md に反映。 |
+| DEC-PHA-0011 | 2026-08-02 | A4 | Phase A の解析モデル化ルールは「設計モデルから派生」「リポジトリ solver は PROJECT_SPECIFIC」「外部解析器は BLOCKED」という DS-06 / phase1 再凍結の位置づけをそのまま採用する。解析結果はプローブ通過まで設計照査へ束縛しない。 | ADOPTED | 04_analysis_model_rules.md に反映。 |
+| DEC-PHA-0012 | 2026-08-02 | A4 | 解析に使う断面剛性・材料・荷重の数値は DS-03/DS-04 の BLOCKED を維持する。旧Apollo 仮定剛度・仮定鋼重・任意指定は処理順の参考のみとし、数値移植しない。 | ADOPTED | 04_analysis_model_rules.md に反映。 |
