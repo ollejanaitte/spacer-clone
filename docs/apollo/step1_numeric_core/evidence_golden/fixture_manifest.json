@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "packageId": "APOLLO_STEP_1A_EVIDENCE_GOLDEN",
+  "generatedAt": "2026-08-02T21:00:00+09:00",
+  "generatedBy": "Cursor Auto (candidate fixtures only; not Golden approval)",
+  "authorityNote": "Input fixtures are fixed for human derivation. Expected numeric fields are intentionally absent.",
+  "fixtures": [
+    {
+      "fixtureId": "FIX-SP-001",
+      "goldenId": "GOLD-SP-001",
+      "title": "Symmetric I-section inputs",
+      "unitSystem": "SI",
+      "inputs": {
+        "topFlangeWidth_m": 0.5,
+        "topFlangeThickness_m": 0.03,
+        "bottomFlangeWidth_m": 0.5,
+        "bottomFlangeThickness_m": 0.03,
+        "webThickness_m": 0.012,
+        "girderDepth_m": 2.5,
+        "bridgeLength_m": 40.0
+      },
+      "derivedDefinitions": {
+        "webHeight_m": "girderDepth_m - topFlangeThickness_m - bottomFlangeThickness_m"
+      },
+      "expectedValues": null,
+      "expectedValuesStatus": "PENDING_HUMAN_DERIVATION"
+    },
+    {
+      "fixtureId": "FIX-SP-002",
+      "goldenId": "GOLD-SP-002",
+      "title": "Asymmetric I-section inputs",
+      "unitSystem": "SI",
+      "inputs": {
+        "topFlangeWidth_m": 0.5,
+        "topFlangeThickness_m": 0.02,
+        "bottomFlangeWidth_m": 0.6,
+        "bottomFlangeThickness_m": 0.025,
+        "webThickness_m": 0.012,
+        "girderDepth_m": 2.5,
+        "bridgeLength_m": 200.0
+      },
+      "derivedDefinitions": {
+        "webHeight_m": "girderDepth_m - topFlangeThickness_m - bottomFlangeThickness_m"
+      },
+      "expectedValues": null,
+      "expectedValuesStatus": "PENDING_HUMAN_DERIVATION"
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "note": "Checksums bind INPUT fixture JSON only. Recompute after any input edit. Do not bind production solver outputs.",
+    "entries": [
+      {
+        "fixtureId": "FIX-SP-001",
+        "sha256": "16df2472c1603ea2560c52533e8d0b4412d14f791b51714244fcea28c9877e8d"
+      },
+      {
+        "fixtureId": "FIX-SP-002",
+        "sha256": "c732dd3e0968fcdc189a953b972cd024e9cbdc9a1cf4d17fcb8cefc6e47d9b97"
+      }
+    ]
+  }
+}
