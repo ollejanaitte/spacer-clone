@@ -5,11 +5,11 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 更新日時: 2026-08-02
 現在のPhase: A (設計基準・計算ロジック統合凍結)
 現在のPhase: A+ (Phase B 数値実装許可ゲート解除準備)
-現在のStep: P1 (リポジトリ内で整理可能なブロッカー)
+現在のStep: P2 (道示・正誤表・JIS 人間確認票)
 作業状態: 実行中
-現在ブランチ: docs/phase-b-prep-p1-repository-blockers
+現在ブランチ: docs/phase-b-prep-p2-standard-review
 開始時main SHA: 8137c7a5f0c24c57dc9f0fb7ac5c90adea8ee3ea (Phase A 最終 main)
-現在HEAD SHA: 4b44df48ec4f035ffb7788a73d423092235d5254 (P0マージ後)
+現在HEAD SHA: f5e6cc7 (P1マージ後)
 実施済み:
 - プリフライト: worktree clean / local main = origin/main / GitHub 認証済み / origin 正 / final_report.txt が main に存在
 - 必読資料: AGENTS.md / ARCHITECTURE.md / README.md / ROADMAP.md / final_report.txt
@@ -46,6 +46,12 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - Phase A+ P0: docs/apollo/phase_b_release_preparation/ に README.md / 00_baseline_and_gate_matrix.md / 01_blocker_resolution_register.csv (13行) / decision_log.md を作成。final_report.txt を Phase A 完了・Phase A+ 開始へ修正
 - Phase A+ P0: ブランチ docs/phase-b-prep-p0-baseline → PR #259 → main マージ済み (merge commit 4b44df4)
 - Phase A+ P1: 01_blocker_resolution_register.csv を更新（PA-OQ-002 RESOLVED / PA-OQ-010 RESOLVED / PA-OQ-007 PARTIALLY_RESOLVED）。07_user_action_required.md を作成
+- Phase A+ P1: ブランチ docs/phase-b-prep-p1-repository-blockers → PR #260 → main マージ済み (merge commit f5e6cc7)
+- Phase A+ P2: 02_standard_visual_review_workbook.md を作成（道示 R7 目視確認票 23 件、優先順位は主桁断面諸量・曲げ・せん断・たわみを最上位）
+- Phase A+ P2: 03_errata_and_jis_acquisition_plan.md を作成（2026-03-31 正誤表の URL 到達性確認 + JIS 34 行の合成プレースホルダ確認と取得手順）
+- Phase A+ P2: 01_blocker_resolution_register.csv を更新（PA-OQ-001/003/004/008 の DEC-PB-0004 反映、READY_FOR_HUMAN_REVIEW 維持）
+- Phase A+ P2: 道示 PDF メタデータ確認（I=388 / II=821 / III=519 / V=210 ページ、全て画像スキャンでテキスト層なし）
+- Phase A+ P2: 正誤表 URL https://www.road.or.jp/img/books/corrigenda/pdf/20260331.pdf 到達性確認（HTTP 200 / 771KB / application/pdf）
 調査中: (なし)
 決定事項:
 - DEC-PHA-0001: 既存ガバナンス体系を統合・再凍結 (書き換えなし)
@@ -69,15 +75,20 @@ Apollo Phase A — 設計基準・計算ロジック統合凍結 — 進捗レ�
 - DEC-PB-0001: Phase A+ は Phase A 成果物を上書きせず参照整合を保持。数値実装は行わずブロッカー整理・人間確認票・独立検証計画・最小セル選定を実施
 - DEC-PB-0002: ブロッカー解除レジスタ 01_blocker_resolution_register.csv を正本とし、状態変更は新しい DEC-ID と証拠を付けて行う
 - DEC-PB-0003: ライセンスPDF参照パスは実在パスを正本 (PA-OQ-002 RESOLVED)。旧Apollo は unknown-rights 21行パス存在確認・REFERENCE_ONLY 維持 (PA-OQ-010 RESOLVED)。refreeze の decision/open_questions 不在を捏造せず記録 (PA-OQ-007 PARTIALLY_RESOLVED)
+- DEC-PB-0004: 道示 R7 目視確認票 02 と正誤表・JIS 取得計画 03 を作成。道示 PDF は画像スキャン (I=388/II=821/III=519/V=210 ページ)。正誤表は URL 到達性のみ確認。JIS 34 行は合成プレースホルダのまま。PA-OQ-001/003/004/008 は READY_FOR_HUMAN_REVIEW 維持
 未決事項: (Phase A+ P1..P6。全ブロッカー解除は完了条件ではなく、解除不能理由と人間の次操作を明確にすることが正式成果)
 ブロッカー:
+- PA-OQ-001 道示 R7 条文・表・式の目視確認 → READY_FOR_HUMAN_REVIEW (確認票 02 作成済み)
 - PA-OQ-002 ライセンスPDF参照パス → RESOLVED (実在パス正本化)
+- PA-OQ-003 JIS 番号 → READY_FOR_HUMAN_REVIEW (取得計画 03 作成済み、34 行全て合成プレースホルダ)
+- PA-OQ-004 2026-03-31 正誤表 → READY_FOR_HUMAN_REVIEW (URL 到達性のみ確認済み、内容確認待ち)
 - PA-OQ-007 refreeze decision/open_questions 不在 → PARTIALLY_RESOLVED
+- PA-OQ-008 単位体積重量 → READY_FOR_HUMAN_REVIEW (確認票 VR-R7-I-003 の対象)
 - PA-OQ-010 旧Apollo版不明 → RESOLVED (REFERENCE_ONLY 維持)
 検証結果: (Step A0 コミット前に CSV パース / source_id 重複 / パス存在 / diff --check 実施)
 PR番号・URL: Step A0 → PR #250 (https://github.com/ollejanaitte/spacer-clone/pull/250) / Step A1 → PR #251 (https://github.com/ollejanaitte/spacer-clone/pull/251) / Step A2 → PR #252 (https://github.com/ollejanaitte/spacer-clone/pull/252) / Step A3 → PR #253 (https://github.com/ollejanaitte/spacer-clone/pull/253) / Step A4 → PR #254 (https://github.com/ollejanaitte/spacer-clone/pull/254) / Step A5 → PR #255 (https://github.com/ollejanaitte/spacer-clone/pull/255) / Step A6 → PR #256 (https://github.com/ollejanaitte/spacer-clone/pull/256) / Step A7 → PR #257 (https://github.com/ollejanaitte/spacer-clone/pull/257) / Step A8 → PR #258 (https://github.com/ollejanaitte/spacer-clone/pull/258)
-mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 マージ済み (4b44df4)。P1 は PR 作成前
-次の作業: P1 commit → P1 push → PR 作成 (#260) → 自己レビュー → main マージ → ローカル同期 → P2 (道示・正誤表・JIS 人間確認票)
+mainマージ状態: Phase A A0..A8 マージ済み (2300411, b2b1ed3, 4729720, 42ebb7a, 0758891, 6dd1477, 6f95f5b, 9f76183, 8137c7a)。Phase A+ P0 マージ済み (4b44df4)。P1 マージ済み (f5e6cc7)。P2 は PR 作成前
+次の作業: P2 commit → P2 push → PR 作成 (#261) → 自己レビュー → main マージ → ローカル同期 → P3 (解析方式契約)
 
 ================================================================================
 MODEL: DeepSeek V4 Flash

@@ -1,7 +1,7 @@
 # Phase A+ — 07 人間作業指示書（User Action Required）
 
 **Authority:** Phase A+（P1 時点で初期化、P2〜P6 で更新）
-**Date:** 2026-08-02
+**Date:** 2026-08-02（P2 更新）
 **Model:** DeepSeek V4 Flash（モデル単体で確認不能な作業を文書化）
 
 本ファイルは、DeepSeek（モデル）単体では完了できない人間作業を、対象・確認項目・記入欄・判定方法・再開条件としてまとめる。モデルはこのファイルの内容を捏造・省略せず、人間の確認が完了するまで数値を採択しない。
@@ -13,10 +13,10 @@
 | UA-P1-01 | PA-OQ-002 | ライセンス PDF の参照パスが実在することを確認（local-archive/restricted-pdf/bridge-standards/260726_設計基準/） | なし（リポジトリ内） | 高 | モデル確認済み・人間最終確認 | P1 |
 | UA-P1-02 | PA-OQ-007 | phase1_design_expansion_refreeze に decision_log.md / open_questions_and_blockers.md が**不在**であることを確認し、復元方針を承認 | なし（リポジトリ内） | 高 | モデル確認済み・人間承認待ち | P1 |
 | UA-P1-03 | PA-OQ-010 | 旧Apollo マニュアル（unknown-rights）の REFERENCE_ONLY 維持を承認（数値根拠へ昇格しない） | なし | 高 | モデル確認済み・人間承認待ち | P1 |
-| UA-P2-01 | PA-OQ-001 | 道示 R7 の条文・表・式の目視確認（02_standard_visual_review_workbook.md の確認票を使用） | 道示 R7 I〜V（restricted-pdf） | 高 | 未実施 | P2 |
-| UA-P2-02 | PA-OQ-003 | JIS 一次資料の取得と番号確認（03_errata_and_jis_acquisition_plan.md） | ライセンス JIS 一次資料 | 高 | 未実施 | P2 |
-| UA-P2-03 | PA-OQ-004 | 2026-03-31 正誤表の内容確認（03_errata_and_jis_acquisition_plan.md） | 公式正誤表 PDF（road.or.jp） | 中 | 未実施 | P2 |
-| UA-P2-04 | PA-OQ-008 | 材料確認票（単位体積重量等）の確認 | 道示 R7 II/III（restricted-pdf） | 中 | 未実施 | P2 |
+| UA-P2-01 | PA-OQ-001 | 道示 R7 の条文・表・式の目視確認（02_standard_visual_review_workbook.md の確認票を使用） | 道示 R7 I〜V（restricted-pdf） | 高 | 確認票作成済み・人間確認待ち | P2 |
+| UA-P2-02 | PA-OQ-003 | JIS 一次資料の取得と番号確認（03_errata_and_jis_acquisition_plan.md） | ライセンス JIS 一次資料 | 高 | 計画作成済み・人間確認待ち | P2 |
+| UA-P2-03 | PA-OQ-004 | 2026-03-31 正誤表の内容確認（03_errata_and_jis_acquisition_plan.md） | 公式正誤表 PDF（road.or.jp） | 中 | URL到達性のみ確認済み・内容確認待ち | P2 |
+| UA-P2-04 | PA-OQ-008 | 材料確認票（単位体積重量等）の確認（02_standard_visual_review_workbook.md VR-R7-I-003） | 道示 R7 II/III（restricted-pdf） | 中 | 確認票作成済み・人間確認待ち | P2 |
 | UA-P4-01 | PA-OQ-005 | 非合成鋼鈑桁 R7 正式計算例の入手 or 独立検算資料の作成（05_golden_validation_execution_plan.md） | 正式計算例・独立検算 | 高 | 未実施 | P4 |
 | UA-P4-02 | PA-OQ-006 | EA-03 外部実行パッケージの実行・証跡取得（05_golden_validation_execution_plan.md） | 外部実行環境・実行権限 | 高 | 未実施 | P4 |
 | UA-P4-03 | GATE-NR-03 | Golden の独立誘導・承認（07_validation_cases.csv の PASS 化） | 独立誘導成果物・承認者 | 高 | 未実施 | P4 |
