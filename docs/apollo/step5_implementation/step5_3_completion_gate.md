@@ -7,8 +7,8 @@
 | P3 Pavement/markings | PASS | #346 |
 | P4 Topology labels | PASS | #348 |
 | P5 L-angle | PASS | #348 |
-| P6 Integration | PASS | (this) |
-| P7 E2E closeout | PASS | (this) |
+| P6 Integration | PASS | #349 |
+| P7 E2E closeout | PASS | #349 |
 
 ## Gate verdict
 - STEP_5_3_VERDICT: **COMPLETE** (development)
