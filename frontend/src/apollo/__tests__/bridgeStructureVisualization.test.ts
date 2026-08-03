@@ -140,13 +140,17 @@ describe("bridge structure visualization (Block C)", () => {
 
     const model = buildApolloVisualizationModelOrThrow({ project: regen.project });
     const stiffeners = model.solidGeometryParameters.filter((entry) => entry.kind === "stiffener");
+    // Step 5-3 P4 dual JP/EN labels: "対傾構 / Sway …", "下横構 / Lower Lateral …"
     const swayMembers = model.solidGeometryParameters.filter(
-      (entry) => entry.kind === "bracing" && entry.displayLabel.startsWith("Sway "),
+      (entry) =>
+        entry.kind === "bracing" &&
+        (entry.displayLabel.includes("Sway ") || entry.displayLabel.includes("対傾構")),
     );
     const lateralMembers = model.solidGeometryParameters.filter(
       (entry) =>
         entry.kind === "bracing" &&
-        (entry.displayLabel.startsWith("Lower Lateral ") ||
+        (entry.displayLabel.includes("Lower Lateral ") ||
+          entry.displayLabel.includes("下横構") ||
           entry.dimensionsM.bracingSystem === 3),
     );
 
