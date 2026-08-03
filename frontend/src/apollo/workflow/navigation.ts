@@ -7,6 +7,8 @@ import type { NavigationTarget } from "./types";
 
 const PANEL_SELECTORS: Record<string, string> = {
   "wf-panel-bridge-structure": '[data-testid="apollo-bridge-structure-panel"]',
+  "wf-panel-appurtenance": '[data-testid="apollo-appurtenance-panel"]',
+  "wf-panel-haunch": '[data-testid="apollo-haunch-panel"]',
   "wf-panel-analysis": '[data-testid="apollo-analysis-development-probe"]',
   "wf-panel-demand": '[data-testid="apollo-demand-development-panel"]',
   "wf-panel-quantity": '[data-testid="apollo-quantity-model-panel"]',

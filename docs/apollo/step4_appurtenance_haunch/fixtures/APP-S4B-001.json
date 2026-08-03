@@ -1,0 +1,14 @@
+{
+  "fixtureId": "APP-S4B-001",
+  "description": "Left/right curb PROVIDED; other slots EXPLICIT_NONE; full-length; local offsets",
+  "bridgeLength": 40,
+  "width": 12,
+  "slots": {
+    "LEFT_CURB": {"presence": "PROVIDED", "startStation": 0, "endStation": 40, "transverseOffset": -5, "width": 0.5, "height": 0.25, "shape": "RECT"},
+    "RIGHT_CURB": {"presence": "PROVIDED", "startStation": 0, "endStation": 40, "transverseOffset": 5, "width": 0.5, "height": 0.25, "shape": "RECT"},
+    "LEFT_WALL_RAILING": {"presence": "EXPLICIT_NONE"},
+    "RIGHT_WALL_RAILING": {"presence": "EXPLICIT_NONE"},
+    "MEDIAN": {"presence": "EXPLICIT_NONE"},
+    "OPTIONAL_BARRIER": {"presence": "EXPLICIT_NONE"}
+  }
+}

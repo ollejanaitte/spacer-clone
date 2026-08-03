@@ -4,8 +4,10 @@ export {
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
   isBridgeStructureGenerationCurrent,
+  withAppurtenanceConfiguration,
   withBridgeStructureField,
   withBridgeStructureInputDraft,
+  withHaunchConfiguration,
 } from "./generateBsdd";
 export {
   buildApolloBsddFingerprintPayload,
@@ -29,7 +31,9 @@ export {
   BRIDGE_STRUCTURE_INPUT_FIELDS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
+  BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
   type ApolloBridgeStructureInputDraft,
   type BridgeStructureApproximateQuantity,
   type BridgeStructureBooleanInputKey,
@@ -49,6 +53,55 @@ export {
   type BridgeStructureFieldValidation,
   type BridgeStructureValidationResult,
 } from "./validation";
+export {
+  PRESENCE_STATUS,
+  isPresenceStatus,
+  validatePresenceConsistency,
+  type PresenceStatus,
+} from "./presence";
+export {
+  APPURTENANCE_SLOTS,
+  APPURTENANCE_SLOT_LABELS,
+  APPURTENANCE_SLOT_TYPE_SIDE,
+  type ApolloAppurtenanceConfigurationDraft,
+  type ApolloAppurtenanceItemDraft,
+  type ApolloAppurtenanceSlotDraft,
+  type AppurtenanceSlot,
+  type BridgeAppurtenanceModel,
+} from "./appurtenanceTypes";
+export {
+  buildBridgeAppurtenanceModels,
+  createDefaultAppurtenanceConfiguration,
+  setAppurtenanceFullLength,
+  stableAppurtenanceId,
+  validateBridgeAppurtenanceConfiguration,
+  withAppurtenanceSlotItem,
+  withAppurtenanceSlotPresence,
+} from "./appurtenanceModel";
+export {
+  HAUNCH_SHAPE_TYPES,
+  mainGirderKeyFromIndex,
+  type ApolloHaunchConfigurationDraft,
+  type ApolloHaunchGirderDraft,
+  type ApolloHaunchItemDraft,
+  type HaunchShapeType,
+  type RcDeckHaunchModel,
+} from "./haunchTypes";
+export {
+  applyHaunchExplicitNoneAll,
+  applyHaunchToAllGirders,
+  buildRcDeckHaunchModels,
+  createDefaultHaunchConfiguration,
+  createEmptyHaunchItemDraft,
+  expectedGirderKeys,
+  resetHaunchConfiguration,
+  resolveMainGirderRefId,
+  setHaunchFullLength,
+  stableHaunchId,
+  validateRcDeckHaunchConfiguration,
+  withHaunchGirderItem,
+  withHaunchGirderPresence,
+} from "./haunchModel";
 export {
   buildContinuousLayout,
   buildSimpleSingleLayout,

@@ -2,8 +2,15 @@
 
 import type { BridgeLayoutSpan, BridgeLayoutSupport, BridgeSystem } from "../contracts";
 import { BridgeSystem as BridgeSystemValues } from "../contracts";
+import type { ApolloAppurtenanceConfigurationDraft } from "./appurtenanceTypes";
+import type { ApolloHaunchConfigurationDraft } from "./haunchTypes";
 
-export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.0.0";
+/**
+ * Step 4-B bumps input draft to 1.1.0-development (DEC-S4-0014).
+ * Legacy 1.0.0 projects migrate with NOT_PROVIDED appurtenance/haunch presence.
+ */
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.1.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY = "1.0.0";
 
 export { BridgeSystem, type BridgeLayoutSpan, type BridgeLayoutSupport } from "../contracts";
 
@@ -34,9 +41,18 @@ export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = [
   "upperLateralBracingEnabled",
 ] as const;
 
+/** Object/array Step 4-B fields — never mixed into numeric field keys. */
+export const BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS = [
+  "appurtenanceConfiguration",
+  "haunchConfiguration",
+] as const;
+
 export type BridgeStructureBooleanInputKey = (typeof BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS)[number];
 
 export type BridgeStructureInputFieldKey = (typeof BRIDGE_STRUCTURE_INPUT_FIELD_KEYS)[number];
+
+export type BridgeStructureConfigurationFieldKey =
+  (typeof BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS)[number];
 
 export type BridgeStructureNumericFieldState = {
   readonly value: number | null;
@@ -74,6 +90,10 @@ export type ApolloBridgeStructureInputDraft = {
   readonly spans: readonly BridgeLayoutSpan[];
   /** C1: support stations; empty for legacy SIMPLE_SINGLE (derived). */
   readonly supports: readonly BridgeLayoutSupport[];
+  /** WF-03: per-slot presence + optional item. Migration → NOT_PROVIDED, empty items. */
+  readonly appurtenanceConfiguration: ApolloAppurtenanceConfigurationDraft;
+  /** WF-05: per-girder presence + optional item. Migration → empty girders (NOT_PROVIDED). */
+  readonly haunchConfiguration: ApolloHaunchConfigurationDraft;
   readonly generatedAt: string | null;
 };
 

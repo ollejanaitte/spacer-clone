@@ -5,6 +5,7 @@ import {
   BridgeSystem,
   buildContinuousLayout,
   buildSupportsFromSpans,
+  createEmptyBridgeStructureInputDraft,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   parseBridgeStructureInputDraft,
@@ -23,6 +24,7 @@ function baseContinuousFields(): Omit<
   ApolloBridgeStructureInputDraft,
   "schemaVersion" | "bridgeSystem" | "spans" | "supports" | "bridgeLength" | "spanLength" | "generatedAt"
 > {
+  const empty = createEmptyBridgeStructureInputDraft();
   return {
     width: 10.5,
     girderCount: 4,
@@ -41,6 +43,8 @@ function baseContinuousFields(): Omit<
     rcUnitWeight: null,
     lateralBracingEnabled: false,
     upperLateralBracingEnabled: false,
+    appurtenanceConfiguration: empty.appurtenanceConfiguration,
+    haunchConfiguration: empty.haunchConfiguration,
   };
 }
 
@@ -48,7 +52,7 @@ function buildContinuousInput(spanLengths: readonly number[]): ApolloBridgeStruc
   const layout = buildContinuousLayout(spanLengths);
   const bridgeLength = spanLengths.reduce((sum, length) => sum + length, 0);
   return {
-    schemaVersion: "1.0.0",
+    schemaVersion: "1.1.0-development",
     ...baseContinuousFields(),
     bridgeSystem: BridgeSystem.CONTINUOUS,
     bridgeLength,

@@ -3295,6 +3295,13 @@ function mapHaunchValue(
       "mainGirderRefId could not be converted to a domain UuidString.",
       issues,
     ),
+    ...(value.shapeType !== undefined ? { shapeType: value.shapeType } : {}),
+    ...(value.startStation !== undefined ? { startStation: value.startStation } : {}),
+    ...(value.endStation !== undefined ? { endStation: value.endStation } : {}),
+    ...(value.topWidth !== undefined ? { topWidth: value.topWidth } : {}),
+    ...(value.bottomWidth !== undefined ? { bottomWidth: value.bottomWidth } : {}),
+    ...(value.height !== undefined ? { height: value.height } : {}),
+    ...(value.materialRef !== undefined ? { materialRef: value.materialRef } : {}),
   };
 }
 

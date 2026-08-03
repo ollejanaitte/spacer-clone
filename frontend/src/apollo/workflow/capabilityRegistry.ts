@@ -43,10 +43,10 @@ export const WORKFLOW_CAPABILITIES: readonly WorkflowCapability[] = [
   {
     capabilityKey: "appurtenance-input",
     stepId: "WF-03",
-    status: "PLANNED",
+    status: "IMPLEMENTED",
     implementedInStep: "Step 4-B",
-    note: "床版・橋面付属物 (curb/railing/median)。Step 4-B 実装待ち。",
-    gatingGuard: "PENDING_FUTURE_STEP",
+    note: "床版・橋面付属物 (curb/railing/median)。presence と canonical input。3D/数量/荷重は Step 4-C。",
+    gatingGuard: "ACTIVE",
   },
   {
     capabilityKey: "section-input",
@@ -59,10 +59,10 @@ export const WORKFLOW_CAPABILITIES: readonly WorkflowCapability[] = [
   {
     capabilityKey: "haunch-input",
     stepId: "WF-05",
-    status: "PLANNED",
+    status: "IMPLEMENTED",
     implementedInStep: "Step 4-B",
-    note: "ハンチ canonical input。Step 4-B 実装待ち。haunches:[] は COMPLETE と解釈しない。",
-    gatingGuard: "PENDING_FUTURE_STEP",
+    note: "ハンチ canonical input。空 haunches:[] は COMPLETE と解釈しない（EXPLICIT_NONE と区別）。3D/数量は Step 4-C。",
+    gatingGuard: "ACTIVE",
   },
   {
     capabilityKey: "splice-input",

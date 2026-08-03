@@ -1,0 +1,11 @@
+{
+  "fixtureId": "HAUNCH-S4B-001",
+  "description": "All girders RECT via apply-all, full-length",
+  "girderCount": 4,
+  "shapeType": "RECT",
+  "startStation": 0,
+  "endStation": 40,
+  "topWidth": 0.4,
+  "bottomWidth": 0.4,
+  "height": 0.15
+}

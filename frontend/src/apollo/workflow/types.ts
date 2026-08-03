@@ -109,7 +109,8 @@ export type WorkflowDiagnosticCode =
   | "WF_NOT_AUTHORIZED"
   | "WF_LOCAL_CRS_WARNING"
   | "WF_PARTIAL_SCOPE_WARNING"
-  | "WF_3D_DIMENSION_PLANNED";
+  | "WF_3D_DIMENSION_PLANNED"
+  | "WF_STEP_4_C_INTEGRATION_PENDING";
 
 export type DiagnosticSeverity = "error" | "warning" | "info";
 
