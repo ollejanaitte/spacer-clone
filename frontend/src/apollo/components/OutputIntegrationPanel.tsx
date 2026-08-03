@@ -162,7 +162,7 @@ export function OutputIntegrationPanel({ project }: Props) {
         </button>
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-output-bundle-status">
-        BUNDLE_EXPORT: BLOCKED_INDIVIDUAL_DOWNLOADS_ONLY (no new zip dependency added)
+        BUNDLE_EXPORT: AVAILABLE via 構造一般図 panel (STORE ZIP, development-only)
       </p>
       {error ? (
         <p className="apollo-input-error" role="alert" data-testid="apollo-output-export-error">

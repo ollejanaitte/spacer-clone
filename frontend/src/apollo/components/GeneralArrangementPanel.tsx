@@ -13,6 +13,10 @@ import {
   downloadMemberScheduleJson,
   openDrawingSetPreview,
 } from "../drawing/drawingSetExport";
+import {
+  downloadArtifactBundleZip,
+  downloadMultiSheetDrawingSetHtml,
+} from "../drawing/artifactBundle";
 
 type Props = { readonly project: ProjectModel };
 
@@ -147,6 +151,24 @@ export function GeneralArrangementPanel({ project }: Props) {
           onClick={() => wrap(() => downloadMemberScheduleJson(project))}
         >
           部材表JSON
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-ga-export-multisheet"
+          disabled={model.stale || model.sheets.length === 0}
+          onClick={() => wrap(() => downloadMultiSheetDrawingSetHtml(project))}
+        >
+          図面一式HTML/PDF
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-ga-export-zip"
+          disabled={model.stale || model.sheets.length < 7}
+          onClick={() => wrap(() => downloadArtifactBundleZip(project))}
+        >
+          成果品ZIP
         </button>
       </div>
       {sheet ? (

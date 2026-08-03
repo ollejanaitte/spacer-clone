@@ -2,7 +2,7 @@
   "scenario": "E2E-STEP3A-001",
   "overall": "PASS",
   "warning": "DEVELOPMENT GENERAL ARRANGEMENT — NOT A DESIGN-APPROVED OR FABRICATION DRAWING — NOT FOR CONSTRUCTION",
-  "provenance": "stale: false / sheets: 7 / views: GENERAL_PLAN, GENERAL_ELEVATION, STANDARD_SECTION / girders: 4 / cb: 7 / checksum: dab75777d7bc830e… / sectionCk: 589812da3bcc…",
+  "provenance": "stale: false / sheets: 7 / views: GENERAL_PLAN, GENERAL_ELEVATION, STANDARD_SECTION / girders: 4 / cb: 7 / checksum: dab75777d7bc830e… / sectionCk: c7fc7342289c…",
   "sheetStatus": "G-01 構造一般図 / GENERAL ARRANGEMENT (1/7) paper=A3 landscape",
   "staleBlocked": true,
   "consoleErrors": [],
