@@ -51,6 +51,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "validationNavigator.test.ts",
   "visualizationBoundsBracing.test.ts",
   "visualizationBuilder.test.ts",
+  "WorkflowControlScreen.test.tsx",
   "workspace.test.ts",
 ] as const;
 
