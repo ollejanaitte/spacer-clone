@@ -1,0 +1,26 @@
+{
+  "$comment": "DRAFT_FOR_IMPLEMENTATION — not production-adopted; docs-only Step 4-P0",
+  "$id": "https://spacer-clone.local/draft/apollo/workflowState.schema.json",
+  "title": "WorkflowStateModelDraft",
+  "type": "object",
+  "required": ["schemaVersion", "steps", "authorizationSummary"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0-development" },
+    "workflowRevision": { "type": "string" },
+    "currentRecommendedStepId": { "type": ["string", "null"] },
+    "authorizationSummary": { "const": "NOT_GRANTED" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["workflowStepId", "status"],
+        "properties": {
+          "workflowStepId": { "type": "string" },
+          "status": { "type": "string" },
+          "badges": { "type": "array", "items": { "type": "string" } },
+          "nextRecommendedAction": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
