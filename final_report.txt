@@ -1,33 +1,29 @@
 ================================================================================
-Previous Phase Summary — Step 1 + Step 2 + Step 3-A (retained)
+Previous Phase Summary — Step 1/2 + Step 3-A/B (retained)
 ================================================================================
-STEP_1: COMPLETE (#289–#298)
-STEP_2: COMPLETE (#299–#307)
 STEP_3A: #308/#309 MERGED
+STEP_3B: #310/#311 MERGED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-B Report Finalize — Member Arrangement
+Apollo Step 3-C Development — Supports / Schedules / Member Table
 ================================================================================
-更新日時: 2026-08-03T09:10:00+09:00
-STEP_3B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/310
-STEP_3B_PRIMARY_PR_MERGE_SHA: 8ca031f04b5a9576344d3491466afe51a702dfd9
-STEP_3B_PRIMARY_PR_STATE: MERGED
+更新日時: 2026-08-03T09:15:00+09:00
+Step ID: APOLLO_STEP_3C_SUPPORTS_SCHEDULES
+START_MAIN_SHA: e529fc663d368e7e170e9b9cc7368dd76913dc1d
+branch: feat/apollo-step3c-supports-schedules
 
-Sheets: G-02, G-03, G-04
-STEP_3B_GIRDER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STEP_3B_CROSS_BEAM_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STEP_3B_SWAY_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STEP_3B_UPPER_LATERAL_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STEP_3B_LOWER_LATERAL_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STEP_3B_STIFFENER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
-STATION_GENERATOR_CONSISTENCY: PASS
-QUANTITY_DRAWING_CONSISTENCY: PASS
-UNDEFINED_SECTION_FAIL_CLOSED: PASS
-PRIMARY_PR_MERGED: YES
-REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/311
-STEP_3C_START_VERDICT: GO
+Sheets: G-05 bearing, G-06 girder elevation/section schedule, G-07 member schedule
+MemberScheduleModel derived from QuantityModel (no re-takeoff)
+CSV/JSON export; STALE rejected; no fabricated splice/camber; bearing NOT_SPECIFIED
+
+Tests: drawingSetModel 15 PASS; typecheck PASS
+GUI: G-01..G-07 navigation + schedule CSV/JSON buttons
+
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/312
+REPORT_PR: PENDING
+STEP_3D_START_VERDICT: PENDING
 FORMAL_OK_NG_EMITTED: NO
 ================================================================================

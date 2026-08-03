@@ -33,6 +33,12 @@ import {
   buildGirderCrossBeamArrangementView,
   buildStiffenerArrangementView,
 } from "./memberArrangementViews";
+import {
+  buildMainGirderElevationScheduleView,
+  buildMemberScheduleView,
+  buildSupportBearingPlanView,
+} from "./supportScheduleViews";
+import { buildMemberScheduleModel } from "./memberScheduleModel";
 
 export const DRAWING_SET_SCHEMA_VERSION = "1.0.0-development";
 
@@ -175,7 +181,9 @@ export type DrawingSetModel = {
     readonly deckThickness: number;
     readonly upperLateralBracingEnabled: boolean;
     readonly lowerLateralBracingEnabled: boolean;
+    readonly bearingCount: number;
   };
+  readonly memberScheduleChecksum: string;
 };
 
 function sheetChecksum(sheet: Omit<SheetModel, "checksum">): string {
@@ -691,14 +699,20 @@ export function buildGeneralArrangementDrawingSet(
     deckThickness: draft.deckThickness!,
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
     lowerLateralBracingEnabled: draft.lateralBracingEnabled,
+    bearingCount: draft.girderCount! * supportStations.length,
   };
 
   const plan = buildGeneralPlanView(layout);
   const elevation = buildGeneralElevationView(layout);
   const standardSectionView = buildStandardSectionViewFromDrawingModel(section);
-  const girderCbView = buildGirderCrossBeamArrangementView(layout);
-  const bracingView = buildBracingArrangementView(layout);
-  const stiffenerView = buildStiffenerArrangementView(layout);
+  const layoutWithBearings = layout;
+  const girderCbView = buildGirderCrossBeamArrangementView(layoutWithBearings);
+  const bracingView = buildBracingArrangementView(layoutWithBearings);
+  const stiffenerView = buildStiffenerArrangementView(layoutWithBearings);
+  const bearingView = buildSupportBearingPlanView(layoutWithBearings);
+  const girderElevView = buildMainGirderElevationScheduleView(layoutWithBearings);
+  const memberSchedule = buildMemberScheduleModel(project, { generatedAt });
+  const memberScheduleView = buildMemberScheduleView(memberSchedule);
 
   const warnings = [
     ...baseWarnings,
@@ -752,7 +766,7 @@ export function buildGeneralArrangementDrawingSet(
     return { ...body, checksum: sheetChecksum(body) };
   };
 
-  const totalSheets = 4;
+  const totalSheets = 7;
   const sheets: SheetModel[] = [
     makeSheet(
       "G-01",
@@ -822,15 +836,77 @@ export function buildGeneralArrangementDrawingSet(
       4,
       totalSheets,
     ),
+    makeSheet(
+      "G-05",
+      "支承配置図 / SUPPORT / BEARING ARRANGEMENT",
+      [bearingView],
+      [
+        {
+          tableId: "table-g05-bearing",
+          title: "支承",
+          headers: ["item", "value", "note"],
+          rows: [
+            ["count", String(layout.bearingCount), "girderCount × supportCount"],
+            ["type", "NOT_SPECIFIED", "generic symbol"],
+            ["size", "NOT_SPECIFIED", "not invented"],
+            ["fixed/movable", "NOT_SPECIFIED", "not invented"],
+          ],
+        },
+      ],
+      [...commonNotes, "bearing type/size/fixed-movable = NOT_SPECIFIED"],
+      5,
+      totalSheets,
+    ),
+    makeSheet(
+      "G-06",
+      "主桁側面構成図 / MAIN GIRDER ELEVATION / SECTION SCHEDULE",
+      [girderElevView],
+      [
+        {
+          tableId: "table-g06-section",
+          title: "断面スケジュール",
+          headers: ["START", "END", "SECTION"],
+          rows: [["0", String(layout.bridgeLength), "constant input section"]],
+        },
+      ],
+      [...commonNotes, "SPLICE LOCATIONS NOT PROVIDED", "CAMBER NOT PROVIDED"],
+      6,
+      totalSheets,
+    ),
+    makeSheet(
+      "G-07",
+      "部材表・数量表 / MEMBER SCHEDULE / QUANTITY SUMMARY",
+      [memberScheduleView],
+      [
+        {
+          tableId: "table-g07-schedule",
+          title: "部材表",
+          headers: ["memberId", "category", "count", "volume", "weight", "drawingRefs"],
+          rows: memberSchedule.rows.map((r) => [
+            r.memberId,
+            r.category,
+            String(r.count),
+            String(r.volume),
+            String(r.weight),
+            r.drawingRefs.join("|"),
+          ]),
+        },
+      ],
+      [...commonNotes, "Derived from QuantityModel — no independent re-takeoff"],
+      7,
+      totalSheets,
+    ),
   ];
 
   const qtyChecksum = modelChecksum(quantity);
   const rptChecksum = modelChecksum(report);
+  const memberScheduleChecksum = computeContentChecksum(memberSchedule).hexDigest;
   const resultChecksum = computeContentChecksum({
     inputChecksum,
     quantity: qtyChecksum,
     report: rptChecksum,
     section: drawingModelChecksum(section),
+    memberSchedule: memberScheduleChecksum,
     sheets: sheets.map((s) => s.checksum),
   }).hexDigest;
 
@@ -845,6 +921,7 @@ export function buildGeneralArrangementDrawingSet(
     quantityModelChecksum: qtyChecksum,
     reportModelChecksum: rptChecksum,
     standardSectionChecksum: drawingModelChecksum(section),
+    memberScheduleChecksum,
     generatedAt,
     developmentStatus: "UNVERIFIED_DEVELOPMENT_ONLY",
     authorizationStatus: "NOT_GRANTED",
@@ -872,7 +949,7 @@ export function buildGeneralArrangementDrawingSet(
     },
     stale,
     fabricationDrawing: false,
-    layout,
+    layout: layoutWithBearings,
   };
 }
 
@@ -936,7 +1013,9 @@ function emptyDrawingSet(
       deckThickness: 0,
       upperLateralBracingEnabled: false,
       lowerLateralBracingEnabled: false,
+      bearingCount: 0,
     },
+    memberScheduleChecksum: "BLOCKED",
   };
 }
 

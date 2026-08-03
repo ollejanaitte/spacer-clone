@@ -16,6 +16,13 @@ import {
 import { renderSheetDxf, renderSheetSvg } from "../drawing/drawingSetExport";
 import { buildStandardSectionDrawingModel, drawingModelChecksum } from "../drawing/drawingModel";
 import {
+  assertMemberScheduleExportable,
+  buildMemberScheduleModel,
+  memberScheduleToCsv,
+  memberScheduleToJson,
+} from "../drawing/memberScheduleModel";
+import { buildQuantityModel, findQuantityValue } from "../quantity/quantityModel";
+import {
   computeDeckOverhang,
   generateSimpleSupportStations,
   generateSpacingStations,
@@ -82,8 +89,16 @@ describe("drawingSetModel general arrangement", () => {
   it("schema and deterministic sheet/view order", () => {
     const model = buildGeneralArrangementDrawingSet(generated());
     expect(model.schemaVersion).toBe(DRAWING_SET_SCHEMA_VERSION);
-    expect(model.sheets).toHaveLength(4);
-    expect(model.sheets.map((s) => s.drawingNumber)).toEqual(["G-01", "G-02", "G-03", "G-04"]);
+    expect(model.sheets).toHaveLength(7);
+    expect(model.sheets.map((s) => s.drawingNumber)).toEqual([
+      "G-01",
+      "G-02",
+      "G-03",
+      "G-04",
+      "G-05",
+      "G-06",
+      "G-07",
+    ]);
     expect(model.sheets[0]!.views.map((v) => v.viewType)).toEqual([
       "GENERAL_PLAN",
       "GENERAL_ELEVATION",
@@ -92,6 +107,9 @@ describe("drawingSetModel general arrangement", () => {
     expect(model.sheets[1]!.views[0]!.viewType).toBe("FLOOR_SYSTEM_PLAN");
     expect(model.sheets[2]!.views[0]!.viewType).toBe("BRACING_LAYOUT");
     expect(model.sheets[3]!.views[0]!.viewType).toBe("STIFFENER_LAYOUT");
+    expect(model.sheets[4]!.views[0]!.viewType).toBe("SUPPORT_BEARING_PLAN");
+    expect(model.sheets[5]!.views[0]!.viewType).toBe("GIRDER_ELEVATION");
+    expect(model.sheets[6]!.views[0]!.viewType).toBe("MEMBER_SCHEDULE");
     expect(model.authorizationStatus).toBe("NOT_GRANTED");
     expect(model.fabricationDrawing).toBe(false);
     expect(model.coordinateSystem.datumNote).toContain("LOCAL DATUM");
@@ -128,8 +146,9 @@ describe("drawingSetModel general arrangement", () => {
 
   it("standard section reuse shares checksum and entity IDs", () => {
     const project = generated();
-    const section = buildStandardSectionDrawingModel(project);
-    const set = buildGeneralArrangementDrawingSet(project);
+    const generatedAt = "2026-08-03T00:00:00.000Z";
+    const section = buildStandardSectionDrawingModel(project, { generatedAt });
+    const set = buildGeneralArrangementDrawingSet(project, { generatedAt });
     expect(set.standardSectionChecksum).toBe(drawingModelChecksum(section));
     const secView = set.sheets[0]!.views.find((v) => v.viewType === "STANDARD_SECTION")!;
     expect(secView.entities.map((e) => e.entityId)).toEqual(section.entities.map((e) => e.entityId));
@@ -208,5 +227,34 @@ describe("drawingSetModel general arrangement", () => {
     );
     expect(g04.views[0]!.labels.some((l) => String(l.geometry.text).includes("NOT_DEFINED"))).toBe(true);
     expect(model.layout.stiffenerStations.length).toBeGreaterThan(0);
+  });
+
+  it("Step 3-C bearing count, no fabricated splice/camber, member schedule parity", () => {
+    const project = generatedGoldGa001();
+    const model = buildGeneralArrangementDrawingSet(project);
+    expect(model.layout.bearingCount).toBe(4 * 2);
+    const g05 = model.sheets.find((s) => s.drawingNumber === "G-05")!;
+    expect(g05.views[0]!.entities.filter((e) => e.layerId === "APOLLO_BEARING")).toHaveLength(8);
+    expect(g05.views[0]!.labels.some((l) => String(l.geometry.text).includes("NOT_SPECIFIED"))).toBe(true);
+    const g06 = model.sheets.find((s) => s.drawingNumber === "G-06")!;
+    expect(g06.views[0]!.labels.some((l) => String(l.geometry.text).includes("SPLICE LOCATIONS NOT PROVIDED"))).toBe(
+      true,
+    );
+    expect(g06.views[0]!.labels.some((l) => String(l.geometry.text).includes("CAMBER NOT PROVIDED"))).toBe(true);
+    expect(g06.notes.some((n) => n.includes("SPLICE"))).toBe(true);
+
+    const schedule = buildMemberScheduleModel(project);
+    const qty = buildQuantityModel(project);
+    expect(schedule.rows.find((r) => r.category === "CROSS_BEAM")!.count).toBe(findQuantityValue(qty, "QTY-XB-N"));
+    expect(schedule.rows.find((r) => r.category === "BEARING")!.count).toBe(8);
+    expect(schedule.rows.find((r) => r.category === "CROSS_BEAM")!.volume).toBe("NOT_AVAILABLE");
+    expect(schedule.rows.find((r) => r.category === "PAVEMENT_OPTIONAL")!.count).toBe("NOT_AVAILABLE");
+    const csv = memberScheduleToCsv(schedule);
+    expect(csv).toContain("memberId,category");
+    expect(csv).not.toMatch(/,0,0,0,/); // no zero-fill for unavailable length/volume/weight on XB
+    expect(memberScheduleToJson(schedule)).toContain("MEMBER_SCHEDULE_SCHEMA_VERSION".slice(0, 0) + "MS-MG");
+    expect(() => assertMemberScheduleExportable(schedule)).not.toThrow();
+    const stale = withBridgeStructureField(project, "width", 11);
+    expect(() => assertMemberScheduleExportable(buildMemberScheduleModel(stale))).toThrow(/STALE/);
   });
 });
