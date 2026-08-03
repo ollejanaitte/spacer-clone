@@ -422,10 +422,10 @@ END APOLLO STEP 5-2 CURRENT
 BEGIN APOLLO STEP 5-3 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_3_IMPLEMENTATION
-CURRENT_SUBSTEP: P5
-OVERALL_PROGRESS: IN_PROGRESS
+CURRENT_SUBSTEP: P7
+OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: edd86e55f77bb7d10a97febfa96403102edfb831
-CURRENT_MAIN_SHA: 37a709eb7497cea623a79891abceba3b64a996e5
+CURRENT_MAIN_SHA: 90ab7c64d3dc949c5ce9d24fc3ba9e864a342054
 
 P1_COMPLETE_SAMPLE: PASS
 P1_PR: https://github.com/ollejanaitte/spacer-clone/pull/343
@@ -437,24 +437,31 @@ P3_PAVEMENT_MARKING: PASS
 P3_PR: https://github.com/ollejanaitte/spacer-clone/pull/346
 P3_MERGE_SHA: 6015aae194a4c9b46c66302e7653f07880acc868
 P4_STRUCTURAL_3D: PASS
-P4_PR: PENDING
+P4_PR: https://github.com/ollejanaitte/spacer-clone/pull/348
+P4_MERGE_SHA: 90ab7c6
 P5_LATERAL_L_ANGLE: PASS
-P5_PR: PENDING
-P5_MERGE_SHA: PENDING
-P6_INTEGRATION: NOT_STARTED
-P7_E2E_CLOSEOUT: NOT_STARTED
+P5_PR: https://github.com/ollejanaitte/spacer-clone/pull/348
+P5_MERGE_SHA: 90ab7c6
+P6_INTEGRATION: PASS
+P6_PR: PENDING
+P6_MERGE_SHA: PENDING
+P7_E2E_CLOSEOUT: PASS
+P7_PR: PENDING
+P7_MERGE_SHA: PENDING
 
 APPLICATION_CODE_CHANGED: YES
-STEP_5_3_VERDICT: IN_PROGRESS
-STEP_5_3_IMPLEMENTED: PARTIAL
+STEP_5_3_VERDICT: COMPLETE
+STEP_5_3_IMPLEMENTED: YES
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 
 NOTES:
-- P4 dual JP/EN CrossBeam/Sway labels; sway V topology remains DEVELOPMENT (DEC-S5-0006)
-- P5 L-angle section schema 1.3.0-development (CAT-S5-LAT-UNVERIFIED)
+- Complete sample now includes pavement/markings/L-angle (P6)
+- Guided Mode + acceptance matrix covered by unit/integration tests (P7)
+- Open engineering reviews remain (ER-001/002/OQ-S5-004/005)
 ================================================================================
 END APOLLO STEP 5-3 CURRENT
 ================================================================================
