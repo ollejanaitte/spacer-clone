@@ -5,6 +5,6 @@ GEOMETRY_READY,Requires explicit generate,No auto tx,apply transaction decision,
 QUANTITY_READY,After generate; pavement NOT_AVAILABLE,Pavement qty missing,qty impact doc,P3+P6
 LOAD_READY,After generate; app/haunch only if PROVIDED,Sample leaves NOT_PROVIDED,integration spec,P1+P6
 ANALYSIS_READY,Simple-span hookup; continuous limited,Known 4-C limits,impact doc only unless needed,P6
-THREED_READY,After generate; no pavement/marking/laterals/haunch/app from sample,Complete preset + domains,P1+P3+P4+P5+P6
-EDITABLE,Detail yes; Guided paper-slide missing,Guided Mode,P2
+THREED_READY,After generate,no pavement/marking/laterals/haunch/app from sample,complete preset + domain specs,P1+P3+P4+P5+P6
+EDITABLE,Detail yes; Guided paper-slide missing,Guided Mode missing,guided IA/screen specs,P2
 DEVELOPMENT_ONLY,Disclaimer present,Must retain on all new UX,safety policy,P1+P7
