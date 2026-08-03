@@ -242,6 +242,10 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     context.groups.apolloDeck.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloDeck !== false;
     context.groups.apolloBearings.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloBearings !== false;
     context.groups.apolloMarkers.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloMarkers !== false;
+    context.groups.apolloAppurtenances.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloAppurtenances !== false;
+    context.groups.apolloHaunches.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false;
     context.groups.loads.visible = props.visibility.loads;
     context.groups.deformed.visible = props.visibility.deformedShape;
     context.groups.resultDiagrams.visible = true;
@@ -316,6 +320,10 @@ function safeRebuildModelScene(
     context.groups.apolloDeck.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloDeck !== false;
     context.groups.apolloBearings.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloBearings !== false;
     context.groups.apolloMarkers.visible = props.visibility.apolloSolidModel !== false && props.visibility.apolloMarkers !== false;
+    context.groups.apolloAppurtenances.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloAppurtenances !== false;
+    context.groups.apolloHaunches.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false;
     context.groups.loads.visible = props.visibility.loads;
     context.groups.deformed.visible = props.visibility.deformedShape;
     context.groups.resultDiagrams.visible = true;

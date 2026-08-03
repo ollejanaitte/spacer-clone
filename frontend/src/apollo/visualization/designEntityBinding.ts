@@ -14,6 +14,8 @@ export const APOLLO_DESIGN_ENTITY_KINDS = [
   "SwayBracing",
   "LateralBracing",
   "DeckAnchorage",
+  "Haunch",
+  "BridgeAppurtenance",
 ] as const satisfies readonly ApolloDesignEntityKind[];
 
 export const UNIMPLEMENTED_APOLLO_DESIGN_ENTITY_KINDS = [

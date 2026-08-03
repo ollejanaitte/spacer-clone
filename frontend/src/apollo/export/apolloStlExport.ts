@@ -14,7 +14,16 @@ const STL_MIME_TYPE = "model/stl";
 const MANIFEST_MIME_TYPE = "application/json";
 const STL_SEGMENTS = 24;
 const ZERO_AREA_EPSILON = 1e-6;
-const SUPPORTED_GROUPS = ["girders", "cross-beams", "bracings", "deck", "bearings", "markers"] as const;
+const SUPPORTED_GROUPS = [
+  "girders",
+  "cross-beams",
+  "bracings",
+  "deck",
+  "bearings",
+  "markers",
+  "appurtenances",
+  "rc-deck-haunches",
+] as const;
 
 export type ApolloStlExportOptions = {
   readonly includedGroups?: readonly ApolloVisualizationVisibilityGroup[];
@@ -26,6 +35,8 @@ export type ApolloStlExportOptions = {
   readonly includeBracing?: boolean;
   readonly includeCrossBeams?: boolean;
   readonly includeGirders?: boolean;
+  readonly includeAppurtenances?: boolean;
+  readonly includeHaunches?: boolean;
 };
 
 type ApolloJscadSerializedPart = string | ArrayBuffer | ArrayBufferView;
@@ -218,6 +229,8 @@ function resolveExportSolids(
   if (options.includeDeck !== false) toggledGroups.add("deck");
   if (options.includeBearings !== false) toggledGroups.add("bearings");
   if (options.includeMarkers === true) toggledGroups.add("markers");
+  if (options.includeAppurtenances !== false) toggledGroups.add("appurtenances");
+  if (options.includeHaunches !== false) toggledGroups.add("rc-deck-haunches");
 
   const requestedGroups = options.includedGroups ? new Set(options.includedGroups) : null;
   const includedGroups = SUPPORTED_GROUPS.filter((group) => toggledGroups.has(group) && (requestedGroups == null || requestedGroups.has(group)));
@@ -269,6 +282,9 @@ function buildGeometryForSolid(
       return buildBracingGeometry(solid, originShiftMm);
     }
     if (solid.kind === "stiffener") {
+      return buildBoxGeometry(solid, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height, originShiftMm);
+    }
+    if (solid.kind === "appurtenance" || solid.kind === "haunch") {
       return buildBoxGeometry(solid, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height, originShiftMm);
     }
   } catch (error) {
@@ -513,6 +529,8 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
   let deck = 0;
   let bearings = 0;
   let markers = 0;
+  let appurtenances = 0;
+  let haunches = 0;
   for (const solid of solids) {
     if (solid.kind === "girder") girders += 1;
     else if (solid.kind === "cross_beam") crossBeams += 1;
@@ -520,6 +538,8 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
     else if (solid.kind === "stiffener") stiffeners += 1;
     else if (solid.kind === "deck") deck += 1;
     else if (solid.kind === "bearing") bearings += 1;
+    else if (solid.kind === "appurtenance") appurtenances += 1;
+    else if (solid.kind === "haunch") haunches += 1;
     else markers += 1;
   }
   return {
@@ -531,6 +551,8 @@ function countEntities(solids: readonly ApolloSolidGeometryParameter[]): ApolloS
     deck,
     bearings,
     markers,
+    appurtenances,
+    haunches,
   };
 }
 

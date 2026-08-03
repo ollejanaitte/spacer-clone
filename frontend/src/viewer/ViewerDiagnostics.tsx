@@ -99,5 +99,7 @@ function formatVisibility(visibility: ViewerRuntimeDiagnostics["visibility"]): s
     `deck=${visibility.apolloDeck !== false}`,
     `bearings=${visibility.apolloBearings !== false}`,
     `markers=${visibility.apolloMarkers === true}`,
+    `appurtenances=${visibility.apolloAppurtenances !== false}`,
+    `haunches=${visibility.apolloHaunches !== false}`,
   ].join(", ");
 }

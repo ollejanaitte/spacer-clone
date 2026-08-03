@@ -30,6 +30,8 @@ const crossBeamMaterial = new THREE.MeshStandardMaterial({ color: "#8b7f6b", rou
 const bracingMaterial = new THREE.MeshStandardMaterial({ color: "#537188", roughness: 0.4 });
 const bearingMaterial = new THREE.MeshStandardMaterial({ color: "#5b4b3a", roughness: 0.55 });
 const markerMaterial = new THREE.MeshStandardMaterial({ color: "#4d6174", roughness: 0.5, transparent: true, opacity: 0.45 });
+const appurtenanceMaterial = new THREE.MeshStandardMaterial({ color: "#7a8f6a", roughness: 0.5 });
+const haunchMaterial = new THREE.MeshStandardMaterial({ color: "#b8a078", roughness: 0.55 });
 
 type ApolloSelectionRenderState = {
   readonly primarySelection: ViewerSelection;
@@ -207,7 +209,10 @@ export function renderApolloVisualizationLabels(
 export function renderApolloVisualizationSolids(
   model: ApolloVisualizationModel,
   selectionState: ApolloSelectionRenderState,
-): Record<"girders" | "crossBeams" | "bracings" | "deck" | "bearings" | "markers", THREE.Object3D[]> {
+): Record<
+  "girders" | "crossBeams" | "bracings" | "deck" | "bearings" | "markers" | "appurtenances" | "haunches",
+  THREE.Object3D[]
+> {
   const result = {
     girders: [] as THREE.Object3D[],
     crossBeams: [] as THREE.Object3D[],
@@ -215,6 +220,8 @@ export function renderApolloVisualizationSolids(
     deck: [] as THREE.Object3D[],
     bearings: [] as THREE.Object3D[],
     markers: [] as THREE.Object3D[],
+    appurtenances: [] as THREE.Object3D[],
+    haunches: [] as THREE.Object3D[],
   };
 
   for (const solid of model.solidGeometryParameters) {
@@ -232,6 +239,10 @@ export function renderApolloVisualizationSolids(
       result.deck.push(object);
     } else if (solid.kind === "bearing") {
       result.bearings.push(object);
+    } else if (solid.kind === "appurtenance") {
+      result.appurtenances.push(object);
+    } else if (solid.kind === "haunch") {
+      result.haunches.push(object);
     } else {
       result.markers.push(object);
     }
@@ -323,6 +334,12 @@ function renderApolloSolid(
   }
   if (solid.kind === "stiffener") {
     return renderBoxLikeSolid(solid, state, girderMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
+  }
+  if (solid.kind === "appurtenance") {
+    return renderBoxLikeSolid(solid, state, appurtenanceMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
+  }
+  if (solid.kind === "haunch") {
+    return renderBoxLikeSolid(solid, state, haunchMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
   }
   return renderBoxLikeSolid(solid, state, markerMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
 }

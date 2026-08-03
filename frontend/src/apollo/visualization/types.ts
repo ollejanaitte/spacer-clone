@@ -37,6 +37,8 @@ export type ApolloVisualizationVisibilityGroup =
   | "deck"
   | "bearings"
   | "markers"
+  | "appurtenances"
+  | "rc-deck-haunches"
   | "bridge-solids"
   | "validation"
   | "export-only";
@@ -158,7 +160,9 @@ export type ApolloDesignEntityKind =
   | "SwayBracing"
   | "LateralBracing"
   | "BraceMember"
-  | "DeckAnchorage";
+  | "DeckAnchorage"
+  | "Haunch"
+  | "BridgeAppurtenance";
 
 export type ApolloSolidGeometryParameter = {
   readonly id: string;
@@ -175,7 +179,9 @@ export type ApolloSolidGeometryParameter = {
     | "deck"
     | "bearing"
     | "pier_marker"
-    | "abutment_marker";
+    | "abutment_marker"
+    | "appurtenance"
+    | "haunch";
   readonly visibilityGroup: ApolloVisualizationVisibilityGroup;
   readonly exportable: boolean;
   readonly designEntityId?: string;

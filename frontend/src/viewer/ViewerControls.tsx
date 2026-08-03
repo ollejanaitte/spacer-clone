@@ -400,6 +400,16 @@ export function ViewerControls({
           <Toggle label="Deck" checked={visibility.apolloDeck !== false} onChange={(value) => setFlag("apolloDeck", value)} />
           <Toggle label="Bearings" checked={visibility.apolloBearings !== false} onChange={(value) => setFlag("apolloBearings", value)} />
           <Toggle label="Markers" checked={visibility.apolloMarkers !== false} onChange={(value) => setFlag("apolloMarkers", value)} />
+          <Toggle
+            label="Appurtenances"
+            checked={visibility.apolloAppurtenances !== false}
+            onChange={(value) => setFlag("apolloAppurtenances", value)}
+          />
+          <Toggle
+            label="Haunches"
+            checked={visibility.apolloHaunches !== false}
+            onChange={(value) => setFlag("apolloHaunches", value)}
+          />
         </div>
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.resultDiagrams}>

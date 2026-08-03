@@ -30,6 +30,8 @@ export function createSceneGroups(): SceneGroups {
     apolloDeck: new THREE.Group(),
     apolloBearings: new THREE.Group(),
     apolloMarkers: new THREE.Group(),
+    apolloAppurtenances: new THREE.Group(),
+    apolloHaunches: new THREE.Group(),
     loads: new THREE.Group(),
     resultDiagrams: new THREE.Group(),
     labels: new THREE.Group(),
@@ -44,6 +46,8 @@ export function createSceneGroups(): SceneGroups {
   groups.apolloDeck.name = "ApolloDeck";
   groups.apolloBearings.name = "ApolloBearings";
   groups.apolloMarkers.name = "ApolloMarkers";
+  groups.apolloAppurtenances.name = "ApolloAppurtenances";
+  groups.apolloHaunches.name = "ApolloHaunches";
   groups.loads.name = "Loads";
   groups.resultDiagrams.name = "ResultDiagrams";
   groups.labels.name = "Labels";
@@ -58,6 +62,8 @@ export function createSceneGroups(): SceneGroups {
     groups.apolloDeck,
     groups.apolloBearings,
     groups.apolloMarkers,
+    groups.apolloAppurtenances,
+    groups.apolloHaunches,
     groups.loads,
     groups.deformed,
     groups.resultDiagrams,
@@ -224,6 +230,18 @@ function rebuildApolloVisualizationScene(
   replaceGroupContents(
     groups.apolloMarkers,
     props.visibility.apolloSolidModel !== false && props.visibility.apolloMarkers !== false ? solidObjects.markers : [],
+  );
+  replaceGroupContents(
+    groups.apolloAppurtenances,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloAppurtenances !== false
+      ? solidObjects.appurtenances
+      : [],
+  );
+  replaceGroupContents(
+    groups.apolloHaunches,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false
+      ? solidObjects.haunches
+      : [],
   );
   replaceGroupContents(groups.loads, []);
   replaceGroupContents(groups.deformed, []);
