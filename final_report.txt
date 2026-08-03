@@ -5,25 +5,19 @@ STEP_3A: #308/#309 MERGED
 STEP_3B: #310/#311 MERGED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-C Development — Supports / Schedules / Member Table
+Apollo Step 3-C Report Finalize
 ================================================================================
-更新日時: 2026-08-03T09:15:00+09:00
-Step ID: APOLLO_STEP_3C_SUPPORTS_SCHEDULES
-START_MAIN_SHA: e529fc663d368e7e170e9b9cc7368dd76913dc1d
-branch: feat/apollo-step3c-supports-schedules
-
-Sheets: G-05 bearing, G-06 girder elevation/section schedule, G-07 member schedule
-MemberScheduleModel derived from QuantityModel (no re-takeoff)
-CSV/JSON export; STALE rejected; no fabricated splice/camber; bearing NOT_SPECIFIED
-
-Tests: drawingSetModel 15 PASS; typecheck PASS
-GUI: G-01..G-07 navigation + schedule CSV/JSON buttons
-
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/312
+更新日時: 2026-08-03T09:20:00+09:00
+STEP_3C_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/312
+STEP_3C_PRIMARY_PR_MERGE_SHA: 5a2417868b5044b58d47283f2e46b97ad0e34f9f
+STEP_3C_BEARING_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+BEARING_COUNT_CONSISTENCY: PASS
+MEMBER_SCHEDULE_VERDICT: PASS_DEVELOPMENT_ONLY
+NO_FABRICATED_SPLICE: PASS
+NO_FABRICATED_CAMBER: PASS
+CSV_JSON_EXPORT_VERDICT: PASS
 REPORT_PR: PENDING
-STEP_3D_START_VERDICT: PENDING
-FORMAL_OK_NG_EMITTED: NO
+STEP_3D_START_VERDICT: GO
 ================================================================================
