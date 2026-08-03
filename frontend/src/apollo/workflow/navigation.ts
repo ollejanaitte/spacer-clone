@@ -18,6 +18,8 @@ const PANEL_SELECTORS: Record<string, string> = {
   "wf-panel-drawing": '[data-testid="apollo-drawing-model-panel"]',
   "wf-panel-output": '[data-testid="apollo-output-integration-panel"]',
   "wf-panel-ga": '[data-testid="apollo-general-arrangement-panel"]',
+  /** Step 5 pavement panel (P3); falls back to bridge structure until panel ships. */
+  "wf-panel-pavement": '[data-testid="apollo-pavement-panel"], [data-testid="apollo-bridge-structure-panel"]',
 };
 
 export function resolveNavigationTarget(target: NavigationTarget): { readonly ok: boolean; readonly reason: string } {
