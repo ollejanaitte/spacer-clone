@@ -1,0 +1,8 @@
+case_id,requirement_ids,steps,expected,authority
+E2E-S5-001,REQ-S5-001;003;014,select simple sample apply+generate,3D ready + disclaimer labels,UNVERIFIED
+E2E-S5-002,REQ-S5-011;012,after sample generate,haunch + curb/railing solids present,UNVERIFIED
+E2E-S5-003,REQ-S5-004;005,toggle pavement/markings,pavement solid + markings visible; markings not in STL,UNVERIFIED
+E2E-S5-004,REQ-S5-006;007,Guided next/back + detail edit,same canonical value,UNVERIFIED
+E2E-S5-005,REQ-S5-002,edit sample field in Guided,persists after reload,UNVERIFIED
+E2E-S5-006,REQ-S5-009;010,inspect entity kinds,XB vs sway labeled; laterals L-angle when enabled,UNVERIFIED
+E2E-S5-007,REQ-S5-014,export/save UI,PROHIBITED/NOT_GRANTED visible,UNVERIFIED
