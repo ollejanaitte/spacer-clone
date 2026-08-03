@@ -112,10 +112,10 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     order: 7,
     prerequisites: ["WF-03", "WF-05", "WF-06"],
     capabilityKey: "load-confirmation",
-    supportedScope: "development loads; future appurtenance/haunch/splice loads pending",
-    navigationTarget: PANEL("wf-panel-analysis", "解析パネル（荷重確認）"),
+    supportedScope: "development dead loads for appurtenance/haunch (DEC-S4-0010); splice pending 4-D",
+    navigationTarget: PANEL("wf-panel-load-confirmation", "荷重確認パネル"),
     primaryActionId: "open-step",
-    completionCriterion: "荷重 input valid + 構造生成 current",
+    completionCriterion: "構造 current + load model READY/EMPTY（unit weight不足は INCOMPLETE）",
   },
   {
     workflowStepId: "WF-08",

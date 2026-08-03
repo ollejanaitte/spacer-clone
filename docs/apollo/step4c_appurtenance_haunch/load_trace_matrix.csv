@@ -1,0 +1,3 @@
+loadIdPattern,source,case,rule,formulaIds,notes
+load:appurtenance:*,BridgeAppurtenance,DEAD_APPURTENANCE,NEAREST or EQUAL,F-S4C-APP-*,slot-dependent
+load:haunch:*,RcDeckHaunch,DEAD_RC_HAUNCH,OWN_GIRDER,F-S4C-HAUNCH-*,100% to owning girder
