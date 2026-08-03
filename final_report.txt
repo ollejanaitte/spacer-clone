@@ -7,23 +7,19 @@ STEP_3C: #312/#313 MERGED
 STEP_3D: #314/#315 MERGED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
-DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-E Development — Final Product Integration
+Apollo Step 3-E Report Finalize
 ================================================================================
-更新日時: 2026-08-03T09:35:00+09:00
-Step ID: APOLLO_STEP_3E_FINAL_PRODUCT_INTEGRATION
-START_MAIN_SHA: 4bcb95c4112bc67edbb94ed82202bc45b5741c4a
-branch: feat/apollo-step3e-final-product-integration
-
-- Extended OutputIntegrationPanel with drawing set / schedule / ZIP / validate / checklist
-- Cross-artifact consistency (quantity/report/drawing/drawingSet/schedule)
-- User acceptance package under docs/apollo/step3_final_product/
-- E2E-STEP3-001 PASS
-
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/316
+更新日時: 2026-08-03T09:40:00+09:00
+STEP_3E_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/316
+STEP_3E_PRIMARY_PR_MERGE_SHA: 7722beb44e60e00bc89ea4ba5d0c3cf4da8eb529
+STEP_3E_FINAL_UI_VERDICT: PASS_DEVELOPMENT_ONLY
+FINAL_E2E_VERDICT: PASS
+CROSS_ARTIFACT_CONSISTENCY: PASS
+SAVE_RELOAD_VERDICT: PASS_GUI_PATH
+STALE_VERDICT: PASS
+USER_ACCEPTANCE_PACKAGE_VERDICT: PASS
 REPORT_PR: PENDING
-STEP_3_CLOSEOUT_READINESS: PENDING
-FORMAL_OK_NG_EMITTED: NO
+STEP_3_CLOSEOUT_READINESS: GO
 ================================================================================
