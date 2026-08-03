@@ -1,0 +1,16 @@
+domain,current_source,missing_model_or_field,editable_path,generation_dependency,step5_2_decision
+Road alignment,LINER project; WF-01 unbound,bridge bind,LINER editors,4-E pending,Whether sample embeds LINER stub
+Bridge basics,sampleInputs,none for basics,BridgeStructureInputPanel,generate,Numeric catalog provenance
+Main girders,sampleInputs,none,panel,BSDD,none
+Deck,sampleInputs,none,panel,BSDD,none
+Haunch,default NOT_PROVIDED,sample presence/items,RcDeckHaunchInputPanel,C1+C2 when PROVIDED,Default PROVIDED values
+Appurtenances,default NOT_PROVIDED,sample presence/items,DeckAppurtenanceInputPanel,C1+C2 when PROVIDED,Which slots
+Cross beam,spacing in sample,true section,panel,solids,Section policy
+Sway/cross frame,interval in sample,L vs cylinder; topology ER,panel,solids,Terminology + topology
+Upper/lower lateral,flags false,enable + L-angle,panel,solids when enabled,Enable + L params
+Pavement,MISSING,entire domain,TBD Guided/detail,new solids,Ownership + thickness fields
+Road markings,MISSING,entire domain,TBD,new viz/stl policy,STL policy
+Materials/weights,sample weights,provenance label,panel,qty/load,Keep UNVERIFIED
+Loads,derived after generate,sample load cases provenance,load panels,load model,Provenance decision
+3D settings,viewer flags,preset camera?,viewer,n/a,Optional
+Quantity/analysis prep,after generate,auto chain,panels,pipeline,Transaction depth

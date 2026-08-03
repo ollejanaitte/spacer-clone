@@ -1,0 +1,10 @@
+target_gate,current_status,gap,step5_2_need,step5_3_candidate
+PRESET_SELECTED,Partial (bridge draft only),Missing pavement markings app haunch laterals road bind,preset catalog + apply tx,P1
+INPUT_VALID,Partial after manual presence,WF-03/05 need decisions; pavement N/A,validation rules for complete sample,P1
+GEOMETRY_READY,Requires explicit generate,No auto tx,apply transaction decision,P1+P6
+QUANTITY_READY,After generate; pavement NOT_AVAILABLE,Pavement qty missing,qty impact doc,P3+P6
+LOAD_READY,After generate; app/haunch only if PROVIDED,Sample leaves NOT_PROVIDED,integration spec,P1+P6
+ANALYSIS_READY,Simple-span hookup; continuous limited,Known 4-C limits,impact doc only unless needed,P6
+THREED_READY,After generate; no pavement/marking/laterals/haunch/app from sample,Complete preset + domains,P1+P3+P4+P5+P6
+EDITABLE,Detail yes; Guided paper-slide missing,Guided Mode,P2
+DEVELOPMENT_ONLY,Disclaimer present,Must retain on all new UX,safety policy,P1+P7

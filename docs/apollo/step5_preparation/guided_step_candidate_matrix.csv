@@ -1,0 +1,16 @@
+slide_id,theme,wf_anchor,must_show,detail_escape,notes
+G01,project/sample,start,disclaimer+sample IDs,project list,REQ-S5-001/014
+G02,road alignment,WF-01,bind status / LINER link,LINER,may stay PLANNED until 4-E
+G03,road pavement/markings,new/WF road,pavement+marking inputs,new panels,REQ-S5-004/005
+G04,bridge basics,WF-02,span width system,BridgeStructureInputPanel,
+G05,main girders,WF-02,count spacing section,panel,
+G06,deck,WF-02/03,thickness,panel,
+G07,haunch,WF-05,presence+params,RcDeckHaunchInputPanel,REQ-S5-011
+G08,appurtenances,WF-03,slots presence,DeckAppurtenanceInputPanel,REQ-S5-012
+G09,cross beam/cross frame,WF-02,XB+sway,panel,REQ-S5-009
+G10,upper/lower lateral,WF-02,flags+future L params,panel,REQ-S5-010
+G11,loads,WF-07,dev loads summary,LoadConfirmation panel,
+G12,3D review,WF-12,visibility checklist,viewer,REQ-S5-008
+G13,quantity,WF-08,qty summary,Quantity panel,
+G14,analysis,WF-09,hookup status,analysis panel,
+G15,deliverables,WF-13-15,4-G pending messaging,output panels,OUT_OF_SCOPE impl until 4-G
