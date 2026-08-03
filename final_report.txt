@@ -27,7 +27,7 @@ STATION_GENERATOR_CONSISTENCY: PASS
 QUANTITY_DRAWING_CONSISTENCY: PASS
 UNDEFINED_SECTION_FAIL_CLOSED: PASS
 PRIMARY_PR_MERGED: YES
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/311
 STEP_3C_START_VERDICT: GO
 FORMAL_OK_NG_EMITTED: NO
 ================================================================================
