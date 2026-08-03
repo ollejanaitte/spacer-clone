@@ -1,0 +1,10 @@
+formulaId,entity,expression,units,notes
+F-S4C-APP-LENGTH,appurtenance,endStation-startStation,m,
+F-S4C-APP-RECT-AREA,appurtenance,width*height,m2,RECT only
+F-S4C-APP-VOLUME,appurtenance,area*length,m3,
+F-S4C-APP-TOTAL-WEIGHT,appurtenance,volume*unitWeight,kN,null unitWeight → NOT_AVAILABLE
+F-S4C-HAUNCH-LENGTH,haunch,endStation-startStation,m,
+F-S4C-HAUNCH-RECT-AREA,haunch,topWidth*height,m2,requires topWidth==bottomWidth
+F-S4C-HAUNCH-TRAP-AREA,haunch,(topWidth+bottomWidth)/2*height,m2,
+F-S4C-HAUNCH-VOLUME,haunch,area*length,m3,
+F-S4C-HAUNCH-TOTAL-WEIGHT,haunch,volume*rcUnitWeight,kN,null rcUnitWeight → NOT_AVAILABLE
