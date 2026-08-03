@@ -1,7 +1,9 @@
 # Step 5-1 Completion Gate
 
 **STEP_ID:** APOLLO_STEP_5_1_PREPARATION  
-**Evaluated against main:** `62366002ca70e1e7d0b22ae3b9ba255910e62759` (pre-S5-1D)  
+**Evaluated against main:** `2755ed875c5f780c8715590330e9b153c1503d69`
+
+**S5_1D_REPORT_MERGE_SHA:** `2755ed875c5f780c8715590330e9b153c1503d69`  
 **APPLICATION_CODE_CHANGED:** NO  
 
 ## Checklist

@@ -7,7 +7,7 @@
 | S5-1A Current state audit | #336 | `8843e4b12eadbbdaec5eac751836ef7d2546e46c` |
 | S5-1B Requirements/scope | #337 | `451e10aa021d7b483b31151305d1c0a0425bc188` |
 | S5-1C Design preparation | #338 | `62366002ca70e1e7d0b22ae3b9ba255910e62759` |
-| S5-1D Report finalize | PENDING | PENDING |
+| S5-1D Report finalize | #339 | `2755ed875c5f780c8715590330e9b153c1503d69` |
 | Seal | PENDING | PENDING |
 
 ## Key facts (not formal design conclusions)
