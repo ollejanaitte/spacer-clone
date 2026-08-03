@@ -273,7 +273,7 @@ C5_PRIMARY_PR_MERGE_SHA: 7cf1e12c6fd6685c7c8b824c1db31bdf562caf4f
 C6_WORKFLOW_E2E: PASS
 C6_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/333
 C6_PRIMARY_PR_MERGE_SHA: 35eea80df6abc96cd155bc3bd51c25ad25a2413a
-FINAL_REPORT_PR: PENDING
+FINAL_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/334
 FINAL_REPORT_PR_MERGE_SHA: PENDING
 SEAL_PR: PENDING
 
