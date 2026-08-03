@@ -1,53 +1,44 @@
 ================================================================================
-Previous Phase Summary — Step 1 + Step 2 (retained)
+Previous Phase Summary — Step 1 + Step 2 + Step 3-A (retained)
 ================================================================================
 STEP_1: COMPLETE (#289–#298)
-STEP_2A_VERDICT: COMPLETE (#299/#300)
-STEP_2B_VERDICT: COMPLETE (#301/#302)
-STEP_2C_VERDICT: COMPLETE (#303/#304)
-STEP_2D_VERDICT: COMPLETE (#305/#306)
-STEP_2_CLOSEOUT: #307 MERGED @ 483e0753fce22f18d78eae0a1221aa9fd85f54b2
+STEP_2: COMPLETE (#299–#307)
+STEP_3A_PRIMARY: #308 MERGED @ b37424543401d90e2bb6f131f79cf52e95b88b2f
+STEP_3A_REPORT: #309 MERGED @ db2347ec64d531f298489b4629b5780ef6222ea3
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-A Report Finalize — DrawingSetModel / General Arrangement
+Apollo Step 3-B Development — Member Arrangement Drawings
 ================================================================================
-更新日時: 2026-08-03T09:00:00+09:00
-Step ID: APOLLO_STEP_3A_GENERAL_ARRANGEMENT
+更新日時: 2026-08-03T09:05:00+09:00
+Step ID: APOLLO_STEP_3B_MEMBER_ARRANGEMENT
+START_MAIN_SHA: db2347ec64d531f298489b4629b5780ef6222ea3
+作業branch: feat/apollo-step3b-member-arrangement
 
-STEP_3A_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/308
-STEP_3A_PRIMARY_PR_MERGE_SHA: b37424543401d90e2bb6f131f79cf52e95b88b2f
-STEP_3A_PRIMARY_PR_STATE: MERGED
+Implementation:
+- G-02 主桁・横桁配置図 (FLOOR_SYSTEM_PLAN)
+- G-03 対傾構・横構配置図 (BRACING_LAYOUT) with upper/lower lateral states
+- G-04 補剛材配置図 (STIFFENER_LAYOUT)
+- Undefined section disclosures (fail-closed, no fabricated plate sizes)
+- Shared stationGenerator continuity with QuantityModel/3D
 
-DrawingSetModel: 1.0.0-development
-Sheets: G-01 構造一般図 (plan + elevation + standard section reuse)
-Formats: SVG / DXF / A3 HTML
-Paper: A3 landscape (A1 deferred)
-GOLD-GA-001: PASS (SHA256 c72e98336665011cd602dcbdbfcb16f9718779e0e2828b059389dfa2888f44f4)
-Tests: drawingSetModel PASS; Step2 regression PASS; typecheck PASS
-GUI E2E-STEP3A-001: PASS
-STALE guard: PASS
-STANDARD_SECTION_REUSE: PASS
+Tests: drawingSetModel 14 PASS; typecheck PASS
+GUI: panel sheet navigation G-01..G-04
 
-STEP_3A_DRAWING_SET_MODEL_VERDICT: PASS_DEVELOPMENT_ONLY
-GOLD_GA_001_PARITY: PASS
-GENERAL_PLAN_VERDICT: PASS_DEVELOPMENT_ONLY
-GENERAL_ELEVATION_VERDICT: PASS_DEVELOPMENT_ONLY
-STANDARD_SECTION_REUSE_VERDICT: PASS
-DIMENSION_CONSISTENCY: PASS
-ENTITY_ID_CONSISTENCY: PASS
-SVG_EXPORT_VERDICT: PASS
-DXF_EXPORT_VERDICT: PASS
-PDF_EXPORT_VERDICT: PASS_HTML_SHEET
-SAVE_RELOAD_VERDICT: PASS_GUI_PATH
-STALE_VERDICT: PASS
-GUI_VERDICT: PASS
-PRIMARY_PR_MERGED: YES
-REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/309
-STEP_3B_START_VERDICT: GO
+STEP_3B_GIRDER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STEP_3B_CROSS_BEAM_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STEP_3B_SWAY_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STEP_3B_UPPER_LATERAL_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STEP_3B_LOWER_LATERAL_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STEP_3B_STIFFENER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
+STATION_GENERATOR_CONSISTENCY: PASS
+QUANTITY_DRAWING_CONSISTENCY: PASS
+UNDEFINED_SECTION_FAIL_CLOSED: PASS
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/310
+REPORT_PR: PENDING
+STEP_3C_START_VERDICT: PENDING
 
 FORMAL_OK_NG_EMITTED: NO
-LOCAL_EQUALS_ORIGIN: PENDING_REPORT_MERGE
 ================================================================================

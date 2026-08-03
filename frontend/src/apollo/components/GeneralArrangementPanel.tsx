@@ -52,8 +52,8 @@ export function GeneralArrangementPanel({ project }: Props) {
     <article className="apollo-editor-card" data-testid="apollo-general-arrangement-panel">
       <div className="apollo-editor-card-header">
         <div>
-          <h2>構造一般図（開発プレビュー）</h2>
-          <p>DrawingSetModel G-01：平面図・側面図・標準断面（Step 2-C再利用）。</p>
+          <h2>構造一般図・配置図（開発プレビュー）</h2>
+          <p>DrawingSetModel G-01〜G-04：一般図＋主桁/横桁・対傾構/横構・補剛材配置。</p>
         </div>
       </div>
       <p className="apollo-input-error" role="status" data-testid="apollo-ga-development-warning">

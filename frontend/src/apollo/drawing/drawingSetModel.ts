@@ -28,6 +28,11 @@ import {
   generateSwayBracingStations,
   girderCenterOffsetsY,
 } from "./stationGenerator";
+import {
+  buildBracingArrangementView,
+  buildGirderCrossBeamArrangementView,
+  buildStiffenerArrangementView,
+} from "./memberArrangementViews";
 
 export const DRAWING_SET_SCHEMA_VERSION = "1.0.0-development";
 
@@ -691,6 +696,9 @@ export function buildGeneralArrangementDrawingSet(
   const plan = buildGeneralPlanView(layout);
   const elevation = buildGeneralElevationView(layout);
   const standardSectionView = buildStandardSectionViewFromDrawingModel(section);
+  const girderCbView = buildGirderCrossBeamArrangementView(layout);
+  const bracingView = buildBracingArrangementView(layout);
+  const stiffenerView = buildStiffenerArrangementView(layout);
 
   const warnings = [
     ...baseWarnings,
@@ -698,44 +706,123 @@ export function buildGeneralArrangementDrawingSet(
     ...(stiffener.ok ? [] : ["stiffener stations: NOT_PROVIDED"]),
     ...(sway.ok ? [] : ["sway bracing: NOT_PROVIDED"]),
     "bracing/stiffener geometry: SCHEMATIC / APPROXIMATE where section not defined",
+    "CROSS BEAM SECTION NOT DEFINED",
+    "STIFFENER PLATE SIZE NOT DEFINED",
+    "support stiffener: NOT_DEFINED (not auto-added)",
     "A3 landscape adopted (A1 deferred — HTML/PDF print path more stable on A3)",
   ];
 
-  const tables = [buildParticularsTable(layout, draft)];
-  const notes = [
+  const commonNotes = [
     "UNVERIFIED DEVELOPMENT OUTPUT",
     "NOT FOR DESIGN, FABRICATION OR CONSTRUCTION",
     "USER REVIEW REQUIRED",
     "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
-    "Standard section view reuses Step 2-C DrawingModel (same stable IDs / checksum).",
   ];
 
-  const sheetWithoutChecksum: Omit<SheetModel, "checksum"> = {
-    sheetId: "sheet-G-01",
-    drawingNumber: "G-01",
-    title: "構造一般図 / GENERAL ARRANGEMENT",
-    paperSize: "A3",
-    orientation: "landscape",
-    scale: "FIT",
-    sheetIndex: 1,
-    totalSheets: 1,
-    views: [plan, elevation, standardSectionView],
-    tables,
-    notes,
-    titleBlock: {
-      title: "構造一般図 / GENERAL ARRANGEMENT",
-      subtitle: "DEVELOPMENT PREVIEW",
-      warning: "NOT A DESIGN-APPROVED OR FABRICATION DRAWING — NOT FOR CONSTRUCTION",
-      drawingNumber: "G-01",
-      revision: inputRevision,
-      inputChecksum,
-    },
+  const makeSheet = (
+    drawingNumber: string,
+    title: string,
+    views: readonly ViewModel[],
+    tables: readonly SheetTable[],
+    notes: readonly string[],
+    sheetIndex: number,
+    totalSheets: number,
+  ): SheetModel => {
+    const body: Omit<SheetModel, "checksum"> = {
+      sheetId: `sheet-${drawingNumber}`,
+      drawingNumber,
+      title,
+      paperSize: "A3",
+      orientation: "landscape",
+      scale: "FIT",
+      sheetIndex,
+      totalSheets,
+      views,
+      tables,
+      notes,
+      titleBlock: {
+        title,
+        subtitle: "DEVELOPMENT PREVIEW",
+        warning: "NOT A DESIGN-APPROVED OR FABRICATION DRAWING — NOT FOR CONSTRUCTION",
+        drawingNumber,
+        revision: inputRevision,
+        inputChecksum,
+      },
+    };
+    return { ...body, checksum: sheetChecksum(body) };
   };
 
-  const sheet: SheetModel = {
-    ...sheetWithoutChecksum,
-    checksum: sheetChecksum(sheetWithoutChecksum),
-  };
+  const totalSheets = 4;
+  const sheets: SheetModel[] = [
+    makeSheet(
+      "G-01",
+      "構造一般図 / GENERAL ARRANGEMENT",
+      [plan, elevation, standardSectionView],
+      [buildParticularsTable(layout, draft)],
+      [...commonNotes, "Standard section view reuses Step 2-C DrawingModel."],
+      1,
+      totalSheets,
+    ),
+    makeSheet(
+      "G-02",
+      "主桁・横桁配置図 / MAIN GIRDER / CROSS BEAM ARRANGEMENT",
+      [girderCbView],
+      [
+        {
+          tableId: "table-g02-counts",
+          title: "部材数",
+          headers: ["category", "count", "note"],
+          rows: [
+            ["MAIN_GIRDER", String(layout.girderCount), "G1..Gn"],
+            ["CROSS_BEAM", String(layout.crossBeamStations.length), "CROSS BEAM SECTION NOT DEFINED"],
+          ],
+        },
+      ],
+      [...commonNotes, "CROSS BEAM SECTION NOT DEFINED"],
+      2,
+      totalSheets,
+    ),
+    makeSheet(
+      "G-03",
+      "対傾構・横構配置図 / SWAY / LATERAL BRACING ARRANGEMENT",
+      [bracingView],
+      [
+        {
+          tableId: "table-g03-bracing",
+          title: "横構状態",
+          headers: ["item", "status", "count"],
+          rows: [
+            ["SWAY_BRACING", sway.ok ? "SCHEMATIC" : "NOT_PROVIDED", String(layout.swayStations.length)],
+            ["UPPER_LATERAL", layout.upperLateralBracingEnabled ? "ENABLED_SCHEMATIC" : "DISABLED", layout.upperLateralBracingEnabled ? "schematic" : "0"],
+            ["LOWER_LATERAL", layout.lowerLateralBracingEnabled ? "ENABLED_SCHEMATIC" : "DISABLED", layout.lowerLateralBracingEnabled ? "schematic" : "0"],
+          ],
+        },
+      ],
+      [...commonNotes, "BRACING SECTION NOT DEFINED — SCHEMATIC only"],
+      3,
+      totalSheets,
+    ),
+    makeSheet(
+      "G-04",
+      "補剛材配置図 / STIFFENER ARRANGEMENT",
+      [stiffenerView],
+      [
+        {
+          tableId: "table-g04-stiff",
+          title: "補剛材",
+          headers: ["item", "value", "note"],
+          rows: [
+            ["stations", String(layout.stiffenerStations.length), stiffener.ok ? "per girder line" : "NOT_PROVIDED"],
+            ["plate size", "NOT_DEFINED", "STIFFENER PLATE SIZE NOT DEFINED"],
+            ["support stiffener", "NOT_DEFINED", "not auto-added"],
+          ],
+        },
+      ],
+      [...commonNotes, "STIFFENER PLATE SIZE NOT DEFINED"],
+      4,
+      totalSheets,
+    ),
+  ];
 
   const qtyChecksum = modelChecksum(quantity);
   const rptChecksum = modelChecksum(report);
@@ -744,12 +831,12 @@ export function buildGeneralArrangementDrawingSet(
     quantity: qtyChecksum,
     report: rptChecksum,
     section: drawingModelChecksum(section),
-    sheet: sheet.checksum,
+    sheets: sheets.map((s) => s.checksum),
   }).hexDigest;
 
   return {
     schemaVersion: DRAWING_SET_SCHEMA_VERSION,
-    drawingSetId: `dset-ga-${project.project.id}-${inputChecksum.slice(0, 12)}`,
+    drawingSetId: `dset-dev-${project.project.id}-${inputChecksum.slice(0, 12)}`,
     projectId: project.project.id,
     inputRevision,
     inputChecksum,
@@ -777,7 +864,7 @@ export function buildGeneralArrangementDrawingSet(
       developmentWatermark: "UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR CONSTRUCTION",
     },
     titleBlockTemplate: "APOLLO_DEVELOPMENT_A3",
-    sheets: [sheet],
+    sheets,
     warnings,
     audit: {
       paperChoiceReason: "A3 landscape chosen for PDF/HTML stability; A1 deferred",
