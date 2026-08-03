@@ -1,0 +1,15 @@
+requirement_id,design_doc,primary_code,secondary_code,automated_test,package
+REQ-S5-001,02_complete_sample_preset_spec.md,bridgeStructure/sampleInputs.ts,components/BridgeStructureInputPanel.tsx,simpleSingleSpanSample.test.ts;step5p6p7IntegrationCloseout.test.ts,P1+P6
+REQ-S5-002,04_sample_apply_transaction.md;08_guided_detail_data_ownership.md,sampleInputs.ts,guided/GuidedModeShell.tsx,guidedMode.test.tsx,P1+P2
+REQ-S5-003,04_sample_apply_transaction.md;16_sample_generation_pipeline.md,sampleInputs.applyAndGenerate*,generateBsdd.ts;visualization/builder.ts,simpleSingleSpanSample.test.ts,P1+P6
+REQ-S5-004,09_pavement_domain_model.md,bridgeStructure/pavementModel.ts;pavementGeometry.ts,visualization/pavementMarkingSolids.ts;quantity/pavementQuantity.ts,step5p3PavementMarkings.test.ts,P3
+REQ-S5-005,10_road_marking_domain_model.md;19_stl_and_visualization_policy.md,pavementMarkingSolids.ts exportable=false,export/apolloStlExport.ts,step5p3;step5p6p7,P3
+REQ-S5-006,05-07 guided specs,guided/slides.ts;GuidedModeShell.tsx,guided/chrome.ts,guidedMode.test.tsx;step5p6p7 P7,P2
+REQ-S5-007,08_guided_detail_data_ownership.md,GuidedModeShell detail escape,workflow/navigation.ts,guidedMode.test.tsx,P2
+REQ-S5-008,11_structural_3d_correction_spec.md,visualization/bridgeStructureSolids.ts assumptions,step5_preparation component_source_trace,step5p4p5TopologyLAngle.test.ts,P4
+REQ-S5-009,12_cross_beam_cross_frame_spec.md,bridgeStructureSolids displayLabel dual labels,BSDD kinds CrossBeam/Sway unchanged,step5p4p5;bridgeStructureVisualization.test.ts,P4
+REQ-S5-010,13_lateral_bracing_angle_section_spec.md,lateralAngleTypes.ts;lateralAngleModel.ts,viewer/renderers/ApolloVisualizationRenderer.ts L-plates,step5p4p5TopologyLAngle.test.ts,P5
+REQ-S5-011,14_haunch_appurtenance_integration_spec.md,sampleInputs haunchConfiguration,visualization/appurtenanceHaunchSolids.ts,simpleSingleSpanSample;step5p6p7,P1+P6
+REQ-S5-012,14_haunch_appurtenance_integration_spec.md,sampleInputs appurtenances curb/railing,appurtenanceHaunchSolids.ts,simpleSingleSpanSample;step5p6p7,P1+P6
+REQ-S5-013,15_coordinate_datum_and_local_axes.md,solid localFrame;stable entity IDs,generateBsdd checksum,viz ID stability tests,P4
+REQ-S5-014,01_step5_overview.md;02 preset,sampleInputs SAMPLE disclaimer,UI safety copy,step5p6p7 E2E-S5-007,P1+P7
