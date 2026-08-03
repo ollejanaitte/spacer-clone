@@ -39,6 +39,8 @@ export type ApolloVisualizationVisibilityGroup =
   | "markers"
   | "appurtenances"
   | "rc-deck-haunches"
+  | "pavement"
+  | "road-markings"
   | "bridge-solids"
   | "validation"
   | "export-only";
@@ -181,7 +183,9 @@ export type ApolloSolidGeometryParameter = {
     | "pier_marker"
     | "abutment_marker"
     | "appurtenance"
-    | "haunch";
+    | "haunch"
+    | "pavement"
+    | "road_marking";
   readonly visibilityGroup: ApolloVisualizationVisibilityGroup;
   readonly exportable: boolean;
   readonly designEntityId?: string;

@@ -189,6 +189,7 @@ describe("apollo sway / upper / lower lateral bracing geometry", () => {
   it("preserves legacy lower-only meaning of lateralBracingEnabled", () => {
     let project = applyContinuousGirderSampleInput(createApollo200mContinuousBridgeSample());
     project = withBridgeStructureBooleanField(project, "lateralBracingEnabled", true);
+    project = withBridgeStructureBooleanField(project, "upperLateralBracingEnabled", false);
     project = withBridgeStructureField(project, "swayBracingInterval", null);
     const generated = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
     expect(generated.ok).toBe(true);

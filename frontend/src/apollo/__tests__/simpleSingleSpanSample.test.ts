@@ -35,7 +35,7 @@ describe("simple single-span complete sample input (Step 5-3 P1)", () => {
     expect(draft.lateralBracingEnabled).toBe(true);
     expect(draft.upperLateralBracingEnabled).toBe(true);
     expect(draft.generatedAt).toBeNull();
-    expect(draft.schemaVersion).toBe("1.1.0-development");
+    expect(draft.schemaVersion).toBe("1.2.0-development");
 
     const curbLeft = draft.appurtenanceConfiguration.slots.find((s) => s.slot === "LEFT_CURB");
     expect(curbLeft?.presence).toBe(PRESENCE_STATUS.PROVIDED);
@@ -86,7 +86,7 @@ describe("simple single-span complete sample input (Step 5-3 P1)", () => {
   it("exposes the sample values through the sample input constant", () => {
     expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.spanLength).toBe(30.0);
     expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.bridgeLength).toBe(30.0);
-    expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.schemaVersion).toBe("1.1.0-development");
+    expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.schemaVersion).toBe("1.2.0-development");
     expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.lateralBracingEnabled).toBe(true);
   });
 });

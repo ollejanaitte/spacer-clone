@@ -12,6 +12,7 @@ export {
   hasBridgeStructureVisualizationSource,
 } from "./bridgeStructureSolids";
 export { buildAppurtenanceAndHaunchSolids } from "./appurtenanceHaunchSolids";
+export { buildPavementAndMarkingSolids } from "./pavementMarkingSolids";
 export {
   APOLLO_VISUALIZATION_CONTRACT_VERSION,
   APOLLO_VISUALIZATION_SCHEMA_VERSION,

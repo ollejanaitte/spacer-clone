@@ -8,6 +8,8 @@ export {
   withBridgeStructureField,
   withBridgeStructureInputDraft,
   withHaunchConfiguration,
+  withPavementConfiguration,
+  withRoadMarkingsConfiguration,
 } from "./generateBsdd";
 export {
   buildApolloBsddFingerprintPayload,
@@ -34,6 +36,7 @@ export {
   BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
   type ApolloBridgeStructureInputDraft,
   type BridgeStructureApproximateQuantity,
   type BridgeStructureBooleanInputKey,
@@ -102,6 +105,34 @@ export {
   withHaunchGirderItem,
   withHaunchGirderPresence,
 } from "./haunchModel";
+export {
+  DEFAULT_PAVEMENT_UNIT_WEIGHT_KN_M3,
+  ROAD_MARKING_DASH_PATTERNS,
+  ROAD_MARKING_KINDS,
+  type ApolloPavementConfigurationDraft,
+  type ApolloPavementItemDraft,
+  type ApolloRoadMarkingDraft,
+  type ApolloRoadMarkingsConfigurationDraft,
+  type PavementDiagnostic,
+  type RoadMarkingDashPattern,
+  type RoadMarkingKind,
+} from "./pavementTypes";
+export {
+  createDefaultPavementConfiguration,
+  createDefaultRoadMarkingsConfiguration,
+  createEmptyPavementItem,
+  parsePavementConfiguration,
+  parseRoadMarkingsConfiguration,
+  validatePavementConfiguration,
+  withPavementItem,
+  withPavementPresence,
+} from "./pavementModel";
+export {
+  derivePavementGeometry,
+  deriveRoadMarkingGeometries,
+  type PavementGeometry,
+  type RoadMarkingGeometry,
+} from "./pavementGeometry";
 export {
   GEOMETRY_FORMULA_IDS,
   deriveLengthMeters,

@@ -15,6 +15,7 @@ import {
   collectDesignEntityBindingWarnings,
 } from "./designEntityBinding";
 import { buildAppurtenanceAndHaunchSolids } from "./appurtenanceHaunchSolids";
+import { buildPavementAndMarkingSolids } from "./pavementMarkingSolids";
 import type { ApolloDesignEntityKind } from "./types";
 import type {
   ApolloSolidGeometryParameter,
@@ -773,6 +774,7 @@ export function buildBridgeStructureSolidGeometryParameters(
   warnings.push(...collectDesignEntityBindingWarnings(document, solids));
 
   solids.push(...buildAppurtenanceAndHaunchSolids(project, warnings, assumptions));
+  solids.push(...buildPavementAndMarkingSolids(project, warnings, assumptions));
 
   return solids.sort((left, right) => left.id.localeCompare(right.id));
 }

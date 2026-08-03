@@ -29,6 +29,7 @@ import { ApolloNumericInput } from "./components/ApolloNumericInput";
 import { BridgeStructureInputPanel } from "./components/BridgeStructureInputPanel";
 import { DeckAppurtenanceInputPanel } from "./components/DeckAppurtenanceInputPanel";
 import { RcDeckHaunchInputPanel } from "./components/RcDeckHaunchInputPanel";
+import { PavementMarkingInputPanel } from "./components/PavementMarkingInputPanel";
 import { AnalysisDevelopmentProbePanel } from "./components/AnalysisDevelopmentProbePanel";
 import { AppurtenanceHaunchAnalysisPanel } from "./components/AppurtenanceHaunchAnalysisPanel";
 import { DemandCheckDevelopmentPanel } from "./components/DemandCheckDevelopmentPanel";
@@ -2455,6 +2456,11 @@ export function ApolloPhase1Shell({
                 onPrimaryAction={handleWorkflowPrimaryAction}
               />
               <BridgeStructureInputPanel
+                project={project}
+                onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                onAuditEvent={onAuditEvent}
+              />
+              <PavementMarkingInputPanel
                 project={project}
                 onProjectChange={(nextProject) => onProjectChange(nextProject)}
                 onAuditEvent={onAuditEvent}
