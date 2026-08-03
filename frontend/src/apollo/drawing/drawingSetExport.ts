@@ -267,12 +267,25 @@ function primarySheet(model: DrawingSetModel): SheetModel {
   return sheet;
 }
 
+function sheetFileStem(sheet: SheetModel): string {
+  const map: Record<string, string> = {
+    "G-01": "general_arrangement",
+    "G-02": "girder_crossbeam",
+    "G-03": "bracing",
+    "G-04": "stiffener",
+    "G-05": "support_bearing",
+    "G-06": "girder_elevation",
+    "G-07": "member_schedule",
+  };
+  return map[sheet.drawingNumber] ?? sheet.drawingNumber.toLowerCase().replaceAll("-", "_");
+}
+
 export function downloadDrawingSetSheetSvg(model: DrawingSetModel, drawingNumber?: string): void {
   const sheet = drawingNumber
     ? model.sheets.find((s) => s.drawingNumber === drawingNumber) ?? primarySheet(model)
     : primarySheet(model);
   downloadTextFile(
-    `${sheet.drawingNumber}_general_arrangement.svg`,
+    `${sheet.drawingNumber}_${sheetFileStem(sheet)}.svg`,
     renderSheetSvg(model, sheet),
     "image/svg+xml;charset=utf-8",
   );
@@ -283,7 +296,7 @@ export function downloadDrawingSetSheetDxf(model: DrawingSetModel, drawingNumber
     ? model.sheets.find((s) => s.drawingNumber === drawingNumber) ?? primarySheet(model)
     : primarySheet(model);
   downloadTextFile(
-    `${sheet.drawingNumber}_general_arrangement.dxf`,
+    `${sheet.drawingNumber}_${sheetFileStem(sheet)}.dxf`,
     renderSheetDxf(model, sheet),
     "application/dxf;charset=utf-8",
   );
@@ -294,7 +307,7 @@ export function downloadDrawingSetSheetPdfHtml(model: DrawingSetModel, drawingNu
     ? model.sheets.find((s) => s.drawingNumber === drawingNumber) ?? primarySheet(model)
     : primarySheet(model);
   downloadTextFile(
-    `${sheet.drawingNumber}_general_arrangement.html`,
+    `${sheet.drawingNumber}_${sheetFileStem(sheet)}.html`,
     renderSheetPdfHtml(model, sheet),
     "text/html;charset=utf-8",
   );

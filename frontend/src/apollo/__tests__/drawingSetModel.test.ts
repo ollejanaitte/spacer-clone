@@ -82,13 +82,16 @@ describe("drawingSetModel general arrangement", () => {
   it("schema and deterministic sheet/view order", () => {
     const model = buildGeneralArrangementDrawingSet(generated());
     expect(model.schemaVersion).toBe(DRAWING_SET_SCHEMA_VERSION);
-    expect(model.sheets).toHaveLength(1);
-    expect(model.sheets[0]!.drawingNumber).toBe("G-01");
+    expect(model.sheets).toHaveLength(4);
+    expect(model.sheets.map((s) => s.drawingNumber)).toEqual(["G-01", "G-02", "G-03", "G-04"]);
     expect(model.sheets[0]!.views.map((v) => v.viewType)).toEqual([
       "GENERAL_PLAN",
       "GENERAL_ELEVATION",
       "STANDARD_SECTION",
     ]);
+    expect(model.sheets[1]!.views[0]!.viewType).toBe("FLOOR_SYSTEM_PLAN");
+    expect(model.sheets[2]!.views[0]!.viewType).toBe("BRACING_LAYOUT");
+    expect(model.sheets[3]!.views[0]!.viewType).toBe("STIFFENER_LAYOUT");
     expect(model.authorizationStatus).toBe("NOT_GRANTED");
     expect(model.fabricationDrawing).toBe(false);
     expect(model.coordinateSystem.datumNote).toContain("LOCAL DATUM");
@@ -175,5 +178,35 @@ describe("drawingSetModel general arrangement", () => {
     const model = buildGeneralArrangementDrawingSet(project);
     // QuantityModel: floor(30/5)+1 = 7
     expect(model.layout.crossBeamStations).toHaveLength(7);
+  });
+
+  it("Step 3-B member arrangement disclosures and lateral states", () => {
+    let project = withBridgeStructureInputDraft(createDefaultProject(), () => ({
+      ...SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+      lateralBracingEnabled: true,
+      upperLateralBracingEnabled: true,
+      generatedAt: null,
+    }));
+    const g = generateBridgeStructureFromInput(project, getBridgeStructureInputDraft(project));
+    if (!g.ok) throw new Error(g.diagnostics.join("; "));
+    project = g.project;
+    const model = buildGeneralArrangementDrawingSet(project);
+    const g02 = model.sheets.find((s) => s.drawingNumber === "G-02")!;
+    expect(g02.notes.some((n) => n.includes("CROSS BEAM SECTION NOT DEFINED"))).toBe(true);
+    expect(g02.views[0]!.labels.some((l) => String(l.geometry.text).includes("CROSS BEAM SECTION NOT DEFINED"))).toBe(
+      true,
+    );
+    const g03 = model.sheets.find((s) => s.drawingNumber === "G-03")!;
+    expect(model.layout.upperLateralBracingEnabled).toBe(true);
+    expect(model.layout.lowerLateralBracingEnabled).toBe(true);
+    expect(g03.views[0]!.entities.some((e) => e.metadata?.kind === "UPPER_LATERAL")).toBe(true);
+    expect(g03.views[0]!.entities.some((e) => e.metadata?.kind === "LOWER_LATERAL")).toBe(true);
+    expect(g03.views[0]!.entities.some((e) => e.entityId.startsWith("g03-sway-v"))).toBe(true);
+    const g04 = model.sheets.find((s) => s.drawingNumber === "G-04")!;
+    expect(g04.views[0]!.labels.some((l) => String(l.geometry.text).includes("STIFFENER PLATE SIZE NOT DEFINED"))).toBe(
+      true,
+    );
+    expect(g04.views[0]!.labels.some((l) => String(l.geometry.text).includes("NOT_DEFINED"))).toBe(true);
+    expect(model.layout.stiffenerStations.length).toBeGreaterThan(0);
   });
 });
