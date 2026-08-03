@@ -314,15 +314,15 @@ END APOLLO STEP 4-C CURRENT
 BEGIN APOLLO STEP 5-1 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_1_PREPARATION
-CURRENT_SUBSTEP: S5-1A
-OVERALL_PROGRESS: S5-1A_IN_PROGRESS
+CURRENT_SUBSTEP: S5-1B
+OVERALL_PROGRESS: S5-1B_IN_PROGRESS
 START_MAIN_SHA: ad4906ab76f167d8ba9313abcaf41440b72234f7
-CURRENT_MAIN_SHA: ad4906ab76f167d8ba9313abcaf41440b72234f7
+CURRENT_MAIN_SHA: 8843e4b12eadbbdaec5eac751836ef7d2546e46c
 
 S5_1A_CURRENT_STATE_AUDIT: PASS
 S5_1A_PR: https://github.com/ollejanaitte/spacer-clone/pull/336
-S5_1A_MERGE_SHA: PENDING
-S5_1B_SCOPE_REQUIREMENTS: NOT_STARTED
+S5_1A_MERGE_SHA: 8843e4b12eadbbdaec5eac751836ef7d2546e46c
+S5_1B_SCOPE_REQUIREMENTS: PASS
 S5_1B_PR: PENDING
 S5_1B_MERGE_SHA: PENDING
 S5_1C_DESIGN_PREPARATION: NOT_STARTED
@@ -347,8 +347,8 @@ LOWER_LATERAL_AUDIT_VERDICT: PASS
 HAUNCH_AUDIT_VERDICT: PASS
 APPURTENANCE_AUDIT_VERDICT: PASS
 COORDINATE_DATUM_AUDIT_VERDICT: PASS
-USER_REQUIREMENTS_VERDICT: NOT_STARTED
-SCOPE_BOUNDARY_VERDICT: NOT_STARTED
+USER_REQUIREMENTS_VERDICT: PASS
+SCOPE_BOUNDARY_VERDICT: PASS
 RESPONSIBILITY_MATRIX_VERDICT: NOT_STARTED
 RISK_REGISTER_VERDICT: NOT_STARTED
 DESIGN_DOCUMENT_PLAN_VERDICT: NOT_STARTED
@@ -365,14 +365,11 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-S5_1A_NOTES:
-- Sample apply fills BASIC bridge draft only; generatedAt=null; no auto-generate (CODE_CONFIRMED)
-- Sample leaves appurtenance/haunch NOT_PROVIDED; laterals false → no haunch/app/lateral solids after generate-only-from-sample (CODE_CONFIRMED)
-- CrossBeam mid-height prism ≠ SwayBracing V-diagonals (cylinder Ø0.08); laterals cylinder not L-angle (CODE_CONFIRMED)
-- Pavement/road markings: no canonical solids (CODE_CONFIRMED)
-- Shell GuidedStep ≠ REQ-S5-006 Workflow paper-slide Guided Mode (CODE_CONFIRMED)
-- STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED (GUI alone does not prove correctness)
-- Docs: docs/apollo/step5_preparation/*
+S5_1B_NOTES:
+- REQ-S5-001..014 registered (MUST); formal checks excluded
+- Complete sample / Guided / structural 3D scope matrices frozen as candidates
+- DEC-S5-0001..0012 decision candidates (none ADOPTED)
+- Docs: 07-11 + CSVs + excluded_formal_checks.md
 ================================================================================
 END APOLLO STEP 5-1 CURRENT
 ================================================================================

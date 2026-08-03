@@ -1,0 +1,10 @@
+component,current_implementation,user_concern,code_confirmed_issue,visual_issue,engineering_question,step5_2_design_need,step5_3_candidate,out_of_scope
+CrossBeam,mid-Z prism 0.35*depth,may be called 対傾構,approx section factors,looks boxy,true section?,12_cross_beam_cross_frame_spec,P4,formal steel design
+SwayBracing,V cylinder to bottom mid,should be lower / 対傾構,cylinder not angle; naming,cylinder look,CF topology practice?,12+13 specs,P4+P5,fatigue/connections
+UpperLateral,off in sample; cylinder when on,want L-angle,no L model; sample off,missing in sample 3D,L sizes?,13_spec,P1+P5,invented standard sizes
+LowerLateral,same,want L-angle,same,same,same,13_spec,P1+P5,same
+Haunch,kernel+solids if PROVIDED,not visible,sample NOT_PROVIDED,absent after sample-only,default values?,14_spec,P1,formal haunch design
+Appurtenance,kernel+solids if PROVIDED,railing unclear,sample NOT_PROVIDED,absent,which slots?,14_spec,P1,barrier crash certification
+Pavement,missing,need pavement,no domain,absent,std thickness?,09_spec,P3,road agency approval
+RoadMarking,missing,need markings,no domain,absent,layout?,10_spec,P3,traffic std adoption as truth
+Supports/markers,placeholders,n/a,decorative markers,ok for dev,n/a,none,none,treat as design supports

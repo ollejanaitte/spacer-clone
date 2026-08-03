@@ -1,0 +1,13 @@
+decision_id,topic,options_sketch,default_if_unset,resolution_stage,blocks_5_3
+DEC-S5-0001,Sample apply transaction depth,input-only vs input+generate,REQUIRES_DECISION,5-2,YES for P1
+DEC-S5-0002,Sample re-apply overwrite UX,confirm modal vs always replace,REQUIRES_DECISION,5-2,YES for P1
+DEC-S5-0003,Pavement canonical ownership,Apollo draft vs LINER hoso,REQUIRES_DECISION,5-2,YES for P3
+DEC-S5-0004,Road marking STL policy,viz-only vs structural STL,REQUIRES_DECISION,5-2,YES for P3
+DEC-S5-0005,Cross-frame terminology/entity,SwayBracing rename vs dual label,REQUIRES_DECISION,5-2,P4
+DEC-S5-0006,Cross-frame attachment topology,keep V vs alternate,REQUIRES_ENGINEERING_REVIEW,5-2+ER,P4
+DEC-S5-0007,L-angle parameterization,leg/thickness/orientation schema,REQUIRES_DECISION+ER,5-2,P5
+DEC-S5-0008,Sample L-angle / member dims provenance,catalog UNVERIFIED vs omit,REQUIRES_DECISION,5-2,P1+P5
+DEC-S5-0009,Guided Mode slide count/order,15-candidate vs compress,REQUIRES_DECISION,5-2,P2
+DEC-S5-0010,Developer diagnostics default,collapsed vs hidden,REQUIRES_DECISION,5-2,P2
+DEC-S5-0011,Sample load values provenance,derive-only vs seeded cases,REQUIRES_DECISION,5-2,P1+P6
+DEC-S5-0012,Pavement qty/load connection scope,viz-only vs dead load,REQUIRES_DECISION,5-2,P3+P6
