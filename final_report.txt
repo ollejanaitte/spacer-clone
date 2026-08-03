@@ -22,7 +22,7 @@ CSV/JSON export; STALE rejected; no fabricated splice/camber; bearing NOT_SPECIF
 Tests: drawingSetModel 15 PASS; typecheck PASS
 GUI: G-01..G-07 navigation + schedule CSV/JSON buttons
 
-PRIMARY_PR: PENDING
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/312
 REPORT_PR: PENDING
 STEP_3D_START_VERDICT: PENDING
 FORMAL_OK_NG_EMITTED: NO
