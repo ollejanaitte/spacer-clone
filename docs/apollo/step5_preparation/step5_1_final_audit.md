@@ -8,7 +8,7 @@
 | S5-1B Requirements/scope | #337 | `451e10aa021d7b483b31151305d1c0a0425bc188` |
 | S5-1C Design preparation | #338 | `62366002ca70e1e7d0b22ae3b9ba255910e62759` |
 | S5-1D Report finalize | #339 | `2755ed875c5f780c8715590330e9b153c1503d69` |
-| Seal | PENDING | PENDING |
+| Seal | #340 | (recorded in Cursor final report after merge) |
 
 ## Key facts (not formal design conclusions)
 

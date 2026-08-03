@@ -331,7 +331,7 @@ S5_1C_MERGE_SHA: 62366002ca70e1e7d0b22ae3b9ba255910e62759
 S5_1D_REPORT_FINALIZE: PASS
 S5_1D_PR: https://github.com/ollejanaitte/spacer-clone/pull/339
 S5_1D_MERGE_SHA: 2755ed875c5f780c8715590330e9b153c1503d69
-SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/PENDING_SEAL
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/340
 
 CURRENT_SAMPLE_AUDIT_VERDICT: PASS
 ROAD_ALIGNMENT_AUDIT_VERDICT: PASS
