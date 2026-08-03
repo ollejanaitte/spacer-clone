@@ -47,6 +47,7 @@ type ResolvedBridgeStructureInput = {
   readonly crossBeamSpacing: number;
   readonly stiffenerSpacing: number | null;
   readonly swayBracingInterval: number | null;
+  readonly lateralAngleSection: import("../bridgeStructure").ApolloLateralAngleSectionDraft;
   readonly lateralBracingEnabled: boolean;
   readonly upperLateralBracingEnabled: boolean;
 };
@@ -117,6 +118,7 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     crossBeamSpacing: draft.crossBeamSpacing!,
     stiffenerSpacing: draft.stiffenerSpacing,
     swayBracingInterval: draft.swayBracingInterval,
+    lateralAngleSection: draft.lateralAngleSection,
     lateralBracingEnabled: draft.lateralBracingEnabled,
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
   };
@@ -362,7 +364,9 @@ function buildCrossBeamSolid(
     sourceEntityId: entityId,
     selectionKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
     validationTargetKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
-    displayLabel: atSupport ? `Cross beam ${index + 1} (support)` : `Cross beam ${index + 1}`,
+    displayLabel: atSupport
+      ? `横桁 / Cross beam ${index + 1} (support)`
+      : `横桁 / Cross beam ${index + 1}`,
     kind: "cross_beam",
     visibilityGroup: "cross-beams",
     exportable: true,
@@ -452,11 +456,20 @@ function buildBracingMember(
   end: readonly [number, number, number],
   label: string,
   bracingSystem: number,
+  angleSection: import("../bridgeStructure").ApolloLateralAngleSectionDraft | null,
 ): ApolloSolidGeometryParameter | null {
   const oriented = frameFromStartEnd(start, end);
   if (!oriented) {
     return null;
   }
+  const useAngle =
+    angleSection?.enabled === true &&
+    angleSection.legA !== null &&
+    angleSection.legB !== null &&
+    angleSection.thickness !== null &&
+    angleSection.legA > 0 &&
+    angleSection.legB > 0 &&
+    angleSection.thickness > 0;
   return {
     id: `solid:bsdd:bracing:${entityId}`,
     sourceEntityKind: "member",
@@ -469,11 +482,21 @@ function buildBracingMember(
     exportable: true,
     designEntityId: entityId,
     designEntityKind: "BraceMember",
-    dimensionsM: {
-      length: oriented.length,
-      diameter: BRACING_MEMBER_DIAMETER_M,
-      bracingSystem,
-    },
+    dimensionsM: useAngle
+      ? {
+          length: oriented.length,
+          legA: angleSection!.legA!,
+          legB: angleSection!.legB!,
+          thickness: angleSection!.thickness!,
+          sectionType: 1,
+          bracingSystem,
+        }
+      : {
+          length: oriented.length,
+          diameter: BRACING_MEMBER_DIAMETER_M,
+          sectionType: 0,
+          bracingSystem,
+        },
     localFrame: oriented.frame,
     path: [start, end],
   };
@@ -667,8 +690,9 @@ export function buildBridgeStructureSolidGeometryParameters(
             member.braceMemberId,
             start,
             end,
-            `Sway ${swayIndex + 1}`,
+            `対傾構 / Sway ${swayIndex + 1}`,
             BRACING_SYSTEM_SWAY,
+            input.lateralAngleSection,
           );
           if (solid) {
             solids.push(solid);
@@ -720,6 +744,7 @@ export function buildBridgeStructureSolidGeometryParameters(
             end,
             `${labelPrefix} ${pair + 1}-${bay + 1}`,
             bracingSystem,
+            input.lateralAngleSection,
           );
           if (solid) {
             solids.push(solid);
@@ -737,7 +762,7 @@ export function buildBridgeStructureSolidGeometryParameters(
       appendLateralPlane(
         model.lateralBracings[lateralIndex]?.lateralBracingId,
         bottomConnectionZ,
-        "Lower Lateral",
+        "下横構 / Lower Lateral",
         BRACING_SYSTEM_LOWER_LATERAL,
       );
       lateralIndex += 1;
@@ -746,7 +771,7 @@ export function buildBridgeStructureSolidGeometryParameters(
       appendLateralPlane(
         model.lateralBracings[lateralIndex]?.lateralBracingId,
         topConnectionZ,
-        "Upper Lateral",
+        "上横構 / Upper Lateral",
         BRACING_SYSTEM_UPPER_LATERAL,
       );
     }
@@ -773,6 +798,22 @@ export function buildBridgeStructureSolidGeometryParameters(
 
   warnings.push(...collectDesignEntityBindingWarnings(document, solids));
 
+    assumptions.push(
+    {
+      code: "dec-s5-0005-cross-beam-sway-labels",
+      message: "CrossBeam=横桁, SwayBracing=対傾構 dual labels (DEC-S5-0005). BSDD kinds unchanged.",
+    },
+    {
+      code: "dec-s5-0006-sway-v-topology-development",
+      message: "Sway V topology (top flange mid → bottom flange mid) is DEVELOPMENT pending ER-001 (DEC-S5-0006).",
+    },
+    {
+      code: "dec-s5-0007-lateral-l-angle",
+      message: input.lateralAngleSection.enabled
+        ? `Lateral/sway members use L-angle section (${input.lateralAngleSection.catalogId}) — UNVERIFIED pending ER-002.`
+        : "Lateral/sway members use legacy cylinder section (L-angle disabled).",
+    },
+  );
   solids.push(...buildAppurtenanceAndHaunchSolids(project, warnings, assumptions));
   solids.push(...buildPavementAndMarkingSolids(project, warnings, assumptions));
 

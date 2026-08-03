@@ -27,9 +27,15 @@ import {
   validateRoadMarkingsConfigurationPersistence,
 } from "./pavementModel";
 import {
+  createDefaultLateralAngleSection,
+  parseLateralAngleSection,
+  validateLateralAngleSectionPersistence,
+} from "./lateralAngleModel";
+import {
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
@@ -117,6 +123,7 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     haunchConfiguration: createDefaultHaunchConfiguration(),
     pavementConfiguration: createDefaultPavementConfiguration(),
     roadMarkingsConfiguration: createDefaultRoadMarkingsConfiguration(),
+    lateralAngleSection: createDefaultLateralAngleSection(),
     generatedAt: null,
   };
 }
@@ -235,11 +242,12 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
 
   if (
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION &&
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY
   ) {
     diagnostics.push(
-      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
+      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
     );
   }
 
@@ -331,6 +339,7 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
   diagnostics.push(...validateHaunchConfigurationPersistence(raw.haunchConfiguration));
   diagnostics.push(...validatePavementConfigurationPersistence(raw.pavementConfiguration));
   diagnostics.push(...validateRoadMarkingsConfigurationPersistence(raw.roadMarkingsConfiguration));
+  diagnostics.push(...validateLateralAngleSectionPersistence(raw.lateralAngleSection));
 
   return diagnostics;
 }
@@ -391,11 +400,16 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   if (roadMarkingsConfiguration === null) {
     return null;
   }
+  const lateralAngleSection = parseLateralAngleSection(raw.lateralAngleSection);
+  if (lateralAngleSection === null) {
+    return null;
+  }
 
-  // Legacy 1.0.0 / 1.1.0 → 1.2.0-development: missing pavement/markings → NOT_PROVIDED / disabled.
+  // Legacy → current: missing pavement/markings/L-angle migrate without inventing solids.
   const migratedFromLegacy =
     raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY ||
-    raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1;
+    raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 ||
+    raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2;
   const preservedGeneratedAt =
     generatedAt === null || generatedAt === undefined
       ? null
@@ -416,6 +430,7 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
     haunchConfiguration,
     pavementConfiguration,
     roadMarkingsConfiguration,
+    lateralAngleSection,
     generatedAt: migratedFromLegacy ? null : preservedGeneratedAt,
   };
 }

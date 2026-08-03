@@ -8,14 +8,16 @@ import type {
   ApolloPavementConfigurationDraft,
   ApolloRoadMarkingsConfigurationDraft,
 } from "./pavementTypes";
+import type { ApolloLateralAngleSectionDraft } from "./lateralAngleTypes";
 
 /**
  * Step 4-B bumps input draft to 1.1.0-development (DEC-S4-0014).
  * Legacy 1.0.0 projects migrate with NOT_PROVIDED appurtenance/haunch presence.
  */
-export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.2.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.3.0-development";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY = "1.0.0";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 = "1.1.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2 = "1.2.0-development";
 
 export { BridgeSystem, type BridgeLayoutSpan, type BridgeLayoutSupport } from "../contracts";
 
@@ -52,6 +54,7 @@ export const BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS = [
   "haunchConfiguration",
   "pavementConfiguration",
   "roadMarkingsConfiguration",
+  "lateralAngleSection",
 ] as const;
 
 export type BridgeStructureBooleanInputKey = (typeof BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS)[number];
@@ -105,6 +108,8 @@ export type ApolloBridgeStructureInputDraft = {
   readonly pavementConfiguration: ApolloPavementConfigurationDraft;
   /** Step 5 road markings viz-only (DEC-S5-0004). Migration → disabled. */
   readonly roadMarkingsConfiguration: ApolloRoadMarkingsConfigurationDraft;
+  /** Step 5 L-angle section for laterals/sway (DEC-S5-0007/0008). */
+  readonly lateralAngleSection: ApolloLateralAngleSectionDraft;
   readonly generatedAt: string | null;
 };
 
