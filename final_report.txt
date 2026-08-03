@@ -25,7 +25,7 @@ branch: feat/apollo-step3d-sheetset-exports
 Tests: artifactBundle + drawingSetModel PASS; typecheck PASS
 BUNDLE_EXPORT_VERDICT: PASS_DEVELOPMENT_ONLY (resolves Step 2 BLOCKED)
 
-PRIMARY_PR: PENDING
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/314
 REPORT_PR: PENDING
 STEP_3E_START_VERDICT: PENDING
 ================================================================================
