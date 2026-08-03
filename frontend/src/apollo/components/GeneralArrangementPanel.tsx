@@ -9,6 +9,8 @@ import {
   downloadDrawingSetSheetDxf,
   downloadDrawingSetSheetPdfHtml,
   downloadDrawingSetSheetSvg,
+  downloadMemberScheduleCsv,
+  downloadMemberScheduleJson,
   openDrawingSetPreview,
 } from "../drawing/drawingSetExport";
 
@@ -52,8 +54,8 @@ export function GeneralArrangementPanel({ project }: Props) {
     <article className="apollo-editor-card" data-testid="apollo-general-arrangement-panel">
       <div className="apollo-editor-card-header">
         <div>
-          <h2>構造一般図・配置図（開発プレビュー）</h2>
-          <p>DrawingSetModel G-01〜G-04：一般図＋主桁/横桁・対傾構/横構・補剛材配置。</p>
+          <h2>構造一般図・配置図・部材表（開発プレビュー）</h2>
+          <p>DrawingSetModel G-01〜G-07：一般図・配置図・支承・側面構成・部材表。</p>
         </div>
       </div>
       <p className="apollo-input-error" role="status" data-testid="apollo-ga-development-warning">
@@ -127,6 +129,24 @@ export function GeneralArrangementPanel({ project }: Props) {
           onClick={() => wrap(() => downloadDrawingSetSheetPdfHtml(model, sheet?.drawingNumber))}
         >
           PDF用HTML
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-ga-export-schedule-csv"
+          disabled={model.stale || model.sheets.length === 0}
+          onClick={() => wrap(() => downloadMemberScheduleCsv(project))}
+        >
+          部材表CSV
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-ga-export-schedule-json"
+          disabled={model.stale || model.sheets.length === 0}
+          onClick={() => wrap(() => downloadMemberScheduleJson(project))}
+        >
+          部材表JSON
         </button>
       </div>
       {sheet ? (

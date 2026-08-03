@@ -12,6 +12,13 @@ import {
   type SheetModel,
   type ViewModel,
 } from "./drawingSetModel";
+import {
+  assertMemberScheduleExportable,
+  buildMemberScheduleModel,
+  memberScheduleToCsv,
+  memberScheduleToJson,
+} from "./memberScheduleModel";
+import type { ProjectModel } from "../../types";
 
 function escapeXml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -321,4 +328,24 @@ export function openDrawingSetPreview(model: DrawingSetModel, drawingNumber?: st
   const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
   window.open(url, "_blank", "noopener,noreferrer");
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+export function downloadMemberScheduleCsv(project: ProjectModel): void {
+  const schedule = buildMemberScheduleModel(project);
+  assertMemberScheduleExportable(schedule);
+  downloadTextFile(
+    `member_schedule_${schedule.projectId}_r${schedule.inputChecksum.slice(0, 8)}.csv`,
+    memberScheduleToCsv(schedule),
+    "text/csv;charset=utf-8",
+  );
+}
+
+export function downloadMemberScheduleJson(project: ProjectModel): void {
+  const schedule = buildMemberScheduleModel(project);
+  assertMemberScheduleExportable(schedule);
+  downloadTextFile(
+    `member_schedule_${schedule.projectId}_r${schedule.inputChecksum.slice(0, 8)}.json`,
+    memberScheduleToJson(schedule),
+    "application/json;charset=utf-8",
+  );
 }
