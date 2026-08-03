@@ -1,0 +1,19 @@
+stateDiagram-v2
+  [*] --> NOT_STARTED
+  NOT_STARTED --> AVAILABLE: prerequisites_met
+  AVAILABLE --> RECOMMENDED: is_next_recommended
+  RECOMMENDED --> INCOMPLETE: user_edits
+  AVAILABLE --> INCOMPLETE: user_edits
+  INCOMPLETE --> READY: completion_criteria_met
+  RECOMMENDED --> READY: completion_criteria_met
+  READY --> COMPLETE: mark_derived_complete
+  COMPLETE --> STALE: upstream_checksum_change
+  READY --> STALE: upstream_checksum_change
+  STALE --> AVAILABLE: regenerate_success
+  AVAILABLE --> BLOCKED: blocking_diagnostic
+  INCOMPLETE --> BLOCKED: blocking_diagnostic
+  BLOCKED --> AVAILABLE: diagnostic_cleared
+  COMPLETE --> NOT_AUTHORIZED: always_badge_dev_only
+  READY --> ERROR: runtime_failure
+  ERROR --> AVAILABLE: retry_after_fix
+  NOT_STARTED --> OUT_OF_SCOPE: scope_gate

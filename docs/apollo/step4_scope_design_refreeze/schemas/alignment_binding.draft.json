@@ -1,0 +1,19 @@
+{
+  "$comment": "DRAFT_FOR_IMPLEMENTATION — AlignmentBridgeBindingModel",
+  "$id": "https://spacer-clone.local/draft/apollo/alignmentBridgeBinding.schema.json",
+  "title": "AlignmentBridgeBindingModelDraft",
+  "type": "object",
+  "required": ["schemaVersion", "bindingId", "alignmentId", "bridgeStartStation", "bridgeEndStation", "bindingChecksum", "status"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0-development" },
+    "bindingId": { "type": "string" },
+    "alignmentId": { "type": "string" },
+    "lineId": { "type": ["string", "null"] },
+    "bridgeStartStation": { "type": "number" },
+    "bridgeEndStation": { "type": "number" },
+    "transverseOffset": { "type": "number" },
+    "verticalOffset": { "type": "number" },
+    "bindingChecksum": { "type": "string" },
+    "status": { "type": "string" }
+  }
+}

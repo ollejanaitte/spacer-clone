@@ -1,0 +1,30 @@
+entity,field,type,unit,required,nullable,none_semantics,default_policy,validation,source_of_truth,persisted,checksum,consumers,notes
+BridgeAppurtenanceModel,appurtenanceId,uuid,-,Y,N,n/a,stable_seed,unique,Apollo,Y,Y,3d qty draw,
+BridgeAppurtenanceModel,type,enum,-,Y,N,n/a,none,enum,Apollo,Y,Y,all,
+BridgeAppurtenanceModel,side,enum,-,Y,N,EXPLICIT_NONE_via_type,NOT_PROVIDED,enum,Apollo,Y,Y,all,
+BridgeAppurtenanceModel,startStation,number,m,Y,N,n/a,0,>=0,Apollo/binding,Y,Y,all,
+BridgeAppurtenanceModel,endStation,number,m,Y,N,n/a,L,>start,Apollo/binding,Y,Y,all,
+BridgeAppurtenanceModel,crossSection.width,number,m,Y,Y,NOT_PROVIDED,null,>0 if PROVIDED,Apollo,Y,Y,qty 3d,
+BridgeAppurtenanceModel,unitWeight,number,kN/m3,N,Y,NOT_PROVIDED,null,>=0,user,Y,Y,load,USER_PROVIDED_UNVERIFIED
+RcDeckHaunchModel,haunchId,uuid,-,Y,N,n/a,stable_seed,unique,Apollo,Y,Y,all,extends BSSD
+RcDeckHaunchModel,mainGirderRefId,uuid,-,Y,Y,n/a,null,must_exist,Apollo,Y,Y,all,
+RcDeckHaunchModel,shapeType,enum,-,Y,N,n/a,RECT,RECT|TRAPEZOID,Apollo,Y,Y,geom,
+RcDeckHaunchModel,height,number,m,Y,Y,NOT_PROVIDED,null,>0,Apollo,Y,Y,qty,
+RcDeckHaunchModel,topWidth,number,m,Y,Y,NOT_PROVIDED,null,>0,Apollo,Y,Y,qty,
+RcDeckHaunchModel,bottomWidth,number,m,N,Y,NOT_PROVIDED,=topWidth,>0,Apollo,Y,Y,qty,TRAP
+SpliceAssemblyModel,spliceAssemblyId,uuid,-,Y,N,n/a,stable_seed,unique,Apollo,Y,Y,all,
+SpliceAssemblyModel,station,number,m,Y,N,n/a,none,0..L,Apollo,Y,Y,all,
+SpliceAssemblyModel,flangeSplicePlates,array,-,N,N,empty_not_none,[],plate schema,Apollo,Y,Y,qty draw,
+SpliceAssemblyModel,fillerPlates,array,-,N,N,empty_not_none,[],plate schema,Apollo,Y,Y,qty,
+SpliceAssemblyModel,boltPatterns,array,-,N,N,empty_not_none,[],pattern schema,Apollo,Y,Y,qty,NOT_DESIGN_CHECKED
+AlignmentBridgeBindingModel,bindingId,uuid,-,Y,N,n/a,stable_seed,unique,Apollo,Y,Y,workflow,
+AlignmentBridgeBindingModel,alignmentId,string,-,Y,N,n/a,none,nonempty,Road/LINER,Y,Y,all,SoR ref
+AlignmentBridgeBindingModel,bridgeStartStation,number,m,Y,N,n/a,none,finite,binding,Y,Y,geom,
+AlignmentBridgeBindingModel,bridgeEndStation,number,m,Y,N,n/a,none,>start,binding,Y,Y,geom,
+AlignmentBridgeBindingModel,bindingChecksum,string,-,Y,N,n/a,hash,hex,snapshot,Y,Y,stale,
+DimensionOverlayModel,dimensionId,uuid,-,Y,N,n/a,stable_seed,unique,Apollo,optional,N,ui,
+DimensionOverlayModel,measuredValue,number,m,Y,N,n/a,from_canonical_or_pick,finite,canonical|user_pick,optional,N,ui,
+DimensionOverlayModel,type,enum,-,Y,N,n/a,none,MAJOR|ENTITY|MEASURE_2PT,Apollo,optional,N,ui,
+WorkflowStateModel,schemaVersion,string,-,Y,N,n/a,1.0.0-development,const,Apollo,Y,Y,ui,
+WorkflowStateModel,steps,array,-,Y,N,n/a,[],step schema,derived+persist ack,Y,Y,ui,
+WorkflowStateModel,currentRecommendedStepId,string,-,N,Y,n/a,null,WF-id,derived,Y,N,ui,

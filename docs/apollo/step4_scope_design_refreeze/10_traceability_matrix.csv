@@ -1,0 +1,9 @@
+requirement_id,requirement_name,domain_entity,input_ui,workflow_step,validation,persistence,migration,3d,stl,load,analysis,quantity,report,standard_section,general_arrangement,member_schedule,svg,dxf,pdf,zip,stale_dependency,checksum_dependency,test_level,formal_status,implementation_phase,notes
+R1,Workflow control screen,WorkflowStateModel,WorkflowControlScreen,WF-01..WF-15,Y,Y,Y,N,N,N,N,N,N,N,N,N,N,N,N,partial,Y,Y,unit+e2e,NOT_AUTHORIZED,4-A/4-H,SuperDesigner principles only
+R2,Deck appurtenances,BridgeAppurtenanceModel,AppurtenancePanel,WF-03,Y,Y,Y,Y,Y,Y,Y,Y,Y,N,Y,Y,Y,Y,Y,Y,Y,Y,geom+qty,NOT_AUTHORIZED,4-B/4-C,curb railing median barrier
+R3,RC deck haunch,RcDeckHaunchModel,HaunchPanel,WF-05,Y,Y,Y,Y,Y,Y,Y,Y,Y,partial,Y,Y,Y,Y,Y,Y,Y,Y,geom+qty,NOT_AUTHORIZED,4-B/4-C,extends BSSD Haunch
+R4,Appurtenance/haunch loads,LoadCase+Quantity,LoadConfirmPanel,WF-07,Y,Y,Y,N,N,Y,Y,Y,Y,N,N,N,N,N,N,Y,Y,Y,trace,NOT_AUTHORIZED,4-C,simplified distribution
+R5,Splice filler bolts,SpliceAssemblyModel,SplicePanel,WF-06,Y,Y,Y,Y,Y,optional,N_default,Y,Y,N,Y,Y,Y,Y,Y,Y,Y,Y,geom+qty,NOT_AUTHORIZED,4-D,NOT_DESIGN_CHECKED
+R6,Road alignment binding,AlignmentBridgeBindingModel,BindingPanel,WF-01,Y,Y,Y,Y,N,N,N,indirect,indirect,N,Y,N,Y,Y,Y,Y,Y,Y,compat,NOT_AUTHORIZED,4-E,Road SoR
+R7,3D dimensions overlay,DimensionOverlayModel,DimensionControls,WF-11,Y,optional,Y,Y,N,N,N,N,N,N,N,N,N,N,N,N,Y,Y,gui,NOT_AUTHORIZED,4-F,no mesh reverse
+R8,Reintegration outputs,DrawingSet+Bundle+Schedule,OutputIntegrationPanel,WF-12..WF-14,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,e2e+bundle,NOT_AUTHORIZED,4-G/4-H,extends Step3

@@ -1,0 +1,19 @@
+decision_id,topic,decision,status,rationale,source,alternatives,consequences,owner,date,implementation_phase
+DEC-S4-0001,Workflow status model,status plus badges,DECIDED_DRAFT,Allow COMPLETE with NOT_AUTHORIZED,03_workflow,,UI complexity,docs-agent,2026-08-03,4-A
+DEC-S4-0002,UI originality,No SuperDesigner asset copy,DECIDED_DRAFT,Copyright and modernization,18_manual,,Must design original chrome,docs-agent,2026-08-03,4-A
+DEC-S4-0003,Haunch BSSD,Extend Haunch beyond ID-only,DECIDED_DRAFT,Contract slot exists empty,01_inventory,sidecar only,Schema bump,docs-agent,2026-08-03,4-B
+DEC-S4-0004,Appurtenance NONE,EXPLICIT_NONE vs NOT_PROVIDED,DECIDED_DRAFT,Avoid null/false confusion,05_schema,,Migration tests,docs-agent,2026-08-03,4-B
+DEC-S4-0005,Alignment timing,4-E parallel to 4-C after 4-B,DECIDED_DRAFT,Need coords for curb placement,11_sequence,strict serial,Local CRS warning if unbound,docs-agent,2026-08-03,4-E
+DEC-S4-0006,Alignment SoR,Road/LINER authoritative,DECIDED_DRAFT,DEC-S1-0008,07_alignment,Apollo fork,Binding checksum STALE,docs-agent,2026-08-03,4-E
+DEC-S4-0007,Handedness,+Y right looking +station,DECIDED_DRAFT,Consistency,07_alignment,,Doc in UI,docs-agent,2026-08-03,4-E
+DEC-S4-0008,Crossfall sign,Positive right-down,DECIDED_DRAFT,Document convention,07_alignment,,Must label UI,docs-agent,2026-08-03,4-E
+DEC-S4-0009,Haunch datum,On top flange below deck soffit,DECIDED_DRAFT,Non-composite deck,12_oq,,Geometry tests,docs-agent,2026-08-03,4-B
+DEC-S4-0010,Load distribution,Nearest girder curb/rail; equal median,DECIDED_DRAFT,Dev simplified,06_load,equal all,Warnings formal blocker,docs-agent,2026-08-03,4-C
+DEC-S4-0011,Splice self-weight,Exclude from analysis default,DECIDED_DRAFT,Avoid unverified mass,06_load,include,Quantity still emitted,docs-agent,2026-08-03,4-D
+DEC-S4-0012,Bolts,Pattern not per-bolt FEM,DECIDED_DRAFT,Scope control,12_oq,,Schedule approximate,docs-agent,2026-08-03,4-D
+DEC-S4-0013,Workflow persist,Derive statuses; WF-15 ack optional,DECIDED_DRAFT,Checksum is SoR,03_workflow,full persist,Less drift,docs-agent,2026-08-03,4-A
+DEC-S4-0014,Schema versions,Bump input to 1.1.0-development,DECIDED_DRAFT,Additive fields,05_schema,,Migration required,docs-agent,2026-08-03,4-B
+DEC-S4-0015,3D labels,CSS2D preferred,DECIDED_DRAFT,Readable HTML labels,08_dimension,sprites,A11y panel mirror,docs-agent,2026-08-03,4-F
+DEC-S4-0016,Mesh dimensions,Forbidden as design SoR,DECIDED_DRAFT,Step3 absolute rule,08_dimension,,Tests must not use AABB,docs-agent,2026-08-03,4-F
+DEC-S4-0017,Formal auth,Remain NOT_GRANTED,DECIDED_DRAFT,Human gate,phase_a freeze,,No OK/NG,docs-agent,2026-08-03,all
+DEC-S4-0018,P0 readiness,GO with draft decisions,DECIDED_DRAFT,Blocking OQ=0,13_gate,,4-A may start after merge,docs-agent,2026-08-03,P0
