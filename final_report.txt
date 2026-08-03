@@ -135,10 +135,10 @@ STEP_4B_START_READINESS: READY (report) — do not begin Step 4-B implementation
 Apollo Step 4-B — WF-03 Appurtenances / WF-05 Haunch Canonical Input
 ================================================================================
 更新日時: 2026-08-03T23:20:00+09:00
-作業状態: PRIMARY_PR_PENDING_MERGE
+作業状態: COMPLETE
 STEP_ID: APOLLO_STEP_4B_APPURTENANCE_HAUNCH_INPUT
 START_MAIN_SHA: 4f86767ce9729bf25f049cc9c64a0991c5e0084f
-END_MAIN_SHA: PENDING
+END_MAIN_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
 INPUT_SCHEMA_BEFORE: 1.0.0
 INPUT_SCHEMA_AFTER: 1.1.0-development
 MIGRATION_VERDICT: PASS
@@ -173,16 +173,16 @@ REGRESSION_TESTS: PASS (continuous layout, bridgeStructure workflow, Step 4-A E2
 TYPECHECK: PASS
 LINT: PASS
 BUILD: PASS
-CI: PENDING
+CI: NO_CHECKS_CONFIGURED (mergeable; local typecheck/lint/build/E2E PASS)
 APPLICATION_CODE_CHANGED: YES
 PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/325
-PRIMARY_PR_MERGE_SHA: PENDING
+PRIMARY_PR_MERGE_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
 REPORT_PR: PENDING
 REPORT_PR_MERGE_SHA: PENDING
 SEAL_PR: PENDING
-LOCAL_MAIN_EQUALS_ORIGIN: PENDING
-WORKTREE_CLEAN: PENDING
-STEP_4B_VERDICT: COMPLETE (pending GitHub merge)
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+STEP_4B_VERDICT: COMPLETE
 STEP_4C_START_READINESS: GO
 STEP_4C_IMPLEMENTED: NO
 NEXT_ACTION: Merge Primary/Report/(Seal) PRs to main; do not begin Step 4-C until instructed.
@@ -193,3 +193,30 @@ FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 Evidence: docs/apollo/step4_appurtenance_haunch/
+
+
+================================================================================
+Apollo Step 4-B Report Finalize
+================================================================================
+更新日時: 2026-08-03T23:30:00+09:00
+STEP_ID: APOLLO_STEP_4B_REPORT_FINALIZE
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+
+BASE_MAIN_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
+BRANCH: docs/apollo-step4b-report-finalize
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/325
+PRIMARY_PR_STATE: MERGED
+PRIMARY_PR_MERGE_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
+
+STEP_4B_VERDICT: COMPLETE
+STEP_4B_REPORT_READINESS: GO
+STEP_4C_START_READINESS: GO
+STEP_4C_IMPLEMENTED: NO
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+
+REPORT_PR: PENDING
+NEXT_ACTION: Merge report PR; optional seal PR for report merge SHA; do not begin Step 4-C until instructed.

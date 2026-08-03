@@ -10,7 +10,10 @@
 - [x] WF-06 remains PLANNED
 - [x] Step 4-C not implemented
 - [x] Authorization NOT_GRANTED
+- [x] Primary PR #325 MERGED (`cfb3d0646f40ee304300d4b00fcf741d7549180d`)
 
 STEP_4B_VERDICT: COMPLETE  
 STEP_4C_START_READINESS: GO  
-STEP_4C_IMPLEMENTED: NO
+STEP_4C_IMPLEMENTED: NO  
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/325  
+PRIMARY_PR_MERGE_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
