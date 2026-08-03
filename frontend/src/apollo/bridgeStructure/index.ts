@@ -10,6 +10,7 @@ export {
   withHaunchConfiguration,
   withPavementConfiguration,
   withRoadMarkingsConfiguration,
+  withLateralAngleSection,
 } from "./generateBsdd";
 export {
   buildApolloBsddFingerprintPayload,
@@ -37,6 +38,7 @@ export {
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2,
   type ApolloBridgeStructureInputDraft,
   type BridgeStructureApproximateQuantity,
   type BridgeStructureBooleanInputKey,
@@ -133,6 +135,15 @@ export {
   type PavementGeometry,
   type RoadMarkingGeometry,
 } from "./pavementGeometry";
+export {
+  LATERAL_ANGLE_CATALOG_DEFAULTS,
+  LATERAL_ANGLE_CATALOG_ID,
+  type ApolloLateralAngleSectionDraft,
+} from "./lateralAngleTypes";
+export {
+  createDefaultLateralAngleSection,
+  parseLateralAngleSection,
+} from "./lateralAngleModel";
 export {
   GEOMETRY_FORMULA_IDS,
   deriveLengthMeters,

@@ -92,7 +92,7 @@ describe("apollo visualization bounds and bracing alignment", () => {
       girderCenterZ - girderDepth / 2 + (draft.bottomFlangeThickness ?? 0) / 2;
 
     const sway = model.solidGeometryParameters.filter(
-      (solid) => solid.kind === "bracing" && solid.displayLabel.startsWith("Sway"),
+      (solid) => solid.kind === "bracing" && (solid.displayLabel.includes("Sway") || solid.displayLabel.includes("対傾構")),
     );
     expect(sway.length).toBeGreaterThan(0);
 

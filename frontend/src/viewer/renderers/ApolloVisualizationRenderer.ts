@@ -400,11 +400,29 @@ function renderBracingSolid(
   state: { readonly selected: boolean; readonly validationSeverity: ApolloViewerValidationHighlight["severity"] | null },
 ): THREE.Object3D | null {
   const length = finiteOrNull(solid.dimensionsM.length);
+  if (!length) return null;
+  const material = materialForState(state, bracingMaterial, selectedNodeMaterial, warningNodeMaterial, errorNodeMaterial);
+
+  const legA = finiteOrNull(solid.dimensionsM.legA);
+  const legB = finiteOrNull(solid.dimensionsM.legB);
+  const thickness = finiteOrNull(solid.dimensionsM.thickness);
+  if (solid.dimensionsM.sectionType === 1 && legA && legB && thickness) {
+    // Development L-angle: two plates along member X axis (pending ER-002 exact orientation).
+    const group = new THREE.Group();
+    const vertical = new THREE.Mesh(new THREE.BoxGeometry(length, thickness, legA), material);
+    vertical.position.set(0, thickness / 2, legA / 2);
+    const horizontal = new THREE.Mesh(new THREE.BoxGeometry(length, legB, thickness), material);
+    horizontal.position.set(0, legB / 2, thickness / 2);
+    group.add(vertical, horizontal);
+    applySolidFrame(group, solid.localFrame);
+    applySolidMetadata(group, solid);
+    return group;
+  }
+
   const diameter = finiteOrNull(solid.dimensionsM.diameter);
-  if (!length || !diameter) return null;
+  if (!diameter) return null;
   const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 14);
   geometry.rotateZ(Math.PI / 2);
-  const material = materialForState(state, bracingMaterial, selectedNodeMaterial, warningNodeMaterial, errorNodeMaterial);
   const mesh = new THREE.Mesh(geometry, material);
   applySolidFrame(mesh, solid.localFrame);
   applySolidMetadata(mesh, solid);
