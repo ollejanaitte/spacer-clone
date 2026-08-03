@@ -8,8 +8,8 @@
 | C4 load/distribution | PASS | #331 | 1bc2e45c3f15959ee297c2f95eed1760652c9256 |
 | C5 analysis/equilibrium | PASS | #332 | 7cf1e12c6fd6685c7c8b824c1db31bdf562caf4f |
 | C6 workflow/E2E/scope | PASS | #333 | 35eea80df6abc96cd155bc3bd51c25ad25a2413a |
-| Report finalize | #334 | PENDING | PENDING |
-| Seal | follow-up | PENDING | (Cursor final report only) |
+| Report finalize | #334 | MERGED | dc479bb6bc4cb48462ef261bd95dcc8b88f1df05 |
+| Seal | this PR | MERGED after merge | (recorded in Cursor final report only) |
 
 STEP_4C_VERDICT: COMPLETE  
 STEP_4D_START_READINESS: GO  
@@ -22,3 +22,6 @@ SPLICE_IMPLEMENTED: NO
 ALIGNMENT_BINDING_IMPLEMENTED: NO  
 DIMENSION_OVERLAY_IMPLEMENTED: NO  
 FORMAL_AUTHORIZATION_CHANGED: NO  
+
+FINAL_REPORT_PR_MERGE_SHA: dc479bb6bc4cb48462ef261bd95dcc8b88f1df05
+STEP_4C_VERDICT: COMPLETE
