@@ -47,3 +47,7 @@ Still true after GO:
 - DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 Next: Step 4-A on a **new** branch from latest main after this P0 report merges.
+
+PRIMARY_PR_MERGED: YES
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/319
+PRIMARY_MERGE_SHA: 5120e0a5cbdaf9d4774723c450cc0cd2b1451b7b
