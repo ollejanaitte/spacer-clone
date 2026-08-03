@@ -1,0 +1,5 @@
+role,entity,ui_label_risk,geometry_role,elevation_behavior,section,sample_default,user_concern_map,evidence
+CROSS_BEAM,CrossBeam,may look central,transverse prism between girders,mid-depth of girder,assumed prism,spacing 5m filled,USER may call 対傾構,CODE_CONFIRMED
+CROSS_FRAME_SWAY,SwayBracing+BraceMember,may look central V,V diagonals in XB plane,top flange to bottom mid,cylinder,interval 1 filled,USER_REPORTED lower position — code already reaches bottom flange mid,CODE_CONFIRMED
+VISUAL_ONLY,markers/bearings,decorative,placeholders,below deck,boxes,always with supports,not structural design,CODE_CONFIRMED
+UNKNOWN,—,—,—,—,—,—,do not invent other members,NOT_VERIFIED

@@ -1,0 +1,13 @@
+entity_kind,visibility_group,solid_kind,canonical_source,placement_source,section_source,stl_exportable,approx_level,evidence
+MainGirder,girders,girder,BSDD MainGirder + draft section,bridgeStructureSolids,I/box from draft,YES,EXACT_GEOMETRY_DEV,CODE_CONFIRMED
+RcDeck,deck,deck,BSDD RcDeck,bridgeStructureSolids,box thickness,YES,EXACT_GEOMETRY_DEV,CODE_CONFIRMED
+CrossBeam,cross-beams,cross_beam,BSDD CrossBeam,index*spacing mid-Z,0.35*depth × webThick,YES,VISUAL_APPROX,CODE_CONFIRMED
+Stiffener,girders (bucket),stiffener,BSDD Stiffener,spacing on girder,plate approx,YES,VISUAL_APPROX,CODE_CONFIRMED
+SwayBracing/BraceMember,bracings,bracing,BSDD SwayBracing+BraceMember,V topFlange→bottom mid,cylinder Ø0.08,YES,VISUAL_APPROX,CODE_CONFIRMED
+LateralBracing/BraceMember,bracings,bracing,BSDD LateralBracing+BraceMember,plane diagonals,cylinder Ø0.08,YES,VISUAL_APPROX,CODE_CONFIRMED
+Haunch,rc-deck-haunches,haunch,RcDeckHaunchModel,C1 kernel,RECT/avg trap box,YES,DEV (trap avg),CODE_CONFIRMED
+BridgeAppurtenance,appurtenances,appurtenance,BridgeAppurtenanceModel,C1 kernel,RECT box,YES,EXACT_GEOMETRY_DEV,CODE_CONFIRMED
+Bearing,bearings,bearing,supports,markers helper,box,YES,PLACEHOLDER,CODE_CONFIRMED
+Pier/AbutmentMarker,markers,marker,supports,decorative,box,optional,PLACEHOLDER,CODE_CONFIRMED
+Pavement,—,—,none,none,none,NO,MISSING,CODE_CONFIRMED
+RoadMarking,—,—,none,none,none,NO,MISSING,CODE_CONFIRMED

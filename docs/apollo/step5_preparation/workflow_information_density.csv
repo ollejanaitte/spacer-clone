@@ -1,0 +1,16 @@
+step_id,label,status_source,diag_codes_visible,dense_ui,guided_slide,notes
+WF-01,道路線形,capability PLANNED,YES,YES,NO,binding Step 4-E
+WF-02,橋梁基本条件,generation current,YES,YES,NO,sample entry here
+WF-03,付属物,presence+gen,YES,YES,NO,4-G warning if PROVIDED
+WF-04,主桁断面,structure input,YES,YES,NO,
+WF-05,ハンチ,presence+gen,YES,YES,NO,4-G warning if PROVIDED
+WF-06,添接,PLANNED BLOCKED,YES,YES,NO,Step 4-D
+WF-07,荷重,load model,YES,YES,NO,4-C4 panel
+WF-08,解析,PARTIAL,YES,YES,NO,probe+adapter
+WF-09,候補照査,PARTIAL,YES,YES,NO,
+WF-10,数量,quantity model,YES,YES,NO,
+WF-11,3D,viz solids,YES,YES,NO,dim overlay 4-F
+WF-12,計算書,report model,YES,YES,NO,4-G pending
+WF-13,図面,drawing set,YES,YES,NO,4-G pending
+WF-14,ZIP,output integration,YES,YES,NO,4-G pending
+WF-15,確認,localStorage ack,YES,MED,NO,

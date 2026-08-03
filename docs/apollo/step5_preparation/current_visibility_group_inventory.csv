@@ -1,0 +1,9 @@
+visibility_group,viewer_flag,default_on,stl_group_supported,notes
+girders,apolloGirders,true,YES,includes stiffener meshes in girder bucket
+cross-beams,apolloCrossBeams,true,YES,
+bracings,apolloBracings,true,YES,sway+lateral cylinders
+deck,apolloDeck,true,YES,
+bearings,apolloBearings,true,YES,
+markers,apolloMarkers,false,YES (opt-in),
+appurtenances,apolloAppurtenances,true,YES,Step 4-C2
+rc-deck-haunches,apolloHaunches,true,YES,Step 4-C2

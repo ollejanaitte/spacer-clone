@@ -1,0 +1,11 @@
+datum_id,description,current_source,used_by,status,evidence
+DAT-X,Station / longitudinal +X,local CRS unbound; LINER not bound,all solids,DEFINED_LOCAL,CODE_CONFIRMED
+DAT-Y,+Y right looking +station,DEC-S4-0007 docs + offsets,girder/app Y,DEFINED_LOCAL,CODE_CONFIRMED
+DAT-Z,+Z up; girder top/deck soffit ~0,solids convention,girder/deck/haunch,DEFINED_LOCAL,CODE_CONFIRMED
+DAT-DECK-TOP,Deck top Z = deckThickness,appurtenanceGeometry,appurtenances,DEFINED,CODE_CONFIRMED
+DAT-HAUNCH,Top flange upper face Z=0 to height,haunchGeometry DEC-S4-0009,haunches,DEFINED,CODE_CONFIRMED
+DAT-FLANGE-TOP-MID,topConnectionZ,girderConnectionZs,sway/lateral,DEFINED_APPROX,CODE_CONFIRMED
+DAT-FLANGE-BOT-MID,bottomConnectionZ,girderConnectionZs,sway/lateral,DEFINED_APPROX,CODE_CONFIRMED
+DAT-ROAD-CL,Road centerline,LINER project.liner,WF-01 only,UNBOUND_TO_BRIDGE,CODE_CONFIRMED
+DAT-PAVEMENT-TOP,Pavement top,none,none,MISSING,CODE_CONFIRMED
+DAT-MARKING-Z,Marking offset above pavement,none,none,MISSING,CODE_CONFIRMED
