@@ -20,6 +20,6 @@ CROSS_ARTIFACT_CONSISTENCY: PASS
 SAVE_RELOAD_VERDICT: PASS_GUI_PATH
 STALE_VERDICT: PASS
 USER_ACCEPTANCE_PACKAGE_VERDICT: PASS
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/317
 STEP_3_CLOSEOUT_READINESS: GO
 ================================================================================
