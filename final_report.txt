@@ -177,7 +177,7 @@ CI: NO_CHECKS_CONFIGURED (mergeable; local typecheck/lint/build/E2E PASS)
 APPLICATION_CODE_CHANGED: YES
 PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/325
 PRIMARY_PR_MERGE_SHA: cfb3d0646f40ee304300d4b00fcf741d7549180d
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/326
 REPORT_PR_MERGE_SHA: PENDING
 SEAL_PR: PENDING
 LOCAL_MAIN_EQUALS_ORIGIN: YES
@@ -218,5 +218,5 @@ NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/326
 NEXT_ACTION: Merge report PR; optional seal PR for report merge SHA; do not begin Step 4-C until instructed.
