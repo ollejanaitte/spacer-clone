@@ -35,7 +35,7 @@ STEP_4_ALIGNMENT_CONTRACT_VERDICT: PASS
 STEP_4_IMPLEMENTATION_SEQUENCE_VERDICT: PASS
 STEP_4_IMPLEMENTATION_START_READINESS: GO
 
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/320
 REPORT_PR_MERGE_SHA: PENDING
 NEXT_ACTION: Step 4-A workflow skeleton on new branch from main after this report merges
 ================================================================================
