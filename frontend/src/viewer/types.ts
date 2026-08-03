@@ -76,6 +76,8 @@ export type ViewerVisibility = {
   apolloMarkers?: boolean;
   apolloAppurtenances?: boolean;
   apolloHaunches?: boolean;
+  apolloPavement?: boolean;
+  apolloRoadMarkings?: boolean;
   loads: boolean;
   labels: boolean;
   nodeLabels: boolean;
@@ -229,6 +231,8 @@ export const defaultVisibility: ViewerVisibility = {
   apolloMarkers: false,
   apolloAppurtenances: true,
   apolloHaunches: true,
+  apolloPavement: true,
+  apolloRoadMarkings: true,
   loads: true,
   labels: true,
   nodeLabels: true,
@@ -310,6 +314,8 @@ export type SceneGroups = {
   apolloMarkers: THREE.Group;
   apolloAppurtenances: THREE.Group;
   apolloHaunches: THREE.Group;
+  apolloPavement: THREE.Group;
+  apolloRoadMarkings: THREE.Group;
   loads: THREE.Group;
   resultDiagrams: THREE.Group;
   labels: THREE.Group;

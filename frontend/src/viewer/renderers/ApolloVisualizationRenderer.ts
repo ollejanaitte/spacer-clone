@@ -32,6 +32,8 @@ const bearingMaterial = new THREE.MeshStandardMaterial({ color: "#5b4b3a", rough
 const markerMaterial = new THREE.MeshStandardMaterial({ color: "#4d6174", roughness: 0.5, transparent: true, opacity: 0.45 });
 const appurtenanceMaterial = new THREE.MeshStandardMaterial({ color: "#7a8f6a", roughness: 0.5 });
 const haunchMaterial = new THREE.MeshStandardMaterial({ color: "#b8a078", roughness: 0.55 });
+const pavementMaterial = new THREE.MeshStandardMaterial({ color: "#4a4a4a", roughness: 0.85 });
+const roadMarkingMaterial = new THREE.MeshStandardMaterial({ color: "#f5f5f0", roughness: 0.4 });
 
 type ApolloSelectionRenderState = {
   readonly primarySelection: ViewerSelection;
@@ -210,7 +212,7 @@ export function renderApolloVisualizationSolids(
   model: ApolloVisualizationModel,
   selectionState: ApolloSelectionRenderState,
 ): Record<
-  "girders" | "crossBeams" | "bracings" | "deck" | "bearings" | "markers" | "appurtenances" | "haunches",
+  "girders" | "crossBeams" | "bracings" | "deck" | "bearings" | "markers" | "appurtenances" | "haunches" | "pavement" | "roadMarkings",
   THREE.Object3D[]
 > {
   const result = {
@@ -222,6 +224,8 @@ export function renderApolloVisualizationSolids(
     markers: [] as THREE.Object3D[],
     appurtenances: [] as THREE.Object3D[],
     haunches: [] as THREE.Object3D[],
+    pavement: [] as THREE.Object3D[],
+    roadMarkings: [] as THREE.Object3D[],
   };
 
   for (const solid of model.solidGeometryParameters) {
@@ -243,6 +247,10 @@ export function renderApolloVisualizationSolids(
       result.appurtenances.push(object);
     } else if (solid.kind === "haunch") {
       result.haunches.push(object);
+    } else if (solid.kind === "pavement") {
+      result.pavement.push(object);
+    } else if (solid.kind === "road_marking") {
+      result.roadMarkings.push(object);
     } else {
       result.markers.push(object);
     }
@@ -340,6 +348,12 @@ function renderApolloSolid(
   }
   if (solid.kind === "haunch") {
     return renderBoxLikeSolid(solid, state, haunchMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
+  }
+  if (solid.kind === "pavement") {
+    return renderBoxLikeSolid(solid, state, pavementMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.thickness);
+  }
+  if (solid.kind === "road_marking") {
+    return renderBoxLikeSolid(solid, state, roadMarkingMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.thickness);
   }
   return renderBoxLikeSolid(solid, state, markerMaterial, solid.dimensionsM.length, solid.dimensionsM.width, solid.dimensionsM.height);
 }

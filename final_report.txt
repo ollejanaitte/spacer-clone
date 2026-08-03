@@ -422,10 +422,10 @@ END APOLLO STEP 5-2 CURRENT
 BEGIN APOLLO STEP 5-3 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_3_IMPLEMENTATION
-CURRENT_SUBSTEP: P2
+CURRENT_SUBSTEP: P3
 OVERALL_PROGRESS: IN_PROGRESS
 START_MAIN_SHA: edd86e55f77bb7d10a97febfa96403102edfb831
-CURRENT_MAIN_SHA: 2d1855b04ecc1fa9f56691239ee1b933760ec645
+CURRENT_MAIN_SHA: bcd72336cf8cfec8d9350b456012228d4edf13ca
 
 P1_COMPLETE_SAMPLE: PASS
 P1_PR: https://github.com/ollejanaitte/spacer-clone/pull/343
@@ -433,7 +433,9 @@ P1_MERGE_SHA: 7987aee3dae54e34b8570907015572dc7d21611f
 P2_GUIDED_MODE: PASS
 P2_PR: https://github.com/ollejanaitte/spacer-clone/pull/344
 P2_MERGE_SHA: 2d1855b04ecc1fa9f56691239ee1b933760ec645
-P3_PAVEMENT_MARKING: NOT_STARTED
+P3_PAVEMENT_MARKING: PASS
+P3_PR: PENDING
+P3_MERGE_SHA: PENDING
 P4_STRUCTURAL_3D: NOT_STARTED
 P5_LATERAL_L_ANGLE: NOT_STARTED
 P6_INTEGRATION: NOT_STARTED
@@ -448,8 +450,7 @@ STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 
 NOTES:
-- P2 Guided Mode shell G01-G15 under frontend/src/apollo/guided/
-- DEC-S5-0009/0010; detail escape reuses Workflow SoR panels
+- P3 schema 1.2.0-development; pavement solids/qty; markings viz-only
 ================================================================================
 END APOLLO STEP 5-3 CURRENT
 ================================================================================

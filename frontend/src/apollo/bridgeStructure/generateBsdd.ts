@@ -42,6 +42,10 @@ import { buildRcDeckHaunchModels } from "./haunchModel";
 import type { ApolloAppurtenanceConfigurationDraft } from "./appurtenanceTypes";
 import type { ApolloHaunchConfigurationDraft } from "./haunchTypes";
 import type {
+  ApolloPavementConfigurationDraft,
+  ApolloRoadMarkingsConfigurationDraft,
+} from "./pavementTypes";
+import type {
   ApolloBridgeStructureInputDraft,
   BridgeStructureApproximateQuantity,
   BridgeStructureBooleanInputKey,
@@ -572,6 +576,28 @@ export function withHaunchConfiguration(
   return withBridgeStructureInputDraft(project, (draft) => ({
     ...draft,
     haunchConfiguration: configuration,
+    generatedAt: null,
+  }));
+}
+
+export function withPavementConfiguration(
+  project: ProjectModel,
+  configuration: ApolloPavementConfigurationDraft,
+): ProjectModel {
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    pavementConfiguration: configuration,
+    generatedAt: null,
+  }));
+}
+
+export function withRoadMarkingsConfiguration(
+  project: ProjectModel,
+  configuration: ApolloRoadMarkingsConfigurationDraft,
+): ProjectModel {
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    roadMarkingsConfiguration: configuration,
     generatedAt: null,
   }));
 }

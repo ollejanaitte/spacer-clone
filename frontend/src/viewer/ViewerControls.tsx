@@ -410,6 +410,16 @@ export function ViewerControls({
             checked={visibility.apolloHaunches !== false}
             onChange={(value) => setFlag("apolloHaunches", value)}
           />
+          <Toggle
+            label="Pavement"
+            checked={visibility.apolloPavement !== false}
+            onChange={(value) => setFlag("apolloPavement", value)}
+          />
+          <Toggle
+            label="Road markings"
+            checked={visibility.apolloRoadMarkings !== false}
+            onChange={(value) => setFlag("apolloRoadMarkings", value)}
+          />
         </div>
       </ControlGroup>
       <ControlGroup title={ja.viewer.controls.resultDiagrams}>

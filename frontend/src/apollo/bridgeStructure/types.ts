@@ -4,13 +4,18 @@ import type { BridgeLayoutSpan, BridgeLayoutSupport, BridgeSystem } from "../con
 import { BridgeSystem as BridgeSystemValues } from "../contracts";
 import type { ApolloAppurtenanceConfigurationDraft } from "./appurtenanceTypes";
 import type { ApolloHaunchConfigurationDraft } from "./haunchTypes";
+import type {
+  ApolloPavementConfigurationDraft,
+  ApolloRoadMarkingsConfigurationDraft,
+} from "./pavementTypes";
 
 /**
  * Step 4-B bumps input draft to 1.1.0-development (DEC-S4-0014).
  * Legacy 1.0.0 projects migrate with NOT_PROVIDED appurtenance/haunch presence.
  */
-export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.1.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.2.0-development";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY = "1.0.0";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 = "1.1.0-development";
 
 export { BridgeSystem, type BridgeLayoutSpan, type BridgeLayoutSupport } from "../contracts";
 
@@ -45,6 +50,8 @@ export const BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS = [
 export const BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS = [
   "appurtenanceConfiguration",
   "haunchConfiguration",
+  "pavementConfiguration",
+  "roadMarkingsConfiguration",
 ] as const;
 
 export type BridgeStructureBooleanInputKey = (typeof BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS)[number];
@@ -94,6 +101,10 @@ export type ApolloBridgeStructureInputDraft = {
   readonly appurtenanceConfiguration: ApolloAppurtenanceConfigurationDraft;
   /** WF-05: per-girder presence + optional item. Migration → empty girders (NOT_PROVIDED). */
   readonly haunchConfiguration: ApolloHaunchConfigurationDraft;
+  /** Step 5 pavement (DEC-S5-0003). Migration → NOT_PROVIDED. */
+  readonly pavementConfiguration: ApolloPavementConfigurationDraft;
+  /** Step 5 road markings viz-only (DEC-S5-0004). Migration → disabled. */
+  readonly roadMarkingsConfiguration: ApolloRoadMarkingsConfigurationDraft;
   readonly generatedAt: string | null;
 };
 

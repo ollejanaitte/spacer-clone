@@ -32,6 +32,8 @@ export function createSceneGroups(): SceneGroups {
     apolloMarkers: new THREE.Group(),
     apolloAppurtenances: new THREE.Group(),
     apolloHaunches: new THREE.Group(),
+    apolloPavement: new THREE.Group(),
+    apolloRoadMarkings: new THREE.Group(),
     loads: new THREE.Group(),
     resultDiagrams: new THREE.Group(),
     labels: new THREE.Group(),
@@ -48,6 +50,8 @@ export function createSceneGroups(): SceneGroups {
   groups.apolloMarkers.name = "ApolloMarkers";
   groups.apolloAppurtenances.name = "ApolloAppurtenances";
   groups.apolloHaunches.name = "ApolloHaunches";
+  groups.apolloPavement.name = "ApolloPavement";
+  groups.apolloRoadMarkings.name = "ApolloRoadMarkings";
   groups.loads.name = "Loads";
   groups.resultDiagrams.name = "ResultDiagrams";
   groups.labels.name = "Labels";
@@ -64,6 +68,8 @@ export function createSceneGroups(): SceneGroups {
     groups.apolloMarkers,
     groups.apolloAppurtenances,
     groups.apolloHaunches,
+    groups.apolloPavement,
+    groups.apolloRoadMarkings,
     groups.loads,
     groups.deformed,
     groups.resultDiagrams,
@@ -241,6 +247,18 @@ function rebuildApolloVisualizationScene(
     groups.apolloHaunches,
     props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false
       ? solidObjects.haunches
+      : [],
+  );
+  replaceGroupContents(
+    groups.apolloPavement,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloPavement !== false
+      ? solidObjects.pavement
+      : [],
+  );
+  replaceGroupContents(
+    groups.apolloRoadMarkings,
+    props.visibility.apolloSolidModel !== false && props.visibility.apolloRoadMarkings !== false
+      ? solidObjects.roadMarkings
       : [],
   );
   replaceGroupContents(groups.loads, []);

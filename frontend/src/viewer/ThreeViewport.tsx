@@ -246,6 +246,10 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
       props.visibility.apolloSolidModel !== false && props.visibility.apolloAppurtenances !== false;
     context.groups.apolloHaunches.visible =
       props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false;
+    context.groups.apolloPavement.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloPavement !== false;
+    context.groups.apolloRoadMarkings.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloRoadMarkings !== false;
     context.groups.loads.visible = props.visibility.loads;
     context.groups.deformed.visible = props.visibility.deformedShape;
     context.groups.resultDiagrams.visible = true;
@@ -324,6 +328,10 @@ function safeRebuildModelScene(
       props.visibility.apolloSolidModel !== false && props.visibility.apolloAppurtenances !== false;
     context.groups.apolloHaunches.visible =
       props.visibility.apolloSolidModel !== false && props.visibility.apolloHaunches !== false;
+    context.groups.apolloPavement.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloPavement !== false;
+    context.groups.apolloRoadMarkings.visible =
+      props.visibility.apolloSolidModel !== false && props.visibility.apolloRoadMarkings !== false;
     context.groups.loads.visible = props.visibility.loads;
     context.groups.deformed.visible = props.visibility.deformedShape;
     context.groups.resultDiagrams.visible = true;

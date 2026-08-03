@@ -19,8 +19,17 @@ import {
   validateHaunchConfigurationPersistence,
 } from "./haunchModel";
 import {
+  createDefaultPavementConfiguration,
+  createDefaultRoadMarkingsConfiguration,
+  parsePavementConfiguration,
+  parseRoadMarkingsConfiguration,
+  validatePavementConfigurationPersistence,
+  validateRoadMarkingsConfigurationPersistence,
+} from "./pavementModel";
+import {
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
@@ -106,6 +115,8 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     supports: [],
     appurtenanceConfiguration: createDefaultAppurtenanceConfiguration(),
     haunchConfiguration: createDefaultHaunchConfiguration(),
+    pavementConfiguration: createDefaultPavementConfiguration(),
+    roadMarkingsConfiguration: createDefaultRoadMarkingsConfiguration(),
     generatedAt: null,
   };
 }
@@ -224,10 +235,11 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
 
   if (
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION &&
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY
   ) {
     diagnostics.push(
-      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY} or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
+      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
     );
   }
 
@@ -317,6 +329,8 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
 
   diagnostics.push(...validateAppurtenanceConfigurationPersistence(raw.appurtenanceConfiguration));
   diagnostics.push(...validateHaunchConfigurationPersistence(raw.haunchConfiguration));
+  diagnostics.push(...validatePavementConfigurationPersistence(raw.pavementConfiguration));
+  diagnostics.push(...validateRoadMarkingsConfigurationPersistence(raw.roadMarkingsConfiguration));
 
   return diagnostics;
 }
@@ -369,9 +383,19 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   if (haunchConfiguration === null) {
     return null;
   }
+  const pavementConfiguration = parsePavementConfiguration(raw.pavementConfiguration);
+  if (pavementConfiguration === null) {
+    return null;
+  }
+  const roadMarkingsConfiguration = parseRoadMarkingsConfiguration(raw.roadMarkingsConfiguration);
+  if (roadMarkingsConfiguration === null) {
+    return null;
+  }
 
-  // Legacy 1.0.0 → 1.1.0-development: new fields are NOT_PROVIDED; mark generation STALE.
-  const migratedFromLegacy = raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY;
+  // Legacy 1.0.0 / 1.1.0 → 1.2.0-development: missing pavement/markings → NOT_PROVIDED / disabled.
+  const migratedFromLegacy =
+    raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY ||
+    raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1;
   const preservedGeneratedAt =
     generatedAt === null || generatedAt === undefined
       ? null
@@ -390,6 +414,8 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
     supports,
     appurtenanceConfiguration,
     haunchConfiguration,
+    pavementConfiguration,
+    roadMarkingsConfiguration,
     generatedAt: migratedFromLegacy ? null : preservedGeneratedAt,
   };
 }
