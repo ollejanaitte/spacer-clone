@@ -1,0 +1,1434 @@
+{
+  "schemaVersion": "1.1.0-development",
+  "quantityModelId": "qty-bridge-continuous-f16c02db027d",
+  "projectId": "bridge-continuous",
+  "inputRevision": "2026-08-03T16:00:28.259Z",
+  "inputChecksum": "f16c02db027dfcaa23bb608429ecd6867ef724ec0782608a253a679bc21b96f2",
+  "generatedAt": "2026-08-03T16:00:28.297Z",
+  "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "authorizationStatus": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "stale": false,
+  "warnings": [
+    "UNVERIFIED DEVELOPMENT QUANTITY",
+    "NOT FOR ESTIMATE, DESIGN OR CONSTRUCTION",
+    "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
+    "APPURTENANCE/RC_HAUNCH quantities derived from C1 geometry kernel; RC_DECK body remains separate (no double count)."
+  ],
+  "items": [
+    {
+      "quantityId": "QTY-MG-ATF",
+      "category": "MAIN_GIRDER",
+      "subcategory": "area",
+      "label": "上フランジ断面積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-ATF",
+      "inputRefs": [
+        "topFlangeWidth",
+        "topFlangeThickness"
+      ],
+      "value": 0.01,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-AW",
+      "category": "MAIN_GIRDER",
+      "subcategory": "area",
+      "label": "ウェブ断面積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-AW",
+      "inputRefs": [
+        "webThickness",
+        "webHeight"
+      ],
+      "value": 0.02946,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-ABF",
+      "category": "MAIN_GIRDER",
+      "subcategory": "area",
+      "label": "下フランジ断面積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-ABF",
+      "inputRefs": [
+        "bottomFlangeWidth",
+        "bottomFlangeThickness"
+      ],
+      "value": 0.015,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VTF1",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "主桁1本の上フランジ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VTF1",
+      "inputRefs": [
+        "QTY-MG-ATF",
+        "bridgeLength"
+      ],
+      "value": 0.4,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VW1",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "主桁1本のウェブ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VW1",
+      "inputRefs": [
+        "QTY-MG-AW",
+        "bridgeLength"
+      ],
+      "value": 1.1784,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VBF1",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "主桁1本の下フランジ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VBF1",
+      "inputRefs": [
+        "QTY-MG-ABF",
+        "bridgeLength"
+      ],
+      "value": 0.6,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-V1",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "主桁1本の全鋼体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-V1",
+      "inputRefs": [
+        "totalSectionArea",
+        "bridgeLength"
+      ],
+      "value": 2.1784,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VTF",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "全主桁の上フランジ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VTF",
+      "inputRefs": [
+        "QTY-MG-VTF1",
+        "girderCount"
+      ],
+      "value": 1.6,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VW",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "全主桁のウェブ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VW",
+      "inputRefs": [
+        "QTY-MG-VW1",
+        "girderCount"
+      ],
+      "value": 4.7136,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VBF",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "全主桁の下フランジ体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VBF",
+      "inputRefs": [
+        "QTY-MG-VBF1",
+        "girderCount"
+      ],
+      "value": 2.4,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-VALL",
+      "category": "MAIN_GIRDER",
+      "subcategory": "volume",
+      "label": "全主桁の全鋼体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-VALL",
+      "inputRefs": [
+        "QTY-MG-V1",
+        "girderCount"
+      ],
+      "value": 8.7136,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "主桁本体のみ。補剛材・対傾構・横構・横桁は含まない。"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-DK-AREA",
+      "category": "RC_DECK",
+      "subcategory": "area",
+      "label": "床版面積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-DK-A",
+      "inputRefs": [
+        "width",
+        "bridgeLength"
+      ],
+      "value": 480,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-DK-VOL",
+      "category": "RC_DECK",
+      "subcategory": "volume",
+      "label": "RC床版体積",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-DK-V",
+      "inputRefs": [
+        "QTY-DK-AREA",
+        "deckThickness"
+      ],
+      "value": 120,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-SUM-SPAN",
+      "category": "SUMMARY",
+      "subcategory": "count",
+      "label": "支間数",
+      "sourceEntityIds": [
+        "layout"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-SPAN-N",
+      "inputRefs": [
+        "spans",
+        "bridgeSystem"
+      ],
+      "value": 1,
+      "unit": "count",
+      "precision": 0,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-SUM-GIRDER-N",
+      "category": "SUMMARY",
+      "subcategory": "count",
+      "label": "主桁本数",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-GIRDER-N",
+      "inputRefs": [
+        "girderCount"
+      ],
+      "value": 4,
+      "unit": "count",
+      "precision": 0,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-XB-N",
+      "category": "CROSS_BEAM",
+      "subcategory": "count",
+      "label": "横桁本数",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-XB-N",
+      "inputRefs": [
+        "bridgeLength",
+        "crossBeamSpacing"
+      ],
+      "value": 9,
+      "unit": "count",
+      "precision": 0,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "位置数は floor(L/spacing)+1。横桁断面寸法は未入力のため詳細鋼体積なし。"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-ST-N",
+      "category": "STIFFENER",
+      "subcategory": "count",
+      "label": "補剛材本数",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "INCOMPLETE_INPUT",
+      "formulaId": "F-QTY-ST-N",
+      "inputRefs": [
+        "stiffenerSpacing"
+      ],
+      "value": null,
+      "unit": "count",
+      "precision": 0,
+      "status": "NOT_AVAILABLE",
+      "assumptionIds": [],
+      "warnings": [
+        "補剛材間隔未設定"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-SW-N",
+      "category": "SWAY_BRACING",
+      "subcategory": "count",
+      "label": "対傾構箇所数",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "INCOMPLETE_INPUT",
+      "formulaId": "F-QTY-SW-N",
+      "inputRefs": [
+        "swayBracingInterval"
+      ],
+      "value": null,
+      "unit": "count",
+      "precision": 0,
+      "status": "NOT_AVAILABLE",
+      "assumptionIds": [],
+      "warnings": [
+        "対傾構間隔未設定"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-LB-LOWER",
+      "category": "LOWER_LATERAL_BRACING",
+      "subcategory": "flag",
+      "label": "下横構有無",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-LB-L",
+      "inputRefs": [
+        "lateralBracingEnabled"
+      ],
+      "value": 0,
+      "unit": "flag",
+      "precision": 0,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "有無フラグのみ。詳細鋼体積なし。"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-LB-UPPER",
+      "category": "UPPER_LATERAL_BRACING",
+      "subcategory": "flag",
+      "label": "上横構有無",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-LB-U",
+      "inputRefs": [
+        "upperLateralBracingEnabled"
+      ],
+      "value": 0,
+      "unit": "flag",
+      "precision": 0,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "有無フラグのみ。詳細鋼体積なし。"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-MG-W",
+      "category": "MAIN_GIRDER",
+      "subcategory": "weight",
+      "label": "主桁重量（ユーザー単位重量）",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "INCOMPLETE_INPUT",
+      "formulaId": "F-QTY-MG-W",
+      "inputRefs": [
+        "QTY-MG-VALL",
+        "steelUnitWeight"
+      ],
+      "value": null,
+      "unit": "kN",
+      "precision": 12,
+      "status": "NOT_AVAILABLE",
+      "assumptionIds": [],
+      "warnings": [
+        "USER_PROVIDED_UNVERIFIED",
+        "NOT_FOR_FORMAL_QUANTITY",
+        "鋼単位重量未設定"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-DK-W",
+      "category": "RC_DECK",
+      "subcategory": "weight",
+      "label": "RC床版重量（ユーザー単位重量）",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-QTY-DK-W",
+      "inputRefs": [
+        "QTY-DK-VOL",
+        "rcUnitWeight"
+      ],
+      "value": 2940,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "USER_PROVIDED_UNVERIFIED",
+        "NOT_FOR_FORMAL_QUANTITY",
+        "単位重量はユーザー入力（正式採択なし）"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-PV-VOL",
+      "category": "PAVEMENT",
+      "subcategory": "volume",
+      "label": "舗装体積",
+      "sourceEntityIds": [],
+      "calculationBasis": "INCOMPLETE_INPUT",
+      "formulaId": "F-QTY-PV-V",
+      "inputRefs": [
+        "pavementThickness",
+        "pavementWidth"
+      ],
+      "value": null,
+      "unit": "m3",
+      "precision": 12,
+      "status": "NOT_AVAILABLE",
+      "assumptionIds": [],
+      "warnings": [
+        "canonical schemaに舗装入力がないため算出せず補完しない"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-PAINT-GEOM",
+      "category": "PAINT_AREA",
+      "subcategory": "area",
+      "label": "塗装面積（幾何推定・開発）",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "DEVELOPMENT_GEOMETRIC_SURFACE_ESTIMATE",
+      "formulaId": "F-QTY-PAINT-GEOM",
+      "inputRefs": [
+        "flange",
+        "web",
+        "bridgeLength",
+        "girderCount"
+      ],
+      "value": 1068.1599999999999,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [
+        "PAINT-GEOM-I-EXPOSED-NO-CONTACT-COEFF"
+      ],
+      "warnings": [
+        "DEVELOPMENT_GEOMETRIC_SURFACE_ESTIMATE",
+        "正式塗装数量ではない",
+        "接触面・添接・補剛材・マスキング・塗装系係数は含まない"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-SUM-OVERHANG",
+      "category": "SUMMARY",
+      "subcategory": "geometry",
+      "label": "左右張出し",
+      "sourceEntityIds": [
+        "bridgeStructureInput"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-QTY-OVERHANG",
+      "inputRefs": [
+        "width",
+        "girderCount",
+        "girderSpacing"
+      ],
+      "value": 1.5,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-LEFT_CURB-A",
+      "category": "APPURTENANCE",
+      "subcategory": "area",
+      "label": "左地覆 断面積",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-APP-RECT-AREA",
+      "inputRefs": [
+        "width",
+        "height"
+      ],
+      "value": 0.125,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only)."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-LEFT_CURB-GAMMA",
+      "category": "APPURTENANCE",
+      "subcategory": "unit_weight",
+      "label": "左地覆 単位体積重量",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-APP-UNIT-WEIGHT-INPUT",
+      "inputRefs": [
+        "unitWeight"
+      ],
+      "value": 24.5,
+      "unit": "kN/m3",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_APPURTENANCE"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only).",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-LEFT_CURB-L",
+      "category": "APPURTENANCE",
+      "subcategory": "length",
+      "label": "左地覆 延長",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-APP-LENGTH",
+      "inputRefs": [
+        "startStation",
+        "endStation"
+      ],
+      "value": 40,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only)."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-LEFT_CURB-V",
+      "category": "APPURTENANCE",
+      "subcategory": "volume",
+      "label": "左地覆 体積",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-APP-VOLUME",
+      "inputRefs": [
+        "QTY-APP-LEFT_CURB-A",
+        "QTY-APP-LEFT_CURB-L"
+      ],
+      "value": 5,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only)."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-LEFT_CURB-W",
+      "category": "APPURTENANCE",
+      "subcategory": "weight",
+      "label": "左地覆 総重量",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-APP-TOTAL-WEIGHT",
+      "inputRefs": [
+        "QTY-APP-LEFT_CURB-V",
+        "unitWeight"
+      ],
+      "value": 122.5,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_APPURTENANCE"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only).",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-TOTAL-V",
+      "category": "APPURTENANCE",
+      "subcategory": "volume_total",
+      "label": "付属物体積合計",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-APP-VOLUME-SUM",
+      "inputRefs": [
+        "QTY-APP-LEFT_CURB-V"
+      ],
+      "value": 5,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "Does not include RC deck body volume"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-APP-TOTAL-W",
+      "category": "APPURTENANCE",
+      "subcategory": "weight_total",
+      "label": "付属物重量合計",
+      "sourceEntityIds": [
+        "175902bf-6f24-4802-ac59-96f26e796b2c"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-APP-TOTAL-WEIGHT-SUM",
+      "inputRefs": [
+        "QTY-APP-LEFT_CURB-W"
+      ],
+      "value": 122.5,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_APPURTENANCE"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-0-A",
+      "category": "RC_HAUNCH",
+      "subcategory": "area",
+      "label": "ハンチ girder-0 断面積",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-TRAP-AREA",
+      "inputRefs": [
+        "topWidth",
+        "bottomWidth",
+        "height"
+      ],
+      "value": 0.08000000000000002,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-0-GAMMA",
+      "category": "RC_HAUNCH",
+      "subcategory": "unit_weight",
+      "label": "ハンチ girder-0 単位体積重量",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-UNIT-WEIGHT-INPUT",
+      "inputRefs": [
+        "rcUnitWeight"
+      ],
+      "value": 24.5,
+      "unit": "kN/m3",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-0-L",
+      "category": "RC_HAUNCH",
+      "subcategory": "length",
+      "label": "ハンチ girder-0 延長",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-LENGTH",
+      "inputRefs": [
+        "startStation",
+        "endStation"
+      ],
+      "value": 40,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-0-V",
+      "category": "RC_HAUNCH",
+      "subcategory": "volume",
+      "label": "ハンチ girder-0 体積",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-VOLUME",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-0-A",
+        "QTY-HAUNCH-girder-0-L"
+      ],
+      "value": 3.2000000000000006,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-0-W",
+      "category": "RC_HAUNCH",
+      "subcategory": "weight",
+      "label": "ハンチ girder-0 総重量",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-TOTAL-WEIGHT",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-0-V",
+        "rcUnitWeight"
+      ],
+      "value": 78.40000000000002,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-1-A",
+      "category": "RC_HAUNCH",
+      "subcategory": "area",
+      "label": "ハンチ girder-1 断面積",
+      "sourceEntityIds": [
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-TRAP-AREA",
+      "inputRefs": [
+        "topWidth",
+        "bottomWidth",
+        "height"
+      ],
+      "value": 0.08000000000000002,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-1-GAMMA",
+      "category": "RC_HAUNCH",
+      "subcategory": "unit_weight",
+      "label": "ハンチ girder-1 単位体積重量",
+      "sourceEntityIds": [
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-UNIT-WEIGHT-INPUT",
+      "inputRefs": [
+        "rcUnitWeight"
+      ],
+      "value": 24.5,
+      "unit": "kN/m3",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-1-L",
+      "category": "RC_HAUNCH",
+      "subcategory": "length",
+      "label": "ハンチ girder-1 延長",
+      "sourceEntityIds": [
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-LENGTH",
+      "inputRefs": [
+        "startStation",
+        "endStation"
+      ],
+      "value": 40,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-1-V",
+      "category": "RC_HAUNCH",
+      "subcategory": "volume",
+      "label": "ハンチ girder-1 体積",
+      "sourceEntityIds": [
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-VOLUME",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-1-A",
+        "QTY-HAUNCH-girder-1-L"
+      ],
+      "value": 3.2000000000000006,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-1-W",
+      "category": "RC_HAUNCH",
+      "subcategory": "weight",
+      "label": "ハンチ girder-1 総重量",
+      "sourceEntityIds": [
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-TOTAL-WEIGHT",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-1-V",
+        "rcUnitWeight"
+      ],
+      "value": 78.40000000000002,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-2-A",
+      "category": "RC_HAUNCH",
+      "subcategory": "area",
+      "label": "ハンチ girder-2 断面積",
+      "sourceEntityIds": [
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-TRAP-AREA",
+      "inputRefs": [
+        "topWidth",
+        "bottomWidth",
+        "height"
+      ],
+      "value": 0.08000000000000002,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-2-GAMMA",
+      "category": "RC_HAUNCH",
+      "subcategory": "unit_weight",
+      "label": "ハンチ girder-2 単位体積重量",
+      "sourceEntityIds": [
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-UNIT-WEIGHT-INPUT",
+      "inputRefs": [
+        "rcUnitWeight"
+      ],
+      "value": 24.5,
+      "unit": "kN/m3",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-2-L",
+      "category": "RC_HAUNCH",
+      "subcategory": "length",
+      "label": "ハンチ girder-2 延長",
+      "sourceEntityIds": [
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-LENGTH",
+      "inputRefs": [
+        "startStation",
+        "endStation"
+      ],
+      "value": 40,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-2-V",
+      "category": "RC_HAUNCH",
+      "subcategory": "volume",
+      "label": "ハンチ girder-2 体積",
+      "sourceEntityIds": [
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-VOLUME",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-2-A",
+        "QTY-HAUNCH-girder-2-L"
+      ],
+      "value": 3.2000000000000006,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-2-W",
+      "category": "RC_HAUNCH",
+      "subcategory": "weight",
+      "label": "ハンチ girder-2 総重量",
+      "sourceEntityIds": [
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-TOTAL-WEIGHT",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-2-V",
+        "rcUnitWeight"
+      ],
+      "value": 78.40000000000002,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-3-A",
+      "category": "RC_HAUNCH",
+      "subcategory": "area",
+      "label": "ハンチ girder-3 断面積",
+      "sourceEntityIds": [
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-TRAP-AREA",
+      "inputRefs": [
+        "topWidth",
+        "bottomWidth",
+        "height"
+      ],
+      "value": 0.08000000000000002,
+      "unit": "m2",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-3-GAMMA",
+      "category": "RC_HAUNCH",
+      "subcategory": "unit_weight",
+      "label": "ハンチ girder-3 単位体積重量",
+      "sourceEntityIds": [
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-UNIT-WEIGHT-INPUT",
+      "inputRefs": [
+        "rcUnitWeight"
+      ],
+      "value": 24.5,
+      "unit": "kN/m3",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-3-L",
+      "category": "RC_HAUNCH",
+      "subcategory": "length",
+      "label": "ハンチ girder-3 延長",
+      "sourceEntityIds": [
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-LENGTH",
+      "inputRefs": [
+        "startStation",
+        "endStation"
+      ],
+      "value": 40,
+      "unit": "m",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-3-V",
+      "category": "RC_HAUNCH",
+      "subcategory": "volume",
+      "label": "ハンチ girder-3 体積",
+      "sourceEntityIds": [
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-VOLUME",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-3-A",
+        "QTY-HAUNCH-girder-3-L"
+      ],
+      "value": 3.2000000000000006,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-girder-3-W",
+      "category": "RC_HAUNCH",
+      "subcategory": "weight",
+      "label": "ハンチ girder-3 総重量",
+      "sourceEntityIds": [
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-TOTAL-WEIGHT",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-3-V",
+        "rcUnitWeight"
+      ],
+      "value": 78.40000000000002,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "UNVERIFIED_DEVELOPMENT_ONLY",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding.",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-TOTAL-V",
+      "category": "RC_HAUNCH",
+      "subcategory": "volume_total",
+      "label": "ハンチ体積合計",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b",
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "EXACT_GEOMETRY_DEVELOPMENT",
+      "formulaId": "F-S4C-HAUNCH-VOLUME-SUM",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-0-V",
+        "QTY-HAUNCH-girder-1-V",
+        "QTY-HAUNCH-girder-2-V",
+        "QTY-HAUNCH-girder-3-V"
+      ],
+      "value": 12.800000000000002,
+      "unit": "m3",
+      "precision": 12,
+      "status": "READY",
+      "assumptionIds": [],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "Not added into QTY-DK-VOL / QTY-DK-W"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    },
+    {
+      "quantityId": "QTY-HAUNCH-TOTAL-W",
+      "category": "RC_HAUNCH",
+      "subcategory": "weight_total",
+      "label": "ハンチ重量合計",
+      "sourceEntityIds": [
+        "65debd1f-303a-49cc-b766-58a7f5dae22b",
+        "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+        "ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+        "33c2b39e-fe17-4531-a1fe-2cd0224e1394"
+      ],
+      "calculationBasis": "USER_PROVIDED_UNVERIFIED",
+      "formulaId": "F-S4C-HAUNCH-TOTAL-WEIGHT-SUM",
+      "inputRefs": [
+        "QTY-HAUNCH-girder-0-W",
+        "QTY-HAUNCH-girder-1-W",
+        "QTY-HAUNCH-girder-2-W",
+        "QTY-HAUNCH-girder-3-W"
+      ],
+      "value": 313.6000000000001,
+      "unit": "kN",
+      "precision": 12,
+      "status": "USER_PROVIDED_UNVERIFIED",
+      "assumptionIds": [
+        "USER_UNIT_WEIGHT_RC"
+      ],
+      "warnings": [
+        "NOT_AUTHORIZED",
+        "SEPARATE_FROM_RC_DECK_BODY",
+        "USER_PROVIDED_UNVERIFIED"
+      ],
+      "provenance": "development QuantityModel; NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED; NOT FOR ESTIMATE/DESIGN/CONSTRUCTION"
+    }
+  ]
+}

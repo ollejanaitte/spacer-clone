@@ -13,7 +13,7 @@
 | C3 | QuantityModel — see `quantity_traceability.md` | feat/apollo-step4c3-quantity |
 | C4 | Dead load / distribution — see `load_model.md` | feat/apollo-step4c4-load-model |
 | C5 | Analysis hookup — see `analysis_adapter.md` | feat/apollo-step4c5-analysis-hookup |
-| C6 | Workflow / E2E / scope guard | feat/apollo-step4c6-integration-e2e |
+| C6 | Workflow / E2E / scope guard — see `workflow_integration.md` | feat/apollo-step4c6-integration-e2e |
 
 ## Out of scope
 

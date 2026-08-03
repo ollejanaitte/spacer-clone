@@ -110,7 +110,8 @@ export type WorkflowDiagnosticCode =
   | "WF_LOCAL_CRS_WARNING"
   | "WF_PARTIAL_SCOPE_WARNING"
   | "WF_3D_DIMENSION_PLANNED"
-  | "WF_STEP_4_C_INTEGRATION_PENDING";
+  | "WF_STEP_4_C_INTEGRATION_PENDING"
+  | "WF_STEP_4_G_REINTEGRATION_PENDING";
 
 export type DiagnosticSeverity = "error" | "warning" | "info";
 

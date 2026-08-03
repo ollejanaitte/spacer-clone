@@ -188,20 +188,31 @@ function classifyBridgeStructureResult(project: ProjectModel): StepResultState {
   return "NOT_GENERATED";
 }
 
-function step4cIntegrationPending(stepId: WorkflowStepId, index: number): WorkflowDiagnostic {
+function step4gReintegrationPending(stepId: WorkflowStepId, index: number): WorkflowDiagnostic {
   return {
-    diagnosticId: `DIAG-${stepId}-S4C-${index}`,
+    diagnosticId: `DIAG-${stepId}-S4G-${index}`,
     workflowStepId: stepId,
     severity: "warning",
-    code: "WF_STEP_4_C_INTEGRATION_PENDING",
+    code: "WF_STEP_4_G_REINTEGRATION_PENDING",
     message:
-      "付属物・ハンチの 3D / 数量 / 荷重への接続は Step 4-C で実装予定です。本工程は canonical input までです。",
-    technicalDetail: "STEP_4_C_INTEGRATION_PENDING",
+      "付属物・ハンチの計算書/図面/ZIP 再統合は Step 4-G 待ちです。既存成果を新 entity 対応済みとみなしません。",
+    technicalDetail: "STEP_4_G_REINTEGRATION_PENDING",
     blocking: false,
     source: "frontend/src/apollo/workflow/selectors.ts",
-    remediation: "Step 4-C 実装後に下流成果へ反映されます。現時点では未統合と表示します。",
+    remediation: "Step 4-G で report/drawing/member schedule/ZIP を再統合してください。",
     navigationTarget: null,
   };
+}
+
+function hasProvidedAppurtenanceOrHaunch(project: ProjectModel): boolean {
+  const draft = getBridgeStructureInputDraft(project);
+  const appProvided = draft.appurtenanceConfiguration.slots.some(
+    (slot) => slot.presence === PRESENCE_STATUS.PROVIDED,
+  );
+  const haunchProvided = draft.haunchConfiguration.girders.some(
+    (girder) => girder.presence === PRESENCE_STATUS.PROVIDED,
+  );
+  return appProvided || haunchProvided;
 }
 
 function bridgeStructureEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
@@ -260,6 +271,10 @@ function derivedModelEvidence(
   const currentRevision = buildInputRevision(draft);
   const hasContent = derivedModelHasContent(model, kind);
   const complete = !stale && hasContent;
+  const warnings: WorkflowDiagnostic[] = [];
+  if (hasProvidedAppurtenanceOrHaunch(project) && (kind === "report" || kind === "drawing")) {
+    warnings.push(step4gReintegrationPending(stepId, 0));
+  }
   return {
     workflowStepId: stepId,
     capability: getWorkflowCapability(stepId).status,
@@ -272,7 +287,7 @@ function derivedModelEvidence(
     currentChecksum,
     generatedChecksum: stale ? null : currentChecksum,
     diagnostics: [],
-    warnings: [],
+    warnings,
   };
 }
 
@@ -357,7 +372,7 @@ function outputIntegrationEvidence(project: ProjectModel, stepId: WorkflowStepId
     currentChecksum,
     generatedChecksum: stale ? null : currentChecksum,
     diagnostics,
-    warnings: [],
+    warnings: hasProvidedAppurtenanceOrHaunch(project) ? [step4gReintegrationPending(stepId, 0)] : [],
   };
 }
 
@@ -514,22 +529,19 @@ function appurtenanceEvidence(project: ProjectModel, stepId: WorkflowStepId): St
   const allNotProvided = draft.appurtenanceConfiguration.slots.every(
     (slot) => slot.presence === PRESENCE_STATUS.NOT_PROVIDED,
   );
-  const warnings: WorkflowDiagnostic[] = [
-    localCrsWarning(stepId, 0),
-    step4cIntegrationPending(stepId, 0),
-  ];
+  const warnings: WorkflowDiagnostic[] = [localCrsWarning(stepId, 0)];
   if (anyProvided) {
     warnings.push({
       diagnosticId: `DIAG-${stepId}-DOWNSTREAM-PENDING`,
       workflowStepId: stepId,
       severity: "warning",
-      code: "WF_PARTIAL_SCOPE_WARNING",
+      code: "WF_STEP_4_G_REINTEGRATION_PENDING",
       message:
-        "付属物が PROVIDED ですが、下流の 3D・数量・荷重・図面は Step 4-C 未統合です。既存 Step 3 成果を新 entity 対応済みとみなしません。",
-      technicalDetail: "appurtenance PROVIDED; Step 4-C pending",
+        "付属物が PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+      technicalDetail: "appurtenance PROVIDED; Step 4-G reintegration pending",
       blocking: false,
       source: "frontend/src/apollo/workflow/selectors.ts",
-      remediation: "Step 4-C 実装まで下流成果は未統合警告付きで扱ってください。",
+      remediation: "Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。",
       navigationTarget: null,
     });
   }
@@ -611,19 +623,19 @@ function haunchEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvid
   const anyProvided = draft.haunchConfiguration.girders.some(
     (g) => g.presence === PRESENCE_STATUS.PROVIDED,
   );
-  const warnings: WorkflowDiagnostic[] = [step4cIntegrationPending(stepId, 0)];
+  const warnings: WorkflowDiagnostic[] = [];
   if (anyProvided) {
     warnings.push({
       diagnosticId: `DIAG-${stepId}-DOWNSTREAM-PENDING`,
       workflowStepId: stepId,
       severity: "warning",
-      code: "WF_PARTIAL_SCOPE_WARNING",
+      code: "WF_STEP_4_G_REINTEGRATION_PENDING",
       message:
-        "ハンチが PROVIDED ですが、3D・数量・自重への接続は Step 4-C 未統合です。",
-      technicalDetail: "haunch PROVIDED; Step 4-C pending",
+        "ハンチが PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+      technicalDetail: "haunch PROVIDED; Step 4-G reintegration pending",
       blocking: false,
       source: "frontend/src/apollo/workflow/selectors.ts",
-      remediation: "Step 4-C 実装まで下流成果は未統合警告付きで扱ってください。",
+      remediation: "Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。",
       navigationTarget: null,
     });
   }

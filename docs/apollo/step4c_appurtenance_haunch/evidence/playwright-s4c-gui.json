@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "panels": [
+    "load",
+    "quantity",
+    "analysis"
+  ]
+}

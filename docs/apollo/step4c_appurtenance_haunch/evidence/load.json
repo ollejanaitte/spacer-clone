@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "1.0.0-development",
+  "loadModelId": "load-bridge-continuous-f16c02db027d",
+  "projectId": "bridge-continuous",
+  "inputRevision": "2026-08-03T16:00:28.259Z",
+  "inputChecksum": "f16c02db027dfcaa23bb608429ecd6867ef724ec0782608a253a679bc21b96f2",
+  "generatedAt": "2026-08-03T16:00:28.301Z",
+  "stale": false,
+  "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "authorizationStatus": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "status": "READY",
+  "loads": [
+    {
+      "loadId": "load:appurtenance:175902bf-6f24-4802-ac59-96f26e796b2c",
+      "sourceEntityId": "175902bf-6f24-4802-ac59-96f26e796b2c",
+      "sourceType": "BridgeAppurtenance",
+      "loadCaseId": "DEAD_APPURTENANCE",
+      "category": "APPURTENANCE",
+      "slotOrGirderKey": "LEFT_CURB",
+      "startStation": 0,
+      "endStation": 40,
+      "lengthM": 40,
+      "transverseOffset": -5,
+      "sectionAreaM2": 0.125,
+      "lineLoadKNPerM": 3.0625,
+      "totalLoadKN": 122.5,
+      "direction": "-Z",
+      "distributionRule": "NEAREST_GIRDER",
+      "targetGirderRefs": [
+        {
+          "girderKey": "girder-0",
+          "girderIndex": 0,
+          "girderOffsetY": -4.5,
+          "share": 1
+        }
+      ],
+      "formulaIds": [
+        "F-S4C-APP-RECT-AREA",
+        "F-S4C-APP-LENGTH",
+        "F-S4C-APP-TOTAL-WEIGHT",
+        "F-S4C-APP-LINE-LOAD"
+      ],
+      "unitWeightSource": "USER_PROVIDED_UNVERIFIED",
+      "status": "READY",
+      "warnings": [
+        "DEVELOPMENT_ONLY_DISTRIBUTION",
+        "NOT_AUTHORIZED",
+        "LOCAL_CRS_UNBOUND",
+        "LOCAL_CRS: transverse placement uses unbound local CRS (+Y=right). Step 4-E binding pending.",
+        "OFFSET_ANCHOR: transverseOffset is the cross-section centerline (DEC-S4C-0001 development-only)."
+      ],
+      "provenance": {
+        "source": "canonical_geometry_kernel",
+        "generatedBy": "buildAppurtenanceHaunchLoadModel",
+        "designAuthorization": "NOT_AUTHORIZED",
+        "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY"
+      }
+    },
+    {
+      "loadId": "load:haunch:33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+      "sourceEntityId": "33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+      "sourceType": "RcDeckHaunch",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "slotOrGirderKey": "girder-3",
+      "startStation": 0,
+      "endStation": 40,
+      "lengthM": 40,
+      "transverseOffset": 4.5,
+      "sectionAreaM2": 0.08000000000000002,
+      "lineLoadKNPerM": 1.9600000000000004,
+      "totalLoadKN": 78.40000000000002,
+      "direction": "-Z",
+      "distributionRule": "OWN_GIRDER",
+      "targetGirderRefs": [
+        {
+          "girderKey": "girder-3",
+          "girderIndex": 3,
+          "girderOffsetY": 4.5,
+          "share": 1
+        }
+      ],
+      "formulaIds": [
+        "F-S4C-HAUNCH-TRAP-AREA",
+        "F-S4C-HAUNCH-LENGTH",
+        "F-S4C-HAUNCH-TOTAL-WEIGHT",
+        "F-S4C-HAUNCH-LINE-LOAD"
+      ],
+      "unitWeightSource": "USER_PROVIDED_UNVERIFIED",
+      "status": "READY",
+      "warnings": [
+        "DEVELOPMENT_ONLY_DISTRIBUTION",
+        "NOT_AUTHORIZED",
+        "OWN_GIRDER_100_PERCENT",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": {
+        "source": "canonical_geometry_kernel",
+        "generatedBy": "buildAppurtenanceHaunchLoadModel",
+        "designAuthorization": "NOT_AUTHORIZED",
+        "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY"
+      }
+    },
+    {
+      "loadId": "load:haunch:65debd1f-303a-49cc-b766-58a7f5dae22b",
+      "sourceEntityId": "65debd1f-303a-49cc-b766-58a7f5dae22b",
+      "sourceType": "RcDeckHaunch",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "slotOrGirderKey": "girder-0",
+      "startStation": 0,
+      "endStation": 40,
+      "lengthM": 40,
+      "transverseOffset": -4.5,
+      "sectionAreaM2": 0.08000000000000002,
+      "lineLoadKNPerM": 1.9600000000000004,
+      "totalLoadKN": 78.40000000000002,
+      "direction": "-Z",
+      "distributionRule": "OWN_GIRDER",
+      "targetGirderRefs": [
+        {
+          "girderKey": "girder-0",
+          "girderIndex": 0,
+          "girderOffsetY": -4.5,
+          "share": 1
+        }
+      ],
+      "formulaIds": [
+        "F-S4C-HAUNCH-TRAP-AREA",
+        "F-S4C-HAUNCH-LENGTH",
+        "F-S4C-HAUNCH-TOTAL-WEIGHT",
+        "F-S4C-HAUNCH-LINE-LOAD"
+      ],
+      "unitWeightSource": "USER_PROVIDED_UNVERIFIED",
+      "status": "READY",
+      "warnings": [
+        "DEVELOPMENT_ONLY_DISTRIBUTION",
+        "NOT_AUTHORIZED",
+        "OWN_GIRDER_100_PERCENT",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": {
+        "source": "canonical_geometry_kernel",
+        "generatedBy": "buildAppurtenanceHaunchLoadModel",
+        "designAuthorization": "NOT_AUTHORIZED",
+        "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY"
+      }
+    },
+    {
+      "loadId": "load:haunch:77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+      "sourceEntityId": "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+      "sourceType": "RcDeckHaunch",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "slotOrGirderKey": "girder-1",
+      "startStation": 0,
+      "endStation": 40,
+      "lengthM": 40,
+      "transverseOffset": -1.5,
+      "sectionAreaM2": 0.08000000000000002,
+      "lineLoadKNPerM": 1.9600000000000004,
+      "totalLoadKN": 78.40000000000002,
+      "direction": "-Z",
+      "distributionRule": "OWN_GIRDER",
+      "targetGirderRefs": [
+        {
+          "girderKey": "girder-1",
+          "girderIndex": 1,
+          "girderOffsetY": -1.5,
+          "share": 1
+        }
+      ],
+      "formulaIds": [
+        "F-S4C-HAUNCH-TRAP-AREA",
+        "F-S4C-HAUNCH-LENGTH",
+        "F-S4C-HAUNCH-TOTAL-WEIGHT",
+        "F-S4C-HAUNCH-LINE-LOAD"
+      ],
+      "unitWeightSource": "USER_PROVIDED_UNVERIFIED",
+      "status": "READY",
+      "warnings": [
+        "DEVELOPMENT_ONLY_DISTRIBUTION",
+        "NOT_AUTHORIZED",
+        "OWN_GIRDER_100_PERCENT",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": {
+        "source": "canonical_geometry_kernel",
+        "generatedBy": "buildAppurtenanceHaunchLoadModel",
+        "designAuthorization": "NOT_AUTHORIZED",
+        "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY"
+      }
+    },
+    {
+      "loadId": "load:haunch:ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+      "sourceEntityId": "ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+      "sourceType": "RcDeckHaunch",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "slotOrGirderKey": "girder-2",
+      "startStation": 0,
+      "endStation": 40,
+      "lengthM": 40,
+      "transverseOffset": 1.5,
+      "sectionAreaM2": 0.08000000000000002,
+      "lineLoadKNPerM": 1.9600000000000004,
+      "totalLoadKN": 78.40000000000002,
+      "direction": "-Z",
+      "distributionRule": "OWN_GIRDER",
+      "targetGirderRefs": [
+        {
+          "girderKey": "girder-2",
+          "girderIndex": 2,
+          "girderOffsetY": 1.5,
+          "share": 1
+        }
+      ],
+      "formulaIds": [
+        "F-S4C-HAUNCH-TRAP-AREA",
+        "F-S4C-HAUNCH-LENGTH",
+        "F-S4C-HAUNCH-TOTAL-WEIGHT",
+        "F-S4C-HAUNCH-LINE-LOAD"
+      ],
+      "unitWeightSource": "USER_PROVIDED_UNVERIFIED",
+      "status": "READY",
+      "warnings": [
+        "DEVELOPMENT_ONLY_DISTRIBUTION",
+        "NOT_AUTHORIZED",
+        "OWN_GIRDER_100_PERCENT",
+        "HAUNCH_DATUM: top flange upper face (Z=0) to deck soffit (Z=height); mesh not used (DEC-S4-0009 / DEC-S4C-0002).",
+        "LOCAL_CRS: unbound local CRS until Step 4-E binding."
+      ],
+      "provenance": {
+        "source": "canonical_geometry_kernel",
+        "generatedBy": "buildAppurtenanceHaunchLoadModel",
+        "designAuthorization": "NOT_AUTHORIZED",
+        "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY"
+      }
+    }
+  ],
+  "warnings": [
+    "UNVERIFIED DEVELOPMENT LOAD MODEL",
+    "NOT FOR DESIGN OR CONSTRUCTION",
+    "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
+    "DISTRIBUTION: DEC-S4-0010 development-only (nearest curb/rail; equal median; own-girder haunch)"
+  ]
+}
