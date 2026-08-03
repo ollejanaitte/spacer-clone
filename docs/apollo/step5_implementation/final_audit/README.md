@@ -12,10 +12,15 @@
 
 ## Audit chain
 
-| Audit | Branch / PR | Focus |
-|-------|-------------|-------|
+| Audit | PR | Focus |
+|-------|-----|-------|
 | A | #351 | final_report + gates repair |
 | B | #352 | REQ/code/automated tests |
-| C | this PR | real GUI / Playwright / evidence |
+| C | #353 | real GUI / Playwright / evidence |
 | D | skipped | no blocking app defect |
-| Closeout | pending | final verdict + seal |
+| Closeout | this PR | final verdict + seal follow-up |
+
+## Final verdict
+
+**STEP_5_3_VERDICT: COMPLETE_WITH_HUMAN_GATES**
+

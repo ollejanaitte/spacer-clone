@@ -432,48 +432,61 @@ END APOLLO STEP 5-2 CURRENT
 BEGIN APOLLO STEP 5-3 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_3_IMPLEMENTATION
-CURRENT_SUBSTEP: FINAL_CLOSEOUT_AUDIT
-OVERALL_PROGRESS: IN_PROGRESS
+CURRENT_SUBSTEP: FINAL_REPORT
+OVERALL_PROGRESS: COMPLETE_WITH_HUMAN_GATES
 START_MAIN_SHA: edd86e55f77bb7d10a97febfa96403102edfb831
-CURRENT_MAIN_SHA: 887923fa675ea2de8274b2549f40eecacdcf99fd
+CURRENT_MAIN_SHA: 99d72cbcaad8cb23bc0c68f8a798e7c2b01d0037
 
-P1_COMPLETE_SAMPLE: PACKAGE_MERGED
+P1_COMPLETE_SAMPLE: PASS
 P1_PR: https://github.com/ollejanaitte/spacer-clone/pull/343
 P1_MERGE_SHA: 7987aee3dae54e34b8570907015572dc7d21611f
-P2_GUIDED_MODE: PACKAGE_MERGED
+P2_GUIDED_MODE: PASS
 P2_PR: https://github.com/ollejanaitte/spacer-clone/pull/344
 P2_MERGE_SHA: 2d1855b04ecc1fa9f56691239ee1b933760ec645
 P2_STAMP_PR: https://github.com/ollejanaitte/spacer-clone/pull/345
 P2_STAMP_MERGE_SHA: bcd72336cf8cfec8d9350b456012228d4edf13ca
-P3_PAVEMENT_MARKING: PACKAGE_MERGED
+P3_PAVEMENT_MARKING: PASS
 P3_PR: https://github.com/ollejanaitte/spacer-clone/pull/346
 P3_MERGE_SHA: 6015aae194a4c9b46c66302e7653f07880acc868
 P3_STAMP_PR: https://github.com/ollejanaitte/spacer-clone/pull/347
 P3_STAMP_MERGE_SHA: 37a709eb7497cea623a79891abceba3b64a996e5
-P4_STRUCTURAL_3D: PACKAGE_MERGED
+P4_STRUCTURAL_3D: PASS_LABEL_ONLY
 P4_PR: https://github.com/ollejanaitte/spacer-clone/pull/348
 P4_MERGE_SHA: 90ab7c64d3dc949c5ce9d24fc3ba9e864a342054
-P5_LATERAL_L_ANGLE: PACKAGE_MERGED
+P5_LATERAL_L_ANGLE: PASS_WITH_LIMITATIONS
 P5_PR: https://github.com/ollejanaitte/spacer-clone/pull/348
 P5_MERGE_SHA: 90ab7c64d3dc949c5ce9d24fc3ba9e864a342054
-P6_INTEGRATION: PACKAGE_MERGED
+P6_INTEGRATION: PASS
 P6_PR: https://github.com/ollejanaitte/spacer-clone/pull/349
 P6_MERGE_SHA: bacce7eaab47144a4e1e64a4313d1e03f0afccaf
-P7_E2E_CLOSEOUT: PACKAGE_MERGED
+P7_E2E_CLOSEOUT: PASS
 P7_PR: https://github.com/ollejanaitte/spacer-clone/pull/349
 P7_MERGE_SHA: bacce7eaab47144a4e1e64a4313d1e03f0afccaf
 P6_P7_STAMP_PR: https://github.com/ollejanaitte/spacer-clone/pull/350
 P6_P7_STAMP_MERGE_SHA: 887923fa675ea2de8274b2549f40eecacdcf99fd
 
-GUI_E2E_VERDICT: PENDING_FINAL_AUDIT
-REQUIREMENT_AUDIT_VERDICT: PENDING_FINAL_AUDIT
-SAVE_RELOAD_VERDICT: PENDING_FINAL_AUDIT
-STALE_REGEN_VERDICT: PENDING_FINAL_AUDIT
+RECORD_REPAIR_PR: https://github.com/ollejanaitte/spacer-clone/pull/351
+RECORD_REPAIR_MERGE_SHA: e524a168bf7b7afaca0e2efcb987adf52d66c0ed
+AUDIT_PR: https://github.com/ollejanaitte/spacer-clone/pull/352
+AUDIT_MERGE_SHA: fed0f52e494d7fced7859e33af032055c2b3f27d
+GUI_E2E_PR: https://github.com/ollejanaitte/spacer-clone/pull/353
+GUI_E2E_MERGE_SHA: 99d72cbcaad8cb23bc0c68f8a798e7c2b01d0037
+CORRECTIVE_PR: NONE
+CORRECTIVE_MERGE_SHA: N_A
+FINAL_REPORT_PR: PENDING_SEAL
+SEAL_PR: PENDING
+
+GUI_E2E_VERDICT: PASS
+REQUIREMENT_AUDIT_VERDICT: PASS_WITH_HUMAN_GATES
+SAVE_RELOAD_VERDICT: PASS
+STALE_REGEN_VERDICT: PASS
 CROSS_FRAME_TOPOLOGY_VERDICT: LABEL_ONLY_PENDING_ER001
-L_ANGLE_VERDICT: PENDING_FINAL_AUDIT
+L_ANGLE_VERDICT: PASS_TWO_PLATE_PENDING_ER002
+REGRESSION_VERDICT: PASS
+PLAYWRIGHT_VERDICT: PASS_11_OF_11
 
 APPLICATION_CODE_CHANGED: YES
-STEP_5_3_VERDICT: PENDING_FINAL_VERIFICATION
+STEP_5_3_VERDICT: COMPLETE_WITH_HUMAN_GATES
 STEP_5_3_IMPLEMENTED: YES
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
@@ -482,12 +495,22 @@ DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 FORMAL_STRUCTURAL_APPROVAL: NOT_GRANTED
 
+HUMAN_GATES:
+- ER-001 / DEC-S5-0006: cross-frame attachment topology formal lock
+- ER-002 / DEC-S5-0008: L-angle catalog dims and orientation
+- OQ-S5-004/005 remain OPEN
+- DEC-S5-0002 confirm-on-reapply modal not implemented (clear/reapply path verified without data-loss)
+
+KNOWN_LIMITATIONS:
+- P4 labels only; sway V topology DEVELOPMENT (USER_CONCERN_PARTIAL)
+- L-angle viewer uses two-plate approximation (not single L-polygon extrusion)
+- Pavement/marking/L-angle sample dims are UNVERIFIED development placeholders
+- Formal structural OK/NG and numeric design authorization not granted
+
 NOTES:
-- P1–P7 packages merged (#343–#350); prior COMPLETE claim was package-level only
-- PR #343/#344/#346 left Playwright/GUI smoke unchecked — final Audit C required
-- P4 dual labels only; sway V topology remains DEVELOPMENT (DEC-S5-0006 / ER-001)
-- P5 L-angle schema 1.3.0-development; CAT-S5-LAT-UNVERIFIED (DEC-S5-0008 / ER-002)
-- Closeout restores CURRENT_MAIN_SHA labels stripped by #350; expands gate evidence fields
+- Final verification Audits A–C merged (#351–#353); Audit D skipped (no blocking defect)
+- Evidence: docs/apollo/step5_implementation/final_audit/
+- Step 4-D–H not started
 ================================================================================
 END APOLLO STEP 5-3 CURRENT
 ================================================================================
