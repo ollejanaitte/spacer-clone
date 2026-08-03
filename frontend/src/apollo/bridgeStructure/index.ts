@@ -103,6 +103,33 @@ export {
   withHaunchGirderPresence,
 } from "./haunchModel";
 export {
+  GEOMETRY_FORMULA_IDS,
+  deriveLengthMeters,
+  deriveMainGirderOffsets,
+  deriveRectAreaMeters2,
+  deriveTotalWeightKN,
+  deriveTrapezoidAreaMeters2,
+  deriveVolumeMeters3,
+  type GeometryFormulaId,
+  type GeometryScalarResult,
+} from "./geometryFormulas";
+export {
+  deriveAppurtenanceGeometries,
+  deriveAppurtenanceGeometry,
+  type AppurtenanceGeometry,
+  type AppurtenanceGeometryContext,
+  type AppurtenanceGeometryResult,
+  type AppurtenancePlacement,
+} from "./appurtenanceGeometry";
+export {
+  deriveHaunchGeometries,
+  deriveHaunchGeometry,
+  type HaunchGeometry,
+  type HaunchGeometryContext,
+  type HaunchGeometryResult,
+  type HaunchPlacement,
+} from "./haunchGeometry";
+export {
   buildContinuousLayout,
   buildSimpleSingleLayout,
   buildSupportsFromSpans,
