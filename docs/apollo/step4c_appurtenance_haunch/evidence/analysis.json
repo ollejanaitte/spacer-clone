@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "1.0.0-development",
+  "projectId": "bridge-continuous",
+  "inputChecksum": "f16c02db027dfcaa23bb608429ecd6867ef724ec0782608a253a679bc21b96f2",
+  "loadModelId": "load-bridge-continuous-f16c02db027d",
+  "stale": false,
+  "status": "READY",
+  "developmentLabel": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "authorizationStatus": "NOT_GRANTED",
+  "designOrConstructionUse": "PROHIBITED",
+  "beamIdealization": "SIMPLE_SPAN_CLOSED_FORM_PER_GIRDER",
+  "assumptions": [
+    "Beam idealization: simply-supported closed-form per main girder (development).",
+    "Partial segment UDL retained; never silently converted to full-span UDL.",
+    "Distribution shares from DEC-S4-0010 load model.",
+    "Deflection NOT_AVAILABLE."
+  ],
+  "warnings": [
+    "UNVERIFIED DEVELOPMENT ANALYSIS RESULT",
+    "NOT FOR DESIGN OR CONSTRUCTION",
+    "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED"
+  ],
+  "perGirder": [
+    {
+      "girderKey": "girder-0",
+      "girderIndex": 0,
+      "spanLengthM": 40,
+      "appliedSegments": [
+        {
+          "sourceLoadId": "load:appurtenance:175902bf-6f24-4802-ac59-96f26e796b2c",
+          "sourceEntityId": "175902bf-6f24-4802-ac59-96f26e796b2c",
+          "loadCaseId": "DEAD_APPURTENANCE",
+          "category": "APPURTENANCE",
+          "startStation": 0,
+          "endStation": 40,
+          "lineLoadKNPerM": 3.0625,
+          "share": 1,
+          "appliedLineLoadKNPerM": 3.0625,
+          "appliedTotalKN": 122.5
+        },
+        {
+          "sourceLoadId": "load:haunch:65debd1f-303a-49cc-b766-58a7f5dae22b",
+          "sourceEntityId": "65debd1f-303a-49cc-b766-58a7f5dae22b",
+          "loadCaseId": "DEAD_RC_HAUNCH",
+          "category": "RC_HAUNCH",
+          "startStation": 0,
+          "endStation": 40,
+          "lineLoadKNPerM": 1.9600000000000004,
+          "share": 1,
+          "appliedLineLoadKNPerM": 1.9600000000000004,
+          "appliedTotalKN": 78.40000000000002
+        }
+      ],
+      "totalAppliedVerticalKN": 200.90000000000003,
+      "leftReactionKN": 100.45000000000002,
+      "rightReactionKN": 100.45000000000002,
+      "maxMomentKNm": 612.5,
+      "deflectionStatus": "NOT_AVAILABLE",
+      "deflectionWarning": "Partial-UDL deflection closed-form not authorized in Step 4-C; deflection remains NOT_AVAILABLE.",
+      "equilibriumResidualKN": 0,
+      "formulaIds": [
+        "F-S4C-AN-PARTIAL-UDL-REACTIONS",
+        "F-S4C-AN-PARTIAL-UDL-MOMENT-BOUND"
+      ],
+      "warnings": [
+        "ASSUMED_DEVELOPMENT_ONLY: simple-span closed-form per girder",
+        "NOT_AUTHORIZED"
+      ]
+    },
+    {
+      "girderKey": "girder-1",
+      "girderIndex": 1,
+      "spanLengthM": 40,
+      "appliedSegments": [
+        {
+          "sourceLoadId": "load:haunch:77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+          "sourceEntityId": "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+          "loadCaseId": "DEAD_RC_HAUNCH",
+          "category": "RC_HAUNCH",
+          "startStation": 0,
+          "endStation": 40,
+          "lineLoadKNPerM": 1.9600000000000004,
+          "share": 1,
+          "appliedLineLoadKNPerM": 1.9600000000000004,
+          "appliedTotalKN": 78.40000000000002
+        }
+      ],
+      "totalAppliedVerticalKN": 78.40000000000002,
+      "leftReactionKN": 39.20000000000001,
+      "rightReactionKN": 39.20000000000001,
+      "maxMomentKNm": 392.0000000000001,
+      "deflectionStatus": "NOT_AVAILABLE",
+      "deflectionWarning": "Partial-UDL deflection closed-form not authorized in Step 4-C; deflection remains NOT_AVAILABLE.",
+      "equilibriumResidualKN": 0,
+      "formulaIds": [
+        "F-S4C-AN-PARTIAL-UDL-REACTIONS",
+        "F-S4C-AN-PARTIAL-UDL-MOMENT-BOUND"
+      ],
+      "warnings": [
+        "ASSUMED_DEVELOPMENT_ONLY: simple-span closed-form per girder",
+        "NOT_AUTHORIZED"
+      ]
+    },
+    {
+      "girderKey": "girder-2",
+      "girderIndex": 2,
+      "spanLengthM": 40,
+      "appliedSegments": [
+        {
+          "sourceLoadId": "load:haunch:ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+          "sourceEntityId": "ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+          "loadCaseId": "DEAD_RC_HAUNCH",
+          "category": "RC_HAUNCH",
+          "startStation": 0,
+          "endStation": 40,
+          "lineLoadKNPerM": 1.9600000000000004,
+          "share": 1,
+          "appliedLineLoadKNPerM": 1.9600000000000004,
+          "appliedTotalKN": 78.40000000000002
+        }
+      ],
+      "totalAppliedVerticalKN": 78.40000000000002,
+      "leftReactionKN": 39.20000000000001,
+      "rightReactionKN": 39.20000000000001,
+      "maxMomentKNm": 392.0000000000001,
+      "deflectionStatus": "NOT_AVAILABLE",
+      "deflectionWarning": "Partial-UDL deflection closed-form not authorized in Step 4-C; deflection remains NOT_AVAILABLE.",
+      "equilibriumResidualKN": 0,
+      "formulaIds": [
+        "F-S4C-AN-PARTIAL-UDL-REACTIONS",
+        "F-S4C-AN-PARTIAL-UDL-MOMENT-BOUND"
+      ],
+      "warnings": [
+        "ASSUMED_DEVELOPMENT_ONLY: simple-span closed-form per girder",
+        "NOT_AUTHORIZED"
+      ]
+    },
+    {
+      "girderKey": "girder-3",
+      "girderIndex": 3,
+      "spanLengthM": 40,
+      "appliedSegments": [
+        {
+          "sourceLoadId": "load:haunch:33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+          "sourceEntityId": "33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+          "loadCaseId": "DEAD_RC_HAUNCH",
+          "category": "RC_HAUNCH",
+          "startStation": 0,
+          "endStation": 40,
+          "lineLoadKNPerM": 1.9600000000000004,
+          "share": 1,
+          "appliedLineLoadKNPerM": 1.9600000000000004,
+          "appliedTotalKN": 78.40000000000002
+        }
+      ],
+      "totalAppliedVerticalKN": 78.40000000000002,
+      "leftReactionKN": 39.20000000000001,
+      "rightReactionKN": 39.20000000000001,
+      "maxMomentKNm": 392.0000000000001,
+      "deflectionStatus": "NOT_AVAILABLE",
+      "deflectionWarning": "Partial-UDL deflection closed-form not authorized in Step 4-C; deflection remains NOT_AVAILABLE.",
+      "equilibriumResidualKN": 0,
+      "formulaIds": [
+        "F-S4C-AN-PARTIAL-UDL-REACTIONS",
+        "F-S4C-AN-PARTIAL-UDL-MOMENT-BOUND"
+      ],
+      "warnings": [
+        "ASSUMED_DEVELOPMENT_ONLY: simple-span closed-form per girder",
+        "NOT_AUTHORIZED"
+      ]
+    }
+  ],
+  "combined": {
+    "totalAppliedVerticalKN": 436.10000000000014,
+    "totalReactionKN": 436.1,
+    "equilibriumResidualKN": 1.1368683772161603e-13,
+    "appurtenanceAppliedKN": 122.5,
+    "haunchAppliedKN": 313.6000000000001
+  },
+  "sourceLoadTrace": [
+    {
+      "loadId": "load:appurtenance:175902bf-6f24-4802-ac59-96f26e796b2c",
+      "sourceEntityId": "175902bf-6f24-4802-ac59-96f26e796b2c",
+      "loadCaseId": "DEAD_APPURTENANCE",
+      "category": "APPURTENANCE",
+      "startStation": 0,
+      "endStation": 40,
+      "totalLoadKN": 122.5,
+      "distributionRule": "NEAREST_GIRDER"
+    },
+    {
+      "loadId": "load:haunch:33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+      "sourceEntityId": "33c2b39e-fe17-4531-a1fe-2cd0224e1394",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "startStation": 0,
+      "endStation": 40,
+      "totalLoadKN": 78.40000000000002,
+      "distributionRule": "OWN_GIRDER"
+    },
+    {
+      "loadId": "load:haunch:65debd1f-303a-49cc-b766-58a7f5dae22b",
+      "sourceEntityId": "65debd1f-303a-49cc-b766-58a7f5dae22b",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "startStation": 0,
+      "endStation": 40,
+      "totalLoadKN": 78.40000000000002,
+      "distributionRule": "OWN_GIRDER"
+    },
+    {
+      "loadId": "load:haunch:77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+      "sourceEntityId": "77ba8c05-3d5c-4e34-a1e6-8814ab401ef4",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "startStation": 0,
+      "endStation": 40,
+      "totalLoadKN": 78.40000000000002,
+      "distributionRule": "OWN_GIRDER"
+    },
+    {
+      "loadId": "load:haunch:ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+      "sourceEntityId": "ca6b6022-db56-4cbc-9e42-be6a75798d0f",
+      "loadCaseId": "DEAD_RC_HAUNCH",
+      "category": "RC_HAUNCH",
+      "startStation": 0,
+      "endStation": 40,
+      "totalLoadKN": 78.40000000000002,
+      "distributionRule": "OWN_GIRDER"
+    }
+  ]
+}

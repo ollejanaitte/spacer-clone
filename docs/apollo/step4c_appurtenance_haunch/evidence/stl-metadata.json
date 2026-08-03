@@ -1,0 +1,16 @@
+{
+  "triangleCount": 484,
+  "entityCounts": {
+    "total": 27,
+    "girders": 4,
+    "crossBeams": 9,
+    "bracings": 0,
+    "stiffeners": 0,
+    "deck": 1,
+    "bearings": 8,
+    "markers": 0,
+    "appurtenances": 1,
+    "haunches": 4
+  },
+  "digest": "fnv1a32:709b37a2"
+}
