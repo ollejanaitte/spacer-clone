@@ -34,6 +34,10 @@ import { ReportModelDevelopmentPanel } from "./components/ReportModelDevelopment
 import { StandardSectionDrawingPanel } from "./components/StandardSectionDrawingPanel";
 import { GeneralArrangementPanel } from "./components/GeneralArrangementPanel";
 import { OutputIntegrationPanel } from "./components/OutputIntegrationPanel";
+import { WorkflowControlScreen } from "./components/WorkflowControlScreen";
+import { scrollWorkflowTargetIntoView } from "./workflow/navigation";
+import { WORKFLOW_STEP_DEFINITIONS } from "./workflow/registry";
+import type { WorkflowStateModel } from "./workflow/types";
 import {
   CompositionAwareInput,
   CompositionAwareTextarea,
@@ -1548,6 +1552,17 @@ export function ApolloPhase1Shell({
     return `${index + 1}`;
   };
 
+  const handleWorkflowNavigate = (target: WorkflowStateModel["steps"][number]["definition"]["navigationTarget"]) => {
+    scrollWorkflowTargetIntoView(target);
+  };
+
+  const handleWorkflowPrimaryAction = (stepId: WorkflowStateModel["steps"][number]["workflowStepId"]) => {
+    const step = WORKFLOW_STEP_DEFINITIONS.find((entry) => entry.workflowStepId === stepId);
+    if (step) {
+      handleWorkflowNavigate(step.navigationTarget);
+    }
+  };
+
   const renderStepBar = () => (
     <ol className="apollo-stepbar" aria-label="Apollo guided steps">
       {STEP_DEFINITIONS.map(({ key, label }, index) => {
@@ -2384,6 +2399,11 @@ export function ApolloPhase1Shell({
           <div className="apollo-unit2-layout">
             <div className="apollo-unit2-editor">
               {renderProjectForm()}
+              <WorkflowControlScreen
+                project={project}
+                onNavigate={handleWorkflowNavigate}
+                onPrimaryAction={handleWorkflowPrimaryAction}
+              />
               <BridgeStructureInputPanel
                 project={project}
                 onProjectChange={(nextProject) => onProjectChange(nextProject)}
