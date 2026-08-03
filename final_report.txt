@@ -475,7 +475,7 @@ CORRECTIVE_PR: NONE
 CORRECTIVE_MERGE_SHA: N_A
 FINAL_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/354
 FINAL_REPORT_PR_MERGE_SHA: 7cb4fc7f3c4e73344a1bfcfefbbbd725f15782bd
-SEAL_PR: PENDING
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/355
 
 GUI_E2E_VERDICT: PASS
 REQUIREMENT_AUDIT_VERDICT: PASS_WITH_HUMAN_GATES
