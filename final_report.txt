@@ -329,7 +329,7 @@ S5_1C_DESIGN_PREPARATION: PASS
 S5_1C_PR: https://github.com/ollejanaitte/spacer-clone/pull/338
 S5_1C_MERGE_SHA: 62366002ca70e1e7d0b22ae3b9ba255910e62759
 S5_1D_REPORT_FINALIZE: PASS
-S5_1D_PR: PENDING
+S5_1D_PR: https://github.com/ollejanaitte/spacer-clone/pull/339
 S5_1D_MERGE_SHA: PENDING
 SEAL_PR: PENDING
 
