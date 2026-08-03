@@ -1,17 +1,24 @@
 # Step 4-C Completion Gate
 
-| Gate | Status |
-|------|--------|
-| C1 geometry kernel | PASS |
-| C2 3D/STL | PASS |
-| C3 quantity | PASS |
-| C4 load/distribution | PASS |
-| C5 analysis/equilibrium | PASS |
-| C6 workflow/E2E/scope | PASS (this PR) |
-| Report/seal | pending finalize PRs |
+| Gate | Status | PR | Merge SHA |
+|------|--------|----|-----------|
+| C1 geometry kernel | PASS | #328 | ba5798ab0d8e4a33065458f44267dabf68c7a64d |
+| C2 3D/STL | PASS | #329 | ddf3e178af5daf2aa8441d96a75f0841f0f277f3 |
+| C3 quantity | PASS | #330 | 36ed3ec933bf9ce7d1a5f661e57a5754416901b0 |
+| C4 load/distribution | PASS | #331 | 1bc2e45c3f15959ee297c2f95eed1760652c9256 |
+| C5 analysis/equilibrium | PASS | #332 | 7cf1e12c6fd6685c7c8b824c1db31bdf562caf4f |
+| C6 workflow/E2E/scope | PASS | #333 | 35eea80df6abc96cd155bc3bd51c25ad25a2413a |
+| Report finalize | this PR | PENDING | PENDING |
+| Seal | follow-up | PENDING | (Cursor final report only) |
 
-STEP_4D_START_READINESS: GO (after report+seal on main)  
+STEP_4C_VERDICT: COMPLETE  
+STEP_4D_START_READINESS: GO  
 STEP_4D_IMPLEMENTED: NO  
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED  
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION  
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED  
 REPORT_DRAWING_ZIP_INTEGRATED: NO  
+SPLICE_IMPLEMENTED: NO  
+ALIGNMENT_BINDING_IMPLEMENTED: NO  
+DIMENSION_OVERLAY_IMPLEMENTED: NO  
+FORMAL_AUTHORIZATION_CHANGED: NO  
