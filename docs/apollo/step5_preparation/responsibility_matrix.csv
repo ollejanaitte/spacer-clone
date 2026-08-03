@@ -1,0 +1,11 @@
+owner,owns,must_not,consumes,produces,related_reqs
+SamplePresetDefinition,preset field set + labels + disclaimer,silent formal approval,catalog decisions,PresetDefinition,REQ-S5-001;014
+PresetApplicationService,apply/re-apply transaction orchestration,bypass STALE rules,PresetDefinition;canonical draft,updated ProjectModel,REQ-S5-001;002;003
+Canonical Project Data,apolloBridgeStructureInput + future pavement/marking,dual Guided store,panels;Guided,SoR draft,REQ-S5-007
+WorkflowStateModel,WF-01..15 control plane status,own geometry formulas,canonical readiness,WorkflowState,REQ-S5-006
+GuidedMode,paper-slide UX over Workflow+canonical,private data model,WorkflowState;canonical,navigation/edits,REQ-S5-006;007
+Detailed Panels,full field editors,fork data,canonical,edits,REQ-S5-002;007
+Geometry Kernel,C1 formulas app/haunch,UI-only placement,PROVIDED models,derived geometry,REQ-S5-011;012;013
+Scene Builder,Three.js solids from BSDD+kernel,qty from mesh,solids params,viewer model,REQ-S5-008
+STL Exporter,export policy per kind,export viz-only without policy,solids,STL bytes,REQ-S5-005;008
+Quantity/Load/Analysis,dev models from canonical/geometry,mesh reverse engineering,draft+geometry,qty/load/analysis views,REQ-S5-003;004

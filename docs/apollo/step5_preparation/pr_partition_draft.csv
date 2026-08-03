@@ -1,0 +1,8 @@
+package_id,title,depends_on_decisions,depends_on_er,suggested_pr_split,not_in_step
+P1,Complete sample/preset transaction,0001;0002;0008;0011,ER-005 values,docs then feat PRs,5-1/5-2
+P2,Guided Mode shell/navigation,0009;0010,,shell then slides,5-1/5-2
+P3,Road pavement/marking,0003;0004;0012,ER-004,model then viz/stl,5-1/5-2
+P4,Structural 3D topology correction,0005;0006,ER-001;ER-003,spec lock then code,5-1/5-2
+P5,Lateral L-angle geometry,0007;0008,ER-002,param then solids,5-1/5-2
+P6,Sample full generation integration,0001;0011;0012,,integration PR,5-1/5-2
+P7,E2E/user acceptance/closeout,,,e2e+report,5-1/5-2

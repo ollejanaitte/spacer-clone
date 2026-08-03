@@ -1,0 +1,15 @@
+requirement_id,current_evidence,step5_2_design_doc,step5_3_package,unit_test_concept,gui_e2e_concept,acceptance_gate
+REQ-S5-001,03;sample inventory,02;03 catalog,P1,preset field completeness,select sample shows filled fields,PRESET_SELECTED+labels
+REQ-S5-002,03;editability matrix,08 ownership,P1+P2,edit persists canonical,Guided+detail same value,EDITABLE
+REQ-S5-003,03;gap matrix,04;16,P1+P6,apply tx state machine,reach 3D with disclaimer,THREED_READY+DEV_ONLY
+REQ-S5-004,05 missing pavement,09,P3,pavement solid volume,pavement visible,pavement group on
+REQ-S5-005,05 missing marking,10;19,P3,marking entities,markings visible,policy respected
+REQ-S5-006,04;guided gap,05-07,P2,slide transitions,paper-slide nav,Guided Mode exists
+REQ-S5-007,10 scope,08,P2,no second store invariant,edit either mode,single SoR
+REQ-S5-008,05;trace matrix,11;15,P4,trace formulas tested,viewer ids match,trace PASS
+REQ-S5-009,role matrix;05,12,P4,entity kind asserts,labels distinguish XB/CF,role matrix satisfied
+REQ-S5-010,lateral audit,13,P5,L-angle geom unit,laterals look angled when enabled,ER dims used
+REQ-S5-011,haunch visibility audit,14,P1+P6,sample PROVIDED→solid,haunch visible after sample tx,path PASS
+REQ-S5-012,haunch/app audit,14,P1+P6,sample PROVIDED→solid,railing/curb visible,path PASS
+REQ-S5-013,datum inventory,15,P4,datum helpers,debug overlays optional,formulas documented
+REQ-S5-014,disclaimers;final_report,01;02;04,P1+P7,label constants,UI shows prohibited,labels PASS
