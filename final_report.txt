@@ -3,30 +3,20 @@ Previous Phase Summary — Step 1 + Step 2 + Step 3-A (retained)
 ================================================================================
 STEP_1: COMPLETE (#289–#298)
 STEP_2: COMPLETE (#299–#307)
-STEP_3A_PRIMARY: #308 MERGED @ b37424543401d90e2bb6f131f79cf52e95b88b2f
-STEP_3A_REPORT: #309 MERGED @ db2347ec64d531f298489b4629b5780ef6222ea3
+STEP_3A: #308/#309 MERGED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
 DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-B Development — Member Arrangement Drawings
+Apollo Step 3-B Report Finalize — Member Arrangement
 ================================================================================
-更新日時: 2026-08-03T09:05:00+09:00
-Step ID: APOLLO_STEP_3B_MEMBER_ARRANGEMENT
-START_MAIN_SHA: db2347ec64d531f298489b4629b5780ef6222ea3
-作業branch: feat/apollo-step3b-member-arrangement
+更新日時: 2026-08-03T09:10:00+09:00
+STEP_3B_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/310
+STEP_3B_PRIMARY_PR_MERGE_SHA: 8ca031f04b5a9576344d3491466afe51a702dfd9
+STEP_3B_PRIMARY_PR_STATE: MERGED
 
-Implementation:
-- G-02 主桁・横桁配置図 (FLOOR_SYSTEM_PLAN)
-- G-03 対傾構・横構配置図 (BRACING_LAYOUT) with upper/lower lateral states
-- G-04 補剛材配置図 (STIFFENER_LAYOUT)
-- Undefined section disclosures (fail-closed, no fabricated plate sizes)
-- Shared stationGenerator continuity with QuantityModel/3D
-
-Tests: drawingSetModel 14 PASS; typecheck PASS
-GUI: panel sheet navigation G-01..G-04
-
+Sheets: G-02, G-03, G-04
 STEP_3B_GIRDER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
 STEP_3B_CROSS_BEAM_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
 STEP_3B_SWAY_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
@@ -36,9 +26,8 @@ STEP_3B_STIFFENER_LAYOUT_VERDICT: PASS_DEVELOPMENT_ONLY
 STATION_GENERATOR_CONSISTENCY: PASS
 QUANTITY_DRAWING_CONSISTENCY: PASS
 UNDEFINED_SECTION_FAIL_CLOSED: PASS
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/310
-REPORT_PR: PENDING
-STEP_3C_START_VERDICT: PENDING
-
+PRIMARY_PR_MERGED: YES
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/311
+STEP_3C_START_VERDICT: GO
 FORMAL_OK_NG_EMITTED: NO
 ================================================================================
