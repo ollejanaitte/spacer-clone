@@ -29,12 +29,14 @@ describe("workflow registry", () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 
-  it("keeps WF-01/WF-03/WF-05/WF-06 as future (non-gating) capabilities", () => {
+  it("keeps WF-01/WF-06 as future (non-gating) capabilities; WF-03/WF-05 are IMPLEMENTED", () => {
     expect(getWorkflowCapability("WF-01").status).toBe("PLANNED");
-    expect(getWorkflowCapability("WF-03").status).toBe("PLANNED");
-    expect(getWorkflowCapability("WF-05").status).toBe("PLANNED");
+    expect(getWorkflowCapability("WF-03").status).toBe("IMPLEMENTED");
+    expect(getWorkflowCapability("WF-05").status).toBe("IMPLEMENTED");
     expect(getWorkflowCapability("WF-06").status).toBe("PLANNED");
     expect(isFutureCapability("WF-01")).toBe(true);
+    expect(isFutureCapability("WF-03")).toBe(false);
+    expect(isFutureCapability("WF-05")).toBe(false);
     expect(isFutureCapability("WF-02")).toBe(false);
   });
 

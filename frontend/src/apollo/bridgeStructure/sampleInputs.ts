@@ -23,7 +23,7 @@ export const CONTINUOUS_ANALYSIS_DISCLAIMER =
   "連続桁の解析・照査は未対応です。構造モデル生成と概算数量の確認のみ可能です。";
 
 export const SIMPLE_SINGLE_SPAN_SAMPLE_INPUT: ApolloBridgeStructureInputDraft = {
-  schemaVersion: "1.0.0",
+  ...createEmptyBridgeStructureInputDraft(),
   spanLength: 30.0,
   bridgeLength: 30.0,
   width: 10.5,

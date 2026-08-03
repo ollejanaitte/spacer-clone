@@ -1,0 +1,10 @@
+case_id,category,expectation
+HAUNCH-PRES-001,presence,empty girders != EXPLICIT_NONE
+HAUNCH-APPLY-001,apply_all,RECT all girders
+HAUNCH-MIX-001,per_girder,PROVIDED + EXPLICIT_NONE mix
+HAUNCH-TRAP-001,shape,TRAPEZOID different widths
+HAUNCH-RECT-001,shape,RECT width mismatch blocked
+HAUNCH-REF-001,refs,dangling after girderCount change
+HAUNCH-BSDD-001,projection,PROVIDED → BSSD entries
+HAUNCH-BSDD-002,projection,EXPLICIT_NONE → []
+HAUNCH-WF-001,workflow,COMPLETE with NOT_AUTHORIZED

@@ -1,0 +1,10 @@
+{
+  "fixtureId": "HAUNCH-S4B-002",
+  "description": "Per-girder mix with TRAPEZOID and EXPLICIT_NONE",
+  "girderCount": 3,
+  "girders": [
+    {"key": "girder-0", "presence": "PROVIDED", "shapeType": "TRAPEZOID", "topWidth": 0.3, "bottomWidth": 0.5, "height": 0.2},
+    {"key": "girder-1", "presence": "EXPLICIT_NONE"},
+    {"key": "girder-2", "presence": "PROVIDED", "shapeType": "RECT", "topWidth": 0.4, "bottomWidth": 0.4, "height": 0.15}
+  ]
+}

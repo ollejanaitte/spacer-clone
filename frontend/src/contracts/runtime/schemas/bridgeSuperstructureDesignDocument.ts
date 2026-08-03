@@ -173,6 +173,13 @@ const haunchSchema = designEntityMetadataSchema.extend({
   entityKind: z.literal("Haunch"),
   haunchId: uuidStringSchema,
   mainGirderRefId: uuidStringSchema.nullable(),
+  shapeType: z.enum(["RECT", "TRAPEZOID"]).optional(),
+  startStation: z.number().finite().optional(),
+  endStation: z.number().finite().optional(),
+  topWidth: z.number().finite().optional(),
+  bottomWidth: z.number().finite().optional(),
+  height: z.number().finite().optional(),
+  materialRef: z.string().nullable().optional(),
 });
 
 const crossBeamSchema = designEntityMetadataSchema.extend({

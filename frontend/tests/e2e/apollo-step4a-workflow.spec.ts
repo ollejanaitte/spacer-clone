@@ -29,14 +29,17 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("NOT_GRANTED");
   });
 
-  test("E2E-S4A-004: future stubs are BLOCKED with reason and disabled CTA", async ({ page }) => {
+  test("E2E-S4A-004: WF-06 remains PLANNED BLOCKED; WF-03/WF-05 are implemented and not capability-blocked", async ({ page }) => {
     await openWorkflowScreen(page);
 
-    for (const stepId of ["WF-03", "WF-05", "WF-06"]) {
+    const wf06 = page.getByTestId("apollo-wf-step-WF-06");
+    await expect(wf06).toHaveAttribute("data-status", "BLOCKED");
+    await expect(wf06.getByTestId("apollo-wf-step-disabled-reason")).toContainText("WF_CAPABILITY_PLANNED");
+    await expect(wf06.getByTestId("apollo-wf-step-primary")).toBeDisabled();
+
+    for (const stepId of ["WF-03", "WF-05"]) {
       const card = page.getByTestId(`apollo-wf-step-${stepId}`);
-      await expect(card).toHaveAttribute("data-status", "BLOCKED");
-      await expect(card.getByTestId("apollo-wf-step-disabled-reason")).toContainText("WF_CAPABILITY_PLANNED");
-      await expect(card.getByTestId("apollo-wf-step-primary")).toBeDisabled();
+      await expect(card).not.toHaveAttribute("data-status", "BLOCKED");
     }
   });
 
@@ -45,8 +48,12 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
 
     await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "動作確認用サンプル値を入力" }).click();
     await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "構造を生成" }).click();
+    // Step 4-B: WF-03/WF-05 gate downstream — decide explicit none before expecting WF-10+.
+    await page.getByTestId("apollo-appurtenance-all-none").click();
+    await page.getByTestId("apollo-haunch-all-none").click();
+    await page.getByTestId("apollo-appurtenance-regenerate").click();
 
-    for (const stepId of ["WF-02", "WF-04", "WF-10", "WF-12", "WF-14"]) {
+    for (const stepId of ["WF-02", "WF-03", "WF-04", "WF-05", "WF-10", "WF-12", "WF-14"]) {
       const card = page.getByTestId(`apollo-wf-step-${stepId}`);
       await expect(card, stepId).toHaveAttribute("data-status", "COMPLETE");
       await expect(card, stepId).toContainText("NOT_AUTHORIZED");

@@ -12,6 +12,7 @@ import {
   type DesignEntityDesignStatus,
   type DesignEntityMetadata,
   type GovernedQuantity,
+  type Haunch,
   type LateralBracing,
   type MainGirder,
   type RcDeck,
@@ -33,9 +34,13 @@ import {
 import { syncOverlayFrameToLayout } from "./syncOverlayFrame";
 import {
   createEmptyBridgeStructureInputDraft,
+  parseBridgeStructureInputDraft,
   validateBridgeStructureInputDraft,
   type BridgeStructureValidationResult,
 } from "./validation";
+import { buildRcDeckHaunchModels } from "./haunchModel";
+import type { ApolloAppurtenanceConfigurationDraft } from "./appurtenanceTypes";
+import type { ApolloHaunchConfigurationDraft } from "./haunchTypes";
 import type {
   ApolloBridgeStructureInputDraft,
   BridgeStructureApproximateQuantity,
@@ -285,13 +290,38 @@ export function buildBridgeSuperstructureDesignDocument(
   pushLateralPlane("bottom-flange", input.lateralBracingEnabled);
   pushLateralPlane("upper-flange", input.upperLateralBracingEnabled);
 
+  const haunchBuild = buildRcDeckHaunchModels(input.haunchConfiguration, {
+    bridgeLength: input.bridgeLength,
+    girderCount: input.girderCount,
+    projectScopeId,
+  });
+  // Project only when presence is fully decided and valid. EXPLICIT_NONE → [].
+  // NOT_PROVIDED / incomplete / blocking → refuse to claim a generated haunch set
+  // (caller already requires bridge structure validation.complete; haunch stays []).
+  const haunches: Haunch[] =
+    haunchBuild.complete
+      ? haunchBuild.models.map((model) => ({
+          ...createEntityMetadata(null, designStatus),
+          entityKind: "Haunch" as const,
+          haunchId: model.haunchId as UuidString,
+          mainGirderRefId: model.mainGirderRefId as UuidString,
+          shapeType: model.shapeType,
+          startStation: model.startStation,
+          endStation: model.endStation,
+          topWidth: model.topWidth,
+          bottomWidth: model.bottomWidth,
+          height: model.height,
+          materialRef: model.materialRef,
+        }))
+      : [];
+
   const structuralDesignModel: StructuralDesignModel = {
     modelId: sdmModelId,
     nonCompositeAssertion: { compositeAction: false },
     mainGirders,
     girderSectionSegments: [],
     rcDecks,
-    haunches: [],
+    haunches,
     crossBeams,
     swayBracings,
     lateralBracings,
@@ -510,12 +540,40 @@ export function generateBridgeStructureFromInput(
 }
 
 export function getBridgeStructureInputDraft(project: ProjectModel): ApolloBridgeStructureInputDraft {
-  return project.apolloBridgeStructureInput ?? createEmptyBridgeStructureInputDraft();
+  const raw = project.apolloBridgeStructureInput;
+  if (!raw) {
+    return createEmptyBridgeStructureInputDraft();
+  }
+  // Migrate legacy 1.0.0 / partial persisted shapes to 1.1.0-development.
+  const parsed = parseBridgeStructureInputDraft(raw);
+  return parsed ?? createEmptyBridgeStructureInputDraft();
 }
 
 export function isBridgeStructureGenerationCurrent(project: ProjectModel): boolean {
   const input = getBridgeStructureInputDraft(project);
   return input.generatedAt !== null && Boolean(project.apolloBsdd?.structuralDesignModel);
+}
+
+export function withAppurtenanceConfiguration(
+  project: ProjectModel,
+  configuration: ApolloAppurtenanceConfigurationDraft,
+): ProjectModel {
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    appurtenanceConfiguration: configuration,
+    generatedAt: null,
+  }));
+}
+
+export function withHaunchConfiguration(
+  project: ProjectModel,
+  configuration: ApolloHaunchConfigurationDraft,
+): ProjectModel {
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    haunchConfiguration: configuration,
+    generatedAt: null,
+  }));
 }
 
 export function getBridgeStructureQuantities(project: ProjectModel): readonly BridgeStructureApproximateQuantity[] {

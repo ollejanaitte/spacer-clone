@@ -9,7 +9,20 @@ import {
   parseBridgeSystemField,
 } from "../contracts/layoutParser";
 import {
+  createDefaultAppurtenanceConfiguration,
+  parseAppurtenanceConfiguration,
+  validateAppurtenanceConfigurationPersistence,
+} from "./appurtenanceModel";
+import {
+  createDefaultHaunchConfiguration,
+  parseHaunchConfiguration,
+  validateHaunchConfigurationPersistence,
+} from "./haunchModel";
+import {
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
+  BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELDS,
   BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS,
@@ -68,7 +81,7 @@ function validatePositiveNumber(
 
 export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInputDraft {
   return {
-    schemaVersion: "1.0.0",
+    schemaVersion: APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
     spanLength: null,
     bridgeLength: null,
     width: null,
@@ -91,6 +104,8 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     bridgeSystem: DEFAULT_BRIDGE_SYSTEM,
     spans: [],
     supports: [],
+    appurtenanceConfiguration: createDefaultAppurtenanceConfiguration(),
+    haunchConfiguration: createDefaultHaunchConfiguration(),
     generatedAt: null,
   };
 }
@@ -197,6 +212,7 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
     ...BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
     ...BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
     ...BRIDGE_STRUCTURE_LAYOUT_FIELD_KEYS,
+    ...BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
     "schemaVersion",
     "generatedAt",
   ]);
@@ -206,8 +222,13 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
     }
   }
 
-  if (raw.schemaVersion !== "1.0.0") {
-    diagnostics.push("apolloBridgeStructureInput schemaVersion must be 1.0.0.");
+  if (
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION &&
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY
+  ) {
+    diagnostics.push(
+      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY} or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
+    );
   }
 
   for (const key of BRIDGE_STRUCTURE_INPUT_FIELD_KEYS) {
@@ -294,9 +315,17 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
     }
   }
 
+  diagnostics.push(...validateAppurtenanceConfigurationPersistence(raw.appurtenanceConfiguration));
+  diagnostics.push(...validateHaunchConfigurationPersistence(raw.haunchConfiguration));
+
   return diagnostics;
 }
 
+/**
+ * Parse + migrate 1.0.0 → 1.1.0-development.
+ * Missing appurtenance/haunch fields become NOT_PROVIDED / empty — never EXPLICIT_NONE,
+ * never auto-created entities, never null→0.
+ */
 export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStructureInputDraft | null {
   if (!isRecord(raw)) {
     return null;
@@ -304,7 +333,7 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   const empty = createEmptyBridgeStructureInputDraft();
   const draft: ApolloBridgeStructureInputDraft = {
     ...empty,
-    schemaVersion: "1.0.0",
+    schemaVersion: APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
   };
 
   for (const key of BRIDGE_STRUCTURE_INPUT_FIELD_KEYS) {
@@ -332,19 +361,35 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
     return null;
   }
 
+  const appurtenanceConfiguration = parseAppurtenanceConfiguration(raw.appurtenanceConfiguration);
+  if (appurtenanceConfiguration === null) {
+    return null;
+  }
+  const haunchConfiguration = parseHaunchConfiguration(raw.haunchConfiguration);
+  if (haunchConfiguration === null) {
+    return null;
+  }
+
+  // Legacy 1.0.0 → 1.1.0-development: new fields are NOT_PROVIDED; mark generation STALE.
+  const migratedFromLegacy = raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY;
+  const preservedGeneratedAt =
+    generatedAt === null || generatedAt === undefined
+      ? null
+      : typeof generatedAt === "string"
+        ? generatedAt
+        : null;
+
   return {
     ...draft,
+    schemaVersion: APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION,
     lateralBracingEnabled: typeof lateralBracingRaw === "boolean" ? lateralBracingRaw : false,
     upperLateralBracingEnabled:
       typeof upperLateralBracingRaw === "boolean" ? upperLateralBracingRaw : false,
     bridgeSystem: parseBridgeSystemField(raw.bridgeSystem),
     spans,
     supports,
-    generatedAt:
-      generatedAt === null || generatedAt === undefined
-        ? null
-        : typeof generatedAt === "string"
-          ? generatedAt
-          : null,
+    appurtenanceConfiguration,
+    haunchConfiguration,
+    generatedAt: migratedFromLegacy ? null : preservedGeneratedAt,
   };
 }

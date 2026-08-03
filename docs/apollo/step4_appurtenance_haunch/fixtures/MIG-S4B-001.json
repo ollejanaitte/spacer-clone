@@ -1,0 +1,14 @@
+{
+  "fixtureId": "MIG-S4B-001",
+  "schemaVersion": "1.0.0",
+  "spanLength": 30,
+  "bridgeLength": 30,
+  "width": 10,
+  "girderCount": 3,
+  "expectation": {
+    "schemaVersion": "1.1.0-development",
+    "appurtenancePresence": "NOT_PROVIDED",
+    "haunchGirders": [],
+    "noAutoEntities": true
+  }
+}

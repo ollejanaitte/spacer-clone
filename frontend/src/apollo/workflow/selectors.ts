@@ -12,6 +12,9 @@ import {
   parseBridgeStructureInputDraft,
   validateBridgeStructureInputDraft,
 } from "../bridgeStructure/validation";
+import { validateBridgeAppurtenanceConfiguration } from "../bridgeStructure/appurtenanceModel";
+import { validateRcDeckHaunchConfiguration } from "../bridgeStructure/haunchModel";
+import { PRESENCE_STATUS } from "../bridgeStructure/presence";
 import { buildInputChecksum, buildInputRevision, buildQuantityModel } from "../quantity/quantityModel";
 import { buildReportModel } from "../report/reportModel";
 import { buildStandardSectionDrawingModel } from "../drawing/drawingModel";
@@ -182,6 +185,22 @@ function classifyBridgeStructureResult(project: ProjectModel): StepResultState {
   if (current) return "CURRENT";
   if (hasModel) return "STALE";
   return "NOT_GENERATED";
+}
+
+function step4cIntegrationPending(stepId: WorkflowStepId, index: number): WorkflowDiagnostic {
+  return {
+    diagnosticId: `DIAG-${stepId}-S4C-${index}`,
+    workflowStepId: stepId,
+    severity: "warning",
+    code: "WF_STEP_4_C_INTEGRATION_PENDING",
+    message:
+      "付属物・ハンチの 3D / 数量 / 荷重への接続は Step 4-C で実装予定です。本工程は canonical input までです。",
+    technicalDetail: "STEP_4_C_INTEGRATION_PENDING",
+    blocking: false,
+    source: "frontend/src/apollo/workflow/selectors.ts",
+    remediation: "Step 4-C 実装後に下流成果へ反映されます。現時点では未統合と表示します。",
+    navigationTarget: null,
+  };
 }
 
 function bridgeStructureEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
@@ -475,6 +494,197 @@ function wf15AcknowledgmentEvidence(project: ProjectModel, stepId: WorkflowStepI
   };
 }
 
+function appurtenanceEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
+  if (isBridgeStructureInputCorrupted(project)) {
+    return corruptedEvidence(project, stepId);
+  }
+  const draft = getBridgeStructureInputDraft(project);
+  const validation = validateBridgeAppurtenanceConfiguration(draft.appurtenanceConfiguration, {
+    bridgeLength: draft.bridgeLength,
+    width: draft.width,
+    projectScopeId: project.project.id,
+  });
+  const currentChecksum = buildInputChecksum(draft);
+  const currentRevision = buildInputRevision(draft);
+  const resultState = classifyBridgeStructureResult(project);
+  const anyProvided = draft.appurtenanceConfiguration.slots.some(
+    (slot) => slot.presence === PRESENCE_STATUS.PROVIDED,
+  );
+  const allNotProvided = draft.appurtenanceConfiguration.slots.every(
+    (slot) => slot.presence === PRESENCE_STATUS.NOT_PROVIDED,
+  );
+  const warnings: WorkflowDiagnostic[] = [
+    localCrsWarning(stepId, 0),
+    step4cIntegrationPending(stepId, 0),
+  ];
+  if (anyProvided) {
+    warnings.push({
+      diagnosticId: `DIAG-${stepId}-DOWNSTREAM-PENDING`,
+      workflowStepId: stepId,
+      severity: "warning",
+      code: "WF_PARTIAL_SCOPE_WARNING",
+      message:
+        "付属物が PROVIDED ですが、下流の 3D・数量・荷重・図面は Step 4-C 未統合です。既存 Step 3 成果を新 entity 対応済みとみなしません。",
+      technicalDetail: "appurtenance PROVIDED; Step 4-C pending",
+      blocking: false,
+      source: "frontend/src/apollo/workflow/selectors.ts",
+      remediation: "Step 4-C 実装まで下流成果は未統合警告付きで扱ってください。",
+      navigationTarget: null,
+    });
+  }
+
+  if (validation.blockingDiagnostics.length > 0) {
+    return {
+      workflowStepId: stepId,
+      capability: getWorkflowCapability(stepId).status,
+      inputState: "INVALID",
+      resultState,
+      complete: false,
+      corrupted: false,
+      currentRevision,
+      generatedRevision: draft.generatedAt,
+      currentChecksum,
+      generatedChecksum: resultState === "CURRENT" ? currentChecksum : null,
+      diagnostics: validation.blockingDiagnostics.map((d, index) => ({
+        diagnosticId: `DIAG-${stepId}-${d.code}-${index}`,
+        workflowStepId: stepId,
+        severity: "error" as const,
+        code: "WF_INPUT_INVALID" as const,
+        message: d.message,
+        technicalDetail: d.code,
+        blocking: true,
+        source: "frontend/src/apollo/bridgeStructure/appurtenanceModel.ts",
+        remediation: d.remediation,
+        navigationTarget: {
+          kind: "panel" as const,
+          path: "wf-panel-appurtenance",
+          label: "床版・橋面付属物入力",
+        },
+      })),
+      warnings,
+    };
+  }
+
+  let inputState: StepInputState;
+  if (allNotProvided) {
+    inputState = "EMPTY";
+  } else if (!validation.complete) {
+    inputState = "PARTIAL";
+  } else {
+    inputState = "VALID";
+  }
+
+  const complete = validation.complete && resultState === "CURRENT";
+  return {
+    workflowStepId: stepId,
+    capability: getWorkflowCapability(stepId).status,
+    inputState,
+    resultState: allNotProvided && resultState === "NOT_GENERATED" ? "NONE" : resultState,
+    complete,
+    corrupted: false,
+    currentRevision,
+    generatedRevision: draft.generatedAt,
+    currentChecksum,
+    generatedChecksum: resultState === "CURRENT" ? currentChecksum : null,
+    diagnostics: [],
+    warnings,
+  };
+}
+
+function haunchEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
+  if (isBridgeStructureInputCorrupted(project)) {
+    return corruptedEvidence(project, stepId);
+  }
+  const draft = getBridgeStructureInputDraft(project);
+  const validation = validateRcDeckHaunchConfiguration(draft.haunchConfiguration, {
+    bridgeLength: draft.bridgeLength,
+    girderCount: draft.girderCount,
+    projectScopeId: project.project.id,
+  });
+  const currentChecksum = buildInputChecksum(draft);
+  const currentRevision = buildInputRevision(draft);
+  const resultState = classifyBridgeStructureResult(project);
+  const allNotProvided =
+    draft.haunchConfiguration.girders.length === 0 ||
+    draft.haunchConfiguration.girders.every((g) => g.presence === PRESENCE_STATUS.NOT_PROVIDED);
+  const anyProvided = draft.haunchConfiguration.girders.some(
+    (g) => g.presence === PRESENCE_STATUS.PROVIDED,
+  );
+  const warnings: WorkflowDiagnostic[] = [step4cIntegrationPending(stepId, 0)];
+  if (anyProvided) {
+    warnings.push({
+      diagnosticId: `DIAG-${stepId}-DOWNSTREAM-PENDING`,
+      workflowStepId: stepId,
+      severity: "warning",
+      code: "WF_PARTIAL_SCOPE_WARNING",
+      message:
+        "ハンチが PROVIDED ですが、3D・数量・自重への接続は Step 4-C 未統合です。",
+      technicalDetail: "haunch PROVIDED; Step 4-C pending",
+      blocking: false,
+      source: "frontend/src/apollo/workflow/selectors.ts",
+      remediation: "Step 4-C 実装まで下流成果は未統合警告付きで扱ってください。",
+      navigationTarget: null,
+    });
+  }
+
+  if (validation.blockingDiagnostics.length > 0) {
+    return {
+      workflowStepId: stepId,
+      capability: getWorkflowCapability(stepId).status,
+      inputState: "INVALID",
+      resultState,
+      complete: false,
+      corrupted: false,
+      currentRevision,
+      generatedRevision: draft.generatedAt,
+      currentChecksum,
+      generatedChecksum: resultState === "CURRENT" ? currentChecksum : null,
+      diagnostics: validation.blockingDiagnostics.map((d, index) => ({
+        diagnosticId: `DIAG-${stepId}-${d.code}-${index}`,
+        workflowStepId: stepId,
+        severity: "error" as const,
+        code: "WF_INPUT_INVALID" as const,
+        message: d.message,
+        technicalDetail: d.code,
+        blocking: true,
+        source: "frontend/src/apollo/bridgeStructure/haunchModel.ts",
+        remediation: d.remediation,
+        navigationTarget: {
+          kind: "panel" as const,
+          path: "wf-panel-haunch",
+          label: "ハンチ入力",
+        },
+      })),
+      warnings,
+    };
+  }
+
+  let inputState: StepInputState;
+  if (allNotProvided) {
+    inputState = "EMPTY";
+  } else if (!validation.complete) {
+    inputState = "PARTIAL";
+  } else {
+    inputState = "VALID";
+  }
+
+  const complete = validation.complete && resultState === "CURRENT";
+  return {
+    workflowStepId: stepId,
+    capability: getWorkflowCapability(stepId).status,
+    inputState,
+    resultState: allNotProvided && resultState === "NOT_GENERATED" ? "NONE" : resultState,
+    complete,
+    corrupted: false,
+    currentRevision,
+    generatedRevision: draft.generatedAt,
+    currentChecksum,
+    generatedChecksum: resultState === "CURRENT" ? currentChecksum : null,
+    diagnostics: [],
+    warnings,
+  };
+}
+
 export function evaluateStepEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
   switch (stepId) {
     case "WF-01":
@@ -482,7 +692,9 @@ export function evaluateStepEvidence(project: ProjectModel, stepId: WorkflowStep
     case "WF-02":
       return bridgeStructureEvidence(project, stepId);
     case "WF-03":
+      return appurtenanceEvidence(project, stepId);
     case "WF-05":
+      return haunchEvidence(project, stepId);
     case "WF-06":
       return bridgeStructureEvidence(project, stepId);
     case "WF-04":

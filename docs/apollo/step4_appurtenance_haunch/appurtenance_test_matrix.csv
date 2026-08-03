@@ -1,0 +1,10 @@
+case_id,category,expectation
+APP-PRES-001,presence,NOT_PROVIDED default
+APP-PRES-002,presence,EXPLICIT_NONE without item
+APP-PRES-003,presence,PROVIDED empty invalid
+APP-SLOT-001,slots,six slots present
+APP-VAL-001,validation,station start<end
+APP-VAL-002,validation,offset within half width
+APP-ID-001,stable_id,deterministic per slot
+APP-MIG-001,migration,1.0.0 → NOT_PROVIDED
+APP-WF-001,workflow,COMPLETE with NOT_AUTHORIZED

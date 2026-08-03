@@ -191,6 +191,12 @@ export function buildInputChecksum(draft: ApolloBridgeStructureInputDraft): stri
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
     spans: draft.spans,
     supports: draft.supports,
+    appurtenanceConfiguration: draft.appurtenanceConfiguration,
+    haunchConfiguration: {
+      girders: [...draft.haunchConfiguration.girders].sort((a, b) =>
+        a.mainGirderKey.localeCompare(b.mainGirderKey),
+      ),
+    },
   };
   return computeContentChecksum(payload).hexDigest;
 }

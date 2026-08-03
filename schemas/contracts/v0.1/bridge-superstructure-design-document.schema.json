@@ -1253,6 +1253,38 @@
                     "type": "null"
                   }
                 ]
+              },
+              "shapeType": {
+                "type": "string",
+                "enum": [
+                  "RECT",
+                  "TRAPEZOID"
+                ]
+              },
+              "startStation": {
+                "type": "number"
+              },
+              "endStation": {
+                "type": "number"
+              },
+              "topWidth": {
+                "type": "number"
+              },
+              "bottomWidth": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              },
+              "materialRef": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             },
             "required": [
@@ -2507,8 +2539,16 @@
           "$ref": "#/$defs/https://spacer.local/schemas/contracts/v0.1/governed-quantity.schema.json"
         },
         "spanSystem": {
-          "type": "string",
-          "const": "simple"
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "simple"
+            },
+            {
+              "type": "string",
+              "const": "continuous"
+            }
+          ]
         },
         "superstructureKind": {
           "type": "string",

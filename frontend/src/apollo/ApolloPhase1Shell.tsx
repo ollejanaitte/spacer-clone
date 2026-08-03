@@ -27,6 +27,8 @@ import {
 } from "./workspace";
 import { ApolloNumericInput } from "./components/ApolloNumericInput";
 import { BridgeStructureInputPanel } from "./components/BridgeStructureInputPanel";
+import { DeckAppurtenanceInputPanel } from "./components/DeckAppurtenanceInputPanel";
+import { RcDeckHaunchInputPanel } from "./components/RcDeckHaunchInputPanel";
 import { AnalysisDevelopmentProbePanel } from "./components/AnalysisDevelopmentProbePanel";
 import { DemandCheckDevelopmentPanel } from "./components/DemandCheckDevelopmentPanel";
 import { QuantityModelDevelopmentPanel } from "./components/QuantityModelDevelopmentPanel";
@@ -1796,6 +1798,16 @@ export function ApolloPhase1Shell({
           onProjectChange={(nextProject) => onProjectChange(nextProject)}
           onAuditEvent={onAuditEvent}
         />
+        <DeckAppurtenanceInputPanel
+          project={project}
+          onProjectChange={(nextProject) => onProjectChange(nextProject)}
+          onAuditEvent={onAuditEvent}
+        />
+        <RcDeckHaunchInputPanel
+          project={project}
+          onProjectChange={(nextProject) => onProjectChange(nextProject)}
+          onAuditEvent={onAuditEvent}
+        />
         <div className="apollo-applied-summary">
           <span data-testid="apollo-selection-count">選択 {selectedRefs.length} 件</span>
           <span data-testid="apollo-visible-count">表示 {visibleEditorRefs.length} 件</span>
@@ -2405,6 +2417,16 @@ export function ApolloPhase1Shell({
                 onPrimaryAction={handleWorkflowPrimaryAction}
               />
               <BridgeStructureInputPanel
+                project={project}
+                onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                onAuditEvent={onAuditEvent}
+              />
+              <DeckAppurtenanceInputPanel
+                project={project}
+                onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                onAuditEvent={onAuditEvent}
+              />
+              <RcDeckHaunchInputPanel
                 project={project}
                 onProjectChange={(nextProject) => onProjectChange(nextProject)}
                 onAuditEvent={onAuditEvent}

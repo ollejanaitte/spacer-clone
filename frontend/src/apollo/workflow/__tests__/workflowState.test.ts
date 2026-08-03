@@ -111,11 +111,11 @@ describe("workflow state — empty project", () => {
     expect(wf02.prerequisitesSatisfied).toBe(true);
   });
 
-  it("keeps future stubs BLOCKED but does not block WF-02+", () => {
-    const model = buildWorkflowStateModel(project);
-    expect(statusOf(project, "WF-03").status).toBe("BLOCKED");
-    expect(statusOf(project, "WF-05").status).toBe("BLOCKED");
+  it("keeps future stubs BLOCKED for WF-01/WF-06; WF-03/WF-05 are NOT_STARTED until WF-02 completes", () => {
+    expect(statusOf(project, "WF-01").status).toBe("BLOCKED");
     expect(statusOf(project, "WF-06").status).toBe("BLOCKED");
+    expect(statusOf(project, "WF-03").status).toBe("NOT_STARTED");
+    expect(statusOf(project, "WF-05").status).toBe("NOT_STARTED");
     expect(statusOf(project, "WF-02").status).toBe("RECOMMENDED");
   });
 
@@ -172,11 +172,16 @@ describe("workflow state — valid generated project", () => {
     expect(["AVAILABLE", "READY", "RECOMMENDED", "NOT_STARTED"]).toContain(wf09.status);
   });
 
-  it("keeps WF-03/WF-05/WF-06 as future BLOCKED stubs (no false complete)", () => {
-    for (const stepId of ["WF-03", "WF-05", "WF-06"]) {
+  it("keeps WF-06 as future BLOCKED stub; WF-03/WF-05 COMPLETE when explicit-none + generated", () => {
+    const wf06 = statusOf(project, "WF-06");
+    expect(wf06.status).toBe("BLOCKED");
+    expect(wf06.diagnostics.some((d) => d.code === "WF_CAPABILITY_PLANNED")).toBe(true);
+
+    for (const stepId of ["WF-03", "WF-05"] as const) {
       const step = statusOf(project, stepId);
-      expect(step.status, stepId).toBe("BLOCKED");
-      expect(step.diagnostics.some((d) => d.code === "WF_CAPABILITY_PLANNED")).toBe(true);
+      expect(step.status, stepId).toBe("COMPLETE");
+      expect(step.badges, stepId).toContain("NOT_AUTHORIZED");
+      expect(step.diagnostics.some((d) => d.code === "WF_CAPABILITY_PLANNED")).toBe(false);
     }
   });
 
@@ -188,9 +193,9 @@ describe("workflow state — valid generated project", () => {
 
   it("reports progress counts", () => {
     const model = buildWorkflowStateModel(project);
-    expect(model.progress.complete).toBeGreaterThanOrEqual(6);
-    expect(model.progress.notAuthorized).toBeGreaterThanOrEqual(6);
-    expect(model.progress.blocked).toBeGreaterThanOrEqual(4);
+    expect(model.progress.complete).toBeGreaterThanOrEqual(8);
+    expect(model.progress.notAuthorized).toBeGreaterThanOrEqual(8);
+    expect(model.progress.blocked).toBeGreaterThanOrEqual(2);
   });
 });
 

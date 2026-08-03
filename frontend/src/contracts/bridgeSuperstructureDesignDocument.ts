@@ -232,6 +232,14 @@ export interface Haunch extends DesignEntityMetadata {
   readonly entityKind: "Haunch";
   readonly haunchId: UuidString;
   readonly mainGirderRefId: UuidString | null;
+  /** Step 4-B additive geometry (DEC-S4-0003). Optional for backward compatibility with ID-only haunches. */
+  readonly shapeType?: "RECT" | "TRAPEZOID";
+  readonly startStation?: number;
+  readonly endStation?: number;
+  readonly topWidth?: number;
+  readonly bottomWidth?: number;
+  readonly height?: number;
+  readonly materialRef?: string | null;
 }
 
 export interface CrossBeam extends DesignEntityMetadata {
