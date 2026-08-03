@@ -39,3 +39,60 @@ REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/320
 REPORT_PR_MERGE_SHA: 704329d0f747ee0400ef182904d54184f1b935f0
 NEXT_ACTION: Begin Step 4-A (WorkflowState skeleton) from latest main; do not start until this stamp is on main (already GO)
 ================================================================================
+
+================================================================================
+Apollo Step 4-A — WorkflowState / Design Flow Control Screen / Derived Status
+================================================================================
+更新日時: 2026-08-03T21:00:00+09:00
+STEP_ID: APOLLO_STEP_4A_WORKFLOW_STATE
+DOCUMENTATION_ONLY: NO (application code changed)
+
+BASE_MAIN_SHA: 5c10af7240303c4f3248ce20a55848bafa7015a2
+BRANCH: feat/apollo-step4a-workflow-state
+
+Commit record (local, not yet merged):
+  9620b69 feat(apollo): add workflow control and derived status evaluation
+  cd35221 test(apollo): register drawingSetModel and artifactBundle modules in AP-00 suite
+  bc07f27 feat(apollo): add workflow control screen UI and navigation
+  4bb1b33 test(apollo): add workflow control screen component tests
+  e003085 test(apollo): add Step 4A workflow E2E (S4A-001..005)
+
+IMPLEMENTATION_SUMMARY: PASS
+  - Workflow control plane WF-01..WF-15 (registry, capabilities, dependencies, selectors, evaluators, diagnostics, recommended action, navigation)
+  - WorkflowControlScreen integrated into ApolloPhase1Shell (basics screen)
+  - Status always derived from current project data/checksums; only WF-15 ack persisted
+  - STALE truth = isBridgeStructureGenerationCurrent (OutputIntegration parity)
+  - PLANNED capability stubs BLOCKED with WF_CAPABILITY_PLANNED; never block downstream (BINDING_PREREQUISITE_GUARD = PENDING_STEP_4E)
+  - Status conveyed as label + symbol + reason, not color-only
+
+TEST_SUMMARY:
+  UNIT: npx vitest run src/apollo -> 51 files / 383 tests all pass
+  WORKFLOW_UNIT: npx vitest run src/apollo/workflow + WorkflowControlScreen.test.tsx -> 3 files / 3 pass
+  E2E: npx playwright test tests/e2e/apollo-step4a-workflow.spec.ts -> 5/5 pass (E2E-S4A-001..005)
+  TSC: npx tsc -b --pretty false -> OK
+  LINT: npm run lint -> exit 0
+  FULL_UNIT: npx vitest run src -> 287 files / 286 pass, 2 fail
+    (contract schema drift: src/contracts/runtime/__tests__/contractJsonSchema.test.ts, pre-existing on main)
+
+PREEXISTING_E2E_FAILURES (unrelated to Step 4-A, reproduced on main):
+  level0-navigation x2, p2-d06-viewer-vertical-z x1, th-analysis-revamp x2
+
+EVIDENCE_ROOT: docs/apollo/step4_workflow_state/
+  README.md / workflow_registry.md / workflow_data_source_mapping.md / status_semantics.md
+  current_state_snapshot.md / stale_propagation.md / capability_stub_policy.md
+  e2e_report.md / evidence_index.md / workflow_status_truth_table.csv / step4a_completion_gate.md
+  evidence/vitest-workflow-20260803.json / evidence/e2e-step4a-20260803.json
+
+RELEASE_POSTURE: UNCHANGED
+  NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+  DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+  FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
+  All artifact steps render COMPLETE with NOT_AUTHORIZED + DEVELOPMENT_ONLY badges.
+  WF-15 never auto-COMPLETEs (explicit checksum-bound human ack required).
+
+STEP_4A_VERDICT: COMPLETE
+STEP_4A_REPORT_READINESS: GO
+STEP_4B_START_READINESS: READY (report) — Step 4-B will implement appurtenance (WF-03) and haunch (WF-05) canonical inputs; do not begin until instructed.
+
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/322 (pending)
+PRIMARY_PR_STATE: OPEN
