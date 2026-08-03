@@ -1,0 +1,20 @@
+from_slide,event,to_slide,guards,side_effects
+G01,next_valid,G02,disclaimer_acked,none
+G01,apply_generate,G12,disclaimer_acked,run apply+generate tx
+G02,next,G03,none,none
+G02,skip_unbound,G03,ack_unbound_crs,record warning
+G03,next_valid,G04,pavement_valid_or_explicit,save canonical
+G04,next_valid,G05,basics_valid,save
+G05,next_valid,G06,girders_valid,save
+G06,next_valid,G07,deck_valid,save
+G07,next_valid,G08,haunch_presence_decided,save
+G08,next_valid,G09,app_presence_decided,save
+G09,next_valid,G10,xb_valid,save
+G10,next_valid,G11,lateral_flags_set,save
+G11,next,G12,none,none
+G12,next,G13,geometry_ready_or_warn,none
+G13,next,G14,none,none
+G14,next,G15,none,none
+*,back,prev,none,none
+*,open_detail,same,none,navigate detail pane same SoR
+*,dirty_edit,*,field changed,STALE dependents

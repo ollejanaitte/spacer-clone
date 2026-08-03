@@ -1,0 +1,20 @@
+catalog_id,domain,field,value,unit,provenance,status,notes
+CAT-S5-BASIC-001,bridge,spanLength,30,m,existing sampleInputs,UNVERIFIED_DEVELOPMENT,retain
+CAT-S5-BASIC-002,bridge,width,10.5,m,existing sampleInputs,UNVERIFIED_DEVELOPMENT,retain
+CAT-S5-BASIC-003,bridge,girderCount,4,-,existing sampleInputs,UNVERIFIED_DEVELOPMENT,retain
+CAT-S5-BASIC-004,bridge,girderSpacing,3.0,m,existing sampleInputs,UNVERIFIED_DEVELOPMENT,retain
+CAT-S5-BASIC-005,bridge,deckThickness,0.22,m,existing sampleInputs,UNVERIFIED_DEVELOPMENT,retain
+CAT-S5-APP-001,appurtenance,CURB_LEFT.height,0.25,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-APP-002,appurtenance,CURB_LEFT.width,0.5,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-APP-003,appurtenance,WALL_RAILING_LEFT.height,1.1,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-APP-004,appurtenance,WALL_RAILING_LEFT.width,0.25,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-HAUNCH-001,haunch,RECT.height,0.15,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-HAUNCH-002,haunch,RECT.width,0.4,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-PAVE-001,pavement,thickness,0.08,m,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-PAVE-002,pavement,unitWeight,22.5,kN/m3,dev placeholder,UNVERIFIED_DEVELOPMENT,not standard
+CAT-S5-MARK-001,marking,centerLine.width,0.15,m,dev placeholder,UNVERIFIED_DEVELOPMENT,viz
+CAT-S5-MARK-002,marking,laneBoundary.width,0.15,m,dev placeholder,UNVERIFIED_DEVELOPMENT,viz
+CAT-S5-MARK-003,marking,edgeLine.width,0.15,m,dev placeholder,UNVERIFIED_DEVELOPMENT,viz
+CAT-S5-LAT-001,lateral,legA,0.09,m,dev placeholder PENDING_ER,UNVERIFIED_DEVELOPMENT,L-angle provisional
+CAT-S5-LAT-002,lateral,legB,0.09,m,dev placeholder PENDING_ER,UNVERIFIED_DEVELOPMENT,L-angle provisional
+CAT-S5-LAT-003,lateral,thickness,0.01,m,dev placeholder PENDING_ER,UNVERIFIED_DEVELOPMENT,L-angle provisional

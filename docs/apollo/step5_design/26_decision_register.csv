@@ -1,0 +1,13 @@
+decision_id,topic,decision,status,rationale,source,alternatives,consequences,owner,date,implementation_phase
+DEC-S5-0001,Sample apply transaction depth,Apply inputs + optional generate in one CTA; secondary input-only,DECIDED_DRAFT,Close REQ-S5-003 gap,04_sample_apply_transaction,input-only only,P1 UX,docs-agent,2026-08-04,5-3-P1
+DEC-S5-0002,Sample re-apply overwrite UX,Confirm modal when dirty,DECIDED_DRAFT,Prevent data loss,04,always replace,P1,docs-agent,2026-08-04,5-3-P1
+DEC-S5-0003,Pavement canonical ownership,Apollo draft owns deck pavement; LINER hoso unbound until 4-E,DECIDED_DRAFT,Unblock P3,09,LINER-only,schema bump,docs-agent,2026-08-04,5-3-P3
+DEC-S5-0004,Road marking STL policy,Viz-only; exclude from structural STL default,DECIDED_DRAFT,Avoid viz leak RISK-S5-011,10;19,include STL,export flags,docs-agent,2026-08-04,5-3-P3
+DEC-S5-0005,Cross-frame terminology,Keep CrossBeam + SwayBracing entities; UI 横桁/対傾構 labels,DECIDED_DRAFT,Code-confirmed split,12,rename kinds,UI copy,docs-agent,2026-08-04,5-3-P4
+DEC-S5-0006,Cross-frame attachment topology,Retain current V top→bottom mid as development,PENDING_ENGINEERING_REVIEW,ER-001 required for lock,12;ER-001,alternate CF,P4 limited to labels unless ER,docs-agent,2026-08-04,5-3-P4
+DEC-S5-0007,L-angle parameterization,legA/legB/thickness/orientation schema,DECIDED_DRAFT,Enable P5,13,keep cylinder,geom module,docs-agent,2026-08-04,5-3-P5
+DEC-S5-0008,Sample L-angle dims provenance,CAT-S5-LAT-* UNVERIFIED placeholders,DECIDED_DRAFT,No invented ADOPTED std,03 catalog,omit laterals,UI provenance,docs-agent,2026-08-04,5-3-P1+P5
+DEC-S5-0009,Guided Mode slide count/order,15-slide G01-G15,DECIDED_DRAFT,Matches 5-1 candidates,05-07,compress,P2 IA,docs-agent,2026-08-04,5-3-P2
+DEC-S5-0010,Developer diagnostics default,Collapsed by default,DECIDED_DRAFT,General-user UX,05,hidden forever,P2,docs-agent,2026-08-04,5-3-P2
+DEC-S5-0011,Sample load values provenance,Derive-only; no seeded formal live loads,DECIDED_DRAFT,Authority boundary,18,seed cases,P1+P6,docs-agent,2026-08-04,5-3-P6
+DEC-S5-0012,Pavement qty/load connection,Include qty+dead load when PROVIDED,DECIDED_DRAFT,REQ-S5-004 usefulness,09;18,viz-only pavement,P3+P6,docs-agent,2026-08-04,5-3-P3

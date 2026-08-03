@@ -1,0 +1,15 @@
+requirement_id,design_docs,step5_3_package,unit_tests,e2e_cases
+REQ-S5-001,02;03;04,P1,preset completeness,E2E-S5-001
+REQ-S5-002,04;08,P1+P2,edit persist,E2E-S5-005
+REQ-S5-003,04;16,P1+P6,apply+generate tx,E2E-S5-001
+REQ-S5-004,09;18;19,P3,pavement solid/qty,E2E-S5-003
+REQ-S5-005,10;19,P3,marking viz policy,E2E-S5-003
+REQ-S5-006,05;06;07,P2,slide transitions,E2E-S5-004
+REQ-S5-007,08,P2,single SoR invariant,E2E-S5-004
+REQ-S5-008,11;15,P4,trace formulas,E2E-S5-006
+REQ-S5-009,12,P4,entity kind asserts,E2E-S5-006
+REQ-S5-010,13,P5,L-angle geom,E2E-S5-006
+REQ-S5-011,14,P1+P6,sample haunch PROVIDED,E2E-S5-002
+REQ-S5-012,14,P1+P6,sample app PROVIDED,E2E-S5-002
+REQ-S5-013,15,P4,datum helpers,E2E-S5-006
+REQ-S5-014,01;02;04,P1+P7,label constants,E2E-S5-007
