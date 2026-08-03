@@ -1,0 +1,23 @@
+{
+  "scenario": "E2E-STEP3-001",
+  "overall": "PASS",
+  "panels": {
+    "quantity": true,
+    "report": true,
+    "drawing": true,
+    "ga": true,
+    "output": true,
+    "section": true,
+    "demand": true,
+    "analysis": true
+  },
+  "status": "stale: false / consistency: PASS / checksum: dab75777d7bc830e… / qty:READY / report:READY / drawing:READY / drawingSet:READY / schedule:READY / bundle:READY / formal:NOT_AUTHORIZED",
+  "sheets": "sheets: G-01, G-02, G-03, G-04, G-05, G-06, G-07",
+  "warning": "UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR DESIGN OR CONSTRUCTION — USER REVIEW REQUIRED",
+  "validation": "VALIDATE PASS / sheets=7 / ck=dab75777d7bc",
+  "staleBlocked": true,
+  "consoleErrors": [],
+  "screenshot": "/home/masaharu/Projects/spacer-clone/docs/apollo/step3_final_product/e2e/e2e_step3_final.png",
+  "label": "UNVERIFIED_DEVELOPMENT_ONLY",
+  "authorization": "NOT_GRANTED"
+}

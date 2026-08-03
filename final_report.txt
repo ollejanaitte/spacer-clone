@@ -1,21 +1,29 @@
 ================================================================================
-Previous Phase Summary — Step 1/2 + Step 3-A/B/C (retained)
+Previous Phase Summary — Step 1/2 + Step 3-A..D (retained)
 ================================================================================
 STEP_3A: #308/#309 MERGED
 STEP_3B: #310/#311 MERGED
 STEP_3C: #312/#313 MERGED
+STEP_3D: #314/#315 MERGED
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 
 ================================================================================
-Apollo Step 3-D Report Finalize
+Apollo Step 3-E Development — Final Product Integration
 ================================================================================
-更新日時: 2026-08-03T09:30:00+09:00
-STEP_3D_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/314
-STEP_3D_PRIMARY_PR_MERGE_SHA: 82f4c234bce1599c5e6325fcfc237206dc13914b
-BUNDLE_EXPORT_VERDICT: PASS_DEVELOPMENT_ONLY
-MULTISHEET_PDF_VERDICT: PASS_HTML_SHEET
-STALE_BUNDLE_GUARD: PASS
-REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/315
-STEP_3E_START_VERDICT: GO
+更新日時: 2026-08-03T09:35:00+09:00
+Step ID: APOLLO_STEP_3E_FINAL_PRODUCT_INTEGRATION
+START_MAIN_SHA: 4bcb95c4112bc67edbb94ed82202bc45b5741c4a
+branch: feat/apollo-step3e-final-product-integration
+
+- Extended OutputIntegrationPanel with drawing set / schedule / ZIP / validate / checklist
+- Cross-artifact consistency (quantity/report/drawing/drawingSet/schedule)
+- User acceptance package under docs/apollo/step3_final_product/
+- E2E-STEP3-001 PASS
+
+PRIMARY_PR: PENDING
+REPORT_PR: PENDING
+STEP_3_CLOSEOUT_READINESS: PENDING
+FORMAL_OK_NG_EMITTED: NO
 ================================================================================
