@@ -237,13 +237,17 @@ function resolveApolloStlExportOptions(
 }
 
 function resolveVisibleApolloExportGroups(visibility: ViewerVisibility) {
-  const groups: Array<"girders" | "cross-beams" | "bracings" | "deck" | "bearings" | "markers"> = [];
+  const groups: Array<
+    "girders" | "cross-beams" | "bracings" | "deck" | "bearings" | "markers" | "appurtenances" | "rc-deck-haunches"
+  > = [];
   if (visibility.apolloGirders !== false) groups.push("girders");
   if (visibility.apolloCrossBeams !== false) groups.push("cross-beams");
   if (visibility.apolloBracings !== false) groups.push("bracings");
   if (visibility.apolloDeck !== false) groups.push("deck");
   if (visibility.apolloBearings !== false) groups.push("bearings");
   if (visibility.apolloMarkers === true) groups.push("markers");
+  if (visibility.apolloAppurtenances !== false) groups.push("appurtenances");
+  if (visibility.apolloHaunches !== false) groups.push("rc-deck-haunches");
   return groups;
 }
 

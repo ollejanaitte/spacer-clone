@@ -20,6 +20,8 @@ export type ApolloStlEntityCounts = {
   readonly deck: number;
   readonly bearings: number;
   readonly markers: number;
+  readonly appurtenances: number;
+  readonly haunches: number;
 };
 
 export type ApolloStlExportManifest = {

@@ -9,7 +9,7 @@
 | ID | Scope | Branch |
 |----|-------|--------|
 | C1 | Shared geometry / formula kernel | feat/apollo-step4c1-geometry-kernel |
-| C2 | 3D solids / STL | feat/apollo-step4c2-3d-solids |
+| C2 | 3D solids / STL — see `3d_solids.md`, `stl_integration.md` | feat/apollo-step4c2-3d-solids |
 | C3 | QuantityModel | feat/apollo-step4c3-quantity |
 | C4 | Dead load / distribution | feat/apollo-step4c4-load-model |
 | C5 | Analysis hookup | feat/apollo-step4c5-analysis-hookup |

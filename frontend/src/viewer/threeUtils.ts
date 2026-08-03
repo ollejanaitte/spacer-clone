@@ -284,6 +284,8 @@ export function computeApolloVisualizationBox(
     if (solid.kind === "bracing" && visibility?.apolloBracings === false) continue;
     if (solid.kind === "deck" && visibility?.apolloDeck === false) continue;
     if (solid.kind === "bearing" && visibility?.apolloBearings === false) continue;
+    if (solid.kind === "appurtenance" && visibility?.apolloAppurtenances === false) continue;
+    if (solid.kind === "haunch" && visibility?.apolloHaunches === false) continue;
     if ((solid.kind === "pier_marker" || solid.kind === "abutment_marker") && (!includeMarkers || visibility?.apolloMarkers === false)) {
       continue;
     }
