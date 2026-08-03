@@ -1,0 +1,7 @@
+{
+  "suite": "apollo-step5-final-gui",
+  "evidenceRoot": "/home/masaharu/Projects/spacer-clone/docs/apollo/step5_implementation/final_audit/evidence",
+  "note": "GUI smoke against live Apollo app; 3D ENGINEERING_CORRECTNESS_NOT_AUTHORIZED",
+  "crossFrameTopology": "LABEL_ONLY_PENDING_ER001",
+  "lAngleGeometry": "TWO_PLATE_APPROXIMATION_PENDING_ER002"
+}

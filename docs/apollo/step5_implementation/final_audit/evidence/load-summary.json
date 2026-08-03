@@ -1,0 +1,5 @@
+{
+  "note": "Pavement dead load connected when PROVIDED (DEC-S5-0012); formal live loads not seeded (DEC-S5-0011)",
+  "pavementPresence": "PROVIDED",
+  "unitWeight": 22.5
+}

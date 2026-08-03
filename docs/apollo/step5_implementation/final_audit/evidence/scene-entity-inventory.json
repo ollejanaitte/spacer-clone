@@ -1,0 +1,50 @@
+{
+  "solidCount": 188,
+  "byKind": {
+    "appurtenance": 4,
+    "bearing": 8,
+    "bracing": 102,
+    "cross_beam": 7,
+    "deck": 1,
+    "girder": 4,
+    "abutment_marker": 2,
+    "stiffener": 52,
+    "haunch": 4,
+    "pavement": 1,
+    "road_marking": 3
+  },
+  "exportableFalse": [
+    "abutment_marker",
+    "abutment_marker",
+    "road_marking",
+    "road_marking",
+    "road_marking"
+  ],
+  "bracingSectionTypes": [
+    1
+  ],
+  "dualLabels": {
+    "crossBeam": true,
+    "sway": true,
+    "upper": true,
+    "lower": true
+  },
+  "assumptions": [
+    "bsdd-bridge-structure-solids",
+    "bsdd-cross-beam-station-convention",
+    "dec-s5-0005-cross-beam-sway-labels",
+    "dec-s5-0006-sway-v-topology-development",
+    "dec-s5-0007-lateral-l-angle",
+    "appurtenance-solids-local-crs",
+    "haunch-solids-datum",
+    "pavement-full-deck-width",
+    "road-markings-viz-only",
+    "simple-solid-girder-offsets",
+    "simple-solid-deck-width",
+    "simple-solid-cross-beam-stations",
+    "poc-defaults-provider"
+  ],
+  "engineeringCorrectness": "NOT_AUTHORIZED",
+  "crossFrameTopology": "LABEL_ONLY_V_SWAY_DEVELOPMENT_PENDING_ER001",
+  "lAngleRender": "TWO_PLATE_APPROXIMATION_PENDING_ER002"
+}

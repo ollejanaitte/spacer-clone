@@ -1,0 +1,9 @@
+{
+  "pavement": {
+    "category": "PAVEMENT",
+    "volumeM3": 25.2,
+    "weightKN": 567,
+    "status": "UNVERIFIED_DEVELOPMENT_ONLY"
+  },
+  "schemaVersion": "1.3.0-development"
+}
