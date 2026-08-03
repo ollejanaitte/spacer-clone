@@ -17,6 +17,10 @@
 ## Boundary
 
 - Step 5-1: docs/evidence only — no application implementation
-- Step 5-2: full design documents (not started)
+- Step 5-2: full design documents (not started) — **START_READINESS: GO** after S5-1D
 - Step 5-3: implementation (not started)
 - Step 4-D〜H: not started in this step
+
+## Completion
+
+See `step5_1_completion_gate.md` and `step5_1_final_audit.md`.
