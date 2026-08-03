@@ -1,0 +1,14 @@
+formulaId,entity,quantity,expression,unit,notes
+F-S4C-APP-LENGTH,appurtenance,length,endStation-startStation,m,C1 kernel
+F-S4C-APP-RECT-AREA,appurtenance,area,width*height,m2,RECT only
+F-S4C-APP-VOLUME,appurtenance,volume,area*length,m3,volume without unit weight OK
+F-S4C-APP-TOTAL-WEIGHT,appurtenance,weight,volume*unitWeight,kN,NOT_AVAILABLE if unitWeight null
+F-S4C-APP-VOLUME-SUM,appurtenance,volume_total,sum(entity volumes),m3,slot PROVIDED only
+F-S4C-APP-TOTAL-WEIGHT-SUM,appurtenance,weight_total,sum(entity weights),kN,incomplete if any missing gamma
+F-S4C-HAUNCH-LENGTH,haunch,length,endStation-startStation,m,C1 kernel
+F-S4C-HAUNCH-RECT-AREA,haunch,area,topWidth*height,m2,RECT
+F-S4C-HAUNCH-TRAP-AREA,haunch,area,(topWidth+bottomWidth)/2*height,m2,TRAPEZOID
+F-S4C-HAUNCH-VOLUME,haunch,volume,area*length,m3,not added to QTY-DK-VOL
+F-S4C-HAUNCH-TOTAL-WEIGHT,haunch,weight,volume*rcUnitWeight,kN,NOT_AVAILABLE if rcUnitWeight null
+F-S4C-HAUNCH-VOLUME-SUM,haunch,volume_total,sum(entity volumes),m3,per provided girders
+F-S4C-HAUNCH-TOTAL-WEIGHT-SUM,haunch,weight_total,sum(entity weights),kN,incomplete if rcUnitWeight null
