@@ -1,0 +1,20 @@
+{
+  "step": "S5-1A",
+  "mainSha": "ad4906ab76f167d8ba9313abcaf41440b72234f7",
+  "baselineVitest": "geometryKernel+step4b+workflowState 54 passed",
+  "tsc": "PASS",
+  "applicationCodeChanged": false,
+  "sampleAutoGenerate": false,
+  "sampleAppurtenances": "NOT_PROVIDED_by_default",
+  "sampleHaunch": "NOT_PROVIDED_by_default",
+  "sampleLaterals": false,
+  "swayBracingSection": "cylinder_0.08m",
+  "crossBeamSection": "prism_0.35*girderDepth",
+  "guiObserved": {
+    "vitePort": 4173,
+    "playwright": "apollo-step4a-workflow.spec.ts + apollo-step4c-integration.spec.ts",
+    "result": "6 passed",
+    "classification": "GUI_OBSERVED",
+    "notes": "Workflow control screen + Step 4-C load/quantity/analysis panels reachable on latest main. Multi-view structural screenshot gallery not captured in this substep; engineering correctness remains NOT_AUTHORIZED."
+  }
+}

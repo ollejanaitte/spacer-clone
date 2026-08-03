@@ -1,0 +1,6 @@
+item_id,topic,why_needed,blocking_for_5_2_docs,blocking_for_5_3_impl,owner
+ER-001,Cross-frame vs code practice topology,Confirm V-brace attachment vs required CF,NO (can draft options),YES before locking geometry,structural engineer
+ER-002,L-angle sizes for laterals/sway,No inventing leg dims,NO (catalog TBD),YES for solids/qty,structural engineer + product
+ER-003,Cross-beam true section,Prism factors are development,NO,YES if qty steel from section,structural engineer
+ER-004,Pavement/marking standards,Lane layout not inventable,NO for model shape,YES for preset values,road designer
+ER-005,Sample numeric provenance,Must stay UNVERIFIED,NO,YES for labeling,product

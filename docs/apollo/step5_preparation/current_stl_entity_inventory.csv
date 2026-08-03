@@ -1,0 +1,10 @@
+stl_kind,count_field,included_by_default,notes
+girder,girders,YES,
+cross_beam,crossBeams,YES,
+bracing,bracings,YES,
+stiffener,stiffeners,YES,
+deck,deck,YES,
+bearing,bearings,YES,
+marker,markers,NO (includeMarkers),
+appurtenance,appurtenances,YES,
+haunch,haunches,YES,

@@ -1,0 +1,10 @@
+component,canonical_entity,topology_source,attachment_nodes,station_rule,transverse_rule,elevation_datum,section_model,orientation,quantity_relevance,load_relevance,unknowns
+MainGirder,MainGirder,BSDD+draft,N/A continuous segs,0..L or span segs,girderOffsets,top Z=0 convention,I from flanges/web,X long,YES steel vol,via dead case other,local CRS unbound
+CrossBeam,CrossBeam,BSDD count from spacing,ends at outer girders Y,index*spacing,Y span between girders,mid girder Z approx,prism factors,rotated frame,count only,no dedicated,true section unknown
+SwayBracing,SwayBracing+BraceMember,interval on XB stations,top flange mid / bottom mid,XB stations,girder pairs,flange mid Z,cylinder,along member,approx vol,no,L-angle / true CF topology
+UpperLateral,LateralBracing,flag upper plane,top flange connections,bays along L,girder pairs,topConnectionZ,cylinder,along member,flag,no,disabled in sample
+LowerLateral,LateralBracing,flag lower plane,bottom flange connections,bays along L,girder pairs,bottomConnectionZ,cylinder,along member,flag,no,disabled in sample
+Haunch,RcDeckHaunchModel,per girder PROVIDED,on girder Y,start/end stations,girder Y,Z0..height,RECT/TRAP area,X long,YES separate RC_HAUNCH,YES DEAD_RC_HAUNCH,sample presence
+Appurtenance,BridgeAppurtenanceModel,slot PROVIDED,centerline Y,start/end,transverseOffset,deck top Z,RECT,X long,YES APPURTENANCE,YES DEAD_APP,sample presence
+Pavement,MISSING,n/a,n/a,n/a,n/a,n/a,n/a,n/a,NOT_AVAILABLE,n/a,domain missing
+RoadMarking,MISSING,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,domain missing

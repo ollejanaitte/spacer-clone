@@ -1,0 +1,20 @@
+field_group,field_or_flag,sample_simple_single,sample_continuous,editable_ui,auto_on_sample_apply,notes,evidence
+identity,bridgeSystem,SIMPLE_SINGLE,CONTINUOUS,YES,YES,disclaimer verification-only,CODE_CONFIRMED
+geometry,spanLength/bridgeLength,30/30,null/95 spans,YES,YES,generatedAt null,CODE_CONFIRMED
+geometry,width,10.5,10.5,YES,YES,,CODE_CONFIRMED
+girders,girderCount/spacing/depth,4/3.0/2.0,same,YES,YES,,CODE_CONFIRMED
+section,flanges/web,filled,filled,YES,YES,,CODE_CONFIRMED
+deck,deckThickness,0.22,0.22,YES,YES,,CODE_CONFIRMED
+secondary,crossBeamSpacing,5.0,5.0,YES,YES,,CODE_CONFIRMED
+secondary,stiffenerSpacing,2.5,2.5,YES,YES,,CODE_CONFIRMED
+secondary,swayBracingInterval,1,1,YES,YES,,CODE_CONFIRMED
+lateral,lateralBracingEnabled,false,false,YES,YES,no lower laterals in sample 3D,CODE_CONFIRMED
+lateral,upperLateralBracingEnabled,false,false,YES,YES,no upper laterals in sample 3D,CODE_CONFIRMED
+materials,steelUnitWeight/rcUnitWeight,77/24.5,same,YES,YES,USER_PROVIDED_UNVERIFIED posture,CODE_CONFIRMED
+appurtenance,slots presence,NOT_PROVIDED,NOT_PROVIDED,YES,NO,empty draft defaults,CODE_CONFIRMED
+haunch,girder presence,NOT_PROVIDED,NOT_PROVIDED,YES,NO,empty draft defaults,CODE_CONFIRMED
+pavement,canonical fields,MISSING,MISSING,NO,NO,quantity NOT_AVAILABLE,CODE_CONFIRMED
+road_marking,canonical fields,MISSING,MISSING,NO,NO,,CODE_CONFIRMED
+road_alignment,LINER bind,UNBOUND,UNBOUND,LINER UI,NO,WF-01 PLANNED Step 4-E,CODE_CONFIRMED
+generation,generatedAt,null,null,via 構造を生成,sets null,STALE until generate,CODE_CONFIRMED
+generation,auto BSDD/3D/qty/load,NO,NO,N/A,NO,explicit generate required,CODE_CONFIRMED

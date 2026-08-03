@@ -1,0 +1,11 @@
+gap_id,domain,current_behavior,user_impact,evidence_tag,step5_destination
+GAP-S5-001,complete_sample,Sample does not set app/haunch/pavement/markings/laterals/road bind,REQ-S5-001/003 incomplete,CODE_CONFIRMED,5-2 preset spec / 5-3 P1
+GAP-S5-002,auto_generation,Sample leaves generatedAt null; manual generate required,REQ-S5-003,CODE_CONFIRMED,5-2 transaction decision
+GAP-S5-003,pavement,No canonical pavement input/solid,REQ-S5-004,CODE_CONFIRMED,5-2 pavement domain / 5-3 P3
+GAP-S5-004,road_markings,No marking model/visualization,REQ-S5-005,CODE_CONFIRMED,5-2 marking domain / 5-3 P3
+GAP-S5-005,guided_mode,Only coarse shell GuidedStep; not WF paper-slide UX,REQ-S5-006,CODE_CONFIRMED,5-2 IA / 5-3 P2
+GAP-S5-006,cross_frame_section,Sway/lateral use Ø80mm cylinder not L-angle,REQ-S5-010,CODE_CONFIRMED,5-2 L-angle spec / 5-3 P5
+GAP-S5-007,cross_beam_section,Cross beam prism uses assumed depth/width factors,visual approx,CODE_CONFIRMED,5-2 structural correction
+GAP-S5-008,terminology,UI may not clearly separate cross beam vs sway bracing,USER_REPORTED risk,INFERRED,5-2 naming/IA
+GAP-S5-009,alignment,WF-01 binding PLANNED local CRS,REQ road complete sample,CODE_CONFIRMED,4-E / 5-2 decision
+GAP-S5-010,outputs_4g,Report/drawing/ZIP not reintegrated for new entities,known 4-C limit,CODE_CONFIRMED,4-G

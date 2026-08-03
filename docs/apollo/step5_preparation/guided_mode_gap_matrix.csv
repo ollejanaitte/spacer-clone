@@ -1,0 +1,9 @@
+gap_id,capability,current,required_for_REQ_S5_006,priority
+GM-01,one_theme_per_screen,NO (all WF + panels dense),MUST,P0
+GM-02,back_next_save,partial shell nav only,MUST,P0
+GM-03,progress_from_WorkflowState,status list exists; not slide chrome,MUST,P0
+GM-04,decide_summary_per_step,diagnostics dense,MUST,P0
+GM-05,impact_preview_3d_qty_load,NOT as guided pane,SHOULD,P1
+GM-06,detail_mode_switch_same_data,YES shared draft,MUST keep,P0
+GM-07,fold_developer_diags,partial,SHOULD,P1
+GM-08,a11y_mobile,NOT_VERIFIED full audit,SHOULD,P1
