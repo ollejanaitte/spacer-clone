@@ -1,0 +1,9 @@
+{
+  "byteLength": 56084,
+  "triangleCountEstimate": 1120,
+  "markingsExcluded": true,
+  "exportableFalseKinds": [
+    "abutment_marker",
+    "road_marking"
+  ]
+}

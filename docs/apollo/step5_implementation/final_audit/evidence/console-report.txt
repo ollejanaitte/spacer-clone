@@ -1,0 +1,2 @@
+total_console_errors=0
+serious_console_errors=0

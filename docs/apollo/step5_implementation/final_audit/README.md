@@ -8,13 +8,14 @@
 | Regression report | [regression_report.md](./regression_report.md) |
 | Known limitations | [known_limitations.md](./known_limitations.md) |
 | GUI evidence (Audit C) | [evidence/](./evidence/) |
+| GUI E2E report | [gui_e2e_report.md](./gui_e2e_report.md) |
 
 ## Audit chain
 
 | Audit | Branch / PR | Focus |
 |-------|-------------|-------|
 | A | #351 | final_report + gates repair |
-| B | this PR | REQ/code/automated tests |
-| C | pending | real GUI / Playwright / evidence |
-| D | only if needed | limited app corrections |
+| B | #352 | REQ/code/automated tests |
+| C | this PR | real GUI / Playwright / evidence |
+| D | skipped | no blocking app defect |
 | Closeout | pending | final verdict + seal |
