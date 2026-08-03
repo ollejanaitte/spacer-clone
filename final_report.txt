@@ -18,6 +18,6 @@ MEMBER_SCHEDULE_VERDICT: PASS_DEVELOPMENT_ONLY
 NO_FABRICATED_SPLICE: PASS
 NO_FABRICATED_CAMBER: PASS
 CSV_JSON_EXPORT_VERDICT: PASS
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/313
 STEP_3D_START_VERDICT: GO
 ================================================================================
