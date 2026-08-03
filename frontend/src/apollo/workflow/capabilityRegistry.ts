@@ -75,9 +75,9 @@ export const WORKFLOW_CAPABILITIES: readonly WorkflowCapability[] = [
   {
     capabilityKey: "load-confirmation",
     stepId: "WF-07",
-    status: "PARTIAL",
-    implementedInStep: "Step 2-C (development loads)",
-    note: "荷重確認。構造から派生する development 荷重のみ。付属物/ハンチ/添接荷重は将来。",
+    status: "IMPLEMENTED",
+    implementedInStep: "Step 4-C4 (appurtenance/haunch dead loads)",
+    note: "荷重確認。付属物/ハンチ死荷重 + DEC-S4-0010 development distribution。添接荷重は Step 4-D。",
     gatingGuard: "ACTIVE",
   },
   {

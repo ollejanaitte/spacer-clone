@@ -12,6 +12,7 @@ const PANEL_SELECTORS: Record<string, string> = {
   "wf-panel-analysis": '[data-testid="apollo-analysis-development-probe"]',
   "wf-panel-demand": '[data-testid="apollo-demand-development-panel"]',
   "wf-panel-quantity": '[data-testid="apollo-quantity-model-panel"]',
+  "wf-panel-load-confirmation": '[data-testid="apollo-load-confirmation-panel"]',
   "wf-panel-model-view": '[data-testid="apollo-model-view-panel"]',
   "wf-panel-report": '[data-testid="apollo-report-model-panel"]',
   "wf-panel-drawing": '[data-testid="apollo-drawing-model-panel"]',

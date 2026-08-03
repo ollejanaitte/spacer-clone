@@ -16,6 +16,7 @@ import { validateBridgeAppurtenanceConfiguration } from "../bridgeStructure/appu
 import { validateRcDeckHaunchConfiguration } from "../bridgeStructure/haunchModel";
 import { PRESENCE_STATUS } from "../bridgeStructure/presence";
 import { buildInputChecksum, buildInputRevision, buildQuantityModel } from "../quantity/quantityModel";
+import { buildAppurtenanceHaunchLoadModel } from "../loads/appurtenanceHaunchLoadModel";
 import { buildReportModel } from "../report/reportModel";
 import { buildStandardSectionDrawingModel } from "../drawing/drawingModel";
 import { buildGeneralArrangementDrawingSet } from "../drawing/drawingSetModel";
@@ -685,6 +686,53 @@ function haunchEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvid
   };
 }
 
+function loadConfirmationEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
+  if (isBridgeStructureInputCorrupted(project)) {
+    return corruptedEvidence(project, stepId);
+  }
+  const draft = getBridgeStructureInputDraft(project);
+  const currentChecksum = buildInputChecksum(draft);
+  const currentRevision = buildInputRevision(draft);
+  const stale = isArtifactStale(project);
+  const loadModel = buildAppurtenanceHaunchLoadModel(project);
+  const structureCurrent = isBridgeStructureGenerationCurrent(project);
+  const inputState = classifyBridgeStructureInput(project).inputState;
+  const diagnostics: WorkflowDiagnostic[] = [];
+  if (!stale && loadModel.status === "INCOMPLETE") {
+    diagnostics.push({
+      diagnosticId: `DIAG-${stepId}-LOAD-UNIT-WEIGHT`,
+      workflowStepId: stepId,
+      severity: "warning",
+      code: "WF_INPUT_MISSING",
+      message: "付属物/ハンチの単位体積重量が不足しています。該当荷重は NOT_AVAILABLE です。",
+      technicalDetail: `loadStatus=${loadModel.status}; unavailable=${loadModel.loads.filter((l) => l.status === "NOT_AVAILABLE").length}`,
+      blocking: false,
+      source: "frontend/src/apollo/workflow/selectors.ts",
+      remediation: "単位体積重量を入力するか、解析へ渡す前に当該エンティティを見直してください。",
+      navigationTarget: { kind: "panel", path: "wf-panel-load-confirmation", label: "荷重確認パネル" },
+    });
+  }
+  const complete =
+    structureCurrent &&
+    !stale &&
+    inputState === "VALID" &&
+    (loadModel.status === "READY" || loadModel.status === "EMPTY");
+  return {
+    workflowStepId: stepId,
+    capability: getWorkflowCapability(stepId).status,
+    inputState,
+    resultState: stale ? "STALE" : complete ? "CURRENT" : structureCurrent ? "CURRENT" : "NOT_GENERATED",
+    complete,
+    corrupted: false,
+    currentRevision,
+    generatedRevision: draft.generatedAt,
+    currentChecksum,
+    generatedChecksum: stale ? null : currentChecksum,
+    diagnostics,
+    warnings: [],
+  };
+}
+
 export function evaluateStepEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvidence {
   switch (stepId) {
     case "WF-01":
@@ -700,7 +748,7 @@ export function evaluateStepEvidence(project: ProjectModel, stepId: WorkflowStep
     case "WF-04":
       return bridgeStructureEvidence(project, stepId);
     case "WF-07":
-      return bridgeStructureEvidence(project, stepId);
+      return loadConfirmationEvidence(project, stepId);
     case "WF-08":
       return analysisEvidence(project, stepId);
     case "WF-09":
