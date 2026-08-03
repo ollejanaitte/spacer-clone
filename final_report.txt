@@ -275,7 +275,7 @@ C6_PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/333
 C6_PRIMARY_PR_MERGE_SHA: 35eea80df6abc96cd155bc3bd51c25ad25a2413a
 FINAL_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/334
 FINAL_REPORT_PR_MERGE_SHA: dc479bb6bc4cb48462ef261bd95dcc8b88f1df05
-SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/PENDING_SEAL
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/335
 
 APPURTENANCE_GEOMETRY_VERDICT: PASS
 HAUNCH_GEOMETRY_VERDICT: PASS
