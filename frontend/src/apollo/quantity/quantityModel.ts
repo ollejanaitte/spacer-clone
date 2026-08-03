@@ -12,8 +12,9 @@ import type { ApolloBridgeStructureInputDraft } from "../bridgeStructure/types";
 import { computeContentChecksum } from "../../contracts/legacy/checksum";
 import type { ProjectModel } from "../../types";
 import { getBridgeStructureInputDraft, isBridgeStructureGenerationCurrent } from "../bridgeStructure/generateBsdd";
+import { buildAppurtenanceHaunchQuantityItems } from "./appurtenanceHaunchQuantities";
 
-export const QUANTITY_MODEL_SCHEMA_VERSION = "1.0.0-development";
+export const QUANTITY_MODEL_SCHEMA_VERSION = "1.1.0-development";
 
 export type QuantityCalculationBasis =
   | "EXACT_GEOMETRY_DEVELOPMENT"
@@ -27,6 +28,8 @@ export type QuantityCalculationBasis =
 export type QuantityCategory =
   | "MAIN_GIRDER"
   | "RC_DECK"
+  | "RC_HAUNCH"
+  | "APPURTENANCE"
   | "PAVEMENT"
   | "CROSS_BEAM"
   | "STIFFENER"
@@ -657,8 +660,11 @@ export function buildQuantityModel(
   }
 
   const resolved = resolveDraft(draft);
-  const items = resolved
-    ? computeItems(resolved).map((entry) =>
+  const baseItems = resolved ? computeItems(resolved) : null;
+  const appHaunchItems =
+    resolved && baseItems ? buildAppurtenanceHaunchQuantityItems(project, draft) : [];
+  const items = baseItems
+    ? [...baseItems, ...appHaunchItems].map((entry) =>
         stale
           ? {
               ...entry,
@@ -685,6 +691,12 @@ export function buildQuantityModel(
           warnings: ["入力不完全"],
         }),
       ];
+
+  if (appHaunchItems.length > 0) {
+    warnings.push(
+      "APPURTENANCE/RC_HAUNCH quantities derived from C1 geometry kernel; RC_DECK body remains separate (no double count).",
+    );
+  }
 
   return {
     schemaVersion: QUANTITY_MODEL_SCHEMA_VERSION,
