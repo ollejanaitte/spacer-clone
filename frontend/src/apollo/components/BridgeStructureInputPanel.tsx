@@ -12,6 +12,8 @@ import {
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
   SupportLayoutRole,
   addContinuousSpan,
+  applyAndGenerateContinuousGirderSample,
+  applyAndGenerateSimpleSingleSpanSample,
   applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
@@ -387,31 +389,81 @@ export function BridgeStructureInputPanel({
 
       <div className="apollo-workspace-actions">
         {isContinuous ? (
-          <button
-            type="button"
-            className="apollo-button-secondary"
-            data-testid="apollo-continuous-sample-input"
-            onClick={() => {
-              onProjectChange(applyContinuousGirderSampleInput(project));
-              setGenerationMessage("連続桁の動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
-              onAuditEvent?.("連続桁の動作確認用サンプル値を入力しました。");
-            }}
-          >
-            連続桁サンプル [30, 35, 30] を入力
-          </button>
+          <>
+            <button
+              type="button"
+              className="apollo-button-secondary"
+              data-testid="apollo-continuous-sample-input"
+              onClick={() => {
+                onProjectChange(applyContinuousGirderSampleInput(project));
+                setGenerationMessage(
+                  "連続桁の完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
+                );
+                onAuditEvent?.("連続桁の完全サンプル値を入力しました。");
+              }}
+            >
+              連続桁サンプル [30, 35, 30] を入力
+            </button>
+            <button
+              type="button"
+              className="apollo-button-secondary"
+              data-testid="apollo-continuous-sample-apply-generate"
+              onClick={() => {
+                const result = applyAndGenerateContinuousGirderSample(project);
+                if (result.ok) {
+                  onProjectChange(result.project);
+                  setGenerationMessage(
+                    "連続桁完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY）。",
+                  );
+                  onAuditEvent?.("連続桁完全サンプルを適用・生成しました。");
+                } else {
+                  onProjectChange(result.project);
+                  setGenerationMessage(`生成に失敗しました: ${result.diagnostics.join("; ")}`);
+                  onAuditEvent?.("連続桁完全サンプルの生成に失敗しました。");
+                }
+              }}
+            >
+              サンプルを適用して構造を生成
+            </button>
+          </>
         ) : (
-          <button
-            type="button"
-            className="apollo-button-secondary"
-            data-testid="apollo-sample-input"
-            onClick={() => {
-              onProjectChange(applySimpleSingleSpanSampleInput(project));
-              setGenerationMessage("動作確認用サンプル値を入力しました。「構造を生成」を押して生成してください。");
-              onAuditEvent?.("動作確認用サンプル値を入力しました。");
-            }}
-          >
-            動作確認用サンプル値を入力
-          </button>
+          <>
+            <button
+              type="button"
+              className="apollo-button-secondary"
+              data-testid="apollo-sample-input"
+              onClick={() => {
+                onProjectChange(applySimpleSingleSpanSampleInput(project));
+                setGenerationMessage(
+                  "完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
+                );
+                onAuditEvent?.("完全サンプル値を入力しました。");
+              }}
+            >
+              動作確認用サンプル値を入力
+            </button>
+            <button
+              type="button"
+              className="apollo-button-primary"
+              data-testid="apollo-sample-apply-generate"
+              onClick={() => {
+                const result = applyAndGenerateSimpleSingleSpanSample(project);
+                if (result.ok) {
+                  onProjectChange(result.project);
+                  setGenerationMessage(
+                    "完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY / NOT_GRANTED）。",
+                  );
+                  onAuditEvent?.("完全サンプルを適用・生成しました。");
+                } else {
+                  onProjectChange(result.project);
+                  setGenerationMessage(`生成に失敗しました: ${result.diagnostics.join("; ")}`);
+                  onAuditEvent?.("完全サンプルの生成に失敗しました。");
+                }
+              }}
+            >
+              サンプルを適用して構造を生成
+            </button>
+          </>
         )}
         <button
           type="button"

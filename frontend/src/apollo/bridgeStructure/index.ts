@@ -143,12 +143,16 @@ export {
   CONTINUOUS_ANALYSIS_DISCLAIMER,
   CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER,
   CONTINUOUS_GIRDER_SAMPLE_SPANS,
+  SAMPLE_PRESET_CATALOG,
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
   SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+  applyAndGenerateContinuousGirderSample,
+  applyAndGenerateSimpleSingleSpanSample,
   applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
+  type SampleApplyGenerateResult,
 } from "./sampleInputs";
 export {
   BRIDGE_SYSTEM_LABELS,

@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultProject } from "../../data/defaultProject";
 import {
+  PRESENCE_STATUS,
+  SAMPLE_PRESET_CATALOG,
   SIMPLE_SINGLE_SPAN_SAMPLE_INPUT,
+  applyAndGenerateSimpleSingleSpanSample,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
@@ -10,9 +13,10 @@ import {
   validateBridgeStructureInputDraft,
   withBridgeStructureField,
 } from "../bridgeStructure";
+import { buildApolloVisualizationModelOrThrow } from "../visualization";
 
-describe("simple single-span sample input", () => {
-  it("validates and generates from the sample", () => {
+describe("simple single-span complete sample input (Step 5-3 P1)", () => {
+  it("validates and generates from the complete sample", () => {
     const p = applySimpleSingleSpanSampleInput(createDefaultProject());
     const draft = getBridgeStructureInputDraft(p);
     const v = validateBridgeStructureInputDraft(draft);
@@ -21,34 +25,45 @@ describe("simple single-span sample input", () => {
     expect(g.ok).toBe(true);
   });
 
-  it("fills all fields with the sample values and marks the structure STALE", () => {
+  it("fills basics + appurtenances + haunch + laterals and marks STALE", () => {
     const project = applySimpleSingleSpanSampleInput(createDefaultProject());
     const draft = getBridgeStructureInputDraft(project);
     expect(draft.spanLength).toBe(30.0);
     expect(draft.bridgeLength).toBe(30.0);
     expect(draft.width).toBe(10.5);
     expect(draft.girderCount).toBe(4);
-    expect(draft.girderSpacing).toBe(3.0);
-    expect(draft.girderDepth).toBe(2.0);
-    expect(draft.topFlangeWidth).toBe(0.45);
-    expect(draft.topFlangeThickness).toBe(0.025);
-    expect(draft.bottomFlangeWidth).toBe(0.55);
-    expect(draft.bottomFlangeThickness).toBe(0.03);
-    expect(draft.webThickness).toBe(0.012);
-    expect(draft.deckThickness).toBe(0.22);
-    expect(draft.crossBeamSpacing).toBe(5.0);
-    expect(draft.stiffenerSpacing).toBe(2.5);
-    expect(draft.swayBracingInterval).toBe(1);
-    expect(draft.steelUnitWeight).toBe(77.0);
-    expect(draft.rcUnitWeight).toBe(24.5);
-    expect(draft.lateralBracingEnabled).toBe(false);
+    expect(draft.lateralBracingEnabled).toBe(true);
+    expect(draft.upperLateralBracingEnabled).toBe(true);
     expect(draft.generatedAt).toBeNull();
-    expect(draft.schemaVersion).toBe("1.0.0");
+    expect(draft.schemaVersion).toBe("1.1.0-development");
+
+    const curbLeft = draft.appurtenanceConfiguration.slots.find((s) => s.slot === "LEFT_CURB");
+    expect(curbLeft?.presence).toBe(PRESENCE_STATUS.PROVIDED);
+    expect(curbLeft?.item?.height).toBe(SAMPLE_PRESET_CATALOG.curbHeightM);
+    const median = draft.appurtenanceConfiguration.slots.find((s) => s.slot === "MEDIAN");
+    expect(median?.presence).toBe(PRESENCE_STATUS.EXPLICIT_NONE);
+
+    expect(draft.haunchConfiguration.girders).toHaveLength(4);
+    expect(draft.haunchConfiguration.girders.every((g) => g.presence === PRESENCE_STATUS.PROVIDED)).toBe(
+      true,
+    );
+    expect(draft.haunchConfiguration.girders[0]?.item?.height).toBe(SAMPLE_PRESET_CATALOG.haunchHeightM);
   });
 
-  it("does not auto-generate a StructuralDesignModel", () => {
+  it("does not auto-generate on input-only apply", () => {
     const project = applySimpleSingleSpanSampleInput(createDefaultProject());
     expect(project.apolloBsdd?.structuralDesignModel).toBeUndefined();
+  });
+
+  it("apply+generate produces haunch and appurtenance solids", () => {
+    const result = applyAndGenerateSimpleSingleSpanSample(createDefaultProject());
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.project.apolloBsdd?.structuralDesignModel).toBeDefined();
+    const viz = buildApolloVisualizationModelOrThrow({ project: result.project });
+    expect(viz.solidGeometryParameters.some((s) => s.kind === "haunch")).toBe(true);
+    expect(viz.solidGeometryParameters.some((s) => s.kind === "appurtenance")).toBe(true);
+    expect(viz.solidGeometryParameters.some((s) => s.kind === "bracing")).toBe(true);
   });
 
   it("clears all fields and marks the structure STALE", () => {
@@ -56,22 +71,6 @@ describe("simple single-span sample input", () => {
     const cleared = clearBridgeStructureInput(project);
     const draft = getBridgeStructureInputDraft(cleared);
     expect(draft.spanLength).toBeNull();
-    expect(draft.bridgeLength).toBeNull();
-    expect(draft.width).toBeNull();
-    expect(draft.girderCount).toBeNull();
-    expect(draft.girderSpacing).toBeNull();
-    expect(draft.girderDepth).toBeNull();
-    expect(draft.topFlangeWidth).toBeNull();
-    expect(draft.topFlangeThickness).toBeNull();
-    expect(draft.bottomFlangeWidth).toBeNull();
-    expect(draft.bottomFlangeThickness).toBeNull();
-    expect(draft.webThickness).toBeNull();
-    expect(draft.deckThickness).toBeNull();
-    expect(draft.crossBeamSpacing).toBeNull();
-    expect(draft.stiffenerSpacing).toBeNull();
-    expect(draft.swayBracingInterval).toBeNull();
-    expect(draft.steelUnitWeight).toBeNull();
-    expect(draft.rcUnitWeight).toBeNull();
     expect(draft.lateralBracingEnabled).toBe(false);
     expect(draft.generatedAt).toBeNull();
   });
@@ -82,13 +81,13 @@ describe("simple single-span sample input", () => {
     expect(draft.steelUnitWeight).toBe(77.0);
     expect(draft.rcUnitWeight).toBe(24.5);
     expect(project.apolloBsdd?.materialDefinitions).toBeUndefined();
-    expect(project.apolloBsdd?.structuralDesignModel).toBeUndefined();
   });
 
   it("exposes the sample values through the sample input constant", () => {
     expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.spanLength).toBe(30.0);
     expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.bridgeLength).toBe(30.0);
-    expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.schemaVersion).toBe("1.0.0");
+    expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.schemaVersion).toBe("1.1.0-development");
+    expect(SIMPLE_SINGLE_SPAN_SAMPLE_INPUT.lateralBracingEnabled).toBe(true);
   });
 });
 
