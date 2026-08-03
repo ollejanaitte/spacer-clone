@@ -94,5 +94,23 @@ STEP_4A_VERDICT: COMPLETE
 STEP_4A_REPORT_READINESS: GO
 STEP_4B_START_READINESS: READY (report) — Step 4-B will implement appurtenance (WF-03) and haunch (WF-05) canonical inputs; do not begin until instructed.
 
-PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/322 (pending)
-PRIMARY_PR_STATE: OPEN
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/322
+PRIMARY_PR_STATE: MERGED
+PRIMARY_PR_MERGE_SHA: 76ebee26b8083fe0463ecda027acddbe984dbff1
+
+================================================================================
+Apollo Step 4-A Report Finalize
+================================================================================
+更新日時: 2026-08-03T21:15:00+09:00
+STEP_ID: APOLLO_STEP_4A_REPORT_FINALIZE
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+
+BASE_MAIN_SHA: 76ebee26b8083fe0463ecda027acddbe984dbff1
+BRANCH: docs/apollo-step4a-report-finalize
+
+STEP_4A_VERDICT: COMPLETE
+STEP_4A_REPORT_READINESS: GO
+STEP_4B_START_READINESS: READY (report) — Step 4-B will implement appurtenance (WF-03) and haunch (WF-05) canonical inputs, replacing their PLANNED stubs. Do not begin Step 4-B implementation until instructed.
+
+NEXT_ACTION: Await instruction to begin Step 4-B. Local main must equal origin/main with a clean work tree.
