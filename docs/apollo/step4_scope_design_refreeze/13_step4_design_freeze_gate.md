@@ -51,3 +51,8 @@ Next: Step 4-A on a **new** branch from latest main after this P0 report merges.
 PRIMARY_PR_MERGED: YES
 PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/319
 PRIMARY_MERGE_SHA: 5120e0a5cbdaf9d4774723c450cc0cd2b1451b7b
+
+REPORT_PR_MERGED: YES
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/320
+REPORT_MERGE_SHA: 704329d0f747ee0400ef182904d54184f1b935f0
+FINAL_MAIN_SHA_AT_P0_CLOSE: 704329d0f747ee0400ef182904d54184f1b935f0

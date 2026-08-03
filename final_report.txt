@@ -36,6 +36,6 @@ STEP_4_IMPLEMENTATION_SEQUENCE_VERDICT: PASS
 STEP_4_IMPLEMENTATION_START_READINESS: GO
 
 REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/320
-REPORT_PR_MERGE_SHA: PENDING
-NEXT_ACTION: Step 4-A workflow skeleton on new branch from main after this report merges
+REPORT_PR_MERGE_SHA: 704329d0f747ee0400ef182904d54184f1b935f0
+NEXT_ACTION: Begin Step 4-A (WorkflowState skeleton) from latest main; do not start until this stamp is on main (already GO)
 ================================================================================
