@@ -74,7 +74,7 @@ STEP_3E_REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/317
 STEP_3E_PRIMARY_MERGE_SHA: 7722beb44e60e00bc89ea4ba5d0c3cf4da8eb529
 STEP_3E_REPORT_MERGE_SHA: c2f1703cd6c9c7e1d680ddb0787f9efdf13730f9
 
-CLOSEOUT_PR: PENDING
+CLOSEOUT_PR: https://github.com/ollejanaitte/spacer-clone/pull/318
 
 Model/schema versions:
 - DRAWING_SET_SCHEMA_VERSION: 1.0.0-development
