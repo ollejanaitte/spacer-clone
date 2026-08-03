@@ -6259,3 +6259,340 @@ button:disabled {
     min-height: 360px;
   }
 }
+
+/* --- Step 4-A workflow control screen (control plane) --- */
+.apollo-wf-screen {
+  display: grid;
+  gap: 16px;
+}
+
+.apollo-wf-header h2 {
+  margin: 0 0 6px;
+}
+
+.apollo-wf-header p {
+  margin: 0;
+  color: #57697d;
+}
+
+.apollo-wf-progress {
+  padding: 12px 16px;
+  border: 1px solid #d7e2ee;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.apollo-wf-progress-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-wf-progress-list li {
+  display: grid;
+  gap: 2px;
+  min-width: 64px;
+}
+
+.apollo-wf-progress-count {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.apollo-wf-progress-label {
+  font-size: 12px;
+  color: #57697d;
+}
+
+.apollo-wf-progress-recommended {
+  margin: 0;
+  font-size: 13px;
+}
+
+.apollo-wf-authorization {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #e0b35a;
+  border-radius: 8px;
+  background: #fff8e8;
+  color: #7a4d00;
+  font-size: 13px;
+}
+
+.apollo-wf-step-list {
+  display: grid;
+  gap: 12px;
+}
+
+.apollo-wf-step-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #d7e2ee;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.apollo-wf-step-card-recommended {
+  border-color: #1f6feb;
+  box-shadow: 0 12px 22px rgba(31, 111, 235, 0.12);
+}
+
+.apollo-wf-step-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.apollo-wf-step-id {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #edf3f7;
+  color: #19314d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.apollo-wf-step-label {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.apollo-wf-step-group {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #f3f7fb;
+  color: #57697d;
+  font-size: 12px;
+}
+
+.apollo-wf-step-card-body {
+  display: grid;
+  gap: 8px;
+}
+
+.apollo-wf-step-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.apollo-wf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.apollo-wf-badge-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+}
+
+.apollo-wf-badge-recommended {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e8f1ff;
+  color: #1f4f98;
+  font-size: 11px;
+}
+
+.apollo-wf-badge-complete {
+  background: #eaf6ef;
+  border-color: #81c995;
+  color: #215c34;
+}
+
+.apollo-wf-badge-recommended,
+.apollo-wf-badge-available,
+.apollo-wf-badge-ready {
+  background: #e8f1ff;
+  border-color: #9ab4d0;
+  color: #19314d;
+}
+
+.apollo-wf-badge-blocked,
+.apollo-wf-badge-error {
+  background: #fff1f2;
+  border-color: #e59aa5;
+  color: #a11d2d;
+}
+
+.apollo-wf-badge-stale,
+.apollo-wf-badge-warning {
+  background: #fff8e8;
+  border-color: #e0b35a;
+  color: #7a4d00;
+}
+
+.apollo-wf-badge-not_started,
+.apollo-wf-badge-out_of_scope {
+  background: #f4f6f8;
+  border-color: #d7e2ee;
+  color: #57697d;
+}
+
+.apollo-wf-badge-incomplete {
+  background: #fdf0e2;
+  border-color: #e2b57c;
+  color: #6b4513;
+}
+
+.apollo-wf-badge-not_authorized {
+  background: #f1f3f9;
+  border-color: #aeb9c9;
+  color: #33455b;
+}
+
+.apollo-wf-step-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-wf-extra-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #d7e2ee;
+  background: #f8fbff;
+  color: #44566a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.apollo-wf-recommended-action {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 4px solid #1f6feb;
+  background: #eef5ff;
+  color: #19314d;
+  font-size: 13px;
+}
+
+.apollo-wf-step-criterion {
+  margin: 0;
+  font-size: 12px;
+  color: #57697d;
+}
+
+.apollo-wf-diagnostics {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-wf-diagnostic {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #e6edf5;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.apollo-wf-diagnostic-error {
+  border-left: 4px solid #d64545;
+}
+
+.apollo-wf-diagnostic-warning {
+  border-left: 4px solid #e0b35a;
+}
+
+.apollo-wf-diagnostic-info {
+  border-left: 4px solid #1f6feb;
+}
+
+.apollo-wf-diagnostic-code {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.apollo-wf-diagnostic-body {
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.apollo-wf-diagnostic-message {
+  margin: 0;
+  font-weight: 600;
+}
+
+.apollo-wf-diagnostic-code-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #44566a;
+}
+
+.apollo-wf-diagnostic-blocking {
+  margin: 0;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fff1f2;
+  color: #a11d2d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.apollo-wf-diagnostic-detail,
+.apollo-wf-diagnostic-remediation {
+  margin: 0;
+  color: #57697d;
+}
+
+.apollo-wf-no-diagnostics {
+  margin: 0;
+  font-size: 12px;
+  color: #57697d;
+}
+
+.apollo-wf-step-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.apollo-wf-step-disabled-reason {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f4f6f8;
+  color: #57697d;
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  .apollo-wf-step-card-header {
+    flex-wrap: wrap;
+  }
+
+  .apollo-wf-step-group {
+    margin-left: 0;
+  }
+}

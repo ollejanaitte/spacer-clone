@@ -1,0 +1,267 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/home/masaharu/Projects/spacer-clone/frontend/node_modules/.bin/playwright",
+      "test",
+      "tests/e2e/apollo-step4a-workflow.spec.ts",
+      "--reporter=json"
+    ],
+    "configFile": "/home/masaharu/Projects/spacer-clone/frontend/playwright.config.ts",
+    "rootDir": "/home/masaharu/Projects/spacer-clone/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/masaharu/Projects/spacer-clone/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/masaharu/Projects/spacer-clone/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.0",
+    "workers": 6,
+    "webServer": {
+      "command": "npx concurrently -k \"cd .. && .venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000\" \"npm run dev -- --mode apollo --host 127.0.0.1 --port 4173\"",
+      "env": {
+        "VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL": "true"
+      },
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "apollo-step4a-workflow.spec.ts",
+      "file": "apollo-step4a-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Apollo Step 4-A workflow control screen",
+          "file": "apollo-step4a-workflow.spec.ts",
+          "line": 16,
+          "column": 6,
+          "specs": [
+            {
+              "title": "E2E-S4A-001: initial empty project shows registry order, stubs and recommendation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4635,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-03T11:44:40.508Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09f52207261eeafd2dca-130a62220df723c49969",
+              "file": "apollo-step4a-workflow.spec.ts",
+              "line": 17,
+              "column": 7
+            },
+            {
+              "title": "E2E-S4A-004: future stubs are BLOCKED with reason and disabled CTA",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2814,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-03T11:44:45.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09f52207261eeafd2dca-3d12c725605d3b5c9b5f",
+              "file": "apollo-step4a-workflow.spec.ts",
+              "line": 32,
+              "column": 7
+            },
+            {
+              "title": "E2E-S4A-002: valid existing project marks generated steps COMPLETE + NOT_AUTHORIZED",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3424,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-03T11:44:48.080Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09f52207261eeafd2dca-8397386c29c59a8a6ba7",
+              "file": "apollo-step4a-workflow.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "E2E-S4A-003: mutating input makes dependent steps STALE with regeneration CTA",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3653,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-03T11:44:51.516Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09f52207261eeafd2dca-6a32c45fb5d126254a60",
+              "file": "apollo-step4a-workflow.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "E2E-S4A-005: status is conveyed by text label, not color only",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2785,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-03T11:44:55.179Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09f52207261eeafd2dca-5cb0dbe85ac2d63171e2",
+              "file": "apollo-step4a-workflow.spec.ts",
+              "line": 72,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-08-03T11:44:39.131Z",
+    "duration": 18911.112999999998,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

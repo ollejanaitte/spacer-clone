@@ -15,6 +15,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "apolloSourceHygiene.test.ts",
   "apolloStlExport.test.ts",
   "apolloSuite.test.ts",
+  "artifactBundle.test.ts",
   "bridgeStructureQuantities.test.ts",
   "bridgeStructureVisualization.test.ts",
   "bridgeStructureWorkflow.test.ts",
@@ -26,6 +27,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "continuousGirderVisualization.test.ts",
   "dirtyFingerprint.test.ts",
   "drawingModel.test.ts",
+  "drawingSetModel.test.ts",
   "entryGuard.test.ts",
   "errors.test.ts",
   "featureFlag.test.ts",
@@ -49,6 +51,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "validationNavigator.test.ts",
   "visualizationBoundsBracing.test.ts",
   "visualizationBuilder.test.ts",
+  "WorkflowControlScreen.test.tsx",
   "workspace.test.ts",
 ] as const;
 
