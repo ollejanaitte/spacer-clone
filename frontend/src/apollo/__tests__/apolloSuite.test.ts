@@ -55,6 +55,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "step4c6Integration.test.ts",
   "step5p3PavementMarkings.test.ts",
   "step5p4p5TopologyLAngle.test.ts",
+  "step5p6p7IntegrationCloseout.test.ts",
   "testingHelpers.test.ts",
   "unit2Draft.test.ts",
   "unsavedChangesGuard.test.ts",

@@ -24,6 +24,8 @@ import {
 } from "./generateBsdd";
 import { applyHaunchToAllGirders } from "./haunchModel";
 import { PRESENCE_STATUS } from "./presence";
+import { createDefaultRoadMarkingsConfiguration } from "./pavementModel";
+import { LATERAL_ANGLE_CATALOG_ID } from "./lateralAngleTypes";
 import { createEmptyBridgeStructureInputDraft } from "./validation";
 import type { ApolloBridgeStructureInputDraft } from "./types";
 
@@ -47,6 +49,11 @@ export const SAMPLE_PRESET_CATALOG = {
   haunchWidthM: 0.4,
   haunchHeightM: 0.15,
   appUnitWeightKNPerM3: 24.5,
+  pavementThicknessM: 0.08,
+  pavementUnitWeightKNPerM3: 22.5,
+  lateralAngleLegAM: 0.075,
+  lateralAngleLegBM: 0.075,
+  lateralAngleThicknessM: 0.009,
 } as const;
 
 const BASIC_SIMPLE_SINGLE_FIELDS = {
@@ -169,6 +176,26 @@ function buildCompleteSampleDraft(
       height: SAMPLE_PRESET_CATALOG.haunchHeightM,
       materialRef: null,
     }),
+    pavementConfiguration: {
+      presence: PRESENCE_STATUS.PROVIDED,
+      item: {
+        thickness: SAMPLE_PRESET_CATALOG.pavementThicknessM,
+        unitWeight: SAMPLE_PRESET_CATALOG.pavementUnitWeightKNPerM3,
+        startStation: 0,
+        endStation: bridgeLength,
+      },
+    },
+    roadMarkingsConfiguration: {
+      ...createDefaultRoadMarkingsConfiguration(),
+      enabled: true,
+    },
+    lateralAngleSection: {
+      enabled: true,
+      legA: SAMPLE_PRESET_CATALOG.lateralAngleLegAM,
+      legB: SAMPLE_PRESET_CATALOG.lateralAngleLegBM,
+      thickness: SAMPLE_PRESET_CATALOG.lateralAngleThicknessM,
+      catalogId: LATERAL_ANGLE_CATALOG_ID,
+    },
     generatedAt: null,
   };
 }
