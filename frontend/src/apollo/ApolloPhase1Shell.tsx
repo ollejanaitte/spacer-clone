@@ -30,6 +30,7 @@ import { BridgeStructureInputPanel } from "./components/BridgeStructureInputPane
 import { DeckAppurtenanceInputPanel } from "./components/DeckAppurtenanceInputPanel";
 import { RcDeckHaunchInputPanel } from "./components/RcDeckHaunchInputPanel";
 import { AnalysisDevelopmentProbePanel } from "./components/AnalysisDevelopmentProbePanel";
+import { AppurtenanceHaunchAnalysisPanel } from "./components/AppurtenanceHaunchAnalysisPanel";
 import { DemandCheckDevelopmentPanel } from "./components/DemandCheckDevelopmentPanel";
 import { LoadConfirmationDevelopmentPanel } from "./components/LoadConfirmationDevelopmentPanel";
 import { QuantityModelDevelopmentPanel } from "./components/QuantityModelDevelopmentPanel";
@@ -2437,6 +2438,7 @@ export function ApolloPhase1Shell({
                 onAuditEvent={onAuditEvent}
               />
               <AnalysisDevelopmentProbePanel />
+              <AppurtenanceHaunchAnalysisPanel project={project} />
               <LoadConfirmationDevelopmentPanel project={project} />
               <DemandCheckDevelopmentPanel />
               <QuantityModelDevelopmentPanel project={project} />

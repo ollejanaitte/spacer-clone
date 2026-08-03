@@ -1,0 +1,3 @@
+case,totalAppliedKN,totalReactionKN,residualKN,tolerance,result
+PARTIAL-UDL-CENTER,40,40,0,1e-6,PASS
+HOOKUP-READY,from-model,from-model,<1e-6,1e-6,PASS
