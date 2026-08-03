@@ -6596,3 +6596,123 @@ button:disabled {
     margin-left: 0;
   }
 }
+
+/* --- Step 5 Guided Mode shell (DEC-S5-0009 / 0010) --- */
+.apollo-guided-shell {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid #d7e2ee;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.apollo-guided-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.apollo-guided-kicker {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: #57697d;
+}
+
+.apollo-guided-header h2 {
+  margin: 0 0 4px;
+}
+
+.apollo-guided-header p {
+  margin: 0;
+  color: #334155;
+}
+
+.apollo-guided-progress {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.apollo-guided-progress-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-guided-progress-list button {
+  min-width: 40px;
+  padding: 4px 6px;
+  font-size: 12px;
+}
+
+.apollo-guided-progress-list button.active {
+  font-weight: 700;
+  outline: 2px solid #2563eb;
+}
+
+.apollo-guided-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  gap: 12px;
+}
+
+.apollo-guided-card,
+.apollo-guided-side {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.apollo-guided-card {
+  padding: 12px;
+  border: 1px solid #d7e2ee;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.apollo-guided-card h3,
+.apollo-guided-card ul,
+.apollo-guided-card p {
+  margin: 0;
+}
+
+.apollo-guided-impact {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #eef6ff;
+  font-size: 13px;
+}
+
+.apollo-guided-diagnostics {
+  padding: 8px 10px;
+  border: 1px solid #d7e2ee;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  color: #57697d;
+}
+
+.apollo-guided-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.apollo-guided-slide-id {
+  margin-left: auto;
+  font-size: 12px;
+  color: #57697d;
+}
+
+@media (max-width: 900px) {
+  .apollo-guided-body {
+    grid-template-columns: 1fr;
+  }
+}

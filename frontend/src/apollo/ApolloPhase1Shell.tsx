@@ -39,6 +39,7 @@ import { StandardSectionDrawingPanel } from "./components/StandardSectionDrawing
 import { GeneralArrangementPanel } from "./components/GeneralArrangementPanel";
 import { OutputIntegrationPanel } from "./components/OutputIntegrationPanel";
 import { WorkflowControlScreen } from "./components/WorkflowControlScreen";
+import { GuidedModeShell, type GuidedDetailEscape } from "./guided";
 import { scrollWorkflowTargetIntoView } from "./workflow/navigation";
 import { WORKFLOW_STEP_DEFINITIONS } from "./workflow/registry";
 import type { WorkflowStateModel } from "./workflow/types";
@@ -1571,6 +1572,19 @@ export function ApolloPhase1Shell({
     }
   };
 
+  const handleGuidedDetailEscape = (escape: GuidedDetailEscape) => {
+    if (escape.kind === "panel") {
+      scrollWorkflowTargetIntoView({ kind: "panel", path: escape.panelId, label: escape.label });
+      return;
+    }
+    if (escape.kind === "route") {
+      scrollWorkflowTargetIntoView({ kind: "route", path: escape.path, label: escape.label });
+      return;
+    }
+    const viewer = document.querySelector<HTMLElement>('[data-testid="apollo-model-view-panel"]');
+    viewer?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const renderStepBar = () => (
     <ol className="apollo-stepbar" aria-label="Apollo guided steps">
       {STEP_DEFINITIONS.map(({ key, label }, index) => {
@@ -2323,12 +2337,23 @@ export function ApolloPhase1Shell({
               </button>
             </article>
             <article className="apollo-editor-card">
-              <h3>2. 新しい橋梁を作成</h3>
+              <h3>2. Step 5 ガイド付きモード（15画面）</h3>
+              <p>G01–G15 の案内シェルで、既存ワークフローと同じ入力データへ進めます。</p>
+              <button
+                type="button"
+                data-testid="apollo-open-step5-guided-mode"
+                onClick={() => setGuidedStep("basics")}
+              >
+                Step 5 ガイドを開く
+              </button>
+            </article>
+            <article className="apollo-editor-card">
+              <h3>3. 新しい橋梁を作成</h3>
               <p>空のプロジェクトを作成し、自分で橋梁情報を入力します。</p>
               <button type="button" onClick={() => void startNewProject()}>新規作成</button>
             </article>
             <article className="apollo-editor-card">
-              <h3>3. 保存済みデータを開く</h3>
+              <h3>4. 保存済みデータを開く</h3>
               <p>以前保存した Apollo データを開き、作業を再開します。</p>
               <button type="button" onClick={() => void openFromFile()}>ファイルを開く</button>
             </article>
@@ -2417,6 +2442,13 @@ export function ApolloPhase1Shell({
           <div className="apollo-unit2-layout">
             <div className="apollo-unit2-editor">
               {renderProjectForm()}
+              <GuidedModeShell
+                project={project}
+                onOpenDetail={handleGuidedDetailEscape}
+                onSave={() => {
+                  void saveToFile();
+                }}
+              />
               <WorkflowControlScreen
                 project={project}
                 onNavigate={handleWorkflowNavigate}
