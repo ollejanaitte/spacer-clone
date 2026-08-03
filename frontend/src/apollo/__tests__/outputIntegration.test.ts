@@ -20,11 +20,24 @@ function generated() {
 }
 
 describe("outputIntegration", () => {
-  it("aligns checksums across quantity/report/drawing", () => {
+  it("aligns checksums across quantity/report/drawing/drawingSet/schedule", () => {
     const outputs = buildIntegratedOutputs(generated());
     expect(outputs.consistency.inputChecksumAligned).toBe(true);
+    expect(outputs.consistency.quantityMatchesSchedule).toBe(true);
+    expect(outputs.consistency.drawingSetSheetCountOk).toBe(true);
     expect(outputs.consistency.overall).toBe("PASS");
+    expect(outputs.drawingSet.sheets.map((s) => s.drawingNumber)).toEqual([
+      "G-01",
+      "G-02",
+      "G-03",
+      "G-04",
+      "G-05",
+      "G-06",
+      "G-07",
+    ]);
+    expect(outputs.statuses.bundle).toBe("READY");
     expect(outputs.statuses.formalReport).toBe("NOT_AUTHORIZED");
+    expect(outputs.userReviewChecklist).toContain("O. ZIP");
     expect(outputs.warnings.join(" ")).toMatch(/NOT_GRANTED/);
     assertIntegratedExportAllowed(outputs);
   });

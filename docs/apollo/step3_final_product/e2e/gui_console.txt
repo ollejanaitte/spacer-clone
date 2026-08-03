@@ -1,0 +1,15 @@
+{
+  "overall": "PASS",
+  "staleBlocked": true,
+  "sheets": "sheets: G-01, G-02, G-03, G-04, G-05, G-06, G-07",
+  "panels": {
+    "quantity": true,
+    "report": true,
+    "drawing": true,
+    "ga": true,
+    "output": true,
+    "section": true,
+    "demand": true,
+    "analysis": true
+  }
+}

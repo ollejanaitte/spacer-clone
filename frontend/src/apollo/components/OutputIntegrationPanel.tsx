@@ -1,5 +1,5 @@
 /**
- * Step 2-D output integration panel.
+ * Step 2-D / Step 3-E output integration panel — final development deliverables workflow.
  */
 import { useState } from "react";
 import type { ProjectModel } from "../../types";
@@ -18,16 +18,45 @@ import {
   downloadDrawingSvg,
   openDrawingPreview,
 } from "../drawing/drawingExport";
+import {
+  downloadDrawingSetSheetDxf,
+  downloadDrawingSetSheetPdfHtml,
+  downloadDrawingSetSheetSvg,
+  downloadMemberScheduleCsv,
+  downloadMemberScheduleJson,
+} from "../drawing/drawingSetExport";
+import {
+  downloadArtifactBundleZip,
+  downloadMultiSheetDrawingSetHtml,
+} from "../drawing/artifactBundle";
 
 type Props = { readonly project: ProjectModel };
 
 export function OutputIntegrationPanel({ project }: Props) {
   const [outputs, setOutputs] = useState(() => buildIntegratedOutputs(project));
   const [error, setError] = useState<string | null>(null);
+  const [validationNote, setValidationNote] = useState<string | null>(null);
 
   const regenerate = () => {
     setError(null);
+    setValidationNote(null);
     setOutputs(buildIntegratedOutputs(project));
+  };
+
+  const validateAll = () => {
+    try {
+      const next = buildIntegratedOutputs(project);
+      setOutputs(next);
+      if (next.consistency.overall !== "PASS") {
+        throw new Error(`Consistency ${next.consistency.overall}`);
+      }
+      if (next.stale) throw new Error("STALE");
+      setValidationNote(`VALIDATE PASS / sheets=${next.drawingSet.sheets.length} / ck=${next.inputChecksum.slice(0, 12)}`);
+      setError(null);
+    } catch (err) {
+      setValidationNote(null);
+      setError(err instanceof Error ? err.message : String(err));
+    }
   };
 
   const wrap = (fn: () => void) => {
@@ -44,8 +73,8 @@ export function OutputIntegrationPanel({ project }: Props) {
     <article className="apollo-editor-card" data-testid="apollo-output-integration-panel">
       <div className="apollo-editor-card-header">
         <div>
-          <h2>成果物統合（開発専用）</h2>
-          <p>数量・計算書・標準断面図の revision/checksum 整合と一括状態確認。</p>
+          <h2>成果物統合（開発専用・最終）</h2>
+          <p>数量・計算書・図面一式・ZIP の revision/checksum 整合と一括操作。</p>
         </div>
       </div>
       <p className="apollo-input-error" role="status" data-testid="apollo-output-integration-warning">
@@ -54,12 +83,28 @@ export function OutputIntegrationPanel({ project }: Props) {
       <p className="apollo-inline-hint" data-testid="apollo-output-integration-status">
         stale: {String(outputs.stale)} / consistency: {outputs.consistency.overall} / checksum:{" "}
         {outputs.inputChecksum.slice(0, 16)}… / qty:{outputs.statuses.quantity} / report:
-        {outputs.statuses.report} / drawing:{outputs.statuses.drawing} / formal:
-        {outputs.statuses.formalReport}
+        {outputs.statuses.report} / drawing:{outputs.statuses.drawing} / drawingSet:
+        {outputs.statuses.drawingSet} / schedule:{outputs.statuses.memberSchedule} / bundle:
+        {outputs.statuses.bundle} / formal:{outputs.statuses.formalReport}
+      </p>
+      <p data-testid="apollo-output-sheet-register">
+        sheets: {outputs.drawingSet.sheets.map((s) => s.drawingNumber).join(", ") || "none"}
       </p>
       <div className="apollo-workspace-actions">
         <button type="button" className="apollo-button-secondary" data-testid="apollo-output-regenerate-all" onClick={regenerate}>
-          全成果物を再生成
+          全成果物を生成/再生成
+        </button>
+        <button type="button" className="apollo-button-secondary" data-testid="apollo-output-validate-all" onClick={validateAll}>
+          全成果物を検証
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-zip"
+          disabled={outputs.stale || outputs.statuses.bundle !== "READY"}
+          onClick={() => wrap(() => downloadArtifactBundleZip(project))}
+        >
+          ZIPを作成
         </button>
         <button
           type="button"
@@ -140,7 +185,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawing.entities.length === 0}
           onClick={() => wrap(() => downloadDrawingSvg(outputs.drawing))}
         >
-          SVG
+          断面SVG
         </button>
         <button
           type="button"
@@ -149,7 +194,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawing.entities.length === 0}
           onClick={() => wrap(() => downloadDrawingDxf(outputs.drawing))}
         >
-          DXF
+          断面DXF
         </button>
         <button
           type="button"
@@ -158,12 +203,79 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawing.entities.length === 0}
           onClick={() => wrap(() => downloadDrawingPdfHtml(outputs.drawing))}
         >
-          図面PDF用HTML
+          断面PDF用HTML
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-ga-svg"
+          disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
+          onClick={() => wrap(() => downloadDrawingSetSheetSvg(outputs.drawingSet, "G-01"))}
+        >
+          G-01 SVG
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-ga-dxf"
+          disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
+          onClick={() => wrap(() => downloadDrawingSetSheetDxf(outputs.drawingSet, "G-01"))}
+        >
+          G-01 DXF
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-ga-html"
+          disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
+          onClick={() => wrap(() => downloadDrawingSetSheetPdfHtml(outputs.drawingSet, "G-01"))}
+        >
+          G-01 HTML
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-multisheet"
+          disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
+          onClick={() => wrap(() => downloadMultiSheetDrawingSetHtml(project))}
+        >
+          図面一式HTML
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-schedule-csv"
+          disabled={outputs.stale}
+          onClick={() => wrap(() => downloadMemberScheduleCsv(project))}
+        >
+          部材表CSV
+        </button>
+        <button
+          type="button"
+          className="apollo-button-secondary"
+          data-testid="apollo-output-export-schedule-json"
+          disabled={outputs.stale}
+          onClick={() => wrap(() => downloadMemberScheduleJson(project))}
+        >
+          部材表JSON
         </button>
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-output-bundle-status">
-        BUNDLE_EXPORT: AVAILABLE via 構造一般図 panel (STORE ZIP, development-only)
+        BUNDLE_EXPORT: {outputs.statuses.bundle} (STORE ZIP development-only)
       </p>
+      <div data-testid="apollo-output-user-checklist">
+        <strong>User review checklist</strong>
+        <ul>
+          {outputs.userReviewChecklist.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+      {validationNote ? (
+        <p className="apollo-inline-hint" data-testid="apollo-output-validation-note">
+          {validationNote}
+        </p>
+      ) : null}
       {error ? (
         <p className="apollo-input-error" role="alert" data-testid="apollo-output-export-error">
           {error}
