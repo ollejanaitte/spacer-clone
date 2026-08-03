@@ -1,0 +1,13 @@
+axis_or_datum,required_for,current_status,step5_2_action
+local_X_station,all members,DEFINED_LOCAL,document + 4-E dependency
+local_Y_transverse,girders app XB,DEFINED_LOCAL,document sign convention
+local_Z_up,elevations,DEFINED_LOCAL,document deck/flange zeros
+deck_top,app pavement,DEFINED / pavement MISSING,define pavement stack
+top_flange_upper,haunch,DEFINED,retain DEC-S4-0009
+flange_connection_Z,sway laterals,DEFINED_APPROX,review with L-angle
+cross_frame_nodes,sway,DEFINED_APPROX V,ER-001
+upper_lateral_nodes,upper lateral,DEFINED when enabled,L-angle orientation
+lower_lateral_nodes,lower lateral,DEFINED when enabled,L-angle orientation
+pavement_top,pavement solids,MISSING,new
+marking_offset,markings,MISSING,new + z-fight policy
+road_centerline,alignment bind,UNBOUND,4-E or sample stub decision

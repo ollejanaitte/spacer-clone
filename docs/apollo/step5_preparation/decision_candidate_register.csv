@@ -1,0 +1,13 @@
+decision_id,topic,status,linked_oq,step5_2_doc,notes
+DEC-S5-0001,Sample apply transaction depth,CANDIDATE,OQ-S5-001,04_sample_apply_transaction.md,not ADOPTED
+DEC-S5-0002,Sample re-apply overwrite UX,CANDIDATE,,04_sample_apply_transaction.md,not ADOPTED
+DEC-S5-0003,Pavement canonical ownership,CANDIDATE,OQ-S5-002,09_pavement_domain_model.md,not ADOPTED
+DEC-S5-0004,Road marking STL policy,CANDIDATE,OQ-S5-003,10+19,not ADOPTED
+DEC-S5-0005,Cross-frame terminology/entity,CANDIDATE,,12_cross_beam_cross_frame_spec.md,not ADOPTED
+DEC-S5-0006,Cross-frame attachment topology,CANDIDATE,OQ-S5-004,12_spec,REQUIRES_ENGINEERING_REVIEW
+DEC-S5-0007,L-angle parameterization,CANDIDATE,OQ-S5-005,13_spec,REQUIRES_ENGINEERING_REVIEW
+DEC-S5-0008,Sample L-angle dims provenance,CANDIDATE,OQ-S5-005,03_preset_value_catalog.csv,not ADOPTED
+DEC-S5-0009,Guided Mode slide count/order,CANDIDATE,OQ-S5-007,05-07,not ADOPTED
+DEC-S5-0010,Developer diagnostics default,CANDIDATE,,06_guided_mode_screen_spec.md,not ADOPTED
+DEC-S5-0011,Sample load values provenance,CANDIDATE,,18_quantity_load_analysis_impact.md,not ADOPTED
+DEC-S5-0012,Pavement qty/load connection scope,CANDIDATE,,18+09,not ADOPTED

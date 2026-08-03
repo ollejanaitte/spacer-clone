@@ -1,0 +1,17 @@
+risk_id,description,likelihood,impact,mitigation,owner_stage
+RISK-S5-001,Sample values mistaken for formal design,H,H,Persistent SAMPLE_PRESET / NOT_GRANTED / PROHIBITED labels,5-2/5-3
+RISK-S5-002,Guided/Detail data divergence,M,H,Single canonical SoR; forbid Guided store,5-2 ownership
+RISK-S5-003,Auto-apply destroys user edits,M,H,DEC-S5-0002 confirm policy,5-2/P1
+RISK-S5-004,Road/bridge coordinate mismatch,M,H,Document 4-E dependency; no silent CRS claim,5-2 datum
+RISK-S5-005,Cross-frame terminology confusion,H,M,Role matrix + UI labels DEC-0005,5-2/P4
+RISK-S5-006,Visual-only fix leaves wrong canonical topology,M,H,Corrections must update canonical/topology specs first,5-2/P4
+RISK-S5-007,L-angle orientation wrong,M,H,Parameterization + ER review before impl,5-2/P5
+RISK-S5-008,Pavement/marking z-fighting,M,M,Marking Z offset policy,5-2/P3
+RISK-S5-009,Haunch double generation,L,H,Presence rules; single kernel path,5-2/P1
+RISK-S5-010,Appurtenance sample presence mismatch UI vs 3D,M,M,Integration spec + E2E,5-2/P6
+RISK-S5-011,Viz-only entities leak into STL,M,H,STL policy DEC-0004,5-2/P3
+RISK-S5-012,Quantity/load double counting,M,H,Impact matrix; no mesh reverse qty,5-2/18
+RISK-S5-013,Step 4-E local CRS still unbound,H,M,Explicit dependency; sample stub option,5-2
+RISK-S5-014,Step 4-G outputs still pending,H,L,Guided deliverables messaging only,5-2 G15
+RISK-S5-015,Scope creep into formal checks,M,H,excluded_formal_checks.md gate,5-1/5-2
+RISK-S5-016,Insufficient engineering review,M,H,ER register blocking P4/P5 locks,5-2
