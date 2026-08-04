@@ -544,7 +544,7 @@ R4_INTEGRATION_E2E: PASS
 R4_PR: https://github.com/ollejanaitte/spacer-clone/pull/359
 R4_MERGE_SHA: 231230f806758fb990598ef896d717ca9568bf94
 
-REPORT_PR: PENDING_THIS_PR
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/360
 REPORT_MERGE_SHA: PENDING_SEAL
 SEAL_PR: PENDING
 
