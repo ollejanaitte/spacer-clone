@@ -1,0 +1,18 @@
+JP1-A evidence method: CODE_LITERAL audit of frontend/src/apollo/
+  - ApolloPhase1Shell.tsx
+  - components/*
+  - guided/*
+  - workflow/* (STATUS_GROUP_LABELS, diagnostic messages)
+
+Main SHA audited: c5ca3b33e226763697a7a2aabb8214c5ea77fb62 (post Step 5-R seal #361)
+
+Classification:
+  user_visible=YES  → L1/L2 candidate (must have JA plan)
+  technical_only=YES → L3 / allowlist
+  recommended_action ∈ {TRANSLATE_TO_JA, KEEP_TECHNICAL, ALLOWLIST, REVIEW}
+
+DOM screenshot harvest is deferred to JP3 E2E (jp3_e2e_plan.md).
+JP1-A is source-complete for design; live GUI confirmation is a JP3 gate.
+
+Counts (ui_text_inventory.csv):
+  rows=100 user_visible=85 technical_only=15 MIXED_JA_EN=29 REVIEW=7

@@ -1,0 +1,8 @@
+term_id,current_text,source_path,screen,issue,proposed_resolution,owner,status,decision_target,notes
+UT-JP1A-0045,BLOCKED→中断,workflow/diagnostics.ts,workflow,Glossary conflict or ambiguous exposure,BLOCKED → 先に必要な作業があります (not 中断/ブロック済み),JP1-B glossary owner,OPEN,JP1-B,Conflicts with required wording
+UT-JP1A-0046,NOT_AUTHORIZED→未認可,workflow/diagnostics.ts,workflow,Glossary conflict or ambiguous exposure,NOT_AUTHORIZED → 正式認可なし (not 未認可 alone if ambiguous),JP1-B glossary owner,OPEN,JP1-B,Prefer 正式認可なし
+UT-JP1A-0047,STALE→要再生成,workflow/diagnostics.ts,workflow,Glossary conflict or ambiguous exposure,STALE → 要再計算 (align progress badge; avoid 古い),JP1-B glossary owner,OPEN,JP1-B,Align with 要再計算
+UT-JP1A-0050,中断 (progress blocked count),components/WorkflowProgressSummary.tsx,workflow,Glossary conflict or ambiguous exposure,progress blocked count label → 先に必要な作業があります,JP1-B glossary owner,OPEN,JP1-B,Same as BLOCKED conflict
+UT-JP1A-0051,要再生成 (progress stale),components/WorkflowProgressSummary.tsx,workflow,Glossary conflict or ambiguous exposure,progress stale label → 要再計算,JP1-B glossary owner,OPEN,JP1-B,Align glossary
+UT-JP1A-0091,LEFT_CURB slot keys if shown raw,DeckAppurtenanceInputPanel,appurtenance,Glossary conflict or ambiguous exposure,LEFT_CURB etc → 左側地覆 etc via member glossary,JP1-B member/slot glossary,OPEN,JP1-B,Prefer JP slot labels
+UT-JP1A-0096,Fit/iso/xy english if viewer controls shared,viewer/ViewerControls,viewer,Glossary conflict or ambiguous exposure,Fit/iso/xy → 全体表示/等角/平面 etc or keep short EN with JA tooltip,JP1-C viewer chrome design,OPEN,JP1-C,Outside apollo/ but visible

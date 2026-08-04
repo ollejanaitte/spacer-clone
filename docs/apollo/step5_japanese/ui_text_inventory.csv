@@ -1,0 +1,101 @@
+text_id,current_text,source_path,symbol,screen,category,user_visible,technical_only,frequency,evidence_class,recommended_action,notes
+JP1A-0001,UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION,components/BridgeStructureInputPanel.tsx,section-properties-banner,bridge-structure,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,L1 JA + L3 EN token
+JP1A-0002,NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED,components/BridgeStructureInputPanel.tsx,provenance,bridge-structure,AUTHORIZATION,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,Keep NOT_GRANTED in L3
+JP1A-0003,GENERATION_CURRENT,components/BridgeStructureInputPanel.tsx,provenance,bridge-structure,STATUS,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,Map to 生成結果は最新
+JP1A-0004,STALE,components/BridgeStructureInputPanel.tsx,provenance,bridge-structure,STATUS,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,Must be 要再計算 not 古い
+JP1A-0005,INPUT_ONLY,components/BridgeStructureInputPanel.tsx,provenance,bridge-structure,STATUS,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,入力のみ（未生成）
+JP1A-0006,designStatus: NOT_AUTHORIZED,components/BridgeStructureInputPanel.tsx,sdm-summary,bridge-structure,AUTHORIZATION,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,L1 正式認可なし
+JP1A-0007,UNVERIFIED_DEVELOPMENT_ONLY,components/BridgeStructureInputPanel.tsx,generation-message,bridge-structure,AUTHORIZATION,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,Also in sample disclaimer
+JP1A-0008,ADOPTED / USER_PROVIDED_UNVERIFIED,components/BridgeStructureInputPanel.tsx,unit-weight-help,bridge-structure,HELP,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Status names need glossary
+JP1A-0009,UNVERIFIED DEVELOPMENT ONLY — HUMAN ENGINEERING REVIEW REQUIRED,components/CrossFrameAttachmentInputPanel.tsx,dev-banner,cross-frame,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0010,V（IMPLEMENTED）,components/CrossFrameAttachmentInputPanel.tsx,pattern-V,cross-frame,FIELD_LABEL,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,実装済み
+JP1A-0011,PLANNED / UNAVAILABLE,components/CrossFrameAttachmentInputPanel.tsx,pattern-X,cross-frame,STATUS,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,計画中・選択不可
+JP1A-0012,UNVERIFIED_DEVELOPMENT_ONLY,components/SampleReapplyConfirmDialog.tsx,summary,reapply,AUTHORIZATION,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Keep DEC-S5-0002 in L3
+JP1A-0013,DEC-S5-0002,components/SampleReapplyConfirmDialog.tsx,summary,reapply,TECHNICAL_DETAIL,NO,YES,MED,CODE_LITERAL,KEEP_TECHNICAL,L3 only
+JP1A-0014,単位重量ステータス: USER_PROVIDED_UNVERIFIED,components/PavementMarkingInputPanel.tsx,status-line,pavement,STATUS,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0015,presence,guided/slides.ts + PavementMarkingInputPanel,decideWhat/labels,pavement,FIELD_LABEL,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,有無 / 入力状態
+JP1A-0016,UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION,components/DeckAppurtenanceInputPanel.tsx,banner,appurtenance,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0017,CURRENT / STALE/未生成,components/DeckAppurtenanceInputPanel.tsx,generation-state,appurtenance,STATUS,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0018,UNVERIFIED DEVELOPMENT RESULT,components/RcDeckHaunchInputPanel.tsx,banner,haunch,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0019,BSSD haunches,components/RcDeckHaunchInputPanel.tsx,generation-state,haunch,TECHNICAL_DETAIL,YES,NO,LOW,MIXED_JA_EN,KEEP_TECHNICAL,Typo BSSD→BSDD; L3
+JP1A-0020,UNVERIFIED DEVELOPMENT LOAD — NOT FOR DESIGN OR CONSTRUCTION,components/LoadConfirmationDevelopmentPanel.tsx,banner,load,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0021,UNVERIFIED DEVELOPMENT ANALYSIS,components/AppurtenanceHaunchAnalysisPanel.tsx,banner,analysis,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0022,UNVERIFIED DEVELOPMENT QUANTITY,components/QuantityModelDevelopmentPanel.tsx,banner,quantity,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0023,UNVERIFIED DEVELOPMENT OUTPUT,components/OutputIntegrationPanel.tsx,banner,stl,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0024,USER REVIEW REQUIRED,components/OutputIntegrationPanel.tsx,banner,stl,AUTHORIZATION,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,利用者確認が必要
+JP1A-0025,authorizationStatus,components/QuantityModelDevelopmentPanel.tsx,meta,quantity,TECHNICAL_DETAIL,YES,NO,MED,MIXED_JA_EN,KEEP_TECHNICAL,Move to L3
+JP1A-0026,Step 5 Guided Mode（DEC-S5-0009）,guided/GuidedModeShell.tsx,kicker,guided,SECTION_TITLE,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,DEC in L3
+JP1A-0027,G01,guided/GuidedModeShell.tsx,jump-buttons,guided,BUTTON,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Slide IDs OK as EN
+JP1A-0028,WF anchor: WF-02,guided/GuidedModeShell.tsx,wf-anchor,guided,TECHNICAL_DETAIL,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,L1 関連工程: 橋梁構造入力
+JP1A-0029,crossBeamSpacing（横桁）,guided/slides.ts,primaryFields-G09,guided,FIELD_LABEL,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Prefer 横桁間隔 only
+JP1A-0030,upperAttachmentDepthFromGirderTop,guided/slides.ts,primaryFields-G09,guided,FIELD_LABEL,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,上側取付深さ
+JP1A-0031,pattern=V (IMPLEMENTED),guided/slides.ts,primaryFields-G09,guided,STATUS,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0032,L params,guided/slides.ts,primaryFields-G10,guided,FIELD_LABEL,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,L形断面寸法
+JP1A-0033,alignment bind status,guided/slides.ts,primaryFields-G02,guided,FIELD_LABEL,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0034,PLANNED,guided/slides.ts,decideWhat-G02,guided,STATUS,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,計画中
+JP1A-0035,Apollo guided steps,ApolloPhase1Shell.tsx,aria-label-stepbar,guided,ARIA,YES,NO,MED,ARIA,TRANSLATE_TO_JA,Apolloは残可
+JP1A-0036,provisional-status-banner,ApolloPhase1Shell.tsx,aria-label-banner,basics,ARIA,YES,NO,MED,ARIA,TRANSLATE_TO_JA,
+JP1A-0037,Apollo editor sections,ApolloPhase1Shell.tsx,aria-label-tabs,workspace,ARIA,YES,NO,MED,ARIA,TRANSLATE_TO_JA,
+JP1A-0038,STL,ApolloPhase1Shell.tsx,export-stl,stl,EXPORT,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Keep STL
+JP1A-0039,full / girders / deck / visible,ApolloPhase1Shell.tsx,stl-export-preset,stl,FIELD_LABEL,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,全体/主桁/床版/表示中
+JP1A-0040,Apollo Visualization Model,ApolloPhase1Shell.tsx,stl-error,stl,ERROR,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,Allow Apollo brand
+JP1A-0041,対傾構 / Sway,visualization/bridgeStructureSolids.ts,displayLabel,viewer,MEMBER_NAME,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,L1 対傾構 only
+JP1A-0042,横桁 / Cross beam,visualization/bridgeStructureSolids.ts,displayLabel,viewer,MEMBER_NAME,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,L1 横桁 only
+JP1A-0043,上横構 / Upper Lateral,visualization/bridgeStructureSolids.ts,displayLabel,viewer,MEMBER_NAME,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0044,下横構 / Lower Lateral,visualization/bridgeStructureSolids.ts,displayLabel,viewer,MEMBER_NAME,YES,NO,HIGH,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0045,BLOCKED→中断,workflow/diagnostics.ts,STATUS_GROUP_LABELS,workflow,STATUS,YES,NO,HIGH,CODE_LITERAL,REVIEW,Conflicts with required wording
+JP1A-0046,NOT_AUTHORIZED→未認可,workflow/diagnostics.ts,STATUS_GROUP_LABELS,workflow,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,REVIEW,Prefer 正式認可なし
+JP1A-0047,STALE→要再生成,workflow/diagnostics.ts,STATUS_GROUP_LABELS,workflow,STATUS,YES,NO,HIGH,CODE_LITERAL,REVIEW,Align with 要再計算
+JP1A-0048,WF_PREREQUISITE_INCOMPLETE,workflow/evaluators.ts,diagnostic-code,workflow,TECHNICAL_DETAIL,NO,YES,HIGH,CODE_LITERAL,KEEP_TECHNICAL,L3
+JP1A-0049,WF_RESULT_STALE,workflow/evaluators.ts,diagnostic-code,workflow,TECHNICAL_DETAIL,NO,YES,HIGH,CODE_LITERAL,KEEP_TECHNICAL,L3
+JP1A-0050,中断 (progress blocked count),components/WorkflowProgressSummary.tsx,blocked-label,workflow,STATUS,YES,NO,MED,CODE_LITERAL,REVIEW,Same as BLOCKED conflict
+JP1A-0051,要再生成 (progress stale),components/WorkflowProgressSummary.tsx,stale-label,workflow,STATUS,YES,NO,MED,CODE_LITERAL,REVIEW,Align glossary
+JP1A-0052,ON / OFF,ApolloPhase1Shell.tsx,sample-guide-dismiss,guided,BUTTON,YES,NO,LOW,MIXED_JA_EN,TRANSLATE_TO_JA,オン/オフ
+JP1A-0053,ID,ApolloPhase1Shell.tsx,entity-detail,workspace,FIELD_LABEL,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Keep ID
+JP1A-0054,Undo/Redo testids only (buttons JA),ApolloPhase1Shell.tsx,toolbar,workspace,OTHER,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0055,LINER（道路線形）,guided/slides.ts,detailEscape-G02,guided,BUTTON,YES,NO,LOW,MIXED_JA_EN,ALLOWLIST,Product name LINER
+JP1A-0056,P5 / P4 references in decideWhat,guided/slides.ts,decideWhat,guided,HELP,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Avoid internal package codes in L1
+JP1A-0057,4-G 成果物,guided/slides.ts,decideWhat-G15,guided,HELP,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Step 4-G → 成果物工程
+JP1A-0058,schemaVersion,bridgeStructure/types.ts,persisted,other,TECHNICAL_DETAIL,NO,YES,HIGH,CODE_LITERAL,KEEP_TECHNICAL,Never localize
+JP1A-0059,NOT_GRANTED (raw),multiple panels,banners,authorization,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,Not 不合格
+JP1A-0060,PROHIBITED,sample disclaimer / banners,disclaimer,authorization,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,設計・施工への使用禁止
+JP1A-0061,UNVERIFIED,sample disclaimer,disclaimer,authorization,AUTHORIZATION,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,未検証
+JP1A-0062,COMPLETE (raw if leaked),workflow badges,status,workflow,STATUS,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,Usually mapped
+JP1A-0063,AVAILABLE / READY / RECOMMENDED,workflow,status,workflow,STATUS,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,Mapped partially
+JP1A-0064,INCOMPLETE,workflow,status,workflow,STATUS,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,入力不足 preferred
+JP1A-0065,OUT_OF_SCOPE,workflow,status,workflow,STATUS,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,対象外
+JP1A-0066,PENDING_HUMAN_ENGINEERING_REVIEW,cross-frame banner,banner,cross-frame,AUTHORIZATION,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0067,mesh推定禁止,CrossFrameAttachmentInputPanel,banner,cross-frame,WARNING,YES,NO,LOW,MIXED_JA_EN,TRANSLATE_TO_JA,mesh→メッシュ or L3
+JP1A-0068,Export SVG / DXF testids,StandardSectionDrawingPanel,buttons,stl,EXPORT,YES,NO,MED,CODE_LITERAL,ALLOWLIST,SVG/DXF keep; button verbs JA
+JP1A-0069,CSV / JSON quantity export,OutputIntegrationPanel,export,stl,EXPORT,YES,NO,MED,CODE_LITERAL,ALLOWLIST,
+JP1A-0070,Three.js (dev diagnostics if shown),viewer diagnostics,diag,viewer,TECHNICAL_DETAIL,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0071,selectionKey / designEntityId,viewer picking,meta,viewer,TECHNICAL_DETAIL,NO,YES,MED,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0072,checksum / revision,persistence/workflow,meta,other,TECHNICAL_DETAIL,NO,YES,HIGH,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0073,Apollo (brand),multiple,titles,basics,SCREEN_TITLE,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,
+JP1A-0074,m / mm / kN,field units,units,bridge-structure,FIELD_LABEL,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,SI units
+JP1A-0075,サンプルを適用して構造を生成,BridgeStructureInputPanel,button,bridge-structure,BUTTON,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Already JA — baseline good
+JP1A-0076,キャンセル / 新規プロジェクトとして開く / 置換,SampleReapplyConfirmDialog,actions,reapply,BUTTON,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Already JA
+JP1A-0077,保存して次へ / 戻る / 詳細編集へ,GuidedModeShell,nav,guided,BUTTON,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Already JA
+JP1A-0078,開発者診断（既定は折りたたみ）,GuidedModeShell,diagnostics,guided,TECHNICAL_DETAIL,YES,NO,MED,CODE_LITERAL,ALLOWLIST,Good L3 pattern
+JP1A-0079,resultState=STALE (upstream checksum changed),workflow/evaluators.ts,diagnostic-message,workflow,TECHNICAL_DETAIL,NO,YES,MED,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0080,NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED title attr,ReportModelDevelopmentPanel,title,stl,AUTHORIZATION,YES,NO,LOW,TITLE,TRANSLATE_TO_JA,
+JP1A-0081,mode: / stale: meta line,ReportModelDevelopmentPanel,meta,stl,TECHNICAL_DETAIL,YES,NO,MED,MIXED_JA_EN,KEEP_TECHNICAL,Collapse to L3
+JP1A-0082,CANDIDATE / UNVERIFIED,DemandCheckDevelopmentPanel,banner,analysis,AUTHORIZATION,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0083,NOT FOR ESTIMATE,QuantityModelDevelopmentPanel,banner,quantity,AUTHORIZATION,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,積算にも使用禁止
+JP1A-0084,WF-01..WF-15 step IDs,workflow registry,ids,workflow,WORKFLOW_STEP,YES,NO,HIGH,CODE_LITERAL,ALLOWLIST,Show with JA title
+JP1A-0085,data-testid english ids,all components,testids,other,OTHER,NO,YES,HIGH,CODE_LITERAL,KEEP_TECHNICAL,Not user visible
+JP1A-0086,SHARP_CORNER_DEVELOPMENT,assumptions viz,assumption,viewer,TECHNICAL_DETAIL,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0087,PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED,assumptions viz,assumption,viewer,TECHNICAL_DETAIL,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0088,ER-001 / ER-002,docs+banners,gates,authorization,TECHNICAL_DETAIL,YES,NO,MED,MIXED_JA_EN,KEEP_TECHNICAL,L3 human gate ids
+JP1A-0089,CONTINUOUS / SIMPLE_SINGLE,bridge system select values,select,bridge-structure,TECHNICAL_DETAIL,NO,YES,MED,CODE_LITERAL,KEEP_TECHNICAL,Labels already JA
+JP1A-0090,RECT haunch shape,RcDeckHaunchInputPanel,select,haunch,FIELD_LABEL,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,矩形
+JP1A-0091,LEFT_CURB slot keys if shown raw,DeckAppurtenanceInputPanel,slots,appurtenance,FIELD_LABEL,YES,NO,MED,CODE_LITERAL,REVIEW,Prefer JP slot labels
+JP1A-0092,PROVIDED / NOT_PROVIDED / EXPLICIT_NONE,presence radios,presence,pavement,STATUS,YES,NO,HIGH,CODE_LITERAL,TRANSLATE_TO_JA,あり/未入力/なし
+JP1A-0093,Undo message english keys in history,ApolloPhase1Shell,history,workspace,TECHNICAL_DETAIL,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0094,blocked_by_numeric_evidence,ApolloPhase1Shell,material-status,workspace,TECHNICAL_DETAIL,NO,YES,LOW,CODE_LITERAL,KEEP_TECHNICAL,
+JP1A-0095,unverified provisionalStatus,ApolloPhase1Shell,material,workspace,STATUS,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0096,Fit/iso/xy english if viewer controls shared,viewer/ViewerControls,controls,viewer,BUTTON,YES,NO,MED,CODE_LITERAL,REVIEW,Outside apollo/ but visible
+JP1A-0097,Export ZIP (if labeled EN),output panels,export,stl,EXPORT,YES,NO,LOW,CODE_LITERAL,TRANSLATE_TO_JA,Allow ZIP acronym
+JP1A-0098,Human engineering review,cross-frame banner,banner,cross-frame,AUTHORIZATION,YES,NO,MED,CODE_LITERAL,TRANSLATE_TO_JA,
+JP1A-0099,validation OK（engineering authorization は未付与）,CrossFrameAttachmentInputPanel,validation-ok,cross-frame,STATUS,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,
+JP1A-0100,Apollo Phase 1 / Unit2 labels,ApolloPhase1Shell,chrome,basics,SCREEN_TITLE,YES,NO,MED,MIXED_JA_EN,TRANSLATE_TO_JA,Hide Unit2 from L1

@@ -1,0 +1,43 @@
+allowlist_id,text_or_pattern,reason,layer,source_path,screen,notes
+AL-JP1A-0013,DEC-S5-0002,KEEP_TECHNICAL,L3,components/SampleReapplyConfirmDialog.tsx,reapply,L3 only
+AL-JP1A-0019,BSSD haunches,KEEP_TECHNICAL,L3,components/RcDeckHaunchInputPanel.tsx,haunch,Typo BSSD→BSDD; L3
+AL-JP1A-0025,authorizationStatus,KEEP_TECHNICAL,L3,components/QuantityModelDevelopmentPanel.tsx,quantity,Move to L3
+AL-JP1A-0027,G01,ALLOWLIST,L1_SAFE,guided/GuidedModeShell.tsx,guided,Slide IDs OK as EN
+AL-JP1A-0038,STL,ALLOWLIST,L1_SAFE,ApolloPhase1Shell.tsx,stl,Keep STL
+AL-JP1A-0048,WF_PREREQUISITE_INCOMPLETE,KEEP_TECHNICAL,L3,workflow/evaluators.ts,workflow,L3
+AL-JP1A-0049,WF_RESULT_STALE,KEEP_TECHNICAL,L3,workflow/evaluators.ts,workflow,L3
+AL-JP1A-0053,ID,ALLOWLIST,L1_SAFE,ApolloPhase1Shell.tsx,workspace,Keep ID
+AL-JP1A-0054,Undo/Redo testids only (buttons JA),KEEP_TECHNICAL,L3,ApolloPhase1Shell.tsx,workspace,
+AL-JP1A-0055,LINER（道路線形）,ALLOWLIST,L1_SAFE,guided/slides.ts,guided,Product name LINER
+AL-JP1A-0058,schemaVersion,KEEP_TECHNICAL,L3,bridgeStructure/types.ts,other,Never localize
+AL-JP1A-0068,Export SVG / DXF testids,ALLOWLIST,L1_SAFE,StandardSectionDrawingPanel,stl,SVG/DXF keep; button verbs JA
+AL-JP1A-0069,CSV / JSON quantity export,ALLOWLIST,L1_SAFE,OutputIntegrationPanel,stl,
+AL-JP1A-0070,Three.js (dev diagnostics if shown),KEEP_TECHNICAL,L3,viewer diagnostics,viewer,
+AL-JP1A-0071,selectionKey / designEntityId,KEEP_TECHNICAL,L3,viewer picking,viewer,
+AL-JP1A-0072,checksum / revision,KEEP_TECHNICAL,L3,persistence/workflow,other,
+AL-JP1A-0073,Apollo (brand),ALLOWLIST,L1_SAFE,multiple,basics,
+AL-JP1A-0074,m / mm / kN,ALLOWLIST,L1_SAFE,field units,bridge-structure,SI units
+AL-JP1A-0075,サンプルを適用して構造を生成,ALLOWLIST,L1_SAFE,BridgeStructureInputPanel,bridge-structure,Already JA — baseline good
+AL-JP1A-0076,キャンセル / 新規プロジェクトとして開く / 置換,ALLOWLIST,L1_SAFE,SampleReapplyConfirmDialog,reapply,Already JA
+AL-JP1A-0077,保存して次へ / 戻る / 詳細編集へ,ALLOWLIST,L1_SAFE,GuidedModeShell,guided,Already JA
+AL-JP1A-0078,開発者診断（既定は折りたたみ）,ALLOWLIST,L1_SAFE,GuidedModeShell,guided,Good L3 pattern
+AL-JP1A-0079,resultState=STALE (upstream checksum changed),KEEP_TECHNICAL,L3,workflow/evaluators.ts,workflow,
+AL-JP1A-0081,mode: / stale: meta line,KEEP_TECHNICAL,L3,ReportModelDevelopmentPanel,stl,Collapse to L3
+AL-JP1A-0084,WF-01..WF-15 step IDs,ALLOWLIST,L1_SAFE,workflow registry,workflow,Show with JA title
+AL-JP1A-0085,data-testid english ids,KEEP_TECHNICAL,L3,all components,other,Not user visible
+AL-JP1A-0086,SHARP_CORNER_DEVELOPMENT,KEEP_TECHNICAL,L3,assumptions viz,viewer,
+AL-JP1A-0087,PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED,KEEP_TECHNICAL,L3,assumptions viz,viewer,
+AL-JP1A-0088,ER-001 / ER-002,KEEP_TECHNICAL,L3,docs+banners,authorization,L3 human gate ids
+AL-JP1A-0089,CONTINUOUS / SIMPLE_SINGLE,KEEP_TECHNICAL,L3,bridge system select values,bridge-structure,Labels already JA
+AL-JP1A-0093,Undo message english keys in history,KEEP_TECHNICAL,L3,ApolloPhase1Shell,workspace,
+AL-JP1A-0094,blocked_by_numeric_evidence,KEEP_TECHNICAL,L3,ApolloPhase1Shell,workspace,
+AL-SAFE-001,Apollo,Brand name,L1_SAFE,multiple,basics,Always OK
+AL-SAFE-002,STL|CSV|JSON|DXF|SVG|ZIP,File/format acronyms,L1_SAFE,export,stl,Acronyms OK with JA verb
+AL-SAFE-003,G0[1-9]|G1[0-5],Guided slide IDs,L1_SAFE,guided/GuidedModeShell.tsx,guided,Show with JA title
+AL-SAFE-004,WF-0[1-9]|WF-1[0-5],Workflow step IDs,L3,workflow,workflow,Prefer JA title + ID in L3
+AL-SAFE-005,DEC-S5-\d{4}|ER-00[12],Decision/gate codes,L3,multiple,authorization,Technical details only
+AL-SAFE-006,schemaVersion,Schema version key,L3,contracts,other,Never localize key
+AL-SAFE-007,m|mm|kN|MPa,SI units,L1_SAFE,fields,bridge-structure,SI symbols OK
+AL-SAFE-008,Three\.js,Engine name in diagnostics,L3,viewer,viewer,Dev diagnostics only
+AL-SAFE-009,ID|URL,Generic technical tokens,L1_SAFE,multiple,other,
+AL-SAFE-010,data-testid=*,Test ids,L3,components,other,Not user-visible
