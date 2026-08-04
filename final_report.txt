@@ -523,10 +523,10 @@ END APOLLO STEP 5-3 CURRENT
 BEGIN APOLLO STEP 5-R CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_R_RESIDUAL_CORRECTIONS
-CURRENT_SUBSTEP: R4
-OVERALL_PROGRESS: COMPLETE_PENDING_REPORT_SEAL
+CURRENT_SUBSTEP: REPORT
+OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: b53e64f239c7ca4a68903a1588e0b42cb72bdaea
-CURRENT_MAIN_SHA: fd6642af67c0d1003f978e1638aa5e9e6e10577f
+CURRENT_MAIN_SHA: 231230f806758fb990598ef896d717ca9568bf94
 
 R1_REAPPLY_CONFIRMATION: PASS
 R1_PR: https://github.com/ollejanaitte/spacer-clone/pull/356
@@ -541,11 +541,11 @@ R3_PR: https://github.com/ollejanaitte/spacer-clone/pull/358
 R3_MERGE_SHA: fd6642af67c0d1003f978e1638aa5e9e6e10577f
 
 R4_INTEGRATION_E2E: PASS
-R4_PR: PENDING
-R4_MERGE_SHA: PENDING
+R4_PR: https://github.com/ollejanaitte/spacer-clone/pull/359
+R4_MERGE_SHA: 231230f806758fb990598ef896d717ca9568bf94
 
-REPORT_PR: PENDING
-REPORT_MERGE_SHA: PENDING
+REPORT_PR: PENDING_THIS_PR
+REPORT_MERGE_SHA: PENDING_SEAL
 SEAL_PR: PENDING
 
 REAPPLY_MODAL_VERDICT: PASS
@@ -584,11 +584,17 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED
 FORMAL_STRUCTURAL_APPROVAL: NOT_GRANTED
 
+TESTS:
+- Apollo Vitest: 462/462 PASS
+- Playwright E2E-S5R-001..013: 13/13 PASS
+- typecheck: PASS
+- build: PASS
+
 NOTES:
-- R1–R3 merged (#356/#357/#358)
-- R4: Apollo Vitest 462/462 PASS; Playwright E2E-S5R-001..013 PASS; typecheck PASS
-- Evidence under docs/apollo/step5_residual_corrections/
-- ER-001/002 engineering authorization remains PENDING_HUMAN_ENGINEERING_REVIEW
+- R1–R4 merged (#356/#357/#358/#359)
+- Residual corrections implemented; formal engineering approval NOT granted
+- Human engineering review still required for ER-001/ER-002
+- Step 4-D〜4-H not started
 ================================================================================
 END APOLLO STEP 5-R CURRENT
 ================================================================================
