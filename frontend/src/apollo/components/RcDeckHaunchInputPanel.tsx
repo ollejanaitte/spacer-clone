@@ -401,7 +401,7 @@ export function RcDeckHaunchInputPanel({
               <ul data-testid={`apollo-haunch-diagnostics-${mainGirderKey}`}>
                 {girderDiagnostics.map((d) => (
                   <li key={`${d.code}-${d.message}`} role={d.blocking ? "alert" : "status"}>
-                    [{d.blocking ? "blocking" : "info"}] {d.message}
+                    [{d.blocking ? "要解消" : "情報"}] {d.message}
                   </li>
                 ))}
               </ul>

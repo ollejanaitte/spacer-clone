@@ -6255,6 +6255,15 @@ button:disabled {
     flex-direction: column;
   }
 
+  .apollo-unit2-header-actions {
+    width: 100%;
+  }
+
+  .apollo-unit2-header-actions button {
+    max-width: 100%;
+    white-space: normal;
+  }
+
   .apollo-topology-view {
     min-height: 360px;
   }
