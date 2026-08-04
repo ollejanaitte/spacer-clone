@@ -1,3 +1,4 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
 /**
  * Step 3-A general arrangement drawing panel.
  * DEVELOPMENT GENERAL ARRANGEMENT — NOT FOR CONSTRUCTION
@@ -62,10 +63,10 @@ export function GeneralArrangementPanel({ project }: Props) {
           <p>DrawingSetModel G-01〜G-07：一般図・配置図・支承・側面構成・部材表。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-ga-development-warning">
-        DEVELOPMENT GENERAL ARRANGEMENT — NOT A DESIGN-APPROVED OR FABRICATION DRAWING — NOT FOR
-        CONSTRUCTION
-      </p>
+      <div data-testid="apollo-ga-development-warning">
+        <AuthorizationBanner testId="apollo-ga-auth" />
+        <p>一般図は開発用プレビューです。設計承認図・製作図ではありません。</p>
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-ga-provenance">
         stale: {String(model.stale)} / sheets: {model.sheets.length} / views: {viewTypes} / girders:{" "}
         {model.layout.girderCount} / cb: {model.layout.crossBeamStations.length} / checksum:{" "}

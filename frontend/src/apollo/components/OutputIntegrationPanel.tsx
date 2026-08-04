@@ -1,3 +1,5 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { getStatusLabel } from "../i18n";
 /**
  * Step 2-D / Step 3-E output integration panel — final development deliverables workflow.
  */
@@ -77,11 +79,14 @@ export function OutputIntegrationPanel({ project }: Props) {
           <p>数量・計算書・図面一式・ZIP の revision/checksum 整合と一括操作。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-output-integration-warning">
-        UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR DESIGN OR CONSTRUCTION — USER REVIEW REQUIRED
-      </p>
+      <div data-testid="apollo-output-integration-warning">
+        <AuthorizationBanner
+          testId="apollo-output-auth"
+          keys={["UNVERIFIED_DEVELOPMENT_ONLY", "USER_REVIEW_REQUIRED", "NOT_GRANTED", "PROHIBITED"]}
+        />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-output-integration-status">
-        stale: {String(outputs.stale)} / consistency: {outputs.consistency.overall} / checksum:{" "}
+        状態: {outputs.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / 整合: {outputs.consistency.overall} / checksum:{" "}
         {outputs.inputChecksum.slice(0, 16)}… / qty:{outputs.statuses.quantity} / report:
         {outputs.statuses.report} / drawing:{outputs.statuses.drawing} / drawingSet:
         {outputs.statuses.drawingSet} / schedule:{outputs.statuses.memberSchedule} / bundle:

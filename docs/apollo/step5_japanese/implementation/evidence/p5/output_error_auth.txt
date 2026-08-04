@@ -1,0 +1,4 @@
+JP2-P5 evidence
+- Output/Report/Drawing/GA/AnalysisProbe: AuthorizationBanner + JA L1
+- Formal export remains disabled; NOT_GRANTED unchanged
+- tsc PASS; drawingSetModel/i18n vitest PASS
