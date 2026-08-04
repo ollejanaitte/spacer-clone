@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development-only simple-span analysis probe.
  * UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
@@ -216,12 +219,16 @@ export function AnalysisDevelopmentProbePanel() {
           <p>単純支持梁の閉形式参照と live solver 比較。正式設計には使用しないでください。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-analysis-development-warning">
-        UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
-      </p>
+      <div data-testid="apollo-analysis-development-warning">
+        <AuthorizationBanner testId="apollo-analysis-probe-auth" />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-analysis-development-provenance">
-        authorization: NOT_AUTHORIZED / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED / solver: scipy_sparse
+        正式認可なし — 開発用解析プローブ
       </p>
+      <TechnicalDetails
+        testId="apollo-analysis-probe-tech"
+        lines={["authorization=NOT_AUTHORIZED", "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED", "solver=scipy_sparse"]}
+      />
       <div className="apollo-workspace-actions">
         <button
           type="button"

@@ -1,3 +1,5 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { getStatusLabel } from "../i18n";
 /**
  * Standard section drawing panel (Step 2-C).
  */
@@ -39,11 +41,12 @@ export function StandardSectionDrawingPanel({ project }: Props) {
           <p>Drawing Semantic Modelから生成。製作図ではありません。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-drawing-development-warning">
-        STANDARD SECTION — DEVELOPMENT PREVIEW — NOT A FABRICATION DRAWING — NOT FOR DESIGN OR CONSTRUCTION
-      </p>
+      <div data-testid="apollo-drawing-development-warning">
+        <AuthorizationBanner testId="apollo-drawing-auth" />
+        <p>標準断面は開発用プレビューです。製作図ではありません。</p>
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-drawing-provenance">
-        stale: {String(model.stale)} / overhang: {model.layout.overhang} / girders:{" "}
+        状態: {model.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / overhang: {model.layout.overhang} / girders:{" "}
         {model.layout.girderCount} / checksum: {model.inputChecksum.slice(0, 16)}… / fabrication:{" "}
         {String(model.fabricationDrawing)}
       </p>

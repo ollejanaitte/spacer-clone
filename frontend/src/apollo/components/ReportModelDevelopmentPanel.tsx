@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development report panel (Step 2-B).
  */
@@ -41,13 +44,24 @@ export function ReportModelDevelopmentPanel({ project }: Props) {
           <p>ReportModelから生成。アプリ画面の印刷を計算書としません。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-report-development-warning">
-        UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR DESIGN OR CONSTRUCTION — USER REVIEW REQUIRED
-      </p>
+      <div data-testid="apollo-report-development-warning">
+        <AuthorizationBanner
+          testId="apollo-report-auth"
+          keys={["UNVERIFIED_DEVELOPMENT_ONLY", "USER_REVIEW_REQUIRED", "NOT_GRANTED", "PROHIBITED"]}
+        />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-report-provenance">
-        mode: {model.mode} / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED / stale: {String(model.stale)} /
-        chapters: {model.chapters.length} / checksum: {model.resultChecksum.slice(0, 16)}…
+        状態: {model.stale ? getStatusLabel("STALE") : "準備完了"} / 章数: {model.chapters.length}
       </p>
+      <TechnicalDetails
+        testId="apollo-report-tech"
+        lines={[
+          `mode=${model.mode}`,
+          "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED",
+          `stale=${String(model.stale)}`,
+          `checksum=${model.resultChecksum.slice(0, 16)}…`,
+        ]}
+      />
       <div className="apollo-workspace-actions">
         <button type="button" className="apollo-button-secondary" data-testid="apollo-report-regenerate" onClick={regenerate}>
           計算書を生成/再生成
@@ -102,7 +116,7 @@ export function ReportModelDevelopmentPanel({ project }: Props) {
           className="apollo-button-secondary"
           data-testid="apollo-report-formal-disabled"
           disabled
-          title="NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED"
+          title="正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）"
           onClick={() => wrap(() => tryBuildFormalReport(project))}
         >
           正式計算書（無効）
