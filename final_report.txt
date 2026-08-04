@@ -1051,3 +1051,53 @@ NEXT_ACTION: Begin Step 6-UI-3 (Input + 3D Viewer workspace) from latest main.
 ================================================================================
 END APOLLO STEP 6-UI-2
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-CLOSEOUT
+================================================================================
+更新日時: 2026-08-05T02:12:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_CLOSEOUT
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED_IN_STEP_6: YES
+
+## PR and Merge SHA Summary
+
+| Step | PR | Merge SHA | Description |
+|------|----|-----------|-------------|
+| UI-1D | #385 | b6242d12f13cbf1cd095d9ce8c6e509ff63cc72e | Implementation design docs |
+| UI-1 | #386 | 99c77462769c7da7cc6b854e8b3835b7d5ce334a | Header/mode/auth separation |
+| UI-2 | #388 | b6c0ca458f8022d5e4586e984ac7628b04bb9cfa | Guided progress + sticky footer |
+| UI-3 | #390 | 02a3bbea7134ebd1e797e779f7aacbb5324675c1 | Input + 3D Viewer 2-pane |
+| UI-4 | #391 | 2634fa9fd666d9e4047b4470cb711e7f8b705591 | Workflow master-detail |
+| UI-5 | #392 | 860396a07aa5be2c9a831955e92839c2f53bff31 | Responsive + accessibility |
+| UI-6 | #393 | 6fb6e11c56e37fc6497f67744479ef01ea937da4 | Regression + verification |
+
+## Verdicts
+
+STEP_6_UI_VERDICT: COMPLETE
+HEADER_ACTION_SPLIT_VERDICT: PASS
+COMPACT_AUTH_VERDICT: PASS
+GUIDED_PROGRESS_VERDICT: PASS
+GUIDED_STICKY_FOOTER_VERDICT: PASS
+VIEWER_WORKSPACE_VERDICT: PASS
+WORKFLOW_MASTER_DETAIL_VERDICT: PASS
+RESPONSIVE_VERDICT: PASS
+ACCESSIBILITY_VERDICT: PASS
+RESIDUAL_ENGLISH_L1_COUNT: 0 (no regressions)
+CANONICAL_DATA_GUARD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_STALE_GUARD_VERDICT: PASS
+VIEWER_STL_SOURCE_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+GITHUB_MAIN_REFLECTION_VERDICT: PASS
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+NEXT_ACTION: Step 6 complete. Await further instruction.
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged throughout)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
+
+EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/
+================================================================================
+END APOLLO STEP 6-UI-CLOSEOUT
+================================================================================
