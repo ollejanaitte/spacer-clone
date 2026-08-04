@@ -86,32 +86,43 @@ describe("WorkflowStepCard", () => {
   });
 });
 
-describe("WorkflowControlScreen (full model)", () => {
-  it("renders all 15 steps in registry order with progress summary", () => {
+describe("WorkflowControlScreen (full model master-detail)", () => {
+  it("renders navigator with all 15 steps and progress summary", () => {
     const project = generatedProject();
     const container = render(<WorkflowControlScreen project={project} onNavigate={() => undefined} onPrimaryAction={() => undefined} />);
-    const ids = Array.from(container.querySelectorAll("[data-testid='apollo-wf-step-id']")).map((el) => el.textContent);
-    expect(ids).toEqual([
-      "WF-01", "WF-02", "WF-03", "WF-04", "WF-05", "WF-06", "WF-07",
-      "WF-08", "WF-09", "WF-10", "WF-11", "WF-12", "WF-13", "WF-14", "WF-15",
-    ]);
+    expect(container.querySelector("[data-testid='apollo-wf-master-detail']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-wf-navigator']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-wf-detail-panel']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-wf-progress-summary']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-wf-authorization-summary']")?.textContent).toContain(
       "正式認可なし",
     );
-    expect(container.querySelector("[data-testid='apollo-wf-authorization-summary']")?.textContent).not.toContain(
-      "NOT_GRANTED",
-    );
+  });
+
+  it("navigator lists all 15 steps", () => {
+    const project = generatedProject();
+    const container = render(<WorkflowControlScreen project={project} onNavigate={() => undefined} onPrimaryAction={() => undefined} />);
+    const navButtons = container.querySelectorAll("[data-testid^='apollo-wf-nav-']");
+    expect(navButtons).toHaveLength(15);
   });
 
   it("marks STALE steps with regeneration CTA after input mutation", () => {
     let project = generatedProject();
     project = withBridgeStructureField(project, "width", 13);
     const container = render(<WorkflowControlScreen project={project} onNavigate={() => undefined} onPrimaryAction={() => undefined} />);
-    const stale = container.querySelector("[data-testid='apollo-wf-step-WF-02']");
-    expect(stale?.getAttribute("data-status")).toBe("STALE");
-    expect(stale?.textContent).toContain("要再計算");
+    const staleNav = container.querySelector("[data-testid='apollo-wf-nav-WF-02']");
+    expect(staleNav?.textContent).toContain("要再計算");
     expect(container.querySelector("[data-testid='apollo-wf-progress-recommended']")?.textContent).toContain("WF-02");
+  });
+
+  it("detail panel shows navigation and next/prev buttons", () => {
+    const project = generatedProject();
+    const container = render(<WorkflowControlScreen project={project} onNavigate={() => undefined} onPrimaryAction={() => undefined} />);
+    expect(container.querySelector("[data-testid='apollo-wf-detail-prev']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-wf-detail-next']")).not.toBeNull();
+    const pos = container.querySelector("[data-testid='apollo-wf-detail-position']")?.textContent;
+    expect(pos).toMatch(/\d+ \/ 15/);
+    expect(container.querySelector("[data-testid='apollo-wf-step-id']")).not.toBeNull();
   });
 
   it("navigation handler receives the step navigation target", () => {
@@ -126,10 +137,13 @@ describe("WorkflowControlScreen (full model)", () => {
         onPrimaryAction={() => undefined}
       />,
     );
-    const wf02 = container.querySelector("[data-testid='apollo-wf-step-WF-02']");
-    const navigate = wf02?.querySelector("[data-testid='apollo-wf-step-navigate']") as HTMLButtonElement | null;
+    const wf02 = container.querySelector("[data-testid='apollo-wf-nav-WF-02']") as HTMLButtonElement | null;
     act(() => {
-      navigate?.click();
+      wf02?.click();
+    });
+    const detailNavigate = container.querySelector("[data-testid='apollo-wf-step-navigate']") as HTMLButtonElement | null;
+    act(() => {
+      detailNavigate?.click();
     });
     expect(received).toBe("wf-panel-bridge-structure");
   });

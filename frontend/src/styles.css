@@ -6739,6 +6739,128 @@ button:disabled {
   }
 }
 
+/* --- Step 6-UI-4 Workflow master-detail --- */
+.apollo-wf-master-detail {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.apollo-wf-navigator {
+  border: 1px solid #d7e2ee;
+  border-radius: 12px;
+  background: #f8fbff;
+  overflow: hidden;
+}
+
+.apollo-wf-navigator-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apollo-wf-navigator-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid #e6edf5;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+}
+
+.apollo-wf-navigator-item:last-child {
+  border-bottom: none;
+}
+
+.apollo-wf-navigator-item:hover {
+  background: #eef5ff;
+}
+
+.apollo-wf-navigator-item.selected {
+  background: #e8f1ff;
+  font-weight: 700;
+}
+
+.apollo-wf-navigator-item.recommended {
+  border-left: 3px solid #1f6feb;
+}
+
+.apollo-wf-navigator-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: #57697d;
+  min-width: 44px;
+}
+
+.apollo-wf-navigator-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apollo-wf-detail-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.apollo-wf-detail-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apollo-wf-detail-nav-btn {
+  padding: 4px 12px;
+  border: 1px solid #9ab4d0;
+  border-radius: 6px;
+  background: #f8fbff;
+  color: #19314d;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.apollo-wf-detail-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.apollo-wf-detail-nav-position {
+  font-size: 12px;
+  color: #57697d;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .apollo-wf-master-detail {
+    grid-template-columns: 1fr;
+  }
+  .apollo-wf-navigator-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px;
+  }
+  .apollo-wf-navigator-item {
+    grid-template-columns: auto 1fr;
+    border: 1px solid #e6edf5;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .apollo-wf-detail-panel .apollo-wf-step-card .apollo-wf-step-card-header {
+    flex-wrap: wrap;
+  }
+}
+
 /* --- Step 5 Guided Mode shell (DEC-S5-0009 / 0010) --- */
 .apollo-guided-shell {
   display: grid;
