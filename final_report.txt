@@ -659,11 +659,11 @@ END APOLLO STEP 5-JP1 CURRENT
 BEGIN APOLLO STEP 5-JP2 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_JP2
-CURRENT_SUBSTEP: REPORT
+CURRENT_SUBSTEP: SEAL
 OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: 023d9da160eb163724e88fb7764d831ac86a36d1
-CURRENT_MAIN_SHA: 3a29686c09cbaea2219686cb1c4872caad24f783
-UPDATED_AT: 2026-08-04T21:27:36+09:00
+CURRENT_MAIN_SHA: 8c1ef1a8dc1003dd816a0a0841ec2c33737820db
+UPDATED_AT: 2026-08-04T21:28:12+09:00
 
 P1_FOUNDATION: PASS
 P1_PR: https://github.com/ollejanaitte/spacer-clone/pull/367
@@ -690,8 +690,8 @@ P6_PR: https://github.com/ollejanaitte/spacer-clone/pull/372
 P6_MERGE_SHA: 3a29686c09cbaea2219686cb1c4872caad24f783
 
 REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/373
-REPORT_MERGE_SHA: PENDING
-SEAL_PR: PENDING
+REPORT_MERGE_SHA: 8c1ef1a8dc1003dd816a0a0841ec2c33737820db
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/374
 
 TYPED_CATALOG_VERDICT: PASS
 TECHNICAL_DETAILS_COMPONENT_VERDICT: PASS
@@ -719,6 +719,8 @@ TESTS:
 - residual English JP2 source scan: 0 findings
 
 DOCUMENT_ROOT: docs/apollo/step5_japanese/implementation/
+NOTES:
+- Seal stamps report merge SHA; no further seal-SHA PR
 ================================================================================
 END APOLLO STEP 5-JP2 CURRENT
 ================================================================================
