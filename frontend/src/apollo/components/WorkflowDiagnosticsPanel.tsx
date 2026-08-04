@@ -1,9 +1,10 @@
 /**
  * Step 4-A workflow diagnostics panel.
- * Lists step diagnostics/warnings with code + message + remediation.
- * Each entry is text-labeled (never color-only) for a11y.
+ * L1: Japanese message; L3: diagnostic code (collapsed).
  */
 import type { WorkflowDiagnostic, WorkflowStepState } from "../workflow/types";
+import { getDiagnosticMessage } from "../i18n";
+import { TechnicalDetails } from "./TechnicalDetails";
 
 type Props = {
   readonly step: WorkflowStepState;
@@ -28,22 +29,32 @@ export function WorkflowDiagnosticsPanel({ step }: Props) {
 }
 
 function DiagnosticRow({ entry }: { readonly entry: WorkflowDiagnostic }) {
+  const catalog = getDiagnosticMessage(entry.code);
+  const l1 = catalog.l1 !== "表示文言未登録" ? catalog.l1 : entry.message;
+  const l2 = catalog.l2;
   return (
     <li className={`apollo-wf-diagnostic apollo-wf-diagnostic-${entry.severity}`} data-severity={entry.severity}>
       <span className="apollo-wf-diagnostic-code" aria-hidden="true">
         {severitySymbol(entry.severity)}
       </span>
       <div className="apollo-wf-diagnostic-body">
-        <p className="apollo-wf-diagnostic-message">
-          <span className="apollo-wf-diagnostic-code-text">{entry.code}</span> {entry.message}
-        </p>
+        <p className="apollo-wf-diagnostic-message">{l1}</p>
+        {l2 ? <p className="apollo-wf-diagnostic-l2">{l2}</p> : null}
         {entry.blocking ? (
           <p className="apollo-wf-diagnostic-blocking" data-testid="apollo-wf-diagnostic-blocking">
-            ブロッキング
+            先に解消が必要です
           </p>
         ) : null}
-        <p className="apollo-wf-diagnostic-detail">{entry.technicalDetail}</p>
-        <p className="apollo-wf-diagnostic-remediation">対処: {entry.remediation}</p>
+        <p className="apollo-wf-diagnostic-remediation">
+          対処: {catalog.nextAction ?? entry.remediation}
+        </p>
+        <TechnicalDetails
+          testId={`apollo-wf-diag-${entry.diagnosticId}-tech`}
+          lines={[
+            `diagnosticCode=${entry.code}`,
+            entry.technicalDetail ? `detail=${entry.technicalDetail}` : "",
+          ].filter(Boolean)}
+        />
       </div>
     </li>
   );

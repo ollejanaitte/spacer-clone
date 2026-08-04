@@ -1,14 +1,18 @@
 /**
  * Step 5 Guided Mode shell — 15-slide navigation over existing Workflow SoR.
  * DEC-S5-0009 / DEC-S5-0010. Does not invent a second bridge model.
+ * L1 Japanese; slide IDs (G01–G15) and diagnostic codes remain allowlisted / L3.
  */
 import { useMemo, useState, type ReactNode } from "react";
 import type { ProjectModel } from "../../types";
 import { buildWorkflowStateModel } from "../workflow/index";
+import { getButtonLabel, getFieldLabel, getWorkflowStepLabel } from "../i18n";
 import { buildGuidedModeChromeState } from "./chrome";
 import { adjacentGuidedSlide, getGuidedSlideDefinition, GUIDED_SLIDE_DEFINITIONS } from "./slides";
 import type { GuidedDetailEscape, GuidedSlideId } from "./types";
 import { GUIDED_SLIDE_IDS } from "./types";
+import { TechnicalDetails } from "../components/TechnicalDetails";
+import { AuthorizationBanner } from "../components/AuthorizationBanner";
 
 export type GuidedModeShellProps = {
   readonly project: ProjectModel;
@@ -17,6 +21,24 @@ export type GuidedModeShellProps = {
   readonly onSave?: () => void;
   readonly children?: ReactNode;
 };
+
+function formatWfAnchor(anchor: string): string {
+  if (anchor.startsWith("WF-") && anchor.includes("/")) {
+    return anchor
+      .split("/")
+      .map((part) => (part.startsWith("WF-") ? getWorkflowStepLabel(part) : part))
+      .join(" / ");
+  }
+  if (anchor.startsWith("WF-") && anchor.includes("..")) {
+    return "関連工程（複数）";
+  }
+  if (anchor.startsWith("WF-")) {
+    return getWorkflowStepLabel(anchor);
+  }
+  if (anchor === "start") return "開始";
+  if (anchor === "pavement") return "舗装・区画線";
+  return anchor;
+}
 
 export function GuidedModeShell({
   project,
@@ -40,13 +62,14 @@ export function GuidedModeShell({
     <section
       className="apollo-guided-shell"
       data-testid="apollo-guided-mode-shell"
-      aria-label="Step 5 ガイド付きモード"
+      aria-label="ガイド付きモード"
     >
       <header className="apollo-guided-header">
         <div>
-          <p className="apollo-guided-kicker">Step 5 Guided Mode（DEC-S5-0009）</p>
+          <p className="apollo-guided-kicker">ガイド付きモード</p>
           <h2 data-testid="apollo-guided-theme">{slide.theme}</h2>
           <p data-testid="apollo-guided-decide-what">この画面で決めること: {slide.decideWhat}</p>
+          <AuthorizationBanner testId="apollo-guided-authorization" />
         </div>
         <div className="apollo-guided-progress" data-testid="apollo-guided-progress" aria-label="進捗">
           <span>{chrome.progressLabel}</span>
@@ -58,6 +81,7 @@ export function GuidedModeShell({
                   className={entry.slideId === currentSlideId ? "active" : undefined}
                   data-testid={`apollo-guided-jump-${entry.slideId}`}
                   aria-current={entry.slideId === currentSlideId ? "step" : undefined}
+                  aria-label={`${entry.slideId} ${entry.theme}`}
                   onClick={() => setCurrentSlideId(entry.slideId)}
                 >
                   {entry.slideId}
@@ -73,10 +97,15 @@ export function GuidedModeShell({
           <h3>主要項目</h3>
           <ul data-testid="apollo-guided-primary-fields">
             {slide.primaryFields.map((field) => (
-              <li key={field}>{field}</li>
+              <li key={field}>{getFieldLabel(field) === "表示文言未登録" ? field : getFieldLabel(field)}</li>
             ))}
           </ul>
-          <p className="apollo-guided-wf-anchor">WF anchor: {slide.wfAnchor}</p>
+          <p className="apollo-guided-wf-anchor">関連工程: {formatWfAnchor(slide.wfAnchor)}</p>
+          <TechnicalDetails
+            testId="apollo-guided-wf-anchor-tech"
+            title="WF ID"
+            lines={[`wfAnchor=${slide.wfAnchor}`]}
+          />
           <div className="apollo-guided-impact" data-testid="apollo-guided-impact-strip" aria-label="影響サマリ">
             <strong>影響</strong>
             <ul>
@@ -87,7 +116,7 @@ export function GuidedModeShell({
           </div>
           {currentSlideId === "G15" ? (
             <p data-testid="apollo-guided-g15-pending">
-              成果物パッケージ（Step 4-G）は未実装です。ここでは完了扱いにしません。
+              成果物パッケージは未実装です。ここでは完了扱いにしません。
             </p>
           ) : null}
           {children}
@@ -99,7 +128,7 @@ export function GuidedModeShell({
             data-testid="apollo-guided-detail-escape"
             onClick={() => onOpenDetail(slide.detailEscape)}
           >
-            詳細編集へ: {slide.detailEscape.label}
+            {getButtonLabel("OPEN_DETAIL")}: {slide.detailEscape.label}
           </button>
           <details
             className="apollo-guided-diagnostics"
@@ -107,7 +136,7 @@ export function GuidedModeShell({
             open={diagnosticsOpen}
             onToggle={(event) => setDiagnosticsOpen((event.target as HTMLDetailsElement).open)}
           >
-            <summary>開発者診断（既定は折りたたみ / DEC-S5-0010）</summary>
+            <summary>技術情報を表示（開発者診断）</summary>
             <p>
               推奨工程: {workflow.currentRecommendedStepId ?? "なし"} / 完了{" "}
               {workflow.progress.complete}/{workflow.progress.total}
@@ -141,7 +170,7 @@ export function GuidedModeShell({
             go("next");
           }}
         >
-          保存して次へ
+          {getButtonLabel("SAVE_NEXT")}
         </button>
         {!chrome.canGoNext ? (
           <button type="button" data-testid="apollo-guided-save" onClick={() => onSave?.()}>

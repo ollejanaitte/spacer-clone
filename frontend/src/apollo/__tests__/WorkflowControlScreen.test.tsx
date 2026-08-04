@@ -77,7 +77,7 @@ describe("WorkflowStepCard", () => {
     expect(container.querySelector("[data-testid='apollo-wf-step-id']")?.textContent).toBe(blocked.workflowStepId);
     expect(container.querySelector("[data-testid='apollo-wf-diagnostics']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-wf-step-disabled-reason']")?.textContent).toContain(
-      "現在利用できません",
+      "先に必要な作業があります",
     );
     expect(container.querySelector("[data-testid='apollo-wf-step-primary']") as HTMLButtonElement).toHaveProperty(
       "disabled",
@@ -97,6 +97,9 @@ describe("WorkflowControlScreen (full model)", () => {
     ]);
     expect(container.querySelector("[data-testid='apollo-wf-progress-summary']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-wf-authorization-summary']")?.textContent).toContain(
+      "正式認可なし",
+    );
+    expect(container.querySelector("[data-testid='apollo-wf-authorization-summary']")?.textContent).not.toContain(
       "NOT_GRANTED",
     );
   });
