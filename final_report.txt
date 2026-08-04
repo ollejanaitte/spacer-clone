@@ -625,7 +625,7 @@ JP1_D_COMPLETION_GATE: PASS
 JP1_D_PR: https://github.com/ollejanaitte/spacer-clone/pull/365
 JP1_D_MERGE_SHA: c572f7b1abfe45f20965959fe976e9a977ee645a
 
-SEAL_PR: PENDING
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/366
 
 USER_VISIBLE_ENGLISH_COUNT: 85
 TECHNICAL_ONLY_ENGLISH_COUNT: 15
