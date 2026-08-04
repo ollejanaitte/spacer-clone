@@ -686,7 +686,7 @@ P5_PR: https://github.com/ollejanaitte/spacer-clone/pull/371
 P5_MERGE_SHA: 780752c973e8a8e15e7dcbec5c6c3c7a3e15d967
 
 P6_INTEGRATION_E2E: PASS
-P6_PR: PENDING
+P6_PR: https://github.com/ollejanaitte/spacer-clone/pull/372
 P6_MERGE_SHA: PENDING
 
 REPORT_PR: PENDING
