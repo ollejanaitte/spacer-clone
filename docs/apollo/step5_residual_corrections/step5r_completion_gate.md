@@ -6,8 +6,8 @@
 - [x] R2 true L polygon merged (#357 / `e3a272a2…`)
 - [x] R3 cross-frame attachments merged (#358 / `fd6642af…`)
 - [x] R4 GUI/E2E + evidence merged (#359 / `231230f8…`)
-- [x] Report PR (this finalize)
-- [ ] Seal PR (stamps report merge SHA)
+- [x] Report PR merged (#360 / `7aab7d7d…`)
+- [x] Seal PR (this stamp; seal SHA recorded in Cursor final report only)
 - [x] Formal authorization unchanged (NOT_GRANTED)
 - [x] Step 4-D〜4-H not implemented
 - [x] ER-001 IMPLEMENTATION: PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED
