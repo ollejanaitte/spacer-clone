@@ -12,12 +12,14 @@ import {
   SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER,
   SupportLayoutRole,
   addContinuousSpan,
-  applyAndGenerateContinuousGirderSample,
-  applyAndGenerateSimpleSingleSpanSample,
   applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
+  detectSampleReapply,
+  executeSampleReapplyCreateNew,
+  executeSampleReapplyDirect,
+  executeSampleReapplyReplace,
   generateBridgeStructureFromInput,
   getBridgeStructureInputDraft,
   getBridgeStructureQuantities,
@@ -36,10 +38,13 @@ import {
   type BridgeStructureInputFieldKey,
   type BridgeStructureUnitWeightKind,
   type GirderSectionProperties,
+  type SampleKind,
+  type SampleReapplyDetection,
   type SelectableBridgeSystem,
 } from "../bridgeStructure";
 import { commitApolloNumericDraft } from "../numericInput";
 import { CompositionAwareInput } from "./CompositionAwareInput";
+import { SampleReapplyConfirmDialog } from "./SampleReapplyConfirmDialog";
 
 type BridgeStructureInputPanelProps = {
   readonly project: ProjectModel;
@@ -266,6 +271,85 @@ export function BridgeStructureInputPanel({
   const isGenerationCurrent = isBridgeStructureGenerationCurrent(project);
   const isStale = Boolean(sdm && !isGenerationCurrent);
   const [generationMessage, setGenerationMessage] = useState<string | null>(null);
+  const [reapplyDetection, setReapplyDetection] = useState<SampleReapplyDetection | null>(null);
+  const [reapplyOpen, setReapplyOpen] = useState(false);
+  const [reapplyIntent, setReapplyIntent] = useState<"apply_generate" | "input_only">("apply_generate");
+
+  const requestSampleApplyGenerate = (sampleKind: SampleKind) => {
+    const detection = detectSampleReapply(project, sampleKind);
+    if (!detection.requiresConfirmation) {
+      const result = executeSampleReapplyDirect(project, sampleKind);
+      if (result.ok) {
+        onProjectChange(result.project);
+        setGenerationMessage(
+          "完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY / NOT_GRANTED）。",
+        );
+        onAuditEvent?.("完全サンプルを適用・生成しました。");
+      } else {
+        onProjectChange(result.project);
+        setGenerationMessage(`生成に失敗しました: ${result.diagnostics.join("; ")}`);
+        onAuditEvent?.("完全サンプルの生成に失敗しました（rollback）。");
+      }
+      return;
+    }
+    setReapplyIntent("apply_generate");
+    setReapplyDetection(detection);
+    setReapplyOpen(true);
+  };
+
+  const handleReapplyChoice = (choice: "cancel" | "create_new" | "replace") => {
+    const sampleKind = reapplyDetection?.sampleKind ?? "SIMPLE_SINGLE";
+    const intent = reapplyIntent;
+    setReapplyOpen(false);
+    if (choice === "cancel") {
+      onAuditEvent?.("サンプル再適用をキャンセルしました。");
+      setReapplyDetection(null);
+      return;
+    }
+    if (choice === "replace" && intent === "input_only") {
+      const snapshot = structuredClone(project);
+      try {
+        const next =
+          sampleKind === "CONTINUOUS"
+            ? applyContinuousGirderSampleInput(project)
+            : applySimpleSingleSpanSampleInput(project);
+        onProjectChange(next);
+        setGenerationMessage(
+          "サンプル値を入力しました。「構造を生成」を押して生成してください。",
+        );
+        onAuditEvent?.("サンプル再適用: 入力のみ置換");
+      } catch (error) {
+        onProjectChange(snapshot);
+        setGenerationMessage(
+          `入力置換に失敗しロールバックしました: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+      setReapplyDetection(null);
+      return;
+    }
+    const result =
+      choice === "create_new"
+        ? executeSampleReapplyCreateNew(project, sampleKind)
+        : executeSampleReapplyReplace(project, sampleKind);
+    setReapplyDetection(null);
+    if (result.ok) {
+      onProjectChange(result.project);
+      setGenerationMessage(
+        choice === "create_new"
+          ? "新規プロジェクトとしてサンプルを適用・生成しました（現プロジェクトは作業中データへ退避）。"
+          : "現在のプロジェクトをサンプル値で置換し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY）。",
+      );
+      onAuditEvent?.(
+        choice === "create_new" ? "サンプル再適用: 新規プロジェクト" : "サンプル再適用: 置換",
+      );
+      return;
+    }
+    onProjectChange(result.project);
+    setGenerationMessage(
+      `再適用に失敗しロールバックしました: ${result.diagnostics.join("; ")}`,
+    );
+    onAuditEvent?.("サンプル再適用失敗・rollback");
+  };
 
   const sectionProperties = useMemo(() => {
     if (!validation.complete || inputDraft.bridgeLength === null) {
@@ -395,33 +479,27 @@ export function BridgeStructureInputPanel({
               className="apollo-button-secondary"
               data-testid="apollo-continuous-sample-input"
               onClick={() => {
-                onProjectChange(applyContinuousGirderSampleInput(project));
-                setGenerationMessage(
-                  "連続桁の完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
-                );
-                onAuditEvent?.("連続桁の完全サンプル値を入力しました。");
+                const detection = detectSampleReapply(project, "CONTINUOUS");
+                if (!detection.requiresConfirmation) {
+                  onProjectChange(applyContinuousGirderSampleInput(project));
+                  setGenerationMessage(
+                    "連続桁の完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
+                  );
+                  onAuditEvent?.("連続桁の完全サンプル値を入力しました。");
+                  return;
+                }
+                setReapplyIntent("input_only");
+                setReapplyDetection(detection);
+                setReapplyOpen(true);
               }}
             >
               連続桁サンプル [30, 35, 30] を入力
             </button>
             <button
               type="button"
-              className="apollo-button-secondary"
+              className="apollo-button-primary"
               data-testid="apollo-continuous-sample-apply-generate"
-              onClick={() => {
-                const result = applyAndGenerateContinuousGirderSample(project);
-                if (result.ok) {
-                  onProjectChange(result.project);
-                  setGenerationMessage(
-                    "連続桁完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY）。",
-                  );
-                  onAuditEvent?.("連続桁完全サンプルを適用・生成しました。");
-                } else {
-                  onProjectChange(result.project);
-                  setGenerationMessage(`生成に失敗しました: ${result.diagnostics.join("; ")}`);
-                  onAuditEvent?.("連続桁完全サンプルの生成に失敗しました。");
-                }
-              }}
+              onClick={() => requestSampleApplyGenerate("CONTINUOUS")}
             >
               サンプルを適用して構造を生成
             </button>
@@ -433,11 +511,18 @@ export function BridgeStructureInputPanel({
               className="apollo-button-secondary"
               data-testid="apollo-sample-input"
               onClick={() => {
-                onProjectChange(applySimpleSingleSpanSampleInput(project));
-                setGenerationMessage(
-                  "完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
-                );
-                onAuditEvent?.("完全サンプル値を入力しました。");
+                const detection = detectSampleReapply(project, "SIMPLE_SINGLE");
+                if (!detection.requiresConfirmation) {
+                  onProjectChange(applySimpleSingleSpanSampleInput(project));
+                  setGenerationMessage(
+                    "完全サンプル値を入力しました。「構造を生成」を押して生成してください。",
+                  );
+                  onAuditEvent?.("完全サンプル値を入力しました。");
+                  return;
+                }
+                setReapplyIntent("input_only");
+                setReapplyDetection(detection);
+                setReapplyOpen(true);
               }}
             >
               動作確認用サンプル値を入力
@@ -446,20 +531,7 @@ export function BridgeStructureInputPanel({
               type="button"
               className="apollo-button-primary"
               data-testid="apollo-sample-apply-generate"
-              onClick={() => {
-                const result = applyAndGenerateSimpleSingleSpanSample(project);
-                if (result.ok) {
-                  onProjectChange(result.project);
-                  setGenerationMessage(
-                    "完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY / NOT_GRANTED）。",
-                  );
-                  onAuditEvent?.("完全サンプルを適用・生成しました。");
-                } else {
-                  onProjectChange(result.project);
-                  setGenerationMessage(`生成に失敗しました: ${result.diagnostics.join("; ")}`);
-                  onAuditEvent?.("完全サンプルの生成に失敗しました。");
-                }
-              }}
+              onClick={() => requestSampleApplyGenerate("SIMPLE_SINGLE")}
             >
               サンプルを適用して構造を生成
             </button>
@@ -478,6 +550,12 @@ export function BridgeStructureInputPanel({
           入力をクリア
         </button>
       </div>
+
+      <SampleReapplyConfirmDialog
+        open={reapplyOpen}
+        detection={reapplyDetection}
+        onChoice={handleReapplyChoice}
+      />
 
       <p className="apollo-inline-hint" data-testid="apollo-sample-disclaimer">
         {isContinuous ? CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER : SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER}

@@ -192,10 +192,24 @@ export {
   applyAndGenerateSimpleSingleSpanSample,
   applyContinuousGirderSampleInput,
   applySimpleSingleSpanSampleInput,
+  buildCompleteSampleDraft,
   clearBridgeStructureInput,
   deriveSingleSpanModelLength,
   type SampleApplyGenerateResult,
 } from "./sampleInputs";
+export {
+  detectSampleReapply,
+  diffProjectForSampleReapply,
+  executeSampleReapplyCreateNew,
+  executeSampleReapplyDirect,
+  executeSampleReapplyReplace,
+  type ReapplyDetectionKind,
+  type SampleKind,
+  type SampleReapplyChoice,
+  type SampleReapplyDetection,
+  type SampleReapplyDiffSummary,
+  type SampleReapplyTransactionResult,
+} from "./sampleReapply";
 export {
   BRIDGE_SYSTEM_LABELS,
   addContinuousSpan,
