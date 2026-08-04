@@ -72,7 +72,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
 
     const wf02 = page.getByTestId("apollo-wf-step-WF-02");
     await expect(wf02).toHaveAttribute("data-status", "STALE");
-    await expect(wf02).toContainText("要再生成");
+    await expect(wf02).toContainText("要再計算");
     await expect(page.getByTestId("apollo-wf-progress-recommended")).toContainText("WF-02");
   });
 
@@ -80,7 +80,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     await openWorkflowScreen(page);
 
     const wf01Badge = page.getByTestId("apollo-wf-step-WF-01").getByTestId("apollo-wf-status-blocked");
-    await expect(wf01Badge).toHaveAttribute("aria-label", expect.stringContaining("中断"));
+    await expect(wf01Badge).toHaveAttribute("aria-label", expect.stringContaining("先に必要な作業があります"));
 
     const recommendedBadge = page.getByTestId("apollo-wf-step-WF-02").getByTestId("apollo-wf-status-recommended");
     await expect(recommendedBadge).toHaveAttribute("aria-label", expect.stringContaining("推奨"));

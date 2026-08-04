@@ -6716,3 +6716,47 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+/* Apollo Step 5-JP2 — technical details / authorization banner */
+.apollo-technical-details {
+  margin-top: 0.5rem;
+}
+.apollo-technical-details-toggle {
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #8a8f98;
+  border-radius: 4px;
+  padding: 0.25rem 0.55rem;
+  color: #2c3340;
+}
+.apollo-technical-details-panel {
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.65rem;
+  background: #f4f6f8;
+  border: 1px solid #d0d5dd;
+  border-radius: 4px;
+}
+.apollo-technical-details-pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: #3a4150;
+}
+.apollo-authorization-banner {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid #b45309;
+  background: #fff7ed;
+}
+.apollo-authorization-banner-l1 {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: #7c2d12;
+}
+.apollo-authorization-banner-l2 {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  color: #5b4636;
+}

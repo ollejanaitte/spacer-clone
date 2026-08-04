@@ -3,6 +3,7 @@
  */
 
 import type { WorkflowDiagnostic, WorkflowStateModel, WorkflowStatus } from "./types";
+import { getStatusLabel } from "../i18n";
 
 export function blockingDiagnostics(model: WorkflowStateModel): readonly WorkflowDiagnostic[] {
   return model.diagnostics.filter((entry) => entry.blocking);
@@ -23,17 +24,18 @@ export function diagnosticsForStep(
   return model.steps.find((step) => step.workflowStepId === stepId)?.diagnostics ?? [];
 }
 
+/** JP1-B glossary labels via centralized catalog (Step 5-JP2). */
 export const STATUS_GROUP_LABELS: Record<WorkflowStatus, string> = {
-  NOT_STARTED: "未着手",
-  AVAILABLE: "開始可能",
-  RECOMMENDED: "推奨",
-  INCOMPLETE: "入力途中",
-  BLOCKED: "中断",
-  READY: "実行可能",
-  STALE: "要再生成",
-  WARNING: "警告あり",
-  ERROR: "エラー",
-  COMPLETE: "完了",
-  NOT_AUTHORIZED: "未認可",
-  OUT_OF_SCOPE: "範囲外",
+  NOT_STARTED: getStatusLabel("NOT_STARTED"),
+  AVAILABLE: getStatusLabel("AVAILABLE"),
+  RECOMMENDED: getStatusLabel("RECOMMENDED"),
+  INCOMPLETE: getStatusLabel("INCOMPLETE"),
+  BLOCKED: getStatusLabel("BLOCKED"),
+  READY: getStatusLabel("READY"),
+  STALE: getStatusLabel("STALE"),
+  WARNING: getStatusLabel("WARNING"),
+  ERROR: getStatusLabel("ERROR"),
+  COMPLETE: getStatusLabel("COMPLETE"),
+  NOT_AUTHORIZED: getStatusLabel("NOT_AUTHORIZED"),
+  OUT_OF_SCOPE: getStatusLabel("OUT_OF_SCOPE"),
 };

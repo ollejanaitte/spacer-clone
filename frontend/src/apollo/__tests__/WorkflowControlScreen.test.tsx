@@ -107,7 +107,7 @@ describe("WorkflowControlScreen (full model)", () => {
     const container = render(<WorkflowControlScreen project={project} onNavigate={() => undefined} onPrimaryAction={() => undefined} />);
     const stale = container.querySelector("[data-testid='apollo-wf-step-WF-02']");
     expect(stale?.getAttribute("data-status")).toBe("STALE");
-    expect(stale?.textContent).toContain("要再生成");
+    expect(stale?.textContent).toContain("要再計算");
     expect(container.querySelector("[data-testid='apollo-wf-progress-recommended']")?.textContent).toContain("WF-02");
   });
 
