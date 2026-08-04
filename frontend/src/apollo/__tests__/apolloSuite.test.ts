@@ -60,6 +60,7 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "step5r1SampleReapply.test.ts",
   "step5r2TrueLSection.test.ts",
   "step5r3CrossFrameAttachments.test.ts",
+  "step5r4EvidenceHarvest.test.ts",
   "testingHelpers.test.ts",
   "unit2Draft.test.ts",
   "unsavedChangesGuard.test.ts",

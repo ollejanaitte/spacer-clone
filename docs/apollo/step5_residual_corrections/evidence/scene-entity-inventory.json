@@ -1,0 +1,27 @@
+{
+  "solidCount": 188,
+  "bracingCount": 102,
+  "swayCount": 30,
+  "crossBeamCount": 7,
+  "sectionImplementation": [
+    2
+  ],
+  "trueLPolygon": true,
+  "twoPlateAbsent": true,
+  "crossFrameAssumption": true,
+  "schemaVersion": "1.5.0-development",
+  "crossFrameAttachment": {
+    "pattern": "V",
+    "upperAttachmentDepthFromGirderTop": 0.15,
+    "lowerAttachmentDepthFromGirderTop": 1.7,
+    "centerNodeDepthFromGirderTop": null,
+    "provenance": "USER_PROVIDED_UNVERIFIED",
+    "status": "DEVELOPMENT"
+  },
+  "lAngleAreaM2": 0.001269,
+  "expectedUpperZ": -0.15,
+  "engineeringCorrectness": "NOT_AUTHORIZED",
+  "er001": "PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED",
+  "er002": "TRUE_L_GEOMETRY_IMPLEMENTED",
+  "formalAuthorization": "NOT_GRANTED"
+}
