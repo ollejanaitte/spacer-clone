@@ -15,3 +15,8 @@
 | `jp2_implementation_plan.md` / `jp3_e2e_plan.md` | JP2/JP3 plans |
 | `evidence/jp1d/gate_results.txt` | JP1-D completion gate results |
 | `07_completion_gate.md` | Completion gate |
+
+## JP3 evidence
+
+- `jp3/` live DOM audit, residual fixes, GUI/E2E, completion gate
+- See `jp3/jp3_completion_gate.md`
