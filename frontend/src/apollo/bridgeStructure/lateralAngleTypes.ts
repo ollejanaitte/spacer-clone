@@ -1,4 +1,6 @@
-/** Lateral / sway L-angle section (DEC-S5-0007 / 0008). */
+/** Lateral / sway L-angle section (DEC-S5-0007 / 0008 / Step 5-R R2). */
+
+import type { LAngleOrientation } from "./lAnglePolygon";
 
 export type ApolloLateralAngleSectionDraft = {
   /** When true, bracing solids use L-angle instead of Ø cylinder. */
@@ -8,6 +10,8 @@ export type ApolloLateralAngleSectionDraft = {
   readonly thickness: number | null;
   /** Catalog provenance label shown in UI. */
   readonly catalogId: string;
+  /** Section orientation relative to member local axes (ER-002 development). */
+  readonly orientation: LAngleOrientation;
 };
 
 export const LATERAL_ANGLE_CATALOG_ID = "CAT-S5-LAT-UNVERIFIED";
@@ -17,6 +21,7 @@ export const LATERAL_ANGLE_CATALOG_DEFAULTS = {
   legA: 0.075,
   legB: 0.075,
   thickness: 0.009,
+  orientation: "LEG_A_ALONG_LOCAL_Y" as LAngleOrientation,
 } as const;
 
 export function createDefaultLateralAngleSection(): ApolloLateralAngleSectionDraft {
@@ -26,5 +31,6 @@ export function createDefaultLateralAngleSection(): ApolloLateralAngleSectionDra
     legB: LATERAL_ANGLE_CATALOG_DEFAULTS.legB,
     thickness: LATERAL_ANGLE_CATALOG_DEFAULTS.thickness,
     catalogId: LATERAL_ANGLE_CATALOG_ID,
+    orientation: LATERAL_ANGLE_CATALOG_DEFAULTS.orientation,
   };
 }

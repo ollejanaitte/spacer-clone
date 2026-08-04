@@ -145,6 +145,15 @@ export {
   parseLateralAngleSection,
 } from "./lateralAngleModel";
 export {
+  buildLAnglePolygon,
+  computeLAngleAreaM2,
+  computeLAngleVolumeM3,
+  validateLAngleSectionParams,
+  type LAngleOrientation,
+  type LAnglePolygonResult,
+  type LAngleSectionParams,
+} from "./lAnglePolygon";
+export {
   GEOMETRY_FORMULA_IDS,
   deriveLengthMeters,
   deriveMainGirderOffsets,

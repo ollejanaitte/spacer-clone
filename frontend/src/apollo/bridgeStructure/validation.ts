@@ -36,6 +36,7 @@ import {
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
@@ -242,12 +243,13 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
 
   if (
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION &&
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY
   ) {
     diagnostics.push(
-      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
+      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
     );
   }
 
@@ -406,6 +408,8 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
   }
 
   // Legacy → current: missing pavement/markings/L-angle migrate without inventing solids.
+  // Legacy through 1.2 may invent pavement/L-angle defaults → force STALE.
+  // 1.3 → 1.4 only adds orientation default; preserve generatedAt.
   const migratedFromLegacy =
     raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY ||
     raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 ||

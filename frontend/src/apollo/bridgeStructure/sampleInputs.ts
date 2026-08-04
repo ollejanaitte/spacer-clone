@@ -195,6 +195,7 @@ export function buildCompleteSampleDraft(
       legB: SAMPLE_PRESET_CATALOG.lateralAngleLegBM,
       thickness: SAMPLE_PRESET_CATALOG.lateralAngleThicknessM,
       catalogId: LATERAL_ANGLE_CATALOG_ID,
+      orientation: "LEG_A_ALONG_LOCAL_Y",
     },
     generatedAt: null,
   };

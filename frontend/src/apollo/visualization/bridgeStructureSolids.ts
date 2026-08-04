@@ -490,6 +490,7 @@ function buildBracingMember(
           thickness: angleSection!.thickness!,
           sectionType: 1,
           bracingSystem,
+          sectionImplementation: 2, // 2 = true L polygon (Step 5-R); 1 was two-plate
         }
       : {
           length: oriented.length,
@@ -810,7 +811,7 @@ export function buildBridgeStructureSolidGeometryParameters(
     {
       code: "dec-s5-0007-lateral-l-angle",
       message: input.lateralAngleSection.enabled
-        ? `Lateral/sway members use L-angle section (${input.lateralAngleSection.catalogId}) — UNVERIFIED pending ER-002.`
+        ? `Lateral/sway members use true L-polygon extrusion (${input.lateralAngleSection.catalogId}, ${input.lateralAngleSection.orientation}, SHARP_CORNER_DEVELOPMENT) — UNVERIFIED pending ER-002.`
         : "Lateral/sway members use legacy cylinder section (L-angle disabled).",
     },
   );

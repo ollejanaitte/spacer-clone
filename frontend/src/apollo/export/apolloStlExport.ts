@@ -1,4 +1,4 @@
-import { booleans, maths, modifiers, primitives, transforms } from "@jscad/modeling";
+import { booleans, extrusions, maths, modifiers, primitives, transforms } from "@jscad/modeling";
 import { serialize } from "@jscad/stl-serializer";
 import type {
   ApolloSolidGeometryParameter,
@@ -347,8 +347,42 @@ function buildBracingGeometry(
   originShiftMm: readonly [number, number, number],
 ): JscadGeom3 {
   const length = toMillimeters(solid.dimensionsM.length);
+  if (!isPositiveFinite(length)) {
+    throw new Error("invalid bracing dimensions");
+  }
+
+  if (solid.dimensionsM.sectionType === 1) {
+    const legA = toMillimeters(solid.dimensionsM.legA);
+    const legB = toMillimeters(solid.dimensionsM.legB);
+    const thickness = toMillimeters(solid.dimensionsM.thickness);
+    if (
+      !isPositiveFinite(legA) ||
+      !isPositiveFinite(legB) ||
+      !isPositiveFinite(thickness) ||
+      !(legA > thickness) ||
+      !(legB > thickness)
+    ) {
+      throw new Error("invalid L-angle bracing dimensions");
+    }
+    // True L polygon (mm) extruded along Z then rotated to member X.
+    const polygon2d = primitives.polygon({
+      points: [
+        [0, 0],
+        [legA, 0],
+        [legA, thickness],
+        [thickness, thickness],
+        [thickness, legB],
+        [0, legB],
+      ],
+    });
+    const extruded = extrusions.extrudeLinear({ height: length }, polygon2d) as JscadGeom3;
+    const centered = transforms.translate([0, 0, -length / 2], extruded) as JscadGeom3;
+    const aligned = transforms.rotateY(-Math.PI / 2, centered) as JscadGeom3;
+    return placeGeometry(aligned, solid, originShiftMm);
+  }
+
   const diameter = toMillimeters(solid.dimensionsM.diameter);
-  if (!isPositiveFinite(length) || !isPositiveFinite(diameter)) {
+  if (!isPositiveFinite(diameter)) {
     throw new Error("invalid bracing dimensions");
   }
   const base = transforms.rotateY(Math.PI / 2, primitives.cylinder({
