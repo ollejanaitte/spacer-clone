@@ -96,6 +96,8 @@ import type {
   StructuredMessage,
 } from "../types";
 import { getButtonLabel } from "./i18n";
+import { SaveStatusBadge } from "./components/SaveStatusBadge";
+import { CompactAuthorizationBadge } from "./components/CompactAuthorizationBadge";
 
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
@@ -2284,12 +2286,24 @@ export function ApolloPhase1Shell({
           </p>
         </div>
         <div className="apollo-unit2-header-actions">
-          <button type="button" onClick={() => setMode("guided")}>ガイド付きモード</button>
-          <button type="button" onClick={() => setMode("list")}>一覧編集モード</button>
-          <button type="button" onClick={openOnboarding}>操作ガイド</button>
-          <button type="button" data-testid="apollo-reload-project" onClick={() => void openFromFile()} disabled={persisting !== null}>ファイルを開く</button>
-          <button type="button" data-testid="apollo-save-project" onClick={() => void saveToFile()} disabled={persisting !== null}>{persisting === "save" ? "保存中..." : "保存"}</button>
-          <button type="button" onClick={onReturnToPro} data-testid="apollo-return-to-pro">メニューへ戻る</button>
+          <div className="apollo-header-group apollo-header-mode-group" role="group" aria-label="表示モード">
+            <button type="button" className={mode === "guided" ? "apollo-header-active" : ""} onClick={() => setMode("guided")}>ガイド付き</button>
+            <button type="button" className={mode === "list" ? "apollo-header-active" : ""} onClick={() => setMode("list")}>一覧編集</button>
+          </div>
+          <div className="apollo-header-group apollo-header-file-group" role="group" aria-label="ファイル操作">
+            <button type="button" data-testid="apollo-reload-project" onClick={() => void openFromFile()} disabled={persisting !== null}>開く</button>
+            <button type="button" data-testid="apollo-save-project" onClick={() => void saveToFile()} disabled={persisting !== null}>{persisting === "save" ? "保存中..." : "保存"}</button>
+            <SaveStatusBadge isDirty={isDirty} persisting={persisting} />
+          </div>
+          <div className="apollo-header-group apollo-header-nav-group" role="group" aria-label="ナビゲーション">
+            <button type="button" onClick={onReturnToPro} data-testid="apollo-return-to-pro">← メニューへ戻る</button>
+          </div>
+          <div className="apollo-header-group apollo-header-help-group" role="group" aria-label="ヘルプ">
+            <button type="button" onClick={openOnboarding}>ⓘ 操作ガイド</button>
+          </div>
+          <div className="apollo-header-group apollo-header-auth-group">
+            <CompactAuthorizationBadge />
+          </div>
         </div>
       </header>
 

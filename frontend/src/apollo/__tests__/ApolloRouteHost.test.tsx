@@ -88,7 +88,7 @@ describe("ApolloRouteHost", () => {
     const { container } = renderRouteHost({ initialProject });
 
     const listModeButton = Array.from(container.querySelectorAll("button")).find((button) =>
-      button.textContent?.includes("一覧編集モード"),
+      button.textContent?.includes("一覧編集"),
     ) as HTMLButtonElement | undefined;
     act(() => {
       listModeButton?.click();
@@ -136,7 +136,7 @@ describe("ApolloRouteHost", () => {
     const { container } = renderRouteHost({ initialProject, onSaveProject, onReloadProject });
 
     const listModeButton = Array.from(container.querySelectorAll("button")).find((button) =>
-      button.textContent?.includes("一覧編集モード"),
+      button.textContent?.includes("一覧編集"),
     ) as HTMLButtonElement | undefined;
     act(() => {
       listModeButton?.click();
@@ -190,7 +190,7 @@ describe("ApolloRouteHost", () => {
     const { container } = renderRouteHost({ initialProject });
 
     const listModeButton = Array.from(container.querySelectorAll("button")).find((button) =>
-      button.textContent?.includes("一覧編集モード"),
+      button.textContent?.includes("一覧編集"),
     ) as HTMLButtonElement | undefined;
     act(() => {
       listModeButton?.click();

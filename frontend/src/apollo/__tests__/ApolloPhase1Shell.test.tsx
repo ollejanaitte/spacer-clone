@@ -256,7 +256,7 @@ describe("ApolloPhase1Shell", () => {
     act(() => {
       (container.querySelectorAll("button")).forEach(() => undefined);
       (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
-        button.textContent?.includes("一覧編集モード"),
+        button.textContent?.includes("一覧編集"),
       )?.click();
     });
 
@@ -267,7 +267,7 @@ describe("ApolloPhase1Shell", () => {
 
   it("passes the derived Apollo visualization model to Viewer3D", () => {
     const { container } = renderShell({ project: createApollo200mContinuousBridgeSample() });
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
     const viewer = container.querySelector("[data-testid='mock-viewer3d']");
     expect(viewer).not.toBeNull();
     expect(viewer?.getAttribute("data-visualization-elements")).not.toBe("0");
@@ -281,7 +281,7 @@ describe("ApolloPhase1Shell", () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
     const { container } = renderShell({ project: createApollo200mContinuousBridgeSample() });
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
     const exportButton = container.querySelector("[data-testid='apollo-export-stl']") as HTMLButtonElement | null;
     expect(exportButton).not.toBeNull();
     act(() => {
@@ -298,8 +298,8 @@ describe("ApolloPhase1Shell", () => {
   it("shows basics screen and Japanese save status", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
-    clickButtonByText(container, "ガイド付きモード");
+    clickButtonByText(container, "一覧編集");
+    clickButtonByText(container, "ガイド付き");
     clickButtonByText(container, "サンプルを選ぶ");
     clickButtonByText(container, "このサンプルを読み込む");
     clickButtonByText(container, "次へ（基本情報）");
@@ -354,7 +354,7 @@ describe("ApolloPhase1Shell", () => {
 
     act(() => {
       (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
-        button.textContent?.includes("一覧編集モード"),
+        button.textContent?.includes("一覧編集"),
       )?.click();
     });
 
@@ -398,7 +398,7 @@ describe("ApolloPhase1Shell", () => {
 
     act(() => {
       (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
-        button.textContent?.includes("一覧編集モード"),
+        button.textContent?.includes("一覧編集"),
       )?.click();
     });
 
@@ -416,12 +416,12 @@ describe("ApolloPhase1Shell", () => {
 
     act(() => {
       (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
-        button.textContent?.includes("一覧編集モード"),
+        button.textContent?.includes("一覧編集"),
       )?.click();
     });
     act(() => {
       (Array.from(container.querySelectorAll("button")) as HTMLButtonElement[]).find((button) =>
-        button.textContent?.includes("ガイド付きモード"),
+        button.textContent?.includes("ガイド付き"),
       )?.click();
     });
     clickButtonByText(container, "サンプルを選ぶ");
@@ -461,7 +461,7 @@ describe("ApolloPhase1Shell", () => {
   it("clears viewer focus when multiple rows are selected", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
     const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
@@ -483,7 +483,7 @@ describe("ApolloPhase1Shell", () => {
   it("projects a support selection to the viewer and accepts support picks from the viewer", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
     clickButtonByText(container, "支点");
 
     const supportSelect = container.querySelector("[data-testid='apollo-support-select-SUP-1']") as HTMLButtonElement;
@@ -509,7 +509,7 @@ describe("ApolloPhase1Shell", () => {
     }
     const { container } = renderStatefulShell(project);
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
     clickButtonByText(container, "部材");
 
     const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
@@ -531,7 +531,7 @@ describe("ApolloPhase1Shell", () => {
     const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
     const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
@@ -560,7 +560,7 @@ describe("ApolloPhase1Shell", () => {
   it("blocks bulk edit when fewer than two selected rows are visible while keeping hidden selection", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
     const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
@@ -590,7 +590,7 @@ describe("ApolloPhase1Shell", () => {
     const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const first = container.querySelector("[data-testid='apollo-node-select-N-A1']") as HTMLButtonElement;
     const second = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
@@ -642,7 +642,7 @@ describe("ApolloPhase1Shell", () => {
   it("selects only visible rows with Ctrl/Cmd+A after filtering", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const query = container.querySelector("[data-testid='apollo-search-query']") as HTMLInputElement;
     act(() => {
@@ -666,7 +666,7 @@ describe("ApolloPhase1Shell", () => {
     const { container } = renderStatefulShell(brokenSample);
     const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const navigateButton = Array.from(
       container.querySelectorAll("[data-testid='apollo-validation-list'] li"),
@@ -698,7 +698,7 @@ describe("ApolloPhase1Shell", () => {
     }
     const { container } = renderStatefulShell(brokenSample);
 
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const navigateButton = Array.from(
       container.querySelectorAll("[data-testid='apollo-validation-list'] li"),
@@ -726,7 +726,7 @@ describe("ApolloPhase1Shell", () => {
 
   it("copies only visible selected rows while filter-hidden selection is retained", () => {
     const { container } = renderStatefulShell(createApollo200mContinuousBridgeSample());
-    clickButtonByText(container, "一覧編集モード");
+    clickButtonByText(container, "一覧編集");
 
     const first = container.querySelector("[data-testid='apollo-node-select-N-P1']") as HTMLButtonElement;
     const second = container.querySelector("[data-testid='apollo-node-select-N-P2']") as HTMLButtonElement;
