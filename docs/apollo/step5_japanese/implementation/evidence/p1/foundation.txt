@@ -1,0 +1,8 @@
+JP2-P1 foundation evidence
+- i18n module: frontend/src/apollo/i18n/*
+- TechnicalDetails + AuthorizationBanner components
+- STATUS_GROUP_LABELS wired to getStatusLabel
+- vitest: src/apollo/i18n + WorkflowControlScreen + workflow → PASS
+- tsc -b → PASS
+- APPLICATION_CODE_CHANGED: YES (frontend only)
+- schema/enum/save data: unchanged

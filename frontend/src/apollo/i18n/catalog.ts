@@ -1,0 +1,154 @@
+/** Auto-derived from docs/apollo/step5_japanese catalogs (JP1). Do not ad-hoc edit labels. */
+export const MISSING_LABEL_JA = "表示文言未登録" as const;
+
+export type CatalogEntry = { primaryJa: string; shortJa: string; descriptionJa: string; technicalEn: string };
+
+export const STATUS_CATALOG: Record<string, CatalogEntry> = {
+  'COMPLETE': { primaryJa: '完了', shortJa: '完了', descriptionJa: '工程または成果が完了している', technicalEn: 'COMPLETE' },
+  'STALE': { primaryJa: '要再計算', shortJa: '要再計算', descriptionJa: '入力変更により再計算・再生成が必要', technicalEn: 'STALE' },
+  'BLOCKED': { primaryJa: '先に必要な作業があります', shortJa: '前提未完了', descriptionJa: '前提工程が未完了のため進めない', technicalEn: 'BLOCKED' },
+  'NOT_STARTED': { primaryJa: '未着手', shortJa: '未着手', descriptionJa: 'まだ開始していない', technicalEn: 'NOT_STARTED' },
+  'AVAILABLE': { primaryJa: '操作可能', shortJa: '操作可', descriptionJa: 'ユーザーが操作を開始できる', technicalEn: 'AVAILABLE' },
+  'RECOMMENDED': { primaryJa: '推奨', shortJa: '推奨', descriptionJa: '次に進める推奨工程', technicalEn: 'RECOMMENDED' },
+  'INCOMPLETE': { primaryJa: '入力不足', shortJa: '入力不足', descriptionJa: '必須入力が不足', technicalEn: 'INCOMPLETE' },
+  'READY': { primaryJa: '準備完了', shortJa: '準備完了', descriptionJa: '実行・生成の準備ができている', technicalEn: 'READY' },
+  'WARNING': { primaryJa: '注意', shortJa: '注意', descriptionJa: '続行可能だが確認が必要', technicalEn: 'WARNING' },
+  'ERROR': { primaryJa: 'エラー', shortJa: 'エラー', descriptionJa: '進行を止める誤り', technicalEn: 'ERROR' },
+  'NOT_AUTHORIZED': { primaryJa: '正式認可なし', shortJa: '認可なし', descriptionJa: '正式な構造・数値認可がない', technicalEn: 'NOT_AUTHORIZED' },
+  'OUT_OF_SCOPE': { primaryJa: '対象外', shortJa: '対象外', descriptionJa: '本製品範囲外', technicalEn: 'OUT_OF_SCOPE' },
+  'GENERATION_CURRENT': { primaryJa: '生成結果は最新', shortJa: '最新', descriptionJa: '生成成果が現入力と一致', technicalEn: 'GENERATION_CURRENT' },
+  'INPUT_ONLY': { primaryJa: '入力のみ（未生成）', shortJa: '入力のみ', descriptionJa: '入力はあるが成果未生成', technicalEn: 'INPUT_ONLY' },
+  'IMPLEMENTED': { primaryJa: '実装済み', shortJa: '実装済', descriptionJa: '機能が利用可能', technicalEn: 'IMPLEMENTED' },
+  'PLANNED': { primaryJa: '計画中', shortJa: '計画中', descriptionJa: '将来実装・現在は選択不可寄り', technicalEn: 'PLANNED' },
+  'UNAVAILABLE': { primaryJa: '選択不可', shortJa: '不可', descriptionJa: '現在選択できない', technicalEn: 'UNAVAILABLE' },
+};
+
+export const STATUS_MESSAGE_CATALOG: Record<string, { l1: string; l2: string; nextAction: string; l3: string }> = {
+  'COMPLETE': { l1: '完了', l2: '工程または成果が完了している', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'COMPLETE' },
+  'STALE': { l1: '要再計算', l2: '入力変更により再計算・再生成が必要', nextAction: '入力を確認し、再計算・再生成してください。', l3: 'STALE' },
+  'BLOCKED': { l1: '先に必要な作業があります', l2: '前提工程が未完了のため進めない', nextAction: '先に必要な工程を完了してください。', l3: 'BLOCKED' },
+  'NOT_STARTED': { l1: '未着手', l2: 'まだ開始していない', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'NOT_STARTED' },
+  'AVAILABLE': { l1: '操作可能', l2: 'ユーザーが操作を開始できる', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'AVAILABLE' },
+  'RECOMMENDED': { l1: '推奨', l2: '次に進める推奨工程', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'RECOMMENDED' },
+  'INCOMPLETE': { l1: '入力不足', l2: '必須入力が不足', nextAction: '不足している入力を埋めてください。', l3: 'INCOMPLETE' },
+  'READY': { l1: '準備完了', l2: '実行・生成の準備ができている', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'READY' },
+  'WARNING': { l1: '注意', l2: '続行可能だが確認が必要', nextAction: '注意事項を確認してから続行してください。', l3: 'WARNING' },
+  'ERROR': { l1: 'エラー', l2: '進行を止める誤り', nextAction: 'エラー内容を解消してください。', l3: 'ERROR' },
+  'NOT_AUTHORIZED': { l1: '正式認可なし', l2: '正式な構造・数値認可がない', nextAction: '正式認可があるまで設計・施工に用いないでください。', l3: 'NOT_AUTHORIZED' },
+  'OUT_OF_SCOPE': { l1: '対象外', l2: '本製品範囲外', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'OUT_OF_SCOPE' },
+  'GENERATION_CURRENT': { l1: '生成結果は最新', l2: '生成成果が現入力と一致', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'GENERATION_CURRENT' },
+  'INPUT_ONLY': { l1: '入力のみ（未生成）', l2: '入力はあるが成果未生成', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'INPUT_ONLY' },
+  'IMPLEMENTED': { l1: '実装済み', l2: '機能が利用可能', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'IMPLEMENTED' },
+  'PLANNED': { l1: '計画中', l2: '将来実装・現在は選択不可寄り', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'PLANNED' },
+  'UNAVAILABLE': { l1: '選択不可', l2: '現在選択できない', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'UNAVAILABLE' },
+};
+
+export const MEMBER_CATALOG: Record<string, CatalogEntry> = {
+  'MAIN_GIRDER': { primaryJa: '主桁', shortJa: '主桁', descriptionJa: '橋軸方向の主たる鋼桁', technicalEn: 'main girder' },
+  'CROSS_BEAM': { primaryJa: '横桁', shortJa: '横桁', descriptionJa: '主桁間を結ぶ横桁。対傾構とは別', technicalEn: 'cross beam' },
+  'CROSS_FRAME': { primaryJa: '対傾構', shortJa: '対傾構', descriptionJa: '主桁間の対傾構（sway）。横桁とは別', technicalEn: 'cross frame / sway bracing' },
+  'UPPER_LATERAL_BRACING': { primaryJa: '上横構', shortJa: '上横構', descriptionJa: '上フランジ側水平ブレース', technicalEn: 'upper lateral bracing' },
+  'LOWER_LATERAL_BRACING': { primaryJa: '下横構', shortJa: '下横構', descriptionJa: '下フランジ側水平ブレース', technicalEn: 'lower lateral bracing' },
+  'RC_DECK': { primaryJa: 'RC床版', shortJa: '床版', descriptionJa: '鉄筋コンクリート床版', technicalEn: 'RC deck' },
+  'HAUNCH': { primaryJa: 'ハンチ', shortJa: 'ハンチ', descriptionJa: '床版ハンチ', technicalEn: 'haunch' },
+  'CURB': { primaryJa: '地覆', shortJa: '地覆', descriptionJa: '地覆', technicalEn: 'curb' },
+  'WALL_RAILING': { primaryJa: '壁高欄', shortJa: '壁高欄', descriptionJa: '壁高欄', technicalEn: 'wall railing' },
+  'MEDIAN': { primaryJa: '中央分離帯', shortJa: '中央分離帯', descriptionJa: '中央分離帯', technicalEn: 'median' },
+  'OPTIONAL_BARRIER': { primaryJa: '任意防護柵', shortJa: '防護柵', descriptionJa: '任意の防護柵', technicalEn: 'optional barrier' },
+  'PAVEMENT': { primaryJa: '舗装', shortJa: '舗装', descriptionJa: '舗装', technicalEn: 'pavement' },
+  'ROAD_MARKING': { primaryJa: '区画線', shortJa: '区画線', descriptionJa: '区画線', technicalEn: 'road marking' },
+  'SUPPORT': { primaryJa: '支承', shortJa: '支承', descriptionJa: '支承', technicalEn: 'support / bearing' },
+  'L_SECTION': { primaryJa: 'L形断面', shortJa: 'L形', descriptionJa: '一体L形断面（対傾構等）', technicalEn: 'true L-section' },
+  'LEFT_CURB': { primaryJa: '左側地覆', shortJa: '左地覆', descriptionJa: '左側地覆スロット', technicalEn: 'LEFT_CURB' },
+  'RIGHT_CURB': { primaryJa: '右側地覆', shortJa: '右地覆', descriptionJa: '右側地覆スロット', technicalEn: 'RIGHT_CURB' },
+  'SWAY_BRACING': { primaryJa: '対傾構', shortJa: '対傾構', descriptionJa: '対傾構（sway）。横桁とは別', technicalEn: 'sway bracing' },
+};
+
+export const WORKFLOW_STEP_CATALOG: Record<string, CatalogEntry> = {
+  'WF-01': { primaryJa: '道路線形', shortJa: '道路線形', descriptionJa: 'LINER連携の道路線形（計画中）', technicalEn: 'WF-01' },
+  'WF-02': { primaryJa: '橋梁基本条件', shortJa: '基本条件', descriptionJa: '橋梁構造の基本入力', technicalEn: 'WF-02' },
+  'WF-03': { primaryJa: '床版・橋面付属物', shortJa: '床版付属物', descriptionJa: '床版・付属物入力', technicalEn: 'WF-03' },
+  'WF-04': { primaryJa: '主桁断面', shortJa: '主桁断面', descriptionJa: '主桁断面入力', technicalEn: 'WF-04' },
+  'WF-05': { primaryJa: 'ハンチ', shortJa: 'ハンチ', descriptionJa: 'ハンチ入力', technicalEn: 'WF-05' },
+  'WF-06': { primaryJa: '添接・フィラー', shortJa: '添接', descriptionJa: '添接・フィラー（計画中）', technicalEn: 'WF-06' },
+  'WF-07': { primaryJa: '荷重', shortJa: '荷重', descriptionJa: '荷重確認', technicalEn: 'WF-07' },
+  'WF-08': { primaryJa: '構造解析', shortJa: '解析', descriptionJa: '構造解析', technicalEn: 'WF-08' },
+  'WF-09': { primaryJa: '候補照査', shortJa: '照査', descriptionJa: '候補照査', technicalEn: 'WF-09' },
+  'WF-10': { primaryJa: '数量', shortJa: '数量', descriptionJa: '数量算出', technicalEn: 'WF-10' },
+  'WF-11': { primaryJa: '3D確認', shortJa: '3D', descriptionJa: '3D可視化確認', technicalEn: 'WF-11' },
+  'WF-12': { primaryJa: '計算書', shortJa: '計算書', descriptionJa: '計算書出力', technicalEn: 'WF-12' },
+  'WF-13': { primaryJa: '図面', shortJa: '図面', descriptionJa: '図面出力', technicalEn: 'WF-13' },
+  'WF-14': { primaryJa: '成果品出力', shortJa: '成果品', descriptionJa: '成果品一式出力', technicalEn: 'WF-14' },
+  'WF-15': { primaryJa: 'ユーザー確認', shortJa: '確認', descriptionJa: '人間による確認・承認相当操作', technicalEn: 'WF-15' },
+};
+
+export const BUTTON_CATALOG: Record<string, { labelJa: string; shortJa: string }> = {
+  'APPLY_SAMPLE': { labelJa: 'サンプルを適用', shortJa: '適用' },
+  'Apply Sample': { labelJa: 'サンプルを適用', shortJa: '適用' },
+  'APPLY_GENERATE': { labelJa: 'サンプルを適用して3Dを生成', shortJa: '適用して生成' },
+  'Apply & Generate': { labelJa: 'サンプルを適用して3Dを生成', shortJa: '適用して生成' },
+  'SAVE_NEXT': { labelJa: '保存して次へ', shortJa: '次へ' },
+  'Save and Next': { labelJa: '保存して次へ', shortJa: '次へ' },
+  'OPEN_DETAIL': { labelJa: '詳細編集を開く', shortJa: '詳細' },
+  'Open Detail': { labelJa: '詳細編集を開く', shortJa: '詳細' },
+  'REGENERATE': { labelJa: '再計算・再生成', shortJa: '再生成' },
+  'Regenerate': { labelJa: '再計算・再生成', shortJa: '再生成' },
+  'CREATE_NEW': { labelJa: '新規プロジェクトとして開く', shortJa: '新規' },
+  'Create New': { labelJa: '新規プロジェクトとして開く', shortJa: '新規' },
+  'REPLACE': { labelJa: '現在の入力を置き換える', shortJa: '置き換え' },
+  'Replace Current': { labelJa: '現在の入力を置き換える', shortJa: '置き換え' },
+  'CANCEL': { labelJa: 'キャンセル', shortJa: 'キャンセル' },
+  'Cancel': { labelJa: 'キャンセル', shortJa: 'キャンセル' },
+  'SHOW_TECH': { labelJa: '技術情報を表示', shortJa: '技術情報' },
+  'Show Technical Details': { labelJa: '技術情報を表示', shortJa: '技術情報' },
+  'EXPORT_STL': { labelJa: 'STLを出力', shortJa: 'STL出力' },
+  'Export STL': { labelJa: 'STLを出力', shortJa: 'STL出力' },
+};
+
+export const FIELD_CATALOG: Record<string, { labelJa: string; units: string }> = {
+  'crossBeamSpacing': { labelJa: '横桁間隔', units: 'm' },
+  'swayBracingInterval': { labelJa: '対傾構間隔', units: 'm' },
+  'upperAttachmentDepthFromGirderTop': { labelJa: '上側取付深さ（主桁上面基準）', units: 'm' },
+  'lowerAttachmentDepthFromGirderTop': { labelJa: '下側取付深さ（主桁上面基準）', units: 'm' },
+  'midAttachmentDepthFromGirderTop': { labelJa: '中央取付深さ（主桁上面基準）', units: 'm' },
+  'presence': { labelJa: '有無', units: '-' },
+  'unitWeightStatus': { labelJa: '単位重量ステータス', units: '-' },
+  'haunchShape': { labelJa: 'ハンチ形状', units: '-' },
+  'workflowAnchor': { labelJa: '関連工程', units: '-' },
+};
+
+export const AUTHORIZATION_CATALOG: Record<string, { l1: string; l2: string; l3: string }> = {
+  'NOT_GRANTED': { l1: '正式認可なし', l2: '数値設計の正式認可は付与されていない', l3: 'NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED' },
+  'PROHIBITED': { l1: '設計・施工への使用禁止', l2: '設計・施工目的での使用は禁止', l3: 'DESIGN_OR_CONSTRUCTION_USE: PROHIBITED' },
+  'UNVERIFIED_DEVELOPMENT_ONLY': { l1: '開発確認用・未検証', l2: '開発確認専用で検証されていない', l3: 'UNVERIFIED_DEVELOPMENT_ONLY' },
+  'PENDING_HUMAN_ENGINEERING_REVIEW': { l1: '技術者による確認待ち', l2: '人間の技術レビュー待ち', l3: 'PENDING_HUMAN_ENGINEERING_REVIEW' },
+  'NOT_FOR_DESIGN_OR_CONSTRUCTION': { l1: '設計・施工には使用しないでください', l2: '設計・施工に用いてはならない', l3: 'NOT FOR DESIGN OR CONSTRUCTION' },
+  'USER_REVIEW_REQUIRED': { l1: '利用者確認が必要', l2: '利用者が内容を確認する必要がある', l3: 'USER REVIEW REQUIRED' },
+  'NOT_FOR_ESTIMATE': { l1: '積算には使用しないでください', l2: '積算目的での使用禁止', l3: 'NOT FOR ESTIMATE' },
+  'NO_GO_PENDING_HUMAN_VALIDATION': { l1: '正式リリース未達（人的検証待ち）', l2: '正式リリース準備未完了', l3: 'FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION' },
+  'STRUCTURAL_ENGINEERING_CORRECTNESS': { l1: '構造工学的正しさは未認可', l2: '構造としての正しさは認可されていない', l3: 'STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED' },
+};
+
+export const DIAGNOSTIC_CATALOG: Record<string, { l1: string; l2: string; nextAction: string; code: string }> = {
+  'resultState=STALE': { l1: '要再計算', l2: '入力変更により生成結果が一致しません。', nextAction: '再計算・再生成を実行してください。', code: 'resultState=STALE' },
+  'WE-STALE-GEN': { l1: '要再計算', l2: '入力変更により生成結果が一致しません。', nextAction: '再計算・再生成を実行してください。', code: 'resultState=STALE' },
+  'WF_PREREQUISITE_INCOMPLETE': { l1: '先に必要な作業があります', l2: '前提工程が未完了です。', nextAction: '推奨工程を開いて入力を完了してください。', code: 'WF_PREREQUISITE_INCOMPLETE' },
+  'WE-PREREQ': { l1: '先に必要な作業があります', l2: '前提工程が未完了です。', nextAction: '推奨工程を開いて入力を完了してください。', code: 'WF_PREREQUISITE_INCOMPLETE' },
+  'VALIDATION_ERROR': { l1: '入力に誤りがあります', l2: '赤表示の項目を修正してください。', nextAction: '修正後に再度保存してください。', code: 'VALIDATION_ERROR' },
+  'WE-VALIDATION': { l1: '入力に誤りがあります', l2: '赤表示の項目を修正してください。', nextAction: '修正後に再度保存してください。', code: 'VALIDATION_ERROR' },
+  'USER_PROVIDED_UNVERIFIED': { l1: '単位重量は未検証の利用者入力です', l2: '設計値としての検証は行われていません。', nextAction: '値を確認し、必要なら修正してください。', code: 'USER_PROVIDED_UNVERIFIED' },
+  'WE-UNVERIFIED-WEIGHT': { l1: '単位重量は未検証の利用者入力です', l2: '設計値としての検証は行われていません。', nextAction: '値を確認し、必要なら修正してください。', code: 'USER_PROVIDED_UNVERIFIED' },
+};
+
+export const PRESENCE_CATALOG: Record<string, CatalogEntry> = {
+  'PROVIDED': { primaryJa: 'あり', shortJa: 'あり', descriptionJa: '値が提供されている', technicalEn: 'PROVIDED' },
+  'NOT_PROVIDED': { primaryJa: '未入力', shortJa: '未入力', descriptionJa: 'まだ入力されていない', technicalEn: 'NOT_PROVIDED' },
+  'EXPLICIT_NONE': { primaryJa: 'なし', shortJa: 'なし', descriptionJa: '明示的に無し', technicalEn: 'EXPLICIT_NONE' },
+  'USER_PROVIDED_UNVERIFIED': { primaryJa: '利用者入力・未検証', shortJa: '入力・未検証', descriptionJa: '利用者が入力したが検証されていない', technicalEn: 'USER_PROVIDED_UNVERIFIED' },
+  'ADOPTED': { primaryJa: '採用済み', shortJa: '採用', descriptionJa: 'サンプル等が採用された状態', technicalEn: 'ADOPTED' },
+};
+export const VIEWER_CATALOG: Record<string, CatalogEntry> = {
+  'Fit': { primaryJa: '全体表示', shortJa: '全体', descriptionJa: 'ビュー全体に合わせる', technicalEn: 'Fit' },
+  'iso': { primaryJa: '等角', shortJa: '等角', descriptionJa: '等角投影', technicalEn: 'iso' },
+  'xy': { primaryJa: '平面', shortJa: '平面', descriptionJa: 'XY平面表示', technicalEn: 'xy' },
+};
