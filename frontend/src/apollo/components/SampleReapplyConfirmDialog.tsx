@@ -5,6 +5,7 @@
 import { useEffect, useId, useRef } from "react";
 import type { SampleReapplyDetection, SampleReapplyChoice } from "../bridgeStructure/sampleReapply";
 import { TechnicalDetails } from "./TechnicalDetails";
+import { GuardDialogPortal } from "./GuardDialogPortal";
 
 type Props = {
   readonly open: boolean;
@@ -52,11 +53,10 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
   const categoryRows = Object.entries(diff.byCategory).filter(([, count]) => count > 0);
 
   return (
-    <div
-      className="apollo-guard-backdrop"
-      data-testid="apollo-sample-reapply-dialog"
-      role="presentation"
-      onMouseDown={(event) => {
+    <GuardDialogPortal
+      open={open}
+      testId="apollo-sample-reapply-dialog"
+      onBackdropMouseDown={(event) => {
         if (event.target === event.currentTarget) onChoice("cancel");
       }}
     >
@@ -140,6 +140,6 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
           </button>
         </div>
       </section>
-    </div>
+    </GuardDialogPortal>
   );
 }

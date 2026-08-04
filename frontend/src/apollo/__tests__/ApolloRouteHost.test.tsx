@@ -164,10 +164,10 @@ describe("ApolloRouteHost", () => {
       reloadButton.click();
     });
 
-    const guardDialog = container.querySelector('[data-testid="apollo-unsaved-guard-dialog"]');
+    const guardDialog = document.querySelector('[data-testid="apollo-unsaved-guard-dialog"]');
     expect(guardDialog).toBeTruthy();
 
-    const guardSaveButton = container.querySelector(
+    const guardSaveButton = document.querySelector(
       '[data-testid="apollo-guard-save"]',
     ) as HTMLButtonElement;
     await act(async () => {

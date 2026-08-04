@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { UnsavedGuardChoice } from "../unsavedChangesGuard";
+import { GuardDialogPortal } from "./GuardDialogPortal";
 
 type UnsavedChangesGuardDialogProps = {
   open: boolean;
@@ -24,7 +25,7 @@ export function UnsavedChangesGuardDialog({
   }
 
   return (
-    <div className="apollo-guard-backdrop" data-testid="apollo-unsaved-guard-dialog" role="presentation">
+    <GuardDialogPortal open={open} testId="apollo-unsaved-guard-dialog">
       <section
         className="apollo-guard-dialog"
         role="dialog"
@@ -50,7 +51,7 @@ export function UnsavedChangesGuardDialog({
           </button>
         </div>
       </section>
-    </div>
+    </GuardDialogPortal>
   );
 }
 
