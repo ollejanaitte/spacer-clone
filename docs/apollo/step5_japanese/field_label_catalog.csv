@@ -1,0 +1,10 @@
+field_id,internal_key,label_ja,units,context
+FL-crossBeamSpacing,crossBeamSpacing,横桁間隔,m,guided/bridge
+FL-swayBracingInterval,swayBracingInterval,対傾構間隔,m,guided/bridge
+FL-upperAttach,upperAttachmentDepthFromGirderTop,上側取付深さ（主桁上面基準）,m,cross-frame
+FL-lowerAttach,lowerAttachmentDepthFromGirderTop,下側取付深さ（主桁上面基準）,m,cross-frame
+FL-midAttach,midAttachmentDepthFromGirderTop,中央取付深さ（主桁上面基準）,m,cross-frame
+FL-presence,presence,有無,-,pavement
+FL-unitWeightStatus,unitWeightStatus,単位重量ステータス,-,pavement
+FL-haunchShape,haunchShape,ハンチ形状,-,haunch
+FL-wfAnchor,workflowAnchor,関連工程,-,guided

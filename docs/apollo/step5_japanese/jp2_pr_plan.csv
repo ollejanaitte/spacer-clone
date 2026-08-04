@@ -1,0 +1,7 @@
+pr_seq,title,package,depends
+JP2-P1,feat(apollo): add Japanese UI catalog helpers,P1,
+JP2-P2,feat(apollo): localize workflow and guided mode labels,P2,JP2-P1
+JP2-P3,feat(apollo): localize sample and input panels,P3,JP2-P1
+JP2-P4,feat(apollo): localize 3D quantity load analysis panels,P4,JP2-P1
+JP2-P5,feat(apollo): localize outputs and authorization banners,P5,JP2-P1
+JP2-P6,test(apollo): residual English scan and closeout,P6,JP2-P2..P5

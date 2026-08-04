@@ -1,0 +1,5 @@
+JP1-C UI text design @ 2026-08-04T12:47:56+09:00
+base_main: bde8b6d151daf9757aa969ec41893f3fde6b637e
+catalogs: status/button/field/warning_error/authorization/screen_matrix
+plans: jp2_implementation_plan.md jp3_e2e_plan.md jp2_pr_plan.csv
+APPLICATION_CODE_CHANGED: NO
