@@ -81,7 +81,7 @@ test.describe("Apollo Step 5 final GUI E2E", () => {
     await expect(page.getByTestId("apollo-guided-current-id")).toContainText("G01");
 
     for (let i = 1; i < 15; i += 1) {
-      await page.getByTestId("apollo-guided-save-next").click();
+      await page.getByTestId("apollo-guided-next").click();
     }
     await expect(page.getByTestId("apollo-guided-progress")).toContainText("15/15");
     await expect(page.getByTestId("apollo-guided-current-id")).toContainText("G15");
@@ -205,8 +205,8 @@ test.describe("Apollo Step 5 final GUI E2E", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openBasics(page);
     await expect(page.getByTestId("apollo-guided-mode-shell")).toBeVisible();
-    await page.getByTestId("apollo-guided-save-next").focus();
-    await expect(page.getByTestId("apollo-guided-save-next")).toBeFocused();
+    await page.getByTestId("apollo-guided-next").focus();
+    await expect(page.getByTestId("apollo-guided-next")).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("apollo-guided-current-id")).toContainText("G02");
     await shot(page, "mobile/e2e-s5-final-012-mobile.png");

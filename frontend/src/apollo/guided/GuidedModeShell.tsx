@@ -215,21 +215,21 @@ export function GuidedModeShell({
         </button>
         <button
           type="button"
-          className="apollo-guided-nav-save-next"
-          data-testid="apollo-guided-save-next"
-          disabled={!chrome.canGoNext}
-          onClick={() => {
-            onSave?.();
-            go("next");
-          }}
+          className="apollo-guided-nav-save"
+          data-testid="apollo-guided-save"
+          onClick={() => onSave?.()}
         >
-          {currentSlideId === "G15" ? "保存して完了" : getButtonLabel("SAVE_NEXT")}
+          保存
         </button>
-        {!chrome.canGoNext ? (
-          <button type="button" className="apollo-guided-nav-save" data-testid="apollo-guided-save" onClick={() => onSave?.()}>
-            最終保存
-          </button>
-        ) : null}
+        <button
+          type="button"
+          className="apollo-guided-nav-next"
+          data-testid="apollo-guided-next"
+          disabled={!chrome.canGoNext}
+          onClick={() => go("next")}
+        >
+          {currentSlideId === "G15" ? "確認へ" : "次へ"}
+        </button>
         <span className="apollo-guided-slide-id" data-testid="apollo-guided-current-id">
           {currentSlideId} ({slideIndex + 1}/{allSlideIds.length})
         </span>
