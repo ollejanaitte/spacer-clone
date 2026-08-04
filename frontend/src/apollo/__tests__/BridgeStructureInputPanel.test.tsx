@@ -211,10 +211,10 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     expect(container.querySelector("[data-testid='apollo-bridge-structure-section-properties']")).not.toBeNull();
     expect(
       container.querySelector("[data-testid='apollo-section-properties-development-warning']")?.textContent,
-    ).toContain("UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION");
+    ).toContain("正式認可なし");
     expect(
       container.querySelector("[data-testid='apollo-section-properties-provenance']")?.textContent,
-    ).toContain("NOT_AUTHORIZED");
+    ).toContain("正式認可なし");
     expect(container.querySelector("[data-testid='apollo-section-property-ウェブ高さ']")?.textContent).toContain("2.455");
     expect(container.querySelector("[data-testid='apollo-section-property-断面積合計']")).not.toBeNull();
   });
@@ -246,7 +246,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       container.querySelector("[data-testid='apollo-current-bridge-system']")?.textContent,
     ).toContain("単径間単純桁（現在対応）");
     expect(container.querySelector("[data-testid='apollo-sample-disclaimer']")?.textContent).toContain(
-      "動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。",
+      "開発確認用・未検証",
     );
   });
 

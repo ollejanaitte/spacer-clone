@@ -26,12 +26,12 @@ describe("DemandCheckDevelopmentPanel", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-demand-development-warning']")?.textContent).toContain(
-      "UNVERIFIED DEVELOPMENT RESULT",
+      "開発確認用・未検証",
     );
     expect(container.querySelector("[data-testid='apollo-demand-development-provenance']")?.textContent).toContain(
-      "CANDIDATE",
+      "候補値",
     );
-    expect(container.querySelector("[data-testid='apollo-demand-development-provenance']")?.textContent).toContain(
+    expect(container.querySelector("[data-testid='apollo-demand-development-provenance']")?.textContent).not.toContain(
       "NOT_EMITTED",
     );
 
@@ -44,8 +44,6 @@ describe("DemandCheckDevelopmentPanel", () => {
       (el) => el.textContent,
     );
     expect(statuses.every((s) => s === "CANDIDATE")).toBe(true);
-    expect(container.querySelector("[data-testid='apollo-demand-development-provenance']")?.textContent).toContain(
-      "formalOkNg: NOT_EMITTED",
-    );
+    expect(container.querySelector("[data-testid='apollo-demand-tech-panel']")).toBeNull();
   });
 });

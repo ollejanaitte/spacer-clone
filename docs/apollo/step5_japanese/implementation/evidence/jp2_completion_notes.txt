@@ -1,0 +1,5 @@
+JP2 P6 integration
+JP2 targeted L1 banner patterns: 0 findings (source scan)
+Playwright Step4A+Step5R: see playwright-results.json
+JP3 remaining: live DOM residual-English regex, screenshot harvest, non-apollo viewer chrome, generated drawing/report chapter EN titles
+STEP_5_JP3_START_READINESS: GO

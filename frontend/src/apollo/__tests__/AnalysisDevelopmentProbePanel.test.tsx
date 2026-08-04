@@ -53,7 +53,7 @@ describe("AnalysisDevelopmentProbePanel", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-analysis-development-warning']")?.textContent).toContain(
-      "UNVERIFIED DEVELOPMENT RESULT",
+      "正式認可なし",
     );
 
     await act(async () => {
