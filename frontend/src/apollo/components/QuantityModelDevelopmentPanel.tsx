@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development QuantityModel panel (Step 2-A).
  * UNVERIFIED DEVELOPMENT QUANTITY — NOT FOR ESTIMATE, DESIGN OR CONSTRUCTION
@@ -48,16 +51,27 @@ export function QuantityModelDevelopmentPanel({ project }: Props) {
           <p>直接幾何数量と可視化仮定数量を分離表示します。正式積算ではありません。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-quantity-development-warning">
-        UNVERIFIED DEVELOPMENT QUANTITY — NOT FOR ESTIMATE, DESIGN OR CONSTRUCTION
-      </p>
+      <div data-testid="apollo-quantity-development-warning">
+        <AuthorizationBanner
+          testId="apollo-quantity-auth"
+          keys={["UNVERIFIED_DEVELOPMENT_ONLY", "NOT_FOR_ESTIMATE", "NOT_GRANTED", "PROHIBITED"]}
+        />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-quantity-development-provenance">
-        NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED / authorizationStatus: {model.authorizationStatus} /
-        stale: {String(model.stale)} / revision: {model.inputRevision} / checksum: {model.inputChecksum.slice(0, 16)}…
+        状態: {model.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / 認可表示: 正式認可なし
       </p>
+      <TechnicalDetails
+        testId="apollo-quantity-tech"
+        lines={[
+          `authorizationStatus=${model.authorizationStatus}`,
+          `stale=${String(model.stale)}`,
+          `revision=${model.inputRevision}`,
+          `checksum=${model.inputChecksum.slice(0, 16)}…`,
+        ]}
+      />
       {liveStaleHint && model.stale ? (
         <p className="apollo-input-error" data-testid="apollo-quantity-stale-banner">
-          STALE — 構造を再生成してから数量を再生成・出力してください。STALE時のexportは拒否されます。
+          要再計算 — 構造を再生成してから数量を再生成・出力してください。要再計算時の出力は拒否されます。
         </p>
       ) : null}
       <div className="apollo-workspace-actions">

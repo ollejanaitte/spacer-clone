@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development-only demand candidate panel (Step 1-D).
  * UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
@@ -76,15 +79,27 @@ export function DemandCheckDevelopmentPanel() {
           <p>正式照査・OK/NGは出しません。ユーザー確認用の demand-only 候補値です。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-demand-development-warning">
-        UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
-      </p>
+      <div data-testid="apollo-demand-development-warning">
+        <AuthorizationBanner
+          testId="apollo-demand-auth"
+          keys={["UNVERIFIED_DEVELOPMENT_ONLY", "USER_REVIEW_REQUIRED", "NOT_GRANTED", "PROHIBITED"]}
+        />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-demand-development-provenance">
-        status: CANDIDATE / UNVERIFIED / USER REVIEW REQUIRED / formalOkNg: NOT_EMITTED /
-        NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+        候補値・未検証 — 利用者確認が必要です（正式OK/NGは出しません）
       </p>
+      <TechnicalDetails
+        testId="apollo-demand-tech"
+        lines={[
+          "status=CANDIDATE",
+          "verification=UNVERIFIED",
+          "formalOkNg=NOT_EMITTED",
+          "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED",
+          "basis=GOLD-AN-001×GOLD-SP-001",
+        ]}
+      />
       <p className="apollo-inline-hint" data-testid="apollo-demand-development-basis">
-        basis: GOLD-AN-001 demand × GOLD-SP-001 section (development references only)
+        根拠は開発用参照のみです。
       </p>
       <div className="apollo-workspace-actions">
         <button
@@ -93,7 +108,7 @@ export function DemandCheckDevelopmentPanel() {
           data-testid="apollo-demand-reveal-candidates"
           onClick={() => setRevealed(true)}
         >
-          Reveal demand candidates
+          候補値を表示
         </button>
       </div>
       {revealed ? (

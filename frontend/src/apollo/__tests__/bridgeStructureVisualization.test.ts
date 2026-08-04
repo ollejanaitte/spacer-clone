@@ -144,13 +144,12 @@ describe("bridge structure visualization (Block C)", () => {
     const swayMembers = model.solidGeometryParameters.filter(
       (entry) =>
         entry.kind === "bracing" &&
-        (entry.displayLabel.includes("Sway ") || entry.displayLabel.includes("対傾構")),
+        entry.displayLabel.includes("対傾構"),
     );
     const lateralMembers = model.solidGeometryParameters.filter(
       (entry) =>
         entry.kind === "bracing" &&
-        (entry.displayLabel.includes("Lower Lateral ") ||
-          entry.displayLabel.includes("下横構") ||
+        (entry.displayLabel.includes("下横構") ||
           entry.dimensionsM.bracingSystem === 3),
     );
 

@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development panel: appurtenance/haunch analysis hookup (Step 4-C5).
  */
@@ -35,16 +38,18 @@ export function AppurtenanceHaunchAnalysisPanel({ project }: Props) {
           <p>部分区間UDLを閉形式単純梁で評価。全長UDLへの黙った変換はしません。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status">
-        UNVERIFIED DEVELOPMENT ANALYSIS — NOT FOR DESIGN OR CONSTRUCTION / NOT_GRANTED
-      </p>
+      <AuthorizationBanner testId="apollo-analysis-auth" />
       <p className="apollo-inline-hint" data-testid="apollo-app-haunch-analysis-status">
-        status: {result.status} / stale: {String(result.stale)} / applied:{" "}
-        {result.combined.totalAppliedVerticalKN.toFixed(6)} kN / residual:{" "}
+        状態: {getStatusLabel(result.status)} / 作用鉛直力:{" "}
+        {result.combined.totalAppliedVerticalKN.toFixed(6)} kN / 残差:{" "}
         {result.combined.equilibriumResidualKN.toExponential(3)}
       </p>
+      <TechnicalDetails
+        testId="apollo-analysis-tech"
+        lines={[`status=${result.status}`, `stale=${String(result.stale)}`]}
+      />
       {(live.stale || result.stale) && (
-        <p className="apollo-input-error">STALE — 構造再生成後に再実行してください。</p>
+        <p className="apollo-input-error">要再計算 — 構造再生成後に再実行してください。</p>
       )}
       {result.status === "BLOCKED" && (
         <p className="apollo-input-error" data-testid="apollo-app-haunch-analysis-blocked">

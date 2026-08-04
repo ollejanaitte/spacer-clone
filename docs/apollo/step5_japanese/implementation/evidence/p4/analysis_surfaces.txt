@@ -1,0 +1,4 @@
+JP2-P4 evidence
+- bridgeStructureSolids displayLabel: JA-only (横桁/対傾構/上横構/下横構)
+- Quantity/Load/Analysis/Demand panels: AuthorizationBanner + JA stale
+- vitest visualization/bracing/topology/quantity/i18n PASS; tsc PASS

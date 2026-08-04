@@ -1,3 +1,6 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Development load confirmation panel (Step 4-C4).
  * UNVERIFIED DEVELOPMENT ONLY — NOT FOR DESIGN OR CONSTRUCTION
@@ -38,22 +41,24 @@ export function LoadConfirmationDevelopmentPanel({ project }: Props) {
           <p>付属物・ハンチ死荷重の station / 線荷重 / 分配先を確認します。正式設計値ではありません。</p>
         </div>
       </div>
-      <p className="apollo-input-error" role="status" data-testid="apollo-load-development-warning">
-        UNVERIFIED DEVELOPMENT LOAD — NOT FOR DESIGN OR CONSTRUCTION / NUMERIC_DESIGN_AUTHORIZATION:
-        NOT_GRANTED
-      </p>
+      <div data-testid="apollo-load-development-warning">
+        <AuthorizationBanner testId="apollo-load-auth" />
+      </div>
       <p className="apollo-inline-hint" data-testid="apollo-load-development-provenance">
-        status: {model.status} / stale: {String(model.stale)} / loads: {model.loads.length} /
-        checksum: {model.inputChecksum.slice(0, 16)}…
+        状態: {getStatusLabel(model.status)} / 荷重数: {model.loads.length}
       </p>
+      <TechnicalDetails
+        testId="apollo-load-tech"
+        lines={[`status=${model.status}`, `stale=${String(model.stale)}`, `checksum=${model.inputChecksum.slice(0, 16)}…`]}
+      />
       {(live.stale || model.stale) && (
         <p className="apollo-input-error" data-testid="apollo-load-stale-banner">
-          STALE — 構造を再生成してから荷重を再確認してください。
+          要再計算 — 構造を再生成してから荷重を再確認してください。
         </p>
       )}
       {model.status === "INCOMPLETE" && (
         <p className="apollo-input-error" data-testid="apollo-load-incomplete-banner">
-          単位体積重量不足の荷重があります（NOT_AVAILABLE）。解析には渡しません。
+          単位体積重量不足の荷重があります。解析には含めません。
         </p>
       )}
       <div className="apollo-workspace-actions">
