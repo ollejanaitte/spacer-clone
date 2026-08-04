@@ -1,0 +1,8 @@
+screen_id,scanned,l1_residual,l3_hits,screenshot
+basics-empty,YES,220,11,evidence/jp3a/01-basics-empty.png
+basics-sample,YES,290,13,evidence/jp3a/02-basics-sample.png
+guided-G01,YES,290,13,evidence/jp3a/03-guided-G01.png
+guided-G09,YES,290,13,evidence/jp3a/03-guided-G09.png
+guided-G15,YES,290,13,evidence/jp3a/03-guided-G15.png
+reapply-dialog,YES,261,15,evidence/jp3a/05-reapply-dialog.png
+mobile-basics,YES,255,13,evidence/jp3a/06-mobile-basics.png

@@ -1,0 +1,2767 @@
+{
+  "leaf_unique_l1": 256,
+  "top_tokens": [
+    [
+      "Step",
+      39
+    ],
+    [
+      "NOT_AUTHORIZED",
+      17
+    ],
+    [
+      "info",
+      16
+    ],
+    [
+      "current",
+      15
+    ],
+    [
+      "kN/m",
+      15
+    ],
+    [
+      "type",
+      14
+    ],
+    [
+      "side",
+      14
+    ],
+    [
+      "binding",
+      10
+    ],
+    [
+      "checksum",
+      8
+    ],
+    [
+      "seed",
+      8
+    ],
+    [
+      "local",
+      7
+    ],
+    [
+      "CRS",
+      7
+    ],
+    [
+      "girder-0",
+      7
+    ],
+    [
+      "girder-1",
+      7
+    ],
+    [
+      "girder-2",
+      7
+    ],
+    [
+      "girder-3",
+      7
+    ],
+    [
+      "WF",
+      6
+    ],
+    [
+      "PROVIDED",
+      6
+    ],
+    [
+      "HTML",
+      6
+    ],
+    [
+      "input",
+      5
+    ],
+    [
+      "designStatus",
+      5
+    ],
+    [
+      "valid",
+      4
+    ],
+    [
+      "model",
+      4
+    ],
+    [
+      "OK/NG",
+      4
+    ],
+    [
+      "primary",
+      4
+    ],
+    [
+      "action",
+      4
+    ],
+    [
+      "INCOMPLETE",
+      4
+    ],
+    [
+      "CURB",
+      4
+    ],
+    [
+      "LEFT",
+      4
+    ],
+    [
+      "RIGHT",
+      4
+    ],
+    [
+      "WALL_RAILING",
+      4
+    ],
+    [
+      "blocking",
+      4
+    ],
+    [
+      "PDF",
+      4
+    ],
+    [
+      "G-01",
+      4
+    ],
+    [
+      "Solid",
+      4
+    ],
+    [
+      "STUB",
+      3
+    ],
+    [
+      "unit",
+      3
+    ],
+    [
+      "overlay",
+      3
+    ],
+    [
+      "UNKNOWN",
+      3
+    ],
+    [
+      "MEDIAN",
+      3
+    ],
+    [
+      "CENTER",
+      3
+    ],
+    [
+      "BARRIER_OPTIONAL",
+      3
+    ],
+    [
+      "NONE",
+      3
+    ],
+    [
+      "UDL",
+      3
+    ],
+    [
+      "status",
+      3
+    ],
+    [
+      "case",
+      3
+    ],
+    [
+      "station",
+      3
+    ],
+    [
+      "none",
+      3
+    ],
+    [
+      "G0",
+      3
+    ],
+    [
+      "GPU",
+      3
+    ]
+  ],
+  "items": [
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-shell-kicker\"]",
+      "text": "Apollo Phase 1-NN",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Phase|NN",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-provisional-banner\"]",
+      "text": "非数値入力モード 構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。(Wednesday, July 29, 2026)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Wednesday|July",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。(Wednesday, July 29, 2026)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Wednesday|July",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-undo\"]",
+      "text": "Undo",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Undo",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-redo\"]",
+      "text": "Redo",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Redo",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "プロジェクトID apollo-prj-1785847750492-1-3kd0iozs 内部識別子です。編集できません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:apollo-prj-1785847750492-1-3kd0iozs",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-project-id-display\"]",
+      "text": "apollo-prj-1785847750492-1-3kd0iozs",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:apollo-prj-1785847750492-1-3kd0iozs",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-project-description-input\"]",
+      "text": "Non-numeric Apollo workspace draft.",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Non-numeric|workspace|draft",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-guided-slide-G01\"]",
+      "text": "主要項目 サンプルID 免責の確認 関連工程: 開始 技術情報を表示（WF ID） 影響 3D: サンプル適用後に更新 数量・荷重: 生成後に反映",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-guided-wf-anchor-tech\"]",
+      "text": "技術情報を表示（WF ID）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span.apollo-wf-step-group",
+      "text": "geometry",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:geometry",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: alignment binding 成立 (Step 4-E 実装後評価)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:alignment|binding|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-error",
+      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-E 実装後に評価が有効になります。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:STUB|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "この工程は将来工程（STUB）です。現在は利用できません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:STUB",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-E 実装後に評価が有効になります。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:local|CRS|Step|binding|Step|binding",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:local|CRS|Step|binding",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-E 実装後に道路線形 binding を設定してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step|binding",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 入力 valid + 構造生成 current (generatedAt)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:valid|current|generatedAt",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 全スロット presence 決定 + valid PROVIDED + 構造生成 current",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:presence|valid|PROVIDED|current",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 断面入力 valid + 構造生成 current",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:valid|current",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 全主桁 presence 決定 + valid + BSSD projection current",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:presence|valid|BSSD|projection|current",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 添接 canonical input (Step 4-D)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:canonical|input|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-error",
+      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-D 実装後に評価が有効になります。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:STUB|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-D 実装後に評価が有効になります。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span.apollo-wf-step-group",
+      "text": "loads",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:loads",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 構造 current + load model READY/EMPTY（unit weight不足は INCOMPLETE）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current|load|model|READY/EMPTY|unit|weight",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span.apollo-wf-step-group",
+      "text": "analysis",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:analysis",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: current input に対する解析結果あり",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current|input",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! この工程は development 限定の部分実装です。将来工程の項目は未対応です。 対処: 今後の Step で拡張予定です。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:development|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "この工程は development 限定の部分実装です。将来工程の項目は未対応です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:development",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: 今後の Step で拡張予定です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: current 解析結果に基づく候補照査あり",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span.apollo-wf-step-group",
+      "text": "outputs",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:outputs",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: quantity model current (checksum aligned)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:quantity|model|current|checksum|aligned",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-info",
+      "text": "i 開発上の完了です。正式認可（formal authorization）は未付与です。 対処: 正式 OK/NG は人間による確認後に付与されます。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:formal|authorization|OK/NG",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "開発上の完了です。正式認可（formal authorization）は未付与です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:formal|authorization",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: 正式 OK/NG は人間による確認後に付与されます。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:OK/NG",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: 3Dモデル build ok; dimension overlay は別診断",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:build|dimension|overlay",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! 3D 寸法 overlay・2点計測は Step 4-F で実装予定です。3D 本体とは別に管理します。 対処: Step 4-F 実装後に有効化されます。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:overlay|Step|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "3D 寸法 overlay・2点計測は Step 4-F で実装予定です。3D 本体とは別に管理します。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:overlay|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-F 実装後に有効化されます。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: report model current (checksum aligned)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:report|model|current|checksum|aligned",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: drawing set current + sheet count >= 7",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:drawing|set|current|sheet|count",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: integrated outputs current + consistency PASS",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:integrated|outputs|current|consistency|PASS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span.apollo-wf-step-group",
+      "text": "governance",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:governance",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-step-criterion",
+      "text": "完了条件: human acknowledgment 記録あり (checksum bound)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:human|acknowledgment|checksum|bound",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
+      "text": "i 先に必要な作業があります 前提工程が未完了です。 対処: 推奨工程を開いて入力を完了してください。 技術情報を表示 i 入力は有効ですが、まだ生成結果がありません。 対処: primary action（生成）を実行してください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:primary|action",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-info",
+      "text": "i 入力は有効ですが、まだ生成結果がありません。 対処: primary action（生成）を実行してください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:primary|action",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: primary action（生成）を実行してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:primary|action",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "寸法を入力し「構造を生成」で StructuralDesignModel を作成します。設計判定は未許可のままです。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:StructuralDesignModel",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "鋼の単位体積重量 (kN/m³)（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "RC床版の単位体積重量 (kN/m³)（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "h3",
+      "text": "対傾構取付点（Step 5-R / ER-001）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-bridge-structure-unit-weight\"]",
+      "text": "単位体積重量の採用 項目 状態 操作 鋼（未入力 kN/m³） UNKNOWN 採用 RC床版（未入力 kN/m³） UNKNOWN 採用 採用は数値設計の正式認可がないため拒否されます。現時点では採用操作は失敗し、正式認可なしのままです。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m|UNKNOWN|kN/m|UNKNOWN",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "td",
+      "text": "鋼（未入力 kN/m³）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-steel-unit-weight-status\"]",
+      "text": "UNKNOWN",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:UNKNOWN",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "td",
+      "text": "RC床版（未入力 kN/m³）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-bridge-structure-quantities\"]",
+      "text": "概算数量・重量 項目 値 状態 概算数量 — INCOMPLETE 単位重量が未設定の場合は「正式認可なし／入力不足」、入力済み未採用は「利用者入力・未検証」、採用時のみ「採用済み」を表示します。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-quantity-row-概算数量\"]",
+      "text": "概算数量 — INCOMPLETE",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-quantity-status-概算数量\"]",
+      "text": "INCOMPLETE",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-local-crs-warning\"]",
+      "text": "横断オフセットは橋梁 local CRS（+Y = 右、測点増方向を向いて）です。道路線形 binding は Step 4-E 待ち。3D・数量・荷重は Step 4-C 未実装です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:local|CRS|binding|Step|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-LEFT_CURB\"]",
+      "text": "左地覆（type=CURB / side=LEFT） 有無 未入力 なし あり [info] 左地覆の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|CURB|side|LEFT|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "左地覆（type=CURB / side=LEFT）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|CURB|side|LEFT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-LEFT_CURB\"]",
+      "text": "[info] 左地覆の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-RIGHT_CURB\"]",
+      "text": "右地覆（type=CURB / side=RIGHT） 有無 未入力 なし あり [info] 右地覆の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|CURB|side|RIGHT|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "右地覆（type=CURB / side=RIGHT）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|CURB|side|RIGHT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-RIGHT_CURB\"]",
+      "text": "[info] 右地覆の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-LEFT_WALL_RAILING\"]",
+      "text": "左壁高欄（type=WALL_RAILING / side=LEFT） 有無 未入力 なし あり [info] 左壁高欄の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|WALL_RAILING|side|LEFT|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "左壁高欄（type=WALL_RAILING / side=LEFT）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|WALL_RAILING|side|LEFT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-LEFT_WALL_RAILING\"]",
+      "text": "[info] 左壁高欄の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-RIGHT_WALL_RAILING\"]",
+      "text": "右壁高欄（type=WALL_RAILING / side=RIGHT） 有無 未入力 なし あり [info] 右壁高欄の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|WALL_RAILING|side|RIGHT|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "右壁高欄（type=WALL_RAILING / side=RIGHT）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|WALL_RAILING|side|RIGHT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-RIGHT_WALL_RAILING\"]",
+      "text": "[info] 右壁高欄の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-MEDIAN\"]",
+      "text": "中央分離帯（type=MEDIAN / side=CENTER） 有無 未入力 なし あり [info] 中央分離帯の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|MEDIAN|side|CENTER|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "中央分離帯（type=MEDIAN / side=CENTER）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|MEDIAN|side|CENTER",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-MEDIAN\"]",
+      "text": "[info] 中央分離帯の有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-OPTIONAL_BARRIER\"]",
+      "text": "任意バリア（type=BARRIER_OPTIONAL / side=NONE） 有無 未入力 なし あり [info] 任意バリアの有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|BARRIER_OPTIONAL|side|NONE|info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "legend",
+      "text": "任意バリア（type=BARRIER_OPTIONAL / side=NONE）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|BARRIER_OPTIONAL|side|NONE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-OPTIONAL_BARRIER\"]",
+      "text": "[info] 任意バリアの有無が未入力です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-appurtenance-status\"]",
+      "text": "完了判定: INCOMPLETE/BLOCKED / blocking=0",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE/BLOCKED|blocking",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-haunch-datum\"]",
+      "text": "ハンチ datum: 主桁上フランジ上面と床版下面の間（DEC-S4-0009）。mesh から逆算しません。 3D solids・数量・自重は Step 4-C 未実装です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:datum|DEC-S4-0009|mesh|solids|Step",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-haunch-status\"]",
+      "text": "完了判定: INCOMPLETE/BLOCKED / blocking=0 / models=0",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE/BLOCKED|blocking|models",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "単純支持梁の閉形式参照と live solver 比較。正式設計には使用しないでください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:live|solver",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-analysis-run-gold-an-001\"]",
+      "text": "Run GOLD-AN-001 (UDL)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Run|GOLD-AN-001|UDL",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-analysis-run-gold-an-002\"]",
+      "text": "Run GOLD-AN-002 (center P)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Run|GOLD-AN-002|center",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-analysis-development-status\"]",
+      "text": "status: idle / case: GOLD-AN-001",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:status|idle|case|GOLD-AN-001",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "部分区間UDLを閉形式単純梁で評価。全長UDLへの黙った変換はしません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:UDL|UDL",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "付属物・ハンチ死荷重の station / 線荷重 / 分配先を確認します。正式設計値ではありません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:station",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-load-table\"]",
+      "text": "loadId case station w [kN/m] P [kN] rule targets status PROVIDED 付属物/ハンチなし（EXPLICIT_NONE は偽エンティティを作りません）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:loadId|case|station|kN/m|rule|targets",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "loadId",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:loadId",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "case",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:case",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "station",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:station",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "w [kN/m]",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "rule",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:rule",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "targets",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:targets",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "status",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:status",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "td",
+      "text": "PROVIDED 付属物/ハンチなし（EXPLICIT_NONE は偽エンティティを作りません）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PROVIDED|EXPLICIT_NONE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "正式照査・OK/NGは出しません。ユーザー確認用の demand-only 候補値です。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:OK/NG|demand-only",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-demand-development-provenance\"]",
+      "text": "候補値・未検証 — 利用者確認が必要です（正式OK/NGは出しません）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:OK/NG",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-quantity-generated-at\"]",
+      "text": "generatedAt: 2026-08-04T12:49:10.617Z / quantityModelId: qty-apollo-prj-1785847750492-1-3kd0iozs-89f55a546a5c",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:generatedAt|quantityModelId|qty-apollo-prj-1785847750492-1-3kd0iozs-89f55a546a5c",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-quantity-model-table\"]",
+      "text": "category label value unit status basis warnings SUMMARY 数量算出不可 — — INCOMPLETE INCOMPLETE_INPUT 入力不完全",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:category|label|value|unit|status|basis",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "category",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:category",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "label",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:label",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "value",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:value",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "unit",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:unit",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "basis",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:basis",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "th",
+      "text": "warnings",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:warnings",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-qty-row-QTY-BLOCKED\"]",
+      "text": "SUMMARY 数量算出不可 — — INCOMPLETE INCOMPLETE_INPUT 入力不完全",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:SUMMARY|INCOMPLETE|INCOMPLETE_INPUT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "td",
+      "text": "SUMMARY",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:SUMMARY",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "td",
+      "text": "INCOMPLETE_INPUT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:INCOMPLETE_INPUT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "ReportModelから生成。アプリ画面の印刷を計算書としません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:ReportModel",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-report-download-html\"]",
+      "text": "HTML出力（PDF化用）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:HTML|PDF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-report-download-json\"]",
+      "text": "Report JSON",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Report",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-report-download-audit\"]",
+      "text": "監査manifest",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:manifest",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-COVER: 表紙・メタデータ (6)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-COVER",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-DESIGN-COND: 設計条件 (3)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-DESIGN-COND",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-STRUCTURE: 構造概要 (5)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-STRUCTURE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-INPUTS: 入力値 (6)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-INPUTS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-SECTION: 主桁断面諸量 (1)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-SECTION",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-LOADS: 荷重条件 (2)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-LOADS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-ANALYSIS-SETTINGS: 解析条件 (3)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-ANALYSIS-SETTINGS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-REACTIONS: 支点反力 (1)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-REACTIONS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-SHEAR: せん断力 (1)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-SHEAR",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-MOMENT: 曲げモーメント (1)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-MOMENT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-DEFLECTION: たわみ (1)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-DEFLECTION",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-DEMAND: demand candidate (3)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-DEMAND|demand|candidate",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-QUANTITY: 数量 (0)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-QUANTITY",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-DRAWING-REF: 標準断面図参照 (3)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-DRAWING-REF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-WARNINGS: 警告・未許可項目 (5)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-WARNINGS",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "CH-AUDIT: 監査記録 (6)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:CH-AUDIT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "Drawing Semantic Modelから生成。製作図ではありません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Drawing|Semantic|Model",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-drawing-provenance\"]",
+      "text": "状態: 要再計算 / overhang: 0 / girders: 0 / checksum: 89f55a546a5cac6c… / fabrication: false",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:overhang|girders|checksum|fabrication|false",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-drawing-export-pdf-html\"]",
+      "text": "図面PDF用HTML",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PDF|HTML",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-drawing-girder-centers\"]",
+      "text": "girderCentersX:",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girderCentersX",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "DrawingSetModel G-01〜G-07：一般図・配置図・支承・側面構成・部材表。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:DrawingSetModel|G-01|G-07",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-provenance\"]",
+      "text": "stale: true / sheets: 0 / views: none / girders: 0 / cb: 0 / checksum: 89f55a546a5cac6c… / sectionCk: BLOCKED…",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:stale|true|sheets|views|none|girders",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-export-pdf-html\"]",
+      "text": "PDF用HTML",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PDF|HTML",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-export-multisheet\"]",
+      "text": "図面一式HTML/PDF",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:HTML/PDF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-sheet-status\"]",
+      "text": "NO SHEETS — BLOCKED or incomplete input (DEVELOPMENT GENERAL ARRANGEMENT; NOT A DESIGN-APPROVED OR FABRICATION DRAWING; NOT FOR CONSTRUCTION)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NO|SHEETS|BLOCKED|or|incomplete|input",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-layer-toggles\"]",
+      "text": "APOLLO_GIRDER APOLLO_CROSSBEAM APOLLO_BRACING APOLLO_STIFFENER APOLLO_SUPPORT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_GIRDER|APOLLO_CROSSBEAM|APOLLO_BRACING|APOLLO_STIFFENER|APOLLO_SUPPORT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "APOLLO_GIRDER",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_GIRDER",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "APOLLO_CROSSBEAM",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_CROSSBEAM",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "APOLLO_BRACING",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_BRACING",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "APOLLO_STIFFENER",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_STIFFENER",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "label",
+      "text": "APOLLO_SUPPORT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:APOLLO_SUPPORT",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-ga-layout-summary\"]",
+      "text": "plan L=0 B=0 oh=0 supports= girderY= hiddenLayers=none",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:plan|oh|supports|girderY|hiddenLayers|none",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "数量・計算書・図面一式・ZIP の revision/checksum 整合と一括操作。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:revision/checksum",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-sheet-register\"]",
+      "text": "sheets: none",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:sheets|none",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-report\"]",
+      "text": "計算書preview",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:preview",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-report-html\"]",
+      "text": "計算書HTML/PDF",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:HTML/PDF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-audit\"]",
+      "text": "audit",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:audit",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-drawing-preview\"]",
+      "text": "断面preview",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:preview",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-drawing-pdf\"]",
+      "text": "断面PDF用HTML",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PDF|HTML",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-ga-svg\"]",
+      "text": "G-01 SVG",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G-01",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-ga-dxf\"]",
+      "text": "G-01 DXF",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G-01",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-ga-html\"]",
+      "text": "G-01 HTML",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G-01|HTML",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-export-multisheet\"]",
+      "text": "図面一式HTML",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:HTML",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-output-bundle-status\"]",
+      "text": "BUNDLE_EXPORT: STALE (STORE ZIP development-only)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:BUNDLE_EXPORT|STALE|STORE|development-only",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "N. SVG/DXF/PDF",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:SVG/DXF/PDF",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "Q. STALE",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:STALE",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "li",
+      "text": "支点: A1, P1, P2, P3, P4, A2",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:A1|P1|P2|P3|P4|A2",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-export-stl\"]",
+      "text": "STL + Manifest",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Manifest",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-topology-view\"]",
+      "text": "3D ビュー 節点 G0 / 入力モデルを表示中 表示: 3D GPU: browser WebGL: available 節点 10 部材 9 支点 6 荷重 0 Apollo Solid: 120",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G0|GPU|browser|WebGL|available|Solid",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "p",
+      "text": "節点 G0 / 入力モデルを表示中",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G0",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span",
+      "text": "GPU: browser",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:GPU|browser",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span",
+      "text": "WebGL: available",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WebGL|available",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "span",
+      "text": "Apollo Solid: 120",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Solid",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-provisional-banner\"]@aria-label",
+      "text": "provisional-status-banner",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:provisional-status-banner",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "ol@aria-label",
+      "text": "Apollo guided steps",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:guided|steps",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"apollo-report-formal-disabled\"]@title",
+      "text": "正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "div@aria-label",
+      "text": "3D model viewport",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:model|viewport",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-empty",
+      "selector": "[data-testid=\"open-view-panel\"]@aria-label",
+      "text": "View パネルを開く",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:View",
+      "screenshot": "evidence/jp3a/01-basics-empty.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! 付属物が PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。 対処: Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PROVIDED|Step|Step|Step|report/drawing/ZIP",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "付属物が PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PROVIDED|Step|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step|report/drawing/ZIP",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! ハンチが PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。 対処: Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PROVIDED|Step|Step|Step|report/drawing/ZIP",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "ハンチが PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PROVIDED|Step|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-wf-recommended-action\"]",
+      "text": "primary action を実行してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:primary|action",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! 付属物・ハンチの計算書/図面/ZIP 再統合は Step 4-G 待ちです。既存成果を新 entity 対応済みとみなしません。 対処: Step 4-G で report/drawing/member schedule/ZIP を再統合してください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step|entity|Step|report/drawing/member|schedule/ZIP",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "付属物・ハンチの計算書/図面/ZIP 再統合は Step 4-G 待ちです。既存成果を新 entity 対応済みとみなしません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step|entity",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: Step 4-G で report/drawing/member schedule/ZIP を再統合してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Step|report/drawing/member|schedule/ZIP",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "主桁: 4 件（designStatus: NOT_AUTHORIZED）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:designStatus|NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "RC床版: 1 件（designStatus: NOT_AUTHORIZED）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:designStatus|NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "横桁: 7 件（designStatus: NOT_AUTHORIZED）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:designStatus|NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "補剛材: 52 件（designStatus: NOT_AUTHORIZED）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:designStatus|NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "対傾構・横繋部材: 102 本（designStatus: NOT_AUTHORIZED）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:designStatus|NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "li",
+      "text": "nonCompositeAssertion.compositeAction: false",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:nonCompositeAssertion.compositeAction|false",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-bridge-structure-main-girder-status\"]",
+      "text": "主桁1: NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-bridge-structure-unit-weight\"]",
+      "text": "単位体積重量の採用 項目 状態 操作 鋼（77 kN/m³） PENDING 採用 RC床版（24.5 kN/m³） PENDING 採用 採用は数値設計の正式認可がないため拒否されます。現時点では採用操作は失敗し、正式認可なしのままです。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m|PENDING|kN/m|PENDING",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "td",
+      "text": "鋼（77 kN/m³）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-steel-unit-weight-status\"]",
+      "text": "PENDING",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:PENDING",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "td",
+      "text": "RC床版（24.5 kN/m³）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-支間数（概算）\"]",
+      "text": "支間数（概算） 1 支間 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-status-支間数（概算）\"]",
+      "text": "NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-横桁本数（概算）\"]",
+      "text": "横桁本数（概算） 7 本 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-床版体積（概算）\"]",
+      "text": "床版体積（概算） 69.3 m³ NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-補剛材本数（概算）\"]",
+      "text": "補剛材本数（概算） 52 本 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-対傾構箇所数（概算）\"]",
+      "text": "対傾構箇所数（概算） 5 箇所 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-下横構（概算）\"]",
+      "text": "下横構（概算） 1 有/無 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-上横構（概算）\"]",
+      "text": "上横構（概算） 1 有/無 NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-主桁断面積（概算）\"]",
+      "text": "主桁断面積（概算） 0.0511 m² NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-主桁鋼体積（概算）\"]",
+      "text": "主桁鋼体積（概算） 8.7968 m³ NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-鋼重量（概算）\"]",
+      "text": "鋼重量（概算） 677.3553 kN USER_PROVIDED_UNVERIFIED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:USER_PROVIDED_UNVERIFIED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-status-鋼重量（概算）\"]",
+      "text": "USER_PROVIDED_UNVERIFIED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:USER_PROVIDED_UNVERIFIED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-RC床版重量（概算）\"]",
+      "text": "RC床版重量（概算） 1,697.85 kN USER_PROVIDED_UNVERIFIED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:USER_PROVIDED_UNVERIFIED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-quantity-row-横桁鋼体積（概算）\"]",
+      "text": "横桁鋼体積（概算） 1.512 m³ NOT_AUTHORIZED",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NOT_AUTHORIZED",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-pavement-fields\"]",
+      "text": "厚さ (m)単位体積重量 (kN/m³) 単位重量ステータス: 利用者入力・未検証",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "label",
+      "text": "単位体積重量 (kN/m³)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "label.apollo-field",
+      "text": "断面形状 未選択 RECT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:RECT",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-shape-LEFT_CURB\"]",
+      "text": "未選択 RECT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:RECT",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "label.apollo-field",
+      "text": "単位重量 (kN/m³, 任意・未検証)",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:kN/m",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-LEFT_CURB\"]",
+      "text": "[info] 左地覆: 横断オフセットは橋梁 local CRS（+Y=右）です。道路線形 binding は Step 4-E 待ち。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info|local|CRS|binding|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-id-RIGHT_CURB\"]",
+      "text": "ID: d979c08e…",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:d979c08e",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-RIGHT_CURB\"]",
+      "text": "[info] 右地覆: 横断オフセットは橋梁 local CRS（+Y=右）です。道路線形 binding は Step 4-E 待ち。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info|local|CRS|binding|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-LEFT_WALL_RAILING\"]",
+      "text": "[info] 左壁高欄: 横断オフセットは橋梁 local CRS（+Y=右）です。道路線形 binding は Step 4-E 待ち。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info|local|CRS|binding|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-diagnostics-RIGHT_WALL_RAILING\"]",
+      "text": "[info] 右壁高欄: 横断オフセットは橋梁 local CRS（+Y=右）です。道路線形 binding は Step 4-E 待ち。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:info|local|CRS|binding|Step",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-MEDIAN\"]",
+      "text": "中央分離帯（type=MEDIAN / side=CENTER） 有無 未入力 なし あり",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|MEDIAN|side|CENTER",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-slot-OPTIONAL_BARRIER\"]",
+      "text": "任意バリア（type=BARRIER_OPTIONAL / side=NONE） 有無 未入力 なし あり",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:type|BARRIER_OPTIONAL|side|NONE",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-appurtenance-status\"]",
+      "text": "完了判定: input COMPLETE候補 / blocking=0",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:input|COMPLETE|blocking",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-girder-girder-0\"]",
+      "text": "主桁 1（girder-0 / seed=girder-0） 有無 未入力 なし あり ID: 3f30e5ea… 形状 未選択 矩形 台形 始点測点 (m)終点測点 (m)全延長を設定上幅 (m)下幅 (m)高さ (m)材料参照（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-0|seed|girder-0",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "legend",
+      "text": "主桁 1（girder-0 / seed=girder-0）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-0|seed|girder-0",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-girder-girder-1\"]",
+      "text": "主桁 2（girder-1 / seed=girder-1） 有無 未入力 なし あり ID: 867b341c… 形状 未選択 矩形 台形 始点測点 (m)終点測点 (m)全延長を設定上幅 (m)下幅 (m)高さ (m)材料参照（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-1|seed|girder-1",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "legend",
+      "text": "主桁 2（girder-1 / seed=girder-1）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-1|seed|girder-1",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-girder-girder-2\"]",
+      "text": "主桁 3（girder-2 / seed=girder-2） 有無 未入力 なし あり ID: be29a4fa… 形状 未選択 矩形 台形 始点測点 (m)終点測点 (m)全延長を設定上幅 (m)下幅 (m)高さ (m)材料参照（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-2|seed|girder-2|be29a4fa",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "legend",
+      "text": "主桁 3（girder-2 / seed=girder-2）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-2|seed|girder-2",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-id-girder-2\"]",
+      "text": "ID: be29a4fa…",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:be29a4fa",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-girder-girder-3\"]",
+      "text": "主桁 4（girder-3 / seed=girder-3） 有無 未入力 なし あり ID: 8fb8a165… 形状 未選択 矩形 台形 始点測点 (m)終点測点 (m)全延長を設定上幅 (m)下幅 (m)高さ (m)材料参照（任意）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-3|seed|girder-3",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "legend",
+      "text": "主桁 4（girder-3 / seed=girder-3）",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-3|seed|girder-3",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-status\"]",
+      "text": "完了判定: input COMPLETE候補 / blocking=0 / models=4",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:input|COMPLETE|blocking|models",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-topology-view\"]",
+      "text": "3D ビュー 節点 G0 / 入力モデルを表示中 表示: 3D GPU: browser WebGL: available 節点 10 部材 9 支点 6 荷重 0 Apollo Solid: 188",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:G0|GPU|browser|WebGL|available|Solid",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "span",
+      "text": "Apollo Solid: 188",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:Solid",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-presence-girder-0\"]@aria-label",
+      "text": "主桁 girder-0 のハンチ有無",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-0",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-shape-girder-0\"]@aria-label",
+      "text": "主桁 girder-0 形状",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-0",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-material-girder-0\"]@aria-label",
+      "text": "主桁 girder-0 材料参照",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-0",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-presence-girder-1\"]@aria-label",
+      "text": "主桁 girder-1 のハンチ有無",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-1",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-shape-girder-1\"]@aria-label",
+      "text": "主桁 girder-1 形状",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-1",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-material-girder-1\"]@aria-label",
+      "text": "主桁 girder-1 材料参照",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-1",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-presence-girder-2\"]@aria-label",
+      "text": "主桁 girder-2 のハンチ有無",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-2",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-shape-girder-2\"]@aria-label",
+      "text": "主桁 girder-2 形状",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-2",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-material-girder-2\"]@aria-label",
+      "text": "主桁 girder-2 材料参照",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-2",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-presence-girder-3\"]@aria-label",
+      "text": "主桁 girder-3 のハンチ有無",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-3",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-shape-girder-3\"]@aria-label",
+      "text": "主桁 girder-3 形状",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-3",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-haunch-material-girder-3\"]@aria-label",
+      "text": "主桁 girder-3 材料参照",
+      "visibility": "attr",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:girder-3",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
+    },
+    {
+      "screen": "guided-G05",
+      "selector": "[data-testid=\"apollo-guided-slide-G05\"]",
+      "text": "主要項目 主桁本数 主桁間隔 断面寸法 関連工程: 橋梁基本条件 / 主桁断面 技術情報を表示（WF ID） 影響 3D: 主桁 数量: 鋼重",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/03-guided-G05.png"
+    },
+    {
+      "screen": "guided-G09",
+      "selector": "[data-testid=\"apollo-guided-slide-G09\"]",
+      "text": "主要項目 横桁間隔 対傾構間隔 上側取付深さ（主桁上面基準） 下側取付深さ（主桁上面基準） 中央取付深さ（主桁上面基準） パターンV（実装済み） 関連工程: 橋梁基本条件 技術情報を表示（WF ID） 影響 3D: 横桁・対傾構取付 数量: 二次鋼材 深さ変更で要再計算",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/03-guided-G09.png"
+    },
+    {
+      "screen": "guided-G12",
+      "selector": "[data-testid=\"apollo-guided-slide-G12\"]",
+      "text": "主要項目 表示チェックリスト 関連工程: 3D確認 技術情報を表示（WF ID） 影響 3D: 確認",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/03-guided-G12.png"
+    },
+    {
+      "screen": "guided-G15",
+      "selector": "[data-testid=\"apollo-guided-slide-G15\"]",
+      "text": "主要項目 成果物（未実装の明示） 関連工程: 図面 技術情報を表示（WF ID） 影響 成果物: 対象外（将来工程まで） 成果物パッケージは未実装です。ここでは完了扱いにしません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:WF",
+      "screenshot": "evidence/jp3a/03-guided-G15.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! 入力が変更され、生成結果が古くなっています。再生成してください。 対処: 上流工程を再生成して current に戻してください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: 上流工程を再生成して current に戻してください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
+      "text": "! current checksum と generated 状態が一致しません。 対処: 再生成後に checksum を一致させてください。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current|checksum|generated|checksum",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "p.apollo-wf-diagnostic-message",
+      "text": "current checksum と generated 状態が一致しません。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:current|checksum|generated",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "p.apollo-wf-diagnostic-remediation",
+      "text": "対処: 再生成後に checksum を一致させてください。",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:checksum",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "[data-testid=\"apollo-sample-reapply-summary\"]",
+      "text": "現在のプロジェクト「Apollo NN Draft」とサンプル「動作確認用サンプル（単純桁）」に差分があります。 無言の上書きは行いません（開発確認用・未検証）。 技術情報を表示",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:NN|Draft",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "[data-testid=\"apollo-sample-reapply-counts\"]",
+      "text": "変更フィールド: 1 追加: 0 削除: 0 検出: EXISTING_EDITED_PROJECT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:EXISTING_EDITED_PROJECT",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    },
+    {
+      "screen": "reapply-dialog",
+      "selector": "li",
+      "text": "検出: EXISTING_EDITED_PROJECT",
+      "visibility": "visible",
+      "layer": "L1",
+      "allowlisted": "false",
+      "reason": "residual:EXISTING_EDITED_PROJECT",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
+    }
+  ]
+}
