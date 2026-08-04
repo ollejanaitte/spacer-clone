@@ -46,4 +46,7 @@ export type GuidedModeChromeState = {
   readonly canGoBack: boolean;
   readonly canGoNext: boolean;
   readonly progressLabel: string;
+  readonly currentPhaseId: number;
+  readonly currentPhaseLabel: string;
+  readonly phaseSlideIds: readonly GuidedSlideId[];
 };

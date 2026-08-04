@@ -13,3 +13,8 @@ export {
   type GuidedSlideDefinition,
   type GuidedSlideId,
 } from "./types";
+export {
+  GUIDED_PHASES,
+  getPhaseForSlide,
+  getCompletedSlideCount,
+} from "./phases";
