@@ -783,3 +783,29 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 ================================================================================
 END APOLLO STEP 5-JP3 CURRENT
 ================================================================================
+
+================================================================================
+Apollo Step 6-UI-P0-A — Current UI and Dependency Audit
+================================================================================
+更新日時: 2026-08-05T00:37:09+09:00
+STEP_ID: APOLLO_STEP_6_UI_P0_A
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: 98ad5be376223be03449da835aec9a60f40e1cd9
+PRIMARY_PR: PENDING
+PRIMARY_PR_STATE: PENDING
+PRIMARY_PR_MERGE_SHA: PENDING
+DIRECT_UI_SURFACE_COUNT: 11
+EDIT_CANDIDATE_COUNT: 32
+PROTECTED_AREA_COUNT: 6
+OPEN_QUESTION_COUNT: 5
+FORMAL_AUTHORIZATION: NOT_GRANTED
+P0_A_VERDICT: COMPLETE
+P0_B_START_READINESS: GO
+EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/p0_a/
+NOTES:
+- Surveyed ApolloPhase1Shell, guided/, workflow UI, components/, viewer/, styles.css apollo-*, E2E apollo-*.spec.ts
+- Direct UI edit candidates concentrated in shell/guided/workflow chrome/styles/tests
+- Conditional: navigation.ts, i18n labels, Viewer3D chrome only
+- Protected: evaluators/selectors/dependencies/capabilityRegistry, bridgeStructure, visualization generation, export, workspace/schema/checksum, formal auth
+================================================================================

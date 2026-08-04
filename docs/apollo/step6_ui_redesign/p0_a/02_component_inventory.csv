@@ -1,0 +1,33 @@
+component_id,path,component_name,responsibility,rendered_in,state_owner,data_source,ui_change_likelihood,change_risk,notes
+AP-SHELL,frontend/src/apollo/ApolloPhase1Shell.tsx,ApolloPhase1Shell,Mode/step orchestration; header chrome; mounts all surfaces,App/ApolloRouteHost,self (mode/guidedStep/selection/viewer/...),ProjectModel props + Unit2 draft + buildApolloVisualizationModel,HIGH,HIGH,Primary UI redesign surface; ~2621 lines
+AP-GUIDED,frontend/src/apollo/guided/GuidedModeShell.tsx,GuidedModeShell,G01-G15 chrome/nav/progress/footer,guided-basics only,local currentSlideId + parent project,slides.ts + buildWorkflowStateModel,HIGH,MEDIUM,Footer not sticky; progress duplicates 6-step bar
+AP-SLIDES,frontend/src/apollo/guided/slides.ts,GUIDED_SLIDE_DEFINITIONS,G01-G15 definitions and adjacency,GuidedModeShell,static,DEC-S5-0009 slide table,LOW,MEDIUM,Meaning of G## must not change; presentation may wrap
+AP-CHROME,frontend/src/apollo/guided/chrome.ts,buildGuidedModeChromeState,Back/next enablement and progress label,GuidedModeShell,derived,currentSlideId,MEDIUM,LOW,Likely reused for sticky footer
+AP-WF-SCR,frontend/src/apollo/components/WorkflowControlScreen.tsx,WorkflowControlScreen,WF control plane; maps all steps to cards,guided-basics only,derived WorkflowStateModel,buildWorkflowStateModel,HIGH,MEDIUM,Full vertical list is UX problem #6
+AP-WF-CARD,frontend/src/apollo/components/WorkflowStepCard.tsx,WorkflowStepCard,Per-step status/CTA/diagnostics,WorkflowControlScreen,props,WorkflowStepState,HIGH,MEDIUM,Master-detail likely reuses card body
+AP-WF-PROG,frontend/src/apollo/components/WorkflowProgressSummary.tsx,WorkflowProgressSummary,Aggregate WF status counts,WorkflowControlScreen,props,WorkflowProgress,MEDIUM,LOW,Text-first counts; not color-only
+AP-WF-BADGE,frontend/src/apollo/components/WorkflowStatusBadge.tsx,WorkflowStatusBadge,Status symbol+label,WorkflowStepCard,props,status enum,LOW,LOW,A11y: text not color-only
+AP-WF-DIAG,frontend/src/apollo/components/WorkflowDiagnosticsPanel.tsx,WorkflowDiagnosticsPanel,Step diagnostics L1/L3,WorkflowStepCard,props,diagnostics,MEDIUM,LOW,Priority of diagnostics for redesign
+AP-AUTH,frontend/src/apollo/components/AuthorizationBanner.tsx,AuthorizationBanner,L1 JA auth banner + L3 TechnicalDetails fold,~18 call sites,props keys,i18n authorization catalog,HIGH,MEDIUM,Presentation only; NOT_GRANTED semantics frozen
+AP-TECH,frontend/src/apollo/components/TechnicalDetails.tsx,TechnicalDetails,Collapsed L3 technical lines,many panels,local open,lines props,MEDIUM,LOW,Reuse for compact auth/detail disclosure
+AP-BRIDGE,frontend/src/apollo/components/BridgeStructureInputPanel.tsx,BridgeStructureInputPanel,Bridge geometry input/generate,basics+editor,local+project,bridgeStructure/*,LOW,HIGH,SoR work surface; layout mount may change; generation logic frozen
+AP-XFRAME,frontend/src/apollo/components/CrossFrameAttachmentInputPanel.tsx,CrossFrameAttachmentInputPanel,Cross-frame attachment depths,BridgeStructureInputPanel,project,crossFrameAttachmentModel,LOW,MEDIUM,Nested panel
+AP-PAVE,frontend/src/apollo/components/PavementMarkingInputPanel.tsx,PavementMarkingInputPanel,Pavement and markings,basics,project,pavementModel,LOW,MEDIUM,Work surface
+AP-APP,frontend/src/apollo/components/DeckAppurtenanceInputPanel.tsx,DeckAppurtenanceInputPanel,Deck appurtenances,basics+editor,project,appurtenanceModel,LOW,HIGH,Work surface
+AP-HAUNCH,frontend/src/apollo/components/RcDeckHaunchInputPanel.tsx,RcDeckHaunchInputPanel,Haunch input,basics+editor,project,haunchModel,LOW,HIGH,Work surface
+AP-AN-PROBE,frontend/src/apollo/components/AnalysisDevelopmentProbePanel.tsx,AnalysisDevelopmentProbePanel,Dev analysis probe,basics,local,analysis adapters,LOW,HIGH,NOT_GRANTED; keep out of beginner chrome
+AP-AN-AH,frontend/src/apollo/components/AppurtenanceHaunchAnalysisPanel.tsx,AppurtenanceHaunchAnalysisPanel,App/haunch analysis,basics,project,analysis adapter,LOW,HIGH,Expert surface
+AP-LOAD,frontend/src/apollo/components/LoadConfirmationDevelopmentPanel.tsx,LoadConfirmationDevelopmentPanel,Load confirmation,basics,project,loads,LOW,HIGH,Expert surface
+AP-DEMAND,frontend/src/apollo/components/DemandCheckDevelopmentPanel.tsx,DemandCheckDevelopmentPanel,Demand check candidate,basics,local,dev,LOW,HIGH,Expert surface
+AP-QTY,frontend/src/apollo/components/QuantityModelDevelopmentPanel.tsx,QuantityModelDevelopmentPanel,Quantity model,basics,project,quantityModel,LOW,HIGH,Expert surface
+AP-RPT,frontend/src/apollo/components/ReportModelDevelopmentPanel.tsx,ReportModelDevelopmentPanel,Report model,basics,project,reportModel,LOW,HIGH,Expert surface
+AP-DRAW,frontend/src/apollo/components/StandardSectionDrawingPanel.tsx,StandardSectionDrawingPanel,Standard section drawing,basics,project,drawing,LOW,HIGH,Expert surface
+AP-GA,frontend/src/apollo/components/GeneralArrangementPanel.tsx,GeneralArrangementPanel,GA drawing,basics,project,drawingSet,LOW,HIGH,Expert surface
+AP-OUT,frontend/src/apollo/components/OutputIntegrationPanel.tsx,OutputIntegrationPanel,ZIP/checklist output,basics,project,outputIntegration,LOW,HIGH,Expert surface
+AP-REAPPLY,frontend/src/apollo/components/SampleReapplyConfirmDialog.tsx,SampleReapplyConfirmDialog,Sample reapply confirmation,BridgeStructure flow,props,sampleReapply,LOW,MEDIUM,E2E heavily depends on dialog testids
+AP-GUARD,frontend/src/apollo/components/UnsavedChangesGuardDialog.tsx,UnsavedChangesGuardDialog,Unsaved changes guard,host/shell flows,props,unsavedChangesGuard,LOW,MEDIUM,Preserve dirty/save semantics
+AP-NUM,frontend/src/apollo/components/ApolloNumericInput.tsx,ApolloNumericInput,Numeric commit input,editors,local,numericInput,LOW,LOW,IME/commit contract
+AP-COMP,frontend/src/apollo/components/CompositionAwareInput.tsx,CompositionAwareInput/Textarea,IME-safe text inputs,forms,local,compositionRegistry,LOW,LOW,
+AP-V3D,frontend/src/viewer/Viewer3D.tsx,Viewer3D,3D viewport chrome and scene,renderModelView in shell,internal viewer state,apolloVisualizationModel + viewProject,HIGH,HIGH,Placement/layout may change; mesh generation must not
+AP-VTYPES,frontend/src/viewer/types.ts,Viewer types,Visibility/selection types,Viewer3D + shell,N/A,types only,LOW,MEDIUM,Conditional if layout adds visibility chrome
+AP-STYLES,frontend/src/styles.css,apollo-* CSS,Header/layout/WF/Guided/responsive,global,N/A,CSS,HIGH,HIGH,Direct edit candidate for header/sticky/layout/responsive
