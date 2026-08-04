@@ -1007,3 +1007,47 @@ NEXT_ACTION: Begin Step 6-UI-2 (Guided progress + sticky footer) from latest mai
 ================================================================================
 END APOLLO STEP 6-UI-1
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-2
+================================================================================
+更新日時: 2026-08-05T01:53:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_2
+DOCUMENTATION_ONLY: NO (application code changed)
+BASE_MAIN_SHA: ec67674b2624ad7de8e230e28f43cf45a538b814
+BRANCH: feat/apollo-step6-ui-2-guided-progress
+MERGE_SHA: b6c0ca458f8022d5e4586e984ac7628b04bb9cfa
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/388
+
+NEW_FILES:
+  frontend/src/apollo/guided/phases.ts — 6-phase grouping (計画/主桁・床版/二次部材/荷重/確認/完了)
+
+MODIFIED_FILES:
+  frontend/src/apollo/guided/GuidedModeShell.tsx — phase bar + step strip + sticky footer
+  frontend/src/apollo/guided/chrome.ts — phase info in chrome state
+  frontend/src/apollo/guided/types.ts — ChromeState extended with phase fields
+  frontend/src/apollo/guided/index.ts — phases module export
+  frontend/src/styles.css — phase bar, step strip, sticky footer CSS (156 lines)
+  frontend/src/apollo/guided/__tests__/guidedMode.test.tsx — 7→11 tests
+
+IMPLEMENTATION_SUMMARY: PASS
+  - 6-phase high-level bar replaces inline 15-button grid
+  - Step strip shows only current phase steps; toggle for all 15
+  - Status conveyed via icon (✓/◉/○) + text + shape, not color-only
+  - Sticky footer with back / save-next / final-save buttons
+  - G15 shows "保存して完了"; last slide shows "最終保存"
+  - Guided data paths unchanged
+
+TEST_SUMMARY:
+  Apollo Vitest: 484/484 pass (71 test files)
+  Typecheck: PASS
+  Lint: PASS
+  Build: PASS
+  Denylist files: NONE changed
+
+STEP_6_UI_2_VERDICT: COMPLETE
+STEP_6_UI_3_START_READINESS: GO
+NEXT_ACTION: Begin Step 6-UI-3 (Input + 3D Viewer workspace) from latest main.
+================================================================================
+END APOLLO STEP 6-UI-2
+================================================================================
