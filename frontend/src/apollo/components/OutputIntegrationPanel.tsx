@@ -1,5 +1,6 @@
 import { AuthorizationBanner } from "./AuthorizationBanner";
 import { getStatusLabel } from "../i18n";
+import { TechnicalDetails } from "./TechnicalDetails";
 /**
  * Step 2-D / Step 3-E output integration panel — final development deliverables workflow.
  */
@@ -76,7 +77,7 @@ export function OutputIntegrationPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>成果物統合（開発専用・最終）</h2>
-          <p>数量・計算書・図面一式・ZIP の revision/checksum 整合と一括操作。</p>
+          <p>数量・計算書・図面一式・ZIP の版番号／照合値整合と一括操作。</p>
         </div>
       </div>
       <div data-testid="apollo-output-integration-warning">
@@ -86,14 +87,25 @@ export function OutputIntegrationPanel({ project }: Props) {
         />
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-output-integration-status">
-        状態: {outputs.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / 整合: {outputs.consistency.overall} / checksum:{" "}
-        {outputs.inputChecksum.slice(0, 16)}… / qty:{outputs.statuses.quantity} / report:
-        {outputs.statuses.report} / drawing:{outputs.statuses.drawing} / drawingSet:
-        {outputs.statuses.drawingSet} / schedule:{outputs.statuses.memberSchedule} / bundle:
-        {outputs.statuses.bundle} / formal:{outputs.statuses.formalReport}
+        状態: {outputs.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / 整合:{" "}
+        {getStatusLabel(outputs.consistency.overall)}
       </p>
+      <TechnicalDetails
+        testId="apollo-output-integration-tech"
+        title="照合・成果状態"
+        lines={[
+          `checksum=${outputs.inputChecksum.slice(0, 16)}…`,
+          `qty=${outputs.statuses.quantity}`,
+          `report=${outputs.statuses.report}`,
+          `drawing=${outputs.statuses.drawing}`,
+          `drawingSet=${outputs.statuses.drawingSet}`,
+          `schedule=${outputs.statuses.memberSchedule}`,
+          `bundle=${outputs.statuses.bundle}`,
+          `formal=${outputs.statuses.formalReport}`,
+        ]}
+      />
       <p data-testid="apollo-output-sheet-register">
-        sheets: {outputs.drawingSet.sheets.map((s) => s.drawingNumber).join(", ") || "none"}
+        シート: {outputs.drawingSet.sheets.map((s) => s.drawingNumber).join(", ") || "なし"}
       </p>
       <div className="apollo-workspace-actions">
         <button type="button" className="apollo-button-secondary" data-testid="apollo-output-regenerate-all" onClick={regenerate}>
@@ -136,7 +148,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale}
           onClick={() => wrap(() => openDevelopmentReportPreview(outputs.report))}
         >
-          計算書preview
+          計算書プレビュー
         </button>
         <button
           type="button"
@@ -154,7 +166,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale}
           onClick={() => wrap(() => downloadDevelopmentReportJson(outputs.report))}
         >
-          Report JSON
+          計算書JSON
         </button>
         <button
           type="button"
@@ -172,7 +184,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale}
           onClick={() => wrap(() => downloadAuditManifest(outputs.report, project))}
         >
-          audit
+          監査マニフェスト
         </button>
         <button
           type="button"
@@ -181,7 +193,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawing.entities.length === 0}
           onClick={() => wrap(() => openDrawingPreview(outputs.drawing))}
         >
-          断面preview
+          断面プレビュー
         </button>
         <button
           type="button"
@@ -217,7 +229,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
           onClick={() => wrap(() => downloadDrawingSetSheetSvg(outputs.drawingSet, "G-01"))}
         >
-          G-01 SVG
+          一般図SVG
         </button>
         <button
           type="button"
@@ -226,7 +238,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
           onClick={() => wrap(() => downloadDrawingSetSheetDxf(outputs.drawingSet, "G-01"))}
         >
-          G-01 DXF
+          一般図DXF
         </button>
         <button
           type="button"
@@ -235,7 +247,7 @@ export function OutputIntegrationPanel({ project }: Props) {
           disabled={outputs.stale || outputs.drawingSet.sheets.length === 0}
           onClick={() => wrap(() => downloadDrawingSetSheetPdfHtml(outputs.drawingSet, "G-01"))}
         >
-          G-01 HTML
+          一般図HTML
         </button>
         <button
           type="button"
@@ -266,7 +278,7 @@ export function OutputIntegrationPanel({ project }: Props) {
         </button>
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-output-bundle-status">
-        BUNDLE_EXPORT: {outputs.statuses.bundle} (STORE ZIP development-only)
+        ZIP一式: {getStatusLabel(outputs.statuses.bundle)}（開発専用ストア）
       </p>
       <div data-testid="apollo-output-user-checklist">
         <strong>User review checklist</strong>

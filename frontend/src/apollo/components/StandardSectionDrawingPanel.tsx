@@ -1,5 +1,6 @@
 import { AuthorizationBanner } from "./AuthorizationBanner";
 import { getStatusLabel } from "../i18n";
+import { TechnicalDetails } from "./TechnicalDetails";
 /**
  * Standard section drawing panel (Step 2-C).
  */
@@ -38,7 +39,7 @@ export function StandardSectionDrawingPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>標準断面図（開発プレビュー）</h2>
-          <p>Drawing Semantic Modelから生成。製作図ではありません。</p>
+          <p>図面意味モデルから生成。製作図ではありません。</p>
         </div>
       </div>
       <div data-testid="apollo-drawing-development-warning">
@@ -46,10 +47,18 @@ export function StandardSectionDrawingPanel({ project }: Props) {
         <p>標準断面は開発用プレビューです。製作図ではありません。</p>
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-drawing-provenance">
-        状態: {model.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / overhang: {model.layout.overhang} / girders:{" "}
-        {model.layout.girderCount} / checksum: {model.inputChecksum.slice(0, 16)}… / fabrication:{" "}
-        {String(model.fabricationDrawing)}
+        状態: {model.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / 張出: {model.layout.overhang}m / 主桁:{" "}
+        {model.layout.girderCount}
       </p>
+      <TechnicalDetails
+        testId="apollo-drawing-provenance-tech"
+        title="断面図詳細"
+        lines={[
+          `checksum=${model.inputChecksum.slice(0, 16)}…`,
+          `fabrication=${String(model.fabricationDrawing)}`,
+          `overhang=${model.layout.overhang}`,
+        ]}
+      />
       <div className="apollo-workspace-actions">
         <button type="button" className="apollo-button-secondary" data-testid="apollo-drawing-regenerate" onClick={regenerate}>
           標準断面を生成/再生成
@@ -97,7 +106,7 @@ export function StandardSectionDrawingPanel({ project }: Props) {
         </p>
       ) : null}
       <p data-testid="apollo-drawing-girder-centers">
-        girderCentersX: {model.layout.girderCentersX.map((x) => x.toFixed(3)).join(", ")}
+        主桁中心X: {model.layout.girderCentersX.map((x) => x.toFixed(3)).join(", ")} m
       </p>
     </article>
   );

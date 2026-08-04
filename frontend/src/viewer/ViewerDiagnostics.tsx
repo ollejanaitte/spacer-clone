@@ -27,18 +27,18 @@ export function ViewerDiagnostics({ diagnostics, open, onToggle }: ViewerDiagnos
         <dl>
           <Row label="Viewer mode" value={describeViewerMode(diagnostics.viewerMode)} />
           <Row label="Fallback reason" value={describeFallbackReason(diagnostics.fallbackReason)} />
-          <Row label="WebGL available" value={diagnostics.webgl.available ? "true" : "false"} />
-          <Row label="WebGL renderer" value={diagnostics.webgl.renderer} />
-          <Row label="WebGL vendor" value={diagnostics.webgl.vendor} />
-          <Row label="WebGL version" value={diagnostics.webgl.version} />
-          <Row label="WebGL shading language" value={diagnostics.webgl.shadingLanguageVersion} />
-          <Row label="WebGL unmasked renderer" value={diagnostics.webgl.unmaskedRenderer} />
-          <Row label="WebGL unmasked vendor" value={diagnostics.webgl.unmaskedVendor} />
-          <Row label="GPU mode" value={diagnostics.gpuMode} />
+          <Row label="WebGL利用可否" value={diagnostics.webgl.available ? "true" : "false"} />
+          <Row label="WebGLレンダラー" value={diagnostics.webgl.renderer} />
+          <Row label="WebGLベンダー" value={diagnostics.webgl.vendor} />
+          <Row label="WebGL版" value={diagnostics.webgl.version} />
+          <Row label="WebGLシェーダ言語" value={diagnostics.webgl.shadingLanguageVersion} />
+          <Row label="WebGL実レンダラー" value={diagnostics.webgl.unmaskedRenderer} />
+          <Row label="WebGL実ベンダー" value={diagnostics.webgl.unmaskedVendor} />
+          <Row label="GPUモード" value={diagnostics.gpuMode} />
           <Row label="App version" value={diagnostics.appVersion} />
           <Row label="Current preset" value={describeCameraPreset(diagnostics.currentViewPreset)} />
           <Row label="Line element count" value={apolloCounts?.lineElementCount ?? UNAVAILABLE_LABEL} />
-          <Row label="Solid count" value={apolloCounts?.solidCount ?? UNAVAILABLE_LABEL} />
+          <Row label="立体数" value={apolloCounts?.solidCount ?? UNAVAILABLE_LABEL} />
           <Row label="Girder count" value={apolloCounts?.girderCount ?? UNAVAILABLE_LABEL} />
           <Row label="Cross beam count" value={apolloCounts?.crossBeamCount ?? UNAVAILABLE_LABEL} />
           <Row label="Bracing count" value={apolloCounts?.bracingCount ?? UNAVAILABLE_LABEL} />
@@ -47,7 +47,7 @@ export function ViewerDiagnostics({ diagnostics, open, onToggle }: ViewerDiagnos
           <Row label="Marker count" value={apolloCounts?.markerCount ?? UNAVAILABLE_LABEL} />
           <Row label="Warning count" value={apolloCounts?.warningCount ?? UNAVAILABLE_LABEL} />
           <Row
-            label="Solid display assessment"
+            label="立体表示判定"
             value={describeSolidVisibilityAssessment(
               apolloCounts,
               diagnostics.visibility,

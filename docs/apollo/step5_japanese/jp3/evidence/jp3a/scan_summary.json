@@ -1,8 +1,8 @@
 {
-  "total_hits": 2593,
-  "raw_english_l1": 2476,
+  "total_hits": 126,
+  "raw_english_l1": 9,
   "technical_only": 117,
-  "unresolved": 2476,
+  "unresolved": 9,
   "screens": [
     "basics-empty",
     "basics-sample",
@@ -17,403 +17,93 @@
   "top_l1": [
     {
       "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-shell-kicker\"]",
-      "text": "Apollo Phase 1-NN",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Phase|NN",
+      "reason": "residual:User|review|checklist",
       "screenshot": "evidence/jp3a/01-basics-empty.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-provisional-banner\"]",
-      "text": "非数値入力モード 構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。(Wednesday, July 29, 2026)",
+      "screen": "basics-sample",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Wednesday|July",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/02-basics-sample.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "p",
-      "text": "構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。(Wednesday, July 29, 2026)",
+      "screen": "guided-G01",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Wednesday|July",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/03-guided-G01.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-project-shell\"]",
-      "text": "基本情報 橋梁の識別情報と保存状態を確認します。 保存状態: 保存済み UndoRedo プロジェクトID apollo-prj-1785847750492-1-3kd0iozs 内部識別子です。編集できません。 橋梁名 必須 概要・備考 任意",
+      "screen": "guided-G05",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:UndoRedo|apollo-prj-1785847750492-1-3kd0iozs",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/03-guided-G05.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-undo\"]",
-      "text": "Undo",
+      "screen": "guided-G09",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Undo",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/03-guided-G09.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-redo\"]",
-      "text": "Redo",
+      "screen": "guided-G12",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Redo",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/03-guided-G12.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "label",
-      "text": "プロジェクトID apollo-prj-1785847750492-1-3kd0iozs 内部識別子です。編集できません。",
+      "screen": "guided-G15",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:apollo-prj-1785847750492-1-3kd0iozs",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/03-guided-G15.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-project-id-display\"]",
-      "text": "apollo-prj-1785847750492-1-3kd0iozs",
+      "screen": "reapply-dialog",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:apollo-prj-1785847750492-1-3kd0iozs",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/05-reapply-dialog.png"
     },
     {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-project-description-input\"]",
-      "text": "Non-numeric Apollo workspace draft.",
+      "screen": "mobile-basics",
+      "selector": "[data-testid=\"apollo-output-user-checklist\"]",
+      "text": "User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",
       "visibility": "visible",
       "layer": "L1",
       "allowlisted": false,
-      "reason": "residual:Non-numeric|workspace|draft",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-guided-mode-shell\"]",
-      "text": "ガイド付きモード プロジェクト / サンプル この画面で決めること: サンプル適用可否と免責の確認 開発確認用・未検証 — 正式認可なし — 設計・施工への使用禁止 開発確認専用で検証されていない 数値設計の正式認可は付与されていない 設計・施工目的での使用は禁止 技術情報を表示（認可） 1/15 G01 G02 G03 G04 G05 G06 G07 G08 G09 G10 G11 G12 G13 G14 G15 主要項目 サンプルID 免責の確認 関連工程: 開始 技術情",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:WF",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-guided-slide-G01\"]",
-      "text": "主要項目 サンプルID 免責の確認 関連工程: 開始 技術情報を表示（WF ID） 影響 3D: サンプル適用後に更新 数量・荷重: 生成後に反映",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:WF",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-guided-wf-anchor-tech\"]",
-      "text": "技術情報を表示（WF ID）",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:WF",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-guided-wf-anchor-tech-toggle\"]",
-      "text": "技術情報を表示（WF ID）",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:WF",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-01\"]",
-      "text": "WF-01 道路線形 geometry ✕ 先に必要な作業があります 表示文言未登録 表示文言未登録 注意 完了条件: alignment binding 成立 (Step 4-E 実装後評価) ✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-E 実装後に評価が有効になります。 技術情報を表示 ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モ",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|alignment|binding|Step|STUB|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "span.apollo-wf-step-group",
-      "text": "geometry",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: alignment binding 成立 (Step 4-E 実装後評価)",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:alignment|binding|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
-      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-E 実装後に評価が有効になります。 技術情報を表示 ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i まだ入力がありません。この工程を開始してください。 対処: 工程を開",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:STUB|Step|local|CRS|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-error",
-      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-E 実装後に評価が有効になります。 技術情報を表示",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:STUB|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-diagnostic-message",
-      "text": "この工程は将来工程（STUB）です。現在は利用できません。",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:STUB",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-diagnostic-remediation",
-      "text": "対処: Step 4-E 実装後に評価が有効になります。",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-warning",
-      "text": "! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:local|CRS|Step|binding|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-diagnostic-message",
-      "text": "座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:local|CRS|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-diagnostic-remediation",
-      "text": "対処: Step 4-E 実装後に道路線形 binding を設定してください。",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-02\"]",
-      "text": "WF-02 橋梁基本条件 geometry ★ 推奨 推奨 表示文言未登録 注意 工程を開いて進めてください。 完了条件: 入力 valid + 構造生成 current (generatedAt) ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i まだ入力がありません。この",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|valid|current|generatedAt|local|CRS",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: 入力 valid + 構造生成 current (generatedAt)",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:valid|current|generatedAt",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
-      "text": "! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i まだ入力がありません。この工程を開始してください。 対処: 工程を開いて入力を開始してください。 技術情報を表示",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:local|CRS|Step|binding|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-03\"]",
-      "text": "WF-03 床版・橋面付属物 geometry ○ 未着手 表示文言未登録 注意 完了条件: 全スロット presence 決定 + valid PROVIDED + 構造生成 current ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 ! 座標系は local CRS で",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|presence|valid|PROVIDED|current|local",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: 全スロット presence 決定 + valid PROVIDED + 構造生成 current",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:presence|valid|PROVIDED|current",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
-      "text": "! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:local|CRS|Step|binding|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-04\"]",
-      "text": "WF-04 主桁断面 geometry ○ 未着手 表示文言未登録 注意 完了条件: 断面入力 valid + 構造生成 current ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i 先に必要な作業があります 前提工程が未完了です。 対処: 推奨工程を開いて入力を完了して",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|valid|current|local|CRS|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: 断面入力 valid + 構造生成 current",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:valid|current",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
-      "text": "! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i 先に必要な作業があります 前提工程が未完了です。 対処: 推奨工程を開いて入力を完了してください。 技術情報を表示 i まだ入力がありません。この工程を開始してください。 対処: 工程を開いて入力を開始してください。 技術情報",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:local|CRS|Step|binding|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-05\"]",
-      "text": "WF-05 ハンチ geometry ○ 未着手 表示文言未登録 注意 完了条件: 全主桁 presence 決定 + valid + BSSD projection current ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i 先に必要な作業があります 前提工程が未完了",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|presence|valid|BSSD|projection|current",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: 全主桁 presence 決定 + valid + BSSD projection current",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:presence|valid|BSSD|projection|current",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-06\"]",
-      "text": "WF-06 添接・フィラー geometry ✕ 先に必要な作業があります 表示文言未登録 表示文言未登録 注意 完了条件: 添接 canonical input (Step 4-D) ✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-D 実装後に評価が有効になります。 技術情報を表示 ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:geometry|canonical|input|Step|STUB|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-step-criterion",
-      "text": "完了条件: 添接 canonical input (Step 4-D)",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:canonical|input|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-diagnostics\"]",
-      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-D 実装後に評価が有効になります。 技術情報を表示 ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i まだ入力がありません。この工程を開始してください。 対処: 工程を開",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:STUB|Step|local|CRS|Step|binding",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "li.apollo-wf-diagnostic.apollo-wf-diagnostic-error",
-      "text": "✕ この工程は将来工程（STUB）です。現在は利用できません。 先に解消が必要です 対処: Step 4-D 実装後に評価が有効になります。 技術情報を表示",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:STUB|Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "p.apollo-wf-diagnostic-remediation",
-      "text": "対処: Step 4-D 実装後に評価が有効になります。",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:Step",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
-    },
-    {
-      "screen": "basics-empty",
-      "selector": "[data-testid=\"apollo-wf-step-WF-07\"]",
-      "text": "WF-07 荷重 loads ○ 未着手 表示文言未登録 注意 完了条件: 構造 current + load model READY/EMPTY（unit weight不足は INCOMPLETE） ! 座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。 対処: Step 4-E 実装後に道路線形 binding を設定してください。 技術情報を表示 i 先に必要な作業があります",
-      "visibility": "visible",
-      "layer": "L1",
-      "allowlisted": false,
-      "reason": "residual:loads|current|load|model|READY/EMPTY|unit",
-      "screenshot": "evidence/jp3a/01-basics-empty.png"
+      "reason": "residual:User|review|checklist",
+      "screenshot": "evidence/jp3a/06-mobile-basics.png"
     }
   ]
 }

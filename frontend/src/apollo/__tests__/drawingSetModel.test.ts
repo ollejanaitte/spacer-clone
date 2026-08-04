@@ -159,7 +159,7 @@ describe("drawingSetModel general arrangement", () => {
     const incomplete = createDefaultProject();
     const model = buildGeneralArrangementDrawingSet(incomplete);
     expect(model.sheets).toHaveLength(0);
-    expect(model.warnings.some((w) => w.includes("INCOMPLETE") || w.includes("BLOCKED") || w.includes("STEP3"))).toBe(
+    expect(model.warnings.some((w) => w.includes("入力不足") || w.includes("対象外") || w.includes("単純桁"))).toBe(
       true,
     );
   });

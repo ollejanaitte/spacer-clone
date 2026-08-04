@@ -41,7 +41,7 @@ describe("DeckAppurtenanceInputPanel UI", () => {
     expect(container.querySelector('[data-testid="apollo-appurtenance-panel"]')).toBeTruthy();
     expect(
       container.querySelector('[data-testid="apollo-appurtenance-local-crs-warning"]')?.textContent,
-    ).toMatch(/local CRS/);
+    ).toMatch(/橋梁ローカル座標系/);
     expect(
       container.querySelector('[data-testid="apollo-appurtenance-presence-LEFT_CURB"]'),
     ).toBeTruthy();

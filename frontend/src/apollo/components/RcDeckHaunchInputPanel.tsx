@@ -197,8 +197,8 @@ export function RcDeckHaunchInputPanel({
           <AuthorizationBanner testId="apollo-haunch-auth" />
         </div>
         <p role="note" data-testid="apollo-haunch-datum">
-          ハンチ datum: 主桁上フランジ上面と床版下面の間（DEC-S4-0009）。mesh から逆算しません。
-          3D solids・数量・自重は Step 4-C 未実装です。
+          ハンチ基準面: 主桁上フランジ上面と床版下面の間。メッシュから逆算しません。
+          3Dソリッド・数量・自重の接続状態は技術情報を確認してください。
         </p>
         <p data-testid="apollo-haunch-context">
           主桁本数: {girderCount ?? "未入力"} / 構造モデル長: {draft.bridgeLength ?? "未入力"} m /
@@ -297,14 +297,14 @@ export function RcDeckHaunchInputPanel({
             data-testid={`apollo-haunch-girder-${mainGirderKey}`}
           >
             <legend>
-              主桁 {index + 1}（{mainGirderKey} / seed={mainGirderKeyFromIndex(index)}）
+              主桁 {index + 1}
             </legend>
             <label className="apollo-field">
               <span>有無</span>
               <select
                 data-testid={`apollo-haunch-presence-${mainGirderKey}`}
                 value={girder.presence}
-                aria-label={`主桁 ${mainGirderKey} のハンチ有無`}
+                aria-label={`主桁 ${index + 1} のハンチ有無`}
                 onChange={(event) =>
                   updatePresence(mainGirderKey, event.target.value as PresenceStatus)
                 }
@@ -324,7 +324,7 @@ export function RcDeckHaunchInputPanel({
                   <select
                     data-testid={`apollo-haunch-shape-${mainGirderKey}`}
                     value={item.shapeType ?? ""}
-                    aria-label={`主桁 ${mainGirderKey} 形状`}
+                    aria-label={`主桁 ${index + 1} 形状`}
                     onChange={(event) =>
                       updateItem(mainGirderKey, {
                         ...item,
@@ -386,7 +386,7 @@ export function RcDeckHaunchInputPanel({
                   <CompositionAwareInput
                     data-testid={`apollo-haunch-material-${mainGirderKey}`}
                     value={item.materialRef ?? ""}
-                    aria-label={`主桁 ${mainGirderKey} 材料参照`}
+                    aria-label={`主桁 ${index + 1} 材料参照`}
                     onValueChange={(next) =>
                       updateItem(mainGirderKey, {
                         ...item,
@@ -411,8 +411,8 @@ export function RcDeckHaunchInputPanel({
       })}
 
       <footer data-testid="apollo-haunch-status">
-        完了判定: {validation.complete ? "input COMPLETE候補" : "INCOMPLETE/BLOCKED"} /
-        blocking={validation.blockingDiagnostics.length} / models={validation.models.length}
+        完了判定: {validation.complete ? "入力完了候補" : "入力不足／前提未完了"} /
+        要解消={validation.blockingDiagnostics.length} / モデル数={validation.models.length}
       </footer>
     </article>
   );

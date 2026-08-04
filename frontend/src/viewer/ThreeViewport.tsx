@@ -278,7 +278,7 @@ const ThreeViewportInner = (props: ThreeViewportProps, ref: React.ForwardedRef<I
     if (context && props.cameraRequest) fitCamera(context, props, props.cameraRequest);
   }, [props.cameraRequest]);
 
-  return <div ref={hostRef} className="three-viewport" aria-label="3D model viewport" />;
+  return <div ref={hostRef} className="three-viewport" aria-label="3Dモデル表示領域" />;
 }
 
 function animationOverrideFor(

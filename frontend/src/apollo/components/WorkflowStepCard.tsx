@@ -4,7 +4,7 @@
  * Not color-only: symbol + label + text reason always present.
  */
 import type { WorkflowStepState } from "../workflow/types";
-import { getStatusLabel } from "../i18n";
+import { getStatusLabel, getWorkflowGroupLabel } from "../i18n";
 import { WorkflowStatusBadge } from "./WorkflowStatusBadge";
 import { WorkflowDiagnosticsPanel } from "./WorkflowDiagnosticsPanel";
 import { TechnicalDetails } from "./TechnicalDetails";
@@ -33,7 +33,7 @@ export function WorkflowStepCard({ step, onNavigate, onPrimaryAction }: Props) {
           {def.workflowStepId}
         </span>
         <h3 className="apollo-wf-step-label">{def.label}</h3>
-        <span className="apollo-wf-step-group">{def.group}</span>
+        <span className="apollo-wf-step-group">{getWorkflowGroupLabel(def.group)}</span>
       </div>
       <div className="apollo-wf-step-card-body">
         <div className="apollo-wf-step-status">

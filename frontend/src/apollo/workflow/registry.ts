@@ -43,7 +43,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "LINER alignment available; binding is Step 4-E",
     navigationTarget: { kind: "route", path: "/pro/liner", label: "LINER（道路線形）" },
     primaryActionId: "open-step",
-    completionCriterion: "alignment binding 成立 (Step 4-E 実装後評価)",
+    completionCriterion: "道路線形の接続が成立していること（道路線形連携実装後に評価）",
   },
   {
     workflowStepId: "WF-02",
@@ -55,7 +55,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "SIMPLE_SINGLE / SIMPLE_MULTIPLE / CONTINUOUS bridge structure input",
     navigationTarget: PANEL("wf-panel-bridge-structure", "橋梁基本条件入力"),
     primaryActionId: "generate-structure",
-    completionCriterion: "入力 valid + 構造生成 current (generatedAt)",
+    completionCriterion: "入力が妥当で、構造生成結果が最新であること",
   },
   {
     workflowStepId: "WF-03",
@@ -67,7 +67,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "地覆/壁高欄/中央分離帯/任意バリア canonical input (constant segment)",
     navigationTarget: PANEL("wf-panel-appurtenance", "床版・橋面付属物入力"),
     primaryActionId: "generate-structure",
-    completionCriterion: "全スロット presence 決定 + valid PROVIDED + 構造生成 current",
+    completionCriterion: "全スロットの有無が決定し、提供値が妥当で、構造生成結果が最新であること",
   },
   {
     workflowStepId: "WF-04",
@@ -79,7 +79,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "平板I桁断面 (girderDepth/flange/web)",
     navigationTarget: PANEL("wf-panel-bridge-structure", "主桁断面入力"),
     primaryActionId: "generate-structure",
-    completionCriterion: "断面入力 valid + 構造生成 current",
+    completionCriterion: "断面入力が妥当で、構造生成結果が最新であること",
   },
   {
     workflowStepId: "WF-05",
@@ -91,7 +91,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "主桁ごと RECT/TRAPEZOID constant range haunch input",
     navigationTarget: PANEL("wf-panel-haunch", "ハンチ入力"),
     primaryActionId: "generate-structure",
-    completionCriterion: "全主桁 presence 決定 + valid + BSSD projection current",
+    completionCriterion: "全主桁の有無が決定し、入力が妥当で、投影結果が最新であること",
   },
   {
     workflowStepId: "WF-06",
@@ -103,7 +103,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "Step 4-D 実装後に評価",
     navigationTarget: PANEL("wf-panel-bridge-structure", "添接入力（未実装）"),
     primaryActionId: "none",
-    completionCriterion: "添接 canonical input (Step 4-D)",
+    completionCriterion: "添接の正規入力が完了していること（添接工程実装後）",
   },
   {
     workflowStepId: "WF-07",
@@ -115,7 +115,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "development dead loads for appurtenance/haunch (DEC-S4-0010); splice pending 4-D",
     navigationTarget: PANEL("wf-panel-load-confirmation", "荷重確認パネル"),
     primaryActionId: "open-step",
-    completionCriterion: "構造 current + load model READY/EMPTY（unit weight不足は INCOMPLETE）",
+    completionCriterion: "構造が最新で、荷重モデルが準備完了またはデータなし（単位重量不足は入力不足）",
   },
   {
     workflowStepId: "WF-08",
@@ -127,7 +127,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "development probe (GOLD-AN-001/002)",
     navigationTarget: PANEL("wf-panel-analysis", "構造解析パネル"),
     primaryActionId: "run-analysis",
-    completionCriterion: "current input に対する解析結果あり",
+    completionCriterion: "現在の入力に対する解析結果があること",
   },
   {
     workflowStepId: "WF-09",
@@ -139,7 +139,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "development candidate (UNVERIFIED)",
     navigationTarget: PANEL("wf-panel-demand", "候補照査パネル"),
     primaryActionId: "open-step",
-    completionCriterion: "current 解析結果に基づく候補照査あり",
+    completionCriterion: "現在の解析結果に基づく候補照査があること",
   },
   {
     workflowStepId: "WF-10",
@@ -151,7 +151,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "bridge structure approximate quantities",
     navigationTarget: PANEL("wf-panel-quantity", "数量パネル"),
     primaryActionId: "regenerate",
-    completionCriterion: "quantity model current (checksum aligned)",
+    completionCriterion: "数量モデルが最新で照合値が一致していること",
   },
   {
     workflowStepId: "WF-11",
@@ -163,7 +163,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "3D solids; dimension overlay is Step 4-F",
     navigationTarget: PANEL("wf-panel-model-view", "3Dモデルビュー"),
     primaryActionId: "review-3d",
-    completionCriterion: "3Dモデル build ok; dimension overlay は別診断",
+    completionCriterion: "3Dモデルの構築が成功していること（寸法表示は別診断）",
   },
   {
     workflowStepId: "WF-12",
@@ -175,7 +175,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "development report",
     navigationTarget: PANEL("wf-panel-report", "計算書パネル"),
     primaryActionId: "regenerate",
-    completionCriterion: "report model current (checksum aligned)",
+    completionCriterion: "計算書モデルが最新で照合値が一致していること",
   },
   {
     workflowStepId: "WF-13",
@@ -187,7 +187,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "standard section + GA drawing set",
     navigationTarget: PANEL("wf-panel-drawing", "図面パネル"),
     primaryActionId: "regenerate",
-    completionCriterion: "drawing set current + sheet count >= 7",
+    completionCriterion: "図面セットが最新で、シート数が7以上であること",
   },
   {
     workflowStepId: "WF-14",
@@ -199,7 +199,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "artifact bundle / ZIP (OutputIntegrationPanel)",
     navigationTarget: PANEL("wf-panel-output", "成果品出力パネル"),
     primaryActionId: "export",
-    completionCriterion: "integrated outputs current + consistency PASS",
+    completionCriterion: "統合成果が最新で、整合チェックを通過していること",
   },
   {
     workflowStepId: "WF-15",
@@ -211,7 +211,7 @@ export const WORKFLOW_STEP_DEFINITIONS: readonly WorkflowStepDefinition[] = [
     supportedScope: "human review checklist",
     navigationTarget: PANEL("wf-panel-output", "成果品出力パネル（確認チェックリスト）"),
     primaryActionId: "open-checklist",
-    completionCriterion: "human acknowledgment 記録あり (checksum bound)",
+    completionCriterion: "利用者確認の記録があり、照合値に紐づいていること",
   },
 ] as const;
 

@@ -641,13 +641,13 @@ export function buildGeneralArrangementDrawingSet(
   const section = buildStandardSectionDrawingModel(project, { generatedAt });
 
   const baseWarnings = [
-    "DEVELOPMENT GENERAL ARRANGEMENT",
-    "NOT A DESIGN-APPROVED OR FABRICATION DRAWING",
-    "NOT FOR CONSTRUCTION",
-    "UNVERIFIED DEVELOPMENT OUTPUT",
-    "USER REVIEW REQUIRED",
-    "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
-    "LOCAL DATUM — ABSOLUTE ELEVATION NOT PROVIDED",
+    "開発用一般図（設計承認図・製作図ではありません）",
+    "設計承認図・製作図ではありません",
+    "施工には使用しないでください",
+    "未検証の開発用出力です",
+    "利用者確認が必要です",
+    "数値設計の正式認可はありません",
+    "ローカル基準です（絶対標高は未提供）",
   ];
 
   const required = [
@@ -664,8 +664,8 @@ export function buildGeneralArrangementDrawingSet(
     return emptyDrawingSet(project, inputChecksum, inputRevision, generatedAt, stale, [
       ...baseWarnings,
       draft.bridgeSystem !== "SIMPLE_SINGLE"
-        ? "STEP3_SCOPE: SIMPLE_SINGLE only — continuous/skew/curved BLOCKED"
-        : "INCOMPLETE_INPUT",
+        ? "現在スコープは単純桁のみです（連続・斜橋・曲線は対象外）"
+        : "入力不足",
     ]);
   }
 
@@ -727,8 +727,8 @@ export function buildGeneralArrangementDrawingSet(
   ];
 
   const commonNotes = [
-    "UNVERIFIED DEVELOPMENT OUTPUT",
-    "NOT FOR DESIGN, FABRICATION OR CONSTRUCTION",
+    "未検証の開発用出力です",
+    "設計・製作・施工には使用しないでください",
     "USER REVIEW REQUIRED",
     "NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED",
   ];
@@ -757,7 +757,7 @@ export function buildGeneralArrangementDrawingSet(
       titleBlock: {
         title,
         subtitle: "DEVELOPMENT PREVIEW",
-        warning: "NOT A DESIGN-APPROVED OR FABRICATION DRAWING — NOT FOR CONSTRUCTION",
+        warning: "設計承認図・製作図ではありません — 施工には使用しないでください",
         drawingNumber,
         revision: inputRevision,
         inputChecksum,
@@ -938,7 +938,7 @@ export function buildGeneralArrangementDrawingSet(
     units: "m",
     layerRegistry: DRAWING_SET_LAYERS,
     styleRegistry: {
-      developmentWatermark: "UNVERIFIED DEVELOPMENT OUTPUT — NOT FOR CONSTRUCTION",
+      developmentWatermark: "未検証の開発用出力 — 施工には使用しないでください",
     },
     titleBlockTemplate: "APOLLO_DEVELOPMENT_A3",
     sheets,

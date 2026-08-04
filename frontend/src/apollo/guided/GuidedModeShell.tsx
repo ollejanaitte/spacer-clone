@@ -103,7 +103,7 @@ export function GuidedModeShell({
           <p className="apollo-guided-wf-anchor">関連工程: {formatWfAnchor(slide.wfAnchor)}</p>
           <TechnicalDetails
             testId="apollo-guided-wf-anchor-tech"
-            title="WF ID"
+            title="工程ID"
             lines={[`wfAnchor=${slide.wfAnchor}`]}
           />
           <div className="apollo-guided-impact" data-testid="apollo-guided-impact-strip" aria-label="影響サマリ">

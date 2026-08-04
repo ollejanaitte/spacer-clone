@@ -50,7 +50,7 @@ export type StepEvidence = {
 };
 
 export const LOCAL_CRS_WARNING_MESSAGE =
-  "座標系は local CRS です（Step 4-E 未実装）。道路線形 binding は未接続のため、横断配置は互換モードで運用してください。";
+  "座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。";
 
 function localCrsWarning(stepId: WorkflowStepId, index: number): WorkflowDiagnostic {
   return {
@@ -62,7 +62,7 @@ function localCrsWarning(stepId: WorkflowStepId, index: number): WorkflowDiagnos
     technicalDetail: "BINDING_PREREQUISITE_GUARD=PENDING_STEP_4E",
     blocking: false,
     source: "frontend/src/apollo/workflow/selectors.ts",
-    remediation: "Step 4-E 実装後に道路線形 binding を設定してください。",
+    remediation: "道路線形連携の実装後にバインドを設定してください。",
     navigationTarget: { kind: "route", path: "/pro/liner", label: "LINER（道路線形）" },
   };
 }
@@ -73,11 +73,11 @@ function partialCapabilityWarning(stepId: WorkflowStepId, index: number): Workfl
     workflowStepId: stepId,
     severity: "warning",
     code: "WF_PARTIAL_SCOPE_WARNING",
-    message: "この工程は development 限定の部分実装です。将来工程の項目は未対応です。",
+    message: "この工程は開発確認用の部分実装です。将来工程の項目は未対応です。",
     technicalDetail: "capability=PARTIAL",
     blocking: false,
     source: "frontend/src/apollo/workflow/selectors.ts",
-    remediation: "今後の Step で拡張予定です。",
+    remediation: "今後の拡張を待つか、対応済み項目のみ利用してください。",
     navigationTarget: null,
   };
 }
@@ -88,11 +88,11 @@ export function dimensionPlannedWarning(stepId: WorkflowStepId, index: number): 
     workflowStepId: stepId,
     severity: "warning",
     code: "WF_3D_DIMENSION_PLANNED",
-    message: "3D 寸法 overlay・2点計測は Step 4-F で実装予定です。3D 本体とは別に管理します。",
+    message: "3D寸法表示・2点計測は将来工程で実装予定です。3D本体とは別に管理します。",
     technicalDetail: "capability model-view=IMPLEMENTED; dimension capability=PLANNED",
     blocking: false,
     source: "frontend/src/apollo/workflow/selectors.ts",
-    remediation: "Step 4-F 実装後に有効化されます。",
+    remediation: "寸法機能の実装後に有効化されます。",
     navigationTarget: null,
   };
 }
@@ -195,11 +195,11 @@ function step4gReintegrationPending(stepId: WorkflowStepId, index: number): Work
     severity: "warning",
     code: "WF_STEP_4_G_REINTEGRATION_PENDING",
     message:
-      "付属物・ハンチの計算書/図面/ZIP 再統合は Step 4-G 待ちです。既存成果を新 entity 対応済みとみなしません。",
+      "付属物・ハンチの計算書／図面／ZIP再統合は将来工程待ちです。既存成果を新エンティティ対応済みとみなしません。",
     technicalDetail: "STEP_4_G_REINTEGRATION_PENDING",
     blocking: false,
     source: "frontend/src/apollo/workflow/selectors.ts",
-    remediation: "Step 4-G で report/drawing/member schedule/ZIP を再統合してください。",
+    remediation: "再統合工程で計算書・図面・部材表・ZIPを再統合してください。",
     navigationTarget: null,
   };
 }
@@ -537,11 +537,11 @@ function appurtenanceEvidence(project: ProjectModel, stepId: WorkflowStepId): St
       severity: "warning",
       code: "WF_STEP_4_G_REINTEGRATION_PENDING",
       message:
-        "付属物が PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+        "付属物は「あり」です。3D・数量・荷重は接続済みです。計算書／図面／ZIP再統合は将来工程待ちです。",
       technicalDetail: "appurtenance PROVIDED; Step 4-G reintegration pending",
       blocking: false,
       source: "frontend/src/apollo/workflow/selectors.ts",
-      remediation: "Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。",
+      remediation: "再統合工程完了まで計算書・図面・ZIPは未再統合として扱ってください。",
       navigationTarget: null,
     });
   }
@@ -631,11 +631,11 @@ function haunchEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvid
       severity: "warning",
       code: "WF_STEP_4_G_REINTEGRATION_PENDING",
       message:
-        "ハンチが PROVIDED です。3D/数量/荷重は Step 4-C で接続済み。計算書/図面/ZIP 再統合は Step 4-G 待ちです。",
+        "ハンチは「あり」です。3D・数量・荷重は接続済みです。計算書／図面／ZIP再統合は将来工程待ちです。",
       technicalDetail: "haunch PROVIDED; Step 4-G reintegration pending",
       blocking: false,
       source: "frontend/src/apollo/workflow/selectors.ts",
-      remediation: "Step 4-G まで report/drawing/ZIP は未再統合として扱ってください。",
+      remediation: "再統合工程完了まで計算書・図面・ZIPは未再統合として扱ってください。",
       navigationTarget: null,
     });
   }
@@ -716,7 +716,7 @@ function loadConfirmationEvidence(project: ProjectModel, stepId: WorkflowStepId)
       workflowStepId: stepId,
       severity: "warning",
       code: "WF_INPUT_MISSING",
-      message: "付属物/ハンチの単位体積重量が不足しています。該当荷重は NOT_AVAILABLE です。",
+      message: "付属物／ハンチの単位体積重量が不足しています。該当荷重は利用不可です。",
       technicalDetail: `loadStatus=${loadModel.status}; unavailable=${loadModel.loads.filter((l) => l.status === "NOT_AVAILABLE").length}`,
       blocking: false,
       source: "frontend/src/apollo/workflow/selectors.ts",
@@ -804,7 +804,7 @@ function drawingEvidence(project: ProjectModel, stepId: WorkflowStepId): StepEvi
         technicalDetail: "STEP3_SCOPE: SIMPLE_SINGLE only",
         blocking: true,
         source: "frontend/src/apollo/workflow/selectors.ts",
-        remediation: "SIMPLE_SINGLE モデルで図面を生成するか、将来の Step で図面スコープを拡張してください。",
+        remediation: "単純桁モデルで図面を生成するか、将来の拡張を待ってください。",
         navigationTarget: { kind: "panel", path: "wf-panel-drawing", label: "図面パネル" },
       });
     } else {

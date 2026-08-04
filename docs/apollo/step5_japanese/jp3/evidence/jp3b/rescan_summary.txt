@@ -1,0 +1,2 @@
+leaf_unique_l1=85
+top_tokens=[('kN/m', 15), ('HTML', 6), ('PDF', 4), ('Solid', 4), ('G0', 3), ('GPU', 3), ('browser', 3), ('WebGL', 3), ('available', 3), ('apollo-prj-1785848331385-1-q7p9d6l0', 2), ('formal', 2), ('authorization', 2), ('OK/NG', 2), ('UDL', 2), ('category', 2), ('label', 2), ('value', 2), ('unit', 2), ('status', 2), ('basis', 2), ('SUMMARY', 2), ('INCOMPLETE', 2), ('INCOMPLETE_INPUT', 2), ('HTML/PDF', 2), ('RECT', 2), ('EXISTING_EDITED_PROJECT', 2), ('StructuralDesignModel', 1), ('Step', 1), ('GOLD-AN-001', 1), ('generatedAt', 1)]

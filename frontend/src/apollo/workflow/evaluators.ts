@@ -122,11 +122,10 @@ function capabilityDiagnostics(evidence: StepEvidence): readonly WorkflowDiagnos
         stepId,
         "WF_CAPABILITY_PLANNED",
         "error",
-        "この工程は将来工程（STUB）です。現在は利用できません。",
+        "この工程は将来工程（未実装）です。現在は利用できません。",
         `implementedIn=${cap.implementedInStep ?? "TBD"}`,
         true,
-        `${cap.implementedInStep ?? "今後のStep"} 実装後に評価が有効になります。`,
-      ),
+        `${cap.implementedInStep ?? "今後の工程"} 実装後に評価が有効になります。`,      ),
     ];
   }
   if (capability === "UNAVAILABLE") {
@@ -191,7 +190,7 @@ export function buildStepDiagnostics(
         "先行工程が未完了のため、この工程は未着手です。",
         `activePrerequisites not satisfied`,
         false,
-        "先行工程（dependencies）を先に進めてください。",
+        "先行工程を先に進めてください。",
       ),
     );
   }
@@ -233,7 +232,7 @@ export function buildStepDiagnostics(
         "入力が変更され、生成結果が古くなっています。再生成してください。",
         "resultState=STALE (upstream checksum changed)",
         false,
-        "上流工程を再生成して current に戻してください。",
+        "上流工程を再生成して最新状態に戻してください。",
       ),
     );
     diagnostics.push(
@@ -241,10 +240,10 @@ export function buildStepDiagnostics(
         stepId,
         "WF_CHECKSUM_MISMATCH",
         "warning",
-        "current checksum と generated 状態が一致しません。",
+        "入力照合値と生成状態が一致しません。",
         "currentRevision != generatedRevision",
         false,
-        "再生成後に checksum を一致させてください。",
+        "再生成後に照合値を一致させてください。",
       ),
     );
   }
@@ -258,7 +257,7 @@ export function buildStepDiagnostics(
         "入力は有効ですが、まだ生成結果がありません。",
         "resultState=NOT_GENERATED",
         false,
-        "primary action（生成）を実行してください。",
+        "主操作（生成）を実行してください。",
       ),
     );
   }
@@ -269,10 +268,10 @@ export function buildStepDiagnostics(
         stepId,
         "WF_NOT_AUTHORIZED",
         "info",
-        "開発上の完了です。正式認可（formal authorization）は未付与です。",
+        "開発上の完了です。正式認可は未付与です。",
         "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED",
         false,
-        "正式 OK/NG は人間による確認後に付与されます。",
+        "正式な合否判定は人間による確認後に付与されます。",
       ),
     );
   }

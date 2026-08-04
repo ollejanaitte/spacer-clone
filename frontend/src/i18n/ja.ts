@@ -2175,10 +2175,10 @@ export const ja = {
 
   workspace: {
     viewPanel: {
-      openLabel: "View パネルを開く",
-      closeLabel: "View パネルを閉じる",
-      openAriaLabel: "View パネルを開く",
-      closeAriaLabel: "View パネルを閉じる",
+      openLabel: "表示パネルを開く",
+      closeLabel: "表示パネルを閉じる",
+      openAriaLabel: "表示パネルを開く",
+      closeAriaLabel: "表示パネルを閉じる",
     },
     dataPanel: {
       openLabel: "プロパティパネルを開く",

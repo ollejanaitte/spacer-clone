@@ -38,7 +38,7 @@ export function LoadConfirmationDevelopmentPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>荷重確認（開発専用）</h2>
-          <p>付属物・ハンチ死荷重の station / 線荷重 / 分配先を確認します。正式設計値ではありません。</p>
+          <p>付属物・ハンチ死荷重の測点／線荷重／分配先を確認します。正式設計値ではありません。</p>
         </div>
       </div>
       <div data-testid="apollo-load-development-warning">
@@ -79,20 +79,20 @@ export function LoadConfirmationDevelopmentPanel({ project }: Props) {
         <table>
           <thead>
             <tr>
-              <th>loadId</th>
-              <th>case</th>
-              <th>station</th>
+              <th>荷重ID</th>
+              <th>ケース</th>
+              <th>測点</th>
               <th>w [kN/m]</th>
               <th>P [kN]</th>
-              <th>rule</th>
-              <th>targets</th>
-              <th>status</th>
+              <th>分配則</th>
+              <th>分配先</th>
+              <th>状態</th>
             </tr>
           </thead>
           <tbody>
             {model.loads.length === 0 ? (
               <tr>
-                <td colSpan={8}>PROVIDED 付属物/ハンチなし（EXPLICIT_NONE は偽エンティティを作りません）</td>
+                <td colSpan={8}>「あり」の付属物／ハンチはありません（「なし」は偽エンティティを作りません）</td>
               </tr>
             ) : (
               model.loads.map((load) => (
@@ -110,7 +110,7 @@ export function LoadConfirmationDevelopmentPanel({ project }: Props) {
                       .map((t) => `${t.girderKey}:${t.share.toFixed(4)}`)
                       .join(", ")}
                   </td>
-                  <td>{load.status}</td>
+                  <td>{getStatusLabel(load.status)}</td>
                 </tr>
               ))
             )}

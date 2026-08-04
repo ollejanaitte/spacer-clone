@@ -216,7 +216,7 @@ export function AnalysisDevelopmentProbePanel() {
       <div className="apollo-editor-card-header">
         <div>
           <h2>解析プローブ（開発専用）</h2>
-          <p>単純支持梁の閉形式参照と live solver 比較。正式設計には使用しないでください。</p>
+          <p>単純支持梁の閉形式参照と実行ソルバー比較。設計・施工には使用しないでください。</p>
         </div>
       </div>
       <div data-testid="apollo-analysis-development-warning">
@@ -236,7 +236,7 @@ export function AnalysisDevelopmentProbePanel() {
           data-testid="apollo-analysis-run-gold-an-001"
           onClick={() => void runProbe("GOLD-AN-001")}
         >
-          Run GOLD-AN-001 (UDL)
+          等分布荷重ケースを実行
         </button>
         <button
           type="button"
@@ -244,10 +244,31 @@ export function AnalysisDevelopmentProbePanel() {
           data-testid="apollo-analysis-run-gold-an-002"
           onClick={() => void runProbe("GOLD-AN-002")}
         >
-          Run GOLD-AN-002 (center P)
+          中央集中荷重ケースを実行
         </button>
       </div>
-      <p data-testid="apollo-analysis-development-status">status: {status} / case: {activeCase}</p>
+      <TechnicalDetails
+        testId="apollo-analysis-case-tech"
+        title="ケースID"
+        lines={["GOLD-AN-001=UDL", "GOLD-AN-002=center point load"]}
+      />
+      <p data-testid="apollo-analysis-development-status">
+        状態:{" "}
+        {status === "idle"
+          ? "待機"
+          : status === "success"
+            ? "成功"
+            : status === "error"
+              ? "エラー"
+              : status === "running"
+                ? "実行中"
+                : status}
+      </p>
+      <TechnicalDetails
+        testId="apollo-analysis-active-case-tech"
+        title="実行ケース"
+        lines={[`activeCase=${activeCase ?? "none"}`]}
+      />
       {error ? (
         <p className="apollo-input-error" role="alert" data-testid="apollo-analysis-development-error">
           {error}
@@ -257,15 +278,26 @@ export function AnalysisDevelopmentProbePanel() {
         <table className="apollo-detail-table" data-testid="apollo-analysis-development-table">
           <thead>
             <tr>
-              <th>quantity</th>
-              <th>closed-form expected</th>
-              <th>engine actual</th>
+              <th>項目</th>
+              <th>閉形式の期待値</th>
+              <th>ソルバー実測値</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.label}>
-                <td>{row.label}</td>
+                <td>
+                  {
+                    (
+                      {
+                        leftReaction_fy_kN: "左支点反力 fy [kN]",
+                        rightReaction_fy_kN: "右支点反力 fy [kN]",
+                        Mmax_kNm: "最大曲げモーメント [kN·m]",
+                        centerDeflection_uy_m: "中央たわみ uy [m]",
+                      } as Record<string, string>
+                    )[row.label] ?? row.label
+                  }
+                </td>
                 <td>{row.expected}</td>
                 <td>{row.actual}</td>
               </tr>

@@ -20,6 +20,8 @@ const ALLOWLIST_EXACT = new Set(
     "DXF",
     "SVG",
     "ZIP",
+    "PDF",
+    "HTML",
     "ID",
     "URL",
     "SI",
@@ -35,11 +37,17 @@ const ALLOWLIST_EXACT = new Set(
     "LINER",
     "OK",
     "NG",
+    "kN/m",
+    "kN/m³",
+    "kN·m",
+    "HTML/PDF",
+    "WebGL",
+    "GPU",
   ].map((s) => s.toLowerCase()),
 );
 
 const ALLOWLIST_ID_RE =
-  /^(G0[1-9]|G1[0-5]|WF-0[1-9]|WF-1[0-5]|DEC-S5-\d{4}|ER-00[12]|CAT-S5-[\w-]+)$/i;
+  /^(G0[1-9]|G1[0-5]|G-0[1-7]|WF-0[1-9]|WF-1[0-5]|CH-[A-Z0-9-]+|DEC-S5-\d{4}|ER-00[12]|CAT-S5-[\w-]+|GOLD-AN-00[12]|apollo-prj-[\w-]+)$/i;
 
 const LATIN_TOKEN_RE =
   /\b([A-Za-z][A-Za-z0-9_/.-]{1,}|[A-Z]{2,}(?:_[A-Z0-9]+)*)\b/g;
@@ -67,6 +75,10 @@ function isAllowlistedToken(token: string): boolean {
   if (ALLOWLIST_ID_RE.test(t)) return true;
   if (/^\d+(\.\d+)?$/.test(t)) return true;
   if (/^[+\-−]?\d+(\.\d+)?(e[+\-]?\d+)?$/i.test(t)) return true;
+  // Opaque truncated hex / UUID fragments shown as IDs
+  if (/^[0-9a-f]{6,}$/i.test(t) || /^[0-9a-f]{6,}…$/i.test(t)) return true;
+  // Support / node short labels like A1, P2, G0
+  if (/^[APG]\d{1,2}$/i.test(t)) return true;
   return false;
 }
 
