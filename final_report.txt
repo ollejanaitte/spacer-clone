@@ -1101,3 +1101,50 @@ EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/
 ================================================================================
 END APOLLO STEP 6-UI-CLOSEOUT
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-F1 — Post-Closeout Usability and Fullscreen Repair
+================================================================================
+更新日時: 2026-08-05T08:47:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_F1
+BASE_MAIN_SHA: 9fe98bdbd6bb4a7e60c9cc0ecee9fa173589d3ac
+
+## PR and Merge SHA Summary
+
+| Step | PR | SHA | Description |
+|------|----|-----|-------------|
+| F1-A | #395 | 9cb0df5 | Investigation docs (7 documents) |
+| F1-B1 | #396 | fa2eb1a | Compact header, step bar, toast, topology summary |
+| F1-B2 | #397 | 4eb4fbe | Separate guided save and next actions |
+| F1-C | #398 | c2dd82f | Portal-based dialogs, body scroll lock |
+| F1-D | #399 | 9fe98bd | 3D member verification docs |
+
+## Verdicts
+
+APPLICATION_CODE_CHANGED: YES
+USER_REPRODUCTION_VERDICT: PASS
+UI_DENSITY_VERDICT: PASS (header ~40% smaller, step bar ~50% smaller, topology summary ~60% smaller)
+GUIDED_DETAIL_DISPLAY_VERDICT: PASS (drawer option documented, save/next separated)
+SAVE_NEXT_SEPARATION_VERDICT: PASS (next = navigation only, save = explicit action)
+FULLSCREEN_OVERLAY_VERDICT: PASS (portal-based dialogs, body scroll lock, stacking context fix)
+UNKNOWN_3D_MEMBER_TRACE_VERDICT: PASS (cross beam confirmed correct, no geometry change)
+3D_GEOMETRY_FIX_VERDICT: NOT_REQUIRED
+CANONICAL_DATA_GUARD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_GUARD_VERDICT: PASS
+VIEWER_STL_SOURCE_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+TEST_VERDICT: PASS (309 files, 2374 tests)
+
+STEP_6_UI_F1_VERDICT: COMPLETE
+GITHUB_MAIN_REFLECTION_VERDICT: PASS
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+KNOWN_LIMITATIONS: Guided detail drawer not implemented (drawer evaluation documented in F1-A)
+NEXT_ACTION: Step 6 follow-up complete. Await further instruction.
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged throughout)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
+================================================================================
+END APOLLO STEP 6-UI-F1
+================================================================================
