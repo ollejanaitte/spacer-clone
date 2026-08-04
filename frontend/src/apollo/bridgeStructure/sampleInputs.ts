@@ -153,7 +153,7 @@ function buildCompleteAppurtenanceConfiguration(
   return configuration;
 }
 
-function buildCompleteSampleDraft(
+export function buildCompleteSampleDraft(
   projectScopeId: string,
   base: ApolloBridgeStructureInputDraft,
 ): ApolloBridgeStructureInputDraft {

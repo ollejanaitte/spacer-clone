@@ -181,7 +181,10 @@ test.describe("Apollo Step 5 final GUI E2E", () => {
   test("E2E-S5-FINAL-011 Reapply sample", async ({ page }) => {
     await openBasics(page);
     await applyGenerateCompleteSample(page);
+    // Second apply requires DEC-S5-0002 confirmation modal
     await page.getByTestId("apollo-sample-apply-generate").click();
+    await expect(page.getByTestId("apollo-sample-reapply-dialog")).toBeVisible();
+    await page.getByTestId("apollo-sample-reapply-replace").click();
     await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText(
       "GENERATION_CURRENT",
     );
@@ -189,6 +192,11 @@ test.describe("Apollo Step 5 final GUI E2E", () => {
     // Clear removes section-properties block; generation message remains
     await expect(page.getByTestId("apollo-bridge-structure-panel")).toContainText(/クリア|INPUT|入力/);
     await page.getByTestId("apollo-sample-apply-generate").click();
+    // Cleared project may apply directly or still confirm depending on residual fields
+    const dialog = page.getByTestId("apollo-sample-reapply-dialog");
+    if (await dialog.isVisible().catch(() => false)) {
+      await page.getByTestId("apollo-sample-reapply-replace").click();
+    }
     await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE");
     await expect(page.getByTestId("apollo-pavement-presence-PROVIDED")).toBeChecked();
   });
