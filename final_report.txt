@@ -603,11 +603,11 @@ END APOLLO STEP 5-R CURRENT
 BEGIN APOLLO STEP 5-JP1 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_JP1
-CURRENT_SUBSTEP: JP1-D
+CURRENT_SUBSTEP: SEAL
 OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: c5ca3b33e226763697a7a2aabb8214c5ea77fb62
-CURRENT_MAIN_SHA: 9763630f09fbd7058c0c8f92433cbc794cebf956
-UPDATED_AT: 2026-08-04T12:49:16+09:00
+CURRENT_MAIN_SHA: c572f7b1abfe45f20965959fe976e9a977ee645a
+UPDATED_AT: 2026-08-04T12:50:02+09:00
 
 JP1_A_ENGLISH_EXPOSURE_AUDIT: PASS
 JP1_A_PR: https://github.com/ollejanaitte/spacer-clone/pull/362
@@ -623,7 +623,7 @@ JP1_C_MERGE_SHA: 9763630f09fbd7058c0c8f92433cbc794cebf956
 
 JP1_D_COMPLETION_GATE: PASS
 JP1_D_PR: https://github.com/ollejanaitte/spacer-clone/pull/365
-JP1_D_MERGE_SHA: PENDING
+JP1_D_MERGE_SHA: c572f7b1abfe45f20965959fe976e9a977ee645a
 
 SEAL_PR: PENDING
 
@@ -648,9 +648,8 @@ STEP_5_JP3_IMPLEMENTED: NO
 
 DOCUMENT_ROOT: docs/apollo/step5_japanese/
 NOTES:
-- JP1-A..C merged (#362/#363/#364)
-- Completion gate PASS; glossary + catalogs + JP2/JP3 plans ready
-- DOM screenshot English scan deferred to JP3 E2E by design
+- JP1-A..D merged (#362/#363/#364/#365)
+- Seal stamps JP1-D report merge SHA; no further seal-SHA PR
 - Formal authorization unchanged: NOT_GRANTED / PROHIBITED
 ================================================================================
 END APOLLO STEP 5-JP1 CURRENT
