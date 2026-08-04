@@ -4,8 +4,10 @@
  * Not color-only: symbol + label + text reason always present.
  */
 import type { WorkflowStepState } from "../workflow/types";
+import { getStatusLabel } from "../i18n";
 import { WorkflowStatusBadge } from "./WorkflowStatusBadge";
 import { WorkflowDiagnosticsPanel } from "./WorkflowDiagnosticsPanel";
+import { TechnicalDetails } from "./TechnicalDetails";
 
 type Props = {
   readonly step: WorkflowStepState;
@@ -17,6 +19,7 @@ export function WorkflowStepCard({ step, onNavigate, onPrimaryAction }: Props) {
   const def = step.definition;
   const disabled = step.status === "BLOCKED" || step.status === "ERROR" || step.status === "OUT_OF_SCOPE";
   const hasBlocking = step.diagnostics.some((entry) => entry.blocking);
+  const blocking = step.diagnostics.filter((entry) => entry.blocking);
 
   return (
     <article
@@ -38,7 +41,7 @@ export function WorkflowStepCard({ step, onNavigate, onPrimaryAction }: Props) {
           <ul className="apollo-wf-step-badges" aria-label="追加バッジ">
             {step.badges.map((badge) => (
               <li key={badge} className="apollo-wf-extra-badge">
-                {badge}
+                {getStatusLabel(badge)}
               </li>
             ))}
           </ul>
@@ -71,9 +74,16 @@ export function WorkflowStepCard({ step, onNavigate, onPrimaryAction }: Props) {
         </button>
       </div>
       {disabled && hasBlocking ? (
-        <p className="apollo-wf-step-disabled-reason" data-testid="apollo-wf-step-disabled-reason">
-          この工程は現在利用できません（原因: {blockingCodes(step)}）
-        </p>
+        <>
+          <p className="apollo-wf-step-disabled-reason" data-testid="apollo-wf-step-disabled-reason">
+            {getStatusLabel("BLOCKED")}
+          </p>
+          <TechnicalDetails
+            testId={`apollo-wf-step-${def.workflowStepId}-blocking-tech`}
+            title="診断コード"
+            lines={blocking.map((entry) => `diagnosticCode=${entry.code}`)}
+          />
+        </>
       ) : null}
     </article>
   );
@@ -82,9 +92,9 @@ export function WorkflowStepCard({ step, onNavigate, onPrimaryAction }: Props) {
 function primaryActionLabel(step: WorkflowStepState): string {
   switch (step.definition.primaryActionId) {
     case "generate-structure":
-      return step.status === "STALE" ? "再生成を推奨" : "構造生成";
+      return step.status === "STALE" ? "再計算・再生成" : "構造生成";
     case "regenerate":
-      return step.status === "STALE" ? "再生成を推奨" : "生成/再生成";
+      return step.status === "STALE" ? "再計算・再生成" : "生成/再生成";
     case "run-analysis":
       return "解析実行";
     case "review-3d":
@@ -96,11 +106,6 @@ function primaryActionLabel(step: WorkflowStepState): string {
     case "open-step":
       return "工程を開く";
     case "none":
-      return "利用不可";
+      return "選択不可";
   }
-}
-
-function blockingCodes(step: WorkflowStepState): string {
-  const codes = step.diagnostics.filter((entry) => entry.blocking).map((entry) => entry.code);
-  return codes.length > 0 ? codes.join(", ") : "未判定";
 }

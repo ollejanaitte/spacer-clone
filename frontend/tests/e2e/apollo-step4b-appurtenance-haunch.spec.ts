@@ -218,7 +218,7 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await expect(page.getByTestId("apollo-wf-step-WF-06")).toHaveAttribute("data-status", "BLOCKED");
     await expect(page.getByTestId("apollo-appurtenance-local-crs-warning")).toContainText("Step 4-E");
     await expect(page.getByTestId("apollo-haunch-datum")).toContainText("Step 4-C");
-    await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("NOT_GRANTED");
+    await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("正式認可なし");
 
     await page.screenshot({
       path: path.join(EVIDENCE_DIR, "e2e-s4b-007-scope-guard.png"),

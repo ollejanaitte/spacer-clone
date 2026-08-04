@@ -1,0 +1,7 @@
+JP2-P2 evidence
+- WorkflowControlScreen: AuthorizationBanner (JA L1)
+- WorkflowStepCard/Diagnostics: status badges JA; codes in TechnicalDetails
+- GuidedModeShell: JA kicker/fields/WF anchor; G01-G15 IDs allowlisted
+- slides: JA impactHints/decideWhat
+- vitest i18n+workflow+guided+WorkflowControlScreen PASS
+- tsc PASS

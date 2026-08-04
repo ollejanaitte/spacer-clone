@@ -41,7 +41,7 @@ describe("guided slide registry (DEC-S5-0009)", () => {
     expect(GUIDED_SLIDE_DEFINITIONS).toHaveLength(15);
     expect(GUIDED_SLIDE_DEFINITIONS.map((s) => s.slideId)).toEqual([...GUIDED_SLIDE_IDS]);
     expect(getGuidedSlideDefinition("G03").theme).toContain("舗装");
-    expect(getGuidedSlideDefinition("G15").decideWhat).toContain("4-G");
+    expect(getGuidedSlideDefinition("G15").decideWhat).toContain("未実装");
   });
 
   it("navigates adjacent slides without wrapping", () => {
@@ -93,7 +93,7 @@ describe("GuidedModeShell", () => {
     act(() => {
       (container.querySelector("[data-testid='apollo-guided-detail-escape']") as HTMLButtonElement).click();
     });
-    expect(escapes.some((label) => label.includes("LINER"))).toBe(true);
+    expect(escapes.some((label) => label.includes("道路線形"))).toBe(true);
 
     act(() => {
       (container.querySelector("[data-testid='apollo-guided-jump-G15']") as HTMLButtonElement).click();

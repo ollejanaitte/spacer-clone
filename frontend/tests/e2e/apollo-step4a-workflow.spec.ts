@@ -26,7 +26,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     await expect(page.getByTestId("apollo-wf-step-WF-01")).toHaveAttribute("data-status", "BLOCKED");
     await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "RECOMMENDED");
     await expect(page.getByTestId("apollo-wf-progress-recommended")).toContainText("WF-02");
-    await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("NOT_GRANTED");
+    await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("正式認可なし");
   });
 
   test("E2E-S4A-004: WF-06 remains PLANNED BLOCKED; WF-03/WF-05 are implemented and not capability-blocked", async ({ page }) => {
