@@ -622,7 +622,7 @@ JP1_C_PR: https://github.com/ollejanaitte/spacer-clone/pull/364
 JP1_C_MERGE_SHA: 9763630f09fbd7058c0c8f92433cbc794cebf956
 
 JP1_D_COMPLETION_GATE: PASS
-JP1_D_PR: PENDING
+JP1_D_PR: https://github.com/ollejanaitte/spacer-clone/pull/365
 JP1_D_MERGE_SHA: PENDING
 
 SEAL_PR: PENDING
