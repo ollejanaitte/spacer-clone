@@ -27,6 +27,12 @@ import {
   validateRoadMarkingsConfigurationPersistence,
 } from "./pavementModel";
 import {
+  createDefaultCrossFrameAttachment,
+  parseCrossFrameAttachment,
+  validateCrossFrameAttachmentPersistence,
+} from "./crossFrameAttachmentModel";
+import { validateCrossFrameAttachment } from "./crossFrameAttachmentTypes";
+import {
   createDefaultLateralAngleSection,
   parseLateralAngleSection,
   validateLateralAngleSectionPersistence,
@@ -37,6 +43,7 @@ import {
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2,
   APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3,
+  APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_4,
   BRIDGE_STRUCTURE_BOOLEAN_INPUT_KEYS,
   BRIDGE_STRUCTURE_CONFIGURATION_FIELD_KEYS,
   BRIDGE_STRUCTURE_INPUT_FIELD_KEYS,
@@ -125,6 +132,7 @@ export function createEmptyBridgeStructureInputDraft(): ApolloBridgeStructureInp
     pavementConfiguration: createDefaultPavementConfiguration(),
     roadMarkingsConfiguration: createDefaultRoadMarkingsConfiguration(),
     lateralAngleSection: createDefaultLateralAngleSection(),
+    crossFrameAttachment: createDefaultCrossFrameAttachment(),
     generatedAt: null,
   };
 }
@@ -214,6 +222,8 @@ export function validateBridgeStructureInputDraft(
     diagnostics.push(message);
   }
 
+  diagnostics.push(...validateCrossFrameAttachment(draft.crossFrameAttachment, draft.girderDepth));
+
   return {
     fieldErrors,
     diagnostics,
@@ -243,13 +253,14 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
 
   if (
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION &&
+    raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_4 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 &&
     raw.schemaVersion !== APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY
   ) {
     diagnostics.push(
-      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
+      `apolloBridgeStructureInput schemaVersion must be ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3}, ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_4}, or ${APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION}.`,
     );
   }
 
@@ -342,6 +353,7 @@ export function validateBridgeStructureInputPersistence(raw: unknown): readonly 
   diagnostics.push(...validatePavementConfigurationPersistence(raw.pavementConfiguration));
   diagnostics.push(...validateRoadMarkingsConfigurationPersistence(raw.roadMarkingsConfiguration));
   diagnostics.push(...validateLateralAngleSectionPersistence(raw.lateralAngleSection));
+  diagnostics.push(...validateCrossFrameAttachmentPersistence(raw.crossFrameAttachment));
 
   return diagnostics;
 }
@@ -407,9 +419,34 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
     return null;
   }
 
+  const girderDepth =
+    typeof raw.girderDepth === "number" && Number.isFinite(raw.girderDepth) ? raw.girderDepth : null;
+  const topFlangeThickness =
+    typeof raw.topFlangeThickness === "number" && Number.isFinite(raw.topFlangeThickness)
+      ? raw.topFlangeThickness
+      : null;
+  const bottomFlangeThickness =
+    typeof raw.bottomFlangeThickness === "number" && Number.isFinite(raw.bottomFlangeThickness)
+      ? raw.bottomFlangeThickness
+      : null;
+
+  let crossFrameAttachment;
+  if (raw.crossFrameAttachment === undefined || raw.crossFrameAttachment === null) {
+    crossFrameAttachment = {
+      ...createDefaultCrossFrameAttachment(girderDepth, topFlangeThickness, bottomFlangeThickness),
+      provenance: "UNVERIFIED_MIGRATED_DEVELOPMENT" as const,
+    };
+  } else {
+    crossFrameAttachment = parseCrossFrameAttachment(raw.crossFrameAttachment);
+    if (crossFrameAttachment === null) {
+      return null;
+    }
+  }
+
   // Legacy → current: missing pavement/markings/L-angle migrate without inventing solids.
   // Legacy through 1.2 may invent pavement/L-angle defaults → force STALE.
   // 1.3 → 1.4 only adds orientation default; preserve generatedAt.
+  // 1.4 → 1.5 migrates mid-flange attachment defaults (geometry-equivalent); preserve generatedAt.
   const migratedFromLegacy =
     raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY ||
     raw.schemaVersion === APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 ||
@@ -435,6 +472,7 @@ export function parseBridgeStructureInputDraft(raw: unknown): ApolloBridgeStruct
     pavementConfiguration,
     roadMarkingsConfiguration,
     lateralAngleSection,
+    crossFrameAttachment,
     generatedAt: migratedFromLegacy ? null : preservedGeneratedAt,
   };
 }

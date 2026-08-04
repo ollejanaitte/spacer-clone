@@ -315,6 +315,25 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
     return renderPanel(withBridgeStructureSystem(initialProject, BridgeSystem.CONTINUOUS));
   }
 
+  /** Continuous system switch seeds [30,30], so sample reapply requires R1 confirmation. */
+  function applyContinuousSampleViaConfirm(container: HTMLElement) {
+    act(() => {
+      const sample = container.querySelector(
+        "[data-testid='apollo-continuous-sample-input']",
+      ) as HTMLButtonElement;
+      sample.click();
+    });
+    const dialog = container.querySelector("[data-testid='apollo-sample-reapply-dialog']");
+    if (dialog) {
+      act(() => {
+        const replace = container.querySelector(
+          "[data-testid='apollo-sample-reapply-replace']",
+        ) as HTMLButtonElement;
+        replace.click();
+      });
+    }
+  }
+
   it("renders bridge system select and continuous layout controls", () => {
     const container = renderContinuousPanel();
     expect(container.querySelector("[data-testid='apollo-bridge-system-select']")).not.toBeNull();
@@ -329,10 +348,7 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
 
   it("shows cumulative support stations and abutment/pier roles", () => {
     const container = renderContinuousPanel();
-    act(() => {
-      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
-      sample.click();
-    });
+    applyContinuousSampleViaConfirm(container);
     expect(container.querySelector("[data-testid='apollo-continuous-support-station-0']")?.textContent).toBe("0");
     expect(container.querySelector("[data-testid='apollo-continuous-support-station-1']")?.textContent).toBe("30");
     expect(container.querySelector("[data-testid='apollo-continuous-support-station-2']")?.textContent).toBe("65");
@@ -344,10 +360,7 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
 
   it("fills continuous sample [30,35,30] without auto-generating and derives bridgeLength", () => {
     const container = renderContinuousPanel();
-    act(() => {
-      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
-      sample.click();
-    });
+    applyContinuousSampleViaConfirm(container);
 
     const span0 = container.querySelector("[data-testid='apollo-continuous-span-length-0']") as HTMLInputElement;
     const span1 = container.querySelector("[data-testid='apollo-continuous-span-length-1']") as HTMLInputElement;
@@ -369,10 +382,7 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
 
   it("adds and removes spans within 2-5 limits", () => {
     const container = renderContinuousPanel();
-    act(() => {
-      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
-      sample.click();
-    });
+    applyContinuousSampleViaConfirm(container);
     expect(container.querySelector("[data-testid='apollo-continuous-span-count']")?.textContent).toContain("支間数: 3");
 
     act(() => {
@@ -429,10 +439,7 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
 
   it("generates continuous StructuralDesignModel with NOT_AUTHORIZED entities", () => {
     const container = renderContinuousPanel();
-    act(() => {
-      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
-      sample.click();
-    });
+    applyContinuousSampleViaConfirm(container);
     act(() => {
       const button = container.querySelector("[data-testid='apollo-generate-structure']") as HTMLButtonElement;
       button.click();
@@ -447,10 +454,7 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
 
   it("switches back to SIMPLE_SINGLE and restores span length input", () => {
     const container = renderContinuousPanel();
-    act(() => {
-      const sample = container.querySelector("[data-testid='apollo-continuous-sample-input']") as HTMLButtonElement;
-      sample.click();
-    });
+    applyContinuousSampleViaConfirm(container);
     act(() => {
       const select = container.querySelector("[data-testid='apollo-bridge-system-select']") as HTMLSelectElement;
       select.value = BridgeSystem.SIMPLE_SINGLE;

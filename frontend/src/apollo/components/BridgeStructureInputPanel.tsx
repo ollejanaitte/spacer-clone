@@ -44,6 +44,7 @@ import {
 } from "../bridgeStructure";
 import { commitApolloNumericDraft } from "../numericInput";
 import { CompositionAwareInput } from "./CompositionAwareInput";
+import { CrossFrameAttachmentInputPanel } from "./CrossFrameAttachmentInputPanel";
 import { SampleReapplyConfirmDialog } from "./SampleReapplyConfirmDialog";
 
 type BridgeStructureInputPanelProps = {
@@ -696,6 +697,12 @@ export function BridgeStructureInputPanel({
         />
         下横構（下フランジ水平ブレース）を有効にする
       </label>
+
+      <CrossFrameAttachmentInputPanel
+        project={project}
+        onProjectChange={onProjectChange}
+        onAuditEvent={onAuditEvent}
+      />
 
       {sectionProperties ? (
         <section data-testid="apollo-bridge-structure-section-properties">

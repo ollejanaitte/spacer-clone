@@ -48,6 +48,7 @@ type ResolvedBridgeStructureInput = {
   readonly stiffenerSpacing: number | null;
   readonly swayBracingInterval: number | null;
   readonly lateralAngleSection: import("../bridgeStructure").ApolloLateralAngleSectionDraft;
+  readonly crossFrameAttachment: import("../bridgeStructure").ApolloCrossFrameAttachmentDraft;
   readonly lateralBracingEnabled: boolean;
   readonly upperLateralBracingEnabled: boolean;
 };
@@ -75,6 +76,36 @@ function girderConnectionZs(input: ResolvedBridgeStructureInput): {
   const topConnectionZ = girderCenterZ + input.girderDepth / 2 - input.topFlangeThickness / 2;
   const bottomConnectionZ = girderCenterZ - input.girderDepth / 2 + input.bottomFlangeThickness / 2;
   return { girderCenterZ, topConnectionZ, bottomConnectionZ };
+}
+
+/**
+ * Sway / cross-frame attachment Z from user depth-from-top inputs (ER-001 / Step 5-R R3).
+ * Falls back to mid-flange only when depths are missing (should not occur when draft validates).
+ */
+function swayAttachmentZs(input: ResolvedBridgeStructureInput): {
+  readonly upperZ: number;
+  readonly lowerZ: number;
+  readonly centerZ: number;
+} {
+  const { girderCenterZ, topConnectionZ, bottomConnectionZ } = girderConnectionZs(input);
+  const attachment = input.crossFrameAttachment;
+  const upperDepth = attachment.upperAttachmentDepthFromGirderTop;
+  const lowerDepth = attachment.lowerAttachmentDepthFromGirderTop;
+  const centerDepth = attachment.centerNodeDepthFromGirderTop ?? lowerDepth;
+  const topFlangeUpperZ = girderCenterZ + input.girderDepth / 2;
+  const upperZ =
+    upperDepth !== null && Number.isFinite(upperDepth)
+      ? topFlangeUpperZ - upperDepth
+      : topConnectionZ;
+  const lowerZ =
+    lowerDepth !== null && Number.isFinite(lowerDepth)
+      ? topFlangeUpperZ - lowerDepth
+      : bottomConnectionZ;
+  const centerZ =
+    centerDepth !== null && Number.isFinite(centerDepth)
+      ? topFlangeUpperZ - centerDepth
+      : lowerZ;
+  return { upperZ, lowerZ, centerZ };
 }
 
 /** Decorative substructure placeholders (non-design, visualization only). */
@@ -119,6 +150,7 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     stiffenerSpacing: draft.stiffenerSpacing,
     swayBracingInterval: draft.swayBracingInterval,
     lateralAngleSection: draft.lateralAngleSection,
+    crossFrameAttachment: draft.crossFrameAttachment,
     lateralBracingEnabled: draft.lateralBracingEnabled,
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
   };
@@ -658,49 +690,52 @@ export function buildBridgeStructureSolidGeometryParameters(
         swayStations.push(index);
       }
     }
-    const { topConnectionZ, bottomConnectionZ } = girderConnectionZs(input);
-    model.swayBracings.forEach((swayBracing, swayIndex) => {
-      const station = swayStations[swayIndex];
-      if (station === undefined) {
-        return;
-      }
-      const x = station * input.crossBeamSpacing;
-      const members = membersByParent.get(swayBracing.swayBracingId) ?? [];
-      let memberIndex = 0;
-      for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
-        const leftY = offsets[pair] ?? 0;
-        const rightY = offsets[pair + 1] ?? offsets[pair] ?? 0;
-        const midY = (leftY + rightY) / 2;
-        // V-type sway bracing in the transverse vertical plane (constant X).
-        const leftTop: readonly [number, number, number] = [x, leftY, topConnectionZ];
-        const rightTop: readonly [number, number, number] = [x, rightY, topConnectionZ];
-        const midBottom: readonly [number, number, number] = [x, midY, bottomConnectionZ];
-        const diagonals: ReadonlyArray<
-          readonly [readonly [number, number, number], readonly [number, number, number]]
-        > = [
-          [leftTop, midBottom],
-          [rightTop, midBottom],
-        ];
-        for (const [start, end] of diagonals) {
-          const member = members[memberIndex];
-          memberIndex += 1;
-          if (!member) {
-            continue;
-          }
-          const solid = buildBracingMember(
-            member.braceMemberId,
-            start,
-            end,
-            `対傾構 / Sway ${swayIndex + 1}`,
-            BRACING_SYSTEM_SWAY,
-            input.lateralAngleSection,
-          );
-          if (solid) {
-            solids.push(solid);
+    // Only V pattern is IMPLEMENTED; other patterns are PLANNED/UNAVAILABLE.
+    if (input.crossFrameAttachment.pattern === "V") {
+      const { upperZ, centerZ } = swayAttachmentZs(input);
+      model.swayBracings.forEach((swayBracing, swayIndex) => {
+        const station = swayStations[swayIndex];
+        if (station === undefined) {
+          return;
+        }
+        const x = station * input.crossBeamSpacing;
+        const members = membersByParent.get(swayBracing.swayBracingId) ?? [];
+        let memberIndex = 0;
+        for (let pair = 0; pair < input.girderCount - 1; pair += 1) {
+          const leftY = offsets[pair] ?? 0;
+          const rightY = offsets[pair + 1] ?? offsets[pair] ?? 0;
+          const midY = (leftY + rightY) / 2;
+          // V-type sway bracing from explicit attachment depths (not mesh bounds).
+          const leftTop: readonly [number, number, number] = [x, leftY, upperZ];
+          const rightTop: readonly [number, number, number] = [x, rightY, upperZ];
+          const midBottom: readonly [number, number, number] = [x, midY, centerZ];
+          const diagonals: ReadonlyArray<
+            readonly [readonly [number, number, number], readonly [number, number, number]]
+          > = [
+            [leftTop, midBottom],
+            [rightTop, midBottom],
+          ];
+          for (const [start, end] of diagonals) {
+            const member = members[memberIndex];
+            memberIndex += 1;
+            if (!member) {
+              continue;
+            }
+            const solid = buildBracingMember(
+              member.braceMemberId,
+              start,
+              end,
+              `対傾構 / Sway ${swayIndex + 1}`,
+              BRACING_SYSTEM_SWAY,
+              input.lateralAngleSection,
+            );
+            if (solid) {
+              solids.push(solid);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   const appendLateralPlane = (
@@ -806,7 +841,7 @@ export function buildBridgeStructureSolidGeometryParameters(
     },
     {
       code: "dec-s5-0006-sway-v-topology-development",
-      message: "Sway V topology (top flange mid → bottom flange mid) is DEVELOPMENT pending ER-001 (DEC-S5-0006).",
+      message: `Sway V attachment depths from girder top (upper=${input.crossFrameAttachment.upperAttachmentDepthFromGirderTop}, lower=${input.crossFrameAttachment.lowerAttachmentDepthFromGirderTop}, center=${input.crossFrameAttachment.centerNodeDepthFromGirderTop ?? "lower"}) — PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED / ER-001 PENDING_HUMAN_ENGINEERING_REVIEW.`,
     },
     {
       code: "dec-s5-0007-lateral-l-angle",
