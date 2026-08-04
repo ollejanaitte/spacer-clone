@@ -1,0 +1,5 @@
+msg_id,severity,l1_ja,l2_ja,next_ja,code_en
+WE-STALE-GEN,WARNING,要再計算,入力変更により生成結果が一致しません。,再計算・再生成を実行してください。,resultState=STALE
+WE-PREREQ,ERROR,先に必要な作業があります,前提工程が未完了です。,推奨工程を開いて入力を完了してください。,WF_PREREQUISITE_INCOMPLETE
+WE-VALIDATION,ERROR,入力に誤りがあります,赤表示の項目を修正してください。,修正後に再度保存してください。,VALIDATION_ERROR
+WE-UNVERIFIED-WEIGHT,WARNING,単位重量は未検証の利用者入力です,設計値としての検証は行われていません。,値を確認し、必要なら修正してください。,USER_PROVIDED_UNVERIFIED

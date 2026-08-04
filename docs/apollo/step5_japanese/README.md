@@ -37,4 +37,17 @@
 | [authorization_glossary.csv](./authorization_glossary.csv) | JP1-B |
 | [prohibited_translation.csv](./prohibited_translation.csv) | JP1-B |
 | [terminology_decision_register.csv](./terminology_decision_register.csv) | JP1-B |
+| [03_ui_text_architecture.md](./03_ui_text_architecture.md) | JP1-C |
+| [04_technical_details_disclosure.md](./04_technical_details_disclosure.md) | JP1-C |
+| [05_message_style_guide.md](./05_message_style_guide.md) | JP1-C |
+| [06_mobile_and_accessibility.md](./06_mobile_and_accessibility.md) | JP1-C |
+| [status_message_catalog.csv](./status_message_catalog.csv) | JP1-C |
+| [button_label_catalog.csv](./button_label_catalog.csv) | JP1-C |
+| [field_label_catalog.csv](./field_label_catalog.csv) | JP1-C |
+| [warning_error_catalog.csv](./warning_error_catalog.csv) | JP1-C |
+| [authorization_message_catalog.csv](./authorization_message_catalog.csv) | JP1-C |
+| [screen_translation_matrix.csv](./screen_translation_matrix.csv) | JP1-C |
+| [jp2_implementation_plan.md](./jp2_implementation_plan.md) | JP1-C |
+| [jp3_e2e_plan.md](./jp3_e2e_plan.md) | JP1-C |
+| [jp2_pr_plan.csv](./jp2_pr_plan.csv) | JP1-C |
 | [evidence_index.md](./evidence_index.md) | JP1-A+ |

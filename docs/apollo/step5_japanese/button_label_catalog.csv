@@ -1,0 +1,11 @@
+button_id,action_key,label_ja,short_ja,context,status
+BTN-APPLY_SAMPLE,Apply Sample,サンプルを適用,適用,button,ADOPTED_UI_LABEL
+BTN-APPLY_GENERATE,Apply & Generate,サンプルを適用して3Dを生成,適用して生成,button,ADOPTED_UI_LABEL
+BTN-SAVE_NEXT,Save and Next,保存して次へ,次へ,button,ADOPTED_UI_LABEL
+BTN-OPEN_DETAIL,Open Detail,詳細編集を開く,詳細,button,ADOPTED_UI_LABEL
+BTN-REGENERATE,Regenerate,再計算・再生成,再生成,button,ADOPTED_UI_LABEL
+BTN-CREATE_NEW,Create New,新規プロジェクトとして開く,新規,reapply,ADOPTED_UI_LABEL
+BTN-REPLACE,Replace Current,現在の入力を置き換える,置き換え,reapply,ADOPTED_UI_LABEL
+BTN-CANCEL,Cancel,キャンセル,キャンセル,button,ADOPTED_UI_LABEL
+BTN-SHOW_TECH,Show Technical Details,技術情報を表示,技術情報,disclosure,ADOPTED_UI_LABEL
+BTN-EXPORT_STL,Export STL,STLを出力,STL出力,export,ADOPTED_UI_LABEL
