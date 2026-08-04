@@ -1,0 +1,10 @@
+{
+  "jp2_target_findings": [],
+  "count": 0,
+  "jp3_deferred": [
+    "DOM screenshot harvest",
+    "Full Playwright residual-English regex over live DOM",
+    "Non-Apollo shared viewer chrome strings outside apolloView mode",
+    "Drawing/report chapter English titles inside generated artifacts"
+  ]
+}

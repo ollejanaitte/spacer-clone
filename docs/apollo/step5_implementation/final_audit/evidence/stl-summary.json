@@ -1,6 +1,6 @@
 {
-  "byteLength": 56084,
-  "triangleCountEstimate": 1120,
+  "byteLength": 158084,
+  "triangleCountEstimate": 3160,
   "markingsExcluded": true,
   "exportableFalseKinds": [
     "abutment_marker",

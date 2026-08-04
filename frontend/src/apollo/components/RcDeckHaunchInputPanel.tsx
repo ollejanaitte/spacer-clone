@@ -193,9 +193,9 @@ export function RcDeckHaunchInputPanel({
     <article className="apollo-editor-card" data-testid="apollo-haunch-panel">
       <header>
         <h3>RC床版ハンチ（WF-05）</h3>
-        <p className="apollo-dev-banner" data-testid="apollo-haunch-dev-banner">
+        <div className="apollo-dev-banner" data-testid="apollo-haunch-dev-banner">
           <AuthorizationBanner testId="apollo-haunch-auth" />
-        </p>
+        </div>
         <p role="note" data-testid="apollo-haunch-datum">
           ハンチ datum: 主桁上フランジ上面と床版下面の間（DEC-S4-0009）。mesh から逆算しません。
           3D solids・数量・自重は Step 4-C 未実装です。

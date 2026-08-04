@@ -27,7 +27,7 @@ async function applyGenerateCompleteSample(page: Page) {
     timeout: 30_000,
   });
   await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText(
-    "GENERATION_CURRENT",
+    "生成結果は最新",
   );
 }
 
@@ -77,7 +77,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await page.getByTestId("apollo-sample-reapply-replace").click();
     await expect(page.getByTestId("apollo-pavement-thickness")).toHaveValue("0.08");
     await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText(
-      "GENERATION_CURRENT",
+      "生成結果は最新",
     );
     await shot(page, "reapply/e2e-s5r-002-replace.png");
   });
@@ -93,7 +93,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     // New project receives sample; workspace should list more than one entry after save path
     await expect(page.getByTestId("apollo-pavement-thickness")).toHaveValue("0.08");
     await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText(
-      "GENERATION_CURRENT",
+      "生成結果は最新",
     );
     await shot(page, "reapply/e2e-s5r-003-create-new.png");
   });
@@ -114,7 +114,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await applyGenerateCompleteSample(page);
     await expect(page.getByTestId("apollo-export-stl")).toBeEnabled();
     await expect(page.getByTestId("apollo-topology-summary")).toBeVisible();
-    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("UNVERIFIED");
+    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("未検証");
     await shot(page, "l-section/e2e-s5r-005-l-section.png");
   });
 
@@ -122,7 +122,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await openBasics(page);
     await applyGenerateCompleteSample(page);
     await page.getByTestId("apollo-cross-frame-attachment-panel").scrollIntoViewIfNeeded();
-    await expect(page.getByTestId("apollo-cross-frame-dev-banner")).toContainText("HUMAN ENGINEERING REVIEW");
+    await expect(page.getByTestId("apollo-cross-frame-dev-banner")).toContainText("技術者による確認待ち");
     await expect(page.getByTestId("apollo-cross-frame-pattern-V")).toBeChecked();
     await expect(page.getByTestId("apollo-cross-frame-upper-depth")).toBeVisible();
     await expect(page.getByTestId("apollo-cross-frame-lower-depth")).toBeVisible();
@@ -134,7 +134,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await page.getByTestId("apollo-guided-jump-G09").click();
     await expect(page.getByTestId("apollo-guided-slide-G09")).toBeVisible();
     await expect(page.getByTestId("apollo-guided-primary-fields")).toContainText(
-      "upperAttachmentDepthFromGirderTop",
+      "上側取付深さ",
     );
     await expect(page.getByTestId("apollo-guided-decide-what")).toContainText("横桁と対傾構は別");
     await shot(page, "cross-frame/e2e-s5r-007-g09.png");
@@ -145,12 +145,12 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await applyGenerateCompleteSample(page);
     await page.getByTestId("apollo-cross-frame-upper-depth").fill("0.2");
     await page.getByTestId("apollo-cross-frame-upper-depth").blur();
-    await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText("STALE", {
+    await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText("要再計算", {
       timeout: 10_000,
     });
     await page.getByTestId("apollo-generate-structure").click();
     await expect(page.getByTestId("apollo-section-properties-provenance")).toContainText(
-      "GENERATION_CURRENT",
+      "生成結果は最新",
       { timeout: 30_000 },
     );
     await shot(page, "stale/e2e-s5r-008-stale.png");
@@ -190,11 +190,11 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
   test("E2E-S5R-012 Authorization gates unchanged", async ({ page }) => {
     await openBasics(page);
     await applyGenerateCompleteSample(page);
-    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("NOT_GRANTED");
-    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("PROHIBITED");
-    await expect(page.getByTestId("apollo-cross-frame-dev-banner")).toContainText("NOT_GRANTED");
+    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("正式認可なし");
+    await expect(page.getByTestId("apollo-sample-disclaimer")).toContainText("設計・施工への使用禁止");
+    await expect(page.getByTestId("apollo-cross-frame-dev-banner")).toContainText("正式認可なし");
     await expect(page.getByTestId("apollo-section-properties-development-warning")).toContainText(
-      "UNVERIFIED DEVELOPMENT RESULT",
+      "開発確認用・未検証",
     );
   });
 

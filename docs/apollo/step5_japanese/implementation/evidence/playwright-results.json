@@ -1,0 +1,26 @@
+{
+  "apollo_vitest": "469/469 PASS",
+  "playwright_tail": [
+    "[12/18] tests/e2e/apollo-step5r-residual.spec.ts:132:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-007 G09 lists attachment depths",
+    "[13/18] tests/e2e/apollo-step5r-residual.spec.ts:143:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-008 Cross-frame STALE then regenerate",
+    "[14/18] tests/e2e/apollo-step5r-residual.spec.ts:159:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-009 Cross beam vs sway labels in summary",
+    "[15/18] tests/e2e/apollo-step5r-residual.spec.ts:167:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-010 Persistence via workspace save",
+    "[16/18] tests/e2e/apollo-step5r-residual.spec.ts:176:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-011 Mobile / a11y modal + G09",
+    "[17/18] tests/e2e/apollo-step5r-residual.spec.ts:190:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-012 Authorization gates unchanged",
+    "[18/18] tests/e2e/apollo-step5r-residual.spec.ts:201:7 › Apollo Step 5-R residual corrections E2E › E2E-S5R-013 Regression sample + guided + console soft",
+    "  18 passed (1.5m)"
+  ],
+  "typecheck": "PASS",
+  "lint": "PASS",
+  "build": "PASS",
+  "residual_english_jp2_source_scan": {
+    "jp2_target_findings": [],
+    "count": 0,
+    "jp3_deferred": [
+      "DOM screenshot harvest",
+      "Full Playwright residual-English regex over live DOM",
+      "Non-Apollo shared viewer chrome strings outside apolloView mode",
+      "Drawing/report chapter English titles inside generated artifacts"
+    ]
+  }
+}

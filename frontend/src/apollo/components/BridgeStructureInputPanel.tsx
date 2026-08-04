@@ -564,6 +564,15 @@ export function BridgeStructureInputPanel({
       <p className="apollo-inline-hint" data-testid="apollo-sample-disclaimer">
         {isContinuous ? CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER : SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER}
       </p>
+      <TechnicalDetails
+        testId="apollo-sample-disclaimer-tech"
+        lines={[
+          "SAMPLE_PRESET",
+          "UNVERIFIED_DEVELOPMENT_ONLY",
+          "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED",
+          "DESIGN_OR_CONSTRUCTION_USE=PROHIBITED",
+        ]}
+      />
 
       {isContinuous ? (
         <section data-testid="apollo-continuous-layout-panel">

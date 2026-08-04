@@ -152,9 +152,9 @@ export function DeckAppurtenanceInputPanel({
     <article className="apollo-editor-card" data-testid="apollo-appurtenance-panel">
       <header>
         <h3>床版・橋面付属物（WF-03）</h3>
-        <p className="apollo-dev-banner" data-testid="apollo-appurtenance-dev-banner">
+        <div className="apollo-dev-banner" data-testid="apollo-appurtenance-dev-banner">
           <AuthorizationBanner testId="apollo-appurtenance-auth" />
-        </p>
+        </div>
         <p role="note" data-testid="apollo-appurtenance-local-crs-warning">
           横断オフセットは橋梁 local CRS（+Y = 右、測点増方向を向いて）です。道路線形 binding は
           Step 4-E 待ち。3D・数量・荷重は Step 4-C 未実装です。

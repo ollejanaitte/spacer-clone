@@ -34,7 +34,9 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
 
     const wf06 = page.getByTestId("apollo-wf-step-WF-06");
     await expect(wf06).toHaveAttribute("data-status", "BLOCKED");
-    await expect(wf06.getByTestId("apollo-wf-step-disabled-reason")).toContainText("WF_CAPABILITY_PLANNED");
+    await expect(wf06.getByTestId("apollo-wf-step-disabled-reason")).toContainText("先に必要な作業があります");
+    await wf06.getByTestId("apollo-wf-step-WF-06-blocking-tech-toggle").click();
+    await expect(wf06.getByTestId("apollo-wf-step-WF-06-blocking-tech-panel")).toContainText("WF_CAPABILITY_PLANNED");
     await expect(wf06.getByTestId("apollo-wf-step-primary")).toBeDisabled();
 
     for (const stepId of ["WF-03", "WF-05"]) {
@@ -47,7 +49,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     await openWorkflowScreen(page);
 
     await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "動作確認用サンプル値を入力" }).click();
-    await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "構造を生成" }).click();
+    await page.getByTestId("apollo-generate-structure").click();
     // Step 4-B: WF-03/WF-05 gate downstream — decide explicit none before expecting WF-10+.
     await page.getByTestId("apollo-appurtenance-all-none").click();
     await page.getByTestId("apollo-haunch-all-none").click();
@@ -56,7 +58,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     for (const stepId of ["WF-02", "WF-03", "WF-04", "WF-05", "WF-10", "WF-12", "WF-14"]) {
       const card = page.getByTestId(`apollo-wf-step-${stepId}`);
       await expect(card, stepId).toHaveAttribute("data-status", "COMPLETE");
-      await expect(card, stepId).toContainText("NOT_AUTHORIZED");
+      await expect(card, stepId).toContainText("正式認可なし");
     }
   });
 
@@ -64,7 +66,7 @@ test.describe("Apollo Step 4-A workflow control screen", () => {
     await openWorkflowScreen(page);
 
     await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "動作確認用サンプル値を入力" }).click();
-    await page.getByTestId("apollo-bridge-structure-panel").getByRole("button", { name: "構造を生成" }).click();
+    await page.getByTestId("apollo-generate-structure").click();
 
     const widthInput = page.getByTestId("apollo-bridge-input-width");
     await widthInput.fill("14");

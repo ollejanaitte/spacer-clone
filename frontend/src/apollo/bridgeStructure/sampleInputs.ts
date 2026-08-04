@@ -31,12 +31,12 @@ import { createEmptyBridgeStructureInputDraft } from "./validation";
 import type { ApolloBridgeStructureInputDraft } from "./types";
 
 export const SIMPLE_SINGLE_SPAN_SAMPLE_DISCLAIMER =
-  "動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。SAMPLE_PRESET / UNVERIFIED_DEVELOPMENT_ONLY / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED / DESIGN_OR_CONSTRUCTION_USE: PROHIBITED";
+  "動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。開発確認用・未検証 — 正式認可なし — 設計・施工への使用禁止。";
 
 export const CONTINUOUS_GIRDER_SAMPLE_SPANS = [30, 35, 30] as const;
 
 export const CONTINUOUS_GIRDER_SAMPLE_DISCLAIMER =
-  "連続桁の動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。正式設計には使用しないでください。SAMPLE_PRESET / UNVERIFIED_DEVELOPMENT_ONLY";
+  "連続桁の動作確認用サンプル値です。設計基準に基づく採用値・照査済み断面ではありません。開発確認用・未検証です。";
 
 export const CONTINUOUS_ANALYSIS_DISCLAIMER =
   "連続桁の解析・照査は未対応です。構造モデル生成と概算数量の確認のみ可能です。";
