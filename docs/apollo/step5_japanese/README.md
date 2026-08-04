@@ -5,8 +5,8 @@
 | Step | Scope | Status |
 |------|-------|--------|
 | **5-JP1** | 英語露出監査・用語集・文言設計 | COMPLETE（設計のみ） |
-| 5-JP2 | 共通翻訳辞書・表示 component | 未着手 |
-| 5-JP3 | 全画面適用・残存英語検査・E2E | 未着手 |
+| **5-JP2** | 共通翻訳辞書・表示 component | COMPLETE |
+| **5-JP3** | 全画面適用・残存英語検査・E2E | COMPLETE — see [jp3/jp3_completion_gate.md](./jp3/jp3_completion_gate.md) |
 
 ## 表示レイヤー
 
