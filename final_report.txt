@@ -659,11 +659,11 @@ END APOLLO STEP 5-JP1 CURRENT
 BEGIN APOLLO STEP 5-JP2 CURRENT
 ================================================================================
 STEP_ID: APOLLO_STEP_5_JP2
-CURRENT_SUBSTEP: P6
-OVERALL_PROGRESS: IN_PROGRESS
+CURRENT_SUBSTEP: REPORT
+OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: 023d9da160eb163724e88fb7764d831ac86a36d1
-CURRENT_MAIN_SHA: 780752c973e8a8e15e7dcbec5c6c3c7a3e15d967
-UPDATED_AT: 2026-08-04T21:26:44+09:00
+CURRENT_MAIN_SHA: 3a29686c09cbaea2219686cb1c4872caad24f783
+UPDATED_AT: 2026-08-04T21:27:36+09:00
 
 P1_FOUNDATION: PASS
 P1_PR: https://github.com/ollejanaitte/spacer-clone/pull/367
@@ -687,9 +687,9 @@ P5_MERGE_SHA: 780752c973e8a8e15e7dcbec5c6c3c7a3e15d967
 
 P6_INTEGRATION_E2E: PASS
 P6_PR: https://github.com/ollejanaitte/spacer-clone/pull/372
-P6_MERGE_SHA: PENDING
+P6_MERGE_SHA: 3a29686c09cbaea2219686cb1c4872caad24f783
 
-REPORT_PR: PENDING
+REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/373
 REPORT_MERGE_SHA: PENDING
 SEAL_PR: PENDING
 
@@ -703,7 +703,7 @@ VIEWER_QUANTITY_LOAD_ANALYSIS_VERDICT: PASS
 OUTPUT_ERROR_AUTH_VERDICT: PASS
 JP2_L1_RAW_ENGLISH_VERDICT: PASS
 APPLICATION_CODE_CHANGED: YES
-STEP_5_JP2_VERDICT: IN_PROGRESS
+STEP_5_JP2_VERDICT: COMPLETE
 STEP_5_JP3_START_READINESS: GO
 STEP_5_JP3_IMPLEMENTED: NO
 STEP_4_D_TO_H_IMPLEMENTED: NO
@@ -717,6 +717,8 @@ TESTS:
 - Playwright Step4A+Step5R: 18/18 PASS
 - typecheck/lint/build: PASS
 - residual English JP2 source scan: 0 findings
+
+DOCUMENT_ROOT: docs/apollo/step5_japanese/implementation/
 ================================================================================
 END APOLLO STEP 5-JP2 CURRENT
 ================================================================================
