@@ -751,7 +751,7 @@ JP3_D_REPORT_FINALIZE: PASS
 JP3_D_PR: https://github.com/ollejanaitte/spacer-clone/pull/378
 JP3_D_MERGE_SHA: 543f0ae1e287193e1620ddb2d0fbcde0a007630c
 
-SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/PENDING_SEAL
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/379
 
 LIVE_DOM_SCAN_VERDICT: PASS
 VISIBLE_TEXT_SCAN_VERDICT: PASS
