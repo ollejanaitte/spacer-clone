@@ -13,3 +13,5 @@
 | `terminology_decision_register.csv` | Decision register |
 | `evidence/jp1c/design_summary.txt` | JP1-C design summary |
 | `jp2_implementation_plan.md` / `jp3_e2e_plan.md` | JP2/JP3 plans |
+| `evidence/jp1d/gate_results.txt` | JP1-D completion gate results |
+| `07_completion_gate.md` | Completion gate |
