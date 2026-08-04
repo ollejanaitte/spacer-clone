@@ -323,10 +323,10 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
       ) as HTMLButtonElement;
       sample.click();
     });
-    const dialog = container.querySelector("[data-testid='apollo-sample-reapply-dialog']");
+    const dialog = document.querySelector("[data-testid='apollo-sample-reapply-dialog']");
     if (dialog) {
       act(() => {
-        const replace = container.querySelector(
+        const replace = dialog.querySelector(
           "[data-testid='apollo-sample-reapply-replace']",
         ) as HTMLButtonElement;
         replace.click();
