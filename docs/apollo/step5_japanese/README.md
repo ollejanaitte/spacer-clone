@@ -4,7 +4,7 @@
 
 | Step | Scope | Status |
 |------|-------|--------|
-| **5-JP1** | 英語露出監査・用語集・文言設計 | 本ディレクトリ（設計のみ） |
+| **5-JP1** | 英語露出監査・用語集・文言設計 | COMPLETE（設計のみ） |
 | 5-JP2 | 共通翻訳辞書・表示 component | 未着手 |
 | 5-JP3 | 全画面適用・残存英語検査・E2E | 未着手 |
 
@@ -50,4 +50,5 @@
 | [jp2_implementation_plan.md](./jp2_implementation_plan.md) | JP1-C |
 | [jp3_e2e_plan.md](./jp3_e2e_plan.md) | JP1-C |
 | [jp2_pr_plan.csv](./jp2_pr_plan.csv) | JP1-C |
+| [07_completion_gate.md](./07_completion_gate.md) | JP1-D |
 | [evidence_index.md](./evidence_index.md) | JP1-A+ |
