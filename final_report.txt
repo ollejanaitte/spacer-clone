@@ -792,9 +792,9 @@ STEP_ID: APOLLO_STEP_6_UI_P0_A
 DOCUMENTATION_ONLY: YES
 APPLICATION_CODE_CHANGED: NO
 BASE_MAIN_SHA: 98ad5be376223be03449da835aec9a60f40e1cd9
-PRIMARY_PR: PENDING
-PRIMARY_PR_STATE: PENDING
-PRIMARY_PR_MERGE_SHA: PENDING
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/380
+PRIMARY_PR_STATE: MERGED
+PRIMARY_PR_MERGE_SHA: ed14922aa9f1745df1ccd44d58f847d4d1574047
 DIRECT_UI_SURFACE_COUNT: 11
 EDIT_CANDIDATE_COUNT: 32
 PROTECTED_AREA_COUNT: 6
@@ -808,4 +808,30 @@ NOTES:
 - Direct UI edit candidates concentrated in shell/guided/workflow chrome/styles/tests
 - Conditional: navigation.ts, i18n labels, Viewer3D chrome only
 - Protected: evaluators/selectors/dependencies/capabilityRegistry, bridgeStructure, visualization generation, export, workspace/schema/checksum, formal auth
+================================================================================
+
+================================================================================
+Apollo Step 6-UI-P0-B — UI Requirements and Responsibilities
+================================================================================
+更新日時: 2026-08-05T00:40:08+09:00
+STEP_ID: APOLLO_STEP_6_UI_P0_B
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: ed14922aa9f1745df1ccd44d58f847d4d1574047
+PRIMARY_PR: PENDING
+PRIMARY_PR_STATE: PENDING
+PRIMARY_PR_MERGE_SHA: PENDING
+REQUIREMENT_COUNT: 14
+IN_SCOPE_COUNT: 14
+OUT_OF_SCOPE_COUNT: 11
+OPEN_QUESTION_COUNT: 5
+AUTHORIZATION_POLICY: UNCHANGED
+FORMAL_AUTHORIZATION: NOT_GRANTED
+P0_B_VERDICT: COMPLETE
+P0_C_START_READINESS: GO
+EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/p0_b/
+NOTES:
+- Converted user complaints 1-8 into UR-01..UR-14 with acceptance criteria
+- Mode responsibility matrix covers Guided / list / Workflow / Viewer / tech / file / auth
+- Authorization display may compact; token values remain NOT_GRANTED / PROHIBITED
 ================================================================================
