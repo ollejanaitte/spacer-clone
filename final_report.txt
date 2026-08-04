@@ -614,7 +614,7 @@ JP1_A_PR: https://github.com/ollejanaitte/spacer-clone/pull/362
 JP1_A_MERGE_SHA: ccde639b2761994c4a2bbeaffc44faac1b041a7e
 
 JP1_B_GLOSSARY_TERMINOLOGY: PASS
-JP1_B_PR: PENDING
+JP1_B_PR: https://github.com/ollejanaitte/spacer-clone/pull/363
 JP1_B_MERGE_SHA: PENDING
 
 JP1_C_UI_TEXT_DESIGN: PENDING
