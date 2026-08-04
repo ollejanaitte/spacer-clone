@@ -1,0 +1,6 @@
+requirement_id,description,status,evidence
+DEC-S5-0002,Sample reapply confirmation modal,IMPLEMENTED,reapply_transaction.md;E2E-S5R-001..004
+ER-002,True one-piece L polygon,GEOMETRY_IMPLEMENTED,true_l_section.md;E2E-S5R-005
+ER-001,Parameterized cross-frame attachments,PARAMETERIZED_ATTACHMENT_TOPOLOGY_IMPLEMENTED,cross_frame_attachment_model.md;E2E-S5R-006..009
+OQ-S5-004,Cross-frame engineering review,PENDING_HUMAN,known_limitations.md
+OQ-S5-005,L-angle engineering review,PENDING_HUMAN,known_limitations.md

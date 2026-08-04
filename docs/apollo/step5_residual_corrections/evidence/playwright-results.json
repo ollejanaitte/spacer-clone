@@ -1,0 +1,22 @@
+{
+  "suite": "apollo-step5r-residual",
+  "total": 13,
+  "passed": 13,
+  "failed": 0,
+  "ids": [
+    "E2E-S5R-001",
+    "E2E-S5R-002",
+    "E2E-S5R-003",
+    "E2E-S5R-004",
+    "E2E-S5R-005",
+    "E2E-S5R-006",
+    "E2E-S5R-007",
+    "E2E-S5R-008",
+    "E2E-S5R-009",
+    "E2E-S5R-010",
+    "E2E-S5R-011",
+    "E2E-S5R-012",
+    "E2E-S5R-013"
+  ],
+  "verdict": "PASS"
+}
