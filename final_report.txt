@@ -958,3 +958,52 @@ NEXT_ACTION: Merge UI-1D PR to main, sync, begin UI-1 on new branch.
 ================================================================================
 END APOLLO STEP 6-UI-1D
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-1
+================================================================================
+更新日時: 2026-08-05T01:47:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_1
+DOCUMENTATION_ONLY: NO (application code changed)
+BASE_MAIN_SHA: b6242d12f13cbf1cd095d9ce8c6e509ff63cc72e
+BRANCH: feat/apollo-step6-ui-1-header-auth
+MERGE_SHA: 99c77462769c7da7cc6b854e8b3835b7d5ce334a
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/386
+
+NEW_COMPONENTS:
+  frontend/src/apollo/components/SaveStatusBadge.tsx
+  frontend/src/apollo/components/CompactAuthorizationBadge.tsx
+
+MODIFIED_COMPONENTS:
+  frontend/src/apollo/ApolloPhase1Shell.tsx — header reorganized into semantic groups
+  frontend/src/styles.css — header group/badge/auth styles added
+
+MODIFIED_TESTS:
+  frontend/src/apollo/__tests__/ApolloPhase1Shell.test.tsx — button label updates
+  frontend/src/apollo/__tests__/ApolloRouteHost.test.tsx — button label updates
+
+NEW_TESTS:
+  frontend/src/apollo/components/__tests__/SaveStatusBadge.test.tsx (4 tests)
+  frontend/src/apollo/components/__tests__/CompactAuthorizationBadge.test.tsx (4 tests)
+
+IMPLEMENTATION_SUMMARY: PASS
+  - Header actions split into mode / file+status / nav / help groups with visual dividers
+  - SaveStatusBadge (non-interactive) shows 保存済み/変更あり/保存中...
+  - CompactAuthorizationBadge shows compact token with expandable detail panel
+  - Active mode button highlighted with apollo-header-active class
+  - Formal authorization unchanged (NOT_GRANTED)
+
+TEST_SUMMARY:
+  Apollo Vitest: 477/477 pass (71 test files)
+  Typecheck: PASS
+  Lint: PASS
+  Build: PASS
+  New component tests: 8/8 pass
+  Denylist files: NONE changed
+
+STEP_6_UI_1_VERDICT: COMPLETE
+STEP_6_UI_2_START_READINESS: GO
+NEXT_ACTION: Begin Step 6-UI-2 (Guided progress + sticky footer) from latest main.
+================================================================================
+END APOLLO STEP 6-UI-1
+================================================================================
