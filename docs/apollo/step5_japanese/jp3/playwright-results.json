@@ -1,0 +1,115 @@
+{
+  "results": [
+    {
+      "id": "E2E-JP3-001",
+      "verdict": "PASS",
+      "note": "Apollo入口"
+    },
+    {
+      "id": "E2E-JP3-002",
+      "verdict": "PASS",
+      "note": "sample selection/apply"
+    },
+    {
+      "id": "E2E-JP3-003",
+      "verdict": "PASS",
+      "note": "reapply modal"
+    },
+    {
+      "id": "E2E-JP3-004",
+      "verdict": "PASS",
+      "note": "Workflow"
+    },
+    {
+      "id": "E2E-JP3-005",
+      "verdict": "PASS",
+      "note": "Guided G01-G15"
+    },
+    {
+      "id": "E2E-JP3-006",
+      "verdict": "PASS",
+      "note": "bridge/deck/haunch/appurtenance"
+    },
+    {
+      "id": "E2E-JP3-007",
+      "verdict": "PASS",
+      "note": "pavement/marking"
+    },
+    {
+      "id": "E2E-JP3-008",
+      "verdict": "PASS",
+      "note": "cross frame / L-angle"
+    },
+    {
+      "id": "E2E-JP3-009",
+      "verdict": "PASS",
+      "note": "3D viewer"
+    },
+    {
+      "id": "E2E-JP3-010",
+      "verdict": "PASS",
+      "note": "quantity"
+    },
+    {
+      "id": "E2E-JP3-011",
+      "verdict": "PASS",
+      "note": "load"
+    },
+    {
+      "id": "E2E-JP3-012",
+      "verdict": "PASS",
+      "note": "analysis"
+    },
+    {
+      "id": "E2E-JP3-013",
+      "verdict": "PASS",
+      "note": "report/drawing/output"
+    },
+    {
+      "id": "E2E-JP3-014",
+      "verdict": "PASS",
+      "note": "stale/block/error"
+    },
+    {
+      "id": "E2E-JP3-015",
+      "verdict": "PASS",
+      "note": "authorization"
+    },
+    {
+      "id": "E2E-JP3-016",
+      "verdict": "PASS",
+      "note": "technical details collapsed"
+    },
+    {
+      "id": "E2E-JP3-017",
+      "verdict": "PASS",
+      "note": "save/reload"
+    },
+    {
+      "id": "E2E-JP3-018",
+      "verdict": "PASS",
+      "note": "mobile save chrome reachable"
+    },
+    {
+      "id": "E2E-JP3-019",
+      "verdict": "PASS",
+      "note": "keyboard focus"
+    },
+    {
+      "id": "E2E-JP3-020",
+      "verdict": "PASS",
+      "note": "residual L1=0"
+    },
+    {
+      "id": "E2E-JP3-021",
+      "verdict": "PASS",
+      "note": "Step 5-R reapply JA"
+    },
+    {
+      "id": "E2E-JP3-022",
+      "verdict": "PASS",
+      "note": "authorization unchanged wording"
+    }
+  ],
+  "consoleErrors": []
+}

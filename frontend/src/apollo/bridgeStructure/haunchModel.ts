@@ -189,6 +189,13 @@ export function expectedGirderKeys(girderCount: number): readonly string[] {
   return Array.from({ length: girderCount }, (_, index) => mainGirderKeyFromIndex(index));
 }
 
+
+function girderDisplayName(key: string): string {
+  const match = /^girder-(\d+)$/.exec(key);
+  if (!match) return key;
+  return `主桁 ${Number(match[1]) + 1}`;
+}
+
 export function validateRcDeckHaunchConfiguration(
   configuration: ApolloHaunchConfigurationDraft,
   context: HaunchValidationContext,
@@ -233,7 +240,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_GIRDER_UNDECIDED",
         mainGirderKey: key,
         blocking: false,
-        message: `主桁 ${key} のハンチ有無が未入力です。`,
+        message: `${girderDisplayName(key)} のハンチ有無が未入力です。`,
         remediation: "各主桁について「あり」「なし」を選択するか「全主桁に適用」を使ってください。",
       });
       continue;
@@ -244,7 +251,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_DUPLICATE_GIRDER_REF",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁キー ${key} が重複しています。`,
+        message: `${girderDisplayName(key)} の設定が重複しています。`,
         remediation: "ハンチ設定を一度未入力に戻して再設定してください。",
       });
       continue;
@@ -277,7 +284,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_PRESENCE_NOT_PROVIDED",
         mainGirderKey: key,
         blocking: false,
-        message: `主桁 ${key} のハンチ有無が未入力です。`,
+        message: `${girderDisplayName(key)} のハンチ有無が未入力です。`,
         remediation: "「あり」「なし」のいずれかを選択してください。",
       });
       continue;
@@ -295,7 +302,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_DUPLICATE_ID",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: ハンチ ID が重複しています。`,
+        message: `${girderDisplayName(key)}: ハンチ ID が重複しています。`,
         remediation: "当該主桁を一度未入力に戻して再設定してください。",
       });
       continue;
@@ -308,7 +315,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_INVALID_DIMENSION",
         mainGirderKey: key,
         blocking: false,
-        message: `主桁 ${key}: ハンチ寸法が不足しています。`,
+        message: `${girderDisplayName(key)}: ハンチ寸法が不足しています。`,
         remediation: "形状・測点・幅・高さを入力してください。",
       });
       continue;
@@ -319,7 +326,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_MISSING_BRIDGE_LENGTH",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: 構造モデル長が未入力のため測点を検証できません。`,
+        message: `${girderDisplayName(key)}: 構造モデル長が未入力のため測点を検証できません。`,
         remediation: "WF-02 で構造モデル長を入力してください。",
       });
       continue;
@@ -332,7 +339,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_INVALID_STATION_RANGE",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: 測点範囲が不正です（0 ≤ 始点 < 終点）。`,
+        message: `${girderDisplayName(key)}: 測点範囲が不正です（0 ≤ 始点 < 終点）。`,
         remediation: "始点・終点測点を見直してください。",
       });
       continue;
@@ -342,7 +349,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_OUTSIDE_BRIDGE_LENGTH",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: 終点測点が構造モデル長を超えています。`,
+        message: `${girderDisplayName(key)}: 終点測点が構造モデル長を超えています。`,
         remediation: `終点を ${context.bridgeLength} m 以下にしてください。`,
       });
       continue;
@@ -358,7 +365,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_INVALID_DIMENSION",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: ハンチ寸法が不正です。`,
+        message: `${girderDisplayName(key)}: ハンチ寸法が不正です。`,
         remediation: "正の有限値を入力してください。",
       });
       continue;
@@ -372,7 +379,7 @@ export function validateRcDeckHaunchConfiguration(
           code: "HAUNCH_INVALID_RECT",
           mainGirderKey: key,
           blocking: true,
-          message: `主桁 ${key}: RECT では上幅と下幅を一致させてください。`,
+          message: `${girderDisplayName(key)}: 矩形では上幅と下幅を一致させてください。`,
           remediation: "下幅を上幅と同じにするか、TRAPEZOID を選択してください。",
         });
         continue;
@@ -383,7 +390,7 @@ export function validateRcDeckHaunchConfiguration(
           code: "HAUNCH_INVALID_TRAPEZOID",
           mainGirderKey: key,
           blocking: true,
-          message: `主桁 ${key}: TRAPEZOID では下幅 > 0 が必要です。`,
+          message: `${girderDisplayName(key)}: 台形では下幅 > 0 が必要です。`,
           remediation: "下幅を正の値で入力してください。",
         });
         continue;
@@ -395,7 +402,7 @@ export function validateRcDeckHaunchConfiguration(
         code: "HAUNCH_INVALID_MATERIAL_REF",
         mainGirderKey: key,
         blocking: true,
-        message: `主桁 ${key}: 材料参照に空文字は使えません。`,
+        message: `${girderDisplayName(key)}: 材料参照に空文字は使えません。`,
         remediation: "材料参照を削除するか非空の識別子を入力してください。",
       });
       continue;

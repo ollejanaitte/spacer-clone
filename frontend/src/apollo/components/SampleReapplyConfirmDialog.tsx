@@ -69,11 +69,11 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
         aria-describedby={summaryId}
       >
         <h2 id={titleId}>サンプルを再適用しますか？</h2>
-        <p id={summaryId} data-testid="apollo-sample-reapply-summary">
+        <div id={summaryId} data-testid="apollo-sample-reapply-summary">
           現在のプロジェクト「{diff.currentProjectName}」とサンプル「{diff.sampleName}」に差分があります。
           無言の上書きは行いません（開発確認用・未検証）。
           <TechnicalDetails testId="apollo-reapply-tech" lines={["DEC-S5-0002", "UNVERIFIED_DEVELOPMENT_ONLY"]} />
-        </p>
+        </div>
         <ul data-testid="apollo-sample-reapply-counts">
           <li>変更フィールド: {diff.changedFieldCount}</li>
           <li>追加: {diff.addedEntityCount}</li>
