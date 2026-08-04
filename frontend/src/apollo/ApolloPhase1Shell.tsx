@@ -98,6 +98,7 @@ import type {
 import { getButtonLabel } from "./i18n";
 import { SaveStatusBadge } from "./components/SaveStatusBadge";
 import { CompactAuthorizationBadge } from "./components/CompactAuthorizationBadge";
+import { ViewerPane } from "./components/ViewerPane";
 
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
@@ -1724,7 +1725,8 @@ export function ApolloPhase1Shell({
             <p>サンプル橋梁を読み込むか、新規作成してください。</p>
           </div>
         ) : (
-          <Viewer3D
+          <ViewerPane nodeCount={draft.nodes.length}>
+            <Viewer3D
             apolloVisualizationModel={apolloVisualizationBuild.ok ? apolloVisualizationBuild.model : null}
             apolloSelectionKeys={viewerSelectionKeys}
             apolloValidationHighlight={viewerValidationHighlight}
@@ -1740,6 +1742,7 @@ export function ApolloPhase1Shell({
             onViewPanelToggle={() => setTopologyViewPanelOpen((current) => !current)}
             onVisibilityChange={setApolloViewerVisibility}
           />
+          </ViewerPane>
         )}
       </div>
     </section>

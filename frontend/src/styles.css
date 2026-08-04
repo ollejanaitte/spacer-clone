@@ -6002,7 +6002,7 @@ button:disabled {
 
 .apollo-unit2-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.95fr);
+  grid-template-columns: minmax(280px, 0.45fr) minmax(400px, 1fr);
   gap: 16px;
 }
 
@@ -6013,6 +6013,33 @@ button:disabled {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+}
+
+.apollo-unit2-visual-panel {
+  min-height: calc(100vh - 200px);
+}
+
+.apollo-viewer-pane {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  min-height: 400px;
+}
+
+.apollo-viewer-pane-main {
+  min-height: 360px;
+}
+
+.apollo-viewer-supplementary {
+  padding: 6px 12px;
+  border-top: 1px solid #d7e2ee;
+  font-size: 12px;
+  color: #57697d;
+  background: #f8fbff;
+}
+
+.apollo-viewer-node-count {
+  font-weight: 600;
 }
 
 .apollo-unit2-tabs {
