@@ -1,0 +1,64 @@
+# Step 6 UI — File Change Allowlist Proposal (upper bound)
+# BASE_MAIN_SHA: ee045b353ade480a9d2a857c7f48215973274273
+#
+# IMPORTANT:
+# This is NOT permission to edit all listed files in every PR.
+# Each implementation PR must publish a narrower allowlist.
+# Classification: DIRECT = expected chrome/layout/test edits; CONDITIONAL = only with evidence.
+
+## DIRECT (presentation / layout / tests)
+
+frontend/src/apollo/ApolloPhase1Shell.tsx
+frontend/src/styles.css
+frontend/src/apollo/guided/GuidedModeShell.tsx
+frontend/src/apollo/components/WorkflowControlScreen.tsx
+frontend/src/apollo/components/WorkflowStepCard.tsx
+frontend/src/apollo/components/WorkflowProgressSummary.tsx
+frontend/src/apollo/components/WorkflowDiagnosticsPanel.tsx
+frontend/src/apollo/components/WorkflowStatusBadge.tsx
+frontend/src/apollo/components/AuthorizationBanner.tsx
+frontend/src/apollo/components/TechnicalDetails.tsx
+frontend/src/apollo/__tests__/ApolloPhase1Shell.test.tsx
+frontend/src/apollo/guided/__tests__/guidedMode.test.tsx
+frontend/src/apollo/__tests__/WorkflowControlScreen.test.tsx
+frontend/src/apollo/i18n/__tests__/catalog.test.tsx
+frontend/tests/e2e/apollo-step4a-workflow.spec.ts
+frontend/tests/e2e/apollo-step4b-appurtenance-haunch.spec.ts
+frontend/tests/e2e/apollo-step5-final-gui.spec.ts
+frontend/tests/e2e/apollo-step5r-residual.spec.ts
+frontend/tests/e2e/apollo-step5-jp3a-live-dom-audit.spec.ts
+frontend/tests/e2e/apollo-step5-jp3c-full-gui-e2e.spec.ts
+
+## DIRECT (new components may be added under these directories)
+
+frontend/src/apollo/components/   # e.g. ApolloAppHeader, ApolloModeSwitcher, … (names TBD in P0-D)
+frontend/src/apollo/guided/       # presentation helpers only
+
+## CONDITIONAL (edit only with written justification in PR)
+
+frontend/src/apollo/workflow/navigation.ts
+frontend/src/apollo/guided/chrome.ts
+frontend/src/apollo/guided/slides.ts          # presentation fields only; no G## meaning/order change
+frontend/src/apollo/guided/types.ts           # only if new presentation types required
+frontend/src/apollo/guided/index.ts
+frontend/src/apollo/i18n/catalog.ts           # additive keys; no auth semantic flip
+frontend/src/apollo/i18n/buttonLabels.ts
+frontend/src/apollo/i18n/authorizationMessages.ts
+frontend/src/apollo/i18n/statusLabels.ts
+frontend/src/apollo/i18n/workflowLabels.ts
+frontend/src/apollo/i18n/fieldLabels.ts
+frontend/src/apollo/i18n/technicalLabels.ts
+frontend/src/viewer/Viewer3D.tsx              # only if shell wrapper insufficient; smoke non-Apollo hosts
+frontend/src/viewer/types.ts                 # avoid unless required
+frontend/tests/e2e/apollo-step4c-integration.spec.ts  # only if selectors break
+
+## Docs / report (always allowed for Step 6 docs PRs)
+
+docs/apollo/step6_ui_redesign/**
+final_report.txt
+
+## Counts (upper-bound proposal)
+
+DIRECT_EDIT_CANDIDATE_COUNT: 20 path entries + new component files as needed
+CONDITIONAL_EDIT_CANDIDATE_COUNT: 15
+PROTECTED: see 08_file_change_denylist.txt

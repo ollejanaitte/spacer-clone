@@ -1,0 +1,56 @@
+# Step 6 UI — File Change Denylist (principle: do not edit in UI implementation PRs)
+# BASE_MAIN_SHA: ee045b353ade480a9d2a857c7f48215973274273
+
+## Workflow SoR / state logic
+
+frontend/src/apollo/workflow/evaluators.ts
+frontend/src/apollo/workflow/selectors.ts
+frontend/src/apollo/workflow/dependencies.ts
+frontend/src/apollo/workflow/capabilityRegistry.ts
+frontend/src/apollo/workflow/index.ts
+frontend/src/apollo/workflow/registry.ts          # no WF id/order/meaning changes
+frontend/src/apollo/workflow/types.ts             # no status enum / model shape changes
+frontend/src/apollo/workflow/diagnostics.ts       # no diagnostic semantics changes
+frontend/src/apollo/workflow/recommendedAction.ts
+
+## Canonical / generation / export
+
+frontend/src/apollo/bridgeStructure/**
+frontend/src/apollo/visualization/**
+frontend/src/apollo/export/**
+frontend/src/apollo/quantity/**
+frontend/src/apollo/loads/**
+frontend/src/apollo/analysis/**
+frontend/src/apollo/report/**
+frontend/src/apollo/drawing/**
+frontend/src/apollo/output/**
+
+## Persistence / schema / checksum
+
+frontend/src/apollo/workspace.ts
+frontend/src/apollo/unit2Draft.ts                 # schema/version paths
+schemas/**
+# any dirtyFingerprint / checksum implementation modules
+
+## Auth fail-closed model code (values)
+
+# Do not flip authorizationStatus or grant paths inside domain models.
+# Presentation components may read messages; models stay NOT_GRANTED.
+
+## Package / lockfile / unrelated hosts
+
+package.json
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+frontend/src/App.tsx                              # unless unavoidable Viewer prop typing — prefer avoid
+frontend/src/liner/**
+frontend/src/compare/**
+frontend/src/timeHistory/**
+
+## Protected group count (for reporting)
+
+PROTECTED_FILE_GROUP_COUNT: 8
+# 1 workflow SoR  2 bridgeStructure  3 visualization  4 export
+# 5 domain models (qty/load/analysis/report/drawing/output)
+# 6 persistence/schema  7 package/lockfile  8 non-Apollo hosts

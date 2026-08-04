@@ -1,0 +1,15 @@
+risk_id,severity,area,likelihood,impact,regression_risk,data_schema_risk,authorization_risk,mitigation,recommended_PR,status
+R-01,Header regroup accidentally changes all .apollo-editor-card button styles,CSS selector coupling,MEDIUM,MEDIUM,MEDIUM,NONE,NONE,Split header-action selectors from editor-card button rules; visual diff panels,UI-1,OPEN
+R-02,Removing/compacting AuthorizationBanner breaks E2E auth visibility,Auth chrome,HIGH,HIGH,HIGH,NONE,HIGH,Keep L1 meaning; update E2E selectors; retain L3 tokens; run S5R-012,UI-1,OPEN
+R-03,Guided progress redesign breaks G01-G15 jump testids,Guided,HIGH,HIGH,HIGH,NONE,NONE,Preserve apollo-guided-jump-G## or provide aliases; update UT-GUIDED/JP3C,UI-2,OPEN
+R-04,Sticky footer covers inputs / fails mobile keyboard,Guided CSS,MEDIUM,MEDIUM,MEDIUM,NONE,NONE,padding-bottom; visual mobile E2E; focus order tests,UI-2,OPEN
+R-05,Viewer buried or detached from ProjectModel during layout refactor,Viewer layout,MEDIUM,HIGH,HIGH,HIGH if new store,NONE,Shell-only placement; forbid new viewer store; STL same-source check,UI-3,OPEN
+R-06,Editing Viewer3D internals regresses Liner/Compare/App,Viewer shared,MEDIUM,HIGH,HIGH,NONE,NONE,Prefer CSS wrapper in Apollo shell; Viewer3D changes require non-Apollo smoke,UI-3 CONDITIONAL,OPEN
+R-07,WF master-detail loses step reachability or order,Workflow UI,HIGH,HIGH,HIGH,NONE if evaluators untouched,NONE,Keep all WF-01..15 reachable; assert order in unit+E2E-S4A,UI-4,OPEN
+R-08,Co-mount removal moves expert panels unexpectedly for Guided users,IA mounting,MEDIUM,MEDIUM,MEDIUM,NONE,NONE,Follow mode responsibility matrix; provide detail escape to Workflow/panels,UI-2/UI-4,OPEN
+R-09,Orphan apollo-model-view-panel scroll remains broken,navigation.ts,HIGH(already),MEDIUM,MEDIUM,NONE,NONE,Align testid in UI-3/4; add regression test,UI-3 or UI-4,OPEN
+R-10,i18n key edits reintroduce English L1,i18n,MEDIUM,HIGH,HIGH,NONE,MEDIUM,JP3 residual scan mandatory in UI-6; catalog tests,UI-1..6,OPEN
+R-11,Accidental workflow/evaluator edit in broad PR,SoR,LOW,CRITICAL,CRITICAL,HIGH,HIGH,Denylist + PR file allowlist gate; reject if touched,ALL,OPEN
+R-12,Schema/checksum touch via drive-by refactor,Persistence,LOW,CRITICAL,CRITICAL,CRITICAL,NONE,Denylist; serialize before/after on save-related PRs,ALL,OPEN
+R-13,Tablet/mobile policy incomplete → JP3 mobile a11y regress,Responsive,MEDIUM,MEDIUM,MEDIUM,NONE,NONE,Screenshot matrix; keyboard/focus checks UI-5,UI-5,OPEN
+R-14,Large combined PR overlaps Shell+Guided+WF+Viewer,Process,MEDIUM,HIGH,HIGH,MEDIUM,MEDIUM,Enforce P0-D PR plan; split if file overlap high,ALL,OPEN
