@@ -407,16 +407,27 @@ function renderBracingSolid(
   const legB = finiteOrNull(solid.dimensionsM.legB);
   const thickness = finiteOrNull(solid.dimensionsM.thickness);
   if (solid.dimensionsM.sectionType === 1 && legA && legB && thickness) {
-    // Development L-angle: two plates along member X axis (pending ER-002 exact orientation).
-    const group = new THREE.Group();
-    const vertical = new THREE.Mesh(new THREE.BoxGeometry(length, thickness, legA), material);
-    vertical.position.set(0, thickness / 2, legA / 2);
-    const horizontal = new THREE.Mesh(new THREE.BoxGeometry(length, legB, thickness), material);
-    horizontal.position.set(0, legB / 2, thickness / 2);
-    group.add(vertical, horizontal);
-    applySolidFrame(group, solid.localFrame);
-    applySolidMetadata(group, solid);
-    return group;
+    // Step 5-R: single L-polygon extrusion along member X (not two-plate).
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    shape.lineTo(legA, 0);
+    shape.lineTo(legA, thickness);
+    shape.lineTo(thickness, thickness);
+    shape.lineTo(thickness, legB);
+    shape.lineTo(0, legB);
+    shape.closePath();
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+      depth: length,
+      bevelEnabled: false,
+      steps: 1,
+    });
+    // ExtrudeGeometry extends along +Z; member local length is +X.
+    geometry.translate(0, 0, -length / 2);
+    geometry.rotateY(-Math.PI / 2);
+    const mesh = new THREE.Mesh(geometry, material);
+    applySolidFrame(mesh, solid.localFrame);
+    applySolidMetadata(mesh, solid);
+    return mesh;
   }
 
   const diameter = finiteOrNull(solid.dimensionsM.diameter);

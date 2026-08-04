@@ -14,10 +14,11 @@ import type { ApolloLateralAngleSectionDraft } from "./lateralAngleTypes";
  * Step 4-B bumps input draft to 1.1.0-development (DEC-S4-0014).
  * Legacy 1.0.0 projects migrate with NOT_PROVIDED appurtenance/haunch presence.
  */
-export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.3.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION = "1.4.0-development";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_LEGACY = "1.0.0";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_1 = "1.1.0-development";
 export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_2 = "1.2.0-development";
+export const APOLLO_BRIDGE_STRUCTURE_INPUT_SCHEMA_VERSION_1_3 = "1.3.0-development";
 
 export { BridgeSystem, type BridgeLayoutSpan, type BridgeLayoutSupport } from "../contracts";
 

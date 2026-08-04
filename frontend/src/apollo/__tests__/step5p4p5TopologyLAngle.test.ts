@@ -36,6 +36,7 @@ describe("Step 5-3 P4/P5 topology labels and L-angle", () => {
       legB: 0.075,
       thickness: 0.009,
       catalogId: "CAT-S5-LAT-UNVERIFIED",
+      orientation: "LEG_A_ALONG_LOCAL_Y",
     });
     const draft = getBridgeStructureInputDraft(project);
     // enable laterals
@@ -76,6 +77,7 @@ describe("Step 5-3 P4/P5 topology labels and L-angle", () => {
       legB: null,
       thickness: null,
       catalogId: "CAT-S5-LAT-UNVERIFIED",
+      orientation: "LEG_A_ALONG_LOCAL_Y",
     });
     const draft = getBridgeStructureInputDraft(project);
     const generated = generateBridgeStructureFromInput(
