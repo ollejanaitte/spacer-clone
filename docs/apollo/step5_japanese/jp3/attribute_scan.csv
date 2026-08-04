@@ -1,0 +1,183 @@
+screen,selector,text,layer,reason
+basics-empty,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+basics-empty,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+basics-empty,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+basics-empty,div@aria-label,"3D model viewport",L1,residual:model|viewport
+basics-empty,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+basics-empty,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+basics-sample,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+basics-sample,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+basics-sample,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+basics-sample,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+basics-sample,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+basics-sample,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+basics-sample,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+basics-sample,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+basics-sample,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+basics-sample,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+basics-sample,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+basics-sample,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+basics-sample,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+basics-sample,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+basics-sample,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+basics-sample,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+basics-sample,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+basics-sample,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+basics-sample,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+basics-sample,div@aria-label,"3D model viewport",L1,residual:model|viewport
+basics-sample,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+basics-sample,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+guided-G01,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+guided-G01,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+guided-G01,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G01,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G01,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G01,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G01,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+guided-G01,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+guided-G01,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+guided-G01,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+guided-G01,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+guided-G01,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+guided-G01,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+guided-G01,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+guided-G01,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+guided-G01,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+guided-G01,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+guided-G01,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+guided-G01,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+guided-G01,div@aria-label,"3D model viewport",L1,residual:model|viewport
+guided-G01,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+guided-G01,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+guided-G05,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+guided-G05,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+guided-G05,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G05,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G05,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G05,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G05,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+guided-G05,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+guided-G05,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+guided-G05,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+guided-G05,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+guided-G05,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+guided-G05,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+guided-G05,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+guided-G05,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+guided-G05,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+guided-G05,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+guided-G05,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+guided-G05,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+guided-G05,div@aria-label,"3D model viewport",L1,residual:model|viewport
+guided-G05,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+guided-G05,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+guided-G09,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+guided-G09,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+guided-G09,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G09,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G09,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G09,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G09,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+guided-G09,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+guided-G09,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+guided-G09,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+guided-G09,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+guided-G09,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+guided-G09,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+guided-G09,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+guided-G09,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+guided-G09,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+guided-G09,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+guided-G09,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+guided-G09,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+guided-G09,div@aria-label,"3D model viewport",L1,residual:model|viewport
+guided-G09,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+guided-G09,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+guided-G12,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+guided-G12,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+guided-G12,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G12,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G12,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G12,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G12,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+guided-G12,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+guided-G12,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+guided-G12,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+guided-G12,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+guided-G12,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+guided-G12,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+guided-G12,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+guided-G12,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+guided-G12,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+guided-G12,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+guided-G12,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+guided-G12,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+guided-G12,div@aria-label,"3D model viewport",L1,residual:model|viewport
+guided-G12,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+guided-G12,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+guided-G15,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+guided-G15,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+guided-G15,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G15,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G15,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G15,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+guided-G15,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+guided-G15,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+guided-G15,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+guided-G15,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+guided-G15,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+guided-G15,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+guided-G15,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+guided-G15,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+guided-G15,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+guided-G15,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+guided-G15,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+guided-G15,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+guided-G15,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+guided-G15,div@aria-label,"3D model viewport",L1,residual:model|viewport
+guided-G15,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+guided-G15,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+reapply-dialog,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+reapply-dialog,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+reapply-dialog,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+reapply-dialog,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+reapply-dialog,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+reapply-dialog,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+reapply-dialog,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+reapply-dialog,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+reapply-dialog,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+reapply-dialog,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+reapply-dialog,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+reapply-dialog,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+reapply-dialog,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+reapply-dialog,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+reapply-dialog,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+reapply-dialog,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+reapply-dialog,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+reapply-dialog,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+reapply-dialog,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+reapply-dialog,div@aria-label,"3D model viewport",L1,residual:model|viewport
+reapply-dialog,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+reapply-dialog,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View
+mobile-basics,[data-testid="apollo-provisional-banner"]@aria-label,"provisional-status-banner",L1,residual:provisional-status-banner
+mobile-basics,ol@aria-label,"Apollo guided steps",L1,residual:guided|steps
+mobile-basics,[data-testid="apollo-appurtenance-unit-weight-LEFT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+mobile-basics,[data-testid="apollo-appurtenance-unit-weight-RIGHT_CURB"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+mobile-basics,[data-testid="apollo-appurtenance-unit-weight-LEFT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+mobile-basics,[data-testid="apollo-appurtenance-unit-weight-RIGHT_WALL_RAILING"]@aria-label,"単位重量 (kN/m³, 任意・未検証)",L1,residual:kN/m
+mobile-basics,[data-testid="apollo-haunch-presence-girder-0"]@aria-label,"主桁 girder-0 のハンチ有無",L1,residual:girder-0
+mobile-basics,[data-testid="apollo-haunch-shape-girder-0"]@aria-label,"主桁 girder-0 形状",L1,residual:girder-0
+mobile-basics,[data-testid="apollo-haunch-material-girder-0"]@aria-label,"主桁 girder-0 材料参照",L1,residual:girder-0
+mobile-basics,[data-testid="apollo-haunch-presence-girder-1"]@aria-label,"主桁 girder-1 のハンチ有無",L1,residual:girder-1
+mobile-basics,[data-testid="apollo-haunch-shape-girder-1"]@aria-label,"主桁 girder-1 形状",L1,residual:girder-1
+mobile-basics,[data-testid="apollo-haunch-material-girder-1"]@aria-label,"主桁 girder-1 材料参照",L1,residual:girder-1
+mobile-basics,[data-testid="apollo-haunch-presence-girder-2"]@aria-label,"主桁 girder-2 のハンチ有無",L1,residual:girder-2
+mobile-basics,[data-testid="apollo-haunch-shape-girder-2"]@aria-label,"主桁 girder-2 形状",L1,residual:girder-2
+mobile-basics,[data-testid="apollo-haunch-material-girder-2"]@aria-label,"主桁 girder-2 材料参照",L1,residual:girder-2
+mobile-basics,[data-testid="apollo-haunch-presence-girder-3"]@aria-label,"主桁 girder-3 のハンチ有無",L1,residual:girder-3
+mobile-basics,[data-testid="apollo-haunch-shape-girder-3"]@aria-label,"主桁 girder-3 形状",L1,residual:girder-3
+mobile-basics,[data-testid="apollo-haunch-material-girder-3"]@aria-label,"主桁 girder-3 材料参照",L1,residual:girder-3
+mobile-basics,[data-testid="apollo-report-formal-disabled"]@title,"正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）",L1,residual:NUMERIC_DESIGN_AUTHORIZATION|NOT_GRANTED
+mobile-basics,div@aria-label,"3D model viewport",L1,residual:model|viewport
+mobile-basics,[data-testid="open-view-panel"]@aria-label,"View パネルを開く",L1,residual:View
+mobile-basics,[data-testid="open-view-panel"]@title,"View パネルを開く",L1,residual:View

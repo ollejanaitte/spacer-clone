@@ -1,0 +1,31 @@
+allowlist_id,text_or_pattern,reason,layer,notes
+AL-JP3A-0001,Apollo,Brand name,L1_SAFE,Product brand
+AL-JP3A-0002,STL,File format acronym,L1_SAFE,Keep STL
+AL-JP3A-0003,CSV,File format acronym,L1_SAFE,
+AL-JP3A-0004,JSON,File format acronym,L1_SAFE,
+AL-JP3A-0005,DXF,File format acronym,L1_SAFE,
+AL-JP3A-0006,SVG,File format acronym,L1_SAFE,
+AL-JP3A-0007,ZIP,File format acronym,L1_SAFE,
+AL-JP3A-0008,PDF,File format acronym,L1_SAFE,
+AL-JP3A-0009,HTML,File format acronym,L1_SAFE,OK in export labels with JA verb
+AL-JP3A-0010,ID,Identifier label,L1_SAFE,
+AL-JP3A-0011,3D,Dimensional label,L1_SAFE,
+AL-JP3A-0012,RC,Material acronym,L1_SAFE,
+AL-JP3A-0013,LINER,Product name,L1_SAFE,
+AL-JP3A-0014,m,SI unit,L1_SAFE,
+AL-JP3A-0015,mm,SI unit,L1_SAFE,
+AL-JP3A-0016,kN,SI unit,L1_SAFE,
+AL-JP3A-0017,MPa,SI unit,L1_SAFE,
+AL-JP3A-0018,G01..G15,Guided slide ids,L1_SAFE,Exact ids only
+AL-JP3A-0019,WF-01..WF-15,Workflow step ids,L1_SAFE,Show with JA title
+AL-JP3A-0020,DEC-S5-*,Diagnostic code,L3,TechnicalDetails only
+AL-JP3A-0021,ER-001,Gate id,L3,TechnicalDetails only
+AL-JP3A-0022,ER-002,Gate id,L3,TechnicalDetails only
+AL-JP3A-0023,GOLD-AN-001,Analysis case id,L3,Allow in L3 / collapsed
+AL-JP3A-0024,GOLD-AN-002,Analysis case id,L3,Allow in L3 / collapsed
+AL-JP3A-0025,data-testid values,Test hooks,L3,Not user-facing
+AL-JP3A-0026,project id apollo-prj-*,Opaque id,L3,Display as ID value; not prose
+AL-JP3A-0027,checksum hex,Opaque id,L3,TechnicalDetails
+AL-JP3A-0028,girder-N seed ids,Internal seed,L3,Do not show raw in L1 aria
+AL-JP3A-0029,URL,Scheme label,L1_SAFE,
+AL-JP3A-0030,OK,Compact status with JA context,L1_SAFE,Prefer 正式OK wording already JA
