@@ -1,3 +1,4 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
 import { useEffect, useMemo, useState } from "react";
 import type { ProjectModel } from "../../types";
 import {
@@ -152,8 +153,7 @@ export function DeckAppurtenanceInputPanel({
       <header>
         <h3>床版・橋面付属物（WF-03）</h3>
         <p className="apollo-dev-banner" data-testid="apollo-appurtenance-dev-banner">
-          UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION /
-          NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+          <AuthorizationBanner testId="apollo-appurtenance-auth" />
         </p>
         <p role="note" data-testid="apollo-appurtenance-local-crs-warning">
           横断オフセットは橋梁 local CRS（+Y = 右、測点増方向を向いて）です。道路線形 binding は
@@ -161,7 +161,7 @@ export function DeckAppurtenanceInputPanel({
         </p>
         <p data-testid="apollo-appurtenance-context">
           構造モデル長: {draft.bridgeLength ?? "未入力"} m / 幅員: {draft.width ?? "未入力"} m /
-          生成状態: {generationCurrent ? "CURRENT" : "STALE/未生成"}
+          生成状態: {generationCurrent ? "生成結果は最新" : "要再計算／未生成"}
         </p>
       </header>
 

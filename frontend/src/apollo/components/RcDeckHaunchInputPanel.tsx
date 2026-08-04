@@ -1,3 +1,4 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
 import { useEffect, useMemo, useState } from "react";
 import type { ProjectModel } from "../../types";
 import {
@@ -193,8 +194,7 @@ export function RcDeckHaunchInputPanel({
       <header>
         <h3>RC床版ハンチ（WF-05）</h3>
         <p className="apollo-dev-banner" data-testid="apollo-haunch-dev-banner">
-          UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION /
-          NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+          <AuthorizationBanner testId="apollo-haunch-auth" />
         </p>
         <p role="note" data-testid="apollo-haunch-datum">
           ハンチ datum: 主桁上フランジ上面と床版下面の間（DEC-S4-0009）。mesh から逆算しません。
@@ -202,7 +202,7 @@ export function RcDeckHaunchInputPanel({
         </p>
         <p data-testid="apollo-haunch-context">
           主桁本数: {girderCount ?? "未入力"} / 構造モデル長: {draft.bridgeLength ?? "未入力"} m /
-          生成状態: {generationCurrent ? "CURRENT" : "STALE/未生成"} / BSSD haunches:{" "}
+          生成状態: {generationCurrent ? "生成結果は最新" : "要再計算／未生成"} / ハンチ投影件数:{" "}
           {projectedCount}
         </p>
       </header>
@@ -217,8 +217,8 @@ export function RcDeckHaunchInputPanel({
             aria-label="全主桁適用の形状"
             onChange={(event) => setApplyShape(event.target.value as HaunchShapeType)}
           >
-            <option value="RECT">RECT</option>
-            <option value="TRAPEZOID">TRAPEZOID</option>
+            <option value="RECT">矩形</option>
+            <option value="TRAPEZOID">台形</option>
           </select>
         </label>
         <NullableNumberInput
@@ -336,8 +336,8 @@ export function RcDeckHaunchInputPanel({
                     }
                   >
                     <option value="">未選択</option>
-                    <option value="RECT">RECT</option>
-                    <option value="TRAPEZOID">TRAPEZOID</option>
+                    <option value="RECT">矩形</option>
+                    <option value="TRAPEZOID">台形</option>
                   </select>
                 </label>
                 <NullableNumberInput

@@ -11,6 +11,9 @@ import {
   type ApolloCrossFrameAttachmentDraft,
   type CrossFramePattern,
 } from "../bridgeStructure";
+import { getStatusLabel } from "../i18n";
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
 
 type Props = {
   readonly project: ProjectModel;
@@ -19,9 +22,9 @@ type Props = {
 };
 
 const PATTERN_OPTIONS: readonly { value: CrossFramePattern; label: string; available: boolean }[] = [
-  { value: "V", label: "V（IMPLEMENTED）", available: true },
-  { value: "INVERTED_V", label: "逆V（PLANNED / UNAVAILABLE）", available: false },
-  { value: "X", label: "X（PLANNED / UNAVAILABLE）", available: false },
+  { value: "V", label: "V（実装済み）", available: true },
+  { value: "INVERTED_V", label: "逆V（計画中・選択不可）", available: false },
+  { value: "X", label: "X（計画中・選択不可）", available: false },
 ];
 
 export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAuditEvent }: Props) {
@@ -40,7 +43,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
       status: "DEVELOPMENT",
     };
     onProjectChange(withCrossFrameAttachment(project, next));
-    onAuditEvent?.("対傾構取付点を更新しました（STALE → 再生成が必要）");
+    onAuditEvent?.("対傾構取付点を更新しました（要再計算）");
   };
 
   const parseNullableNumber = (raw: string): number | null => {
@@ -57,19 +60,24 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
       aria-label="対傾構取付点入力"
     >
       <h3>対傾構取付点（Step 5-R / ER-001）</h3>
-      <p
-        className="apollo-input-error"
-        role="status"
-        data-testid="apollo-cross-frame-dev-banner"
-      >
-        UNVERIFIED DEVELOPMENT ONLY — HUMAN ENGINEERING REVIEW REQUIRED /
-        NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED / mesh推定禁止
-      </p>
+      <div data-testid="apollo-cross-frame-dev-banner">
+        <AuthorizationBanner
+          testId="apollo-cross-frame-auth"
+          keys={["UNVERIFIED_DEVELOPMENT_ONLY", "PENDING_HUMAN_ENGINEERING_REVIEW", "NOT_GRANTED"]}
+        />
+      </div>
       <p className="apollo-inline-hint">
-        基準: 主桁上フランジ上面から下向きの depth [m]。横桁（CrossBeam）とは別 entity です。
-        provenance: {config.provenance} / pattern status:{" "}
-        {config.pattern === "V" ? "IMPLEMENTED" : "PLANNED"}
+        基準: 主桁上フランジ上面から下向きの深さ [m]。横桁とは別部材です。
+        パターン状態: {config.pattern === "V" ? getStatusLabel("IMPLEMENTED") : getStatusLabel("PLANNED")}
       </p>
+      <TechnicalDetails
+        testId="apollo-cross-frame-tech"
+        lines={[
+          `provenance=${config.provenance}`,
+          `pattern=${config.pattern}`,
+          "mesh推定禁止",
+        ]}
+      />
 
       <fieldset>
         <legend>配置パターン</legend>
@@ -93,7 +101,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
 
       <div className="apollo-cross-frame-fields">
         <label>
-          上側取付 depth（上フランジ上面から下向き） [m]
+          上側取付深さ（上フランジ上面から下向き） [m]
           <input
             type="number"
             step="0.001"
@@ -106,7 +114,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
           />
         </label>
         <label>
-          下側取付 depth（上フランジ上面から下向き） [m]
+          下側取付深さ（上フランジ上面から下向き） [m]
           <input
             type="number"
             step="0.001"
@@ -119,7 +127,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
           />
         </label>
         <label>
-          中央節点 depth（任意・未入力時は下側） [m]
+          中央節点深さ（任意・未入力時は下側） [m]
           <input
             type="number"
             step="0.001"
@@ -135,7 +143,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
 
       <div data-testid="apollo-cross-frame-schematic" aria-hidden="true">
         <svg viewBox="0 0 120 80" width="180" height="120" role="img">
-          <title>V pattern schematic</title>
+          <title>Vパターン模式図</title>
           <line x1="20" y1="15" x2="20" y2="65" stroke="currentColor" strokeWidth="2" />
           <line x1="100" y1="15" x2="100" y2="65" stroke="currentColor" strokeWidth="2" />
           <line x1="20" y1="20" x2="60" y2="60" stroke="#c45c26" strokeWidth="2" />
@@ -154,7 +162,7 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
         </ul>
       ) : (
         <p data-testid="apollo-cross-frame-validation-ok" role="status">
-          取付点入力は validation OK（engineering authorization は未付与）
+          取付点入力の検証は成功しました（正式認可は未付与）
         </p>
       )}
     </section>

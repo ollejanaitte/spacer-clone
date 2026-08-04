@@ -1,0 +1,6 @@
+JP2-P3 evidence
+- SampleReapplyConfirmDialog: JA copy + TechnicalDetails for DEC codes
+- BridgeStructureInputPanel: AuthorizationBanner + JA generation state
+- CrossFrameAttachmentInputPanel: JA pattern labels + auth banner
+- Pavement/Appurtenance/Haunch panels: AuthorizationBanner; JA generation/shape labels
+- vitest step4b/step5r3/panels/i18n PASS; tsc PASS
