@@ -2280,13 +2280,9 @@ export function ApolloPhase1Shell({
   return (
     <main ref={shellRootRef} className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
-        <div>
+        <div className="apollo-header-title">
           <p data-testid="apollo-shell-kicker">Apollo フェーズ1（非数値）</p>
           <h1>Apollo 橋梁骨組み入力</h1>
-          <p>
-            橋梁の骨組みモデルを入力・編集します。現在は入力・確認機能のみ利用できます。
-            構造計算と計算結果出力は利用できません。
-          </p>
         </div>
         <div className="apollo-unit2-header-actions">
           <div className="apollo-header-group apollo-header-mode-group" role="group" aria-label="表示モード">
@@ -2311,10 +2307,10 @@ export function ApolloPhase1Shell({
       </header>
 
       {flags.showProvisionalStatus ? (
-        <section className="apollo-phase1-banner" data-testid="apollo-provisional-banner" aria-label="暫定状態バナー">
-          <strong>非数値入力モード</strong>
-          <p>構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。({VERIFICATION_DATE})</p>
-        </section>
+        <div className="apollo-provisional-compact" data-testid="apollo-provisional-badge" aria-label="暫定状態">
+          <span className="apollo-provisional-badge-label">非数値入力モード</span>
+          <span className="apollo-provisional-badge-hint" title="構造計算は現在利用できません。計算結果は未検証です。">ⓘ</span>
+        </div>
       ) : null}
 
       {showOnboarding ? (
@@ -2333,7 +2329,7 @@ export function ApolloPhase1Shell({
         </section>
       ) : null}
 
-      {saveNotice ? <section className="apollo-editor-card"><p>{saveNotice}</p></section> : null}
+      {saveNotice ? <div className="apollo-toast-notice" data-testid="apollo-toast-notice"><span>{saveNotice}</span></div> : null}
 
       {mode === "guided" && guidedStep === "start" ? (
         <section className="apollo-screen-grid" data-testid="apollo-start-screen">
