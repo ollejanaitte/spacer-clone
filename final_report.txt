@@ -730,10 +730,10 @@ BEGIN APOLLO STEP 5-JP3 CURRENT
 ================================================================================
 
 STEP_ID: APOLLO_STEP_5_JP3
-CURRENT_SUBSTEP: JP3-D
+CURRENT_SUBSTEP: SEAL
 OVERALL_PROGRESS: COMPLETE
 START_MAIN_SHA: 1e391d2c675e2f3a75b10d80f9150c6fde0dd051
-CURRENT_MAIN_SHA: 5447ed7315eba868a12465bb879aa4356f0108d6
+CURRENT_MAIN_SHA: 543f0ae1e287193e1620ddb2d0fbcde0a007630c
 
 JP3_A_LIVE_DOM_AUDIT: PASS
 JP3_A_PR: https://github.com/ollejanaitte/spacer-clone/pull/375
@@ -748,10 +748,10 @@ JP3_C_PR: https://github.com/ollejanaitte/spacer-clone/pull/377
 JP3_C_MERGE_SHA: 5447ed7315eba868a12465bb879aa4356f0108d6
 
 JP3_D_REPORT_FINALIZE: PASS
-JP3_D_PR: PENDING
-JP3_D_MERGE_SHA: PENDING
+JP3_D_PR: https://github.com/ollejanaitte/spacer-clone/pull/378
+JP3_D_MERGE_SHA: 543f0ae1e287193e1620ddb2d0fbcde0a007630c
 
-SEAL_PR: PENDING
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/PENDING_SEAL
 
 LIVE_DOM_SCAN_VERDICT: PASS
 VISIBLE_TEXT_SCAN_VERDICT: PASS
