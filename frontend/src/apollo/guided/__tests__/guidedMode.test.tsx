@@ -117,10 +117,11 @@ describe("GuidedModeShell", () => {
 
     expect(container.querySelector("[data-testid='apollo-guided-nav']")?.className).toContain("apollo-sticky-footer");
     expect(container.querySelector("[data-testid='apollo-guided-back']")).not.toBeNull();
-    expect(container.querySelector("[data-testid='apollo-guided-save-next']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-guided-next']")).not.toBeNull();
+    expect(container.querySelector("[data-testid='apollo-guided-save']")).not.toBeNull();
   });
 
-  it("navigates forward on save-next and shows correct slide ID", () => {
+  it("navigates forward on next and shows correct slide ID", () => {
     const saves: number[] = [];
     const container = render(
       <GuidedModeShell
@@ -133,13 +134,13 @@ describe("GuidedModeShell", () => {
     expect(container.querySelector("[data-testid='apollo-guided-current-id']")?.textContent).toContain("G01");
 
     act(() => {
-      (container.querySelector("[data-testid='apollo-guided-save-next']") as HTMLButtonElement).click();
+      (container.querySelector("[data-testid='apollo-guided-next']") as HTMLButtonElement).click();
     });
-    expect(saves).toHaveLength(1);
+    expect(saves).toHaveLength(0); // next should NOT save
     expect(container.querySelector("[data-testid='apollo-guided-current-id']")?.textContent).toContain("G02");
   });
 
-  it("shows G15 pending message and save button changes label", () => {
+  it("shows G15 pending message and next button shows confirmation label", () => {
     const container = render(
       <GuidedModeShell
         project={createDefaultProject()}
@@ -153,7 +154,7 @@ describe("GuidedModeShell", () => {
       "未実装",
     );
     expect(
-      (container.querySelector("[data-testid='apollo-guided-save-next']") as HTMLButtonElement).disabled,
+      (container.querySelector("[data-testid='apollo-guided-next']") as HTMLButtonElement).disabled,
     ).toBe(true);
   });
 

@@ -6509,6 +6509,7 @@ button:disabled {
     padding: 8px 12px;
   }
   .apollo-guided-nav-back,
+  .apollo-guided-nav-next,
   .apollo-guided-nav-save-next,
   .apollo-guided-nav-save {
     font-size: 13px;
@@ -7256,6 +7257,7 @@ textarea:focus-visible {
 
 .apollo-guided-nav-back,
 .apollo-guided-nav-save-next,
+.apollo-guided-nav-next,
 .apollo-guided-nav-save {
   min-height: 38px;
   padding: 8px 18px;
@@ -7271,6 +7273,7 @@ textarea:focus-visible {
   color: #19314d;
 }
 
+.apollo-guided-nav-next,
 .apollo-guided-nav-save-next {
   border: 1px solid #1f6feb;
   background: #1f6feb;
@@ -7284,6 +7287,7 @@ textarea:focus-visible {
 }
 
 .apollo-guided-nav-back:disabled,
+.apollo-guided-nav-next:disabled,
 .apollo-guided-nav-save-next:disabled {
   opacity: 0.5;
   cursor: not-allowed;
