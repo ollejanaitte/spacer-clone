@@ -678,7 +678,7 @@ P3_PR: https://github.com/ollejanaitte/spacer-clone/pull/369
 P3_MERGE_SHA: 354f56a82bc4f8581f8ba343beeda65c654520a9
 
 P4_ANALYSIS_SURFACES: PASS
-P4_PR: PENDING
+P4_PR: https://github.com/ollejanaitte/spacer-clone/pull/370
 P4_MERGE_SHA: PENDING
 
 P5_OUTPUT_ERROR_AUTH: PENDING
