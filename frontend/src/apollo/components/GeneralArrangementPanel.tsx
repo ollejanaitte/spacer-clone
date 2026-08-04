@@ -1,4 +1,6 @@
 import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 /**
  * Step 3-A general arrangement drawing panel.
  * DEVELOPMENT GENERAL ARRANGEMENT — NOT FOR CONSTRUCTION
@@ -60,7 +62,7 @@ export function GeneralArrangementPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>構造一般図・配置図・部材表（開発プレビュー）</h2>
-          <p>DrawingSetModel G-01〜G-07：一般図・配置図・支承・側面構成・部材表。</p>
+          <p>図面セット G-01〜G-07：一般図・配置図・支承・側面構成・部材表。</p>
         </div>
       </div>
       <div data-testid="apollo-ga-development-warning">
@@ -68,10 +70,20 @@ export function GeneralArrangementPanel({ project }: Props) {
         <p>一般図は開発用プレビューです。設計承認図・製作図ではありません。</p>
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-ga-provenance">
-        stale: {String(model.stale)} / sheets: {model.sheets.length} / views: {viewTypes} / girders:{" "}
-        {model.layout.girderCount} / cb: {model.layout.crossBeamStations.length} / checksum:{" "}
-        {model.inputChecksum.slice(0, 16)}… / sectionCk: {model.standardSectionChecksum.slice(0, 12)}…
+        状態: {model.stale ? getStatusLabel("STALE") : getStatusLabel("GENERATION_CURRENT")} / シート数: {model.sheets.length} / 主桁:{" "}
+        {model.layout.girderCount}
       </p>
+      <TechnicalDetails
+        testId="apollo-ga-provenance-tech"
+        title="一般図詳細"
+        lines={[
+          `stale=${String(model.stale)}`,
+          `views=${viewTypes}`,
+          `crossBeamStations=${model.layout.crossBeamStations.length}`,
+          `checksum=${model.inputChecksum.slice(0, 16)}…`,
+          `sectionCk=${model.standardSectionChecksum.slice(0, 12)}…`,
+        ]}
+      />
       <div className="apollo-workspace-actions">
         <button
           type="button"
@@ -174,12 +186,12 @@ export function GeneralArrangementPanel({ project }: Props) {
       </div>
       {sheet ? (
         <p data-testid="apollo-ga-sheet-status">
-          {sheet.drawingNumber} {sheet.title} ({sheetIndex + 1}/{model.sheets.length}) paper=
-          {sheet.paperSize} {sheet.orientation}
+          {sheet.drawingNumber} {sheet.title}（{sheetIndex + 1}/{model.sheets.length}）用紙=
+          {sheet.paperSize} {sheet.orientation === "landscape" ? "横" : sheet.orientation === "portrait" ? "縦" : sheet.orientation}
         </p>
       ) : (
         <p data-testid="apollo-ga-sheet-status">
-          NO SHEETS — BLOCKED or incomplete input ({model.warnings.slice(0, 3).join("; ")})
+          シートなし — 前提未完了または入力不足（{model.warnings.slice(0, 3).join("; ") || "詳細は技術情報"}）
         </p>
       )}
       <div data-testid="apollo-ga-layer-toggles">
@@ -192,17 +204,23 @@ export function GeneralArrangementPanel({ project }: Props) {
                 onChange={() => toggleLayer(layer)}
                 data-testid={`apollo-ga-layer-${layer}`}
               />{" "}
-              {layer}
+              {({"APOLLO_GIRDER":"主桁","APOLLO_CROSSBEAM":"横桁","APOLLO_BRACING":"ブレース","APOLLO_STIFFENER":"補剛材","APOLLO_SUPPORT":"支承"} as const)[layer]}
             </label>
           ),
         )}
       </div>
       <p data-testid="apollo-ga-layout-summary">
-        plan L={model.layout.bridgeLength} B={model.layout.width} oh={model.layout.overhang} supports=
-        {model.layout.supportStations.join(",")} girderY=
-        {model.layout.girderCentersY.map((y) => y.toFixed(3)).join(",")} hiddenLayers=
-        {Array.from(hiddenLayers).join("|") || "none"}
+        平面 橋長={model.layout.bridgeLength}m 幅員={model.layout.width}m 張出={model.layout.overhang}m
       </p>
+      <TechnicalDetails
+        testId="apollo-ga-layout-tech"
+        title="配置数値"
+        lines={[
+          `supports=${model.layout.supportStations.join(",")}`,
+          `girderY=${model.layout.girderCentersY.map((y) => y.toFixed(3)).join(",")}`,
+          `hiddenLayers=${Array.from(hiddenLayers).join("|") || "none"}`,
+        ]}
+      />
       {error ? (
         <p className="apollo-input-error" role="alert" data-testid="apollo-ga-export-error">
           {error}

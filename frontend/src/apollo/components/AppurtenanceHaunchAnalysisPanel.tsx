@@ -35,7 +35,7 @@ export function AppurtenanceHaunchAnalysisPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>付属物・ハンチ解析接続（開発専用）</h2>
-          <p>部分区間UDLを閉形式単純梁で評価。全長UDLへの黙った変換はしません。</p>
+          <p>部分区間の等分布荷重を閉形式単純梁で評価します。全長等分布への黙った変換はしません。</p>
         </div>
       </div>
       <AuthorizationBanner testId="apollo-analysis-auth" />

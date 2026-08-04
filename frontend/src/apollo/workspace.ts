@@ -297,7 +297,7 @@ export function isApolloWorkspaceEntryMalformed(workspaceId: string): ApolloWork
   return readSnapshot().malformed.find((entry) => entry.workspaceId === workspaceId) ?? null;
 }
 
-export function createApolloWorkspaceProject(name = "Apollo NN Draft"): ProjectModel {
+export function createApolloWorkspaceProject(name = "Apollo非数値下書き"): ProjectModel {
   const created = createDefaultProject();
   const timestamp = nowIsoString();
   const projectId = generateApolloProjectId();
@@ -305,7 +305,7 @@ export function createApolloWorkspaceProject(name = "Apollo NN Draft"): ProjectM
     ...created.project,
     id: projectId,
     name,
-    description: "Non-numeric Apollo workspace draft.",
+    description: "非数値Apollo作業用の下書きです。",
     createdAt: timestamp,
     updatedAt: timestamp,
   };

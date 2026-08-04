@@ -327,7 +327,7 @@ export function validateBridgeAppurtenanceConfiguration(
         slot: slotDraft.slot,
         blocking: true,
         message: `${label}: 横断オフセットが不正です。`,
-        remediation: "有限の数値を入力してください（local CRS, +Y=右）。",
+        remediation: "有限の数値を入力してください（橋梁ローカル座標系、+Y＝右）。",
       });
       continue;
     }
@@ -336,8 +336,8 @@ export function validateBridgeAppurtenanceConfiguration(
       code: "APPURTENANCE_LOCAL_CRS_WARNING",
       slot: slotDraft.slot,
       blocking: false,
-      message: `${label}: 横断オフセットは橋梁 local CRS（+Y=右）です。道路線形 binding は Step 4-E 待ち。`,
-      remediation: "local CRS のまま入力を続けてください。",
+      message: `${label}: 横断オフセットは橋梁ローカル座標系（+Y＝右）です。道路線形の接続は将来工程待ちです。`,
+      remediation: "橋梁ローカル座標系のまま入力を続けてください。",
     });
 
     if (context.width === null) {

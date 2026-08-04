@@ -15,6 +15,7 @@ export {
   getWorkflowStepLabel,
   getWorkflowStepDescription,
   getWorkflowStepShortLabel,
+  getWorkflowGroupLabel,
 } from "./workflowLabels";
 export { getButtonLabel, getButtonShortLabel } from "./buttonLabels";
 export { getFieldLabel, getPresenceLabel, getViewerControlLabel } from "./fieldLabels";
@@ -26,6 +27,7 @@ export {
   STATUS_CATALOG,
   MEMBER_CATALOG,
   WORKFLOW_STEP_CATALOG,
+  WORKFLOW_GROUP_CATALOG,
   BUTTON_CATALOG,
   FIELD_CATALOG,
   AUTHORIZATION_CATALOG,

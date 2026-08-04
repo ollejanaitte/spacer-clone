@@ -444,7 +444,7 @@ export function BridgeStructureInputPanel({
           <p>
             現在の対応形式: <strong data-testid="apollo-current-bridge-system">{currentBridgeSystemLabel}</strong>
           </p>
-          <p>寸法を入力し「構造を生成」で StructuralDesignModel を作成します。設計判定は未許可のままです。</p>
+          <p>寸法を入力し「構造を生成」で構造設計モデルを作成します。設計判定は未許可のままです。</p>
         </div>
       </div>
 
@@ -790,17 +790,17 @@ export function BridgeStructureInputPanel({
         <section data-testid="apollo-bridge-structure-sdm-summary">
           <h3>生成済み設計エンティティ</h3>
           <ul>
-            <li>主桁: {sdm.mainGirders.length} 件（designStatus: NOT_AUTHORIZED）</li>
-            <li>RC床版: {sdm.rcDecks.length} 件（designStatus: NOT_AUTHORIZED）</li>
-            <li>横桁: {sdm.crossBeams.length} 件（designStatus: NOT_AUTHORIZED）</li>
-            <li>補剛材: {sdm.stiffeners.length} 件（designStatus: NOT_AUTHORIZED）</li>
+            <li>主桁: {sdm.mainGirders.length} 件（設計状態: 正式認可なし）</li>
+            <li>RC床版: {sdm.rcDecks.length} 件（設計状態: 正式認可なし）</li>
+            <li>横桁: {sdm.crossBeams.length} 件（設計状態: 正式認可なし）</li>
+            <li>補剛材: {sdm.stiffeners.length} 件（設計状態: 正式認可なし）</li>
             <li>対傾構: {sdm.swayBracings.length} 箇所 / 横繋: {sdm.lateralBracings.length} 箇所</li>
-            <li>対傾構・横繋部材: {sdm.braceMembers.length} 本（designStatus: NOT_AUTHORIZED）</li>
-            <li>nonCompositeAssertion.compositeAction: {String(sdm.nonCompositeAssertion.compositeAction)}</li>
+            <li>対傾構・横繋部材: {sdm.braceMembers.length} 本（設計状態: 正式認可なし）</li>
+            <li>合成作用の主張: {sdm.nonCompositeAssertion.compositeAction ? "あり" : "なし"}</li>
           </ul>
           {sdm.mainGirders.length > 0 ? (
             <p data-testid="apollo-bridge-structure-main-girder-status">
-              主桁1: {sdm.mainGirders[0]!.designStatus}
+              主桁1: {getStatusLabel(sdm.mainGirders[0]!.designStatus)}
             </p>
           ) : null}
         </section>
@@ -821,12 +821,12 @@ export function BridgeStructureInputPanel({
           <tbody>
             <tr>
               <td>鋼（{inputDraft.steelUnitWeight ?? "未入力"} kN/m³）</td>
-              <td data-testid="apollo-steel-unit-weight-status">{steelAdoption}</td>
+              <td data-testid="apollo-steel-unit-weight-status">{getStatusLabel(steelAdoption)}</td>
               <td>{adoptionButton("steel", project, onProjectChange, setGenerationMessage)}</td>
             </tr>
             <tr>
               <td>RC床版（{inputDraft.rcUnitWeight ?? "未入力"} kN/m³）</td>
-              <td data-testid="apollo-rc-unit-weight-status">{rcAdoption}</td>
+              <td data-testid="apollo-rc-unit-weight-status">{getStatusLabel(rcAdoption)}</td>
               <td>{adoptionButton("rc", project, onProjectChange, setGenerationMessage)}</td>
             </tr>
           </tbody>
@@ -851,7 +851,7 @@ export function BridgeStructureInputPanel({
               <tr key={quantity.label} data-testid={`apollo-quantity-row-${quantity.label}`}>
                 <td>{quantity.label}</td>
                 <td>{formatQuantityValue(quantity)}</td>
-                <td data-testid={`apollo-quantity-status-${quantity.label}`}>{quantity.status}</td>
+                <td data-testid={`apollo-quantity-status-${quantity.label}`}>{getStatusLabel(quantity.status)}</td>
               </tr>
             ))}
           </tbody>

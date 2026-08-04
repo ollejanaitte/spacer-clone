@@ -41,7 +41,7 @@ export function ReportModelDevelopmentPanel({ project }: Props) {
       <div className="apollo-editor-card-header">
         <div>
           <h2>計算書（開発版）</h2>
-          <p>ReportModelから生成。アプリ画面の印刷を計算書としません。</p>
+          <p>計算書モデルから生成します。アプリ画面の印刷を計算書としません。</p>
         </div>
       </div>
       <div data-testid="apollo-report-development-warning">
@@ -91,7 +91,7 @@ export function ReportModelDevelopmentPanel({ project }: Props) {
           disabled={model.stale}
           onClick={() => wrap(() => downloadDevelopmentReportJson(model))}
         >
-          Report JSON
+          計算書JSON
         </button>
         <button
           type="button"
@@ -109,14 +109,14 @@ export function ReportModelDevelopmentPanel({ project }: Props) {
           disabled={model.stale}
           onClick={() => wrap(() => downloadAuditManifest(model, project))}
         >
-          監査manifest
+          監査マニフェスト
         </button>
         <button
           type="button"
           className="apollo-button-secondary"
           data-testid="apollo-report-formal-disabled"
           disabled
-          title="正式認可なし（NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED）"
+          title="正式認可なし"
           onClick={() => wrap(() => tryBuildFormalReport(project))}
         >
           正式計算書（無効）

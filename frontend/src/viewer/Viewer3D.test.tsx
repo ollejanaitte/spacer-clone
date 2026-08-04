@@ -78,7 +78,7 @@ describe("Viewer3D WebGL fallback", () => {
 
     await act(async () => undefined);
 
-    expect(document.body.textContent).toContain("GPU: browser");
+    expect(document.body.textContent).toContain("GPU: ブラウザ");
     expect(document.querySelector('[data-viewer-mode="fallback2d"]')).not.toBeNull();
   });
 

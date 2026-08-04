@@ -78,7 +78,19 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
           <li>変更フィールド: {diff.changedFieldCount}</li>
           <li>追加: {diff.addedEntityCount}</li>
           <li>削除: {diff.removedEntityCount}</li>
-          <li>検出: {detection.kind}</li>
+          <li>
+            検出:{" "}
+            {
+              (
+                {
+                  EXISTING_EDITED_PROJECT: "既存プロジェクト（編集済み）",
+                  EXISTING_OTHER_PROJECT: "別プロジェクトが開かれています",
+                  EXISTING_UNCHANGED_SAMPLE: "同一サンプル（未編集）",
+                  EMPTY_WORKSPACE: "空の作業領域",
+                } as Record<string, string>
+              )[detection.kind] ?? detection.kind
+            }
+          </li>
         </ul>
         {categoryRows.length > 0 ? (
           <details data-testid="apollo-sample-reapply-categories">

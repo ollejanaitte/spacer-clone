@@ -59,7 +59,12 @@ export function CrossFrameAttachmentInputPanel({ project, onProjectChange, onAud
       data-testid="apollo-cross-frame-attachment-panel"
       aria-label="対傾構取付点入力"
     >
-      <h3>対傾構取付点（Step 5-R / ER-001）</h3>
+      <h3>対傾構取付点</h3>
+      <TechnicalDetails
+        testId="apollo-cross-frame-gate-tech"
+        title="ゲート識別"
+        lines={["gate=ER-001", "package=Step 5-R"]}
+      />
       <div data-testid="apollo-cross-frame-dev-banner">
         <AuthorizationBanner
           testId="apollo-cross-frame-auth"

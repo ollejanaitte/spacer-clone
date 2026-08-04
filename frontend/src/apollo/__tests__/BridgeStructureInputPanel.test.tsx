@@ -84,7 +84,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     const incompleteRow = container.querySelector("[data-testid='apollo-quantity-row-概算数量']");
     expect(incompleteRow).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-quantity-status-概算数量']")?.textContent).toBe(
-      "INCOMPLETE",
+      "入力不足",
     );
   });
 
@@ -98,14 +98,14 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
 
     expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
     expect(container.querySelector("[data-testid='apollo-bridge-structure-not-generated']")).toBeNull();
-    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
-    expect(container.textContent).toContain("RC床版: 1 件（designStatus: NOT_AUTHORIZED）");
-    expect(container.textContent).toContain("nonCompositeAssertion.compositeAction: false");
+    expect(container.textContent).toContain("主桁: 4 件（設計状態: 正式認可なし）");
+    expect(container.textContent).toContain("RC床版: 1 件（設計状態: 正式認可なし）");
+    expect(container.textContent).toContain("合成作用の主張: なし");
     expect(container.querySelector("[data-testid='apollo-bridge-structure-main-girder-status']")?.textContent).toBe(
-      "主桁1: NOT_AUTHORIZED",
+      "主桁1: 正式認可なし",
     );
     expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
-      "NOT_AUTHORIZED",
+      "正式認可なし",
     );
     expect(container.querySelector("[data-testid='apollo-bridge-structure-message']")?.textContent).toContain(
       "構造設計モデルを生成しました",
@@ -132,7 +132,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     });
     expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).toBeNull();
     expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
-      "NOT_AUTHORIZED",
+      "正式認可なし",
     );
 
     const girderCountInput = container.querySelector(
@@ -147,7 +147,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       "入力が変更されました",
     );
     expect(container.querySelector("[data-testid='apollo-quantity-status-概算数量']")?.textContent).toBe(
-      "INCOMPLETE",
+      "入力不足",
     );
   });
 
@@ -173,7 +173,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     expect(container.querySelector("[data-testid='apollo-bridge-structure-stale-message']")).toBeNull();
     expect(container.textContent).toContain("主桁: 2 件");
     expect(container.querySelector("[data-testid='apollo-quantity-status-床版体積（概算）']")?.textContent).toBe(
-      "NOT_AUTHORIZED",
+      "正式認可なし",
     );
   });
 
@@ -228,13 +228,13 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
       button.click();
     });
 
-    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("PENDING");
+    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("未確定");
     act(() => {
       const adopt = container.querySelector("[data-testid='apollo-adopt-steel-unit-weight']") as HTMLButtonElement;
       adopt.click();
     });
 
-    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("PENDING");
+    expect(container.querySelector("[data-testid='apollo-steel-unit-weight-status']")?.textContent).toBe("未確定");
     expect(container.querySelector("[data-testid='apollo-bridge-structure-message']")?.textContent).toContain(
       "数値設計権限が付与されていない",
     );
@@ -274,7 +274,7 @@ describe("BridgeStructureInputPanel (Visible Vertical Slice input UI)", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
-    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
+    expect(container.textContent).toContain("主桁: 4 件（設計状態: 正式認可なし）");
   });
 
   it("clears all inputs through the clear button", () => {
@@ -446,9 +446,9 @@ describe("BridgeStructureInputPanel (continuous girder C2 UI)", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-bridge-structure-sdm-summary']")).not.toBeNull();
-    expect(container.textContent).toContain("主桁: 4 件（designStatus: NOT_AUTHORIZED）");
+    expect(container.textContent).toContain("主桁: 4 件（設計状態: 正式認可なし）");
     expect(container.querySelector("[data-testid='apollo-bridge-structure-main-girder-status']")?.textContent).toBe(
-      "主桁1: NOT_AUTHORIZED",
+      "主桁1: 正式認可なし",
     );
   });
 

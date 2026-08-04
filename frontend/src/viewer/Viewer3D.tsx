@@ -435,13 +435,16 @@ export function Viewer3D({
         </div>
         <div className="viewer-stats">
           <span>{ja.viewer.messages.displayMode(mode === "three" ? "3D" : describeViewerMode(mode))}</span>
-          <span>GPU: {gpuMode}</span>
-          <span>WebGL: {diagnostics.webgl.available ? "available" : "Unavailable"}</span>
+          <span>
+            GPU:{" "}
+            {gpuMode === "browser" ? "ブラウザ" : gpuMode === "Unavailable" ? "利用不可" : gpuMode}
+          </span>
+          <span>WebGL: {diagnostics.webgl.available ? "利用可" : "利用不可"}</span>
           <span>{ja.viewer.messages.nodeCount(project.nodes.length)}</span>
           <span>{ja.viewer.messages.memberCount(project.members.length)}</span>
           <span>{ja.viewer.messages.supportCount(project.supports.length)}</span>
           <span>{ja.viewer.messages.loadCount(project.nodalLoads.length + project.memberLoads.length)}</span>
-          {apolloCounts ? <span>Apollo Solid: {apolloCounts.solidCount}</span> : null}
+          {apolloCounts ? <span>Apollo立体: {apolloCounts.solidCount}</span> : null}
           {animationOptions.enabled ? <span>{ja.viewer.messages.animationOn}</span> : null}
         </div>
       </div>

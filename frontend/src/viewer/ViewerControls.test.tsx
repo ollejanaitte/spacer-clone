@@ -193,7 +193,7 @@ describe("ViewerControls UI surface", () => {
   it("renders Apollo line/solid visibility toggles", () => {
     render(<ViewerControls {...buildProps()} />);
     expect(document.body.textContent).toContain("Apollo Line");
-    expect(document.body.textContent).toContain("Apollo Solid");
+    expect(document.body.textContent).toContain("Apollo立体");
     expect(document.body.textContent).toContain("Girders");
     expect(document.body.textContent).toContain("Deck");
   });

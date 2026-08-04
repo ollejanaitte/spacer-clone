@@ -22,7 +22,28 @@ export const STATUS_CATALOG: Record<string, CatalogEntry> = {
   'PLANNED': { primaryJa: '計画中', shortJa: '計画中', descriptionJa: '将来実装・現在は選択不可寄り', technicalEn: 'PLANNED' },
   'UNAVAILABLE': { primaryJa: '選択不可', shortJa: '不可', descriptionJa: '現在選択できない', technicalEn: 'UNAVAILABLE' },
   'EMPTY': { primaryJa: 'データなし', shortJa: 'なし', descriptionJa: '表示対象データがない', technicalEn: 'EMPTY' },
+  'CAPABILITY_PLANNED': { primaryJa: '将来工程', shortJa: '将来', descriptionJa: '将来実装予定の工程', technicalEn: 'CAPABILITY_PLANNED' },
+  'LOCAL_CRS_LEGACY': { primaryJa: '互換座標系', shortJa: '互換座標', descriptionJa: '道路線形未接続の互換モード', technicalEn: 'LOCAL_CRS_LEGACY' },
+  'PARTIAL': { primaryJa: '部分実装', shortJa: '部分', descriptionJa: '開発確認用の部分実装', technicalEn: 'PARTIAL' },
+  'DEVELOPMENT_ONLY': { primaryJa: '開発確認専用', shortJa: '開発専用', descriptionJa: '開発確認専用・未検証', technicalEn: 'DEVELOPMENT_ONLY' },
+  '3D_DIMENSION_PLANNED': { primaryJa: '寸法機能は計画中', shortJa: '寸法計画中', descriptionJa: '3D寸法は将来工程', technicalEn: '3D_DIMENSION_PLANNED' },
+  'PENDING': { primaryJa: '未確定', shortJa: '未確定', descriptionJa: '採用前の未確定状態', technicalEn: 'PENDING' },
+  'UNKNOWN': { primaryJa: '不明', shortJa: '不明', descriptionJa: '状態不明', technicalEn: 'UNKNOWN' },
+  'PASS': { primaryJa: '整合', shortJa: '整合', descriptionJa: '整合チェック通過', technicalEn: 'PASS' },
+  'PROVIDED': { primaryJa: 'あり', shortJa: 'あり', descriptionJa: '値が提供されている', technicalEn: 'PROVIDED' },
+  'ADOPTED': { primaryJa: '採用済み', shortJa: '採用', descriptionJa: 'サンプル等が採用された状態', technicalEn: 'ADOPTED' },
+  'USER_PROVIDED_UNVERIFIED': { primaryJa: '利用者入力・未検証', shortJa: '入力・未検証', descriptionJa: '利用者が入力したが検証されていない', technicalEn: 'USER_PROVIDED_UNVERIFIED' },
+  'NOT_AVAILABLE': { primaryJa: '利用不可', shortJa: '不可', descriptionJa: 'データ不足等で利用できない', technicalEn: 'NOT_AVAILABLE' },
 };
+
+export const WORKFLOW_GROUP_CATALOG: Record<string, CatalogEntry> = {
+  'geometry': { primaryJa: '形状', shortJa: '形状', descriptionJa: '形状・断面入力', technicalEn: 'geometry' },
+  'loads': { primaryJa: '荷重', shortJa: '荷重', descriptionJa: '荷重確認', technicalEn: 'loads' },
+  'analysis': { primaryJa: '解析', shortJa: '解析', descriptionJa: '解析・照査', technicalEn: 'analysis' },
+  'outputs': { primaryJa: '成果', shortJa: '成果', descriptionJa: '数量・図面・計算書', technicalEn: 'outputs' },
+  'governance': { primaryJa: '確認', shortJa: '確認', descriptionJa: '利用者確認', technicalEn: 'governance' },
+};
+
 
 export const STATUS_MESSAGE_CATALOG: Record<string, { l1: string; l2: string; nextAction: string; l3: string }> = {
   'COMPLETE': { l1: '完了', l2: '工程または成果が完了している', nextAction: '表示を確認し、必要な操作を続行してください。', l3: 'COMPLETE' },
@@ -104,6 +125,12 @@ export const BUTTON_CATALOG: Record<string, { labelJa: string; shortJa: string }
   'Show Technical Details': { labelJa: '技術情報を表示', shortJa: '技術情報' },
   'EXPORT_STL': { labelJa: 'STLを出力', shortJa: 'STL出力' },
   'Export STL': { labelJa: 'STLを出力', shortJa: 'STL出力' },
+  'UNDO': { labelJa: '元に戻す', shortJa: '戻す' },
+  'REDO': { labelJa: 'やり直す', shortJa: 'やり直し' },
+  'RUN_ANALYSIS': { labelJa: '解析を実行', shortJa: '解析実行' },
+  'EXPORT_AUDIT': { labelJa: '監査ログを出力', shortJa: '監査ログ' },
+  'PREVIEW': { labelJa: 'プレビュー', shortJa: 'プレビュー' },
+  'ADOPT': { labelJa: '採用', shortJa: '採用' },
 };
 
 export const FIELD_CATALOG: Record<string, { labelJa: string; units: string }> = {
@@ -168,6 +195,20 @@ export const DIAGNOSTIC_CATALOG: Record<string, { l1: string; l2: string; nextAc
   'WE-VALIDATION': { l1: '入力に誤りがあります', l2: '赤表示の項目を修正してください。', nextAction: '修正後に再度保存してください。', code: 'VALIDATION_ERROR' },
   'USER_PROVIDED_UNVERIFIED': { l1: '単位重量は未検証の利用者入力です', l2: '設計値としての検証は行われていません。', nextAction: '値を確認し、必要なら修正してください。', code: 'USER_PROVIDED_UNVERIFIED' },
   'WE-UNVERIFIED-WEIGHT': { l1: '単位重量は未検証の利用者入力です', l2: '設計値としての検証は行われていません。', nextAction: '値を確認し、必要なら修正してください。', code: 'USER_PROVIDED_UNVERIFIED' },
+  'WF_CAPABILITY_PLANNED': { l1: 'この工程は将来工程（未実装）です。現在は利用できません。', l2: '実装後に評価が有効になります。', nextAction: '実装完了後に再度開いてください。', code: 'WF_CAPABILITY_PLANNED' },
+  'WF_CAPABILITY_UNAVAILABLE': { l1: 'この工程は現在利用できません。', l2: '能力が無効です。', nextAction: '実装計画を確認してください。', code: 'WF_CAPABILITY_UNAVAILABLE' },
+  'WF_UNSUPPORTED_SCOPE': { l1: 'この工程は対象プロジェクトの範囲外です。', l2: 'サポート外の入力です。', nextAction: '対応範囲のモデルで操作してください。', code: 'WF_UNSUPPORTED_SCOPE' },
+  'WF_EXECUTION_ERROR': { l1: '永続化データの破損により状態を評価できません。', l2: '入力データの修復が必要です。', nextAction: '入力データを修復するか、再入力をしてください。', code: 'WF_EXECUTION_ERROR' },
+  'WF_INPUT_INVALID': { l1: '入力値に不整合があります。修正してください。', l2: '値の符号・範囲・相互関係を確認してください。', nextAction: '値を修正してから続行してください。', code: 'WF_INPUT_INVALID' },
+  'WF_INPUT_MISSING': { l1: 'まだ入力がありません。この工程を開始してください。', l2: '必須入力が未開始です。', nextAction: '工程を開いて入力を開始してください。', code: 'WF_INPUT_MISSING' },
+  'WF_RESULT_STALE': { l1: '入力が変更され、生成結果が古くなっています。再生成してください。', l2: '上流入力と成果が一致しません。', nextAction: '再計算・再生成を実行してください。', code: 'WF_RESULT_STALE' },
+  'WF_CHECKSUM_MISMATCH': { l1: '入力照合値と生成状態が一致しません。', l2: '再生成が必要です。', nextAction: '再生成後に照合値を一致させてください。', code: 'WF_CHECKSUM_MISMATCH' },
+  'WF_RESULT_NOT_GENERATED': { l1: '入力は有効ですが、まだ生成結果がありません。', l2: '成果未生成です。', nextAction: '生成または再生成を実行してください。', code: 'WF_RESULT_NOT_GENERATED' },
+  'WF_LOCAL_CRS_WARNING': { l1: '座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。', l2: '道路線形バインドは将来工程待ちです。', nextAction: '道路線形連携の実装後にバインドを設定してください。', code: 'WF_LOCAL_CRS_WARNING' },
+  'WF_PARTIAL_SCOPE_WARNING': { l1: 'この工程は開発確認用の部分実装です。将来工程の項目は未対応です。', l2: '能力は部分実装です。', nextAction: '今後の拡張を待つか、対応済み項目のみ利用してください。', code: 'WF_PARTIAL_SCOPE_WARNING' },
+  'WF_3D_DIMENSION_PLANNED': { l1: '3D寸法表示・2点計測は将来工程で実装予定です。3D本体とは別に管理します。', l2: '寸法機能は計画中です。', nextAction: '寸法機能の実装後に有効化されます。', code: 'WF_3D_DIMENSION_PLANNED' },
+  'WF_STEP_4_G_REINTEGRATION_PENDING': { l1: '付属物・ハンチの計算書／図面／ZIP再統合は将来工程待ちです。既存成果を新エンティティ対応済みとみなしません。', l2: '再統合は未完了です。', nextAction: '再統合工程の完了後に成果を更新してください。', code: 'WF_STEP_4_G_REINTEGRATION_PENDING' },
+  'WF_NOT_AUTHORIZED': { l1: '開発上の完了です。正式認可は未付与です。', l2: '正式な数値設計認可はありません。', nextAction: '正式な合否判定は人間による確認後に付与されます。', code: 'WF_NOT_AUTHORIZED' },
 };
 
 export const PRESENCE_CATALOG: Record<string, CatalogEntry> = {

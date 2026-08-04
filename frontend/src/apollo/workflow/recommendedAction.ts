@@ -52,7 +52,7 @@ export function resolveRecommendedStep(steps: readonly RecommendedStepInput[]): 
 
 export function recommendedActionText(stepId: WorkflowStepId, status: WorkflowStatus): string {
   if (status === "STALE") return "再生成を推奨（上流の再生成が最優先）";
-  if (status === "READY") return "primary action を実行してください。";
+  if (status === "READY") return "主操作（生成）を実行してください。";
   if (status === "INCOMPLETE") return "不足項目を入力・確認してください。";
   if (status === "AVAILABLE") return "工程を開いて進めてください。";
   return "次の工程へ進んでください。";

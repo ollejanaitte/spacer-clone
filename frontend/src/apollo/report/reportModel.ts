@@ -34,7 +34,7 @@ export const REPORT_CHAPTER_REGISTRY = [
   { id: "CH-SHEAR", title: "せん断力" },
   { id: "CH-MOMENT", title: "曲げモーメント" },
   { id: "CH-DEFLECTION", title: "たわみ" },
-  { id: "CH-DEMAND", title: "demand candidate" },
+  { id: "CH-DEMAND", title: "作用候補" },
   { id: "CH-QUANTITY", title: "数量" },
   { id: "CH-DRAWING-REF", title: "標準断面図参照" },
   { id: "CH-WARNINGS", title: "警告・未許可項目" },
@@ -254,7 +254,7 @@ export function buildReportModel(
     },
     {
       id: "CH-DEMAND",
-      title: "demand candidate",
+      title: "作用候補",
       rows: [
         row("status", "CANDIDATE / UNVERIFIED / USER REVIEW REQUIRED"),
         row("formalOkNg", "NOT_EMITTED", "", "NOT_AUTHORIZED"),

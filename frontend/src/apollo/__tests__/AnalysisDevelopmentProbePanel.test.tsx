@@ -63,7 +63,7 @@ describe("AnalysisDevelopmentProbePanel", () => {
     });
 
     expect(container.querySelector("[data-testid='apollo-analysis-development-status']")?.textContent).toContain(
-      "success",
+      "成功",
     );
     expect(container.querySelector("[data-testid='apollo-analysis-development-table']")).not.toBeNull();
   });

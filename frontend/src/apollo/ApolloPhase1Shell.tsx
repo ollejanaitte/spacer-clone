@@ -95,6 +95,7 @@ import type {
   SectionKey,
   StructuredMessage,
 } from "../types";
+import { getButtonLabel } from "./i18n";
 
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
@@ -131,7 +132,7 @@ type ValidationIssueTarget = {
 type StepKey = "start" | "basics" | "nodes" | "members" | "supportsMaterials" | "validation";
 type StepStatus = "current" | "complete" | "error" | "available" | "locked";
 
-const VERIFICATION_DATE = "Wednesday, July 29, 2026";
+const VERIFICATION_DATE = "2026年7月29日（水）";
 const APOLLO_GUIDE_DISMISSED_KEY = "apollo_phase1_sample_guide_dismissed";
 const APOLLO_ONBOARDING_DISMISSED_KEY = "apollo_phase1_onboarding_dismissed";
 const STEP_DEFINITIONS = [
@@ -1587,7 +1588,7 @@ export function ApolloPhase1Shell({
   };
 
   const renderStepBar = () => (
-    <ol className="apollo-stepbar" aria-label="Apollo guided steps">
+    <ol className="apollo-stepbar" aria-label="Apolloガイド工程">
       {STEP_DEFINITIONS.map(({ key, label }, index) => {
         const status = resolveStepStatus(key, index);
         return (
@@ -1636,10 +1637,10 @@ export function ApolloPhase1Shell({
           <span>保存状態: {statusText(isDirty)}</span>
           <div className="apollo-inline-actions">
             <button type="button" data-testid="apollo-undo" onClick={onUndo} disabled={!canUndo}>
-              Undo
+              {getButtonLabel("UNDO")}
             </button>
             <button type="button" data-testid="apollo-redo" onClick={onRedo} disabled={!canRedo}>
-              Redo
+              {getButtonLabel("REDO")}
             </button>
           </div>
         </div>
@@ -1704,7 +1705,7 @@ export function ApolloPhase1Shell({
             onClick={handleStlExport}
             disabled={!apolloVisualizationBuild.ok}
           >
-            STL + Manifest
+            STLとマニフェストを出力
           </button>
         </div>
       </div>
@@ -2275,7 +2276,7 @@ export function ApolloPhase1Shell({
     <main ref={shellRootRef} className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
         <div>
-          <p data-testid="apollo-shell-kicker">Apollo Phase 1-NN</p>
+          <p data-testid="apollo-shell-kicker">Apollo フェーズ1（非数値）</p>
           <h1>Apollo 橋梁骨組み入力</h1>
           <p>
             橋梁の骨組みモデルを入力・編集します。現在は入力・確認機能のみ利用できます。
@@ -2293,7 +2294,7 @@ export function ApolloPhase1Shell({
       </header>
 
       {flags.showProvisionalStatus ? (
-        <section className="apollo-phase1-banner" data-testid="apollo-provisional-banner" aria-label="provisional-status-banner">
+        <section className="apollo-phase1-banner" data-testid="apollo-provisional-banner" aria-label="暫定状態バナー">
           <strong>非数値入力モード</strong>
           <p>構造計算は現在利用できません。計算結果は未検証です。計算結果出力は現在利用できません。({VERIFICATION_DATE})</p>
         </section>

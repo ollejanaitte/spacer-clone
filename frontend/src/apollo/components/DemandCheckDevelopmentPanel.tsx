@@ -76,7 +76,7 @@ export function DemandCheckDevelopmentPanel() {
       <div className="apollo-editor-card-header">
         <div>
           <h2>応力度・たわみ候補（開発専用）</h2>
-          <p>正式照査・OK/NGは出しません。ユーザー確認用の demand-only 候補値です。</p>
+          <p>正式照査・合否判定は出しません。利用者確認用の作用候補値です。</p>
         </div>
       </div>
       <div data-testid="apollo-demand-development-warning">
@@ -86,7 +86,7 @@ export function DemandCheckDevelopmentPanel() {
         />
       </div>
       <p className="apollo-inline-hint" data-testid="apollo-demand-development-provenance">
-        候補値・未検証 — 利用者確認が必要です（正式OK/NGは出しません）
+        候補値・未検証 — 利用者確認が必要です（正式な合否判定は出しません）
       </p>
       <TechnicalDetails
         testId="apollo-demand-tech"

@@ -1,4 +1,5 @@
 import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
 import { useEffect, useMemo, useState } from "react";
 import type { ProjectModel } from "../../types";
 import {
@@ -156,8 +157,8 @@ export function DeckAppurtenanceInputPanel({
           <AuthorizationBanner testId="apollo-appurtenance-auth" />
         </div>
         <p role="note" data-testid="apollo-appurtenance-local-crs-warning">
-          横断オフセットは橋梁 local CRS（+Y = 右、測点増方向を向いて）です。道路線形 binding は
-          Step 4-E 待ち。3D・数量・荷重は Step 4-C 未実装です。
+          横断オフセットは橋梁ローカル座標系（+Y＝右、測点増方向を向いて）です。道路線形の接続は
+          将来工程待ちです。3D・数量・荷重の接続状態は技術情報を確認してください。
         </p>
         <p data-testid="apollo-appurtenance-context">
           構造モデル長: {draft.bridgeLength ?? "未入力"} m / 幅員: {draft.width ?? "未入力"} m /
@@ -207,8 +208,13 @@ export function DeckAppurtenanceInputPanel({
             data-testid={`apollo-appurtenance-slot-${slot}`}
           >
             <legend>
-              {APPURTENANCE_SLOT_LABELS[slot]}（type={typeSide.type} / side={typeSide.side}）
+              {APPURTENANCE_SLOT_LABELS[slot]}
             </legend>
+            <TechnicalDetails
+              testId={`apollo-appurtenance-slot-tech-${slot}`}
+              title="スロット識別"
+              lines={[`slot=${slot}`, `type=${typeSide.type}`, `side=${typeSide.side}`]}
+            />
             <label className="apollo-field">
               <span>有無</span>
               <select
@@ -275,7 +281,7 @@ export function DeckAppurtenanceInputPanel({
                     }
                   >
                     <option value="">未選択</option>
-                    <option value="RECT">RECT</option>
+                    <option value="RECT">矩形</option>
                   </select>
                 </label>
                 <NullableNumberInput
@@ -316,7 +322,7 @@ export function DeckAppurtenanceInputPanel({
               <ul data-testid={`apollo-appurtenance-diagnostics-${slot}`}>
                 {slotDiagnostics.map((d) => (
                   <li key={d.code} role={d.blocking ? "alert" : "status"}>
-                    [{d.blocking ? "blocking" : "info"}] {d.message}
+                    [{d.blocking ? "要解消" : "情報"}] {d.message}
                   </li>
                 ))}
               </ul>
@@ -326,8 +332,8 @@ export function DeckAppurtenanceInputPanel({
       })}
 
       <footer data-testid="apollo-appurtenance-status">
-        完了判定: {validation.complete ? "input COMPLETE候補" : "INCOMPLETE/BLOCKED"} /
-        blocking={validation.blockingDiagnostics.length}
+        完了判定: {validation.complete ? "入力完了候補" : "入力不足／前提未完了"} /
+        要解消={validation.blockingDiagnostics.length}
       </footer>
     </article>
   );

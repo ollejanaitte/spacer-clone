@@ -14,6 +14,27 @@ type Props = {
   readonly project: ProjectModel;
 };
 
+const QUANTITY_CATEGORY_JA: Record<string, string> = {
+  SUMMARY: "概要",
+  MAIN_GIRDER: "主桁",
+  CROSS_BEAM: "横桁",
+  STIFFENER: "補剛材",
+  SWAY_BRACING: "対傾構",
+  LOWER_LATERAL_BRACING: "下横構",
+  UPPER_LATERAL_BRACING: "上横構",
+  RC_DECK: "RC床版",
+  HAUNCH: "ハンチ",
+  APPURTENANCE: "付属物",
+  PAVEMENT: "舗装",
+};
+
+const QUANTITY_BASIS_JA: Record<string, string> = {
+  EXACT_GEOMETRY_DEVELOPMENT: "正確な幾何（開発）",
+  INCOMPLETE_INPUT: "入力不足",
+  APPROXIMATE_DEVELOPMENT: "概算（開発）",
+};
+
+
 export function QuantityModelDevelopmentPanel({ project }: Props) {
   const [model, setModel] = useState(() => buildQuantityModel(project));
   const [error, setError] = useState<string | null>(null);
@@ -103,31 +124,36 @@ export function QuantityModelDevelopmentPanel({ project }: Props) {
         </p>
       ) : null}
       <p className="apollo-inline-hint" data-testid="apollo-quantity-generated-at">
-        generatedAt: {model.generatedAt} / quantityModelId: {model.quantityModelId}
+        生成時刻: {model.generatedAt}
       </p>
+      <TechnicalDetails
+        testId="apollo-quantity-generated-tech"
+        title="数量モデル識別"
+        lines={[`quantityModelId=${model.quantityModelId}`, `generatedAt=${model.generatedAt}`]}
+      />
       <table className="apollo-detail-table" data-testid="apollo-quantity-model-table">
         <thead>
           <tr>
-            <th>category</th>
-            <th>label</th>
-            <th>value</th>
-            <th>unit</th>
-            <th>status</th>
-            <th>basis</th>
-            <th>warnings</th>
+            <th>区分</th>
+            <th>項目</th>
+            <th>値</th>
+            <th>単位</th>
+            <th>状態</th>
+            <th>根拠</th>
+            <th>注意</th>
           </tr>
         </thead>
         <tbody>
           {model.items.map((entry) => (
             <tr key={entry.quantityId} data-testid={`apollo-qty-row-${entry.quantityId}`}>
-              <td>{entry.category}</td>
+              <td>{QUANTITY_CATEGORY_JA[entry.category] ?? entry.category}</td>
               <td>{entry.label}</td>
               <td data-testid={`apollo-qty-value-${entry.quantityId}`}>
                 {entry.value === null ? "—" : entry.value}
               </td>
               <td>{entry.unit}</td>
-              <td>{entry.status}</td>
-              <td>{entry.calculationBasis}</td>
+              <td>{getStatusLabel(entry.status)}</td>
+              <td>{QUANTITY_BASIS_JA[entry.calculationBasis] ?? entry.calculationBasis}</td>
               <td>{entry.warnings.join("; ")}</td>
             </tr>
           ))}

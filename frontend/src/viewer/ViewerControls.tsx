@@ -385,7 +385,7 @@ export function ViewerControls({
           <Toggle label={ja.viewer.controls.member} checked={visibility.members} onChange={(value) => setFlag("members", value)} />
           <Toggle label={ja.viewer.controls.support} checked={visibility.supports} onChange={(value) => setFlag("supports", value)} />
           <Toggle label="Apollo Line" checked={visibility.apolloLineModel !== false} onChange={(value) => setFlag("apolloLineModel", value)} />
-          <Toggle label="Apollo Solid" checked={visibility.apolloSolidModel !== false} onChange={(value) => setFlag("apolloSolidModel", value)} />
+          <Toggle label="Apollo立体" checked={visibility.apolloSolidModel !== false} onChange={(value) => setFlag("apolloSolidModel", value)} />
           <Toggle label={ja.viewer.controls.load} checked={visibility.loads} onChange={(value) => setFlag("loads", value)} />
           <Toggle label={ja.viewer.controls.label} checked={visibility.labels} onChange={(value) => setFlag("labels", value)} />
           <Toggle label={ja.viewer.controls.grid} checked={visibility.grid} onChange={(value) => setFlag("grid", value)} icon={<Grid3X3 size={14} />} />
