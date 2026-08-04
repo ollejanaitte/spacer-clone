@@ -27,8 +27,8 @@
 | JP3-A | #375 | `9e2ce45be7781a94a988e5a99fa68155a02ec3b8` |
 | JP3-B | #376 | `5510f7074cda2ef0c5c646e400025e485f7009c6` |
 | JP3-C | #377 | `5447ed7315eba868a12465bb879aa4356f0108d6` |
-| JP3-D report | (this PR) | PENDING |
-| Seal | (follow-up once) | PENDING |
+| JP3-D report | #378 | `543f0ae1e287193e1620ddb2d0fbcde0a007630c` |
+| Seal | (this PR) | stamps report SHA above |
 
 ## Known limitations
 
