@@ -618,7 +618,7 @@ JP1_B_PR: https://github.com/ollejanaitte/spacer-clone/pull/363
 JP1_B_MERGE_SHA: bde8b6d151daf9757aa969ec41893f3fde6b637e
 
 JP1_C_UI_TEXT_DESIGN: PASS
-JP1_C_PR: PENDING
+JP1_C_PR: https://github.com/ollejanaitte/spacer-clone/pull/364
 JP1_C_MERGE_SHA: PENDING
 
 JP1_D_COMPLETION_GATE: PENDING
