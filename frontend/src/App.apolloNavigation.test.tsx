@@ -250,7 +250,7 @@ describe("App Apollo navigation", () => {
 
     expect(window.location.pathname).toBe("/pro/apollo");
     await act(async () => {
-      clickButtonByText("一覧編集モード");
+      clickButtonByText("一覧編集");
     });
     expect(inputByTestId("apollo-project-name-input").value).toBe("Apollo Route Persistence");
     expect(document.body.textContent).toContain("11");
