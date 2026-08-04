@@ -1,0 +1,16 @@
+term_id,internal_key,category,primary_ja,short_ja,description_ja,technical_en,context,allowed_variants,prohibited_variants,status,decision_id,notes
+WFSTEP-WF-01,WF-01,WORKFLOW_STEP,道路線形,道路線形,LINER連携の道路線形（計画中）,WF-01,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0401,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-02,WF-02,WORKFLOW_STEP,橋梁基本条件,基本条件,橋梁構造の基本入力,WF-02,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0402,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-03,WF-03,WORKFLOW_STEP,床版・橋面付属物,床版付属物,床版・付属物入力,WF-03,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0403,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-04,WF-04,WORKFLOW_STEP,主桁断面,主桁断面,主桁断面入力,WF-04,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0404,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-05,WF-05,WORKFLOW_STEP,ハンチ,ハンチ,ハンチ入力,WF-05,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0405,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-06,WF-06,WORKFLOW_STEP,添接・フィラー,添接,添接・フィラー（計画中）,WF-06,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0406,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-07,WF-07,WORKFLOW_STEP,荷重,荷重,荷重確認,WF-07,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0407,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-08,WF-08,WORKFLOW_STEP,構造解析,解析,構造解析,WF-08,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0408,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-09,WF-09,WORKFLOW_STEP,候補照査,照査,候補照査,WF-09,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0409,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-10,WF-10,WORKFLOW_STEP,数量,数量,数量算出,WF-10,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0410,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-11,WF-11,WORKFLOW_STEP,3D確認,3D,3D可視化確認,WF-11,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0411,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-12,WF-12,WORKFLOW_STEP,計算書,計算書,計算書出力,WF-12,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0412,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-13,WF-13,WORKFLOW_STEP,図面,図面,図面出力,WF-13,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0413,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-14,WF-14,WORKFLOW_STEP,成果品出力,成果品,成果品一式出力,WF-14,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0414,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-15,WF-15,WORKFLOW_STEP,ユーザー確認,確認,人間による確認・承認相当操作,WF-15,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0415,L1 shows JA; ID in L3 or beside title

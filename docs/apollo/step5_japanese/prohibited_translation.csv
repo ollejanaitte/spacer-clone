@@ -1,0 +1,13 @@
+rule_id,internal_key,prohibited_ja,reason,correct_ja,severity
+PT-001,STALE,古い,意味が「期限切れ」に寄り、再計算必要性を伝えない,要再計算,absolute
+PT-002,BLOCKED,ブロック済み,ユーザーが拒否された印象; 前提未完了が正しい,先に必要な作業があります,absolute
+PT-003,BLOCKED,中断,作業中断と誤解される,先に必要な作業があります,absolute
+PT-004,NOT_GRANTED,不合格,合否判定と誤解; 認可未付与が正しい,正式認可なし,absolute
+PT-005,PROHIBITED,使用不可,用途（設計・施工）が消える,設計・施工への使用禁止,absolute
+PT-006,CROSS_BEAM,対傾構,部材混同,横桁,absolute
+PT-007,CROSS_FRAME,横桁,部材混同,対傾構,absolute
+PT-008,UPPER_LATERAL_BRACING,下横構,上下混同,上横構,absolute
+PT-009,LOWER_LATERAL_BRACING,上横構,上下混同,下横構,absolute
+PT-010,diagnosticCode,(any Japanese rewrite of code),コード同一性・検索性を壊す,keep English code in L3,absolute
+PT-011,NOT_AUTHORIZED,不合格,認可と合否の混同,正式認可なし,absolute
+PT-012,UNVERIFIED_DEVELOPMENT_ONLY,検証済み,反意,開発確認用・未検証,absolute

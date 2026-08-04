@@ -7,3 +7,7 @@
 | `screen_inventory.csv` | Screen-level exposure summary |
 | `technical_only_allowlist.csv` | Strings allowed to remain English |
 | `unresolved_terms.csv` | Terms needing glossary decisions |
+| `evidence/jp1b/glossary_coverage.txt` | Glossary coverage counts |
+| `apollo_japanese_glossary.csv` | Master terminology |
+| `prohibited_translation.csv` | Forbidden mistranslations |
+| `terminology_decision_register.csv` | Decision register |

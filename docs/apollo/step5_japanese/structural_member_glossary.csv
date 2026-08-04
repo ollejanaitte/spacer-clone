@@ -1,0 +1,18 @@
+term_id,internal_key,category,primary_ja,short_ja,description_ja,technical_en,context,allowed_variants,prohibited_variants,status,decision_id,notes
+MB-MAIN_GIRDER,MAIN_GIRDER,MEMBER,主桁,主桁,橋軸方向の主たる鋼桁,main girder,member,,,ADOPTED_UI_LABEL,DEC-JP1B-020,
+MB-CROSS_BEAM,CROSS_BEAM,MEMBER,横桁,横桁,主桁間を結ぶ横桁。対傾構とは別,cross beam,member,Cross beam,対傾構|スウェイ,ADOPTED_UI_LABEL,DEC-JP1B-021,Never confuse with CROSS_FRAME
+MB-CROSS_FRAME,CROSS_FRAME,MEMBER,対傾構,対傾構,主桁間の対傾構（sway）。横桁とは別,cross frame / sway bracing,member,スウェイブレース,横桁|クロスビーム,ADOPTED_UI_LABEL,DEC-JP1B-022,EN Sway only in L3
+MB-UPPER_LATERAL,UPPER_LATERAL_BRACING,MEMBER,上横構,上横構,上フランジ側水平ブレース,upper lateral bracing,member,上フランジ水平ブレース,下横構,ADOPTED_UI_LABEL,DEC-JP1B-023,
+MB-LOWER_LATERAL,LOWER_LATERAL_BRACING,MEMBER,下横構,下横構,下フランジ側水平ブレース,lower lateral bracing,member,下フランジ水平ブレース,上横構,ADOPTED_UI_LABEL,DEC-JP1B-024,
+MB-RC_DECK,RC_DECK,MEMBER,RC床版,床版,鉄筋コンクリート床版,RC deck,member,床版,,ADOPTED_UI_LABEL,DEC-JP1B-025,RC acronym allowlisted
+MB-HAUNCH,HAUNCH,MEMBER,ハンチ,ハンチ,床版ハンチ,haunch,member,,,ADOPTED_UI_LABEL,DEC-JP1B-026,
+MB-CURB,CURB,MEMBER,地覆,地覆,地覆,curb,member,,,ADOPTED_UI_LABEL,DEC-JP1B-027,
+MB-WALL_RAILING,WALL_RAILING,MEMBER,壁高欄,壁高欄,壁高欄,wall railing,member,,,ADOPTED_UI_LABEL,DEC-JP1B-028,
+MB-MEDIAN,MEDIAN,MEMBER,中央分離帯,中央分離帯,中央分離帯,median,member,,,ADOPTED_UI_LABEL,DEC-JP1B-029,
+MB-OPTIONAL_BARRIER,OPTIONAL_BARRIER,MEMBER,任意防護柵,防護柵,任意の防護柵,optional barrier,member,,,ADOPTED_UI_LABEL,DEC-JP1B-030,
+MB-PAVEMENT,PAVEMENT,MEMBER,舗装,舗装,舗装,pavement,member,,,ADOPTED_UI_LABEL,DEC-JP1B-031,
+MB-ROAD_MARKING,ROAD_MARKING,MEMBER,区画線,区画線,区画線,road marking,member,,,ADOPTED_UI_LABEL,DEC-JP1B-032,
+MB-SUPPORT,SUPPORT,MEMBER,支承,支承,支承,support / bearing,member,,,ADOPTED_UI_LABEL,DEC-JP1B-033,
+MB-L_SECTION,L_SECTION,MEMBER,L形断面,L形,一体L形断面（対傾構等）,true L-section,member,アングル,,ADOPTED_UI_LABEL,DEC-JP1B-034,ER-002 related
+MB-LEFT_CURB,LEFT_CURB,MEMBER,左側地覆,左地覆,左側地覆スロット,LEFT_CURB,appurtenance slot,,LEFT_CURB raw in L1,ADOPTED_UI_LABEL,DEC-JP1B-035,Resolves UT-JP1A-0091
+MB-RIGHT_CURB,RIGHT_CURB,MEMBER,右側地覆,右地覆,右側地覆スロット,RIGHT_CURB,appurtenance slot,,,ADOPTED_UI_LABEL,DEC-JP1B-036,
