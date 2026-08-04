@@ -5764,20 +5764,31 @@ button:disabled {
 .apollo-unit2-header {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 16px 18px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
 }
 
 .apollo-unit2-header h1 {
-  margin: 4px 0 8px;
-  font-size: 1.8rem;
+  margin: 2px 0 0;
+  font-size: 1.3rem;
+}
+
+.apollo-header-title {
+  display: grid;
+  gap: 0;
+}
+
+.apollo-header-title p {
+  margin: 0;
+  font-size: 11px;
+  color: #57697d;
 }
 
 .apollo-unit2-header-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .apollo-unit2-header-actions button,
@@ -5916,9 +5927,39 @@ button:disabled {
   margin-top: 8px;
 }
 
-.apollo-phase1-banner {
-  padding: 14px 16px;
-  border-left: 6px solid #d17a00;
+.apollo-provisional-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid #e0b35a;
+  border-radius: 6px;
+  background: #fff8e8;
+  font-size: 12px;
+  color: #7a4d00;
+  width: fit-content;
+}
+
+.apollo-provisional-badge-label {
+  font-weight: 600;
+}
+
+.apollo-provisional-badge-hint {
+  cursor: help;
+  opacity: 0.7;
+}
+
+.apollo-toast-notice {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #eaf6ef;
+  border: 1px solid #81c995;
+  color: #215c34;
+  font-size: 13px;
+  gap: 8px;
+  width: fit-content;
 }
 
 .apollo-unit2-summary-grid {
@@ -5940,9 +5981,10 @@ button:disabled {
 
 .apollo-project-meta-list div,
 .apollo-topology-summary span {
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 8px;
   background: #f3f7fb;
+  font-size: 12px;
 }
 
 .apollo-project-meta-list dt {
@@ -6116,10 +6158,10 @@ button:disabled {
 }
 
 .apollo-topology-summary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .apollo-topology-view {
@@ -6162,7 +6204,7 @@ button:disabled {
 .apollo-stepbar {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 8px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -6170,19 +6212,20 @@ button:disabled {
 
 .apollo-stepbar-item button {
   display: grid;
-  gap: 4px;
+  gap: 1px;
   width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 4px 6px;
+  border-radius: 6px;
   border: 1px solid #d7e2ee;
   background: #edf3f7;
   color: #5a6b7d;
-  font-size: 13px;
+  font-size: 11px;
+  min-height: 36px;
   text-align: center;
 }
 
 .apollo-stepbar-symbol {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -6191,7 +6234,7 @@ button:disabled {
 }
 
 .apollo-stepbar-state {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .apollo-stepbar-current button {
