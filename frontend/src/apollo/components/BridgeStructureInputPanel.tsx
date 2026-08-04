@@ -44,6 +44,9 @@ import {
 } from "../bridgeStructure";
 import { commitApolloNumericDraft } from "../numericInput";
 import { CompositionAwareInput } from "./CompositionAwareInput";
+import { AuthorizationBanner } from "./AuthorizationBanner";
+import { TechnicalDetails } from "./TechnicalDetails";
+import { getStatusLabel } from "../i18n";
 import { CrossFrameAttachmentInputPanel } from "./CrossFrameAttachmentInputPanel";
 import { SampleReapplyConfirmDialog } from "./SampleReapplyConfirmDialog";
 
@@ -283,7 +286,7 @@ export function BridgeStructureInputPanel({
       if (result.ok) {
         onProjectChange(result.project);
         setGenerationMessage(
-          "完全サンプルを適用し構造を生成しました（UNVERIFIED_DEVELOPMENT_ONLY / NOT_GRANTED）。",
+          "完全サンプルを適用し構造を生成しました（開発確認用・未検証 / 正式認可なし）。",
         );
         onAuditEvent?.("完全サンプルを適用・生成しました。");
       } else {
@@ -707,18 +710,26 @@ export function BridgeStructureInputPanel({
       {sectionProperties ? (
         <section data-testid="apollo-bridge-structure-section-properties">
           <h3>断面特性（純幾何計算・設計判定なし）</h3>
-          <p
-            className="apollo-input-error"
-            role="status"
-            data-testid="apollo-section-properties-development-warning"
-          >
-            UNVERIFIED DEVELOPMENT RESULT — NOT FOR DESIGN OR CONSTRUCTION
-          </p>
+          <div data-testid="apollo-section-properties-development-warning">
+            <AuthorizationBanner testId="apollo-bridge-section-auth" />
+          </div>
           <p className="apollo-inline-hint" data-testid="apollo-section-properties-provenance">
-            authorization: NOT_AUTHORIZED / NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED /
-            source: pure-geometry dimensions only / calculationState:{" "}
-            {isGenerationCurrent ? "GENERATION_CURRENT" : isStale ? "STALE" : "INPUT_ONLY"}
+            状態:{" "}
+            {isGenerationCurrent
+              ? getStatusLabel("GENERATION_CURRENT")
+              : isStale
+                ? getStatusLabel("STALE")
+                : getStatusLabel("INPUT_ONLY")}
+            （正式認可なし）
           </p>
+          <TechnicalDetails
+            testId="apollo-section-properties-tech"
+            lines={[
+              "authorization=NOT_AUTHORIZED",
+              "NUMERIC_DESIGN_AUTHORIZATION=NOT_GRANTED",
+              `calculationState=${isGenerationCurrent ? "GENERATION_CURRENT" : isStale ? "STALE" : "INPUT_ONLY"}`,
+            ]}
+          />
           <table className="apollo-detail-table">
             <thead>
               <tr>
@@ -812,7 +823,7 @@ export function BridgeStructureInputPanel({
           </tbody>
         </table>
         <p className="apollo-inline-hint">
-          ADOPTED は数値設計権限（NOT_GRANTED が既定）のもとで拒否されます。現時点では採用操作は失敗し、NOT_AUTHORIZED のままです。
+          採用は数値設計の正式認可がないため拒否されます。現時点では採用操作は失敗し、正式認可なしのままです。
         </p>
       </section>
 
@@ -837,7 +848,7 @@ export function BridgeStructureInputPanel({
           </tbody>
         </table>
         <p className="apollo-inline-hint">
-          単位重量が未設定の場合は NOT_AUTHORIZED / INCOMPLETE、入力済み未採用は USER_PROVIDED_UNVERIFIED、採用時のみ ADOPTED を表示します。
+          単位重量が未設定の場合は「正式認可なし／入力不足」、入力済み未採用は「利用者入力・未検証」、採用時のみ「採用済み」を表示します。
         </p>
       </section>
     </article>

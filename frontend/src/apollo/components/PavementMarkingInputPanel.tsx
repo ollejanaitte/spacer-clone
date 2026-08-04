@@ -1,3 +1,4 @@
+import { AuthorizationBanner } from "./AuthorizationBanner";
 /**
  * Step 5 pavement / road-marking input panel (DEC-S5-0003 / 0004).
  * Same SoR as Guided Mode G03 detail escape.
@@ -56,14 +57,14 @@ export function PavementMarkingInputPanel({ project, onProjectChange, onAuditEve
       data-testid="apollo-pavement-panel"
       aria-label="舗装・白線入力"
     >
-      <h2>舗装・白線（Step 5 / DEC-S5-0003・0004）</h2>
+      <h2>舗装・区画線</h2>
+      <AuthorizationBanner testId="apollo-pavement-auth" />
       <p>
-        舗装は Apollo draft が所有します。白線は可視化専用で、構造 STL 既定からは除外されます。
-        数値設計認可は付与されません。
+        舗装は Apollo 入力が所有します。区画線は可視化専用で、構造 STL 既定からは除外されます。
       </p>
 
       <fieldset>
-        <legend>舗装 presence</legend>
+        <legend>舗装の有無</legend>
         {(
           [
             [PRESENCE_STATUS.NOT_PROVIDED, "未入力"],
@@ -112,7 +113,7 @@ export function PavementMarkingInputPanel({ project, onProjectChange, onAuditEve
               }}
             />
           </label>
-          <p className="apollo-muted">単位重量ステータス: USER_PROVIDED_UNVERIFIED</p>
+          <p className="apollo-muted">単位重量ステータス: 利用者入力・未検証</p>
         </div>
       ) : null}
 
