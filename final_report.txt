@@ -546,7 +546,7 @@ R4_MERGE_SHA: 231230f806758fb990598ef896d717ca9568bf94
 
 REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/360
 REPORT_MERGE_SHA: 7aab7d7df498149cc5510253abf4f9c7ef43d931
-SEAL_PR: PENDING_THIS_PR
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/361
 
 REAPPLY_MODAL_VERDICT: PASS
 REAPPLY_PREVIEW_VERDICT: PASS
