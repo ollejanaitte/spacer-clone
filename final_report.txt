@@ -682,7 +682,7 @@ P4_PR: https://github.com/ollejanaitte/spacer-clone/pull/370
 P4_MERGE_SHA: 35a99aed38c157f93fd34e3c098a429a40f61650
 
 P5_OUTPUT_ERROR_AUTH: PASS
-P5_PR: PENDING
+P5_PR: https://github.com/ollejanaitte/spacer-clone/pull/371
 P5_MERGE_SHA: PENDING
 
 P6_INTEGRATION_E2E: PENDING
