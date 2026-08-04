@@ -5810,6 +5810,112 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.apollo-header-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-right: 1px solid #d7e2ee;
+}
+
+.apollo-header-group:last-child {
+  border-right: none;
+}
+
+.apollo-header-mode-group button {
+  min-width: 80px;
+}
+
+.apollo-header-active {
+  background: #1f6feb !important;
+  border-color: #1f6feb !important;
+  color: #fff !important;
+}
+
+.apollo-header-file-group {
+  gap: 6px;
+}
+
+.apollo-header-nav-group button {
+  white-space: nowrap;
+}
+
+.apollo-header-help-group button {
+  white-space: nowrap;
+}
+
+.apollo-save-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.apollo-save-status-saved {
+  background: #e6f7e6;
+  color: #1a7f1a;
+}
+
+.apollo-save-status-unsaved {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.apollo-save-status-persisting {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.apollo-compact-auth {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.apollo-compact-auth-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px !important;
+  min-height: 24px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background: #fef3e2 !important;
+  border-color: #e6b87e !important;
+  color: #7a5a28 !important;
+  cursor: pointer;
+}
+
+.apollo-compact-auth-token {
+  white-space: nowrap;
+}
+
+.apollo-compact-auth-arrow {
+  font-size: 9px;
+}
+
+.apollo-compact-auth-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+  min-width: 320px;
+  margin-top: 4px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #d7e2ee;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(22, 34, 51, 0.12);
+}
+
+.apollo-compact-auth-expanded {
+  margin-top: 8px;
+}
+
 .apollo-phase1-banner {
   padding: 14px 16px;
   border-left: 6px solid #d17a00;
