@@ -691,7 +691,7 @@ P6_MERGE_SHA: 3a29686c09cbaea2219686cb1c4872caad24f783
 
 REPORT_PR: https://github.com/ollejanaitte/spacer-clone/pull/373
 REPORT_MERGE_SHA: 8c1ef1a8dc1003dd816a0a0841ec2c33737820db
-SEAL_PR: PENDING
+SEAL_PR: https://github.com/ollejanaitte/spacer-clone/pull/374
 
 TYPED_CATALOG_VERDICT: PASS
 TECHNICAL_DETAILS_COMPONENT_VERDICT: PASS
