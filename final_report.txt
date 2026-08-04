@@ -844,9 +844,9 @@ STEP_ID: APOLLO_STEP_6_UI_P0_C
 DOCUMENTATION_ONLY: YES
 APPLICATION_CODE_CHANGED: NO
 BASE_MAIN_SHA: ee045b353ade480a9d2a857c7f48215973274273
-PRIMARY_PR: PENDING
-PRIMARY_PR_STATE: PENDING
-PRIMARY_PR_MERGE_SHA: PENDING
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/382
+PRIMARY_PR_STATE: MERGED
+PRIMARY_PR_MERGE_SHA: 7023cb61e7e2f7189e45b46dcb7edb0395320767
 DIRECT_EDIT_CANDIDATE_COUNT: 20
 CONDITIONAL_EDIT_CANDIDATE_COUNT: 15
 PROTECTED_FILE_GROUP_COUNT: 8
@@ -861,4 +861,33 @@ EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/p0_c/
 NOTES:
 - Classifications based on import graph + call sites on main
 - Allowlist is upper-bound only; each UI PR needs a narrower allowlist
+================================================================================
+
+================================================================================
+Apollo Step 6-UI-P0-D — Architecture and Implementation Plan Freeze
+================================================================================
+更新日時: 2026-08-05T00:45:04+09:00
+STEP_ID: APOLLO_STEP_6_UI_P0_D
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: 7023cb61e7e2f7189e45b46dcb7edb0395320767
+PRIMARY_PR: PENDING
+PRIMARY_PR_STATE: PENDING
+PRIMARY_PR_MERGE_SHA: PENDING
+TARGET_LAYOUT_VERDICT: PASS
+GUIDED_PROGRESS_DESIGN_VERDICT: PASS
+WORKFLOW_REDESIGN_VERDICT: PASS
+VIEWER_LAYOUT_VERDICT: PASS
+RESPONSIVE_POLICY_VERDICT: PASS
+REGRESSION_PLAN_VERDICT: PASS
+IMPLEMENTATION_PR_COUNT: 7
+OPEN_QUESTION_COUNT: 3
+FORMAL_AUTHORIZATION: NOT_GRANTED
+STEP_6_UI_P0_VERDICT: COMPLETE
+STEP_6_UI_1_START_READINESS: GO
+EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/p0_d/
+NOTES:
+- Workflow becomes third mode (not co-mounted on Guided basics)
+- G01-G15 primary progress; legacy 6-step bar loses visual primacy
+- UI-1..UI-6 + CLOSEOUT sequenced to avoid mega-PR overlap
 ================================================================================
