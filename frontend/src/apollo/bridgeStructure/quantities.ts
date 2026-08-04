@@ -27,6 +27,7 @@ type ResolvedBridgeStructureInput = {
   readonly rcUnitWeight: number | null;
   readonly lateralBracingEnabled: boolean;
   readonly upperLateralBracingEnabled: boolean;
+  readonly crossFrameAttachment: ApolloBridgeStructureInputDraft["crossFrameAttachment"];
 };
 
 export type BridgeStructureUnitWeightAdoption = {
@@ -102,6 +103,7 @@ function resolveInput(draft: ApolloBridgeStructureInputDraft): ResolvedBridgeStr
     rcUnitWeight: draft.rcUnitWeight,
     lateralBracingEnabled: draft.lateralBracingEnabled,
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
+    crossFrameAttachment: draft.crossFrameAttachment,
   };
 }
 
@@ -178,9 +180,14 @@ function swayBracingVolumeM3(input: ResolvedBridgeStructureInput): number {
   if (stations === 0 || input.girderCount < 2) {
     return 0;
   }
-  // V-type: each diagonal spans half bay width and full flange-to-flange height.
-  const height =
-    input.girderDepth - input.topFlangeThickness / 2 - input.bottomFlangeThickness / 2;
+  // V-type: diagonal length from attachment depths when provided, else mid-flange height.
+  const upper =
+    input.crossFrameAttachment?.upperAttachmentDepthFromGirderTop ??
+    input.topFlangeThickness / 2;
+  const lower =
+    input.crossFrameAttachment?.lowerAttachmentDepthFromGirderTop ??
+    input.girderDepth - input.bottomFlangeThickness / 2;
+  const height = Math.abs(lower - upper);
   const diagonalLength = Math.sqrt((input.girderSpacing / 2) ** 2 + height ** 2);
   const memberArea = Math.PI * (BRACING_MEMBER_DIAMETER_M / 2) ** 2;
   return stations * (input.girderCount - 1) * 2 * memberArea * diagonalLength;

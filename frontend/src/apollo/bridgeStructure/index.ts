@@ -11,6 +11,7 @@ export {
   withPavementConfiguration,
   withRoadMarkingsConfiguration,
   withLateralAngleSection,
+  withCrossFrameAttachment,
 } from "./generateBsdd";
 export {
   buildApolloBsddFingerprintPayload,
@@ -144,6 +145,16 @@ export {
   createDefaultLateralAngleSection,
   parseLateralAngleSection,
 } from "./lateralAngleModel";
+export {
+  createDefaultCrossFrameAttachment,
+  parseCrossFrameAttachment,
+} from "./crossFrameAttachmentModel";
+export {
+  attachmentDepthToZ,
+  validateCrossFrameAttachment,
+  type ApolloCrossFrameAttachmentDraft,
+  type CrossFramePattern,
+} from "./crossFrameAttachmentTypes";
 export {
   buildLAnglePolygon,
   computeLAngleAreaM2,

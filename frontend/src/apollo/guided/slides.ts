@@ -90,11 +90,19 @@ export const GUIDED_SLIDE_DEFINITIONS: readonly GuidedSlideDefinition[] = [
     slideId: "G09",
     order: 9,
     theme: "横桁 / 対傾構",
-    decideWhat: "横桁間隔・対傾構間隔（ラベルは P4 で明確化）",
-    primaryFields: ["crossBeamSpacing", "swayBracingInterval"],
+    decideWhat:
+      "横桁間隔・対傾構間隔・対傾構取付 depth（上/下/中央）。横桁と対傾構は別 entity。取付点は UNVERIFIED / USER_EDITABLE",
+    primaryFields: [
+      "crossBeamSpacing（横桁）",
+      "swayBracingInterval（対傾構間隔）",
+      "upperAttachmentDepthFromGirderTop",
+      "lowerAttachmentDepthFromGirderTop",
+      "centerNodeDepthFromGirderTop",
+      "pattern=V (IMPLEMENTED)",
+    ],
     wfAnchor: "WF-02",
     detailEscape: { kind: "panel", panelId: "wf-panel-bridge-structure", label: "横桁・対傾構入力" },
-    impactHints: ["3D: cross beams / sway", "qty: steel secondary"],
+    impactHints: ["3D: cross beams / sway attachments", "qty: steel secondary", "STALE on depth change"],
   },
   {
     slideId: "G10",

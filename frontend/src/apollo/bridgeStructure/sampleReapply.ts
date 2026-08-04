@@ -117,6 +117,21 @@ const BASIC_PATHS: ReadonlyArray<{
     pick: (d) => d.lateralAngleSection.legA,
   },
   {
+    path: "crossFrame.pattern",
+    category: "cross_beam_frame_laterals",
+    pick: (d) => d.crossFrameAttachment.pattern,
+  },
+  {
+    path: "crossFrame.upperAttachmentDepth",
+    category: "cross_beam_frame_laterals",
+    pick: (d) => d.crossFrameAttachment.upperAttachmentDepthFromGirderTop,
+  },
+  {
+    path: "crossFrame.lowerAttachmentDepth",
+    category: "cross_beam_frame_laterals",
+    pick: (d) => d.crossFrameAttachment.lowerAttachmentDepthFromGirderTop,
+  },
+  {
     path: "appurtenance.providedCount",
     category: "haunch_appurtenances",
     pick: (d) => d.appurtenanceConfiguration.slots.filter((s) => s.presence === "PROVIDED").length,

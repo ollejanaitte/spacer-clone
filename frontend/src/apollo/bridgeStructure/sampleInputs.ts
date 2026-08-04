@@ -26,6 +26,7 @@ import { applyHaunchToAllGirders } from "./haunchModel";
 import { PRESENCE_STATUS } from "./presence";
 import { createDefaultRoadMarkingsConfiguration } from "./pavementModel";
 import { LATERAL_ANGLE_CATALOG_ID } from "./lateralAngleTypes";
+import { createDefaultCrossFrameAttachment } from "./crossFrameAttachmentModel";
 import { createEmptyBridgeStructureInputDraft } from "./validation";
 import type { ApolloBridgeStructureInputDraft } from "./types";
 
@@ -196,6 +197,14 @@ export function buildCompleteSampleDraft(
       thickness: SAMPLE_PRESET_CATALOG.lateralAngleThicknessM,
       catalogId: LATERAL_ANGLE_CATALOG_ID,
       orientation: "LEG_A_ALONG_LOCAL_Y",
+    },
+    crossFrameAttachment: {
+      ...createDefaultCrossFrameAttachment(
+        BASIC_SIMPLE_SINGLE_FIELDS.girderDepth,
+        BASIC_SIMPLE_SINGLE_FIELDS.topFlangeThickness,
+        BASIC_SIMPLE_SINGLE_FIELDS.bottomFlangeThickness,
+      ),
+      provenance: "UNVERIFIED_SAMPLE_PLACEHOLDER",
     },
     generatedAt: null,
   };

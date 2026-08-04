@@ -46,6 +46,7 @@ import type {
   ApolloRoadMarkingsConfigurationDraft,
 } from "./pavementTypes";
 import type { ApolloLateralAngleSectionDraft } from "./lateralAngleTypes";
+import type { ApolloCrossFrameAttachmentDraft } from "./crossFrameAttachmentTypes";
 import type {
   ApolloBridgeStructureInputDraft,
   BridgeStructureApproximateQuantity,
@@ -588,6 +589,17 @@ export function withLateralAngleSection(
   return withBridgeStructureInputDraft(project, (draft) => ({
     ...draft,
     lateralAngleSection: section,
+    generatedAt: null,
+  }));
+}
+
+export function withCrossFrameAttachment(
+  project: ProjectModel,
+  configuration: ApolloCrossFrameAttachmentDraft,
+): ProjectModel {
+  return withBridgeStructureInputDraft(project, (draft) => ({
+    ...draft,
+    crossFrameAttachment: configuration,
     generatedAt: null,
   }));
 }

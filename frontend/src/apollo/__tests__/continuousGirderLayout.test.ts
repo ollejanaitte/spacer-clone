@@ -48,6 +48,7 @@ function baseContinuousFields(): Omit<
     pavementConfiguration: empty.pavementConfiguration,
     roadMarkingsConfiguration: empty.roadMarkingsConfiguration,
     lateralAngleSection: empty.lateralAngleSection,
+    crossFrameAttachment: empty.crossFrameAttachment,
   };
 }
 
@@ -55,7 +56,7 @@ function buildContinuousInput(spanLengths: readonly number[]): ApolloBridgeStruc
   const layout = buildContinuousLayout(spanLengths);
   const bridgeLength = spanLengths.reduce((sum, length) => sum + length, 0);
   return {
-    schemaVersion: "1.4.0-development",
+    schemaVersion: "1.5.0-development",
     ...baseContinuousFields(),
     bridgeSystem: BridgeSystem.CONTINUOUS,
     bridgeLength,
