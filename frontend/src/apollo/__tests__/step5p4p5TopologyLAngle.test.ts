@@ -17,7 +17,7 @@ describe("Step 5-3 P4/P5 topology labels and L-angle", () => {
     const model = buildApolloVisualizationModelOrThrow({ project: project.project });
     const cross = model.solidGeometryParameters.find((s) => s.kind === "cross_beam");
     expect(cross?.displayLabel).toContain("横桁");
-    expect(cross?.displayLabel).toContain("Cross beam");
+    expect(cross?.displayLabel).toContain("横桁");
     const sway = model.solidGeometryParameters.find(
       (s) => s.kind === "bracing" && s.displayLabel.includes("対傾構"),
     );

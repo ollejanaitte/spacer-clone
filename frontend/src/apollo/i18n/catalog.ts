@@ -21,6 +21,7 @@ export const STATUS_CATALOG: Record<string, CatalogEntry> = {
   'IMPLEMENTED': { primaryJa: '実装済み', shortJa: '実装済', descriptionJa: '機能が利用可能', technicalEn: 'IMPLEMENTED' },
   'PLANNED': { primaryJa: '計画中', shortJa: '計画中', descriptionJa: '将来実装・現在は選択不可寄り', technicalEn: 'PLANNED' },
   'UNAVAILABLE': { primaryJa: '選択不可', shortJa: '不可', descriptionJa: '現在選択できない', technicalEn: 'UNAVAILABLE' },
+  'EMPTY': { primaryJa: 'データなし', shortJa: 'なし', descriptionJa: '表示対象データがない', technicalEn: 'EMPTY' },
 };
 
 export const STATUS_MESSAGE_CATALOG: Record<string, { l1: string; l2: string; nextAction: string; l3: string }> = {

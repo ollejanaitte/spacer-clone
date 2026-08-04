@@ -397,8 +397,8 @@ function buildCrossBeamSolid(
     selectionKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
     validationTargetKey: buildDesignEntitySelectionKey("CrossBeam", entityId),
     displayLabel: atSupport
-      ? `横桁 / Cross beam ${index + 1} (support)`
-      : `横桁 / Cross beam ${index + 1}`,
+      ? `横桁 ${index + 1}（支承位置）`
+      : `横桁 ${index + 1}`,
     kind: "cross_beam",
     visibilityGroup: "cross-beams",
     exportable: true,
@@ -725,7 +725,7 @@ export function buildBridgeStructureSolidGeometryParameters(
               member.braceMemberId,
               start,
               end,
-              `対傾構 / Sway ${swayIndex + 1}`,
+              `対傾構 ${swayIndex + 1}`,
               BRACING_SYSTEM_SWAY,
               input.lateralAngleSection,
             );
@@ -798,7 +798,7 @@ export function buildBridgeStructureSolidGeometryParameters(
       appendLateralPlane(
         model.lateralBracings[lateralIndex]?.lateralBracingId,
         bottomConnectionZ,
-        "下横構 / Lower Lateral",
+        "下横構",
         BRACING_SYSTEM_LOWER_LATERAL,
       );
       lateralIndex += 1;
@@ -807,7 +807,7 @@ export function buildBridgeStructureSolidGeometryParameters(
       appendLateralPlane(
         model.lateralBracings[lateralIndex]?.lateralBracingId,
         topConnectionZ,
-        "上横構 / Upper Lateral",
+        "上横構",
         BRACING_SYSTEM_UPPER_LATERAL,
       );
     }

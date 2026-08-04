@@ -137,7 +137,7 @@ describe("apollo sway / upper / lower lateral bracing geometry", () => {
         expect(point[0]).toBeGreaterThanOrEqual(0 - EPSILON);
         expect(point[0]).toBeLessThanOrEqual(95 + EPSILON);
       }
-      expect(solid.displayLabel.includes("Lower Lateral") || solid.displayLabel.includes("下横構")).toBe(true);
+      expect(solid.displayLabel.includes("下横構")).toBe(true);
     }
   });
 
@@ -156,7 +156,7 @@ describe("apollo sway / upper / lower lateral bracing geometry", () => {
         expect(point[1]).toBeGreaterThanOrEqual(Math.min(...offsets) - EPSILON);
         expect(point[1]).toBeLessThanOrEqual(Math.max(...offsets) + EPSILON);
       }
-      expect(solid.displayLabel.includes("Upper Lateral") || solid.displayLabel.includes("上横構")).toBe(true);
+      expect(solid.displayLabel.includes("上横構")).toBe(true);
     }
   });
 
