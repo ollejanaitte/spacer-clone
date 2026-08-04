@@ -1,0 +1,80 @@
+term_id,internal_key,category,primary_ja,short_ja,description_ja,technical_en,context,allowed_variants,prohibited_variants,status,decision_id,notes
+WS-COMPLETE,COMPLETE,STATUS,完了,完了,工程または成果が完了している,COMPLETE,workflow status,完了済み,ブロック済み|古い|不合格,ADOPTED_UI_LABEL,DEC-JP1B-001,Prompt candidate
+WS-STALE,STALE,STATUS,要再計算,要再計算,入力変更により再計算・再生成が必要,STALE,workflow/provenance,要再生成,古い|期限切れ|無効,ADOPTED_UI_LABEL,DEC-JP1B-002,Align badges; 要再生成 allowed as variant for generation context
+WS-BLOCKED,BLOCKED,STATUS,先に必要な作業があります,前提未完了,前提工程が未完了のため進めない,BLOCKED,workflow status,前提未完了,ブロック済み|中断|拒否,ADOPTED_UI_LABEL,DEC-JP1B-003,Overrides current 中断
+WS-NOT_STARTED,NOT_STARTED,STATUS,未着手,未着手,まだ開始していない,NOT_STARTED,workflow status,,,ADOPTED_UI_LABEL,DEC-JP1B-004,
+WS-AVAILABLE,AVAILABLE,STATUS,操作可能,操作可,ユーザーが操作を開始できる,AVAILABLE,workflow status,開始可能,利用可能のみ|Available,ADOPTED_UI_LABEL,DEC-JP1B-005,Overrides 開始可能
+WS-RECOMMENDED,RECOMMENDED,STATUS,推奨,推奨,次に進める推奨工程,RECOMMENDED,workflow status,おすすめ,,ADOPTED_UI_LABEL,DEC-JP1B-006,
+WS-INCOMPLETE,INCOMPLETE,STATUS,入力不足,入力不足,必須入力が不足,INCOMPLETE,workflow status,入力途中|未完了,不完全,ADOPTED_UI_LABEL,DEC-JP1B-007,Overrides 入力途中
+WS-READY,READY,STATUS,準備完了,準備完了,実行・生成の準備ができている,READY,workflow status,実行可能,Readyのみ,ADOPTED_UI_LABEL,DEC-JP1B-008,Overrides 実行可能
+WS-WARNING,WARNING,STATUS,注意,注意,続行可能だが確認が必要,WARNING,workflow status,警告あり,警告のみ|Warning,ADOPTED_UI_LABEL,DEC-JP1B-009,
+WS-ERROR,ERROR,STATUS,エラー,エラー,進行を止める誤り,ERROR,workflow status,,,ADOPTED_UI_LABEL,DEC-JP1B-010,
+WS-NOT_AUTHORIZED,NOT_AUTHORIZED,STATUS,正式認可なし,認可なし,正式な構造・数値認可がない,NOT_AUTHORIZED,authorization/status,未認可,不合格|否認,ADOPTED_UI_LABEL,DEC-JP1B-011,Overrides 未認可 as primary
+WS-OUT_OF_SCOPE,OUT_OF_SCOPE,STATUS,対象外,対象外,本製品範囲外,OUT_OF_SCOPE,workflow status,範囲外,,ADOPTED_UI_LABEL,DEC-JP1B-012,
+WS-GENERATION_CURRENT,GENERATION_CURRENT,STATUS,生成結果は最新,最新,生成成果が現入力と一致,GENERATION_CURRENT,provenance,CURRENT,最新のみ曖昧,ADOPTED_UI_LABEL,DEC-JP1B-013,
+WS-INPUT_ONLY,INPUT_ONLY,STATUS,入力のみ（未生成）,入力のみ,入力はあるが成果未生成,INPUT_ONLY,provenance,,,ADOPTED_UI_LABEL,DEC-JP1B-014,
+WS-IMPLEMENTED,IMPLEMENTED,STATUS,実装済み,実装済,機能が利用可能,IMPLEMENTED,capability,,,ADOPTED_UI_LABEL,DEC-JP1B-015,
+WS-PLANNED,PLANNED,STATUS,計画中,計画中,将来実装・現在は選択不可寄り,PLANNED,capability,予定,,ADOPTED_UI_LABEL,DEC-JP1B-016,
+WS-UNAVAILABLE,UNAVAILABLE,STATUS,選択不可,不可,現在選択できない,UNAVAILABLE,capability,利用不可,,ADOPTED_UI_LABEL,DEC-JP1B-017,
+MB-MAIN_GIRDER,MAIN_GIRDER,MEMBER,主桁,主桁,橋軸方向の主たる鋼桁,main girder,member,,,ADOPTED_UI_LABEL,DEC-JP1B-020,
+MB-CROSS_BEAM,CROSS_BEAM,MEMBER,横桁,横桁,主桁間を結ぶ横桁。対傾構とは別,cross beam,member,Cross beam,対傾構|スウェイ,ADOPTED_UI_LABEL,DEC-JP1B-021,Never confuse with CROSS_FRAME
+MB-CROSS_FRAME,CROSS_FRAME,MEMBER,対傾構,対傾構,主桁間の対傾構（sway）。横桁とは別,cross frame / sway bracing,member,スウェイブレース,横桁|クロスビーム,ADOPTED_UI_LABEL,DEC-JP1B-022,EN Sway only in L3
+MB-UPPER_LATERAL,UPPER_LATERAL_BRACING,MEMBER,上横構,上横構,上フランジ側水平ブレース,upper lateral bracing,member,上フランジ水平ブレース,下横構,ADOPTED_UI_LABEL,DEC-JP1B-023,
+MB-LOWER_LATERAL,LOWER_LATERAL_BRACING,MEMBER,下横構,下横構,下フランジ側水平ブレース,lower lateral bracing,member,下フランジ水平ブレース,上横構,ADOPTED_UI_LABEL,DEC-JP1B-024,
+MB-RC_DECK,RC_DECK,MEMBER,RC床版,床版,鉄筋コンクリート床版,RC deck,member,床版,,ADOPTED_UI_LABEL,DEC-JP1B-025,RC acronym allowlisted
+MB-HAUNCH,HAUNCH,MEMBER,ハンチ,ハンチ,床版ハンチ,haunch,member,,,ADOPTED_UI_LABEL,DEC-JP1B-026,
+MB-CURB,CURB,MEMBER,地覆,地覆,地覆,curb,member,,,ADOPTED_UI_LABEL,DEC-JP1B-027,
+MB-WALL_RAILING,WALL_RAILING,MEMBER,壁高欄,壁高欄,壁高欄,wall railing,member,,,ADOPTED_UI_LABEL,DEC-JP1B-028,
+MB-MEDIAN,MEDIAN,MEMBER,中央分離帯,中央分離帯,中央分離帯,median,member,,,ADOPTED_UI_LABEL,DEC-JP1B-029,
+MB-OPTIONAL_BARRIER,OPTIONAL_BARRIER,MEMBER,任意防護柵,防護柵,任意の防護柵,optional barrier,member,,,ADOPTED_UI_LABEL,DEC-JP1B-030,
+MB-PAVEMENT,PAVEMENT,MEMBER,舗装,舗装,舗装,pavement,member,,,ADOPTED_UI_LABEL,DEC-JP1B-031,
+MB-ROAD_MARKING,ROAD_MARKING,MEMBER,区画線,区画線,区画線,road marking,member,,,ADOPTED_UI_LABEL,DEC-JP1B-032,
+MB-SUPPORT,SUPPORT,MEMBER,支承,支承,支承,support / bearing,member,,,ADOPTED_UI_LABEL,DEC-JP1B-033,
+MB-L_SECTION,L_SECTION,MEMBER,L形断面,L形,一体L形断面（対傾構等）,true L-section,member,アングル,,ADOPTED_UI_LABEL,DEC-JP1B-034,ER-002 related
+MB-LEFT_CURB,LEFT_CURB,MEMBER,左側地覆,左地覆,左側地覆スロット,LEFT_CURB,appurtenance slot,,LEFT_CURB raw in L1,ADOPTED_UI_LABEL,DEC-JP1B-035,Resolves UT-JP1A-0091
+MB-RIGHT_CURB,RIGHT_CURB,MEMBER,右側地覆,右地覆,右側地覆スロット,RIGHT_CURB,appurtenance slot,,,ADOPTED_UI_LABEL,DEC-JP1B-036,
+WFSTEP-WF-01,WF-01,WORKFLOW_STEP,道路線形,道路線形,LINER連携の道路線形（計画中）,WF-01,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0401,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-02,WF-02,WORKFLOW_STEP,橋梁基本条件,基本条件,橋梁構造の基本入力,WF-02,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0402,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-03,WF-03,WORKFLOW_STEP,床版・橋面付属物,床版付属物,床版・付属物入力,WF-03,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0403,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-04,WF-04,WORKFLOW_STEP,主桁断面,主桁断面,主桁断面入力,WF-04,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0404,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-05,WF-05,WORKFLOW_STEP,ハンチ,ハンチ,ハンチ入力,WF-05,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0405,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-06,WF-06,WORKFLOW_STEP,添接・フィラー,添接,添接・フィラー（計画中）,WF-06,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0406,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-07,WF-07,WORKFLOW_STEP,荷重,荷重,荷重確認,WF-07,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0407,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-08,WF-08,WORKFLOW_STEP,構造解析,解析,構造解析,WF-08,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0408,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-09,WF-09,WORKFLOW_STEP,候補照査,照査,候補照査,WF-09,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0409,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-10,WF-10,WORKFLOW_STEP,数量,数量,数量算出,WF-10,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0410,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-11,WF-11,WORKFLOW_STEP,3D確認,3D,3D可視化確認,WF-11,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0411,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-12,WF-12,WORKFLOW_STEP,計算書,計算書,計算書出力,WF-12,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0412,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-13,WF-13,WORKFLOW_STEP,図面,図面,図面出力,WF-13,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0413,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-14,WF-14,WORKFLOW_STEP,成果品出力,成果品,成果品一式出力,WF-14,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0414,L1 shows JA; ID in L3 or beside title
+WFSTEP-WF-15,WF-15,WORKFLOW_STEP,ユーザー確認,確認,人間による確認・承認相当操作,WF-15,workflow registry,,,ADOPTED_UI_LABEL,DEC-JP1B-0415,L1 shows JA; ID in L3 or beside title
+AZ-NOT_GRANTED,NOT_GRANTED,AUTHORIZATION,正式認可なし,認可なし,数値設計の正式認可は付与されていない,NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED,authorization banner,,不合格|否認|NG,ADOPTED_UI_LABEL,DEC-JP1B-060,
+AZ-PROHIBITED,PROHIBITED,AUTHORIZATION,設計・施工への使用禁止,使用禁止（設計・施工）,設計・施工目的での使用は禁止,DESIGN_OR_CONSTRUCTION_USE: PROHIBITED,authorization banner,使用禁止,使用不可のみ|利用できませんのみ,ADOPTED_UI_LABEL,DEC-JP1B-061,Must keep 設計・施工
+AZ-UNVERIFIED_DEV,UNVERIFIED_DEVELOPMENT_ONLY,AUTHORIZATION,開発確認用・未検証,開発用・未検証,開発確認専用で検証されていない,UNVERIFIED_DEVELOPMENT_ONLY,authorization,開発結果,本番利用可,ADOPTED_UI_LABEL,DEC-JP1B-062,
+AZ-PENDING_REVIEW,PENDING_HUMAN_ENGINEERING_REVIEW,AUTHORIZATION,技術者による確認待ち,技術者確認待ち,人間の技術レビュー待ち,PENDING_HUMAN_ENGINEERING_REVIEW,authorization,エンジニアリングレビュー待ち,,ADOPTED_UI_LABEL,DEC-JP1B-063,
+AZ-NOT_FOR_DESIGN,NOT_FOR_DESIGN_OR_CONSTRUCTION,AUTHORIZATION,設計・施工には使用しないでください,設計・施工不可,設計・施工に用いてはならない,NOT FOR DESIGN OR CONSTRUCTION,authorization banner,,,ADOPTED_UI_LABEL,DEC-JP1B-064,
+AZ-USER_REVIEW,USER_REVIEW_REQUIRED,AUTHORIZATION,利用者確認が必要,確認必要,利用者が内容を確認する必要がある,USER REVIEW REQUIRED,output,,,ADOPTED_UI_LABEL,DEC-JP1B-065,
+AZ-NOT_FOR_ESTIMATE,NOT_FOR_ESTIMATE,AUTHORIZATION,積算には使用しないでください,積算不可,積算目的での使用禁止,NOT FOR ESTIMATE,quantity,,,ADOPTED_UI_LABEL,DEC-JP1B-066,
+AZ-FORMAL_NO_GO,NO_GO_PENDING_HUMAN_VALIDATION,AUTHORIZATION,正式リリース未達（人的検証待ち）,リリース未達,正式リリース準備未完了,FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION,release posture,,リリース可能,TECHNICAL_ONLY,DEC-JP1B-067,Primarily L3 / docs
+AZ-STRUCT_NOT_AUTH,STRUCTURAL_ENGINEERING_CORRECTNESS,AUTHORIZATION,構造工学的正しさは未認可,構造正しさ未認可,構造としての正しさは認可されていない,STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED,authorization,,合格,ADOPTED_UI_LABEL,DEC-JP1B-068,
+CM-PRESENCE_PROVIDED,PROVIDED,PRESENCE,あり,あり,値が提供されている,PROVIDED,presence,有,,ADOPTED_UI_LABEL,DEC-JP1B-070,
+CM-PRESENCE_NOT_PROVIDED,NOT_PROVIDED,PRESENCE,未入力,未入力,まだ入力されていない,NOT_PROVIDED,presence,,,ADOPTED_UI_LABEL,DEC-JP1B-071,
+CM-PRESENCE_EXPLICIT_NONE,EXPLICIT_NONE,PRESENCE,なし,なし,明示的に無し,EXPLICIT_NONE,presence,無し,,ADOPTED_UI_LABEL,DEC-JP1B-072,
+CM-USER_PROVIDED_UNVERIFIED,USER_PROVIDED_UNVERIFIED,PRESENCE,利用者入力・未検証,入力・未検証,利用者が入力したが検証されていない,USER_PROVIDED_UNVERIFIED,unit weight status,,,ADOPTED_UI_LABEL,DEC-JP1B-073,
+CM-ADOPTED,ADOPTED,PRESENCE,採用済み,採用,サンプル等が採用された状態,ADOPTED,sample,,,ADOPTED_UI_LABEL,DEC-JP1B-074,
+BTN-APPLY_SAMPLE,Apply Sample,BUTTON,サンプルを適用,適用,サンプル入力を適用,Apply Sample,button,,,ADOPTED_UI_LABEL,DEC-JP1B-080,
+BTN-APPLY_GENERATE,Apply & Generate,BUTTON,サンプルを適用して3Dを生成,適用して生成,サンプル適用と3D生成,Apply & Generate,button,,,ADOPTED_UI_LABEL,DEC-JP1B-081,
+BTN-SAVE_NEXT,Save and Next,BUTTON,保存して次へ,次へ,保存して次工程へ,Save and Next,button,,,ADOPTED_UI_LABEL,DEC-JP1B-082,
+BTN-OPEN_DETAIL,Open Detail,BUTTON,詳細編集を開く,詳細,詳細パネルを開く,Open Detail,button,,,ADOPTED_UI_LABEL,DEC-JP1B-083,
+BTN-REGENERATE,Regenerate,BUTTON,再計算・再生成,再生成,再計算および再生成,Regenerate,button,再計算,,ADOPTED_UI_LABEL,DEC-JP1B-084,
+BTN-CREATE_NEW,Create New,BUTTON,新規プロジェクトとして開く,新規,新規として開く,Create New,reapply,,,ADOPTED_UI_LABEL,DEC-JP1B-085,
+BTN-REPLACE,Replace Current,BUTTON,現在の入力を置き換える,置き換え,現入力を置換,Replace Current,reapply,,,ADOPTED_UI_LABEL,DEC-JP1B-086,
+BTN-CANCEL,Cancel,BUTTON,キャンセル,キャンセル,操作を取り消す,Cancel,button,,,ADOPTED_UI_LABEL,DEC-JP1B-087,
+BTN-SHOW_TECH,Show Technical Details,BUTTON,技術情報を表示,技術情報,L3を展開,Show Technical Details,disclosure,,,ADOPTED_UI_LABEL,DEC-JP1B-088,
+BTN-EXPORT_STL,Export STL,BUTTON,STLを出力,STL出力,STLエクスポート,Export STL,export,,,ADOPTED_UI_LABEL,DEC-JP1B-089,STL allowlisted
+TECH-DIAG_CODE,diagnosticCode,TECHNICAL,（技術情報）診断コード,診断コード,内部診断コードは英語のまま,diagnostic code,L3,,日本語化しない,TECHNICAL_ONLY,DEC-JP1B-090,Never localize codes
+TECH-ENUM,internal enum,TECHNICAL,（技術情報）内部区分,内部区分,スキーマ/enumは英語のまま,enum/schema key,L3,,日本語キー化,TECHNICAL_ONLY,DEC-JP1B-091,
+TECH-CHECKSUM,checksum,TECHNICAL,（技術情報）チェックサム,checksum,整合性トークン,checksum,L3,,,TECHNICAL_ONLY,DEC-JP1B-092,
+DEF-VIEWER-FIT,viewer Fit,VIEWER,全体表示,全体,ビュー全体に合わせる,Fit,viewer chrome,Fit,,ADOPTED_UI_LABEL,DEC-JP1B-096,Resolves UT-JP1A-0096
+DEF-VIEWER-ISO,viewer iso,VIEWER,等角,等角,等角投影,iso,viewer chrome,,,ADOPTED_UI_LABEL,DEC-JP1B-097,
+DEF-VIEWER-XY,viewer xy,VIEWER,平面,平面,XY平面表示,xy,viewer chrome,,,ADOPTED_UI_LABEL,DEC-JP1B-098,

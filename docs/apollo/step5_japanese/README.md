@@ -29,4 +29,12 @@
 | [screen_inventory.csv](./screen_inventory.csv) | JP1-A |
 | [technical_only_allowlist.csv](./technical_only_allowlist.csv) | JP1-A |
 | [unresolved_terms.csv](./unresolved_terms.csv) | JP1-A |
+| [02_japanese_ui_principles.md](./02_japanese_ui_principles.md) | JP1-B |
+| [apollo_japanese_glossary.csv](./apollo_japanese_glossary.csv) | JP1-B |
+| [workflow_status_glossary.csv](./workflow_status_glossary.csv) | JP1-B |
+| [structural_member_glossary.csv](./structural_member_glossary.csv) | JP1-B |
+| [workflow_step_glossary.csv](./workflow_step_glossary.csv) | JP1-B |
+| [authorization_glossary.csv](./authorization_glossary.csv) | JP1-B |
+| [prohibited_translation.csv](./prohibited_translation.csv) | JP1-B |
+| [terminology_decision_register.csv](./terminology_decision_register.csv) | JP1-B |
 | [evidence_index.md](./evidence_index.md) | JP1-A+ |

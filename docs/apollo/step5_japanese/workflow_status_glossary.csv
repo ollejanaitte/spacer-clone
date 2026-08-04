@@ -1,0 +1,18 @@
+term_id,internal_key,category,primary_ja,short_ja,description_ja,technical_en,context,allowed_variants,prohibited_variants,status,decision_id,notes
+WS-COMPLETE,COMPLETE,STATUS,完了,完了,工程または成果が完了している,COMPLETE,workflow status,完了済み,ブロック済み|古い|不合格,ADOPTED_UI_LABEL,DEC-JP1B-001,Prompt candidate
+WS-STALE,STALE,STATUS,要再計算,要再計算,入力変更により再計算・再生成が必要,STALE,workflow/provenance,要再生成,古い|期限切れ|無効,ADOPTED_UI_LABEL,DEC-JP1B-002,Align badges; 要再生成 allowed as variant for generation context
+WS-BLOCKED,BLOCKED,STATUS,先に必要な作業があります,前提未完了,前提工程が未完了のため進めない,BLOCKED,workflow status,前提未完了,ブロック済み|中断|拒否,ADOPTED_UI_LABEL,DEC-JP1B-003,Overrides current 中断
+WS-NOT_STARTED,NOT_STARTED,STATUS,未着手,未着手,まだ開始していない,NOT_STARTED,workflow status,,,ADOPTED_UI_LABEL,DEC-JP1B-004,
+WS-AVAILABLE,AVAILABLE,STATUS,操作可能,操作可,ユーザーが操作を開始できる,AVAILABLE,workflow status,開始可能,利用可能のみ|Available,ADOPTED_UI_LABEL,DEC-JP1B-005,Overrides 開始可能
+WS-RECOMMENDED,RECOMMENDED,STATUS,推奨,推奨,次に進める推奨工程,RECOMMENDED,workflow status,おすすめ,,ADOPTED_UI_LABEL,DEC-JP1B-006,
+WS-INCOMPLETE,INCOMPLETE,STATUS,入力不足,入力不足,必須入力が不足,INCOMPLETE,workflow status,入力途中|未完了,不完全,ADOPTED_UI_LABEL,DEC-JP1B-007,Overrides 入力途中
+WS-READY,READY,STATUS,準備完了,準備完了,実行・生成の準備ができている,READY,workflow status,実行可能,Readyのみ,ADOPTED_UI_LABEL,DEC-JP1B-008,Overrides 実行可能
+WS-WARNING,WARNING,STATUS,注意,注意,続行可能だが確認が必要,WARNING,workflow status,警告あり,警告のみ|Warning,ADOPTED_UI_LABEL,DEC-JP1B-009,
+WS-ERROR,ERROR,STATUS,エラー,エラー,進行を止める誤り,ERROR,workflow status,,,ADOPTED_UI_LABEL,DEC-JP1B-010,
+WS-NOT_AUTHORIZED,NOT_AUTHORIZED,STATUS,正式認可なし,認可なし,正式な構造・数値認可がない,NOT_AUTHORIZED,authorization/status,未認可,不合格|否認,ADOPTED_UI_LABEL,DEC-JP1B-011,Overrides 未認可 as primary
+WS-OUT_OF_SCOPE,OUT_OF_SCOPE,STATUS,対象外,対象外,本製品範囲外,OUT_OF_SCOPE,workflow status,範囲外,,ADOPTED_UI_LABEL,DEC-JP1B-012,
+WS-GENERATION_CURRENT,GENERATION_CURRENT,STATUS,生成結果は最新,最新,生成成果が現入力と一致,GENERATION_CURRENT,provenance,CURRENT,最新のみ曖昧,ADOPTED_UI_LABEL,DEC-JP1B-013,
+WS-INPUT_ONLY,INPUT_ONLY,STATUS,入力のみ（未生成）,入力のみ,入力はあるが成果未生成,INPUT_ONLY,provenance,,,ADOPTED_UI_LABEL,DEC-JP1B-014,
+WS-IMPLEMENTED,IMPLEMENTED,STATUS,実装済み,実装済,機能が利用可能,IMPLEMENTED,capability,,,ADOPTED_UI_LABEL,DEC-JP1B-015,
+WS-PLANNED,PLANNED,STATUS,計画中,計画中,将来実装・現在は選択不可寄り,PLANNED,capability,予定,,ADOPTED_UI_LABEL,DEC-JP1B-016,
+WS-UNAVAILABLE,UNAVAILABLE,STATUS,選択不可,不可,現在選択できない,UNAVAILABLE,capability,利用不可,,ADOPTED_UI_LABEL,DEC-JP1B-017,

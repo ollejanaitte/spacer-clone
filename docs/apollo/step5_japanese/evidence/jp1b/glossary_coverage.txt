@@ -1,0 +1,15 @@
+JP1-B glossary coverage @ 2026-08-04T12:46:16+09:00
+main_base: ccde639b2761994c4a2bbeaffc44faac1b041a7e
+master_terms: 79
+status_terms: 17
+member_terms: 17
+workflow_steps: 15
+authorization_terms: 9
+other_terms: 21
+prohibited_rules: 12
+decisions: 13
+unresolved_from_JP1A: all 7 addressed via DEC-JP1B-002/003/011/035/096
+status_enum_WF: COMPLETE,STALE,BLOCKED,NOT_STARTED,AVAILABLE,RECOMMENDED,INCOMPLETE,READY,WARNING,ERROR,NOT_AUTHORIZED,OUT_OF_SCOPE covered
+members: MAIN_GIRDER,CROSS_BEAM,CROSS_FRAME,UPPER/LOWER_LATERAL,RC_DECK,HAUNCH,CURB,WALL_RAILING,MEDIAN,OPTIONAL_BARRIER,PAVEMENT,ROAD_MARKING,SUPPORT covered
+WF-01..WF-15: covered
+APPLICATION_CODE_CHANGED: NO
