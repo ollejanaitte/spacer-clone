@@ -1,0 +1,70 @@
+Step,ID,Criteria,Type,Verification
+UI-1,T-001,Header groups visually separated (mode / file+status / nav / help),Unit,Vitest snapshots
+UI-1,T-002,Mode toggle switches between Guided and List Edit,Unit,click handler test
+UI-1,T-003,Save status badge shows correct state (saved/unsaved/never),Unit,prop-driven render test
+UI-1,T-004,Save status badge is not clickable,Unit,no onClick handler test
+UI-1,T-005,Authorization compact mode shows single-line token badge,Unit,render test
+UI-1,T-006,Authorization expands to full description on click,Unit,click toggle test
+UI-1,T-007,Authorization auto-expands on output/analysis screens,Unit,mode prop test
+UI-1,T-008,Authorization collapses after 10s on non-output screens,Unit,timer test
+UI-1,T-009,Formal authorization token values unchanged,Integration,source scan + runtime check
+UI-1,T-010,Canonical data / schema / checksum unchanged,Integration,git diff allowlist check
+UI-2,T-011,Guided progress bar shows 6 high-level phases,Unit,render test
+UI-2,T-012,Detailed step strip shows G01-G15 filtered by current phase,Unit,phase filter test
+UI-2,T-013,Each Gxx step shows number + label + status icon + text,Unit,render per state
+UI-2,T-014,Status not conveyed by color alone (check text + icon + shape),Unit,state prop rendering
+UI-2,T-015,Sticky footer sticks to bottom of viewport,Unit/CSS,position check + scroll test
+UI-2,T-016,Back and Save-and-Next buttons navigate correctly,Unit/E2E,navigation handler test
+UI-2,T-017,Final step (G15) shows "保存して完了" instead of "保存して次へ",Unit,conditional label test
+UI-2,T-018,Validation error banner appears above sticky footer,Unit/E2E,error state render
+UI-2,T-019,Direct jump to any Gxx step via "全工程を表示",Unit/E2E,direct navigation test
+UI-2,T-020,All 15 G steps reachable (G01-G15),E2E,playwright navigation
+UI-3,T-021,Desktop: 2-pane layout with input left and viewer right,Integration,viewport test 1024px+
+UI-3,T-022,Input pane 30-40% width, viewer pane 60-70% width,Unit/CSS,computed style check
+UI-3,T-023,Viewer pane height = viewport minus header/footer,Unit/CSS,computed height check
+UI-3,T-024,Viewer renders 3D model after input change,Integration,model update trigger
+UI-3,T-025,Node count shown as supplementary info,Unit,render check
+UI-3,T-026,GPU/WebGL details in TechnicalDetails only,Integration,component check
+UI-3,T-027,Model selection and visibility controls work,Integration,click/interaction test
+UI-3,T-028,STL export produces same canonical projection as viewer,Integration,checksum parity
+UI-3,T-029,Save/reload preserves viewer state,Integration,save-load cycle
+UI-3,T-030,STALE/checksum unchanged after viewer-only operations,Integration,checksum before/after
+UI-4,T-031,Master list shows all WF-01 to WF-15,Unit,render count test
+UI-4,T-032,Each row shows WF code + label + status badge,Unit,row content test
+UI-4,T-033,Recommended step auto-selected on initial load,Unit,recommended selector test
+UI-4,T-034,Clicking row opens detail for that step,Unit/E2E,detail panel test
+UI-4,T-035,Detail shows: state, conditions, diagnostics, CTA,Unit,detail content test
+UI-4,T-036,Detailed diagnostics section is collapsible,Unit,toggle test
+UI-4,T-037,Prev/Next navigation moves through steps,Unit/E2E,navigation test
+UI-4,T-038,Direct step selection from master list always works,Unit/E2E,direct selection test
+UI-4,T-039,No vertical mega-list (15 large cards stacked),Visual,screenshot audit
+UI-4,T-040,WorkflowStateModel unchanged,Integration,git diff denylist check
+UI-5,T-041,Desktop layout renders correctly (≥1024px),Visual,viewport screenshot
+UI-5,T-042,Tablet layout stacks input above viewer (600-1023px),Visual,viewport screenshot
+UI-5,T-043,Mobile layout shows tab bar for input/viewer (<600px),Visual,viewport screenshot
+UI-5,T-044,Mobile sticky footer stacks buttons vertically,Visual,viewport screenshot
+UI-5,T-045,Header wraps on tablet/mobile without overflow,Visual,viewport screenshot
+UI-5,T-046,Workflow navigator adapts to mobile (list→detail drill),Visual,viewport screenshot
+UI-5,T-047,No horizontal scroll at 320px,375px,768px,Visual,viewport check
+UI-5,T-048,Focus visibility maintained on all interactive elements,Accessibility,keyboard tab test
+UI-5,T-049,aria-current / aria-selected used on active items,Accessibility,aria attribute check
+UI-5,T-050,Landmark regions present (banner, main, navigation, contentinfo),Accessibility,axe or manual
+UI-6,T-051,All Apollo Vitest pass,Regression,npm run test
+UI-6,T-052,Typecheck passes,Regression,npm run typecheck
+UI-6,T-053,Lint passes,Regression,npm run lint
+UI-6,T-054,Production build succeeds,Regression,npm run build
+UI-6,T-055,Step 4-A Workflow E2E passes,Regression,playwright test
+UI-6,T-056,Step 4-B appurtenance/haunch E2E passes,Regression,playwright test
+UI-6,T-057,Step 5 Guided/sample/reapply/3D E2E passes,Regression,playwright test
+UI-6,T-058,Residual English L1 count = 0,Regression,source scan
+UI-6,T-059,Desktop/tablet/mobile screenshots captured,Evidence,screenshot directory
+UI-6,T-060,Save/reload cycle passes,Integration,save-load-test
+UI-6,T-061,Canonical data before/after identical,Integration,checksum comparison
+UI-6,T-062,Schema unchanged,Integration,git diff denylist
+UI-6,T-063,Checksum/STALE mechanism unchanged,Integration,logic review
+UI-6,T-064,Viewer and STL same source,Integration,data path trace
+UI-6,T-065,Formal authorization unchanged,Integration,source scan
+UI-6,T-066,No console errors on all pages,Regression,playwright console check
+UI-6,T-067,Keyboard navigation works for all primary flows,Accessibility,keyboard-only E2E
+UI-6,T-068,NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED unchanged,Guard,source scan
+UI-6,T-069,DESIGN_OR_CONSTRUCTION_USE: PROHIBITED unchanged,Guard,source scan

@@ -920,3 +920,41 @@ NOTES:
 - Single closeout stamps P0-D merge SHA; no further seal PR intended
 - UI implementation begins at Step 6-UI-1 on a new branch from latest main
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-1D
+================================================================================
+更新日時: 2026-08-05T00:50:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_1D
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: 948b34dd55a96ff9d50c093d791a02fd784eaa8e
+
+DOCUMENTS_CREATED:
+  docs/apollo/step6_ui_redesign/implementation/00_readme.md
+  docs/apollo/step6_ui_redesign/implementation/01_user_image_requirement_trace.md
+  docs/apollo/step6_ui_redesign/implementation/02_header_and_action_design.md
+  docs/apollo/step6_ui_redesign/implementation/03_guided_progress_and_footer_design.md
+  docs/apollo/step6_ui_redesign/implementation/04_viewer_workspace_design.md
+  docs/apollo/step6_ui_redesign/implementation/05_workflow_master_detail_design.md
+  docs/apollo/step6_ui_redesign/implementation/06_responsive_behavior_matrix.md
+  docs/apollo/step6_ui_redesign/implementation/07_component_and_file_plan.md
+  docs/apollo/step6_ui_redesign/implementation/08_test_and_acceptance_matrix.csv
+  docs/apollo/step6_ui_redesign/implementation/09_implementation_gate.md
+
+USER_REQUIREMENT_TRACE_VERDICT: PASS (12 delta requirements traced)
+HEADER_DESIGN_VERDICT: PASS (mode/file/nav/help separation, compact auth, save status badge)
+GUIDED_DESIGN_VERDICT: PASS (6-phase bar + G01-G15 strip, sticky footer, validation banner)
+VIEWER_LAYOUT_DESIGN_VERDICT: PASS (desktop 2-pane, tablet stack, mobile tabs)
+WORKFLOW_DESIGN_VERDICT: PASS (master-detail navigator + detail card)
+RESPONSIVE_DESIGN_VERDICT: PASS (desktop/tablet/mobile matrix defined)
+OPEN_QUESTION_COUNT: 0
+STEP_6_UI_1_START_READINESS: GO
+
+FORMAL_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+
+NEXT_ACTION: Merge UI-1D PR to main, sync, begin UI-1 on new branch.
+================================================================================
+END APOLLO STEP 6-UI-1D
+================================================================================
