@@ -818,9 +818,9 @@ STEP_ID: APOLLO_STEP_6_UI_P0_B
 DOCUMENTATION_ONLY: YES
 APPLICATION_CODE_CHANGED: NO
 BASE_MAIN_SHA: ed14922aa9f1745df1ccd44d58f847d4d1574047
-PRIMARY_PR: PENDING
-PRIMARY_PR_STATE: PENDING
-PRIMARY_PR_MERGE_SHA: PENDING
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/381
+PRIMARY_PR_STATE: MERGED
+PRIMARY_PR_MERGE_SHA: ee045b353ade480a9d2a857c7f48215973274273
 REQUIREMENT_COUNT: 14
 IN_SCOPE_COUNT: 14
 OUT_OF_SCOPE_COUNT: 11
@@ -834,4 +834,31 @@ NOTES:
 - Converted user complaints 1-8 into UR-01..UR-14 with acceptance criteria
 - Mode responsibility matrix covers Guided / list / Workflow / Viewer / tech / file / auth
 - Authorization display may compact; token values remain NOT_GRANTED / PROHIBITED
+================================================================================
+
+================================================================================
+Apollo Step 6-UI-P0-C — Edit Scope and Regression Risk Map
+================================================================================
+更新日時: 2026-08-05T00:42:25+09:00
+STEP_ID: APOLLO_STEP_6_UI_P0_C
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: ee045b353ade480a9d2a857c7f48215973274273
+PRIMARY_PR: PENDING
+PRIMARY_PR_STATE: PENDING
+PRIMARY_PR_MERGE_SHA: PENDING
+DIRECT_EDIT_CANDIDATE_COUNT: 20
+CONDITIONAL_EDIT_CANDIDATE_COUNT: 15
+PROTECTED_FILE_GROUP_COUNT: 8
+HIGH_RISK_ITEM_COUNT: 8
+SCHEMA_CHANGE_REQUIRED: NO
+CANONICAL_DATA_CHANGE_REQUIRED: NO
+WORKFLOW_LOGIC_CHANGE_REQUIRED: NO
+FORMAL_AUTHORIZATION: NOT_GRANTED
+P0_C_VERDICT: COMPLETE
+P0_D_START_READINESS: GO
+EVIDENCE_ROOT: docs/apollo/step6_ui_redesign/p0_c/
+NOTES:
+- Classifications based on import graph + call sites on main
+- Allowlist is upper-bound only; each UI PR needs a narrower allowlist
 ================================================================================
