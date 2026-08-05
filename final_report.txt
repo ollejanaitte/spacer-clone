@@ -1605,7 +1605,7 @@ H-01_STATUS: RESOLVED/ADOPTED (phase1ScopeGuard AP-00 classifier test-only; Brid
 H-02_STATUS: RESOLVED/ADOPTED (sidecar default-fill shim != AP-02 lifecycle framework; AP-02 stays Rejected)
 H-03_STATUS: RESOLVED/ADOPTED (continuous design drawings stay PROHIBITED; Report Model emits non-numeric geometry/STL only)
 U-03_STATUS: VERDICT=B (absorbable in Phase 3 spec); Phase 2.5-F=NOT_APPLICABLE (spanLength consumed by gate but unused in computeGirderSectionProperties; refactor deferred to Phase 3 impl under DEC-PHA-0004)
-CH_CP_CANON_STATUS: IN_PROGRESS
+CH_CP_CANON_STATUS: RECONFIRMED (CP-* canonical report IDs; CH-* dev scaffold; mappings fixed)
 PROHIBITED_RECONFIRM_STATUS: IN_PROGRESS
 DECISION_REGISTER_STATUS: PENDING
 
@@ -1619,8 +1619,8 @@ SUBSTEP_STATUS:
   D_h03_architect_decision: COMPLETE (RESOLVED/ADOPTED)
   E_u03_investigation: COMPLETE (VERDICT=B)
   F_u03_minimal_code_change: NOT_APPLICABLE (no code change)
-  G_ch_cp_canonicalization: IN_PROGRESS
-  H_prohibited_reconfirmation: PENDING
+  G_ch_cp_canonicalization: COMPLETE
+  H_prohibited_reconfirmation: IN_PROGRESS
   I_decision_register: PENDING
   J_phase3_entry_gate: PENDING
   K_phase3_handoff: PENDING
