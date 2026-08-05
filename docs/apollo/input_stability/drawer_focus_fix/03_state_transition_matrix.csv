@@ -1,0 +1,13 @@
+case_id,previous_open,next_open,parent_rerender,onClose_identity_changed,active_element,expected_autofocus,expected_restore,expected_active_element,onClose_calls,notes
+C01,false,true,no,no,trigger_button,yes,no,first_input,0,normal open
+C02,true,true,no,no,first_input,no,no,first_input,0,same props
+C03,true,true,yes,yes,first_input,no,no,first_input,0,PR #413 root cause
+C04,true,true,yes,no,first_input,no,no,first_input,0,Enter commit simulation
+C05,true,true,yes,no,first_input,no,no,first_input,0,isDirty update
+C06,true,false,no,no,first_input,no,yes,trigger_button,1,Escape
+C07,true,false,no,no,first_input,no,yes,trigger_button,1,close button
+C08,true,false,no,no,first_input,no,yes,trigger_button,1,done button
+C09,true,false,no,no,first_input,no,yes,trigger_button,1,backdrop click
+C10,true,unmount,no,no,first_input,no,yes,trigger_button,0,unmount while open
+C11,false,false,no,no,none,no,no,none,0,stays closed
+C12,true,unmount,no,no,trigger_missing,no,no,no_exception,0,trigger removed from DOM
