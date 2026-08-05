@@ -1,0 +1,38 @@
+ID,Category,Finding,Evidence_Code,Evidence_Test,Evidence_Doc,Phase1_Status,STEP9_Phase
+E-01,input,Enum BridgeSystem SIMPLE_SINGLE/CONTINUOUS/SIMPLE_MULTIPLE and CONTINUOUS span bounds 2-5,contracts/layoutTypes.ts:3-12,,,CONFIRMED,Phase 1
+E-02,input,ApolloBridgeStructureInputDraft holds bridgeSystem/spans/supports/bridgeLength/spanLength,bridgeStructure/types.ts:76-121,,,CONFIRMED,Phase 1
+E-03,validation,CONTINUOUS layout 2-5 spans / cumulative stations / abutment-pier roles,contracts/layoutValidation.ts:234-251,continuousGirderLayout.test.ts:71-86+134-142,,CONFIRMED,Phase 1
+E-04,validation,resolveSpanCount derives span count from bridgeLength/spanLength,bridgeStructure/validation.ts:71-78,,,CONFIRMED,Phase 1
+E-05,bsd3,generateBridgeStructureFromInput produces BSDD spanSystem=continuous and pier support role,bridgeStructure/generateBsdd.ts:467+116-124,continuousGirderLayout.test.ts:144-163+continuousGirderSample.test.ts:24-36,,CONFIRMED,Phase 1
+E-06,bsd3,BSDD entities designStatus=NOT_AUTHORIZED,generateBsdd sdm entities,continuousGirderSample.test.ts:33-35,,CONFIRMED,Phase 1
+E-07,stale,STALE gate isBridgeStructureGenerationCurrent(generatedAt+apolloBsdd),bridgeStructure/generateBsdd.ts:558-561,continuousGirderVisualization.test.ts:87-95+importExport.test.ts:138-156,,CONFIRMED,Phase 1
+E-08,visualization,Continuous 3D solids girder segments contiguous at intermediate supports,visualization/bridgeStructureSolids.ts:260+619,continuousGirderVisualization.test.ts:35-85,,CONFIRMED,Phase 1
+E-09,stl,Binary STL export mm conversion/axis/origin/digest,export/apolloStlExport.ts,apolloStlExport.test.ts:25-98,,CONFIRMED,Phase 1
+E-10,persist,Save-reload round-trips apolloBridgeStructureInput+apolloBsdd sidecars,importExport.ts,importExport.test.ts:89-156,importExport.test.ts:89-156,CONFIRMED,Phase 1
+E-11,report,ReportModel reads bridgeSystem ONLY into CH-DESIGN-COND,report/reportModel.ts:175,reportModel.test.ts,,CONFIRMED,Phase 1
+E-12,report,CH-SECTION gated on spanLength not null so CONTINUOUS yields NOT_AVAILABLE,report/reportModel.ts:119-148+206-216,reportModel.test.ts,,CONFIRMED_GAP,Phase 6
+E-13,report,CH-REACTIONS/SHEAR/MOMENT/DEFLECTION code-literal null NOT_AVAILABLE analysis not bound,report/reportModel.ts:238+243+248+253,reportModel.test.ts:42-49,,CONFIRMED_GAP,Phase 6
+E-14,report,reportModelToCalculationCsv emits NOT_AVAILABLE placeholder only no zero-fill,report/reportModel.ts:354-372,reportModel.test.ts:42-49,,CONFIRMED,Phase 1
+E-15,report,renderReportModelHtml watermark DEVELOPMENT NOT_GRANTED,report/reportModel.ts:71-73+391,reportModel.test.ts:28-40,,CONFIRMED,Phase 1
+E-16,report,assertFormalReportRejected formal PDF rejected,report/reportExport.ts:66-69,reportModel.test.ts:51-58,,CONFIRMED_GAP,Phase 6
+E-17,output,buildIntegratedOutputs consistency checksum/schedule/drawing>=7,output/outputIntegration.ts:61-129,outputIntegration.test.ts:22-51,,CONFIRMED_GAP,Phase 6
+E-18,output,statuses.formalReport hardcoded NOT_AUTHORIZED,output/outputIntegration.ts:128,outputIntegration.test.ts:23-43,,CONFIRMED,Phase 1
+E-19,output,artifactBundle manifest unsupportedScope includes continuous design drawings,drawing/artifactBundle.ts:157-178+216-241,,05_current_output_capability.md OUT-02,CONFIRMED_GAP,Phase 6
+E-20,quantity,quantityModel tested SIMPLE_SINGLE only GOLD-QTY-001/002 both simple_span,quantity/quantityModel.ts,quantityModel.test.ts:26+46,,CONFIRMED_GAP,Phase 6
+E-21,quantity,approx quantities computeBridgeStructureApproximateQuantities covered for CONTINUOUS,bridgeStructure/quantities.ts,bridgeStructureQuantities.test.ts:29-54,,CONFIRMED,Phase 1
+E-22,analysis,Continuous bridge analysis idealizes bridgeLength as single simple-span no continuous FEM,analysis/appurtenanceHaunchAnalysisAdapter.ts:385,,,CONFIRMED_GAP,Phase 5
+E-23,analysis,Backend FEM generator is mesh only linear_static not bound to BridgeSystem.CONTINUOUS,engine/bridge_fem_generator.ts,test_bridge_fem_generator.py,09_phase2_recommendation.md,NOT_BRIDGE_SYSTEM_CONTINUOUS,Phase 5
+E-24,analysis,Backend reports.py exports linear result CSV/JSON IF3 gate only analysisType linear_static,app/reports.py:96,test_reports_if3_gate.py,08_numeric_authorization_gate.md,LINEAR_ONLY,Phase 6
+E-25,numeric,ADOPTED fails fail-closed under default NOT_SELECTED numeric authority,numericAuthorityGuard.ts:46-58,numericAuthorityGuard.test.ts:61-69+adoption.test.ts:53-64,,CONFIRMED,Phase 6+
+E-26,numeric,Unit weight adoptionStatus PENDING/UNKNOWN ADOPTED only via SELECTED context test-only,bridgeStructure/adoption.ts:70-143,adoption.test.ts:28-122,08_numeric_authorization_gate.md,CONFIRMED,Phase 6+
+E-27,numeric,Unit weight ADOPTED UI action wired fail-closed at BridgeStructureInputPanel.tsx:256,components/BridgeStructureInputPanel.tsx:256,adoption.test.ts:53-64,,CONFIRMED,Phase 6+
+E-28,gate,DS-09 gate NR-01..05 BLOCKED NR-06/07 PASS,08_numeric_authorization_gate.md:19-29,,08_numeric_authorization_boundary.md,CONFIRMED,Phase 6+
+E-29,gate,All member/inspection cells NOT_AUTHORIZED DS-09,08_numeric_authorization_gate.md:46-55,,08_numeric_authorization_boundary.md,CONFIRMED,Phase 6+
+E-30,scope,phase1ScopeGuard guards legacy Phase1SpanSystem.CONTINUOUS not BridgeSystem.CONTINUOUS runtime unused,phase1ScopeGuard.ts:60+89,phase1ScopeGuard.test.ts:67-71,continuous_girder/README.md:7,CONFLICTING_EVIDENCE,HUMAN_CONFIRMATION_REQUIRED
+E-31,scope,generateBsdd has 1.0.0-1.5.0 migration but ap01_final_report.md:4 declares AP-02 Rejected,generateBsdd.ts:548,importExport.test.ts:111-126,ap01_final_report.md:4,CONFLICTING_EVIDENCE,HUMAN_CONFIRMATION_REQUIRED
+E-32,test,Continuous geometric layer fully tested,multiple,continuousGirderLayout/Sample/Visualization.test.ts+bridgeStructureVisualization.test.ts+bridgeStructureWorkflow.test.ts+bridgeStructureQuantities.test.ts+importExport.test.ts+apolloStlExport.test.ts+adoption.test.ts,04_existing_test_inventory.md,CONFIRMED,Phase 1
+E-33,test,ReportModel/outputIntegration/formal quantityModel tested SIMPLE_SINGLE only,bridgeStructure/reportModel.ts+output/outputIntegration.ts+quantity/quantityModel.ts,reportModel.test.ts:20+outputIntegration.test.ts:15+quantityModel.test.ts:26+46,04_existing_test_inventory.md,CONFIRMED_GAP,Phase 6
+E-34,test,appurtenanceHaunchAnalysisAdapter continuous idealization branch NOT tested,analysis/appurtenanceHaunchAnalysisAdapter.ts:385,(no test references the adapter),,CONFIRMED_GAP,Phase 5
+E-35,test,Backend tests target linear FEM/IF3 not continuous calc report,backend/tests/test_reports_if3_gate.py+test_bridge_fem_generator.py+test_bridge_*.py+test_if3_*.py+test_*_analysis.py,test_reports_if3_gate.py+test_bridge_fem_generator.ts,,CONFIRMED,LINEAR/IF3_ONLY
+E-36,preflight,Repository baseline commit cec0ab3 local==origin/main clean tree,git rev-parse cec0ab3,git status,01_repository_baseline.md,CONFIRMED,Phase 1
+E-37,preflight,Phase 1 HEAD after commits 4e6e8d3/825e942/f77a641/34fcf9e/c57a68a/db93462/8a2947e local==origin/main clean,git rev-parse @+@{u},git status,01_repository_baseline.md,CONFIRMED,Phase 1
