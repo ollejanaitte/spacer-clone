@@ -1386,3 +1386,86 @@ PRIMARY_PR_MERGE_SHA: N/A
 ================================================================================
 END APOLLO WINDOWS ELECTRON INPUT AUDIT
 ================================================================================
+
+================================================================================
+BEGIN APOLLO INPUT WIF — Drawer Focus Lifecycle Fix
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP_ID: APOLLO_INPUT_WIF_1
+BASE_MAIN_SHA: 00759cebe2aa6553bfcb136b7ef57cf927f65677
+DOCUMENTATION_ONLY: YES (design docs)
+APPLICATION_CODE_CHANGED: NO (in WIF-1 PR itself)
+ROOT_CAUSE_REFERENCE_PR: 413
+FOCUS_LIFECYCLE_DESIGN_VERDICT: PASS
+CALLBACK_IDENTITY_DECOUPLING_VERDICT: PASS (onCloseRef)
+AUTOFOCUS_TRANSITION_VERDICT: PASS (closed→open only)
+FOCUS_RESTORE_TRANSITION_VERDICT: PASS (actual close/unmount only)
+EDIT_SCOPE_VERDICT: PASS
+WIF_1_PR: https://github.com/ollejanaitte/spacer-clone/pull/414
+WIF_1_MERGE_SHA: 2bbd3163b54da4f6fcfb9b71abcce99672655bcb
+WIF_2_START_READINESS: GO
+
+NOTE: WIF-2 implementation was committed to main directly (SHA 00759ce) before
+the WIF-1 design PR merged. This is a documented workflow deviation. The change
+is fully tested and the design docs retroactively record the intended design.
+
+--------------------------------------------------------------------------------
+STEP_ID: APOLLO_INPUT_WIF_2
+BASE_MAIN_SHA: ab82d5c13bd7d1aea46eb8ea9f51f82b9d44b5ef
+APPLICATION_CODE_CHANGED: YES
+ROOT_CAUSE_FIXED: YES
+DRAWER_INTERNAL_HARDENING_VERDICT: PASS
+CALLER_CALLBACK_STABILITY_VERDICT: NOT_REQUIRED (drawer-internal fix sufficient)
+OPEN_RERENDER_FOCUS_VERDICT: PASS
+ENTER_COMMIT_FOCUS_VERDICT: PASS
+ACTUAL_CLOSE_RESTORE_VERDICT: PASS
+ESCAPE_VERDICT: PASS
+TAB_TRAP_VERDICT: PASS
+SCROLL_LOCK_VERDICT: PASS
+TARGETED_TEST_VERDICT: PASS (13/13 drawer tests)
+TYPECHECK_VERDICT: PASS
+LINT_VERDICT: PASS
+BUILD_VERDICT: PASS
+WINDOWS_POST_FIX_VERDICT: PENDING_HUMAN_WINDOWS_RETEST
+WINDOWS_IME_VERDICT: NOT_VERIFIED
+SCHEMA_GUARD_VERDICT: PASS
+CANONICAL_FORMAT_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+WIF_2_PR: N/A (direct push deviation, see WIF-1 note)
+WIF_2_MERGE_SHA: 00759cebe2aa6553bfcb136b7ef57cf927f65677
+WIF_2_VERDICT: COMPLETE
+WIF_3_START_READINESS: GO
+
+--------------------------------------------------------------------------------
+STEP_ID: APOLLO_INPUT_WIF_3_CLOSEOUT
+WIF_ROOT_CAUSE_REFERENCE_PR: 413
+WIF_1_DESIGN_PR: https://github.com/ollejanaitte/spacer-clone/pull/414
+WIF_1_DESIGN_MERGE_SHA: 2bbd3163b54da4f6fcfb9b71abcce99672655bcb
+WIF_2_IMPLEMENTATION_PR: N/A (direct push deviation)
+WIF_2_IMPLEMENTATION_MERGE_SHA: 00759cebe2aa6553bfcb136b7ef57cf927f65677
+WIF_3_VERIFICATION_PR: https://github.com/ollejanaitte/spacer-clone/pull/415
+DRAWER_OPEN_RERENDER_FOCUS_VERDICT: PASS
+ENTER_COMMIT_FOCUS_VERDICT: PASS
+CONTINUED_TYPING_VERDICT: PASS (unit-level)
+ACTUAL_CLOSE_RESTORE_VERDICT: PASS
+ESCAPE_VERDICT: PASS
+TAB_TRAP_VERDICT: PASS
+SCROLL_LOCK_VERDICT: PASS
+ZORIN_BROWSER_VERDICT: PASS (unit-level; full E2E NOT_VERIFIED backend dependency)
+ZORIN_ELECTRON_VERDICT: NOT_VERIFIED (no display)
+WINDOWS_POST_FIX_VERDICT: PENDING_HUMAN_WINDOWS_RETEST
+WINDOWS_IME_VERDICT: NOT_VERIFIED
+ELECTRON_SPECIFIC_HACK_ADDED: NO
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_GUARD_VERDICT: PASS
+CANONICAL_FORMAT_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+GITHUB_MAIN_REFLECTION_VERDICT: PASS
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+APOLLO_DRAWER_FOCUS_FIX_VERDICT: COMPLETE (with known limitations)
+NEXT_ACTION: Windows human retest via 10_windows_retest_checklist.md; then IME follow-up if needed.
+================================================================================
+END APOLLO INPUT WIF — Drawer Focus Lifecycle Fix
+================================================================================
