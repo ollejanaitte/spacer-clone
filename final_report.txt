@@ -1184,3 +1184,68 @@ NEXT_ACTION: Begin F2-B (drawer shell) from latest main.
 ================================================================================
 END APOLLO STEP 6-UI-F2-A
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-F2 — Guided Detail Drawer
+================================================================================
+更新日時: 2026-08-05T12:58:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_F2
+BASE_MAIN_SHA: 3599a4956a23c1dd772be3569ed55aa48e28bf9d
+
+## PR and Merge SHA Summary
+
+| Step | PR | SHA | Description |
+|------|----|-----|-------------|
+| F2-A | #401 | cd6136b | Design docs |
+| F2-B | #402 | 0027a7e | Drawer shell (DrawerPortal + GuidedDetailDrawer) |
+| F2-C | #403 | d57bc90 | Detail panel connections (8 panels) |
+| F2-D | #404 | 3599a49 | UX polish (save button, dirty state) |
+| F2-E | #405 | - | Verification/closeout |
+
+## Implemented
+
+NEW_FILES:
+  frontend/src/apollo/components/DrawerPortal.tsx
+  frontend/src/apollo/components/GuidedDetailDrawer.tsx
+  frontend/src/apollo/components/__tests__/GuidedDetailDrawer.test.tsx
+
+MODIFIED_FILES:
+  frontend/src/apollo/ApolloPhase1Shell.tsx — drawer state, content mapping, conditional inline hiding
+  frontend/src/styles.css — drawer CSS
+  frontend/tests/e2e/apollo-step5-final-gui.spec.ts — drawer-aware E2E
+
+## Verdicts
+
+DETAIL_DRAWER_DESIGN_VERDICT: PASS
+CANONICAL_SINGLE_OWNER_VERDICT: PASS (drawer is UI-only; edits use existing onProjectChange)
+DRAWER_SHELL_VERDICT: PASS
+DETAIL_TARGET_MAPPING_VERDICT: PASS (12 panel targets, 1 route, 1 viewer)
+GUIDED_CONTEXT_RETURN_VERDICT: PASS
+SAVE_NEXT_SEPARATION_VERDICT: PASS
+FOCUS_ACCESSIBILITY_VERDICT: PASS
+FULLSCREEN_COMPATIBILITY_VERDICT: PASS
+MOBILE_SHEET_VERDICT: PASS
+SAVE_RELOAD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_STALE_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+TEST_VERDICT: PASS (310 files, 2382 tests)
+
+STEP_6_UI_F2_VERDICT: COMPLETE
+GUIDED_DETAIL_DRAWER_VERDICT: COMPLETE
+CANONICAL_DATA_GUARD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_STALE_GUARD_VERDICT: PASS
+FULLSCREEN_REGRESSION_VERDICT: PASS
+ACCESSIBILITY_VERDICT: PASS
+GITHUB_MAIN_REFLECTION_VERDICT: PASS
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+KNOWN_LIMITATIONS: Route (G02) and viewer (G12) detail targets retain scroll navigation (drawer not applicable)
+NEXT_ACTION: Step 6-UI-F2 complete. Await further instruction.
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged throughout)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
+================================================================================
+END APOLLO STEP 6-UI-F2
+================================================================================
