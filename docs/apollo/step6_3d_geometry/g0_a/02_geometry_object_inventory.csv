@@ -1,0 +1,9 @@
+object_id,display_label,kind,design_entity_kind,visibility_group,station,z_min,z_max,y_offset,width,height,depth,source_entity,notes
+DECK,RC床版,rc_deck,RcDeck,deck,0,0,deckThickness,0,width,deckThickness,0.22,bridgeStructureSolids.ts:369,Overlaps haunch at Z in [0,haunchHeight]
+HAUNCH-RECT,ハンチ(RECT),haunch,RcDeckHaunch,haunches,girderY,0,haunchHeight,girderOffsetY,topWidth,haunchHeight,0.15,appurtenanceHaunchSolids.ts:68,Overlaps deck at Z in [0,haunchHeight]
+HAUNCH-TRAP,ハンチ(TRAP),haunch,RcDeckHaunch,haunches,girderY,0,haunchHeight,girderOffsetY,(top+bottom)/2,haunchHeight,0.15,appurtenanceHaunchSolids.ts:68,Avg-width box; exact area in quantity model
+CROSS_BEAM,横桁,cross_beam,CrossBeam,cross-beams,station,-girderDepth/2,+crossBeamDepth/2,0,crossBeamWidth,crossBeamDepth,beamLength,bridgeStructureSolids.ts:376,Lower half of girder
+SWAY_DIAG_LEFT,V形斜材(左),bracing,BraceMember,bracings,station,upperZ,centerZ,leftOffset,,,diagonal,generateBsdd.ts:233,Diagonal from left top to center bottom
+SWAY_DIAG_RIGHT,V形斜材(右),bracing,BraceMember,bracings,station,upperZ,centerZ,rightOffset,,,diagonal,generateBsdd.ts:233,Diagonal from right top to center bottom
+LOWER_LATERAL,下横構,bracing,BraceMember,bracings,station,bottomConnectionZ,bottomConnectionZ,,,0,diagonal,bridgeStructureSolids.ts:797,X-pattern at bottom flange
+UPPER_LATERAL,上横構,bracing,BraceMember,bracings,station,topConnectionZ,topConnectionZ,,,0,diagonal,bridgeStructureSolids.ts:806,X-pattern at top flange

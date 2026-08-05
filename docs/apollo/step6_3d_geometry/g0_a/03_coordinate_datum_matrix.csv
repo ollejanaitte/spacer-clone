@@ -1,0 +1,14 @@
+# G0-A Coordinate Datum Matrix
+
+| datum_id | meaning | source_file | formula | example_value | related_object | expected_relationship | actual_relationship | verdict | evidence |
+|----------|---------|-------------|---------|---------------|----------------|----------------------|--------------------|---------|----------|
+| DECK_BOTTOM | RC床版下面Z | bridgeStructureSolids.ts:372 | centerZ=deckThickness/2 → bottomZ=0 | 0 | HAUNCH_TOP | haunchTopZ <= deckBottomZ | haunchTopZ = haunchHeight (0.15), deckBottomZ = 0 → OVERLAP | DATUM_MISMATCH | overdeck fills from 0 to deckThickness, haunch from 0 to haunchHeight |
+| DECK_TOP | RC床版上面Z | bridgeStructureSolids.ts:372 | centerZ+deckThickness/2 | 0.22 | — | — | — | OK | — |
+| HAUNCH_BOTTOM | ハンチ下面Z | haunchGeometry.ts:151 | topFlangeUpperZ | 0 | TOP_FLANGE_UPPER | haunchBottomZ = topFlangeUpperZ | 0 = 0 | CONNECTED | — |
+| HAUNCH_TOP | ハンチ上面Z | haunchGeometry.ts:152 | topFlangeUpperZ + height | 0.15 | DECK_BOTTOM | haunchTopZ = deckBottomZ | 0.15 > 0 → OVERLAP | DATUM_MISMATCH | deck bottom should be at haunchTopZ |
+| TOP_FLANGE_UPPER | 主桁上フランジ上面Z | bridgeStructureSolids.ts:95 | -girderDepth/2 + girderDepth/2 | 0 | HAUNCH_BOTTOM | topFlangeUpperZ = haunchBottomZ | 0 = 0 | CONNECTED | — |
+| GIRDER_CENTER | 主桁中心Z | bridgeStructureSolids.ts:74 | -girderDepth/2 | -1.0 | — | — | — | OK | — |
+| BOTTOM_FLANGE_LOWER | 主桁下フランジ下面Z | bridgeStructureSolids.ts:79 | -girderDepth + bottomFlangeThickness/2 | -1.985 | — | — | — | OK | — |
+| SWAY_UPPER_Z | 対傾構上部取付Z | bridgeStructureSolids.ts:96 | -topFlangeThickness/2 | -0.0125 | TOP_FLANGE_UPPER | — | — | OK | Mid-thickness of top flange |
+| SWAY_CENTER_Z | 対傾構中央節点Z | bridgeStructureSolids.ts:108 | -centerNodeDepth | -1.985 | BOTTOM_FLANGE_LOWER | — | — | OK | Defaults to lowerAttachmentDepth |
+| CROSS_BEAM_ORIGIN_Z | 横桁中心Z | bridgeStructureSolids.ts:390 | -girderDepth/2 + crossBeamDepth/2 | -0.825 | GIRDER_CENTER | — | crossBeamTop=-0.65, crossBeamBottom=-1.0 | OK | Lower half of girder |
