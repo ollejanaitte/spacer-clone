@@ -1603,7 +1603,7 @@ PHASE3_ENTRY_GATE: PENDING (resolve H-01..03, decide U-03 direction)
 
 H-01_STATUS: RESOLVED/ADOPTED (phase1ScopeGuard AP-00 classifier test-only; BridgeSystem.CONTINUOUS canonical runtime gate)
 H-02_STATUS: RESOLVED/ADOPTED (sidecar default-fill shim != AP-02 lifecycle framework; AP-02 stays Rejected)
-H-03_STATUS: IN_PROGRESS (bundle unsupportedScope continuous design drawings)
+H-03_STATUS: RESOLVED/ADOPTED (continuous design drawings stay PROHIBITED; Report Model emits non-numeric geometry/STL only)
 U-03_STATUS: IN_PROGRESS (spanLength gate / computeGirderSectionProperties)
 CH_CP_CANON_STATUS: IN_PROGRESS
 PROHIBITED_RECONFIRM_STATUS: IN_PROGRESS
@@ -1616,8 +1616,8 @@ SUBSTEP_STATUS:
   A_preflight_and_input_review: COMPLETE
   B_h01_architect_decision: COMPLETE (RESOLVED/ADOPTED)
   C_h02_architect_decision: COMPLETE (RESOLVED/ADOPTED)
-  D_h03_architect_decision: IN_PROGRESS
-  E_u03_investigation: PENDING
+  D_h03_architect_decision: COMPLETE (RESOLVED/ADOPTED)
+  E_u03_investigation: IN_PROGRESS
   F_u03_minimal_code_change: NOT_APPLICABLE (no code change)
   G_ch_cp_canonicalization: PENDING
   H_prohibited_reconfirmation: PENDING
