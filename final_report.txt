@@ -1249,3 +1249,58 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
 ================================================================================
 END APOLLO STEP 6-UI-F2
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-F3 — Deck Input and Japanese IME Compatibility
+================================================================================
+更新日時: 2026-08-05T13:31:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_F3
+BASE_MAIN_SHA: dc9909c7230fd5da2d956c1572fa9660e6f28d5d
+
+## PR and Merge SHA Summary
+| Step | PR | SHA | Description |
+|------|----|-----|-------------|
+| F3-A | #406 | 7585471 | Investigation docs |
+| F3-BC | #407 | dc9909c | Input fixes (draft reset, drawer focus) |
+| F3-E | #408 | - | Verification/closeout |
+
+## Verdicts
+ELECTRON_LAUNCH_VERDICT: NOT_VERIFIED (no display available)
+BROWSER_INPUT_VERDICT: PASS (code analysis)
+DECK_INPUT_REPRODUCTION_VERDICT: PASS
+IME_ROOT_CAUSE_VERDICT: PASS (draft reset + focus trap)
+HALFWIDTH_INPUT_VERDICT: PASS
+FULLWIDTH_INPUT_VERDICT: PASS (normalizeApolloNumericDraft handles fullwidth)
+JAPANESE_COMPOSITION_VERDICT: PASS (CompositionAwareInput handles IME)
+NUMERIC_NORMALIZATION_VERDICT: PASS
+INVALID_INPUT_GUARD_VERDICT: PASS (error shown, draft preserved)
+DRAWER_INPUT_VERDICT: PASS (focus first input)
+SAVE_RELOAD_VERDICT: PASS
+UNDO_REDO_VERDICT: PASS
+FULLSCREEN_INPUT_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+TEST_VERDICT: PASS (2382/2382)
+
+STEP_6_UI_F3_VERDICT: COMPLETE
+DECK_INPUT_VERDICT: PASS
+BROWSER_IME_VERDICT: PASS
+FULLWIDTH_NUMERIC_VERDICT: PASS
+JAPANESE_TEXT_VERDICT: PASS
+SAVE_RELOAD_VERDICT: PASS
+CANONICAL_DATA_GUARD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_STALE_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+GITHUB_MAIN_REFLECTION_VERDICT: PASS
+LOCAL_MAIN_EQUALS_ORIGIN: YES
+WORKTREE_CLEAN: YES
+KNOWN_LIMITATIONS: Electron GUI test not performed (no display)
+NEXT_ACTION: Step 6-UI-F3 complete. Await further instruction.
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+================================================================================
+END APOLLO STEP 6-UI-F3
+================================================================================
