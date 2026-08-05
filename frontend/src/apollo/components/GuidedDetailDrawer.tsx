@@ -31,7 +31,16 @@ export function GuidedDetailDrawer({
   useEffect(() => {
     if (!open) return;
     triggerRef.current = document.activeElement as HTMLElement | null;
-    closeRef.current?.focus();
+    // Focus first input if available, otherwise close button
+    const inputs = panelRef.current?.querySelectorAll<HTMLElement>(
+      'input:not([disabled]):not([readonly]), select:not([disabled]), textarea:not([disabled]), button:not([disabled])',
+    );
+    const firstInput = inputs?.[0];
+    if (firstInput) {
+      firstInput.focus();
+    } else {
+      closeRef.current?.focus();
+    }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();

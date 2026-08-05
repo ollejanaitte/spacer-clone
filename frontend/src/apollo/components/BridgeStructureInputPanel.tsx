@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { ProjectModel } from "../../types";
 import {
@@ -73,8 +73,13 @@ function NullableBridgeStructureFieldInput({
 }: NullableFieldInputProps) {
   const [draft, setDraft] = useState(value === null ? "" : String(value));
   const [inputError, setInputError] = useState<string | null>(null);
+  const commitInRef = useRef(false);
 
   useEffect(() => {
+    if (commitInRef.current) {
+      commitInRef.current = false;
+      return;
+    }
     setDraft(value === null ? "" : String(value));
     setInputError(null);
   }, [value]);
@@ -93,11 +98,11 @@ function NullableBridgeStructureFieldInput({
     const result = commitApolloNumericDraft(trimmed);
     if (!result.ok) {
       setInputError(result.message);
-      setDraft(value === null ? "" : String(value));
       return;
     }
     setInputError(null);
     onCommit(result.value);
+    commitInRef.current = true;
     setDraft(String(result.value));
   };
 
