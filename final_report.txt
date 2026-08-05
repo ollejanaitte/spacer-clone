@@ -1588,3 +1588,51 @@ NEXT_ACTION: See open items above.
 ================================================================================
 END APOLLO STEP 6 FINAL STATUS
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 9 — Phase 2.5 BLOCKER RESOLUTION (H-01/H-02/H-03, U-03, CH/CP, PROHIBITED)
+================================================================================
+STEP_ID: APOLLO_STEP_9_PHASE25_BLOCKER_RESOLUTION
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO (Phase 2.5-F ruled NOT_APPLICABLE — no production code change)
+BASE_MAIN_SHA: 96ea0184249178e99b2c1889b504e45e506e9ddd
+CURRENT_MAIN_SHA: 96ea0184249178e99b2c1889b504e45e506e9ddd
+OVERALL_PROGRESS: IN_PROGRESS
+STEP9_PHASE25_STATUS: IN_PROGRESS
+PHASE3_ENTRY_GATE: PENDING (resolve H-01..03, decide U-03 direction)
+
+H-01_STATUS: IN_PROGRESS (phase1ScopeGuard vs BridgeSystem naming)
+H-02_STATUS: IN_PROGRESS (generateBsdd migration vs AP-02 Rejected)
+H-03_STATUS: IN_PROGRESS (bundle unsupportedScope continuous design drawings)
+U-03_STATUS: IN_PROGRESS (spanLength gate / computeGirderSectionProperties)
+CH_CP_CANON_STATUS: IN_PROGRESS
+PROHIBITED_RECONFIRM_STATUS: IN_PROGRESS
+DECISION_REGISTER_STATUS: PENDING
+
+EVIDENCE_ROOT: docs/apollo/step9/phase2_5_phase3_blocker_resolution/
+DELIVERABLES: README.md, 01_preflight_and_input_review.md, 02_h01_architect_decision.md, 03_h02_architect_decision.md, 04_h03_architect_decision.md, 05_u03_spanlength_gate_investigation.md, 06_ch_cp_identifier_canonicalization.md, 07_prohibited_output_reconfirmation.md, 09_human_decision_register.md, 08_phase3_entry_gate.md, 10_phase3_handoff.md, completion_report.md + blocker_matrix.csv + decision_register.csv
+
+SUBSTEP_STATUS:
+  A_preflight_and_input_review: COMPLETE
+  B_h01_architect_decision: IN_PROGRESS
+  C_h02_architect_decision: PENDING
+  D_h03_architect_decision: PENDING
+  E_u03_investigation: PENDING
+  F_u03_minimal_code_change: NOT_APPLICABLE (no code change)
+  G_ch_cp_canonicalization: PENDING
+  H_prohibited_reconfirmation: PENDING
+  I_decision_register: PENDING
+  J_phase3_entry_gate: PENDING
+  K_phase3_handoff: PENDING
+  L_completion: PENDING
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED (unchanged)
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY (unchanged)
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
+
+NEXT_ACTION: Complete Phase 2.5-A..L; update this block; GO Phase 3 with non-numeric restrictions.
+================================================================================
+END APOLLO STEP 9 — PHASE 2.5 BLOCKER RESOLUTION
+================================================================================
