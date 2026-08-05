@@ -1,0 +1,5 @@
+option_id,left_endpoint,right_endpoint,center_node,diagonal_endpoint,horizontal,required_validation,schema_impact,geometry_risk,quantity_risk,recommendation,review_status
+T-A,leftBottom=[s,leftY,centerZ],rightBottom=[s,rightY,centerZ],midBottom on chord,leftTop→midBottom & rightTop→midBottom,yes (leftBottom→rightBottom),centerNodeDepth=lowerAttachmentDepth forced equal,NONE,low,low,recommended,PENDING_HUMAN_REVIEW
+T-B,leftBottom=[s,leftY,centerZ],rightBottom=[s,rightY,centerZ],midBottom on chord,leftTop→midBottom & rightTop→midBottom,yes (leftBottom→rightBottom),none needed,NONE,low,low,acceptable,PENDING_HUMAN_REVIEW
+T-C,leftBottom=[s,leftY,lowerZ],rightBottom=[s,rightY,lowerZ'],midBottom on chord,leftTop→midBottom & rightTop→midBottom,yes (inclined),none needed,NONE,medium,medium,not preferred,PENDING_HUMAN_REVIEW
+T-D,none,none,midBottom,leftTop→midBottom & rightTop→midBottom,no,none,NONE,none,current limitation,current,PENDING_HUMAN_REVIEW
