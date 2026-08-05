@@ -1607,7 +1607,7 @@ H-03_STATUS: RESOLVED/ADOPTED (continuous design drawings stay PROHIBITED; Repor
 U-03_STATUS: VERDICT=B (absorbable in Phase 3 spec); Phase 2.5-F=NOT_APPLICABLE (spanLength consumed by gate but unused in computeGirderSectionProperties; refactor deferred to Phase 3 impl under DEC-PHA-0004)
 CH_CP_CANON_STATUS: RECONFIRMED (CP-* canonical report IDs; CH-* dev scaffold; mappings fixed)
 PROHIBITED_RECONFIRM_STATUS: RECONFIRMED (O-19..O-30 PROHIBITED; CP-08/15/16/30-34 FORBIDDEN; invariants reasserted; cross-check H/U OK)
-DECISION_REGISTER_STATUS: PENDING
+DECISION_REGISTER_STATUS: COMPLETE (6 DEC-PHA-0001..0006 RESOLVED; blocker_matrix.csv 4 blockers; H-01..H-03 UNRESOLVED -> RESOLVED)
 
 EVIDENCE_ROOT: docs/apollo/step9/phase2_5_phase3_blocker_resolution/
 DELIVERABLES: README.md, 01_preflight_and_input_review.md, 02_h01_architect_decision.md, 03_h02_architect_decision.md, 04_h03_architect_decision.md, 05_u03_spanlength_gate_investigation.md, 06_ch_cp_identifier_canonicalization.md, 07_prohibited_output_reconfirmation.md, 09_human_decision_register.md, 08_phase3_entry_gate.md, 10_phase3_handoff.md, completion_report.md + blocker_matrix.csv + decision_register.csv
@@ -1621,8 +1621,8 @@ SUBSTEP_STATUS:
   F_u03_minimal_code_change: NOT_APPLICABLE (no code change)
   G_ch_cp_canonicalization: COMPLETE
   H_prohibited_reconfirmation: COMPLETE
-  I_decision_register: IN_PROGRESS
-  J_phase3_entry_gate: PENDING
+  I_decision_register: COMPLETE (6 decisions; blocker_matrix 4 blockers)
+  J_phase3_entry_gate: IN_PROGRESS
   K_phase3_handoff: PENDING
   L_completion: PENDING
 
