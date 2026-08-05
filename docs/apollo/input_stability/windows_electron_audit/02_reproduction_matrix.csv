@@ -1,0 +1,5 @@
+environment,screen,field,input_method,input_sample,attempts,reproduced_count,symptom,verdict,evidence
+windows-electron-dev,guided-detail-drawer,apollo-bridge-input-spanLength,half-width numeric with Enter commit,123.45,1,1,FOCUS_LOST,PASS_WITH_REPRODUCED_DEFECT,"Playwright Electron run on 2026-08-05: activeElement moved from apollo-bridge-input-spanLength to apollo-guided-detail-escape immediately after Enter-triggered commit; drawer cleanup/start trace captured."
+windows-browser-dev,guided-detail-drawer,apollo-bridge-input-spanLength,half-width numeric with Enter commit,123.45,1,1,FOCUS_LOST,PASS_WITH_REPRODUCED_DEFECT,"Playwright Chromium run on 2026-08-05 reproduced the same activeElement transition and drawer cleanup/start trace."
+windows-electron-prod-equivalent,guided-detail-drawer,apollo-bridge-input-spanLength,not run,not run,0,0,NOT_VERIFIED,NOT_VERIFIED,"Skipped after stop condition met: primary cause confirmed with matching browser and Electron dev traces."
+windows-electron-dev,guided-detail-drawer,apollo-bridge-input-spanLength,real Japanese IME,こうきょう→鋼橋,0,0,NOT_VERIFIED,NOT_VERIFIED,"No human IME operation performed in this Codex-only audit."

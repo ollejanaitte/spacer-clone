@@ -1361,3 +1361,28 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
 ================================================================================
 END APOLLO STEP 6-3D-G2
 ================================================================================
+
+================================================================================
+BEGIN APOLLO WINDOWS ELECTRON INPUT AUDIT
+================================================================================
+日時: 2026-08-05T18:00:00+09:00
+STEP_ID: APOLLO_WINDOWS_ELECTRON_INPUT_AUDIT
+MODEL: CODEX_GPT_5_4_MEDIUM
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+WINDOWS_ELECTRON_REPRODUCTION_VERDICT: REPRODUCED_FOCUS_LOST_ON_ENTER_COMMIT
+BROWSER_COMPARISON_VERDICT: MATCHED_BROWSER_AND_ELECTRON_DEV
+DRAWER_FOCUS_VERDICT: CONFIRMED_TRIGGER_FOCUS_RESTORE_ON_PARENT_RERENDER
+INPUT_REMOUNT_VERDICT: OBSERVED_AS_SECONDARY_SIGNAL_IN_DEV_TRACE
+DRAFT_OVERWRITE_VERDICT: EXCLUDED_FOR_REPRESENTATIVE_FIELD
+COMPOSITION_EVENT_VERDICT: NOT_VERIFIED_WITH_REAL_IME
+RENDER_COST_VERDICT: NOT_REQUIRED_FOR_PRIMARY_CAUSE
+PRIMARY_CAUSE_STATUS: CONFIRMED_PRIMARY_CAUSE
+PRIMARY_CAUSE: GuidedDetailDrawer useEffect depends on unstable onClose; parent rerender while drawer stays open runs cleanup that focuses trigger and steals focus from active input
+SECONDARY_CAUSE_COUNT: 2
+IMPLEMENTATION_START_READINESS: GO
+PRIMARY_PR: NOT_CREATED
+PRIMARY_PR_MERGE_SHA: N/A
+================================================================================
+END APOLLO WINDOWS ELECTRON INPUT AUDIT
+================================================================================
