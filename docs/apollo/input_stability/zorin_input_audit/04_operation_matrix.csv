@@ -1,0 +1,64 @@
+control_id,operation,input_value,focus_test,blur_test,enter_test,escape_test,tab_test,shift_tab_test,backspace_test,delete_test,copy_paste_test,undo_redo_test,save_reload_test,ime_test,notes
+AUI-C-0001,text input,"abc123, 全角英数字, ひらがな, 漢字, カタカナ, 記号, 空文字, 長文",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Project name: IME-relevant text
+AUI-C-0002,text input,"abc123, 全角英数字, ひらがな, 漢字, カタカナ, 記号, 空文字, 長文, 貼り付け",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Project description: IME-relevant textarea
+AUI-C-0003,select,"SIMPLE_SINGLE, CONTINUOUS, toggle",YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Bridge system switch
+AUI-C-0004,numeric input,"123, 123.45, -1, 1., -, ., １２３, invalid text, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Span length
+AUI-C-0005,numeric input,"123, 123.45, 0, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Bridge length (read-only when continuous)
+AUI-C-0006,numeric input,"123, 123.45, -1, 0, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Width
+AUI-C-0007,numeric input,"2, 1, 3, -1, 0, 123, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Girder count (integer, min=1)
+AUI-C-0008,numeric input,"1.5, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Girder spacing
+AUI-C-0009,numeric input,"2.0, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Girder depth
+AUI-C-0010,numeric input,"0.5, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Top flange width
+AUI-C-0011,numeric input,"0.05, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Top flange thickness
+AUI-C-0012,numeric input,"0.5, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Bottom flange width
+AUI-C-0013,numeric input,"0.05, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Bottom flange thickness
+AUI-C-0014,numeric input,"0.02, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Web thickness
+AUI-C-0015,numeric input,"0.25, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Deck thickness
+AUI-C-0016,numeric input,"5.0, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Cross beam spacing
+AUI-C-0017,numeric input,"3.0, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Stiffener spacing (optional)
+AUI-C-0018,numeric input,"2, 0, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Sway bracing interval (optional integer)
+AUI-C-0019,numeric input,"78.5, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Steel unit weight (optional)
+AUI-C-0020,numeric input,"25.0, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,RC unit weight (optional)
+AUI-C-0021,checkbox,"toggle, save/reload",YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Upper lateral bracing
+AUI-C-0022,checkbox,"toggle, save/reload",YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Lower lateral bracing
+AUI-C-0024,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Add span
+AUI-C-0025,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Remove span
+AUI-C-0026,numeric input,"30, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Span 0 length
+AUI-C-0027,numeric input,"35, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Span 1 length
+AUI-C-0036,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,NO,YES,NO,Sample input
+AUI-C-0041,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Generate structure
+AUI-C-0046,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,NO,NO,NO,Undo
+AUI-C-0047,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,NO,NO,NO,Redo
+AUI-C-0048,text input,"APN-10, 全角, 記号, 空文字, 重複ID",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Node ID
+AUI-C-0049,text input,"TestNode, 漢字, ひらがな, 空文字",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Node label
+AUI-C-0050,numeric input,"12.5, 0, -1, empty, invalid",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Node X coordinate
+AUI-C-0051,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Add node
+AUI-C-0054,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,NO,NO,Node select
+AUI-C-0055,text input,"APM-10, 記号, 空文字, 重複ID",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Member ID
+AUI-C-0056,text input,"TestMember, 漢字, 空文字",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Member label
+AUI-C-0057,select,node IDs,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Node I select
+AUI-C-0058,select,node IDs,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Node J select
+AUI-C-0059,select,material IDs,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Member material select
+AUI-C-0060,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Add member
+AUI-C-0064,text input,"SUP-10, 記号, 空文字, 重複ID",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Support ID
+AUI-C-0065,select,node IDs,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Support node select
+AUI-C-0066,text input,"TestSupport, 漢字, 空文字",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Support label
+AUI-C-0067,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Add support
+AUI-C-0071,text input,"MAT-10, 記号, 空文字, 重複ID",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Material ID
+AUI-C-0072,text input,"TestMaterial, 漢字, 空文字",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Material name
+AUI-C-0073,text input,"reference, steel, empty",YES,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,Material category
+AUI-C-0074,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Add material
+AUI-C-0087,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,NO,NO,Save file
+AUI-C-0088,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,NO,NO,Open file
+AUI-C-0105,radio,pattern select,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Cross-frame pattern
+AUI-C-0106,numeric input,"0.5, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Upper attachment depth
+AUI-C-0112,radio,presence select,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Pavement presence
+AUI-C-0113,numeric input,"0.05, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Pavement thickness
+AUI-C-0121,select,presence select,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Appurtenance presence
+AUI-C-0127,numeric input,"0.0, 10.5, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Appurtenance station
+AUI-C-0134,select,presence select,YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Haunch presence
+AUI-C-0135,select,"RECT, TRAPEZOID",YES,YES,NO,NO,YES,YES,NO,NO,NO,YES,YES,NO,Haunch shape
+AUI-C-0136,numeric input,"0.1, 0, -1, empty",YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,Haunch height
+AUI-C-0145,button,click,YES,NO,NO,YES,YES,YES,NO,NO,NO,NO,NO,NO,Drawer close button
+AUI-C-0146,button,click,YES,NO,NO,NO,YES,YES,NO,NO,NO,YES,NO,NO,Drawer save button
+AUI-C-0147,button,click,YES,NO,NO,YES,YES,YES,NO,NO,NO,YES,NO,NO,Drawer complete button
