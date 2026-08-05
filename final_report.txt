@@ -1622,8 +1622,8 @@ SUBSTEP_STATUS:
   G_ch_cp_canonicalization: COMPLETE
   H_prohibited_reconfirmation: COMPLETE
   I_decision_register: COMPLETE (6 decisions; blocker_matrix 4 blockers)
-  J_phase3_entry_gate: IN_PROGRESS
-  K_phase3_handoff: PENDING
+  J_phase3_entry_gate: COMPLETE (GO_WITH_NON_NUMERIC_RESTRICTIONS; G1-G4 GREEN; N1-N4 not triggered)
+  K_phase3_handoff: IN_PROGRESS
   L_completion: PENDING
 
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
