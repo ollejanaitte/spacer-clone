@@ -1,0 +1,106 @@
+import { useEffect, useId, useRef, type ReactNode } from "react";
+import { DrawerPortal } from "./DrawerPortal";
+
+export type GuidedDetailDrawerProps = {
+  readonly open: boolean;
+  readonly title: string;
+  readonly description?: string;
+  readonly onClose: () => void;
+  readonly children?: ReactNode;
+  readonly testId?: string;
+};
+
+export function GuidedDetailDrawer({
+  open,
+  title,
+  description,
+  onClose,
+  children,
+  testId = "apollo-guided-detail-drawer",
+}: GuidedDetailDrawerProps) {
+  const titleId = useId();
+  const descId = useId();
+  const panelRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <DrawerPortal
+      open={open}
+      testId={testId}
+      onBackdropMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        ref={panelRef}
+        className="apollo-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descId : undefined}
+      >
+        <header className="apollo-drawer-header">
+          <div className="apollo-drawer-title">
+            <h2 id={titleId} data-testid={`${testId}-title`}>{title}</h2>
+            {description ? (
+              <p id={descId} data-testid={`${testId}-desc`}>{description}</p>
+            ) : null}
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            className="apollo-drawer-close"
+            data-testid={`${testId}-close`}
+            onClick={onClose}
+          >
+            編集を閉じる ✕
+          </button>
+        </header>
+        <div className="apollo-drawer-body" data-testid={`${testId}-body`}>
+          {children}
+        </div>
+        <footer className="apollo-drawer-footer">
+          <span className="apollo-drawer-footer-hint">編集内容は即座にプロジェクトへ反映されます。</span>
+          <button type="button" className="apollo-drawer-done" data-testid={`${testId}-done`} onClick={onClose}>
+            完了
+          </button>
+        </footer>
+      </section>
+    </DrawerPortal>
+  );
+}
