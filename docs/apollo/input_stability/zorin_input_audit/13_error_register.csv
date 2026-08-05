@@ -1,0 +1,1 @@
+error_id,title,severity,environment,screen_id,control_ids,symptom,reproduction_rate,precondition,reproduction_steps,expected,actual,data_loss_risk,crash_risk,workaround,probable_layer,probable_files,evidence,status,notes

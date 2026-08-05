@@ -1,0 +1,11 @@
+screen_id,control_id,coverage_type,total_controls,tested_browser,tested_electron,pass_count,fail_count,blocked_count,not_applicable,coverage_pct,notes
+SCR-04,Basics,inline,62,25,20,25,0,0,0,40%,browser tested 25 controls
+SCR-11,Drawer bridge,drawer,11,6,4,6,0,2,2,55%,INVERTED_V/X disabled
+SCR-12,Drawer pavement,drawer,10,4,4,4,0,0,0,40%,pavement radios tested
+SCR-13,Drawer appurtenance,drawer,14,6,6,6,0,0,0,43%,6 presence selects tested
+SCR-05,Editor nodes,inline,7,2,2,2,0,0,0,29%,label+X tested only
+SCR-06,Editor members,inline,9,0,0,0,0,0,0,0%,not tested this session
+SCR-07,Editor supports,inline,7,0,0,0,0,0,0,0%,not tested this session
+SCR-08,Editor materials,inline,7,0,0,0,0,0,0,0%,not tested this session
+SCR-14,Drawer haunch,drawer,5,0,0,0,0,0,0,0%,not tested this session
+SCR-09,Validation,inline,4,0,0,0,0,0,0,0%,not tested this session

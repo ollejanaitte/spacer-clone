@@ -1,0 +1,25 @@
+STEP_ID: APOLLO_INPUT_AUI_R2
+AUDIT_SCOPE: ZORIN_REACHABLE_APOLLO_INPUTS
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+TEST_CODE_CHANGED: NO
+BASELINE_MAIN_SHA: f6b222c18b4663d225c731f8624c61eda9bb153c
+AUDIT_STATUS: INTERRUPTED
+
+PROGRESS:
+  Browser tests executed: 39 (39 PASS / 0 FAIL / 0 BLOCKED)
+  Electron tests executed: ~31 (PASS, CSV not persisted due to timeout)
+  Screenshots captured: browser 38, electron 10
+  Defects found: 0 (within completed test scope)
+  Controls tested: ~40 of 153 inventoried
+  Japanese IME: NOT_STARTED
+  Node editor detail: PARTIAL (label+X tested, member/support/material not tested)
+  3-repeat trials: NOT_STARTED
+  Error register: empty (no defects observed)
+
+NEXT_ACTION:
+  Resume from AUI-R2 execution. Rerun browser+electron scripts,
+  add missing control coverage (member/support/material panes,
+  haunch, continuous span, IME), complete 3-repeat trials,
+  finalize coverage summary and error register.
+  Then create docs-only PR and merge to main.
