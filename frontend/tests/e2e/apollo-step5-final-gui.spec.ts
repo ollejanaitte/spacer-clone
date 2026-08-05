@@ -91,6 +91,9 @@ test.describe("Apollo Step 5 final GUI E2E", () => {
     await expect(page.getByTestId("apollo-guided-slide-G03")).toBeVisible();
     await page.getByTestId("apollo-guided-detail-escape").click();
     await expect(page.getByTestId("apollo-pavement-panel")).toBeVisible();
+    await expect(page.getByTestId("apollo-guided-detail-drawer")).toBeVisible();
+    await page.getByTestId("apollo-guided-detail-drawer-done").click();
+    await expect(page.getByTestId("apollo-guided-detail-drawer")).not.toBeVisible();
 
     await page.getByTestId("apollo-guided-back").click();
     await expect(page.getByTestId("apollo-guided-current-id")).toContainText("G02");

@@ -99,6 +99,7 @@ import { getButtonLabel } from "./i18n";
 import { SaveStatusBadge } from "./components/SaveStatusBadge";
 import { CompactAuthorizationBadge } from "./components/CompactAuthorizationBadge";
 import { ViewerPane } from "./components/ViewerPane";
+import { GuidedDetailDrawer } from "./components/GuidedDetailDrawer";
 
 type ApolloPhase1ShellProps = {
   project: ProjectModel;
@@ -386,6 +387,7 @@ export function ApolloPhase1Shell({
   const [sampleGuideDismissed, setSampleGuideDismissed] = useState(() => getStoredBoolean(APOLLO_GUIDE_DISMISSED_KEY, false));
   const [onboardingIndex, setOnboardingIndex] = useState(0);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
+  const [drawerTarget, setDrawerTarget] = useState<GuidedDetailEscape | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState<ApolloSearchFilterState>(() =>
     createApolloSearchFilterState(),
@@ -1579,7 +1581,7 @@ export function ApolloPhase1Shell({
 
   const handleGuidedDetailEscape = (escape: GuidedDetailEscape) => {
     if (escape.kind === "panel") {
-      scrollWorkflowTargetIntoView({ kind: "panel", path: escape.panelId, label: escape.label });
+      setDrawerTarget(escape);
       return;
     }
     if (escape.kind === "route") {
@@ -2277,6 +2279,57 @@ export function ApolloPhase1Shell({
     </details>
   );
 
+  const renderDrawerContent = () => {
+    if (!drawerTarget || drawerTarget.kind !== "panel") return null;
+    switch (drawerTarget.panelId) {
+      case "wf-panel-bridge-structure":
+        return (
+          <BridgeStructureInputPanel
+            project={project}
+            onProjectChange={(nextProject) => onProjectChange(nextProject)}
+            onAuditEvent={onAuditEvent}
+          />
+        );
+      case "wf-panel-pavement":
+        return (
+          <PavementMarkingInputPanel
+            project={project}
+            onProjectChange={(nextProject) => onProjectChange(nextProject)}
+            onAuditEvent={onAuditEvent}
+          />
+        );
+      case "wf-panel-appurtenance":
+        return (
+          <DeckAppurtenanceInputPanel
+            project={project}
+            onProjectChange={(nextProject) => onProjectChange(nextProject)}
+            onAuditEvent={onAuditEvent}
+          />
+        );
+      case "wf-panel-haunch":
+        return (
+          <RcDeckHaunchInputPanel
+            project={project}
+            onProjectChange={(nextProject) => onProjectChange(nextProject)}
+            onAuditEvent={onAuditEvent}
+          />
+        );
+      case "wf-panel-load-confirmation":
+        return <LoadConfirmationDevelopmentPanel project={project} />;
+      case "wf-panel-quantity":
+        return <QuantityModelDevelopmentPanel project={project} />;
+      case "wf-panel-analysis":
+        return <AnalysisDevelopmentProbePanel />;
+      case "wf-panel-output":
+        return <OutputIntegrationPanel project={project} />;
+      default:
+        return null;
+    }
+  };
+
+  const drawerPanelActive = (panelId: string): boolean =>
+    drawerTarget?.kind === "panel" && drawerTarget.panelId === panelId;
+
   return (
     <main ref={shellRootRef} className="apollo-phase1-shell" data-testid="apollo-phase1-shell">
       <header className="apollo-unit2-header">
@@ -2469,35 +2522,43 @@ export function ApolloPhase1Shell({
                 onNavigate={handleWorkflowNavigate}
                 onPrimaryAction={handleWorkflowPrimaryAction}
               />
-              <BridgeStructureInputPanel
-                project={project}
-                onProjectChange={(nextProject) => onProjectChange(nextProject)}
-                onAuditEvent={onAuditEvent}
-              />
-              <PavementMarkingInputPanel
-                project={project}
-                onProjectChange={(nextProject) => onProjectChange(nextProject)}
-                onAuditEvent={onAuditEvent}
-              />
-              <DeckAppurtenanceInputPanel
-                project={project}
-                onProjectChange={(nextProject) => onProjectChange(nextProject)}
-                onAuditEvent={onAuditEvent}
-              />
-              <RcDeckHaunchInputPanel
-                project={project}
-                onProjectChange={(nextProject) => onProjectChange(nextProject)}
-                onAuditEvent={onAuditEvent}
-              />
-              <AnalysisDevelopmentProbePanel />
+              {!drawerPanelActive("wf-panel-bridge-structure") ? (
+                <BridgeStructureInputPanel
+                  project={project}
+                  onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                  onAuditEvent={onAuditEvent}
+                />
+              ) : null}
+              {!drawerPanelActive("wf-panel-pavement") ? (
+                <PavementMarkingInputPanel
+                  project={project}
+                  onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                  onAuditEvent={onAuditEvent}
+                />
+              ) : null}
+              {!drawerPanelActive("wf-panel-appurtenance") ? (
+                <DeckAppurtenanceInputPanel
+                  project={project}
+                  onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                  onAuditEvent={onAuditEvent}
+                />
+              ) : null}
+              {!drawerPanelActive("wf-panel-haunch") ? (
+                <RcDeckHaunchInputPanel
+                  project={project}
+                  onProjectChange={(nextProject) => onProjectChange(nextProject)}
+                  onAuditEvent={onAuditEvent}
+                />
+              ) : null}
+              {!drawerPanelActive("wf-panel-analysis") ? <AnalysisDevelopmentProbePanel /> : null}
               <AppurtenanceHaunchAnalysisPanel project={project} />
-              <LoadConfirmationDevelopmentPanel project={project} />
+              {!drawerPanelActive("wf-panel-load-confirmation") ? <LoadConfirmationDevelopmentPanel project={project} /> : null}
               <DemandCheckDevelopmentPanel />
-              <QuantityModelDevelopmentPanel project={project} />
+              {!drawerPanelActive("wf-panel-quantity") ? <QuantityModelDevelopmentPanel project={project} /> : null}
               <ReportModelDevelopmentPanel project={project} />
               <StandardSectionDrawingPanel project={project} />
               <GeneralArrangementPanel project={project} />
-              <OutputIntegrationPanel project={project} />
+              {!drawerPanelActive("wf-panel-output") ? <OutputIntegrationPanel project={project} /> : null}
               <article className="apollo-editor-card">
                 <h2>サンプル概要</h2>
                 <ul>
@@ -2629,6 +2690,15 @@ export function ApolloPhase1Shell({
       ) : null}
 
       {renderDeveloperInfo()}
+
+      <GuidedDetailDrawer
+        open={drawerTarget !== null && drawerTarget.kind === "panel"}
+        title={drawerTarget?.kind === "panel" ? drawerTarget.label : ""}
+        description="ガイド付きモードの詳細編集。編集内容は即座にプロジェクトへ反映されます。"
+        onClose={() => setDrawerTarget(null)}
+      >
+        {renderDrawerContent()}
+      </GuidedDetailDrawer>
     </main>
   );
 }
