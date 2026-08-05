@@ -1601,7 +1601,7 @@ OVERALL_PROGRESS: IN_PROGRESS
 STEP9_PHASE25_STATUS: IN_PROGRESS
 PHASE3_ENTRY_GATE: PENDING (resolve H-01..03, decide U-03 direction)
 
-H-01_STATUS: IN_PROGRESS (phase1ScopeGuard vs BridgeSystem naming)
+H-01_STATUS: RESOLVED/ADOPTED (phase1ScopeGuard AP-00 classifier test-only; BridgeSystem.CONTINUOUS canonical runtime gate)
 H-02_STATUS: IN_PROGRESS (generateBsdd migration vs AP-02 Rejected)
 H-03_STATUS: IN_PROGRESS (bundle unsupportedScope continuous design drawings)
 U-03_STATUS: IN_PROGRESS (spanLength gate / computeGirderSectionProperties)
@@ -1614,8 +1614,8 @@ DELIVERABLES: README.md, 01_preflight_and_input_review.md, 02_h01_architect_deci
 
 SUBSTEP_STATUS:
   A_preflight_and_input_review: COMPLETE
-  B_h01_architect_decision: IN_PROGRESS
-  C_h02_architect_decision: PENDING
+  B_h01_architect_decision: COMPLETE (RESOLVED/ADOPTED)
+  C_h02_architect_decision: IN_PROGRESS
   D_h03_architect_decision: PENDING
   E_u03_investigation: PENDING
   F_u03_minimal_code_change: NOT_APPLICABLE (no code change)
