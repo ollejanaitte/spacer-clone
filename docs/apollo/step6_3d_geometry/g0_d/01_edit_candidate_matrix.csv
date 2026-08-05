@@ -1,0 +1,39 @@
+# G0-D Implementation Plan
+
+## Edit Candidates
+
+| File | G1 Haunch | G3 Cross-Frame | Type |
+|------|-----------|----------------|------|
+| `bridgeStructureSolids.ts` | deck center Z fix | add horizontal BraceMember | DIRECT |
+| `generateBsdd.ts` | — | add 3rd BraceMember per sway bay | DIRECT |
+| `quantityModel.ts` | — | count new BraceMember | CONDITIONAL |
+| `appurtenanceHaunchQuantities.ts` | — | count new BraceMember | CONDITIONAL |
+| `apolloStlExport.ts` | — | verify BraceMember export (auto) | VERIFY |
+| `crossFrameAttachmentTypes.ts` | — | NO CHANGE | PROTECTED |
+
+## PR Plan
+
+| PR | Scope | Files |
+|----|-------|-------|
+| G1 | Haunch deck Z correction | `bridgeStructureSolids.ts` (+tests, +screenshots) |
+| G3 | Cross-frame bottom chord | `generateBsdd.ts`, `bridgeStructureSolids.ts`, `quantityModel.ts` (+tests, +screenshots) |
+| G5 | Compatibility / regression | E2E, screenshots, save/reload |
+| CLOSEOUT | Final report | `final_report.txt` |
+
+## Protected (Denylist)
+
+- `bridgeStructure/types.ts` — schema
+- `bridgeStructure/crossFrameAttachmentTypes.ts` — cross-frame types (no change needed)
+- `haunchGeometry.ts` — no change needed for haunch position
+- `appurtenanceHaunchSolids.ts` — no change needed
+- `viewer/Viewer3D.tsx` — internal viewer logic
+- `schema/` — all schema files
+- `package.json` / `lockfile`
+
+## Human Engineering Review
+
+The following must be marked PENDING_HUMAN_REVIEW before implementing G3:
+1. Bottom chord structural role and section type confirmation
+2. Connection point engineering (welded/bolted to web)
+3. Quantity classification (secondary steel? cross-frame steel?)
+4. Load path confirmation
