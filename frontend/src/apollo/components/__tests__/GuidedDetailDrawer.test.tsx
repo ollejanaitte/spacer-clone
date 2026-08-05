@@ -51,6 +51,33 @@ function keyPress(key: string) {
   });
 }
 
+function createDrawerHarness(
+  initialProps: { open: boolean; onClose: () => void; title?: string },
+): { rerender: (props: { open?: boolean; onClose?: () => void; title?: string; isDirty?: boolean }) => void } {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  mountedRoots.push({ root, container });
+  const render = (props: { open: boolean; onClose: () => void; title?: string; isDirty?: boolean }) => {
+    act(() => {
+      root.render(
+        <GuidedDetailDrawer
+          open={props.open}
+          title={props.title ?? "テストタイトル"}
+          isDirty={props.isDirty}
+          onClose={props.onClose}
+        >
+          <input data-testid="drawer-input" />
+        </GuidedDetailDrawer>,
+      );
+    });
+  };
+  render(initialProps);
+  return {
+    rerender: (props) => render({ open: props.open ?? false, onClose: props.onClose ?? (() => undefined), title: props.title, isDirty: props.isDirty }),
+  };
+}
+
 describe("GuidedDetailDrawer", () => {
   it("renders nothing when closed", () => {
     renderDrawer({ open: false });
@@ -116,5 +143,67 @@ describe("GuidedDetailDrawer", () => {
     expect(section).not.toBeNull();
     expect(section?.getAttribute("aria-modal")).toBe("true");
     expect(section?.getAttribute("aria-labelledby")).toBeTruthy();
+  });
+
+  it("preserves focus when onClose identity changes while drawer stays open", () => {
+    const harness = createDrawerHarness({ open: true, onClose: () => undefined });
+    const input = document.querySelector('[data-testid="drawer-input"]') as HTMLInputElement;
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    // Parent re-render provides a NEW onClose function reference (the root cause).
+    harness.rerender({ open: true, onClose: () => undefined });
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("preserves focus when isDirty/title update while drawer stays open", () => {
+    const harness = createDrawerHarness({ open: true, onClose: () => undefined });
+    const input = document.querySelector('[data-testid="drawer-input"]') as HTMLInputElement;
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    harness.rerender({ open: true, onClose: () => undefined, title: "新しいタイトル", isDirty: true });
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("preserves focus across repeated parent re-renders (Enter commit simulation)", () => {
+    const harness = createDrawerHarness({ open: true, onClose: () => undefined });
+    const input = document.querySelector('[data-testid="drawer-input"]') as HTMLInputElement;
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    // Simulate several parent re-renders (e.g. canonical commit on Enter).
+    for (let i = 0; i < 5; i += 1) {
+      harness.rerender({ open: true, onClose: () => undefined, isDirty: true });
+      expect(document.activeElement).toBe(input);
+    }
+  });
+
+  it("restores focus to trigger on actual close", () => {
+    const trigger = document.createElement("button");
+    trigger.setAttribute("data-testid", "trigger");
+    document.body.appendChild(trigger);
+    trigger.focus();
+    expect(document.activeElement).toBe(trigger);
+
+    const harness = createDrawerHarness({ open: true, onClose: () => undefined });
+    // Drawer autofocuses the first input; trigger is no longer focused.
+    // (It may still be activeElement briefly in StrictMode, but the drawer
+    // input is what matters for the close test.)
+    const drawerInput = document.querySelector('[data-testid="drawer-input"]') as HTMLInputElement | null;
+    if (drawerInput) drawerInput.focus();
+
+    harness.rerender({ open: false, onClose: () => undefined });
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("does not throw when the recorded trigger is removed from the DOM on close", () => {
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+    trigger.focus();
+
+    const harness = createDrawerHarness({ open: true, onClose: () => undefined });
+    trigger.remove(); // trigger disappears while drawer open
+    expect(() => harness.rerender({ open: false, onClose: () => undefined })).not.toThrow();
   });
 });

@@ -27,11 +27,20 @@ export function GuidedDetailDrawer({
   const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  // Keep the latest onClose without coupling the focus-lifecycle effect to its
+  // identity. Parent re-renders create a new onClose reference each time; the
+  // focus effect must NOT re-run (and steal focus) merely because onClose changed.
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
     triggerRef.current = document.activeElement as HTMLElement | null;
-    // Focus first input if available, otherwise close button
+    // Autofocus only on the closed→open transition. Focus first input if
+    // available, otherwise close button.
     const inputs = panelRef.current?.querySelectorAll<HTMLElement>(
       'input:not([disabled]):not([readonly]), select:not([disabled]), textarea:not([disabled]), button:not([disabled])',
     );
@@ -44,7 +53,7 @@ export function GuidedDetailDrawer({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== "Tab" || !panelRef.current) return;
@@ -65,9 +74,12 @@ export function GuidedDetailDrawer({
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
+      // The effect only re-runs its cleanup when `open` transitions to false
+      // (actual close) or the component unmounts — NOT on parent re-renders.
+      // Restore focus to the trigger only in those real close/unmount cases.
       triggerRef.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
