@@ -1,0 +1,20 @@
+field_key,label,component,type,nullable,min,max,composition_aware,notes
+deckThickness,床版厚,NullableBridgeStructureFieldInput,number,yes,0,,yes,Required field
+bridgeLength,橋長,NullableBridgeStructureFieldInput,number,yes,0,,yes,readOnly when continuous
+spanLength,支間長,NullableBridgeStructureFieldInput/ContinuousSpanLengthInput,number,yes,0,,yes,Switchable between simple/continuous
+width,幅員,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+girderCount,主桁本数,NullableBridgeStructureFieldInput,number,yes,1,,yes,
+girderSpacing,主桁間隔,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+girderDepth,主桁高さ,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+topFlangeWidth,上フランジ幅,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+topFlangeThickness,上フランジ厚,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+bottomFlangeWidth,下フランジ幅,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+bottomFlangeThickness,下フランジ厚,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+webThickness,ウェブ厚,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+crossBeamSpacing,横桁間隔,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+stiffenerSpacing,補剛材間隔,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+swayBracingInterval,対傾構間隔,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+steelUnitWeight,鋼単位重量,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+rcUnitWeight,RC単位重量,NullableBridgeStructureFieldInput,number,yes,0,,yes,
+upperLateralBracingEnabled,上横構,checkbox,boolean,no,,,n/a,
+lateralBracingEnabled,下横構,checkbox,boolean,no,,,n/a,
