@@ -1148,3 +1148,39 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
 ================================================================================
 END APOLLO STEP 6-UI-F1
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-UI-F2-A — Guided Detail Drawer Design
+================================================================================
+更新日時: 2026-08-05T09:10:00+09:00
+STEP_ID: APOLLO_STEP_6_UI_F2_A
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: e9c99fdd95e3c9e34cd16860d617a8e90806d298
+
+DOCUMENTS_CREATED:
+  docs/apollo/step6_ui_followup/f2_a/01_current_detail_escape_flow.md
+  docs/apollo/step6_ui_followup/f2_a/02_drawer_state_ownership.md
+  docs/apollo/step6_ui_followup/f2_a/03_drawer_target_mapping.csv
+  docs/apollo/step6_ui_followup/f2_a/04_component_reuse_plan.md
+  docs/apollo/step6_ui_followup/f2_a/05_focus_and_accessibility_plan.md
+  docs/apollo/step6_ui_followup/f2_a/06_fullscreen_and_portal_compatibility.md
+  docs/apollo/step6_ui_followup/f2_a/07_edit_allowlist.md
+  docs/apollo/step6_ui_followup/f2_a/08_test_plan.md
+  docs/apollo/step6_ui_followup/f2_a/09_f2_a_completion_gate.md
+
+DETAIL_DRAWER_DESIGN_VERDICT: PASS
+CANONICAL_SINGLE_OWNER_VERDICT: PASS (drawer is UI-only; edits use existing onProjectChange)
+DETAIL_TARGET_MAPPING_VERDICT: PASS (12 panel targets, 1 route, 1 viewer)
+FOCUS_ACCESSIBILITY_VERDICT: PASS (role=dialog, aria-modal, focus trap, return focus)
+FULLSCREEN_COMPATIBILITY_VERDICT: PASS (portal at body level, z-index 2000)
+OPEN_QUESTION_COUNT: 0
+F2_B_START_READINESS: GO
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+
+NEXT_ACTION: Begin F2-B (drawer shell) from latest main.
+================================================================================
+END APOLLO STEP 6-UI-F2-A
+================================================================================

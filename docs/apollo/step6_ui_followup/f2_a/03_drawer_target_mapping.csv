@@ -1,0 +1,28 @@
+guided_slide_id,detail_escape_kind,escape_label,panel_id,panel_component,currently_in_basics,drawer_feasible,notes
+G01,panel,橋梁入力パネル,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Handles project/sample/basics
+G02,route,道路線形,,,no,no,Navigates away via window.location.assign; drawer cannot show cross-app route
+G03,panel,舗装・区画線パネル,wf-panel-pavement,PavementMarkingInputPanel,yes,yes,Simple panel
+G04,panel,橋梁基本条件入力,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Same component as G01 but scrolls to different section
+G05,panel,主桁断面入力,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Same component as G01
+G06,panel,床版入力,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Same component as G01
+G07,panel,ハンチ入力,wf-panel-haunch,RcDeckHaunchInputPanel,yes,yes,Dedicated panel
+G08,panel,床版・橋面付属物入力,wf-panel-appurtenance,DeckAppurtenanceInputPanel,yes,yes,Dedicated panel
+G09,panel,横桁・対傾構入力,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Same component as G01
+G10,panel,横構入力,wf-panel-bridge-structure,BridgeStructureInputPanel,yes,yes,Same component as G01
+G11,panel,荷重確認パネル,wf-panel-load-confirmation,LoadConfirmationDevelopmentPanel,yes,yes,Dedicated panel
+G12,viewer,3Dビューア,,,yes,no,Viewer is full-canvas; drawer too small. Keep scroll-to-viewer
+G13,panel,数量パネル,wf-panel-quantity,QuantityModelDevelopmentPanel,yes,yes,Dedicated panel
+G14,panel,解析パネル,wf-panel-analysis,AnalysisDevelopmentProbePanel,yes,yes,Dedicated panel
+G15,panel,出力パネル,wf-panel-output,OutputIntegrationPanel,yes,yes,Dedicated panel
+
+## Summary
+
+| Feasibility | Count | Slides |
+|-------------|-------|--------|
+| Full drawer | 12 | G01,G03,G04,G05,G06,G07,G08,G09,G10,G11,G13,G14,G15 |
+| Route (no drawer) | 1 | G02 |
+| Viewer (scroll only) | 1 | G12 |
+
+## BridgeStructureInputPanel Special Case
+
+G01/G04/G05/G06/G09/G10 all use `wf-panel-bridge-structure` → `BridgeStructureInputPanel`. This is a single large component that handles bridge basics, girders, deck, cross beams, sway bracing, and lateral bracing. The panel has internal tabs/sections for each topic. The drawer will render the same `BridgeStructureInputPanel` component regardless of which G slide triggered it. The scrolling within the panel to the relevant section can be done via `scrollIntoView` on the target element within the panel.
