@@ -8,6 +8,8 @@ export type GuidedDetailDrawerProps = {
   readonly onClose: () => void;
   readonly children?: ReactNode;
   readonly testId?: string;
+  readonly isDirty?: boolean;
+  readonly onSave?: () => void;
 };
 
 export function GuidedDetailDrawer({
@@ -17,6 +19,8 @@ export function GuidedDetailDrawer({
   onClose,
   children,
   testId = "apollo-guided-detail-drawer",
+  isDirty,
+  onSave,
 }: GuidedDetailDrawerProps) {
   const titleId = useId();
   const descId = useId();
@@ -95,10 +99,37 @@ export function GuidedDetailDrawer({
           {children}
         </div>
         <footer className="apollo-drawer-footer">
-          <span className="apollo-drawer-footer-hint">編集内容は即座にプロジェクトへ反映されます。</span>
-          <button type="button" className="apollo-drawer-done" data-testid={`${testId}-done`} onClick={onClose}>
-            完了
-          </button>
+          <div className="apollo-drawer-footer-left">
+            <span className="apollo-drawer-footer-hint">編集内容は即座にプロジェクトへ反映されます。</span>
+            {isDirty !== undefined ? (
+              <span
+                className={`apollo-drawer-dirty${isDirty ? " apollo-drawer-dirty-unsaved" : " apollo-drawer-dirty-saved"}`}
+                data-testid={`${testId}-dirty`}
+              >
+                {isDirty ? "変更あり" : "保存済み"}
+              </span>
+            ) : null}
+          </div>
+          <div className="apollo-drawer-footer-actions">
+            {onSave ? (
+              <button
+                type="button"
+                className="apollo-drawer-save"
+                data-testid={`${testId}-save`}
+                onClick={onSave}
+              >
+                保存
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="apollo-drawer-done"
+              data-testid={`${testId}-done`}
+              onClick={onClose}
+            >
+              完了
+            </button>
+          </div>
         </footer>
       </section>
     </DrawerPortal>
