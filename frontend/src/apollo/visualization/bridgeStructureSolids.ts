@@ -22,6 +22,8 @@ import type {
   ApolloVisualizationAssumption,
   ApolloVisualizationWarning,
 } from "./types";
+import { PRESENCE_STATUS } from "../bridgeStructure/presence";
+import type { ApolloHaunchConfigurationDraft } from "../bridgeStructure/haunchTypes";
 
 type Axis3 = readonly [number, number, number];
 
@@ -44,6 +46,7 @@ type ResolvedBridgeStructureInput = {
   readonly bottomFlangeThickness: number;
   readonly webThickness: number;
   readonly deckThickness: number;
+  readonly haunchHeight: number;
   readonly crossBeamSpacing: number;
   readonly stiffenerSpacing: number | null;
   readonly swayBracingInterval: number | null;
@@ -146,6 +149,7 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     bottomFlangeThickness: draft.bottomFlangeThickness!,
     webThickness: draft.webThickness!,
     deckThickness: draft.deckThickness!,
+    haunchHeight: resolveHaunchTopOffset(draft.haunchConfiguration),
     crossBeamSpacing: draft.crossBeamSpacing!,
     stiffenerSpacing: draft.stiffenerSpacing,
     swayBracingInterval: draft.swayBracingInterval,
@@ -154,6 +158,26 @@ function resolveInput(project: ProjectModel): ResolvedBridgeStructureInput | nul
     lateralBracingEnabled: draft.lateralBracingEnabled,
     upperLateralBracingEnabled: draft.upperLateralBracingEnabled,
   };
+}
+
+/**
+ * Effective deck-soffit lift due to RC deck haunches.
+ * The deck solid sits on the tallest provided haunch top; haunches are
+ * per-girder but must all terminate at the same deck soffit plane.
+ * Returns 0 when no PROVIDED haunch has a positive height.
+ */
+export function resolveHaunchTopOffset(config: ApolloHaunchConfigurationDraft): number {
+  let maxHeight = 0;
+  for (const girder of config.girders) {
+    if (girder.presence !== PRESENCE_STATUS.PROVIDED || girder.item === null) {
+      continue;
+    }
+    const height = girder.item.height;
+    if (height !== null && height > maxHeight) {
+      maxHeight = height;
+    }
+  }
+  return maxHeight;
 }
 
 function longitudinalFrame(origin: readonly [number, number, number]): LocalFrame {
@@ -351,6 +375,7 @@ function buildDeckSolid(
   input: ResolvedBridgeStructureInput,
 ): ApolloSolidGeometryParameter {
   const midpointX = input.bridgeLength / 2;
+  const deckRise = input.haunchHeight;
   return {
     id: `solid:bsdd:deck:${entityId}`,
     sourceEntityKind: "member",
@@ -369,7 +394,7 @@ function buildDeckSolid(
       thickness: input.deckThickness,
       overhang: 0,
     },
-    localFrame: longitudinalFrame([midpointX, 0, input.deckThickness / 2]),
+    localFrame: longitudinalFrame([midpointX, 0, input.deckThickness / 2 + deckRise]),
   };
 }
 
