@@ -2695,6 +2695,8 @@ export function ApolloPhase1Shell({
         open={drawerTarget !== null && drawerTarget.kind === "panel"}
         title={drawerTarget?.kind === "panel" ? drawerTarget.label : ""}
         description="ガイド付きモードの詳細編集。編集内容は即座にプロジェクトへ反映されます。"
+        isDirty={isDirty}
+        onSave={() => { void saveToFile(); }}
         onClose={() => setDrawerTarget(null)}
       >
         {renderDrawerContent()}
