@@ -1469,3 +1469,122 @@ NEXT_ACTION: Windows human retest via 10_windows_retest_checklist.md; then IME f
 ================================================================================
 END APOLLO INPUT WIF — Drawer Focus Lifecycle Fix
 ================================================================================
+
+================================================================================
+APOLLO STEP 6 — FINAL STATUS
+================================================================================
+更新日時: 2026-08-05T19:00:00+09:00
+STEP_ID: APOLLO_STEP_6_FINAL_STATUS
+
+## Completed Steps
+
+### Step 6 UI Redesign (PR #385–#394)
+- UI-1D: Implementation design docs
+- UI-1: Header mode/file/nav/help separation, compact auth, save status badge
+- UI-2: 6-phase guided progress bar, step strip, sticky footer
+- UI-3: Input + 3D Viewer 2-pane workspace (ViewerPane)
+- UI-4: Workflow master-detail navigator
+- UI-5: Responsive breakpoints, focus visibility
+- UI-6: Full regression, verification evidence
+- CLOSEOUT: Final report stamp
+
+### Step 6 UI Follow-up — F1 (PR #395–#400)
+- F1-A: Investigation docs (9 UFX issues)
+- F1-B1: Compact header, step bar, toast, topology summary
+- F1-B2: Separate guided save and next actions
+- F1-C: Portal-based guard dialogs, body scroll lock
+- F1-D: 3D member verification (cross beam confirmed correct)
+- F1-E: Regression/closeout
+
+### Step 6 UI Follow-up — F2 (PR #401–#405)
+- F2-A: Guided detail drawer design docs
+- F2-B: Drawer shell (DrawerPortal + GuidedDetailDrawer)
+- F2-C: Detail panel connections (8 panels)
+- F2-D: UX polish (save button, dirty state)
+- F2-E: Verification/closeout
+
+### Step 6 UI Follow-up — F3 (PR #406–#408)
+- F3-A: Deck input/IME investigation docs
+- F3-BC: Input fixes (draft reset guard, focus-first-input)
+- F3-E: Verification/closeout
+
+### Step 6 3D Geometry — G0 (PR #409–#410)
+- G0-A: Haunch-datum audit, cross-frame topology audit
+- G0-BCD: Structural meaning, target design, implementation scope freeze
+
+### Step 6 3D Geometry — G1 (PR #411)
+- Haunch-deck contact: deck center Z shifted by max haunch height
+- resolveHaunchTopOffset for per-girder variable haunch
+
+### Step 6 3D Geometry — G2 (PR #412)
+- Cross-frame bottom chord engineering review package (docs-only)
+- G3 implementation: NOGO_PENDING_HUMAN_REVIEW
+
+### Step 6 Input WIF (PR #413–#415)
+- Investigation: drawer focus lifecycle root cause identified
+- WIF-1: Design docs (focus lifecycle decoupling)
+- WIF-2: Implementation (onCloseRef, [open] deps, 5 regression tests)
+- WIF-3: Verification/closeout
+
+## Overall Status
+
+FORMAL_AUTHORIZATION: NOT_GRANTED (unchanged throughout)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged throughout)
+CANONICAL_DATA: Unchanged
+SCHEMA: Unchanged
+CHECKSUM/STALE: Unchanged
+WORKFLOW_STATE_MODEL: Unchanged
+
+## Open Items
+
+- G3 (cross-frame bottom chord): PENDING_HUMAN_ENGINEERING_REVIEW
+- Windows post-fix retest: PENDING_HUMAN_WINDOWS_RETEST
+- Windows IME verification: NOT_VERIFIED
+- ZorinOS Electron verification: NOT_VERIFIED (no display)
+- Full E2E browser smoke: NOT_VERIFIED (backend dependency)
+
+## PR and Merge SHA Summary
+
+| PR | SHA | Description |
+|----|-----|-------------|
+| #385 | b6242d1 | UI-1D: Implementation design docs |
+| #386 | 99c7746 | UI-1: Header/auth separation |
+| #387 | ec67674 | UI-1 report |
+| #388 | b6c0ca4 | UI-2: Guided progress + sticky footer |
+| #389 | d3f9809 | UI-2 report |
+| #390 | 02a3bbe | UI-3: Viewer workspace |
+| #391 | 2634fa9 | UI-4: Workflow master-detail |
+| #392 | 860396a | UI-5: Responsive |
+| #393 | 6fb6e11 | UI-6: Regression |
+| #394 | 515ded6 | UI closeout |
+| #395 | 9cb0df5 | F1-A: Investigation |
+| #396 | fa2eb1a | F1-B1: UI density |
+| #397 | 4eb4fbe | F1-B2: Save/next separation |
+| #398 | c2dd82f | F1-C: Fullscreen overlay |
+| #399 | 9fe98bd | F1-D: 3D member |
+| #400 | e9c99fd | F1-E: Closeout |
+| #401 | cd6136b | F2-A: Drawer design |
+| #402 | 0027a7e | F2-B: Drawer shell |
+| #403 | d57bc90 | F2-C: Panel connections |
+| #404 | 3599a49 | F2-D: UX polish |
+| #405 | 22f78af | F2-E: Closeout |
+| #406 | 7585471 | F3-A: Investigation |
+| #407 | dc9909c | F3-BC: Input fixes |
+| #408 | 0add521 | F3-E: Closeout |
+| #409 | 2ec3d8e | G0-A: Geometry audit |
+| #410 | e2c7940 | G0-BCD: Design freeze |
+| #411 | 5a3c7fa | G1: Haunch fix |
+| #412 | 83264c0 | G2: Engineering review |
+| #413 | ab82d5c | Input audit |
+| #414 | 2bbd316 | WIF-1: Focus design |
+| #415 | d4fd805 | WIF-3: Focus closeout |
+
+## Final Verdict
+
+APOLLO_STEP_6_OVERALL_VERDICT: COMPLETE (with known limitations)
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+NEXT_ACTION: See open items above.
+================================================================================
+END APOLLO STEP 6 FINAL STATUS
+================================================================================
