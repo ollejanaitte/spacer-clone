@@ -1304,3 +1304,60 @@ DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
 ================================================================================
 END APOLLO STEP 6-UI-F3
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-3D-G1 — Haunch-Deck Contact Implementation
+================================================================================
+更新日時: 2026-08-05T16:45:00+09:00
+STEP_ID: APOLLO_STEP_6_3D_G1
+BASE_MAIN_SHA: e2c7940745872cfdcb256b6bd24964743ed14935
+PRIMARY_PR: https://github.com/ollejanaitte/spacer-clone/pull/411
+PRIMARY_PR_MERGE_SHA: 5a3c7fa399da13348d44e48eb1e721e86c8b4fbe
+APPLICATION_CODE_CHANGED: YES
+
+G1_APPLICABILITY_VERDICT: PASS (max-haunch-height approach)
+HAUNCH_FLANGE_CONTACT_VERDICT: PASS
+HAUNCH_DECK_CONTACT_VERDICT: PASS
+RECT_HAUNCH_VERDICT: PASS
+TRAPEZOID_HAUNCH_VERDICT: PASS
+VIEWER_STL_PARITY_VERDICT: PASS (shared ApolloSolidGeometryParameter)
+QUANTITY_NON_REGRESSION_VERDICT: PASS
+SAVE_RELOAD_VERDICT: PASS
+SCHEMA_GUARD_VERDICT: PASS
+CHECKSUM_GUARD_VERDICT: PASS
+FORMAL_AUTHORIZATION_GUARD_VERDICT: PASS
+G1_VERDICT: COMPLETE
+G2_START_READINESS: GO
+
+IMPLEMENTATION: resolveHaunchTopOffset (max provided haunch height); deck center Z = deckThickness/2 + haunchHeight
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+================================================================================
+END APOLLO STEP 6-3D-G1
+================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 6-3D-G2 — Cross-Frame Bottom Chord Engineering Review
+================================================================================
+更新日時: 2026-08-05T16:50:00+09:00
+STEP_ID: APOLLO_STEP_6_3D_G2
+BASE_MAIN_SHA: 5a3c7fa399da13348d44e48eb1e721e86c8b4fbe
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+
+CURRENT_TOPOLOGY_VERDICT: PASS (2 diagonals, no bottom chord)
+CONNECTION_OPTION_VERDICT: PASS (T-A/T-B/T-C/T-D documented)
+SECTION_OPTION_VERDICT: PASS (S-A recommended, S-B conditional)
+QUANTITY_OPTION_VERDICT: PASS (Q-A recommended)
+SCHEMA_IMPACT_VERDICT: PASS (no schema change required for S-A)
+ENGINEERING_REVIEW_STATUS: PENDING_HUMAN_REVIEW
+G2_VERDICT: COMPLETE
+G3_START_READINESS: NOGO_PENDING_HUMAN_REVIEW
+
+RECOMMENDED: T-A topology + S-A section (same L-angle as diagonals) + Q-A quantity
+DECISION_FORM: docs/apollo/step6_3d_geometry/g2_engineering_review/09_engineering_review_decision_form.md
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+================================================================================
+END APOLLO STEP 6-3D-G2
+================================================================================
