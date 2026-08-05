@@ -1,0 +1,31 @@
+item_id,label,data_class,permission,warning,authorization_status,future_unlock_condition,basis
+O-01,工事名/project id/name,stored,ALLOWED,none,NOT_GRANTED,n/a,project.project.id/name
+O-02,橋梁概要(bridgeLength/width/girderCount/depth),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-05 + reportModel.ts:184-188
+O-03,橋梁形式(bridgeSystem/spanSystem),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-06 + reportModel.ts:175
+O-04,径間数(spans.length),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-07
+O-05,径間長(spans[].length),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-07
+O-06,支点位置(supports[].station),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-10
+O-07,支点形式(abutment/pier),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-10
+O-08,主桁本数(girderCount),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-09
+O-09,主桁座標(offset/segment),geometry,DETAIL_ONLY,UNVERIFIED,NOT_AUTHORIZED,n/a,solidGeometryParameters
+O-10,横桁位置(cross_beam),input+geometry,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-11
+O-11,材料入力値(unitWeight),input,ALLOWED_WITH_WARNING,PENDING/UNKNOWN,NOT_AUTHORIZED,ADOPTED with SELECTED context,CP-12 + adoption.ts
+O-12,断面入力値(flg/web/deck),input,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,fix spanLength gate (U-03),CP-13
+O-13,荷重入力値,input,PLACEHOLDER_ONLY,NOT_AVAILABLE,NOT_AUTHORIZED,real load case engine,CP-14 + reportModel.ts:222-223
+O-14,3Dモデル(sols),geometry,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-18 + bridgeStructureSolids.ts
+O-15,STL出力状態,bbox/digest/triangles,DETAIL_ONLY,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-18 + exportApolloBinaryStl.ts manifest
+O-16,validation結果,validation,ALLOWED_WITH_WARNING,UNVERIFIED,NOT_AUTHORIZED,n/a,CP-19 + validation.ts
+O-17,STALE状態,state,ALLOWED_WITH_WARNING,STALE note if stale,NOT_AUTHORIZED,n/a,CP-21 + isBridgeStructureGenerationCurrent
+O-18,設計者名,input,NOT_IMPLEMENTED,none,n/a,author field added to project,n/a (project has no designer field)
+O-19,解析結果(reactions/shear/moment/deflection),analysis_result,PROHIBITED,none,NOT_AUTHORIZED,U-01 bound,reportModel.ts:238+243+248+253
+O-20,断面力,design_check,PROHIBITED,none,NOT_AUTHORIZED,DS-09 cell grant,DS-09 §2 member cells
+O-21,反力,design_check,PROHIBITED,none,NOT_AUTHORIZED,U-01 + DS-09,CP-30 + reportModel.ts:238
+O-22,応力度,design_check,PROHIBITED,none,NOT_AUTHORIZED,DS-09 cell grant,DS-09 §2
+O-23,許容値,design_check,PROHIBITED,none,NOT_AUTHORIZED,DS-09 LV register,verification register
+O-24,照査比,design_check,PROHIBITED,none,NOT_AUTHORIZED,check engine,DS-09 §3.4
+O-25,合否判定,design_check,PROHIBITED,none,NOT_AUTHORIZED,check engine + gate,DS-09 + NR-01..05
+O-26,疲労照査,design_check,PROHIBITED,none,NOT_AUTHORIZED/out_of_scope,DEC-PHA-0014,DS-09 fatigue OUT_OF_SCOPE
+O-27,たわみ,design_check,PROHIBITED,none,NOT_AUTHORIZED,U-01 + DS-09,CP-33 + reportModel.ts:253
+O-28,キャンバー(camber),input,NOT_IMPLEMENTED,none,n/a,model field added,n/a (not modeled)
+O-29,鋼重(QTY-MG-W),quantity,ALLOWED_WITH_WARNING,USER_PROVIDED_UNVERIFIED/NOT_AUTHORIZED,NOT_AUTHORIZED,ADOPTED path,CP-25 + quantityModel.ts
+O-30,設計成立判定,design_check,PROHIBITED,none,NOT_AUTHORIZED,DS-09 gate unlock,DS-09 + 07 §4
