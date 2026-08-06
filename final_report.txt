@@ -1805,7 +1805,7 @@ STEP 10 roadmap (Phase 0–15) with verification gates and Phase 1 handoff.
 | #421 | docs/apollo-step10-p0c-legacy-scope-recovery | 4a695ec | squash |
 | #422 | docs/apollo-step10-p0d-source-manifest | a3558d6 | squash |
 | #423 | docs/apollo-step10-p0e-plan-and-handoff | e229705 | squash |
-| #424 | docs/apollo-step10-p0f-closeout | (closeout merge SHA) | squash |
+| #424 | docs/apollo-step10-p0f-closeout | aa35c6143af4cbe69b223077bede2aa109692f9a | squash |
 
 ## Source originals
 | Source | SHA256 | Pages | Status |
@@ -1858,4 +1858,62 @@ provenance, calculation-drawing correspondence, revision mapping).
 Phase 1 is documentation-only. No production code changes.
 ================================================================================
 END APOLLO STEP 10 — PHASE 0 OLD PLAN FREEZE AND STEP 10 REDEFINITION
+================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 10 PHASE 1 CURRENT
+================================================================================
+
+STEP_ID: APOLLO_STEP10_PHASE1_SOURCE_SET_CANONIZATION
+CURRENT_SUBSTEP: P1-0
+OVERALL_PROGRESS: P1-0 in progress (0/7 sub-steps complete)
+START_MAIN_SHA: aa35c6143af4cbe69b223077bede2aa109692f9a
+CURRENT_MAIN_SHA: aa35c6143af4cbe69b223077bede2aa109692f9a
+
+PHASE0_CLOSEOUT_PR: #424
+PHASE0_CLOSEOUT_MERGE_SHA: aa35c6143af4cbe69b223077bede2aa109692f9a
+PHASE0_SEAL_CORRECTION: IN_PROGRESS
+
+P1_0_CORRECTION_PR: PENDING_THIS_PR
+P1_0_CORRECTION_MERGE_SHA: PENDING_THIS_PR
+P1_A_SOURCE_IDENTITY_PR:
+P1_A_SOURCE_IDENTITY_MERGE_SHA:
+P1_B_BRIDGE_PARITY_PR:
+P1_B_BRIDGE_PARITY_MERGE_SHA:
+P1_C_DRAWING_CATALOG_PR:
+P1_C_DRAWING_CATALOG_MERGE_SHA:
+P1_D_CALCULATION_CATALOG_PR:
+P1_D_CALCULATION_CATALOG_MERGE_SHA:
+P1_E_CORRESPONDENCE_PR:
+P1_E_CORRESPONDENCE_MERGE_SHA:
+P1_F_CLOSEOUT_PR:
+P1_F_CLOSEOUT_MERGE_SHA:
+P1_G_SEAL_PR:
+P1_G_SEAL_MERGE_SHA:
+
+SOURCE_INTEGRITY_RECHECK: PENDING
+DOCUMENT_IDENTITY_VERDICT: PENDING
+REVISION_STATUS_VERDICT: PENDING
+BRIDGE_IDENTITY_PARITY_VERDICT: PENDING
+DRAWING_SHEET_CATALOG_VERDICT: PENDING
+CALCULATION_STRUCTURE_CATALOG_VERDICT: PENDING
+PAGE_NUMBERING_MODEL_VERDICT: PENDING
+CALCULATION_DRAWING_CORRESPONDENCE_VERDICT: PENDING
+DESIGN_STANDARD_REFERENCE_VERDICT: PENDING
+SOURCE_CONFLICT_REGISTER_VERDICT: PENDING
+HUMAN_CONFIRMATION_REGISTER_VERDICT: PENDING
+SOURCE_ORIGINALS_NOT_COMMITTED: PASS
+PHASE1_DOCUMENTATION_ONLY: YES
+PHASE1_PRODUCTION_CODE_CHANGED: NO
+PHASE1_OVERALL_VERDICT: IN_PROGRESS
+PHASE2_START_READINESS: HOLD_WITH_EXACT_REQUIREMENTS
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
+
+NEXT_ACTION: Complete P1-0 Phase 0 seal correction, then open Phase 1 source
+set canonization (P1-A source identity).
+================================================================================
+END APOLLO STEP 10 PHASE 1 CURRENT
 ================================================================================
