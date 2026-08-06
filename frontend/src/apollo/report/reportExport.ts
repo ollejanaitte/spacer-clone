@@ -12,6 +12,13 @@ import {
   reportModelToJson,
   type ReportModel,
 } from "./reportModel";
+import {
+  assertContinuousReportExportable,
+  buildContinuousReportModel,
+  continuousReportModelToJson,
+  type ContinuousReportOptions,
+} from "./reportModelContinuous";
+import type { ContinuousReportModel } from "./reportModelTypes";
 import { buildQuantityModel } from "../quantity/quantityModel";
 import { downloadTextFile } from "../quantity/quantityExport";
 import type { ProjectModel } from "../../types";
@@ -69,4 +76,25 @@ export function tryBuildFormalReport(project: ProjectModel): never {
 
 export function createDevelopmentReport(project: ProjectModel): ReportModel {
   return buildReportModel(project);
+}
+
+/** Canonical continuous-girder report (CP-*) — validated at export (fail-closed, VR-01..26). */
+export function createContinuousReport(
+  project: ProjectModel,
+  options?: ContinuousReportOptions,
+): ContinuousReportModel {
+  const model = buildContinuousReportModel(project, options);
+  assertContinuousReportExportable(model);
+  return model;
+}
+
+export function downloadContinuousReportJson(
+  model: ContinuousReportModel,
+): void {
+  assertContinuousReportExportable(model);
+  downloadTextFile(
+    `apollo-continuous-report_${model.projectId}_r${model.inputChecksum.slice(0, 8)}.json`,
+    continuousReportModelToJson(model),
+    "application/json;charset=utf-8",
+  );
 }

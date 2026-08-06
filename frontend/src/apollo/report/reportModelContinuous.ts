@@ -45,6 +45,7 @@ import {
 import { getBridgeStructureInputDraft, isBridgeStructureGenerationCurrent } from "../bridgeStructure/generateBsdd";
 import { resolveEffectiveLayout, validateBridgeLayoutContract, BridgeSystem } from "../contracts";
 import { getBridgeStructureUnitWeightAdoption } from "../bridgeStructure/adoption";
+import { assertReportModelValid, validateReportModel } from "./reportModelValidator";
 
 export interface ContinuousReportOptions {
   readonly generatedAt?: string;
@@ -527,4 +528,23 @@ export function buildContinuousReportModel(
 
 export function continuousReportModelToJson(model: ContinuousReportModel): string {
   return `${JSON.stringify(model, null, 2)}\n`;
+}
+
+/**
+ * Read/export gate for the canonical continuous-girder report model.
+ * Fail-closed: rejects any model that fails Phase 4-D validation (VR-01..VR-26)
+ * or that carries a non-development authorization posture. Mirrors the legacy
+ * `assertDevelopmentReportExportable` gate applied to the legacy ReportModel.
+ */
+export function assertContinuousReportExportable(model: ContinuousReportModel): void {
+  if (model.authorizationStatus !== "NOT_GRANTED") {
+    throw new Error("continuous report export rejected: authorizationStatus (NUMERIC_DESIGN_AUTHORIZATION)");
+  }
+  if (model.designOrConstructionUse !== "PROHIBITED") {
+    throw new Error("continuous report export rejected: designOrConstructionUse");
+  }
+  if (model.audit.formalOkNgEmitted !== false) {
+    throw new Error("continuous report export rejected: formalOkNgEmitted must be false");
+  }
+  assertReportModelValid(model);
 }
