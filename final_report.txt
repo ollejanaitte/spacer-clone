@@ -1773,7 +1773,7 @@ c847036 refactor(apollo): add continuous report model entity types
 e3e2fd9 feat(apollo): implement continuous report model transformer
 0eaa328 feat(apollo): add continuous report model validator (VR-01..26) + export gate
 0fadc1c fix(apollo): realign validator to frozen VR-01..26 table + tests
-198db18 test(apollo): register continuous report model tests in AP-00 suite
+5fd090a test(apollo): register continuous report model tests in AP-00 suite
 
 STEP9_PHASE4_VERDICT: COMPLETE
 STEP9_OVERALL_VERDICT: COMPLETE
