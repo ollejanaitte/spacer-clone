@@ -82,7 +82,7 @@ calc body. H29_REFERENCE and R7_COMPLIANCE separated.
 | #429 | docs/apollo-step10-p1d-calculation-catalog | 80c50fd | MERGED |
 | #430 | docs/apollo-step10-p1e-correspondence | a40941e | MERGED |
 | P1-F | docs/apollo-step10-p1f-closeout | 120a9fd | MERGED |
-| P1-G | docs/apollo-step10-p1g-seal | GITHUB_PR_IS_AUTHORITY | PENDING |
+| #432 | docs/apollo-step10-p1g-seal | b6532d4 | MERGED |
 
 ## 13. Quality checks
 
@@ -102,7 +102,7 @@ documented. 3 open items for human confirmation.
 
 ## 15. Phase 2 readiness
 
-HOLD_WITH_EXACT_REQUIREMENTS (waiting for P1-G seal).
+GO (P1-G seal complete).
 
 ## 16. Verdict block
 
@@ -130,7 +130,7 @@ STEP10_PHASE1_VITEST_VERDICT: PASS
 STEP10_PHASE1_LOCAL_EQUALS_ORIGIN: YES
 STEP10_PHASE1_WORKTREE_CLEAN: YES
 STEP10_PHASE1_OVERALL_VERDICT: COMPLETE
-STEP10_PHASE2_START_READINESS: HOLD_WITH_EXACT_REQUIREMENTS
+STEP10_PHASE2_START_READINESS: GO
 REFERENCE_BRIDGE_ID: RB-S10-001
 REFERENCE_BRIDGE_SOURCE_SET_STATUS: SAME_PROJECT_SET_REVISION_UNCERTAIN
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
