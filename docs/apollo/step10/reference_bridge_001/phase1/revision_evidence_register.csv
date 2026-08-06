@@ -1,0 +1,4 @@
+source_id,revision_field,revision_value,revision_locator,revision_status,release_judgment,evidence,notes
+SRC-001,revision_number,NOT_FOUND,apollo_user_manual_pdf_p1,REVISION_NOT_FOUND,SINGLE_RELEASE_CONFIRMED,No revision marks in PDF metadata or text,2002-04-23 single PDF; no revision column
+SRC-002,revision_number,NOT_FOUND,drawing_pdf_p1-143,REVISION_NOT_FOUND,SAME_PROJECT_SET_REVISION_UNCERTAIN,"No revision column, revision mark, or change history found in text-extracted title blocks across 141 sheets","Title block format does not include revision field. Assume single release but uncertain."
+SRC-003,revision_number,NOT_FOUND,calc_pdf_p1-2221,REVISION_NOT_FOUND,SAME_PROJECT_SET_REVISION_UNCERTAIN,"No revision marks, revision history, or change indicators found in text extraction","Single self-consistent content. No revision evidence."
