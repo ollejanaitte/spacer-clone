@@ -107,7 +107,7 @@ PASS — no PDFs or images in git tracking.
 | #437 | p2i-d-calc-3-2 (batched) | c24b685 | MERGED |
 | #438 | p2i-h-drawing-001-141 | 43e4a4b | MERGED |
 | P2I-K | docs/apollo-step10-p2i-k-closeout | 207c9d1 | MERGED |
-| P2I-L | docs/apollo-step10-p2i-l-seal | GITHUB_PR_IS_AUTHORITY | PENDING |
+| P2I-L | docs/apollo-step10-p2i-l-seal | 7b07f62 (#440) | MERGED |
 
 ## 16. final_report.txt update history
 
@@ -128,7 +128,8 @@ Lint: PASS (pre-existing). CSV parseable: all verified.
 
 ## 19. Phase 2-II readiness
 
-HOLD_WITH_EXACT_REQUIREMENTS (waiting for P2I-L seal).
+SEALED. P2I-L merged (#440, 7b07f62). Phase 2-II may proceed (see
+phase2_ii/ truth gate).
 
 ## 20. Verdict block
 

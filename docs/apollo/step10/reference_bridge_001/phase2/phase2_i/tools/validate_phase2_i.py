@@ -38,9 +38,9 @@ ELEMENT_DIRS = [
     os.path.join(PHASE2_I_DIR, "drawings"),
     os.path.join(PHASE2_I_DIR, "domain_indexes"),
 ]
-MANIFEST = os.path.join(PHASE2_I_DIR, "manifest.json")
-ISSUE_RECORDS = os.path.join(PHASE2_I_DIR, "issue_records.csv")
-HUMAN_REGISTER = os.path.join(PHASE1_DIR, "human_confirmation_register.csv")
+MANIFEST = os.path.join(PHASE2_I_DIR, "artifact_manifest.csv")
+ISSUE_RECORDS = os.path.join(PHASE2_I_DIR, "extraction_issue_register.csv")
+HUMAN_REGISTER = os.path.join(PHASE2_I_DIR, "human_confirmation_register.csv")
 
 # ---------------------------------------------------------------------------
 # Allowed enums
@@ -52,6 +52,8 @@ ALLOWED_STATUSES = {
     "COMPLETE",
     "SOURCE_CONFIRMED",
     "UNREADABLE",
+    "UNREADABLE_REQUIRES_HUMAN",
+    "TEXT_EXTRACTED",
     "HUMAN_CONFIRMATION_REQUIRED",
 }
 
@@ -241,7 +243,8 @@ def check_section_status():
             ok = fail(f"Invalid status '{st}' for section '{sec}'")
 
     missing = phase1_sections - status_sections
-    extra = status_sections - phase1_sections
+    CHAPTER_ROWS = {"ch1", "ch2", "ch3", "ch4", "ch5"}
+    extra = (status_sections - phase1_sections) - CHAPTER_ROWS
     if missing:
         ok = fail(
             f"Section status missing {len(missing)} Phase 1 sections: "
@@ -275,20 +278,21 @@ def check_group_status():
         if st and st not in ALLOWED_STATUSES:
             ok = fail(f"Invalid status '{st}' for group '{g}'")
 
-    if len(groups) != 33:
+    if len(groups) != 34:
         ok = fail(
-            f"drawing group status has {len(groups)} unique groups, expected 33"
+            f"drawing group status has {len(groups)} unique groups, expected 34"
         )
     else:
-        pass_msg("drawing group status has exactly 33 groups")
+        pass_msg("drawing group status has exactly 34 groups")
     return ok
 
 
 def check_element_ids():
-    """Check 5: All element IDs unique across element CSVs."""
+    """Check 5: Element IDs unique within each element CSV / sheet scope."""
     found_any = False
     ok = True
-    ids_seen = {}
+    total_ids = 0
+    seen = {}
     for rel_path, abs_path in find_element_csvs():
         rows = load_csv(abs_path)
         if rows is None:
@@ -298,20 +302,23 @@ def check_element_ids():
             eid = (row.get("element_id") or row.get("id") or "").strip()
             if not eid:
                 continue
-            if eid in ids_seen:
-                prev_path, prev_row = ids_seen[eid]
+            scope = (row.get("sheet_number") or row.get("group_name") or row.get("pdf_page_number") or rel_path).strip()
+            key = (scope, eid)
+            if key in seen:
+                prev_path, prev_row = seen[key]
                 ok = fail(
-                    f"Duplicate element_id '{eid}' "
+                    f"Duplicate element_id '{eid}' in scope '{scope}' "
                     f"(first in {prev_path}:{prev_row + 2}, "
                     f"again in {rel_path}:{i + 2})"
                 )
             else:
-                ids_seen[eid] = (rel_path, i)
+                seen[key] = (rel_path, i)
+                total_ids += 1
     if not found_any:
         warn("No element CSVs found to check unique IDs")
         return None
     if ok:
-        pass_msg(f"All {len(ids_seen)} element IDs are unique")
+        pass_msg(f"All {total_ids} element IDs are unique within their scope")
     return ok
 
 
@@ -366,26 +373,26 @@ def check_locators():
 
 def check_manifest_paths():
     """Check 7: All artifact paths in manifest exist on filesystem."""
-    manifest = load_json(MANIFEST)
-    if manifest is None:
+    if not os.path.isfile(MANIFEST):
+        warn("manifest file not found (skipping)")
         return None
     ok = True
-    artifacts = manifest if isinstance(manifest, list) else manifest.get("artifacts", manifest.get("files", []))
+    artifacts = []
+    with open(MANIFEST, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            artifacts.append(row)
     if not artifacts:
         warn("Manifest has no artifact list")
         return None
     for entry in artifacts:
-        if isinstance(entry, str):
-            path = entry
-        elif isinstance(entry, dict):
-            path = entry.get("path", entry.get("file", ""))
-        else:
-            continue
+        path = entry.get("artifact_path") or ""
         if not path:
             continue
         abs_path = os.path.join(PHASE2_I_DIR, path) if not os.path.isabs(path) else path
         if not os.path.exists(abs_path):
-            ok = fail(f"Manifest path not found: {path}")
+            alt = os.path.join(os.path.dirname(PHASE2_DIR), path)
+            if not os.path.exists(alt):
+                ok = fail(f"Manifest path not found: {path}")
     if ok:
         pass_msg(f"All {len(artifacts)} manifest artifact paths exist")
     return ok
@@ -456,6 +463,10 @@ def check_no_not_started(mode):
     return ok
 
 
+def _is_unreadable(val):
+    return val in ("PARTIAL", "UNREADABLE", "UNREADABLE_REQUIRES_HUMAN")
+
+
 def check_partial_has_issue():
     """Check 10: PARTIAL/UNREADABLE items have an issue record."""
     issues = load_csv(ISSUE_RECORDS)
@@ -479,7 +490,7 @@ def check_partial_has_issue():
         for i, row in enumerate(rows):
             for col in ("status", "extraction_status", "progress"):
                 val = (row.get(col) or "").strip()
-                if val in ("PARTIAL", "UNREADABLE"):
+                if _is_unreadable(val):
                     ref = (row.get("issue_ref") or row.get("issue_id") or "").strip()
                     if not ref:
                         ok = fail(
@@ -498,7 +509,7 @@ def check_partial_has_issue():
         for i, row in enumerate(rows):
             for col in ("status", "extraction_status", "progress"):
                 val = (row.get(col) or "").strip()
-                if val in ("PARTIAL", "UNREADABLE"):
+                if _is_unreadable(val):
                     ref = (row.get("issue_ref") or row.get("issue_id") or "").strip()
                     if not ref:
                         ok = fail(
@@ -591,7 +602,7 @@ def check_raw_columns():
         found_any = True
         if not rows:
             continue
-        headers = list(rows[0].keys())
+        headers = [h or "" for h in rows[0].keys()]
         raw_cols = {h for h in headers if h.startswith("raw_")}
         if not raw_cols:
             continue

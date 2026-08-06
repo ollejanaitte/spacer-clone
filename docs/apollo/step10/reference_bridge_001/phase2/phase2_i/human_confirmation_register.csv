@@ -1,1 +1,5 @@
 item_id,description,reason,affected_sources,recommended_action,phase,status
+HCR-001,Drawing sheet 141 (架設計画図) content is raster-only; text extraction returned no usable text,Requires visual inspection / OCR of PDF page 143,SRC-002,Visual + OCR transcription of drawing sheet 141 in P2II-A,Phase 2-II,OPEN
+HCR-002,Revision status of both calc and drawing sets is uncertain,No revision marks found in text extraction,"SRC-002, SRC-003",OCR check of title blocks; else accept REVISION_NOT_FOUND,P2II-A,OPEN
+HCR-003,Exact field correspondence between calc section properties and drawing dimensions,Requires detailed dimension extraction from both sources,"SRC-002, SRC-003",Cross-source traceability in Phase 2-II (P2II-H/I),Phase 2-II,OPEN
+HCR-004,Calc uses label A2 while drawing uses AR2 for abutment,Same physical abutment; notation variation only,"SRC-002, SRC-003",Retain both labels in traceability; no numeric impact,Phase 2-II,OPEN
