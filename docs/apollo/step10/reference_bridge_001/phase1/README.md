@@ -18,12 +18,12 @@ calculation-drawing correspondence.
 | Step | Name | Status |
 |------|------|--------|
 | P1-0 | Phase 0 seal correction | COMPLETE (PR #425) |
-| P1-A | Source recheck, document identity, revision | THIS PR |
-| P1-B | Bridge identity and basic condition parity | PENDING |
-| P1-C | Drawing 141-sheet catalog | PENDING |
-| P1-D | Calculation structure and page numbering | PENDING |
-| P1-E | Calculation-drawing correspondence and design standards | PENDING |
-| P1-F | Source status, conflicts, Phase 2 handoff, primary closeout | PENDING |
+| P1-A | Source recheck, document identity, revision | COMPLETE (PR #426) |
+| P1-B | Bridge identity and basic condition parity | COMPLETE (PR #427) |
+| P1-C | Drawing 141-sheet catalog | COMPLETE (PR #428) |
+| P1-D | Calculation structure and page numbering | COMPLETE (PR #429) |
+| P1-E | Calculation-drawing correspondence and design standards | COMPLETE (PR #430) |
+| P1-F | Source status, conflicts, Phase 2 handoff, primary closeout | THIS PR |
 | P1-G | Seal — final report finalization | PENDING |
 
 ## Phase 1 deliverables

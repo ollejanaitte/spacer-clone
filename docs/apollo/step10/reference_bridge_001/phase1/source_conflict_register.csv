@@ -1,0 +1,3 @@
+conflict_id,item_a,value_a,item_b,value_b,description,severity,resolution,source_status,locator,notes
+CF-001,calc_support_label,A2,drawing_support_label,AR2,Calc uses A2 drawing uses AR2 for far abutment,NOTATION_VARIATION,Same physical abutment; A=abutment R=ramp,SOURCE_CONFIRMED,calc_pdf_p7/drawing_pdf_p9,No impact on reproduction
+CF-002,calc_bridge_name,金沢IC Aランプ橋,drawing_bridge_name,旭高架橋 Aランプ PU15-AR2,Different naming conventions for same bridge,NOTATION_VARIATION,Same bridge via cross-referenced business name/route/client,SOURCE_CONFIRMED,calc_pdf_p1/drawing_pdf_p1,No impact on reproduction
