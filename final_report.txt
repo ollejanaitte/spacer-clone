@@ -1632,7 +1632,7 @@ STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED (unchanged)
 DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY (unchanged)
 FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
 
-NEXT_ACTION: Complete Phase 2.5-A..L; update this block; GO Phase 3 with non-numeric restrictions.
+NEXT_ACTION: Phase 2.5 COMPLETE. Step 9 / Phase 3 GO_WITH_NON_NUMERIC_RESTRICTIONS — begin Report Model spec freeze (docs-first) on latest main (d034a1f).
 ================================================================================
 END APOLLO STEP 9 — PHASE 2.5 BLOCKER RESOLUTION
 ================================================================================
