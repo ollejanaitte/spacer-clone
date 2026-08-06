@@ -1655,8 +1655,8 @@ PHASE3_SUBSTEPS:
   A_input_review: COMPLETE
 STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
   B_report_model_responsibility: COMPLETE
-  C_domain_to_report_mapping: IN_PROGRESS
-  D_report_model_entity_spec: PENDING
+  C_domain_to_report_mapping: COMPLETE
+  D_report_model_entity_spec: IN_PROGRESS
   E_chapter_payload_contract: PENDING
   F_status_and_authorization_contract: PENDING
   G_validation_and_missing_data_contract: PENDING
