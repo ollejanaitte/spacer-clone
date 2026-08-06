@@ -1,0 +1,26 @@
+artifact,location,status,phase4_action,prohibited_zone,basis
+ReportModel type,frontend/src/apollo/report/reportModel.ts,exists,target,expand ReportRow (R-13..22),no
+ReportChapter,frontend/src/apollo/report/reportModel.ts,exists,target,CP-* chapter id union,yes
+ReportRow,frontend/src/apollo/report/reportModel.ts,exists,target,add display/unit/stale/missingReason/legacyStatus (R-01..22),no
+buildReportModel,frontend/src/apollo/report/reportModel.ts,exists,target,continuous CP-* path; CH-* alias internal,yes
+validateReportModel,frontend/src/apollo/report/reportModel.ts,new,target,VR-01..26 (fail-close),no
+projectReportSummary,frontend/src/apollo/report/reportModel.ts,new,target,summary projection (11),no
+projectReportDetail,frontend/src/apollo/report/reportModel.ts,new,target,detail projection (11),no
+status_code_matrix.csv,docs/apollo/step9/phase3_continuous_report_model_spec/,frozen,target,re-export/lookup at build,yes
+chapter_payload_matrix.csv,docs/apollo/step9/phase3_continuous_report_model_spec/,frozen,target,re-export/lookup at build,yes
+report_entity_matrix.csv,docs/apollo/step9/phase3_continuous_report_model_spec/,frozen,target,re-export/lookup at build,yes
+reportExport.ts,frontend/src/apollo/report/reportExport.ts,exists,keep,gate assertDevelopmentReportExportable retained,no
+ReportModelDevelopmentPanel.tsx,frontend/src/apollo/components/,exists,keep,DO NOT EDIT (UI),yes
+reportModel.test.ts,frontend/src/apollo/__tests__/reportModel.test.ts,exists,extend,add CONTINUOUS/PROHIBITED/validator/projection/regression,no
+bridgeStructureFixtures.ts,frontend/src/testing/,exists,keep,fixture only (no production logic),no
+phase1ScopeGuard.ts,frontend/src/apollo/,exists,forbidden,no edits (change-prohibited),yes
+numericAuthorityGuard.ts,frontend/src/apollo/,exists,forbidden,no edits (change-prohibited),yes
+featureFlag.ts,frontend/src/apollo/,exists,forbidden,no edits (change-prohibited),yes
+appurtenanceHaunchAnalysisAdapter.ts,frontend/src/apollo/,exists,forbidden,analysis not touched,yes
+apolloStlExport.ts,frontend/src/apollo/,exists,forbidden,STL generation not touched (manifest only),yes
+bridgeStructureSolids.ts,frontend/src/apollo/,exists,forbidden,3D generation not touched,yes
+styles.css,frontend/src/styles.css,exists,forbidden,no CSS/UI,yes
+components/,frontend/src/apollo/components/,exists,forbidden,no UI,yes
+backend/,backend/,exists,forbidden,no backend,yes
+package.json / lockfile,repo,absent,forbidden,no deps added/changed,yes
+apolloBridgeStructureInput schemaVersion,frontend/,exists,forbidden,no migration shim change,yes

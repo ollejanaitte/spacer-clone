@@ -1691,3 +1691,50 @@ NEXT_ACTION: Phase 3 COMPLETE. STEP 9 / Phase 3 REPORT MODEL SPEC FREEZE frozen 
 ================================================================================
 END APOLLO STEP 9 — PHASE 3 REPORT MODEL SPECIFICATION FREEZE
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 9 — Phase 4 REPORT MODEL IMPLEMENTATION (docs-first + code)
+================================================================================
+STEP_ID: APOLLO_STEP_9_PHASE4_REPORT_MODEL_IMPLEMENTATION
+DOCUMENTATION_ONLY_IN_PHASE_4A: YES
+APPLICATION_CODE_CHANGED_IN_PHASE_4A: NO
+BASE_MAIN_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
+CURRENT_MAIN_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
+UPDATED_AT: 2026-08-06T (Phase 4-A preflight)
+
+STEP9_PHASE4_STATUS: IN_PROGRESS
+STEP9_PHASE4_BASELINE_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
+STEP9_PHASE4_CURRENT_SUBSTEP: A_PREFLIGHT
+
+PHASE4_ENTRY_VERDICT: GO_WITH_NON_NUMERIC_RESTRICTIONS (reaffirmed from Phase 3)
+
+## Phase 4-A Preflight
+PHASE4_A_PREFLIGHT_VERDICT: COMPLETE
+WORKTREE_CLEAN: YES
+LOCAL_EQUALS_ORIGIN: YES (52f1f53)
+BASELINE_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
+PHASE3_STATUS_VERIFIED: COMPLETE
+PHASE4_GATE: GO_WITH_NON_NUMERIC_RESTRICTIONS
+TOOLCHAIN: frontend-scoped (frontend/package.json + frontend/tsconfig.json + frontend/node_modules present; frontend/node_modules/.bin/{tsc,vitest,vite,rimraf}); root has no package.json by design
+
+## Existing code inventory (unchanged by Phase 4-A)
+REPORT_MODEL_SCAFFOLD: frontend/src/apollo/report/reportModel.ts (468 lines; CH-* registry, buildReportModel, assertDevelopmentReportExportable, assertFormalReportRejected, ReportModel)
+REPORT_EXPORT_GATE: frontend/src/apollo/report/reportExport.ts (72 lines)
+EXISTING_TESTS: frontend/src/apollo/__tests__/reportModel.test.ts (4 tests, simple-single based)
+CONTINUOUS_FIXTURE: frontend/src/testing/bridgeStructureFixtures.ts -> fillContinuousBridgeStructureInput (5-span CONTINUOUS 200 m)
+SCOPE_GUARDS (change-prohibited): frontend/src/apollo/{phase1ScopeGuard,numericAuthorityGuard,featureFlag}.ts
+NON-TARGETS: apolloStlExport.ts, bridgeStructureSolids.ts, appurtenanceHaunchAnalysisAdapter.ts, styles.css, components/, backend/, lockfile, schemaVersion semantics
+
+## Change/prohibit matrix — see docs/apollo/step9/phase4_continuous_report_model_implementation/implementation_matrix.csv
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED (unchanged)
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY (unchanged)
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
+
+EVIDENCE_ROOT: docs/apollo/step9/phase4_continuous_report_model_implementation/
+NEXT_ACTION: Phase 4-B implement Report Model entity types (R-01..R-22); Phase 4-C transformer; 4-D validator; 4-E projection; 4-F tests+regression; 4-G scope audit; 4-H closeout.
+================================================================================
+END APOLLO STEP 9 — PHASE 4 REPORT MODEL IMPLEMENTATION
+================================================================================
