@@ -7,46 +7,64 @@ Define the scope, conditions, and deliverables for Phase 1 of STEP 10.
 Phase 1 is **source set canonization** — the systematic verification of the
 source originals and their correspondence.
 
+Phase 1 focuses on **document/section/page-range/drawing-group/evidence-anchor
+canonization**. Full structural decomposition of every page, table, formula,
+note, and drawing element is **Phase 2** responsibility.
+
 ## 2. Phase 1 scope
 
 ### 2.1 Investigation targets
 
 The following items must be confirmed in Phase 1:
 
-1. **Calculation and drawing sheet correspondence**
-   - Every calculation page must be mapped to the drawing sheet(s) it references
-   - Every drawing sheet must be mapped to the calculation page(s) it supports
-
-2. **Revision numbers and dates**
-   - Identify the revision number of each document
+1. **Document identity and revision**
+   - Identify the revision number/status of each document
    - Confirm the creation/modification date of each document
-   - Identify whether the set is a single self-consistent release or assembled from multiple revisions
+   - Identify whether the set is a single self-consistent release or assembled
+     from multiple revisions
 
-3. **Bridge identification**
+2. **Bridge identification**
    - Confirm the bridge name, route name, and construction location
    - Confirm the pier/abutment labels (PU15, PR1, PR2, AR2)
    - Confirm the main girder labels (AG1, AG2)
 
-4. **Span arrangement**
-   - Confirm span lengths: 40.201m + 51.000m + 40.200m (ACL上)
-   - Confirm total bridge length: 134.001m (ACL上)
-   - Confirm girder length: 133.151m (ACL上)
+3. **Basic condition parity**
+   - Bridge length, girder length, span arrangement
+   - Total width, effective width, girder spacing
+   - Curve alignment parameters (R=160m, R=3000m)
+   - Cross-section type and dimensions
+   - Material specifications
 
-5. **Cross-section data**
-   - Confirm total width: 8.010m
-   - Confirm effective width: 7.000m
-   - Confirm girder spacing and overhang dimensions
+4. **Drawing sheet catalog**
+   - All 141 sheets by name and PDF page
+   - Sheet grouping (general, structure, alignment, cross-section, girder,
+     cross-beam, bracing, bearings, etc.)
+   - Title block review for representative sheets
 
-6. **Curve alignment**
-   - Confirm the horizontal alignment parameters (R=160m, R=3000m)
-   - Confirm the transition geometry
-   - Confirm the superelevation data
+5. **Calculation section catalog**
+   - Table of contents: chapters and sections
+   - Chapter/section start pages (PDF and printed)
+   - Page numbering model (offsets, gaps, unnumbered pages, inserts)
 
-7. **Design standards referenced**
-   - Confirm the exact edition of each standard
-   - Identify any unlisted or supplementary standards
+6. **Calculation-drawing correspondence**
+   - Chapter/section ranges mapped to drawing groups
+   - Direct references vs. semantic candidate separation
+   - Evidence strength classification
 
-### 2.2 SOURCE_* classification
+7. **Design standards**
+   - Exact edition, organization, year of each referenced standard
+   - H29_REFERENCE vs. R7_COMPLIANCE separation
+
+### 2.2 Phase 1 does NOT do
+
+- Full page-by-page table/number extraction
+- One-to-one mapping of every calculation page to every drawing sheet
+- Design formula verification
+- Numeric recomputation
+- Golden JSON creation
+- Production code implementation
+
+### 2.3 SOURCE_* classification
 
 Each source element must be classified as:
 
@@ -58,28 +76,32 @@ Each source element must be classified as:
 | SOURCE_MISSING | Required information not found in any source |
 | HUMAN_CONFIRMATION_REQUIRED | Requires expert judgment to resolve |
 
-### 2.3 Page-level provenance ledger
+### 2.4 Page-level provenance anchors
 
-Phase 1 must produce a page-level provenance ledger that records:
+Phase 1 must produce anchor records for key pages:
 
-- Source original
-- Page number or sheet number
-- Content summary
-- Corresponding pages in other documents
-- SOURCE_* classification
-- Notes
+- Cover / title page
+- Table of contents
+- Drawing catalog
+- Chapter start pages
+- Major section start pages
+- Representative drawing sheets (first/last of each group)
+- Any page with critical identification metadata
+
+Full structural decomposition of every page is Phase 2.
 
 ## 3. Phase 1 start conditions
 
 Phase 1 may start when:
 
 - [x] Phase 0 is complete (all 6 PRs merged)
+- [x] Phase 0 closeout merge SHA recorded: aa35c6143af4cbe69b223077bede2aa109692f9a
 - [x] RB-S10-001 is defined
 - [x] Source originals are accessible (3/3 CONFIRMED)
 - [x] STEP 9 assets are frozen
 - [x] Legacy scope findings are summarized
 - [x] Source manifest is recorded with verified SHA256 and page counts
-- [ ] Phase 0 closeout report is finalized (P0-F)
+- [x] Phase 0 closeout report is finalized
 
 ## 4. Phase 1 constraints
 

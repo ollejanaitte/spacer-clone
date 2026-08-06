@@ -16,7 +16,8 @@ were performed.
 |------|-------|
 | Repository | `https://github.com/ollejanaitte/spacer-clone.git` |
 | Pre-Phase-0 baseline SHA | `ceeabc11616fb7bcaf5a2700745141681f15b26e` |
-| Final main SHA | `e229705f4fa897a4415d711076b3b3bfdef0c186` |
+| Phase 0 closeout merge SHA | `aa35c6143af4cbe69b223077bede2aa109692f9a` |
+| Phase 0 runtime main SHA (at closeout) | `aa35c6143af4cbe69b223077bede2aa109692f9a` |
 | Branch | `main` |
 | Worktree | clean |
 | Local == origin/main | YES |
@@ -66,13 +67,13 @@ Full register: `step9_asset_retention_register.csv`
 ## 7. PR / merge chain
 
 | PR | Branch | Head SHA | Merge SHA | Merge method | Status |
-|----|--------|----------|-----------|-------------|--------|
-| #419 | docs/apollo-step10-p0a-baseline | d198daa | e9aeb40 | squash | MERGED |
-| #420 | docs/apollo-step10-p0b-step9-freeze | 48ecfa2 | 9f701fb | squash | MERGED |
-| #421 | docs/apollo-step10-p0c-legacy-scope-recovery | f15a278 | 4a695ec | squash | MERGED |
-| #422 | docs/apollo-step10-p0d-source-manifest | e8e0de9 | a3558d6 | squash | MERGED |
-| #423 | docs/apollo-step10-p0e-plan-and-handoff | 52d1f58 | e229705 | squash | MERGED |
-| #424 | docs/apollo-step10-p0f-closeout | (this PR) | (this PR) | squash | PENDING |
+ |----|--------|----------|-----------|-------------|--------|
+ | #419 | docs/apollo-step10-p0a-baseline | d198daa | e9aeb40 | squash | MERGED |
+ | #420 | docs/apollo-step10-p0b-step9-freeze | 48ecfa2 | 9f701fb | squash | MERGED |
+ | #421 | docs/apollo-step10-p0c-legacy-scope-recovery | f15a278 | 4a695ec | squash | MERGED |
+ | #422 | docs/apollo-step10-p0d-source-manifest | e8e0de9 | a3558d6 | squash | MERGED |
+ | #423 | docs/apollo-step10-p0e-plan-and-handoff | 52d1f58 | e229705 | squash | MERGED |
+ | #424 | docs/apollo-step10-p0f-closeout | ac4089c | aa35c61 | squash | MERGED |
 
 ## 8. Files created
 
@@ -162,7 +163,9 @@ FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 
 ## 14. Exact next action
 
-Merge PR #424 (this PR). Then proceed to Phase 1 — source set canonization:
-page-level provenance, calculation-drawing correspondence, revision mapping.
+Phase 0 is sealed. Proceed to Phase 1 — source set canonization:
+document/section/page-range/drawing-group/evidence-anchor identity, bridge
+condition parity, drawing catalog, calculation structure, and correspondence
+mapping.
 
 Phase 1 is documentation-only. No production code changes.
