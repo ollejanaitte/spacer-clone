@@ -1,0 +1,13 @@
+artifact_path,artifact_kind,file_format,row_count,sha256,domain,phase,status,notes
+phase2/phase2_i/README.md,documentation,md,,,contract,phase2_i,CREATED,Phase 2-I overview
+phase2/phase2_i/01_phase2_i_scope_and_contract.md,documentation,md,,,contract,phase2_i,CREATED,Extraction scope and contract
+phase2/phase2_i/02_extraction_schema_and_id_contract.md,documentation,md,,,contract,phase2_i,CREATED,ID schema and semantic contract
+phase2/phase2_i/03_source_processing_and_verification_policy.md,documentation,md,,,contract,phase2_i,CREATED,Processing and verification policy
+phase2/phase2_i/id_registry.csv,registry,csv,30,,contract,phase2_i,CREATED,ID prefix registry; 30 rows (header + 29 prefixes)
+phase2/phase2_i/extraction_issue_register.csv,register,csv,0,,governance,phase2_i,CREATED,Empty extraction issue register
+phase2/phase2_i/human_confirmation_register.csv,register,csv,0,,governance,phase2_i,CREATED,Empty human confirmation register
+phase2/phase2_i/source_conflict_register.csv,register,csv,0,,governance,phase2_i,CREATED,Empty source conflict register
+phase2/phase2_i/calculation_page_coverage.csv,coverage,csv,2226,,coverage,phase2_i,CREATED,Calc page coverage skeleton; 2226 rows + header
+phase2/phase2_i/drawing_sheet_coverage.csv,coverage,csv,141,,coverage,phase2_i,CREATED,Drawing sheet coverage skeleton; 141 rows + header
+phase2/phase2_i/calculation_section_status.csv,coverage,csv,92,,coverage,phase2_i,CREATED,Calc section status skeleton; 92 rows + header
+phase2/phase2_i/drawing_group_status.csv,coverage,csv,34,,coverage,phase2_i,CREATED,Drawing group status skeleton; 34 rows + header

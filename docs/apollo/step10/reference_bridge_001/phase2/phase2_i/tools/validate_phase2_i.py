@@ -1,0 +1,716 @@
+#!/usr/bin/env python3
+"""Phase 2-I Validation Tool — Validate decomposition data completeness and integrity.
+
+Usage:
+    python3 validate_phase2_i.py --mode pre-closeout
+    python3 validate_phase2_i.py --mode closeout
+
+Modes:
+    pre-closeout   Run all checks except no-NOT_STARTED enforcement.
+    closeout       Run all checks including no-NOT_STARTED enforcement.
+
+Exit code 0 = all checks pass, 1 = any check fails.
+"""
+
+import csv
+import json
+import hashlib
+import os
+import re
+import sys
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
+PHASE2_I_DIR = os.path.dirname(TOOL_DIR)
+PHASE2_DIR = os.path.dirname(PHASE2_I_DIR)
+PHASE1_DIR = os.path.join(PHASE2_DIR, "..", "phase1")
+
+PHASE1_SECTION_CATALOG = os.path.join(PHASE1_DIR, "calculation_section_catalog.csv")
+
+CALC_COVERAGE = os.path.join(PHASE2_I_DIR, "calculation_page_coverage.csv")
+DRAWING_COVERAGE = os.path.join(PHASE2_I_DIR, "drawing_sheet_coverage.csv")
+SECTION_STATUS = os.path.join(PHASE2_I_DIR, "calculation_section_status.csv")
+GROUP_STATUS = os.path.join(PHASE2_I_DIR, "drawing_group_status.csv")
+ELEMENT_DIRS = [
+    os.path.join(PHASE2_I_DIR, "calculation"),
+    os.path.join(PHASE2_I_DIR, "drawings"),
+    os.path.join(PHASE2_I_DIR, "domain_indexes"),
+]
+MANIFEST = os.path.join(PHASE2_I_DIR, "manifest.json")
+ISSUE_RECORDS = os.path.join(PHASE2_I_DIR, "issue_records.csv")
+HUMAN_REGISTER = os.path.join(PHASE1_DIR, "human_confirmation_register.csv")
+
+# ---------------------------------------------------------------------------
+# Allowed enums
+# ---------------------------------------------------------------------------
+ALLOWED_STATUSES = {
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "PARTIAL",
+    "COMPLETE",
+    "SOURCE_CONFIRMED",
+    "UNREADABLE",
+    "HUMAN_CONFIRMATION_REQUIRED",
+}
+
+ALLOWED_SEMANTIC_CLASSES = {
+    "geometry",
+    "structural_model",
+    "loads",
+    "analysis_results",
+    "design_checks",
+    "adopted_values",
+    "report_structure",
+    "drawing_structure",
+    "materials_sections",
+    "members",
+    "text",
+    "table",
+    "figure",
+    "heading",
+    "paragraph",
+    "list",
+    "note",
+}
+
+LOCATOR_RE = re.compile(r"^(calc|drawing|manual)_pdf_p\d+$")
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def warn(msg):
+    print(f"  [WARN] {msg}")
+
+
+def fail(msg):
+    print(f"  [FAIL] {msg}")
+    return False
+
+
+def pass_msg(msg):
+    print(f"  [PASS] {msg}")
+    return True
+
+
+def load_csv(path, required=False):
+    """Load a CSV into a list-of-dicts. Returns None on failure."""
+    if not os.path.isfile(path):
+        if required:
+            warn(f"Required file not found: {path}")
+        else:
+            warn(f"File not found (skipping): {path}")
+        return None
+    try:
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            return list(csv.DictReader(f))
+    except Exception as e:
+        warn(f"Could not read {path}: {e}")
+        return None
+
+
+def load_json(path, required=False):
+    """Load a JSON file. Returns None on failure."""
+    if not os.path.isfile(path):
+        if required:
+            warn(f"Required file not found: {path}")
+        else:
+            warn(f"File not found (skipping): {path}")
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        warn(f"Could not read {path}: {e}")
+        return None
+
+
+def get_phase1_sections():
+    """Return the set of section identifiers from the Phase 1 catalog."""
+    rows = load_csv(PHASE1_SECTION_CATALOG, required=True)
+    if rows is None:
+        return None
+    sections = set()
+    for row in rows:
+        sec = (row.get("section") or "").strip()
+        if sec and not sec.startswith("ch") and sec != "end":
+            sections.add(sec)
+    return sections
+
+
+def find_element_csvs():
+    """Yield (rel_path, abs_path) for every CSV under element directories."""
+    for d in ELEMENT_DIRS:
+        if not os.path.isdir(d):
+            continue
+        for root, _dirs, files in os.walk(d):
+            for fn in files:
+                if fn.endswith(".csv"):
+                    rel = os.path.relpath(os.path.join(root, fn), PHASE2_I_DIR)
+                    yield rel, os.path.join(root, fn)
+
+
+# ---------------------------------------------------------------------------
+# Checks
+# ---------------------------------------------------------------------------
+
+def check_calc_coverage():
+    """Check 1: calculation_page_coverage.csv has exactly 2226 rows, pdf_page 1-2226 unique."""
+    rows = load_csv(CALC_COVERAGE)
+    if rows is None:
+        return None
+    ok = True
+    if len(rows) != 2226:
+        ok = fail(
+            f"calculation_page_coverage.csv has {len(rows)} rows, expected 2226"
+        )
+    else:
+        pass_msg("calculation_page_coverage.csv row count = 2226")
+
+    pdf_pages = set()
+    for row in rows:
+        try:
+            pdf_pages.add(int((row.get("pdf_page_number") or "").strip()))
+        except (ValueError, TypeError):
+            ok = fail(f"Invalid pdf_page_number value: {row.get('pdf_page_number')}")
+    expected = set(range(1, 2227))
+    missing_pages = expected - pdf_pages
+    extra_pages = pdf_pages - expected
+    if missing_pages:
+        ok = fail(
+            f"Missing pdf_page_number values: {sorted(missing_pages)[:20]}..."
+        )
+    if extra_pages:
+        ok = fail(
+            f"Extra pdf_page_number values (outside 1-2226): {sorted(extra_pages)[:20]}..."
+        )
+    if not missing_pages and not extra_pages:
+        pass_msg("calculation_page_coverage.pdf_page_number covers 1-2226 uniquely")
+    return ok
+
+
+def check_drawing_coverage():
+    """Check 2: drawing_sheet_coverage.csv has exactly 141 rows, sheet 1-141 unique."""
+    rows = load_csv(DRAWING_COVERAGE)
+    if rows is None:
+        return None
+    ok = True
+    if len(rows) != 141:
+        ok = fail(
+            f"drawing_sheet_coverage.csv has {len(rows)} rows, expected 141"
+        )
+    else:
+        pass_msg("drawing_sheet_coverage.csv row count = 141")
+
+    sheets = set()
+    for row in rows:
+        try:
+            sheets.add(int((row.get("drawing_sheet_number") or "").strip()))
+        except (ValueError, TypeError):
+            ok = fail(f"Invalid drawing_sheet_number value: {row.get('drawing_sheet_number')}")
+    expected = set(range(1, 142))
+    missing = expected - sheets
+    extra = sheets - expected
+    if missing:
+        ok = fail(f"Missing drawing_sheet_number values: {sorted(missing)[:20]}...")
+    if extra:
+        ok = fail(f"Extra drawing_sheet_number values (outside 1-141): {sorted(extra)[:20]}...")
+    if not missing and not extra:
+        pass_msg("drawing_sheet_coverage.drawing_sheet_number covers 1-141 uniquely")
+    return ok
+
+
+def check_section_status():
+    """Check 3: section status covers Phase 1's sections."""
+    rows = load_csv(SECTION_STATUS)
+    if rows is None:
+        return None
+    phase1_sections = get_phase1_sections()
+    if phase1_sections is None:
+        return None
+    ok = True
+    status_sections = set()
+    for row in rows:
+        sec = (row.get("section_id") or "").strip()
+        st = (row.get("extraction_status") or "").strip()
+        if sec:
+            status_sections.add(sec)
+        if st and st not in ALLOWED_STATUSES:
+            ok = fail(f"Invalid status '{st}' for section '{sec}'")
+
+    missing = phase1_sections - status_sections
+    extra = status_sections - phase1_sections
+    if missing:
+        ok = fail(
+            f"Section status missing {len(missing)} Phase 1 sections: "
+            f"{sorted(missing)[:10]}..."
+        )
+    else:
+        pass_msg("All Phase 1 sections present in section status")
+    if extra:
+        ok = fail(
+            f"Section status has {len(extra)} extra sections not in Phase 1: "
+            f"{sorted(extra)[:10]}..."
+        )
+    else:
+        if not missing:
+            pass_msg("No extra sections in section status")
+    return ok
+
+
+def check_group_status():
+    """Check 4: drawing group status covers 33 groups."""
+    rows = load_csv(GROUP_STATUS)
+    if rows is None:
+        return None
+    ok = True
+    groups = set()
+    for row in rows:
+        g = (row.get("group_name") or "").strip()
+        st = (row.get("extraction_status") or "").strip()
+        if g:
+            groups.add(g)
+        if st and st not in ALLOWED_STATUSES:
+            ok = fail(f"Invalid status '{st}' for group '{g}'")
+
+    if len(groups) != 33:
+        ok = fail(
+            f"drawing group status has {len(groups)} unique groups, expected 33"
+        )
+    else:
+        pass_msg("drawing group status has exactly 33 groups")
+    return ok
+
+
+def check_element_ids():
+    """Check 5: All element IDs unique across element CSVs."""
+    found_any = False
+    ok = True
+    ids_seen = {}
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        for i, row in enumerate(rows):
+            eid = (row.get("element_id") or row.get("id") or "").strip()
+            if not eid:
+                continue
+            if eid in ids_seen:
+                prev_path, prev_row = ids_seen[eid]
+                ok = fail(
+                    f"Duplicate element_id '{eid}' "
+                    f"(first in {prev_path}:{prev_row + 2}, "
+                    f"again in {rel_path}:{i + 2})"
+                )
+            else:
+                ids_seen[eid] = (rel_path, i)
+    if not found_any:
+        warn("No element CSVs found to check unique IDs")
+        return None
+    if ok:
+        pass_msg(f"All {len(ids_seen)} element IDs are unique")
+    return ok
+
+
+def check_locators():
+    """Check 6: All source locators in valid format."""
+    found_any = False
+    ok = True
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        loc_col = None
+        for candidate in ("locator", "source_locator", "location"):
+            if candidate in (rows[0] if rows else {}):
+                loc_col = candidate
+                break
+        if not loc_col:
+            continue
+        for i, row in enumerate(rows):
+            loc_val = (row.get(loc_col) or "").strip()
+            if loc_val and not LOCATOR_RE.match(loc_val):
+                ok = fail(
+                    f"Invalid locator '{loc_val}' in {rel_path}:{i + 2}"
+                )
+    for cov_path in (CALC_COVERAGE, DRAWING_COVERAGE):
+        rows = load_csv(cov_path)
+        if rows is None:
+            continue
+        loc_col = None
+        for candidate in ("locator", "source_locator", "location"):
+            if candidate in (rows[0] if rows else {}):
+                loc_col = candidate
+                break
+        if not loc_col:
+            continue
+        found_any = True
+        for i, row in enumerate(rows):
+            loc_val = (row.get(loc_col) or "").strip()
+            if loc_val and not LOCATOR_RE.match(loc_val):
+                ok = fail(
+                    f"Invalid locator '{loc_val}' in "
+                    f"{os.path.basename(cov_path)}:{i + 2}"
+                )
+    if not found_any:
+        warn("No files with locator columns found to validate")
+        return None
+    if ok:
+        pass_msg("All source locators match expected format")
+    return ok
+
+
+def check_manifest_paths():
+    """Check 7: All artifact paths in manifest exist on filesystem."""
+    manifest = load_json(MANIFEST)
+    if manifest is None:
+        return None
+    ok = True
+    artifacts = manifest if isinstance(manifest, list) else manifest.get("artifacts", manifest.get("files", []))
+    if not artifacts:
+        warn("Manifest has no artifact list")
+        return None
+    for entry in artifacts:
+        if isinstance(entry, str):
+            path = entry
+        elif isinstance(entry, dict):
+            path = entry.get("path", entry.get("file", ""))
+        else:
+            continue
+        if not path:
+            continue
+        abs_path = os.path.join(PHASE2_I_DIR, path) if not os.path.isabs(path) else path
+        if not os.path.exists(abs_path):
+            ok = fail(f"Manifest path not found: {path}")
+    if ok:
+        pass_msg(f"All {len(artifacts)} manifest artifact paths exist")
+    return ok
+
+
+def check_no_pdf_in_tracked():
+    """Check 8: No .pdf files in git-tracked files under phase2_i."""
+    ok = True
+    try:
+        result = os.popen(
+            f"cd {PHASE2_I_DIR} && git ls-files '*.pdf' 2>/dev/null"
+        ).read().strip()
+    except Exception:
+        warn("Could not run git ls-files to check for .pdf files")
+        return None
+    if result:
+        pdf_files = [f for f in result.split("\n") if f.strip()]
+        if pdf_files:
+            ok = fail(
+                f"Found {len(pdf_files)} tracked .pdf files: "
+                f"{pdf_files[:5]}..."
+            )
+        else:
+            pass_msg("No tracked .pdf files in phase2_i")
+    else:
+        pass_msg("No tracked .pdf files in phase2_i")
+    return ok
+
+
+def check_no_not_started(mode):
+    """Check 9: No NOT_STARTED items (closeout mode only)."""
+    if mode != "closeout":
+        pass_msg("Skipped NOT_STARTED check (pre-closeout mode)")
+        return True
+    ok = True
+    found_any = False
+    targets = [CALC_COVERAGE, DRAWING_COVERAGE, SECTION_STATUS, GROUP_STATUS]
+    for path in targets:
+        rows = load_csv(path)
+        if rows is None:
+            continue
+        found_any = True
+        basename = os.path.basename(path)
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val == "NOT_STARTED":
+                    ok = fail(
+                        f"NOT_STARTED in {basename}:{i + 2} column '{col}'"
+                    )
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val == "NOT_STARTED":
+                    ok = fail(
+                        f"NOT_STARTED in {rel_path}:{i + 2} column '{col}'"
+                    )
+    if not found_any:
+        warn("No status-bearing files found for NOT_STARTED check")
+        return None
+    if ok:
+        pass_msg("No NOT_STARTED items found (closeout check passed)")
+    return ok
+
+
+def check_partial_has_issue():
+    """Check 10: PARTIAL/UNREADABLE items have an issue record."""
+    issues = load_csv(ISSUE_RECORDS)
+    issue_refs = set()
+    if issues is not None:
+        for row in issues:
+            for col in ("issue_id", "id", "conflict_id"):
+                val = (row.get(col) or "").strip()
+                if val:
+                    issue_refs.add(val)
+                    break
+    ok = True
+    found_any = False
+    targets = [CALC_COVERAGE, DRAWING_COVERAGE, SECTION_STATUS, GROUP_STATUS]
+    for path in targets:
+        rows = load_csv(path)
+        if rows is None:
+            continue
+        found_any = True
+        basename = os.path.basename(path)
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val in ("PARTIAL", "UNREADABLE"):
+                    ref = (row.get("issue_ref") or row.get("issue_id") or "").strip()
+                    if not ref:
+                        ok = fail(
+                            f"{val} in {basename}:{i + 2} has no issue_ref"
+                        )
+                    elif ref not in issue_refs:
+                        ok = fail(
+                            f"{val} in {basename}:{i + 2} references "
+                            f"unknown issue '{ref}'"
+                        )
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val in ("PARTIAL", "UNREADABLE"):
+                    ref = (row.get("issue_ref") or row.get("issue_id") or "").strip()
+                    if not ref:
+                        ok = fail(
+                            f"{val} in {rel_path}:{i + 2} has no issue_ref"
+                        )
+                    elif ref not in issue_refs:
+                        ok = fail(
+                            f"{val} in {rel_path}:{i + 2} references "
+                            f"unknown issue '{ref}'"
+                        )
+    if not found_any:
+        warn("No files found for PARTIAL/UNREADABLE check")
+        return None
+    if ok:
+        pass_msg("All PARTIAL/UNREADABLE items have issue records")
+    return ok
+
+
+def check_human_confirmation():
+    """Check 11: HUMAN_CONFIRMATION_REQUIRED items have human register row."""
+    human_rows = load_csv(HUMAN_REGISTER)
+    human_ids = set()
+    if human_rows is not None:
+        for row in human_rows:
+            hid = (row.get("item_id") or "").strip()
+            if hid:
+                human_ids.add(hid)
+    ok = True
+    found_any = False
+    targets = [CALC_COVERAGE, DRAWING_COVERAGE, SECTION_STATUS, GROUP_STATUS]
+    for path in targets:
+        rows = load_csv(path)
+        if rows is None:
+            continue
+        found_any = True
+        basename = os.path.basename(path)
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val == "HUMAN_CONFIRMATION_REQUIRED":
+                    ref = (row.get("human_ref") or row.get("human_id") or "").strip()
+                    if not ref:
+                        ok = fail(
+                            f"HUMAN_CONFIRMATION_REQUIRED in "
+                            f"{basename}:{i + 2} has no human_ref"
+                        )
+                    elif ref not in human_ids:
+                        ok = fail(
+                            f"HUMAN_CONFIRMATION_REQUIRED in "
+                            f"{basename}:{i + 2} references "
+                            f"unknown human register id '{ref}'"
+                        )
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        for i, row in enumerate(rows):
+            for col in ("status", "extraction_status", "progress"):
+                val = (row.get(col) or "").strip()
+                if val == "HUMAN_CONFIRMATION_REQUIRED":
+                    ref = (row.get("human_ref") or row.get("human_id") or "").strip()
+                    if not ref:
+                        ok = fail(
+                            f"HUMAN_CONFIRMATION_REQUIRED in "
+                            f"{rel_path}:{i + 2} has no human_ref"
+                        )
+                    elif ref not in human_ids:
+                        ok = fail(
+                            f"HUMAN_CONFIRMATION_REQUIRED in "
+                            f"{rel_path}:{i + 2} references "
+                            f"unknown human register id '{ref}'"
+                        )
+    if not found_any:
+        warn("No files found for HUMAN_CONFIRMATION_REQUIRED check")
+        return None
+    if ok:
+        pass_msg("All HUMAN_CONFIRMATION_REQUIRED items have human register entries")
+    return ok
+
+
+def check_raw_columns():
+    """Check 12: Raw columns not overwritten by normalized values."""
+    ok = True
+    found_any = False
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        if not rows:
+            continue
+        headers = list(rows[0].keys())
+        raw_cols = {h for h in headers if h.startswith("raw_")}
+        if not raw_cols:
+            continue
+        normalized_cols = {h for h in headers if not h.startswith("raw_")}
+        for raw in raw_cols:
+            stem = raw[4:]
+            if stem in normalized_cols:
+                for i, row in enumerate(rows):
+                    rv = (row.get(raw) or "").strip()
+                    nv = (row.get(stem) or "").strip()
+                    if rv and nv and rv != nv:
+                        ok = fail(
+                            f"In {rel_path}:{i + 2}: raw_{stem}='{rv}' "
+                            f"differs from {stem}='{nv}'"
+                        )
+                        break
+    if not found_any:
+        warn("No element CSVs with raw_ columns found")
+        return None
+    if ok:
+        pass_msg("No raw column overwrites detected")
+    return ok
+
+
+def check_semantic_classes():
+    """Check 13: Semantic classes are from the allowed enum."""
+    ok = True
+    found_any = False
+    for rel_path, abs_path in find_element_csvs():
+        rows = load_csv(abs_path)
+        if rows is None:
+            continue
+        found_any = True
+        if not rows:
+            continue
+        sc_col = None
+        for candidate in ("semantic_class", "class", "type"):
+            if candidate in rows[0]:
+                sc_col = candidate
+                break
+        if not sc_col:
+            continue
+        for i, row in enumerate(rows):
+            val = (row.get(sc_col) or "").strip()
+            if val and val not in ALLOWED_SEMANTIC_CLASSES:
+                ok = fail(
+                    f"Invalid semantic class '{val}' in {rel_path}:{i + 2}"
+                )
+    if not found_any:
+        warn("No element CSVs with semantic_class columns found")
+        return None
+    if ok:
+        pass_msg("All semantic classes are from the allowed enum")
+    return ok
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+CHECKS = [
+    ("Check 1 — calc coverage rows & pages", check_calc_coverage),
+    ("Check 2 — drawing coverage rows & sheets", check_drawing_coverage),
+    ("Check 3 — section status covers Phase 1", check_section_status),
+    ("Check 4 — drawing group status covers 33 groups", check_group_status),
+    ("Check 5 — element IDs unique", check_element_ids),
+    ("Check 6 — source locators valid format", check_locators),
+    ("Check 7 — manifest paths exist", check_manifest_paths),
+    ("Check 8 — no .pdf in git tracked files", check_no_pdf_in_tracked),
+    ("Check 9 — no NOT_STARTED items", check_no_not_started),
+    ("Check 10 — PARTIAL/UNREADABLE have issue", check_partial_has_issue),
+    ("Check 11 — HUMAN_CONFIRMATION_REQUIRED have register", check_human_confirmation),
+    ("Check 12 — raw columns not overwritten", check_raw_columns),
+    ("Check 13 — semantic classes from enum", check_semantic_classes),
+]
+
+
+def main():
+    mode = "pre-closeout"
+    args = sys.argv[1:]
+    for arg in args:
+        if arg.startswith("--mode="):
+            mode = arg.split("=", 1)[1]
+        elif arg == "--mode":
+            idx = args.index(arg)
+            if idx + 1 < len(args):
+                mode = args[idx + 1]
+
+    if mode not in ("pre-closeout", "closeout"):
+        print(f"Unknown mode: {mode}")
+        print("Usage: validate_phase2_i.py --mode pre-closeout|closeout")
+        sys.exit(1)
+
+    print(f"Phase 2-I Validation Tool — mode: {mode}")
+    print(f"Phase 2-I directory: {PHASE2_I_DIR}")
+    print(f"{'=' * 60}")
+
+    all_pass = True
+    for name, func in CHECKS:
+        print(f"\n{name}")
+        print("-" * len(name))
+        try:
+            result = func(mode) if name == "Check 9 — no NOT_STARTED items" else func()
+        except Exception as e:
+            print(f"  [ERROR] Unexpected exception in check: {e}")
+            result = False
+        if result is None:
+            print("  [SKIP] (missing data — not a failure)")
+        elif result is False:
+            all_pass = False
+
+    print(f"\n{'=' * 60}")
+    if all_pass:
+        print("OVERALL: PASS")
+        sys.exit(0)
+    else:
+        print("OVERALL: FAIL — see [FAIL] messages above")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
