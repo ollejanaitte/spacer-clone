@@ -1,0 +1,11 @@
+source_id,category,title,source_origin,file_type,size,sha256,discovered_at,usage_status,notes
+SRC-001,Manuals,JIP-LINER線形座標計算システム ユーザーズマニュアル(令和05年05月 JIPテクノサイエンス),local path (original not committed to this repo),pdf,3742659,a0341e48b4e3d1dc52c04af908e676990d1cf1a12595e412eb9eafc5a1dab29c,2026-08-06T17:20:00Z,REFERENCE_ONLY,P183. LINER/LDIST/HAUNCH/HOSO/GDRAW+オプション。元はspacer-clone内を読取複製しread-only化
+SRC-002,Manual,SPACER操作マニュアル,local path (original not committed to this repo),pdf,2229905,e08681a290904c13c702ed864e0753d85e5c43201a5886c48766c0417aa7d012,2026-08-06T17:20:00Z,REFERENCE_ONLY,SPACER連携の補助参考。未複製(コピーせず原本のみ記録)
+SRC-003,Repository,spacer-clone 公開リポジトリ スナップショット(main@7b07f62),https://github.com/ollejanaitte/spacer-clone.git,git,3578files,7b07f623b7db1fc560e19c2626f5820086e718da8652,2026-08-06T17:22:00Z,PRIMARY,(Phase2監査の正本). git clone --depth 1 --single-branch main 7b07f623
+SRC-004,Designexample,サンプルLINER計算書 高架橋(入力結果・出力結果).PDF,local path (original not committed to this repo),pdf,524395,29d3e3a6957fe3c6dde4436fa27851df7fbf6002bb7c6bad642915ebedf2d505,2026-08-06T17:20:00Z,PRIMARY,Phase1 LINER実データ・出力形式の正本。入力データ全文と座標表を含む
+SRC-005,Designexample,鋼鈑桁橋_設計計算例.pdf,local path (original not committed to this repo),pdf,9724552,da6ab701d18f805b63a262aebb19acb8294dd81a4baec4cc57a46e1abef75d8f,2026-08-06T17:24:00Z,PRIMARY,Phase7上部工側へ渡すべきデータの裏付け。主桁格点/格間/張出し/腹板高/曲率表
+SRC-006,Designexample,鋼鈑桁橋_図面例.pdf,local path (original not committed to this repo),pdf,6738734,77718e39bfb016c8a7827c4ead8c7666a256f6cb03083b423ac9793fdf3f5de8,2026-08-06T17:24:00Z,PRIMARY,Phase7・図面の裏付け。平面/縦断/横断/総割図構成
+SRC-007,Research,Apollo UI修正指示内容(odp),local path (original not committed to this repo),odp,462314,UNKNOWN_NOT_HASHED,2026-08-06T17:20:00Z,REFERENCE_ONLY,上部工UI修正指示。OpenDocument。コピー不要として原本のみ記録
+SRC-008,Archive,Scope_of_Work 講調査(曲線桁step10 P0 source survey),local path (original not committed to this repo),documents,UNKNOWN,UNKNOWN_NOT_HASHED,2026-08-06T17:20:00Z,REFERENCE_ONLY,(Phase8特殊線形の既存検討の参照)。読み取りのみ
+SRC-009,Archive,spacer-close-old.zip,local path (original not committed to this repo),zip,843959348,UNKNOWN_NOT_HASHED,2026-08-06T17:20:00Z,NOT_USED,大容量のため対象外
+SRC-010,Screenshot,床版ハンチのオブジェクトが見えない.PNG,local path (original not committed to this repo),png,394641,UNKNOWN_NOT_HASHED,2026-08-06T17:20:00Z,REFERENCE_ONLY,ハンチ可視化の既存サンプル。内容は画像部品

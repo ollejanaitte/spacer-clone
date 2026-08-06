@@ -1,0 +1,22 @@
+artifact_id,artifact_type,path,phase,status,notes
+EVID-PREFLIGHT,report,research/00_preflight_report.md,P0,COMPLETE,
+EVID-JIP-INV,document,research/01_jip_liner/jip_liner_feature_inventory.md,P1,COMPLETE,
+EVID-JIP-ENTITY,document,research/01_jip_liner/jip_liner_data_entities.md,P1,COMPLETE,
+EVID-JIP-IO,document,research/01_jip_liner/jip_liner_inputs_outputs.md,P1,COMPLETE,
+EVID-JIP-WF,document,research/01_jip_liner/jip_liner_workflow.md,P1,COMPLETE,
+EVID-JIP-CSV,matrix,matrices/jip_liner_feature_inventory.csv,P1,COMPLETE,
+EVID-CUR-AUDIT,document,research/02_current_system/current_system_audit.md,P2,COMPLETE,
+EVID-CUR-CSV,matrix,matrices/current_system_inventory.csv,P2,COMPLETE,
+EVID-GAP,document,research/03_gap_analysis/gap_analysis.md,P3,COMPLETE,
+EVID-GAP-CSV,matrix,matrices/gap_matrix.csv,P3,COMPLETE,
+EVID-WF,document,research/04_user_workflow/user_workflow.md,P4,COMPLETE,
+EVID-UX,document,research/05_gui_concepts/future_ux_concepts.md,P5,COMPLETE,
+EVID-EXT,document,research/05_gui_concepts/external_reference_review.md,EXT,COMPLETE,JIP公式カタログwebsearch
+EVID-2D,document,research/06_editor2d/editor2d_architecture.md,P6,COMPLETE,
+EVID-UP,document,research/07_upper_structure_integration/upper_structure_integration.md,P7,COMPLETE,
+EVID-SPECIAL,document,research/08_special_alignment/special_alignment.md,P8,COMPLETE,
+EVID-ROADMAP,document,roadmap/roadmap.md,P9,COMPLETE,
+EVID-SNAPSHOT,evidence,sources/repository/,PRE,COMPLETE,main@7b07f62 shallow clone
+EVID-MANUAL,source,sources/manuals/JIP-LINER_マニュアル.pdf,P1,COMPLETE,SRC-001
+EVID-SAMPLE,source,sources/design_examples/001_サンプル_LINER計算書*.PDF,P1,COMPLETE,SRC-004
+EVID-CALC,source,sources/design_examples/鋼鈑桁橋_設計計算例.pdf,P4/7,COMPLETE,SRC-005
