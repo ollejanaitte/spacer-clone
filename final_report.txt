@@ -1666,8 +1666,8 @@ STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
   K_summary_detail_projection_contract: COMPLETE
   L_report_model_validation_rules: COMPLETE
   M_phase4_acceptance_criteria: COMPLETE
-  N_phase4_handoff: IN_PROGRESS
-  O_completion: PENDING
+  N_phase4_handoff: COMPLETE
+  O_completion: IN_PROGRESS
 
 CP_STAR_CANONICAL: RECONFIRMED (Phase 2 chapter_matrix.csv)
 CH_STAR_DEPRECATED: RECONFIRMED (reportModel.ts:25-42 scaffold -> Phase 4 CP-* migration)
