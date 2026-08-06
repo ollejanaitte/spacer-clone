@@ -11,6 +11,7 @@ Navigation for Apollo-related research inputs and immutable handoff snapshots st
 ## Step 10 — Reference Bridge 001 Reproduction Project
 
 - [Phase 0 overview](step10/reference_bridge_001/phase0/README.md) — old plan freeze, source manifest, STEP 10 roadmap
+- [Phase 1 overview](step10/reference_bridge_001/phase1/README.md) — source set canonization, document identity, bridge parity, drawing catalog, calculation catalog, correspondence mapping
 - [RB-S10-001 definition](step10/reference_bridge_001/phase0/04_reference_bridge_001_definition.md) — bridge identity and crosswalk with RB-P1-001
 - [Source manifest](step10/reference_bridge_001/phase0/source_original_manifest.csv) — external PDF manifest with SHA256 and page counts
 - [STEP 10 roadmap](step10/reference_bridge_001/phase0/06_step10_redefinition_and_phase_map.md) — Phase 0–15 plan
