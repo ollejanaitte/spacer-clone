@@ -16,7 +16,7 @@ or design verification was performed.
 |------|-------|
 | Start SHA | b6532d475924112a91df236e8e9b05024fec6394 |
 | Phase 1 seal merge SHA | b6532d475924112a91df236e8e9b05024fec6394 |
-| Phase 2-I final SHA | (P2I-K merge SHA) |
+| Phase 2-I final SHA | 207c9d1 (P2I-K merge), P2I-L SHA: GITHUB_PR_IS_AUTHORITY |
 
 ## 3. Phase 1 post-seal correction
 
@@ -106,8 +106,8 @@ PASS — no PDFs or images in git tracking.
 | #436 | p2i-c-calc-3-1 | 88ef8a8 | MERGED |
 | #437 | p2i-d-calc-3-2 (batched) | c24b685 | MERGED |
 | #438 | p2i-h-drawing-001-141 | 43e4a4b | MERGED |
-| P2I-K | p2i-k-closeout | (this PR) | PENDING |
-| P2I-L | (seal) | (pending) | PENDING |
+| P2I-K | docs/apollo-step10-p2i-k-closeout | 207c9d1 | MERGED |
+| P2I-L | docs/apollo-step10-p2i-l-seal | GITHUB_PR_IS_AUTHORITY | PENDING |
 
 ## 16. final_report.txt update history
 
@@ -168,4 +168,5 @@ FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 
 ## 21. Exact next action
 
-P2I-K closeout complete. Proceed to P2I-L seal.
+P2I-L seal complete. Phase 2-I is sealed. Wait for user instruction to
+proceed to Phase 2-II (layered golden integration).
