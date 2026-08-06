@@ -1597,9 +1597,9 @@ DOCUMENTATION_ONLY: YES
 APPLICATION_CODE_CHANGED: NO (Phase 2.5-F ruled NOT_APPLICABLE — no production code change)
 BASE_MAIN_SHA: 96ea0184249178e99b2c1889b504e45e506e9ddd
 CURRENT_MAIN_SHA: 96ea0184249178e99b2c1889b504e45e506e9ddd
-OVERALL_PROGRESS: IN_PROGRESS
-STEP9_PHASE25_STATUS: IN_PROGRESS
-PHASE3_ENTRY_GATE: PENDING (resolve H-01..03, decide U-03 direction)
+OVERALL_PROGRESS: COMPLETE
+STEP9_PHASE25_STATUS: COMPLETE
+PHASE3_ENTRY_GATE: GO_WITH_NON_NUMERIC_RESTRICTIONS (H-01..03 RESOLVED/ADOPTED; U-03=B; G1-G4 GREEN)
 
 H-01_STATUS: RESOLVED/ADOPTED (phase1ScopeGuard AP-00 classifier test-only; BridgeSystem.CONTINUOUS canonical runtime gate)
 H-02_STATUS: RESOLVED/ADOPTED (sidecar default-fill shim != AP-02 lifecycle framework; AP-02 stays Rejected)
@@ -1622,8 +1622,9 @@ SUBSTEP_STATUS:
   G_ch_cp_canonicalization: COMPLETE
   H_prohibited_reconfirmation: COMPLETE
   I_decision_register: COMPLETE (6 decisions; blocker_matrix 4 blockers)
-  J_phase3_entry_gate: COMPLETE (GO_WITH_NON_NUMERIC_RESTRICTIONS; G1-G4 GREEN; N1-N4 not triggered)
-  K_phase3_handoff: IN_PROGRESS
+  J_phase3_entry_gate: COMPLETE (GO_WITH_NON_NUMERIC_RESTRICTIONS)
+  K_phase3_handoff: COMPLETE
+  L_completion: COMPLETE
   L_completion: PENDING
 
 NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
