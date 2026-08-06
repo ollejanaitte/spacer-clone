@@ -1782,3 +1782,80 @@ NEXT_ACTION: Step 9 complete. Do not proceed to Step 11 until instructed.
 ===============================================================================
 END APOLLO STEP 9 — PHASE 4 REPORT MODEL IMPLEMENTATION
 ================================================================================
+
+================================================================================
+APOLLO STEP 10 — PHASE 0 OLD PLAN FREEZE AND STEP 10 REDEFINITION
+================================================================================
+更新日時: 2026-08-06T21:30:00+09:00
+STEP_ID: APOLLO_STEP_10_PHASE_0
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+
+Phase 0 purpose: Freeze old curved-bridge parallel development plan (STEP 9
+Phase 6–9), define RB-S10-001 (Reference Bridge 001) as the reproduction target
+for a 3-span continuous curved steel plate girder bridge, record source
+original manifest with verified SHA256 and page counts, and establish the
+STEP 10 roadmap (Phase 0–15) with verification gates and Phase 1 handoff.
+
+## PR / merge chain
+| PR | Branch | Merge SHA | Method |
+|----|--------|-----------|--------|
+| #419 | docs/apollo-step10-p0a-baseline | e9aeb40 | squash |
+| #420 | docs/apollo-step10-p0b-step9-freeze | 9f701fb | squash |
+| #421 | docs/apollo-step10-p0c-legacy-scope-recovery | 4a695ec | squash |
+| #422 | docs/apollo-step10-p0d-source-manifest | a3558d6 | squash |
+| #423 | docs/apollo-step10-p0e-plan-and-handoff | e229705 | squash |
+| #424 | docs/apollo-step10-p0f-closeout | (closeout merge SHA) | squash |
+
+## Source originals
+| Source | SHA256 | Pages | Status |
+|--------|--------|-------|--------|
+| Apollo User Manual | f91b41f4760d6fe9a0f7d047b52b46d241f93b3ef43a0c186bebc7b14cc0a690 | 30 | SOURCE_CONFIRMED |
+| Design Drawing (鋼鈑桁橋_図面例.pdf) | 77718e39bfb016c8a7827c4ead8c7666a256f6cb03083b423ac9793fdf3f5de8 | 143 | SOURCE_CONFIRMED |
+| Design Calculation (鋼鈑桁橋_設計計算例.pdf) | da6ab701d18f805b63a262aebb19acb8294dd81a4baec4cc57a46e1abef75d8f | 2226 | SOURCE_CONFIRMED |
+PDFs not committed to GitHub.
+
+## Bridge identity
+RB-S10-001 (Reference Bridge 001) defined. RB-P1-001 retained as-is (no collision).
+
+## Legacy scope recovery
+11 legacy items recovered from <EXTERNAL_SOURCE_ROOT>/Scope_of_Work/. Key findings
+summarized; full matrix in legacy_scope_recovery_matrix.csv.
+
+## STEP 9 assets
+All STEP 9 assets (docs, types, transformer, validator, export gate, tests)
+retained unchanged. Full register in step9_asset_retention_register.csv.
+
+## Quality checks
+TypeScript: PASS. Vitest: PASS (77 files, 538 tests). Lint: PASS (pre-existing
+issues, unrelated to docs-only changes).
+
+## Verdicts
+STEP10_PHASE0_DOCUMENTATION_ONLY: YES
+STEP10_PHASE0_PRODUCTION_CODE_CHANGED: NO
+STEP10_PHASE0_OLD_PLAN_FREEZE_VERDICT: PASS
+STEP10_PHASE0_STEP9_ASSET_RETENTION_VERDICT: PASS
+STEP10_PHASE0_LEGACY_SCOPE_RECOVERY_VERDICT: PASS
+STEP10_PHASE0_REFERENCE_BRIDGE_IDENTITY_VERDICT: PASS
+STEP10_PHASE0_SOURCE_MANIFEST_VERDICT: PASS
+STEP10_PHASE0_SOURCE_ORIGINALS_NOT_COMMITTED: PASS
+STEP10_PHASE0_STEP10_REDEFINITION_VERDICT: PASS
+STEP10_PHASE0_PHASE1_HANDOFF_VERDICT: PASS
+STEP10_PHASE0_PR_MERGE_CHAIN_VERDICT: PASS
+STEP10_PHASE0_TYPECHECK_VERDICT: PASS
+STEP10_PHASE0_LINT_VERDICT: PASS
+STEP10_PHASE0_VITEST_VERDICT: PASS
+STEP10_PHASE0_LOCAL_EQUALS_ORIGIN: YES
+STEP10_PHASE0_WORKTREE_CLEAN: YES
+STEP10_PHASE0_OVERALL_VERDICT: COMPLETE
+STEP10_PHASE1_START_READINESS: GO
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
+
+NEXT_ACTION: Proceed to STEP 10 Phase 1 — source set canonization (page-level
+provenance, calculation-drawing correspondence, revision mapping).
+Phase 1 is documentation-only. No production code changes.
+================================================================================
+END APOLLO STEP 10 — PHASE 0 OLD PLAN FREEZE AND STEP 10 REDEFINITION
+================================================================================
