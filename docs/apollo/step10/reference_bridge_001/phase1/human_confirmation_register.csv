@@ -1,0 +1,4 @@
+item_id,description,reason,affected_sources,recommended_action,phase,status
+HCR-001,Drawing sheet 141 (架設計画図) text extraction shows only "141",Text extraction may miss graphical content,SRC-002,Visual inspection of PDF page 143 to confirm sheet 141 content,Phase 2,OPEN
+HCR-002,Revision status of both calc and drawing sets is uncertain,No revision column/marks found in text extraction,SRC-002,SRC-003,OCR check of title block images for revision stamps; if not found, accept as REVISION_NOT_FOUND,Phase 2,OPEN
+HCR-003,Exact field correspondence between calc section properties and drawing dimensions,Requires detailed dimension extraction from both sources,SRC-002,SRC-003,Phase 2 structural decomposition,Phase 2,OPEN

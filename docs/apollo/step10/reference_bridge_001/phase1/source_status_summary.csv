@@ -1,0 +1,4 @@
+source_id,source_role,integrity,identity,revision,release_judgment,parity,overall_status,notes
+SRC-001,Apolloユーザーズマニュアル,SOURCE_CONFIRMED,SOURCE_CONFIRMED,REVISION_NOT_FOUND,SINGLE_RELEASE_CONFIRMED,NOT_APPLICABLE,SOURCE_CONFIRMED,Reference manual only; not a bridge design source
+SRC-002,Reference Bridge 001 設計図面,SOURCE_CONFIRMED,SOURCE_CONFIRMED,REVISION_NOT_FOUND,SAME_PROJECT_SET_REVISION_UNCERTAIN,SOURCE_CONFIRMED,SOURCE_CONFIRMED,141 sheets cataloged; all title blocks consistent
+SRC-003,Reference Bridge 001 設計計算書,SOURCE_CONFIRMED,SOURCE_CONFIRMED,REVISION_NOT_FOUND,SAME_PROJECT_SET_REVISION_UNCERTAIN,SOURCE_CONFIRMED,SOURCE_CONFIRMED,2226 pages; 5 chapters; 68 sections cataloged
