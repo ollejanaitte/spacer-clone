@@ -1,0 +1,31 @@
+id_prefix,entity_type,domain,id_pattern,example,notes
+CAL-P,cale_page,calculation,CAL-P{pdf_6digit},CAL-P000001,Calculation page ID; pdf_6digit = zero-padded PDF page number
+CAL-SEC,cale_section,calculation,CAL-SEC-{chapter}.{section}.{subsection},CAL-SEC-3.2.3,Calculation section ID; mirrors calc section numbering
+CAL-TBL,cale_table,calculation,CAL-TBL-P{pdf_6digit}-{seq_3digit},CAL-TBL-P000010-001,Table on a calculation page; seq resets per page
+CAL-FML,cale_formula,calculation,CAL-FML-P{pdf_6digit}-{seq_3digit},CAL-FML-P000020-001,Formula on a calculation page; seq resets per page
+CAL-VAL,cale_value,calculation,CAL-VAL-P{pdf_6digit}-{seq_3digit},CAL-VAL-P000020-001,Extracted numeric value; seq resets per page
+CAL-FIG,cale_figure,calculation,CAL-FIG-P{pdf_6digit}-{seq_3digit},CAL-FIG-P000021-001,Figure/diagram on a calculation page
+CAL-NOTE,cale_note,calculation,CAL-NOTE-P{pdf_6digit}-{seq_3digit},CAL-NOTE-P000005-001,Note or annotation on a calculation page
+DWG-S,drawing_sheet,drawing,DWG-S{sheet_3digit},DWG-S001,Drawing sheet ID; sheet_3digit = zero-padded sheet number
+DWG-V,drawing_view,drawing,DWG-S{sheet_3digit}-V{seq_2digit},DWG-S021-V01,View or section view on a drawing sheet
+DWG-DIM,drawing_dimension,drawing,DWG-S{sheet_3digit}-DIM-{seq_3digit},DWG-S021-DIM-001,Dimension line or label on a drawing sheet
+DWG-NOTE,drawing_note,drawing,DWG-S{sheet_3digit}-NOTE-{seq_3digit},DWG-S021-NOTE-001,Note or annotation on a drawing sheet
+DWG-DTL,drawing_detail,drawing,DWG-S{sheet_3digit}-DTL-{seq_2digit},DWG-S021-DTL-01,Detail callout on a drawing sheet
+DWG-TBL,drawing_table,drawing,DWG-S{sheet_3digit}-TBL-{seq_3digit},DWG-S005-TBL-001,Table on a drawing sheet
+DWG-ANN,drawing_annotation,drawing,DWG-S{sheet_3digit}-ANN-{seq_3digit},DWG-S010-ANN-001,General annotation on a drawing sheet
+ENT-GIRDER,entity_girder,structure,ENT-GIRDER-{name},ENT-GIRDER-AG1,Main girder entity; name from drawing/calc
+ENT-SUPPORT,entity_support,structure,ENT-SUPPORT-{name},ENT-SUPPORT-PU15,Support/pier entity
+ENT-BEAM,entity_beam,structure,ENT-BEAM-{name},ENT-BEAM-CB01,Cross beam entity
+ENT-BRACING,entity_bracing,structure,ENT-BRACING-{name},ENT-BRACING-LB01,Lateral bracing entity
+ENT-DECK,entity_deck,structure,ENT-DECK-{name},ENT-DECK-COMP1,Deck/slab entity
+ENT-JOINT,entity_joint,structure,ENT-JOINT-{name},ENT-JOINT-EJ01,Expansion joint entity
+ENT-BEARING,entity_bearing,structure,ENT-BEARING-{name},ENT-BEARING-B01,Bearing entity
+ENT-DRAIN,entity_drainage,structure,ENT-DRAIN-{name},ENT-DRAIN-DD01,Drainage entity
+MAT,entity_material,structure,MAT-{type}-{name},MAT-STEEL-SM490Y,Material specification
+SEC,entity_section,structure,SEC-{type}-{name},SEC-GIRDER-AG1-1,Cross-section property
+LCASE,load_case,analysis,LCASE-{name},LCASE-DL,Load case definition
+LCOMB,load_combination,analysis,LCOMB-{name},LCOMB-G1,Load combination definition
+ISSUE-P2I,extraction_issue,governance,ISSUE-P2I-{seq_6digit},ISSUE-P2I-000001,Phase 2-I extraction issue/action item
+ANC,anchor,provenance,ANC-P{pdf_6digit}-{seq_3digit},ANC-P000384-001,Anchor point for cross-referencing on calc page
+ANC-DWG,anchor_drawing,provenance,ANC-S{sheet_3digit}-{seq_3digit},ANC-S022-001,Anchor point for cross-referencing on drawing sheet
+SRC,source,provenance,SRC-{seq_3digit},SRC-003,Source document identifier
