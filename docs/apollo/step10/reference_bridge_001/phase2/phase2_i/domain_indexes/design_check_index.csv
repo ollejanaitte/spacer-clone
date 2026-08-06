@@ -1,0 +1,16 @@
+index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
+DC-001,design_check,CAL-VAL-P00685-001,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 bending stress upper: -232 N/mm2 < σcud=247,Stress verification OK
+DC-002,design_check,CAL-VAL-P00685-002,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 bending stress lower: 249 N/mm2 < σtud=272,Stress verification OK
+DC-003,design_check,CAL-VAL-P00685-003,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 bending stress upper: 261 N/mm2 < σtud=272,Support section tension check OK
+DC-004,design_check,CAL-VAL-P00685-004,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 bending stress lower: -224 N/mm2 < σcud=250,Support section compression check OK
+DC-005,design_check,CAL-VAL-P00685-005,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 shear stress tau: 75 N/mm2 < τud=157,Shear check OK
+DC-006,design_check,CAL-VAL-P00685-006,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 kappa: 1.10 < 1.2,Combined bending + shear check OK
+DC-007,design_check,CAL-VAL-P00852-003,VERIFICATION_RESULT,calculation/chapter_03/section_3_7/values.csv,CH3-CAL-SEC-3.7.1,852,No.1 fatigue damage D: 0.26 < 1.0,Fatigue check OK per 道示
+DC-008,design_check,CAL-VAL-P01319-029,VERIFICATION_RESULT,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Composite section κ: 0.13,Simultaneous bending + shear check
+DC-009,design_check,CAL-VAL-P01319-028,STRESS_VALUE,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Composite shear stress τ: 53 N/mm2 < τud=157,Shear stress verification
+DC-010,design_check,CAL-VAL-P00379-001,VERIFICATION_RESULT,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.16,674,Steel weight ratio: 95.7% ≤ 110%,Assumed vs actual steel weight OK
+DC-011,design_check,CAL-VAL-P01319-016,STRESS_LIMIT,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Upper flange tension limit σtud: 272 N/mm2,Limit state 3
+DC-012,design_check,CAL-VAL-P01319-017,STRESS_LIMIT,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Upper flange compression limit σcud: 193 N/mm2,Limit state 3 composite
+DC-013,design_check,CAL-VAL-P01319-020,STRESS_LIMIT,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Web shear limit τud: 157 N/mm2,Limit state 3
+DC-014,design_check,CAL-VAL-P00771-001,MATERIAL_PROPERTY,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,771,Bending compression limit σ_brgd: 144 N/mm2,Bracket design stress limit
+DC-015,design_check,CAL-VAL-P00771-002,MATERIAL_PROPERTY,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,771,Tension limit σ_tud: 180 N/mm2,Bracket design stress limit

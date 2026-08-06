@@ -1,0 +1,18 @@
+index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
+STRMOD-001,structural_model,CAL-VAL-P00117-001,NOTE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.1,117,Analysis model: plane grid structure,Main girders and cross beams as frame
+STRMOD-002,structural_model,CAL-VAL-P00117-002,IDENTIFIER,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.1,117,Analysis program: APOLLO Analyzer,Yokogawa Technical Information
+STRMOD-003,structural_model,CAL-FIG-P00142-001,numbering_diagram,calculation/chapter_03/section_3_1/figures.csv,CH3-CAL-SEC-3.1.4,142,Panel point and member numbering diagram,Nodes 1001-1027 and 2001-2027 with cross members C1-C23
+STRMOD-004,structural_model,CAL-P00141-CAL-SEC-3.1.3-002,table,calculation/chapter_03/section_3_1/page_elements.csv,CH3-CAL-SEC-3.1.3,141,AG1 girder panel point coordinates table,Nodes 1001-1027
+STRMOD-005,structural_model,CAL-P00141-CAL-SEC-3.1.3-003,table,calculation/chapter_03/section_3_1/page_elements.csv,CH3-CAL-SEC-3.1.3,141,AG2 girder panel point coordinates table,Nodes 2001-2027
+STRMOD-006,structural_model,CAL-VAL-P00149-001,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.6,149,Young's modulus E=2.0e8 kN/m2,Steel material property
+STRMOD-007,structural_model,CAL-VAL-P00149-002,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.6,149,Shear modulus G=7.7e7 kN/m2,Steel material property
+STRMOD-008,structural_model,CAL-VAL-P00149-003,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.6,149,Poisson's ratio ν=1.2e-5,Steel material property
+STRMOD-009,structural_model,CAL-NOT-P00145-001,model_summary,calculation/chapter_03/section_3_1/notes.csv,CH3-CAL-SEC-3.1.6,145,Analysis model: Asahigaoka Viaduct Ramp 54 nodes 52 beam elements 27 support elements,Grid analysis model summary
+STRMOD-010,structural_model,CAL-VAL-P00873-001,NOTE,calculation/chapter_04/section_4_1/values.csv,CH4-CAL-SEC-4.1.1,873,Composite analysis: pre-composite and post-composite models,Two-stage analysis approach
+STRMOD-011,structural_model,DWG-MEM-AG1,member_id,drawings/sheets_001_044/members.csv,drawing_21-29,21,Main girder AG1 member definition,9 drawing sheets (21-29)
+STRMOD-012,structural_model,DWG-MEM-AG2,member_id,drawings/sheets_001_044/members.csv,drawing_30-38,30,Main girder AG2 member definition,9 drawing sheets (30-38)
+STRMOD-013,structural_model,DWG-MEM-GE1,member_id,drawings/sheets_001_044/members.csv,drawing_8,8,End cross beam GE1,Sheet 8 reference
+STRMOD-014,structural_model,DWG-MEM-GE2,member_id,drawings/sheets_001_044/members.csv,drawing_8,8,End cross beam GE2,Sheet 8 reference
+STRMOD-015,structural_model,DWG-MEM-C1C7,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Cross beams C1-C7,Intermediate cross beams
+STRMOD-016,structural_model,DWG-MEM-AL1,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Lateral bracing A-L1,Upper/lower lateral bracing
+STRMOD-017,structural_model,DWG-MEM-AL2,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Lateral bracing A-L2,Upper/lower lateral bracing
