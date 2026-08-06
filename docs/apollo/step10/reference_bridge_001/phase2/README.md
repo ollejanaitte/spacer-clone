@@ -18,24 +18,43 @@ status.
 
 | Step | Name | Status |
 |------|------|--------|
-| P2I-0 | Start Phase 2-I — post-seal correction, README, source recheck | THIS PR |
-| P2I-A | Freeze extraction contract, ID schema, coverage skeletons, validation tools | PENDING |
-| P2I-B | Decompose calculation front matter + chapters 1-2 | PENDING |
-| P2I-C | Decompose calculation section 3.1 (analysis source) | PENDING |
-| P2I-D | Decompose calculation section 3.2 (main girder) | PENDING |
-| P2I-E | Decompose calculation sections 3.3–3.7 (secondary members) | PENDING |
-| P2I-F | Decompose calculation chapter 4 (composite girder) | PENDING |
-| P2I-G | Decompose calculation chapter 5 + close page coverage | PENDING |
-| P2I-H | Decompose drawing sheets 1–44 | PENDING |
-| P2I-I | Decompose drawing sheets 45–88 | PENDING |
-| P2I-J | Decompose drawing sheets 89–141 | PENDING |
-| P2I-K | Closeout — coverage audit, handoff, manifest, validation | PENDING |
-| P2I-L | Seal Phase 2-I | PENDING |
+| P2I-0 | Start Phase 2-I — post-seal correction, README, source recheck, contracts, coverage skeletons | COMPLETE |
+| P2I-A | Freeze extraction contract, ID schema, coverage skeletons, validation tools | COMPLETE |
+| P2I-B | Decompose calculation front matter + chapters 1-2 | COMPLETE |
+| P2I-C | Decompose calculation section 3.1 (analysis source) | COMPLETE |
+| P2I-D | Decompose calculation section 3.2 (main girder) | COMPLETE |
+| P2I-E | Decompose calculation sections 3.3–3.7 (secondary members) | COMPLETE |
+| P2I-F | Decompose calculation chapter 4 (composite girder) | COMPLETE |
+| P2I-G | Decompose calculation chapter 5 + close page coverage | COMPLETE |
+| P2I-H | Decompose drawing sheets 1–44 | COMPLETE |
+| P2I-I | Decompose drawing sheets 45–88 | COMPLETE |
+| P2I-J | Decompose drawing sheets 89–141 | COMPLETE |
+| P2I-K | Closeout — coverage audit, handoff, manifest, validation | COMPLETE |
+| P2I-L | Seal Phase 2-I (#440) | COMPLETE |
+
+## Phase 2-II sub-steps
+
+| Step | Name | Status |
+|------|------|--------|
+| P2II-0 | Truth gate — Phase 2-I reconciliation, coverage/status/manifest repair | THIS PR |
+| P2II-A | Unread resolution (drawing 141) | PENDING |
+| P2II-B | Phase 2-I depth audit | PENDING |
+| P2II-C | Layer contract freeze | PENDING |
+| P2II-D | Input + Geometry candidates | PENDING |
+| P2II-E | Structural model candidates | PENDING |
+| P2II-F | Load + Analysis candidates | PENDING |
+| P2II-G | Design + Adopted candidates | PENDING |
+| P2II-H | Report + Drawing candidates | PENDING |
+| P2II-I | Traceability | PENDING |
+| P2II-J | Closeout + Phase 3 handoff | PENDING |
+| P2II-K | Seal | PENDING |
+
+See [`phase2_ii/README.md`](phase2_ii/README.md).
 
 ## Extraction scope
 
-- Calculation book: 2226 PDF pages, 2221 printed pages, 5 chapters, 68 sections
-- Drawing set: 141 sheets, 33 groups, 143 PDF pages
+- Calculation book: 2226 PDF pages, 2221 printed pages, 5 chapters, 92 sections
+- Drawing set: 141 sheets, 34 groups, 143 PDF pages
 - Domain indexes: geometry, structural model, loads, analysis results, design checks,
   adopted values, report structure, drawing structure, materials/sections, members
 
