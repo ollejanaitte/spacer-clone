@@ -1,0 +1,10 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CAL-NOT-P00676-001,676,671,CAL-CH3,CAL-SEC-3.3.1,design_approach,横桁は主桁間荷重分配+風/地震水平力に抵抗,NOTE,CAL-P00676,HIGH
+CAL-NOT-P00676-002,676,671,CAL-CH3,CAL-SEC-3.3.1,design_approach,中間横桁WLは微小省略 支点上横桁は水平力として作用,NOTE,CAL-P00676,HIGH
+CAL-NOT-P00676-003,676,671,CAL-CH3,CAL-SEC-3.3.1,design_approach,床版/鋼桁温度差影響は地震L2等に比べ小さいので省略,NOTE,CAL-P00676,HIGH
+CAL-NOT-P00677-001,677,672,CAL-CH3,CAL-SEC-3.3.1,design_approach,支点上横桁は巻き立てコンクリート剛性考慮しない,NOTE,CAL-P00677,HIGH
+CAL-NOT-P00677-002,677,672,CAL-CH3,CAL-SEC-3.3.1,design_approach,継手計算はL2地震時断面決定 実応力度計算,NOTE,CAL-P00677,HIGH
+CAL-NOT-P00679-001,679,674,CAL-CH3,CAL-SEC-3.3.2,design_note,荷重係数考慮設計値:死荷重1.05 活荷重1.25 施工1.05,NOTE,CAL-P00679,HIGH
+CAL-NOT-P00685-001,685,680,CAL-CH3,CAL-SEC-3.3.3,design_note,鋼桁部風荷重Wg=13.34kN/m 横桁設計用,NOTE,CAL-P00685,HIGH
+CAL-NOT-P00686-001,686,681,CAL-CH3,CAL-SEC-3.3.3,design_note,横桁設計:横桁風/地震反力使用 ずれ止め設計:床版部反力使用,NOTE,CAL-P00686,HIGH
+CAL-NOT-P00689-001,689,684,CAL-CH3,CAL-SEC-3.3.4,design_approach,曲率影響による下フランジ付加応力に横桁が抵抗,NOTE,CAL-P00689,HIGH

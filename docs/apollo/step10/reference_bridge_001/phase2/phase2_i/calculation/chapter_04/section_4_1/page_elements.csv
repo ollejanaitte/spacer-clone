@@ -1,0 +1,51 @@
+element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
+CAL-P00871-CAL-SEC-ch4-001,871,866,CAL-CH4,CAL-SEC-ch4,chapter_header,第4章 合成桁の設計,CAL-P00871,TEXT_EXTRACTED,HIGH,Chapter 4 - Composite girder design
+CAL-P00872-CAL-SEC-4.1-001,872,867,CAL-CH4,CAL-SEC-4.1,section_header,4.1 主構断面力の計算,CAL-P00872,TEXT_EXTRACTED,HIGH,Section 4.1 - Main frame section force calculation
+CAL-P00873-CAL-SEC-4.1.1-001,873,868,CAL-CH4,CAL-SEC-4.1.1,subsection_header,4.1.1 解析方針,CAL-P00873,TEXT_EXTRACTED,HIGH,Analysis policy
+CAL-P00873-CAL-SEC-4.1.1-002,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,解析概要: 主桁・横桁からなる平面格子モデル。死荷重・活荷重を載荷。,CAL-P00873,TEXT_EXTRACTED,HIGH,Plane grid model with main girders and cross girders, dead and live loads
+CAL-P00873-CAL-SEC-4.1.1-003,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,節点: 横断線位置/断面変化位置/0.15L位置。座標は線形計算結果を使用。,CAL-P00873,TEXT_EXTRACTED,HIGH,Nodes at cross-section lines, section change points, 0.15L positions
+CAL-P00873-CAL-SEC-4.1.1-004,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,床版一括打設。合成前(鋼桁剛度)と合成後(合成断面剛度)の2モデル。,CAL-P00873,TEXT_EXTRACTED,HIGH,Deck monolithic casting. Pre-composite and post-composite models
+CAL-P00873-CAL-SEC-4.1.1-005,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,主桁合成後剛度算出時のヤング係数比 n=7,CAL-P00873,TEXT_EXTRACTED,HIGH,Young's modulus ratio n=7 for composite stiffness
+CAL-P00873-CAL-SEC-4.1.1-006,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,クリープ/乾燥収縮/温度差による断面力・たわみを道示Ⅱ14.2.2～14.2.4により算出,CAL-P00873,TEXT_EXTRACTED,HIGH,Consider creep/drying shrinkage/temperature difference per Doshin II
+CAL-P00873-CAL-SEC-4.1.1-007,873,868,CAL-CH4,CAL-SEC-4.1.1,text_block,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,CAL-P00873,TEXT_EXTRACTED,HIGH,APOLLO Analyzer by Yokogawa Technical Information
+CAL-P00874-CAL-SEC-4.1.2-001,874,869,CAL-CH4,CAL-SEC-4.1.2,subsection_header,4.1.2 荷重強度,CAL-P00874,TEXT_EXTRACTED,HIGH,Load intensities
+CAL-P00874-CAL-SEC-4.1.2-002,874,869,CAL-CH4,CAL-SEC-4.1.2,text_block,荷重強度は荷重係数を乗じていない荷重の特性値,CAL-P00874,TEXT_EXTRACTED,HIGH,Load intensities are characteristic values without load factors
+CAL-P00874-CAL-SEC-4.1.2-003,874,869,CAL-CH4,CAL-SEC-4.1.2,figure,標準断面図,CAL-P00874,TEXT_EXTRACTED,MEDIUM,"Standard cross-section 8010x7000 with composite deck t=230mm, asphalt t=80mm"
+CAL-P00876-CAL-SEC-4.1.2-001,876,871,CAL-CH4,CAL-SEC-4.1.2,subsection_header,(2) 死荷重 1) 合成前死荷重,CAL-P00876,TEXT_EXTRACTED,HIGH,Pre-composite dead load
+CAL-P00876-CAL-SEC-4.1.2-002,876,871,CAL-CH4,CAL-SEC-4.1.2,table,合成前死荷重一覧,CAL-P00876,TEXT_EXTRACTED,MEDIUM,Pre-composite dead load summary - slab/haunch/steel/inspection/nose
+CAL-P00881-CAL-SEC-4.1.2-001,881,876,CAL-CH4,CAL-SEC-4.1.2,subsection_header,2) 合成後死荷重,CAL-P00881,TEXT_EXTRACTED,HIGH,Post-composite dead load
+CAL-P00882-CAL-SEC-4.1.2-001,882,877,CAL-CH4,CAL-SEC-4.1.2,table,合成後死荷重一覧表,CAL-P00882,TEXT_EXTRACTED,MEDIUM,Post-composite dead load summary - pavement/wall rail/sound barrier
+CAL-P00893-CAL-SEC-4.1.2-001,893,888,CAL-CH4,CAL-SEC-4.1.2,subsection_header,(3) 活荷重,CAL-P00893,TEXT_EXTRACTED,HIGH,Live load - B活荷重
+CAL-P00893-CAL-SEC-4.1.2-002,893,888,CAL-CH4,CAL-SEC-4.1.2,table,衝撃係数一覧,CAL-P00893,TEXT_EXTRACTED,MEDIUM,Impact coefficients per span
+CAL-P00893-CAL-SEC-4.1.2-003,893,888,CAL-CH4,CAL-SEC-4.1.2,subsection_header,(4) 組み合わせ係数および荷重係数,CAL-P00893,TEXT_EXTRACTED,HIGH,Combination and load factors
+CAL-P00893-CAL-SEC-4.1.2-004,893,888,CAL-CH4,CAL-SEC-4.1.2,text_block,組み合わせ係数および荷重係数は道示Ⅰ3.3表3-3.1による,CAL-P00893,TEXT_EXTRACTED,HIGH,Per Doshin I Section 3.3 Table 3-3.1
+CAL-P00894-CAL-SEC-4.1.2-001,894,889,CAL-CH4,CAL-SEC-4.1.2,subsection_header,(5) 巻き立てコンクリート荷重,CAL-P00894,TEXT_EXTRACTED,HIGH,Wrapping concrete load
+CAL-P00894-CAL-SEC-4.1.2-002,894,889,CAL-CH4,CAL-SEC-4.1.2,text_block,巻き立てコンクリート幅の設定は非合成桁の設計を参照,CAL-P00894,TEXT_EXTRACTED,MEDIUM,Refer to non-composite girder design for wrapping concrete dimensions
+CAL-P00894-CAL-SEC-4.1.2-003,894,889,CAL-CH4,CAL-SEC-4.1.2,table,巻き立てコンクリート荷重一覧,CAL-P00894,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load summary
+CAL-P00900-CAL-SEC-4.1.3-001,900,895,CAL-CH4,CAL-SEC-4.1.3,subsection_header,4.1.3 格点番号および部材番号,CAL-P00900,TEXT_EXTRACTED,HIGH,Panel point and member numbering
+CAL-P00900-CAL-SEC-4.1.3-002,900,895,CAL-CH4,CAL-SEC-4.1.3,figure,格点番号および部材番号図,CAL-P00900,TEXT_EXTRACTED,MEDIUM,Panel point and member numbering diagram
+CAL-P00901-CAL-SEC-4.1.4-001,901,896,CAL-CH4,CAL-SEC-4.1.4,subsection_header,4.1.4 格点座標および仮定剛度,CAL-P00901,TEXT_EXTRACTED,HIGH,Panel point coordinates and assumed stiffness
+CAL-P00901-CAL-SEC-4.1.4-002,901,896,CAL-CH4,CAL-SEC-4.1.4,table,格点座標 AG1桁,CAL-P00901,TEXT_EXTRACTED,MEDIUM,AG1 girder panel point coordinates
+CAL-P00901-CAL-SEC-4.1.4-003,901,896,CAL-CH4,CAL-SEC-4.1.4,table,格点座標 AG2桁,CAL-P00901,TEXT_EXTRACTED,MEDIUM,AG2 girder panel point coordinates
+CAL-P00902-CAL-SEC-4.1.4-001,902,897,CAL-CH4,CAL-SEC-4.1.4,table,仮定剛度一覧,CAL-P00902,TEXT_EXTRACTED,MEDIUM,Assumed stiffness summary
+CAL-P00904-CAL-SEC-4.1.5-001,904,899,CAL-CH4,CAL-SEC-4.1.5,subsection_header,4.1.5 格子解析データ,CAL-P00904,TEXT_EXTRACTED,HIGH,Grid analysis data
+CAL-P00904-CAL-SEC-4.1.5-002,904,899,CAL-CH4,CAL-SEC-4.1.5,subsection_header,4.1.5.1 前死荷重,CAL-P00904,TEXT_EXTRACTED,HIGH,Pre-composite dead load analysis data
+CAL-P00904-CAL-SEC-4.1.5-003,904,899,CAL-CH4,CAL-SEC-4.1.5,table,前死荷重解析モデルデータ,CAL-P00904,TEXT_EXTRACTED,MEDIUM,Pre-composite dead load analysis model data
+CAL-P01026-CAL-SEC-4.1.5-001,1026,1021,CAL-CH4,CAL-SEC-4.1.5,subsection_header,4.1.5.2 後死荷重,CAL-P01026,TEXT_EXTRACTED,HIGH,Post-composite dead load analysis data
+CAL-P01026-CAL-SEC-4.1.5-002,1026,1021,CAL-CH4,CAL-SEC-4.1.5,table,後死荷重解析モデルデータ,CAL-P01026,TEXT_EXTRACTED,MEDIUM,Post-composite dead load analysis model data
+CAL-P01115-CAL-SEC-4.1.6-001,1115,1110,CAL-CH4,CAL-SEC-4.1.6,subsection_header,4.1.6 格子解析結果,CAL-P01115,TEXT_EXTRACTED,HIGH,Grid analysis results
+CAL-P01115-CAL-SEC-4.1.6-002,1115,1110,CAL-CH4,CAL-SEC-4.1.6,subsection_header,4.1.6.1 前死荷重結果,CAL-P01115,TEXT_EXTRACTED,HIGH,Pre-composite dead load results
+CAL-P01115-CAL-SEC-4.1.6-003,1115,1110,CAL-CH4,CAL-SEC-4.1.6,table,前死荷重部材力一覧,CAL-P01115,TEXT_EXTRACTED,MEDIUM,Pre-composite dead load member forces
+CAL-P01130-CAL-SEC-4.1.6-001,1130,1125,CAL-CH4,CAL-SEC-4.1.6,subsection_header,4.1.6.2 後死荷重結果,CAL-P01130,TEXT_EXTRACTED,HIGH,Post-composite dead load results
+CAL-P01130-CAL-SEC-4.1.6-002,1130,1125,CAL-CH4,CAL-SEC-4.1.6,table,後死荷重部材力一覧,CAL-P01130,TEXT_EXTRACTED,MEDIUM,Post-composite dead load member forces
+CAL-P01266-CAL-SEC-4.1.7-001,1266,1261,CAL-CH4,CAL-SEC-4.1.7,subsection_header,4.1.7 断面力,CAL-P01266,TEXT_EXTRACTED,HIGH,Section forces
+CAL-P01266-CAL-SEC-4.1.7-002,1266,1261,CAL-CH4,CAL-SEC-4.1.7,subsection_header,(1)主桁断面力,CAL-P01266,TEXT_EXTRACTED,HIGH,Main girder section forces
+CAL-P01266-CAL-SEC-4.1.7-003,1266,1261,CAL-CH4,CAL-SEC-4.1.7,table,主桁断面力一覧,CAL-P01266,TEXT_EXTRACTED,MEDIUM,Main girder section force summary
+CAL-P01275-CAL-SEC-4.1.7-001,1275,1270,CAL-CH4,CAL-SEC-4.1.7,subsection_header,(2)横桁断面力,CAL-P01275,TEXT_EXTRACTED,HIGH,Cross girder section forces
+CAL-P01275-CAL-SEC-4.1.7-002,1275,1270,CAL-CH4,CAL-SEC-4.1.7,table,横桁断面力一覧,CAL-P01275,TEXT_EXTRACTED,MEDIUM,Cross girder section force summary
+CAL-P01280-CAL-SEC-4.1.7-001,1280,1275,CAL-CH4,CAL-SEC-4.1.7,subsection_header,(3)クリープ・乾燥収縮・温度差の断面力,CAL-P01280,TEXT_EXTRACTED,HIGH,Forces from creep/drying shrinkage/temperature difference
+CAL-P01280-CAL-SEC-4.1.7-002,1280,1275,CAL-CH4,CAL-SEC-4.1.7,table,温度差断面力一覧,CAL-P01280,TEXT_EXTRACTED,MEDIUM,Temperature difference section forces
+CAL-P01280-CAL-SEC-4.1.7-003,1280,1275,CAL-CH4,CAL-SEC-4.1.7,table,クリープ断面力一覧,CAL-P01280,TEXT_EXTRACTED,MEDIUM,Creep section forces
+CAL-P01280-CAL-SEC-4.1.7-004,1280,1275,CAL-CH4,CAL-SEC-4.1.7,table,乾燥収縮断面力一覧,CAL-P01280,TEXT_EXTRACTED,MEDIUM,Drying shrinkage section forces
+CAL-P01282-CAL-SEC-4.1.7-001,1282,1277,CAL-CH4,CAL-SEC-4.1.7,subsection_header,(4)断面照査用断面力,CAL-P01282,TEXT_EXTRACTED,HIGH,Design section forces for verification
+CAL-P01282-CAL-SEC-4.1.7-002,1282,1277,CAL-CH4,CAL-SEC-4.1.7,table,断面照査用断面力一覧,CAL-P01282,TEXT_EXTRACTED,MEDIUM,Design section force summary for verification

@@ -1,0 +1,2 @@
+figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
+CAL-FIG-P00818-001,818,813,CAL-CH3,CAL-SEC-3.6.1,巻き立てコンクリート概要図,cross_section,"AG1,AG2,S1,S2,PR1,PR2",CAL-P00818-TBL,HIGH,Wrapping concrete overview dimensions S1:1500x2280 S2:1500x2400 PR1/PR2:2000x2400

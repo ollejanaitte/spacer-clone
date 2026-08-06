@@ -1,0 +1,57 @@
+table_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,header_raw,row_key,column_key,cell_raw_text,raw_value,raw_unit,normalized_value,normalized_unit,semantic_class,source_locator,confidence,verification_status
+CH5-TBL-001,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),PU15|NR|3|1/217|90 0 0,PU15,ゴム種,NR,NR,,NR,,rubber_type,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-002,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),PU15|NR|3|1/217|90 0 0,PU15,支承数,3,3,,3,,bearing_count,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-003,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),PU15|NR|3|1/217|90 0 0,PU15,回転角,1/217,0.004608,,0.004608,rad,rotation_angle,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-004,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),PR1|NR|3|1/287|90 0 0,PR1,回転角,1/287,0.003484,,0.003484,rad,rotation_angle,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-005,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),PR2|NR|3|1/289|90 0 0,PR2,回転角,1/289,0.003460,,0.003460,rad,rotation_angle,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-006,2028,2023,CH5,CAL-SEC-5.1.1,支承条件,支点|ゴム種|支承数N(基)|回転角Σαe(rad)|斜角θ(° ''),AR2|NR|3|1/215|90 0 0,AR2,回転角,1/215,0.004651,,0.004651,rad,rotation_angle,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-007,2028,2023,CH5,CAL-SEC-5.1.1,下部剛性,No|橋軸方向常時KP(kN/mm)|橋軸方向レベル1KP(kN/mm)|橋直方向レベル1KP(kN/mm),PU15|∞|∞|----,PU15,橋軸方向常時,∞,∞,kN/mm,∞,kN/mm,substructure_stiffness,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-008,2028,2023,CH5,CAL-SEC-5.1.1,下部剛性,No|橋軸方向常時KP(kN/mm)|橋軸方向レベル1KP(kN/mm)|橋直方向レベル1KP(kN/mm),PR1|231.592|232.773|----,PR1,橋軸方向常時,231.592,231.592,kN/mm,231.592,kN/mm,substructure_stiffness,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-009,2028,2023,CH5,CAL-SEC-5.1.1,下部剛性,No|橋軸方向常時KP(kN/mm)|橋軸方向レベル1KP(kN/mm)|橋直方向レベル1KP(kN/mm),PR2|164.391|159.028|----,PR2,橋軸方向常時,164.391,164.391,kN/mm,164.391,kN/mm,substructure_stiffness,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-010,2028,2023,CH5,CAL-SEC-5.1.1,下部剛性,No|橋軸方向常時KP(kN/mm)|橋軸方向レベル1KP(kN/mm)|橋直方向レベル1KP(kN/mm),AR2|759.392|742.568|----,AR2,橋軸方向常時,759.392,759.392,kN/mm,759.392,kN/mm,substructure_stiffness,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-011,2029,2024,CH5,CAL-SEC-5.1.1,径間移動量,径間|支間長L(m)|温度変化⊿t(mm)|不静定水平力⊿t'(mm)|不静定乾･ク･弾⊿scp(mm),PU15-PR1|40.201|±14.5|±24.1|----,PU15-PR1,支間長,40.201,40.201,m,40.201,m,span_length,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-012,2029,2024,CH5,CAL-SEC-5.1.1,径間移動量,径間|支間長L(m)|温度変化⊿t(mm)|不静定水平力⊿t'(mm)|不静定乾･ク･弾⊿scp(mm),PR1-PR2|51.000|±18.4|±30.6|----,PR1-PR2,支間長,51.000,51.000,m,51.000,m,span_length,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-013,2029,2024,CH5,CAL-SEC-5.1.1,径間移動量,径間|支間長L(m)|温度変化⊿t(mm)|不静定水平力⊿t'(mm)|不静定乾･ク･弾⊿scp(mm),PR2-AR2|40.200|±14.5|±24.1|----,PR2-AR2,支間長,40.200,40.200,m,40.200,m,span_length,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-014,2031,2026,CH5,CAL-SEC-5.1.1,荷重条件(反力),支点|Rmax1(kN)|Rmax2(kN)|Rmax'(kN)|Rmin'(kN)|RL+i(kN)|Rdmax(kN)|Rdmin(kN)|ΣRd(kN),PU15|1950|1790|1950|1050|750|1210|1210|2410,PU15,Rmax1,1950,1950,kN,1950,kN,max_reaction,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-015,2031,2026,CH5,CAL-SEC-5.1.1,荷重条件(反力),PR1|4710|4160|4710|3160|----|3330|3310|6640,PR1,Rmax1,4710,4710,kN,4710,kN,max_reaction,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-016,2031,2026,CH5,CAL-SEC-5.1.1,支承形状(寸法),支点|適用|橋軸方向a(mm)|直角方向b(mm)|一層厚te(mm)|積層数n(層)|総厚Σte(mm)|弾性係数Ge(N/mm2)|鉛プラグ径φd(mm)|鉛プラグ本数NP(本)|補強鈑厚ts(mm),PU15|LRB|700|700|32|5|160|1.00|95|4|4.5,PU15,橋軸方向a,700,700,mm,700,mm,bearing_dimension,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-017,2031,2026,CH5,CAL-SEC-5.1.1,支承形状(寸法),PR1|LRB|1000|1000|37|5|185|1.20|150|4|6.0,PR1,橋軸方向a,1000,1000,mm,1000,mm,bearing_dimension,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-018,2031,2026,CH5,CAL-SEC-5.1.1,支承形状(寸法),PR2|LRB|1000|1000|37|5|185|1.20|150|4|6.0,PR2,橋軸方向a,1000,1000,mm,1000,mm,bearing_dimension,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-019,2031,2026,CH5,CAL-SEC-5.1.1,支承形状(寸法),AR2|LRB|700|700|32|5|160|1.00|95|4|4.5,AR2,橋軸方向a,700,700,mm,700,mm,bearing_dimension,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-020,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数計算結果,支点|S1|S2|β|E(N/mm2)|KV(kN/mm)|上限値,PU15|5.15|4.38|1.0|231.9|669|----,PU15,S1,5.15,5.15,,5.15,,shape_factor_1,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-021,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数計算結果,PR1|6.28|5.41|1.0|339.1|1703|----,PR1,S1,6.28,6.28,,6.28,,shape_factor_1,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-022,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数計算結果,PR2|6.28|5.41|1.0|339.1|1703|----,PR2,S1,6.28,6.28,,6.28,,shape_factor_1,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-023,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数計算結果,AR2|5.15|4.38|1.0|231.9|669|----,AR2,S1,5.15,5.15,,5.15,,shape_factor_1,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-024,2034,2029,CH5,CAL-SEC-5.1.1,温度変化時(±50℃)合成剛性,支点|⊿Lt'x(mm)|γx(%/100)|q(γ)(N/mm2)|κ(%/100)|G(γ)(N/mm2)|KB(kN/mm)|N(基)|N･KB(kN/mm)|Km(kN/mm),PU15|38.9|0.243|1.707|0.061|1.43|4.130|3|12.391|12.391,PU15,⊿Lt'x,38.9,38.9,mm,38.9,mm,displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-025,2034,2029,CH5,CAL-SEC-5.1.1,温度変化時(±50℃)合成剛性,PR1|12.5|0.067|1.576|0.076|2.98|14.969|3|44.906|37.613,PR1,⊿Lt'x,12.5,12.5,mm,12.5,mm,displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-026,2034,2029,CH5,CAL-SEC-5.1.1,温度変化時(±50℃)合成剛性,PR2|12.4|0.067|1.562|0.076|2.98|14.969|3|44.906|35.271,PR2,⊿Lt'x,12.4,12.4,mm,12.4,mm,displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-027,2034,2029,CH5,CAL-SEC-5.1.1,温度変化時(±50℃)合成剛性,AR2|39.5|0.247|1.696|0.061|1.42|4.103|3|12.308|12.112,AR2,⊿Lt'x,39.5,39.5,mm,39.5,mm,displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-028,2035,2030,CH5,CAL-SEC-5.1.1,温度変化時(50℃)移動量,支点|伸縮桁長(m)|+50℃⊿Lt'o(mm)|-50℃⊿Lt'o(mm)|⊿Lt'x(mm)|γx(%/100)|N･KB(kN/mm)|Km(kN/mm),PU15|-64.768|-38.9|38.9|38.9|0.243|12.391|12.391,PU15,⊿Lt'x,38.9,38.9,mm,38.9,mm,displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-029,2035,2030,CH5,CAL-SEC-5.1.1,温度変化時(30℃)移動量・水平力,支点|伸縮桁長(m)|+30℃⊿Lt'o(mm)|-30℃⊿Lt'o(mm)|⊿Lt'x(mm)|γx(%/100)|N･KB(kN/mm)|Km(kN/mm)|Ht(kN),PU15|-64.729|-23.3|23.3|23.3|0.146|16.208|16.208|378,PU15,Ht,378,378,kN,378,kN,horizontal_force,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-030,2035,2030,CH5,CAL-SEC-5.1.1,温度変化時(30℃)水平力,PR1||335,PR1,Ht,335,335,kN,335,kN,horizontal_force,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-031,2035,2030,CH5,CAL-SEC-5.1.1,温度変化時(30℃)水平力,PR2||333,PR2,Ht,333,333,kN,333,kN,horizontal_force,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-032,2035,2030,CH5,CAL-SEC-5.1.1,温度変化時(30℃)水平力,AR2||379,AR2,Ht,379,379,kN,379,kN,horizontal_force,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-033,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度照査,支点|Rmax1(kN)|ΔL(mm)|Acn(m2)|σmax(N/mm2)|σmaxa(N/mm2)|判定,PU15|1950|48.1|0.4280|4.56|8.0|OK,PU15,σmax,4.56,4.56,N/mm2,4.56,N/mm2,compressive_stress,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-034,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度照査,PR1|4710|12.5|0.9169|5.14|8.0|OK,PR1,σmax,5.14,5.14,N/mm2,5.14,N/mm2,compressive_stress,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-035,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度照査,PR2|4730|12.4|0.9170|5.16|8.0|OK,PR2,σmax,5.16,5.16,N/mm2,5.16,N/mm2,compressive_stress,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-036,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度照査,AR2|2000|48.7|0.4275|4.68|8.0|OK,AR2,σmax,4.68,4.68,N/mm2,4.68,N/mm2,compressive_stress,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-037,2041,2036,CH5,CAL-SEC-5.1.1,繰返し水平変位照査,支点|常時⊿L(mm)|⊿scp(mm)|レベル1UBⅠ(mm)|Σte(mm)|γs(%)|γsa(%)|γse(%)|γsea(%)|判定,PU15|48.1|0.0|27.7|160|30.0|70|17.3|150|OK,PU15,γs,30.0,30.0,%,30.0,%,shear_strain,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-038,2041,2036,CH5,CAL-SEC-5.1.1,繰返し水平変位照査,PR1|12.5|0.0|22.6|185|6.7|70|12.2|150|OK,PR1,γs,6.7,6.7,%,6.7,%,shear_strain,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-039,2041,2036,CH5,CAL-SEC-5.1.1,繰返し水平変位照査,PR2|12.4|0.0|20.8|185|6.7|70|11.3|150|OK,PR2,γs,6.7,6.7,%,6.7,%,shear_strain,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-040,2041,2036,CH5,CAL-SEC-5.1.1,繰返し水平変位照査,AR2|48.7|0.0|26.8|160|30.5|70|16.7|150|OK,AR2,γs,30.5,30.5,%,30.5,%,shear_strain,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-041,2139,2134,CH5,CAL-SEC-5.1.3,設計条件(鋼材計算書),No|Rmax(kN)|RD(kN)|ΣRD(kN)|RU1(kN)|RHeq1(kN)|RU2(kN)|RHeq2(kN)|RU(kN),PU15|1950|1210|2410|575|1354|-1056|2015|-1056,PU15,Rmax,1950,1950,kN,1950,kN,max_reaction,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-042,2139,2134,CH5,CAL-SEC-5.1.3,設計条件(変位量),No|橋軸方向ΔLe1(mm)|橋軸直角ΔLe2(mm)|支承数(基),PU15|±400|±0|2,PU15,ΔLe1,±400,±400,mm,400,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-043,2139,2134,CH5,CAL-SEC-5.1.3,設計条件(変位量),PR1|±463|±0|2,PR1,ΔLe1,±463,±463,mm,463,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-044,2139,2134,CH5,CAL-SEC-5.1.3,設計条件(変位量),PR2|±463|±0|2,PR2,ΔLe1,±463,±463,mm,463,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-045,2139,2134,CH5,CAL-SEC-5.1.3,設計条件(変位量),AR2|±400|±0|2,AR2,ΔLe1,±400,±400,mm,400,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-046,2139,2134,CH5,CAL-SEC-5.1.3,取付けボルト寸法,No|強度区分|M|do(mm)|As(mm2)|a(mm)|b(mm)|hr(mm)|c1(mm)|d1(mm)|c2(mm)|d2(mm)|m1(本)|m2(本)|Σm(本),PU15|12.9|20|17.294|234.9|700|700|246|40|660|40|660|5|5|16,PU15,As,234.9,234.9,mm2,234.9,mm2,bolt_area,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-047,2139,2134,CH5,CAL-SEC-5.1.3,取付けボルト寸法,PR1|10.9|24|20.752|338.2|1000|1000|293|50|950|50|950|7|7|24,PR1,As,338.2,338.2,mm2,338.2,mm2,bolt_area,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-048,2207,2202,CH5,CAL-SEC-5.4.1,レベル1移動量,橋軸方向(mm)|橋軸直角方向(mm),左桁|±73.0|±64.2,左桁,橋軸方向,±73.0,±73.0,mm,73.0,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-049,2207,2202,CH5,CAL-SEC-5.4.1,レベル1移動量,橋軸方向(mm)|橋軸直角方向(mm),右桁|±34.0|----,右桁,橋軸方向,±34.0,±34.0,mm,34.0,mm,seismic_displacement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-050,2207,2202,CH5,CAL-SEC-5.4.1,レベル1固有周期,橋軸方向(sec)|橋軸直角方向(sec),左桁|1.092|1.111,左桁,橋軸方向,1.092,1.092,sec,1.092,sec,natural_period,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-051,2207,2202,CH5,CAL-SEC-5.4.1,レベル1固有周期,右桁|0.751|0.411,右桁,橋軸方向,0.751,0.751,sec,0.751,sec,natural_period,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-052,2208,2203,CH5,CAL-SEC-5.4.1,ミドルビーム機械的性質,材質|降伏点(N/mm2)|引張強さ(N/mm2)|伸び(%),S355J2+N|355以上|470-630|22以上,S355J2+N,降伏点,355以上,355,N/mm2,355,N/mm2,yield_strength,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-053,2222,2217,CH5,CAL-SEC-5.4.2,AR2伸縮量,項目|計算値(mm)|(+)ΔL(mm)|(-)ΔL(mm),T:⊿LAT|62.0|25.0|37.0,⊿LAT,T,62.0,62.0,mm,62.0,mm,expansion_movement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-054,2222,2217,CH5,CAL-SEC-5.4.2,AR2伸縮量,EQ:⊿LER|50.0|25.0|25.0,⊿LER,EQ,50.0,50.0,mm,50.0,mm,seismic_movement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-055,2222,2217,CH5,CAL-SEC-5.4.2,AR2伸縮量,T+EQ:⊿LETR|58.5|26.3|32.2,⊿LETR,T+EQ,58.5,58.5,mm,58.5,mm,combined_movement,chapter_05/tables.csv,HIGH,UNVERIFIED
+CH5-TBL-056,2222,2217,CH5,CAL-SEC-5.4.2,AR2設計伸縮量,⊿L|62.0|25.0|37.0,⊿L,設計,62.0,62.0,mm,62.0,mm,design_movement,chapter_05/tables.csv,HIGH,UNVERIFIED

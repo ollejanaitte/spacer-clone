@@ -1,0 +1,82 @@
+parameter,value,unit,subsection,notes
+girder_system,"2主桁 (2-girder system)",-,3.2.1,Non-composite + composite design
+bridge_name,"旭高架橋 Aランプ PU15-AR2",-,3.2,Bridge name
+girder_designation,AG1,-,3.2,Main girder 1
+girder_designation,AG2,-,3.2,Main girder 2
+steel_grades,"SM520 / SM490Y / SM400 / SM520-H",-,3.2.1,High-strength steel for thick plates (SM520-H for 47mm)
+ufg_width,620,mm,3.2.1,Upper flange width (constant throughout)
+lfg_width,680,mm,3.2.1,Lower flange width (constant throughout)
+web_thickness,14,mm,3.2.1,Web thickness (constant throughout)
+reference_girder_height,2700,mm,3.2.1,Base girder height from top UFLG to bottom LFLG
+curvature_radius,2998.500,m,3.2.2,Horizontal curve radius
+bolt_type,"TCB M22(S10T)",-,3.2.4,High strength bolt for field splices
+bolt_hole_diameter,24.5,mm,3.2.4,Bolt hole diameter (25.0 for tension check)
+fillet_weld_max,10,mm,3.2.4,Maximum fillet weld size (12mm for stiffeners/crossbeam)
+stress_margin,5,N/mm2,3.2.1,Allowable stress margin
+horizontal_stiffener_stage,1,-,3.2.1,Single-stage horizontal stiffener
+design_program,"APOLLO Super Designer (横河技術情報)",-,3.2.1,Design calculation program
+sigma_tud,272,N/mm2,3.2.2,Limit state 3 tension stress limit (SM490Y)
+tau_ud,157,N/mm2,3.2.2,Limit state 3 shear stress limit
+AG1_length,133.303,m,3.2.16,Girder AG1 total length
+AG2_length,132.847,m,3.2.16,Girder AG2 total length
+assumed_steel_weight,12.000,kN/m,3.2.16,Assumed weight per girder
+assumed_steel_weight_total,3193.800,kN,3.2.16,Total assumed steel weight
+assumed_steel_weight_total_t,325.566,t,3.2.16,Total assumed steel weight (tons)
+actual_steel_weight_main,311.594,t,3.2.16,Actual main structural steel weight
+steel_weight_ratio,95.7,%,3.2.16,"Actual/Assumed ratio (OK ≤110%)"
+stiffness_ratio_target,10,%,3.2.1,Max assumed/actual stiffness ratio per panel point
+stiffness_ratio_span_avg,5,%,3.2.1,Max assumed/actual stiffness ratio span average
+steel_weight_ratio_target,10,%,3.2.1,Max steel weight difference (Aichi pref. guideline)
+AG1_Sec1_UFLG,"620 x 22",mm,3.2.2.1,SM490Y
+AG1_Sec1_WEB,"2537 x 14",mm,3.2.2.1,SM490Y (girder height 2537+22+21=2580mm)
+AG1_Sec1_LFLG,"680 x 21",mm,3.2.2.1,SM490Y
+AG1_Sec1_I,6473032,cm4,3.2.2.1,Moment of inertia
+AG1_Sec1_Yu,-130.33,cm,3.2.2.1,Neutral axis to upper fiber
+AG1_Sec1_YL,127.67,cm,3.2.2.1,Neutral axis to lower fiber
+AG1_Sec1_A,634.38,cm2,3.2.2.1,Total cross-sectional area
+AG1_Sec3_UFLG,"620 x 27",mm,3.2.2.1,SM490Y (Mx-Max section)
+AG1_Sec3_LFLG,"680 x 21",mm,3.2.2.1,SM490Y (Mx-Max section)
+AG1_Sec3_WEB,"2652 x 14",mm,3.2.2.1,SM490Y
+AG1_Sec3_I,7714024,cm4,3.2.2.1
+AG1_Sec3_stress_U,-232,N/mm2,3.2.2.1,σb upper < σcud=247
+AG1_Sec3_stress_L,249,N/mm2,3.2.2.1,σb lower < σtud=272
+AG1_Sec5_UFLG,"620 x 27",mm,3.2.2.1,SM490Y (J-5)
+AG1_Sec5_LFLG,"680 x 30",mm,3.2.2.1,SM490Y
+AG1_Sec5_WEB,"2643 x 14",mm,3.2.2.1,SM490Y
+AG1_Sec5_I,8748717,cm4,3.2.2.1
+AG1_Sec5_Yu,-141.48,cm,3.2.2.1
+AG1_Sec5_YL,128.52,cm,3.2.2.1
+AG1_Sec6_UFLG,"620 x 39",mm,3.2.2.1,SM490Y (Mx-Min - support)
+AG1_Sec6_LFLG,"680 x 47",mm,3.2.2.1,SM520-H (high strength)
+AG1_Sec6_WEB,"2614 x 14",mm,3.2.2.1,SM490Y
+AG1_Sec6_I,11878499,cm4,3.2.2.1
+AG1_Sec6_stress_U,261,N/mm2,3.2.2.1,σb upper < σtud=272
+AG1_Sec6_stress_L,-224,N/mm2,3.2.2.1,σb lower < σcud=250
+AG1_Sec6_tau,75,N/mm2,3.2.2.1,τb < τud=157
+AG1_Sec6_kappa,1.10,-,3.2.2.1,κ < 1.2 (closest to limit)
+AG1_Sec8_UFLG,"620 x 26",mm,3.2.2.1,SM490Y
+AG1_Sec8_LFLG,"680 x 21",mm,3.2.2.1,SM490Y
+AG1_Sec8_WEB,"2653 x 14",mm,3.2.2.1,SM490Y
+AG1_Sec9_UFLG,"620 x 28",mm,3.2.2.1,SM490Y (Mx-Max)
+AG1_Sec9_LFLG,"680 x 21",mm,3.2.2.1,SM490Y
+AG1_Sec10_UFLG,"620 x 26",mm,3.2.2.1,SM490Y
+AG1_Sec10_LFLG,"680 x 21",mm,3.2.2.1,SM490Y
+AG1_Sec11_UFLG,"620 x 26",mm,3.2.2.1,SM490Y
+AG1_Sec11_LFLG,"680 x 30",mm,3.2.2.1,SM490Y
+AG1_Sec12_UFLG,"620 x 39",mm,3.2.2.1,SM490Y (Mx-Min)
+AG1_Sec12_LFLG,"680 x 47",mm,3.2.2.1,SM520-H
+AG1_Sec13_UFLG,"620 x 27",mm,3.2.2.1,SM490Y
+AG1_Sec13_LFLG,"680 x 30",mm,3.2.2.1,SM490Y
+AG1_Sec14_UFLG,"620 x 25",mm,3.2.2.1,SM490Y
+AG1_Sec14_LFLG,"680 x 22",mm,3.2.2.1,SM490Y
+AG1_Sec15_UFLG,"620 x 28",mm,3.2.2.1,SM490Y (Mx-Max)
+AG1_Sec16_UFLG,"620 x 26",mm,3.2.2.1,SM490Y
+AG1_Sec16_LFLG,"680 x 21",mm,3.2.2.1,SM490Y
+AG1_Sec17_UFLG,"620 x 26",mm,3.2.2.1,SM490Y
+AG1_Sec17_LFLG,"680 x 30",mm,3.2.2.1,SM490Y
+sole_plate_thickness_center,25,mm,3.2.15,End support sole plate center thickness
+sole_plate_thickness_center_mid,36,mm,3.2.15,Intermediate support sole plate
+seismic_horizontal_force_PU15,4000,kN,3.2.15,L2 seismic bridge axis direction (Type I+II max)
+seismic_horizontal_force_PR1,7000,kN,3.2.15,Seismic force at PR1 support
+seismic_horizontal_force_PR2,6500,kN,3.2.15,Seismic force at PR2 support
+seismic_horizontal_force_AR2,4500,kN,3.2.15,Seismic force at AR2 support

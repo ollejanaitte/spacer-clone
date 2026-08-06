@@ -1,0 +1,17 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CAL-NOT-P01284-001,1284,1279,CAL-CH4,CAL-SEC-4.2.1,design_approach,完成系:鋼合成桁として設計。コンクリート床版は有効幅を考慮した合成断面,NOTE,CAL-P01284,HIGH
+CAL-NOT-P01284-002,1284,1279,CAL-CH4,CAL-SEC-4.2.1,design_approach,施工系:合成前の鋼桁断面として死荷重及び施工時荷重に対して安全であること,NOTE,CAL-P01284,HIGH
+CAL-NOT-P01284-003,1284,1279,CAL-CH4,CAL-SEC-4.2.1,design_approach,部分係数設計法による 限界状態1(耐荷性能)と限界状態3(使用性)の照査,NOTE,CAL-P01284,HIGH
+CAL-NOT-P01284-004,1284,1279,CAL-CH4,CAL-SEC-4.2.1,design_approach,鋼合成桁としてのクリープ/乾燥収縮/温度差の影響を考慮,NOTE,CAL-P01284,HIGH
+CAL-NOT-P01285-001,1285,1280,CAL-CH4,CAL-SEC-4.2.1,material_property,鋼材SM490Y σy=355N/mm2 σsu=490N/mm2 τy=205N/mm2 E=200000N/mm2 G=77000N/mm2,NOTE,CAL-P01285,HIGH
+CAL-NOT-P01286-001,1286,1281,CAL-CH4,CAL-SEC-4.2.1,material_property,合成断面の設計に想定する鉄筋量は上下D22間隔125mm,NOTE,CAL-P01286,HIGH
+CAL-NOT-P01286-002,1286,1281,CAL-CH4,CAL-SEC-4.2.1,material_property,活荷重:合成断面n=7 クリープ:n=14 乾燥収縮:n=21,NOTE,CAL-P01286,HIGH
+CAL-NOT-P01318-001,1318,1313,CAL-CH4,CAL-SEC-4.2.4,design_approach,断面の応力度照査(耐荷性能の照査)-AG1全断面・AG2全断面について照査,NOTE,CAL-P01318,HIGH
+CAL-NOT-P01318-002,1318,1313,CAL-CH4,CAL-SEC-4.2.4,design_approach,断面決定は非合成桁と同様の方法で行う,NOTE,CAL-P01318,HIGH
+CAL-NOT-P01319-001,1319,1314,CAL-CH4,CAL-SEC-4.2.4,standard_reference,温度差応力度:道示Ⅱ式(解14.2.9),NOTE,CAL-P01319,HIGH
+CAL-NOT-P01319-002,1319,1314,CAL-CH4,CAL-SEC-4.2.4,standard_reference,クリープ応力度:道示Ⅱ式(解14.2.3) φ1=2,NOTE,CAL-P01319,HIGH
+CAL-NOT-P01319-003,1319,1314,CAL-CH4,CAL-SEC-4.2.4,standard_reference,乾燥収縮応力度:道示Ⅱ式(解14.2.10),NOTE,CAL-P01319,HIGH
+CAL-NOT-P01319-004,1319,1314,CAL-CH4,CAL-SEC-4.2.4,standard_reference,合成後上フランジ座屈は生じないものとする,NOTE,CAL-P01319,HIGH
+CAL-NOT-P01322-001,1322,1317,CAL-CH4,CAL-SEC-4.2.4,verification_result,AG1 Sec-1 Sup-1:全照査項目OK κ=0.13<1.20,NOTE,CAL-P01322,HIGH
+CAL-NOT-P01778-001,1778,1773,CAL-CH4,CAL-SEC-4.2.6,design_approach,高力ボルト摩擦接合による現場継手の設計,NOTE,P01778,HIGH
+CAL-NOT-P01947-001,1947,1942,CAL-CH4,CAL-SEC-4.2.7,standard_reference,たわみの照査は道示Ⅱの規定による,NOTE,P01947,HIGH
