@@ -1664,8 +1664,8 @@ STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
   I_traceability_and_versioning_contract: COMPLETE
   J_legacy_and_compatibility_contract: COMPLETE
   K_summary_detail_projection_contract: COMPLETE
-  L_report_model_validation_rules: IN_PROGRESS
-  M_phase4_acceptance_criteria: PENDING
+  L_report_model_validation_rules: COMPLETE
+  M_phase4_acceptance_criteria: IN_PROGRESS
   N_phase4_handoff: PENDING
   O_completion: PENDING
 
