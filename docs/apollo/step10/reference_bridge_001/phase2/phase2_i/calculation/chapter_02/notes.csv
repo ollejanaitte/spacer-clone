@@ -1,0 +1,10 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CH2-NOTE-001,16,11,CH2,CAL-SEC-ch2,scope_note,計算はノーズ部を考慮しない標準幅員で行う。,scope,chapter_02/notes.csv,HIGH
+CH2-NOTE-002,18,13,CH2,CAL-SEC-2.1,design_scope,寸法は標準幅員のS1で代表,representative_section,chapter_02/notes.csv,HIGH
+CH2-NOTE-003,19,14,CH2,CAL-SEC-2.1,design_note,スラッド高さ: 0.7×hc=0.7×222=155.4≒160mm,stud_height,chapter_02/notes.csv,HIGH
+CH2-NOTE-004,20,15,CH2,CAL-SEC-2.1,design_note,ハンチ筋は設計断面に考慮する。,rebar_note,chapter_02/notes.csv,HIGH
+CH2-NOTE-005,21,16,CH2,CAL-SEC-2.1,method_note,鋼板の膜作用による曲げモーメントと鋼板+横リブの梁としての曲げモーメントを照査する。,analysis_method,chapter_02/notes.csv,HIGH
+CH2-NOTE-006,21,16,CH2,CAL-SEC-2.1,method_note,鋼板を主桁と横リブで囲まれた4辺固定支持板としてモデル化。,analysis_model,chapter_02/notes.csv,HIGH
+CH2-NOTE-007,21,16,CH2,CAL-SEC-2.1,method_note,係数βx、βyは構造力学公式集:平板の数値表により算出する。,coefficient_source,chapter_02/notes.csv,HIGH
+CH2-NOTE-008,29,24,CH2,CAL-SEC-2.1,reference_note,道示Ⅱ 11.5 式11.5.2,standard_ref,chapter_02/notes.csv,HIGH
+CH2-NOTE-009,33,28,CH2,CAL-SEC-2.1,reference_note,道示Ⅱ 11.2.3 表-11.2.4,standard_ref,chapter_02/notes.csv,HIGH

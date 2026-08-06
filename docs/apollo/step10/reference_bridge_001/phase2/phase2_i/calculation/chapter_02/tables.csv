@@ -1,0 +1,35 @@
+table_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,header_raw,row_key,column_key,cell_raw_text,raw_value,raw_unit,normalized_value,normalized_unit,semantic_class,source_locator,confidence,verification_status
+CH2-TBL-001,18,13,CH2,CAL-SEC-2.1,各部構成,構成項目|値|単位,総幅員,値,8032,8032,mm,8032,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-002,18,13,CH2,CAL-SEC-2.1,各部構成,構成項目|値|単位,舗装厚,値,80,80,mm,80,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-003,18,13,CH2,CAL-SEC-2.1,各部構成,構成項目|値|単位,床版支間長(支間部),値,4512,4512,mm,4512,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-004,18,13,CH2,CAL-SEC-2.1,各部構成,構成項目|値|単位,床版支間長(張出部),値,1760,1760,mm,1760,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-005,18,13,CH2,CAL-SEC-2.1,材料(鋼板),項目|値|単位,材質,,SM490Y,,SM490Y,,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-006,18,13,CH2,CAL-SEC-2.1,材料(鋼板),項目|値|単位,引張応力度制限値,210,N/mm2,210,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-007,18,13,CH2,CAL-SEC-2.1,材料(鋼板),項目|値|単位,引張降伏強度,355,N/mm2,355,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-008,18,13,CH2,CAL-SEC-2.1,材料(鋼板),項目|値|単位,圧縮降伏強度,355,N/mm2,355,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-009,18,13,CH2,CAL-SEC-2.1,材料(横リブ),項目|値|単位,材質,,SS400,,SS400,,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-010,18,13,CH2,CAL-SEC-2.1,材料(横リブ),項目|値|単位,引張降伏強度,235,N/mm2,235,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-011,18,13,CH2,CAL-SEC-2.1,材料(横リブ),項目|値|単位,圧縮降伏強度,235,N/mm2,235,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-012,18,13,CH2,CAL-SEC-2.1,材料(鉄筋),項目|値|単位,材質,,SD345,,SD345,,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-013,18,13,CH2,CAL-SEC-2.1,材料(鉄筋),項目|値|単位,引張応力度制限値(疲労),120,N/mm2,120,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-014,18,13,CH2,CAL-SEC-2.1,材料(鉄筋),項目|値|単位,引張応力度制限値(腐食),100,N/mm2,100,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-015,18,13,CH2,CAL-SEC-2.1,材料(鉄筋),項目|値|単位,引張降伏強度,345,N/mm2,345,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-016,18,13,CH2,CAL-SEC-2.1,材料(鉄筋),項目|値|単位,圧縮降伏強度,345,N/mm2,345,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-017,18,13,CH2,CAL-SEC-2.1,材料(コンクリート),項目|値|単位,設計基準強度,30,N/mm2,30,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-018,18,13,CH2,CAL-SEC-2.1,材料(コンクリート),項目|値|単位,曲げ圧縮応力度制限値,8.6,N/mm2,8.6,N/mm2,material,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-019,19,14,CH2,CAL-SEC-2.1,合成床版厚,項目|値|単位,合成床版厚,230,mm,230,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-020,19,14,CH2,CAL-SEC-2.1,合成床版厚,項目|値|単位,RC版厚(支間部),222,mm,222,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-021,19,14,CH2,CAL-SEC-2.1,合成床版厚,項目|値|単位,RC版厚(支点部),330,mm,330,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-022,19,14,CH2,CAL-SEC-2.1,合成床版厚,項目|値|単位,ハンチ高,100,mm,100,mm,deck_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-023,19,14,CH2,CAL-SEC-2.1,鋼材寸法,項目|値|単位,底鋼板板厚,8,mm,8,mm,steel_dimension,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-024,19,14,CH2,CAL-SEC-2.1,鋼材寸法,項目|値|単位,横リブ間隔,625,mm,625,mm,steel_dimension,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-025,19,14,CH2,CAL-SEC-2.1,鋼材寸法,項目|値|単位,横リブ高さ,100,mm,100,mm,steel_dimension,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-026,19,14,CH2,CAL-SEC-2.1,鋼材寸法,項目|値|単位,横リブ板厚,12,mm,12,mm,steel_dimension,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-027,19,14,CH2,CAL-SEC-2.1,鋼材寸法,項目|値|単位,使用形鋼,"1-L 75×75×9",,L 75×75×9,,steel_dimension,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-028,19,14,CH2,CAL-SEC-2.1,スタッド仕様,項目|値|単位,主鉄筋方向ピッチ,250,mm,250,mm,stud_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-029,19,14,CH2,CAL-SEC-2.1,スタッド仕様,項目|値|単位,配力筋方向ピッチ,208,mm,208,mm,stud_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-030,19,14,CH2,CAL-SEC-2.1,スタッド仕様,項目|値|単位,サイズ,"φ16×160mm",,φ16×160mm,,stud_property,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-031,20,15,CH2,CAL-SEC-2.1,鉄筋配置(一般部),項目|値,主鉄筋,"D19 @100mm",D19 @100,,D19 @100,,rebar_layout,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-032,20,15,CH2,CAL-SEC-2.1,鉄筋配置(一般部),項目|値,配力筋,"D19 @250mm",D19 @250,,D19 @250,,rebar_layout,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-033,20,15,CH2,CAL-SEC-2.1,鉄筋配置(一般部),項目|値,ハンチ筋,"D22 @300mm",D22 @300,,D22 @300,,rebar_layout,chapter_02/tables.csv,HIGH,UNVERIFIED
+CH2-TBL-034,20,15,CH2,CAL-SEC-2.1,鉄筋配置(中間支点部),項目|値,配力筋,"D22 @125mm",D22 @125,,D22 @125,,rebar_layout,chapter_02/tables.csv,HIGH,UNVERIFIED
