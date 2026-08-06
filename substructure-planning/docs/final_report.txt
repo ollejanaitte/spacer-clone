@@ -1,0 +1,385 @@
+================================================================================
+最終報告（final_report）
+下部工計画・3Dモデリングツール 事前調査・要求整理・技術検証
+================================================================================
+
+作成日時   : 2026-08-07 02:50 JST
+作成主体   : 現場監督兼実装検証責任者（調査・設計・検証チーム）
+LAB_ROOT   : /home/masaharu/Projects/substructure-planning-lab
+作業環境   : ローカル。GitHub への書込みは一切禁止・未実施。
+
+--------------------------------------------------------------------------------
+1. Executive Summary（概要）
+--------------------------------------------------------------------------------
+仮称「下部工計画・3Dモデリングツール」について、正式実装前に
+事前調査・要求整理・データモデル設計・3D生成方式検討・最小プロトタイプ技術検証を
+独立したローカル環境で完了した。
+
+- 独立ツールとして成立することを確認。
+- 上部工（spacer-clone）とは疎結合（JSON交換スキーマ）で連携する方式を設計。
+- 座標系・単位系・安定ID・交換項目を曖昧にしないよう定義。
+- Vanilla TypeScript + Three.js の最小プロトタイプを構築し動作確認。
+- データ検証 12/12、単体テスト 26/26、ブラウザ検証 10/10 すべて成功。
+- spacer-clone は無変更。GitHub 書込み・push・PR・merge はすべて未実施。
+
+--------------------------------------------------------------------------------
+2. 作業目的
+--------------------------------------------------------------------------------
+- 独立ツールとして成立するか検討
+- 上部工と疎結合で連携できる方式を検討
+- 下部構造のパラメトリック3Dモデル生成方式を検証
+- プロジェクトデータのJSON構造を検討
+- 概略設計・詳細設計への拡張余地を整理
+- 初期実装の対象・非対象範囲を明確化
+- 実装ロードマップを作成
+- 最小技術プロトタイプで成立性を確認
+
+--------------------------------------------------------------------------------
+3. LAB_ROOT
+--------------------------------------------------------------------------------
+/home/masaharu/Projects/substructure-planning-lab
+（同名が無かったため新規作成。spacer-clone の兄弟ディレクトリ）
+
+--------------------------------------------------------------------------------
+4. 作業日時
+--------------------------------------------------------------------------------
+開始: 2026-08-07 02:28 JST（プリフライト）
+完了: 2026-08-07 02:51 JST（最終確認）
+
+--------------------------------------------------------------------------------
+5. プリフライト結果
+--------------------------------------------------------------------------------
+- 日時: 2026-08-07 02:28 JST
+- ユーザ: masaharu
+- 作業ディレクトリ: /home/masaharu/Projects
+- ~/Projects 一覧: 別紙 preflight_report.txt 参照
+- LAB_ROOT: /home/masaharu/Projects/substructure-planning-lab（新規）
+- spacer-clone 存在: あり
+- spacer-clone ブランチ: docs/apollo-step10-p2ii-0-truth-gate（開始時）
+- spacer-clone HEAD: c6e7348d7e9ab8ecfda5adb847085ef280086588（開始時）
+- git status: 3ファイルの既存差分あり（触らない）
+- remote: origin https://github.com/ollejanaitte/spacer-clone.git
+- LAB_ROOT は spacer-clone の外部・非Git: 確認済
+- GitHub書込みなし: 確認済
+（詳細は preflight_report.txt）
+
+--------------------------------------------------------------------------------
+6. 既存環境の状態
+--------------------------------------------------------------------------------
+作業前 HEAD: c6e7348d7e9ab8ecfda5adb847085ef280086588
+作業後 HEAD: b6775ddf41707dddac0de24df2cf782c49ac11c2
+ブランチ   : docs/apollo-step10-p2ii-a-unread-resolution（作業後）
+
+※ 作業後のHEAD・ブランチは開始時と異なっていた。
+確認の結果、作業中（02:46 JST）に外部ユーザ ollejanaitte が
+「Phase 2-II(A) unread drawing sheet 141 の解決」をコミットしたことによる
+変化であり、本チームの変更ではない。
+本チームは spacer-clone で読み取り専用コマンド（git status/rev-parse/
+branch/remote/log/show）のみ実行した。コミット等の書込み操作は行っていない。
+
+既存差分（3ファイル）は現状を保持。修正・復旧・退避はしていない。
+
+--------------------------------------------------------------------------------
+7. 参照資料
+--------------------------------------------------------------------------------
+入手済み（ローカル）:
+- spacer-clone/マニュアル/JIP-LINER_マニュアル.pdf
+- spacer-clone/マニュアル/SPACER操作マニュアル.pdf
+- 鋼鈑桁橋_設計計算例.pdf
+- 鋼鈑桁橋_図面例.pdf
+- spacer-clone/schemas/bridge-definition.schema.json
+- spacer-clone/schemas/contracts/v0.1/ （coordinate-context 他）
+- spacer-clone/docs/road/design/coordinate_system_policy.md
+- spacer-clone/docs/apollo/3d-stl/10_stl_export_design.md
+- spacer-clone/frontend/src/…（BridgeDefinition/RoadToFrame/Three.js表示/STL export）
+- spacer-clone/examples/（bridge JSON, gc-07 domain）
+
+未入手（記録のみ・取得せず。ネット取得禁止）:
+- Apollo SuperDesigner / SuperDrawing の正式資料
+- JIP-LINER の正式仕様一式
+- 下部工設計基準（示方書下部構造編）の全文
+- 杭基礎・橋台の詳細取り合い図
+（詳細: research/reference_inventory.md）
+
+--------------------------------------------------------------------------------
+8. 既存資産調査結果
+--------------------------------------------------------------------------------
+- 上部工の BridgeDefinition は支援を「station（橋軸距離）+ substructureKind + skewAngle」で定義。
+  支援は座標を持たない。
+- 支承 bearings[] は {id, supportId, type} で支援を参照。支承座（bearing seat）エンティティは既存に無し。
+- RoadToFrameTransferPackage は SubstructureEntry(point XOR polyline)+BearingLineEntry の
+  UUID entityId / dependencyIds 方式を持つ。
+- 座標系規約は x-longitudinal-y-transverse-z-up（右手系 Z-up）。斜角は skewAngleDeg。
+- フーチング・杭・柱・梁など下部工ジオメトリの専用モデルは既存にない（地表条件のみ）。
+- STL 出力は @jscad/stl-serializer（既存）。glTF/GLB/OBJ は未実装。
+- 反力は result.schema.json の loadCaseId ベース、荷重分類enum（permanent/live等）は無い。
+（詳細: research/existing_asset_review.md）
+
+--------------------------------------------------------------------------------
+9. 要求整理
+--------------------------------------------------------------------------------
+目的・利用者・ユースケース・機能要求・非機能要求・入出力・前提・制約を整理。
+代表ユースケース:
+- UC-01 新規プロジェクト/支点入力
+- UC-03 寸法変更での3D再生成
+- UC-05 JSON保存・再読込み
+- UC-07 概算数量
+- UC-10 反力データ取込（任意）
+（詳細: research/requirements.md）
+
+--------------------------------------------------------------------------------
+10. 初期スコープ
+--------------------------------------------------------------------------------
+- 単柱式RC橋脚（矩形柱）・張出梁・支承座
+- 矩形フーチング・場所打ち杭
+- 逆T式橋台簡易外形・翼壁簡易外形
+- 上部工簡略外形・地盤面簡易表示
+- 機能: 3D再生成 / 安定ID / JSON入出力 / 検証 / 概算数量 / GLB出力比較
+
+--------------------------------------------------------------------------------
+11. 非スコープ
+--------------------------------------------------------------------------------
+- 道路橋示方書に基づく正式照査・せん断/曲げ/疲労照査
+- レベル1・2地震時の正式設計、動的・非線形解析
+- 基礎の正式支持力照査・杭設計・地盤ばね・液状化
+- 配筋自動設計・配筋図・正式数量計算・計算書
+- 実務利用可能表示・上部工への実装・コード移植・GitHub反映
+（詳細: research/scope.md）
+
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+PRODUCTION_USE_AUTHORIZATION: NOT_GRANTED
+CALCULATION_STATUS: RESEARCH_ONLY
+RESULT_LABEL: 参考値・未検証・実務使用不可
+
+--------------------------------------------------------------------------------
+12. システム構成案
+--------------------------------------------------------------------------------
+- 独立アプリ + JSON交換で上部工と連携
+- Vanilla TypeScript + Three.js（Vite ビルド）
+- モジュール: model / validation / geometry / quantity / io / ui
+- 上部工から受け取るのは support-interface.json
+- 下部工から返すのは形状・数量・安定ID
+（詳細: architecture/system_concept.md）
+
+--------------------------------------------------------------------------------
+13. データモデル案
+--------------------------------------------------------------------------------
+エンティティ: Project, Bridge, AlignmentReference, Support, BearingSeat,
+Bearing, Pier, PierCap, PierColumn, Abutment, WingWall, Footing, PileGroup,
+Pile, GroundSurface, SuperstructureEnvelope, LoadCase, Reaction,
+QuantitySummary, ValidationIssue, ExportRecord
+
+安定ID: P1 / P1-CAP / P1-COLUMN-01 / P1-FOOTING / P1-PILE-01 /
+P1-BEARING-01 / A1-BACKWALL / A1-WING-L / A1-WING-R / P1-PILEGROUP
+（詳細: architecture/data_model.md）
+
+--------------------------------------------------------------------------------
+14. 座標系案
+--------------------------------------------------------------------------------
+- 右手系 Z-up。+X=橋軸, +Y=橋軸直角(+Xを見て左+), +Z=上。
+- 斜角: 橋軸直角から支承線方向へ +X 軸回り CCW 正。
+- span/単位: m, deg(保存)/rad(内部), kN。
+- unitSystem / coordinateSystem 不明時は拒否。
+（詳細: architecture/coordinate_system.md）
+
+--------------------------------------------------------------------------------
+15. 上部工交換スキーマ案
+--------------------------------------------------------------------------------
+schemas/support-interface.schema.json:
+schemaVersion, projectId, bridgeId, supportId, supportType,
+sourceApplication/Version/Revision, coordinateSystem, unitSystem,
+origin, position, longitudinalAxis, transverseAxis, verticalAxis,
+skewAngle, bearingSeats（+bearingId/position/process/bearingHeight）,
+girderBottomElevation, deckElevation, reactionCases（caseId/caseKind）,
+metadata, createdAt, updatedAt
+
+反力がなくても: 3Dモデリング可 / 概算数量可 / 反力依存計算無効 / 正式照査常に無効
+（詳細: architecture/exchange_schema.md）
+
+--------------------------------------------------------------------------------
+16. 3D生成方式
+--------------------------------------------------------------------------------
+- プリミティブ（Box/Cylinder）のパラメトリック合成。寸法→ジオメトリ→ メッシュ。
+- 安定IDを node.name に付与し、クリック（raycast）で選択ID表示。
+- 寸法変更時は再構築。IDは維持。
+- エクスポート: glTF/GLB を第一候補（部材ID・メタデータ・単位・座標保持）。
+  STL は確認用、OBJ は必要性が低い。
+（詳細: architecture/three_d_generation.md）
+
+--------------------------------------------------------------------------------
+17. プロトタイプ概要
+--------------------------------------------------------------------------------
+LAB_ROOT/prototype/
+- Vanilla TypeScript + Three.js（Vite）
+- 単柱式RC橋脚・支承座・フーチング・杭・橋台・翼壁・上部工・地盤面
+- パラメータ変更で3D（再生成）
+- 部材クリックで安定ID表示
+- 概算コンクリート体積・杭延長表示
+- JSON保存・再読み込み・GLB出力
+- 入力検証（fail-closed）
+
+--------------------------------------------------------------------------------
+18. 起動方法
+--------------------------------------------------------------------------------
+cd ~/Projects/substructure-planning-lab/prototype
+npm install
+npm run dev      # http://127.0.0.1:5173/
+（検証: npm test, node tests/browser_verify.mjs, python3 ../verification/schema_validation.py）
+
+--------------------------------------------------------------------------------
+19. 検証方法
+--------------------------------------------------------------------------------
+- データ: python3 verification/schema_validation.py（jsonschema）
+- 単体: prototype で `npx vitest run`
+- ブラウザ: `node tests/browser_verify.mjs`（devサーバ起動中）
+- スクリーンショット: verification/screenshots/
+（検計画: verification/test_plan.md）
+
+--------------------------------------------------------------------------------
+20. 検証結果
+--------------------------------------------------------------------------------
+- データ（JSON Schema）: 12/12 PASS
+- 単体テスト: 26/26 PASS
+  ・検証（負値・ゼロ・不明単位/座標・未対応形式・schemaVersion）
+  ・ジオメトリ生成・安定ID維持・座標移動・斜角回転
+  ・概算数量（柱/梁/フーチング/杭/合計/杭延長）
+  ・JSON入出力（round-trip）
+- ブラウザ検証: 10/10 PASS
+  ・canvas表示 / 3D生成可能 / 概算数量 / 再生成（体積変化） /
+    部材ID選択（P1-COLUMN-01）/ スクリーンショット / JSエラーなし /
+    JSON保存 / GLB出力（glTF, 41,544bytes）/ JSON再読込
+- エクスポート: GLB 出力成功。安定ID（P1-FOOTING, P1-COLUMN-01, P1-BEARING-01
+  , 構成等）が node.name に保持されることを確認。
+（詳細: verification/test_results.md）
+
+--------------------------------------------------------------------------------
+21. 概算数量機能
+--------------------------------------------------------------------------------
+- 柱・梁・フーチング・杭の体積と合計、杭総延長を算出（幾何概算）。
+- 既定プロジェクト例: 柱26.40m³, 合計222.48m³, 杭延長 80.00m
+- お、実務数量ではない旨を常時表示。
+
+--------------------------------------------------------------------------------
+22. エクスポート比較
+--------------------------------------------------------------------------------
+| 形式 | 部材ID | メタ | 単位 | 座標 | 判定 |
+|---|---|---|---|---|---|
+| glTF/GLB | node.name(可) | 可 | m | 可 | 第一候補（実装） |
+| STL | 不可 | 不可 | 不可 | 頂点のみ | 参考 |
+| OBJ | 限定 | 限定 | 不可 | 頂点のみ | 必要性低 |
+
+プロトタイプは GLB のみ実装。STL は方式の比較検討とした。
+
+--------------------------------------------------------------------------------
+23. 未解決事項
+--------------------------------------------------------------------------------
+- 斜角の正負の現場解釈の揺れ
+- 桁下高・支承高の定義（上部工との一致）
+- 曲線橋・超高（カント）の扱い（初期は直線橋のみ）
+- 単位系・格納面の複数対応
+- 反力データの上部工からの標準的な受け渡し方法
+- 杭本数配置の実用化
+- glTF 単位メタデータの明示
+
+--------------------------------------------------------------------------------
+24. リスク
+--------------------------------------------------------------------------------
+- 実務設計と誤解され本表示（表示で常にNOT_GRANTED明示）
+- 座標系・斜角の誤解（検証テストで確認）
+- 未対応形式の無害生成（fail-closedで回避）
+- データモデルの過大化（MVPで最小化）
+（詳細: research/risk_register.md）
+
+--------------------------------------------------------------------------------
+25. 推奨ロードマップ
+--------------------------------------------------------------------------------
+Phase B(推奨・次段階): 拡張・反力インポート・橋台詳細・杭配置実用化
+Phase C: 概略設計（耐震レベル1の概略試算など）
+Phase D: 詳細設計（示方書正式照査・配筋図・計算書）※今回は対象外
+（詳細: architecture/roadmap.md）
+
+--------------------------------------------------------------------------------
+26. 次フェーズ提案
+--------------------------------------------------------------------------------
+- support-interface.json の上部工側から取り込むパイプライン
+- 橋台・翼壁・精り加工
+- パラメータHR関係の拡張（杭配置・算出・数量）
+- glTF/GLB への単位・メタデータ明示、STL/OBJ補完
+（詳細: handoffs/next_phase_handoff.md）
+
+--------------------------------------------------------------------------------
+27. GitHub非操作確認
+--------------------------------------------------------------------------------
+- 本作業で GitHub API / gh CLI の書込みを一切実行していない。
+- git remote の追加・変更・削除もしていない。
+- remote: ありません（LAB_ROOT は非Git）
+- push / PR / merge をしていない。
+
+--------------------------------------------------------------------------------
+28. spacer-clone非変更確認
+--------------------------------------------------------------------------------
+- spacer-clone でファイルの追加・変更・削除を行っていない。
+- spacer-clone の git 書込み操作（commit/checkout/reset等）をしていない。
+- 既存差分3ファイルは現状のまま（不変）。
+- 作業中に外部ユーザーによりHEADが進んだ（本チームの変更ではない）。
+
+--------------------------------------------------------------------------------
+29. 最終判定
+--------------------------------------------------------------------------------
+SUBSTRUCTURE_RESEARCH_VERDICT: COMPLETED
+DATA_MODEL_VERDICT: ESTABLISHED（安定ID付きエンティティモデル）
+EXCHANGE_SCHEMA_VERDICT: ESTABLISHED（support-interface 疎結合スキーマ）
+THREE_D_PROTOTYPE_VERDICT: SUCCESS（単体26/26, ブラウザ10/10 PASS）
+VERIFICATION_VERDICT: PASSED（データ12/12）
+UPPER_STRUCTURE_ISOLATION_VERDICT: CONFIRMED（疎結合・分離）
+SPACER_CLONE_NON_MODIFICATION_VERDICT: PASSED（無変更）
+GITHUB_WRITE_VERDICT: NOT_EXECUTED
+GITHUB_PUSH_VERDICT: NOT_EXECUTED
+PULL_REQUEST_VERDICT: NOT_CREATED
+MERGE_VERDICT: NOT_EXECUTED
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED
+PRODUCTION_USE_AUTHORIZATION: NOT_GRANTED
+NEXT_PHASE_READINESS: READY（Phase A 準備可）
+OVERALL_VERDICT: RESEARCH_AND_TECHNICAL_VALIDATION_COMPLETE（独立研究・技術検証成立）
+
+Phase A 版判定（2026-08-07 追記）
+--------------------------------------------------------------------------------
+PHASE_A_OVERALL_VERDICT: PASS
+REPORT_CLEANUP_VERDICT: PASS（final_report/roadmap/handoff の表記・タイポ修正、韓国語文字なし）
+ARTIFACT_EXISTENCE_VERDICT: PASS（49/49 実在・非空・相互参照成立）
+REPRODUCIBILITY_VERDICT: PASS（npm ci→unit 26/26, build, schema 12/12, browser 10/10, GLB 安定ID）
+SCHEMA_VALIDATION_VERDICT: PASS（12/12）
+UNIT_TEST_VERDICT: PASS（26/26, 5 files）
+BUILD_VERDICT: PASS（vite build 成功）
+BROWSER_TEST_VERDICT: PASS（10/10 + スクリーンショット3枚）
+SECURITY_SCAN_VERDICT: PASS（秘密/資格/PII 検出なし）
+INTEGRATION_MANIFEST_VERDICT: PASS（integration_manifest.csv 実在、統合対象を定義）
+SPACER_CLONE_NON_MODIFICATION_VERDICT: PASS（無変更）
+GITHUB_NON_OPERATION_VERDICT: PASS（push/PR/merge 未実施）
+INTEGRATION_SCOPE_VERDICT: ESTABLISHED（schemas/substructure + substructure-planning/ のみ）
+
+LINER 優先制御（統合前提の確認結果）
+--------------------------------------------------------------------------------
+LINER_MAIN_SHA: f1107b541ee45b6589b2ad9da2b4c045a8901310（origin/main, LINER-PR#443 merge 済み）
+SUBSTRUCTURE_BASELINE_SHA: （未設定。Phase B 開始時に origin/main=f1107b5 を基準に確定）
+BASELINE_EQUALS_LATEST_MAIN: YES（最新 main を基準に予定）
+REBASE_REQUIRED: YES（現在 checkout の HEAD は origin/main より古いため、Phase B では新しいメインベース）
+MERGE_CONFLICT_DETECTED: NO（ここまでの調査で substructure/* と main の衝突なし。実際は commit 前 diff で再確認）
+PHASE_B_START_AUTHORIZED: NO（この時点では Phase A のみ。Phase B は別フェーズで明示指示があって初めて開始）
+
+--------------------------------------------------------------------------------
+最終安全確認（spacer-clone / GitHub / LAB_ROOT）
+--------------------------------------------------------------------------------
+SPACER_CLONE_FILES_WRITTEN_BY_THIS_TASK: NO
+SPACER_CLONE_GIT_OPERATION_WRITE: NO
+LAB_REMOTE_CONFIGURED: NO
+GITHUB_API_WRITE_EXECUTED: NO
+GITHUB_PUSH_EXECUTED: NO
+PULL_REQUEST_CREATED: NO
+MERGE_EXECUTED: NO
+LAB_ROOT_IS_GIT_REPO: NO
+WROTE_OUTSIDE_LAB: NO（一時ファイルは /tmp/opencode のみ）
+
+================================================================================
+終了
+================================================================================

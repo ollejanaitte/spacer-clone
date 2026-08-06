@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://substructure-planning-lab.local/schemas/foundation.schema.json",
+  "title": "Foundation",
+  "description": "基礎。矩形フーチング + 場所打ち杭。",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "footing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "length", "width", "thickness", "topElevation"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-FOOTING" },
+        "length": { "type": "number", "exclusiveMinimum": 0 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "thickness": { "type": "number", "exclusiveMinimum": 0 },
+        "topElevation": { "type": "number" }
+      }
+    },
+    "pileGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "pileType", "diameter", "length", "pileCount", "spacing"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-PILEGROUP" },
+        "pileType": { "enum": ["bored_pile"] },
+        "diameter": { "type": "number", "exclusiveMinimum": 0 },
+        "length": { "type": "number", "exclusiveMinimum": 0 },
+        "pileCount": { "type": "integer", "minimum": 1 },
+        "spacing": {
+          "type": "object",
+          "required": ["x", "y"],
+          "additionalProperties": false,
+          "properties": {
+            "x": { "type": "number", "exclusiveMinimum": 0 },
+            "y": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}
