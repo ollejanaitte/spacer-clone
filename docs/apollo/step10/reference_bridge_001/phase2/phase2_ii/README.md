@@ -33,7 +33,7 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 
 | PR | Branch prefix | Content |
 |----|---------------|---------|
-| P2II-0 | p2ii-0-truth-gate | Truth reconciliation, post-seal correction, Phase 2-I coverage/status/manifest repair |
+| P2II-0 | p2ii-0-truth-gate | Truth reconciliation, post-seal correction, Phase 2-I coverage/status/manifest repair (#441, MERGED) |
 | P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription |
 | P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair |
 | P2II-C | p2ii-c-layer-contract | Candidate layer contract, schema, enums, ID & normalization rules |
@@ -72,3 +72,20 @@ phase2_ii/
 - Every candidate must carry a source locator and source record linkage.
 - `adoption_status` never equals `APPROVED_GOLDEN_INPUT` in Phase 2-II.
 - Recalculation and production-code changes are prohibited.
+
+## P2II-A — Unread / low-confidence resolution (THIS PR)
+
+Drawings/results that Phase 2-I flagged `UNREADABLE_REQUIRES_HUMAN` (i.e.
+raster-only pages with empty/partial text layers) are re-extracted via
+render + OCR and transcribed into structured CSVs, then logged in
+`unread_resolution_register.csv`.
+
+- Drawing sheet 141 (PDF page 143, 架設計画図): text layer empty; resolved with
+  RapidOCR two passes (300/400 DPI). Transcribed into 8 CSVs under
+  `unread_resolution/`. 5 ambiguity cells flagged V001–V005 for human confirm.
+- Status transitioned: `UNREADABLE_REQUIRES_HUMAN` → `PARTIAL`
+  (`verification_status=OCR_VERIFIED`) in Phase 2-I coverage/status/registers.
+- Validation: `tools/validate_p2ii_a_unread.py` → **OVERALL: PASS**.
+
+Verdict remains **RESOLVED_WITH_OCR_ASSIST (PARTIAL)** — not a Golden value.
+Ambiguous cells require human confirmation before Phase 2-II closeout.

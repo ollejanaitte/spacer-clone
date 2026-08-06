@@ -1,0 +1,5 @@
+view_id,sheet_number,view_name,view_name_jp,dimension_type,scale,location,confidence,verification_status,status,notes
+S141-V01,141,侧平面,側面図,MAIN_VIEW,S=1:500,top-right,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,side elevation of girder + pier
+S141-V02,141,plan,平面図,MAIN_VIEW,S=1:500,center,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,plan with erection blocks
+S141-V03,141,cross section 中間部,横断図,MAIN_VIEW,S=1:200,right-bottom,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,cross section at PR2 pier
+S141-V04,141,crane capacity table,120t吊定格荷重表,TABLE,n/a,bottom-right,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,TADANO ATF120N-5.1 (A性能)

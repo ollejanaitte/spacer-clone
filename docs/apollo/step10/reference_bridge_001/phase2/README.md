@@ -36,8 +36,8 @@ status.
 
 | Step | Name | Status |
 |------|------|--------|
-| P2II-0 | Truth gate — Phase 2-I reconciliation, coverage/status/manifest repair | THIS PR |
-| P2II-A | Unread resolution (drawing 141) | PENDING |
+| P2II-0 | Truth gate — Phase 2-I reconciliation, coverage/status/manifest repair | COMPLETE (#441) |
+| P2II-A | Unread resolution (drawing 141) | THIS PR |
 | P2II-B | Phase 2-I depth audit | PENDING |
 | P2II-C | Layer contract freeze | PENDING |
 | P2II-D | Input + Geometry candidates | PENDING |

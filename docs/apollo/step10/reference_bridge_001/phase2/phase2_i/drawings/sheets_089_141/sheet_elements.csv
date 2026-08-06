@@ -51,4 +51,4 @@ sheet_number,pdf_page_number,group_name,title_prefix,extraction_status,confidenc
 138,140,ノーズ部ガードレール,旭高架橋 Aランプ PU15ｰAR2 ノーズ部ガードレール,TEXT_EXTRACTED,HIGH,Text extracted via pdftotext -layout for sheet 138 (PDF page 140),
 139,141,ノーズ部ガードレール,旭高架橋 Aランプ PU15ｰAR2 ノーズ部ガードレール,TEXT_EXTRACTED,HIGH,Text extracted via pdftotext -layout for sheet 139 (PDF page 141),
 140,142,ノーズ部止水構造図,旭高架橋 Aランプ PU15ｰAR2 ノーズ部止水構造図,TEXT_EXTRACTED,HIGH,Text extracted via pdftotext -layout for sheet 140 (PDF page 142),
-141,143,架設計画図,旭高架橋 Aランプ PU15ｰAR2 架設計画図,UNREADABLE_REQUIRES_HUMAN,LOW,PDF page 143 extracted blank; no text found for erection plan. Visual verification needed.,ISSUE-001
+141,143,架設計画図,旭高架橋 Aランプ PU15ｰAR2 架設計画図,PARTIAL,MEDIUM,OCR-assisted transcription in P2II-A; text layer empty; major dimensions/weights/crane table read; minor cells flagged for human confirm.,ISSUE-001
