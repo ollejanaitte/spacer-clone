@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://substructure-planning-lab.local/schemas/support-interface.schema.json",
+  "title": "SupportInterface",
+  "description": "上部工ツールと下部工ツールを疎結合で結ぶ交換スキーマ。反力が無くても3Dモデリング・概算数量は可能。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "supportId",
+    "supportType",
+    "sourceApplication",
+    "sourceVersion",
+    "coordinateSystem",
+    "unitSystem",
+    "origin",
+    "position"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "projectId": { "type": "string" },
+    "bridgeId": { "type": "string" },
+    "supportId": { "type": "string" },
+    "supportType": { "enum": ["pier", "abutment"] },
+    "sourceApplication": { "type": "string" },
+    "sourceVersion": { "type": "string" },
+    "sourceRevision": { "type": "string" },
+    "coordinateSystem": { "const": "x-longitudinal-y-transverse-z-up" },
+    "unitSystem": { "const": "si" },
+    "origin": { "$ref": "#/$defs/vec3" },
+    "position": { "$ref": "#/$defs/vec3" },
+    "longitudinalAxis": { "$ref": "#/$defs/vec3" },
+    "transverseAxis": { "$ref": "#/$defs/vec3" },
+    "verticalAxis": { "$ref": "#/$defs/vec3" },
+    "skewAngle": { "type": "number" },
+    "bearingSeats": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/bearingSeat" }
+    },
+    "girderBottomElevation": { "type": "number" },
+    "deckElevation": { "type": "number" },
+    "reactionCases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/reactionCase" }
+    },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "bearingSeat": {
+      "type": "object",
+      "required": ["bearingId", "bearingPosition", "bearingHeight"],
+      "additionalProperties": false,
+      "properties": {
+        "bearingId": { "type": "string" },
+        "bearingPosition": { "$ref": "#/$defs/vec3" },
+        "bearingDimensions": {
+          "type": "object",
+          "required": ["w", "d", "h"],
+          "additionalProperties": false,
+          "properties": {
+            "w": { "type": "number", "exclusiveMinimum": 0 },
+            "d": { "type": "number", "exclusiveMinimum": 0 },
+            "h": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "bearingHeight": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "reactionCase": {
+      "type": "object",
+      "required": ["caseId", "caseKind"],
+      "additionalProperties": false,
+      "properties": {
+        "caseId": { "type": "string" },
+        "caseKind": {
+          "type": "string",
+          "enum": [
+            "permanent",
+            "liveLoad",
+            "braking",
+            "wind",
+            "seismicLevel1",
+            "seismicLevel2"
+          ]
+        },
+        "force": { "$ref": "#/$defs/vec3" },
+        "moment": { "$ref": "#/$defs/vec3" },
+        "displacement": { "$ref": "#/$defs/vec3" },
+        "rotation": { "$ref": "#/$defs/vec3" }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

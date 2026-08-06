@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://substructure-planning-lab.local/schemas/abutment.schema.json",
+  "title": "Abutment",
+  "description": "橋台。逆T式簡易外形。",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "abutment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "formType", "backwall", "wingWallL", "wingWallR"],
+      "properties": {
+        "id": { "type": "string", "description": "例: A1" },
+        "formType": {
+          "type": "string",
+          "enum": ["inverted_t"]
+        },
+        "backwall": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "height", "thickness", "width", "seatElevation"],
+          "properties": {
+            "id": { "type": "string", "description": "例: A1-BACKWALL" },
+            "height": { "type": "number", "exclusiveMinimum": 0 },
+            "thickness": { "type": "number", "exclusiveMinimum": 0 },
+            "width": { "type": "number", "exclusiveMinimum": 0 },
+            "seatElevation": { "type": "number" }
+          }
+        },
+        "wingWallL": { "$ref": "#/$defs/wingWall" },
+        "wingWallR": { "$ref": "#/$defs/wingWall" }
+      }
+    },
+    "wingWall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "length", "height", "thickness"],
+      "properties": {
+        "id": { "type": "string", "description": "例: A1-WING-L" },
+        "length": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "thickness": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}

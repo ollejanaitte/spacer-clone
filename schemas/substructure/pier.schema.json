@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://substructure-planning-lab.local/schemas/pier.schema.json",
+  "title": "Pier",
+  "description": "橋脚。単柱式RC矩形柱・張出梁・支承座。",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "pier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "formType", "column", "cap", "footing"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1" },
+        "formType": {
+          "type": "string",
+          "enum": ["single_column_rect"]
+        },
+        "column": { "$ref": "#/$defs/column" },
+        "cap": { "$ref": "#/$defs/cap" },
+        "footing": { "$ref": "#/$defs/footing" },
+        "piles": { "$ref": "#/$defs/pileGroup" }
+      }
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "width", "depth", "height"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-COLUMN-01" },
+        "width": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸直角幅(m)" },
+        "depth": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸方向奥行(m)" },
+        "height": { "type": "number", "exclusiveMinimum": 0, "description": "柱高(m)" }
+      }
+    },
+    "cap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "width", "depth", "height", "overhangL", "overhangR"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-CAP" },
+        "width": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸方向梁幅(m)" },
+        "depth": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸直角奥行(m)" },
+        "height": { "type": "number", "exclusiveMinimum": 0, "description": "梁高(m)" },
+        "overhangL": { "type": "number", "minimum": 0, "description": "左張出(m)" },
+        "overhangR": { "type": "number", "minimum": 0, "description": "右張出(m)" }
+      }
+    },
+    "footing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "length", "width", "thickness", "topElevation"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-FOOTING" },
+        "length": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸方向長(m)" },
+        "width": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸直角幅(m)" },
+        "thickness": { "type": "number", "exclusiveMinimum": 0, "description": "厚さ(m)" },
+        "topElevation": { "type": "number", "description": "フーチング上面標高(m)" }
+      }
+    },
+    "pileGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "pileType", "diameter", "length", "pileCount", "spacing"],
+      "properties": {
+        "id": { "type": "string", "description": "例: P1-PILEGROUP" },
+        "pileType": {
+          "type": "string",
+          "enum": ["bored_pile"]
+        },
+        "diameter": { "type": "number", "exclusiveMinimum": 0, "description": "杭径(m)" },
+        "length": { "type": "number", "exclusiveMinimum": 0, "description": "杭長(m)" },
+        "pileCount": { "type": "integer", "minimum": 1, "description": "杭本数" },
+        "spacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸方向間隔(m)" },
+            "y": { "type": "number", "exclusiveMinimum": 0, "description": "橋軸直角方向間隔(m)" }
+          }
+        }
+      }
+    }
+  }
+}
