@@ -1665,8 +1665,8 @@ STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
   J_legacy_and_compatibility_contract: COMPLETE
   K_summary_detail_projection_contract: COMPLETE
   L_report_model_validation_rules: COMPLETE
-  M_phase4_acceptance_criteria: IN_PROGRESS
-  N_phase4_handoff: PENDING
+  M_phase4_acceptance_criteria: COMPLETE
+  N_phase4_handoff: IN_PROGRESS
   O_completion: PENDING
 
 CP_STAR_CANONICAL: RECONFIRMED (Phase 2 chapter_matrix.csv)
