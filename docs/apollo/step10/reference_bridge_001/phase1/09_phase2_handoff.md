@@ -75,6 +75,4 @@ Phase 2 may start when:
 
 ## 8. Phase 2 readiness
 
-Current: HOLD_WITH_EXACT_REQUIREMENTS (waiting for P1-G seal)
-
-After P1-G: READY
+Current: READY (P1-G seal complete, PR #432 merged at b6532d4).
