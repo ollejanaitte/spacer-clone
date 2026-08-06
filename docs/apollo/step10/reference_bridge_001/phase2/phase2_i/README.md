@@ -26,8 +26,8 @@ Establish the extraction contract, ID schema, processing policy, and coverage sk
 | P2I-H | Decompose drawing sheets 1–44 | PENDING |
 | P2I-I | Decompose drawing sheets 45–88 | PENDING |
 | P2I-J | Decompose drawing sheets 89–141 | PENDING |
-| P2I-K | Closeout — coverage audit, handoff, manifest, validation | PENDING |
-| P2I-L | Seal Phase 2-I | PENDING |
+| P2I-K | Closeout — coverage audit, handoff, manifest, validation | COMPLETE (PR #439) |
+| P2I-L | Seal Phase 2-I | THIS PR |
 
 ## Scope
 

@@ -31,7 +31,7 @@ reporting verification.
 - [x] Drawing coverage complete
 - [x] Domain indexes available
 - [x] Validation tool operational
-- [ ] Phase 2-I seal complete (P2I-L)
+- [x] Phase 2-I seal complete
 
 ## 5. Deliverables (outline)
 
