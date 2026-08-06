@@ -1,0 +1,99 @@
+FINAL_REPORT: YES
+RESEARCH_ROOT: ~/Projects/liner-future-research
+REPOSITORY_REMOTE: https://github.com/ollejanaitte/spacer-clone.git
+REMOTE_DEFAULT_BRANCH: main
+REMOTE_BASELINE_SHA: 7b07f623b7db1fc560e19c2626d488e718da8652
+LOCAL_REPOSITORY_TOUCHED: NO
+ACTIVE_WORKTREE_MODIFIED: NO
+GIT_WRITE_OPERATION_EXECUTED: NO
+IMPLEMENTATION_OPERATION_EXECUTED: NO
+GITHUB_CHANGED: NO
+
+==================================================
+JIP-LINER機能差分監査・線形座標計算ツール将来UX構想調査
+==================================================
+
+本調査は、JIP-LINERユーザーズマニュアル(P183, SRC-001)・サンプルLINER計算書(SRC-004)・鋼鈑桁橋設計計算例(SRC-005)・図面例(SRC-006)・現行spacer-clone(main@7b07f62)・JIP公式公開情報を、読み取り専用で調査し、成果物を ~/Projects/liner-future-research 内のみに作成した。実装・リポジトリ変更は一切行っていない。
+
+--------------------------------------------------
+1. 調査の構成
+--------------------------------------------------
+- Phase 0: 事前調査・資料探索・基準SHA確定(main@7b07f62)・作業フォルダ確立
+- Phase 1: JIP-LINER機能棚卸し(12プログラム/制約/データ構成/入出力/標準手順)
+- Phase 2: 現行システム監査(実コード+docsの実装記録)
+- Phase 3: 差分監査(JIP×現行、49行の差分マトリクス)
+- Phase 4: 実務ユーザーワークフロー分析(設計計算例の実数値で裏付け)
+- Phase 5: 追加機能・将来UX構想(19機能アイテム+画面構成)
+- Phase 6: 2D平面GUI線形入力エディタ技術構想
+- Phase 7: 上部工・解析・3D連携分析
+- Phase 8: 特殊線形・曲線橋・Y字橋・ランプ橋への拡張
+- Phase 9: 優先順位・ロードマップ(4フェーズ)
+- 外部: JIP公式公開情報(カタログ/サイト)
+- 整合: 定量集計・整合性チェック
+
+成果物インデックス: README.md / STATUS.md / evidence_register.csv / research_log.md / open_questions.md
+各フェーズ成果物: research/00_preflight_report.md, research/01_jip_liner/*, research/02_current_system/*, research/03_gap_analysis/*, research/04_user_workflow/*, research/05_gui_concepts/*, research/06_editor2d/*, research/07_upper_structure_integration/*, research/08_special_alignment/*, research/09_integration/*, roadmap/*, matrices/*
+
+--------------------------------------------------
+2. 主要な発見(FACT/INFERENCEを分離)
+--------------------------------------------------
+[FACT] 現行システムの実装状態
+- 平面線形(直線/円/クロソイド/複合/Offset)・測点・縦断/横断/断面高さ(Z Merge)・LDIST・HOSO・レポート(HTML/CSV)・DXF・描画(Plan A/B)は IMPLEMENTED_VERIFIED レベル。
+- multi-alignment(P4-D01)・sourceRevision(stale)・Formal Drawing(P5)・3D(STL)は実装済み。
+- 拡幅(1次/4次)・幅員変化は「型定義のみ」(ABSENT計算)。
+- ハンチ(HAUNCH)は native family(two_point/three_point/plane/range)として実装。
+- 図面の一部(交角描画・寸法線規則・座標テーブル項目)は未確定/部分。
+- 上部工(主桁/横桁/支承/3Dソリッド)は本正本に含まれず、ローカル進行中(Apollo/step10)。
+
+[FACT] JIP-LINERの構造(Phase1)
+- 12プログラム(LINER/LDIST/HAUNCH/HOSO/GDRAW/APLINE/LTOOL/GVIEW/FOOTING/MDVIEWER/GCROSS/MDSKOUT)。
+- 1テキストファイルに `##### PROGRAM` ブロックで同居。
+- ハンチ計算はタイプ1-17。ピア設定は9方式。制限(ライン100/要素100/測点50/ピア500/スパン90等)。
+
+[INFERENCE] 差分の本質(Phase3)
+- ハンチJIP型17のうち現行は{1,2,6,7,8,9,14}をnative対応、残り(3一定/4,5,10基準桁/11最小2乗/12 WG-W/13比例/15キャンバー円弧/16対角線/17全入力)は非対応または明示エラー。
+- 主桁G(円弧/折れ桁)・セクション×主桁の格点モデル・ピア9方式の完全化は未実装。
+- 曲線橋の橋梁幾何(主桁動径オフセット・放射方向・横桁方向・支承方向)は、先行研究(Scope_of_Work)により道路線形はFULLY IMPLEMENTEDだが橋梁層はNOT IMPLEMENTEDと確認。
+
+[CRITICAL] 検証基盤の課題(Phase3・GAP_VERIFICATION)
+- 現行のゴールデンテスト(水平/縦断/横断)は解析参照(Simpson積分・円弧公式等)との一致で、**JIP-LINER実出力・実設計計算例(SRC-004/005)との突合ではない**。
+- Phase5描画ゴールデン(P5-D01)は自己参照(runtime生成から自動)。
+- Importerサンプルの一部(C1-C17/GE2)は補間値で、PDF実値への置換予定のまま。
+- → 「実装あり」と「検証の実証性」は別物。数値の信頼性を実務基準で担保するには、実設計例の数値(例: AG1支間長 40291.5mm、格間長 5344.0/5020.1mm 等)をゴールデンに取り込む必要がある。
+
+--------------------------------------------------
+3. 差分定量集計(N=49, 出典: matrices/gap_matrix.csv)
+--------------------------------------------------
+分類: GAP_DONE 13 / GAP_JIP_PARTIAL 17 / GAP_JIP_MISSING 9 / GAP_VERIFICATION 3 / GAP_DESIGN_NEED 3 / GAP_CURRENT_ONLY 3 / GAP_MODERNIZE 1
+優先度: high 21 / medium 18 / low 9
+カテゴリ: alignment 8 / profile 5 / station 2 / bridge 8 / ldist 2 / haunch 4 / hoso 2 / drawing 7 / program 7 / verification 4
+
+--------------------------------------------------
+4. 将来UX・技術構想の要点
+--------------------------------------------------
+- 入力: 数値テーブル → 2Dキャンバス直編集(スナップ/ハンドル/オフセット/ピア配置)+インスペクタ。既存DrawingPrimitive/SVG基盤を活用。
+- 検証: パイプライン診断の逐次実行・インライン表示(fail-closed維持)。
+- 図面: 交角描画・寸法線規則・座標テーブル公式化。
+- 上部工: LINER→Frame→STL/DXF の既存経路に、床板サーフェス・主桁ソリッド・支承を追加(上部工Phase2)。
+- 特殊: 主桁動径オフセット・放射/横桁方向・支承方向(曲線橋)、測点有効範囲→分岐/接続(ランプ/Y字橋)。
+- 連動: JIPはマスターファイル→SPACER/HyBRIDGE連動。現行はsourceRevision+Frameで同等。連動契約(IF)の整備が望ましい。
+
+--------------------------------------------------
+5. ロードマップ(roadmap/roadmap.md 参照)
+--------------------------------------------------
+R1(短期): 数値検証の確立 — 実JIP/実設計例をゴールデン化(外部突合を正本)
+R2(中期): 曲線橋のLINER骨格 — 拡幅計算/S×G格点/主桁G円弧・折れ/ハンチ残型/小標系/ピア拡張/スパン簡易入力
+R3(中期〜長期): 図面・UX・拡張 — 交角/寸法規則/座標表/バンド、2DエディタMVP、測点有効範囲・分岐
+R4(長期): 上部工・3D・特殊 — 動径オフセット・曲線橋幾何、床板/主桁/支承3D、Y字橋/ランプ、APLINE/MDSKOUT相当
+
+--------------------------------------------------
+6. 安全確認(最終)
+--------------------------------------------------
+LOCAL_REPOSITORY_TOUCHED: NO
+ACTIVE_WORKTREE_MODIFIED: NO
+GIT_WRITE_OPERATION_EXECUTED: NO
+IMPLEMENTATION_OPERATION_EXECUTED: NO
+GITHUB_CHANGED: NO
+調査成果物はすべて ~/Projects/liner-future-research 内にのみ存在。
+
+FINAL_VERDICT: COMPLETE (調査・資料化のみ、実装なし)

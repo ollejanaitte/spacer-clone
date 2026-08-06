@@ -1,0 +1,50 @@
+gap_id,category,jip_id,feature,current_status,gap_classification,priority,phase_owner,notes
+GAP-100,alignment,JIP-300,直線,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-101,alignment,JIP-301,円弧,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-102,alignment,JIP-302,クロソイド,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-103,alignment,JIP-303,平行線,IMPLEMENTED(Offset),GAP_JIP_PARTIAL,medium,current,Offsetのみ直角平行不足
+GAP-104,alignment,JIP-305,拡幅(1次),PARTIAL_DEFINITION_ONLY,GAP_JIP_PARTIAL,high,implement,曲線橋必須
+GAP-105,alignment,JIP-306,拡幅(4次),ABSENT,GAP_JIP_PARTIAL,high,implement,
+GAP-106,alignment,JIP-108,接続/分岐,ABSENT,GAP_JIP_MISSING,high,phase8,ランプ橋前提
+GAP-107,alignment,REQUIRED,複数線形,IMPLEMENTED,GAP_DONE,0,parity,done
+GAP-108,alignment,UEFUX,要素入力方式,数値入力中心,GAP_MODERNIZE,medium,phase56,GUI直接編集
+GAP-200,station,JIP-400,累加/No.表記,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-201,station,JIP-401,測点有効範囲,equation規定のみ,GAP_JIP_PARTIAL,high,phase8,ランプ/ブレーキ
+GAP-300,profile,JIP-500,縦断PH,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-301,profile,JIP-501,横断GR,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-302,profile,JIP-502,断面高W/WG,ZMerge,GAP_JIP_PARTIAL,high,implement,WG(G)高さ無
+GAP-303,profile,JIP-503,断面高WA,ZMerge,GAP_JIP_PARTIAL,medium,current,
+GAP-304,profile,JIP-504,断面高WB,ZMerge,GAP_JIP_PARTIAL,medium,current,
+GAP-400,bridge,JIP-600,ピア 距離/測点,IMPLEMENTED,GAP_JIP_PARTIAL,high,implement,9方式中2のみ
+GAP-401,bridge,JIP-601,ピア 2点/平行/角度,ABSENT,GAP_JIP_MISSING,medium,implement,
+GAP-402,bridge,JIP-602,ピア斜角,IMPLEMENTED,GAP_DONE,low,parity,done
+GAP-403,bridge,JIP-700,スパン簡易入力,SpanDraft,GAP_JIP_PARTIAL,high,implement,参照ピア間隔UI
+GAP-404,bridge,JIP-701,セクションS 設定,CrossBeam,GAP_JIP_PARTIAL,high,implement,S×G 格点
+GAP-405,bridge,JIP-702,主桁G(直/折れ/円弧),ABSENT,GAP_JIP_MISSING,high,implement,曲線橋主桁
+GAP-406,bridge,JIP-605,小標系 TRAN,グローバル,GAP_JIP_PARTIAL,medium,implement,実務帳票で標準
+GAP-500,ldist,JIP-800,格点間距離,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-501,ldist,JIP-801,張出し長,IMPLEMENTED,GAP_DONE,low,parity,done
+GAP-600,haunch,JIP-900,"type 1,2,6,7,8,9,14",IMPLEMENTED,GAP_DONE,high,parity,mapping済
+GAP-601,haunch,JIP-900,"type 3,11,13,15,16,17",ABSENT,GAP_JIP_MISSING,medium,implement,一定/最小2乗/比例/キャンバー円弧/対角線/全入力
+GAP-602,haunch,JIP-900,"type 4,5,10,基準桁",NOT_IMPLEMENTED,GAP_JIP_MISSING,medium,implement,基準桁モデル
+GAP-603,haunch,JIP-900,type12-WG/W,NOT_IMPLEMENTED,GAP_JIP_MISSING,low,implement,ハンチ用G高さ
+GAP-700,hoso,JIP-700,舗装厚,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-701,hoso,JIP-1000,舗装厚最小厚の照査,PARTIAL,GAP_JIP_PARTIAL,medium,implement,照査UI/最小厚
+GAP-800,drawing,JIP-1100,平面図,IMPLEMENTED_VERIFIED,GAP_DONE,high,parity,done
+GAP-801,drawing,JIP-1101,座標テーブル,IMPLEMENTED_PARTIAL,GAP_JIP_PARTIAL,medium,parity,項目/精度
+GAP-802,drawing,JIP-1102,交角描画,NOT_IMPLEMENTED,GAP_JIP_MISSING,medium,implement,
+GAP-803,drawing,JIP-1103,ライン間寸法,IMPLEMENTED_PARTIAL,GAP_JIP_PARTIAL,medium,parity,
+GAP-804,drawing,JIP-1104,セクション間寸法,IMPLEMENTED_PARTIAL,GAP_JIP_PARTIAL,medium,parity,
+GAP-805,drawing,JIP-1100,橋門,IMPLEMENTED_PARTIAL,GAP_JIP_PARTIAL,medium,parity,地面未設定
+GAP-806,drawing,JIP-004,バンド,IMPLEMENTED_PARTIAL,GAP_JIP_PARTIAL,medium,parity,
+GAP-900,program,JIP-007,APLINE,ABSENT,GAP_JIP_MISSING,medium,phase8,IP線形
+GAP-901,program,JIP-006,MDSKOUT,ABSENT,GAP_DESIGN_NEED,medium,phase6,現代化解析出力
+GAP-902,program,JIP-010,FOOTING,ABSENT,GAP_DESIGN_NEED,low,phase7,上部工3Dと統合
+GAP-903,program,JIP-011,MDVIEWER,ABSENT,GAP_DESIGN_NEED,low,phase7,3D面積
+GAP-904,program,JIP-012,GCROSS,ABSENT,GAP_JIP_MISSING,low,phase7,標準断面
+GAP-905,program,JIP-1200,単一ファイル運用,RoadDesignDocument,GAP_CURRENT_ONLY,low,parity,維持
+GAP-906,program,JIP-1201,バックアップ復元,autosave,GAP_CURRENT_ONLY,low,parity,
+GAP-907,program,JIP-1202,確認図,preview,GAP_CURRENT_ONLY,low,parity,
+GAP-1000,verification,GAP_JIP,ゴールデン外部突合,解析参照のみ,GAP_VERIFICATION,high,verify,実設計計算例/実JIP出力
+GAP-1001,verification,P5ゴールデン,描画ゴールデン自己参照,self_referential,GAP_VERIFICATION,high,verify,外部帳票との突合なし
+GAP-1002,verification,Importer,サンプル補間値(interpolated)未置換,interpolated未置換,GAP_VERIFICATION,medium,verify,C1-C17/GE2 を PDF 実値へ置換
