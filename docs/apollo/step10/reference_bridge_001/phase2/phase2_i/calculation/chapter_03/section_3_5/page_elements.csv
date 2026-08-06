@@ -1,0 +1,19 @@
+element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
+CAL-P00788-CAL-SEC-3.5-001,788,783,CAL-CH3,CAL-SEC-3.5,section_header,3.5 横構の設計,CAL-P00788,TEXT_EXTRACTED,HIGH,Lateral bracing section title
+CAL-P00789-CAL-SEC-3.5.1-001,789,784,CAL-CH3,CAL-SEC-3.5.1,subsection_header,3.5.1 設計方針,CAL-P00789,TEXT_EXTRACTED,HIGH,Design policy
+CAL-P00789-CAL-SEC-3.5.1-002,789,784,CAL-CH3,CAL-SEC-3.5.1,text_block,横構上下設ける 限界状態3 ボルト限界状態1 風WS鋼桁下半分 地震EQ慣性力1/4 組合せ(8)D+WS (11)D+EQ,CAL-P00789,TEXT_EXTRACTED,HIGH,LM3 members LM1 bolts WS lower half EQ 1/4
+CAL-P00789-CAL-SEC-3.5.1-003,789,784,CAL-CH3,CAL-SEC-3.5.1,text_block,ダブルワーレンX配置 引張部材 細長比一次部材 ボルト孔ボルト径+5mm ガセット厚フランジ厚合わせ,CAL-P00789,TEXT_EXTRACTED,HIGH,Double Warren tension design member slenderness
+CAL-P00790-CAL-SEC-3.5.1-001,790,785,CAL-CH3,CAL-SEC-3.5.1,figure,横構骨組図 格点番号/部材番号/断面番号/支点部変更,CAL-P00790,TEXT_EXTRACTED,MEDIUM,Lateral bracing frame diagram
+CAL-P00790-CAL-SEC-3.5.1-002,790,785,CAL-CH3,CAL-SEC-3.5.1,table,断面種類(4):1:FLG370x22 WEB200x22(SM490Y) 2:FLG250x19 WEB150x19(SM490Y) 3:FLG250x19 WEB150x19(SM400) 4:FLG250x12 WEB150x12(SM400),CAL-P00790,TEXT_EXTRACTED,HIGH,4 section types
+CAL-P00791-CAL-SEC-3.5.2-001,791,786,CAL-CH3,CAL-SEC-3.5.2,subsection_header,3.5.2 風荷重および地震の影響,CAL-P00791,TEXT_EXTRACTED,HIGH,Wind and seismic effects
+CAL-P00791-CAL-SEC-3.5.2-002,791,786,CAL-CH3,CAL-SEC-3.5.2,text_block,V=40m/s WS=6.67kN/m(横構1組) 設計Pw=8.34kN/m(γp=1.00 γq=1.25),CAL-P00791,TEXT_EXTRACTED,MEDIUM,Wind load WS=6.67 Pw=8.34
+CAL-P00791-CAL-SEC-3.5.2-003,791,786,CAL-CH3,CAL-SEC-3.5.2,text_block,地震L2 Wd=18853.5kN Kh=1.36 We=48.81kN/m(横構1組1/4+常時換算) 設計Pe=37.34kN/m Keq=0.765,CAL-P00791,TEXT_EXTRACTED,MEDIUM,Seismic L2 We=48.81 Pe=37.34
+CAL-P00792-CAL-SEC-3.5.3-001,792,787,CAL-CH3,CAL-SEC-3.5.3,subsection_header,3.5.3 設計断面力 部材軸力表(コード/長さ/Secθ/Nw/Ne/N),CAL-P00792,TEXT_EXTRACTED,HIGH,Design section forces member axial forces
+CAL-P00792-CAL-SEC-3.5.3-002,792,787,CAL-CH3,CAL-SEC-3.5.3,table,部材軸力 D-10016~D-10216 2行コード 風Nw/地震Ne/設計N kN,CAL-P00792,TEXT_EXTRACTED,MEDIUM,Member axial forces table
+CAL-P00793-CAL-SEC-3.5.4-001,793,788,CAL-CH3,CAL-SEC-3.5.4,subsection_header,3.5.4 断面の決定,CAL-P00793,TEXT_EXTRACTED,HIGH,Section determination
+CAL-P00793-CAL-SEC-3.5.4-002,793,788,CAL-CH3,CAL-SEC-3.5.4,table,断面決定表 断面番号/種別/材質/A/Ag/照査結果,CAL-P00793,TEXT_EXTRACTED,MEDIUM,Section determination table
+CAL-P00797-CAL-SEC-3.5.5-001,797,792,CAL-CH3,CAL-SEC-3.5.5,subsection_header,3.5.5 計算結果一覧,CAL-P00797,TEXT_EXTRACTED,HIGH,Calculation results summary
+CAL-P00797-CAL-SEC-3.5.5-002,797,792,CAL-CH3,CAL-SEC-3.5.5,table,横構計算結果一覧表 部材/断面/応力度照査,CAL-P00797,TEXT_EXTRACTED,MEDIUM,Results table
+CAL-P00800-CAL-SEC-3.5.6-001,800,795,CAL-CH3,CAL-SEC-3.5.6,subsection_header,3.5.6 支点部水平支承補強計算 PU15/PR1/PR2/AR2,CAL-P00800,TEXT_EXTRACTED,HIGH,Support horizontal bearing reinforcement
+CAL-P00800-CAL-SEC-3.5.6-002,800,795,CAL-CH3,CAL-SEC-3.5.6,table,支点部補強計算 断面諸元/ボルト継手照査,CAL-P00800,TEXT_EXTRACTED,MEDIUM,Support reinforcement tables
+CAL-P00816-CAL-SEC-3.5.6-001,816,811,CAL-CH3,CAL-SEC-3.5.6,table,支点部補強計算(最終),CAL-P00816,TEXT_EXTRACTED,MEDIUM,Support reinforcement final

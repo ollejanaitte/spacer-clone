@@ -1,0 +1,43 @@
+element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
+CAL-P00675-CAL-SEC-3.3-001,675,670,CAL-CH3,CAL-SEC-3.3,section_header,3.3 横桁の設計,CAL-P00675,TEXT_EXTRACTED,HIGH,Cross beam design section title page
+CAL-P00676-CAL-SEC-3.3.1-001,676,671,CAL-CH3,CAL-SEC-3.3.1,subsection_header,3.3.1 設計方針,CAL-P00676,TEXT_EXTRACTED,HIGH,Design policy for cross beams
+CAL-P00676-CAL-SEC-3.3.1-002,676,671,CAL-CH3,CAL-SEC-3.3.1,text_block,横桁は主桁間荷重分配+風/地震水平力に抵抗するよう設計,CAL-P00676,TEXT_EXTRACTED,HIGH,Fundamental load distribution + horizontal resistance
+CAL-P00676-CAL-SEC-3.3.1-003,676,671,CAL-CH3,CAL-SEC-3.3.1,text_block,荷重組合せ(2)(6)(8)(10)(11)施工時,CAL-P00676,TEXT_EXTRACTED,HIGH,Load combinations 2 6 8 10 11 construction
+CAL-P00676-CAL-SEC-3.3.1-004,676,671,CAL-CH3,CAL-SEC-3.3.1,text_block,中間横桁WL微小省略 地震L2水平力はL1値にL2/L1水平震度比乗じた値載荷,CAL-P00676,TEXT_EXTRACTED,HIGH,Intermediate cross beam WL omitted seismic L2 calculation
+CAL-P00677-CAL-SEC-3.3.1-001,677,672,CAL-CH3,CAL-SEC-3.3.1,text_block,断面力換算:Mi=ML0+(Mr0-ML0)*(Li/L0) 継手位置:端支点800mm中間支点800mm中間横桁500mm,CAL-P00677,TEXT_EXTRACTED,HIGH,Section force conversion formula
+CAL-P00677-CAL-SEC-3.3.1-002,677,672,CAL-CH3,CAL-SEC-3.3.1,text_block,支点上横桁:巻き立てコンクリート剛性考慮しない鋼断面 横倒れ座屈影響考慮しない,CAL-P00677,TEXT_EXTRACTED,HIGH,Steel section only for pier beams no lateral buckling
+CAL-P00678-CAL-SEC-3.3.1-001,678,673,CAL-CH3,CAL-SEC-3.3.1,figure,横桁部材番号図 S1-PR1-PR2-S2 CR1-001~CR1-027,CAL-P00678,TEXT_EXTRACTED,MEDIUM,Cross beam numbering diagram
+CAL-P00679-CAL-SEC-3.3.2-001,679,674,CAL-CH3,CAL-SEC-3.3.2,subsection_header,3.3.2 主構作用断面力,CAL-P00679,TEXT_EXTRACTED,HIGH,Main frame section forces
+CAL-P00679-CAL-SEC-3.3.2-002,679,674,CAL-CH3,CAL-SEC-3.3.2,text_block,荷重係数:死荷重1.05 活荷重1.25 施工時1.05,CAL-P00679,TEXT_EXTRACTED,HIGH,Load factors
+CAL-P00679-CAL-SEC-3.3.2-003,679,674,CAL-CH3,CAL-SEC-3.3.2,table,CR1-002~CR1-026中間横桁断面力 M(kNm) S(kN) 死荷重/活荷重/施工時,CAL-P00679,TEXT_EXTRACTED,MEDIUM,Intermediate cross beam section forces
+CAL-P00685-CAL-SEC-3.3.3-001,685,680,CAL-CH3,CAL-SEC-3.3.3,subsection_header,3.3.3 風荷重および地震荷重の影響,CAL-P00685,TEXT_EXTRACTED,HIGH,Wind and seismic load effects
+CAL-P00685-CAL-SEC-3.3.3-002,685,680,CAL-CH3,CAL-SEC-3.3.3,text_block,V=40m/s B=8.010m D=8.110m alpha=1.30 Ws=40.06kN/m Ws(deck)=26.73 Ws(steel)=13.34 kN/m,CAL-P00685,TEXT_EXTRACTED,MEDIUM,Wind load calculation
+CAL-P00686-CAL-SEC-3.3.3-001,686,681,CAL-CH3,CAL-SEC-3.3.3,text_block,地震L1 Wd=17955.7kN Kh=0.25 We=35.89kN/m We(deck)=29.59 We(steel)=6.30 kN/m,CAL-P00686,TEXT_EXTRACTED,MEDIUM,Seismic L1 calculation
+CAL-P00686-CAL-SEC-3.3.3-002,686,681,CAL-CH3,CAL-SEC-3.3.3,table,水平反力影響値 PU15/PR1/PR2/A2R A(+)/A(-)/SigmaA/Rw/Re,CAL-P00686,TEXT_EXTRACTED,MEDIUM,Horizontal reaction table
+CAL-P00687-CAL-SEC-3.3.4-001,687,682,CAL-CH3,CAL-SEC-3.3.4,subsection_header,3.3.4 中間横桁の設計 グループ1代表CR1-026,CAL-P00687,TEXT_EXTRACTED,HIGH,Intermediate cross beam design representative CR1-026
+CAL-P00687-CAL-SEC-3.3.4-002,687,682,CAL-CH3,CAL-SEC-3.3.4,figure,中間横桁断面図,CAL-P00687,TEXT_EXTRACTED,MEDIUM,Cross section flange 400x1800x500mm span 4500mm
+CAL-P00688-CAL-SEC-3.3.4-001,688,683,CAL-CH3,CAL-SEC-3.3.4,subsection_header,(1)設計荷重 荷重組合せ表,CAL-P00688,TEXT_EXTRACTED,HIGH,Design loads and load combination table
+CAL-P00689-CAL-SEC-3.3.4-001,689,684,CAL-CH3,CAL-SEC-3.3.4,text_block,(b)曲率による下フランジ付加断面力:W=-sigma*(Af+Aw/3)/R P=w*lambda,CAL-P00689,TEXT_EXTRACTED,HIGH,Curvature additional force formula
+CAL-P00689-CAL-SEC-3.3.4-002,689,684,CAL-CH3,CAL-SEC-3.3.4,table,曲率付加応力算定表 死/活/風/地震L1/L2各ケース,CAL-P00689,TEXT_EXTRACTED,MEDIUM,Curvature stress calculation table
+CAL-P00691-CAL-SEC-3.3.4-001,691,686,CAL-CH3,CAL-SEC-3.3.4,table,(2)平面骨組解析断面力 CR1-026断面力一覧(荷重係数考慮),CAL-P00691,TEXT_EXTRACTED,MEDIUM,Plane frame analysis forces
+CAL-P00696-CAL-SEC-3.3.4-001,696,691,CAL-CH3,CAL-SEC-3.3.4,subsection_header,(3)断面計算 代表グループ1 CR1-026,CAL-P00696,TEXT_EXTRACTED,HIGH,Section calculation representative group 1
+CAL-P00696-CAL-SEC-3.3.4-002,696,691,CAL-CH3,CAL-SEC-3.3.4,table,中間横桁断面諸元/曲げ/せん断/合成応力度照査結果,CAL-P00696,TEXT_EXTRACTED,MEDIUM,Section properties and check results
+CAL-P00698-CAL-SEC-3.3.4-001,698,693,CAL-CH3,CAL-SEC-3.3.4,table,中間横桁全グループ(73)断面照査結果一覧,CAL-P00698,TEXT_EXTRACTED,MEDIUM,All group section check results
+CAL-P00704-CAL-SEC-3.3.5-001,704,699,CAL-CH3,CAL-SEC-3.3.5,subsection_header,3.3.5 端支点上横桁の設計 代表CR1-001(端支点S1側),CAL-P00704,TEXT_EXTRACTED,HIGH,End pier cross beam design representative CR1-001
+CAL-P00704-CAL-SEC-3.3.5-002,704,699,CAL-CH3,CAL-SEC-3.3.5,figure,端支点上横桁断面図+荷重載荷図,CAL-P00704,TEXT_EXTRACTED,MEDIUM,End pier cross beam section and load diagram
+CAL-P00705-CAL-SEC-3.3.5-001,705,700,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 荷重組合せ表/曲率付加軸力/CAL-P00705,TEXT_EXTRACTED,MEDIUM,End pier load combinations
+CAL-P00707-CAL-SEC-3.3.5-001,707,702,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 CR1-001/CR1-027断面力,CAL-P00707,TEXT_EXTRACTED,MEDIUM,End pier section forces
+CAL-P00710-CAL-SEC-3.3.5-001,710,705,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 設計断面力 M/S/N,CAL-P00710,TEXT_EXTRACTED,MEDIUM,End pier design forces
+CAL-P00711-CAL-SEC-3.3.5-001,711,706,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 断面諸元/曲げ/軸力+曲げ/せん断照査,CAL-P00711,TEXT_EXTRACTED,MEDIUM,End pier section checks
+CAL-P00714-CAL-SEC-3.3.5-001,714,709,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 継手ボルト計算,CAL-P00714,TEXT_EXTRACTED,MEDIUM,End pier joint bolt calc
+CAL-P00720-CAL-SEC-3.3.5-001,720,715,CAL-CH3,CAL-SEC-3.3.5,table,端支点上横桁 全73区分断面照査結果,CAL-P00720,TEXT_EXTRACTED,MEDIUM,End pier all groups section checks
+CAL-P00735-CAL-SEC-3.3.6-001,735,730,CAL-CH3,CAL-SEC-3.3.6,subsection_header,3.3.6 中間支点上横桁の設計 代表CR1-009(中間支点PR1側),CAL-P00735,TEXT_EXTRACTED,HIGH,Intermediate pier cross beam design
+CAL-P00735-CAL-SEC-3.3.6-002,735,730,CAL-CH3,CAL-SEC-3.3.6,figure,中間支点上横桁断面図+荷重載荷図,CAL-P00735,TEXT_EXTRACTED,MEDIUM,Intermediate pier cross beam section
+CAL-P00736-CAL-SEC-3.3.6-001,736,731,CAL-CH3,CAL-SEC-3.3.6,table,中間支点上横桁 荷重組合せ表,CAL-P00736,TEXT_EXTRACTED,MEDIUM,Intermediate pier load combinations
+CAL-P00738-CAL-SEC-3.3.6-001,738,733,CAL-CH3,CAL-SEC-3.3.6,table,中間支点上横桁 CR1-009/CR1-019断面力,CAL-P00738,TEXT_EXTRACTED,MEDIUM,Intermediate pier section forces
+CAL-P00741-CAL-SEC-3.3.6-001,741,736,CAL-CH3,CAL-SEC-3.3.6,table,中間支点上横桁 断面諸元/曲げ/軸力+曲げ照査,CAL-P00741,TEXT_EXTRACTED,MEDIUM,Intermediate pier section checks
+CAL-P00744-CAL-SEC-3.3.6-001,744,739,CAL-CH3,CAL-SEC-3.3.6,table,中間支点上横桁 継手ボルト計算,CAL-P00744,TEXT_EXTRACTED,MEDIUM,Intermediate pier bolt joint
+CAL-P00757-CAL-SEC-3.3.6-001,757,752,CAL-CH3,CAL-SEC-3.3.6,table,中間支点上横桁 全24区分断面照査結果,CAL-P00757,TEXT_EXTRACTED,MEDIUM,Intermediate pier all groups results
+CAL-P00762-CAL-SEC-3.3.7-001,762,757,CAL-CH3,CAL-SEC-3.3.7,subsection_header,3.3.7 横桁補剛材の計算 道示II13.4垂直/水平補剛材,CAL-P00762,TEXT_EXTRACTED,HIGH,Cross beam stiffener calculation per Doshin II 13.4
+CAL-P00763-CAL-SEC-3.3.7-001,763,758,CAL-CH3,CAL-SEC-3.3.7,table,横桁補剛材断面照査一覧,CAL-P00763,TEXT_EXTRACTED,MEDIUM,Stiffener check table
+CAL-P00764-CAL-SEC-3.3.7-001,764,759,CAL-CH3,CAL-SEC-3.3.7,table,横桁補剛材断面照査一覧(最終),CAL-P00764,TEXT_EXTRACTED,MEDIUM,Stiffener check final

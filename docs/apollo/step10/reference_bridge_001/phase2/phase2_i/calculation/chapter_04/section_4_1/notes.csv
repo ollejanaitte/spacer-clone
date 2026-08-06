@@ -1,0 +1,17 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CAL-NOT-P00873-001,873,868,CAL-CH4,CAL-SEC-4.1.1,design_approach,構造解析は主桁/横桁からなる平面格子モデル。死荷重・活荷重を載荷。,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-002,873,868,CAL-CH4,CAL-SEC-4.1.1,design_approach,構造解析上の節点は横断線位置/断面変化位置/0.15L位置とする,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-003,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,0.15L位置:中間支点上付近の床版に引張応力が発生する範囲の境界位置,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-004,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,床版一括打設とし解析モデルは合成前と合成後の2つ,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-005,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,合成前解析は鋼桁剛度とし床版荷重を全長に載荷,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-006,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,合成後解析は鋼桁と床版の合成断面剛度,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-007,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,主桁剛度及び横桁剛度は曲げ剛度のみを考慮,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-008,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,主桁合成後の曲げ剛度は床版有効幅より算出,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-009,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,主桁合成後剛度算出時のヤング係数比はn=7,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-010,873,868,CAL-CH4,CAL-SEC-4.1.1,model_summary,中間支点上より0.15L位置間の合成後曲げ剛度は合成断面剛度より算出,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-011,873,868,CAL-CH4,CAL-SEC-4.1.1,standard_reference,クリープ/乾燥収縮/温度差による断面力・たわみ 道示Ⅱ14.2.2～14.2.4,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00873-012,873,868,CAL-CH4,CAL-SEC-4.1.1,tool_reference,解析プログラム:鋼橋自動設計システムAPOLLO Analyzer 株式会社横河技術情報,NOTE,CAL-P00873,HIGH
+CAL-NOT-P00874-001,874,869,CAL-CH4,CAL-SEC-4.1.2,design_condition,荷重強度は荷重係数を乗じていない荷重の特性値,NOTE,CAL-P00874,HIGH
+CAL-NOT-P00874-002,874,869,CAL-CH4,CAL-SEC-4.1.2,design_condition,PU15付近の左側壁高欄部はノーズ部荷重を考慮,NOTE,CAL-P00874,HIGH
+CAL-NOT-P00894-001,894,889,CAL-CH4,CAL-SEC-4.1.2,standard_reference,巻き立てコンクリート幅の設定は非合成桁の設計を参照,NOTE,CAL-P00894,HIGH
+CAL-NOT-P00904-001,904,899,CAL-CH4,CAL-SEC-4.1.5,model_summary,格子解析データ:前死荷重/後死荷重/クリープ/乾燥収縮/温度差の5ケース,NOTE,CAL-P00904,HIGH

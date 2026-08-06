@@ -1,0 +1,11 @@
+figure_id,pdf_page,subsection,figure_type,title,description
+F01,379,3.2.3,section_drawing,"非合成断面 AG1 断面構成図","Non-composite section composition diagram for AG1 showing flange/web dimensions, moment diagram, field splice locations"
+F02,380-381,3.2.3,section_drawing,"非合成断面 AG1 断面構成図(続き)","Non-composite section composition diagram (continued) showing girder elevation with panel points, cross-section at each section"
+F03,382,3.2.3,section_drawing,"非合成断面 AG2 断面構成図","Non-composite section composition diagram for AG2"
+F04,383,3.2.3,section_drawing,"非合成断面 AG2 断面構成図(続き)","Non-composite section composition diagram for AG2 (continued)"
+F05,382,3.2.4,bolts,AG1 J-1 UFLG field splice,"Bolt arrangement: 620mm flange width, 75mm edge, 140/90/90mm gage lines"
+F06,382-514,3.2.4,bolts,"Field splice bolt arrangement per joint","Each joint (J-1 through J-17) has bolt arrangement diagrams for UFLG, LFLG, and WEB"
+F07,524,3.2.6,schematic,"Bearing stiffener - horizontal load arm","Schematic showing moment arm h = crossbeam lower flange top + sole plate thickness + bearing height"
+F08,579,3.2.9,schematic,"Jack-up stiffener - jacking point","Jack-up stiffener arrangement schematic"
+F09,667,3.2.15,schematic,"Sole plate - end support","Sole plate plan view showing bearing center, A/A1/B dimensions, taper details"
+F10,667,3.2.15,schematic,"Sole plate - intermediate support","Sole plate at intermediate support (PR1, PR2) showing center thickness 36mm"

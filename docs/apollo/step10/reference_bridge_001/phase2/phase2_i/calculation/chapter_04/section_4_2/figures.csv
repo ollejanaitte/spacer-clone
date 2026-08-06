@@ -1,0 +1,3 @@
+figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
+CAL-FIG-P01776-001,1776,1771,CAL-CH4,CAL-SEC-4.2.5,断面構成図 AG1,cross_section,AG1,CAL-P01776-TBL,HIGH,"AG1 section composition drawing showing flange/web dimensions along girder"
+CAL-FIG-P01776-002,1776,1771,CAL-CH4,CAL-SEC-4.2.5,断面構成図 AG2,cross_section,AG2,CAL-P01776-TBL,HIGH,"AG2 section composition drawing showing flange/web dimensions along girder"

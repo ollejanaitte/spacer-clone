@@ -1,0 +1,3 @@
+figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
+CAL-FIG-P00874-001,874,869,CAL-CH4,CAL-SEC-4.1.2,標準断面図,cross_section,"AG1,AG2,PU15",CAL-P00874-TBL,HIGH,"Composite bridge cross-section 8010x7000 with composite deck t=230mm"
+CAL-FIG-P00900-001,900,895,CAL-CH4,CAL-SEC-4.1.3,格点番号および部材番号図,numbering_diagram,"AG1,AG2",CAL-P00900-TBL,HIGH,"Panel point and member numbering for composite girder model"

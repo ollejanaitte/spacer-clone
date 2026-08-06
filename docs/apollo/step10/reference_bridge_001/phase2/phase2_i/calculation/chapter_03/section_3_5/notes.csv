@@ -1,0 +1,6 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CAL-NOT-P00789-001,789,784,CAL-CH3,CAL-SEC-3.5.1,design_approach,横構+横桁+対傾構で鋼桁形状保持+風/地震力伝達,NOTE,CAL-P00789,HIGH
+CAL-NOT-P00789-002,789,784,CAL-CH3,CAL-SEC-3.5.1,design_approach,ダブルワーレンX配置引張部材 細長比一次部材,NOTE,CAL-P00789,HIGH
+CAL-NOT-P00789-003,789,784,CAL-CH3,CAL-SEC-3.5.1,design_approach,ガセット厚横構フランジ厚に合わせる,NOTE,CAL-P00789,HIGH
+CAL-NOT-P00791-001,791,786,CAL-CH3,CAL-SEC-3.5.2,design_note,Keq=0.765 抵抗側係数作用側乗じ常時換算,NOTE,CAL-P00791,HIGH
+CAL-NOT-P00792-001,792,787,CAL-CH3,CAL-SEC-3.5.3,design_note,支点部参考値 最大1294.90kN(D-10096),NOTE,CAL-P00792,HIGH

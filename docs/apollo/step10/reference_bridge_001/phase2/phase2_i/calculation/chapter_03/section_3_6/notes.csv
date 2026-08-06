@@ -1,0 +1,8 @@
+note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
+CAL-NOT-P00818-001,818,813,CAL-CH3,CAL-SEC-3.6.1,standard_reference,鉄筋量0.15%以上 最大径32mm 最大間隔300mm 道示III5.2,NOTE,CAL-P00818,HIGH
+CAL-NOT-P00818-002,818,813,CAL-CH3,CAL-SEC-3.6.1,design_approach,下端突起部橋軸方向力は横桁上下FLG補強部材(ラテラル)で負担,NOTE,CAL-P00818,HIGH
+CAL-NOT-P00818-003,818,813,CAL-CH3,CAL-SEC-3.6.1,design_approach,下端突起部は補強部材位置固定片持ち梁計算,NOTE,CAL-P00818,HIGH
+CAL-NOT-P00818-004,818,813,CAL-CH3,CAL-SEC-3.6.1,design_note,本体(横桁部)面外曲げ/ねじりモーメント生じない,NOTE,CAL-P00818,HIGH
+CAL-NOT-P00819-001,819,814,CAL-CH3,CAL-SEC-3.6.2,design_note,S1 B=1500 H=2280 D19@250 7段x3=21本 D25@250 4本,NOTE,CAL-P00819,HIGH
+CAL-NOT-P00820-001,820,815,CAL-CH3,CAL-SEC-3.6.2,design_note,S2 B=1500 H=2400 D19@250 7段x3=21本 D25@250 4本,NOTE,CAL-P00820,HIGH
+CAL-NOT-P00821-001,821,816,CAL-CH3,CAL-SEC-3.6.2,design_note,PR1/PR2 B=2000 H=2400 D19@250 7段x4=28本 D25@250 4本,NOTE,CAL-P00821,HIGH
