@@ -1,0 +1,53 @@
+jip_id,category,name,en_name,current_program,parity_classification,notes
+JIP-001,program,LINE計算,Line computation,LINER,PARITY_REQUIRED,平面・縦断・横断・ピア・スパン・格点の一括計算
+JIP-002,program,ハンチ計算,Haunch computation,HAUNCH,PARITY_REQUIRED,タイプ1-17
+JIP-003,program,舗装厚計算,Pavement thickness,HOSO,PARITY_USEFUL,自動/縦断/横断/3点/2点
+JIP-004,program,図面作成,GDRAW drawing,GDRAW,PARITY_REQUIRED,平面図・DXF
+JIP-005,program,格点間距離,LDIST,PARITY_REQUIRED,主桁格間長・支間長・張出し長
+JIP-006,program,MightyBridge連動,MDSKOUT,PARITY_USEFUL,外部解析連動
+JIP-007,program,予備計算,APLINE,PARITY_USEFUL,IP線形等高度ライン
+JIP-008,program,線形情報出力,LTOOL,PARITY_USEFUL,
+JIP-009,program,線形一般図,GVIEW,PARITY_USEFUL,
+JIP-010,program,フーチング図,FOOTING,PARITY_USEFUL,
+JIP-011,program,橋面面積・3D-DXF,MDVIEWER,PARITY_USEFUL,3D連携
+JIP-012,program,標準断面図,GCROSS,PARITY_USEFUL,
+JIP-101,program,制約(ライン100/要素100/測点50),Limits,PARITY_USEFUL,現行より大きい
+JIP-300,alignment,直線要素,Straight,PARITY_REQUIRED,L要素
+JIP-301,alignment,円弧要素,Circle,PARITY_REQUIRED,R要素
+JIP-302,alignment,クロソイド要素,Clothoid,PARITY_REQUIRED,A要素BR/ER
+JIP-303,alignment,平行線,Parallel,PARITY_REQUIRED,L//平行
+JIP-304,alignment,直角平行,Perpendicular parallel,PARITY_USEFUL,||
+JIP-305,alignment,拡幅(1次),Taper widen 1,PARITY_REQUIRED,1次放物線拡幅
+JIP-306,alignment,拡幅(4次),4th extend,PARITY_USEFUL,4次拡幅
+JIP-307,alignment,APLINE IP線形,APLINE,PARITY_USEFUL,曲線橋の高度ライン
+JIP-400,station,測点データ,Station,PARITY_REQUIRED,
+JIP-401,station,測点有効範囲,Station range,PARITY_USEFUL,ランプ/ブレーキ対応
+JIP-500,profile,縦断勾配,Vertical profile,PARITY_REQUIRED,PH
+JIP-501,profile,横断勾配,Cross slope,PARITY_REQUIRED,GR
+JIP-502,profile,断面高さ(標準),Cross section height,PARITY_REQUIRED,W/WG
+JIP-503,profile,断面高さ(簡易),WA,PARITY_USEFUL,
+JIP-504,profile,断面高さ(平均),WB,PARITY_USEFUL,
+JIP-600,pier,ピア設定(測点),Pier,PARITY_REQUIRED,
+JIP-601,pier,ピア設定(距離/方向),Pier position,PARITY_REQUIRED,
+JIP-602,pier,ピア設定(2点結ぶ),Pier 2points,PARITY_REQUIRED,
+JIP-603,pier,ピア設定(垂直/平行),Pier angle,PARITY_REQUIRED,
+JIP-604,pier,ピア設定(角度),Pier angle,PARITY_USEFUL,方位角/角度
+JIP-605,pier,座標変換(小標系),TRAN,PARITY_USEFUL,
+JIP-700,span,スパン簡易入力,Span,PARITY_REQUIRED,参照ピア→セクション
+JIP-701,span,セクション設定,Section,PARITY_REQUIRED,横桁/支点
+JIP-702,span,主桁設定,Girder,PARITY_REQUIRED,直/折れ/円弧
+JIP-703,span,出力指定,Output select,PARITY_REQUIRED,PRTL/PRTS
+JIP-800,ldist,格点間距離,Lat.of distance,PARITY_REQUIRED,
+JIP-801,ldist,張出し長,Overhang,PARITY_USEFUL,
+JIP-900,haunch,ハンチタイプ1-17,Haunch types,PARITY_REQUIRED,独自4タイプと対比
+JIP-1000,hoso,舗装厚計算,Hoso,PARITY_USEFUL,
+JIP-1100,drawing,平面図,Drawing plan,PARITY_REQUIRED,
+JIP-1101,drawing,座標テーブル,Coordinate table,PARITY_REQUIRED,
+JIP-1102,drawing,交角描画,Curvature,PARITY_USEFUL,
+JIP-1103,drawing,ライン間寸法線,Line dim,PARITY_USEFUL,
+JIP-1104,drawing,セクション間寸法線,Section dim,PARITY_USEFUL,
+JIP-1200,file,単一ファイル運用,Single file,PARITY_USEFUL,1ファイルで全データ
+JIP-1201,file,バックアップ復元,backup/restore,PARITY_USEFUL,LIM
+JIP-1202,file,確認図,Check drawing,PARITY_REQUIRED,図面で確認
+JIP-1203,error,構文チェック,LL1,PARITY_REQUIRED,構文エラー
+JIP-1204,error,計算エラー/警告,Error/warm,PARITY_USEFUL,基準ライン・交点不可

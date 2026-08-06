@@ -1,0 +1,52 @@
+# integration_and_r1_planning_final_report
+
+- **日時**: 2026-08-07
+- **対象**: Track A（調査成果の docs 統合）+ Track B（R1 数値検証基盤の実装前計画）
+
+## OVERALL: 完了
+
+Track A と Track B を、それぞれ単独で完遂しました。
+
+## Track A 完了内容
+
+- **統合元**: `~/Projects/liner-future-research`（GitHub 非公開の調査ホーム）
+- **統合先**: spacer-clone `docs/liner/research/jip-liner-gap-and-future-ux/`
+- **統合ファイル数**: 25（調査成果物 md/csv/txt）+ 統合文書 4（README・INTEGRATION_MANIFEST・INTEGRATION_REPORT・SOURCE_REFERENCE_INDEX）＝ **計 29 件**
+- **Redact**: `source_manifest.csv` / `final_report.txt` / `research/00_preflight_report.md` のローカル絶対パスとユーザー名を汎化・削除
+- **非収録**: PDF 元本（JIP-LINER マニュアル・実設計例・図面例等）は権利配慮により GitHub 非収録。所在地のみ source_manifest.csv に記録
+- **commit**: `0000f4ae`（branch `docs/liner-future-research-integration`）
+- **PR**: #443（title: "docs(liner): integrate JIP-LINER gap and future UX research"）
+- **merge commit**: `f1107b54`（main）-mergedAt 2026-08-06T22:48:26Z
+- **final main SHA**: `f1107b541ee45b6589b2da9da2b4c045a8901310`
+- **検証**: 全非 redact コピー sha256 一致 / UTF-8 OK / PDF・`.git`・symlink 混入なし / manifest dest 全 25 一致
+
+## Track B（実装前計画のみ）
+
+- **r1-planning 成果物**（`~/Projects/liner-future-research/r1-planning/`、編集可領域）:
+  - R1_BOUNDARY_REPORT.md
+  - R1_PLAN.md
+  - R1_DESIGN.md
+  - R1_TEST_PLAN.md
+  - R1_ACCEPTANCE_CRITERIA.md
+  - R1_VERIFICATION_STRATEGY.md
+  - B3_NON_MODIFICATION_AUDIT.md
+- 内容: R1 数値検証基盤（GAP-1000/1001/1002）の二層検証（LAYER1 解析参照 / LAYER2 外部突合を正本）の設計・テスト・受入・検証戦略
+- **spacer-clone 非変更**: HEAD=b6775ddf、branch=docs/apollo-step10-p2ii-a-unread-resolution、
+  変更ファイル 3 件（既存）、untracked なし。Track 前後で diff-sha 一致（14eee478…）。**実装・Git・GitHub は一切行っていません**（PASS）
+
+## 成果物の場所
+
+- Track A 統合先: `docs/liner/research/jip-liner-gap-and-future-ux/`（origin/main @ f1107b5）
+- Track B 計画: `~/Projects/liner-future-research/r1-planning/`
+- 事前確認(読取): `~/Projects/liner-future-research/integration-preflight-report.md`
+
+## 注意（追記・選択説明）
+
+- 統合作業は spacer-clone の進行中 worktree（branch `docs/apollo-step10-p2ii-a-unread-resolution`）を
+  読み取りのみで、実行 clone は /tmp/opencode/integ（origin/main ベース）で行ったため、
+  作業中の worktree を破壊していません。
+- Track B は計画（docs）のみで、実装は spacer-clone にて別途・許可された作業として実施される想定です。
+
+## 最終verdict
+
+- 両 Track：完了（COMPLETE）/ 境界遵守（非越権）
