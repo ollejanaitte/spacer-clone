@@ -1,0 +1,11 @@
+field,calculation_raw,calculation_locator,drawing_raw,drawing_locator,normalized_value,normalization_rule,parity,source_status,human_confirmation
+business_name,令和3年度 道路改良工事の内橋梁詳細設計業務（知－5）,calc_pdf_p1,令和3年度 道路改良工事の内橋梁詳細設計業務（知－5）,drawing_pdf_p1,令和3年度 道路改良工事の内橋梁詳細設計業務（知－5）,verbatim,MATCH,SOURCE_CONFIRMED,
+client,愛知県知多建設事務所,calc_pdf_p1,愛知県知多建設事務所,drawing_pdf_p1,愛知県知多建設事務所,verbatim,MATCH,SOURCE_CONFIRMED,
+date_issued,令和5年3月,calc_pdf_p1,令和5年3月,drawing_pdf_p1,令和5年3月,verbatim,MATCH,SOURCE_CONFIRMED,
+bridge_name,金沢IC Aランプ橋,calc_pdf_p2,旭高架橋 Aランプ PU15-AR2,drawing_catalog,金沢IC Aランプ橋 / 旭高架橋 Aランプ PU15-AR2,calc=official_name drawing=sheet_title,MATCH,SOURCE_CONFIRMED,"Different naming convention: calculation uses IC-based name, drawing uses route-based name"
+route_name,一般国道247号（西知多道路）,calc_pdf_p7,一般国道247号（西知多道路）,drawing_title_block,一般国道247号（西知多道路）,verbatim,MATCH,SOURCE_CONFIRMED,
+construction_location,N/A,NOT_FOUND,知多市旭地内始め,drawing_title_block,知多市旭地内始め,,ONLY,SOURCE_PARTIAL,"Calculation book does not explicitly state construction location; only drawing has it"
+document_volume,第18編 上部工設計計算書（ランプ橋）,calc_pdf_p1,上部工（金沢IC Aランプ）,drawing_pdf_p1,see raw,separate conventions,NOT_FOUND,SOURCE_CONFIRMED,"Different volume naming; both refer to same superstructure design"
+drawing_total_sheets,N/A,NOT_FOUND,全141葉,drawing_catalog,141,verbatim,ONLY,SOURCE_CONFIRMED,
+pdf_pages_calc,2226,pdfinfo,N/A,NOT_FOUND,2226,verbatim,ONLY,SOURCE_CONFIRMED,
+pdf_pages_drawing,N/A,NOT_FOUND,143,pdfinfo,143,verbatim,ONLY,SOURCE_CONFIRMED,
