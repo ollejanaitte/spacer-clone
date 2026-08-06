@@ -28,11 +28,16 @@ export type CanonicalChapterId =
   | "CP-22" | "CP-23" | "CP-24" | "CP-25" | "CP-30" | "CP-31" | "CP-32" | "CP-33"
   | "CP-34";
 
-/** All canonical chapters that the CONTINUOUS Report Model may emit (CP-30..34 are PROHIBITED/NOT_AVAILABLE and therefore omitted from payloads). */
+/** All canonical chapters the CONTINUOUS Report Model emits (CP-08/CP-15/CP-30..34 are forbidden and omitted). */
 export const EMITTED_CHAPTER_IDS: readonly CanonicalChapterId[] = [
   "CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07",
-  "CP-09", "CP-10", "CP-11", "CP-12", "CP-13", "CP-14", "CP-17",
-  "CP-19", "CP-20", "CP-21", "CP-22", "CP-23", "CP-25",
+  "CP-09", "CP-10", "CP-11", "CP-12", "CP-13", "CP-14", "CP-16",
+  "CP-17", "CP-18", "CP-19", "CP-20", "CP-21", "CP-22", "CP-23", "CP-25",
+];
+
+/** Chapters that are PROHIBITED/NOT_AVAILABLE for CONTINUOUS and must NEVER appear in a payload. */
+export const FORBIDDEN_CHAPTER_IDS: readonly CanonicalChapterId[] = [
+  "CP-08", "CP-15", "CP-30", "CP-31", "CP-32", "CP-33", "CP-34",
 ];
 
 /** Deprecated Step 2-B development-scaffold chapter ids (deprecated alias layer, internal only). */
@@ -199,7 +204,7 @@ export type SupportSummary = {
 
 export type GirderSummary = {
   readonly girderId: string;
-  readonly offset: number;
+  readonly offset: number | null;
   readonly count: number;
   readonly depth: number | null;
   readonly spacing: number | null;
@@ -216,6 +221,7 @@ export type SectionInputSummary = {
   /** SIMPLE only. CONTINUOUS design drawings PROHIBITED (CP-13). */
   readonly spanLength: number | null;
   readonly bridgeLength: number | null;
+  readonly width: number | null;
   readonly girderCount: number | null;
   readonly girderSpacing: number | null;
   readonly girderDepth: number | null;
