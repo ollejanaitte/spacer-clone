@@ -1,0 +1,57 @@
+id,member_id,japanese_name,english_name,sheet_references
+1,AG1,主桁AG1,Main girder AG1,21-29
+2,AG2,主桁AG2,Main girder AG2,30-38
+3,GE1,端横桁GE1,End cross beam GE1,8
+4,GE2,端横桁GE2,End cross beam GE2,8
+5,S1,支点S1 (PU15),Support S1 (PU15),"9,12"
+6,S2,支点S2 (AR2),Support S2 (AR2),"9,12"
+7,PR1,中間支点PR1,Pier support PR1,"9,12"
+8,PR2,中間支点PR2,Pier support PR2,"9,12"
+9,C1-C7,横桁C1-C7,Cross beams C1-C7,11
+10,C8-C13,横桁C8-C13,Cross beams C8-C13,11
+11,C14-C20,横桁C14-C20,Cross beams C14-C20,11
+12,C21-C23,横桁C21-C23,Cross beams C21-C23,11
+13,A-L1,横構A-L1,Lateral bracing A-L1,11
+14,A-L2,横構A-L2,Lateral bracing A-L2,11
+15,STUD,スタッドφ22,Stud φ22,39-44
+16,SPL-J1,AG1添接板J-1,AG1 splice plate J-1,21
+17,SPL-J2,AG1添接板J-2,AG1 splice plate J-2,21
+18,SPL-J3,AG1添接板J-3,AG1 splice plate J-3,22
+19,SPL-J4,AG1添接板J-4,AG1 splice plate J-4,22
+20,SPL-J5,AG1添接板J-5,AG1 splice plate J-5,23
+21,SPL-J6,AG1添接板J-6,AG1 splice plate J-6,23
+22,SPL-J7,AG1添接板J-7,AG1 splice plate J-7,24
+23,SPL-J8,AG1添接板J-8,AG1 splice plate J-8,24
+24,SPL-J9,AG1添接板J-9,AG1 splice plate J-9,25
+25,SPL-J10,AG1添接板J-10,AG1 splice plate J-10,25
+26,SPL-J11,AG1添接板J-11,AG1 splice plate J-11,26
+27,SPL-J12,AG1添接板J-12,AG1 splice plate J-12,26
+28,SPL-J13,AG1添接板J-13,AG1 splice plate J-13,27
+29,SPL-J14,AG1添接板J-14,AG1 splice plate J-14,27
+30,SPL-J15,AG1添接板J-15,AG1 splice plate J-15,28
+31,SPL-J16,AG1添接板J-16,AG1 splice plate J-16,28
+32,SPL-AG2-J1,AG2添接板J-1,AG2 splice plate J-1,30
+33,SPL-AG2-J2,AG2添接板J-2,AG2 splice plate J-2,30
+34,SPL-AG2-J3,AG2添接板J-3,AG2 splice plate J-3,31
+35,SPL-AG2-J4,AG2添接板J-4,AG2 splice plate J-4,31
+36,SPL-AG2-J5,AG2添接板J-5,AG2 splice plate J-5,32
+37,SPL-AG2-J6,AG2添接板J-6,AG2 splice plate J-6,32
+38,SPL-AG2-J7,AG2添接板J-7,AG2 splice plate J-7,33
+39,SPL-AG2-J8,AG2添接板J-8,AG2 splice plate J-8,33
+40,SPL-AG2-J9,AG2添接板J-9,AG2 splice plate J-9,34
+41,SPL-AG2-J10,AG2添接板J-10,AG2 splice plate J-10,34
+42,SPL-AG2-J11,AG2添接板J-11,AG2 splice plate J-11,35
+43,SPL-AG2-J12,AG2添接板J-12,AG2 splice plate J-12,35
+44,SPL-AG2-J13,AG2添接板J-13,AG2 splice plate J-13,36
+45,SPL-AG2-J14,AG2添接板J-14,AG2 splice plate J-14,36
+46,SPL-AG2-J15,AG2添接板J-15,AG2 splice plate J-15,37
+47,SPL-AG2-J16,AG2添接板J-16,AG2 splice plate J-16,37
+48,V-STIFF,垂直補剛材,Vertical stiffener,17
+49,JACK-STIFF,ジャッキアップ補剛材,Jack-up stiffener,21-38
+50,WTR-STOP,水切り板,Water stop plate,21
+51,HANGR,吊り金具,Hanger fitting,18
+52,SOLE-PL,ソールプレート,Sole plate,19
+53,NOSE,ノーズ,Nose section,9
+54,H-NO1,ノーズ部H-NO1,Nose section H-NO1,12
+55,PU15,橋台PU15,Abutment PU15,8
+56,AR2,橋台AR2,Abutment AR2,8

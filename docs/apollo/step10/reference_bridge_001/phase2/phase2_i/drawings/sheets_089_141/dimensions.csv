@@ -1,0 +1,33 @@
+sheet_number,dim_group,label,value,unit,description
+89,expansion_joint_main,全体長さ,8352,mm,EJ-4 全体長さ
+89,expansion_joint_main,ボックスピッチ_D_C_F_E,1373/1410/1300/880,mm,Box pitches on sheet
+89,anchor_pattern,アンカーPLピッチ,993/1500,mm,Anchor PL pitch
+89,anchor_pattern,ボルト孔ピッチ,520/50,mm,Bolt hole pitch
+89,design_conditions,遊間a(20℃時),40,mm,Gap a at 20℃ per cell
+89,design_conditions,荷重(1輪当り),100,kN,Design wheel load
+89,design_conditions,温度範囲,-10～+40,℃,Temperature range
+89,design_conditions,伸縮桁長,162.264,m,Expansion girder length
+89,design_conditions,常時移動量,153.6,mm,Normal movement
+89,design_conditions,L1地震時移動量(橋軸方向),236.5,mm,L1 seismic movement(longitudinal)
+89,design_conditions,L1地震時移動量(橋軸直角方向),211.6,mm,L1 seismic movement(transverse)
+90,anchor_pattern_2,ボルト孔ピッチ,75/75/150/150/50,mm,Bolt hole pitches on sheet 2
+90,anchor_pattern_2,アンカーPLピッチ,1413/985/1350/820/730/1285,mm,Anchor PL pitches
+90,anchor_pattern_2,調整範囲θ,"93°05'41""～94°15'21""",deg,Angle adjustment range
+92,expansion_joint_detail,全体長さ,8010,mm,AR2橋台 expansion joint total length
+92,expansion_joint_detail,Face PL厚さ,80,mm,Face PL thickness
+92,expansion_joint_detail,PBL PL厚さ,22,mm,PBL PL thickness
+92,expansion_joint_detail,Web PL厚さ,22,mm,Web PL thickness
+102,drainage_pipe,排水管径,200,mm,VP200 main drainage pipe
+102,drainage_pipe,VP200直管長さ,4000/2453/1953/2802/2702,mm,VP200 straight pipe lengths
+102,drainage_pipe,水抜きゴム管径,25A,,Drainage rubber hose
+102,drainage_pipe,排水管延長(第1系統),25990.4,mm,Drainage pipe length System 1
+102,drainage_pipe,排水桝間隔(A-L2上),4450/4500/4500/7500/8000,mm,Drainage basin spacing on A-L2
+102,drainage_DL,DL1 H1/H2/H3/H4,2011/1506/505/485,mm,DL1 dimensions
+102,drainage_DL,DL2 H1/H2/H3/H4,1889/1384/505/485,mm,DL2 dimensions
+102,drainage_DL,DL3 H1/H2/H3/H4,1745/1340/405/385,mm,DL3 dimensions
+102,drainage_DL,DL4 H1/H2/H3/H4,1478/1073/405/385,mm,DL4 dimensions
+102,drainage_DL,DL5 H1/H2/H3/H4,1155/750/405/385,mm,DL5 dimensions
+93,parapet_rebar,横断勾配(A-L2),2.000,%,Cross slope on A-L2
+93,parapet_rebar,横断勾配(A-R2),2.025,%,Cross slope on A-R2
+94,parapet_type,Type A 製作数,1,set,Type A quantity
+94,parapet_type,Type B 製作数,1,set,Type B quantity

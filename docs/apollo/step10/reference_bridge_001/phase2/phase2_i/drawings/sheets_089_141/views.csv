@@ -1,0 +1,29 @@
+sheet_number,view_label,description,view_type
+89,組立図,"EJ-4(PU15,ONランプ) 組立図 S=1:30",assembly
+89,A-A,A-A断面 (PU15～ONランプ側),section
+89,B-B,B-B断面 (PU12～PU15鋼桁側),section
+89,配置図,EJ-1～EJ-6 配置図,layout
+90,C-C,C-C断面 部分詳細,section
+90,D-D,D-D断面 部分詳細,section
+90,E-E,E-E断面 (壁高欄遊間 700),section
+90,F矢視,F矢視 (巻き立てコンクリート部),arrow_view
+90,G-G,G-G断面,section
+90,H-H,H-H断面,section
+90,I-I,I-I断面,section
+90,H補強鉄筋詳細,H補強鉄筋詳細図,detail
+90,28 ライナー詳細,ライナー詳細図,detail
+91,壁高欄カバー図,"EJ-4(PU15,ONランプ) 壁高欄カバー図",cover_detail
+91,1-1,1-1断面,section
+91,配置図,壁高欄カバー配置図,layout
+92,配筋図,AR2橋台 配筋図 S=1:10,reinforcement
+92,断面図,断面図 S=1:10,section
+92,壁高欄塞ぎ板詳細図,壁高欄塞ぎ板詳細図 S=1:10,detail
+92,遊間グラフ,遊間グラフ,graph
+99,配筋表,壁高欄配筋表,table
+100,配筋図,照明受台配筋図,reinforcement
+101,平面図,排水系統平面図,plan
+102,断面図,"排水装置断面図 (伸縮水抜き部, 落とし口, DL1～DL5)",section
+111,配置図,排水装置配置図,layout
+131,配置図,法面階段配置図,layout
+132,参考図,落下物防止柵 参考図,reference
+141,架設計画図,架設計画図 (VISUAL VERIFICATION REQUIRED),plan

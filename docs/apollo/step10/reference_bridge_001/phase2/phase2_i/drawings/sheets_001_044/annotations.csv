@@ -1,0 +1,472 @@
+sheet_number,annotation_type,japanese_text,english_text
+1,scale,縮尺 図示,Scale 図示
+2,scale,縮尺 1:200,Scale 1:200
+3,scale,縮尺 1:200,Scale 1:200
+4,scale,縮尺 1:200,Scale 1:200
+8,scale,縮尺 1:200,Scale 1:200
+9,scale,縮尺 1:50,Scale 1:50
+10,scale,縮尺 1:1200,Scale 1:1200
+11,scale,縮尺 1:200,Scale 1:200
+12,scale,縮尺 1:100,Scale 1:100
+17,scale,縮尺 1:20,Scale 1:20
+18,scale,縮尺 1:10,Scale 1:10
+19,scale,縮尺 1:10,Scale 1:10
+20,scale,縮尺 図示,Scale 図示
+21,scale,縮尺 1:30,Scale 1:30
+22,scale,縮尺 1:30,Scale 1:30
+23,scale,縮尺 1:30,Scale 1:30
+24,scale,縮尺 1:30,Scale 1:30
+25,scale,縮尺 1:30,Scale 1:30
+26,scale,縮尺 1:30,Scale 1:30
+27,scale,縮尺 1:30,Scale 1:30
+28,scale,縮尺 1:30,Scale 1:30
+29,scale,縮尺 1:30,Scale 1:30
+30,scale,縮尺 1:30,Scale 1:30
+31,scale,縮尺 1:30,Scale 1:30
+32,scale,縮尺 1:30,Scale 1:30
+33,scale,縮尺 1:30,Scale 1:30
+34,scale,縮尺 1:30,Scale 1:30
+35,scale,縮尺 1:30,Scale 1:30
+36,scale,縮尺 1:30,Scale 1:30
+37,scale,縮尺 1:30,Scale 1:30
+38,scale,縮尺 1:30,Scale 1:30
+39,scale,縮尺 1:30,Scale 1:30
+40,scale,縮尺 1:30,Scale 1:30
+41,scale,縮尺 1:30,Scale 1:30
+42,scale,縮尺 1:30,Scale 1:30
+43,scale,縮尺 1:30,Scale 1:30
+44,scale,縮尺 1:30,Scale 1:30
+1,title,旭高架橋 Aランプ PU15ｰAR2 位置図
+5,title,旭高架橋 Aランプ PU15ｰAR2 数量総括表(その1)
+6,title,旭高架橋 Aランプ PU15ｰAR2 数量総括表(その2)
+7,title,旭高架橋 Aランプ PU15ｰAR2 数量総括表(その3)
+8,title,旭高架橋 Aランプ PU15ｰAR2 上部工構造一般図(その1)
+9,note,巻き立てコンクリート range indicated
+12,note,※桁高には、上下フランジ厚を含む
+12,note,※PU15(S1)の桁高とハンチ高は、伸縮装置高の切り欠きを考慮しない値
+17,note,非合成主体であるため交番部の下フランジ側は非合成断面の範囲とする
+19,note,ソールプレート幅は上沓幅に合わせ、下フランジ幅は上沓幅に溶接代を考慮する
+20,note,S1のDh値は、桁端部付近の切り欠きを考慮していない
+23,note,2000 巻き立てコンクリート幅
+26,note,2000 巻き立てコンクリート幅
+44,note,添接板の前後の間隔が必要間隔を超える場合スタッド溶接
+1,drawing_no,全141葉の内 1 号,Sheet 1 of 141
+2,drawing_no,全141葉の内 2 号,Sheet 2 of 141
+3,drawing_no,全141葉の内 3 号,Sheet 3 of 141
+4,drawing_no,全141葉の内 4 号,Sheet 4 of 141
+5,drawing_no,全141葉の内 5 号,Sheet 5 of 141
+6,drawing_no,全141葉の内 6 号,Sheet 6 of 141
+7,drawing_no,全141葉の内 7 号,Sheet 7 of 141
+8,drawing_no,全141葉の内 8 号,Sheet 8 of 141
+9,drawing_no,全141葉の内 9 号,Sheet 9 of 141
+10,drawing_no,全141葉の内 10 号,Sheet 10 of 141
+11,drawing_no,全141葉の内 11 号,Sheet 11 of 141
+12,drawing_no,全141葉の内 12 号,Sheet 12 of 141
+13,drawing_no,全141葉の内 13 号,Sheet 13 of 141
+14,drawing_no,全141葉の内 14 号,Sheet 14 of 141
+15,drawing_no,全141葉の内 15 号,Sheet 15 of 141
+16,drawing_no,全141葉の内 16 号,Sheet 16 of 141
+17,drawing_no,全141葉の内 17 号,Sheet 17 of 141
+18,drawing_no,全141葉の内 18 号,Sheet 18 of 141
+19,drawing_no,全141葉の内 19 号,Sheet 19 of 141
+20,drawing_no,全141葉の内 20 号,Sheet 20 of 141
+21,drawing_no,全141葉の内 21 号,Sheet 21 of 141
+22,drawing_no,全141葉の内 22 号,Sheet 22 of 141
+23,drawing_no,全141葉の内 23 号,Sheet 23 of 141
+24,drawing_no,全141葉の内 24 号,Sheet 24 of 141
+25,drawing_no,全141葉の内 25 号,Sheet 25 of 141
+26,drawing_no,全141葉の内 26 号,Sheet 26 of 141
+27,drawing_no,全141葉の内 27 号,Sheet 27 of 141
+28,drawing_no,全141葉の内 28 号,Sheet 28 of 141
+29,drawing_no,全141葉の内 29 号,Sheet 29 of 141
+30,drawing_no,全141葉の内 30 号,Sheet 30 of 141
+31,drawing_no,全141葉の内 31 号,Sheet 31 of 141
+32,drawing_no,全141葉の内 32 号,Sheet 32 of 141
+33,drawing_no,全141葉の内 33 号,Sheet 33 of 141
+34,drawing_no,全141葉の内 34 号,Sheet 34 of 141
+35,drawing_no,全141葉の内 35 号,Sheet 35 of 141
+36,drawing_no,全141葉の内 36 号,Sheet 36 of 141
+37,drawing_no,全141葉の内 37 号,Sheet 37 of 141
+38,drawing_no,全141葉の内 38 号,Sheet 38 of 141
+39,drawing_no,全141葉の内 39 号,Sheet 39 of 141
+40,drawing_no,全141葉の内 40 号,Sheet 40 of 141
+41,drawing_no,全141葉の内 41 号,Sheet 41 of 141
+42,drawing_no,全141葉の内 42 号,Sheet 42 of 141
+43,drawing_no,全141葉の内 43 号,Sheet 43 of 141
+44,drawing_no,全141葉の内 44 号,Sheet 44 of 141
+1,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+1,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+2,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+2,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+3,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+3,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+4,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+4,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+5,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+5,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+6,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+6,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+7,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+7,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+8,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+8,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+9,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+9,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+10,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+10,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+11,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+11,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+12,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+12,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+13,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+13,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+14,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+14,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+15,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+15,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+16,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+16,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+17,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+17,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+18,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+18,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+19,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+19,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+20,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+20,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+21,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+21,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+22,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+22,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+23,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+23,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+24,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+24,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+25,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+25,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+26,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+26,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+27,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+27,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+28,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+28,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+29,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+29,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+30,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+30,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+31,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+31,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+32,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+32,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+33,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+33,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+34,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+34,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+35,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+35,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+36,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+36,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+37,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+37,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+38,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+38,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+39,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+39,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+40,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+40,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+41,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+41,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+42,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+42,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+43,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+43,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+44,project,一般国道247号（西知多道路）,Route 247 Nishichita Road
+44,location,知多市旭地内始め 旭高架橋 Aランプ PU15ｰAR2,Asahi Viaduct A-Ramp PU15-AR2
+21,splice,J-1,Field splice J-1
+21,splice,J-2,Field splice J-2
+21,splice,J-3,Field splice J-3
+21,splice,J-4,Field splice J-4
+21,splice,J-5,Field splice J-5
+21,splice,J-6,Field splice J-6
+21,splice,J-7,Field splice J-7
+21,splice,J-8,Field splice J-8
+21,splice,J-9,Field splice J-9
+21,splice,J-10,Field splice J-10
+21,splice,J-11,Field splice J-11
+21,splice,J-12,Field splice J-12
+21,splice,J-13,Field splice J-13
+21,splice,J-14,Field splice J-14
+21,splice,J-15,Field splice J-15
+21,splice,J-16,Field splice J-16
+22,splice,J-1,Field splice J-1
+22,splice,J-2,Field splice J-2
+22,splice,J-3,Field splice J-3
+22,splice,J-4,Field splice J-4
+22,splice,J-5,Field splice J-5
+22,splice,J-6,Field splice J-6
+22,splice,J-7,Field splice J-7
+22,splice,J-8,Field splice J-8
+22,splice,J-9,Field splice J-9
+22,splice,J-10,Field splice J-10
+22,splice,J-11,Field splice J-11
+22,splice,J-12,Field splice J-12
+22,splice,J-13,Field splice J-13
+22,splice,J-14,Field splice J-14
+22,splice,J-15,Field splice J-15
+22,splice,J-16,Field splice J-16
+23,splice,J-1,Field splice J-1
+23,splice,J-2,Field splice J-2
+23,splice,J-3,Field splice J-3
+23,splice,J-4,Field splice J-4
+23,splice,J-5,Field splice J-5
+23,splice,J-6,Field splice J-6
+23,splice,J-7,Field splice J-7
+23,splice,J-8,Field splice J-8
+23,splice,J-9,Field splice J-9
+23,splice,J-10,Field splice J-10
+23,splice,J-11,Field splice J-11
+23,splice,J-12,Field splice J-12
+23,splice,J-13,Field splice J-13
+23,splice,J-14,Field splice J-14
+23,splice,J-15,Field splice J-15
+23,splice,J-16,Field splice J-16
+24,splice,J-1,Field splice J-1
+24,splice,J-2,Field splice J-2
+24,splice,J-3,Field splice J-3
+24,splice,J-4,Field splice J-4
+24,splice,J-5,Field splice J-5
+24,splice,J-6,Field splice J-6
+24,splice,J-7,Field splice J-7
+24,splice,J-8,Field splice J-8
+24,splice,J-9,Field splice J-9
+24,splice,J-10,Field splice J-10
+24,splice,J-11,Field splice J-11
+24,splice,J-12,Field splice J-12
+24,splice,J-13,Field splice J-13
+24,splice,J-14,Field splice J-14
+24,splice,J-15,Field splice J-15
+24,splice,J-16,Field splice J-16
+25,splice,J-1,Field splice J-1
+25,splice,J-2,Field splice J-2
+25,splice,J-3,Field splice J-3
+25,splice,J-4,Field splice J-4
+25,splice,J-5,Field splice J-5
+25,splice,J-6,Field splice J-6
+25,splice,J-7,Field splice J-7
+25,splice,J-8,Field splice J-8
+25,splice,J-9,Field splice J-9
+25,splice,J-10,Field splice J-10
+25,splice,J-11,Field splice J-11
+25,splice,J-12,Field splice J-12
+25,splice,J-13,Field splice J-13
+25,splice,J-14,Field splice J-14
+25,splice,J-15,Field splice J-15
+25,splice,J-16,Field splice J-16
+26,splice,J-1,Field splice J-1
+26,splice,J-2,Field splice J-2
+26,splice,J-3,Field splice J-3
+26,splice,J-4,Field splice J-4
+26,splice,J-5,Field splice J-5
+26,splice,J-6,Field splice J-6
+26,splice,J-7,Field splice J-7
+26,splice,J-8,Field splice J-8
+26,splice,J-9,Field splice J-9
+26,splice,J-10,Field splice J-10
+26,splice,J-11,Field splice J-11
+26,splice,J-12,Field splice J-12
+26,splice,J-13,Field splice J-13
+26,splice,J-14,Field splice J-14
+26,splice,J-15,Field splice J-15
+26,splice,J-16,Field splice J-16
+27,splice,J-1,Field splice J-1
+27,splice,J-2,Field splice J-2
+27,splice,J-3,Field splice J-3
+27,splice,J-4,Field splice J-4
+27,splice,J-5,Field splice J-5
+27,splice,J-6,Field splice J-6
+27,splice,J-7,Field splice J-7
+27,splice,J-8,Field splice J-8
+27,splice,J-9,Field splice J-9
+27,splice,J-10,Field splice J-10
+27,splice,J-11,Field splice J-11
+27,splice,J-12,Field splice J-12
+27,splice,J-13,Field splice J-13
+27,splice,J-14,Field splice J-14
+27,splice,J-15,Field splice J-15
+27,splice,J-16,Field splice J-16
+28,splice,J-1,Field splice J-1
+28,splice,J-2,Field splice J-2
+28,splice,J-3,Field splice J-3
+28,splice,J-4,Field splice J-4
+28,splice,J-5,Field splice J-5
+28,splice,J-6,Field splice J-6
+28,splice,J-7,Field splice J-7
+28,splice,J-8,Field splice J-8
+28,splice,J-9,Field splice J-9
+28,splice,J-10,Field splice J-10
+28,splice,J-11,Field splice J-11
+28,splice,J-12,Field splice J-12
+28,splice,J-13,Field splice J-13
+28,splice,J-14,Field splice J-14
+28,splice,J-15,Field splice J-15
+28,splice,J-16,Field splice J-16
+29,splice,J-1,Field splice J-1
+29,splice,J-2,Field splice J-2
+29,splice,J-3,Field splice J-3
+29,splice,J-4,Field splice J-4
+29,splice,J-5,Field splice J-5
+29,splice,J-6,Field splice J-6
+29,splice,J-7,Field splice J-7
+29,splice,J-8,Field splice J-8
+29,splice,J-9,Field splice J-9
+29,splice,J-10,Field splice J-10
+29,splice,J-11,Field splice J-11
+29,splice,J-12,Field splice J-12
+29,splice,J-13,Field splice J-13
+29,splice,J-14,Field splice J-14
+29,splice,J-15,Field splice J-15
+29,splice,J-16,Field splice J-16
+30,splice,J-1,Field splice J-1
+30,splice,J-2,Field splice J-2
+30,splice,J-3,Field splice J-3
+30,splice,J-4,Field splice J-4
+30,splice,J-5,Field splice J-5
+30,splice,J-6,Field splice J-6
+30,splice,J-7,Field splice J-7
+30,splice,J-8,Field splice J-8
+30,splice,J-9,Field splice J-9
+30,splice,J-10,Field splice J-10
+30,splice,J-11,Field splice J-11
+30,splice,J-12,Field splice J-12
+30,splice,J-13,Field splice J-13
+30,splice,J-14,Field splice J-14
+30,splice,J-15,Field splice J-15
+30,splice,J-16,Field splice J-16
+31,splice,J-1,Field splice J-1
+31,splice,J-2,Field splice J-2
+31,splice,J-3,Field splice J-3
+31,splice,J-4,Field splice J-4
+31,splice,J-5,Field splice J-5
+31,splice,J-6,Field splice J-6
+31,splice,J-7,Field splice J-7
+31,splice,J-8,Field splice J-8
+31,splice,J-9,Field splice J-9
+31,splice,J-10,Field splice J-10
+31,splice,J-11,Field splice J-11
+31,splice,J-12,Field splice J-12
+31,splice,J-13,Field splice J-13
+31,splice,J-14,Field splice J-14
+31,splice,J-15,Field splice J-15
+31,splice,J-16,Field splice J-16
+32,splice,J-1,Field splice J-1
+32,splice,J-2,Field splice J-2
+32,splice,J-3,Field splice J-3
+32,splice,J-4,Field splice J-4
+32,splice,J-5,Field splice J-5
+32,splice,J-6,Field splice J-6
+32,splice,J-7,Field splice J-7
+32,splice,J-8,Field splice J-8
+32,splice,J-9,Field splice J-9
+32,splice,J-10,Field splice J-10
+32,splice,J-11,Field splice J-11
+32,splice,J-12,Field splice J-12
+32,splice,J-13,Field splice J-13
+32,splice,J-14,Field splice J-14
+32,splice,J-15,Field splice J-15
+32,splice,J-16,Field splice J-16
+33,splice,J-1,Field splice J-1
+33,splice,J-2,Field splice J-2
+33,splice,J-3,Field splice J-3
+33,splice,J-4,Field splice J-4
+33,splice,J-5,Field splice J-5
+33,splice,J-6,Field splice J-6
+33,splice,J-7,Field splice J-7
+33,splice,J-8,Field splice J-8
+33,splice,J-9,Field splice J-9
+33,splice,J-10,Field splice J-10
+33,splice,J-11,Field splice J-11
+33,splice,J-12,Field splice J-12
+33,splice,J-13,Field splice J-13
+33,splice,J-14,Field splice J-14
+33,splice,J-15,Field splice J-15
+33,splice,J-16,Field splice J-16
+34,splice,J-1,Field splice J-1
+34,splice,J-2,Field splice J-2
+34,splice,J-3,Field splice J-3
+34,splice,J-4,Field splice J-4
+34,splice,J-5,Field splice J-5
+34,splice,J-6,Field splice J-6
+34,splice,J-7,Field splice J-7
+34,splice,J-8,Field splice J-8
+34,splice,J-9,Field splice J-9
+34,splice,J-10,Field splice J-10
+34,splice,J-11,Field splice J-11
+34,splice,J-12,Field splice J-12
+34,splice,J-13,Field splice J-13
+34,splice,J-14,Field splice J-14
+34,splice,J-15,Field splice J-15
+34,splice,J-16,Field splice J-16
+35,splice,J-1,Field splice J-1
+35,splice,J-2,Field splice J-2
+35,splice,J-3,Field splice J-3
+35,splice,J-4,Field splice J-4
+35,splice,J-5,Field splice J-5
+35,splice,J-6,Field splice J-6
+35,splice,J-7,Field splice J-7
+35,splice,J-8,Field splice J-8
+35,splice,J-9,Field splice J-9
+35,splice,J-10,Field splice J-10
+35,splice,J-11,Field splice J-11
+35,splice,J-12,Field splice J-12
+35,splice,J-13,Field splice J-13
+35,splice,J-14,Field splice J-14
+35,splice,J-15,Field splice J-15
+35,splice,J-16,Field splice J-16
+36,splice,J-1,Field splice J-1
+36,splice,J-2,Field splice J-2
+36,splice,J-3,Field splice J-3
+36,splice,J-4,Field splice J-4
+36,splice,J-5,Field splice J-5
+36,splice,J-6,Field splice J-6
+36,splice,J-7,Field splice J-7
+36,splice,J-8,Field splice J-8
+36,splice,J-9,Field splice J-9
+36,splice,J-10,Field splice J-10
+36,splice,J-11,Field splice J-11
+36,splice,J-12,Field splice J-12
+36,splice,J-13,Field splice J-13
+36,splice,J-14,Field splice J-14
+36,splice,J-15,Field splice J-15
+36,splice,J-16,Field splice J-16
+37,splice,J-1,Field splice J-1
+37,splice,J-2,Field splice J-2
+37,splice,J-3,Field splice J-3
+37,splice,J-4,Field splice J-4
+37,splice,J-5,Field splice J-5
+37,splice,J-6,Field splice J-6
+37,splice,J-7,Field splice J-7
+37,splice,J-8,Field splice J-8
+37,splice,J-9,Field splice J-9
+37,splice,J-10,Field splice J-10
+37,splice,J-11,Field splice J-11
+37,splice,J-12,Field splice J-12
+37,splice,J-13,Field splice J-13
+37,splice,J-14,Field splice J-14
+37,splice,J-15,Field splice J-15
+37,splice,J-16,Field splice J-16
+38,splice,J-1,Field splice J-1
+38,splice,J-2,Field splice J-2
+38,splice,J-3,Field splice J-3
+38,splice,J-4,Field splice J-4
+38,splice,J-5,Field splice J-5
+38,splice,J-6,Field splice J-6
+38,splice,J-7,Field splice J-7
+38,splice,J-8,Field splice J-8
+38,splice,J-9,Field splice J-9
+38,splice,J-10,Field splice J-10
+38,splice,J-11,Field splice J-11
+38,splice,J-12,Field splice J-12
+38,splice,J-13,Field splice J-13
+38,splice,J-14,Field splice J-14
+38,splice,J-15,Field splice J-15
+38,splice,J-16,Field splice J-16

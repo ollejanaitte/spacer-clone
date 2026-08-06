@@ -1,0 +1,264 @@
+sheet_number,field_name,raw_value,field_type
+45,bridge_name,旭高架橋 Aランプ,bridge
+45,girder_ref,PU15ｰAR2,girder_reference
+45,drawing_title,端横桁(その1),title
+45,sheet_suffix,その1,sequence
+45,drawing_group,end_cross_beam,group
+45,scale,S=1:30,scale
+46,bridge_name,旭高架橋 Aランプ,bridge
+46,girder_ref,PU15ｰAR2,girder_reference
+46,drawing_title,端横桁(その2),title
+46,sheet_suffix,その2,sequence
+46,drawing_group,end_cross_beam,group
+46,scale,S=1:30,scale
+47,bridge_name,旭高架橋 Aランプ,bridge
+47,girder_ref,PU15ｰAR2,girder_reference
+47,drawing_title,中間支点横桁(その1),title
+47,sheet_suffix,その1,sequence
+47,drawing_group,pier_cross_beam,group
+47,scale,S=1:30,scale
+48,bridge_name,旭高架橋 Aランプ,bridge
+48,girder_ref,PU15ｰAR2,girder_reference
+48,drawing_title,中間支点横桁(その2),title
+48,sheet_suffix,その2,sequence
+48,drawing_group,pier_cross_beam,group
+48,scale,S=1:30,scale
+49,bridge_name,旭高架橋 Aランプ,bridge
+49,girder_ref,PU15ｰAR2,girder_reference
+49,drawing_title,中間横桁(その1),title
+49,sheet_suffix,その1,sequence
+49,drawing_group,intermediate_cross_beam,group
+49,scale,S=1:30,scale
+50,bridge_name,旭高架橋 Aランプ,bridge
+50,girder_ref,PU15ｰAR2,girder_reference
+50,drawing_title,中間横桁(その2),title
+50,sheet_suffix,その2,sequence
+50,drawing_group,intermediate_cross_beam,group
+50,scale,S=1:30,scale
+51,bridge_name,旭高架橋 Aランプ,bridge
+51,girder_ref,PU15ｰAR2,girder_reference
+51,drawing_title,中間横桁(その3),title
+51,sheet_suffix,その3,sequence
+51,drawing_group,intermediate_cross_beam,group
+51,scale,S=1:30,scale
+52,bridge_name,旭高架橋 Aランプ,bridge
+52,girder_ref,PU15ｰAR2,girder_reference
+52,drawing_title,中間横桁(その4),title
+52,sheet_suffix,その4,sequence
+52,drawing_group,intermediate_cross_beam,group
+52,scale,S=1:30,scale
+53,bridge_name,旭高架橋 Aランプ,bridge
+53,girder_ref,PU15ｰAR2,girder_reference
+53,drawing_title,中間横桁(その5),title
+53,sheet_suffix,その5,sequence
+53,drawing_group,intermediate_cross_beam,group
+53,scale,S=1:30,scale
+54,bridge_name,旭高架橋 Aランプ,bridge
+54,girder_ref,PU15ｰAR2,girder_reference
+54,drawing_title,中間横桁(その6),title
+54,sheet_suffix,その6,sequence
+54,drawing_group,intermediate_cross_beam,group
+54,scale,S=1:30,scale
+55,bridge_name,旭高架橋 Aランプ,bridge
+55,girder_ref,PU15ｰAR2,girder_reference
+55,drawing_title,中間横桁(その7),title
+55,sheet_suffix,その7,sequence
+55,drawing_group,intermediate_cross_beam,group
+55,scale,S=1:30,scale
+56,bridge_name,旭高架橋 Aランプ,bridge
+56,girder_ref,PU15ｰAR2,girder_reference
+56,drawing_title,中間横桁(その8),title
+56,sheet_suffix,その8,sequence
+56,drawing_group,intermediate_cross_beam,group
+56,scale,S=1:30,scale
+57,bridge_name,旭高架橋 Aランプ,bridge
+57,girder_ref,PU15ｰAR2,girder_reference
+57,drawing_title,中間横桁(その9),title
+57,sheet_suffix,その9,sequence
+57,drawing_group,intermediate_cross_beam,group
+57,scale,S=1:30,scale
+58,bridge_name,旭高架橋 Aランプ,bridge
+58,girder_ref,PU15ｰAR2,girder_reference
+58,drawing_title,中間横桁(その10),title
+58,sheet_suffix,その10,sequence
+58,drawing_group,intermediate_cross_beam,group
+58,scale,S=1:30,scale
+59,bridge_name,旭高架橋 Aランプ,bridge
+59,girder_ref,PU15ｰAR2,girder_reference
+59,drawing_title,中間横桁(その11),title
+59,sheet_suffix,その11,sequence
+59,drawing_group,intermediate_cross_beam,group
+59,scale,S=1:30,scale
+60,bridge_name,旭高架橋 Aランプ,bridge
+60,girder_ref,PU15ｰAR2,girder_reference
+60,drawing_title,中間横桁(その12),title
+60,sheet_suffix,その12,sequence
+60,drawing_group,intermediate_cross_beam,group
+60,scale,S=1:30,scale
+61,bridge_name,旭高架橋 Aランプ,bridge
+61,girder_ref,PU15ｰAR2,girder_reference
+61,drawing_title,上下横構(その1),title
+61,sheet_suffix,その1,sequence
+61,drawing_group,lateral_bracing,group
+61,scale,S=1:30,scale
+62,bridge_name,旭高架橋 Aランプ,bridge
+62,girder_ref,PU15ｰAR2,girder_reference
+62,drawing_title,上下横構(その2),title
+62,sheet_suffix,その2,sequence
+62,drawing_group,lateral_bracing,group
+62,scale,S=1:30,scale
+63,bridge_name,旭高架橋 Aランプ,bridge
+63,girder_ref,PU15ｰAR2,girder_reference
+63,drawing_title,上下横構(その3),title
+63,sheet_suffix,その3,sequence
+63,drawing_group,lateral_bracing,group
+63,scale,S=1:30,scale
+64,bridge_name,旭高架橋 Aランプ,bridge
+64,girder_ref,PU15ｰAR2,girder_reference
+64,drawing_title,上下横構(その4),title
+64,sheet_suffix,その4,sequence
+64,drawing_group,lateral_bracing,group
+64,scale,S=1:30,scale
+65,bridge_name,旭高架橋 Aランプ,bridge
+65,girder_ref,PU15ｰAR2,girder_reference
+65,drawing_title,上下横構(その5),title
+65,sheet_suffix,その5,sequence
+65,drawing_group,lateral_bracing,group
+65,scale,S=1:30,scale
+66,bridge_name,旭高架橋 Aランプ,bridge
+66,girder_ref,PU15ｰAR2,girder_reference
+66,drawing_title,上下横構(その6),title
+66,sheet_suffix,その6,sequence
+66,drawing_group,lateral_bracing,group
+66,scale,S=1:30,scale
+67,bridge_name,旭高架橋 Aランプ,bridge
+67,girder_ref,PU15ｰAR2,girder_reference
+67,drawing_title,上下横構(その7),title
+67,sheet_suffix,その7,sequence
+67,drawing_group,lateral_bracing,group
+67,scale,S=1:30,scale
+68,bridge_name,旭高架橋 Aランプ,bridge
+68,girder_ref,PU15ｰAR2,girder_reference
+68,drawing_title,上下横構(その8),title
+68,sheet_suffix,その8,sequence
+68,drawing_group,lateral_bracing,group
+68,scale,S=1:30,scale
+69,bridge_name,旭高架橋 Aランプ,bridge
+69,girder_ref,PU15ｰAR2,girder_reference
+69,drawing_title,上下横構(その9),title
+69,sheet_suffix,その9,sequence
+69,drawing_group,lateral_bracing,group
+69,scale,S=1:30,scale
+70,bridge_name,旭高架橋 Aランプ,bridge
+70,girder_ref,PU15ｰAR2,girder_reference
+70,drawing_title,上下横構(その10),title
+70,sheet_suffix,その10,sequence
+70,drawing_group,lateral_bracing,group
+70,scale,S=1:30,scale
+71,bridge_name,旭高架橋 Aランプ,bridge
+71,girder_ref,PU15ｰAR2,girder_reference
+71,drawing_title,上下横構(その11),title
+71,sheet_suffix,その11,sequence
+71,drawing_group,lateral_bracing,group
+71,scale,S=1:30,scale
+72,bridge_name,旭高架橋 Aランプ,bridge
+72,girder_ref,PU15ｰAR2,girder_reference
+72,drawing_title,巻き立てコンクリート(その1),title
+72,sheet_suffix,その1,sequence
+72,drawing_group,wrapping_concrete,group
+72,scale,S=1:30,scale
+73,bridge_name,旭高架橋 Aランプ,bridge
+73,girder_ref,PU15ｰAR2,girder_reference
+73,drawing_title,巻き立てコンクリート(その2),title
+73,sheet_suffix,その2,sequence
+73,drawing_group,wrapping_concrete,group
+73,scale,S=1:30,scale
+74,bridge_name,旭高架橋 Aランプ,bridge
+74,girder_ref,PU15ｰAR2,girder_reference
+74,drawing_title,巻き立てコンクリート(その3),title
+74,sheet_suffix,その3,sequence
+74,drawing_group,wrapping_concrete,group
+74,scale,S=1:30,scale
+75,bridge_name,旭高架橋 Aランプ,bridge
+75,girder_ref,PU15ｰAR2,girder_reference
+75,drawing_title,巻き立てコンクリート(その4),title
+75,sheet_suffix,その4,sequence
+75,drawing_group,wrapping_concrete,group
+75,scale,S=1:30,scale
+76,bridge_name,旭高架橋 Aランプ,bridge
+76,girder_ref,PU15ｰAR2,girder_reference
+76,drawing_title,巻き立てコンクリート(その5),title
+76,sheet_suffix,その5,sequence
+76,drawing_group,wrapping_concrete,group
+76,scale,S=1:30,scale
+77,bridge_name,旭高架橋 Aランプ,bridge
+77,girder_ref,PU15ｰAR2,girder_reference
+77,drawing_title,巻き立てコンクリート(その6),title
+77,sheet_suffix,その6,sequence
+77,drawing_group,wrapping_concrete,group
+77,scale,S=1:30,scale
+78,bridge_name,旭高架橋 Aランプ,bridge
+78,girder_ref,PU15ｰAR2,girder_reference
+78,drawing_title,巻き立てコンクリート(その7),title
+78,sheet_suffix,その7,sequence
+78,drawing_group,wrapping_concrete,group
+78,scale,S=1:30,scale
+79,bridge_name,旭高架橋 Aランプ,bridge
+79,girder_ref,PU15ｰAR2,girder_reference
+79,drawing_title,巻き立てコンクリート(その8),title
+79,sheet_suffix,その8,sequence
+79,drawing_group,wrapping_concrete,group
+79,scale,S=1:30,scale
+80,bridge_name,旭高架橋 Aランプ,bridge
+80,girder_ref,PU15ｰAR2,girder_reference
+80,drawing_title,巻き立てコンクリートスタッド図(その1),title
+80,sheet_suffix,その1,sequence
+80,drawing_group,wrapping_concrete_stud,group
+80,scale,S=1:30,scale
+81,bridge_name,旭高架橋 Aランプ,bridge
+81,girder_ref,PU15ｰAR2,girder_reference
+81,drawing_title,巻き立てコンクリートスタッド図(その2),title
+81,sheet_suffix,その2,sequence
+81,drawing_group,wrapping_concrete_stud,group
+81,scale,S=1:30,scale
+82,bridge_name,旭高架橋 Aランプ,bridge
+82,girder_ref,PU15ｰAR2,girder_reference
+82,drawing_title,巻き立てコンクリートスタッド図(その3),title
+82,sheet_suffix,その3,sequence
+82,drawing_group,wrapping_concrete_stud,group
+82,scale,S=1:30,scale
+83,bridge_name,旭高架橋 Aランプ,bridge
+83,girder_ref,PU15ｰAR2,girder_reference
+83,drawing_title,巻き立てコンクリートスタッド図(その4),title
+83,sheet_suffix,その4,sequence
+83,drawing_group,wrapping_concrete_stud,group
+83,scale,S=1:30,scale
+84,bridge_name,旭高架橋 Aランプ,bridge
+84,girder_ref,PU15ｰAR2,girder_reference
+84,drawing_title,合成床版割付図,title
+84,drawing_group,composite_deck_layout,group
+84,scale,S=1:30,scale
+85,bridge_name,旭高架橋 Aランプ,bridge
+85,girder_ref,PU15ｰAR2,girder_reference
+85,drawing_title,支承詳細図(その1),title
+85,sheet_suffix,その1,sequence
+85,drawing_group,bearing_detail,group
+85,scale,S=1:15,scale
+86,bridge_name,旭高架橋 Aランプ,bridge
+86,girder_ref,PU15ｰAR2,girder_reference
+86,drawing_title,支承詳細図(その2),title
+86,sheet_suffix,その2,sequence
+86,drawing_group,bearing_detail,group
+86,scale,S=1:15,scale
+87,bridge_name,旭高架橋 Aランプ,bridge
+87,girder_ref,PU15ｰAR2,girder_reference
+87,drawing_title,支承詳細図(その3),title
+87,sheet_suffix,その3,sequence
+87,drawing_group,bearing_detail,group
+87,scale,S=1:15,scale
+88,bridge_name,旭高架橋 Aランプ,bridge
+88,girder_ref,PU15ｰAR2,girder_reference
+88,drawing_title,支承詳細図(その4),title
+88,sheet_suffix,その4,sequence
+88,drawing_group,bearing_detail,group
+88,scale,S=1:15,scale

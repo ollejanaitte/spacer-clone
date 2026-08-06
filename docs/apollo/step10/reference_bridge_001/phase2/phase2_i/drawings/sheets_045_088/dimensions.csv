@@ -1,0 +1,107 @@
+sheet_number,dimension_id,category,item,value_raw,value_numeric,unit,notes
+45,DIM-001,overall,端横桁全体長,4512.2,4512.2,mm,Girder center-to-center
+45,DIM-002,overall,張出左,1900,1900,mm,Left overhang
+45,DIM-003,overall,張出右,1400,1400,mm,Right overhang
+45,DIM-004,girder,AG1-AG2間,2256.1,2256.1,mm,Girder spacing
+45,DIM-005,girder,AG2端部,1089.2,1089.2,mm,AG2 to edge
+45,DIM-006,uflg,UFLG端横桁左,250x12x1599,250x12x1599,mm,UFLG plate (SM490YA)
+45,DIM-007,uflg,UFLG端横桁中央,400x19x2908,400x19x2908,mm,UFLG plate (SM490YB)
+45,DIM-008,uflg,UFLG端横桁右,250x12x1099,250x12x1099,mm,UFLG plate (SM490YA)
+45,DIM-009,lflg,LFLG端横桁左,250x12x1934,250x12x1934,mm,LFLG plate
+45,DIM-010,lflg,LFLG端横桁右,250x12x1468,250x12x1468,mm,LFLG plate
+45,DIM-011,web,WEB PL左,733x9x1603,733x9x1603,mm,Web plate left
+45,DIM-012,web,WEB PL中央主,2537x32x791,2537x32x791,mm,Web plate main (SM490YB)
+45,DIM-013,web,WEB PL右,730x9x1103,730x9x1103,mm,Web plate right
+45,DIM-014,conn,CONN PL,351x19x789,351x19x789,mm,Connection plate (SM490YB)
+45,DIM-015,conn,CONN PL alt,367x19x818,367x19x818,mm,Connection plate alt (SM490YB)
+45,DIM-016,splice,SPL PL,165x13x470,165x13x470,mm,Splice plate (SM490YA)
+45,DIM-017,splice,SPL PL large,1692x10x470,1692x10x470,mm,Splice plate (SM490YA)
+45,DIM-018,fill,FILL PL,1686x8x233,1686x8x233,mm,Filler plate (SS400)
+45,DIM-019,stud,STUD,φ22x200,22x200,mm,Stud diameter x length (SS400)
+45,DIM-020,plate,PL small,80x9x625,80x9x625,mm,Small plate
+45,DIM-021,plate,PL small alt,80x9x555,80x9x555,mm,Small plate alt
+45,DIM-022,angle,角度,94°13'05",94.218,deg,Angle
+46,DIM-023,overall,端横桁(2)全体長,4500.2,4500.2,mm,Girder center-to-center
+46,DIM-024,overall,張出左,1400,1400,mm,Left overhang
+46,DIM-025,overall,張出右,1400,1400,mm,Right overhang
+46,DIM-026,girder,AG1-AG2間,2250.1,2250.1,mm,Girder spacing
+46,DIM-027,uflg,UFLG端横桁(2)中央,400x19x2897,400x19x2897,mm,UFLG plate (SM490YB)
+46,DIM-028,conn,CONN PL(2),353x19x790,353x19x790,mm,Connection plate
+46,DIM-029,conn,CONN PL(2)alt,355x19x793,355x19x793,mm,Connection plate alt
+47,DIM-030,overall,中間支点横桁全体長,4500,4500,mm,Girder center-to-center
+47,DIM-031,girder,PR1間,2250/2250,2250,mm,Girder spacing
+47,DIM-032,uflg,UFLG支点,560x32x2896,560x32x2896,mm,UFLG plate (SM490YB)
+47,DIM-033,web,WEB PL支点,2614x40x791,2614x40x791,mm,Web plate (SM490YB)
+47,DIM-034,web,WEB PL支点主,1800x28x2932,1800x28x2932,mm,Web plate main (SM490YB)
+47,DIM-035,conn,CONN PL支点,495x32x791,495x32x791,mm,Connection plate (SM490YB)
+47,DIM-036,splice,SPL PL支点,230x22x620,230x22x620,mm,Splice plate (SM490YB)
+48,DIM-037,detail,WEB PL支点(2),2614x40x791,2614x40x791,mm,Web plate
+49,DIM-038,overall,中間横桁(1)C1/C2,4500/4500,4500,mm,Girder center-to-center
+49,DIM-039,uflg,UFLG C1,250x12x3196,250x12x3196,mm,UFLG plate
+49,DIM-040,uflg,UFLG C2,250x12x3496,250x12x3496,mm,UFLG plate
+49,DIM-041,splice,SPL PL C1,240x9x320,240x9x320,mm,Splice plate (SS400)
+49,DIM-042,splice,SPL PL C1 small,90x10x320,90x10x320,mm,Splice plate (SS400)
+49,DIM-043,fill,FILL PL C1,240x10x158,240x10x158,mm,Filler plate (SS400)
+50,DIM-044,uflg,UFLG C3/C4,250x12x3496/250x12x3396,250x12x3496,mm,UFLG plates
+51,DIM-045,overall,C5/C6,4500/4500,4500,mm,Girder center-to-center
+52,DIM-046,overall,C7/C8,4500/4500,4500,mm,Girder center-to-center
+53,DIM-047,overall,C9/C10,4500/4500,4500,mm,Girder center-to-center
+54,DIM-048,overall,C11/C12,4500/4500,4500,mm,Girder center-to-center
+55,DIM-049,overall,C13/C14,4500/4500,4500,mm,Girder center-to-center
+56,DIM-050,overall,C15/C16,4500/4500,4500,mm,Girder center-to-center
+57,DIM-051,overall,C17/C18,4500/4500,4500,mm,Girder center-to-center
+58,DIM-052,overall,C19/C20,4500/4500,4500,mm,Girder center-to-center
+58,DIM-053,uflg,UFLG C19,250x12x3196,250x12x3196,mm,UFLG plate
+58,DIM-054,uflg,UFLG C20,250x12x3395,250x12x3395,mm,UFLG plate
+61,DIM-055,gusset,GUSSET PL S1,640x22x940,640x22x940,mm,Gusset plate (SM490YB)
+61,DIM-056,gusset,GUSSET PL C1,641x22x1200,641x22x1200,mm,Gusset plate (SM490YB)
+61,DIM-057,gusset,GUSSET PL large,570x22x1730,570x22x1730,mm,Large gusset plate (SM490YB)
+61,DIM-058,gusset,GUSSET PL large2,1270x22x1220,1270x22x1220,mm,Large gusset plate (SM490YB)
+61,DIM-059,spacing,K.L.間隔,2700/2644,2700,mm,Brace panel lengths
+61,DIM-060,spacing,ボルトピッチ,5x75=375,375,mm,Bolt pitch pattern
+61,DIM-061,spacing,ガセット内ピッチ,4x250=1000,1000,mm,Gusset bolt spacing
+62,DIM-062,gusset,GUSSET PL S1,491x12x980,491x12x980,mm,Gusset plate
+62,DIM-063,gusset,GUSSET PL S1 alt,491x12x920,491x12x920,mm,Gusset plate
+62,DIM-064,gusset,GUSSET PL S1 alt2,541x12x1030,541x12x1030,mm,Gusset plate
+62,DIM-065,spacing,パネル長,C1-C2/C2-C3/C3-C4=4992.5,4992.5,mm,Panel lengths
+68,DIM-066,gusset,GUSSET PL C16,690x22x1040,690x22x1040,mm,Gusset plate (SM490YB)
+68,DIM-067,gusset,GUSSET PL C17,690x22x1040,690x22x1040,mm,Gusset plate (SM490YB)
+68,DIM-068,gusset,GUSSET PL PR2,741x22x1510,741x22x1510,mm,Gusset plate (SM490YB)
+68,DIM-069,spacing,パネル長PR2,5097.4/5094.6,5097.4,mm,Panel lengths at PR2
+68,DIM-070,spacing,分割,4x75=300,300,mm,Bolt pitch at web splice
+72,DIM-071,overall,巻きコンA-A,4512,4512,mm,Overall width
+72,DIM-072,overall,巻きコンG-G,3152,3152,mm,G-G section width
+72,DIM-073,rebar_pitch,軸方向ピッチ,6x270=1620,1620,mm,Longitudinal rebar pitch
+72,DIM-074,rebar_pitch,横方向ピッチ,4x270=1080,1080,mm,Transverse rebar pitch
+73,DIM-075,section,各断面幅,1650,1650,mm,Section width H-L
+80,DIM-076,overall,スタッドE-E,4512,4512,mm,Overall width
+80,DIM-077,stud_pitch,スタッド間隔,5x300=1500,1500,mm,Stud spacing
+80,DIM-078,stud_pitch,横方向,4x300=1200,1200,mm,Transverse stud spacing
+82,DIM-079,overall,スタッドD-D,4500,4500,mm,PR2 section width
+82,DIM-080,rebar_pitch,D-D pitch,5x250=1250,1250,mm,Rebar pitch
+84,DIM-081,overall,合成床版,4512,4512,mm,Deck width
+85,DIM-082,bearing,ベアリング長,750,750,mm,Bearing longitudinal dimension
+85,DIM-083,bearing,ベアリング幅,690,690,mm,Bearing transverse dimension
+85,DIM-084,bolt,アンカーボルトM45,4-M45,4,本,M45 anchor bolts
+85,DIM-085,bolt,ベースプレートボルト,24-M36,24,本,M36 bolts
+85,DIM-086,bolt,取付ボルト,8-M72,8,本,M72 bolts
+85,DIM-087,bolt_pitch,ボルトピッチ,4@155=620,620,mm,Bolt pitch
+85,DIM-088,thickness,積層厚,32+2,34,mm,Laminated rubber thickness
+85,DIM-089,plug,鉛プラグ径,φ200,200,mm,Lead plug diameter
+86,DIM-090,bearing,ベアリング長PR,1050,1050,mm,Bearing dimension
+86,DIM-091,bolt,アンカーボルトM45,8-M45,8,本,M45 anchor bolts
+86,DIM-092,bolt,ベースプレートボルト,24-M48,24,本,M48 bolts
+86,DIM-093,bolt,取付ボルト,8-M90,8,本,M90 bolts
+86,DIM-094,bolt_pitch,ボルトピッチ,6@150=900,900,mm,Bolt pitch
+86,DIM-095,plug,鉛プラグ径,φ300,300,mm,Lead plug diameter
+87,DIM-096,bearing,ベアリング長PU,990,990,mm,Bearing dimension (PU15-AR2)
+87,DIM-097,bolt,取付ボルト,8-M39,8,本,M39 bolts
+87,DIM-098,rebar,アンカー鉄筋,8-D41,8,本,D41 anchor bars
+87,DIM-099,bolt_pitch,ボルトピッチ,4@155=620,620,mm,Bolt pitch
+87,DIM-100,bolt_pitch,ソールプレート,2@350=700,700,mm,Sole plate bolt spacing
+88,DIM-101,bearing,ベアリング長PR2,1340,1340,mm,Bearing dimension (PR1-PR2)
+88,DIM-102,bolt,取付ボルト,20-M39,20,本,M39 bolts
+88,DIM-103,rebar,アンカー鉄筋,20-D41,20,本,D41 anchor bars
+88,DIM-104,bolt_pitch,ボルトピッチ,5@200=1000,1000,mm,Bolt pitch
+88,DIM-105,soffit,ソールプレート長,1100,1100,mm,Sole plate length
+88,DIM-106,bolt_pitch,ソールプレート貫通,5@240=1200,1200,mm,Sole plate bolts
