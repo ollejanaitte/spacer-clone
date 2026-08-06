@@ -1,6 +1,7 @@
 # STEP 9 — 連続橋設計計算書整備および曲線橋実装前調査・仕様凍結
 
 > **Authority:** PHASE 1 INVESTIGATION RECORD (documentation-only)
+> **Phase 0 freeze note (STEP 10, 2026-08-06):** The Phase 6–9 curved bridge forward plan documented in this STEP 9 README is **terminated**. The curved bridge reproduction effort is now consolidated under STEP 10 (Reference Bridge 001 Reproduction Project). All STEP 9 implementation assets (types, transformer, validator, export gate, tests) are retained unchanged and will be connected to the STEP 10 standard in Phase 14. See `docs/apollo/step10/reference_bridge_001/phase0/` for the new plan.
 
 ## STEP 9 の名称
 

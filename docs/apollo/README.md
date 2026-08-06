@@ -8,6 +8,13 @@ Navigation for Apollo-related research inputs and immutable handoff snapshots st
 
 - [Step 1 overview](step1/README.md) — governance, acceptance, and planned P00–P09 PR units
 
+## Step 10 — Reference Bridge 001 Reproduction Project
+
+- [Phase 0 overview](step10/reference_bridge_001/phase0/README.md) — old plan freeze, source manifest, STEP 10 roadmap
+- [RB-S10-001 definition](step10/reference_bridge_001/phase0/04_reference_bridge_001_definition.md) — bridge identity and crosswalk with RB-P1-001
+- [Source manifest](step10/reference_bridge_001/phase0/source_original_manifest.csv) — external PDF manifest with SHA256 and page counts
+- [STEP 10 roadmap](step10/reference_bridge_001/phase0/06_step10_redefinition_and_phase_map.md) — Phase 0–15 plan
+
 ## AP-00 — Implementation Governance
 
 - [AP-00 overview](ap00/README.md) — Phase 1 implementation governance; `CONDITIONAL_GO` constraints; AP-00..AP-18 authorization
