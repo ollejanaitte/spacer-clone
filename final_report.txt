@@ -1653,8 +1653,9 @@ STEP9_PHASE3_BASELINE_SHA: 89b01ae8e2a9b074c323f04d3c236bb5407c52ff
 
 PHASE3_SUBSTEPS:
   A_input_review: COMPLETE
-  B_report_model_responsibility: IN_PROGRESS
-  C_domain_to_report_mapping: PENDING
+STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
+  B_report_model_responsibility: COMPLETE
+  C_domain_to_report_mapping: IN_PROGRESS
   D_report_model_entity_spec: PENDING
   E_chapter_payload_contract: PENDING
   F_status_and_authorization_contract: PENDING
