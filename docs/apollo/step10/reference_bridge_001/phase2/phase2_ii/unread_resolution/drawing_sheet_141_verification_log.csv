@@ -1,0 +1,9 @@
+verification_id,sheet_id,item_checked,ocr_pass1,ocr_pass2,agreement,verdict,status,notes
+V001,141,桁長 last digit,133201,133201,AGREE,PARTIAL,RESOLVED_WITH_OCR_ASSIST,both reads 201; expected 200 pattern; not confirmed; do not guess
+V002,141,工事名 value,blank,blank,AGREE,CONFIRMED_BLANK,RESOLVED_WITH_OCR_ASSIST,work-name cell empty in source
+V003,141,erection circle numbers,③④⑥⑧,③④⑤⑥⑧,AGREE,PARTIAL,RESOLVED_WITH_OCR_ASSIST,W values confirmed 8; circle-glyph order assumed L->R
+V004,141,施工箇所名 suffix,知多市旭地内始,知多市旭地内始,AGREE,PARTIAL,RESOLVED_WITH_OCR_ASSIST,「始」likely 起点; not confirmed
+V005,141,R=20m note context,single token,single token,AGREE,PARTIAL,RESOLVED_WITH_OCR_ASSIST,note context not fully read
+V006,141,市道番号,60295,60255,AGREE,PARTIAL,RESOLVED_WITH_OCR_ASSIST,6/5 digit uncertain
+V007,141,crane capacity table,matrix,matrix,AGREE,CONFIRMED,RESOLVED_WITH_OCR_ASSIST,two passes identical matrix
+V008,141,span lengths,40200/51000/40200,40201/51000/40200,AGREE,CONFIRMED,RESOLVED_WITH_OCR_ASSIST,spans confirmed

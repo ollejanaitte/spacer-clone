@@ -1,0 +1,7 @@
+annotation_id,sheet_number,view_id,annotation_type,label,text_value,source_region,confidence,verification_status,status,notes
+S141-A01,141,S141-V02,ERECTION_BLOCK,架設順序,①-⑨,plan,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,block order left-to-right from PU15 side
+S141-A02,141,S141-V02,CITY_ROAD,市道,市道60295号線,plan,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,digit 6/5 uncertain
+S141-A03,141,S141-V02,NOTE,作業半径,R=20m,plan,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,context flag V005
+S141-A04,141,S141-V01,CRANE,120t吊,120t吊オールテレーンクレーン,side-plan,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,all-terrain crane label
+S141-A05,141,S141-V04,CRANE_MACHINE,定格起重機,TADANO ATF120N-5.1（A性能）,crane-table,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,crane capacity table header
+S141-A06,141,S141-V03,PIER,橋脚,PR2橋脚,cross-section,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,cross section at PR2

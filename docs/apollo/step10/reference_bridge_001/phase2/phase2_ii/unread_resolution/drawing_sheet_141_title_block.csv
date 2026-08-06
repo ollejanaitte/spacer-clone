@@ -1,0 +1,9 @@
+field_id,sheet_id,title_block_field,value,confidence,verification_status,status,notes
+TB01,141,図面番号,141号,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,sheet number
+TB02,141,枚数,141枚の内,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,sheet 141 of 141
+TB03,141,工事名,(blank),N/A,CONFIRMED_BLANK,RESOLVED_WITH_OCR_ASSIST,work-name value empty in source
+TB04,141,路線名,一般国道247号（西知多道路）,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,route name
+TB05,141,施工箇所名,知多市旭地内 起点,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,suffix 起点 assumed flag V004
+TB06,141,図の種類,架設計画図,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,sheet kind
+TB07,141,縮尺,側面・平面 S=1:500 / 横断 S=1:200,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,scales
+TB08,141,図名,旭高架橋 APU15-AR2 架設計画図,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,drawing title

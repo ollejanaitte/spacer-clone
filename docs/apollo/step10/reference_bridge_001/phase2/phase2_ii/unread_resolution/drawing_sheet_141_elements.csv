@@ -1,0 +1,18 @@
+element_id,sheet_number,pdf_page_number,element_type,description,value,unit,region,ocr_pass1,ocr_pass2,confidence,verification_status,status,notes
+S141-E01,141,143,TITLE,Drawing title,旭高架橋 APU15-AR2 架設計画図,,top-left,"旭高架橋APU15-AR2架設計画区","旭高架橘APU15-AR2架設計画区",HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,title header
+S141-E02,141,143,LABEL,図の種類,架設計画図,,title-block,"架設计画区","架設計画図",HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,sheet kind
+S141-E03,141,143,ROUTE,Road route,一般国道247号（西知多道路）,,title-block,一般国道247号（西知多道路）,般国道247号（西知多道路）,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,route name
+S141-E04,141,143,LOCATION,Construction location,知多市旭地内 起点,,title-block,知多市旭地内始,知多市旭地内始,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,suffix 起点 assumed; flag V004
+S141-E05,141,143,SHEET_NO,Sheet number,141号 / 141枚の内,,title-block,141菜の内 / 141号,141装の内 / 141号,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,sheet 141 of 141
+S141-E06,141,143,STRUCTURE,Structure type,A 鋼3径間連続少数主桁橋,,side-plan,鋼3径間連統少数主桁橋134001,A闊3径间速统少数主桁橘134001,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,3-span continuous few-girder
+S141-E07,141,143,LENGTH,Bridge length L,134.001,m,side-plan,134001,134001,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,matches Phase 0 CF-003
+S141-E08,141,143,LENGTH,Girder length,133.201,m,side-plan,133201,133201,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,last digit uncertain V001
+S141-E09,141,143,SPAN,Span 1,40.200,m,side-plan,40200,40201,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,支間長40200/40201
+S141-E10,141,143,SPAN,Span 2,51.000,m,side-plan,51000,51000,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,支間長51000
+S141-E11,141,143,SPAN,Span 3,40.200,m,side-plan,40200,40200,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,支間長40200
+S141-E12,141,143,STATION,Road station,西知多道路 NO.178+10.000 / No.26+8.001,,top-left,"西知多道路NO.178+10.000","西短多落路NO.178+10.000",HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,station marks
+S141-E13,141,143,SCALE,Scale side/plan,S=1:500,,side-plan,S=1:500,S=1:500,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,側面図・平面図
+S141-E14,141,143,SCALE,Scale cross section,S=1:200,,cross-section,S=1:200,S=1 : 200,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,横断図
+S141-E15,141,143,JUNCTION,Junction,PU15 合流部,,top-left,合流/-XPU15,合流/-XPU15,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,junction at PU15
+S141-E16,141,143,DIRECTION,Erection direction,架設方向,,side-plan,架設方向,架設方向,HIGH,AGREED,RESOLVED_WITH_OCR_ASSIST,arrow on plan
+S141-E17,141,143,LINETYPE,Up line,上り線,,side-plan,上線,上線,MEDIUM,PARTIAL,RESOLVED_WITH_OCR_ASSIST,label partially read

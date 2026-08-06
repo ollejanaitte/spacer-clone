@@ -1,0 +1,2 @@
+resolution_id,source_locator,item,region,method,before_status,drawn_status,confidence,verification_status,verdict,notes,linked_issue
+UR-001,SRC-002 drawing_sheet 141 (PDF page 143),架設計画図 erection plan,full sheet,RENDER+OCR,UNREADABLE_REQUIRES_HUMAN,PARTIAL,HIGH,VERIFIED,RESOLVED_WITH_OCR_ASSIST,"RapidOCR two passes (300/400DPI + enhance). Title, route, L=134.001, spans 40.2/51.0/40.2, 9 erection blocks+weights, 2 crane positions, full crane capacity table, cross-section levels transcribed. 5 cells flagged V001-V006 for human confirm.",ISSUE-001
