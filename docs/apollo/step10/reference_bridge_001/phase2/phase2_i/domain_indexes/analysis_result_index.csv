@@ -1,0 +1,24 @@
+index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
+AR-001,analysis_result,CAL-VAL-P00223-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Dead load reaction Rd PU15-AG1: 1205.1 kN,Grid analysis reaction
+AR-002,analysis_result,CAL-VAL-P00223-003,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Dead load reaction Rd PR1-AG1: 3325.5 kN,Grid analysis reaction
+AR-003,analysis_result,CAL-VAL-P00223-005,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Dead load reaction Rd PR2-AG1: 3341.6 kN,Grid analysis reaction
+AR-004,analysis_result,CAL-VAL-P00223-007,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Dead load reaction Rd AR2-AG1: 1221.9 kN,Grid analysis reaction
+AR-005,analysis_result,CAL-VAL-P00223-009,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Live load RL max PU15-AG1: 737.8 kN,Grid analysis reaction
+AR-006,analysis_result,CAL-VAL-P00223-010,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Live load RL max PR1-AG1: 1378.9 kN,Grid analysis reaction
+AR-007,analysis_result,CAL-VAL-P00223-047,ANALYSIS_RESULT,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.8,223,Live load rotation angle max: 0.00448 rad,Support rotation for bearing design
+AR-008,analysis_result,CAL-VAL-P00686-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,Total dead load reaction Wd: 17955.7 kN,Cross beam main frame force
+AR-009,analysis_result,CAL-VAL-P00686-005,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,PR1 wind reaction Rw: 2159.12 kN,Wind load distribution
+AR-010,analysis_result,CAL-VAL-P00686-006,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,PR1 seismic reaction Re: 1824.37 kN,Seismic load distribution
+AR-011,analysis_result,CAL-VAL-P00686-007,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,PU15 wind reaction Rw: 738.52 kN,Wind load distribution
+AR-012,analysis_result,CAL-VAL-P00686-008,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,PU15 seismic reaction Re: 536.55 kN,Seismic load distribution
+AR-013,analysis_result,CAL-VAL-P00769-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,769,Design moment M: -308.9 kNm,Bracket design section force
+AR-014,analysis_result,CAL-VAL-P00769-002,ANALYSIS_RESULT,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,769,Design shear S: 288.0 kN,Bracket design section force
+AR-015,analysis_result,CAL-VAL-P00791-002,ANALYSIS_RESULT,calculation/chapter_03/section_3_5/values.csv,CH3-CAL-SEC-3.5.2,791,Lateral bracing Wd L2: 18853.5 kN,Wind/seismic design force
+AR-016,analysis_result,CAL-VAL-P00792-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_5/values.csv,CH3-CAL-SEC-3.5.3,792,Lateral bracing Nmax D-10096: 1294.90 kN,Max axial force in lateral bracing
+AR-017,analysis_result,CAL-VAL-P00850-003,ANALYSIS_RESULT,calculation/chapter_03/section_3_7/values.csv,CH3-CAL-SEC-3.7.1,850,No.1 dead load stress: 63 N/mm2,Fatigue check stress range
+AR-018,analysis_result,CAL-VAL-P00851-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_7/values.csv,CH3-CAL-SEC-3.7.1,851,No.1 delta_sigma_max: 54 N/mm2,Fatigue stress range
+AR-019,analysis_result,CAL-VAL-P00853-003,ANALYSIS_RESULT,calculation/chapter_03/section_3_7/values.csv,CH3-CAL-SEC-3.7.1,853,No.2 dead load stress: -84 N/mm2,Fatigue check (compression)
+AR-020,analysis_result,CAL-VAL-P00854-001,ANALYSIS_RESULT,calculation/chapter_03/section_3_7/values.csv,CH3-CAL-SEC-3.7.1,854,No.2 delta_sigma_max: 80 N/mm2,Fatigue stress range
+AR-021,analysis_result,CAL-VAL-P01319-006,SECTION_FORCE,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Pre-composite DL moment Md1: 0.0 kNm,AG1 Sec-1 composite section check
+AR-022,analysis_result,CAL-VAL-P01319-007,SECTION_FORCE,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Pre-composite DL shear S: 663.1 kN,AG1 Sec-1 composite section check
+AR-023,analysis_result,CAL-VAL-P01319-011,SECTION_FORCE,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.4,1319,Post-composite LL shear S: 922.1 kN,AG1 Sec-1 composite section check
