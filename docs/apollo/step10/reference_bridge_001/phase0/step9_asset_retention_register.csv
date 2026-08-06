@@ -1,0 +1,22 @@
+asset_id,asset_path,asset_kind,current_role,retention_status,migration_target,modification_allowed_in_phase0,evidence,notes
+S9-001,docs/apollo/step9/README.md,markdown,step9_overview,RETAINED_UNCHANGED,step10_phase6-9_terminates_forward_plan,NO,S9-5fd090a,Phase 6-9 curved bridge plan terminated; README not modified
+S9-002,docs/apollo/step9/phase1_continuous_bridge_report_inventory/,markdown+CSV,phase1_inventory,RETAINED_UNCHANGED,none,NO,S9-5fd090a,13 documents + evidence_matrix.csv
+S9-003,docs/apollo/step9/phase2_continuous_bridge_report_spec/,markdown+CSV,phase2_report_spec,RETAINED_UNCHANGED,none,NO,S9-5fd090a,12 documents + chapter_matrix.csv + output_permission_matrix.csv
+S9-004,docs/apollo/step9/phase2_5_phase3_blocker_resolution/,markdown+CSV,phase2.5_blocker_resolution,RETAINED_UNCHANGED,none,NO,S9-5fd090a,H-01..03 U-03 CH/CP resolved; blocker_matrix.csv + decision_register.csv
+S9-005,docs/apollo/step9/phase3_continuous_report_model_spec/,markdown+CSV,phase3_report_model_spec,RETAINED_UNCHANGED,none,NO,S9-5fd090a,14 spec docs + 3 CSVs + completion_report.md
+S9-006,docs/apollo/step9/phase4_continuous_report_model_implementation/,markdown+CSV,phase4_report_model_impl,RETAINED_UNCHANGED,none,NO,S9-5fd090a,preflight + README + completion_report.md + implementation_matrix.csv
+S9-007,frontend/src/apollo/report/reportModelTypes.ts,TypeScript,report_model_types,RETAINED_UNCHANGED,step10_phase5_data_model,NO,S9-c847036,Phase 4-B; R-01..R-22 canonical types
+S9-008,frontend/src/apollo/report/reportModelContinuous.ts,TypeScript,report_model_transformer,RETAINED_UNCHANGED,step10_phase7_transformer,NO,S9-e3e2fd9,Phase 4-C; buildContinuousReportModel CP-01..CP-25
+S9-009,frontend/src/apollo/report/reportModelValidator.ts,TypeScript,report_model_validator,RETAINED_UNCHANGED,step10_phase7_validator,NO,S9-0eaa328,Phase 4-D; VR-01..26 fail-closed
+S9-010,frontend/src/apollo/report/reportExport.ts,TypeScript,report_export_gate,RETAINED_UNCHANGED,step10_phase7_export,NO,S9-0eaa328,Phase 4-E; assertContinuousReportExportable + createContinuousReport/downloadContinuousReportJson
+S9-011,frontend/src/apollo/report/reportModel.ts,TypeScript,report_model_scaffold,RETAINED_UNCHANGED,step10_phase5_scaffold_adopt_or_replace,NO,S9-5fd090a,Step 2-B CH-* scaffold; not modified by Phase 4
+S9-012,frontend/src/apollo/__tests__/reportModel.test.ts,TypeScript,report_model_tests,RETAINED_UNCHANGED,none,NO,S9-5fd090a,4 tests; simple-single based
+S9-013,frontend/src/apollo/__tests__/reportModelContinuous.test.ts,TypeScript,test_continuous,RETAINED_UNCHANGED,step10_phase13_regression,NO,S9-e3e2fd9,7 tests; 3 continuous + 1 regression
+S9-014,frontend/src/apollo/__tests__/reportModelValidator.test.ts,TypeScript,test_validator,RETAINED_UNCHANGED,step10_phase13_regression,NO,S9-0eaa328,23 tests; 14 VR + regression
+S9-015,frontend/src/apollo/__tests__/apolloSuite.test.ts,TypeScript,apollo_integration_suite,RETAINED_UNCHANGED,none,NO,S9-5fd090a,registered reportModelContinuous.test.ts + reportModelValidator.test.ts
+S9-016,docs/apollo/step9/phase1_continuous_bridge_report_inventory/completion_report.md,markdown,phase1_completion,RETAINED_UNCHANGED,none,NO,S9-5fd090a,
+S9-017,docs/apollo/step9/phase2_continuous_bridge_report_spec/completion_report.md,markdown,phase2_completion,RETAINED_UNCHANGED,none,NO,S9-5fd090a,
+S9-018,docs/apollo/step9/phase2_5_phase3_blocker_resolution/completion_report.md,markdown,phase2.5_completion,RETAINED_UNCHANGED,none,NO,S9-5fd090a,
+S9-019,docs/apollo/step9/phase3_continuous_report_model_spec/completion_report.md,markdown,phase3_completion,RETAINED_UNCHANGED,none,NO,S9-5fd090a,Phase 3 frozen; Phase 4 GO
+S9-020,docs/apollo/step9/phase4_continuous_report_model_implementation/completion_report.md,markdown,phase4_completion,RETAINED_UNCHANGED,none,NO,S9-5fd090a,Phase 4 COMPLETE
+S9-021,final_report.txt (Step 9 block),text,final_report,RETAINED_UNCHANGED,none,NO,S9-5fd090a,Step 9 Phase 4 COMPLETE stamped; appended only
