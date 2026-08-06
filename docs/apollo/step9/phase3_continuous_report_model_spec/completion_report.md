@@ -95,22 +95,22 @@ None. Documentation-only; no .ts/.tsx/.json/lockfile/backend file touched.
 
 ## 21. Tests Executed
 
-- Typecheck: npx tsc -b --pretty false -> PASS (EXIT 0) (proves no TS broken by docs-only Phase 3).
-- Docs-only git proof: git log --name-only 89b01ae..b438d22 -> all files under phase3_continuous_report_model_spec/ + final_report.txt; 0 non-doc files.
-- Full vitest not executed: two pre-existing on-main failures (contractJsonSchema.test.ts, unrelated per Step 4-A record). Typecheck + docs-only proof suffice per AGENTS.md.
+- git diff --check -> OK.
+- docs-only invariant proof: git log --name-only 89b01ae..a514f18 -> 19 files, ALL under docs/apollo/step9/phase3_continuous_report_model_spec/ + final_report.txt; 0 non-doc files, 0 .ts/.tsx/.json/.lockfile changes.
+- typecheck (npx tsc -b): NOT EXECUTED in this sandbox (package.json / node_modules / TypeScript not installed here). Change set is docs-only (0 source files), so there is no TS to break; the invariant holds vacuously. (Per AGENTS.md, a full on-main vitest run was not re-executed because the toolchain is unavailable; 2 pre-existing on-main failures noted per Step 4-A record are unrelated to this docs-only step.)
 
 ## 22. Quality Results
 
 - git diff --check: OK
 - local == origin/main: YES (b438d22)
 - worktree clean: YES
-- docs-only (no production code): YES (0 non-doc files)
-- typecheck (tsc -b): PASS (EXIT 0)
+- docs-only (no production code): YES (0 source/.ts/.tsx/.json/.lockfile changes)
+- typecheck (tsc -b): NOT EXECUTED (sandbox lacks TypeScript/node_modules; docs-only change set => vacuously safe)
 - numeric authorization: NOT_GRANTED (unchanged)
 - design/construction use: PROHIBITED (unchanged)
 - formal release readiness: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
 
-## 23. Commits and SHAs (Phase 3, 89b01ae..b438d22)
+## 23. Commits and SHAs (Phase 3, 89b01ae..a514f18)
 
 47078b8 docs(apollo-step9): start phase 3 report model specification
 e849fbb docs(apollo-step9): freeze report model responsibility boundary
@@ -126,14 +126,15 @@ fd7d0fd docs(apollo-step9): freeze summary and detail projection contract
 3b81061 docs(apollo-step9): freeze report model validation rules
 8b9c911 docs(apollo-step9): freeze phase 4 implementation acceptance criteria
 b438d22 docs(apollo-step9): prepare phase 4 report model implementation handoff
+a514f18 docs(apollo-step9): closeout phase 3 report model spec freeze (completion report + final report)
 
 ## 24. Push Results
 
-Each commit pushed immediately to origin/main; local main == origin/main after each push.
+Commits 47078b8..b438d22 pushed to origin/main during the step. The Phase 3-O closeout commit (a514f18) is local-pending-push per Phase 3-O directive; awaiting explicit push instruction (AGENTS.md).
 
 ## 25. Local/Remote SHA
 
-Final pre-closeout HEAD = b438d22 = origin/main (local == origin/main, clean).
+Final HEAD (local) = a514f18. origin/main = b438d22 (closeout commit a514f18 one commit ahead, pending push). Worktree clean.
 
 ## 26. Working Tree Status
 
@@ -143,7 +144,7 @@ Clean (empty git status --porcelain).
 
 - Phase 4 scope discipline: must not cross into HTML/PDF/UI/numeric/drawings; AC-20/section 2 enforce.
 - Phase 2.5 `09_human_decision_register.md` filename differs from directive-expected `09_decision_register.md`; content-equivalent; non-blocking (recorded in 01_phase2_5_input_review.md section 1).
-- Two pre-existing on-main vitest failures (contractJsonSchema.test.ts, unrelated) not re-run; typecheck + docs-only proof are the invariant evidence.
+- Typecheck: NOT EXECUTED (sandbox lacks TypeScript/node_modules); docs-only proof is the invariant evidence. Two pre-existing on-main vitest failures (contractJsonSchema.test.ts, unrelated) not re-run.
 
 ## Verdict block
 
