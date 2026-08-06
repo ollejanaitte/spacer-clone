@@ -23,8 +23,8 @@ calculation-drawing correspondence.
 | P1-C | Drawing 141-sheet catalog | COMPLETE (PR #428) |
 | P1-D | Calculation structure and page numbering | COMPLETE (PR #429) |
 | P1-E | Calculation-drawing correspondence and design standards | COMPLETE (PR #430) |
-| P1-F | Source status, conflicts, Phase 2 handoff, primary closeout | THIS PR |
-| P1-G | Seal — final report finalization | PENDING |
+| P1-F | Source status, conflicts, Phase 2 handoff, primary closeout | COMPLETE (PR #431) |
+| P1-G | Seal — final report finalization | THIS PR |
 
 ## Phase 1 deliverables
 

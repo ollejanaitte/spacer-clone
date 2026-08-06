@@ -17,7 +17,7 @@ checks were performed.
 | Item | Value |
 |------|-------|
 | Start SHA | aa35c6143af4cbe69b223077bede2aa109692f9a |
-| Phase 1 final SHA | (P1-F merge SHA) |
+| Phase 1 final SHA | 120a9fd (P1-F merge), P1-G SHA: GITHUB_PR_IS_AUTHORITY |
 | Phase 0 closeout merge SHA | aa35c6143af4cbe69b223077bede2aa109692f9a |
 
 ## 3. Phase 0 seal correction
@@ -81,7 +81,8 @@ calc body. H29_REFERENCE and R7_COMPLIANCE separated.
 | #428 | docs/apollo-step10-p1c-drawing-catalog | ce19b1a | MERGED |
 | #429 | docs/apollo-step10-p1d-calculation-catalog | 80c50fd | MERGED |
 | #430 | docs/apollo-step10-p1e-correspondence | a40941e | MERGED |
-| P1-F | docs/apollo-step10-p1f-closeout | (this PR) | PENDING |
+| P1-F | docs/apollo-step10-p1f-closeout | 120a9fd | MERGED |
+| P1-G | docs/apollo-step10-p1g-seal | GITHUB_PR_IS_AUTHORITY | PENDING |
 
 ## 13. Quality checks
 
@@ -139,5 +140,6 @@ FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION
 
 ## 17. Exact next action
 
-Merge P1-F, then proceed to P1-G (seal) to finalize the final_report.txt
-CURRENT block and enable Phase 2 start.
+P1-G seal complete. Phase 1 is sealed. Proceed to Phase 2 on user instruction.
+Phase 2 performs complete structural decomposition of all 2226 calculation
+pages and 141 drawing sheets.
