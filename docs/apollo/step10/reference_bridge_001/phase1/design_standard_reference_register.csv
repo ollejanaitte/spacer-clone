@@ -1,0 +1,8 @@
+raw_title,organization,edition,year,calc_locator,drawing_locator,normalized_title,applicability,source_status,r7_relation,notes
+道路橋示方書・同解説,日本道路協会,H29.11,2017,calc_pdf_p7,drawing_pdf_p9,道路橋示方書・同解説 H29.11,primary_design_standard,SOURCE_CONFIRMED,R7_DEFERRED_TO_PHASE15,Referenced in both calc and drawing
+橋梁設計の手引き,愛知県建設局,R1.7,2019,calc_pdf_p7,drawing_pdf_p9,橋梁設計の手引き R1.7,local_supplement,SOURCE_CONFIRMED,NOT_APPLICABLE,
+道路設計要領 設計編,中部地方整備局,H26.3,2014,calc_pdf_p7,drawing_pdf_p9,道路設計要領 設計編 H26.3,local_supplement,SOURCE_CONFIRMED,NOT_APPLICABLE,
+長寿命化に向けた設計の手引き(案) 第2版,中部地方整備局,H26.3,2014,calc_pdf_p7,drawing_pdf_p9,長寿命化設計の手引き 第2版 H26.3,local_supplement,SOURCE_CONFIRMED,NOT_APPLICABLE,
+鋼道路橋設計便覧,日本道路協会,R2.9,2020,calc_pdf_p7,drawing_pdf_p9,鋼道路橋設計便覧 R2.9,design_reference,SOURCE_CONFIRMED,R7_DEFERRED_TO_PHASE15,
+鋼道路橋疲労設計便覧,日本道路協会,R2.9,2020,calc_pdf_p7,drawing_pdf_p9,鋼道路橋疲労設計便覧 R2.9,fatigue_reference,SOURCE_CONFIRMED,R7_DEFERRED_TO_PHASE15,
+複合構造標準示方書,土木学会,2014年版,2014,calc_pdf_p2221,NOT_FOUND,複合構造標準示方書 2014,孔あき鋼板ジベル設計,SOURCE_CONFIRMED,NOT_APPLICABLE,Referenced in bearing design only
