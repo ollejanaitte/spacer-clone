@@ -1662,8 +1662,8 @@ STEP9_PHASE3_RESPONSIBILITY_VERDICT: FROZEN
   G_validation_and_missing_data_contract: COMPLETE
   H_units_precision_and_display_contract: COMPLETE
   I_traceability_and_versioning_contract: COMPLETE
-  J_legacy_and_compatibility_contract: IN_PROGRESS
-  K_summary_detail_projection_contract: PENDING
+  J_legacy_and_compatibility_contract: COMPLETE
+  K_summary_detail_projection_contract: IN_PROGRESS
   L_report_model_validation_rules: PENDING
   M_phase4_acceptance_criteria: PENDING
   N_phase4_handoff: PENDING
