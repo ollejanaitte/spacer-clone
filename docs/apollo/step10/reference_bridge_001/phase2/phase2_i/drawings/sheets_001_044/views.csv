@@ -1,0 +1,66 @@
+sheet_number,view_name,view_type
+1,Location map,plan
+2,General arrangement,elevation
+2,Cross section,section
+3,General arrangement,elevation
+3,Cross section,section
+4,General arrangement,elevation
+4,Cross section,section
+5,Quantity summary table,table
+6,Bolt summary table,table
+6,Plating weight table,table
+6,Paint summary table,table
+7,Parapet quantity table,table
+7,Drainage quantity table,table
+7,Substructure drainage table,table
+8,Side view,elevation
+8,Plan view,plan
+9,Cross section at support,section
+10,Plan view,plan
+10,Alignment elements,diagram
+11,Plan view,plan
+11,Detailed plan,plan
+12,Support height table,table
+12,Nose detail,section
+13,Non-composite section diagram AG1,diagram
+13,Section properties,table
+14,Non-composite section diagram AG2,diagram
+14,Section properties,table
+15,Composite section diagram AG1,diagram
+15,Bending moment diagram,diagram
+16,Composite section diagram AG2,diagram
+16,Bending moment diagram,diagram
+17,Girder basic dimension,detail
+17,Vertical stiffener detail,detail
+18,Scaffold hanger detail,detail
+18,Bottom flange waterstop detail,detail
+19,Sole plate detail,detail
+20,Camber diagram,diagram
+20,Camber table,table
+21,AG1 segment assembly J-1 J-2,elevation
+21,Cross section A-A,section
+22,AG1 segment assembly J-2 J-3 J-4,elevation
+23,AG1 segment assembly J-4 J-5 J-6,elevation
+24,AG1 segment assembly J-6 J-7 J-8,elevation
+25,AG1 segment assembly J-8 J-9 J-10,elevation
+26,AG1 segment assembly J-10 J-11 J-12,elevation
+27,AG1 segment assembly J-12 J-13 J-14,elevation
+28,AG1 segment assembly J-14 J-15 J-16,elevation
+29,AG1 end segment J-16,elevation
+30,AG2 segment assembly J-1 J-2,elevation
+30,Cross section A-A,section
+31,AG2 segment assembly J-2 J-3 J-4,elevation
+32,AG2 segment assembly J-4 J-5 J-6,elevation
+33,AG2 segment assembly J-6 J-7 J-8,elevation
+34,AG2 segment assembly J-8 J-9 J-10,elevation
+35,AG2 segment assembly J-10 J-11 J-12,elevation
+36,AG2 segment assembly J-12 J-13 J-14,elevation
+37,AG2 segment assembly J-14 J-15 J-16,elevation
+38,AG2 end segment J-16,elevation
+39,Stud layout on girder segments,detail
+40,Stud layout on girder segments,detail
+41,Stud layout on girder segments,detail
+42,Stud layout on girder segments,detail
+43,Stud layout J-14 J-15 J-16,detail
+44,Stud layout detail,detail
+44,Stud detail,detail

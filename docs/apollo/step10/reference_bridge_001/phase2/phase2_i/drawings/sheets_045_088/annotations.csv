@@ -1,0 +1,120 @@
+sheet_number,annotation_id,annotation_type,raw_text,category
+45,ANNO-001,material,"※ 1-UFLG PL 250x12x1599(SM490YA)",Upper flange material
+45,ANNO-002,material,"※ 1-UFLG PL 400x19x2908(SM490YB)",Upper flange main material
+45,ANNO-003,material,"※ 1-UFLG PL 250x12x1099(SM490YA)",Upper flange material
+45,ANNO-004,material,"※ 1-LFLG PL 250x12x1934",Lower flange material
+45,ANNO-005,material,"※ 1-LFLG PL 250x12x1468",Lower flange material
+45,ANNO-006,material,"※ 1-WEB PL 733x9x1603",Web plate left
+45,ANNO-007,material,"※ 1-WEB PL 2537x32x791(SM490YB)",Web plate main
+45,ANNO-008,material,"※ 1-WEB PL 730x9x1103",Web plate right
+45,ANNO-009,material,"※ 1-CONN PL 351x19x789(SM490YB)",Connection plate
+45,ANNO-010,material,"※ 1-CONN PL 367x19x818(SM490YB)",Connection plate
+45,ANNO-011,material,"4-SPL PL 165x13x470(SM490YA)",Splice plate
+45,ANNO-012,material,"2-SPL PL 1692x10x470(SM490YA)",Large splice plate
+45,ANNO-013,material,"2-FILL PL 1686x8x233(SS400)",Filler plate
+45,ANNO-014,material,"1-PL 80x9x625 / 1-PL 80x9x555",Small plate
+45,ANNO-015,weld,止端仕上げ,Weld toe finishing
+45,ANNO-016,weld,"15c溶接後埋め戻し",15c weld then backfill
+45,ANNO-017,stud,"※ 6-STUD φ22x200(SS400)","6 studs φ22x200 (SS400)"
+45,ANNO-018,stud,"※ 4-STUD φ22x200(SS400)","4 studs φ22x200 (SS400)"
+45,ANNO-019,note,"t=22mm",Thickness note
+45,ANNO-020,note,i %,Slope indication
+45,ANNO-021,note,"3.14% / 3.10%",Slope values
+45,ANNO-022,note,"下面に合わせる",Align with bottom face
+45,ANNO-023,note,"上面に合わせる",Align with top face
+45,ANNO-024,bolt,"24-TCB M22x80(S10T)",Bolts at connection
+45,ANNO-025,bolt,"102-TCB M22x90(S10T)",Bolts at main splice
+45,ANNO-026,bolt,"24-TCB M22x80(S10T)",Bolts at connection right
+46,ANNO-027,material,"※ 1-CONN PL 353x19x790(SM490YB)",Connection plate
+46,ANNO-028,material,"※ 1-CONN PL 355x19x793(SM490YB)",Connection plate
+46,ANNO-029,bolt,"24-TCB M22x80(S10T)",Bolts
+47,ANNO-030,material,"※ 2-CONN PL 495x32x791(SM490YB)",Pier cross beam connection plate
+47,ANNO-031,material,"4-SPL PL 230x22x620(SM490YB)",Pier splice plate
+47,ANNO-032,material,"1-WEB PL 2614x40x791(SM490YB)",Pier web plate
+47,ANNO-033,material,"1-WEB PL 1800x28x2932(SM490YB)",Pier main web plate
+47,ANNO-034,material,"1-UFLG PL 560x32x2896(SM490YB)",Pier upper flange
+47,ANNO-035,bolt,"48-TCB M22x115(S10T)",Pier bolts
+47,ANNO-036,note,"t=22mm",Thickness note
+47,ANNO-037,weld,"15c溶接後埋め戻し",15c weld then backfill
+49,ANNO-038,material,"1-UFLG PL 250x12x3196",Cross beam UFLG
+49,ANNO-039,material,"1-UFLG PL 250x12x3496",Cross beam UFLG
+49,ANNO-040,material,"1-SPL PL 240x9x320(SS400)",Splice plate
+49,ANNO-041,material,"2-SPL PL 90x10x320(SS400)",Small splice plate
+49,ANNO-042,material,"1-FILL PL 240x10x158(SS400)",Filler plate
+49,ANNO-043,bolt,"8-TCB M22x80(S10T)",Bolts
+49,ANNO-044,note,"t=22mm / t=12mm",Thickness notes
+49,ANNO-045,note,K.L.,K.L. reference line
+50,ANNO-046,bolt,"8-TCB M22x70(S10T)",Bolts
+50,ANNO-047,note,"t=12mm",Thickness
+51,ANNO-048,note,"t=12mm / t=22mm",Thickness notes
+52,ANNO-049,note,"t=12mm",Thickness
+53,ANNO-050,note,"t=12mm",Thickness
+54,ANNO-051,note,"t=12mm",Thickness
+55,ANNO-052,note,"t=12mm / t=19mm",Thickness notes
+56,ANNO-053,note,"t=12mm",Thickness
+57,ANNO-054,note,"t=12mm",Thickness
+58,ANNO-055,note,"t=19mm / t=12mm",Thickness notes
+58,ANNO-056,material,"1-UFLG PL 250x12x3196 / 250x12x3395",UFLG at C19/C20
+58,ANNO-057,bolt,"8-TCB M22x75(S10T) / 8-TCB M22x70(S10T)",Bolts
+58,ANNO-058,bolt,"8-TCB M22x70(S10T)",Bolts at C20
+61,ANNO-059,material,"★ 1-GUSS PL 570x22x1730(SM490YB)",Main gusset plate
+61,ANNO-060,material,"1-GUSS PL 640x22x940(SM490YB)",Gusset plate S1
+61,ANNO-061,material,"1-GUSS PL 641x22x1200(SM490YB)",Gusset plate C1
+61,ANNO-062,material,"1-GUSS PL 1270x22x1220(SM490YB)",Large gusset plate
+61,ANNO-063,bolt,"36-TCB M22x80(S10T)",Bolts at S1
+61,ANNO-064,bolt,"24-TCB M22x80(S10T)",Bolts at main gusset
+61,ANNO-065,bolt,"12-TCB M22x80(S10T)",Bolts at C1
+61,ANNO-066,bolt,"6-TCB M22x70(S10T)",Bolts at K.L.
+61,ANNO-067,bolt,"52-TCB M22x80(S10T)",Bolts at large gusset
+62,ANNO-068,material,"※ 1-GUSS PL 491x12x980 / 491x12x920 / 541x12x1030",Gusset plates
+62,ANNO-069,bolt,"10-TCB M22x60(S10T) / 8-TCB M22x60(S10T) / 12-TCB M22x60(S10T)",Connection bolts
+68,ANNO-070,material,"1-GUSS PL 690x22x1040(SM490YB)",Gusset plate C16/C17
+68,ANNO-071,material,"※ 1-GUSS PL 741x22x1510(SM490YB)",Gusset plate PR2
+68,ANNO-072,bolt,"40-TCB M22x80(S10T)",Bolts at C16/C17
+68,ANNO-073,bolt,"36-TCB M22x80(S10T)",Bolts at PR2
+72,ANNO-074,rebar,"H5 D25 / H7 D25 / H9 D25 / H11 D25",Rebar marks H-series
+72,ANNO-075,rebar,"K1 D19 / K6 D19 / K7 D19 / K3 D19",Rebar marks K-series
+72,ANNO-076,note,"2.600% / 2.605%",Slope indications
+72,ANNO-077,note,※,General note marker
+73,ANNO-078,rebar,"K1 D19 / H6 D25",Rebar marks
+73,ANNO-079,rebar_pitch,"150 215 240 245 103",Rebar spacing pattern
+74,ANNO-080,rebar,"H5 D25 / H6 D25 / H8 D25 / H11 D25",Rebar marks H-series
+74,ANNO-081,rebar,"K1 D19 / K2 D19 / K4 D19 / K5 D19",Rebar marks K-series
+74,ANNO-082,note,"2.000%",Slope
+74,ANNO-083,note,"横桁上フランジ付きガセット / 横構",Cross beam flange gusset / bracing
+85,ANNO-084,condition,"設 計 条 件",Design conditions header
+85,ANNO-085,condition,"最 大 反 力 Rmax 2000 kN",Max reaction
+85,ANNO-086,condition,"最 大 反 力 回転照査用 Rmax2 1790 kN",Max reaction for rotation check
+85,ANNO-087,condition,"死 荷 重 反 力 Rd 1230 kN",Dead load reaction
+85,ANNO-088,condition,"照 査 荷 重 Rl 390 kN",Check load
+85,ANNO-089,condition,"最 大 水 平 力 橋軸方向 Rheq1 1354 kN",Max horizontal force longitudinal
+85,ANNO-090,condition,"最 大 水 平 力 橋軸直角方向 Rheq2 2290 kN",Max horizontal force transverse
+85,ANNO-091,condition,"上 向 き の 地 震 力 Ru 1486 kN",Upward seismic force
+85,ANNO-092,condition,"照 査 荷 重 時 の 変 位 量 δcl 0.58 mm",Check load displacement
+85,ANNO-093,condition,"回 転 変 位 量 δr 1.63 mm",Rotation displacement
+85,ANNO-094,condition,"常 時 橋 軸 方 向 ΔL1 49.4 mm",Service longitudinal displacement
+85,ANNO-095,condition,"変 位 量 地震時 橋 軸 方 向 ΔLe1 399 mm",Seismic longitudinal displacement
+85,ANNO-096,material,"1 鉛プラグ入り積層ゴム支承 NR+SM490A+SS400+Pb",Lead rubber bearing
+85,ANNO-097,material,"2 ベースプレート SM490A",Base plate material
+85,ANNO-098,note,"ねじ深60 / ねじ深65",Thread depth 60/65mm
+85,ANNO-099,note,"(裏側から)",From reverse side
+86,ANNO-100,material,"1 鉛プラグ入り積層ゴム支承 NR+SM490A+SS400+Pb",Lead rubber bearing PR
+86,ANNO-101,material,"2 ベースプレート SM490A",Base plate material
+86,ANNO-102,condition,"Rmax 4730 kN / Rmax2 4160 kN",Max reactions PR
+86,ANNO-103,condition,"Rd 3350 kN / Rl ---- kN",Dead/check load
+86,ANNO-104,condition,"Rheq1 3391 kN / Rheq2 3997 kN",Horizontal forces
+86,ANNO-105,condition,"Ru 1656 kN",Upward seismic force
+86,ANNO-106,condition,"δr 1.74 mm / ΔL1 15.7 mm / ΔLe1 346 mm",Displacements
+86,ANNO-107,note,"ねじ深55 / ねじ深75",Thread depth
+87,ANNO-108,material,"1 鉛プラグ入り積層ゴム支承 NR+SM490A+SS400+Pb",Lead rubber bearing PU
+87,ANNO-109,material,"2 ソールプレート SM490A＋SS400",Sole plate material
+87,ANNO-110,condition,"Rmax ---- kN / Rmax2 ---- kN",Max reactions not specified
+87,ANNO-111,condition,"Rheq1 1354 kN / Rheq2 ---- kN",Horizontal forces
+87,ANNO-112,condition,"ΔL1 49.4 mm / ΔLe1 399 mm",Displacements
+87,ANNO-113,rebar,8-D41,Anchor bars D41
+88,ANNO-114,material,"1 鉛プラグ入り積層ゴム支承 NR+SM490A+SS400+Pb",Lead rubber bearing PR
+88,ANNO-115,material,"2 ソールプレート SM490A＋SS400",Sole plate material
+88,ANNO-116,condition,"Rmax ---- kN / Rmax2 ---- kN",Not specified
+88,ANNO-117,condition,"Rheq1 3391 kN / Rheq2 ---- kN",Horizontal forces
+88,ANNO-118,condition,"ΔL1 15.7 mm / ΔLe1 346 mm",Displacements
+88,ANNO-119,rebar,20-D41,Anchor bars D41

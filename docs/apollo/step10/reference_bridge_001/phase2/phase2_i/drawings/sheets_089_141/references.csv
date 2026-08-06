@@ -1,0 +1,18 @@
+sheet_number,ref_type,ref_target,description
+89,cross_sheet,90,伸縮装置図(その2) 継続
+90,cross_sheet,91,伸縮装置図(その3) 継続
+91,cross_sheet,92,伸縮装置図 継続 (AR2橋台)
+93,cross_sheet,94-99,壁高欄配筋図 シリーズ
+101,cross_sheet,102-111,上部工排水装置 シリーズ
+102,standard,JIS HDZT 77,溶融亜鉛メッキ基準
+102,standard,JIS B1198,スタッド規格
+91,standard,JIS HDZT 77,溶融亜鉛メッキ基準
+91,standard,JIS HDZT 49,ボルトナット類メッキ基準
+90,standard,JIS B1198,スタッド規格
+92,standard,SM520C-耐疲労鋼,Face PL 材質
+92,standard,SM490YB-耐疲労鋼,PBL/Web PL 材質
+132,drawing_type,参考図,落下物防止柵 参考図
+137,drawing_type,参考図,橋名板・橋歴板 参考図
+138,drawing_type,参考図,ノーズ部ガードレール 参考図
+139,drawing_type,参考図,ノーズ部ガードレール 参考図
+140,drawing_type,参考図,ノーズ部止水構造図 参考図

@@ -1,0 +1,45 @@
+sheet_number,drawing_title,calc_section,notes
+1,位置図,Ch1,site/location
+2,橋梁一般図(その1),Ch1,general arrangement
+3,橋梁一般図(その2),Ch1,general arrangement
+4,橋梁一般図(その3),Ch1,general arrangement
+5,数量総括表(その1),Ch2,steel quantities
+6,数量総括表(その2),Ch2,bolt/paint/weld quantities
+7,数量総括表(その3),Ch2,parapet/drainage quantities
+8,上部工構造一般図(その1),Ch1,structural general arrangement
+9,上部工構造一般図(その2),Ch1,cross-section at supports
+10,線形図(その1),Ch1,alignment
+11,線形図(その2),Ch1,plan alignment
+12,線形図(その3),Ch1/Ch2,support heights / structural depths
+13,断面構成図(その1),Ch3/s3.3,non-composite section AG1
+14,断面構成図(その2),Ch3/s3.4,non-composite section AG2
+15,断面構成図(その3),Ch3/s3.5,composite section AG1
+16,断面構成図(その4),Ch3/s3.6,composite section AG2
+17,共通詳細図(その1),Ch2,stiffener details
+18,共通詳細図(その2),Ch2,hanger/waterstop details
+19,共通詳細図(その3),Ch2,sole plate details
+20,キャンバー図,Ch3,camber diagram AG1/AG2
+21,主桁AG1(その1),Ch3/s3.3,AG1 segment J-1/J-2
+22,主桁AG1(その2),Ch3/s3.3,AG1 segment J-2/J-3/J-4
+23,主桁AG1(その3),Ch3/s3.3,AG1 segment J-4/J-5/J-6
+24,主桁AG1(その4),Ch3/s3.3,AG1 segment J-6/J-7/J-8
+25,主桁AG1(その5),Ch3/s3.3,AG1 segment J-8/J-9/J-10
+26,主桁AG1(その6),Ch3/s3.3,AG1 segment J-10/J-11/J-12
+27,主桁AG1(その7),Ch3/s3.3,AG1 segment J-12/J-13/J-14
+28,主桁AG1(その8),Ch3/s3.3,AG1 segment J-14/J-15/J-16
+29,主桁AG1(その9),Ch3/s3.3,AG1 end segment J-16
+30,主桁AG2(その1),Ch3/s3.4,AG2 segment J-1/J-2
+31,主桁AG2(その2),Ch3/s3.4,AG2 segment J-2/J-3/J-4
+32,主桁AG2(その3),Ch3/s3.4,AG2 segment J-4/J-5/J-6
+33,主桁AG2(その4),Ch3/s3.4,AG2 segment J-6/J-7/J-8
+34,主桁AG2(その5),Ch3/s3.4,AG2 segment J-8/J-9/J-10
+35,主桁AG2(その6),Ch3/s3.4,AG2 segment J-10/J-11/J-12
+36,主桁AG2(その7),Ch3/s3.4,AG2 segment J-12/J-13/J-14
+37,主桁AG2(その8),Ch3/s3.4,AG2 segment J-14/J-15/J-16
+38,主桁AG2(その9),Ch3/s3.4,AG2 end segment J-16
+39,スタッド配置図(その1),Ch3/s3.7,stud layout
+40,スタッド配置図(その2),Ch3/s3.7,stud layout
+41,スタッド配置図(その3),Ch3/s3.7,stud layout
+42,スタッド配置図(その4),Ch3/s3.7,stud layout
+43,スタッド配置図(その5),Ch3/s3.7,stud layout
+44,スタッド配置図(その6),Ch3/s3.7,stud layout

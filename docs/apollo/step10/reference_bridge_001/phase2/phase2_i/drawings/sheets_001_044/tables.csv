@@ -1,0 +1,11 @@
+sheet_number,table_name_jp,table_name_en,description
+5,本体付属別総括表,Main body and附属物 summary table,"Steel weight by material grade (PL SM520C-H, SM520C, SM490YB, SM490YA, SM400A, SS400) and member type (main girder, splice, cross beam, bracing). Total ~332,667kg with 314,348kg main structure + 18,319kg附属物"
+5,工数算定要素表,Work-hour estimation factor table,"Element counts and weights for large/small pieces, member counts, weld lengths, average span 43800mm, girder spacing 4500mm, girder height 2700mm"
+5,付属物要素集計表,Accessory element summary table,"Inspection road 5909kg, deck drainage 84kg, superstructure inspection 10611kg, step prevention 1010kg, total 17614kg"
+6,ボルト総括表,Bolt summary table,"STUD φ22 (2441+590=3031), TCB M22 various lengths (10092+5528+5376=20996), BN bolts (982+84+3020+1353+24=5463), total 30758"
+6,メッキ重量総括表,Plating weight summary table,"HDZ35, HDZ45, HDZ55 plating weights by member category. Total 20461kg"
+6,塗装工集計表,Painting summary table,"Paint areas by coating specification (A, C-D-F, C-F, D, E, F, M, N, J systems). Shop primer 4475m2, shop coat 2210m2, field coat various"
+6,溶接延長総括表,Weld length summary table,"Main girder: plate butt 1065.136m, T-joint 342.008m; total 1407.144m"
+7,壁高欄数量総括表,Parapet quantity summary,"Concrete volume: L-side 50.8m3, R-side 53.5m3, NOSE 2.7m3, total 106.9m3. Form area 573.1m2. Expansion joints 35, contraction joints 37"
+7,上部工排水数量総括表,Superstructure drainage quantity summary,"Drainage basins, pipes VP250/VP200 various lengths, supports"
+7,下部工排水数量総括表,Substructure drainage quantity summary,"VP250/VP200 pipes for PU15 and AR2 abutments, rubber supports"

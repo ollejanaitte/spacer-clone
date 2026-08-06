@@ -1,0 +1,56 @@
+sheet_number,member_id,member_type,designation,material,size_description,location_ref
+45,MEM-001,girder,AG1,SM490YA,Main girder AG1,Left
+45,MEM-002,girder,AG2,SM490YA,Main girder AG2,Right
+45,MEM-003,cross_beam,UFLG_end_L,SM490YA,"250x12x1599",Upper flange end left
+45,MEM-004,cross_beam,UFLG_end_center,SM490YB,"400x19x2908",Upper flange center
+45,MEM-005,cross_beam,UFLG_end_R,SM490YA,"250x12x1099",Upper flange end right
+45,MEM-006,cross_beam,LFLG_end_L,-,"250x12x1934",Lower flange left
+45,MEM-007,cross_beam,LFLG_end_R,-,"250x12x1468",Lower flange right
+45,MEM-008,cross_beam,WEB_end_L,-,"733x9x1603",Web left
+45,MEM-009,cross_beam,WEB_end_main,SM490YB,"2537x32x791",Web main
+45,MEM-010,cross_beam,WEB_end_R,-,"730x9x1103",Web right
+45,MEM-011,connection,CONN_PL,SM490YB,"351x19x789",Connection plate
+45,MEM-012,connection,CONN_PL_alt,SM490YB,"367x19x818",Connection plate alt
+45,MEM-013,splice,SPL_PL,SM490YA,"165x13x470",Splice plate
+45,MEM-014,splice,SPL_PL_large,SM490YA,"1692x10x470",Splice plate large
+45,MEM-015,fill,FILL_PL,SS400,"1686x8x233",Filler plate
+45,MEM-016,stud,STUD,SS400,"φ22x200",6+4 studs
+46,MEM-017,girder,AG1,SM490YA,Main girder AG1,Left
+46,MEM-018,girder,AG2,SM490YA,Main girder AG2,Right
+46,MEM-019,cross_beam,UFLG_end2_center,SM490YB,"400x19x2897",Upper flange center
+46,MEM-020,connection,CONN_PL2,SM490YB,"353x19x790",Connection plate
+46,MEM-021,connection,CONN_PL2_alt,SM490YB,"355x19x793",Connection plate alt
+46,MEM-022,splice,SPL_PL2,SM490YA,"165x13x470",Splice plate
+47,MEM-023,girder,PR1,SM490YA,Pier girder PR1,Left
+47,MEM-024,girder,PR2,SM490YA,Pier girder PR2,Right
+47,MEM-025,cross_beam,UFLG_pier,SM490YB,"560x32x2896",Pier upper flange
+47,MEM-026,cross_beam,WEB_pier_main,SM490YB,"1800x28x2932",Pier main web
+47,MEM-027,cross_beam,WEB_pier,SM490YB,"2614x40x791",Pier web
+47,MEM-028,connection,CONN_PL_pier,SM490YB,"495x32x791",Pier connection plate
+47,MEM-029,splice,SPL_PL_pier,SM490YB,"230x22x620",Pier splice plate
+49,MEM-030,cross_beam,UFLG_C1,-,"250x12x3196",Cross beam C1 upper flange
+49,MEM-031,cross_beam,UFLG_C2,-,"250x12x3496",Cross beam C2 upper flange
+49,MEM-032,splice,SPL_PL_C1,SS400,"240x9x320",Splice plate C1
+49,MEM-033,splice,SPL_PL_C1_sm,SS400,"90x10x320",Splice plate C1 small
+49,MEM-034,fill,FILL_PL_C1,SS400,"240x10x158",Filler plate C1
+50,MEM-035,cross_beam,UFLG_C3,-,"250x12x3496",Cross beam C3 upper flange
+50,MEM-036,cross_beam,UFLG_C4,-,"250x12x3396",Cross beam C4 upper flange
+58,MEM-037,cross_beam,UFLG_C19,-,"250x12x3196",Cross beam C19 upper flange
+58,MEM-038,cross_beam,UFLG_C20,-,"250x12x3395",Cross beam C20 upper flange
+61,MEM-039,bracing,S1_GUSSET,SM490YB,"640x22x940",Gusset plate at S1
+61,MEM-040,bracing,C1_GUSSET,SM490YB,"641x22x1200",Gusset plate at C1
+61,MEM-041,bracing,MAIN_GUSSET,SM490YB,"570x22x1730",Main gusset plate
+61,MEM-042,bracing,LARGE_GUSSET,SM490YB,"1270x22x1220",Large gusset plate
+61,MEM-043,bracing,CONN_PLATE,-,"20 30 30 20",Connection plate profile
+62,MEM-044,bracing,GUSSET_S1,SM490YB,"491x12x980",Gusset at S1
+62,MEM-045,bracing,GUSSET_S1_alt,SM490YB,"491x12x920",Gusset alt
+62,MEM-046,bracing,GUSSET_S1_alt2,SM490YB,"541x12x1030",Gusset alt2
+68,MEM-047,bracing,GUSSET_C16,SM490YB,"690x22x1040",Gusset at C16
+68,MEM-048,bracing,GUSSET_C17,SM490YB,"690x22x1040",Gusset at C17
+68,MEM-049,bracing,GUSSET_PR2,SM490YB,"741x22x1510",Gusset at PR2
+85,MEM-050,bearing,LAMINATED_RUBBER,NR+SM490A+SS400+Pb,"φ200 鉛プラグ",Lead rubber bearing PU15-AR2
+85,MEM-051,bearing,BASE_PLATE,SM490A,"770x880",Base plate
+86,MEM-052,bearing,LAMINATED_RUBBER_PR,NR+SM490A+SS400+Pb,"φ300 鉛プラグ",Lead rubber bearing PR1-PR2
+86,MEM-053,bearing,BASE_PLATE_PR,SM490A,"1070x1220",Base plate PR
+87,MEM-054,bearing,SOLE_PLATE_PU,SM490A+SS400,"990x700",Sole plate PU15-AR2
+88,MEM-055,bearing,SOLE_PLATE_PR,SM490A+SS400,"1340x1100",Sole plate PR1-PR2
