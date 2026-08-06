@@ -42,6 +42,8 @@ const EXPECTED_APOLLO_TEST_MODULES = [
   "projectId.test.ts",
   "quantityModel.test.ts",
   "reportModel.test.ts",
+  "reportModelContinuous.test.ts",
+  "reportModelValidator.test.ts",
   "searchFilter.test.ts",
   "sectionProperties.test.ts",
   "selection.test.ts",

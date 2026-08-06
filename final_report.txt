@@ -1697,14 +1697,14 @@ BEGIN APOLLO STEP 9 — Phase 4 REPORT MODEL IMPLEMENTATION (docs-first + code)
 ================================================================================
 STEP_ID: APOLLO_STEP_9_PHASE4_REPORT_MODEL_IMPLEMENTATION
 DOCUMENTATION_ONLY_IN_PHASE_4A: YES
-APPLICATION_CODE_CHANGED_IN_PHASE_4A: NO
+APPLICATION_CODE_CHANGED: YES
 BASE_MAIN_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
-CURRENT_MAIN_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
-UPDATED_AT: 2026-08-06T (Phase 4-A preflight)
+CURRENT_MAIN_SHA: 0fadc1c2fa984f702b94af12f249a97fc2842705
+UPDATED_AT: 2026-08-06T
 
-STEP9_PHASE4_STATUS: IN_PROGRESS
+STEP9_PHASE4_STATUS: COMPLETE
 STEP9_PHASE4_BASELINE_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
-STEP9_PHASE4_CURRENT_SUBSTEP: A_PREFLIGHT
+STEP9_PHASE4_CURRENT_SUBSTEP: H_CLOSEOUT
 
 PHASE4_ENTRY_VERDICT: GO_WITH_NON_NUMERIC_RESTRICTIONS (reaffirmed from Phase 3)
 
@@ -1716,6 +1716,38 @@ BASELINE_SHA: 52f1f536cd4eae1da925e26432e75ffeea0316ab
 PHASE3_STATUS_VERIFIED: COMPLETE
 PHASE4_GATE: GO_WITH_NON_NUMERIC_RESTRICTIONS
 TOOLCHAIN: frontend-scoped (frontend/package.json + frontend/tsconfig.json + frontend/node_modules present; frontend/node_modules/.bin/{tsc,vitest,vite,rimraf}); root has no package.json by design
+
+## Phase 4-B Entity Types (c847036)
+PHASE4_B_ENTITY_TYPES_VERDICT: COMPLETE
+reportModelTypes.ts: 364 lines, additive. CanonicalChapterId (CP-01..CP-34), DeprecatedChapterId + CH_TO_CP alias, status/authorization/missing/legacy unions, R-01..R-22 entity summary types. Step 2-B scaffold untouched.
+
+## Phase 4-C Transformer (e3e2fd9)
+PHASE4_C_TRANSFORMER_VERDICT: COMPLETE
+reportModelContinuous.ts: 530 lines. buildContinuousReportModel read-only; CP-01..CP-25; CP-07 NOT_AVAILABLE; CP-13 NOT_AVAILABLE (U-03); CP-30..34/CP-08/CP-15 forbidden; numeric auth NOT_GRANTED.
+
+## Phase 4-D Validator (0eaa328)
+PHASE4_D_VALIDATOR_VERDICT: COMPLETE
+reportModelValidator.ts: 170 lines. validateReportModel / assertReportModelValid — fail-closed, VR-01..VR-26.
+
+## Phase 4-E Projection + Export Gate (0eaa328)
+PHASE4_E_PROJECTION_EXPORT_VERDICT: COMPLETE
+reportExport.ts: 28 lines added. assertContinuousReportExportable + createContinuousReport / downloadContinuousReportJson. reportModelContinuous.ts extended with summary/detail projection.
+
+## Phase 4-F Tests + Regression (0eaa328 + 0fadc1c + closeout commit)
+PHASE4_F_TESTS_REGRESSION_VERDICT: COMPLETE
+reportModelContinuous.test.ts: 77 lines (3 continuous + 1 regression).
+reportModelValidator.test.ts: 188 lines (14 VR cases + regression).
+apolloSuite.test.ts: 2 lines added (register continuous + validator tests).
+Vitest: 77 files / 538 tests PASS.
+
+## Phase 4-G Scope Audit
+PHASE4_G_SCOPE_AUDIT_VERDICT: PASS
+No denylist/prohibited-zone files modified.
+
+## Phase 4-H Closeout
+PHASE4_H_CLOSEOUT_VERDICT: COMPLETE
+completion_report.md written.
+final_report.txt updated.
 
 ## Existing code inventory (unchanged by Phase 4-A)
 REPORT_MODEL_SCAFFOLD: frontend/src/apollo/report/reportModel.ts (468 lines; CH-* registry, buildReportModel, assertDevelopmentReportExportable, assertFormalReportRejected, ReportModel)
@@ -1734,7 +1766,19 @@ DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY (unchanged)
 FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
 
 EVIDENCE_ROOT: docs/apollo/step9/phase4_continuous_report_model_implementation/
-NEXT_ACTION: Phase 4-B implement Report Model entity types (R-01..R-22); Phase 4-C transformer; 4-D validator; 4-E projection; 4-F tests+regression; 4-G scope audit; 4-H closeout.
-================================================================================
+
+## Commits (52f1f53..closeout)
+2670d9c docs(apollo-step9): start phase 4 report model implementation
+c847036 refactor(apollo): add continuous report model entity types
+e3e2fd9 feat(apollo): implement continuous report model transformer
+0eaa328 feat(apollo): add continuous report model validator (VR-01..26) + export gate
+0fadc1c fix(apollo): realign validator to frozen VR-01..26 table + tests
+198db18 test(apollo): register continuous report model tests in AP-00 suite
+
+STEP9_PHASE4_VERDICT: COMPLETE
+STEP9_OVERALL_VERDICT: COMPLETE
+STEP9_PHASE5_START_READINESS: GO
+NEXT_ACTION: Step 9 complete. Do not proceed to Step 11 until instructed.
+===============================================================================
 END APOLLO STEP 9 — PHASE 4 REPORT MODEL IMPLEMENTATION
 ================================================================================
