@@ -1,0 +1,26 @@
+element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
+CH2-PE-001,16,11,CH2,CAL-SEC-ch2,chapter_title,"第2章 合成床版の設計",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Chapter 2 heading
+CH2-PE-002,16,11,CH2,CAL-SEC-ch2,note,計算はノーズ部を考慮しない標準幅員で行う。,chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Scope note
+CH2-PE-003,17,12,CH2,CAL-SEC-2.1,section_title,"2.1 一般部",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Section 2.1 general part
+CH2-PE-004,17,12,CH2,CAL-SEC-2.1,design_calc_title,"合成床版設計計算書",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Design calc sub-title
+CH2-PE-005,18,13,CH2,CAL-SEC-2.1,subsection_title,"§1. 設計条件",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Design conditions subsection
+CH2-PE-006,18,13,CH2,CAL-SEC-2.1,subsection_title,"1-1 各部構成",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Component configuration
+CH2-PE-007,18,13,CH2,CAL-SEC-2.1,subsection_title,"1-2 荷重",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Load conditions
+CH2-PE-008,18,13,CH2,CAL-SEC-2.1,subsection_title,"1-3 材料",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Material specifications
+CH2-PE-009,19,14,CH2,CAL-SEC-2.1,subsection_title,"§2. 断面寸法",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Section dimensions
+CH2-PE-010,19,14,CH2,CAL-SEC-2.1,subsection_title,"2-1 合成床版厚",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Composite deck thickness
+CH2-PE-011,19,14,CH2,CAL-SEC-2.1,subsection_title,"2-2 鋼材寸法",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Steel member dimensions
+CH2-PE-012,19,14,CH2,CAL-SEC-2.1,subsection_title,"2-3 スタッド",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Stud specifications
+CH2-PE-013,20,15,CH2,CAL-SEC-2.1,subsection_title,"2-4 鉄筋配置",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Reinforcement layout
+CH2-PE-014,20,15,CH2,CAL-SEC-2.1,subsection_title,"§3. 断面力の計算",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Section force calculation
+CH2-PE-015,20,15,CH2,CAL-SEC-2.1,subsection_title,"3-1 支間部",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Span section
+CH2-PE-016,21,16,CH2,CAL-SEC-2.1,subsection_title,"3-1-1 合成前断面",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Pre-composite section
+CH2-PE-017,21,16,CH2,CAL-SEC-2.1,subsection_title,"3-1-2 合成後断面",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Post-composite section
+CH2-PE-018,22,17,CH2,CAL-SEC-2.1,subsection_title,"3-2 張出部",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Cantilever section
+CH2-PE-019,27,22,CH2,CAL-SEC-2.1,subsection_title,"3-2-3 張出-ハンチ折れ点",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Cantilever-haunch breakpoint
+CH2-PE-020,29,24,CH2,CAL-SEC-2.1,subsection_title,"3-3 断面力の集計",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Section force summary
+CH2-PE-021,30,25,CH2,CAL-SEC-2.1,subsection_title,"§4. 疲労に対する耐久性能の照査",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Fatigue durability check
+CH2-PE-022,38,33,CH2,CAL-SEC-2.1,subsection_title,"4-5 ずれ止めの照査",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Shear connector check
+CH2-PE-023,41,36,CH2,CAL-SEC-2.1,subsection_title,"§5. 耐荷性能の照査",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Load bearing capacity check
+CH2-PE-024,70,65,CH2,CAL-SEC-2.2,section_title,"2.2 桁端部",chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Section 2.2 girder end part
+CH2-PE-025,114,109,CH2,CAL-SEC-2.2,page_end,第2章 終了,chapter_02/page_elements.csv,EXTRACTION_COMPLETE,HIGH,Chapter 2 end marker

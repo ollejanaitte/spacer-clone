@@ -1,0 +1,3 @@
+figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,source_locator,extraction_status,notes
+FM-FIG-001,1,,front_matter,,金沢IC Aランプ橋 3径間連続鈑桁橋,cover_art,front_matter/figures.csv,EXTRACTION_COMPLETE,PDF cover page graphical title layout
+FM-FIG-002,3,,front_matter,,目次,TOC_layout,front_matter/figures.csv,EXTRACTION_COMPLETE,Table of contents spanning PDF pages 3-5
