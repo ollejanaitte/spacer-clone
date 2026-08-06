@@ -1636,3 +1636,50 @@ NEXT_ACTION: Phase 2.5 COMPLETE. Step 9 / Phase 3 GO_WITH_NON_NUMERIC_RESTRICTIO
 ================================================================================
 END APOLLO STEP 9 — PHASE 2.5 BLOCKER RESOLUTION
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 9 — Phase 3 REPORT MODEL SPECIFICATION FREEZE (docs-first)
+================================================================================
+STEP_ID: APOLLO_STEP_9_PHASE3_REPORT_MODEL_SPEC
+DOCUMENTATION_ONLY: YES
+APPLICATION_CODE_CHANGED: NO
+BASE_MAIN_SHA: 89b01ae8e2a9b074c323f04d3c236bb5407c52ff
+CURRENT_MAIN_SHA: 89b01ae8e2a9b074c323f04d3c236bb5407c52ff
+OVERALL_PROGRESS: IN_PROGRESS
+STEP9_PHASE3_STATUS: IN_PROGRESS
+STEP9_PHASE3_TARGET: REPORT_MODEL_SPEC_FREEZE
+STEP9_PHASE3_ENTRY_VERDICT: GO_WITH_NON_NUMERIC_RESTRICTIONS
+STEP9_PHASE3_BASELINE_SHA: 89b01ae8e2a9b074c323f04d3c236bb5407c52ff
+
+PHASE3_SUBSTEPS:
+  A_input_review: COMPLETE
+  B_report_model_responsibility: IN_PROGRESS
+  C_domain_to_report_mapping: PENDING
+  D_report_model_entity_spec: PENDING
+  E_chapter_payload_contract: PENDING
+  F_status_and_authorization_contract: PENDING
+  G_validation_and_missing_data_contract: PENDING
+  H_units_precision_and_display_contract: PENDING
+  I_traceability_and_versioning_contract: PENDING
+  J_legacy_and_compatibility_contract: PENDING
+  K_summary_detail_projection_contract: PENDING
+  L_report_model_validation_rules: PENDING
+  M_phase4_acceptance_criteria: PENDING
+  N_phase4_handoff: PENDING
+  O_completion: PENDING
+
+CP_STAR_CANONICAL: RECONFIRMED (Phase 2 chapter_matrix.csv)
+CH_STAR_DEPRECATED: RECONFIRMED (reportModel.ts:25-42 scaffold -> Phase 4 CP-* migration)
+FORMAL_PDF: PROHIBITED (assertFormalReportRejected retained)
+CONTINUOUS_DRAWINGS: PROHIBITED (until Phase 6, H-03 ADOPTED)
+NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED (unchanged)
+DESIGN_OR_CONSTRUCTION_USE: PROHIBITED (unchanged)
+STRUCTURAL_ENGINEERING_CORRECTNESS: NOT_AUTHORIZED (unchanged)
+DEVELOPMENT_RESULT_LABEL: UNVERIFIED_DEVELOPMENT_ONLY (unchanged)
+FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION (unchanged)
+
+EVIDENCE_ROOT: docs/apollo/step9/phase3_continuous_report_model_spec/
+NEXT_ACTION: Continue Phase 3-B..O (docs-first spec freeze); push each substep; final_report updated each step.
+================================================================================
+END APOLLO STEP 9 — PHASE 3 REPORT MODEL SPECIFICATION FREEZE
+================================================================================
