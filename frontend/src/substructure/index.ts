@@ -5,3 +5,5 @@ export * from "./validation";
 export * from "./SubstructureSolidGenerator";
 // Phase C1 (I03B) 橋脚ソリッド生成。
 export * from "./PierSolidGenerator";
+// Phase C1 (I03C) 基礎・杭ソリッド生成。
+export * from "./FoundationSolidGenerator";
