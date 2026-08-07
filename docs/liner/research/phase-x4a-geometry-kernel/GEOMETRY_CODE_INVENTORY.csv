@@ -1,0 +1,19 @@
+﻿capability,existing_file,existing_symbol,status,current_consumers,current_tests,candidate_canonical,duplicate_group,risk,action,notes
+HORIZONTAL_EVALUATION,frontend/src/liner/core/geometry/horizontal.ts,"evaluateElementAtDistance, elementLength, evaluateElementEndState",IMPLEMENTED_VERIFIED,"RuleEngine, AlignmentSolver, Preview, Export",horizontal.test.ts,YES,-,LOW,KEEP_AS_CANONICAL,直線・円・クロソイドの統合評価
+STRAIGHT_EVALUATION,frontend/src/liner/core/geometry/line.ts,evaluateStraightElement,IMPLEMENTED_VERIFIED,horizontal.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,直線要素評価
+CIRCULAR_ARC,frontend/src/liner/core/geometry/arc.ts,"evaluateCircularArcElement, signedArcCurvature",IMPLEMENTED_VERIFIED,horizontal.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,円曲線評価
+CLOTHOID,frontend/src/liner/core/geometry/clothoid.ts,"clothoidCurvatureAt, clothoidHeadingAt, evaluateClothoidElement",IMPLEMENTED_VERIFIED,horizontal.ts,clothoid.test.ts,YES,-,LOW,KEEP_AS_CANONICAL,クロソイド評価
+VERTICAL_PROFILE,frontend/src/liner/core/geometry/vertical.ts,"evaluateVerticalElement, evaluateVerticalAlignment",IMPLEMENTED_VERIFIED,"elevationAt.ts, zMerge.ts",-,YES,-,LOW,KEEP_AS_CANONICAL,縦断評価
+COORDINATE_3D,frontend/src/liner/core/coordinate3d.ts,"worldToLayout, layoutToWorld, localFrameToWorld",IMPLEMENTED_VERIFIED,bridgeLayoutEvaluation.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,3D座標変換
+STATION_AT_POINT,frontend/src/liner/core/stationAtPoint.ts,"stationAtPoint, pointAtStation",IMPLEMENTED_VERIFIED,"sampling.ts, exports",-,YES,-,LOW,KEEP_AS_CANONICAL,測点↔座標変換
+VECTOR_UTILITIES,frontend/src/liner/core/vector.ts,"vec2, vec3, add2, scale2, distance2, dot2",IMPLEMENTED_VERIFIED,core全体,-,YES,-,LOW,KEEP_AS_CANONICAL,ベクトル演算
+TOLERANCES,frontend/src/liner/core/tolerances.ts,DEFAULT_TOLERANCES,IMPLEMENTED_VERIFIED,core全体,-,YES,-,LOW,KEEP_AS_CANONICAL,許容差定義
+FRAME_EVALUATION,frontend/src/liner/core/geometry/frame.ts,evaluateFrame,IMPLEMENTED_VERIFIED,bridgeLayoutEvaluation.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,フレーム評価
+TYPES,frontend/src/liner/core/types.ts,"Vec2, Vec3, AlignmentElement, ElementEvaluation 他",IMPLEMENTED_VERIFIED,core全体,各種,YES,-,LOW,KEEP_AS_CANONICAL,全型定義
+CONTINUITY_C0,frontend/src/liner/core/continuityC0.ts,checkC0Continuity,IMPLEMENTED_VERIFIED,horizontal.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,C0連続性
+CONTINUITY_C1,frontend/src/liner/core/continuityC1.ts,checkC1Continuity,IMPLEMENTED_VERIFIED,horizontal.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,C1連続性
+CROSS_SECTION_ELEVATION,frontend/src/liner/core/crossSectionElevation.ts,-,IMPLEMENTED_VERIFIED,crossSectionZMerge.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,断面高さ
+CROSS_SECTION_Z_MERGE,frontend/src/liner/core/crossSectionZMerge.ts,-,IMPLEMENTED_VERIFIED,bridgeLayoutEvaluation.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,Z Merge
+Z_MERGE,frontend/src/liner/core/zMerge.ts,-,IMPLEMENTED_VERIFIED,bridgeLayoutEvaluation.ts,-,YES,-,LOW,KEEP_AS_CANONICAL,縦断Z Merge
+ELEVATION_AT,frontend/src/liner/core/elevationAt.ts,-,IMPLEMENTED_VERIFIED,export,-,YES,-,LOW,KEEP_AS_CANONICAL,縦断高さ計算
+BACKEND_ADAPTER,backend/rule_engine/,-,ABSENT,-,-,NO,-,LOW,IMPLEMENT_MINIMAL,backend側Kernel Adapter（新規）

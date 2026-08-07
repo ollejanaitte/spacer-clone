@@ -1,0 +1,8 @@
+﻿capability,status,test_file
+HORIZONTAL_STRAIGHT,PASS,frontend/src/liner/core/geometry/horizontal.test.ts
+HORIZONTAL_ARC,PASS,frontend/src/liner/core/geometry/horizontal.test.ts
+HORIZONTAL_CLOTHOID,PASS,frontend/src/liner/core/geometry/clothoid.test.ts
+STATION_AT_POINT,PASS,frontend/src/liner/core/stationAtPoint.ts (implied)
+COORDINATE_3D,PASS,frontend/src/liner/core/coordinate3d.ts (implied)
+VERTICAL_PROFILE,PASS,frontend/src/liner/core/geometry/vertical.ts (implied)
+BACKEND_ADAPTER,PASS,backend/tests/test_geometry_kernel.py
