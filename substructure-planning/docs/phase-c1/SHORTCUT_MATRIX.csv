@@ -1,0 +1,17 @@
+shortcut,function,scope,conflict,note
+Ctrl+C,コピー,global,ブラウザ標準,選択supportをコピー
+Ctrl+V,ペースト,global,ブラウザ標準,クリップボードから追加
+Ctrl+D,複製,global,なし,選択supportを複製
+Ctrl+Z,Undo,global,ブラウザ標準,数値変更/構造操作の取消
+Ctrl+Y,Redo,global,ブラウザ標準,Undoの取消
+Shift+Ctrl+Z,Redo,global,ブラウザ標準,同上
+Delete,削除,global（入力中除く）,ブラウザ標準,選択support削除
+Backspace,削除,global（入力中除く）,ブラウザ標準,同上
+ESC,選択解除/キャンセル,global,ブラウザ標準,全ビュー選択解除
+F,Fit Selection,3D/2D,ブラウザ標準,選択対象を画面中央に
+Home,Fit All,3D/2D,ブラウザ標準（preventDefault）,全表示
+1,Top視点,3D,ブラウザ標準,上面視
+2,Front視点,3D,ブラウザ標準,正面視
+3,Side視点,3D,ブラウザ標準,側面視
+0/5,Isometric視点,3D,ブラウザ標準,等角視
+Ctrl+S,保存,global,ブラウザ標準,明示的保存
