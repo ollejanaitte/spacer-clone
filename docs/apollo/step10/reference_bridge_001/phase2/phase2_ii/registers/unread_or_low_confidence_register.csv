@@ -1,0 +1,102 @@
+item_id,source_locator,item,confidence,verification_status,notes
+DR-141,DWG-S141,drawing.sheet.141,MEDIUM,PARTIAL,[drawing] Drawing sheet 141 (erection_plan).
+DR-1593,DWG-S141-V01,drawing.view.DWG-VW-S141-001,MEDIUM,PARTIAL,[drawing] Drawing view type 'plan'.
+DR-1646,DWG-S141,drawing.annotation.DWG-ANO-S141-001,MEDIUM,PARTIAL,[drawing] Drawing annotation type 'verification_note'.
+DR-1955,DWG-S141,drawing.title_block.DWG-TB-S141-001,MEDIUM,PARTIAL,[drawing] Title block field '図面の種類'.
+DR-1956,DWG-S141,drawing.title_block.DWG-TB-S141-002,MEDIUM,PARTIAL,[drawing] Title block field '図面番号'.
+DR-1974,DWG-S141,drawing.view.S141-V01,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR view; scale S=1:500.
+DR-1975,DWG-S141,drawing.view.S141-V02,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR view; scale S=1:500.
+DR-1976,DWG-S141,drawing.view.S141-V03,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR view; scale S=1:200.
+DR-1977,DWG-S141,drawing.view.S141-V04,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR view; scale n/a.
+DR-1978,DWG-S141,drawing.dimension.S141-D01,MEDIUM,PARTIAL,[drawing]
+DR-1979,DWG-S141,drawing.dimension.S141-D02,MEDIUM,PARTIAL,[drawing]
+DR-1980,DWG-S141,drawing.dimension.S141-D03,MEDIUM,PARTIAL,[drawing]
+DR-1981,DWG-S141,drawing.dimension.S141-D04,MEDIUM,PARTIAL,[drawing] matches CF-003
+DR-1982,DWG-S141,drawing.dimension.S141-D05,LOW,PARTIAL,[drawing] last digit uncertain V001
+DR-1983,DWG-S141,drawing.dimension.S141-D06,MEDIUM,PARTIAL,[drawing] crane position 1
+DR-1984,DWG-S141,drawing.dimension.S141-D07,MEDIUM,PARTIAL,[drawing] crane position 2
+DR-1985,DWG-S141,drawing.dimension.S141-D08,MEDIUM,PARTIAL,[drawing]
+DR-1986,DWG-S141,drawing.dimension.S141-D09,MEDIUM,PARTIAL,[drawing]
+DR-1987,DWG-S141,drawing.dimension.S141-D10,MEDIUM,PARTIAL,[drawing] FW/L IP+13.60
+DR-1988,DWG-S141,drawing.dimension.S141-D11,MEDIUM,PARTIAL,[drawing]
+DR-1989,DWG-S141,drawing.annotation.S141-A01,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR annotation type 'ERECTION_BLOCK'.
+DR-1990,DWG-S141,drawing.annotation.S141-A02,LOW,PARTIAL,[drawing] Sheet 141 OCR annotation type 'CITY_ROAD'.
+DR-1991,DWG-S141,drawing.annotation.S141-A03,LOW,PARTIAL,[drawing] Sheet 141 OCR annotation type 'NOTE'.
+DR-1992,DWG-S141,drawing.annotation.S141-A04,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR annotation type 'CRANE'.
+DR-1993,DWG-S141,drawing.annotation.S141-A05,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR annotation type 'CRANE_MACHINE'.
+DR-1994,DWG-S141,drawing.annotation.S141-A06,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR annotation type 'PIER'.
+DR-1995,DWG-S141,drawing.annotation.S141-E01,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Drawing title.
+DR-1996,DWG-S141,drawing.annotation.S141-E02,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: 図の種類.
+DR-1997,DWG-S141,drawing.annotation.S141-E03,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Road route.
+DR-1998,DWG-S141,drawing.annotation.S141-E04,LOW,PARTIAL,[drawing] Sheet 141 OCR element: Construction location.
+DR-1999,DWG-S141,drawing.annotation.S141-E05,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Sheet number.
+DR-2000,DWG-S141,drawing.annotation.S141-E06,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Structure type.
+DR-2001,DWG-S141,drawing.annotation.S141-E07,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Bridge length L.
+DR-2002,DWG-S141,drawing.annotation.S141-E08,LOW,PARTIAL,[drawing] Sheet 141 OCR element: Girder length.
+DR-2003,DWG-S141,drawing.annotation.S141-E09,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Span 1.
+DR-2004,DWG-S141,drawing.annotation.S141-E10,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Span 2.
+DR-2005,DWG-S141,drawing.annotation.S141-E11,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Span 3.
+DR-2006,DWG-S141,drawing.annotation.S141-E12,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Road station.
+DR-2007,DWG-S141,drawing.annotation.S141-E13,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Scale side/plan.
+DR-2008,DWG-S141,drawing.annotation.S141-E14,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Scale cross section.
+DR-2009,DWG-S141,drawing.annotation.S141-E15,LOW,PARTIAL,[drawing] Sheet 141 OCR element: Junction.
+DR-2010,DWG-S141,drawing.annotation.S141-E16,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR element: Erection direction.
+DR-2011,DWG-S141,drawing.annotation.S141-E17,LOW,PARTIAL,[drawing] Sheet 141 OCR element: Up line.
+DR-2012,DWG-S141,drawing.annotation.S141-B01.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 1, W=12.5 t."
+DR-2013,DWG-S141,drawing.annotation.S141-B02.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 2, W=11.6 t."
+DR-2014,DWG-S141,drawing.annotation.S141-B03.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 3, W=16.7 t."
+DR-2015,DWG-S141,drawing.annotation.S141-B04.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 4, W=14.0 t."
+DR-2016,DWG-S141,drawing.annotation.S141-B05.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 5, W=13.6 t."
+DR-2017,DWG-S141,drawing.annotation.S141-B06.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 6, W=16.7 t."
+DR-2018,DWG-S141,drawing.annotation.S141-B07.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 7, W=12.4 t."
+DR-2019,DWG-S141,drawing.annotation.S141-B08.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 8, W=7.0 t."
+DR-2020,DWG-S141,drawing.annotation.S141-B09.weight,MEDIUM,PARTIAL,"[drawing] Sheet 141 erection block order 9, W=12.3 t."
+DR-2021,DWG-S141,drawing.table.s141.crane_capacity,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table (OCR); 30 capacity rows.
+DR-2022,DWG-S141,drawing.table.s141.crane_capacity.S141-C01,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2023,DWG-S141,drawing.table.s141.crane_capacity.S141-C02,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2024,DWG-S141,drawing.table.s141.crane_capacity.S141-C03,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2025,DWG-S141,drawing.table.s141.crane_capacity.S141-C04,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2026,DWG-S141,drawing.table.s141.crane_capacity.S141-C05,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2027,DWG-S141,drawing.table.s141.crane_capacity.S141-C06,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2028,DWG-S141,drawing.table.s141.crane_capacity.S141-C07,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2029,DWG-S141,drawing.table.s141.crane_capacity.S141-C08,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2030,DWG-S141,drawing.table.s141.crane_capacity.S141-C09,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2031,DWG-S141,drawing.table.s141.crane_capacity.S141-C10,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2032,DWG-S141,drawing.table.s141.crane_capacity.S141-C11,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2033,DWG-S141,drawing.table.s141.crane_capacity.S141-C12,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2034,DWG-S141,drawing.table.s141.crane_capacity.S141-C13,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2035,DWG-S141,drawing.table.s141.crane_capacity.S141-C14,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2036,DWG-S141,drawing.table.s141.crane_capacity.S141-C15,LOW,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2037,DWG-S141,drawing.table.s141.crane_capacity.S141-C16,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2038,DWG-S141,drawing.table.s141.crane_capacity.S141-C17,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2039,DWG-S141,drawing.table.s141.crane_capacity.S141-C18,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2040,DWG-S141,drawing.table.s141.crane_capacity.S141-C19,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2041,DWG-S141,drawing.table.s141.crane_capacity.S141-C20,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2042,DWG-S141,drawing.table.s141.crane_capacity.S141-C21,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2043,DWG-S141,drawing.table.s141.crane_capacity.S141-C22,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2044,DWG-S141,drawing.table.s141.crane_capacity.S141-C23,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2045,DWG-S141,drawing.table.s141.crane_capacity.S141-C24,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2046,DWG-S141,drawing.table.s141.crane_capacity.S141-C25,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2047,DWG-S141,drawing.table.s141.crane_capacity.S141-C26,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2048,DWG-S141,drawing.table.s141.crane_capacity.S141-C27,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2049,DWG-S141,drawing.table.s141.crane_capacity.S141-C28,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2050,DWG-S141,drawing.table.s141.crane_capacity.S141-C29,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2051,DWG-S141,drawing.table.s141.crane_capacity.S141-C30,MEDIUM,PARTIAL,[drawing] Sheet 141 crane capacity table row (OCR).
+DR-2052,DWG-S141,drawing.title_block.TB01,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '図面番号'.
+DR-2053,DWG-S141,drawing.title_block.TB02,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '枚数'.
+DR-2054,DWG-S141,drawing.title_block.TB03,LOW,PARTIAL,[drawing] Sheet 141 OCR title block field '工事名'.
+DR-2055,DWG-S141,drawing.title_block.TB04,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '路線名'.
+DR-2056,DWG-S141,drawing.title_block.TB05,LOW,PARTIAL,[drawing] Sheet 141 OCR title block field '施工箇所名'.
+DR-2057,DWG-S141,drawing.title_block.TB06,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '図の種類'.
+DR-2058,DWG-S141,drawing.title_block.TB07,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '縮尺'.
+DR-2059,DWG-S141,drawing.title_block.TB08,MEDIUM,PARTIAL,[drawing] Sheet 141 OCR title block field '図名'.
+DS-222,calc_pdf_p819,judgment.wrapping_concrete.rebar_count,LOW,UNVERIFIED,[design] Wrapping-concrete minimum rebar counts (D19 n=18/19/26) computed; no explicit OK/NG verdict extracted. Requires human confirmation.
+DS-223,DWG-S020,judgment.camber,LOW,UNVERIFIED,[design] Camber shown only on drawing sheet 20 (camber diagram/table); no camber calc values extracted. Drawing-only.
+DS-242,calc_pdf_p291,design_gap.stiffeners.vertical,LOW,UNVERIFIED,[design] Vertical stiffener design policy extracted as note only; no numeric check values registered.
+DS-243,calc_pdf_p379,design_gap.splice.field,LOW,UNVERIFIED,[design] Field splice design described by equations/tables; bolt-level results not individually extracted.
+DS-244,calc_pdf_p667,design_gap.welding.flange_web,LOW,UNVERIFIED,[design] Flange-web weld verification table present; per-weld values not extracted.
+GEO-087,DWG-S141,elevation.deck_elevation_DL,MEDIUM,PARTIAL,[geometry] Deck level D.L. 10.00 m from sheet 141 OCR
+GEO-088,DWG-S141,elevation.ground_level_V,MEDIUM,PARTIAL,[geometry] Construction base level V 15.250 m from sheet 141 OCR
+LD-056,calc_pdf_p136,load_combination.detail_table,LOW,UNVERIFIED,[load] Numeric load-combination coefficient table (道示Ⅰ 3.3 表3-3.1) not extracted numerically
+LD-059,calc_pdf_p135,load_application.live_load_placement,LOW,UNVERIFIED,[load] Exact live-load placement (influence lines) not extracted; requires human confirmation
+SM-091,calc_pdf_p293,section_assignment.ag1.full,LOW,UNVERIFIED,[structural_model] Full AG1 section layout Sec-1..Sec-17 per section_3_2; exact member-to-section assignment needs human confirmation

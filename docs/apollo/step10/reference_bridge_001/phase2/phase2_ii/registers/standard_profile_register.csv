@@ -1,0 +1,9 @@
+profile_id,name,source_record_ids,notes
+PRO-001,SM490Y,"MATSEC-004,CH1-VAL-027,CH2-VAL-009","Main structural steel grade; adopted_material.steel_sm490y (AD-008); yield 355 N/mm2, tensile 490 N/mm2, shear-yield 205 N/mm2 (AD-018/019/020)"
+PRO-002,SM400,"MATSEC-005,CH1-VAL-028","Mild steel grade; adopted_material.steel_sm400 (AD-009)"
+PRO-003,SM520,"MATSEC-003,CH1-VAL-026","High-strength steel grade; adopted_material.steel_sm520 (AD-010)"
+PRO-004,SM520-H,"SRC-calculation_chapter_03_section_3_2_values-006,ADV-007","High-strength steel for thick plates (47 mm); adopted_material.steel_sm520h (AD-012)"
+PRO-005,SS400,"MATSEC-006,CH1-VAL-029","General structural steel grade; adopted_material.steel_ss400 (AD-011)"
+PRO-006,SD345,"MATSEC-013,CH1-VAL-033","Rebar grade; adopted_material.rebar_sd345 (AD-013)"
+PRO-007,Concrete C30 (deck/wrapping),"MATSEC-010,CH1-VAL-030,CH2-VAL-020","Concrete design strength 30 N/mm2 for composite deck / wrapping; adopted_material.concrete_deck_ck30 (AD-014)"
+PRO-008,Concrete C24 (wall rail),"CH1-VAL-031","Concrete design strength 24 N/mm2 for wall rail; adopted_material.concrete_wall_rail_ck24 (AD-015)"
