@@ -35,15 +35,10 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 |----|---------------|---------|
 | P2II-0 | p2ii-0-truth-gate | Truth reconciliation, post-seal correction, Phase 2-I coverage/status/manifest repair (#441, MERGED) |
 | P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription (#442, MERGED) |
-| P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair |
-| P2II-C | p2ii-c-layer-contract | Candidate layer contract, schema, enums, ID & normalization rules |
-| P2II-D | p2ii-d-input-geometry | Input + Geometry candidate layers |
-| P2II-E | p2ii-e-structural-model | Structural model candidate layer |
-| P2II-F | p2ii-f-load-analysis | Load + Analysis candidate layers |
-| P2II-G | p2ii-g-design-adopted | Design + Adopted design candidate layers |
-| P2II-H | p2ii-h-report-drawing | Report + Drawing candidate layers |
-| P2II-I | p2ii-i-traceability | Traceability + conflict integration |
-| P2II-J | p2ii-j-closeout | Validation, manifest, Phase 3 handoff |
+| P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair (#445, MERGED) |
+| P2II-C~F | p2ii-cf-candidate-foundation | Contracts + Source/Input/Geometry/StructuralModel/Load/Analysis candidate layers (THIS PR) |
+| P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability |
+| P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff |
 | P2II-K | p2ii-k-seal | Seal |
 
 ## Directory map
@@ -112,3 +107,31 @@ Artifacts:
 
 Validator: `tools/validate_phase2_i.py --mode pre-closeout` → **OVERALL: PASS**
 (13/13 checks). Frontend lint / tsc / vitest: PASS (538/538).
+## P2II-C~F — Candidate foundation (contracts + Source/Input/Geometry/StructuralModel/Load/Analysis) (THIS PR)
+
+Establishes the Phase 2-II candidate-layer contract and the first six candidate
+layers, derived deterministically from the Phase 2-I extraction data (no
+fabrication, no recalculation).
+
+- **Contracts** (`contracts/`): candidate_layer_contract, candidate_schema,
+  id_and_entity_contract, normalization_contract, source_to_candidate_contract,
+  candidate_enums.csv.
+- **Source layer** (`candidates/source/`): source_record_catalog (4330 records =
+  4075 calc/drawing + 162 domain-index + 93 sheet-141 OCR), value/formula/
+  table/figure/note catalogs.
+- **Input layer** (`candidates/input/`): 25 input candidates + 207 exclusions.
+- **Geometry layer** (`candidates/geometry/`): 88 candidates (alignment, girder
+  lines, grid points, cross sections, support lines, elevation/crossfall).
+- **Structural Model layer** (`candidates/structural_model/`): 91 candidates
+  (nodes, members, connectivity, axes, supports, rigid offsets, section assignment).
+- **Load layer** (`candidates/load/`): 59 candidates (cases, values, combos,
+  application).
+- **Analysis layer** (`candidates/analysis/`): 52 candidates (reactions,
+  displacements, rotations, member forces, governing cases) — EXCLUDED_ANALYSIS_RESULT.
+- **Generator**: `tools/generate_p2iicf_layers.py` (deterministic, idempotent).
+
+Registered gaps (logged in candidate CSVs + summaries): station absent,
+panel-point coordinates partial, flange-width conflict `CONF-P2II-001`,
+local axes / rigid offsets / per-DOF fixity not stated, cross-beam connectivity
+from figure, load-combination table not numeric, live-load influence lines
+absent, drawing-141 PARTIAL (HCR-001).

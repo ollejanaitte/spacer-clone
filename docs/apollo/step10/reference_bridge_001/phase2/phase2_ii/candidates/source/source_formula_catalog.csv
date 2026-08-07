@@ -1,0 +1,149 @@
+source_record_id,pdf_page_number,formula_label_raw,expression_raw,variable_symbols,referenced_standard_raw,semantic_class,source_locator,confidence,verification_status
+CH2-FML-001,19,合成床版厚算定式,hc=25×L+110=223mm,L,,deck_thickness,calc_pdf_p19,HIGH,UNVERIFIED
+CH2-FML-002,20,膜作用主鉄筋方向曲げモーメント,My=βy×p0×a² =0.01250×6.325×0.625²=0.031 kN･m/m,βy|p0|a,,member_force,calc_pdf_p20,HIGH,UNVERIFIED
+CH2-FML-003,20,膜作用配力筋方向曲げモーメント,Mx=βx×p0×a² =0.04170×6.325×0.625²=0.103 kN･m/m,βx|p0|a,,member_force,calc_pdf_p20,HIGH,UNVERIFIED
+CH2-FML-004,21,梁モデル荷重強度,wd=0.625×p0=0.625×6.325=3.95 kN/m,p0,,load_intensity,calc_pdf_p21,HIGH,UNVERIFIED
+CH2-FML-005,22,舗装死荷重曲げモーメント,Md=w×L²/8=(22.5×0.080)×4.512²/8=4.58 kN･m/m,w|L,,member_force,calc_pdf_p22,HIGH,UNVERIFIED
+CH2-FML-006,22,T荷重支間割増係数,K=1.125+(L-4.0)/26=1.145,L,,DERIVED_VALUE,calc_pdf_p22,HIGH,UNVERIFIED
+CH2-FML-007,22,活荷重曲げモーメント主鉄筋方向,Mly=(0.12L+0.07)×P×K=(0.12×4.512+0.07)×100×1.145=70.01 kN･m/m,L|P|K,,member_force,calc_pdf_p22,HIGH,UNVERIFIED
+CH2-FML-008,22,活荷重曲げモーメント配力筋方向,Mlx=(0.10L+0.04)×P=(0.10×4.512+0.04)×100=49.12 kN･m/m,L|P,,member_force,calc_pdf_p22,HIGH,UNVERIFIED
+CH2-FML-009,23,張出部T荷重活荷重曲げモーメント,Mly=-P×L/(1.3L+0.25)×K×α=-100×1.004/(1.3×1.004+0.25)×1.00×1.00=-64.56 kN･m/m,P|L|K|α,,member_force,calc_pdf_p23,HIGH,UNVERIFIED
+CH2-FML-010,30,疲労応力度照査鋼板下面,σfy=My/W=0.031×10⁶/10667=2.9 N/mm²,My|W,,DESIGN_RESULT,calc_pdf_p30,HIGH,UNVERIFIED
+CH2-FML-011,31,スタッドせん断力算定式,Vd=k1×k2×(0.04L+0.72)×P=29.61 kN/m,k1|k2|L|P,,member_force,calc_pdf_p31,HIGH,UNVERIFIED
+CAL-FML-P00121-001,121,ハンチ荷重 W,W = (1.660 + 0.660) / 2 x 0.100 x 24.5 = 2.842 kN/m,"W, 1.660, 0.660, 0.100, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p121,HIGH,UNVERIFIED
+CAL-FML-P00121-002,121,壁高欄重心位置 e,e = sum(A*X)/sum(A) = 77755850/404550 = 192 mm,"e, A, X, sum",,DERIVED_VALUE,calc_pdf_p121,HIGH,UNVERIFIED
+CAL-FML-P00121-003,121,壁高欄荷重 Wd,Wd = sum(A) x 24.5 / 1000 = 404550 x 24.5 / 1000 = 9.911 kN/m → 9.920 kN/m,"Wd, A, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p121,HIGH,UNVERIFIED
+CAL-FML-P00122-001,122,左側壁高欄調整 S1,W = 0.000 kN/m (ノーズ部控除),"W,",,NUMERIC_SUBSTITUTION,calc_pdf_p122,HIGH,UNVERIFIED
+CAL-FML-P00122-002,122,左側壁高欄調整 C1,W = 9.920 x 1.319 / (2.735 + 2.495) = 2.502 kN/m,"W, 9.920, 1.319, 2.735, 2.495",,NUMERIC_SUBSTITUTION,calc_pdf_p122,HIGH,UNVERIFIED
+CAL-FML-P00122-003,122,左側壁高欄調整 C2以降,W = 9.920 kN/m,"W,",,NUMERIC_SUBSTITUTION,calc_pdf_p122,HIGH,UNVERIFIED
+CAL-FML-P00122-004,122,左側遮音壁調整 C1,W = 2.100 x 1.319 / (2.735 + 2.495) = 0.530 kN/m,"W, 2.100, 1.319, 2.735, 2.495",,NUMERIC_SUBSTITUTION,calc_pdf_p122,HIGH,UNVERIFIED
+CAL-FML-P00124-001,124,ノーズ地覆荷重 GE1,W = {(0.326 - 0.125)/2 + 0.290 x 0.180 / 2} x 0.823 x 24.5 = 5.935 kN/m,"W, 0.326, 0.125, 0.290, 0.180, 0.823, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-002,124,ノーズ地覆荷重 S1,W = {(0.328 - 0.125)/2 + 0.290 x 0.180 / 2} x 0.890 x 24.5 = 6.462 kN/m,"W, 0.328, 0.125, 0.290, 0.180, 0.890, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-003,124,ノーズ地覆荷重 A部,W = {(0.336 - 0.125)/2 + 0.290 x 0.180 / 2} x 1.101 x 24.5 = 8.167 kN/m,"W, 0.336, 0.125, 0.290, 0.180, 1.101, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-004,124,ノーズ地覆荷重 C1,W = {(0.341 - 0.125)/2 + 0.290 x 0.180 / 2} x 1.311 x 24.5 = 9.858 kN/m,"W, 0.341, 0.125, 0.290, 0.180, 1.311, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-005,124,ノーズ地覆荷重 B部,W = {(0.344 - 0.125)/2 + 0.290 x 0.180 / 2} x 1.401 x 24.5 = 10.605 kN/m,"W, 0.344, 0.125, 0.290, 0.180, 1.401, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-006,124,ノーズ地覆荷重 C部,W = {(0.344 - 0.125)/2 + 0.290 x 0.180 / 2} x 1.421 x 24.5 = 10.761 kN/m,"W, 0.344, 0.125, 0.290, 0.180, 1.421, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00124-007,124,ノーズ壁高欄直壁,W = (0.708 + 0.787) x 0.250 x 24.5 = 4.102 kN (格点荷重),"W, 0.708, 0.787, 0.250, 24.5",,NUMERIC_SUBSTITUTION,calc_pdf_p124,HIGH,UNVERIFIED
+CAL-FML-P00135-001,135,衝撃係数 i=20/(50+L),i = 20 / (50 + 40.156) = 0.222,"i, L=40.156",道示Ⅰ 8.2,FORMULA_DEFINITION,calc_pdf_p135,HIGH,UNVERIFIED
+CAL-FML-P00135-002,135,衝撃係数 第2支承線上,i = 20 / (50 + 45.584) = 0.209,"i, L=45.584",道示Ⅰ 8.2,NUMERIC_SUBSTITUTION,calc_pdf_p135,HIGH,UNVERIFIED
+CAL-FML-P00135-003,135,衝撃係数 第2支間,i = 20 / (50 + 51.013) = 0.198,"i, L=51.013",道示Ⅰ 8.2,NUMERIC_SUBSTITUTION,calc_pdf_p135,HIGH,UNVERIFIED
+CAL-FML-P00135-004,135,衝撃係数 第3支承線上,i = 20 / (50 + 45.585) = 0.209,"i, L=45.585",道示Ⅰ 8.2,NUMERIC_SUBSTITUTION,calc_pdf_p135,HIGH,UNVERIFIED
+CAL-FML-P00135-005,135,衝撃係数 第3支間,i = 20 / (50 + 40.156) = 0.222,"i, L=40.156",道示Ⅰ 8.2,NUMERIC_SUBSTITUTION,calc_pdf_p135,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-001,,Tension stress limit (limit state 3),σtud = ξ1 × ξ2 × Φut × σyk,σtud,道示Ⅱ 式(5.4.22),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-002,,Compression stress limit (limit state 3),"σcud = min(σcrld, σbrgd)",σcud,道示Ⅱ 5.4.6,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-003,,Local buckling stress limit,σcrld = ξ1 × ξ2 × Φu × ρcrl × σyk,σcrld,道示Ⅱ 式(5.4.5),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-004,,Lateral torsional buckling limit,σbrgd = ξ1 × ξ2 × Φu × ρbrg × σyk,σbrgd,道示Ⅱ 式(5.4.23),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-005,,Bending stress,σb = M × y / I,σb,道示Ⅱ 式(13.2.1),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-006,,Shear stress,τb = S / Aw,τb,道示Ⅱ 式(13.2.2),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-007,,Shear stress limit,τud = ξ1 × ξ2 × Φus × τyk,τud,道示Ⅱ 式(5.4.28),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-008,,Combined bending+shear check,κ = (σb/σtyd)² + (τb/τyd)² ≤ 1.2,κ,道示Ⅱ 式(5.3.2),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-009,,Bolt force per bolt (limit state 1),Vsd = Psd / n ≤ Vfyd = ξ1 × ΦMfv × Vfk × m × α,Vsd,道示Ⅱ 式(9.6.2),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-010,,Force on bolt group,Psd = σ × b × t,Psd,道示Ⅱ 9.6,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-011,,Bolt force per bolt (limit state 3),Vsd = Psd / n ≤ Vfud = ξ1 × ξ2 × ΦMBsl × τuk × As × m,Vsd_LS3,道示Ⅱ 式(9.9.1)(9.9.2),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-012,,Web bolt i-th row force,Vsdi = Psdi / ni ≤ Vfyd,Vsdi,道示Ⅱ 式(9.6.1),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-013,,Web bolt shear force,Vsds = Ssd / n ≤ Vfyd,Vsds,道示Ⅱ 式(9.6.3),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-014,,Web bolt moment force (LS3),Vsdm = (Msd / Σyi²) × yi ≤ yi/yn × Vfud,Vsdm,道示Ⅱ 式(9.9.3),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-015,,Web bolt combined check,√(Vsdi² + Vsds²) ≤ Vfyd,Combined_web,道示Ⅱ 式(9.6.4),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-016,,Bearing stress limit,σbyd = ξ1 × Φb × α × σbk,σbyd,道示Ⅱ 式(5.3.9),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-017,,Column compression limit,σcud = ξ1 × ξ2 × Φu × ρcrg × ρcrl × σyk,σcud_col,道示Ⅱ 式(5.4.17),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-018,,Weld shear stress,τb = P / Σ(a × L),τb_weld,道示Ⅱ 式(9.4.4),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-019,,Stability under horizontal load,-σc/σcud + σcz/[σcuzdo×{1-σc/(0.8×σez)}] ≤ 1.0,stab,道示Ⅱ 5.4.4,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-020,,Weld combined check,(σb/σyd)² + (τb/τyd)² ≤ 1.2,weld_check,道示Ⅱ 式(9.3.3),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-021,,Weld shear stress,τb = τw × tw / A,weld_shear,Derived,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-022,,Required weld throat,If (σb/σyd)²<0.2: Areq=τw×tw/τyd; else: Areq=τw×tw/(τyd×√(1.2-(σb/σyd)²)),Areq,Derived,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-023,,Moment by lateral seismic force,M = H × h,M_seismic,3.2.6,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-024,,Curvature secondary stress (upper),σu2 = 0.106×σu/(R×Iu) × (Au+Awequ/3) × λ²,σu2,Derived (program formula),UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-025,,Minimum fillet weld size,St = √(2×plate thickness) ≥ 6mm,fillet_weld_min,3.2.14,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+SRC-calculation_chapter_03_section_3_2_formulas-026,,Effective throat area (groove weld),"A = (D+S')×Sinα-3, α=tan⁻¹(b/S')",weld_throat,3.2.14,UNKNOWN_REQUIRES_REVIEW,,HIGH,UNVERIFIED
+CAL-FML-P00677-001,677,断面力換算,Mi=ML0+(Mr0-ML0)*(Li/L0),"Mi, ML0, Mr0, Li, L0",,FORMULA_DEFINITION,calc_pdf_p677,HIGH,UNVERIFIED
+CAL-FML-P00685-001,685,風荷重WS,Ws=(V/40)^2*[4.0-0.2*(B/D)]*D*α,"V=40, B=8.010, D=8.110, α=1.30",道示I8.17,FORMULA_DEFINITION,calc_pdf_p685,HIGH,UNVERIFIED
+CAL-FML-P00685-002,685,風荷重数値代入,Ws=(40/40)^2*[4.0-0.2]*8.110*1.30=40.06kN/m,"40, 4.0, 0.2, 8.110, 1.30",道示I8.17,NUMERIC_SUBSTITUTION,calc_pdf_p685,HIGH,UNVERIFIED
+CAL-FML-P00686-001,686,地震荷重L1,We=γd*Wd*Kh/Lspan=1.05*17955.7*0.25/131.325=35.89kN/m,"γd=1.05, Wd=17955.7, Kh=0.25, Lspan=131.325",道示V2.3,NUMERIC_SUBSTITUTION,calc_pdf_p686,HIGH,UNVERIFIED
+CAL-FML-P00689-001,689,曲率付加軸力W,W=-σ*(Af+Aw/3)/R,"σ, Af, Aw, R",,FORMULA_DEFINITION,calc_pdf_p689,HIGH,UNVERIFIED
+CAL-FML-P00689-002,689,曲率付加軸力P,P=w*λ,"w, λ",,FORMULA_DEFINITION,calc_pdf_p689,HIGH,UNVERIFIED
+CAL-FML-P00767-001,767,衝撃係数,i=20/(50+L)=20/(50+1.003)=0.392,"i, L=1.003",道示I8.2,NUMERIC_SUBSTITUTION,calc_pdf_p767,HIGH,UNVERIFIED
+CAL-FML-P00767-002,767,衝撃係数衝突時,i=20/(50+L)=20/(50+1.359)=0.389,"i, L=1.359",道示I8.2,NUMERIC_SUBSTITUTION,calc_pdf_p767,HIGH,UNVERIFIED
+CAL-FML-P00769-001,769,衝突換算k,k=0.90*0.85=0.765,"k, 0.90, 0.85",道示II表5.4.10,FORMULA_DEFINITION,calc_pdf_p769,HIGH,UNVERIFIED
+CAL-FML-P00770-001,770,座屈パラメータα,α=2/pi*sqrt(K)*sqrt(σyk/E)*(l/b)=0.678,"α, K=2.045, l=3800, b=250, σyk=235, E=200000",道示II式5.4.25,NUMERIC_SUBSTITUTION,calc_pdf_p770,HIGH,UNVERIFIED
+CAL-FML-P00770-002,770,σbrgd,σbrgd=ξ1*ξ2*Φu*ρbrg*σyk=144N/mm2,"ξ1=0.90, ξ2=1.00, Φu=0.85, ρbrg=0.803, σyk=235",道示II式5.4.23,NUMERIC_SUBSTITUTION,calc_pdf_p770,HIGH,UNVERIFIED
+CAL-FML-P00772-001,772,τud,τud=ξ1*ξ2*ΦUs*τyk=103N/mm2,"ξ1=0.90, ξ2=1.00, Φus=0.85, τyk=135",道示II式5.4.28,NUMERIC_SUBSTITUTION,calc_pdf_p772,HIGH,UNVERIFIED
+CAL-FML-P00774-001,774,たわみδ,δ=Pb^3/(6EI)*(3x/b-1),"P=100, b=1003, E=2.0e5, I=805393104, x=1900",,NUMERIC_SUBSTITUTION,calc_pdf_p774,HIGH,UNVERIFIED
+CAL-FML-P00791-001,791,鋼桁風,WS=40.06*2.700/8.110=13.34kN/m,"WS=40.06, Dg=2.700, D=8.110",道示I8.17,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-002,791,横構1組風,WS=13.34/2=6.67kN/m,13.34,,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-003,791,地震L2,We=18853.5*1.36/131.325=195.25kN/m,"Wd=18853.5, Kh=1.36, L=131.325",,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-004,791,横構1組地震,We=195.25/4=48.81kN/m,195.25,,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-005,791,Pw,Pw=1.00*1.25*6.67=8.34kN/m,"γp=1.00, γq=1.25, WS=6.67",,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-006,791,Pe,Pe=1.00*1.00*48.81*0.765=37.34kN/m,"γp=1.00, γq=1.00, We=48.81, Keq=0.765",,NUMERIC_SUBSTITUTION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00791-007,791,Keq,Keq=0.90*0.85=0.765,"0.90, 0.85",道示II表5.3.1,FORMULA_DEFINITION,calc_pdf_p791,HIGH,UNVERIFIED
+CAL-FML-P00819-001,819,S1 Ac,Ac=B*H=1500*2280/100=34200cm2,"1500, 2280",,NUMERIC_SUBSTITUTION,calc_pdf_p819,HIGH,UNVERIFIED
+CAL-FML-P00819-002,819,S1 Asreq,Asreq=Ac*0.15%=34200*0.0015=51.30cm2,"34200, 0.0015",道示III5.2,NUMERIC_SUBSTITUTION,calc_pdf_p819,HIGH,UNVERIFIED
+CAL-FML-P00819-003,819,S1 D19 n,n=51.30/2.865=17.9->18本,"51.30, 2.865",,NUMERIC_SUBSTITUTION,calc_pdf_p819,HIGH,UNVERIFIED
+CAL-FML-P00820-001,820,S2 Ac,Ac=1500*2400/100=36000cm2,"1500, 2400",,NUMERIC_SUBSTITUTION,calc_pdf_p820,HIGH,UNVERIFIED
+CAL-FML-P00820-002,820,S2 Asreq,Asreq=36000*0.0015=54.00cm2,"36000, 0.0015",,NUMERIC_SUBSTITUTION,calc_pdf_p820,HIGH,UNVERIFIED
+CAL-FML-P00820-003,820,S2 D19 n,n=54.00/2.865=18.9->19本,"54.00, 2.865",,NUMERIC_SUBSTITUTION,calc_pdf_p820,HIGH,UNVERIFIED
+CAL-FML-P00821-001,821,PR1 Ac,Ac=2000*2400/100=48000cm2,"2000, 2400",,NUMERIC_SUBSTITUTION,calc_pdf_p821,HIGH,UNVERIFIED
+CAL-FML-P00821-002,821,PR1 Asreq,Asreq=48000*0.0015=72.00cm2,"48000, 0.0015",,NUMERIC_SUBSTITUTION,calc_pdf_p821,HIGH,UNVERIFIED
+CAL-FML-P00821-003,821,PR1 D19 n,n=72.00/2.865=25.1->26本,"72.00, 2.865",,NUMERIC_SUBSTITUTION,calc_pdf_p821,HIGH,UNVERIFIED
+CAL-FML-P00845-001,845,if,if=10/(50+L),"if, L",道示II式8.2.2,FORMULA_DEFINITION,calc_pdf_p845,HIGH,UNVERIFIED
+CAL-FML-P00846-001,846,gammaF,gammaF=gammaF1*gammaF2*gammaF3*gammaa,"gammaF1, gammaF2, gammaF3, gammaa",道示II式8.2.1,FORMULA_DEFINITION,calc_pdf_p846,HIGH,UNVERIFIED
+CAL-FML-P00850-001,850,応力範囲,"delta_sigmai,j=|sigma_i","k1-sigma_i, k2|*gammaF(i), sigma, gammaF",,FORMULA_DEFINITION,calc_pdf_p850,HIGH,UNVERIFIED
+CAL-FML-P00850-002,850,No.1 delta_sigma,delta_sigma=|14-(-4)|*3.00=54N/mm2,"14, -4, 3.00",,NUMERIC_SUBSTITUTION,calc_pdf_p850,HIGH,UNVERIFIED
+CAL-FML-P00852-001,852,nti,nti=ADTTSLi*gamma_n*365*Y=379*0.03*365*100=0.42e6,"ADTTSLi=379, gamma_n=0.03, Y=100",道示II式8.2.3,NUMERIC_SUBSTITUTION,calc_pdf_p852,HIGH,UNVERIFIED
+CAL-FML-P00852-002,852,Ni,j,"Ni, j=2e6*(delta_sigma_f*CR*Ct)^3/delta_sigma_i, j^3, delta_sigma_f=50, CR=1.00, Ct=1.00, delta_sigma=54",,NUMERIC_SUBSTITUTION,calc_pdf_p852,HIGH,UNVERIFIED
+CAL-FML-P00873-001,873,合成後剛度,合成断面の曲げ剛度は床版有効幅より算出。ヤング係数比n=7,,道示Ⅱ14.2,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-002,873,クリープ静定力,クリープの静定力は後死荷重曲げモーメントが正の範囲に生じる,,道示Ⅱ14.2.2～14.2.4,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-003,873,乾燥収縮静定力,中間支点上～0.15L位置(床版引張区間)を除く範囲に生じる,,道示Ⅱ14.2.2～14.2.4,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-004,873,温度差静定力,全長にわたって生じる。後死荷重M正範囲は合成断面、他は鋼+鉄筋断面より算出,,道示Ⅱ14.2.2～14.2.4,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-005,873,連続桁不静定力ΔM,静定力Mを平面格子モデルに載荷して求める,,道示Ⅱ14.2.2～14.2.4,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-006,873,設計断面力,設計軸力=P 設計曲げモーメント=M+ΔM,,道示Ⅱ14.2,NOTE,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00893-001,893,衝撃係数,i = 20/(50+L),"i, L=支間長",道示Ⅰ8.2,FORMULA_DEFINITION,calc_pdf_p893,HIGH,UNVERIFIED
+CAL-FML-P01284-001,1284,限界状態1照査式,γa*γf*Md + γa*γq*Mlive ≤ Mu/γb,,道示Ⅱ,NOTE,calc_pdf_p1284,HIGH,UNVERIFIED
+CAL-FML-P01284-002,1284,限界状態3照査式,σ ≤ σa=fy/γm1,,道示Ⅱ,NOTE,calc_pdf_p1284,HIGH,UNVERIFIED
+CAL-FML-P01321-001,1321,引張応力度制限値(限界状態3),σtud = ξ1*ξ2*Φut*σyk,"σtud, ξ1=0.9, ξ2=1.0, Φut=0.85, σyk=355",道示Ⅱ式(5.4.22),FORMULA_DEFINITION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-002,1321,横倒れ座屈パラメータK(合成前),K = √{3+Aw/(2*Ac)},"K, Aw=35518, Ac=13640",道示Ⅱ式(5.4.25),FORMULA_DEFINITION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-003,1321,横倒れ座屈パラメータα,α = 2/π*K*√(σyk/E)*L/b,"α, K=2.074, σyk=355, E=200000, L=5344, b=620",道示Ⅱ式(5.4.25),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-004,1321,横倒れ座屈低減係数ρbrg,ρbrg = 1.0-0.412*(α-0.2),"ρbrg, α=0.479",道示Ⅱ式(5.4.24),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-005,1321,横倒れ座屈制限応力度,σbrgd = ξ1*ξ2*Φu*ρbrg*σyk,"σbrgd, ξ1=0.9, ξ2=1.0, Φu=0.85, ρbrg=0.885, σyk=355",道示Ⅱ式(5.4.23),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-006,1321,局部座屈パラメータR,R = (b/t)*√[σyk/E*{12*(1-μ2)/(0.43*π2)}],"R, b=303, t=22, σyk=355, E=200000, μ=0.30",道示Ⅱ式(5.4.7),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-007,1321,局部座屈低減係数ρcrl,ρcrl = (0.7/R)^1.19,"ρcrl, R=0.931",道示Ⅱ式(5.4.6),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-008,1321,局部座屈制限応力度,σcrld = ξ1*ξ2*Φu*ρcrl*σyk,"σcrld, ξ1=0.9, ξ2=1.0, Φu=0.85, ρcrl=0.712, σyk=355",道示Ⅱ式(5.4.5),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-009,1321,上フランジ圧縮制限値,"σcud = min(σbrgd,σcrld) = min(240,193) = 193 N/mm2","σcud, σbrgd=240, σcrld=193",道示Ⅱ,stress_limit,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-010,1321,合成後圧縮制限値,σcud = ξ1*ξ2*Φu*σyk (座屈は生じないものとする),"σcud, ξ1=0.9, ξ2=1.0, Φu=0.85, σyk=355",道示Ⅱ式(5.4.5),FORMULA_DEFINITION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01321-011,1321,せん断応力度制限値,τud = ξ1*ξ2*Φus*τyk = 0.90*1.00*0.85*205 = 157 N/mm2,"τud, ξ1=0.9, ξ2=1.0, Φus=0.85, τyk=205",道示Ⅱ式(5.4.28),NUMERIC_SUBSTITUTION,calc_pdf_p1321,HIGH,UNVERIFIED
+CAL-FML-P01319-001,1319,温度差床版応力度(上),σcu = 1/n*(P/A+M/I*Yc)-Ec*εt,"σcu, P=-3158.2kN, M=1686.3kNm, n=7, A=194650, I=18008524, Yc=-64.89, Ec=2.857e4, εt=12e-6, ΔT=10",道示Ⅱ式(解14.2.9),NUMERIC_SUBSTITUTION,calc_pdf_p1319,HIGH,UNVERIFIED
+CAL-FML-P01319-002,1319,温度差鋼桁応力度(上),σsu = P/A+M/I*Ys,"σsu, P=-3158.2kN, M=1686.3kNm, A=194650, I=18008524, Ys=-198.9",道示Ⅱ式(解14.2.9),NUMERIC_SUBSTITUTION,calc_pdf_p1319,HIGH,UNVERIFIED
+CAL-FML-P01319-003,1319,乾燥収縮床版応力度(上),σcu = 1/n*(P/A+M/I*Yc)+Ec2*εs,"σcu, P=-1842.3kN, M=1786.5kNm, n=21, A=107175, I=13440812, Yc=-1084.7, Ec2=0.952e4, εs=20e-5",道示Ⅱ式(解14.2.10),NUMERIC_SUBSTITUTION,calc_pdf_p1319,HIGH,UNVERIFIED
+CAL-FML-P01319-004,1319,乾燥収縮鋼桁応力度(上),σsu = P/A+M/I*Ys,"σsu, P=-1842.3kN, M=1786.5kNm, A=107175, I=13440812, Ys=-634.7",道示Ⅱ式(解14.2.10),NUMERIC_SUBSTITUTION,calc_pdf_p1319,HIGH,UNVERIFIED
+CAL-FML-P01319-005,1319,曲げとせん断の同時性照査(限界状態1),κ = (σm/σa)^2 + (τ/τa)^2 <= 1.2,"κ, σm=-43, σa=312, τ=53, τa=157",道示Ⅱ,DESIGN_RESULT,calc_pdf_p1319,HIGH,UNVERIFIED
+CH5-FORM-001,2032,1次形状係数S1,"S1 = Ae / (2*(a+b)*te) (0.5≦b/a≦2) または S1 = a/(2*te) (b/a<0.5,2<b/a)",Ae:有効面積 a:橋軸方向寸法 b:橋軸直角方向寸法 te:一層厚,,SECTION_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-002,2032,2次形状係数S2,"S2 = Min(a,b)/Σte",a:橋軸方向寸法 b:橋軸直角方向寸法 Σte:ゴム総厚,,SECTION_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-003,2032,縦弾性係数E,E = α*β*S1*Ge (S1≧5),α:種類係数(鉛プラグ入り=45) β:平面形状係数 Ge:せん断弾性係数,,elastic_modulus,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-004,2032,等価剛性KB(温度変化),KB = Ae*G(γ)/Σte,Ae:有効面積 G(γ):等価せん断弾性係数 Σte:ゴム総厚,,MATERIAL_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-005,2032,圧縮剛性KV,KV = E*Ae/Σte,E:縦弾性係数 Ae:有効面積 Σte:ゴム総厚,,MATERIAL_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-006,2032,等価せん断弾性係数G(γ),G(γ) = cγ(γ)*Ge + q(γ)*κ/γ,cγ:ひずみ依存係数 Ge:せん断弾性係数 q:鉛プラグせん断応力度 κ:面積比 γ:せん断ひずみ,,MATERIAL_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-007,2032,鉛プラグ面積Ap,Ap = N*π*φd^2/4,N:本数 φd:鉛プラグ径,,SECTION_PROPERTY,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-008,2033,合成剛性Km,1/Km = 1/(N*KB) + 1/KP,N:支承数 KB:等価剛性 KP:下部剛性,,MATERIAL_PROPERTY,calc_pdf_p2033,HIGH,UNVERIFIED
+CH5-FORM-009,2035,温度変化水平力Ht,Ht = Km*⊿Lt,Km:合成剛性 ⊿Lt:移動量,,LOAD_VALUE,calc_pdf_p2035,HIGH,UNVERIFIED
+CH5-FORM-010,2037,レベル1上部工移動量UBⅠo,UBⅠo = ΣW*kh/ΣKm,ΣW:全死荷重 kh:水平震度 ΣKm:合成剛性和,,deflection,calc_pdf_p2037,HIGH,UNVERIFIED
+CH5-FORM-011,2040,最大圧縮応力度σmax,σmax = Rmax1/Acn,Rmax1:最大反力 Acn:移動量控除支圧面積,,DESIGN_RESULT,calc_pdf_p2040,HIGH,UNVERIFIED
+CH5-FORM-012,2040,圧縮応力振幅Δσ,Δσ = σmax - σmin,σmax:最大 σmin:最小応力度,,DESIGN_RESULT,calc_pdf_p2040,HIGH,UNVERIFIED
+CH5-FORM-013,2041,せん断ひずみγs,γs = ⊿L/Σte,⊿L:支承移動量 Σte:ゴム総厚,,DESIGN_RESULT,calc_pdf_p2041,HIGH,UNVERIFIED
+CH5-FORM-014,2042,回転変位δr,δr = (a*sinθ+b*cosθ)/2*Σαe,a:橋軸方向 b:直角方向 θ:斜角 Σαe:回転角,,rotation,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-015,2042,圧縮変位δc,δc = Rmax2/Kv,Rmax2:最大反力 Kv:圧縮剛性,,deflection,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-016,2042,局部せん断ひずみγt,γt = γc + γs + γr,γc:圧縮作用 γs:水平変位 γr:回転変位,,DESIGN_RESULT,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-017,2138,照査基本式,"ΣSi(γpi*γqi*Pi) ≦ ξ1*ξ2*ΦR(fc,Δc)",γpi:荷重係数 γqi:組合せ係数 ξ1:調査解析係数 ξ2:部材構造係数 ΦR:抵抗係数,,FORMULA_DEFINITION,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-018,2138,支圧応力度制限値,σbyd = ξ1*ΦB*α*σbk,ξ1:調査解析係数 ΦB:抵抗係数 α:補正係数 σbk:支圧強度特性値,,stress_limit,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-019,2138,曲げ引張応力度制限値,σtud = ξ1*ξ2*ΦUt*σyk,ξ1:調査解析係数 ξ2:部材構造係数 ΦUt:抵抗係数 σyk:降伏強度特性値,,stress_limit,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-020,2138,合成応力度照査式,(σbd/σtyd)^2 + (τbd/τud)^2 ≦ 1.2,σbd:曲げ応力度 σtyd:制限値 τbd:せん断応力度 τud:せん断制限値,,DESIGN_RESULT,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-021,2199,通水断面積A,A = h*B*1/2,h:深さ B:通水幅,,SECTION_PROPERTY,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-022,2199,径深R,R = A/P,A:通水断面積 P:潤辺長,,SECTION_PROPERTY,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-023,2199,設計通水量Q,Q = (1/n)*R^(2/3)*i2^(1/2)*A,n:粗度係数 R:径深 i2:水面勾配 A:通水断面積,,NOTE,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-024,2200,排水桝最大間隔Ls,Ls = Q/(q*γ*e),Q:設計通水量 q:流出量 γ:落下率 e:余裕率,,DIMENSION,calc_pdf_p2200,HIGH,UNVERIFIED
+CH5-FORM-025,2207,温度変化伸縮量,ΔLt = α*L*⊿T,α:線膨張係数 L:伸縮桁長 ⊿T:温度差,,deflection,calc_pdf_p2207,HIGH,UNVERIFIED
+CH5-FORM-026,2207,地震時(⑩)伸縮量,ΔLq = EQmax*CB + LA,EQmax:レベル1移動量 CB:補正係数 LA:余裕量,,deflection,calc_pdf_p2207,HIGH,UNVERIFIED
+CH5-FORM-027,2222,フィンガー遊間b(常時),b = (+)ΔLt + bmin,(+)ΔLt:温度伸び bmin:最小遊間,,DIMENSION,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-028,2222,フィンガーラップc(常時),c = (-)ΔLt + cmin,(-)ΔLt:温度縮み cmin:最小ラップ,,DIMENSION,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-029,2222,フィンガー長L0,L0 = b + c + 15,b:遊間 c:ラップ,,DIMENSION,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-030,2224,フェイスプレート曲げM,M = (1/2)*P*(1+i)*L0,P:輪荷重 i:衝撃係数 L0:フィンガー長,,member_force,calc_pdf_p2224,HIGH,UNVERIFIED
+CH5-FORM-031,2224,フェイスプレート厚t1,t1 = √(6*M/(B*σ)),M:曲げモーメント B:抵抗幅 σ:曲げ応力度制限値,,DIMENSION,calc_pdf_p2224,HIGH,UNVERIFIED
+CH5-FORM-032,2225,ジベルせん断耐力Qu,Qu = 0.90*0.85*[1.85*{π*(d^2-φst^2)/4*f'cd + π*φst^2/4*fud} - 26.1*10^3]/γb,d:孔径 φst:鉄筋径 f'cd:コンクリート強度 fud:鉄筋引張強度 γb:部材係数,,DESIGN_RESULT,calc_pdf_p2225,HIGH,UNVERIFIED

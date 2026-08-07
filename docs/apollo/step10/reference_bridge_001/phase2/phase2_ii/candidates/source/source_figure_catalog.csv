@@ -1,0 +1,56 @@
+source_record_id,pdf_page_number,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
+CAL-FIG-P00118-001,118,標準断面図,cross_section,"AG1,AG2,PU15",calc_pdf_p118,HIGH,"8010x7000mm cross section with sound barrier, pavement t=80mm, slab t=230mm"
+CAL-FIG-P00121-001,121,ハンチ荷重 断面図,cross_section,AG1 AG2,calc_pdf_p121,HIGH,Haunch cross section 1660x500 with 1:5 slope
+CAL-FIG-P00121-002,121,壁高欄 断面図,cross_section,左側 右側,calc_pdf_p121,HIGH,Wall rail cross section with 6 subdivided areas ①-⑥
+CAL-FIG-P00122-001,122,左側壁高欄荷重載荷図,plan_view,"S1,C1,C2,A-L1,A-L2",calc_pdf_p122,MEDIUM,Left wall rail load distribution plan with nose deduction
+CAL-FIG-P00123-001,123,ノーズ部詳細図,plan_and_section,"C1,C2,S1,GE1,A-L1,A-L2,PU15",calc_pdf_p123,MEDIUM,"Nose section details with A-A, B-B section cuts"
+CAL-FIG-P00126-001,126,ノーズ部床版打下ろし断面図,cross_section,"AG1,C1,C2,A-L1,A-L2,PU15,GE1",calc_pdf_p126,MEDIUM,Nose slab drooping cross section with A-A through E-E cuts
+CAL-FIG-P00129-001,129,桁端部S1側 床版打下し図,cross_section,"AG1,AG2,GE1,S1",calc_pdf_p129,MEDIUM,Girder end S1 slab drooping detail with notch dimensions
+CAL-FIG-P00130-001,130,桁端部S2側 床版打下し図,cross_section,"AG1,AG2,GE1,S2",calc_pdf_p130,MEDIUM,Girder end S2 slab drooping detail
+CAL-FIG-P00131-001,131,中間支点PR1/PR2床版打下し図,cross_section,"AG1,AG2,PR1,PR2",calc_pdf_p131,MEDIUM,Intermediate support slab drooping detail
+CAL-FIG-P00133-001,133,巻き立てコンクリート概要図,cross_section,"AG1,AG2,S1,PR1,PR2,S2",calc_pdf_p133,MEDIUM,Wrapping concrete schematic with L1/L2/B/L3 dimensions
+CAL-FIG-P00137-001,137,荷重載荷図,load_diagram,"AG1,AG2",calc_pdf_p137,MEDIUM,Load application diagram page 1
+CAL-FIG-P00138-001,138,荷重載荷図(格点集中荷重),load_diagram,"S1,C1,C2,PR1,PR2,S2,AG1,AG2",calc_pdf_p138,MEDIUM,Load application diagram with panel point concentrated loads
+CAL-FIG-P00142-001,142,格点番号および部材番号図,numbering_diagram,"AG1,AG2,S1,S2,C1-C23,PR1,PR2",calc_pdf_p142,HIGH,Panel point and member numbering diagram showing all nodes 1001-1027 and 2001-2027 with cross member numbers C1-C23
+SRC-calculation_chapter_03_section_3_2_figures-001,379,非合成断面 AG1 断面構成図,section_drawing,,calc_pdf_p379,HIGH,"Non-composite section composition diagram for AG1 showing flange/web dimensions, moment diagram, field splice locations"
+SRC-calculation_chapter_03_section_3_2_figures-002,380-381,非合成断面 AG1 断面構成図(続き),section_drawing,,calc_pdf_p380-381,HIGH,"Non-composite section composition diagram (continued) showing girder elevation with panel points, cross-section at each section"
+SRC-calculation_chapter_03_section_3_2_figures-003,382,非合成断面 AG2 断面構成図,section_drawing,,calc_pdf_p382,HIGH,Non-composite section composition diagram for AG2
+SRC-calculation_chapter_03_section_3_2_figures-004,383,非合成断面 AG2 断面構成図(続き),section_drawing,,calc_pdf_p383,HIGH,Non-composite section composition diagram for AG2 (continued)
+SRC-calculation_chapter_03_section_3_2_figures-005,382,AG1 J-1 UFLG field splice,bolts,,calc_pdf_p382,HIGH,"Bolt arrangement: 620mm flange width, 75mm edge, 140/90/90mm gage lines"
+SRC-calculation_chapter_03_section_3_2_figures-006,382-514,Field splice bolt arrangement per joint,bolts,,calc_pdf_p382-514,HIGH,"Each joint (J-1 through J-17) has bolt arrangement diagrams for UFLG, LFLG, and WEB"
+SRC-calculation_chapter_03_section_3_2_figures-007,524,Bearing stiffener - horizontal load arm,schematic,,calc_pdf_p524,HIGH,Schematic showing moment arm h = crossbeam lower flange top + sole plate thickness + bearing height
+SRC-calculation_chapter_03_section_3_2_figures-008,579,Jack-up stiffener - jacking point,schematic,,calc_pdf_p579,HIGH,Jack-up stiffener arrangement schematic
+SRC-calculation_chapter_03_section_3_2_figures-009,667,Sole plate - end support,schematic,,calc_pdf_p667,HIGH,"Sole plate plan view showing bearing center, A/A1/B dimensions, taper details"
+SRC-calculation_chapter_03_section_3_2_figures-010,667,Sole plate - intermediate support,schematic,,calc_pdf_p667,HIGH,"Sole plate at intermediate support (PR1, PR2) showing center thickness 36mm"
+CAL-FIG-P00678-001,678,横桁部材番号図,numbering_diagram,"CR1-001~CR1-027,S1,PR1,PR2,S2",calc_pdf_p678,HIGH,Cross beam numbering CR1-001 through CR1-027
+CAL-FIG-P00687-001,687,中間横桁代表CR1-026断面図,cross_section,CR1-026,calc_pdf_p687,MEDIUM,Intermediate cross beam 4500mm span
+CAL-FIG-P00704-001,704,端支点上横桁断面図+荷重載荷図,cross_section,"CR1-001,端支点S1",calc_pdf_p704,MEDIUM,End pier cross beam section and load diagram
+CAL-FIG-P00735-001,735,中間支点上横桁断面図+荷重載荷図,cross_section,"CR1-009,中間支点PR1",calc_pdf_p735,MEDIUM,Intermediate pier cross beam section and load diagram
+CAL-FIG-P00766-001,766,端ブラケットS1側断面図,cross_section,"S1,AG1,AG2",calc_pdf_p766,HIGH,S1 bracket section 2146x1900mm
+CAL-FIG-P00777-001,777,端ブラケットS2側断面図,cross_section,"S2,AG1,AG2",calc_pdf_p777,HIGH,S2 side bracket cross section
+CAL-FIG-P00790-001,790,横構骨組図(格点/部材/断面番号),frame_diagram,"AG1,AG2,S1,PR1,PR2,S2,C1-C23",calc_pdf_p790,HIGH,Lateral bracing frame with nodes 10010-10270/20010-20270 Warren truss
+CAL-FIG-P00818-001,818,巻き立てコンクリート概要図,cross_section,"AG1,AG2,S1,S2,PR1,PR2",calc_pdf_p818,HIGH,Wrapping concrete overview dimensions S1:1500x2280 S2:1500x2400 PR1/PR2:2000x2400
+CAL-FIG-P00843-001,843,疲労照査フローチャート,flowchart,"AG1,AG2",calc_pdf_p843,HIGH,Fatigue check flowchart necessity-simplified-detailed
+CAL-FIG-P00844-001,844,疲労照査荷重位置図,load_diagram,"AG1,AG2,100kN",calc_pdf_p844,HIGH,8010mm width 7000mm roadway 100kN wheel loads at 1755/4500/1755
+CAL-FIG-P00874-001,874,標準断面図,cross_section,"AG1,AG2,PU15",calc_pdf_p874,HIGH,Composite bridge cross-section 8010x7000 with composite deck t=230mm
+CAL-FIG-P00900-001,900,格点番号および部材番号図,numbering_diagram,"AG1,AG2",calc_pdf_p900,HIGH,Panel point and member numbering for composite girder model
+CAL-FIG-P01776-001,1776,断面構成図 AG1,cross_section,AG1,calc_pdf_p1776,HIGH,AG1 section composition drawing showing flange/web dimensions along girder
+CAL-FIG-P01776-002,1776,断面構成図 AG2,cross_section,AG2,calc_pdf_p1776,HIGH,AG2 section composition drawing showing flange/web dimensions along girder
+CH5-FIG-001,2032,形状係数・縦弾性係数説明図,formula_diagram,,calc_pdf_p2032,HIGH,NOT_EXTRACTED
+CH5-FIG-002,2033,合成剛性概念図,concept_diagram,,calc_pdf_p2033,HIGH,NOT_EXTRACTED
+CH5-FIG-003,2034,不動点および温度変化移動量概念図,concept_diagram,,calc_pdf_p2034,HIGH,NOT_EXTRACTED
+CH5-FIG-004,2038,レベル1地震時作用概念図,concept_diagram,,calc_pdf_p2038,HIGH,NOT_EXTRACTED
+CH5-FIG-005,2045,耐荷性能照査用鉛直力算出概念図,concept_diagram,,calc_pdf_p2045,HIGH,NOT_EXTRACTED
+CH5-FIG-006,2190,段差防止構造 正面図,structural_drawing,,calc_pdf_p2190,HIGH,NOT_EXTRACTED
+CH5-FIG-007,2190,段差防止構造 側面図,structural_drawing,,calc_pdf_p2190,HIGH,NOT_EXTRACTED
+CH5-FIG-008,2192,台座寸法図,structural_drawing,,calc_pdf_p2192,HIGH,NOT_EXTRACTED
+CH5-FIG-009,2192,台座断面図(緩衝材),structural_drawing,,calc_pdf_p2192,HIGH,NOT_EXTRACTED
+CH5-FIG-010,2199,通水断面形状図,concept_diagram,,calc_pdf_p2199,HIGH,NOT_EXTRACTED
+CH5-FIG-011,2208,ミドルビーム断面図,structural_drawing,,calc_pdf_p2208,HIGH,NOT_EXTRACTED
+CH5-FIG-012,2209,ミドルビーム4径間連続梁載荷図,structural_drawing,,calc_pdf_p2209,HIGH,NOT_EXTRACTED
+CH5-FIG-013,2214,サポートビーム載荷イメージ図,structural_drawing,,calc_pdf_p2214,HIGH,NOT_EXTRACTED
+CH5-FIG-014,2216,伸縮装置張出部断面図,structural_drawing,,calc_pdf_p2216,HIGH,NOT_EXTRACTED
+CH5-FIG-015,2223,フィンガー形状図,structural_drawing,,calc_pdf_p2223,HIGH,NOT_EXTRACTED
+CH5-FIG-016,2224,フェイスプレート断面図,structural_drawing,,calc_pdf_p2224,HIGH,NOT_EXTRACTED
+FM-FIG-001,1,金沢IC Aランプ橋 3径間連続鈑桁橋,cover_art,,calc_pdf_p1,HIGH,PDF cover page graphical title layout
+FM-FIG-002,3,目次,TOC_layout,,calc_pdf_p3,HIGH,Table of contents spanning PDF pages 3-5
