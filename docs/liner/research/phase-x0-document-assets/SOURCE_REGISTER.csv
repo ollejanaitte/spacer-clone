@@ -1,0 +1,7 @@
+﻿source_root,root_path,description,access_policy
+SR-01,~/Projects（最上位）,道路構造令・サンプル道路資料・鋼橋サンプル・Apollo UI指示書の正本置場,読み取り専用の参照元。リポジトリ外
+SR-02,~/Projects/liner-future-research,LINER R1調査のソース複製（manuals/design_examples/repositoryスナップショット）,既存調査成果物の保管庫
+SR-03,~/Projects/spacer-clone-liner-r1-planning,LINER専用worktree（マニュアル・サンプル・level2データ・研究成果物）,Phase X0 の作業場。成果物をここへ配置
+SR-04,~/Projects/spacer-clone,上部工・main系worktree。マニュアル・設計基準PDF・APOLLOマニュアル・研究アーカイブを保持,読み取り専用。絶対に変更しない
+SR-05,~/Projects/Scope_of_Work,曲線橋ソース調査（step10_curved_bridge）等の研究成果物,読み取り専用の参照元
+SR-06,~/Projects/substructure-planning-lab,下部工計画の研究成果物（データモデル・統合報告）,読み取り専用の参照元
