@@ -2,34 +2,34 @@ id,sheet_number,japanese_name,english_name,value,unit,notes
 1,all,橋長,Bridge length,134001,mm,ACL上
 2,all,桁長,Girder length,133151/132847,mm,"AG1=133151, AG2=132847"
 3,all,支間長,Span length,40201/51000/40200,mm,3 spans
-4,all,主桁間隔,Girder spacing,4500,mm
-5,all,主桁高,Girder height,2700,mm
+4,all,主桁間隔,Girder spacing,4500,mm,
+5,all,主桁高,Girder height,2700,mm,
 6,9,全幅員,Total width,8031.7/8010.3/8010,mm,At S1/S2/PR1
 7,9,床版厚,Deck thickness,230,mm,Steel-concrete composite
-8,9,舗装厚,Pavement thickness,80,mm
-9,9,片持張出,Cantilever overhang,2750/2750.1/2750,mm
+8,9,舗装厚,Pavement thickness,80,mm,
+9,9,片持張出,Cantilever overhang,2750/2750.1/2750,mm,
 10,13,上フランジ幅,Top flange width,620,mm,All sections
 11,13,上フランジ厚,Top flange thickness,22/27/27/25/27/39/26/26/28,mm,Sec-1 to Sec-9
 12,13,腹板高さ,Web height,2537-2657,mm,Range across sections
 13,13,腹板厚,Web thickness,14,mm,All sections
 14,13,下フランジ幅,Bottom flange width,700/700/700/700/700/700/700/700/700,mm,Sec-1 to Sec-9
 15,13,下フランジ厚,Bottom flange thickness,28/32/32/32/36/40/36/36/36,mm,Sec-1 to Sec-9
-16,13,格間長,Panel length,5344/7@4992.5/10@5097.4/6@5094.6/4834.7/4885,mm
-17,14,AG2格間長,AG2 panel length,5020.1/7@5000/10@5105.1/6@5102.2/4700/4712.7,mm
+16,13,格間長,Panel length,5344/7@4992.5/10@5097.4/6@5094.6/4834.7/4885,mm,
+17,14,AG2格間長,AG2 panel length,5020.1/7@5000/10@5105.1/6@5102.2/4700/4712.7,mm,
 18,21,AG1上フランジ,AG1 UFLG J-1,PL 620x22x8151,mm,SM490YB
 19,21,AG1上フランジ,AG1 UFLG J-2,PL 620x27x6241,mm,SM490YB
 20,21,AG1ウェブ,AG1 WEB J-1,PL 2663x14x8113,mm,SM490YA
 21,21,AG1ウェブ,AG1 WEB J-2,PL 2655x14x6260,mm,SM490YA
-22,21,AG1下フランジ,AG1 LFLG J-1,PL 700x28x8148,mm
-23,21,AG1下フランジ,AG1 LFLG J-2,PL 700x32x6241,mm
+22,21,AG1下フランジ,AG1 LFLG J-1,PL 700x28x8148,mm,
+23,21,AG1下フランジ,AG1 LFLG J-2,PL 700x32x6241,mm,
 24,29,AG1端部フランジ,AG1 end UFLG,PL 620x25x7562,mm,SM490YB
 25,30,AG2上フランジ,AG2 UFLG J-1,PL 620x22x7818,mm,SM490YB
 26,30,AG2上フランジ,AG2 UFLG J-2,PL 620x27x6250,mm,SM490YB
 27,30,AG2ウェブ,AG2 WEB J-1,PL 2657x14x7801,mm,SM490YA
 28,30,AG2ウェブ,AG2 WEB J-2,PL 2654x14x6270,mm,SM490YA
-29,30,AG2下フランジ,AG2 LFLG J-1,PL 700x28x7814,mm
-30,30,AG2下フランジ,AG2 LFLG J-2,PL 700x32x6250,mm
-31,38,AG2端部フランジ,AG2 end UFLG,PL 620x25x7548,mm
+29,30,AG2下フランジ,AG2 LFLG J-1,PL 700x28x7814,mm,
+30,30,AG2下フランジ,AG2 LFLG J-2,PL 700x32x6250,mm,
+31,38,AG2端部フランジ,AG2 end UFLG,PL 620x25x7548,mm,
 32,39,スタッド径,Stud diameter,22,mm,φ22
 33,39,スタッド長さ,Stud length,200/150,mm,"200 typical, 150 at some locations"
 34,39,スタッド材質,Stud material,SS400,,

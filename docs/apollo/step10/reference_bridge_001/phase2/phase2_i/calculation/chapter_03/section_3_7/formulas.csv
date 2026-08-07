@@ -1,7 +1,7 @@
 formula_id,pdf_page_number,printed_page_number,chapter_id,section_id,formula_label_raw,expression_raw,variable_symbols,referenced_standard_raw,semantic_class,source_locator,confidence,verification_status
-CAL-FML-P00845-001,845,840,CAL-CH3,CAL-SEC-3.7.1,if,if=10/(50+L),if,L,道示II式8.2.2,FORMULA_DEFINITION,CAL-P00845,HIGH,UNVERIFIED
-CAL-FML-P00846-001,846,841,CAL-CH3,CAL-SEC-3.7.1,gammaF,gammaF=gammaF1*gammaF2*gammaF3*gammaa,gammaF1,gammaF2,gammaF3,gammaa,道示II式8.2.1,FORMULA_DEFINITION,CAL-P00846,HIGH,UNVERIFIED
-CAL-FML-P00850-001,850,845,CAL-CH3,CAL-SEC-3.7.1,応力範囲,delta_sigmai,j=|sigma_i,k1-sigma_i,k2|*gammaF(i),sigma,gammaF,,FORMULA_DEFINITION,CAL-P00850,HIGH,UNVERIFIED
-CAL-FML-P00850-002,850,845,CAL-CH3,CAL-SEC-3.7.1,No.1 delta_sigma,delta_sigma=|14-(-4)|*3.00=54N/mm2,14,-4,3.00,,NUMERIC_SUBSTITUTION,CAL-P00850,HIGH,UNVERIFIED
-CAL-FML-P00852-001,852,847,CAL-CH3,CAL-SEC-3.7.1,nti,nti=ADTTSLi*gamma_n*365*Y=379*0.03*365*100=0.42e6,ADTTSLi=379,gamma_n=0.03,Y=100,道示II式8.2.3,NUMERIC_SUBSTITUTION,CAL-P00852,HIGH,UNVERIFIED
-CAL-FML-P00852-002,852,847,CAL-CH3,CAL-SEC-3.7.1,Ni,j,Ni,j=2e6*(delta_sigma_f*CR*Ct)^3/delta_sigma_i,j^3,delta_sigma_f=50,CR=1.00,Ct=1.00,delta_sigma=54,,NUMERIC_SUBSTITUTION,CAL-P00852,HIGH,UNVERIFIED
+CAL-FML-P00845-001,845,840,CAL-CH3,CAL-SEC-3.7.1,if,if=10/(50+L),"if, L",道示II式8.2.2,FORMULA_DEFINITION,calc_pdf_p845,HIGH,UNVERIFIED
+CAL-FML-P00846-001,846,841,CAL-CH3,CAL-SEC-3.7.1,gammaF,gammaF=gammaF1*gammaF2*gammaF3*gammaa,"gammaF1, gammaF2, gammaF3, gammaa",道示II式8.2.1,FORMULA_DEFINITION,calc_pdf_p846,HIGH,UNVERIFIED
+CAL-FML-P00850-001,850,845,CAL-CH3,CAL-SEC-3.7.1,応力範囲,"delta_sigmai,j=|sigma_i","k1-sigma_i, k2|*gammaF(i), sigma, gammaF",,FORMULA_DEFINITION,calc_pdf_p850,HIGH,UNVERIFIED
+CAL-FML-P00850-002,850,845,CAL-CH3,CAL-SEC-3.7.1,No.1 delta_sigma,delta_sigma=|14-(-4)|*3.00=54N/mm2,"14, -4, 3.00",,NUMERIC_SUBSTITUTION,calc_pdf_p850,HIGH,UNVERIFIED
+CAL-FML-P00852-001,852,847,CAL-CH3,CAL-SEC-3.7.1,nti,nti=ADTTSLi*gamma_n*365*Y=379*0.03*365*100=0.42e6,"ADTTSLi=379, gamma_n=0.03, Y=100",道示II式8.2.3,NUMERIC_SUBSTITUTION,calc_pdf_p852,HIGH,UNVERIFIED
+CAL-FML-P00852-002,852,847,CAL-CH3,CAL-SEC-3.7.1,Ni,j,"Ni, j=2e6*(delta_sigma_f*CR*Ct)^3/delta_sigma_i, j^3, delta_sigma_f=50, CR=1.00, Ct=1.00, delta_sigma=54",,NUMERIC_SUBSTITUTION,calc_pdf_p852,HIGH,UNVERIFIED

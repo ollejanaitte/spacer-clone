@@ -1,25 +1,25 @@
 index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
-GEO-001,geometry,CH1-VAL-005,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Bridge length 134.001m,Overall bridge length on ACL
-GEO-002,geometry,CH1-VAL-007,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Span length 40.201m (span 1),First span
-GEO-003,geometry,CH1-VAL-008,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Span length 51.000m (span 2),Second span
-GEO-004,geometry,CH1-VAL-009,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Span length 40.200m (span 3),Third span
-GEO-005,geometry,CH1-VAL-010,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Total width 8.010m,Deck total width
-GEO-006,geometry,CH1-VAL-011,DIMENSION,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Effective width 7.000m,Effective roadway width
-GEO-007,geometry,DWG-DIM-S001-001,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_all,3,Bridge length 134001mm,From drawing sheet 1 (location)
-GEO-008,geometry,DWG-DIM-S001-002,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_all,3,Girder length AG1=133151mm AG2=132847mm,From drawing general sheets
-GEO-009,geometry,DWG-DIM-S001-003,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_all,3,Span lengths 40201/51000/40200mm,3-span configuration
-GEO-010,geometry,DWG-DIM-S001-004,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_all,3,Girder spacing 4500mm,Main girder spacing
-GEO-011,geometry,DWG-DIM-S001-005,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_all,3,Girder height 2700mm,Main girder depth
-GEO-012,geometry,CAL-VAL-P00135-007,DIMENSION,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Average span length 40.156m (span 1),Impact factor calculation input
-GEO-013,geometry,CAL-VAL-P00135-009,DIMENSION,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Average span length 51.013m (span 2),Impact factor calculation input
-GEO-014,geometry,CAL-VAL-P00135-011,DIMENSION,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Average span length 40.156m (span 3),Impact factor calculation input
-GEO-015,geometry,DWG-DIM-S013-010,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_13,15,Top flange width 620mm,All sections constant
-GEO-016,geometry,DWG-DIM-S013-014,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_13,15,Bottom flange width 700mm,All sections constant
-GEO-017,geometry,DWG-DIM-S013-012,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_13,15,Web height 2537-2657mm,Range across sections
-GEO-018,geometry,DWG-DIM-S013-013,DIMENSION,drawings/sheets_001_044/dimensions.csv,drawing_13,15,Web thickness 14mm,Constant throughout
-GEO-019,geometry,CAL-FIG-P00118-001,DIMENSION,calculation/chapter_03/section_3_1/figures.csv,CH3-CAL-SEC-3.1.2,118,Standard cross-section 8010x7000mm,With sound barrier and pavement
-GEO-020,geometry,CAL-VAL-P00119-001,DIMENSION,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Pavement thickness 0.080m,Dead load parameter
-GEO-021,geometry,CAL-VAL-P00119-004,DIMENSION,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Deck thickness 0.230m,Steel-concrete composite deck
-GEO-022,geometry,CAL-VAL-P00379-001,DIMENSION,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.3,384,Cross-section composition diagram,Section layout reference
-GEO-023,geometry,CAL-VAL-P00685-002,DIMENSION,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,685,Bridge total width B=8.010m,Wind load calculation input
-GEO-024,geometry,CAL-VAL-P00685-003,DIMENSION,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,685,Bridge total height D=8.110m,Wind load calculation input
+GEO-001,geometry,CH1-VAL-005,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Bridge length 134.001m,Overall bridge length on ACL
+GEO-002,geometry,CH1-VAL-007,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Span length 40.201m (span 1),First span
+GEO-003,geometry,CH1-VAL-008,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Span length 51.000m (span 2),Second span
+GEO-004,geometry,CH1-VAL-009,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Span length 40.200m (span 3),Third span
+GEO-005,geometry,CH1-VAL-010,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Total width 8.010m,Deck total width
+GEO-006,geometry,CH1-VAL-011,DIMENSION,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Effective width 7.000m,Effective roadway width
+GEO-007,geometry,DWG-DIM-S001-001,DIMENSION,calc_pdf_p3,drawing_all,3,Bridge length 134001mm,From drawing sheet 1 (location)
+GEO-008,geometry,DWG-DIM-S001-002,DIMENSION,calc_pdf_p3,drawing_all,3,Girder length AG1=133151mm AG2=132847mm,From drawing general sheets
+GEO-009,geometry,DWG-DIM-S001-003,DIMENSION,calc_pdf_p3,drawing_all,3,Span lengths 40201/51000/40200mm,3-span configuration
+GEO-010,geometry,DWG-DIM-S001-004,DIMENSION,calc_pdf_p3,drawing_all,3,Girder spacing 4500mm,Main girder spacing
+GEO-011,geometry,DWG-DIM-S001-005,DIMENSION,calc_pdf_p3,drawing_all,3,Girder height 2700mm,Main girder depth
+GEO-012,geometry,CAL-VAL-P00135-007,DIMENSION,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Average span length 40.156m (span 1),Impact factor calculation input
+GEO-013,geometry,CAL-VAL-P00135-009,DIMENSION,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Average span length 51.013m (span 2),Impact factor calculation input
+GEO-014,geometry,CAL-VAL-P00135-011,DIMENSION,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Average span length 40.156m (span 3),Impact factor calculation input
+GEO-015,geometry,DWG-DIM-S013-010,DIMENSION,calc_pdf_p15,drawing_13,15,Top flange width 620mm,All sections constant
+GEO-016,geometry,DWG-DIM-S013-014,DIMENSION,calc_pdf_p15,drawing_13,15,Bottom flange width 700mm,All sections constant
+GEO-017,geometry,DWG-DIM-S013-012,DIMENSION,calc_pdf_p15,drawing_13,15,Web height 2537-2657mm,Range across sections
+GEO-018,geometry,DWG-DIM-S013-013,DIMENSION,calc_pdf_p15,drawing_13,15,Web thickness 14mm,Constant throughout
+GEO-019,geometry,CAL-FIG-P00118-001,DIMENSION,calc_pdf_p118,CH3-CAL-SEC-3.1.2,118,Standard cross-section 8010x7000mm,With sound barrier and pavement
+GEO-020,geometry,CAL-VAL-P00119-001,DIMENSION,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Pavement thickness 0.080m,Dead load parameter
+GEO-021,geometry,CAL-VAL-P00119-004,DIMENSION,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Deck thickness 0.230m,Steel-concrete composite deck
+GEO-022,geometry,CAL-VAL-P00379-001,DIMENSION,calc_pdf_p384,CH3-CAL-SEC-3.2.3,384,Cross-section composition diagram,Section layout reference
+GEO-023,geometry,CAL-VAL-P00685-002,DIMENSION,calc_pdf_p685,CH3-CAL-SEC-3.3.3,685,Bridge total width B=8.010m,Wind load calculation input
+GEO-024,geometry,CAL-VAL-P00685-003,DIMENSION,calc_pdf_p685,CH3-CAL-SEC-3.3.3,685,Bridge total height D=8.110m,Wind load calculation input

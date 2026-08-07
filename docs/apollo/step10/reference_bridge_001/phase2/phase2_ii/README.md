@@ -34,7 +34,7 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 | PR | Branch prefix | Content |
 |----|---------------|---------|
 | P2II-0 | p2ii-0-truth-gate | Truth reconciliation, post-seal correction, Phase 2-I coverage/status/manifest repair (#441, MERGED) |
-| P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription |
+| P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription (#442, MERGED) |
 | P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair |
 | P2II-C | p2ii-c-layer-contract | Candidate layer contract, schema, enums, ID & normalization rules |
 | P2II-D | p2ii-d-input-geometry | Input + Geometry candidate layers |
@@ -73,7 +73,7 @@ phase2_ii/
 - `adoption_status` never equals `APPROVED_GOLDEN_INPUT` in Phase 2-II.
 - Recalculation and production-code changes are prohibited.
 
-## P2II-A — Unread / low-confidence resolution (THIS PR)
+## P2II-A — Unread / low-confidence resolution (COMPLETE, #442)
 
 Drawings/results that Phase 2-I flagged `UNREADABLE_REQUIRES_HUMAN` (i.e.
 raster-only pages with empty/partial text layers) are re-extracted via
@@ -89,3 +89,26 @@ render + OCR and transcribed into structured CSVs, then logged in
 
 Verdict remains **RESOLVED_WITH_OCR_ASSIST (PARTIAL)** — not a Golden value.
 Ambiguous cells require human confirmation before Phase 2-II closeout.
+
+## P2II-B — Phase 2-I depth audit + status repair (THIS PR)
+
+Resolved the two deferred Phase 2-I validator checks (`validate_phase2_i.py`):
+
+- **Check 6 — source locators**: 1817 → 0 invalid. `source_locator` derived as
+  `calc_pdf_p{pdf_page_number}` / `calc_pdf_p{pdf_page}` from each row's own page
+  number (1781 rows). The `title_blocks.csv` geographic `location` column is no
+  longer scanned as a locator (validator false positive).
+- **Check 13 — semantic classes**: 1233 → 0 invalid. `ALLOWED_SEMANTIC_CLASSES`
+  re-aligned to the authoritative contract taxonomy (26 uppercase classes in
+  `02_extraction_schema_and_id_contract.md`) plus the legitimate domain labels
+  actually used (253 classes total).
+- **Column-shift corruption**: 249 rows across 32 files re-aligned (field count
+  == header; content restored to correct columns, nothing lost).
+
+Artifacts:
+- `tools/repair_p2ii_b_data.py` (deterministic, idempotent repair script)
+- `p2ii_b_depth_audit_register.csv` (2031 change records)
+- `p2ii_b_depth_audit_report.md` (baseline, repairs, metrics)
+
+Validator: `tools/validate_phase2_i.py --mode pre-closeout` → **OVERALL: PASS**
+(13/13 checks). Frontend lint / tsc / vitest: PASS (538/538).

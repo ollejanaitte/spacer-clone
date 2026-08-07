@@ -1,23 +1,23 @@
 index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
-MATSEC-001,material_section,CAL-VAL-P00149-001,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.6,149,Steel Young's modulus E=2.0e8 kN/m2,Common for all steel grades
-MATSEC-002,material_section,CAL-VAL-P00149-002,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.6,149,Steel shear modulus G=7.7e7 kN/m2,Common for all steel grades
-MATSEC-003,material_section,CH1-VAL-026,steel_grade,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Steel grade SM520,High-strength steel
-MATSEC-004,material_section,CH1-VAL-027,steel_grade,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Steel grade SM490Y,Main structural steel
-MATSEC-005,material_section,CH1-VAL-028,steel_grade,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Steel grade SM400,Mild steel
-MATSEC-006,material_section,CH1-VAL-029,steel_grade,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Steel grade SS400,General structural steel
-MATSEC-007,material_section,CAL-VAL-P01285-001,MATERIAL_PROPERTY,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1285,SM490Y yield point σy: 355 N/mm2,Composite section design
-MATSEC-008,material_section,CAL-VAL-P01285-002,MATERIAL_PROPERTY,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1285,SM490Y tensile strength σsu: 490 N/mm2,Composite section design
-MATSEC-009,material_section,CAL-VAL-P01285-003,MATERIAL_PROPERTY,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1285,SM490Y shear yield τy: 205 N/mm2,Composite section design
-MATSEC-010,material_section,CH2-VAL-020,concrete_strength,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Concrete design strength σck: 30 N/mm2,Composite deck design
-MATSEC-011,material_section,CH2-VAL-009,steel_grade,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Steel plate grade SM490Y,Composite deck bottom plate
-MATSEC-012,material_section,CH2-VAL-013,steel_grade,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Rib steel grade SS400,Composite deck lateral rib
-MATSEC-013,material_section,CH2-VAL-016,rebar_grade,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Rebar grade SD345,Composite deck reinforcement
-MATSEC-014,material_section,CH2-VAL-011,yield_strength,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Steel tension yield 355 N/mm2,SM490Y
-MATSEC-015,material_section,CH2-VAL-014,yield_strength,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Rib tension yield 235 N/mm2,SS400
-MATSEC-016,material_section,CH2-VAL-019,yield_strength,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Rebar tension yield 345 N/mm2,SD345
-MATSEC-017,material_section,CAL-VAL-P01286-001,REINFORCEMENT,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1286,Rebar D22 @125mm top and bottom,Composite section reinforcement
-MATSEC-018,material_section,CAL-VAL-P01286-002,PARAMETER,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1286,Composite n-value for live load: 7,Young's modulus ratio
-MATSEC-019,material_section,CAL-VAL-P01286-003,PARAMETER,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1286,Composite n-value for creep: 14,Long-term effect
-MATSEC-020,material_section,CAL-VAL-P01286-004,PARAMETER,calculation/chapter_04/section_4_2/values.csv,CH4-CAL-SEC-4.2.1,1286,Composite n-value for drying shrinkage: 21,Long-term effect
-MATSEC-021,material_section,CAL-VAL-P00121-001,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,121,Haunch concrete unit weight: 24.5 kN/m3,RCC material property
-MATSEC-022,material_section,CAL-VAL-P00121-002,MATERIAL_PROPERTY,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,121,Wall rail concrete unit weight: 24.5 kN/m3,RCC material property
+MATSEC-001,material_section,CAL-VAL-P00149-001,MATERIAL_PROPERTY,calc_pdf_p149,CH3-CAL-SEC-3.1.6,149,Steel Young's modulus E=2.0e8 kN/m2,Common for all steel grades
+MATSEC-002,material_section,CAL-VAL-P00149-002,MATERIAL_PROPERTY,calc_pdf_p149,CH3-CAL-SEC-3.1.6,149,Steel shear modulus G=7.7e7 kN/m2,Common for all steel grades
+MATSEC-003,material_section,CH1-VAL-026,steel_grade,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Steel grade SM520,High-strength steel
+MATSEC-004,material_section,CH1-VAL-027,steel_grade,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Steel grade SM490Y,Main structural steel
+MATSEC-005,material_section,CH1-VAL-028,steel_grade,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Steel grade SM400,Mild steel
+MATSEC-006,material_section,CH1-VAL-029,steel_grade,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Steel grade SS400,General structural steel
+MATSEC-007,material_section,CAL-VAL-P01285-001,MATERIAL_PROPERTY,calc_pdf_p1285,CH4-CAL-SEC-4.2.1,1285,SM490Y yield point σy: 355 N/mm2,Composite section design
+MATSEC-008,material_section,CAL-VAL-P01285-002,MATERIAL_PROPERTY,calc_pdf_p1285,CH4-CAL-SEC-4.2.1,1285,SM490Y tensile strength σsu: 490 N/mm2,Composite section design
+MATSEC-009,material_section,CAL-VAL-P01285-003,MATERIAL_PROPERTY,calc_pdf_p1285,CH4-CAL-SEC-4.2.1,1285,SM490Y shear yield τy: 205 N/mm2,Composite section design
+MATSEC-010,material_section,CH2-VAL-020,concrete_strength,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Concrete design strength σck: 30 N/mm2,Composite deck design
+MATSEC-011,material_section,CH2-VAL-009,steel_grade,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Steel plate grade SM490Y,Composite deck bottom plate
+MATSEC-012,material_section,CH2-VAL-013,steel_grade,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Rib steel grade SS400,Composite deck lateral rib
+MATSEC-013,material_section,CH2-VAL-016,rebar_grade,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Rebar grade SD345,Composite deck reinforcement
+MATSEC-014,material_section,CH2-VAL-011,yield_strength,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Steel tension yield 355 N/mm2,SM490Y
+MATSEC-015,material_section,CH2-VAL-014,yield_strength,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Rib tension yield 235 N/mm2,SS400
+MATSEC-016,material_section,CH2-VAL-019,yield_strength,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Rebar tension yield 345 N/mm2,SD345
+MATSEC-017,material_section,CAL-VAL-P01286-001,REINFORCEMENT,calc_pdf_p1286,CH4-CAL-SEC-4.2.1,1286,Rebar D22 @125mm top and bottom,Composite section reinforcement
+MATSEC-018,material_section,CAL-VAL-P01286-002,PARAMETER,calc_pdf_p1286,CH4-CAL-SEC-4.2.1,1286,Composite n-value for live load: 7,Young's modulus ratio
+MATSEC-019,material_section,CAL-VAL-P01286-003,PARAMETER,calc_pdf_p1286,CH4-CAL-SEC-4.2.1,1286,Composite n-value for creep: 14,Long-term effect
+MATSEC-020,material_section,CAL-VAL-P01286-004,PARAMETER,calc_pdf_p1286,CH4-CAL-SEC-4.2.1,1286,Composite n-value for drying shrinkage: 21,Long-term effect
+MATSEC-021,material_section,CAL-VAL-P00121-001,MATERIAL_PROPERTY,calc_pdf_p121,CH3-CAL-SEC-3.1.2,121,Haunch concrete unit weight: 24.5 kN/m3,RCC material property
+MATSEC-022,material_section,CAL-VAL-P00121-002,MATERIAL_PROPERTY,calc_pdf_p121,CH3-CAL-SEC-3.1.2,121,Wall rail concrete unit weight: 24.5 kN/m3,RCC material property

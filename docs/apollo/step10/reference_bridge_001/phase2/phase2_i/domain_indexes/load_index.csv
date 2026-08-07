@@ -1,26 +1,26 @@
 index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
-LOAD-001,load,CAL-VAL-P00119-003,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Pavement load 1.800 kN/m2,Dead load
-LOAD-002,load,CAL-VAL-P00119-006,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Deck load 6.325 kN/m2,Dead load
-LOAD-003,load,CAL-VAL-P00119-007,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Haunch load AG1/AG2 2.842 kN/m,Dead load
-LOAD-004,load,CAL-VAL-P00119-008,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Wall rail load 9.920 kN/m,Dead load per side
-LOAD-005,load,CAL-VAL-P00119-009,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Sound barrier load 2.100 kN/m,Dead load
-LOAD-006,load,CAL-VAL-P00119-010,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Steel weight AG1/AG2 12.000 kN/m,Assumed dead load per girder
-LOAD-007,load,CAL-VAL-P00119-011,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Inspection walkway load 1.000 kN/m,Dead load
-LOAD-008,load,CAL-VAL-P00119-012,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Nose load 1.000 kN/m,Dead load
-LOAD-009,load,CAL-VAL-P00119-013,LOAD_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,119,Curb load 2.100 kN/m,Dead load
-LOAD-010,load,CAL-VAL-P00135-002,DERIVED_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 1: 0.222,i=20/(50+L)
-LOAD-011,load,CAL-VAL-P00135-004,DERIVED_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 2: 0.198,i=20/(50+L)
-LOAD-012,load,CAL-VAL-P00135-006,DERIVED_VALUE,calculation/chapter_03/section_3_1/values.csv,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 3: 0.222,i=20/(50+L)
-LOAD-013,load,CH1-VAL-006,LOAD_VALUE,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Live load B-活荷重,B活荷重 per 道示Ⅰ 8.2
-LOAD-014,load,CH2-VAL-006,LOAD_VALUE,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Wind load outer side 3.00 kN/m2,Design wind load
-LOAD-015,load,CH2-VAL-007,LOAD_VALUE,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Wind load inner side 1.50 kN/m2,Design wind load
-LOAD-016,load,CH2-VAL-008,LOAD_VALUE,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,18,Collision load 13.0 kN/m,Vehicle collision load
-LOAD-017,load,CH1-VAL-024,COEFFICIENT,calculation/chapter_01/values.csv,CH1-CAL-SEC-1.1,7,Seismic coefficient Level 1: 0.25,Horizontal seismic coefficient
-LOAD-018,load,CAL-VAL-P00685-001,DESIGN_PARAMETER,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,685,Design wind speed V=40 m/s,Wind load basis
-LOAD-019,load,CAL-VAL-P00685-005,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,685,Wind load WS=40.06 kN/m,Parallel bridge correction α=1.30
-LOAD-020,load,CAL-VAL-P00686-003,COEFFICIENT,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,Seismic coefficient L1 Kh=0.25,Level 1 seismic design
-LOAD-021,load,CAL-VAL-P00686-002,LOAD_VALUE,calculation/chapter_03/section_3_3/values.csv,CH3-CAL-SEC-3.3.3,686,Seismic load L1 We=35.89 kN/m,Level 1 equivalent seismic load
-LOAD-022,load,CAL-VAL-P00767-005,DERIVED_VALUE,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,767,Impact coefficient normal i=0.392,Bracket end-plate design
-LOAD-023,load,CAL-VAL-P00767-003,LOAD_VALUE,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,767,Wheel load P=100 kN,T-wheel load
-LOAD-024,load,CAL-VAL-P00767-004,DERIVED_VALUE,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,767,Impact coefficient collision i=0.389,Bracket collision check
-LOAD-025,load,CAL-VAL-P00768-001,LOAD_VALUE,calculation/chapter_03/section_3_4/values.csv,CH3-CAL-SEC-3.4.1,768,Collision load F=35.0 kN,SC class collision load
+LOAD-001,load,CAL-VAL-P00119-003,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Pavement load 1.800 kN/m2,Dead load
+LOAD-002,load,CAL-VAL-P00119-006,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Deck load 6.325 kN/m2,Dead load
+LOAD-003,load,CAL-VAL-P00119-007,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Haunch load AG1/AG2 2.842 kN/m,Dead load
+LOAD-004,load,CAL-VAL-P00119-008,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Wall rail load 9.920 kN/m,Dead load per side
+LOAD-005,load,CAL-VAL-P00119-009,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Sound barrier load 2.100 kN/m,Dead load
+LOAD-006,load,CAL-VAL-P00119-010,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Steel weight AG1/AG2 12.000 kN/m,Assumed dead load per girder
+LOAD-007,load,CAL-VAL-P00119-011,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Inspection walkway load 1.000 kN/m,Dead load
+LOAD-008,load,CAL-VAL-P00119-012,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Nose load 1.000 kN/m,Dead load
+LOAD-009,load,CAL-VAL-P00119-013,LOAD_VALUE,calc_pdf_p119,CH3-CAL-SEC-3.1.2,119,Curb load 2.100 kN/m,Dead load
+LOAD-010,load,CAL-VAL-P00135-002,DERIVED_VALUE,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 1: 0.222,i=20/(50+L)
+LOAD-011,load,CAL-VAL-P00135-004,DERIVED_VALUE,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 2: 0.198,i=20/(50+L)
+LOAD-012,load,CAL-VAL-P00135-006,DERIVED_VALUE,calc_pdf_p135,CH3-CAL-SEC-3.1.2,135,Impact coefficient span 3: 0.222,i=20/(50+L)
+LOAD-013,load,CH1-VAL-006,LOAD_VALUE,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Live load B-活荷重,B活荷重 per 道示Ⅰ 8.2
+LOAD-014,load,CH2-VAL-006,LOAD_VALUE,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Wind load outer side 3.00 kN/m2,Design wind load
+LOAD-015,load,CH2-VAL-007,LOAD_VALUE,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Wind load inner side 1.50 kN/m2,Design wind load
+LOAD-016,load,CH2-VAL-008,LOAD_VALUE,calc_pdf_p18,CH2-CAL-SEC-2.1,18,Collision load 13.0 kN/m,Vehicle collision load
+LOAD-017,load,CH1-VAL-024,COEFFICIENT,calc_pdf_p7,CH1-CAL-SEC-1.1,7,Seismic coefficient Level 1: 0.25,Horizontal seismic coefficient
+LOAD-018,load,CAL-VAL-P00685-001,DESIGN_PARAMETER,calc_pdf_p685,CH3-CAL-SEC-3.3.3,685,Design wind speed V=40 m/s,Wind load basis
+LOAD-019,load,CAL-VAL-P00685-005,LOAD_VALUE,calc_pdf_p685,CH3-CAL-SEC-3.3.3,685,Wind load WS=40.06 kN/m,Parallel bridge correction α=1.30
+LOAD-020,load,CAL-VAL-P00686-003,COEFFICIENT,calc_pdf_p686,CH3-CAL-SEC-3.3.3,686,Seismic coefficient L1 Kh=0.25,Level 1 seismic design
+LOAD-021,load,CAL-VAL-P00686-002,LOAD_VALUE,calc_pdf_p686,CH3-CAL-SEC-3.3.3,686,Seismic load L1 We=35.89 kN/m,Level 1 equivalent seismic load
+LOAD-022,load,CAL-VAL-P00767-005,DERIVED_VALUE,calc_pdf_p767,CH3-CAL-SEC-3.4.1,767,Impact coefficient normal i=0.392,Bracket end-plate design
+LOAD-023,load,CAL-VAL-P00767-003,LOAD_VALUE,calc_pdf_p767,CH3-CAL-SEC-3.4.1,767,Wheel load P=100 kN,T-wheel load
+LOAD-024,load,CAL-VAL-P00767-004,DERIVED_VALUE,calc_pdf_p767,CH3-CAL-SEC-3.4.1,767,Impact coefficient collision i=0.389,Bracket collision check
+LOAD-025,load,CAL-VAL-P00768-001,LOAD_VALUE,calc_pdf_p768,CH3-CAL-SEC-3.4.1,768,Collision load F=35.0 kN,SC class collision load

@@ -1,8 +1,8 @@
 note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
-CAL-NOT-P00843-001,843,838,CAL-CH3,CAL-SEC-3.7.1,design_approach,疲労照査:耐久性能 荷重係数乗じない特性値で計算,NOTE,CAL-P00843,HIGH
-CAL-NOT-P00845-001,845,840,CAL-CH3,CAL-SEC-3.7.1,standard_reference,照査必要判定 道示II表8.2.1 3径間連続D-G SM520/490Y/400 L=40.020 ADTT=379,NOTE,CAL-P00845,HIGH
-CAL-NOT-P00846-001,846,841,CAL-CH3,CAL-SEC-3.7.1,standard_reference,gammaF2=(LogLB1+1.50)/3.0 道示II表8.2.2 gammaa=0.8多主桁橋,NOTE,CAL-P00846,HIGH
-CAL-NOT-P00848-001,848,843,CAL-CH3,CAL-SEC-3.7.1,design_result,11照査点 D/E/G等級 No.1腹板+横桁下FLG G No.2上FLG+スタッドE,NOTE,CAL-P00848,HIGH
-CAL-NOT-P00851-001,851,846,CAL-CH3,CAL-SEC-3.7.1,design_result,No.1 G:簡便54>32 NG 詳細D=0.26<=1.0 OK,NOTE,CAL-P00851,HIGH
-CAL-NOT-P00854-001,854,849,CAL-CH3,CAL-SEC-3.7.1,design_result,No.2 E:delta_sigma=80 CR=1.30(応力比R=2.25>1.00),NOTE,CAL-P00854,HIGH
-CAL-NOT-P00860-001,860,855,CAL-CH3,CAL-SEC-3.7.2,design_note,横桁疲労:主桁同様F荷重載荷応力範囲照査,NOTE,CAL-P00860,HIGH
+CAL-NOT-P00843-001,843,838,CAL-CH3,CAL-SEC-3.7.1,design_approach,疲労照査:耐久性能 荷重係数乗じない特性値で計算,NOTE,calc_pdf_p843,HIGH
+CAL-NOT-P00845-001,845,840,CAL-CH3,CAL-SEC-3.7.1,standard_reference,照査必要判定 道示II表8.2.1 3径間連続D-G SM520/490Y/400 L=40.020 ADTT=379,NOTE,calc_pdf_p845,HIGH
+CAL-NOT-P00846-001,846,841,CAL-CH3,CAL-SEC-3.7.1,standard_reference,gammaF2=(LogLB1+1.50)/3.0 道示II表8.2.2 gammaa=0.8多主桁橋,NOTE,calc_pdf_p846,HIGH
+CAL-NOT-P00848-001,848,843,CAL-CH3,CAL-SEC-3.7.1,design_result,11照査点 D/E/G等級 No.1腹板+横桁下FLG G No.2上FLG+スタッドE,NOTE,calc_pdf_p848,HIGH
+CAL-NOT-P00851-001,851,846,CAL-CH3,CAL-SEC-3.7.1,design_result,No.1 G:簡便54>32 NG 詳細D=0.26<=1.0 OK,NOTE,calc_pdf_p851,HIGH
+CAL-NOT-P00854-001,854,849,CAL-CH3,CAL-SEC-3.7.1,design_result,No.2 E:delta_sigma=80 CR=1.30(応力比R=2.25>1.00),NOTE,calc_pdf_p854,HIGH
+CAL-NOT-P00860-001,860,855,CAL-CH3,CAL-SEC-3.7.2,design_note,横桁疲労:主桁同様F荷重載荷応力範囲照査,NOTE,calc_pdf_p860,HIGH

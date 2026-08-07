@@ -1,21 +1,21 @@
 index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
-MEMID-001,member_identifier,DWG-MEM-AG1,member_id,drawings/sheets_001_044/members.csv,drawing_21-29,21,Main girder AG1,9 drawing sheets 21-29
-MEMID-002,member_identifier,DWG-MEM-AG2,member_id,drawings/sheets_001_044/members.csv,drawing_30-38,30,Main girder AG2,9 drawing sheets 30-38
-MEMID-003,member_identifier,DWG-MEM-GE1,member_id,drawings/sheets_001_044/members.csv,drawing_8,8,End cross beam GE1,Sheet 8
-MEMID-004,member_identifier,DWG-MEM-GE2,member_id,drawings/sheets_001_044/members.csv,drawing_8,8,End cross beam GE2,Sheet 8
-MEMID-005,member_identifier,DWG-MEM-S1,member_id,drawings/sheets_001_044/members.csv,drawing_9-12,9,Support S1 (PU15),Abutment PU15
-MEMID-006,member_identifier,DWG-MEM-S2,member_id,drawings/sheets_001_044/members.csv,drawing_9-12,9,Support S2 (AR2),Abutment AR2
-MEMID-007,member_identifier,DWG-MEM-PR1,member_id,drawings/sheets_001_044/members.csv,drawing_9-12,9,Pier support PR1,Intermediate pier 1
-MEMID-008,member_identifier,DWG-MEM-PR2,member_id,drawings/sheets_001_044/members.csv,drawing_9-12,9,Pier support PR2,Intermediate pier 2
-MEMID-009,member_identifier,DWG-MEM-C1C7,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Cross beams C1-C7,Intermediate cross beams
-MEMID-010,member_identifier,DWG-MEM-C8C13,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Cross beams C8-C13,Intermediate cross beams
-MEMID-011,member_identifier,DWG-MEM-C14C20,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Cross beams C14-C20,Intermediate cross beams
-MEMID-012,member_identifier,DWG-MEM-C21C23,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Cross beams C21-C23,Intermediate cross beams
-MEMID-013,member_identifier,DWG-MEM-AL1,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Lateral bracing A-L1,Upper/lower lateral bracing
-MEMID-014,member_identifier,DWG-MEM-AL2,member_id,drawings/sheets_001_044/members.csv,drawing_11,11,Lateral bracing A-L2,Upper/lower lateral bracing
-MEMID-015,member_identifier,DWG-MEM-STUD,member_id,drawings/sheets_001_044/members.csv,drawing_39-44,39,Stud φ22,Head stud shear connector
-MEMID-016,member_identifier,DWG-MEM-VSTIFF,member_id,drawings/sheets_001_044/members.csv,drawing_17,17,Vertical stiffener,Web stiffener
-MEMID-017,member_identifier,DWG-MEM-JACKSTIFF,member_id,drawings/sheets_001_044/members.csv,drawing_21-38,21,Jack-up stiffener,Stiffener for jacking
-MEMID-018,member_identifier,DWG-MEM-SOLEPL,member_id,drawings/sheets_001_044/members.csv,drawing_19,19,Sole plate,Bearing sole plate
-MEMID-019,member_identifier,DWG-MEM-NOSE,member_id,drawings/sheets_001_044/members.csv,drawing_9,9,Nose section,Nose of main girder
-MEMID-020,member_identifier,DWG-MEM-HNO1,member_id,drawings/sheets_001_044/members.csv,drawing_12,12,Nose section H-NO1,H nose member
+MEMID-001,member_identifier,DWG-MEM-AG1,member_id,calc_pdf_p21,drawing_21-29,21,Main girder AG1,9 drawing sheets 21-29
+MEMID-002,member_identifier,DWG-MEM-AG2,member_id,calc_pdf_p30,drawing_30-38,30,Main girder AG2,9 drawing sheets 30-38
+MEMID-003,member_identifier,DWG-MEM-GE1,member_id,calc_pdf_p8,drawing_8,8,End cross beam GE1,Sheet 8
+MEMID-004,member_identifier,DWG-MEM-GE2,member_id,calc_pdf_p8,drawing_8,8,End cross beam GE2,Sheet 8
+MEMID-005,member_identifier,DWG-MEM-S1,member_id,calc_pdf_p9,drawing_9-12,9,Support S1 (PU15),Abutment PU15
+MEMID-006,member_identifier,DWG-MEM-S2,member_id,calc_pdf_p9,drawing_9-12,9,Support S2 (AR2),Abutment AR2
+MEMID-007,member_identifier,DWG-MEM-PR1,member_id,calc_pdf_p9,drawing_9-12,9,Pier support PR1,Intermediate pier 1
+MEMID-008,member_identifier,DWG-MEM-PR2,member_id,calc_pdf_p9,drawing_9-12,9,Pier support PR2,Intermediate pier 2
+MEMID-009,member_identifier,DWG-MEM-C1C7,member_id,calc_pdf_p11,drawing_11,11,Cross beams C1-C7,Intermediate cross beams
+MEMID-010,member_identifier,DWG-MEM-C8C13,member_id,calc_pdf_p11,drawing_11,11,Cross beams C8-C13,Intermediate cross beams
+MEMID-011,member_identifier,DWG-MEM-C14C20,member_id,calc_pdf_p11,drawing_11,11,Cross beams C14-C20,Intermediate cross beams
+MEMID-012,member_identifier,DWG-MEM-C21C23,member_id,calc_pdf_p11,drawing_11,11,Cross beams C21-C23,Intermediate cross beams
+MEMID-013,member_identifier,DWG-MEM-AL1,member_id,calc_pdf_p11,drawing_11,11,Lateral bracing A-L1,Upper/lower lateral bracing
+MEMID-014,member_identifier,DWG-MEM-AL2,member_id,calc_pdf_p11,drawing_11,11,Lateral bracing A-L2,Upper/lower lateral bracing
+MEMID-015,member_identifier,DWG-MEM-STUD,member_id,calc_pdf_p39,drawing_39-44,39,Stud φ22,Head stud shear connector
+MEMID-016,member_identifier,DWG-MEM-VSTIFF,member_id,calc_pdf_p17,drawing_17,17,Vertical stiffener,Web stiffener
+MEMID-017,member_identifier,DWG-MEM-JACKSTIFF,member_id,calc_pdf_p21,drawing_21-38,21,Jack-up stiffener,Stiffener for jacking
+MEMID-018,member_identifier,DWG-MEM-SOLEPL,member_id,calc_pdf_p19,drawing_19,19,Sole plate,Bearing sole plate
+MEMID-019,member_identifier,DWG-MEM-NOSE,member_id,calc_pdf_p9,drawing_9,9,Nose section,Nose of main girder
+MEMID-020,member_identifier,DWG-MEM-HNO1,member_id,calc_pdf_p12,drawing_12,12,Nose section H-NO1,H nose member

@@ -1,6 +1,6 @@
 note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
-CAL-NOT-P00766-001,766,761,CAL-CH3,CAL-SEC-3.4.1,design_approach,端ブラケットS1/S2支承線 床版作用力直接載荷 死荷重45度分布,NOTE,CAL-P00766,HIGH
-CAL-NOT-P00768-001,768,763,CAL-CH3,CAL-SEC-3.4.1,standard_reference,衝突F=35.0kN(SC種) 愛知県橋梁設計手引,NOTE,CAL-P00768,HIGH
-CAL-NOT-P00769-001,769,764,CAL-CH3,CAL-SEC-3.4.1,design_note,衝突k=0.765 道示II11.12,NOTE,CAL-P00769,HIGH
-CAL-NOT-P00770-001,770,765,CAL-CH3,CAL-SEC-3.4.1,material_property,SM400 σyk=235 τyk=135 N/mm2,NOTE,CAL-P00770,HIGH
-CAL-NOT-P00773-001,773,768,CAL-CH3,CAL-SEC-3.4.1,design_result,垂直補剛PL80x9 Iv=1,536,000mm4 水平省略,NOTE,CAL-P00773,HIGH
+CAL-NOT-P00766-001,766,761,CAL-CH3,CAL-SEC-3.4.1,design_approach,端ブラケットS1/S2支承線 床版作用力直接載荷 死荷重45度分布,NOTE,calc_pdf_p766,HIGH
+CAL-NOT-P00768-001,768,763,CAL-CH3,CAL-SEC-3.4.1,standard_reference,衝突F=35.0kN(SC種) 愛知県橋梁設計手引,NOTE,calc_pdf_p768,HIGH
+CAL-NOT-P00769-001,769,764,CAL-CH3,CAL-SEC-3.4.1,design_note,衝突k=0.765 道示II11.12,NOTE,calc_pdf_p769,HIGH
+CAL-NOT-P00770-001,770,765,CAL-CH3,CAL-SEC-3.4.1,material_property,SM400 σyk=235 τyk=135 N/mm2,NOTE,calc_pdf_p770,HIGH
+CAL-NOT-P00773-001,773,768,CAL-CH3,CAL-SEC-3.4.1,design_result,"垂直補剛PL80x9 Iv=1,536,000mm4 水平省略",NOTE,calc_pdf_p773,HIGH
