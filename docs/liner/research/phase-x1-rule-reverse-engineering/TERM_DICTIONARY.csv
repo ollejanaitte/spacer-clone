@@ -1,0 +1,51 @@
+﻿term_id,term,definition,source_domain,status,resolution_step
+TERM-001,道路区分,道路の種類・種級の区分（第1種〜第4種・第1級〜第5級）,道路構造令,FACT,X1-P01
+TERM-002,設計速度,道路の設計の基準となる自動車の走行速度,道路構造令,FACT,X1-P01
+TERM-003,設計車両,道路の設計の基準となる車両（乗用車・小型貨物・大型貨物・セミトレーラ等）,道路構造令,FACT,X1-P01
+TERM-004,横断面,道路の幅員方向の断面構成,道路構造令,FACT,X1-P01
+TERM-005,車道,自動車等の通行の用に供する道路の部分,道路構造令,FACT,X1-P01
+TERM-006,車線,一列の自動車が安全かつ円滑に走行するために設けられる帯状の車道の部分,道路構造令,FACT,X1-P01
+TERM-007,路肩,車道に接して設けられる道路の部分（歩道等を除く）,道路構造令,FACT,X1-P01
+TERM-008,中央帯,上下線の車線を分離するための帯状の道路の部分,道路構造令,FACT,X1-P01
+TERM-009,曲線半径,平面線形の円曲線部の半径 R,道路構造令,FACT,X1-P01
+TERM-010,最小曲線半径,設計速度ごとに定められる円曲線半径の最小値,道路構造令,FACT,X1-P01
+TERM-011,曲線長,円曲線部の長さ,道路構造令,FACT,X1-P01
+TERM-012,片勾配,曲線部において車道に付ける横断勾配（バンク）,道路構造令,FACT,X1-P01
+TERM-013,拡幅,曲線部において車線等の幅員を広げること,道路構造令,FACT,X1-P01
+TERM-014,緩和区間,直線と円曲線の間等に設ける緩和区間（クロソイド等）,道路構造令,FACT,X1-P01
+TERM-015,クロソイド,曲率が走行距離に比例して変化する緩和曲線,INFERENCE,X1-P01
+TERM-016,視距,運転者が前方を見通すことのできる距離,道路構造令,FACT,X1-P01
+TERM-017,制動停止視距,運転者が障害物を発見してから停止するまでに必要な距離,道路構造令,FACT,X1-P01
+TERM-018,縦断勾配,道路の縦断方向の勾配（％）,道路構造令,FACT,X1-P01
+TERM-019,縦断曲線,縦断勾配の変化部に設ける曲線（放物線等）,道路構造令,FACT,X1-P01
+TERM-020,横断勾配,車道に付ける横断方向の勾配,道路構造令,FACT,X1-P01
+TERM-021,測点,線形上の起点からの距離に相当する位置（測点：No.）,FACT,X1-P01
+TERM-022,BP,線形の起点（Beginning Point）,実案件,FACT,X1-P01
+TERM-023,BC,円曲線の始点（Beginning of Curve）,実案件,FACT,X1-P01
+TERM-024,EC,円曲線の終点（End of Curve）,実案件,FACT,X1-P01
+TERM-025,KA/KE,クロソイドの始点/終点,実案件,FACT,X1-P01
+TERM-026,ブレーキ測点,（用途確認中）,UNRESOLVED,X1-P03
+TERM-027,ピア,橋脚（下部工）,INFERENCE,X1-P04
+TERM-028,スパン,隣接する支点間の距離（支間長）,INFERENCE,X1-P04
+TERM-029,主桁,上部工の主要な桁,INFERENCE,X1-P04
+TERM-030,格点,構造解析上の節点・モデル点,INFERENCE,X1-P04
+TERM-031,横桁,主桁間に設けられる横方向の桁,INFERENCE,X1-P04
+TERM-032,桁間隔,隣接する主桁の間隔,INFERENCE,X1-P04
+TERM-033,張り出し,橋脚・フランジ等の張出し部,INFERENCE,X1-P04
+TERM-034,斜角,橋軸と交差方向のなす角度,INFERENCE,X1-P04
+TERM-035,支間長,橋の隣接支点間の長さ,INFERENCE,X1-P04
+TERM-036,橋長,橋の両端部間の長さ,INFERENCE,X1-P04
+TERM-037,ランプ,立体交差部の連絡道路,道路構造令,FACT,X1-P01
+TERM-038,インターチェンジ,高速道路等と一般道路等を接続する施設（IC）,道路構造令,FACT,X1-P01
+TERM-039,ジャンクション,高速道路等相互を接続する施設（JCT）,道路構造令,FACT,X1-P01
+TERM-040,建築限界,道路の上空等で確保すべき空間,道路構造令,FACT,X1-P01
+TERM-041,LINER,JIPの線形座標計算システム（spacer-clone-liner の対象）,JIP-LINER,FACT,X1-P02
+TERM-042,LDIST,LINER内の機能（線形距離/縦断関連と推定）,JIP-LINER,INFERENCE,X1-P02
+TERM-043,HAUNCH,LINER内の機能（張出し部/ハンチ関連と推定）,JIP-LINER,INFERENCE,X1-P02
+TERM-044,HOSO,LINER内の機能（横断/細部と推定）,JIP-LINER,INFERENCE,X1-P02
+TERM-045,GDRAW,LINER内の図面生成機能と推定,JIP-LINER,INFERENCE,X1-P02
+TERM-046,STATION,測点（ステーション）,JIP-LINER,INFERENCE,X1-P02
+TERM-047,SPACER,JIPの上部工配置システム,SPACER,INFERENCE,X1-P02
+TERM-048,APOLLO,鋼橋自動設計システム（SuperDesigner等）,APOLLO,FACT,X1-P02
+TERM-049,SuperDesigner,APOLLOの自動設計製図システム,APOLLO,FACT,X1-P02
+TERM-050,設計ルールエンジン,基準値・条件・例外から照査・警告を出力する将来エンジン,UNRESOLVED,X1-P05
