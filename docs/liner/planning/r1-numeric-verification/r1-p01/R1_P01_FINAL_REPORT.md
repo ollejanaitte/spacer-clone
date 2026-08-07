@@ -24,8 +24,7 @@ fail fail-closed rules were separated as unresolved. Delivered via 5 sequential 
 ## 4. Baseline
 
 - Integration branch HEAD at R1-P01 start: `2bdda839e0d9542a623e53deaeea81e4b36f6bad`
-- Integration branch final HEAD: `eb8928c32578d690907f8d866ef4244b54b9a69c` (after P01-04)
-  → final after P01-05 merge (see section 14)
+- Integration branch final HEAD (after P01-05 merge): `03775e8f1030a96ae288d6d92a3190891b7b3875`
 
 ## 5. Source Inventory
 
@@ -102,8 +101,18 @@ fields (span.girder_span_length, unit m).
 
 ## 14. PR Ledger
 
-See `R1_P01_PR_LEDGER.md`. All 5 PRs (P01-00..P01-04) merged to
-`research/liner-r1-planning`. P01-05 (this PR) is the final integration PR.
+See `R1_P01_PR_LEDGER.md`.
+
+| Step | PR | Branch | Merge commit |
+|---|---|---|---|
+| P01-00 | #448 | research/liner-r1-p01-00-freeze | 2c81b050 |
+| P01-01 | #449 | research/liner-r1-p01-01-schema | ef34c8c4 |
+| P01-02 | #450 | research/liner-r1-p01-02-alignment-profile | e2061611 |
+| P01-03 | #451 | research/liner-r1-p01-03-bridge-ldist | 669bebcc |
+| P01-04 | #452 | research/liner-r1-p01-04-haunch-hoso-drawing | eb8928c3 |
+| P01-05 | #453 | research/liner-r1-p01-05-integration | 03775e8f |
+
+All 6 PRs merged to `research/liner-r1-planning`. Final integration HEAD: `03775e8f`.
 
 ## 15. Files Changed
 
