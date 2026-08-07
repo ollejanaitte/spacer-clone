@@ -1,0 +1,9 @@
+﻿test_id,rule_id,test_type,status,source_file
+TC-001,X2-R-001,UNIT,PASS,backend/tests/test_rule_engine_vertical_slice.py
+TC-002,X2-R-002,UNIT,PASS,backend/tests/test_rule_engine_vertical_slice.py
+TC-007,X2-R-007,UNIT,PASS,backend/tests/test_rule_engine_vertical_slice.py
+TC-018,X2-R-007,PROJECT_REPLAY,PASS,backend/tests/test_rule_engine_vertical_slice.py
+TC-019,X2-R-007,PROJECT_REPLAY,PASS,backend/tests/test_rule_engine_vertical_slice.py
+TC-016,X2-R-008,PROJECT_REPLAY,PASS,backend/tests/test_rule_engine_regression.py
+TC-017,X2-R-016,PROJECT_REPLAY,PASS,backend/tests/test_rule_engine_regression.py
+R-ALL,X2-R-001..018,REGRESSION,PASS,backend/tests/test_rule_engine_regression.py
