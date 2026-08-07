@@ -1,0 +1,9 @@
+﻿mapping_id,rule_id,rule_title,drawing_page,drawing_section,drawing_value,standard_value,match,evidence_type,notes
+BD-001,BR-001,上部工構造一般図,8-9,図面8-9,"上部工構造一般図（その1,その2）",橋梁一般図,INFO,FACT,金沢IC AランプPU15-AR2
+BD-002,BR-004,主桁図（AG1/AG2）,21-38,図面21-38,主桁AG1（その1〜その9）/ AG2（その1〜その9）,主桁詳細図,INFO,FACT,
+BD-003,BR-004,横桁図,45-60,図面45-60,端横桁・中間支点横桁・中間横桁,横桁詳細図,INFO,FACT,
+BD-004,BR-004,上下横構,61-71,図面61-71,上下横構（その1〜その11）,横構詳細図,INFO,FACT,
+BD-005,BR-002,支承詳細図,85-88,図面85-88,支承詳細図（その1〜その4）,支承詳細図,INFO,FACT,
+BD-006,BR-003,キャンバー図,20,図面20,キャンバー図,キャンバー図,INFO,FACT,
+BD-007,BR-001,線形図,10-12,図面10-12,線形図（その1〜その3）,線形図,INFO,FACT,
+BD-008,BR-001,断面構成図,13-16,図面13-16,断面構成図（その1〜その4）,断面構成図,INFO,FACT,
