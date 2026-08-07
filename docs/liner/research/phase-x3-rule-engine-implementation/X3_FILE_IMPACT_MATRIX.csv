@@ -1,0 +1,39 @@
+﻿file,component,pr,description,action
+backend/rule_engine/__init__.py,Core,P01,Rule Engine package init,NEW
+backend/rule_engine/models.py,Core,P01,"Data models (RuleResult, ValidationResult, TraceRecord)",NEW
+backend/rule_engine/registry.py,Core,P01,RuleRegistry,NEW
+backend/rule_engine/loader.py,Core,P01,RuleLoader,NEW
+backend/rule_engine/applicability.py,Core,P01,ApplicabilityResolver,NEW
+backend/rule_engine/normalizer.py,Core,P01,InputNormalizer,NEW
+backend/rule_engine/evaluator.py,Core,P01,RuleEvaluator,NEW
+backend/rule_engine/formula.py,Core,P01,FormulaExecutor,NEW
+backend/rule_engine/lookup.py,Core,P01,LookupResolver,NEW
+backend/rule_engine/validator.py,Core,P01,ConstraintValidator,NEW
+backend/rule_engine/exception.py,Core,P01,ExceptionResolver,NEW
+backend/rule_engine/trace.py,Core,P01,TraceRecorder,NEW
+backend/rule_engine/aggregator.py,Core,P01,RuleResultAggregator,NEW
+backend/rule_engine/rules/__init__.py,Core,P01,Rules package init,NEW
+backend/rule_engine/rules/road_classification.py,Vertical Slice,P02,X2-R-001,NEW
+backend/rule_engine/rules/design_speed.py,Vertical Slice,P02,X2-R-002,NEW
+backend/rule_engine/rules/curve_radius.py,Vertical Slice,P02,X2-R-007,NEW
+backend/rule_engine/rules/design_vehicle.py,Road Rules,P03,X2-R-003,NEW
+backend/rule_engine/rules/lane_width.py,Road Rules,P03,X2-R-004,NEW
+backend/rule_engine/rules/median.py,Road Rules,P03,X2-R-005,NEW
+backend/rule_engine/rules/shoulder.py,Road Rules,P03,X2-R-006,NEW
+backend/rule_engine/rules/cross_slope.py,Road Rules,P03,X2-R-013,NEW
+backend/rule_engine/rules/transition_curve.py,Alignment,P04,X2-R-008,NEW
+backend/rule_engine/rules/superelevation.py,Alignment,P04,X2-R-009,NEW
+backend/rule_engine/rules/sight_distance.py,Alignment,P04,X2-R-010,NEW
+backend/rule_engine/rules/longitudinal_grade.py,Alignment,P04,X2-R-011,NEW
+backend/rule_engine/rules/vertical_curve.py,Alignment,P04,X2-R-012,NEW
+backend/rule_engine/rules/exception.py,Alignment,P04,X2-R-018,NEW
+backend/rule_engine/rules/grid_point.py,Interfaces,P05,X2-R-015,NEW
+backend/rule_engine/rules/station.py,Interfaces,P05,X2-R-016,NEW
+backend/rule_engine/rules/coordinate_transform.py,Interfaces,P05,X2-R-017,NEW
+backend/rule_engine/rules/validation.py,Interfaces,P05,X2-R-014,NEW
+backend/tests/test_rule_engine_core.py,Core,P01,Core engine tests,NEW
+backend/tests/test_rule_engine_vertical_slice.py,Vertical Slice,P02,Vertical slice tests,NEW
+backend/tests/test_rule_engine_rules.py,Road Rules,P03,Road rules tests,NEW
+backend/tests/test_rule_engine_alignment.py,Alignment,P04,Alignment rules tests,NEW
+backend/tests/test_rule_engine_interfaces.py,Interfaces,P05,Interface tests,NEW
+backend/tests/test_rule_engine_regression.py,Integration,P06,Regression tests,NEW
