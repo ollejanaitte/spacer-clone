@@ -111,7 +111,7 @@ def evaluate_alignment_at_distance(
             evaluation = evaluate_element_at_distance(element, local_distance)
             evaluation.physicalDistance = target
             evaluation.displayedStation = (
-                displayed_station if displayed_station is not None
+                displayedStation if displayedStation is not None
                 else displayed_station_at_physical_distance(target, StationDefinition())
             )
             evaluation.localFrame = local_frame_from_azimuth(evaluation.azimuth)
@@ -123,13 +123,13 @@ def evaluate_alignment_at_distance(
         return ElementEvaluation(
             point=Vec2D(0, 0),
             physicalDistance=0,
-            displayedStation=(displayed_station if displayed_station is not None else 0),
+            displayedStation=(displayedStation if displayedStation is not None else 0),
             localFrame=local_frame_from_azimuth(0),
         )
     evaluation = evaluate_element_at_distance(last, last.length)
     evaluation.physicalDistance = total_length
     evaluation.displayedStation = (
-        displayed_station if displayed_station is not None
+        displayedStation if displayedStation is not None
         else displayed_station_at_physical_distance(total_length, StationDefinition())
     )
     evaluation.localFrame = local_frame_from_azimuth(evaluation.azimuth)
