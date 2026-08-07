@@ -1,0 +1,15 @@
+﻿mapping_id,road_element,road_source,bridge_element,bridge_source,relationship,evidence_type,road_source_page,bridge_source_page,notes
+RB-001,道路中心線（平面線形）,DOC-X0-0143 線形計算書,"橋梁の平面線形（R=160, R=3000）",DOC-X0-0001 鋼鈑桁橋計算例,ROAD_DERIVED,FACT,1732-1810,2,曲線橋では道路の平面線形が橋梁の線形に直接反映
+RB-002,測点（ステーション）,DOC-X0-0143,橋梁の測点・支点位置（ACL上）,DOC-X0-0001,ROAD_DERIVED,FACT,1732-1810,2,支間長40.201+51.000+40.200はACL上で定義
+RB-003,縦断勾配,DOC-X0-0001（設計条件）,"橋梁の縦断（i=6.000%, VCL=100）",DOC-X0-0001,ROAD_DERIVED,FACT,2,2,縦断勾配6%は道路の縦断が橋梁へ引き継がれる
+RB-004,横断勾配・片勾配,DOC-X0-0001,橋梁の横断勾配（i=5.000〜2.958%）,DOC-X0-0001,ROAD_DERIVED,FACT,2,2,曲線部の片勾配が横断勾配に反映
+RB-005,斜角,DOC-X0-0001,"橋梁の斜角（θ=94°14'27"", 90°）",DOC-X0-0001,INTERFACE,FACT,2,2,道路との交角が支承・橋台の斜角を決める
+RB-006,車道幅員,DOC-X0-0001,橋梁の有効幅員（7.000m）・総幅員（8.010m）,DOC-X0-0001,ROAD_DERIVED,FACT,2,2,道路幅員が橋梁幅員の基準
+RB-007,設計速度,DOC-X0-0001（設計条件 V=40）,橋梁の設計速度・活荷重,DOC-X0-0001,INTERFACE,FACT,2,2,A規格・V=40・B活荷重が橋梁設計条件
+RB-008,支間長・橋長,DOC-X0-0001,橋長134.001m・桁長133.151m・支間40.201+51.000+40.200,DOC-X0-0001,STRUCTURE_DEFINED,FACT,2,2,橋長・支間は構造設計で決まる
+RB-009,主桁・格点,DOC-X0-0001,主桁A-L1/A-L2・格点C1〜C23・S1/S2,DOC-X0-0001,STRUCTURE_DEFINED,FACT,135-136,135-136,格点座標・格点番号・部材番号
+RB-010,桁間隔,DOC-X0-0001,少数主桁（2主桁）の桁間隔,DOC-X0-0001,STRUCTURE_DEFINED,FACT,2,2,少数主桁橋（回転照査あり）
+RB-011,張り出し長,DOC-X0-0143,橋梁の張り出し長（X1-P04で確認）,DOC-X0-0001,INTERFACE,UNRESOLVED,124,-,張り出し長の具体的値は要確認
+RB-012,格点間距離,DOC-X0-0035 JIP-LINER,格点間距離（LDIST）,DOC-X0-0001,INTERFACE,FACT,123,-,LINERの格点間距離計算と橋梁モデルの対応
+RB-013,設計荷重,DOC-X0-0001（B活荷重）,主桁の設計・照査,DOC-X0-0066 道示Ⅰ,INTERFACE,FACT,2,UNKNOWN,道示Ⅰの荷重規定と整合（要道示ページ確認）
+RB-014,CAD・図面,DOC-X0-0091 APOLLO,SuperDrawingでAutoCAD/DXF製図,DOC-X0-0091,INTERFACE,FACT,16-20,16-20,線形計算→自動設計→計算書→AutoCADデータ生成

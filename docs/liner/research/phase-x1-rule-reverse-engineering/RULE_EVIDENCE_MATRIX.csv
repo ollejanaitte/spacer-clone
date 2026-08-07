@@ -52,3 +52,8 @@ PR-002,DOC-X0-0143,サンプル_道路線形計算例,1740-1745,5.3 測点設定
 PR-003,DOC-X0-0143,サンプル_道路線形計算例,1732-1810,主要点座標リスト,クロソイドA値,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値。基準値と照合（CONSISTENT）
 PR-004,DOC-X0-0143,サンプル_道路線形計算例,1732-1810,主要点座標リスト,円曲線半径,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値。最小曲線半径規定値と照合（CONSISTENT）
 PR-005,DOC-X0-0143,サンプル_道路線形計算例,3960,ＩＰの角度・距離計算書,交角IA・CL・TL,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値
+BR-001,DOC-X0-0001,鋼鈑桁橋_設計計算例,2,第1章 設計条件,1.1 設計条件,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,旭高架橋AランプPU15-AR2
+BR-002,DOC-X0-0001,鋼鈑桁橋_設計計算例,2,第1章 設計条件,斜角,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+BR-003,DOC-X0-0001,鋼鈑桁橋_設計計算例,2,第1章 設計条件,橋長・桁長・支間,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+BR-004,DOC-X0-0001,鋼鈑桁橋_設計計算例,135-136,3.1 構造解析モデル,格点座標・格点番号・部材番号,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+BR-005,DOC-X0-0091,APOLLO_ユーザーズマニュアル,16-20,2-3 SUPERDRAWING,自動製図の実行,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,APOLLO 2002年4月版
