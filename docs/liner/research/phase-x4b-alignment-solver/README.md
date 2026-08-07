@@ -26,14 +26,17 @@ LINERの「1本の道路中心線Alignment」を安全に組み立て・評価�
 - 二重実装禁止
 - X4-A canonical APIの破壊禁止
 
-## Step構成
-| Step | 内容 | ブランチ |
-|------|------|----------|
-| P00 | Existing Alignment Audit / Scope Freeze | liner-x4b-p00-audit |
-| P01 | Alignment Model / Builder | liner-x4b-p01-model |
-| P02 | Station Progression / Element Lookup | liner-x4b-p02-station-lookup |
-| P03 | Alignment Evaluation | liner-x4b-p03-evaluation |
-| P04 | Continuity / Semantic Points | liner-x4b-p04-continuity |
-| P05 | Rule Engine / Road→Bridge Adapter | liner-x4b-p05-adapters |
-| P06 | Project Replay / Regression | liner-x4b-p06-verification |
-| P07 | Completion / X4-C Gate | liner-x4b-p07-x4c-gate |
+## Step構成（実行結果）
+| Step | 内容 | ブランチ | PR | 状態 |
+|------|------|----------|-----|------|
+| P00 | Existing Alignment Audit / Scope Freeze | liner-x4b-p00-audit | #529 | MERGED |
+| P01 | Alignment Model / Builder | liner-x4b-p01-model | #531 | MERGED |
+| P02 | Station Progression / Element Lookup | liner-x4b-p02-station-lookup | #532 | MERGED |
+| P03 | Alignment Evaluation | liner-x4b-p03-evaluation | #534 | MERGED |
+| P04 | Continuity / Semantic Points | liner-x4b-p04-continuity | #535 | MERGED |
+| P05 | Rule Engine / Road→Bridge Adapter | liner-x4b-p05-adapters | #536 | MERGED |
+| P06 | Project Replay / Regression | liner-x4b-p06-verification | #538 | MERGED |
+| P07 | Completion / X4-C Gate | liner-x4b-p07-x4c-gate | 本PR | 実行 |
+
+## 完了報告
+- [X4-C Gate Report](./X4C_GATE_REPORT.md)
