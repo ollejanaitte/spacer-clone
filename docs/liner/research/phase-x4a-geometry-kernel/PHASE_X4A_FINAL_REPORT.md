@@ -13,12 +13,17 @@ KEEP_AS_CANONICALとし、backendには必要最小限のPythonアダプタを�
 |------|-------------|--------|
 | P00 | X4A_SCOPE / audit ledgers / precheck | #513 merged |
 | P01 | Canonical Geometry Kernel contracts | #514 merged |
-| P02 | line/arc evaluation module | local commit |
-| P03 | clothoid evaluation module | local commit |
-| P04 | station/offset projection module | local commit |
-| P05 | adapter re-export surface | local commit |
-| P06 | Geometry Kernel regression tests | local commit (extends #515) |
-| P07 | X4-B readiness gate | this report |
+| P02 | line/arc evaluation module | #517 merged (`4108100`) |
+| P03 | clothoid evaluation module | #518 merged (`aeae8cc`) |
+| P04 | station/offset projection module | #519 merged (`101d1db`) |
+| P05 | adapter re-export surface | #520 merged (`54aef44`) |
+| P06 | Geometry Kernel regression tests | #521 merged (`6604157`) |
+| P07 | X4-B readiness gate | this PR |
+
+## PR Ledger
+
+X4A_PR_LEDGER.md 参照。全Stepが research/liner-r1-planning base の独立PRとして
+GitHub へ正式反映済み。
 
 ## Backend Adapter Structure
 
@@ -34,7 +39,7 @@ backend/rule_engine/geometry/
 
 ## Verification
 
-- backend full suite: 708 passed
+- backend full suite: 745 passed (708 + 新規Geometry tests 37)
 - Geometry Kernel regression: 21 passed
 - Mirrors canonical frontend implementation file-for-file
 - Public contract surface unchanged from the canonical contracts phase
