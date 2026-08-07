@@ -5,6 +5,7 @@ Canonical Alignment model/builder over the X4-A Geometry Kernel.
 """
 from .model import Alignment, AlignmentError, AlignmentElement, AlignmentSpan, build_alignment
 from .station import STATION_EPSILON, AlignmentRangeError, StationLookup, lookup_station, station_at
+from .evaluate import AlignmentEvaluation, evaluate_alignment
 
 __all__ = [
     "Alignment",
@@ -17,4 +18,6 @@ __all__ = [
     "StationLookup",
     "lookup_station",
     "station_at",
+    "AlignmentEvaluation",
+    "evaluate_alignment",
 ]
