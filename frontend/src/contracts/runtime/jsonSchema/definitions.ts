@@ -1,6 +1,7 @@
 import type { ZodType } from "zod";
 import { bridgeFrameAnalysisDocumentSchema } from "../schemas/bridgeFrameAnalysisDocument";
 import { bridgeSuperstructureDesignDocumentSchema } from "../schemas/bridgeSuperstructureDesignDocument";
+import { commonBridgeDataModelSchema } from "../schemas/commonBridgeDataModel";
 import { commonEnvelopeSchema } from "../schemas/commonEnvelope";
 import { contentChecksumSchema } from "../schemas/contentChecksum";
 import { coordinateContextSchema } from "../schemas/coordinateContext";
@@ -52,6 +53,7 @@ export const CONTRACT_JSON_SCHEMA_DEFINITIONS: readonly ContractJsonSchemaDefini
   { slug: "migration-record", schema: migrationRecordSchema },
   { slug: "road-to-frame-transfer-package", schema: roadToFrameTransferPackageSchema },
   { slug: "transfer-record", schema: transferRecordSchema },
+  { slug: "common-bridge-data-model", schema: commonBridgeDataModelSchema },
 ];
 
 export function contractJsonSchemaPath(slug: string): string {

@@ -12,6 +12,7 @@ export const DOCUMENT_KINDS = [
   "validation-result",
   "unknown-field-store",
   "migration-record",
+  "common-bridge-data-model",
 ] as const;
 
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number];

@@ -287,4 +287,19 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "Recursive JSON value schema rejecting undefined, functions, symbols, bigint, NaN, and Infinity.",
     runtimeRules: ["JSON_VALUE_INVALID"],
   },
+  "common-bridge-data-model": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "Common Bridge Data Model contract schema. Confirms envelope, metadata, the 12 logical layers, stable IDs, value states, resolution registry, and schema version. Bridge-agnostic: no Reference Bridge specific value or ID prefix is part of the contract. Runtime semantic validation enforces ID uniqueness, reference integrity, finite numeric values, no silent default for unresolved engineering values, unsupported version rejection, and analysisReference NOT_AVAILABLE empty-state correctness.",
+    runtimeRules: [
+      "COMMON_BRIDGE_MODEL_SCHEMA_VERSION_UNSUPPORTED",
+      "COMMON_BRIDGE_MODEL_ENTITY_ID_DUPLICATE",
+      "COMMON_BRIDGE_MODEL_REFERENCE_BROKEN",
+      "COMMON_BRIDGE_MODEL_NON_FINITE_NUMBER",
+      "COMMON_BRIDGE_MODEL_UNRESOLVED_DEFAULT",
+      "COMMON_BRIDGE_MODEL_ANALYSIS_EMPTY_STATE_INVALID",
+    ],
+  },
 };

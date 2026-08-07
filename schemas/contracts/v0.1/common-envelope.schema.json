@@ -30,7 +30,8 @@
         "revision-metadata",
         "validation-result",
         "unknown-field-store",
-        "migration-record"
+        "migration-record",
+        "common-bridge-data-model"
       ]
     },
     "revisionId": {
@@ -273,7 +274,8 @@
             "revision-metadata",
             "validation-result",
             "unknown-field-store",
-            "migration-record"
+            "migration-record",
+            "common-bridge-data-model"
           ]
         },
         "documentId": {

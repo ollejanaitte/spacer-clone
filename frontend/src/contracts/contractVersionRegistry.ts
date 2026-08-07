@@ -20,6 +20,8 @@ export const DOCUMENT_REFERENCE_SCHEMA_ID = "spacer.contracts.document-reference
 export const ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_ID =
   "spacer.contracts.road-to-frame-transfer-package" as SchemaId;
 export const TRANSFER_RECORD_SCHEMA_ID = "spacer.contracts.transfer-record" as SchemaId;
+export const COMMON_BRIDGE_DATA_MODEL_SCHEMA_ID =
+  "spacer.contracts.common-bridge-data-model" as SchemaId;
 
 /** Reusable envelope shape identifier for JSON Schema metadata; not a standalone document family. */
 export const COMMON_ENVELOPE_SHAPE_ID = "spacer.contracts.common-envelope-shape" as SchemaId;
@@ -33,6 +35,7 @@ export const UNKNOWN_FIELD_STORE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const MIGRATION_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const ROAD_TO_FRAME_TRANSFER_PACKAGE_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const TRANSFER_RECORD_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const COMMON_BRIDGE_DATA_MODEL_SCHEMA_VERSION = requireSchemaVersion("1.0.0");
 
 export interface ContractVersionSupport {
   readonly schemaId: SchemaId;
@@ -95,6 +98,11 @@ export const CONTRACT_VERSION_SUPPORT_MATRIX: Readonly<
     schemaId: TRANSFER_RECORD_SCHEMA_ID,
     supportedVersions: [TRANSFER_RECORD_SCHEMA_VERSION],
     currentVersion: TRANSFER_RECORD_SCHEMA_VERSION,
+  },
+  [COMMON_BRIDGE_DATA_MODEL_SCHEMA_ID]: {
+    schemaId: COMMON_BRIDGE_DATA_MODEL_SCHEMA_ID,
+    supportedVersions: [COMMON_BRIDGE_DATA_MODEL_SCHEMA_VERSION],
+    currentVersion: COMMON_BRIDGE_DATA_MODEL_SCHEMA_VERSION,
   },
 };
 
