@@ -1,0 +1,4 @@
+﻿version_family_id,family_name,asset_ids,date,relationship,confidence,notes
+VF-1,APOLLO Sectionアプリ 断面計算マニュアル,DOC-X0-0131;DOC-X0-0132,マニュアル(鋼橋の断面計算).pdf / マニュアル(断面計算).pdf,UNKNOWN,同一アプリの版違いの可能性,MEDIUM
+VF-2,level2-type2（レベル2地震動データ）,DOC-X0-0037;DOC-X0-0038;DOC-X0-0054;DOC-X0-0055;DOC-X0-0059,level2-type2.xls / level2-type2.csv,UNKNOWN,同一データの別形式（XLS/CSV）,HIGH
+VF-3,道路橋示方書・同解説 シリーズ,DOC-X0-0066;DOC-X0-0067;DOC-X0-0068;DOC-X0-0069;DOC-X0-0070,道示Ⅰ〜Ⅴ（共通/鋼/コンクリート/下部/上下部接続）,平成29年11月版,シリーズ分冊,HIGH
