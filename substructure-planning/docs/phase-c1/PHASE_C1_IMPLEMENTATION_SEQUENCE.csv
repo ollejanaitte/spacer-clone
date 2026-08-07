@@ -1,0 +1,15 @@
+stage,id,description,files,dependsOn,testCount,gate
+1,C1-I01,Data Model + Validation,model.ts,validation.ts,none,20,全C1形式型定義完了
+2,C1-I02,Placement Engine,SupportPlacementEngine.ts,I01,15,直橋/斜橋/曲線橋配置計算成立
+3,C1-I03,Solid Geometry Generator,SubstructureSolidGenerator.ts,I01-I02,20,全形式3D Mesh生成可能
+4,C1-I04,2D Plan Projection,PlanProjection.ts,I01-I02,15,全形式2D投影成立
+5,C1-I05,State + History,state.ts,history.ts,I01,10,選択同期+Undo/Redo成立
+6,C1-I06,Hooks (3 files),hooks/use*.ts,I05,5,debounce+選択+history独立動作
+7,C1-I07,UI Shell + Routing,SubstructurePlanningPage.tsx,uiPreparation.ts(App.tsx),I05-I06,2,メイン画面→下部工到達
+8,C1-I08,3D Preview (R3F),Substructure3DPreview.tsx,I03+I05,5,Orbit+選択+表示制御
+9,C1-I09,2D Preview (SVG),SubstructurePlanPreview.tsx,I04+I05,5,投影+選択+表示
+10,C1-I10,Property + Input Forms,SubstructurePropertyPanel.tsx+Pier/PortalPier/Abutment/Foundation/PileInputForm.tsx,I05+I07,10,全形式編集可能
+11,C1-I11,Sample Generation,sampleDefaults.ts+sampleGenerator.ts+SampleCreationDialog.tsx,I01+I03+I04+I07,10,9種+LNER生成
+12,C1-I12,LINER Overlay,(MODIFY) formalBuilders.ts+LinerFormalDrawingWorkspacePage.tsx,I04+I07,3,Overlay表示+トグル
+13,C1-I13,Unified 3D Integration,(MODIFY) viewer/types.ts+SceneBuilder.ts,I08+I03,5,上部工+下部工同一Scene
+14,C1-I14,Save/Load + Golden Tests,projectSubstructureAdapter.ts+(MODIFY) project.schema.json,I01-I13,15~,全19Gate PASS
