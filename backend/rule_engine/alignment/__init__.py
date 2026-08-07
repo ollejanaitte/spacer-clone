@@ -11,6 +11,11 @@ from .continuity import (
     ContinuityReport, SemanticBoundaryError, SemanticPoint,
     semantic_points, verify_continuity,
 )
+from .contract import (
+    ALIGNMENT_RULE_ID, ALIGNMENT_RULE_VERSION, AlignmentGeometryRule,
+    RoadAlignmentError, RoadElementRow, build_alignment_from_roadmap,
+    evaluate_alignment_for_rule,
+)
 
 __all__ = [
     "Alignment",
@@ -35,4 +40,11 @@ __all__ = [
     "SemanticPoint",
     "semantic_points",
     "verify_continuity",
+    "ALIGNMENT_RULE_ID",
+    "ALIGNMENT_RULE_VERSION",
+    "AlignmentGeometryRule",
+    "RoadAlignmentError",
+    "RoadElementRow",
+    "build_alignment_from_roadmap",
+    "evaluate_alignment_for_rule",
 ]
