@@ -7,3 +7,5 @@ export * from "./SubstructureSolidGenerator";
 export * from "./PierSolidGenerator";
 // Phase C1 (I03C) 基礎・杭ソリッド生成。
 export * from "./FoundationSolidGenerator";
+// Phase C1 (I04) 2D 平面投影。
+export * from "./PlanProjection";
