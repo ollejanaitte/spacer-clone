@@ -1,0 +1,18 @@
+component,file,props/state,type,reuseFrom
+SubstructurePlanningPage,frontend/src/substructure/pages/SubstructurePlanningPage.tsx,draft,project,onChange,page,新規
+SubstructureTreePanel,frontend/src/substructure/components/SubstructureTreePanel.tsx,supports,selectedId,tree,antd Tree or custom
+SubstructurePropertyPanel,frontend/src/substructure/components/SubstructurePropertyPanel.tsx,support,onChange,panel,新規
+PlacementSelector,,,sub-component,新規
+StructureSelector,,,sub-component,新規
+PierInputForm,frontend/src/substructure/components/PierInputForm.tsx,column,cap,onChange,form,新規
+PortalPierInputForm,frontend/src/substructure/components/PortalPierInputForm.tsx,columns,beam,onChange,form,新規
+AbutmentInputForm,frontend/src/substructure/components/AbutmentInputForm.tsx,backwall,wings,onChange,form,新規
+FoundationInputForm,frontend/src/substructure/components/FoundationInputForm.tsx,footing,piles,onChange,form,新規
+PileInputPanel,frontend/src/substructure/components/PileInputPanel.tsx,pileParams,onChange,panel+svg,新規（JIP系FOOTING）
+SubstructurePlanPreview,frontend/src/substructure/components/SubstructurePlanPreview.tsx,primitives,selectedId,svg,liner/drawing/rendering/DrawingDocumentSvg.tsx
+Substructure3DPreview,frontend/src/substructure/components/Substructure3DPreview.tsx,solidParams,selectedId,canvas,@react-three/fiber
+CoordinateTable,frontend/src/substructure/components/CoordinateTable.tsx,placements,selectedId,table,新規
+SampleCreationDialog,frontend/src/substructure/components/SampleCreationDialog.tsx,onCreate,dialog,新規
+useSubstructureSelection,frontend/src/substructure/hooks/useSubstructureSelection.ts,selectedId,hoveredId,hook,React context
+useSubstructureRealtimeUpdate,frontend/src/substructure/hooks/useSubstructureRealtimeUpdate.ts,debounce(300),hook,新規
+SubstructureSelectionContext,frontend/src/substructure/state.ts,Provider,useSelector,context,React.createContext
