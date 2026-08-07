@@ -1,0 +1,15 @@
+trace_id,adopted_candidate_id,entity_id,adopted_value,source_record_ids,upstream_candidate_ids,source_type,notes
+TR-4174,AD-001,ENT-GIRDER-AG1,PL620x22,ADV-001,DS-001,domain_index/adopted_value,AG1 Sec-1 UFLG adopted from ADV-001 (calc only).
+TR-4175,AD-002,ENT-GIRDER-AG1,PL2537x14,ADV-002,DS-002,domain_index/adopted_value,AG1 Sec-1 WEB adopted from ADV-002.
+TR-4176,AD-003,ENT-GIRDER-AG1,PL680x21,ADV-003,DS-003,domain_index/adopted_value,AG1 Sec-1 LFLG adopted from ADV-003 (CONF-P2II-001 width).
+TR-4177,AD-004,ENT-GIRDER-AG1,PL620x27,ADV-004,DS-008,domain_index/adopted_value,AG1 Sec-3 UFLG adopted from ADV-004.
+TR-4178,AD-006,ENT-GIRDER-AG1,PL620x39,ADV-006,DS-018,domain_index/adopted_value,AG1 Sec-6 UFLG adopted from ADV-006.
+TR-4179,AD-007,ENT-GIRDER-AG1,PL680x47 SM520-H,ADV-007,DS-019,domain_index/adopted_value,AG1 Sec-6 LFLG SM520-H adopted from ADV-007.
+TR-4180,AD-022,ENT-SUPPORT-PU15,32mm x5,ADV-011,,domain_index/adopted_value,PU15 rubber layer adopted from ADV-011.
+TR-4181,AD-029,ENT-SUPPORT-PR1,37mm x5,ADV-012,,domain_index/adopted_value,PR1 rubber layer adopted from ADV-012.
+TR-4182,AD-025,ENT-SUPPORT-PU15,phi95mm x4,ADV-013,,domain_index/adopted_value,PU15 lead plug adopted from ADV-013.
+TR-4183,AD-031,ENT-SUPPORT-PR1,phi150mm,ADV-014,,domain_index/adopted_value,PR1 lead plug adopted from ADV-014.
+TR-4184,AD-049,ENT-DECK,φ16×160,ADV-008,,domain_index/adopted_value,Deck stud adopted from ADV-008.
+TR-4185,AD-050,ENT-DECK,D19@100,ADV-009,,domain_index/adopted_value,Main reinforcement adopted from ADV-009.
+TR-4186,AD-051,ENT-DECK,D22@125,ADV-010,,domain_index/adopted_value,Distribution rebar adopted from ADV-010.
+TR-4187,AD-052,ENT-DECK,100mm,ADV-016,,domain_index/adopted_value,Lateral rib height adopted from ADV-016.

@@ -1,0 +1,16 @@
+trace_id,formula_source_id,result_source_id,formula_expression,result_raw_value,result_unit,calculation_locator,notes
+TR-4142,SRC-calculation_chapter_03_section_3_2_formulas-005,SRC-calculation_chapter_03_section_3_2_values-040,σb = M x y / I,-232,N/mm2,calc_pdf_p297,AG1 Sec-3 upper bending stress.
+TR-4143,SRC-calculation_chapter_03_section_3_2_formulas-006,SRC-calculation_chapter_03_section_3_2_values-054,τb = S / Aw,75,N/mm2,calc_pdf_p297,AG1 Sec-6 shear stress.
+TR-4144,SRC-calculation_chapter_03_section_3_2_formulas-008,SRC-calculation_chapter_03_section_3_2_values-055,κ = (σb/σtyd)² + (τb/τyd)² <= 1.2,1.10,,calc_pdf_p297,AG1 Sec-6 combined check.
+TR-4145,CAL-FML-P01321-001,CAL-VAL-P01319-016,σtud = ξ1 x ξ2 x Φut x σyk,272,N/mm2,calc_pdf_p1321,Upper flange tension limit.
+TR-4146,CAL-FML-P01321-011,CAL-VAL-P01319-020,τud = ξ1 x ξ2 x Φus x τyk = 157,157,N/mm2,calc_pdf_p1321,Web shear limit.
+TR-4147,CAL-FML-P00850-002,CAL-VAL-P00851-001,delta_sigma = |14-(-4)|*3.00 = 54,54,N/mm2,calc_pdf_p850,Fatigue No.1 stress range.
+TR-4148,CAL-FML-P00852-001,CAL-VAL-P00852-001,nti = 379*0.03*365*100 = 0.42e6,0.42e6,回,calc_pdf_p852,Fatigue No.1 equivalent cycles.
+TR-4149,CAL-FML-P00685-002,CAL-VAL-P00685-005,Ws = (40/40)²*[4.0-0.2]*8.110*1.30 = 40.06,40.06,kN/m,calc_pdf_p685,Cross-beam wind load.
+TR-4150,CAL-FML-P00686-001,CAL-VAL-P00686-002,We = 1.05*17955.7*0.25/131.325 = 35.89,35.89,kN/m,calc_pdf_p686,Level-1 seismic load.
+TR-4151,CAL-FML-P00770-002,CAL-VAL-P00771-001,σbrgd = 0.90*1.00*0.85*0.803*235 = 144,144,N/mm2,calc_pdf_p770,Bracket bending-compression limit.
+TR-4152,CAL-FML-P00772-001,CAL-VAL-P00771-002,τud = 0.90*1.00*0.85*135 = 103,103,N/mm2,calc_pdf_p772,Bracket shear limit.
+TR-4153,CAL-FML-P00791-005,CAL-VAL-P00791-005,Pw = 1.00*1.25*6.67 = 8.34,8.34,kN/m,calc_pdf_p791,Lateral bracing wind load.
+TR-4154,CAL-FML-P00791-006,CAL-VAL-P00791-006,Pe = 1.00*1.00*48.81*0.765 = 37.34,37.34,kN/m,calc_pdf_p791,Lateral bracing seismic load.
+TR-4155,CAL-FML-P00819-001,CAL-VAL-P00819-001,Ac = B*H = 1500*2280/100 = 34200,34200,cm2,calc_pdf_p819,Wrapping concrete S1 area.
+TR-4156,CAL-FML-P00819-002,CAL-VAL-P00819-004,Asreq = 34200*0.0015 = 51.30,51.30,cm2,calc_pdf_p819,Wrapping concrete S1 min rebar area.

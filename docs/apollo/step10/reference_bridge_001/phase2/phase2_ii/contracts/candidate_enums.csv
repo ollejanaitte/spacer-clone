@@ -69,6 +69,8 @@ semantic_class,appurtenance,Appurtenance (railing/wall),phase2_i_extraction
 semantic_class,text,Text content,phase2_i_extraction
 semantic_class,table,Table content,phase2_i_extraction
 semantic_class,figure,Figure content,phase2_i_extraction
+semantic_class,fatigue,Fatigue design/check quantity (stress range, damage ratio),phase2_i_extraction
+semantic_class,welding,Welding design quantity/verification,phase2_i_extraction
 verification_status,UNVERIFIED,Extraction not yet cross-verified,phase2_i
 verification_status,PARTIAL,Partially verified (OCR-assisted etc.),phase2_i
 verification_status,VERIFIED,Cross-source verified,phase2_i
