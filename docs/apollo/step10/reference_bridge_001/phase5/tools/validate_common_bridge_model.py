@@ -101,9 +101,6 @@ def iter_entities(model):
             for ent in container.get(key, []):
                 if isinstance(ent, dict) and "id" in ent:
                     yield ent
-    for ent in model.get("traceability", {}).get("links", []):
-        if isinstance(ent, dict):
-            yield ent
 
 
 def iter_values(node):
