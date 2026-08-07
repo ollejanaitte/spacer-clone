@@ -5,3 +5,4 @@ export * from "./tolerance";
 export * from "./coordinate";
 export * from "./provenance";
 export * from "./verificationMetadata";
+export * from "./reference-data";
