@@ -67,6 +67,19 @@ def evaluate_alignment(
     )
 
 
+def evaluate_element(
+    element: AlignmentElement,
+    local_station: float,
+) -> ElementEvaluation:
+    """Evaluate a single element at an element-local station (0..length).
+
+    Unlike evaluate_alignment this does NOT resolve boundaries via the station
+    policy; it always evaluates the given element, which is what continuity
+    checks need at a junction (left element at its end, right at its start).
+    """
+    return _dispatch(element, local_station)
+
+
 def _dispatch(element: AlignmentElement, local: float) -> ElementEvaluation:
     etype = getattr(element, "type", "")
     if etype == "straight":
@@ -81,4 +94,5 @@ def _dispatch(element: AlignmentElement, local: float) -> ElementEvaluation:
 __all__ = [
     "AlignmentEvaluation",
     "evaluate_alignment",
+    "evaluate_element",
 ]
