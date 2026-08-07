@@ -1,0 +1,47 @@
+﻿entity_type,entity_definition,canonical_id_pattern,source_domains,allowed_attributes,required_provenance,rule_engine_role,geometry_engine_role,drawing_role,bridge_role,apollo_role,notes
+SOURCE_DOCUMENT,文書資産（PDF等）,DOC-X0-\d{4},X0/X1/X1.5,"path,sha256,page_count,text_layer",source_asset_id,source,-,-,-,source,X0で147件識別済み
+SOURCE_PAGE,文書内のページ,PRINTED_P\d+|PDF_P\d+,X1,"printed_page,pdf_page,section",source_page,source,-,-,-,source,
+STANDARD_RULE,法令・基準のルール,RO-\d{3},X1,"rule_id,category,title,condition,constraint,output","source_asset_id,source_page",rule_engine,-,-,-,rule,X1で37件抽出
+RULE_CONDITION,Ruleの適用条件,PATTERN:TBD,X1,condition_text,rule_id,rule_engine,-,-,-,rule,
+RULE_CONSTRAINT,Ruleの制約値,PATTERN:TBD,X1,"constraint_value,unit",rule_id,rule_engine,-,-,-,rule,
+FORMULA,計算式,PATTERN:TBD,X1,"formula_text,notation",rule_id,rule_engine,geometry_engine,-,-,rule,
+LOOKUP_TABLE,参照表,TABLE-\d{2},X1,"table_columns,row_values",source_page,rule_engine,-,-,-,rule,道路構造令の表類
+DESIGN_PARAMETER,設計パラメータ,PARAM-\d{3},X1/X1.5,"param_name,value,unit","source_asset_id,source_page",input,input,-,-,parameter,曲線半径・設計速度等
+INPUT_VALUE,ユーザ入力値,INPUT-\d{3},X1.5,"value,unit",source_asset_id,input,input,-,-,input,
+ADOPTED_VALUE,実案件採用値,PR-\d{3},X1.5,"adopted_value,standard_compared","source_asset_id,source_page",-,-,-,-,validation,実案件と基準の対比
+CALCULATED_VALUE,計算結果値,CALC-\d{3},X1.5,"calc_value,method",source_asset_id,-,output,-,-,output,
+ALIGNMENT,線形,ALIGN-\d{3},X1.5,"alignment_type,design_speed",source_asset_id,-,geometry,-,-,geometry,道路中心線・ランプ線形
+ALIGNMENT_ELEMENT,線形要素,ELEM-\d{3},X1.5,"element_type(S/R/A),params",source_asset_id,-,geometry,-,-,geometry,直線S/円R/クロソイドA
+STATION,測点,STA-\d{3},X1.5,"station_value,station_name",source_asset_id,-,geometry,-,-,geometry,BP/KA/KE/BC/EC/EP
+COORDINATE,座標,XY-\d{3},X1.5,"x,y,rotation",source_asset_id,-,geometry,-,-,geometry,
+PROFILE,縦断,PROF-\d{3},X1,"grade_value,curve_params",source_asset_id,-,geometry,-,-,geometry,
+CROSSFALL,横断勾配・片勾配,CF-\d{3},X1,"crossfall_value,superelevation",source_asset_id,-,geometry,-,-,geometry,
+CROSS_SECTION,横断面,CS-\d{3},X1,widths:lane/shoulder/median,source_asset_id,-,geometry,-,-,geometry,
+WIDTH,幅員,WIDTH-\d{3},X1,"width_value,width_type",source_asset_id,-,geometry,-,-,geometry,車線幅員・路肩幅員等
+PIER,橋脚,SUPPORT-\w+,X1.5,"pier_name,station,angle",source_asset_id,-,geometry,bridge,-,bridge,Apollo ENT-SUPPORT-*
+SUPPORT_LINE,支点ライン,SL-\d{3},X1.5,"support_type,stations",source_asset_id,-,geometry,bridge,-,bridge,
+SPAN,支間,SPAN-\d{3},X1.5,"span_length,span_type",source_asset_id,-,-,bridge,-,bridge,
+GIRDER_LINE,主桁ライン,GIRDER-\w+,X1.5,"girder_name,girder_type",source_asset_id,-,-,bridge,-,bridge,Apollo ENT-GIRDER-*
+GRID_POINT,格点,GP-\d{3},X1.5,"grid_point_name,coordinates",source_asset_id,-,-,bridge,-,bridge,
+CROSS_BEAM,横桁,CB-\d{3},X1.5,"beam_name,span",source_asset_id,-,-,bridge,-,bridge,端横桁・中間横桁等
+BEARING,支承,BEAR-\d{3},X1.5,"bearing_type,capacity",source_asset_id,-,-,bridge,-,bridge,
+STRUCTURAL_NODE,構造解析節点,NODE-\d{3},X1.5,"node_id,coordinates",source_asset_id,-,-,bridge,-,bridge,
+STRUCTURAL_MEMBER,構造部材,MEMBER-\d{3},X1.5,"member_id,section,type",source_asset_id,-,-,bridge,-,bridge,
+LOAD,荷重,LOAD-\d{3},X1.5,"load_type,load_value",source_asset_id,-,-,bridge,-,bridge,B活荷重等
+ANALYSIS_RESULT,解析結果,AR-\d{3},X1.5,"result_type,value",source_asset_id,-,-,bridge,-,bridge,
+DESIGN_CHECK,設計照査,DC-\d{3},X1.5,"check_type,status,value",source_asset_id,-,validation,bridge,-,bridge,
+DRAWING,図面,DWG-\w+,X1.5,"drawing_number,drawing_name,sheet",source_asset_id,-,-,-,drawing,drawing,Apollo DWG-S*
+DRAWING_VIEW,図面ビュー,DWV-\d{3},X1.5,"view_type,scale",source_asset_id,-,-,-,drawing,drawing,
+DRAWING_DIMENSION,図面寸法,DWD-\d{3},X1.5,"dimension_value,unit",source_asset_id,-,-,-,drawing,drawing,
+REPORT_SECTION,報告書セクション,RPT-\d{3},X1.5,"section_name,page",source_asset_id,-,-,-,-,report,
+VALIDATION,Validation,VAL-\d{3},X1,"validation_type,severity","source_asset_id,rule_id",rule_engine,validation,-,-,validation,
+WARNING,警告,WARN-\d{3},X1,"warning_type,condition","source_asset_id,rule_id",rule_engine,validation,-,-,validation,
+ERROR,エラー,ERR-\d{3},X1,"error_type,condition","source_asset_id,rule_id",rule_engine,validation,-,-,validation,
+ROAD_BRIDGE_INTERFACE,道路→橋梁Interface,RBI-\d{3},X1.5,"interface_type,value",source_asset_id,-,-,bridge,-,interface,斜角・幅員等
+APOLLO_CANDIDATE,Apollo Candidate,candidate_\w+,Apollo,"candidate_id,layer,entity_kind,value",source_record_ids,-,-,bridge,-,candidate,Phase2-II candidate
+KNOWLEDGE_TRACE,Knowledge Trace,TRACE-\d{3},X1.5,"from_entity,to_entity,relation",-,-,-,-,-,trace,
+EVIDENCE,Evidence,EV-\d{3},X1.5,"evidence_type,evidence_status","source_asset_id,source_page",-,-,-,-,evidence,X1.5で13件識別
+CANDIDATE_LAYER,Apollo Candidate Layer,layer_\w+,Apollo,"layer_name,kind",contract,-,-,-,-,candidate,source/input/geometry/...
+TRACEABILITY_RECORD,Traceability Record,TR-\d{3},Apollo,"trace_id,source,candidate,status",source_record_id,-,-,-,-,trace,Apollo Phase2-II traceability
+LINER_MODULE,LINER Module,MOD-LINER/LDIST/HAUNCH/HOSO/GDRAW,X1,"module_name,function",source_asset_id,-,-,-,-,liner,X1で11件識別
+DESIGN_DOMAIN,設計領域,DOMAIN-\d{3},X1,"domain_name,scope",-,-,-,-,-,domain,road/bridge/LINER/Apollo
