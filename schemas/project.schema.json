@@ -212,6 +212,9 @@
       "items": {
         "$ref": "#/$defs/linerTraceEntry"
       }
+    },
+    "substructure": {
+      "$ref": "#/$defs/projectSubstructure"
     }
   },
   "$defs": {
@@ -1177,7 +1180,10 @@
           "additionalProperties": true
         },
         "draftSchemaVersion": {
-          "enum": ["0.2.0", "0.3.0"],
+          "enum": [
+            "0.2.0",
+            "0.3.0"
+          ],
           "description": "Domain draft schema version. Required when saving vNext domain draft."
         },
         "domainDraft": {
@@ -1199,7 +1205,10 @@
           ],
           "properties": {
             "draftSchemaVersion": {
-              "enum": ["0.2.0", "0.3.0"]
+              "enum": [
+                "0.2.0",
+                "0.3.0"
+              ]
             }
           }
         }
@@ -2496,6 +2505,584 @@
         },
         "envelopes": {
           "type": "object"
+        }
+      }
+    },
+    "projectSubstructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "projectId",
+        "source",
+        "supports"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "0.2.0"
+        },
+        "projectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bridgeId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinateSystem": {
+          "type": "string",
+          "const": "x-longitudinal-y-transverse-z-up"
+        },
+        "unitSystem": {
+          "type": "string",
+          "const": "si"
+        },
+        "supports": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/substructureSupport"
+          }
+        }
+      }
+    },
+    "substructureSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supportId",
+        "supportType",
+        "placement",
+        "skewRad"
+      ],
+      "properties": {
+        "supportId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supportType": {
+          "type": "string",
+          "enum": [
+            "pier",
+            "abutment"
+          ]
+        },
+        "skewRad": {
+          "type": "number",
+          "description": "rad, +Z CCW 正"
+        },
+        "zOverride": {
+          "type": "number"
+        },
+        "placement": {
+          "$ref": "#/$defs/substructurePlacement"
+        },
+        "placementSnapshot": {
+          "$ref": "#/$defs/substructurePlacementSnapshot"
+        },
+        "bearingSeats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/substructureBearingSeat"
+          }
+        },
+        "pier": {
+          "$ref": "#/$defs/substructurePier"
+        },
+        "abutment": {
+          "$ref": "#/$defs/substructureAbutment"
+        }
+      }
+    },
+    "substructurePlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "liner",
+            "direct_xyz"
+          ]
+        },
+        "alignmentId": {
+          "type": "string"
+        },
+        "station": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "position": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "azimuthRad": {
+          "type": "number"
+        }
+      }
+    },
+    "substructurePlacementSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "position",
+        "skewRad",
+        "azimuthRad"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "liner",
+            "direct_xyz"
+          ]
+        },
+        "position": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "tangent": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "transverse": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "vertical": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "azimuthRad": {
+          "type": "number"
+        },
+        "skewRad": {
+          "type": "number"
+        }
+      }
+    },
+    "substructureVec3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    },
+    "substructureBearingSeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seatId",
+        "position",
+        "dimensions"
+      ],
+      "properties": {
+        "seatId": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/substructureVec3"
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "w",
+            "d",
+            "h"
+          ],
+          "properties": {
+            "w": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "d": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "h": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "bearing": {
+          "$ref": "#/$defs/substructureBearing"
+        }
+      }
+    },
+    "substructureBearing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "height",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "elastomeric",
+            "pot",
+            "fixed",
+            "custom"
+          ]
+        }
+      }
+    },
+    "substructurePier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "formType",
+        "footing"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "formType": {
+          "type": "string",
+          "enum": [
+            "single_column_rect",
+            "wall",
+            "portal_frame"
+          ]
+        },
+        "column": {
+          "$ref": "#/$defs/substructurePierColumn"
+        },
+        "cap": {
+          "$ref": "#/$defs/substructurePierCap"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/substructurePierColumn"
+          }
+        },
+        "beam": {
+          "$ref": "#/$defs/substructurePortalBeam"
+        },
+        "footing": {
+          "$ref": "#/$defs/substructureFooting"
+        },
+        "pileGroup": {
+          "$ref": "#/$defs/substructurePileGroup"
+        }
+      }
+    },
+    "substructurePierColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "width",
+        "depth",
+        "height"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depth": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "transverseOffset": {
+          "type": "number"
+        }
+      }
+    },
+    "substructurePierCap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "width",
+        "depth",
+        "height",
+        "overhangL",
+        "overhangR"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depth": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "overhangL": {
+          "type": "number",
+          "minimum": 0
+        },
+        "overhangR": {
+          "type": "number",
+          "minimum": 0
+        },
+        "spanDirection": {
+          "type": "string",
+          "enum": [
+            "longitudinal",
+            "transverse"
+          ]
+        }
+      }
+    },
+    "substructurePortalBeam": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "width",
+        "depth",
+        "height"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depth": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "spanDirection": {
+          "type": "string",
+          "enum": [
+            "longitudinal",
+            "transverse"
+          ]
+        }
+      }
+    },
+    "substructureFooting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "length",
+        "width",
+        "thickness",
+        "topElevation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "thickness": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "topElevation": {
+          "type": "number"
+        }
+      }
+    },
+    "substructurePileGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "pileType",
+        "diameter",
+        "length",
+        "pileCount",
+        "spacing"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pileType": {
+          "type": "string",
+          "enum": [
+            "bored_pile",
+            "steel_pipe"
+          ]
+        },
+        "diameter": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pileCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "spacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "y": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      }
+    },
+    "substructureAbutment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "formType",
+        "backwall",
+        "wingWallL",
+        "wingWallR",
+        "footing"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "formType": {
+          "type": "string",
+          "enum": [
+            "inverted_t",
+            "cantilever_frame"
+          ]
+        },
+        "backwall": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "height",
+            "thickness",
+            "width",
+            "seatElevation"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "thickness": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "seatElevation": {
+              "type": "number"
+            }
+          }
+        },
+        "wingWallL": {
+          "$ref": "#/$defs/substructureWingWall"
+        },
+        "wingWallR": {
+          "$ref": "#/$defs/substructureWingWall"
+        },
+        "footing": {
+          "$ref": "#/$defs/substructureFooting"
+        },
+        "pileGroup": {
+          "$ref": "#/$defs/substructurePileGroup"
+        }
+      }
+    },
+    "substructureWingWall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "length",
+        "height",
+        "thickness"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "length": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "thickness": {
+          "type": "number",
+          "exclusiveMinimum": 0
         }
       }
     }
