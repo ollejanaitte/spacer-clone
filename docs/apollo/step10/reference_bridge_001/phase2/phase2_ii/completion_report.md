@@ -1,6 +1,6 @@
-# Phase 2-II Completion Report (P2II-J)
+# Phase 2-II Completion Report (P2II-J + P2II-K seal)
 
-> **Authority:** STEP 10 Reference Bridge 001 (RB-S10-001) — Phase 2-II closeout
+> **Authority:** STEP 10 Reference Bridge 001 (RB-S10-001) — Phase 2-II closeout + seal (P2II-J + P2II-K)
 > **Development approach:** documentation-only / data-only
 > **Numeric analysis performed:** NO (recalculation prohibited)
 > **Formal `APPROVED_GOLDEN_INPUT` creation:** NO (prohibited in Phase 2-II)
@@ -18,7 +18,7 @@ Phase 2-II is complete as a candidate dataset. Every layer is candidate-only
 with registered gaps; no value was silently upgraded and no Golden input was
 created. Phase 3 performs the Golden promotion review.
 
-## 2. Deliverables produced (this PR, P2II-J)
+## 2. Deliverables produced (P2II-J, MERGED #456; P2II-K seal THIS PR)
 
 ### Registers (`registers/`)
 
