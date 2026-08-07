@@ -1,0 +1,95 @@
+﻿asset_id,file_name,relative_source_path,page_count,text_layer_status,toc_status,ocr_required,priority,notes
+DOC-X0-0032,001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,liner-future-research/sources/design_examples/001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,84,YES,UNKNOWN,NO,P0,LINERの計算書サンプル（高架橋）。入力→出力の流れの参照。
+DOC-X0-0033,鋼鈑桁橋_図面例.pdf,liner-future-research/sources/design_examples/鋼鈑桁橋_図面例.pdf,143,YES,UNKNOWN,NO,P1,鋼鈑桁橋の図面例（143頁）。
+DOC-X0-0034,鋼鈑桁橋_設計計算例.pdf,liner-future-research/sources/design_examples/鋼鈑桁橋_設計計算例.pdf,2226,YES,UNKNOWN,NO,P1,鋼鈑桁橋の設計計算例（2226頁）。上部工計算の参照。
+DOC-X0-0035,JIP-LINER_マニュアル.pdf,liner-future-research/sources/manuals/JIP-LINER_マニュアル.pdf,183,YES,UNKNOWN,NO,P0,JIP-LINER本体の操作マニュアル。LINER機能の正本。
+DOC-X0-0036,001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,liner-future-research/sources/repository/001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,84,YES,UNKNOWN,NO,P0,LINERの計算書サンプル（高架橋）。入力→出力の流れの参照。
+DOC-X0-0039,JIP-LINER_マニュアル.pdf,liner-future-research/sources/repository/マニュアル/JIP-LINER_マニュアル.pdf,183,YES,UNKNOWN,NO,P0,JIP-LINER本体の操作マニュアル。LINER機能の正本。
+DOC-X0-0040,SPACER操作マニュアル.pdf,liner-future-research/sources/repository/マニュアル/SPACER操作マニュアル.pdf,199,YES,UNKNOWN,NO,P1,SPACER操作マニュアル。
+DOC-X0-0041,001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,spacer-clone-liner-r1-planning/001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,84,YES,UNKNOWN,NO,P0,LINERの計算書サンプル（高架橋）。入力→出力の流れの参照。
+DOC-X0-0056,JIP-LINER_マニュアル.pdf,spacer-clone-liner-r1-planning/マニュアル/JIP-LINER_マニュアル.pdf,183,YES,UNKNOWN,NO,P0,JIP-LINER本体の操作マニュアル。LINER機能の正本。
+DOC-X0-0057,SPACER操作マニュアル.pdf,spacer-clone-liner-r1-planning/マニュアル/SPACER操作マニュアル.pdf,199,YES,UNKNOWN,NO,P1,SPACER操作マニュアル。
+DOC-X0-0058,001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,spacer-clone/001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF,84,YES,UNKNOWN,NO,P0,LINERの計算書サンプル（高架橋）。入力→出力の流れの参照。
+DOC-X0-0060,2021_デザインデータブック.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/2021_デザインデータブック.pdf,306,NO,UNKNOWN,YES,P2,設計データブック。テキスト層なし(OCR必須)。
+DOC-X0-0061,20220101_合成桁の設計例と解説令和4年1月_日本橋梁建設協会.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/20220101_合成桁の設計例と解説令和4年1月_日本橋梁建設協会.pdf,233,NO,UNKNOWN,YES,P1,合成桁の設計例。テキスト層なし(OCR必須)。
+DOC-X0-0062,20220102_令和4年1月 鋼橋構造詳細の手引き(改訂3版).pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/20220102_令和4年1月 鋼橋構造詳細の手引き(改訂3版).pdf,127,NO,UNKNOWN,YES,P1,鋼橋構造詳細。テキスト層なし(OCR必須)。
+DOC-X0-0063,H31道路橋支承便覧.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/H31道路橋支承便覧.pdf,616,NO,UNKNOWN,YES,P1,支承便覧。テキスト層なし(OCR必須)。
+DOC-X0-0064,R2鋼道路橋設計便覧.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/R2鋼道路橋設計便覧.pdf,325,NO,UNKNOWN,YES,P1,鋼道路橋設計便覧。テキスト層なし(OCR必須)。
+DOC-X0-0065,令和3年6月_細幅箱桁橋の設計例と解説～道示　平成29年11月版対応.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/令和3年6月_細幅箱桁橋の設計例と解説～道示　平成29年11月版対応.pdf,129,NO,UNKNOWN,YES,P1,細幅箱桁橋の設計例。テキスト層なし(OCR必須)。
+DOC-X0-0066,道路橋示方書・同解説　Ⅰ　共通編.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/道路橋示方書・同解説　Ⅰ　共通編.pdf,388,NO,UNKNOWN,YES,P0,道示本体。テキスト層なし(OCR必須)。APOLLO/上部工の基準の正本。
+DOC-X0-0067,道路橋示方書・同解説　Ⅱ　鋼部材・鋼上部構造編.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/道路橋示方書・同解説　Ⅱ　鋼部材・鋼上部構造編.pdf,821,NO,UNKNOWN,YES,P0,道示本体。テキスト層なし(OCR必須)。APOLLO/上部工の基準の正本。
+DOC-X0-0068,道路橋示方書・同解説　Ⅲ　コンクリート部材・コンクリート上部構造編.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/道路橋示方書・同解説　Ⅲ　コンクリート部材・コンクリート上部構造編.pdf,519,NO,UNKNOWN,YES,P0,道示本体。テキスト層なし(OCR必須)。APOLLO/上部工の基準の正本。
+DOC-X0-0069,道路橋示方書・同解説　Ⅳ　下部構造編.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/道路橋示方書・同解説　Ⅳ　下部構造編.pdf,740,NO,UNKNOWN,YES,P0,道示本体。テキスト層なし(OCR必須)。APOLLO/上部工の基準の正本。
+DOC-X0-0070,道路橋示方書・同解説　Ⅴ　上下部接続部編.pdf,spacer-clone/local-archive/restricted-pdf/bridge-standards/260726_設計基準/道路橋示方書・同解説　Ⅴ　上下部接続部編.pdf,210,NO,UNKNOWN,YES,P0,道示本体。テキスト層なし(OCR必須)。APOLLO/上部工の基準の正本。
+DOC-X0-0071,Grider_I_00.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_00.pdf,2,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0072,Grider_I_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_01.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0073,Grider_I_02.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_02.pdf,19,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0074,Grider_I_03.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_03.pdf,7,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0075,Grider_I_04.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_04.pdf,34,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0076,Grider_I_05.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_05.pdf,11,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0077,Grider_I_06.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_06.pdf,12,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0078,Grider_I_07.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_07.pdf,29,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0079,Grider_I_08.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_08.pdf,23,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0080,Grider_I_09.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_09.pdf,6,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0081,Grider_I_10.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_10.pdf,17,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0082,Grider_I_11.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_11.pdf,15,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0083,Grider_I_12.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_12.pdf,6,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0084,Grider_I_13.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/01_非合成鈑/Grider_I_13.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0085,CompGrd_I_00.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_00.pdf,2,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0086,CompGrd_I_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_01.pdf,13,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0087,CompGrd_I_02.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_02.pdf,34,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0088,CompGrd_I_03.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_03.pdf,60,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0089,CompGrd_I_04.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_04.pdf,16,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0090,CompGrd_I_05.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_コンクリート床版系鈑桁/02_合成鈑桁/CompGrd_I_05.pdf,9,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0091,01_鋼橋自動設計システム_APOLLO_ユーザーズマニュアル_SuperDesigner_鋼橋の自動設計製図システム.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/01_鋼橋自動設計システム_APOLLO_ユーザーズマニュアル_SuperDesigner_鋼橋の自動設計製図システム.pdf,30,YES,UNKNOWN,NO,P0,APOLLO SuperDesigner の主マニュアル。権利不明のため参照専用。
+DOC-X0-0092,Girder_Box_00.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_00.pdf,2,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0093,Girder_Box_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_01.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0094,Girder_Box_02.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_02.pdf,20,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0095,Girder_Box_03.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_03.pdf,9,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0096,Girder_Box_04.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_04.pdf,38,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0097,Girder_Box_05.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_05.pdf,11,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0098,Girder_Box_06.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_06.pdf,12,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0099,Girder_Box_07.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_07.pdf,30,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0100,Girder_Box_08.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_08.pdf,8,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0101,Girder_Box_09.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_09.pdf,6,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0102,Girder_Box_10.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_10.pdf,4,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0103,Girder_Box_11.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_11.pdf,13,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0104,Girder_Box_12.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_12.pdf,6,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0105,Girder_Box_13.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_13.pdf,11,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0106,Girder_Box_14.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_14.pdf,13,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0107,Girder_Box_15.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_15.pdf,6,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0108,Girder_Box_16.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/01_非合成箱/Girder_Box_16.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0109,CompGrd_Box_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/02_合成閉断面箱/CompGrd_Box_01.pdf,43,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0110,CompGrd_OpenBox_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/02_コンクリート床版系箱桁/03_合成開断面箱/CompGrd_OpenBox_01.pdf,45,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0111,StDeck_I_00.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_00.pdf,2,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0112,StDeck_I_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_01.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0113,StDeck_I_02.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_02.pdf,8,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0114,StDeck_I_03.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_03.pdf,36,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0115,StDeck_I_04.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_04.pdf,21,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0116,StDeck_I_05.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_05.pdf,12,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0117,StDeck_I_06.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_06.pdf,29,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0118,StDeck_I_07.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_07.pdf,7,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0119,StDeck_I_08.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_08.pdf,9,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0120,StDeck_I_09.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_09.pdf,5,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0121,StDeck_I_10.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/01_鋼床版鈑/StDeck_I_10.pdf,7,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0122,StDeck_Box_00.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_00.pdf,2,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0123,StDeck_Box_01.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_01.pdf,14,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0124,StDeck_Box_02.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_02.pdf,7,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0125,StDeck_Box_03.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_03.pdf,38,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0126,StDeck_Box_04.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_04.pdf,21,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0127,StDeck_Box_05.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_05.pdf,13,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0128,StDeck_Box_06.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_06.pdf,34,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0129,StDeck_Box_07.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/03_鋼床版鈑桁箱桁/02_鋼床版箱/StDeck_Box_07.pdf,10,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0130,マニュアル(ＰＣ床版の設計).pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/PcSlab/マニュアル(ＰＣ床版の設計).pdf,40,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0131,マニュアル(断面計算).pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/Section/マニュアル(断面計算).pdf,27,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0132,マニュアル(鋼橋の断面計算).pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/Section/マニュアル(鋼橋の断面計算).pdf,26,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0133,マニュアル(添接計算).pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/Splice/マニュアル(添接計算).pdf,12,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0134,マニュアル(鋼床版の設計).pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/StDeck/マニュアル(鋼床版の設計).pdf,36,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0135,鋼床版の解析方法概要と解析結果の比較.pdf,spacer-clone/local-archive/unknown-rights/apollo/ユーザーズマニュアル/単体アプリ/StDeck/鋼床版の解析方法概要と解析結果の比較.pdf,13,YES,UNKNOWN,NO,P2,APOLLOの橋種別/単体アプリ別マニュアル。権利不明のため参照専用。
+DOC-X0-0136,JIP-LINER_マニュアル.pdf,spacer-clone/マニュアル/JIP-LINER_マニュアル.pdf,183,YES,UNKNOWN,NO,P0,JIP-LINER本体の操作マニュアル。LINER機能の正本。
+DOC-X0-0137,SPACER操作マニュアル.pdf,spacer-clone/マニュアル/SPACER操作マニュアル.pdf,199,YES,UNKNOWN,NO,P1,SPACER操作マニュアル。
+DOC-X0-0143,サンプル_道路線形計算例.pdf,サンプル_道路線形計算例.pdf,161,YES,YES,NO,P0,実案件の線形計算書。IC/ランプ/暫定線含む。
+DOC-X0-0144,サンプル_道路設計図.pdf,サンプル_道路設計図.pdf,168,YES,UNKNOWN,NO,P0,実案件の平面線形図。R・クロソイドA・主要点を確認。
+DOC-X0-0145,道路構造令の解説と運用_令和3年3月.pdf,道路構造令の解説と運用_令和3年3月.pdf,385,NO,YES,YES,P0,道路構造令の解説と運用。テキスト層なし(OCR必須)。目次は前フェーズで解析済み。
+DOC-X0-0146,鋼鈑桁橋_図面例.pdf,鋼鈑桁橋_図面例.pdf,143,YES,UNKNOWN,NO,P1,鋼鈑桁橋の図面例（143頁）。
+DOC-X0-0147,鋼鈑桁橋_設計計算例.pdf,鋼鈑桁橋_設計計算例.pdf,2226,YES,UNKNOWN,NO,P1,鋼鈑桁橋の設計計算例（2226頁）。上部工計算の参照。
