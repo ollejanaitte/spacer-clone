@@ -1,0 +1,11 @@
+﻿mapping_id,rule_id,rule_title,apollo_layer,apollo_entity_mapping,entity_group,status,notes
+AM-001,X2-R-001,道路区分,source,ENT_PROJECT,project,CANDIDATE,read-only reference
+AM-002,X2-R-002,設計速度,source,ENT_PROJECT,project,CANDIDATE,read-only reference
+AM-003,X2-R-007,最小曲線半径,source/geometry,ENT_ALIGNMENT_ACL,alignment,CANDIDATE,
+AM-004,X2-R-008,緩和区間,source/geometry,ENT_ALIGNMENT_ACL,alignment,CANDIDATE,
+AM-005,X2-R-009,片勾配,source,ENT_CROSSFALL,crossfall,CANDIDATE,
+AM-006,X2-R-011,縦断勾配,source,ENT_PROFILE,profile,CANDIDATE,
+AM-007,X2-R-012,縦断曲線,source,ENT_PROFILE,profile,CANDIDATE,
+AM-008,X2-R-013,横断勾配,source,ENT_CROSSFALL,crossfall,CANDIDATE,
+AM-009,X2-R-015,格点間距離,geometry,ENT_GRID,grid,CANDIDATE,
+AM-010,X2-R-016,測点,source,ENT_STATION,station,CANDIDATE,
