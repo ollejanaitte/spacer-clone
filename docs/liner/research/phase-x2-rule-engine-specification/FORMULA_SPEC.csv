@@ -1,18 +1,18 @@
-﻿formula_id,rule_id,formula_type,expression,inputs,input_units,outputs,output_units,rounding,tolerance,lookup_source,boundary_conditions,exception_behavior,status,source_evidence_ids,notes
+﻿formula_id,rule_id,formula_type,expression,inputs,input_units,outputs,output_units,rounding,tolerance,lookup_source,boundary_conditions,exception_behavior,source_evidence_ids,notes
 FORMULA-01,X2-R-008,DIRECT_FORMULA,緩和走行区間: クロソイドA値設定,"A,R,設計速度","m,m,km/h",緩和曲線長L=A²/R,m,-,-,道路構造令第18条・LINER要素A,-,FACT,"DOC-X0-0145 p383, DOC-X0-0035 p39",実装可
 FORMULA-02,X2-R-015,DIRECT_FORMULA,格点間距離: 距離×sin(交角),"セクション距離,交角","m,度",距離×sin(交角),m,-,-,LINER km(5.8.2),-,FACT,DOC-X0-0035 p123,実装可
 FORMULA-03,X2-R-016,DIRECT_FORMULA,ブレーキ測点補正,"ブレーキ測点,調整距離","m,m",新測点=ブレーキ測点+調整距離,m,-,-,実案件線形計算書,-,FACT,DOC-X0-0143 p1740,実装可
 FORMULA-04,X2-R-017,DIRECT_FORMULA,座標変換(TRAN),TRAN指定,-,LINER TRAN対応,-,-,-,LINER 5.6.4,-,FACT,DOC-X0-0035 p115,実装可
 FORMULA-05,X2-R-018,CONDITIONAL,例外判定: 条件に基づく適用除外,"道路区分,地形,特別理由",-,特別理由の有無を判定→適用除外可否,-,-,-,道路構造令第18条/第15条/第13条,-,FACT,"DOC-X0-0145 p383,347",実装可
-TABLE-01,X2-R-001,TABLE_LOOKUP,道路種級区分表,"種級,地域,地形,計画交通量",-,種級区分,-,-,表1-1,-,FACT,DOC-X0-0145 p138-139,実装可
-TABLE-02,X2-R-002,TABLE_LOOKUP,設計速度表,"種級,地形",-,設計速度(km/h),-,-,第13条表,-,FACT,DOC-X0-0145 p161,実装可
-TABLE-03,X2-R-003,TABLE_LOOKUP,設計車両諸元表,設計車両種別,-,全長・全幅・軸距等,-,-,第4条表,-,FACT,DOC-X0-0145 p173,実装可
-TABLE-04,X2-R-004,TABLE_LOOKUP,車線幅員表,種級,-,車線幅員(m),-,-,第5条,-,FACT,DOC-X0-0145 p208-209,実装可
-TABLE-05,X2-R-005,TABLE_LOOKUP,中央帯幅員表,種級,-,中央帯幅員(m),-,-,第6条,-,FACT,DOC-X0-0145 p210-211,実装可
-TABLE-06,X2-R-006,TABLE_LOOKUP,路肩幅員表,"種級,道路種別",-,路肩幅員(m),-,-,第13条,-,FACT,DOC-X0-0145 p228-229,実装可
-TABLE-07,X2-R-007,TABLE_LOOKUP,最小曲線半径表,"設計速度,片勾配",-,最小曲線半径R(m),-,-,表3-5/3-6,-,FACT,DOC-X0-0145 p348-349,実装可
-TABLE-08,X2-R-009,TABLE_LOOKUP,最大片勾配表,"地域,道路区分",-,最大片勾配(%),-,-,第16条,-,FACT,DOC-X0-0145 p358-359,実装可
-TABLE-09,X2-R-010,TABLE_LOOKUP,視距表,設計速度,-,視距(m),-,-,第19条,-,FACT,DOC-X0-0145 p413,実装可
-TABLE-10,X2-R-011,TABLE_LOOKUP,縦断勾配表,"種級,設計速度",-,最大縦断勾配(%),-,-,第20条,-,FACT,DOC-X0-0145 p424-425,実装可
-TABLE-11,X2-R-012,TABLE_LOOKUP,縦断曲線半径表,"設計速度,曲線形",-,半径(m)・長さ(m),-,-,第22条,-,FACT,DOC-X0-0145 p452-453,実装可
-TABLE-12,X2-R-013,TABLE_LOOKUP,横断勾配表,"路面種類,片側車線数",-,横断勾配(%),-,-,第24条・表3-51,-,FACT,DOC-X0-0145 p466-467,実装可
+TABLE-01,X2-R-001,TABLE_LOOKUP,道路種級区分表,"種級,地域,地形,計画交通量",-,種級区分,-,-,,表1-1,-,FACT,DOC-X0-0145 p138-139,実装可
+TABLE-02,X2-R-002,TABLE_LOOKUP,設計速度表,"種級,地形",-,設計速度(km/h),-,-,,第13条表,-,FACT,DOC-X0-0145 p161,実装可
+TABLE-03,X2-R-003,TABLE_LOOKUP,設計車両諸元表,設計車両種別,-,全長・全幅・軸距等,-,-,,第4条表,-,FACT,DOC-X0-0145 p173,実装可
+TABLE-04,X2-R-004,TABLE_LOOKUP,車線幅員表,種級,-,車線幅員(m),-,-,,第5条,-,FACT,DOC-X0-0145 p208-209,実装可
+TABLE-05,X2-R-005,TABLE_LOOKUP,中央帯幅員表,種級,-,中央帯幅員(m),-,-,,第6条,-,FACT,DOC-X0-0145 p210-211,実装可
+TABLE-06,X2-R-006,TABLE_LOOKUP,路肩幅員表,"種級,道路種別",-,路肩幅員(m),-,-,,第13条,-,FACT,DOC-X0-0145 p228-229,実装可
+TABLE-07,X2-R-007,TABLE_LOOKUP,最小曲線半径表,"設計速度,片勾配",-,最小曲線半径R(m),-,-,,表3-5/3-6,-,FACT,DOC-X0-0145 p348-349,実装可
+TABLE-08,X2-R-009,TABLE_LOOKUP,最大片勾配表,"地域,道路区分",-,最大片勾配(%),-,-,,第16条,-,FACT,DOC-X0-0145 p358-359,実装可
+TABLE-09,X2-R-010,TABLE_LOOKUP,視距表,設計速度,-,視距(m),-,-,,第19条,-,FACT,DOC-X0-0145 p413,実装可
+TABLE-10,X2-R-011,TABLE_LOOKUP,縦断勾配表,"種級,設計速度",-,最大縦断勾配(%),-,-,,第20条,-,FACT,DOC-X0-0145 p424-425,実装可
+TABLE-11,X2-R-012,TABLE_LOOKUP,縦断曲線半径表,"設計速度,曲線形",-,半径(m)・長さ(m),-,-,,第22条,-,FACT,DOC-X0-0145 p452-453,実装可
+TABLE-12,X2-R-013,TABLE_LOOKUP,横断勾配表,"路面種類,片側車線数",-,横断勾配(%),-,-,,第24条・表3-51,-,FACT,DOC-X0-0145 p466-467,実装可
