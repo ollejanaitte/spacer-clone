@@ -1,8 +1,10 @@
 import type { ReferenceValueRow } from "./types";
 import { ALIGNMENT_PROFILE_ROWS } from "./dataset-alignment-profile";
+import { BRIDGE_GEOMETRY_ROWS } from "./dataset-bridge-geometry";
 
 export const REFERENCE_DATASET_ROWS: ReferenceValueRow[] = [
   ...ALIGNMENT_PROFILE_ROWS,
+  ...BRIDGE_GEOMETRY_ROWS,
 ];
 
 export const REFERENCE_DATASET_VERSION = "v1";
