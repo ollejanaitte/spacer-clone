@@ -1,0 +1,12 @@
+reconciliation_id,item,source,status,classification,notes
+P4R-001,local main HEAD sync,git rev-parse HEAD,DONE,RESYNCED_FAST_FORWARD,90 commits behind origin/main; pull --ff-only to bbfa6aeae3e78d344ee2d2582931149c9f722cc5
+P4R-002,origin/main divergence check,git rev-list --left-right origin/main...HEAD,DONE,NO_DIVERGENCE,"0 0"
+P4R-003,worktree inventory,git worktree list --porcelain,DONE,INVENTORIED,17 worktrees; see worktree_inventory.csv
+P4R-004,branch inventory,git for-each-ref refs/heads,DONE,INVENTORIED,185 local branches; see branch_reconciliation_inventory.csv
+P4R-005,main-intended pending content scan,branch_reconciliation_inventory.csv,DONE,NONE_FOUND,All NOT-in-main branches are research/ or superseded pre-merge branches; content present in main
+P4R-006,pre-existing step4c evidence dirty files,git status,DONE,PRESERVED_LOCAL_DIRTY,3 files; not staged/not deleted/not in Phase 4
+P4R-007,Phase 3 Input Golden presence,git ls-files phase3/,DONE,PRESENT,141 records committed in main
+P4R-008,Phase 2-II candidates presence,git ls-files phase2/phase2_ii/,DONE,PRESENT,geometry/structural_model/design/analysis/report/drawing/load candidates committed
+P4R-009,Phase 4 handoff authority,phase3/08_phase4_handoff.md,DONE,GO_WITH_HUMAN_CONFIRMATION_TRACK,Input Golden ready for promotion
+P4R-010,Phase 4 source originals policy,constraints,DONE,NO_SOURCE_COMMIT,PDFs/images stay out of git
+P4R-011,verdict,this report,DONE,RECONCILIATION_COMPLETE_PASS,Baseline clean; Phase 4 may begin
