@@ -1,66 +1,66 @@
 element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
-CAL-P01283-CAL-SEC-4.2-001,1283,1278,CAL-CH4,CAL-SEC-4.2,section_header,4.2 主桁の設計,CAL-P01283,TEXT_EXTRACTED,HIGH,Section 4.2 - Main girder design
-CAL-P01284-CAL-SEC-4.2.1-001,1284,1279,CAL-CH4,CAL-SEC-4.2.1,subsection_header,4.2.1 設計方針,CAL-P01284,TEXT_EXTRACTED,HIGH,Design policy
-CAL-P01284-CAL-SEC-4.2.1-002,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,設計方針(部分係数設計法に関わる事項),CAL-P01284,TEXT_EXTRACTED,HIGH,Design policy - partial factor design method
-CAL-P01284-CAL-SEC-4.2.1-003,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,完成系: 鋼合成桁として設計。コンクリート床版は有効幅を考慮した合成断面,計算応力度は道示Ⅱの規定を満足するものとする,CAL-P01284,TEXT_EXTRACTED,HIGH,Composite girder design with effective deck width per Doshin II
-CAL-P01284-CAL-SEC-4.2.1-004,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,施工系: 合成前の鋼桁断面として死荷重及び施工時荷重に対して安全であること,非合成桁と同様に断面の決定,応力度照査を行う,CAL-P01284,TEXT_EXTRACTED,HIGH,Construction stage design per non-composite girder method
-CAL-P01284-CAL-SEC-4.2.1-005,1284,1279,CAL-CH4,CAL-SEC-4.2.1,table,限界状態区分と照査項目一覧,CAL-P01284,TEXT_EXTRACTED,MEDIUM,"Limit state categories: 1/2/3, 4 check items"
-CAL-P01285-CAL-SEC-4.2.1-001,1285,1280,CAL-CH4,CAL-SEC-4.2.1,table,材料係数一覧,CAL-P01285,TEXT_EXTRACTED,MEDIUM,Material factors: γm1/γm2/γmb/γms
-CAL-P01285-CAL-SEC-4.2.1-002,1285,1280,CAL-CH4,CAL-SEC-4.2.1,table,部材係数・構造解析係数一覧,CAL-P01285,TEXT_EXTRACTED,MEDIUM,Member and structural analysis factors
-CAL-P01285-CAL-SEC-4.2.1-003,1285,1280,CAL-CH4,CAL-SEC-4.2.1,text_block,鋼材SM490Y: σy=355N/mm2, σsu=490N/mm2, τy=205N/mm2, E=200000N/mm2, G=77000N/mm2,CAL-P01285,TEXT_EXTRACTED,HIGH,Material properties SM490Y
-CAL-P01286-CAL-SEC-4.2.1-001,1286,1281,CAL-CH4,CAL-SEC-4.2.1,text_block,断面諸量の算出に必要な鉄筋量は上下D22 @125mm,CAL-P01286,TEXT_EXTRACTED,HIGH,Reinforcement D22 @125mm上下
-CAL-P01286-CAL-SEC-4.2.1-002,1286,1281,CAL-CH4,CAL-SEC-4.2.1,text_block,合成断面設計: n=7(活荷重) n=14(クリープ) n=21(乾燥収縮),CAL-P01286,TEXT_EXTRACTED,HIGH,Composite section n values
-CAL-P01287-CAL-SEC-4.2.2-001,1287,1282,CAL-CH4,CAL-SEC-4.2.2,subsection_header,4.2.2 床版有効幅の計算,CAL-P01287,TEXT_EXTRACTED,HIGH,Effective deck width calculation
-CAL-P01287-CAL-SEC-4.2.2-002,1287,1282,CAL-CH4,CAL-SEC-4.2.2,table,床版有効幅一覧,CAL-P01287,TEXT_EXTRACTED,MEDIUM,Effective deck width values per section
-CAL-P01299-CAL-SEC-4.2.3-001,1299,1294,CAL-CH4,CAL-SEC-4.2.3,subsection_header,4.2.3 断面諸量,CAL-P01299,TEXT_EXTRACTED,HIGH,Section properties
-CAL-P01299-CAL-SEC-4.2.3-002,1299,1294,CAL-CH4,CAL-SEC-4.2.3,text_block,単位: 断面寸法=mm, 断面諸量=cm/cm2/cm4,CAL-P01299,TEXT_EXTRACTED,HIGH,Units: dimensions in mm, section properties in cm/cm2/cm4
-CAL-P01299-CAL-SEC-4.2.3-003,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 鋼桁断面 AG1,CAL-P01299,TEXT_EXTRACTED,MEDIUM,Steel section properties AG1
-CAL-P01299-CAL-SEC-4.2.3-004,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成断面(n=7) AG1,CAL-P01299,TEXT_EXTRACTED,MEDIUM,Composite section properties (n=7) AG1
-CAL-P01299-CAL-SEC-4.2.3-005,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成(n=14 クリープ) AG1,CAL-P01299,TEXT_EXTRACTED,MEDIUM,Composite creep section (n=14) AG1
-CAL-P01299-CAL-SEC-4.2.3-006,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成(n=21 乾燥収縮) AG1,CAL-P01299,TEXT_EXTRACTED,MEDIUM,Composite shrinkage section (n=21) AG1
-CAL-P01318-CAL-SEC-4.2.4-001,1318,1313,CAL-CH4,CAL-SEC-4.2.4,subsection_header,4.2.4 断面の応力度照査(耐荷性能の照査),CAL-P01318,TEXT_EXTRACTED,HIGH,Stress verification (load-carrying capacity check)
-CAL-P01318-CAL-SEC-4.2.4-002,1318,1313,CAL-CH4,CAL-SEC-4.2.4,text_block,断面の決定,CAL-P01318,TEXT_EXTRACTED,HIGH,Section determination
-CAL-P01319-CAL-SEC-4.2.4-001,1319,1314,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-1(Sup-1) その1(完成時),CAL-P01319,TEXT_EXTRACTED,HIGH,AG1 Section 1 (Support 1) - completed state
-CAL-P01319-CAL-SEC-4.2.4-002,1319,1314,CAL-CH4,CAL-SEC-4.2.4,table,断面力及び計算条件 AG1 Sec-1 Sup-1,CAL-P01319,TEXT_EXTRACTED,MEDIUM,Section forces and conditions AG1 Sup-1
-CAL-P01319-CAL-SEC-4.2.4-003,1319,1314,CAL-CH4,CAL-SEC-4.2.4,table,断面諸量一覧 AG1 Sup-1,CAL-P01319,TEXT_EXTRACTED,MEDIUM,Section properties AG1 Sup-1 (steel, n=7, n=14, n=21, steel+rebar)
-CAL-P01319-CAL-SEC-4.2.4-004,1319,1314,CAL-CH4,CAL-SEC-4.2.4,text_block,断面構成: SLAB 3993x230 / D22x2 / UFLG PL620x22 / WEB PL2537x14 / LFLG PL680x21,CAL-P01319,TEXT_EXTRACTED,HIGH,Section makeup AG1 Sup-1
-CAL-P01319-CAL-SEC-4.2.4-005,1319,1314,CAL-CH4,CAL-SEC-4.2.4,text_block,温度差 P=-3158.2kN M=1686.3kNm クリープ P=0 M=0 乾燥収縮 P=-1842.3kN M=1786.5kNm,CAL-P01319,TEXT_EXTRACTED,HIGH,Temperature/creep/shrinkage forces
-CAL-P01320-CAL-SEC-4.2.4-001,1320,1315,CAL-CH4,CAL-SEC-4.2.4,text_block,温度差/クリープ/乾燥収縮応力度計算結果,CAL-P01320,TEXT_EXTRACTED,MEDIUM,Temperature/creep/shrinkage stress results
-CAL-P01321-CAL-SEC-4.2.4-001,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,上フランジ応力度制限値(限界状態3) σtud=272N/mm2 σcud=min(240,193)=193N/mm2,CAL-P01321,TEXT_EXTRACTED,HIGH,Upper flange stress limits
-CAL-P01321-CAL-SEC-4.2.4-002,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,下フランジ応力度制限値(限界状態3) σtud=272N/mm2 σcud=min(245,164)=164N/mm2,CAL-P01321,TEXT_EXTRACTED,HIGH,Lower flange stress limits
-CAL-P01321-CAL-SEC-4.2.4-003,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,腹板せん断応力度制限値(限界状態3) τud=157N/mm2,CAL-P01321,TEXT_EXTRACTED,HIGH,Web shear stress limit
-CAL-P01322-CAL-SEC-4.2.4-001,1322,1317,CAL-CH4,CAL-SEC-4.2.4,text_block,応力度照査結果 AG1 Sec-1 Sup-1 - 全項目OK,CAL-P01322,TEXT_EXTRACTED,HIGH,Stress verification result - all items OK
-CAL-P01322-CAL-SEC-4.2.4-002,1322,1317,CAL-CH4,CAL-SEC-4.2.4,table,応力度照査結果一覧 AG1 Sec-1 Sup-1,CAL-P01322,TEXT_EXTRACTED,MEDIUM,Stress verification summary table
-CAL-P01400-CAL-SEC-4.2.4-001,1400,1395,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-2(Span 1) その2-1(完成時),CAL-P01400,TEXT_EXTRACTED,HIGH,AG1 Section 2 (Span 1) stress verification
-CAL-P01451-CAL-SEC-4.2.4-001,1451,1446,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-3(C1) 断面照査(完成時),CAL-P01451,TEXT_EXTRACTED,HIGH,AG1 Section 3 (C1) stress verification
-CAL-P01520-CAL-SEC-4.2.4-001,1520,1515,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-4(PK前) 断面照査,CAL-P01520,TEXT_EXTRACTED,HIGH,AG1 Section 4 (before PK) stress verification
-CAL-P01598-CAL-SEC-4.2.4-001,1598,1593,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-5(PK後活) 断面照査,CAL-P01598,TEXT_EXTRACTED,HIGH,AG1 Section 5 (after PK) stress verification
-CAL-P01680-CAL-SEC-4.2.4-001,1680,1675,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-6(PR1) 断面照査(完成時),CAL-P01680,TEXT_EXTRACTED,HIGH,AG1 Section 6 (PR1) stress verification
-CAL-P01776-CAL-SEC-4.2.5-001,1776,1771,CAL-CH4,CAL-SEC-4.2.5,subsection_header,4.2.5 断面構成図,CAL-P01776,TEXT_EXTRACTED,HIGH,Section composition drawing
-CAL-P01776-CAL-SEC-4.2.5-002,1776,1771,CAL-CH4,CAL-SEC-4.2.5,figure,断面構成図 AG1,CAL-P01776,TEXT_EXTRACTED,MEDIUM,AG1 section composition drawing
-CAL-P01776-CAL-SEC-4.2.5-003,1776,1771,CAL-CH4,CAL-SEC-4.2.5,figure,断面構成図 AG2,CAL-P01776,TEXT_EXTRACTED,MEDIUM,AG2 section composition drawing
-CAL-P01778-CAL-SEC-4.2.6-001,1778,1773,CAL-CH4,CAL-SEC-4.2.6,subsection_header,4.2.6 現場継手の計算,CAL-P01778,TEXT_EXTRACTED,HIGH,Field splice calculation
-CAL-P01778-CAL-SEC-4.2.6-002,1778,1773,CAL-CH4,CAL-SEC-4.2.6,text_block,高力ボルト摩擦接合による現場継手の設計,CAL-P01778,TEXT_EXTRACTED,HIGH,High-strength bolted friction-type field splice
-CAL-P01947-CAL-SEC-4.2.7-001,1947,1942,CAL-CH4,CAL-SEC-4.2.7,subsection_header,4.2.7 たわみおよび剛比の照査,CAL-P01947,TEXT_EXTRACTED,HIGH,Deflection and stiffness ratio check
-CAL-P01947-CAL-SEC-4.2.7-002,1947,1942,CAL-CH4,CAL-SEC-4.2.7,table,たわみ計算結果一覧,CAL-P01947,TEXT_EXTRACTED,MEDIUM,Deflection calculation results
-CAL-P01955-CAL-SEC-4.2.8-001,1955,1950,CAL-CH4,CAL-SEC-4.2.8,subsection_header,4.2.8 各計算応力度,CAL-P01955,TEXT_EXTRACTED,HIGH,Calculated stress values
-CAL-P01955-CAL-SEC-4.2.8-002,1955,1950,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(1) 床版応力度,CAL-P01955,TEXT_EXTRACTED,HIGH,Deck slab stresses
-CAL-P01955-CAL-SEC-4.2.8-003,1955,1950,CAL-CH4,CAL-SEC-4.2.8,table,床版応力度一覧表,CAL-P01955,TEXT_EXTRACTED,MEDIUM,Deck slab stress summary
-CAL-P01958-CAL-SEC-4.2.8-001,1958,1953,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(2) 曲率による応力度,CAL-P01958,TEXT_EXTRACTED,HIGH,Stresses due to curvature
-CAL-P02003-CAL-SEC-4.2.8-001,2003,1998,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(3)完成系応力度(活荷重最大),CAL-P02003,TEXT_EXTRACTED,HIGH,Completed state stresses (live load max)
-CAL-P02003-CAL-SEC-4.2.8-002,2003,1998,CAL-CH4,CAL-SEC-4.2.8,table,完成系応力度一覧(活最大),CAL-P02003,TEXT_EXTRACTED,MEDIUM,Completed state stress table (live max)
-CAL-P02076-CAL-SEC-4.2.8-001,2076,2071,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(4)完成系応力度(活荷重最小),CAL-P02076,TEXT_EXTRACTED,HIGH,Completed state stresses (live load min)
-CAL-P02076-CAL-SEC-4.2.8-002,2076,2071,CAL-CH4,CAL-SEC-4.2.8,table,完成系応力度一覧(活最小),CAL-P02076,TEXT_EXTRACTED,MEDIUM,Completed state stress table (live min)
-CAL-P02098-CAL-SEC-4.2.8-001,2098,2093,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(5) 鉄筋応力度,CAL-P02098,TEXT_EXTRACTED,HIGH,Reinforcement stresses
-CAL-P02098-CAL-SEC-4.2.8-002,2098,2093,CAL-CH4,CAL-SEC-4.2.8,table,鉄筋応力度一覧表,CAL-P02098,TEXT_EXTRACTED,MEDIUM,Reinforcement stress summary
-CAL-P02100-CAL-SEC-4.2.8-001,2100,2095,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(6) 常時換算応力度,CAL-P02100,TEXT_EXTRACTED,HIGH,Service converted stresses
-CAL-P02100-CAL-SEC-4.2.8-002,2100,2095,CAL-CH4,CAL-SEC-4.2.8,table,常時換算応力度一覧表,CAL-P02100,TEXT_EXTRACTED,MEDIUM,Service converted stress summary
-CAL-P02114-CAL-SEC-4.2.8-001,2114,2109,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(7) 断面毎応力度,CAL-P02114,TEXT_EXTRACTED,HIGH,Per-section stress summary
-CAL-P02114-CAL-SEC-4.2.8-002,2114,2109,CAL-CH4,CAL-SEC-4.2.8,table,断面毎応力度一覧表,CAL-P02114,TEXT_EXTRACTED,MEDIUM,Per-section stress summary table
-CAL-P02003-CAL-SEC-4.2.9-001,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9 中間補剛材の計算,CAL-P02003,TEXT_EXTRACTED,HIGH,Intermediate stiffener calculation
-CAL-P02003-CAL-SEC-4.2.9-002,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.1 垂直補剛材の計算,CAL-P02003,TEXT_EXTRACTED,HIGH,Vertical stiffener calculation
-CAL-P02003-CAL-SEC-4.2.9-003,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.2 垂直補剛材端部の処理,CAL-P02003,TEXT_EXTRACTED,HIGH,Vertical stiffener end treatment
-CAL-P02003-CAL-SEC-4.2.9-004,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.3 水平補剛材の応力度照査,CAL-P02003,TEXT_EXTRACTED,HIGH,Horizontal stiffener stress verification
-CAL-P02003-CAL-SEC-4.2.9-005,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.4 中間補剛材の剛性照査,CAL-P02003,TEXT_EXTRACTED,HIGH,Intermediate stiffener stiffness check
-CAL-P02023-CAL-SEC-4.2.10-001,2023,2018,CAL-CH4,CAL-SEC-4.2.10,subsection_header,4.2.10 主桁溶接計算,CAL-P02023,TEXT_EXTRACTED,HIGH,Main girder weld calculation
-CAL-P02023-CAL-SEC-4.2.10-002,2023,2018,CAL-CH4,CAL-SEC-4.2.10,table,溶接サイズ一覧,CAL-P02023,TEXT_EXTRACTED,MEDIUM,Weld size summary table
+CAL-P01283-CAL-SEC-4.2-001,1283,1278,CAL-CH4,CAL-SEC-4.2,section_header,4.2 主桁の設計,calc_pdf_p1283,TEXT_EXTRACTED,HIGH,Section 4.2 - Main girder design
+CAL-P01284-CAL-SEC-4.2.1-001,1284,1279,CAL-CH4,CAL-SEC-4.2.1,subsection_header,4.2.1 設計方針,calc_pdf_p1284,TEXT_EXTRACTED,HIGH,Design policy
+CAL-P01284-CAL-SEC-4.2.1-002,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,設計方針(部分係数設計法に関わる事項),calc_pdf_p1284,TEXT_EXTRACTED,HIGH,Design policy - partial factor design method
+CAL-P01284-CAL-SEC-4.2.1-003,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,"完成系: 鋼合成桁として設計。コンクリート床版は有効幅を考慮した合成断面,計算応力度は道示Ⅱの規定を満足するものとする",calc_pdf_p1284,TEXT_EXTRACTED,HIGH,Composite girder design with effective deck width per Doshin II
+CAL-P01284-CAL-SEC-4.2.1-004,1284,1279,CAL-CH4,CAL-SEC-4.2.1,text_block,"施工系: 合成前の鋼桁断面として死荷重及び施工時荷重に対して安全であること,非合成桁と同様に断面の決定,応力度照査を行う",calc_pdf_p1284,TEXT_EXTRACTED,HIGH,Construction stage design per non-composite girder method
+CAL-P01284-CAL-SEC-4.2.1-005,1284,1279,CAL-CH4,CAL-SEC-4.2.1,table,限界状態区分と照査項目一覧,calc_pdf_p1284,TEXT_EXTRACTED,MEDIUM,"Limit state categories: 1/2/3, 4 check items"
+CAL-P01285-CAL-SEC-4.2.1-001,1285,1280,CAL-CH4,CAL-SEC-4.2.1,table,材料係数一覧,calc_pdf_p1285,TEXT_EXTRACTED,MEDIUM,Material factors: γm1/γm2/γmb/γms
+CAL-P01285-CAL-SEC-4.2.1-002,1285,1280,CAL-CH4,CAL-SEC-4.2.1,table,部材係数・構造解析係数一覧,calc_pdf_p1285,TEXT_EXTRACTED,MEDIUM,Member and structural analysis factors
+CAL-P01285-CAL-SEC-4.2.1-003,1285,1280,CAL-CH4,CAL-SEC-4.2.1,text_block,"鋼材SM490Y: σy=355N/mm2, σsu=490N/mm2, τy=205N/mm2, E=200000N/mm2, G=77000N/mm2",calc_pdf_p1285,TEXT_EXTRACTED,HIGH,Material properties SM490Y
+CAL-P01286-CAL-SEC-4.2.1-001,1286,1281,CAL-CH4,CAL-SEC-4.2.1,text_block,断面諸量の算出に必要な鉄筋量は上下D22 @125mm,calc_pdf_p1286,TEXT_EXTRACTED,HIGH,Reinforcement D22 @125mm上下
+CAL-P01286-CAL-SEC-4.2.1-002,1286,1281,CAL-CH4,CAL-SEC-4.2.1,text_block,合成断面設計: n=7(活荷重) n=14(クリープ) n=21(乾燥収縮),calc_pdf_p1286,TEXT_EXTRACTED,HIGH,Composite section n values
+CAL-P01287-CAL-SEC-4.2.2-001,1287,1282,CAL-CH4,CAL-SEC-4.2.2,subsection_header,4.2.2 床版有効幅の計算,calc_pdf_p1287,TEXT_EXTRACTED,HIGH,Effective deck width calculation
+CAL-P01287-CAL-SEC-4.2.2-002,1287,1282,CAL-CH4,CAL-SEC-4.2.2,table,床版有効幅一覧,calc_pdf_p1287,TEXT_EXTRACTED,MEDIUM,Effective deck width values per section
+CAL-P01299-CAL-SEC-4.2.3-001,1299,1294,CAL-CH4,CAL-SEC-4.2.3,subsection_header,4.2.3 断面諸量,calc_pdf_p1299,TEXT_EXTRACTED,HIGH,Section properties
+CAL-P01299-CAL-SEC-4.2.3-002,1299,1294,CAL-CH4,CAL-SEC-4.2.3,text_block,"単位: 断面寸法=mm, 断面諸量=cm/cm2/cm4",calc_pdf_p1299,TEXT_EXTRACTED,HIGH,"Units: dimensions in mm, section properties in cm/cm2/cm4"
+CAL-P01299-CAL-SEC-4.2.3-003,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 鋼桁断面 AG1,calc_pdf_p1299,TEXT_EXTRACTED,MEDIUM,Steel section properties AG1
+CAL-P01299-CAL-SEC-4.2.3-004,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成断面(n=7) AG1,calc_pdf_p1299,TEXT_EXTRACTED,MEDIUM,Composite section properties (n=7) AG1
+CAL-P01299-CAL-SEC-4.2.3-005,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成(n=14 クリープ) AG1,calc_pdf_p1299,TEXT_EXTRACTED,MEDIUM,Composite creep section (n=14) AG1
+CAL-P01299-CAL-SEC-4.2.3-006,1299,1294,CAL-CH4,CAL-SEC-4.2.3,table,断面諸量 合成(n=21 乾燥収縮) AG1,calc_pdf_p1299,TEXT_EXTRACTED,MEDIUM,Composite shrinkage section (n=21) AG1
+CAL-P01318-CAL-SEC-4.2.4-001,1318,1313,CAL-CH4,CAL-SEC-4.2.4,subsection_header,4.2.4 断面の応力度照査(耐荷性能の照査),calc_pdf_p1318,TEXT_EXTRACTED,HIGH,Stress verification (load-carrying capacity check)
+CAL-P01318-CAL-SEC-4.2.4-002,1318,1313,CAL-CH4,CAL-SEC-4.2.4,text_block,断面の決定,calc_pdf_p1318,TEXT_EXTRACTED,HIGH,Section determination
+CAL-P01319-CAL-SEC-4.2.4-001,1319,1314,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-1(Sup-1) その1(完成時),calc_pdf_p1319,TEXT_EXTRACTED,HIGH,AG1 Section 1 (Support 1) - completed state
+CAL-P01319-CAL-SEC-4.2.4-002,1319,1314,CAL-CH4,CAL-SEC-4.2.4,table,断面力及び計算条件 AG1 Sec-1 Sup-1,calc_pdf_p1319,TEXT_EXTRACTED,MEDIUM,Section forces and conditions AG1 Sup-1
+CAL-P01319-CAL-SEC-4.2.4-003,1319,1314,CAL-CH4,CAL-SEC-4.2.4,table,断面諸量一覧 AG1 Sup-1,calc_pdf_p1319,TEXT_EXTRACTED,MEDIUM,"Section properties AG1 Sup-1 (steel, n=7, n=14, n=21, steel+rebar)"
+CAL-P01319-CAL-SEC-4.2.4-004,1319,1314,CAL-CH4,CAL-SEC-4.2.4,text_block,断面構成: SLAB 3993x230 / D22x2 / UFLG PL620x22 / WEB PL2537x14 / LFLG PL680x21,calc_pdf_p1319,TEXT_EXTRACTED,HIGH,Section makeup AG1 Sup-1
+CAL-P01319-CAL-SEC-4.2.4-005,1319,1314,CAL-CH4,CAL-SEC-4.2.4,text_block,温度差 P=-3158.2kN M=1686.3kNm クリープ P=0 M=0 乾燥収縮 P=-1842.3kN M=1786.5kNm,calc_pdf_p1319,TEXT_EXTRACTED,HIGH,Temperature/creep/shrinkage forces
+CAL-P01320-CAL-SEC-4.2.4-001,1320,1315,CAL-CH4,CAL-SEC-4.2.4,text_block,温度差/クリープ/乾燥収縮応力度計算結果,calc_pdf_p1320,TEXT_EXTRACTED,MEDIUM,Temperature/creep/shrinkage stress results
+CAL-P01321-CAL-SEC-4.2.4-001,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,"上フランジ応力度制限値(限界状態3) σtud=272N/mm2 σcud=min(240,193)=193N/mm2",calc_pdf_p1321,TEXT_EXTRACTED,HIGH,Upper flange stress limits
+CAL-P01321-CAL-SEC-4.2.4-002,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,"下フランジ応力度制限値(限界状態3) σtud=272N/mm2 σcud=min(245,164)=164N/mm2",calc_pdf_p1321,TEXT_EXTRACTED,HIGH,Lower flange stress limits
+CAL-P01321-CAL-SEC-4.2.4-003,1321,1316,CAL-CH4,CAL-SEC-4.2.4,text_block,腹板せん断応力度制限値(限界状態3) τud=157N/mm2,calc_pdf_p1321,TEXT_EXTRACTED,HIGH,Web shear stress limit
+CAL-P01322-CAL-SEC-4.2.4-001,1322,1317,CAL-CH4,CAL-SEC-4.2.4,text_block,応力度照査結果 AG1 Sec-1 Sup-1 - 全項目OK,calc_pdf_p1322,TEXT_EXTRACTED,HIGH,Stress verification result - all items OK
+CAL-P01322-CAL-SEC-4.2.4-002,1322,1317,CAL-CH4,CAL-SEC-4.2.4,table,応力度照査結果一覧 AG1 Sec-1 Sup-1,calc_pdf_p1322,TEXT_EXTRACTED,MEDIUM,Stress verification summary table
+CAL-P01400-CAL-SEC-4.2.4-001,1400,1395,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-2(Span 1) その2-1(完成時),calc_pdf_p1400,TEXT_EXTRACTED,HIGH,AG1 Section 2 (Span 1) stress verification
+CAL-P01451-CAL-SEC-4.2.4-001,1451,1446,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-3(C1) 断面照査(完成時),calc_pdf_p1451,TEXT_EXTRACTED,HIGH,AG1 Section 3 (C1) stress verification
+CAL-P01520-CAL-SEC-4.2.4-001,1520,1515,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-4(PK前) 断面照査,calc_pdf_p1520,TEXT_EXTRACTED,HIGH,AG1 Section 4 (before PK) stress verification
+CAL-P01598-CAL-SEC-4.2.4-001,1598,1593,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-5(PK後活) 断面照査,calc_pdf_p1598,TEXT_EXTRACTED,HIGH,AG1 Section 5 (after PK) stress verification
+CAL-P01680-CAL-SEC-4.2.4-001,1680,1675,CAL-CH4,CAL-SEC-4.2.4,subsection_header,AG1 Sec-6(PR1) 断面照査(完成時),calc_pdf_p1680,TEXT_EXTRACTED,HIGH,AG1 Section 6 (PR1) stress verification
+CAL-P01776-CAL-SEC-4.2.5-001,1776,1771,CAL-CH4,CAL-SEC-4.2.5,subsection_header,4.2.5 断面構成図,calc_pdf_p1776,TEXT_EXTRACTED,HIGH,Section composition drawing
+CAL-P01776-CAL-SEC-4.2.5-002,1776,1771,CAL-CH4,CAL-SEC-4.2.5,figure,断面構成図 AG1,calc_pdf_p1776,TEXT_EXTRACTED,MEDIUM,AG1 section composition drawing
+CAL-P01776-CAL-SEC-4.2.5-003,1776,1771,CAL-CH4,CAL-SEC-4.2.5,figure,断面構成図 AG2,calc_pdf_p1776,TEXT_EXTRACTED,MEDIUM,AG2 section composition drawing
+CAL-P01778-CAL-SEC-4.2.6-001,1778,1773,CAL-CH4,CAL-SEC-4.2.6,subsection_header,4.2.6 現場継手の計算,calc_pdf_p1778,TEXT_EXTRACTED,HIGH,Field splice calculation
+CAL-P01778-CAL-SEC-4.2.6-002,1778,1773,CAL-CH4,CAL-SEC-4.2.6,text_block,高力ボルト摩擦接合による現場継手の設計,calc_pdf_p1778,TEXT_EXTRACTED,HIGH,High-strength bolted friction-type field splice
+CAL-P01947-CAL-SEC-4.2.7-001,1947,1942,CAL-CH4,CAL-SEC-4.2.7,subsection_header,4.2.7 たわみおよび剛比の照査,calc_pdf_p1947,TEXT_EXTRACTED,HIGH,Deflection and stiffness ratio check
+CAL-P01947-CAL-SEC-4.2.7-002,1947,1942,CAL-CH4,CAL-SEC-4.2.7,table,たわみ計算結果一覧,calc_pdf_p1947,TEXT_EXTRACTED,MEDIUM,Deflection calculation results
+CAL-P01955-CAL-SEC-4.2.8-001,1955,1950,CAL-CH4,CAL-SEC-4.2.8,subsection_header,4.2.8 各計算応力度,calc_pdf_p1955,TEXT_EXTRACTED,HIGH,Calculated stress values
+CAL-P01955-CAL-SEC-4.2.8-002,1955,1950,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(1) 床版応力度,calc_pdf_p1955,TEXT_EXTRACTED,HIGH,Deck slab stresses
+CAL-P01955-CAL-SEC-4.2.8-003,1955,1950,CAL-CH4,CAL-SEC-4.2.8,table,床版応力度一覧表,calc_pdf_p1955,TEXT_EXTRACTED,MEDIUM,Deck slab stress summary
+CAL-P01958-CAL-SEC-4.2.8-001,1958,1953,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(2) 曲率による応力度,calc_pdf_p1958,TEXT_EXTRACTED,HIGH,Stresses due to curvature
+CAL-P02003-CAL-SEC-4.2.8-001,2003,1998,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(3)完成系応力度(活荷重最大),calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Completed state stresses (live load max)
+CAL-P02003-CAL-SEC-4.2.8-002,2003,1998,CAL-CH4,CAL-SEC-4.2.8,table,完成系応力度一覧(活最大),calc_pdf_p2003,TEXT_EXTRACTED,MEDIUM,Completed state stress table (live max)
+CAL-P02076-CAL-SEC-4.2.8-001,2076,2071,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(4)完成系応力度(活荷重最小),calc_pdf_p2076,TEXT_EXTRACTED,HIGH,Completed state stresses (live load min)
+CAL-P02076-CAL-SEC-4.2.8-002,2076,2071,CAL-CH4,CAL-SEC-4.2.8,table,完成系応力度一覧(活最小),calc_pdf_p2076,TEXT_EXTRACTED,MEDIUM,Completed state stress table (live min)
+CAL-P02098-CAL-SEC-4.2.8-001,2098,2093,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(5) 鉄筋応力度,calc_pdf_p2098,TEXT_EXTRACTED,HIGH,Reinforcement stresses
+CAL-P02098-CAL-SEC-4.2.8-002,2098,2093,CAL-CH4,CAL-SEC-4.2.8,table,鉄筋応力度一覧表,calc_pdf_p2098,TEXT_EXTRACTED,MEDIUM,Reinforcement stress summary
+CAL-P02100-CAL-SEC-4.2.8-001,2100,2095,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(6) 常時換算応力度,calc_pdf_p2100,TEXT_EXTRACTED,HIGH,Service converted stresses
+CAL-P02100-CAL-SEC-4.2.8-002,2100,2095,CAL-CH4,CAL-SEC-4.2.8,table,常時換算応力度一覧表,calc_pdf_p2100,TEXT_EXTRACTED,MEDIUM,Service converted stress summary
+CAL-P02114-CAL-SEC-4.2.8-001,2114,2109,CAL-CH4,CAL-SEC-4.2.8,subsection_header,(7) 断面毎応力度,calc_pdf_p2114,TEXT_EXTRACTED,HIGH,Per-section stress summary
+CAL-P02114-CAL-SEC-4.2.8-002,2114,2109,CAL-CH4,CAL-SEC-4.2.8,table,断面毎応力度一覧表,calc_pdf_p2114,TEXT_EXTRACTED,MEDIUM,Per-section stress summary table
+CAL-P02003-CAL-SEC-4.2.9-001,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9 中間補剛材の計算,calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Intermediate stiffener calculation
+CAL-P02003-CAL-SEC-4.2.9-002,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.1 垂直補剛材の計算,calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Vertical stiffener calculation
+CAL-P02003-CAL-SEC-4.2.9-003,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.2 垂直補剛材端部の処理,calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Vertical stiffener end treatment
+CAL-P02003-CAL-SEC-4.2.9-004,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.3 水平補剛材の応力度照査,calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Horizontal stiffener stress verification
+CAL-P02003-CAL-SEC-4.2.9-005,2003,1998,CAL-CH4,CAL-SEC-4.2.9,subsection_header,4.2.9.4 中間補剛材の剛性照査,calc_pdf_p2003,TEXT_EXTRACTED,HIGH,Intermediate stiffener stiffness check
+CAL-P02023-CAL-SEC-4.2.10-001,2023,2018,CAL-CH4,CAL-SEC-4.2.10,subsection_header,4.2.10 主桁溶接計算,calc_pdf_p2023,TEXT_EXTRACTED,HIGH,Main girder weld calculation
+CAL-P02023-CAL-SEC-4.2.10-002,2023,2018,CAL-CH4,CAL-SEC-4.2.10,table,溶接サイズ一覧,calc_pdf_p2023,TEXT_EXTRACTED,MEDIUM,Weld size summary table

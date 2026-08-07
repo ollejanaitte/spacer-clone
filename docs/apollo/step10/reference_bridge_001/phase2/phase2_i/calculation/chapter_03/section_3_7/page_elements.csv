@@ -1,23 +1,23 @@
 element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
-CAL-P00842-CAL-SEC-3.7-001,842,837,CAL-CH3,CAL-SEC-3.7,section_header,3.7 疲労設計,CAL-P00842,TEXT_EXTRACTED,HIGH,Fatigue design section title
-CAL-P00843-CAL-SEC-3.7.1-001,843,838,CAL-CH3,CAL-SEC-3.7.1,subsection_header,3.7.1 主桁の疲労設計,CAL-P00843,TEXT_EXTRACTED,HIGH,Main girder fatigue design
-CAL-P00843-CAL-SEC-3.7.1-002,843,838,CAL-CH3,CAL-SEC-3.7.1,figure,疲労照査フローチャート,CAL-P00843,TEXT_EXTRACTED,HIGH,Fatigue check flowchart
-CAL-P00844-CAL-SEC-3.7.1-001,844,839,CAL-CH3,CAL-SEC-3.7.1,figure,疲労照査荷重位置図 8010mm幅 100kN輪荷重,CAL-P00844,TEXT_EXTRACTED,MEDIUM,Fatigue load position diagram
-CAL-P00845-CAL-SEC-3.7.1-001,845,840,CAL-CH3,CAL-SEC-3.7.1,subsection_header,3.7.1.2 疲労照査必要性判定,CAL-P00845,TEXT_EXTRACTED,HIGH,Necessity determination
-CAL-P00845-CAL-SEC-3.7.1-002,845,840,CAL-CH3,CAL-SEC-3.7.1,text_block,3径間連続非合成鈑桁橋 等級D-G SM520/SM490Y/SM400 支間40.020m ADTTSLi=379台 照査必要 道示II表8.2.1,CAL-P00845,TEXT_EXTRACTED,HIGH,3-span continuous non-composite D-G grades ADTT=379
-CAL-P00845-CAL-SEC-3.7.1-003,845,840,CAL-CH3,CAL-SEC-3.7.1,text_block,設計供用100年 F荷重200kN if=10/(50+L) gammaF=gammaF1*gammaF2*gammaF3*gammaa gammaF1=3.0 gammaa=0.8,CAL-P00845,TEXT_EXTRACTED,HIGH,100yr life F=200kN gammaF=3.0
-CAL-P00846-CAL-SEC-3.7.1-001,846,841,CAL-CH3,CAL-SEC-3.7.1,text_block,gammaF2=(LogLB1+1.50)/3.0 2/3<=gammaF2<=1.00 gammaF3=1.00(正負交番しない場合表8.2.2) gammaa=0.8(多主桁橋),CAL-P00846,TEXT_EXTRACTED,HIGH,Correction factors gammaF2/3/a
-CAL-P00847-CAL-SEC-3.7.1-001,847,842,CAL-CH3,CAL-SEC-3.7.1,text_block,要素中間点断面力補間:直線1/2/3交点から補間点=交点2+(交点1-交点2)*Lx/L,CAL-P00847,TEXT_EXTRACTED,HIGH,Element midpoint interpolation method
-CAL-P00848-CAL-SEC-3.7.1-001,848,843,CAL-CH3,CAL-SEC-3.7.1,table,照査位置11箇所:上FLG+垂直補剛E/上FLG+スタッドE/下FLG+垂直補剛E/腹板上FLG D/腹板下FLG D/腹板上+垂直補剛E/腹板下+垂直補剛E/水平補剛上G/水平補剛下G/腹板+横桁上FLG G/腹板+横桁下FLG G,CAL-P00848,TEXT_EXTRACTED,MEDIUM,11 check points grades D/E/G
-CAL-P00849-CAL-SEC-3.7.1-001,849,844,CAL-CH3,CAL-SEC-3.7.1,text_block,代表部:No.1 AG1 1005 腹板+横桁下FLG G等級 No.2 AG1 J-14 上FLG+スタッド E等級,CAL-P00849,TEXT_EXTRACTED,HIGH,Representative No.1(G) No.2(E)
-CAL-P00850-CAL-SEC-3.7.1-001,850,845,CAL-CH3,CAL-SEC-3.7.1,table,No.1断面諸量 Rc=2998.500m Ix=0.077140m4 y=0.9080m 断面力/応力度 載荷横断1-27 Mx kNm/CAL-P00850,TEXT_EXTRACTED,MEDIUM,No.1 section properties and forces
-CAL-P00851-CAL-SEC-3.7.1-001,851,846,CAL-CH3,CAL-SEC-3.7.1,table,No.1応力範囲 delta_sigma_max=54N/mm2 G等級打切delta_sigma_ce=32 CR=1.00 Ct=1.00 簡便照査54>32 NG,CAL-P00851,TEXT_EXTRACTED,MEDIUM,No.1 stress range 54MPa simple NG
-CAL-P00852-CAL-SEC-3.7.1-001,852,847,CAL-CH3,CAL-SEC-3.7.1,table,No.1累積損傷度 nti=0.42e6 N1_1=1.61e6 D=0.26<=1.0 OK G等級 delta_sigma_f=50 delta_sigma_ve=15 N/mm2,CAL-P00852,TEXT_EXTRACTED,MEDIUM,No.1 cumulative damage D=0.26 OK
-CAL-P00853-CAL-SEC-3.7.1-001,853,848,CAL-CH3,CAL-SEC-3.7.1,table,No.2 AG1 J-14 Ix=0.076329m4 y=-1.3405m E等級 断面力/応力度+CAL-P00853,TEXT_EXTRACTED,MEDIUM,No.2 section properties
-CAL-P00854-CAL-SEC-3.7.1-001,854,849,CAL-CH3,CAL-SEC-3.7.1,table,No.2応力範囲 delta_sigma_max=80N/mm2 CR=1.30(応力比R=2.25>1.00) 死荷重-84N/mm2,CAL-P00854,TEXT_EXTRACTED,MEDIUM,No.2 stress range 80MPa CR=1.30
-CAL-P00855-CAL-SEC-3.7.1-001,855,850,CAL-CH3,CAL-SEC-3.7.1,table,No.2累積損傷度照査,CAL-P00855,TEXT_EXTRACTED,MEDIUM,No.2 cumulative damage
-CAL-P00856-CAL-SEC-3.7.1-001,856,851,CAL-CH3,CAL-SEC-3.7.1,table,主桁疲労照査結果一覧 全照査点,CAL-P00856,TEXT_EXTRACTED,MEDIUM,Main girder fatigue results all points
-CAL-P00859-CAL-SEC-3.7.1-001,859,854,CAL-CH3,CAL-SEC-3.7.1,table,主桁疲労照査結果一覧(最終),CAL-P00859,TEXT_EXTRACTED,MEDIUM,Main girder fatigue results final
-CAL-P00860-CAL-SEC-3.7.2-001,860,855,CAL-CH3,CAL-SEC-3.7.2,subsection_header,3.7.2 横桁の疲労設計,CAL-P00860,TEXT_EXTRACTED,HIGH,Cross beam fatigue design
-CAL-P00860-CAL-SEC-3.7.2-002,860,855,CAL-CH3,CAL-SEC-3.7.2,table,横桁疲労照査位置/断面力/応力度,CAL-P00860,TEXT_EXTRACTED,MEDIUM,Cross beam fatigue forces
-CAL-P00870-CAL-SEC-3.7.2-001,870,865,CAL-CH3,CAL-SEC-3.7.2,table,横桁疲労照査(最終),CAL-P00870,TEXT_EXTRACTED,MEDIUM,Cross beam fatigue final
+CAL-P00842-CAL-SEC-3.7-001,842,837,CAL-CH3,CAL-SEC-3.7,section_header,3.7 疲労設計,calc_pdf_p842,TEXT_EXTRACTED,HIGH,Fatigue design section title
+CAL-P00843-CAL-SEC-3.7.1-001,843,838,CAL-CH3,CAL-SEC-3.7.1,subsection_header,3.7.1 主桁の疲労設計,calc_pdf_p843,TEXT_EXTRACTED,HIGH,Main girder fatigue design
+CAL-P00843-CAL-SEC-3.7.1-002,843,838,CAL-CH3,CAL-SEC-3.7.1,figure,疲労照査フローチャート,calc_pdf_p843,TEXT_EXTRACTED,HIGH,Fatigue check flowchart
+CAL-P00844-CAL-SEC-3.7.1-001,844,839,CAL-CH3,CAL-SEC-3.7.1,figure,疲労照査荷重位置図 8010mm幅 100kN輪荷重,calc_pdf_p844,TEXT_EXTRACTED,MEDIUM,Fatigue load position diagram
+CAL-P00845-CAL-SEC-3.7.1-001,845,840,CAL-CH3,CAL-SEC-3.7.1,subsection_header,3.7.1.2 疲労照査必要性判定,calc_pdf_p845,TEXT_EXTRACTED,HIGH,Necessity determination
+CAL-P00845-CAL-SEC-3.7.1-002,845,840,CAL-CH3,CAL-SEC-3.7.1,text_block,3径間連続非合成鈑桁橋 等級D-G SM520/SM490Y/SM400 支間40.020m ADTTSLi=379台 照査必要 道示II表8.2.1,calc_pdf_p845,TEXT_EXTRACTED,HIGH,3-span continuous non-composite D-G grades ADTT=379
+CAL-P00845-CAL-SEC-3.7.1-003,845,840,CAL-CH3,CAL-SEC-3.7.1,text_block,設計供用100年 F荷重200kN if=10/(50+L) gammaF=gammaF1*gammaF2*gammaF3*gammaa gammaF1=3.0 gammaa=0.8,calc_pdf_p845,TEXT_EXTRACTED,HIGH,100yr life F=200kN gammaF=3.0
+CAL-P00846-CAL-SEC-3.7.1-001,846,841,CAL-CH3,CAL-SEC-3.7.1,text_block,gammaF2=(LogLB1+1.50)/3.0 2/3<=gammaF2<=1.00 gammaF3=1.00(正負交番しない場合表8.2.2) gammaa=0.8(多主桁橋),calc_pdf_p846,TEXT_EXTRACTED,HIGH,Correction factors gammaF2/3/a
+CAL-P00847-CAL-SEC-3.7.1-001,847,842,CAL-CH3,CAL-SEC-3.7.1,text_block,要素中間点断面力補間:直線1/2/3交点から補間点=交点2+(交点1-交点2)*Lx/L,calc_pdf_p847,TEXT_EXTRACTED,HIGH,Element midpoint interpolation method
+CAL-P00848-CAL-SEC-3.7.1-001,848,843,CAL-CH3,CAL-SEC-3.7.1,table,照査位置11箇所:上FLG+垂直補剛E/上FLG+スタッドE/下FLG+垂直補剛E/腹板上FLG D/腹板下FLG D/腹板上+垂直補剛E/腹板下+垂直補剛E/水平補剛上G/水平補剛下G/腹板+横桁上FLG G/腹板+横桁下FLG G,calc_pdf_p848,TEXT_EXTRACTED,MEDIUM,11 check points grades D/E/G
+CAL-P00849-CAL-SEC-3.7.1-001,849,844,CAL-CH3,CAL-SEC-3.7.1,text_block,代表部:No.1 AG1 1005 腹板+横桁下FLG G等級 No.2 AG1 J-14 上FLG+スタッド E等級,calc_pdf_p849,TEXT_EXTRACTED,HIGH,Representative No.1(G) No.2(E)
+CAL-P00850-CAL-SEC-3.7.1-001,850,845,CAL-CH3,CAL-SEC-3.7.1,table,No.1断面諸量 Rc=2998.500m Ix=0.077140m4 y=0.9080m 断面力/応力度 載荷横断1-27 Mx kNm,calc_pdf_p850,TEXT_EXTRACTED,MEDIUM,No.1 section properties and forces
+CAL-P00851-CAL-SEC-3.7.1-001,851,846,CAL-CH3,CAL-SEC-3.7.1,table,No.1応力範囲 delta_sigma_max=54N/mm2 G等級打切delta_sigma_ce=32 CR=1.00 Ct=1.00 簡便照査54>32 NG,calc_pdf_p851,TEXT_EXTRACTED,MEDIUM,No.1 stress range 54MPa simple NG
+CAL-P00852-CAL-SEC-3.7.1-001,852,847,CAL-CH3,CAL-SEC-3.7.1,table,No.1累積損傷度 nti=0.42e6 N1_1=1.61e6 D=0.26<=1.0 OK G等級 delta_sigma_f=50 delta_sigma_ve=15 N/mm2,calc_pdf_p852,TEXT_EXTRACTED,MEDIUM,No.1 cumulative damage D=0.26 OK
+CAL-P00853-CAL-SEC-3.7.1-001,853,848,CAL-CH3,CAL-SEC-3.7.1,table,No.2 AG1 J-14 Ix=0.076329m4 y=-1.3405m E等級 断面力/応力度,calc_pdf_p853,TEXT_EXTRACTED,MEDIUM,No.2 section properties
+CAL-P00854-CAL-SEC-3.7.1-001,854,849,CAL-CH3,CAL-SEC-3.7.1,table,No.2応力範囲 delta_sigma_max=80N/mm2 CR=1.30(応力比R=2.25>1.00) 死荷重-84N/mm2,calc_pdf_p854,TEXT_EXTRACTED,MEDIUM,No.2 stress range 80MPa CR=1.30
+CAL-P00855-CAL-SEC-3.7.1-001,855,850,CAL-CH3,CAL-SEC-3.7.1,table,No.2累積損傷度照査,calc_pdf_p855,TEXT_EXTRACTED,MEDIUM,No.2 cumulative damage
+CAL-P00856-CAL-SEC-3.7.1-001,856,851,CAL-CH3,CAL-SEC-3.7.1,table,主桁疲労照査結果一覧 全照査点,calc_pdf_p856,TEXT_EXTRACTED,MEDIUM,Main girder fatigue results all points
+CAL-P00859-CAL-SEC-3.7.1-001,859,854,CAL-CH3,CAL-SEC-3.7.1,table,主桁疲労照査結果一覧(最終),calc_pdf_p859,TEXT_EXTRACTED,MEDIUM,Main girder fatigue results final
+CAL-P00860-CAL-SEC-3.7.2-001,860,855,CAL-CH3,CAL-SEC-3.7.2,subsection_header,3.7.2 横桁の疲労設計,calc_pdf_p860,TEXT_EXTRACTED,HIGH,Cross beam fatigue design
+CAL-P00860-CAL-SEC-3.7.2-002,860,855,CAL-CH3,CAL-SEC-3.7.2,table,横桁疲労照査位置/断面力/応力度,calc_pdf_p860,TEXT_EXTRACTED,MEDIUM,Cross beam fatigue forces
+CAL-P00870-CAL-SEC-3.7.2-001,870,865,CAL-CH3,CAL-SEC-3.7.2,table,横桁疲労照査(最終),calc_pdf_p870,TEXT_EXTRACTED,MEDIUM,Cross beam fatigue final

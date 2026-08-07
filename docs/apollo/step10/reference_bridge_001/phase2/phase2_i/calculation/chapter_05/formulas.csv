@@ -1,33 +1,33 @@
 formula_id,pdf_page_number,printed_page_number,chapter_id,section_id,formula_label_raw,expression_raw,variable_symbols,semantic_class,source_locator,confidence,verification_status
-CH5-FORM-001,2032,2027,CH5,CAL-SEC-5.1.1,1次形状係数S1, S1 = Ae / (2*(a+b)*te) (0.5≦b/a≦2) または S1 = a/(2*te) (b/a<0.5,2<b/a),Ae:有効面積 a:橋軸方向寸法 b:橋軸直角方向寸法 te:一層厚,shape_factor_1,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-002,2032,2027,CH5,CAL-SEC-5.1.1,2次形状係数S2, S2 = Min(a,b)/Σte,a:橋軸方向寸法 b:橋軸直角方向寸法 Σte:ゴム総厚,shape_factor_2,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-003,2032,2027,CH5,CAL-SEC-5.1.1,縦弾性係数E, E = α*β*S1*Ge (S1≧5),α:種類係数(鉛プラグ入り=45) β:平面形状係数 Ge:せん断弾性係数,elastic_modulus,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-004,2032,2027,CH5,CAL-SEC-5.1.1,等価剛性KB(温度変化), KB = Ae*G(γ)/Σte,Ae:有効面積 G(γ):等価せん断弾性係数 Σte:ゴム総厚,equivalent_stiffness,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-005,2032,2027,CH5,CAL-SEC-5.1.1,圧縮剛性KV, KV = E*Ae/Σte,E:縦弾性係数 Ae:有効面積 Σte:ゴム総厚,compressive_stiffness,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-006,2032,2027,CH5,CAL-SEC-5.1.1,等価せん断弾性係数G(γ), G(γ) = cγ(γ)*Ge + q(γ)*κ/γ,cγ:ひずみ依存係数 Ge:せん断弾性係数 q:鉛プラグせん断応力度 κ:面積比 γ:せん断ひずみ,equivalent_shear_modulus,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-007,2032,2027,CH5,CAL-SEC-5.1.1,鉛プラグ面積Ap, Ap = N*π*φd^2/4,N:本数 φd:鉛プラグ径,lead_plug_area,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-008,2033,2028,CH5,CAL-SEC-5.1.1,合成剛性Km, 1/Km = 1/(N*KB) + 1/KP,N:支承数 KB:等価剛性 KP:下部剛性,combined_stiffness,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-009,2035,2030,CH5,CAL-SEC-5.1.1,温度変化水平力Ht, Ht = Km*⊿Lt,Km:合成剛性 ⊿Lt:移動量,horizontal_force,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-010,2037,2032,CH5,CAL-SEC-5.1.1,レベル1上部工移動量UBⅠo, UBⅠo = ΣW*kh/ΣKm,ΣW:全死荷重 kh:水平震度 ΣKm:合成剛性和,seismic_displacement,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-011,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度σmax, σmax = Rmax1/Acn,Rmax1:最大反力 Acn:移動量控除支圧面積,max_compressive_stress,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-012,2040,2035,CH5,CAL-SEC-5.1.1,圧縮応力振幅Δσ, Δσ = σmax - σmin,σmax:最大 σmin:最小応力度,stress_amplitude,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-013,2041,2036,CH5,CAL-SEC-5.1.1,せん断ひずみγs, γs = ⊿L/Σte,⊿L:支承移動量 Σte:ゴム総厚,shear_strain,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-014,2042,2037,CH5,CAL-SEC-5.1.1,回転変位δr, δr = (a*sinθ+b*cosθ)/2*Σαe,a:橋軸方向 b:直角方向 θ:斜角 Σαe:回転角,rotation_displacement,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-015,2042,2037,CH5,CAL-SEC-5.1.1,圧縮変位δc, δc = Rmax2/Kv,Rmax2:最大反力 Kv:圧縮剛性,compression_displacement,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-016,2042,2037,CH5,CAL-SEC-5.1.1,局部せん断ひずみγt, γt = γc + γs + γr,γc:圧縮作用 γs:水平変位 γr:回転変位,local_shear_strain,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-017,2138,2133,CH5,CAL-SEC-5.1.3,照査基本式, ΣSi(γpi*γqi*Pi) ≦ ξ1*ξ2*ΦR(fc,Δc),γpi:荷重係数 γqi:組合せ係数 ξ1:調査解析係数 ξ2:部材構造係数 ΦR:抵抗係数,verification_formula,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-018,2138,2133,CH5,CAL-SEC-5.1.3,支圧応力度制限値, σbyd = ξ1*ΦB*α*σbk,ξ1:調査解析係数 ΦB:抵抗係数 α:補正係数 σbk:支圧強度特性値,bearing_stress_limit,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-019,2138,2133,CH5,CAL-SEC-5.1.3,曲げ引張応力度制限値, σtud = ξ1*ξ2*ΦUt*σyk,ξ1:調査解析係数 ξ2:部材構造係数 ΦUt:抵抗係数 σyk:降伏強度特性値,bending_tensile_limit,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-020,2138,2133,CH5,CAL-SEC-5.1.3,合成応力度照査式, (σbd/σtyd)^2 + (τbd/τud)^2 ≦ 1.2,σbd:曲げ応力度 σtyd:制限値 τbd:せん断応力度 τud:せん断制限値,combined_stress_check,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-021,2199,2194,CH5,CAL-SEC-5.3,通水断面積A, A = h*B*1/2,h:深さ B:通水幅,flow_area,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-022,2199,2194,CH5,CAL-SEC-5.3,径深R, R = A/P,A:通水断面積 P:潤辺長,hydraulic_radius,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-023,2199,2194,CH5,CAL-SEC-5.3,設計通水量Q, Q = (1/n)*R^(2/3)*i2^(1/2)*A,n:粗度係数 R:径深 i2:水面勾配 A:通水断面積,design_flow,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-024,2200,2195,CH5,CAL-SEC-5.3,排水桝最大間隔Ls, Ls = Q/(q*γ*e),Q:設計通水量 q:流出量 γ:落下率 e:余裕率,drain_max_spacing,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-025,2207,2202,CH5,CAL-SEC-5.4.1,温度変化伸縮量, ΔLt = α*L*⊿T,α:線膨張係数 L:伸縮桁長 ⊿T:温度差,thermal_movement,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-026,2207,2202,CH5,CAL-SEC-5.4.1,地震時(⑩)伸縮量, ΔLq = EQmax*CB + LA,EQmax:レベル1移動量 CB:補正係数 LA:余裕量,seismic_movement,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-027,2222,2217,CH5,CAL-SEC-5.4.2,フィンガー遊間b(常時), b = (+)ΔLt + bmin,(+)ΔLt:温度伸び bmin:最小遊間,finger_gap,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-028,2222,2217,CH5,CAL-SEC-5.4.2,フィンガーラップc(常時), c = (-)ΔLt + cmin,(-)ΔLt:温度縮み cmin:最小ラップ,finger_lap,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-029,2222,2217,CH5,CAL-SEC-5.4.2,フィンガー長L0, L0 = b + c + 15,b:遊間 c:ラップ,finger_length,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-030,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート曲げM, M = (1/2)*P*(1+i)*L0,P:輪荷重 i:衝撃係数 L0:フィンガー長,face_plate_moment,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-031,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート厚t1, t1 = √(6*M/(B*σ)),M:曲げモーメント B:抵抗幅 σ:曲げ応力度制限値,face_plate_thickness,chapter_05/formulas.csv,HIGH,UNVERIFIED
-CH5-FORM-032,2225,2220,CH5,CAL-SEC-5.4.2,ジベルせん断耐力Qu, Qu = 0.90*0.85*[1.85*{π*(d^2-φst^2)/4*f'cd + π*φst^2/4*fud} - 26.1*10^3]/γb,d:孔径 φst:鉄筋径 f'cd:コンクリート強度 fud:鉄筋引張強度 γb:部材係数,stud_shear_capacity,chapter_05/formulas.csv,HIGH,UNVERIFIED
+CH5-FORM-001,2032,2027,CH5,CAL-SEC-5.1.1,1次形状係数S1," S1 = Ae / (2*(a+b)*te) (0.5≦b/a≦2) または S1 = a/(2*te) (b/a<0.5,2<b/a)",Ae:有効面積 a:橋軸方向寸法 b:橋軸直角方向寸法 te:一層厚,shape_factor_1,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-002,2032,2027,CH5,CAL-SEC-5.1.1,2次形状係数S2," S2 = Min(a,b)/Σte",a:橋軸方向寸法 b:橋軸直角方向寸法 Σte:ゴム総厚,shape_factor_2,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-003,2032,2027,CH5,CAL-SEC-5.1.1,縦弾性係数E, E = α*β*S1*Ge (S1≧5),α:種類係数(鉛プラグ入り=45) β:平面形状係数 Ge:せん断弾性係数,elastic_modulus,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-004,2032,2027,CH5,CAL-SEC-5.1.1,等価剛性KB(温度変化), KB = Ae*G(γ)/Σte,Ae:有効面積 G(γ):等価せん断弾性係数 Σte:ゴム総厚,equivalent_stiffness,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-005,2032,2027,CH5,CAL-SEC-5.1.1,圧縮剛性KV, KV = E*Ae/Σte,E:縦弾性係数 Ae:有効面積 Σte:ゴム総厚,compressive_stiffness,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-006,2032,2027,CH5,CAL-SEC-5.1.1,等価せん断弾性係数G(γ), G(γ) = cγ(γ)*Ge + q(γ)*κ/γ,cγ:ひずみ依存係数 Ge:せん断弾性係数 q:鉛プラグせん断応力度 κ:面積比 γ:せん断ひずみ,equivalent_shear_modulus,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-007,2032,2027,CH5,CAL-SEC-5.1.1,鉛プラグ面積Ap, Ap = N*π*φd^2/4,N:本数 φd:鉛プラグ径,lead_plug_area,calc_pdf_p2032,HIGH,UNVERIFIED
+CH5-FORM-008,2033,2028,CH5,CAL-SEC-5.1.1,合成剛性Km, 1/Km = 1/(N*KB) + 1/KP,N:支承数 KB:等価剛性 KP:下部剛性,combined_stiffness,calc_pdf_p2033,HIGH,UNVERIFIED
+CH5-FORM-009,2035,2030,CH5,CAL-SEC-5.1.1,温度変化水平力Ht, Ht = Km*⊿Lt,Km:合成剛性 ⊿Lt:移動量,horizontal_force,calc_pdf_p2035,HIGH,UNVERIFIED
+CH5-FORM-010,2037,2032,CH5,CAL-SEC-5.1.1,レベル1上部工移動量UBⅠo, UBⅠo = ΣW*kh/ΣKm,ΣW:全死荷重 kh:水平震度 ΣKm:合成剛性和,seismic_displacement,calc_pdf_p2037,HIGH,UNVERIFIED
+CH5-FORM-011,2040,2035,CH5,CAL-SEC-5.1.1,最大圧縮応力度σmax, σmax = Rmax1/Acn,Rmax1:最大反力 Acn:移動量控除支圧面積,max_compressive_stress,calc_pdf_p2040,HIGH,UNVERIFIED
+CH5-FORM-012,2040,2035,CH5,CAL-SEC-5.1.1,圧縮応力振幅Δσ, Δσ = σmax - σmin,σmax:最大 σmin:最小応力度,stress_amplitude,calc_pdf_p2040,HIGH,UNVERIFIED
+CH5-FORM-013,2041,2036,CH5,CAL-SEC-5.1.1,せん断ひずみγs, γs = ⊿L/Σte,⊿L:支承移動量 Σte:ゴム総厚,shear_strain,calc_pdf_p2041,HIGH,UNVERIFIED
+CH5-FORM-014,2042,2037,CH5,CAL-SEC-5.1.1,回転変位δr, δr = (a*sinθ+b*cosθ)/2*Σαe,a:橋軸方向 b:直角方向 θ:斜角 Σαe:回転角,rotation_displacement,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-015,2042,2037,CH5,CAL-SEC-5.1.1,圧縮変位δc, δc = Rmax2/Kv,Rmax2:最大反力 Kv:圧縮剛性,compression_displacement,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-016,2042,2037,CH5,CAL-SEC-5.1.1,局部せん断ひずみγt, γt = γc + γs + γr,γc:圧縮作用 γs:水平変位 γr:回転変位,local_shear_strain,calc_pdf_p2042,HIGH,UNVERIFIED
+CH5-FORM-017,2138,2133,CH5,CAL-SEC-5.1.3,照査基本式," ΣSi(γpi*γqi*Pi) ≦ ξ1*ξ2*ΦR(fc,Δc)",γpi:荷重係数 γqi:組合せ係数 ξ1:調査解析係数 ξ2:部材構造係数 ΦR:抵抗係数,verification_formula,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-018,2138,2133,CH5,CAL-SEC-5.1.3,支圧応力度制限値, σbyd = ξ1*ΦB*α*σbk,ξ1:調査解析係数 ΦB:抵抗係数 α:補正係数 σbk:支圧強度特性値,bearing_stress_limit,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-019,2138,2133,CH5,CAL-SEC-5.1.3,曲げ引張応力度制限値, σtud = ξ1*ξ2*ΦUt*σyk,ξ1:調査解析係数 ξ2:部材構造係数 ΦUt:抵抗係数 σyk:降伏強度特性値,bending_tensile_limit,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-020,2138,2133,CH5,CAL-SEC-5.1.3,合成応力度照査式, (σbd/σtyd)^2 + (τbd/τud)^2 ≦ 1.2,σbd:曲げ応力度 σtyd:制限値 τbd:せん断応力度 τud:せん断制限値,combined_stress_check,calc_pdf_p2138,HIGH,UNVERIFIED
+CH5-FORM-021,2199,2194,CH5,CAL-SEC-5.3,通水断面積A, A = h*B*1/2,h:深さ B:通水幅,flow_area,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-022,2199,2194,CH5,CAL-SEC-5.3,径深R, R = A/P,A:通水断面積 P:潤辺長,hydraulic_radius,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-023,2199,2194,CH5,CAL-SEC-5.3,設計通水量Q, Q = (1/n)*R^(2/3)*i2^(1/2)*A,n:粗度係数 R:径深 i2:水面勾配 A:通水断面積,design_flow,calc_pdf_p2199,HIGH,UNVERIFIED
+CH5-FORM-024,2200,2195,CH5,CAL-SEC-5.3,排水桝最大間隔Ls, Ls = Q/(q*γ*e),Q:設計通水量 q:流出量 γ:落下率 e:余裕率,drain_max_spacing,calc_pdf_p2200,HIGH,UNVERIFIED
+CH5-FORM-025,2207,2202,CH5,CAL-SEC-5.4.1,温度変化伸縮量, ΔLt = α*L*⊿T,α:線膨張係数 L:伸縮桁長 ⊿T:温度差,thermal_movement,calc_pdf_p2207,HIGH,UNVERIFIED
+CH5-FORM-026,2207,2202,CH5,CAL-SEC-5.4.1,地震時(⑩)伸縮量, ΔLq = EQmax*CB + LA,EQmax:レベル1移動量 CB:補正係数 LA:余裕量,seismic_movement,calc_pdf_p2207,HIGH,UNVERIFIED
+CH5-FORM-027,2222,2217,CH5,CAL-SEC-5.4.2,フィンガー遊間b(常時), b = (+)ΔLt + bmin,(+)ΔLt:温度伸び bmin:最小遊間,finger_gap,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-028,2222,2217,CH5,CAL-SEC-5.4.2,フィンガーラップc(常時), c = (-)ΔLt + cmin,(-)ΔLt:温度縮み cmin:最小ラップ,finger_lap,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-029,2222,2217,CH5,CAL-SEC-5.4.2,フィンガー長L0, L0 = b + c + 15,b:遊間 c:ラップ,finger_length,calc_pdf_p2222,HIGH,UNVERIFIED
+CH5-FORM-030,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート曲げM, M = (1/2)*P*(1+i)*L0,P:輪荷重 i:衝撃係数 L0:フィンガー長,face_plate_moment,calc_pdf_p2224,HIGH,UNVERIFIED
+CH5-FORM-031,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート厚t1, t1 = √(6*M/(B*σ)),M:曲げモーメント B:抵抗幅 σ:曲げ応力度制限値,face_plate_thickness,calc_pdf_p2224,HIGH,UNVERIFIED
+CH5-FORM-032,2225,2220,CH5,CAL-SEC-5.4.2,ジベルせん断耐力Qu, Qu = 0.90*0.85*[1.85*{π*(d^2-φst^2)/4*f'cd + π*φst^2/4*fud} - 26.1*10^3]/γb,d:孔径 φst:鉄筋径 f'cd:コンクリート強度 fud:鉄筋引張強度 γb:部材係数,stud_shear_capacity,calc_pdf_p2225,HIGH,UNVERIFIED

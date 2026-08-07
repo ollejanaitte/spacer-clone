@@ -1,3 +1,3 @@
 note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
-CH1-NOTE-001,7,2,CH1,CAL-SEC-1.1,design_policy,本橋の設計について - 非合成桁を主体とし合成断面の照査を行う。主桁断面決定および継手計算は非合成断面と合成断面の双方を満足させる。中間補剛材も同様。床版・支点補剛材・横桁・横構・疲労設計は非合成桁で代表する。,design_note,chapter_01/notes.csv,HIGH
-CH1-NOTE-002,7,2,CH1,CAL-SEC-1.1,design_policy,本橋の支承について - 回転照査を満足させるため機能分離型支承と荷重調整型支承の形式比較を行い荷重調整型支承を採用。詳細は報告書2編設計概要書を参照。,bearing_note,chapter_01/notes.csv,HIGH
+CH1-NOTE-001,7,2,CH1,CAL-SEC-1.1,design_policy,本橋の設計について - 非合成桁を主体とし合成断面の照査を行う。主桁断面決定および継手計算は非合成断面と合成断面の双方を満足させる。中間補剛材も同様。床版・支点補剛材・横桁・横構・疲労設計は非合成桁で代表する。,design_note,calc_pdf_p7,HIGH
+CH1-NOTE-002,7,2,CH1,CAL-SEC-1.1,design_policy,本橋の支承について - 回転照査を満足させるため機能分離型支承と荷重調整型支承の形式比較を行い荷重調整型支承を採用。詳細は報告書2編設計概要書を参照。,bearing_note,calc_pdf_p7,HIGH

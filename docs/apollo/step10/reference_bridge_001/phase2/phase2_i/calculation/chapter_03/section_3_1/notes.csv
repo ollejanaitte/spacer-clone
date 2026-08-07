@@ -1,29 +1,29 @@
 note_id,pdf_page_number,printed_page_number,chapter_id,section_id,note_kind,note_summary,semantic_class,source_locator,confidence
-CAL-NOT-P00117-001,117,112,CAL-CH3,CAL-SEC-3.1.1,design_approach,主桁/横桁を骨組とした平面格子構造物として変形法による解析,NOTE,CAL-P00117,HIGH
-CAL-NOT-P00117-002,117,112,CAL-CH3,CAL-SEC-3.1.1,design_approach,全死荷重及び活荷重に対し横桁で荷重分配を行う,NOTE,CAL-P00117,HIGH
-CAL-NOT-P00117-003,117,112,CAL-CH3,CAL-SEC-3.1.1,tool_reference,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,NOTE,CAL-P00117,HIGH
-CAL-NOT-P00118-001,118,113,CAL-CH3,CAL-SEC-3.1.2,design_condition,荷重強度は荷重係数を乗じていない荷重の特性値である,NOTE,CAL-P00118,HIGH
-CAL-NOT-P00118-002,118,113,CAL-CH3,CAL-SEC-3.1.2,design_condition,PU15付近の左側壁高欄部はノーズ部荷重を考慮する,NOTE,CAL-P00118,HIGH
-CAL-NOT-P00119-001,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,走行車線直下に載荷 (検査路),NOTE,CAL-P00119,HIGH
-CAL-NOT-P00119-002,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,高欄外側に載荷 (遮音壁),NOTE,CAL-P00119,HIGH
-CAL-NOT-P00119-003,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,荷重は格点に載荷する (ノーズ部/床版拡幅/床版打下し),NOTE,CAL-P00119,HIGH
-CAL-NOT-P00122-001,122,117,CAL-CH3,CAL-SEC-3.1.2,design_note,左側の高欄荷重と遮音壁荷重はノーズ部の控除を行う,NOTE,CAL-P00122,HIGH
-CAL-NOT-P00122-002,122,117,CAL-CH3,CAL-SEC-3.1.2,design_note,載荷する荷重強度は計算プログラムの様式に合わせて調整する,NOTE,CAL-P00122,HIGH
-CAL-NOT-P00124-001,124,119,CAL-CH3,CAL-SEC-3.1.2,design_note,C1-C2間の荷重についてはC1からの距離が小さいためC2には考慮せずC1に載荷する,NOTE,CAL-P00124,HIGH
-CAL-NOT-P00125-001,125,120,CAL-CH3,CAL-SEC-3.1.2,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,CAL-P00125,HIGH
-CAL-NOT-P00128-001,128,123,CAL-CH3,CAL-SEC-3.1.2,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,CAL-P00128,HIGH
-CAL-NOT-P00129-001,129,124,CAL-CH3,CAL-SEC-3.1.2,standard_reference,床版支間の1/2 (道示Ⅱ 11.2.13)以上,NOTE,CAL-P00129,HIGH
-CAL-NOT-P00129-002,129,124,CAL-CH3,CAL-SEC-3.1.2,design_note,打下ろしは伸縮装置の切り欠き高を考慮する,NOTE,CAL-P00129,HIGH
-CAL-NOT-P00129-003,129,124,CAL-CH3,CAL-SEC-3.1.2,design_note,ハンチ荷重控除は桁端部荷重で行う (AG1は内側のみ),NOTE,CAL-P00129,HIGH
-CAL-NOT-P00131-001,131,126,CAL-CH3,CAL-SEC-3.1.2,design_note,格点集中荷重とし整数1位に切り上げる,NOTE,CAL-P00131,HIGH
-CAL-NOT-P00133-001,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,巻き立てコンクリート幅は横桁フランジ幅+300mmが基本,NOTE,CAL-P00133,HIGH
-CAL-NOT-P00133-002,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,水平支承部寸法からなる幅を最小とし下端部突起に作用する断面力に対し十分な耐力を有する幅を採用,NOTE,CAL-P00133,HIGH
-CAL-NOT-P00133-003,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,Bは最内の鉄筋(鉛直方向)のかぶりを125mmと想定,NOTE,CAL-P00133,HIGH
-CAL-NOT-P00135-001,135,130,CAL-CH3,CAL-SEC-3.1.2,standard_reference,Ｂ活荷重 「道示Ⅰ 8.2」より抜粋,NOTE,CAL-P00135,HIGH
-CAL-NOT-P00136-001,136,131,CAL-CH3,CAL-SEC-3.1.2,standard_reference,作用の組み合わせに対する荷重組み合わせ係数および荷重係数 (道示Ⅰ 3.3 表3-3.1),NOTE,CAL-P00136,HIGH
-CAL-NOT-P00140-001,140,135,CAL-CH3,CAL-SEC-3.1.2,verification_result,死荷重反力の確認 計算値と解析値の比が全て1.000で一致確認OK,NOTE,CAL-P00140,HIGH
-CAL-NOT-P00145-001,145,140,CAL-CH3,CAL-SEC-3.1.6,model_summary,解析モデル: 旭高架橋 ランプ 節点数54 梁要素52 支点要素27,NOTE,CAL-P00145,HIGH
-CAL-NOT-P00149-001,149,144,CAL-CH3,CAL-SEC-3.1.6,material_property,鋼材: E=2.0e8 kN/m2 G=7.7e7 kN/m2 ν=1.2e-5,NOTE,CAL-P00149,HIGH
-CAL-NOT-P00222-001,222,217,CAL-CH3,CAL-SEC-3.1.8,note,表内数値は特性値を示す,NOTE,CAL-P00222,HIGH
-CAL-NOT-P00223-001,223,218,CAL-CH3,CAL-SEC-3.1.8,note,*印部は特性値を示す,NOTE,CAL-P00223,HIGH
-CAL-NOT-P00223-002,223,218,CAL-CH3,CAL-SEC-3.1.8,note,合計は作用の組合せ(D+L)に対する荷重組合せ係数(γp)荷重係数(γq)を考慮した値を示す,NOTE,CAL-P00223,HIGH
+CAL-NOT-P00117-001,117,112,CAL-CH3,CAL-SEC-3.1.1,design_approach,主桁/横桁を骨組とした平面格子構造物として変形法による解析,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00117-002,117,112,CAL-CH3,CAL-SEC-3.1.1,design_approach,全死荷重及び活荷重に対し横桁で荷重分配を行う,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00117-003,117,112,CAL-CH3,CAL-SEC-3.1.1,tool_reference,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00118-001,118,113,CAL-CH3,CAL-SEC-3.1.2,design_condition,荷重強度は荷重係数を乗じていない荷重の特性値である,NOTE,calc_pdf_p118,HIGH
+CAL-NOT-P00118-002,118,113,CAL-CH3,CAL-SEC-3.1.2,design_condition,PU15付近の左側壁高欄部はノーズ部荷重を考慮する,NOTE,calc_pdf_p118,HIGH
+CAL-NOT-P00119-001,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,走行車線直下に載荷 (検査路),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00119-002,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,高欄外側に載荷 (遮音壁),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00119-003,119,114,CAL-CH3,CAL-SEC-3.1.2,design_note,荷重は格点に載荷する (ノーズ部/床版拡幅/床版打下し),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00122-001,122,117,CAL-CH3,CAL-SEC-3.1.2,design_note,左側の高欄荷重と遮音壁荷重はノーズ部の控除を行う,NOTE,calc_pdf_p122,HIGH
+CAL-NOT-P00122-002,122,117,CAL-CH3,CAL-SEC-3.1.2,design_note,載荷する荷重強度は計算プログラムの様式に合わせて調整する,NOTE,calc_pdf_p122,HIGH
+CAL-NOT-P00124-001,124,119,CAL-CH3,CAL-SEC-3.1.2,design_note,C1-C2間の荷重についてはC1からの距離が小さいためC2には考慮せずC1に載荷する,NOTE,calc_pdf_p124,HIGH
+CAL-NOT-P00125-001,125,120,CAL-CH3,CAL-SEC-3.1.2,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p125,HIGH
+CAL-NOT-P00128-001,128,123,CAL-CH3,CAL-SEC-3.1.2,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p128,HIGH
+CAL-NOT-P00129-001,129,124,CAL-CH3,CAL-SEC-3.1.2,standard_reference,床版支間の1/2 (道示Ⅱ 11.2.13)以上,NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00129-002,129,124,CAL-CH3,CAL-SEC-3.1.2,design_note,打下ろしは伸縮装置の切り欠き高を考慮する,NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00129-003,129,124,CAL-CH3,CAL-SEC-3.1.2,design_note,ハンチ荷重控除は桁端部荷重で行う (AG1は内側のみ),NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00131-001,131,126,CAL-CH3,CAL-SEC-3.1.2,design_note,格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p131,HIGH
+CAL-NOT-P00133-001,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,巻き立てコンクリート幅は横桁フランジ幅+300mmが基本,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00133-002,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,水平支承部寸法からなる幅を最小とし下端部突起に作用する断面力に対し十分な耐力を有する幅を採用,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00133-003,133,128,CAL-CH3,CAL-SEC-3.1.2,design_note,Bは最内の鉄筋(鉛直方向)のかぶりを125mmと想定,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00135-001,135,130,CAL-CH3,CAL-SEC-3.1.2,standard_reference,Ｂ活荷重 「道示Ⅰ 8.2」より抜粋,NOTE,calc_pdf_p135,HIGH
+CAL-NOT-P00136-001,136,131,CAL-CH3,CAL-SEC-3.1.2,standard_reference,作用の組み合わせに対する荷重組み合わせ係数および荷重係数 (道示Ⅰ 3.3 表3-3.1),NOTE,calc_pdf_p136,HIGH
+CAL-NOT-P00140-001,140,135,CAL-CH3,CAL-SEC-3.1.2,verification_result,死荷重反力の確認 計算値と解析値の比が全て1.000で一致確認OK,NOTE,calc_pdf_p140,HIGH
+CAL-NOT-P00145-001,145,140,CAL-CH3,CAL-SEC-3.1.6,model_summary,解析モデル: 旭高架橋 ランプ 節点数54 梁要素52 支点要素27,NOTE,calc_pdf_p145,HIGH
+CAL-NOT-P00149-001,149,144,CAL-CH3,CAL-SEC-3.1.6,material_property,鋼材: E=2.0e8 kN/m2 G=7.7e7 kN/m2 ν=1.2e-5,NOTE,calc_pdf_p149,HIGH
+CAL-NOT-P00222-001,222,217,CAL-CH3,CAL-SEC-3.1.8,note,表内数値は特性値を示す,NOTE,calc_pdf_p222,HIGH
+CAL-NOT-P00223-001,223,218,CAL-CH3,CAL-SEC-3.1.8,note,*印部は特性値を示す,NOTE,calc_pdf_p223,HIGH
+CAL-NOT-P00223-002,223,218,CAL-CH3,CAL-SEC-3.1.8,note,合計は作用の組合せ(D+L)に対する荷重組合せ係数(γp)荷重係数(γq)を考慮した値を示す,NOTE,calc_pdf_p223,HIGH

@@ -1,73 +1,73 @@
 element_id,pdf_page_number,printed_page_number,chapter_id,section_id,element_type,title_raw,source_locator,extraction_status,confidence,notes
-CAL-P00115-CAL-SEC-3.1-001,115,110,CAL-CH3,CAL-SEC-3.1,section_header,第3章 非合成桁の設計,CAL-P00115,TEXT_EXTRACTED,HIGH,Chapter 3 title page
-CAL-P00116-CAL-SEC-3.1-001,116,111,CAL-CH3,CAL-SEC-3.1,section_header,3.1 主構断面力の計算,CAL-P00116,TEXT_EXTRACTED,HIGH,Section 3.1 title page
-CAL-P00117-CAL-SEC-3.1.1-001,117,112,CAL-CH3,CAL-SEC-3.1.1,subsection_header,3.1.1 解析方針,CAL-P00117,TEXT_EXTRACTED,HIGH,Analysis policy
-CAL-P00117-CAL-SEC-3.1.1-002,117,112,CAL-CH3,CAL-SEC-3.1.1,text_block,解析方法: 主桁/横桁を骨組とした平面格子構造物として変形法による,CAL-P00117,TEXT_EXTRACTED,HIGH,Analysis method: plane grid structure using deformation method
-CAL-P00117-CAL-SEC-3.1.1-003,117,112,CAL-CH3,CAL-SEC-3.1.1,text_block,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,CAL-P00117,TEXT_EXTRACTED,HIGH,Analysis program: APOLLO Analyzer by Yokogawa Technical Information
-CAL-P00118-CAL-SEC-3.1.2-001,118,113,CAL-CH3,CAL-SEC-3.1.2,subsection_header,3.1.2 荷重強度,CAL-P00118,TEXT_EXTRACTED,HIGH,Load intensities
-CAL-P00118-CAL-SEC-3.1.2-002,118,113,CAL-CH3,CAL-SEC-3.1.2,figure,標準断面図,CAL-P00118,TEXT_EXTRACTED,MEDIUM,Standard cross-section diagram with dimensions 8010x7000
-CAL-P00119-CAL-SEC-3.1.2-001,119,114,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(2) 死荷重,CAL-P00119,TEXT_EXTRACTED,HIGH,Dead load
-CAL-P00119-CAL-SEC-3.1.2-002,119,114,CAL-CH3,CAL-SEC-3.1.2,table,死荷重一覧表,CAL-P00119,TEXT_EXTRACTED,MEDIUM,Dead load summary - pavement/bridge deck/haunch/wall rail/sound barrier/steel/inspection walkway/nose
-CAL-P00121-CAL-SEC-3.1.2-001,121,116,CAL-CH3,CAL-SEC-3.1.2,subsection_header,1) 死荷重詳細計算 A) ハンチ荷重,CAL-P00121,TEXT_EXTRACTED,MEDIUM,Haunch load detailed calculation
-CAL-P00121-CAL-SEC-3.1.2-002,121,116,CAL-CH3,CAL-SEC-3.1.2,subsection_header,B) 壁高欄荷重,CAL-P00121,TEXT_EXTRACTED,MEDIUM,Wall rail load calculation
-CAL-P00122-CAL-SEC-3.1.2-001,122,117,CAL-CH3,CAL-SEC-3.1.2,subsection_header,C) 左側壁高欄の荷重載荷,CAL-P00122,TEXT_EXTRACTED,MEDIUM,Left wall rail load application (nose deduction)
-CAL-P00122-CAL-SEC-3.1.2-002,122,117,CAL-CH3,CAL-SEC-3.1.2,subsection_header,D) 左側遮音壁の荷重載荷,CAL-P00122,TEXT_EXTRACTED,MEDIUM,Left sound barrier load application (nose deduction)
-CAL-P00123-CAL-SEC-3.1.2-001,123,118,CAL-CH3,CAL-SEC-3.1.2,subsection_header,E) ノーズ部,CAL-P00123,TEXT_EXTRACTED,MEDIUM,Nose section details
-CAL-P00123-CAL-SEC-3.1.2-002,123,118,CAL-CH3,CAL-SEC-3.1.2,figure,ノーズ部壁高欄断面図,CAL-P00123,TEXT_EXTRACTED,MEDIUM,Nose wall rail cross section
-CAL-P00124-CAL-SEC-3.1.2-001,124,119,CAL-CH3,CAL-SEC-3.1.2,subsection_header,a) ノーズ部の地覆荷重および壁高欄荷重(ガードレール含む),CAL-P00124,TEXT_EXTRACTED,MEDIUM,Nose curb and wall rail load including guardrail
-CAL-P00125-CAL-SEC-3.1.2-001,125,120,CAL-CH3,CAL-SEC-3.1.2,subsection_header,b) 床版拡幅部荷重,CAL-P00125,TEXT_EXTRACTED,MEDIUM,Slab widening load
-CAL-P00125-CAL-SEC-3.1.2-002,125,120,CAL-CH3,CAL-SEC-3.1.2,table,ノーズ部地覆等の格点荷重,CAL-P00125,TEXT_EXTRACTED,MEDIUM,Nose curb panel point loads summary (S1=30kN, C1=48kN)
-CAL-P00126-CAL-SEC-3.1.2-001,126,121,CAL-CH3,CAL-SEC-3.1.2,subsection_header,F) ノーズ部の床版打下ろし荷重,CAL-P00126,TEXT_EXTRACTED,MEDIUM,Nose slab drooping load
-CAL-P00126-CAL-SEC-3.1.2-002,126,121,CAL-CH3,CAL-SEC-3.1.2,figure,ノーズ部床版打下ろし断面図,CAL-P00126,TEXT_EXTRACTED,MEDIUM,Nose slab drooping cross section
-CAL-P00127-CAL-SEC-3.1.2-001,127,122,CAL-CH3,CAL-SEC-3.1.2,subsection_header,a) ノーズ部の打下ろし荷重(詳細),CAL-P00127,TEXT_EXTRACTED,MEDIUM,Nose drooping load detailed calculation
-CAL-P00128-CAL-SEC-3.1.2-001,128,123,CAL-CH3,CAL-SEC-3.1.2,subsection_header,ノーズ部打下ろし荷重(続き),CAL-P00128,TEXT_EXTRACTED,MEDIUM,Nose drooping load continued - panel point loads
-CAL-P00128-CAL-SEC-3.1.2-002,128,123,CAL-CH3,CAL-SEC-3.1.2,table,ノーズ部打下ろし荷重の格点荷重,CAL-P00128,TEXT_EXTRACTED,MEDIUM,Nose drooping panel point loads (S1=31kN, C1=23kN, C2=8kN)
-CAL-P00129-CAL-SEC-3.1.2-001,129,124,CAL-CH3,CAL-SEC-3.1.2,subsection_header,G) 床版打下し荷重 <桁端部 S1側>,CAL-P00129,TEXT_EXTRACTED,MEDIUM,Slab drooping load at girder end S1 side
-CAL-P00130-CAL-SEC-3.1.2-001,130,125,CAL-CH3,CAL-SEC-3.1.2,subsection_header,<桁端部 S2側>,CAL-P00130,TEXT_EXTRACTED,MEDIUM,Girder end S2 side slab drooping
-CAL-P00131-CAL-SEC-3.1.2-001,131,126,CAL-CH3,CAL-SEC-3.1.2,subsection_header,<中間支点部 PR1,PR2>,CAL-P00131,TEXT_EXTRACTED,MEDIUM,Intermediate support PR1/PR2 slab drooping
-CAL-P00131-CAL-SEC-3.1.2-002,131,126,CAL-CH3,CAL-SEC-3.1.2,table,床版打下し荷重格点荷重一覧,CAL-P00131,TEXT_EXTRACTED,MEDIUM,Slab drooping panel point load summary table
-CAL-P00132-CAL-SEC-3.1.2-001,132,127,CAL-CH3,CAL-SEC-3.1.2,subsection_header,H) 桁端部荷重 <S1側>,CAL-P00132,TEXT_EXTRACTED,MEDIUM,Girder end load S1 side
-CAL-P00132-CAL-SEC-3.1.2-002,132,127,CAL-CH3,CAL-SEC-3.1.2,subsection_header,<S2側>,CAL-P00132,TEXT_EXTRACTED,MEDIUM,Girder end load S2 side
-CAL-P00133-CAL-SEC-3.1.2-001,133,128,CAL-CH3,CAL-SEC-3.1.2,subsection_header,I) 巻き立てコンクリート荷重,CAL-P00133,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load
-CAL-P00133-CAL-SEC-3.1.2-002,133,128,CAL-CH3,CAL-SEC-3.1.2,table,巻き立てコンクリート寸法表,CAL-P00133,TEXT_EXTRACTED,MEDIUM,Wrapping concrete dimension table
-CAL-P00134-CAL-SEC-3.1.2-001,134,129,CAL-CH3,CAL-SEC-3.1.2,text_block,巻き立てコンクリート荷重 S1側 AG1=215kN AG2=215kN,CAL-P00134,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load S1 side
-CAL-P00135-CAL-SEC-3.1.2-001,135,130,CAL-CH3,CAL-SEC-3.1.2,text_block,巻き立てコンクリート荷重 S2側/PR1/PR2,CAL-P00135,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load S2/PR1/PR2 side (215/283/226kN)
-CAL-P00135-CAL-SEC-3.1.2-002,135,130,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(3) 活荷重 (a) 活荷重,CAL-P00135,TEXT_EXTRACTED,HIGH,Live load - B活荷重
-CAL-P00135-CAL-SEC-3.1.2-003,135,130,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(b) 衝撃係数,CAL-P00135,TEXT_EXTRACTED,HIGH,Impact coefficient
-CAL-P00135-CAL-SEC-3.1.2-004,135,130,CAL-CH3,CAL-SEC-3.1.2,table,衝撃係数一覧,CAL-P00135,TEXT_EXTRACTED,MEDIUM,Impact coefficients per span
-CAL-P00136-CAL-SEC-3.1.2-001,136,131,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(4) 組み合わせ係数および荷重係数,CAL-P00136,TEXT_EXTRACTED,HIGH,Combination and load factors from 道示Ⅰ 3.3 表3-3.1
-CAL-P00137-CAL-SEC-3.1.2-001,137,132,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(5) 荷重載荷図,CAL-P00137,TEXT_EXTRACTED,MEDIUM,Load application diagram
-CAL-P00138-CAL-SEC-3.1.2-001,138,133,CAL-CH3,CAL-SEC-3.1.2,figure,荷重載荷図(続き),CAL-P00138,TEXT_EXTRACTED,MEDIUM,Load application diagram continued (panel point loads)
-CAL-P00138-CAL-SEC-3.1.2-002,138,133,CAL-CH3,CAL-SEC-3.1.2,table,格点集中荷重一覧表,CAL-P00138,TEXT_EXTRACTED,MEDIUM,Panel point concentrated load summary
-CAL-P00139-CAL-SEC-3.1.2-001,139,134,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(6) 死荷重反力の確認,CAL-P00139,TEXT_EXTRACTED,HIGH,Dead load reaction verification
-CAL-P00139-CAL-SEC-3.1.2-002,139,134,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力計算表,CAL-P00139,TEXT_EXTRACTED,MEDIUM,Dead load reaction calculation table
-CAL-P00140-CAL-SEC-3.1.2-001,140,135,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力の比較 計算値vs解析値,CAL-P00140,TEXT_EXTRACTED,MEDIUM,Dead load reaction comparison: calculated vs analysis values
-CAL-P00140-CAL-SEC-3.1.2-002,140,135,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力集計 全体座標系Z軸方向,CAL-P00140,TEXT_EXTRACTED,MEDIUM,Dead load reaction summary global Z direction by block
-CAL-P00141-CAL-SEC-3.1.3-001,141,136,CAL-CH3,CAL-SEC-3.1.3,subsection_header,3.1.3 格点座標,CAL-P00141,TEXT_EXTRACTED,HIGH,Panel point coordinates
-CAL-P00141-CAL-SEC-3.1.3-002,141,136,CAL-CH3,CAL-SEC-3.1.3,table,AG1桁 格点座標表,CAL-P00141,TEXT_EXTRACTED,MEDIUM,AG1 girder panel point coordinates (1001-1027)
-CAL-P00141-CAL-SEC-3.1.3-003,141,136,CAL-CH3,CAL-SEC-3.1.3,table,AG2桁 格点座標表,CAL-P00141,TEXT_EXTRACTED,MEDIUM,AG2 girder panel point coordinates (2001-2027)
-CAL-P00142-CAL-SEC-3.1.4-001,142,137,CAL-CH3,CAL-SEC-3.1.4,subsection_header,3.1.4 格点番号および部材番号,CAL-P00142,TEXT_EXTRACTED,HIGH,Panel point and member numbering
-CAL-P00142-CAL-SEC-3.1.4-002,142,137,CAL-CH3,CAL-SEC-3.1.4,figure,格点番号および部材番号図,CAL-P00142,TEXT_EXTRACTED,MEDIUM,Panel point and member numbering diagram
-CAL-P00143-CAL-SEC-3.1.5-001,143,138,CAL-CH3,CAL-SEC-3.1.5,subsection_header,3.1.5 仮定剛度,CAL-P00143,TEXT_EXTRACTED,HIGH,Assumed stiffness
-CAL-P00143-CAL-SEC-3.1.5-002,143,138,CAL-CH3,CAL-SEC-3.1.5,table,AG1桁 仮定剛度表,CAL-P00143,TEXT_EXTRACTED,MEDIUM,AG1 assumed bending stiffness (Ix) per member
-CAL-P00144-CAL-SEC-3.1.5-001,144,139,CAL-CH3,CAL-SEC-3.1.5,table,AG2桁/横桁 仮定剛度表,CAL-P00144,TEXT_EXTRACTED,MEDIUM,AG2 and cross-girder assumed stiffness
-CAL-P00145-CAL-SEC-3.1.6-001,145,140,CAL-CH3,CAL-SEC-3.1.6,subsection_header,3.1.6 格子解析データ,CAL-P00145,TEXT_EXTRACTED,HIGH,Grid analysis data
-CAL-P00145-CAL-SEC-3.1.6-002,145,140,CAL-CH3,CAL-SEC-3.1.6,table,解析モデル概要,CAL-P00145,TEXT_EXTRACTED,MEDIUM,Analysis model summary (54 nodes, 52 beams, 27 supports)
-CAL-P00146-CAL-SEC-3.1.6-001,146,141,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ ブロック1,CAL-P00146,TEXT_EXTRACTED,MEDIUM,Structural node data block 1 (nodes 1001-1024)
-CAL-P00147-CAL-SEC-3.1.6-001,147,142,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ(続き) 自由度拘束,CAL-P00147,TEXT_EXTRACTED,MEDIUM,Nodal DOF constraints block 1
-CAL-P00148-CAL-SEC-3.1.6-001,148,143,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ ブロック1(続き) nodes 1025-2027,CAL-P00148,TEXT_EXTRACTED,MEDIUM,Node data block 1 continued
-CAL-P00149-CAL-SEC-3.1.6-001,149,144,CAL-CH3,CAL-SEC-3.1.6,table,材料定数データ MATE1,CAL-P00149,TEXT_EXTRACTED,MEDIUM,Material properties: E=2.0e8 kN/m2, G=7.7e7 kN/m2, nu=1.2e-5
-CAL-P00150-CAL-SEC-3.1.6-001,150,145,CAL-CH3,CAL-SEC-3.1.6,table,要素剛性データ 梁要素(BEAM) 剛性番号1-30,CAL-P00150,TEXT_EXTRACTED,MEDIUM,Element stiffness data beam elements
-CAL-P00151-CAL-SEC-3.1.6-001,151,146,CAL-CH3,CAL-SEC-3.1.6,table,要素剛性データ(続き) 剛性番号31-60,CAL-P00151,TEXT_EXTRACTED,MEDIUM,Element stiffness data continued
-CAL-P00178-CAL-SEC-3.1.6-001,178,173,CAL-CH3,CAL-SEC-3.1.6,table,荷重データ(節点荷重),CAL-P00178,TEXT_EXTRACTED,MEDIUM,Load data - nodal loads
-CAL-P00179-CAL-SEC-3.1.6-001,179,174,CAL-CH3,CAL-SEC-3.1.6,table,荷重データ(続き),CAL-P00179,TEXT_EXTRACTED,MEDIUM,Load data continued
-CAL-P00180-CAL-SEC-3.1.7-001,180,175,CAL-CH3,CAL-SEC-3.1.7,subsection_header,3.1.7 格子解析結果,CAL-P00180,TEXT_EXTRACTED,HIGH,Grid analysis results
-CAL-P00180-CAL-SEC-3.1.7-002,180,175,CAL-CH3,CAL-SEC-3.1.7,table,解析ケース一覧,CAL-P00180,TEXT_EXTRACTED,MEDIUM,Analysis case listing (dead load/live load/design total)
-CAL-P00182-CAL-SEC-3.1.7-001,182,177,CAL-CH3,CAL-SEC-3.1.7,table,節点変位データ,CAL-P00182,TEXT_EXTRACTED,MEDIUM,Nodal displacement data DZ
-CAL-P00221-CAL-SEC-3.1.7-001,221,216,CAL-CH3,CAL-SEC-3.1.7,table,部材断面力データ(最終ページ),CAL-P00221,TEXT_EXTRACTED,MEDIUM,Member force data final page
-CAL-P00222-CAL-SEC-3.1.8-001,222,217,CAL-CH3,CAL-SEC-3.1.8,subsection_header,3.1.8 反力および活荷重回転角,CAL-P00222,TEXT_EXTRACTED,HIGH,Reactions and live load rotation
-CAL-P00222-CAL-SEC-3.1.8-002,222,217,CAL-CH3,CAL-SEC-3.1.8,table,鉛直方向死荷重反力表,CAL-P00222,TEXT_EXTRACTED,MEDIUM,Vertical dead load reactions by support
-CAL-P00223-CAL-SEC-3.1.8-001,223,218,CAL-CH3,CAL-SEC-3.1.8,table,上部工反力 鉛直方向反力 死荷重/活荷重,CAL-P00223,TEXT_EXTRACTED,MEDIUM,Superstructure reactions dead and live load
-CAL-P00276-CAL-SEC-3.1.8-001,276,271,CAL-CH3,CAL-SEC-3.1.8,table,活荷重回転角データ,CAL-P00276,TEXT_EXTRACTED,MEDIUM,Live load rotation data
-CAL-P00277-CAL-SEC-3.1.9-001,277,272,CAL-CH3,CAL-SEC-3.1.9,subsection_header,3.1.9 設計断面力,CAL-P00277,TEXT_EXTRACTED,HIGH,Design section forces
-CAL-P00290-CAL-SEC-3.1.9-001,290,285,CAL-CH3,CAL-SEC-3.1.9,table,設計断面力一覧(最終ページ),CAL-P00290,TEXT_EXTRACTED,MEDIUM,Design section forces final page
+CAL-P00115-CAL-SEC-3.1-001,115,110,CAL-CH3,CAL-SEC-3.1,section_header,第3章 非合成桁の設計,calc_pdf_p115,TEXT_EXTRACTED,HIGH,Chapter 3 title page
+CAL-P00116-CAL-SEC-3.1-001,116,111,CAL-CH3,CAL-SEC-3.1,section_header,3.1 主構断面力の計算,calc_pdf_p116,TEXT_EXTRACTED,HIGH,Section 3.1 title page
+CAL-P00117-CAL-SEC-3.1.1-001,117,112,CAL-CH3,CAL-SEC-3.1.1,subsection_header,3.1.1 解析方針,calc_pdf_p117,TEXT_EXTRACTED,HIGH,Analysis policy
+CAL-P00117-CAL-SEC-3.1.1-002,117,112,CAL-CH3,CAL-SEC-3.1.1,text_block,解析方法: 主桁/横桁を骨組とした平面格子構造物として変形法による,calc_pdf_p117,TEXT_EXTRACTED,HIGH,Analysis method: plane grid structure using deformation method
+CAL-P00117-CAL-SEC-3.1.1-003,117,112,CAL-CH3,CAL-SEC-3.1.1,text_block,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,calc_pdf_p117,TEXT_EXTRACTED,HIGH,Analysis program: APOLLO Analyzer by Yokogawa Technical Information
+CAL-P00118-CAL-SEC-3.1.2-001,118,113,CAL-CH3,CAL-SEC-3.1.2,subsection_header,3.1.2 荷重強度,calc_pdf_p118,TEXT_EXTRACTED,HIGH,Load intensities
+CAL-P00118-CAL-SEC-3.1.2-002,118,113,CAL-CH3,CAL-SEC-3.1.2,figure,標準断面図,calc_pdf_p118,TEXT_EXTRACTED,MEDIUM,Standard cross-section diagram with dimensions 8010x7000
+CAL-P00119-CAL-SEC-3.1.2-001,119,114,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(2) 死荷重,calc_pdf_p119,TEXT_EXTRACTED,HIGH,Dead load
+CAL-P00119-CAL-SEC-3.1.2-002,119,114,CAL-CH3,CAL-SEC-3.1.2,table,死荷重一覧表,calc_pdf_p119,TEXT_EXTRACTED,MEDIUM,Dead load summary - pavement/bridge deck/haunch/wall rail/sound barrier/steel/inspection walkway/nose
+CAL-P00121-CAL-SEC-3.1.2-001,121,116,CAL-CH3,CAL-SEC-3.1.2,subsection_header,1) 死荷重詳細計算 A) ハンチ荷重,calc_pdf_p121,TEXT_EXTRACTED,MEDIUM,Haunch load detailed calculation
+CAL-P00121-CAL-SEC-3.1.2-002,121,116,CAL-CH3,CAL-SEC-3.1.2,subsection_header,B) 壁高欄荷重,calc_pdf_p121,TEXT_EXTRACTED,MEDIUM,Wall rail load calculation
+CAL-P00122-CAL-SEC-3.1.2-001,122,117,CAL-CH3,CAL-SEC-3.1.2,subsection_header,C) 左側壁高欄の荷重載荷,calc_pdf_p122,TEXT_EXTRACTED,MEDIUM,Left wall rail load application (nose deduction)
+CAL-P00122-CAL-SEC-3.1.2-002,122,117,CAL-CH3,CAL-SEC-3.1.2,subsection_header,D) 左側遮音壁の荷重載荷,calc_pdf_p122,TEXT_EXTRACTED,MEDIUM,Left sound barrier load application (nose deduction)
+CAL-P00123-CAL-SEC-3.1.2-001,123,118,CAL-CH3,CAL-SEC-3.1.2,subsection_header,E) ノーズ部,calc_pdf_p123,TEXT_EXTRACTED,MEDIUM,Nose section details
+CAL-P00123-CAL-SEC-3.1.2-002,123,118,CAL-CH3,CAL-SEC-3.1.2,figure,ノーズ部壁高欄断面図,calc_pdf_p123,TEXT_EXTRACTED,MEDIUM,Nose wall rail cross section
+CAL-P00124-CAL-SEC-3.1.2-001,124,119,CAL-CH3,CAL-SEC-3.1.2,subsection_header,a) ノーズ部の地覆荷重および壁高欄荷重(ガードレール含む),calc_pdf_p124,TEXT_EXTRACTED,MEDIUM,Nose curb and wall rail load including guardrail
+CAL-P00125-CAL-SEC-3.1.2-001,125,120,CAL-CH3,CAL-SEC-3.1.2,subsection_header,b) 床版拡幅部荷重,calc_pdf_p125,TEXT_EXTRACTED,MEDIUM,Slab widening load
+CAL-P00125-CAL-SEC-3.1.2-002,125,120,CAL-CH3,CAL-SEC-3.1.2,table,ノーズ部地覆等の格点荷重,calc_pdf_p125,TEXT_EXTRACTED,MEDIUM,"Nose curb panel point loads summary (S1=30kN, C1=48kN)"
+CAL-P00126-CAL-SEC-3.1.2-001,126,121,CAL-CH3,CAL-SEC-3.1.2,subsection_header,F) ノーズ部の床版打下ろし荷重,calc_pdf_p126,TEXT_EXTRACTED,MEDIUM,Nose slab drooping load
+CAL-P00126-CAL-SEC-3.1.2-002,126,121,CAL-CH3,CAL-SEC-3.1.2,figure,ノーズ部床版打下ろし断面図,calc_pdf_p126,TEXT_EXTRACTED,MEDIUM,Nose slab drooping cross section
+CAL-P00127-CAL-SEC-3.1.2-001,127,122,CAL-CH3,CAL-SEC-3.1.2,subsection_header,a) ノーズ部の打下ろし荷重(詳細),calc_pdf_p127,TEXT_EXTRACTED,MEDIUM,Nose drooping load detailed calculation
+CAL-P00128-CAL-SEC-3.1.2-001,128,123,CAL-CH3,CAL-SEC-3.1.2,subsection_header,ノーズ部打下ろし荷重(続き),calc_pdf_p128,TEXT_EXTRACTED,MEDIUM,Nose drooping load continued - panel point loads
+CAL-P00128-CAL-SEC-3.1.2-002,128,123,CAL-CH3,CAL-SEC-3.1.2,table,ノーズ部打下ろし荷重の格点荷重,calc_pdf_p128,TEXT_EXTRACTED,MEDIUM,"Nose drooping panel point loads (S1=31kN, C1=23kN, C2=8kN)"
+CAL-P00129-CAL-SEC-3.1.2-001,129,124,CAL-CH3,CAL-SEC-3.1.2,subsection_header,G) 床版打下し荷重 <桁端部 S1側>,calc_pdf_p129,TEXT_EXTRACTED,MEDIUM,Slab drooping load at girder end S1 side
+CAL-P00130-CAL-SEC-3.1.2-001,130,125,CAL-CH3,CAL-SEC-3.1.2,subsection_header,<桁端部 S2側>,calc_pdf_p130,TEXT_EXTRACTED,MEDIUM,Girder end S2 side slab drooping
+CAL-P00131-CAL-SEC-3.1.2-001,131,126,CAL-CH3,CAL-SEC-3.1.2,subsection_header,"<中間支点部 PR1,PR2>",calc_pdf_p131,TEXT_EXTRACTED,MEDIUM,Intermediate support PR1/PR2 slab drooping
+CAL-P00131-CAL-SEC-3.1.2-002,131,126,CAL-CH3,CAL-SEC-3.1.2,table,床版打下し荷重格点荷重一覧,calc_pdf_p131,TEXT_EXTRACTED,MEDIUM,Slab drooping panel point load summary table
+CAL-P00132-CAL-SEC-3.1.2-001,132,127,CAL-CH3,CAL-SEC-3.1.2,subsection_header,H) 桁端部荷重 <S1側>,calc_pdf_p132,TEXT_EXTRACTED,MEDIUM,Girder end load S1 side
+CAL-P00132-CAL-SEC-3.1.2-002,132,127,CAL-CH3,CAL-SEC-3.1.2,subsection_header,<S2側>,calc_pdf_p132,TEXT_EXTRACTED,MEDIUM,Girder end load S2 side
+CAL-P00133-CAL-SEC-3.1.2-001,133,128,CAL-CH3,CAL-SEC-3.1.2,subsection_header,I) 巻き立てコンクリート荷重,calc_pdf_p133,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load
+CAL-P00133-CAL-SEC-3.1.2-002,133,128,CAL-CH3,CAL-SEC-3.1.2,table,巻き立てコンクリート寸法表,calc_pdf_p133,TEXT_EXTRACTED,MEDIUM,Wrapping concrete dimension table
+CAL-P00134-CAL-SEC-3.1.2-001,134,129,CAL-CH3,CAL-SEC-3.1.2,text_block,巻き立てコンクリート荷重 S1側 AG1=215kN AG2=215kN,calc_pdf_p134,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load S1 side
+CAL-P00135-CAL-SEC-3.1.2-001,135,130,CAL-CH3,CAL-SEC-3.1.2,text_block,巻き立てコンクリート荷重 S2側/PR1/PR2,calc_pdf_p135,TEXT_EXTRACTED,MEDIUM,Wrapping concrete load S2/PR1/PR2 side (215/283/226kN)
+CAL-P00135-CAL-SEC-3.1.2-002,135,130,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(3) 活荷重 (a) 活荷重,calc_pdf_p135,TEXT_EXTRACTED,HIGH,Live load - B活荷重
+CAL-P00135-CAL-SEC-3.1.2-003,135,130,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(b) 衝撃係数,calc_pdf_p135,TEXT_EXTRACTED,HIGH,Impact coefficient
+CAL-P00135-CAL-SEC-3.1.2-004,135,130,CAL-CH3,CAL-SEC-3.1.2,table,衝撃係数一覧,calc_pdf_p135,TEXT_EXTRACTED,MEDIUM,Impact coefficients per span
+CAL-P00136-CAL-SEC-3.1.2-001,136,131,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(4) 組み合わせ係数および荷重係数,calc_pdf_p136,TEXT_EXTRACTED,HIGH,Combination and load factors from 道示Ⅰ 3.3 表3-3.1
+CAL-P00137-CAL-SEC-3.1.2-001,137,132,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(5) 荷重載荷図,calc_pdf_p137,TEXT_EXTRACTED,MEDIUM,Load application diagram
+CAL-P00138-CAL-SEC-3.1.2-001,138,133,CAL-CH3,CAL-SEC-3.1.2,figure,荷重載荷図(続き),calc_pdf_p138,TEXT_EXTRACTED,MEDIUM,Load application diagram continued (panel point loads)
+CAL-P00138-CAL-SEC-3.1.2-002,138,133,CAL-CH3,CAL-SEC-3.1.2,table,格点集中荷重一覧表,calc_pdf_p138,TEXT_EXTRACTED,MEDIUM,Panel point concentrated load summary
+CAL-P00139-CAL-SEC-3.1.2-001,139,134,CAL-CH3,CAL-SEC-3.1.2,subsection_header,(6) 死荷重反力の確認,calc_pdf_p139,TEXT_EXTRACTED,HIGH,Dead load reaction verification
+CAL-P00139-CAL-SEC-3.1.2-002,139,134,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力計算表,calc_pdf_p139,TEXT_EXTRACTED,MEDIUM,Dead load reaction calculation table
+CAL-P00140-CAL-SEC-3.1.2-001,140,135,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力の比較 計算値vs解析値,calc_pdf_p140,TEXT_EXTRACTED,MEDIUM,Dead load reaction comparison: calculated vs analysis values
+CAL-P00140-CAL-SEC-3.1.2-002,140,135,CAL-CH3,CAL-SEC-3.1.2,table,死荷重反力集計 全体座標系Z軸方向,calc_pdf_p140,TEXT_EXTRACTED,MEDIUM,Dead load reaction summary global Z direction by block
+CAL-P00141-CAL-SEC-3.1.3-001,141,136,CAL-CH3,CAL-SEC-3.1.3,subsection_header,3.1.3 格点座標,calc_pdf_p141,TEXT_EXTRACTED,HIGH,Panel point coordinates
+CAL-P00141-CAL-SEC-3.1.3-002,141,136,CAL-CH3,CAL-SEC-3.1.3,table,AG1桁 格点座標表,calc_pdf_p141,TEXT_EXTRACTED,MEDIUM,AG1 girder panel point coordinates (1001-1027)
+CAL-P00141-CAL-SEC-3.1.3-003,141,136,CAL-CH3,CAL-SEC-3.1.3,table,AG2桁 格点座標表,calc_pdf_p141,TEXT_EXTRACTED,MEDIUM,AG2 girder panel point coordinates (2001-2027)
+CAL-P00142-CAL-SEC-3.1.4-001,142,137,CAL-CH3,CAL-SEC-3.1.4,subsection_header,3.1.4 格点番号および部材番号,calc_pdf_p142,TEXT_EXTRACTED,HIGH,Panel point and member numbering
+CAL-P00142-CAL-SEC-3.1.4-002,142,137,CAL-CH3,CAL-SEC-3.1.4,figure,格点番号および部材番号図,calc_pdf_p142,TEXT_EXTRACTED,MEDIUM,Panel point and member numbering diagram
+CAL-P00143-CAL-SEC-3.1.5-001,143,138,CAL-CH3,CAL-SEC-3.1.5,subsection_header,3.1.5 仮定剛度,calc_pdf_p143,TEXT_EXTRACTED,HIGH,Assumed stiffness
+CAL-P00143-CAL-SEC-3.1.5-002,143,138,CAL-CH3,CAL-SEC-3.1.5,table,AG1桁 仮定剛度表,calc_pdf_p143,TEXT_EXTRACTED,MEDIUM,AG1 assumed bending stiffness (Ix) per member
+CAL-P00144-CAL-SEC-3.1.5-001,144,139,CAL-CH3,CAL-SEC-3.1.5,table,AG2桁/横桁 仮定剛度表,calc_pdf_p144,TEXT_EXTRACTED,MEDIUM,AG2 and cross-girder assumed stiffness
+CAL-P00145-CAL-SEC-3.1.6-001,145,140,CAL-CH3,CAL-SEC-3.1.6,subsection_header,3.1.6 格子解析データ,calc_pdf_p145,TEXT_EXTRACTED,HIGH,Grid analysis data
+CAL-P00145-CAL-SEC-3.1.6-002,145,140,CAL-CH3,CAL-SEC-3.1.6,table,解析モデル概要,calc_pdf_p145,TEXT_EXTRACTED,MEDIUM,"Analysis model summary (54 nodes, 52 beams, 27 supports)"
+CAL-P00146-CAL-SEC-3.1.6-001,146,141,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ ブロック1,calc_pdf_p146,TEXT_EXTRACTED,MEDIUM,Structural node data block 1 (nodes 1001-1024)
+CAL-P00147-CAL-SEC-3.1.6-001,147,142,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ(続き) 自由度拘束,calc_pdf_p147,TEXT_EXTRACTED,MEDIUM,Nodal DOF constraints block 1
+CAL-P00148-CAL-SEC-3.1.6-001,148,143,CAL-CH3,CAL-SEC-3.1.6,table,構造節点データ ブロック1(続き) nodes 1025-2027,calc_pdf_p148,TEXT_EXTRACTED,MEDIUM,Node data block 1 continued
+CAL-P00149-CAL-SEC-3.1.6-001,149,144,CAL-CH3,CAL-SEC-3.1.6,table,材料定数データ MATE1,calc_pdf_p149,TEXT_EXTRACTED,MEDIUM,"Material properties: E=2.0e8 kN/m2, G=7.7e7 kN/m2, nu=1.2e-5"
+CAL-P00150-CAL-SEC-3.1.6-001,150,145,CAL-CH3,CAL-SEC-3.1.6,table,要素剛性データ 梁要素(BEAM) 剛性番号1-30,calc_pdf_p150,TEXT_EXTRACTED,MEDIUM,Element stiffness data beam elements
+CAL-P00151-CAL-SEC-3.1.6-001,151,146,CAL-CH3,CAL-SEC-3.1.6,table,要素剛性データ(続き) 剛性番号31-60,calc_pdf_p151,TEXT_EXTRACTED,MEDIUM,Element stiffness data continued
+CAL-P00178-CAL-SEC-3.1.6-001,178,173,CAL-CH3,CAL-SEC-3.1.6,table,荷重データ(節点荷重),calc_pdf_p178,TEXT_EXTRACTED,MEDIUM,Load data - nodal loads
+CAL-P00179-CAL-SEC-3.1.6-001,179,174,CAL-CH3,CAL-SEC-3.1.6,table,荷重データ(続き),calc_pdf_p179,TEXT_EXTRACTED,MEDIUM,Load data continued
+CAL-P00180-CAL-SEC-3.1.7-001,180,175,CAL-CH3,CAL-SEC-3.1.7,subsection_header,3.1.7 格子解析結果,calc_pdf_p180,TEXT_EXTRACTED,HIGH,Grid analysis results
+CAL-P00180-CAL-SEC-3.1.7-002,180,175,CAL-CH3,CAL-SEC-3.1.7,table,解析ケース一覧,calc_pdf_p180,TEXT_EXTRACTED,MEDIUM,Analysis case listing (dead load/live load/design total)
+CAL-P00182-CAL-SEC-3.1.7-001,182,177,CAL-CH3,CAL-SEC-3.1.7,table,節点変位データ,calc_pdf_p182,TEXT_EXTRACTED,MEDIUM,Nodal displacement data DZ
+CAL-P00221-CAL-SEC-3.1.7-001,221,216,CAL-CH3,CAL-SEC-3.1.7,table,部材断面力データ(最終ページ),calc_pdf_p221,TEXT_EXTRACTED,MEDIUM,Member force data final page
+CAL-P00222-CAL-SEC-3.1.8-001,222,217,CAL-CH3,CAL-SEC-3.1.8,subsection_header,3.1.8 反力および活荷重回転角,calc_pdf_p222,TEXT_EXTRACTED,HIGH,Reactions and live load rotation
+CAL-P00222-CAL-SEC-3.1.8-002,222,217,CAL-CH3,CAL-SEC-3.1.8,table,鉛直方向死荷重反力表,calc_pdf_p222,TEXT_EXTRACTED,MEDIUM,Vertical dead load reactions by support
+CAL-P00223-CAL-SEC-3.1.8-001,223,218,CAL-CH3,CAL-SEC-3.1.8,table,上部工反力 鉛直方向反力 死荷重/活荷重,calc_pdf_p223,TEXT_EXTRACTED,MEDIUM,Superstructure reactions dead and live load
+CAL-P00276-CAL-SEC-3.1.8-001,276,271,CAL-CH3,CAL-SEC-3.1.8,table,活荷重回転角データ,calc_pdf_p276,TEXT_EXTRACTED,MEDIUM,Live load rotation data
+CAL-P00277-CAL-SEC-3.1.9-001,277,272,CAL-CH3,CAL-SEC-3.1.9,subsection_header,3.1.9 設計断面力,calc_pdf_p277,TEXT_EXTRACTED,HIGH,Design section forces
+CAL-P00290-CAL-SEC-3.1.9-001,290,285,CAL-CH3,CAL-SEC-3.1.9,table,設計断面力一覧(最終ページ),calc_pdf_p290,TEXT_EXTRACTED,MEDIUM,Design section forces final page

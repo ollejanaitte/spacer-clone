@@ -1,2 +1,2 @@
 figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
-CAL-FIG-P00790-001,790,785,CAL-CH3,CAL-SEC-3.5.1,横構骨組図(格点/部材/断面番号),frame_diagram,"AG1,AG2,S1,PR1,PR2,S2,C1-C23",CAL-P00790-TBL,HIGH,Lateral bracing frame with nodes 10010-10270/20010-20270 Warren truss
+CAL-FIG-P00790-001,790,785,CAL-CH3,CAL-SEC-3.5.1,横構骨組図(格点/部材/断面番号),frame_diagram,"AG1,AG2,S1,PR1,PR2,S2,C1-C23",calc_pdf_p790,HIGH,Lateral bracing frame with nodes 10010-10270/20010-20270 Warren truss

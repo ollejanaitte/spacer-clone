@@ -1,8 +1,8 @@
 formula_id,pdf_page_number,printed_page_number,chapter_id,section_id,formula_label_raw,expression_raw,variable_symbols,referenced_standard_raw,semantic_class,source_locator,confidence,verification_status
-CAL-FML-P00873-001,873,868,CAL-CH4,CAL-SEC-4.1.1,合成後剛度,合成断面の曲げ剛度は床版有効幅より算出。ヤング係数比n=7,,道示Ⅱ14.2,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00873-002,873,868,CAL-CH4,CAL-SEC-4.1.1,クリープ静定力,クリープの静定力は後死荷重曲げモーメントが正の範囲に生じる,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00873-003,873,868,CAL-CH4,CAL-SEC-4.1.1,乾燥収縮静定力,中間支点上～0.15L位置(床版引張区間)を除く範囲に生じる,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00873-004,873,868,CAL-CH4,CAL-SEC-4.1.1,温度差静定力,全長にわたって生じる。後死荷重M正範囲は合成断面、他は鋼+鉄筋断面より算出,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00873-005,873,868,CAL-CH4,CAL-SEC-4.1.1,連続桁不静定力ΔM,静定力Mを平面格子モデルに載荷して求める,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00873-006,873,868,CAL-CH4,CAL-SEC-4.1.1,設計断面力,設計軸力=P 設計曲げモーメント=M+ΔM,,道示Ⅱ14.2,DESIGN_POLICY,CAL-P00873,HIGH,UNVERIFIED
-CAL-FML-P00893-001,893,888,CAL-CH4,CAL-SEC-4.1.2,衝撃係数,i = 20/(50+L),i,L=支間長,道示Ⅰ8.2,FORMULA_DEFINITION,CAL-P00893,HIGH,UNVERIFIED
+CAL-FML-P00873-001,873,868,CAL-CH4,CAL-SEC-4.1.1,合成後剛度,合成断面の曲げ剛度は床版有効幅より算出。ヤング係数比n=7,,道示Ⅱ14.2,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-002,873,868,CAL-CH4,CAL-SEC-4.1.1,クリープ静定力,クリープの静定力は後死荷重曲げモーメントが正の範囲に生じる,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-003,873,868,CAL-CH4,CAL-SEC-4.1.1,乾燥収縮静定力,中間支点上～0.15L位置(床版引張区間)を除く範囲に生じる,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-004,873,868,CAL-CH4,CAL-SEC-4.1.1,温度差静定力,全長にわたって生じる。後死荷重M正範囲は合成断面、他は鋼+鉄筋断面より算出,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-005,873,868,CAL-CH4,CAL-SEC-4.1.1,連続桁不静定力ΔM,静定力Mを平面格子モデルに載荷して求める,,道示Ⅱ14.2.2～14.2.4,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00873-006,873,868,CAL-CH4,CAL-SEC-4.1.1,設計断面力,設計軸力=P 設計曲げモーメント=M+ΔM,,道示Ⅱ14.2,DESIGN_POLICY,calc_pdf_p873,HIGH,UNVERIFIED
+CAL-FML-P00893-001,893,888,CAL-CH4,CAL-SEC-4.1.2,衝撃係数,i = 20/(50+L),"i, L=支間長",道示Ⅰ8.2,FORMULA_DEFINITION,calc_pdf_p893,HIGH,UNVERIFIED

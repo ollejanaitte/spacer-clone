@@ -1,17 +1,17 @@
 figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_type,semantic_class,source_locator,confidence,extraction_status
-CH5-FIG-001,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数説明図,formula_diagram,shape_factor_diagram,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-002,2033,2028,CH5,CAL-SEC-5.1.1,合成剛性概念図,concept_diagram,combined_stiffness_diagram,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-003,2034,2029,CH5,CAL-SEC-5.1.1,不動点および温度変化移動量概念図,concept_diagram,displacement_diagram,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-004,2038,2033,CH5,CAL-SEC-5.1.1,レベル1地震時作用概念図,concept_diagram,seismic_diagram,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-005,2045,2040,CH5,CAL-SEC-5.1.1,耐荷性能照査用鉛直力算出概念図,concept_diagram,load_combination_diagram,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-006,2190,2185,CH5,CAL-SEC-5.2.1,段差防止構造 正面図,structural_drawing,step_prevention_front,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-007,2190,2185,CH5,CAL-SEC-5.2.1,段差防止構造 側面図,structural_drawing,step_prevention_side,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-008,2192,2187,CH5,CAL-SEC-5.2.3,台座寸法図,structural_drawing,pedestal_dimensions,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-009,2192,2187,CH5,CAL-SEC-5.2.3,台座断面図(緩衝材),structural_drawing,pedestal_section,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-010,2199,2194,CH5,CAL-SEC-5.3,通水断面形状図,concept_diagram,flow_section,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-011,2208,2203,CH5,CAL-SEC-5.4.1,ミドルビーム断面図,structural_drawing,middle_beam_section,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-012,2209,2204,CH5,CAL-SEC-5.4.1,ミドルビーム4径間連続梁載荷図,structural_drawing,middle_beam_loading,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-013,2214,2209,CH5,CAL-SEC-5.4.1,サポートビーム載荷イメージ図,structural_drawing,support_beam_loading,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-014,2216,2211,CH5,CAL-SEC-5.4.1,伸縮装置張出部断面図,structural_drawing,cantilever_section,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-015,2223,2218,CH5,CAL-SEC-5.4.2,フィンガー形状図,structural_drawing,finger_shape,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
-CH5-FIG-016,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート断面図,structural_drawing,face_plate_section,chapter_05/figures.csv,HIGH,NOT_EXTRACTED
+CH5-FIG-001,2032,2027,CH5,CAL-SEC-5.1.1,形状係数・縦弾性係数説明図,formula_diagram,shape_factor_diagram,calc_pdf_p2032,HIGH,NOT_EXTRACTED
+CH5-FIG-002,2033,2028,CH5,CAL-SEC-5.1.1,合成剛性概念図,concept_diagram,combined_stiffness_diagram,calc_pdf_p2033,HIGH,NOT_EXTRACTED
+CH5-FIG-003,2034,2029,CH5,CAL-SEC-5.1.1,不動点および温度変化移動量概念図,concept_diagram,displacement_diagram,calc_pdf_p2034,HIGH,NOT_EXTRACTED
+CH5-FIG-004,2038,2033,CH5,CAL-SEC-5.1.1,レベル1地震時作用概念図,concept_diagram,seismic_diagram,calc_pdf_p2038,HIGH,NOT_EXTRACTED
+CH5-FIG-005,2045,2040,CH5,CAL-SEC-5.1.1,耐荷性能照査用鉛直力算出概念図,concept_diagram,load_combination_diagram,calc_pdf_p2045,HIGH,NOT_EXTRACTED
+CH5-FIG-006,2190,2185,CH5,CAL-SEC-5.2.1,段差防止構造 正面図,structural_drawing,step_prevention_front,calc_pdf_p2190,HIGH,NOT_EXTRACTED
+CH5-FIG-007,2190,2185,CH5,CAL-SEC-5.2.1,段差防止構造 側面図,structural_drawing,step_prevention_side,calc_pdf_p2190,HIGH,NOT_EXTRACTED
+CH5-FIG-008,2192,2187,CH5,CAL-SEC-5.2.3,台座寸法図,structural_drawing,pedestal_dimensions,calc_pdf_p2192,HIGH,NOT_EXTRACTED
+CH5-FIG-009,2192,2187,CH5,CAL-SEC-5.2.3,台座断面図(緩衝材),structural_drawing,pedestal_section,calc_pdf_p2192,HIGH,NOT_EXTRACTED
+CH5-FIG-010,2199,2194,CH5,CAL-SEC-5.3,通水断面形状図,concept_diagram,flow_section,calc_pdf_p2199,HIGH,NOT_EXTRACTED
+CH5-FIG-011,2208,2203,CH5,CAL-SEC-5.4.1,ミドルビーム断面図,structural_drawing,middle_beam_section,calc_pdf_p2208,HIGH,NOT_EXTRACTED
+CH5-FIG-012,2209,2204,CH5,CAL-SEC-5.4.1,ミドルビーム4径間連続梁載荷図,structural_drawing,middle_beam_loading,calc_pdf_p2209,HIGH,NOT_EXTRACTED
+CH5-FIG-013,2214,2209,CH5,CAL-SEC-5.4.1,サポートビーム載荷イメージ図,structural_drawing,support_beam_loading,calc_pdf_p2214,HIGH,NOT_EXTRACTED
+CH5-FIG-014,2216,2211,CH5,CAL-SEC-5.4.1,伸縮装置張出部断面図,structural_drawing,cantilever_section,calc_pdf_p2216,HIGH,NOT_EXTRACTED
+CH5-FIG-015,2223,2218,CH5,CAL-SEC-5.4.2,フィンガー形状図,structural_drawing,finger_shape,calc_pdf_p2223,HIGH,NOT_EXTRACTED
+CH5-FIG-016,2224,2219,CH5,CAL-SEC-5.4.2,フェイスプレート断面図,structural_drawing,face_plate_section,calc_pdf_p2224,HIGH,NOT_EXTRACTED

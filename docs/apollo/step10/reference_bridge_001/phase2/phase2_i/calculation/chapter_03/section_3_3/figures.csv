@@ -1,5 +1,5 @@
 figure_id,pdf_page_number,printed_page_number,chapter_id,section_id,title_raw,figure_kind,referenced_entities,source_locator,confidence,notes
-CAL-FIG-P00678-001,678,673,CAL-CH3,CAL-SEC-3.3.1,横桁部材番号図,numbering_diagram,"CR1-001~CR1-027,S1,PR1,PR2,S2",CAL-P00678-TBL,HIGH,Cross beam numbering CR1-001 through CR1-027
-CAL-FIG-P00687-001,687,682,CAL-CH3,CAL-SEC-3.3.4,中間横桁代表CR1-026断面図,cross_section,CR1-026,CAL-P00687-TBL,MEDIUM,Intermediate cross beam 4500mm span
-CAL-FIG-P00704-001,704,699,CAL-CH3,CAL-SEC-3.3.5,端支点上横桁断面図+荷重載荷図,cross_section,"CR1-001,端支点S1",CAL-P00704-TBL,MEDIUM,End pier cross beam section and load diagram
-CAL-FIG-P00735-001,735,730,CAL-CH3,CAL-SEC-3.3.6,中間支点上横桁断面図+荷重載荷図,cross_section,"CR1-009,中間支点PR1",CAL-P00735-TBL,MEDIUM,Intermediate pier cross beam section and load diagram
+CAL-FIG-P00678-001,678,673,CAL-CH3,CAL-SEC-3.3.1,横桁部材番号図,numbering_diagram,"CR1-001~CR1-027,S1,PR1,PR2,S2",calc_pdf_p678,HIGH,Cross beam numbering CR1-001 through CR1-027
+CAL-FIG-P00687-001,687,682,CAL-CH3,CAL-SEC-3.3.4,中間横桁代表CR1-026断面図,cross_section,CR1-026,calc_pdf_p687,MEDIUM,Intermediate cross beam 4500mm span
+CAL-FIG-P00704-001,704,699,CAL-CH3,CAL-SEC-3.3.5,端支点上横桁断面図+荷重載荷図,cross_section,"CR1-001,端支点S1",calc_pdf_p704,MEDIUM,End pier cross beam section and load diagram
+CAL-FIG-P00735-001,735,730,CAL-CH3,CAL-SEC-3.3.6,中間支点上横桁断面図+荷重載荷図,cross_section,"CR1-009,中間支点PR1",calc_pdf_p735,MEDIUM,Intermediate pier cross beam section and load diagram

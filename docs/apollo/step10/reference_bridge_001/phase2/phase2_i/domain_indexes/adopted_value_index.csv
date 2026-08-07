@@ -1,17 +1,17 @@
 index_id,domain,record_id,semantic_class,source_locator,chapter_section,pdf_page,description,notes
-ADV-001,adopted_value,CAL-VAL-P00379-001,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 UFLG: PL620x22 SM490Y,Adopted section dimension
-ADV-002,adopted_value,CAL-VAL-P00379-002,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 WEB: PL2537x14 SM490Y,Adopted section dimension
-ADV-003,adopted_value,CAL-VAL-P00379-003,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 LFLG: PL680x21 SM490Y,Adopted section dimension
-ADV-004,adopted_value,CAL-VAL-P00379-004,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 UFLG: PL620x27 SM490Y,Max positive moment section
-ADV-005,adopted_value,CAL-VAL-P00379-005,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 LFLG: PL680x21 SM490Y,Max positive moment section
-ADV-006,adopted_value,CAL-VAL-P00379-006,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 UFLG: PL620x39 SM490Y,Support section (max negative moment)
-ADV-007,adopted_value,CAL-VAL-P00379-007,SECTION_PROPERTY,calculation/chapter_03/section_3_2/values.csv,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 LFLG: PL680x47 SM520-H,Support section high-strength steel
-ADV-008,adopted_value,CH2-VAL-030,stud_size,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,19,Stud size: φ16×160,Composite deck stud specification
-ADV-009,adopted_value,CH2-VAL-034,rebar_spec,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,20,Main reinforcement D19@100,Composite slab reinforcement
-ADV-010,adopted_value,CH2-VAL-037,rebar_spec,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,20,Distribution rebar intermediate support D22@125,Support slab reinforcement
-ADV-011,adopted_value,CH5-VAL-016,rubber_layer_thickness,calculation/chapter_05/values.csv,CH5-CAL-SEC-5.1.1,2031,PU15 rubber layer te: 32mm x 5 layers,Bearing adopted specification
-ADV-012,adopted_value,CH5-VAL-018,rubber_layer_thickness,calculation/chapter_05/values.csv,CH5-CAL-SEC-5.1.1,2031,PR1 rubber layer te: 37mm x 5 layers,Bearing adopted specification
-ADV-013,adopted_value,CH5-VAL-024,lead_plug_diameter,calculation/chapter_05/values.csv,CH5-CAL-SEC-5.1.1,2031,PU15 lead plug diameter φd: 95mm x 4,Lead rubber bearing specification
-ADV-014,adopted_value,CH5-VAL-025,lead_plug_diameter,calculation/chapter_05/values.csv,CH5-CAL-SEC-5.1.1,2031,PR1 lead plug diameter φd: 150mm,Lead rubber bearing specification
-ADV-015,adopted_value,CH5-VAL-048,buffer_length,calculation/chapter_05/values.csv,CH5-CAL-SEC-5.2.3,2192,Buffer length: 900mm,Step prevention design
-ADV-016,adopted_value,CH2-VAL-028,rib_height,calculation/chapter_02/values.csv,CH2-CAL-SEC-2.1,19,Rib height: 100mm,Composite deck lateral rib
+ADV-001,adopted_value,CAL-VAL-P00379-001,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 UFLG: PL620x22 SM490Y,Adopted section dimension
+ADV-002,adopted_value,CAL-VAL-P00379-002,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 WEB: PL2537x14 SM490Y,Adopted section dimension
+ADV-003,adopted_value,CAL-VAL-P00379-003,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-1 LFLG: PL680x21 SM490Y,Adopted section dimension
+ADV-004,adopted_value,CAL-VAL-P00379-004,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 UFLG: PL620x27 SM490Y,Max positive moment section
+ADV-005,adopted_value,CAL-VAL-P00379-005,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-3 LFLG: PL680x21 SM490Y,Max positive moment section
+ADV-006,adopted_value,CAL-VAL-P00379-006,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 UFLG: PL620x39 SM490Y,Support section (max negative moment)
+ADV-007,adopted_value,CAL-VAL-P00379-007,SECTION_PROPERTY,calc_pdf_p297,CH3-CAL-SEC-3.2.2,297,AG1 Sec-6 LFLG: PL680x47 SM520-H,Support section high-strength steel
+ADV-008,adopted_value,CH2-VAL-030,stud_size,calc_pdf_p19,CH2-CAL-SEC-2.1,19,Stud size: φ16×160,Composite deck stud specification
+ADV-009,adopted_value,CH2-VAL-034,rebar_spec,calc_pdf_p20,CH2-CAL-SEC-2.1,20,Main reinforcement D19@100,Composite slab reinforcement
+ADV-010,adopted_value,CH2-VAL-037,rebar_spec,calc_pdf_p20,CH2-CAL-SEC-2.1,20,Distribution rebar intermediate support D22@125,Support slab reinforcement
+ADV-011,adopted_value,CH5-VAL-016,rubber_layer_thickness,calc_pdf_p2031,CH5-CAL-SEC-5.1.1,2031,PU15 rubber layer te: 32mm x 5 layers,Bearing adopted specification
+ADV-012,adopted_value,CH5-VAL-018,rubber_layer_thickness,calc_pdf_p2031,CH5-CAL-SEC-5.1.1,2031,PR1 rubber layer te: 37mm x 5 layers,Bearing adopted specification
+ADV-013,adopted_value,CH5-VAL-024,lead_plug_diameter,calc_pdf_p2031,CH5-CAL-SEC-5.1.1,2031,PU15 lead plug diameter φd: 95mm x 4,Lead rubber bearing specification
+ADV-014,adopted_value,CH5-VAL-025,lead_plug_diameter,calc_pdf_p2031,CH5-CAL-SEC-5.1.1,2031,PR1 lead plug diameter φd: 150mm,Lead rubber bearing specification
+ADV-015,adopted_value,CH5-VAL-048,buffer_length,calc_pdf_p2192,CH5-CAL-SEC-5.2.3,2192,Buffer length: 900mm,Step prevention design
+ADV-016,adopted_value,CH2-VAL-028,rib_height,calc_pdf_p19,CH2-CAL-SEC-2.1,19,Rib height: 100mm,Composite deck lateral rib
