@@ -2,8 +2,9 @@
 // UI非依存（純粋なソリッドパラメータ記述）。R3F/THREE 生成は Milestone 2 で実施。
 // 共有ベース（SolidNode/SolidTransform/partId/GeometryError）は geometryBase.ts に集約。
 
-import type { Support, SupportPlacementSnapshot, AbutmentData } from "./model";
+import type { Support, SupportPlacementSnapshot, AbutmentData, Footing, PileGroup } from "./model";
 import { buildPierSolids } from "./PierSolidGenerator";
+import { buildFoundationSolids } from "./FoundationSolidGenerator";
 import {
   type SolidNode,
   type SolidGroup,
@@ -106,7 +107,7 @@ export function buildAbutmentSolids(
 
 /** 1本の Support 全体のソリッドを生成する。 */
 export function buildSupportSolids(
-  support: { supportId: string; supportType: string; abutment?: AbutmentData; pier?: unknown },
+  support: Support,
   snapshots: Map<string, SupportPlacementSnapshot>,
 ): SolidGroup {
   const snapshot = snapshots.get(support.supportId);
@@ -116,18 +117,26 @@ export function buildSupportSolids(
     ]);
   }
   const transform = transformFromSnapshot(snapshot);
+  const group: SolidGroup = { supportId: support.supportId, solids: [], transform };
   if (support.supportType === "abutment" && support.abutment) {
-    return buildAbutmentSolids(support, support.abutment, transform);
+    group.solids.push(...buildAbutmentSolids(support, support.abutment, transform).solids);
   }
   if (support.supportType === "pier" && support.pier) {
-    return buildPierSolids(support as never, support.pier as never, transform);
+    group.solids.push(...buildPierSolids(support, support.pier, transform).solids);
   }
-  return { supportId: support.supportId, solids: [], transform };
+  // I03C: 基礎（フーチング + 杭）。abutment / pier いずれも footing+pileGroup を持つ。
+  const sub = (support.supportType === "abutment" ? support.abutment : support.pier) as
+    | { footing?: Footing; pileGroup?: PileGroup | null }
+    | undefined;
+  if (sub?.footing) {
+    group.solids.push(...buildFoundationSolids(support.supportId, sub.footing, sub.pileGroup, transform).solids);
+  }
+  return group;
 }
 
 /** 複数支点のソリッドを一括生成。 */
 export function buildAllSupportSolids(
-  supports: { supportId: string; supportType: string; abutment?: AbutmentData; pier?: unknown }[],
+  supports: readonly Support[],
   snapshots: Map<string, SupportPlacementSnapshot>,
 ): SolidGroup[] {
   return supports.map((s) => buildSupportSolids(s, snapshots));

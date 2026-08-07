@@ -84,12 +84,15 @@ describe("invalid input (fail-closed)", () => {
     expect(() => buildSupportSolids(support, new Map())).toThrow(/スナップショット/);
   });
 
-  it("dispatches pier support to I03B generator", () => {
-    const support = abutmentSupport({ supportId: "P1", supportType: "pier", pier: { id: "P1", formType: "single_column_rect", footing: { id: "P1-FOOTING", length: 6, width: 8, thickness: 1.8, topElevation: 0 } } } as never);
+  it("dispatches pier support to I03B/I03C generators", () => {
+    const support = abutmentSupport({ supportId: "P1", supportType: "pier", pier: { id: "P1", formType: "single_column_rect", column: { id: "C", width: 1.2, depth: 1.6, height: 7.0 }, footing: { id: "P1-FOOTING", length: 6, width: 8, thickness: 1.8, topElevation: 0 } } } as never);
     const map = new Map<string, SupportPlacementSnapshot>([["P1", snapshot]]);
     const group = buildSupportSolids(support, map);
     expect(group.supportId).toBe("P1");
-    expect(group.solids.every((s) => s.entity === "pier")).toBe(true);
+    // I03B: 柱ソリッド生成
+    expect(group.solids.some((s) => s.entity === "pier")).toBe(true);
+    // I03C: 基礎（フーチング）生成
+    expect(group.solids.some((s) => s.entity === "footing")).toBe(true);
   });
 });
 
