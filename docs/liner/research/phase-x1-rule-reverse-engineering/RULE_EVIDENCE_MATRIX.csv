@@ -47,3 +47,8 @@ LIN-008,DOC-X0-0035,JIP-LINER_マニュアル,115,5.6.4,座標変換,FACT,限定
 LIN-009,DOC-X0-0035,JIP-LINER_マニュアル,143,8. 図面作成,GDRAW,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
 LIN-010,DOC-X0-0035,JIP-LINER_マニュアル,2,1.2 プログラム構成,MDVIEWER,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
 LIN-011,DOC-X0-0035,JIP-LINER_マニュアル,122,5.8,LDIST,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+PR-001,DOC-X0-0143,サンプル_道路線形計算例,1732-1810,5.2 ラインデータ,主要点座標リスト,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値（基準値ではなく採用値）
+PR-002,DOC-X0-0143,サンプル_道路線形計算例,1740-1745,5.3 測点設定,ブレーキ測点,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値
+PR-003,DOC-X0-0143,サンプル_道路線形計算例,1732-1810,主要点座標リスト,クロソイドA値,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値。基準値と照合（CONSISTENT）
+PR-004,DOC-X0-0143,サンプル_道路線形計算例,1732-1810,主要点座標リスト,円曲線半径,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値。最小曲線半径規定値と照合（CONSISTENT）
+PR-005,DOC-X0-0143,サンプル_道路線形計算例,3960,ＩＰの角度・距離計算書,交角IA・CL・TL,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,実案件採用値
