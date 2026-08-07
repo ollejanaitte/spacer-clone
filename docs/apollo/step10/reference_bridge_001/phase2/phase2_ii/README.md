@@ -38,8 +38,8 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 | P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair (#445, MERGED) |
 | P2II-C~F | p2ii-cf-candidate-foundation | Contracts + Source/Input/Geometry/StructuralModel/Load/Analysis candidate layers (#454, MERGED) |
 | P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability (#455, MERGED) |
-| P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff (THIS PR) |
-| P2II-K | p2ii-k-seal | Seal |
+| P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff (#456, MERGED) |
+| P2II-K | p2ii-k-seal | Seal (THIS PR) |
 
 ## Directory map
 
@@ -198,3 +198,25 @@ PHASE2_II_VALIDATION: PASS (17/17)
 PHASE2_II_READINESS: GO_WITH_HUMAN_CONFIRMATION_TRACK
 PHASE3_HANDOFF: 08_phase3_handoff.md
 ```
+
+## P2II-K — Seal (THIS PR)
+
+Phase 2-II is sealed. All sub-steps merged:
+
+| Sub-step | PR | Merge SHA |
+|----------|-----|-----------|
+| P2II-0 truth gate | #441 | 91e5fe0 |
+| P2II-A unread resolution | #442 | 53833ee |
+| P2II-B depth audit | #445 | 2cc9be0 |
+| P2II-C~F candidate foundation | #454 | 35d908a |
+| P2II-G~I design + traceability | #455 | aeeeeba |
+| P2II-J closeout | #456 | 691cbfd |
+| P2II-K seal | THIS PR | PENDING_THIS_PR (GITHUB_PR_IS_AUTHORITY) |
+
+Final verdicts:
+- `PHASE2_II_OVERALL_VERDICT: PARTIAL` (all layers candidate-only; registered gaps tracked).
+- `PHASE3_START_READINESS: GO_WITH_HUMAN_CONFIRMATION_TRACK`.
+- `NUMERIC_DESIGN_AUTHORIZATION: NOT_GRANTED`; `DESIGN_OR_CONSTRUCTION_USE: PROHIBITED`;
+  `FORMAL_RELEASE_READINESS: NO_GO_PENDING_HUMAN_VALIDATION`.
+
+Phase 3 (Golden promotion review) is NOT started in this PR; await user instruction.
