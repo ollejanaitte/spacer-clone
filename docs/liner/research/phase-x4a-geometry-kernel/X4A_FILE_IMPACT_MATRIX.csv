@@ -1,0 +1,4 @@
+﻿file,component,pr,description,action
+frontend/src/liner/core/geometry/,geometry kernel,P01-P04,既存全て KEEP_AS_CANONICAL,KEEP
+backend/rule_engine/geometry/,backend geometry adapter,P05,新規 canonical adapter,NEW
+backend/tests/test_geometry_kernel.py,geometry kernel tests,P06,新規 regression tests,NEW
