@@ -1,0 +1,163 @@
+source_record_id,pdf_page_number,note_kind,note_summary,semantic_class,source_locator,confidence
+CH1-NOTE-001,7,design_policy,本橋の設計について - 非合成桁を主体とし合成断面の照査を行う。主桁断面決定および継手計算は非合成断面と合成断面の双方を満足させる。中間補剛材も同様。床版・支点補剛材・横桁・横構・疲労設計は非合成桁で代表する。,NOTE,calc_pdf_p7,HIGH
+CH1-NOTE-002,7,design_policy,本橋の支承について - 回転照査を満足させるため機能分離型支承と荷重調整型支承の形式比較を行い荷重調整型支承を採用。詳細は報告書2編設計概要書を参照。,NOTE,calc_pdf_p7,HIGH
+CH2-NOTE-001,16,scope_note,計算はノーズ部を考慮しない標準幅員で行う。,NOTE,calc_pdf_p16,HIGH
+CH2-NOTE-002,18,design_scope,寸法は標準幅員のS1で代表,SECTION_PROPERTY,calc_pdf_p18,HIGH
+CH2-NOTE-003,19,design_note,スラッド高さ: 0.7×hc=0.7×222=155.4≒160mm,DIMENSION,calc_pdf_p19,HIGH
+CH2-NOTE-004,20,design_note,ハンチ筋は設計断面に考慮する。,NOTE,calc_pdf_p20,HIGH
+CH2-NOTE-005,21,method_note,鋼板の膜作用による曲げモーメントと鋼板+横リブの梁としての曲げモーメントを照査する。,NOTE,calc_pdf_p21,HIGH
+CH2-NOTE-006,21,method_note,鋼板を主桁と横リブで囲まれた4辺固定支持板としてモデル化。,NOTE,calc_pdf_p21,HIGH
+CH2-NOTE-007,21,method_note,係数βx、βyは構造力学公式集:平板の数値表により算出する。,REFERENCE_TEXT,calc_pdf_p21,HIGH
+CH2-NOTE-008,29,reference_note,道示Ⅱ 11.5 式11.5.2,REFERENCE_TEXT,calc_pdf_p29,HIGH
+CH2-NOTE-009,33,reference_note,道示Ⅱ 11.2.3 表-11.2.4,REFERENCE_TEXT,calc_pdf_p33,HIGH
+CAL-NOT-P00117-001,117,design_approach,主桁/横桁を骨組とした平面格子構造物として変形法による解析,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00117-002,117,design_approach,全死荷重及び活荷重に対し横桁で荷重分配を行う,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00117-003,117,tool_reference,解析プログラム: 鋼橋自動設計システム APOLLO Analyzer 株式会社横河技術情報,NOTE,calc_pdf_p117,HIGH
+CAL-NOT-P00118-001,118,design_condition,荷重強度は荷重係数を乗じていない荷重の特性値である,NOTE,calc_pdf_p118,HIGH
+CAL-NOT-P00118-002,118,design_condition,PU15付近の左側壁高欄部はノーズ部荷重を考慮する,NOTE,calc_pdf_p118,HIGH
+CAL-NOT-P00119-001,119,design_note,走行車線直下に載荷 (検査路),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00119-002,119,design_note,高欄外側に載荷 (遮音壁),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00119-003,119,design_note,荷重は格点に載荷する (ノーズ部/床版拡幅/床版打下し),NOTE,calc_pdf_p119,HIGH
+CAL-NOT-P00122-001,122,design_note,左側の高欄荷重と遮音壁荷重はノーズ部の控除を行う,NOTE,calc_pdf_p122,HIGH
+CAL-NOT-P00122-002,122,design_note,載荷する荷重強度は計算プログラムの様式に合わせて調整する,NOTE,calc_pdf_p122,HIGH
+CAL-NOT-P00124-001,124,design_note,C1-C2間の荷重についてはC1からの距離が小さいためC2には考慮せずC1に載荷する,NOTE,calc_pdf_p124,HIGH
+CAL-NOT-P00125-001,125,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p125,HIGH
+CAL-NOT-P00128-001,128,design_result,AG1桁の各格点に格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p128,HIGH
+CAL-NOT-P00129-001,129,standard_reference,床版支間の1/2 (道示Ⅱ 11.2.13)以上,NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00129-002,129,design_note,打下ろしは伸縮装置の切り欠き高を考慮する,NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00129-003,129,design_note,ハンチ荷重控除は桁端部荷重で行う (AG1は内側のみ),NOTE,calc_pdf_p129,HIGH
+CAL-NOT-P00131-001,131,design_note,格点集中荷重とし整数1位に切り上げる,NOTE,calc_pdf_p131,HIGH
+CAL-NOT-P00133-001,133,design_note,巻き立てコンクリート幅は横桁フランジ幅+300mmが基本,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00133-002,133,design_note,水平支承部寸法からなる幅を最小とし下端部突起に作用する断面力に対し十分な耐力を有する幅を採用,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00133-003,133,design_note,Bは最内の鉄筋(鉛直方向)のかぶりを125mmと想定,NOTE,calc_pdf_p133,HIGH
+CAL-NOT-P00135-001,135,standard_reference,Ｂ活荷重 「道示Ⅰ 8.2」より抜粋,NOTE,calc_pdf_p135,HIGH
+CAL-NOT-P00136-001,136,standard_reference,作用の組み合わせに対する荷重組み合わせ係数および荷重係数 (道示Ⅰ 3.3 表3-3.1),NOTE,calc_pdf_p136,HIGH
+CAL-NOT-P00140-001,140,verification_result,死荷重反力の確認 計算値と解析値の比が全て1.000で一致確認OK,NOTE,calc_pdf_p140,HIGH
+CAL-NOT-P00145-001,145,model_summary,解析モデル: 旭高架橋 ランプ 節点数54 梁要素52 支点要素27,NOTE,calc_pdf_p145,HIGH
+CAL-NOT-P00149-001,149,material_property,鋼材: E=2.0e8 kN/m2 G=7.7e7 kN/m2 ν=1.2e-5,NOTE,calc_pdf_p149,HIGH
+CAL-NOT-P00222-001,222,note,表内数値は特性値を示す,NOTE,calc_pdf_p222,HIGH
+CAL-NOT-P00223-001,223,note,*印部は特性値を示す,NOTE,calc_pdf_p223,HIGH
+CAL-NOT-P00223-002,223,note,合計は作用の組合せ(D+L)に対する荷重組合せ係数(γp)荷重係数(γq)を考慮した値を示す,NOTE,calc_pdf_p223,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-001,292,design_policy,Limit state 1 for tension can be omitted; only limit state 3 is checked (tension side limit is same or stricter than LS1),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p292,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-002,292,design_policy,"Compression side checked at limit state 3, deemed not to exceed limit state 1",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p292,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-003,292,design_policy,"Combined bending+shear checked at limit state 1, deemed not to exceed limit state 3",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p292,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-004,291,material,"Steel materials: SM520, SM490Y, SM400. Plates >40mm use constant yield point steel (except sole plates)",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-005,291,geometry,"Flange width constant: upper 620mm, lower 680mm. Web thickness constant: 14mm",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-006,291,geometry,"Flange plate thickness relief direction: upper flange downward, lower flange upward",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-007,291,geometry,Minimum plate thickness difference: 2mm (based on filler plate thickness). Max flange thickness difference: ≤1/2 of thicker plate (max 25mm),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-008,291,filler,"Filler plate thickness: 2.3mm minimum, increments: 2.3, 3.2, 4.5, 6mm then 1mm steps",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-009,291,stress,Allowable stress margin: approximately 5 N/mm²,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-010,291,buckling,"Upper flange: fixed to concrete deck, no lateral buckling considered (local buckling only)",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-011,291,buckling,Lower flange: both lateral torsional buckling and local buckling considered,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-012,291,composite,Composite stress check at web top and bottom edges (considers flange thickness via stress gradient from APOLLO program),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-013,291,stiffener,"Horizontal stiffener: single stage, position based on reference girder height",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-014,291,stiffener,Intermediate vertical stiffeners: basically divide panel points into 4 equal parts,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-015,291,splice,Splice position: basically at center between vertical stiffeners (panel point divided into 4),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-016,291,bolt,Field splice bolts: TCB M22(S10T). Inorganic zinc-rich paint coating considered,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-017,291,bolt,Splice plate area ≥ base material area. Bolt hole 24.5φ (25φ for tension tear-out check),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-018,291,weld,Upper flange splice plate: 50mm recess from flange edge (for composite slab clearance),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-019,291,weld,Lower flange splice plate: 5mm recess from flange edge,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-020,291,weld,Fillet weld max 10mm (per Aichi 'Bridge Design Guide 3-33'). Over 10mm use partial penetration weld,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-021,291,weld,Bearing stiffeners/crossbeam joints: fillet weld up to 12mm allowed for workability,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-022,291,accuracy,"Assumed vs actual stiffness ratio: ≤10% per panel point, ≤5% span average",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-023,291,accuracy,Assumed vs actual steel weight ratio: ≤10% (per Aichi guideline 3-4),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-024,291,program,Design program: APOLLO Super Designer (Yokogawa Technical Information),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p291,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-025,290,splice,Flange splice plates: ensure cross-sectional area and bending stiffness ≥ base material,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p290,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-026,379,weld,Fillet weld: Inorganic zinc-rich paint coating considered; Vfk reduction factor α applied,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p379,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-027,382,bolt,"Bolt arrangement dimensions: UFLG width 620mm with bolt gage lines at 140,90,90 spacing (75mm edge distance)",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p382,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-028,350,purpose,Dead load section determination is for out-of-plane bending moment calculation from transverse loads at mid-span and intermediate supports,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p350,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-029,666,sole_plate,Sole plate: material grade ≥ bearing shear key grade. >40mm: constant yield point steel NOT used,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p666,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-030,666,sole_plate,Fillet weld on all 4 sides of sole plate. Weld size ≥ √2t from sole plate center thickness,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p666,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-031,666,sole_plate,Level 2 seismic horizontal force from dynamic analysis used for weld verification,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p666,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-032,666,sole_plate,Shear key bearing check not required (verified at 175% shear strain for shear key in performance test),UNKNOWN_REQUIRES_REVIEW,calc_pdf_p666,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-033,669,weight,Steel weight comparison: Actual (311.594t) / Assumed (325.566t) = 95.7% [OK] within 10% limit,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p669,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-034,669,weight,AG1: 133.303m × 12.000kN/m = 1599.636kN ; AG2: 132.847m × 12.000kN/m = 1594.164kN ; Total: 3193.800kN = 325.566t,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p669,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-035,662,weld,"When bending stress ≤45% of limit, weld size determined by shear stress only",UNKNOWN_REQUIRES_REVIEW,calc_pdf_p662,HIGH
+SRC-calculation_chapter_03_section_3_2_notes-036,382,bolt,Bolt design: needs both limit state 1 (slip) and limit state 3 (bolt fracture) checks,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p382,HIGH
+CAL-NOT-P00676-001,676,design_approach,横桁は主桁間荷重分配+風/地震水平力に抵抗,NOTE,calc_pdf_p676,HIGH
+CAL-NOT-P00676-002,676,design_approach,中間横桁WLは微小省略 支点上横桁は水平力として作用,NOTE,calc_pdf_p676,HIGH
+CAL-NOT-P00676-003,676,design_approach,床版/鋼桁温度差影響は地震L2等に比べ小さいので省略,NOTE,calc_pdf_p676,HIGH
+CAL-NOT-P00677-001,677,design_approach,支点上横桁は巻き立てコンクリート剛性考慮しない,NOTE,calc_pdf_p677,HIGH
+CAL-NOT-P00677-002,677,design_approach,継手計算はL2地震時断面決定 実応力度計算,NOTE,calc_pdf_p677,HIGH
+CAL-NOT-P00679-001,679,design_note,荷重係数考慮設計値:死荷重1.05 活荷重1.25 施工1.05,NOTE,calc_pdf_p679,HIGH
+CAL-NOT-P00685-001,685,design_note,鋼桁部風荷重Wg=13.34kN/m 横桁設計用,NOTE,calc_pdf_p685,HIGH
+CAL-NOT-P00686-001,686,design_note,横桁設計:横桁風/地震反力使用 ずれ止め設計:床版部反力使用,NOTE,calc_pdf_p686,HIGH
+CAL-NOT-P00689-001,689,design_approach,曲率影響による下フランジ付加応力に横桁が抵抗,NOTE,calc_pdf_p689,HIGH
+CAL-NOT-P00766-001,766,design_approach,端ブラケットS1/S2支承線 床版作用力直接載荷 死荷重45度分布,NOTE,calc_pdf_p766,HIGH
+CAL-NOT-P00768-001,768,standard_reference,衝突F=35.0kN(SC種) 愛知県橋梁設計手引,NOTE,calc_pdf_p768,HIGH
+CAL-NOT-P00769-001,769,design_note,衝突k=0.765 道示II11.12,NOTE,calc_pdf_p769,HIGH
+CAL-NOT-P00770-001,770,material_property,SM400 σyk=235 τyk=135 N/mm2,NOTE,calc_pdf_p770,HIGH
+CAL-NOT-P00773-001,773,design_result,"垂直補剛PL80x9 Iv=1,536,000mm4 水平省略",NOTE,calc_pdf_p773,HIGH
+CAL-NOT-P00789-001,789,design_approach,横構+横桁+対傾構で鋼桁形状保持+風/地震力伝達,NOTE,calc_pdf_p789,HIGH
+CAL-NOT-P00789-002,789,design_approach,ダブルワーレンX配置引張部材 細長比一次部材,NOTE,calc_pdf_p789,HIGH
+CAL-NOT-P00789-003,789,design_approach,ガセット厚横構フランジ厚に合わせる,NOTE,calc_pdf_p789,HIGH
+CAL-NOT-P00791-001,791,design_note,Keq=0.765 抵抗側係数作用側乗じ常時換算,NOTE,calc_pdf_p791,HIGH
+CAL-NOT-P00792-001,792,design_note,支点部参考値 最大1294.90kN(D-10096),NOTE,calc_pdf_p792,HIGH
+CAL-NOT-P00818-001,818,standard_reference,鉄筋量0.15%以上 最大径32mm 最大間隔300mm 道示III5.2,NOTE,calc_pdf_p818,HIGH
+CAL-NOT-P00818-002,818,design_approach,下端突起部橋軸方向力は横桁上下FLG補強部材(ラテラル)で負担,NOTE,calc_pdf_p818,HIGH
+CAL-NOT-P00818-003,818,design_approach,下端突起部は補強部材位置固定片持ち梁計算,NOTE,calc_pdf_p818,HIGH
+CAL-NOT-P00818-004,818,design_note,本体(横桁部)面外曲げ/ねじりモーメント生じない,NOTE,calc_pdf_p818,HIGH
+CAL-NOT-P00819-001,819,design_note,S1 B=1500 H=2280 D19@250 7段x3=21本 D25@250 4本,NOTE,calc_pdf_p819,HIGH
+CAL-NOT-P00820-001,820,design_note,S2 B=1500 H=2400 D19@250 7段x3=21本 D25@250 4本,NOTE,calc_pdf_p820,HIGH
+CAL-NOT-P00821-001,821,design_note,PR1/PR2 B=2000 H=2400 D19@250 7段x4=28本 D25@250 4本,NOTE,calc_pdf_p821,HIGH
+CAL-NOT-P00843-001,843,design_approach,疲労照査:耐久性能 荷重係数乗じない特性値で計算,NOTE,calc_pdf_p843,HIGH
+CAL-NOT-P00845-001,845,standard_reference,照査必要判定 道示II表8.2.1 3径間連続D-G SM520/490Y/400 L=40.020 ADTT=379,NOTE,calc_pdf_p845,HIGH
+CAL-NOT-P00846-001,846,standard_reference,gammaF2=(LogLB1+1.50)/3.0 道示II表8.2.2 gammaa=0.8多主桁橋,NOTE,calc_pdf_p846,HIGH
+CAL-NOT-P00848-001,848,design_result,11照査点 D/E/G等級 No.1腹板+横桁下FLG G No.2上FLG+スタッドE,NOTE,calc_pdf_p848,HIGH
+CAL-NOT-P00851-001,851,design_result,No.1 G:簡便54>32 NG 詳細D=0.26<=1.0 OK,NOTE,calc_pdf_p851,HIGH
+CAL-NOT-P00854-001,854,design_result,No.2 E:delta_sigma=80 CR=1.30(応力比R=2.25>1.00),NOTE,calc_pdf_p854,HIGH
+CAL-NOT-P00860-001,860,design_note,横桁疲労:主桁同様F荷重載荷応力範囲照査,NOTE,calc_pdf_p860,HIGH
+CAL-NOT-P00873-001,873,design_approach,構造解析は主桁/横桁からなる平面格子モデル。死荷重・活荷重を載荷。,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-002,873,design_approach,構造解析上の節点は横断線位置/断面変化位置/0.15L位置とする,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-003,873,model_summary,0.15L位置:中間支点上付近の床版に引張応力が発生する範囲の境界位置,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-004,873,model_summary,床版一括打設とし解析モデルは合成前と合成後の2つ,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-005,873,model_summary,合成前解析は鋼桁剛度とし床版荷重を全長に載荷,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-006,873,model_summary,合成後解析は鋼桁と床版の合成断面剛度,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-007,873,model_summary,主桁剛度及び横桁剛度は曲げ剛度のみを考慮,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-008,873,model_summary,主桁合成後の曲げ剛度は床版有効幅より算出,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-009,873,model_summary,主桁合成後剛度算出時のヤング係数比はn=7,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-010,873,model_summary,中間支点上より0.15L位置間の合成後曲げ剛度は合成断面剛度より算出,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-011,873,standard_reference,クリープ/乾燥収縮/温度差による断面力・たわみ 道示Ⅱ14.2.2～14.2.4,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00873-012,873,tool_reference,解析プログラム:鋼橋自動設計システムAPOLLO Analyzer 株式会社横河技術情報,NOTE,calc_pdf_p873,HIGH
+CAL-NOT-P00874-001,874,design_condition,荷重強度は荷重係数を乗じていない荷重の特性値,NOTE,calc_pdf_p874,HIGH
+CAL-NOT-P00874-002,874,design_condition,PU15付近の左側壁高欄部はノーズ部荷重を考慮,NOTE,calc_pdf_p874,HIGH
+CAL-NOT-P00894-001,894,standard_reference,巻き立てコンクリート幅の設定は非合成桁の設計を参照,NOTE,calc_pdf_p894,HIGH
+CAL-NOT-P00904-001,904,model_summary,格子解析データ:前死荷重/後死荷重/クリープ/乾燥収縮/温度差の5ケース,NOTE,calc_pdf_p904,HIGH
+CAL-NOT-P01284-001,1284,design_approach,完成系:鋼合成桁として設計。コンクリート床版は有効幅を考慮した合成断面,NOTE,calc_pdf_p1284,HIGH
+CAL-NOT-P01284-002,1284,design_approach,施工系:合成前の鋼桁断面として死荷重及び施工時荷重に対して安全であること,NOTE,calc_pdf_p1284,HIGH
+CAL-NOT-P01284-003,1284,design_approach,部分係数設計法による 限界状態1(耐荷性能)と限界状態3(使用性)の照査,NOTE,calc_pdf_p1284,HIGH
+CAL-NOT-P01284-004,1284,design_approach,鋼合成桁としてのクリープ/乾燥収縮/温度差の影響を考慮,NOTE,calc_pdf_p1284,HIGH
+CAL-NOT-P01285-001,1285,material_property,鋼材SM490Y σy=355N/mm2 σsu=490N/mm2 τy=205N/mm2 E=200000N/mm2 G=77000N/mm2,NOTE,calc_pdf_p1285,HIGH
+CAL-NOT-P01286-001,1286,material_property,合成断面の設計に想定する鉄筋量は上下D22間隔125mm,NOTE,calc_pdf_p1286,HIGH
+CAL-NOT-P01286-002,1286,material_property,活荷重:合成断面n=7 クリープ:n=14 乾燥収縮:n=21,NOTE,calc_pdf_p1286,HIGH
+CAL-NOT-P01318-001,1318,design_approach,断面の応力度照査(耐荷性能の照査)-AG1全断面・AG2全断面について照査,NOTE,calc_pdf_p1318,HIGH
+CAL-NOT-P01318-002,1318,design_approach,断面決定は非合成桁と同様の方法で行う,NOTE,calc_pdf_p1318,HIGH
+CAL-NOT-P01319-001,1319,standard_reference,温度差応力度:道示Ⅱ式(解14.2.9),NOTE,calc_pdf_p1319,HIGH
+CAL-NOT-P01319-002,1319,standard_reference,クリープ応力度:道示Ⅱ式(解14.2.3) φ1=2,NOTE,calc_pdf_p1319,HIGH
+CAL-NOT-P01319-003,1319,standard_reference,乾燥収縮応力度:道示Ⅱ式(解14.2.10),NOTE,calc_pdf_p1319,HIGH
+CAL-NOT-P01319-004,1319,standard_reference,合成後上フランジ座屈は生じないものとする,NOTE,calc_pdf_p1319,HIGH
+CAL-NOT-P01322-001,1322,verification_result,AG1 Sec-1 Sup-1:全照査項目OK κ=0.13<1.20,NOTE,calc_pdf_p1322,HIGH
+CAL-NOT-P01778-001,1778,design_approach,高力ボルト摩擦接合による現場継手の設計,NOTE,calc_pdf_p1778,HIGH
+CAL-NOT-P01947-001,1947,standard_reference,たわみの照査は道示Ⅱの規定による,NOTE,calc_pdf_p1947,HIGH
+CH5-NOTE-001,2028,design_note,回転角は実回転角とする。斜角は各桁の最大角を考慮する。,NOTE,calc_pdf_p2028,HIGH
+CH5-NOTE-002,2028,design_note,Δt:水平力算出用(±30℃) Δt':支承照査用(±50℃) 正数値は伸長側、負数値は収縮側。,NOTE,calc_pdf_p2028,HIGH
+CH5-NOTE-003,2031,design_note,Rmax1:D+L+I+TF(+)の最大値 Rmax2:D+L(+)+I+TF(±)の最小値,UNKNOWN_REQUIRES_REVIEW,calc_pdf_p2031,HIGH
+CH5-NOTE-004,2031,legend,b:橋軸直角方向有効寸法 a:橋軸方向有効寸法 te:弾性ゴム一層厚 n:積層数 Σte:総厚 Ge:せん断弾性係数 φd:鉛プラグ径 NP:鉛プラグ本数 ts:補強材板厚,NOTE,calc_pdf_p2031,HIGH
+CH5-NOTE-005,2032,design_note,S2は4程度以上を確保するものとする。,NOTE,calc_pdf_p2032,HIGH
+CH5-NOTE-006,2035,design_note,正数値は右方向、負数値は左方向を示す。支承照査移動量はΔLの絶対値の大きい値とする。,NOTE,calc_pdf_p2035,HIGH
+CH5-NOTE-007,2038,design_note,上部工水平力は静的解析で算出した数値,NOTE,calc_pdf_p2038,HIGH
+CH5-NOTE-008,2138,design_note,RHeq1:Σte×2.5×KB RHeq2:動的解析値,NOTE,calc_pdf_p2138,HIGH
+CH5-NOTE-009,2138,design_note,"ΔLe1,ΔLe2:動的解析値",NOTE,calc_pdf_p2138,HIGH
+CH5-NOTE-010,2139,design_note,直角方向の水平力はサイドブロックにより拘束される為ゼロとする。,NOTE,calc_pdf_p2139,HIGH
+CH5-NOTE-011,2167,design_note,レベル2地震動の水平力・変位量は250%変形時の数値。上向き力は主桁部の支承で負担する。,NOTE,calc_pdf_p2167,HIGH
+CH5-NOTE-012,2191,design_note,設計荷重は死荷重反力(荷重係数γq考慮)を10kN切り上げで丸める。,NOTE,calc_pdf_p2191,HIGH
+CH5-NOTE-013,2193,design_note,Rib高hは最大高のS2-AG1で代表,DIMENSION,calc_pdf_p2193,HIGH
+CH5-NOTE-014,2195,design_note,Rib高hは最小高のS2-AG2で代表,DIMENSION,calc_pdf_p2195,HIGH
+CH5-NOTE-015,2199,reference,愛知県「橋梁設計の手引き 第6章」より,REFERENCE_TEXT,calc_pdf_p2199,HIGH
+CH5-NOTE-016,2205,reference,排水管確認は「愛知県 橋梁設計の手引き」より,REFERENCE_TEXT,calc_pdf_p2205,HIGH
+CH5-NOTE-017,2207,design_note,伸縮装置算出式は日本道路協会「道路橋示方書」による。,NOTE,calc_pdf_p2207,HIGH
+CH5-NOTE-018,2210,design_note,マウラースイベル・ジョイント ES-480型（最大設計伸縮量480mm）を使用する。,NOTE,calc_pdf_p2210,HIGH
+CH5-NOTE-019,2217,design_note,ミドルビーム支持条件として4径間連続梁と考え曲げモーメント求める。,NOTE,calc_pdf_p2217,HIGH
+CH5-NOTE-020,2224,design_note,フェイスプレート厚80mmで10mm以上の摩耗代が確保されている。,NOTE,calc_pdf_p2224,HIGH
+CH5-NOTE-021,2225,design_note,"孔あき鋼板ジベル計算式は「複合構造標準示方書」(2014年,土木学会)による。",NOTE,calc_pdf_p2225,HIGH
+CH5-NOTE-022,2226,design_note,貫通鉄筋を配置するものとする。,NOTE,calc_pdf_p2226,HIGH

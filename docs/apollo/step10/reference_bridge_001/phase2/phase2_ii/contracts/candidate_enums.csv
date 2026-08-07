@@ -1,0 +1,99 @@
+enum_type,enum_value,description,source
+semantic_class,SOURCE_INPUT,Input parameter from standards or project specs,candidate_layer_contract
+semantic_class,DERIVED_VALUE,Value computed from source inputs (intermediate),candidate_layer_contract
+semantic_class,ANALYSIS_INPUT,Input fed into structural analysis,candidate_layer_contract
+semantic_class,ANALYSIS_RESULT,Output from structural analysis (forces/displacements),candidate_layer_contract
+semantic_class,DESIGN_INPUT,Input for member/cross-section design checks,candidate_layer_contract
+semantic_class,DESIGN_RESULT,Result of design check (OK/NG/ratio),candidate_layer_contract
+semantic_class,ADOPTED_VALUE,Final adopted design value,candidate_layer_contract
+semantic_class,DRAWING_VALUE,Value shown on a drawing sheet,candidate_layer_contract
+semantic_class,LIMIT_VALUE,Limit/criteria value from standards,candidate_layer_contract
+semantic_class,FORMULA_DEFINITION,Expression or equation definition,candidate_layer_contract
+semantic_class,NUMERIC_SUBSTITUTION,Formula with values substituted,candidate_layer_contract
+semantic_class,JUDGMENT_RESULT,Engineering judgment outcome (OK/NG/N/A),candidate_layer_contract
+semantic_class,REFERENCE_TEXT,Text reference to standard/code/section,candidate_layer_contract
+semantic_class,IDENTIFIER,Member/section/node/load-case label,candidate_layer_contract
+semantic_class,DIMENSION,Geometric dimension (length/angle/radius),candidate_layer_contract
+semantic_class,COORDINATE,Node/point coordinate,candidate_layer_contract
+semantic_class,MATERIAL_PROPERTY,Material strength/modulus/unit weight,candidate_layer_contract
+semantic_class,SECTION_PROPERTY,Cross-section area/inertia/section modulus,candidate_layer_contract
+semantic_class,LOAD_VALUE,Magnitude of a load,candidate_layer_contract
+semantic_class,LOAD_COMBINATION,Load combination definition,candidate_layer_contract
+semantic_class,SUPPORT_CONDITION,Support type/spring constant/fixity,candidate_layer_contract
+semantic_class,MEMBER_CONNECTIVITY,Joint-to-joint member connectivity,candidate_layer_contract
+semantic_class,NOTE,Text note/remark/design condition,candidate_layer_contract
+semantic_class,TITLE_BLOCK_VALUE,Title block value (sheet/scale/date),candidate_layer_contract
+semantic_class,UNKNOWN_REQUIRES_REVIEW,Class cannot be determined automatically,candidate_layer_contract
+semantic_class,road_spec,Road specification label,phase2_i_extraction
+semantic_class,design_speed,Design speed,phase2_i_extraction
+semantic_class,live_load,Live load specification,phase2_i_extraction
+semantic_class,bridge_type,Bridge type,phase2_i_extraction
+semantic_class,bridge_length,Bridge length,phase2_i_extraction
+semantic_class,girder_length,Girder length,phase2_i_extraction
+semantic_class,span_length,Span length,phase2_i_extraction
+semantic_class,total_width,Total width,phase2_i_extraction
+semantic_class,effective_width,Effective roadway width,phase2_i_extraction
+semantic_class,girder_spacing,Girder spacing,phase2_i_extraction
+semantic_class,deck_overhang,Deck overhang,phase2_i_extraction
+semantic_class,girder_height,Girder height,phase2_i_extraction
+semantic_class,curve_radius,Curve radius,phase2_i_extraction
+semantic_class,skew_angle,Skew angle,phase2_i_extraction
+semantic_class,cross_gradient,Cross gradient,phase2_i_extraction
+semantic_class,longitudinal_gradient,Longitudinal gradient,phase2_i_extraction
+semantic_class,deck_thickness,Deck thickness,phase2_i_extraction
+semantic_class,steel_grade,Steel grade,phase2_i_extraction
+semantic_class,concrete_strength,Concrete strength,phase2_i_extraction
+semantic_class,yield_strength,Yield strength,phase2_i_extraction
+semantic_class,shear_modulus,Shear modulus,phase2_i_extraction
+semantic_class,elastic_modulus,Elastic modulus,phase2_i_extraction
+semantic_class,member_id,Member identifier,phase2_i_extraction
+semantic_class,panel_length,Panel length,phase2_i_extraction
+semantic_class,cross_interval,Cross interval,phase2_i_extraction
+semantic_class,load_intensity,Load intensity,phase2_i_extraction
+semantic_class,reaction,Reaction,phase2_i_extraction
+semantic_class,deflection,Deflection,phase2_i_extraction
+semantic_class,rotation,Rotation,phase2_i_extraction
+semantic_class,member_force,Member force,phase2_i_extraction
+semantic_class,bending_stress,Bending stress,phase2_i_extraction
+semantic_class,shear_stress,Shear stress,phase2_i_extraction
+semantic_class,combined_stress,Combined stress,phase2_i_extraction
+semantic_class,stress_limit,Stress limit,phase2_i_extraction
+semantic_class,check_ratio,Check ratio,phase2_i_extraction
+semantic_class,judgment,Judgment OK/NG,phase2_i_extraction
+semantic_class,applicable_code,Applicable code,phase2_i_extraction
+semantic_class,applicable_manual,Applicable manual,phase2_i_extraction
+semantic_class,bearing_type,Bearing type,phase2_i_extraction
+semantic_class,restraint_method,Restraint method,phase2_i_extraction
+semantic_class,camber,Camber,phase2_i_extraction
+semantic_class,appurtenance,Appurtenance (railing/wall),phase2_i_extraction
+semantic_class,text,Text content,phase2_i_extraction
+semantic_class,table,Table content,phase2_i_extraction
+semantic_class,figure,Figure content,phase2_i_extraction
+verification_status,UNVERIFIED,Extraction not yet cross-verified,phase2_i
+verification_status,PARTIAL,Partially verified (OCR-assisted etc.),phase2_i
+verification_status,VERIFIED,Cross-source verified,phase2_i
+verification_status,AGREED,Both OCR passes agreed,phase2_i
+verification_status,CONFIRMED_BLANK,Confirmed blank in source,phase2_i
+verification_status,OCR_VERIFIED,Verified via OCR-assisted transcription,phase2_i
+parity_status,CALC_ONLY,Value appears only in calculation book,phase2_ii
+parity_status,DRAWING_ONLY,Value appears only in drawing set,phase2_ii
+parity_status,BOTH,Value appears in both calculation and drawing,phase2_ii
+parity_status,ONE_SOURCE_ONLY,Value appears in only one source,phase2_ii
+parity_status,NOT_CHECKED,Parity not yet checked,phase2_ii
+adoption_status,CANDIDATE_ONLY,Plain candidate for Phase 3,candidate_layer_contract
+adoption_status,EXCLUDED_DERIVED_VALUE,Derived value excluded from Golden input,candidate_layer_contract
+adoption_status,EXCLUDED_ANALYSIS_RESULT,Analysis result excluded from Golden input,candidate_layer_contract
+adoption_status,EXCLUDED_DESIGN_RESULT,Design result excluded from Golden input,candidate_layer_contract
+adoption_status,EXCLUDED_DRAWING_ONLY,Drawing-only value excluded from Golden input,candidate_layer_contract
+adoption_status,CONFLICT_REQUIRES_REVIEW,Source conflict needs review,candidate_layer_contract
+adoption_status,HUMAN_CONFIRMATION_REQUIRED,Needs human confirmation,candidate_layer_contract
+adoption_status,APPROVED_GOLDEN_INPUT,FORMAL GOLDEN PROMOTION - PROHIBITED IN PHASE 2-II,candidate_layer_contract
+confidence,HIGH,High confidence,phase2_i
+confidence,MEDIUM,Medium confidence,phase2_i
+confidence,LOW,Low confidence,phase2_i
+confidence,UNKNOWN,Unknown confidence,phase2_i
+phase3_action,GOLDEN_ELIGIBLE,Eligible for Golden promotion review,phase2_ii
+phase3_action,GOLDEN_EXCLUDED,Excluded from Golden (derived/result/drawing-only),phase2_ii
+phase3_action,HUMAN_VALIDATION,Requires human validation in Phase 3,phase2_ii
+phase3_action,REVIEW_CONFLICT,Conflict requires review in Phase 3,phase2_ii
+phase3_action,ORPHAN_LOG,Logged as orphan for Phase 3 resolution,phase2_ii

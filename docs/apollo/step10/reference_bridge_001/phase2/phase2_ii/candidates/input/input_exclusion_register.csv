@@ -1,0 +1,208 @@
+exclusion_id,source_record_id,semantic_class,raw_value,exclusion_reason,notes
+EXC-001,CH1-VAL-024,DERIVED_VALUE,0.25,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 設計水平震度_レベル1
+EXC-002,CAL-TBL-P00222-001,ANALYSIS_RESULT,183.2,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-003,CAL-TBL-P00222-002,ANALYSIS_RESULT,736.5,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-004,CAL-TBL-P00222-003,ANALYSIS_RESULT,348.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-005,CAL-TBL-P00222-004,ANALYSIS_RESULT,82.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-006,CAL-TBL-P00222-005,ANALYSIS_RESULT,14.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-007,CAL-TBL-P00222-006,ANALYSIS_RESULT,142.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-008,CAL-TBL-P00222-007,ANALYSIS_RESULT,30.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-009,CAL-TBL-P00222-008,ANALYSIS_RESULT,88.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-010,CAL-TBL-P00222-009,ANALYSIS_RESULT,18.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-011,CAL-TBL-P00222-010,ANALYSIS_RESULT,97.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-012,CAL-TBL-P00222-011,ANALYSIS_RESULT,81.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-013,CAL-TBL-P00222-012,ANALYSIS_RESULT,430.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-014,CAL-TBL-P00222-013,ANALYSIS_RESULT,70.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-015,CAL-TBL-P00222-014,ANALYSIS_RESULT,27.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-016,CAL-TBL-P00222-015,ANALYSIS_RESULT,55.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-017,CAL-TBL-P00222-016,ANALYSIS_RESULT,2405.8,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 鉛直方向死荷重反力
+EXC-018,CAL-TBL-P00223-001,ANALYSIS_RESULT,1205.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-019,CAL-TBL-P00223-002,ANALYSIS_RESULT,737.8,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-020,CAL-TBL-P00223-003,ANALYSIS_RESULT,-128.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-021,CAL-TBL-P00223-004,ANALYSIS_RESULT,2187.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-022,CAL-TBL-P00223-005,ANALYSIS_RESULT,1105.4,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-023,CAL-TBL-P00223-006,ANALYSIS_RESULT,1200.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-024,CAL-TBL-P00223-007,ANALYSIS_RESULT,749.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-025,CAL-TBL-P00223-008,ANALYSIS_RESULT,-137.8,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-026,CAL-TBL-P00223-009,ANALYSIS_RESULT,2197.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-027,CAL-TBL-P00223-010,ANALYSIS_RESULT,1088.5,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 上部工反力 死荷重/活荷重
+EXC-028,CAL-VAL-P00135-002,DERIVED_VALUE,0.222,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第1支間
+EXC-029,CAL-VAL-P00135-003,DERIVED_VALUE,0.209,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第2支承線上
+EXC-030,CAL-VAL-P00135-004,DERIVED_VALUE,0.198,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第2支間
+EXC-031,CAL-VAL-P00135-005,DERIVED_VALUE,0.209,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第3支承線上
+EXC-032,CAL-VAL-P00135-006,DERIVED_VALUE,0.222,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第3支間
+EXC-033,CAL-VAL-P00223-001,ANALYSIS_RESULT,1205.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PU15-AG1
+EXC-034,CAL-VAL-P00223-002,ANALYSIS_RESULT,1200.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PU15-AG2
+EXC-035,CAL-VAL-P00223-003,ANALYSIS_RESULT,3325.5,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PR1-AG1
+EXC-036,CAL-VAL-P00223-004,ANALYSIS_RESULT,3306.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PR1-AG2
+EXC-037,CAL-VAL-P00223-005,ANALYSIS_RESULT,3341.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PR2-AG1
+EXC-038,CAL-VAL-P00223-006,ANALYSIS_RESULT,3272.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd PR2-AG2
+EXC-039,CAL-VAL-P00223-007,ANALYSIS_RESULT,1221.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd AR2-AG1
+EXC-040,CAL-VAL-P00223-008,ANALYSIS_RESULT,1081.3,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力Rd AR2-AG2
+EXC-041,CAL-VAL-P00223-009,ANALYSIS_RESULT,737.8,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最大 PU15-AG1
+EXC-042,CAL-VAL-P00223-010,ANALYSIS_RESULT,1378.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最大 PR1-AG1
+EXC-043,CAL-VAL-P00223-011,ANALYSIS_RESULT,1383.2,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最大 PR2-AG1
+EXC-044,CAL-VAL-P00223-012,ANALYSIS_RESULT,777.3,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最大 AR2-AG1
+EXC-045,CAL-VAL-P00223-013,ANALYSIS_RESULT,-128.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最小 PU15-AG1
+EXC-046,CAL-VAL-P00223-014,ANALYSIS_RESULT,-164.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最小 PR1-AG1
+EXC-047,CAL-VAL-P00223-015,ANALYSIS_RESULT,-161.4,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最小 PR2-AG1
+EXC-048,CAL-VAL-P00223-016,ANALYSIS_RESULT,-134.1,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 活荷重RL最小 AR2-AG1
+EXC-049,CAL-VAL-P00223-017,ANALYSIS_RESULT,2187.6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 合計荷重係数考慮最大 PU15-AG1
+EXC-050,CAL-VAL-P00223-018,ANALYSIS_RESULT,1105.4,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 合計荷重係数考慮最小 PU15-AG1
+EXC-051,CAL-VAL-P00222-001,ANALYSIS_RESULT,17955.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力合計(全支承)
+EXC-052,CAL-VAL-P00222-002,ANALYSIS_RESULT,2405.8,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力合計 PU15
+EXC-053,CAL-VAL-P00222-003,ANALYSIS_RESULT,6632.2,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力合計 PR1
+EXC-054,CAL-VAL-P00222-004,ANALYSIS_RESULT,6614.5,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力合計 PR2
+EXC-055,CAL-VAL-P00222-005,ANALYSIS_RESULT,2303.2,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力合計 AR2
+EXC-056,CAL-VAL-P00140-001,DERIVED_VALUE,17955.87,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 死荷重反力確認 計算値
+EXC-057,CAL-VAL-P00140-002,ANALYSIS_RESULT,17955.68,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 死荷重反力確認 解析値
+EXC-058,CAL-VAL-P00140-003,DERIVED_VALUE,1.000,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 死荷重反力確認 比率計算値/解析値
+EXC-059,CAL-TBL-P00685-004,DERIVED_VALUE,1.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 風荷重計算
+EXC-060,CAL-TBL-P00686-001,ANALYSIS_RESULT,17955.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 地震荷重
+EXC-061,CAL-VAL-P00685-004,DERIVED_VALUE,1.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 並列橋補正係数α
+EXC-062,CAL-VAL-P00686-001,ANALYSIS_RESULT,17955.7,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 全死荷重反力Wd
+EXC-063,CAL-VAL-P00686-003,DERIVED_VALUE,0.25,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 水平震度L1 Kh
+EXC-064,CAL-TBL-P00769-001,ANALYSIS_RESULT,-308.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 設計断面力
+EXC-065,CAL-TBL-P00769-002,ANALYSIS_RESULT,288.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 設計断面力
+EXC-066,CAL-TBL-P00771-001,ANALYSIS_RESULT,95,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 応力度照査
+EXC-067,CAL-TBL-P00771-002,ANALYSIS_RESULT,-95,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 応力度照査
+EXC-068,CAL-TBL-P00772-001,ANALYSIS_RESULT,41,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: せん断照査
+EXC-069,CAL-TBL-P00772-002,DESIGN_RESULT,0.42,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: せん断照査
+EXC-070,CAL-VAL-P00767-004,DERIVED_VALUE,0.392,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数常時i
+EXC-071,CAL-VAL-P00767-005,DERIVED_VALUE,0.389,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数衝突時i
+EXC-072,CAL-VAL-P00769-001,ANALYSIS_RESULT,-308.9,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 設計断面力M
+EXC-073,CAL-VAL-P00769-002,ANALYSIS_RESULT,288.0,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 設計断面力S
+EXC-074,CAL-TBL-P00792-001,ANALYSIS_RESULT,1294.90,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 部材軸力
+EXC-075,CAL-TBL-P00792-002,ANALYSIS_RESULT,1274.69,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 部材軸力
+EXC-076,CAL-TBL-P00792-003,ANALYSIS_RESULT,1007.16,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: 部材軸力
+EXC-077,CAL-VAL-P00791-002,ANALYSIS_RESULT,18853.5,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: Wd L2
+EXC-078,CAL-VAL-P00791-003,DERIVED_VALUE,1.36,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Kh L2
+EXC-079,CAL-VAL-P00791-007,DERIVED_VALUE,0.765,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Keq L2
+EXC-080,CAL-VAL-P00792-001,ANALYSIS_RESULT,1294.90,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: Nmax D-10096
+EXC-081,CAL-TBL-P00819-002,DERIVED_VALUE,51.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S1 Asreq
+EXC-082,CAL-TBL-P00819-003,DERIVED_VALUE,18,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S1 D19 nreq
+EXC-083,CAL-TBL-P00820-002,DERIVED_VALUE,54.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S2 Asreq
+EXC-084,CAL-TBL-P00820-003,DERIVED_VALUE,19,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S2 D19 nreq
+EXC-085,CAL-TBL-P00821-002,DERIVED_VALUE,72.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PR1 Asreq
+EXC-086,CAL-TBL-P00821-003,DERIVED_VALUE,26,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PR1 D19 nreq
+EXC-087,CAL-VAL-P00819-004,DERIVED_VALUE,51.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S1 Asreq 0.15%
+EXC-088,CAL-VAL-P00820-003,DERIVED_VALUE,54.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: S2 Asreq
+EXC-089,CAL-VAL-P00821-004,DERIVED_VALUE,72.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PR1 Asreq
+EXC-090,CAL-TBL-P00851-001,ANALYSIS_RESULT,54,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.1応力範囲
+EXC-091,CAL-TBL-P00851-003,DESIGN_RESULT,NG,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: No.1応力範囲
+EXC-092,CAL-TBL-P00852-002,ANALYSIS_RESULT,1.61e6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.1損傷度
+EXC-093,CAL-TBL-P00852-003,DESIGN_RESULT,0.26,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: No.1損傷度
+EXC-094,CAL-TBL-P00854-001,ANALYSIS_RESULT,80,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.2応力範囲
+EXC-095,CAL-TBL-P00854-002,DERIVED_VALUE,1.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: No.2応力範囲
+EXC-096,CAL-VAL-P00846-001,DERIVED_VALUE,3.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: gammaF1
+EXC-097,CAL-VAL-P00846-002,DERIVED_VALUE,1.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: gammaF2
+EXC-098,CAL-VAL-P00846-003,DERIVED_VALUE,1.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: gammaF3
+EXC-099,CAL-VAL-P00846-004,DERIVED_VALUE,0.80,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: gamma_a
+EXC-100,CAL-VAL-P00846-005,DERIVED_VALUE,3.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: gammaF総合
+EXC-101,CAL-VAL-P00850-003,ANALYSIS_RESULT,63,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.1 死荷重応力
+EXC-102,CAL-VAL-P00851-001,ANALYSIS_RESULT,54,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.1 delta_sigma_max
+EXC-103,CAL-VAL-P00852-002,ANALYSIS_RESULT,1.61e6,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.1 N1_1
+EXC-104,CAL-VAL-P00852-003,DESIGN_RESULT,0.26,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: No.1 D
+EXC-105,CAL-VAL-P00853-003,ANALYSIS_RESULT,-84,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.2 死荷重応力
+EXC-106,CAL-VAL-P00854-001,ANALYSIS_RESULT,80,Derived/intermediate/analysis/design-result value (ANALYSIS_RESULT); excluded from input candidates,label: No.2 delta_sigma_max
+EXC-107,CAL-VAL-P00854-002,DERIVED_VALUE,1.30,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: No.2 CR
+EXC-108,CAL-VAL-P00893-002,DERIVED_VALUE,0.222,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第1支間
+EXC-109,CAL-VAL-P00893-004,DERIVED_VALUE,0.209,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第2支承線上
+EXC-110,CAL-VAL-P00893-006,DERIVED_VALUE,0.198,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第2支間
+EXC-111,CAL-VAL-P00893-008,DERIVED_VALUE,0.209,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第3支承線上
+EXC-112,CAL-VAL-P00893-009,DERIVED_VALUE,0.222,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 衝撃係数-第3支間
+EXC-113,CAL-TBL-P01319-001,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-114,CAL-TBL-P01319-002,member_force,663.1,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-115,CAL-TBL-P01319-003,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-116,CAL-TBL-P01319-004,member_force,281.6,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-117,CAL-TBL-P01319-005,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-118,CAL-TBL-P01319-006,member_force,922.1,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 断面力及び計算条件 AG1 Sec-1 Sup-1
+EXC-119,CAL-TBL-P01322-001,DESIGN_RESULT,-,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-120,CAL-TBL-P01322-002,DESIGN_RESULT,0,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-121,CAL-TBL-P01322-003,DESIGN_RESULT,0.0,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-122,CAL-TBL-P01322-004,DESIGN_RESULT,0,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-123,CAL-TBL-P01322-005,DESIGN_RESULT,0.2,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-124,CAL-TBL-P01322-006,DESIGN_RESULT,0.6,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-125,CAL-TBL-P01322-007,DESIGN_RESULT,-18,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-126,CAL-TBL-P01322-008,DESIGN_RESULT,6,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-127,CAL-TBL-P01322-009,DESIGN_RESULT,0.4,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-128,CAL-TBL-P01322-010,DESIGN_RESULT,0.5,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-129,CAL-TBL-P01322-011,DESIGN_RESULT,-26,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-130,CAL-TBL-P01322-012,DESIGN_RESULT,9,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-131,CAL-TBL-P01322-013,DESIGN_RESULT,0.6,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-132,CAL-TBL-P01322-014,DESIGN_RESULT,-44,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-133,CAL-TBL-P01322-015,DESIGN_RESULT,-8,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-134,CAL-TBL-P01322-016,DESIGN_RESULT,53,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 応力度照査一覧 AG1 Sec-1 Sup-1
+EXC-135,CAL-TBL-P01947-001,deflection,23.5,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: たわみ計算結果
+EXC-136,CAL-TBL-P01947-002,deflection,28.7,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: たわみ計算結果
+EXC-137,CAL-TBL-P01947-003,deflection,22.1,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: たわみ計算結果
+EXC-138,CAL-VAL-P01319-006,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成前死荷重Md1
+EXC-139,CAL-VAL-P01319-007,member_force,663.1,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成前死荷重せん断力S
+EXC-140,CAL-VAL-P01319-008,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成後死荷重Md2
+EXC-141,CAL-VAL-P01319-009,member_force,281.6,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成後死荷重せん断力S
+EXC-142,CAL-VAL-P01319-010,member_force,0.0,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成後活荷重ML1
+EXC-143,CAL-VAL-P01319-011,member_force,922.1,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 合成後活荷重せん断力S
+EXC-144,CAL-VAL-P01319-012,member_force,-3158.2,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 温度差軸力P
+EXC-145,CAL-VAL-P01319-013,member_force,1686.3,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 温度差曲げモーメントM
+EXC-146,CAL-VAL-P01319-014,member_force,-1842.3,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 乾燥収縮軸力P
+EXC-147,CAL-VAL-P01319-015,member_force,1786.5,Derived/intermediate/analysis/design-result value (member_force); excluded from input candidates,label: 乾燥収縮曲げモーメントM
+EXC-148,CAL-VAL-P01319-028,DESIGN_RESULT,53,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: せん断応力度τ(AG1 Sec-1)
+EXC-149,CAL-VAL-P01319-029,DESIGN_RESULT,0.13,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 曲げとせん断の同時性κ
+EXC-150,CH5-TBL-002,DERIVED_VALUE,3,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 支承条件
+EXC-151,CH5-TBL-003,rotation,0.004608,Derived/intermediate/analysis/design-result value (rotation); excluded from input candidates,label: 支承条件
+EXC-152,CH5-TBL-004,rotation,0.003484,Derived/intermediate/analysis/design-result value (rotation); excluded from input candidates,label: 支承条件
+EXC-153,CH5-TBL-005,rotation,0.003460,Derived/intermediate/analysis/design-result value (rotation); excluded from input candidates,label: 支承条件
+EXC-154,CH5-TBL-006,rotation,0.004651,Derived/intermediate/analysis/design-result value (rotation); excluded from input candidates,label: 支承条件
+EXC-155,CH5-TBL-014,reaction,1950,Derived/intermediate/analysis/design-result value (reaction); excluded from input candidates,label: 荷重条件(反力)
+EXC-156,CH5-TBL-015,reaction,4710,Derived/intermediate/analysis/design-result value (reaction); excluded from input candidates,label: 荷重条件(反力)
+EXC-157,CH5-TBL-024,deflection,38.9,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 温度変化時(±50℃)合成剛性
+EXC-158,CH5-TBL-025,deflection,12.5,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 温度変化時(±50℃)合成剛性
+EXC-159,CH5-TBL-026,deflection,12.4,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 温度変化時(±50℃)合成剛性
+EXC-160,CH5-TBL-027,deflection,39.5,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 温度変化時(±50℃)合成剛性
+EXC-161,CH5-TBL-028,deflection,38.9,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 温度変化時(50℃)移動量
+EXC-162,CH5-TBL-033,DESIGN_RESULT,4.56,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 最大圧縮応力度照査
+EXC-163,CH5-TBL-034,DESIGN_RESULT,5.14,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 最大圧縮応力度照査
+EXC-164,CH5-TBL-035,DESIGN_RESULT,5.16,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 最大圧縮応力度照査
+EXC-165,CH5-TBL-036,DESIGN_RESULT,4.68,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 最大圧縮応力度照査
+EXC-166,CH5-TBL-037,DESIGN_RESULT,30.0,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 繰返し水平変位照査
+EXC-167,CH5-TBL-038,DESIGN_RESULT,6.7,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 繰返し水平変位照査
+EXC-168,CH5-TBL-039,DESIGN_RESULT,6.7,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 繰返し水平変位照査
+EXC-169,CH5-TBL-040,DESIGN_RESULT,30.5,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 繰返し水平変位照査
+EXC-170,CH5-TBL-041,reaction,1950,Derived/intermediate/analysis/design-result value (reaction); excluded from input candidates,label: 設計条件(鋼材計算書)
+EXC-171,CH5-TBL-042,deflection,±400,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 設計条件(変位量)
+EXC-172,CH5-TBL-043,deflection,±463,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 設計条件(変位量)
+EXC-173,CH5-TBL-044,deflection,±463,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 設計条件(変位量)
+EXC-174,CH5-TBL-045,deflection,±400,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: 設計条件(変位量)
+EXC-175,CH5-TBL-048,deflection,±73.0,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: レベル1移動量
+EXC-176,CH5-TBL-049,deflection,±34.0,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: レベル1移動量
+EXC-177,CH5-TBL-050,DERIVED_VALUE,1.092,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: レベル1固有周期
+EXC-178,CH5-TBL-051,DERIVED_VALUE,0.751,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: レベル1固有周期
+EXC-179,CH5-TBL-053,DERIVED_VALUE,62.0,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: AR2伸縮量
+EXC-180,CH5-TBL-054,deflection,50.0,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: AR2伸縮量
+EXC-181,CH5-TBL-055,DERIVED_VALUE,58.5,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: AR2伸縮量
+EXC-182,CH5-TBL-056,DERIVED_VALUE,62.0,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: AR2設計伸縮量
+EXC-183,CH5-VAL-008,DERIVED_VALUE,1.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Cz
+EXC-184,CH5-VAL-009,DERIVED_VALUE,1.20,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: CzⅠ
+EXC-185,CH5-VAL-010,DERIVED_VALUE,1.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: CzⅡ
+EXC-186,CH5-VAL-020,DERIVED_VALUE,5,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PU15積層数
+EXC-187,CH5-VAL-021,DERIVED_VALUE,5,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PR1積層数
+EXC-188,CH5-VAL-026,DERIVED_VALUE,4,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PU15鉛プラグ本数NP
+EXC-189,CH5-VAL-035,deflection,±27.7,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: レベル1上部工移動量UBⅠo(橋軸)
+EXC-190,CH5-VAL-044,DERIVED_VALUE,1.00,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Ⅱ種地盤Cz
+EXC-191,CH5-VAL-045,DERIVED_VALUE,1.20,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Ⅱ種地盤CzⅠ
+EXC-192,CH5-VAL-046,DERIVED_VALUE,1.40,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: Ⅱ種地盤CzⅡ
+EXC-193,CH5-VAL-053,DESIGN_RESULT,7.2,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 緩衝材支圧応力度σb
+EXC-194,CH5-VAL-057,DESIGN_RESULT,30,Derived/intermediate/analysis/design-result value (DESIGN_RESULT); excluded from input candidates,label: 軸方向圧縮応力度σc
+EXC-195,CH5-VAL-060,bending_stress,165,Derived/intermediate/analysis/design-result value (bending_stress); excluded from input candidates,label: 天板曲げ応力度σ
+EXC-196,CH5-VAL-062,DERIVED_VALUE,0.90,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 流出係数C
+EXC-197,CH5-VAL-063,DERIVED_VALUE,0.013,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 粗度係数n
+EXC-198,CH5-VAL-064,DERIVED_VALUE,0.80,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 余裕率e
+EXC-199,CH5-VAL-065,DERIVED_VALUE,0.60,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: 落下率γ
+EXC-200,CH5-VAL-072,deflection,70.9,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15温度変化(左)
+EXC-201,CH5-VAL-073,deflection,40.0,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15温度変化(右)
+EXC-202,CH5-VAL-074,deflection,10.7,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15活荷重たわみ(左)
+EXC-203,CH5-VAL-075,deflection,12.0,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15活荷重たわみ(右)
+EXC-204,CH5-VAL-076,DERIVED_VALUE,10.0,Derived/intermediate/analysis/design-result value (DERIVED_VALUE); excluded from input candidates,label: PU15伸縮余裕量(左右)
+EXC-205,CH5-VAL-077,deflection,153.6,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15常時合計ΔLj
+EXC-206,CH5-VAL-078,deflection,236.5,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15地震時(⑩)ΔLq
+EXC-207,CH5-VAL-079,deflection,211.6,Derived/intermediate/analysis/design-result value (deflection); excluded from input candidates,label: PU15地震時(⑩)直角ΔLq
