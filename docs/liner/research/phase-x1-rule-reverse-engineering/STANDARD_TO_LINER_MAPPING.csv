@@ -1,0 +1,23 @@
+﻿mapping_id,rule_id,rule_title,liner_function,liner_module,liner_data,direction,fact_or_inference,source_page,confidence,notes
+LM-001,RO-001,道路区分,件名・出力オプション/ライン設定,LINER/INPUT,"road_class, ライン構成",STANDARD_TO_LINER,FACT,161,HIGH,種級区分がLINERの入力コンテキストになる
+LM-002,RO-003,設計速度,件名・出力オプション,LINER/INPUT,design_speed,STANDARD_TO_LINER,FACT,161,HIGH,設計速度はライン・高さデータの前提
+LM-003,RO-017,緩和区間（第18条）,要素入力（クロソイド要素 A）,LINER/INPUT,A=350 R=3000 等のクロソイドパラメータ,STANDARD_TO_LINER,FACT,39,HIGH,要素種類 A=クロソイド、パラメータA・半径Rで指定
+LM-004,RO-013,最小曲線半径,要素入力（円要素 R）,LINER/INPUT,R の符号（負=右カーブ）,STANDARD_TO_LINER,FACT,39,HIGH,円要素の半径は符号でカーブ方向
+LM-005,RO-016,曲線長,要素入力（延長距離）,LINER/INPUT,要素長,STANDARD_TO_LINER,FACT,39,HIGH,延長距離とパラメータで要素設定
+LM-006,RO-037,測点,測点設定（STATION DATA）,LINER/INPUT,測点・ステーション,STANDARD_TO_LINER,FACT,54,HIGH,測点設定は要素表出力にも反映
+LM-007,RO-029,縦断曲線,高さデータ（縦断勾配）,LINER/INPUT,縦断勾配データ,STANDARD_TO_LINER,FACT,60,HIGH,縦断勾配の入力
+LM-008,RO-027,縦断勾配,高さデータ（縦断勾配）,LINER/INPUT,縦断勾配（%）,STANDARD_TO_LINER,FACT,60,HIGH,
+LM-009,RO-031,横断勾配,高さデータ（横断勾配）,LINER/INPUT,横断勾配・片勾配,STANDARD_TO_LINER,FACT,64,HIGH,横断勾配の入力
+LM-010,RO-020,最大片勾配,高さデータ（横断勾配）,LINER/INPUT,片勾配,STANDARD_TO_LINER,FACT,64,HIGH,
+LM-011,RO-022,曲線部拡幅,断面形状（拡幅線）,LINER/INPUT,拡幅線 L 設定・拡幅タイプ(1次/4次),STANDARD_TO_LINER,FACT,47,HIGH,拡幅線は断面形状で平行/拡幅を設定
+LM-012,RO-004,設計車両,断面形状/桁設定,LINER/INPUT,車線・幅員,STANDARD_TO_LINER,FACT,47,HIGH,断面形状は車線ごとに設定
+LM-013,RO-037,ピア（橋脚）,ピア設定,LINER/INPUT,ピア記号K・測点・角度,STANDARD_TO_LINER,FACT,75,HIGH,ピアは測点・角度・要素変化点等で設定
+LM-014,RO-037,スパン・桁,スパンデータ・桁設定,LINER/INPUT,縦桁G・横桁S,STANDARD_TO_LINER,FACT,97,HIGH,桁設定で縦桁G/横桁S本数を指定
+LM-015,RO-037,格点,格点間距離チェック,LINER/OUTPUT,格点間距離・張り出し長,STANDARD_TO_LINER,FACT,122,HIGH,LDISTで格点間距離・張り出し長を出力
+LM-016,RO-037,座標変換,座標変換（TRAN）,LINER/OUTPUT,TRAN,STANDARD_TO_LINER,FACT,115,HIGH,TRANに対応
+LM-017,RO-037,図面作成,GDRAW（平面図・座標テーブル）,LINER/OUTPUT,平面図・座標テーブル,STANDARD_TO_LINER,FACT,143,HIGH,GDRAWで図面・座標テーブル作成
+LM-018,RO-037,橋面面積・3D,MDVIEWER,LINER/OUTPUT,橋面面積・3次元DXF,STANDARD_TO_LINER,FACT,2,HIGH,MDVIEWERで橋面面積計算・3D DXF出力
+LM-019,RO-037,ハンチ,HAUNCH（ハンチ計算）,LINER/OUTPUT,ハンチ計算結果,STANDARD_TO_LINER,FACT,125,HIGH,ハンチ計算タイプ1〜17
+LM-020,RO-037,舗装厚,HOSO（舗装厚計算）,LINER/OUTPUT,舗装厚計算結果,STANDARD_TO_LINER,FACT,137,HIGH,縦断/横断の舗装厚
+LM-021,RO-037,張り出し長,LDIST（張り出し長）,LINER/OUTPUT,張り出し長,STANDARD_TO_LINER,FACT,124,HIGH,張り出し長を出力
+LM-022,RO-005,車線幅員,断面形状（幅員指定）,LINER/INPUT,車線幅員,STANDARD_TO_LINER,FACT,47,HIGH,断面形状で幅員を指定
