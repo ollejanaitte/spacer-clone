@@ -11,13 +11,38 @@ except ImportError:
     print("Python jsonschema / referencing がありません: pip install jsonschema")
     sys.exit(2)
 
-LAB = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCHEMA_DIR = os.path.join(LAB, "schemas")
+HERE = os.path.dirname(os.path.abspath(__file__))
+PLANNING = os.path.dirname(HERE)  # substructure-planning
+REPO_ROOT = os.path.dirname(PLANNING)  # spacer-clone ルート（統合後）または LAB の親
+
+def _first_dir(*paths):
+    for p in paths:
+        if os.path.isdir(p):
+            return p
+    return None
+
+# 配置は LAB（schemas/ が隣接）と統合先（repo-root の schemas/substructure/）で異なる
+SCHEMA_DIR = _first_dir(
+    os.path.join(REPO_ROOT, "schemas", "substructure"),
+    os.path.join(PLANNING, "schemas"),
+) or os.path.join(PLANNING, "schemas")
+
+SAMPLE_CANDIDATES = [
+    os.path.join(REPO_ROOT, "substructure-planning", "examples", "sample-project.json"),
+    os.path.join(SCHEMA_DIR, "sample-project.json"),
+]
 
 def load(name):
     p = os.path.join(SCHEMA_DIR, name)
     with open(p, encoding="utf-8") as f:
         return json.load(f)
+
+def load_sample():
+    for p in SAMPLE_CANDIDATES:
+        if os.path.isfile(p):
+            with open(p, encoding="utf-8") as f:
+                return json.load(f)
+    raise FileNotFoundError("sample-project.json が見つかりません: " + "; ".join(SAMPLE_CANDIDATES))
 
 def build_registry():
     files = [
@@ -53,7 +78,7 @@ def main():
     results = []
     proj_schema = load("substructure-project.schema.json")
     ifc_schema = load("support-interface.schema.json")
-    sample = load("sample-project.json")
+    sample = load_sample()
 
     print("=== verifier: schema_validation ===")
     # valid
