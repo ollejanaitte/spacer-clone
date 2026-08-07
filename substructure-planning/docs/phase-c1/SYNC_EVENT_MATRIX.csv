@@ -1,0 +1,8 @@
+event,substructureModel,LINERplanView,substructure2D,substructure3D,apollo3D,syncOrder
+station変更,更新,影響なし,再生成,再配置,確認,1→2→3→4
+offset変更,更新,影響なし,再生成,再配置,影響なし,1→2→3
+skew変更,更新,影響なし,再生成,再生成,影響なし,1→2→3
+supportId変更,更新,ラベル更新,ラベル更新,userData更新,要同期,1→2→3→4→5
+寸法変更,更新,影響なし,再生成,再生成,影響なし,1→2→3
+LINER線形変更,placement再計算,自動更新,全再生成,全再生成,全確認,1→2→3→4→5
+平面図Overlay表示切替,影響なし,表示切替,影響なし,影響なし,影響なし,1

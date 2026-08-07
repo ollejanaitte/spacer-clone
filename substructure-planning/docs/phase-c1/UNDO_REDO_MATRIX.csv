@@ -1,0 +1,10 @@
+event,undoScope,redoScope,historyUnit,note
+数値変更（寸法）,前の値に戻す,再適用,1フィールド確定ごと,debounce後確定時に記録
+support追加,追加を取り消し,再度追加,1操作,削除時に子要素も削除
+support削除,削除を取り消し,再度削除,1操作,削除時に全データをsnapshot保存
+support複製,複製を取り消し,再度複製,1操作,
+station変更,前のstation値に戻す,再適用,1回の変更,
+offset変更,前のoffset値に戻す,再適用,1回の変更,
+skew変更,前のskew値に戻す,再適用,1回の変更,
+サンプル生成,生成前の状態に戻す,再度生成,1操作,全Modelをsnapshot保存
+debounce連続入力,初回値に戻す,最終値に再適用,1まとまり,300ms内の連続変更は統合

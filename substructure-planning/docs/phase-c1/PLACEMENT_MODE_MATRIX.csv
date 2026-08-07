@@ -1,0 +1,4 @@
+mode,priority,description,alignmentRequired,stationSource,offsetDefault,skewSource,ZSource,useCase
+PRIMARY,1,LINER線形+測点+Offset,Yes,ユーザー指定 or PierDraft,0.0,PierDraft or ユーザー,LINER縦断,標準配置
+SECONDARY,2,平面図から選択,Yes,クリック位置から逆算,0.0,自動 or 手動,LINER縦断,直感的配置
+EXCEPTION,3,XYZ直接指定,No,N/A,N/A,手入力,手動,線形未定義領域

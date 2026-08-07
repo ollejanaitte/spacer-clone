@@ -1,0 +1,13 @@
+risk,severity,likelihood,mitigation,detection
+degree/radian mismatch,HIGH,MED,SupportPlacementEngineでradian統一+UI表示のみdegree,Unit testで全角度計算検証
+skew定義不一致,HIGH,LOW,P02でLINER定義確定ずみ,既存regression
+Z source混乱,MED,MED,LINER縦断優先+手動override+fallback=0,Golden CaseでZ比較
+supportId衝突,HIGH,LOW,validation.tsで重複チェック,validation test
+stage間依存の連鎖,MED,MED,Stage単位でrollback可能設計,CIの全Stage通過確認
+LINER平面図regression,HIGH,LOW,独立レイヤ追加で既存影響なし,Drawing regression
+ApolloScene競合,MED,LOW,新規SceneGroup追加のみ,Apollo regression
+R3F性能(杭多数時),MED,LOW,>100本でinstancing検討、C1では対象外,perf test
+選択desync,MED,MED,supportId唯一キー+React context管理,selection test
+save/load後方互換,HIGH,LOW,substructure field optional+default補完,古いproject.json読み込みtest
+main並行開発競合,MED,LOW,変更7ファイル+専用worktree分離,git status確認
+main入口追加忘れ,HIGH,LOW,Completion Gate G01で検出,G01自動テスト

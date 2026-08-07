@@ -1,0 +1,14 @@
+event,selectionUpdate,stateUpdate,2Dupdate,3Dupdate,LINERupdate,propertyUpdate
+LINERクリックでP1選択,set P1,なし,ハイライト,ハイライト,発生元,P1表示
+2DクリックでP1選択,set P1,なし,発生元,ハイライト,ハイライト,P1表示
+3DクリックでP1選択,set P1,なし,ハイライト,発生元,ハイライト,P1表示
+TreeクリックでP1選択,set P1,なし,ハイライト,ハイライト,ハイライト,P1表示
+Property編集,維持,Model更新,再生成,再生成,Overlay更新,発生元
+station変更,維持,placement更新,再生成,再配置,Overlay更新,値更新
+offset変更,維持,placement更新,再生成,再配置,Overlay更新,値更新
+skew変更,維持,placement更新,再生成,再生成,Overlay更新,値更新
+support削除,解除,Model削除,再生成,再生成,Overlay更新,空
+support追加,新規選択,Model追加,再生成,再生成,Overlay更新,新規表示
+サンプル生成,全置換,Model置換,全再生成,全再生成,全再生成,全表示
+寸法モード切替,影響なし,表示設定更新,寸法更新,寸法更新,影響なし,影響なし
+LINER線形変更,維持,placement再計算,全再生成,全再生成,自動更新,position更新
