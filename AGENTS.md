@@ -24,3 +24,53 @@
 - typecheck / test が失敗した
 - 依存関係が想定と異なった
 - git status に想定外の変化を検知した
+
+## Standard Git Workflow（作業標準ルール）
+
+すべての作業（調査・設計書作成・ドキュメント更新・実装・テスト・検証）は以下の運用に従う。
+
+### 作業開始前
+
+1. `git fetch origin` で最新 origin/main を取得する
+2. `git rev-parse origin/main` で BASE_MAIN_SHA を確認する
+3. `git worktree add --detach <WORKTREE_PATH> origin/main` で専用worktreeを作成する
+4. worktree内で `git checkout -b <FEATURE_BRANCH>` でfeature branchを作成する
+5. 必ず以下を報告する：
+   - BASE_MAIN_SHA
+   - WORKTREE_PATH
+   - FEATURE_BRANCH
+   - WORKING_BRANCH
+   - TARGET_SCOPE
+
+### 作業中
+
+- すべての編集は専用worktree内でのみ行う
+- mainブランチでは作業しない
+- 他worktreeを編集しない
+- origin/main へ直接 push しない
+- main へ直接 commit しない
+
+### 作業完了時
+
+1. 対象ファイルのみを `git add <PATH>` で stage（ワイルドカード禁止）
+2. `git commit -m "<メッセージ>"` で commit
+3. `git push origin <FEATURE_BRANCH>` でリモートへ push
+4. `gh pr create` で Pull Request を作成する
+5. CI・レビュー・検証を経て承認を得る
+6. 承認後にのみ `gh pr merge --merge` で main へ merge
+7. 必ず以下を報告する：
+   - COMMIT_SHA
+   - FEATURE_BRANCH
+   - PR_NUMBER
+   - CI_STATUS
+   - MERGE_READY
+   - MAIN_UPDATED
+
+### 禁止事項（再掲）
+
+- mainブランチでの作業
+- origin/mainへの直接push
+- mainへの直接commit
+- force push（`git push -f`）
+- 未承認merge
+- 他worktreeへの編集
