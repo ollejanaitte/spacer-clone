@@ -9,7 +9,7 @@
 | X0-P02 | research/liner-x0-p02-metadata | #472 | 6bae4c6351987759dac15e5315cda2578adc7643 | OCR_TEXT_LAYER_STATUS.csv | MERGED | PDF94件のテキスト層判定 |
 | X0-P03 | research/liner-x0-p03-classification | #473 | b1ab09dcbeb9ac02d87e1925ada7761e2b12b804 | DOCUMENT_RELATION_MATRIX.csv | MERGED | 設計領域別関連度 |
 | X0-P04 | research/liner-x0-p04-priority | #474 | f3a79f4c214af9b4b15f91a5780cecbb138ccf29 | DUPLICATE_REPORT / VERSION_FAMILY_REPORT / RESEARCH_PRIORITY / OPEN_QUESTIONS | MERGED | 重複・版・優先順位 |
-| X0-P05 | research/liner-x0-p05-integration | #475 | （X0-P05 merge後に記入） | X1_HANDOFF.md / X0_PR_LEDGER.md / PHASE_X0_FINAL_REPORT.md | MERGED | 統合・引継ぎ・最終報告 |
+| X0-P05 | research/liner-x0-p05-integration | #475 | 994e791d3c328dbbc16ec2d441153b34b5adc876 | X1_HANDOFF.md / X0_PR_LEDGER.md / PHASE_X0_FINAL_REPORT.md | MERGED | 統合・引継ぎ・最終報告 |
 
 ## 確認事項
 
