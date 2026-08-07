@@ -10,7 +10,7 @@
 | X1-P03 | research/liner-x1-p03-project-crosscheck | #479 | 631d77d406a37111d249e28f24457e417f565614 | DOC-X0-0143/0144 | 5 | 12 | 0 | MERGED |
 | X1-P04 | research/liner-x1-p04-road-bridge | #480 | 27f04dfcb39b1839f31029b1e4af0cdc12a935f8 | DOC-X0-0001/0091 | 5 | 14 | 0 | MERGED |
 | X1-P05 | research/liner-x1-p05-rule-engine | #481 | 3b2f43a2321962e20f0372a2cb363d2c4a21c13d | 統合 | 0（候補21） | 0 | 11 | MERGED |
-| X1-P06 | research/liner-x1-p06-integration | #482 | （X1-P06 merge後に入力） | 統合 | 0 | 0 | - | MERGED |
+| X1-P06 | research/liner-x1-p06-integration | #482 | 9cc8b86316ff453e2b51279dcda9f201d46358ad | 統合 | 0 | 0 | - | MERGED |
 
 累計: Rules 58 / FACT 55 / INFERENCE 2 / UNRESOLVED 1 / STANDARD_TO_LINER 22 / PROJECT 12 / ROAD_TO_BRIDGE 14 / Candidates 21
 
