@@ -1,0 +1,5 @@
+human_confirmation_id,candidate_ids,field_path,description,golden_promotion,notes
+HCR-001,"GEO-087,GEO-088",elevation.deck_elevation_DL;elevation.ground_level_V,Drawing 141 OCR cells V001-V006 need human visual confirmation,APPROVED_WITH_HUMAN_CONFIRMATION_TRACK,Deck level and ground level from sheet 141 OCR; promoted as track
+HCR-002,multiple,stiffener/splice/weld chains,Wrapping-concrete chain ends at rebar count; stiffener/splice/weld numeric detail absent,NOT_IN_GOLDEN_SCOPE,Phase 3 input Golden does not include wrapping details
+HCR-003,multiple,section_property,Calculation section-property to drawing dimension field correspondence,NOT_IN_GOLDEN_SCOPE,Section property field correspondence is Phase 4 concern
+HCR-004,"GEO-081",support_line.ar2,Calculation label A2 vs drawing AR2 notation variation,APPROVED_INPUT_GOLDEN,AR2 adopted as canonical; notation variation accepted

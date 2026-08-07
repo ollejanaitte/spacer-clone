@@ -1,0 +1,26 @@
+candidate_id,golden_id,field_path,promotion_status,promotion_reason,source_priority,confidence
+INP-001,GIN-0025,road_spec.road_spec,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-002,GIN-0026,road_spec.design_speed,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-003,GIN-0027,live_load.standard,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-004,GIN-0028,bridge_type.type,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-005,GIN-0029,bridge.bridge_length,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-006,GIN-0030,girder.girder_length_AG1,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-007,GIN-0031,bridge.span_length.1,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-008,GIN-0032,bridge.span_length.2,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-009,GIN-0033,bridge.span_length.3,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-010,GIN-0034,bridge.total_width,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-011,GIN-0035,bridge.effective_width,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-012,GIN-0036,material.steel_grade.SM520,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-013,GIN-0037,material.steel_grade.SM490Y,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-014,GIN-0038,material.steel_grade.SM400,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-015,GIN-0039,material.concrete_strength_composite_deck,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-016,GIN-0040,material.concrete_strength_wall_rail,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-017,GIN-0041,material.concrete_strength_wrapping,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-018,GIN-0042,material.elastic_modulus_steel,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-019,GIN-0043,material.shear_modulus_steel,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-020,GIN-0044,material.yield_strength_SM490Y,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-021,GIN-0045,code.applicable_code,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-022,GIN-0046,code.applicable_manual,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-023,GIN-0047,code.live_load_reference,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,CALCULATION,HIGH
+INP-024,GIN-0048,deck.deck_thickness,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH
+INP-025,GIN-0049,deck.pavement_thickness,APPROVED_INPUT_GOLDEN,SOURCE_INPUT from input layer; HIGH confidence,BOTH,HIGH

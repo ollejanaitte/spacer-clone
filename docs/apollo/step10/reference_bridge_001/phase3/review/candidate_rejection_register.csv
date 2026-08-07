@@ -1,0 +1,4 @@
+candidate_id,field_path,rejection_reason,source_priority,rejected_semantic_class,notes
+LD-025,load_value.impact_coefficient.1,Derived value i=20/(50+L),CALCULATION,DERIVED_VALUE,Impact coefficient excluded; formula is standard but value is derived
+LD-026,load_value.impact_coefficient.2,Derived value i=20/(50+L),CALCULATION,DERIVED_VALUE,Impact coefficient excluded
+LD-027,load_value.impact_coefficient.3,Derived value i=20/(50+L),CALCULATION,DERIVED_VALUE,Impact coefficient excluded

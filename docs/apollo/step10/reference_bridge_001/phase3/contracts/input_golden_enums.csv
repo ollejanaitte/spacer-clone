@@ -1,0 +1,45 @@
+enum_type,enum_value,description
+semantic_class,road_spec,Road specification (A規格 etc.)
+semantic_class,design_speed,Design speed
+semantic_class,live_load,Live load standard (B活荷重)
+semantic_class,bridge_type,Bridge type description
+semantic_class,bridge_length,Bridge length
+semantic_class,girder_length,Girder length
+semantic_class,span_length,Span length
+semantic_class,total_width,Total bridge width
+semantic_class,effective_width,Effective roadway width
+semantic_class,steel_grade,Steel grade (SM490Y/SM520/SM400)
+semantic_class,concrete_strength,Concrete design strength
+semantic_class,elastic_modulus,Elastic modulus
+semantic_class,shear_modulus,Shear modulus
+semantic_class,yield_strength,Yield strength
+semantic_class,deck_thickness,Deck slab thickness
+semantic_class,DIMENSION,General dimension
+semantic_class,member_id,Member identifier
+semantic_class,SUPPORT_CONDITION,Support line condition
+semantic_class,LOAD_VALUE,Load value
+semantic_class,COORDINATE,Coordinate value
+semantic_class,longitudinal_gradient,Longitudinal gradient
+semantic_class,cross_gradient,Cross gradient
+semantic_class,girder_spacing,Main girder spacing
+semantic_class,girder_height,Girder height
+semantic_class,applicable_code,Applicable code
+semantic_class,applicable_manual,Applicable manual
+semantic_class,REFERENCE_TEXT,Reference text
+promotion_status,APPROVED_INPUT_GOLDEN,Formal Golden input record
+promotion_status,APPROVED_WITH_HUMAN_CONFIRMATION_TRACK,Golden with open human confirmation
+promotion_status,HOLD_CONFLICT,Not promoted; conflict unresolved
+promotion_status,HOLD_INSUFFICIENT_SOURCE,Not promoted; insufficient source
+promotion_status,REJECTED_RESULT_VALUE,Not promoted; is a result value
+promotion_status,REJECTED_DERIVED_VALUE,Not promoted; is a derived value
+promotion_status,REJECTED_DRAWING_ONLY,Not promoted; drawing-only value
+source_priority,BOTH,Value in both calculation and drawing
+source_priority,CALCULATION,Value only in calculation
+source_priority,DRAWING,Value only in drawing
+source_priority,UNKNOWN,Source not determined
+standard_profile,H29_REFERENCE,H29 reference profile
+standard_profile,R7_COMPLIANCE,R7 compliance profile
+confidence,HIGH,High confidence in source extraction
+confidence,MEDIUM,Medium confidence
+confidence,LOW,Low confidence
+confidence,UNKNOWN,Unknown confidence
