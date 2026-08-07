@@ -1,0 +1,8 @@
+﻿unresolved_id,rule_id,evidence_type,issue,missing_source,needed_action,priority,notes
+UE-001,PM-001,道路区分,PROJECT_MISSING,（線形計算書に種級の明記なし）,設計概要書等で確定,P1,
+UE-002,PM-008,設計速度,PROJECT_MISSING,（線形計算書に設計速度の明記なし）,別資料（設計概要・標識図）で確定,P1,
+UE-003,PM-010,実案件の縦断・横断勾配,PROJECT_MISSING,線形計算書には縦断・横断の記載なし,縦断図・横断図を取得して確認,P1,
+UE-004,PM-012,路肩幅員・車線幅員（実案件）,OCR_LIMITED,設計図の標準横断が画像でOCR不能,標準横断図を画像確認,P1,
+UE-005,BR-001,橋梁設計条件の設計速度,PARTIAL,橋梁計算書にV=40の記載あり。道路側の設計速度と整合確認が必要,道路側の設計速度確定後に照合,P1,
+UE-006,RO-025,視距の値（V=30）,OCR_LIMITED,V=30の視距値が30/40mでOCR不明瞭,限定OCRで再確認,P0,
+UE-007,RO-022/023,拡幅量の詳細式,OCR_LIMITED,操向作用回転半径の式がOCR不明瞭,拡幅量算定式を確認,P0,
