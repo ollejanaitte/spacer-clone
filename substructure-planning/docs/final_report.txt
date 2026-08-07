@@ -383,3 +383,27 @@ WROTE_OUTSIDE_LAB: NO（一時ファイルは /tmp/opencode のみ）
 ================================================================================
 終了
 ================================================================================
+================================================================================
+Phase C1 Milestone 1 追記（2026-08-08）
+================================================================================
+本ファイルは Phase A（調査・技術検証）の記録。以下はその後の Phase C1
+（spacer-clone 統合実装）の Milestone 1 完了状況を追記する。
+
+PHASE_C1_MILESTONE1:
+- I01: COMPLETE / PR #522 / merge b07fda1
+- I02: COMPLETE / PR #525 / merge 8298b75
+- I03A: COMPLETE / PR #530 / merge e6279d0 (merge f1a55b9)
+- I03B: COMPLETE / PR #533 / merge 3d145b1 (merge 62ed673)
+- I03C: COMPLETE / PR #537 / merge 612ea31 (merge 44a11fd)
+- I04: COMPLETE / PR #540 / merge 2d83cf2 (merge 9fe4af5)
+- M1 Gate: PASS（検証結果は verification/m1_gate_results.md）
+- PHASE_C1_MILESTONE1_COMPLETE: YES
+- NEXT: Phase C1 Milestone 2
+
+M1_CI 補足: 対象 repo は GitHub Actions workflow を持たないため CI ゲートは
+未設定。全チェック（tsc/build/vitest 338 ファイル 2658 テスト）はローカルで
+実施・記録済み。
+
+PR SHA の注記: I03A〜I04 の feature commit SHA と merge commit SHA を併記。
+GITHUB_PR_IS_AUTHORITY。
+================================================================================
