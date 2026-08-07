@@ -36,8 +36,8 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 | P2II-0 | p2ii-0-truth-gate | Truth reconciliation, post-seal correction, Phase 2-I coverage/status/manifest repair (#441, MERGED) |
 | P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription (#442, MERGED) |
 | P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair (#445, MERGED) |
-| P2II-C~F | p2ii-cf-candidate-foundation | Contracts + Source/Input/Geometry/StructuralModel/Load/Analysis candidate layers (THIS PR) |
-| P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability |
+| P2II-C~F | p2ii-cf-candidate-foundation | Contracts + Source/Input/Geometry/StructuralModel/Load/Analysis candidate layers (#454, MERGED) |
+| P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability (THIS PR) |
 | P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff |
 | P2II-K | p2ii-k-seal | Seal |
 
@@ -135,3 +135,31 @@ panel-point coordinates partial, flange-width conflict `CONF-P2II-001`,
 local axes / rigid offsets / per-DOF fixity not stated, cross-beam connectivity
 from figure, load-combination table not numeric, live-load influence lines
 absent, drawing-141 PARTIAL (HCR-001).
+
+## P2II-G~I — Design / Adopted / Report / Drawing + Traceability (THIS PR)
+
+Completes the candidate layers and traceability for Reference Bridge 001.
+
+- **Design** (`candidates/design/`): section properties (49), stresses (104),
+  limits (16), check ratios (35), judgments (23), formula traces (18).
+  Chain input→formula→substitution→intermediate→limit→check→judgment→adopted
+  where source data allows. `EXCLUDED_DESIGN_RESULT` for verification outputs.
+- **Adopted Design** (`candidates/adopted_design/`): adopted sections (7),
+  materials (13), bearings (16), dimensions (16). Conflicts not overwritten —
+  flange-width calc 680 vs drawing 700 mm → `CONF-P2II-001`.
+- **Report** (`candidates/report/`): chapters (6), sections (232), tables (486),
+  formulas (148), figures (55), notes (162), layout (579).
+- **Drawing** (`candidates/drawing/`): all 141 sheets + views (178), dimensions
+  (183), annotations (643), members (153), tables (79), title blocks (577),
+  references (105). Drawing 141 OCR integrated as PARTIAL/HCR-001.
+- **Traceability** (`traceability/`): entity crosswalk (12), source→candidate
+  (4116), value chains (13), formula→result (15), calc↔drawing parity (17),
+  adopted-value (14), report↔drawing (141).
+- **Generator**: `tools/generate_p2iigi_layers.py` (deterministic, idempotent).
+
+Uniqueness: 4339 candidate_ids across PR-1+PR-2, 0 duplicates; 4116 trace
+records all resolve (0 missing). New enum labels: `fatigue`, `welding`.
+
+Registered gaps: wrapping-concrete ends at rebar count (HCR-002), brackets
+limits-only, camber drawing-only, AG2 sections T30 summary, stiffeners/splice/
+welding policy-only, one-source-only items (camber, deck/ground level).

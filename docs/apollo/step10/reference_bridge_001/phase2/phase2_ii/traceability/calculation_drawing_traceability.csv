@@ -1,0 +1,18 @@
+trace_id,item,calc_value,calc_unit,calc_source_ids,drawing_value,drawing_unit,drawing_source_ids,parity_status,confidence,conflict_id,notes
+TR-4157,bridge_length,134.001,m,"CH1-VAL-005,GEO-001",134001,mm,DWG-DIM-S001-001,BOTH,HIGH,,Bridge length calc 134.001 m == drawing 134001 mm.
+TR-4158,girder_length_AG1,133.151,m,CH1-VAL-006,133151,mm,DWG-DIM-S001-002,BOTH,HIGH,,Girder length AG1 133.151 m == 133151 mm.
+TR-4159,span_1,40.201,m,"CH1-VAL-007,GEO-002",40201,mm,DWG-DIM-S001-003,BOTH,HIGH,,Span 1 40.201 m == 40201 mm.
+TR-4160,span_2,51.000,m,"CH1-VAL-008,GEO-003",51000,mm,DWG-DIM-S001-003,BOTH,HIGH,,Span 2 51.000 m == 51000 mm.
+TR-4161,span_3,40.200,m,"CH1-VAL-009,GEO-004",40200,mm,DWG-DIM-S001-003,BOTH,HIGH,,Span 3 40.200 m == 40200 mm.
+TR-4162,total_width,8.010,m,"CH1-VAL-010,GEO-005",8031.7/8010.3/8010,mm,DWG-DIM-S009-006,BOTH,HIGH,,Total width calc 8.010 m; drawing 8031.7/8010.3/8010 mm (varies at supports).
+TR-4163,deck_thickness,230,mm,"CH1-VAL-022,CH2-VAL-022",230,mm,DWG-DIM-S009-007,BOTH,HIGH,,Deck thickness 230 mm both.
+TR-4164,pavement_thickness,80,mm,CH1-VAL-021,80,mm,DWG-DIM-S009-008,BOTH,HIGH,,Pavement thickness 80 mm both.
+TR-4165,top_flange_width,620,mm,SRC-calculation_chapter_03_section_3_2_values-006,620,mm,DWG-DIM-S013-010,BOTH,HIGH,,Top flange width 620 mm both.
+TR-4166,bottom_flange_width,680,mm,"SRC-calculation_chapter_03_section_3_2_values-007,ADV-003",700,mm,DWG-DIM-S013-014,CONFLICT,HIGH,CONF-P2II-001,CONFLICT: calc bottom flange width 680 mm vs drawing 700 mm.
+TR-4167,web_thickness,14,mm,SRC-calculation_chapter_03_section_3_2_values-008,14,mm,DWG-DIM-S013-013,BOTH,HIGH,,Web thickness 14 mm both.
+TR-4168,girder_spacing,4500,mm,CH1-TBL-064,4500,mm,DWG-DIM-S001-004,BOTH,HIGH,,Girder spacing 4500 mm both (calc table row2).
+TR-4169,girder_height,2700,mm,SRC-calculation_chapter_03_section_3_2_values-009,2700,mm,DWG-DIM-S001-005,BOTH,HIGH,,Girder height 2700 mm both.
+TR-4170,girder_length_sheet141,133.151/133.303,m,"CH1-VAL-006,SRC-calculation_chapter_03_section_3_2_values-019",133.201,m,S141-D05,BOTH,MEDIUM,,"Sheet 141 girder length 133.201 m (OCR) vs calc 133.151/133.303 m; PARTIAL (V001 last digit uncertain), HCR-001."
+TR-4171,deck_level_sheet141,,,,10.00,m,S141-D11,DRAWING_ONLY,MEDIUM,,Deck level D.L. 10.00 m from sheet 141 OCR only; HCR-001.
+TR-4172,ground_level_sheet141,,,,15.250,m,S141-D08,DRAWING_ONLY,MEDIUM,,Construction base level V 15.250 m from sheet 141 OCR only; HCR-001.
+TR-4173,deck_stud_vs_girder_stud,φ16×160,mm,CH2-VAL-030,φ22x200/150,mm,DWG-DIM-S039-032,ONE_SOURCE_ONLY,HIGH,,Different stud types: calc composite-deck stud phi16x160 vs drawing girder stud phi22x200/150; not a conflict.
