@@ -1,0 +1,2 @@
+human_confirmation_id,candidate_ids,field_path,description,golden_promotion,notes
+HCR-001,"GEO-087,GEO-088",elevation.deck_elevation_DL;elevation.ground_level_V,Drawing 141 OCR cells need human visual confirmation,APPROVED_WITH_HUMAN_CONFIRMATION_TRACK,Carried from Phase 3; deck level and ground level promoted as track
