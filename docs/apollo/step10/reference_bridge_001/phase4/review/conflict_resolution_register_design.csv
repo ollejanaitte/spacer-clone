@@ -1,0 +1,2 @@
+conflict_id,candidate_ids,field_path,conflict_description,calc_value,drawing_value,resolution,notes
+CONF-P2II-001,"GEO-074,GEO-075",cross_section.bottom_flange_width,calc 680 vs drawing 700 mm,680 mm,700 mm,UNRESOLVED (carried),not in design golden scope either
