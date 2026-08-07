@@ -1,64 +1,115 @@
 # -*- coding: utf-8 -*-
 """Geometry Kernel Adapter for Rule Engine.
 
-This adapter provides Python wrappers around the canonical TypeScript
-Geometry Kernel (frontend/src/liner/core/geometry/).
+This package provides Python-side canonical contracts and evaluation utilities
+mirroring the canonical TypeScript Geometry Kernel
+(frontend/src/liner/core/geometry/). It is split by responsibility so each
+Geometry Kernel phase advances as an independent, reviewable unit:
 
-Since the canonical implementation lives in TypeScript, this adapter
-provides Python-side contracts and utilities that mirror the kernel's
-conventions for use by the Rule Engine.
+- contracts:     core 2D/3D types and vector math (mirror of vector.ts/types.ts)
+- line_arc:      straight and circular arc evaluation (line.ts / arc.ts)
+- clothoid:      clothoid evaluation via Simpson integration (clothoid.ts)
+- station_offset: station/offset projection and alignment evaluation
+                  (stationAtPoint.ts / horizontal.ts / stationRules.ts)
+
+Keeping the implementation in separate modules mirrors the canonical frontend
+structure and keeps each phase's diff minimal and self-contained.
 """
-from typing import Any, Dict, List, Optional, Tuple
-import math
+from .contracts import (
+    LocalFrame,
+    Point2D,
+    Vector2D,
+    Vec2,
+    Vec2D,
+    Vec3,
+    add2,
+    angle_to_normal,
+    angle_to_tangent,
+    azimuth_from_direction,
+    cross3,
+    distance2,
+    dot2,
+    local_frame_from_azimuth,
+    normalize2,
+    normalize3,
+    normalize_angle,
+    offset_point,
+    radius_from_curvature,
+    scale2,
+    signed_curvature,
+    sub2,
+    vec2,
+    vec3,
+)
+from .line_arc import (
+    CircularArcElement,
+    ElementEvaluation,
+    StraightElement,
+    evaluate_circular_arc_element,
+    evaluate_straight_element,
+    signed_arc_curvature,
+)
+from .clothoid import (
+    ClothoidElement,
+    SIMPSON_INTERVALS,
+    clothoid_curvature_at,
+    evaluate_clothoid_element,
+    is_phase0_clothoid_approximation,
+)
+from .station_offset import (
+    LinearAlignment,
+    StationDefinition,
+    StationProjection,
+    displayed_station_at_physical_distance,
+    element_length,
+    evaluate_alignment_at_distance,
+    evaluate_element_at_distance,
+    station_at_point,
+    total_alignment_length,
+)
 
-
-class Point2D:
-    """2D point. Matches Vec2 from frontend types."""
-    def __init__(self, x: float = 0.0, y: float = 0.0):
-        self.x = x
-        self.y = y
-
-    def __repr__(self):
-        return f"Point2D({self.x}, {self.y})"
-
-    def distance_to(self, other: "Point2D") -> float:
-        return math.hypot(self.x - other.x, self.y - other.y)
-
-
-class Vector2D:
-    """2D vector."""
-    def __init__(self, x: float = 0.0, y: float = 0.0):
-        self.x = x
-        self.y = y
-
-    def dot(self, other: "Vector2D") -> float:
-        return self.x * other.x + self.y * other.y
-
-    def cross(self, other: "Vector2D") -> float:
-        return self.x * other.y - self.y * other.x
-
-    def length(self) -> float:
-        return math.hypot(self.x, self.y)
-
-    def normalized(self) -> "Vector2D":
-        l = self.length()
-        if l < 1e-12:
-            return Vector2D(0, 0)
-        return Vector2D(self.x / l, self.y / l)
-
-
-def normalize_angle(angle: float) -> float:
-    """Normalize angle to [0, 2π)."""
-    return angle % (2 * math.pi)
-
-
-def azimuth_from_direction(dx: float, dy: float) -> float:
-    """Compute azimuth from +X axis."""
-    return normalize_angle(math.atan2(dy, dx))
-
-
-def signed_curvature(turn: str, radius: float) -> float:
-    """Signed curvature: left = positive, right = negative."""
-    if radius <= 0 or not math.isfinite(radius):
-        return 0.0
-    return (1.0 / radius) if turn == "left" else (-1.0 / radius)
+__all__ = [
+    "LocalFrame",
+    "Point2D",
+    "Vector2D",
+    "Vec2",
+    "Vec2D",
+    "Vec3",
+    "add2",
+    "angle_to_normal",
+    "angle_to_tangent",
+    "azimuth_from_direction",
+    "cross3",
+    "distance2",
+    "dot2",
+    "local_frame_from_azimuth",
+    "normalize2",
+    "normalize3",
+    "normalize_angle",
+    "offset_point",
+    "radius_from_curvature",
+    "scale2",
+    "signed_curvature",
+    "sub2",
+    "vec2",
+    "vec3",
+    "CircularArcElement",
+    "ElementEvaluation",
+    "StraightElement",
+    "evaluate_circular_arc_element",
+    "evaluate_straight_element",
+    "signed_arc_curvature",
+    "ClothoidElement",
+    "SIMPSON_INTERVALS",
+    "clothoid_curvature_at",
+    "evaluate_clothoid_element",
+    "is_phase0_clothoid_approximation",
+    "LinearAlignment",
+    "StationDefinition",
+    "displayed_station_at_physical_distance",
+    "element_length",
+    "evaluate_alignment_at_distance",
+    "evaluate_element_at_distance",
+    "station_at_point",
+    "total_alignment_length",
+]
