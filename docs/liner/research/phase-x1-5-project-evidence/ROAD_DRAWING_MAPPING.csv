@@ -1,0 +1,4 @@
+﻿mapping_id,rule_id,rule_title,drawing_page,drawing_section,drawing_value,standard_value,match,evidence_type,notes
+RD-001,PR-004,実案件採用半径（本線）,1-168,平面線形図,"R=3500, R=1900, R=∞ 等",R値の確認,CONSISTENT,FACT,設計図からR値を確認
+RD-002,PR-001,測点・主要点,1-168,平面線形図,BP/KA/KE/BC/EC/EPの測点,測点体系,INFO,FACT,設計図から測点を確認
+RD-003,PM-012,路肩幅員・車線幅員,標準横断図,（画像OCR不能）,UNKNOWN,路肩幅員（第13条）,UNRESOLVED,UNRESOLVED,標準横断図は画像のためOCR不能。画像確認が必要
