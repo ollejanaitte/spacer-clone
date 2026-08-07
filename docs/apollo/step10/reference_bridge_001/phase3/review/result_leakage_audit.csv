@@ -1,0 +1,14 @@
+check_id,description,result,notes
+RL-001,ANALYSIS_RESULT in Golden records,PASS,0 analysis result records found in Golden
+RL-002,DESIGN_RESULT in Golden records,PASS,0 design result records found in Golden
+RL-003,ADOPTED_VALUE in Golden records,PASS,0 adopted value records found in Golden
+RL-004,JUDGMENT_RESULT in Golden records,PASS,0 judgment result records found in Golden
+RL-005,REACTION in Golden records,PASS,0 reaction records found in Golden
+RL-006,DISPLACEMENT in Golden records,PASS,0 displacement records found in Golden
+RL-007,ROTATION in Golden records,PASS,0 rotation records found in Golden
+RL-008,MEMBER_FORCE in Golden records,PASS,0 member force records found in Golden
+RL-009,STRESS in Golden records,PASS,0 stress records found in Golden
+RL-010,CHECK_RATIO in Golden records,PASS,0 check ratio records found in Golden
+RL-011,LIMIT_VALUE in Golden records,PASS,0 limit value records found in Golden
+RL-012,DERIVED_VALUE in Golden records,PASS,0 derived value records found in Golden
+RL-013,OVERALL RESULT LEAKAGE,PASS,Zero result leakage confirmed

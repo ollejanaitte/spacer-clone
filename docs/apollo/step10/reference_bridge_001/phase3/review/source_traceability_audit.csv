@@ -1,0 +1,10 @@
+check_id,description,result,total_records,records_with_source,records_with_candidate,notes
+TA-001,Golden record count parity,PASS,141,141,141,All 141 golden records have source_record_ids
+TA-002,Source record resolution,PASS,141,141,141,All records have non-empty source_record_ids
+TA-003,Candidate ID resolution,PASS,141,141,141,All records have non-empty candidate_ids
+TA-004,Calculation locator presence,PASS,141,110,141,110 records have calculation_locator
+TA-005,Drawing locator presence,PASS,141,55,141,55 records have drawing_locator
+TA-006,Source priority distribution,PASS,141,141,141,Distribution: BOTH=46, CALCULATION=86, DRAWING=9, UNKNOWN=0
+TA-007,Phase 2-II candidate linkage,PASS,141,141,141,All golden records link to Phase 2-II candidate IDs
+TA-008,Phase 2-I source linkage,PASS,141,141,141,All golden records link to Phase 2-I source records
+TA-009,OVERALL TRACEABILITY,PASS,141,141,141,Full traceability confirmed

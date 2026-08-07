@@ -1,0 +1,2 @@
+conflict_id,candidate_ids,field_path,conflict_description,calc_value,drawing_value,resolution,notes
+CONF-P2II-001,"GEO-074,GEO-075",cross_section.bottom_flange_width,Calculation bottom flange width 680 mm vs drawing 700 mm,680 mm,700 mm,UNRESOLVED; requires human decision,Candidates GEO-074 and GEO-075 held as HOLD_CONFLICT; not promoted to Golden
