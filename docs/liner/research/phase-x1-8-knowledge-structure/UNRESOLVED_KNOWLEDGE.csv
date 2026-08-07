@@ -1,0 +1,8 @@
+﻿unresolved_id,rule_id,title,knowledge_status,issue,needed_action,priority
+UK-001,RO-025,視距値V=30,OCR_LIMITED,V=30の視距値が30/40mで不明瞭,限定OCRで再確認,P0
+UK-002,RO-022/023,拡幅量詳細式,OCR_LIMITED,操向作用回転半径の式がOCR不明瞭,拡幅量算定式を確認,P0
+UK-003,PM-001,実案件道路区分,PROJECT_MISSING,線形計算書に種級の明記なし,設計概要書等で確定,P1
+UK-004,PM-008,実案件設計速度,PROJECT_MISSING,線形計算書に設計速度の明記なし,別資料で確定,P1
+UK-005,CAND-21,建築限界,BLOCKED,道示Ⅰのページ未確認,道示の限定OCR,P1
+UK-006,RO-016,最小曲線長数値表,NEEDS_RESEARCH,2秒走行距離の具体表未取得,道路構造令の限定OCR,P0
+UK-007,PM-010,実案件縦断・横断図,PROJECT_MISSING,線形計算書に記載なし,縦断図・横断図取得,P1

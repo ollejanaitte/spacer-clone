@@ -28,4 +28,5 @@ export * from "./verticalContinuity";
 export * from "./verticalContinuity";
 export * from "./verticalSampling";
 export * from "./vector";
+export * from "./verification";
 export * from "./zMerge";

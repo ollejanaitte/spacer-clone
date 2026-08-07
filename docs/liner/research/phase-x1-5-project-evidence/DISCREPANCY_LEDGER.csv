@@ -1,0 +1,5 @@
+﻿discrepancy_id,rule_id,rule_title,standard_value,project_value,discrepancy_type,severity,resolution_status,notes
+DL-001,RO-013,最小曲線半径（本線）,規定値710m（V=120）,R=1900,CONSISTENT,INFO,CLOSED,本線R=1900は規定値に対し十分余裕あり。問題なし
+DL-002,RO-013,最小曲線半径（ランプR=320）,規定値150m（V=60）,R=320,CONSISTENT,INFO,CLOSED,ランプR=320は規定値以上。問題なし
+DL-003,RO-027,縦断勾配（橋梁6%）,規定値5%（V=120）→8%（V=60）,i=6.000%,INCONCLUSIVE,INFO,OPEN,橋梁の設計速度V=40（第4種）では6%は規定内。ただし道路側の設計速度未確定のため要確認
+DL-004,RO-031,横断勾配（橋梁5%）,規定値1.5〜2.0%（舗装道）,i=5.000%,STANDARD_DEVIATION,INFO,OPEN,曲線部の片勾配（R=160）のため5%は合理的。道路構造令第16条（最大片勾配）の範囲内

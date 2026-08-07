@@ -1,0 +1,52 @@
+cur_id,category,name,status,location,notes
+CUR-B01,route,Launcher エントリポイント,IMPLEMENTED_VERIFIED,LinerLauncherPage.tsx,route pro/linear-coordinate
+CUR-B02,route,GUIエディタ ルート,IMPLEMENTED_VERIFIED,LinerEditPage.tsx,route pro/liner/setup
+CUR-B03,route,Importer,IMPLEMENTED_VERIFIED,f.,importer/*,
+CUR-B04,route,Preview,IMPLEMENTED_VERIFIED,LinerPreviewPage.tsx,
+CUR-B05,route,Mapping Review,IMPLEMENTED_VERIFIED,LinerMappingReviewPage.tsx,
+CUR-B06,route,Formal Drawing,IMPLEMENTED_VERIFIED,LinerFormalDrawingWorkspacePage.tsx,plan/profile/cross
+CUR-100,alignment,直線要素,IMPLEMENTED_VERIFIED,core/geometry/horizontal.ts,
+CUR-101,alignment,円弧要素,IMPLEMENTED_VERIFIED,schema/alignment,
+CUR-102,alignment,クロソイド要素,IMPLEMENTED_VERIFIED,schema/alignment,
+CUR-103,alignment,複合線形,IMPLEMENTED_VERIFIED,,
+CUR-104,alignment,Offset線,IMPLEMENTED,,
+CUR-105,alignment,拡幅(1次/4次),PARTIAL_DEFINITION_ONLY,widthChangePoints型のみ,
+CUR-106,alignment,接続/分岐,ABSENT,,
+CUR-107,alignment,複数線形multi-alignment,IMPLEMENTED_VERIFIED,AlignmentBundleDraft,
+CUR-200,station,累加距離,IMPLEMENTED_VERIFIED,,
+CUR-201,station,No.表記,IMPLEMENTED_VERIFIED,stationFormat.ts,
+CUR-202,station,interval,IMPLEMENTED_VERIFIED,,
+CUR-203,station,explicit station,IMPLEMENTED_VERIFIED,,
+CUR-204,station,equation(break),IMPLEMENTED_VERIFIED,,
+CUR-300,profile,縦断 grade/parabolic,IMPLEMENTED_VERIFIED,vertical.ts,
+CUR-301,profile,横断 crossSlope,IMPLEMENTED_VERIFIED,CrossSlopeIntervalDraft,
+CUR-302,profile,centerline elevation,IMPLEMENTED_VERIFIED,,
+CUR-303,profile,Z Merge断面高さ,IMPLEMENTED_VERIFIED,zMerge.ts,
+CUR-400,bridge,Pier kind,IMPLEMENTED,PierDraft,
+CUR-401,bridge,Pier skew,IMPLEMENTED,pierLineGeometry.ts,
+CUR-402,bridge,Pier bearingOffsets,IMPLEMENTED,PierBearingOffsetDraft,
+CUR-403,bridge,Span start/end,IMPLEMENTED,SpanDraft,
+CUR-404,bridge,CrossBeam,IMPLEMENTED_PARTIAL,CrossBeamDraft,
+CUR-405,bridge,MeasuredGrid,IMPLEMENTED,MeasuredGridDraft,Phase3.8
+CUR-500,ldist,格点間距離,IMPLEMENTED_VERIFIED,core/ldist,LdistJob
+CUR-501,ldist,張出し長,IMPLEMENTED,LdistJobKind/overhang,
+CUR-600,haunch,native family,IMPLEMENTED_VERIFIED,core/haunch,2点/3点/平面/範囲
+CUR-601,haunch,JIP型マッピング,PARTIAL,validateHaunchDefinitions,対応{1,2,6,7,8,9,14}
+CUR-602,haunch,型12(WG/W差),ERROR,validateHaunchDefinitions,LINER高さ要求
+CUR-700,hoso,舗装厚,IMPLEMENTED_VERIFIED,core/hoso,5 family
+CUR-800,drawing,Plan A/B,IMPLEMENTED_VERIFIED,formalBuilders+golden P5-D01,
+CUR-801,drawing,Profile,IMPLEMENTED_PARTIAL,bans ground fail-closed,
+CUR-802,drawing,Cross,IMPLEMENTED_VERIFIED,,
+CUR-803,drawing,Band,IMPLEMENTED_PARTIAL,crossfall,
+CUR-804,drawing,交角描画,NOT_IMPLEMENTED,JIP8.6,
+CUR-805,drawing,寸法線,IMPLEMENTED_PARTIAL,dimensions,
+CUR-806,drawing,座標テーブル,IMPLEMENTED_PARTIAL,tables/planCoordinateTable,
+CUR-807,drawing,DXF export,IMPLEMENTED_VERIFIED,dxf/*,INSUNITS6
+CUR-900,report,HTML+CSV,IMPLEMENTED_VERIFIED,exports/roadCsvExport,grid/ldist/haunch/hoso
+CUR-901,report,sourceRevision stale,IMPLEMENTED_VERIFIED,core/pipeline,
+CUR-902,3d,STL,IMPLEMENTED,exports/linerFrameStl,ProjectModel→円柱
+CUR-903,3d,DXF viewer,IMPLEMENTED_PARTIAL,,
+CUR-950,verification,ゴールデン(解析参照),IMPLEMENTED,horizontalCurveGolden,外部突合ではない
+CUR-951,verification,P5描画ゴールデン,self-referential,phase5/__golden__,外部突合ではない
+CUR-952,verification,Importer sample,PARTIAL,builtInSampleDataset,C1-C17/GE2 補間未置換
+CUR-953,verification,E2E,IMPLEMENTED,frontend/tests/e2e,24 spec

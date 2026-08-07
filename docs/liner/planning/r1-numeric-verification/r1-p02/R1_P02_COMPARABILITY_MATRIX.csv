@@ -1,0 +1,29 @@
+reference_id,category,value_name,comparison_kind,target_case,source_document,source_page,source_unit,normalized_unit,coordinate_system,expected_value_class,review_status,note
+REF-horizontal-001,horizontal_alignment,要素1 要素長 (円),INPUT_PARITY,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,element length (input definition)
+REF-horizontal-002,horizontal_alignment,要素1 曲率半径 (円),INPUT_PARITY,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,radius (input)
+REF-horizontal-003,horizontal_alignment,要素2 パラメーター (クロソイド),INPUT_PARITY,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,clothoid parameter (input)
+REF-horizontal-004,horizontal_alignment,要素2 要素長 (クロソイド),INPUT_PARITY,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,clothoid length (input definition)
+REF-horizontal-005,horizontal_alignment,要素3 要素長 (直線),INPUT_PARITY,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,straight length (input)
+REF-horizontal-006,horizontal_alignment,ECL 要素1 要素長 (円),INPUT_PARITY,case-liner-sample-ecl,SRC-LINER-SAMPLE,8,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,element length (input)
+REF-horizontal-007,horizontal_alignment,ECL 要素1 曲率半径 (円),INPUT_PARITY,case-liner-sample-ecl,SRC-LINER-SAMPLE,8,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,radius (input)
+REF-horizontal-008,horizontal_alignment,ECL 要素2 要素長 (円),INPUT_PARITY,case-liner-sample-ecl,SRC-LINER-SAMPLE,8,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,element length (input)
+REF-horizontal-009,horizontal_alignment,HCL 要素1 要素長 (円),INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,9,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,element length (input)
+REF-horizontal-010,horizontal_alignment,HCL 要素1 曲率半径 (円),INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,9,m,m,GLOBAL_XY,EXTERNAL_REFERENCE,CROSS_CHECKED,radius (input)
+REF-station-001,station,要素1 始点 測点,DERIVED_OUTPUT,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,ALIGNMENT_TANGENT_NORMAL,EXTERNAL_REFERENCE,CROSS_CHECKED,cumulative station from element length
+REF-station-002,station,要素3 始点 測点,DERIVED_OUTPUT,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,ALIGNMENT_TANGENT_NORMAL,EXTERNAL_REFERENCE,CROSS_CHECKED,cumulative station from element length
+REF-station-003,station,要素3 終点 測点,DERIVED_OUTPUT,case-liner-sample-cl,SRC-LINER-SAMPLE,7,m,m,ALIGNMENT_TANGENT_NORMAL,EXTERNAL_REFERENCE,CROSS_CHECKED,cumulative station from element length
+REF-station-004,station,HCL 要素1 始点 測点,DERIVED_OUTPUT,case-liner-sample-hcl,SRC-LINER-SAMPLE,9,m,m,ALIGNMENT_TANGENT_NORMAL,EXTERNAL_REFERENCE,CROSS_CHECKED,cumulative station from element length
+REF-vertical-001,vertical_profile,要素1 クラウン高,DERIVED_OUTPUT,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,crown elevation computed
+REF-vertical-002,vertical_profile,要素2 クラウン高,DERIVED_OUTPUT,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,crown elevation computed
+REF-vertical-003,vertical_profile,要素3 クラウン高,DERIVED_OUTPUT,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,crown elevation computed
+REF-vertical-004,vertical_profile,要素1 前勾配,INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,percent,percent,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,grade definition
+REF-vertical-005,vertical_profile,要素1 後勾配,INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,percent,percent,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,grade definition
+REF-vertical-006,vertical_profile,要素2 後勾配,INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,percent,percent,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,grade definition
+REF-vertical-007,vertical_profile,要素3 前勾配,INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,percent,percent,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,grade definition
+REF-vertical-008,vertical_profile,要素3 後勾配,INPUT_PARITY,case-liner-sample-hcl,SRC-LINER-SAMPLE,10,percent,percent,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,grade definition
+REF-crossfall-001,crossfall,HL1 横断勾配,INPUT_PARITY,case-liner-sample-hl1,SRC-LINER-SAMPLE,13,percent,percent,BRIDGE_LOCAL,EXTERNAL_REFERENCE,CROSS_CHECKED,crossfall definition
+REF-crossfall-002,crossfall,G1 横断勾配,INPUT_PARITY,case-liner-sample-g1,SRC-LINER-SAMPLE,13,percent,percent,BRIDGE_LOCAL,EXTERNAL_REFERENCE,CROSS_CHECKED,crossfall definition
+REF-crossfall-003,crossfall,G2 横断勾配,INPUT_PARITY,case-liner-sample-g2,SRC-LINER-SAMPLE,13,percent,percent,BRIDGE_LOCAL,EXTERNAL_REFERENCE,CROSS_CHECKED,crossfall definition
+REF-section_height-001,section_height,HL1 計画高,DERIVED_OUTPUT,case-liner-sample-hl1,SRC-LINER-SAMPLE,13,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,plan height computed
+REF-section_height-002,section_height,HCL 計画高,DERIVED_OUTPUT,case-liner-sample-hcl,SRC-LINER-SAMPLE,13,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,plan height computed
+REF-section_height-003,section_height,HL2 計画高,DERIVED_OUTPUT,case-liner-sample-hl2,SRC-LINER-SAMPLE,13,m,m,VERTICAL_DATUM,EXTERNAL_REFERENCE,CROSS_CHECKED,plan height computed

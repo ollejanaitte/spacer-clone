@@ -1,0 +1,10 @@
+﻿mapping_id,rule_id,rule_title,calc_page,calc_section,calc_value,standard_value,match,evidence_type,notes
+RC-001,RO-013;PR-004,最小曲線半径（本線）,1732-1810,H28西知多本線 主要点,R=1900,設計速度120→710m / 100→460m,CONSISTENT,FACT,本線R=1900は規定値に対し十分余裕
+RC-002,RO-013;PR-004,最小曲線半径（ランプ）,3869-3960,専用ONランプ 主要点,"R=520, R=320, R=1983, R=1000",設計速度60→150m / 80→280m,CONSISTENT,FACT,ランプ小半径（320/520）
+RC-003,RO-017;PR-003,緩和区間（クロソイド）,1732-1810,H28西知多本線 主要点,"A=450, A=550, A=500",クロソイドA値,CONSISTENT,FACT,KA/KE主要点で確認
+RC-004,RO-016,曲線長,3869-3960,専用ONランプIP計算書,"CL=81.71（R=520, IA=9-00-12）",曲線長の算定,INFO,FACT,IP計算書の曲線長CL
+RC-005,PR-001,測点・座標,1732-1810,H28西知多本線 主要点,BP/KA/KE/BC/EC/EPの測点・X/Y,測点体系,INFO,FACT,測点ピッチ20、開始測点24+19.95
+RC-006,PR-002,ブレーキ測点,1740-1745,H28西知多本線,112+15.121→112+14.868（調整-0.253）,測点補正,INFO,FACT,ブレーキ測点による測点補正
+RC-007,PR-005,IP計算書,3869-3960,専用ONランプIP計算書,IP.1〜IP.4（交角・曲線長・接線長）,交角・CL・TL,INFO,FACT,IP計算書の構成
+RC-008,PM-001;PM-002,道路区分・設計速度,表紙・TOC,西知多道路（東海JCT）,（線形計算書に明記なし）,UNKNOWN,UNRESOLVED,別資料要確認
+RC-009,PM-010,縦断・横断勾配,-,（線形計算書には記載なし）,UNKNOWN,UNKNOWN,UNRESOLVED,縦断図・横断図は別資料

@@ -1,0 +1,10 @@
+﻿mapping_id,rule_id,rule_title,source_standard,source_project,standard_value,project_value,match,evidence_chain,confidence,notes
+RPE-001,RO-012,最小曲線半径の算定（表3-3）,DOC-X0-0145,DOC-X0-0143,R=V^2/(127(f+i/100))により算定,R=1900（本線）,CONSISTENT,道路構造令→線形計算書,HIGH,本線R=1900は規定値余裕あり
+RPE-002,RO-013,最小曲線半径の規定値（表3-5）,DOC-X0-0145,DOC-X0-0143,"V=120→710m, V=100→460m, V=80→280m","R=1900（本線）, R=520/320（ランプ）",CONSISTENT,道路構造令→線形計算書,HIGH,
+RPE-003,RO-017;LIN-002,緩和区間（クロソイド）,DOC-X0-0145,DOC-X0-0143,第18条・A=350 R=3000等,A=450/500/550（本線）,CONSISTENT,道路構造令→JIP-LINER→線形計算書,HIGH,クロソイドA値の実案件採用
+RPE-004,PR-001,測点・座標,JIP-LINER,DOC-X0-0143,LINERの測点設定,BP/KA/KE/BC/EC/EPの測点・X/Y,CONSISTENT,JIP-LINER→線形計算書,HIGH,
+RPE-005,BR-001,橋梁設計条件,DOC-X0-0145,DOC-X0-0001,道路区分・設計速度・幅員等,道路規格A・V=40・有効幅員7.0m,CONSISTENT,道路構造令→橋梁計算書,HIGH,道路から橋梁への引き継ぎ
+RPE-006,BR-002,斜角,DOC-X0-0145,DOC-X0-0001,交差角の規定,"PU15:94°14'27"" / PR1,PR2,A2:90°",CONSISTENT,道路構造令→橋梁計算書,HIGH,
+RPE-007,BR-004,主桁・格点,DOC-X0-0001,DOC-X0-0002,主桁A-L1/A-L2・格点C1-C23,主桁図AG1/AG2,CONSISTENT,橋梁計算書→橋梁図面,HIGH,
+RPE-008,PM-001,道路区分,DOC-X0-0145,DOC-X0-0143,第1種/第2種/第3種/第4種,（線形計算書に明記なし）,UNRESOLVED,道路構造令→線形計算書,UNRESOLVED,別資料要確認
+RPE-009,PM-008,設計速度,DOC-X0-0145,DOC-X0-0143,設計速度表（第13条）,（線形計算書に明記なし）,UNRESOLVED,道路構造令→線形計算書,UNRESOLVED,別資料要確認
