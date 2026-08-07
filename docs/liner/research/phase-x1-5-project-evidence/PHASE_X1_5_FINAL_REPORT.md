@@ -1,0 +1,70 @@
+# Phase X1.5 Final Report
+
+PHASE_X1_5_VERDICT:
+COMPLETE
+
+X2_GATE_VERDICT:
+GO
+
+EVIDENCE_INVENTORY:
+13 evidence sources
+
+ROAD_CALC_MAPPING:
+9 mappings
+
+ROAD_DRAWING_MAPPING:
+3 mappings
+
+BRIDGE_CALC_MAPPING:
+8 mappings
+
+BRIDGE_DRAWING_MAPPING:
+8 mappings
+
+RULE_TO_PROJECT_EVIDENCE:
+9 chains
+
+ROAD_TO_BRIDGE_EVIDENCE:
+10 chains
+
+EVIDENCE_CHAIN_MATRIX:
+4 chains
+
+UNRESOLVED_EVIDENCE:
+7 items
+
+DISCREPANCY_LEDGER:
+4 items
+
+X2_READINESS_MATRIX:
+21 candidates (READY_FOR_IMPLEMENTATION=18 / NEEDS_RESEARCH=2 / BLOCKED=1)
+
+INTEGRATION_BRANCH:
+research/liner-r1-planning
+
+MAIN_MODIFIED:
+NO
+
+UPPER_WORKTREE_MODIFIED:
+NO
+
+PDF_ORIGINALS_COMMITTED:
+NO
+
+SOFTWARE_IMPLEMENTATION_EXECUTED:
+NO
+
+X2_READY:
+YES
+
+NEXT_RECOMMENDATION:
+X2（Rule Engine実装仕様化）を開始可能。READY_FOR_IMPLEMENTATION 18件を正式仕様化し、NEEDS_RESEARCH 2件（曲線長・拡幅）とBLOCKED 1件（建築限界）は追加調査後に仕様化する。
+
+---
+
+## 検証結果
+
+- Evidence Chain整合: 道路構造令→線形計算書→橋梁計算書→橋梁図面までの一貫性確認
+- 基準値と実案件採用値の分離: 管理済み（DISCREPANCY_LEDGERに乖離4件を記録、いずれもINFO）
+- 未解決Evidence: 7件（OCR限界・資料不足による）
+- 全CSV整合性: 正常
