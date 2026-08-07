@@ -1,7 +1,7 @@
 # R1_P02_FIXTURE_REPORT
 
 - **Date**: 2026-08-07
-- **Phase**: R1-P02-02 (horizontal + station)
+- **Phase**: R1-P02-02 (horizontal + station), R1-P02-03 (profile/crossfall/height)
 
 ## Fixtures
 
@@ -23,14 +23,23 @@ or station-equation definitions. Therefore:
   derived-station comparison is **NOT_COMPARABLE** (except the origin station, which is
   INPUT_PARITY).
 
-## Comparison adapter
+## P02-03 vertical fixture
 
-`frontend/src/liner/core/verification/comparison/adapters/horizontal-station.ts`
+`frontend/src/liner/core/verification/comparison/adapters/profile-crossfall-height.ts`
 
-- `runHorizontalStationComparison()` returns `ExternalComparisonResult[]` for all 14
-  horizontal_alignment (10) + station (4) rows.
+- HCL vertical alignment reconstructed from 縦断線形 (crown heights + grades).
+- crown heights / grades / crossfall → INPUT_PARITY (input definitions carried through the
+  pipeline input model).
+- section_height plan heights → NOT_COMPARABLE: reproducing them requires the full vertical
+  alignment plus the cross-section station chainage (station equations) not present in the
+  R1-P01 dataset; a naive reconstruction does not reproduce the reference values.
 
-## Results (P02-02)
+## Comparison adapters
+
+- `comparison/adapters/horizontal-station.ts` — `runHorizontalStationComparison()`
+- `comparison/adapters/profile-crossfall-height.ts` — `runProfileCrossfallHeightComparison()`
+
+## Results (P02-02 horizontal + station)
 
 | metric | count |
 |---|---|
@@ -41,11 +50,19 @@ or station-equation definitions. Therefore:
 | derived FAIL | 0 |
 | not comparable | 3 (station chainage: REF-station-002/003/004) |
 
-Input-parity PASS verifies the reference element length/radius/parameter and the station
-origin are faithfully representable in the current LINER pipeline input model. It is NOT
-counted as numeric calculation verification.
+## Results (P02-03 vertical/crossfall/height)
+
+| metric | count |
+|---|---|
+| total references | 14 |
+| input parity | 11 (all PASS: crown heights 3, grades 5, crossfall 3) |
+| derived comparable | 0 |
+| derived PASS | 0 |
+| derived FAIL | 0 |
+| not comparable | 3 (section_height plan heights) |
 
 ## Honesty note
 
 No expected value was generated from runtime; no tolerance was widened; no reference value
-was altered; station rows that cannot be reproduced honestly are NOT_COMPARABLE, not PASS.
+was altered; rows that cannot be reproduced honestly are NOT_COMPARABLE, not PASS. Input
+parity is reported separately and is NOT counted as numeric calculation verification.
