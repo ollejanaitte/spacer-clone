@@ -1,0 +1,118 @@
+STEP 10 REFERENCE BRIDGE 001 - PHASE 2-II FINAL REPORT
+========================================================================
+
+Authority: RB-S10-001 Phase 2-II (P2II-J closeout)
+Development approach: documentation-only / data-only
+Numeric analysis performed: NO (recalculation prohibited)
+Formal APPROVED_GOLDEN_INPUT promotion: PROHIBITED in Phase 2-II
+
+Phase 2-II verdict: PARTIAL (all layers candidate-only; registered gaps tracked)
+Phase 3 readiness: GO_WITH_HUMAN_CONFIRMATION_TRACK
+
+Sub-step completion:
+  P2II-0    truth gate           COMPLETE (#441, MERGED)
+  P2II-A    unread resolution    COMPLETE (#442, MERGED)
+  P2II-B    depth audit          COMPLETE (#445, MERGED)
+  P2II-C~F  candidate foundation COMPLETE (#454, MERGED)
+  P2II-G~I  design + trace       COMPLETE (#455, MERGED)
+  P2II-J    closeout             THIS PR
+  P2II-K    seal                 PENDING
+
+== PHASE 2-II CURRENT ==
+TOTAL_CANDIDATE_ROWS,4339
+TOTAL_CANDIDATE_FILES,48
+
+artifact_manifest.csv,115
+candidates/adopted_design/adopted_bearing_candidate.csv,16
+candidates/adopted_design/adopted_dimension_candidate.csv,16
+candidates/adopted_design/adopted_material_candidate.csv,13
+candidates/adopted_design/adopted_section_candidate.csv,7
+candidates/analysis/displacement_candidate.csv,4
+candidates/analysis/governing_case_candidate.csv,4
+candidates/analysis/member_force_candidate.csv,10
+candidates/analysis/reaction_candidate.csv,29
+candidates/analysis/rotation_candidate.csv,5
+candidates/design/check_ratio_candidate.csv,35
+candidates/design/formula_trace_candidate.csv,18
+candidates/design/judgment_candidate.csv,23
+candidates/design/limit_candidate.csv,16
+candidates/design/section_property_candidate.csv,49
+candidates/design/stress_candidate.csv,104
+candidates/drawing/drawing_annotation_candidate.csv,643
+candidates/drawing/drawing_dimension_candidate.csv,183
+candidates/drawing/drawing_member_candidate.csv,153
+candidates/drawing/drawing_reference_candidate.csv,105
+candidates/drawing/drawing_sheet_candidate.csv,141
+candidates/drawing/drawing_table_candidate.csv,79
+candidates/drawing/drawing_title_block_candidate.csv,577
+candidates/drawing/drawing_view_candidate.csv,178
+candidates/geometry/alignment_candidate.csv,5
+candidates/geometry/cross_section_candidate.csv,8
+candidates/geometry/elevation_crossfall_candidate.csv,7
+candidates/geometry/geometry_entity_register.csv,8
+candidates/geometry/girder_line_candidate.csv,6
+candidates/geometry/grid_point_candidate.csv,58
+candidates/geometry/support_line_candidate.csv,4
+candidates/input/input_candidate_register.csv,25
+candidates/input/input_exclusion_register.csv,207
+candidates/load/load_application_candidate.csv,3
+candidates/load/load_case_candidate.csv,8
+candidates/load/load_combination_candidate.csv,2
+candidates/load/load_value_candidate.csv,46
+candidates/report/report_chapter_candidate.csv,6
+candidates/report/report_figure_candidate.csv,55
+candidates/report/report_formula_candidate.csv,148
+candidates/report/report_layout_candidate.csv,579
+candidates/report/report_note_candidate.csv,162
+candidates/report/report_section_candidate.csv,232
+candidates/report/report_table_candidate.csv,486
+candidates/source/source_figure_catalog.csv,55
+candidates/source/source_formula_catalog.csv,148
+candidates/source/source_note_catalog.csv,162
+candidates/source/source_record_catalog.csv,4330
+candidates/source/source_table_catalog.csv,534
+candidates/source/source_value_catalog.csv,1127
+candidates/structural_model/connectivity_candidate.csv,4
+candidates/structural_model/local_axis_candidate.csv,3
+candidates/structural_model/member_candidate.csv,20
+candidates/structural_model/model_entity_register.csv,21
+candidates/structural_model/node_candidate.csv,54
+candidates/structural_model/rigid_offset_candidate.csv,1
+candidates/structural_model/section_assignment_candidate.csv,4
+candidates/structural_model/support_restraint_candidate.csv,5
+catalog_count_reconciliation.csv,6
+contracts/candidate_enums.csv,100
+phase2_i_truth_reconciliation.csv,18
+registers/duplicate_record_register.csv,0
+registers/human_confirmation_register.csv,4
+registers/issue_register.csv,16
+registers/normalization_rule_register.csv,13
+registers/orphan_record_register.csv,637
+registers/source_conflict_register.csv,1
+registers/standard_profile_register.csv,8
+registers/unread_or_low_confidence_register.csv,101
+traceability/adopted_value_traceability.csv,14
+traceability/calculation_drawing_traceability.csv,17
+traceability/entity_crosswalk.csv,12
+traceability/formula_result_traceability.csv,15
+traceability/report_drawing_traceability.csv,141
+traceability/source_to_candidate_traceability.csv,4116
+traceability/value_traceability.csv,13
+unread_resolution/drawing_sheet_141_annotations.csv,6
+unread_resolution/drawing_sheet_141_crane_capacity.csv,30
+unread_resolution/drawing_sheet_141_dimensions.csv,11
+unread_resolution/drawing_sheet_141_elements.csv,17
+unread_resolution/drawing_sheet_141_erection_blocks.csv,9
+unread_resolution/drawing_sheet_141_title_block.csv,8
+unread_resolution/drawing_sheet_141_verification_log.csv,8
+unread_resolution/drawing_sheet_141_views.csv,4
+unread_resolution_register.csv,1
+
+== PHASE 2-II SUMMARY ==
+TOTAL_CANDIDATE_ROWS,4339
+TOTAL_CANDIDATE_FILES,48
+TOTAL_TRACEABILITY_ROWS,4328
+TOTAL_REGISTER_ROWS,781
+TOTAL_SOURCE_CATALOG_ROWS,6356
+TOTAL_MANIFEST_ROWS,115
+

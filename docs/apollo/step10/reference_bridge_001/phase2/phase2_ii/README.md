@@ -37,8 +37,8 @@ PHASE2_I_TRUTH_RECONCILIATION_VERDICT: PASS
 | P2II-A | p2ii-a-unread | Unread / low-confidence resolution, drawing 141 transcription (#442, MERGED) |
 | P2II-B | p2ii-b-depth-sud | Phase 2-I depth audit + status repair (#445, MERGED) |
 | P2II-C~F | p2ii-cf-candidate-foundation | Contracts + Source/Input/Geometry/StructuralModel/Load/Analysis candidate layers (#454, MERGED) |
-| P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability (THIS PR) |
-| P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff |
+| P2II-G~I | p2ii-gi-design-traceability | Design/Adopted/Report/Drawing candidate layers + Traceability (#455, MERGED) |
+| P2II-J | p2ii-j-closeout | Validation, manifest, registers, Phase 3 handoff (THIS PR) |
 | P2II-K | p2ii-k-seal | Seal |
 
 ## Directory map
@@ -136,7 +136,7 @@ local axes / rigid offsets / per-DOF fixity not stated, cross-beam connectivity
 from figure, load-combination table not numeric, live-load influence lines
 absent, drawing-141 PARTIAL (HCR-001).
 
-## P2II-G~I — Design / Adopted / Report / Drawing + Traceability (THIS PR)
+## P2II-G~I — Design / Adopted / Report / Drawing + Traceability (COMPLETE, #455)
 
 Completes the candidate layers and traceability for Reference Bridge 001.
 
@@ -163,3 +163,38 @@ records all resolve (0 missing). New enum labels: `fatigue`, `welding`.
 Registered gaps: wrapping-concrete ends at rebar count (HCR-002), brackets
 limits-only, camber drawing-only, AG2 sections T30 summary, stiffeners/splice/
 welding policy-only, one-source-only items (camber, deck/ground level).
+
+## P2II-J — Closeout: validation, manifest, registers, Phase 3 handoff (THIS PR)
+
+Closes out Phase 2-II with deterministic validation, an artifact manifest, the
+closeout registers and the Phase 3 handoff.
+
+- **Validator** `tools/validate_phase2_ii.py` — **OVERALL: PASS** (17/17 checks,
+  exit 0). Enforces CSV parse integrity, candidate_id uniqueness, entity
+  registry membership, locator formats, source-record resolution, source↔
+  candidate orphan checks, enum membership, raw_value/normalized_value rules,
+  conflict/human-linkage, drawing-141 PARTIAL/HCR-001 linkage, manifest
+  path/row/SHA-256, binary exclusion, no `APPROVED_GOLDEN_INPUT`, and
+  final_report count parity. See `validation/phase2_ii_validation_summary.md`.
+- **Manifest** `artifact_manifest.csv` (115 rows) built by
+  `tools/build_phase2_ii_manifest.py` (path/type/kind/row_count/sha256).
+- **Count parity** `tools/compare_reported_counts.py` reads the
+  `final_report.txt` "Phase 2-II CURRENT" block → **OVERALL: PASS** (84 CSVs).
+- **Registers** (`registers/`): issue (16), source conflict (1,
+  CONF-P2II-001), human confirmation (4, HCR-001..004),
+  unread/low-confidence (101), orphan (637: 636 source + GEO-005),
+  duplicate (0), normalization (13, NOR-001..013), standard profile (8).
+- **Documented exceptions** (registered, non-blocking): ISSUE-014 (AN-032
+  raw_value ±), ISSUE-015 (candidate_enums.csv quoting), ISSUE-016 (GEO-076
+  range normalization).
+- **Handoff** `08_phase3_handoff.md` — verdict PARTIAL,
+  readiness **GO_WITH_HUMAN_CONFIRMATION_TRACK**, Phase 3 Golden promotion
+  review scope (4339 candidates), registered gaps, exact next actions.
+- **Completion** `completion_report.md` and `final_report.txt`.
+
+```
+PHASE2_II_VERDICT: PARTIAL
+PHASE2_II_VALIDATION: PASS (17/17)
+PHASE2_II_READINESS: GO_WITH_HUMAN_CONFIRMATION_TRACK
+PHASE3_HANDOFF: 08_phase3_handoff.md
+```

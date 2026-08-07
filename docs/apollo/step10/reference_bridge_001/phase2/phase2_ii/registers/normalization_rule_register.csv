@@ -1,0 +1,14 @@
+rule_id,applies_to,action,example,notes
+NOR-001,length (m),keep m,40.201 m -> 40.201 m,No conversion; identity
+NOR-002,length (mm),convert to m,40201 mm -> 40.201 m,Divide by 1000
+NOR-003,force (kN),keep kN,1200 kN -> 1200 kN,Identity
+NOR-004,distributed load (kN/m),keep kN/m,9.920 kN/m -> 9.920 kN/m,Identity
+NOR-005,area load (kN/m2),keep kN/m2,6.325 kN/m2 -> 6.325 kN/m2,Identity
+NOR-006,unit weight (kN/m3),keep kN/m3,24.5 kN/m3 -> 24.5 kN/m3,Identity
+NOR-007,stress (N/mm2),keep N/mm2,355 N/mm2 -> 355 N/mm2,Identity
+NOR-008,angle (deg),keep deg,30 deg -> 30 deg,Identity
+NOR-009,dimensionless,no unit,0.85 -> 0.85,Identity
+NOR-010,count,no unit,18 -> 18,Identity
+NOR-011,text/label,no unit,A規格 -> A規格,Identity; also used when source gives no unit
+NOR-012,moment (kN·m),keep kN·m,1686.3 kN·m -> 1686.3 kN·m,Identity
+NOR-013,stiffness (kN/mm),keep kN/mm,4.0 kN/mm -> 4.0 kN/mm,Identity
