@@ -1,0 +1,38 @@
+﻿rule_id,source_asset_id,source_document,source_page,source_section,source_item,fact_or_inference,extraction_method,evidence_quality,ocr_limited,review_status,notes
+RO-001,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,138-139,Ⅲ-1-1-2 道路の区分,表1-1 道路種級区分の体系,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,"表1-1に計画交通量(30,000〜500台/日)・設計速度・出入制限区分あり"
+RO-002,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,139,Ⅲ-1-1-2 (2),第3条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-003,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,161,Ⅲ-1-3,第13条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表セル一部OCR不明瞭。小型道路の値は別表
+RO-004,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,173,Ⅲ-1-6,第4条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,軸距・回転半径セルはOCR不明瞭
+RO-005,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,208-209,Ⅲ-2-2-3,解説C.a,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,
+RO-006,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,208-209,Ⅲ-2-2-3 (2),表2-4,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表セル一部不明瞭
+RO-007,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,209,Ⅲ-2-2-3 d,解説,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,
+RO-008,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,210,Ⅲ-2-3-4,第6条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表セル一部不明瞭、要確認
+RO-009,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,211,Ⅲ-2-3-5,第6条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,
+RO-010,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,228-229,Ⅲ-2-5-2,第13条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表セル一部不明瞭
+RO-011,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,345,Ⅲ-3-3-1,表3-2,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-012,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,346,Ⅲ-3-3-1 d,表3-3・(36)式,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,式は表の値から逆算で整合確認（INFERENCE成分含む）
+RO-013,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,348,Ⅲ-3-3-1 b,表3-5,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-014,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,349,Ⅲ-3-3-2,表3-6,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-015,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,346-347,Ⅲ-3-3-1,表3-4,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-016,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,346-358,Ⅲ-3-4,解説,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,具体の数値表は別途要確認
+RO-017,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,383,Ⅲ-3-7,第18条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-018,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,384-398,Ⅲ-3-7-2/3-7-3,解説,INFERENCE,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,A値の具体式は実案件A=450と照合して要確認
+RO-019,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,358,Ⅲ-3-5,第16条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-020,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,358-359,Ⅲ-3-5-1,第16条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表の地域区分セル一部不明瞭
+RO-021,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,359,Ⅲ-3-5-1,(4)式,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,式表記OCR不明瞭
+RO-022,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,372,Ⅲ-3-6,第17条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-023,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,372-373,Ⅲ-3-6-1,(3-14)式,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,式表記OCR不明瞭
+RO-024,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,382,Ⅲ-3-6-4 (4),解説,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,
+RO-025,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,413,Ⅲ-3-9,第19条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,V=30の値はOCR不明瞭(30/40)
+RO-026,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,413,Ⅲ-3-9,第19条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-027,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,424-425,Ⅲ-3-10-1,第20条,FACT,限定OCR（該当ページのみ）,MEDIUM,YES,PENDING,表セル一部不明瞭、要確認
+RO-028,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,452,Ⅲ-3-12-1,第22条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-029,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,453,Ⅲ-3-12-1,第22条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-030,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,453,Ⅲ-3-12-1,解説,INFERENCE,限定OCR（該当ページのみ）,LOW,YES,PENDING,式の完全形はOCR不明瞭
+RO-031,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,466,Ⅲ-3-13,第24条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-032,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,467,Ⅲ-3-13-1,表3-51,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-033,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,466,Ⅲ-3-13,第24条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-034,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,383,Ⅲ-3-7,第18条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-035,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,347-348,Ⅲ-3-3-1 b,解説,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-036,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,161,Ⅲ-1-3,第13条,FACT,限定OCR（該当ページのみ）,HIGH,YES,PENDING,
+RO-037,DOC-X0-0145,道路構造令の解説と運用（令和3年3月）,PENDING,X1-P03,実案件,UNRESOLVED,未実施,N/A,NO,PENDING,X1-P03で確定
