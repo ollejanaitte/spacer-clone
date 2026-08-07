@@ -1,0 +1,23 @@
+# Compatibility Matrix — Common Bridge Data Model
+
+> **Authority:** Reference Bridge 001 (RB-S10-001) — STEP 10 Phase 5 PR P5-4
+
+Status legend: COMPATIBLE | ADAPTER_REQUIRED | MIGRATION_REQUIRED | NOT_APPLICABLE | BLOCKED
+
+| Target | Status | Evidence / notes | Phase 6 impact |
+|--------|--------|------------------|----------------|
+| existing project JSON (`schemas/project.schema.json`, `frontend/src/types.ts`) | COMPATIBLE | Unchanged in P5; existing save/load intact | none |
+| existing Apollo data / contracts (`schemas/contracts/v0.1`, `frontend/src/contracts`) | COMPATIBLE | CBDM is a new member of the same family; envelope/primitives reused | none |
+| LINER geometry data (`frontend/src/liner/core/types.ts`) | ADAPTER_REQUIRED | Coordinate/axis conventions aligned (right-handed, m, rad); mapping via geometry input layer | none (adapter in Phase 6) |
+| frame/SPACER model interface (`backend/engine/model.py`, `frontend/src/types.ts`) | ADAPTER_REQUIRED | Structural nodes/members/materials/sections concepts aligned; adapter maps Golden to frame inputs | none |
+| substructure support IDs (`schemas/substructure/*`, `support-interface.schema.json`) | ADAPTER_REQUIRED | Support ids SUP-* stable; interface boundary defined in ownership freeze | none |
+| Reference Bridge fixture (`phase5/fixtures/reference_bridge_001_common_model.json`) | COMPATIBLE | Validates against canonical schema; round-trip PASS | direct input |
+| future Phase 6 Geometry | COMPATIBLE | alignment + bridgeGeometry + structuralModel layers carry required inputs; HOLD coords explicit | GO-with-human-track |
+| future Phase 7 Structural Analysis | COMPATIBLE | analysisReference slot designed (NOT_AVAILABLE now); load layer present | none |
+| future Report generation | COMPATIBLE | reportSpecification layer (1,591 items) present | none |
+| future Drawing generation | COMPATIBLE | drawingSpecification layer (141 sheets / 1,918 items) present | none |
+| angle deg/rad convention | ADAPTER_REQUIRED | Canonical rad, source deg preserved on values; no silent conversion | none |
+| legacy `bridge.schema.json` / `bridge/types.ts` | NOT_APPLICABLE | Superseded; not part of CBDM path | none |
+
+No `BLOCKED` entries. Phase 6 Geometry readiness: **GO_WITH_HUMAN_CONFIRMATION_TRACK**
+(existing Phase 4 HCR/conflict/HOLD carry-forward items do not block Geometry start).
