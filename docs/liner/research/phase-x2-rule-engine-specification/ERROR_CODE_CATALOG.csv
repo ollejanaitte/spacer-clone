@@ -1,0 +1,19 @@
+﻿error_code,rule_id,severity,title,trigger_condition,user_message,developer_message,recommended_action,trace_required,notes
+LR-RULE-CLASS-001,X2-R-001,ERROR,道路区分決定エラー,入力種級不能,道路区分の入力が不正です,check road_class field,入力を確認,YES,表1-1参照
+LR-RULE-SPEED-001,X2-R-002,ERROR,設計速度決定エラー,設計速度不能,設計速度の入力が不正です,check design_speed field,入力を確認,YES,第13条表参照
+LR-RULE-VEHICLE-001,X2-R-003,ERROR,設計車両諸元エラー,設計車両種別不能,設計車両の指定が不正です,check vehicle_type,入力を確認,YES,第4条表参照
+LR-RULE-LANE-001,X2-R-004,INFO,車線幅員注意,幅員が縮小条件に該当,車線幅員が縮小条件に該当します,check縮小条件,縮小条件確認,YES,
+LR-RULE-MEDIAN-001,X2-R-005,WARNING,中央帯幅員注意,幅員が縮小条件に該当,中央帯幅員が縮小条件に該当します,check縮小条件,縮小条件確認,YES,
+LR-RULE-SHOULDER-001,X2-R-006,WARNING,路肩幅員注意,幅員が縮小条件に該当,路肩幅員が縮小条件に該当します,check縮小条件,縮小条件確認,YES,
+LR-RULE-RADIUS-001,X2-R-007,ERROR,最小曲線半径違反,曲線半径R<規定値,曲線半径が規定値未満です,曲線半径を大きくするか、片勾配を増加,R≥規定値,YES,表3-5参照
+LR-RULE-TRANS-001,X2-R-008,WARNING,緩和区間省略注意,第4種道路で緩和区間省略,緩和区間が省略されています,特別理由を確認,省略理由確認,YES,
+LR-RULE-SUPER-001,X2-R-009,ERROR,片勾配違反,片勾配>最大値,片勾配が最大値を超えています,片勾配を低減,i≤最大片勾配,YES,第16条参照
+LR-RULE-SIGHT-001,X2-R-010,ERROR,視距不足,視距<規定値,視距が規定値未満です,線形の再検討,S≥規定値,YES,第19条参照
+LR-RULE-GRADE-001,X2-R-011,WARNING,縦断勾配超過,勾配>規定値,縦断勾配が規定値を超えています,勾配の低減・登坂車線の検討,i≤規定値,YES,第20条表参照
+LR-RULE-VCURVE-001,X2-R-012,WARNING,縦断曲線不足,曲線半径<規定値,縦断曲線半径が規定値未満です,曲線半径を拡大,R≥規定値,YES,第22条表参照
+LR-RULE-CSLOPE-001,X2-R-013,WARNING,横断勾配注意,勾配が標準範囲外,横断勾配が標準範囲外です,排水性舗装等の検討,範囲内確認,YES,
+LR-RULE-VAL-001,X2-R-014,WARNING,照査警告,設計値が基準未達,設計値が基準を満たしていません,設計値の再確認,-,YES,
+LR-RULE-GRID-001,X2-R-015,INFO,格点間距離情報,計算結果通知,格点間距離を計算しました,-,-,NO,
+LR-RULE-STATION-001,X2-R-016,INFO,測点補正情報,補正結果通知,測点を補正しました,-,-,NO,
+LR-RULE-COORD-001,X2-R-017,INFO,座標変換情報,変換結果通知,座標変換を実行しました,-,-,NO,
+LR-RULE-EXCEPT-001,X2-R-018,WARNING,例外適用,例外条件適用,例外ルールを適用しました,適用条件を確認,-,YES,
