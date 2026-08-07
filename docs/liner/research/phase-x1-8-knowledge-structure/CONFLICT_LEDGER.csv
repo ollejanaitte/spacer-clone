@@ -1,0 +1,3 @@
+﻿conflict_id,rule_id,title,standard_value,project_value,conflict_type,severity,resolution_status,notes
+CL-001,RO-027,縦断勾配6%,規定値5%（V=120）→8%（V=60）,i=6.000%（橋梁）,INCONCLUSIVE,INFO,OPEN,橋梁設計速度V=40では6%は規定内。道路側設計速度未確定のため要確認
+CL-002,RO-031,横断勾配5%,規定値1.5〜2.0%,i=5.000%（橋梁）,STANDARD_DEVIATION,INFO,OPEN,曲線部の片勾配（R=160）のため5%は合理的。第16条の範囲内
