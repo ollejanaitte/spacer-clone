@@ -84,10 +84,12 @@ describe("invalid input (fail-closed)", () => {
     expect(() => buildSupportSolids(support, new Map())).toThrow(/スナップショット/);
   });
 
-  it("throws GeometryError for pier (I03B not implemented)", () => {
+  it("dispatches pier support to I03B generator", () => {
     const support = abutmentSupport({ supportId: "P1", supportType: "pier", pier: { id: "P1", formType: "single_column_rect", footing: { id: "P1-FOOTING", length: 6, width: 8, thickness: 1.8, topElevation: 0 } } } as never);
     const map = new Map<string, SupportPlacementSnapshot>([["P1", snapshot]]);
-    expect(() => buildSupportSolids(support, map)).toThrow(/I03B/);
+    const group = buildSupportSolids(support, map);
+    expect(group.supportId).toBe("P1");
+    expect(group.solids.every((s) => s.entity === "pier")).toBe(true);
   });
 });
 
