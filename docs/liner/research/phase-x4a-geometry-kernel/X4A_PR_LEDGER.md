@@ -11,7 +11,7 @@ Phase X4-A (LINER Geometry Kernel Audit / Canonicalization) のPR台帳。
 | P04 | research/liner-x4a-p04-station-offset | feat(liner): add Geometry Kernel station/offset module | #519 `101d1db` | MERGED |
 | P05 | research/liner-x4a-p05-adapters | refactor(liner): re-export Geometry Kernel adapter surface | #520 `54aef44` | MERGED |
 | P06 | research/liner-x4a-p06-verification | test(liner): expand Geometry Kernel regression coverage | #521 `6604157` | MERGED |
-| P07 | research/liner-x4a-p07-x4b-gate | docs/final X4-B readiness gate | this PR | OPEN |
+| P07 | research/liner-x4a-p07-x4b-gate | docs/final X4-B readiness gate | #523 | MERGED |
 
 Note: P01 was initially merged (#514) with the canonical contracts in a single
 `__init__.py`. To keep P02-P05 as independently reviewable diffs, the adapter was

@@ -18,7 +18,7 @@ KEEP_AS_CANONICALとし、backendには必要最小限のPythonアダプタを�
 | P04 | station/offset projection module | #519 merged (`101d1db`) |
 | P05 | adapter re-export surface | #520 merged (`54aef44`) |
 | P06 | Geometry Kernel regression tests | #521 merged (`6604157`) |
-| P07 | X4-B readiness gate | this PR |
+| P07 | X4-B readiness gate | #523 |
 
 ## PR Ledger
 
@@ -46,5 +46,10 @@ backend/rule_engine/geometry/
 
 ## X4-B Readiness
 
-X4B_READINESS_MATRIX.csv 全行 GO。次のフェーズはGeometry Kernelを基盤とした
-Rule Engine統合へ進められる状態にある。
+X4B_READINESS_MATRIX.csv 全行 GO。別に正式反映した integration branch
+(origin/research/liner-r1-planning) 実状態で再監査済み。
+
+PR Ledger: X4A-P02 `4108100` / P03 `aeae8cc` / P04 `101d1db` / P05 `54aef44` /
+P06 `6604157` / P07 `137cf8a`（#523）。
+
+X4-Bはユーザー承認待ち。本フェーズでは自動開始しない。
