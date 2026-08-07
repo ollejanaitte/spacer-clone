@@ -1,0 +1,14 @@
+data,sourceOfTruth,editable,recalculateOn,note
+alignmentId,LINER Draft,Yes (select),N/A,
+station,Substructure placement,Yes,当該support XYZ再計算,
+offset,Substructure placement,Yes (default 0),当該support X/Y/Z再計算,
+X,LINER pointAtStationOffset,No (readonly),station/offset変更時,
+Y,LINER pointAtStationOffset,No (readonly),station/offset変更時,
+Z,LINER縦断優先(手動override可),Yes (manual),手動時は固定、自動時はstation変更で再計算,
+tangentDirection,LINER localFrame,No (readonly),station変更時,
+transverseDirection,skew適用後localFrame,No (readonly),skew変更時,
+verticalDirection,固定(0,0,1),No (readonly),変更なし,
+skewAngle,Substructure placement,Yes,transverse/2D回転再計算,
+supportId,Substructure Model,Yes,3D/2Dラベル更新,
+bearingId,自動生成(Substructure Model),No,自動,
+supportType,Substructure Model,Yes,形式切替
