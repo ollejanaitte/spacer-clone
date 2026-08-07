@@ -53,3 +53,16 @@ PR Ledger: X4A-P02 `4108100` / P03 `aeae8cc` / P04 `101d1db` / P05 `54aef44` /
 P06 `6604157` / P07 `137cf8a`（#523）。
 
 X4-Bはユーザー承認待ち。本フェーズでは自動開始しない。
+
+## Remote Reflection Summary
+
+- integration branch: research/liner-r1-planning
+- remote integration SHA: `141bd8d`
+- local completed original HEAD: `dc86e5b`（backup ref 保全）
+- backup ref: `backup/x4a-p02-p07-local-complete-20260808-020354`
+- P02 #517 `4108100` / P03 #518 `aeae8cc` / P04 #519 `101d1db` / P05 #520 `54aef44` / P06 #521 `6604157` / P07 #523 `141bd8d`
+- Geometry regression: PASS (21)
+- backend full suite: PASS (745)
+- main modified: NO（local main 4b44067 / upper diff hash b948131 不変）
+- upper worktree modified: NO（既知の evidence 3 file modified は開始時より存在）
+- LOCAL_INTEGRATION_SYNC_REQUIRED: YES（local research/liner-r1-planning は旧commit列を保持。remoteへはPR経由で反映済みのため、ローカルポインタ整理は任意）
