@@ -1,0 +1,46 @@
+{
+  "project": "GM-02",
+  "name": "H28 西知多道路（東海JCT）本線・ランプ主要点",
+  "provenance": {
+    "source": "ROAD_CALC_MAPPING.csv (phase-x1-5-project-evidence) SRC-010",
+    "pages": "本線 1732-1810 / ランプIP計算書 3869-3960",
+    "note": "X1-5 監査で数値確定済み (FACT)"
+  },
+  "input": {
+    "design": {
+      "road_class": "本線",
+      "design_speed_kmh": 120,
+      "curve_radii": [1900],
+      "clothoid_A": [450, 550, 500]
+    },
+    "ramp_design": {
+      "road_class": "専用ONランプ",
+      "design_speed_kmh": 60,
+      "curve_radii": [520, 320, 1983, 1000],
+      "ip_curve": {"radius": 520, "intersection_angle_deg": 9.0167, "curve_length": 81.71}
+    }
+  },
+  "expected": {
+    "mainline": {
+      "radius": 1900,
+      "min_radius_by_speed": {"120": 710, "100": 460},
+      "check": "CONSISTENT (R=1900 >= 基準)"
+    },
+    "ramp": {
+      "radii": [520, 320, 1983, 1000],
+      "min_radius_by_speed": {"60": 150, "80": 280},
+      "check": "CONSISTENT (小半径320/520 >= 基準)"
+    },
+    "clothoid": {"A_values": [450, 550, 500], "check": "CONSISTENT (KA/KE主要点)"},
+    "ip_curve_length": {"radius": 520, "CL": 81.71}
+  },
+  "tolerance": {
+    "radius_m": 1.0,
+    "curve_length_m": 0.01,
+    "A_m": 0.01
+  },
+  "discrepancies": {
+    "station_xy": "DEFERRED (X/Y実測値はPDFページ参照のみで数値未取得)",
+    "vertical_crossfall": "DEFERRED (縦断図・横断図は別資料)"
+  }
+}
