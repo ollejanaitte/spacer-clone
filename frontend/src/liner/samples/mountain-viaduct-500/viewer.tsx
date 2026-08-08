@@ -13,13 +13,14 @@
  *
  * Camera presets / layer toggles are visual convenience only.
  */
-import { Component, useMemo, type ErrorInfo, type ReactNode } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Component, useEffect, useMemo, type ErrorInfo, type ReactNode } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import type { BuildIntermediateInput } from "../../core/pipeline/pipeline";
 import { buildUnified3DScene, type Unified3DScene } from "./scene";
 import type { SceneLayer } from "./scene";
+import { terrainPositionsToThree } from "./threeCoords";
 
 export type MountainViewerProps = {
   draft: BuildIntermediateInput;
@@ -41,12 +42,15 @@ const FRAME_COLOR = "#9333ea";
 /** Terrain mesh from the unified scene (deterministic). */
 function TerrainLayer({ scene }: { scene: Unified3DScene }) {
   const geometry = useMemo(() => {
+    // terrain positions are (x, height, y); remap y -> -y to match the
+    // domain->three mapping used by road/bridge/substructure (TERRAIN-FIX).
+    const positions = terrainPositionsToThree(scene.terrain.positions);
     const buffer = new THREE.BufferGeometry();
-    buffer.setAttribute("position", new THREE.BufferAttribute(scene.terrain.positions, 3));
+    buffer.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     buffer.setIndex(new THREE.BufferAttribute(scene.terrain.indices, 1));
-    const colors = new Float32Array(scene.terrain.positions.length);
-    for (let i = 0; i < scene.terrain.positions.length; i += 3) {
-      const height = scene.terrain.positions[i + 1];
+    const colors = new Float32Array(positions.length);
+    for (let i = 0; i < positions.length; i += 3) {
+      const height = positions[i + 1];
       const shade = 0.55 + ((height % 10) / 10) * 0.25;
       colors[i] = shade * 0.30;
       colors[i + 1] = shade * 0.49;
@@ -59,7 +63,7 @@ function TerrainLayer({ scene }: { scene: Unified3DScene }) {
 
   return (
     <mesh geometry={geometry}>
-      <meshStandardMaterial vertexColors wireframe={false} />
+      <meshStandardMaterial vertexColors wireframe={false} side={THREE.DoubleSide} />
     </mesh>
   );
 }
@@ -195,16 +199,24 @@ export function MountainViaduct3dViewer({
   };
 
   const camera = scene.camera;
+  // camera presets are ALREADY in three coords (x, y=height, z): pass through.
+  const camX = camera.position.x;
+  const camY = camera.position.y;
+  const camZ = camera.position.z;
+  const tgtX = camera.target.x;
+  const tgtY = camera.target.y;
+  const tgtZ = camera.target.z;
 
   return (
     <ViewerErrorBoundary
       fallback={<div data-testid="mountain-viewer-error">3D 表示を初期化できませんでした</div>}
     >
       <div data-testid="mountain-viewer" style={{ width: "100%", height: 480 }}>
-        <Canvas camera={{ position: [camera.position.x, camera.position.y, camera.position.z], fov: 55 }}>
+        <Canvas camera={{ position: [camX, camY, camZ], fov: 55 }}>
           <ambientLight intensity={0.7} />
           <directionalLight position={[200, 150, 100]} intensity={1.1} />
-          <gridHelper args={[600, 30, "#334155", "#223047"]} position={[250, 0, 0]} />
+          {/* grid at the terrain floor (three Y = domain height minZ), 500m fits the route */}
+          <gridHelper args={[500, 20, "#334155", "#223047"]} position={[250, scene.bounds.minZ, 0]} />
           {layers.terrain && <TerrainLayer scene={scene} />}
           {layers.road && <RoadLayer scene={scene} />}
           {layers.superstructure && <SuperstructureLayer scene={scene} />}
@@ -212,9 +224,30 @@ export function MountainViaduct3dViewer({
             <SubstructureLayer scene={scene} selectedSupportId={selectedSupportId} />
           )}
           {layers.frame && <FrameLayer scene={scene} />}
-          <OrbitControls makeDefault target={[camera.target.x, camera.target.y, camera.target.z]} />
+          <CameraRig
+            position={[camX, camY, camZ]}
+            target={[tgtX, tgtY, tgtZ]}
+          />
         </Canvas>
       </div>
     </ViewerErrorBoundary>
   );
+}
+
+/** Applies a camera preset on change (camera position + OrbitControls target). */
+function CameraRig({
+  position,
+  target,
+}: {
+  position: [number, number, number];
+  target: [number, number, number];
+}) {
+  const { camera } = useThree();
+  useEffect(() => {
+    camera.position.set(position[0], position[1], position[2]);
+    camera.lookAt(target[0], target[1], target[2]);
+    camera.updateProjectionMatrix();
+  }, [camera, position, target]);
+
+  return <OrbitControls makeDefault target={target} />;
 }

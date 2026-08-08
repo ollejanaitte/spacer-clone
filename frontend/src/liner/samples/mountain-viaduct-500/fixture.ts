@@ -36,26 +36,26 @@ export const MOUNTAIN_CAMERA_PRESETS: MountainCameraPreset[] = [
   {
     id: "overview",
     label: "全景",
-    position: { x: 250, y: 130, z: 320 },
-    target: { x: 250, y: 60, z: 0 },
+    position: { x: 250, y: 220, z: 420 },
+    target: { x: 250, y: 25, z: 0 },
   },
   {
     id: "bridge",
     label: "橋梁区間",
-    position: { x: 250, y: 90, z: 120 },
-    target: { x: 250, y: 60, z: 0 },
+    position: { x: 250, y: 90, z: 150 },
+    target: { x: 250, y: 28, z: 0 },
   },
   {
     id: "follow",
     label: "路面追従",
-    position: { x: 80, y: 55, z: 20 },
-    target: { x: 420, y: 70, z: 0 },
+    position: { x: 250, y: 45, z: 120 },
+    target: { x: 250, y: 30, z: 0 },
   },
   {
     id: "valley",
     label: "谷俯瞰",
-    position: { x: 150, y: 85, z: 260 },
-    target: { x: 250, y: 40, z: 0 },
+    position: { x: 200, y: 55, z: 130 },
+    target: { x: 250, y: 25, z: 0 },
   },
 ];
 
