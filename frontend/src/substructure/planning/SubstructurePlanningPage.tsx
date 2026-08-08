@@ -10,6 +10,7 @@ import { SubstructureViewport } from "./SubstructureViewport";
 import { useSubstructureRealtimeUpdate } from "./useSubstructureRealtimeUpdate";
 import { SubstructurePropertyPanel } from "./SubstructurePropertyPanel";
 import { SubstructureFormPanel, type FormDataBundle } from "./SubstructureFormPanel";
+import type { Coordinate3dInput } from "../../liner/core/coordinate3d";
 import type { DimensionMode } from "./dimensions/dimensionModel";
 import { CoordinateTable } from "./CoordinateTable";
 import { StatusArea } from "./StatusArea";
@@ -30,6 +31,8 @@ export interface PlanningPageProps {
   supports: readonly Support[];
   /** 配置スナップショット（supportId → 座標） */
   coordinates: ReadonlyMap<string, { x: number; y: number; z: number }>;
+  /** Phase 3-5: 実線形（LINER Coordinate3dInput）。指定時は正準配置で3D生成。 */
+  coordinateInput?: Coordinate3dInput | null;
   selectedSupportId?: string | null;
   onSelectSupport?: (supportId: string | null) => void;
   /** M2-07 で接続する Undo/Redo */
@@ -55,7 +58,7 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
   const [dimensionMode, setDimensionMode] = useState<DimensionMode>("off");
 
   // M2-05: 2D即時 / 3D 300ms debounce のリアルタイム更新
-  const realtime = useSubstructureRealtimeUpdate(props.supports);
+  const realtime = useSubstructureRealtimeUpdate(props.supports, props.coordinateInput);
 
   const togglePanel = useCallback((key: keyof PanelState) => {
     setPanels((prev) => ({ ...prev, [key]: !prev[key] }));

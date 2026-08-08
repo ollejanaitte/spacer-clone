@@ -52,6 +52,13 @@ import { LinerFormalDrawingWorkspacePage } from "./liner/pages/LinerFormalDrawin
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { LinerMain3DPage } from "./liner/pages/LinerMain3DPage";
 import { buildMountainDraft } from "./liner/samples/mountain-viaduct-500/fixture";
+import { buildBridgeProjectAlignment } from "./bridgeProject/alignmentAdapter";
+import { buildBridgeProjectGeometry } from "./bridgeProject/bridgeGeometryGenerator";
+import { buildCommonBridgeModel, buildBridgeProjectManifest } from "./bridgeProject/cbdmDocument";
+import { buildBoundSubstructure } from "./bridgeProject/substructureBinding";
+import { getApolloBridgeProjectSuperstructure } from "./bridgeProject/projectSuperstructure";
+import { attachSuperstructureToManifest } from "./bridgeProject/cbdmDocument";
+import type { BridgeProjectSuperstructure } from "./bridgeProject/types";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -1264,6 +1271,29 @@ export function App() {
     const handoffAlignmentId = linerDraft
       ? resolveHandoffAlignmentId(linerDraft.alignment, linerDraft.activeAlignmentId)
       : "";
+    // Phase 3-5: BridgeProject-bound mode — derive the substructure Supports from
+    // the shared CBDM + manifest and drive real placement with the LINER draft.
+    let boundSupports: readonly import("./substructure/model").Support[] | undefined;
+    try {
+      if (linerDraft && (linerDraft.piers ?? []).length > 0) {
+        const alignment = buildBridgeProjectAlignment(linerDraft);
+        const geometry = buildBridgeProjectGeometry(
+          alignment,
+          linerDraft.piers,
+          linerDraft.spans,
+        );
+        const commonModel = buildCommonBridgeModel(alignment, geometry);
+        let manifest = buildBridgeProjectManifest(alignment, geometry, commonModel);
+        const sidecar = getApolloBridgeProjectSuperstructure(project);
+        if (sidecar !== undefined) {
+          manifest = attachSuperstructureToManifest(manifest, sidecar as BridgeProjectSuperstructure);
+        }
+        boundSupports = buildBoundSubstructure(commonModel, manifest);
+      }
+    } catch {
+      // Fall through to the LINER handoff path (explicit, not a silent sample fallback).
+      boundSupports = undefined;
+    }
     return (
       <ErrorBoundary
         fallback={(
@@ -1275,7 +1305,9 @@ export function App() {
         <SubstructurePlanningHost
           linerSupports={handoffSupports}
           alignmentId={handoffAlignmentId}
-          autoGenerateFromLiner={Boolean(linerDraft) && handoffSupports.length > 0}
+          boundSupports={boundSupports}
+          coordinateInput={boundSupports !== undefined ? linerDraft : undefined}
+          autoGenerateFromLiner={boundSupports === undefined && Boolean(linerDraft) && handoffSupports.length > 0}
           onBack={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
         />
       </ErrorBoundary>

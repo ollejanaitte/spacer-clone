@@ -19,6 +19,7 @@ import { applyFormPatchToSupport } from "./formToSupport";
 import { supportToForm } from "./formModel";
 import type { FormDataBundle } from "./SubstructureFormPanel";
 import { useUndoRedo } from "./useUndoRedo";
+import { makePlacementSnapshots } from "./useSubstructureRealtimeUpdate";
 import { validateSubstructureProject } from "../validation";
 import type { Support } from "../model";
 import type { LinerSupportHandoff } from "./linerHandoff";
@@ -26,6 +27,7 @@ import type { SuperstructureInput, SupportReactions } from "../design/designType
 import { buildSuperstructureEnvelope } from "../design/superstructureEnvelope";
 import { parseSupportInterface, validateSuperstructureInput } from "../design/superstructureInterface";
 import type { SolidGroup } from "../geometryBase";
+import type { Coordinate3dInput } from "../../liner/core/coordinate3d";
 import { runDesign, type DesignResult } from "../design/designEngine";
 import { buildCalculationCsv, buildCalculationJson } from "../design/calculationOutput";
 import { DesignResultPanel } from "./DesignResultPanel";
@@ -58,6 +60,10 @@ export interface SubstructurePlanningHostProps {
   superstructures?: readonly SuperstructureInput[];
   /** back navigation 受け口（LINER / /pro へ戻る）。 */
   onBack?: () => void;
+  /** Phase 3-5: BridgeProject で binding 済みの支点（初期支点として優先）。 */
+  boundSupports?: readonly Support[];
+  /** Phase 3-5: 実線形（LINER Coordinate3dInput）。指定時は SupportPlacementEngine で正準配置。 */
+  coordinateInput?: Coordinate3dInput;
 }
 
 /** 座標スナップショット（station/offset/z を反映）。 */
@@ -124,6 +130,9 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const alignmentId = props.alignmentId ?? "";
 
   const initialSupports = useMemo(() => {
+    if (props.boundSupports && props.boundSupports.length > 0) {
+      return props.boundSupports;
+    }
     if (props.initialSupports && props.initialSupports.length > 0) {
       return props.initialSupports;
     }
@@ -131,7 +140,13 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
       return buildLinerGeneratedSupports(props.linerSupports ?? [], alignmentId);
     }
     return [];
-  }, [props.initialSupports, props.autoGenerateFromLiner, props.linerSupports, alignmentId]);
+  }, [
+    props.boundSupports,
+    props.initialSupports,
+    props.autoGenerateFromLiner,
+    props.linerSupports,
+    alignmentId,
+  ]);
 
   const history = useUndoRedo<readonly Support[]>(initialSupports);
   const supports = history.state.present;
@@ -151,7 +166,22 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const [adapterSelectedSupportId, setAdapterSelectedSupportId] = useState<string | null>(null);
   const [engineUnavailable, setEngineUnavailable] = useState(false);
 
-  const coordinates = useMemo(() => buildHostCoordinates(supports), [supports]);
+  const coordinates = useMemo(() => {
+    // Phase 3-5: real placement from the LINER alignment when available.
+    if (props.coordinateInput) {
+      try {
+        const snapshots = makePlacementSnapshots(supports, props.coordinateInput);
+        const map = new Map<string, { x: number; y: number; z: number }>();
+        for (const [supportId, snapshot] of snapshots) {
+          map.set(supportId, snapshot.position);
+        }
+        return map;
+      } catch {
+        return buildHostCoordinates(supports);
+      }
+    }
+    return buildHostCoordinates(supports);
+  }, [supports, props.coordinateInput]);
   const validation = useMemo(() => buildValidationSummary(supports), [supports]);
 
   const extraGroups: readonly SolidGroup[] = useMemo(() => {
@@ -426,6 +456,7 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
       <SubstructurePlanningPage
         supports={supports}
         coordinates={coordinates}
+        coordinateInput={props.coordinateInput}
         selectedSupportId={selectedSupportId}
         onSelectSupport={setSelectedSupportId}
         onUndo={() => {
