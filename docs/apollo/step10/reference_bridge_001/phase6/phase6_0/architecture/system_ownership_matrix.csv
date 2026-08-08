@@ -1,0 +1,20 @@
+concern_id,concern,primary_owner,boundary_system,rationale,source_of_truth
+OWN-001,road horizontal alignment (line/arc/clothoid),LINER,Alignment Connector,Single Source of Alignment; Apollo must not reimplement,frontend/src/liner/core/geometry/*
+OWN-002,road vertical profile / elevation,LINER,Alignment Connector,vertical math owned by LINER,frontend/src/liner/core/elevationAt.ts; geometry/vertical.ts
+OWN-003,crossfall,LINER,Alignment Connector,crossfall math owned by LINER,frontend/src/liner/core/grid/crossfallResolution.ts
+OWN-004,stationing / station equations,LINER,Alignment Connector,station rules owned by LINER,frontend/src/liner/core/station/stationRules.ts
+OWN-005,station/offset -> XYZ,LINER,Alignment Connector,coordinate3d authoritative,frontend/src/liner/core/coordinate3d.ts
+OWN-006,XY -> station (inverse),LINER,Alignment Connector,stationAtPoint authoritative,frontend/src/liner/core/stationAtPoint.ts
+OWN-007,common persistence data contract,Common Bridge Data Model,Geometry Input Adapter,Phase 5 frozen contract; single input contract,schemas/contracts/v0.1/common-bridge-data-model.schema.json
+OWN-008,bridge geometry generation (supports/girders/grid/sections/bearings/frames),Apollo Geometry Engine,GeometrySnapshot,Single Source of Bridge Geometry,phase6 Geometry Engine (Phase 6-1)
+OWN-009,GeometrySnapshot (runtime output),Apollo Geometry Engine,all consumers,runtime/output model; not a persistence format,phase6 GeometrySnapshot types
+OWN-010,structural connectivity (nodes/members),Structural Model layer,Structural Model Connector,consumes GeometrySnapshot; no coordinate recompute,backend/engine/model.py + frontend types
+OWN-011,3D rendering,3D Viewer,3D Connector,display only; no engineering coordinate math,frontend/src/viewer/**
+OWN-012,drawing rendering,Drawing layer,Drawing Connector,dimension text/typography; reads snapshot,frontend/src/apollo/drawing/**
+OWN-013,substructure physical geometry (pier/abutment/foundation solids),Substructure module,Substructure Connector,placement consumes GeometrySnapshot supports,frontend/src/substructure/**
+OWN-014,geometry coordinates consumed by downstream,GeometrySnapshot,all connectors,one source of bridge coordinates,phase6 GeometrySnapshot
+OWN-015,STL/DXF/IFC export format conversion,Export Connector,GeometrySnapshot,engineering geometry separated from format,phase6 Export Connector
+OWN-016,structural analysis / design judgment,Analysis/Design layers,future connectors,not part of Geometry Engine,backend/engine/**
+OWN-017,member local axes (from GeometrySnapshot frames),Apollo Geometry Engine,Structural Model Connector,frames generated once,phase6 GeometrySnapshot
+OWN-018,road alignment azimuth (bridge-side consumption),Alignment Connector,Apollo Geometry Engine,wraps LINER result; no math copy,phase6 Alignment Connector
+OWN-019,save/load,Common Bridge Data Model,Persistence boundary,Common Model is the persistence data contract,frontend/src/contracts/persistence/**
