@@ -17,3 +17,6 @@ export * from "./planning/SubstructurePlanningPage";
 export * from "./planning/formModel";
 export * from "./planning/forms/PlacementFields";
 export * from "./planning/SubstructureFormPanel";
+// Phase C1 (M2-04) FOOTING 思想 杭基礎UI。
+export * from "./planning/piles/pileLayoutModel";
+export * from "./planning/piles/PileLayoutPanel";
