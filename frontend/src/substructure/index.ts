@@ -9,3 +9,5 @@ export * from "./PierSolidGenerator";
 export * from "./FoundationSolidGenerator";
 // Phase C1 (I04) 2D 平面投影。
 export * from "./PlanProjection";
+// Phase C1 (M2-01) 3D ソリッド→THREE 変換層（純粋）。
+export * from "./viewer3d/threeFactory";
