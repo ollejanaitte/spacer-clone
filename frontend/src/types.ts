@@ -291,6 +291,8 @@ export type ProjectModel = {
   apolloBsdd?: BridgeSuperstructureDesignDocument;
   /** Optional persisted bridge structure input for Visible Vertical Slice 01. */
   apolloBridgeStructureInput?: ApolloBridgeStructureInputDraft;
+  /** Optional Phase 3-4 shared superstructure facts sidecar (schema 0.1.0). */
+  apolloBridgeProjectSuperstructure?: import("./bridgeProject/types").BridgeProjectSuperstructure;
 };
 
 export type StructuredMessage = {

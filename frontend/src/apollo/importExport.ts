@@ -5,6 +5,10 @@ import {
 } from "../liner/adapters/linerProjectDraft";
 import type { ProjectModel } from "../types";
 import {
+  hydrateApolloBridgeProjectSuperstructureFromPersistence,
+  serializeApolloBridgeProjectSuperstructureForPersistence,
+} from "../bridgeProject/projectSuperstructure";
+import {
   hydrateApolloBsddFromPersistence,
   serializeApolloBsddForPersistence,
   validateBridgeStructureInputPersistence,
@@ -196,7 +200,16 @@ export function importApolloProjectFromText(text: string): ApolloProjectImportRe
     return { ok: false, diagnostics: bsddHydration.diagnostics };
   }
 
-  const validation = validateApolloPhase1Unit2Draft(getApolloPhase1Unit2Draft(bsddHydration.project));
+  const superstructureHydration = hydrateApolloBridgeProjectSuperstructureFromPersistence(
+    bsddHydration.project,
+  );
+  if (!superstructureHydration.ok) {
+    return { ok: false, diagnostics: superstructureHydration.diagnostics };
+  }
+
+  const validation = validateApolloPhase1Unit2Draft(
+    getApolloPhase1Unit2Draft(superstructureHydration.project),
+  );
   if (validation.errors.length > 0) {
     return {
       ok: false,
@@ -204,7 +217,7 @@ export function importApolloProjectFromText(text: string): ApolloProjectImportRe
     };
   }
 
-  return { ok: true, project: bsddHydration.project };
+  return { ok: true, project: superstructureHydration.project };
 }
 
 export function exportApolloProjectToText(project: ProjectModel): ApolloProjectExportResult {
@@ -212,7 +225,13 @@ export function exportApolloProjectToText(project: ProjectModel): ApolloProjectE
   if (!bsddSerialized.ok) {
     return { ok: false, diagnostics: bsddSerialized.diagnostics };
   }
-  const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(bsddSerialized.project);
+  const superstructureSerialized = serializeApolloBridgeProjectSuperstructureForPersistence(
+    bsddSerialized.project,
+  );
+  if (!superstructureSerialized.ok) {
+    return { ok: false, diagnostics: superstructureSerialized.diagnostics };
+  }
+  const apolloSerialized = serializeApolloPhase1Unit2ForPersistence(superstructureSerialized.project);
   if (!apolloSerialized.ok) {
     return { ok: false, diagnostics: apolloSerialized.diagnostics };
   }
