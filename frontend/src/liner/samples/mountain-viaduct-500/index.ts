@@ -12,4 +12,5 @@ export * from "./camera";
 export * from "./markers";
 export * from "./substructure";
 export * from "./scene";
+export * from "./viewerSwitch";
 export * from "./viewer";
