@@ -24,8 +24,9 @@ test.describe("Phase C1 M3-01 substructure persistence", () => {
     const saveDir = `/tmp/opencode/m3-01-e2e-${Date.now()}.json`;
     await download.saveAs(saveDir);
     const saved = JSON.parse(readFileSync(saveDir, "utf8"));
-    expect(saved.schemaVersion).toBe("0.2.0");
-    expect(saved.supports.map((s: { supportId: string }) => s.supportId)).toEqual([
+    expect(saved.schemaVersion).toBe("0.1.0");
+    expect(saved.project.schemaVersion).toBe("0.2.0");
+    expect(saved.project.supports.map((s: { supportId: string }) => s.supportId)).toEqual([
       "A1",
       "P1",
       "P2",
