@@ -12,17 +12,25 @@ import type { GeometrySnapshot, LocalFrame3, Vec3 } from "./types";
 /**
  * Input contract for the Geometry Engine. Produced by the Geometry Input Adapter
  * from the frozen Common Bridge Data Model. Contains NO computed coordinates —
- * the adapter performs no geometry calculation.
+ * the adapter performs no geometry calculation. Resolution states are carried.
  */
 export type GeometryEngineInput = {
   sourceModelVersion: string;
   bridgeId: string;
   alignmentIds: string[];
   supports: { id: string; stationM?: number; skewRad?: number; state: string }[];
-  girders: { id: string; offsetM?: number }[];
+  girders: { id: string; offsetM?: number; state: string }[];
   gridPointIds: string[];
   deckIds: string[];
   sectionIds: string[];
+  /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
+  unresolved: UnresolvedSummary[];
+};
+
+export type UnresolvedSummary = {
+  id: string;
+  kind: "HCR" | "CONFLICT" | "HOLD" | "NOT_AVAILABLE";
+  affectedEntityIds: string[];
 };
 
 /** A single alignment sample from the Alignment Connector (LINER authority). */
@@ -30,8 +38,10 @@ export type AlignmentPointSample = {
   position: Vec3;
   azimuthRad: number;
   curvature: number;
-  grade: number;
-  crossfallPercent: number;
+  /** Present only when the LINER source exposes a vertical grade. */
+  grade?: number;
+  /** Present only when the LINER source exposes a crossfall value. */
+  crossfallPercent?: number;
   tangent: Vec3;
   transverse: Vec3;
   vertical: Vec3;
