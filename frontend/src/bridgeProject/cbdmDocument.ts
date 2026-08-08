@@ -534,3 +534,39 @@ export function attachSuperstructureToManifest(
   }
   return finalized as unknown as BridgeProject;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 3-8: attach reconstruction (CASE B) provenance to the manifest
+// ---------------------------------------------------------------------------
+
+/**
+ * Mark the BridgeProject manifest as CASE B (superstructure-sample-originated):
+ * record the reconstruction block and set the alignment section to PARTIAL
+ * (reconstructed). Re-validates the manifest (fail-closed).
+ */
+export function attachReconstructionToManifest(
+  manifest: BridgeProject,
+  reconstruction: import("../contracts/bridgeProject").BridgeProjectReconstruction,
+): BridgeProject {
+  const sections = {
+    ...manifest.status.sections,
+    alignment: {
+      owner: "ALIGNMENT_OWNER" as const,
+      state: "PARTIAL" as const,
+      stateReason: "reconstructed from superstructure sample (CASE B); INFERRED/MISSING values await user confirmation",
+    },
+  };
+  const updated = { ...manifest, status: { ...manifest.status, sections }, reconstruction };
+  const checksum = checksumHex(updated as Record<string, unknown>);
+  const finalized = { ...updated, contentChecksum: { algorithm: "sha256", hexDigest: checksum } };
+  const result = validateBridgeProject(finalized as unknown as Partial<BridgeProject>);
+  if (result.issues.length > 0) {
+    throw new BridgeProjectAdapterError(
+      BP_CODES.UNIT_INVALID,
+      `Attached reconstruction failed manifest validation: ${result.issues
+        .map((issue) => issue.code)
+        .join(", ")}`,
+    );
+  }
+  return finalized as unknown as BridgeProject;
+}
