@@ -34,6 +34,14 @@ import type { SolidGroup } from "../geometryBase";
 import { runDesign, type DesignResult } from "../design/designEngine";
 import { buildCalculationCsv, buildCalculationJson } from "../design/calculationOutput";
 import { DesignResultPanel } from "./DesignResultPanel";
+import { mapSupportToAdapterInput } from "../design/adapterMapper";
+import { calculateTest } from "../design/testCalculationEngine";
+import {
+  ADAPTER_SCHEMA_VERSION,
+  type CalculationAdapterInput,
+  type CalculationAdapterResult,
+} from "../design/calculationAdapter";
+import { AdapterResultPanel } from "./AdapterResultPanel";
 
 export type { LinerSupportHandoff };
 
@@ -140,6 +148,12 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const superstructureInputRef = useRef<HTMLInputElement | null>(null);
   const [designResults, setDesignResults] = useState<readonly DesignResult[] | null>(null);
   const [designSelectedSupportId, setDesignSelectedSupportId] = useState<string | null>(null);
+  const [adapterResults, setAdapterResults] = useState<readonly CalculationAdapterResult[] | null>(null);
+  const [adapterInputs, setAdapterInputs] = useState<ReadonlyMap<string, CalculationAdapterInput>>(
+    () => new Map(),
+  );
+  const [adapterSelectedSupportId, setAdapterSelectedSupportId] = useState<string | null>(null);
+  const [engineUnavailable, setEngineUnavailable] = useState(false);
 
   const coordinates = useMemo(() => buildHostCoordinates(supports), [supports]);
   const validation = useMemo(() => buildValidationSummary(supports), [supports]);
@@ -343,6 +357,48 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
     URL.revokeObjectURL(url);
   }, [designResults]);
 
+  const handleRunAdapter = useCallback(() => {
+    const results: CalculationAdapterResult[] = [];
+    const inputs = new Map<string, CalculationAdapterInput>();
+    for (const support of supports) {
+      const mapped = mapSupportToAdapterInput(support, {
+        projectId: props.projectId,
+        bridgeId: props.bridgeId,
+        source: "spacer-clone",
+      });
+      if (!mapped.ok || !mapped.value) {
+        // 不完全モデル → fail-closed: 計算を実行せず ERROR 結果
+        results.push({
+          schemaVersion: ADAPTER_SCHEMA_VERSION,
+          calculationId: `calc-error-${support.supportId}`,
+          supportId: support.supportId,
+          engineType: "test-mock",
+          engineVersion: "0.1.0",
+          status: "ERROR",
+          checks: [],
+          summary: { pass: 0, fail: 0, hold: 0, total: 0 },
+          errors: [`Adapter 入力生成に失敗しました（不完全モデル）: ${mapped.diagnostics.join(" / ")}`],
+          warnings: ["計算は実行されていません（fail-closed）"],
+          trace: [{ key: "supportId", value: support.supportId }],
+          generatedAt: new Date().toISOString(),
+          isFormalDesign: false,
+          engineLabel: "TEST",
+        });
+        continue;
+      }
+      inputs.set(support.supportId, mapped.value);
+      results.push(calculateTest(mapped.value, { simulateUnavailable: engineUnavailable }));
+    }
+    setAdapterInputs(inputs);
+    setAdapterResults(results);
+    setAdapterSelectedSupportId(results[0]?.supportId ?? null);
+    setPersistMessage(
+      engineUnavailable
+        ? "Adapter 計算（TEST）: Engine 利用不可をシミュレート（ERROR）"
+        : `Adapter 計算（TEST）を実行しました（${results.length} supports / TEST結果）`,
+    );
+  }, [supports, props.projectId, props.bridgeId, engineUnavailable]);
+
   return (
     <>
       <SubstructurePlanningPage
@@ -398,6 +454,20 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
             <button type="button" data-testid="run-design" onClick={handleRunDesign}>
               {t.runDesign ?? "設計計算"}
             </button>
+            <button type="button" data-testid="run-adapter-test" onClick={handleRunAdapter}>
+              {t.runAdapterTest ?? "Adapter計算(TEST)"}
+            </button>
+            <label
+              data-testid="engine-unavailable-toggle"
+              style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12 }}
+            >
+              <input
+                type="checkbox"
+                checked={engineUnavailable}
+                onChange={(e) => setEngineUnavailable(e.target.checked)}
+              />
+              {t.engineUnavailable ?? "Engine不可シミュレート"}
+            </label>
             <button
               type="button"
               data-testid="export-design-csv"
@@ -497,6 +567,25 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
             results={designResults}
             selectedSupportId={designSelectedSupportId}
             onSelectSupport={setDesignSelectedSupportId}
+          />
+        </div>
+      )}
+      {adapterResults && adapterResults.length > 0 && (
+        <div
+          style={{
+            position: "fixed",
+            top: 130,
+            left: 12,
+            zIndex: 940,
+            width: 480,
+            maxHeight: "60vh",
+            overflow: "auto",
+          }}
+        >
+          <AdapterResultPanel
+            results={adapterResults}
+            selectedSupportId={adapterSelectedSupportId}
+            onSelectSupport={setAdapterSelectedSupportId}
           />
         </div>
       )}

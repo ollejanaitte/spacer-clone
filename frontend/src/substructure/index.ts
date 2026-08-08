@@ -56,3 +56,5 @@ export * from "./design/calculationAdapter";
 export * from "./design/adapterMapper";
 // Phase C1 (A-03) Test / Mock Calculation Engine。
 export * from "./design/testCalculationEngine";
+// Phase C1 (A-04) Adapter 結果 UI。
+export * from "./planning/AdapterResultPanel";
