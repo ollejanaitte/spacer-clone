@@ -2187,6 +2187,17 @@ export const ja = {
       closeAriaLabel: "プロパティパネルを閉じる",
     },
   },
+
+  substructure: {
+    viewer: {
+      fitAll: "全体表示",
+      fitSelection: "選択へ合わせる",
+      top: "上面",
+      front: "正面",
+      side: "側面",
+      isometric: "等角",
+    },
+  },
 };
 
 export type JaDictionary = typeof ja;
