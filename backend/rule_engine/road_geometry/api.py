@@ -16,6 +16,12 @@ from typing import Optional
 from backend.rule_engine.alignment import Alignment
 from backend.rule_engine.alignment.contract import build_alignment_from_roadmap
 from backend.rule_engine.alignment.evaluate import evaluate_alignment
+from backend.rule_engine.alignment.station import AlignmentRangeError
+from backend.rule_engine.geometry.contracts import (
+    Vec3,
+    angle_to_normal,
+    angle_to_tangent,
+)
 from backend.rule_engine.crosssection.global_xyz import (
     center_point_global,
     generate_global_section,
@@ -64,9 +70,37 @@ class RoadGeometryAPI:
     ) -> RoadGeometryResult:
         """Evaluate center pose (X / Y / heading / curvature / tangent / normal).
 
-        P02: delegates to evaluate_alignment via the X4-B solver.
+        P02: delegates to evaluate_alignment via the X4-B solver and derives
+        tangent / normal vectors from the canonical Geometry Kernel.
         """
-        raise NotImplementedError("P01 skeleton: implemented in P02")
+        try:
+            evaluation = evaluate_alignment(
+                alignment, request.station, bearing_units=request.bearing_units)
+        except AlignmentRangeError as exc:
+            raise RoadGeometryError(str(exc)) from exc
+
+        azimuth = evaluation.azimuth
+        tangent = angle_to_tangent(azimuth)
+        normal = angle_to_normal(azimuth)
+        return RoadGeometryResult(
+            station=request.station,
+            x=evaluation.point.x,
+            y=evaluation.point.y,
+            z=request.center_elevation,
+            heading=azimuth,
+            tangent=Vec3(tangent.x, tangent.y, 0.0),
+            normal=Vec3(normal.x, normal.y, 0.0),
+            curvature=evaluation.curvature,
+            element_id=evaluation.element_id,
+            element_type=evaluation.element_type,
+            total_left_width=0.0,
+            total_right_width=0.0,
+            crossfall_left_percent=0.0,
+            crossfall_right_percent=0.0,
+            left_edge_xyz=None,
+            right_edge_xyz=None,
+            trace={"source": "X4B-ALIGNMENT-SOLVER", "element": evaluation.element_id},
+        )
 
     def _merge_cross_section(
         self,
@@ -76,9 +110,13 @@ class RoadGeometryAPI:
     ) -> RoadGeometryResult:
         """Merge width / crossfall / edges / cross-section points / Z.
 
-        P03: delegates to generate_global_section (X4-C).
+        P03: delegates to generate_global_section (X4-C). Until then, requests
+        without cross-section inputs pass through unchanged.
         """
-        raise NotImplementedError("P01 skeleton: implemented in P03")
+        has_cross_inputs = bool(request.left_segments or request.right_segments)
+        if not has_cross_inputs:
+            return result
+        raise NotImplementedError("P02 skeleton: cross section merge implemented in P03")
 
 
 # Module-level facade instance (canonical entry point)
