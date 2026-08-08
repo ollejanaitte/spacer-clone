@@ -8,3 +8,4 @@ export * from "./bridgeFixture";
 export * from "./terrain";
 export * from "./fixture";
 export * from "./useSamplePicker";
+export * from "./camera";
