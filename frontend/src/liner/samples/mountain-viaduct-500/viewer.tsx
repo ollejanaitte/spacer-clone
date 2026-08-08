@@ -29,6 +29,8 @@ export type MountainViewerProps = {
   layerState?: Partial<Record<SceneLayer, boolean>>;
   /** selected support id (A1/P1..P7/A2) to highlight, or undefined. */
   selectedSupportId?: string;
+  /** Phase 3-6: fused ② superstructure + ③ substructure solids (three-space). */
+  integrated?: import("../../../bridgeProject/integratedScene3d").IntegratedScene3d;
 };
 
 const TERRAIN_COLOR = "#4d7c4f";
@@ -183,11 +185,56 @@ class ViewerErrorBoundary extends Component<{ children: ReactNode; fallback: Rea
   }
 }
 
+/** Phase 3-6: render fused ② superstructure + ③ substructure oriented boxes. */
+function SolidBoxLayer({
+  integrated,
+}: {
+  integrated: import("../../../bridgeProject/integratedScene3d").IntegratedScene3d;
+}) {
+  const boxes = useMemo(() => {
+    const all = [
+      ...integrated.substructureBoxes.map((b) => ({ ...b, layer: "sub" as const })),
+      ...integrated.superstructureBoxes.map((b) => ({ ...b, layer: "super" as const })),
+    ];
+    const matrices = new Map<string, THREE.Quaternion>();
+    for (const box of all) {
+      const m = new THREE.Matrix4();
+      m.makeBasis(
+        new THREE.Vector3(box.basis[0][0], box.basis[0][1], box.basis[0][2]),
+        new THREE.Vector3(box.basis[1][0], box.basis[1][1], box.basis[1][2]),
+        new THREE.Vector3(box.basis[2][0], box.basis[2][1], box.basis[2][2]),
+      );
+      matrices.set(box.id, new THREE.Quaternion().setFromRotationMatrix(m));
+    }
+    return { all, matrices };
+  }, [integrated]);
+  return (
+    <group>
+      {boxes.all.map((box) => {
+        const q = boxes.matrices.get(box.id)!;
+        const color = box.layer === "sub" ? PIER_COLOR : SPAN_COLOR;
+        return (
+          <mesh
+            key={box.id}
+            position={[box.center[0], box.center[1], box.center[2]]}
+            quaternion={q}
+            data-testid={`solid-${box.layer}-${box.id}`}
+          >
+            <boxGeometry args={[box.size[0], box.size[1], box.size[2]]} />
+            <meshStandardMaterial color={color} transparent opacity={0.85} />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
 export function MountainViaduct3dViewer({
   draft,
   presetId = "overview",
   layerState = {},
   selectedSupportId,
+  integrated,
 }: MountainViewerProps) {
   const scene = useMemo(() => buildUnified3DScene(draft, presetId), [draft, presetId]);
   const layers: Record<SceneLayer, boolean> = {
@@ -224,6 +271,7 @@ export function MountainViaduct3dViewer({
             <SubstructureLayer scene={scene} selectedSupportId={selectedSupportId} />
           )}
           {layers.frame && <FrameLayer scene={scene} />}
+          {integrated && <SolidBoxLayer integrated={integrated} />}
           <CameraRig
             position={[camX, camY, camZ]}
             target={[tgtX, tgtY, tgtZ]}
