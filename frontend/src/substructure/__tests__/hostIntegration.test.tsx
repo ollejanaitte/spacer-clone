@@ -219,4 +219,26 @@ describe("SubstructurePlanningHost", () => {
     const message = container.querySelector('[data-testid="superstructure-message"]')?.textContent ?? "";
     expect(message).toContain("失敗");
   });
+
+  it("runs design and shows the result panel with HOLD summary", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="combo-combo-standard"]')!.click();
+    });
+    expect(
+      container.querySelector<HTMLButtonElement>('[data-testid="export-design-csv"]')!.disabled,
+    ).toBe(true);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="run-design"]')!.click();
+    });
+    expect(container.querySelector('[data-testid="design-result-panel"]')).not.toBeNull();
+    const summary = container.querySelector('[data-testid="design-summary"]')?.textContent ?? "";
+    expect(summary).toContain("HOLD 4");
+    expect(
+      container.querySelector<HTMLButtonElement>('[data-testid="export-design-csv"]')!.disabled,
+    ).toBe(false);
+  });
 });

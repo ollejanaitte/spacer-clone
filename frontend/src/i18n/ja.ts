@@ -2271,6 +2271,11 @@ export const ja = {
       saveProject: "保存",
       loadProject: "読込",
       importSuperstructure: "上部工接続",
+      runDesign: "設計計算",
+      exportDesignCsv: "計算書CSV",
+      exportDesignJson: "結果JSON",
+      designResultTitle: "設計計算結果",
+      designNoResult: "設計計算を実行すると結果が表示されます（数値照査は根拠未 ADOPTED のため HOLD となります）",
     },
   },
 };

@@ -47,3 +47,6 @@ export * from "./design/designEngine";
 // Phase C1 (M3-04) 耐震・配筋フレームワーク。
 export * from "./design/seismicDesign";
 export * from "./design/reinforcementDesign";
+// Phase C1 (M3-05) 計算結果UI・成果物。
+export * from "./design/calculationOutput";
+export * from "./planning/DesignResultPanel";
