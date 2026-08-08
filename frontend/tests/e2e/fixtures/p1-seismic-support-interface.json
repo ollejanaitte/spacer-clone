@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "0.1.0",
+  "projectId": "m3-e2e",
+  "supportId": "P1",
+  "supportType": "pier",
+  "sourceApplication": "m3-e2e",
+  "sourceVersion": "e2e",
+  "sourceRevision": "e2e",
+  "coordinateSystem": "x-longitudinal-y-transverse-z-up",
+  "unitSystem": "si",
+  "origin": { "x": 0, "y": 0, "z": 0 },
+  "position": { "x": 30, "y": 0, "z": 0 },
+  "bearingSeats": [
+    { "bearingId": "P1-BRG-01", "bearingPosition": { "x": 0, "y": -2.5, "z": 8.0 }, "bearingHeight": 0.2 },
+    { "bearingId": "P1-BRG-02", "bearingPosition": { "x": 0, "y": 2.5, "z": 8.0 }, "bearingHeight": 0.2 }
+  ],
+  "reactionCases": [
+    { "caseId": "DL", "caseKind": "permanent", "force": { "x": 0, "y": 0, "z": -3325.5 } },
+    { "caseId": "LL", "caseKind": "liveLoad", "force": { "x": 0, "y": 0, "z": -1378.9 } },
+    { "caseId": "EQ1", "caseKind": "seismicLevel1", "force": { "x": 0, "y": -1824.37, "z": 0 } },
+    { "caseId": "EQ2", "caseKind": "seismicLevel2", "force": { "x": 0, "y": -2500.0, "z": 0 } }
+  ],
+  "girderBottomElevation": 8.4,
+  "deckElevation": 10.0
+}
