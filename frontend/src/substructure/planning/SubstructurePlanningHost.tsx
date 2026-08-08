@@ -5,7 +5,7 @@
 // 空/不正状態でもクラッシュせず、back navigation の受け口を備える。
 // M2-09C: LINER 支点 handoff（自動生成・skew/alignmentId 継承）。
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { SubstructurePlanningPage, type ValidationSummary } from "./SubstructurePlanningPage";
 import { SampleCreationDialog } from "./samples/SampleCreationDialog";
@@ -22,6 +22,11 @@ import { useUndoRedo } from "./useUndoRedo";
 import { validateSubstructureProject } from "../validation";
 import type { Support } from "../model";
 import type { LinerSupportHandoff } from "./linerHandoff";
+import {
+  deserializeSubstructureProject,
+  projectToSupports,
+  serializeSubstructureProject,
+} from "./persistence";
 
 export type { LinerSupportHandoff };
 
@@ -34,6 +39,10 @@ export interface SubstructurePlanningHostProps {
   alignmentId?: string;
   /** マウント時に LINER 支点から自動生成するか（LINER review からの遷移時）。 */
   autoGenerateFromLiner?: boolean;
+  /** 保存時のプロジェクトID。 */
+  projectId?: string;
+  /** 保存時の bridgeId。 */
+  bridgeId?: string;
   /** back navigation 受け口（LINER / /pro へ戻る）。 */
   onBack?: () => void;
 }
@@ -181,6 +190,46 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
     [],
   );
 
+  const [persistMessage, setPersistMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSave = useCallback(() => {
+    const result = serializeSubstructureProject({
+      supports,
+      projectId: props.projectId,
+      bridgeId: props.bridgeId,
+      alignmentRefs: alignmentId ? [{ alignmentId, originStation: 0, totalLength: 0 }] : undefined,
+    });
+    if (!result.ok || !result.value) {
+      setPersistMessage(`保存失敗: ${result.diagnostics.join(" / ")}`);
+      return;
+    }
+    const blob = new Blob([result.value.json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "substructure-project.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    setPersistMessage("保存しました (substructure-project.json)");
+  }, [supports, props.projectId, props.bridgeId, alignmentId]);
+
+  const handleLoadFile = useCallback(
+    async (file: File) => {
+      const text = await file.text();
+      const result = deserializeSubstructureProject(text);
+      if (!result.ok || !result.value) {
+        setPersistMessage(`読込失敗: ${result.diagnostics.join(" / ")}`);
+        return;
+      }
+      const loaded = projectToSupports(result.value);
+      history.reset(loaded);
+      setSelectedSupportId(null);
+      setPersistMessage(`読込ました (${loaded.length} supports, ${file.name})`);
+    },
+    [history],
+  );
+
   return (
     <>
       <SubstructurePlanningPage
@@ -207,15 +256,59 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
         onFormPatch={handleFormPatch}
         onFormTypeChange={handleFormTypeChange}
         toolbarExtra={
-          <button
-            type="button"
-            data-testid="open-sample-dialog"
-            onClick={() => setDialogOpen(true)}
-          >
-            {t.sampleDialogTitle ?? "サンプル新規作成"}
-          </button>
+          <>
+            <button
+              type="button"
+              data-testid="open-sample-dialog"
+              onClick={() => setDialogOpen(true)}
+            >
+              {t.sampleDialogTitle ?? "サンプル新規作成"}
+            </button>
+            <button type="button" data-testid="substructure-save" onClick={handleSave}>
+              {t.saveProject ?? "保存"}
+            </button>
+            <button
+              type="button"
+              data-testid="substructure-load"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {t.loadProject ?? "読込"}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json,application/json"
+              style={{ display: "none" }}
+              data-testid="substructure-load-input"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void handleLoadFile(file);
+                e.target.value = "";
+              }}
+            />
+          </>
         }
       />
+      {persistMessage && (
+        <div
+          data-testid="substructure-persist-message"
+          style={{
+            position: "fixed",
+            top: 64,
+            right: 12,
+            zIndex: 950,
+            padding: "8px 12px",
+            borderRadius: 8,
+            border: "1px solid rgba(255,255,255,0.15)",
+            background: "#1d2b45",
+            color: "#f1f5f9",
+            fontSize: 12,
+            fontFamily: "Inter, 'Noto Sans JP', sans-serif",
+          }}
+        >
+          {persistMessage}
+        </div>
+      )}
       {dialogOpen && (
         <SampleCreationDialog
           hasLinerSupports={(props.linerSupports ?? []).length > 0}
