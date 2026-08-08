@@ -28,3 +28,5 @@ export * from "./planning/dimensions/dimensionModel";
 export * from "./planning/selectionState";
 export * from "./planning/useUndoRedo";
 export * from "./planning/useKeyboardShortcuts";
+// Phase C1 (M2-08) サンプル自動生成。
+export * from "./planning/samples/sampleGenerator";
