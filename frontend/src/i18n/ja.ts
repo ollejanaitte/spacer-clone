@@ -2276,6 +2276,11 @@ export const ja = {
       exportDesignJson: "結果JSON",
       designResultTitle: "設計計算結果",
       designNoResult: "設計計算を実行すると結果が表示されます（数値照査は根拠未 ADOPTED のため HOLD となります）",
+      runAdapterTest: "Adapter計算(TEST)",
+      engineUnavailable: "Engine不可シミュレート",
+      adapterResultTitle: "Adapter 計算結果（TEST/MOCK）",
+      adapterNoResult: "Adapter 計算（TEST）を実行すると結果が表示されます",
+      adapterFormalNotice: "この結果は TEST / MOCK 計算によるものであり、正式な構造安全性の設計判定ではありません。",
     },
   },
 };

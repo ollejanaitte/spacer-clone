@@ -241,4 +241,43 @@ describe("SubstructurePlanningHost", () => {
       container.querySelector<HTMLButtonElement>('[data-testid="export-design-csv"]')!.disabled,
     ).toBe(false);
   });
+
+  it("runs the Adapter (TEST) calculation and shows TEST results", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="combo-combo-standard"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="run-adapter-test"]')!.click();
+    });
+    expect(container.querySelector('[data-testid="adapter-result-panel"]')).not.toBeNull();
+    const summary = container.querySelector('[data-testid="adapter-summary"]')?.textContent ?? "";
+    expect(summary).toContain("PASS 4");
+    const notice =
+      container.querySelector('[data-testid="adapter-formal-notice"]')?.textContent ?? "";
+    expect(notice).toContain("正式な構造安全性の設計判定ではありません");
+  });
+
+  it("simulated engine-unavailable returns ERROR results (fail-closed)", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="combo-combo-standard"]')!.click();
+    });
+    act(() => {
+      container
+        .querySelector<HTMLInputElement>('[data-testid="engine-unavailable-toggle"] input')!
+        .click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="run-adapter-test"]')!.click();
+    });
+    const summary = container.querySelector('[data-testid="adapter-summary"]')?.textContent ?? "";
+    expect(summary).toContain("ERROR 4");
+  });
 });
