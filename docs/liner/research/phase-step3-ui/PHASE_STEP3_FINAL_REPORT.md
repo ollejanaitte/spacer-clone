@@ -5,7 +5,7 @@ PHASE_STEP3: COMPLETE
 ROAD_ALIGNMENT_TOOL_RELEASE_READINESS: GO
 
 REMOTE_INTEGRATION_SHA:
-（P11 merge後確定）
+2ff3449405e8d212c7ff182805c68d4157b3aa71
 
 ## 完了条件（§13）
 | 条件 | 状態 |
@@ -44,7 +44,8 @@ REMOTE_INTEGRATION_SHA:
 - S3-UX08 #678
 - S3-UX09 #679
 - S3-UX10 #681
-- S3-UX11 （本PR）
+- S3-UX11 #683
+- S3-UX11-sha-fill （本PR）
 
 ## 新規 frontend（production code）
 - frontend/src/liner/core/visual/（contract / svgFoundation / horizontalAlignment /
