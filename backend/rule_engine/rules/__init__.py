@@ -26,6 +26,7 @@ def load_all_rules() -> List:
     from .validation import VALIDATIONRule as ValidationRule
     from ..alignment.contract import AlignmentGeometryRule
     from .widening import WIDENINGRule
+    from .curve_length import CURVE_LENGTHRule
     return [
         RoadClassificationRule(),
         DesignSpeedRule(),
@@ -47,4 +48,5 @@ def load_all_rules() -> List:
         ValidationRule(),
         AlignmentGeometryRule(),
         WIDENINGRule(),
+        CURVE_LENGTHRule(),
     ]
