@@ -2265,6 +2265,9 @@ export const ja = {
       sampleClose: "閉じる",
       sampleSupportId: "supportId",
       backToLiner: "LINERへ戻る",
+      reviewTabEntryTitle: "下部工計画",
+      reviewTabEntryDescription: "LINER支点を引き継いで下部工の計画・2D/3D表示を行います。",
+      openPlanning: "下部工計画を開く",
     },
   },
 };

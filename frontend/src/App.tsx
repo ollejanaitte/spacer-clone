@@ -67,6 +67,7 @@ import {
   resolveLinerDrawingWorkspaceKind,
   resolveLinerUiRouteId,
   resolveLinerUiRoutePath,
+  resolveSubstructureRoutePath,
   isSubstructureRoute,
 } from "./liner/uiPreparation";
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
@@ -1114,6 +1115,7 @@ export function App() {
           onOpenPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
           onOpenDrawings={() => navigatePro(resolveLinerUiRoutePath("liner.drawingPlan"))}
           onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
+          onOpenSubstructure={() => navigatePro(resolveSubstructureRoutePath())}
           onClose={() => navigatePro("/pro")}
           onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
         />

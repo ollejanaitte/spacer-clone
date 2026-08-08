@@ -60,6 +60,7 @@ export type LinerEditPageProps = {
   onOpenPreview?: () => void;
   onOpenDrawings?: () => void;
   onOpenMappingReview?: () => void;
+  onOpenSubstructure?: () => void;
   onClose: () => void;
   onBackToList: () => void;
 };
@@ -71,6 +72,7 @@ export function LinerEditPage({
   onOpenPreview,
   onOpenDrawings,
   onOpenMappingReview,
+  onOpenSubstructure,
   onClose,
   onBackToList,
 }: LinerEditPageProps) {
@@ -462,6 +464,26 @@ export function LinerEditPage({
                 onCompositionStateChange={reportCompositionState}
               />
               <BridgeLayoutDiagnosticsPanel draft={draft} />
+              {onOpenSubstructure && (
+                <section
+                  className="liner-edit-panel"
+                  aria-labelledby="substructure-entry-title"
+                >
+                  <h2 id="substructure-entry-title">
+                    {ja.substructure.planning.reviewTabEntryTitle}
+                  </h2>
+                  <p className="liner-edit-help" data-testid="substructure-entry-description">
+                    {ja.substructure.planning.reviewTabEntryDescription}
+                  </p>
+                  <button
+                    type="button"
+                    data-testid="open-substructure-planning"
+                    onClick={() => commitAndRun(onOpenSubstructure)}
+                  >
+                    {ja.substructure.planning.openPlanning}
+                  </button>
+                </section>
+              )}
             </div>
           )}
         </LinerSetupTabs>
