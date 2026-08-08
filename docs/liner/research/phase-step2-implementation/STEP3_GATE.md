@@ -1,0 +1,35 @@
+# Phase STEP-2 — Completion Gate
+
+STEP3_UI_INTEGRATION_READINESS: **GO**
+
+## 判定根拠
+
+| 完了条件 | 状態 |
+|----------|------|
+| STEP2_IMPLEMENTATION | COMPLETE |
+| VERTICAL_GEOMETRY | COMPLETE |
+| ROAD_RULES | COMPLETE（widening算定式のみDEFERRED明示） |
+| BRIDGE_GEOMETRY | COMPLETE |
+| OUTPUT_REPORT | COMPLETE |
+| PROJECT_REPLAY | PASS |
+| GOLDEN_MASTER | PASS |
+| SCHEMATIC_DATA_CONTRACT | COMPLETE |
+| FIELD_TO_DIAGRAM_MAPPING_IMPLEMENTATION | COMPLETE |
+| VISUAL_STATE_CONTRACT | COMPLETE |
+| ERROR_WARNING_PAYLOAD | COMPLETE |
+| X4_REGRESSION | PASS |
+| BACKEND_REGRESSION | PASS（1074） |
+| UNRESOLVED_BLOCKERS | 0 |
+| STEP3_UI_INTEGRATION_READINESS | GO |
+| 全PR GitHub段階merge | PASS（#629-#660） |
+| 最終integration SHA確定 | PASS |
+| production code clean / tests clean | PASS |
+
+## Step 3 で着手する PR（改訂版）
+S3-UX01〜UX11（UX_P09_PLAN_REVISION.md §4 参照）
+- 模式図SVG共通基盤 → H-ALIGN/V-PROF/X-SECT/B-BRIDGE/O-OUTPUT画面
+- LIVE PREVIEW 3状態・ナビゲーション・3D（geometry3d payload）・E2E
+
+## 注意
+Step 3 は自動開始しない（ユーザー承認待ち）。
+main統合も別途承認待ち。
