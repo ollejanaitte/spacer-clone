@@ -67,7 +67,9 @@ import {
   resolveLinerDrawingWorkspaceKind,
   resolveLinerUiRouteId,
   resolveLinerUiRoutePath,
+  isSubstructureRoute,
 } from "./liner/uiPreparation";
+import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
 import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
 import { ImporterStartupPage } from "./liner/importer/project-list/ImporterStartupPage";
 import { defaultImporterProjectService } from "./liner/importer/ImporterProjectService";
@@ -1213,6 +1215,22 @@ export function App() {
           navigatePro("/pro");
         }}
       />
+    );
+  }
+
+  if (isSubstructureRoute(currentPathname)) {
+    return (
+      <ErrorBoundary
+        fallback={(
+          <main role="alert" data-testid="substructure-error-boundary">
+            <p>{ja.liner.editor.linerError}</p>
+          </main>
+        )}
+      >
+        <SubstructurePlanningHost
+          onBack={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        />
+      </ErrorBoundary>
     );
   }
 
