@@ -3,7 +3,7 @@
 PHASE_X4_D: COMPLETE
 
 REMOTE_INTEGRATION_SHA:
-23346c8249fb44201ac3de378e2208bed1120b5a
+1809161fa71aa1bd8a83356023531c287b433c71
 
 ## Contract / Kernel status
 
@@ -34,7 +34,8 @@ BLOCKING_DISCREPANCIES: 0
 - P04 #571
 - P05 #572
 - P06 #573
-- P07 （本PR）
+- P07 #574
+- P07-sha-fill （本PR）
 
 ## Audit flags
 
