@@ -14,7 +14,7 @@
 | #738 | P2 adapter: spanLengths/bridgeLength/deckWidth | `3960361bcac62b8fe759f413b8c0731398131496` |
 | #739 | P3 binding facade + WF-01 active | `684fce16de033193ce33af48120d9aab0d71efa1` |
 | #740 | P4 panel bound mode + mountain ①→② E2E | `ac6062403b5d7c594bc043b585adc2959b3b68a8` |
-| #741 | P5 docs + closeout（本 PR） | （merge 後に記録） |
+| #741 | P5 docs + closeout（本 PR） | `49b661c64a57b5fffeb57ea8ae515397c1f30836` |
 
 ## 2. 達成事項
 
