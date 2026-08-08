@@ -29,6 +29,7 @@ from backend.engine import (
 )
 from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
 from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
+from backend.engine.grillage import run_grillage_analysis, GrillageError
 from backend.engine.if3_normalizer import (
     build_unsupported_result_resource,
     normalize_linear_static_result_resource,
@@ -141,6 +142,27 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
         response["persistedResultRef"] = persisted_ref
 
     return safe_json_response(response)
+
+
+@app.post("/api/design/analyze")
+def design_analyze_endpoint(payload: dict[str, Any]) -> JSONResponse:
+    """Run the design grillage model through the linear-static solver.
+
+    Input: a grillage design model (nodes/members/supports/loadCases) derived
+    from GeometrySnapshot on the frontend. Output: analysis results gated
+    NOT_AUTHORIZED (Phase A numeric-authorization policy).
+    """
+    grillage = payload.get("grillage", payload)
+    try:
+        result = run_grillage_analysis(grillage)
+    except GrillageError as exc:
+        return JSONResponse(
+            {
+                "error": {"code": "GRILLAGE_ERROR", "message": str(exc)},
+            },
+            status_code=400,
+        )
+    return safe_json_response(result)
 
 
 @app.post("/api/analysis/eigen")

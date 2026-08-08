@@ -185,6 +185,16 @@ export const apiClient = {
   },
 
   /**
+   * Run a design grillage model (from GeometrySnapshot, Phase 7) through the
+   * backend linear-static solver. Results are gated NOT_AUTHORIZED.
+   */
+  analyzeGrillage(grillage: unknown): Promise<{ authorization: string }> {
+    return postJson<{ authorization: string }>("/api/design/analyze", {
+      grillage,
+    });
+  },
+
+  /**
    * Authoritative App paths must pass `if3` metadata from `buildRunAnalysisIf3Metadata`.
    * When omitted, the request body stays `{ project, options }` and the backend remains
    * fail-closed for IF3 normalization (no client-side silent defaults).
