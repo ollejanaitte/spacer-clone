@@ -8,7 +8,7 @@
  * NOT_AUTHORIZED (Phase A gate); unresolved states are displayed, never fabricated.
  */
 
-import { useState, type ReactElement } from "react";
+import { useState, useMemo, type ReactElement } from "react";
 import { DefaultGeometryEngine } from "../geometry/engine";
 import type { GeometrySnapshot } from "../geometry";
 import { RB001_GRID_PANEL_SPECS } from "../geometry/gridPoints";
@@ -26,6 +26,12 @@ import { classifyGeometryReplay } from "../replay/replay";
 import { apiClient } from "../../api/client";
 import { AuthorizationBanner } from "./AuthorizationBanner";
 import { downloadTextFile } from "../quantity/quantityExport";
+import type { ProjectModel } from "../../types";
+import { linerDraftFromProject } from "../../liner/adapters/linerProjectDraft";
+import { buildBridgeProjectAlignment } from "../../bridgeProject/alignmentAdapter";
+import { buildBridgeProjectGeometry } from "../../bridgeProject/bridgeGeometryGenerator";
+import { buildCommonBridgeModel } from "../../bridgeProject/cbdmDocument";
+import { buildBoundGeometryInput } from "../../bridgeProject/superstructureBinding";
 
 const RB001_ALIGNMENT: LinearAlignment = {
   id: "ALN-ACL",
@@ -100,7 +106,55 @@ function describeSnapshot(s: GeometrySnapshot): string {
   ].join(" / ");
 }
 
-export function SuperstructurePipelinePanel(): ReactElement {
+export type SuperstructurePipelinePanelProps = {
+  /**
+   * When present and carrying a Liner draft with piers/spans, the pipeline runs
+   * in BridgeProject-bound mode: the geometry is derived from the road alignment
+   * through the shared BridgeProject contract. Girder arrangement below is
+   * SUPERSTRUCTURE-OWNED demo input (not a bridge-geometry fact).
+   */
+  project?: ProjectModel;
+};
+
+const BOUND_DEMO_GIRDERS = { "GIRDER-1": -4.0, "GIRDER-2": 4.0 } as const;
+
+type BoundGeometry =
+  | { ok: true; input: GeometryEngineInput; bridgeId: string; supports: number; bridgeLengthM: number }
+  | { ok: false; message: string };
+
+function buildBoundGeometry(project: ProjectModel | undefined): BoundGeometry | undefined {
+  if (!project) {
+    return undefined;
+  }
+  try {
+    const linerDraft = linerDraftFromProject(project);
+    const piers = linerDraft?.piers ?? [];
+    if (!linerDraft || piers.length === 0) {
+      return undefined;
+    }
+    const alignment = buildBridgeProjectAlignment(linerDraft);
+    const geometry = buildBridgeProjectGeometry(alignment, piers, linerDraft.spans);
+    const commonModel = buildCommonBridgeModel(alignment, geometry);
+    const input = buildBoundGeometryInput(commonModel, {
+      girderOffsetsM: { ...BOUND_DEMO_GIRDERS },
+      girderIds: Object.keys(BOUND_DEMO_GIRDERS),
+    });
+    return {
+      ok: true,
+      input,
+      bridgeId: geometry.bridgeId,
+      supports: geometry.supports.length,
+      bridgeLengthM: geometry.bridgeLengthM.value ?? 0,
+    };
+  } catch (error) {
+    return { ok: false, message: (error as Error).message };
+  }
+}
+
+export function SuperstructurePipelinePanel({
+  project,
+}: SuperstructurePipelinePanelProps): ReactElement {
+  const [mode, setMode] = useState<"sample" | "bound">("sample");
   const [geometry, setGeometry] = useState<StepState>(IDLE);
   const [threeD, setThreeD] = useState<StepState>(IDLE);
   const [analysis, setAnalysis] = useState<StepState>(IDLE);
@@ -110,10 +164,24 @@ export function SuperstructurePipelinePanel(): ReactElement {
   const [snapshot, setSnapshot] = useState<GeometrySnapshot | null>(null);
   const [solidCount, setSolidCount] = useState<number | null>(null);
 
+  const boundGeometry = useMemo(() => buildBoundGeometry(project), [project]);
+  const boundAvailable = boundGeometry !== undefined;
+
+  const buildActiveSnapshot = (): GeometrySnapshot => {
+    if (mode === "bound" && boundGeometry?.ok) {
+      const linerDraft = linerDraftFromProject(project!);
+      if (!linerDraft) {
+        throw new Error("BridgeProject bound mode requires a Liner draft in the project.");
+      }
+      return new DefaultGeometryEngine(linerDraft).generateSnapshot(boundGeometry.input);
+    }
+    return buildSnapshot();
+  };
+
   const runGeometry = (): void => {
     setGeometry({ status: "running" });
     try {
-      const snap = buildSnapshot();
+      const snap = buildActiveSnapshot();
       setSnapshot(snap);
       setGeometry({ status: "ok", detail: describeSnapshot(snap) });
     } catch (e) {
@@ -230,8 +298,45 @@ export function SuperstructurePipelinePanel(): ReactElement {
   return (
     <div className="apollo-pipeline" data-testid="apollo-superstructure-pipeline">
       <AuthorizationBanner keys={["UNVERIFIED_DEVELOPMENT_ONLY", "NOT_GRANTED", "PROHIBITED"]} />
-      <h3>上部工一気通貫パイプライン（Reference Bridge 001）</h3>
-      {renderStep("Geometry", geometry, runGeometry, "Geometry 生成")}
+      <h3>上部工一気通貫パイプライン</h3>
+      <section data-testid="pipeline-mode">
+        <label>
+          <input
+            type="radio"
+            name="pipeline-mode"
+            checked={mode === "sample"}
+            onChange={() => setMode("sample")}
+            data-testid="pipeline-mode-sample"
+          />
+          SAMPLE（RB-001）
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="pipeline-mode"
+            checked={mode === "bound"}
+            disabled={!boundAvailable}
+            onChange={() => setMode("bound")}
+            data-testid="pipeline-mode-bound"
+          />
+          BridgeProject bound
+        </label>
+        {boundGeometry?.ok ? (
+          <p className="pipeline-ok" data-testid="pipeline-bound-summary">
+            bound: bridgeId={boundGeometry.bridgeId} supports={boundGeometry.supports}
+            bridgeLengthM={boundGeometry.bridgeLengthM}
+          </p>
+        ) : boundGeometry === undefined ? (
+          <p className="pipeline-error" data-testid="pipeline-bound-unavailable">
+            BridgeProject bound は道路線形（pier 配置）がある場合に利用できます。
+          </p>
+        ) : (
+          <p className="pipeline-error" data-testid="pipeline-bound-error">
+            bound error: {boundGeometry.message}
+          </p>
+        )}
+      </section>
+      {renderStep("Geometry", geometry, runGeometry, mode === "bound" ? "Geometry 生成 (bound)" : "Geometry 生成")}
       {renderStep("3D", threeD, run3D, "3D モデル生成")}
       {renderStep("Analysis", analysis, runAnalysis, "解析実行")}
       {renderStep("Design", design, runDesign, "設計実行")}

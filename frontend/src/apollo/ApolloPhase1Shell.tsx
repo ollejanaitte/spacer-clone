@@ -2331,7 +2331,7 @@ export function ApolloPhase1Shell({
       case "wf-panel-output":
         return <OutputIntegrationPanel project={project} />;
       case "wf-panel-superstructure-pipeline":
-        return <SuperstructurePipelinePanel />;
+        return <SuperstructurePipelinePanel project={project} />;
       default:
         return null;
     }
