@@ -81,6 +81,54 @@ export class DefaultGeometryEngine implements GeometryEngine {
     const roles: SupportRole[] = input.supports.map((_, i) =>
       i === 0 || i === input.supports.length - 1 ? "abutment" : "pier",
     );
+
+    // BridgeProject-bound mode: when every support declares a finite station,
+    // those stations are authoritative alignment sample stations (global),
+    // overriding the bridge-local span-sum derivation. Mixed presence is
+    // fail-closed (no silent partial binding).
+    const hasAnyStation = input.supports.some(
+      (support) => support.stationM !== undefined && Number.isFinite(support.stationM),
+    );
+    const hasAllStations = input.supports.every(
+      (support) => support.stationM !== undefined && Number.isFinite(support.stationM),
+    );
+    if (hasAnyStation && !hasAllStations) {
+      throw new Error(
+        "Binding error: some supports declare stationM but not all; mixed station presence is not allowed.",
+      );
+    }
+    const explicitStations = hasAllStations
+      ? (input.supports.map((support) => support.stationM) as number[])
+      : undefined;
+
+    const supportStationStart = explicitStations !== undefined ? explicitStations[0]! : 0;
+    const supportStationEnd =
+      explicitStations !== undefined ? explicitStations[explicitStations.length - 1]! : bridgeLengthM;
+
+    if (explicitStations !== undefined) {
+      for (let i = 1; i < explicitStations.length; i += 1) {
+        if (explicitStations[i]! <= explicitStations[i - 1]!) {
+          throw new Error(`Binding error: support stations must be strictly ascending at index ${i}.`);
+        }
+      }
+      if (
+        input.bridgeLengthM !== undefined &&
+        Math.abs(input.bridgeLengthM - (supportStationEnd - supportStationStart)) > 1e-6
+      ) {
+        throw new Error(
+          `Binding error: bridgeLengthM ${input.bridgeLengthM} does not match support span ${supportStationEnd - supportStationStart}.`,
+        );
+      }
+      if (
+        spanLengthsM.length > 0 &&
+        Math.abs(
+          spanLengthsM.reduce((sum, s) => sum + s, 0) - (supportStationEnd - supportStationStart),
+        ) > 1e-6
+      ) {
+        throw new Error("Binding error: span length sum does not match support span.");
+      }
+    }
+
     const { supportLines, supportPoints } = placeSupportLines(
       {
         supports: input.supports.map((s, i) => ({ id: s.id, role: roles[i] })),
@@ -88,6 +136,10 @@ export class DefaultGeometryEngine implements GeometryEngine {
         bridgeLengthM,
         girderIds: input.girders.map((g) => g.id),
         alignmentId: this.alignmentId,
+        supportStationsM: explicitStations,
+        skewRads: input.supports.map((s) =>
+          s.skewRad !== undefined && Number.isFinite(s.skewRad) ? s.skewRad : undefined,
+        ),
       },
       this.connector,
       girderOffsetsM,
@@ -100,8 +152,8 @@ export class DefaultGeometryEngine implements GeometryEngine {
           offsetStartM: girderOffsetsM[g.id],
           offsetEndM: girderOffsetsM[`${g.id}:end`],
         })),
-        stationStartM: 0,
-        stationEndM: bridgeLengthM,
+        stationStartM: supportStationStart,
+        stationEndM: supportStationEnd,
         alignmentId: this.alignmentId,
       },
       this.connector,
@@ -128,7 +180,8 @@ export class DefaultGeometryEngine implements GeometryEngine {
     const deckReferences = buildDeckReferences(
       input.deckSpecs,
       input.deckIds,
-      bridgeLengthM,
+      supportStationStart,
+      supportStationEnd,
       this.connector,
       this.alignmentId,
     );
@@ -240,7 +293,8 @@ function assembleGridPoints(
 function buildDeckReferences(
   deckSpecs: GeometryEngineInput["deckSpecs"],
   deckIds: string[],
-  bridgeLengthM: number,
+  bridgeStartStationM: number,
+  bridgeEndStationM: number,
   connector: AlignmentConnector,
   alignmentId: string,
 ): DeckReference[] {
@@ -249,8 +303,8 @@ function buildDeckReferences(
       buildDeckReference(
         {
           spec,
-          stationStartM: 0,
-          stationEndM: bridgeLengthM,
+          stationStartM: bridgeStartStationM,
+          stationEndM: bridgeEndStationM,
           alignmentId,
         },
         connector,
