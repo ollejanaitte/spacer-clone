@@ -131,6 +131,51 @@ def validate_span_sequence(spans: List[Span]) -> List[str]:
     return issues
 
 
+@dataclass
+class Girder:
+    """A longitudinal girder line on one side of the bridge."""
+    girder_id: str
+    line_side: str = "center"  # "left" | "right" | "center"
+    transverse_offset_m: float = 0.0
+    spans: List[str] = field(default_factory=list)  # span_ids covered
+    alignment_id: str = ""
+    _nodes: Optional[List["Node"]] = field(default=None, repr=False, compare=False)
+
+    @property
+    def nodes(self) -> List["Node"]:
+        if self._nodes is None:
+            raise BridgeGeometryError(
+                "Girder must be resolved via generate_girder_nodes() before reading nodes")
+        return self._nodes
+
+    @nodes.setter
+    def nodes(self, value: List["Node"]) -> None:
+        self._nodes = value
+
+
+@dataclass
+class Node:
+    """A girder node (grid point) at a pier on a girder line."""
+    node_id: str
+    girder_id: str
+    pier_id: str
+    station: float
+    offset_m: float
+    xyz: Vec3
+    z_plan: float = 0.0
+
+
+def validate_girder(girder: Girder) -> List[str]:
+    issues: list = []
+    if not girder.girder_id:
+        issues.append("girder_id must not be empty")
+    if girder.line_side not in ("left", "right", "center"):
+        issues.append(f"girder {girder.girder_id!r} line_side must be left/right/center")
+    if not math.isfinite(girder.transverse_offset_m):
+        issues.append(f"girder {girder.girder_id!r} transverse_offset_m must be finite")
+    return issues
+
+
 def validate_pier(
     pier: Pier,
     *,
@@ -169,7 +214,10 @@ __all__ = [
     "BridgeGeometryError",
     "Pier",
     "Span",
+    "Girder",
+    "Node",
     "validate_pier",
     "validate_span",
     "validate_span_sequence",
+    "validate_girder",
 ]
