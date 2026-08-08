@@ -128,4 +128,35 @@ describe("SubstructurePlanningHost", () => {
     const text = container.textContent ?? "";
     expect(text).not.toContain("P1");
   });
+
+  it("single sample generates the requested kind (pier_single -> pier form)", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="sample-pier_single"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="tree-item-S1"]')!.click();
+    });
+    // S1 は単柱矩形橋脚 → pier form が表示される（組合せ先頭の橋台ではない）
+    expect(container.querySelector('[data-testid="pier-form"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="abutment-form"]')).toBeNull();
+  });
+
+  it("single sample foundation_bored renders pile fields", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="sample-foundation_bored"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="tree-item-S1"]')!.click();
+    });
+    expect(container.querySelector('[data-testid="foundation-form"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="pile-count"]')).not.toBeNull();
+  });
 });
