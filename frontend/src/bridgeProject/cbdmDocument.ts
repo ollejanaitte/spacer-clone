@@ -570,3 +570,46 @@ export function attachReconstructionToManifest(
   }
   return finalized as unknown as BridgeProject;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 3-7: attach substructure binding status to the manifest (CASE A ③)
+// ---------------------------------------------------------------------------
+
+/**
+ * Mark the manifest's substructure section as COMPLETE after ③ binding and
+ * record the bound support ids in sharedFacts.supports. Re-validates.
+ */
+export function attachSubstructureToManifest(
+  manifest: BridgeProject,
+  supportIds: readonly string[],
+): BridgeProject {
+  const sections = {
+    ...manifest.status.sections,
+    substructure: {
+      owner: "SUBSTRUCTURE_OWNER" as const,
+      state: "COMPLETE" as const,
+    },
+  };
+  const existing = manifest.sharedFacts?.supports ?? [];
+  const bound = supportIds.map((id) => {
+    const prev = existing.find((s) => s.supportId === id);
+    return prev ?? { supportId: id, supportType: "pier" as const, stationM: undefined, skewRad: undefined };
+  });
+  const updated = {
+    ...manifest,
+    status: { ...manifest.status, sections },
+    sharedFacts: { ...manifest.sharedFacts, supports: bound },
+  };
+  const checksum = checksumHex(updated as Record<string, unknown>);
+  const finalized = { ...updated, contentChecksum: { algorithm: "sha256", hexDigest: checksum } };
+  const result = validateBridgeProject(finalized as unknown as Partial<BridgeProject>);
+  if (result.issues.length > 0) {
+    throw new BridgeProjectAdapterError(
+      BP_CODES.UNIT_INVALID,
+      `Attached substructure failed manifest validation: ${result.issues
+        .map((issue) => issue.code)
+        .join(", ")}`,
+    );
+  }
+  return finalized as unknown as BridgeProject;
+}
