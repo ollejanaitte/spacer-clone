@@ -50,6 +50,8 @@ import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerFormalDrawingWorkspacePage } from "./liner/pages/LinerFormalDrawingWorkspacePage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
+import { LinerMain3DPage } from "./liner/pages/LinerMain3DPage";
+import { buildMountainDraft } from "./liner/samples/mountain-viaduct-500/fixture";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
 import {
   linerDraftFromProject,
@@ -361,6 +363,13 @@ export function App() {
     commitProject(withProjectLinerDraft(project, draft));
     navigatePro(resolveLinerUiRoutePath("liner.setup"));
     log(`LINER model ${draft.alignment.linerModelId} created.`);
+  }, [project, navigatePro, commitProject]);
+
+  const createMountainSampleModel = useCallback(() => {
+    const draft = buildMountainDraft();
+    commitProject(withProjectLinerDraft(project, draft));
+    navigatePro(resolveLinerUiRoutePath("liner.setup"));
+    log(`Mountain Viaduct 500 sample loaded.`);
   }, [project, navigatePro, commitProject]);
 
   const openLinearCoordinateLauncher = useCallback(() => {
@@ -910,6 +919,7 @@ export function App() {
         onClose={() => navigatePro("/pro")}
         onOpenGui={createLinerModel}
         onOpenImporter={() => navigatePro(resolveImporterStartupRoutePath())}
+        onOpenSample={createMountainSampleModel}
       />
     );
   }
@@ -1149,6 +1159,31 @@ export function App() {
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
         onOpenDrawings={() => navigatePro(resolveLinerUiRoutePath("liner.drawingPlan"))}
         onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
+        onOpenMain3D={() => navigatePro(resolveLinerUiRoutePath("liner.main3d"))}
+      />
+    );
+  }
+
+  if (linerRouteId === "liner.main3d") {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={openLinearCoordinateLauncher}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
+    return (
+      <LinerMain3DPage
+        draft={linerDraft}
+        onClose={() => navigatePro("/pro")}
+        onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onBackToPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
     );
   }

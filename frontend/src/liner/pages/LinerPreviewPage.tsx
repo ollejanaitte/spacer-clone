@@ -1,10 +1,12 @@
-import { ArrowLeft, CheckCircle2, Eye, List, Pencil } from "lucide-react";
-import { useMemo } from "react";
+import { ArrowLeft, Box, CheckCircle2, Eye, List, Pencil, Orbit } from "lucide-react";
+import { useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
 import { buildLinerPreviewFromDraft } from "../adapters/linerPreviewAdapter";
 import type { LinerDraft } from "../adapters/linerUiAdapter";
 import { LinerGridPreview } from "../components/LinerGridPreview";
 import { LinerRoadExportControls } from "../components/LinerRoadExportControls";
+import { MountainViaduct3dViewer } from "../samples/mountain-viaduct-500/viewer";
+import { MOUNTAIN_CAMERA_PRESETS } from "../samples/mountain-viaduct-500/fixture";
 import type { LinerUiDiagnosticDisplay } from "../uiPreparation";
 
 export type LinerPreviewPageProps = {
@@ -15,6 +17,7 @@ export type LinerPreviewPageProps = {
   onBackToSetup: () => void;
   onOpenDrawings?: () => void;
   onOpenMappingReview?: () => void;
+  onOpenMain3D?: () => void;
 };
 
 export function LinerPreviewPage({
@@ -25,9 +28,12 @@ export function LinerPreviewPage({
   onBackToSetup,
   onOpenDrawings,
   onOpenMappingReview,
+  onOpenMain3D,
 }: LinerPreviewPageProps) {
   const preview = useMemo(() => buildLinerPreviewFromDraft(draft), [draft]);
   const { viewModel } = preview;
+  const [viewerPreset, setViewerPreset] = useState("overview");
+  const hasBridge = Boolean(draft.piers?.length && draft.spans?.length);
 
   return (
     <main className="liner-preview-page" data-testid="liner-preview-page">
@@ -76,6 +82,39 @@ export function LinerPreviewPage({
             {ja.liner.preview.openFormalDrawing}
           </button>
         </aside>
+      )}
+
+      {hasBridge && (
+        <section className="liner-preview-3d-panel" aria-label="3D表示" data-testid="liner-preview-3d-panel">
+          <div className="liner-preview-3d-header">
+            <h2>
+              <Box size={16} />
+              3D表示（山岳連続高架橋）
+            </h2>
+            <div className="liner-preview-3d-actions">
+              {onOpenMain3D && (
+                <button type="button" onClick={onOpenMain3D} data-testid="open-liner-main3d">
+                  <Orbit size={16} />
+                  統合3D表示
+                </button>
+              )}
+              <div className="liner-preview-3d-presets" aria-label="カメラプリセット">
+                {MOUNTAIN_CAMERA_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className={viewerPreset === preset.id ? "active" : undefined}
+                    onClick={() => setViewerPreset(preset.id)}
+                    data-testid={`mountain-viewer-preset-${preset.id}`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <MountainViaduct3dViewer draft={draft} presetId={viewerPreset} />
+        </section>
       )}
 
       <div className="liner-preview-layout">
