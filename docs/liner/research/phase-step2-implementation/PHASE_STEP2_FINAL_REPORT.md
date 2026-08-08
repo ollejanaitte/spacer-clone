@@ -5,7 +5,7 @@ PHASE_STEP2: COMPLETE
 STEP3_UI_INTEGRATION_READINESS: GO
 
 REMOTE_INTEGRATION_SHA:
-（P18 merge後確定）
+a40350d02cbe556704648e631447c632fa826cc7
 
 ## 完了条件（§13）
 | 条件 | 状態 |
@@ -44,7 +44,8 @@ REMOTE_INTEGRATION_SHA:
 - S2-UX15 #656
 - S2-UX16 #658
 - S2-UX17 #660
-- S2-UX18 （本PR）
+- S2-UX18 #661
+- S2-UX18-sha-fill （本PR）
 
 ## 新規パッケージ（production code）
 - backend/rule_engine/vertical/（grade/parabolic, VPI, station→Z/grade/curvature）
