@@ -26,3 +26,17 @@ export {
   type CheckKind,
   type DeclaredCheck,
 } from "./checkFramework";
+export {
+  RB001_SECTION_CANDIDATES,
+  runDesignIteration,
+  type DesignIteration,
+  type DesignIterationState,
+  type SectionCandidate,
+} from "./autoDesign";
+export {
+  outputFileName,
+  quantityRowsFromSnapshot,
+  reportSectionsFromDesignResult,
+  type QuantityRow,
+  type ReportSectionSkeleton,
+} from "./designOutput";

@@ -7,6 +7,7 @@ import { RB001_CROSS_GIRDER_SPECS } from "../geometry/members";
 import { buildGrillageModel } from "./grillageModel";
 import { emptyNotAuthorizedResult, RB001_DESIGN_CONDITIONS } from "./index";
 import { runChecks } from "./checkFramework";
+import { outputFileName, quantityRowsFromSnapshot, runDesignIteration } from "./index";
 
 const ALIGNMENT: LinearAlignment = {
   id: "ALN-ACL",
@@ -97,5 +98,19 @@ describe("design framework (Phase 7)", () => {
       expect(kinds.has(k as never)).toBe(true);
     }
     expect(result.traceability.some((t) => t.entityId === "GIRDER-AG1")).toBe(true);
+  });
+
+  it("runs the declared design iteration with PENDING_AUTHORIZATION decision (Phase 8)", () => {
+    const iteration = runDesignIteration({ snapshot: buildSnapshot() });
+    expect(iteration.selectedCandidateId).toBe("SEC-AG1-BASE");
+    expect(iteration.state.decision).toBe("PENDING_AUTHORIZATION");
+    expect(iteration.state.reason).toContain("NOT_AUTHORIZED");
+  });
+
+  it("derives quantity rows and output file names from the snapshot", () => {
+    const rows = quantityRowsFromSnapshot(buildSnapshot());
+    expect(rows.some((r) => r.item.includes("GIRDER-AG1"))).toBe(true);
+    expect(rows.some((r) => r.item === "bridge length" && r.value === 134.001)).toBe(true);
+    expect(outputFileName("quantity", "RB-S10-001")).toBe("quantity-RB-S10-001-r1");
   });
 });
