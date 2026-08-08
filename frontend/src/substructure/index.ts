@@ -13,3 +13,7 @@ export * from "./PlanProjection";
 export * from "./viewer3d/threeFactory";
 // Phase C1 (M2-02) 3ペインCAD UI Shell。
 export * from "./planning/SubstructurePlanningPage";
+// Phase C1 (M2-03) 構造形式・入力フォーム。
+export * from "./planning/formModel";
+export * from "./planning/forms/PlacementFields";
+export * from "./planning/SubstructureFormPanel";

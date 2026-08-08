@@ -1,0 +1,132 @@
+/* Phase C1 (M2-03) 入力フォーム共通スタイル */
+.forms {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0;
+}
+
+.fieldFatal {
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid #ef4444;
+  padding-left: 8px;
+}
+
+.fieldWarn {
+  border-left: 3px solid #f97316;
+  padding-left: 8px;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--th-color-text-muted, #a8b8cc);
+}
+
+.autoLabel {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--th-color-primary, #3b82f6);
+}
+
+.fieldControl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fieldInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--th-color-bg, #0e1726);
+  color: var(--th-color-text, #f1f5f9);
+  border: 1px solid var(--th-color-border, rgba(255, 255, 255, 0.12));
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: var(--th-color-primary, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.fieldInput[data-readonly="true"] {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--th-color-text-muted, #a8b8cc);
+  cursor: not-allowed;
+}
+
+.fieldUnit {
+  font-size: 12px;
+  color: var(--th-color-text-muted, #a8b8cc);
+  width: 22px;
+}
+
+.fieldIssue {
+  font-size: 11px;
+}
+
+.issue_fatal {
+  color: #fca5a5;
+}
+
+.issue_warning {
+  color: #fdba74;
+}
+
+.issue_info {
+  color: #93c5fd;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--th-color-text-muted, #a8b8cc);
+  margin: 10px 0 4px;
+}
+
+.typeSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.typeButton {
+  background: var(--th-color-panel-raised, #1d2b45);
+  color: var(--th-color-text, #f1f5f9);
+  border: 1px solid var(--th-color-border, rgba(255, 255, 255, 0.08));
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.typeButton:hover {
+  border-color: var(--th-color-primary, #3b82f6);
+}
+
+.typeButton.active {
+  background: var(--th-color-primary, #3b82f6);
+  color: #fff;
+}
+
+.typeButton.future {
+  opacity: 0.5;
+}
+
+.typeNote {
+  font-size: 11px;
+  margin-top: 4px;
+  color: var(--th-color-warning, #f97316);
+}

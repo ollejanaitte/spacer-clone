@@ -8,6 +8,7 @@ import { SubstructureToolbar } from "./SubstructureToolbar";
 import { SubstructureTreePanel } from "./SubstructureTreePanel";
 import { SubstructureViewport } from "./SubstructureViewport";
 import { SubstructurePropertyPanel } from "./SubstructurePropertyPanel";
+import { SubstructureFormPanel, type FormDataBundle } from "./SubstructureFormPanel";
 import { CoordinateTable } from "./CoordinateTable";
 import { StatusArea } from "./StatusArea";
 import type { Support } from "../model";
@@ -36,6 +37,10 @@ export interface PlanningPageProps {
   canRedo?: boolean;
   validation?: ValidationSummary;
   toolbarExtra?: React.ReactNode;
+  /** M2-03: 選択支点のフォーム状態（未指定なら基本プロパティのみ） */
+  formBundle?: FormDataBundle | null;
+  onFormPatch?: (patch: Partial<FormDataBundle>) => void;
+  onFormTypeChange?: (typeId: string, status: string) => void;
 }
 
 export function SubstructurePlanningPage(props: PlanningPageProps) {
@@ -92,12 +97,23 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
         </main>
         {panels.right && (
           <aside className={styles.right} data-testid="panel-properties">
-            <SubstructurePropertyPanel
-              selected={selected}
-              coordinates={
-                selected ? props.coordinates.get(selected.supportId) : undefined
-              }
-            />
+            {props.formBundle !== undefined ? (
+              <SubstructureFormPanel
+                form={props.formBundle}
+                coordinates={
+                  selected ? props.coordinates.get(selected.supportId) : undefined
+                }
+                onPatch={props.onFormPatch}
+                onFormTypeChange={props.onFormTypeChange}
+              />
+            ) : (
+              <SubstructurePropertyPanel
+                selected={selected}
+                coordinates={
+                  selected ? props.coordinates.get(selected.supportId) : undefined
+                }
+              />
+            )}
           </aside>
         )}
       </div>
