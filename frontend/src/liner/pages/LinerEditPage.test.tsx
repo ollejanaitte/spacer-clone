@@ -526,4 +526,40 @@ describe("LinerEditPage", () => {
     expect(document.querySelector("[data-testid=liner-preview-formal-drawing-notice]")).toBeNull();
     expect(document.body.textContent).not.toContain("Phase 4.0-2");
   });
+
+  it("shows substructure planning entry in review tab and triggers onOpenSubstructure", () => {
+    const onOpenSubstructure = vi.fn();
+    render(
+      <LinerEditPage
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onOpenSubstructure={onOpenSubstructure}
+      />,
+    );
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=open-substructure-planning]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=substructure-entry-description]")?.textContent).toContain(
+      "LINER支点",
+    );
+
+    act(() => {
+      (document.querySelector("[data-testid=open-substructure-planning]") as HTMLButtonElement).click();
+    });
+    expect(onOpenSubstructure).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not render substructure entry when handler is absent", () => {
+    render(<LinerEditPage onClose={() => undefined} onBackToList={() => undefined} />);
+
+    act(() => {
+      (document.querySelector("[data-testid=liner-setup-tab-review]") as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector("[data-testid=open-substructure-planning]")).toBeNull();
+    expect(document.querySelector("[data-testid=add-bridge-pier]")).not.toBeNull();
+  });
 });
