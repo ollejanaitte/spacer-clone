@@ -100,23 +100,23 @@ describe("workflow state model — registry & progress shape", () => {
 describe("workflow state — empty project", () => {
   const project = createDefaultProject();
 
-  it("shows WF-01 as BLOCKED stub and WF-02 as AVAILABLE", () => {
+  it("shows WF-01 as the recommended alignment-binding step and WF-02 as AVAILABLE", () => {
     const wf01 = statusOf(project, "WF-01");
-    expect(wf01.status).toBe("BLOCKED");
-    expect(wf01.badges).toContain("CAPABILITY_PLANNED");
-    expect(wf01.diagnostics.some((d) => d.code === "WF_CAPABILITY_PLANNED")).toBe(true);
+    expect(wf01.status).toBe("RECOMMENDED");
+    expect(wf01.badges).not.toContain("CAPABILITY_PLANNED");
+    expect(wf01.diagnostics.some((d) => d.code === "WF_CAPABILITY_PLANNED")).toBe(false);
 
     const wf02 = statusOf(project, "WF-02");
-    expect(wf02.status).toBe("RECOMMENDED");
+    expect(wf02.status).toBe("AVAILABLE");
     expect(wf02.prerequisitesSatisfied).toBe(true);
   });
 
-  it("keeps future stubs BLOCKED for WF-01/WF-06; WF-03/WF-05 are NOT_STARTED until WF-02 completes", () => {
-    expect(statusOf(project, "WF-01").status).toBe("BLOCKED");
+  it("keeps future stubs BLOCKED for WF-06; WF-01 is recommended and WF-03/WF-05 are NOT_STARTED until WF-02 completes", () => {
+    expect(statusOf(project, "WF-01").status).toBe("RECOMMENDED");
     expect(statusOf(project, "WF-06").status).toBe("BLOCKED");
     expect(statusOf(project, "WF-03").status).toBe("NOT_STARTED");
     expect(statusOf(project, "WF-05").status).toBe("NOT_STARTED");
-    expect(statusOf(project, "WF-02").status).toBe("RECOMMENDED");
+    expect(statusOf(project, "WF-02").status).toBe("AVAILABLE");
   });
 
   it("does not mark un-generated steps as STALE", () => {
@@ -125,19 +125,19 @@ describe("workflow state — empty project", () => {
     expect(wf10.status).toBe("NOT_STARTED");
   });
 
-  it("recommends exactly one step (WF-02, the first actionable)", () => {
+  it("recommends exactly one step (WF-01, the first actionable with binding active)", () => {
     const model = buildWorkflowStateModel(project);
-    expect(model.currentRecommendedStepId).toBe("WF-02");
+    expect(model.currentRecommendedStepId).toBe("WF-01");
     const recommended = model.steps.filter((step) => step.isRecommended);
     expect(recommended).toHaveLength(1);
   });
 });
 
 describe("workflow state — partial / invalid / corrupt input", () => {
-  it("classifies partial input as INCOMPLETE (promoted to RECOMMENDED when recommended)", () => {
+  it("classifies partial input as INCOMPLETE (WF-01 is the recommended step)", () => {
     const step = statusOf(partialProject(), "WF-02");
-    expect(["INCOMPLETE", "RECOMMENDED"]).toContain(step.status);
-    expect(step.isRecommended).toBe(true);
+    expect(step.status).toBe("INCOMPLETE");
+    expect(step.isRecommended).toBe(false);
   });
 
   it("classifies invalid input as BLOCKED with WF_INPUT_INVALID", () => {
@@ -195,7 +195,8 @@ describe("workflow state — valid generated project", () => {
     const model = buildWorkflowStateModel(project);
     expect(model.progress.complete).toBeGreaterThanOrEqual(8);
     expect(model.progress.notAuthorized).toBeGreaterThanOrEqual(8);
-    expect(model.progress.blocked).toBeGreaterThanOrEqual(2);
+    // WF-01 (alignment binding) is now a real step; WF-06 remains the PLANNED stub.
+    expect(model.progress.blocked).toBeGreaterThanOrEqual(1);
   });
 });
 
