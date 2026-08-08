@@ -6,6 +6,7 @@ import { DefaultGeometryEngine, computeFingerprint } from "./engine";
 import type { GeometryEngineInput } from "./contracts";
 import { RB001_GRID_PANEL_SPECS } from "./gridPoints";
 import { RB001_DECK_SPEC } from "./deck";
+import { RB001_CROSS_GIRDER_SPECS } from "./members";
 
 const FIXTURE = resolve(
   process.cwd(),
@@ -216,5 +217,15 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
     expect(deck.boundary).toHaveLength(4);
     expect(deck.boundary![2].x).toBeCloseTo(134.001, 9);
     expect(deck.boundary![2].y).toBeCloseTo(4.005, 9);
+  });
+
+  it("generates member placement and cross girder references (Phase 6-2)", () => {
+    const snap = buildEngine().generateSnapshot(
+      buildInput({ crossGirderSpecs: RB001_CROSS_GIRDER_SPECS }),
+    );
+    expect(snap.memberPlacementReferences).toHaveLength(6); // 3 spans x 2 girders
+    expect(snap.memberPlacementReferences[0].kind).toBe("mainGirder");
+    expect(snap.crossGirderReferences).toHaveLength(4);
+    expect(snap.crossGirderReferences.map((c) => c.stationM)).toEqual([0, 40.201, 91.201, 134.001]);
   });
 });
