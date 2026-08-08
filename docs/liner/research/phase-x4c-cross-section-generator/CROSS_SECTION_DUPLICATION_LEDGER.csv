@@ -1,0 +1,7 @@
+area,canonical,duplicate,status,evidence,notes
+geometry_kernel,backend/rule_engine/geometry/,none,NO_DUPLICATE,grep class StraightElement/CircularArcElement/ClothoidElement only in geometry/,second implementation not found
+alignment_solver,backend/rule_engine/alignment/,none,NO_DUPLICATE,alignment package single source,contract.py delegates to kernel
+cross_section_cross_gen,backend/rule_engine/crosssection/,none,NO_DUPLICATE,CROSS_SECTION_CODE_INVENTORY.csv,one package only
+width_eval,crosssection/width.py,none,NO_DUPLICATE,width only in width.py,,CONFORM
+crossfall_eval,crosssection/crossfall.py,none,NO_DUPLICATE,crossfall only in crossfall.py,,
+elevation,global_xyz.py,none,EXPECTED_FAULT,EXPLICIT_INPUT contract,no vertical profile (DEFERRED producer)

@@ -1,0 +1,10 @@
+area,test_file,count,result,notes
+model,test_crosssection_p01_model.py,11,PASS,"builder/validate/order"
+width,test_crosssection_p02_width.py,PASS,PASS,piecewise-hold width eval
+crossfall,test_crosssection_p02_width.py,wip,remain in P02 suite,via width/crossfall eval
+geometry,test_crosssection_p03_geometry.py,14,PASS,pose/local offsets
+global_xyz,test_crosssection_p04_global_xyz.py,12,PASS,XYZ conversions
+adapters,test_crosssection_p05_adapters.py,16,PASS,Rule/Alignment/RoadBridge contracts
+focused,test_crosssection_p06_focused.py,11,PASS,pipeline lock
+replay,test_crosssection_p06_replay.py,6,PASS,PDF values via explicit inputs
+package_total,test_crosssection_p*.py,89,PASS,full cross-section coverage

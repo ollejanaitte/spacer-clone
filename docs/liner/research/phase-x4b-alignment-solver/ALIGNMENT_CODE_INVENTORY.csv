@@ -1,0 +1,14 @@
+capability,existing_file,existing_symbol,status,current_consumer,tests,candidate_canonical,duplicate_group,risk,action,notes
+HORIZONTAL_EVALUATION,frontend/src/liner/core/geometry/horizontal.ts,"evaluateElementAtDistance, evaluateAlignmentAtDistance, totalAlignmentLength, validateAlignment",IMPLEMENTED_VERIFIED,Preview/Export/Pipeline,R1 golden,P1_keep,frontend,keep_as_canonical,frontend横断Solver正本
+ELEMENT_EVALUATION,frontend/src/liner/core/geometry/line.ts,evaluateStraightElement,IMPLEMENTED_VERIFIED,Pipeline,horizontal.test.ts,-,frontend,keep_as_canonical,直線
+ELEMENT_EVALUATION,frontend/src/liner/core/g1/arc.ts,evaluateCircularArcElement,IMPLEMENTED_VERIFIED,Pipeline,horizontal.test.ts,-,frontend,keep_as_canonical,円弧
+ELEMENT_EVALUATION,frontend/src/liner/core/geometry/clothoid.ts,"evaluateClothoidElement, clothoidCurvatureAt",IMPLEMENTED_VERIFIED,Pipeline,clothoid.test.ts,-,frontend,keep_as_canonical,クロソイド(Simpson)
+STATION_RULES,frontend/src/liner/core/station/stationRules.ts,"displayedStationAtPhysicalDistance, generateStations",IMPLEMENTED_VERIFIED,Station panel,station.test.ts,-,station,keep_as_canonical,ステーション変換
+STATION_FORMAT,frontend/src/liner/core/station/stationFormat.ts,"formatStationNoPlus, parseStationInput",IMPLEMENTED_VERIFIED,Station panel,stationFormat.test.ts,-,station,keep_as_canonical,No.XX+YY 表記
+INVERSE_PROJECTION,frontend/src/liner/core/stationAtPoint.ts,stationAtPoint,IMPLEMENTED_VERIFIED,Grid/測点,measuredGridGeneration.test.ts,-,projection,keep_as_canonical,XY→station
+PIPELINE_RESULT,frontend/src/liner/core/pipeline/pipeline.ts,"buildHorizontalSegments, buildHorizontalResult, buildIntermediateResult",IMPLEMENTED_PARTIAL,Preview/Export,-,-,result,keep_as_canonical,piansPerPoint 未実装
+BACKEND_GEOMETRY,backend/rule_engine/geometry/,"contracts, line_arc, clothoid, station_offset",IMPLEMENTED_VERIFIED,test only (pytest),test_geometry_kernel*.py,-,mirror,wrap,X4-A Python 線格ミラー(上位層から利用)
+BACKEND_STATION_RULE,backend/rule_engine/rules/station.py,STATIONRule (X2-R-016),IMPLEMENTED_PARTIAL,RuleEngine,-,-,rule_stub,defer,stub(PASSのみ)
+ALIGNMENT_SOLVER,backend/(absent),Alignment solver 上位層,ABSENT,-,-,-,-,implement_minimal,X4-Bにて新規
+PI_INTERSECTIONS,frontend/src/liner/core/pipeline/pipeline.ts,piPoints,IMPLEMENTED_PARTIAL,-,-,-,result,defer,常に空(未実装)
+VERTICAL_SOLVER,frontend/src/liner/core/geometry/vertical.ts,evaluateVerticalAlignment,IMPLEMENTED_VERIFIED,Pipeline,verticalGolden.test.ts,-,frontend,keep_as_canonical,縦断(今回対象外)

@@ -1,0 +1,20 @@
+id,source,station,field,expected,actual,difference,tolerance,status,blocking,evidence,resolution,notes
+XL-001,builtin_sample_pdf,0.0000,centerline_length_m,164.2476,164.2476,0.0,1e-6,PASS,false,PDF cumulative distance (HCL),exact match,"X4-B replay; also locked in alignment P06"
+XL-002,builtin_sample_pdf,0.0000,centerline_xyz_x,0.0000,0.0000,0.0,1e-6,PASS,false,PDF localX / evaluate_alignment,exact match,"HCL straight at origin azimuth 0"
+XL-003,builtin_sample_pdf,0.0000,centerline_design_elevation_m,17.6595,17.6595,0.0,1e-9,PASS,false,PDF designElevation (横断面1 PH12),explicit input retained,"elevation producer DEFERRED; input contract only"
+XL-004,builtin_sample_pdf,0.5897,centerline_xyz_x,0.5897,0.5897,0.0,1e-6,PASS,false,PDF designGeometry,exact match,"横断面2 GE1"
+XL-005,builtin_sample_pdf,0.6399,centerline_design_elevation_m,17.6304,17.6304,0.0,1e-9,PASS,false,PDF section 3 S1,explicit input,""
+XL-006,builtin_sample_pdf,8.3121,centerline_xyz_x,8.3121,8.3121,0.0,1e-6,PASS,false,PDF section 5 C1,exact match,""
+XL-007,builtin_sample_pdf,16.2403,centerline_design_elevation_m,17.5200,17.5200,0.0,1e-9,PASS,false,PDF section 6 C2,explicit input,""
+XL-008,builtin_sample_pdf,24.1779,centerline_design_elevation_m,17.4500,17.4500,0.0,1e-9,PASS,false,PDF section 7 C3,explicit input,""
+XL-009,builtin_sample_pdf,32.1547,centerline_design_elevation_m,17.3800,17.3800,0.0,1e-9,PASS,false,PDF section 8 C4,explicit input,""
+XL-010,project_evidence,*,road_width_m,NOT_DOCUMENTED,3.0x2 (input),N/A,manual_tol,NOT_COMPARABLE,false,UE-004 (路肩・車線幅 標準横断OCR不能),no fabrication,"width contract explicit input only"
+XL-011,project_evidence,*,cross_gradient_percent,UNKNOWN,2.0/3.0 input,manual_tol,manual_tol,DEFERRED,false,UE-003 (縦断・横断プロジェクト欠落),elevation producer DEFERRED,"ELEVATION producer dependency recorded"
+XL-012,unresolved_rule,*,widening_design_rule,not_implemented,not_implemented,manual_tol,manual_tol,DEFERRED,false,P0 電プロ無し / widening rule 未実装,unresolved rule library,recorded in X4C unresolved ledger
+XL-013,unresolved_rule,*,curve_length_design_rule,not_implemented,not_implemented,manual_tol,manual_tol,DEFERRED,false,curve length rule 未実装,unresolved rule library,recorded in X4C unresolved ledger
+XL-014,unresolved_rule,*,building_clearance_rule,not_implemented,not_implemented,manual_tol,manual_tol,DEFERRED,false,building clearance rule 未実装,unresolved rule library,recorded in X4C unresolved ledger
+XP-015,regression,*,geometry_kernel,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_geometry_kernel_*.py,37 passed,X4-A regression
+XP-016,regression,*,alignment_solver,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_alignment_*.py,61 passed,X4-B regression
+XP-017,regression,*,rule_engine,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_rule_engine_*.py,35 passed,X3 regression
+XP-018,regression,*,cross_section_focused,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_crosssection_p06_focused.py,11 passed,pipeline lock
+XP-019,regression,*,cross_section_replay,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_crosssection_p06_replay.py,6 passed,project replay

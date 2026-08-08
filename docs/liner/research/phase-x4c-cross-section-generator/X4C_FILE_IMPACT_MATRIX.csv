@@ -1,0 +1,14 @@
+capability,impact_kind,existing_file,new_file,compat_strategy,x4a_kernel_use,xb_alignment_use,status,risk,notes
+canonical_models,REFERENCE,frontend/src/liner/schema/types.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,low,inventory with X4C module CONSUMES domain draft
+width_resolution,REFERENCE,frontend/src/liner/core/width/widthResolution.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,low,backend width.py mirrors the hold rule
+crossfall_resolution,REFERENCE,frontend/src/liner/core/grid/crossfallResolution.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,low,backend crossfall.py mirrors resolveCrossfallOffset
+vector_local_frame,REFERENCE,frontend/src/liner/core/vector.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,low,offsetPoint / angleToNormal constraint
+coordinate3d,REFERENCE,frontend/src/liner/core/coordinate3d.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,medium,XYZ formula mirror only in backend helper
+elevationAt,REFERENCE,frontend/src/liner/core/elevationAt.ts,(no change),KEEP_AS_CANONICAL,-,-,KEEP,low,backend keeps explicit input; adapter deferred
+geometry_kernel,USE,-,backend/rule_engine/crosssection/*,REUSE,-,Vec2D type,USE,low,Vec2D plane math via kernel
+alignment_solver,USE,-,backend/rule_engine/crosssection/*,REUSE,-,evaluate_alignment / Alignment,USE,low,station pose only source
+cross_section_module,NEW,backend/rule_engine/crosssection/*,backend/rule_engine/crosssection/{contract,width,crossfall,geometry,adapters}.py,IMPLEMENT_MINIMAL,-,-,NEW,medium,P01-P05
+rule_engine_contract,NEW,-,backend/rule_engine/crosssection/adapters.py,IMPLEMENT_MINIMAL,-,-,NEW,low,P05 (RuleResult / Registry)
+road_bridge_contract,NEW,-,backend/rule_engine/crosssection/adapters.py,IMPLEMENT_MINIMAL,-,-,NEW,medium,P05 (payload for bridge)
+drawing_exports,NO_CHANGE,frontend/src/liner/exports/*,(no change),-, -, -, KEEP,low,consumes existing frontend XYZ not backend
+bridge_layout,NO_CHANGE,frontend/src/liner/core/bridge/*,(no change),-, -, -, KEEP,low,bridge consumers unchanged in X4-C

@@ -1,0 +1,9 @@
+﻿capability,canonical_module,canonical_symbol,previous_modules,status,unit_contract,coordinate_contract,tests,project_replay,rule_engine_consumer,road_bridge_consumer,compatibility_status,notes
+HORIZONTAL_EVALUATION,frontend/src/liner/core/geometry/horizontal.ts,evaluateElementAtDistance,frontend,CANONICAL,YES,YES,horizontal.test.ts,PASS,RULE_ENGINE,ROAD_BRIDGE,-,
+STRAIGHT_EVALUATION,frontend/src/liner/core/geometry/line.ts,evaluateStraightElement,frontend,CANONICAL,YES,YES,-,PASS,-,-,-,
+CIRCULAR_ARC,frontend/src/liner/core/geometry/arc.ts,evaluateCircularArcElement,frontend,CANONICAL,YES,YES,-,PASS,RULE_ENGINE,-,-,
+CLOTHOID,frontend/src/liner/core/geometry/clothoid.ts,evaluateClothoidElement,frontend,CANONICAL,YES,YES,clothoid.test.ts,PASS,RULE_ENGINE,-,-,
+VERTICAL_PROFILE,frontend/src/liner/core/geometry/vertical.ts,evaluateVerticalAlignment,frontend,CANONICAL,YES,YES,-,PASS,RULE_ENGINE,ROAD_BRIDGE,-,
+STATION_AT_POINT,frontend/src/liner/core/stationAtPoint.ts,stationAtPoint,frontend,CANONICAL,YES,YES,-,PASS,RULE_ENGINE,ROAD_BRIDGE,-,
+COORDINATE_3D,frontend/src/liner/core/coordinate3d.ts,worldToLayout,frontend,CANONICAL,YES,YES,-,PASS,-,ROAD_BRIDGE,-,
+BACKEND_ADAPTER,backend/rule_engine/geometry/,-,backend,NEW,YES,YES,-,PASS,RULE_ENGINE,-,-,新規 adapter
