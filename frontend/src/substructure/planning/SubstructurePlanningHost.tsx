@@ -12,6 +12,7 @@ import { SampleCreationDialog } from "./samples/SampleCreationDialog";
 import {
   generateCombo,
   generateFromLinerSupports,
+  generateSample,
   type SampleKind,
 } from "./samples/sampleGenerator";
 import { applyFormPatchToSupport } from "./formToSupport";
@@ -139,15 +140,7 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
 
   const handleGenerateSingle = useCallback(
     (kind: SampleKind, supportId: string) => {
-      const next = generateCombo("combo-standard").map((s, i) => {
-        if (i !== 0) return s;
-        return {
-          ...s,
-          supportId,
-          pier: s.pier ? { ...s.pier, id: supportId } : undefined,
-          abutment: s.abutment ? { ...s.abutment, id: supportId } : undefined,
-        };
-      });
+      const next = [generateSample(kind, supportId, 0)];
       setDialogOpen(false);
       commitSupports(next, `sample ${kind} (${supportId})`);
     },
