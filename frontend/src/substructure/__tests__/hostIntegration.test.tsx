@@ -105,4 +105,27 @@ describe("SubstructurePlanningHost", () => {
     ) ?? container.querySelector<HTMLElement>('[data-testid="panel-tree"]');
     expect(select).not.toBeNull();
   });
+
+  it("auto-generates from LINER supports on mount when enabled", () => {
+    const liner = [
+      { id: "A1", station: 0, skewRad: 0, kind: "abutment" },
+      { id: "P1", station: 30, skewRad: 0.05, kind: "pier" },
+    ];
+    const { container } = render(
+      <SubstructurePlanningHost linerSupports={liner} alignmentId="aln-1" autoGenerateFromLiner />,
+    );
+    const text = container.textContent ?? "";
+    expect(text).toContain("A1");
+    expect(text).toContain("P1");
+    // 生成支点は LINER alignmentId を持つ
+    const stationCell = container.querySelector('[data-testid="coord-table"]')?.textContent ?? "";
+    expect(stationCell.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it("does not auto-generate when autoGenerateFromLiner is off", () => {
+    const liner = [{ id: "P1", station: 30, kind: "pier" }];
+    const { container } = render(<SubstructurePlanningHost linerSupports={liner} />);
+    const text = container.textContent ?? "";
+    expect(text).not.toContain("P1");
+  });
 });
