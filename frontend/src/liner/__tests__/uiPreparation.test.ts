@@ -27,6 +27,7 @@ describe("liner ui preparation", () => {
       "liner.drawingPlan",
       "liner.drawingProfile",
       "liner.drawingCrossSection",
+      "liner.main3d",
     ]);
     expect(resolveLinerUiRoutePath("liner.list")).toBe("/pro/liner");
     expect(resolveLinerUiRoutePath("liner.setup")).toBe("/pro/liner/setup");
@@ -35,10 +36,12 @@ describe("liner ui preparation", () => {
     expect(resolveLinerUiRoutePath("liner.drawingPlan")).toBe("/pro/liner/drawings/plan");
     expect(resolveLinerUiRoutePath("liner.drawingProfile")).toBe("/pro/liner/drawings/profile");
     expect(resolveLinerUiRoutePath("liner.drawingCrossSection")).toBe("/pro/liner/drawings/cross-section");
+    expect(resolveLinerUiRoutePath("liner.main3d")).toBe("/pro/liner/main3d");
     expect(resolveLinerUiRouteId("/pro/liner")).toBe("liner.list");
     expect(resolveLinerUiRouteId("/pro/liner/setup")).toBe("liner.setup");
     expect(resolveLinerUiRouteId("/pro/liner/preview")).toBe("liner.preview");
     expect(resolveLinerUiRouteId("/pro/liner/drawings/plan")).toBe("liner.drawingPlan");
+    expect(resolveLinerUiRouteId("/pro/liner/main3d")).toBe("liner.main3d");
     expect(resolveLinerUiRouteId("/pro/th/run")).toBeNull();
   });
 
