@@ -17,4 +17,4 @@ XP-015,regression,*,geometry_kernel,all PASS,all PASS,0.0,auto,PASS,false,backen
 XP-016,regression,*,alignment_solver,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_alignment_*.py,61 passed,X4-B regression
 XP-017,regression,*,rule_engine,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_rule_engine_*.py,35 passed,X3 regression
 XP-018,regression,*,cross_section_focused,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_crosssection_p06_focused.py,11 passed,pipeline lock
-XP-019,regression,*,cross_section_replay,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_crosssection_p06_replay.py,7 passed,project replay
+XP-019,regression,*,cross_section_replay,all PASS,all PASS,0.0,auto,PASS,false,backend/tests/test_crosssection_p06_replay.py,6 passed,project replay

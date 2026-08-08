@@ -1,0 +1,16 @@
+area,module,artifact,status,evidence,notes
+model,backend/rule_engine/crosssection/model.py,CrossSectionRequest/Result/Segment/Pivot,IMPLEMENTED,CROSS_SECTION_CONTRACT.md,"P01 canonical (X4C-P01 #549)"
+width_evaluation,backend/rule_engine/crosssection/width.py,ResolvedWidthExtents / piecewise-hold,IMPLEMENTED,WIDTH_CROSSFALL_CONVENTIONS.md,"P02 (#550) explicit-input only"
+crossfall_evaluation,backend/rule_engine/crosssection/crossfall.py,ResolvedCrossfallState / delta_z,IMPLEMENTED,WIDTH_CROSSFALL_CONVENTIONS.md,"P02 (#550) mirror frontend crossfallResolution"
+pivot_contract,model.py,CENTERLINE / CUSTOM_OFFSET,IMPLEMENTED,ELEVATION_PIVOT_CONTRACT.md,"FAIL-CLOSED on UNRESOLVED"
+elevation_contract,crosssection/global_xyz.py,EXPLICIT_INPUT + producer DEFERRED,EXPLICIT_INPUT_DEFERRED,ELEVATION_PIVOT_CONTRACT.md,"no vertical profile in X4-C"
+local_geometry,backend/rule_engine/crosssection/geometry.py,pose_at/local_normal/offset eval,IMPLEMENTED,,P03 (#551) via Alignment Solver + Kernel
+global_xyz,backend/rule_engine/crosssection/global_xyz.py,offset_point + local z,IMPLEMENTED,,P04 (#552)
+left_right_edges,geometry/global_xyz,left/right_offset + edge XYZ,IMPLEMENTED,,P04/P06
+rule_engine_contract,crosssection/adapters.py,RuleCrossSectionInput + full contract,IMPLEMENTED,,P05 (#558)
+alignment_contract,crosssection/adapters.py + alignment/contract.py,pose intake,IMPLEMENTED,,P05 (#558)
+road_bridge_contract,crosssection/adapters.py,RoadBridgeResult read-only,IMPLEMENTED,,P05 (#558) no design fields
+project_replay,backend/tests/test_crosssection_p06_replay.py,Locked PDF values,IMPLEMENTED,,P06 (#555)
+test_cover,backend/tests/test_crosssection_p0*.py,CrossSection package tests,89 PASS,,included in full suite
+regression,kernel+alignment+rule suites,37/61/35 PASS,PASS,,X4-A/X4-B/X3
+backend_full,backend/tests/,895 PASS,PASS,,final audit (P07)

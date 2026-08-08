@@ -1,0 +1,23 @@
+criteria,status,evidence
+canonical_cross_section_generator,READY,backend/rule_engine/crosssection/ single package (P05 census)
+width_contract,STABLE,width.py explicit / WIDTH_CROSSFALL_CONVENTIONS.md stable
+crossfall_contract,STABLE,crossfall.py explicit / WIDTH_CROSSFALL_CONVENTIONS.md stable
+pivot_contract,STABLE,CENTERLINE/CUSTOM_OFFSET contract fail-closed
+elevation_contract,EXPLICIT_INPUT,EXPLICIT_INPUT contract + producer DEFERRED documented
+alignment_pose_intake,PASS,pose_at via X4-B evaluate_alignment
+low_level_geometry,PASS,geometry evaluated only through X4-A kernel
+local_cross_section,STABLE,P03 tests 9+14 pass
+global_xyz,STABLE,P04 tests 12 pass
+left_right_edges,STABLE,P04/P06 tests pass
+rule_engine_contract,PASS,P05 16 tests pass
+road_bridge_contract,PASS,P05 RoadBridge read-only payload
+project_replay,PASS,P06 replay tests pass (real PDF HCL data)
+x4a_regression,PASS,37 passed
+x4b_regression,PASS,61 passed
+x3_regression,PASS,35 passed
+blocking_discrepancy,NONE,0 (X4C_DISCREPANCY_LEDGER.csv)
+road_geometry_api,OK,GENERATED / rule engine contract wiring complete
+main_worktree_safe,PASS,upper non-mod audit NO
+gate_verdict,GO,All criteria satisfied (see PHASE_X4C_FINAL_REPORT.md)
+note,DO_NOT_AUTOSTART,X4-D start requires user approval
+note,main_integration,main-side integration also requires user approval
