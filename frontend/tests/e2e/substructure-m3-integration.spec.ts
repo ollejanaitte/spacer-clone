@@ -145,7 +145,7 @@ test.describe("Phase C1 M3-06 integration scenarios", () => {
     const savedPath = `/tmp/opencode/m3-06-saved-${Date.now()}.json`;
     await download.saveAs(savedPath);
     const saved = JSON.parse(readFileSync(savedPath, "utf8"));
-    expect(saved.supports.map((s: { supportId: string }) => s.supportId)).toEqual([
+    expect(saved.project.supports.map((s: { supportId: string }) => s.supportId)).toEqual([
       "A1",
       "P1",
       "P2",

@@ -22,11 +22,6 @@ import { useUndoRedo } from "./useUndoRedo";
 import { validateSubstructureProject } from "../validation";
 import type { Support } from "../model";
 import type { LinerSupportHandoff } from "./linerHandoff";
-import {
-  deserializeSubstructureProject,
-  projectToSupports,
-  serializeSubstructureProject,
-} from "./persistence";
 import type { SuperstructureInput, SupportReactions } from "../design/designTypes";
 import { buildSuperstructureEnvelope } from "../design/superstructureEnvelope";
 import { parseSupportInterface, validateSuperstructureInput } from "../design/superstructureInterface";
@@ -42,6 +37,7 @@ import {
   type CalculationAdapterResult,
 } from "../design/calculationAdapter";
 import { AdapterResultPanel } from "./AdapterResultPanel";
+import { serializeAdapterEnvelope, deserializeAdapterEnvelope } from "../design/adapterPersistence";
 
 export type { LinerSupportHandoff };
 
@@ -276,11 +272,21 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSave = useCallback(() => {
-    const result = serializeSubstructureProject({
+    const calculation = adapterResults
+      ? {
+          inputs: Object.fromEntries(adapterInputs),
+          results: Object.fromEntries(
+            adapterResults.map((r) => [r.supportId, r]),
+          ),
+          engineType: "test-mock",
+          engineVersion: "0.1.0",
+        }
+      : null;
+    const result = serializeAdapterEnvelope({
       supports,
       projectId: props.projectId,
       bridgeId: props.bridgeId,
-      alignmentRefs: alignmentId ? [{ alignmentId, originStation: 0, totalLength: 0 }] : undefined,
+      calculation,
     });
     if (!result.ok || !result.value) {
       setPersistMessage(`保存失敗: ${result.diagnostics.join(" / ")}`);
@@ -294,21 +300,37 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
     a.click();
     URL.revokeObjectURL(url);
     setPersistMessage("保存しました (substructure-project.json)");
-  }, [supports, props.projectId, props.bridgeId, alignmentId]);
+  }, [supports, props.projectId, props.bridgeId, alignmentId, adapterResults, adapterInputs]);
 
   const handleLoadFile = useCallback(
     async (file: File) => {
       const text = await file.text();
-      const result = deserializeSubstructureProject(text);
+      const result = deserializeAdapterEnvelope(text);
       if (!result.ok || !result.value) {
         setPersistMessage(`読込失敗: ${result.diagnostics.join(" / ")}`);
         return;
       }
-      const loaded = projectToSupports(result.value);
+      const loaded = result.value.supports;
       history.reset(loaded);
       setSelectedSupportId(null);
       setDesignResults(null);
-      setPersistMessage(`読込ました (${loaded.length} supports, ${file.name})`);
+      if (result.value.calculation) {
+        const calc = result.value.calculation;
+        setAdapterInputs(new Map(Object.entries(calc.inputs ?? {})));
+        setAdapterResults(Object.values(calc.results ?? {}));
+        setAdapterSelectedSupportId(Object.keys(calc.results ?? {})[0] ?? null);
+        if (result.value.staleSupportIds.length > 0) {
+          setPersistMessage(
+            `読込ました (${loaded.length} supports)。注意: 一部の Adapter 結果はモデルと不一致のため stale です (${result.value.staleSupportIds.join(", ")})`,
+          );
+          return;
+        }
+        setPersistMessage(`読込ました (${loaded.length} supports + Adapter結果復元)`);
+      } else {
+        setAdapterResults(null);
+        setAdapterInputs(new Map());
+        setPersistMessage(`読込ました (${loaded.length} supports, ${file.name})`);
+      }
     },
     [history],
   );
