@@ -1,55 +1,50 @@
 /**
- * Mountain Viaduct 500 — 3D viewer (MOUNTAIN-SAMPLE P11).
+ * Mountain Viaduct 500 — unified 3D viewer (MAIN3D P04).
  *
  * Renders the sample through the normal pipeline:
- *   Project State (draft) -> solvers -> terrain + geometry -> Three.js
+ *   Project State (draft) -> Unified3DScene -> Three.js
  *
- * Layers:
+ * Layers (Unified3DScene):
  *   - terrain mesh (deterministic heightfield, DISPLAY_LAYER)
  *   - road centerline polyline
- *   - pier / abutment markers (cones with orientation arrows)
- *   - span deck polylines
+ *   - superstructure (span deck polylines)
+ *   - substructure (A1/P1..P7/A2: column + cap + support zone meshes)
+ *   - frame (optional, from the existing frame viewer project)
  *
- * Camera presets are visual convenience only (never affect geometry).
+ * Camera presets / layer toggles are visual convenience only.
  */
 import { Component, useMemo, type ErrorInfo, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import type { BuildIntermediateInput } from "../../core/pipeline/pipeline";
-import { buildTerrainHeightfield, buildTerrainIndices } from "./terrain";
-import { resolveSupportMarkers } from "./markers";
-import { cameraStateForPreset } from "./camera";
-import { MOUNTAIN_CAMERA_PRESETS } from "./fixture";
-import { evaluateAlignmentAtDistance } from "../../core/geometry/horizontal";
-import { elevationAt } from "../../core/elevationAt";
+import { buildUnified3DScene, type Unified3DScene } from "./scene";
+import type { SceneLayer } from "./scene";
 
 export type MountainViewerProps = {
   draft: BuildIntermediateInput;
   presetId?: string;
-  showTerrain?: boolean;
-  showCenterline?: boolean;
-  showSupports?: boolean;
+  /** per-layer visibility; defaults to all on. */
+  layerState?: Partial<Record<SceneLayer, boolean>>;
 };
 
 const TERRAIN_COLOR = "#4d7c4f";
 const CENTERLINE_COLOR = "#2563eb";
 const ABUTMENT_COLOR = "#ea580c";
 const PIER_COLOR = "#16a34a";
+const CAP_COLOR = "#0f766e";
 const SPAN_COLOR = "#64748b";
+const FRAME_COLOR = "#9333ea";
 
-/** Terrain mesh positions + colors from the deterministic heightfield. */
-function TerrainLayer() {
+/** Terrain mesh from the unified scene (deterministic). */
+function TerrainLayer({ scene }: { scene: Unified3DScene }) {
   const geometry = useMemo(() => {
-    const { positions, widths, depths } = buildTerrainHeightfield();
-    const indices = buildTerrainIndices(widths, depths);
     const buffer = new THREE.BufferGeometry();
-    buffer.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    buffer.setIndex(new THREE.BufferAttribute(indices, 1));
-    // simple flat vertex colors (deterministic)
-    const colors = new Float32Array(positions.length);
-    for (let i = 0; i < positions.length; i += 3) {
-      const height = positions[i + 1];
+    buffer.setAttribute("position", new THREE.BufferAttribute(scene.terrain.positions, 3));
+    buffer.setIndex(new THREE.BufferAttribute(scene.terrain.indices, 1));
+    const colors = new Float32Array(scene.terrain.positions.length);
+    for (let i = 0; i < scene.terrain.positions.length; i += 3) {
+      const height = scene.terrain.positions[i + 1];
       const shade = 0.55 + ((height % 10) / 10) * 0.25;
       colors[i] = shade * 0.30;
       colors[i + 1] = shade * 0.49;
@@ -58,7 +53,7 @@ function TerrainLayer() {
     buffer.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     buffer.computeVertexNormals();
     return buffer;
-  }, []);
+  }, [scene]);
 
   return (
     <mesh geometry={geometry}>
@@ -67,75 +62,93 @@ function TerrainLayer() {
   );
 }
 
-function CenterlineLayer({ draft }: { draft: BuildIntermediateInput }) {
-  const line = useMemo(() => {
-    const points: THREE.Vector3[] = [];
-    const total = draft.alignment.elements.reduce((s, e) => s + e.length, 0);
-    const step = 5;
-    for (let d = 0; d <= total; d += step) {
-      const ev = evaluate(d, draft);
-      points.push(new THREE.Vector3(ev.x, ev.y, ev.z));
-    }
-    return points;
-  }, [draft]);
-
-  return (
-    <line>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[new Float32Array(line.flatMap((p) => [p.x, p.y, p.z])), 3]} />
-      </bufferGeometry>
-      <lineBasicMaterial color={CENTERLINE_COLOR} />
-    </line>
-  );
+function Polyline({
+  points,
+  color,
+  transparent,
+}: {
+  points: number[];
+  color: string;
+  transparent?: boolean;
+}) {
+  const object = useMemo(() => {
+    const buffer = new THREE.BufferGeometry();
+    buffer.setAttribute("position", new THREE.BufferAttribute(new Float32Array(points), 3));
+    const material = new THREE.LineBasicMaterial({
+      color,
+      transparent,
+      opacity: transparent ? 0.5 : 1,
+    });
+    return new THREE.Line(buffer, material);
+  }, [points, color, transparent]);
+  return <primitive object={object} />;
 }
 
-function SupportsLayer({ draft }: { draft: BuildIntermediateInput }) {
-  const { markers, spans } = useMemo(() => resolveSupportMarkers(draft), [draft]);
+/** Substructure element mesh (column + cap + support zone boxes). */
+function SubstructureLayer({ scene }: { scene: Unified3DScene }) {
   return (
     <group>
-      {spans.map((span) => (
-        <line key={span.id}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              args={[new Float32Array([span.startX, span.startY, 0, span.endX, span.endY, 0]), 3]}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial color={SPAN_COLOR} transparent opacity={0.5} />
-        </line>
-      ))}
-      {markers.map((marker) => (
-        <SupportMarker key={marker.id} marker={marker} />
-      ))}
+      {scene.substructure.map((element) => {
+        const color = element.kind === "abutment" ? ABUTMENT_COLOR : PIER_COLOR;
+        return (
+          <group key={element.id} data-testid={`substructure-${element.id}`}>
+            {element.boxes.map((box, index) => (
+              <mesh
+                key={`${element.id}-${index}`}
+                position={[box.centerX, box.centerZ, -box.centerY]}
+                data-testid={`${element.id}-box-${index}`}
+              >
+                <boxGeometry args={[box.sizeX, box.sizeZ, box.sizeY]} />
+                <meshStandardMaterial color={index === 1 ? CAP_COLOR : color} />
+              </mesh>
+            ))}
+          </group>
+        );
+      })}
     </group>
   );
 }
 
-function SupportMarker({ marker }: { marker: { id: string; kind: string; x: number; y: number; z: number; direction: { x: number; y: number } } }) {
-  const color = marker.kind === "abutment" ? ABUTMENT_COLOR : PIER_COLOR;
-  // arrow/cone oriented along the pier-line direction (in plan)
-  const angle = Math.atan2(marker.direction.y, marker.direction.x);
+/** Superstructure: span deck polylines at deck Z (from bridge layer). */
+function SuperstructureLayer({ scene }: { scene: Unified3DScene }) {
   return (
-    <group position={[marker.x, marker.z, -marker.y]} rotation={[0, 0, 0]}>
-      {/* vertical cone marker */}
-      <mesh position={[0, 6, 0]}>
-        <coneGeometry args={[2.2, 8, 12]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-      {/* direction arrow on the ground */}
-      <mesh position={[0, 0.5, 0]} rotation={[0, 0, -angle]}>
-        <coneGeometry args={[1.4, 5, 10]} />
-        <meshStandardMaterial color={color} transparent opacity={0.85} />
-      </mesh>
+    <group>
+      {scene.bridge.spans.map((span) => (
+        <Polyline
+          key={span.id}
+          color={SPAN_COLOR}
+          points={[span.startX, span.startZ, -span.startY, span.endX, span.endZ, -span.endY]}
+        />
+      ))}
     </group>
   );
 }
 
-/** Evaluate XY at distance, Z via elevation. Kept here to avoid re-implementing solvers. */
-function evaluate(d: number, draft: BuildIntermediateInput): { x: number; y: number; z: number } {
-  const ev = evaluateAlignmentAtDistance(draft.alignment, d);
-  const z = draft.verticalAlignment ? elevationAt(d, draft.verticalAlignment) ?? 0 : 0;
-  return { x: ev.point.x, y: ev.point.y, z };
+function RoadLayer({ scene }: { scene: Unified3DScene }) {
+  const points = useMemo(() => {
+    const arr: number[] = [];
+    for (const p of scene.road.points) {
+      arr.push(p.x, p.z, -p.y);
+    }
+    return arr;
+  }, [scene]);
+  return <Polyline points={points} color={CENTERLINE_COLOR} />;
+}
+
+/** Optional frame overlay (points/members from the existing frame project). */
+function FrameLayer({ scene }: { scene: Unified3DScene }) {
+  const frame = scene.frame;
+  if (!frame || frame.nodes.length === 0) {
+    return null;
+  }
+  const points = useMemo(() => {
+    const arr: number[] = [];
+    for (const node of frame.nodes) {
+      arr.push(node.x, node.z, -node.y);
+    }
+    return arr;
+  }, [frame]);
+  return <Polyline points={points} color={FRAME_COLOR} transparent />;
 }
 
 class ViewerErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
@@ -155,11 +168,18 @@ class ViewerErrorBoundary extends Component<{ children: ReactNode; fallback: Rea
 export function MountainViaduct3dViewer({
   draft,
   presetId = "overview",
-  showTerrain = true,
-  showCenterline = true,
-  showSupports = true,
+  layerState = {},
 }: MountainViewerProps) {
-  const camera = useMemo(() => cameraStateForPreset(MOUNTAIN_CAMERA_PRESETS, presetId), [presetId]);
+  const scene = useMemo(() => buildUnified3DScene(draft, presetId), [draft, presetId]);
+  const layers: Record<SceneLayer, boolean> = {
+    terrain: layerState.terrain ?? true,
+    road: layerState.road ?? true,
+    superstructure: layerState.superstructure ?? true,
+    substructure: layerState.substructure ?? true,
+    frame: layerState.frame ?? true,
+  };
+
+  const camera = scene.camera;
 
   return (
     <ViewerErrorBoundary
@@ -170,9 +190,11 @@ export function MountainViaduct3dViewer({
           <ambientLight intensity={0.7} />
           <directionalLight position={[200, 150, 100]} intensity={1.1} />
           <gridHelper args={[600, 30, "#334155", "#223047"]} position={[250, 0, 0]} />
-          {showTerrain && <TerrainLayer />}
-          {showCenterline && <CenterlineLayer draft={draft} />}
-          {showSupports && <SupportsLayer draft={draft} />}
+          {layers.terrain && <TerrainLayer scene={scene} />}
+          {layers.road && <RoadLayer scene={scene} />}
+          {layers.superstructure && <SuperstructureLayer scene={scene} />}
+          {layers.substructure && <SubstructureLayer scene={scene} />}
+          {layers.frame && <FrameLayer scene={scene} />}
           <OrbitControls makeDefault target={[camera.target.x, camera.target.y, camera.target.z]} />
         </Canvas>
       </div>
