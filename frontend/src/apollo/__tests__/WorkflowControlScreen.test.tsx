@@ -155,7 +155,8 @@ describe("WorkflowProgressSummary", () => {
     const container = render(
       <WorkflowProgressSummary progress={model.progress} currentRecommendedStepId={model.currentRecommendedStepId} />,
     );
-    expect(container.querySelector("[data-testid='apollo-wf-progress-recommended']")?.textContent).toContain("WF-02");
+    // With alignment-binding active, the first recommended step is WF-01.
+    expect(container.querySelector("[data-testid='apollo-wf-progress-recommended']")?.textContent).toContain("WF-01");
     expect(container.textContent).toContain("全 15 工程");
   });
 });

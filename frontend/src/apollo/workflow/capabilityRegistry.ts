@@ -27,10 +27,10 @@ export const WORKFLOW_CAPABILITIES: readonly WorkflowCapability[] = [
   {
     capabilityKey: "alignment-binding",
     stepId: "WF-01",
-    status: "PLANNED",
-    implementedInStep: "Step 4-E",
-    note: "LINER/道路線形 binding。Step 4-E 実装待ち。local CRS で互換運用。",
-    gatingGuard: "PENDING_FUTURE_STEP",
+    status: "IMPLEMENTED",
+    implementedInStep: "Step 3-3",
+    note: "LINER/道路線形 binding。BridgeProject（CBDM）経由で support/span/skew/width を上部工へ接続。local CRS で互換運用。",
+    gatingGuard: "ACTIVE",
   },
   {
     capabilityKey: "bridge-structure-input",
