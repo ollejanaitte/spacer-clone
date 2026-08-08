@@ -182,4 +182,41 @@ describe("SubstructurePlanningHost", () => {
     act(() => loadBtn.click());
     expect(clickSpy).toHaveBeenCalled();
   });
+
+  it("imports a support-interface and shows the connection message", async () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    const input = container.querySelector<HTMLInputElement>('[data-testid="support-interface-input"]')!;
+    const doc = {
+      schemaVersion: "0.1.0",
+      supportId: "PR1",
+      supportType: "pier",
+      bearingSeats: [
+        { bearingId: "PR1-B1", bearingPosition: { x: 0, y: -3, z: 8 }, bearingHeight: 0.2 },
+        { bearingId: "PR1-B2", bearingPosition: { x: 0, y: 3, z: 8 }, bearingHeight: 0.2 },
+      ],
+      reactionCases: [{ caseId: "DL", caseKind: "permanent", force: { x: 0, y: 0, z: -1000 } }],
+      girderBottomElevation: 8.4,
+      deckElevation: 10.0,
+    };
+    const file = new File([JSON.stringify(doc)], "support-interface.json", { type: "application/json" });
+    await act(async () => {
+      Object.defineProperty(input, "files", { value: [file], configurable: true });
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    const message = container.querySelector('[data-testid="superstructure-message"]')?.textContent ?? "";
+    expect(message).toContain("PR1");
+    expect(message).toContain("bearing 2");
+  });
+
+  it("rejects an invalid support-interface (fail-closed)", async () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    const input = container.querySelector<HTMLInputElement>('[data-testid="support-interface-input"]')!;
+    const file = new File([JSON.stringify({ schemaVersion: "9.9.9" })], "bad.json", { type: "application/json" });
+    await act(async () => {
+      Object.defineProperty(input, "files", { value: [file], configurable: true });
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    const message = container.querySelector('[data-testid="superstructure-message"]')?.textContent ?? "";
+    expect(message).toContain("失敗");
+  });
 });

@@ -20,6 +20,8 @@ export interface SubstructureViewportProps {
   groups?: SolidGroup[];
   /** M2-05: リアルタイムフックが計算済みの2D投影（未指定なら内部計算） */
   projections?: PlanProjection[];
+  /** M3-02: 上部工簡易外形など追加グループ（2D/3D 双方に合成） */
+  extraGroups?: readonly SolidGroup[];
   /** 3D生成停止中（FATAL）表示 */
   generationBlocked?: boolean;
   /** M2-06: 寸法モード */
@@ -186,14 +188,20 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
   const t = ja.substructure?.planning ?? ({} as Record<string, string>);
 
   const groups = useMemo<SolidGroup[]>(() => {
-    if (props.groups) return props.groups;
-    const snapshots = makeSnapshots(props.supports, props.coordinates);
-    try {
-      return buildAllSupportSolids(props.supports as never, snapshots);
-    } catch {
-      return [];
-    }
-  }, [props.supports, props.coordinates, props.groups]);
+    const base: SolidGroup[] = props.groups
+      ? props.groups
+      : (() => {
+          const snapshots = makeSnapshots(props.supports, props.coordinates);
+          try {
+            return buildAllSupportSolids(props.supports as never, snapshots);
+          } catch {
+            return [];
+          }
+        })();
+    return props.extraGroups && props.extraGroups.length > 0
+      ? [...base, ...props.extraGroups]
+      : base;
+  }, [props.supports, props.coordinates, props.groups, props.extraGroups]);
 
   const projections = useMemo(() => {
     if (props.projections) return props.projections;

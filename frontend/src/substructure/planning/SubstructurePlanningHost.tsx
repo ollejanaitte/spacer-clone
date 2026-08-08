@@ -27,6 +27,10 @@ import {
   projectToSupports,
   serializeSubstructureProject,
 } from "./persistence";
+import type { SuperstructureInput } from "../design/designTypes";
+import { buildSuperstructureEnvelope } from "../design/superstructureEnvelope";
+import { parseSupportInterface, validateSuperstructureInput } from "../design/superstructureInterface";
+import type { SolidGroup } from "../geometryBase";
 
 export type { LinerSupportHandoff };
 
@@ -43,6 +47,8 @@ export interface SubstructurePlanningHostProps {
   projectId?: string;
   /** 保存時の bridgeId。 */
   bridgeId?: string;
+  /** M3-02: 上部工 support-interface 入力（同一3D表示・接続）。 */
+  superstructures?: readonly SuperstructureInput[];
   /** back navigation 受け口（LINER / /pro へ戻る）。 */
   onBack?: () => void;
 }
@@ -124,9 +130,66 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const supports = history.state.present;
   const [selectedSupportId, setSelectedSupportId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [superstructures, setSuperstructures] = useState<readonly SuperstructureInput[]>(
+    () => props.superstructures ?? [],
+  );
+  const [superstructureMessage, setSuperstructureMessage] = useState<string | null>(null);
+  const superstructureInputRef = useRef<HTMLInputElement | null>(null);
 
   const coordinates = useMemo(() => buildHostCoordinates(supports), [supports]);
   const validation = useMemo(() => buildValidationSummary(supports), [supports]);
+
+  const extraGroups: readonly SolidGroup[] = useMemo(() => {
+    if (!superstructures || superstructures.length === 0) return [];
+    const result = buildSuperstructureEnvelope({
+      superstructures,
+      supportPositions: coordinates,
+    });
+    return result.ok && result.group ? [result.group] : [];
+  }, [superstructures, coordinates]);
+
+  const handleImportSuperstructure = useCallback(async (file: File) => {
+    const text = await file.text();
+    const parsed = parseSupportInterface(text);
+    if (!parsed.ok || !parsed.value) {
+      setSuperstructureMessage(`上部工接続失敗: ${parsed.diagnostics.join(" / ")}`);
+      return;
+    }
+    const doc = parsed.value;
+    const issues = validateSuperstructureInput({
+      supportId: doc.supportId,
+      supportType: doc.supportType,
+      bearingSeats: doc.bearingSeats,
+      reactionCases: doc.reactionCases,
+      girderBottomElevation: doc.girderBottomElevation,
+      deckElevation: doc.deckElevation,
+      sourceApplication: doc.sourceApplication,
+      sourceVersion: doc.sourceVersion,
+      sourceRevision: doc.sourceRevision,
+    });
+    if (issues.length > 0) {
+      setSuperstructureMessage(`上部工接続失敗: ${issues.join(" / ")}`);
+      return;
+    }
+    const entry: SuperstructureInput = {
+      supportId: doc.supportId,
+      supportType: doc.supportType,
+      bearingSeats: doc.bearingSeats,
+      reactionCases: doc.reactionCases,
+      girderBottomElevation: doc.girderBottomElevation,
+      deckElevation: doc.deckElevation,
+      sourceApplication: doc.sourceApplication,
+      sourceVersion: doc.sourceVersion,
+      sourceRevision: doc.sourceRevision,
+    };
+    setSuperstructures((current) => {
+      const next = current.filter((s) => s.supportId !== entry.supportId);
+      return [...next, entry];
+    });
+    setSuperstructureMessage(
+      `上部工接続: ${doc.supportId}（bearing ${(doc.bearingSeats ?? []).length} / reaction ${(doc.reactionCases ?? []).length}）`,
+    );
+  }, []);
 
   const selected = useMemo(
     () => supports.find((s) => s.supportId === selectedSupportId) ?? null,
@@ -255,6 +318,7 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
         formBundle={formBundle}
         onFormPatch={handleFormPatch}
         onFormTypeChange={handleFormTypeChange}
+        extraGroups={extraGroups}
         toolbarExtra={
           <>
             <button
@@ -274,6 +338,13 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
             >
               {t.loadProject ?? "読込"}
             </button>
+            <button
+              type="button"
+              data-testid="import-support-interface"
+              onClick={() => superstructureInputRef.current?.click()}
+            >
+              {t.importSuperstructure ?? "上部工接続"}
+            </button>
             <input
               ref={fileInputRef}
               type="file"
@@ -283,6 +354,18 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) void handleLoadFile(file);
+                e.target.value = "";
+              }}
+            />
+            <input
+              ref={superstructureInputRef}
+              type="file"
+              accept=".json,application/json"
+              style={{ display: "none" }}
+              data-testid="support-interface-input"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void handleImportSuperstructure(file);
                 e.target.value = "";
               }}
             />
@@ -307,6 +390,26 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
           }}
         >
           {persistMessage}
+        </div>
+      )}
+      {superstructureMessage && (
+        <div
+          data-testid="superstructure-message"
+          style={{
+            position: "fixed",
+            top: 96,
+            right: 12,
+            zIndex: 950,
+            padding: "8px 12px",
+            borderRadius: 8,
+            border: "1px solid rgba(255,255,255,0.15)",
+            background: "#1d2b45",
+            color: "#f1f5f9",
+            fontSize: 12,
+            fontFamily: "Inter, 'Noto Sans JP', sans-serif",
+          }}
+        >
+          {superstructureMessage}
         </div>
       )}
       {dialogOpen && (

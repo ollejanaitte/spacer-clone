@@ -2270,6 +2270,7 @@ export const ja = {
       openPlanning: "下部工計画を開く",
       saveProject: "保存",
       loadProject: "読込",
+      importSuperstructure: "上部工接続",
     },
   },
 };
