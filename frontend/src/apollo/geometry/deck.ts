@@ -66,7 +66,13 @@ export function buildDeckReference(
     id: `DECK-REF-${spec.deckId}`,
     deckId: spec.deckId,
     widthM: { state: "CONFIRMED", value: spec.widthM, unit: "m" },
-    thicknessM: { state: "CONFIRMED", value: spec.thicknessM, unit: "m" },
+    thicknessM:
+      spec.thicknessM !== undefined
+        ? { state: "CONFIRMED", value: spec.thicknessM, unit: "m" }
+        : {
+            state: "NOT_AVAILABLE",
+            stateReason: "deck thickness not declared in the shared BridgeProject model; superstructure-owned input pending.",
+          },
     edgeOffsetM,
     ...(spec.elevationM !== undefined
       ? { elevationM: { state: "CONFIRMED" as const, value: spec.elevationM, unit: "m" } }

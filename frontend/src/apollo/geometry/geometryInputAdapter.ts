@@ -128,6 +128,12 @@ function listOf(container: CommonEntity[] | undefined): CommonEntity[] {
  * Adapts a Common Bridge Data Model document into `GeometryEngineInput`.
  * Pure extraction: entity IDs, confirmed numeric values (station/offset) and
  * resolution states; no geometry calculation and no invented values.
+ *
+ * Phase 3-3: additionally extracts the numeric bridge facts that the Geometry
+ * Engine needs for the BridgeProject-bound path — declared span lengths, bridge
+ * length, and deck width — when the CBDM carries them (Phase 3-2 CBDM builder
+ * writes numeric `spanLength`/`bridgeLength`/`widthM` fields). Legacy fixtures
+ * without numeric values stay empty (nothing is invented).
  */
 export class CommonModelGeometryInputAdapter implements GeometryInputAdapter {
   adapt(commonModel: unknown): GeometryEngineInput {
@@ -147,6 +153,57 @@ export class CommonModelGeometryInputAdapter implements GeometryInputAdapter {
       state: entityState(e),
     }));
 
+    // Declared span lengths, ordered by start station (falls back to document
+    // order when a span has no startStationM).
+    const spans = listOf(bridgeGeometry.spans);
+    const spanLengthsM = spans
+      .map((e) => {
+        const length = numericField(e, "spanLength");
+        const start = numericField(e, "startStationM") ?? numericField(e, "startStation");
+        return { e, length, start };
+      })
+      .filter((entry): entry is { e: CommonEntity; length: number; start: number | undefined } =>
+        typeof entry.length === "number" && Number.isFinite(entry.length),
+      )
+      .sort((a, b) => {
+        if (a.start === undefined && b.start === undefined) {
+          return 0;
+        }
+        if (a.start === undefined) {
+          return 1;
+        }
+        if (b.start === undefined) {
+          return -1;
+        }
+        return a.start - b.start;
+      })
+      .map((entry) => entry.length);
+
+    // Bridge length from the alignment aggregate (or support span when all
+    // support stations are declared).
+    const aggregate = listOf(model.alignments?.alignments).find((e) =>
+      entityField(e, "bridgeLength") !== undefined,
+    );
+    const bridgeLengthFromAggregate = aggregate === undefined
+      ? undefined
+      : numericField(aggregate, "bridgeLength");
+    const supportStations = supports
+      .map((s) => s.stationM)
+      .filter((station): station is number => typeof station === "number" && Number.isFinite(station));
+    const bridgeLengthFromSupports =
+      supportStations.length === supports.length && supports.length > 0
+        ? supportStations[supportStations.length - 1]! - supportStations[0]!
+        : undefined;
+    const bridgeLengthM = bridgeLengthFromAggregate ?? bridgeLengthFromSupports;
+
+    // Deck width specs from deck entities that carry a numeric widthM.
+    const deckSpecs = listOf(bridgeGeometry.deck)
+      .map((e) => {
+        const widthM = numericField(e, "widthM") ?? numericField(e, "width");
+        return widthM === undefined ? undefined : { deckId: e.id, widthM };
+      })
+      .filter((spec): spec is { deckId: string; widthM: number } => spec !== undefined);
+
     return {
       sourceModelVersion: model.schemaVersion ?? "unknown",
       bridgeId: model.documentId ?? "unknown",
@@ -156,6 +213,9 @@ export class CommonModelGeometryInputAdapter implements GeometryInputAdapter {
       gridPointIds: listOf(bridgeGeometry.gridPoints).map((e) => e.id),
       deckIds: listOf(bridgeGeometry.deck).map((e) => e.id),
       sectionIds: listOf(model.sections?.sections).map((e) => e.id),
+      ...(spanLengthsM.length > 0 ? { spanLengthsM } : {}),
+      ...(bridgeLengthM !== undefined ? { bridgeLengthM } : {}),
+      ...(deckSpecs.length > 0 ? { deckSpecs } : {}),
       unresolved: collectUnresolved(model),
     };
   }
