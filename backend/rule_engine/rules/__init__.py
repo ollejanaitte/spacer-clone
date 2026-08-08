@@ -27,6 +27,7 @@ def load_all_rules() -> List:
     from ..alignment.contract import AlignmentGeometryRule
     from .widening import WIDENINGRule
     from .curve_length import CURVE_LENGTHRule
+    from .superelevation_transition import SUPERELEVATION_TRANSITIONRule
     return [
         RoadClassificationRule(),
         DesignSpeedRule(),
@@ -49,4 +50,5 @@ def load_all_rules() -> List:
         AlignmentGeometryRule(),
         WIDENINGRule(),
         CURVE_LENGTHRule(),
+        SUPERELEVATION_TRANSITIONRule(),
     ]
