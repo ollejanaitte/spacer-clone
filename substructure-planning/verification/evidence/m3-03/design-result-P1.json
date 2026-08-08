@@ -1,0 +1,35 @@
+{
+  "projectId": "evidence",
+  "supportId": "P1",
+  "supportType": "pier",
+  "status": "hold_not_available",
+  "inputTrace": {
+    "supportId": "P1",
+    "supportType": "pier",
+    "station": 30,
+    "skewDeg": 0,
+    "pierFormType": "portal_frame",
+    "footing": {
+      "length": 10,
+      "width": 7,
+      "thickness": 1.8
+    },
+    "pileCount": null,
+    "pileDiameter": null,
+    "pileLength": null
+  },
+  "geometric": {
+    "columnVolume": 40.32,
+    "capVolume": 0,
+    "beamVolume": 21.6,
+    "backwallVolume": 0,
+    "wingVolume": 0,
+    "footingVolume": 126,
+    "pileVolume": 0,
+    "totalConcreteVolume": 187.92000000000002,
+    "totalPileLength": 0,
+    "units": "m³ / m",
+    "note": "幾何学的概算値。実務数量・設計照査値ではない。"
+  },
+  "diagnostics": []
+}
