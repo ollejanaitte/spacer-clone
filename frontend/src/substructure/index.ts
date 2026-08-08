@@ -52,3 +52,5 @@ export * from "./design/calculationOutput";
 export * from "./planning/DesignResultPanel";
 // Phase C1 (A-01) Design Calculation Adapter 契約。
 export * from "./design/calculationAdapter";
+// Phase C1 (A-02) 橋脚モデル → Adapter 入力マッパー。
+export * from "./design/adapterMapper";
