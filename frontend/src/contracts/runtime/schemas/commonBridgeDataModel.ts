@@ -119,6 +119,50 @@ export const notAvailableValueSchema = z
   })
   .describe("Concept valid but no value available in the current contract.");
 
+export const derivedValueSchema = z
+  .object({
+    state: z.literal("DERIVED"),
+    value: scalarValueSchema,
+    unit: nonEmptyStringSchema.optional(),
+    sourceUnit: nonEmptyStringSchema.optional(),
+    derivedFrom: nonEmptyStringSchema,
+    generatedBy: nonEmptyStringSchema.optional(),
+    authority: numericAuthoritySchema.optional(),
+    precision: finiteNumberSchema.optional(),
+  })
+  .describe(
+    "Value deterministically derived from the current model (e.g. station->XYZ, support " +
+      "placement). derivedFrom records the derivation source; it is NOT an original input.",
+  );
+
+export const inferredValueSchema = z
+  .object({
+    state: z.literal("INFERRED"),
+    value: scalarValueSchema,
+    unit: nonEmptyStringSchema.optional(),
+    sourceUnit: nonEmptyStringSchema.optional(),
+    inferenceBasis: nonEmptyStringSchema,
+    confidence: z.enum(["high", "medium", "low"]).optional(),
+    sourceRefs: z.array(nonEmptyStringSchema).optional(),
+  })
+  .describe(
+    "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment " +
+      "from superstructure sample). inferenceBasis records why it is an estimate.",
+  );
+
+export const deferredValueSchema = z
+  .object({
+    state: z.literal("DEFERRED"),
+    stateReason: nonEmptyStringSchema,
+    unit: nonEmptyStringSchema.optional(),
+    deferredTo: nonEmptyStringSchema.optional(),
+    sourceRefs: z.array(nonEmptyStringSchema).optional(),
+  })
+  .describe(
+    "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an " +
+      "invented value and not silently treated as available.",
+  );
+
 export const resolvedValueSchema = z.discriminatedUnion("state", [
   confirmedValueSchema,
   humanConfirmationRequiredValueSchema,
@@ -126,6 +170,9 @@ export const resolvedValueSchema = z.discriminatedUnion("state", [
   holdValueSchema,
   notApplicableValueSchema,
   notAvailableValueSchema,
+  derivedValueSchema,
+  inferredValueSchema,
+  deferredValueSchema,
 ]);
 
 export const resolvedValueStates = [
@@ -135,6 +182,9 @@ export const resolvedValueStates = [
   "HOLD_INSUFFICIENT_SOURCE",
   "NOT_APPLICABLE",
   "NOT_AVAILABLE",
+  "DERIVED",
+  "INFERRED",
+  "DEFERRED",
 ] as const;
 
 // ---------------------------------------------------------------------------

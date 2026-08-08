@@ -302,4 +302,21 @@ export const CONTRACT_JSON_SCHEMA_SEMANTIC_METADATA: Readonly<
       "COMMON_BRIDGE_MODEL_ANALYSIS_EMPTY_STATE_INVALID",
     ],
   },
+  "bridge-project": {
+    scope: "structural-plus-semantic",
+    completeValidator: false,
+    runtimeRequired: true,
+    description:
+      "BridgeProject coordination manifest schema. Confirms envelope, project identity, per-section ownership/status, references to authoritative per-domain documents, cross-tool support/reaction handoff facts, and CASE B reconstruction provenance. Runtime semantic validation enforces schema version, project UUID, section keys/owners, support id uniqueness, reaction case kinds, reconstruction value statuses, and the prohibition of embedded full domain payloads.",
+    runtimeRules: [
+      "BRIDGE_PROJECT_SCHEMA_VERSION_UNSUPPORTED",
+      "BRIDGE_PROJECT_ID_INVALID",
+      "BRIDGE_PROJECT_SECTION_KEY_INVALID",
+      "BRIDGE_PROJECT_OWNER_INVALID",
+      "BRIDGE_PROJECT_SUPPORT_DUPLICATE",
+      "BRIDGE_PROJECT_REACTION_CASE_KIND_INVALID",
+      "BRIDGE_PROJECT_RECONSTRUCTION_STATUS_INVALID",
+      "BRIDGE_PROJECT_EMBEDDED_PAYLOAD_FORBIDDEN",
+    ],
+  },
 };

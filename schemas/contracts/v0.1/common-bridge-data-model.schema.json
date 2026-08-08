@@ -419,6 +419,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -759,6 +906,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -1089,6 +1383,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -1419,6 +1860,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -1749,6 +2337,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -2079,6 +2814,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -2409,6 +3291,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -2754,6 +3783,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -3084,6 +4260,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -3425,6 +4748,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -3765,6 +5235,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -4105,6 +5722,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -4435,6 +6199,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -4787,6 +6698,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -5128,6 +7186,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -5468,6 +7673,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -5808,6 +8160,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -6138,6 +8637,153 @@
                       ],
                       "additionalProperties": false,
                       "description": "Concept valid but no value available in the current contract."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DERIVED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "derivedFrom": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "generatedBy": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "authority": {
+                          "type": "string",
+                          "enum": [
+                            "PLACEHOLDER",
+                            "USER_PROVIDED_UNVERIFIED",
+                            "SOURCE_TRACED",
+                            "ADOPTED"
+                          ]
+                        },
+                        "precision": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "derivedFrom"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value deterministically derived from the current model (e.g. station->XYZ, support placement). derivedFrom records the derivation source; it is NOT an original input."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "INFERRED"
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceUnit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "inferenceBasis": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "high",
+                            "medium",
+                            "low"
+                          ]
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "value",
+                        "inferenceBasis"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Estimated value reconstructed from insufficient/indirect source (e.g. reverse alignment from superstructure sample). inferenceBasis records why it is an estimate."
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "const": "DEFERRED"
+                        },
+                        "stateReason": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "deferredTo": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sourceRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "stateReason"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Value intentionally deferred (scope/step later). Must carry an explicit reason; not an invented value and not silently treated as available."
                     }
                   ]
                 }
@@ -6632,7 +9278,8 @@
             "validation-result",
             "unknown-field-store",
             "migration-record",
-            "common-bridge-data-model"
+            "common-bridge-data-model",
+            "bridge-project"
           ]
         },
         "documentId": {

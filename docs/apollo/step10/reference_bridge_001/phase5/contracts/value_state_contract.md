@@ -64,3 +64,31 @@ A `ConflictValue<T>`:
 | Analysis Golden = 0 | analysisReference.status `NOT_AVAILABLE` |
 
 These MUST survive fixture build → serialize → deserialize unchanged.
+
+## 7. Integration extension (Phase 1-2, additive)
+
+For the cross-tool BridgeProject integration (①road alignment / ②superstructure /
+③substructure), the value-state set is extended **additively** with three states
+that preserve provenance of reverse reconstruction (superstructure sample →
+alignment) and derivation. The six original states above are unchanged.
+
+| State | Enum value | Meaning | Requirement |
+|-------|-----------|---------|-------------|
+| Derived | `DERIVED` | Deterministically derived from the current model (e.g. station→XYZ, support placement) | `derivedFrom` (derivation source) required |
+| Inferred | `INFERRED` | Estimated / reconstructed from insufficient or indirect source | `inferenceBasis` required; confidence high/medium/low optional |
+| Deferred | `DEFERRED` | Intentionally deferred to a later step; not invented, not silently available | `stateReason` required; `deferredTo` optional |
+
+Mapping of the BridgeProject vocabulary onto the model:
+
+- `CONFIRMED` ↔ original/input confirmed value (`CONFIRMED`)
+- `DERIVED` ↔ `DERIVED`
+- `INFERRED` ↔ `INFERRED`
+- `MISSING` ↔ `HOLD_INSUFFICIENT_SOURCE` (missing-with-reason) or `NOT_AVAILABLE`
+- `DEFERRED` ↔ `DEFERRED`
+- `NOT_AUTHORIZED` ↔ **document level** `numericDesignAuthorization` /
+  `designStatus` (not a value state; authorization gates live on the document).
+
+A reconstructed alignment MUST use `DERIVED` / `INFERRED` (never `CONFIRMED`) for
+any value not present as an original input, so a restored alignment is never
+mistaken for the original confirmed input. See
+`docs/integration/value-status-unit-policy.md`.

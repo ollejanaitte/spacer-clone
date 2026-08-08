@@ -559,7 +559,8 @@
             "validation-result",
             "unknown-field-store",
             "migration-record",
-            "common-bridge-data-model"
+            "common-bridge-data-model",
+            "bridge-project"
           ]
         },
         "documentId": {
