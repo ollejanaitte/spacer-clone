@@ -1,6 +1,12 @@
 // Phase C1 (M2-02) 左ペイン: 部材ツリー
+import { useState } from "react";
 import { ja } from "../../i18n/ja";
 import type { Support } from "../model";
+import {
+  SubstructureContextMenu,
+  useContextMenu,
+  type ContextMenuItem,
+} from "./SubstructureContextMenu";
 import styles from "./SubstructurePlanningPage.module.css";
 
 export interface SubstructureTreePanelProps {
@@ -9,6 +15,9 @@ export interface SubstructureTreePanelProps {
   hoveredSupportId?: string | null;
   onSelect?: (supportId: string) => void;
   onHover?: (supportId: string | null) => void;
+  /** M2-07: コンテキストメニュー操作 */
+  onDeleteSupport?: (supportId: string) => void;
+  onDuplicateSupport?: (supportId: string) => void;
 }
 
 const TYPE_LABEL: Record<string, string> = {
@@ -18,6 +27,30 @@ const TYPE_LABEL: Record<string, string> = {
 
 export function SubstructureTreePanel(props: SubstructureTreePanelProps) {
   const t = ja.substructure?.planning ?? ({} as Record<string, string>);
+  const { menu, openMenu, closeMenu } = useContextMenu();
+  const [menuFor, setMenuFor] = useState<string | null>(null);
+
+  const openContextMenu = (e: React.MouseEvent, supportId: string) => {
+    e.preventDefault();
+    setMenuFor(supportId);
+    const items: ContextMenuItem[] = [
+      {
+        id: "delete",
+        label: t.menuDelete ?? "削除",
+        danger: true,
+        disabled: !props.onDeleteSupport,
+        onSelect: () => props.onDeleteSupport?.(supportId),
+      },
+      {
+        id: "duplicate",
+        label: t.menuDuplicate ?? "複製",
+        disabled: !props.onDuplicateSupport,
+        onSelect: () => props.onDuplicateSupport?.(supportId),
+      },
+    ];
+    openMenu(e.clientX, e.clientY, items);
+  };
+
   return (
     <div data-testid="tree-panel">
       <div className={styles.panelHeader}>
@@ -45,6 +78,7 @@ export function SubstructureTreePanel(props: SubstructureTreePanelProps) {
                 onClick={() => props.onSelect?.(s.supportId)}
                 onMouseEnter={() => props.onHover?.(s.supportId)}
                 onMouseLeave={() => props.onHover?.(null)}
+                onContextMenu={(e) => openContextMenu(e, s.supportId)}
               >
                 <span>{s.supportId}</span>
                 <span className={styles.treeItemType}>
@@ -54,6 +88,17 @@ export function SubstructureTreePanel(props: SubstructureTreePanelProps) {
             );
           })}
         </ul>
+      )}
+      {menu && menuFor && (
+        <SubstructureContextMenu
+          x={menu.x}
+          y={menu.y}
+          items={menu.items}
+          onClose={() => {
+            closeMenu();
+            setMenuFor(null);
+          }}
+        />
       )}
     </div>
   );
