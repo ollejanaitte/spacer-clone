@@ -18,7 +18,9 @@ import {
   type GeometryEngineInput,
 } from "./contracts";
 import { buildCrossSectionFrames } from "./crossSectionFrame";
+import { generateGridPanelPoints } from "./gridPoints";
 import { placeGirderLines, placeSupportLines, type SupportRole } from "./placement";
+import { rb001PlaneGridTransform } from "./planeGridTransform";
 import type {
   AlignmentReference,
   BearingPoint,
@@ -27,7 +29,7 @@ import type {
   GeometrySnapshot,
   GirderLine,
   GirderStationPoint,
-  GridPoint,
+  GridPanelPoint,
   SupportLine,
   SupportPoint,
   TraceabilityLink,
@@ -103,7 +105,13 @@ export class DefaultGeometryEngine implements GeometryEngine {
       this.connector,
     );
 
-    const gridPoints = assembleGridPoints(girderLines, input.gridPointIds);
+    const gridPoints = assembleGridPoints(
+      girderLines,
+      input.gridPointIds,
+      input.gridPanelSpecs,
+      this.connector,
+      this.alignmentId,
+    );
     const sectionId = input.sectionIds[0] ?? DEFAULT_SECTION_ID;
     const crossSectionFrames = buildCrossSectionFrames(
       supportLines.map((line) => ({ sectionId, stationM: line.stationM.value ?? 0 })),
@@ -171,8 +179,21 @@ export class DefaultGeometryEngine implements GeometryEngine {
 function assembleGridPoints(
   girderLines: GirderLine[],
   gridPointIds: string[],
-): GridPoint[] {
-  const out: GridPoint[] = [];
+  gridPanelSpecs: GeometryEngineInput["gridPanelSpecs"],
+  connector: AlignmentConnector,
+  alignmentId: string,
+): GridPanelPoint[] {
+  // Phase 6-2: full panel structure when declared.
+  if (gridPanelSpecs && gridPanelSpecs.length > 0) {
+    const transform = rb001PlaneGridTransform();
+    const out: GridPanelPoint[] = [];
+    for (const spec of gridPanelSpecs) {
+      out.push(...generateGridPanelPoints(spec, connector, alignmentId, transform));
+    }
+    return out;
+  }
+  // Phase 6-1 fallback: girder-line endpoint grid points.
+  const out: GridPanelPoint[] = [];
   const endpoints: { girderId: string; point: GirderStationPoint }[] = [];
   for (const line of girderLines) {
     for (const point of line.points) {
@@ -183,6 +204,9 @@ function assembleGridPoints(
     out.push({
       id: `GP-${point.stationM}-${point.offsetM}`,
       gridPointId: gridPointIds[index] ?? `GRID-${index + 1}`,
+      girderId,
+      panelIndex: index + 1,
+      role: "endpoint",
       stationM: point.stationM,
       offsetM: point.offsetM,
       position: point.position,
@@ -210,7 +234,7 @@ function buildTraceability(args: {
   input: GeometryEngineInput;
   supportLines: SupportLine[];
   girderLines: GirderLine[];
-  gridPoints: GridPoint[];
+  gridPoints: GridPanelPoint[];
 }): TraceabilityLink[] {
   const links: TraceabilityLink[] = [];
   for (const a of args.input.alignmentIds) {
@@ -246,7 +270,13 @@ export function computeFingerprint(snapshot: GeometrySnapshot): string {
       offsetM: l.offsetM.value,
       points: l.points.map((p) => [p.stationM, p.offsetM, p.position.x, p.position.y, p.position.z]),
     })),
-    gridPoints: snapshot.gridPoints.map((g) => [g.gridPointId, g.stationM, g.offsetM]),
+    gridPoints: snapshot.gridPoints.map((g) => [
+      g.gridPointId,
+      g.role,
+      g.state,
+      g.stationM,
+      g.offsetM,
+    ]),
     crossSectionFrames: snapshot.crossSectionFrames.map((f) => [
       f.stationM,
       f.skewRad,

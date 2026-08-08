@@ -1,5 +1,5 @@
 /**
- * Geometry Core — public exports (Phase 6-1E).
+ * Geometry Core — public exports (Phase 6-2).
  */
 export * from "./types";
 export * from "./contracts";
@@ -8,3 +8,5 @@ export * from "./geometryInputAdapter";
 export * from "./placement";
 export * from "./crossSectionFrame";
 export * from "./engine";
+export * from "./planeGridTransform";
+export * from "./gridPoints";
