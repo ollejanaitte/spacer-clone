@@ -41,6 +41,13 @@ from .crossfall import (
     resolve_crossfall_at,
     resolve_crossfall_input,
 )
+from .geometry import (
+    SectionGeometryError,
+    StationPose,
+    generate_local_section,
+    local_normal,
+    pose_at,
+)
 
 __all__ = [
     "CrossSectionError",
@@ -74,4 +81,9 @@ __all__ = [
     "crossfall_delta_z",
     "resolve_crossfall_at",
     "resolve_crossfall_input",
+    "SectionGeometryError",
+    "StationPose",
+    "generate_local_section",
+    "local_normal",
+    "pose_at",
 ]
