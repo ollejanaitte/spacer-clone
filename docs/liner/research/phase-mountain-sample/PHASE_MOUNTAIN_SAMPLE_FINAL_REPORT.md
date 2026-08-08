@@ -5,7 +5,7 @@ PHASE_MOUNTAIN_SAMPLE: COMPLETE
 MOUNTAIN_SAMPLE_RELEASE_READINESS: GO
 
 REMOTE_INTEGRATION_SHA:
-（P10 merge後確定）
+3e9208ec09f9885b238b2c14ee3ab2ab6dd33316
 
 ## 完了条件（§23）
 | 条件 | 状態 |
@@ -47,7 +47,8 @@ REMOTE_INTEGRATION_SHA:
 - P07 #699
 - P08 #700
 - P09 #701
-- P10 （本PR）
+- P10 #702
+- P10-sha-fill （本PR）
 
 ## 新規 frontend
 - samples/mountain-viaduct-500/（schema / bridgeStations / horizontal / horizontalFixture /
