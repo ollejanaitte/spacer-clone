@@ -9,3 +9,5 @@ export * from "./terrain";
 export * from "./fixture";
 export * from "./useSamplePicker";
 export * from "./camera";
+export * from "./markers";
+export * from "./viewer";

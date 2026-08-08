@@ -7,6 +7,15 @@ import { ja } from "../../i18n/ja";
 import { createDefaultLinerDraft } from "../adapters/linerUiAdapter";
 import { LinerPreviewPage } from "./LinerPreviewPage";
 
+vi.mock("../samples/mountain-viaduct-500/viewer", () => ({
+  MountainViaduct3dViewer: () => <div data-testid="mountain-viewer-mock">3D</div>,
+}));
+vi.mock("../samples/mountain-viaduct-500/fixture", () => ({
+  MOUNTAIN_CAMERA_PRESETS: [
+    { id: "overview", label: "全景", position: { x: 0, y: 0, z: 0 }, target: { x: 0, y: 0, z: 0 } },
+  ],
+}));
+
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 let root: Root | null = null;
@@ -152,5 +161,29 @@ describe("LinerPreviewPage", () => {
     createObjectURL.mockRestore();
     revokeObjectURL.mockRestore();
     clickSpy.mockRestore();
+  });
+
+  it("shows the 3D viewer panel when the draft has piers/spans (mountain sample)", () => {
+    const draft = createDefaultLinerDraft();
+    draft.piers = [
+      { id: "A1", physicalDistance: 50, kind: "abutment" },
+      { id: "P1", physicalDistance: 100, kind: "pier" },
+    ];
+    draft.spans = [
+      { id: "SPAN-1", startPhysicalDistance: 50, endPhysicalDistance: 100, pierIdStart: "A1", pierIdEnd: "P1" },
+    ];
+
+    render(
+      <LinerPreviewPage
+        draft={draft}
+        onClose={() => undefined}
+        onBackToList={() => undefined}
+        onBackToSetup={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=liner-preview-3d-panel]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=mountain-viewer-mock]")).not.toBeNull();
+    expect(document.querySelector("[data-testid=mountain-viewer-preset-overview]")).not.toBeNull();
   });
 });
