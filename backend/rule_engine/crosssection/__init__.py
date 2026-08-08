@@ -55,6 +55,20 @@ from .global_xyz import (
     generate_global_section,
     point_global,
 )
+from .adapters import (
+    CrossSectionAdapterError,
+    RoadBridgePoint,
+    RoadBridgeResult,
+    RoadWidthSegment,
+    RuleCrossfallInput,
+    RuleCrossSectionInput,
+    adapt_rule_request,
+    build_road_bridge,
+    cross_rule_from_inputs,
+    cross_section_result,
+    cross_section_trace,
+    validate_road_bridge,
+)
 
 __all__ = [
     "CrossSectionError",
@@ -98,4 +112,16 @@ __all__ = [
     "elevation_contract_status",
     "generate_global_section",
     "point_global",
+    "CrossSectionAdapterError",
+    "RoadBridgePoint",
+    "RoadBridgeResult",
+    "RoadWidthSegment",
+    "RuleCrossfallInput",
+    "RuleCrossSectionInput",
+    "adapt_rule_request",
+    "build_road_bridge",
+    "cross_rule_from_inputs",
+    "cross_section_result",
+    "cross_section_trace",
+    "validate_road_bridge",
 ]
