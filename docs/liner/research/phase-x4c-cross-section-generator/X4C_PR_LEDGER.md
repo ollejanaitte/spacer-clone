@@ -9,8 +9,8 @@
 | P04 | #552 | research/liner-x4c-p04-global-xyz | merged |
 | P05 | #558 | research/liner-x4c-p05-adapters | merged |
 | P06 | #559 | research/liner-x4c-p06-verification | merged |
-| P07 | #<p07> | research/liner-x4c-p07-x4d-gate | merged (this PR) |
+| P07 | #561 | research/liner-x4c-p07-x4d-gate | merged (this PR) |
 
 ## Notes
-- The P05 PR number was bumped from the provisional #55x to the actual merge above.
+- PR numbers are the actual assigned merge numbers (recorded post-merge).
 - All merges base on `research/liner-r1-planning`; none touch main.
