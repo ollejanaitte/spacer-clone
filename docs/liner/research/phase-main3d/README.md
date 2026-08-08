@@ -1,7 +1,7 @@
 # Phase MAIN3D — 山岳500m → メイン3D Viewer統合
 
 ## Status
-IN_PROGRESS（P00実施中）
+COMPLETE（P08完了, Release Readiness GO）
 
 ## 目的
 山岳500mサンプルを既存のメイン3D Viewerへ正式統合し、
@@ -12,11 +12,8 @@ IN_PROGRESS（P00実施中）
 ## 正規baseline
 - origin/research/liner-r1-planning @ 3288e1cc6f3def3674a5e2def58018fdb480d10b
 
-## 作業パス
-- /home/masaharu/Projects/spacer-clone-liner-r1-planning
-
-## 既存正本（再利用）
-- mountain sample: samples/mountain-viaduct-500/（P00-P11: terrain/markers/viewer/fixture）
-- main 3D: viewer/Viewer3D.tsx + ThreeViewport.tsx（frame表示, LinerMappingReviewPage で使用）
-- geometry3d: core/geometry3d/（TS builders）
-- 既存frame: mapper/frameModelMapper.ts
+## 成果物
+- samples/mountain-viaduct-500/: terrain(深谷)/substructure/scene/viewerSwitch/selection/viewer
+- pages/LinerMain3DPage + route liner.main3d + preview「統合3D表示」導線
+- tests/e2e/mountain-main3d.spec.ts
+- レポート: PHASE_MAIN3D_FINAL_REPORT.md / MAIN3D_RELEASE_GATE.md
