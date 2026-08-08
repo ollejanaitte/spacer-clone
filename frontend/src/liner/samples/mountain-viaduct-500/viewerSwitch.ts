@@ -17,7 +17,8 @@ export type ViewerModelMode =
   | "road"
   | "bridge"
   | "terrain"
-  | "integrated";
+  | "integrated"
+  | "custom";
 
 export const VIEWER_MODEL_MODES: ViewerModelMode[] = [
   "frame",
@@ -56,6 +57,8 @@ export function layerStateForMode(mode: ViewerModelMode): ViewerLayerState {
       return { ...ALL_OFF, terrain: true };
     case "integrated":
       return { ...DEFAULT_LAYER_STATE };
+    case "custom":
+      return { ...DEFAULT_LAYER_STATE };
   }
 }
 
@@ -85,6 +88,8 @@ export function modelModeLabel(mode: ViewerModelMode): string {
       return "地形";
     case "integrated":
       return "統合モデル";
+    case "custom":
+      return "カスタム";
   }
 }
 

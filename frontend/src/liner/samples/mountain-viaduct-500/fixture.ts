@@ -53,9 +53,9 @@ export const MOUNTAIN_CAMERA_PRESETS: MountainCameraPreset[] = [
   },
   {
     id: "valley",
-    label: "谷側視点",
-    position: { x: 250, y: 20, z: 180 },
-    target: { x: 250, y: 55, z: 0 },
+    label: "谷俯瞰",
+    position: { x: 150, y: 85, z: 260 },
+    target: { x: 250, y: 40, z: 0 },
   },
 ];
 
