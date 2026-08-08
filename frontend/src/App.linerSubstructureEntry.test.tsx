@@ -96,4 +96,26 @@ describe("App LINER review → substructure navigation", () => {
     expect(window.location.pathname).toBe("/pro/liner/substructure");
     expect(document.querySelector("[data-testid=substructure-planning-page]")).not.toBeNull();
   }, 40000);
+
+  it("handoffs LINER piers to the substructure page (auto generation)", async () => {
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+    await render(<App />);
+    await createLinerSetup();
+
+    await act(async () => {
+      buttonByTestId("liner-setup-tab-review").click();
+    });
+    await act(async () => {
+      buttonByTestId("add-bridge-pier").click();
+    });
+    // LINER 支点 P1 を追加し、下部工へ遷移
+    await act(async () => {
+      buttonByTestId("open-substructure-planning").click();
+    });
+
+    expect(window.location.pathname).toBe("/pro/liner/substructure");
+    const pageText = document.querySelector("[data-testid=substructure-planning-page]")?.textContent ?? "";
+    expect(pageText).toContain("P1");
+  }, 40000);
 });

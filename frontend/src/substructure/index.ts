@@ -33,3 +33,5 @@ export * from "./planning/samples/sampleGenerator";
 // Phase C1 (M2-09A) フォーム→モデル変換・App 統合ホスト。
 export * from "./planning/formToSupport";
 export * from "./planning/SubstructurePlanningHost";
+// Phase C1 (M2-09C) LINER → 下部工 handoff。
+export * from "./planning/linerHandoff";

@@ -71,6 +71,10 @@ import {
   isSubstructureRoute,
 } from "./liner/uiPreparation";
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
+import {
+  linerPiersToSupportHandoff,
+  resolveHandoffAlignmentId,
+} from "./substructure/planning/linerHandoff";
 import { ImporterProjectListPage } from "./liner/importer/project-list/ImporterProjectListPage";
 import { ImporterStartupPage } from "./liner/importer/project-list/ImporterStartupPage";
 import { defaultImporterProjectService } from "./liner/importer/ImporterProjectService";
@@ -1221,6 +1225,10 @@ export function App() {
   }
 
   if (isSubstructureRoute(currentPathname)) {
+    const handoffSupports = linerDraft ? linerPiersToSupportHandoff(linerDraft.piers ?? []) : [];
+    const handoffAlignmentId = linerDraft
+      ? resolveHandoffAlignmentId(linerDraft.alignment, linerDraft.activeAlignmentId)
+      : "";
     return (
       <ErrorBoundary
         fallback={(
@@ -1230,6 +1238,9 @@ export function App() {
         )}
       >
         <SubstructurePlanningHost
+          linerSupports={handoffSupports}
+          alignmentId={handoffAlignmentId}
+          autoGenerateFromLiner={Boolean(linerDraft) && handoffSupports.length > 0}
           onBack={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
         />
       </ErrorBoundary>

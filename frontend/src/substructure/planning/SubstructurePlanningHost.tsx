@@ -3,6 +3,7 @@
 // データ状態（supports/coordinates/selection/undo）と接続し、M2-08 サンプル生成を
 // toolbar から起動できるようにする。
 // 空/不正状態でもクラッシュせず、back navigation の受け口を備える。
+// M2-09C: LINER 支点 handoff（自動生成・skew/alignmentId 継承）。
 
 import { useCallback, useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
@@ -19,12 +20,19 @@ import type { FormDataBundle } from "./SubstructureFormPanel";
 import { useUndoRedo } from "./useUndoRedo";
 import { validateSubstructureProject } from "../validation";
 import type { Support } from "../model";
+import type { LinerSupportHandoff } from "./linerHandoff";
+
+export type { LinerSupportHandoff };
 
 export interface SubstructurePlanningHostProps {
-  /** 初期支点（LINER handoff 等。M2-09C で接続）。 */
+  /** 初期支点（手動指定時）。空なら空状態。 */
   initialSupports?: readonly Support[];
-  /** LINER 支点（id + station）。空なら「LINER支点から自動生成」無効。 */
-  linerSupports?: readonly { id: string; station: number }[];
+  /** LINER 支点 handoff（id + station + 任意 skew）。 */
+  linerSupports?: readonly LinerSupportHandoff[];
+  /** LINER alignment id（生成支点の placement.alignmentId に反映）。 */
+  alignmentId?: string;
+  /** マウント時に LINER 支点から自動生成するか（LINER review からの遷移時）。 */
+  autoGenerateFromLiner?: boolean;
   /** back navigation 受け口（LINER / /pro へ戻る）。 */
   onBack?: () => void;
 }
@@ -69,9 +77,40 @@ export function buildValidationSummary(
   };
 }
 
+/** LINER 支点 handoff から下部工を生成（skew と alignmentId を継承）。 */
+export function buildLinerGeneratedSupports(
+  linerSupports: readonly LinerSupportHandoff[],
+  alignmentId: string,
+): readonly Support[] {
+  const generated = generateFromLinerSupports(linerSupports);
+  return generated.map((s) => {
+    const src = linerSupports.find((l) => l.id === s.supportId);
+    const withAlignment: Support = {
+      ...s,
+      placement: { ...s.placement, alignmentId: alignmentId || s.placement.alignmentId },
+    };
+    if (src && typeof src.skewRad === "number" && src.skewRad !== 0) {
+      return { ...withAlignment, skewRad: src.skewRad };
+    }
+    return withAlignment;
+  });
+}
+
 export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   const t = ja.substructure?.planning ?? ({} as Record<string, string>);
-  const history = useUndoRedo<readonly Support[]>(props.initialSupports ?? []);
+  const alignmentId = props.alignmentId ?? "";
+
+  const initialSupports = useMemo(() => {
+    if (props.initialSupports && props.initialSupports.length > 0) {
+      return props.initialSupports;
+    }
+    if (props.autoGenerateFromLiner && (props.linerSupports ?? []).length > 0) {
+      return buildLinerGeneratedSupports(props.linerSupports ?? [], alignmentId);
+    }
+    return [];
+  }, [props.initialSupports, props.autoGenerateFromLiner, props.linerSupports, alignmentId]);
+
+  const history = useUndoRedo<readonly Support[]>(initialSupports);
   const supports = history.state.present;
   const [selectedSupportId, setSelectedSupportId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -127,8 +166,8 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
     const liner = props.linerSupports ?? [];
     if (liner.length === 0) return;
     setDialogOpen(false);
-    commitSupports(generateFromLinerSupports(liner), "sample from LINER supports");
-  }, [commitSupports, props.linerSupports]);
+    commitSupports(buildLinerGeneratedSupports(liner, alignmentId), "sample from LINER supports");
+  }, [commitSupports, props.linerSupports, alignmentId]);
 
   const handleFormPatch = useCallback(
     (patch: Partial<FormDataBundle>) => {
