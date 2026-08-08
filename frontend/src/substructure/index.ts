@@ -20,3 +20,5 @@ export * from "./planning/SubstructureFormPanel";
 // Phase C1 (M2-04) FOOTING 思想 杭基礎UI。
 export * from "./planning/piles/pileLayoutModel";
 export * from "./planning/piles/PileLayoutPanel";
+// Phase C1 (M2-05) リアルタイム2D/3D更新。
+export * from "./planning/useSubstructureRealtimeUpdate";

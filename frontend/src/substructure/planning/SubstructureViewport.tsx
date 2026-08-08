@@ -14,6 +14,12 @@ export interface SubstructureViewportProps {
   coordinates: ReadonlyMap<string, { x: number; y: number; z: number }>;
   selectedSupportId?: string | null;
   onSelect?: (supportId: string) => void;
+  /** M2-05: リアルタイムフックが計算済みの3Dグループ（未指定なら内部計算） */
+  groups?: SolidGroup[];
+  /** M2-05: リアルタイムフックが計算済みの2D投影（未指定なら内部計算） */
+  projections?: PlanProjection[];
+  /** 3D生成停止中（FATAL）表示 */
+  generationBlocked?: boolean;
 }
 
 function makeSnapshots(
@@ -169,15 +175,19 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
   const t = ja.substructure?.planning ?? ({} as Record<string, string>);
 
   const groups = useMemo<SolidGroup[]>(() => {
+    if (props.groups) return props.groups;
     const snapshots = makeSnapshots(props.supports, props.coordinates);
     try {
       return buildAllSupportSolids(props.supports as never, snapshots);
     } catch {
       return [];
     }
-  }, [props.supports, props.coordinates]);
+  }, [props.supports, props.coordinates, props.groups]);
 
-  const projections = useMemo(() => projectAll(groups), [groups]);
+  const projections = useMemo(() => {
+    if (props.projections) return props.projections;
+    return projectAll(groups);
+  }, [groups, props.projections]);
 
   return (
     <div className={styles.viewportWrap} data-testid="substructure-viewport">
@@ -191,12 +201,18 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
         </div>
       ) : (
         <div className={styles.viewportCanvas}>
-          <SubstructureViewer3D
-            groups={groups}
-            selectedSupportId={props.selectedSupportId}
-            onSelect={props.onSelect}
-            height={undefined}
-          />
+          {props.generationBlocked ? (
+            <div className={styles.planHint} data-testid="viewport-blocked">
+              {t.generationBlocked ?? "入力エラーのため3Dを生成停止中"}
+            </div>
+          ) : (
+            <SubstructureViewer3D
+              groups={groups}
+              selectedSupportId={props.selectedSupportId}
+              onSelect={props.onSelect}
+              height={undefined}
+            />
+          )}
         </div>
       )}
     </div>

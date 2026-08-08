@@ -2250,6 +2250,7 @@ export const ja = {
       pileNo: "No",
       pileId: "杭ID",
       noPiles: "杭がありません",
+      generationBlocked: "入力エラーのため3Dを生成停止中",
     },
   },
 };

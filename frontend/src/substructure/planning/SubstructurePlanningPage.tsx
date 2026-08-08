@@ -7,6 +7,7 @@ import { ja } from "../../i18n/ja";
 import { SubstructureToolbar } from "./SubstructureToolbar";
 import { SubstructureTreePanel } from "./SubstructureTreePanel";
 import { SubstructureViewport } from "./SubstructureViewport";
+import { useSubstructureRealtimeUpdate } from "./useSubstructureRealtimeUpdate";
 import { SubstructurePropertyPanel } from "./SubstructurePropertyPanel";
 import { SubstructureFormPanel, type FormDataBundle } from "./SubstructureFormPanel";
 import { CoordinateTable } from "./CoordinateTable";
@@ -48,6 +49,9 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("3d");
   const [panels, setPanels] = useState<PanelState>({ left: true, right: true, bottom: true });
   const [hoveredSupportId, setHoveredSupportId] = useState<string | null>(null);
+
+  // M2-05: 2D即時 / 3D 300ms debounce のリアルタイム更新
+  const realtime = useSubstructureRealtimeUpdate(props.supports);
 
   const togglePanel = useCallback((key: keyof PanelState) => {
     setPanels((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -93,6 +97,9 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
             coordinates={props.coordinates}
             selectedSupportId={props.selectedSupportId}
             onSelect={props.onSelectSupport}
+            groups={realtime.groups}
+            projections={realtime.projections}
+            generationBlocked={realtime.generationBlocked}
           />
         </main>
         {panels.right && (
