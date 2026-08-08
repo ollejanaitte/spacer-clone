@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1.0",
+  "projectId": "reference-bridge-001",
+  "bridgeId": "RB-S10-001",
+  "supportId": "PR1",
+  "supportType": "pier",
+  "sourceApplication": "reference-bridge-001",
+  "sourceVersion": "phase2-ii",
+  "sourceRevision": "reference",
+  "coordinateSystem": "x-longitudinal-y-transverse-z-up",
+  "unitSystem": "si",
+  "origin": { "x": 0, "y": 0, "z": 0 },
+  "position": { "x": 30, "y": 0, "z": 0 },
+  "bearingSeats": [
+    { "bearingId": "PR1-BRG-01", "bearingPosition": { "x": 0, "y": -2.5, "z": 8.0 }, "bearingHeight": 0.2 },
+    { "bearingId": "PR1-BRG-02", "bearingPosition": { "x": 0, "y": 2.5, "z": 8.0 }, "bearingHeight": 0.2 }
+  ],
+  "reactionCases": [
+    { "caseId": "DL-AG1", "caseKind": "permanent", "force": { "x": 0, "y": 0, "z": -3325.5 } },
+    { "caseId": "LL-MAX-AG1", "caseKind": "liveLoad", "force": { "x": 0, "y": 0, "z": -1378.9 } },
+    { "caseId": "WIND", "caseKind": "wind", "force": { "x": 0, "y": -2159.12, "z": 0 } },
+    { "caseId": "SEISMIC-L1", "caseKind": "seismicLevel1", "force": { "x": 0, "y": -1824.37, "z": 0 } }
+  ],
+  "girderBottomElevation": 8.4,
+  "deckElevation": 10.0,
+  "metadata": {
+    "note": "Reference Bridge 001 reaction_candidate.csv の値を入力データとして保持（EXCLUDED_ANALYSIS_RESULT / 設計照査値ではない）。"
+  }
+}

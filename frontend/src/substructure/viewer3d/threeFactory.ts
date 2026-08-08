@@ -58,6 +58,7 @@ const ENTITY_COLORS: Record<string, number> = {
   pile: 0x8f7a6a,
   bearingSeat: 0xb08ad0,
   bearing: 0xb08ad0,
+  superstructure: 0x6f8fbf,
 };
 
 function materialFor(node: SolidNode, selected: boolean): THREE.MeshStandardMaterial {

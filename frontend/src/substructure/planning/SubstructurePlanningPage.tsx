@@ -43,6 +43,8 @@ export interface PlanningPageProps {
   formBundle?: FormDataBundle | null;
   onFormPatch?: (patch: Partial<FormDataBundle>) => void;
   onFormTypeChange?: (typeId: string, status: string) => void;
+  /** M3-02: 上部工簡易外形など追加グループ */
+  extraGroups?: readonly import("../geometryBase").SolidGroup[];
 }
 
 export function SubstructurePlanningPage(props: PlanningPageProps) {
@@ -105,6 +107,7 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
             projections={realtime.projections}
             generationBlocked={realtime.generationBlocked}
             dimensionMode={dimensionMode}
+            extraGroups={props.extraGroups}
           />
         </main>
         {panels.right && (

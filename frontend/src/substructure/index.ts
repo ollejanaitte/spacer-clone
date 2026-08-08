@@ -37,3 +37,7 @@ export * from "./planning/SubstructurePlanningHost";
 export * from "./planning/linerHandoff";
 // Phase C1 (M3-01) プロジェクト永続化。
 export * from "./planning/persistence";
+// Phase C1 (M3-02) 上部工接続・3D統合。
+export * from "./design/designTypes";
+export * from "./design/superstructureInterface";
+export * from "./design/superstructureEnvelope";

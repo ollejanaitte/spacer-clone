@@ -14,7 +14,14 @@ export interface SolidNode {
   localCenter: Vec3;
   /** ローカル寸法 */
   localSize: Vec3;
-  entity: "abutment" | "pier" | "footing" | "pile" | "bearingSeat" | "bearing";
+  entity:
+    | "abutment"
+    | "pier"
+    | "footing"
+    | "pile"
+    | "bearingSeat"
+    | "bearing"
+    | "superstructure";
   material: string;
 }
 
