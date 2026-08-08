@@ -1,11 +1,20 @@
 import { ja } from "../../i18n/ja";
 import type { LinerGridPreviewViewModel } from "../adapters/linerPreviewAdapter";
+import { VISUAL_COLORS, objectColor } from "../core/visual/svgFoundation";
+import type { DiagramPayload, VisualState } from "../core/visual/contract";
 
 export type LinerGridPreviewProps = {
   viewModel: LinerGridPreviewViewModel;
+  /** Optional schematic payload for field->diagram highlight (S3-UX02). */
+  diagramPayload?: DiagramPayload;
+  visualState?: VisualState;
 };
 
-export function LinerGridPreview({ viewModel }: LinerGridPreviewProps) {
+export function LinerGridPreview({
+  viewModel,
+  diagramPayload,
+  visualState = "CALCULATED",
+}: LinerGridPreviewProps) {
   const axisPoints = toPolylinePoints(viewModel.axisPolyline);
 
   return (
@@ -26,7 +35,13 @@ export function LinerGridPreview({ viewModel }: LinerGridPreviewProps) {
             />
           ))}
         </g>
-        {axisPoints && <polyline className="liner-grid-preview-axis" points={axisPoints} />}
+        {axisPoints && (
+          <polyline
+            className="liner-grid-preview-axis"
+            points={axisPoints}
+            stroke={axisStrokeColor(diagramPayload, visualState)}
+          />
+        )}
         <g className="liner-grid-preview-points">
           {viewModel.gridPoints.map((point) => (
             <circle
@@ -49,6 +64,24 @@ export function LinerGridPreview({ viewModel }: LinerGridPreviewProps) {
       </figcaption>
     </figure>
   );
+}
+
+/** Axis stroke color derived from the schematic visual state. */
+export function axisStrokeColor(
+  payload: DiagramPayload | undefined,
+  state: VisualState,
+): string {
+  if (!payload || payload.objects.length === 0) {
+    if (state === "INPUT") return VISUAL_COLORS.input;
+    if (state === "VALIDATED") return VISUAL_COLORS.validated;
+    return VISUAL_COLORS.calculated;
+  }
+  // If any diagram object has an error, the axis is red; else warning amber.
+  if (payload.errors.length > 0) return VISUAL_COLORS.error;
+  if (payload.warnings.length > 0) return VISUAL_COLORS.warning;
+  if (state === "INPUT") return VISUAL_COLORS.input;
+  if (state === "VALIDATED") return VISUAL_COLORS.validated;
+  return VISUAL_COLORS.calculated;
 }
 
 function BackgroundGrid({ viewModel }: LinerGridPreviewProps) {
