@@ -11,6 +11,13 @@ from .contracts import (
     validate_request,
 )
 from .api import RoadGeometryAPI, road_geometry_api
+from .adapters import (
+    DesignWarning,
+    RuleDesignValues,
+    RuleToGeometryAdapter,
+    apply_rule_design_values,
+    rule_to_geometry_adapter,
+)
 
 __all__ = [
     "RoadGeometryError",
@@ -19,4 +26,9 @@ __all__ = [
     "RoadGeometryAPI",
     "road_geometry_api",
     "validate_request",
+    "DesignWarning",
+    "RuleDesignValues",
+    "RuleToGeometryAdapter",
+    "apply_rule_design_values",
+    "rule_to_geometry_adapter",
 ]
