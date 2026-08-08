@@ -147,7 +147,17 @@ describe("GeometrySnapshot contract (Phase 6-1A)", () => {
         return { ...buildMinimalSnapshot(), bridgeId: input.bridgeId };
       },
     };
-    const snap = engine.generateSnapshot({ bridgeId: "RB-S10-001", alignmentIds: [], supports: [], girders: [], gridPointIds: [], deckIds: [], sectionIds: [], sourceModelVersion: "1.0.0" });
+    const snap = engine.generateSnapshot({
+      bridgeId: "RB-S10-001",
+      alignmentIds: [],
+      supports: [],
+      girders: [],
+      gridPointIds: [],
+      deckIds: [],
+      sectionIds: [],
+      unresolved: [],
+      sourceModelVersion: "1.0.0",
+    });
     expect(snap.bridgeId).toBe("RB-S10-001");
   });
 
@@ -192,6 +202,7 @@ describe("GeometrySnapshot contract (Phase 6-1A)", () => {
           gridPointIds: [],
           deckIds: [],
           sectionIds: [],
+          unresolved: [],
         };
       },
     };
