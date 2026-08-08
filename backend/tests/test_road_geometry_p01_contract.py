@@ -93,14 +93,15 @@ class TestFacadeSkeleton:
     def test_api_instance_exists(self):
         assert isinstance(road_geometry_api, RoadGeometryAPI)
 
-    def test_skeleton_raises_not_implemented(self):
+    def test_skeleton_evaluate_center_pose(self):
         request = RoadGeometryRequest(
             alignment_id="r",
             station=10.0,
             rows=[RoadElementRow(kind="straight", length=100.0, id="e0")],
         )
-        with pytest.raises(NotImplementedError):
-            road_geometry_api.evaluate(request)
+        result = road_geometry_api.evaluate(request)
+        assert result.ok
+        assert result.x == 10.0
 
     def test_resolve_alignment_from_rows(self):
         api = RoadGeometryAPI()
