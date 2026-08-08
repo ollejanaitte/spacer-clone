@@ -2251,6 +2251,10 @@ export const ja = {
       pileId: "杭ID",
       noPiles: "杭がありません",
       generationBlocked: "入力エラーのため3Dを生成停止中",
+      dimOff: "寸法OFF",
+      dimMain: "主要寸法",
+      dimSelected: "選択部材",
+      dimAll: "全寸法",
     },
   },
 };

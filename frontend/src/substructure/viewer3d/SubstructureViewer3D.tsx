@@ -13,6 +13,8 @@ import {
 } from "./threeFactory";
 import { resolveOrbitControlsBindings } from "../../viewer/threeUtils";
 import { ja } from "../../i18n/ja";
+import type { DimensionSet } from "../planning/dimensions/dimensionModel";
+import { Dimension3DLayer } from "../planning/dimensions/Dimension3DLayer";
 
 export type CameraPreset = "top" | "front" | "side" | "isometric";
 
@@ -25,6 +27,8 @@ export interface Viewer3DProps {
   height?: number;
   /** 既定カメラ姿勢（default=isometric） */
   initialCamera?: CameraPreset;
+  /** M2-06: 3D 寸法マーカー（Canvas 内に描画） */
+  dimensions?: DimensionSet | null;
 }
 
 /** OrbitControls の P03.5 バインド（LEFT=ROTATE / RIGHT=PAN / MIDDLE=DOLLY）。 */
@@ -101,6 +105,7 @@ interface SceneViewProps {
   preset: CameraPreset;
   fitKey: number;
   focusKey: string | null;
+  dimensions?: DimensionSet | null;
 }
 
 function SceneView({
@@ -112,6 +117,7 @@ function SceneView({
   preset,
   fitKey,
   focusKey,
+  dimensions,
 }: SceneViewProps) {
   const { scene } = useThree();
   const root = useMemo(
@@ -146,6 +152,7 @@ function SceneView({
       <directionalLight position={[-15, 10, -20]} intensity={0.35} />
       <primitive object={root} />
       <MeshPicker onSelect={(supportId) => onSelect?.(supportId)} />
+      {dimensions && <Dimension3DLayer dimensions={dimensions} />}
       <CameraRig preset={preset} bounds={bounds} fitKey={fitKey} focusKey={focusKey} />
       <GridHelper floor={bounds.min.y} bounds={bounds} />
     </>
@@ -269,6 +276,7 @@ export function SubstructureViewer3D(props: Viewer3DProps) {
           preset={preset}
           fitKey={fitKey}
           focusKey={focusKey}
+          dimensions={props.dimensions}
         />
         <ViewerControls />
       </Canvas>

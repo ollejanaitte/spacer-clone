@@ -4,6 +4,8 @@ import { ja } from "../../i18n/ja";
 import { buildAllSupportSolids, type SolidGroup } from "../SubstructureSolidGenerator";
 import { projectAll, type PlanProjection } from "../PlanProjection";
 import { SubstructureViewer3D } from "../viewer3d/SubstructureViewer3D";
+import { Dimension2DLayer } from "./dimensions/Dimension2DLayer";
+import { buildDimensions, type DimensionMode, type DimensionSet } from "./dimensions/dimensionModel";
 import type { Support } from "../model";
 import styles from "./SubstructurePlanningPage.module.css";
 import type { ViewMode } from "./SubstructurePlanningPage";
@@ -20,6 +22,8 @@ export interface SubstructureViewportProps {
   projections?: PlanProjection[];
   /** 3D生成停止中（FATAL）表示 */
   generationBlocked?: boolean;
+  /** M2-06: 寸法モード */
+  dimensionMode?: DimensionMode;
 }
 
 function makeSnapshots(
@@ -43,7 +47,13 @@ function makeSnapshots(
 }
 
 /** 2D 平面表示（SVG）。plan projection の primitive を元に汎用描画。 */
-export function PlanPreviewSvg({ projections }: { projections: PlanProjection[] }) {
+export function PlanPreviewSvg({
+  projections,
+  dimensions,
+}: {
+  projections: PlanProjection[];
+  dimensions?: DimensionSet;
+}) {
   const { minX, minY, span } = useMemo(() => {
     let minX = Infinity;
     let minY = Infinity;
@@ -167,6 +177,7 @@ export function PlanPreviewSvg({ projections }: { projections: PlanProjection[] 
           return null;
         }),
       )}
+      {dimensions && <Dimension2DLayer dimensions={dimensions} toSvg={toSvg} />}
     </svg>
   );
 }
@@ -189,6 +200,16 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
     return projectAll(groups);
   }, [groups, props.projections]);
 
+  const dimensions = useMemo(
+    () =>
+      buildDimensions(
+        groups,
+        props.dimensionMode ?? "off",
+        props.selectedSupportId,
+      ),
+    [groups, props.dimensionMode, props.selectedSupportId],
+  );
+
   return (
     <div className={styles.viewportWrap} data-testid="substructure-viewport">
       {props.viewMode === "2d" ? (
@@ -196,7 +217,7 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
           {projections.length === 0 ? (
             <div className={styles.planHint}>{t.emptyViewport ?? "表示する部材がありません"}</div>
           ) : (
-            <PlanPreviewSvg projections={projections} />
+            <PlanPreviewSvg projections={projections} dimensions={dimensions} />
           )}
         </div>
       ) : (
@@ -211,6 +232,7 @@ export function SubstructureViewport(props: SubstructureViewportProps) {
               selectedSupportId={props.selectedSupportId}
               onSelect={props.onSelect}
               height={undefined}
+              dimensions={dimensions.markers3D.length > 0 ? dimensions : null}
             />
           )}
         </div>

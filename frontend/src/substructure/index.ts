@@ -22,3 +22,5 @@ export * from "./planning/piles/pileLayoutModel";
 export * from "./planning/piles/PileLayoutPanel";
 // Phase C1 (M2-05) リアルタイム2D/3D更新。
 export * from "./planning/useSubstructureRealtimeUpdate";
+// Phase C1 (M2-06) 寸法表示。
+export * from "./planning/dimensions/dimensionModel";
