@@ -102,6 +102,29 @@ describe("LinerMain3DPage", () => {
     expect(frameCheckbox.checked).toBe(false);
   });
 
+  it("selects a support and shows it in the selection UI", () => {
+    render(
+      <LinerMain3DPage
+        draft={buildMountainDraft()}
+        onClose={() => undefined}
+        onBackToSetup={() => undefined}
+        onBackToPreview={() => undefined}
+        onBackToList={() => undefined}
+      />,
+    );
+
+    act(() => {
+      (document.querySelector("[data-testid=main3d-select-P4]") as HTMLButtonElement).click();
+    });
+    const current = document.querySelector("[data-testid=main3d-selection-current]");
+    expect(current?.textContent).toContain("P4");
+    // click again to deselect
+    act(() => {
+      (document.querySelector("[data-testid=main3d-select-P4]") as HTMLButtonElement).click();
+    });
+    expect(document.querySelector("[data-testid=main3d-selection-current]")?.textContent).toContain("選択なし");
+  });
+
   it("does not render without bridge draft", () => {
     // main3d page renders the viewer regardless; ensure default draft renders
     render(

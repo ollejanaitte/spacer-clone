@@ -26,6 +26,8 @@ export type MountainViewerProps = {
   presetId?: string;
   /** per-layer visibility; defaults to all on. */
   layerState?: Partial<Record<SceneLayer, boolean>>;
+  /** selected support id (A1/P1..P7/A2) to highlight, or undefined. */
+  selectedSupportId?: string;
 };
 
 const TERRAIN_COLOR = "#4d7c4f";
@@ -85,11 +87,19 @@ function Polyline({
 }
 
 /** Substructure element mesh (column + cap + support zone boxes). */
-function SubstructureLayer({ scene }: { scene: Unified3DScene }) {
+function SubstructureLayer({
+  scene,
+  selectedSupportId,
+}: {
+  scene: Unified3DScene;
+  selectedSupportId?: string;
+}) {
+  const HIGHLIGHT_COLOR = "#f59e0b";
   return (
     <group>
       {scene.substructure.map((element) => {
         const color = element.kind === "abutment" ? ABUTMENT_COLOR : PIER_COLOR;
+        const selected = element.id === selectedSupportId;
         return (
           <group key={element.id} data-testid={`substructure-${element.id}`}>
             {element.boxes.map((box, index) => (
@@ -99,7 +109,11 @@ function SubstructureLayer({ scene }: { scene: Unified3DScene }) {
                 data-testid={`${element.id}-box-${index}`}
               >
                 <boxGeometry args={[box.sizeX, box.sizeZ, box.sizeY]} />
-                <meshStandardMaterial color={index === 1 ? CAP_COLOR : color} />
+                <meshStandardMaterial
+                  color={selected ? HIGHLIGHT_COLOR : index === 1 ? CAP_COLOR : color}
+                  emissive={selected ? HIGHLIGHT_COLOR : "#000000"}
+                  emissiveIntensity={selected ? 0.4 : 0}
+                />
               </mesh>
             ))}
           </group>
@@ -169,6 +183,7 @@ export function MountainViaduct3dViewer({
   draft,
   presetId = "overview",
   layerState = {},
+  selectedSupportId,
 }: MountainViewerProps) {
   const scene = useMemo(() => buildUnified3DScene(draft, presetId), [draft, presetId]);
   const layers: Record<SceneLayer, boolean> = {
@@ -193,7 +208,9 @@ export function MountainViaduct3dViewer({
           {layers.terrain && <TerrainLayer scene={scene} />}
           {layers.road && <RoadLayer scene={scene} />}
           {layers.superstructure && <SuperstructureLayer scene={scene} />}
-          {layers.substructure && <SubstructureLayer scene={scene} />}
+          {layers.substructure && (
+            <SubstructureLayer scene={scene} selectedSupportId={selectedSupportId} />
+          )}
           {layers.frame && <FrameLayer scene={scene} />}
           <OrbitControls makeDefault target={[camera.target.x, camera.target.y, camera.target.z]} />
         </Canvas>

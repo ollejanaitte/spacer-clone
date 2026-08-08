@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import type { LinerDraft } from "../adapters/linerUiAdapter";
 import { MountainViaduct3dViewer } from "../samples/mountain-viaduct-500/viewer";
 import { MOUNTAIN_CAMERA_PRESETS } from "../samples/mountain-viaduct-500/fixture";
+import { SUPPORT_IDS, selectionLabel, type SceneSelection } from "../samples/mountain-viaduct-500/selection";
 import {
   VIEWER_MODEL_MODES,
   layerLabel,
@@ -39,6 +40,7 @@ export function LinerMain3DPage({
 }: LinerMain3DPageProps) {
   const [presetId, setPresetId] = useState("valley");
   const [mode, setMode] = useState<ViewerModelMode>("integrated");
+  const [selection, setSelection] = useState<SceneSelection>(null);
   const [layers, setLayers] = useState<ViewerLayerState>(
     layerStateForMode("integrated"),
   );
@@ -49,6 +51,8 @@ export function LinerMain3DPage({
     }
     return layerStateForMode(mode);
   }, [mode, layers]);
+
+  const selectedSupportId = selection && selection.kind === "support" ? selection.id : undefined;
 
   const handleMode = (next: (typeof VIEWER_MODEL_MODES)[number]) => {
     setMode(next);
@@ -132,9 +136,38 @@ export function LinerMain3DPage({
             </button>
           ))}
         </fieldset>
+
+        <fieldset className="liner-main3d-selection">
+          <legend>選択（下部工）</legend>
+          <span className="liner-main3d-selection-current" data-testid="main3d-selection-current">
+            {selectionLabel(selection)}
+          </span>
+          <div className="liner-main3d-selection-options">
+            {SUPPORT_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                className={selectedSupportId === id ? "active" : undefined}
+                onClick={() =>
+                  setSelection((prev) =>
+                    prev && prev.kind === "support" && prev.id === id ? null : { kind: "support", id },
+                  )
+                }
+                data-testid={`main3d-select-${id}`}
+              >
+                {id}
+              </button>
+            ))}
+          </div>
+        </fieldset>
       </div>
 
-      <MountainViaduct3dViewer draft={draft} presetId={presetId} layerState={sceneLayers} />
+      <MountainViaduct3dViewer
+        draft={draft}
+        presetId={presetId}
+        layerState={sceneLayers}
+        selectedSupportId={selectedSupportId}
+      />
     </main>
   );
 }
