@@ -1,7 +1,7 @@
 # Phase STEP-2 — Implementation (backend〜Project Replay〜模式図データ契約)
 
 ## Status
-IN_PROGRESS（S2-UX00実施中）
+COMPLETE（S2-UX18完了, STEP3 GO）
 
 ## 目的
 Step 1 + UX再設計で FROZEN した仕様を production code へ落とす。
@@ -21,3 +21,7 @@ backend 計算（Vertical/Rules/BridgeGeometry/Output）→ Project Replay → �
 - docs/liner/research/phase-step1-design/（STEP1_P01〜P07）
 - docs/liner/research/phase-ux-reaudit/（UX_P01〜P09 + STEP2_GATE_REVISED）
 - UX_P09_PLAN_REVISION.md（S2-UX00〜UX18）
+
+## 成果物
+- 実装: backend/rule_engine/{vertical,rules(widening/curve_length/superelevation_transition/clearance),road_geometry/adapters,bridge_geometry,output,geometry3d,visual} + replay_runner + fixtures
+- レポート: PHASE_STEP2_FINAL_REPORT.md / STEP3_GATE.md
