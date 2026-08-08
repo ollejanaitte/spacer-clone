@@ -13,6 +13,7 @@ export const DOCUMENT_KINDS = [
   "unknown-field-store",
   "migration-record",
   "common-bridge-data-model",
+  "bridge-project",
 ] as const;
 
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number];

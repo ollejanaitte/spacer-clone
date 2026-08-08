@@ -288,6 +288,22 @@ export {
 } from "./engineeringProject";
 
 export {
+  BRIDGE_PROJECT_DOCUMENT_KIND,
+  detectForbiddenEmbeddedPayloadKeys as detectForbiddenBridgeProjectPayloadKeys,
+  validateBridgeProject,
+  type BridgeProject,
+  type BridgeProjectOwner,
+  type BridgeProjectReaction,
+  type BridgeProjectReconstruction,
+  type BridgeProjectReconstructionEntry,
+  type BridgeProjectReferences,
+  type BridgeProjectSectionStatus,
+  type BridgeProjectSupport,
+  type BridgeProjectValue,
+  type BridgeProjectValueStatus,
+} from "./bridgeProject";
+
+export {
   EXTENSION_KEY_PATTERN,
   isExtensionKey,
   validateExtensions,
@@ -675,6 +691,7 @@ export {
   documentReferenceSchema,
   engineeringProjectSchema,
   migrationRecordSchema,
+  bridgeProjectSchema,
   type BridgeFrameAnalysisDocumentValue,
   type BridgeSuperstructureDesignDocumentValue,
   type GovernedQuantityValue,
@@ -698,6 +715,7 @@ export {
   type RevisionMetadataValue,
   type SchemaIdentityValue,
   type SemanticValidationOptions,
+  type BridgeProjectValue as BridgeProjectRuntimeValue,
   type StableEntityIdValue,
   type UnitContextValue,
   type UnknownFieldStoreValue,

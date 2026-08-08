@@ -58,6 +58,11 @@ selected value (null when unresolved), resolution status.
 `HUMAN_CONFIRMATION_REQUIRED` values MUST carry: value, source, human confirmation ID,
 confirmation state.
 
+> **Integration extension (Phase 1-2, additive):** the value-state set is extended
+> with `DERIVED` / `INFERRED` / `DEFERRED` for cross-tool reconstruction provenance
+> (superstructure sample → alignment). See `value_state_contract.md` §7 and
+> `docs/integration/value-status-unit-policy.md`. Original six states are unchanged.
+
 See `value_state_contract.md`.
 
 ## 5. ID contract

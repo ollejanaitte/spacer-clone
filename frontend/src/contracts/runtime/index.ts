@@ -49,6 +49,7 @@ export {
 } from "./constants";
 export {
   bridgeFrameAnalysisDocumentSchema,
+  bridgeProjectSchema,
   bridgeSuperstructureDesignDocumentSchema,
   commonEnvelopeSchema,
   createCommonEnvelopeSchema,
@@ -138,5 +139,17 @@ export {
   type ResolvedValueValue,
   type ConflictValueValue,
   type CandidateValueValue,
+  type BridgeProjectValue,
+  type BridgeProjectValueStatus,
+  type BridgeProjectOwner,
+  type BridgeProjectSectionKey,
+  type BridgeProjectSectionStatus,
+  type BridgeProjectStatusValue,
+  type BridgeProjectReferencesValue,
+  type BridgeProjectSharedFactsValue,
+  type BridgeProjectSupportValue,
+  type BridgeProjectReactionValue,
+  type BridgeProjectReconstructionValue,
+  type BridgeProjectReconstructionEntryValue,
 } from "./schemas";
 export { zodIssueToValidationIssue, zodIssuesToValidationResult } from "./zodIssues";
