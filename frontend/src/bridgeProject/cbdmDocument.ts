@@ -31,7 +31,12 @@ import {
   validateBridgeProject,
   type BridgeProject,
 } from "../contracts/bridgeProject";
-import type { BpValue, BridgeProjectAlignment, BridgeProjectBridgeGeometry } from "./types";
+import type {
+  BpValue,
+  BridgeProjectAlignment,
+  BridgeProjectBridgeGeometry,
+  BridgeProjectSuperstructure,
+} from "./types";
 import { BridgeProjectAdapterError, BP_CODES, assertBpValueShape } from "./validation";
 
 const DOCUMENT_VERSION = "1.0.0";
@@ -448,4 +453,84 @@ export function parseBridgeProjectManifest(text: string): BridgeProject {
     );
   }
   return value as BridgeProject;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3-4: attach BridgeProject.Superstructure facts to the manifest
+// ---------------------------------------------------------------------------
+
+export interface AttachSuperstructureOptions {
+  /** Reference to the authoritative BSDD document (kind bridge-superstructure-design). */
+  readonly superstructureRef?: import("../contracts/documentReference").DocumentReference;
+}
+
+/**
+ * Record ②'s shared superstructure facts on the BridgeProject manifest:
+ *  - `sharedFacts.supports[].bearingSeats` from the bearing/support incidence
+ *  - `status.sections.superstructure` = COMPLETE
+ *  - `references.superstructure` when a BSDD reference is provided
+ *
+ * Uses only the existing manifest schema fields (no contract change). Re-validates
+ * the manifest after the update (fail-closed).
+ */
+export function attachSuperstructureToManifest(
+  manifest: BridgeProject,
+  superstructure: BridgeProjectSuperstructure,
+  options: AttachSuperstructureOptions = {},
+): BridgeProject {
+  const supports =
+    manifest.sharedFacts?.supports?.map((support) => {
+      const relations = superstructure.bearingSupportRelation.filter(
+        (rel) => rel.supportId === support.supportId,
+      );
+      if (relations.length === 0) {
+        return support;
+      }
+      const bearingSeats = relations.map((rel) => {
+        const girder = superstructure.mainGirderArrangement.find(
+          (g) => g.girderId === rel.girderId,
+        );
+        return {
+          seatId: `${support.supportId}-SEAT-${rel.girderId}`,
+          ...(girder?.offsetM.value !== undefined
+            ? { transverseOffsetM: girder.offsetM.value }
+            : {}),
+        };
+      });
+      return { ...support, bearingSeats };
+    }) ?? [];
+
+  const sections = {
+    ...manifest.status.sections,
+    superstructure: {
+      owner: "SUPERSTRUCTURE_OWNER" as const,
+      state: "COMPLETE" as const,
+    },
+  };
+
+  const references =
+    options.superstructureRef !== undefined
+      ? { ...manifest.references, superstructure: options.superstructureRef }
+      : manifest.references;
+
+  const updated = {
+    ...manifest,
+    references,
+    sharedFacts: { ...manifest.sharedFacts, supports },
+    status: { ...manifest.status, sections },
+  };
+
+  const checksum = checksumHex(updated as Record<string, unknown>);
+  const finalized = { ...updated, contentChecksum: { algorithm: "sha256", hexDigest: checksum } };
+
+  const result = validateBridgeProject(finalized as unknown as Partial<BridgeProject>);
+  if (result.issues.length > 0) {
+    throw new BridgeProjectAdapterError(
+      BP_CODES.UNIT_INVALID,
+      `Attached BridgeProject.Superstructure failed manifest validation: ${result.issues
+        .map((issue) => issue.code)
+        .join(", ")}`,
+    );
+  }
+  return finalized as unknown as BridgeProject;
 }
