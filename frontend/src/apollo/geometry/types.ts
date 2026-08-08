@@ -190,6 +190,8 @@ export type BearingPoint = {
   supportId: string;
   girderId: string;
   position: Vec3;
+  /** Bearing local frame (from the support point at the girder offset). */
+  localFrame?: LocalFrame3;
 };
 
 export type MemberKind =

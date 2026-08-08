@@ -228,4 +228,13 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
     expect(snap.crossGirderReferences).toHaveLength(4);
     expect(snap.crossGirderReferences.map((c) => c.stationM)).toEqual([0, 40.201, 91.201, 134.001]);
   });
+
+  it("bearing points carry the support-point local frame (Phase 6-2)", () => {
+    const snap = buildEngine().generateSnapshot(buildInput());
+    expect(snap.bearingPoints).toHaveLength(8); // 4 supports x 2 girders
+    expect(snap.bearingPoints[0].supportId).toBe("SUP-AR2");
+    expect(snap.bearingPoints[0].girderId).toBe("GIRDER-AG1");
+    expect(snap.bearingPoints[0].localFrame).toBeDefined();
+    expect(snap.bearingPoints[0].localFrame!.normal.y).toBeCloseTo(1, 9);
+  });
 });

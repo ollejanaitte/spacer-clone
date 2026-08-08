@@ -132,6 +132,7 @@ export class DefaultGeometryEngine implements GeometryEngine {
       supportId: p.supportId,
       girderId: p.girderId,
       position: p.position,
+      localFrame: p.localFrame,
     }));
     const supportStationsM = supportLines.map((line) => line.stationM.value ?? 0);
     const memberPlacementReferences = buildMainGirderMembers({
