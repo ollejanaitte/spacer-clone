@@ -28,6 +28,7 @@ from backend.rule_engine.crosssection.crossfall import (
 )
 from backend.rule_engine.crosssection.geometry import pose_at
 from backend.rule_engine.crosssection.global_xyz import (
+    elevation_contract_status as cross_section_elevation_contract_status,
     generate_global_section,
     point_global,
 )
@@ -45,10 +46,20 @@ class RoadGeometryAPI:
     """Single entry point for road geometry evaluation."""
 
     def evaluate(self, request: RoadGeometryRequest) -> RoadGeometryResult:
-        validate_request(request)
-        alignment = self._resolve_alignment(request)
-        result = self._evaluate_alignment(request, alignment)
-        return self._merge_cross_section(request, alignment, result)
+        try:
+            validate_request(request)
+            alignment = self._resolve_alignment(request)
+            result = self._evaluate_alignment(request, alignment)
+            return self._merge_cross_section(request, alignment, result)
+        except RoadGeometryError:
+            raise
+        except ValueError as exc:
+            raise RoadGeometryError(str(exc)) from exc
+
+    @staticmethod
+    def elevation_contract_status() -> str:
+        """Explicit elevation producer contract status (X4-C contract)."""
+        return cross_section_elevation_contract_status()
 
     # -- internal orchestration (filled in P02/P03) -------------------------
 
@@ -168,6 +179,7 @@ class RoadGeometryAPI:
             **result.trace,
             "cross_section": "X4C-CROSS-SECTION",
             "elevation_source": "explicit_input",
+            "elevation_contract": cross_section_elevation_contract_status(),
         }
         return result
 

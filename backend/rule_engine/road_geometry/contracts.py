@@ -115,6 +115,10 @@ def validate_request(request: RoadGeometryRequest) -> None:
             "either alignment or rows must be provided")
     if request.alignment is not None and not request.alignment.alignment_id:
         raise RoadGeometryError("alignment.alignment_id must not be empty")
+    if request.center_elevation is not None:
+        if not math.isfinite(request.center_elevation):
+            raise RoadGeometryError(
+                f"center_elevation must be finite (got {request.center_elevation!r})")
     for side_label, segments in (("left", request.left_segments),
                                  ("right", request.right_segments)):
         for segment in segments:
