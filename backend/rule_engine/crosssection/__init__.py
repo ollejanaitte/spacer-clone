@@ -19,6 +19,28 @@ from .model import (
     Side,
     validate_request,
 )
+from .width import (
+    ResolvedWidthExtents,
+    WIDTH_TOLERANCE,
+    WidthChangePoint,
+    WidthError,
+    evaluate_request_width,
+    evaluate_width_at_distance,
+    resolve_level_width,
+    segment_total_width_left,
+    segment_total_width_right,
+    total_width_from_request,
+)
+from .crossfall import (
+    CrossfallError,
+    CrossfallInterval,
+    CrossfallMode,
+    OFFSET_TOLERANCE,
+    ResolvedCrossfallState,
+    crossfall_delta_z,
+    resolve_crossfall_at,
+    resolve_crossfall_input,
+)
 
 __all__ = [
     "CrossSectionError",
@@ -34,4 +56,22 @@ __all__ = [
     "SegmentType",
     "Side",
     "validate_request",
+    "ResolvedWidthExtents",
+    "WIDTH_TOLERANCE",
+    "WidthChangePoint",
+    "WidthError",
+    "evaluate_request_width",
+    "evaluate_width_at_distance",
+    "resolve_level_width",
+    "segment_total_width_left",
+    "segment_total_width_right",
+    "total_width_from_request",
+    "CrossfallError",
+    "CrossfallInterval",
+    "CrossfallMode",
+    "OFFSET_TOLERANCE",
+    "ResolvedCrossfallState",
+    "crossfall_delta_z",
+    "resolve_crossfall_at",
+    "resolve_crossfall_input",
 ]
