@@ -27,10 +27,13 @@ import {
   projectToSupports,
   serializeSubstructureProject,
 } from "./persistence";
-import type { SuperstructureInput } from "../design/designTypes";
+import type { SuperstructureInput, SupportReactions } from "../design/designTypes";
 import { buildSuperstructureEnvelope } from "../design/superstructureEnvelope";
 import { parseSupportInterface, validateSuperstructureInput } from "../design/superstructureInterface";
 import type { SolidGroup } from "../geometryBase";
+import { runDesign, type DesignResult } from "../design/designEngine";
+import { buildCalculationCsv, buildCalculationJson } from "../design/calculationOutput";
+import { DesignResultPanel } from "./DesignResultPanel";
 
 export type { LinerSupportHandoff };
 
@@ -135,6 +138,8 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
   );
   const [superstructureMessage, setSuperstructureMessage] = useState<string | null>(null);
   const superstructureInputRef = useRef<HTMLInputElement | null>(null);
+  const [designResults, setDesignResults] = useState<readonly DesignResult[] | null>(null);
+  const [designSelectedSupportId, setDesignSelectedSupportId] = useState<string | null>(null);
 
   const coordinates = useMemo(() => buildHostCoordinates(supports), [supports]);
   const validation = useMemo(() => buildValidationSummary(supports), [supports]);
@@ -288,10 +293,55 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
       const loaded = projectToSupports(result.value);
       history.reset(loaded);
       setSelectedSupportId(null);
+      setDesignResults(null);
       setPersistMessage(`読込ました (${loaded.length} supports, ${file.name})`);
     },
     [history],
   );
+
+  const handleRunDesign = useCallback(() => {
+    const reactionsMap = new Map<string, SupportReactions>();
+    for (const s of superstructures) {
+      reactionsMap.set(s.supportId, {
+        supportId: s.supportId,
+        cases: s.reactionCases ?? [],
+        source: s.sourceApplication,
+        sourceRevision: s.sourceRevision,
+      });
+    }
+    const results = supports.map((s) =>
+      runDesign({
+        projectId: props.projectId,
+        support: s,
+        reactions: reactionsMap.get(s.supportId) ?? null,
+      }),
+    );
+    setDesignResults(results);
+    setDesignSelectedSupportId(results[0]?.supportId ?? null);
+    setPersistMessage(`設計計算を実行しました（${results.length} supports / 全数値照査は HOLD）`);
+  }, [supports, superstructures, props.projectId]);
+
+  const handleExportCsv = useCallback(() => {
+    if (!designResults || designResults.length === 0) return;
+    const blob = new Blob([buildCalculationCsv(designResults)], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "substructure-design-sheet.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [designResults]);
+
+  const handleExportJson = useCallback(() => {
+    if (!designResults || designResults.length === 0) return;
+    const blob = new Blob([buildCalculationJson(designResults)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "substructure-design-result.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [designResults]);
 
   return (
     <>
@@ -344,6 +394,25 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
               onClick={() => superstructureInputRef.current?.click()}
             >
               {t.importSuperstructure ?? "上部工接続"}
+            </button>
+            <button type="button" data-testid="run-design" onClick={handleRunDesign}>
+              {t.runDesign ?? "設計計算"}
+            </button>
+            <button
+              type="button"
+              data-testid="export-design-csv"
+              disabled={!designResults || designResults.length === 0}
+              onClick={handleExportCsv}
+            >
+              {t.exportDesignCsv ?? "計算書CSV"}
+            </button>
+            <button
+              type="button"
+              data-testid="export-design-json"
+              disabled={!designResults || designResults.length === 0}
+              onClick={handleExportJson}
+            >
+              {t.exportDesignJson ?? "結果JSON"}
             </button>
             <input
               ref={fileInputRef}
@@ -410,6 +479,25 @@ export function SubstructurePlanningHost(props: SubstructurePlanningHostProps) {
           }}
         >
           {superstructureMessage}
+        </div>
+      )}
+      {designResults && designResults.length > 0 && (
+        <div
+          style={{
+            position: "fixed",
+            top: 130,
+            right: 12,
+            zIndex: 940,
+            width: 480,
+            maxHeight: "60vh",
+            overflow: "auto",
+          }}
+        >
+          <DesignResultPanel
+            results={designResults}
+            selectedSupportId={designSelectedSupportId}
+            onSelectSupport={setDesignSelectedSupportId}
+          />
         </div>
       )}
       {dialogOpen && (
