@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildMountainDraft } from "../mountain-viaduct-500/fixture";
 import { resolveSupportMarkers } from "../mountain-viaduct-500/markers";
+import { terrainElevation } from "../mountain-viaduct-500/terrain";
 
 describe("mountain support markers", () => {
   it("resolves 9 markers (2 abutments + 7 piers)", () => {
@@ -40,5 +41,29 @@ describe("mountain support markers", () => {
     const draft = buildMountainDraft();
     const { spans } = resolveSupportMarkers(draft);
     expect(spans).toHaveLength(8);
+  });
+
+  it("deep valley makes P4 the tallest pier and abutments low (pier height distribution)", () => {
+    const draft = buildMountainDraft();
+    const { markers } = resolveSupportMarkers(draft);
+    const pierHeight = (id: string): number => {
+      const marker = markers.find((m) => m.id === id);
+      const ground = terrainElevation(marker!.station, 0);
+      return marker!.z - ground;
+    };
+    // all supports stand above terrain (positive height)
+    for (const marker of markers) {
+      expect(pierHeight(marker.id)).toBeGreaterThan(0);
+    }
+    // P4 is the tallest; abutments and end piers are low
+    const p4 = pierHeight("P4");
+    const p1 = pierHeight("P1");
+    const p7 = pierHeight("P7");
+    const a1 = pierHeight("A1");
+    const a2 = pierHeight("A2");
+    expect(p4).toBeGreaterThan(p1 + 10);
+    expect(p4).toBeGreaterThan(p7 + 10);
+    expect(p4).toBeGreaterThan(a1 + 10);
+    expect(p4).toBeGreaterThan(a2 + 10);
   });
 });
