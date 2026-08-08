@@ -2255,6 +2255,8 @@ export const ja = {
       dimMain: "主要寸法",
       dimSelected: "選択部材",
       dimAll: "全寸法",
+      menuDelete: "削除",
+      menuDuplicate: "複製",
     },
   },
 };

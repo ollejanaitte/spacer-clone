@@ -24,3 +24,7 @@ export * from "./planning/piles/PileLayoutPanel";
 export * from "./planning/useSubstructureRealtimeUpdate";
 // Phase C1 (M2-06) 寸法表示。
 export * from "./planning/dimensions/dimensionModel";
+// Phase C1 (M2-07) 選択同期・Interaction。
+export * from "./planning/selectionState";
+export * from "./planning/useUndoRedo";
+export * from "./planning/useKeyboardShortcuts";
