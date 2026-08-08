@@ -1,0 +1,17 @@
+conversion_id,from,to,formula,owner,allowed_consumers,declared,notes
+COORD-001,station,global X (bridge axis),X = station along alignment at tangent direction,Apollo Geometry Engine + Alignment Connector,GeometrySnapshot consumers,PRODUCTION_REQUIRED,straight-only generators replaced by snapshot
+COORD-002,offset,global Y (transverse),Y = offset right-positive (via local frame),Apollo Geometry Engine,GeometrySnapshot consumers,PRODUCTION_REQUIRED,frame-derived
+COORD-003,elevation,global Z (up),Z = elevation (vertical),LINER + Geometry Engine,GeometrySnapshot consumers,PRODUCTION_REQUIRED,vertical positive up
+COORD-004,station/offset/elevation,global XYZ,pointAtStationOffset composition,LINER (Alignment Connector),Geometry Engine,PRODUCTION_REQUIRED,LINER authoritative
+COORD-005,bridge-local,global,origin + L/T/V basis,LINER + Geometry Engine,GeometrySnapshot consumers,PRODUCTION_REQUIRED,right-handed frame
+COORD-006,member local,global,local frame origin + axes,Geometry Engine (memberPlacementReference frames),Structural Model Connector,PRODUCTION_REQUIRED,no consumer re-derivation
+COORD-007,global XYZ,viewer scene,z-up verbatim or documented single display transform,3D Connector,Viewer,PRODUCTION_REQUIRED,unifies apollo z-up vs frame y-up split
+COORD-008,global XYZ,DXF/SVG,view projection (plan X-Y elevation X-Z section Y-Z) + mm,Drawing Connector,Drawing layer,PRODUCTION_REQUIRED,drawing never recomputes geometry
+COORD-009,global XYZ,STL,m->mm single policy (exact*1000; integer mm where required),Export Connector,STL export,PRODUCTION_REQUIRED,resolves DUP-016/017
+COORD-010,skew,transverse rotation,rotate transverse about vertical (+Z CCW),Geometry Engine,GeometrySnapshot consumers,PRODUCTION_REQUIRED,canonical rad; source deg preserved
+COORD-011,crossfall,elevation delta,right-down-positive slope -> -Z per (offset-pivot)*slope/100,LINER,Geometry Engine,PRODUCTION_REQUIRED,LINER authority
+COORD-012,station,X-to-station inverse (XY->station),stationAtPoint,LINER,Geometry Engine,PRODUCTION_REQUIRED,inverse projection
+COORD-013,units,m->mm display,m*1000,Export Connector / Drawing Connector,export/drawing,PRODUCTION_REQUIRED,single policy
+COORD-014,axis swap,frame model viewer,(x,y,z)->(x,z,y) display swap,3D Connector,Viewer,PROHIBITED_AS_HIDDEN,declared display transform only
+COORD-015,origin shift,export origin,declared export option only,Export Connector,STL,REQUIRES_DECLARATION,no hidden originShiftMm
+COORD-016,legacy sign policy,per-axis sign override,applied with provenance in snapshot,Geometry Engine,consumers,REQUIRES_DECLARATION,resolves RC-012
