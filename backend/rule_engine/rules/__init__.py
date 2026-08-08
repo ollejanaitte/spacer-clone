@@ -24,6 +24,7 @@ def load_all_rules() -> List:
     from .station import STATIONRule as StationRule
     from .coordinate_transform import COORDINATERule as CoordinateTransformRule
     from .validation import VALIDATIONRule as ValidationRule
+    from ..alignment.contract import AlignmentGeometryRule
     return [
         RoadClassificationRule(),
         DesignSpeedRule(),
@@ -43,4 +44,5 @@ def load_all_rules() -> List:
         StationRule(),
         CoordinateTransformRule(),
         ValidationRule(),
+        AlignmentGeometryRule(),
     ]
