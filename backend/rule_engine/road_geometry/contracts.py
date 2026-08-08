@@ -30,6 +30,7 @@ from backend.rule_engine.crosssection.model import (
     CrossfallInput,
     PivotDefinition,
 )
+from backend.rule_engine.vertical import VerticalProfile
 
 __all__ = [
     "RoadGeometryError",
@@ -50,6 +51,10 @@ class RoadGeometryRequest:
     Provide either `alignment` (prebuilt) or `rows` (raw road element rows to
     build through the canonical adapter). When both are given, `alignment`
     wins and `rows` is ignored.
+
+    Elevation: if `center_elevation` is given it wins (explicit input contract).
+    Otherwise, if `vertical_profile` is given, Z is computed by the backend
+    vertical solver. If neither is given, Z is None (deferred).
     """
     alignment_id: str
     station: float
@@ -58,6 +63,7 @@ class RoadGeometryRequest:
     origin_station: float = 0.0
     bearing_units: str = "radian"
     center_elevation: Optional[float] = None
+    vertical_profile: Optional[VerticalProfile] = None
     left_segments: List[CrossSectionSegment] = field(default_factory=list)
     right_segments: List[CrossSectionSegment] = field(default_factory=list)
     crossfall: CrossfallInput = field(default_factory=CrossfallInput)
@@ -119,6 +125,14 @@ def validate_request(request: RoadGeometryRequest) -> None:
         if not math.isfinite(request.center_elevation):
             raise RoadGeometryError(
                 f"center_elevation must be finite (got {request.center_elevation!r})")
+    if request.vertical_profile is not None:
+        if not request.vertical_profile.profile_id:
+            raise RoadGeometryError("vertical_profile.profile_id must not be empty")
+        if request.station < request.vertical_profile.start_station - 1e-9 \
+                or request.station > request.vertical_profile.end_station + 1e-9:
+            raise RoadGeometryError(
+                f"station {request.station!r} outside vertical_profile range "
+                f"{request.vertical_profile.station_range}")
     for side_label, segments in (("left", request.left_segments),
                                  ("right", request.right_segments)):
         for segment in segments:

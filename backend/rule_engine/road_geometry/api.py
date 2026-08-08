@@ -33,6 +33,7 @@ from backend.rule_engine.crosssection.global_xyz import (
     point_global,
 )
 from backend.rule_engine.crosssection.model import CrossSectionRequest
+from backend.rule_engine.vertical import VerticalError, evaluate_vertical
 
 from .contracts import (
     RoadGeometryError,
@@ -98,11 +99,12 @@ class RoadGeometryAPI:
         azimuth = evaluation.azimuth
         tangent = angle_to_tangent(azimuth)
         normal = angle_to_normal(azimuth)
+        z, elevation_trace = self._resolve_z(request)
         return RoadGeometryResult(
             station=request.station,
             x=evaluation.point.x,
             y=evaluation.point.y,
-            z=request.center_elevation,
+            z=z,
             heading=azimuth,
             tangent=Vec3(tangent.x, tangent.y, 0.0),
             normal=Vec3(normal.x, normal.y, 0.0),
@@ -115,8 +117,28 @@ class RoadGeometryAPI:
             crossfall_right_percent=0.0,
             left_edge_xyz=None,
             right_edge_xyz=None,
-            trace={"source": "X4B-ALIGNMENT-SOLVER", "element": evaluation.element_id},
+            trace={"source": "X4B-ALIGNMENT-SOLVER", "element": evaluation.element_id,
+                   **elevation_trace},
         )
+
+    def _resolve_z(
+        self,
+        request: RoadGeometryRequest,
+    ) -> "tuple":
+        """Resolve center Z.
+
+        Priority: explicit center_elevation > vertical_profile (backend solver)
+        > None (deferred).
+        """
+        if request.center_elevation is not None:
+            return request.center_elevation, {"elevation_source": "explicit_input"}
+        if request.vertical_profile is not None:
+            evaluation = evaluate_vertical(request.vertical_profile, request.station)
+            return evaluation["elevation"], {
+                "elevation_source": "vertical_profile",
+                "vertical_element": evaluation["element_id"],
+            }
+        return None, {"elevation_source": "deferred"}
 
     def _merge_cross_section(
         self,
@@ -133,10 +155,11 @@ class RoadGeometryAPI:
         if not has_cross_inputs:
             return result
 
+        center_z = result.z if result.z is not None else 0.0
         cross_request = CrossSectionRequest(
             alignment_id=request.alignment_id,
             station=request.station,
-            center_elevation=request.center_elevation or 0.0,
+            center_elevation=center_z,
             left_segments=list(request.left_segments),
             right_segments=list(request.right_segments),
             crossfall=request.crossfall,
@@ -147,7 +170,6 @@ class RoadGeometryAPI:
 
         pose = pose_at(alignment, request.station)
         crossfall_state = resolve_crossfall_input(request.crossfall)
-        center_z = request.center_elevation or 0.0
 
         left_edge_xyz = None
         right_edge_xyz = None
