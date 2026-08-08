@@ -10,4 +10,5 @@ export * from "./fixture";
 export * from "./useSamplePicker";
 export * from "./camera";
 export * from "./markers";
+export * from "./substructure";
 export * from "./viewer";

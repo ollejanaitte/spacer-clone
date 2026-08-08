@@ -24,12 +24,13 @@ describe("mountain terrain", () => {
   });
 
   it("deep valley sits ~180-320 with clear depth (pier height driver)", () => {
+    // valley centre is on the real road x (~200, P4 area)
     const floor = terrainElevation(DEEP_VALLEY_CENTRE, 0);
-    const edge180 = terrainElevation(180, 0);
-    const edge320 = terrainElevation(320, 0);
-    // the valley floor is well below the surrounding edges
-    expect(floor).toBeLessThan(edge180 - 3);
-    expect(floor).toBeLessThan(edge320 - 3);
+    const edgeStart = terrainElevation(0, 0);
+    const edgeFar = terrainElevation(400, 0);
+    // the valley floor is well below the surrounding mountain edges
+    expect(floor).toBeLessThan(edgeStart - 10);
+    expect(floor).toBeLessThan(edgeFar - 10);
     // road deck is ~36-47m, so valley floor should be below ~30m
     expect(floor).toBeLessThan(30);
   });
