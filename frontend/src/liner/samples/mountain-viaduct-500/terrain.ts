@@ -19,6 +19,12 @@ export const MOUNTAIN_TERRAIN_SETTINGS: MountainTerrainSettings = {
   extentM: 500,
 };
 
+/** Deep valley window (station) that centres the large valley under the bridge. */
+export const DEEP_VALLEY_CENTRE = 250;
+export const DEEP_VALLEY_HALF_WIDTH = 70;
+export const DEEP_VALLEY_DEPTH = 18;
+export const VALLEY_EDGE_ELEVATION = 36;
+
 /** Deterministic hash of a grid coordinate (fixed seed). */
 export function terrainHash(xIndex: number, yIndex: number, seed: number): number {
   let h = seed ^ (xIndex * 374761393) ^ (yIndex * 668265263);
@@ -48,10 +54,17 @@ export function terrainElevation(
   const fx = (x / cellSizeM) - xIndex;
   const fy = (y / cellSizeM) - yIndex;
 
-  // base mountain: high at the ends (start/end), valley in the middle.
-  const normalized = x / extentM;
-  const distanceFromCentre = Math.abs(normalized - 0.5) * 2; // 0 at centre, 1 at ends
-  const base = 77 - (1 - distanceFromCentre) * 30;
+  // Deep valley centred around station 250 (±70), depth ~18 m below the
+  // surrounding terrain (edge elevation ~36 m). Road Z over the bridge ranges
+  // ~36–47 m, so the valley floor sits clearly below the deck -> tall piers
+  // at the centre (P4 ~25 m) while A1/P1 (low) and P7/A2 (low) stay positive.
+  const distanceFromValleyCentre = Math.abs(x - DEEP_VALLEY_CENTRE);
+  const valleyFactor = Math.max(
+    0,
+    1 - distanceFromValleyCentre / (DEEP_VALLEY_HALF_WIDTH * 2),
+  );
+  const ridgeProfile = smoothstep(valleyFactor);
+  const base = VALLEY_EDGE_ELEVATION - DEEP_VALLEY_DEPTH * ridgeProfile;
 
   // deterministic noise for mountain texture
   const n00 = terrainHash(xIndex, yIndex, seed);
@@ -65,7 +78,7 @@ export function terrainElevation(
     n10 * sx * (1 - sy) +
     n01 * (1 - sx) * sy +
     n11 * sx * sy;
-  const detail = (noise - 0.5) * 8;
+  const detail = (noise - 0.5) * 4;
 
   // lateral hills so the valley is deep at the centre and rises at the sides
   const lateral = Math.abs(y) / 200;

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEEP_VALLEY_CENTRE,
   MOUNTAIN_TERRAIN_SETTINGS,
   buildTerrainHeightfield,
   buildTerrainIndices,
@@ -15,16 +16,27 @@ describe("mountain terrain", () => {
   });
 
   it("valley is deeper near the bridge centre than at the ends", () => {
-    const centre = terrainElevation(250, 0);
+    const centre = terrainElevation(DEEP_VALLEY_CENTRE, 0);
     const start = terrainElevation(0, 0);
     const end = terrainElevation(500, 0);
     expect(centre).toBeLessThan(start - 5);
     expect(centre).toBeLessThan(end - 5);
   });
 
+  it("deep valley sits ~180-320 with clear depth (pier height driver)", () => {
+    const floor = terrainElevation(DEEP_VALLEY_CENTRE, 0);
+    const edge180 = terrainElevation(180, 0);
+    const edge320 = terrainElevation(320, 0);
+    // the valley floor is well below the surrounding edges
+    expect(floor).toBeLessThan(edge180 - 3);
+    expect(floor).toBeLessThan(edge320 - 3);
+    // road deck is ~36-47m, so valley floor should be below ~30m
+    expect(floor).toBeLessThan(30);
+  });
+
   it("lateral slopes rise away from the centreline", () => {
-    const centre = terrainElevation(250, 0);
-    const side = terrainElevation(250, 150);
+    const centre = terrainElevation(DEEP_VALLEY_CENTRE, 0);
+    const side = terrainElevation(DEEP_VALLEY_CENTRE, 150);
     expect(side).toBeGreaterThan(centre);
   });
 
