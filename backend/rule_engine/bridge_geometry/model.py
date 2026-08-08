@@ -53,6 +53,84 @@ class Pier:
         self._support_points = points
 
 
+@dataclass
+class Span:
+    """A bridge span between two piers."""
+    span_id: str
+    start_pier_id: str
+    end_pier_id: str
+    start_station: float
+    end_station: float
+    alignment_id: str = ""
+
+    @property
+    def span_length(self) -> float:
+        return self.end_station - self.start_station
+
+    @property
+    def start_pier(self) -> Optional[Pier]:
+        return self._start_pier
+
+    @property
+    def end_pier(self) -> Optional[Pier]:
+        return self._end_pier
+
+    _start_pier: Optional[Pier] = field(default=None, repr=False, compare=False)
+    _end_pier: Optional[Pier] = field(default=None, repr=False, compare=False)
+
+    def bind(self, start_pier: Pier, end_pier: Pier) -> "Span":
+        """Bind the span to its start/end piers."""
+        self._start_pier = start_pier
+        self._end_pier = end_pier
+        return self
+
+
+def validate_span(
+    span: Span,
+    piers: Optional[List[Pier]] = None,
+) -> List[str]:
+    """Validate a Span. Returns a list of issues (empty when valid)."""
+    issues: list = []
+    if not span.span_id:
+        issues.append("span_id must not be empty")
+    if not span.start_pier_id or not span.end_pier_id:
+        issues.append("start_pier_id and end_pier_id are required")
+    if not math.isfinite(span.start_station) or not math.isfinite(span.end_station):
+        issues.append(f"span {span.span_id!r} stations must be finite")
+    if span.end_station <= span.start_station:
+        issues.append(
+            f"span {span.span_id!r} end_station must be > start_station "
+            f"({span.start_station!r}->{span.end_station!r})")
+    if span.start_pier_id == span.end_pier_id:
+        issues.append(f"span {span.span_id!r} start/end pier must differ")
+    if piers is not None:
+        ids = {p.pier_id for p in piers}
+        if span.start_pier_id not in ids:
+            issues.append(f"span {span.span_id!r} start pier {span.start_pier_id!r} not found")
+        if span.end_pier_id not in ids:
+            issues.append(f"span {span.span_id!r} end pier {span.end_pier_id!r} not found")
+    return issues
+
+
+def validate_span_sequence(spans: List[Span]) -> List[str]:
+    """Validate a sequence of spans: contiguous, monotonic, no overlap."""
+    issues: list = []
+    seen: set = set()
+    ordered = sorted(spans, key=lambda s: s.start_station)
+    for index, span in enumerate(ordered):
+        if span.span_id in seen:
+            issues.append(f"duplicate span_id {span.span_id!r}")
+        seen.add(span.span_id)
+        if index == 0:
+            continue
+        prev = ordered[index - 1]
+        if abs(span.start_station - prev.end_station) > 1e-6:
+            issues.append(
+                f"span {span.span_id!r} start {span.start_station!r} not contiguous "
+                f"with previous span end {prev.end_station!r}")
+    return issues
+
+
 def validate_pier(
     pier: Pier,
     *,
@@ -90,5 +168,8 @@ __all__ = [
     "SKEW_MAX_DEG",
     "BridgeGeometryError",
     "Pier",
+    "Span",
     "validate_pier",
+    "validate_span",
+    "validate_span_sequence",
 ]
