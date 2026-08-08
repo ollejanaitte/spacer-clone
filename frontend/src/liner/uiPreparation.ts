@@ -12,7 +12,8 @@ export type LinerUiRouteId =
   | "liner.mappingReview"
   | "liner.drawingPlan"
   | "liner.drawingProfile"
-  | "liner.drawingCrossSection";
+  | "liner.drawingCrossSection"
+  | "liner.main3d";
 
 export type LinerDrawingWorkspaceKind = "plan" | "profile" | "cross-section";
 
@@ -24,6 +25,7 @@ export const LINER_UI_ROUTE_IDS = [
   "liner.drawingPlan",
   "liner.drawingProfile",
   "liner.drawingCrossSection",
+  "liner.main3d",
 ] as const satisfies readonly LinerUiRouteId[];
 
 /** Upper-level launcher for choosing GUI direct input vs Phase 3.6 Importer. */
@@ -41,6 +43,7 @@ export const LINER_UI_ROUTE_PATHS: Record<LinerUiRouteId, string> = {
   "liner.drawingPlan": "/pro/liner/drawings/plan",
   "liner.drawingProfile": "/pro/liner/drawings/profile",
   "liner.drawingCrossSection": "/pro/liner/drawings/cross-section",
+  "liner.main3d": "/pro/liner/main3d",
 };
 
 export type LinerUiPanelId =
