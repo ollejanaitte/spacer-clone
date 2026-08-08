@@ -1,0 +1,15 @@
+entity_type,entity_id_rule,parent,source,has_global_coords,has_local_frame,has_station,resolution_state_carried,traceability,notes
+AlignmentReference,ALN-{token},none,Common Model alignments + LINER,optional (via LINER),yes,LINER,CONFIRMED or HOLD,yes,road alignment reference (Single Source of Alignment)
+SupportLine,SUPL-{token},AlignmentReference,Common Model supports + Geometry Engine,yes,yes (skew),yes,CONFIRMED/CONFLICT/HCR,yes,transverse line at support station (skew applied)
+SupportPoint,SUP-{token},SupportLine,Common Model supports + Geometry Engine,yes,yes,yes,CONFIRMED/CONFLICT/HCR,yes,support bearing point
+GirderLine,GIRL-{token},AlignmentReference,Common Model girders + Geometry Engine,yes (offset line),yes,yes,CONFIRMED/CONFLICT/HCR,yes,girder reference line
+GirderStationPoint,GRP-{station}-{girder},GirderLine,Geometry Engine (sampled),yes,yes,yes,CONFIRMED/CONFLICT/HCR,yes,girder point at station
+GridPoint,GP-{station}-{offset},GirderLine/CrossSectionFrame,Common Model grid + Geometry Engine,yes,yes,yes,CONFIRMED/HCR/HOLD,yes,grid point (panel points may be HOLD)
+CrossSectionFrame,XSEC-{station},AlignmentReference,Geometry Engine,yes,yes,yes,CONFIRMED/HCR,yes,transverse frame at station
+DeckReferenceLine,DKRL-{token},AlignmentReference,Common Model deck + Geometry Engine,yes,yes,yes,CONFIRMED,yes,deck reference line (edge)
+DeckBoundary,DKRB-{token},DeckReferenceLine,Geometry Engine,yes,no,yes,CONFIRMED,yes,deck plan boundary
+BearingReferencePoint,BRG-{support}-{girder},SupportPoint,Geometry Engine,yes,yes,yes,CONFIRMED/HCR,yes,bearing point (eccentricity reference)
+CrossGirderReference,XGR-{station}-{token},GirderLine,Geometry Engine,yes,yes,yes,CONFIRMED,yes,cross girder placement reference
+BracingReference,BRC-{station}-{token},GirderLine,Geometry Engine,yes,yes,yes,CONFIRMED,yes,bracing placement reference
+MemberPlacementReference,MBR-{token},GirderLine/CrossSectionFrame,Geometry Engine,yes,yes (member local),yes,CONFIRMED/HCR,yes,structural member placement reference
+GeometryIssue,ISS-{n},varies,Geometry Engine,no,no,optional,N/A,yes,diagnostic/issue entity
