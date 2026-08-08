@@ -32,6 +32,21 @@ Phase 1（現状調査・責任分界）・Phase 2（BridgeProject 共通モデ�
 | P5 | [blockers.md](blockers.md) | unresolved blocker 一覧 |
 | P5 | [merge-ledger.md](merge-ledger.md) | merge した PR / commit / SHA 一覧 |
 
+## Phase 1-2 完了ステータス
+
+| 項目 | 状態 |
+|------|------|
+| 現状データフロー | COMPLETE（[current-data-flow.md](current-data-flow.md)） |
+| 責任分界表 | COMPLETE（[responsibility-boundary.md](responsibility-boundary.md)） |
+| 重複・競合・不足 | COMPLETE（[duplicates-conflicts-gaps.md](duplicates-conflicts-gaps.md)） |
+| BridgeProject 最小 contract | COMPLETE（`schemas/contracts/v0.1/bridge-project.schema.json` + [bridge-project-contract.md](bridge-project-contract.md)） |
+| value/status/unit 方針 | COMPLETE（[value-status-unit-policy.md](value-status-unit-policy.md)） |
+| Adapter 境界 | COMPLETE（[adapter-boundaries.md](adapter-boundaries.md)） |
+| CASE A / CASE B シーケンス | COMPLETE（[sequences.md](sequences.md)） |
+| Phase 3 実装順序 | COMPLETE（[phase3-implementation-order.md](phase3-implementation-order.md)） |
+| Blocker 一覧 | COMPLETE（[blockers.md](blockers.md)） |
+| Merge Ledger | COMPLETE（[merge-ledger.md](merge-ledger.md)） |
+
 ## 大前提（実測に基づく事実）
 
 - `main` は `origin/main` と一致（未push差分なし）。ただし作業ツリーに evidence JSON 3ファイルの dirty 差分がある（生成時刻の再現のみ。壊さない・触らない）。
