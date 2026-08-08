@@ -2222,6 +2222,13 @@ export const ja = {
       colStation: "測点",
       statusSelection: "選択",
       statusOk: "OK",
+      validationTitle: "検証",
+      validationOk: "問題なし",
+      validationRun: "検証を実行",
+      validationHide: "検証を隠す",
+      formAbutmentType: "橋台形式",
+      formPierType: "橋脚形式",
+      formTypeSelected: "選択中",
     },
   },
 };

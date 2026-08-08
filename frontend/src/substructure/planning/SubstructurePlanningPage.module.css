@@ -272,6 +272,45 @@
   flex-shrink: 0;
 }
 
+.issueFatal {
+  color: #fca5a5;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.issueWarn {
+  color: #fdba74;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.issueInfo {
+  color: #93c5fd;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.issueOk {
+  color: #86efac;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.validateButton {
+  margin-top: 6px;
+  background: var(--th-color-panel-raised, #1d2b45);
+  color: var(--th-color-text, #f1f5f9);
+  border: 1px solid var(--th-color-border, rgba(255, 255, 255, 0.08));
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.validateButton:hover {
+  border-color: var(--th-color-primary, #3b82f6);
+}
+
 .statusBadge {
   padding: 1px 8px;
   border-radius: 10px;
