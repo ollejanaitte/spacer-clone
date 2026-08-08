@@ -26,16 +26,15 @@ REQUIRED_FILES = [
 
 REQUIRED_COLUMNS = {
     "duplicate_geometry_logic_register.csv": [
-        "audit_id", "subsystem", "file_path", "function_or_type", "responsibility",
-        "geometry_operation", "current_source_of_truth", "duplicate_with", "risk",
-        "proposed_owner", "proposed_action", "notes"],
+        "audit_id", "subsystem", "file_path", "function_or_type", "geometry_operation",
+        "current_owner", "duplicate_with", "risk", "proposed_owner", "proposed_action",
+        "status", "notes"],
     "existing_connector_inventory.csv": [
-        "connector_id", "from_system", "to_system", "current_file", "input_type",
-        "output_type", "coordinate_transform", "ownership", "duplication", "status",
-        "proposed_future_role"],
+        "connector_id", "from_system", "to_system", "file_path", "input_type",
+        "output_type", "transform", "current_owner", "future_owner", "reuse_status"],
     "responsibility_conflict_register.csv": [
-        "conflict_id", "description", "subsystem_a", "subsystem_b", "current_behavior",
-        "evidence", "resolution_plan", "phase"],
+        "conflict_id", "responsibility", "system_a", "system_b", "current_behavior",
+        "proposed_authority", "migration_action", "severity", "status"],
 }
 
 REQUIRED_MARKERS = {
@@ -62,14 +61,20 @@ def main():
             continue
         if rel.endswith(".csv"):
             with open(p, newline="", encoding="utf-8") as f:
-                rows = list(csv.DictReader(f))
-            headers = list(rows[0].keys()) if rows else []
+                raw = list(csv.reader(f))
+            headers = raw[0] if raw else []
+            rows = [dict(zip(headers, r)) for r in raw[1:]]
             for col in REQUIRED_COLUMNS.get(os.path.basename(rel), []):
                 checks += 1
                 if col not in headers:
                     fails.append(f"{rel} missing column: {col}")
             if not rows:
                 fails.append(f"{rel} empty")
+            checks += 1
+            ncols = len(raw[0]) if raw else 0
+            malformed = [i + 1 for i, row in enumerate(raw[1:], start=1) if len(row) != ncols]
+            if malformed:
+                fails.append(f"{rel} malformed rows (field count != header count): {malformed}")
         else:
             text = open(p, encoding="utf-8").read().lower()
             for m in REQUIRED_MARKERS.get(os.path.basename(rel), []):
