@@ -42,3 +42,9 @@ export {
   convertLengthMetersToMillimeters,
   createSupportSelectionKey,
 } from "./builder";
+
+export {
+  buildSnapshotSolidParameters,
+  SNAPSHOT_3D_DEFAULTS,
+  type Snapshot3dBuildOptions,
+} from "./snapshot3d";
