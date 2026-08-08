@@ -101,6 +101,8 @@ export interface BpUnitContext {
 export interface BpAlignmentStation {
   readonly stationM: BpValue; // physical distance (m)
   readonly position: BpVec3; // global x/y/z (m)
+  readonly tangent: BpVec3; // unit local basis (travel direction)
+  readonly transverse: BpVec3; // unit local basis (right-positive)
   readonly azimuthRad: BpValue; // tangent heading (rad)
   readonly curvaturePerM: BpValue; // 1/m (0 for straight)
   readonly grade?: BpValue; // vertical grade ratio
