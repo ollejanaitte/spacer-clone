@@ -1,0 +1,15 @@
+check_id,check_name,status,required_evidence_source,required_evidence_locator,decision_id,notes
+M3-CHK-STABILITY-OVERTURNING,安定照査-転倒,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,partial factor / clause TBD,未発行,DS-04/05 numeric adoption required
+M3-CHK-STABILITY-SLIDING,安定照査-滑動,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,partial factor / clause TBD,未発行,DS-04/05 numeric adoption required
+M3-CHK-STABILITY-BEARING,安定照査-支持力,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,ground bearing clause TBD,未発行,地盤定数も未 ADOPTED
+M3-CHK-STABILITY-FLOAT,安定照査-浮上,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,flotation clause TBD,未発行,対象形式で要否確認
+M3-CHK-MEMBER-PIER-FLEXURE,橋脚-曲げ照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅲ コンクリート部材・Ⅳ 下部構造編,flexural check clause TBD,未発行,DS-05 resistance side
+M3-CHK-MEMBER-PIER-SHEAR,橋脚-せん断照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅲ コンクリート部材・Ⅳ 下部構造編,shear check clause TBD,未発行,DS-05 resistance side
+M3-CHK-MEMBER-ABUTMENT,橋台-部材照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅲ コンクリート部材・Ⅳ 下部構造編,member check clause TBD,未発行,DS-05 resistance side
+M3-CHK-FOUNDATION-SOIL,基礎-地盤支持力照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,ground bearing clause TBD,未発行,地盤定数未 ADOPTED
+M3-CHK-PILE-STRUCTURE,杭-杭体照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,pile capacity clause TBD,未発行,杭支持力式・係数未 ADOPTED
+M3-CHK-PILE-GROUP,杭-群杭照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅳ 下部構造編,group pile clause TBD,未発行,同上
+M3-CHK-SEISMIC-L1,耐震-レベル1照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅴ 耐震設計編,seismic level1 clause TBD,未発行,耐震設計法未 ADOPTED
+M3-CHK-SEISMIC-L2,耐震-レベル2照査,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅴ 耐震設計編,seismic level2 clause TBD,未発行,同上
+M3-CHK-REBAR-REQUIRED,配筋-必要鉄筋量,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅲ コンクリート部材・Ⅳ 下部構造編,rebar requirement clause TBD,未発行,配筋ルール未 ADOPTED
+M3-CHK-REBAR-SPACING,配筋-間隔・かぶり,HOLD_NOT_AVAILABLE,道路橋示方書・同解説 Ⅲ コンクリート部材・Ⅳ 下部構造編,spacing/cover clause TBD,未発行,同上
