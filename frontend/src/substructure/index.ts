@@ -44,3 +44,6 @@ export * from "./design/superstructureEnvelope";
 // Phase C1 (M3-03) 設計計算エンジン（フレームワーク）。
 export * from "./design/geometricQuantity";
 export * from "./design/designEngine";
+// Phase C1 (M3-04) 耐震・配筋フレームワーク。
+export * from "./design/seismicDesign";
+export * from "./design/reinforcementDesign";
