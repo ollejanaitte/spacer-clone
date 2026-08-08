@@ -48,3 +48,8 @@ export {
   SNAPSHOT_3D_DEFAULTS,
   type Snapshot3dBuildOptions,
 } from "./snapshot3d";
+
+export {
+  buildSnapshotVisualizationModel,
+  type SnapshotVisualizationOptions,
+} from "./snapshotVisualizationModel";
