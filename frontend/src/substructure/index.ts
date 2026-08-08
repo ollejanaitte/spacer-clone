@@ -35,3 +35,5 @@ export * from "./planning/formToSupport";
 export * from "./planning/SubstructurePlanningHost";
 // Phase C1 (M2-09C) LINER → 下部工 handoff。
 export * from "./planning/linerHandoff";
+// Phase C1 (M3-01) プロジェクト永続化。
+export * from "./planning/persistence";

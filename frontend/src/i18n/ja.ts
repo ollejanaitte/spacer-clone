@@ -2268,6 +2268,8 @@ export const ja = {
       reviewTabEntryTitle: "下部工計画",
       reviewTabEntryDescription: "LINER支点を引き継いで下部工の計画・2D/3D表示を行います。",
       openPlanning: "下部工計画を開く",
+      saveProject: "保存",
+      loadProject: "読込",
     },
   },
 };

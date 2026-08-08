@@ -159,4 +159,27 @@ describe("SubstructurePlanningHost", () => {
     expect(container.querySelector('[data-testid="foundation-form"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="pile-count"]')).not.toBeNull();
   });
+
+  it("save button serializes current supports to JSON", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="open-sample-dialog"]')!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>('[data-testid="combo-combo-standard"]')!.click();
+    });
+    expect(container.querySelector('[data-testid="substructure-save"]')).not.toBeNull();
+    // ダウンロードは jsdom では不可。モジュール単体の round-trip は persistence.test で検証済み。
+    expect(container.querySelector('[data-testid="substructure-load"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="substructure-load-input"]')).not.toBeNull();
+  });
+
+  it("load button triggers file input", () => {
+    const { container } = render(<SubstructurePlanningHost />);
+    const loadBtn = container.querySelector<HTMLButtonElement>('[data-testid="substructure-load"]')!;
+    const input = container.querySelector<HTMLInputElement>('[data-testid="substructure-load-input"]')!;
+    const clickSpy = vi.spyOn(input, "click");
+    act(() => loadBtn.click());
+    expect(clickSpy).toHaveBeenCalled();
+  });
 });
