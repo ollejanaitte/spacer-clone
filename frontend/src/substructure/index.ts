@@ -11,3 +11,5 @@ export * from "./FoundationSolidGenerator";
 export * from "./PlanProjection";
 // Phase C1 (M2-01) 3D ソリッド→THREE 変換層（純粋）。
 export * from "./viewer3d/threeFactory";
+// Phase C1 (M2-02) 3ペインCAD UI Shell。
+export * from "./planning/SubstructurePlanningPage";
