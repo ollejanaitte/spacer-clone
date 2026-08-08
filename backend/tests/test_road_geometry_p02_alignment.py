@@ -89,11 +89,12 @@ class TestCenterPose:
         with pytest.raises(RoadGeometryError):
             road_geometry_api.evaluate(request)
 
-    def test_cross_section_inputs_still_deferred(self):
+    def test_cross_section_inputs_merged_in_p03(self):
         from backend.rule_engine.crosssection.model import CrossSectionSegment
         request = RoadGeometryRequest(
             alignment_id=ROAD, station=10.0, rows=_rows(),
             left_segments=[CrossSectionSegment(segment_id="l0", side="LEFT", width=3.0)],
         )
-        with pytest.raises(NotImplementedError):
-            road_geometry_api.evaluate(request)
+        result = road_geometry_api.evaluate(request)
+        assert result.ok
+        assert result.total_left_width == 3.0
