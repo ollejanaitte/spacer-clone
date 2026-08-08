@@ -31,6 +31,14 @@ export type SupportPlacementRequest = {
   alignmentId: string;
   /** Optional explicit skew (rad). Defaults to orthogonal (0) when absent. */
   skewRad?: number;
+  /**
+   * Optional explicit support stations (m). When provided (length must equal
+   * supports), these are authoritative sample stations on the alignment; the
+   * span-sum derivation is bypassed. This is the BridgeProject-bound path.
+   */
+  supportStationsM?: number[];
+  /** Optional per-support skew (rad); finite values override `skewRad`. */
+  skewRads?: (number | undefined)[];
 };
 
 export type SupportPlacementResult = {
@@ -129,17 +137,38 @@ export function placeSupportLines(
   connector: AlignmentConnector,
   girderOffsetsM: Record<string, number>,
 ): SupportPlacementResult {
-  const stations = supportStationsFromSpans(
-    request.supports,
-    request.spanLengthsM,
-    request.bridgeLengthM,
-  );
-  const skewRad = request.skewRad ?? 0;
+  const stations =
+    request.supportStationsM !== undefined
+      ? (() => {
+          if (request.supportStationsM.length !== request.supports.length) {
+            throw new Error(
+              `supportStationsM length ${request.supportStationsM.length} != supports ${request.supports.length}`,
+            );
+          }
+          for (let i = 1; i < request.supportStationsM.length; i += 1) {
+            if (request.supportStationsM[i]! <= request.supportStationsM[i - 1]!) {
+              throw new Error(
+                `supportStationsM must be strictly ascending at index ${i}.`,
+              );
+            }
+          }
+          return request.supportStationsM;
+        })()
+      : supportStationsFromSpans(
+          request.supports,
+          request.spanLengthsM,
+          request.bridgeLengthM,
+        );
+  const defaultSkewRad = request.skewRad ?? 0;
   const supportLines: SupportLine[] = [];
   const supportPoints: SupportPoint[] = [];
 
   request.supports.forEach((support, index) => {
     const stationM = stations[index];
+    const skewRad =
+      request.skewRads !== undefined && request.skewRads[index] !== undefined
+        ? request.skewRads[index]!
+        : defaultSkewRad;
     supportLines.push(
       buildSupportLine(support.id, stationM, skewRad, connector, request.alignmentId),
     );
