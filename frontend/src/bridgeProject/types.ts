@@ -160,3 +160,68 @@ export interface BridgeProjectBridgeGeometry {
   readonly unitContext: BpUnitContext;
   readonly generatedBy: string;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 3-4: BridgeProject.Superstructure (shared superstructure facts)
+// ---------------------------------------------------------------------------
+
+export const BRIDGE_PROJECT_SUPERSTRUCTURE_SCHEMA_VERSION = "0.1.0";
+export const BRIDGE_PROJECT_SUPERSTRUCTURE_TOOL_ID = "spacer-bridge-project-superstructure-adapter";
+export const SUPERSTRUCTURE_KIND_PLATE_GIRDER_RC_SLAB_NON_COMPOSITE =
+  "plate_girder_rc_slab_non_composite";
+
+export interface BpGirderArrangement {
+  readonly girderId: string;
+  /** Start offset (m) from the bridge centerline (SUPERSTRUCTURE-owned input). */
+  readonly offsetM: BpValue;
+  /** End offset (m); present for tapered lines. */
+  readonly offsetEndM?: BpValue;
+}
+
+export interface BpDeckFacts {
+  readonly deckId: string;
+  readonly widthM: BpValue; // CONFIRMED / DERIVED
+  /** Thickness is SUPERSTRUCTURE-owned; MISSING when not declared. */
+  readonly thicknessM?: BpValue;
+}
+
+/** Support × girder bearing incidence (which girder bears on which support). */
+export interface BpBearingRelation {
+  readonly supportId: string;
+  readonly girderId: string;
+}
+
+export interface BpSuperstructureAnalysisReference {
+  readonly status: "NOT_AUTHORIZED" | "NOT_AVAILABLE";
+  readonly stateReason?: string;
+}
+
+/**
+ * BridgeProject.Superstructure — the shared superstructure facts that ③ (and
+ * downstream) may consume. Built by `buildBridgeProjectSuperstructure` from the
+ * ② GeometrySnapshot + BSDD + bridge-structure input. Carries provenance and an
+ * explicit authorization state; NEVER upgrades NOT_AUTHORIZED design values.
+ */
+export interface BridgeProjectSuperstructure {
+  readonly schemaVersion: typeof BRIDGE_PROJECT_SUPERSTRUCTURE_SCHEMA_VERSION;
+  readonly documentId: string;
+  readonly revisionId: number;
+  readonly provenance: {
+    readonly createdAt: string;
+    readonly createdBy: string;
+    readonly producer: string;
+  };
+  readonly bridgeId: string;
+  readonly superstructureType: string; // SUPERSTRUCTURE_OWNER declaration
+  readonly spanSystem: "simple" | "continuous";
+  readonly mainGirderArrangement: readonly BpGirderArrangement[];
+  readonly deck?: BpDeckFacts;
+  readonly bearingSupportRelation: readonly BpBearingRelation[];
+  readonly analysisReference: BpSuperstructureAnalysisReference;
+  /** 3D reference (deterministic snapshot fingerprint), not the geometry itself. */
+  readonly model3DReference?: {
+    readonly snapshotFingerprint: string;
+    readonly snapshotVersion: string;
+  };
+  readonly generatedBy: string;
+}
