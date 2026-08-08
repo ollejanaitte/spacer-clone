@@ -54,3 +54,5 @@ export * from "./planning/DesignResultPanel";
 export * from "./design/calculationAdapter";
 // Phase C1 (A-02) 橋脚モデル → Adapter 入力マッパー。
 export * from "./design/adapterMapper";
+// Phase C1 (A-03) Test / Mock Calculation Engine。
+export * from "./design/testCalculationEngine";
