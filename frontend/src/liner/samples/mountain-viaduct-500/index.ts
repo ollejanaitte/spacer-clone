@@ -5,3 +5,4 @@ export * from "./horizontal";
 export * from "./horizontalFixture";
 export * from "./verticalFixture";
 export * from "./bridgeFixture";
+export * from "./terrain";
