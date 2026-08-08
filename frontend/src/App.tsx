@@ -51,6 +51,7 @@ import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerFormalDrawingWorkspacePage } from "./liner/pages/LinerFormalDrawingWorkspacePage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
+import { buildMountainDraft } from "./liner/samples/mountain-viaduct-500/fixture";
 import {
   linerDraftFromProject,
   tryWithProjectLinerDraft,
@@ -354,6 +355,13 @@ export function App() {
     commitProject(withProjectLinerDraft(project, draft));
     navigatePro(resolveLinerUiRoutePath("liner.setup"));
     log(`LINER model ${draft.alignment.linerModelId} created.`);
+  }, [project, navigatePro, commitProject]);
+
+  const createMountainSampleModel = useCallback(() => {
+    const draft = buildMountainDraft();
+    commitProject(withProjectLinerDraft(project, draft));
+    navigatePro(resolveLinerUiRoutePath("liner.setup"));
+    log(`Mountain Viaduct 500 sample loaded.`);
   }, [project, navigatePro, commitProject]);
 
   const openLinearCoordinateLauncher = useCallback(() => {
@@ -903,6 +911,7 @@ export function App() {
         onClose={() => navigatePro("/pro")}
         onOpenGui={createLinerModel}
         onOpenImporter={() => navigatePro(resolveImporterStartupRoutePath())}
+        onOpenSample={createMountainSampleModel}
       />
     );
   }
