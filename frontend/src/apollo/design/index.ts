@@ -20,3 +20,9 @@ export {
   type DesignCheckPart,
   type DesignResult,
 } from "./designResult";
+export {
+  RB001_DECLARED_CHECKS,
+  runChecks,
+  type CheckKind,
+  type DeclaredCheck,
+} from "./checkFramework";
