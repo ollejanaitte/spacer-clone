@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { LinearAlignment } from "../../liner/core/types";
 import { DefaultGeometryEngine, computeFingerprint } from "./engine";
 import type { GeometryEngineInput } from "./contracts";
+import { RB001_GRID_PANEL_SPECS } from "./gridPoints";
 
 const FIXTURE = resolve(
   process.cwd(),
@@ -108,7 +109,7 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
       "GRID-2001",
       "GRID-2027",
     ]);
-    expect(snap.gridPoints.map((g) => g.position.y)).toEqual([
+    expect(snap.gridPoints.map((g) => g.position!.y)).toEqual([
       1.47689, 1.55372, -3.02859, -2.94155,
     ]);
     expect(snap.gridPoints.map((g) => g.state)).toEqual(["CONFIRMED", "CONFIRMED", "CONFIRMED", "CONFIRMED"]);
@@ -174,5 +175,34 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
     expect(snap.deckReferences.map((d) => d.deckId)).toEqual(
       fixture.bridgeGeometry.deck.map((d) => d.id),
     );
+  });
+
+  it("generates the full RB-001 panel structure with HOLD intermediates (Phase 6-2)", () => {
+    const input = buildInput({ gridPanelSpecs: RB001_GRID_PANEL_SPECS });
+    const snap = buildEngine().generateSnapshot(input);
+    expect(snap.gridPoints).toHaveLength(54); // 2 girder lines x 27 panel points
+    const ag1 = snap.gridPoints.filter((g) => g.girderId === "GIRDER-AG1");
+    expect(ag1).toHaveLength(27);
+    expect(ag1[0].gridPointId).toBe("GRID-1001");
+    expect(ag1[26].gridPointId).toBe("GRID-1027");
+    // endpoints CONFIRMED with plane-grid-transformed stations
+    expect(ag1[0].state).toBe("CONFIRMED");
+    expect(ag1[0].stationM).toBeCloseTo(2.45821, 5);
+    expect(ag1[26].stationM).toBeCloseTo(134.001, 5);
+    // intermediates HOLD, no position
+    expect(ag1[1].gridPointId).toBe("GRID-1002");
+    expect(ag1[1].role).toBe("intermediate");
+    expect(ag1[1].state).toBe("HOLD_INSUFFICIENT_SOURCE");
+    expect(ag1[1].position).toBeUndefined();
+    expect(ag1[25].gridPointId).toBe("GRID-1026");
+    const ag2 = snap.gridPoints.filter((g) => g.girderId === "GIRDER-AG2");
+    expect(ag2[0].gridPointId).toBe("GRID-2001");
+    expect(ag2[26].gridPointId).toBe("GRID-2027");
+    expect(ag2[1].state).toBe("HOLD_INSUFFICIENT_SOURCE");
+    // fingerprint differs when panel structure changes (HOLD states counted)
+    const plain = buildEngine().generateSnapshot(buildInput());
+    expect(snap.fingerprint).not.toBe(plain.fingerprint);
+    const again = buildEngine().generateSnapshot(input);
+    expect(snap.fingerprint).toBe(again.fingerprint);
   });
 });

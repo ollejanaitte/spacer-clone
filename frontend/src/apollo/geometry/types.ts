@@ -116,6 +116,40 @@ export type GridPoint = {
   stateReason?: string;
 };
 
+/**
+ * Panel point on a girder line (Phase 6-2). Extends GridPoint with panel
+ * structure. Endpoint panel points carry CONFIRMED station/offset/position;
+ * intermediate panel points whose coordinates were not extracted (RB-001
+ * GRID-1002..1026 / 2002..2026) are `HOLD_INSUFFICIENT_SOURCE` and carry no
+ * position (no interpolation, no fabrication).
+ */
+export type GridPanelPoint = {
+  id: string;
+  gridPointId: string;
+  girderId: string;
+  /** 1-based panel index along the girder line. */
+  panelIndex: number;
+  role: "endpoint" | "intermediate";
+  stationM?: number;
+  offsetM?: number;
+  position?: Vec3;
+  localFrame?: LocalFrame3;
+  state: GeometryValueState;
+  stateReason?: string;
+};
+
+/** Declared panel structure for one girder line (plane-grid coordinates). */
+export type GridPanelSpec = {
+  girderId: string;
+  /** Number of panel points along the girder line (RB-001: 27). */
+  panelCount: number;
+  startGridId: string;
+  endGridId: string;
+  /** Golden plane-grid coordinates of the endpoint panel points. */
+  planeStart?: { x: number; y: number };
+  planeEnd?: { x: number; y: number };
+};
+
 export type CrossSectionFrame = {
   id: string;
   sectionId: string;
@@ -183,7 +217,7 @@ export type GeometrySnapshot = {
   supportLines: SupportLine[];
   supportPoints: SupportPoint[];
   girderLines: GirderLine[];
-  gridPoints: GridPoint[];
+  gridPoints: GridPanelPoint[];
   crossSectionFrames: CrossSectionFrame[];
   deckReferences: DeckReference[];
   bearingPoints: BearingPoint[];

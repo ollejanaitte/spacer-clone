@@ -7,7 +7,7 @@
  * alignment math).
  */
 
-import type { GeometrySnapshot, LocalFrame3, Vec3 } from "./types";
+import type { GeometrySnapshot, GridPanelSpec, LocalFrame3, Vec3 } from "./types";
 
 /**
  * Input contract for the Geometry Engine. Produced by the Geometry Input Adapter
@@ -28,6 +28,8 @@ export type GeometryEngineInput = {
   bridgeLengthM?: number;
   /** Declared girder line offsets (m). `{id}` start offset, `{id}:end` end offset. */
   girderOffsetsM?: Record<string, number>;
+  /** Panel structure per girder line (Phase 6-2); enables full grid generation. */
+  gridPanelSpecs?: GridPanelSpec[];
   /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
   unresolved: UnresolvedSummary[];
 };
