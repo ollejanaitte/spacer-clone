@@ -1,0 +1,44 @@
+{
+  "project": "GM-01",
+  "name": "Hランプ4号橋 (HCL)",
+  "provenance": {
+    "source": "001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF (SRC-004) + builtInSampleDataset.ts",
+    "centerline_length": "PDF 中心線長 164.2476 m / builtInSampleDataset.ts",
+    "section_elevations": "PDF 横断面設計標高 (PH12/GE1/S1/C1..C4)",
+    "note": "X4B-P06 / X4C-P06 既存replayで数値確定済み"
+  },
+  "input": {
+    "alignment": {
+      "alignment_id": "HCL",
+      "origin_station": 0.0,
+      "elements": [
+        {"kind": "straight", "id": "hcl", "length": 164.2476,
+         "parameters": {"startX": 0.0, "startY": 0.0, "azimuth": 0.0}}
+      ]
+    },
+    "profile": null,
+    "sections": [
+      {"station": 0.0000, "center_elevation": 17.6595},
+      {"station": 0.5897, "center_elevation": 17.6550},
+      {"station": 0.6399, "center_elevation": 17.6304},
+      {"station": 8.3121, "center_elevation": 17.5903},
+      {"station": 16.2403, "center_elevation": 17.5200},
+      {"station": 24.1779, "center_elevation": 17.4500},
+      {"station": 32.1547, "center_elevation": 17.3800}
+    ]
+  },
+  "expected": {
+    "centerline_length": 164.2476,
+    "tolerance_m": 1e-3,
+    "stations": [
+      {"station": 0.0000, "x": 0.0000, "y": 0.0, "z": 17.6595},
+      {"station": 8.3121, "x": 8.3121, "y": 0.0, "z": 17.5903},
+      {"station": 16.2403, "x": 16.2403, "y": 0.0, "z": 17.5200},
+      {"station": 32.1547, "x": 32.1547, "y": 0.0, "z": 17.3800}
+    ]
+  },
+  "discrepancies": {
+    "road_width": "DEFERRED (OCR_LIMITED 標準横断図)",
+    "vertical_profile": "DEFERRED (縦断図は別資料)"
+  }
+}
