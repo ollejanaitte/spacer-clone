@@ -1,0 +1,26 @@
+mapping_id,common_model_entity,common_model_id,geometry_input_entity,geometry_entity_type,geometry_entity_id_rule,golden_reference,source_reference,resolution_state,readiness,notes
+GM-001,alignments/ALN-ACL,ALN-ACL,alignment_input,AlignmentReference,ALN-{token},"G-GEO-0001..0004;GIN-0001..0004","CH1-VAL-005;DWG-DIM-S001-001",CONFIRMED,READY,alignment bridge length/spans
+GM-002,bridgeGeometry/supports,SUP-AR2,alignment_input,SupportLine+SupportPoint,SUP-{token},"G-SM-0028..0031;GIN-0025..0028","DWG-MEM-S2;STRMOD",CONFIRMED,READY,support lines at pier/abutment stations
+GM-003,bridgeGeometry/supports,SUP-PR1,alignment_input,SupportLine+SupportPoint,SUP-{token},"G-SM-0029;GIN-0026",,CONFIRMED,READY,
+GM-004,bridgeGeometry/supports,SUP-PR2,alignment_input,SupportLine+SupportPoint,SUP-{token},"G-SM-0030;GIN-0027",,CONFIRMED,READY,
+GM-005,bridgeGeometry/supports,SUP-PU15,alignment_input,SupportLine+SupportPoint,SUP-{token},"G-SM-0028;GIN-0025",,CONFIRMED,READY,
+GM-006,bridgeGeometry/girders,GIRDER-AG1,geometry_input,GirderLine+GirderStationPoint,GIRL-AG1,"G-GEO-0005;GIN-0005;G-SM-0005","DWG-MEM-AG1;STRMOD-011",CONFIRMED,READY,outer girder line
+GM-007,bridgeGeometry/girders,GIRDER-AG2,geometry_input,GirderLine+GirderStationPoint,GIRL-AG2,"G-GEO-0006;GIN-0006;G-SM-0006","DWG-MEM-AG2;STRMOD-012",CONFIRMED,READY,
+GM-008,bridgeGeometry/gridPoints,GRID-1001,geometry_input,GridPoint,GP-{station}-{offset},"GIN-0011..0012;G-SM-0001",,CONFIRMED,READY,endpoint grid point AG1 start
+GM-009,bridgeGeometry/gridPoints,GRID-1027,geometry_input,GridPoint,GP-{station}-{offset},"GIN-0013..0014;G-SM-0002",,CONFIRMED,READY,AG1 end
+GM-010,bridgeGeometry/gridPoints,GRID-2001,geometry_input,GridPoint,GP-{station}-{offset},"GIN-0015..0016;G-SM-0003",,CONFIRMED,READY,AG2 start
+GM-011,bridgeGeometry/gridPoints,GRID-2027,geometry_input,GridPoint,GP-{station}-{offset},"GIN-0017..0018;G-SM-0004",,CONFIRMED,READY,AG2 end
+GM-012,bridgeGeometry/gridPoints,GRID-1002..1026,geometry_input,GridPoint,GP-{station}-{offset},none (Phase 2 not extracted),Phase 2 HOLD register,HOLD_INSUFFICIENT_SOURCE,HOLD,intermediate panel points AG1; no interpolation
+GM-013,bridgeGeometry/gridPoints,GRID-2002..2026,geometry_input,GridPoint,GP-{station}-{offset},none (Phase 2 not extracted),Phase 2 HOLD register,HOLD_INSUFFICIENT_SOURCE,HOLD,intermediate panel points AG2
+GM-014,bridgeGeometry/deck,DECK-01,geometry_input,DeckReferenceLine+DeckBoundary,DKRL-01,"GIN-0019..0020;GIN-0059..0060","CAL-FIG-P00118-001;CH1-VAL-010",CONFIRMED,READY,deck width/thickness
+GM-015,sections/sections,SECTION-DECK,geometry_input,CrossSectionFrame input,XSEC-{station},"GIN-0020;GIN-0050..0052","CH2-VAL-022",CONFIRMED,READY,deck section
+GM-016,sections/sections,SECTION-GIRDER-AG1,geometry_input,CrossSectionFrame input,XSEC-{station},"G-DES-0003/0005/0011;G-AD-0003/0005/0007","DS-003;DR-220",CONFLICT,CONFLICT,CONF-P2II-001 bottom flange 680 vs 700 mm unresolved
+GM-017,structuralModel/nodes,NODE-1001/1027/2001/2027,geometry_input,GridPoint/StructuralModel node,NODE-{station},"G-SM-0001..0004","CAL-TBL-P00141-001",CONFIRMED,READY,structural endpoint nodes
+GM-018,structuralModel/nodes,NODE-1002..1026,geometry_input,StructuralModel node,NODE-{station},none,Phase 2 HOLD register,HOLD_INSUFFICIENT_SOURCE,HOLD,intermediate panel nodes AG1
+GM-019,structuralModel/nodes,NODE-2002..2026,geometry_input,StructuralModel node,NODE-{station},none,Phase 2 HOLD register,HOLD_INSUFFICIENT_SOURCE,HOLD,intermediate panel nodes AG2
+GM-020,structuralModel/members,MEMBER-* (20),geometry_input,MemberPlacementReference,MBR-{token},"G-SM-0005..0024","DWG-MEM-AG1;STRMOD",CONFIRMED,READY,main + cross + bracing members
+GM-021,bridgeGeometry/girders,GIRDER-AG1/AG2 cross beams,geometry_input,CrossGirderReference,XGR-{station},"G-SM-0007..0012","DWG-MEM-GE1;STRMOD",CONFIRMED,READY,cross girders GE1/GE2/C1-C7...
+GM-022,bridgeGeometry/supports,bearings (per support),geometry_input,BearingReferencePoint,BRG-{support}-{girder},"G-GEO-00xx;G-DES bearings","GEO-xxx",CONFIRMED,READY,bearing reference points
+GM-023,drawingSpecification/items,DWG-* HCR-001 (91),geometry_input,drawing reference,HCR propagate,"G-DWG-xxxx (HCR-001)",DWG-S141,HUMAN_CONFIRMATION_REQUIRED,READY_WITH_HUMAN_TRACK,sheet 141 OCR; not geometry-blocking
+GM-024,analysisReference,analysisReference,geometry_input,N/A,N/A,none,Phase 4 seal,NOT_AVAILABLE,NOT_APPLICABLE,Analysis Golden = 0
+GM-025,materials/materials,MAT-*,geometry_input,material reference,N/A,"GIN-0047..0055","DS-03 register",CONFIRMED,READY,material properties for section geometry
