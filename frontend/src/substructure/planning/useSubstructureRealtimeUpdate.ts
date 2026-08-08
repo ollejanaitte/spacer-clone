@@ -13,7 +13,9 @@ import {
   type SolidGroup,
 } from "../SubstructureSolidGenerator";
 import { projectAll, type PlanProjection } from "../PlanProjection";
+import { computeAllPlacements } from "../SupportPlacementEngine";
 import type { Support, SupportPlacementSnapshot } from "../model";
+import type { Coordinate3dInput } from "../../liner/core/coordinate3d";
 
 export const REALTIME_3D_DEBOUNCE_MS = 300;
 
@@ -60,16 +62,51 @@ export function makeSnapshots(
 }
 
 /**
+ * Real placement snapshots: when a LINER Coordinate3dInput is available, use
+ * the SupportPlacementEngine (single source of alignment = LINER) so position /
+ * tangent / transverse reflect the actual alignment and skew. Fatal placement
+ * errors are propagated (fail-closed). Falls back to the placeholder only when
+ * no alignment input exists.
+ */
+export function makePlacementSnapshots(
+  supports: readonly Support[],
+  coordinateInput: Coordinate3dInput | null,
+): Map<string, SupportPlacementSnapshot> {
+  if (coordinateInput === null) {
+    return makeSnapshots(supports);
+  }
+  const output = computeAllPlacements(supports, coordinateInput);
+  const map = new Map<string, SupportPlacementSnapshot>();
+  supports.forEach((support, index) => {
+    const result = output.results[index];
+    if (result === undefined || result.diagnostics.some((d) => d.severity === "fatal")) {
+      throw new Error(
+        `Placement failed for support ${support.supportId}: ${result?.diagnostics
+          .filter((d) => d.severity === "fatal")
+          .map((d) => d.message)
+          .join(" / ")}`,
+      );
+    }
+    map.set(support.supportId, result.snapshot);
+  });
+  return map;
+}
+
+/**
  * リアルタイム更新を管理する。
  * 2D は supports 変更毎に即時。3D は 300ms debounce。FATAL は throw を捕捉して停止。
  */
 export function useSubstructureRealtimeUpdate(
   supports: readonly Support[],
+  coordinateInput?: Coordinate3dInput | null,
 ): RealtimeOutput {
   const [latestSupports, setLatestSupports] = useState<readonly Support[]>(supports);
   const [groups, setGroups] = useState<SolidGroup[]>(() => {
     try {
-      return buildAllSupportSolids(supports as never, makeSnapshots(supports));
+      return buildAllSupportSolids(
+        supports as never,
+        makePlacementSnapshots(supports, coordinateInput ?? null),
+      );
     } catch {
       return [];
     }
@@ -87,28 +124,31 @@ export function useSubstructureRealtimeUpdate(
   // 2D 即時投影は毎 render で計算（軽量）
   const projections = useMemo<PlanProjection[]>(() => {
     try {
-      const snapshots = makeSnapshots(latestSupports);
+      const snapshots = makePlacementSnapshots(latestSupports, coordinateInput ?? null);
       const g = buildAllSupportSolids(latestSupports as never, snapshots);
       return projectAll(g);
     } catch {
       return [];
     }
-  }, [latestSupports]);
+  }, [latestSupports, coordinateInput]);
 
-  const run3D = useCallback((list: readonly Support[]) => {
-    try {
-      const snapshots = makeSnapshots(list);
-      const g = buildAllSupportSolids(list as never, snapshots);
-      setGroups(g);
-      setBlocked(false);
-    } catch {
-      // FATAL → generation stop
-      setGroups([]);
-      setBlocked(true);
-    }
-    regenCountRef.current += 1;
-    setRegenTick((t) => t + 1);
-  }, []);
+  const run3D = useCallback(
+    (list: readonly Support[]) => {
+      try {
+        const snapshots = makePlacementSnapshots(list, coordinateInput ?? null);
+        const g = buildAllSupportSolids(list as never, snapshots);
+        setGroups(g);
+        setBlocked(false);
+      } catch {
+        // FATAL → generation stop
+        setGroups([]);
+        setBlocked(true);
+      }
+      regenCountRef.current += 1;
+      setRegenTick((t) => t + 1);
+    },
+    [coordinateInput],
+  );
 
   const refresh3D = useCallback(() => {
     if (timerRef.current) {
