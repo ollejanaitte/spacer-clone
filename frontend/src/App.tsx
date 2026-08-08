@@ -50,6 +50,7 @@ import { LinerListPage } from "./liner/pages/LinerListPage";
 import { LinerMappingReviewPage } from "./liner/pages/LinerMappingReviewPage";
 import { LinerFormalDrawingWorkspacePage } from "./liner/pages/LinerFormalDrawingWorkspacePage";
 import { LinerPreviewPage } from "./liner/pages/LinerPreviewPage";
+import { LinerMain3DPage } from "./liner/pages/LinerMain3DPage";
 import { createDefaultLinerDraft, type LinerDraftUpdate } from "./liner/adapters/linerUiAdapter";
 import { buildMountainDraft } from "./liner/samples/mountain-viaduct-500/fixture";
 import {
@@ -1148,8 +1149,33 @@ export function App() {
         onClose={() => navigatePro("/pro")}
         onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
         onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onOpenMain3D={() => navigatePro(resolveLinerUiRoutePath("liner.main3d"))}
         onOpenDrawings={() => navigatePro(resolveLinerUiRoutePath("liner.drawingPlan"))}
         onOpenMappingReview={() => navigatePro(resolveLinerUiRoutePath("liner.mappingReview"))}
+      />
+    );
+  }
+
+  if (linerRouteId === "liner.main3d") {
+    if (!linerDraft) {
+      return (
+        <LinerListPage
+          project={project}
+          onClose={() => navigatePro("/pro")}
+          onCreate={openLinearCoordinateLauncher}
+          onOpenSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+          onDelete={deleteLinerModel}
+        />
+      );
+    }
+
+    return (
+      <LinerMain3DPage
+        draft={linerDraft}
+        onClose={() => navigatePro("/pro")}
+        onBackToSetup={() => navigatePro(resolveLinerUiRoutePath("liner.setup"))}
+        onBackToPreview={() => navigatePro(resolveLinerUiRoutePath("liner.preview"))}
+        onBackToList={() => navigatePro(resolveLinerUiRoutePath("liner.list"))}
       />
     );
   }
