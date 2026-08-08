@@ -1,0 +1,13 @@
+﻿contract_id,rule_id,formula_type,rule_engine,geometry_engine,boundary_notes,source,description,gen_notes
+CC-001,X2-R-001,TABLE_LOOKUP,RULE_ENGINE,-,-,表1-1,道路区分,-
+CC-002,X2-R-002,TABLE_LOOKUP,RULE_ENGINE,-,-,第13条表,設計速度,-
+CC-003,X2-R-007,TABLE_LOOKUP,RULE_ENGINE,-,-,表3-5/3-6,最小曲線半径,-
+CC-004,X2-R-008,FORMULA,RULE_ENGINE,GEOMETRY_ENGINE,クロソイドA値はRule Engineで判定、座標計算はGeometry Engine委譲,第18条,緩和区間,geometry:座標計算
+CC-005,X2-R-009,TABLE_LOOKUP,RULE_ENGINE,-,-,第16条表,片勾配,-
+CC-006,X2-R-010,TABLE_LOOKUP,RULE_ENGINE,-,-,第19条表,視距,-
+CC-007,X2-R-011,TABLE_LOOKUP,RULE_ENGINE,-,-,第20条表,縦断勾配,-
+CC-008,X2-R-012,TABLE_LOOKUP,RULE_ENGINE,-,-,第22条表,縦断曲線,-
+CC-009,X2-R-013,TABLE_LOOKUP,RULE_ENGINE,-,-,第24条表,横断勾配,-
+CC-010,X2-R-015,FORMULA,RULE_ENGINE,GEOMETRY_ENGINE,格点間距離はRule Engineで判定、LDISTで計算,LINER 5.8.2,格点間距離,geometry:LDIST
+CC-011,X2-R-016,FORMULA,RULE_ENGINE,-,-,実案件,ブレーキ測点補正,-
+CC-012,X2-R-018,CONDITIONAL,RULE_ENGINE,-,-,第18条/第15条,例外判定,-

@@ -1,0 +1,2 @@
+﻿capability,primary_file,duplicate_file,duplicate_type,risk,resolution,action,notes
+HORIZONTAL_EVALUATION,frontend/src/liner/core/geometry/horizontal.ts,-,独自,NONE,-,KEEP,既存を唯一の正本として維持

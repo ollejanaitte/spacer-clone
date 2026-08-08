@@ -1,0 +1,8 @@
+﻿step,pr,title,priority,rules,dependency,files,gate,notes
+X3-S-01,X3-P01,Core Infrastructure,P0,"Rule Registry, Loader, Evaluator, Validator, Trace",-,backend/rule_engine/,PASS,Core Engine基盤
+X3-S-02,X3-P02,Vertical Slice,P0,"X2-R-001(道路区分), X2-R-002(設計速度), X2-R-007(最小曲線半径)",X3-S-01,backend/rule_engine/rules/,PASS,最小Sliceで全体開通
+X3-S-03,X3-P03,Core Road Rules,P0,"X2-R-003,004,005,006,013",X3-S-02,backend/rule_engine/rules/,PASS,基本道路Rule
+X3-S-04,X3-P04,Alignment Rules,P0,"X2-R-008,009,010,011,012,018",X3-S-03,backend/rule_engine/rules/,PASS,線形Rule
+X3-S-05,X3-P05,Interfaces,P1,"Geometry Interface, Road-Bridge Contract",X3-S-04,backend/rule_engine/,PASS,Interface接続
+X3-S-06,X3-P06,Integration,P0,"Regression, Typecheck, Build, Full Tests",X3-S-05,-,PASS,全体Regression
+X3-S-07,X3-P07,Completion,-,"X4 Gate, Final Report",X3-S-06,-,PASS,X4 Gate

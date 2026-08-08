@@ -1,0 +1,11 @@
+file,component,pr,description,action
+backend/rule_engine/alignment/model.py,alignment model,P01,canonical Alignment型+builder,NEW
+backend/rule_engine/alignment/station.py,station progression,P02,station lookup,NEW
+backend/rule_engine/alignment/solver.py,evaluation,P03,Station→XY/tangent/curvature (Kernel委譲),NEW
+backend/rule_engine/alignment/continuity.py,continuity,P04,continuity+semantic points,NEW
+backend/rule_engine/alignment/adapters.py,adapters,P05,Rule/Road→Bridge contract,NEW
+backend/rule_engine/alignment/__init__.py,public api,各Step,re-export,NEW
+backend/rule_engine/rules/*.py,rule engine,P05,geometry_interface接続(最小),WRAP
+backend/tests/test_alignment_*.py,tests,P01-P06,step tests,NEW
+docs/liner/research/phase-x4b-alignment-solver/,docs,P00-P07,phase docs,NEW
+frontend/**,existing canonical,no change,-,KEEP

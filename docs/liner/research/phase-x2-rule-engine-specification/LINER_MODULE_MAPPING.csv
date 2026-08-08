@@ -1,0 +1,13 @@
+﻿mapping_id,rule_id,title,liner_module,liner_function,interface_type,status
+LM-001,X2-R-001,道路区分,LINER/INPUT,件名・出力オプション,rule_id,READY
+LM-002,X2-R-002,設計速度,LINER/INPUT,件名・出力オプション,rule_id,READY
+LM-003,X2-R-007,最小曲線半径,LINER/INPUT,要素入力(円要素R),rule_id,READY
+LM-004,X2-R-008,緩和区間(クロソイド),LINER/INPUT,要素入力(クロソイド要素A),rule_id,READY
+LM-005,X2-R-009,片勾配,LINER/INPUT,高さデータ(横断勾配),rule_id,READY
+LM-006,X2-R-010,視距,LINER/OUTPUT,帳票,rule_id,READY
+LM-007,X2-R-011,縦断勾配,LINER/INPUT,高さデータ(縦断勾配),rule_id,READY
+LM-008,X2-R-012,縦断曲線,LINER/INPUT,高さデータ(縦断勾配),rule_id,READY
+LM-009,X2-R-013,横断勾配,LINER/INPUT,高さデータ(横断勾配),rule_id,READY
+LM-010,X2-R-015,格点間距離,LINER/LDIST,格点間距離チェック,rule_id,READY
+LM-011,X2-R-016,ブレーキ測点,LINER/INPUT,測点設定,rule_id,READY
+LM-012,X2-R-017,座標変換,LINER/INPUT,座標変換(TRAN),rule_id,READY
