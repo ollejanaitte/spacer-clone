@@ -14,7 +14,7 @@
 | #718 | P2 responsibility boundary | `research/bridge-project-phase1-2` | `2344c87` | `a370f2c05e3ddf8dbb2d22a4e74024cee8034010` | docs only |
 | #719 | P3 BridgeProject contract + CBDM value-state extension | `research/bridge-project-phase1-2` | `a370f2c0` | `d479d93266c83dc59942dff472987f37a237f554` | typecheck + contracts 280 tests + adapters + P5 validator |
 | #720 | P4 adapter boundaries + CASE A/B sequences | `research/bridge-project-phase1-2` | `d479d932` | `cd1f315973ec88f6b2c54234dad91db12a64f151` | docs only |
-| #721 | P5 closeout (phase3 order / blockers / ledger) | `research/bridge-project-phase1-2` | `cd1f3159` | （merge 後に記録） | docs only |
+| #721 | P5 closeout (phase3 order / blockers / ledger) | `research/bridge-project-phase1-2` | `cd1f3159` | `e83a7f1b74535d8be8990ff333421f3e34041fb3` | docs only |
 
 ## 作業ブランチ
 - `research/bridge-project-phase1-2`（worktree: `/tmp/opencode/bridge-project-phase1-2`）
