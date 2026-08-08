@@ -19,11 +19,11 @@ export const MOUNTAIN_TERRAIN_SETTINGS: MountainTerrainSettings = {
   extentM: 500,
 };
 
-/** Deep valley window (station) that centres the large valley under the bridge. */
-export const DEEP_VALLEY_CENTRE = 250;
+/** Deep valley window (real road x-axis) that centres the large valley under the bridge. */
+export const DEEP_VALLEY_CENTRE = 200;
 export const DEEP_VALLEY_HALF_WIDTH = 70;
 export const DEEP_VALLEY_DEPTH = 18;
-export const VALLEY_EDGE_ELEVATION = 36;
+export const VALLEY_EDGE_ELEVATION = 34;
 
 /** Deterministic hash of a grid coordinate (fixed seed). */
 export function terrainHash(xIndex: number, yIndex: number, seed: number): number {
@@ -54,10 +54,11 @@ export function terrainElevation(
   const fx = (x / cellSizeM) - xIndex;
   const fy = (y / cellSizeM) - yIndex;
 
-  // Deep valley centred around station 250 (±70), depth ~18 m below the
-  // surrounding terrain (edge elevation ~36 m). Road Z over the bridge ranges
-  // ~36–47 m, so the valley floor sits clearly below the deck -> tall piers
-  // at the centre (P4 ~25 m) while A1/P1 (low) and P7/A2 (low) stay positive.
+  // Deep valley centred on the road's real x ~200 (P4 area). Depth ~18 m below
+  // the surrounding terrain (edge elevation ~34 m). Road Z over the bridge
+  // ranges ~36–47 m, so the valley floor sits clearly below the deck -> tall
+  // piers at the centre (P4 ~25 m) while A1/P1 (low) and P7/A2 (low) stay
+  // positive. The road snakes in x, so the valley follows the real road x.
   const distanceFromValleyCentre = Math.abs(x - DEEP_VALLEY_CENTRE);
   const valleyFactor = Math.max(
     0,
@@ -82,7 +83,7 @@ export function terrainElevation(
 
   // lateral hills so the valley is deep at the centre and rises at the sides
   const lateral = Math.abs(y) / 200;
-  return base + detail + lateral * 10;
+  return base + detail + lateral * 1.5;
 }
 
 /** Build a heightfield grid (positions + heights) for the 3D terrain mesh. */
