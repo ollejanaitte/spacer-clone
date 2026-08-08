@@ -26,11 +26,11 @@ export function buildMountainVerticalProfile(): VerticalAlignmentDraft {
       // 80–200: crest transition (parabolic) +6% -> -5%
       { type: "parabolic", id: "VP-1", startStation: 80, endStation: 200, startGrade: 0.06, endGrade: -0.05, startElevation: 44.8, length: 120, curveType: "crest" },
       // 200–360: steep descent -5% (bridge over valley)
-      { type: "grade", id: "VG-2", startStation: 200, endStation: 360, startElevation: 41.8, grade: -0.05, length: 160 },
+      { type: "grade", id: "VG-2", startStation: 200, endStation: 360, startElevation: 45.4, grade: -0.05, length: 160 },
       // 360–440: sag transition (parabolic) -5% -> +4%
-      { type: "parabolic", id: "VP-2", startStation: 360, endStation: 440, startGrade: -0.05, endGrade: 0.04, startElevation: 33.8, length: 80, curveType: "sag" },
+      { type: "parabolic", id: "VP-2", startStation: 360, endStation: 440, startGrade: -0.05, endGrade: 0.04, startElevation: 37.4, length: 80, curveType: "sag" },
       // 440–500: final climb +4%
-      { type: "grade", id: "VG-3", startStation: 440, endStation: 500, startElevation: 37.8, grade: 0.04, length: 60 },
+      { type: "grade", id: "VG-3", startStation: 440, endStation: 500, startElevation: 37.0, grade: 0.04, length: 60 },
     ],
   };
 }
