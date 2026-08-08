@@ -48,6 +48,13 @@ from .geometry import (
     local_normal,
     pose_at,
 )
+from .global_xyz import (
+    GlobalXyzError,
+    center_point_global,
+    elevation_contract_status,
+    generate_global_section,
+    point_global,
+)
 
 __all__ = [
     "CrossSectionError",
@@ -86,4 +93,9 @@ __all__ = [
     "generate_local_section",
     "local_normal",
     "pose_at",
+    "GlobalXyzError",
+    "center_point_global",
+    "elevation_contract_status",
+    "generate_global_section",
+    "point_global",
 ]
