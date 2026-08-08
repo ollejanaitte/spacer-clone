@@ -58,6 +58,16 @@
   cursor: not-allowed;
 }
 
+.toolbarSelect {
+  background: var(--th-color-panel-raised, #1d2b45);
+  color: var(--th-color-text, #f1f5f9);
+  border: 1px solid var(--th-color-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--th-radius, 8px);
+  padding: 6px 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 .body {
   display: flex;
   flex: 1;

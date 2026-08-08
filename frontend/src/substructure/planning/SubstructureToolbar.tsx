@@ -1,6 +1,7 @@
 // Phase C1 (M2-02) 下部工ツールバー（3ペイン Shell 用）
 import { ja } from "../../i18n/ja";
 import type { ViewMode, PanelState } from "./SubstructurePlanningPage";
+import type { DimensionMode } from "./dimensions/dimensionModel";
 import styles from "./SubstructurePlanningPage.module.css";
 
 export interface SubstructureToolbarProps {
@@ -14,6 +15,9 @@ export interface SubstructureToolbarProps {
   canUndo?: boolean;
   canRedo?: boolean;
   extra?: React.ReactNode;
+  /** M2-06: 寸法モード */
+  dimensionMode?: DimensionMode;
+  onDimensionModeChange?: (mode: DimensionMode) => void;
 }
 
 export function SubstructureToolbar(props: SubstructureToolbarProps) {
@@ -62,6 +66,19 @@ export function SubstructureToolbar(props: SubstructureToolbarProps) {
         >
           {t.panelTable ?? "座標表"}
         </button>
+        {props.onDimensionModeChange && (
+          <select
+            className={styles.toolbarSelect}
+            data-testid="dimension-mode"
+            value={props.dimensionMode ?? "off"}
+            onChange={(e) => props.onDimensionModeChange?.(e.target.value as DimensionMode)}
+          >
+            <option value="off">{t.dimOff ?? "寸法OFF"}</option>
+            <option value="main">{t.dimMain ?? "主要寸法"}</option>
+            <option value="selected">{t.dimSelected ?? "選択部材"}</option>
+            <option value="all">{t.dimAll ?? "全寸法"}</option>
+          </select>
+        )}
         <button
           type="button"
           className={styles.toolbarButton}

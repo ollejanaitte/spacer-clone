@@ -10,6 +10,7 @@ import { SubstructureViewport } from "./SubstructureViewport";
 import { useSubstructureRealtimeUpdate } from "./useSubstructureRealtimeUpdate";
 import { SubstructurePropertyPanel } from "./SubstructurePropertyPanel";
 import { SubstructureFormPanel, type FormDataBundle } from "./SubstructureFormPanel";
+import type { DimensionMode } from "./dimensions/dimensionModel";
 import { CoordinateTable } from "./CoordinateTable";
 import { StatusArea } from "./StatusArea";
 import type { Support } from "../model";
@@ -49,6 +50,7 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("3d");
   const [panels, setPanels] = useState<PanelState>({ left: true, right: true, bottom: true });
   const [hoveredSupportId, setHoveredSupportId] = useState<string | null>(null);
+  const [dimensionMode, setDimensionMode] = useState<DimensionMode>("off");
 
   // M2-05: 2D即時 / 3D 300ms debounce のリアルタイム更新
   const realtime = useSubstructureRealtimeUpdate(props.supports);
@@ -77,6 +79,8 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
         canUndo={props.canUndo}
         canRedo={props.canRedo}
         extra={props.toolbarExtra}
+        dimensionMode={dimensionMode}
+        onDimensionModeChange={setDimensionMode}
       />
       <div className={styles.body}>
         {panels.left && (
@@ -100,6 +104,7 @@ export function SubstructurePlanningPage(props: PlanningPageProps) {
             groups={realtime.groups}
             projections={realtime.projections}
             generationBlocked={realtime.generationBlocked}
+            dimensionMode={dimensionMode}
           />
         </main>
         {panels.right && (
