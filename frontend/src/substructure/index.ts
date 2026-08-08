@@ -30,3 +30,6 @@ export * from "./planning/useUndoRedo";
 export * from "./planning/useKeyboardShortcuts";
 // Phase C1 (M2-08) サンプル自動生成。
 export * from "./planning/samples/sampleGenerator";
+// Phase C1 (M2-09A) フォーム→モデル変換・App 統合ホスト。
+export * from "./planning/formToSupport";
+export * from "./planning/SubstructurePlanningHost";

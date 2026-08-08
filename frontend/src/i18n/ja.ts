@@ -2264,6 +2264,7 @@ export const ja = {
       sampleFromLiner: "LINER支点から自動生成",
       sampleClose: "閉じる",
       sampleSupportId: "supportId",
+      backToLiner: "LINERへ戻る",
     },
   },
 };

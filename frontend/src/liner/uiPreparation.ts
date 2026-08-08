@@ -29,6 +29,9 @@ export const LINER_UI_ROUTE_IDS = [
 /** Upper-level launcher for choosing GUI direct input vs Phase 3.6 Importer. */
 export const LINEAR_COORDINATE_LAUNCHER_PATH = "/pro/linear-coordinate";
 
+/** P03 Freeze: 下部工計画 独立ページ ルート。 */
+export const SUBSTRUCTURE_ROUTE_PATH = "/pro/liner/substructure";
+
 /** URL paths under `/pro/liner/*`, matching existing pro-feature routing style. */
 export const LINER_UI_ROUTE_PATHS: Record<LinerUiRouteId, string> = {
   "liner.list": "/pro/liner",
@@ -292,6 +295,14 @@ export type LinerUiAdapterOutput = {
 
 export function resolveLinerUiRoutePath(routeId: LinerUiRouteId): string {
   return LINER_UI_ROUTE_PATHS[routeId];
+}
+
+export function resolveSubstructureRoutePath(): string {
+  return SUBSTRUCTURE_ROUTE_PATH;
+}
+
+export function isSubstructureRoute(pathname: string): boolean {
+  return pathname === SUBSTRUCTURE_ROUTE_PATH;
 }
 
 export function resolveLinerUiRouteId(pathname: string): LinerUiRouteId | null {
