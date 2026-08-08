@@ -22,6 +22,17 @@ from .tables import (
     station_coordinate_table,
     vertical_table,
 )
+from .reports import (
+    DxfDocument,
+    DxfLine,
+    DxfPoint,
+    DxfText,
+    ReportSet,
+    build_report_set,
+    render_dxf,
+    table_to_csv,
+    table_to_html,
+)
 
 __all__ = [
     "curvature_to_radius",
@@ -42,4 +53,13 @@ __all__ = [
     "road_edge_table",
     "station_coordinate_table",
     "vertical_table",
+    "DxfDocument",
+    "DxfLine",
+    "DxfPoint",
+    "DxfText",
+    "ReportSet",
+    "build_report_set",
+    "render_dxf",
+    "table_to_csv",
+    "table_to_html",
 ]
