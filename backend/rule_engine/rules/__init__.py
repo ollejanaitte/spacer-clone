@@ -28,6 +28,7 @@ def load_all_rules() -> List:
     from .widening import WIDENINGRule
     from .curve_length import CURVE_LENGTHRule
     from .superelevation_transition import SUPERELEVATION_TRANSITIONRule
+    from .clearance import CLEARANCERule
     return [
         RoadClassificationRule(),
         DesignSpeedRule(),
@@ -51,4 +52,5 @@ def load_all_rules() -> List:
         WIDENINGRule(),
         CURVE_LENGTHRule(),
         SUPERELEVATION_TRANSITIONRule(),
+        CLEARANCERule(),
     ]
