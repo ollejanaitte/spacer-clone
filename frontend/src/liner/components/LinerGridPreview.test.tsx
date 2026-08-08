@@ -40,4 +40,31 @@ describe("LinerGridPreview", () => {
     expect(document.querySelector(".liner-grid-preview-axis")).not.toBeNull();
     expect(document.querySelectorAll(".liner-grid-preview-point").length).toBeGreaterThan(0);
   });
+
+  it("renders with schematic payload and visual state (S3-UX02)", () => {
+    const { viewModel } = buildLinerPreviewFromDraft(createDefaultLinerDraft());
+    const payload: import("../core/visual/contract").DiagramPayload = {
+      plane: "PLAN",
+      objects: [],
+      mappings: [],
+      highlights: [],
+      warnings: [],
+      errors: [],
+      selectedObjectId: undefined,
+      geometryRef: {},
+    };
+
+    render(
+      <LinerGridPreview
+        viewModel={viewModel}
+        diagramPayload={payload}
+        visualState="INPUT"
+      />,
+    );
+
+    expect(document.querySelector("[data-testid=liner-grid-preview]")).not.toBeNull();
+    const axis = document.querySelector(".liner-grid-preview-axis");
+    expect(axis).not.toBeNull();
+    expect(axis?.getAttribute("stroke")).toBe("#94a3b8");
+  });
 });
