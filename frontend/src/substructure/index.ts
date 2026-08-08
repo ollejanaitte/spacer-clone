@@ -50,3 +50,5 @@ export * from "./design/reinforcementDesign";
 // Phase C1 (M3-05) 計算結果UI・成果物。
 export * from "./design/calculationOutput";
 export * from "./planning/DesignResultPanel";
+// Phase C1 (A-01) Design Calculation Adapter 契約。
+export * from "./design/calculationAdapter";
