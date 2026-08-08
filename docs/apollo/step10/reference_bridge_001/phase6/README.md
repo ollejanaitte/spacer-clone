@@ -9,10 +9,9 @@
 
 | PR | Scope | Branch (recommended) | Status |
 |----|-------|----------------------|--------|
-| P6-0-A | Existing architecture audit | `docs/apollo-step10-p6-0-a-geometry-architecture-audit` | CURRENT |
-| P6-0-B | Geometry architecture + responsibility freeze | `docs/apollo-step10-p6-0-b-geometry-architecture-freeze` | pending |
-| P6-0-C | Connector + coordinate + geometry entity freeze | `docs/apollo-step10-p6-0-c-connector-coordinate-freeze` | pending |
-| P6-0-D | Master validation + backlog + closeout + seal | `docs/apollo-step10-p6-0-d-geometry-design-seal` | pending |
+| PR-1 | Architecture audit + Geometry architecture freeze | `docs/apollo-step10-p6-0-pr1-architecture-freeze` | CURRENT |
+| PR-2 | Connector + coordinate + geometry entity freeze | `docs/apollo-step10-p6-0-pr2-connector-coordinate-entity` | pending |
+| PR-3 | Reference mapping + validation + backlog + closeout + seal | `docs/apollo-step10-p6-0-pr3-validation-seal` | pending |
 
 ## Directory layout
 
