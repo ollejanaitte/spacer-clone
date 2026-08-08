@@ -223,6 +223,16 @@ function sampleStation(
       y: bpDerived(y, "m", `pointAtStationOffset(${station},0).y`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
       z: bpDerived(z, "m", `pointAtStationOffset(${station},0).z`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
     },
+    tangent: {
+      x: bpDerived(point.value.localFrame.tangent.x, "m", `pointAtStationOffset(${station},0).localFrame.tangent.x`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+      y: bpDerived(point.value.localFrame.tangent.y, "m", `pointAtStationOffset(${station},0).localFrame.tangent.y`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+      z: bpDerived(point.value.localFrame.tangent.z, "m", `pointAtStationOffset(${station},0).localFrame.tangent.z`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+    },
+    transverse: {
+      x: bpDerived(point.value.localFrame.normal.x, "m", `pointAtStationOffset(${station},0).localFrame.normal.x`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+      y: bpDerived(point.value.localFrame.normal.y, "m", `pointAtStationOffset(${station},0).localFrame.normal.y`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+      z: bpDerived(point.value.localFrame.normal.z, "m", `pointAtStationOffset(${station},0).localFrame.normal.z`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
+    },
     azimuthRad: bpDerived(azimuth, "rad", `pointAtStationOffset(${station},0).azimuth`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
     curvaturePerM: bpDerived(curvature, "1/m", `evaluateAlignmentAtDistance(${physicalDistance}).curvature`, BRIDGE_PROJECT_ALIGNMENT_TOOL_ID),
     grade:
