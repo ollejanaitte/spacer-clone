@@ -14,7 +14,7 @@
 | #731 | P2 BridgeGeometry 数値生成 | `5d1fea02ed4f84d4761940dd3d854655c2935536` |
 | #732 | P3 CBDM 格納 + manifest + round-trip | `8bed902fe4f45ab38d953a362ff832777e258fdd` |
 | #733 | P4 山岳500m E2E + Save/Load/Replay | `3e762c258585fbb034d9051b6ad114142e7f28fc` |
-| #734 | P5 docs + closeout（本 PR） | （merge 後に記録） |
+| #734 | P5 docs + closeout（本 PR） | `b28c6bcb7de02abe5247026b3b1e9fce1491fe11` |
 
 ## 2. 達成事項
 
