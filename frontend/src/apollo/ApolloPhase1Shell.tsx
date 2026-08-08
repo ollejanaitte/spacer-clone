@@ -39,6 +39,7 @@ import { ReportModelDevelopmentPanel } from "./components/ReportModelDevelopment
 import { StandardSectionDrawingPanel } from "./components/StandardSectionDrawingPanel";
 import { GeneralArrangementPanel } from "./components/GeneralArrangementPanel";
 import { OutputIntegrationPanel } from "./components/OutputIntegrationPanel";
+import { SuperstructurePipelinePanel } from "./components/SuperstructurePipelinePanel";
 import { WorkflowControlScreen } from "./components/WorkflowControlScreen";
 import { GuidedModeShell, type GuidedDetailEscape } from "./guided";
 import { scrollWorkflowTargetIntoView } from "./workflow/navigation";
@@ -1712,6 +1713,13 @@ export function ApolloPhase1Shell({
           >
             STLとマニフェストを出力
           </button>
+          <button
+            type="button"
+            data-testid="apollo-open-superstructure-pipeline"
+            onClick={() => setDrawerTarget({ kind: "panel", panelId: "wf-panel-superstructure-pipeline", label: "上部工一気通貫パイプライン" })}
+          >
+            上部工一気通貫パイプライン
+          </button>
         </div>
       </div>
       <div className="apollo-topology-summary" data-testid="apollo-topology-summary">
@@ -2322,6 +2330,8 @@ export function ApolloPhase1Shell({
         return <AnalysisDevelopmentProbePanel />;
       case "wf-panel-output":
         return <OutputIntegrationPanel project={project} />;
+      case "wf-panel-superstructure-pipeline":
+        return <SuperstructurePipelinePanel />;
       default:
         return null;
     }
