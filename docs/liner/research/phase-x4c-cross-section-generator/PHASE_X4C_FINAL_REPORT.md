@@ -3,7 +3,7 @@
 PHASE_X4_C: COMPLETE
 
 REMOTE_INTEGRATION_SHA:
-<sha>
+e8201660382bee602f792cfe6ccfe0df3ebea85f
 
 ## Contract / Kernel status
 
