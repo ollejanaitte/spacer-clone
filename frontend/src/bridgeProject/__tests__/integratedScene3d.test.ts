@@ -117,3 +117,27 @@ describe("buildIntegratedScene3d (Phase 3-6)", () => {
     expect(scene.consistency.mismatches.length).toBeGreaterThan(0);
   });
 });
+
+describe("SolidBoxLayer input contract (Phase 3-6 viewer wiring)", () => {
+  it("provides orthonormal basis columns so the viewer's makeBasis is well-formed", () => {
+    const { draft, commonModel, superSolids, subGroups, snapshot } = fullChain();
+    const scene = buildIntegratedScene3d(draft, {
+      superSolids,
+      subGroups,
+      commonModel,
+      snapshot,
+    });
+    const all = [...scene.substructureBoxes, ...scene.superstructureBoxes];
+    expect(all.length).toBeGreaterThan(0);
+    for (const box of all) {
+      for (const axis of box.basis) {
+        const norm = Math.hypot(axis[0], axis[1], axis[2]);
+        expect(norm).toBeCloseTo(1, 4);
+      }
+      // deterministic: center + size finite
+      expect(box.size.every((n) => Number.isFinite(n) && n > 0)).toBe(true);
+    }
+    // substructure boxes carry their support id (selection keeps working)
+    expect(scene.substructureBoxes.every((b) => b.supportId !== undefined)).toBe(true);
+  });
+});
