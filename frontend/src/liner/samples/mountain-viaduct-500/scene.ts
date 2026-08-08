@@ -29,8 +29,8 @@ export interface RoadLayer3d {
 }
 
 export interface BridgeLayer3d {
-  /** deck / superstructure span polylines (station pairs). */
-  spans: { id: string; startX: number; startY: number; endX: number; endY: number }[];
+  /** deck / superstructure span polylines (station pairs) with deck Z. */
+  spans: { id: string; startX: number; startY: number; startZ: number; endX: number; endY: number; endZ: number }[];
 }
 
 export interface FrameLayer3d {
@@ -93,7 +93,7 @@ export function buildRoadLayer(
   return { points };
 }
 
-/** Bridge deck spans from draft spans. */
+/** Bridge deck spans from draft spans (deck Z = road elevation). */
 export function buildBridgeLayer(draft: BuildIntermediateInput): BridgeLayer3d {
   const spans: BridgeLayer3d["spans"] = [];
   for (const span of draft.spans ?? []) {
@@ -103,8 +103,10 @@ export function buildBridgeLayer(draft: BuildIntermediateInput): BridgeLayer3d {
       id: span.id,
       startX: start.x,
       startY: start.y,
+      startZ: start.z,
       endX: end.x,
       endY: end.y,
+      endZ: end.z,
     });
   }
   return { spans };
