@@ -25,6 +25,7 @@ def load_all_rules() -> List:
     from .coordinate_transform import COORDINATERule as CoordinateTransformRule
     from .validation import VALIDATIONRule as ValidationRule
     from ..alignment.contract import AlignmentGeometryRule
+    from .widening import WIDENINGRule
     return [
         RoadClassificationRule(),
         DesignSpeedRule(),
@@ -45,4 +46,5 @@ def load_all_rules() -> List:
         CoordinateTransformRule(),
         ValidationRule(),
         AlignmentGeometryRule(),
+        WIDENINGRule(),
     ]
