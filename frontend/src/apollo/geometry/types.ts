@@ -178,7 +178,8 @@ export type DeckReference = {
 export type DeckSpec = {
   deckId: string;
   widthM: number;
-  thicknessM: number;
+  /** Optional deck thickness (m); absent when not declared in the shared model. */
+  thicknessM?: number;
   /** Optional deck reference elevation (m). */
   elevationM?: number;
   /** Override centered deck edge offsets. */
