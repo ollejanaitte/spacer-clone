@@ -16,7 +16,7 @@ over the X4-B Alignment Solver and the X4-A Geometry Kernel.
 | X4-B Alignment Solver | **PASS** | 61 passed | `test_alignment_*.py` |
 | X3 Rule Engine | **PASS** | 35 passed | `test_rule_engine_*.py` |
 | Cross Section focused (P06) | **PASS** | 11 passed | `test_crosssection_p06_focused.py` |
-| Cross Section project replay (P06) | **PASS** | 7 passed | `test_crosssection_p06_replay.py` |
+| Cross Section project replay (P06) | **PASS** | 6 passed | `test_crosssection_p06_replay.py` |
 | Cross Section package | **PASS** | 89 passed | `test_crosssection_*.py` |
 
 ## Focused pipeline coverage (test_crosssection_p06_focused.py)

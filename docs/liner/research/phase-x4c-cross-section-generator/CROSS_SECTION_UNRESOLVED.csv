@@ -1,0 +1,8 @@
+id,area,unresolved_item,impact,disposition,references
+UN-001,elevation,Vertical Alignment Solver 未実装 / elevation producer は EXPLICIT_INPUT 依存,center_elevation は呼び出し側入力契約,SEPARATE_X4_PHASE,ELEVATION_PIVOT_CONTRACT.md / X4D_GATE
+UN-002,width,widening_design_rule 未実装,拡幅設計ルールは Range1 未定式,DEFERRED_RULE_LIBRARY,X4C_DISCREPANCY_LEDGER.md XL-012
+UN-003,longitudinal,curve_length_design_rule 未実装,曲線長設計ルール Range1 未定式,DEFERRED_RULE_LIBRARY,X4C_DISCREPANCY_LEDGER.md XL-013
+UN-004,clearance,building_clearance_rule 未実装,建築限界ルール未実装,DEFERRED_RULE_LIBRARY,X4C_DISCREPANCY_LEDGER.md XL-014
+UN-005,pivot,unsupported advanced pivot,（explicit point 以外） 未対応,DEFERRED,PIVOT_CONTRACT supports CENTERLINE/CUSTOM_OFFSET
+UN-006,interpolation,station-dependent width/crossfall interpolation は利用できるが明示提供前提,未対応（明示 state のみ）,DEFERRED,"caller must provide resolved state"
+ur_notes,project_replay,road_width NOT_COMPARABLE (UE-004),width contract explicit-input only,NOT_COMPARABLE,X4C_DISCREPANCY_LEDGER.md XL-010
