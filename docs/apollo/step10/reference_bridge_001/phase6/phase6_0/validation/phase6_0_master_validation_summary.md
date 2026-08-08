@@ -2,7 +2,7 @@
 
 ## Overall
 
-**PHASE6_0_MASTER_VALIDATION: PASS** (39 checks)
+**PHASE6_0_MASTER_VALIDATION: PASS** (40 checks)
 
 ## Validators
 
@@ -12,6 +12,7 @@
 | P6-0 PR-1 architecture freeze | PASS | `OVERALL: PASS (71 checks)` |
 | P6-0 PR-2 connector/coordinate/entity freeze | PASS | `OVERALL: PASS (39 checks)` |
 | P6-0 PR-3A geometry mapping | PASS | `OVERALL: PASS (236 checks)` |
+| P6-0 PR-3C closeout / final report | PASS | `OVERALL: PASS (32 checks)` |
 
 ## Gates
 

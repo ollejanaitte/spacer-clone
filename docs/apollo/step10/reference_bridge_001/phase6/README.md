@@ -9,9 +9,9 @@
 
 | PR | Scope | Branch (recommended) | Status |
 |----|-------|----------------------|--------|
-| PR-1 | Architecture audit + Geometry architecture freeze | `docs/apollo-step10-p6-0-pr1-architecture-freeze` | CURRENT |
-| PR-2 | Connector + coordinate + geometry entity freeze | `docs/apollo-step10-p6-0-pr2-connector-coordinate-entity` | pending |
-| PR-3 | Reference mapping + validation + backlog + closeout + seal | `docs/apollo-step10-p6-0-pr3-validation-seal` | pending |
+| PR-1 | Architecture audit + Geometry architecture freeze | `docs/apollo-step10-p6-0-pr1-architecture-freeze` | MERGED (#565) |
+| PR-2 | Connector + coordinate + geometry entity freeze | `docs/apollo-step10-p6-0-pr2-connector-coordinate-entity` | MERGED (#566) |
+| PR-3 | Reference mapping + validation + backlog + closeout + seal | `docs/apollo-step10-p6-0-pr3-validation-seal` | COMPLETE (#575/#577/closeout) |
 
 ## Directory layout
 
