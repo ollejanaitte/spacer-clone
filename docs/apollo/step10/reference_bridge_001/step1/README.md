@@ -28,23 +28,23 @@ STEP 2 で本実装、STEP 3 で UI 統合・Project Replay・最終製品検証
 
 | # | Deliverable | 文書 | PR |
 |---|-------------|------|----|
-| 1 | MASTER_ARCHITECTURE | `STEP1_P01_MASTER_ARCHITECTURE.md` | P01 |
-| 2 | IMPLEMENTATION_SEQUENCE | `STEP1_P01_IMPLEMENTATION_SEQUENCE.md` | P01 |
-| 3 | DATA_MODEL_SCHEMA_MATRIX | `STEP1_P02_DATA_MODEL_MATRIX.md` | P02 |
-| 4 | COORDINATE_UNIT_CONTRACT | `STEP1_P02_COORDINATE_UNIT_CONTRACT.md` | P02 |
-| 5 | INTERFACE_CONNECTOR_MATRIX | `STEP1_P03_CONNECTOR_MATRIX.md` | P03 |
-| 6 | API_DATAFLOW_MATRIX | `STEP1_P03_API_DATAFLOW_MATRIX.md` | P03 |
-| 7 | CALCULATION_RULE_MATRIX | `STEP1_P05_CALCULATION_RULE_MATRIX.md` | P05 |
-| 8 | UI_SCREEN_MATRIX | `STEP1_P06_UI_SCREEN_MATRIX.md` | P06 |
-| 9 | UI_BUTTON_ACTION_MATRIX | `STEP1_P06_UI_BUTTON_ACTION_MATRIX.md` | P06 |
-| 10 | 3D_CONTRACT | `STEP1_P04_3D_CONTRACT.md` | P04 |
-| 11 | OUTPUT_MATRIX | `STEP1_P07_OUTPUT_MATRIX.md` | P07 |
-| 12 | GOLDEN_MASTER_REPLAY_SPEC | `STEP1_P07_GOLDEN_REPLAY_SPEC.md` | P07 |
-| 13 | TEST_ACCEPTANCE_MATRIX | `STEP1_P08_TEST_ACCEPTANCE_MATRIX.md` | P08 |
-| 14 | ERROR_HOLD_TRACEABILITY_SPEC | `STEP1_P08_ERROR_HOLD_TRACEABILITY.md` | P08 |
-| 15 | RISK_DEPENDENCY_BACKLOG | `STEP1_P09_RISK_BACKLOG.md` | P09 |
-| 16 | STEP2_IMPLEMENTATION_HANDOFF | `STEP1_P10_STEP2_HANDOFF.md` | P10 |
-| 17 | STEP3_INTEGRATION_HANDOFF | `STEP1_P10_STEP3_HANDOFF.md` | P10 |
+| 1 | MASTER_ARCHITECTURE | `STEP1_P01_MASTER_ARCHITECTURE.md` | P01 #599 |
+| 2 | IMPLEMENTATION_SEQUENCE | `STEP1_P01_IMPLEMENTATION_SEQUENCE.md` | P01 #599 |
+| 3 | DATA_MODEL_SCHEMA_MATRIX | `STEP1_P02_DATA_MODEL_MATRIX.md` | P02 #600 |
+| 4 | COORDINATE_UNIT_CONTRACT | `STEP1_P02_COORDINATE_UNIT_CONTRACT.md` | P02 #600 |
+| 5 | INTERFACE_CONNECTOR_MATRIX | `STEP1_P03_CONNECTOR_MATRIX.md` | P03 #603 |
+| 6 | API_DATAFLOW_MATRIX | `STEP1_P03_API_DATAFLOW_MATRIX.md` | P03 #603 |
+| 7 | CALCULATION_RULE_MATRIX | `STEP1_P05_CALCULATION_RULE_MATRIX.md` | P05 #608 |
+| 8 | UI_SCREEN_MATRIX | `STEP1_P06_UI_SCREEN_MATRIX.md` | P06 #610 |
+| 9 | UI_BUTTON_ACTION_MATRIX | `STEP1_P06_UI_BUTTON_ACTION_MATRIX.md` | P06 #610 |
+| 10 | 3D_CONTRACT | `STEP1_P04_3D_CONTRACT.md` | P04 #605 |
+| 11 | OUTPUT_MATRIX | `STEP1_P07_OUTPUT_MATRIX.md` | P07 #613 |
+| 12 | GOLDEN_MASTER_REPLAY_SPEC | `STEP1_P07_GOLDEN_REPLAY_SPEC.md` | P07 #613 |
+| 13 | TEST_ACCEPTANCE_MATRIX | `STEP1_P08_TEST_ACCEPTANCE_MATRIX.md` | P08 #615 |
+| 14 | ERROR_HOLD_TRACEABILITY_SPEC | `STEP1_P08_ERROR_HOLD_TRACEABILITY.md` | P08 #615 |
+| 15 | RISK_DEPENDENCY_BACKLOG | `STEP1_P09_RISK_BACKLOG.md` | P09 #617 |
+| 16 | STEP2_IMPLEMENTATION_HANDOFF | `STEP1_P10_STEP2_HANDOFF.md` | P10 #619 |
+| 17 | STEP3_INTEGRATION_HANDOFF | `STEP1_P10_STEP3_HANDOFF.md` | P10 #619 |
 | 18 | DESIGN_FREEZE / IMPLEMENTATION_READY | `STEP1_P11_DESIGN_FREEZE_REPORT.md` | P11 |
 
 ## Phase 設計文書（P04/P05 で Phase 6-2..8 の設計を確定）
@@ -55,18 +55,28 @@ STEP 2 で本実装、STEP 3 で UI 統合・Project Replay・最終製品検証
 
 ## PR 計画（各 PR は main へ merge）
 
-- P00: baseline / inventory / scope freeze（本PR）
-- P01: master architecture + implementation sequence
-- P02: data model / schema matrix + coordinate-unit contract
-- P03: interface / connector matrix + API dataflow matrix
-- P04: Bridge Geometry（Phase 6-2）+ 3D contract（Phase 6-3）
-- P05: analysis/design calc architecture + calculation rule matrix（Phase 6-4/7/8）
-- P06: UI screen matrix + UI button/action matrix（Phase 9）
-- P07: output matrix + golden master / replay spec
-- P08: test / acceptance matrix + error / hold traceability spec
-- P09: risk / dependency / backlog
-- P10: STEP 2 / STEP 3 implementation handoff
-- P11: master validator + Design Freeze / IMPLEMENTATION_READY report
+- P00: baseline / inventory / scope freeze（#598 MERGED）
+- P01: master architecture + implementation sequence（#599 MERGED）
+- P02: data model / schema matrix + coordinate-unit contract（#600 MERGED）
+- P03: interface / connector matrix + API dataflow matrix（#603 MERGED）
+- P04: Bridge Geometry（Phase 6-2）+ 3D contract（Phase 6-3）（#605 MERGED）
+- P05: analysis/design calc architecture + calculation rule matrix（Phase 6-4/7/8）（#608 MERGED）
+- P06: UI screen matrix + UI button/action matrix（Phase 9）（#610 MERGED）
+- P07: output matrix + golden master / replay spec（#613 MERGED）
+- P08: test / acceptance matrix + error / hold traceability spec（#615 MERGED）
+- P09: risk / dependency / backlog（#617 MERGED）
+- P10: STEP 2 / STEP 3 implementation handoff（#619 MERGED）
+- P11: master validator + Design Freeze / IMPLEMENTATION_READY report（#… MERGED）
+
+## Master Validator
+
+`tools/validate_step1_master.py`（102 checks, PASS）— 18 deliverables・README index・
+connector matrix・replay spec・test acceptance・risk backlog・GAP 解決を機械検証。
+`tools/tests/test_validate_step1_master.py`（4 tests）。
+
+## 最終判定
+
+`DESIGN_FREEZE: PASS` / `IMPLEMENTATION_READY: PASS` / `STEP2_GATE: GO`（P11 参照）
 
 ## 作業ルール
 
