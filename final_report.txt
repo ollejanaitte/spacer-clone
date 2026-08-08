@@ -2336,3 +2336,28 @@ NEXT_ACTION: Phase 6-3 3D Bridge Model (snapshot->3D payload, superstructure mem
 ================================================================================
 END APOLLO STEP 10 PHASE 6-2 CURRENT
 ================================================================================
+
+================================================================================
+BEGIN APOLLO STEP 10 PHASE 6-4 RB-001 REPLAY CURRENT
+================================================================================
+
+STEP_ID: APOLLO_STEP10_PHASE6_4_RB001_REPLAY
+CURRENT_SUBSTEP: P6_4_CLOSEOUT
+OVERALL_PROGRESS_PERCENT: 100
+
+P6_4_REPLAY: this PR
+
+REPLAY_FIXTURE_TO_GEOMETRY: PASS (RB-001 snapshot parity)
+REPLAY_GEOMETRY_TO_3D: PASS (solids, fixture id parity)
+REPLAY_3D_TO_STL: PASS (deterministic digest)
+TOLERANCE: PASS (1e-6)
+DISCREPANCY_CLASSIFICATION: PASS (FAIL_NUMERIC / FAIL_ID / FAIL_UNRESOLVED / WARN / PASS)
+HOLD_NO_FABRICATION: PASS
+DETERMINISTIC_REPLAY: PASS
+GOLDEN_SELF_GENERATION: NO
+
+P6_4_OVERALL_VERDICT: COMPLETE (geometry chain)
+NEXT_ACTION: Phase 7 design engine (analysis binding completes the numeric chain).
+================================================================================
+END APOLLO STEP 10 PHASE 6-4 CURRENT
+================================================================================
