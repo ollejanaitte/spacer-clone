@@ -5,7 +5,7 @@ PHASE_MOUNTAIN_SAMPLE: COMPLETE
 MOUNTAIN_SAMPLE_RELEASE_READINESS: GO
 
 REMOTE_INTEGRATION_SHA:
-3e9208ec09f9885b238b2c14ee3ab2ab6dd33316
+711dcbd565fc9f0ae0f3c0d9d0b4d45d93c3b687
 
 ## 完了条件（§23）
 | 条件 | 状態 |
@@ -24,6 +24,7 @@ REMOTE_INTEGRATION_SHA:
 | CROSSFALL_SEQUENCE | COMPLETE（crown→片勾配→crown→逆片勾配） |
 | BRIDGE_GEOMETRY | COMPLETE（A1+P1..P7+A2, 8スパン） |
 | TERRAIN_3D | COMPLETE（deterministic, DISPLAY_LAYER） |
+| THREED_VIEWER | COMPLETE（P11: terrain mesh + centerline + 橋脚/橋台マーカー + camera preset, LinerPreviewPage に表示） |
 | SCHEMATIC_INTEGRATION | PASS（既存pipeline経由） |
 | THREED_INTEGRATION | PASS（geometry3d + terrain builders） |
 | CAMERA_PRESETS | COMPLETE（全景/橋梁/路面追従/谷側） |
@@ -48,6 +49,7 @@ REMOTE_INTEGRATION_SHA:
 - P08 #700
 - P09 #701
 - P10 #702
+- P11 #704（3D viewer: terrain + 橋脚/橋台マーカー）
 - P10-sha-fill （本PR）
 
 ## 新規 frontend
