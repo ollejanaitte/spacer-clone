@@ -5,7 +5,7 @@ PHASE_MAIN3D: COMPLETE
 MAIN_3D_MOUNTAIN_SAMPLE_RELEASE_READINESS: GO
 
 REMOTE_INTEGRATION_SHA:
-（P08 merge後確定）
+877fb9622f6316c8f8b280382e9e7913c958b8b5
 
 ## 完了条件（§20）
 | 条件 | 状態 |
@@ -42,7 +42,8 @@ REMOTE_INTEGRATION_SHA:
 - P05 #711
 - P06 #712
 - P07 #713
-- P08 （本PR）
+- P08 #714
+- P08-sha-fill （本PR）
 
 ## 新規 frontend
 - samples/mountain-viaduct-500/: terrain(深谷) / substructure / scene / viewerSwitch / selection / viewer(統合)
