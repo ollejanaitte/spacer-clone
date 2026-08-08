@@ -15,7 +15,7 @@
 | #754 | P3 viewer solids wiring | `bbe6761015d6a14a405027699b71ba6c2db9d4fc` |
 | #755 | P4 CASE A E2E + workflow readiness | `eaf136b035fb01db5957e04ee333a1abb2d96f4d` |
 | #756 | P5 CASE B E2E | `b33b7581f7e7e293461ed0c7018d1738f13d4634` |
-| #757 | P6 docs + closeout（本 PR） | （merge 後記録） |
+| #757 | P6 docs + closeout（本 PR） | `c25a2971dd8637ac7b39c8771014f2f1d1c6eb26` |
 
 ## 2. 達成
 
