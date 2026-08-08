@@ -2257,6 +2257,13 @@ export const ja = {
       dimAll: "全寸法",
       menuDelete: "削除",
       menuDuplicate: "複製",
+      sampleDialogTitle: "サンプル新規作成",
+      sampleReferenceNotice: "生成値は参考・サンプル値です。設計標準値ではありません。",
+      sampleSingleTitle: "単一サンプル",
+      sampleComboTitle: "組合せサンプル",
+      sampleFromLiner: "LINER支点から自動生成",
+      sampleClose: "閉じる",
+      sampleSupportId: "supportId",
     },
   },
 };
