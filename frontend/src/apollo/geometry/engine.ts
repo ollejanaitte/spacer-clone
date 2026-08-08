@@ -20,6 +20,7 @@ import {
 import { buildCrossSectionFrames } from "./crossSectionFrame";
 import { buildDeckReference } from "./deck";
 import { generateGridPanelPoints } from "./gridPoints";
+import { buildCrossGirderReferences, buildMainGirderMembers } from "./members";
 import { placeGirderLines, placeSupportLines, type SupportRole } from "./placement";
 import { rb001PlaneGridTransform } from "./planeGridTransform";
 import type {
@@ -132,6 +133,16 @@ export class DefaultGeometryEngine implements GeometryEngine {
       girderId: p.girderId,
       position: p.position,
     }));
+    const supportStationsM = supportLines.map((line) => line.stationM.value ?? 0);
+    const memberPlacementReferences = buildMainGirderMembers({
+      girderLines,
+      supportStationsM,
+      connector: this.connector,
+      alignmentId: this.alignmentId,
+    });
+    const crossGirderReferences = input.crossGirderSpecs
+      ? buildCrossGirderReferences(input.crossGirderSpecs, input.girders.map((g) => g.id))
+      : [];
     const alignmentReferences = buildAlignmentReferences(input, bridgeLengthM, spanLengthsM);
     const unresolvedGeometry = input.unresolved.map((u) => ({
       id: u.id,
@@ -167,7 +178,8 @@ export class DefaultGeometryEngine implements GeometryEngine {
       crossSectionFrames,
       deckReferences,
       bearingPoints,
-      memberPlacementReferences: [],
+      memberPlacementReferences,
+      crossGirderReferences,
       geometryIssues: [],
       unresolvedGeometry,
       traceability,

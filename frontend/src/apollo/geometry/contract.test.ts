@@ -44,6 +44,7 @@ function buildMinimalSnapshot(): GeometrySnapshot {
     deckReferences: [],
     bearingPoints: [],
     memberPlacementReferences: [],
+    crossGirderReferences: [],
     geometryIssues: [],
     unresolvedGeometry: [],
     traceability: [],

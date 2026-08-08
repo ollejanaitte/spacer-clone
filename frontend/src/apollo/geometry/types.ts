@@ -192,11 +192,34 @@ export type BearingPoint = {
   position: Vec3;
 };
 
+export type MemberKind =
+  | "mainGirder"
+  | "crossBeam"
+  | "swayBracing"
+  | "lateralBracing"
+  | "stiffener";
+
 export type MemberPlacementReference = {
   id: string;
   memberId: string;
+  kind: MemberKind;
   fromPointId: string;
   toPointId: string;
+  localFrame: LocalFrame3;
+};
+
+export type CrossGirderReference = {
+  id: string;
+  crossGirderId: string;
+  stationM: number;
+  connectedGirderIds: string[];
+};
+
+/** Declared cross girder placement (station + connected girder ids). */
+export type CrossGirderSpec = {
+  crossGirderId: string;
+  stationM: number;
+  connectedGirderIds?: string[];
 };
 
 export type GeometryIssue = {
@@ -238,6 +261,7 @@ export type GeometrySnapshot = {
   deckReferences: DeckReference[];
   bearingPoints: BearingPoint[];
   memberPlacementReferences: MemberPlacementReference[];
+  crossGirderReferences: CrossGirderReference[];
   geometryIssues: GeometryIssue[];
   unresolvedGeometry: UnresolvedGeometry[];
   traceability: TraceabilityLink[];

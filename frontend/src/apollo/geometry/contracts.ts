@@ -8,6 +8,7 @@
  */
 
 import type {
+  CrossGirderSpec,
   DeckSpec,
   GeometrySnapshot,
   GridPanelSpec,
@@ -38,6 +39,8 @@ export type GeometryEngineInput = {
   gridPanelSpecs?: GridPanelSpec[];
   /** Deck reference dimensions (Phase 6-2). */
   deckSpecs?: DeckSpec[];
+  /** Cross girder placement (Phase 6-2). */
+  crossGirderSpecs?: CrossGirderSpec[];
   /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
   unresolved: UnresolvedSummary[];
 };

@@ -11,3 +11,4 @@ export * from "./engine";
 export * from "./planeGridTransform";
 export * from "./gridPoints";
 export * from "./deck";
+export * from "./members";
