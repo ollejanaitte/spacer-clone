@@ -8,6 +8,7 @@
  */
 import type { BuildIntermediateInput } from "../../core/pipeline/pipeline";
 import type { MountainSampleFixture } from "./schema";
+import { buildMountainViaduct500Fixture } from "./fixture";
 
 export interface LoadedMountainSample {
   fixture: MountainSampleFixture;
@@ -26,9 +27,7 @@ export function loadMountainSample(
   return { fixture, draft };
 }
 
-/** Stub for sample registry: returns the mountain sample fixture. */
+/** Sample registry: returns the mountain viaduct 500 fixture. */
 export function mountainViaduct500Fixture(): MountainSampleFixture {
-  throw new Error(
-    "mountain-viaduct-500 fixture is assembled in P02-P05 (alignment/vertical/bridge/terrain).",
-  );
+  return buildMountainViaduct500Fixture();
 }
