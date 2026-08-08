@@ -15,7 +15,7 @@
 | #746 | P3 BridgeProject→substructure binding + reaction guard | `6e7de0e89a887c680d305560589973b656edf8e6` |
 | #747 | P4 real placement + App bound mode | `03cd5f70209d12f67a29e03cbcb151ca4c55978f` |
 | #748 | P5 full-chain E2E | `f017099f0259f49e3cc5124db1d888e80b382e82` |
-| #749 | P6 docs + closeout（本 PR） | （merge 後に記録） |
+| #749 | P6 docs + closeout（本 PR） | `cdea6beb6ed199f3e7419e45c43ad475b31e9d9a` |
 
 ## 2. 達成
 
