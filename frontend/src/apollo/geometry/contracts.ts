@@ -41,6 +41,8 @@ export type GeometryEngineInput = {
   deckSpecs?: DeckSpec[];
   /** Cross girder placement (Phase 6-2). */
   crossGirderSpecs?: CrossGirderSpec[];
+  /** Additional cross-section frame stations (m) beyond support stations (Phase 6-2). */
+  sectionStations?: number[];
   /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
   unresolved: UnresolvedSummary[];
 };

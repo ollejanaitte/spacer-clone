@@ -237,4 +237,14 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
     expect(snap.bearingPoints[0].localFrame).toBeDefined();
     expect(snap.bearingPoints[0].localFrame!.normal.y).toBeCloseTo(1, 9);
   });
+
+  it("adds cross-section frames at declared section stations (Phase 6-2)", () => {
+    const snap = buildEngine().generateSnapshot(
+      buildInput({ sectionStations: [20.1005, 65.701, 112.601] }),
+    );
+    expect(snap.crossSectionFrames).toHaveLength(7); // 4 supports + 3 mid-spans
+    expect(snap.crossSectionFrames.map((f) => f.stationM)).toEqual([
+      0, 20.1005, 40.201, 65.701, 91.201, 112.601, 134.001,
+    ]);
+  });
 });

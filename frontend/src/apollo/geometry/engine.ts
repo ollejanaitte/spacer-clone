@@ -115,8 +115,13 @@ export class DefaultGeometryEngine implements GeometryEngine {
       this.alignmentId,
     );
     const sectionId = input.sectionIds[0] ?? DEFAULT_SECTION_ID;
+    const frameStations = [
+      ...supportLines.map((line) => line.stationM.value ?? 0),
+      ...(input.sectionStations ?? []),
+    ].filter((s, i, arr) => Number.isFinite(s) && arr.indexOf(s) === i);
+    frameStations.sort((a, b) => a - b);
     const crossSectionFrames = buildCrossSectionFrames(
-      supportLines.map((line) => ({ sectionId, stationM: line.stationM.value ?? 0 })),
+      frameStations.map((stationM) => ({ sectionId, stationM })),
       this.connector,
       this.alignmentId,
     );
