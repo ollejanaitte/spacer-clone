@@ -14,4 +14,5 @@ export * from "./substructure";
 export * from "./scene";
 export * from "./viewerSwitch";
 export * from "./selection";
+export * from "./threeCoords";
 export * from "./viewer";

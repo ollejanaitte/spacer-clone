@@ -5,6 +5,10 @@
  * and OrbitControls. Presets are visual convenience only — they never affect
  * the computed geometry. Pure helpers so the preset math is unit-testable
  * without a rendering context.
+ *
+ * COORDINATES: preset position/target use THREE coords directly:
+ *   x = easting, y = HEIGHT (m), z = transverse (-domain.y)
+ * The scene model is laid out in the same three space via threeCoords.ts.
  */
 import type { MountainCameraPreset } from "./schema";
 
