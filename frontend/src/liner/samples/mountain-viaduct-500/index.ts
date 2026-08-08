@@ -4,3 +4,4 @@ export * from "./loader";
 export * from "./horizontal";
 export * from "./horizontalFixture";
 export * from "./verticalFixture";
+export * from "./bridgeFixture";
