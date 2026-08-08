@@ -1,13 +1,19 @@
-import { ArrowLeft, FileText, PencilLine } from "lucide-react";
+import { ArrowLeft, FileText, Mountain, PencilLine } from "lucide-react";
 import { ja } from "../../i18n/ja";
 
 export type LinerLauncherPageProps = {
   onClose: () => void;
   onOpenGui: () => void;
   onOpenImporter: () => void;
+  onOpenSample?: () => void;
 };
 
-export function LinerLauncherPage({ onClose, onOpenGui, onOpenImporter }: LinerLauncherPageProps) {
+export function LinerLauncherPage({
+  onClose,
+  onOpenGui,
+  onOpenImporter,
+  onOpenSample,
+}: LinerLauncherPageProps) {
   return (
     <main className="liner-launcher-page" data-testid="liner-launcher-page">
       <header className="liner-launcher-header">
@@ -42,6 +48,18 @@ export function LinerLauncherPage({ onClose, onOpenGui, onOpenImporter }: LinerL
           <h2>{ja.liner.launcher.pdfTitle}</h2>
           <p>{ja.liner.launcher.pdfDescription}</p>
         </button>
+        {onOpenSample && (
+          <button
+            type="button"
+            className="liner-launcher-card"
+            onClick={onOpenSample}
+            data-testid="liner-launcher-sample"
+          >
+            <Mountain size={28} aria-hidden />
+            <h2>山岳連続高架橋500m</h2>
+            <p>急曲線・急縦断・片勾配・400m連続高架橋（ショーケース）</p>
+          </button>
+        )}
       </section>
     </main>
   );

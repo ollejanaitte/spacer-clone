@@ -6,3 +6,5 @@ export * from "./horizontalFixture";
 export * from "./verticalFixture";
 export * from "./bridgeFixture";
 export * from "./terrain";
+export * from "./fixture";
+export * from "./useSamplePicker";
