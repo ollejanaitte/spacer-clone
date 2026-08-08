@@ -23,6 +23,11 @@ export type GeometryEngineInput = {
   gridPointIds: string[];
   deckIds: string[];
   sectionIds: string[];
+  /** Declared span lengths (m) and bridge length (m); used for placement. */
+  spanLengthsM?: number[];
+  bridgeLengthM?: number;
+  /** Declared girder line offsets (m). `{id}` start offset, `{id}:end` end offset. */
+  girderOffsetsM?: Record<string, number>;
   /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
   unresolved: UnresolvedSummary[];
 };

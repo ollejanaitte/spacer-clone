@@ -39,7 +39,13 @@ export type SupportPlacementResult = {
 };
 
 export type GirderPlacementRequest = {
-  girders: { id: string; offsetM: number }[];
+  girders: {
+    id: string;
+    /** Constant offset, or use offsetStartM/offsetEndM for a tapered line. */
+    offsetM?: number;
+    offsetStartM?: number;
+    offsetEndM?: number;
+  }[];
   stationStartM: number;
   stationEndM: number;
   alignmentId: string;
@@ -151,13 +157,18 @@ export function placeSupportLines(
 /** Build one girder line with endpoint station points. */
 function buildGirderLine(
   girderId: string,
-  offsetM: number,
+  offsetStartM: number,
+  offsetEndM: number,
   stationStartM: number,
   stationEndM: number,
   connector: AlignmentConnector,
   alignmentId: string,
 ): GirderLine {
-  const points: GirderStationPoint[] = [stationStartM, stationEndM].map((stationM, i) => {
+  const endpoints: [number, number][] = [
+    [stationStartM, offsetStartM],
+    [stationEndM, offsetEndM],
+  ];
+  const points: GirderStationPoint[] = endpoints.map(([stationM, offsetM], i) => {
     const sample = connector.samplePoint({ alignmentId, stationM, offsetM });
     return {
       id: `GIRL-${girderId}-${i === 0 ? "START" : "END"}`,
@@ -173,7 +184,7 @@ function buildGirderLine(
   return {
     id: `GIRL-${girderId}`,
     girderId,
-    offsetM: { state: "CONFIRMED", value: offsetM, unit: "m" },
+    offsetM: { state: "CONFIRMED", value: offsetStartM, unit: "m" },
     stationStartM,
     stationEndM,
     points,
@@ -187,14 +198,17 @@ export function placeGirderLines(
   request: GirderPlacementRequest,
   connector: AlignmentConnector,
 ): GirderLine[] {
-  return request.girders.map((girder) =>
-    buildGirderLine(
+  return request.girders.map((girder) => {
+    const offsetStartM = girder.offsetStartM ?? girder.offsetM ?? 0;
+    const offsetEndM = girder.offsetEndM ?? girder.offsetM ?? offsetStartM;
+    return buildGirderLine(
       girder.id,
-      girder.offsetM,
+      offsetStartM,
+      offsetEndM,
       request.stationStartM,
       request.stationEndM,
       connector,
       request.alignmentId,
-    ),
-  );
+    );
+  });
 }
