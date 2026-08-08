@@ -41,3 +41,6 @@ export * from "./planning/persistence";
 export * from "./design/designTypes";
 export * from "./design/superstructureInterface";
 export * from "./design/superstructureEnvelope";
+// Phase C1 (M3-03) 設計計算エンジン（フレームワーク）。
+export * from "./design/geometricQuantity";
+export * from "./design/designEngine";
