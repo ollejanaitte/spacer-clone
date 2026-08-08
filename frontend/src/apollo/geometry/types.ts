@@ -166,7 +166,23 @@ export type DeckReference = {
   deckId: string;
   widthM: ResolvedValue<number>;
   thicknessM: ResolvedValue<number>;
+  /** Deck edge offsets from the alignment centerline (m; right-positive). */
+  edgeOffsetM?: { left: number; right: number };
+  /** Deck reference elevation (m). */
+  elevationM?: ResolvedValue<number>;
+  /** Plan boundary corners in snapshot global coordinates (m). */
   boundary?: Vec3[];
+};
+
+/** Declared deck reference input (golden-derived dimensions). */
+export type DeckSpec = {
+  deckId: string;
+  widthM: number;
+  thicknessM: number;
+  /** Optional deck reference elevation (m). */
+  elevationM?: number;
+  /** Override centered deck edge offsets. */
+  edgeOffsetM?: { left: number; right: number };
 };
 
 export type BearingPoint = {

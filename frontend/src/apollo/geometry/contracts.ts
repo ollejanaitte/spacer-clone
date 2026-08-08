@@ -7,7 +7,13 @@
  * alignment math).
  */
 
-import type { GeometrySnapshot, GridPanelSpec, LocalFrame3, Vec3 } from "./types";
+import type {
+  DeckSpec,
+  GeometrySnapshot,
+  GridPanelSpec,
+  LocalFrame3,
+  Vec3,
+} from "./types";
 
 /**
  * Input contract for the Geometry Engine. Produced by the Geometry Input Adapter
@@ -30,6 +36,8 @@ export type GeometryEngineInput = {
   girderOffsetsM?: Record<string, number>;
   /** Panel structure per girder line (Phase 6-2); enables full grid generation. */
   gridPanelSpecs?: GridPanelSpec[];
+  /** Deck reference dimensions (Phase 6-2). */
+  deckSpecs?: DeckSpec[];
   /** HCR / conflict / HOLD / NOT_AVAILABLE propagated from the model. */
   unresolved: UnresolvedSummary[];
 };

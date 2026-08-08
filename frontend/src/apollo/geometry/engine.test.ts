@@ -5,6 +5,7 @@ import type { LinearAlignment } from "../../liner/core/types";
 import { DefaultGeometryEngine, computeFingerprint } from "./engine";
 import type { GeometryEngineInput } from "./contracts";
 import { RB001_GRID_PANEL_SPECS } from "./gridPoints";
+import { RB001_DECK_SPEC } from "./deck";
 
 const FIXTURE = resolve(
   process.cwd(),
@@ -204,5 +205,16 @@ describe("Reference Bridge 001 Golden parity (Phase 6-1E)", () => {
     expect(snap.fingerprint).not.toBe(plain.fingerprint);
     const again = buildEngine().generateSnapshot(input);
     expect(snap.fingerprint).toBe(again.fingerprint);
+  });
+
+  it("populates deck reference from golden dimensions when deckSpecs provided", () => {
+    const snap = buildEngine().generateSnapshot(buildInput({ deckSpecs: [RB001_DECK_SPEC] }));
+    expect(snap.deckReferences).toHaveLength(1);
+    const deck = snap.deckReferences[0];
+    expect(deck.widthM.value).toBeCloseTo(8.01, 9); // G-GEO-0017
+    expect(deck.thicknessM.value).toBeCloseTo(0.23, 9); // G-GEO-0018
+    expect(deck.boundary).toHaveLength(4);
+    expect(deck.boundary![2].x).toBeCloseTo(134.001, 9);
+    expect(deck.boundary![2].y).toBeCloseTo(4.005, 9);
   });
 });
