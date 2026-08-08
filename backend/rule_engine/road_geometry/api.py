@@ -22,9 +22,14 @@ from backend.rule_engine.geometry.contracts import (
     angle_to_normal,
     angle_to_tangent,
 )
+from backend.rule_engine.crosssection.crossfall import (
+    crossfall_delta_z,
+    resolve_crossfall_input,
+)
+from backend.rule_engine.crosssection.geometry import pose_at
 from backend.rule_engine.crosssection.global_xyz import (
-    center_point_global,
     generate_global_section,
+    point_global,
 )
 from backend.rule_engine.crosssection.model import CrossSectionRequest
 
@@ -110,13 +115,61 @@ class RoadGeometryAPI:
     ) -> RoadGeometryResult:
         """Merge width / crossfall / edges / cross-section points / Z.
 
-        P03: delegates to generate_global_section (X4-C). Until then, requests
-        without cross-section inputs pass through unchanged.
+        P03: delegates to generate_global_section (X4-C) and fills the unified
+        result with total widths, crossfall, road edges and section points.
         """
         has_cross_inputs = bool(request.left_segments or request.right_segments)
         if not has_cross_inputs:
             return result
-        raise NotImplementedError("P02 skeleton: cross section merge implemented in P03")
+
+        cross_request = CrossSectionRequest(
+            alignment_id=request.alignment_id,
+            station=request.station,
+            center_elevation=request.center_elevation or 0.0,
+            left_segments=list(request.left_segments),
+            right_segments=list(request.right_segments),
+            crossfall=request.crossfall,
+            pivot=request.pivot,
+            source_trace=dict(request.source_trace),
+        )
+        cross = generate_global_section(alignment, cross_request)
+
+        pose = pose_at(alignment, request.station)
+        crossfall_state = resolve_crossfall_input(request.crossfall)
+        center_z = request.center_elevation or 0.0
+
+        left_edge_xyz = None
+        right_edge_xyz = None
+        if cross.left_edge_offset is not None:
+            left_edge_xyz = point_global(
+                pose.center_xy,
+                pose.azimuth,
+                cross.left_edge_offset,
+                center_z + crossfall_delta_z(crossfall_state, cross.left_edge_offset),
+            )
+        if cross.right_edge_offset is not None:
+            right_edge_xyz = point_global(
+                pose.center_xy,
+                pose.azimuth,
+                cross.right_edge_offset,
+                center_z + crossfall_delta_z(crossfall_state, cross.right_edge_offset),
+            )
+
+        result.z = cross.center_point_xyz.z if cross.center_point_xyz else center_z
+        result.total_left_width = cross.total_left_width
+        result.total_right_width = cross.total_right_width
+        result.crossfall_left_percent = crossfall_state.left_slope_percent
+        result.crossfall_right_percent = crossfall_state.right_slope_percent
+        result.left_edge_xyz = left_edge_xyz
+        result.right_edge_xyz = right_edge_xyz
+        result.section_points = list(cross.section_points)
+        result.warnings = list(cross.warnings)
+        result.trace = {
+            **result.trace,
+            "cross_section": "X4C-CROSS-SECTION",
+            "elevation_source": "explicit_input",
+        }
+        return result
 
 
 # Module-level facade instance (canonical entry point)
