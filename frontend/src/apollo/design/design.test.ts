@@ -6,6 +6,7 @@ import { RB001_DECK_SPEC } from "../geometry/deck";
 import { RB001_CROSS_GIRDER_SPECS } from "../geometry/members";
 import { buildGrillageModel } from "./grillageModel";
 import { emptyNotAuthorizedResult, RB001_DESIGN_CONDITIONS } from "./index";
+import { runChecks } from "./checkFramework";
 
 const ALIGNMENT: LinearAlignment = {
   id: "ALN-ACL",
@@ -84,5 +85,17 @@ describe("design framework (Phase 7)", () => {
     expect(result.reactions.state).toBe("NOT_AUTHORIZED");
     expect(result.memberForces.state).toBe("NOT_AUTHORIZED");
     expect(result.checks[0].state).toBe("NOT_AUTHORIZED");
+  });
+
+  it("declares the RB-001 check set with NOT_AUTHORIZED execution (check framework)", () => {
+    const result = runChecks({ snapshot: buildSnapshot() });
+    expect(result.authorization).toBe("NOT_GRANTED");
+    expect(result.checks.length).toBeGreaterThanOrEqual(10);
+    expect(result.checks.every((c) => c.state === "NOT_AUTHORIZED")).toBe(true);
+    const kinds = new Set(result.checks.map((c) => c.kind));
+    for (const k of ["mainGirder", "deck", "crossBeam", "bearing", "stiffener", "splice"]) {
+      expect(kinds.has(k as never)).toBe(true);
+    }
+    expect(result.traceability.some((t) => t.entityId === "GIRDER-AG1")).toBe(true);
   });
 });
