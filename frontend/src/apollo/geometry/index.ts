@@ -10,3 +10,4 @@ export * from "./crossSectionFrame";
 export * from "./engine";
 export * from "./planeGridTransform";
 export * from "./gridPoints";
+export * from "./deck";

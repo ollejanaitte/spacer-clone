@@ -18,6 +18,7 @@ import {
   type GeometryEngineInput,
 } from "./contracts";
 import { buildCrossSectionFrames } from "./crossSectionFrame";
+import { buildDeckReference } from "./deck";
 import { generateGridPanelPoints } from "./gridPoints";
 import { placeGirderLines, placeSupportLines, type SupportRole } from "./placement";
 import { rb001PlaneGridTransform } from "./planeGridTransform";
@@ -118,12 +119,13 @@ export class DefaultGeometryEngine implements GeometryEngine {
       this.connector,
       this.alignmentId,
     );
-    const deckReferences = input.deckIds.map((deckId) => ({
-      id: `DECK-REF-${deckId}`,
-      deckId,
-      widthM: { state: "CONFIRMED" as const },
-      thicknessM: { state: "CONFIRMED" as const },
-    }));
+    const deckReferences = buildDeckReferences(
+      input.deckSpecs,
+      input.deckIds,
+      bridgeLengthM,
+      this.connector,
+      this.alignmentId,
+    );
     const bearingPoints = supportPoints.map<BearingPoint>((p) => ({
       id: `BRG-${p.supportId}-${p.girderId}`,
       supportId: p.supportId,
@@ -215,6 +217,34 @@ function assembleGridPoints(
     });
   });
   return out;
+}
+
+function buildDeckReferences(
+  deckSpecs: GeometryEngineInput["deckSpecs"],
+  deckIds: string[],
+  bridgeLengthM: number,
+  connector: AlignmentConnector,
+  alignmentId: string,
+): DeckReference[] {
+  if (deckSpecs && deckSpecs.length > 0) {
+    return deckSpecs.map((spec) =>
+      buildDeckReference(
+        {
+          spec,
+          stationStartM: 0,
+          stationEndM: bridgeLengthM,
+          alignmentId,
+        },
+        connector,
+      ),
+    );
+  }
+  return deckIds.map((deckId) => ({
+    id: `DECK-REF-${deckId}`,
+    deckId,
+    widthM: { state: "CONFIRMED" as const },
+    thicknessM: { state: "CONFIRMED" as const },
+  }));
 }
 
 function buildAlignmentReferences(
