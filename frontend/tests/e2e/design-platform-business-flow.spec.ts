@@ -5,7 +5,10 @@ async function createBusiness(page: import("@playwright/test").Page) {
   await expect(page.getByRole("heading", { name: "Design Platform" })).toBeVisible();
   await page.locator("[data-testid=platform-entry-business]").click();
   await expect(page).toHaveURL(/\/pro\/platform\/businesses$/);
-  await expect(page.locator("[data-testid=business-list]")).toBeVisible();
+  // Empty state (first run) or list table both indicate the business list page.
+  await expect(
+    page.locator("[data-testid=business-list], [data-testid=business-list-empty]").first(),
+  ).toBeVisible();
   await page.locator("[data-testid=business-new]").click();
   await page.locator("[data-testid=business-number-input]").fill("H620164A");
   await page.locator("[data-testid=business-name-input]").fill("E2Eテスト業務");
