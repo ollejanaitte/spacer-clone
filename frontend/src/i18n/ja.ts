@@ -2341,6 +2341,12 @@ export const ja = {
       footerHint: "1画面 = 1目的 = 1 viewport",
       launchDescription: "{tool} を起動してこのセクションの設計作業を行います。",
       launchAction: "{tool} を開く",
+      guided: {
+        prev: "戻る",
+        save: "保存",
+        next: "次へ",
+        progress: "ガイド {current}/{total}",
+      },
       sectionLabels: {
         overview: "概要",
         road: "道路線形",
