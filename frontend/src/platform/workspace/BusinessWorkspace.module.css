@@ -55,6 +55,14 @@
   color: #ffffff;
 }
 
+.saveButton:disabled,
+.saveInlineButton:disabled {
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+  cursor: not-allowed;
+}
+
 .tabs {
   display: flex;
   gap: 0.25rem;
