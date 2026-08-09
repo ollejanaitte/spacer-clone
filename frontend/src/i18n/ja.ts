@@ -2310,6 +2310,7 @@ export const ja = {
       title: "業務一覧",
       empty: "業務がありません。「新規業務」から作成してください。",
       newBusiness: "新規業務",
+      sampleBusiness: "サンプル業務を作成",
       createTitle: "新規業務の作成",
       projectNumber: "業務件番",
       projectName: "業務名",

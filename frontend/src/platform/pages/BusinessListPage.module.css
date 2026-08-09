@@ -39,6 +39,18 @@
   color: #ffffff;
 }
 
+.sampleButton {
+  padding: 0.5rem 1.25rem;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f766e;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .table {
   width: 100%;
   max-width: 1080px;
