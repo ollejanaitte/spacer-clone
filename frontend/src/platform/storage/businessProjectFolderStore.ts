@@ -60,7 +60,7 @@ export type BusinessProjectOpenOutcome =
   | {
       readonly ok: false;
       readonly error: PersistenceError;
-      readonly reason: "validation" | "store" | "missing";
+      readonly reason: "validation" | "store" | "missing" | "child-mismatch";
     };
 
 export interface BusinessProjectFolderStore {
@@ -89,6 +89,16 @@ function readRaw(store: AtomicJsonStorePort, path: string): unknown {
   } catch {
     return undefined;
   }
+}
+
+function allChildRefs(manifest: BusinessProjectManifest): readonly BusinessProjectRef[] {
+  return [
+    ...manifest.roadRefs,
+    ...manifest.bridgeProjectRefs,
+    ...manifest.analysisRefs,
+    ...manifest.sharedDatasetRefs,
+    ...manifest.deliverableRefs,
+  ];
 }
 
 function buildManifestValidation(manifest: BusinessProjectManifest): ValidationResult {
@@ -171,6 +181,18 @@ export function createBusinessProjectFolderStore(
       ...manifest.sharedDatasetRefs.map((ref) => ref.uri),
       ...manifest.deliverableRefs.map((ref) => ref.uri),
     ];
+
+    for (const ref of allChildRefs(manifest)) {
+      if (!verifyChildRefAgainstStore(store, basePath, ref)) {
+        return {
+          ok: false,
+          error: createPersistenceStoreFailedError(
+            `Child document is missing or corrupted (checksum mismatch): ${ref.uri}`,
+          ),
+          reason: "child-mismatch",
+        };
+      }
+    }
 
     return { ok: true, manifest, childUris };
   }
