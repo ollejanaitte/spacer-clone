@@ -1,0 +1,118 @@
+# Source Files Reviewed
+
+Date: 2026-08-06
+Repository: /home/masaharu/Projects/spacer-clone
+HEAD: 0fadc1c2fa984f702b94af12f249a97fc2842705
+
+## Key Source Files Examined (read-only)
+
+### Liner Geometry Core
+- frontend/src/liner/core/geometry/line.ts
+- frontend/src/liner/core/geometry/arc.ts (evaluateCircularArcElement, signedArcCurvature)
+- frontend/src/liner/core/geometry/clothoid.ts (clothoidCurvatureAt, evaluateClothoidElement, Simpson integration)
+- frontend/src/liner/core/geometry/horizontal.ts (evaluateAlignmentAtDistance, validateAlignment)
+- frontend/src/liner/core/geometry/vertical.ts
+- frontend/src/liner/core/continuityC0.ts (checkC0Continuity)
+- frontend/src/liner/core/continuityC1.ts (checkC1Continuity)
+- frontend/src/liner/core/clothoidGate.ts
+- frontend/src/liner/core/coordinate3d.ts (pointAtStationOffset, crossSectionAtStation, elevationAtStation)
+- frontend/src/liner/core/elevationAt.ts
+- frontend/src/liner/core/vector.ts (localFrameFromAzimuth, offsetPoint)
+- frontend/src/liner/core/types.ts (AlignmentElement, LocalFrame, GridPointResult, etc.)
+- frontend/src/liner/core/tolerances.ts
+- frontend/src/liner/core/diagnostics.ts
+- frontend/src/liner/core/station/stationRules.ts
+- frontend/src/liner/core/grid/gridGeneration.ts
+- frontend/src/liner/core/grid/crossfallResolution.ts
+- frontend/src/liner/core/grid/measuredGridGeneration.ts
+- frontend/src/liner/core/crossSectionTemplateValidation.ts
+
+### Liner Bridge Layout
+- frontend/src/liner/core/bridge/pierLineGeometry.ts (SKEW_* constants, pierLineDirectionFromSkew)
+- frontend/src/liner/core/bridge/bridgeLayoutEvaluation.ts (validateBridgeLayout, evaluateBridgeLayout)
+- frontend/src/liner/components/bridgeLayoutSkew.ts (pierSkewModeFromRad)
+
+### Liner Schema
+- frontend/src/liner/schema/types.ts (AlignmentBundleDraft, CircularArcElementDraft, ClothoidElementDraft, SpanDraft, PierDraft, CrossBeamDraft, PierBearingOffsetDraft, LinerDomainDraftVNext)
+
+### Liner UI Components
+- frontend/src/liner/components/AlignmentManager.tsx
+- frontend/src/liner/components/AlignmentLineManager.tsx
+- frontend/src/liner/components/CurveSamplingControl.tsx
+- frontend/src/liner/components/HorizontalElementEditor.tsx
+- frontend/src/liner/components/VerticalElementEditor.tsx
+- frontend/src/liner/components/PlanElevationTable.tsx
+- frontend/src/liner/components/BridgeLayoutDiagnosticsPanel.tsx
+- frontend/src/liner/components/ContinuityDiagnosticsPanel.tsx
+- frontend/src/liner/components/CrossSectionDiagnosticsPanel.tsx
+- frontend/src/liner/components/CrossSlopeIntervalEditor.tsx
+
+### Liner Tests (curve-related)
+- frontend/src/liner/core/__tests__/horizontalCurveGolden.test.ts
+- frontend/src/liner/core/__tests__/clothoid.test.ts
+- frontend/src/liner/core/__tests__/coordinate3d.test.ts
+- frontend/src/liner/core/__tests__/geometry.test.ts
+- frontend/src/liner/core/__tests__/continuity.test.ts
+- frontend/src/liner/core/__tests__/goldenFixture.test.ts
+- frontend/src/liner/core/__tests__/multiAlignmentIsolation.test.ts
+- frontend/src/liner/core/bridge/__tests__/pierLineGeometry.test.ts
+- frontend/src/liner/core/bridge/__tests__/bridgeLayoutEvaluation.test.ts
+
+### Apollo Bridge Structure
+- frontend/src/apollo/bridgeStructure/types.ts
+- frontend/src/apollo/bridgeStructure/geometryFormulas.ts
+- frontend/src/apollo/bridgeStructure/sectionProperties.ts
+- frontend/src/apollo/bridgeStructure/quantities.ts
+- frontend/src/apollo/bridgeStructure/crossFrameAttachmentModel.ts
+- frontend/src/apollo/bridgeStructure/crossFrameAttachmentTypes.ts
+- frontend/src/apollo/bridgeStructure/validation.ts
+
+### Apollo Analysis / Loads
+- frontend/src/apollo/analysis/appurtenanceHaunchAnalysisAdapter.ts
+- frontend/src/apollo/loads/appurtenanceHaunchLoadModel.ts
+- frontend/src/apollo/components/LoadConfirmationDevelopmentPanel.tsx
+
+### Apollo Export / Drawing / Report
+- frontend/src/apollo/export/apolloStlExport.ts
+- frontend/src/apollo/export/apolloExportManifest.ts
+- frontend/src/apollo/drawing/drawingModel.ts
+- frontend/src/apollo/drawing/memberArrangementViews.ts
+- frontend/src/apollo/drawing/supportScheduleViews.ts
+- frontend/src/apollo/drawing/stationGenerator.ts
+- frontend/src/apollo/report/ (report model files)
+
+### Apollo Contracts / Layout
+- frontend/src/apollo/contracts/layoutTypes.ts (BridgeSystem, BridgeLayoutContract)
+
+### Frame Contracts / Results
+- frontend/src/contracts/frameAnalysisResultResource.ts (FrameAnalysisResultKind, 6-component forces)
+- frontend/src/contracts/bridgeFrameAnalysisDocument.ts
+- docs/frame/contracts/04_input_schema.md
+- docs/frame/contracts/06_result_schema.md
+
+### Viewer
+- frontend/src/viewer/Viewer3D.tsx
+- frontend/src/viewer/SceneBuilder.ts
+- frontend/src/viewer/coordinateTransform.ts
+- frontend/src/viewer/threeUtils.ts
+
+### Docs
+- docs/frame/current-capability.md
+- docs/frame/gap-and-acceptance.md
+- docs/frame/analysis/README.md
+- docs/frame/analysis/influence-moving-load.md
+- docs/road/current-capability.md
+- docs/apollo/step4_scope_design_refreeze/07_alignment_compatibility_contract.md
+- docs/apollo/step9/ (continuous bridge report work)
+
+### Schemas
+- schemas/project.schema.json
+- schemas/result.schema.json
+
+### Examples
+- examples/verification/beam/cantilever_torsion.json
+- examples/verification/beam/cantilever_torsion.meta.json
+- examples/verification/3d-frame/l_frame.json
+
+## Count
+Approximately 80 source files and directories examined via read-only git commands (grep, ls-files, show, read).

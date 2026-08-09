@@ -1,0 +1,31 @@
+file_id,path,type,purpose,status,notes
+SOW-001,README.md,markdown,Scope overview,CREATED,Top-level entry point
+SOW-002,final_report.txt,text,Master verdict report,CREATED,Contains all verdicts
+SOW-003,source_manifest.csv,csv,File inventory,CREATED,This file
+SOW-004,evidence/repository_baseline.txt,text,Git baseline at survey time,CREATED,SHA, date, branch, log
+SOW-005,evidence/repository_paths_reviewed.txt,text,Paths examined in survey,CREATED,All reviewed paths
+SOW-006,evidence/source_files_reviewed.txt,text,Key source files examined,CREATED,~80 files listed
+SOW-007,evidence/command_log.txt,text,Commands executed during survey,CREATED,Read-only git commands
+SOW-008,handoff/integration_plan.md,markdown,Plan for future spacer-clone integration,CREATED,Post-continuous-bridge
+SOW-009,handoff/file_mapping.csv,csv,File mapping for integration,CREATED,Scope_of_Work -> spacer-clone
+SOW-010,handoff/conflict_risk_register.csv,csv,Conflict risk register,CREATED,6 risks identified
+SOW-011,handoff/post_continuous_bridge_merge_checklist.md,markdown,Post-merge checklist,CREATED,Checklist for integration
+SOW-012,step10_curved_bridge/phase0_pre_required_source_survey/README.md,markdown,Phase survey overview,CREATED,Phase 0-PRE entry point
+SOW-013,step10_curved_bridge/phase0_pre_required_source_survey/01_repository_curved_capability_inventory.md,markdown,Repository curved bridge capability inventory,CREATED,Detailed capability analysis
+SOW-014,step10_curved_bridge/phase0_pre_required_source_survey/02_required_source_categories.md,markdown,Required source categories L0-L10,CREATED,Layered source requirements
+SOW-015,step10_curved_bridge/phase0_pre_required_source_survey/03_design_standard_requirements.md,markdown,Design standard requirements,CREATED,Japanese standards
+SOW-016,step10_curved_bridge/phase0_pre_required_source_survey/04_alignment_geometry_requirements.md,markdown,Alignment geometry requirements,CREATED,Road alignment analysis
+SOW-017,step10_curved_bridge/phase0_pre_required_source_survey/05_structural_model_requirements.md,markdown,Structural model requirements,CREATED,Bridge model analysis
+SOW-018,step10_curved_bridge/phase0_pre_required_source_survey/06_analysis_theory_requirements.md,markdown,Analysis theory requirements,CREATED,Torsion, warping, etc.
+SOW-019,step10_curved_bridge/phase0_pre_required_source_survey/07_load_support_requirements.md,markdown,Load and support requirements,CREATED,Centrifugal, bearing, etc.
+SOW-020,step10_curved_bridge/phase0_pre_required_source_survey/08_design_check_requirements.md,markdown,Design check requirements,CREATED,Section check, fatigue, etc.
+SOW-021,step10_curved_bridge/phase0_pre_required_source_survey/09_calculation_example_requirements.md,markdown,Calculation example requirements,CREATED,Golden data requirements
+SOW-022,step10_curved_bridge/phase0_pre_required_source_survey/10_existing_source_inventory.md,markdown,Existing source inventory,CREATED,All existing sources
+SOW-023,step10_curved_bridge/phase0_pre_required_source_survey/11_missing_source_register.md,markdown,Missing source register,CREATED,20 missing sources
+SOW-024,step10_curved_bridge/phase0_pre_required_source_survey/12_user_search_guide.md,markdown,User search guide,CREATED,Search instructions
+SOW-025,step10_curved_bridge/phase0_pre_required_source_survey/13_scope_progression_by_source_availability.md,markdown,Scope progression analysis,CREATED,GO/BLOCKED analysis
+SOW-026,step10_curved_bridge/phase0_pre_required_source_survey/14_phase0_handoff.md,markdown,Phase 0 handoff,CREATED,Next phase preparation
+SOW-027,step10_curved_bridge/phase0_pre_required_source_survey/required_source_matrix.csv,csv,Required source matrix,CREATED,47 items
+SOW-028,step10_curved_bridge/phase0_pre_required_source_survey/repository_capability_matrix.csv,csv,Repository capability matrix,CREATED,39 items
+SOW-029,step10_curved_bridge/phase0_pre_required_source_survey/missing_source_register.csv,csv,Missing source register,CREATED,20 items
+SOW-030,step10_curved_bridge/phase0_pre_required_source_survey/completion_report.md,markdown,Completion report,CREATED,Final verdict

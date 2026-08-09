@@ -1,0 +1,233 @@
+﻿item_id,toc_id,title,software_category,current_liner_relation,road_geometry_relation,bridge_relation,rule_engine_relation,priority,confidence,reason
+SM001,T011,用語の定義,ADMINISTRATIVE;STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ADMINISTRATIVE, 構造要求",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM002,T012,道路構造令における用語,ADMINISTRATIVE;STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ADMINISTRATIVE, 構造要求",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM003,T013,本書における用語,ADMINISTRATIVE;STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ADMINISTRATIVE, 構造要求",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM004,T019,地域の弾力的な基準の運用,EXCEPTION_RULE;ADMINISTRATIVE,将来機能として接続可能性あり,"例外規定, ADMINISTRATIVE",NO,YES,C,HIGH,本文確認後に照査
+SM005,T022,第2章 道路の機能確保のための道路構造,STRUCTURAL_REQUIREMENT;ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"構造要求, ADMINISTRATIVE",NO,YES,C,HIGH,本文確認後に照査
+SM006,T023,交通機能と道路構造,STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,構造要求,NO,YES,B,HIGH,本文確認後に照査
+SM007,T024,自動車の交通機能と道路構造,STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,構造要求,NO,YES,B,HIGH,本文確認後に照査
+SM008,T025,歩行者・自転車の交通機能と道路構造,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM009,T032,第3章 地域の状況に応じた道路構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM010,T033,地域の状況に応じた高速道路等の構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM011,T034,高規格幹線道路の構造,ROAD_CLASSIFICATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,道路区分,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM012,T035,重要物流道路の構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM013,T036,地域高規格道路の構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM014,T037,都市の状況に応じた道路構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,C,HIGH,本文確認後に照査
+SM015,T038,都心部道路の構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,C,HIGH,本文確認後に照査
+SM016,T039,中心市街地・商店街等道路の構造,ROAD_CLASSIFICATION,将来機能として接続可能性あり,道路区分,NO,YES,C,HIGH,本文確認後に照査
+SM017,T040,住宅地等道路（歩車共存道路等）の構造,ROAD_CLASSIFICATION;BICYCLE,将来機能として接続可能性あり,"道路区分, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM018,T041,地域の状況に応じた渋滞対策（仮）,ROAD_CLASSIFICATION,将来機能として接続可能性あり,道路区分,NO,YES,C,LOW,本文確認後に照査
+SM019,T042,山地部等の道路構造,ROAD_CLASSIFICATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,道路区分,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM020,T047,雪寒・寒冷地の道路構造,STRUCTURAL_REQUIREMENT,将来機能として接続可能性あり,構造要求,NO,YES,C,HIGH,本文確認後に照査
+SM021,T048,自動車の通行空間の構造,STRUCTURAL_REQUIREMENT,将来機能として接続可能性あり,構造要求,NO,YES,C,HIGH,本文確認後に照査
+SM022,T049,歩行者の通行空間の構造,STRUCTURAL_REQUIREMENT,将来機能として接続可能性あり,構造要求,NO,YES,C,HIGH,本文確認後に照査
+SM023,T056,第1章 道路の区分と設計速度、設計車両,ROAD_CLASSIFICATION;DESIGN_SPEED,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"道路区分, 設計速度",NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM024,T057,道路区分,ROAD_CLASSIFICATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,道路区分,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM025,T058,道路区分の適用の考え方,ROAD_CLASSIFICATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,道路区分,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM026,T059,道路の区分,ROAD_CLASSIFICATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,道路区分,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM027,T060,道路の種類・種級区分等の関係,ROAD_CLASSIFICATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,道路区分,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM028,T061,計画交通量・設計時間交通量,ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,ADMINISTRATIVE,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM029,T063,計画交通量,ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,ADMINISTRATIVE,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM030,T065,設計時間交通量,ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,ADMINISTRATIVE,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM031,T066,設計速度,DESIGN_SPEED,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,設計速度,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM032,T067,設計速度の意味,DESIGN_SPEED,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,設計速度,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM033,T068,設計速度と走行速度の関係,DESIGN_SPEED,LINER機能を直接補完（照査・橋梁配置・交差点等）,設計速度,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM034,T069,設計速度の値,DESIGN_SPEED,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,設計速度,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM035,T070,設計区間,HORIZONTAL_ALIGNMENT;ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面線形, ADMINISTRATIVE",PARTIAL,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM036,T071,設計区間設定の基本原則,HORIZONTAL_ALIGNMENT;ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面線形, ADMINISTRATIVE",PARTIAL,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM037,T072,設計区間変更の場合の注意事項,HORIZONTAL_ALIGNMENT;ADMINISTRATIVE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面線形, ADMINISTRATIVE",PARTIAL,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM038,T073,出入制限,ACCESS_CONTROL,将来機能として接続可能性あり,出入制限,NO,YES,C,HIGH,本文確認後に照査
+SM039,T074,出入制限の定義と種類,ACCESS_CONTROL,将来機能として接続可能性あり,出入制限,NO,YES,C,HIGH,本文確認後に照査
+SM040,T075,普通道路の出入制限,ACCESS_CONTROL,将来機能として接続可能性あり,出入制限,NO,YES,C,HIGH,本文確認後に照査
+SM041,T076,小型道路の出入制限,ACCESS_CONTROL,将来機能として接続可能性あり,出入制限,NO,YES,C,HIGH,本文確認後に照査
+SM042,T077,設計車両,STRUCTURAL_REQUIREMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,構造要求,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM043,T078,普通道路の自動車,STRUCTURAL_REQUIREMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,構造要求,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM044,T079,小型道路の自動車,STRUCTURAL_REQUIREMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,構造要求,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM045,T080,設計車両の最大値を超える車両,EXCEPTION_RULE;STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"例外規定, 構造要求",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM046,T081,自転車・歩行者,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM047,T082,第2章 横断面の構成,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM048,T083,概説,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM049,T084,本章の適用範囲,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM050,T085,基本的考え方,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM051,T086,横断面構成要素の組合せ,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM052,T087,車道・車線,LANE_WIDTH;CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"車線幅員, 横断構成",NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM053,T088,車道の構成,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM054,T089,車線数,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM055,T090,車線幅員,LANE_WIDTH,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,車線幅員,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM056,T091,中央帯,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM057,T092,中央帯の機能,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM058,T093,中央帯の設置,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM059,T094,中央帯の構成,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM060,T095,中央帯の幅員,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM061,T096,中央帯の形式・構造,MEDIAN,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,中央帯,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM062,T097,中央帯開口部,MEDIAN;INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"中央帯, 平面交差",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM063,T098,付加追越車線,CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,横断構成,NO,YES,B,HIGH,本文確認後に照査
+SM064,T099,概説,CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,横断構成,NO,YES,B,HIGH,本文確認後に照査
+SM065,T100,付加追越車線の設置場所等,CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,横断構成,NO,YES,B,HIGH,本文確認後に照査
+SM066,T101,（付加追越車線の構造・仮）,CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,横断構成,NO,YES,B,LOW,本文確認後に照査
+SM067,T102,路肩,SHOULDER,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,路肩,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM068,T103,路肩の機能・形式・分類等,SHOULDER,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,路肩,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM069,T104,路肩の幅員,SHOULDER,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,路肩,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM070,T105,路肩の省略・縮小,SHOULDER;EXCEPTION_RULE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"路肩, 例外規定",NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM071,T106,路肩の構造,SHOULDER,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,路肩,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM072,T108,路肩の側帯,SHOULDER,LINER機能を直接補完（照査・橋梁配置・交差点等）,路肩,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM073,T109,保護路肩,SHOULDER,LINER機能を直接補完（照査・橋梁配置・交差点等）,路肩,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM074,T110,停車帯,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM075,T111,停車帯の設置,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM076,T112,停車帯の幅員・構造,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM077,T113,停車帯の運用方法,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM078,T114,自転車通行帯・自転車道・自転車歩行者道・歩道,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM079,T115,概説,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM080,T116,設置の考え方,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM081,T117,幅員,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM082,T118,構造,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM083,T119,歩行者滞留の用に供する部分,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM084,T121,歩行者利便増進道路の歩道等,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM085,T122,積雪地域にある道路の中央帯等の幅員,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM086,T123,概説,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM087,T124,積雪地域の幅員構成,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM088,T130,副道,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM089,T131,概説,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM090,T132,副道の設置,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM091,T133,副道の構造,CROSS_SECTION,将来機能として接続可能性あり,横断構成,NO,YES,C,HIGH,本文確認後に照査
+SM092,T143,建築限界,CLEARANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,建築限界,YES,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM093,T144,車道部の建築限界,CLEARANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,建築限界,YES,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM094,T145,歩道・自転車道・自転車歩行者道の建築限界,CLEARANCE;SIDEWALK;BICYCLE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"建築限界, 歩道, 自転車",YES,YES,B,HIGH,本文確認後に照査
+SM095,T146,建築限界線の方向,CLEARANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,建築限界,YES,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM096,T147,第3章 線形・視距,HORIZONTAL_ALIGNMENT;LONGITUDINAL_GRADE;VERTICAL_CURVE;SIGHT_DISTANCE;SUPERELEVATION;WIDENING;CLOTHOID_OR_TRANSITION;CURVE_RADIUS;CROSS_SLOPE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"平面線形, 縦断勾配, 縦断曲線, 視距, 片勾配, 拡幅, 緩和区間・クロソイド, 平面線形の曲率半径, 横断勾配",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM097,T148,概説,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM098,T149,線形設計の原則事項,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM099,T150,平面線形の設計,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM100,T151,縦断線形の設計,LONGITUDINAL_GRADE;VERTICAL_CURVE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"縦断勾配, 縦断曲線",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM101,T152,平面線形と縦断線形の組合せ,HORIZONTAL_ALIGNMENT;LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"平面線形, 縦断勾配",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM102,T153,都市部の道路の線形設計,HORIZONTAL_ALIGNMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面線形,PARTIAL,YES,B,HIGH,本文確認後に照査
+SM103,T154,第3種第5級・第4種第4級の道路の線形設計,HORIZONTAL_ALIGNMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面線形,PARTIAL,YES,B,HIGH,本文確認後に照査
+SM104,T155,本章の適用（仮）,HORIZONTAL_ALIGNMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面線形,PARTIAL,YES,B,LOW,本文確認後に照査
+SM105,T156,車道の屈曲部,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM106,T157,曲線半径,CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形の曲率半径,NO,YES,A,MEDIUM,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM107,T158,最小曲線半径,CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形の曲率半径,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM108,T159,最小曲線半径の望ましい値,CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形の曲率半径,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM109,T160,適用の際の注意,CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形の曲率半径,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM110,T161,曲線長,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM111,T162,最小曲線長,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM112,T163,適用の際の注意,HORIZONTAL_ALIGNMENT,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,平面線形,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM113,T164,曲線部の片勾配,SUPERELEVATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,片勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM114,T165,曲線部の最大片勾配,SUPERELEVATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,片勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM115,T166,片勾配を打ち切る最小曲線半径,SUPERELEVATION;CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"片勾配, 平面線形の曲率半径",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM116,T167,曲線半径と片勾配の値,SUPERELEVATION;CURVE_RADIUS,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"片勾配, 平面線形の曲率半径",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM117,T168,適用の際の注意,SUPERELEVATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,片勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM118,T169,曲線部の拡幅,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM119,T170,曲線部の拡幅,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM120,T171,曲線部の拡幅量,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM121,T172,適用の際の注意,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM122,T173,設計の際の注意,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM123,T174,緩和区間,CLOTHOID_OR_TRANSITION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,緩和区間・クロソイド,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM124,T175,概説,CLOTHOID_OR_TRANSITION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,緩和区間・クロソイド,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM125,T176,自動車の緩和走行軌跡,CLOTHOID_OR_TRANSITION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,緩和区間・クロソイド,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM126,T177,緩和走行区間,CLOTHOID_OR_TRANSITION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,緩和区間・クロソイド,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM127,T178,緩和曲線の省略,CLOTHOID_OR_TRANSITION;EXCEPTION_RULE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"緩和区間・クロソイド, 例外規定",NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM128,T179,片勾配、拡幅等が変わる場合,SUPERELEVATION;WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"片勾配, 拡幅",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM129,T180,片勾配（のすりつけ）,SUPERELEVATION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,片勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM130,T181,拡幅（のすりつけ）,WIDENING,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,拡幅,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM131,T182,車線数が増減する場合,CROSS_SECTION,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断構成,NO,YES,A,MEDIUM,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM132,T183,制動停止視距・追越視距,SIGHT_DISTANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,視距,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM133,T184,概説,SIGHT_DISTANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,視距,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM134,T185,視距の計算,SIGHT_DISTANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,視距,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM135,T186,視距の確保,SIGHT_DISTANCE,LINER機能を直接補完（照査・橋梁配置・交差点等）,視距,NO,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM136,T187,縦断勾配,LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM137,T188,普通道路の縦断勾配,LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM138,T189,普通道路の縦断勾配の特例値,LONGITUDINAL_GRADE;EXCEPTION_RULE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"縦断勾配, 例外規定",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM139,T190,小型道路の縦断勾配,LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM140,T191,適用の際の注意,LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM141,T192,登坂車線,LONGITUDINAL_GRADE;CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"縦断勾配, 横断構成",PARTIAL,YES,B,HIGH,本文確認後に照査
+SM142,T193,概説,LONGITUDINAL_GRADE;CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"縦断勾配, 横断構成",PARTIAL,YES,B,HIGH,本文確認後に照査
+SM143,T194,設置必要区間の設計,LONGITUDINAL_GRADE;CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"縦断勾配, 横断構成",PARTIAL,YES,B,HIGH,本文確認後に照査
+SM144,T195,付加追越車線との関係,LONGITUDINAL_GRADE;CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"縦断勾配, 横断構成",PARTIAL,YES,B,HIGH,本文確認後に照査
+SM145,T196,縦断曲線,VERTICAL_CURVE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断曲線,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM146,T197,縦断曲線,VERTICAL_CURVE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断曲線,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM147,T198,縦断曲線半径の望ましい値,VERTICAL_CURVE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断曲線,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM148,T199,縦断曲線の中間値の計算,VERTICAL_CURVE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,縦断曲線,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM149,T200,横断勾配,CROSS_SLOPE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM150,T201,車道部の横断勾配,CROSS_SLOPE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,横断勾配,PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM151,T202,歩道等の横断勾配（仮）,CROSS_SLOPE;SIDEWALK,LINER機能を直接補完（照査・橋梁配置・交差点等）,"横断勾配, 歩道",PARTIAL,YES,B,MEDIUM,本文確認後に照査
+SM152,T203,合成勾配,CROSS_SLOPE;LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"横断勾配, 縦断勾配",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM153,T204,概説,CROSS_SLOPE;LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"横断勾配, 縦断勾配",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM154,T205,基準の算定（仮）,CROSS_SLOPE;LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"横断勾配, 縦断勾配",PARTIAL,YES,A,MEDIUM,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM155,T206,適用の際の注意,CROSS_SLOPE;LONGITUDINAL_GRADE,LINER数値計算コアに直結（線形・横断パラメータの入力/出力）,"横断勾配, 縦断勾配",PARTIAL,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM156,T207,第4章 平面交差,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM157,T208,道路の役割・機能,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM158,T209,平面交差の計画・設計,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM159,T210,幾何構造と交通制御,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM160,T211,幾何構造と交通安全,INTERSECTION;SAFETY_FACILITY,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 安全施設",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM161,T212,設計車両・通行方法・設計速度,INTERSECTION;DESIGN_SPEED;STRUCTURAL_REQUIREMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 設計速度, 構造要求",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM162,T213,平面交差点の形状・間隔,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM163,T214,枝数・交差角,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM164,T215,交差点の形状,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM165,T216,交差点の間隔,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM166,T217,平面交差点付近の線形,INTERSECTION;HORIZONTAL_ALIGNMENT,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 平面線形",PARTIAL,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM167,T218,交差点視距・交差点内の見通し,SIGHT_DISTANCE;INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"視距, 平面交差",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM168,T219,曲線半径・縦断線形,INTERSECTION;CURVE_RADIUS;LONGITUDINAL_GRADE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 平面線形の曲率半径, 縦断勾配",PARTIAL,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM169,T220,平面交差点付近の横断構成,INTERSECTION;CROSS_SECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 横断構成",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM170,T221,車線幅員・車線数,INTERSECTION;LANE_WIDTH,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 車線幅員",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM171,T222,本線,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM172,T223,右折車線,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM173,T224,左折車線,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM174,T225,変速車線,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM175,T226,導流路、交通島・隅切り等,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM176,T227,導流路,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM177,T228,交通島・分離帯,INTERSECTION;MEDIAN,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 中央帯",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM178,T229,交差点の通行方法・隅切り,INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,平面交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM179,T230,歩道・車道,INTERSECTION;SIDEWALK,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 歩道",NO,YES,B,HIGH,本文確認後に照査
+SM180,T231,横断歩道、自転車横断帯・停止線,INTERSECTION;SAFETY_FACILITY,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 安全施設",NO,YES,B,HIGH,本文確認後に照査
+SM181,T232,横断歩道,INTERSECTION;SAFETY_FACILITY,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 安全施設",NO,YES,B,HIGH,本文確認後に照査
+SM182,T233,自転車横断帯,INTERSECTION;BICYCLE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 自転車",NO,YES,B,HIGH,本文確認後に照査
+SM183,T234,停止線,INTERSECTION;SAFETY_FACILITY,LINER機能を直接補完（照査・橋梁配置・交差点等）,"平面交差, 安全施設",NO,YES,B,HIGH,本文確認後に照査
+SM184,T235,（ラウンドアバウト・仮）,INTERSECTION,将来機能として接続可能性あり,平面交差,NO,YES,B,LOW,本文確認後に照査
+SM185,T236,概説,INTERSECTION,将来機能として接続可能性あり,平面交差,NO,YES,B,HIGH,本文確認後に照査
+SM186,T237,構成要素と交通量の定義,INTERSECTION,将来機能として接続可能性あり,平面交差,NO,YES,B,MEDIUM,本文確認後に照査
+SM187,T238,適用条件と留意事項,INTERSECTION,将来機能として接続可能性あり,平面交差,NO,YES,B,HIGH,本文確認後に照査
+SM188,T239,二段横断施設,INTERSECTION;SAFETY_FACILITY,将来機能として接続可能性あり,"平面交差, 安全施設",NO,YES,C,HIGH,本文確認後に照査
+SM189,T240,第5章 立体交差,GRADE_SEPARATION;RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"立体交差, ランプ, ジャンクション",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM190,T241,概説,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM191,T242,立体交差の計画基準,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM192,T243,計画基準の具体的適用,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM193,T244,立体交差構造の原則,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM194,T245,普通道路・小型道路の分合流部,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM195,T246,交差点立体交差の計画・設計,GRADE_SEPARATION;INTERSECTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"立体交差, 平面交差",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM196,T247,計画原則,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM197,T248,交差点立体交差の計画・設計,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM198,T249,連絡側道,GRADE_SEPARATION,LINER機能を直接補完（照査・橋梁配置・交差点等）,立体交差,NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM199,T250,立体交差の流入出部,GRADE_SEPARATION;RAMP,LINER機能を直接補完（照査・橋梁配置・交差点等）,"立体交差, ランプ",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM200,T251,インターチェンジ等（計画・設計基準・仮）,RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション",NO,YES,B,MEDIUM,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM201,T252,位置決定,RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM202,T253,形式決定,RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM203,T254,形式の特性,RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM204,T255,基本（的基準・仮）,RAMP;JUNCTION,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション",NO,YES,B,LOW,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM205,T256,交通安全対策,RAMP;JUNCTION;SAFETY_FACILITY,LINER機能を直接補完（照査・橋梁配置・交差点等）,"ランプ, ジャンクション, 安全施設",NO,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM206,T266,第7章 自転車専用道路等・歩行者専用道路・歩車共存道路等,BICYCLE;SIDEWALK,将来機能として接続可能性あり,"自転車, 歩道",NO,YES,C,HIGH,本文確認後に照査
+SM207,T267,自転車専用道路等,BICYCLE,将来機能として接続可能性あり,自転車,NO,YES,C,HIGH,本文確認後に照査
+SM208,T268,概説,BICYCLE,将来機能として接続可能性あり,自転車,NO,YES,C,HIGH,本文確認後に照査
+SM209,T269,自転車専用道路等の幅員・建築限界,BICYCLE;CLEARANCE,将来機能として接続可能性あり,"自転車, 建築限界",YES,YES,C,HIGH,本文確認後に照査
+SM210,T270,自転車専用道路等の構造,BICYCLE,将来機能として接続可能性あり,自転車,NO,YES,C,HIGH,本文確認後に照査
+SM211,T271,歩行者専用道路,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM212,T272,概説,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM213,T273,歩行者専用道路の構造,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM214,T274,附属施設,SIDEWALK,将来機能として接続可能性あり,歩道,NO,YES,C,HIGH,本文確認後に照査
+SM215,T275,歩車共存道路等,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM216,T276,概説,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM217,T277,歩車共存道路等の必要性,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM218,T278,歩車共存道路等の種類,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM219,T279,計画・設計時の留意点,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM220,T280,歩車共存道路等の構造,SIDEWALK;BICYCLE,将来機能として接続可能性あり,"歩道, 自転車",NO,YES,C,HIGH,本文確認後に照査
+SM221,T281,第8章 土工、舗装、道路構造物,STRUCTURAL_REQUIREMENT;BRIDGE;TUNNEL;DRAINAGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,"構造要求, 橋梁, TUNNEL, 排水",YES,YES,B,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM222,T300,橋、高架の道路等,BRIDGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,橋梁,YES,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM223,T301,構造,BRIDGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,橋梁,YES,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM224,T302,設計自動車荷重,BRIDGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,橋梁,YES,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM225,T303,構造の基準,BRIDGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,橋梁,YES,YES,A,HIGH,実案件(西知多道路・東海JCT)の線形計算書・設計図と対応
+SM226,T304,小規模吊橋等,BRIDGE,LINER機能を直接補完（照査・橋梁配置・交差点等）,橋梁,YES,YES,B,HIGH,本文確認後に照査
+SM227,T309,自動運行補助施設,SAFETY_FACILITY,将来機能として接続可能性あり,安全施設,NO,YES,C,HIGH,本文確認後に照査
+SM228,T330,特定車両停留施設,STRUCTURAL_REQUIREMENT,将来機能として接続可能性あり,構造要求,NO,YES,C,HIGH,本文確認後に照査
+SM229,T342,第10章 雑則,EXCEPTION_RULE,将来機能として接続可能性あり,例外規定,NO,YES,C,HIGH,本文確認後に照査
+SM230,T343,附帯工事等の特例,EXCEPTION_RULE,将来機能として接続可能性あり,例外規定,NO,YES,C,HIGH,本文確認後に照査
+SM231,T344,区分変更道路の特例,EXCEPTION_RULE,将来機能として接続可能性あり,例外規定,NO,YES,C,HIGH,本文確認後に照査
+SM232,T345,小区間改良の場合の特例,EXCEPTION_RULE,将来機能として接続可能性あり,例外規定,NO,YES,C,HIGH,本文確認後に照査

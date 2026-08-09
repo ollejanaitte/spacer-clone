@@ -1,0 +1,90 @@
+# Repository Paths Reviewed
+
+Date: 2026-08-06
+Repository: /home/masaharu/Projects/spacer-clone
+HEAD: 0fadc1c2fa984f702b94af12f249a97fc2842705
+
+## Paths Reviewed
+
+### Root
+- AGENTS.md
+- final_report.txt (not opened for edit; header confirmed to exist)
+
+### docs/
+- docs/apollo/ (top-level listing)
+- docs/liner/
+- docs/road/
+- docs/frame/
+- docs/bridge-modeler-v2/
+- docs/history/road/phase3.5/
+
+### docs/apollo/ (selected)
+- docs/apollo/ap00/ (governance, scope guards)
+- docs/apollo/design-standards/
+- docs/apollo/continuous_girder/
+- docs/apollo/step9/ (continuous bridge report work)
+- docs/apollo/step4c_appurtenance_haunch/ (evidence dir, dirty in working tree)
+- docs/apollo/3d-stl/
+- docs/apollo/research/
+
+### docs/frame/ (selected)
+- docs/frame/current-capability.md
+- docs/frame/gap-and-acceptance.md
+- docs/frame/analysis/README.md
+- docs/frame/analysis/influence-moving-load.md
+- docs/frame/analysis/influence-analysis.md
+- docs/frame/contracts/04_input_schema.md
+- docs/frame/contracts/06_result_schema.md
+- docs/frame/modeler/
+- docs/frame/verification/
+
+### docs/liner/
+- docs/liner/phase3.5/
+- docs/liner/phase4.5/
+- docs/liner/cad_output_spec.md
+- docs/liner/test_plan_geometry.md
+- docs/liner/ui/
+
+### docs/road/
+- docs/road/current-capability.md
+- docs/road/design/
+- docs/road/phase4/
+- docs/road/phase5/
+- docs/road/phase6/
+- docs/road/verification/
+
+### frontend/src/
+- frontend/src/liner/ (full listing)
+- frontend/src/apollo/ (full listing)
+- frontend/src/viewer/ (full listing)
+- frontend/src/contracts/ (frameAnalysisResultResource.ts, bridgeFrameAnalysisDocument.ts)
+
+### schemas/
+- schemas/project.schema.json
+- schemas/result.schema.json
+- schemas/bridge-definition.schema.json
+- schemas/bridge.schema.json
+- schemas/generated-fem.schema.json
+- schemas/contracts/v0.1/
+
+### examples/
+- examples/bridge-2span-3girder.json
+- examples/bridge-load-line.json
+- examples/bridge-simple-2lane.json
+- examples/verification/beam/cantilever_torsion.json
+- examples/verification/3d-frame/l_frame.json
+- examples/verification/frame/portal_frame_horizontal.meta.json
+- examples/verification/truss/simple_truss.json
+- examples/verification/beam/
+- examples/liner/ (gc-01 .. gc-08 golden fixtures)
+- examples/spacer-reference/
+
+## User-Provided Apollo PDF
+
+- Path searched: /mnt/data/01_鋼橋自動設計システム_APOLLO_ユーザーズマニュアル_SuperDesigner_鋼橋の自動設計製図システム.pdf
+- Result: NOT FOUND (no PDF files present under /mnt/data)
+- Any alternate path search: /mnt/data/*.pdf, *APOLLO*, *SuperDesigner* - no results
+
+## Notes
+- Only read-only git commands were used
+- No files in spacer-clone were modified
