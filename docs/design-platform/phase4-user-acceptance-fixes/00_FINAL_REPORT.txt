@@ -1,0 +1,62 @@
+VERDICT: COMPLETE
+BASELINE_SHA: 1ff2536a22aedc929773ed7b571d54a8ff9ae868
+FINAL_MAIN_SHA: 2b2e30397eecd0d9b6242c7159271c9cdf62b286
+
+USER_REPORTED_ISSUES:
+  1. 「保存」ボタンを押しても保存された実感がなく、実際に効いていない可能性
+  2. 動作確認用の「サンプル業務」が欲しい
+  3. 起動時から「5-Span Continuous Viaduct (Plan A)」が自動表示される
+
+ROOT_CAUSE_SAVE_QUICK_ANALYSIS:
+  - 保存自体は実装済み（Electron native dialog / browser download）だが成功 feedback が無く、
+    Toolbar は dirty=false 初期で「保存済み」固定表示。log() は非表示パネル。→ 保存した実感がない。
+ROOT_CAUSE_SAVE_BUSINESS_PROJECT:
+  - App.tsx の Workspace onSave は registry.touch() のみで folder store / business-project.json への書き込みが無く、
+    さらに confirmation gate が Save を disabled にし得た。
+ROOT_CAUSE_DEFAULT_MODEL:
+  - App.tsx useState 初期値と「新規」が createDefaultProject()（= Plan A）を使用。runtime 初期状態に直結。
+
+DEFAULT_MODEL_RUNTIME_REMOVED: YES（createEmptyProject() を runtime 初期値 + 新規に使用。Plan A は Apollo sample / test fixture に隔離）
+EMPTY_STATE: YES（/pro で nodes/members 0 のとき「モデルがありません」+ 新規作成/開く/サンプルを読み込む）
+QUICK_ANALYSIS_SAVE: PASS（保存後「保存しました (project.json)」notice 表示）
+BUSINESS_PROJECT_SAVE: PASS（businessProjectPersistence が manifest を localStorage folder-store key へ書込）
+SAVE_FEEDBACK: PASS（Workspace 保存済み時刻表示 / 失敗時エラー表示）
+DIRTY_STATE: PASS（QA 保存成功で dirty クリア / Workspace は常時保存可能）
+
+SAMPLE_BUSINESS: YES（「サンプル業務 - 道路・鋼鈑桁橋」SAMPLE-001）
+SAMPLE_BUSINESS_SOURCE: sampleBusiness.ts（read-only template、明示操作で clone）
+SAMPLE_BUSINESS_CREATE: YES（業務一覧「サンプル業務を作成」ボタン。毎起動 auto-seed しない）
+SAMPLE_BUSINESS_SAVE_LOAD: PASS（saveManifest で persistence、再起動後も一覧に残る）
+SAMPLE_BUSINESS_TOOL_BINDINGS: PASS（Workspace から LINER/Apollo/Substructure/FEM/Main3D 到達）
+
+START_UBUNTU: PASS（Vite apollo mode 5173 + backend 8000）
+ELECTRON_SAVE_REOPEN: PASS（QA: 保存→reload→復元 / BP: 保存→再起動→一覧→reopen）
+ELECTRON_SAMPLE_BUSINESS_E2E: PASS（P6 実起動 11 チェック / P7 自動 E2E 4 テスト）
+
+CASE_A: PASS（11）
+PROTECTED_CORE: PASS（bridgeProject 106）
+FRONTEND_TESTS: PASS（lobby+platform+data 151 / contracts 290）
+BACKEND_TESTS: PASS（1077）
+TYPECHECK: PASS
+BUILD: PASS
+ELECTRON_E2E: PASS（user-acceptance 4 / startup-path 3）
+
+PR_LIST:
+  #790 P0 root cause docs
+  #791 P1 empty default model
+  #792 P2 QA save feedback
+  #793 P3 BusinessProject save
+  #794 P4 sample business
+  #795 P5 empty state UX
+  #796 P7/P6 user-acceptance E2E
+  #797 本 Final Report
+MERGE_SHA_LIST:
+  3ba81ec, 3974063, cee8e05, 966c61d, 3febcf0, dc256ef, 2b2e303
+
+OPEN_ISSUES:
+  - BusinessProject 子エンティティ（road/bridge/analysis）の実ファイルはサンプル ref のみで、
+    実データは今後の migration/tool 連携で生成（本ステップは runtime 空始動 + 保存基盤）。
+  - Browser モードでは native folder write 不可（download/in-memory 相当）。Electron では native。
+USER_DECISIONS_REQUIRED: 0
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+FINAL_GIT_STATUS: 先任セッション由来 dirty（apollo evidence 3 JSON / final_report.txt 削除）は保持（AGENTS.md）
