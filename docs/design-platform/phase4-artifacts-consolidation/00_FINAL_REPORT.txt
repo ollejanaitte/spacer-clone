@@ -4,14 +4,16 @@ Phase 4 設計成果物統合 (004–007) Final Report
 VERDICT: COMPLETE
 BASELINE_SHA: 25430ed2920e15cd3622fd31762f6bff57ec291d
   (origin/main at task start; Step 4-0/4-2 already merged)
-FINAL_MAIN_SHA: 1a933da9354aa1acd0b8ff04937f25d78b0edce5
-  (origin/main HEAD after PR #761 merged Step 4-3 design = 007)
+FINAL_MAIN_SHA: 27d11c25e52820f240d843ce765e821c037efc8a
+  (origin/main M2 = integration-complete main: 007 via PR #761 + 004/005/006
+   unique-local + Final Report v1 via PR #2. The only later commit (M3) renews this
+   report text; true final origin/main HEAD = M3, see supervisor summary.)
 WORK_PATH: /home/masaharu/Projects/spacer-clone
 CONSOLIDATION_WORKTREE: /tmp/opencode/consolidation (branch docs/phase4-artifacts-consolidation)
-BRANCH: docs/phase4-artifacts-consolidation
-PR#: 2  (consolidation: 3 unique-local files + this Final Report)
-  (007 was integrated separately via PR #761, already merged to main)
-MERGE_STATUS: COMPLETE
+BRANCH: docs/phase4-consolidation-finalize
+PR#: 3  (finalizes Final Report: FINAL_MAIN_SHA=M2, deletion verified)
+  (007 via PR #761; 004/005/006 + Final Report v1 via PR #2; both merged to main)
+MERGE_STATUS: COMPLETE (PR #761 merged; PR #2 consolidation merged; PR #3 finalizes this report)
 REPOSITORY: https://github.com/ollejanaitte/spacer-clone.git
 
 ============================================================
@@ -96,8 +98,9 @@ NOTES
   (*.json). These were preserved (not discarded, not staged, not committed). All git
   operations used dedicated refs / a clean worktree off origin/main to avoid disturbing them.
   origin/main (remote) is the single source of truth for this consolidation.
-- FINAL_MAIN_SHA above = M1 (main after Step 4-3 / 007 integration). After this consolidation
-  PR merges, final main = M2 (this report's commit); M2 sha is reported in the supervisor summary.
+  - FINAL_MAIN_SHA above = M2 = origin/main after PR #761 (007) + PR #2 (004/005/006 + report v1)
+    merged = integration-complete main. The only later commit, M3 (PR #3), updates this
+    Final Report text. Supervisor summary reports M3 = final origin/main HEAD.
 - DISCORD_WEBHOOK_URL is exported in ~/.bashrc (line 128) and current shell, so the
   session-notify plugin auto-posts session summaries to the provided webhook going forward.
 - No code changes; no Phase 3 / Protected Core changes; no force-push; no reset --hard; no git clean.
