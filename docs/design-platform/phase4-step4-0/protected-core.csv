@@ -1,0 +1,9 @@
+core_area,module,file,protect_reason,status
+CASE_A,bridgeProject,cbdmDocument.ts+alignmentAdapter.ts+bridgeGeometryGenerator.ts+superstructureBinding.ts+substructureBinding.ts,①→②→③ 正規経路,PROTECTED
+CASE_B,bridgeProject,alignmentReconstruction.ts+attachReconstructionToManifest,②sample→①復元（status/provenance）,PROTECTED
+BridgeProject contract,contracts+bridgeProject schemas,contracts/bridgeProject.ts+runtime/schemas/bridgeProject.ts,schema/validator/manifest,PROTECTED
+Provenance/status/revision,contracts,provenance.ts+revision.ts+value-status-unit-policy,status語彙・revision・cycle guard,PROTECTED
+NOT_AUTHORIZED guard,bridgeProject,validation.ts+superstructureAdapter.ts+substructureBinding.ts,未認証値昇格禁止・fail-closed,PROTECTED
+Save/Load/Replay,bridgeProject,cbdmDocument.ts serialize/parse+各adapter,canonical round-trip 決定論,PROTECTED
+Main3D,bridgeProject+viewer,integratedScene3d.ts+viewer.tsx,統合3D・support-XYZ parity,PROTECTED
+Calculation Adapter,substructure/design,calculationAdapter.ts (A-01),domain↔engine境界（変更しない）,PROTECTED

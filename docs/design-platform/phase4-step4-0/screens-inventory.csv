@@ -1,0 +1,22 @@
+route,page,component,module,purpose,classification
+"/",LobbyHome,lobby/pages/LobbyHome.tsx,lobby,mode-picker home (Learn/Level0/Pro),WRAP
+"/learn",LearnTop,lobby/pages,lobby,learning catalog,WRAP
+"/level0",Level0Top,lobby/pages,lobby,generic FEM teaching app (T20 placeholder partial),WRAP
+"/pro",Pro shell,App.tsx + Toolbar/Viewer3D/Results/BridgeWizard,components/viewer,generic FEM modeler/analyzer workspace,MOVE
+"/pro/compare",ModelComparisonWorkspace,compare/,compare,model comparison,WRAP
+"/pro/apollo",ApolloRouteHost->ApolloPhase1Shell,apollo/,apollo,WF-01..WF-15 superstructure workspace,MOVE
+"/pro/linear-coordinate",LinerLauncherPage,liner/pages/,liner,entry: GUI/PDF importer/山岳500m,WRAP
+"/pro/importer",ImporterProjectListPage,liner/importer/,liner,PDF importer project list,WRAP
+"/pro/importer/:pid/line-master/:bid",LineMasterPage,liner/importer/,liner,girder line master editor,WRAP
+"/pro/importer/:pid/sections/:bid",SectionListPage,liner/importer/,liner,section list,WRAP
+"/pro/importer/:pid/section-edit/:bid/:sid",SectionEditorPage,liner/importer/,liner,per-section editor,WRAP
+"/pro/importer/:pid/validation/:bid",ValidationPanelPage,liner/importer/,liner,validation report,WRAP
+"/pro/importer/:pid/export/:bid",ExportPanel,liner/importer/,liner,export + phase 3.5 handoff,WRAP
+"/pro/liner",LinerListPage,liner/pages/,liner,LINER model list,WRAP
+"/pro/liner/setup",LinerEditPage,liner/pages/,liner,setup editor 7 tabs,MOVE
+"/pro/liner/preview",LinerPreviewPage,liner/pages/,liner,intermediate preview,MOVE
+"/pro/liner/main3d",LinerMain3DPage,liner/pages/,liner,unified 3D viewer (山岳500m),KEEP
+"/pro/liner/drawings/*",LinerFormalDrawingWorkspacePage,liner/pages/,liner,plan/profile/cross-section drawing,MOVE
+"/pro/liner/mapping-review",LinerMappingReviewPage,liner/pages/,liner,frame mapping review,MOVE
+"/pro/liner/substructure",SubstructurePlanningHost,substructure/planning/,substructure,3-pane CAD,MOVE
+Toolbar,Toolbar,components/Toolbar.tsx,components,open/save/run/export buttons,WRAP
