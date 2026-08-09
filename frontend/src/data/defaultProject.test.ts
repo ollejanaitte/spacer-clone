@@ -7,6 +7,7 @@ import {
   BRIDGE_SUSPENDED_OFFSET,
   BRIDGE_TOTAL_LENGTH,
   createDefaultProject,
+  createEmptyProject,
   createSuspendedDeckProject,
   describeBridgeVariant,
   pierBaseGroundCondition,
@@ -146,5 +147,34 @@ describe("mutability guards", () => {
     createSuspendedDeckProject();
     expect(a.nodes.find((n) => n.id === "G3L")).toBeUndefined();
     expect(a.nodes.find((n) => n.id === "G3R")).toBeUndefined();
+  });
+});
+describe("createEmptyProject (runtime initial state)", () => {
+  const empty = createEmptyProject();
+
+  it("has no nodes, members, supports, loads, or materials", () => {
+    expect(empty.nodes).toHaveLength(0);
+    expect(empty.members).toHaveLength(0);
+    expect(empty.supports).toHaveLength(0);
+    expect(empty.loadCases).toHaveLength(0);
+    expect(empty.nodalLoads).toHaveLength(0);
+    expect(empty.memberLoads).toHaveLength(0);
+    expect(empty.materials).toHaveLength(0);
+    expect(empty.sections).toHaveLength(0);
+    expect(empty.massCases ?? []).toHaveLength(0);
+  });
+
+  it("does not auto-create any analysis result", () => {
+    expect(empty.analysisResults).toBeUndefined();
+  });
+
+  it("names the project as untitled / model not created", () => {
+    expect(empty.project.name).toBe("モデル未作成");
+    expect(empty.project.id).toBe("untitled");
+  });
+
+  it("never references the Plan A sample", () => {
+    expect(empty.project.name).not.toContain("Continuous Viaduct");
+    expect(empty.project.name).not.toContain("Plan A");
   });
 });
