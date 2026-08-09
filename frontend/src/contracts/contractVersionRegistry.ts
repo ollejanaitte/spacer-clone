@@ -28,6 +28,7 @@ export const BRIDGE_PROJECT_SCHEMA_ID = "spacer.contracts.bridge-project" as Sch
 export const COMMON_ENVELOPE_SHAPE_ID = "spacer.contracts.common-envelope-shape" as SchemaId;
 
 export const ENGINEERING_PROJECT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
+export const BUSINESS_PROJECT_SCHEMA_VERSION = requireSchemaVersion("0.2.0");
 export const ROAD_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const BRIDGE_FRAME_ANALYSIS_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
 export const BRIDGE_SUPERSTRUCTURE_DESIGN_DOCUMENT_SCHEMA_VERSION = requireSchemaVersion("0.1.0");
@@ -58,8 +59,8 @@ export const CONTRACT_VERSION_SUPPORT_MATRIX: Readonly<
 > = {
   [ENGINEERING_PROJECT_SCHEMA_ID]: {
     schemaId: ENGINEERING_PROJECT_SCHEMA_ID,
-    supportedVersions: [ENGINEERING_PROJECT_SCHEMA_VERSION],
-    currentVersion: ENGINEERING_PROJECT_SCHEMA_VERSION,
+    supportedVersions: [ENGINEERING_PROJECT_SCHEMA_VERSION, BUSINESS_PROJECT_SCHEMA_VERSION],
+    currentVersion: BUSINESS_PROJECT_SCHEMA_VERSION,
   },
   [ROAD_DESIGN_DOCUMENT_SCHEMA_ID]: {
     schemaId: ROAD_DESIGN_DOCUMENT_SCHEMA_ID,
