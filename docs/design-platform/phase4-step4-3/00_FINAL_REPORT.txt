@@ -1,0 +1,274 @@
+============================================================
+STEP4-3 保存システム本体設計 最終報告（00_FINAL_REPORT）
+============================================================
+Date: 2026-08-09
+Step: Phase 4 / Step 4-3「保存システム本体設計」（設計のみ・実装なし）
+
+STEP4_3_STORAGE_DESIGN_VERDICT: COMPLETE
+BASELINE_SHA: 25430ed2920e15cd3622fd31762f6bff57ec291d (git rev-parse origin/main, fetched at session start)
+ACTIVE_WORK_PATH: /tmp/opencode/step4-3-baseline (clean worktree @ origin/main for code reading);
+                            output base /home/masaharu/Projects/007_設計ツール統合_保存システム本体設計
+BRANCH: docs/phase4-step4-3-storage-design (new branch off origin/main; docs-only)
+
+INPUT_DOCS:
+  - 006 保存経路棚卸し /home/masaharu/Projects/006_設計ツール統合_現行保存経路棚卸し.txt (code-rooted)
+  - Step4-0 docs/design-platform/phase4-step4-0/ (protected-core.csv, data-storage-inventory.csv)
+  - Step4-2 docs/design-platform/phase4-step4-2/ (案D BusinessProject model, ID/reference rules, P5 boundary)
+  - Contract scaffolding (origin/main): contracts/engineeringProject.ts, roadDesignDocument.ts,
+    documentReference.ts, immutableResourceReference.ts, stableEntityId.ts, revision.ts,
+    repository/revisionedDocumentRepository.ts, repository/immutablePackageRepository.ts,
+    contractVersionRegistry.ts, migrationRecord.ts
+  - Backend: backend/app/atomic_json.py (AtomicJsonStore), backend/app/main.py (save/load/autosave/bridge CRUD)
+  - Frontend: frontend/src/App.tsx (save/autosave), frontend/src/bridgeProject/cbdmDocument.ts (canonical serialize/parse)
+
+CURRENT_STORAGE_INVENTORY_STATUS:
+  - ProjectModel (types.ts:250-296) in-memory -> 5 systems: project.json(download/native),
+    localStorage(13 keys workspace+importer+wf15ack+4 UI), backend/data(autosave+projects+bridges),
+    substructure-project.json(envelope), scattered artifact downloads.
+  - BridgeProject = CBDM+manifest+superstructure+substructure canonical JSON (parse/serialize+validateBridgeProject, fail-closed). Protected Core.
+  - autosave DISABLED (AUTOSAVE_ENABLED=false, App.tsx:135). backend autosave.json latent.
+  - AtomicJsonStore = temp->fsync->os.replace->dir fsync (atomic single-file). create_only/expected_checksum supported.
+  - EngineeringProject(manifest kind) / RoadDesignDocument / DocumentReference(kind:id:revision+checksum+uri)
+    / ImmutableResourceReference / RevisionedDocumentRepository / ImmutablePackageRepository already exist as contracts
+    but EngineeringProject has NO app callers (wiring-pending) -> safe to extend.
+
+RECOMMENDED_STORAGE_ARCHITECTURE:
+  - Option C: Folder + manifest(ToC) + Entity canonical docs + immutable binary resources
+    (case D package layer on top). REJECTED: A single-giant JSON (violates prohibition),
+    B path-based references (path != identity prohibition). Reuse existing contract envelope.
+
+RECOMMENDED_WORKING_PROJECT_FORMAT:
+  1 BusinessProject = 1 native-filesystem folder (Electron main / backend fs).
+  Browser mode = in-memory + download only (no folder write).
+
+RECOMMENDED_FOLDER_STRUCTURE:
+  <businessProjectDir>-<projectName>/
+  ├─ business-project.json            # manifest (engineering-project canonical doc)
+  ├─ roads/<roadId>.road.json         # road-design document (canonical)
+  ├─ bridges/<bridgeId>/{cbdm.json, manifest.json, superstructure.json, substructure.json}  # Protected Core verbatim
+  ├─ analyses/<analysisId>/{document.json, results/<resultId>.persisted-result.json}
+  ├─ shared/datasets/<datasetId>.json # Terrain/Existing descriptor (canonical)
+  ├─ resources/<sha256>.<ext>         # immutable binary (Terrain/PDF/STL/imagery/artifacts)
+  ├─ deliverables/<deliverableId>/deliverable.json    # + resource refs
+  └─ .system/{autosave/, recovery/, history/, cache/}
+
+BUSINESS_PROJECT_MANIFEST_ROLE:
+  - ToC/index only (engineering-project documentKind, canonical JSON, sha256).
+  - Owns: projectMetadata, revision/checksum/provenance, and *Refs[] (roadRefs, bridgeProjectRefs,
+    analysisRefs, sharedDatasetRefs, deliverableRefs, coordinateReference).
+  - Does NOT embed entity payloads (FORBIDDEN_EMBEDDED_PAYLOAD_KEYS inherited from engineeringProject.ts).
+  - Extend existing EngineeringProject (0.1.0 -> 0.2.0 additive) with array refs.
+
+ROAD_PERSISTENCE_UNIT: 1 file = roads/<roadId>.road.json (road-design document, canonical). RoadSection/Alignment are in-doc stable entities (RoadAlignmentEntry.entityId / coordinateContexts). Case A/B safe (non-contiguous sections + multiple alignments as arrays).
+
+ROAD_SECTION_PERSISTENCE_UNIT: in-doc stable entity of road-design, not a separate file (avoids fragmenting canonical road-design contract).
+
+ALIGNMENT_PERSISTENCE_UNIT: in-doc stable entity (StableEntityId) referenced by BridgeProject via DocumentReference to road-design doc + entityId. Not a separate file (would break alignmentReconstruction cycle guard).
+
+BRIDGEPROJECT_PERSISTENCE_UNIT: bridges/<bridgeId>/ folder with 4 canonical docs (cbdm/manifest/superstructure/substructure) using existing serialize*/parse* verbatim. Protected Core; BusinessProject references manifest.json via DocumentReference(bridge-project). Zero Core change.
+
+ANALYSIS_PERSISTENCE_UNIT: analyses/<analysisId>/document.json (bridge-frame-analysis doc, canonical) + results/<resultId>.persisted-result.json. subjectRef references bridge/road/member by Stable ID.
+
+SHARED_DATASET_PERSISTENCE_UNIT: shared/datasets/<datasetId>.json (descriptor, canonical) + immutable binary in resources/<sha>.<ext> via ImmutableResourceReference. Terrain/Existing shared (not copied) across bridges.
+
+DELIVERABLE_PERSISTENCE_UNIT: deliverables/<deliverableId>/deliverable.json (canonical, persisted-result kind; metadata+sourceRefs+resourceRefs) + artifact bytes in resources/. Distinct from ad-hoc user Export (download, unmanaged).
+
+CANONICAL_POLICY:
+  - A CANONICAL = envelope(schemaId/documentId/documentKind/revisionId/contentChecksum/provenance)
+    + body; canonicalJsonForChecksum (sorted keys, NaN/Infinity reject) + sha256 contentChecksum.
+  - Saved via AtomicJsonStore (temp->fsync->replace->dir fsync). Readback checksum-verify; fail-closed.
+  - manifest = ToC (no embedded payload). BridgeProject docs VERBATIM canonical (verbatim reuse of cbdmDocument serialize/parse + validateBridgeProject).
+
+RESULT_EVIDENCE_POLICY:
+  - B RESULT = displacements/reactions/member-force/quantity/design-result/audit/reports/AnalysisResult/Deliverable.
+  - Stored as canonical docs (persisted-result kind) + resources/. Regenerable but kept (evidence).
+  - Included in backup/package by default (large via exclude option).
+
+CACHE_POLICY:
+  - C CACHE = viewer scene cache/thumbnail/preview/temporary geometry. .system/cache/ only.
+  - Excluded from package/backup; regenerable; safe to delete. localStorage UI settings = app config (not project data).
+
+STABLE_ID_POLICY:
+  - UUID (uuidStringSchema / generateUuid; deriveStableUuid for deterministic bridge refs).
+  - documentId = UUID (rename-safe). entityId (in-doc) = StableEntityId(namespace+UUID+entityKind+aliases).
+  - human-readable (projectNumber/name/road名称) = display only, NOT primary key.
+  - copy -> deep re-id; import -> collision detect (AtomicJsonStore create_only) + remap.
+
+REFERENCE_POLICY:
+  - DocumentReference (kind:id:revision+checksum+uri). identity = "kind:uuid:revision".
+  - revision in ref = positive int (no floating latest) -> stale detection.
+  - checksum in ref -> dangling/tamper/mismatched-revision detect -> fail-closed.
+  - uri = project-root relative (portability; path != identity).
+  - EngineeringProject/BridgeProject already use this; BusinessProject extends it.
+
+PATH_POLICY:
+  - path = location (human-readable <documentId>.<kind>.json), identity = documentId+revision+checksum.
+  - resources = content-addressed resources/<sha256>.<ext>.
+  - rename/move -> update uri in manifest only; refs by ID survive.
+
+FORMAL_SAVE_POLICY:
+  - dirty -> schema validate -> reference validate (dangling/checksum/revision) -> dependency validate
+    (incoming refs; fail-closed) -> WritePlan -> each child atomic publish (AtomicJsonStore) ->
+    manifest last commit (revisionId+1, contentChecksum recompute) -> readback checksum verify.
+  - manifest = last commit; crash leaves old consistent manifest + orphan children (recovered by journal).
+
+MULTI_FILE_TRANSACTION_POLICY:
+  - RECOMMENDED: Option A (children-first atomic + manifest-last commit) + lightweight recovery journal.
+    - Why: portable (each file atomic via existing AtomicJsonStore), manifest-last = logical atomicity,
+      crash yields only orphan children (recoverable), no cross-volume/Windows-dir-swap fragility.
+    - REJECTED: B folder-swap (Windows empty-dir-only os.replace; cross-volume fail), D manifest-first (dangling refs).
+    - Option C (full journal) is V2; Prototype uses A + minimal journal.
+
+AUTOSAVE_POLICY:
+  - Separate from formal Save. Staging in .system/autosave/ (manifest + dirty children). formal
+    manifest.revisionId NOT bumped by autosave (autosave.meta.json has own autosaveRevision).
+  - 5s idle debounce; 3-generation keep; dirty via contentChecksum diff vs formal manifest.
+  - Autosave target: manifest + dirty child docs (NOT immutable resources/cache).
+
+RECOVERY_POLICY:
+  - .system/recovery/transaction.json intent journal (written before mutations, commit marker after).
+  - Boot: commit marker check -> crash detected -> candidate比較 (formal vs autosave vs journal); newest valid selected.
+  - Corrupted autosave -> checksum verify fail -> discard + warn (never overwrite formal save).
+  - Recovery 후 user [Save] -> promote to formal (manifest revision bump).
+
+HISTORY_POLICY:
+  - .system/history/<revision>.json append-only log: {revisionId, timestamp, changedEntityRefs(kinds),
+    manifestChecksum, backupPoint, migrationRecordRef, actor, reason}.
+  - manifest stays latest-only (no full-object history). Catalog scan can rebuild folder.
+
+BACKUP_POLICY:
+  - Primary: Project Folder copy (snapshot) - simplest, recommended Prototype.
+  - Portable: Package export (P14) incl history(option), excl .system/autosave,recovery,cache.
+  - Snapshot/incremental: V2. .system/cache excluded; resources shared (dedup by sha).
+
+RESOURCE_BINARY_POLICY:
+  - resources/<sha256>.<ext> immutable content-addressed. ImmutableResourceReference(uri+checksum+mediaType).
+  - Terrain/imagery/PDF/STL/CSV/DXF/SVG/PNG all here (no JSON embed). Dataset descriptors -> resources.
+  - Missing -> warn + fail-closed on that datum only (project opens). External absolute/uri -> package inline.
+  - Same content -> same path (dedup). Edit -> new binary -> new sha -> new path (immutable).
+
+PACKAGE_POLICY:
+  - ZIP (.business-project / .dpz). package-manifest.json (entries+sha256+classification, excluded list, externalResourceRefs, businessProjectId, baseRevisionId).
+  - Include CANONICAL+RESULT (+history optional); exclude .system/autosave,recovery,cache.
+  - Import: verify all entry checksums; reject path-traversal/symlink/zip-slip; ID collision -> remap table + ref rewrite; external uri -> inline or warn; dry-run+rollback (non-destructive).
+
+IMPORT_EXPORT_POLICY:
+  - Import = open folder OR unpack package; validate (schema+reference+checksum).
+  - Export: ad-hoc Download (unmanaged) vs project-internal Deliverable (promote to deliverables/).
+  - Package = portable single-file transfer (Case 8). Folder = native working form (Case 7).
+
+PROJECT_CATALOG_POLICY:
+  - catalog.json at workspace root (file-based JSON; NOT DB). {businessProjectId,name,path,
+    lastSavedAt,lastOpenedAt,manifestChecksum,openedCount,compatible}.
+  - manifest = source of truth; Catalog = index (P6 C, regenerable).
+  - Catalog lost/corrupt -> scanWorkspace(business-project.json) rebuild (Case 11). SQLite = V2 (not decided).
+
+QUICK_ANALYSIS_POLICY:
+  - Independent AnalysisProject folder (analysis-project.json, bridge-frame-analysis doc, shared resources). businessProjectId=null.
+  - Same Solver/Core + same canonical doc kinds. Copy-in to BusinessProject.Analyses[] (re-id + subjectRef bind); copy-out (re-id).
+
+MIGRATION_POLICY:
+  - Non-destructive (import adapter -> NEW BusinessProject; originals untouched).
+  - Sources: project.json->Analysis+metadata; Apollo workspace->Analyses; backend bridges->bridges/<id>(verbatim reuse); substructure-project.json->substructure; BridgeProject canonical->bridges/ verbatim; artifacts->deliverables.
+  - migration-record document (contracts/migrationRecord.ts) attach via manifest.migrationProvenanceRef.
+  - dry-run/preview + validation + rollback. backend/data は保持（latent); server REST = future extension.
+
+PROTECTED_CORE_IMPACT: NONE
+  - BridgeProject canonical docs placed verbatim in bridges/<bridgeId>/. serialize*/parse* reused unchanged.
+  - validateBridgeProject / cycle guard / NOT_AUTHORIZED / fail-closed / provenance / status / revision / CASE A/B / Main3D / CalculationAdapter untouched.
+  - BusinessProject = wrapper(manifest references bridge-project document) only. Core internal NOT modified.
+
+EXTENSION_PROPOSALS (design-only; do NOT implement this step):
+  EP-1 engineeringProject.ts + runtime/schemas/engineeringProject.ts: 0.1.0(roadDesignRef single / frameAnalysisRefs / transferRecordRefs) -> 0.2.0(roadRefs[] / bridgeProjectRefs[] / analysisRefs[] / sharedDatasetRefs[] / deliverableRefs[] / coordinateReference / projectStatus / designStage). Additive. Currently unwired -> low risk.
+  EP-2 add documentKind "terrain-dataset"/"existing-condition-dataset"/"attached-source"/(business-project-package) to documentKind.ts + contractVersionRegistry (additive enum).
+  EP-3 BridgeProject.references.alignmentRefs[] array (multiple alignment) -> future (currently single roadDesign + entityId).
+  EP-4 RoadSection as separate document kind (currently in-doc entity).
+  EP-5 file-backed FileRevisionedDocumentRepository (lift RevisionedDocumentRepository to disk) + Electron main fsync/replace.
+  EP-6 BusinessProject REST on backend (/api/business-project/*) ; backend/data projects/bridges を adapter入力に。
+  EP-7 SQLite project catalog (many projects) ; current JSON file is Prototype.
+  EP-8 full git-like history backend (current .system/history log is V1).
+
+PROTOTYPE_MINIMUM_SCOPE (Phase A):
+  BusinessProject folder + business-project.json(manifest, extended EngineeringProject) +
+  roads/*.road.json + bridges/<id>/{cbdm,manifest,superstructure,substructure}.json +
+  analyses/<id>/document.json + resources/ + canonical formal Save/Load/validate
+  (children-first atomic + manifest-last commit) using FileRevisionedDocumentRepository over AtomicJsonStore.
+
+PROTOTYPE_PHASES:
+  Phase A (must): manifest+road+bridge(Protected)+analysis save/load; Case 1/2/3/7/12.
+  Phase B (must): autosave/.system/autosave + recovery journal + .system/history; Case 4/5.
+  Phase C (should): resources/binary + deliverables + package(zip+guard+remap) + catalog(scam)+ migration adapter; Case 6/8/9/10/11.
+  Phase D (future): backend REST / SQLite catalog / quick-analysis copy-in/out / UI wiring (Step 4-1 screens).
+
+MAJOR_RISKS:
+  R1 manifest checksum が canonical に依存 -> canonicalJsonForChecksum 一貫性必須（zod sort keys）。
+  R2 Windows dir-replace 不可 → folder-swap 却避 (Option A 採用で回避)。dir fsync Windows no-op 許容。
+  R3 browser は native fs 無し -> folder save 不可 (Electron/backend必須)。browser = in-memory+downloadのまま。
+  R4 BridgeProject 4 docs の atomic は4ファイル、manifest-last で整合だが部分更新時は
+    BridgeProject 内部整合の re-validate 必須（Core validator reuse）。
+  R5 resource が外部/巨大 -> package inline 時 I/O 増大。streaming zip 推奨。
+  R6 EngineeringProject が未配線ゆえ extend は安全だが、後続実装者が 0.1.0 と混同しないよう
+    migration record + schemaVersion 必須。
+
+MAJOR_OPEN_QUESTIONS:
+  Q1 RoadSection を road-design doc 内 entity とするか、Separate document kind とするか
+     （Step4-2案2「RoadSection=1JSON」vs 案1）。案1を推奨（既存road-design contractに準拠）が、
+     離れ区間の cross-roadSection referencing が将来必要なら kind 新設予定（EP-4）。
+  Q2 BusinessProject documentKind = engineering-project reuse か、別 "business-project" kind か。
+     再利用を推奨（contract 一貫）が命名混同防止 via doc コメント。
+  Q3 Quick Analysis manifest の formal kind（analysis-project 新規 vs engineering-project reuse）
+     → reuse engineering-project (designStage=quick_analysis) 推奨。
+  Q4 result 粒度（AnalysisResult を analyses/results/ に置るか、Top-level results/ か）
+     → analyses/<id>/results/ 推奨（source 追跡）。
+
+STEP4_4_HANDOFF:
+  - deliver: design spec + prototype plan (Phase A実装タスク明細 in 15_prototype_implementation_plan.md)。
+  - 実装フェーズ: contract extend（EP-1..EP-4） -> file repository（EP-5） -> Save/Load round-trip
+    -> 12 Case E2E。Phase 3 Protected Core は一切変更しない。GitHub docs PR: docs/design-platform/phase4-step4-3/。
+
+NEXT_STEP:
+  1. Phase 4-4: implementation prep (contract extend EP-1/EP-2, FileRevisionedDocumentRepository EP-5)。
+  2. Prototype Phase A 実装 (manifest build/serialize/validate + FileRevisionedDocumentRepository + Save/Load)。
+  3. E2E round-trip test (Case 1/2/3/7/12) with real BridgeProject canonical (caseA/caseB e2e fixtures).
+
+NEXT_STEP_READINESS: GO (design grounded in code; Protected Core 0 change; extension-only on unwired contracts;
+                   12 use cases verified by design. Blockers: none for design; implementation pending Phase 4-4.)
+
+DETAIL_REPORT_PATHS:
+  /home/masaharu/Projects/007_設計ツール統合_保存システム本体設計/
+    01_storage_architecture_options.md
+    02_recommended_project_folder.md
+    03_business_project_manifest.md
+    04_entity_persistence_units.md
+    05_id_reference_rules.md
+    06_save_transaction_design.md
+    07_autosave_recovery.md
+    08_history_backup.md
+    09_resource_binary_design.md
+    10_deliverable_design.md
+    11_package_import_export.md
+    12_project_catalog.md
+    13_migration_strategy.md
+    14_quick_analysis_boundary.md
+    15_prototype_implementation_plan.md
+    canonical_result_cache_classification.md  (P6 分類)
+    protected_core_boundary.md              (P5 Protected Core 要件)
+    inventories/persistence_units.csv
+    inventories/reference_rules.csv
+    inventories/canonical_result_cache.csv
+    inventories/migration_mapping.csv
+
+  12 USE CASE VERIFICATION (design-level):
+    Case 1 (new business->road->bridge->save->close->restart->restore): manifest + child docs canonical round-trip; OK
+    Case 2 (multi-road/multi-section/multi-bridge): roads/* array, bridges/* folders; OK
+    Case 3 (update bridge 002 only): manifest bridgeProjectRef.checksum/revision bump, others unchanged; OK
+    Case 4 (crash during save): manifest-last commit -> old manifest intact, orphan children recovered by journal; OK
+    Case 5 (autosave then crash before formal save): candidate comparison (formal vs autosave), corrupted autosave discarded; OK
+    Case 6 (terrain resource missing): warn + fail-closed on dataset, project opens; OK
+    Case 7 (folder copy to another PC): StableID references, relative uri, no absolute path; OK
+    Case 8 (package export->import): package-manifest checksum verify, ID remap+rewrite, zip-slip guard; OK
+    Case 9 (import old project.json): non-destructive import adapter -> new BusinessProject, dry-run; OK
+    Case 10 (quick analysis -> business): AnalysisProject copy-in to analyses/ with re-id + subjectRef; OK
+    Case 11 (catalog lost): scanWorkspace rebuild from business-project.json; OK
+    Case 12 (1 child JSON corrupted): fail-closed isolation, other entities open; OK
+============================================================

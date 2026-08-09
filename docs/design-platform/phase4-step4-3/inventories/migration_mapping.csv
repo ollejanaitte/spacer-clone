@@ -1,0 +1,20 @@
+source_system,source_artifact,source_location,source_kind,source_class,target_location,target_document_kind,target_action,non_destructive,notes
+legacy project.json,ProjectModel (FEM),frontend/src/types.ts:250 App.tsx:719,project-json,current,KEEP -> analyses/<id>/document.json,bridge-frame-analysis,import-adapter(re-id),yes, FEM nodes/members/loads -> Analysis document; liner/apollo sidecars are separate
+legacy project.json,ProjectInfo,types.ts ProjectInfo,embedded,KEEP,business-project.json (ProjectMetadata),engineering-project,map to manifest metadata,yes, projectNumber/name/units -> manifest
+Apollo workspace,ApolloPhase1Shell workspace,apollo/workspace.ts:168,apollo-workspace,WRAP,analyses/<id>/ (superstructure facts),bridge-superstructure-design / bridge-frame-analysis,workspace->AnalysisProject,yes, locale workspace (12 slots) -> analyses; BusinessProject取込はcopy-in
+Apollo workspace,WF-15 ack,apollo/workflow/selectors.ts:469,wf15-ack,WRAP,.system/history or manifest extensions,migration-record or ext,adapter,yes, checksum-bound ack; user confirmation artifact
+importer project,importer project,liner/importer/storage/importerStorage.ts:70,importer-project,WRAP,attachments/<id>.json or shared/datasets/,attached-source or shared,importer->source doc,yes, importer project/index/snapshot
+importer recovery,importer recovery,recoveryManager.ts:53,importer-recovery,WRAP,.system/recovery/,n/a,skip or migrate,yes, importer recovery -> BusinessProject recovery journal
+importer conversion log,ConversionLogWriter.ts,ConversionLogWriter.ts:11,n/a,WRAP,.system/history/ or attachments/,migration-record,log->record,yes, conversion log -> migration-record
+backend projects,backend/data/projects/*.json,backend/app/main.py:373,server-project,WRAP,analyses/<id>/document.json,bridge-frame-analysis,server->file adapter,yes, server project.json -> Analysis
+backend bridges,backend/data/bridges/<id>.json,backend/app/main.py:1127,bridge-project,WRAP,bridges/<id>/manifest.json,bridge-project,canonical reuse,yes, LATENT; reuse canonical manifest verbatim
+backend autosave,backend/data/projects/autosave.json,backend/app/main.py:423,autosave,WRAP,.system/autosave/,staging files,once autosave enabled,yes, autosave.json -> .system/autosave/
+substructure-project.json,SubstructurePlanningHost envelope,SubstructurePlanningHost.tsx:304,substructure-project,WRAP,bridges/<id>/substructure.json,substructure,envelope->canonical,yes, envelope -> canonical substructure doc
+BridgeProject CBDM,canonical common-bridge-data-model,bridgeProject/cbdmDocument.ts:304,common-bridge-data-model,PROTECTED_CORE,bridges/<id>/cbdm.json,common-bridge-data-model,VERBATIM reuse,yes, Protected Core exact copy
+BridgeProject manifest,canonical bridge-project,bridgeProject/cbdmDocument.ts:336,bridge-project,PROTECTED_CORE,bridges/<id>/manifest.json,bridge-project,VERBATIM reuse,yes, Protected Core exact copy
+BridgeProject superstructure,BSDD,superstructureAdapter.ts,bridge-superstructure-design,PROTECTED_CORE,bridges/<id>/superstructure.json,bridge-superstructure-design,VERBATIM reuse,yes, Protected Core exact copy
+BridgeProject substructure,substructure binding,substructureBinding.ts,substructure,PROTECTED_CORE,bridges/<id>/substructure.json,substructure,VERBATIM reuse,yes, Protected Core exact copy
+scattered artifacts,CSV/PDF/DXF/STL/ZIP/JSON/SVG/PNG,exports/* resultCsvExport.ts,generated-output,WRAP(scattered),deliverables/<id>/deliverable.json + resources/<sha>,persisted-result,artifact ingest,yes, file-pattern -> sourceRefs推定
+IF3 sidecar,frameDocumentPath,backend/app/main.py latent,latent,latent,n/a (discard or reuse),persisted-result or analysis-result,evaluate or drop,yes, FE not sending -> latent; design decides adopt or drop
+frontend projectMigration.ts,current migration logic,frontend/src/projectMigration.ts,legacy-migrator,current,use as adapter base,migration-record,base reuse/adapt,yes, existing migrator -> Step4-3 migration adapter
+sessionStorage/IndexedDB/Cookie,n/a,n/a,n/a,NOT_USED,n/a,n/a,do not migrate,n/a, not used in any repo
