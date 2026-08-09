@@ -81,6 +81,11 @@ import {
 } from "./liner/uiPreparation";
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
 import {
+  DESIGN_PLATFORM_HOME_PATH,
+  isDesignPlatformHome,
+} from "./platform/routes";
+import { DesignPlatformHome } from "./platform/pages/DesignPlatformHome";
+import {
   linerPiersToSupportHandoff,
   resolveHandoffAlignmentId,
 } from "./substructure/planning/linerHandoff";
@@ -893,6 +898,15 @@ export function App() {
     setBottomTab("errors");
     log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
+
+  if (isDesignPlatformHome(pathnameForRouting)) {
+    return (
+      <DesignPlatformHome
+        onNavigate={navigatePro}
+        onOpenQuickAnalysis={() => navigatePro("/pro")}
+      />
+    );
+  }
 
   if (isApolloRoute(pathnameForRouting) && apolloPhase1Enabled) {
     return (
