@@ -2,6 +2,7 @@ import { L0_STRINGS } from "../data/lobbyStrings";
 import { ModeCard } from "../components/ModeCard";
 import { ja } from "../../i18n/ja";
 import { showAboutDialog } from "../../desktop/projectFileDialog";
+import { DESIGN_PLATFORM_ENTRY_PATH } from "../designPlatformEntry";
 import styles from "./LobbyHome.module.css";
 
 type LobbyHomeProps = {
@@ -41,7 +42,7 @@ export function LobbyHome({ onNavigate }: LobbyHomeProps) {
           description={text.modes.pro.description}
           audience={text.modes.pro.audience}
           button={text.modes.pro.button}
-          onClick={() => onNavigate("/pro")}
+          onClick={() => onNavigate(DESIGN_PLATFORM_ENTRY_PATH)}
         />
       </div>
       <p className={styles.footer}>

@@ -49,13 +49,13 @@ describe("Level0Top", () => {
     expect(container.textContent).toContain("実務編で詳しく見る");
   });
 
-  test("navigates to /pro when the pro-mode link is clicked", () => {
+  test("navigates to the Design Platform entry when the pro-mode link is clicked", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<Level0Top onNavigate={onNavigate} />);
     const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     const proButton = Array.from(buttons).find(b => b.textContent?.includes("実務編で詳しく見る"));
     proButton?.click();
-    expect(onNavigate).toHaveBeenCalledWith("/pro");
+    expect(onNavigate).toHaveBeenCalledWith("/pro/platform");
   });
 
   test("shows the parameter panel when a sample card is clicked", () => {
