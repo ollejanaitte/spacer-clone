@@ -3,6 +3,7 @@ import { ja } from "../../i18n/ja";
 import type { BusinessSummary } from "../business/businessRegistry";
 import { isWorkspaceSection, WORKSPACE_SECTIONS, type WorkspaceSection } from "./sections";
 import { createToolBindings } from "../tools/toolBindings";
+import { guidedProgress, resolveGuidedNavigation } from "../workflow/guidedNavigation";
 import styles from "./BusinessWorkspace.module.css";
 
 export type BusinessWorkspaceProps = {
@@ -47,11 +48,23 @@ export function BusinessWorkspace({
   const bindings = useMemo(() => createToolBindings(), []);
   const activeBinding = bindings.resolveBinding(activeSection);
 
+  const guided = useMemo(() => resolveGuidedNavigation(activeSection), [activeSection]);
+  const progress = useMemo(() => guidedProgress(activeSection), [activeSection]);
+
   const launchActiveTool = useCallback(() => {
     if (activeBinding !== null && activeBinding.available) {
       onLaunchTool?.(activeSection);
     }
   }, [activeBinding, activeSection, onLaunchTool]);
+
+  const goGuided = useCallback(
+    (section: WorkspaceSection | null) => {
+      if (section !== null) {
+        selectSection(section);
+      }
+    },
+    [selectSection],
+  );
 
   return (
     <div className={styles.page}>
@@ -116,7 +129,42 @@ export function BusinessWorkspace({
       </main>
 
       <footer className={styles.footer}>
-        <span className={styles.footerHint}>{text.footerHint}</span>
+        <div className={styles.guidedBar}>
+          <button
+            type="button"
+            className={styles.guidedButton}
+            onClick={() => goGuided(guided.prev)}
+            disabled={!guided.hasPrev}
+            data-testid="guided-prev"
+          >
+            {text.guided.prev}
+          </button>
+          <button
+            type="button"
+            className={styles.saveInlineButton}
+            onClick={onSave}
+            data-testid="guided-save"
+          >
+            {text.guided.save}
+          </button>
+          <button
+            type="button"
+            className={styles.guidedButton}
+            onClick={() => goGuided(guided.next)}
+            disabled={!guided.hasNext}
+            data-testid="guided-next"
+          >
+            {text.guided.next}
+          </button>
+        </div>
+        <span className={styles.footerHint}>
+          {text.footerHint}
+          {"　"}
+          {text.guided.progress.replace("{current}", String(progress)).replace(
+            "{total}",
+            String(WORKSPACE_SECTIONS.length),
+          )}
+        </span>
       </footer>
     </div>
   );
