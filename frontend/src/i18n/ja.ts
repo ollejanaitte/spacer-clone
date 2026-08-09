@@ -2283,6 +2283,29 @@ export const ja = {
       adapterFormalNotice: "この結果は TEST / MOCK 計算によるものであり、正式な構造安全性の設計判定ではありません。",
     },
   },
+
+  designPlatform: {
+    home: {
+      title: "Design Platform",
+      subtitle: "業務単位で設計・保存・復元を管理します。",
+      fromBusiness: {
+        icon: "🏗",
+        name: "業務から設計",
+        catchPhrase: "Business Project",
+        description:
+          "業務（BusinessProject）を作成し、道路線形・上部工・下部工・解析・統合3Dをまとめて管理します。",
+        button: "業務一覧を開く",
+      },
+      quickAnalysis: {
+        icon: "⚡",
+        name: "クイック解析",
+        catchPhrase: "Quick Analysis",
+        description: "既存の FEM / 汎用解析ワークスペースへ移動します。",
+        button: "クイック解析を開く",
+      },
+      footer: "Design Platform Prototype (Phase 4 Step 4-4)",
+    },
+  },
 };
 
 export type JaDictionary = typeof ja;
