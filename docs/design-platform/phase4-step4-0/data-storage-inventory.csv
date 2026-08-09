@@ -1,0 +1,17 @@
+artifact,generator,storage,reader,source_of_truth,classification
+ProjectModel,App state,project.json + localStorage + backend/data,hydration chain,①②③ source,KEEP
+apollo workspace,ApolloPhase1Shell,localStorage apollo_phase1_nn_workspace_v1,ApolloRouteHost,② workspace,WRAP
+importer project,ImporterProjectList,localStorage spacer.importer.*,importer storage,① importer,WRAP
+substructure project,SubstructurePlanningHost,substructure-project.json (envelope),deserialize,③,WRAP
+CBDM,bridgeProject/cbdmDocument.ts,canonical JSON,parseCommonBridgeModel,BridgeProject shared,PROTECTED_CORE
+BridgeProject manifest,bridgemProject/cbdmDocument.ts,canonical JSON,parseBridgeProjectManifest,BridgeProject coordination,PROTECTED_CORE
+BridgeProject.Superstructure,superstructureAdapter.ts,ProjectModel.apolloBridgeProjectSuperstructure,projectSuperstructure.ts,② shared facts,PROTECTED_CORE
+result.csv,exports/resultCsvExport.ts,file download,none,analysis result,WRAP
+report.pdf,exports/resultPdfReport.ts,print window,none,report,WRAP
+liner_plan.dxf / liner_profile.dxf,liner/exports/lineers,file download,none,liner drawing,WRAP
+liner_frame.stl,liner/exports/linerFrameStl.ts,file download,none,liner 3D,WRAP
+road *.csv,liner/exports/roadCsvExport.ts,file download,none,road output,WRAP
+quantity_*.csv,apollo/quantity/quantityExport.ts,file download,none,② quantity,WRAP
+*.stl+.apollo.json,apollo/export/apolloStlExport.ts,file download,none,② 3D,WRAP
+substructure-design-sheet.csv,substructure/design/calculationOutput.ts,file download,none,③ design sheet,WRAP
+replay,apollo/replay/replay.ts,in-memory verdict,none,replay (no file),WRAP

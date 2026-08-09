@@ -1,0 +1,13 @@
+item,current,classification,note
+Design Platform Home,(none),NEW,新設（Lobby/業務一覧の包み直し）
+Business list,(per-domain workspaces),NEW,業務一覧
+Business workspace,ApolloPhase1Shell / SubstructurePlanningPage / LinerEditPage,MOVE,新しい画面階層へ移動
+Navigation,Toolbar + 経路ベースSPA,WRAP,ナビゲーションを包んで再利用
+Quick analysis,Toolbar Run/Validate,WRAP,クイック解析
+Project management UI,Toolbar New/Open/Save,WRAP,Project管理UI
+Save UI,Toolbar Save + workspace,WRAP,保存UI
+Recent data,(none),NEW,最近使用したデータ
+Import/Export,LinerLauncher + importer + exports,WRAP,Import/Export導線
+Launch screen,LobbyHome / LinerLauncher,WRAP,起動画面
+FEM Pro shell,App.tsx /pro,WRAP,generic FEM workspace
+Learn/Level0,lobby,WRAP,学習・Level0
