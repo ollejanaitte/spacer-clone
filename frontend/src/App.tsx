@@ -81,12 +81,17 @@ import {
 } from "./liner/uiPreparation";
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
 import {
+  DESIGN_PLATFORM_BUSINESS_LIST_PATH,
   DESIGN_PLATFORM_HOME_PATH,
   isBusinessListPath,
+  isBusinessWorkspacePath,
   isDesignPlatformHome,
+  parseBusinessWorkspacePath,
+  resolveBusinessWorkspacePath,
 } from "./platform/routes";
 import { DesignPlatformHome } from "./platform/pages/DesignPlatformHome";
 import { BusinessListPage } from "./platform/pages/BusinessListPage";
+import { BusinessWorkspace } from "./platform/workspace/BusinessWorkspace";
 import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
 import {
   linerPiersToSupportHandoff,
@@ -911,12 +916,31 @@ export function App() {
     );
   }
 
+  if (isBusinessWorkspacePath(pathnameForRouting)) {
+    const parsed = parseBusinessWorkspacePath(pathnameForRouting);
+    if (parsed !== null) {
+      const registry = createLocalStorageBusinessRegistry();
+      const business = registry.find(parsed.businessId);
+      if (business !== undefined) {
+        return (
+          <BusinessWorkspace
+            business={business}
+            onSave={() => {
+              registry.touch(business.businessId);
+            }}
+            onBack={() => navigatePro(DESIGN_PLATFORM_BUSINESS_LIST_PATH)}
+          />
+        );
+      }
+    }
+  }
+
   if (isBusinessListPath(pathnameForRouting)) {
     return (
       <BusinessListPage
         registry={createLocalStorageBusinessRegistry()}
         onOpen={(businessId) => {
-          navigatePro(`/pro/platform/businesses/${businessId}`);
+          navigatePro(resolveBusinessWorkspacePath(businessId));
         }}
         onBack={() => navigatePro(DESIGN_PLATFORM_HOME_PATH)}
       />
