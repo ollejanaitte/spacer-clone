@@ -5,7 +5,12 @@ import { isWorkspaceSection, WORKSPACE_SECTIONS, type WorkspaceSection } from ".
 import { createToolBindings } from "../tools/toolBindings";
 import { guidedProgress, resolveGuidedNavigation } from "../workflow/guidedNavigation";
 import { bindBusinessReadiness, type SectionStatusSource } from "../workflow/businessReadiness";
+import {
+  evaluateConfirmationGate,
+  type ConfirmationGateInput,
+} from "../workflow/confirmationGate";
 import { ReadinessPanel } from "../components/ReadinessPanel";
+import { ConfirmationGatePanel } from "../components/ConfirmationGatePanel";
 import styles from "./BusinessWorkspace.module.css";
 
 export type BusinessWorkspaceProps = {
@@ -16,6 +21,7 @@ export type BusinessWorkspaceProps = {
   onBack: () => void;
   onLaunchTool?: (section: WorkspaceSection) => void;
   statusSource?: SectionStatusSource;
+  confirmationGate?: ConfirmationGateInput;
 };
 
 export function BusinessWorkspace({
@@ -26,6 +32,7 @@ export function BusinessWorkspace({
   onBack,
   onLaunchTool,
   statusSource,
+  confirmationGate,
 }: BusinessWorkspaceProps) {
   const text = ja.designPlatform.workspace;
   const [activeSection, setActiveSection] = useState<WorkspaceSection>(() =>
@@ -36,6 +43,22 @@ export function BusinessWorkspace({
     () => bindBusinessReadiness(statusSource ?? { sections: {} }),
     [statusSource],
   );
+
+  const gate = useMemo(
+    () =>
+      evaluateConfirmationGate(
+        confirmationGate ?? {
+          notAuthorizedSections: [],
+          needsUserConfirmation: false,
+          cycleGuardActive: false,
+          validationErrors: 0,
+          validationWarnings: 0,
+        },
+      ),
+    [confirmationGate],
+  );
+
+  const saveBlocked = gate.blocked;
 
   const selectSection = useCallback(
     (section: WorkspaceSection) => {
@@ -93,6 +116,7 @@ export function BusinessWorkspace({
           type="button"
           className={styles.saveButton}
           onClick={onSave}
+          disabled={saveBlocked}
           data-testid="workspace-save"
         >
           {text.save}
@@ -119,6 +143,7 @@ export function BusinessWorkspace({
           <h2 className={styles.sectionTitle}>{text.sectionLabels[activeSection]}</h2>
           <p className={styles.sectionNotice}>{text.sectionNotices[activeSection]}</p>
           <ReadinessPanel readiness={readiness} />
+          <ConfirmationGatePanel state={gate} />
           {activeBinding !== null && (
             <div className={styles.launchArea}>
               <p className={styles.launchDescription}>
@@ -153,6 +178,7 @@ export function BusinessWorkspace({
             type="button"
             className={styles.saveInlineButton}
             onClick={onSave}
+            disabled={saveBlocked}
             data-testid="guided-save"
           >
             {text.guided.save}

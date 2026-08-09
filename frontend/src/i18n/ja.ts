@@ -2396,6 +2396,20 @@ export const ja = {
         data: "データ",
       },
     },
+    confirmationGate: {
+      blockedTitle: "保存できません（fail-closed）",
+      okTitle: "保存可能",
+      okMessage: "ブロック要因はありません。",
+      reasonLabels: {
+        NOT_AUTHORIZED: "権限がないため処理できません（NOT_AUTHORIZED）",
+        BLOCKED: "進行をブロックされています",
+        CYCLE_GUARD: "循環参照が検出されています（cycle guard）",
+        NEEDS_CONFIRMATION: "ユーザー確認が必要です",
+        VALIDATION_ERROR: "バリデーションエラーがあります",
+      },
+      warningCount: "警告: {count} 件",
+      nextAction: "次のアクション: {action}",
+    },
   },
 };
 
