@@ -63,6 +63,16 @@
   cursor: not-allowed;
 }
 
+.saveFeedback {
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  background: #ecfdf5;
+  border-bottom: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
 .tabs {
   display: flex;
   gap: 0.25rem;

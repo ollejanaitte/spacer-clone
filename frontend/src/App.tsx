@@ -94,6 +94,7 @@ import { BusinessListPage } from "./platform/pages/BusinessListPage";
 import { BusinessWorkspace } from "./platform/workspace/BusinessWorkspace";
 import { createToolBindings } from "./platform/tools/toolBindings";
 import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
+import { createBusinessProjectPersistence } from "./platform/storage/businessProjectPersistence";
 import {
   linerPiersToSupportHandoff,
   resolveHandoffAlignmentId,
@@ -174,6 +175,7 @@ export function App() {
   const [bottomTab, setBottomTab] = useState<BottomTab>("results");
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
+  const [workspaceSaveFeedback, setWorkspaceSaveFeedback] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [if3Result, setIf3Result] = useState<FrameAnalysisResultResource | null>(null);
   const [persistedResultRef, setPersistedResultRef] = useState<DocumentReference | null>(null);
@@ -925,11 +927,34 @@ export function App() {
       const registry = createLocalStorageBusinessRegistry();
       const business = registry.find(parsed.businessId);
       if (business !== undefined) {
+        const persistence = createBusinessProjectPersistence();
+        const lastSavedAt = persistence.lastSavedAt(business.businessId);
+        const saveFeedback =
+          workspaceSaveFeedback !== null
+            ? workspaceSaveFeedback
+            : lastSavedAt !== null
+              ? ja.designPlatform.workspace.savedAt.replace(
+                  "{time}",
+                  new Date(lastSavedAt).toLocaleTimeString("ja-JP"),
+                )
+              : null;
         return (
           <BusinessWorkspace
             business={business}
+            saveFeedback={saveFeedback}
             onSave={() => {
-              registry.touch(business.businessId);
+              const result = persistence.save(business);
+              if (result.ok) {
+                registry.touch(business.businessId);
+                setWorkspaceSaveFeedback(
+                  ja.designPlatform.workspace.savedAt.replace(
+                    "{time}",
+                    new Date(result.lastSavedAt).toLocaleTimeString("ja-JP"),
+                  ),
+                );
+              } else {
+                setWorkspaceSaveFeedback(ja.designPlatform.workspace.saveFailed);
+              }
             }}
             onBack={() => navigatePro(DESIGN_PLATFORM_BUSINESS_LIST_PATH)}
             onLaunchTool={(section) => {

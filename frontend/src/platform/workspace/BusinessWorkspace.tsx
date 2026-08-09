@@ -22,6 +22,7 @@ export type BusinessWorkspaceProps = {
   onLaunchTool?: (section: WorkspaceSection) => void;
   statusSource?: SectionStatusSource;
   confirmationGate?: ConfirmationGateInput;
+  saveFeedback?: string | null;
 };
 
 export function BusinessWorkspace({
@@ -33,6 +34,7 @@ export function BusinessWorkspace({
   onLaunchTool,
   statusSource,
   confirmationGate,
+  saveFeedback,
 }: BusinessWorkspaceProps) {
   const text = ja.designPlatform.workspace;
   const [activeSection, setActiveSection] = useState<WorkspaceSection>(() =>
@@ -58,7 +60,9 @@ export function BusinessWorkspace({
     [confirmationGate],
   );
 
-  const saveBlocked = gate.blocked;
+  // Save is always allowed for work-in-progress data. The confirmation gate
+  // only governs workflow progression / calculation authorization, never
+  // blocks saving the user's intermediate work.
 
   const selectSection = useCallback(
     (section: WorkspaceSection) => {
@@ -116,12 +120,17 @@ export function BusinessWorkspace({
           type="button"
           className={styles.saveButton}
           onClick={onSave}
-          disabled={saveBlocked}
           data-testid="workspace-save"
         >
           {text.save}
         </button>
       </header>
+
+      {saveFeedback !== null && saveFeedback !== undefined && (
+        <p className={styles.saveFeedback} data-testid="workspace-save-feedback">
+          {saveFeedback}
+        </p>
+      )}
 
       <nav className={styles.tabs} aria-label={text.tabsAria}>
         {sectionTabs.map(({ section, label }) => (
@@ -178,7 +187,6 @@ export function BusinessWorkspace({
             type="button"
             className={styles.saveInlineButton}
             onClick={onSave}
-            disabled={saveBlocked}
             data-testid="guided-save"
           >
             {text.guided.save}
