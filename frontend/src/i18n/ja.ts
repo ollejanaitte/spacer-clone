@@ -36,6 +36,7 @@ export const ja = {
     appMark: "SC",
     versionPrefix: "Version",
     aboutLink: "このアプリについて",
+    projectSaved: "保存しました (project.json)",
   },
 
   input: {
