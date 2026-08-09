@@ -82,9 +82,12 @@ import {
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
 import {
   DESIGN_PLATFORM_HOME_PATH,
+  isBusinessListPath,
   isDesignPlatformHome,
 } from "./platform/routes";
 import { DesignPlatformHome } from "./platform/pages/DesignPlatformHome";
+import { BusinessListPage } from "./platform/pages/BusinessListPage";
+import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
 import {
   linerPiersToSupportHandoff,
   resolveHandoffAlignmentId,
@@ -904,6 +907,18 @@ export function App() {
       <DesignPlatformHome
         onNavigate={navigatePro}
         onOpenQuickAnalysis={() => navigatePro("/pro")}
+      />
+    );
+  }
+
+  if (isBusinessListPath(pathnameForRouting)) {
+    return (
+      <BusinessListPage
+        registry={createLocalStorageBusinessRegistry()}
+        onOpen={(businessId) => {
+          navigatePro(`/pro/platform/businesses/${businessId}`);
+        }}
+        onBack={() => navigatePro(DESIGN_PLATFORM_HOME_PATH)}
       />
     );
   }
