@@ -271,7 +271,21 @@ if [[ ! -x "$ELECTRON_BIN" ]]; then
 fi
 
 # desktop/electron を TypeScript でビルド
-if [[ ! -f "$ROOT_DIR/desktop/electron/dist/main.js" ]]; then
+# dist/main.js が無い場合、または .ts ソースが dist より新しい場合は再ビルドする
+# （stale dist による「ソース更新が Electron 起動へ反映されない」事象を防ぐ）
+ELECTRON_DIST="$ROOT_DIR/desktop/electron/dist/main.js"
+ELECTRON_NEEDS_COMPILE="0"
+if [[ ! -f "$ELECTRON_DIST" ]]; then
+  ELECTRON_NEEDS_COMPILE="1"
+else
+  while IFS= read -r -d '' SRC_FILE; do
+    if [[ "$SRC_FILE" -nt "$ELECTRON_DIST" ]]; then
+      ELECTRON_NEEDS_COMPILE="1"
+      break
+    fi
+  done < <(find "$ROOT_DIR/desktop/electron" -name '*.ts' -not -path '*/dist/*' -print0)
+fi
+if [[ "$ELECTRON_NEEDS_COMPILE" == "1" ]]; then
   info "desktop/electron を TypeScript ビルドしています..."
   ( cd "$FRONTEND_DIR" && npm run electron:compile )
 fi
