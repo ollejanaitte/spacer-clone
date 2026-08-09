@@ -248,6 +248,7 @@ export function App() {
   const canExportAuthoritative = if3ExportGate.authoritativeOutputAllowed;
   const canRun = !running && validation?.valid !== false && !hasInvalidNumericDrafts;
   const canSave = !hasInvalidNumericDrafts;
+  const isEmptyProject = project.nodes.length === 0 && project.members.length === 0;
   const nativeFileDialogs = isNativeProjectFileDialogAvailable();
   const timeHistoryAnalysis = useTimeHistoryAnalysis({
     onSuccess: (analysisResult) => {
@@ -1498,6 +1499,39 @@ export function App() {
       )}
       {AUTOSAVE_ENABLED && autosaveStatus && !autosaveCandidate && (
         <div className="autosave-status">{autosaveStatus}</div>
+      )}
+      {isEmptyProject && (
+        <div className="empty-model-state" data-testid="empty-model-state">
+          <h2>{ja.app.emptyModelTitle}</h2>
+          <p>{ja.app.emptyModelDescription}</p>
+          <div className="empty-model-actions">
+            <button
+              type="button"
+              onClick={() => {
+                commitProject(createEmptyProject());
+                setDirty(false);
+                log("New empty model created.");
+              }}
+              data-testid="empty-model-new"
+            >
+              {ja.app.emptyModelNew}
+            </button>
+            <button
+              type="button"
+              onClick={() => void openProjectViaDialog()}
+              data-testid="empty-model-open"
+            >
+              {ja.app.emptyModelOpen}
+            </button>
+            <button
+              type="button"
+              onClick={createMountainSampleModel}
+              data-testid="empty-model-sample"
+            >
+              {ja.app.emptyModelSample}
+            </button>
+          </div>
+        </div>
       )}
       <div className={`workspace ${dataPanelOpen ? "data-panel-open" : "data-panel-closed"}`}>
         <ProjectTree project={project} selected={selectedSection} onSelect={setSelectedSection} />
