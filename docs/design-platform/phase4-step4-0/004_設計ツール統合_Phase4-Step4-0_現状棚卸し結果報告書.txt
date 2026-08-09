@@ -1,0 +1,85 @@
+============================================================
+004_設計ツール統合 Phase4-Step4-0 現状棚卸し 結果報告書
+============================================================
+Date: 2026-08-09
+Step: Phase 4 / Step 4-0（現状棚卸し・Protected Core確定・Rebuildable Shell確定）
+方針: 大規模実装・リファクタ・削除なし（調査・分類のみ）
+
+STEP4_0_VERDICT: GO
+BASELINE_SHA: d30592ee28916efefdadfa159f13e97506f56122
+FINAL_SHA: d30592ee28916efefdadfa159f13e97506f56122（変更なし・調査のみ）
+ACTIVE_WORK_PATH: /tmp/opencode/phase4-step4-0（branch: research/phase4-step4-0-inventory）
+
+PHASE3_CORE_BASELINE: PASS（bridgeProject suite 106 tests）
+CASE_A_BASELINE: PASS（①→②→③→統合3D→Save/Load/Replay）
+CASE_B_BASELINE: PASS（②sample→①復元→③→統合3D、cycle guard）
+MAIN3D_BASELINE: PASS（mountain-main3d e2e・integratedScene3d）
+SAVE_LOAD_REPLAY_BASELINE: PASS（canonical JSON round-trip・fingerprint 一致）
+
+PROTECTED_CORE（再構築で壊してはならない）:
+  CASE A/B 正規経路 / BridgeProject schema・validator・manifest
+  Alignment/BridgeGeometry/Superstructure/Substructure binding
+  provenance・status・revision・cycle guard
+  NOT_AUTHORIZED・fail-closed
+  Save/Load/Replay（canonical 決定論）
+  Main3D（integratedScene3d・support-XYZ parity）
+  Calculation Adapter（A-01）
+  根拠: bridgeProject/*.ts + contracts/*.ts + substructure/design/calculationAdapter.ts
+
+REBUILDABLE_SHELL（変更可能候補）:
+  起動画面 / Design Platform Home（未存在→NEW）/ 業務一覧（NEW）/
+  業務Workspace（MOVE）/ navigation（WRAP）/ クイック解析（WRAP）/
+  Project管理UI（WRAP）/ 保存UI（WRAP）/ 最近使用（NEW）/ Import・Export（WRAP）
+
+KEEP: bridgeProject/contracts 全般、Main3D viewer、pro/substructure 3-pane CAD、FEM Pro shell
+WRAP: Toolbar・launcher・importer・apollo workspace・substructure save/load・exports・replay
+MOVE: liner setup/preview/drawings/mapping、apollo shell、substructure host（新画面階層へ）
+NEW: Design Platform Home・業務一覧・最近使用データ
+DEPRECATE_CANDIDATE: なし（削除禁止のため明示候補なし）
+※ DELETE は今回禁止
+
+CURRENT_SCREEN_STRUCTURE:
+  /（LobbyHome mode-picker）→ /pro（FEM shell）/pro/apollo（WF-01..15）
+  /pro/linear-coordinate（launcher）/pro/importer/*（PDF importer）
+  /pro/liner/{list,setup,preview,main3d,drawings,mapping-review,substructure}
+  経路ベースSPA（react-router不使用・main.tsx で振分）
+  → 詳細: docs/design-platform/phase4-step4-0/current-system-inventory.md
+
+CURRENT_PROJECT_DATA:
+  ProjectModel（liner / apolloPhase1Unit2 / apolloBsdd / apolloBridgeStructureInput /
+  apolloBridgeProjectSuperstructure）+ CBDM / manifest（canonical JSON）
+CURRENT_STORAGE_FLOW:
+  project.json / localStorage（apollo_phase1_nn_workspace_v1, spacer.importer.*）/
+  backend/data（autosave, bridges） / substructure-project.json /
+  CBDM・manifest（derived・再生成可）
+SCATTERED_OUTPUTS:
+  displacements/reactions/member_section_forces/eigen_modes/influence CSV、result.json、
+  <pid>-report.pdf、liner_plan/profile.dxf、liner_frame.stl、road *.csv、quantity_*.csv、
+  *.stl+.apollo.json、apollo-development-report_*、substructure-design-sheet.csv/result.json
+
+MAJOR_GAPS:
+  - Design Platform Home 未存在（Lobby mode-picker のみ）
+  - deck/cross-beam の bridge-local 3D origin 正規化（統合シーンは girder/bearing のみ）
+  - INFERRED/MISSING 項目のユーザー確認 UI（契約上のみ）
+  - 業務一覧・最近使用・統合ナビゲーション未整備
+UNRESOLVED_QUESTIONS:
+  - Design Platform Home の配置（Lobby を包むか / 新設するか）
+  - 業務一覧の粒度（ツール単位 vs 工程単位）
+  - Main3D への ③ bound モデルの App 導線（data-level + viewer prop 提供中）
+  - 正式数値設計・反力認証（NOT_AUTHORIZED 維持）
+STEP4_1_READINESS: GO（Protected Core・Shell・分類がコード根拠付きで確定）
+
+NEXT_STEP:
+  Step 4-1「製品・画面構成設計」— Design Platform Home / 業務一覧 / 業務Workspace /
+  ナビゲーションを設計。Protected Core は WRAP で包み、MOVE 対象を新階層へ。
+
+DETAIL_REPORT_PATH:
+  /tmp/opencode/phase4-step4-0/docs/design-platform/phase4-step4-0/current-system-inventory.md
+  （repo: docs/design-platform/phase4-step4-0/current-system-inventory.md）
+
+INVENTORY_PATHS:
+  docs/design-platform/phase4-step4-0/screens-inventory.csv
+  docs/design-platform/phase4-step4-0/data-storage-inventory.csv
+  docs/design-platform/phase4-step4-0/protected-core.csv
+  docs/design-platform/phase4-step4-0/rebuildable-shell.csv
+============================================================

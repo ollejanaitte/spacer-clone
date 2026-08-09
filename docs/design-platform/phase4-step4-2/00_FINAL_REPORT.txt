@@ -1,0 +1,94 @@
+============================================================
+004_設計ツール統合 Phase4-Step4-2 業務Project概念設計 最終報告
+============================================================
+Date: 2026-08-09
+Step: Phase 4 / Step 4-2「業務Project概念設計」（概念設計・実装なし）
+
+STEP4_2_VERDICT: COMPLETE
+BASELINE_SHA: f3823b3601e14e551fc94761690077add0b2d99b（origin/main, Step 4-0 完了）
+ACTIVE_WORK_PATH: /home/masaharu/Projects/005_設計ツール統合_業務Project概念
+
+CURRENT_PROJECT_MODEL:
+  ProjectModel（types.ts）が最上位アプリ状態。1業務=複数道路/橋梁/解析を表現できない。
+  1橋梁単位の共有モデルは BridgeProject（Protected Core）。「業務」を表す単位は現行存在しない。
+CURRENT_BRIDGEPROJECT_POSITION:
+  1橋梁単位の共有設計モデル（CASE A/B・CBDM+manifest・provenance/status/revision/cycle guard）。
+CURRENT_ANALYSIS_MODEL:
+  FEM/grillage は ProjectModel 内 + backend。業務解析/クイック解析の区別は現行無し。
+
+RECOMMENDED_TOP_LEVEL_PROJECT:
+  BusinessProject（道路・橋梁設計業務1件を表す最上位コンテナ）
+RECOMMENDED_ENTITIES:
+  BusinessProject / ProjectMetadata / Road / RoadSection / Alignment /
+  BridgeProject（Protected Core）/ Analysis / TerrainDataset / ExistingConditionDataset /
+  Deliverable / Attachment / CoordinateReference / ProjectSettings
+ROAD_MODEL:
+  1業務=複数 Road。Road→RoadSections[]（非連続可）
+ROAD_SECTION_MODEL:
+  RoadSection 中間 Entity（離れ区間・複数区間・複数中心線の単位）
+ALIGNMENT_MODEL:
+  RoadSection→Alignments[]（複数中心線可）。将来 Y字/JCT は集合で表現
+BRIDGEPROJECT_MODEL:
+  1橋梁単位の Protected Core を BusinessProject の子として所有。alignmentRef(s)・terrainRef は安定ID参照
+ANALYSIS_MODEL:
+  Analysis（subjectRef で road/bridge/member 参照）を業務子に。クイック解析は独立 lightweight で後から取り込み可
+SHARED_DATA_MODEL:
+  Terrain/現況/河川/鉄道/埋設物は SharedDatasets に独立置き・複数から参照（複製しない）
+DELIVERABLE_MODEL:
+  Deliverable（sourceRefs[]）が複数設計対象を参照
+
+OWNERSHIP_RULE:
+  親子所有（BusinessProject→子）と参照（alignmentRef/terrainRef/subjectRef/sourceRefs）を分離。
+  共有データは複製せず独立Dataset参照
+REFERENCE_RULE:
+  安定ID参照（kind+id+revision）。human-readable（件番/名称）は primary key にしない
+ID_RULE:
+  internal stable ID（UUID等）と表示用IDを分離。renameしても参照不変・copy時はID再発行
+DELETE_COPY_RULE:
+  dependency check（incoming ref）→ 参照残は fail-closed or 確認。複製はID再発行+内部ref張替え
+QUICK_ANALYSIS_BOUNDARY:
+  クイック解析=独立 lightweight AnalysisProject（業務と別保存・同一Solver）。業務解析=BusinessProject 子
+
+PROTECTED_CORE_IMPACT:
+  なし（BridgeProject を子として所有/参照するだけ。Core 内部は無変更）
+MIGRATION_RISK:
+  低（現行 ProjectModel から BusinessProject 層を追加。BridgeProject の保存方式は維持）
+MAJOR_OPEN_QUESTIONS:
+  - BusinessProject manifest の詳細スキーマ（Step 4-3）
+  - Road/Section の doc 単位（路線単位 vs 区間単位）
+  - 将来 extension（複数 alignmentRef 等）の追加タイミング
+  - 業務解析/クイック解析の保存方式
+
+RECOMMENDED_ARCHITECTURE:
+  案D「BusinessProject 直下所有 + 安定ID参照」
+  （Phase 3 互換・実務1:1・過剰設計リスク最小）
+REJECTED_ALTERNATIVES:
+  案A（Roads/Bridges/Analyses を全て直下所有）= 区間・複数Alignment表現が弱い
+  案B（DesignAreas/Sections 中間層）= 過剰設計リスク・migration難
+  案C（Entity Registry 参照中心）= 抽象度高・実務とUIの整合が弱い
+
+STEP4_3_REQUIREMENTS:
+  保存単位=BusinessProject manifest + 子doc（Road系/BridgeProject/Analysis/SharedDataset/Deliverable）。
+  BridgeProject は既存 canonical JSON 維持。Terrain/3D は binary 分離。autosave/backup/export/migration 対象を整理
+STEP4_3_READINESS: GO
+NEXT_STEP:
+  Step 4-3「保存システム設計」— manifest スキーマ・ID/reference 永続化・子doc分離・binary管理を設計
+
+DETAIL_REPORT_PATHS:
+  /home/masaharu/Projects/005_設計ツール統合_業務Project概念/
+    01_current_project_concepts.md
+    02_business_project_requirements.md
+    03_entity_model_candidates.md
+    04_relation_model.md
+    05_bridgeproject_boundary.md
+    06_analysis_project_boundary.md
+    07_shared_data_ownership.md
+    08_lifecycle_and_reference_rules.md
+    09_recommended_project_model.md（Mermaid概念図含む）
+    10_step4_3_handoff.md
+    inventories/current_project_entities.csv
+    inventories/proposed_entities.csv
+    inventories/relations.csv
+    inventories/ownership_matrix.csv
+  GitHub 反映予定: docs/design-platform/phase4-step4-2/
+============================================================
