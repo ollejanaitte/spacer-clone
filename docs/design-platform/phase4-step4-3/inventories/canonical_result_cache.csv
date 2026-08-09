@@ -1,0 +1,25 @@
+entity_or_artifact,current_path/current_key,classification,status,save_target,backup_target,package_target,migration_target,regenerable,deletable,notes,code_reference
+BusinessProject manifest,NONE(new),NEW,A CANONICAL,new root business-project.json,yes,yes(mandatory),yes(migration record),no,no,P16,A CANONICAL
+Road design doc,NONE(new),NEW,A CANONICAL,roads/<roadId>.road.json,yes,yes,yes(road-design doc),no,no,map from liner/project.liner,RDD
+RoadSection entity,in road-design doc,NEW,in-doc entity,road-design doc internal,yes,yes(docs),yes(road-design),no,no,Step4-2 entity,stableIdRegistry
+Alignment entity,in road-design doc,NEW,in-doc entity,road-design doc internal,yes,yes(docs),yes(road-design),no,no,step4-2,entityId in alignments[]
+ProjectMetadata,NONE(new),NEW,A CANONICAL,manifest inline,yes,yes,yes,yes,yes,Step4-2,keep in manifest
+BridgeProject (CBDM),cbdDocument.ts build,PROTECTED_CORE,A CANONICAL,bridges/<id>/cbdm.json,yes,yes,reuse(rebuild from alignment+geometry),no,no,cbdmDocument.ts:304,P5 keep verbatim
+BridgeProject (manifest),cbdDocument.ts build,PROTECTED_CORE,A CANONICAL,bridges/<id>/manifest.json,YES(Protected),yes,reuse verbatim,no,no,cbdmDocument.ts:336,P5 keep verbatim verbatim
+BridgeProject (superstructure),superstructureAdapter.ts,PROTECTED_CORE,A CANONICAL,bridges/<id>/superstructure.json,yes,yes,reuse,no,no,superstructureAdapter.ts,P5
+BridgeProject (substructure),substructure model.ts,PROTECTED_CORE,A CANONICAL,bridges/<id>/substructure.json,yes,yes,reuse no,substructureBinding.ts,P5
+Analysis doc,ProjectModel types.ts,NEW,A CANONICAL (or B),analyses/<id>/document.json,yes,yes,yes(analysis doc from project.json),no,no,types.ts:250,map FEM nodes/members/loads
+AnalysisResult,types.ts analysisResults,NEW,B RESULT,analyses/<id>/results/*.json,yes,yes(optional exclude),yes(solver rerun),yes,user,types.ts:281,persisted result
+Terrain/3D,liner/samples/*/terrain.ts,C CACHE→A CANONICAL,resources/<sha>.<ext>,yes,yes,yes(terrain data),yes(ingest from sample),no,terrain immutable terrain ts,content-addressed
+Apollo workspace,localStorage apollo_phase1_nn_workspace_v1,WRAP→B,autosave/analyses import,yes(optional),no(rebuild),yes(workspace import),no,yes(workspace ts:116),wrap→BusinessProject
+importer project,localStorage spacer.importer.*,WRAP→B/attachments,attachments/ or resources/,yes,no,yes(importerStorage.ts:56),no,yes,importerStorage.ts,adapter import
+importer snapshot,localStorage spacer.importer.snapshot.*,WRAP,B .system/autosave or resources,yes,no,yes,yes,rebuild,importerStorage.ts:214,wrap
+importer recovery,localStorage spacer.importer.recovery,WRAP,B .system/recovery,yes,no,no,yes,rebuild,recoveryManager.ts,wrap
+WF-15 ack,localStorage apollo.workflow.wf15.ack.*,WRAP→C,manifest extensions or .system,yes,no,no,yes(extension),no,yes,workflow/selectors.ts,wrap→manifest extension
+UI settings localStorage,4 keys (onboarding/guide/mode/viewer),KEEP,App config (.system/cache or app),no,yes,no,yes,runtime,no,yes,uiModeDefault.ts etc,keep separate
+backend autosave.json,backend/data/projects/autosave.json,WRAP→autosave,.system/autosave/,no,no(autosave),yes(adapter),yes,yes,main.py:423,disabled→re-enable
+backend projects/*.json,backend/data/projects/*.json,WRAP→Analysis/Business,analyses/ or BusinessProject,yes(optional),no,yes(adapter),no,yes,main.py:373,latent
+backend bridges/{id}.json,backend/data/bridges/{id}.json,WRAP→BridgeProject,bridges/<id>/,yes,yes,reuse canonical,yes,yes,main.py:1127,latent BridgeWizard
+substructure-project.json,SubstructurePlanningHost envelope,WRAP→Substructure,bridges/<id>/substructure.json,yes,yes,reuse,yes,no,SubstructurePlanningHost.tsx:304,adapter envelope
+result CSV/PDF/DXF/STL/JSON/SVG/PNG,various download,WRAP→B RESULT,deliverables/<id>/ + resources/,yes,yes,yes(artifact ingest),yes(solver rerun),yes,user,resultCsvExport.ts etc,scattered→deliverable
+Replay,in-memory replay.ts,WRAP,NOT persisted (in-memory),no,no,no,no,n/a,no,n/a,apollo/replay/replay.ts,keep in-memory; future persist as AnalysisResult

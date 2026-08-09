@@ -1,0 +1,16 @@
+rule_id,from_entity,to_entity,relation,reference_form,stale_detection,copy_behavior,delete_behavior,dangling_policy,revision_in_ref,code_reference,notes
+R1,BusinessProject,-,owns,owner,not applicable,deep copy+re-id,fail-closed if children,A CANONICAL,yes,manifest,*Refs[],BusinessProject owns child entities
+R2,BridgeProject,Alignment,alignmentRef,DocumentReference(kind=id=rev+checksum),compare referenced revisionId vs current,inherit same ref or rebind,ref-check needed,yes (kind+id+revision),engineeringProject.ts + bridgeProjectReferencesSchema,Step4-2 P5 alignmentRef
+R3,BridgeProject,TerrainDataset,terrainRef,DocumentReference,revision mismatch warn,shared(no copy),fail-closed if bridge,yes,roadDesignRef in engineeringProject,terrain dataset shared
+R4,Analysis,BridgeProject|Road|Member,subjectRef,DocumentReference,revision mismatch,copy(re-id),ref-check,yes,frameAnalysisRefs in engineeringProject,Analysis subject reference
+R5,Deliverable,any,sourceRefs[],DocumentReference[],all resolve,copy,copy,yes,deliverableRefs in manifest,deliverable source references
+R6,BusinessProject,BridgeProject,bridgeProjectRefs[],DocumentReference[],checksum+revision match,deep copy+re-id(preserve option),dependents fail-closed,yes (proposed),engineeringProject.ts extend,proposed array
+R7,BusinessProject,Road,roadRefs[],DocumentReference[],checksum match,deep copy+re-id,fail-closed if bridge,yes (proposed),engineeringProject.ts extend,proposed array
+R8,BusinessProject,Analysis,analysisRefs[],DocumentReference[],checksum match,re-id,copy,yes (proposed),engineeringProject.ts extend,proposed array
+R9,BusinessProject,Deliverable,deliverableRefs[],DocumentReference[],checksum match,copy,copy,yes (to design),engineeringProject.ts extend,proposed array
+R10,BusinessProject,SharedDataset,sharedDatasetRefs[],DocumentReference[],match,copy or share(no copy if shared),no-if-shared,yes (to design),engineeringProject.ts extend,proposed array
+R11,BusinessProject,CoordinateReference,coordinateReference,DocumentReference,match,copy,fail-closed if refd,yes (to design),coordinate-context kind,coordinateReference
+R12,in-doc,Alignment,stable entity id,StableEntityId(namespace+id+entityKind),n/a (in-doc),re-id in doc,re-id in doc,n/a,n/a,stableEntityId.ts + roadAlignmentEntry.entityId,Alignment is in-doc stable entity
+R13,BusinessProject,Resource,uri,ImmutableResourceReference(uri+checksum+mediaType),checksum mismatch warn,dedup by sha,unlink if no ref,yes(uri+checksum),immutableResourceReference.ts,Binary resource reference
+R14,Road,BridgeProject,RoadBridgeEntry.entityId,stable entity id (UUID),n/a,copy,delete,fail-closed if bridge,as StableEntityId id,roadDesignDocument.RoadBridgeEntry,Bridge referenced from road-design
+R15,AnalysisProject->Business,cross copy,copy-in/copy-out,DocumentReference rewrite,revision re-resolve,full re-id + ref-rewrite,independent,yes (remap table),quick analysis copy,P17 quick analysis boundary
