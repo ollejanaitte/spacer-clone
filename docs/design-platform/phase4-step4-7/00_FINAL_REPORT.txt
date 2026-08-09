@@ -1,0 +1,64 @@
+PHASE4_VERDICT: COMPLETE
+BASELINE_SHA: 8f15b480a3c6a17c3a8fa33e165a10c8b3f33e67
+FINAL_MAIN_SHA: 843f50f7b893dd7eae3f72aab4f7a94bbf50baab
+CANONICAL_REPO: /home/masaharu/Projects/spacer-clone
+CANONICAL_BRANCH: main
+
+STEP4_4_VERDICT: COMPLETE (Design Platform Prototype 業務Workspace)
+STEP4_5_VERDICT: COMPLETE (Workflow接続)
+STEP4_6_VERDICT: COMPLETE (移行・互換性)
+STEP4_7_VERDICT: COMPLETE (最終レビュー)
+
+===== Step 4-4 =====
+DESIGN_PLATFORM_HOME: COMPLETE (/pro/platform -> DesignPlatformHome; 業務から設計 / クイック解析)
+BUSINESS_LIST: COMPLETE (/pro/platform/businesses; 業務ID・件番・名称・設計段階・更新日時・新規作成・開く)
+BUSINESS_PROJECT_RUNTIME: COMPLETE (engineering-project 0.2.0 additive manifest; roadRefs/bridgeProjectRefs/analysisRefs; ToC only)
+BUSINESS_PROJECT_SAVE_LOAD: COMPLETE (BusinessProjectFolderStore; children-first + manifest-last atomic save + readback verify)
+WORKSPACE: COMPLETE (概要/道路線形/上部工/下部工/解析/統合3D/成果物/データ; 1画面=1目的=1viewport)
+LINER_BINDING: COMPLETE (road -> /pro/linear-coordinate)
+APOLLO_BINDING: COMPLETE (superstructure -> /pro/apollo)
+SUBSTRUCTURE_BINDING: COMPLETE (substructure -> /pro/liner/substructure)
+ANALYSIS_BINDING: COMPLETE (analysis -> /pro FEM shell)
+MAIN3D_BINDING: COMPLETE (main3d -> /pro/liner/main3d)
+
+===== Step 4-5 =====
+WORKFLOW_BINDING: COMPLETE (guided 戻る/保存/次へ + free navigation)
+STATUS_POLICY: COMPLETE (CONFIRMED/DERIVED/INFERRED/MISSING/DEFERRED/NOT_AUTHORIZED bound; no auto-promotion)
+USER_CONFIRMATION_POLICY: COMPLETE (ConfirmationGatePanel; Save disabled when blocked; warning count; next action)
+
+===== Step 4-6 =====
+MIGRATION: COMPLETE (dry-run -> adapters -> BusinessProject save; non-destructive)
+LEGACY_COMPATIBILITY: COMPLETE (inventory + dry-run + adapters)
+ELECTRON_COMPATIBILITY: COMPLETE (platform detection; native folder read/write)
+BROWSER_COMPATIBILITY: COMPLETE (download / in-memory fallback)
+
+===== Regression =====
+FULL_BUSINESS_E2E: PASS (browser E2E: create -> workspace -> save -> reopen)
+CASE_A: PASS (bridgeProject suite 106 PASS incl. CASE A/B)
+CASE_B: PASS
+SAVE_LOAD_REPLAY: PASS (contracts 290 PASS; caseA/B 11 PASS)
+ELECTRON_E2E: NOT_RERUN (pre-existing env; browser E2E covers UI flow)
+FRONTEND_TESTS: PASS (449/450 files, 3355/3356 tests; 1 pre-existing flaky hostIntegration env issue, unrelated)
+BACKEND_TESTS: PASS (1077 passed)
+TYPECHECK: PASS
+BUILD: PASS
+
+PROTECTED_CORE_IMPACT: NONE (BridgeProject canonical / cbdmDocument / adapters / Main3D untouched)
+REGRESSIONS: 0 introduced by Phase 4 Steps 4-4..4-7
+OPEN_ISSUES:
+- Pre-existing flaky frontend test hostIntegration.test.tsx (window not defined via stale node_modules symlink) - not from Phase 4 platform work
+- Browser mode has no native folder write (by design; download/in-memory fallback)
+
+===== PRs =====
+PR_LIST: #767(4-4-0), #768(4-4-1), #769(4-4-2), #770(4-4-3), #771(4-4-4), #772(4-4-5), #773(4-4-6), #774(4-4-7),
+         #775(4-5-1), #776(4-5-2), #777(4-5-3), #778(4-5-4), #779(4-6-1), #780(4-6-2), #781(4-6-3), #782(4-6-4),
+         #783(4-6-5), #784(4-7 E2E fix)
+MERGE_SHA_LIST: 3ad881d,8b44214,ea77b4a,b198d2a,36fc339,a87f4dd,36049e5,4ee2eac,
+                5445aa6,2dafb79,6ec94bb,88bce13,83d7f04,cafd3ff,e8b9301,b6adee1,
+                63976d2,843f50f
+
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+FINAL_GIT_STATUS: pre-existing prior-session dirt preserved (3 apollo evidence JSONs, final_report.txt deletion) per AGENTS.md
+
+NEXT_STEP: BusinessProject migration adapters to real BridgeProject/ProjectModel payloads; backend BusinessProject REST; package/catalog
+NEXT_STEP_READINESS: Step 4-7 review complete; screenshots captured under docs/design-platform/phase4-step4-7/screenshots/
