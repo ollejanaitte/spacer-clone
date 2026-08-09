@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ja } from "../../i18n/ja";
 import type { BusinessSummary } from "../business/businessRegistry";
 import { isWorkspaceSection, WORKSPACE_SECTIONS, type WorkspaceSection } from "./sections";
+import { createToolBindings } from "../tools/toolBindings";
 import styles from "./BusinessWorkspace.module.css";
 
 export type BusinessWorkspaceProps = {
@@ -10,6 +11,7 @@ export type BusinessWorkspaceProps = {
   onSectionChange?: (section: WorkspaceSection) => void;
   onSave: () => void;
   onBack: () => void;
+  onLaunchTool?: (section: WorkspaceSection) => void;
 };
 
 export function BusinessWorkspace({
@@ -18,6 +20,7 @@ export function BusinessWorkspace({
   onSectionChange,
   onSave,
   onBack,
+  onLaunchTool,
 }: BusinessWorkspaceProps) {
   const text = ja.designPlatform.workspace;
   const [activeSection, setActiveSection] = useState<WorkspaceSection>(() =>
@@ -40,6 +43,15 @@ export function BusinessWorkspace({
       })),
     [text],
   );
+
+  const bindings = useMemo(() => createToolBindings(), []);
+  const activeBinding = bindings.resolveBinding(activeSection);
+
+  const launchActiveTool = useCallback(() => {
+    if (activeBinding !== null && activeBinding.available) {
+      onLaunchTool?.(activeSection);
+    }
+  }, [activeBinding, activeSection, onLaunchTool]);
 
   return (
     <div className={styles.page}>
@@ -84,6 +96,22 @@ export function BusinessWorkspace({
         <section className={styles.sectionBody}>
           <h2 className={styles.sectionTitle}>{text.sectionLabels[activeSection]}</h2>
           <p className={styles.sectionNotice}>{text.sectionNotices[activeSection]}</p>
+          {activeBinding !== null && (
+            <div className={styles.launchArea}>
+              <p className={styles.launchDescription}>
+                {text.launchDescription.replace("{tool}", activeBinding.toolName)}
+              </p>
+              <button
+                type="button"
+                className={styles.launchButton}
+                onClick={launchActiveTool}
+                disabled={!activeBinding.available}
+                data-testid={`workspace-launch-${activeSection}`}
+              >
+                {text.launchAction.replace("{tool}", activeBinding.toolName)}
+              </button>
+            </div>
+          )}
         </section>
       </main>
 

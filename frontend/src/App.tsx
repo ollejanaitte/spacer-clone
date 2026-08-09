@@ -92,6 +92,7 @@ import {
 import { DesignPlatformHome } from "./platform/pages/DesignPlatformHome";
 import { BusinessListPage } from "./platform/pages/BusinessListPage";
 import { BusinessWorkspace } from "./platform/workspace/BusinessWorkspace";
+import { createToolBindings } from "./platform/tools/toolBindings";
 import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
 import {
   linerPiersToSupportHandoff,
@@ -929,6 +930,12 @@ export function App() {
               registry.touch(business.businessId);
             }}
             onBack={() => navigatePro(DESIGN_PLATFORM_BUSINESS_LIST_PATH)}
+            onLaunchTool={(section) => {
+              const binding = createToolBindings().resolveBinding(section);
+              if (binding !== null && binding.available) {
+                navigatePro(binding.route);
+              }
+            }}
           />
         );
       }

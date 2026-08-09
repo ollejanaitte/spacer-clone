@@ -111,6 +111,35 @@
   line-height: 1.7;
 }
 
+.launchArea {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.launchDescription {
+  margin: 0 0 0.75rem;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.launchButton {
+  padding: 0.625rem 1.5rem;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.launchButton:disabled {
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
 .footer {
   padding: 0.75rem 1.5rem;
   border-top: 1px solid #e2e8f0;
