@@ -2339,6 +2339,8 @@ export const ja = {
       stageLabel: "設計段階",
       tabsAria: "業務Workspaceセクション",
       footerHint: "1画面 = 1目的 = 1 viewport",
+      launchDescription: "{tool} を起動してこのセクションの設計作業を行います。",
+      launchAction: "{tool} を開く",
       sectionLabels: {
         overview: "概要",
         road: "道路線形",
