@@ -1,0 +1,9 @@
+data,business_direct,road_section,bridgeproject,analysis,shared_dataset,recommended
+Terrain,no,no,no,no,yes,SharedDataset(terrainDatasetId)
+Existing structures/rivers/rail/subway,no,no,no,no,yes,SharedDataset(existingConditionId)
+Coordinate system,yes(+child override),-,-,-,-,ProjectMetadata
+Survey control points,yes,-,-,-,-,BusinessProject
+Design standards,yes,-,-,-,-,BusinessProject(common)
+Common load conditions,yes,-,-,-,-,BusinessProject(common)
+Owner/project metadata,yes,-,-,-,-,ProjectMetadata
+Source documents,yes,-,-,-,-,BusinessProject(Attachment)

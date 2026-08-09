@@ -1,0 +1,12 @@
+from,to,relation_type,cardinality,notes
+BusinessProject,Road,parent-child,1:N,owns roads
+BusinessProject,BridgeProject,parent-child,1:N,owns 1-bridge cores
+BusinessProject,Analysis,parent-child,1:N,owns analyses
+BusinessProject,SharedDatasets,parent-child,1:N,owns shared datasets
+BusinessProject,Deliverable,parent-child,1:N,owns deliverables
+Road,RoadSection,parent-child,1:N,non-contiguous sections allowed
+RoadSection,Alignment,parent-child,1:N,multiple centerlines future
+BridgeProject,Alignment,reference,1:N,alignmentRef(s) stable-id
+BridgeProject,TerrainDataset,reference,N:1,terrainRef shared
+Analysis,any(road/bridge/member),reference,N:1,subjectRef
+Deliverable,any,reference,N:1,sourceRefs[]

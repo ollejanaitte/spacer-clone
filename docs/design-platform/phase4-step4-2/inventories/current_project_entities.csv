@@ -1,0 +1,10 @@
+name,implementation_path,responsibility,source_of_truth,data,references,persistence,bridgeproject_relation,protected_core
+ProjectModel,frontend/src/types.ts:250-296,top-level app state (FEM + tool sidecars),in-memory+project.json,nodes/members/supports/loads+liner/apollo sidecars,loose id/name coupling,project.json/localStorage/backend,hosts sidecars but not a business container,partial
+BridgeProject,bridgeProject/*.ts,1-bridge shared design model,CBDM canonical json,Alignment/BridgeGeometry/Superstructure/Substructure binding/reconstruction,alignmentRef/terrainRef(proposed),canonical json round-trip,is the 1-bridge core,YES
+LINER project,liner/ (core/schema/adapters),road alignment,project.liner,alignment elements/station/vertical/crossSection/piers/spans,activeAlignmentId,project.liner+RDD,source for Alignment,YES(boundary)
+Apollo workspace,apollo/workspace.ts,superstructure workspace,localStorage workspace,apolloPhase1Unit2/bsdd/input,bridgeId,localStorage,source for Superstructure,no
+SubstructureProject,substructure/model.ts+persistence.ts,substructure,present 0.2.0,supports/pier/abutment/foundation,alignmentId+supportId,substructure-project.json,substructure binding target,no
+FEM/analysis,backend/app/main.py+types.ts,fem model/analysis,ProjectModel,nodes/members+analysisSettings,-,backend/data/autosave+project.json,grillage from snapshot,no
+importer project,liner/importer/storage/importerStorage.ts,pdf importer,importer project,line master/sections,-,localStorage,input candidate,no
+sample/fixture,apollo/sampleProjects.ts+liner/samples+docs/apollo/step10,demo/golden,fixtures,mountain500/RB-001/200m,-,repo,fcase A representative,no
+terrain/3D,liner/samples/mountain-viaduct-500/terrain.ts,display layer,deterministic heightfield,terrain mesh,display only,repo,main3d layer,no

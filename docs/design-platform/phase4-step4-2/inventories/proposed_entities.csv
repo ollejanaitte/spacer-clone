@@ -1,0 +1,14 @@
+entity,id,parent,source_of_truth,references,mutable,copyable,delete,relation_to_bridgeproject,recommended
+BusinessProject,businessProjectId,-,manifest,-,yes,yes,-,owns BridgeProjects[],YES
+ProjectMetadata,-,BusinessProject,manifest,-,yes,yes,-,-,YES
+Road,roadId,BusinessProject,road doc,RoadSections[],yes,yes,yes-if-no-ref,-,YES
+RoadSection,roadSectionId,Road,road doc,alignments/bridges,yes,yes,yes-if-no-ref,bridge ownership+ref,YES
+Alignment,alignmentId,RoadSection(或Road),LINER/RDD,-,yes,yes,yes-if-no-ref,BridgeProject->alignmentRef,YES
+BridgeProject,bridgeProjectId,BusinessProject,CBDM+manifest,alignmentRef(s)/terrainRef,yes,yes(re-id),ref-check-needed,1-bridge Protected Core,YES
+Analysis,analysisId,BusinessProject,analysis doc,subjectRef,yes,yes,ref-check-needed,grillage etc,YES
+TerrainDataset,terrainDatasetId,SharedDatasets,terrain data,-,yes,yes(shared or copy),no-if-shared,shared by bridges,YES
+ExistingConditionDataset,existingConditionId,SharedDatasets,existing data,-,yes,yes,no-if-shared,shared,YES
+Deliverable,deliverableId,BusinessProject,deliverable doc,sourceRefs[],yes,yes,-,references designs,YES
+Attachment/SourceDocument,attachmentId,BusinessProject(or Deliverable),attachment,sourceRefs,no,yes,-,reference only,YES
+CoordinateReference,coordinateRefId,ProjectMetadata,coordinate def,-,yes,yes,yes-if-no-ref,BridgeProject coordinate,YES
+ProjectSettings,settingsId,ProjectMetadata,common settings,-,yes,yes,-,common,YES
