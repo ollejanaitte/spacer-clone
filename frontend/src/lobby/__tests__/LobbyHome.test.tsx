@@ -63,12 +63,12 @@ describe("LobbyHome", () => {
     expect(onNavigate).toHaveBeenCalledWith("/level0");
   });
 
-  test("navigates to /pro when the pro mode is clicked", () => {
+  test("navigates to the Design Platform entry when the pro mode is clicked", () => {
     const onNavigate = vi.fn();
     const { container } = renderComponent(<LobbyHome onNavigate={onNavigate} />);
     const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     buttons[2].click();
-    expect(onNavigate).toHaveBeenCalledWith("/pro");
+    expect(onNavigate).toHaveBeenCalledWith("/pro/platform");
   });
 
   test("does not display forbidden terms", () => {

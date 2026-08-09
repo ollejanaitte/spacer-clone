@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { DESIGN_PLATFORM_ENTRY_PATH } from "../designPlatformEntry";
 import { L0_STRINGS } from "../data/lobbyStrings";
 import { ModeCard } from "../components/ModeCard";
 import { ParameterPanel, getDefaultParameters, type Level0Parameters } from "../../level0/components/ParameterPanel";
@@ -110,7 +111,7 @@ export function Level0Top({ onNavigate }: Level0TopProps) {
         <button
           type="button"
           className={styles.proLink}
-          onClick={() => onNavigate("/pro")}
+          onClick={() => onNavigate(DESIGN_PLATFORM_ENTRY_PATH)}
         >
           {text.proLink}
         </button>
