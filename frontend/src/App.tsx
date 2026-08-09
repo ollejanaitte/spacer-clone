@@ -782,12 +782,14 @@ export function App() {
       if (result.canceled) return false;
       setProject(serializedProject);
       setDirty(false);
+      setValidationNotice({ kind: "ok", text: ja.app.projectSaved });
       log(`Current model saved to ${result.filePath}.`);
       return true;
     }
     downloadText("project.json", payload, "application/json");
     setProject(serializedProject);
     setDirty(false);
+    setValidationNotice({ kind: "ok", text: ja.app.projectSaved });
     log("Current model saved to project.json.");
     return true;
   };
