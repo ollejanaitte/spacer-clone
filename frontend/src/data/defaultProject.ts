@@ -1,6 +1,51 @@
 import { CURRENT_PROJECT_SCHEMA_VERSION } from "../projectMigration";
 import type { ProjectModel } from "../types";
 
+/**
+ * Empty project used as the runtime initial state.
+ * No nodes, members, supports, loads, materials, or results are auto-created.
+ * The previous runtime default ("5-Span Continuous Viaduct (Plan A)") has been
+ * removed from the production initial state; it remains available as an
+ * explicit sample template only (createDefaultProject is used by sample flows).
+ */
+export const createEmptyProject = (): ProjectModel => {
+  const now = new Date().toISOString();
+  return {
+    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
+    project: {
+      id: "untitled",
+      name: "モデル未作成",
+      schemaVersion: "1.0.0",
+      description: "",
+      createdAt: now,
+      updatedAt: now,
+    },
+    units: {
+      length: "m",
+      force: "kN",
+      moment: "kN_m",
+      modulus: "kN_per_m2",
+      area: "m2",
+      inertia: "m4",
+    },
+    nodes: [],
+    materials: [],
+    sections: [],
+    members: [],
+    supports: [],
+    loadCases: [],
+    nodalLoads: [],
+    memberLoads: [],
+    massCases: [],
+    analysisSettings: {
+      analysisType: "linear_static",
+      includeShearDeformation: false,
+      largeDisplacement: false,
+      tolerance: 1e-9,
+    },
+  };
+};
+
 export const createDefaultProject = (): ProjectModel => {
   const deckNode = (id: string, x: number, z = 0) => ({ id, x, y: BRIDGE_DECK_Y, z });
   const baseNode = (id: string, x: number, z = 0) => ({ id, x, y: 0, z });

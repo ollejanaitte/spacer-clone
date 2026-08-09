@@ -9,7 +9,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PropertyPanel } from "./components/PropertyPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
-import { createDefaultProject, createSuspendedDeckProject } from "./data/defaultProject";
+import { createEmptyProject, createSuspendedDeckProject } from "./data/defaultProject";
 import { resetProjectModelContents } from "./modelReset";
 import { migrateProject } from "./projectMigration";
 import {
@@ -165,12 +165,12 @@ export function App() {
   const pathnameForRouting =
     typeof window !== "undefined" ? window.location.pathname : "/pro";
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
-  const [project, setProject] = useState<ProjectModel>(() => createDefaultProject());
+  const [project, setProject] = useState<ProjectModel>(() => createEmptyProject());
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
   const [selectedSection, setSelectedSection] = useState<SectionKey>("nodes");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
-  const [activeLoadCase, setActiveLoadCase] = useState<string>(() => createDefaultProject().loadCases[0]?.id ?? "");
+  const [activeLoadCase, setActiveLoadCase] = useState<string>(() => createEmptyProject().loadCases[0]?.id ?? "");
   const [bottomTab, setBottomTab] = useState<BottomTab>("results");
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
@@ -1387,7 +1387,7 @@ export function App() {
         nativeFileDialogs={nativeFileDialogs}
         onBackToTop={navigateTop}
         onNew={() => {
-          commitProject(createDefaultProject());
+          commitProject(createEmptyProject());
           setDirty(false);
           log("New model created.");
         }}
