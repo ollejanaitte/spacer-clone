@@ -343,7 +343,7 @@ describe("Step 0B2a artifact contracts", () => {
     it("rejects unsupported schema versions without defaulting", () => {
       const parsed = parseEngineeringProjectValue({
         ...createValidEngineeringProject(),
-        schemaVersion: "0.2.0",
+        schemaVersion: "0.3.0",
       });
       expect(parsed.success).toBe(false);
       if (!parsed.success) {
