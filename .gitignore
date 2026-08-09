@@ -42,3 +42,6 @@ scan_result.md
 
 # Local-only reference materials (copyrighted PDFs; git-untracked)
 /local-reference/
+
+# Local-only opencode model config (see E decision; git-untracked)
+/opencode.json

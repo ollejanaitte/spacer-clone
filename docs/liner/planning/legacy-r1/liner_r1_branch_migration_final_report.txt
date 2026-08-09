@@ -1,0 +1,136 @@
+LINER R1 Dedicated Branch Migration
+Final Report
+
+Date: 2026-08-07
+
+1. Executive Summary
+   LINER R1 numeric verification planning artifacts were isolated from the
+   upper-structure work in ~/Projects/spacer-clone into a dedicated independent
+   Git worktree and pushed to a dedicated GitHub branch. No merge to main, no
+   PR created, no implementation started, and the source repository was not
+   modified.
+
+2. Source Repository State
+   - SOURCE_REPOSITORY_PATH: ~/Projects/spacer-clone
+   - SOURCE_CURRENT_BRANCH: main
+   - SOURCE_HEAD: b8db389fbb4e43806ffa05661a6e71b832c40d04
+   - SOURCE_ORIGIN_MAIN: b8db389fbb4e43806ffa05661a6e71b832c40d04
+   - SOURCE_STATUS: 3 pre-existing modified files (docs/apollo/step4c_appurtenance_haunch/evidence/load.json, quantity.json, stl-metadata.json)
+   - SOURCE_EXISTING_CHANGE_COUNT: 3
+   - SOURCE_UNTRACKED_COUNT: 0
+   - SOURCE_WORKTREE_LIST: main@b8db389, plus p2i_verify (detached), p2iib-work, substruct-b (detached), and new liner-r1-planning worktree
+
+3. Source Research Folder
+   - ~/Projects/liner-future-research/
+   - R1 planning artifacts in r1-planning/ (8 files) + supporting matrices (3 CSV)
+
+4. Actual Worktree Path
+   - /home/masaharu/Projects/spacer-clone-liner-r1-planning
+
+5. Actual Branch Name
+   - research/liner-r1-planning
+
+6. Base Ref and Baseline SHA
+   - BASE_REF: origin/main
+   - BASELINE_SHA: b8db389fbb4e43806ffa05661a6e71b832c40d04
+
+7. Branch Reuse or Creation Decision
+   - Branch did not exist locally or remotely. Created new from origin/main.
+
+8. Copied Deliverables (11 artifacts + 3 new docs)
+   - B3_NON_MODIFICATION_AUDIT.md
+   - R1_ACCEPTANCE_CRITERIA.md
+   - R1_BOUNDARY_REPORT.md
+   - R1_DESIGN.md
+   - R1_PLAN.md
+   - R1_TEST_PLAN.md
+   - R1_VERIFICATION_STRATEGY.md
+   - integration_and_r1_planning_final_report.txt
+   - matrices/current_system_inventory.csv
+   - matrices/gap_matrix.csv
+   - matrices/jip_liner_feature_inventory.csv
+   - plus new: README.md, BRANCH_STATUS.md, COPY_MANIFEST.csv
+   Total files on branch: 14.
+
+9. Redactions
+   - Source artifacts already used generalized paths (~/Projects/...). No
+     /home/masaharu absolute paths or usernames present. No redaction required.
+   - COPY_MANIFEST.csv source/destination paths recorded in generalized form.
+
+10. Copy Manifest Verification
+    - COPY_MANIFEST.csv at docs/liner/planning/r1-numeric-verification/COPY_MANIFEST.csv
+    - 11 items (ITM-001..ITM-011); all sha256_source == sha256_destination match on disk.
+
+11. Docs-Only Verification
+    - All files UTF-8; no PDF/binary; no .git; no symlinks; no empty files;
+      no implementation code; no secrets; no absolute paths/usernames;
+      CSV parse + headers OK; no duplicate ITM IDs; no forbidden dirs.
+    - git diff vs origin/main = only docs/liner/planning/r1-numeric-verification/**.
+    - Build skipped (docs-only branch; no doc-validation script in repo).
+
+12. Commit
+    - SHA: 75b4522f0a9a8a0e6c97576c95e2cc960e072596
+    - Message: docs(liner): add R1 numeric verification planning
+
+13. Push
+    - Pushed to origin/research/liner-r1-planning (git push -u)
+
+14. Remote Branch Verification
+    - Remote ref: 75b4522f0a9a8a0e6c97576c95e2cc960e072596 == local HEAD
+    - README present, all R1 docs present, matrices present, BRANCH_STATUS present,
+      COPY_MANIFEST present, no PDF originals, no code changes, main unchanged.
+
+15. Pull Request Status
+    - No PR created (pr list empty for branch).
+
+16. Main Branch Status
+    - origin/main: b8db389fbb4e43806ffa05661a6e71b832c40d04 (unchanged)
+
+17. Source Repository Non-Modification Audit
+    - SOURCE_HEAD_BEFORE: b8db389... == SOURCE_HEAD_AFTER: b8db389... : MATCH
+    - SOURCE_BRANCH_BEFORE: main == SOURCE_BRANCH_AFTER: main : MATCH
+    - SOURCE_STATUS_BEFORE: 3 files == SOURCE_STATUS_AFTER: 3 files : MATCH
+    - SOURCE_DIFF_SHA_BEFORE: 14eee478... == SOURCE_DIFF_SHA_AFTER: 14eee478... : MATCH
+    - SOURCE_UNTRACKED_BEFORE: 0 == SOURCE_UNTRACKED_AFTER: 0 : MATCH
+    - SOURCE_FILE_EDIT_EXECUTED: NO
+    - SOURCE_BRANCH_SWITCH_EXECUTED: NO
+    - SOURCE_STASH_EXECUTED: NO
+    - SOURCE_RESET_EXECUTED: NO
+    - SOURCE_COMMIT_EXECUTED: NO
+    - SOURCE_PUSH_EXECUTED: NO
+
+18. Worktree Status
+    - New worktree: ~/Projects/spacer-clone-liner-r1-planning @ research/liner-r1-planning, clean.
+    - Source worktree (main) untouched; other worktrees untouched.
+
+19. Deliverables
+    - Dedicated branch: research/liner-r1-planning
+    - Branch path: docs/liner/planning/r1-numeric-verification/
+    - Manifest: COPY_MANIFEST.csv
+    - Status doc: BRANCH_STATUS.md
+
+20. Next Recommended Action
+    - Review R1 planning on the dedicated GitHub branch.
+    - Resolve open questions; approve tolerances / coordinate system / authoritative data.
+    - Create R1-P00 implementation prompt only after approval.
+    - Confirm no file conflicts with upper-structure work.
+    - Do not start R1 implementation yet.
+
+21. Final Verdicts
+    PREFLIGHT_VERDICT: PASS
+    SOURCE_REPOSITORY_PROTECTION_VERDICT: PASS
+    WORKTREE_ISOLATION_VERDICT: PASS
+    BRANCH_ISOLATION_VERDICT: PASS
+    R1_COPY_SCOPE_VERDICT: PASS
+    PUBLIC_SAFETY_VERDICT: PASS
+    DOCS_ONLY_VERDICT: PASS
+    COPY_HASH_VERDICT: PASS
+    COMMIT_VERDICT: PASS
+    REMOTE_PUSH_VERDICT: PASS
+    REMOTE_BRANCH_VERDICT: PASS
+    MAIN_NON_MODIFICATION_VERDICT: PASS
+    PR_NON_CREATION_VERDICT: PASS
+    IMPLEMENTATION_NON_EXECUTION_VERDICT: PASS
+    UPPER_STRUCTURE_NON_MODIFICATION_VERDICT: PASS
+    APOLLO_NON_MODIFICATION_VERDICT: PASS
+    OVERALL_VERDICT: PASS
