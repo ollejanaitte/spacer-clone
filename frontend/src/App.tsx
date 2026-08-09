@@ -95,6 +95,7 @@ import { BusinessWorkspace } from "./platform/workspace/BusinessWorkspace";
 import { createToolBindings } from "./platform/tools/toolBindings";
 import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
 import { createBusinessProjectPersistence } from "./platform/storage/businessProjectPersistence";
+import { createSampleBusiness } from "./platform/sample/sampleBusiness";
 import {
   linerPiersToSupportHandoff,
   resolveHandoffAlignmentId,
@@ -977,6 +978,11 @@ export function App() {
           navigatePro(resolveBusinessWorkspacePath(businessId));
         }}
         onBack={() => navigatePro(DESIGN_PLATFORM_HOME_PATH)}
+        onCreateSample={() => {
+          const registry = createLocalStorageBusinessRegistry();
+          const created = createSampleBusiness(registry);
+          navigatePro(resolveBusinessWorkspacePath(created.businessId));
+        }}
       />
     );
   }

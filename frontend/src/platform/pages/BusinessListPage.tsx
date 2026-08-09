@@ -12,9 +12,15 @@ export type BusinessListPageProps = {
   registry: BusinessRegistryPort;
   onOpen: (businessId: string) => void;
   onBack: () => void;
+  onCreateSample?: () => void;
 };
 
-export function BusinessListPage({ registry, onOpen, onBack }: BusinessListPageProps) {
+export function BusinessListPage({
+  registry,
+  onOpen,
+  onBack,
+  onCreateSample,
+}: BusinessListPageProps) {
   const text = ja.designPlatform.businessList;
   const [showCreate, setShowCreate] = useState(false);
   const [projectNumber, setProjectNumber] = useState("");
@@ -107,6 +113,16 @@ export function BusinessListPage({ registry, onOpen, onBack }: BusinessListPageP
         >
           {text.newBusiness}
         </button>
+        {onCreateSample !== undefined && (
+          <button
+            type="button"
+            className={styles.sampleButton}
+            onClick={onCreateSample}
+            data-testid="business-sample-create"
+          >
+            {text.sampleBusiness}
+          </button>
+        )}
       </div>
       {showCreate ? (
         <section className={styles.createPanel} aria-label={text.createPanelAria}>

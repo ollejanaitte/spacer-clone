@@ -24,6 +24,7 @@ export type BusinessProjectSaveOutcome = BusinessProjectSaveResult | BusinessPro
 
 export interface BusinessProjectPersistencePort {
   save(business: BusinessSummary): BusinessProjectSaveOutcome;
+  saveManifest(manifest: BusinessProjectManifest): BusinessProjectSaveOutcome;
   load(businessId: string): BusinessProjectManifest | null;
   lastSavedAt(businessId: string): string | null;
 }
@@ -95,6 +96,26 @@ export function createBusinessProjectPersistence(
         const lastSavedAt = now();
         storage.setItem(
           storageKey(business.businessId),
+          JSON.stringify({ manifest, lastSavedAt }, null, 2),
+        );
+        return { ok: true, lastSavedAt, revisionId: manifest.revisionId };
+      } catch (cause) {
+        return {
+          ok: false,
+          reason: cause instanceof Error ? cause.message : String(cause),
+        };
+      }
+    },
+
+    saveManifest(manifest: BusinessProjectManifest): BusinessProjectSaveOutcome {
+      try {
+        const validation = validateBusinessProjectManifest(manifest);
+        if (validation.status !== "valid") {
+          return { ok: false, reason: "BusinessProject manifest validation failed." };
+        }
+        const lastSavedAt = now();
+        storage.setItem(
+          storageKey(manifest.projectId),
           JSON.stringify({ manifest, lastSavedAt }, null, 2),
         );
         return { ok: true, lastSavedAt, revisionId: manifest.revisionId };
