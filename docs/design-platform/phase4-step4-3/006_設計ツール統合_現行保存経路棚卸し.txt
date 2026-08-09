@@ -1,0 +1,138 @@
+============================================================
+006_設計ツール統合 Phase4-Step4-3 現行保存経路棚卸し 結果報告書
+============================================================
+Date: 2026-08-09
+Step: Phase 4 / Step 4-3「現行保存経路棚卸し」（調査・分類のみ・実装なし）
+方針: 大規模実装・リファクタ・削除なし（調査・分類のみ）
+
+STEP4_3_INVENTORY_VERDICT: COMPLETE
+BASELINE_SHA: 25430ed（origin/main, Step 4-2 完了）
+ACTIVE_WORK_PATH: /tmp/opencode/phase4-step4-3-storage
+BRANCH: research/phase4-step4-3-storage-inventory
+REPO_DOCS: docs/design-platform/phase4-step4-3/
+
+------------------------------------------------------------
+1. 現行保存経路の全体像
+------------------------------------------------------------
+ProjectModel（in-memory, types.ts:250-296）が最上位状態。
+保存先は以下の 5 系統に分散:
+
+  A. project.json（download / Electron ネイティブ保存）
+     App.tsx:719-779 / desktop/electron/dialogIpc.ts:77-101
+  B. localStorage（workspace・importer・UI 設定・WF-15 ack）
+     13 キー（下記 §3 参照）
+  C. backend/data（autosave.json / projects/ / bridges/）
+     backend/app/main.py:373-466, 1127-1222
+  D. substructure-project.json（AdapterEnvelope, download）
+     substructure/planning/SubstructurePlanningHost.tsx:304-366
+  E. 派生成果物（CSV/PDF/DXF/STL/ZIP/JSON の download / print）
+     App.tsx・apollo/*・liner/*・substructure/*（下記 §6 参照）
+
+BridgeProject（CBDM + manifest）は canonical JSON を維持（Protected Core）。
+sessionStorage / IndexedDB / Cookie は不使用（全リポジトリ確認済み）。
+
+------------------------------------------------------------
+2. 保存先分類
+------------------------------------------------------------
+KEEP（要整理）:
+  project.json（download / native）、UI 設定系 localStorage
+PROTECTED_CORE:
+  BridgeProject CBDM / manifest canonical JSON（bridgeProject/cbdmDocument.ts）
+WRAP:
+  Apollo workspace・importer（localStorage）、autosave、server project save、
+  bridge CRUD、IF3 sidecar、substructure-project.json、全派生成果物
+LATENT（コード上存在・FE から未使用）:
+  backend /api/projects/save|load（UI 未使用）、IF3 result sidecar（FE が
+  frameDocumentPath を送らないため未発火）
+DISABLED:
+  autosave（AUTOSAVE_ENABLED=false, App.tsx:135）
+
+------------------------------------------------------------
+3. localStorage 全キー（13 件・網羅）
+------------------------------------------------------------
+データ系（WRAP）:
+  apollo_phase1_nn_workspace_v1 ..... Apollo workspace（ProjectModel 丸ごと, 最大12件）
+                                     workspace.ts:168-212 / 116-149
+  spacer.importer.projects.index .... importer 一覧          importerStorage.ts:70 / 56-68
+  spacer.importer.project.<id> ...... importer プロジェクト  importerStorage.ts:86 / 156-171
+  spacer.importer.snapshot.<p>.<s> .. importer スナップショット importerStorage.ts:214 / 229-247
+  spacer.importer.recovery .......... importer リカバリ      recoveryManager.ts:53 / 38-50
+  importer-conversion-log:<p>:<l> ... 変換ログ               ConversionLogWriter.ts:11-18 / 20-38
+  importer-conversion-log-latest:<p>  最新変換ログ ID        ConversionLogWriter.ts:17 / 25
+  apollo.workflow.wf15.ack.<id> ..... WF-15 承認（checksum 束縛）workflow/selectors.ts:483 / 469-481
+UI 設定系（KEEP・低リスク）:
+  apollo_phase1_onboarding_dismissed   オンボーディング      ApolloPhase1Shell.tsx:1431 / 387
+  apollo_phase1_sample_guide_dismissed サンプルガイド        ApolloPhase1Shell.tsx:1469 / 388
+  spacer_clone_ui_mode_default         Lobby 初期モード      uiModeDefault.ts:12 / routes.tsx:20-26
+  spacer-clone:viewer:spacer-axis-swap Viewer 軸設定         coordinateTransform.ts:57-64 / 36-45
+  spacer-clone:viewer:displaySize:v1   Viewer 表示サイズ     displaySize.ts:70-81 / 56-68
+
+------------------------------------------------------------
+4. backend 永続化
+------------------------------------------------------------
+  backend/data/projects/autosave.json .... autosave スロット（FE 無効化中）
+  backend/data/projects/{fileName}.json .. サーバ保存（UI 未使用 = latent）
+  backend/data/bridges/{id}.json ......... BridgeProject（BridgeWizard 用）
+  {frameDocDir}/results/{id}.if3.json .... IF3 結果 sidecar（FE 未送付 = latent）
+
+全書込は AtomicJsonStore（atomic_json.py:207-238）で
+temp → fsync → os.replace → dir fsync の atomic 書込。NaN/Infinity 拒否。
+バックグラウンド永続化なし（全リクエスト同期）。UploadFile/FileResponse 不使用。
+
+------------------------------------------------------------
+5. autosave の現状
+------------------------------------------------------------
+  AUTOSAVE_ENABLED = false（App.tsx:135）＝実質無効
+  FE デバウンス 3000ms（App.tsx:331-341）→ POST /api/projects/autosave
+  起動時リカバリ候補チェックも同フラグで無効化（App.tsx:299-310）
+  「保存中...」は即時保存の表示（SaveStatusBadge・persisting フラグ）
+
+------------------------------------------------------------
+6. 派生成果物（出力）一覧
+------------------------------------------------------------
+CSV : displacements/reactions/member_section_forces/eigen_modes/
+      influence_lines/member_force_report.csv（resultCsvExport.ts:71-75）
+      apollo-calculation-results_*/apollo-quantities_*/quantity-*/member_schedule_*
+      <token>_liner_grid_/ldist/haunch/hoso_*.csv
+      substructure-design-sheet.csv / time-history*.csv
+PDF : <pid>-report.pdf（HTML print, resultPdfReport.ts:25）
+      apollo-development-report_*.html / standard-section / drawing-set
+      <token>_liner_report_*.html
+DXF : liner_plan.dxf / liner_profile.dxf / liner-<pid>-<kind>-<ts>.dxf
+      apollo-standard-section_*.dxf / <drawingNumber>_<stem>.dxf
+STL : liner_frame.stl / <name>.stl + <name>.apollo.json（apolloStlExport.ts:156-174）
+ZIP : apollo-development-deliverables_*.zip（artifactBundle.ts:287, STORE ZIP）
+JSON: project.json / result.json / substructure-*.json / parity-report.json
+      apollo-development-report_*/audit-manifest/quantities/member_schedule
+      <pid>.bridge.json / phase35-draft / conversion.log.json
+SVG/PNG: standard-section/drawing-set .svg / time-history.png
+Replay: in-memory のみ（apollo/replay/replay.ts、ファイル保存なし）
+
+------------------------------------------------------------
+7. Step 4-3（保存システム設計）へのインプット
+------------------------------------------------------------
+1. 正本分散: ProjectModel が project.json・localStorage workspace・backend
+   autosave の 3 系統に並存。BusinessProject manifest を正本とした一元化を設計。
+2. autosave 実質無効: manifest + 子 doc の自動保存設計で再有効化を判断。
+3. BridgeProject は既存 canonical JSON を維持（Protected Core）。
+4. Importer / substructure / workspace は独立 localStorage → 業務 doc 統合 or 参照化。
+5. backend/data は橋梁 CRUD・autosave のみ。業務解析・成果物のサーバ永続化は未整備。
+6. IF3 sidecar / server save は latent。設計で採用 or 廃止を明示。
+
+STEP4_3_INVENTORY_READINESS: GO（保存システム設計の前提がコード根拠付きで確定）
+NEXT_STEP:
+  Step 4-3「保存システム設計」— BusinessProject manifest スキーマ・ID/reference
+  永続化・子 doc 分離・binary 管理・autosave/backup/export/migration 対象整理
+
+DETAIL_REPORT_PATHS:
+  /tmp/opencode/phase4-step4-3-storage/docs/design-platform/phase4-step4-3/
+    README.md
+    00_save_path_inventory.md
+    01_frontend_storage.md
+    02_backend_storage.md
+    03_export_output.md
+    inventories/frontend-storage-keys.csv
+    inventories/backend-storage-paths.csv
+    inventories/export-artifacts.csv
+  （repo: docs/design-platform/phase4-step4-3/）
+============================================================

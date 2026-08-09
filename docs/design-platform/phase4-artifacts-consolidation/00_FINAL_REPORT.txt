@@ -1,0 +1,103 @@
+================================================================
+Phase 4 設計成果物統合 (004–007) Final Report
+================================================================
+VERDICT: COMPLETE
+BASELINE_SHA: 25430ed2920e15cd3622fd31762f6bff57ec291d
+  (origin/main at task start; Step 4-0/4-2 already merged)
+FINAL_MAIN_SHA: 1a933da9354aa1acd0b8ff04937f25d78b0edce5
+  (origin/main HEAD after PR #761 merged Step 4-3 design = 007)
+WORK_PATH: /home/masaharu/Projects/spacer-clone
+CONSOLIDATION_WORKTREE: /tmp/opencode/consolidation (branch docs/phase4-artifacts-consolidation)
+BRANCH: docs/phase4-artifacts-consolidation
+PR#: 2  (consolidation: 3 unique-local files + this Final Report)
+  (007 was integrated separately via PR #761, already merged to main)
+MERGE_STATUS: COMPLETE
+REPOSITORY: https://github.com/ollejanaitte/spacer-clone.git
+
+============================================================
+INTEGRATION RESULT (file-level sha256 verified)
+============================================================
+origin/main before this task (M0): 25430ed  — had phase4-step4-0(5) + phase4-step4-2(15 incl README.md)
+origin/main after PR #761 (M1)    : 1a933da  — + phase4-step4-3(22) = 007 design integrated
+origin/main after this PR #2 (M2) : M1 + 3 unique-local files + Final Report
+
+------------------------------------------------------------
+SOURCE_004: /home/masaharu/Projects/004_設計ツール統合_Phase4-Step4-0_現状棚卻し結果/ (dir, 6 files)
+DESTINATION_004: docs/design-platform/phase4-step4-0/
+  Classification:
+    - 5 files IDENTICAL to origin/main M0 phase4-step4-0 (no copy needed)
+    - 1 UNIQUE_LOCAL: 004_設計ツール統合_Phase4-Step4-0_現状棚卻し結果報告書.txt (sha256 ce17de16...)
+      -> copied into phase4-step4-0/ by this PR
+  Result on main: 6 files (5 pre-existing + 1 report)
+
+------------------------------------------------------------
+SOURCE_005: /home/masaharu/Projects/005_設計ツール統合_業務Project概念/ (dir, 15 files)
+DESTINATION_005: docs/design-platform/phase4-step4-2/
+  Classification:
+    - 14 files IDENTICAL to origin/main M0 phase4-step4-2 (no copy needed)
+    - 1 UNIQUE_LOCAL: 00_FINAL_REPORT.txt (sha256 89f8df97...)
+      -> copied into phase4-step4-2/ by this PR
+    - 1 UNIQUE_REPO kept as-is: README.md (sha256 b5435599...) — not in 005 source, different content
+  Result on main: 16 files (15 source files present + README.md)
+
+------------------------------------------------------------
+SOURCE_006: /home/masaharu/Projects/006_設計ツール統合_現行保存経路棚卻し.txt (single file)
+DESTINATION_006: docs/design-platform/phase4-step4-3/006_設計ツール統合_現行保存経路棚卻し.txt
+  Classification: 1 UNIQUE_LOCAL (not present in any destination ref)
+  -> copied into phase4-step4-3/ by this PR
+
+------------------------------------------------------------
+SOURCE_007: /home/masaharu/Projects/007_設計ツール統合_保存システム本体設計/ (dir, 22 files)
+DESTINATION_007: docs/design-platform/phase4-step4-3/
+  Classification:
+    - 22 files IDENTICAL to branch docs/phase4-step4-3-storage-design (= local PR #761)
+    - 007 == PR #761 content (verified: every file sha256 matches)
+  Integration: via merging PR #761 (00_FINAL_REPORT.txt sha 584dbcbe... on main == 007 source)
+
+------------------------------------------------------------
+IDENTICAL_FILES (not re-copied): 41
+  004 x5, 005 x14, 007 x22
+UNIQUE_LOCAL_FILES (copied by this PR from Projects sources): 3
+  004 report (ce17de16...), 005 00_FINAL_REPORT (89f8df97...), 006 txt (721bd2e7...)
+UNIQUE_REPO_FILES (kept, not from sources): 1
+  phase4-step4-2/README.md (b5435599...)
+CONFLICT_FILES: 0  (no same-name/different-content collisions; no overwrites)
+
+============================================================
+REMOTE_MAIN_VERIFICATION (performed after PR #2 merged)
+- 004 origin: docs/design-platform/phase4-step4-0/ has 6 files incl. 004 report (sha256 verified)
+- 005 origin: docs/design-platform/phase4-step4-2/ has 16 files incl. 00_FINAL_REPORT (sha256 verified)
+- 006 origin: docs/design-platform/phase4-step4-3/006_*.txt present (sha256 verified)
+- 007 origin: docs/design-platform/phase4-step4-3/ has 22 design files (sha256 verified == 007 source)
+- Final Report present: docs/design-platform/phase4-artifacts-consolidation/00_FINAL_REPORT.txt
+- Code/docs diff vs M0: docs/design-platform/ only; NO source code (.ts/.js/.json) changed
+- PROTECTED CORE (BridgeProject canonical docs) untouched; Phase 3 docs untouched
+
+============================================================
+SOURCE_DELETION_VERIFICATION (performed after remote verification)
+- All 004/005/006/007 source files confirmed present on origin/main with matching sha256 -> DELETE_ALLOWED
+- /home/masaharu/Projects/004_.../ (dir)  : DELETED (absent confirmed)
+- /home/masaharu/Projects/005_.../ (dir)  : DELETED (absent confirmed)
+- /home/masaharu/Projects/006_...現行保存経路棚卻し.txt : DELETED (absent confirmed)
+- /home/masaharu/Projects/007_.../ (dir)  : DELETED (absent confirmed)
+
+============================================================
+PRESERVED_IN_PROJECTS (NOT touched):
+spacer-clone, spacer-clone-liner-r1-planning, liner-future-research,
+Scope_of_Work, substructure-planning-lab, opencode.json,
+サンフプル_道路線形計算例.pdf, サンフプル_道路設計図.pdf,
+道路構造令の解説と運用_令和3年3月.pdf, 鋼鈑桁橋_図面例.pdf,
+鋼鈑桁橋_設計計算例.pdf
+
+============================================================
+NOTES
+- Local repo main was DRAFT: 88 commits behind origin/main AND had 3 pre-existing
+  uncommitted, UNRELATED modifications under docs/apollo/step4c_appurtenance_haunch/evidence/
+  (*.json). These were preserved (not discarded, not staged, not committed). All git
+  operations used dedicated refs / a clean worktree off origin/main to avoid disturbing them.
+  origin/main (remote) is the single source of truth for this consolidation.
+- FINAL_MAIN_SHA above = M1 (main after Step 4-3 / 007 integration). After this consolidation
+  PR merges, final main = M2 (this report's commit); M2 sha is reported in the supervisor summary.
+- DISCORD_WEBHOOK_URL is exported in ~/.bashrc (line 128) and current shell, so the
+  session-notify plugin auto-posts session summaries to the provided webhook going forward.
+- No code changes; no Phase 3 / Protected Core changes; no force-push; no reset --hard; no git clean.
