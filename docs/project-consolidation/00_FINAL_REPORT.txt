@@ -1,0 +1,50 @@
+PROJECT_CONSOLIDATION_VERDICT: COMPLETE
+BASELINE_SHA: 21b963f9e5779e2937a5c5f5b5f7ec1949d6784f
+FINAL_MAIN_SHA: 5d485b5867d89c4620d3fb192631c8c3afc80984
+CANONICAL_REPO: /home/masaharu/Projects/spacer-clone
+CANONICAL_BRANCH: main
+
+===== Source asset status =====
+SOURCE_004_STATUS: ALREADY_INTEGRATED -> docs/design-platform/phase4-step4-0/ (on main, verified)
+SOURCE_005_STATUS: ALREADY_INTEGRATED -> docs/design-platform/phase4-step4-2/ (on main, verified)
+SOURCE_006_STATUS: ALREADY_INTEGRATED -> docs/design-platform/phase4-step4-3/ (on main, verified)
+SOURCE_007_STATUS: ALREADY_INTEGRATED -> docs/design-platform/phase4-step4-3/ (on main, verified)
+SCOPE_OF_WORK_STATUS: INTEGRATED -> docs/apollo/step10_curved_bridge/ (30 files, PR #764, verified 30/30)
+LINER_FUTURE_RESEARCH_STATUS: INTEGRATED (research on main as docs/liner/research/jip-liner-gap-and-future-ux + docs/liner/planning/r1-numeric-verification; historical reports -> docs/liner/planning/legacy-r1/ PR #765)
+LINER_R1_WORKTREE_STATUS: REMOVED (worktree removed; branch research/liner-terrain-fix-p01-coords fully pushed to origin c7d7774; apollo evidence 3 files = generated, discarded per decision D; road-structure-ordinance integrated -> docs/liner/research/road-structure-ordinance/ PR #764)
+SUBSTRUCTURE_LAB_STATUS: INTEGRATED (schemas/prototype/tests/docs on main under schemas/substructure/ + substructure-planning/; 49/49 manifest verified)
+OPENCODE_STATUS: MOVED /home/masaharu/Projects/opencode.json -> /home/masaharu/Projects/spacer-clone/opencode.json (identical, no secrets, gitignored via /opencode.json)
+
+===== PDF status =====
+PDF_STORAGE_PATH: /home/masaharu/Projects/spacer-clone/local-reference/
+  road/  : サンプル_道路設計図.pdf, サンプル_道路線形計算例.pdf, 道路構造令の解説と運用_令和3年3月.pdf
+  bridge/: 鋼鈑桁橋_図面例.pdf, 鋼鈑桁橋_設計計算例.pdf
+  research/liner/: 001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF, JIP-LINER_マニュアル.pdf, SPACER操作マニュアル.pdf
+PDF_GIT_POLICY: local-only, gitignored via /local-reference/ (5 original project PDFs + 3 vendor/sample PDFs removed from main)
+PDF_GITHUB_VERIFICATION: 0 tracked PDFs on origin/main (git ls-tree origin/main | grep -ic pdf$ = 0)
+
+===== Merged files =====
+- PR #764 (docs/project-consolidation-round1): Scope_of_Work (30) + road-structure-ordinance (12) + PDF_POLICY.md + .gitignore /local-reference/
+- PR #765 (docs/project-consolidation-round2): legacy-r1 reports (6) + remove 3 vendor PDFs from main + .gitignore /opencode.json
+
+MOVED_LOCAL_ONLY: 8 PDFs -> spacer-clone/local-reference/ (SHA256 verified vs git blobs / originals)
+DUPLICATES_REMOVED: liner-future-research/sources/repository (3605 files, dup/generated), generated evidence under sources/
+OLD_WORKTREES_REMOVED: spacer-clone-liner-r1-planning (git worktree remove, branch preserved on origin)
+PRESERVED_ITEMS: spacer-clone/local-reference/ (8 PDFs), branch research/liner-terrain-fix-p01-coords on origin
+DELETED_ITEMS: Scope_of_Work, substructure-planning-lab, liner-future-research (Projects root); sources/repository + generated
+
+UNIQUE_COMMITS_RECOVERED: road-structure-ordinance untracked content (12 files) recovered to main; legacy-r1 reports (5) recovered to main
+CONFLICTS: 0
+USER_DECISIONS_REQUIRED: 0 (A-E resolved)
+
+===== Verification =====
+TEST_RESULTS: no source code changed (docs-only); git diff --check clean on all merged branches
+REMOTE_MAIN_VERIFICATION: docs/design-platform/*, docs/apollo/step10_curved_bridge/, docs/liner/research/*, docs/liner/planning/*, substructure-planning/, schemas/substructure/ present on origin/main; 0 PDFs tracked
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+FINAL_GIT_STATUS: canonical main clean (3 pre-existing modified Apollo evidence JSONs + untracked FINAL_REPORT.txt + untracked docs/project-consolidation/00_FINAL_REPORT.txt preserved per AGENTS.md, unrelated to this work)
+FINAL_PROJECTS_TREE: /home/masaharu/Projects/ contains only spacer-clone/
+
+===== Notes =====
+- No history rewrite, no force push, no git clean, no reset --hard performed.
+- Webhook URL not committed; kept in environment only.
+- Pre-existing dirt (3 Apollo evidence JSONs, FINAL_REPORT.txt, prior HOLD report) preserved untouched.
