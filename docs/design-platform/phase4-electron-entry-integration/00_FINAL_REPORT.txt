@@ -1,0 +1,43 @@
+VERDICT: COMPLETE
+BASELINE_SHA: 3c9b156349003759da86d4d24e026fe1fe7ebd7b
+FINAL_MAIN_SHA: aca907c46e0ebf0e6b0916f2724709176830a12e
+
+REPRODUCTION_RESULT: FAIL-REPRODUCED (実務編→/pro が従来FEM/Quick Analysis画面へ遷移し、Design Platform Homeへ到達しなかった)
+ROOT_CAUSE: LobbyHome / Level0Top の「実務編」カードが `/pro` へ遷移しており、App.tsx の `/pro` は従来FEM shell を描画。Design Platform Home（`/pro/platform`）へ繋がるUIリンクが存在しなかったため、実ユーザー起動経路（./start-ubuntu.sh → Electron → / → 実務編）から Design Platform に到達不能だった。
+START_UBUNTU_RESULT: OK（Vite apollo mode 5173 + backend 8000 を起動。Electron は http://127.0.0.1:5173/ を load）
+ELECTRON_INITIAL_URL: http://127.0.0.1:5173/（pathname=/）
+LOBBY_PRO_ROUTE_BEFORE: /pro（従来FEM shell）
+LOBBY_PRO_ROUTE_AFTER: /pro/platform（Design Platform Home）
+DESIGN_PLATFORM_ROUTE: /pro/platform
+APOLLO_MODE_IMPACT: なし（APOLLO_MODE=1 は feature flag。トップ導線へ影響せず、Design Platform→Apollo 到達も妨げない）
+STALE_ELECTRON_DIST_RISK: 修正済み（start-ubuntu.sh が .ts ソースの mtime > dist/main.js の場合に再コンパイル）
+
+DESIGN_PLATFORM_HOME: PASS
+BUSINESS_LIST: PASS
+BUSINESS_WORKSPACE: PASS
+LINER_BINDING: PASS（road → /pro/linear-coordinate）
+APOLLO_BINDING: PASS（superstructure → /pro/apollo）
+SUBSTRUCTURE_BINDING: PASS（substructure → /pro/liner/substructure）
+ANALYSIS_BINDING: PASS（analysis → /pro FEM shell）
+MAIN3D_BINDING: PASS（main3d → /pro/liner/main3d。LINERモデル未作成時はLINER listへfallback＝設計意図）
+
+SAVE_LOAD: PASS（作成→保存→一覧反映）
+EXIT_RESTART_REOPEN: PASS（reload=再起動相当→業務一覧→reopen→Workspace復元）
+ELECTRON_E2E: PASS（起動経路E2E 3件 + P7フル回帰22チェック）
+
+CASE_A: PASS（11）
+BRIDGEPROJECT: PASS（106）
+FRONTEND_TESTS: PASS（lobby 52 / platform 74 / contracts 290）
+BACKEND_TESTS: PASS（1077）
+TYPECHECK: PASS
+BUILD: PASS
+
+PR_LIST: #786（実務編→/pro/platform）, #787（start-ubuntu stale-dist）, #788（起動経路E2E）, #789（本Final Report）
+MERGE_SHA_LIST: fd38f40, 8adec19, aca907c
+
+PROTECTED_CORE_IMPACT: NONE（BridgeProject canonical / cbdmDocument / adapters / Main3D 無変更）
+OPEN_ISSUES:
+- Main3D/Substructure は LINER モデル作成後の遷移が前提（設計意図どおり）
+- Electron 実機ウィンドウ表示は browser(dev) と同一 routing のため本報告では browser E2E で検証（./start-ubuntu.sh の起動・compile・stale検知は実スクリプトで確認）
+LOCAL_MAIN_EQUALS_ORIGIN_MAIN: YES
+FINAL_GIT_STATUS: 先任セッション由来 dirty（apollo evidence 3 JSON / final_report.txt 削除）は保持（AGENTS.md）
