@@ -1,0 +1,58 @@
+source_requirement_id,layer,topic,required_for,minimum_content,preferred_content,current_candidate,current_status,blocks_geometry,blocks_model,blocks_analysis,blocks_design_check,blocks_report,priority,search_keywords,publisher_candidate,notes
+RSQ-L0-01,L0,曲線橋の適用範囲・定義,scoping and terminology,適用範囲と用語の定義,曲線橋の設計体系,"spacer-clone docs",MISSING,FALSE,FALSE,FALSE,FALSE,FALSE,P1,曲線橋 適用範囲 定義,道路協会,""
+RSQ-L1-01,L1,単円曲線,horizontal alignment implementation,半径・方向・中心角の定義,複合線形の組合せ規則,"liner core geometry/arc.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,単円 曲線 線形,道路協会,""
+RSQ-L1-02,L1,クロソイド,horizontal alignment implementation,パラメータと曲率の定義,精度基準と許容誤差,"liner core geometry/clothoid.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,クロソイド 線形 パラメータ,道路協会,""
+RSQ-L1-03,L1,複合線形,horizontal alignment,要素接続規則,C0/C1/G2連続性,"liner core geometry/horizontal.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,複合線形 連続性,道路協会,""
+RSQ-L1-04,L1,測点・方位角・曲率,station/offset,測点定義,曲率連続性と逆投影,"liner core station/",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,測点 方位角 曲率,道路協会,""
+RSQ-L1-05,L1,offset line・主桁線,main girder geometry,主桁線のオフセット定義,曲線上の桁線方向,"liner core coordinate3d.ts",PARTIAL,TRUE,FALSE,FALSE,FALSE,FALSE,P0,主桁線 オフセット,橋梁協会,主桁線はスカラオフセットのみで曲線方向なし
+RSQ-L1-06,L1,横断線・片勾配・拡幅,cross section,横断テンプレート,片勾配の遷移,"liner core crossfallResolution.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,横断 片勾配 拡幅,道路協会,""
+RSQ-L1-07,L1,縦断,vertical alignment,縦断勾配・縦断曲線,クレスト・サグ,"liner core geometry/vertical.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,縦断 勾配,道路協会,""
+RSQ-L1-08,L1,局所T/N/B・3D座標,3D geometry,局所座標系定義,曲線上の局所フレーム,"liner core vector.ts",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,局所座標 3D,道路協会,""
+RSQ-L1-09,L1,曲率ゼロ極限,straight bridge regression,曲率0の直線桁への退化,数値安定性,"liner core geometry/",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,曲率 ゼロ 極限,技術研究所,""
+RSQ-L2-01,L2,主桁節点,structural model nodes,曲線上の主桁節点生成,多主桁の節点,"liner core gridGeneration.ts",PARTIAL,TRUE,FALSE,FALSE,FALSE,FALSE,P0,主桁 節点,橋梁協会,節点は直線グリッドのみ
+RSQ-L2-02,L2,部材局所軸,member local axis,部材の局所座標系,曲率に沿った局所軸,"frame contracts 04_input_schema.md",PARTIAL,FALSE,TRUE,FALSE,FALSE,FALSE,P0,部材 局所軸,橋梁協会,直線部材の局所軸のみ
+RSQ-L2-03,L2,横桁方向,cross beam direction,横桁の方向定義,ラジアル方向の横桁,"liner schema CrossBeamDraft",SCHEMA_ONLY,TRUE,TRUE,FALSE,FALSE,FALSE,P0,横桁 方向 ラジアル,橋梁協会,schemaのみで実装なし
+RSQ-L2-04,L2,対傾構,cross frame,対傾構の配置,曲線上の配置規則,"apollo crossFrameAttachmentModel.ts",MISSING,TRUE,TRUE,FALSE,FALSE,FALSE,P0,対傾構 曲線,橋梁協会,直線のみ
+RSQ-L2-05,L2,横構,lateral bracing,横構の配置,曲線による二次応力,"apollo bracingSystemGeometry",MISSING,TRUE,TRUE,FALSE,FALSE,FALSE,P1,横構 曲線 二次応力,橋梁協会,""
+RSQ-L2-06,L2,偏心,eccentricity,部材間の偏心,曲線上の偏心,"apollo bridgeStructure",MISSING,TRUE,TRUE,FALSE,FALSE,FALSE,P0,偏心 曲線,橋梁協会,""
+RSQ-L2-07,L2,支承方向,bearing direction,支承の拘束方向,ラジアル・タンジェンシャル方向,"liner schema PierBearingOffsetDraft",SCHEMA_ONLY,TRUE,TRUE,FALSE,FALSE,FALSE,P0,支承 方向 ラジアル,橋梁協会,オフセットスカラのみ
+RSQ-L2-08,L2,剛域,rigid zone,剛域の定義,剛域を考慮したモデル,NOT FOUND,MISSING,FALSE,TRUE,FALSE,FALSE,FALSE,P1,剛域 骨組,橋梁協会,""
+RSQ-L2-09,L2,多主桁,multi-girder,複数主桁の配置,曲線上の多主桁,"liner grid multiple offsets",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,多主桁 曲線,橋梁協会,オフセット複数は可能
+RSQ-L2-10,L2,連続曲線橋,continuous curved bridge,連続桁の曲線橋,多径間曲線連続桁,"apollo continuous_girder",PARTIAL,TRUE,FALSE,FALSE,FALSE,FALSE,P0,連続 曲線橋,橋梁協会,直線連続桁のみ
+RSQ-L3-01,L3,3D frame,3D frame model,節点・部材生成,立体骨組モデル,"frame contracts/",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,3D 骨組 モデル,技術研究所,""
+RSQ-L3-02,L3,6DOF,six DOF solver,各節点の6自由度,回転自由度,"frame result schema",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,6自由度 骨組,技術研究所,""
+RSQ-L3-03,L3,6成分断面力,6-component forces,軸力・せん断2・曲げ2・ねじり,符号規約,"frame result schema",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,6成分 断面力,技術研究所,""
+RSQ-L4-01,L4,自重・床版・舗装・地覆,dead load,死荷重の算定,曲線桁の死荷重,"apollo loads/",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,死荷重 床版 舗装,道路協会,""
+RSQ-L4-02,L4,活荷重,live load,活荷重の載荷,曲線上の移動載荷,"frame influence-moving-load.md",PARTIAL,FALSE,FALSE,TRUE,FALSE,FALSE,P0,活荷重 曲線,道路協会,MVP移動荷重のみ
+RSQ-L4-03,L4,遠心荷重,centrifugal load,遠心荷重の算定式,曲線橋の遠心荷重,,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P0,遠心荷重 曲線橋,道路協会,""
+RSQ-L4-04,L4,制動荷重,braking load,制動荷重の算定,曲線上での分布,,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P1,制動荷重,道路協会,""
+RSQ-L4-05,L4,風荷重,wind load,風荷重の算定,曲線桁の風荷重,"frame loads",MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P1,風荷重 曲線,道路協会,""
+RSQ-L4-06,L4,温度荷重,temperature load,温度荷重の算定,曲線桁の温度応力,,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P1,温度荷重,道路協会,""
+RSQ-L4-07,L4,沈下荷重,settlement,不等沈下の影響,連続曲線橋の沈下,,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P1,沈下 曲線橋,道路協会,""
+RSQ-L4-08,L4,地震荷重,seismic,耐震設計,曲線橋の地震応答,"frame seismic",MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P1,地震 曲線橋 耐震,道路協会,""
+RSQ-L4-09,L4,支承条件,bearing conditions,固定・一方向可動・多方向可動,曲線橋の支承配置,"frame support definitions",PARTIAL,FALSE,TRUE,FALSE,FALSE,FALSE,P0,支承 拘束方向,橋梁メーカー,直線座標のみ
+RSQ-L4-10,L4,反力6成分,6-component reactions,反力の6成分,曲線橋の反力,"frame result schema",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,反力 6成分,技術研究所,""
+RSQ-L5-01,L5,3D frame解析,3D frame analysis,線形骨組解析,立体骨組,"frame solver",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,3D 骨組 解析,技術研究所,""
+RSQ-L5-02,L5,Saint-Venantねじり,Saint-Venant torsion,一様ねじり,ねじり剛性,"examples cantilever_torsion.json",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,Saint-Venant ねじり,技術研究所,""
+RSQ-L5-03,L5,そりねじり,warping torsion,そり拘束ねじり,Vlasov理論,NOT_IMPLEMENTED,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P0,そり ねじり Vlasov,日本鋼構造協会,7DOF必要
+RSQ-L5-04,L5,二軸曲げ,biaxial bending,二軸曲げの解析,曲げの組合せ,"frame solver",PARTIAL,FALSE,FALSE,FALSE,FALSE,FALSE,P1,二軸曲げ,技術研究所,My/Mz個別に出力可能
+RSQ-L5-05,L5,横構二次応力,secondary stress in bracing,曲線による横構の二次応力,二次応力の算定,NOT_IMPLEMENTED,MISSING,FALSE,FALSE,TRUE,FALSE,FALSE,P0,横構 二次応力,日本鋼構造協会,""
+RSQ-L5-06,L5,影響線,influence line,影響線の算出,曲線上の影響線,"frame influence-analysis.md",AVAILABLE,FALSE,FALSE,FALSE,FALSE,FALSE,P0,影響線,技術研究所,""
+RSQ-L5-07,L5,移動荷重,moving load,移動荷重の載荷,曲線上の移動載荷,"frame influence-moving-load.md",PARTIAL,FALSE,FALSE,FALSE,FALSE,FALSE,P1,移動荷重 曲線,道路協会,MVPのみ
+RSQ-L5-08,L5,支承ばね,bearing spring,支承のばね定数,支承の線形ばね,NOT_IMPLEMENTED,MISSING,FALSE,TRUE,FALSE,FALSE,FALSE,P1,支承 ばね,橋梁メーカー,""
+RSQ-L6-01,L6,断面力・符号規約,sign convention,断面力の正方向,曲線部材の符号規約,"frame result schema",PARTIAL,FALSE,FALSE,FALSE,FALSE,FALSE,P0,断面力 符号規約,日本鋼構造協会,局所座標のみ
+RSQ-L6-02,L6,丸め・許容差,rounding,数値の丸め規則,中間値の丸め,"frame contracts",PARTIAL,FALSE,FALSE,FALSE,FALSE,FALSE,P0,丸め 許容差,道路協会,""
+RSQ-L7-01,L7,主桁照査,main girder check,曲げ・軸力の照査,曲げ+ねじり+軸力の組合せ,"apollo step5_design",MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,主桁 照査,道路協会,直線のみ
+RSQ-L7-02,L7,二軸曲げ照査,biaxial bending check,My+Mzの組合せ,相関照査,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,二軸曲げ 照査,日本鋼構造協会,""
+RSQ-L7-03,L7,ねじり・そり応力度,torsion warping stress,torsion stress,そり応力度の算定,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,ねじり そり 応力度,日本鋼構造協会,""
+RSQ-L7-04,L7,横倒れ・局部座屈,lateral local buckling,横倒れ照査,局部座屈照査,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,横倒れ 局部座屈,日本鋼構造協会,""
+RSQ-L7-05,L7,疲労,fatigue,疲労照査,疲労詳細,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P1,疲労 曲線橋,日本鋼構造協会,""
+RSQ-L7-06,L7,横桁・対傾構照査,cross beam check,横桁の照査,対傾構の照査,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,横桁 対傾構 照査,道路協会,""
+RSQ-L7-07,L7,横構照査,lateral bracing check,横構の照査,二次応力を含む照査,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,横構 照査,日本鋼構造協会,""
+RSQ-L7-08,L7,支点部・補剛材・添接,support section,支点部の照査,補剛材・添接の照査,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P1,支点部 補剛 添接,日本鋼構造協会,""
+RSQ-L7-09,L7,支承照査,bearing check,支承の照査,反力の算定と支承選定,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P1,支承 照査,橋梁メーカー,""
+RSQ-L7-10,L7,たわみ・キャンバー,deflection camber,たわみの照査,キャンバーの算定,,MISSING,FALSE,FALSE,FALSE,TRUE,FALSE,P0,たわみ キャンバー 曲線,日本鋼構造協会,""
+RSQ-L8-01,L8,計算書,calculation report,計算書の章構成,中間値・符号・丸めの明記,"apollo report model",PARTIAL,FALSE,FALSE,FALSE,FALSE,TRUE,P1,計算書 曲線橋,道路協会,直線のみ
+RSQ-L9-01,L9,図面・製作情報,drawings,一般図・部材表,製作図・溶接詳細,"apollo drawing model",PARTIAL,FALSE,FALSE,FALSE,FALSE,TRUE,P1,図面 製作 曲線橋,橋梁メーカー,直線のみ
+RSQ-L10-01,L10,検証用計算例,golden verification,単純曲線鈑桁の中間値,連続曲線鈑桁の計算例,"examples/verification/ (straight only)",MISSING,FALSE,FALSE,FALSE,FALSE,FALSE,P0,曲線鈑桁 計算例,学会論文,""
+RSQ-L10-02,L10,節点表・部材表・局所軸,verification model data,節点表と部材表,局所軸の定義,,MISSING,FALSE,FALSE,FALSE,FALSE,FALSE,P0,節点表 部材表,学会論文,""

@@ -1,0 +1,24 @@
+﻿rule_candidate_id,toc_id,title,possible_inputs,possible_outputs,possible_constraints,software_module_candidate,requires_body_review,priority,notes
+RULE-01,T057,road_class（道路区分）,道路法上の道路種類・種級候補；計画交通量；都市/地方区分；地形,道路種級区分（第1種〜第4種・第1級〜第5級）,種級決定表・計画交通量区分表・地域区分条件,module:road-class (rule-engine/input),YES,A,第1章道路区分（Ⅲ-1-1）を根拠に。実案件の路線種別と照合可能。
+RULE-02,T066,design_speed（設計速度）,道路種級区分；地形；設計区間,設計速度（km/h）,種級×地形→設計速度標準値表・設計区間内均一,module:design-speed (rule-engine/input),YES,A,全線形基準の親パラメータ。Ⅲ-1-3設計速度、1-4設計区間を根拠に。
+RULE-03,T087,lane_width（車線幅員・車線構成）,道路種級；設計速度；車線数；大型車混入率,車線幅員・車線数・付加追越車線の要否,種級別車線幅員表・車線数決定条件,module:cross-section (lane-width),YES,A,Ⅲ-2-2車道・車線を根拠に。LINER CrossSectionTemplateへ直結。
+RULE-04,T102,shoulder_width（路肩幅員）,道路種級；設計速度,路肩幅員,種級別路肩幅員表・省略/縮小条件,module:cross-section (shoulder),YES,A,Ⅲ-2-5路肩を根拠に。
+RULE-05,T091,median_width（中央帯幅員）,道路種級；設計速度,中央帯幅員・構成,種級別中央帯幅員表・開口部条件,module:cross-section (median),YES,A,Ⅲ-2-3中央帯を根拠に。
+RULE-06,T157,minimum_curve_radius（最小曲線半径）,設計速度；最大片勾配；横滑り摩擦係数,最小曲線半径（m）・望ましい値,設計速度×片勾配→R表・緩和条件,module:alignment/horizontal (radius),YES,A,Ⅲ-3-3曲線半径を根拠に。実案件R=400/500/1900と照合可能。
+RULE-07,T161,curve_length（最小曲線長）,設計速度；曲線半径,最小曲線長（m）,設計速度別最小曲線長,module:alignment/horizontal (curve-length),YES,A,Ⅲ-3-4曲線長を根拠に。
+RULE-08,T164,superelevation（片勾配）,設計速度；曲線半径；道路種級,片勾配（%）・打ち切り最小R,最大片勾配・R×片勾配表,module:alignment/superelevation,YES,A,Ⅲ-3-5片勾配・3-8すりつけを根拠に。実案件のランプ・本線片勾配と照合可能。
+RULE-09,T169,widening（曲線部拡幅）,曲線半径；設計車両；車線数；設計速度,曲線部拡幅量（m）,設計車両別拡幅算定式,module:alignment/widening,YES,A,Ⅲ-3-6曲線部の拡幅を根拠に。
+RULE-10,T174,clothoid_transition（緩和区間・クロソイド）,設計速度；曲線半径；すりつけ,緩和曲線長・クロソイドパラメータA,緩和走行時間・省略条件,module:alignment/clothoid,YES,A,Ⅲ-3-7緩和区間を根拠に。実案件A=450等と照合可能。
+RULE-11,T183,sight_distance（視距）,設計速度；縦断勾配；道路種級,制動停止視距・追越視距（m）,設計速度別視距表・算定式,module:alignment/verification (sight),YES,A,Ⅲ-3-9視距・4-3-1交差点視距を根拠に。
+RULE-12,T187,maximum_grade（最大縦断勾配）,道路種級；設計速度；地形,最大縦断勾配（%）・特例値,種級×設計速度→勾配表・特例条件,module:alignment/vertical (grade),YES,A,Ⅲ-3-10縦断勾配を根拠に。実案件の縦断計算書と照合可能。
+RULE-13,T196,vertical_curve（縦断曲線）,設計速度；縦断勾配変化；視距,縦断曲線半径・長さ,設計速度別最小縦断曲線半径,module:alignment/vertical (vcurve),YES,A,Ⅲ-3-12縦断曲線を根拠に。
+RULE-14,T200,cross_slope（横断勾配）,車道構成；舗装種別；排水条件,車道部横断勾配（%）,標準横断勾配,module:cross-section (cross-slope),YES,A,Ⅲ-3-13横断勾配を根拠に。実案件の横断図・横断勾配と照合可能。
+RULE-15,T203,composite_grade（合成勾配）,縦断勾配；片勾配；横断勾配,合成勾配（%）,合成勾配許容値,module:alignment/verification (composite),YES,A,Ⅲ-3-14合成勾配を根拠に。
+RULE-16,T143,clearance（建築限界）,道路種級；車道構成；設計速度,建築限界（高さ・幅）,種級別建築限界,module:bridge/clearance-check,YES,B,Ⅲ-2-13建築限界を根拠に。橋梁連携（桁下空間照査）に重要。
+RULE-17,T207,intersection_geometry（平面交差）,交差形態；枝数；交差角；設計車両；設計速度；交通量,交差点形状・隅切・右左折車線・変速車線・導流路,交差点間隔・交差角・隅切半径,module:intersection (geometry),YES,B,第4章平面交差を根拠に。将来の交差点モジュール。
+RULE-18,T240,ramp_geometry（立体交差・ランプ・IC/JCT）,IC/JCT形式；ランプ設計速度；設計車両；地形,ランプ線形（R・A・片勾配・拡幅・縦断）・分合流,ランプ別設計速度・最小R・縦断条件,module:intersection/ramp,YES,B,第5章立体交差（5-4 IC/JCT）を根拠に。実案件（東海JCT・荒尾IC）と直接対応。
+RULE-19,T077,design_vehicle（設計車両）,道路種級；交通構成,設計車両諸元（ホイールベース・回転軌跡等）,設計車両一覧,module:shared/vehicle-profile,YES,A,Ⅲ-1-6設計車両を根拠に。拡幅・隅切・交差点設計の前提。
+RULE-20,T061,traffic_volume（計画交通量・設計時間交通量）,計画目標年次；道路交通特性；将来交通量,計画交通量・設計時間交通量,目標年次設定・交通量算定手順,module:demand/input,YES,B,Ⅲ-1-2計画交通量を根拠に。種級決定の入力。
+RULE-21,T073,access_control（出入制限）,道路種級区分,出入制限の種別,高規格幹線等の制限条件,module:road-class (access),YES,C,Ⅲ-1-5出入制限を根拠に。将来機能。
+RULE-22,T122,snow_region_width（積雪地域幅員）,積雪地域区分,中央帯・路肩等の幅員増分,積雪地域別幅員表,module:cross-section (snow),YES,C,Ⅲ-2-8積雪地域・Ⅱ-3-5雪寒地を根拠に。将来機能。
+RULE-23,T342,exception_rule（特例・例外）,適用対象道路；特例条件（地形・交通・既設・小区間）,適用除外・特例値・照査結果（警告）,政令・省令の特例条文；弾力的運用（Ⅱ-1-2-2）,module:rule-engine/exception,YES,C,第10章雑則・各適用の際の注意・緩和曲線省略等を根拠に。Rule Engineの例外フレームワーク。

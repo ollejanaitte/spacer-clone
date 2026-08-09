@@ -1,0 +1,62 @@
+# Command Log
+
+Date: 2026-08-06
+Repository: /home/masaharu/Projects/spacer-clone
+HEAD: 0fadc1c2fa984f702b94af12f249a97fc2842705
+
+## Baseline Capture
+date --iso-8601=seconds
+git -C /home/masaharu/Projects/spacer-clone branch --show-current
+git -C /home/masaharu/Projects/spacer-clone status --short
+git -C /home/masaharu/Projects/spacer-clone rev-parse HEAD
+git -C /home/masaharu/Projects/spacer-clone rev-parse origin/main
+git -C /home/masaharu/Projects/spacer-clone log -10 --oneline
+
+## Read-Only Investigation Commands (all git commands are read-only)
+git -C /home/masaharu/Projects/spacer-clone ls-files -- 'schemas/'
+git -C /home/masaharu/Projects/spacer-clone ls-files -- 'examples/'
+git -C /home/masaharu/Projects/spacer-clone grep -li "arc|clothoid|horizontal|stationAtPoint|alignment|curved|curve" -- 'frontend/src/liner/**/*.ts' 'frontend/src/liner/**/*.tsx'
+git -C /home/masaharu/Projects/spacer-clone ls-files -- 'frontend/src/viewer/'
+git -C /home/masaharu/Projects/spacer-clone grep -li "curved|curve|torsion|warping|moving.*load|influence.*line|secondary.*stress" -- 'frontend/src/apollo/analysis/**/*.ts'
+git -C /home/masaharu/Projects/spacer-clone grep -li "girder|crossBeam|crossFrame|diaphragm|bearing|curved|curve|torsion|warping|localFrame|alignment|offset" -- 'frontend/src/apollo/**/*.ts' 'frontend/src/apollo/**/*.tsx'
+git -C /home/masaharu/Projects/spacer-clone ls-files -- 'docs/liner/phase3.5/' 'docs/history/road/phase3.5/'
+git -C /home/masaharu/Projects/spacer-clone grep -li "torsion|warping|6DOF|six.*component|sectional.*force|local.*axis|member.*axis" -- 'frontend/src/**/*.ts' 'frontend/src/**/*.tsx'
+git -C /home/masaharu/Projects/spacer-clone grep -li "curved|curve|curv" -- 'docs/frame/**/*.md' 'docs/bridge-modeler-v2/**/*.md'
+git -C /home/masaharu/Projects/spacer-clone grep -li "crossBeam|crossbeam|CrossBeam|cross_frame|crossFrame|CrossFrame|diaphragm|bracing" -- 'frontend/src/**/*.ts' 'frontend/src/**/*.tsx'
+git -C /home/masaharu/Projects/spacer-clone grep -li "curved|curve|torsion|warping|girder.*line|offset.*line|bearing.*direction|support.*direction" -- 'frontend/src/liner/core/bridge/' 'frontend/src/liner/core/grid/'
+git -C /home/masaharu/Projects/spacer-clone ls-files -- 'frontend/src/apollo/analysis/'
+git -C /home/masaharu/Projects/spacer-clone grep -li "moving.*load|influence.*line|inflload|live.*load|INFLOAD" -- 'frontend/src/**/*.ts' 'frontend/src/**/*.tsx'
+git -C /home/masaharu/Projects/spacer-clone grep -li "torsion|warping|secondary.*stress|6.*component|section.*force.*6|axial.*shear.*moment" -- 'frontend/src/**/*.ts' 'frontend/src/**/*.tsx'
+
+## File Reads (Read tool)
+- frontend/src/liner/core/geometry/horizontal.ts
+- frontend/src/liner/core/geometry/arc.ts
+- frontend/src/liner/core/geometry/clothoid.ts
+- frontend/src/liner/core/continuityC0.ts
+- frontend/src/liner/core/continuityC1.ts
+- frontend/src/liner/core/coordinate3d.ts
+- frontend/src/liner/core/vector.ts
+- frontend/src/liner/core/types.ts
+- frontend/src/liner/schema/types.ts
+- frontend/src/liner/core/bridge/pierLineGeometry.ts
+- frontend/src/liner/core/bridge/bridgeLayoutEvaluation.ts
+- frontend/src/liner/components/bridgeLayoutSkew.ts
+- docs/frame/current-capability.md
+- docs/frame/gap-and-acceptance.md
+- docs/frame/analysis/README.md
+- docs/frame/contracts/04_input_schema.md
+- docs/frame/contracts/06_result_schema.md
+- frontend/src/contracts/frameAnalysisResultResource.ts
+- frontend/src/apollo/components/LoadConfirmationDevelopmentPanel.tsx
+- frontend/src/apollo/contracts/layoutTypes.ts
+
+## Apollo PDF Search
+find /mnt/data -name "*.pdf"
+find /mnt/data -name "*APOLLO*" -o -name "*apollo*" -o -name "*Apollo*"
+find /mnt/data -name "*SuperDesigner*"
+All returned no results. The PDF manual is NOT available at the documented path.
+
+## Write Protection Audit (end of session)
+git -C /home/masaharu/Projects/spacer-clone status --short
+git -C /home/masaharu/Projects/spacer-clone rev-parse HEAD
+(HEAD unchanged: 0fadc1c2fa984f702b94af12f249a97fc2842705; working tree state identical to baseline)

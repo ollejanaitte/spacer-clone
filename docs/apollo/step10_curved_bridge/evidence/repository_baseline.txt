@@ -1,0 +1,24 @@
+=== Repository Baseline ===
+Date: 2026-08-06T14:01:08+09:00
+Branch: main
+HEAD SHA: 0fadc1c2fa984f702b94af12f249a97fc2842705
+origin/main SHA: 0fadc1c2fa984f702b94af12f249a97fc2842705
+HEAD == origin/main: YES
+
+=== Last 10 commits ===
+0fadc1c fix(apollo): realign validator to frozen VR-01..26 table + tests
+0eaa328 feat(apollo): add continuous report model validator (VR-01..26) + export gate
+e3e2fd9 feat(apollo): implement continuous report model transformer
+c847036 refactor(apollo): add continuous report model entity types
+2670d9c docs(apollo-step9): start phase 4 report model implementation
+52f1f53 docs(apollo-step9): correction - honest typecheck/push status in Phase 3 completion report
+a514f18 docs(apollo-step9): closeout phase 3 report model spec freeze (completion report + final report)
+b438d22 docs(apollo-step9): prepare phase 4 report model implementation handoff
+8b9c911 docs(apollo-step9): freeze phase 4 implementation acceptance criteria
+3b81061 docs(apollo-step9): freeze report model validation rules
+
+=== Working tree status (dirty - pre-existing, NOT modified by this session) ===
+ M docs/apollo/step4c_appurtenance_haunch/evidence/load.json
+ M docs/apollo/step4c_appurtenance_haunch/evidence/quantity.json
+ M docs/apollo/step4c_appurtenance_haunch/evidence/stl-metadata.json
+ M frontend/src/apollo/__tests__/apolloSuite.test.ts

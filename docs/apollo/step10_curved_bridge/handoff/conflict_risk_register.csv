@@ -1,0 +1,7 @@
+risk_id,path_or_topic,risk,likelihood,impact,detection,mitigation,stop_condition,notes
+CR-001,docs/apollo/step10_curved_bridge/,Target directory already exists with different content,Medium,High,ls target directory before copy,Verify and create subdirectory with timestamp suffix,Stop if content differs and cannot be merged,
+CR-002,spacer-clone/final_report.txt,Final report append conflicts with existing content,Low,Medium,Read final_report.txt before append,Append with clear section markers,Stop if SECTION header already exists,
+CR-003,spacer-clone main branch,Continuous bridge implementation changes main branch,High,High,git status and git log before integration,Wait for continuous bridge completion,Stop if main is not clean,
+CR-004,Scope_of_Work file SHA256,Integrity check fails after copy,Low,Medium,Compute SHA256 before and after copy,Re-copy file,Stop if checksums don't match,
+CR-005,git add scope,Unintended files staged,Low,High,Review git diff --cached,Use explicit path for git add,Stop if untracked files appear in status,
+CR-006,GitHub push,origin/main diverges from local,Low,High,git fetch + git log origin/main..main,git pull --rebase first,Stop if rebase conflicts,

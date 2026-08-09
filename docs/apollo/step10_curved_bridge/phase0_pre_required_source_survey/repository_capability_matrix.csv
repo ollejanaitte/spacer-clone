@@ -1,0 +1,40 @@
+capability_id,category,feature,repository_path,symbol_or_test,status,curve_specific,straight_only,input_supported,save_reload_supported,viewer_supported,stl_supported,analysis_supported,design_check_supported,evidence,gap,notes
+A01,Horizontal Alignment,Straight,frontend/src/liner/core/geometry/line.ts,evaluateStraightElement,IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,Test uses straight element,None,Base capability
+A02,Horizontal Alignment,Circular Arc,frontend/src/liner/core/geometry/arc.ts,evaluateCircularArcElement,IMPLEMENTED,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,arc.ts: evaluateCircularArcElement,No curved bridge structural use,"Curve geometry for road alignment only"
+A03,Horizontal Alignment,Clothoid,frontend/src/liner/core/geometry/clothoid.ts,evaluateClothoidElement,IMPLEMENTED,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,clothoid.ts: Simpson integration,No curved bridge structural use,"Spiral curve for road alignment only"
+A04,Horizontal Alignment,C0 Continuity,frontend/src/liner/core/continuityC0.ts,checkC0Continuity,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,checkC0Continuity,None,Position continuity check
+A05,Horizontal Alignment,C1 Continuity,frontend/src/liner/core/continuityC1.ts,checkC1Continuity,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,checkC1Continuity,None,Azimuth continuity check
+A06,Horizontal Alignment,Station/Offset,frontend/src/liner/core/coordinate3d.ts,pointAtStationOffset,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,pointAtStationOffset,None,"3D coordinate from station/offset"
+A07,Horizontal Alignment,Local Frame,frontend/src/liner/core/vector.ts,localFrameFromAzimuth,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,localFrameFromAzimuth,None,"3D local frame (tangent/normal/binormal)"
+A08,Horizontal Alignment,Multiple Alignments,frontend/src/liner/schema/types.ts,AlignmentBundleDraft,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,alignments[] in LinerDomainDraftVNext,None,Multi-alignment support
+A09,Horizontal Alignment,Inverse Projection,frontend/src/liner/core/diagnostics.ts,LINER_GEOM_INVERSE_PROJECTION_FAILED,DOCUMENTED_ONLY,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,Diagnostic code exists,Not implemented,Inverse projection code not found
+B01,Vertical Alignment,Grade,frontend/src/liner/core/geometry/vertical.ts,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,vertical.ts,,Vertical profile
+B02,Vertical Alignment,Parabolic,frontend/src/liner/core/geometry/vertical.ts,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,vertical.ts,,Parabolic vertical curve
+B03,Cross Section,Cross Slope,frontend/src/liner/core/grid/crossfallResolution.ts,resolveCrossfallState,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,crossfallResolution.ts,,Superelevation support
+B04,Cross Section,Cross Section Template,frontend/src/liner/schema/types.ts,CrossSectionTemplateDraft,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,CrossSectionTemplateDraft,,Offset line definition
+C01,Bridge Layout,Span Definition,frontend/src/liner/schema/types.ts,SpanDraft,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,SpanDraft,,Span start/end stations
+C02,Bridge Layout,Pier Definition,frontend/src/liner/schema/types.ts,PierDraft,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,PierDraft,"Pier with skew angle",""
+C03,Bridge Layout,Pier Line Geometry,frontend/src/liner/core/bridge/pierLineGeometry.ts,pierLineDirectionFromSkew,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,pierLineGeometry.ts,,Skew calculation
+C04,Bridge Layout,Bearing Offset,frontend/src/liner/schema/types.ts,PierBearingOffsetDraft,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,PierBearingOffsetDraft,,Bearing offset scalar
+C05,Bridge Layout,Cross Beam,frontend/src/liner/schema/types.ts,CrossBeamDraft,SCHEMA_ONLY,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,CrossBeamDraft,"Schema defined, no implementation",""
+D01,Bridge Structure,Simple Single Span,frontend/src/apollo/,IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,PARTIAL,simpleSingleSpanSample.test.ts,,Straight bridge only
+D02,Bridge Structure,Continuous Girder,frontend/src/apollo/,PARTIALLY_IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,PARTIAL,PARTIAL,continuousGirderLayout.test.ts,,Straight continuous girder only
+D03,Bridge Structure,Cross Frame Attachment,frontend/src/apollo/bridgeStructure/crossFrameAttachmentModel.ts,IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,crossFrameAttachmentModel.ts,,Straight bridge only
+D04,Bridge Structure,Section Properties,frontend/src/apollo/bridgeStructure/sectionProperties.ts,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,PARTIAL,sectionProperties.ts,,General section properties
+E01,3D/STL,STL Export,frontend/src/apollo/export/apolloStlExport.ts,IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,FALSE,FALSE,apolloStlExport.ts,,Straight bridge STL only
+E02,3D/STL,3D Viewer,frontend/src/viewer/Viewer3D.tsx,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,Viewer3D.tsx,,General 3D viewer
+E03,3D/STL,Scene Builder,frontend/src/viewer/SceneBuilder.ts,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,SceneBuilder.ts,,Scene graph construction
+F01,Frame Analysis,3D Frame Solver,frontend/src/,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,project.schema.json,,6DOF linear static
+F02,Frame Analysis,6DOF Support,frontend/src/contracts/frameAnalysisResultResource.ts,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,frameAnalysisResultResource.ts,,6DOF support conditions
+F03,Frame Analysis,Member End Force (6 components),docs/frame/contracts/06_result_schema.md,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,result schema: fx,fy,fz,mx,my,mz,,"6 component section forces"
+F04,Frame Analysis,Influence Line,docs/frame/analysis/influence-moving-load.md,IMPLEMENTED,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,influence-moving-load.md,,MVP influence line
+F05,Frame Analysis,Moving Load,docs/frame/analysis/influence-moving-load.md,IMPLEMENTED,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,influence-moving-load.md,,MVP moving load
+F06,Frame Analysis,Torsion,examples/verification/beam/cantilever_torsion.json,IMPLEMENTED,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,cantilever_torsion.json,,Saint-Venant torsion only
+F07,Frame Analysis,Warping Torsion,,NOT_IMPLEMENTED,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,No evidence found,"Warping torsion not implemented in solver","Required for curved bridge"
+F08,Frame Analysis,Secondary Stress,,NOT_IMPLEMENTED,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,No evidence found,"No secondary stress calculation","Bracing secondary stress from curvature"
+G01,Design Check,Section Design,frontend/src/apollo/,PARTIALLY_IMPLEMENTED,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,PARTIAL,step5_design/,,"Straight bridge only"
+G02,Design Check,Fatigue,,NOT_IMPLEMENTED,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,No evidence found,"No fatigue check","Required for curved bridges"
+G03,Design Check,Camber,,NOT_IMPLEMENTED,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,No evidence found,"No camber calculation","Curved bridge camber"
+H01,Report/Drawing,Report Model,frontend/src/apollo/report/,PARTIALLY_IMPLEMENTED,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,report/,,"Straight continuous bridge report"
+H02,Report/Drawing,DXF Output,frontend/src/liner/dxf/,IMPLEMENTED,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,dxf/,,"General CAD output"
+H03,Report/Drawing,Member Schedule,frontend/src/apollo/drawing/memberArrangementViews.ts,IMPLEMENTED,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,memberArrangementViews.ts,,Straight bridge only

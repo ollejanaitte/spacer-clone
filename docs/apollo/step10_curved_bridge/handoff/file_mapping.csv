@@ -1,0 +1,13 @@
+scope_of_work_source,future_repository_destination,action,overwrite_allowed,conflict_check_required,integration_order,notes
+README.md,docs/apollo/step10_curved_bridge/README.md,copy,FALSE,TRUE,1,Scope overview
+final_report.txt,NOT COPIED (summary appended to spacer-clone final_report.txt),append,FALSE,TRUE,10,Summary block only
+source_manifest.csv,docs/apollo/step10_curved_bridge/source_manifest.csv,copy,FALSE,TRUE,2,Source manifest
+evidence/repository_baseline.txt,docs/apollo/step10_curved_bridge/evidence/repository_baseline.txt,copy,FALSE,TRUE,4,Repository baseline
+evidence/repository_paths_reviewed.txt,docs/apollo/step10_curved_bridge/evidence/repository_paths_reviewed.txt,copy,FALSE,TRUE,4,Paths reviewed
+evidence/source_files_reviewed.txt,docs/apollo/step10_curved_bridge/evidence/source_files_reviewed.txt,copy,FALSE,TRUE,4,Source files reviewed
+evidence/command_log.txt,docs/apollo/step10_curved_bridge/evidence/command_log.txt,copy,FALSE,TRUE,4,Command log
+handoff/integration_plan.md,docs/apollo/step10_curved_bridge/handoff/integration_plan.md,copy,FALSE,TRUE,5,Integration plan
+handoff/file_mapping.csv,docs/apollo/step10_curved_bridge/handoff/file_mapping.csv,copy,FALSE,TRUE,5,File mapping
+handoff/conflict_risk_register.csv,docs/apollo/step10_curved_bridge/handoff/conflict_risk_register.csv,copy,FALSE,TRUE,5,Conflict risk register
+handoff/post_continuous_bridge_merge_checklist.md,docs/apollo/step10_curved_bridge/handoff/post_continuous_bridge_merge_checklist.md,copy,FALSE,TRUE,5,Post-merge checklist
+step10_curved_bridge/phase0_pre_required_source_survey/*,docs/apollo/step10_curved_bridge/phase0_pre_required_source_survey/,copy,FALSE,TRUE,3,All survey files
