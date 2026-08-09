@@ -2375,6 +2375,27 @@ export const ja = {
         complete: "完了",
       },
     },
+    readiness: {
+      title: "セクション進捗ステータス",
+      statusLabels: {
+        CONFIRMED: "確定",
+        DERIVED: "導出",
+        INFERRED: "推定",
+        MISSING: "未定義",
+        DEFERRED: "保留",
+        NOT_AUTHORIZED: "権限なし",
+      },
+      sectionLabels: {
+        overview: "概要",
+        road: "道路線形",
+        superstructure: "上部工",
+        substructure: "下部工",
+        analysis: "解析",
+        main3d: "統合3D",
+        deliverables: "成果物",
+        data: "データ",
+      },
+    },
   },
 };
 

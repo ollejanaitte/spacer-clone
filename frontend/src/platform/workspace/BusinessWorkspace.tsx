@@ -4,6 +4,8 @@ import type { BusinessSummary } from "../business/businessRegistry";
 import { isWorkspaceSection, WORKSPACE_SECTIONS, type WorkspaceSection } from "./sections";
 import { createToolBindings } from "../tools/toolBindings";
 import { guidedProgress, resolveGuidedNavigation } from "../workflow/guidedNavigation";
+import { bindBusinessReadiness, type SectionStatusSource } from "../workflow/businessReadiness";
+import { ReadinessPanel } from "../components/ReadinessPanel";
 import styles from "./BusinessWorkspace.module.css";
 
 export type BusinessWorkspaceProps = {
@@ -13,6 +15,7 @@ export type BusinessWorkspaceProps = {
   onSave: () => void;
   onBack: () => void;
   onLaunchTool?: (section: WorkspaceSection) => void;
+  statusSource?: SectionStatusSource;
 };
 
 export function BusinessWorkspace({
@@ -22,10 +25,16 @@ export function BusinessWorkspace({
   onSave,
   onBack,
   onLaunchTool,
+  statusSource,
 }: BusinessWorkspaceProps) {
   const text = ja.designPlatform.workspace;
   const [activeSection, setActiveSection] = useState<WorkspaceSection>(() =>
     isWorkspaceSection(initialSection) ? initialSection : "overview",
+  );
+
+  const readiness = useMemo(
+    () => bindBusinessReadiness(statusSource ?? { sections: {} }),
+    [statusSource],
   );
 
   const selectSection = useCallback(
@@ -109,6 +118,7 @@ export function BusinessWorkspace({
         <section className={styles.sectionBody}>
           <h2 className={styles.sectionTitle}>{text.sectionLabels[activeSection]}</h2>
           <p className={styles.sectionNotice}>{text.sectionNotices[activeSection]}</p>
+          <ReadinessPanel readiness={readiness} />
           {activeBinding !== null && (
             <div className={styles.launchArea}>
               <p className={styles.launchDescription}>
