@@ -7495,3 +7495,43 @@ textarea:focus-visible {
   font-size: 0.9rem;
   color: #5b4636;
 }
+
+.empty-model-state {
+  margin: 1rem 1.5rem 0;
+  padding: 2rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.empty-model-state h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.empty-model-state p {
+  margin: 0 0 1rem;
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+.empty-model-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.empty-model-actions button {
+  padding: 0.625rem 1.5rem;
+  border: 1px solid #0f172a;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}

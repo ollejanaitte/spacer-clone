@@ -37,6 +37,11 @@ export const ja = {
     versionPrefix: "Version",
     aboutLink: "このアプリについて",
     projectSaved: "保存しました (project.json)",
+    emptyModelTitle: "モデルがありません",
+    emptyModelDescription: "新規作成、既存モデルを開く、またはサンプルを読み込んで開始してください。",
+    emptyModelNew: "新規作成",
+    emptyModelOpen: "開く",
+    emptyModelSample: "サンプルを読み込む",
   },
 
   input: {
