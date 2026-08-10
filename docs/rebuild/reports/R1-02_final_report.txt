@@ -1,0 +1,76 @@
+================================================================================
+Phase R1  R1-02  ファイナルレポート
+最小 Project Schema / Project Data Core
+================================================================================
+完了日: 2026-08-10
+
+--------------------------------------------------------------------------------
+1. 結論
+--------------------------------------------------------------------------------
+R1-02 COMPLETE。
+新統合システムの唯一のProject正本候補となる最小Project Schema / Project
+Data Coreを実装し、全検証PASSの上、GitHub mainへmergeした。
+
+--------------------------------------------------------------------------------
+2. 作業内容
+--------------------------------------------------------------------------------
+■ 実装（frontend/src/next/project/）
+- schema.ts
+  - Project型: projectId / name / createdAt / updatedAt / schemaVersion /
+    metadata / modules（8キー固定）
+  - modules: road / terrain / bridgeLayout / substructure / superstructure /
+    analysis / cim / deliverables（各モジュールは空コンテナ＝後から接続できる
+    拡張点。R1-02では中身を実装しない）
+  - zod strictObject schema（uuid / semver / ISO8601UTC / min(1)）
+- projectDataCore.ts
+  - createEmptyProject(): default Project生成
+  - generateProjectId(): crypto.randomUUIDによる一意ID生成
+  - parseProject(): runtime validation（{ ok, issues } を返す）
+  - serializeProject(): validation通過後 JSON.stringify
+  - deserializeProject(): JSON.parse → validation（不正JSON/不正Project reject）
+  - migrateProject() / PROJECT_MIGRATIONS: 将来migration用の境界（現状空）
+
+■ 検証
+- R1-02新規tests: 17/17 PASS
+- R1-01回帰（NextApp）: 3/3 PASS
+- src/next全テスト: 20/20 PASS
+- electron tests: 26/26 PASS
+- typecheck: PASS
+- build: PASS
+- Electron通常起動回帰: /app App Shell描画確認（証跡: docs/rebuild/evidence/
+  r1-02-regression-app-shell.png）
+
+--------------------------------------------------------------------------------
+3. Acceptance Gate
+--------------------------------------------------------------------------------
+R1_02_SCHEMA_VERDICT            : PASS
+R1_02_VALIDATION_VERDICT        : PASS
+R1_02_SERIALIZATION_VERDICT     : PASS
+R1_02_TEST_VERDICT              : PASS
+R1_02_TYPECHECK_VERDICT         : PASS
+R1_02_BUILD_VERDICT             : PASS
+R1_02_REGRESSION_VERDICT        : PASS
+R1_02_GITHUB_REFLECTION_VERDICT : PASS
+
+--------------------------------------------------------------------------------
+4. GitHub反映
+--------------------------------------------------------------------------------
+- PR #816: feat(rebuild) R1-02 Project Data Core → main merge
+- PR #817: R1-02記録 final SHA追記 → main merge
+- final main SHA: f9f6a0cd3352c6fe5f06a159f1b0f07d5677b874
+  （local main / origin/main / GitHub main 一致確認）
+- rebuild/integrated-system: f9f6a0cd3352c6fe5f06a159f1b0f07d5677b874
+  （fast-forward同期、local/origin一致）
+
+--------------------------------------------------------------------------------
+5. 残課題（R1-03以降）
+--------------------------------------------------------------------------------
+- Project Repository / 永続化 / Save / Load
+- modulesの中身実装（道路/FEM/CIM等）
+- schemaVersion 1.0.0 → 以降の実migration
+
+--------------------------------------------------------------------------------
+6. 停止
+--------------------------------------------------------------------------------
+R1-03には進まない。ユーザーの次の明示指示を待つ。
+================================================================================
