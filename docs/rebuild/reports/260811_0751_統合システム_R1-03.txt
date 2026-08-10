@@ -1,0 +1,163 @@
+================================================================================
+Railsys 統合システム R1-03 Final Report
+ファイル名: 260811_0751_統合システム_R1-03.txt
+================================================================================
+
+作業名: R1-03 Project Manager / Project Repository 最小縦断実装
+完了日時（JST）: 2026-08-11 07:51
+
+--------------------------------------------------------------------------------
+1. R1-03 目的
+--------------------------------------------------------------------------------
+R1-02で確定したProject Data Coreを、ユーザーが新統合システムの画面から
+作成・選択・編集・複製・削除し、Projectトップへ開ける最小縦断経路を確立する。
+新ホーム画面を正式入口とし、旧メイン画面への正規導線を完全排除する。
+
+--------------------------------------------------------------------------------
+2. 実装範囲
+--------------------------------------------------------------------------------
+Step A: Project Manager / Repository 契約と最小実装
+  - businessMetadata: 業務件番 / 設計段階5種 / その他カスタムラベル
+  - ProjectRepository interface + InMemoryProjectRepository
+  - ProjectManager（create/get/list/update/duplicate/delete・updatedAt管理）
+Step B: 新ホーム画面・routing・旧メイン画面導線排除
+  - HomePage（業務から設計 / クイック解析 + 最近使用したデータ基盤）
+  - QuickAnalysisPage（Project独立入口）
+  - routes拡張 / NextAppから旧システムボタン削除
+Step C: 業務一覧 + 新規作成 + 編集
+  - BusinessListPage（表形式・検索・操作）/ BusinessForm / NewProjectPage /
+    EditProjectPage / LoadBusinessPage（placeholder）
+Step D: 複製 + 削除確認 + Projectトップ
+  - ProjectTopPage（業務情報 + 9領域入口）/ DeleteConfirm（完全削除）
+  - BusinessListPage 複製・削除確認・フィードバック
+Step E: 縦断テスト・regression・記録
+Step F: Final Report（本ファイル）
+
+--------------------------------------------------------------------------------
+3. 実装しなかった範囲（R1-04以降）
+--------------------------------------------------------------------------------
+- filesystem / localStorage を正本とする本格永続化
+- Project Repository 本格実装（in-memoryのみ・差し替え可能な境界は確立済み）
+- Save / Load 本実装 / ProjectファイルImport/Export
+- 道路・地形・橋梁配置・下部工・上部工・FEM・CIM・成果品 本体
+- 新規CDP基盤 / WebSocket GUI操作 / remote-debugging環境
+
+--------------------------------------------------------------------------------
+4. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/
+- project/businessMetadata.ts
+- project/projectRepository.ts
+- project/inMemoryProjectRepository.ts
+- project/projectManager.ts
+- project/projectManagerInstance.ts
+- pages/HomePage.tsx
+- pages/BusinessListPage.tsx
+- pages/NewProjectPage.tsx
+- pages/EditProjectPage.tsx
+- pages/ProjectTopPage.tsx
+- pages/QuickAnalysisPage.tsx
+- pages/LoadBusinessPage.tsx
+- components/BusinessForm.tsx
+- components/DeleteConfirm.tsx
+- NextApp.tsx / routes.ts / styles.css
+- __tests__/NextApp.test.tsx / businessFlow.test.tsx / verticalSlice.test.tsx
+docs/rebuild/
+- r1/R1-03_project_manager.md
+- evidence/r1-03-home-screen.png
+
+--------------------------------------------------------------------------------
+5. Project Repository / Manager構成
+--------------------------------------------------------------------------------
+- ProjectRepository: storage非依存interface（create/get/list/update/delete）
+- InMemoryProjectRepository: parseProject検証・duplicate-id reject・not-found処理
+- ProjectManager: UI-facing API（業務metadata入出力・updatedAt・複製時新ID生成）
+- 将来Repository実装を差し替えられる責任境界として分離
+
+--------------------------------------------------------------------------------
+6. UI / routing構成
+--------------------------------------------------------------------------------
+- /app            : 新ホーム（正式入口）
+- /app/business   : 業務一覧
+- /app/business/new       : 新規作成
+- /app/business/:id/edit  : 業務編集
+- /app/projects/:id       : Projectトップ
+- /app/quick      : クイック解析（Project独立）
+- /app/business/load      : 業務データ読込（placeholder）
+
+--------------------------------------------------------------------------------
+7. 旧メイン画面導線排除結果
+--------------------------------------------------------------------------------
+- NextAppの旧システムボタン（nav-legacy）削除
+- ホーム/業務一覧/Projectトップ/クイック解析から旧メイン画面へ遷移する導線なし
+- 「戻る」操作・refresh・routingで旧メイン画面を正規入口にしない
+- 旧システム本体（/pro / route）は旧資産保全のため削除せず新UIから到達不能化
+- 回帰テストでnav-legacy不存在を検証
+
+--------------------------------------------------------------------------------
+8. Project操作確認結果
+--------------------------------------------------------------------------------
+- 新規作成: UI→ProjectManager→R1-02 Data Core（createEmptyProject）→Repository
+- 業務編集: プリフィル→保存でupdatedAt更新
+- 複製: 新しいProject ID生成・元Project非破壊
+- 削除: 確認ダイアログ→完全削除（ゴミ箱・復元なし）
+- 業務を開く: Projectトップへ遷移（9領域入口表示）
+- システム内部Project IDと業務件番を別管理
+
+--------------------------------------------------------------------------------
+9. tests結果
+--------------------------------------------------------------------------------
+- src/next全体: 59/59 PASS（Step A〜E・縦断テスト含む）
+- R1-02 regression（project）: 32/32 PASS
+- electron tests: 26/26 PASS
+
+--------------------------------------------------------------------------------
+10. regression結果
+--------------------------------------------------------------------------------
+- R1-01: NextApp 3/3（新ホーム・旧導線不存在含む）PASS
+- R1-02: 32/32 PASS
+- Electron通常起動: 新ホーム画面描画確認（証跡: r1-03-home-screen.png）
+
+--------------------------------------------------------------------------------
+11. typecheck / build結果
+--------------------------------------------------------------------------------
+- typecheck: PASS（tsc -b --pretty false）
+- build: PASS（tsc -b && vite build）
+
+--------------------------------------------------------------------------------
+12. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #821 Step A: 9507b9e600bf92d491bbb0e0a0073e1e596ea17d
+- PR #822 Step B: 2020689e680033a19223777c9531b85c46b58986
+- PR #823 Step C: 0b21cd6cdb3ecc883b88521ae3c58821dc1cf015
+- PR #824 Step D: da20bd748cc639b05812852aae80d527219e3476
+- PR #825 Step E: 54bf36917d3844f59d38cdae83ce721847809692
+- PR #826 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+13. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #826
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+14. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+15. 残課題（R1-04以降のみ）
+--------------------------------------------------------------------------------
+- 永続化（filesystem/localStorage正本・Save/Load・Import/Export）
+- Project Repository 本格実装（in-memoryから差し替え）
+- 各設計module本体（道路/地形/橋梁配置/下部工/上部工/FEM/CIM/成果品）
+- Project Manager 本実装（業務フロー拡張）
+
+--------------------------------------------------------------------------------
+16. 最終判定
+--------------------------------------------------------------------------------
+R1-03: COMPLETE
+R1-04へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
