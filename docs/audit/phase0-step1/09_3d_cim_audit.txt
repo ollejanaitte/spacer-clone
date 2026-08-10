@@ -1,0 +1,82 @@
+================================================================================
+Phase 0 / STEP 1-09  3D / CIM 実態監査
+監査日: 2026-08-10
+状態: CONFIRMED（コード実測 + サブエージェント調査 + 実機操作）
+================================================================================
+
+--------------------------------------------------------------------------------
+1. 3D 実装箇所一覧
+--------------------------------------------------------------------------------
+| 場所 | 役割 |
+|---|---|
+| viewer/Viewer3D.tsx, ThreeViewport.tsx, SceneBuilder.ts, renderers/* | /pro メイン 3D（FEM フレーム + 解析結果オーバーレイ） |
+| apollo/visualization/* | Apollo ソリッドモデル生成 |
+| liner/pages/LinerMain3DPage.tsx + samples/mountain-viaduct-500/viewer.tsx | LINER 統合3D |
+| substructure/viewer3d/SubstructureViewer3D.tsx | 下部工 3D ソリッド |
+| substructure/*SolidGenerator.ts | 下部工ジオメトリ生成 |
+| bridge/viewer/BridgeThreeViewer.tsx | 橋梁ウィザード 3D |
+| compare/ModelComparisonWorkspace.tsx | A/B 比較 |
+
+CIM: IFC/IFC4/CIM 実装は存在しない（frontend/src 全体でヒットなし）。
+Apollo BSDD (project.apolloBsdd) が内部的な橋梁情報モデルの最上位。外部 CIM 標準との接続なし。
+
+--------------------------------------------------------------------------------
+2. 各 3D 表示の分類（A〜F）
+--------------------------------------------------------------------------------
+A) /pro メイン Viewer3D（フレーム）: A（実設計データ）
+   - project.nodes/members/supports/loads を直接描画 (SceneBuilder.ts:91-185)。
+   - 骨組みのみ（ライン+球+矢印）。断面寸法・形状は描画に反映されない。
+
+B) /pro Viewer3D（Apollo ソリッド）: B（一部実データ＋仮形状）
+   - 節点/部材/支点は実 draft 座標。
+   - ソリッド断面は既定値 (DEFAULT_APOLLO_BRIDGE_GEOMETRY_DEFAULTS types.ts:232-265、
+     桁高2.0m/フランジ0.55m/ウェブ0.02m 等) または BSDD 生成済み時の入力寸法。
+   - 配置は直線 X 軸前提。道路線形/縦断は考慮しない。
+
+C) LINER Main3D（統合3D）: C（sample 専用）
+   - MountainViaduct3dViewer を直接 import（サンプル専用ビューア）。
+   - 地形=固定シード (terrain.ts:15-20)、カメラ=固定プリセット、下部工ボックス寸法=
+     hard-code (substructure.ts:42-46)。
+   - 道路中心線・橋梁スパン・下部工位置は draft データ駆動。
+   - ユーザー作成の LINER（piers/spans なし）では 3D パネル自体が出ない。
+
+D) substructure 3D: A/B（support データ駆動、姿勢は条件依存）
+   - 寸法・位置は Support 入力駆動 (SubstructureSolidGenerator.ts:109-135)。
+   - LINER coordinateInput 無しのフォールバックでは軸固定 (SubstructureViewport.tsx:31-49)。
+   - LINER 入力ありなら実線形の接線・スキュー適用 (useSubstructureRealtimeUpdate.ts:71-93)。
+
+E) bridge viewer: A（実データ）
+   - 道路版盤・橋梁ライン・FEM 節点/要素は入力データ由来。
+
+F) apollo visualization: B（draft 駆動＋既定断面）
+   - ソース: input.draft ?? project.apolloPhase1Unit2 ?? projectToDraftLike(project)
+     (builder.ts:901-903)。
+   - ソリッドは既定断面 or BSDD 由来。直線 X 軸配置。
+
+--------------------------------------------------------------------------------
+3. 最重要発見
+--------------------------------------------------------------------------------
+1) 3D 生成元は「FEM骨組み実データ」「サンプル固定」「既定断面から自動合成」の3系統に分かれ、
+   完全な実設計ジオメトリ（断面形状込み）から 3D を生成するパスは存在しない。
+2) CIM は未実装（ROADMAP 上も将来項目）。
+3) LINER Main3D は「サンプル専用」ビューア。実業務の線形では機能しない。
+4) Apollo ソリッドは道路線形と無関係（直線 X 軸）。
+5) /pro メイン Viewer3D は骨組み表示のみで、断面形状は表現されない。
+6) STL エクスポートは Apollo ソリッドのみ実装。メイン Viewer3D には STL/DXF 出力なし。
+7) Load 後の再生成は構造上機能する（project 変化でシーン再構築）。
+8) 性能: アニメーション時に rAF 毎にシーン全体再構築（大規模モデルで負荷懸念）。
+
+--------------------------------------------------------------------------------
+4. 結論
+--------------------------------------------------------------------------------
+- 3D 表示は「実データ駆動の骨組み（A）」「既定断面の仮形状（B）」「サンプル専用（C）」
+  が混在し、統一された実設計ジオメトリ駆動ではない。
+- 特に「LINER 統合3D」「Apollo ソリッド」は実務で使える実設計 3D ではない。
+- CIM は未実装。STEP 2 で 3D/CIM の生成アーキテクチャ設計判断が必要。
+
+--------------------------------------------------------------------------------
+5. 成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/09_3d_cim_audit.txt
+証拠: evidence/18-eigen-result.png, 09-main3d.png, 16-substructure-sample.png
+判定: PARTIAL（メイン3Dは実データ駆動だが、統合3D/Apolloは仮形状・サンプル固定。CIM未実装）
