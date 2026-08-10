@@ -1,0 +1,235 @@
+================================================================================
+Phase 0 / STEP 1-02  システム全体構成・機能インベントリ
+監査日: 2026-08-10
+状態: CONFIRMED（コード実測 + 実機操作 + サブエージェント調査）
+--------------------------------------------------------------------------------
+分類凡例:
+  COMPLETE     = 本実装で動作する
+  PARTIAL      = 一部実装・条件付きで動作
+  BROKEN       = 現状動作しない/故障
+  MOCK         = 動作するが本物の計算・保存ではない
+  PLACEHOLDER  = 未実装の明示的プレースホルダ
+  HARD_CODED   = 固定値・偽データで動作
+  SAMPLE_ONLY  = サンプル専用データ・経路
+  LEGACY       = 旧仕様・移行用
+  DEAD         = ランタイムで使用されないコード
+  UNKNOWN      = 判断に証拠不足
+================================================================================
+
+--------------------------------------------------------------------------------
+1. システム全体構成（実測）
+--------------------------------------------------------------------------------
+Lobby(/) → 学習編(/learn) / 入門編(/level0) / 実務編(/pro/platform)
+実務編 → DesignPlatformHome(/pro/platform) → BusinessList(/pro/platform/businesses)
+       → BusinessWorkspace(/pro/platform/businesses/:id)
+       → クイック解析(/pro)
+クイック解析(/pro) = FEM ワークスペース（節点/部材/支点/荷重入力 + 解析 + 3D + 出力）
+LINER(/pro/linear-coordinate, /pro/liner/*)
+Apollo(/pro/apollo)
+Substructure(/pro/liner/substructure)
+Main3D(/pro/liner/main3d)
+Importer(/pro/importer/*)
+Compare(/pro/compare)
+
+Frontend: React19 + Vite7 + Three.js/ReactThreeFiber + Recharts + MakerJS/JSCAD
+Backend : FastAPI (port 8000) + Python solver (scipy/numpy)
+Desktop : Electron (main/preload, 1280x820)
+
+--------------------------------------------------------------------------------
+2. 機能インベントリ（フロントエンド + バックエンド + 実機操作）
+--------------------------------------------------------------------------------
+[Project管理]
+- New (新規作成)                          : COMPLETE  App.tsx:1423, data/defaultProject.ts
+- Open (開く)                             : COMPLETE  App.tsx:691/713, desktop/projectFileDialog.ts
+- Save (保存)                             : PARTIAL   App.tsx:737-799。ファイル名固定 project.json。
+- Save As                                 : 無し
+- Close                                   : PARTIAL   navigateTop でロビーへ戻るのみ
+- Autosave                                : DEAD      App.tsx:151 AUTOSAVE_ENABLED=false（凍結）
+- Recent                                  : 無し
+- Dirty 表示                              : COMPLETE  App.tsx:193,266,296; Toolbar 表示
+- Autosave 復元 UI                        : DEAD      App.tsx:1481-1502（フラグで非表示）
+
+[道路線形 (LINER)]
+- 起動ランチャ (GUI/Importer/サンプル)    : COMPLETE  /pro/linear-coordinate
+- 線形編集 7タブ (line/station/height/vertical/cross/utility/review)
+                                          : COMPLETE  LinerEditPage.tsx（ldist/haunch/hoso実計算）
+- プレビュー・グリッド                     : COMPLETE  /pro/liner/preview
+- 一覧・削除                               : COMPLETE  /pro/liner
+- 正式図面 (plan/profile/cross-section)    : COMPLETE  /pro/liner/drawings/*（SVG/印刷/DXF）
+- マッピングレビュー                       : COMPLETE  /pro/liner/mapping-review
+- Main3D                                  : COMPLETE  /pro/liner/main3d（サンプル時のみ意味を持つ）
+- rule_engine（バックエンド道路規則）      : DEAD      約50モジュール。app/engine から import 0件。
+                                                     frontend からの API 呼び出し 0件。テスト専用。
+
+[橋梁配置・上部工]
+- BridgeWizard (6step モーダル)           : PARTIAL   バックエンド API 依存
+- Apollo Phase1 モデル入力                 : PARTIAL   undo/redo・dirty guard は本格。
+                                                     構造解析・結果表示は未実装(ApolloPhase1Shell.tsx:1630)
+- Apollo グリレージ解析                    : PARTIAL   NOT_AUTHORIZED ゲートのみ
+- BridgeProject データ層 (CBDM/manifest)   : COMPLETE  テスト多数
+- 統合3Dデータ層 integratedScene3d         : DEAD      テストのみ。UI 未配線
+
+[下部工]
+- 3ペイン UI (tree/viewport/property)      : COMPLETE  /pro/liner/substructure
+- 3D ビューア                              : COMPLETE  substructure/viewer3d
+- 設計計算 (15チェック)                    : MOCK      全チェック hold_not_available
+                                                      (designEngine.ts:115-160)
+- Adapter計算(TEST)                        : MOCK      TEST_ENGINE_TYPE="test-mock",
+                                                      MOCK-FIXTURE-CHECK 固定値
+- 計算書 CSV / 結果 JSON                   : COMPLETE
+- 入力フォーム                             : PLACEHOLDER "M2-03 で実装予定"
+
+[FEM・解析（バックエンド実計算）]
+- 線形静解析   /api/analysis/run           : COMPLETE  scipy spsolve
+- 固有値解析   /api/analysis/eigen          : COMPLETE  scipy eigh
+- 応答スペクトル /api/analysis/response-spectrum : COMPLETE SRSS/CQC
+- 時刻歴解析   /api/analysis/time-history   : COMPLETE  Newmark-β
+- 影響線       /api/influence/run           : COMPLETE
+- 移動荷重     /api/moving-load/run         : COMPLETE  単点荷重のみ
+- グリレージ   /api/design/analyze          : PARTIAL   実ソルバー + ハードコード材料/断面
+                                                      + NOT_GRANTED ゲート
+
+[3D Viewer]
+- メイン Viewer3D                          : COMPLETE  WebGL + 2Dフォールバック
+- Compare (A/B)                            : COMPLETE  /pro/compare
+- 橋梁 Viewer (BridgeWizard内)             : COMPLETE
+- 下部工 3D                                : COMPLETE
+- Main3D (統合3D)                          : SAMPLE_ONLY 山岳サンプル専用
+- 3D表示が実設計データから生成されるか      : STEP 1-09 で詳細監査
+
+[Import/Export]
+- 結果 CSV                                 : COMPLETE  ただし IF3 権威ゲート必須
+- 結果 PDF                                 : PARTIAL   HTMLを新窓→ブラウザ印刷（真のPDF生成ではない）
+- LINER 道路 CSV                           : COMPLETE
+- DXF (plan/profile/cross)                 : COMPLETE
+- STL (frame/apollo)                       : COMPLETE
+- SVG                                     : COMPLETE
+- Importer (JIP-LINER PDF)                 : SAMPLE_ONLY PDF非ロード、手入力再現ワークフロー
+
+[Design Platform]
+- ホーム (業務/クイック解析)               : COMPLETE  /pro/platform
+- 業務一覧                                 : COMPLETE  /pro/platform/businesses
+- BusinessWorkspace (8タブ)                : PARTIAL   タブは Readiness/Gate/起動ボタンのみ。
+                                                     業務実体はメタデータのみ（checksum偽値）
+- サンプル業務                             : SAMPLE_ONLY
+- クイック解析                             : COMPLETE  /pro
+
+[教育フロー]
+- ロビー                                   : COMPLETE  /
+- 学習編                                   : PLACEHOLDER 全リンク https://example.com/placeholder
+- 入門編 サンプル選択+スライダー            : COMPLETE  /level0
+- 入門編 「結果を計算」                     : MOCK      パラメータ説明文生成のみ(level0Parameters.ts:66)
+- 入門編 サンプル詳細                       : PLACEHOLDER 静的テキストのみ
+- 教材モード                               : PLACEHOLDER 静的テキスト3講義
+- level0 エンジン群                        : PLACEHOLDER 16ファイルが「// T## で実装予定」
+
+[帳票・図面]
+- LINER 正式図面 (SVG/印刷/DXF)            : COMPLETE
+- 道路帳票 CSV                             : COMPLETE
+- IF3 結果カタログ+レポート                : COMPLETE
+- 下部工計算書 CSV/JSON                    : COMPLETE
+- Apollo 成果物パッケージ                  : PARTIAL   「成果物パッケージは未実装」明示
+
+[設定]
+- ビューア設定 (displaySize/座標軸)        : COMPLETE  localStorage
+- UIモード初期値                           : COMPLETE  localStorage
+- グローバル設定画面                       : UNKNOWN   無し
+
+[バックエンド API 一覧]（全23本）
+- GET  /health                             : COMPLETE
+- POST /api/projects/validate              : COMPLETE
+- POST /api/analysis/run                   : COMPLETE
+- POST /api/design/analyze                 : PARTIAL (NOT_GRANTED)
+- POST /api/analysis/eigen                 : COMPLETE
+- POST /api/analysis/response-spectrum      : COMPLETE
+- POST /api/analysis/time-history           : COMPLETE
+- POST /api/influence/run                  : COMPLETE
+- POST /api/moving-load/run                : COMPLETE
+- POST /api/projects/save                  : COMPLETE (JSONファイル保存)
+- POST /api/projects/load                  : COMPLETE
+- POST /api/projects/autosave              : COMPLETE (ただしフロントは自動保存無効)
+- GET  /api/projects/autosave              : COMPLETE
+- GET  /api/examples                       : COMPLETE (プログラム生成サンプル)
+- POST /api/if3/availability               : COMPLETE ただしフロント未使用
+- POST /api/bridge 等 CRUD                 : COMPLETE
+- GET  /api/bridge/template                : COMPLETE
+- POST /api/fem/generate                   : PARTIAL (材料/断面ハードコード)
+- GET  /api/viewer/bridge/{id}             : COMPLETE
+
+--------------------------------------------------------------------------------
+3. 保存の実体（概要。詳細は STEP 1-06）
+--------------------------------------------------------------------------------
+- プロジェクト(メインFEM): frontend「保存」= project.json のダウンロード / ネイティブ保存。
+  backend /api/projects/save は backend/data/projects/ へ JSON 保存（UIからは未使用経路）。
+- Autosave: 凍結中 (AUTOSAVE_ENABLED=false)。backend/data/projects/autosave.json は
+  133KB の空スケルトンが残存（gitignore 対象）。
+- 橋梁: backend/data/bridges/（現状 空）。/api/bridge で保存可能だが UI からは未使用。
+- BusinessProject (Design Platform): localStorage
+  (spacer.designPlatform.projects.<businessId>, businessList.v1)。
+- ビューア設定・UIモード: localStorage。
+- Importer プロジェクト: localStorage。
+- IF3 解析結果サイドカー: フレーム文書と同一ディレクトリの results/<uuid>.if3.json。
+
+--------------------------------------------------------------------------------
+4. mock / placeholder / hard-code / sample専用 一覧（証拠付き）
+--------------------------------------------------------------------------------
+【MOCK】
+- 下部工 設計計算15チェック      : designEngine.ts:115-160 hold_not_available
+- 下部工 Adapter計算(TEST)       : testCalculationEngine.ts:16 TEST_ENGINE_TYPE="test-mock",
+                                   :184 MOCK-FIXTURE-CHECK 固定値
+- 入門編 「結果を計算」          : level0Parameters.ts:66 パラメータ説明文生成のみ
+- BusinessProject checksum      : sampleBusiness.ts:61 "0".repeat(64) 偽値
+
+【PLACEHOLDER】
+- level0 エンジン16ファイル      : // T## で実装予定 (level0/services, pages 等)
+- 学習編リンク6件               : public/locales/learn_links.json 全件 example.com/placeholder
+- 下部工入力フォーム             : SubstructurePropertyPanel.tsx:83 "M2-03 で実装予定"
+- Apollo 構造解析・結果表示      : ApolloPhase1Shell.tsx:1630,2680
+- Apollo 成果物パッケージ        : GuidedModeShell.tsx:170, slides.ts:161
+- 入門編サンプル詳細             : lobbyStrings.ts:120
+
+【HARD_CODED】
+- App.tsx:151 AUTOSAVE_ENABLED=false
+- grillage.py:19-48 STEEL_MATERIAL / declared_section 固定
+- bridge_fem_generator.py:376-395 材料・断面固定定数
+- data/defaultProject.ts:207 サスペンドデッキ (Plan B) ハードコードモデル
+- bridgeDefinition/structuralModelGenerator.ts PLACEHOLDER材料/断面
+- Apolo Replay期待値 SuperstructurePipelinePanel.tsx:251-255
+
+【SAMPLE_ONLY】
+- liner/samples/mountain-viaduct-500/ 一式
+- substructure/planning/samples/sampleGenerator.ts
+- liner/importer/sample/builtInSampleDataset.ts (JIP-LINER PDF非ロード)
+- apollo/sampleProjects.ts (200m 5径間, MAT/SEC全0)
+- platform/sample/sampleBusiness.ts
+
+【DEAD】
+- backend/rule_engine/ 全体（約50モジュール）: app/engineからimport 0件（実証済み）
+- engine/if3_legacy_compatibility.py: テストのみ
+- app/reports.py のIF3権威エクスポート関数: テストのみ
+- POST /api/if3/availability: フロント未使用
+- frontend/src/bridgeProject/integratedScene3d.ts: テストのみ
+- App.tsx autosave 経路全体
+
+【LEGACY】
+- /th/* → /pro/th/* リダイレクト (timeHistory/routeRedirect.ts)
+- /compare → /pro/compare リダイレクト
+
+--------------------------------------------------------------------------------
+5. 特に重要な発見（実機操作で確認したユーザー視点の問題）
+--------------------------------------------------------------------------------
+1) /pro の空モデル状態で「サンプルを読み込む」を押すと、FEMサンプルではなく
+   LINER 山岳サンプルが読み込まれ、LINER 編集画面へ遷移する（App.tsx empty-model-state）。
+   → ユーザーが「FEMサンプル」を期待する箇所で「LINERサンプル」になる UX 不一致。
+2) 入門編「結果を計算」の結果は「短い橋の橋です。」等の文言のみ。実解析なし。
+3) 実務編 BusinessWorkspace の全セクション進捗は「未定義」固定。業務実体なし。
+4) 成果物/データ タブには起動ボタンが無く、案内文のみ（プレースホルダ）。
+5) 下部工計画画面に「FATAL 1」表示が確認された（詳細は STEP 1-10 で調査）。
+6) 学習編の動画・記事リンクは全てダミーURL。
+
+--------------------------------------------------------------------------------
+6. 成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/02_system_inventory.txt
+判定: PASS（棚卸し完了）
+根拠: コード実測（サブエージェント調査 + 実証grep）+ Electron/ブラウザ実機操作
