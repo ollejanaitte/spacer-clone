@@ -51,7 +51,8 @@ Project 構造:
 - frontend/src/next/project/__tests__/projectDataCore.test.ts
 - docs/rebuild/r1/R1-02_project_data_core.md（完了記録）
 - docs/rebuild/evidence/r1-02-regression-app-shell.png（回帰証跡）
-- docs/rebuild/reports/Railsys_Phase_1.2_Rail Piece.txt（本Final Report）
+- docs/rebuild/reports/260811_SPACER_R1-02機能実装_ファイナルレポート.txt（本Final Report）
+  ※旧名「Railsys_Phase_1.2_Rail Piece.txt」から名称変更（260811_SPACER_R1-02機能実装_ファイナルレポート）
 
 --------------------------------------------------------------------------------
 5. Project schemaVersion
@@ -120,13 +121,15 @@ Project 構造:
   merge commit: f9f6a0cd3352c6fe5f06a159f1b0f07d5677b874
 - PR #818 docs(rebuild): R1-02 final report
   merge commit: f884ef672a9a3a2abc2e5729bb42c4cc3587dfe8
-- PR #（本Final Report追加）: （merge後SHAを記録）
+- PR #819 docs(rebuild): R1-02 final report（Railsys_Phase_1.2_Rail Piece.txt）
+  merge commit: 425fa1509e9c00c302fa9f803fda5975caabe540
+- PR #（本Final Report名称変更）: （merge後SHAを記録）
 
 --------------------------------------------------------------------------------
 14. 最終main SHA / 同期確認
 --------------------------------------------------------------------------------
-- final main SHA: f884ef672a9a3a2abc2e5729bb42c4cc3587dfe8
-  （本Final Report反映後の最終SHAを本項目に追記）
+- final main SHA: 425fa1509e9c00c302fa9f803fda5975caabe540
+  （本Final Report名称変更反映後の最終SHAを本項目に追記）
 - local main / origin/main / GitHub main / rebuild/integrated-system
   （反映後に再確認し、全SHA一致を記録）
 
