@@ -72,6 +72,11 @@ function getProductionIndexPath(): string {
   return path.join(process.resourcesPath, "frontend", "index.html");
 }
 
+// 新統合システム（Project System）の既定エントリ。
+// R1 以降、Electron 起動時は新システムの業務一覧を表示する。
+// 旧システムは /pro, / 等から引き続き到達可能。
+const NEXT_APP_ENTRY = "http://127.0.0.1:5173/app";
+
 function getAppIconPath(): string | undefined {
   // In dev, the source icon is at the repo root build/. In packaged builds,
   // electron-builder will copy build/icon.png into the application resources
@@ -457,7 +462,7 @@ async function createMainWindow(version: string): Promise<void> {
   if (app.isPackaged) {
     await mainWindow.loadFile(getProductionIndexPath());
   } else {
-    await mainWindow.loadURL("http://127.0.0.1:5173");
+    await mainWindow.loadURL(NEXT_APP_ENTRY);
   }
 }
 
