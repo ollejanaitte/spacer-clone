@@ -1,0 +1,181 @@
+================================================================================
+Phase 0 / STEP 1-01  正規 baseline・実行環境の確定
+監査日: 2026-08-10
+監査者: opencode (統合監査)
+状態: CONFIRMED (実機計測による)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. 概要
+--------------------------------------------------------------------------------
+「今どのコードを、どう起動すれば正規のアプリになるのか」を一意に確定するための
+監査である。コード調査に加え、Electron を実際に起動して実測した。
+
+判定: PASS（baseline は一意に説明できる。正規起動手順は再現できる。）
+
+--------------------------------------------------------------------------------
+2. Canonical repo / branch / SHA
+--------------------------------------------------------------------------------
+- Canonical repo    : /home/masaharu/Projects/spacer-clone
+- Canonical branch  : main
+- Remote            : origin = https://github.com/ollejanaitte/spacer-clone.git
+- 監査開始時 SHA    : eedb4994f6cefcffdb520b79d3ad0a5a84137314
+- origin/main SHA   : eedb4994f6cefcffdb520b79d3ad0a5a84137314 (local main == origin/main)
+- 監査時 HEAD       : eedb499 (Merge pull request #797 docs/phase4-user-acceptance-final)
+- git worktree list : 主リポジトリは本ディレクトリ1つのみ。他は /tmp/opencode/* に多数の
+                      監査用 worktree が存在するが、いずれも main とは独立のブランチ。
+
+--------------------------------------------------------------------------------
+3. 開始時点の dirty worktree（重要）
+--------------------------------------------------------------------------------
+監査開始時、local main の worktree に以下の変更が存在した。
+これらの既存変更は保護し、破棄・reset・checkout・stash・上書きは行わなかった。
+
+- M docs/apollo/step4c_appurtenance_haunch/evidence/load.json
+      inputRevision: 2026-08-04T12:24:09.031Z -> 2026-08-09T12:11:43.393Z
+      generatedAt : 2026-08-04T12:24:09.120Z -> 2026-08-09T12:11:43.496Z
+      inputChecksum は 88693ef32568... で不変（中身は同一、再生成タイムスタンプのみ更新）
+- M docs/apollo/step4c_appurtenance_haunch/evidence/quantity.json
+      同上のタイムスタンプ更新
+- M docs/apollo/step4c_appurtenance_haunch/evidence/stl-metadata.json
+      digest: fnv1a32:709b37a2 -> fnv1a32:a677cbba
+- D final_report.txt (2500行の報告書ファイルがローカルで削除済み)
+
+→ これらの変更は監査作業とは無関係の既存作業と判断。内容と所有関係を確認するため
+  Discord へ「ユーザー判断が必要」を通知済み。監査のための commit / PR には含めていない。
+
+- git stash list : 空
+
+--------------------------------------------------------------------------------
+4. runtime 環境
+--------------------------------------------------------------------------------
+- Node.js : v22.23.2
+- npm     : 10.9.8
+- Python  : 3.10.12 (system) / .venv 内に依存インストール済み
+- gh CLI  : 2.4.0 (GitHub 認証: ollejanaitte, https プロトコル)
+- Electron: ^42.3.3 (frontend devDependencies)
+- DISPLAY : :0 (X11) あり。xvfb-run / Xvfb / google-chrome も利用可能
+- Playwright: Chromium 1228 が ~/.cache/ms-playwright にインストール済み
+
+--------------------------------------------------------------------------------
+5. ディレクトリ構成・レイヤ
+--------------------------------------------------------------------------------
+backend/
+  app/        FastAPI エンドポイント・レポート・プロジェクト保存 API (main.py 1334行)
+  engine/     解析エンジン・ソルバ・橋梁 FEM 生成 (element/assembly/eigen/response_spectrum/
+              time_history/grillage/bridge_fem_generator/if3_* 等)
+  rule_engine/ 道路規則エンジン (alignment/vertical/bridge_geometry/geometry3d/rules/...)
+  data/       projects/autosave.json (gitignore対象), bridges/ (空)
+  tests/      pytest
+desktop/
+  electron/   main.ts / preload.ts / gpuMode.ts / dialogIpc.ts / closeGuard.ts /
+              aboutConfig.ts / ipcChannels.ts + テスト
+frontend/
+  src/        React アプリ (api, apollo, bridge, bridgeDefinition, bridgeProject, compare,
+              components, contracts, data, desktop, exports, i18n, if3, input, level0,
+              liner, lobby, platform, results, substructure, timeHistory, viewer, ...)
+  tests/e2e/  Playwright E2E
+  package.json scripts: dev / dev:apollo / build / lint / test / test:e2e /
+                        electron:dev / electron:dev:apollo / electron:compile / app:dev / ...
+schemas/      bridge-definition / bridge / project (67KB) / result / generated-fem の JSON Schema
+examples/     構造解析検証用モデル (bridge-*, cantilever_*, simple_beam_*, portal_frame_* 等)
+scripts/      ビルド・アイコン生成・ソース衛生チェック
+docs/         設計・検証・運用ドキュメント
+
+--------------------------------------------------------------------------------
+6. 正規起動方法（一意確定）
+--------------------------------------------------------------------------------
+Ubuntu/WSL の正規起動:
+    ./start-ubuntu.sh                # 既定: Apollo Phase1-NN + Electron + compat-gpu-blocklist
+    ./start                          # Linux では start-ubuntu.sh を exec する wrapper
+    ./start-ubuntu.sh --web          # Electron を使わず Vite のみ (http://127.0.0.1:5173)
+    ./start-ubuntu.sh --backend-only # FastAPI のみ (http://127.0.0.1:8000)
+
+README / docs/development/runtime-ubuntu.md と start-ubuntu.sh の実装が一致する。
+既定モードは APOLLO_MODE=1 + GPU_MODE=compat-gpu-blocklist で
+「npm run electron:dev:apollo」を実行し、vite(apollo mode) + electron が起動する。
+
+ポート:
+- backend : 127.0.0.1:8000 (FastAPI, title="spacer-clone MVP API", version=0.3.0-preview)
+- vite    : 127.0.0.1:5173 (strictPort, apollo mode)
+- Electron main window: 1280x820 (loads http://127.0.0.1:5173)
+
+環境変数:
+- HOST (default 127.0.0.1), PORT (default 8000), GPU_MODE, PYTHON_BIN
+- VITE_APOLLO_PHASE1_ENABLED=true 等は frontend/.env.apollo に定義 (Apollo phase1 feature flags)
+- SPACER_AUTOMATION=1 で Electron のスプラッシュをスキップ (テスト用)
+
+実測:
+- ./start-ubuntu.sh を起動し、backend OK -> vite ready (199ms) -> Electron 起動を確認。
+- Electron ウィンドウ "SPACER Clone MVP" (1280x820) が表示された。
+- 起動直後の画面は日本語ランディング「簡易構造計算ソフト」
+  (学習編 / 入門編 / 実務編)。
+
+--------------------------------------------------------------------------------
+7. データ保存先（保存候補）
+--------------------------------------------------------------------------------
+- backend/data/projects/        : /api/projects/save 等で使うレガシー project.json 保存先
+                                  (fileName は project.json または *.project.json のみ許可)
+- backend/data/projects/autosave.json : autosave 用 (gitignore対象)
+- backend/data/bridges/         : /api/bridge 保存先 (現状 空)
+- frontend localStorage         : Design Platform の BusinessProject
+                                  (spacer.designPlatform.projects.<businessId> 他)
+- frontend download             : 「保存」は project.json のダウンロード/ネイティブファイル保存
+- examples/                     : サンプルは backend /api/examples から生成（コード内ハードコード）
+
+--------------------------------------------------------------------------------
+8. feature flag / env 参照箇所
+--------------------------------------------------------------------------------
+- frontend/.env.apollo: VITE_APOLLO_PHASE1_ENABLED / VITE_APOLLO_PHASE1_NN_ENABLED /
+                        VITE_APOLLO_PHASE1_NUMERIC_RELEASE_BLOCKED /
+                        VITE_APOLLO_PHASE1_SHOW_PROVISIONAL_STATUS /
+                        VITE_APOLLO_PHASE1_DISABLE_RESULT_PUBLICATION /
+                        VITE_APOLLO_PHASE1_DISABLE_NUMERIC_EXECUTION
+- App.tsx AUTOSAVE_ENABLED = false (定数フラグ。自動保存無効)
+- vite.config.ts の mode による .env.apollo 切替
+- frontend/src/apollo/featureFlag.ts (resolveApolloPhase1FeatureFlags)
+
+--------------------------------------------------------------------------------
+9. build / test / CI 設定
+--------------------------------------------------------------------------------
+- frontend package.json:
+  build: tsc -b && vite build
+  typecheck: tsc -b --pretty false
+  lint: tsc -b + scripts/check_frontend_source_hygiene.mjs + check_frontend_japanese_strings.mjs
+  test: vitest run / test:regression / test:all
+  test:e2e: playwright test
+  electron:compile / electron:dev / electron:dev:apollo / app:dev / app:dev:apollo
+- playwright.config.ts: baseURL http://127.0.0.1:4173, backend+webServer 自動起動,
+  VITE_USE_BRIDGE_DEFINITION_STRUCTURAL_MODEL=true
+- その他 playwright.phase5-*.config.ts あり
+- backend: pytest (backend/tests)
+- CI: .github/workflows を確認済み (後述)
+
+--------------------------------------------------------------------------------
+10. 起動時に確認したエラー（初期状態）
+--------------------------------------------------------------------------------
+- [Gtk-Message] Failed to load module "xapp-gtk3-module"        (Electron, 無害)
+- [ERROR:media/gpu/vaapi/vaapi_wrapper.cc] Installed VAAPI version is too old.
+    min supported: 1.17, installed: 1.14                        (GPU コーデック, 無害)
+- backend-start.err.log は起動情報のみでエラーなし
+
+--------------------------------------------------------------------------------
+11. 既存の zombie プロセス（参考）
+--------------------------------------------------------------------------------
+8/8 以前に起動された vite プロセスが多数残存 (ポート 5211-5225 帯)。
+正規ポート 5173/8000 には影響なし。監査対象外だが要クリーンアップ候補。
+
+--------------------------------------------------------------------------------
+12. 不明点
+--------------------------------------------------------------------------------
+- backend/data/bridges/ が空（サンプル橋梁はコード内生成、永続化は別経路か未使用）
+- frontend/node_modules が /tmp/wt-m2-08/frontend/node_modules への symlink
+  （正規起動自体は成功するが、node_modules の実体が main worktree 外にある状態）
+- Design Platform BusinessProject の真の正本が localStorage のみなのかは STEP 1-06/1-07 で確認
+
+--------------------------------------------------------------------------------
+13. 成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/01_baseline_environment.txt
+証拠:        docs/audit/phase0-step1/evidence/01-electron-first-launch.png (Electron 初回画面)
+判定:        PASS
