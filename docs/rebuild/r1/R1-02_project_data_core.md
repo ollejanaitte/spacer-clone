@@ -86,8 +86,9 @@ frontend/src/next/project/
 --------------------------------------------------------------------------------
 - PR: #816
 - merge先: GitHub main（PR merge）
-- final main SHA: （merge後SHAを記録）
-- rebuild/integrated-system: 同期後のSHAを記録
+- final main SHA: 8ea92f8646cb13167de67d1985af64798179d32e
+- rebuild/integrated-system: 同期後のSHA 8ea92f8646cb13167de67d1985af64798179d32e
+  （fast-forwardで同期、local/origin同一）
 
 --------------------------------------------------------------------------------
 10. 残課題
