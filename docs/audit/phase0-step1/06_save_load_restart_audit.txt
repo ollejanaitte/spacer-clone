@@ -1,0 +1,172 @@
+================================================================================
+Phase 0 / STEP 1-06  Save / Load / Restart 徹底監査【最重要】
+監査日: 2026-08-10
+状態: CONFIRMED（実操作で Save→プロセス終了→再起動→Load→値比較を実施）
+================================================================================
+
+--------------------------------------------------------------------------------
+1. UI として存在する保存機能
+--------------------------------------------------------------------------------
+- New Project:      /pro「新規」、Design Platform「新規業務」
+- Open:             /pro「開く」(ネイティブ/ファイル入力)、Apollo「ファイルを開く」
+- Save:             /pro「保存」、BusinessWorkspace「保存」、Apollo「保存」
+- Save As:          【無し】(ファイル名固定 project.json / ネイティブ保存のみ)
+- Close:            【無し】(「戻る」「ホームに戻る」のみ)
+- Autosave:         【凍結】AUTOSAVE_ENABLED=false (App.tsx:151)
+- Recent projects:  【無し】
+- Dirty indicator:  あり（/pro は「保存済み/未保存の変更あり」、Apollo は fingerprint）
+- save success:     あり（/pro は toast 的表示、Business は「保存済み:{時刻}」）
+- save failure:     あり（エラーコード表示）
+- project path/filename 表示: なし（保存先の明示がない）
+
+--------------------------------------------------------------------------------
+2. 実際の保存先（何が・どこへ・どの形式で・どのコードで）
+--------------------------------------------------------------------------------
+【メインFEMプロジェクト (/pro)】
+- 保存先: ファイル（ブラウザでは download、Electron ではネイティブ保存ダイアログ）
+- 形式: JSON (project.schema.json 準拠のプロジェクトドキュメント)
+- コード: App.tsx:737 saveProject() → desktop/projectFileDialog.ts saveProjectFile()
+- 保存される内容: project 全体（nodes/members/supports/loadCases/liner/apolloPhase1Unit2/…）
+  を serializeProjectForPersistence / serializeApolloPhase1Unit2ForPersistence で直列化。
+- 注意: backend /api/projects/save は UI から呼ばれない。
+  frontend api/client.ts:247 saveProject() は定義済みだが App の saveProject は
+  saveProjectFile (download/native) を使う。つまりバックエンド保存 API は
+  フロントエンドの正規保存経路ではない。
+- backend/data/projects/autosave.json: 133KB の空スケルトンが残存（gitignore 対象）。
+  UI からは書かれない（autosave 凍結）。
+
+【BusinessProject (Design Platform)】
+- 保存先: localStorage
+  - spacer.designPlatform.businessList.v1 （業務一覧）
+  - spacer.designPlatform.projects.<businessId> （マニフェスト）
+- 形式: JSON。manifest (schemaId=spacer.contracts.engineering-project v0.2.0)
+- コード: businessProjectPersistence.ts save() / saveManifest()
+- 内容: ToC のみ（roadRefs/bridgeProjectRefs/analysisRefs/deliverableRefs 等は空配列）。
+  子エンティティ本体は無し。contentChecksum は "0".repeat(64) の偽値。
+- 実測: サンプル業務作成 → 保存 → localStorage に manifest + businessList が書かれる。
+  プロセス再起動（同一ブラウザプロファイル）後も業務一覧・ワークスペースが復元される。
+
+【LINER】
+- 線形データはプロジェクト状態に埋め込まれ（project.liner）、メイン保存 (project.json) に
+  含まれる。専用の LINER プロジェクト保存は localStorage（importer 経路）。
+- importer: localStorage (importerStorage / recoveryManager)
+
+【Apollo】
+- ワークスペース状態は localStorage (APOLLO_WORKSPACE_STORAGE_KEY、workspace.ts:120/168)。
+- 橋梁モデル入力は project.apolloPhase1Unit2 としてプロジェクト状態に埋め込まれ、
+  「保存」はメインの project.json 保存へ委譲。
+
+【IF3 解析結果】
+- フレーム文書と同じディレクトリの results/<uuid>.if3.json にサイドカー保存
+  （backend if3_persistence.py）。/api/analysis/run で自動実行される経路あり。
+
+【ビューア設定 / UIモード】
+- localStorage（displaySize / coordinateTransform / uiModeDefault）
+
+--------------------------------------------------------------------------------
+3. Save 操作の実測
+--------------------------------------------------------------------------------
+- /pro で cantilever_tip_load を読み込み、保存を実行。
+  → project.json (3382B) がダウンロードされた。中身は正しい
+    (project.name=Cantilever Tip Load, nodes=2, loads=1)。
+  → 保存は機能するが「どこに保存されたか」がユーザーに分からない
+    （download 先はブラウザ既定フォルダ）。
+- 補足: Playwright のネイティブ click では保存ボタンがクリック困難だった
+  （JS evaluate では実行できた）。ツールバーと重なる要素の可能性。UI 品質面で注記。
+
+--------------------------------------------------------------------------------
+4. Restart 実測
+--------------------------------------------------------------------------------
+【FEM モデル】
+1. cantilever_tip_load を読み込み
+2. 保存（project.json ダウンロード）
+3. ブラウザプロセスを完全終了
+4. 同一プロファイルで再起動 → /pro を開く
+5. 結果: 「モデル未作成」（空モデル）。Cantilever Tip Load は復元されない。
+   → localStorage にも FEM モデルは書かれていない
+     (localStorage = spacer-clone:viewer:displaySize:v1 のみ)。
+6. 手動でダウンロード済み project.json を「開く」で読み込めば復元可能。
+
+【BusinessProject】
+1. サンプル業務作成 → 保存
+2. プロセス終了 → 再起動（同一プロファイル）
+3. 結果: 業務一覧・ワークスペースが復元される（localStorage 由来）。
+
+【判定】
+- メイン FEM: 保存(ダウンロード) → 再起動 → 手動 Load で復元可。
+  自動復元なし。ダウンロードファイルを紛失するとデータ損失。
+- BusinessProject: localStorage により再起動で復元可（同一プロファイル時）。
+- ブラウザプロファイルが変わる/消えると BusinessProject も消失。
+
+--------------------------------------------------------------------------------
+5. 再起動後に消えるもの
+--------------------------------------------------------------------------------
+- メイン FEM の編集内容（手動 Load しない限り）
+- 解析結果（result/if3Result はメモリのみ。プロジェクト保存に含まれない）
+- active tab / viewer 状態（カメラ等）
+- 入力チェック結果
+- サンプル由来の編集（読み込み直しが必要）
+- （同一プロファイルなら残る）BusinessProject 一覧・マニフェスト、ビューア設定、
+  Apollo ワークスペース、importer プロジェクト
+
+--------------------------------------------------------------------------------
+6. 復元確認対象の一覧と結果
+--------------------------------------------------------------------------------
+| データ | 保存場所 | Restart 復元 |
+|---|---|---|
+| Project metadata | project.json (download/native) | 手動Openのみ |
+| UI入力値 (FEM) | project.json | 手動Openのみ |
+| 道路線形 (LINER) | project.json (project.liner) | 手動Openのみ |
+| 縦断/横断 | project.liner 内 | 手動Openのみ |
+| 地形 | mountain sample 由来 | 手動Openのみ |
+| 橋梁位置 | project 内 | 手動Openのみ |
+| 下部工 | project 内? | 要検証(下部工の保存実体を未確認) |
+| 上部工 | project.apolloPhase1Unit2 | 手動Openのみ |
+| FEM モデル | project.json | 手動Openのみ |
+| 荷重 | project.json | 手動Openのみ |
+| 解析条件 | project.json | 手動Openのみ |
+| 解析結果 | メモリ / IF3サイドカー | メモリは消える。IF3はフレーム文書と同一ディレクトリ |
+| 3D/CIM | 生成物（保存されない） | 消える |
+| validation state | メモリ | 消える |
+| active tab / viewer 状態 | メモリ | 消える |
+| sample 由来データ | サンプル再読込 | 手動再読込のみ |
+
+--------------------------------------------------------------------------------
+7. 判定
+--------------------------------------------------------------------------------
+PROJECT_SAVE_VERDICT:
+  PARTIAL（保存は機能するが、ファイルダウンロード/ネイティブ保存のみで、
+  保存先・バージョン管理・復元導線がない。backend 保存 API は UI 未使用。
+  Save As なし。autosave 凍結）
+
+PROJECT_LOAD_VERDICT:
+  COMPLETE（手動 Open で JSON を読み込め、値が正しく復元される。FEM モデル実測済み）
+
+RESTART_RESTORE_VERDICT:
+  FAIL（メイン FEM モデルは再起動で自動復元されない。ユーザーが手動 Open する必要がある。
+  BusinessProject のみ localStorage で復元されるが、子データなし）
+
+DATA_LOSS_RISK:
+  HIGH（メイン FEM はダウンロードファイルに依存。ダウンロード紛失・別PC移行でデータ消失。
+  autosave 凍結のためクラッシュ時の復旧手段なし。BusinessProject は localStorage 依存で、
+  プロファイル消去やブラウザデータ削除で消失。バックエンド保存 API は未使用。）
+
+SOURCE_OF_TRUTH_CONFIDENCE:
+  LOW（正本が「Reactメモリ」「ダウンロードファイル」「localStorage」「backend/data」
+  に分散し、UI から見える正本が定まっていない。STEP 1-07 で詳細追跡）
+
+--------------------------------------------------------------------------------
+8. 重大リスク（即 Discord 通知対象）
+--------------------------------------------------------------------------------
+- S0候補: メイン FEM モデルは保存しても再起動で自動復元されない。autosave は凍結。
+  クラッシュ・誤操作で作業が失われる可能性が高い。
+- S1候補: メイン FEM の「正本」がファイルダウンロードのみで、backend 保存 API
+  (/api/projects/save) が UI から使われていない（無駄な二重実装 + 正本不明）。
+- BusinessProject は「マニフェストのみ + checksum 偽値」。実業務データはどこにも
+  永続化されない。
+
+--------------------------------------------------------------------------------
+9. 成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/06_save_load_restart_audit.txt
+判定: BLOCKED（保存機能は存在するが、自動復元なし・正本分散・高データ損失リスク）
