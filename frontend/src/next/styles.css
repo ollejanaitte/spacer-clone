@@ -1,0 +1,172 @@
+.next-app {
+  min-height: 100vh;
+  background: #f6f8fa;
+  color: #1f2937;
+  font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", Arial, sans-serif;
+}
+
+.next-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #1f3b5a;
+  color: #fff;
+}
+
+.next-brand {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.next-brand-sub {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #c7d6e8;
+}
+
+.next-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.next-nav button {
+  padding: 6px 12px;
+  border: 1px solid #54749b;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.next-nav button:hover {
+  background: #2d4c73;
+}
+
+.next-main {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.next-page-title {
+  font-size: 22px;
+  margin: 0 0 16px;
+}
+
+.next-actions {
+  margin-bottom: 16px;
+}
+
+.next-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.next-actions button:hover {
+  background: #1d4ed8;
+}
+
+.next-empty {
+  padding: 32px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+}
+
+.next-hint {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.next-error {
+  color: #b91c1c;
+}
+
+.next-project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.next-project-card {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.next-project-name {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.next-project-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.next-project-id {
+  font-family: monospace;
+}
+
+.next-link-button {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.next-section-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.next-section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.next-section-label {
+  font-weight: 600;
+}
+
+.next-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.next-badge-implemented {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.next-badge-todo {
+  background: #fef3c7;
+  color: #92400e;
+}

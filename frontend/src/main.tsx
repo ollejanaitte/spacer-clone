@@ -4,6 +4,8 @@ import { App } from "./App";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ja } from "./i18n/ja";
 import { LobbyApp } from "./lobby/routes";
+import { NextApp } from "./next/NextApp";
+import { isNextAppPath } from "./next/routes";
 import "./styles/tokens.css";
 import "./styles.css";
 
@@ -27,6 +29,9 @@ function Root() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
+  if (isNextAppPath(currentLocation)) {
+    return <NextApp />;
+  }
   if (currentLocation === "/pro" || currentLocation.startsWith("/pro/")) {
     return <App />;
   }
