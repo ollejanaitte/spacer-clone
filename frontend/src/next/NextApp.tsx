@@ -13,7 +13,7 @@ import {
 } from "./routes";
 import { HomePage } from "./pages/HomePage";
 import { BusinessListPage } from "./pages/BusinessListPage";
-import { ProjectHomePage } from "./pages/ProjectHomePage";
+import { ProjectTopPage } from "./pages/ProjectTopPage";
 import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
 import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
@@ -80,7 +80,7 @@ export function NextApp() {
       body = <EditProjectPage projectId={route.projectId} />;
       break;
     case "projectHome":
-      body = <ProjectHomePage projectId={route.projectId} />;
+      body = <ProjectTopPage projectId={route.projectId} />;
       break;
     case "load":
       body = <LoadBusinessPage />;

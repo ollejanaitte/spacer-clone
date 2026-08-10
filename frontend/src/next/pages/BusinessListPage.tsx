@@ -2,11 +2,14 @@ import { useMemo, useState } from "react";
 import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
+import { DeleteConfirm, useDeleteConfirm } from "../components/DeleteConfirm";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 
 export function BusinessListPage() {
   const [projects, setProjects] = useState<Project[]>(() => [...getProjectManager().listProjects()]);
   const [query, setQuery] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const deleteConfirm = useDeleteConfirm();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -23,16 +26,23 @@ export function BusinessListPage() {
     setProjects([...getProjectManager().listProjects()]);
   }
 
-  function handleDuplicate(projectId: string) {
-    const result = getProjectManager().duplicateProject(projectId);
-    if (!result.ok) return;
+  function handleDuplicate(project: Project) {
+    const result = getProjectManager().duplicateProject(project.projectId);
+    if (!result.ok) {
+      setMessage("複製に失敗しました。");
+      return;
+    }
+    setMessage(`複製しました: ${result.project.name}`);
     refresh();
   }
 
-  function handleDelete(projectId: string) {
-    const confirmed = window.confirm("この業務を完全削除します。よろしいですか？");
-    if (!confirmed) return;
-    getProjectManager().deleteProject(projectId);
+  function handleConfirmDelete() {
+    const pendingId = projects.find((p) => p.name === deleteConfirm.pendingName)?.projectId;
+    if (pendingId !== undefined) {
+      getProjectManager().deleteProject(pendingId);
+      setMessage("削除しました。");
+    }
+    deleteConfirm.cancel();
     refresh();
   }
 
@@ -67,6 +77,15 @@ export function BusinessListPage() {
         />
       </div>
 
+      {message !== null && (
+        <div className="next-message" data-testid="business-message">
+          {message}
+          <button type="button" className="next-message-close" onClick={() => setMessage(null)}>
+            ×
+          </button>
+        </div>
+      )}
+
       {projects.length === 0 ? (
         <div className="next-empty" data-testid="business-list-empty">
           <p>業務がまだありません。</p>
@@ -91,36 +110,41 @@ export function BusinessListPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((project, index) => {
-                const stage = getBusinessNumber(project) === "" ? designStageDisplayName(project) : designStageDisplayName(project);
-                return (
-                  <tr key={project.projectId} data-testid="business-row">
-                    <td>{index + 1}</td>
-                    <td className="next-table-id" data-testid="business-internal-id">{project.projectId}</td>
-                    <td data-testid="business-number">{getBusinessNumber(project)}</td>
-                    <td data-testid="business-name">{project.name}</td>
-                    <td data-testid="business-stage">{stage}</td>
-                    <td data-testid="business-updated">{project.updatedAt}</td>
-                    <td className="next-table-actions">
-                      <button type="button" data-testid="business-open" onClick={() => navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`)}>
-                        業務を開く
-                      </button>
-                      <button type="button" data-testid="business-edit" onClick={() => navigateTo(`/app/business/${project.projectId}/edit`)}>
-                        業務編集
-                      </button>
-                      <button type="button" data-testid="business-duplicate" onClick={() => handleDuplicate(project.projectId)}>
-                        複製
-                      </button>
-                      <button type="button" className="next-danger" data-testid="business-delete" onClick={() => handleDelete(project.projectId)}>
-                        削除
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {filtered.map((project, index) => (
+                <tr key={project.projectId} data-testid="business-row">
+                  <td>{index + 1}</td>
+                  <td className="next-table-id" data-testid="business-internal-id">{project.projectId}</td>
+                  <td data-testid="business-number">{getBusinessNumber(project)}</td>
+                  <td data-testid="business-name">{project.name}</td>
+                  <td data-testid="business-stage">{designStageDisplayName(project)}</td>
+                  <td data-testid="business-updated">{project.updatedAt}</td>
+                  <td className="next-table-actions">
+                    <button type="button" data-testid="business-open" onClick={() => navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`)}>
+                      業務を開く
+                    </button>
+                    <button type="button" data-testid="business-edit" onClick={() => navigateTo(`/app/business/${project.projectId}/edit`)}>
+                      業務編集
+                    </button>
+                    <button type="button" data-testid="business-duplicate" onClick={() => handleDuplicate(project)}>
+                      複製
+                    </button>
+                    <button type="button" className="next-danger" data-testid="business-delete" onClick={() => deleteConfirm.requestDelete(project.name)}>
+                      削除
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {deleteConfirm.pendingName !== null && (
+        <DeleteConfirm
+          projectName={deleteConfirm.pendingName}
+          onConfirm={handleConfirmDelete}
+          onCancel={deleteConfirm.cancel}
+        />
       )}
     </section>
   );
