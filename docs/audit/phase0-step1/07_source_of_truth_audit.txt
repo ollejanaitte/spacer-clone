@@ -1,0 +1,120 @@
+================================================================================
+Phase 0 / STEP 1-07  Source of Truth / データ流監査
+監査日: 2026-08-10
+状態: CONFIRMED（コード実測 + サブエージェント調査 + 実機操作）
+================================================================================
+
+--------------------------------------------------------------------------------
+1. 全体像
+--------------------------------------------------------------------------------
+アプリの状態は App.tsx の単一 useState<ProjectModel> (App.tsx:170) が中心。
+グローバルストア（Zustand/Redux/Jotai）は実質なし。
+各ツールは project を prop で受け、commitProject (App.tsx:266) で更新する。
+
+ただし「LINER線形ドメイン」「FEM骨組モデル」「下部工配置」「Apollo 3Dソリッド」
+の4ドメインが「派生コピー」でつながっており、再同期は手動/再計算ベース。
+→ 多数の多重管理・同期破綻リスクがある。
+
+--------------------------------------------------------------------------------
+2. Source of Truth 一覧
+--------------------------------------------------------------------------------
+| データ | 正本 | 保持場所 | 保存先 |
+|---|---|---|---|
+| Project metadata | React local state project.project | App.tsx:170 | project.json |
+| Coordinate system | 暗黙（フィールドなし） | 各モジュール定数（5箇所以上重複） | なし |
+| Alignment | project.liner.domainDraft.alignments | project.liner | project.json |
+| station/測点 | domainDraft.stationDefinition | project.liner | project.json |
+| 縦断 | domainDraft.verticalAlignment | project.liner | project.json |
+| 横断勾配 | crossSlopeIntervals | project.liner | project.json |
+| 地形 | ハードコード heightfield | mountain-viaduct-500/terrain.ts | 非永続化 |
+| X/Y/Z (FEM) | project.nodes[] | App.tsx | project.json |
+| 橋梁線形 | LINER draft の派生ビュー | 毎 render 再計算 (App.tsx:1373) | 非永続化 |
+| 下部工支点位置 | domainDraft.piers/spans + 下部工 Support[] | ローカル state (SubstructurePlanningHost:151) | substructure-project.json（別ファイル） |
+| girder line | LINER offsetLines + Apollo GeometrySnapshot + apolloBsdd | project.liner / project.apolloBsdd | project.json |
+| 断面 | LINER crossSections / project.sections | project | project.json |
+| FEM node/member | project.nodes/members | App.tsx | project.json（apolloPhase1Unit2 に別コピー有） |
+| 材料 | project.materials | project | project.json |
+| 荷重 | project.loadCases/nodalLoads/memberLoads | project | project.json |
+| 解析結果 | result state（最新のみ・非永続化） | App.tsx:180 | timeHistory のみ project.analysisResults |
+| CIM geometry (CBDM) | 派生値（buildCommonBridgeModel） | 毎 render 一時変数 | 非永続化 |
+| Three.js geometry | 描画時派生 | viewer ローカル | 非永続化 |
+| Viewer state | Viewer3D 内部 state | Viewer3D.tsx | axisSwap のみ localStorage |
+
+--------------------------------------------------------------------------------
+3. データフロー図
+--------------------------------------------------------------------------------
+project.liner.domainDraft（正本・道路線形）
+  ├─ linerDraftFromProject → LinerDraft（毎 render 派生）
+  │    ├─ マッピングレビュー → headless frame → project.nodes/members（スナップショット）
+  │    ├─ 下部工 handoff → Support[]（ローカル state → substructure-project.json）
+  │    ├─ BridgeProject チェーン（buildBridgeProjectAlignment/Geometry/
+  │    │   CommonBridgeModel/Manifest/BoundSubstructure：毎 render・非永続化）
+  │    └─ Main3D 統合表示（draft 直参照・サンプルビューア）
+project ──buildBackendProject──▶ POST /api/analysis/run ──▶ result + if3Result
+  ──▶ setResult/setIf3Result ──▶ Viewer3D（if3Result 優先表示）
+BridgeWizard ──/api/fem/generate──▶ BridgeFemResponse ──▶ commitProject（全体置換）
+project.apolloPhase1Unit2 ──buildApolloVisualizationModel──▶ ApolloVisualizationModel ──▶ Viewer3D(apollo)
+
+--------------------------------------------------------------------------------
+4. 多重管理・同期破綻リスク（具体箇所）
+--------------------------------------------------------------------------------
+R1【最重要】LINER 編集後の project.nodes/members の陳腐化
+  - LINER draft → project.nodes は「マッピング確認の commit」時のみ再生成。
+  - 以後 LINER を編集しても project.nodes/members は自動再同期されない
+    (commitLinerDraft: App.tsx:285-311 は project.nodes を触らない)。
+  - FEM 解析・メイン Viewer3D は古い座標のまま → 乖離。
+
+R2 下部工ルートの毎 render 再計算 + 編集損失
+  - App.tsx:1363-1409 で CBDM チェーンを毎 render 実行、結果は非永続化。
+  - SubstructurePlanningHost は initialSupports を useMemo で再導出 → 再入時に
+    ユーザー編集（skew 除く）が失われる可能性。
+
+R3 project.supports（FEM 支点）と下部工 Support[]（配置）が別物
+  - 下部工は substructure-project.json に別ファイル保存。
+  - 「下部工配置を変えたのに解析モデルの支点が変わらない」が起こり得る。
+
+R4 Apollo draft と project.nodes/members の二重コピー
+  - withApolloPhase1Unit2Draft (unit2Draft.ts:412) は draft 内のみ更新。
+  - Apollo 表示は draft 優先、解析は project.nodes → 表示と解析で座標が異なり得る。
+  - draft.metadata が project.project.id/name を上書きする箇所あり (unit2Draft.ts:420-427)。
+
+R5 解析結果の多重保持
+  - result / if3Result / rightResult / project.analysisResults.timeHistory の4系統。
+  - commitProject は timeHistory をクリアしない → モデル変更後も古い結果が残る。
+
+R6 座標系の5箇所重複
+  - coordinateTransform.ts (display swap) / alignmentAdapter.ts:49 /
+    substructure/model.ts:6 / apollo builder.ts:27 / cbdmDocument.ts:394
+    （x-east-y-north-z-up ← LINER と異なる規約）
+
+R7 BridgeProject/CBDM/manifest が非永続化
+  - 毎 render 再計算。保存・ロードされない。checksum の正しさはその render 内のみ。
+
+R8 上部工 manifest の入力が apolloPhase1Unit2 ではなく geometry snapshot 由来
+
+R9 LINER 生成モデルの材料・断面が fixture（placeholder 値）
+
+R10 resetModelContents が LINER メタデータまで全消し (modelReset.ts)
+
+R11 BridgeWizard handleBridgeGenerated がプロジェクト全体を置換（LINER/Apollo/下部工消失）
+
+R12 多重保存・別ファイルの島
+  - 下部工(substructure-project.json) / BridgeWizard(*.bridge.json, /api/bridge) /
+    level0 / BusinessProject(localStorage) が相互参照なしで独立保存。
+
+--------------------------------------------------------------------------------
+5. 結論
+--------------------------------------------------------------------------------
+- 単一 React state という見た目は単純だが、実体は「派生コピーの連鎖」で、
+  Source of Truth が曖昧・分散。
+- 最も重大なのは R1（LINER→FEM の同期破綻）と R3（下部工↔FEM支点の分離）、
+  R7（CBDM 非永続化）。
+- 座標系（R6）が明示されず、isLinerDerived で Viewer の軸が自動反転するため
+  見た目が跳ぶ可能性。
+- SOURCE_OF_TRUTH_CONFIDENCE: LOW
+
+--------------------------------------------------------------------------------
+6. 成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/07_source_of_truth_audit.txt
+判定: FAIL（Source of Truth が分散・曖昧、同期破綻リスク多数）
