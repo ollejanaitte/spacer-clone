@@ -2,19 +2,30 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   NEXT_BUSINESS_LIST_PATH,
+  NEXT_HOME_PATH,
   NEXT_PROJECT_HOME_PATH,
-  LEGACY_SYSTEM_PATH,
+  NEXT_QUICK_PATH,
   navigateTo,
 } from "./routes";
+import { HomePage } from "./pages/HomePage";
 import { BusinessListPage } from "./pages/BusinessListPage";
 import { ProjectHomePage } from "./pages/ProjectHomePage";
+import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
 import "./styles.css";
 
 type NextRoute =
+  | { kind: "home" }
   | { kind: "businessList" }
-  | { kind: "projectHome"; projectId: string };
+  | { kind: "projectHome"; projectId: string }
+  | { kind: "quick" };
 
 function resolveRoute(pathname: string): NextRoute {
+  if (pathname === NEXT_HOME_PATH) {
+    return { kind: "home" };
+  }
+  if (pathname === NEXT_QUICK_PATH || pathname.startsWith(`${NEXT_QUICK_PATH}/`)) {
+    return { kind: "quick" };
+  }
   if (pathname.startsWith(`${NEXT_PROJECT_HOME_PATH}/`)) {
     return { kind: "projectHome", projectId: pathname.slice(NEXT_PROJECT_HOME_PATH.length + 1) };
   }
@@ -33,10 +44,18 @@ export function NextApp() {
   const route = resolveRoute(pathname);
 
   let body: ReactNode;
-  if (route.kind === "projectHome") {
-    body = <ProjectHomePage projectId={route.projectId} />;
-  } else {
-    body = <BusinessListPage />;
+  switch (route.kind) {
+    case "home":
+      body = <HomePage />;
+      break;
+    case "quick":
+      body = <QuickAnalysisPage />;
+      break;
+    case "projectHome":
+      body = <ProjectHomePage projectId={route.projectId} />;
+      break;
+    default:
+      body = <BusinessListPage />;
   }
 
   return (
@@ -48,18 +67,17 @@ export function NextApp() {
         <nav className="next-nav">
           <button
             type="button"
+            data-testid="nav-home"
+            onClick={() => navigateTo(NEXT_HOME_PATH)}
+          >
+            ホーム
+          </button>
+          <button
+            type="button"
             data-testid="nav-business-list"
             onClick={() => navigateTo(NEXT_BUSINESS_LIST_PATH)}
           >
             業務一覧
-          </button>
-          <button
-            type="button"
-            data-testid="nav-legacy"
-            title="旧システム（比較・確認用）"
-            onClick={() => navigateTo(LEGACY_SYSTEM_PATH)}
-          >
-            旧システムへ
           </button>
         </nav>
       </header>
