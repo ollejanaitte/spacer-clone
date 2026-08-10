@@ -3,21 +3,31 @@ import type { ReactNode } from "react";
 import {
   NEXT_BUSINESS_LIST_PATH,
   NEXT_HOME_PATH,
+  NEXT_NEW_PROJECT_PATH,
   NEXT_PROJECT_HOME_PATH,
   NEXT_QUICK_PATH,
+  isNewProjectPath,
+  isEditProjectPath,
+  parseEditProjectId,
   navigateTo,
 } from "./routes";
 import { HomePage } from "./pages/HomePage";
 import { BusinessListPage } from "./pages/BusinessListPage";
 import { ProjectHomePage } from "./pages/ProjectHomePage";
 import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
+import { NewProjectPage } from "./pages/NewProjectPage";
+import { EditProjectPage } from "./pages/EditProjectPage";
+import { LoadBusinessPage } from "./pages/LoadBusinessPage";
 import "./styles.css";
 
 type NextRoute =
   | { kind: "home" }
   | { kind: "businessList" }
+  | { kind: "newProject" }
+  | { kind: "editProject"; projectId: string }
   | { kind: "projectHome"; projectId: string }
-  | { kind: "quick" };
+  | { kind: "quick" }
+  | { kind: "load" };
 
 function resolveRoute(pathname: string): NextRoute {
   if (pathname === NEXT_HOME_PATH) {
@@ -25,6 +35,18 @@ function resolveRoute(pathname: string): NextRoute {
   }
   if (pathname === NEXT_QUICK_PATH || pathname.startsWith(`${NEXT_QUICK_PATH}/`)) {
     return { kind: "quick" };
+  }
+  if (isNewProjectPath(pathname)) {
+    return { kind: "newProject" };
+  }
+  if (pathname === "/app/business/load") {
+    return { kind: "load" };
+  }
+  if (isEditProjectPath(pathname)) {
+    const projectId = parseEditProjectId(pathname);
+    if (projectId !== undefined) {
+      return { kind: "editProject", projectId };
+    }
   }
   if (pathname.startsWith(`${NEXT_PROJECT_HOME_PATH}/`)) {
     return { kind: "projectHome", projectId: pathname.slice(NEXT_PROJECT_HOME_PATH.length + 1) };
@@ -51,8 +73,17 @@ export function NextApp() {
     case "quick":
       body = <QuickAnalysisPage />;
       break;
+    case "newProject":
+      body = <NewProjectPage />;
+      break;
+    case "editProject":
+      body = <EditProjectPage projectId={route.projectId} />;
+      break;
     case "projectHome":
       body = <ProjectHomePage projectId={route.projectId} />;
+      break;
+    case "load":
+      body = <LoadBusinessPage />;
       break;
     default:
       body = <BusinessListPage />;

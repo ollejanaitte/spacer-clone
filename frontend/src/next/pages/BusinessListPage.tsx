@@ -1,19 +1,40 @@
-import { useEffect, useState } from "react";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
-import type { ProjectSummary } from "../types";
-
-type LoadState = "loading" | "ready" | "error";
+import { useMemo, useState } from "react";
+import type { Project } from "../project/schema";
+import { getProjectManager } from "../project/projectManagerInstance";
+import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
+import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 
 export function BusinessListPage() {
-  const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [projects, setProjects] = useState<Project[]>(() => [...getProjectManager().listProjects()]);
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    // R1-01: 業務一覧の実データは R1-04 で Project Repository へ接続する。
-    // この段階では Repository が空の状態を正しく表示できる骨格のみ。
-    setLoadState("ready");
-    setProjects([]);
-  }, []);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length === 0) return projects;
+    return projects.filter((p) => {
+      const name = p.name.toLowerCase();
+      const number = getBusinessNumber(p).toLowerCase();
+      const stage = designStageDisplayName(p).toLowerCase();
+      return name.includes(q) || number.includes(q) || stage.includes(q) || p.projectId.includes(q);
+    });
+  }, [projects, query]);
+
+  function refresh() {
+    setProjects([...getProjectManager().listProjects()]);
+  }
+
+  function handleDuplicate(projectId: string) {
+    const result = getProjectManager().duplicateProject(projectId);
+    if (!result.ok) return;
+    refresh();
+  }
+
+  function handleDelete(projectId: string) {
+    const confirmed = window.confirm("この業務を完全削除します。よろしいですか？");
+    if (!confirmed) return;
+    getProjectManager().deleteProject(projectId);
+    refresh();
+  }
 
   return (
     <section className="next-page" data-testid="business-list-page">
@@ -22,37 +43,84 @@ export function BusinessListPage() {
         <button
           type="button"
           data-testid="new-project-button"
-          onClick={() => navigateTo(NEXT_BUSINESS_LIST_PATH)}
+          onClick={() => navigateTo("/app/business/new")}
         >
-          ＋ 新しい業務
+          ＋ 新規作成
+        </button>
+        <button
+          type="button"
+          className="next-action-secondary"
+          data-testid="load-business-button"
+          onClick={() => navigateTo("/app/business/load")}
+        >
+          業務データ読込
         </button>
       </div>
 
-      {loadState === "loading" && <p className="next-hint">読み込み中…</p>}
-      {loadState === "error" && (
-        <p className="next-error" role="alert" data-testid="business-list-error">
-          業務一覧を読み込めませんでした。
-        </p>
-      )}
-      {loadState === "ready" && projects.length === 0 && (
+      <div className="next-search">
+        <input
+          type="search"
+          placeholder="業務検索（業務名・件番・設計段階）"
+          data-testid="business-search-input"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      {projects.length === 0 ? (
         <div className="next-empty" data-testid="business-list-empty">
           <p>業務がまだありません。</p>
-          <p className="next-hint">「新しい業務」から最初の業務を作成してください。</p>
+          <p className="next-hint">「＋ 新規作成」から最初の業務を作成してください。</p>
         </div>
-      )}
-      {loadState === "ready" && projects.length > 0 && (
-        <ul className="next-project-list" data-testid="business-list">
-          {projects.map((project) => (
-            <li key={project.projectId} className="next-project-card">
-              <div className="next-project-name">{project.name}</div>
-              <div className="next-project-meta">
-                <span>更新: {project.updatedAt}</span>
-                <span>schema: {project.schemaVersion}</span>
-                <span className="next-project-id">{project.projectId}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+      ) : filtered.length === 0 ? (
+        <div className="next-empty" data-testid="business-search-empty">
+          <p>検索条件に一致する業務がありません。</p>
+        </div>
+      ) : (
+        <div className="next-table-wrap">
+          <table className="next-table" data-testid="business-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>システム内部Project ID</th>
+                <th>業務件番</th>
+                <th>業務名</th>
+                <th>設計段階</th>
+                <th>更新日時</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((project, index) => {
+                const stage = getBusinessNumber(project) === "" ? designStageDisplayName(project) : designStageDisplayName(project);
+                return (
+                  <tr key={project.projectId} data-testid="business-row">
+                    <td>{index + 1}</td>
+                    <td className="next-table-id" data-testid="business-internal-id">{project.projectId}</td>
+                    <td data-testid="business-number">{getBusinessNumber(project)}</td>
+                    <td data-testid="business-name">{project.name}</td>
+                    <td data-testid="business-stage">{stage}</td>
+                    <td data-testid="business-updated">{project.updatedAt}</td>
+                    <td className="next-table-actions">
+                      <button type="button" data-testid="business-open" onClick={() => navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`)}>
+                        業務を開く
+                      </button>
+                      <button type="button" data-testid="business-edit" onClick={() => navigateTo(`/app/business/${project.projectId}/edit`)}>
+                        業務編集
+                      </button>
+                      <button type="button" data-testid="business-duplicate" onClick={() => handleDuplicate(project.projectId)}>
+                        複製
+                      </button>
+                      <button type="button" className="next-danger" data-testid="business-delete" onClick={() => handleDelete(project.projectId)}>
+                        削除
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );

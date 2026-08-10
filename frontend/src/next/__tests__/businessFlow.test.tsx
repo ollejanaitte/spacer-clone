@@ -1,0 +1,170 @@
+// @vitest-environment jsdom
+import { act, type ReactNode } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { BusinessListPage } from "../pages/BusinessListPage";
+import { NewProjectPage } from "../pages/NewProjectPage";
+import { EditProjectPage } from "../pages/EditProjectPage";
+import { BusinessForm, type BusinessFormValues } from "../components/BusinessForm";
+import { getProjectManager, resetProjectManagerForTest } from "../project/projectManagerInstance";
+
+function render(node: ReactNode): Root {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  act(() => {
+    root.render(node);
+  });
+  return root;
+}
+
+function cleanup(root: Root) {
+  act(() => {
+    root.unmount();
+  });
+}
+
+function changeValue(testId: string, value: string) {
+  const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set;
+  act(() => {
+    setter!.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
+function changeSelect(testId: string, value: string) {
+  const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLSelectElement;
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, "value")!.set;
+  act(() => {
+    setter!.call(el, value);
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+beforeEach(() => {
+  resetProjectManagerForTest();
+});
+
+afterEach(() => {
+  document.body.innerHTML = "";
+  window.history.pushState({}, "", "/app");
+  resetProjectManagerForTest();
+});
+
+describe("BusinessListPage", () => {
+  it("空状態を表示し、新規作成・読込ボタンを備える", () => {
+    const root = render(<BusinessListPage />);
+    expect(document.querySelector('[data-testid="business-list-empty"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="new-project-button"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="load-business-button"]')).toBeTruthy();
+    cleanup(root);
+  });
+
+  it("作成済みProjectを行に表示し、内部IDと業務件番を別管理する", () => {
+    const manager = getProjectManager();
+    manager.createProject({
+      name: "道路詳細設計業務",
+      businessNumber: "B-2026-001",
+      designStage: "road-detailed",
+    });
+    const root = render(<BusinessListPage />);
+    expect(document.querySelector('[data-testid="business-table"]')).toBeTruthy();
+    const rows = document.querySelectorAll('[data-testid="business-row"]');
+    expect(rows.length).toBe(1);
+    const name = rows[0].querySelector('[data-testid="business-name"]')?.textContent;
+    const number = rows[0].querySelector('[data-testid="business-number"]')?.textContent;
+    const stage = rows[0].querySelector('[data-testid="business-stage"]')?.textContent;
+    const id = rows[0].querySelector('[data-testid="business-internal-id"]')?.textContent;
+    expect(name).toBe("道路詳細設計業務");
+    expect(number).toBe("B-2026-001");
+    expect(stage).toBe("道路詳細設計");
+    expect(id).toBeTruthy();
+    expect(id).not.toBe("B-2026-001");
+    cleanup(root);
+  });
+
+  it("業務検索で絞り込む", () => {
+    const manager = getProjectManager();
+    manager.createProject({ name: "橋梁予備設計業務", businessNumber: "B-001", designStage: "bridge-preliminary" });
+    manager.createProject({ name: "道路詳細設計業務", businessNumber: "B-002", designStage: "road-detailed" });
+    const root = render(<BusinessListPage />);
+    changeValue("business-search-input", "道路");
+    expect(document.querySelectorAll('[data-testid="business-row"]').length).toBe(1);
+    expect(document.querySelector('[data-testid="business-name"]')?.textContent).toContain("道路詳細");
+    cleanup(root);
+  });
+});
+
+describe("BusinessForm → NewProjectPage", () => {
+  it("新規作成フォームで作成すると一覧に反映される", () => {
+    let submitted: BusinessFormValues | undefined;
+    const root = render(
+      <BusinessForm
+        initial={{ businessNumber: "", name: "", designStage: "road-preliminary", designStageCustomLabel: "" }}
+        submitLabel="作成"
+        onSubmit={(v) => {
+          submitted = v;
+        }}
+        onCancel={() => {}}
+      />,
+    );
+    changeValue("form-business-number", "B-2026-010");
+    changeValue("form-name", "耐震照査業務");
+    changeSelect("form-design-stage", "other");
+    changeValue("form-design-stage-custom", "耐震照査");
+    act(() => {
+      (document.querySelector('[data-testid="form-submit"]') as HTMLButtonElement).click();
+    });
+    expect(submitted).toEqual({
+      businessNumber: "B-2026-010",
+      name: "耐震照査業務",
+      designStage: "other",
+      designStageCustomLabel: "耐震照査",
+    });
+    cleanup(root);
+  });
+
+  it("NewProjectPageはProjectManager経由で作成する", () => {
+    const root = render(<NewProjectPage />);
+    changeValue("form-business-number", "B-777");
+    changeValue("form-name", "作成テスト業務");
+    act(() => {
+      (document.querySelector('[data-testid="form-submit"]') as HTMLButtonElement).click();
+    });
+    const projects = getProjectManager().listProjects();
+    expect(projects.length).toBe(1);
+    expect(projects[0].name).toBe("作成テスト業務");
+    cleanup(root);
+  });
+});
+
+describe("EditProjectPage", () => {
+  it("編集フォームに既存値を表示し、保存で更新される", () => {
+    const manager = getProjectManager();
+    const created = manager.createProject({
+      name: "編集前業務",
+      businessNumber: "B-100",
+      designStage: "bridge-preliminary",
+    });
+    if (!created.ok) throw new Error("create failed");
+    const root = render(<EditProjectPage projectId={created.project.projectId} />);
+    const nameInput = document.querySelector('[data-testid="form-name"]') as HTMLInputElement;
+    const numberInput = document.querySelector('[data-testid="form-business-number"]') as HTMLInputElement;
+    expect(nameInput.value).toBe("編集前業務");
+    expect(numberInput.value).toBe("B-100");
+    changeValue("form-name", "編集後業務");
+    act(() => {
+      (document.querySelector('[data-testid="form-submit"]') as HTMLButtonElement).click();
+    });
+    const updated = manager.getProject(created.project.projectId);
+    expect(updated?.name).toBe("編集後業務");
+    cleanup(root);
+  });
+
+  it("存在しないProjectではnot-foundを表示する", () => {
+    const root = render(<EditProjectPage projectId="missing-project" />);
+    expect(document.querySelector('[data-testid="edit-not-found"]')).toBeTruthy();
+    cleanup(root);
+  });
+});
