@@ -15,7 +15,7 @@ import {
   editProjectPath,
   parseEditProjectId,
 } from "../routes";
-import { resetProjectManagerForTest } from "../project/projectManagerInstance";
+import { resetProjectManagerForTest, getProjectManager } from "../project/projectManagerInstance";
 
 function render(node: ReactNode): Root {
   const container = document.createElement("div");
@@ -94,11 +94,19 @@ describe("NextApp Shell", () => {
     cleanup(root);
   });
 
-  it("Project Home で未実装セクションを明示する", () => {
-    window.history.pushState({}, "", `${NEXT_PROJECT_HOME_PATH}/proj-001`);
+  it("Projectトップで業務情報と未実装セクションを明示する", () => {
+    const manager = getProjectManager();
+    const created = manager.createProject({
+      name: "トップ表示業務",
+      businessNumber: "B-700",
+      designStage: "road-detailed",
+    });
+    if (!created.ok) throw new Error("create failed");
+    window.history.pushState({}, "", `${NEXT_PROJECT_HOME_PATH}/${created.project.projectId}`);
     const root = render(<NextApp />);
-    expect(document.querySelector('[data-testid="project-home-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="project-home-id"]')?.textContent).toContain("proj-001");
+    expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="project-top-not-found"]')).toBeNull();
+    expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("トップ表示業務");
     expect(document.querySelector('[data-testid="section-road-todo"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="section-analysis-todo"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="section-cim-todo"]')).toBeTruthy();

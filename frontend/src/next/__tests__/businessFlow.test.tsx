@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { BusinessListPage } from "../pages/BusinessListPage";
 import { NewProjectPage } from "../pages/NewProjectPage";
 import { EditProjectPage } from "../pages/EditProjectPage";
+import { ProjectTopPage } from "../pages/ProjectTopPage";
 import { BusinessForm, type BusinessFormValues } from "../components/BusinessForm";
 import { getProjectManager, resetProjectManagerForTest } from "../project/projectManagerInstance";
 
@@ -165,6 +166,86 @@ describe("EditProjectPage", () => {
   it("存在しないProjectではnot-foundを表示する", () => {
     const root = render(<EditProjectPage projectId="missing-project" />);
     expect(document.querySelector('[data-testid="edit-not-found"]')).toBeTruthy();
+    cleanup(root);
+  });
+});
+
+describe("BusinessListPage duplicate / delete", () => {
+  it("複製で新しいProjectが作られ、元Projectは破壊されない", () => {
+    const manager = getProjectManager();
+    const created = manager.createProject({
+      name: "複製元業務",
+      businessNumber: "B-500",
+      designStage: "road-detailed",
+    });
+    if (!created.ok) throw new Error("create failed");
+    const root = render(<BusinessListPage />);
+    act(() => {
+      (document.querySelector('[data-testid="business-duplicate"]') as HTMLButtonElement).click();
+    });
+    expect(manager.listProjects()).toHaveLength(2);
+    const original = manager.getProject(created.project.projectId);
+    expect(original?.name).toBe("複製元業務");
+    const duplicated = manager.listProjects().find((p) => p.projectId !== created.project.projectId);
+    expect(duplicated?.name).toBe("複製元業務");
+    expect(duplicated?.projectId).not.toBe(created.project.projectId);
+    expect(document.querySelector('[data-testid="business-message"]')?.textContent).toContain("複製しました");
+    cleanup(root);
+  });
+
+  it("削除は確認ダイアログを経て完全削除される", () => {
+    const manager = getProjectManager();
+    const created = manager.createProject({
+      name: "削除予定業務",
+      businessNumber: "B-600",
+      designStage: "bridge-preliminary",
+    });
+    if (!created.ok) throw new Error("create failed");
+    const root = render(<BusinessListPage />);
+
+    // 削除ボタン → 確認ダイアログ表示
+    act(() => {
+      (document.querySelector('[data-testid="business-delete"]') as HTMLButtonElement).click();
+    });
+    expect(document.querySelector('[data-testid="delete-confirm"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="delete-confirm"]')?.textContent).toContain("削除予定業務");
+
+    // キャンセルでは削除されない
+    act(() => {
+      (document.querySelector('[data-testid="delete-confirm-cancel"]') as HTMLButtonElement).click();
+    });
+    expect(manager.listProjects()).toHaveLength(1);
+
+    // 再度削除 → 完全削除で消える
+    act(() => {
+      (document.querySelector('[data-testid="business-delete"]') as HTMLButtonElement).click();
+    });
+    act(() => {
+      (document.querySelector('[data-testid="delete-confirm-ok"]') as HTMLButtonElement).click();
+    });
+    expect(manager.listProjects()).toHaveLength(0);
+    expect(manager.getProject(created.project.projectId)).toBeUndefined();
+    cleanup(root);
+  });
+});
+
+describe("ProjectTopPage", () => {
+  it("業務情報と9領域の入口を表示する", () => {
+    const manager = getProjectManager();
+    const created = manager.createProject({
+      name: "トップ表示業務",
+      businessNumber: "B-700",
+      designStage: "other",
+      designStageCustomLabel: "耐震照査",
+    });
+    if (!created.ok) throw new Error("create failed");
+    const root = render(<ProjectTopPage projectId={created.project.projectId} />);
+    expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("トップ表示業務");
+    expect(document.querySelector('[data-testid="project-top-number"]')?.textContent).toBe("B-700");
+    expect(document.querySelector('[data-testid="project-top-stage"]')?.textContent).toBe("耐震照査");
+    expect(document.querySelector('[data-testid="project-top-internal-id"]')?.textContent).toBe(created.project.projectId);
+    const sections = document.querySelectorAll('[data-testid="project-top-sections"] li');
+    expect(sections.length).toBe(9);
     cleanup(root);
   });
 });
