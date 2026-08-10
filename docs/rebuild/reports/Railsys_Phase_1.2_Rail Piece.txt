@@ -1,0 +1,146 @@
+================================================================================
+Railsys Phase 1.2  Final Report
+作業名: R1-02  最小 Project Schema / Project Data Core
+================================================================================
+完了日: 2026-08-11
+
+--------------------------------------------------------------------------------
+1. 実施目的
+--------------------------------------------------------------------------------
+「Projectを保存すること」ではなく、
+「新統合システムにおいて、何をProjectの唯一の正本として扱うのか」を
+型・schema・runtime validation・serialization境界として最小限確定する。
+将来すべての設計機能が接続する Project Data Core の正本構造を定める。
+
+--------------------------------------------------------------------------------
+2. 実装した責任範囲
+--------------------------------------------------------------------------------
+- Project schema / type（唯一のProject正本構造）
+- current schema version の単一管理
+- default Project 生成（createEmptyProject）
+- Project ID 生成（crypto.randomUUID）
+- runtime validator / parser（zod strictObject）
+- serialize / deserialize
+- invalid schema rejection
+- future migration 用の責任境界（registry + migrateProject）
+- modules 8領域の最小placeholder境界
+- 上記を保証する unit tests
+
+Project 構造:
+  projectId / name / createdAt / updatedAt / schemaVersion / metadata / modules
+  modules: road / terrain / bridgeLayout / substructure / superstructure /
+           analysis / cim / deliverables（各モジュールは空コンテナ）
+
+--------------------------------------------------------------------------------
+3. 実装していないもの / R1-03以降へ送ったもの
+--------------------------------------------------------------------------------
+- Save / Load 本実装
+- localStorage / filesystem 永続化
+- backend Project 保存 API
+- Project Repository 本実装
+- 道路 / 地形 / 橋梁配置 / 下部工 / 上部工 / FEM / CIM / 成果品 実装
+- UI 大改修
+- 新規CDP基盤 / WebSocket GUI操作 / remote-debugging環境（今回GUI自動化は禁止）
+- migration 本実装（責任境界のみ）
+
+--------------------------------------------------------------------------------
+4. 主要変更ファイル
+--------------------------------------------------------------------------------
+- frontend/src/next/project/schema.ts
+- frontend/src/next/project/projectDataCore.ts
+- frontend/src/next/project/__tests__/projectDataCore.test.ts
+- docs/rebuild/r1/R1-02_project_data_core.md（完了記録）
+- docs/rebuild/evidence/r1-02-regression-app-shell.png（回帰証跡）
+- docs/rebuild/reports/Railsys_Phase_1.2_Rail Piece.txt（本Final Report）
+
+--------------------------------------------------------------------------------
+5. Project schemaVersion
+--------------------------------------------------------------------------------
+- PROJECT_SCHEMA_VERSION = "1.0.0"（schema.ts の単一箇所で管理）
+- getCurrentProjectSchemaVersion() で参照
+- deserialize時にschemaVersion必須・semver形式検証
+
+--------------------------------------------------------------------------------
+6. runtime validation方針
+--------------------------------------------------------------------------------
+- zod strictObject（既存依存 zod 4.4.3 を再利用、新規依存追加なし）
+- projectId: uuid / name: min(1) / createdAt・updatedAt: ISO 8601 UTC
+- schemaVersion: semver / metadata・modules: record
+- unknown top-level field reject・必須field欠落reject・非オブジェクトreject
+- TypeScript型のみでvalidation済みとしない（runtimeで必ず検証）
+
+--------------------------------------------------------------------------------
+7. serialize / deserialize方針
+--------------------------------------------------------------------------------
+- serializeProject: parseProject通過後 JSON.stringify（不正Projectはthrow）
+- deserializeProject: JSON.parse → parseProject（不正JSON/不正Projectはreject）
+- serialize → deserialize round-trip equality をテストで保証
+
+--------------------------------------------------------------------------------
+8. migration責任境界
+--------------------------------------------------------------------------------
+- ProjectMigration interface（from / to / migrate）を定義
+- PROJECT_MIGRATIONS registry（現状空）
+- migrateProject(input, fromSchemaVersion) が registry を順次適用 → parseProject
+- 将来の旧schemaVersion → current変換の責任置き場をコード上で明確化
+- 過剰なmigration frameworkは作らない
+
+--------------------------------------------------------------------------------
+9. tests結果
+--------------------------------------------------------------------------------
+- R1-02 unit tests: 17/17 PASS
+  （default生成・ID一意性・必須項目・欠損reject・schemaVersion・
+    serialize/deserialize equality・日本語名・modules初期状態・migration境界）
+- src/next 全体: 20/20 PASS
+
+--------------------------------------------------------------------------------
+10. regression結果
+--------------------------------------------------------------------------------
+- R1-01 regression（NextApp）: 3/3 PASS
+- electron tests: 26/26 PASS
+- Electron通常起動回帰: /app App Shell描画確認
+  （証跡: docs/rebuild/evidence/r1-02-regression-app-shell.png）
+
+--------------------------------------------------------------------------------
+11. typecheck結果
+--------------------------------------------------------------------------------
+- PASS（tsc -b --pretty false）
+
+--------------------------------------------------------------------------------
+12. build結果
+--------------------------------------------------------------------------------
+- PASS（tsc -b && vite build）
+
+--------------------------------------------------------------------------------
+13. 各PR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #816 feat(rebuild): R1-02 Project Data Core
+  merge commit: 8ea92f8646cb13167de67d1985af64798179d32e
+- PR #817 docs(rebuild): R1-02 record final SHAs
+  merge commit: f9f6a0cd3352c6fe5f06a159f1b0f07d5677b874
+- PR #818 docs(rebuild): R1-02 final report
+  merge commit: f884ef672a9a3a2abc2e5729bb42c4cc3587dfe8
+- PR #（本Final Report追加）: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+14. 最終main SHA / 同期確認
+--------------------------------------------------------------------------------
+- final main SHA: f884ef672a9a3a2abc2e5729bb42c4cc3587dfe8
+  （本Final Report反映後の最終SHAを本項目に追記）
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （反映後に再確認し、全SHA一致を記録）
+
+--------------------------------------------------------------------------------
+15. 残課題（R1-03以降のみ）
+--------------------------------------------------------------------------------
+- Project Repository / 永続化 / Save / Load
+- modules 中身の実装（道路 / 地形 / 橋梁配置 / 下部工 / 上部工 / FEM / CIM / 成果品）
+- schemaVersion 1.0.0 以降の実migration
+- Project Manager 本実装
+
+--------------------------------------------------------------------------------
+16. 最終判定
+--------------------------------------------------------------------------------
+R1-02: COMPLETE
+R1-03へは進まない。ユーザーの次の明示指示を待つ。
+================================================================================
