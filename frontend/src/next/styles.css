@@ -73,6 +73,140 @@
   background: #1d4ed8;
 }
 
+.next-action-secondary {
+  margin-left: 8px;
+  padding: 10px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2937;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.next-action-secondary:hover {
+  background: #f1f5f9;
+}
+
+.next-danger {
+  padding: 6px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.next-danger:hover {
+  background: #fee2e2;
+}
+
+.next-search {
+  margin: 0 0 16px;
+}
+
+.next-search input {
+  width: 100%;
+  max-width: 360px;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.next-table-wrap {
+  overflow-x: auto;
+}
+
+.next-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 13px;
+}
+
+.next-table th,
+.next-table td {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.next-table th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+.next-table-id {
+  font-family: monospace;
+  font-size: 12px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.next-table-actions {
+  white-space: nowrap;
+}
+
+.next-table-actions button {
+  margin-right: 6px;
+  padding: 5px 10px;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.next-table-actions button:hover {
+  background: #dbeafe;
+}
+
+.next-form {
+  max-width: 420px;
+  display: grid;
+  gap: 16px;
+}
+
+.next-field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.next-field input,
+.next-field select {
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.next-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.next-primary {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.next-primary:hover {
+  background: #1d4ed8;
+}
+
 .next-empty {
   padding: 32px;
   border: 1px dashed #cbd5e1;

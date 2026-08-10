@@ -112,4 +112,23 @@ describe("NextApp Shell", () => {
     expect(document.querySelector('[data-testid="quick-analysis-placeholder"]')).toBeTruthy();
     cleanup(root);
   });
+
+  it("新規作成ページで業務フォームを表示する", () => {
+    window.history.pushState({}, "", "/app/business/new");
+    const root = render(<NextApp />);
+    expect(document.querySelector('[data-testid="new-project-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="business-form"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="form-business-number"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="form-name"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="form-design-stage"]')).toBeTruthy();
+    cleanup(root);
+  });
+
+  it("業務データ読込ページ（placeholder）を表示する", () => {
+    window.history.pushState({}, "", "/app/business/load");
+    const root = render(<NextApp />);
+    expect(document.querySelector('[data-testid="load-business-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="load-business-placeholder"]')).toBeTruthy();
+    cleanup(root);
+  });
 });
