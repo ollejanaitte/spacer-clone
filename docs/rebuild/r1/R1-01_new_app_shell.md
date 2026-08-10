@@ -77,8 +77,9 @@ feature/r1-01-new-app-shell 上で検証・commit。
 --------------------------------------------------------------------------------
 - PR: #814
 - merge先: GitHub main（PR merge）
-- main merge後 SHA: （merge実行時点のSHAを記録）
-- rebuild/integrated-system: main 同期後のSHAを記録
+- main merge後 SHA: cac0a82b70286f06f642178acb146b22b6d7a927
+- rebuild/integrated-system: main 同期後のSHA cac0a82b70286f06f642178acb146b22b6d7a927
+  （fast-forwardで同期、origin/rebuild/integrated-system も同一SHA）
 
 --------------------------------------------------------------------------------
 7. 残課題
