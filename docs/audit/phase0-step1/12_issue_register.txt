@@ -1,0 +1,197 @@
+================================================================================
+Phase 0 / STEP 1-12  不具合・課題台帳
+監査日: 2026-08-10
+状態: CONFIRMED（再現・証拠付き）
+Severity: S0=データ破損/Project喪失 S1=業務継続不可 S2=主要機能故障
+          S3=部分不具合 S4=UX/品質改善
+分類: MUST_FIX_BEFORE_REDESIGN / STEP2_DESIGN_ITEM / STEP3_IMPLEMENTATION_ITEM /
+      LATER / UNKNOWN
+================================================================================
+
+--------------------------------------------------------------------------------
+S0 / S1（データ・業務継続）
+--------------------------------------------------------------------------------
+[ISSUE-001] メインFEMプロジェクトは保存しても再起動で自動復元されない
+- Severity: S1（業務継続不可相当、データ損失リスク大）
+- Category: 永続化
+- 対象画面: /pro クイック解析
+- 症状: 保存（project.json ダウンロード）→ 再起動 →「モデル未作成」で復元されない。
+- 再現: モデル読込→保存→プロセス終了→再起動
+- Expected: 保存したモデルが再起動後も開ける/復元される
+- Actual: 空モデル。手動 Open のみ
+- 頻度: 100%
+- 証拠: 06_save_load_restart_audit.txt
+- 関連: App.tsx:737 (saveProject), App.tsx:151 (AUTOSAVE_ENABLED=false)
+- 原因候補: 正規保存がファイルダウンロードのみ。autosave 凍結。backend 保存 API 未使用
+- 原因確度: HIGH
+- データ損失リスク: HIGH
+- 業務影響: 作業の紛失・再開不能
+- 回避策: 保存した project.json を手動 Open
+- 修正方向案: 永続化レイヤの再設計（STEP 2）
+- STEP2設計判断: YES / ユーザー判断: YES
+- 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-002] autosave が凍結（AUTOSAVE_ENABLED=false）
+- Severity: S1（クラッシュ時復旧なし）
+- Category: 永続化
+- 関連: App.tsx:151,318,350,1481 / backend autosave.json（空スケルトン残存）
+- 証拠: コード + 06_監査
+- 原因確度: HIGH / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-003] BusinessProject はマニフェストのみ・checksum 偽値・子データなし
+- Severity: S1（業務の実設計データがどこにも永続化されない）
+- Category: 永続化 / Design Platform
+- 対象: /pro/platform/businesses/:id
+- 症状: 業務を作成・保存しても、実際の設計値（線形・上部工・下部工）は業務に紐付かない。
+- 証拠: localStorage の manifest（roadRefs:[] 等空）+ checksum "0".repeat(64)
+- 原因確度: HIGH / 分類: STEP2_DESIGN_ITEM
+
+--------------------------------------------------------------------------------
+S2（主要機能故障）
+--------------------------------------------------------------------------------
+[ISSUE-004] 移動荷重解析 → UI クラッシュ（ErrorBoundary）
+- Severity: S2
+- Category: 解析結果表示
+- 対象画面: /pro 移動荷重ボタン
+- 症状: 移動荷重を実行すると「予期しないエラーが発生しました。再読み込み」
+- 再現: モデル読込→入力チェック→移動荷重（100%）
+- Expected: 影響線・包絡結果が表示される
+- Actual: クラッシュ
+- 証拠: 21-movingload-crash.png, console TypeError
+- 関連ファイル: frontend/src/results/resultViewModel.ts:183,
+  frontend/src/components/ResultsPanel.tsx
+- 原因候補: movingLoadResult のみの result で result.displacements.filter() を実行
+- 原因確度: HIGH
+- データ損失リスク: なし（クラッシュのみ）
+- 業務影響: 移動荷重解析を使用不能
+- 修正方向案: resultViewModel の入力ガード、レスポンス型の厳格化、E2E追加
+- 分類: MUST_FIX_BEFORE_REDESIGN / ユーザー判断: NO
+
+[ISSUE-005] 下部工 Support[]（配置）と project.supports（FEM支点）が分離
+- Severity: S2
+- Category: データ連携
+- 症状: 下部工配置を変えても解析モデルの支点が変わらない
+- 関連: substructure 別ファイル保存 / App.tsx:1363-1409
+- 原因確度: HIGH / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-006] LINER 編集後に project.nodes/members が自動再同期されない
+- Severity: S2
+- Category: データ連携
+- 症状: LINER で線形を編集しても FEM モデル・メイン 3D が古い座標のまま
+- 関連: commitLinerDraft (App.tsx:285) は project.nodes を触らない
+- 原因確度: HIGH / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-007] BridgeProject / CBDM / manifest が非永続化（毎 render 再計算）
+- Severity: S2
+- Category: 永続化 / CIM
+- 関連: App.tsx:1373-1385, bridgeProject/*
+- 原因確度: HIGH / 分類: STEP2_DESIGN_ITEM
+
+--------------------------------------------------------------------------------
+S3（部分不具合）
+--------------------------------------------------------------------------------
+[ISSUE-008] 空状態「サンプルを読み込む」が LINER 山岳サンプルを読み込む（UX不一致）
+- Severity: S3 / Category: UX / 対象: /pro 空状態
+- 関連: App.tsx empty-model-state → createMountainSampleModel
+- 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-009] /api/examples の FEM サンプルが UI 未配線（loadExamples 未使用）
+- Severity: S3 / Category: 機能 / 対象: /pro
+- 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-010] backend /api/projects/save|load が UI 未使用（二重実装）
+- Severity: S3 / Category: アーキテクチャ
+- 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-011] 座標系の暗黙定義が5箇所重複（規約不一致含む）
+- Severity: S3 / Category: データモデル
+- 関連: coordinateTransform / alignmentAdapter:49 / substructure/model.ts:6 /
+  apollo builder.ts:27 / cbdmDocument.ts:394
+- 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-012] 解析結果の4重保持（result/if3Result/rightResult/analysisResults）
+- Severity: S3 / Category: 状態管理
+- 関連: App.tsx:180-183,253-264
+- 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-013] backend rule_engine 全体が DEAD CODE
+- Severity: S3 / Category: デッドコード
+- 関連: backend/rule_engine/*（app/engine から import 0件）
+- 分類: STEP2_DESIGN_ITEM（配線 or 廃止判断）
+
+[ISSUE-014] Apollo draft が project metadata を上書きし得る
+- Severity: S3 / Category: データモデル
+- 関連: unit2Draft.ts:420-427
+- 分類: STEP3_IMPLEMENTATION_ITEM
+
+--------------------------------------------------------------------------------
+S4（UX / 品質改善）
+--------------------------------------------------------------------------------
+[ISSUE-015] BusinessWorkspace「成果物」「データ」タブが起動不能（行き止まり）
+- Severity: S4 / Category: UX / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-016] 学習編リンク全件が example.com/placeholder
+- Severity: S4 / Category: コンテンツ / 分類: LATER
+
+[ISSUE-017] 入門編「結果を計算」が文言生成のみ（MOCK）
+- Severity: S4 / Category: 機能 / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-018] 下部工 設計計算15チェックが hold_not_available（MOCK）
+- Severity: S4→S2相当（設計実務では S1）/ Category: 機能
+- 分類: STEP3_IMPLEMENTATION_ITEM（承認プロセス次第）
+
+[ISSUE-019] 「FATAL 1」「Adapter計算(TEST)」等の開発者向け文言露出
+- Severity: S4 / Category: UX / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-020] Apollo 構造解析・結果表示が未実装
+- Severity: S4→S1相当 / Category: 機能 / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-021] level0/ 16ファイルが未実装プレースホルダ
+- Severity: S4 / Category: 機能 / 分類: LATER（教育フロー）
+
+[ISSUE-022] PDF 出力が HTML 印刷方式（真の PDF 生成ではない）
+- Severity: S4 / Category: 出力 / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-023] App.tsx 1752行・ApolloPhase1Shell 2716行の巨大コンポーネント
+- Severity: S4 / Category: 構造 / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-024] zombie プロセス多数（vite/electron 45プロセス相当）
+- Severity: S4 / Category: 環境衛生 / 分類: LATER
+
+[ISSUE-025] 起動ツールから BusinessWorkspace へ直接戻る導線がない
+- Severity: S4 / Category: UX / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-026] グリレージ/ブリッジFEM生成の材料・断面がハードコード
+- Severity: S4 / Category: データモデル / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-027] PDF/印刷以外の成果物パッケージ（Apollo）が未実装
+- Severity: S4 / Category: 機能 / 分類: STEP3_IMPLEMENTATION_ITEM
+
+[ISSUE-028] 統合3D データ層（integratedScene3d）が UI 未配線
+- Severity: S4 / Category: デッドコード / 分類: STEP2_DESIGN_ITEM
+
+[ISSUE-029] 移動荷重クラッシュを検出する自動テストがない
+- Severity: S4 / Category: テスト / 分類: MUST_FIX_BEFORE_REDESIGN
+
+[ISSUE-030] Save/Restart を検証する E2E がない
+- Severity: S4 / Category: テスト / 分類: MUST_FIX_BEFORE_REDESIGN
+
+--------------------------------------------------------------------------------
+台帳サマリ
+--------------------------------------------------------------------------------
+S0: 0件（明示的データ破損は検出せず）
+S1: 3件（ISSUE-001/002/003）
+S2: 4件（ISSUE-004/005/006/007）
+S3: 7件（ISSUE-008〜014）
+S4: 16件（ISSUE-015〜030）
+
+MUST_FIX_BEFORE_REDESIGN: ISSUE-004, 029, 030
+STEP2_DESIGN_ITEM: ISSUE-001,002,003,005,006,007,010,011,012,013,023,026,028
+STEP3_IMPLEMENTATION_ITEM: ISSUE-008,009,014,015,017,018,019,020,022,025,027
+LATER: ISSUE-016,021,024
+
+--------------------------------------------------------------------------------
+成果物
+--------------------------------------------------------------------------------
+本ファイル: docs/audit/phase0-step1/12_issue_register.txt
+判定: 台帳完成（S0なし、S1:3, S2:4, S3:7, S4:16）
