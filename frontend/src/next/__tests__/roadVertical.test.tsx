@@ -89,9 +89,9 @@ describe("Phase 2-A Road Module vertical slice (real filesystem)", () => {
 
     // verify in-memory road module data
     const stored = manager.getProject(project.projectId)?.modules?.road as {
-      data?: { roadDesignDocument?: { label?: string } };
+      data?: { roadInput?: { label?: string } };
     };
-    expect(stored?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
+    expect(stored?.data?.roadInput?.label).toBe("国道〇〇号 道路設計");
 
     // app restart: fresh manager on same filesystem
     resetProjectManagerForTest();
@@ -103,9 +103,9 @@ describe("Phase 2-A Road Module vertical slice (real filesystem)", () => {
 
     // road module data restored
     const restoredModule = manager2.getProject(project.projectId)?.modules?.road as {
-      data?: { roadDesignDocument?: { label?: string } };
+      data?: { roadInput?: { label?: string } };
     };
-    expect(restoredModule?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
+    expect(restoredModule?.data?.roadInput?.label).toBe("国道〇〇号 道路設計");
 
     // export .spacerproj
     const built = buildProjectPackage(manager2.getProject(project.projectId)!);
@@ -125,9 +125,9 @@ describe("Phase 2-A Road Module vertical slice (real filesystem)", () => {
     await manager3.flushPendingSaves();
 
     const importedModule = manager3.getProject(project.projectId)?.modules?.road as {
-      data?: { roadDesignDocument?: { label?: string } };
+      data?: { roadInput?: { label?: string } };
     };
-    expect(importedModule?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
+    expect(importedModule?.data?.roadInput?.label).toBe("国道〇〇号 道路設計");
 
     // Project top shows road module entry
     window.history.pushState({}, "", `/app/projects/${project.projectId}`);

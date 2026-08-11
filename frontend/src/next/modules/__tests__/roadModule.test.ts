@@ -4,7 +4,7 @@ import { applyBusinessMetadata } from "../../project/businessMetadata";
 import { getProjectManager, resetProjectManagerForTest } from "../../project/projectManagerInstance";
 import { getModuleDefinition } from "../registry";
 import { createRoadModuleRecord, isRoadData, validateRoadData, ROAD_MODULE_ID } from "../roadModule";
-import { readRoadDesignDocument, writeRoadDesignDocument, hasRoadDesignDocument } from "../roadModuleAdapter";
+import { readRoadDesignDocument, writeRoadDesignDocument, hasRoadDesignDocument, readRoadInputs, writeRoadInputs } from "../roadModuleAdapter";
 
 function makeProject() {
   return applyBusinessMetadata(createEmptyProject("道路接続業務"), {
@@ -33,21 +33,22 @@ describe("Road Module registration (Phase 2-01)", () => {
     expect(isRoadData(record.data)).toBe(true);
   });
 
-  it("validates road data: empty data valid; malformed doc rejected", () => {
+  it("validates road data: empty data valid; malformed doc rejected (full schema validation)", () => {
     expect(validateRoadData({})).toEqual([]);
     // a doc must be an object
     const notObject = validateRoadData({ roadDesignDocument: "not-an-object" });
     expect(notObject.length).toBeGreaterThan(0);
-    // a doc with non-string label is invalid
-    const badLabel = validateRoadData({ roadDesignDocument: { label: 42 } });
-    expect(badLabel.length).toBeGreaterThan(0);
-    // a doc with string label is valid
-    expect(validateRoadData({ roadDesignDocument: { label: "国道〇〇号" } })).toEqual([]);
+    // a partial doc fails the full RoadDesignDocument schema validation
+    const partialDoc = validateRoadData({ roadDesignDocument: { label: "国道〇〇号" } });
+    expect(partialDoc.length).toBeGreaterThan(0);
+    // the strict validator flags missing required fields
+    const issuesText = partialDoc.map((i) => `${i.path}: ${i.message}`).join("; ");
+    expect(issuesText).toContain("schemaId");
   });
 });
 
 describe("Road Module adapter (Phase 2-01)", () => {
-  it("reads/writes RoadDesignDocument through the Module Data Core", async () => {
+  it("rejects a partial RoadDesignDocument via full schema validation", async () => {
     const manager = getProjectManager();
     const project = makeProject();
     expect(manager.importProject(project)).toBe(true);
@@ -55,15 +56,12 @@ describe("Road Module adapter (Phase 2-01)", () => {
     expect(hasRoadDesignDocument(manager, project.projectId)).toBe(false);
     expect(readRoadDesignDocument(manager, project.projectId)).toBeUndefined();
 
-    const doc = {
-      label: "国道〇〇号 道路設計",
-    } as never;
-    const result = writeRoadDesignDocument(manager, project.projectId, doc);
-    expect(result.ok).toBe(true);
-    await manager.flushPendingSaves();
-
-    expect(hasRoadDesignDocument(manager, project.projectId)).toBe(true);
-    expect(readRoadDesignDocument(manager, project.projectId)).toBeDefined();
+    // A partial document fails full RoadDesignDocument schema validation.
+    const partial = { label: "国道〇〇号 道路設計" } as never;
+    const result = writeRoadDesignDocument(manager, project.projectId, partial);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toBe("invalid-road-data");
+    expect(hasRoadDesignDocument(manager, project.projectId)).toBe(false);
   });
 
   it("rejects invalid road data (broken document)", () => {
@@ -80,5 +78,17 @@ describe("Road Module adapter (Phase 2-01)", () => {
     const result = writeRoadDesignDocument(manager, "missing", undefined);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.reason).toBe("project-not-found");
+  });
+
+  it("writes and reads road inputs through the Module Data Core", async () => {
+    const manager = getProjectManager();
+    const project = makeProject();
+    expect(manager.importProject(project)).toBe(true);
+
+    expect(readRoadInputs(manager, project.projectId)).toEqual({});
+    const result = writeRoadInputs(manager, project.projectId, { label: "国道〇〇号 道路設計" });
+    expect(result.ok).toBe(true);
+    await manager.flushPendingSaves();
+    expect(readRoadInputs(manager, project.projectId).label).toBe("国道〇〇号 道路設計");
   });
 });
