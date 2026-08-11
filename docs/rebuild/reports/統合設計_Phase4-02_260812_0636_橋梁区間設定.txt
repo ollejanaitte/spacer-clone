@@ -264,17 +264,17 @@ Step E（E2E / regression / documentation / Final Gate）:
 23. Final Report 自身の PR / merge SHA
 --------------------------------------------------------------------------------
 - branch: docs/phase4-02-final-report
-- PR: #895（merge SHA は merge 後に確定）
-- Final Report merge SHA:
+- PR: #895 → merge SHA: f4457d6af359694d7389096596bd58b04da9aadd
+- 本更新（merge SHA追記）: PR #896
 
 --------------------------------------------------------------------------------
 24. 最終main SHA / 4系統同期
 --------------------------------------------------------------------------------
-- local main        : 12f7d0a6c83ed63a12bfe661725ccf65b3fb58f3（Step E merge後）
+- local main        : f4457d6af359694d7389096596bd58b04da9aadd（Final Report merge後）
 - origin/main       : 同上
 - GitHub main       : 同上
 - rebuild/integrated-system: 同上
-- 4系統一致: 確認済み（Final Report merge後にも再確認する）
+- 4系統一致: 確認済み
 
 --------------------------------------------------------------------------------
 25. 未解決事項
