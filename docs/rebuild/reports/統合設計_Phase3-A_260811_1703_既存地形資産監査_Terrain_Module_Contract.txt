@@ -1,0 +1,164 @@
+================================================================================
+Railsys 統合設計 Phase 3-A Final Report
+ファイル名: 統合設計_Phase3-A_260811_1703_既存地形資産監査_Terrain_Module_Contract.txt
+================================================================================
+
+作業名: 統合設計 Phase 3-A 3-00 既存地形資産監査 ＋ 3-01 Terrain Module Contract
+完了日時（JST）: 2026-08-11 17:03
+
+--------------------------------------------------------------------------------
+1. Phase 3-A 目的
+--------------------------------------------------------------------------------
+既存の地形・3D・Viewer・座標系・CIM・現況関連資産を監査し（3-00）、
+Phase 1 Module Core上へTerrain Moduleを正式接続（3-01）。
+Terrain正本、Coordinate/Unit/Origin、Validation/Status/Auto Save、
+将来のTIN/Surface/Terrain CIM/large asset格納境界をFreezeする。
+地形Import・TIN生成・大規模Viewerは3-02以降。
+
+--------------------------------------------------------------------------------
+2. baseline SHA
+--------------------------------------------------------------------------------
+- 1c555f69168af96fa1b79dd13a4d3fb12c45ce50（Phase 2 final main）
+
+--------------------------------------------------------------------------------
+3. 監査対象 / KEEP / ADAPT / REWRITE / DEFER
+--------------------------------------------------------------------------------
+監査対象: 山岳Terrain表示サンプル / threeCoords座標変換 / viewer座標変換 /
+  Three.js Viewer / bridge viewer / backend地形 / Road CIM / Module Core / Road Adapter / Existing Conditions
+
+- KEEP   : Phase 1 Module Core一式・Road CIM geometry・R1基盤
+- ADAPT  : 山岳Terrain表示サンプル（elevation関数）/ threeCoords座標変換 /
+           Viewer座標変換（SpacerAxisSwap・表示用）/ Road Adapterパターン
+- REWRITE: Terrain正本データ構造（新責任境界で定義・大容量格納境界確保）
+- DEFER  : Import（XYZ/CSV/LandXML/DEM/GeoTIFF/point cloud）/ TIN / Surface /
+           3D Viewer / LOD / Existing Conditions本体 → Phase 3-02以降
+
+詳細: docs/rebuild/phase3/R3-00_terrain_asset_audit.md
+
+--------------------------------------------------------------------------------
+4. Terrain / Existing Conditions 責任分離
+--------------------------------------------------------------------------------
+- Terrain Module = 地面・地表面の正本（source/points/elevation/TIN/surface/coordinate context/metadata/validation）
+- Existing Conditions = 地面以外の現況構造物（現況道路/河川/鉄道/既設橋/建物/防潮堤/池/地下埋設物）
+- Phase 3-AではExisting Conditions本体を作らず、責任分離のみFreeze
+- 接続: Terrain Module→Terrain Adapter/Module Core→Project Data Core→Persistence/Auto Save→.spacerproj
+- UI/ViewerからProject JSON直接変更禁止
+
+詳細: docs/rebuild/phase3/R3-00_terrain_existing_split.md
+
+--------------------------------------------------------------------------------
+5. Terrain Module Contract
+--------------------------------------------------------------------------------
+- terrainModule.ts: Terrain正本最小構造（terrainId/schemaVersion/source/
+  coordinateContext/bounds/surfaceReference/assetReferences）+ validator
+  （metric/axis規約検証）
+- terrainModuleAdapter.ts: read/writeTerrainDocument（Module Core経由・直接変更禁止・invalid reject）
+- TerrainModuleShellPage: status/metadata確認 + source name保存
+- 大容量Terrain本体はproject.jsonへ埋め込まず、大容量格納境界（surfaceReference/assetReferences）を確保
+
+--------------------------------------------------------------------------------
+6. Terrain正本最小データ構造
+--------------------------------------------------------------------------------
+terrainDocument:
+  terrainId / schemaVersion / source（sourceType/sourceName/importedAt）/
+  coordinateContext（coordinateSystem/projectOrigin/localOrigin/unitSystem/axisConvention）/
+  bounds（minX/minY/maxX/maxY/minElevation/maxElevation）/
+  surfaceReference / assetReferences / validation
+
+--------------------------------------------------------------------------------
+7. Coordinate system / Unit / Project Origin / Local Origin
+--------------------------------------------------------------------------------
+- domain XYZ規約: X=道路軸方向 / Y=横断方向 / Z=標高（Phase 2 Road CIMと同一）
+- Three.js変換（表示責任）: x→x, y→z, z→-y（threeCoords踏襲）
+- Project Origin: Project Data Core内の正本座標基準（global→project変換の起点）
+- Local Origin: Viewer描画用の基準（大座標による浮動小数点精度劣化を防ぐ）
+- unit: metric（m）
+- domain/render coordinate責任分離（Viewer変換は表示責任・正本を書き換えない）
+
+詳細: docs/rebuild/phase3/R3-00_coordinate_origin_freeze.md
+
+--------------------------------------------------------------------------------
+8. Road CIMとの整合
+--------------------------------------------------------------------------------
+- Road CIM（Phase 2）とTerrainは同一Project座標系（project coordinate）で重ねる
+- どちらもProject Origin基準・ViewerはLocal Originを引いて描画
+
+--------------------------------------------------------------------------------
+9. Module Status / Validation / Auto Save / restart restore / .spacerproj
+--------------------------------------------------------------------------------
+- Module Data Coreの{state,data,validation}にterrainDocumentを格納
+- validator: metric/axis規約・terrainId必須・bounds型検証・assetReferences配列検証
+- Auto Save: terrain metadata変更→自動保存
+- restart restore: 再起動後Terrain復元（実fs確認）
+- .spacerproj: Export→ImportでTerrain metadata復元（実fs確認）
+
+--------------------------------------------------------------------------------
+10. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/modules/ terrainModule.ts / terrainModuleAdapter.ts /
+  __tests__/terrainModule.test.ts
+frontend/src/next/pages/ TerrainModuleShellPage.tsx / NextApp.tsx
+frontend/src/next/persistence/__tests__/ terrainPersistence.test.ts
+docs/rebuild/phase3/ R3-00_terrain_asset_audit.md / R3-00_terrain_existing_split.md /
+  R3-00_coordinate_origin_freeze.md / Phase3-A_terrain_module.md /
+  evidence/phase3a-home-screen.png
+
+--------------------------------------------------------------------------------
+11. tests / regression / Electron / typecheck / build
+--------------------------------------------------------------------------------
+- terrain module tests: 6/6 PASS
+- terrainPersistence: 2/2 PASS
+- src/next全体: 216/216 PASS
+- electron tests: 26/26 PASS
+- R1-01〜R1-05 regression: PASS / Phase 1 regression: PASS / Phase 2 regression: PASS
+- typecheck: PASS / build: PASS
+- Electron通常起動: 新ホーム描画確認
+
+--------------------------------------------------------------------------------
+12. Luna目視 / 旧メイン画面導線
+--------------------------------------------------------------------------------
+- Luna（read-only・gpt-5.6-luna）: ホーム画面UI崩れなし・テキスト一致・
+  コード編集/Git操作/ファイル変更なし（証跡: phase3a-home-screen.png）
+- Luna実行後git差分なし
+- 旧メイン画面への正規導線: 復活していない
+
+--------------------------------------------------------------------------------
+13. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #864 Step A1/A2（監査+判定）: 1fba9a549915de420bfda13bb11a5f80774cb626
+- PR #865 Step A3/A4（責任分離+座標Freeze）: 6ae0c62ab21aa08f52f66eef3d9967b47d6f0072
+- PR #866 Step A5（Terrain Module Contract）: 5941b7039a1b7c60b963ea107570d65e120f94cd
+- PR #867 Step A6（最小縦断）: 55d29edc8f51cfaab3041f880b2361db1dc422de
+- PR #868 Step A7（記録・Final Gate）: eb9e464c526caa4ebf6850d710a4d1aee3804da9
+- PR #869 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+14. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #869
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+15. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+16. 未解決事項
+--------------------------------------------------------------------------------
+- なし（Phase 3-Aスコープ内で未解決の重大事項は発生しなかった）
+
+--------------------------------------------------------------------------------
+17. Phase 3-02開始可否
+--------------------------------------------------------------------------------
+- 可（Terrain Module Contract・座標境界が成立したため）
+- ただしPhase 3-02（地形データImport）はユーザーの次の明示指示を待って開始する
+
+--------------------------------------------------------------------------------
+18. 最終判定
+--------------------------------------------------------------------------------
+統合設計 Phase 3-A: COMPLETE
+Phase 3-02（地形データImport）へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
