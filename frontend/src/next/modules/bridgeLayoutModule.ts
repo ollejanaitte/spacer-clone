@@ -50,6 +50,16 @@ export type {
   BridgeLayoutExistingView,
   BridgeRangeBBox,
 } from "./bridgeLayout/bridgeLayoutPlacement";
+export {
+  listOrderedSupports,
+  nextPierId,
+  addPier,
+  removePier,
+  updatePierStation,
+  updatePierSkew,
+  validatePierConfiguration,
+} from "./bridgeLayout/bridgeLayoutPiers";
+export type { OrderedSupport, AddPierInput } from "./bridgeLayout/bridgeLayoutPiers";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
