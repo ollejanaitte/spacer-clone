@@ -49,3 +49,50 @@ export function writeRoadDesignDocument(
 export function hasRoadDesignDocument(manager: ProjectManager, projectId: string): boolean {
   return readRoadDesignDocument(manager, projectId) !== undefined;
 }
+
+export interface RoadInputsData {
+  readonly label?: string;
+}
+
+export function readRoadInputs(
+  manager: ProjectManager,
+  projectId: string,
+): RoadInputsData {
+  const moduleData = readModuleFromManager(manager, projectId, ROAD_MODULE_ID);
+  const raw = moduleData?.data?.roadInput;
+  if (raw && typeof raw === "object") {
+    return raw as RoadInputsData;
+  }
+  return {};
+}
+
+export function writeRoadInputs(
+  manager: ProjectManager,
+  projectId: string,
+  inputs: RoadInputsData,
+): RoadModuleAdapterResult {
+  const existing = readModuleFromManager(manager, projectId, ROAD_MODULE_ID);
+  if (!existing) {
+    return { ok: false, reason: "project-not-found" };
+  }
+  if (inputs.label !== undefined && typeof inputs.label !== "string") {
+    return { ok: false, reason: "invalid-road-data" };
+  }
+  const nextRecord: ModuleDataRecord = {
+    ...existing,
+    data: {
+      ...existing.data,
+      roadInput: {
+        ...(typeof existing.data.roadInput === "object" && existing.data.roadInput !== null
+          ? (existing.data.roadInput as Record<string, unknown>)
+          : {}),
+        ...(inputs.label !== undefined ? { label: inputs.label } : {}),
+      },
+    },
+  };
+  const result = writeModuleToManager(manager, projectId, ROAD_MODULE_ID, nextRecord);
+  if (!result.ok) {
+    return { ok: false, reason: "project-not-found" };
+  }
+  return { ok: true, roadDesignDocument: undefined };
+}

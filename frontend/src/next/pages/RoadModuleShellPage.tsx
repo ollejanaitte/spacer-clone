@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { getModuleDefinition } from "../modules/registry";
-import { readRoadDesignDocument, writeRoadDesignDocument } from "../modules/roadModuleAdapter";
+import { readRoadDesignDocument, readRoadInputs, writeRoadInputs } from "../modules/roadModuleAdapter";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
 import { navigateTo, NEXT_PROJECT_HOME_PATH, modulePath } from "../routes";
@@ -11,12 +11,8 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
   const [project] = useState(() => getProjectManager().getProject(projectId));
   const definition = getModuleDefinition(moduleId as ProjectModuleKey);
   const [roadLabel, setRoadLabel] = useState(() => {
-    const moduleData = readModuleFromManager(getProjectManager(), projectId, "road");
-    const doc = moduleData?.data?.roadDesignDocument;
-    const label = doc && typeof doc === "object"
-      ? (doc as { label?: unknown }).label
-      : undefined;
-    return typeof label === "string" ? label : "";
+    const inputs = readRoadInputs(getProjectManager(), projectId);
+    return inputs.label ?? "";
   });
   const [message, setMessage] = useState<string | null>(null);
 
@@ -39,12 +35,7 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
   const status = moduleData?.state.status ?? "notStarted";
 
   function handleSaveMetadata() {
-    const current = readRoadDesignDocument(getProjectManager(), projectId);
-    const updated = {
-      ...(current ?? {}),
-      label: roadLabel,
-    } as never;
-    const result = writeRoadDesignDocument(getProjectManager(), projectId, updated as never);
+    const result = writeRoadInputs(getProjectManager(), projectId, { label: roadLabel });
     if (!result.ok) {
       setMessage("保存できませんでした（validation NG）。");
       return;
@@ -81,7 +72,7 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
 
       <div className="next-form">
         <label className="next-field">
-          <span>RoadDesignDocument label（安全なテストデータ）</span>
+          <span>道路設計名（Road Input label）</span>
           <input
             type="text"
             data-testid="road-label-input"
@@ -100,8 +91,8 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
       {message !== null && <div className="next-hint" data-testid="road-message">{message}</div>}
 
       <div className="next-empty" data-testid="road-module-placeholder">
-        <p>道路計算本体（平面線形・測点・縦断・横断）は Phase 2-02 以降で実装します。</p>
-        <p className="next-hint">Phase 2-AではRoad Moduleの正式接続とRoadDesignDocument正本化のみを提供。</p>
+        <p>道路計算（平面線形・測点・縦断・横断・3D）は Phase 2-02 以降で順次実装します。</p>
+        <p className="next-hint">Road Design Documentは完全schema validationで検証・road領域正本として保存されます。</p>
       </div>
     </section>
   );
