@@ -216,13 +216,15 @@ export interface BridgeLayoutView {
  * UI / 3D 用の Bridge Layout ビューモデルを組み立てる。
  * Road / Terrain / Existing は参照のみ（正本複製なし）。
  * 測点変更時は bridgeLength・A1/A2候補・Terrain/Existing参照が再計算される。
+ * options.roadOverride で Road Module 参照を差し替え可能（UIプレビュー用）。
  */
 export function assembleBridgeLayoutView(
   manager: ProjectManager,
   projectId: string,
   document: BridgeLayoutDocument | undefined,
+  options?: { roadOverride?: RoadAlignmentContext },
 ): BridgeLayoutView {
-  const road = readRoadAlignmentContext(manager, projectId);
+  const road = options?.roadOverride ?? readRoadAlignmentContext(manager, projectId);
 
   if (!document) {
     return {
@@ -246,7 +248,10 @@ export function assembleBridgeLayoutView(
     endStation: range.endStation,
     alignmentTotalLength: road.ok ? road.totalLength : null,
     roadReferenceValid: road.ok,
-    alignmentReferenceValid: road.ok && road.alignmentId !== null && road.alignmentId === document.roadReference.alignmentId,
+    // 未保存（roadReference.alignmentId === null）の段階でも現在のRoad Alignmentへ
+    // 解決可能であれば有効とする。保存時に alignmentId が書き込まれる。
+    alignmentReferenceValid: road.ok && road.alignmentId !== null
+      && (document.roadReference.alignmentId === null || document.roadReference.alignmentId === road.alignmentId),
   });
 
   const terrainDoc = readTerrainDocument(manager, projectId);

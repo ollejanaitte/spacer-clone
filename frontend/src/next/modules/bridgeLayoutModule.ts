@@ -25,6 +25,7 @@ export { resolveBridgeLayoutReferences } from "./bridgeLayout/bridgeLayoutRefere
 export type { BridgeLayoutReferenceResolution } from "./bridgeLayout/bridgeLayoutReferences";
 export {
   readRoadAlignmentContext,
+  buildRoadAlignmentContextFromInputs,
   computeBridgeLength,
   validateBridgeRangeInput,
   buildBridgeLayoutFromRange,

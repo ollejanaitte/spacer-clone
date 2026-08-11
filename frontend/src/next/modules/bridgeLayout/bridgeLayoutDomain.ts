@@ -48,8 +48,12 @@ export function readRoadAlignmentContext(
   manager: ProjectManager,
   projectId: string,
 ): RoadAlignmentContext {
+  return buildRoadAlignmentContextFromInputs(readRoadInputs(manager, projectId));
+}
+
+/** RoadInputs（Road Module正本）から alignment コンテキストを組み立てる。 */
+export function buildRoadAlignmentContextFromInputs(inputs: ReturnType<typeof readRoadInputs>): RoadAlignmentContext {
   const issues: BridgeLayoutIssue[] = [];
-  const inputs = readRoadInputs(manager, projectId);
   const horizontal = inputs.horizontal as LinearAlignment | undefined;
 
   if (!horizontal || typeof horizontal !== "object") {
