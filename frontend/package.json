@@ -20,6 +20,8 @@
     "electron:compile": "tsc -p ../desktop/electron/tsconfig.json",
     "electron:dev": "concurrently -k \"vite --host 127.0.0.1 --strictPort\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
     "electron:dev:apollo": "concurrently -k \"vite --mode apollo --host 127.0.0.1 --strictPort\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js\"",
+    "electron:dev:no-gpu": "concurrently -k \"vite --host 127.0.0.1 --strictPort\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --disable-gpu --in-process-gpu --no-sandbox\"",
+    "electron:dev:no-gpu:apollo": "concurrently -k \"vite --mode apollo --host 127.0.0.1 --strictPort\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --disable-gpu --in-process-gpu --no-sandbox\"",
     "electron:dev:compat": "concurrently -k \"vite --host 127.0.0.1 --strictPort\" \"wait-on http://127.0.0.1:5173 && npm run electron:compile && electron ../desktop/electron/dist/main.js --gpu-mode=compat-gpu-blocklist\"",
     "app:dev": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev\"",
     "app:dev:apollo": "concurrently -k \"cd .. && python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000\" \"npm run electron:dev:apollo\"",

@@ -8,6 +8,8 @@
 #   ./start-ubuntu.sh --safe-gpu            互換 GPU モード + ANGLE GL fallback
 #   ./start-ubuntu.sh --legacy-gl           legacy desktop GL を使う
 #   ./start-ubuntu.sh --normal              通常 GPU モード
+#   ./start-ubuntu.sh --disable-gpu         GPU を使わず Electron を起動 (WSL/VM/リモートデスクトップ等で
+#                                            GPU process が起動できない環境向け。--in-process-gpu も併用)
 #   ./start-ubuntu.sh --web                 Electron を起動せず Vite dev のみ
 #   ./start-ubuntu.sh --backend-only        FastAPI のみ起動
 #   ./start-ubuntu.sh --help                このヘルプを表示
@@ -24,9 +26,10 @@ set -eo pipefail
 GPU_MODE="compat-gpu-blocklist"
 LAUNCH_MODE="electron"  # electron | web | backend-only
 APOLLO_MODE="1"
+DISABLE_GPU="0"
 
 print_help() {
-  sed -n '2,20p' "$0"
+  sed -n '2,22p' "$0"
   exit 0
 }
 
@@ -36,6 +39,7 @@ while [[ $# -gt 0 ]]; do
     --legacy-gl)  GPU_MODE="legacy-desktop-gl"; shift ;;
     --normal)     GPU_MODE="normal"; shift ;;
     --blocklist)  GPU_MODE="compat-gpu-blocklist"; shift ;;
+    --disable-gpu) DISABLE_GPU="1"; shift ;;
     --apollo)     APOLLO_MODE="1"; shift ;;
     --web)        LAUNCH_MODE="web"; shift ;;
     --backend-only) LAUNCH_MODE="backend-only"; shift ;;
@@ -378,8 +382,16 @@ launch_frontend() {
       command=(npm run dev -- --host 127.0.0.1 --strictPort)
     fi
   else
-    info "Electron を起動しています。GPU_MODE=$GPU_MODE APOLLO_MODE=$APOLLO_MODE"
-    if [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
+    info "Electron を起動しています。GPU_MODE=$GPU_MODE APOLLO_MODE=$APOLLO_MODE DISABLE_GPU=$DISABLE_GPU"
+    if [[ "$DISABLE_GPU" == "1" ]]; then
+      # GPU process が起動できない環境 (WSL/VM/リモートデスクトップ) 向け。
+      # concurrently 経由の electron 起動に --disable-gpu --in-process-gpu を渡す。
+      if [[ "$APOLLO_MODE" == "1" ]]; then
+        command=(npm run electron:dev:no-gpu:apollo)
+      else
+        command=(npm run electron:dev:no-gpu)
+      fi
+    elif [[ "$GPU_MODE" == "compat-gpu-blocklist" ]]; then
       if [[ "$APOLLO_MODE" == "1" ]]; then
         command=(npm run electron:dev:apollo)
       else
