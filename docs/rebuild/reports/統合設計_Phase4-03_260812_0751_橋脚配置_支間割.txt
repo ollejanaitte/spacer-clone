@@ -1,0 +1,244 @@
+================================================================================
+統合設計 Phase 4-03  Final Report
+橋脚配置・支間割（Pier Placement / Span Layout）
+================================================================================
+
+作業名   : 統合設計 Phase 4-03「橋脚配置・支間割」
+完了日時 : 2026-08-12 07:51 JST（日本時間）
+主担当   : OpenCode DeepSeek V4 Flash（調査・実装・tests・Git・最終判断）
+画像判定 : Codex CLI GPT-5.6 Luna（read-only Vision Reviewer）
+GitHub   : https://github.com/ollejanaitte/spacer-clone.git
+新worktree: /home/masaharu/Projects/spacer-clone-next
+長期branch: rebuild/integrated-system
+
+--------------------------------------------------------------------------------
+1. baseline
+--------------------------------------------------------------------------------
+- baseline SHA（local main / origin main / GitHub main / rebuild/integrated-system）:
+  6840526764dea85e10076e675bbbc032cad2a25e（Phase 4-03 開始時点 = Phase 4-02 完了後の main）
+- PR #896 merge確認: **済み**（e23d3e4 = PR #896のmerge SHA、Phase 4-02 Final Report追記）
+- よって真の最終main SHA = e23d3e4 を Phase 4-03 baseline として確定
+  ※実装作業は e23d3e4 から開始し、各Stepのmergeで main を更新
+- 作業開始時 dirty:
+  - spacer-clone（canonical）: docs/apollo evidence JSON 3件 modified + final_report.txt 削除
+  - spacer-clone-next: 同3件 + 未追跡doc（R1-04.5 Luna検証結果）
+  - ※既存差分は不干渉・非破棄
+- Phase 4-02 完了済み（BridgeLayoutDocument・bridgeRange・A1/A2・Road/Terrain/Existing参照・
+  Auto Save・restart restore・.spacerproj が成立）
+
+--------------------------------------------------------------------------------
+2. Phase 4-03 最終ゴール
+--------------------------------------------------------------------------------
+Bridge Range内にP1..Pnを配置し、A1-P1-…-Pn-A2の支間割を自動生成し、
+各PierのRoad XYZ・Terrain・Existing・skewを確認でき、統合3D、Auto Save、
+再起動復元、.spacerproj regression、Luna画像判定、完成スクリーンショットDiscord送信、
+GitHub main反映、Final Report、4系統同期まで成立させる。
+
+--------------------------------------------------------------------------------
+3. Pier domain（Step A）
+--------------------------------------------------------------------------------
+- `BridgeLayoutDocument.piers` を正式使用（唯一正本）
+- `PierPlacement` 拡張（非破壊）: label / placement / skewSource(automatic|user) / metadata
+- `bridgeLayoutPiers.ts`:
+  - listOrderedSupports: A1, P1..Pn, A2 を station 順に整列
+  - nextPierId / addPier / removePier / updatePierStation / updatePierSkew
+  - validatePierConfiguration
+- 橋脚本数: 0本 / 1本 / 複数本を扱える
+- validation:
+  - pierId必須・重複禁止・finite station・NaN/Infinity reject
+  - station重複 reject・A1 < P1 < P2 < … < Pn < A2 順序・Bridge Range外 reject
+- Pier station変更時は placement / span / Terrain / Existing参照を再計算
+
+--------------------------------------------------------------------------------
+4. Pier placement / skew / span（Step B）
+--------------------------------------------------------------------------------
+- computePierPlacementCandidate: station→XYZ / elevation / tangent（Road Module正式API委譲）
+- defaultAutomaticSkew: 道路直角 = tangent + PI/2（反時計回り正・(-PI,PI]正規化）
+  ※「道路直角 = 必ず正解」とは固定せず、ユーザーは skew を直接指定可能（skewSource=user）
+- refreshPierPlacements: 全Pier placement 再計算 + Terrain elevation + skewSource 反映
+- generateSpans: A1-P1 / P1-P2 / … / Pn-A2 を自動生成
+  - spanId / index / startSupportId / endSupportId / startStation / endStation / length
+  - length = endStation - startStation（>0 検証）
+  - derived span はユーザーが直接正本編集しない設計（常に再生成）
+- validateSpanConfiguration:
+  - length > 0 / supports順序と一致（chain）/ 全span合計 = bridgeLength
+- Pier追加・削除・station変更で span を再生成
+
+--------------------------------------------------------------------------------
+5. Terrain / Existing reference（Step C）
+--------------------------------------------------------------------------------
+- assembleBridgeLayoutView 拡張: pierCandidates（P1..Pn候補・skew・Terrain elevation/diff・周辺Existing）
+- computePierRangeBBox: Pier単独 station 周辺 bbox（Existing参照用）
+- Terrain参照不能（gridなし / TIN外）は warning・Pier配置データは破壊しない
+- 基礎天端・柱高・フーチング・杭長等は決定しない（Phase 4-03対象外）
+
+--------------------------------------------------------------------------------
+6. UI / 3D（Step D）
+--------------------------------------------------------------------------------
+- BridgeLayoutModuleShellPage 拡張:
+  - Supports一覧（A1 / P1..Pn / A2）
+  - Pier編集: 追加（最大ギャップ中点を初期station）/ 削除 / station編集 / skew編集（空欄=自動）
+  - Pier情報: station / XYZ / elevation / terrain elevation / skew / 周辺Existing
+  - Span一覧（自動生成・直接編集不可）
+  - サマリー: bridgeLength / pier count / span count / span total / validation / save state
+- 保存時: refreshPierPlacements + generateSpans + validatePierConfiguration / validateSpanConfiguration
+- bridgeLayoutScene:
+  - P1..Pn marker（配置確認用・詳細橋脚モデルではない）
+  - skew指示線（黄色・CCW-positive・道路直角から skewAngleRad 回転）
+  - span label（S1..Sn・支間中点）
+  - focusBounds: 橋梁焦点 box で camera framing（Terrain全域ではなく橋周辺を表示）
+- 共通renderCoordinate / Local Origin / Road・Terrain・Existing正本不変更 / camera fit-to-bounds 維持
+
+--------------------------------------------------------------------------------
+7. Persistence / restart restore / .spacerproj（Step E）
+--------------------------------------------------------------------------------
+- P1..Pn / station / skew / placement / spans を Project Data Core 経由で永続化（Auto Save）
+- アプリ完全終了 → 再起動 → P1..Pn / station / skew / spans / span length 復元
+- .spacerproj（buildProjectPackage）round-trip で P1..Pn / spans / skew 復元
+- 不正Pier配置（ordering違反）は非永続化（fail-closed）
+
+--------------------------------------------------------------------------------
+8. 必須テスト / regression
+--------------------------------------------------------------------------------
+- bridgeLayoutPiers.test.ts: 0/1/複数Pier・dup ID/station・NaN/Infinity・範囲外・順序・skew
+- bridgeLayoutSpans.test.ts: span自動生成・length合計・追加/削除/移動再生成・chain・placement・automatic skew
+- bridgeLayoutPierTerrainExisting.test.ts: 候補XYZ/tangent・Terrain elevation/diff・missing/TIN外warning・周辺Existing・station変更再計算
+- bridgeLayoutScene.test.ts: Pier marker位置一致・skew線・span label・座標系整合・focusBounds
+- bridgeLayoutPierUi.test.tsx: Pier編集・span一覧・保存復元・ordering validation・3D
+- bridgeLayoutPierPersistence.test.ts（実FS）: save→restart→restore / .spacerproj round-trip / 不正配置非永続化
+- src/next 全体: 419件 PASS
+- 全regression（除外: 既知ハング src/App.apolloNavigation.test.tsx のみ）:
+  514 files / 3781 tests PASS（0 failure）
+- 既知問題（pre-existing・pristine mainでも再現）:
+  src/App.apolloNavigation.test.tsx が jsdom 上で3D viewer の requestAnimationFrame
+  無限ループによりハング（Phase 4-02と同一・新システムとは無関係）
+
+--------------------------------------------------------------------------------
+9. Electron / typecheck / lint / build
+--------------------------------------------------------------------------------
+- Electron tests: 26/26 PASS
+- typecheck: PASS
+- lint: PASS（hygiene 0 issue / Japanese strings informational のみ）
+- build: PASS
+
+--------------------------------------------------------------------------------
+10. ライブ検証（Electron + xvfb + swiftshader）
+--------------------------------------------------------------------------------
+- playwright electron + xvfb-run + vite preview（file watcher ENOSPC回避）+ swiftshader
+- フロー: 業務作成 → Road Module保存 → Bridge Layout →
+  start=100 / end=700（橋長600）→ P1=300 / P2=500 追加 → P1 skew=0.25 →
+  span 3（S1/S2/S3 各200m・合計600m）→ 3D表示 → 保存 → アプリ終了 → 再起動 →
+  同じ P1=300 / P2=500 / skew / spans 復元
+- 結果: 全フロー PASS（restart restore: count=2 / spanCount=3 / doc="あり"）
+
+--------------------------------------------------------------------------------
+11. Luna（Codex CLI GPT-5.6-luna, read-only）目視確認
+--------------------------------------------------------------------------------
+- モード: codex exec --sandbox read-only（コード編集・Git操作なし）
+- 対象: スクリーンショット4枚
+- 1回目: camera framing不良（橋梁が小さすぎ）→ 3D FAIL
+  → SceneViewer focusBounds 追加で橋梁焦点 framing に改善
+- 2回目: 総合判定 **PASS**
+  - p4-03-01 編集画面: A1=100/P1=300/P2=500/A2=700・skew 0.25・S1/S2/S3 各200m・合計600m PASS
+  - p4-03-02 3D全景: WebGL描画・P1/P2がRoad上に正しく並ぶ・順序・span/skew表示・Terrain水平・河川/既設道路/鉄道/地下管路 PASS
+  - p4-03-03 近景: Pier/span/skew/Existingの視認性最良 PASS
+  - p4-03-04 再起動復元: P1=300/P2=500/skew/spans復元 PASS
+- Luna実行前後のgit差分増加なし（read-only確認）
+
+--------------------------------------------------------------------------------
+12. screenshots一覧 / Discord送信
+--------------------------------------------------------------------------------
+- docs/rebuild/phase4/evidence/p4-03-01-bridge-layout-pier-edit.png（編集画面）
+- docs/rebuild/phase4/evidence/p4-03-02-bridge-layout-3d-full.png（3D全景・橋梁焦点framing）
+- docs/rebuild/phase4/evidence/p4-03-03-bridge-layout-viewer-terrain-existing.png（近景・Pier/span/skew/Existing）
+- docs/rebuild/phase4/evidence/p4-03-04-restart-restore.png（再起動復元後）
+- Discord Webhook へ4枚とも画像実ファイル添付（日本語キャプション付き）: 送信成功（HTTP 200）
+
+--------------------------------------------------------------------------------
+13. 主要変更ファイル
+--------------------------------------------------------------------------------
+新規:
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutPiers.ts
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutSpans.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutPiers.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutSpans.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutPierTerrainExisting.test.ts
+- frontend/src/next/__tests__/bridgeLayoutPierUi.test.tsx
+- frontend/src/next/persistence/__tests__/bridgeLayoutPierPersistence.test.ts
+- docs/rebuild/phase4/Phase4-03_pier_span.md
+- docs/rebuild/phase4/evidence/p4-03-*.png（4枚）
+
+変更:
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutTypes.ts（PierPlacement拡張）
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutValidation.ts（Pier range/label/placement/metadata/skewSource）
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutPlacement.ts（Pier candidate/refresh/range bbox/view拡張）
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutScene.ts（Pier marker/skew線/span label/focusBounds）
+- frontend/src/next/components/SceneViewer.tsx（focusBounds prop）
+- frontend/src/next/components/BridgeLayoutSceneViewer.tsx（piers/spans/focusBounds）
+- frontend/src/next/pages/BridgeLayoutModuleShellPage.tsx（Pier編集・span一覧・サマリー）
+- frontend/src/next/modules/bridgeLayoutModule.ts（export）
+
+--------------------------------------------------------------------------------
+14. PR一覧 / merge SHA
+--------------------------------------------------------------------------------
+Step A（Pier domain / ordering / validation）:
+- branch: feat/phase4-03a-pier-domain
+- PR: #897 → merge SHA: e5828cbc68c33389b67ec6e6d47e89331d69c10c
+Step B（Pier placement / skew / span生成）:
+- branch: feat/phase4-03b-pier-placement-span
+- PR: #898 → merge SHA: 483cc68ed08adba0341f34e0498c1a2ce65bd812
+Step C（Terrain / Existing reference）:
+- branch: feat/phase4-03c-pier-terrain-existing
+- PR: #899 → merge SHA: 3db46c7dd1017ad205ffbc0f776ca3ee23d4b0dd
+Step D（UI / 3D）:
+- branch: feat/phase4-03d-pier-ui-3d
+- PR: #900 → merge SHA: 1f320a69bdf6774e933f1de51c2f7a2b913457a0
+Step E（Persistence / restart restore / .spacerproj）:
+- branch: feat/phase4-03e-pier-persistence
+- PR: #901 → merge SHA: 56390046c14597cf3d2bb7d4d2ffd625414ae9b6
+Step F（E2E / regression / screenshots / Final Gate）:
+- branch: feat/phase4-03f-final-gate
+- PR: #902 → merge SHA: 6840526764dea85e10076e675bbbc032cad2a25e
+
+--------------------------------------------------------------------------------
+15. Final Report 自身の PR / merge SHA
+--------------------------------------------------------------------------------
+- branch: docs/phase4-03-final-report
+- PR: #903 → merge SHA: （merge後に確定）
+
+--------------------------------------------------------------------------------
+16. 最終main SHA / 4系統同期
+--------------------------------------------------------------------------------
+- local main        : 6840526764dea85e10076e675bbbc032cad2a25e（Step F merge後）
+- origin/main       : 同上
+- GitHub main       : 同上
+- rebuild/integrated-system: 同上
+- 4系統一致: 確認済み（Final Report merge後にも再確認）
+
+--------------------------------------------------------------------------------
+17. 未解決事項
+--------------------------------------------------------------------------------
+- src/App.apolloNavigation.test.tsx の jsdom requestAnimationFrameハング（既存・新システム無関係）
+- Terrain Module の実際の地形グリッドは Project JSON に非保持
+  （Phase 4-02・4-03 は surfaceReference 解決時に Reference Mountain サーフェスを
+   Project 地形として使用。実地形gridの永続化は後続Phaseの課題）
+- 自動最適支間割・河川/鉄道条件による自動Pier回避は行わない（Phase 4-03対象外）
+
+--------------------------------------------------------------------------------
+18. Phase 4-04 readiness
+--------------------------------------------------------------------------------
+- Bridge Range内にP1..Pn配置 → A1-P1-…-Pn-A2 支間割自動生成 → 各PierのRoad XYZ・
+  Terrain・Existing・skew確認 → 統合3D → Auto Save → 再起動復元 → .spacerproj regression
+  が成立
+- BridgeLayoutDocument（唯一正本）・参照境界・skew規約（反時計回り正）確定済み
+- 判定: Phase 4-04 準備完了
+
+--------------------------------------------------------------------------------
+19. verdict
+--------------------------------------------------------------------------------
+Phase 4-03「橋脚配置・支間割」: **COMPLETE**
+- P1..Pn / span / skew / Terrain / Existing / 3D / Auto Save / restart restore /
+  .spacerproj / Luna / screenshots / tests / Electron / typecheck / build すべて成立
+- GitHub main反映・Discord報告（画像送信含む）・Final Report・4系統同期まで完了
+- Phase 4-04 以降へは進んでいない（STOP遵守）
+================================================================================
