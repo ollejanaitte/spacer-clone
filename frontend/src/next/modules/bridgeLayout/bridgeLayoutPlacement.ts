@@ -8,9 +8,10 @@ import type { ExistingConditionEntity } from "../existingConditions";
 import type { LinearAlignment } from "../../../liner/core/types";
 import type { VerticalElement } from "../../../liner/core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../../liner/schema/types";
-import type { AbutmentPlacementCandidate, BridgeLayoutIssue, PierPlacementCandidate } from "./bridgeLayoutTypes";
+import type { AbutmentPlacementCandidate, BridgeLayoutIssue, PierPlacementCandidate, SkewSource } from "./bridgeLayoutTypes";
 import { readRoadAlignmentContext, validateBridgeRangeInput, type RoadAlignmentContext } from "./bridgeLayoutDomain";
 import type { BridgeLayoutDocument } from "./bridgeLayoutTypes";
+import { generateSpans, describeSpans } from "./bridgeLayoutSpans";
 
 /**
  * Phase 4-02 A1/A2配置候補 + Terrain/Existing参照 / Phase 4-03 P1..Pn配置候補.
@@ -191,7 +192,6 @@ export interface AbutmentCandidateView {
   readonly station: number;
   readonly candidate: AbutmentPlacementCandidate;
 }
-
 export interface BridgeLayoutTerrainView {
   readonly surfaceReference: string | null;
   readonly available: boolean;
@@ -208,6 +208,41 @@ export interface BridgeLayoutExistingView {
   readonly entities: readonly ExistingConditionEntity[];
 }
 
+export interface PierCandidateView {
+  readonly supportId: string;
+  readonly label: string;
+  readonly station: number;
+  readonly candidate: PierPlacementCandidate;
+  readonly skewAngleRad: number | null;
+  readonly skewSource?: SkewSource;
+  /** Pier直下のTerrain参照 */
+  readonly terrain: {
+    readonly elevation: number | null;
+    /** road elevation - terrain elevation */
+    readonly diff: number | null;
+  };
+  /** Pier周辺のExisting entity（最小参照） */
+  readonly nearbyExisting: readonly ExistingConditionEntity[];
+}
+
+/** Pier単独 station の周辺 bbox を算出する（Existing参照用）。 */
+export function computePierRangeBBox(
+  context: RoadAlignmentContext,
+  station: number,
+  margin = 60,
+): BridgeRangeBBox | null {
+  const intermediate = context.intermediate;
+  if (!intermediate || !context.ok) return null;
+  const p = intermediate.sample(station);
+  if (!p) return null;
+  return {
+    minX: p.x - margin,
+    minY: p.y - margin,
+    maxX: p.x + margin,
+    maxY: p.y + margin,
+  };
+}
+
 export interface BridgeLayoutView {
   readonly document: BridgeLayoutDocument | undefined;
   readonly road: RoadAlignmentContext;
@@ -216,6 +251,8 @@ export interface BridgeLayoutView {
     readonly A1: AbutmentCandidateView | undefined;
     readonly A2: AbutmentCandidateView | undefined;
   };
+  readonly pierCandidates: readonly PierCandidateView[];
+  readonly spans: readonly { spanId: string; from: string; to: string; length: number }[];
   readonly terrain: BridgeLayoutTerrainView;
   readonly existing: BridgeLayoutExistingView;
   readonly validation: readonly BridgeLayoutIssue[];
@@ -241,6 +278,8 @@ export function assembleBridgeLayoutView(
       road,
       bridgeLength: null,
       candidates: { A1: undefined, A2: undefined },
+      pierCandidates: [],
+      spans: [],
       terrain: { surfaceReference: null, available: false, elevationA1: null, elevationA2: null, diffA1: null, diffA2: null },
       existing: { available: false, entityCount: 0, entities: [] },
       validation: road.ok ? [] : road.issues,
@@ -304,6 +343,39 @@ export function assembleBridgeLayoutView(
   const bbox = computeBridgeRangeBBox(road, range.startStation, range.endStation);
   const nearEntities = collectExistingNearRange(existingDoc?.entities, bbox);
 
+  // Phase 4-03: P1..Pn 配置候補 + Terrain + 周辺Existing参照
+  const pierCandidates: PierCandidateView[] = [];
+  if (road.ok && road.horizontal) {
+    for (const pier of document.piers) {
+      const result = computePierPlacementCandidate({
+        horizontal: road.horizontal,
+        vertical: road.vertical,
+        crossSections: road.crossSections,
+        station: pier.station,
+      });
+      if (!result.ok) continue;
+      const terrainElevation = lookupTerrainElevation(grid, result.candidate.domainX, result.candidate.domainY);
+      const candidate: PierPlacementCandidate = { ...result.candidate, terrainElevation };
+      const pierBbox = computePierRangeBBox(road, pier.station);
+      const nearby = collectExistingNearRange(existingDoc?.entities, pierBbox);
+      pierCandidates.push({
+        supportId: pier.supportId,
+        label: pier.label ?? pier.supportId,
+        station: pier.station,
+        candidate,
+        skewAngleRad: pier.skewAngleRad,
+        skewSource: pier.skewSource,
+        terrain: {
+          elevation: terrainElevation,
+          diff: terrainElevation !== null ? result.candidate.elevation - terrainElevation : null,
+        },
+        nearbyExisting: nearby,
+      });
+    }
+  }
+  const withSpans = { ...document, spans: generateSpans(document) };
+  const spans = describeSpans(withSpans);
+
   const terrain: BridgeLayoutTerrainView = {
     surfaceReference: terrainDoc?.surfaceReference ?? null,
     available: terrainAvailable,
@@ -328,6 +400,8 @@ export function assembleBridgeLayoutView(
     road,
     bridgeLength,
     candidates: { A1: candidateA1, A2: candidateA2 },
+    pierCandidates,
+    spans,
     terrain,
     existing,
     validation,
