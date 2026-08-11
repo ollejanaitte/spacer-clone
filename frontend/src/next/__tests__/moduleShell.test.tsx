@@ -57,10 +57,10 @@ describe("Project top module entries (Phase 1-06)", () => {
     window.history.pushState({}, "", `/app/projects/${project.projectId}`);
     const root = await render(<NextApp />);
     act(() => {
-      (document.querySelector('[data-testid="module-open-road"]') as HTMLElement).click();
+      (document.querySelector('[data-testid="module-open-cim"]') as HTMLElement).click();
     });
     expect(document.querySelector('[data-testid="module-shell-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="module-shell-title"]')?.textContent).toBe("道路");
+    expect(document.querySelector('[data-testid="module-shell-title"]')?.textContent).toBe("CIM / 統合3D");
     expect(document.querySelector('[data-testid="module-shell-status"]')?.textContent).toBe("未着手");
     cleanup(root);
   });
@@ -73,6 +73,16 @@ describe("Project top module entries (Phase 1-06)", () => {
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="module-shell-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="module-shell-title"]')?.textContent).toBe("CIM / 統合3D");
+    cleanup(root);
+  });
+
+  it("road module opens the Dummy Module page (Phase 1-07)", async () => {
+    const manager = getProjectManager();
+    manager.importProject(createEmptyProject("モジュール業務"));
+    const project = manager.listProjects()[0];
+    window.history.pushState({}, "", modulePath(project.projectId, "road"));
+    const root = await render(<NextApp />);
+    expect(document.querySelector('[data-testid="dummy-module-page"]')).toBeTruthy();
     cleanup(root);
   });
 
