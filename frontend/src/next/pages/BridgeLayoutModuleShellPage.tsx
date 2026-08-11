@@ -13,14 +13,19 @@ import {
   computeBridgeLength,
   validateBridgeRangeInput,
   buildRoadAlignmentContextFromInputs,
-} from "../modules/bridgeLayoutModule";
-import {
   assembleBridgeLayoutView,
   computeAbutmentPlacementCandidate,
+  computePierPlacementCandidate,
   lookupTerrainElevation,
   getProjectTerrainGrid,
+  refreshPierPlacements,
+  defaultAutomaticSkew,
+  generateSpans,
+  validatePierConfiguration,
+  validateSpanConfiguration,
+  nextPierId,
+  createValidationState,
 } from "../modules/bridgeLayoutModule";
-import { createValidationState } from "../modules/bridgeLayoutModule";
 import { createReferenceMountain } from "../modules/terrain/referenceMountain";
 import { gridToMesh } from "../modules/terrain/terrainSurface";
 import { buildRoadMesh } from "../modules/road/roadMesh";
@@ -31,10 +36,41 @@ import type { ProjectModuleKey } from "../project/schema";
 import { createEmptyBridgeLayoutDocument } from "../modules/bridgeLayout/bridgeLayoutTypes";
 import type { BridgeLayoutDocument } from "../modules/bridgeLayout/bridgeLayoutTypes";
 import type { RoadAlignmentContext } from "../modules/bridgeLayout/bridgeLayoutDomain";
-import type { AbutmentPlacementCandidate } from "../modules/bridgeLayout/bridgeLayoutTypes";
+import type { AbutmentPlacementCandidate, PierPlacement } from "../modules/bridgeLayout/bridgeLayoutTypes";
 
 function fmt(v: number | null | undefined, digits = 3): string {
   return v === null || v === undefined || !Number.isFinite(v) ? "—" : v.toFixed(digits);
+}
+
+interface PierRow {
+  readonly supportId: string;
+  readonly station: string;
+  readonly skew: string;
+}
+
+function pierRowsToPiers(rows: readonly PierRow[]): PierPlacement[] {
+  return rows.map((r) => ({
+    supportId: r.supportId,
+    label: r.supportId,
+    station: Number(r.station),
+    skewAngleRad: r.skew.trim() === "" ? null : Number(r.skew),
+    skewSource: r.skew.trim() === "" ? "automatic" : "user",
+  }));
+}
+
+/** 新規Pierの初期station: 現supports間の最大ギャップ中点（A1..A2内） */
+function suggestNewPierStation(piers: readonly PierPlacement[], start: number, end: number): number {
+  const stations = [start, ...piers.map((p) => p.station).filter((s) => Number.isFinite(s)), end].sort((a, b) => a - b);
+  let best = (start + end) / 2;
+  let bestGap = -1;
+  for (let i = 1; i < stations.length; i += 1) {
+    const gap = stations[i] - stations[i - 1];
+    if (gap > bestGap) {
+      bestGap = gap;
+      best = (stations[i] + stations[i - 1]) / 2;
+    }
+  }
+  return Number.isFinite(best) ? best : (start + end) / 2;
 }
 
 export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
@@ -51,6 +87,14 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
   const [endStation, setEndStation] = useState(() => {
     const doc = readBridgeLayoutDocument(getProjectManager(), projectId);
     return doc ? String(doc.bridgeRange.endStation) : "";
+  });
+  const [pierRows, setPierRows] = useState<PierRow[]>(() => {
+    const doc = readBridgeLayoutDocument(getProjectManager(), projectId);
+    return (doc?.piers ?? []).map((p) => ({
+      supportId: p.supportId,
+      station: String(p.station),
+      skew: p.skewAngleRad === null ? "" : String(p.skewAngleRad),
+    }));
   });
   const [message, setMessage] = useState<string | null>(null);
   const [show3d, setShow3d] = useState(false);
@@ -74,18 +118,21 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
   const stationsTyped = Number.isFinite(startNum) && Number.isFinite(endNum) && startStation.trim() !== "" && endStation.trim() !== "";
 
   const pendingDoc = useMemo<BridgeLayoutDocument | undefined>(() => {
-    if (!stationsTyped) return savedDoc;
     const base = savedDoc ?? createEmptyBridgeLayoutDocument();
+    const rangeTyped = stationsTyped;
+    const piers = pierRowsToPiers(pierRows);
     return {
       ...base,
       name: bridgeName,
-      bridgeRange: { startStation: startNum, endStation: endNum, bridgeLength: computeBridgeLength({ startStation: startNum, endStation: endNum }) },
-      abutments: {
-        A1: { ...base.abutments.A1, station: startNum },
-        A2: { ...base.abutments.A2, station: endNum },
-      },
+      bridgeRange: rangeTyped
+        ? { startStation: startNum, endStation: endNum, bridgeLength: computeBridgeLength({ startStation: startNum, endStation: endNum }) }
+        : base.bridgeRange,
+      abutments: rangeTyped
+        ? { A1: { ...base.abutments.A1, station: startNum }, A2: { ...base.abutments.A2, station: endNum } }
+        : base.abutments,
+      piers,
     };
-  }, [savedDoc, stationsTyped, startNum, endNum, bridgeName]);
+  }, [savedDoc, stationsTyped, startNum, endNum, bridgeName, pierRows]);
 
   const view = useMemo(() => assembleBridgeLayoutView(manager, projectId, pendingDoc), [manager, projectId, pendingDoc]);
 
@@ -106,7 +153,19 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
     });
   }, [view.road, mountainRoadContext]);
 
-  const bridgeLength = stationsTyped ? computeBridgeLength({ startStation: startNum, endStation: endNum }) : (savedDoc ? savedDoc.bridgeRange.endStation - savedDoc.bridgeRange.startStation : null);
+  const bridgeLength = stationsTyped
+    ? computeBridgeLength({ startStation: startNum, endStation: endNum })
+    : (savedDoc ? savedDoc.bridgeRange.endStation - savedDoc.bridgeRange.startStation : null);
+
+  const pierIssues = useMemo(() => {
+    if (!pendingDoc) return [];
+    return validatePierConfiguration({ document: pendingDoc });
+  }, [pendingDoc]);
+
+  const spanIssues = useMemo(() => {
+    if (!pendingDoc || pierIssues.length > 0) return [];
+    return validateSpanConfiguration({ document: { ...pendingDoc, spans: generateSpans(pendingDoc) } });
+  }, [pendingDoc, pierIssues]);
 
   if (!project) {
     return (
@@ -125,7 +184,33 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
   const moduleData = readModuleFromManager(manager, projectId, "bridgeLayout");
   const status = moduleData?.state.status ?? "notStarted";
   const hasDoc = savedDoc !== undefined;
-  const saveDisabled = !view.road.ok || view.validation.length > 0;
+  const saveDisabled = !view.road.ok || view.validation.length > 0 || pierIssues.length > 0;
+
+  function handleAddPier() {
+    if (!stationsTyped) {
+      setMessage("橋脚追加前に開始測点と終了測点を設定してください。");
+      return;
+    }
+    const piers = pierRowsToPiers(pierRows);
+    const base = savedDoc ?? createEmptyBridgeLayoutDocument();
+    const probe: BridgeLayoutDocument = {
+      ...base,
+      piers,
+      abutments: { A1: { ...base.abutments.A1, station: startNum }, A2: { ...base.abutments.A2, station: endNum } },
+    };
+    const supportId = nextPierId(probe);
+    const station = suggestNewPierStation(piers, startNum, endNum);
+    setPierRows((rows) => [...rows, { supportId, station: String(station), skew: "" }]);
+    setMessage(null);
+  }
+
+  function handleRemovePier(supportId: string) {
+    setPierRows((rows) => rows.filter((r) => r.supportId !== supportId));
+  }
+
+  function updatePierRow(supportId: string, patch: Partial<PierRow>) {
+    setPierRows((rows) => rows.map((r) => (r.supportId === supportId ? { ...r, ...patch } : r)));
+  }
 
   function handleSave() {
     if (!stationsTyped) {
@@ -166,7 +251,19 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
       document = built.document;
     }
 
-    // A1/A2 配置候補スナップショットを算出して格納（Road Module正本は複製しない）
+    // P1..Pn: placement + automatic/user skew を反映（Road正本は複製しない）
+    document = { ...document, piers: pierRowsToPiers(pierRows) };
+    document = refreshPierPlacements(document, view.road, getProjectTerrainGrid(manager, projectId));
+    document = { ...document, spans: generateSpans(document) };
+
+    const pierCheck = validatePierConfiguration({ document });
+    const spanCheck = validateSpanConfiguration({ document });
+    if (pierCheck.length > 0 || spanCheck.length > 0) {
+      setMessage(`保存できませんでした: ${pierCheck[0]?.message ?? spanCheck[0]?.message}`);
+      return;
+    }
+
+    // A1/A2 配置候補スナップショット（Phase 4-02維持）
     const grid = getProjectTerrainGrid(manager, projectId);
     const candidateFor = (station: number): AbutmentPlacementCandidate | undefined => {
       if (!view.road.horizontal) return undefined;
@@ -180,15 +277,13 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
       const terrainElevation = lookupTerrainElevation(grid, result.candidate.domainX, result.candidate.domainY);
       return { ...result.candidate, terrainElevation };
     };
-    const a1 = candidateFor(startNum);
-    const a2 = candidateFor(endNum);
     const now = new Date().toISOString();
     document = {
       ...document,
       name: bridgeName || document.name,
       abutments: {
-        A1: { ...document.abutments.A1, station: startNum, placement: a1 },
-        A2: { ...document.abutments.A2, station: endNum, placement: a2 },
+        A1: { ...document.abutments.A1, station: startNum, placement: candidateFor(startNum) },
+        A2: { ...document.abutments.A2, station: endNum, placement: candidateFor(endNum) },
       },
       validation: createValidationState(true, [], now),
     };
@@ -201,6 +296,8 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
     setMessage("保存しました（Auto Save）。");
     void manager.flushPendingSaves();
   }
+
+  const spanTotal = previewView.spans.reduce((sum, s) => sum + s.length, 0);
 
   return (
     <section className="next-page next-page-wide" data-testid="bridge-layout-module-page">
@@ -225,6 +322,14 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
         <div>
           <dt>Bridge Layout正本</dt>
           <dd data-testid="bridge-layout-doc">{hasDoc ? "あり" : "なし"}</dd>
+        </div>
+        <div>
+          <dt>橋脚本数</dt>
+          <dd data-testid="bridge-pier-count">{pierRows.length}</dd>
+        </div>
+        <div>
+          <dt>支間数</dt>
+          <dd data-testid="bridge-span-count">{previewView.spans.length}</dd>
         </div>
       </dl>
 
@@ -293,15 +398,15 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
         </div>
       )}
 
-      {view.validation.length > 0 && (
+      {[...view.validation, ...pierIssues, ...spanIssues].length > 0 && (
         <ul className="next-integrity-reasons" data-testid="bridge-layout-issues">
-          {view.validation.map((issue) => (
+          {[...view.validation, ...pierIssues, ...spanIssues].map((issue) => (
             <li key={`${issue.path}:${issue.message}`} data-testid="bridge-layout-issue">{issue.path}: {issue.message}</li>
           ))}
         </ul>
       )}
 
-      <h2 className="next-home-section-title">A1 / A2 配置候補</h2>
+      <h2 className="next-home-section-title">Supports一覧（A1 / P1..Pn / A2）</h2>
       <div className="next-preview-grid">
         {(["A1", "A2"] as const).map((role) => {
           const c = previewView.candidates[role];
@@ -318,6 +423,73 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
             </div>
           );
         })}
+      </div>
+
+      <h2 className="next-home-section-title">Pier編集（P1..Pn）</h2>
+      <div className="next-road-summary" data-testid="bridge-pier-edit">
+        <button
+          type="button"
+          className="next-action-secondary"
+          data-testid="bridge-pier-add"
+          onClick={handleAddPier}
+        >
+          橋脚を追加
+        </button>
+        {pierRows.length === 0 && (
+          <p className="next-hint">橋脚なし（A1-A2の単一支間）</p>
+        )}
+        {pierRows.map((row) => {
+          const info = previewView.pierCandidates.find((p) => p.supportId === row.supportId);
+          const effectiveSkew = info
+            ? (row.skew.trim() === "" ? defaultAutomaticSkew(info.candidate.tangentAzimuthRad) : Number(row.skew))
+            : null;
+          return (
+            <div key={row.supportId} className="next-road-summary" data-testid={`bridge-pier-row-${row.supportId}`}>
+              <p><strong>{row.supportId}</strong></p>
+              <label className="next-field">
+                <span>station [m]</span>
+                <input
+                  type="number"
+                  data-testid={`bridge-pier-station-${row.supportId}`}
+                  value={row.station}
+                  onChange={(e) => updatePierRow(row.supportId, { station: e.target.value })}
+                />
+              </label>
+              <label className="next-field">
+                <span>skew [rad]（反時計回り正・空欄=自動: {effectiveSkew === null ? "—" : fmt(effectiveSkew, 4)}）</span>
+                <input
+                  type="number"
+                  data-testid={`bridge-pier-skew-${row.supportId}`}
+                  value={row.skew}
+                  onChange={(e) => updatePierRow(row.supportId, { skew: e.target.value })}
+                  placeholder="自動（道路直角）"
+                />
+              </label>
+              <p>domain X / Y: {info ? `${fmt(info.candidate.domainX)} / ${fmt(info.candidate.domainY)}` : "—"}</p>
+              <p>道路標高: {info ? fmt(info.candidate.elevation) : "—"} m</p>
+              <p>Terrain標高: {info && info.terrain.elevation !== null ? `${fmt(info.terrain.elevation)} m` : "—"}</p>
+              <p>周辺Existing: {info && info.nearbyExisting.length > 0 ? info.nearbyExisting.map((e) => e.label).join(" / ") : "—"}</p>
+              <button
+                type="button"
+                className="next-danger"
+                data-testid={`bridge-pier-remove-${row.supportId}`}
+                onClick={() => handleRemovePier(row.supportId)}
+              >
+                削除
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2 className="next-home-section-title">Span一覧（自動生成・直接編集不可）</h2>
+      <div className="next-road-summary" data-testid="bridge-span-list">
+        {previewView.spans.map((s) => (
+          <p key={s.spanId} data-testid={`bridge-span-${s.spanId}`}>
+            {s.spanId}: {s.from} → {s.to} / {fmt(s.length)} m
+          </p>
+        ))}
+        <p><strong>span length 合計: {fmt(spanTotal)} m（bridgeLength: {bridgeLength === null ? "—" : fmt(bridgeLength)} m）</strong></p>
       </div>
 
       <h2 className="next-home-section-title">参照状態</h2>
@@ -343,7 +515,7 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
           data-testid="bridge-layout-show-3d"
           onClick={() => setShow3d((v) => !v)}
         >
-          {show3d ? "3Dを隠す" : "3D表示（Terrain + Road + Existing + Bridge Range + A1/A2）"}
+          {show3d ? "3Dを隠す" : "3D表示（Terrain + Road + Existing + A1/P1..Pn/A2 + span）"}
         </button>
       </div>
 
@@ -358,6 +530,14 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
             bridgeRange={previewView.bridgeLength !== null ? { startStation: previewView.candidates.A1?.station ?? startNum, endStation: previewView.candidates.A2?.station ?? endNum } : null}
             candidateA1={previewView.candidates.A1?.candidate}
             candidateA2={previewView.candidates.A2?.candidate}
+            piers={previewView.pierCandidates.map((p) => ({
+              supportId: p.supportId,
+              label: p.label,
+              station: p.station,
+              candidate: p.candidate,
+              skewAngleRad: p.skewAngleRad ?? defaultAutomaticSkew(p.candidate.tangentAzimuthRad),
+            }))}
+            spans={previewView.spans}
             showTerrainWireframe
           />
           <p className="next-hint" data-testid="bridge-layout-viewer-mode">
@@ -367,8 +547,8 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
       )}
 
       <div className="next-empty" data-testid="bridge-layout-placeholder">
-        <p>Phase 4-02: Road Alignment上で橋梁開始・終了測点を設定すると、橋長とA1/A2配置候補が生成され、Terrain + Road + Existing上で3D確認・保存・再起動復元できます。</p>
-        <p className="next-hint">A1/A2は配置候補（配置点/配置線）であり、橋台詳細（躯体・翼壁・基礎・杭）はPhase 4-03以降の対象です。</p>
+        <p>Phase 4-03: Bridge Range内にP1..Pnを配置すると、A1-P1-…-Pn-A2の支間割を自動生成し、各PierのRoad XYZ・Terrain・Existing・skewを確認できます。</p>
+        <p className="next-hint">P1..Pnは配置候補（配置点/配置線）であり、橋脚詳細（柱・梁・フーチング・杭・基礎設計）は後続Phaseの対象です。</p>
       </div>
     </section>
   );
