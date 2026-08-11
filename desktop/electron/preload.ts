@@ -5,6 +5,7 @@ import { contextBridge, ipcRenderer } from "electron";
 // still use `ipcChannels.ts` as the single source of truth for registration.
 const OPEN_PROJECT_CHANNEL = "spacer:dialog:open-project";
 const SAVE_PROJECT_CHANNEL = "spacer:dialog:save-project";
+const SAVE_SPACER_PROJ_CHANNEL = "spacer:dialog:save-spacerproj";
 const SHOW_ABOUT_CHANNEL = "spacer:app:show-about";
 const CLOSE_GUARD_PROMPT_CHANNEL = "spacer:close-guard:prompt";
 const CLOSE_GUARD_RESPONSE_CHANNEL = "spacer:close-guard:response";
@@ -60,6 +61,8 @@ contextBridge.exposeInMainWorld("spacerDesktop", {
   openProjectFile: () => ipcRenderer.invoke(OPEN_PROJECT_CHANNEL),
   saveProjectFile: (content: string, suggestedName?: string) =>
     ipcRenderer.invoke(SAVE_PROJECT_CHANNEL, { content, suggestedName }),
+  saveSpacerProjFile: (content: string, suggestedName?: string) =>
+    ipcRenderer.invoke(SAVE_SPACER_PROJ_CHANNEL, { content, suggestedName }),
   showAbout: () => ipcRenderer.invoke(SHOW_ABOUT_CHANNEL),
   persistence: {
     init: () => ipcRenderer.invoke(PERSISTENCE_INIT_CHANNEL),
