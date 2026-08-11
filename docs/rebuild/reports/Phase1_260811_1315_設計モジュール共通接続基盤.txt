@@ -1,0 +1,140 @@
+================================================================================
+Railsys 統合システム Phase 1 Final Report
+ファイル名: Phase1_260811_1315_設計モジュール共通接続基盤.txt
+================================================================================
+
+作業名: Phase 1 Module Core / 設計モジュール共通接続基盤
+完了日時（JST）: 2026-08-11 13:15
+
+--------------------------------------------------------------------------------
+1. Phase 1 目的
+--------------------------------------------------------------------------------
+道路・地形・橋梁配置・下部工・上部工・FEM・CIM・成果品の8領域を、
+今後すべて同じ作法でProject Data Coreへ接続できる共通Module Coreを完成させる。
+Phase 1では本物の設計計算・3D・設計処理は実装しない。
+
+--------------------------------------------------------------------------------
+2. Module Core全体構成
+--------------------------------------------------------------------------------
+frontend/src/next/modules/
+- contract.ts     : ModuleDefinition / ModuleStatus(5) / ModuleState / ModuleDataRecord
+- registry.ts     : 8Module定義の共通管理
+- state.ts        : Module State管理
+- adapter.ts      : Module↔Project Data Core接続境界
+- validation.ts   : Module validator / Project validation
+- moduleService.ts: Module変更→validate→Data Core→auto-save縦断
+- dummyModule.ts  : Dummy Module（Phase 1-07縦断用）
+
+--------------------------------------------------------------------------------
+3. Phase 1-01〜1-07結果
+--------------------------------------------------------------------------------
+Phase 1-01 Module Contract: ModuleDefinition/ModuleStatus/State/DataRecord型 + runtime guard
+Phase 1-02 Module Registry: 8Module定義を共通管理
+Phase 1-03 Module State/Status: updateModuleState/markModuleDirty/Validated/Completed/Reset
+Phase 1-04 Data Core Adapter: read/writeModule（Manager経由・直接変更禁止・auto-save連携）
+Phase 1-05 Validation/Auto Save: updateModuleData縦断・NG時正本書込拒否
+Phase 1-06 Projectトップ/Module Shell: 8Module表示+status・Shell+placeholder・routing
+Phase 1-07 Dummy縦断: 開く→変更→validate→Data Core→auto-save→再起動復元→export/import復元
+
+--------------------------------------------------------------------------------
+4. 対象8Module
+--------------------------------------------------------------------------------
+road / terrain / bridgeLayout / substructure / superstructure / analysis / cim / deliverables
+各Module本体の計算・3D・設計処理はPhase 2以降（Phase 1では実装しない）。
+
+--------------------------------------------------------------------------------
+5. Module Contract / Registry / State / Adapter / Validation / Auto Save連携
+--------------------------------------------------------------------------------
+- ModuleDefinition: moduleId/type/displayName/moduleVersion/dataVersion/status/input/output/validation/dependencies
+- Registry: 8Moduleを中央管理（Projectトップのハードコード乱立を解消）
+- State: notStarted/working/invalid/needsUpdate/completed + dirty/lastModified/lastValidated/validationErrors
+- Adapter: Project Data Core唯一正本・R1-02 schema/runtime validation尊重・直接変更禁止
+- Validation: Module変更→Module validation→Data Core更新→Project validation→R1-04 Auto Save
+- NG時: 壊れたModuleを正本保存しない・validation errorを黙殺しない
+- R1-04 Persistenceは作り直さず既存基盤へ接続
+
+--------------------------------------------------------------------------------
+6. Dummy Module縦断（Phase 1-07）
+--------------------------------------------------------------------------------
+Projectトップ → Dummy Module開く → Dummy値変更 → Status更新 → Validation →
+Project Data Core更新 → Auto Save → アプリ完全終了 → 再起動 → Dummyデータ復元 →
+.spacerproj Export → Import → Moduleデータ復元 を実fsテストで確認 ✅
+
+--------------------------------------------------------------------------------
+7. tests結果
+--------------------------------------------------------------------------------
+- modules tests: 26/26 PASS（contract 4 / registry 5 / state 6 / adapter 5 / validation 6）
+- src/next全体: 153/153 PASS（Dummy縦断含む）
+- electron tests: 26/26 PASS
+
+--------------------------------------------------------------------------------
+8. R1-01〜R1-05 regression
+--------------------------------------------------------------------------------
+- R1-01（NextApp・旧導線不存在）: PASS
+- R1-02（Project Data Core）: PASS
+- R1-03（Project Manager / UI）: PASS
+- R1-04（Persistence / Auto Save / Restore / Backup）: PASS
+- R1-05（Package / Import・Export / Integrity）: PASS
+
+--------------------------------------------------------------------------------
+9. Electron tests / typecheck / build / Luna目視
+--------------------------------------------------------------------------------
+- electron tests: 26/26 PASS
+- typecheck: PASS（tsc -b --pretty false）
+- build: PASS（tsc -b && vite build）
+- Electron通常起動: 新ホーム描画確認
+- Luna目視確認（read-only・gpt-5.6-luna）: ホーム画面UI崩れなし・テキスト一致・
+  コード編集/Git操作/ファイル変更なし（証跡: phase1-home-screen.png）
+- 旧メイン画面への正規導線: 復活していない
+
+--------------------------------------------------------------------------------
+10. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/modules/ contract.ts / registry.ts / state.ts / adapter.ts /
+  validation.ts / moduleService.ts / dummyModule.ts
+frontend/src/next/pages/ ModuleShellPage.tsx / DummyModulePage.tsx / ProjectTopPage.tsx
+frontend/src/next/ NextApp.tsx / routes.ts / styles.css
+frontend/src/next/project/ projectManager.ts / persistentProjectManager.ts
+frontend/src/next/__tests__/ moduleShell.test.tsx / dummyVertical.test.tsx
+frontend/src/next/modules/__tests__/ contract/registry/state/adapter/validation.test.ts
+docs/rebuild/phase1/ Phase1_module_core.md / evidence/phase1-home-screen.png
+
+--------------------------------------------------------------------------------
+11. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #839 Phase 1-01: 1de5dbcbda7623158aee764a4f7d20526f51e7be
+- PR #840 Phase 1-02: abbec3d054064baa107f79b4addcce48caacf989
+- PR #841 Phase 1-03: f77fb90a799ed568724332491f39fcdcb8be4dd6
+- PR #842 Phase 1-04: 9e73b984cd28212a27c494275e58167918917bc4
+- PR #843 Phase 1-05: 4b0aa474035ba31670537febf5564910ab6f9aa8
+- PR #844 Phase 1-06: 0069949c11c821cc86fe0a3383dcf143c700b938
+- PR #845 Phase 1-07: 32d71623985afa2a0eeef5f7c1312e340e47ea4e
+- PR #846 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+12. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #846
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+13. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+14. 残課題（Phase 2以降のみ）
+--------------------------------------------------------------------------------
+- 道路線形計算本体 / 道路3D / CIM
+- 地形生成本体 / 現況構造物
+- 橋梁配置計算 / 下部工 / 上部工 / FEM解析 / CIM統合3D / 成果品生成
+- Module本体をModule Coreへ接続する実装
+
+--------------------------------------------------------------------------------
+15. 最終判定
+--------------------------------------------------------------------------------
+Phase 1: COMPLETE
+Phase 2（道路設計）へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
