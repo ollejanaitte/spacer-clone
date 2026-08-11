@@ -7,7 +7,7 @@ const MODULE_DEFINITIONS: readonly ModuleDefinition[] = [
     moduleId: "road",
     moduleType: "road",
     displayName: "道路",
-    moduleVersion: "0.1.0",
+    moduleVersion: "1.0.0",
     dataVersion: "1.0.0",
     dependencies: ["terrain"],
     defaultStatus: "notStarted",

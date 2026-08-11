@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NextApp } from "../NextApp";
 import { modulePath } from "../routes";
 import { NodeFileSystemGateway } from "../persistence/nodeFileSystemGateway";
@@ -18,14 +18,13 @@ import { inspectPackageContent, extractProjectFromPackage } from "../persistence
 let tempDir: string;
 
 beforeEach(async () => {
-  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "phase1-dummy-"));
+  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "phase2a-road-"));
   resetProjectManagerForTest();
 });
 
 afterEach(async () => {
   resetProjectManagerForTest();
   await fs.rm(tempDir, { recursive: true, force: true });
-  vi.restoreAllMocks();
 });
 
 function createPersistence() {
@@ -66,37 +65,33 @@ function click(testId: string) {
   });
 }
 
-describe("Phase 1-07 Dummy Module vertical slice (real filesystem)", () => {
-  it("open dummy -> change -> validate -> auto-save -> restart -> restore -> export/import", async () => {
+describe("Phase 2-A Road Module vertical slice (real filesystem)", () => {
+  it("open road -> change metadata -> validate -> auto-save -> restart -> restore -> export/import", async () => {
     const persistence = createPersistence();
     setPersistenceForTest(persistence);
     const manager = getProjectManager();
 
-    // create project
-    const project = applyBusinessMetadata(createEmptyProject("Dummy縦断業務"), {
-      businessNumber: "DUMMY-001",
+    const project = applyBusinessMetadata(createEmptyProject("道路接続縦断業務"), {
+      businessNumber: "ROADV-001",
       designStage: "road-preliminary",
     });
     expect(manager.importProject(project)).toBe(true);
     await manager.flushPendingSaves();
 
-    // open Dummy module, change values, save
+    // open Road module, change metadata, save
     window.history.pushState({}, "", modulePath(project.projectId, "road"));
     let root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="dummy-module-page"]')).toBeTruthy();
-    changeValue("dummy-length-input", "120");
-    changeValue("dummy-label-input", "道路延長120m");
-    click("dummy-save-button");
+    expect(document.querySelector('[data-testid="road-module-page"]')).toBeTruthy();
+    changeValue("road-label-input", "国道〇〇号 道路設計");
+    click("road-save-button");
     await manager.flushPendingSaves();
     cleanup(root);
 
-    // verify in-memory module data
+    // verify in-memory road module data
     const stored = manager.getProject(project.projectId)?.modules?.road as {
-      data?: { length?: number; label?: string };
-      state?: { status?: string };
+      data?: { roadDesignDocument?: { label?: string } };
     };
-    expect(stored?.data?.length).toBe(120);
-    expect(stored?.data?.label).toBe("道路延長120m");
+    expect(stored?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
 
     // app restart: fresh manager on same filesystem
     resetProjectManagerForTest();
@@ -106,18 +101,17 @@ describe("Phase 1-07 Dummy Module vertical slice (real filesystem)", () => {
     const restore = await manager2.restoreFromPersistence();
     expect(restore.restored).toBe(1);
 
-    // module data restored
+    // road module data restored
     const restoredModule = manager2.getProject(project.projectId)?.modules?.road as {
-      data?: { length?: number; label?: string };
+      data?: { roadDesignDocument?: { label?: string } };
     };
-    expect(restoredModule?.data?.length).toBe(120);
-    expect(restoredModule?.data?.label).toBe("道路延長120m");
+    expect(restoredModule?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
 
     // export .spacerproj
     const built = buildProjectPackage(manager2.getProject(project.projectId)!);
     if (!built.ok) throw new Error("build failed");
 
-    // import into a third environment (PC-B equivalent)
+    // import into a fresh environment
     resetProjectManagerForTest();
     const persistence3 = createPersistence();
     setPersistenceForTest(persistence3);
@@ -131,15 +125,13 @@ describe("Phase 1-07 Dummy Module vertical slice (real filesystem)", () => {
     await manager3.flushPendingSaves();
 
     const importedModule = manager3.getProject(project.projectId)?.modules?.road as {
-      data?: { length?: number; label?: string };
+      data?: { roadDesignDocument?: { label?: string } };
     };
-    expect(importedModule?.data?.length).toBe(120);
-    expect(importedModule?.data?.label).toBe("道路延長120m");
+    expect(importedModule?.data?.roadDesignDocument?.label).toBe("国道〇〇号 道路設計");
 
-    // open Project top in the imported environment and verify module entry
+    // Project top shows road module entry
     window.history.pushState({}, "", `/app/projects/${project.projectId}`);
     root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="project-modules"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="module-entry-road"]')).toBeTruthy();
     cleanup(root);
   });

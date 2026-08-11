@@ -21,7 +21,7 @@ import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
 import { ModuleShellPage } from "./pages/ModuleShellPage";
-import { DummyModulePage } from "./pages/DummyModulePage";
+import { RoadModuleShellPage } from "./pages/RoadModuleShellPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
@@ -124,7 +124,7 @@ export function NextApp() {
       case "moduleShell":
         body =
           route.moduleId === "road" ? (
-            <DummyModulePage projectId={route.projectId} moduleId={route.moduleId} />
+            <RoadModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : (
             <ModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           );
