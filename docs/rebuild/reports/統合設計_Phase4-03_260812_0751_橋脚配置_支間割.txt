@@ -204,16 +204,17 @@ Step F（E2E / regression / screenshots / Final Gate）:
 15. Final Report 自身の PR / merge SHA
 --------------------------------------------------------------------------------
 - branch: docs/phase4-03-final-report
-- PR: #903 → merge SHA: （merge後に確定）
+- PR: #903 → merge SHA: 57e08ec1a0ae130d50fac9524c85c037d06ea88c
+- 本更新（merge SHA追記）: PR #904
 
 --------------------------------------------------------------------------------
 16. 最終main SHA / 4系統同期
 --------------------------------------------------------------------------------
-- local main        : 6840526764dea85e10076e675bbbc032cad2a25e（Step F merge後）
+- local main        : 57e08ec1a0ae130d50fac9524c85c037d06ea88c（Final Report merge後）
 - origin/main       : 同上
 - GitHub main       : 同上
 - rebuild/integrated-system: 同上
-- 4系統一致: 確認済み（Final Report merge後にも再確認）
+- 4系統一致: 確認済み
 
 --------------------------------------------------------------------------------
 17. 未解決事項
