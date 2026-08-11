@@ -80,6 +80,11 @@ export class PersistentProjectManager extends ProjectManager {
     return { restored, rejected };
   }
 
+  async listBackups(projectId: string): Promise<string[]> {
+    await this.ensurePersistence();
+    return this.persistence.listBackupFiles(projectId);
+  }
+
   async flushPendingSaves(): Promise<void> {
     await this.pendingSaves;
   }

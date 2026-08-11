@@ -322,6 +322,27 @@
   cursor: pointer;
 }
 
+.next-backup-section {
+  margin: 0 0 20px;
+}
+
+.next-backup-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.next-backup-item {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-family: monospace;
+  font-size: 12px;
+}
+
 .next-empty {
   padding: 32px;
   border: 1px dashed #cbd5e1;
