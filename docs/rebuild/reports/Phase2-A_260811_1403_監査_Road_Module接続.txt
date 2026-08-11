@@ -1,0 +1,143 @@
+================================================================================
+Railsys 統合システム Phase 2-A Final Report
+ファイル名: Phase2-A_260811_1403_監査_Road_Module接続.txt
+================================================================================
+
+作業名: Phase 2-A 2-00 監査＋2-01 Road Module接続
+完了日時（JST）: 2026-08-11 14:03
+
+--------------------------------------------------------------------------------
+1. Phase 2-A 目的
+--------------------------------------------------------------------------------
+既存道路/LINER資産を監査し（2-00）、RoadDesignDocumentをroad領域正本として
+Phase 1 Module Core上のroad ModuleをDummyから本物のRoad Moduleへ正式接続する（2-01）。
+道路計算本体（平面線形等）はPhase 2-02以降。
+
+--------------------------------------------------------------------------------
+2. baseline SHA
+--------------------------------------------------------------------------------
+- 93b011876c1b973162d0f7a2364b76cbb2500057（Phase 1 final main）
+
+--------------------------------------------------------------------------------
+3. 監査対象 / KEEP / ADAPT / REWRITE / DEFER
+--------------------------------------------------------------------------------
+監査対象: RoadDesignDocument / LINER core（平面線形・測点・縦断・横断・拡幅・2D/3D・DXF）/
+  backend road_geometry / legacy adapter / Phase 1 Module Core
+
+- KEEP   : Phase 1 Module Core一式・R1基盤
+- ADAPT  : RoadDesignDocument型 + validateRoadDesignDocument・旧LINER拡張validation
+- REWRITE: なし（旧LINERを丸ごとコピーしない方針）
+- DEFER  : 平面線形/測点/縦断/横断/拡幅/2D/3D/DXF/backend/旧/pro/liner UI → 2-02以降
+
+詳細: docs/rebuild/phase2/R2-00_road_liner_audit.md
+
+--------------------------------------------------------------------------------
+4. RoadDesignDocument責任境界
+--------------------------------------------------------------------------------
+- Road正本: RoadDesignDocument（Module Data Core配下road領域・{state,data,validation}形式）
+- Project正本: Project Data Core唯一正本
+- 接続: Road Module→Module Core/Adapter→Project Data Core→Persistence/Auto Save→Package
+- 禁止: Road UI/LINER/geometryがProject JSON直接変更不可・旧/pro/liner復活禁止
+- Road Module所有: RoadDesignDocument/設計入力/幾何/validation/state
+- 非所有: FEM/上部工/下部工/3D Viewer/terrain/Bridge Layout/成果品
+
+詳細: docs/rebuild/phase2/R2-00_boundary_freeze.md
+
+--------------------------------------------------------------------------------
+5. Module Coreとの接続構造
+--------------------------------------------------------------------------------
+roadModule.ts（定義+validation境界）
+  ↓ roadModuleAdapter.ts（read/write・Module Core経由・直接変更禁止）
+Project Data Core modules.road（{state,data,validation}）
+  ↓ R1-04 Persistence / Auto Save
+  ↓ R1-05 .spacerproj Export / Import
+
+--------------------------------------------------------------------------------
+6. Road Module実装結果
+--------------------------------------------------------------------------------
+- registry road: moduleVersion 1.0.0
+- RoadModuleShellPage: Road status/metadata表示 + label変更→save
+- NextApp: road→RoadModuleShellPage（Dummyを正式Road Moduleへ置換）
+- invalid data reject・Project JSON直接変更なし
+
+--------------------------------------------------------------------------------
+7. Module Status / State / Validation
+--------------------------------------------------------------------------------
+- ModuleDataRecord {state,data,validation} に準拠
+- Road data validation境界: 空data=有効・不正doc（非object/非string label）拒否
+- RoadDesignDocument完全schema validationはPhase 2-02以降
+
+--------------------------------------------------------------------------------
+8. Auto Save / restart restore / .spacerproj
+--------------------------------------------------------------------------------
+Road縦断（実fs）: 開く→label変更→validate→Project Data Core更新→Auto Save→
+完全終了→再起動→復元→.spacerproj Export→Import→Road Moduleデータ復元 ✅
+
+--------------------------------------------------------------------------------
+9. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/modules/ roadModule.ts / roadModuleAdapter.ts / registry.ts
+frontend/src/next/pages/ RoadModuleShellPage.tsx / NextApp.tsx
+frontend/src/next/__tests__/ roadVertical.test.tsx / moduleShell.test.tsx
+frontend/src/next/modules/__tests__/ roadModule.test.ts
+docs/rebuild/phase2/ R2-00_road_liner_audit.md / R2-00_boundary_freeze.md /
+  Phase2-A_road_module.md / evidence/phase2a-home-screen.png
+
+--------------------------------------------------------------------------------
+10. tests / regression / Electron / typecheck / build
+--------------------------------------------------------------------------------
+- modules: 32/32 PASS（roadModule 3件含む）
+- src/next全体: 159/159 PASS（road縦断含む）
+- electron tests: 26/26 PASS
+- R1-01〜R1-05 regression: PASS / Phase 1 regression: PASS
+- typecheck: PASS / build: PASS
+- Electron通常起動: 新ホーム描画確認
+
+--------------------------------------------------------------------------------
+11. Luna目視 / 旧メイン画面導線
+--------------------------------------------------------------------------------
+- Luna（read-only・gpt-5.6-luna）: ホーム画面UI崩れなし・テキスト一致・
+  コード編集/Git操作/ファイル変更なし（証跡: phase2a-home-screen.png）
+- Luna実行後git差分なし
+- 旧メイン画面への正規導線: 復活していない
+
+--------------------------------------------------------------------------------
+12. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #847 Step A1（監査）: dcdf95bba1f820df4e271fce35299307e1217695
+- PR #848 Step A2（境界Freeze）: 20bff38099c25d66a6ba8928d5c71f8c3937cbc7
+- PR #849 Step A3/A4（Road Module接続+Validation/Auto Save/restore）: d1f180a313c89b370737202709347ac79c927e8a
+- PR #850 Step A5/A6（縦断・記録・Final Gate）: b540001c7f6f2b013a972d151461228c3be4e5c2
+- PR #851 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+13. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #851
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+14. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+15. 未解決事項
+--------------------------------------------------------------------------------
+- RoadDesignDocument完全schema validation（現行label検証のみ）→ Phase 2-02
+- 平面線形Core等の計算本体移植 → Phase 2-02
+
+--------------------------------------------------------------------------------
+16. Phase 2-02開始可否
+--------------------------------------------------------------------------------
+- 可（Phase 2-Aの接続基盤が成立したため）
+- ただしPhase 2-02はユーザーの次の明示指示を待って開始する
+
+--------------------------------------------------------------------------------
+17. 最終判定
+--------------------------------------------------------------------------------
+Phase 2-A: COMPLETE
+Phase 2-02（平面線形Core移植）へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
