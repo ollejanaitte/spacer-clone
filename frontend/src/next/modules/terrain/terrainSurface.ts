@@ -13,6 +13,8 @@ export interface TerrainGrid {
 export interface TerrainMesh {
   readonly vertices: Float32Array;
   readonly indices: Uint32Array;
+  readonly width: number;
+  readonly height: number;
   readonly vertexCount: number;
   readonly triangleCount: number;
   readonly bounds: { minX: number; minY: number; maxX: number; maxY: number; minZ: number; maxZ: number };
@@ -87,6 +89,8 @@ export function gridToMesh(grid: TerrainGrid): TerrainMesh {
   return {
     vertices,
     indices: Uint32Array.from(indices),
+    width: grid.width,
+    height: grid.height,
     vertexCount: grid.width * grid.height,
     triangleCount: indices.length / 3,
     bounds: { minX, minY, maxX, maxY, minZ, maxZ },
