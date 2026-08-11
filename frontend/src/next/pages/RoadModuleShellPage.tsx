@@ -1,11 +1,41 @@
 import { useState } from "react";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { getModuleDefinition } from "../modules/registry";
-import { readRoadDesignDocument, readRoadInputs, writeRoadInputs } from "../modules/roadModuleAdapter";
+import { readRoadInputs, writeRoadInputs } from "../modules/roadModuleAdapter";
+import { buildRoadIntermediate } from "../modules/road/intermediateResult";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
-import { navigateTo, NEXT_PROJECT_HOME_PATH, modulePath } from "../routes";
+import { RoadPlanPreview, RoadProfilePreview, RoadCrossSectionPreview } from "../components/RoadPreviews";
+import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import type { ProjectModuleKey } from "../project/schema";
+import type { LinearAlignment } from "../../liner/core/types";
+import type { VerticalElement } from "../../liner/core/geometry/vertical";
+import type { CrossSectionTemplateDraft } from "../../liner/schema/types";
+
+const DEFAULT_HORIZONTAL: LinearAlignment = {
+  id: "ALIGN-DEFAULT",
+  linerModelId: "MODEL-1",
+  coordinatePolicyId: "COORD-1",
+  elements: [
+    { id: "S1", type: "straight", start: { x: 0, y: 0 }, azimuth: 0, length: 100 },
+    { id: "A1", type: "arc", start: { x: 100, y: 0 }, azimuth: 0, radius: 50, turn: "left", length: 50 },
+  ],
+};
+
+const DEFAULT_VERTICAL: VerticalElement[] = [
+  { type: "grade", id: "G1", startPhysicalDistance: 0, startElevation: 10, grade: 0.01, length: 150 },
+];
+
+const DEFAULT_CROSS: CrossSectionTemplateDraft = {
+  id: "XS1",
+  name: "標準",
+  offsetLines: [
+    { id: "L1", offset: -5.5, elevation: 0, role: "lane" },
+    { id: "C1", offset: 0, elevation: 0, role: "lane" },
+    { id: "R1", offset: 5.5, elevation: 0, role: "lane" },
+  ],
+  crossSlope: { signConvention: "right_down_positive", valuePercent: 2 },
+};
 
 export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
@@ -14,7 +44,19 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
     const inputs = readRoadInputs(getProjectManager(), projectId);
     return inputs.label ?? "";
   });
+  const [horizontal, setHorizontal] = useState<LinearAlignment>(DEFAULT_HORIZONTAL);
+  const [vertical, setVertical] = useState<VerticalElement[]>(DEFAULT_VERTICAL);
+  const [crossSections, setCrossSections] = useState<CrossSectionTemplateDraft[]>([DEFAULT_CROSS]);
   const [message, setMessage] = useState<string | null>(null);
+
+  const intermediate = buildRoadIntermediate({
+    horizontal,
+    vertical,
+    crossSections,
+    widthChangePoints: [],
+    crossSlopeIntervals: [],
+    stationDefinition: { originDisplayedStation: 0, equations: [] },
+  }, { sampleInterval: 25 });
 
   if (!project) {
     return (
@@ -30,11 +72,10 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
     );
   }
 
-  const doc = readRoadDesignDocument(getProjectManager(), projectId);
   const moduleData = readModuleFromManager(getProjectManager(), projectId, "road");
   const status = moduleData?.state.status ?? "notStarted";
 
-  function handleSaveMetadata() {
+  function handleSave() {
     const result = writeRoadInputs(getProjectManager(), projectId, { label: roadLabel });
     if (!result.ok) {
       setMessage("保存できませんでした（validation NG）。");
@@ -65,8 +106,8 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
           <dd data-testid="road-module-status">{MODULE_STATUS_LABELS[status]}</dd>
         </div>
         <div>
-          <dt>RoadDesignDocument</dt>
-          <dd data-testid="road-module-doc">{doc !== undefined ? "あり" : "なし"}</dd>
+          <dt>Validation</dt>
+          <dd data-testid="road-module-validation">{intermediate.ok ? "OK" : "NG"}</dd>
         </div>
       </dl>
 
@@ -82,7 +123,7 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
           />
         </label>
         <div className="next-form-actions">
-          <button type="button" className="next-primary" data-testid="road-save-button" onClick={handleSaveMetadata}>
+          <button type="button" className="next-primary" data-testid="road-save-button" onClick={handleSave}>
             保存（Auto Save）
           </button>
         </div>
@@ -90,12 +131,39 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
 
       {message !== null && <div className="next-hint" data-testid="road-message">{message}</div>}
 
-      <div className="next-empty" data-testid="road-module-placeholder">
-        <p>道路計算（平面線形・測点・縦断・横断・3D）は Phase 2-02 以降で順次実装します。</p>
-        <p className="next-hint">Road Design Documentは完全schema validationで検証・road領域正本として保存されます。</p>
+      {intermediate.issues.length > 0 && (
+        <ul className="next-integrity-reasons" data-testid="road-issues">
+          {intermediate.issues.map((issue) => (
+            <li key={`${issue.path}:${issue.message}`}>{issue.path}: {issue.message}</li>
+          ))}
+        </ul>
+      )}
+
+      <h2 className="next-home-section-title">2Dプレビュー</h2>
+      <div className="next-preview-grid">
+        <div>
+          <h3 className="next-hint">平面線形（Plan）</h3>
+          <RoadPlanPreview horizontal={horizontal} vertical={vertical} crossSections={crossSections} widthChangePoints={[]} crossSlopeIntervals={[]} />
+        </div>
+        <div>
+          <h3 className="next-hint">縦断（Profile）</h3>
+          <RoadProfilePreview horizontal={horizontal} vertical={vertical} />
+        </div>
+        <div>
+          <h3 className="next-hint">横断（Cross Section）</h3>
+          <RoadCrossSectionPreview crossSection={crossSections[0]} />
+        </div>
+      </div>
+
+      <div className="next-road-summary" data-testid="road-summary">
+        <p>延長: {intermediate.totalLength.toFixed(3)} m</p>
+        <p>サンプル点: {intermediate.samplePoints.length} 点</p>
+        {intermediate.samplePoints[0] && (
+          <p>
+            起点: No.{intermediate.samplePoints[0].display} / Z={intermediate.samplePoints[0].z.toFixed(3)}
+          </p>
+        )}
       </div>
     </section>
   );
 }
-
-export { modulePath };
