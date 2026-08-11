@@ -5,6 +5,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 export interface SceneBuildResult {
   readonly group: THREE.Group;
   readonly bounds: THREE.Box3;
+  /** Optional tighter camera framing box (defaults to bounds). */
+  readonly focusBounds?: THREE.Box3 | null;
 }
 
 export interface SceneViewerProps {
@@ -16,6 +18,8 @@ export interface SceneViewerProps {
   /** Render an auto-sized grid helper at the scene footprint. */
   readonly showGrid?: boolean;
   readonly background?: number;
+  /** Camera framing override: frame this tighter box instead of the whole scene. */
+  readonly focusBounds?: THREE.Box3 | null;
 }
 
 /**
@@ -25,7 +29,7 @@ export interface SceneViewerProps {
  * already be in the shared Render Coordinate space (domain -> three mapping is
  * applied by the scene builders, never re-implemented here).
  */
-export function SceneViewer({ buildScene, className = "", testId, showGrid = false, background = 0xdfe8f0 }: SceneViewerProps) {
+export function SceneViewer({ buildScene, className = "", testId, showGrid = false, background = 0xdfe8f0, focusBounds = null }: SceneViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
 
@@ -71,7 +75,11 @@ export function SceneViewer({ buildScene, className = "", testId, showGrid = fal
       sceneGroup = built.group;
       scene.add(sceneGroup);
 
-      const box = built.bounds.isEmpty() ? new THREE.Box3().setFromObject(sceneGroup) : built.bounds;
+      const builtBox = built.bounds.isEmpty() ? new THREE.Box3().setFromObject(sceneGroup) : built.bounds;
+      const builtFocus = built.focusBounds ?? null;
+      const box = focusBounds !== null && !focusBounds.isEmpty() ? focusBounds
+        : builtFocus !== null && !builtFocus.isEmpty() ? builtFocus
+        : builtBox;
       const hasBounds = !box.isEmpty();
       if (hasBounds) {
         const size = box.getSize(new THREE.Vector3());
@@ -88,13 +96,13 @@ export function SceneViewer({ buildScene, className = "", testId, showGrid = fal
         controls.target.copy(center);
         controls.update();
 
-        if (showGrid) {
-          const footprint = Math.max(size.x, size.z) * 1.25;
-          const g = new THREE.GridHelper(footprint, 24, 0x8899aa, 0xaabbcc);
-          g.position.set(center.x, box.min.y, center.z);
-          grid = g;
-          scene.add(g);
-        }
+      if (showGrid) {
+        const footprint = Math.max(size.x, size.z) * 1.25;
+        const g = new THREE.GridHelper(footprint, 24, 0x8899aa, 0xaabbcc);
+        g.position.set(center.x, box.min.y, center.z);
+        grid = g;
+        scene.add(g);
+      }
       } else {
         camera.position.set(120, 120, 120);
         camera.lookAt(0, 0, 0);
@@ -146,7 +154,7 @@ export function SceneViewer({ buildScene, className = "", testId, showGrid = fal
         container.removeChild(renderer.domElement);
       }
     };
-  }, [buildScene, showGrid, background]);
+  }, [buildScene, showGrid, background, focusBounds]);
 
   return (
     <div ref={containerRef} className={`next-scene-viewer ${className}`} data-testid={testId}>
