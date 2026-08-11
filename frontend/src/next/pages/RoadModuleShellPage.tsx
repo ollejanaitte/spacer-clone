@@ -44,9 +44,18 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
     const inputs = readRoadInputs(getProjectManager(), projectId);
     return inputs.label ?? "";
   });
-  const [horizontal, setHorizontal] = useState<LinearAlignment>(DEFAULT_HORIZONTAL);
-  const [vertical, setVertical] = useState<VerticalElement[]>(DEFAULT_VERTICAL);
-  const [crossSections, setCrossSections] = useState<CrossSectionTemplateDraft[]>([DEFAULT_CROSS]);
+  const [horizontal, setHorizontal] = useState<LinearAlignment>(() => {
+    const inputs = readRoadInputs(getProjectManager(), projectId);
+    return (inputs.horizontal as LinearAlignment | undefined) ?? DEFAULT_HORIZONTAL;
+  });
+  const [vertical, setVertical] = useState<VerticalElement[]>(() => {
+    const inputs = readRoadInputs(getProjectManager(), projectId);
+    return (inputs.vertical as VerticalElement[] | undefined) ?? DEFAULT_VERTICAL;
+  });
+  const [crossSections, setCrossSections] = useState<CrossSectionTemplateDraft[]>(() => {
+    const inputs = readRoadInputs(getProjectManager(), projectId);
+    return (inputs.crossSections as CrossSectionTemplateDraft[] | undefined) ?? [DEFAULT_CROSS];
+  });
   const [message, setMessage] = useState<string | null>(null);
 
   const intermediate = buildRoadIntermediate({
@@ -76,7 +85,12 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
   const status = moduleData?.state.status ?? "notStarted";
 
   function handleSave() {
-    const result = writeRoadInputs(getProjectManager(), projectId, { label: roadLabel });
+    const result = writeRoadInputs(getProjectManager(), projectId, {
+      label: roadLabel,
+      horizontal,
+      vertical,
+      crossSections,
+    });
     if (!result.ok) {
       setMessage("保存できませんでした（validation NG）。");
       return;
