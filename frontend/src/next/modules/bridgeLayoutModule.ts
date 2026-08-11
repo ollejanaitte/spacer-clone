@@ -31,6 +31,24 @@ export {
   applyBridgeRangeToDocument,
 } from "./bridgeLayout/bridgeLayoutDomain";
 export type { RoadAlignmentContext, BuildBridgeRangeResult, ValidateBridgeRangeInput } from "./bridgeLayout/bridgeLayoutDomain";
+export {
+  computeAbutmentPlacementCandidate,
+  lookupTerrainElevation,
+  getProjectTerrainGrid,
+  computeBridgeRangeBBox,
+  isExistingNearRange,
+  collectExistingNearRange,
+  assembleBridgeLayoutView,
+} from "./bridgeLayout/bridgeLayoutPlacement";
+export type {
+  ComputeCandidateInput,
+  ComputeCandidateResult,
+  AbutmentCandidateView,
+  BridgeLayoutView,
+  BridgeLayoutTerrainView,
+  BridgeLayoutExistingView,
+  BridgeRangeBBox,
+} from "./bridgeLayout/bridgeLayoutPlacement";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
