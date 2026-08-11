@@ -133,11 +133,11 @@ describe("NextApp Shell", () => {
     cleanup(root);
   });
 
-  it("業務データ読込ページ（placeholder）を表示する", async () => {
+  it("業務データ読込ページ（Integrity Check入口）を表示する", async () => {
     window.history.pushState({}, "", "/app/business/load");
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="load-business-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="load-business-placeholder"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="select-package-button"]')).toBeTruthy();
     cleanup(root);
   });
 });
