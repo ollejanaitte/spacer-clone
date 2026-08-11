@@ -7,35 +7,21 @@ import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
 import { RoadPlanPreview, RoadProfilePreview, RoadCrossSectionPreview } from "../components/RoadPreviews";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
+import { createReferenceMountain } from "../modules/terrain/referenceMountain";
 import type { ProjectModuleKey } from "../project/schema";
 import type { LinearAlignment } from "../../liner/core/types";
 import type { VerticalElement } from "../../liner/core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../liner/schema/types";
 
-const DEFAULT_HORIZONTAL: LinearAlignment = {
-  id: "ALIGN-DEFAULT",
-  linerModelId: "MODEL-1",
-  coordinatePolicyId: "COORD-1",
-  elements: [
-    { id: "S1", type: "straight", start: { x: 0, y: 0 }, azimuth: 0, length: 100 },
-    { id: "A1", type: "arc", start: { x: 100, y: 0 }, azimuth: 0, radius: 50, turn: "left", length: 50 },
-  ],
-};
+// 新規Roadの既定データは Reference Mountain の計画道路（Terrain/Existingと同一座標系）。
+// Road Moduleページで「保存」すると roadInput としてProjectへ保存される。
+const ROAD_DEFAULT = createReferenceMountain();
 
-const DEFAULT_VERTICAL: VerticalElement[] = [
-  { type: "grade", id: "G1", startPhysicalDistance: 0, startElevation: 10, grade: 0.01, length: 150 },
-];
+const DEFAULT_HORIZONTAL: LinearAlignment = ROAD_DEFAULT.roadHorizontal;
 
-const DEFAULT_CROSS: CrossSectionTemplateDraft = {
-  id: "XS1",
-  name: "標準",
-  offsetLines: [
-    { id: "L1", offset: -5.5, elevation: 0, role: "lane" },
-    { id: "C1", offset: 0, elevation: 0, role: "lane" },
-    { id: "R1", offset: 5.5, elevation: 0, role: "lane" },
-  ],
-  crossSlope: { signConvention: "right_down_positive", valuePercent: 2 },
-};
+const DEFAULT_VERTICAL: VerticalElement[] = [...ROAD_DEFAULT.roadVertical];
+
+const DEFAULT_CROSS: CrossSectionTemplateDraft = ROAD_DEFAULT.roadCrossSection;
 
 export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
