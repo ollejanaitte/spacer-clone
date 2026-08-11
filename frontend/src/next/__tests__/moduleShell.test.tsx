@@ -76,13 +76,13 @@ describe("Project top module entries (Phase 1-06)", () => {
     cleanup(root);
   });
 
-  it("road module opens the Dummy Module page (Phase 1-07)", async () => {
+  it("road module opens the Road Module page (Phase 2-A)", async () => {
     const manager = getProjectManager();
     manager.importProject(createEmptyProject("モジュール業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", modulePath(project.projectId, "road"));
     const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="dummy-module-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-module-page"]')).toBeTruthy();
     cleanup(root);
   });
 
