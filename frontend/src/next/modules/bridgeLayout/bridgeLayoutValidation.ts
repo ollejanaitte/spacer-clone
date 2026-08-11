@@ -71,6 +71,14 @@ export function validateBridgeLayoutDocument(document: BridgeLayoutDocument): re
     } else if (range.startStation >= range.endStation) {
       issues.push({ path: `${path}.bridgeRange`, message: "startStation must be less than endStation" });
     }
+    if (range.bridgeLength !== undefined && range.bridgeLength !== null) {
+      if (!isFiniteNumber(range.bridgeLength)) {
+        issues.push({ path: `${path}.bridgeRange.bridgeLength`, message: "bridgeLength must be a finite number when present" });
+      } else if (isFiniteNumber(range.startStation) && isFiniteNumber(range.endStation)
+        && Math.abs(range.bridgeLength - (range.endStation - range.startStation)) > 1e-6) {
+        issues.push({ path: `${path}.bridgeRange.bridgeLength`, message: "bridgeLength must equal endStation - startStation" });
+      }
+    }
   }
 
   const abutments = document.abutments;
@@ -91,6 +99,30 @@ export function validateBridgeLayoutDocument(document: BridgeLayoutDocument): re
       }
       if (abutment.skewAngleRad !== null && !isFiniteNumber(abutment.skewAngleRad)) {
         issues.push({ path: `${path}.abutments.${role}.skewAngleRad`, message: `${role}.skewAngleRad must be finite or null` });
+      }
+      const placement = abutment.placement;
+      if (placement !== undefined && placement !== null) {
+        if (typeof placement !== "object") {
+          issues.push({ path: `${path}.abutments.${role}.placement`, message: `${role}.placement must be an object when present` });
+        } else {
+          for (const key of ["domainX", "domainY", "elevation", "tangentAzimuthRad"] as const) {
+            if (!isFiniteNumber(placement[key])) {
+              issues.push({ path: `${path}.abutments.${role}.placement.${key}`, message: `${role}.placement.${key} must be a finite number` });
+            }
+          }
+          if (placement.terrainElevation !== null && !isFiniteNumber(placement.terrainElevation)) {
+            issues.push({ path: `${path}.abutments.${role}.placement.terrainElevation`, message: `${role}.placement.terrainElevation must be finite or null` });
+          }
+          if (typeof placement.roadReferenceId !== "string" || placement.roadReferenceId.length === 0) {
+            issues.push({ path: `${path}.abutments.${role}.placement.roadReferenceId`, message: `${role}.placement.roadReferenceId is required` });
+          }
+          if (placement.coordinateContextId !== null && placement.coordinateContextId !== undefined && typeof placement.coordinateContextId !== "string") {
+            issues.push({ path: `${path}.abutments.${role}.placement.coordinateContextId`, message: `${role}.placement.coordinateContextId must be a string or null` });
+          }
+          if (typeof placement.capturedAt !== "string" || placement.capturedAt.length === 0) {
+            issues.push({ path: `${path}.abutments.${role}.placement.capturedAt`, message: `${role}.placement.capturedAt is required` });
+          }
+        }
       }
     }
   }
@@ -260,6 +292,7 @@ export function parseBridgeLayoutDocument(raw: unknown): { ok: true; document: B
     bridgeRange: {
       startStation: parseStation(range.startStation),
       endStation: parseStation(range.endStation),
+      bridgeLength: parseOptionalNumber(range.bridgeLength),
     },
     abutments: {
       A1: parseAbutment(abutments.A1, "A1"),
@@ -299,6 +332,11 @@ function parseStation(value: unknown): number {
   return isFiniteNumber(value) ? value : Number.NaN;
 }
 
+function parseOptionalNumber(value: unknown): number | undefined {
+  if (value === undefined) return undefined;
+  return isFiniteNumber(value) ? value : Number.NaN;
+}
+
 function parseNullableNumber(value: unknown): number | null {
   if (value === null || value === undefined) return null;
   return isFiniteNumber(value) ? value : Number.NaN;
@@ -309,10 +347,28 @@ function parseAbutment(value: unknown, role: string): BridgeLayoutDocument["abut
     return { supportId: role, station: Number.NaN, skewAngleRad: Number.NaN };
   }
   const record = value as Record<string, unknown>;
+  const placementRaw = record.placement;
+  const placement = placementRaw && typeof placementRaw === "object"
+    ? parsePlacement(placementRaw as Record<string, unknown>)
+    : undefined;
   return {
     supportId: typeof record.supportId === "string" ? record.supportId : role,
     station: parseStation(record.station),
     skewAngleRad: parseNullableNumber(record.skewAngleRad),
+    placement,
+  };
+}
+
+function parsePlacement(record: Record<string, unknown>): BridgeLayoutDocument["abutments"]["A1"]["placement"] {
+  return {
+    domainX: parseStation(record.domainX),
+    domainY: parseStation(record.domainY),
+    elevation: parseStation(record.elevation),
+    tangentAzimuthRad: parseStation(record.tangentAzimuthRad),
+    terrainElevation: record.terrainElevation === null ? null : parseNullableNumber(record.terrainElevation),
+    roadReferenceId: typeof record.roadReferenceId === "string" ? record.roadReferenceId : "",
+    coordinateContextId: typeof record.coordinateContextId === "string" ? record.coordinateContextId : null,
+    capturedAt: typeof record.capturedAt === "string" ? record.capturedAt : "",
   };
 }
 
