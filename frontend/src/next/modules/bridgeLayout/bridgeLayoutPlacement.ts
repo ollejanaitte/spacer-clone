@@ -8,15 +8,15 @@ import type { ExistingConditionEntity } from "../existingConditions";
 import type { LinearAlignment } from "../../../liner/core/types";
 import type { VerticalElement } from "../../../liner/core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../../liner/schema/types";
-import type { AbutmentPlacementCandidate, BridgeLayoutIssue } from "./bridgeLayoutTypes";
+import type { AbutmentPlacementCandidate, BridgeLayoutIssue, PierPlacementCandidate } from "./bridgeLayoutTypes";
 import { readRoadAlignmentContext, validateBridgeRangeInput, type RoadAlignmentContext } from "./bridgeLayoutDomain";
 import type { BridgeLayoutDocument } from "./bridgeLayoutTypes";
 
 /**
- * Phase 4-02 A1/A2配置候補 + Terrain/Existing参照.
+ * Phase 4-02 A1/A2配置候補 + Terrain/Existing参照 / Phase 4-03 P1..Pn配置候補.
  *
- * A1/A2 は「橋梁端部の配置点 / downstream handoff用の最小配置情報」。
- * 橋台躯体・パラペット・翼壁・基礎・杭・詳細CIM・構造照査は対象外。
+ * A1/A2・P1..Pn は「配置点 / downstream handoff用の最小配置情報」。
+ * 橋台・橋脚の躯体詳細・基礎・杭・詳細CIM・構造照査は対象外。
  *
  * XYZ・標高・接線方向は Road Module の正式 station→XYZ 変換
  * （buildRoadIntermediate.sample）へ委譲し、ここで再実装しない。
@@ -33,8 +33,7 @@ export type ComputeCandidateResult =
   | { ok: true; candidate: AbutmentPlacementCandidate }
   | { ok: false; issues: readonly BridgeLayoutIssue[] };
 
-/** startStation→A1 / endStation→A2 の配置候補をRoad Module正式APIで算出する。 */
-export function computeAbutmentPlacementCandidate(input: ComputeCandidateInput): ComputeCandidateResult {
+function computeSupportPlacementCandidate(input: ComputeCandidateInput): ComputeCandidateResult {
   if (typeof input.station !== "number" || !Number.isFinite(input.station)) {
     return { ok: false, issues: [{ path: "bridgeLayoutDocument.abutments", message: "station must be a finite number" }] };
   }
@@ -69,6 +68,16 @@ export function computeAbutmentPlacementCandidate(input: ComputeCandidateInput):
       capturedAt: new Date().toISOString(),
     },
   };
+}
+
+/** startStation→A1 / endStation→A2 の配置候補をRoad Module正式APIで算出する。 */
+export function computeAbutmentPlacementCandidate(input: ComputeCandidateInput): ComputeCandidateResult {
+  return computeSupportPlacementCandidate(input);
+}
+
+/** P1..Pn の配置候補をRoad Module正式APIで算出する。 */
+export function computePierPlacementCandidate(input: ComputeCandidateInput): ComputeCandidateResult {
+  return computeSupportPlacementCandidate(input);
 }
 
 /**
@@ -322,5 +331,63 @@ export function assembleBridgeLayoutView(
     terrain,
     existing,
     validation,
+  };
+}
+
+/**
+ * 道路接線に対する直角方向を skew の自動初期候補として算出する
+ * （反時計回り正・counterclockwise-positive が正規約）。
+ *
+ * 「道路直角 = 必ず正解」とは固定しない。ユーザーは skewAngleRad を
+ * 直接指定でき、その場合は skewSource="user" となる。
+ */
+export function defaultAutomaticSkew(tangentAzimuthRad: number): number {
+  // 道路接線 + 90度（反時計回り）= 道路の左法線方向
+  const raw = tangentAzimuthRad + Math.PI / 2;
+  // (-PI, PI] に正規化
+  let normalized = raw % (2 * Math.PI);
+  if (normalized <= -Math.PI) normalized += 2 * Math.PI;
+  if (normalized > Math.PI) normalized -= 2 * Math.PI;
+  return normalized;
+}
+
+/**
+ * 全 P1..Pn の placement スナップショットを再計算する。
+ * - station→XYZ / elevation / tangent は Road Module 正式APIから取得
+ * - Terrain elevation を参照（grid なし/TIN外は null）
+ * - skewSource が automatic かつ skew 未指定なら道路直角の自動初期値を設定
+ * Road / Terrain の正本は複製・変更しない。
+ */
+export function refreshPierPlacements(
+  document: BridgeLayoutDocument,
+  context: RoadAlignmentContext,
+  grid: TerrainGrid | null,
+): BridgeLayoutDocument {
+  if (!context.ok || !context.horizontal) return document;
+  const horizontal = context.horizontal;
+  const now = new Date().toISOString();
+  const piers = document.piers.map((pier) => {
+    const result = computePierPlacementCandidate({
+      horizontal,
+      vertical: context.vertical,
+      crossSections: context.crossSections,
+      station: pier.station,
+    });
+    if (!result.ok) return pier;
+    const terrainElevation = lookupTerrainElevation(grid, result.candidate.domainX, result.candidate.domainY);
+    const placement: PierPlacementCandidate = { ...result.candidate, terrainElevation };
+    const automaticSkew = defaultAutomaticSkew(result.candidate.tangentAzimuthRad);
+    return {
+      ...pier,
+      placement,
+      skewAngleRad: pier.skewAngleRad ?? (pier.skewSource === "user" ? pier.skewAngleRad : automaticSkew),
+      skewSource: pier.skewSource ?? "automatic",
+      metadata: { ...pier.metadata, refreshedAt: now },
+    };
+  });
+  return {
+    ...document,
+    piers,
+    metadata: { ...document.metadata, updatedAt: now },
   };
 }
