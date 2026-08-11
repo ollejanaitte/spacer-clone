@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IntegrityCheckResult } from "../components/IntegrityCheckResult";
+import { ConflictResolutionDialog, type ConflictChoice } from "../components/ConflictResolutionDialog";
 import { getProjectManager } from "../project/projectManagerInstance";
 import {
   inspectPackageContent,
@@ -9,6 +10,7 @@ import { hasUnsafePathInPackage } from "../persistence/package/packagePathSafety
 import { navigateTo, NEXT_BUSINESS_LIST_PATH, NEXT_PROJECT_HOME_PATH } from "../routes";
 import type { IntegrityReport } from "../persistence/package/projectPackageInspector";
 import type { SpacerProjPackage } from "../persistence/package/projectPackage";
+import type { Project } from "../project/schema";
 
 export type LoadStage = "idle" | "inspecting" | "checked" | "importing" | "imported";
 
@@ -16,9 +18,9 @@ export function LoadBusinessPage() {
   const [stage, setStage] = useState<LoadStage>("idle");
   const [report, setReport] = useState<IntegrityReport | null>(null);
   const [pkg, setPkg] = useState<SpacerProjPackage | null>(null);
-  const [rawContent, setRawContent] = useState<string>("");
   const [fileName, setFileName] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [conflictProject, setConflictProject] = useState<Project | null>(null);
 
   async function handleSelectAndInspect() {
     setMessage(null);
@@ -30,7 +32,6 @@ export function LoadBusinessPage() {
         return;
       }
       setFileName(opened.fileName);
-      setRawContent(opened.content);
       const result = inspectPackageContent(opened.fileName, opened.content);
       setReport(result.ok ? result.report : (result.report ?? null));
       setPkg(result.ok ? result.pkg : null);
@@ -53,14 +54,16 @@ export function LoadBusinessPage() {
       setMessage("PackageからProjectを抽出できませんでした。");
       return;
     }
-    setStage("importing");
-    // conflict check happens in Step D; for now, if ID exists we refuse overwrite
-    const existing = getProjectManager().getProject(project.projectId);
-    if (existing !== undefined) {
-      setStage("checked");
-      setMessage("同一Project IDが既に存在するため、読込を停止しました。（競合処理は後続Stepで実装）");
+    if (getProjectManager().hasProject(project.projectId)) {
+      setConflictProject(project);
+      setMessage("同一Project IDが既に存在します。上書き・複製・キャンセルを選択してください。");
       return;
     }
+    await doRegister(project);
+  }
+
+  async function doRegister(project: Project) {
+    setStage("importing");
     const registered = getProjectManager().importProject(project);
     if (!registered) {
       setStage("checked");
@@ -70,6 +73,39 @@ export function LoadBusinessPage() {
     await getProjectManager().flushPendingSaves();
     setStage("imported");
     navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`);
+  }
+
+  async function handleConflictChoice(choice: ConflictChoice) {
+    const project = conflictProject;
+    setConflictProject(null);
+    if (!project) return;
+    if (choice === "cancel") {
+      setStage("checked");
+      setMessage("キャンセルしました。既存Projectは変更されていません。");
+      return;
+    }
+    setStage("importing");
+    if (choice === "overwrite") {
+      const ok = await getProjectManager().overwriteProject(project);
+      if (!ok) {
+        setStage("checked");
+        setMessage("上書きに失敗しました（安全バックアップを確認してください）。");
+        return;
+      }
+      await getProjectManager().flushPendingSaves();
+      setStage("imported");
+      navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`);
+      return;
+    }
+    const duplicated = await getProjectManager().importAsDuplicate(project);
+    if (!duplicated) {
+      setStage("checked");
+      setMessage("複製に失敗しました。");
+      return;
+    }
+    await getProjectManager().flushPendingSaves();
+    setStage("imported");
+    navigateTo(`${NEXT_PROJECT_HOME_PATH}/${duplicated.projectId}`);
   }
 
   return (
@@ -116,6 +152,14 @@ export function LoadBusinessPage() {
 
       {stage === "importing" && <p className="next-hint">読み込み中...</p>}
       {stage === "imported" && <p className="next-hint" data-testid="import-complete">登録しました。</p>}
+
+      {conflictProject !== null && (
+        <ConflictResolutionDialog
+          projectName={conflictProject.name}
+          projectId={conflictProject.projectId}
+          onChoose={(choice) => void handleConflictChoice(choice)}
+        />
+      )}
     </section>
   );
 }
