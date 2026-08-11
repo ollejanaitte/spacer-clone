@@ -1,0 +1,227 @@
+================================================================================
+統合設計 Phase3-Fix + Phase4-A  Final Report
+3D土台修正・既存橋梁配置監査・BridgeLayoutContract
+================================================================================
+
+作業名   : 統合設計 Phase 3-Fix ＋ Phase 4-A
+完了日時 : 2026-08-12 02:04 JST（日本時間）
+主担当   : OpenCode DeepSeek V4 Flash
+GitHub   : https://github.com/ollejanaitte/spacer-clone.git
+新worktree: /home/masaharu/Projects/spacer-clone-next
+長期branch: rebuild/integrated-system
+
+--------------------------------------------------------------------------------
+1. baseline
+--------------------------------------------------------------------------------
+- baseline SHA（local main / origin main / GitHub main / rebuild/integrated-system）:
+  09b16cf77fea679fa55953f77953baad82d57795
+- 作業開始時: spacer-clone（canonical）dirty（docs/apollo evidence JSON + final_report.txt削除）
+  ※既存差分は不干渉・非破棄。spacer-clone-next は未追跡doc（R1-04.5 Luna検証結果）のみ
+- Phase 3成果: Terrain Module / Existing Conditions / Road CIM / Reference Mountain E2E COMPLETE
+
+--------------------------------------------------------------------------------
+2. Phase 3-Fix 内容（Step A）
+--------------------------------------------------------------------------------
+A. 3D Viewer大型化
+   - SceneViewer共通ホスト新設（renderer/camera/OrbitControls/ResizeObserver/
+     fit-to-bounds/disposeを共通化）
+   - Terrain Moduleページを wide化（max-width 1320px）
+   - Viewer高さ clamp(480px, 62vh, 780px) のresponsive対応（固定pixel依存を回避）
+   - camera aspect / renderer size は ResizeObserver でコンテナ追従
+
+B. 座標変換不具合（root cause）
+   - 原因: TerrainViewerが applyDomainToThreeTransform を built.mesh と
+     built.wireframe の両方へ適用（両者は同一geometryを共有）。
+     共有geometryに対し domain→three 変換が2回実行され、
+     1回目 (x,y,z)->(x,z,-y)、2回目 ->(x,-y,-z) となり
+     three.y=-domain.y・three.z=-elevation に化けて Terrainが鉛直に立った。
+   - また統合シーン（buildIntegratedThreeScene）は terrain に変換を適用しておらず
+     同様に鉛直姿勢だった。
+   - 修正: 変換をgeometryに対し1回だけ適用。統合シーンでもterrainに1回適用。
+
+C. 共通Render Coordinate Adapter（一本化）
+   - frontend/src/next/modules/renderCoordinate.ts を唯一の正本として新設
+   - domainToThree: three.x=domain.x / three.y=domain.z(標高) / three.z=-domain.y
+   - threeToDomain / domainVerticesToThree（Local Origin対応・入力非破壊）
+   - terrainCoordinate.ts / threeCoords.ts を本Adapterへ委譲し、
+     Terrain / Road / Existing / 統合scene / camera / 既存liner・bridgeProject が同一変換を使用
+
+D. 表示修正・統合シーン
+   - IntegratedSceneViewer新設 + Terrain Moduleページに
+     「統合シーン（Terrain+Road+Existing）を3D表示」トグルを追加
+   - 既存Viewer（existingViewerBuilder）もLocal Origin対応・共通変換へ
+
+--------------------------------------------------------------------------------
+3. 座標変換 最終仕様
+--------------------------------------------------------------------------------
+- domain XYZ: X=道路軸方向 / Y=横断方向 / Z=標高（metric）
+- three.x = domain.x / three.y = domain.z（標高,Y-up）/ three.z = -domain.y（右側+保持）
+- Project Origin（global→project）と Local Origin（project→local描画）を分離
+- 変換は表示責任。Terrain / Road / Existing の正本（CIM）を書き換えない
+- 既存の R3-00_coordinate_origin_freeze.md 契約を踏襲
+
+--------------------------------------------------------------------------------
+4. Reference Mountain 結果
+--------------------------------------------------------------------------------
+- 2峰+谷の地形が水平な地表面として描画
+- Road（計画道路）がTerrain上の正しい位置・標高に重なる
+- Existing（河川/既設道路/鉄道/地下管路）が同一座標系で描画
+- 幾何数値検証（test）: terrain水平・elevation範囲y軸・road標高帯重なり・existing位置
+
+--------------------------------------------------------------------------------
+5. Luna（Codex GPT-5.6-luna）目視確認
+--------------------------------------------------------------------------------
+- モード: codex exec --sandbox read-only（コード編集・Git操作なし）
+- 対象: スクリーンショット4枚（Terrain大型Viewer / ページ全体 / 統合シーン / ページ統合表示）
+- 結果: 総合判定 PASS
+  - Terrain水平・山/谷自然な向き・Road重なり正常・Existing同一座標系
+  - UI崩れなし・Viewer大型化・camera fit正常
+- Luna実行前後のgit差分増加なし（read-only確認）
+
+--------------------------------------------------------------------------------
+6. Phase 4-00 既存橋梁配置資産監査（Step B）
+--------------------------------------------------------------------------------
+対象: 旧spacer-clone（main @ 09b16cf）
+- 実装監査: bridge / bridgeDefinition / liner / bridgeProject / apollo / substructure / contracts
+- 文書監査: JIP-LINER研究 / 鋼鈑桁橋Golden（reference_bridge_001）/ Apollo phase6_0 / substructure-planning
+
+--------------------------------------------------------------------------------
+7. KEEP / ADAPT / REWRITE / DEFER 概要
+--------------------------------------------------------------------------------
+KEEP  :
+- liner/core/geometry（straight/arc/clothoid/profile）・coordinate3d.ts pointAtStationOffset
+- next/modules/road（Road CIM）・terrain（Terrain正本）
+- apollo/contracts/layoutValidation.ts・pierLineGeometry・bridgeLayoutSkew
+- 鋼鈑桁橋Golden（reference_bridge_001）・phase6_0 coordinates契約・ROAD_BRIDGE_INTERFACE_SPEC
+
+ADAPT :
+- liner/schema SpanDraft/PierDraft・bridgeProject BpSupport/BpSpan
+- apollo/contracts/layoutTypes.ts（BridgeLayoutContract最小骨格）
+- apollo/geometry placement.ts（GeometrySnapshot）
+- substructure Support/SupportPlacementEngine・contracts bridgeProject sharedFacts
+- JIP-LINERピア設定9方式（設計意図）・substructure-planning exchange_schema
+
+REWRITE:
+- bridgeDefinition/types.ts（概念のみ流用）・旧Bridge Wizard（frontend/src/bridge/*）
+- 旧FEM generator（backend/engine/bridge_fem_generator.py）
+
+DEFER :
+- JIP-LINER折れ桁/円弧桁（GAP-405）・張出し詳細・中間格点・曲線橋自動配置・下部工正式照査
+
+重要発見:
+- 最小配置契約は既存（layoutTypes + layoutValidation）で鋼鈑桁橋Goldenと数値一致
+- skew符号規約が複数箇所に分散 → Phase 4-01で単一規約（反時計回り正）に統一
+
+--------------------------------------------------------------------------------
+8. Phase 4-01 Bridge Layout Contract（Step C）
+--------------------------------------------------------------------------------
+- BridgeLayoutDocument（schema 0.1.0）を唯一の正本として定義
+  bridgeId / name / schemaVersion / metadata / roadReference / bridgeRange
+  (startStation/endStation) / abutments(A1・A2) / piers(P1..Pn) / spans /
+  skew / terrainReference / existingConditionsReference / validation
+- runtime validator（fail-closed）: bridgeId必須・roadReference必須・
+  startStation<endStation・A1/A2識別・pier ID重複禁止・station順序・
+  span length>0・参照切れ検出・NaN/Infinity reject・schemaVersion検証
+- parser: JSON round-trip可能
+- 参照境界: Road / Terrain / Existing を ID/reference で接続（正本複製禁止）。
+  resolveBridgeLayoutReferences で参照切れ（dangling）を検出
+- handoff境界: 下部工（supportId/station/skew）・上部工（spans/skew）へ配置情報を渡す
+- 実装:
+  frontend/src/next/modules/bridgeLayout/{bridgeLayoutTypes,bridgeLayoutValidation,bridgeLayoutReferences}.ts
+  frontend/src/next/modules/bridgeLayoutModule.ts / bridgeLayoutModuleAdapter.ts
+
+--------------------------------------------------------------------------------
+9. 主要変更ファイル
+--------------------------------------------------------------------------------
+新規（Step A）:
+- frontend/src/next/modules/renderCoordinate.ts
+- frontend/src/next/components/SceneViewer.tsx / IntegratedSceneViewer.tsx
+- frontend/src/next/modules/__tests__/renderCoordinate.test.ts / referenceMountainScene.test.ts
+- docs/rebuild/phase3/Phase3-Fix_3d_viewer_coordinate.md
+- docs/rebuild/phase3/evidence/p3f-*.png（4枚）
+
+変更（Step A）:
+- terrainCoordinate.ts / terrainViewerBuilder.ts / integratedSceneBuilder.ts /
+  existingViewerBuilder.ts / threeCoords.ts / TerrainViewer.tsx /
+  TerrainModuleShellPage.tsx / styles.css
+- テスト: terrainViewerBuilder.test.ts / integratedSceneBuilder.test.ts / terrainUi.test.tsx
+
+新規（Step C）:
+- frontend/src/next/modules/bridgeLayout/*.ts（types/validation/references + tests）
+- frontend/src/next/modules/bridgeLayoutModule.ts / bridgeLayoutModuleAdapter.ts
+- docs/rebuild/phase4/Phase4-00_bridge_layout_audit.md
+- docs/rebuild/phase4/Phase4-01_bridge_layout_contract.md
+
+--------------------------------------------------------------------------------
+10. tests / regression / Electron / typecheck / build
+--------------------------------------------------------------------------------
+- bridgeLayout tests   : 25 PASS（schema/validation/parser/reference/adapter）
+- src/next 全体        : 317 PASS（289 + 28）
+- src/liner+bridgeProject: 1116 PASS（threeCoords委譲の整合）
+- src/viewer+timeHistory: 449 PASS
+- 全regression         : 499 files / 3661 tests PASS（0 failure）
+- Electron tests       : 26/26 PASS
+- typecheck            : PASS
+- build                : PASS
+- 既知の注意: 旧システム App テスト（src/App.*.test.tsx）は jsdom 上で3D viewerの
+  requestAnimationFrame無限ループによりハングする既存問題（pristine mainでも再現）。
+  新統合システムとは無関係のため、regressionは当該旧Appテストを除外して全数PASSとした。
+
+--------------------------------------------------------------------------------
+11. PR / merge 記録
+--------------------------------------------------------------------------------
+Step A:
+- branch: fix/phase3-3d-viewer-coordinate
+- commit SHA: 70fbb37ae5d68ef46f1b31058bd59670a566765c
+- PR: #885 → merge SHA: c8947913fe2a6b85471339c9dc108ddbd2c439ef
+Step B:
+- branch: docs/phase4-00-bridge-layout-audit
+- commit SHA: 0407c6ed7fbfd46f0f01efa533b5aea70af46ce9
+- PR: #886 → merge SHA: e8f7e76fbe791ee565cfaeaa6efa8cb598ee9da8
+Step C:
+- branch: feat/phase4-01-bridge-layout-contract
+- commit SHA: acd1f336f27e200bdf4980649662ab672d452623
+- PR: #887 → merge SHA: b1d25782f05790ccfb23041f1a7c4266a5c0a940
+Final Report:
+- branch: docs/phase4-a-final-report
+- PR: #888（下記 merge SHA 参照）
+
+--------------------------------------------------------------------------------
+12. Final Report 自身の PR / merge SHA
+--------------------------------------------------------------------------------
+- merge SHA: （Step D merge後に追記）
+
+--------------------------------------------------------------------------------
+13. 最終main SHA / 4系統同期
+--------------------------------------------------------------------------------
+- local main        : b1d25782f05790ccfb23041f1a7c4266a5c0a940（Final merge後更新）
+- origin/main       : 同上
+- GitHub main       : 同上
+- rebuild/integrated-system: 同上
+- 4系統一致: （Final Report merge後に最終確認）
+
+--------------------------------------------------------------------------------
+14. Phase 4-02 readiness
+--------------------------------------------------------------------------------
+判定: READY（Phase 4-02「橋梁区間設定」開始可能）
+
+成立条件:
+- Terrain / Road / Existing の3D座標表示が正常化（水平地表面・同一座標系）
+- 既存資産再利用方針（KEEP/ADAPT/REWRITE/DEFER）確定
+- Bridge Layoutの唯一の正本（BridgeLayoutDocument）確定
+- 責任境界・Road/Terrain/Existing参照境界・下部工/上部工handoff境界確定
+
+--------------------------------------------------------------------------------
+15. 未解決事項
+--------------------------------------------------------------------------------
+- 旧システム App テスト（src/App.*.test.tsx）のjsdomハング（既存・新システム無関係）
+- 鋼鈑桁橋Goldenの測点（station値）抽出（HUMAN_CONFIRMATION_REQUIRED・Phase 4-02以降）
+- skew符号規約の旧資産側の扱い（新正本は反時計回り正で統一済み）
+- Phase 4-02「橋梁区間設定」以降は本作業の対象外（STOP済み）
+
+--------------------------------------------------------------------------------
+16. verdict
+--------------------------------------------------------------------------------
+Phase 3-Fix ＋ Phase 4-A: COMPLETE
+Phase 4-02（橋梁区間設定）以降へは進んでいない（STOP遵守）
+================================================================================
