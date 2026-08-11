@@ -9,6 +9,14 @@ const SAVE_PROJECT_CHANNEL = "spacer:dialog:save-project";
 const SHOW_ABOUT_CHANNEL = "spacer:app:show-about";
 const CLOSE_GUARD_PROMPT_CHANNEL = "spacer:close-guard:prompt";
 const CLOSE_GUARD_RESPONSE_CHANNEL = "spacer:close-guard:response";
+const PERSISTENCE_INIT_CHANNEL = "spacer:persistence:init";
+const PERSISTENCE_GET_ROOT_CHANNEL = "spacer:persistence:get-root";
+const PERSISTENCE_READ_FILE_CHANNEL = "spacer:persistence:read-file";
+const PERSISTENCE_WRITE_FILE_CHANNEL = "spacer:persistence:write-file";
+const PERSISTENCE_LIST_DIRS_CHANNEL = "spacer:persistence:list-dirs";
+const PERSISTENCE_LIST_FILES_CHANNEL = "spacer:persistence:list-files";
+const PERSISTENCE_DELETE_DIR_CHANNEL = "spacer:persistence:delete-dir";
+const PERSISTENCE_EXISTS_CHANNEL = "spacer:persistence:exists";
 function resolveGpuModeFromArgs(argv, envValue) {
     return resolveGpuMode(envValue ?? findGpuModeArg(argv));
 }
@@ -39,6 +47,16 @@ electron_1.contextBridge.exposeInMainWorld("spacerDesktop", {
     openProjectFile: () => electron_1.ipcRenderer.invoke(OPEN_PROJECT_CHANNEL),
     saveProjectFile: (content, suggestedName) => electron_1.ipcRenderer.invoke(SAVE_PROJECT_CHANNEL, { content, suggestedName }),
     showAbout: () => electron_1.ipcRenderer.invoke(SHOW_ABOUT_CHANNEL),
+    persistence: {
+        init: () => electron_1.ipcRenderer.invoke(PERSISTENCE_INIT_CHANNEL),
+        getRootDir: () => electron_1.ipcRenderer.invoke(PERSISTENCE_GET_ROOT_CHANNEL),
+        readFile: (relativePath) => electron_1.ipcRenderer.invoke(PERSISTENCE_READ_FILE_CHANNEL, relativePath),
+        writeFile: (relativePath, content) => electron_1.ipcRenderer.invoke(PERSISTENCE_WRITE_FILE_CHANNEL, { relativePath, content }),
+        listDirectories: (relativePath) => electron_1.ipcRenderer.invoke(PERSISTENCE_LIST_DIRS_CHANNEL, relativePath),
+        listFiles: (relativePath) => electron_1.ipcRenderer.invoke(PERSISTENCE_LIST_FILES_CHANNEL, relativePath),
+        deleteDirectory: (relativePath) => electron_1.ipcRenderer.invoke(PERSISTENCE_DELETE_DIR_CHANNEL, relativePath),
+        exists: (relativePath) => electron_1.ipcRenderer.invoke(PERSISTENCE_EXISTS_CHANNEL, relativePath),
+    },
     onCloseGuardPrompt: (listener) => {
         const wrapped = (_event, payload) => {
             listener(payload);

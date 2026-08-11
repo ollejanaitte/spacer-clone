@@ -18,6 +18,7 @@ import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
 import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
+import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import "./styles.css";
 
 type NextRoute =
@@ -95,6 +96,7 @@ export function NextApp() {
         <div className="next-brand" data-testid="next-brand">
           新統合システム <span className="next-brand-sub">Project System</span>
         </div>
+        <SaveStatusIndicator />
         <nav className="next-nav">
           <button
             type="button"
