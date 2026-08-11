@@ -15,6 +15,7 @@ import {
 } from "./aboutConfig";
 import { shouldPromptCloseGuardFromUrl } from "./closeGuard";
 import { registerDialogIpc } from "./dialogIpc";
+import { registerPersistenceIpc } from "./projectPersistenceIpc";
 import { IPC_CHANNELS } from "./ipcChannels";
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -514,6 +515,7 @@ if (gotTheLock) {
 
   app.whenReady().then(() => {
     registerDialogIpc(() => mainWindow, showAboutDialog);
+    registerPersistenceIpc();
     registerCloseGuardIpc();
     buildAppMenu();
     void runWithSplash();

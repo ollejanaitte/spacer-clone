@@ -8,6 +8,14 @@ const SAVE_PROJECT_CHANNEL = "spacer:dialog:save-project";
 const SHOW_ABOUT_CHANNEL = "spacer:app:show-about";
 const CLOSE_GUARD_PROMPT_CHANNEL = "spacer:close-guard:prompt";
 const CLOSE_GUARD_RESPONSE_CHANNEL = "spacer:close-guard:response";
+const PERSISTENCE_INIT_CHANNEL = "spacer:persistence:init";
+const PERSISTENCE_GET_ROOT_CHANNEL = "spacer:persistence:get-root";
+const PERSISTENCE_READ_FILE_CHANNEL = "spacer:persistence:read-file";
+const PERSISTENCE_WRITE_FILE_CHANNEL = "spacer:persistence:write-file";
+const PERSISTENCE_LIST_DIRS_CHANNEL = "spacer:persistence:list-dirs";
+const PERSISTENCE_LIST_FILES_CHANNEL = "spacer:persistence:list-files";
+const PERSISTENCE_DELETE_DIR_CHANNEL = "spacer:persistence:delete-dir";
+const PERSISTENCE_EXISTS_CHANNEL = "spacer:persistence:exists";
 
 type CloseGuardPromptPayload = {
   kind: "window-close" | "app-quit";
@@ -53,6 +61,17 @@ contextBridge.exposeInMainWorld("spacerDesktop", {
   saveProjectFile: (content: string, suggestedName?: string) =>
     ipcRenderer.invoke(SAVE_PROJECT_CHANNEL, { content, suggestedName }),
   showAbout: () => ipcRenderer.invoke(SHOW_ABOUT_CHANNEL),
+  persistence: {
+    init: () => ipcRenderer.invoke(PERSISTENCE_INIT_CHANNEL),
+    getRootDir: () => ipcRenderer.invoke(PERSISTENCE_GET_ROOT_CHANNEL),
+    readFile: (relativePath: string) => ipcRenderer.invoke(PERSISTENCE_READ_FILE_CHANNEL, relativePath),
+    writeFile: (relativePath: string, content: string) =>
+      ipcRenderer.invoke(PERSISTENCE_WRITE_FILE_CHANNEL, { relativePath, content }),
+    listDirectories: (relativePath: string) => ipcRenderer.invoke(PERSISTENCE_LIST_DIRS_CHANNEL, relativePath),
+    listFiles: (relativePath: string) => ipcRenderer.invoke(PERSISTENCE_LIST_FILES_CHANNEL, relativePath),
+    deleteDirectory: (relativePath: string) => ipcRenderer.invoke(PERSISTENCE_DELETE_DIR_CHANNEL, relativePath),
+    exists: (relativePath: string) => ipcRenderer.invoke(PERSISTENCE_EXISTS_CHANNEL, relativePath),
+  },
   onCloseGuardPrompt: (listener: (payload: CloseGuardPromptPayload) => void) => {
     const wrapped = (_event: Electron.IpcRendererEvent, payload: CloseGuardPromptPayload) => {
       listener(payload);

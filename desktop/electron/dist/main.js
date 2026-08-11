@@ -10,6 +10,7 @@ const gpuMode_1 = require("./gpuMode");
 const aboutConfig_1 = require("./aboutConfig");
 const closeGuard_1 = require("./closeGuard");
 const dialogIpc_1 = require("./dialogIpc");
+const projectPersistenceIpc_1 = require("./projectPersistenceIpc");
 const ipcChannels_1 = require("./ipcChannels");
 const gotTheLock = electron_1.app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -467,6 +468,7 @@ if (gotTheLock) {
     });
     electron_1.app.whenReady().then(() => {
         (0, dialogIpc_1.registerDialogIpc)(() => mainWindow, showAboutDialog);
+        (0, projectPersistenceIpc_1.registerPersistenceIpc)();
         registerCloseGuardIpc();
         buildAppMenu();
         void runWithSplash();

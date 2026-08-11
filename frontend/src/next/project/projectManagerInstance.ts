@@ -1,13 +1,38 @@
 import { InMemoryProjectRepository } from "./inMemoryProjectRepository";
-import { ProjectManager } from "./projectManager";
+import { PersistentProjectManager } from "./persistentProjectManager";
+import { FilesystemProjectPersistence } from "../persistence/filesystemProjectPersistence";
+import { MemoryFileSystemGateway } from "../persistence/memoryFileSystemGateway";
+import { IpcFileSystemGateway, isIpcAvailable } from "../persistence/ipcFileSystemGateway";
+import type { ProjectPersistence } from "../persistence/projectPersistence";
 
-let instance: ProjectManager | undefined;
+let instance: PersistentProjectManager | undefined;
 
-export function getProjectManager(): ProjectManager {
+function createDefaultPersistence(): ProjectPersistence {
+  if (isIpcAvailable()) {
+    return new FilesystemProjectPersistence(new IpcFileSystemGateway());
+  }
+  return new FilesystemProjectPersistence(new MemoryFileSystemGateway());
+}
+
+export function getProjectManager(): PersistentProjectManager {
   if (instance === undefined) {
-    instance = new ProjectManager(new InMemoryProjectRepository());
+    instance = new PersistentProjectManager(
+      new InMemoryProjectRepository(),
+      createDefaultPersistence(),
+    );
   }
   return instance;
+}
+
+export function getPersistentProjectManager(): PersistentProjectManager {
+  return getProjectManager();
+}
+
+export function setPersistenceForTest(persistence: ProjectPersistence): void {
+  instance = new PersistentProjectManager(
+    new InMemoryProjectRepository(),
+    persistence,
+  );
 }
 
 export function resetProjectManagerForTest(): void {
