@@ -155,6 +155,17 @@ export class PersistentProjectManager extends ProjectManager {
     return result;
   }
 
+  override updateProjectMetadata(
+    projectId: string,
+    metadata: Record<string, unknown>,
+  ): ProjectRepositoryResult {
+    const result = super.updateProjectMetadata(projectId, metadata);
+    if (result.ok) {
+      this.enqueueSave(() => this.saveProjectToPersistence(result.project));
+    }
+    return result;
+  }
+
   override duplicateProject(projectId: string): ProjectRepositoryResult {
     const result = super.duplicateProject(projectId);
     if (result.ok) {
