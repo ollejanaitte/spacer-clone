@@ -63,4 +63,30 @@ describe("Phase 3-05 Terrain 3D Viewer builder", () => {
     expect(Math.abs(cy)).toBeLessThan(0.001);
     expect(Math.abs(cz)).toBeLessThan(0.001);
   });
+
+  it("mesh and wireframe share one geometry so the transform is applied exactly once (Phase 3-Fix regression)", () => {
+    const meshData = makeMountainMesh();
+    const built = buildTerrainThreeScene(meshData);
+    // mesh + wireframe share the SAME geometry object. The viewer previously
+    // called applyDomainToThreeTransform on both, double-applying the mapping
+    // and standing the terrain vertically. Applying it once must keep the
+    // surface horizontal: three.y must equal the domain elevation.
+    expect(built.mesh.geometry).toBe(built.wireframe.geometry);
+    applyDomainToThreeTransform(built.mesh, null);
+    const pos = built.mesh.geometry.getAttribute("position") as THREE.BufferAttribute;
+    // first grid vertex (0,0,z0): three should be (0, z0, 0) - horizontal ground
+    const x = pos.getX(0);
+    const y = pos.getY(0);
+    const z = pos.getZ(0);
+    expect(x).toBeCloseTo(0, 6);
+    expect(z).toBeCloseTo(0, 6);
+    expect(y).toBeCloseTo(meshData.vertices[2], 6);
+    // elevation range stays on the y-up axis (not spread across z)
+    const elevationValues: number[] = [];
+    for (let i = 0; i < pos.count; i += 1) elevationValues.push(pos.getY(i));
+    const minY = Math.min(...elevationValues);
+    const maxY = Math.max(...elevationValues);
+    expect(maxY - minY).toBeGreaterThan(0);
+    expect(maxY).toBeLessThanOrEqual(Math.max(...Array.from(meshData.vertices).filter((_, idx) => idx % 3 === 2)) + 0.001);
+  });
 });

@@ -6,11 +6,14 @@ import { createEmptyTerrainDocument, TERRAIN_SCHEMA_VERSION, TERRAIN_DATA_VERSIO
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
 import { TerrainViewer } from "../components/TerrainViewer";
+import { IntegratedSceneViewer } from "../components/IntegratedSceneViewer";
 import { createReferenceMountain } from "../modules/terrain/referenceMountain";
 import { gridToMesh } from "../modules/terrain/terrainSurface";
+import { buildRoadMesh } from "../modules/road/roadMesh";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import type { ProjectModuleKey } from "../project/schema";
 import type { TerrainMesh } from "../modules/terrain/terrainSurface";
+import type { Road3DMesh } from "../modules/road/roadMesh";
 
 export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
@@ -20,11 +23,24 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
     return doc?.source.sourceName ?? "";
   });
   const [message, setMessage] = useState<string | null>(null);
-  const [showSample, setShowSample] = useState(false);
+  const [viewMode, setViewMode] = useState<"none" | "terrain" | "integrated">("none");
   const [sampleMesh] = useState<TerrainMesh | null>(() => {
     const mountain = createReferenceMountain();
     return gridToMesh(mountain.terrainGrid);
   });
+  const [integratedData] = useState<{ terrain: TerrainMesh; road: Road3DMesh } | null>(() => {
+    const mountain = createReferenceMountain();
+    const terrain = gridToMesh(mountain.terrainGrid);
+    const road = buildRoadMesh({
+      horizontal: mountain.roadHorizontal,
+      vertical: mountain.roadVertical,
+      crossSection: mountain.roadCrossSection,
+      stationInterval: 20,
+    });
+    if (road.vertices.length === 0) return null;
+    return { terrain, road };
+  });
+  const [sampleExisting] = useState(() => createReferenceMountain().existing);
 
   if (!project) {
     return (
@@ -63,7 +79,7 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
   }
 
   return (
-    <section className="next-page" data-testid="terrain-module-page">
+    <section className="next-page next-page-wide" data-testid="terrain-module-page">
       <h1 className="next-page-title" data-testid="terrain-module-title">地形・現況（Terrain Module）</h1>
       <button
         type="button"
@@ -115,19 +131,42 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
           type="button"
           className="next-action-secondary"
           data-testid="terrain-show-sample"
-          onClick={() => setShowSample((v) => !v)}
+          onClick={() => setViewMode((v) => (v === "terrain" ? "none" : "terrain"))}
         >
-          {showSample ? "Reference Mountain を隠す" : "Reference Mountain を3D表示"}
+          {viewMode === "terrain" ? "Reference Mountain を隠す" : "Reference Mountain を3D表示"}
+        </button>
+        <button
+          type="button"
+          className="next-action-secondary"
+          data-testid="terrain-show-integrated"
+          onClick={() => setViewMode((v) => (v === "integrated" ? "none" : "integrated"))}
+        >
+          {viewMode === "integrated" ? "統合シーンを隠す" : "統合シーン（Terrain+Road+Existing）を3D表示"}
         </button>
       </div>
 
-      {showSample && sampleMesh && (
-        <TerrainViewer mesh={sampleMesh} />
+      {viewMode === "terrain" && sampleMesh && (
+        <div className="next-viewer-block" data-testid="terrain-viewer-block">
+          <h2 className="next-home-section-title">Reference Mountain（3D）</h2>
+          <TerrainViewer mesh={sampleMesh} showWireframe />
+        </div>
+      )}
+
+      {viewMode === "integrated" && integratedData && (
+        <div className="next-viewer-block" data-testid="integrated-viewer-block">
+          <h2 className="next-home-section-title">統合シーン（Terrain + Road + Existing）</h2>
+          <IntegratedSceneViewer
+            terrain={integratedData.terrain}
+            road={integratedData.road}
+            existing={sampleExisting}
+            showTerrainWireframe
+          />
+        </div>
       )}
 
       <div className="next-empty" data-testid="terrain-module-placeholder">
         <p>地形Import・TIN・Surface・3D Viewerを利用できます。</p>
-        <p className="next-hint">Phase 3でReference Mountainを3D表示し、統合scene（Terrain+Road+Existing）を確認できます。</p>
+        <p className="next-hint">Phase 3-FixでReference Mountain・統合scene（Terrain+Road+Existing）を大型3D表示できます。</p>
       </div>
     </section>
   );
