@@ -60,6 +60,26 @@ export class PersistentProjectManager extends ProjectManager {
     return this.persistence;
   }
 
+  async restoreFromPersistence(): Promise<{ restored: number; rejected: number }> {
+    await this.ensurePersistence();
+    const loaded = await this.persistence.loadAllProjects();
+    let restored = 0;
+    let rejected = 0;
+    for (const result of loaded) {
+      if (!result.ok) {
+        rejected += 1;
+        continue;
+      }
+      const inserted = this.repository.create(result.project);
+      if (inserted.ok) {
+        restored += 1;
+      } else {
+        rejected += 1;
+      }
+    }
+    return { restored, rejected };
+  }
+
   async flushPendingSaves(): Promise<void> {
     await this.pendingSaves;
   }

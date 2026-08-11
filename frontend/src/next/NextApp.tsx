@@ -19,6 +19,7 @@ import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
+import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
 
 type NextRoute =
@@ -57,6 +58,9 @@ function resolveRoute(pathname: string): NextRoute {
 
 export function NextApp() {
   const [pathname, setPathname] = useState(() => window.location.pathname);
+  const [restoreState, setRestoreState] = useState<"restoring" | "ready">(() =>
+    getProjectManager().isPersistenceInitialized() ? "ready" : "restoring",
+  );
 
   useEffect(() => {
     const onPopState = () => setPathname(window.location.pathname);
@@ -64,30 +68,54 @@ export function NextApp() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const manager = getProjectManager();
+      if (!manager.isPersistenceInitialized()) {
+        await manager.restoreFromPersistence();
+      }
+      if (!cancelled) {
+        setRestoreState("ready");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const route = resolveRoute(pathname);
 
   let body: ReactNode;
-  switch (route.kind) {
-    case "home":
-      body = <HomePage />;
-      break;
-    case "quick":
-      body = <QuickAnalysisPage />;
-      break;
-    case "newProject":
-      body = <NewProjectPage />;
-      break;
-    case "editProject":
-      body = <EditProjectPage projectId={route.projectId} />;
-      break;
-    case "projectHome":
-      body = <ProjectTopPage projectId={route.projectId} />;
-      break;
-    case "load":
-      body = <LoadBusinessPage />;
-      break;
-    default:
-      body = <BusinessListPage />;
+  if (restoreState === "restoring") {
+    body = (
+      <section className="next-page" data-testid="app-restoring">
+        <p className="next-hint">保存済みデータを読み込んでいます...</p>
+      </section>
+    );
+  } else {
+    switch (route.kind) {
+      case "home":
+        body = <HomePage />;
+        break;
+      case "quick":
+        body = <QuickAnalysisPage />;
+        break;
+      case "newProject":
+        body = <NewProjectPage />;
+        break;
+      case "editProject":
+        body = <EditProjectPage projectId={route.projectId} />;
+        break;
+      case "projectHome":
+        body = <ProjectTopPage projectId={route.projectId} />;
+        break;
+      case "load":
+        body = <LoadBusinessPage />;
+        break;
+      default:
+        body = <BusinessListPage />;
+    }
   }
 
   return (

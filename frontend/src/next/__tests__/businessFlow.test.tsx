@@ -9,11 +9,12 @@ import { ProjectTopPage } from "../pages/ProjectTopPage";
 import { BusinessForm, type BusinessFormValues } from "../components/BusinessForm";
 import { getProjectManager, resetProjectManagerForTest } from "../project/projectManagerInstance";
 
-function render(node: ReactNode): Root {
+async function render(node: ReactNode): Promise<Root> {
+  await getProjectManager().restoreFromPersistence();
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
-  act(() => {
+  await act(async () => {
     root.render(node);
   });
   return root;
@@ -54,22 +55,22 @@ afterEach(() => {
 });
 
 describe("BusinessListPage", () => {
-  it("空状態を表示し、新規作成・読込ボタンを備える", () => {
-    const root = render(<BusinessListPage />);
+  it("空状態を表示し、新規作成・読込ボタンを備える", async () => {
+    const root = await render(<BusinessListPage />);
     expect(document.querySelector('[data-testid="business-list-empty"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="new-project-button"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="load-business-button"]')).toBeTruthy();
     cleanup(root);
   });
 
-  it("作成済みProjectを行に表示し、内部IDと業務件番を別管理する", () => {
+  it("作成済みProjectを行に表示し、内部IDと業務件番を別管理する", async () => {
     const manager = getProjectManager();
     manager.createProject({
       name: "道路詳細設計業務",
       businessNumber: "B-2026-001",
       designStage: "road-detailed",
     });
-    const root = render(<BusinessListPage />);
+    const root = await render(<BusinessListPage />);
     expect(document.querySelector('[data-testid="business-table"]')).toBeTruthy();
     const rows = document.querySelectorAll('[data-testid="business-row"]');
     expect(rows.length).toBe(1);
@@ -85,11 +86,11 @@ describe("BusinessListPage", () => {
     cleanup(root);
   });
 
-  it("業務検索で絞り込む", () => {
+  it("業務検索で絞り込む", async () => {
     const manager = getProjectManager();
     manager.createProject({ name: "橋梁予備設計業務", businessNumber: "B-001", designStage: "bridge-preliminary" });
     manager.createProject({ name: "道路詳細設計業務", businessNumber: "B-002", designStage: "road-detailed" });
-    const root = render(<BusinessListPage />);
+    const root = await render(<BusinessListPage />);
     changeValue("business-search-input", "道路");
     expect(document.querySelectorAll('[data-testid="business-row"]').length).toBe(1);
     expect(document.querySelector('[data-testid="business-name"]')?.textContent).toContain("道路詳細");
@@ -98,9 +99,9 @@ describe("BusinessListPage", () => {
 });
 
 describe("BusinessForm → NewProjectPage", () => {
-  it("新規作成フォームで作成すると一覧に反映される", () => {
+  it("新規作成フォームで作成すると一覧に反映される", async () => {
     let submitted: BusinessFormValues | undefined;
-    const root = render(
+    const root = await render(
       <BusinessForm
         initial={{ businessNumber: "", name: "", designStage: "road-preliminary", designStageCustomLabel: "" }}
         submitLabel="作成"
@@ -126,8 +127,8 @@ describe("BusinessForm → NewProjectPage", () => {
     cleanup(root);
   });
 
-  it("NewProjectPageはProjectManager経由で作成する", () => {
-    const root = render(<NewProjectPage />);
+  it("NewProjectPageはProjectManager経由で作成する", async () => {
+    const root = await render(<NewProjectPage />);
     changeValue("form-business-number", "B-777");
     changeValue("form-name", "作成テスト業務");
     act(() => {
@@ -141,7 +142,7 @@ describe("BusinessForm → NewProjectPage", () => {
 });
 
 describe("EditProjectPage", () => {
-  it("編集フォームに既存値を表示し、保存で更新される", () => {
+  it("編集フォームに既存値を表示し、保存で更新される", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "編集前業務",
@@ -149,7 +150,7 @@ describe("EditProjectPage", () => {
       designStage: "bridge-preliminary",
     });
     if (!created.ok) throw new Error("create failed");
-    const root = render(<EditProjectPage projectId={created.project.projectId} />);
+    const root = await render(<EditProjectPage projectId={created.project.projectId} />);
     const nameInput = document.querySelector('[data-testid="form-name"]') as HTMLInputElement;
     const numberInput = document.querySelector('[data-testid="form-business-number"]') as HTMLInputElement;
     expect(nameInput.value).toBe("編集前業務");
@@ -163,15 +164,15 @@ describe("EditProjectPage", () => {
     cleanup(root);
   });
 
-  it("存在しないProjectではnot-foundを表示する", () => {
-    const root = render(<EditProjectPage projectId="missing-project" />);
+  it("存在しないProjectではnot-foundを表示する", async () => {
+    const root = await render(<EditProjectPage projectId="missing-project" />);
     expect(document.querySelector('[data-testid="edit-not-found"]')).toBeTruthy();
     cleanup(root);
   });
 });
 
 describe("BusinessListPage duplicate / delete", () => {
-  it("複製で新しいProjectが作られ、元Projectは破壊されない", () => {
+  it("複製で新しいProjectが作られ、元Projectは破壊されない", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "複製元業務",
@@ -179,7 +180,7 @@ describe("BusinessListPage duplicate / delete", () => {
       designStage: "road-detailed",
     });
     if (!created.ok) throw new Error("create failed");
-    const root = render(<BusinessListPage />);
+    const root = await render(<BusinessListPage />);
     act(() => {
       (document.querySelector('[data-testid="business-duplicate"]') as HTMLButtonElement).click();
     });
@@ -193,7 +194,7 @@ describe("BusinessListPage duplicate / delete", () => {
     cleanup(root);
   });
 
-  it("削除は確認ダイアログを経て完全削除される", () => {
+  it("削除は確認ダイアログを経て完全削除される", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "削除予定業務",
@@ -201,7 +202,7 @@ describe("BusinessListPage duplicate / delete", () => {
       designStage: "bridge-preliminary",
     });
     if (!created.ok) throw new Error("create failed");
-    const root = render(<BusinessListPage />);
+    const root = await render(<BusinessListPage />);
 
     // 削除ボタン → 確認ダイアログ表示
     act(() => {
@@ -230,7 +231,7 @@ describe("BusinessListPage duplicate / delete", () => {
 });
 
 describe("ProjectTopPage", () => {
-  it("業務情報と9領域の入口を表示する", () => {
+  it("業務情報と9領域の入口を表示する", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "トップ表示業務",
@@ -239,7 +240,7 @@ describe("ProjectTopPage", () => {
       designStageCustomLabel: "耐震照査",
     });
     if (!created.ok) throw new Error("create failed");
-    const root = render(<ProjectTopPage projectId={created.project.projectId} />);
+    const root = await render(<ProjectTopPage projectId={created.project.projectId} />);
     expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("トップ表示業務");
     expect(document.querySelector('[data-testid="project-top-number"]')?.textContent).toBe("B-700");
     expect(document.querySelector('[data-testid="project-top-stage"]')?.textContent).toBe("耐震照査");

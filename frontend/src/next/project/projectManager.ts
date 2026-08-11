@@ -18,7 +18,7 @@ export interface UpdateProjectInput {
 }
 
 export class ProjectManager {
-  constructor(private readonly repository: ProjectRepository) {}
+  constructor(protected readonly repository: ProjectRepository) {}
 
   createProject(input: CreateProjectInput): ProjectRepositoryResult {
     const base = createEmptyProject(input.name);
