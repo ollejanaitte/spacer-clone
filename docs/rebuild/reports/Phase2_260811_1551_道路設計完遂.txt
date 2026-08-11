@@ -1,0 +1,151 @@
+================================================================================
+Railsys 統合システム Phase 2 Final Report
+ファイル名: Phase2_260811_1551_道路設計完遂.txt
+================================================================================
+
+作業名: Phase 2 道路設計完遂（Phase 2-02〜2-12）
+完了日時（JST）: 2026-08-11 15:51
+
+--------------------------------------------------------------------------------
+1. Phase 2目的
+--------------------------------------------------------------------------------
+既存LINER有効資産を新Road Moduleへ統合し、平面線形→測点→縦断→横断→幅員/拡幅→
+Intermediate Result/Validation→新Road UI→道路3D→CIM/Pavement→Auto Save→
+再起動復元→.spacerproj移送→Reference Road E2Eまで一気通貫で成立させる。
+
+--------------------------------------------------------------------------------
+2. Phase 2-Aからの引継ぎ
+--------------------------------------------------------------------------------
+- Road正本: RoadDesignDocument（Module Data Core配下road領域）
+- Project正本: Project Data Core唯一正本
+- 旧LINERを丸ごとコピーしない・有効資産をKEEP/ADAPT
+- 旧/pro/linerを新正規導線として復活させない
+
+--------------------------------------------------------------------------------
+3. Phase 2-02〜2-12結果
+--------------------------------------------------------------------------------
+2-02 平面線形Core: RoadHorizontal（Straight/Arc/Clothoid/Composite + C0/C1 + validation）
+2-03 測点・座標: RoadStationing（interval/explicit/equation・XYZ/azimuth/curvature）
+2-04 縦断線形: RoadVertical（Grade/Parabolic・3D centerline）
+2-05 横断構成: RoadCrossSection（Lane/Shoulder/Sidewalk/Median/Edge/Custom・CrossSlope）
+2-06 幅員変化: RoadWidth（幅員変化点/拡幅/片勾配変化・LINER符号規約）
+2-07 Intermediate/Validation: buildRoadIntermediate + RoadDesignDocument完全validation
+2-08 新Road UI: SVG Plan/Profile/CrossSectionプレビュー + Validation + 保存状態
+2-09 道路3D: buildRoadMesh（smooth road surface mesh・XYZ+normal）
+2-10 CIM/Pavement: buildRoadCimGeometry（metadata/surface/pavementEnvelope）
+2-11 Persistence: road inputs保存→restart復元→.spacerproj縦断
+2-12 Reference E2E: 山岳道路sample一本通し ✅
+
+--------------------------------------------------------------------------------
+4. RoadDesignDocument / geometry architecture
+--------------------------------------------------------------------------------
+- RoadDesignDocument: road領域正本（Phase 2-A Freeze維持・完全schema validation接続）
+- Module Data Core配下の{state,data,validation}にroadInput（label/horizontal/vertical/crossSections）を格納
+- geometry: 既存LINER coreをKEEP/ADAPT（horizontal/station/vertical/crossSection/width）
+
+--------------------------------------------------------------------------------
+5. Intermediate Result / validation / Road UI / 3D / CIM / Pavement
+--------------------------------------------------------------------------------
+- Intermediate: 入力値とderived geometry分離・sampled point（XYZ/azimuth/curvature/grade/幅員/横断勾配）
+- Validation: 完全schema validation・invalid拒否・error details
+- Road UI: SVG Plan/Profile/CrossSection + Intermediate Result + Validation + 保存状態
+- 3D: smooth road surface mesh（3D centerline+横断+幅員+縦断+横断勾配）
+- CIM: alignment/station/section/profile metadata + coordinate context + unit + version
+- Pavement: topSurface/bottomSurface/thickness envelope
+
+--------------------------------------------------------------------------------
+6. Reference Road sample / 数値比較結果
+--------------------------------------------------------------------------------
+- 山岳道路Reference: Straight+Clothoid+Arc+Composite / Grade+Parabolic / 横断 / 幅員変化 / 片勾配変化
+- C0/C1連続性をLINER evaluatorで保証した連続線形（座標を実際に計算して検証）
+- LINER符号規約（cross slope: 右down正）を踏襲し数値整合
+- 数値検証: station/XYZ/azimuth/curvature/elevation/width/cross slope をテストで確認
+
+--------------------------------------------------------------------------------
+7. Persistence / Auto Save / .spacerproj
+--------------------------------------------------------------------------------
+- Road inputs（label/horizontal/vertical/crossSections）をAuto Save
+- 再起動復元・Intermediate/CIM/3D再現・export/import復元 を実fsで確認
+- invalid input非保存・既存Project非破壊
+
+--------------------------------------------------------------------------------
+8. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/modules/road/
+- geometryTypes.ts / horizontal.ts / stationing.ts / vertical.ts / crossSection.ts /
+  width.ts / intermediateResult.ts / roadMesh.ts / roadCimGeometry.ts / referenceSamples.ts
+frontend/src/next/modules/ roadModule.ts / roadModuleAdapter.ts
+frontend/src/next/pages/ RoadModuleShellPage.tsx
+frontend/src/next/components/ RoadPreviews.tsx
+frontend/src/next/persistence/__tests__/ roadPersistence.test.ts
+frontend/src/next/persistence/package/__tests__/ referenceRoadE2E.test.ts
+frontend/src/next/modules/road/__tests__/ (horizontal/stationing/vertical/crossSection/width/intermediateResult/roadMesh/roadCimGeometry)
+frontend/src/next/__tests__/ roadUi.test.tsx
+docs/rebuild/phase2/ Phase2_road_design.md / evidence/phase2-home-screen.png
+
+--------------------------------------------------------------------------------
+9. tests / regression / Electron / typecheck / build
+--------------------------------------------------------------------------------
+- road tests: 40/40 PASS
+- src/next全体: 208/208 PASS
+- electron tests: 26/26 PASS
+- LINER core regression: 450/450 PASS（既存geometry完全維持）
+- R1-01〜R1-05 regression: PASS / Phase 1 regression: PASS / Phase 2-A regression: PASS
+- typecheck: PASS / build: PASS
+- Electron通常起動: 新ホーム描画確認
+
+--------------------------------------------------------------------------------
+10. Luna目視 / 旧メイン画面導線
+--------------------------------------------------------------------------------
+- Luna（read-only・gpt-5.6-luna）: ホーム画面UI崩れなし・テキスト一致・
+  コード編集/Git操作/ファイル変更なし（証跡: phase2-home-screen.png）
+- Luna実行後git差分なし
+- 旧メイン画面への正規導線: 復活していない
+- 旧/pro/liner: 新正規導線として復活させていない
+
+--------------------------------------------------------------------------------
+11. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #852 Phase 2-02: 1a2cba27b832b1334fc9f83cf94e7fe2ea4a4629
+- PR #853 Phase 2-03: 688205c0d69b765e510abddbc7eb40c6ca453c9c
+- PR #854 Phase 2-04: 9a14a08b16ce358eb9cfca6bbddd8caa90da2637
+- PR #855 Phase 2-05: 2e241c645d8327f760ecdbbbccc1d7fc9865aeca
+- PR #856 Phase 2-06: 4f33be658a032382a39a31902aaa2edda6aa2a52
+- PR #857 Phase 2-07: c776959bd1004f9f0d6bee97103e6a6d8bb60546
+- PR #858 Phase 2-08: 28b70f19e13ee7d3729e4021694e5f5a01543a20
+- PR #859 Phase 2-09: 9c7ba87af523260454a81410e2b653ffd7bf7dc2
+- PR #860 Phase 2-10: d4cef9bc0801dc481bf945fc96b4c7efe1041ee4
+- PR #861 Phase 2-11: e46f3a53112aaa300f6593ebdee827153544f134
+- PR #862 Phase 2-12: cb2486cd9008a035d8ce0273276211518ed0f3bd
+- PR #863 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+12. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #863
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+13. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+14. 未解決事項
+--------------------------------------------------------------------------------
+- なし（Phase 2スコープ内で未解決の重大事項は発生しなかった）
+
+--------------------------------------------------------------------------------
+15. Phase 3開始可否
+--------------------------------------------------------------------------------
+- 可（Phase 2の道路設計基盤が成立したため）
+- ただしPhase 3（地形・現況）はユーザーの次の明示指示を待って開始する
+
+--------------------------------------------------------------------------------
+16. 最終判定
+--------------------------------------------------------------------------------
+Phase 2: COMPLETE
+Phase 3（地形・現況）へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
