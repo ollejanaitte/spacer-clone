@@ -3,7 +3,7 @@ import {
   type BusinessMetadataInput,
 } from "./businessMetadata";
 import { createEmptyProject, generateProjectId, parseProject } from "./projectDataCore";
-import type { Project } from "./schema";
+import type { Project, ProjectModuleKey } from "./schema";
 import type { ProjectRepository, ProjectRepositoryResult } from "./projectRepository";
 
 export interface CreateProjectInput extends BusinessMetadataInput {
@@ -59,6 +59,26 @@ export class ProjectManager {
                 : {}),
             }
           : {}),
+      },
+      updatedAt: new Date().toISOString(),
+    };
+    return this.repository.update(projectId, merged);
+  }
+
+  updateProjectModule(
+    projectId: string,
+    moduleId: ProjectModuleKey,
+    moduleData: Record<string, unknown>,
+  ): ProjectRepositoryResult {
+    const existing = this.repository.get(projectId);
+    if (!existing) {
+      return { ok: false, reason: "not-found" };
+    }
+    const merged: Project = {
+      ...existing,
+      modules: {
+        ...existing.modules,
+        [moduleId]: moduleData,
       },
       updatedAt: new Date().toISOString(),
     };
