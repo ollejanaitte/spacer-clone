@@ -17,11 +17,12 @@ import {
 } from "../routes";
 import { resetProjectManagerForTest, getProjectManager } from "../project/projectManagerInstance";
 
-function render(node: ReactNode): Root {
+async function render(node: ReactNode): Promise<Root> {
+  await getProjectManager().restoreFromPersistence();
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
-  act(() => {
+  await act(async () => {
     root.render(node);
   });
   return root;
@@ -64,9 +65,9 @@ describe("next/routes", () => {
 });
 
 describe("NextApp Shell", () => {
-  it("ホーム（/app）で業務から設計とクイック解析の2系統を表示する", () => {
+  it("ホーム（/app）で業務から設計とクイック解析の2系統を表示する", async () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="next-app"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="next-brand"]')?.textContent).toContain("Project System");
     expect(document.querySelector('[data-testid="home-page"]')).toBeTruthy();
@@ -78,23 +79,23 @@ describe("NextApp Shell", () => {
     cleanup(root);
   });
 
-  it("旧システムへの導線（nav-legacy）が存在しない", () => {
+  it("旧システムへの導線（nav-legacy）が存在しない", async () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="nav-legacy"]')).toBeNull();
     expect(document.querySelector(".next-nav")?.textContent).not.toContain("旧システムへ");
     cleanup(root);
   });
 
-  it("業務一覧（空状態）を表示する", () => {
+  it("業務一覧（空状態）を表示する", async () => {
     window.history.pushState({}, "", NEXT_BUSINESS_LIST_PATH);
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="business-list-empty"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="new-project-button"]')).toBeTruthy();
     cleanup(root);
   });
 
-  it("Projectトップで業務情報と未実装セクションを明示する", () => {
+  it("Projectトップで業務情報と未実装セクションを明示する", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "トップ表示業務",
@@ -103,7 +104,7 @@ describe("NextApp Shell", () => {
     });
     if (!created.ok) throw new Error("create failed");
     window.history.pushState({}, "", `${NEXT_PROJECT_HOME_PATH}/${created.project.projectId}`);
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="project-top-not-found"]')).toBeNull();
     expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("トップ表示業務");
@@ -113,17 +114,17 @@ describe("NextApp Shell", () => {
     cleanup(root);
   });
 
-  it("クイック解析はProjectから独立した入口を表示する", () => {
+  it("クイック解析はProjectから独立した入口を表示する", async () => {
     window.history.pushState({}, "", NEXT_QUICK_PATH);
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="quick-analysis-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="quick-analysis-placeholder"]')).toBeTruthy();
     cleanup(root);
   });
 
-  it("新規作成ページで業務フォームを表示する", () => {
+  it("新規作成ページで業務フォームを表示する", async () => {
     window.history.pushState({}, "", "/app/business/new");
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="new-project-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="business-form"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="form-business-number"]')).toBeTruthy();
@@ -132,9 +133,9 @@ describe("NextApp Shell", () => {
     cleanup(root);
   });
 
-  it("業務データ読込ページ（placeholder）を表示する", () => {
+  it("業務データ読込ページ（placeholder）を表示する", async () => {
     window.history.pushState({}, "", "/app/business/load");
-    const root = render(<NextApp />);
+    const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="load-business-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="load-business-placeholder"]')).toBeTruthy();
     cleanup(root);
