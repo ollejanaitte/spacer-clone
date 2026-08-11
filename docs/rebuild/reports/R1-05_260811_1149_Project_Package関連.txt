@@ -1,0 +1,218 @@
+================================================================================
+Railsys 統合システム R1-05 Final Report
+ファイル名: R1-05_260811_1149_Project Package関連.txt
+================================================================================
+
+作業名: R1-05 Project Package / Import・Export / Integrity Check
+完了日時（JST）: 2026-08-11 11:49
+
+--------------------------------------------------------------------------------
+1. R1-05 目的
+--------------------------------------------------------------------------------
+R1-04で永続化された1業務=1Projectフォルダーを、1業務=1.spacerprojファイルとして
+他PCへ安全に持ち運べるよう、書き出し・検査・読込・登録できるようにする。
+「正常データを読める」だけでなく「壊れたPackageを既存Projectへ混入させない」ことを最重要要件とする。
+
+--------------------------------------------------------------------------------
+2. Package仕様
+--------------------------------------------------------------------------------
+- 方式: 単一JSONコンテナ（依存追加なし・node:crypto sha256）
+- 拡張子: .spacerproj
+- 将来の大容量module（road/terrain/bridge/FEM/CIM/assets等）へは
+  containerFormatフィールドでZIP等への拡張可能性を確保（R1-05では対象外）
+
+--------------------------------------------------------------------------------
+3. .spacerproj構造
+--------------------------------------------------------------------------------
+{
+  "manifest": {
+    "packageFormatVersion": "1",
+    "containerFormat": "spacerproj-json-v1",
+    "projectId": "<uuid>",
+    "projectSchemaVersion": "1.0.0",
+    "createdAt": "<ISO8601>",
+    "files": [{ "path": "project.json", "size": <bytes>, "checksum": "<sha256>" }]
+  },
+  "files": [{ "path": "project.json", "content": "<Project Data Core JSON>" }]
+}
+
+--------------------------------------------------------------------------------
+4. Package format version
+--------------------------------------------------------------------------------
+- PACKAGE_FORMAT_VERSION = "1"
+- containerFormat = "spacerproj-json-v1"
+- 単一箇所（projectPackage.ts）で管理
+
+--------------------------------------------------------------------------------
+5. manifest構造 / checksum方式
+--------------------------------------------------------------------------------
+- manifest: packageFormatVersion / containerFormat / projectId /
+  projectSchemaVersion / createdAt / files[path,size,checksum]
+- checksum: SHA-256（node:crypto computeSha256Hex）
+- Package生成時にmanifest作成・checksum計算・self-check可能
+- Import時にfile list / size / checksumを照合
+
+--------------------------------------------------------------------------------
+6. Exportフロー
+--------------------------------------------------------------------------------
+Project選択 → [業務データ書き出し] → 保存先選択（OS標準ダイアログ） →
+Package生成 → self-check → temp→rename安全書込 → 完了通知
+- 書き出し成功/失敗/キャンセルをUI表示
+- 途中失敗で壊れた最終成果物を残さない（temp→rename）
+- 既存Project正本を変更しない
+
+--------------------------------------------------------------------------------
+7. Importフロー
+--------------------------------------------------------------------------------
+[業務データ読込] → .spacerproj選択 → 事前検査（Integrity Check）→
+検査結果画面 → 正常なら[読込] → 競合チェック → 安全登録 →
+業務一覧追加 → Projectトップを開く（旧メイン画面へ遷移しない）
+
+--------------------------------------------------------------------------------
+8. Integrity Check項目
+--------------------------------------------------------------------------------
+- ファイル破損 / Project Schema / 必須データ / checksum / 容量 / unsafe path
+- NGが1つでもあれば読込不可（例外許可なし）
+- 総合判定: 読込可能 / 読込不可
+
+--------------------------------------------------------------------------------
+9. 競合処理 / 上書きbackup / transactional safety
+--------------------------------------------------------------------------------
+- 同一Project ID検出 → 上書き / 別Projectとして複製 / キャンセル の3択
+- 上書き: 既存を自動backup（.backup/*.spacerbak）→ backup成功確認 → 置換
+  （backup失敗時は上書き拒否・既存非破壊）
+- 複製: 新Project ID生成・内容維持・R1-02 validator通過
+- キャンセル: 何も変更しない
+- Import失敗時: 半端Projectを業務一覧に残さない・temp残置なし
+
+--------------------------------------------------------------------------------
+10. path traversal等の安全対策
+--------------------------------------------------------------------------------
+- packagePathSafety: 相対pathの ../・絶対パス・ドライブ文字・NULL等を拒否
+- unsafe pathがPackage内に存在する場合、読込前検査で拒否
+
+--------------------------------------------------------------------------------
+11. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/persistence/package/
+- projectPackage.ts / packageChecksum.ts / projectPackageBuilder.ts /
+  projectPackageInspector.ts / packagePathSafety.ts / projectPackageImporter.ts /
+  projectPackageExporter.ts
+frontend/src/next/
+- components/IntegrityCheckResult.tsx / ConflictResolutionDialog.tsx
+- pages/LoadBusinessPage.tsx / BusinessListPage.tsx
+- project/persistentProjectManager.ts
+desktop/electron/
+- ipcChannels.ts / dialogIpc.ts / preload.ts / dist/preload.js
+frontend/src/desktop/ projectFileDialog.ts / spacerDesktop.d.ts
+docs/rebuild/
+- r1/R1-05_project_package.md / evidence/r1-05-home-screen.png
+
+--------------------------------------------------------------------------------
+12. Package / Export / Import / Integrity / Conflict tests
+--------------------------------------------------------------------------------
+- package: 36/36 PASS
+  - Package生成・manifest・checksum・file list・size・format version・schemaVersion
+  - Export正常・非破壊・cancel/fail・round-trip ready
+  - Import正常・破損reject・unsafe path reject・登録・重複拒否
+  - Integrity: 破損JSON/project.json破損/schemaVersion不正/必須欠落/checksum不一致/
+    manifest不正/容量不足
+  - Conflict: 上書きbackup・backup失敗時拒否・複製新ID・キャンセル
+  - Round-trip: Project Data Core主要値一致・新環境登録
+  - path traversal: 拒否・既存非混入
+
+--------------------------------------------------------------------------------
+13. corrupted Package tests（CASE A〜H）
+--------------------------------------------------------------------------------
+- CASE A 破損JSON: reject
+- CASE B project.json破損: checksum不一致→reject
+- CASE C schemaVersion不正: reject
+- CASE D 必須ファイル欠落: reject
+- CASE E checksum不一致: reject
+- CASE F manifest不正: reject
+- CASE G 容量不足: reject
+- CASE H 同一ID競合: 3択処理
+- すべて既存Project非破壊・業務一覧に半端登録なし・temp残置なし
+
+--------------------------------------------------------------------------------
+14. R1-01〜R1-04 regression
+--------------------------------------------------------------------------------
+- R1-01（NextApp・旧導線不存在）: PASS
+- R1-02（Project Data Core）: PASS
+- R1-03（Project Manager / UI）: PASS
+- R1-04（Persistence / Auto Save / Restore / Backup）: PASS
+- src/next全体: 121/121 PASS
+
+--------------------------------------------------------------------------------
+15. Electron tests / typecheck / build
+--------------------------------------------------------------------------------
+- electron tests: 26/26 PASS
+- typecheck: PASS（tsc -b --pretty false）
+- build: PASS（tsc -b && vite build）
+- Electron通常起動: 新ホーム描画確認（証跡: r1-05-home-screen.png）
+
+--------------------------------------------------------------------------------
+16. Luna目視確認結果
+--------------------------------------------------------------------------------
+- 対象: 新ホーム画面（docs/rebuild/evidence/r1-05-home-screen.png）
+- 結果: 画面種類/主要UI/テキスト完全一致・UI崩れ・欠落・異常なし
+- Luna実行: read-only sandbox（gpt-5.6-luna）・コード編集/Git操作/ファイル変更なし
+- 実行後git差分: 変更なし（Lunaは目だけとして運用）
+
+--------------------------------------------------------------------------------
+17. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #833 Step A: 2906b1bdb81b33c822776315ad7cab8af6ee778d
+- PR #834 Step B: 2926ad374f1b11536cf6b4d5a49353cb2235316d
+- PR #835 Step C: cc0f1f6420be3e8891746fee5c6daab639c9ff8a
+- PR #836 Step D: 65e955fe1ee15987cc6dd43f095bf03042abd112
+- PR #837 Step E: 417d982e1ce714fcf5475ac5ec6168454fff0769
+- PR #838 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+18. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #838
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+19. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+20. 残課題（R1-06以降のみ）
+--------------------------------------------------------------------------------
+- 道路/地形/橋梁配置/下部工/上部工/FEM/CIM/成果品 本体
+- Package暗号化 / 電子署名 / DRM
+- cloud / NAS同期 / 複数人同時編集 / 差分同期
+- 大容量CIM差分Package最適化
+- 旧Project形式migration本実装
+
+--------------------------------------------------------------------------------
+21. ユーザー受入確認手順
+--------------------------------------------------------------------------------
+1. 既存Projectを開く
+2. [業務データ書き出し]
+3. 保存先を自由選択
+4. .spacerproj生成確認
+5. [業務データ読込]
+6. .spacerproj選択
+7. Integrity Check画面確認（全項目OK）
+8. [読込]
+9. 業務一覧登録確認
+10. Projectトップ表示確認
+11. 元Project内容一致確認
+12. 同一Project IDを再読込 → 上書き/複製/キャンセル表示確認
+13. 上書き時backup確認（.backup/*.spacerbak）
+14. 破損.spacerprojを選択 → 読込拒否確認
+15. 旧メイン画面へ入らないことを確認
+
+--------------------------------------------------------------------------------
+22. 最終判定
+--------------------------------------------------------------------------------
+R1-05: COMPLETE
+R1-06へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
