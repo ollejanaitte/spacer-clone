@@ -1,4 +1,7 @@
 import type { TerrainPoint } from "./terrainImport";
+import { domainToThree as mapDomainToThree, threeToDomain as mapThreeToDomain } from "../renderCoordinate";
+
+export type { DomainPoint, RenderOrigin } from "../renderCoordinate";
 
 export interface Origin3 {
   readonly x: number;
@@ -62,14 +65,16 @@ export function createTerrainCoordinateTransformer(
 /**
  * Three.js render transform (display responsibility only).
  * domain (x, y, z) -> three (x, height=z, -y) per the Phase 3-A freeze.
+ * Delegates to the shared Render Coordinate Adapter so Terrain / Road /
+ * Existing / Integrated scenes use one single mapping.
  * Never mutates the terrain source of truth.
  */
 export function domainToThree(p: TerrainPoint): [number, number, number] {
-  return [p.x, p.z, -p.y];
+  return mapDomainToThree(p);
 }
 
 export function threeToDomain(t: [number, number, number]): TerrainPoint {
-  return { x: t[0], y: -t[2], z: t[1] };
+  return mapThreeToDomain(t);
 }
 
 export function applyTransformToPoints(

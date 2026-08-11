@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import type { ExistingConditionEntity, ExistingConditionType } from "./existingConditions";
+import { domainToThree } from "./renderCoordinate";
+import type { Origin3 } from "./terrain/terrainCoordinate";
 
 export interface Existing3DObject {
   readonly entityId: string;
@@ -30,8 +32,12 @@ export function entityColor(type: ExistingConditionType): number {
 /**
  * Build a THREE.js mesh for an existing condition entity.
  * Display-only; never mutates the source of truth.
+ * localOrigin is subtracted before the shared domain->three mapping.
  */
-export function buildExistingEntityMesh(entity: ExistingConditionEntity): THREE.Mesh {
+export function buildExistingEntityMesh(entity: ExistingConditionEntity, localOrigin?: Origin3 | null): THREE.Mesh {
+  const ox = localOrigin?.x ?? 0;
+  const oy = localOrigin?.y ?? 0;
+  const oz = localOrigin?.z ?? 0;
   const color = entityColor(entity.type);
   const material = new THREE.MeshStandardMaterial({ color, side: THREE.DoubleSide });
 
@@ -48,10 +54,10 @@ export function buildExistingEntityMesh(entity: ExistingConditionEntity): THREE.
       const diameter = entity.geometry.diameter ?? 2;
       const cylinder = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 12);
       const mesh = new THREE.Mesh(cylinder, material);
-      const mid = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2, z: (p0.z + p1.z) / 2 };
+      const mid = { x: (p0.x + p1.x) / 2 - ox, y: (p0.y + p1.y) / 2 - oy, z: (p0.z + p1.z) / 2 - oz };
       mesh.position.set(mid.x, mid.z, -mid.y);
       mesh.rotation.x = Math.PI / 2;
-      mesh.lookAt(p1.x, p1.z, -p1.y);
+      mesh.lookAt(p1.x - ox, p1.z - oz, -(p1.y - oy));
       return mesh;
     }
     // fallback to sphere
@@ -62,7 +68,10 @@ export function buildExistingEntityMesh(entity: ExistingConditionEntity): THREE.
   // line/polygon: build a tube along the polyline
   const points = entity.geometry.points;
   if (points.length >= 2) {
-    const curvePoints = points.map((p) => new THREE.Vector3(p.x, p.z, -p.y));
+    const curvePoints = points.map((p) => {
+      const t = domainToThree({ x: p.x - ox, y: p.y - oy, z: p.z - oz });
+      return new THREE.Vector3(t[0], t[1], t[2]);
+    });
     const curve = new THREE.CatmullRomCurve3(curvePoints);
     const tubeGeometry = new THREE.TubeGeometry(curve, Math.max(2, points.length - 1) * 4, entity.type === "river" ? 4 : 1.5, 8, false);
     return new THREE.Mesh(tubeGeometry, material);
@@ -70,17 +79,18 @@ export function buildExistingEntityMesh(entity: ExistingConditionEntity): THREE.
 
   // single point -> small marker
   const p = points[0];
+  const t = domainToThree({ x: p.x - ox, y: p.y - oy, z: p.z - oz });
   const box = new THREE.BoxGeometry(2, 4, 2);
   const mesh = new THREE.Mesh(box, material);
-  mesh.position.set(p.x, p.z, -p.y);
+  mesh.position.set(t[0], t[1], t[2]);
   return mesh;
 }
 
-export function buildExistingSceneGroup(entities: readonly ExistingConditionEntity[]): THREE.Group {
+export function buildExistingSceneGroup(entities: readonly ExistingConditionEntity[], localOrigin?: Origin3 | null): THREE.Group {
   const group = new THREE.Group();
   for (const entity of entities) {
     try {
-      const mesh = buildExistingEntityMesh(entity);
+      const mesh = buildExistingEntityMesh(entity, localOrigin);
       mesh.name = `${entity.entityId}:${entity.label}`;
       group.add(mesh);
     } catch {

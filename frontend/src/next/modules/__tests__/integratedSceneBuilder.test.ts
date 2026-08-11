@@ -110,6 +110,52 @@ describe("Phase 3-09 Road + Terrain + Existing integration", () => {
     expect(existingPos!.z).toBeCloseTo(0, 6);
   });
 
+  it("terrain elevation is mapped to three y-up in the integrated scene (Phase 3-Fix)", () => {
+    const result = buildIntegratedThreeScene({
+      terrain: makeTerrainMesh(),
+      road: makeRoadMesh(),
+    });
+    const terrainPos = result.terrainMesh!.geometry.getAttribute("position") as THREE.BufferAttribute;
+    // terrain grid spans x,y in [0,500]; elevation z = 100 + (x+y)*0.1.
+    // three.x = domain.x (>=0), three.y = elevation (>=100), three.z = -domain.y (<=0)
+    const xs: number[] = [];
+    const ys: number[] = [];
+    const zs: number[] = [];
+    for (let i = 0; i < terrainPos.count; i += 1) {
+      xs.push(terrainPos.getX(i));
+      ys.push(terrainPos.getY(i));
+      zs.push(terrainPos.getZ(i));
+    }
+    expect(Math.min(...xs)).toBeGreaterThanOrEqual(-0.001);
+    expect(Math.max(...ys)).toBeGreaterThan(100);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(100);
+    expect(Math.max(...zs)).toBeLessThanOrEqual(0.001);
+    // elevation differences live on the y axis, not z (terrain not vertical)
+    const yRange = Math.max(...ys) - Math.min(...ys);
+    const zRange = Math.max(...zs) - Math.min(...zs);
+    expect(yRange).toBeGreaterThan(0);
+    expect(zRange).toBeGreaterThan(0); // z spread is the transverse extent, y spread the elevation
+  });
+
+  it("road elevation is on the same y-up axis as terrain", () => {
+    const result = buildIntegratedThreeScene({
+      terrain: makeTerrainMesh(),
+      road: makeRoadMesh(),
+    });
+    const roadPos = result.roadMesh!.geometry.getAttribute("position") as THREE.BufferAttribute;
+    const terrainPos = result.terrainMesh!.geometry.getAttribute("position") as THREE.BufferAttribute;
+    const roadYs: number[] = [];
+    for (let i = 0; i < roadPos.count; i += 1) roadYs.push(roadPos.getY(i));
+    const terrainYs: number[] = [];
+    for (let i = 0; i < terrainPos.count; i += 1) terrainYs.push(terrainPos.getY(i));
+    // road is at elevation ~110, terrain between 100 and 130 -> overlapping band
+    const roadMin = Math.min(...roadYs);
+    const terrainMin = Math.min(...terrainYs);
+    const terrainMax = Math.max(...terrainYs);
+    expect(roadMin).toBeGreaterThanOrEqual(terrainMin - 0.001);
+    expect(roadMin).toBeLessThanOrEqual(terrainMax + 0.001);
+  });
+
   it("returns empty bounds for empty scene", () => {
     const result = buildIntegratedThreeScene({});
     const size = result.bounds.getSize(new THREE.Vector3());

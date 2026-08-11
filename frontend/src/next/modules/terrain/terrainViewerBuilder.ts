@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import type { TerrainMesh } from "./terrainSurface";
+import { domainVerticesToThree } from "../renderCoordinate";
+import type { Origin3 } from "./terrainCoordinate";
 
 export interface TerrainSceneBuildResult {
   readonly geometry: THREE.BufferGeometry;
@@ -41,21 +43,15 @@ export function buildTerrainThreeScene(meshData: TerrainMesh): TerrainSceneBuild
   return { geometry, material, wireframeMaterial, mesh, wireframe, bounds };
 }
 
-export function applyDomainToThreeTransform(mesh: THREE.Mesh, localOrigin: { x: number; y: number; z: number } | null): void {
-  // domain (x, y, z) -> three (x, height=z, -y), then subtract local origin.
-  const origin = localOrigin ?? { x: 0, y: 0, z: 0 };
-  mesh.rotation.set(0, 0, 0);
-  // We bake the transform by re-mapping positions: three.x = x - ox, three.y = z - oz, three.z = -(y - oy)
+export function applyDomainToThreeTransform(mesh: THREE.Mesh, localOrigin: Origin3 | null): void {
+  // domain (x, y, z) -> three (x, height=z, -y) minus local origin.
+  // Uses the shared Render Coordinate Adapter. IMPORTANT: mesh and wireframe
+  // share one geometry object, so this must be applied exactly ONCE per
+  // geometry (double application would turn the terrain into a vertical wall).
   const position = mesh.geometry.getAttribute("position") as THREE.BufferAttribute;
   const arr = position.array as Float32Array;
-  for (let i = 0; i < arr.length; i += 3) {
-    const x = arr[i];
-    const y = arr[i + 1];
-    const z = arr[i + 2];
-    arr[i] = x - origin.x;
-    arr[i + 1] = z - origin.z;
-    arr[i + 2] = -(y - origin.y);
-  }
+  const mapped = domainVerticesToThree(arr, localOrigin);
+  for (let i = 0; i < arr.length; i += 1) arr[i] = mapped[i];
   position.needsUpdate = true;
   mesh.geometry.computeVertexNormals();
 }

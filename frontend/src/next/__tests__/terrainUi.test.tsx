@@ -56,4 +56,34 @@ describe("Phase 3 Terrain UI", () => {
     expect(document.querySelector('[data-testid="nav-legacy"]')).toBeNull();
     cleanup(root);
   });
+
+  it("toggles the large reference mountain viewer block", async () => {
+    const manager = getProjectManager();
+    manager.importProject(createEmptyProject("地形UI業務"));
+    const project = manager.listProjects()[0];
+    window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
+    const root = await render(<NextApp />);
+    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeNull();
+    const toggle = document.querySelector('[data-testid="terrain-show-sample"]') as HTMLButtonElement;
+    act(() => toggle.click());
+    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeTruthy();
+    act(() => toggle.click());
+    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeNull();
+    cleanup(root);
+  });
+
+  it("toggles the integrated terrain+road+existing viewer block", async () => {
+    const manager = getProjectManager();
+    manager.importProject(createEmptyProject("地形UI業務"));
+    const project = manager.listProjects()[0];
+    window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
+    const root = await render(<NextApp />);
+    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeNull();
+    const toggle = document.querySelector('[data-testid="terrain-show-integrated"]') as HTMLButtonElement;
+    act(() => toggle.click());
+    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeTruthy();
+    act(() => toggle.click());
+    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeNull();
+    cleanup(root);
+  });
 });

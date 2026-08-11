@@ -71,6 +71,16 @@
   margin: 0 auto;
 }
 
+/* Wider layout for module pages that host a large 3D viewer
+   (Terrain Module / future Bridge Layout). */
+.next-main:has(.next-page-wide) {
+  max-width: 1320px;
+}
+
+.next-page-wide .next-integrity-meta {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
 .next-page-title {
   font-size: 22px;
   margin: 0 0 16px;
@@ -412,6 +422,34 @@
   display: block;
   max-width: 100%;
   border-radius: 8px;
+}
+
+/* Large 3D viewer host shared by TerrainViewer / IntegratedSceneViewer.
+   Responsive height (viewport-relative, clamped) instead of fixed pixels;
+   ResizeObserver keeps renderer size + camera aspect in sync. */
+.next-scene-viewer {
+  position: relative;
+  width: 100%;
+  height: clamp(480px, 62vh, 780px);
+  min-height: 420px;
+  background: #dfe8f0;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.next-scene-viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.next-viewer-block {
+  margin: 16px 0 20px;
+}
+
+.next-viewer-block .next-home-section-title {
+  margin-bottom: 8px;
 }
 
 .next-road-summary {
