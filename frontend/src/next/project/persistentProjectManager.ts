@@ -143,6 +143,18 @@ export class PersistentProjectManager extends ProjectManager {
     return result;
   }
 
+  override updateProjectModule(
+    projectId: string,
+    moduleId: import("./schema").ProjectModuleKey,
+    moduleData: Record<string, unknown>,
+  ): ProjectRepositoryResult {
+    const result = super.updateProjectModule(projectId, moduleId, moduleData);
+    if (result.ok) {
+      this.enqueueSave(() => this.saveProjectToPersistence(result.project));
+    }
+    return result;
+  }
+
   override duplicateProject(projectId: string): ProjectRepositoryResult {
     const result = super.duplicateProject(projectId);
     if (result.ok) {
