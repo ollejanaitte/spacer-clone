@@ -1,30 +1,10 @@
 import { useEffect, useState } from "react";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
 import { getProjectManager } from "../project/projectManagerInstance";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
-
-export type ProjectSectionId =
-  | "businessInfo"
-  | "road"
-  | "terrain"
-  | "bridgeLayout"
-  | "substructure"
-  | "superstructure"
-  | "analysis"
-  | "cim"
-  | "deliverables";
-
-const SECTIONS: ReadonlyArray<{ id: ProjectSectionId; label: string; implemented: boolean }> = [
-  { id: "businessInfo", label: "業務情報", implemented: false },
-  { id: "road", label: "道路", implemented: false },
-  { id: "terrain", label: "地形・現況", implemented: false },
-  { id: "bridgeLayout", label: "橋梁配置", implemented: false },
-  { id: "substructure", label: "下部工", implemented: false },
-  { id: "superstructure", label: "上部工", implemented: false },
-  { id: "analysis", label: "FEM / 構造解析", implemented: false },
-  { id: "cim", label: "CIM / 統合3D", implemented: false },
-  { id: "deliverables", label: "成果品", implemented: false },
-];
+import { navigateTo, NEXT_BUSINESS_LIST_PATH, modulePath } from "../routes";
+import { getModuleDefinitions } from "../modules/registry";
+import { readModuleFromProject } from "../modules/adapter";
+import { MODULE_STATUS_LABELS } from "../modules/contract";
 
 export function ProjectTopPage({ projectId }: { projectId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
@@ -57,6 +37,8 @@ export function ProjectTopPage({ projectId }: { projectId: string }) {
       </section>
     );
   }
+
+  const modules = getModuleDefinitions();
 
   return (
     <section className="next-page" data-testid="project-top-page">
@@ -113,21 +95,29 @@ export function ProjectTopPage({ projectId }: { projectId: string }) {
         )}
       </div>
 
-      <ul className="next-section-list" data-testid="project-top-sections">
-        {SECTIONS.map((section) => (
-          <li key={section.id} className="next-section-item">
-            <div className="next-section-label">{section.label}</div>
-            <div className="next-section-status">
-              {section.implemented ? (
-                <span className="next-badge next-badge-implemented">実装済み</span>
-              ) : (
-                <span className="next-badge next-badge-todo" data-testid={`section-${section.id}-todo`}>
-                  未実装（後続Phaseで実装）
+      <h2 className="next-home-section-title">設計モジュール</h2>
+      <ul className="next-section-list" data-testid="project-modules">
+        {modules.map((definition) => {
+          const moduleData = readModuleFromProject(project, definition.moduleId);
+          const status = moduleData.state.status;
+          return (
+            <li key={definition.moduleId} className="next-section-item" data-testid={`module-entry-${definition.moduleId}`}>
+              <button
+                type="button"
+                className="next-section-link"
+                data-testid={`module-open-${definition.moduleId}`}
+                onClick={() => navigateTo(modulePath(projectId, definition.moduleId))}
+              >
+                {definition.displayName}
+              </button>
+              <div className="next-section-status">
+                <span className="next-badge next-badge-module" data-testid={`module-status-${definition.moduleId}`}>
+                  {MODULE_STATUS_LABELS[status]}
                 </span>
-              )}
-            </div>
-          </li>
-        ))}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

@@ -9,6 +9,8 @@ import {
   isNewProjectPath,
   isEditProjectPath,
   parseEditProjectId,
+  isModulePath,
+  parseModulePath,
   navigateTo,
 } from "./routes";
 import { HomePage } from "./pages/HomePage";
@@ -18,6 +20,7 @@ import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
 import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
+import { ModuleShellPage } from "./pages/ModuleShellPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
@@ -28,6 +31,7 @@ type NextRoute =
   | { kind: "newProject" }
   | { kind: "editProject"; projectId: string }
   | { kind: "projectHome"; projectId: string }
+  | { kind: "moduleShell"; projectId: string; moduleId: string }
   | { kind: "quick" }
   | { kind: "load" };
 
@@ -48,6 +52,12 @@ function resolveRoute(pathname: string): NextRoute {
     const projectId = parseEditProjectId(pathname);
     if (projectId !== undefined) {
       return { kind: "editProject", projectId };
+    }
+  }
+  if (isModulePath(pathname)) {
+    const parsed = parseModulePath(pathname);
+    if (parsed !== undefined) {
+      return { kind: "moduleShell", projectId: parsed.projectId, moduleId: parsed.moduleId };
     }
   }
   if (pathname.startsWith(`${NEXT_PROJECT_HOME_PATH}/`)) {
@@ -109,6 +119,9 @@ export function NextApp() {
         break;
       case "projectHome":
         body = <ProjectTopPage projectId={route.projectId} />;
+        break;
+      case "moduleShell":
+        body = <ModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />;
         break;
       case "load":
         body = <LoadBusinessPage />;
