@@ -160,3 +160,46 @@ describe("Phase 4-01 Bridge Layout parser (fail-closed)", () => {
     expect(parsed.ok).toBe(false);
   });
 });
+
+describe("Phase 4-02 validation robustness (malformed input never throws)", () => {
+  it("validateBridgeLayoutData handles missing piers/spans arrays without throwing", () => {
+    const malformed = { bridgeLayoutDocument: { bridgeId: "", name: "", schemaVersion: "0.1.0" } };
+    expect(() => validateBridgeLayoutData(malformed)).not.toThrow();
+    const issues = validateBridgeLayoutData(malformed);
+    expect(issues.length).toBeGreaterThan(0);
+  });
+
+  it("validateBridgeLayoutDocument handles missing piers property without throwing", () => {
+    const doc = makeValidDocument();
+    const stripped = { ...doc, piers: undefined } as unknown as BridgeLayoutDocument;
+    expect(() => validateBridgeLayoutDocument(stripped)).not.toThrow();
+  });
+
+  it("round-trips bridgeLength and abutment placement snapshot", () => {
+    const doc = makeValidDocument();
+    const withNewFields = {
+      ...doc,
+      bridgeRange: { startStation: 100, endStation: 450, bridgeLength: 350 },
+      abutments: {
+        A1: { ...doc.abutments.A1, placement: { domainX: 100, domainY: 500, elevation: 103, tangentAzimuthRad: 0, terrainElevation: 90, roadReferenceId: "ALIGN-MTN-1", coordinateContextId: "COORD-1", capturedAt: "2026-08-12T00:00:00.000Z" } },
+        A2: { ...doc.abutments.A2 },
+      },
+    };
+    expect(validateBridgeLayoutDocument(withNewFields)).toHaveLength(0);
+    const parsed = parseBridgeLayoutDocument(JSON.parse(JSON.stringify(withNewFields)));
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) {
+      expect(parsed.document.bridgeRange.bridgeLength).toBe(350);
+      expect(parsed.document.abutments.A1.placement?.domainX).toBe(100);
+      expect(parsed.document.abutments.A1.placement?.terrainElevation).toBe(90);
+      expect(parsed.document.abutments.A1.placement?.roadReferenceId).toBe("ALIGN-MTN-1");
+    }
+  });
+
+  it("rejects inconsistent bridgeLength (not equal to end - start)", () => {
+    const doc = makeValidDocument();
+    const bad = { ...doc, bridgeRange: { startStation: 100, endStation: 450, bridgeLength: 999 } };
+    const issues = validateBridgeLayoutDocument(bad);
+    expect(issues.some((i) => i.message.includes("bridgeLength must equal"))).toBe(true);
+  });
+});

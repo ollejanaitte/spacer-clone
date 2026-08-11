@@ -160,8 +160,10 @@ export function validateBridgeLayoutDocument(document: BridgeLayoutDocument): re
   const a1Station = abutments?.A1?.station;
   const a2Station = abutments?.A2?.station;
   if (isFiniteNumber(a1Station)) supports.push({ id: "A1", station: a1Station });
-  for (const pier of piers) {
-    if (pier && isFiniteNumber(pier.station)) supports.push({ id: pier.supportId, station: pier.station });
+  if (Array.isArray(piers)) {
+    for (const pier of piers) {
+      if (pier && isFiniteNumber(pier.station)) supports.push({ id: pier.supportId, station: pier.station });
+    }
   }
   if (isFiniteNumber(a2Station)) supports.push({ id: "A2", station: a2Station });
   for (let i = 1; i < supports.length; i += 1) {
