@@ -108,9 +108,10 @@ describe("NextApp Shell", () => {
     expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="project-top-not-found"]')).toBeNull();
     expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("トップ表示業務");
-    expect(document.querySelector('[data-testid="section-road-todo"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="section-analysis-todo"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="section-cim-todo"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="project-modules"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="module-entry-road"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="module-entry-analysis"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="module-entry-cim"]')).toBeTruthy();
     cleanup(root);
   });
 

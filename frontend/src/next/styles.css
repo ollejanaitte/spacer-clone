@@ -499,6 +499,25 @@
   color: #92400e;
 }
 
+.next-badge-module {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.next-section-link {
+  border: none;
+  background: transparent;
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.next-section-link:hover {
+  text-decoration: underline;
+}
+
 .next-home-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

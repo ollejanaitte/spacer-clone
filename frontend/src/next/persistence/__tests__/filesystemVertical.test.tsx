@@ -124,7 +124,7 @@ describe("R1-04 filesystem vertical: create -> save -> restart -> restore -> ope
     expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("縦断永続化業務（改訂）");
     expect(document.querySelector('[data-testid="project-top-number"]')?.textContent).toBe("E2E-001");
-    expect(document.querySelector('[data-testid="project-top-sections"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="project-modules"]')).toBeTruthy();
     cleanup(root);
   });
 });
