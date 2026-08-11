@@ -100,11 +100,26 @@ export interface AbutmentPlacement {
   readonly placement?: AbutmentPlacementCandidate;
 }
 
-/** 橋脚（P1..Pn）の配置情報 */
+/** 橋脚（P1..Pn）の配置情報（躯体詳細は下部工Moduleが担当） */
+export interface PierPlacementCandidate extends AbutmentPlacementCandidate {}
+
+export type SkewSource = "automatic" | "user";
+
+/**
+ * 橋脚（P1..Pn）の配置情報（Phase 4-03）。
+ * - 橋脚柱詳細・梁・壁式・フーチング・杭・基礎設計は下部工Moduleが担当。
+ * - placement は Road Module の station→XYZ変換から算出した配置候補スナップショット。
+ * - skewSource: automatic = 道路直角の自動初期候補 / user = ユーザー指定。
+ */
 export interface PierPlacement {
   readonly supportId: string;
+  readonly label?: string;
   readonly station: number;
   readonly skewAngleRad: number | null;
+  readonly skewSource?: SkewSource;
+  /** 配置候補スナップショット。未生成時は省略可 */
+  readonly placement?: PierPlacementCandidate;
+  readonly metadata?: Record<string, unknown>;
 }
 
 export interface BridgeSpan {

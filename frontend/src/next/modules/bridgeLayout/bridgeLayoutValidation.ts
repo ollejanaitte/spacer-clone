@@ -145,13 +145,60 @@ export function validateBridgeLayoutDocument(document: BridgeLayoutDocument): re
       } else {
         seen.add(pier.supportId);
       }
+      if (pier.label !== undefined && typeof pier.label !== "string") {
+        issues.push({ path: `${path}.piers[${i}].label`, message: "pier label must be a string when present" });
+      }
       if (!isFiniteNumber(pier.station)) {
         issues.push({ path: `${path}.piers[${i}].station`, message: "pier station must be a finite number" });
       }
       if (pier.skewAngleRad !== null && !isFiniteNumber(pier.skewAngleRad)) {
         issues.push({ path: `${path}.piers[${i}].skewAngleRad`, message: "pier skewAngleRad must be finite or null" });
       }
+      if (pier.skewSource !== undefined && pier.skewSource !== "automatic" && pier.skewSource !== "user") {
+        issues.push({ path: `${path}.piers[${i}].skewSource`, message: "pier skewSource must be automatic or user" });
+      }
+      if (pier.metadata !== undefined && (pier.metadata === null || typeof pier.metadata !== "object" || Array.isArray(pier.metadata))) {
+        issues.push({ path: `${path}.piers[${i}].metadata`, message: "pier metadata must be an object when present" });
+      }
+      const pierPlacement = pier.placement;
+      if (pierPlacement !== undefined && pierPlacement !== null) {
+        if (typeof pierPlacement !== "object") {
+          issues.push({ path: `${path}.piers[${i}].placement`, message: "pier placement must be an object when present" });
+        } else {
+          for (const key of ["domainX", "domainY", "elevation", "tangentAzimuthRad"] as const) {
+            if (!isFiniteNumber(pierPlacement[key])) {
+              issues.push({ path: `${path}.piers[${i}].placement.${key}`, message: `pier placement.${key} must be a finite number` });
+            }
+          }
+          if (pierPlacement.terrainElevation !== null && !isFiniteNumber(pierPlacement.terrainElevation)) {
+            issues.push({ path: `${path}.piers[${i}].placement.terrainElevation`, message: "pier placement.terrainElevation must be finite or null" });
+          }
+          if (typeof pierPlacement.roadReferenceId !== "string" || pierPlacement.roadReferenceId.length === 0) {
+            issues.push({ path: `${path}.piers[${i}].placement.roadReferenceId`, message: "pier placement.roadReferenceId is required" });
+          }
+          if (typeof pierPlacement.capturedAt !== "string" || pierPlacement.capturedAt.length === 0) {
+            issues.push({ path: `${path}.piers[${i}].placement.capturedAt`, message: "pier placement.capturedAt is required" });
+          }
+        }
+      }
       void p;
+    });
+  }
+
+  // pier station must be strictly inside the A1..A2 bridge range
+  const a1StationDoc = abutments?.A1?.station;
+  const a2StationDoc = abutments?.A2?.station;
+  if (Array.isArray(piers) && isFiniteNumber(a1StationDoc) && isFiniteNumber(a2StationDoc)) {
+    piers.forEach((pier, i) => {
+      if (!pier || typeof pier !== "object") return;
+      const station = (pier as { station?: unknown }).station;
+      if (!isFiniteNumber(station)) return;
+      if (station <= a1StationDoc || station >= a2StationDoc) {
+        issues.push({
+          path: `${path}.piers[${i}].station`,
+          message: `pier station ${station} is outside the bridge range (A1=${a1StationDoc}, A2=${a2StationDoc})`,
+        });
+      }
     });
   }
 
@@ -379,10 +426,20 @@ function parsePier(value: unknown, index: number): BridgeLayoutDocument["piers"]
     return { supportId: `P${index + 1}`, station: Number.NaN, skewAngleRad: Number.NaN };
   }
   const record = value as Record<string, unknown>;
+  const placementRaw = record.placement;
+  const placement = placementRaw && typeof placementRaw === "object"
+    ? parsePlacement(placementRaw as Record<string, unknown>)
+    : undefined;
   return {
     supportId: typeof record.supportId === "string" ? record.supportId : `P${index + 1}`,
+    label: typeof record.label === "string" ? record.label : undefined,
     station: parseStation(record.station),
     skewAngleRad: parseNullableNumber(record.skewAngleRad),
+    skewSource: record.skewSource === "automatic" || record.skewSource === "user" ? record.skewSource : undefined,
+    placement,
+    metadata: record.metadata && typeof record.metadata === "object" && !Array.isArray(record.metadata)
+      ? (record.metadata as Record<string, unknown>)
+      : undefined,
   };
 }
 
