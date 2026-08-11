@@ -1,5 +1,6 @@
 import { ProjectManager } from "./projectManager";
 import type { ProjectRepositoryResult } from "./projectRepository";
+import { generateProjectId } from "./projectDataCore";
 import type { Project } from "./schema";
 import type { ProjectPersistence } from "../persistence/projectPersistence";
 
@@ -167,5 +168,52 @@ export class PersistentProjectManager extends ProjectManager {
       return true;
     }
     return false;
+  }
+
+  hasProject(projectId: string): boolean {
+    return this.repository.get(projectId) !== undefined;
+  }
+
+  /**
+   * Overwrite an existing project with the imported project. The existing
+   * project is backed up first (writeBackup) so a failed overwrite never
+   * destroys the previous source of truth.
+   */
+  async overwriteProject(imported: Project): Promise<boolean> {
+    const existing = this.repository.get(imported.projectId);
+    if (existing !== undefined) {
+      const backup = await this.persistence.writeBackup(existing);
+      if (!backup.ok) {
+        // Refuse to overwrite when the safety backup could not be made.
+        return false;
+      }
+    }
+    this.repository.delete(imported.projectId);
+    const created = this.repository.create(imported);
+    if (!created.ok) {
+      return false;
+    }
+    this.enqueueSave(() => this.saveProjectToPersistence(created.project));
+    return true;
+  }
+
+  /**
+   * Import as a new project (different Project ID) preserving content.
+   */
+  async importAsDuplicate(imported: Project, newName?: string): Promise<Project | undefined> {
+    const newProjectId = generateProjectId();
+    const duplicate: Project = {
+      ...imported,
+      projectId: newProjectId,
+      name: newName !== undefined && newName.length > 0 ? newName : imported.name,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const created = this.repository.create(duplicate);
+    if (!created.ok) {
+      return undefined;
+    }
+    this.enqueueSave(() => this.saveProjectToPersistence(created.project));
+    return created.project;
   }
 }
