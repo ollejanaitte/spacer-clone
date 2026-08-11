@@ -52,6 +52,9 @@ export function hasRoadDesignDocument(manager: ProjectManager, projectId: string
 
 export interface RoadInputsData {
   readonly label?: string;
+  readonly horizontal?: unknown;
+  readonly vertical?: readonly unknown[];
+  readonly crossSections?: readonly unknown[];
 }
 
 export function readRoadInputs(
@@ -78,16 +81,19 @@ export function writeRoadInputs(
   if (inputs.label !== undefined && typeof inputs.label !== "string") {
     return { ok: false, reason: "invalid-road-data" };
   }
+  const current = typeof existing.data.roadInput === "object" && existing.data.roadInput !== null
+    ? (existing.data.roadInput as Record<string, unknown>)
+    : {};
+  const merged: Record<string, unknown> = { ...current };
+  if (inputs.label !== undefined) merged.label = inputs.label;
+  if (inputs.horizontal !== undefined) merged.horizontal = inputs.horizontal;
+  if (inputs.vertical !== undefined) merged.vertical = inputs.vertical;
+  if (inputs.crossSections !== undefined) merged.crossSections = inputs.crossSections;
   const nextRecord: ModuleDataRecord = {
     ...existing,
     data: {
       ...existing.data,
-      roadInput: {
-        ...(typeof existing.data.roadInput === "object" && existing.data.roadInput !== null
-          ? (existing.data.roadInput as Record<string, unknown>)
-          : {}),
-        ...(inputs.label !== undefined ? { label: inputs.label } : {}),
-      },
+      roadInput: merged,
     },
   };
   const result = writeModuleToManager(manager, projectId, ROAD_MODULE_ID, nextRecord);
