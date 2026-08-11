@@ -3,12 +3,14 @@ import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
 import { DeleteConfirm, useDeleteConfirm } from "../components/DeleteConfirm";
+import { exportProjectToPackage } from "../persistence/package/projectPackageExporter";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 
 export function BusinessListPage() {
   const [projects, setProjects] = useState<Project[]>(() => [...getProjectManager().listProjects()]);
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [exportingId, setExportingId] = useState<string | null>(null);
   const deleteConfirm = useDeleteConfirm();
 
   const filtered = useMemo(() => {
@@ -44,6 +46,19 @@ export function BusinessListPage() {
     }
     deleteConfirm.cancel();
     refresh();
+  }
+
+  async function handleExport(project: Project) {
+    setExportingId(project.projectId);
+    const result = await exportProjectToPackage(project);
+    setExportingId(null);
+    if (result.ok) {
+      setMessage(`書き出しました: ${result.filePath}`);
+    } else if (result.reason === "canceled") {
+      setMessage("書き出しをキャンセルしました。");
+    } else {
+      setMessage("書き出しに失敗しました。");
+    }
   }
 
   return (
@@ -124,6 +139,9 @@ export function BusinessListPage() {
                     </button>
                     <button type="button" data-testid="business-edit" onClick={() => navigateTo(`/app/business/${project.projectId}/edit`)}>
                       業務編集
+                    </button>
+                    <button type="button" data-testid="business-export" onClick={() => void handleExport(project)} disabled={exportingId === project.projectId}>
+                      {exportingId === project.projectId ? "書き出し中..." : "業務データ書き出し"}
                     </button>
                     <button type="button" data-testid="business-duplicate" onClick={() => handleDuplicate(project)}>
                       複製

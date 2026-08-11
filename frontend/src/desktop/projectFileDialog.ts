@@ -62,6 +62,16 @@ export async function saveProjectFile(
   return saveProjectFileBrowser(content, suggestedName);
 }
 
+export async function saveSpacerProjFile(
+  content: string,
+  suggestedName = "project.spacerproj",
+): Promise<SaveProjectFileResult> {
+  if (typeof window !== "undefined" && typeof window.spacerDesktop?.saveSpacerProjFile === "function") {
+    return window.spacerDesktop!.saveSpacerProjFile(content, suggestedName);
+  }
+  return saveProjectFileBrowser(content, suggestedName);
+}
+
 export async function showAboutDialog(): Promise<void> {
   if (typeof window !== "undefined" && typeof window.spacerDesktop?.showAbout === "function") {
     await window.spacerDesktop.showAbout();

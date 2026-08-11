@@ -17,6 +17,7 @@ export type PersistenceIpcResult =
 export type SpacerDesktopBridge = {
   openProjectFile: () => Promise<OpenProjectFileResult>;
   saveProjectFile: (content: string, suggestedName?: string) => Promise<SaveProjectFileResult>;
+  saveSpacerProjFile?: (content: string, suggestedName?: string) => Promise<SaveProjectFileResult>;
   showAbout: () => Promise<void>;
   persistence?: {
     init: () => Promise<PersistenceIpcResult>;

@@ -100,6 +100,41 @@ export async function handleSaveProject(
   return { canceled: false, filePath };
 }
 
+function ensureSpacerProjExtension(filePath: string): string {
+  return filePath.toLowerCase().endsWith(".spacerproj") ? filePath : `${filePath}.spacerproj`;
+}
+
+export async function handleSaveSpacerProj(
+  parent: Electron.BrowserWindow | undefined,
+  payload: SaveProjectPayload,
+): Promise<SaveProjectResult> {
+  const automationPath = getAutomationSavePath();
+  if (automationPath) {
+    const filePath = ensureSpacerProjExtension(automationPath);
+    const tempPath = `${filePath}.tmp`;
+    await fs.writeFile(tempPath, payload.content, "utf8");
+    await fs.rename(tempPath, filePath);
+    return { canceled: false, filePath };
+  }
+  const options: Electron.SaveDialogOptions = {
+    title: "業務データを書き出し",
+    defaultPath: payload.suggestedName ?? "project.spacerproj",
+    filters: [{ name: "Project Package", extensions: ["spacerproj"] }],
+  };
+  const result = parent
+    ? await dialog.showSaveDialog(parent, options)
+    : await dialog.showSaveDialog(options);
+  if (result.canceled || !isNonEmptyString(result.filePath)) {
+    return { canceled: true };
+  }
+  const filePath = ensureSpacerProjExtension(result.filePath);
+  // temp -> rename: never leave a broken final package as a valid artifact
+  const tempPath = `${filePath}.tmp`;
+  await fs.writeFile(tempPath, payload.content, "utf8");
+  await fs.rename(tempPath, filePath);
+  return { canceled: false, filePath };
+}
+
 export type ShowAboutHandler = (parent: Electron.BrowserWindow | undefined) => Promise<void>;
 
 export function registerDialogIpc(getParentWindow: () => Electron.BrowserWindow | undefined, showAbout: ShowAboutHandler): void {
@@ -110,6 +145,13 @@ export function registerDialogIpc(getParentWindow: () => Electron.BrowserWindow 
       throw new Error("Invalid save-project payload");
     }
     return handleSaveProject(getParentWindow(), validated);
+  });
+  ipcMain.handle(IPC_CHANNELS.SAVE_SPACER_PROJ, async (_event, payload: unknown) => {
+    const validated = validateSavePayload(payload);
+    if (!validated) {
+      throw new Error("Invalid save-spacerproj payload");
+    }
+    return handleSaveSpacerProj(getParentWindow(), validated);
   });
   ipcMain.handle(IPC_CHANNELS.SHOW_ABOUT, async () => {
     await showAbout(getParentWindow());

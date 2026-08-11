@@ -1,6 +1,7 @@
 export const IPC_CHANNELS = {
   OPEN_PROJECT: "spacer:dialog:open-project",
   SAVE_PROJECT: "spacer:dialog:save-project",
+  SAVE_SPACER_PROJ: "spacer:dialog:save-spacerproj",
   SHOW_ABOUT: "spacer:app:show-about",
   CLOSE_GUARD_PROMPT: "spacer:close-guard:prompt",
   CLOSE_GUARD_RESPONSE: "spacer:close-guard:response",
