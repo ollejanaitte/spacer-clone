@@ -7,7 +7,7 @@ import type { ExistingConditionEntity } from "../existingConditions";
 import { domainVerticesToThree, domainToThree } from "../renderCoordinate";
 import type { Origin3 } from "../terrain/terrainCoordinate";
 import type { RoadAlignmentContext } from "./bridgeLayoutDomain";
-import type { AbutmentPlacementCandidate } from "./bridgeLayoutTypes";
+import type { AbutmentPlacementCandidate, PierPlacementCandidate } from "./bridgeLayoutTypes";
 
 export interface BridgeRangeGeometry {
   readonly startStation: number;
@@ -16,11 +16,20 @@ export interface BridgeRangeGeometry {
   readonly envelope: THREE.Mesh;
 }
 
+export interface PierSceneMarker {
+  readonly supportId: string;
+  readonly label: string;
+  readonly station: number;
+  readonly candidate: PierPlacementCandidate;
+  readonly skewAngleRad: number | null;
+}
+
 export interface BridgeLayoutSceneBuildResult {
   readonly group: THREE.Group;
   readonly bridgeGroup: THREE.Group;
   readonly a1Marker: THREE.Group | null;
   readonly a2Marker: THREE.Group | null;
+  readonly pierMarkers: readonly THREE.Group[];
   readonly bounds: THREE.Box3;
 }
 
@@ -32,6 +41,8 @@ export interface BuildBridgeLayoutSceneInput {
   readonly bridgeRange?: { startStation: number; endStation: number } | null;
   readonly candidateA1?: AbutmentPlacementCandidate | null;
   readonly candidateA2?: AbutmentPlacementCandidate | null;
+  readonly piers?: readonly PierSceneMarker[] | null;
+  readonly spans?: readonly { spanId: string; from: string; to: string; length: number }[] | null;
   readonly localOrigin?: Origin3 | null;
   readonly showTerrainWireframe?: boolean;
 }
@@ -39,6 +50,8 @@ export interface BuildBridgeLayoutSceneInput {
 const BRIDGE_LINE_COLOR = 0xff6d2b;
 const A1_COLOR = 0x2f9e44;
 const A2_COLOR = 0x1c6dd0;
+const PIER_COLOR = 0xb02ff0;
+const SPAN_LABEL_COLOR = 0xffd166;
 
 function toThree(x: number, y: number, z: number, origin: Origin3): THREE.Vector3 {
   const t = domainToThree({ x: x - origin.x, y: y - origin.y, z: z - origin.z });
@@ -91,6 +104,61 @@ function makeAbutmentMarker(role: string, candidate: AbutmentPlacementCandidate,
 
   group.name = `${role}-marker`;
   return group;
+}
+
+/**
+ * P1..Pn の配置確認用 marker を作る（詳細橋脚モデルではない）。
+ * skew指示線: 道路接線の直角（skew=0）から skewAngleRad だけ反時計回りに
+ * 回転した方向へ伸ばす水平ライン（counterclockwise-positive）。
+ */
+function makePierMarker(marker: PierSceneMarker, origin: Origin3): THREE.Group {
+  const group = new THREE.Group();
+  const pos = toThree(marker.candidate.domainX, marker.candidate.domainY, marker.candidate.elevation, origin);
+
+  const material = new THREE.MeshStandardMaterial({ color: PIER_COLOR });
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 60, 12), material);
+  stem.position.set(pos.x, pos.y - 30, pos.z);
+  group.add(stem);
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(6, 6, 6), material);
+  head.position.set(pos.x, pos.y + 2, pos.z);
+  group.add(head);
+
+  const label = makeLabelSprite(marker.label, PIER_COLOR);
+  if (label) {
+    label.position.set(pos.x, pos.y + 26, pos.z);
+    group.add(label);
+  }
+
+  // skew 指示線（配置線方向）
+  const tangent = marker.candidate.tangentAzimuthRad;
+  const perpendicular = tangent + Math.PI / 2;
+  const lineAngle = perpendicular + (marker.skewAngleRad ?? 0);
+  const halfLength = 18;
+  const dir = { x: Math.cos(lineAngle), y: Math.sin(lineAngle) };
+  const p0 = toThree(marker.candidate.domainX - dir.x * halfLength, marker.candidate.domainY - dir.y * halfLength, marker.candidate.elevation + 1, origin);
+  const p1 = toThree(marker.candidate.domainX + dir.x * halfLength, marker.candidate.domainY + dir.y * halfLength, marker.candidate.elevation + 1, origin);
+  const curve = new THREE.CatmullRomCurve3([p0, p1]);
+  const skewGeo = new THREE.TubeGeometry(curve, 2, 0.8, 6, false);
+  const skewMesh = new THREE.Mesh(skewGeo, new THREE.MeshStandardMaterial({
+    color: 0xf5c542,
+    emissive: 0x6a4a00,
+    emissiveIntensity: 0.5,
+  }));
+  skewMesh.name = `${marker.label}-skew-line`;
+  group.add(skewMesh);
+
+  group.name = `${marker.label}-marker`;
+  return group;
+}
+
+function makeSpanLabel(spanId: string, midpoint: THREE.Vector3): THREE.Sprite | null {
+  const sprite = makeLabelSprite(spanId, SPAN_LABEL_COLOR);
+  if (sprite) {
+    sprite.position.set(midpoint.x, midpoint.y + 16, midpoint.z);
+    sprite.scale.set(48, 24, 1);
+  }
+  return sprite;
 }
 
 /**
@@ -191,7 +259,43 @@ export function buildBridgeLayoutThreeScene(input: BuildBridgeLayoutSceneInput):
     bridgeGroup.add(a2Marker);
   }
 
+  // Phase 4-03: P1..Pn markers + skew 指示線
+  const pierMarkers: THREE.Group[] = [];
+  if (input.piers) {
+    for (const pier of input.piers) {
+      const marker = makePierMarker(pier, origin);
+      bridgeGroup.add(marker);
+      pierMarkers.push(marker);
+    }
+  }
+
+  // Phase 4-03: span ラベル（支間中点）
+  if (input.roadContext?.ok && input.spans && input.spans.length > 0) {
+    const intermediate = input.roadContext.intermediate;
+    if (intermediate) {
+      const spanStations = new Map<string, number>();
+      if (input.bridgeRange) {
+        spanStations.set("A1", input.bridgeRange.startStation);
+        spanStations.set("A2", input.bridgeRange.endStation);
+      }
+      for (const pier of input.piers ?? []) {
+        spanStations.set(pier.supportId, pier.station);
+      }
+      for (const span of input.spans) {
+        const start = spanStations.get(span.from);
+        const end = spanStations.get(span.to);
+        if (start === undefined || end === undefined) continue;
+        const midpointStation = (start + end) / 2;
+        const p = intermediate.sample(midpointStation);
+        if (!p) continue;
+        const midPoint = toThree(p.x, p.y, p.z + 1, origin);
+        const label = makeSpanLabel(span.spanId, midPoint);
+        if (label) bridgeGroup.add(label);
+      }
+    }
+  }
+
   group.add(bridgeGroup);
   const bounds = new THREE.Box3().setFromObject(group);
-  return { group, bridgeGroup, a1Marker, a2Marker, bounds };
+  return { group, bridgeGroup, a1Marker, a2Marker, pierMarkers, bounds };
 }
