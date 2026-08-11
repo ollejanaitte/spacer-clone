@@ -1,0 +1,196 @@
+================================================================================
+Railsys 統合設計 Phase 3 Final Report
+ファイル名: 統合設計_Phase3_260811_2034_地形現況設計完遂.txt
+================================================================================
+
+作業名: 統合設計 Phase 3 地形・現況 完遂（Phase 3-02〜3-12）
+完了日時（JST）: 2026-08-11 20:34
+
+--------------------------------------------------------------------------------
+1. Phase 3目的
+--------------------------------------------------------------------------------
+地形ImportからTerrain/TIN/Surface、3D Viewer、大規模/LOD、Existing Conditions、
+現況3D、Road+Terrain+Existing統合、CIM、Persistence、.spacerproj移送、
+Reference Mountain E2Eまで一気通貫で成立させる。
+
+--------------------------------------------------------------------------------
+2. Phase 3-Aからの引継ぎ
+--------------------------------------------------------------------------------
+- Terrain Module Contract（正本最小構造・validator）
+- Coordinate/Unit/Origin責任境界Freeze（domain XYZ・Three変換・Project/Local Origin）
+- Terrain=地面正本 / Existing Conditions=現況構造物（別責任）
+- Road CIMと同一Project座標系
+
+--------------------------------------------------------------------------------
+3. baseline SHA
+--------------------------------------------------------------------------------
+- 3b038487b6f4be3a29666837238e03ea3dad7e65（Phase 3-A final main）
+
+--------------------------------------------------------------------------------
+4. Phase 3-02〜3-12結果
+--------------------------------------------------------------------------------
+3-02 地形Import: XYZ/CSVパース（NaN/Infinity/malformed/empty/size拒否・bounds）・large pointsはasset参照
+3-03 座標/Unit/Origin: global→project→local・Three変換(x→x,y→z,z→-y)・round-trip
+3-04 Terrain Core: grid→TIN（2tri/cell）・getGridElevation双線形補間・点群→surface
+3-05 Terrain 3D Viewer: Three.js・OrbitControls・camera fit・Local Origin・正本非破壊
+3-06 大規模/LOD: tile分割・camera距離LOD 4段階・mesh削減
+3-07 Existing Conditions Core: Contract（type/layer/geometry/metadata）・metadata配下格納
+3-08 現況3D: river/road/railway/bridge=tube・pipe/underground=cylinder・point=marker
+3-09 統合: Terrain+Road CIM参照+Existing 同一Project座標系・elevation整合
+3-10 CIM: Terrain CIM + Existing CIM（共通参照境界）
+3-11 Persistence: Terrain+Existing save→restart→.spacerproj完全復元
+3-12 Reference Mountain E2E: 山・谷・河川・既設・道路統合→保存→復元→移送 ✅
+
+--------------------------------------------------------------------------------
+5. Terrain Import形式 / Coordinate / Unit / Origin
+--------------------------------------------------------------------------------
+- Import: XYZ/CSV（tab/;/comma自動検出）・malformed/NaN/empty/size拒否
+- Coordinate: Project Origin/Local Origin・domain XYZ規約（X=軸/Y=横断/Z=標高）・metric
+- Three.js変換: x→x, y→z, z→-y（表示責任・正本非変更）
+- Local Origin適用で大座標精度劣化防止
+
+--------------------------------------------------------------------------------
+6. TIN / Surface / getElevation
+--------------------------------------------------------------------------------
+- TIN: grid 2三角形/cell・deterministic・依存なし
+- Surface: 点群→binning→heightfield
+- getElevation: 双線形補間（TIN外null=no-data明示）
+
+--------------------------------------------------------------------------------
+7. Terrain Viewer / Large Terrain / LOD
+--------------------------------------------------------------------------------
+- Viewer: Three.js・OrbitControls・ambient/directional・grid・wireframe切替
+- Large: tile分割（連続bounds）・camera距離LOD・mesh削減
+- Reference Mountain（41x41 grid 1000m級）で安定表示
+
+--------------------------------------------------------------------------------
+8. Existing Conditions / Underground / Road統合
+--------------------------------------------------------------------------------
+- Existing: 現況道路/河川/鉄道/既設橋/地下管路（entity/layer/visibility/metadata）
+- Underground: pipe/underground=cylinder（中心線+diameter）
+- 統合: Road CIM参照（別正本を作らない）・Terrain+Existing+Road同一座標系
+
+--------------------------------------------------------------------------------
+9. Terrain / Existing CIM Geometry
+--------------------------------------------------------------------------------
+- Terrain CIM: coordinate/unit/origin/bounds/surfaceReference/source/version
+- Existing CIM: entity/type/layer/geometry/metadata/coordinate/version
+- 後続Bridge Layout / Integrated 3Dが内部実装を知らずに参照可能
+
+--------------------------------------------------------------------------------
+10. large asset格納方式 / Auto Save / restart restore / .spacerproj
+--------------------------------------------------------------------------------
+- large asset: surfaceReference/assetReferences参照（project.json非埋込）
+- Auto Save: Terrain+Existing metadata変更→自動保存
+- restart restore: 再起動後完全復元（実fs確認）
+- .spacerproj: Export→Import完全復元（Terrain/Existing metadata + asset reference）
+
+--------------------------------------------------------------------------------
+11. Reference Mountain E2E
+--------------------------------------------------------------------------------
+山岳（2峰+谷）+ 河川 + 既設道路 + 鉄道 + 地下水管 + 計画道路（Clothoid/Arc）を統合。
+Terrain Surface/3D/tile/LOD/Road mesh/Existing 3D/CIMを生成し、
+保存→完全終了→再起動→完全復元→.spacerproj Export→Import→完全復元 ✅
+
+--------------------------------------------------------------------------------
+12. 主要変更ファイル
+--------------------------------------------------------------------------------
+frontend/src/next/modules/terrain/
+- terrainImport.ts / terrainImportAdapter.ts / terrainCoordinate.ts /
+  terrainSurface.ts / terrainTiles.ts / terrainViewerBuilder.ts / referenceMountain.ts
+frontend/src/next/modules/
+- existingConditions.ts / existingConditionsAdapter.ts / existingViewerBuilder.ts /
+  integratedSceneBuilder.ts / terrainCimGeometry.ts
+frontend/src/next/components/ TerrainViewer.tsx
+frontend/src/next/pages/ TerrainModuleShellPage.tsx
+frontend/src/next/project/ projectManager.ts / persistentProjectManager.ts
+frontend/src/next/__tests__/ terrainUi.test.tsx
+frontend/src/next/modules/terrain/__tests__/ (import/coordinate/surface/tiles/viewer)
+frontend/src/next/modules/__tests__/ (existing/existingViewer/integrated/terrainCim)
+frontend/src/next/persistence/__tests__/ phase3Persistence.test.ts
+frontend/src/next/persistence/package/__tests__/ referenceMountainE2E.test.ts
+docs/rebuild/phase3/ Phase3_terrain_complete.md / evidence/phase3-project-top.png
+
+--------------------------------------------------------------------------------
+13. tests / regression / Electron / typecheck / build
+--------------------------------------------------------------------------------
+- terrain tests: 33/33 PASS
+- existing: 8/8 + viewer 5/5 + cim 4/4 + integration 5/5 + persistence 2/2 + e2e 2/2
+- src/next全体: 277/277 PASS
+- electron tests: 26/26 PASS
+- R1-01〜R1-05 regression: PASS / Phase 1 regression: PASS / Phase 2 regression: PASS / Phase 3-A regression: PASS
+- typecheck: PASS / build: PASS
+- Electron通常起動: 新ホーム描画確認
+
+--------------------------------------------------------------------------------
+14. performance結果（Reference Mountain）
+--------------------------------------------------------------------------------
+- terrain point count: 41x41 = 1681 grid vertices（E2Eでサンプリング）
+- triangle count: 3200（40x40x2）
+- tile count: 4（tileSize 20）
+- LOD: 4段階（camera距離基準）
+- 起動・表示に極端な停止なし・camera移動で地形消失なし（テスト・UIで確認）
+
+--------------------------------------------------------------------------------
+15. 完成スクリーンショット一覧 / Discord送信結果
+--------------------------------------------------------------------------------
+- phase3-project-top.png（Projectトップ・App Shell描画確認・ヘッダー#1f3b5a検出）
+- Discord実ファイル添付送信済み（Luna目視PASS・証跡として十分）
+- Terrain 3D / 統合表示はTerrain Module UIのReference Mountain表示トグルで確認可能
+
+--------------------------------------------------------------------------------
+16. Luna目視 / 旧メイン画面導線
+--------------------------------------------------------------------------------
+- Luna（read-only・gpt-5.6-luna）: ホーム画面UI崩れなし・テキスト一致・
+  コード編集/Git操作/ファイル変更なし
+- Luna実行後git差分なし
+- 旧メイン画面への正規導線: 復活していない
+
+--------------------------------------------------------------------------------
+17. 各StepのPR番号 / merge commit SHA
+--------------------------------------------------------------------------------
+- PR #870 Phase 3-02: b9ffc6ff02b8c30313208b8c74dff9a4fc144a93
+- PR #871 Phase 3-03: 3d6fc3fa9a8be3984a9242721505e6c1329bc568
+- PR #872 Phase 3-04: 56a9958cbd649b538855a4efdf8ea03924b7fe55
+- PR #873 Phase 3-05: 47d729ffac2659fc4e3808f48f0ef440593dcaa6
+- PR #874 Phase 3-06: c1e6b15b6053ca37015a26fe7441e4cc12605957
+- PR #875 Phase 3-07: 2404025eda27e29ad27bf4c792d7f73708a59d3b
+- PR #876 Phase 3-08: 918e3ff73503c109ae802e411e36e4ffda1923f7
+- PR #877 Phase 3-09: 6e9f0184d23af20e6eb9b7720573071275a53792
+- PR #878 Phase 3-10: 4b1bdb6b8ec66168686a9fd1766e51e095232a11
+- PR #879 Phase 3-11: 3f492d933930ba57b585aba4b30546cfac6cc6fb
+- PR #880 Phase 3-12: f704c21e9b0968fbf6ec4ce9a2d6cc461d5ec3f2
+- PR #881 完成Gate: a1ac43f064b0c761bfd046a1ca95d9d9de3ad20d
+- PR #882 完了記録: 2e2b9083b2d080a8add9880b83c03d12f435a7c0
+- PR #883 Final Report: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+18. Final Report自身のPR番号 / merge SHA
+--------------------------------------------------------------------------------
+- PR: #883
+- merge commit SHA: （merge後SHAを記録）
+- 最終main SHA: （merge後SHAを記録）
+
+--------------------------------------------------------------------------------
+19. 4系統同期結果
+--------------------------------------------------------------------------------
+- local main / origin/main / GitHub main / rebuild/integrated-system
+  （本Final Report merge後、全SHA一致を確認して記録）
+
+--------------------------------------------------------------------------------
+20. 未解決事項
+--------------------------------------------------------------------------------
+- なし（Phase 3スコープ内で未解決の重大事項は発生しなかった）
+
+--------------------------------------------------------------------------------
+21. Phase 4開始可否
+--------------------------------------------------------------------------------
+- 可（Terrain+Existing+Road統合基盤が成立したため）
+- ただしPhase 4（Bridge Layout / 橋梁配置）はユーザーの次の明示指示を待って開始する
+
+--------------------------------------------------------------------------------
+22. 最終判定
+--------------------------------------------------------------------------------
+統合設計 Phase 3: COMPLETE
+Phase 4（Bridge Layout / 橋梁配置）へは進んでいない。ユーザーの次の明示指示を待つ。
+================================================================================
