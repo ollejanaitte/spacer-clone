@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
@@ -28,6 +28,17 @@ const SECTIONS: ReadonlyArray<{ id: ProjectSectionId; label: string; implemented
 
 export function ProjectTopPage({ projectId }: { projectId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
+  const [backups, setBackups] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getProjectManager().listBackups(projectId).then((files) => {
+      if (!cancelled) setBackups(files);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId]);
 
   if (!project) {
     return (
@@ -83,6 +94,23 @@ export function ProjectTopPage({ projectId }: { projectId: string }) {
             </dd>
           </div>
         </dl>
+      </div>
+
+      <div className="next-backup-section" data-testid="project-top-backups">
+        <h2 className="next-home-section-title">自動バックアップ</h2>
+        {backups.length === 0 ? (
+          <p className="next-hint" data-testid="backup-empty">
+            バックアップはまだありません。
+          </p>
+        ) : (
+          <ul className="next-backup-list" data-testid="backup-list">
+            {backups.map((fileName) => (
+              <li key={fileName} className="next-backup-item" data-testid="backup-item">
+                {fileName}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <ul className="next-section-list" data-testid="project-top-sections">
