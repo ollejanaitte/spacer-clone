@@ -85,6 +85,25 @@ export class ProjectManager {
     return this.repository.update(projectId, merged);
   }
 
+  updateProjectMetadata(
+    projectId: string,
+    metadata: Record<string, unknown>,
+  ): ProjectRepositoryResult {
+    const existing = this.repository.get(projectId);
+    if (!existing) {
+      return { ok: false, reason: "not-found" };
+    }
+    const merged: Project = {
+      ...existing,
+      metadata: {
+        ...existing.metadata,
+        ...metadata,
+      },
+      updatedAt: new Date().toISOString(),
+    };
+    return this.repository.update(projectId, merged);
+  }
+
   duplicateProject(projectId: string): ProjectRepositoryResult {
     const existing = this.repository.get(projectId);
     if (!existing) {
