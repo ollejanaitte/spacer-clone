@@ -1,0 +1,305 @@
+================================================================================
+統合設計 Phase 4-02  Final Report
+橋梁区間設定（Bridge Range Setting）
+================================================================================
+
+作業名   : 統合設計 Phase 4-02「橋梁区間設定」
+完了日時 : 2026-08-12 06:36 JST（日本時間）
+主担当   : OpenCode DeepSeek V4 Flash（調査・実装・tests・Git・最終判断）
+目視確認 : Codex GPT-5.6 Luna（read-only sandbox、スクリーンショット確認のみ）
+GitHub   : https://github.com/ollejanaitte/spacer-clone.git
+新worktree: /home/masaharu/Projects/spacer-clone-next
+長期branch: rebuild/integrated-system
+
+--------------------------------------------------------------------------------
+1. baseline
+--------------------------------------------------------------------------------
+- baseline SHA（local main / origin main / GitHub main / rebuild/integrated-system）:
+  306b3f1eb398f99ccd0d30d841ccee4540eefd1d
+- PR #889 merge確認: **済み**（306b3f1 = PR #889のmerge SHA）
+- よって真の最終main SHA = 306b3f1（PR #889 merge含む）を Phase 4-02 baseline として確定
+- 作業開始時 dirty:
+  - spacer-clone（canonical）: docs/apollo evidence JSON 3件 modified + final_report.txt 削除
+  - spacer-clone-next: 同3件 + 未追跡doc（R1-04.5 Luna検証結果）
+  - ※既存差分は不干渉・非破棄
+- Phase 3-Fix + Phase 4-A 完了済み（BridgeLayoutDocument schema 0.1.0 が唯一の正本）
+
+--------------------------------------------------------------------------------
+2. Phase 4-02 最終ゴール
+--------------------------------------------------------------------------------
+Road Alignment上でユーザーが橋梁開始測点・終了測点を設定すると、
+橋長とA1/A2配置候補が生成され、Terrain + Road + Existing上で3D確認でき、
+Project保存・Auto Save・再起動復元まで成立する最小縦断を完成。
+
+COMPLETE条件:
+「Road Alignment上で橋梁開始・終了測点を設定すると、橋長とA1/A2配置候補が
+生成され、Terrain + Road + Existing上で3D確認でき、保存・再起動・再表示まで成立する」
+
+--------------------------------------------------------------------------------
+3. Bridge Range仕様
+--------------------------------------------------------------------------------
+- 格納: bridgeRange.startStation / endStation（BridgeLayoutDocument唯一正本）
+- 橋長: bridgeLength = endStation - startStation（原則・自動算出）
+  ※Road Moduleのstation体系に別の正式定義は存在しないため、
+    physical distance [m]（origin 0・equation なし）を正式定義として採用
+- 必須validation:
+  - finite number（NaN / Infinity reject）
+  - startStation < endStation（== も reject）
+  - start/end が Road Alignment 範囲内（0 ≤ station ≤ totalLength）
+  - roadReference 有効（moduleId: road）
+  - alignmentReference 有効（未保存段階でも現在のRoad Alignmentへ解決可能なら有効）
+  - bridgeLength 存在時は end - start と一致（不一致 reject）
+
+--------------------------------------------------------------------------------
+4. Road reference（Step A）
+--------------------------------------------------------------------------------
+- BridgeLayoutDocument.roadReference.alignmentId から Road Module 正本を参照
+  （正本複製なし・ID/reference接続）
+- readRoadAlignmentContext: Road Module の horizontal / vertical / crossSections を
+  buildRoadIntermediate で評価し、alignmentId / totalLength / coordinatePolicyId を解決
+- Road 存在しない / alignment 存在しない / 要素なし → fail-closed（ok=false + issues）
+- Bridge Layout UI から Road JSON は変更しない（RoadModuleShellPage のみが Road を保存）
+
+--------------------------------------------------------------------------------
+5. start / end station
+--------------------------------------------------------------------------------
+- startStation → A1 / endStation → A2（station を正式保存）
+- ユーザーが測点を変更すると橋長・A1/A2候補・Terrain/Existing参照が再計算
+  （applyBridgeRangeToDocument / assembleBridgeLayoutView）
+
+--------------------------------------------------------------------------------
+6. bridgeLength
+--------------------------------------------------------------------------------
+- bridgeLength = endStation - startStation（自動算出）
+- BridgeRange.bridgeLength は算出スナップショットとして保存（正式値は常に再算出）
+
+--------------------------------------------------------------------------------
+7. A1/A2生成仕様（Step B）
+--------------------------------------------------------------------------------
+- A1/A2 は「橋梁端部の配置点 / 配置線 / downstream handoff用の最小配置情報」
+  （橋台躯体・パラペット・翼壁・基礎・杭・詳細CIM・構造照査は対象外）
+- computeAbutmentPlacementCandidate: Road Module 正式API（buildRoadIntermediate.sample）で
+  各測点の以下を取得
+  - station / domain X / domain Y / elevation / tangent（azimuth）/ grade / display
+- AbutmentPlacement.placement スナップショット:
+  domainX / domainY / elevation / tangentAzimuthRad / terrainElevation /
+  roadReferenceId / coordinateContextId / capturedAt
+
+--------------------------------------------------------------------------------
+8. XYZ / elevation / tangent
+--------------------------------------------------------------------------------
+- domain XYZ: X=道路軸方向 / Y=横断方向 / Z=標高（metric）
+- 変換は Road Module（liner core pointAtStation/evaluateRoadCenterline3D）へ委譲し再実装しない
+- elevation: 縦断（vertical）評価値（z）
+- tangent: azimuth [rad]
+
+--------------------------------------------------------------------------------
+9. skew
+--------------------------------------------------------------------------------
+- 新正本規約: 反時計回り正（counterclockwise-positive）
+- 旧資産の別符号規約は混入させない
+- Phase 4-02 では A1/A2 の skewAngleRad は null のまま（配置線の向きは未設定）
+  ※変換が必要な場合は Adapter 境界で明示する方針は維持
+
+--------------------------------------------------------------------------------
+10. Terrain reference（Step B・D）
+--------------------------------------------------------------------------------
+- lookupTerrainElevation: getGridElevation 相当（bilinear補間）
+  - gridなし / 点がTIN外 → null（明確な参照不能）
+- assembleBridgeLayoutView で A1/A2 直下の地盤標高と差を参照
+  - A1 terrain elevation / A2 terrain elevation
+  - A1 road elevation - terrain elevation の差（diffA1 / diffA2）
+- getProjectTerrainGrid: Project地形サーフェス（Phase 4-02 では
+  terrain surfaceReference 解決時に Reference Mountain の地形サーフェスを
+  Project地形として使用。Terrain Module の grid は Project JSON に非保持のため）
+- Terrain がない場合でも橋梁区間データは破壊しない（available=false の warning）
+- 地形から橋梁区間を自動決定しない
+
+--------------------------------------------------------------------------------
+11. Existing reference（Step B）
+--------------------------------------------------------------------------------
+- 橋梁区間 bbox（Road中心線サンプル + margin）と Existing entity geometry の
+  線分-bbox交差判定（isExistingNearRange / collectExistingNearRange）
+- 本格的な自動干渉判定エンジンは作らない（最小参照のみ）
+- bridge range 周辺の entity を参照・表示可能 / reference切れ検出
+- 自動的に橋梁区間を変更しない
+
+--------------------------------------------------------------------------------
+12. UI（Step C・F）
+--------------------------------------------------------------------------------
+- BridgeLayoutModuleShellPage 新設（最小 Bridge Layout 画面）
+  - 橋梁名 / Road / Alignment / startStation / endStation / bridgeLength（自動算出）/
+    validation表示 / A1情報 / A2情報 / Terrain参照状態 / Existing参照状態 /
+    保存（Auto Save）状態 / 3D Viewer
+- Road Module 未設定時: Reference Mountain プレビュー表示 + fail-closed 保存不可
+- 旧メイン画面への導線は復活させない
+
+--------------------------------------------------------------------------------
+13. 3D（Step C）
+--------------------------------------------------------------------------------
+- BridgeLayoutSceneViewer / bridgeLayoutScene.ts 新設
+  - Terrain / Road / Existing / Bridge Range / A1 / A2 を単一 render座標系で描画
+  - Bridge Range: 強調ライン（オレンジ TubeGeometry）+ transparent envelope
+  - A1（緑）/ A2（青）: stem + sphere marker + label sprite
+  - Bridge Range centerline は Road と同一 alignment からサンプリング
+    （A1/A2 が Road からずれない）
+- 共通 renderCoordinate（domainToThree）を使用 / Viewer独自XYZ入替なし
+- Terrain/Road/Existing 正本は変更しない / Local Origin を尊重
+- camera fit-to-bounds を利用
+
+--------------------------------------------------------------------------------
+14. renderCoordinate
+--------------------------------------------------------------------------------
+- domainToThree: three.x = domain.x / three.y = domain.z（標高）/ three.z = -domain.y
+- threeToDomain / domainVerticesToThree（Local Origin対応・入力非破壊）
+- 表示責任のみ（正本を書き換えない）
+
+--------------------------------------------------------------------------------
+15. Auto Save / restart restore（Step D）
+--------------------------------------------------------------------------------
+- writeBridgeLayoutDocument → Project Data Core（既存 Module Core/Adapter 責任境界）→
+  PersistentProjectManager enqueueSave（Auto Save）
+- .spacerproj（buildProjectPackage）: Project JSON 全体を保持するため bridgeLayout を自動 round-trip
+- 再起動復元: restoreFromPersistence → Bridge Range / bridgeLength / A1/A2 復元
+- 実ファイルシステム（NodeFileSystemGateway）で save→restart→restore を検証
+
+--------------------------------------------------------------------------------
+16. 主要変更ファイル
+--------------------------------------------------------------------------------
+新規:
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutDomain.ts
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutPlacement.ts
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutScene.ts
+- frontend/src/next/components/BridgeLayoutSceneViewer.tsx
+- frontend/src/next/pages/BridgeLayoutModuleShellPage.tsx
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutDomain.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutPlacement.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutScene.test.ts
+- frontend/src/next/__tests__/bridgeLayoutUi.test.tsx
+- frontend/src/next/persistence/__tests__/bridgeLayoutPersistence.test.ts
+- docs/rebuild/phase4/Phase4-02_bridge_range.md
+- docs/rebuild/phase4/evidence/p4-02-*.png（4枚）
+
+変更:
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutTypes.ts（bridgeLength / placement）
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutValidation.ts（拡張 + robust化）
+- frontend/src/next/modules/bridgeLayoutModule.ts（export）
+- frontend/src/next/NextApp.tsx（bridgeLayoutルーティング）
+- frontend/src/next/pages/RoadModuleShellPage.tsx（既定データ=Reference Mountain道路）
+
+--------------------------------------------------------------------------------
+17. tests / regression
+--------------------------------------------------------------------------------
+- bridgeLayout domain/validation/placement/scene/persistence: 64件 PASS
+- bridgeLayoutUi（jsdom）: 5件 PASS
+- src/next 全体: 366件 PASS
+- src/liner + bridgeProject: 1116件 PASS
+- src/viewer + timeHistory: 449件 PASS
+- 全regression（除外: 既知ハング src/App.apolloNavigation.test.tsx のみ）:
+  509 files / 3729 tests PASS（0 failure）
+- 既知問題（pre-existing・pristine mainでも再現）:
+  src/App.apolloNavigation.test.tsx が jsdom 上で3D viewer の requestAnimationFrame
+  無限ループによりハング（今回のregression failure と混同しない）
+
+--------------------------------------------------------------------------------
+18. Electron / typecheck / lint / build
+--------------------------------------------------------------------------------
+- Electron tests: 26/26 PASS
+- typecheck: PASS
+- lint: PASS（hygiene 0 issue / Japanese strings informational [review] のみ）
+- build: PASS
+
+--------------------------------------------------------------------------------
+19. ライブ検証（Electron + xvfb + swiftshader）
+--------------------------------------------------------------------------------
+- playwright electron + xvfb-run + --enable-unsafe-swiftshader で実アプリを操作
+- フロー: 業務作成 → Road Module 保存（Reference Mountain道路）→ Bridge Layout →
+  橋梁名=旭高架橋 / startStation=100 / endStation=450 →
+  橋長=350.000 自動算出 → 3D表示 → 保存 → アプリ終了 → 再起動 →
+  同じ橋梁区間（100/450/350.000）と A1/A2 が復元
+- 結果: 全フロー PASS（再起動復元時 doc="あり"・start/end/len 復元確認）
+
+--------------------------------------------------------------------------------
+20. Luna（Codex GPT-5.6-luna）目視確認
+--------------------------------------------------------------------------------
+- モード: codex exec --sandbox read-only（コード編集・Git操作なし）
+- 対象: スクリーンショット4枚
+- 結果: 総合判定 **PASS**
+  - p4-02-01 入力画面: Road/Alignment=ROAD-MTN-1・100/450/350.000 表示 PASS
+  - p4-02-02 3D全景: WebGL描画・Terrain水平・Road横倒しなし・Bridge RangeがRoadに沿い・A1/A2がRoad上 PASS
+  - p4-02-03 Terrain+Existing+Bridge Range: 正常描画・位置関係OK PASS
+  - p4-02-04 再起動復元: 同じ橋梁区間・A1/A2情報・正本"あり"復元 PASS
+- Luna実行前後のgit差分増加なし（read-only確認）
+
+--------------------------------------------------------------------------------
+21. screenshots
+--------------------------------------------------------------------------------
+- docs/rebuild/phase4/evidence/p4-02-01-bridge-layout-input.png（入力画面）
+- docs/rebuild/phase4/evidence/p4-02-02-bridge-layout-3d-full.png（3D全景）
+- docs/rebuild/phase4/evidence/p4-02-03-bridge-layout-viewer-terrain-existing.png
+  （Terrain + Existing + Bridge Range）
+- docs/rebuild/phase4/evidence/p4-02-04-restart-restore.png（再起動復元後）
+- Discord へ実ファイル添付
+
+--------------------------------------------------------------------------------
+22. PR一覧 / merge SHA
+--------------------------------------------------------------------------------
+Step A（Road reference + Bridge Range domain logic）:
+- branch: feat/phase4-02a-bridge-range
+- PR: #890 → merge SHA: a861d10b775a9b53294b001e3b4a8a3632caa4e1
+Step B（A1/A2配置候補 + Terrain/Existing参照）:
+- branch: feat/phase4-02b-abutment-candidates
+- PR: #891 → merge SHA: 7187440a4ac8a78b1a5f52dbf6128eb8837359c3
+Step C（Bridge Layout UI + 3D）:
+- branch: feat/phase4-02c-bridge-layout-ui
+- PR: #892 → merge SHA: 8dd7e3d6feaeed094d271b42db28c21b5cd03e79
+Step D（Persistence / restart restore）:
+- branch: feat/phase4-02d-bridge-persistence
+- PR: #893 → merge SHA: 6d6ba676ca922f1426bfb0c676392bc1036338ab
+Step E（E2E / regression / documentation / Final Gate）:
+- branch: feat/phase4-02e-final-gate
+- PR: #894 → merge SHA: 12f7d0a6c83ed63a12bfe661725ccf65b3fb58f3
+
+--------------------------------------------------------------------------------
+23. Final Report 自身の PR / merge SHA
+--------------------------------------------------------------------------------
+- branch: docs/phase4-02-final-report
+- PR: #895（merge SHA は merge 後に確定）
+- Final Report merge SHA:
+
+--------------------------------------------------------------------------------
+24. 最終main SHA / 4系統同期
+--------------------------------------------------------------------------------
+- local main        : 12f7d0a6c83ed63a12bfe661725ccf65b3fb58f3（Step E merge後）
+- origin/main       : 同上
+- GitHub main       : 同上
+- rebuild/integrated-system: 同上
+- 4系統一致: 確認済み（Final Report merge後にも再確認する）
+
+--------------------------------------------------------------------------------
+25. 未解決事項
+--------------------------------------------------------------------------------
+- src/App.apolloNavigation.test.tsx の jsdom requestAnimationFrameハング（既存・新システム無関係）
+- Terrain Module の実際の地形グリッドは Project JSON に非保持
+  （Phase 4-02 は surfaceReference 解決時に Reference Mountain サーフェスを Project 地形として使用。
+   実地形gridの永続化は後続Phaseの課題）
+- A1/A2 の skewAngleRad は Phase 4-02 では null（配置線の向きの正式設定は後続Phase）
+- 鋼鈑桁橋Goldenの測点（station値）抽出（HUMAN_CONFIRMATION_REQUIRED・後続Phase）
+
+--------------------------------------------------------------------------------
+26. Phase 4-03 readiness
+--------------------------------------------------------------------------------
+- Road Alignment上の橋梁区間設定 → 橋長・A1/A2配置候補生成 → Terrain/Existing参照 →
+  3D確認 → 保存 → Auto Save → 再起動復元 が成立
+- BridgeLayoutDocument（唯一正本）・参照境界・skew規約（反時計回り正）確定済み
+- 判定: Phase 4-03（P1..Pn橋脚配置・支間割など）準備完了
+
+--------------------------------------------------------------------------------
+27. verdict
+--------------------------------------------------------------------------------
+Phase 4-02「橋梁区間設定」: **COMPLETE**
+- Bridge Range / bridgeLength / A1/A2 / Terrain・Existing reference / 3D /
+  Auto Save / restart restore / tests / Luna / Electron / typecheck / build すべて成立
+- GitHub main反映・Discord報告・Final Report・4系統同期まで完了
+- Phase 4-03 以降へは進んでいない（STOP遵守）
+================================================================================
