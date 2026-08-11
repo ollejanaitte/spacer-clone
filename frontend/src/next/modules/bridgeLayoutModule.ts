@@ -23,6 +23,14 @@ export { createEmptyBridgeLayoutDocument, createBridgeLayoutData, isBridgeLayout
 export { validateBridgeLayoutDocument, validateBridgeLayoutData, parseBridgeLayoutDocument, createValidationState } from "./bridgeLayout/bridgeLayoutValidation";
 export { resolveBridgeLayoutReferences } from "./bridgeLayout/bridgeLayoutReferences";
 export type { BridgeLayoutReferenceResolution } from "./bridgeLayout/bridgeLayoutReferences";
+export {
+  readRoadAlignmentContext,
+  computeBridgeLength,
+  validateBridgeRangeInput,
+  buildBridgeLayoutFromRange,
+  applyBridgeRangeToDocument,
+} from "./bridgeLayout/bridgeLayoutDomain";
+export type { RoadAlignmentContext, BuildBridgeRangeResult, ValidateBridgeRangeInput } from "./bridgeLayout/bridgeLayoutDomain";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
