@@ -5,8 +5,12 @@ import { readTerrainDocument, writeTerrainDocument, hasTerrainDocument } from ".
 import { createEmptyTerrainDocument, TERRAIN_SCHEMA_VERSION, TERRAIN_DATA_VERSION } from "../modules/terrainModule";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
+import { TerrainViewer } from "../components/TerrainViewer";
+import { createReferenceMountain } from "../modules/terrain/referenceMountain";
+import { gridToMesh } from "../modules/terrain/terrainSurface";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import type { ProjectModuleKey } from "../project/schema";
+import type { TerrainMesh } from "../modules/terrain/terrainSurface";
 
 export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
@@ -16,6 +20,11 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
     return doc?.source.sourceName ?? "";
   });
   const [message, setMessage] = useState<string | null>(null);
+  const [showSample, setShowSample] = useState(false);
+  const [sampleMesh] = useState<TerrainMesh | null>(() => {
+    const mountain = createReferenceMountain();
+    return gridToMesh(mountain.terrainGrid);
+  });
 
   if (!project) {
     return (
@@ -101,9 +110,24 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
 
       {message !== null && <div className="next-hint" data-testid="terrain-message">{message}</div>}
 
+      <div className="next-actions">
+        <button
+          type="button"
+          className="next-action-secondary"
+          data-testid="terrain-show-sample"
+          onClick={() => setShowSample((v) => !v)}
+        >
+          {showSample ? "Reference Mountain を隠す" : "Reference Mountain を3D表示"}
+        </button>
+      </div>
+
+      {showSample && sampleMesh && (
+        <TerrainViewer mesh={sampleMesh} />
+      )}
+
       <div className="next-empty" data-testid="terrain-module-placeholder">
-        <p>地形Import・TIN・Surface・3D Viewerは Phase 3-02 以降で実装します。</p>
-        <p className="next-hint">Phase 3-AではTerrain Module Contract・正本構造・Validation・Auto Save境界を提供。</p>
+        <p>地形Import・TIN・Surface・3D Viewerを利用できます。</p>
+        <p className="next-hint">Phase 3でReference Mountainを3D表示し、統合scene（Terrain+Road+Existing）を確認できます。</p>
       </div>
     </section>
   );
