@@ -159,4 +159,13 @@ export class PersistentProjectManager extends ProjectManager {
     }
     return deleted;
   }
+
+  importProject(project: Project): boolean {
+    const result = this.repository.create(project);
+    if (result.ok) {
+      this.enqueueSave(() => this.saveProjectToPersistence(result.project));
+      return true;
+    }
+    return false;
+  }
 }
