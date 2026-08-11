@@ -55,7 +55,7 @@ export function BridgeLayoutSceneViewer({
         localOrigin,
         showTerrainWireframe,
       });
-      return { group: built.group, bounds: built.bounds };
+      return { group: built.group, bounds: built.bounds, focusBounds: built.focusBounds };
     };
   }, [terrain, road, existing, roadContext, bridgeRange, candidateA1, candidateA2, piers, spans, localOrigin, showTerrainWireframe]);
 
@@ -65,6 +65,7 @@ export function BridgeLayoutSceneViewer({
       className="next-bridge-layout-viewer"
       testId="bridge-layout-viewer"
       showGrid
+      focusBounds={null}
     />
   );
 }

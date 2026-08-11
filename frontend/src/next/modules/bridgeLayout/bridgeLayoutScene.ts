@@ -30,6 +30,8 @@ export interface BridgeLayoutSceneBuildResult {
   readonly a1Marker: THREE.Group | null;
   readonly a2Marker: THREE.Group | null;
   readonly pierMarkers: readonly THREE.Group[];
+  /** 橋梁範囲に絞ったcamera focus box（Terrain全域ではなく橋周辺をframing） */
+  readonly focusBounds: THREE.Box3 | null;
   readonly bounds: THREE.Box3;
 }
 
@@ -297,5 +299,35 @@ export function buildBridgeLayoutThreeScene(input: BuildBridgeLayoutSceneInput):
 
   group.add(bridgeGroup);
   const bounds = new THREE.Box3().setFromObject(group);
-  return { group, bridgeGroup, a1Marker, a2Marker, pierMarkers, bounds };
+
+  // 橋梁焦点box: A1/A2/P1..Pn の配置点を包み、横断方向に広げて framing する
+  const focusBounds = computeBridgeFocusBounds(input, origin, bridgeGroup);
+
+  return { group, bridgeGroup, a1Marker, a2Marker, pierMarkers, focusBounds, bounds };
+}
+
+/** 橋梁範囲（A1/A2/P1..Pn周辺）のcamera focus box を算出する。 */
+function computeBridgeFocusBounds(
+  input: BuildBridgeLayoutSceneInput,
+  origin: Origin3,
+  bridgeGroup: THREE.Group,
+): THREE.Box3 | null {
+  const points: THREE.Vector3[] = [];
+  const push = (p: { domainX: number; domainY: number; elevation: number }) => {
+    points.push(toThree(p.domainX, p.domainY, p.elevation, origin));
+  };
+  if (input.candidateA1) push(input.candidateA1);
+  if (input.candidateA2) push(input.candidateA2);
+  for (const pier of input.piers ?? []) push(pier.candidate);
+  if (points.length === 0) return null;
+
+  const box = new THREE.Box3();
+  for (const p of points) box.expandByPoint(p);
+  // 横断方向（three.z）と高さ方向にマージンを確保
+  box.expandByVector(new THREE.Vector3(80, 60, 160));
+  // 橋梁全体を確実に含む（spanラベル・skew線・envelope）
+  if (bridgeGroup.children.length > 0) {
+    box.expandByObject(bridgeGroup);
+  }
+  return box;
 }

@@ -276,3 +276,55 @@ describe("Phase 4-03 Bridge Layout pier / span / skew scene", () => {
     expect(size.z).toBeGreaterThan(800);
   });
 });
+
+describe("Phase 4-03 Bridge focus bounds (camera framing)", () => {
+  it("focusBounds is tighter than the full scene and centered near the bridge", () => {
+    const mountain = createReferenceMountain();
+    const terrain = gridToMesh(mountain.terrainGrid);
+    const road = buildRoadMesh({
+      horizontal: mountain.roadHorizontal,
+      vertical: mountain.roadVertical,
+      crossSection: mountain.roadCrossSection,
+      stationInterval: 20,
+    });
+    const roadContext = buildRoadAlignmentContextFromInputs({
+      horizontal: mountain.roadHorizontal,
+      vertical: mountain.roadVertical,
+      crossSections: [mountain.roadCrossSection],
+    });
+    const a1 = computeAbutmentPlacementCandidate({ horizontal: mountain.roadHorizontal, vertical: mountain.roadVertical, crossSections: [mountain.roadCrossSection], station: 100 });
+    const a2 = computeAbutmentPlacementCandidate({ horizontal: mountain.roadHorizontal, vertical: mountain.roadVertical, crossSections: [mountain.roadCrossSection], station: 700 });
+    const p1 = computeAbutmentPlacementCandidate({ horizontal: mountain.roadHorizontal, vertical: mountain.roadVertical, crossSections: [mountain.roadCrossSection], station: 300 });
+    const p2 = computeAbutmentPlacementCandidate({ horizontal: mountain.roadHorizontal, vertical: mountain.roadVertical, crossSections: [mountain.roadCrossSection], station: 500 });
+    const built = buildBridgeLayoutThreeScene({
+      terrain,
+      road,
+      existing: mountain.existing,
+      roadContext,
+      bridgeRange: { startStation: 100, endStation: 700 },
+      candidateA1: a1.ok ? a1.candidate : null,
+      candidateA2: a2.ok ? a2.candidate : null,
+      piers: [
+        { supportId: "P1", label: "P1", station: 300, candidate: p1.ok ? p1.candidate : null as never, skewAngleRad: 0 },
+        { supportId: "P2", label: "P2", station: 500, candidate: p2.ok ? p2.candidate : null as never, skewAngleRad: 0 },
+      ],
+      spans: [
+        { spanId: "S1", from: "A1", to: "P1", length: 200 },
+        { spanId: "S2", from: "P1", to: "P2", length: 200 },
+        { spanId: "S3", from: "P2", to: "A2", length: 200 },
+      ],
+    });
+    expect(built.focusBounds).not.toBeNull();
+    const fullSize = built.bounds.getSize(new THREE.Vector3());
+    const focusSize = built.focusBounds!.getSize(new THREE.Vector3());
+    // focus box is much smaller than the full 1000m terrain footprint
+    expect(focusSize.x).toBeLessThan(fullSize.x);
+    expect(focusSize.z).toBeLessThan(fullSize.z);
+    // focus center is near the bridge (road y ~500 -> three z ~-500)
+    const focusCenter = built.focusBounds!.getCenter(new THREE.Vector3());
+    expect(focusCenter.x).toBeGreaterThan(300);
+    expect(focusCenter.x).toBeLessThan(700);
+    expect(focusCenter.z).toBeLessThan(-300);
+    expect(focusCenter.z).toBeGreaterThan(-700);
+  });
+});
