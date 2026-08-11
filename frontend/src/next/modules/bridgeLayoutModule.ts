@@ -15,7 +15,10 @@ export type {
   ExistingConditionsReference,
   BridgeRange,
   AbutmentPlacement,
+  AbutmentPlacementCandidate,
   PierPlacement,
+  PierPlacementCandidate,
+  SkewSource,
   BridgeSpan,
   SkewConfig,
 } from "./bridgeLayout/bridgeLayoutTypes";
@@ -34,6 +37,9 @@ export {
 export type { RoadAlignmentContext, BuildBridgeRangeResult, ValidateBridgeRangeInput } from "./bridgeLayout/bridgeLayoutDomain";
 export {
   computeAbutmentPlacementCandidate,
+  computePierPlacementCandidate,
+  defaultAutomaticSkew,
+  refreshPierPlacements,
   lookupTerrainElevation,
   getProjectTerrainGrid,
   computeBridgeRangeBBox,
@@ -60,6 +66,8 @@ export {
   validatePierConfiguration,
 } from "./bridgeLayout/bridgeLayoutPiers";
 export type { OrderedSupport, AddPierInput } from "./bridgeLayout/bridgeLayoutPiers";
+export { generateSpans, validateSpanConfiguration, describeSpans } from "./bridgeLayout/bridgeLayoutSpans";
+export type { ValidateSpanConfigurationInput } from "./bridgeLayout/bridgeLayoutSpans";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
