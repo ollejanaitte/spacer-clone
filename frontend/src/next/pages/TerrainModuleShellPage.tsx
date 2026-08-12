@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { getModuleDefinition } from "../modules/registry";
 import { readTerrainDocument, writeTerrainDocument, hasTerrainDocument } from "../modules/terrainModuleAdapter";
+import { writeExistingConditions } from "../modules/existingConditionsAdapter";
 import { createEmptyTerrainDocument, TERRAIN_SCHEMA_VERSION, TERRAIN_DATA_VERSION } from "../modules/terrainModule";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
@@ -78,6 +79,19 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
     void getProjectManager().flushPendingSaves();
   }
 
+  function handleSaveExisting() {
+    const result = writeExistingConditions(getProjectManager(), projectId, {
+      schemaVersion: "0.1.0",
+      entities: [...createReferenceMountain().existing],
+    });
+    if (!result.ok) {
+      setMessage("現況保存に失敗しました。");
+      return;
+    }
+    setMessage("参照現況を保存しました。");
+    void getProjectManager().flushPendingSaves();
+  }
+
   return (
     <section className="next-page next-page-wide" data-testid="terrain-module-page">
       <h1 className="next-page-title" data-testid="terrain-module-title">地形・現況（Terrain Module）</h1>
@@ -120,6 +134,9 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
         <div className="next-form-actions">
           <button type="button" className="next-primary" data-testid="terrain-save-button" onClick={handleSave}>
             保存（Auto Save）
+          </button>
+          <button type="button" className="next-action-secondary" data-testid="existing-save-button" onClick={handleSaveExisting}>
+            参照現況（Reference Mountain Existing）を保存
           </button>
         </div>
       </div>

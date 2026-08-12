@@ -12,6 +12,7 @@ import { buildSpanHandoff } from "../bridgeLayout/bridgeLayoutSpanHandoff";
 import { buildSupportHandoff } from "../bridgeLayout/bridgeLayoutSupportHandoff";
 import { readRoadAlignmentContext } from "../bridgeLayout/bridgeLayoutDomain";
 import { buildSuperstructureDocument, attachSuperstructureHandoffs } from "./superstructureDocumentDomain";
+import { buildBearingConfiguration } from "./superstructureComponents";
 import { writeSuperstructureDocument } from "../superstructureModuleAdapter";
 import type { SuperstructureDocument } from "./superstructureTypes";
 
@@ -87,8 +88,21 @@ export function generateSuperstructureFromLayout(
     return { ok: false, issues: built.issues };
   }
 
+  // Populate bearing seats (WP-D): support x girder incidence with stable IDs.
+  const supports = supportHandoff.handoff.supports.map((sp) => ({
+    supportId: sp.supportId,
+    station: sp.station,
+    supportType: sp.supportType,
+  }));
+  const girderIds = built.document.girderConfiguration.girderLines.map((l) => l.girderId);
+  const bearingConfiguration = buildBearingConfiguration(supports, girderIds);
+
+  const documentWithBearings = {
+    ...built.document,
+    bearingConfiguration,
+  };
   const document = attachSuperstructureHandoffs(
-    built.document,
+    documentWithBearings,
     spanHandoff.handoff,
     supportHandoff.handoff,
   );
