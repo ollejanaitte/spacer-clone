@@ -90,3 +90,11 @@ export {
   buildSubstructureSolids,
   buildGeometrySupports,
 } from "./substructure/substructureGeometry";
+
+export {
+  computeFoundationElevations,
+  computePileTip,
+  buildPileArrangement,
+  validateFoundationData,
+} from "./substructure/substructureFoundation";
+export type { DerivedFoundationElevations } from "./substructure/substructureFoundation";
