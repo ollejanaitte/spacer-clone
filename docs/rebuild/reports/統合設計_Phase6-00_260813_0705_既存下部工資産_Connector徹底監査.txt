@@ -1,0 +1,255 @@
+統合設計 Phase 6-00 Final Report
+============================================================
+作業名: 既存下部工資産・Connector徹底監査
+Phase: Phase 6-00
+完了日時(JST): 2026-08-13 07:05 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 5「上部工」COMPLETE後に、当初の線形座標計算ツール内に組み込まれていた
+既存下部工資産を実コード経路まで追跡して徹底監査し、
+Phase 6-01「下部工全体完全設計・Design Freeze」の開始可否を確定した。
+
+下部工本体の大規模実装は行わず、以下を完了:
+  - 既存下部工資産inventory（production path追跡済み）
+  - Connector / Adapter / Binding / Contract / Schema監査
+  - model / validation / planning / Geometry / 3D / persistence / design engine / tests監査
+  - production path / dead code判定
+  - KEEP / ADAPT / REWRITE / DEFER / REMOVE分類
+  - 成熟度Level評価
+  - Phase 4 / Phase 5 Handoff compatibility
+  - Migration Map
+  - Phase 6-01 readiness判定
+
+------------------------------------------------------------
+2. baseline / Phase 5-02 Final Report PR確認
+------------------------------------------------------------
+- Phase 5-02 Final Report PR #936: GitHubでMERGEDを実確認
+- 真のGitHub main SHA: fb63e4bc065952e75eeab349a3ed2ad43a02cfdc（Phase 6-00開始時baseline）
+
+既存dirty差分（破棄せず・Phase 6-00成果へ混入させていない）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json（modified）
+  - final_report.txt（deleted・canonicalのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked・next worktreeのみ）
+
+------------------------------------------------------------
+3. 各Step結果
+------------------------------------------------------------
+[Step A] 全資産inventory（PR #937 1fb7ac7）
+  - 下部工Planning UIはACTIVE_PRODUCTION（/pro/liner/substructure・旧ProjectModel+LINER依存・PDC非接続）
+  - 旧flow実追跡: LINER→buildBridgeProjectAlignment→Geometry→CBDM→buildBoundSubstructure→Host
+  - 分類: ACTIVE_PRODUCTION多数 / ACTIVE_TEST_ONLY 6 / DORMANT 2 / DEAD 4 / RESEARCH_LAB 1
+
+[Step B] Connector/Adapter/Binding/Contract/Schema監査（PR #938 478dd93）
+  - Connector: CONN-010/012/015 KEEP・CONN-011 REMOVE候補・substructure_connector_spec契約は未実装
+  - Phase 4 SupportHandoff: support基本4項目（id/type/station/skew）直接受領可・配置詳細は新Connectorで接続
+  - Phase 5 Handoff: Adapter変換必須（sign/axis/ID/enum/localFrame/elevationの6課題）
+
+[Step C] model/planning/Geometry/3D/persistence/design engine/tests監査（PR #939 ba56172）
+  - model（v0.2.0）=KEEP・validation=KEEP・placement=ADAPT・Geometry/3D=KEEP・Planning UI=KEEP
+  - Persistence=ADAPT/REWRITE（download/upload→PDC）・Design Engine=KEEP（構造照査DEFER）
+  - tests実行: substructure 328件・bridgeProject+superstructure+bridgeLayout 307件 PASS・typecheck OK
+
+[Step D] production/dead判定＋分類＋成熟度Level（PR #940 eb2ed16）
+  - KEEP/ADAPT/REWRITE/DEFER/REMOVE Matrix（全判定根拠付き・REMOVEは候補のみ）
+  - 成熟度: 核心資産L4〜L5（production実績）・Terrain/Existing/PDC/snapshot ConnectorはL0
+
+[Step E] Handoff compat＋Migration Map＋readiness＋screenshots＋Final Report（本PR）
+  - Migration Map完成（PDC/BridgeLayout/Superstructure Handoff→Compatibility Adapter→既存実行層）
+  - Phase 6-01 readiness = READY
+  - 既存下部工UI screenshots取得（3D/2D/ツリー・山岳サンプルP1..P7・Luna検証）
+
+------------------------------------------------------------
+4. 作成/更新設計書一覧
+------------------------------------------------------------
+docs/rebuild/phase6/
+  - Phase6-00A_existing_substructure_asset_inventory.md
+  - Phase6-00B_connector_adapter_binding_contract_audit.md
+  - Phase6-00C_model_planning_geometry_design_audit.md
+  - Phase6-00D_production_path_classification_maturity.md
+  - Phase6-00E_migration_map_readiness.md
+  - evidence/（screenshots 8枚）
+
+------------------------------------------------------------
+5. inventory（要約）
+------------------------------------------------------------
+- ACTIVE_PRODUCTION: model/validation/placement/geometryBase/solid generators/planProjection/viewer3d/planning shell・host・page・viewport・forms・undo・realtime・linerHandoff・persistence・samples・dimensions・design（designEngine/geometricQuantity/calculationAdapter/adapterMapper/testCalculationEngine/calculationOutput/adapterPersistence/superstructureInterface/superstructureEnvelope）・bridgeProject binding chain
+- ACTIVE_TEST_ONLY: selectionState/keyboardShortcuts/piles UI/seismicDesign/reinforcementDesign/computeProjectQuantity等
+- DORMANT: superstructureHandoff.buildSuperstructureHandoff/toSupportInterfaceEntry（Phase 5）
+- DEAD: substructure/index barrel・summarizeReactions・buildBoundReactions・attachSubstructureToManifest
+- REFERENCE_ONLY: substructure-planning/（research lab）
+- BACKEND: 下部工資産なし（全部frontend TS）
+
+------------------------------------------------------------
+6. Connector / Adapter / Binding（要約）
+------------------------------------------------------------
+- CONN-010（LINER→Substructure）KEEP・CONN-011 REMOVE候補・CONN-012（localToWorld）KEEP・CONN-015 ADAPT
+- substructure_connector_spec契約（snapshot由来Connector）は未実装 → Phase 6-01で新規実装候補
+- buildBoundSubstructure=ADAPT（CBDM→新PDC/Handoff）・buildBoundReactions=DEAD→ADAPT候補
+- linerPiersToSupportHandoff=KEEP（旧fallback）・parseSupportInterface=ADAPT
+
+------------------------------------------------------------
+7. Contract / Schema（要約）
+------------------------------------------------------------
+- model.ts SubstructureProject v0.2.0 = KEEP（新SubstructureDocumentのベース）
+- schemas/substructure/substructure-project.schema.json（0.1.0）= STALE（frontend 0.2.0と不整合・runtime未使用・testなし）→ REWRITE相当
+- support-interface.schema.json（0.1.0）= ADAPT（parser寛容化 or schema整合）
+- pier/abutment/foundation schema = STALE（enum狭い）
+
+------------------------------------------------------------
+8. model / validation / planning（要約）
+------------------------------------------------------------
+- model: Support/Pier（単柱/壁式/門型）/Abutment（逆T/片持壁式）/Footing/PileGroup/BearingSeat v0.2.0
+- validation: fail-closed FATAL/WARNING/INFO・supportId一意・形状必須・寸法正値
+- Planning UI: Host/Page/Viewport/forms/undo/tree/status・成熟・production実績
+
+------------------------------------------------------------
+9. Geometry / 3D（要約）
+------------------------------------------------------------
+- geometryBase/solid generators/planProjection = KEEP（純ロジック・Phase 6実行層）
+- viewer3d（threeFactory/SubstructureViewer3D）= KEEP（表示変換はrenderCoordinateへ統一）
+- E2E実機で3D表示確認（山岳サンプルP1..P7・Luna画像検証）
+
+------------------------------------------------------------
+10. Persistence（要約）
+------------------------------------------------------------
+- planning/persistence + adapterPersistence = ADAPT（download/upload→PDC auto-save/.spacerprojへ）
+- 既存はブラウザdownload/uploadのみ・PDC/サーバー非保存
+
+------------------------------------------------------------
+11. Design Engine（要約）
+------------------------------------------------------------
+- runDesign framework + geometricQuantity（概算数量実計算）= KEEP
+- 全構造照査はHOLD_NOT_AVAILABLE（認証ゲート）・seismic/reinforcementはtest-only（DEFER）
+- calculationAdapter境界（TEST/MOCK）= KEEP（実engine受領時に拡張）
+
+------------------------------------------------------------
+12. Terrain / Existing（要約）
+------------------------------------------------------------
+- 既存下部工はTerrain/Existingを直接参照しない（未接続・L0）
+- Phase 4 SupportHandoffのterrainElevation・Phase 4 bridgeLayoutPlacement.lookupTerrainElevationは利用可
+- Phase 6-01で基礎高さ・根入れ計算にTerrain/Existing参照を接続
+
+------------------------------------------------------------
+13. tests / fixtures / samples（要約）
+------------------------------------------------------------
+- substructure 48 test files・bridgeProject binding tests・E2E（Playwright 6 spec）
+- fixtures: reference-bridge-001-support-interface.json・substructure-planning/examples/sample-project.json
+- golden: substructure-planning/verification/evidence/m3-03/design-result-P1.json
+- 検証: substructure 328件・bridgeProject+superstructure+bridgeLayout 307件 PASS・typecheck OK
+
+------------------------------------------------------------
+14. production path / dead code（要約）
+------------------------------------------------------------
+- 下部工UIはACTIVE_PRODUCTION（/pro/liner/substructure・LINER Edit Reviewタブ経由）
+- 旧ProjectModel依存（project.liner.domainDraft）・PDC非接続
+- apolloBridgeProjectSuperstructure sidecarはruntime常にundefined（attach*はDEAD）
+
+------------------------------------------------------------
+15. KEEP / ADAPT / REWRITE / DEFER / REMOVE（要約）
+------------------------------------------------------------
+- KEEP: model/validation/placement/geometry/3D viewer/planning UI/design framework/superstructureEnvelope/tests
+- ADAPT: buildBoundSubstructure/buildBoundReactions/linerHandoff/parseSupportInterface/persistence/useSubstructureRealtimeUpdate/Host入力
+- REWRITE: schemas刷新/toSupportInterfaceEntry（6課題）/新Connector実装/Persistence方式/App.tsx route
+- DEFER: 構造照査/耐震/鉄筋/実計算engine/成果品/Terrain-Existing本接続
+- REMOVE候補（削除しない）: barrel/piles UI/selectionState/keyboardShortcuts/seismicDesign/reinforcementDesign/attachSubstructureToManifest/CONN-011
+
+------------------------------------------------------------
+16. 成熟度Level（要約）
+------------------------------------------------------------
+- L4: Abutment/Pier/Footing/Pile/3D Viewer/Persistence/Validation/Planning UI
+- L5: Design Engine（framework+概算数量）・Connector（LINER接続済み）
+- L0: Terrain integration/Existing integration/新PDC接続/snapshot Connector/実構造照査
+- 最高L4〜L5・L7（Reference Sample照合）は概算数量のみ（構造照査HOLDのため照合不能）
+
+------------------------------------------------------------
+17. Phase 4 Handoff compatibility（要約）
+------------------------------------------------------------
+- supportId/supportType/station/skewAngleRad: 直接受領可（CCW一致・null→0変換）
+- position/tangentAzimuthRad/terrainElevation/roadReferenceId/coordinateContextId: 下部工側未消費 → 新Connectorで接続
+
+------------------------------------------------------------
+18. Phase 5 Handoff compatibility（要約）
+------------------------------------------------------------
+- Adapter変換必須の6課題:
+  1) reaction sign規約（up-positive vs fixture down-negative）
+  2) bearingPosition axis swap（transverse→x vs fixture y）
+  3) seat-ID 3方式混在（BRG-/SEAT-）
+  4) caseKind enum違反（combinationId使用）
+  5) support localFrame identity fabrication（実frame未計算）
+  6) girderBottomElevation/deckElevation常にnull（fallback +0.25m）
+- 未認証反力（NOT_AUTHORIZED）は正式設計計算へ自動採用しない（fail-closed）
+
+------------------------------------------------------------
+19. Migration Map（要約）
+------------------------------------------------------------
+Project Data Core → BridgeLayoutDocument → Support Handoff / SuperstructureDocument → Bearing-Reaction Handoff → Compatibility Adapter/Connector（新）→ 既存Substructure実行層（KEEP/ADAPT）
+
+------------------------------------------------------------
+20. unresolved項目
+------------------------------------------------------------
+- schema version drift（0.1.0 vs 0.2.0）: Phase 6-01で刷新
+- Phase 5 Handoff 6課題: Phase 6-01のAdapter設計で解決
+- REMOVE候補の最終判断: Phase 6-01
+- 上記以外のunresolved TODO/TBD: なし
+
+------------------------------------------------------------
+21. Phase 6-01 readiness
+------------------------------------------------------------
+- 再利用可能model/Geometry/3D/Planning/Design framework: ✅（L4〜L5・production実績）
+- Connector/Adapter/Handoff互換: ✅（field互換確認済み・Adapter変換点特定）
+- Terrain/Existing接続方針: ✅（Phase 6-01で設計）
+- 未認証Reactionの扱い: ✅（fail-closed・自動採用禁止）
+- 新PDC/SubstructureDocument設計対象: ✅（最小候補定義）
+- **Phase 6-01 readiness = READY**
+
+------------------------------------------------------------
+22. Luna / Sol利用結果
+------------------------------------------------------------
+- Luna（read-only）: 既存下部工UI screenshots検証（3D/2D/ツリー・P1..P7表示確認）PASS
+- Sol: 詰まり時の原因調査はPhase 6-00では発生せず
+- read-only遵守・git status/diff確認（差分増加なし）
+
+------------------------------------------------------------
+23. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase6/evidence/
+  - p6-00-01-substructure-3d.png（既存下部工Planning UI・3D・山岳サンプルP1..P7）
+  - p6-00-02-substructure-2d.png（2D計画図）
+  - p6-00-03-substructure-tree-form.png（ツリー/フォーム/ステータス）
+  - p6-00-04-connector-dataflow-audit.png（Connector/Data Flow監査）
+  - p6-00-05-classification-maturity.png（KEEP/ADAPT/REWRITE分類表）
+  - p6-00-06-maturity-levels.png（成熟度Level一覧）
+  - p6-00-07-migration-map.png（Migration Map）
+  - p6-00-08-phase6-01-readiness.png（Phase 6-01 readiness）
+Luna検証済み・Discordへ実ファイル添付送信（HTTP確認）
+
+------------------------------------------------------------
+24. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: fb63e4bc065952e75eeab349a3ed2ad43a02cfdc（Phase 5-02 Final Report PR #936 merge後・GitHub確認）
+- PR #937 Step A → 1fb7ac7aba4a1427c692f149e1ccbbcbc4804e8c
+- PR #938 Step B → 478dd93df9e5d4be7056fab19d209bd6e266d598
+- PR #939 Step C → ba56172cbcb7e60b4ec6624204b49fe48750ac0b
+- PR #940 Step D → eb2ed1658791ff4cde3b96303a0e6c5a3b097f28
+- 本Final Report PR（docs/phase6-00-step-e-final）→ merge後SHAはGitHub正本から取得
+
+------------------------------------------------------------
+25. verdict
+------------------------------------------------------------
+- Phase 6-00 COMPLETE
+- 既存下部工資産・Connector徹底監査完了
+- 全監査（A〜E）完了・KEEP/ADAPT/REWRITE/DEFER/REMOVE分類完了
+- 成熟度Level評価完了・Phase 4/5 Handoff互換確認完了・Migration Map完成
+- Phase 6-01 readiness = READY
+- 各Step細かいPRでmain merge済み・screenshots/Final Report Discord送信済み
+- 最終4系統SHA一致
+
+------------------------------------------------------------
+26. STOP確認
+------------------------------------------------------------
+Phase 6-00 COMPLETE。
+既存下部工資産・Connector徹底監査完了。
+Phase 6-01 readiness判定完了。
+Phase 6-01へは進まずSTOPした。
