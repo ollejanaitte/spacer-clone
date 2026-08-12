@@ -84,3 +84,9 @@ export {
   applySubstructurePlacement,
 } from "./substructure/substructurePlacement";
 export type { PlacementResult } from "./substructure/substructurePlacement";
+
+export {
+  validateSubstructureShapes,
+  buildSubstructureSolids,
+  buildGeometrySupports,
+} from "./substructure/substructureGeometry";
