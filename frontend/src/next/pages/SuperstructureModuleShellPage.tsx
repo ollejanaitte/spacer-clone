@@ -5,10 +5,14 @@ import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import { readSuperstructureDocument } from "../modules/superstructureModuleAdapter";
 import { regenerateSuperstructureDerived } from "../modules/superstructure/superstructurePersistence";
 import { runSuperstructureIntegrityGate } from "../modules/superstructure/superstructureIntegrityGate";
+import { generateSuperstructureFromLayout } from "../modules/superstructure/superstructureGenerator";
 import type { ProjectModuleKey } from "../project/schema";
 
 export function SuperstructureModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
-  const [project] = useState(() => getProjectManager().getProject(projectId));
+  const [reload, setReload] = useState(0);
+  const [message, setMessage] = useState<string | null>(null);
+  const project = getProjectManager().getProject(projectId);
+  void reload;
   const moduleData = project ? readModuleFromManager(getProjectManager(), projectId, moduleId as ProjectModuleKey) : undefined;
   const rawDocument = readSuperstructureDocument(getProjectManager(), projectId);
   // Derived arrays are transient in persistence; regenerate before gating.
@@ -16,6 +20,14 @@ export function SuperstructureModuleShellPage({ projectId, moduleId }: { project
   const integrity = project && document
     ? runSuperstructureIntegrityGate(getProjectManager(), projectId, document)
     : null;
+
+  function handleGenerate() {
+    const result = generateSuperstructureFromLayout(getProjectManager(), projectId);
+    setMessage(result.ok
+      ? "上部工を生成・保存しました（Auto Save）。"
+      : result.issues.map((i) => i.message).join(" / "));
+    setReload((n) => n + 1);
+  }
 
   if (!project) {
     return (
@@ -36,6 +48,13 @@ export function SuperstructureModuleShellPage({ projectId, moduleId }: { project
         ← Projectトップへ
       </button>
 
+      <div className="next-integrity-actions">
+        <button type="button" className="next-primary" data-testid="super-generate-button" onClick={handleGenerate}>
+          上部工を生成（Bridge Layoutから）
+        </button>
+        {message && <p className="next-hint" data-testid="super-message">{message}</p>}
+      </div>
+
       <dl className="next-integrity-meta" data-testid="module-shell-meta">
         <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
         <div><dt>status</dt><dd data-testid="super-status">{status}</dd></div>
@@ -50,8 +69,8 @@ export function SuperstructureModuleShellPage({ projectId, moduleId }: { project
 
       <h2 className="next-home-section-title">Completion Gate（Phase 5）</h2>
       <div className="next-road-summary" data-testid="super-completion-gate">
-        {integrity && integrity.checks.documentValid ? (
-          <p data-testid="super-gate-ok"><strong>Gate status: READY（integrate済み）</strong></p>
+        {integrity && integrity.ok ? (
+          <p data-testid="super-gate-ok"><strong>Gate status: READY</strong></p>
         ) : (
           <p data-testid="super-gate-ng"><strong>Gate status: NOT_READY（Bridge Layout設定・上部工生成が必要）</strong></p>
         )}
@@ -67,16 +86,16 @@ export function SuperstructureModuleShellPage({ projectId, moduleId }: { project
       </div>
 
       {document && (
-        <h2 className="next-home-section-title">上部工概要</h2>
-      )}
-      {document && (
-        <div className="next-road-summary" data-testid="super-summary">
-          <p>type: {document.superstructureType}</p>
-          <p>span system: {document.structuralSystem.spanSystem} / {document.structuralSystem.bridgeSystem}</p>
-          <p>girders: {document.girderConfiguration.girderCount} 本（spacing {document.girderConfiguration.girderSpacingM ?? "—"} m）</p>
-          <p>deck: {document.deckConfiguration.deckKind} / thickness {document.deckConfiguration.thicknessM ?? "—"} m</p>
-          <p>bearings: {document.bearingConfiguration.bearingSeats.length} 箇所</p>
-        </div>
+        <>
+          <h2 className="next-home-section-title">上部工概要</h2>
+          <div className="next-road-summary" data-testid="super-summary">
+            <p>type: {document.superstructureType}</p>
+            <p>span system: {document.structuralSystem.spanSystem} / {document.structuralSystem.bridgeSystem}</p>
+            <p>girders: {document.girderConfiguration.girderCount} 本（spacing {document.girderConfiguration.girderSpacingM ?? "—"} m）</p>
+            <p>deck: {document.deckConfiguration.deckKind} / thickness {document.deckConfiguration.thicknessM ?? "—"} m</p>
+            <p>bearings: {document.bearingConfiguration.bearingSeats.length} 箇所</p>
+          </div>
+        </>
       )}
     </section>
   );
