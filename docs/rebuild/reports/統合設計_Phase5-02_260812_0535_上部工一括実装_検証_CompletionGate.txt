@@ -1,0 +1,230 @@
+統合設計 Phase 5-02 Final Report
+============================================================
+作業名: 上部工一括実装・検証・Completion Gate
+Phase: Phase 5-02
+完了日時(JST): 2026-08-13 05:35 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 5-01でFROZENした設計書を唯一の実装仕様として、WP-A〜Jを実装・検証し、
+Phase 5「上部工」を完了させた。
+最終的にPhase 6下部工へBearing / Reaction Handoffを正式に渡せる状態まで完成。
+Phase 6下部工の実装には進んでいない。
+
+------------------------------------------------------------
+2. baseline / PR #922確認
+------------------------------------------------------------
+- PR #922（Phase 5-01 Final Report）: GitHubでMERGEDを実確認
+- 真のPhase 5-01最終SHA: 2093fa02e6cf2b448f0f3c5839f6a9c14554e311（GitHub main正本・確認済み）
+- Phase 5-02開始時baseline: 4b58eae0a23d0670fc9c848eb3af3d20a08f9639
+  → Phase 5-01 Final Report記載SHA（4b58eae）をGitHub確認の上で採用
+
+既存dirty差分（破棄せず・Phase 5-02成果へ混入させていない）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json（modified）
+  - final_report.txt（deleted・canonicalのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked・next worktreeのみ）
+
+------------------------------------------------------------
+3. WP実装結果（A〜J・全main merge済み）
+------------------------------------------------------------
+[WP-A] SuperstructureDocument / PDC（PR #923 d9692d4）
+  - superstructure module新規: types（Contract A-01準拠）/validation（fail-closed）/domain/build/attach/offsets/module/adapter
+[WP-B] Bridge Layout→Handoff→Adapter/Binding（PR #924 6170265）
+  - superstructureFacts.ts / superstructureBindingNew.ts（fail-closed不変条件: support/station/bridgeLength/spans==supports-1/girder offsets必須）
+[WP-C1] GeometryEngine→GeometrySnapshot（PR #925 ddbee97）
+  - superstructureGeometry.ts: Road Module公式データ→LINER BuildIntermediateInput（縦断C0対応）・DefaultGeometryEngine（KEEP）・withGeometryReference
+[WP-D] 鋼鈑桁（PR #926 386b445）
+  - superstructureComponents.ts: 断面性能（sectionProperties KEEP）・横桁配置（end/support/intermediate）・横構（間隔のみ）・支承配置（BRG-{support}-{girder}）
+[WP-C2] 統合3D（PR #927 9738d21）
+  - superstructureSceneBuilder.ts: GeometrySnapshot→3D（主桁/床版/横桁/支承）・C-02 ID規則・renderCoordinate唯一使用
+[WP-E] Load Model（PR #928 b26c4ed）
+  - superstructureLoadModel.ts: DL partition（主桁+2次部材/DECK/境界）・二重計上防止・COMBO-1 total・steel 77kN/m3
+[WP-F] Analysis/grillage/solver（PR #929 055fdc5）
+  - superstructureAnalysisAdapter.ts: buildGrillageModel KEEP・死荷重均等配分・reactionsFromResult（seat別・up-positive）・NOT_GRANTED→NOT_AUTHORIZED
+[WP-G] Design Check（PR #930 691d935）
+  - superstructureBasicChecks.ts: 基本照査6種・MISSING→NOT_AVAILABLE（自動PASS禁止）・designStatus NOT_AUTHORIZED維持
+  - superstructureDesignConditions.ts: REFERENCE許容値インターフェース
+[WP-H] Bearing/Reaction Handoff→Phase 6（PR #931 e90e48a）
+  - superstructureHandoff.ts: SuperstructureHandoff（v1.0.0・全support一括）・toSupportInterfaceEntry（v0.1.0互換）
+[WP-I] Persistence（PR #932 2b80401）
+  - superstructurePersistence.ts: derived transient（非保存）・deserialize fail-closed・regenerateSuperstructureDerived・.spacerproj round-trip
+[WP-J] Completion Gate＋RB-01〜14＋Shell UI（PR #933 737da97）
+  - superstructureIntegrityGate.ts（Phase 5 Completion Gate・Phase 6 readiness）
+  - referenceBridge.test.ts（RB-01..07/10/12/14）
+  - SuperstructureModuleShellPage.tsx・NextApp dispatch
+[WP-J-E2E] 上部工生成（PR #934 5580cc9）
+  - superstructureGenerator.ts: generateSuperstructureFromLayout
+[E2E完走] 地形・現況保存＋支承配置反映（PR #935 81a8a43）
+  - TerrainModuleShellPage: 参照現況（Existing）保存ボタン
+  - generator: buildBearingConfiguration反映
+
+------------------------------------------------------------
+4. 実装ファイル一覧（新規）
+------------------------------------------------------------
+frontend/src/next/modules/superstructure/
+  - superstructureTypes.ts / superstructureValidation.ts / superstructureDocumentDomain.ts
+  - superstructureModule.ts / superstructureModuleAdapter.ts
+  - superstructureFacts.ts / superstructureBindingNew.ts
+  - superstructureGeometry.ts / superstructureComponents.ts / superstructureSceneBuilder.ts
+  - superstructureLoadModel.ts / superstructureAnalysisAdapter.ts
+  - superstructureBasicChecks.ts / superstructureDesignConditions.ts
+  - superstructureHandoff.ts / superstructurePersistence.ts / superstructureIntegrityGate.ts / superstructureGenerator.ts
+frontend/src/next/pages/SuperstructureModuleShellPage.tsx
+frontend/src/next/NextApp.tsx（dispatch追加）
+frontend/src/next/pages/TerrainModuleShellPage.tsx（現況保存ボタン）
+tests: __tests__ 各モジュール + referenceBridge + integrityGate + shell UI + generator + persistence
+
+------------------------------------------------------------
+5. tests / regression 検証
+------------------------------------------------------------
+- src/next: 527件 PASS（WP系含む）
+- bridgeProject + contracts + if3: 422件 PASS
+- apollo: 636件 PASS
+- substructure: 328件 PASS
+- viewer + liner + next: 1763件 PASS
+- backend grillage: 3件 PASS
+- typecheck: tsc -b PASS
+- lint: frontend source hygiene PASS / japanese strings check exit 0（informational）
+- build: vite build PASS（apollo mode）
+- electron:compile PASS
+- regression golden: 既存構成維持（src全件で担保）
+
+------------------------------------------------------------
+6. Reference Bridge RB-01〜14
+------------------------------------------------------------
+FROZEN E-02準拠。referenceBridge.test.tsで検証:
+- RB-01 bridge length = 134.001 m PASS
+- RB-02 span lengths（station整合）[40.201, 51.0, 42.8] PASS
+- RB-03 girder length = 134.001 m PASS
+- RB-04 support stations [0, 40.201, 91.201, 134.001] PASS
+- RB-05 skew = 0（直線）PASS
+- RB-06 girder count = 2 PASS
+- RB-07 girder spacing = 8.0 m（offsets ±4.0）PASS
+- RB-08/09/11: SOURCE_NOT_AVAILABLE（S-5外部資料未確認・補完しない）
+- RB-10: 支承seat・support-interface互換機構 PASS
+- RB-12: reaction equilibrium（Σ反力=適用荷重）PASS＋外部値3325.5は認証済み解析PhaseのGround Truth（SOURCE注記）
+- RB-14: straight azimuth = 0 PASS
+
+------------------------------------------------------------
+7. 3D
+------------------------------------------------------------
+- superstructureSceneBuilder: snapshot→3D（主桁/床版/横桁/支承）・決定論・bounds・ID規則（C-02）
+- renderCoordinate（domainToThree）唯一使用（正本を書き換えない）
+- 統合シーンへのaddSuperstructureToScene（Road/Terrain/Existing/BL統合）
+
+------------------------------------------------------------
+8. Electron / E2E
+------------------------------------------------------------
+- Electron実起動（SPACER_AUTOMATION=1）・全フロー完走:
+  プロジェクト作成 → 道路保存 → 地形・現況保存 → 橋梁配置保存（A1-P1-A2・175+175m）
+  → 上部工生成 → Completion Gate READY・Phase 6 readiness READY・Handoff READY
+- screenshots 8枚（p5-02-01〜07 + 04b）・Luna画像検証PASS
+  - p5-02-03: 設計モジュール順「道路→地形・現況→橋梁配置→上部工→下部工→FEM→CIM→成果品」確認
+  - p5-02-06: Completion Gate READY・Handoff READY・上部工概要表示確認
+
+------------------------------------------------------------
+9. Persistence
+------------------------------------------------------------
+- derived transient（spanReferences/supportReferences非保存）・deserialize fail-closed
+- save→restart→restore→derived再生成（WP-I test）PASS
+- .spacerproj round-trip（superstructure module含む）PASS
+- restart後のCompletion Gate READY（integrity gate test）PASS
+
+------------------------------------------------------------
+10. Bearing / Reaction Handoff（Phase 6）
+------------------------------------------------------------
+- SuperstructureHandoff（v1.0.0・全support一括・seat別bearing/reaction・envelope・selfWeight・coordinateContext）
+- toSupportInterfaceEntry（v0.1.0互換・Phase 6 superstructureInterface/superstructureEnvelope互換）
+- reactionCasesはNOT_AUTHORIZED入力データとして受け渡し（fail-closed・自動昇格禁止）
+- Phase 6 readiness: READY
+
+------------------------------------------------------------
+11. Luna / Sol利用結果
+------------------------------------------------------------
+- Luna（read-only）: E2Eスクリーンショット検証（Completion Gate READY・モジュール順・Handoff READY）・表示崩れ確認PASS
+- Sol: 詰まり時の原因調査はPhase 5-02では発生せず（WP-C1のLINER縦断C0問題は自身で調査・直線道路テストで解決）
+- read-only遵守・git status/diff確認（差分増加なし）
+
+------------------------------------------------------------
+12. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase5/evidence/
+  - p5-02-01-home.png（ホーム）
+  - p5-02-02-business-list.png（業務一覧・作成後）
+  - p5-02-03-project-top.png（設計モジュール順）
+  - p5-02-04-road-saved.png（道路保存）
+  - p5-02-04b-terrain-existing-saved.png（地形・現況保存）
+  - p5-02-05-bridge-layout-saved.png（橋梁配置保存・Completion Gate）
+  - p5-02-06-superstructure-completion-gate.png（上部工Completion Gate READY）
+  - p5-02-07-superstructure-summary.png（上部工概要）
+Luna検証済み・Discordへ実ファイル添付送信（HTTP確認）
+
+------------------------------------------------------------
+13. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: 4b58eae0a23d0670fc9c848eb3af3d20a08f9639
+- PR #923 WP-A → d9692d4307423a6b59f0bbc9130b921db542d3f0
+- PR #924 WP-B → 6170265974bf1891292592ae17cde9f1e6dd9b0a
+- PR #925 WP-C1 → ddbee97a82a57897f06b5728c6d3d38790cb1a72
+- PR #926 WP-D → 386b4454382b00c65deab09a9a8ed75511ddd1f1
+- PR #927 WP-C2 → 9738d219c12e579df409e82596d3820530f55114
+- PR #928 WP-E → b26c4ed6a1cbd1035606fe71e74c604a2845c79e
+- PR #929 WP-F → 055fdc51ce90c17faf4568b5eb6eeb0bbb63c09f
+- PR #930 WP-G → 691d935da59f2ad2000655b11acfa81fcee136a4
+- PR #931 WP-H → e90e48a9da1718d4b1857b4ee00b7235b25123fe
+- PR #932 WP-I → 2b8040169e2313a505a1bdcfa525f9ce20618826
+- PR #933 WP-J → 737da9747de13bb8eb9d57a084a160af33902f1a
+- PR #934 WP-J-E2E → 5580cc94b76f3f8bb742df01052854db6e0b77b4
+- PR #935 E2E完走 → 81a8a438879629a94fd9bdc2746dd9001a4daf31
+- 本Final Report PR（docs/phase5-02-final）→ merge後SHAはGitHub正本から取得
+
+------------------------------------------------------------
+14. unresolved項目
+------------------------------------------------------------
+- RB-08/09/11（桁深さ・床版幅・断面性能）: SOURCE_NOT_AVAILABLE（S-5外部資料要確認・Phase 5-02では補完しない）
+- RB-12: Phase 5-02基本解析の反力は外部計算書値（|Fz|=3325.5）とは異なる荷重モデルのため不一致。
+  認証済み解析Phaseで外部計算書相当の荷重モデル導入時にGround Truthとして照合（SOURCE注記）
+- 上記以外のunresolved TODO/TBD: なし
+
+------------------------------------------------------------
+15. Completion Gate
+------------------------------------------------------------
+- SuperstructureDocument valid（fail-closed）: PASS
+- Bridge Layout Input / Adapter/Binding / Geometry / GeometrySnapshot: PASS
+- 鋼鈑桁3D / Load / Analysis / Design Check / Bearing / Reaction Handoff: PASS
+- Persistence / Auto Save / restart restore / .spacerproj: PASS
+- Reference Bridge（RB-01..07/10/14・RB-12 equilibrium）: PASS
+- Electron tests / Electron E2E（Completion Gate READY実機確認）: PASS
+- typecheck / lint / build / electron:compile: PASS
+- relevant regression: PASS
+- Phase 6 Handoff READY / Phase 6 readiness READY: PASS
+- **Completion Gate = PASS**
+
+------------------------------------------------------------
+16. Phase 6 readiness
+------------------------------------------------------------
+- Bearing / Reaction Handoff（v1.0.0）生成可能・support-interface（v0.1.0）互換変換可能
+- Phase 6下部工module（modules.substructure）は既存support-interface/superstructureEnvelope（KEEP）で受領可能
+- Phase 6 readiness = READY
+
+------------------------------------------------------------
+17. verdict
+------------------------------------------------------------
+- Phase 5-02 COMPLETE
+- Phase 5「上部工」全体 COMPLETE
+- Completion Gate PASS
+- Phase 6 Handoff READY / Phase 6 readiness READY
+- 全WP main merge済み
+- screenshots・Final Report Discord送信済み
+- 最終4系統SHA一致
+
+------------------------------------------------------------
+18. STOP確認
+------------------------------------------------------------
+Phase 5-02 COMPLETE。
+Phase 5「上部工」全体 COMPLETE。
+Completion Gate PASS。
+Phase 6 Handoff READY。
+Phase 6 readiness READY。
+Phase 6下部工実装へは進まずSTOPした。
