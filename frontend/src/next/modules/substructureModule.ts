@@ -63,3 +63,10 @@ export function createSubstructureModuleRecord(): ModuleDataRecord {
 registerModuleValidator(SUBSTRUCTURE_MODULE_ID, validateSubstructureData);
 
 export { SUBSTRUCTURE_MODULE_ID as SUBSTRUCTURE_MODULE_KEY };
+
+export {
+  buildSupportPlacementFromHandoff,
+  attachPhase4ToDocument,
+  SubstructurePhase4AdapterError,
+} from "./substructure/substructurePhase4Adapter";
+export type { Phase4AdapterResult } from "./substructure/substructurePhase4Adapter";
