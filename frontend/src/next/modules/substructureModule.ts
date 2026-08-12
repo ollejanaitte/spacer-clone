@@ -114,3 +114,11 @@ export {
   buildDesignInputs,
   toModelSupports,
 } from "./substructure/substructureDesign";
+
+export {
+  buildSubstructureSceneGroup,
+  addSubstructureToScene,
+} from "./substructure/substructureSceneBuilder";
+export type { SubstructureSceneBuildResult } from "./substructure/substructureSceneBuilder";
+export { generateSubstructureFromLayout } from "./substructure/substructureGenerator";
+export type { GenerateSubstructureResult } from "./substructure/substructureGenerator";
