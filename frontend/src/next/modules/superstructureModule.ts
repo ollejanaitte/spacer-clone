@@ -129,6 +129,8 @@ export {
   regenerateSuperstructureDerived,
 } from "./superstructure/superstructurePersistence";
 export type { DeserializeResult } from "./superstructure/superstructurePersistence";
+export { runSuperstructureIntegrityGate } from "./superstructure/superstructureIntegrityGate";
+export type { SuperstructureIntegrityResult } from "./superstructure/superstructureIntegrityGate";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
