@@ -98,3 +98,10 @@ export {
   validateFoundationData,
 } from "./substructure/substructureFoundation";
 export type { DerivedFoundationElevations } from "./substructure/substructureFoundation";
+
+export {
+  resolveTerrainElevations,
+  resolveExistingInterference,
+  computeSupportEmbedment,
+} from "./substructure/substructureTerrain";
+export type { TerrainResolution, ExistingResolution } from "./substructure/substructureTerrain";
