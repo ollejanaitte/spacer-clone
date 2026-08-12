@@ -61,6 +61,14 @@ export { buildSuperstructureFacts } from "./superstructure/superstructureFacts";
 export type { SuperstructureFacts, SuperstructureFactsResult } from "./superstructure/superstructureFacts";
 export { buildSuperstructureGeometryInput, SUPER_BINDING_CODES } from "./superstructure/superstructureBindingNew";
 export type { SuperstructureGeometryInputOptions } from "./superstructure/superstructureBindingNew";
+export {
+  buildLinerIntermediateFromRoad,
+  generateSuperstructureSnapshot,
+  withGeometryReference,
+  toVerticalElementDraft,
+  toVerticalAlignmentDraft,
+} from "./superstructure/superstructureGeometry";
+export type { GenerateSnapshotResult, RoadModuleInputs } from "./superstructure/superstructureGeometry";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
