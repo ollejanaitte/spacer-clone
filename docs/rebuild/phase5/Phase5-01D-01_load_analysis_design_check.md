@@ -14,18 +14,19 @@ Phase 5-02で扱う荷重仕様・解析（grillage/solver）データフロー�
 
 | 分類 | 内容 | 扱い |
 |---|---|---|
-| structural self-weight | 上部工構造体の自重（主桁・横桁・横構・支承） | **実装**（単位重量×断面・長さ） |
-| steel girder self-weight | 鋼桁自重 | **実装**（断面性能のunitWeight×面積） |
-| deck self-weight | RC床版自重 | **実装**（厚さ×単位重量） |
-| pavement | 舗装荷重 | **入力境界**（暫定値or MISSING・実装は後続） |
-| barriers / railings | 高欄・地覆・中央分離帯 | **入力境界**（load caseとして宣言のみ・実装は後続） |
-| appurtenances | 付属物（防護柵・標識等） | **入力境界**（宣言のみ） |
-| live load | 活荷重 | **本実装しない**（`liveLoadReference: null` 明示）。入力境界のみ |
+| DL-STRUCTURAL（構造体自重） | 鋼主桁＋横桁・横構・支承（**partition明示・二重計上防止**） | **実装**（`structuralGirder` + `structuralSecondary`） |
+| DL-DECK | RC床版自重 | **実装**（deckConfiguration.thicknessM×unitWeight） |
+| DL-PAVEMENT | 舗装荷重 | **入力境界**（暫定値or MISSING・実装は後続） |
+| DL-APPURTENANCE | 高欄・地覆・中央分離帯・付属物 | **入力境界**（load caseとして宣言のみ・実装は後続） |
+| LL（live load） | 活荷重 | **本実装しない**（`liveLoadReference: null` 明示）。入力境界のみ |
+
+- **partition規則**: DL-STRUCTURAL = 鋼主桁 + 横桁 + 横構 + 支承。DL-DECK = RC床版のみ。
+  各caseの包含範囲を明示し、**同一部材を複数caseで二重計上しない**
 
 ### 2.2 Load Case / Combination（凍結）
 
-- load cases: `DL-STRUCTURAL`（構造自重）/ `DL-DECK`（床版）/ `DL-PAVEMENT`（舗装・未実装は空）
-  / `DL-APPT`（付属物・空）/ `LL`（活荷重・空）
+- load cases: `DL-STRUCTURAL`（構造体自重: 主桁+横桁+横構+支承）/ `DL-DECK`（床版）
+  / `DL-PAVEMENT`（舗装・空）/ `DL-APPURTENANCE`（付属物・空）/ `LL`（活荷重・空）
 - load combination（Phase 5-02）: `COMBO-1 = DL-STRUCTURAL + DL-DECK`（基本）
   - 活荷重・その他組合せは後続Phase。`combinations`は宣言構造のみ
 - 係数: Phase 5-01では1.0（REFERENCE）。部分係数は設計check PhaseでDS採用後に確定
@@ -79,12 +80,15 @@ SuperstructureDocument（loadModel・girderConfiguration・deckConfiguration）
   曲げM（下縁引張+を既定とする設計用定義）
 - reaction: 支承を押し上げる方向を +z 正（鉛直反力Rz）。水平・モーメント反力はPhase 5-02では
   算出しない（支持条件が鉛直のみのため）。Mx/My/Mzは0または算出対象外
+- **反力の扱い（明確化）**: Phase 5-02で算出する反力は**NOT_AUTHORIZEDの基本解析結果**。
+  「認証済みの反力本計算」は対象外。Phase 6へは入力データとして受け渡し（A-01 §4.24・D-02準拠）
 - 詳細符号はPhase 5-02実装時に本設計書の規定に従う（追加設計判断なし）
 
 ### 3.4 エラー処理・fail-closed（凍結）
 
 - 断面性能未宣言（MISSING）→ 解析実行不可（fail-closed・エラー表示）
-- 解析戻り authorization != NOT_GRANTED → 結果をNOT_AUTHORIZEDとして保持（昇格禁止）
+- 解析戻り authorization が `NOT_GRANTED` → 結果は**常にNOT_AUTHORIZEDとして保持**（昇格禁止。
+  authorizedと返された場合も人の承認を経由するまでNOT_AUTHORIZEDのまま）
 - solverがNaN/Infinityを返した場合 → fail-closed（結果破棄・エラー）
 - 未対応モデル（SIMPLE_MULTIPLE・ボックス桁等）→ 解析要求reject
 
@@ -107,6 +111,9 @@ SuperstructureDocument（loadModel・girderConfiguration・deckConfiguration）
 
 - 許容応力度・規制値: Phase 5-01では**REFERENCE保持**。実装時にDS-00..09採用値へ接続する
   設計インターフェース（`designConditions`）を定義し、値は採用Phaseで確定
+- **入力MISSING時の挙動（明確化）**: 断面（depthM/web/flange等）または解析結果が
+  MISSING/NOT_AVAILABLEの場合、該当checkは**NOT_AVAILABLE（照査保留）** とし、OK/NGと判定しない
+  （fail-closed・自動判定禁止）
 - 各check結果: `designStatus` に OK/NG/WARNING/STALE/NOT_AUTHORIZED を記録
 - 自動昇格禁止（NOT_AUTHORIZED→OKは人手承認を経由）
 

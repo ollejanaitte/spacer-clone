@@ -51,16 +51,17 @@ Project Origin（R3-00・全Project共通）
 |---|---|
 | girder count | 上部工入力（SuperstructureDocument.girderConfiguration.girderCount）・>=1 |
 | girder lines | `G1..Gn`（index順） |
-| girder spacing | 等間隔を既定。offsetFromCenterline = `(i - (n-1)/2) * spacing`（生成式・既存generateBsdd流儀） |
+| girder spacing | **canonical入力 `girderSpacingM`**（等間隔）。指定時はoffsetを `(i - (n-1)/2) * spacing` で自動導出（derived）。個別offsetはoverride。両方無しはMISSING（発明しない） |
 | offset端部 | offsetEndFromCenterline（テーパー用・任意・既定null） |
 | 入力元 | 上部工所有。**発明しない**（既存superstructureBinding fail-closed原則） |
 
 ### 4.1 桁断面（web / top flange / bottom flange / depth）
 
 - 桁断面寸法（depthM・web・flange）は**GeometrySnapshotには含めない**（snapshotは配置・座標の正本）
-- 断面寸法は **SuperstructureDocumentの設計入力モデル（WP-D）** が所有
-  - 既定: `sectionIntentRefId = null`・`depthM = null`（MISSING許容）
-  - 基本照査（WP-G）では宣言値がある場合のみ実施。MISSINGなら照査保留（fail-closed）
+- 断面寸法は **SuperstructureDocument.girderConfiguration.girderSectionModel（設計入力モデル・canonical）** が所有
+  - 実体: `{ depthM, webThicknessM, topFlange{widthM,thicknessM}, bottomFlange{widthM,thicknessM}, areaM2, unitWeightPerM }`（全てnull許容・MISSING）
+- 基本照査（WP-G）・自重（WP-E）・3D表現は宣言値がある場合のみ実施。
+  MISSINGなら照査保留（fail-closed・NOT_AVAILABLE）
 - 断面性能計算は既存 `sectionProperties.computeGirderSectionProperties`（I-beam）をKEEP利用
 
 ## 5. 床版（凍結）
@@ -147,12 +148,12 @@ Project Origin（R3-00・全Project共通）
 
 | GeometryEngineInput項目 | 供給元 |
 |---|---|
-| bridgeId | SuperstructureDocument.bridgeId |
+| bridgeId | bridgeLayoutReference.bridgeId |
 | alignmentIds | roadReference.alignmentId |
-| supports[{id, stationM, skewRad, state}] | Support Handoff（supportId/station/skew） |
-| girders[{id, offsetM, state:"CONFIRMED"}] | girderConfiguration.girderLines |
-| spanLengthsM / bridgeLengthM | Span Handoff（spanLength / Σ） |
-| deckSpecs[{deckId, widthM, thicknessM, edgeOffsetM}] | deckConfiguration |
+| supports[{id, stationM, skewRad, state}] | supportReferences.supports（supportId/station/skew） |
+| girders[{id, offsetM, state:"CONFIRMED"}] | girderConfiguration.girderLines（girderSpacingMからderived or override） |
+| spanLengthsM / bridgeLengthM | spanReferences.spans[].spanLength / Σ |
+| deckSpecs[{deckId, widthM, thicknessM, edgeOffsetM}] | deckConfiguration（resolvedWidthM / thicknessM / overhang） |
 | crossGirderSpecs | crossBeamConfiguration（support位置＋中間spacing） |
 | gridPointIds / sectionIds | 既定: 自動生成（RB-001グリッド仕様は参考・Phase 5-02で既定式） |
 | unresolved | BridgeLayout / Road解決不能時 |

@@ -125,6 +125,8 @@ interface SuperstructureDocument {
 - kind: R / owner: BL
 - `{ bridgeId: string, moduleId: "bridgeLayout", documentVersion: string, layoutFingerprint: string }`
 - layoutFingerprint: BridgeLayoutDocumentの内容hash（変更検出用）
+- **bridgeIdへの参照経路**: トップレベルに`bridgeId`を**複製しない**。参照は常に
+  `bridgeLayoutReference.bridgeId`。各設計書・実装はこの経路を正とする
 - required: 必須
 - fail-closed: bridgeLayout module未存在・document未設定は write reject（fail-closed）
 - persistence: 保存（ID参照のみ・内容複製なし）
@@ -138,23 +140,29 @@ interface SuperstructureDocument {
 
 ### 4.11 spanReferences
 - kind: D / owner: BL（生成元: buildSpanHandoff）
-- `{ handoffId: string, schemaVersion: string, generatedAt: string, spans: SpanHandoffItem[] }`
+- 実体: `{ handoffId: string, schemaVersion: string, generatedAt: string, spans: SpanHandoffItem[] }`
   - SpanHandoffItem: `{ spanId, index, startSupportId, endSupportId, startStation, endStation, spanLength, startSupportSkew, endSupportSkew }`
-- required: 必須（>=1 span）
+- required（in-memory document）: 必須（>=1 span）。**ただし永続化DTOではtransient**
+  - 永続化方針: 本derived配列は**シリアライズしない**。restore時に
+    `buildSpanHandoff(manager, projectId, bridgeLayoutDocument)` から再生成し、
+    derived一致検証（保存時キャッシュがあれば突合）を経て in-memoryへ復元
 - validation: chain連続・Σ=bridgeLength・spanLength>0（Span Handoff検証を継承）
 - fail-closed: Span Handoffがok=falseなら derived生成不可（write reject）
-- persistence: 非保存（derived）。保存時はdocument内にキャッシュ可だが、読み出し時に再生成と突合（derived一致検証）
-- regeneration: `buildSpanHandoff(manager, projectId, bridgeLayoutDocument)` から毎回再生成
+- persistence: 非保存（transient・再生成）
+- regeneration: 常時 `buildSpanHandoff(...)` から毎回再生成
+- 参照経路: 他の設計書・実装は `spanReferences.spans[]`（spansは配列）を正とする
 
 ### 4.12 supportReferences
 - kind: D / owner: BL（生成元: buildSupportHandoff）
-- `{ handoffId: string, schemaVersion: string, generatedAt: string, supports: SupportHandoffItem[] }`
+- 実体: `{ handoffId: string, schemaVersion: string, generatedAt: string, supports: SupportHandoffItem[] }`
   - SupportHandoffItem: `{ supportId, supportType, label, station, position{domainX,domainY,elevation}, tangentAzimuthRad, skewAngleRad, skewSource, terrainElevation, roadReferenceId, coordinateContextId }`
-- required: 必須（>=2 support）
+  - `position.domainX/domainY/elevation` は**Project-global XYZ**（LINER由来）。station基準のlocal frameは
+    `tangentAzimuthRad`＋snapshot localFrame（tangent/transverse/vertical）で別途表現。両者を混同しない
+- required（in-memory document）: 必須（>=2 support）。**永続化DTOではtransient**（§4.11と同方針）
 - validation: A1<P1<…<A2順序・station finite・skew規約（counterclockwise-positive）
 - fail-closed: Support Handoffがok=falseなら derived生成不可
-- persistence: 非保存（derived）
-- regeneration: `buildSupportHandoff(manager, projectId, bridgeLayoutDocument)` から毎回再生成
+- persistence: 非保存（transient・再生成）
+- regeneration: 常時 `buildSupportHandoff(...)` から毎回再生成
 
 ### 4.13 superstructureType
 - kind: C / owner: SUPER / 必須
@@ -163,33 +171,47 @@ interface SuperstructureDocument {
 - fail-closed: 未対応type reject
 
 ### 4.14 structuralSystem
-- kind: C / owner: SUPER / 必須
+- kind: C（canonical入力）/ owner: SUPER / 必須
 - `{ spanSystem: "simple" | "continuous", bridgeSystem: "SIMPLE_SINGLE" | "CONTINUOUS" }`
-- 既定: `continuous`（Span Handoffのspans数>=2で連続）
-- validation: spans数と整合（SIMPLE_SINGLE=1 span / CONTINUOUS>=2）
+- 既定: `continuous`。**canonical入力とderived解決を分離**する
+  - canonical入力: `spanSystem`（上部工が明示 or 既定continuous）
+  - derived解決: `effectiveSystem`（spanReferences.spans数から導出: 1 span→SIMPLE_SINGLE / >=2→CONTINUOUS）
+  - `bridgeSystem`はderived解決結果。canonical `spanSystem` と derived `bridgeSystem` の整合をvalidationで検証
+- validation: spans数と整合（SIMPLE_SINGLE=1 span / CONTINUOUS>=2）・不一致は issue（write reject）
 - fail-closed: 不整合reject
-- persistence: 保存 / regeneration: 不可（上部工判断）
+- persistence: canonical入力（spanSystem）のみ保存。bridgeSystemは再生成 / regeneration: 不可（上部工判断）
 
 ### 4.15 girderConfiguration
 - kind: C（主桁配置は上部工所有）/ owner: SUPER / 必須
-- `{ girderCount: number, girderLines: GirderLine[] }`
+- `{ girderCount: number, girderSpacingM: number | null, girderLines: GirderLine[] }`
 - GirderLine: `{ girderId: string, index: number, label: string, offsetFromCenterline: number (m), offsetEndFromCenterline: number | null (m), materialRefId: string | null, sectionIntentRefId: string | null }`
-- girderId規則: `G1..Gn`（index順・`G${index+1}`）。materialRefId/sectionIntentRefIdはPhase 5-02でmaterial library未整備なら null（DEFER明示）
-- offsetFromCenterline: 上部工所有の正規入力。**発明しない**（既存superstructureBindingのfail-closed原則）
-- validation: girderCount>=1・offset有限・重複offset可（等間隔前提）・girderId一意
-- fail-closed: girderCount不一致・offset非有限 reject
-- persistence: 保存（canonical）/ regeneration: 不可（ユーザー入力）
+- girderId規則: `G1..Gn`（index順・`G${index+1}`）
+- **offset生成規則（凍結）**: 
+  - `girderSpacingM`（canonical・等間隔）を指定した場合、offsetは
+    `(i - (n-1)/2) * spacing` で**自動導出（derived）**
+  - 個別offsetFromCenterline指定は上部工所有の**override**。両方が無い場合は
+    offsetを**発明しない**（MISSING・fail-closed）
+  - 重複offsetは**許可しない**（girder間隔0は不合理・reject）
+- girderSectionModel（断面・設計入力・canonical・任意）: 
+  - `{ depthM: number | null, webThicknessM: number | null, topFlange: { widthM, thicknessM } | null, bottomFlange: { widthM, thicknessM } | null, areaM2: number | null, unitWeightPerM: number | null }`
+  - Phase 5-02では**宣言値のみ**（全てnull許容・MISSING）。断面性能計算・自重・基本照査は
+    宣言値がある場合のみ実施し、MISSINGなら照査保留（fail-closed・NOT_AVAILABLE）
+- validation: girderCount>=1・offset有限・girderId一意・girderSpacingM>0 if present
+- fail-closed: girderCount不一致・offset非有限・重複offset reject
+- persistence: 保存（canonical）/ regeneration: 不可（ユーザー入力・自動導出のみ）
 - 変更追従: Bridge Layout変更時はoffset・本数は維持（layout追従しない）→ status=STALE検出のみ
 
 ### 4.16 deckConfiguration
-- kind: C（厚さ・overhangは上部工所有。幅はroad参照）/ owner: SUPER＋ROAD
-- `{ deckId: string, deckKind: "rc_non_composite", widthM: number, thicknessM: number | null, unitWeight: number | null, overhangLeftM: number | null, overhangRightM: number | null }`
+- kind: C（canonical入力: 厚さ・overhang・unitWeight。幅はderived）/ owner: SUPER＋ROAD
+- 実体（canonical入力とderived解決を分離）:
+  - canonical入力: `{ deckId: string, deckKind: "rc_non_composite", thicknessM: number | null, unitWeight: number | null, overhangLeftM: number | null, overhangRightM: number | null }`
+  - derived解決: `resolvedWidthM: number | null`（= Road横断幅＋overhang。Road Module APIから導出・未取得ならMISSING）
 - deckId規則: `DECK-1`（安定ID）
-- widthM: 上部工の床版幅（基準: road横断参照＋overhang。Phase 5-02でroad横断APIから導出、未取得ならMISSING）
 - thicknessM: 上部工所有（未宣言ならMISSING・発明しない）
-- validation: width>0・thickness>0 if present・overhang>=0
+- validation: thickness>0 if present・overhang>=0・resolvedWidth>0 if present
 - fail-closed: 不正reject。composite action禁止（rc_non_composite固定）
-- persistence: 保存（canonical・厚さ/overhang）/ regeneration: 幅はroad参照再評価可、厚さは不可（入力）
+- persistence: canonical入力のみ保存（厚さ/overhang/unitWeight）。resolvedWidthは再生成
+- regeneration: resolvedWidthはroad参照再評価可、canonical入力は不可（ユーザー入力）
 
 ### 4.17 crossBeamConfiguration
 - kind: C / owner: SUPER / 任意（連続橋では必須とする）
@@ -231,15 +253,23 @@ interface SuperstructureDocument {
 ### 4.21 loadModel
 - kind: C（死荷重パラメータ）/ D（算出値）/ owner: SUPER
 - Phase 5-02スコープ（凍結）:
-  - `deadLoads`: structuralSelfWeight / steelGirder / deck / pavement / barriers / appurtenances の分類と暫定値（明示）
+  - `deadLoads`（分類・**二重計上防止のpartitionを明示**）:
+    - `structuralGirder`（鋼主桁自重・DL-STRUCTURALの一部）
+    - `structuralSecondary`（横桁・横構・支承自重・DL-STRUCTURALの一部）
+    - `deck`（RC床版自重・DL-DECK）
+    - `pavement`（舗装・入力境界・空）
+    - `appurtenances`（高欄/地覆/中央分離帯・入力境界・空）
   - `liveLoad`: **入力境界のみ**（`liveLoadReference: null` 明示・本計算はDEFER）
   - 詳細は Phase5-01D-01 へ
 - validation / fail-closed: 詳細設計書参照
 
 ### 4.22 analysisModel
 - kind: D / owner: SUPER（生成元: analysis adapter）
-- `{ analysisStatus: "NOT_AUTHORIZED"|"NOT_AVAILABLE"|"PENDING"|"READY", modelReference: { grillageModelDigest: string|null }, authorization: { numericDesignAuthorization: "NOT_GRANTED", stateReason } }`
+- 実体: `{ analysisStatus: "NOT_AUTHORIZED"|"NOT_AVAILABLE"|"PENDING"|"READY", modelReference: { grillageModelDigest: string|null }, authorization: { numericDesignAuthorization: "NOT_GRANTED", stateReason } }`
+  - **digestフィールド名は `modelReference.grillageModelDigest` に統一**（他の設計書もこれに従う）
 - Phase 5-02スコープ: 解析実行はgrillage/solver。数値認証は NOT_GRANTED 維持（既有方針）
+  - NOT_GRANTEDの解析結果は `analysisStatus: "NOT_AUTHORIZED"` として保持（自動昇格禁止）
+  - 認証後は人が `READY` へ遷移（Phase 5-02では対象外）
 - validation / fail-closed: 詳細設計書参照
 
 ### 4.23 designResults
@@ -250,10 +280,15 @@ interface SuperstructureDocument {
 
 ### 4.24 reactionResults
 - kind: D / owner: SUPER
-- `{ reactionStatus: "NOT_AUTHORIZED"|"NOT_AVAILABLE", reactionCases: ReactionCase[] }`
-- ReactionCase: `{ caseId, combinationId, supportId, Fx, Fy, Fz, Mx, My, Mz, unit, signConvention }`
+- 実体: `{ reactionStatus: "NOT_AUTHORIZED"|"NOT_AVAILABLE", reactionCases: ReactionCase[] }`
+- ReactionCase（**seat別・単位明示・support集約と分離**）:
+  - `{ caseId, combinationId, seatId, supportId, girderId, Fx, Fy, Fz, Mx, My, Mz, unit: "kN", momentUnit: "kNm", signConvention: { force: "up-positive", moment: "right-hand-rule" } }`
+  - caseId規則: `RC-{combinationId}-{seatId}`（seat別反力の一意化）
+  - seat別（girder別）反力が基本。support集約値は別フィールド `supportTotals[]`（任意）
 - Phase 6への Handoff 入力（Phase5-01D-02でContract確定）
-- fail-closed: authorized status以外は受け取り拒否（既存buildBoundReactions原則）
+- **受け渡し方針（凍結）**: NOT_AUTHORIZEDの反力は**入力データとしてPhase 6へ受け渡し可**
+  （既存substructure pattern踏襲）。designStatus等の自動昇格は禁止。authorized扱いにするには人の承認を要する
+- fail-closed: 数値有限・seatId/girderId存在・combinationId整合
 
 ### 4.25 validation
 - kind: D / owner: SUPER
@@ -271,17 +306,22 @@ interface SuperstructureDocument {
 2. Span/Support Handoff が ok=false → derived更新不可（readonly参照は可）
 3. schemaVersion不整合 → parse reject
 4. 上部工必須入力欠落（girderCount/offset等）→ write reject（MISSINGは許容・発明しない）
-5. designStatus / reactionStatus の NOT_AUTHORIZED 自動昇格禁止
+5. designStatus / analysisStatus / reactionStatus の NOT_AUTHORIZED **自動昇格禁止**
+   （人の承認を経由するまでauthorized扱いにしない）
 6. composite action 禁止（rc_non_composite固定）
+7. fail-closed方式の層分け: **parser/validatorは `ok=false + issues`（throwしない）**。
+   **binding層（GeometryEngineInput生成）はtyped exception**（既存`BridgeProjectAdapterError`流儀）。
+   test仕様（E-03）もこの層分けに従う
 
 ## 6. persistence 対象まとめ（凍結）
 
 | データ | 保存 | 備考 |
 |---|---|---|
-| SuperstructureDocument全体 | **保存**（canonical） | modules.superstructure.data 内 |
-| Span/Support Handoff | **非保存** | 再生成＋derived一致検証 |
+| SuperstructureDocument（canonical入力・status・provenance・reference群） | **保存** | modules.superstructure.data 内。derived配列はtransient |
+| spanReferences / supportReferences（derived配列） | **非保存（transient）** | restore時に再生成＋derived一致検証。in-memoryのみ |
 | GeometrySnapshot本体 | **非保存** | fingerprintのみ・再生成 |
-| 解析結果 | **Phase 5-02で再評価** | 案: digest＋要約のみ保存・詳細は再計算（E-01で確定） |
+| analysis / reaction digest | **保存（digestのみ）** | `modelReference.grillageModelDigest`・`designResults.reactionResultsReference.reactionDigest` |
+| 解析結果本体 | **非保存** | 再計算で再現（決定論） |
 
 ## 7. 既存資産との対応（Contract定義で利用するもの）
 

@@ -17,7 +17,10 @@ Phase 5-02実装前にテスト仕様を完成させる。
   Curved Bridge / Skew / Load / Analysis / Design Check / Bearing / Reaction Handoff /
   Persistence / Auto Save / Restart Restore / .spacerproj / 3D / Electron / E2E / Reference Bridge / Regression
 - ID規則: `T5-<CAT>-<NNN>`（例 T5-GEO-001）
-- 全テストfail-closed: 不正入力は例外を投げず ok=false + issues を返すこと（throwしない）
+- **fail-closed方式の層分け（明確化）**:
+  - parser / validator: 不正入力は**例外を投げず** `ok=false + issues` を返す
+  - binding層（GeometryEngineInput生成）: **typed exception**（既存`BridgeProjectAdapterError`流儀）
+  - testは各層の規約に従う（T5-BND系はthrow期待・T5-VAL/PAR系はok=false期待）
 - 決定論: 同一入力→同一出力（fingerprint）
 - tolerance: 明示されない比較は 1e-9（厳密）
 
@@ -92,10 +95,28 @@ Phase 5-02実装前にテスト仕様を完成させる。
 | ID | purpose | input | expected | failure |
 |---|---|---|---|---|
 | T5-3D-001 | 統合シーン（BL+Superstructure・決定論） | 正本 | 同一mesh（fingerprint） | 非決定論 |
+| T5-3D-002 | 全5レイヤ（Road/Terrain/Existing/BL/Super）重なり | 同一Project | 同一座標配置 | ずれ |
 | T5-ELE-001 | Electron smoke（上部工Shell表示） | app起動 | 画面表示 | 起動失敗 |
 | T5-E2E-001 | 縦断E2E（Create→Layout→Super→Save→Restart→Restore） | 全フロー | 完走・再現 | 途中失敗 |
 | T5-RB-001 | Reference Bridge比較（RB-01〜07/10/12） | RB001入力 | expected一致 | 不一致 |
 | T5-REG-001 | 既存regression維持（bridgeProject/apollo/substructure/next） | 既存tests | 全PASS | 破壊 |
+
+### 3.9 追加テスト（Sol reviewで検出された不足分・凍結）
+
+| ID | purpose | input | expected | failure |
+|---|---|---|---|---|
+| T5-REV-001 | revisionId / status遷移（DRAFT→VALIDATED→STALE） | 状態遷移 | 規則どおり | 不正遷移 |
+| T5-REV-002 | layoutFingerprint変更→STALE化 | layout変更 | STALE検出 | 未検出 |
+| T5-DOC-001 | documentId安定（同bridgeId→同documentId） | bridgeId | 同一ID | 変動 |
+| T5-CHN-001 | span/support chain（A1-P1-…-A2・derived一致） | 正本 | chain完全 | 欠損 |
+| T5-DNG-001 | dangling ID（girder/support参照切れ） | 不正document | reject | 誤受理 |
+| T5-DER-001 | derived非永続化（serializeに含まれない） | 保存 | 配列不在 | 混入 |
+| T5-MIG-001 | migration（旧project空module→初期化） | 旧project | 読込・初期化 | 失敗 |
+| T5-MIG-002 | 未知schemaVersion拒否 | 不正version | reject | 誤受理 |
+| T5-DIG-001 | analysis digest突合（reload再計算） | 再計算 | digest一致 | 不一致 |
+| T5-DIG-002 | digest不一致→STALE | モデル変更 | STALE | 未検出 |
+| T5-CRC-001 | crash recovery（.spacerbak復元） | 破損/中断 | 復元 | 失敗 |
+| T5-PH6-001 | Phase 6 schema互換（toSupportInterfaceEntry導出） | 新Handoff | v0.1.0形式 | 非互換 |
 
 ## 4. Execution コマンド（凍結）
 

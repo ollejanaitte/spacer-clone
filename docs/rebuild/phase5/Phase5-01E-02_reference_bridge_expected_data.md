@@ -26,22 +26,36 @@ Phase 5-02で比較するGround Truthを事前に凍結する。
 
 凡例: tol = tolerance / method = 比較方法 / PASS条件
 
+**注意（既知のデータ不整合・RB-01〜05）**: S-1/S-2の宣言spanLengths
+`[40.201, 51.0, 40.2]`（合計131.401m）は同ソースのbridgeLength 134.001m・
+support stations `[0, 40.201, 91.201, 134.001]`（第3支間=42.8m）と**内部不整合**。
+新システムはspanをBridgeLayout supportsから導出するため、**station整合の値**
+`[40.201, 51.0, 42.8]` をExpectedとする。S-1の宣言spanLengths[2]=40.2は
+`KNOWN_DATA_DISCREPANCY`（S-4/S-5で要確認）として明示。
+
 | # | 項目 | Source | Expected | unit | tol | method | PASS条件 |
 |---|---|---|---|---|---|---|---|
-| RB-01 | bridge length | S-1/S-2 | 134.001 | m | 1e-3 m | SuperstructureDocument.bridgeLengthM（Span Handoff Σ） | \|値-134.001\| <= tol |
-| RB-02 | span lengths | S-1/S-2 | [40.201, 51.0, 40.2] | m | 1e-3 m | spanReferences[].spanLength | 全spanで \|値-expected\| <= tol |
-| RB-03 | girder length | S-1 | 134.001（= bridge length・直線） | m | 1e-3 m | girderLines.stationEnd - stationStart | 一致 |
-| RB-04 | support stations | S-1 | [0, 40.201, 91.201, 134.001] | m | 1e-3 m | supportReferences[].station | 全support一致 |
-| RB-05 | skew | S-1（直線） | 0 | rad | 1e-6 | skewAngleRad | 0（直線） |
+| RB-01 | bridge length | S-1/S-2 | 134.001 | m | 1e-3 m | bridgeLayoutReference.bridgeLength（Span Handoff Σ） | \|値-134.001\| <= tol |
+| RB-02 | span lengths（station整合） | S-1（stations） | [40.201, 51.0, 42.8] | m | 1e-3 m | spanReferences.spans[].spanLength | 全spanで \|値-expected\| <= tol |
+| RB-03 | girder length | S-1 | 134.001（= bridge length・直線） | m | 1e-3 m | GeometrySnapshot.girderLines[].points（stationEnd - stationStart） | 一致 |
+| RB-04 | support stations | S-1 | [0, 40.201, 91.201, 134.001] | m | 1e-3 m | supportReferences.supports[].station | 全support一致 |
+| RB-05 | skew | S-1（直線） | 0 | rad | 1e-6 | supportReferences.supports[].skewAngleRad | 0（直線） |
 | RB-06 | girder count | S-1 | 2（BOUND_DEMO_GIRDERS ±4.0） | 本 | — | girderConfiguration.girderCount | 2 |
-| RB-07 | girder spacing | S-1 | 8.0（±4.0） | m | 1e-3 m | girderLines offset差 | 8.0 |
+| RB-07 | girder spacing | S-1 | 8.0（±4.0・等間隔） | m | 1e-3 m | girderConfiguration.girderSpacingM | 8.0 |
 | RB-08 | girder depth | S-5 | SOURCE_NOT_AVAILABLE（要確認） | m | — | — | 未確認時は比較しない |
 | RB-09 | deck width | S-4/S-5 | SOURCE_NOT_AVAILABLE（要確認） | m | — | — | 未確認時は比較しない |
-| RB-10 | support/bearing position | S-3（PR1: y=±2.5, z=8.0） | y ±2.5 / z 8.0 | m | 1e-2 m | bearingSeats[].position（新Handoff） | 全seat一致（既存support-interface fixtureと突合） |
+| RB-10 | support/bearing position | S-3（PR1: y=±2.5, z=8.0） | y ±2.5 / z 8.0 | m | 1e-2 m | 新Handoff bearingSeats[].position（PR1のみ） | 全seat一致 |
 | RB-11 | key cross-section properties | S-5 | SOURCE_NOT_AVAILABLE（要確認） | — | — | sectionProperties出力 | 未確認時は比較しない |
-| RB-12 | major reaction values | S-3 | DL-AG1 PR1 Fz = -3325.5 | kN | 1%（=±33.3 kN） | reactionResults（grillage） | \|値-(-3325.5)\|/3325.5 <= 0.01 |
-| RB-13 | key analysis results | S-4/S-6 | SOURCE_NOT_AVAILABLE（8 nodes/10 members/8 supports構成はS-6で確認） | — | — | grillageModel node/member/support数 | S-6と一致 |
+| RB-12 | major reaction values | S-3 | PR1 DL-AG1 \|Fz\| = 3325.5 | kN | 1%（=±33.3 kN） | reactionResults（grillage・NOT_AUTHORIZED） | \|\|Fz\|-3325.5\|/3325.5 <= 0.01 |
+| RB-13 | key analysis results | S-4/S-6 | 8 nodes / 10 members / 8 supports構成 | — | — | grillageModel node/member/support数 | S-6と一致 |
 | RB-14 | geometry dimensions | S-1 | 直線L1・azimuth 0 | rad | 1e-6 | snapshot alignment references | 一致 |
+
+**注記**:
+- RB-10（bearing位置）は**support-interface fixture（S-3・PR1）を独立した参照**として比較する。
+  S-3のgirder配置（y=±2.5）はS-1のパイプラインdemo（±4.0）と**別のfixture**であり、両者は統合しない。
+  RB-07（girder spacing 8.0）はS-1由来、RB-10（bearing ±2.5）はS-3由来という**別々の対象**として扱う
+- RB-12: S-3のFz=-3325.5は「下向き荷重表現」。新Handoffの符号規約（reaction +z = up-positive）に
+  合わせ、**|Fz| の大きさ**を比較し、方向規約はD-02の変換境界で明示
 
 ## 4. 比較方法（凍結）
 

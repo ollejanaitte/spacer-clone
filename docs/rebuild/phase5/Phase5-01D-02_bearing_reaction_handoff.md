@@ -23,14 +23,15 @@ interface SuperstructureHandoff {
   handoffKind: "superstructure-handoff";
   schemaVersion: string;            // "1.0.0"（新規・support-interface v0.1.0の拡張位置づけ）
   handoffId: string;                // `SH-${bridgeId}`（安定）
-  bridgeId: string;
-  documentReference: string;        // SuperstructureDocument参照（複製しない）
+  bridgeId: string;                 // bridgeLayoutReference.bridgeId由来
+  documentReference: string;        // SuperstructureDocument の documentId（UUID・参照規則を明示）
   generatedAt: string;              // ISO-8601 UTC
   coordinateContext: {
     coordinatePolicyId: string | null;
     axisConvention: "x-along/y-transverse/z-up";
     unitSystem: "metric";
     signConvention: { reactionZ: "up-positive"; skew: "counterclockwise-positive" };
+    positionConvention: "project-global-XYZ";   // position はProject-global XYZ（local frameと分離）
   };
   superstructureType: string;       // plate_girder_rc_slab_non_composite
   structuralSystem: { spanSystem: "simple"|"continuous"; bridgeSystem: "SIMPLE_SINGLE"|"CONTINUOUS" };
@@ -46,9 +47,10 @@ interface SupportHandoffEntry {
   supportId: string;
   supportType: "abutment" | "pier";
   station: number;                  // m
-  position: { domainX: number; domainY: number; elevation: number }; // global XYZ（LINER由来）
+  position: { x: number; y: number; z: number };      // Project-global XYZ（LINER由来）
   tangentAzimuthRad: number;
   skewAngleRad: number | null;      // counterclockwise-positive
+  localFrame: { tangent: Vec3; transverse: Vec3; vertical: Vec3 };  // station基準local frame（globalと分離）
   bearingSeats: BearingSeatEntry[];
   reactionCases: ReactionCaseEntry[];
 }
@@ -56,7 +58,7 @@ interface SupportHandoffEntry {
 interface BearingSeatEntry {
   seatId: string;                   // BRG-{supportId}-{girderId}
   girderId: string;
-  position: { x: number; y: number; z: number };   // global XYZ（bearing point）
+  position: { x: number; y: number; z: number };   // Project-global XYZ（bearing point）
   elevation: number;                // z（global標高）
   localOffset: { longitudinalM: number; transverseM: number }; // 支持点基準からのoffset
   orientation: { longitudinalAxis: Vec3; transverseAxis: Vec3; verticalAxis: Vec3 };
@@ -67,8 +69,11 @@ interface BearingSeatEntry {
 }
 
 interface ReactionCaseEntry {
-  caseId: string;                   // RC-{combinationId}-{supportId}
+  caseId: string;                   // RC-{combinationId}-{seatId}（seat別一意）
   combinationId: string;            // COMBO-1
+  seatId: string;                   // BRG-{supportId}-{girderId}
+  supportId: string;
+  girderId: string;
   Fx: number; Fy: number; Fz: number;
   Mx: number; My: number; Mz: number;
   unit: "kN"; momentUnit: "kNm";
@@ -96,11 +101,12 @@ interface ReactionCaseEntry {
 
 - 既存`support-interface.schema.json`（v0.1.0）は per-support のファイル契約
 - 新`SuperstructureHandoff`（v1.0.0）は**全support一括**のdocument契約
-- 互換: 新Handoffから per-support のsupport-interfaceを**導出可能**（後方互換）
-  - Phase 6の`superstructureInterface.ts`（KEEP）は、新Handoff由来のJSONを
-    `bearingSeatsToModel` / `interfaceToReactions` でそのまま受領可能な形にする
-- 新Handoffはsupport-interfaceの**型をコピーせず**、同一フィールド名・単位・符号を保証する
-  （既存アダプタ互換のための設計）
+- **互換（明示的な変換DTO）**: 新Handoffから per-support のsupport-interfaceを**変換関数**で導出する。
+  既存adapterが直接「そのまま受領」するのではなく、`toSupportInterfaceEntry(handoff, supportId)` が
+  フィールド名（bearingId/bearingPosition/bearingHeight/reactionCases/girderBottomElevation/deckElevation/
+  origin/position/longitudinalAxis/transverseAxis/verticalAxis/skewAngle）をv0.1.0形式へ写像してから渡す。
+  新Handoffはsupport-interfaceの**型をコピーしない**（同一単位・符号のみ保証）
+- `documentReference` は SuperstructureDocument の **documentId（UUID）**。正本複製なし（ID参照）
 
 ## 6. validation・fail-closed（凍結）
 

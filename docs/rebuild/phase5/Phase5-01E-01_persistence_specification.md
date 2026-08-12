@@ -44,16 +44,25 @@ Import（再parse・検証）
 |---|---|---|
 | Project（metadata含む） | 保存 | `project.json` |
 | modules.road / terrain / bridgeLayout | 保存 | 正本 |
-| modules.superstructure.data.superstructureDocument | **保存（canonical）** | 上部工正本 |
-| Span / Support Handoff | **非保存** | derived・再生成＋一致検証 |
+| modules.superstructure.data.superstructureDocument | **保存（canonical）** | 上部工正本。**derived配列（spanReferences/supportReferences/spans等）はtransient（シリアライズしない）** |
+| Span / Support Handoff | **非保存（transient）** | 再生成＋derived一致検証。in-memoryのみ |
 | GeometrySnapshot本体 | **非保存** | fingerprintのみ保存・再生成 |
-| Analysis結果（member forces等） | **再評価** | 案: digest（計算hash）のみ保存＋再計算時に突合。結果本体は再計算で再現（決定論） |
-| reactionResults | 同上 | 再計算で再現 |
+| Analysis結果（member forces等） | **再評価** | digest（`modelReference.grillageModelDigest`）のみ保存・再計算時に突合 |
+| reactionResults | 同上 | `designResults.reactionResultsReference.reactionDigest`のみ・再計算で再現 |
 | 3Dメッシュ | 非保存 | fingerprint keyで再生成 |
+
+### 3.1 保存時のstrict parseの整合（凍結）
+
+- 永続化DTOからderived配列（spanReferences/supportReferences・geometryReferenceは
+  fingerprintのみ）を**除外**して保存する
+- restore時: canonical入力＋reference群をparse（strict）→ 必要に応じて
+  Span/Support Handoff再生成 → derived一致検証 → in-memoryで復元
+- これにより「全document保存＋derived非保存」の矛盾を解消し、strict parseを成立させる
 
 ### 3.1 Analysis結果の保存方針（凍結）
 
-- 保存: `reactionResults.digest`・`analysisModel.modelDigest` のみ（fingerprint）
+- 保存: `analysisModel.modelReference.grillageModelDigest`・
+  `designResults.reactionResultsReference.reactionDigest` のみ（fingerprint）
 - 再現: reload時にSuperstructureDocument→解析を再実行し、digest一致を検証
 - digest不一致（モデル変更・solver変更）→ STALE（結果は非採用・fail-closed）
 - 本体保存はしない（決定論再計算を正とする）。巨大化・不正データ混入を防止
