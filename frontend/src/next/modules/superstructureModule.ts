@@ -81,6 +81,13 @@ export {
   addSuperstructureToScene,
 } from "./superstructure/superstructureSceneBuilder";
 export type { SuperstructureSceneBuildResult } from "./superstructure/superstructureSceneBuilder";
+export {
+  buildDeadLoads,
+  buildLoadModel,
+  comboOneTotalKN,
+  bridgeLengthMFromSpans,
+  STEEL_UNIT_WEIGHT_KN_M3,
+} from "./superstructure/superstructureLoadModel";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
