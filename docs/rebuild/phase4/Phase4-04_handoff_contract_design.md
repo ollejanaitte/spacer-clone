@@ -26,17 +26,23 @@
 
 ## 2. 責任境界（Phase 4-04で決定しないもの）
 
-Support Handoffは「配置情報」のみを渡す。
-下部工側で初めて決定する情報（Phase 5）:
+Support Handoffは「共通Support配置情報」のみを渡す。
+下部工側で初めて決定する情報（Phase 6下部工）:
 - 橋脚柱形状・柱幅・梁形状・壁式橋脚詳細
 - 橋台躯体詳細
 - フーチング・杭・基礎形式・基礎寸法・支持層
 - 耐震設計・下部工構造計算
 
 Span Handoffは「支間配置情報」のみを渡す。
-上部工側で初めて決定する情報（Phase 6）:
+上部工側で初めて決定する情報（Phase 5上部工）:
 - 主桁形式・本数・桁高・床版・横桁・横構
 - 支承詳細・合成/非合成設計・上部工断面計算・FEM
+
+※ 設計順序転換（Phase 5-00）: 正式設計順序は
+   橋梁配置 → 上部工 → 下部工。
+   Span Handoff が Phase 5 上部工の正式入口、
+   Support Handoff は共通Support配置情報として
+   Phase 5 上部工・Phase 6 下部工の両方から参照される。
 
 ## 3. 原則
 
@@ -46,7 +52,7 @@ Span Handoffは「支間配置情報」のみを渡す。
 - Road / Terrain / Existing の正本は複製しない（既存原則維持）。
 - skew規約: counterclockwise-positive（反時計回り正）を唯一とし、旧資産の別符号規約を混入しない。
 
-## 4. Support Handoff Contract（Phase 5下部工へ）
+## 4. Support Handoff Contract（共通Support配置情報）
 
 ### データ構造（derived snapshot・非永続正本）
 
@@ -97,7 +103,7 @@ export interface SupportHandoff {
 - skewAngleRad finite or null・skewConvention = counterclockwise-positive
 - roadReference有効 / terrainReference有効/未解決の扱い明確 / existingConditionsReference同様
 
-## 5. Span Handoff Contract（Phase 6上部工へ）
+## 5. Span Handoff Contract（Phase 5上部工へ）
 
 ### データ構造（derived snapshot）
 
@@ -168,15 +174,16 @@ export interface SpanHandoff {
 Completion Gate画面に以下を表示:
 - Bridge Range / bridgeLength / A1 / P1..Pn / A2 / station / support type / span chain / spanLength / skew
 - Road / Terrain / Existing reference状態
-- Support Handoff READY / ERROR
-- Span Handoff READY / ERROR
+- Support Handoff READY / ERROR（共通Support配置情報: Phase 5上部工参照 / Phase 6下部工向け）
+- Span Handoff READY / ERROR（Phase 5上部工向け・正式入口）
+- Phase 5上部工 readiness / Phase 6下部工 readiness
 - Final Validation状態 / 保存状態
 
 ## 9. テスト計画
 
 - SupportHandoff: build・validation・missing support・順序・skew・reference
 - SpanHandoff: chain・連続性・合計・dup・missing・malformed fail-closed
-- Integrity Gate: 全validation合成・Phase5/6 ready判定
+- Integrity Gate: 全validation合成・Phase 5上部工 ready（Span＋Support成立） / Phase 6下部工 ready（Support成立）判定
 - Persistence: save→restart→restore→handoff再生成→再検証 / .spacerproj
 - UI: READY/ERROR表示・Completion Gate表示
 - 3D: A1/P1..Pn/A2・S1..Sn・skew・統合scene（既存資産再利用）

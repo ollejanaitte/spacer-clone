@@ -134,7 +134,8 @@ describe("Phase 4-04 Reference Integrity Gate", () => {
     expect(result.ok).toBe(false);
     // derived consistency is caught by the Span Handoff validation
     expect(result.checks.spanHandoffReady).toBe(false);
-    expect(result.phase6Ready).toBe(false);
+    // Phase 5（上部工）はSpan Handoffが正式入口のため NOT_READY。Phase 6（下部工）はSupport Handoff基準のため維持
+    expect(result.phase5Ready).toBe(false);
   });
 
   it("fails closed on malformed document (NaN bridgeRange)", () => {

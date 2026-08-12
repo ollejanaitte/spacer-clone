@@ -5,7 +5,7 @@ import { readRoadAlignmentContext } from "./bridgeLayoutDomain";
 import { resolveBridgeLayoutReferences } from "./bridgeLayoutReferences";
 
 /**
- * Phase 4-04 Span Handoff Contract（Phase 6上部工へ渡す正式支間情報）.
+ * Phase 4-04 Span Handoff Contract（Phase 5上部工へ渡す正式支間情報）.
  *
  * BridgeLayoutDocument が唯一正本。spans は Supports（A1/P1..Pn/A2）から
  * 導出される derived data であり、本Handoffも derived snapshot。
