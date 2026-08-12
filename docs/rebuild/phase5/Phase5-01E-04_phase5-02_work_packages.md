@@ -13,15 +13,22 @@ files・dependencies・acceptance criteria・tests・PR単位・rollback boundar
 ```
 WP-A（SuperstructureDocument/PDC） ← 最基盤
   └─ WP-B（Bridge Layout→Adapter/Binding）
-       └─ WP-C（Geometry Engine/3D）
-            ├─ WP-D（Girder/Deck/Cross Beam/Bearing）
+       └─ WP-C1（Geometry Engine基盤: GeometryEngineInput→snapshot）
+            ├─ WP-D（Girder/Deck/Cross Beam/Bearing配置） ← WP-C1依存（配置はsnapshotを前提）
+            │    └─ WP-C2（3D Viewer: 統合シーン＋Superstructure表示） ← WP-D依存（配置から表示）
             └─ WP-E（Load Model）
                  └─ WP-F（Analysis/solver）
                       ├─ WP-G（Design Check）
                       └─ WP-H（Bearing/Reaction Handoff）
-WP-I（Persistence/.spacerproj） ← WP-A/Cと並行可
+WP-I（Persistence/.spacerproj） ← WP-A依存・WP-C1（restart geometry再生成）・WP-F（digest）依存
 WP-J（Reference Bridge/E2E/Completion Gate） ← 全ての後
 ```
+
+**依存順の明確化（Sol review反映）**:
+- WP-Cは **Geometry Engine基盤（WP-C1）** と **3D Viewer（WP-C2）** に分割。
+  WP-C1（snapshot生成）→ WP-D（配置）→ WP-C2（3D表示）の順。
+  「3D部材生成が配置生成より先」にならない
+- WP-Iはrestart時のGeometry再生成（WP-C1）とdigest突合（WP-F）に依存する
 
 ## 3. 各WP詳細（凍結）
 
@@ -50,22 +57,32 @@ WP-J（Reference Bridge/E2E/Completion Gate） ← 全ての後
 - PR: 1本
 - rollback: 新関数未使用状態へ戻せる
 
-### WP-C: Geometry Engine / 3D
+### WP-C1: Geometry Engine基盤
 
-- files: `superstructureSceneBuilder.ts`（新3D・snapshot→solids）
-  - 既存`engine.ts`/`snapshot3d.ts`/`bridgeStructureSolids.ts`はKEEP利用（変更しない）
-  - `NextApp.tsx` module dispatch追加・`SuperstructureModuleShellPage.tsx`（新）
-- dependencies: WP-B（snapshot入力）
-- acceptance: GeometryEngineInput→snapshot→3D（C-01/C-02準拠）・renderCoordinate・ID規則
-- tests: T5-GEO/COO/CUR/SKW/3D
-- PR: 2本（Geometry→3D）
+- files: `superstructureBindingNew.ts`（新binding）呼び出しの集約・snapshot生成
+  - 既存`engine.ts`/`contracts.ts`はKEEP利用（変更しない）
+- dependencies: WP-B
+- acceptance: SuperstructureDocument→GeometryEngineInput→GeometrySnapshot（C-01準拠）・fail-closed不変条件
+- tests: T5-BND/GEO/COO/CUR/SKW
+- PR: 1本
+- rollback: 新binding未使用状態へ戻せる
+
+### WP-C2: 3D Viewer（統合シーン＋Superstructure表示）
+
+- files: `superstructureSceneBuilder.ts`（新3D・snapshot→solids）・
+  `NextApp.tsx` module dispatch追加・`SuperstructureModuleShellPage.tsx`（新）
+  - 既存`snapshot3d.ts`/`bridgeStructureSolids.ts`はKEEP利用（変更しない）
+- dependencies: WP-D（配置生成済み）
+- acceptance: 統合シーン（Road+Terrain+Existing+BL+Superstructure）・renderCoordinate・ID規則（C-02準拠）
+- tests: T5-3D
+- PR: 1本
 - rollback: 3D builder未使用状態へ
 
 ### WP-D: Girder / Deck / Cross Beam / Bearing
 
 - files: `superstructureComponents.ts`（断面性能・配置生成）
   - 既存`sectionProperties.ts`/`members.ts`/`deck.ts`はKEEP利用
-- dependencies: WP-C
+- dependencies: WP-C1（snapshot生成後・配置はsnapshot由来）
 - acceptance: girder/deck/crossBeam/crossFrame/bearing配置（C-01準拠）
 - tests: T5-GEO/BRG関連
 - PR: 1本
@@ -114,10 +131,10 @@ WP-J（Reference Bridge/E2E/Completion Gate） ← 全ての後
 ### WP-I: Persistence / .spacerproj
 
 - files: 既存`next/persistence`へのsuperstructure対応（module genericは既存で対応）
-  - migration追加・digest方針（E-01準拠）
-- dependencies: WP-A（module存在）
-- acceptance: save→restore・restart再生成・.spacerproj round-trip
-- tests: T5-PER/AUT/RST/PKG
+  - migration追加・digest方針（E-01準拠）・derived transient方針
+- dependencies: WP-A（module存在）・**WP-C1（restart時のGeometry再生成）**・**WP-F（digest突合）**
+- acceptance: save→restore・restart再生成（fingerprint）・.spacerproj round-trip・derived非永続化
+- tests: T5-PER/AUT/RST/PKG/DER/MIG/DIG/CRC
 - PR: 1本
 - rollback: 旧persistence動作維持
 

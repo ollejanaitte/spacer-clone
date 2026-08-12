@@ -27,9 +27,10 @@ Phase 5（上部工）のスコープ・原則・モジュール構造・ドキ�
 - SuperstructureDocument（正本）の確立・validation・persistence
 - Bridge Layout → 上部工 の入力接続（Span/Support Handoff利用）
 - 上部工Geometry（主桁配置・床版・横桁・横構・支承配置）生成
-- 3D/CIM（統合シーンへの上部工追加）
+- 統合3D Viewer（Road+Terrain+Existing+Bridge Layout+Superstructure同一座標表示）
+  - ※ **統合viewer表示はPhase 5-02対象。CIM exportは後続Phase（DEFER）**
 - 死荷重モデル（自己重量・床版・舗装・付属物）の整理
-- 解析（grillage/solver）データフローの接続
+- 解析（grillage/solver）データフローの接続（**NOT_AUTHORIZED基本解析**）
 - 基本設計チェック（断面性能・桁力・応力度・たわみ・基本照査）
 - Bearing / Reaction Handoff（Phase 6へ）
 - Persistence（Auto Save / Restart Restore / .spacerproj）
@@ -40,10 +41,10 @@ Phase 5（上部工）のスコープ・原則・モジュール構造・ドキ�
 - 主桁自動設計・断面最適化（詳細設計は後続）
 - 床版・横桁・横構の鉄筋・断面詳細設計（基本照査のみ）
 - 支承詳細設計（形式選定の基本のみ・詳細は後続）
-- 荷重の本計算（死荷重のみ。活荷重は入力境界）
-- FEM本計算（grillageによる基本解析のみ）
-- 支点反力の本計算（解析結果の受け渡しのみ）
-- 図面・計算書・数量・成果品（成果品Phase）
+- 活荷重本計算・荷重組合せ本計算（死荷重のみ。活荷重は入力境界）
+- FEM本計算（grillageによる基本解析のみ。**認証済みの反力・解析本計算は対象外**）
+- 支点反力の認証済み本計算（NOT_AUTHORIZEDの基本解析結果の受け渡しは対象）
+- CIM export・図面・計算書・数量・成果品（成果品Phase）
 - Phase 6下部工本体
 - 旧システム（App.tsx / Apolloパイプライン）の改修
 
@@ -81,7 +82,7 @@ Phase 5（上部工）のスコープ・原則・モジュール構造・ドキ�
 | **Span Handoff** | **derived** | 非保存・毎回再生成 | 生成元: BridgeLayoutDocument |
 | **Support Handoff** | **derived** | 非保存・毎回再生成 | 生成元: BridgeLayoutDocument |
 | **SuperstructureDocument** | **canonical（上部工正本）** | modules.superstructure | 上部工正本 |
-| GeometrySnapshot | derived（fingerprint参照） | 非正本・再生成 | 生成元: DefaultGeometryEngine |
+| **GeometrySnapshot** | **derived（凍結契約）** | 非正本・再生成 | 生成元: DefaultGeometryEngine |
 | Bearing / Reaction Handoff | derived | 非保存・Phase 6へ | 生成元: SuperstructureDocument＋解析結果 |
 
 ## 6. データフロー（凍結・Phase 5-00踏襲）
@@ -112,9 +113,9 @@ Project Data Core
 | GeometrySnapshot / DefaultGeometryEngine | KEEP | 入力正本として利用（凍結契約維持） |
 | CommonModelGeometryInputAdapter | ADAPT | 入力元をSuperstructureDocumentへ差し替え |
 | LinerAlignmentConnector | ADAPT | LINER単一正本の原則維持 |
-| superstructureAdapter | ADAPT | Handoff→shared facts の核として流用 |
-| superstructureBinding | ADAPT（KEEP寄り） | SuperstructureDocument→GeometryEngineInput。fail-closed不変条件維持 |
-| projectSuperstructure | ADAPT | 旧sidecar永続化→新PDC永続化へ |
+| superstructureAdapter | ADAPT | 新module内に新関数を**追加**（旧ファイルは無変更・REFERENCE） |
+| superstructureBinding | ADAPT（KEEP寄り） | 新module内に新関数を**追加**（旧関数は無変更・fail-closed不変条件維持） |
+| projectSuperstructure | ADAPT（新経路不使用） | 旧sidecar永続化は旧システム用に維持。**新ファイル・旧ファイルとも変更しない**。新正本はPDC |
 | sectionProperties | KEEP | 断面性能計算 |
 | grillage / solver（backend） | KEEP | 基本解析 |
 | snapshot3d / solids / STL | KEEP | 3D・出力 |

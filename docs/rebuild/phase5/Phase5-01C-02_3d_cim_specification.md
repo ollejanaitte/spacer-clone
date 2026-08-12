@@ -16,6 +16,8 @@ Phase 5-01では3D本実装を行わず、Phase 5-02で迷わない仕様まで�
 - renderCoordinate（x→x, y→z, z→-y）を唯一の表示変換とする（R3-00 freeze）
 - GeometrySnapshotのglobal XYZ / fingerprintを上部工3Dの配置根拠とする
 - Project reload後は各正本から再生成（キャッシュは派生・再現性あり）
+- **スコープ明確化**: Phase 5-02の対象は「**統合3D Viewer表示**（Road+Terrain+Existing+Bridge Layout+Superstructure同一座標）」。
+  **CIM exportは後続Phase（DEFER）**。本設計書はviewer表示と将来CIM export境界のみを凍結する
 
 ## 3. シーン構成（凍結）
 

@@ -1,0 +1,302 @@
+統合設計 Phase 5-01 Final Report
+============================================================
+作業名: Phase 5全体完全設計・Design Freeze
+Phase: Phase 5-01
+完了日時(JST): 2026-08-12 18:50 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 5-00（設計順序転換＋既存上部工資産・Connector監査）COMPLETE後に、
+Phase 5-02「上部工一括実装・検証・Completion Gate」で実装担当が
+追加の設計判断をほぼ行わずに実装できるよう、Phase 5全体の設計を完成・凍結した。
+
+実装は行わず、設計専用Phaseとして以下を完了。
+  - Phase 5 Master Design骨格
+  - SuperstructureDocument Contract（全項目確定）
+  - Bridge Layout Input（Span/Support Handoff）
+  - Adapter / Connector / Binding Mapping
+  - Migration設計
+  - Geometry完全設計（Coordinate/skew/曲線橋）
+  - 3D / CIM設計
+  - Load / Analysis / Design Check設計
+  - Bearing / Reaction Handoff設計
+  - Persistence設計
+  - Reference Bridge Expected Data
+  - Test Specification
+  - Phase 5-02 Work Package
+  - Cross-Review（Sol 22件検出・全修正）＋ Design Freeze Gate PASS
+
+------------------------------------------------------------
+2. baseline / git 状態
+------------------------------------------------------------
+baseline SHA: 4b58eae0a23d0670fc9c848eb3af3d20a08f9639
+  （Phase 5-00 Final Report merge後・GitHub mainを実際に確認して確定）
+
+既存dirty差分（Phase 5-01開始時・破棄せず記録のみ・成果へ混入させていない）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json（modified）
+  - final_report.txt（deleted・canonical repoのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked・next worktreeのみ）
+
+------------------------------------------------------------
+3. 各Step結果
+------------------------------------------------------------
+[Step A] Phase 5 Master Design骨格＋SuperstructureDocument Contract（PR #917）
+  - Phase5-01A-00_master_design.md: スコープ・原則・モジュール構造・データフロー・WP概要
+  - Phase5-01A-01_superstructure_document_contract.md:
+    schemaVersion 0.1.0 / documentKind superstructure-design / modules.superstructure.data.superstructureDocument
+    全項目（schemaVersion〜extensions）のowner/canonical/required/ID/version/validation/
+    fail-closed/persistence/regeneration確定。BSDDとは複製しない（設計思想のみ継承）
+
+[Step B] Bridge Layout Input＋Adapter/Connector/Binding Mapping＋Migration（PR #918）
+  - Phase5-01B-01: Span Handoff（Phase 5上部工正式入口）・Support Handoff（共通Support配置情報）の
+    全項目・規則凍結。新データフローをファイル単位で確定
+  - Phase5-01B-02: 3層モデル（旧REFERENCE/新正本/共有実行層）・データ自動移行なし・
+    bridge_fem_generator.py置換方針（grillage経路を正とする）
+
+[Step C] Geometry完全設計＋3D/CIM設計（PR #919）
+  - Phase5-01C-01: 座標3段階（Project Origin/Local Origin/renderCoordinate）・skew規約・
+    主桁配置（G1..Gn・girderSpacingM）・床版（overhang）・横桁/横構・支承・曲線橋（LINER正本）・
+    GeometryEngineInput生成仕様・GeometrySnapshot凍結契約維持
+  - Phase5-01C-02: 統合3Dシーン構成・ID規則・fingerprint連動・reload再生成・CIM export境界（DEFER）
+
+[Step D] Load/Analysis/Design Check＋Bearing/Reaction Handoff（PR #920）
+  - Phase5-01D-01: 死荷重partition（DL-STRUCTURAL/DECK・二重計上防止）・活荷重入力境界・
+    grillage/solverデータフロー・符号規約・fail-closed・基本照査6種IN-SCOPE/OUT-OF-SCOPE明示
+  - Phase5-01D-02: Phase 6 Handoff Contract（全support一括・seat別反力・support-interface互換DTO）
+
+[Step E] Persistence＋Reference Bridge＋Test Spec＋WP（PR #921）
+  - Phase5-01E-01: 縦断仕様・canonical/derived分離（transient）・digest方針・migration
+  - Phase5-01E-02: RB-01〜14（expected/tol/PASS条件）・SOURCE_NOT_AVAILABLE明示
+  - Phase5-01E-03: T5群（25カテゴリ）・層別fail-closed規則
+  - Phase5-01E-04: WP-A〜J（files/dependencies/acceptance/tests/PR/rollback/evidence）
+
+[Step F] Cross-Review＋Design Freeze Gate＋screenshots＋Final Report（本PR）
+  - Sol（read-only）による全12設計書cross-review: 22件検出・全て修正
+  - Design Freeze Gate PASS
+  - 設計書screenshots 7枚取得・Luna画像検証（Freeze Gate表レイアウト修正込み）
+  - 本Final Report
+
+------------------------------------------------------------
+4. 作成/更新設計書一覧
+------------------------------------------------------------
+docs/rebuild/phase5/Phase5-01A-00_master_design.md        … FROZEN
+docs/rebuild/phase5/Phase5-01A-01_superstructure_document_contract.md … FROZEN
+docs/rebuild/phase5/Phase5-01B-01_bridge_layout_input_adapter_mapping.md … FROZEN
+docs/rebuild/phase5/Phase5-01B-02_migration_design.md    … FROZEN
+docs/rebuild/phase5/Phase5-01C-01_geometry_specification.md … FROZEN
+docs/rebuild/phase5/Phase5-01C-02_3d_cim_specification.md … FROZEN
+docs/rebuild/phase5/Phase5-01D-01_load_analysis_design_check.md … FROZEN
+docs/rebuild/phase5/Phase5-01D-02_bearing_reaction_handoff.md … FROZEN
+docs/rebuild/phase5/Phase5-01E-01_persistence_specification.md … FROZEN
+docs/rebuild/phase5/Phase5-01E-02_reference_bridge_expected_data.md … FROZEN
+docs/rebuild/phase5/Phase5-01E-03_test_specification.md … FROZEN
+docs/rebuild/phase5/Phase5-01E-04_phase5-02_work_packages.md … FROZEN
+docs/rebuild/phase5/Phase5-01F-00_design_freeze_gate.md  … PASS
+
+------------------------------------------------------------
+5. SuperstructureDocument Contract（要約）
+------------------------------------------------------------
+- schemaId: spacer.next.superstructure-design-document / schemaVersion 0.1.0
+- 格納: modules.superstructure.data.superstructureDocument
+- 正本: 上部工。BridgeLayoutDocumentへはbridgeLayoutReference（ID参照・複製なし）
+- spanReferences/supportReferences: derived・永続化DTOではtransient（restore時に再生成＋一致検証）
+- girderConfiguration: girderCount + girderSpacingM（canonical）+ girderLines + girderSectionModel（宣言値）
+- deckConfiguration: canonical入力（thickness/overhang/unitWeight）+ resolvedWidthM（derived）
+- bearingConfiguration: 配置derived（snapshot由来）+ 形式canonical（Phase 5-02既定UNDECIDED）
+- geometryReference: snapshotFingerprint（決定論）
+- loadModel: DL partition（STRUCTURAL/DECK実装・PAVEMENT/APPURTENANCE/LL入力境界）
+- analysisModel: modelReference.grillageModelDigest・NOT_GRANTED→NOT_AUTHORIZED保持
+- reactionResults: seat別反力（unit kN/momentUnit kNm・up-positive）
+- fail-closed: 層別（validator=ok=false / binding=typed exception）・自動昇格禁止
+
+------------------------------------------------------------
+6. Adapter / Connector Mapping（要約）
+------------------------------------------------------------
+- 既存ファイルは**無変更**（追加のみ）: superstructureAdapter / superstructureBinding /
+  CommonModelGeometryInputAdapter / LinerAlignmentConnector
+- 新module（WP-A/B）: superstructureModule / ModuleAdapter / Validation / DocumentDomain /
+  Facts（新adapter）/ BindingNew（新binding）
+- KEEP: GeometryEngine / GeometrySnapshot（凍結契約 v6.1.0）/ sectionProperties / grillage+solver /
+  snapshot3d / solids / STL / superstructureEnvelope / support-interface
+- REWRITE（置換）: backend/engine/bridge_fem_generator.py（grillage経路を正とする）
+
+------------------------------------------------------------
+7. Migration Map（要約）
+------------------------------------------------------------
+- 3層モデル: 旧システム（REFERENCE維持）/ 新システム（PDC正本）/ 共有実行層（KEEP利用）
+- データの自動移行なし。生成起点の差し替えのみ
+  （旧: LINER draft→CBDM / 新: BridgeLayoutDocument→SuperstructureDocument）
+- ID: supportId（A1..A2継承）・spanId（S1..Sn継承）・girderId（G1..Gn新規）・
+  seatId（BRG-{support}-{girder}）・documentId（deriveStableUuid）
+
+------------------------------------------------------------
+8. Geometry仕様（要約）
+------------------------------------------------------------
+- 座標: Project Origin / Local Origin / renderCoordinate（x→x,y→z,z→-y）
+- skew: counterclockwise-positive（唯一・上部工で再計算しない）
+- 主桁: G1..Gn・girderSpacingM等間隔（derived）or個別offset（override）・断面はgirderSectionModel
+- 床版: rc_non_composite固定・overhang・舗装はload model
+- 横桁: end/support cross beam全support・中間spacing・配置のみ（断面DEFER）
+- 曲線橋: LINER正本・snapshotがglobal XYZ/frame保持・上部工で再実装しない
+
+------------------------------------------------------------
+9. Load仕様（要約）
+------------------------------------------------------------
+- DL-STRUCTURAL（主桁+2次部材・実装）/ DL-DECK（実装）/ DL-PAVEMENT・DL-APPURTENANCE（境界）/
+  LL（入力境界・本計算なし）
+- COMBO-1 = DL-STRUCTURAL + DL-DECK（係数1.0・REFERENCE）
+- partition明示で二重計上防止
+
+------------------------------------------------------------
+10. Analysis仕様（要約）
+------------------------------------------------------------
+- SuperstructureDocument → Analysis Adapter → buildGrillageModel → grillage.py → solver.py
+- node/member/support生成（support station × girder offset・既存流儀）
+- 符号: 反力+z上向き正・member force定義
+- NOT_GRANTED→NOT_AUTHORIZED保持（自動昇格禁止）・solver異常はfail-closed
+
+------------------------------------------------------------
+11. Design Check仕様（要約）
+------------------------------------------------------------
+- IN-SCOPE: SECTION-PROPERTIES / GIRDER-BENDING-BASIC / GIRDER-SHEAR-BASIC /
+  GIRDER-DEFLECTION-BASIC / CROSSBEAM-BASIC / BEARING-BASIC
+- 入力MISSING時はNOT_AVAILABLE（照査保留）・自動昇格禁止
+- OUT-OF-SCOPE: 床版鉄筋・横構部材照査・補剛材/継手・活荷重載荷・疲労・耐震・部分係数値適用
+
+------------------------------------------------------------
+12. Bearing / Reaction Handoff（要約）
+------------------------------------------------------------
+- 新SuperstructureHandoff（v1.0.0・全support一括）・documentReference = documentId
+- bearingSeats: seatId（BRG-{support}-{girder}）・global XYZ・localOffset・orientation・形式
+- reactionCases: seat別（RC-{combo}-{seatId}）・Fx..Mz・kN/kNm・up-positive・NOT_AUTHORIZED入力
+- support-interface（v0.1.0）互換: toSupportInterfaceEntry変換DTO
+
+------------------------------------------------------------
+13. Persistence（要約）
+------------------------------------------------------------
+- canonical保存: SuperstructureDocument（derived配列はtransient）
+- derived再生成: Span/Support Handoff・GeometrySnapshot・解析結果（決定論）
+- digest保存: grillageModelDigest・reactionDigest（reload時再計算突合・STALE検出）
+- migration: 旧project空module初期化・未知version reject
+- autosave/crash recovery: 既存next/persistence流儀
+
+------------------------------------------------------------
+14. Reference Bridge Expected Data（要約）
+------------------------------------------------------------
+- RB-01〜14凍結。RB-01/02/04: station整合値（[40.201,51,42.8]）・KNOWN_DATA_DISCREPANCY明示
+- RB-10（bearing ±2.5）はS-3 fixture独立参照（S-1の±4.0とは別）
+- RB-12: |Fz|比較（3325.5 kN・1%）
+- RB-08/09/11: SOURCE_NOT_AVAILABLE（補完しない）
+
+------------------------------------------------------------
+15. Test Specification（要約）
+------------------------------------------------------------
+- T5群25カテゴリ＋追加12テスト（T5-REV/DOC/CHN/DNG/DER/MIG/DIG/CRC/PH6等）
+- 層別fail-closed: parser/validator=ok=false / binding=typed exception
+- 実行: vitest/pytest/Playwright（Electron）
+
+------------------------------------------------------------
+16. Phase 5-02 Work Package（要約）
+------------------------------------------------------------
+- WP-A: SuperstructureDocument/PDC / WP-B: Adapter/Binding / WP-C1: Geometry基盤 /
+  WP-C2: 3D Viewer / WP-D: Girder/Deck/CrossBeam/Bearing / WP-E: Load / WP-F: Analysis /
+  WP-G: Design Check / WP-H: Handoff / WP-I: Persistence / WP-J: RB/E2E/Gate
+- 依存順確定（C1→D→C2・IはC1/F依存）
+- 各WP: files/dependencies/acceptance/tests/PR/rollback/evidence
+
+------------------------------------------------------------
+17. Luna利用結果
+------------------------------------------------------------
+- 設計書screenshots 3枚確認（Contract・WP・Freeze Gate）
+- Freeze Gate表のレンダリングずれを検出 → レンダラ修正（\|エスケープ）→ 再生成 → 再確認PASS
+- read-only遵守（sandbox read-only・前後でgit status/diff確認・差分増加なし）
+
+------------------------------------------------------------
+18. Sol利用結果
+------------------------------------------------------------
+- 全12設計書のcross-review（read-only）: **22件の不整合を検出**
+- 全22件をDeepSeek V4 Flashが修正（Step Fで10設計書を改訂・220行追加/102行削除）
+- 修正内容: RB数値不整合・Contract欠落（girderSpacing/girderSectionModel/digest）・
+  derived永続化矛盾・ReactionCase形・符号規約・WP依存順・テスト漏れ等
+
+------------------------------------------------------------
+19. Design Review結果
+------------------------------------------------------------
+- Sol review: 22件検出・全解決
+- 整合確認済み: 参照循環なし・単位統一・version整合・KEEP資産の破壊なし・DEFER誤実装なし
+- Freeze禁止項目（TODO/TBD/FIXME/unknown owner/undecided schema/unit/sign/ID/
+  undefined tolerance/PASS条件/実装時判断）: 残存なし
+
+------------------------------------------------------------
+20. unresolved項目
+------------------------------------------------------------
+- RB-08/09/11（桁深さ・床版幅・断面性能）: SOURCE_NOT_AVAILABLE（S-5外部資料で要確認・
+  Phase 5-02で更新可と明示）※設計としては凍結済み（補完しない方針）
+- S-1の宣言spanLengths[2]=40.2: KNOWN_DATA_DISCREPANCY（station整合値42.8を採用）
+- 上記以外のunresolved TODO/TBD: なし
+
+------------------------------------------------------------
+21. Design Freeze Gate
+------------------------------------------------------------
+- 全設計書FROZEN
+- 矛盾除去（22件解決）
+- Freeze禁止項目残存なし
+- 実装担当が追加設計せずPhase 5-02開始可能
+- **Design Freeze Gate = PASS**
+
+------------------------------------------------------------
+22. Phase 5-02 readiness
+------------------------------------------------------------
+- READY（WP-A〜J・files/dependencies/acceptance/tests/rollback確定済み）
+- 実装担当は設計書どおり実装のみ。追加設計判断不要
+
+------------------------------------------------------------
+23. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase5/evidence/
+  - p5-01-01-master-design.png
+  - p5-01-02-superstructure-contract.png
+  - p5-01-03-dataflow-mapping.png
+  - p5-01-04-geometry-spec.png
+  - p5-01-05-load-analysis-spec.png
+  - p5-01-06-work-packages.png
+  - p5-01-07-design-freeze-gate.png
+Luna画像検証済み（表レイアウト修正込み）。Discordへ実ファイル添付送信（HTTP確認）。
+
+------------------------------------------------------------
+24. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: 4b58eae0a23d0670fc9c848eb3af3d20a08f9639（Phase 5-00 Final Report merge後・GitHub確認）
+- PR #917 docs/phase5-01-step-a-master → merge 6e3cc6dc795707770f87ebdd68c0d640d0a9a91c
+- PR #918 docs/phase5-01-step-b-mapping → merge 55b40539a7acf7738b2691315dd1f354387e0e2e
+- PR #919 docs/phase5-01-step-c-geometry → merge 9fb58d5aa096567bc9a570d7800445c81bf9876c
+- PR #920 docs/phase5-01-step-d-load → merge 242667fce9532daa35c1240847305559bea911fb
+- PR #921 docs/phase5-01-step-e-testspec → merge 2a49e7da6cdb05f4ff0b6f25ccafd52b8014783e
+- PR #922 docs/phase5-01-step-f-freeze（本Final Report・Freeze Gate・evidence）
+  → merge後の真の最終GitHub main SHAはGitHubを正本として取得（下記25）
+
+------------------------------------------------------------
+25. 最終4系統同期（予定）
+------------------------------------------------------------
+- Final Report merge後にlocal main / origin/main / GitHub main / rebuild/integrated-system を同期確認
+- 真の最終GitHub main SHA: GitHub正本から取得
+
+------------------------------------------------------------
+26. verdict
+------------------------------------------------------------
+- Phase 5-01 COMPLETE
+- Phase 5全体完全設計・Design Freeze完了
+- Design Freeze Gate = PASS
+- Phase 5-02 readiness = READY
+- 各Step細かいPRでmain merge済み
+- screenshots・Final ReportをDiscordへ送信済み
+
+------------------------------------------------------------
+27. STOP確認
+------------------------------------------------------------
+Phase 5-01 COMPLETE。
+Phase 5全体完全設計・Design Freeze完了。
+Design Freeze Gate PASS。
+Phase 5-02 readiness READY。
+Phase 5-02実装へは進まずSTOPした。
