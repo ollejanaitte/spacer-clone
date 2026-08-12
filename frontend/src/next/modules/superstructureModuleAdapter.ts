@@ -10,6 +10,7 @@ import { readModuleFromManager, writeModuleToManager } from "./adapter";
 import type { ModuleDataRecord } from "./contract";
 import { SUPERSTRUCTURE_MODULE_ID, createSuperstructureModuleRecord, validateSuperstructureData } from "./superstructureModule";
 import type { SuperstructureDocument } from "./superstructure/superstructureTypes";
+import { serializeSuperstructureDocumentForPersistence } from "./superstructure/superstructurePersistence";
 
 export type SuperstructureModuleAdapterResult =
   | { ok: true; superstructureDocument: SuperstructureDocument | undefined }
@@ -34,9 +35,13 @@ export function writeSuperstructureDocument(
     return { ok: false, reason: "project-not-found" };
   }
   const base: ModuleDataRecord = existing ?? createSuperstructureModuleRecord();
+  // Persist the canonical form (derived arrays are transient, per E-01).
+  const persisted = document !== undefined
+    ? serializeSuperstructureDocumentForPersistence(document)
+    : undefined;
   const nextData: Record<string, unknown> = {
     ...base.data,
-    ...(document !== undefined ? { superstructureDocument: document } : {}),
+    ...(persisted !== undefined ? { superstructureDocument: persisted } : {}),
   };
   const issues = validateSuperstructureData(nextData);
   if (issues.length > 0) {

@@ -123,6 +123,12 @@ export type {
   SuperstructureHandoffBearingSeat,
   SuperstructureHandoffReaction,
 } from "./superstructure/superstructureHandoff";
+export {
+  serializeSuperstructureDocumentForPersistence,
+  deserializeSuperstructureDocumentFromPersistence,
+  regenerateSuperstructureDerived,
+} from "./superstructure/superstructurePersistence";
+export type { DeserializeResult } from "./superstructure/superstructurePersistence";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
