@@ -78,3 +78,9 @@ export {
   normalizeSeatId,
 } from "./substructure/substructurePhase5Adapter";
 export type { Phase5AdapterResult } from "./substructure/substructurePhase5Adapter";
+
+export {
+  buildSubstructurePlacement,
+  applySubstructurePlacement,
+} from "./substructure/substructurePlacement";
+export type { PlacementResult } from "./substructure/substructurePlacement";
