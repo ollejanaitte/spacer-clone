@@ -1,0 +1,290 @@
+統合設計 Phase 5-00 Final Report
+============================================================
+作業名: 設計順序転換＋既存上部工資産・Connector監査
+Phase: Phase 5-00
+完了日時(JST): 2026-08-12 18:05 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 4「Bridge Layout」COMPLETE後に、正式設計順序を
+  Bridge Layout → 上部工 → 下部工
+へ転換した。
+
+上部工本体の大規模実装は行わず、以下の監査・整理・最小修正を実施した。
+  1. 設計順序の正式転換（モジュール順序・UI・docs）
+  2. メイン画面・業務一覧・readiness・説明文の新順序化
+  3. Phase 4 Handoffの意味再整理
+  4. 既存上部工資産の網羅監査（inventory）
+  5. Connector / Adapter / Binding / Contract / Schema 監査
+  6. Geometry / 計算 / 3D / Persistence / UI / tests 監査
+  7. KEEP / ADAPT / REWRITE / DEFER 分類
+  8. 新Project Data Core / BridgeLayoutDocument への再接続方針確定
+  9. Phase 5-01「Superstructure Contract」開始条件確定
+
+------------------------------------------------------------
+2. baseline / git 状態
+------------------------------------------------------------
+baseline SHA: 4d6beacf3d06d83635416c4d1d27081f4faaaf2b
+  （PR #911 merge後の真のGitHub mainを確認して確定）
+
+既存dirty差分（Phase 5-00開始時・破棄せず記録のみ）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/load.json（modified）
+  - docs/apollo/step4c_appurtenance_haunch/evidence/quantity.json（modified）
+  - docs/apollo/step4c_appurtenance_haunch/evidence/stl-metadata.json（modified）
+  - final_report.txt（deleted、canonical repoのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked、next worktreeのみ）
+これらはPhase 5-00成果へ混入させていない。
+
+------------------------------------------------------------
+3. Step A〜E 結果
+------------------------------------------------------------
+[Step A] 既存上部工資産inventory
+  - 上部工は3系統並立: BridgeProject統合チェーン / Apolloパイプライン / 新PDC superstructure module（空slot）
+  - GeometrySnapshot（v6.1.0）が凍結ジオメトリ正本。唯一producer: DefaultGeometryEngine
+  - buildBridgeProjectSuperstructureはプロダクションdead（testのみ）
+  - 全数値結果はNOT_AUTHORIZED / UNVERIFIED_DEVELOPMENT_ONLYゲート
+  - 成果物: docs/rebuild/phase5/Phase5-00A_superstructure_asset_inventory.md（PR #912）
+
+[Step B] Connector / Adapter / Binding / Contract / Schema監査
+  - Connector概念（CONN-001〜017）を監査。LINER単一正本・正本再実装禁止原則を確認
+  - KEEP: 3D/STL/配置/表示（CONN-006/007/010/012/013/014）
+  - ADAPT: LINER/BSDD/Drawing/Report/Substructure系
+  - REPLACE/REMOVE: 旧値仮定・旧UI・旧永続化（003/004/011/016）
+  - superstructureAdapter=ADAPT / superstructureBinding=ADAPT(KEEP寄り) / projectSuperstructure=ADAPT
+  - 新PDCを正本とするcompatibility boundaryを定義
+  - 成果物: docs/rebuild/phase5/Phase5-00B_connector_adapter_binding_contract_audit.md（PR #913）
+
+[Step C] 資産分類＋Migration Map
+  - Geometry / 計算 / 3D / Persistence / UI / tests の全監査
+  - KEEP / ADAPT / REWRITE / DEFER 総合分類（全判定根拠付き）
+    KEEP: GeometrySnapshot/Engine・sectionProperties・3D solids・新PDC・substructure handoff境界
+    ADAPT: superstructureAdapter/Binding/projectSuperstructure・integrity gate・registry・UI
+    REWRITE: bridge_fem_generator.py・RB-001ハードコード・旧viewer変換・旧saveDocument
+    DEFER: 荷重/FEM/反力/詳細設計/図面/数量/成果品
+  - 旧→新Migration Map完成
+  - 成果物: docs/rebuild/phase5/Phase5-00C_asset_classification_migration_map.md（PR #914）
+
+[Step D] 設計順序転換＋UI最小修正
+  - registry / schema: モジュール順を「橋梁配置→上部工→下部工」へ変更
+    （下部工dependenciesにsuperstructureを追加）
+  - Integrity Gate意味整理:
+    phase5Ready（上部工）= Span Handoff成立＋Support Handoff成立（共通参照）
+    phase6Ready（下部工）= Support Handoff成立
+  - UI最小修正: Support Handoff（共通Support配置情報）/ Span Handoff（Phase 5上部工向け）/
+    Phase 5上部工 readiness / Phase 6下部工 readiness
+  - docs: Phase4-04 handoff設計・README・R0-04・R0-09 更新
+  - tests追随・検証（src/next 447 PASS / typecheck / lint）
+  - 成果物: PR #915（feat/phase5-00-design-order）
+
+[Step E] 検証・readiness・Final Report
+  - Electron実起動＋screenshots 6枚取得・Terra(read-only)で画像検証PASS
+  - Phase 5-01 readiness確定
+  - 本Final Report作成
+
+------------------------------------------------------------
+4. 新設計順序（正式化）
+------------------------------------------------------------
+  道路 → 地形・現況 → 橋梁配置 → 上部工 → 下部工 → FEM / 構造解析 → 統合3D / CIM → 成果品
+
+旧UI順序: 道路 → 地形 → 橋梁配置 → 下部工 → 上部工 → FEM → CIM → 成果品（下部工/上部工逆順）
+変更後: 上部工がPhase 5、下部工がPhase 6。
+
+------------------------------------------------------------
+5. Phase 4 Handoff意味変更
+------------------------------------------------------------
+旧:
+  Support Handoff → Phase 5下部工
+  Span Handoff    → Phase 6上部工
+
+新:
+  Span Handoff    → Phase 5上部工の正式入口
+  Support Handoff → 共通Support配置情報
+                     Phase 5上部工でも参照
+                     Phase 6下部工でも参照
+
+- Phase 4のデータ構造は破壊していない（互換性維持）
+- 意味・表示・readiness・説明文を修正
+
+------------------------------------------------------------
+6. inventory 一覧（Step A成果物要約）
+------------------------------------------------------------
+詳細は docs/rebuild/phase5/Phase5-00A_superstructure_asset_inventory.md 参照。
+- bridgeProject/（superstructureAdapter/Binding/projectSuperstructure/bridgeGeometryGenerator/alignmentAdapter/alignmentReconstruction/cbdmDocument/integratedScene3d/substructureBinding等）
+- apollo/geometry/（GeometrySnapshot/Engine/CommonModelGeometryInputAdapter/LinerAlignmentConnector/placement等）
+- apollo/components/（SuperstructurePipelinePanel他16パネル）
+- apollo/design・loads・analysis・bridgeStructure・visualization・export・replay
+- contracts/（bridgeSuperstructureDesignDocument 1420行・schema 3514行・bridgeProject・CBDM・roadDesignDocument等）
+- next/（PDC・modules.superstructure空slot）
+- backend/（grillage.py・solver.py・bridge_fem_generator.py・rule_engine）
+- tests / fixtures（bridgeProject 15・apollo 97・substructure 48・next 67・viewer 22・if3 5・contracts 8・backend 86・liner ~164）
+
+------------------------------------------------------------
+7. Connector / Adapter / Binding 監査結果
+------------------------------------------------------------
+- Connector: CONN-001〜017を監査。LINER単一正本を新システムでも維持
+  KEEP: CONN-006/007/010/012/013/014 / ADAPT: CONN-001/002/005/008/009/015/017
+  REPLACE: CONN-003/004/016 / REMOVE: CONN-011
+- Adapter: superstructureAdapter=ADAPT（producer配線が必要）/ CommonModelGeometryInputAdapter=ADAPT
+  / LinerAlignmentConnector=ADAPT / 新PDCアダプタ群=KEEP
+- Binding: superstructureBinding=ADAPT(KEEP寄り・fail-closed不変条件維持) / substructureBinding=ADAPT(DEFER寄り)
+
+------------------------------------------------------------
+8. Contract / Schema 監査結果
+------------------------------------------------------------
+- BSDD（bridgeSuperstructureDesignDocument v0.1.0）: ADAPT（Phase 5-01でID/reference境界整理。schema変更はPhase 5-01以降）
+- bridgeProject.ts / CBDM: ADAPT（historical reference化）
+- roadDesignDocument: KEEP（新Road Module正本）
+- BridgeLayoutDocument（新）: KEEP（Phase 5上部工の入力正本）
+- support-interface.schema.json: KEEP（Phase 6下部工Handoff境界）
+
+------------------------------------------------------------
+9. Geometry / 計算 / 3D / Persistence / UI / tests 監査
+------------------------------------------------------------
+- Geometry: GeometrySnapshot/Engine=KEEP（凍結契約）。renderCoordinateが新座標規約正本
+- 計算: sectionProperties=KEEP / grillage+solver=KEEP / 荷重・FEM・詳細設計=DEFER / bridge_fem_generator=REWRITE
+- 3D: snapshot3d/solids/STL=KEEP / integratedScene3d=ADAPT(DEFER) / 旧viewer=DEFER
+- Persistence: next/persistence=KEEP / projectSuperstructure=ADAPT / 旧saveDocument=DEFER
+- UI: registry/schema/ProjectTopPage/BridgeLayoutModuleShellPage=ADAPT（Step Dで実施済み）
+- tests: 全regression維持（詳細は14）
+
+------------------------------------------------------------
+10. KEEP / ADAPT / REWRITE / DEFER 分類
+------------------------------------------------------------
+詳細は docs/rebuild/phase5/Phase5-00C_asset_classification_migration_map.md 参照。
+- KEEP: GeometrySnapshot/Engine・sectionProperties・grillage backend・3D solids・新PDC全体・
+        substructure designEngine枠組み・superstructureInterface/Envelope・既存regression tests
+- ADAPT: superstructureAdapter/Binding/projectSuperstructure・CommonModelGeometryInputAdapter・
+        LinerAlignmentConnector・generateBsdd・loadモデル・report/quantity/drawing・
+        integrity gate・registry・schema・UI（Step D対象）
+- REWRITE: backend/engine/bridge_fem_generator.py・RB-001ハードコード入力・旧viewer変換・旧saveDocument
+- DEFER: 荷重計算/FEM/反力本計算・主桁自動設計/床版/横桁/横構/支承詳細・図面/計算書/数量/成果品・
+        CASE B再構築・rule_engine・旧FEM viewer
+
+------------------------------------------------------------
+11. Migration Map
+------------------------------------------------------------
+詳細は docs/rebuild/phase5/Phase5-00C_asset_classification_migration_map.md 参照。
+
+旧: BridgeProject（CBDM+manifest+sidecar）/ Apollo（GeometrySnapshot/BSDD/3D/STL/出力）
+    / 既存Superstructure資産 / 旧Binding・Adapter・schema
+        ↓（compatibility boundaryとして維持: 計算・Geometry・3D・出力の実行層）
+新: Project Data Core（正本・永続化）
+    - modules.road / terrain（KEEP・referenceのみ）
+    - modules.bridgeLayout → BridgeLayoutDocument（唯一正本）
+         ├─ Span Handoff → Phase 5上部工の正式入口
+         └─ Support Handoff → 共通Support配置情報（Phase 5上部工・Phase 6下部工参照）
+    - modules.superstructure → SuperstructureDocument（Phase 5-01で集約予定）
+         ├─ superstructureAdapter（ADAPT）→ shared facts
+         ├─ superstructureBinding（ADAPT）→ GeometryEngineInput
+         ├─ 既存Geometry/計算/3D/Analysis（KEEP）を実行層として利用
+         └─ Bearing / Reaction Handoff → Phase 6下部工へ
+    - modules.substructure（Phase 6）→ superstructureEnvelope / support-interface（KEEP）
+    - modules.analysis（FEM）/ modules.cim（統合3D・renderCoordinate）/ modules.deliverables（成果品）
+
+正本境界: Project最上位 / BridgeLayoutDocument唯一 / SuperstructureDocument上部工正本（予定）
+         旧BridgeProject・Apolloを新正本にしない / Connector内に別正本を作らない
+         Road/Terrain/Existingを上部工へ複製しない / Viewer表示変換で正本を書き換えない
+
+------------------------------------------------------------
+12. 下部工への将来Handoff見通し（Phase 6）
+------------------------------------------------------------
+- support-interface（bearingSeats/girderBottomElevation/deckElevation/reactionCases）が
+  上部工→下部工交換schemaとしてKEEP
+- superstructureEnvelope.tsが上部工3D envelope（girder band/deck band）を生成
+- substructure designEngine枠組み（HOLD_NOT_AVAILABLE）はPhase 6で再利用
+- 上部工成果（bearing位置・support標高・反力・荷重・envelope）をPhase 6下部工へ接続可能
+- 現状: 反力は全経路で「入力データ」のみ・数値設計は未使用（fail-closed）→ Phase 6で適正化
+
+------------------------------------------------------------
+13. Phase 5-01 readiness
+------------------------------------------------------------
+詳細は docs/rebuild/phase5/Phase5-00E_phase5-01_readiness.md 参照。
+- SuperstructureDocument最小Contract候補（BSDDベース・ID/reference整理）確定
+- Span Handoff＝正式入口 / Support Handoff＝共通Support配置情報の利用方針確定
+- 既存Adapter再利用方針確定（superstructureAdapter/BindingをADAPT）
+- 最初の最小縦断: Contract定義 → module登録 → Handoff読込+初期生成 → 上部工Shell+3D → Persistence+tests
+- Phase 5-01で実装してよい範囲: 上部工正本Contract＋PDC接続のみ
+- Phase 5-01で実装してはいけない範囲: 自動設計/床版/横桁/横構/支承詳細/荷重/FEM/反力/図面/成果品/下部工本体
+
+------------------------------------------------------------
+14. tests / regression / Electron / typecheck / lint / build
+------------------------------------------------------------
+- src/next: 67 files / 447 tests PASS
+- bridgeProject + contracts: 30 files / 396 tests PASS
+- apollo/geometry + bridgeStructure + substructure design: 15 files / 90 tests PASS
+- regression golden（vitest.regression.config）: 6 tests PASS
+- typecheck: tsc -b PASS（exit 0）
+- lint: frontend source hygiene check PASS / japanese strings check exit 0（informational）
+- build: vite build PASS（apollo mode）
+- electron:compile PASS（tsc -p desktop/electron）
+- Electron実起動: Playwright _electron.launch で起動・描画・操作を確認（SPACER_AUTOMATION=1）
+- 既知問題: なし（Step D起因の新規問題なし。pre-existingのdirty差分は未変更）
+
+------------------------------------------------------------
+15. Codex CLI利用結果
+------------------------------------------------------------
+- GPT-5.6 Terra（read-only sandbox）: スクリーンショット2枚を画像検証
+  - p5-00-04: モジュール順「道路→地形・現況→橋梁配置→上部工→下部工→FEM→CIM→成果品」を確認
+  - p5-00-05: Support Handoff（共通Support配置情報）/ Span Handoff（Phase 5上部工向け）/
+    Phase 5上部工 readiness表記を確認。表示崩れなし
+- GPT-5.6 Luna / Sol: 本作業中capacity制限（Terraで代替・read-only遵守）
+- Codex利用前後でgit status/diff確認済み。差分は増えていない
+
+------------------------------------------------------------
+16. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase5/evidence/
+  - p5-00-01-home.png（ホーム: 業務から設計 / クイック解析）
+  - p5-00-02-business-list.png（業務一覧）
+  - p5-00-03-business-created.png（業務一覧: 作成後）
+  - p5-00-04-project-top-order.png（Projectトップ: 設計モジュール新順序）
+  - p5-00-05-completion-gate-handoff.png（Phase 4 Completion Gate: Handoff新意味・readiness表記）
+  - p5-00-06-bridge-layout-module.png（橋梁配置モジュール全体）
+Discord Webhookへ画像実ファイルとして添付送信済み（HTTP 204確認）。
+
+------------------------------------------------------------
+17. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: 4d6beacf3d06d83635416c4d1d27081f4faaaf2b（PR #911 merge後・GitHub main確認）
+- PR #912 docs/phase5-00-step-a-inventory → merge d43c5da3b7a203c6c09f2c4c4d6cba74c7fe7871
+- PR #913 docs/phase5-00-step-b-audit → merge 0728963b327f53a0c0bc728c0e9bc0d33f5e3267
+- PR #914 docs/phase5-00-step-c-classification → merge 2a24710941715e2c938c3f3c0f59e8789e2078c9
+- PR #915 feat/phase5-00-design-order → merge 019d304dffc7b1720565ee41960a95f67a0e65da
+- PR #916 docs/phase5-00-step-e-final（本Final Report + readiness + evidence）
+  → merge後の真の最終GitHub main SHAはGitHubを正本として取得（下記18）
+
+------------------------------------------------------------
+18. 未解決事項
+------------------------------------------------------------
+- 既存dirty差分（evidence JSON 3件・final_report.txt削除・untracked報告txt）は
+  今回の成果物とは無関係に残存。破棄せずそのまま。
+- SuperstructureDocumentの正確な型形状はPhase 5-01で設計判断（BSDDとの差分吸収）。
+- Existing Conditionsがmoduleでなくmetadata配下の構造的非整合は既知（Phase 5-00では未変更）。
+- projectSchema strictObjectのmodule登録3重変更はPhase 5-01で手順化。
+
+------------------------------------------------------------
+19. verdict
+------------------------------------------------------------
+- Phase 5-00 COMPLETE
+- 新設計順序正式化（上部工→下部工）
+- メイン画面・業務順序整理
+- Phase 4 Handoff意味確定（Span→Phase 5上部工 / Support→共通）
+- inventory・Connector/Adapter/Binding/Contract/Schema監査完了
+- Geometry/計算/3D/Persistence/UI/tests監査完了
+- KEEP/ADAPT/REWRITE/DEFER分類完了
+- Migration Map完成
+- 新Project Data Core接続方針確定
+- Phase 6下部工Handoff境界確認
+- Phase 5-01 readiness判定完了
+- 必要tests・regression・Electron・typecheck・lint・build・screenshots PASS
+- 各Step細かいPRでmain merge済み
+- 最終4系統同期済み
+
+------------------------------------------------------------
+20. STOP確認
+------------------------------------------------------------
+Phase 5-00 COMPLETE。
+設計順序転換＋既存上部工資産・Connector監査完了。
+Phase 5-01 readiness判定完了。
+Phase 5-01へは進まずSTOPした。
