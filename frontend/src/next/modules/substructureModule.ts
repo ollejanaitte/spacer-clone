@@ -70,3 +70,11 @@ export {
   SubstructurePhase4AdapterError,
 } from "./substructure/substructurePhase4Adapter";
 export type { Phase4AdapterResult } from "./substructure/substructurePhase4Adapter";
+
+export {
+  buildBearingReactionFromHandoff,
+  attachPhase5ToDocument,
+  mapCombinationToCaseKind,
+  normalizeSeatId,
+} from "./substructure/substructurePhase5Adapter";
+export type { Phase5AdapterResult } from "./substructure/substructurePhase5Adapter";

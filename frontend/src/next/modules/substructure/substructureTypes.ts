@@ -112,7 +112,7 @@ export interface BearingSeatReference {
     readonly transverseAxis: { x: number; y: number; z: number };
     readonly verticalAxis: { x: number; y: number; z: number };
   };
-  readonly bearingType: "rubber" | "pot" | "fixed" | "custom" | null;
+  readonly bearingType: "elastomeric" | "pot" | "fixed" | "custom" | null;
   readonly fixedOrMovable: "FIXED" | "MOVABLE" | "UNDECIDED";
   readonly longitudinalDirection: "+station" | "-station" | null;
   readonly transverseDirection: "L" | "R" | null;
