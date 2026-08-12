@@ -76,6 +76,11 @@ export {
   buildBearingConfiguration,
 } from "./superstructure/superstructureComponents";
 export type { SupportStation } from "./superstructure/superstructureComponents";
+export {
+  buildSuperstructureSceneGroup,
+  addSuperstructureToScene,
+} from "./superstructure/superstructureSceneBuilder";
+export type { SuperstructureSceneBuildResult } from "./superstructure/superstructureSceneBuilder";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
