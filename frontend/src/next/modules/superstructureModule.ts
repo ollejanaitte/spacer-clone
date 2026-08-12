@@ -98,6 +98,19 @@ export {
   LC_DECK,
 } from "./superstructure/superstructureAnalysisAdapter";
 export type { SuperstructureAnalysisInput, SuperstructureNodalLoad, AnalysisRunner, ReactionSnapshot } from "./superstructure/superstructureAnalysisAdapter";
+export {
+  runBasicChecks,
+  withDesignCheckResults,
+  CHECK_SECTION_PROPERTIES,
+  CHECK_GIRDER_BENDING,
+  CHECK_GIRDER_SHEAR,
+  CHECK_GIRDER_DEFLECTION,
+  CHECK_CROSSBEAM,
+  CHECK_BEARING,
+} from "./superstructure/superstructureBasicChecks";
+export type { BasicCheckInputs } from "./superstructure/superstructureBasicChecks";
+export { REFERENCE_DESIGN_CONDITIONS } from "./superstructure/superstructureDesignConditions";
+export type { DesignConditions } from "./superstructure/superstructureDesignConditions";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
