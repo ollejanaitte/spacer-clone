@@ -122,3 +122,9 @@ export {
 export type { SubstructureSceneBuildResult } from "./substructure/substructureSceneBuilder";
 export { generateSubstructureFromLayout } from "./substructure/substructureGenerator";
 export type { GenerateSubstructureResult } from "./substructure/substructureGenerator";
+
+export {
+  runSubstructureIntegrityGate,
+  runSubstructureIntegrityGateAfterRestore,
+} from "./substructure/substructureIntegrityGate";
+export type { SubstructureIntegrityResult } from "./substructure/substructureIntegrityGate";
