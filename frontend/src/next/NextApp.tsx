@@ -24,6 +24,7 @@ import { ModuleShellPage } from "./pages/ModuleShellPage";
 import { RoadModuleShellPage } from "./pages/RoadModuleShellPage";
 import { TerrainModuleShellPage } from "./pages/TerrainModuleShellPage";
 import { BridgeLayoutModuleShellPage } from "./pages/BridgeLayoutModuleShellPage";
+import { SuperstructureModuleShellPage } from "./pages/SuperstructureModuleShellPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
@@ -129,8 +130,10 @@ export function NextApp() {
             <RoadModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "terrain" ? (
             <TerrainModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
-          ) : route.moduleId === "bridgeLayout" ? (
+          ) :           route.moduleId === "bridgeLayout" ? (
             <BridgeLayoutModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
+          ) : route.moduleId === "superstructure" ? (
+            <SuperstructureModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : (
             <ModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           );
