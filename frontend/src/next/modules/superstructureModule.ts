@@ -69,6 +69,13 @@ export {
   toVerticalAlignmentDraft,
 } from "./superstructure/superstructureGeometry";
 export type { GenerateSnapshotResult, RoadModuleInputs } from "./superstructure/superstructureGeometry";
+export {
+  computeSuperstructureSectionProperties,
+  buildCrossBeamConfiguration,
+  buildCrossFrameConfiguration,
+  buildBearingConfiguration,
+} from "./superstructure/superstructureComponents";
+export type { SupportStation } from "./superstructure/superstructureComponents";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
