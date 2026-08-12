@@ -55,6 +55,9 @@ describe("Superstructure generator (WP-J E2E)", () => {
     expect(result.document.bridgeLayoutReference?.bridgeId).toBe("BR-900");
     expect(result.document.structuralSystem.bridgeSystem).toBe("CONTINUOUS");
     expect(result.document.girderConfiguration.girderCount).toBe(2);
+    // bearing seats populated (support x girder)
+    expect(result.document.bearingConfiguration.bearingSeats.length).toBeGreaterThan(0);
+    expect(result.document.bearingConfiguration.bearingSupportRelation.length).toBe(result.document.bearingConfiguration.bearingSeats.length);
 
     // read back (derived stripped) + regenerate -> gate PASS
     const readBack = readSuperstructureDocument(manager, projectId)!;
