@@ -70,6 +70,8 @@ export {
 export type { OrderedSupport, AddPierInput } from "./bridgeLayout/bridgeLayoutPiers";
 export { generateSpans, validateSpanConfiguration, describeSpans } from "./bridgeLayout/bridgeLayoutSpans";
 export type { ValidateSpanConfigurationInput } from "./bridgeLayout/bridgeLayoutSpans";
+export { buildSupportHandoff, SUPPORT_HANDOFF_SCHEMA_VERSION } from "./bridgeLayout/bridgeLayoutSupportHandoff";
+export type { SupportHandoff, SupportHandoffItem, SupportHandoffResult } from "./bridgeLayout/bridgeLayoutSupportHandoff";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
