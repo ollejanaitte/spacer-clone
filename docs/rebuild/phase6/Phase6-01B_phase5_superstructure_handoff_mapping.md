@@ -61,12 +61,17 @@ SuperstructureHandoff {
 | signConvention | **6課題1解決**（up-positive統一） | sign規約 | — | no | — | 明示 |
 | authorizationStatus | **維持（NOT_AUTHORIZED）** | designInputs | — | no | — | 正式設計へ自動採用しない |
 
-### 3.4 その他
+### 3.4 ReactionCaseData型の拡張（凍結）
+- 既存`ReactionCaseData`にはcombinationId/seatId/unit/signConvention/authorizationStatusが無い
+- **新型を定義**（metadata拡張）: `Phase6ReactionCaseData = ReactionCaseData & { combinationId, seatId, unit, momentUnit, signConvention, authorizationStatus }`
+- Contract（A）に明記し、Phase 6-02で実装
+
+### 3.5 その他
 
 | Phase 5 field | target | nullable | 扱い |
 |---|---|---|---|
-| girderBottomElevation | derived（**6課題6解決**） | yes | 宣言値から導出・無い場合はNOT_AVAILABLE |
-| deckElevation | derived | yes | 同上 |
+| girderBottomElevation | **Record<supportId, number\|null>をsupport単位に解決**（6課題6） | derived | yes | 宣言値から導出・無い場合はNOT_AVAILABLE |
+| deckElevation | Record<supportId, number\|null>をsupport単位に解決 | derived | yes | 同上 |
 | superstructureEnvelope | viewer参照 | yes | 表示用（正本にしない） |
 | selfWeight | designInputs（参考） | yes | 未認証参照 |
 | coordinateContext | coordinateContext | no | — |

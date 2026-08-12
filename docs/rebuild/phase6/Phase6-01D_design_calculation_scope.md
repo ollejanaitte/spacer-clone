@@ -68,7 +68,7 @@ Phase 6-02で「何を実計算として完成させるか」「何をHOLD/DEFER
 | geometricQuantity | 概算数量実計算 |
 | calculationAdapter / adapterMapper | 境界・revision（stale検出） |
 | testCalculationEngine | TEST/MOCK（Phase 6-02維持） |
-| calculationOutput | 計算書CSV/JSON |
+| calculationOutput | 計算書CSV/JSON（**Phase 6-02では内部debug出力のみ**・成果品はDEFER） |
 | designTypes | ReactionCaseData/SuperstructureInput |
 
 ## 7. テスト（T6-DS系）

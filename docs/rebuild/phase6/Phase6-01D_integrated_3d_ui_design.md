@@ -30,6 +30,10 @@ Road + Terrain + Existing + Bridge Layout + Superstructure + Substructure + Foun
 - 配置: 既存SupportPlacementEngine（LINER正本）から実frame
 
 ### 2.3 ID規則（凍結）
+- **entity IDとselection keyを別契約にする**
+  - entity ID（mesh名）: `sub-{supportId}` / `sub-{supportId}-pier` 等
+  - selection key: `sub:{supportId}`（選択同期）
+  - Testはentity IDとselection keyを別assertで検証
 
 | 対象 | ID |
 |---|---|
@@ -99,7 +103,7 @@ Project
 
 | 資産 | 利用 |
 |---|---|
-| substructureViewer3D / threeFactory | 3D（renderCoordinate統一） |
+| substructureViewer3D / threeFactory | 3D（**ADAPT**・renderCoordinate統一・旧route座標回帰test追加） |
 | geometryBase / SolidGenerator | solid生成 |
 | PlanProjection | 2D |
 | planning UI一式 | 編集UI |

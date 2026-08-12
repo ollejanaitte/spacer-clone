@@ -105,7 +105,9 @@ interface SubstructureDocument {
 - fail-closed: Handoff ok=falseならderived更新不可
 
 ### 4.12 bearingReactionReferences — D / SUP（生成元: buildSuperstructureHandoff）
-- 実体: `{ handoffId, schemaVersion, generatedAt, bearingSeats, reactionCases, girderBottomElevation, deckElevation, superstructureEnvelope, selfWeight, authorizationStatus }`
+- 実体: `{ handoffId, schemaVersion, generatedAt, bearingSeats, reactionCases, girderBottomElevation: Record<supportId, number|null>, deckElevation: Record<supportId, number|null>, superstructureEnvelope, selfWeight, reactionStatus, authorizationStatus }`
+  - **標高は `Record<supportId, number|null>`**（support単位に解決する変換を明記）
+  - `authorizationStatus` はSuperstructureDocumentのreactionStatusから**明示転送**する（v1 Handoffに存在しない場合は`NOT_AUTHORIZED`を既定）
 - **transient**（restore時にSuperstructureDocumentから再生成）
 - 未認証Reaction（NOT_AUTHORIZED）は**入力データとして保持**（正式設計計算へ自動採用しない）
 
@@ -144,7 +146,8 @@ interface SubstructureDocument {
 
 ### 4.18 terrainReferences — R / TERRAIN
 - `{ moduleId:"terrain", surfaceReference, coordinateContextId }`・supportごとのgroundElevationはderived参照
-- 必須（基礎高さ計算）・欠落はwarning（geometryは生成可・embedmentは保留）
+- **層別条件（凍結）**: reference containerは**必須**・resolved target（surface/ground）は**nullable**・embedment計算だけが**NOT_AVAILABLE**（Terrain未解決時）
+- 欠落はwarning（geometry生成は可・embedment保留・fail-open明示）
 
 ### 4.19 existingReferences — R / EXT
 - `{ moduleId:"terrain", documentReferenceId }`・interference情報はderived参照
@@ -162,6 +165,7 @@ interface SubstructureDocument {
 - runDesign出力（geometricQuantity実計算・全構造照査HOLD_NOT_AVAILABLE）
 - designStatus: `NOT_AUTHORIZED|INCOMPLETE|READY|STALE|OK|NG|WARNING|ERROR`
 - **NOT_AUTHORIZED自動昇格禁止**
+- **legacy status変換表（凍結）**: 旧`hold_not_available` → 新`reactionStatus: "NOT_AVAILABLE"` + `designStatus`未変化・旧`NOT_AUTHORIZED` → 新`NOT_AUTHORIZED`維持
 
 ### 4.23 quantityResults — D / SUB
 - 概算数量（体積/杭長）・実計算値（DERIVED）
@@ -177,7 +181,8 @@ interface SubstructureDocument {
 1. BridgeLayoutDocument未設定 → SubstructureDocument write reject
 2. Phase 4 Support Handoff / Phase 5 Handoff ok=false → derived更新不可（readonly参照可）
 3. schemaVersion不整合 → parse/write reject
-4. support必須入力欠落（supportId/placement/shape）→ write reject（MISSINGは許容・発明しない）
+4. support必須入力欠落（supportId/placement/shape）→ **Gate validation**（VALIDATED条件）でreject。
+   **DRAFT状態の保存**はpartial/MISSING許容（二段階validation・凍結）
 5. designStatus / reactionStatus の NOT_AUTHORIZED **自動昇格禁止**
 6. 未認証Reactionからの正式設計PASS生成禁止（HOLD_NOT_AVAILABLE維持）
 7. composite等の合成規約違反 reject
@@ -190,7 +195,7 @@ interface SubstructureDocument {
 | SubstructureDocument（canonical入力・reference群・status） | **保存** | modules.substructure.data 内 |
 | supportReferences / bearingReactionReferences / bearingSeatReferences（derived） | **transient（非保存）** | restore時にHandoff再生成＋一致検証 |
 | geometryReference（fingerprint） | 保存（fingerprintのみ） | 本体は再生成 |
-| designResults / quantityResults（digest） | digestのみ保存 | 再計算で再現 |
+| designResults / quantityResults | **PersistedSubstructureDocumentDTO（別定義）にdigestのみ保存** | runtime型と永続化DTOを分離・restore時にparse/再計算で復元 |
 | validation | 直近のみ保存 | 再検証で上書き |
 
 ## 7. 既存資産との対応

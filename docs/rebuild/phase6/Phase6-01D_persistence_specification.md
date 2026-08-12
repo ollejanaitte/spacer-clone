@@ -45,7 +45,7 @@ import
 | 対象 | 保存 | 備考 |
 |---|---|---|
 | SubstructureDocument（canonical入力・reference群・status） | **保存** | modules.substructure.data 内 |
-| supportReferences / bearingReactionReferences（derived） | **transient（非保存）** | restore時にHandoff再生成＋一致検証 |
+| supportReferences / bearingReactionReferences / **bearingSeatReferences**（derived） | **transient（非保存）** | restore時にHandoff再生成＋一致検証 |
 | geometryReference（fingerprint） | 保存（fingerprintのみ） | 本体は再生成 |
 | designResults / quantityResults | digestのみ保存 | 再計算で再現 |
 | validation | 直近のみ保存 | 再検証で上書き |
@@ -56,9 +56,15 @@ import
 - derived: supportReferences / bearingReactionReferences / bearingSeatReferences / geometryReference / designResults / quantityResults
 - transient: derived arrays（永続化DTOから除外）
 
+## 4.5 PersistedSubstructureDocumentDTO（凍結）
+- runtime型（designResults/quantityResults/validationが必須実体）と永続化DTOを分離
+- `PersistedSubstructureDocumentDTO` = canonical入力 + reference群 + status + digest群（design/geometry/validation digest）
+- parse/restore時にDTO→runtime変換を明記（derived再生成・結果再計算）
+
 ## 5. digest / integrity（凍結）
 
-- geometry fingerprint: 配置由来（決定論）
+- geometry fingerprint digest対象: **全geometry canonical入力（support寸法/footing/pile/bearing）+ upstream reference version**（fingerprintが配置変更・寸法変更・upstream変更で更新）
+- **正規化digest**: Handoffのvolatile field（generatedAt等）を除外した正規化hash（restartごとの不一致回避）
 - design digest: runDesign結果のhash（reload時再計算と突合・STALE検出）
 - integrity: 再生成Handoffのderived一致（不一致→STALE・fail-closed）
 

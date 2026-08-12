@@ -21,6 +21,11 @@ Phase 6-02で照合するGround Truthを事前に凍結する。
 
 ## 3. Expected Data 一覧（凍結）
 
+### 3.0 scenario分割（凍結）
+- **RB-MOUNTAIN**: 山岳サンプル（A1/P1..P7/A2・S-3）のsupport配置・skew・bearing offset検証（SB-01〜04/14/22）
+- **RB-S10-001**: Reference Bridge 001（PR1・S-1）のbearing/標高/reaction入力・quantity golden（S-2）検証（SB-05〜07/15〜21）
+- 両scenarioを混在させず、Gateもscenario別に判定
+
 凡例: tol=tolerance / method=比較方法 / PASS条件
 
 | # | 項目 | Source | Expected | unit | tol | method | PASS条件 |
@@ -29,8 +34,8 @@ Phase 6-02で照合するGround Truthを事前に凍結する。
 | SB-02 | P1..Pn位置（station） | S-3 | P1..P7@100..400 | m | 1e-3 | supportReferences.supports[].station | 全P一致 |
 | SB-03 | support type | S-3 | A1/A2=abutment・P1..P7=pier | — | — | supports[].supportType | 一致 |
 | SB-04 | skew | S-3 | π/2（=1.5707963） | rad | 1e-6 | supports[].skewRad | CCW一致 |
-| SB-05 | bearing seat位置 | S-1 | PR1: y=±2.5 / z=8.0 | m | 1e-2 | bearingSeatReferences（6課題2解決後） | 全seat一致 |
-| SB-06 | bridge seat elevation | S-1 | girderBottomElevation=8.4 | m | 1e-2 | derived（6課題6） | 一致 |
+| SB-05 | bearing seat位置 | S-1 | PR1: y=±2.5 / z=8.0（canonical seatId=BRG-PR1-G1/G2・index 1→G1/2→G2採番・legacySeatId=PR1-BRG-01/02保持） | m | 1e-2 | bearingSeatReferences（6課題2/3解決後） | 全seat一致 |
+| SB-06 | girder bottom elevation | S-1 | girderBottomElevation=8.4 | m | 1e-2 | derived（6課題6） | 一致 |
 | SB-07 | deck elevation | S-1 | deckElevation=10.0 | m | 1e-2 | derived（6課題6） | 一致 |
 | SB-08 | pier height | S-5 | SOURCE_NOT_AVAILABLE | m | — | — | 未確認時は比較しない |
 | SB-09 | cap dimensions | S-5 | SOURCE_NOT_AVAILABLE | m | — | — | 未確認時は比較しない |
@@ -39,8 +44,8 @@ Phase 6-02で照合するGround Truthを事前に凍結する。
 | SB-12 | foundation type | S-5 | SOURCE_NOT_AVAILABLE | — | — | — | 未確認時は比較しない |
 | SB-13 | pile count/diameter/spacing | S-5 | SOURCE_NOT_AVAILABLE | — | — | — | 未確認時は比較しない |
 | SB-14 | terrain elevation | S-3（山岳terrain） | terrainElevation(support位置) | m | 1e-2 | terrainReferences参照 | 一致（Terrain Moduleと） |
-| SB-15 | reaction input | S-1 | PR1 DL-AG1 \|Fz\|=3325.5（permanent） | kN | — | designInputs（NOT_AUTHORIZED） | 受領・正式採用しない |
-| SB-16 | reaction input（live） | S-1 | PR1 LL-MAX-AG1 \|Fz\|=1378.9（liveLoad） | kN | — | 同上 | 受領・正式採用しない |
+| SB-15 | reaction input（canonical符号付き） | S-1 | PR1 DL-AG1 Fz=**+3325.5**（permanent・up-positive・6課題1） | kN | **1%** | designInputs（NOT_AUTHORIZED） | 符号付き一致・正式採用しない |
+| SB-16 | reaction input（live・符号付き） | S-1 | PR1 LL-MAX-AG1 Fz=**+1378.9**（liveLoad） | kN | **1%** | 同上 | 符号付き一致・正式採用しない |
 | SB-17 | quantity total | S-2 | P1 totalConcreteVolume=187.92 | m³ | 1e-2 | quantityResults（geometricQuantity） | 一致 |
 | SB-18 | quantity column | S-2 | 40.32 | m³ | 1e-2 | 同上 | 一致 |
 | SB-19 | quantity footing | S-2 | 126.0 | m³ | 1e-2 | 同上 | 一致 |
@@ -50,7 +55,8 @@ Phase 6-02で照合するGround Truthを事前に凍結する。
 
 ## 4. 未認証値（NOT_AUTHORIZED）
 
-- SB-15/16（reaction入力）: 外部計算書由来の宣言値。Phase 6-02では**入力データとして受領のみ**。
+- SB-15/16（reaction入力）: 外部計算書由来の宣言値。**canonical期待値は符号付き**（+3325.5/+1378.9）。
+  legacy fixture負値との照合は|Fz|（source照合専用）。Phase 6-02では**入力データとして受領のみ**・
   正式設計計算・PASS/FAILへ自動採用しない（fail-closed）
 - SB-21（design status）: HOLD_NOT_AVAILABLE維持（構造照査未認証）
 

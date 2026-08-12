@@ -47,7 +47,7 @@ WP-K（Reference Bridge/Electron E2E/Completion Gate） ← 全WP後
 
 ### WP-C: Phase 5 Bearing/Reaction Handoff Adapter
 - files: `substructurePhase5Adapter.ts`（bearingReaction→document・6課題解決）
-- dependencies: WP-A
+- dependencies: **WP-A/WP-B**（BL照合のため）
 - acceptance: bearingSeats/reactionCases受領・6課題（sign/axis/ID/enum/localFrame/elevation）解決・NOT_AUTHORIZED維持
 - tests: T6-BRG/RXN/ELE/LOC
 - PR: 1本
@@ -71,7 +71,7 @@ WP-K（Reference Bridge/Electron E2E/Completion Gate） ← 全WP後
 
 ### WP-F: Footing / Foundation / Pile
 - files: footing/foundation/pile solid＋配置
-- dependencies: WP-E
+- dependencies: **WP-D**（配置・localFrame基盤。躯体solidはWP-Eで統合）
 - acceptance: buildPileGrid/derivePileLayout利用・pile head/tip
 - tests: T6-GEO-005/006
 - PR: 1本
@@ -95,7 +95,7 @@ WP-K（Reference Bridge/Electron E2E/Completion Gate） ← 全WP後
 
 ### WP-I: Integrated 3D / UI
 - files: `superstructure`→`SubstructureSceneBuilder`（下部工レイヤ）・`SubstructureModuleShellPage`・NextApp dispatch
-- dependencies: WP-E/F/G
+- dependencies: **WP-E/F/G/H**（Design status表示のためWP-H追加）
 - acceptance: 統合シーン（renderCoordinate）・ID規則・UI縦断・新route
 - tests: T6-3D/UI
 - PR: 2本（3D→UI）
@@ -103,7 +103,7 @@ WP-K（Reference Bridge/Electron E2E/Completion Gate） ← 全WP後
 
 ### WP-J: Persistence / restart / .spacerproj
 - files: PDC auto-save対応・derived transient・旧JSON import adapter
-- dependencies: WP-A/C/H
+- dependencies: **WP-A/B/C/D/E/F/G/H**（Support Handoff・placement・Geometry再生成経路のため）
 - acceptance: 縦断完走（save→restart→restore→再生成→.spacerproj）
 - tests: T6-PER
 - PR: 1本

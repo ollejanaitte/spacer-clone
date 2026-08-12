@@ -47,7 +47,8 @@ canonical schema version・version bump・旧document migration・parser寛容�
 - `parseSupportInterface`は現状requiredを要求しない（寛容）
 - 新方針: **strict required（正規）＋lenient（旧互換）**の二段
   - strict: schemaVersion/supportId/supportType/coordinateSystem/unitSystem/position/origin（正規受領）
-  - lenient: 旧fixture（position欠落等）は警告付きで受領（compatibility・fail-open明示）
+  - lenient: 旧fixture（position欠落等）は**構文受領のみ（COMPATIBILITY_ONLY）**・警告付き。
+  正規化後にstrict validationを通らない限り**canonical write禁止**（canonicalへは進めない）
 - runtimeはfrontend parser（validation.ts流儀）をsource of truth
 
 ### 3.5 test fixtures

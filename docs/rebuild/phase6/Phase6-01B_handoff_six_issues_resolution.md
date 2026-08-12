@@ -16,11 +16,13 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 
 ### 正規規約（凍結）
 - **Reactionはup-positive（+z=上向き）を唯一とする**
-- fixtureの負値は「適用荷重（下向き）」の表現であり、RB-12比較は|Fz|で照合
+- **canonical期待値は符号付き**（例: `+3325.5 kN`）。符号変換の誤実装を検出するため符号付きでassert
+- fixtureの負値は「適用荷重（下向き）」の表現。**|Fz|比較はlegacy source照合専用**（canonical検証は符号付き）
 
 ### compatibility rule / conversion
 - Phase 5 Handoff → 下部工: そのまま（up-positive）
 - 外部fixture取り込み時: `reactionFz = -appliedLoadFz`（適用荷重→反力へ符号変換・明示）
+- test: canonical=符号付き`+3325.5`・legacy照合=|Fz|（分離）
 
 ### 旧データ対応 / fail-closed
 - 旧support-interfaceの負値は「適用荷重」と解釈し、反力として採用しない（入力データのみ）
@@ -28,7 +30,7 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 
 ### migration / test
 - T6-RXN-001: up-positive維持
-- T6-RXN-010: fixture負値→|Fz|比較（RB-12）
+- T6-RXN-010: fixture負値→|Fz|比較（legacy source照合・SB-15/16）
 
 ## 3. 課題2: bearingPosition axis mapping
 
@@ -45,8 +47,10 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 - `bearingPosition.z = seat.position.z - support.position.z`
 
 ### 旧データ対応
-- 旧x=transverse形式の受領は不可（sign/axis検証で検出）・新形式のみ受理
-- fail-closed: axis不一致検出（既存seatsのxが大きい/ yが小さい等は警告）
+- lenient parserは**構文受領のみ**（COMPATIBILITY_ONLY・正規化後にstrict validationを通らない限りcanonical write禁止）
+- 旧x=transverse形式: **axis metadata不明時はbinding不可**（変換しない・明示）。axisConvention metadata不一致は**reject**
+- 値分布heuristicは**warning**（fail-closed PASS条件にしない）
+- fail-closed: axisConvention metadata不一致reject / 値分布heuristic warning（別ルール）
 
 ### test
 - T6-BRG-002: transverse→y・longitudinal→x
@@ -63,12 +67,16 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 - canonical seatId: **`BRG-{supportId}-{girderId}`**（決定論的・一意・girder対応可読）
 
 ### compatibility rule
-- Adapter受領時に旧IDを正規化: supportId+girderId（or index）からBRG-{support}-{girder}へ再生成
-- 旧データ（SEAT-系）は受領時にマッピング・warning表示・正規化後使用
+- Adapter受領時に旧IDを正規化: canonical seatId = `BRG-{supportId}-{girderId}`
+- **legacy変換表（凍結）**:
+  - `{supportId}-BRG-{index}`（fixture形式・girderIdなし）→ `BRG-{supportId}-G{index}`（index→girderId採番規則: 1→G1・2→G2）＋元IDを`legacySeatId`として保持
+  - `{supportId}-SEAT-{girderId}`（manifest）→ `BRG-{supportId}-{girderId}`
+  - `{supportId}-SEAT-{index}`（import path）→ index採番
+- 旧データ（SEAT-/BRG-index）は受領時に変換表で正規化・warning表示・正規化後使用
 
 ### fail-closed
 - seatId重複・dangling reject
-- 正規化不能（support/girder不明）reject
+- 正規化不能（support不明・index範囲外）reject
 
 ### test
 - T6-BRG-011: 旧SEAT-ID正規化
@@ -93,10 +101,12 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 | WIND | wind |
 | SEISMIC-L1 | seismicLevel1 |
 | SEISMIC-L2 | seismicLevel2 |
-| 不明 | **permanent（既定）+ warning**（fail-open・明示） |
+| 不明 | **UNKNOWN（NOT_AVAILABLE・非採用）** |
 
 ### fail-closed
-- caseKind enum外はreject（mapping不能時は既定+warning・明示）
+- **不明combinationは `UNKNOWN/NOT_AVAILABLE` として非採用**（`permanent`へ黙示分類しない）
+- caseKind enum外はreject（mapping不能・非採用）
+- 統一: 未知→非採用（fail-openでもrejectでもなく「未採用＋明示」）
 
 ### test
 - T6-RXN-002: DL-/COMBO-1→permanent
@@ -110,12 +120,13 @@ Phase 6-00で判明したPhase 5 Handoffの6課題を設計上解決しFreezeす
 
 ### 正規規約（凍結）
 - support localFrameは**実frame**（GeometrySnapshot support point / LINER由来）
-  - tangent = 接線 / transverse = 横断（skew適用） / vertical = 鉛直
-- Phase 6 Adapterはsnapshot（またはSupport Handoff tangent azimuth）から実frameを組み立て
-- **非直線alignment対応**（曲線橋で恒等frameを使わない）
+  - **入力優先順位（凍結）**: (1) snapshot support point localFrame（実測）→ (2) Support Handoff tangent azimuth から右手系直交化＋skew適用
+  - **右手系正規直交化**を明示（tangent×transverse=vertical・正規化）
+  - **skew適用は一箇所**（base tangent frame→skewed support frameへ。二重適用禁止）
+- **曲線橋で恒等frameを使わない**（非直線対応）
 
 ### fallback
-- frame源が無い場合: identityは **VIEWER_PLACEHOLDER** として明示（正本にしない）
+- frame源が無い場合: identityは **VIEWER_PLACEHOLDER** として明示（正本にしない・status=NOT_AVAILABLE）
 - fail-closed: 正本frameのNOT_AVAILABLEは許容・silent fabrication禁止
 
 ### test

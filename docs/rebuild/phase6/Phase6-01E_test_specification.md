@@ -50,7 +50,7 @@ Phase 6-02実装前にテスト仕様を完成させる。
 | T6-RXN-001 | reaction up-positive・authorization維持 | handoff | up-positive/NOT_AUTHORIZED | sign誤り |
 | T6-RXN-002 | combinationId→caseKind（DL→permanent） | DL-STRUCTURAL | permanent | enum違反 |
 | T6-RXN-003 | LL→liveLoad・未知→既定+warning | LL/unknown | liveLoad/既定 | 不正 |
-| T6-RXN-010 | 外部負値→|Fz|比較（RB-12相当） | fixture | |Fz|一致 | 不一致 |
+| T6-RXN-010 | 外部負値→|Fz|比較（legacy source照合・SB-15/16） | fixture | |Fz|一致 | 不一致 |
 | T6-ELE-001 | girderBottom/deckElevation導出（宣言値） | 宣言 | 導出値 | 不一致 |
 | T6-ELE-002 | 未宣言→NOT_AVAILABLE（+0.25m禁止） | 未宣言 | NOT_AVAILABLE | 発明値 |
 | T6-LOC-001 | localFrame実frame（snapshot） | snapshot | 実frame | identity |
@@ -125,10 +125,14 @@ Phase 6-02実装前にテスト仕様を完成させる。
 | T6-RB-003 | SB-17〜20（quantity golden） | 参照 | 一致 | 不一致 |
 | T6-RB-004 | SB-21（design status） | runDesign | HOLD | 昇格 |
 | T6-RB-005 | SOURCE_NOT_AVAILABLEスキップ | 未定義 | スキップ | 補完 |
-| T6-ELE-001 | Electron smoke（新route） | app起動 | 表示 | 起動失敗 |
+| T6-ELC-001 | Electron smoke（新route） | app起動 | 表示 | 起動失敗 |
 | T6-E2E-001 | 縦断E2E（Create→Layout→Super→Sub→Save→Restart→Restore） | 全flow | 完走 | 途中失敗 |
 | T6-REG-001 | 既存regression（substructure/bridgeProject/apollo/next） | 既存tests | 全PASS | 破壊 |
 | T6-REG-002 | typecheck / lint / build | — | PASS | 失敗 |
+
+## 2.5 共通test属性（凍結）
+- 各testに以下を必ず付与: **command**（`npx vitest run <path>`）/ **evidence**（docs/rebuild/phase6/evidence/）/ **tolerance**（明示）
+- 数値tol: 長さ 1e-3 m・角度 1e-6 rad・力 1%（明示されない場合は既定）
 
 ## 3. Execution
 
