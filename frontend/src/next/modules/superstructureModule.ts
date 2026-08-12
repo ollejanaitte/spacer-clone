@@ -88,6 +88,16 @@ export {
   bridgeLengthMFromSpans,
   STEEL_UNIT_WEIGHT_KN_M3,
 } from "./superstructure/superstructureLoadModel";
+export {
+  buildSuperstructureAnalysisInput,
+  reactionsFromResult,
+  applySuperstructureAnalysisResult,
+  comboOneTotal,
+  defaultAnalysisRunner,
+  LC_STRUCTURAL,
+  LC_DECK,
+} from "./superstructure/superstructureAnalysisAdapter";
+export type { SuperstructureAnalysisInput, SuperstructureNodalLoad, AnalysisRunner, ReactionSnapshot } from "./superstructure/superstructureAnalysisAdapter";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
