@@ -72,6 +72,8 @@ export { generateSpans, validateSpanConfiguration, describeSpans } from "./bridg
 export type { ValidateSpanConfigurationInput } from "./bridgeLayout/bridgeLayoutSpans";
 export { buildSupportHandoff, SUPPORT_HANDOFF_SCHEMA_VERSION } from "./bridgeLayout/bridgeLayoutSupportHandoff";
 export type { SupportHandoff, SupportHandoffItem, SupportHandoffResult } from "./bridgeLayout/bridgeLayoutSupportHandoff";
+export { buildSpanHandoff, SPAN_HANDOFF_SCHEMA_VERSION } from "./bridgeLayout/bridgeLayoutSpanHandoff";
+export type { SpanHandoff, SpanHandoffItem, SpanHandoffResult } from "./bridgeLayout/bridgeLayoutSpanHandoff";
 
 export function createBridgeLayoutModuleRecord(): ModuleDataRecord {
   return {
