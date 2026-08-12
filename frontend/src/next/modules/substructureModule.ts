@@ -105,3 +105,12 @@ export {
   computeSupportEmbedment,
 } from "./substructure/substructureTerrain";
 export type { TerrainResolution, ExistingResolution } from "./substructure/substructureTerrain";
+
+export {
+  computeSubstructureQuantity,
+  computeSupportQuantityFor,
+  runSubstructureDesign,
+  applySubstructureDesign,
+  buildDesignInputs,
+  toModelSupports,
+} from "./substructure/substructureDesign";
