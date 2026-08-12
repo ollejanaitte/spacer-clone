@@ -111,6 +111,18 @@ export {
 export type { BasicCheckInputs } from "./superstructure/superstructureBasicChecks";
 export { REFERENCE_DESIGN_CONDITIONS } from "./superstructure/superstructureDesignConditions";
 export type { DesignConditions } from "./superstructure/superstructureDesignConditions";
+export {
+  buildSuperstructureHandoff,
+  toSupportInterfaceEntry,
+  SUPERSTRUCTURE_HANDOFF_SCHEMA_VERSION,
+} from "./superstructure/superstructureHandoff";
+export type {
+  SuperstructureHandoff,
+  SuperstructureHandoffResult,
+  SuperstructureHandoffSupport,
+  SuperstructureHandoffBearingSeat,
+  SuperstructureHandoffReaction,
+} from "./superstructure/superstructureHandoff";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
