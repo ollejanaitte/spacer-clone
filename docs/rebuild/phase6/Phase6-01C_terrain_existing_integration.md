@@ -25,7 +25,7 @@ Terrain / Existing正本は複製しない（ID/reference接続）。
 | pier height | 同上 |
 | footing top | canonical入力（topElevation） |
 | footing bottom | derived = topElevation - thickness |
-| foundation embedment | derived = ground elevation - footing bottom（or pile head） |
+| foundation embedment | **derived = ground elevation - footingBottomElevation**（正値方向・単位m・統一） |
 | pile head | derived（= footing bottom or 既定） |
 | pile tip | derived（= pile head - pileLength） |
 
@@ -37,7 +37,7 @@ Terrain / Existing正本は複製しない（ID/reference接続）。
 ### 3.1 Existing Conditions reference
 
 - **Existing Conditions（modules.existingConditions）が正本**。下部工側は参照のみ
-- `existingConditionsReference: { moduleId:"terrain", documentReferenceId }`（ID参照）
+- `existingConditionsReference: { moduleId: "existingConditions", documentReferenceId }`（ID参照・ContractのexistingReferencesと同名に統一）
 
 ### 3.2 interference情報
 

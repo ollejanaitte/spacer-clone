@@ -64,7 +64,7 @@ Project Data Core（最上位正本）
           ↓
      既存Substructure実行層（KEEP/ADAPT）
        ├─ model.ts（v0.2.0 → SubstructureDocumentへADAPT）
-       ├─ SupportPlacementEngine（LINER単一正本）
+       ├─ SupportPlacementEngine（**LINER正本を参照するplacement engine**・計算実行層）
        ├─ geometryBase / SolidGenerator / PlanProjection（KEEP）
        ├─ viewer3d（KEEP・表示変換はrenderCoordinateへ）
        ├─ Planning UI（KEEP・Host入力のみADAPT）

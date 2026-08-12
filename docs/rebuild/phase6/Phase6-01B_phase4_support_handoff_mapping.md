@@ -25,17 +25,17 @@ SupportHandoffItem {
 |---|---|---|---|---|---|---|---|---|
 | supportId | 直接 | `Support.supportId` | — | no | — | A1/P1..Pn/A2・一意・Bridge Layoutと一致 | 不一致reject（write reject） | T6-ADP-001 |
 | supportType | kindマップ（abutment/pier。virtual_pierはpierへ） | `Support.supportType` | — | no | virtual_pier→pier（明示） | enum一致 | 不明kind reject | T6-ADP-002 |
-| label | 直接 | （表示用） | — | yes | 空許容 | string | — | — |
+| label | 直接 | **metadata.label（新定義）** | — | yes | 空許容 | string | — | — |
 | station | 直接（physical distance m） | `Support.placement.station` | m | no | — | finite・>=0 | NaN/Infinity reject | T6-ADP-003 |
 | position.domainX | **新ConnectorでProject-global XYZ→placement基準へ**（表示/3D用・正本は複製しない） | geometry（3D） | m | no | — | finite | — | T6-GEO-001 |
 | position.domainY | 同上 | geometry（3D） | m | no | — | finite | — | T6-GEO-001 |
 | position.elevation | **support基準高**（road標高） | `Support.zOverride`候補 or derived高さ基準 | m | no | — | finite | — | T6-GEO-002 |
 | tangentAzimuthRad | 直接 | placement azimuth（SupportPlacementEngine参照） | rad | yes | なし（LINER再計算可） | finite or null | nullはLINER由来に委譲 | T6-ADP-004 |
-| skewAngleRad | 直接（CCW正） | `Support.skewRad` | rad | yes | null→0（CCW・明示） | finite or null | nullは0へ（自動・明示） | T6-ADP-005 |
-| skewSource | 直接 | metadata | — | yes | "automatic"既定 | enum | — | — |
+| skewAngleRad | 直接（CCW正） | `Support.skewRad` | rad | yes | **null→0（CCW・例外のallowed defaultとして明示一覧化）** | finite or null | nullは0へ（例外default） | T6-ADP-005 |
+| skewSource | 直接 | **metadata.skewSource（新定義）** | — | yes | "automatic"既定 | enum | — | — |
 | terrainElevation | **新ConnectorでTerrain参照**（基礎高さ計算） | `terrainReferences` groundElevation | m | yes | null（Terrain未設定時） | finite or null | nullはwarning（embedment保留） | T6-TER-001 |
-| roadReferenceId | alignmentIdへマップ | `roadReference.alignmentId` | — | yes | — | road module存在 | 未存在reject | T6-ADP-006 |
-| coordinateContextId | 直接 | `coordinateContext` | — | yes | null | — | — | — |
+| roadReferenceId | alignmentIdへマップ | `roadReference.alignmentId` | — | **no**（必須） | — | road module存在 | 未存在reject・nullは「未配置」として明示 | T6-ADP-006 |
+| coordinateContextId | 直接 | **metadata.coordinateContextId（新定義）** | — | yes | null | — | — | — |
 
 ## 4. 正規規約
 

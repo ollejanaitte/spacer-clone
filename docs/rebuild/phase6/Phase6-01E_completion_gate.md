@@ -12,7 +12,7 @@ Phase 6-02の完了条件を事前に凍結する。一項目でも未成立な�
 | # | 項目 | 判定 | 基準 |
 |---|---|---|---|
 | 1 | SubstructureDocument valid | ✅/❌ | fail-closed検証通過 |
-| 2 | Schema PASS | ✅/❌ | schema 0.2.0 + serializer一致（T6-SCH-002） |
+| 2 | Schema PASS（**3系列分離**） | ✅/❌ | SubstructureDocument 0.1.0（T6-SCH-001）+ 旧Project 0.2.0（T6-SCH-002）+ support-interface 0.1.0（T6-SCH-005）各別 |
 | 3 | Phase 4 Handoff PASS | ✅/❌ | T6-ADP全件 |
 | 4 | Phase 5 Handoff PASS | ✅/❌ | T6-BRG/RXN/ELE/LOC全件 |
 | 5 | Handoff 6課題 PASS | ✅/❌ | 6課題解決test（sign/axis/ID/enum/localFrame/elevation） |
@@ -34,11 +34,14 @@ Phase 6-02の完了条件を事前に凍結する。一項目でも未成立な�
 | 21 | Auto Save PASS | ✅/❌ | T6-PER-001 |
 | 22 | restart restore PASS | ✅/❌ | T6-PER-001/002 |
 | 23 | .spacerproj PASS | ✅/❌ | T6-PER-004 |
-| 24 | Reference Bridge PASS | ✅/❌ | T6-RB |
+| 24 | Reference Bridge PASS（**scenario別**） | ✅/❌ | RB-MOUNTAIN（SB-01〜04/14/22）＋RB-S10-001（SB-05〜07/15〜21）各別 |
 | 25 | Electron PASS | ✅/❌ | T6-ELE-001 |
 | 26 | E2E PASS | ✅/❌ | T6-E2E-001 |
 | 27 | regression PASS | ✅/❌ | T6-REG-001 |
 | 28 | typecheck / lint / build PASS | ✅/❌ | T6-REG-002 |
+| 29 | UI/Workflow PASS | ✅/❌ | T6-UI-001/002/003 |
+| 30 | Design framework適正 | ✅/❌ | T6-DS-001/003/004/005（DEFER誤実装なし・quantity実計算・adapter境界） |
+| 31 | Contract遷移/ownership/digest正規化 | ✅/❌ | T6-CON拡充・digest正規化test |
 
 ## 3. Gate判定規則
 

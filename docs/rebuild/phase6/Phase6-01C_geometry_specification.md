@@ -14,6 +14,7 @@ Phase 6の下部工Geometryを既存資産（model.ts / geometryBase / SolidGene
 - Project Origin / Local Origin分離・表示変換は正本を書き換えない
 - skew: counterclockwise-positive（唯一）
 - 下部工側でRoad geometry / Bridge Layout geometryを**再実装しない**（LINER正本・SupportPlacementEngine委譲）
+- **frame規約**: base tangent frame（未skew）→ skewed support frame（skew適用は一箇所・二重適用禁止）を別名で管理
 - support/bearing positionを再計算して別正本を作らない
 
 ## 3. Support共通
@@ -68,7 +69,7 @@ Phase 6の下部工Geometryを既存資産（model.ts / geometryBase / SolidGene
 | length（橋軸方向）/ width（橋軸直角）/ thickness | canonical（>0 m） |
 | topElevation | canonical（finite・derived基準可） |
 | ground elevation | terrainReferences参照（derived） |
-| 根入れ（embedment） | derived = topElevation - groundElevation（or foundation底） |
+| 根入れ（embedment） | **derived = groundElevation - footingBottomElevation**（groundがfooting底より高い時正・単位m・統一） |
 
 ## 7. Foundation / Pile（基礎・杭）
 
@@ -80,7 +81,7 @@ Phase 6の下部工Geometryを既存資産（model.ts / geometryBase / SolidGene
 | pileCount | canonical（>=1） |
 | spacing {x,y} | canonical（>0 m） |
 | pileLength | canonical（>0 m） |
-| pile head elevation | derived（= footing bottom or 既定） |
+| pile head elevation | **derivedのみ（= footing bottom）**・入力欠落時はNOT_AVAILABLE |
 | pile tip elevation | derived（= pile head - pileLength） |
 | embedment | derived（terrain参照） |
 
