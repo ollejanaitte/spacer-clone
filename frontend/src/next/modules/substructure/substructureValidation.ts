@@ -114,13 +114,54 @@ export function validateSubstructureDocument(document: SubstructureDocument): re
   return issues;
 }
 
-/** Module-data level validation. */
+/** Module-data level DRAFT validation (persistence write).
+ * Partial/MISSING is allowed (shapes not yet configured); reference containers
+ * and support placement must be valid. Gate validation (full shapes) is the
+ * strict `validateSubstructureDocument`.
+ */
 export function validateSubstructureData(data: Record<string, unknown>): readonly SubstructureIssue[] {
-  const doc = data.substructureDocument;
-  if (doc === undefined || doc === null) {
+  const raw = data.substructureDocument;
+  if (raw === undefined || raw === null) {
     return [];
   }
-  return validateSubstructureDocument(doc as SubstructureDocument);
+  const doc = raw as SubstructureDocument;
+  const issues: SubstructureIssue[] = [];
+  if (doc.schemaVersion !== SUBSTRUCTURE_SCHEMA_VERSION) {
+    issues.push({ path: "substructureDocument.schemaVersion", message: `schemaVersion must be ${SUBSTRUCTURE_SCHEMA_VERSION}` });
+  }
+  if (doc.documentKind !== "substructure-design") {
+    issues.push({ path: "substructureDocument.documentKind", message: "documentKind must be substructure-design" });
+  }
+  if (!doc.documentId || doc.documentId.trim().length === 0) {
+    issues.push({ path: "substructureDocument.documentId", message: "documentId is required" });
+  }
+  if (doc.bridgeLayoutReference === null) {
+    issues.push({ path: "substructureDocument.bridgeLayoutReference", message: "bridgeLayoutReference is required" });
+  }
+  if (doc.superstructureReference === null) {
+    issues.push({ path: "substructureDocument.superstructureReference", message: "superstructureReference is required" });
+  }
+  if (doc.roadReference === null) {
+    issues.push({ path: "substructureDocument.roadReference", message: "roadReference is required" });
+  }
+  if (doc.supports.length < 1) {
+    issues.push({ path: "substructureDocument.supports", message: "at least one support is required" });
+  }
+  const seen = new Set<string>();
+  for (const support of doc.supports) {
+    if (seen.has(support.supportId)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}]`, message: "duplicate supportId" });
+    }
+    seen.add(support.supportId);
+    if (support.placement.source === "liner") {
+      if (!isFiniteNumber(support.placement.station)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].placement.station`, message: "liner placement requires a finite station" });
+      }
+    } else if (support.placement.source !== "direct_xyz") {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].placement.source`, message: "unsupported placement source" });
+    }
+  }
+  return issues;
 }
 
 /** Parse a raw persisted value into a SubstructureDocument (fail-closed). */
