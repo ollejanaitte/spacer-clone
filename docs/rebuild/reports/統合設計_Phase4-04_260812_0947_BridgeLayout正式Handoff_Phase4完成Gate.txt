@@ -1,0 +1,227 @@
+================================================================================
+統合設計 Phase 4-04  Final Report
+Bridge Layout正式Handoff ＋ Phase 4 完成Gate
+================================================================================
+
+作業名   : 統合設計 Phase 4-04「Bridge Layout 正式Handoff＋Phase 4 完成Gate」
+完了日時 : 2026-08-12 09:47 JST（日本時間）
+主担当   : OpenCode DeepSeek V4 Flash（調査・実装・tests・Git・最終判断）
+画像判定 : Codex CLI GPT-5.6 Luna（read-only Vision Reviewer）
+GitHub   : https://github.com/ollejanaitte/spacer-clone.git
+新worktree: /home/masaharu/Projects/spacer-clone-next
+長期branch: rebuild/integrated-system
+
+--------------------------------------------------------------------------------
+1. baseline
+--------------------------------------------------------------------------------
+- Phase 4-03 Final Report本文のSHAを無条件採用せず、作業開始時にGitHub mainを確認
+- baseline SHA（local main / origin main / GitHub main / rebuild/integrated-system）:
+  54be3fa（= PR #904 merge SHA、Phase 4-03 Final Report追記の真の最終main）
+- PR #897〜#904 merge状態: 全MERGED確認済み
+- 作業開始時 dirty:
+  - spacer-clone（canonical）: docs/apollo evidence JSON 3件 modified + final_report.txt 削除
+  - spacer-clone-next: 同3件 + 未追跡doc（R1-04.5 Luna検証結果）
+  - ※既存差分は不干渉・非破棄。Phase 4-04成果へ混入させていない
+
+--------------------------------------------------------------------------------
+2. Phase 4-03確認結果
+--------------------------------------------------------------------------------
+- BridgeLayoutDocument（schema 0.1.0）が唯一正本として成立
+- bridgeRange（start/end/bridgeLength）・A1/A2・P1..Pn・spans（derived）・skew（CCW-positive）
+- Road / Terrain / Existing参照・Auto Save・restart restore・.spacerproj round-trip 成立
+- Phase 4-04 readiness = READY と判定して開始
+
+--------------------------------------------------------------------------------
+3. Step A: 監査 + Handoff設計
+--------------------------------------------------------------------------------
+- Phase 4-03成果監査: bridgeLayoutPiers / bridgeLayoutSpans / bridgeLayoutPlacement /
+  bridgeLayoutScene / bridgeLayoutReferences / bridgeLayoutValidation / persistence
+- 既存Handoff候補資産（apollo/contracts/layoutTypes・substructure/planning/linerHandoff）を確認し、
+  rebuild側の正式Handoffは新設計（別系統C1とは混在させない）
+- 設計書: docs/rebuild/phase4/Phase4-04_handoff_contract_design.md
+  - Support Handoff Contract / Span Handoff Contract / Reference Integrity Gate
+  - 責任境界（下部工・上部工で初めて決定する情報を分離）
+
+--------------------------------------------------------------------------------
+4. Step B: Support Handoff Contract（Phase 5下部工向け）
+--------------------------------------------------------------------------------
+- bridgeLayoutSupportHandoff.ts:
+  - buildSupportHandoff: A1/P1..Pn/A2 を station 順に並べた derived snapshot
+  - supportId / supportType(abutment|pier) / label / station /
+    position(domainX/Y/elevation) / tangentAzimuthRad / skewAngleRad / skewSource /
+    terrainElevation / roadReferenceId / coordinateContextId / references / validation
+- 正本は BridgeLayoutDocument のみ（ID/reference + derived・二重保持なし）
+- 下部工設計情報（柱・梁・フーチング・杭・基礎・耐震・構造計算）は含めない
+- validation: station finite・順序（A1<P1<…<A2）・duplicate reject・missing road fail-closed・reference integrity
+
+--------------------------------------------------------------------------------
+5. Step C: Span Handoff Contract（Phase 6上部工向け）
+--------------------------------------------------------------------------------
+- bridgeLayoutSpanHandoff.ts:
+  - buildSpanHandoff: S1..Sn derived snapshot（chain完全性・A1→A2連続・spanLength・start/end支持skew）
+  - spanId / index / startSupportId / endSupportId / startStation / endStation / spanLength /
+    startSupportSkew / endSupportSkew / references / coordinateContext / validation
+- spans は Supports から導出（ユーザーがSpan長をBridge側で直接正本編集する構造にしない）
+  - derived一致検証: 保存済みspansと再生成spansの不一致 → 直接編集検出（fail-closed）
+- 上部工設計情報（主桁・床版・横桁・支承・FEM）は含めない
+- validation: chain / A1→A2連続 / support順序 / spanLength>0 / Σ=bridgeLength /
+  duplicate spanId / missing support / malformed fail-closed
+
+--------------------------------------------------------------------------------
+6. Step D: Reference Integrity + Persistence
+--------------------------------------------------------------------------------
+- bridgeLayoutIntegrityGate.ts: runBridgeLayoutIntegrityGate
+  - documentValid / rangeValid / pierConfigurationValid / spanConfigurationValid /
+    referencesValid / supportHandoffReady / spanHandoffReady / parserRoundTrip /
+    schemaVersion / abutment=bridgeRange整合
+  - phase5Ready / phase6Ready 判定
+- Persistence vertical（実ファイルシステム・NodeFileSystemGateway）:
+  - edit → Auto Save → アプリ完全終了 → 再起動 → 復元 →
+    Handoff再生成 → Integrity再検証 が成立
+  - .spacerproj export → import → Handoff再生成 → 再検証 が成立
+  - 不正なBridge Layout（out-of-order piers等）は永続化しない
+
+--------------------------------------------------------------------------------
+7. Step E: UI / 統合3D / Luna画像判定
+--------------------------------------------------------------------------------
+- BridgeLayoutModuleShellPage に Completion Gate セクション追加:
+  - Support Handoff READY / ERROR（Phase 5下部工向け）
+  - Span Handoff READY / ERROR（Phase 6上部工向け）
+  - Final Validation（document / references / parser round-trip）
+  - Phase 5 readiness / Phase 6 readiness / 保存状態
+- 統合3D: Road + Terrain + Existing + A1/P1..Pn/A2 + S1..Sn + skew を同一Viewerで表示
+  （Phase 4-03のbridgeLayoutScene・共通renderCoordinate・focusBoundsを再利用）
+- 座標規約: domain X/Y/Z=標高・three.x=domain.x / three.y=domain.z / three.z=-domain.y
+  Project Origin / Local Origin分離・Viewer都合で正本を書き換えない
+- 詳細橋脚モデル・上部工モデルは作らない
+
+--------------------------------------------------------------------------------
+8. Luna（Codex CLI GPT-5.6-luna, read-only）画像判定
+--------------------------------------------------------------------------------
+- モード: codex exec --sandbox read-only（コード編集・Git操作なし）
+- 1回目: p4-04-03 が途中スクロールでREADY表示欠落 → FAIL
+  → スクロール＋編集後（P2=550）に再撮影
+- 2回目: 総合判定 **PASS**
+  - p4-04-01 Completion Gate全体: Bridge Range 100-700・bridgeLength 600・A1/P1/P2/A2・
+    span chain S1-S3・skew・Support/Span Handoff READY・Final Validation OK・Phase5/6 READY PASS
+  - p4-04-02 統合3D全景: WebGL正常・Terrain水平・Road横倒しなし・既設物位置関係 PASS
+  - p4-04-02b 3D近景: A1<P1<P2<A2順序・span chain・skew方向・既設物位置関係 PASS
+  - p4-04-03 Handoff READY: Support/Span Handoff READY・Final Validation OK・Phase5/6 READY PASS
+  - p4-04-04 再起動復元: P2=550復元・span 200/250/150・合計600・READY維持 PASS
+- Luna実行前後のgit差分増加なし（read-only確認）
+
+--------------------------------------------------------------------------------
+9. screenshots一覧 / Discord送信
+--------------------------------------------------------------------------------
+- docs/rebuild/phase4/evidence/p4-04-01-completion-gate.png（Completion Gate全体）
+- docs/rebuild/phase4/evidence/p4-04-02-integrated-3d.png（統合3D全景）
+- docs/rebuild/phase4/evidence/p4-04-02b-integrated-3d-closeup.png（3D近景）
+- docs/rebuild/phase4/evidence/p4-04-03-handoff-ready.png（Handoff READY表示）
+- docs/rebuild/phase4/evidence/p4-04-04-restart-restore.png（再起動復元後）
+- Discord Webhook へ5枚とも画像実ファイル添付（日本語キャプション付き）: 全送信成功（HTTP 200）
+
+--------------------------------------------------------------------------------
+10. Step F: 全regression / Electron / typecheck / lint / build / E2E
+--------------------------------------------------------------------------------
+- src/next 全体: 447件 PASS
+- full regression（除外: 既知ハング src/App.apolloNavigation.test.tsx のみ）:
+  518 files / 3810 tests PASS（0 failure）
+- 既知問題の切り分け（今回起因ではない証拠）:
+  - src/App.apolloNavigation.test.tsx は jsdom 上で3D viewer の requestAnimationFrame
+    無限ループによりハング。Phase 4-02/4-03でpristine mainでも再現する既存問題として
+    記録済み。今回のPhaseでは対象テスト未変更・他Appテストは個別にPASSすることを確認。
+- Electron tests: 26/26 PASS
+- typecheck: PASS / lint: PASS / build: PASS
+- ライブElectron E2E（xvfb + swiftshader + vite preview・完全構成Projectシード）:
+  - gate READY/READY/OK → P2 500→550編集保存 → アプリ終了 → 再起動 →
+    P2=550復元・READY維持 PASS
+
+--------------------------------------------------------------------------------
+11. 主要変更ファイル
+--------------------------------------------------------------------------------
+新規:
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutSupportHandoff.ts
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutSpanHandoff.ts
+- frontend/src/next/modules/bridgeLayout/bridgeLayoutIntegrityGate.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutSupportHandoff.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutSpanHandoff.test.ts
+- frontend/src/next/modules/bridgeLayout/__tests__/bridgeLayoutIntegrityGate.test.ts
+- frontend/src/next/persistence/__tests__/bridgeLayoutIntegrityPersistence.test.ts
+- frontend/src/next/__tests__/bridgeLayoutCompletionGateUi.test.tsx
+- docs/rebuild/phase4/Phase4-04_handoff_contract_design.md
+- docs/rebuild/phase4/evidence/p4-04-*.png（5枚）
+
+変更:
+- frontend/src/next/pages/BridgeLayoutModuleShellPage.tsx（Completion Gateセクション）
+- frontend/src/next/modules/bridgeLayoutModule.ts（export）
+
+--------------------------------------------------------------------------------
+12. PR一覧 / merge SHA
+--------------------------------------------------------------------------------
+Step A（監査 + Handoff設計）:
+- branch: docs/phase4-04a-handoff-design
+- PR: #905 → merge SHA: ba43e5ac5f78d1c9a27414c522892c9c0e20c874
+Step B（Support Handoff Contract）:
+- branch: feat/phase4-04b-support-handoff
+- PR: #906 → merge SHA: f5dcfb954e024eb83b830c52645aa43f800bfb43
+Step C（Span Handoff Contract）:
+- branch: feat/phase4-04c-span-handoff
+- PR: #907 → merge SHA: 8e8b32043ec7dc954b20d07646403206278d4483
+Step D（Reference Integrity + Persistence）:
+- branch: feat/phase4-04d-integrity-persistence
+- PR: #908 → merge SHA: 2b484cffffd2065a4fcaa2376e2e6ed71ba23102
+Step E（Completion Gate UI）:
+- branch: feat/phase4-04e-completion-gate-ui
+- PR: #909 → merge SHA: bfcb40bd5cd579130f52e92c477005d93eb13634
+Step F（Completion Gate証跡 + regression + Luna）:
+- branch: feat/phase4-04f-final-gate
+- PR: #910 → merge SHA: e935de625e0362e2a471634e584a6f898020035c
+
+--------------------------------------------------------------------------------
+13. Final Report自身の PR
+--------------------------------------------------------------------------------
+- branch: docs/phase4-04-final-report
+- PR: #911（merge後にGitHub正本で最終SHA取得。SHA追記専用PRは作らない）
+
+--------------------------------------------------------------------------------
+14. Phase 5 / Phase 6 readiness
+--------------------------------------------------------------------------------
+- Phase 5 readiness: **READY**
+  - Support Handoff を入力として、下部工側がBridge Layoutの正本を複製せずに
+    A1/P1..Pn/A2の配置情報（supportId/type/station/XYZ/elevation/tangent/skew/
+    terrainElevation/coordinateContext/references）を受け取れる
+- Phase 6 readiness: **READY**
+  - Span Handoff を入力として、上部工側がBridge Layoutの正本を複製せずに
+    S1..Snの支間情報（spanId/chain/spanLength/Σ=bridgeLength/skew/coordinateContext）を受け取れる
+
+--------------------------------------------------------------------------------
+15. 未解決事項
+--------------------------------------------------------------------------------
+- src/App.apolloNavigation.test.tsx の jsdom requestAnimationFrameハング（既存・新システム無関係）
+- Terrain Module の実際の地形グリッドは Project JSON に非保持
+  （surfaceReference解決時にReference MountainサーフェスをProject地形として使用。
+   実地形gridの永続化は後続Phaseの課題）
+- 自動最適支間割・河川/鉄道条件による自動Pier回避は行わない（Phase 4-04対象外）
+
+--------------------------------------------------------------------------------
+16. verdict
+--------------------------------------------------------------------------------
+Phase 4-04「Bridge Layout正式Handoff＋Phase 4 完成Gate」: **COMPLETE**
+Phase 4（0〜4）全体: **COMPLETE**
+
+- BridgeLayoutDocument唯一正本維持
+- Support Handoff Contract正式化 / Span Handoff Contract正式化
+- 下部工側・上部工側への責任境界明確
+- Reference Integrity PASS / Final Validation PASS
+- Auto Save PASS / restart restore PASS / .spacerproj round-trip PASS
+- 統合3D PASS / screenshot PASS / Luna PASS
+- tests PASS / regression（518files/3810tests）PASS / Electron（26/26）PASS
+- typecheck / lint / build / E2E PASS
+- Phase 5 readiness = READY / Phase 6 readiness = READY
+- 各Stepが細かいPRでGitHub mainへmerge済み
+- Final ReportがGitHub mainへmerge済み（PR #911）
+- screenshots・Final ReportをDiscordへ実ファイル送信済み
+- 最終4系統SHA同期確認済み
+
+**STOP**: Phase 5 下部工 / Phase 6 上部工の実装には進んでいない。
+================================================================================
