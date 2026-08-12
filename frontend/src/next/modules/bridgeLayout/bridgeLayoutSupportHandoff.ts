@@ -12,11 +12,12 @@ import { computePierPlacementCandidate, lookupTerrainElevation, getProjectTerrai
 import { resolveBridgeLayoutReferences } from "./bridgeLayoutReferences";
 
 /**
- * Phase 4-04 Support Handoff Contract（Phase 5下部工へ渡す正式配置情報）.
+ * Phase 4-04 Support Handoff Contract（共通Support配置情報: Phase 5上部工参照 / Phase 6下部工へ）.
  *
  * BridgeLayoutDocument が唯一正本。本Handoffは ID/reference + derived snapshot
  * であり、正本データを二重保持しない。
- * 下部工側で初めて決定する情報（柱形状・梁・フーチング・杭・基礎設計・耐震等）は含めない。
+ * 上部工側・下部工側で初めて決定する情報（桁・床版・支承詳細 / 柱形状・梁・
+ * フーチング・杭・基礎設計・耐震等）は含めない。
  */
 export const SUPPORT_HANDOFF_SCHEMA_VERSION = "1.0.0" as const;
 

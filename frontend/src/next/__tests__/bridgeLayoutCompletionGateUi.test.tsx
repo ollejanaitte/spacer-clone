@@ -104,8 +104,8 @@ describe("Phase 4-04 Completion Gate UI", () => {
     const finalOk = document.querySelector('[data-testid="bridge-final-validation-ok"]')?.textContent;
     expect(finalOk).toBe("OK");
     const pageText = document.querySelector('[data-testid="bridge-final-validation"]')?.textContent;
-    expect(pageText).toContain("Phase 5 readiness: READY");
-    expect(pageText).toContain("Phase 6 readiness: READY");
+    expect(pageText).toContain("Phase 5上部工 readiness: READY");
+    expect(pageText).toContain("Phase 6下部工 readiness: READY");
     cleanup(root);
   });
 

@@ -38,5 +38,5 @@
 - **旧システム**: 現行 `main`（`/home/masaharu/Projects/spacer-clone`）。
 - **新システム**: `rebuild/integrated-system`
   （`/home/masaharu/Projects/spacer-clone-next`）で開発する統合Project System。
-- **Project System**: 業務（Project）を最上位に置き、道路・地形・橋梁・下部工・上部工・
+- **Project System**: 業務（Project）を最上位に置き、道路・地形・橋梁・上部工・下部工・
   FEM・CIM・成果品を接続する新統合システムの基盤。

@@ -28,9 +28,9 @@ export interface BridgeLayoutIntegrityResult {
     readonly parserRoundTrip: boolean;
     readonly schemaVersion: string;
   };
-  /** Phase 5 readiness（Support Handoffが成立するか） */
+  /** Phase 5上部工 readiness（Span Handoffが成立し、上部工へ進めるか） */
   readonly phase5Ready: boolean;
-  /** Phase 6 readiness（Span Handoffが成立するか） */
+  /** Phase 6下部工 readiness（Support Handoffが成立し、下部工へ進めるか） */
   readonly phase6Ready: boolean;
 }
 
@@ -85,8 +85,10 @@ export function runBridgeLayoutIntegrityGate(
   }
 
   const ok = issues.length === 0;
-  const phase5Ready = supportHandoffReady;
-  const phase6Ready = spanHandoffReady;
+  // Phase 5（上部工）: Span Handoffが正式入口。Support Handoffは共通Support配置情報として同時に参照する。
+  const phase5Ready = spanHandoffReady && supportHandoffReady;
+  // Phase 6（下部工）: Support Handoffが正式入口（上部工成果はPhase 5から別途Handoffされる）。
+  const phase6Ready = supportHandoffReady;
 
   return {
     ok,

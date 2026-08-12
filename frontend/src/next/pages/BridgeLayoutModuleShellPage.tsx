@@ -520,7 +520,7 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
       <h2 className="next-home-section-title">Completion Gate（Handoff / Final Validation）</h2>
       <div className="next-preview-grid">
         <div className="next-road-summary" data-testid="bridge-support-handoff-status">
-          <p><strong>Support Handoff（Phase 5下部工向け）</strong></p>
+          <p><strong>Support Handoff（共通Support配置情報: Phase 5上部工参照 / Phase 6下部工向け）</strong></p>
           <p data-testid="bridge-support-handoff-ready">
             {integrity ? (integrity.checks.supportHandoffReady ? <span className="next-ok-text">READY</span> : <span className="next-ng-text">ERROR</span>) : <span>—</span>}
           </p>
@@ -529,10 +529,10 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
               {supportHandoffIssues.map((i) => <li key={`${i.path}:${i.message}`}>{i.message}</li>)}
             </ul>
           )}
-          <p className="next-hint">A1 / P1..Pn / A2 の配置情報（XYZ・elevation・tangent・skew・references）をID/referenceで受け渡し（正本複製なし）</p>
+          <p className="next-hint">A1 / P1..Pn / A2 の共通Support配置情報（XYZ・elevation・tangent・skew・references）をID/referenceで受け渡し（正本複製なし）。Phase 5上部工・Phase 6下部工の両方で参照</p>
         </div>
         <div className="next-road-summary" data-testid="bridge-span-handoff-status">
-          <p><strong>Span Handoff（Phase 6上部工向け）</strong></p>
+          <p><strong>Span Handoff（Phase 5上部工向け）</strong></p>
           <p data-testid="bridge-span-handoff-ready">
             {integrity ? (integrity.checks.spanHandoffReady ? <span className="next-ok-text">READY</span> : <span className="next-ng-text">ERROR</span>) : <span>—</span>}
           </p>
@@ -541,7 +541,7 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
               {spanHandoffIssues.map((i) => <li key={`${i.path}:${i.message}`}>{i.message}</li>)}
             </ul>
           )}
-          <p className="next-hint">S1..Sn の支間情報（chain・spanLength・Σ=bridgeLength・skew）をderivedで受け渡し</p>
+          <p className="next-hint">S1..Sn の支間情報（chain・spanLength・Σ=bridgeLength・skew）をderivedで受け渡し。Phase 5上部工の正式入口</p>
         </div>
       </div>
       <div className="next-road-summary" data-testid="bridge-final-validation">
@@ -549,7 +549,7 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
         <p data-testid="bridge-final-validation-ok">
           {integrity ? (integrity.ok ? <span className="next-ok-text">OK</span> : <span className="next-ng-text">NG</span>) : <span>—</span>}
         </p>
-        <p>Phase 5 readiness: {integrity ? (integrity.phase5Ready ? "READY" : "NOT_READY") : "—"} / Phase 6 readiness: {integrity ? (integrity.phase6Ready ? "READY" : "NOT_READY") : "—"}</p>
+        <p>Phase 5上部工 readiness: {integrity ? (integrity.phase5Ready ? "READY" : "NOT_READY") : "—"} / Phase 6下部工 readiness: {integrity ? (integrity.phase6Ready ? "READY" : "NOT_READY") : "—"}</p>
         <p>document: {integrity ? (integrity.checks.documentValid ? "OK" : "NG") : "—"} / references: {integrity ? (integrity.checks.referencesValid ? "OK" : "NG") : "—"} / parser round-trip: {integrity ? (integrity.checks.parserRoundTrip ? "OK" : "NG") : "—"}</p>
       </div>
 
