@@ -57,6 +57,10 @@ export {
   buildSuperstructureDocument,
   attachSuperstructureHandoffs,
 } from "./superstructure/superstructureDocumentDomain";
+export { buildSuperstructureFacts } from "./superstructure/superstructureFacts";
+export type { SuperstructureFacts, SuperstructureFactsResult } from "./superstructure/superstructureFacts";
+export { buildSuperstructureGeometryInput, SUPER_BINDING_CODES } from "./superstructure/superstructureBindingNew";
+export type { SuperstructureGeometryInputOptions } from "./superstructure/superstructureBindingNew";
 
 export function createSuperstructureData(): SuperstructureModuleData {
   return { superstructureDocument: undefined };
