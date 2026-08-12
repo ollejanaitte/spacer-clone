@@ -1,0 +1,274 @@
+統合設計 Phase 6-01 Final Report
+============================================================
+作業名: 下部工全体完全設計・Design Freeze
+Phase: Phase 6-01
+完了日時(JST): 2026-08-13 07:40 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 6-00「既存下部工資産・Connector徹底監査」の結果を唯一の監査baselineとして、
+Phase 6「下部工」全体の設計を完成・凍結した。
+Phase 6-02で実装担当が追加の設計判断をほぼ行わずに実装できる状態まで確定。
+下部工本体の大規模実装は行っていない。
+
+------------------------------------------------------------
+2. baseline / Phase 6-00 Final Report PR確認
+------------------------------------------------------------
+- Phase 6-00 Final Report PR #941: GitHubでMERGEDを実確認
+- 真のGitHub main SHA: ab30a28bd36177c4f20c673bf2b426bf4280f639（Phase 6-01開始時baseline）
+
+既存dirty差分（破棄せず・Phase 6-01成果へ混入させていない）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json（modified）
+  - final_report.txt（deleted・canonicalのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked・next worktreeのみ）
+
+------------------------------------------------------------
+3. 各Step結果
+------------------------------------------------------------
+[Step A] Master Design＋SubstructureDocument Contract（PR #942 b9e39d8）
+  - Phase6-01A_master_design.md: 正本階層・Migration Map traceability・IN/OUT-SCOPE
+  - Phase6-01A_substructure_document_contract.md: 全項目owner/canonical/required/ID/version/validation/fail-closed/persistence/regeneration
+
+[Step B] Phase 4/5 Handoff Adapter＋6課題解決（PR #943 261b2b0）
+  - Phase6-01B_phase4_support_handoff_mapping.md: field-level mapping（source→conversion→target→unit→nullable→fallback→validation→fail-closed→test）
+  - Phase6-01B_phase5_superstructure_handoff_mapping.md: bearingSeats/reactionCases/girderBottom/deckElevation mapping
+  - Phase6-01B_handoff_six_issues_resolution.md: 6課題（sign/axis/seatID/caseKind/localFrame/標高）完全解決
+
+[Step C] Schema Refresh＋Geometry＋Terrain/Existing（PR #944 d700edd）
+  - Phase6-01C_schema_refresh.md: 0.2.0刷新・migration・parser strict/lenient二段
+  - Phase6-01C_geometry_specification.md: Abutment/Pier/Footing/Foundation/Pile寸法（canonical/derived/min-max/禁則）
+  - Phase6-01C_terrain_existing_integration.md: Terrain/Existing参照・embedment導出・自動化範囲
+
+[Step D] Design Scope＋Persistence＋3D/UI（PR #945 03bf60f）
+  - Phase6-01D_design_calculation_scope.md: 実計算=quantity・構造照査/耐震/鉄筋/実engine=DEFER・未認証Reaction自動採用禁止
+  - Phase6-01D_persistence_specification.md: PDC auto-save/restart/.spacerproj縦断・canonical/derived/transient/digest
+  - Phase6-01D_integrated_3d_ui_design.md: 統合シーン・下部工レイヤ・既存Planning UI再利用・新route移行
+
+[Step E] Reference Bridge＋Test Spec＋WP＋Completion Gate（PR #946 df12480）
+  - Phase6-01E_reference_bridge_expected_data.md: SB-01〜22（scenario分割・符号付きreaction・quantity golden）
+  - Phase6-01E_test_specification.md: T6系（Contract/Schema/Adapter/6課題/Geometry/Terrain/Design/Persistence/3D/UI/RB/E2E）
+  - Phase6-01E_phase6-02_work_packages.md: WP-A..K（files/deps/order/acceptance/PR/rollback/既存資産再利用）
+  - Phase6-01E_completion_gate.md: 全31項目・未認証ReactionはGate根拠にしない
+
+[Step F] Cross-Review＋Design Freeze Gate＋Final Report（本PR）
+  - Sol高度cross-review 17項目検出・全設計書へ反映
+  - Phase6-01F_design_freeze_gate.md（PASS・全15設計書FROZEN）
+  - screenshots 8枚・Final Report
+
+------------------------------------------------------------
+4. 作成/更新設計書一覧（全FROZEN）
+------------------------------------------------------------
+docs/rebuild/phase6/
+  - Phase6-01A_master_design.md
+  - Phase6-01A_substructure_document_contract.md
+  - Phase6-01B_phase4_support_handoff_mapping.md
+  - Phase6-01B_phase5_superstructure_handoff_mapping.md
+  - Phase6-01B_handoff_six_issues_resolution.md
+  - Phase6-01C_schema_refresh.md
+  - Phase6-01C_geometry_specification.md
+  - Phase6-01C_terrain_existing_integration.md
+  - Phase6-01D_design_calculation_scope.md
+  - Phase6-01D_persistence_specification.md
+  - Phase6-01D_integrated_3d_ui_design.md
+  - Phase6-01E_reference_bridge_expected_data.md
+  - Phase6-01E_test_specification.md
+  - Phase6-01E_phase6-02_work_packages.md
+  - Phase6-01E_completion_gate.md
+  - Phase6-01F_design_freeze_gate.md（PASS）
+
+------------------------------------------------------------
+5. SubstructureDocument Contract（要約）
+------------------------------------------------------------
+- schemaId: spacer.next.substructure-design-document / schemaVersion 0.1.0 / documentKind substructure-design
+- 格納: modules.substructure.data.substructureDocument
+- 正本: 下部工唯一正本。BridgeLayout/SuperstructureはID参照（複製なし）
+- supports/abutments/piers/footingConfigurations/foundationConfigurations/pileConfigurations: canonical（model.ts v0.2.0 ADAPT）
+- supportReferences/bearingReactionReferences/bearingSeatReferences: derived・transient（restore時再生成＋一致検証）
+- designResults/quantityResults: PersistedSubstructureDocumentDTOにdigestのみ保存
+- validation: DRAFT/ VALIDATED二段・Gateはfail-closed
+- 未認証Reaction: NOT_AUTHORIZED維持・正式設計PASS生成禁止
+
+------------------------------------------------------------
+6. Phase 4 mapping（要約）
+------------------------------------------------------------
+- supportId/supportType/station/skew: 直接受領（CCW・null→0は例外allowed default）
+- position/azimuth: 3D・配置基準（LINER再実装しない）
+- terrainElevation: Terrain参照（embedment計算入力）
+- roadReferenceId: 必須（nullは「未配置」明示）
+- label/skewSource/coordinateContext: metadata型（新定義）
+
+------------------------------------------------------------
+7. Phase 5 mapping（要約）
+------------------------------------------------------------
+- bearingSeats: BRG-ID正規化・localOffset axis（x=longitudinal/y=transverse）
+- reactionCases: up-positive符号付き・caseKind enum＋combinationId別保持・NOT_AUTHORIZED維持
+- girderBottom/deckElevation: Record<supportId, number|null>・derived or NOT_AVAILABLE
+- bearingType変換表（rubber→elastomeric等）
+- ReactionCaseData拡張型（combinationId/seatId/unit/signConvention/authorizationStatus）
+
+------------------------------------------------------------
+8. Handoff 6課題解決（要約・全FROZEN）
+------------------------------------------------------------
+1. reaction sign: up-positive唯一・canonical符号付きassert（legacy |Fz|はsource照合のみ）
+2. bearing axis: x=longitudinal/y=transverse・axis metadata不一致reject・lenient=COMPATIBILITY_ONLY
+3. seat-ID: BRG-{support}-{girder}唯一・legacy変換表（index→G採番・legacySeatId保持）
+4. caseKind: enum値+combinationId別保持・不明はUNKNOWN/NOT_AVAILABLE非採用
+5. localFrame: 実frame（snapshot優先→azimuth直交化）・skew適用一箇所・identityはVIEWER_PLACEHOLDER
+6. 標高: derived or NOT_AVAILABLE（+0.25m発明値禁止）
+
+------------------------------------------------------------
+9. Schema Refresh（要約）
+------------------------------------------------------------
+- SubstructureDocument 0.1.0 / 旧Project 0.2.0刷新 / support-interface 0.1.0（3系列分離）
+- parser strict/lenient二段・lenientはCOMPATIBILITY_ONLY（canonical write禁止）
+- migration: 旧0.1.0 position→placement・unsupported version reject
+- runtime source of truth = frontend型（model.ts + new Document型）
+
+------------------------------------------------------------
+10. Geometry（要約）
+------------------------------------------------------------
+- Abutment: inverted_t/cantilever_frame（backwall/wingWall/footing/foundation）
+- Pier: single_column_rect/wall/portal_frame（column/cap/beam/bearing seats）
+- Footing/Foundation/Pile: 寸法canonical・embedment統一（groundElevation-footingBottom・正値m）
+- 禁則: 寸法発明禁止・MISSING許容・+0.25m等のfallback禁止
+- frame規約: base tangent frame→skewed support frame（skew適用一箇所・二重禁止）
+
+------------------------------------------------------------
+11. Terrain / Existing（要約）
+------------------------------------------------------------
+- Terrain/Existing正本複製なし（ID/reference・modules.existingConditions統一）
+- embedment導出・missing/staleはwarning（geometry生成継続）
+- 自動最適化/干渉回避: Phase 6-02でしない（情報表示のみ）
+
+------------------------------------------------------------
+12. Design / Calculation Scope（要約）
+------------------------------------------------------------
+- 実計算: 概算数量（geometricQuantity）・substructure自重（参考）
+- 構造照査/耐震/鉄筋/実engine/高度FEM: DEFER（Phase 6-02へ追加しない）
+- calculationOutput: 内部debug出力のみ
+- designStatus: NOT_AUTHORIZED維持・自動昇格禁止
+
+------------------------------------------------------------
+13. Reaction Authorization（要約）
+------------------------------------------------------------
+- Geometry/placement参考: 可（正本にしない）
+- Design calculation採用: 不可（未認証）
+- PASS/FAIL昇格: 不可（自動昇格禁止）
+- 状態: HOLD_NOT_AVAILABLE/NOT_AUTHORIZED/NOT_AVAILABLE維持・消さない
+
+------------------------------------------------------------
+14. Persistence（要約）
+------------------------------------------------------------
+- PDC auto-save/restart/.spacerproj縦断（canonical/derived/transient/digest）
+- PersistedSubstructureDocumentDTO・正規化digest（volatile除外）
+- geometry digest対象: 全canonical入力＋upstream reference version
+- 旧download/upload: import adapter（COMPATIBILITY_ONLY）
+
+------------------------------------------------------------
+15. Integrated 3D / UI（要約）
+------------------------------------------------------------
+- 統合シーン: Road+Terrain+Existing+BL+Super+Sub+Foundation（renderCoordinate唯一）
+- viewer3d/threeFactory: ADAPT（renderCoordinate統一・旧route座標回帰test）
+- entity ID（sub-{supportId}）とselection key（sub:{supportId}）別契約
+- UI: 既存Planning UI再利用・新route（/app/modules/substructure）・旧route維持
+
+------------------------------------------------------------
+16. Reference Bridge（要約）
+------------------------------------------------------------
+- scenario分割: RB-MOUNTAIN（SB-01〜04/14/22）＋RB-S10-001（SB-05〜07/15〜21）
+- SB-15/16: canonical符号付き（+3325.5/+1378.9・1%）・legacy |Fz|はsource照合
+- SB-17〜20: quantity golden（total 187.92・column 40.32・footing 126・beam 21.6 m³）
+- SOURCE_NOT_AVAILABLE（SB-08〜13）はスキップ（補完しない）
+
+------------------------------------------------------------
+17. Test Specification（要約）
+------------------------------------------------------------
+- T6系: Contract/Schema/Parser/Phase4 Adapter/Phase5 Adapter/6課題/Geometry/Terrain/Existing/Design/Quantity/Persistence/3D/UI/RB/Electron(T6-ELC)/E2E/Regression
+- 共通属性: command/evidence/tolerance（既定: 長さ1e-3 m・角度1e-6 rad・力1%）
+
+------------------------------------------------------------
+18. Phase 6-02 Work Packages（要約）
+------------------------------------------------------------
+- WP-A SubstructureDocument/Schema/PDC → WP-B Phase4 Adapter → WP-C Phase5 Adapter（WP-A/B）→ WP-D Placement → WP-E Abutment/Pier → WP-F Footing/Foundation/Pile（WP-D）→ WP-G Terrain/Existing → WP-H Design framework → WP-I 3D/UI（+WP-H）→ WP-J Persistence（WP-A..H）→ WP-K RB/E2E/Gate
+- 各WP: files/deps/order/acceptance/tests/PR/rollback/evidence/既存資産再利用
+
+------------------------------------------------------------
+19. Completion Gate（要約）
+------------------------------------------------------------
+- 全31項目（SubstructureDocument valid〜typecheck/lint/build）
+- schema 3系列分離・RB scenario別・未認証ReactionはGate根拠にしない
+- DEFER資産誤実装なし（T6-DS-005）を含む
+
+------------------------------------------------------------
+20. Cross-Review / Sol利用結果
+------------------------------------------------------------
+- GPT-5.6 Sol（read-only）: 全設計書高度cross-review・**17項目指摘**
+- 全17項目をDeepSeek V4 Flashが設計書へ反映（canonical/ID/unit/sign/axis/6課題整合/nullable/validation/persistence/authorization/mapping/RB/TestSpec/WP/DEFER/KEEP/Gate）
+- Luna（read-only）: Freeze Gate screenshot検証（PASS表示確認）PASS
+- read-only遵守・git status/diff確認（差分増加なし）
+
+------------------------------------------------------------
+21. unresolved項目
+------------------------------------------------------------
+- SOURCE_NOT_AVAILABLE（SB-08〜13: 橋台/橋脚寸法・基礎/杭）: 外部資料要確認・Phase 6-02でスキップ（補完しない）
+- 上記以外のunresolved TODO/TBD: なし（Freeze禁止項目残存なし）
+
+------------------------------------------------------------
+22. Design Freeze Gate
+------------------------------------------------------------
+- 全15設計書 FROZEN ✅
+- Sol 17項目指摘・全修正 ✅
+- Freeze禁止項目（TODO/TBD/undecided schema/version/ID/unit/sign/axis/unresolved localFrame/undefined fallback/tolerance/PASS/6課題未解決）: 残存なし ✅
+- **Design Freeze Gate = PASS**
+
+------------------------------------------------------------
+23. Phase 6-02 readiness
+------------------------------------------------------------
+- READY（WP-A..K・files/deps/order/acceptance/tests/rollback/既存資産再利用確定済み）
+- 実装担当は設計書どおり実装のみ・追加設計判断不要
+
+------------------------------------------------------------
+24. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase6/evidence/
+  - p6-01-01-master-design.png
+  - p6-01-02-substructure-contract.png
+  - p6-01-03-phase4-handoff-mapping.png
+  - p6-01-04-six-issues-resolution.png
+  - p6-01-05-geometry-terrain.png
+  - p6-01-06-persistence-3d.png
+  - p6-01-07-work-packages.png
+  - p6-01-08-design-freeze-gate.png
+Luna検証済み・Discordへ実ファイル添付送信（HTTP確認）
+
+------------------------------------------------------------
+25. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: ab30a28bd36177c4f20c673bf2b426bf4280f639
+- PR #942 Step A → b9e39d8bc2326e9f552174271b6c20523fe4665f
+- PR #943 Step B → 261b2b068c336e374390b2e0ca6ffe01f9724a91
+- PR #944 Step C → d700edd707958db28ee6ada9f5d217bf3dced01e
+- PR #945 Step D → 03bf60f270aaa435506be2e5962f8a2ea513ef6e
+- PR #946 Step E → df1248090a0558a09f325f3de2ec5a416e97c26e
+- PR #947 Step F → 9478611ca25eb7d55530dac9f370a8aaf561d186
+- 本Final Report PR（docs/phase6-01-final）→ merge後SHAはGitHub正本から取得
+
+------------------------------------------------------------
+26. verdict
+------------------------------------------------------------
+- Phase 6-01 COMPLETE
+- 下部工全体完全設計・Design Freeze完了
+- Design Freeze Gate = PASS
+- Phase 6-02 readiness = READY
+- 各Step細かいPRでmain merge済み・screenshots/Final Report Discord送信済み
+- 最終4系統SHA一致
+
+------------------------------------------------------------
+27. STOP確認
+------------------------------------------------------------
+Phase 6-01 COMPLETE。
+下部工全体完全設計・Design Freeze完了。
+Design Freeze Gate PASS。
+Phase 6-02 readiness READY。
+Phase 6-02実装へは進まずSTOPした。
