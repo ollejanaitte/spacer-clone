@@ -6,7 +6,7 @@
  * / stableId / coordinate context), and camera fit/reset + view presets.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { getModuleDefinition } from "../modules/registry";
 import { readModuleFromManager } from "../modules/adapter";
@@ -20,18 +20,73 @@ import {
   type CimEntityMetadata,
   type CimLayerId,
 } from "../modules/cim/integrated3dScene";
-import { Cim3DViewer } from "../components/Cim3DViewer";
+import { Cim3DViewer, type CimViewPreset } from "../components/Cim3DViewer";
+import { exportCimSceneAsGlb, downloadGlb } from "../modules/cim/cimExport";
 import type { ProjectModuleKey } from "../project/schema";
+
+const CIM_UI_STATE_KEY = "spacer.cim.uiState.v1";
+
+interface CimUiState {
+  readonly layerState?: Partial<Record<CimLayerId, boolean>>;
+  readonly viewPreset?: CimViewPreset;
+  readonly transparency?: number;
+}
+
+function loadCimUiState(projectId: string): CimUiState | null {
+  try {
+    const raw = window.localStorage.getItem(`${CIM_UI_STATE_KEY}.${projectId}`);
+    return raw ? (JSON.parse(raw) as CimUiState) : null;
+  } catch {
+    return null;
+  }
+}
 
 export function CimModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
   const [project] = useState(() => getProjectManager().getProject(projectId));
   const definition = getModuleDefinition(moduleId as ProjectModuleKey);
-  const [layerState, setLayerState] = useState<Record<CimLayerId, boolean>>(() => defaultCimLayerState());
+  const [uiState] = useState<CimUiState>(() => loadCimUiState(projectId) ?? {});
+  const [layerState, setLayerState] = useState<Record<CimLayerId, boolean>>(() => ({
+    ...defaultCimLayerState(),
+    ...(uiState?.layerState ?? {}),
+  }));
+  const [viewPreset, setViewPreset] = useState<CimViewPreset>(uiState?.viewPreset ?? "perspective");
+  const [transparency, setTransparency] = useState<number>(uiState?.transparency ?? 1);
   const [selected, setSelected] = useState<CimEntityMetadata | null>(null);
+  const [exportingGlb, setExportingGlb] = useState(false);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
+
+  async function handleExportGlb() {
+    setExportingGlb(true);
+    setExportMessage(null);
+    try {
+      const result = await exportCimSceneAsGlb(scene);
+      if (result.ok && result.glb) {
+        downloadGlb(result.glb);
+        setExportMessage("glTF（.glb）を書き出しました。");
+      } else {
+        setExportMessage(`書き出し失敗: ${result.issues.join("; ")}`);
+      }
+    } catch (error) {
+      setExportMessage(`書き出し失敗: ${String(error)}`);
+    } finally {
+      setExportingGlb(false);
+    }
+  }
 
   const scene = useMemo(() => {
     return buildIntegrated3DScene(getProjectManager(), projectId);
   }, [projectId]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        `${CIM_UI_STATE_KEY}.${projectId}`,
+        JSON.stringify({ layerState, viewPreset, transparency }),
+      );
+    } catch {
+      // ignore persistence failures
+    }
+  }, [projectId, layerState, viewPreset, transparency]);
 
   if (!project) {
     return (
@@ -55,6 +110,12 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
   };
 
   const metaCount = scene.metadata.length;
+  const analysisResultEntry = scene.regeneratedFrom.find((r) => r.module === "analysisResult");
+  const analysisResultStatus = analysisResultEntry
+    ? analysisResultEntry.checksum === "stale" ? "STALE（警告）"
+      : analysisResultEntry.checksum === "invalid" ? "INVALID"
+      : "authoritative"
+    : "none";
 
   return (
     <section className="next-page" data-testid="module-shell-page">
@@ -83,6 +144,10 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         <div>
           <dt>Entity数</dt>
           <dd data-testid="cim-module-entities">{metaCount}</dd>
+        </div>
+        <div>
+          <dt>解析結果</dt>
+          <dd data-testid="cim-result-status">{analysisResultStatus}</dd>
         </div>
       </dl>
 
@@ -132,7 +197,22 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
             scene={scene}
             layerState={layerState}
             onSelect={setSelected}
+            viewPreset={viewPreset}
+            transparency={transparency}
+            onTransparencyChange={(t) => setTransparency(1 - t)}
           />
+        </div>
+        <div className="cim-viewer-actions" data-testid="cim-viewer-actions">
+          <button
+            type="button"
+            className="next-secondary"
+            data-testid="cim-export-glb"
+            disabled={exportingGlb}
+            onClick={() => void handleExportGlb()}
+          >
+            {exportingGlb ? "書き出し中..." : "glTF（.glb）書き出し"}
+          </button>
+          <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
         </div>
       </div>
     </section>
