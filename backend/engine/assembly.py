@@ -8,6 +8,7 @@ from scipy.sparse import coo_matrix, csr_matrix
 
 from .dof import DofMap, member_dofs
 from .element import element_matrices, equivalent_uniform_load_local, transformation
+from .errors import AnalysisError
 from .model import Member, MemberLoad, Model
 
 
@@ -67,6 +68,44 @@ def assemble_stiffness(model: Model, dof_map: DofMap) -> Assembly:
                 ),
             )
         )
+
+    # Elastic supports (springs): diagonal stiffness K[dof,dof] += k (FROZEN §5.3).
+    # Only global-coordinate springs are supported in Phase 7-02.
+    dof_names = ("ux", "uy", "uz", "rx", "ry", "rz")
+    for spring in model.springs:
+        if spring.coordinateSystem != "global":
+            raise AnalysisError(
+                "UNSUPPORTED_LOCAL_SPRING",
+                "Only global-coordinate springs are supported in Phase 7-02.",
+                path=f"/springs/{spring.id}",
+                entity_type="spring",
+            )
+        if spring.dof not in dof_names:
+            raise AnalysisError(
+                "INVALID_SPRING_DOF",
+                f"Spring dof must be one of {dof_names}.",
+                path=f"/springs/{spring.id}/dof",
+                entity_type="spring",
+            )
+        if spring.stiffness < 0:
+            raise AnalysisError(
+                "INVALID_SPRING_STIFFNESS",
+                "Spring stiffness must be non-negative.",
+                path=f"/springs/{spring.id}/stiffness",
+                entity_type="spring",
+            )
+        if spring.nodeId not in nodes:
+            raise AnalysisError(
+                "SPRING_NODE_MISSING",
+                "Spring node must exist.",
+                path=f"/springs/{spring.id}/nodeId",
+                entity_type="spring",
+            )
+        index = dof_names.index(spring.dof)
+        global_dof = dof_map.node_dofs(spring.nodeId)[index]
+        rows.append(global_dof)
+        cols.append(global_dof)
+        values.append(float(spring.stiffness))
     total = dof_map.total_dof
     stiffness = coo_matrix((values, (rows, cols)), shape=(total, total)).tocsr()
     return Assembly(stiffness=stiffness, element_states=states)
