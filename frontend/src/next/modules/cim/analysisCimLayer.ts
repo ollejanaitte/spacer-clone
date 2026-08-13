@@ -18,6 +18,13 @@ import { extractLinearStaticResultFromIf3 } from "../analysis/resultAdapter";
 import { memberForceColor, computeForceColorRange } from "../../../viewer/memberForceColorMap";
 import { domainToThree } from "../renderCoordinate";
 import { attachCimMetadata, type CimEntityMetadata, type CimLayerId } from "./integrated3dScene";
+import { buildAnalysisModel } from "../analysis/analysisModel";
+import { readSuperstructureDocument } from "../superstructureModuleAdapter";
+import { readSubstructureDocument } from "../substructureModuleAdapter";
+import { buildLinerIntermediateFromRoad, generateSuperstructureSnapshot } from "../superstructure/superstructureGeometry";
+import { readRoadData } from "../roadModuleAdapter";
+import { loadRoadEditorDraft } from "../road/roadEditorDraft";
+import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
 
 export interface AnalysisCimLayerResult {
   readonly femNodesGroup: THREE.Group;
@@ -45,6 +52,49 @@ export function readAnalysisDocument(manager: ProjectManager, projectId: string)
   return parsed.ok ? parsed.data.analysisDocument : undefined;
 }
 
+/** Build a derived FEM AnalysisDocument from the super/sub models (no stored doc). */
+export function buildDerivedAnalysisDocument(
+  manager: ProjectManager,
+  projectId: string,
+): AnalysisDocument | undefined {
+  const superDoc = readSuperstructureDocument(manager, projectId);
+  if (!superDoc) {
+    return undefined;
+  }
+  const roadData = readRoadData(manager, projectId);
+  if (!roadData) {
+    return undefined;
+  }
+  const loaded = loadRoadEditorDraft(roadData);
+  if (!loaded.ok) {
+    return undefined;
+  }
+  const draft = loaded.draft;
+  const intermediate = buildLinerIntermediateFromRoad({
+    label: "",
+    horizontal: draft.alignment,
+    vertical: verticalDraftAlignmentToElements(draft.verticalAlignment),
+    crossSections: draft.crossSections ?? [],
+  } as never);
+  if (!intermediate) {
+    return undefined;
+  }
+  const generated = generateSuperstructureSnapshot(intermediate, superDoc);
+  if (!generated.ok) {
+    return undefined;
+  }
+  const subDoc = readSubstructureDocument(manager, projectId);
+  const model = buildAnalysisModel({
+    projectId,
+    createdBy: "cim-integrated3d",
+    superstructure: superDoc,
+    substructure: subDoc ?? null,
+    snapshot: generated.snapshot,
+    sourceReferences: { bridgeLayout: null, superstructure: null, substructure: null, loadFingerprint: null, solverSettingsFingerprint: null },
+  });
+  return model.document;
+}
+
 const NODE_COLOR = 0x64748b;
 const MEMBER_COLOR = 0x334155;
 const SUPPORT_COLOR = 0x16a34a;
@@ -68,7 +118,8 @@ export function buildAnalysisCimLayer(
   projectId: string,
   input: AnalysisOverlayInput = {},
 ): AnalysisCimLayerResult {
-  const document = readAnalysisDocument(manager, projectId);
+  const document = readAnalysisDocument(manager, projectId)
+    ?? buildDerivedAnalysisDocument(manager, projectId);
   const femNodesGroup = new THREE.Group();
   const femMembersGroup = new THREE.Group();
   const supportsGroup = new THREE.Group();
