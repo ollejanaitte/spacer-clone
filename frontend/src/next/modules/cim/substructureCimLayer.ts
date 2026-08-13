@@ -43,7 +43,16 @@ export function buildSubstructureCimLayer(
     return { substructureGroup, foundationGroup, metadata, ok: true, issues: [] };
   }
 
-  const built = buildSubstructureSceneGroup(subDoc, { localOrigin: null });
+  let built;
+  try {
+    built = buildSubstructureSceneGroup(subDoc, { localOrigin: null });
+  } catch (error) {
+    return {
+      substructureGroup, foundationGroup, metadata,
+      ok: false,
+      issues: [{ path: "substructure.solids", message: String(error) }],
+    };
+  }
   for (const mesh of built.group.children as THREE.Mesh[]) {
     const selectionId = mesh.userData.selectionId as string | undefined;
     const supportId = selectionId?.replace(/^sub:/, "") ?? mesh.name;
@@ -60,7 +69,16 @@ export function buildSubstructureCimLayer(
   substructureGroup.add(built.group);
 
   // Foundation layer: footing + pile solids only.
-  const solidGroups = buildSubstructureSolids(subDoc);
+  let solidGroups;
+  try {
+    solidGroups = buildSubstructureSolids(subDoc);
+  } catch (error) {
+    return {
+      substructureGroup, foundationGroup, metadata,
+      ok: false,
+      issues: [{ path: "substructure.foundation", message: String(error) }],
+    };
+  }
   for (const solidGroup of solidGroups) {
     const supportId = solidGroup.supportId;
     for (const node of solidGroup.solids) {
