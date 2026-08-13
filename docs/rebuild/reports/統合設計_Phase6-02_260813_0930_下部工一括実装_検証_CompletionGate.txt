@@ -1,0 +1,266 @@
+統合設計 Phase 6-02 Final Report
+============================================================
+作業名: 下部工一括実装・検証・Completion Gate
+Phase: Phase 6-02（Phase 6最終実装Phase）
+完了日時(JST): 2026-08-13 09:30 JST
+
+------------------------------------------------------------
+1. 作業概要
+------------------------------------------------------------
+Phase 6-01でFROZENした設計書を唯一の実装仕様として、WP-A..Kを実装・検証し、
+Phase 6「下部工」を完了させた。
+Phase 4 Support Handoff + Phase 5 Bearing/Reaction HandoffからSubstructureDocumentを生成し、
+Placement/LocalFrame/BearingSeat → Abutment/Pier → Footing/Foundation/Pile →
+Terrain/Existing → Design/Quantity/Status → 3D/UI → PDC Persistence →
+restart restore → .spacerproj → Reference Bridge → Electron E2E → Completion Gate
+の縦断を成立させた。
+
+------------------------------------------------------------
+2. baseline / Phase 6-01 Final Report PR確認
+------------------------------------------------------------
+- Phase 6-01 Final Report PR #948: GitHubでMERGEDを実確認
+- 真のGitHub main SHA: ba1089eadf93f6913cc3e2ff4ce51f7327d95d20（Phase 6-02開始時baseline）
+
+既存dirty差分（破棄せず・Phase 6-02成果へ混入させていない）:
+  - docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json（modified）
+  - final_report.txt（deleted・canonicalのみ）
+  - docs/rebuild/reports/R1-04.5_...（untracked・next worktreeのみ）
+
+Design Freeze Violation: **なし**（FROZEN仕様をそのまま実装）
+
+------------------------------------------------------------
+3. WP実装結果（A〜K・全main merge済み）
+------------------------------------------------------------
+[WP-A] SubstructureDocument/Schema/PDC（PR #949 df287bf）
+  - substructure module新規: types（model.ts v0.2.0 ADAPT）/validation（DRAFT/Gate二段階）/domain/module/adapter/persistence（derived transient）
+  - strict parser（ok=false）・serialize derived除外
+
+[WP-B] Phase 4 Support Handoff Adapter（PR #950 0d5c531）
+  - substructurePhase4Adapter.ts: SupportHandoff→support placement（field mapping・fail-closed）
+  - virtual_pier→pier明示・skew null→0（CCW）・roadReferenceId fallback
+
+[WP-C] Phase 5 Bearing/Reaction Handoff Adapter＋6課題（PR #951 4e31665）
+  - substructurePhase5Adapter.ts: bearingSeatReferences/reactionCases（6課題全解決）
+  - up-positive符号付き・axis x-longitudinal/y-transverse・BRG-ID正規化・caseKind enum+combinationId・localFrame実frame・標高Record（null=NOT_AVAILABLE）・bearingType変換表・authorizationStatus維持
+
+[WP-D] Placement/Local Frame/Bearing Seat（PR #952 2f23f9e）
+  - substructurePlacement.ts: 既存SupportPlacementEngine（LINER正本・KEEP）で実frame snapshot生成・bearing seats接続・skew一箇所適用・fail-closed
+
+[WP-E] Abutment/Pier Geometry（PR #953 21e7c41）
+  - substructureGeometry.ts: 既存solid generator（KEEP）接続・形状validation（>0・finite）・inverted_t/cantilever_frame・single/wall/portal
+
+[WP-F] Footing/Foundation/Pile（PR #954 45cc8e1）
+  - substructureFoundation.ts: 既存derivePileLayout/buildPileGrid（KEEP）利用・embedment統一（ground-footingBottom）・pile head/tip derived・欠落時NOT_AVAILABLE
+
+[WP-G] Terrain/Existing（PR #955 2096672）
+  - substructureTerrain.ts: Terrain Module参照（getProjectTerrainGrid/lookupTerrainElevation・KEEP）・Existing参照（collectExistingNearRange）・正本複製なし・missing/stale=warning
+
+[WP-H] Design Framework/Quantity/Status（PR #956 97957e0）
+  - substructureDesign.ts: 既存computeProjectQuantity/runDesign（KEEP）利用・quantityResults（DERIVED）・designStatus NOT_AUTHORIZED維持・NOT_AUTHORIZED reaction入力保持
+
+[WP-I] Integrated 3D/UI（PR #957 199b137）
+  - substructureSceneBuilder.ts（既存solid→THREE・renderCoordinate唯一・entity/selection分離）
+  - substructureGenerator.ts（Bridge Layout+SuperstructureからSubstructureDocument生成・保存）
+  - SubstructureModuleShellPage + NextApp dispatch（/app/modules/substructure）
+
+[WP-J] Persistence/restart/.spacerproj（PR #958 c715c17）
+  - 実filesystem縦断test: save→restart→restore→derived再生成・.spacerproj round-trip
+
+[WP-K] Reference Bridge＋Completion Gate（PR #959 cb95d69）
+  - substructureIntegrityGate.ts: Phase 6 Completion Gate（9項目）
+  - referenceBridgeSubstructure.test.ts: RB-MOUNTAIN/RB-S10-001
+
+[hygiene fix]（PR #960 0bafce0）
+  - WP-K testのdebug console.log除去（frontend source hygiene復帰）
+
+------------------------------------------------------------
+4. 実装ファイル一覧（新規）
+------------------------------------------------------------
+frontend/src/next/modules/substructure/
+  - substructureTypes.ts / substructureValidation.ts / substructureDocumentDomain.ts
+  - substructureModule.ts / substructureModuleAdapter.ts / substructurePersistence.ts
+  - substructurePhase4Adapter.ts / substructurePhase5Adapter.ts / substructurePlacement.ts
+  - substructureGeometry.ts / substructureFoundation.ts / substructureTerrain.ts
+  - substructureDesign.ts / substructureSceneBuilder.ts / substructureGenerator.ts
+  - substructureIntegrityGate.ts
+frontend/src/next/pages/SubstructureModuleShellPage.tsx
+frontend/src/next/NextApp.tsx（dispatch追加）
+tests: __tests__ 各モジュール + integrityGate + referenceBridgeSubstructure + persistence
+
+------------------------------------------------------------
+5. 再利用した既存資産（Phase 6-00 KEEP/ADAPT）
+------------------------------------------------------------
+- model.ts（v0.2.0）: SubstructureDocument canonical型ベース（ADAPT）
+- validation.ts: 検証ロジック踏襲
+- SupportPlacementEngine: LINER正本（KEEP）
+- geometryBase / SubstructureSolidGenerator / PierSolidGenerator / FoundationSolidGenerator: solid生成（KEEP）
+- viewer3d/threeFactory: 3D（ADAPT・renderCoordinate統一）
+- design framework（computeProjectQuantity/runDesign/calculationAdapter等）: KEEP
+- superstructureEnvelope: 参照
+- bridgeLayoutPlacement（getProjectTerrainGrid/lookupTerrainElevation/collectExistingNearRange）: Terrain/Existing参照（KEEP）
+- 既存tests: regression維持
+
+------------------------------------------------------------
+6. SubstructureDocument（要約）
+------------------------------------------------------------
+- schemaVersion 0.1.0 / documentKind substructure-design / modules.substructure.data
+- canonical: supports/abutments/piers/footing/foundation/pile/designInputs
+- derived transient: supportReferences（Phase 4）・bearingReactionReferences（Phase 5）
+- validation二段階: DRAFT（persistence・shape欠落許容）/ Gate（shape必須）
+- 未認証Reaction: NOT_AUTHORIZED維持・正式設計PASS生成禁止
+
+------------------------------------------------------------
+7. Phase 4 Handoff（要約）
+------------------------------------------------------------
+- supportId/supportType/station/skew直接受領（CCW・null→0）
+- virtual_pier→pier・roadReferenceId fallback・fail-closed
+
+------------------------------------------------------------
+8. Phase 5 Handoff・6課題（要約）
+------------------------------------------------------------
+1. reaction sign: up-positive符号付き（RBテスト+3325.5/+1378.9）
+2. bearing axis: x=longitudinal/y=transverse
+3. seat-ID: BRG-{support}-{girder}正規化（legacySeatId保持）
+4. caseKind: enum+combinationId別（DL→permanent/LL→liveLoad/不明→UNKNOWN非採用）
+5. localFrame: 実frame（LINER）・identity fabrication禁止
+6. 標高: Record<supportId, number|null>・null=NOT_AVAILABLE（+0.25m禁止）
+
+------------------------------------------------------------
+9. Reference Bridge（要約）
+------------------------------------------------------------
+- RB-MOUNTAIN: mountain support配置（A1@50/P1..P7/A2@450・skew π/2・bearing offset ±3.25）
+- RB-S10-001: bearing ±2.5/z=8.0・girderBottom 8.4/deck 10.0・reaction +3325.5/+1378.9（符号付き）・quantity golden 187.92
+- SOURCE_NOT_AVAILABLE（SB-08〜13）: 補完せずスキップ
+
+------------------------------------------------------------
+10. 検証（tests/regression）
+------------------------------------------------------------
+- src/next: 587件 PASS（substructure module 58件含む）
+- substructure legacy: 328件 PASS
+- bridgeProject: 106件 PASS
+- next+apollo+contracts+viewer+if3: 1767件 PASS
+- liner: 1010件 PASS
+- 合計 ~3200件 PASS（個別suite実行）
+- typecheck: tsc -b PASS
+- lint: frontend source hygiene PASS（console.log除去後）
+- build: vite build PASS（apollo mode）
+- electron:compile PASS
+
+------------------------------------------------------------
+11. Electron / E2E
+------------------------------------------------------------
+- Electron実起動（SPACER_AUTOMATION=1・プレビューサーバー内蔵）・全縦断完走:
+  プロジェクト作成 → 道路 → 地形・現況 → 橋梁配置 → 上部工 → 下部工生成 → Completion Gate
+- screenshots 5枚（Luna画像検証: supports A1/P1/A2・quantity DERIVED・design status NOT_AUTHORIZED・Completion Gate READY）
+
+------------------------------------------------------------
+12. Persistence（要約）
+------------------------------------------------------------
+- PDC auto-save/restart/.spacerproj縦断（canonical/derived transient）
+- save→restart→restore→derived再生成（regenerateSubstructureDerived）・.spacerproj round-trip
+
+------------------------------------------------------------
+13. 3D / UI（要約）
+------------------------------------------------------------
+- substructureSceneBuilder: 既存solid→THREE（renderCoordinate唯一）・entity ID/selection key分離
+- SubstructureModuleShellPage（/app/modules/substructure）: 生成ボタン・supports一覧・quantity・design status・Completion Gate
+
+------------------------------------------------------------
+14. Completion Gate（Phase 6-01全31項目ベース評価）
+------------------------------------------------------------
+| 項目 | 状態 |
+|---|---|
+| SubstructureDocument valid | ✅（DRAFT/Gate二段検証） |
+| Schema PASS | ✅（T6-SCH系・serialize derived除外） |
+| Phase 4 Handoff PASS | ✅（WP-B） |
+| Phase 5 Handoff PASS | ✅（WP-C） |
+| Handoff 6 issues PASS | ✅（WP-C専用tests） |
+| Placement PASS | ✅（WP-D） |
+| Local Frame PASS | ✅（WP-D・実frame） |
+| Bearing Seat PASS | ✅（WP-D/C） |
+| Abutment / Pier PASS | ✅（WP-E） |
+| Footing / Foundation / Pile PASS | ✅（WP-F） |
+| Terrain / Existing PASS | ✅（WP-G） |
+| Geometry PASS | ✅（WP-E/F） |
+| Quantity PASS | ✅（WP-H・golden 187.92） |
+| Design Status PASS | ✅（NOT_AUTHORIZED維持） |
+| NOT_AUTHORIZED fail-closed PASS | ✅（自動昇格禁止） |
+| Integrated 3D PASS | ✅（WP-I・renderCoordinate） |
+| UI PASS | ✅（Shell・新route） |
+| Persistence PASS | ✅（WP-J） |
+| Auto Save / restart restore PASS | ✅（WP-J縦断test） |
+| .spacerproj PASS | ✅（WP-J） |
+| Reference Bridge PASS | ✅（WP-K・RB-MOUNTAIN/RB-S10-001） |
+| Electron PASS | ✅（実起動E2E） |
+| E2E PASS | ✅（縦断完走） |
+| regression PASS | ✅（~3200件） |
+| typecheck / lint / build PASS | ✅ |
+| DEFER guard PASS | ✅（構造照査/耐震/鉄筋/実engine実装なし） |
+
+------------------------------------------------------------
+15. Luna / Sol利用結果
+------------------------------------------------------------
+- Luna（read-only）: 下部工UI screenshot検証（supports/quantity/design status/Gate READY）PASS
+- Sol: 詰まり時の高度原因調査はPhase 6-02では発生せず（FROZEN仕様どおり実装）
+- read-only遵守・git status/diff確認（差分増加なし）
+
+------------------------------------------------------------
+16. screenshots
+------------------------------------------------------------
+保存先: docs/rebuild/phase6/evidence/
+  - p6-02-01-home.png（ホーム）
+  - p6-02-02-project-top.png（Projectトップ）
+  - p6-02-03-substructure-before.png（下部工生成前）
+  - p6-02-04-substructure-generated.png（下部工生成後: supports A1/P1/A2・quantity・design status）
+  - p6-02-05-substructure-gate.png（Completion Gate READY）
+Luna検証済み・Discordへ実ファイル添付送信（HTTP確認）
+
+------------------------------------------------------------
+17. 各branch / commit / PR / merge SHA
+------------------------------------------------------------
+- baseline: ba1089eadf93f6913cc3e2ff4ce51f7327d95d20
+- PR #949 WP-A → df287bf709ec6b027e6b221a716ad933e47180b7
+- PR #950 WP-B → 0d5c5314c429b19394766d284fb99d27c5e8f1d0
+- PR #951 WP-C → 4e316658544fa30f1b4a72707a78d18b1fec24da
+- PR #952 WP-D → 2f23f9e032600e572f550ee147fdad956d2e1034
+- PR #953 WP-E → 21e7c41a723d1a64931f5d95ca58bac47c983dd9
+- PR #954 WP-F → 45cc8e13db7f06ad8a112c159a11fb3e9c50e66e
+- PR #955 WP-G → 20966721fdfd8653d5e637ee1575217cf2d2902a
+- PR #956 WP-H → 97957e0039f99fccdc69575d9447ef2aaa1f7abd
+- PR #957 WP-I → 199b137adf5eb70259a2e0f426a37d41e2e992b3
+- PR #958 WP-J → c715c17b6d691944f5ae04b08f8b28471a374e1c
+- PR #959 WP-K → cb95d69e79b1ba2298cc9e547db882eecafb342c
+- PR #960 hygiene → 0bafce09c010a1e161a8aa7c267fc6f4478c9995
+- 本Final Report PR（docs/phase6-02-final）→ merge後SHAはGitHub正本から取得
+
+------------------------------------------------------------
+18. unresolved / deferred
+------------------------------------------------------------
+- SOURCE_NOT_AVAILABLE（SB-08〜13: 橋台/橋脚寸法・基礎/杭）: 外部資料要確認・Phase 6-02ではスキップ（補完しない）
+- DEFER: 本格構造照査/耐震/鉄筋/実計算engine/高度FEM/成果品（後続Phase）
+- 上記以外のunresolved TODO/TBD: なし
+
+------------------------------------------------------------
+19. Phase 6-02 verdict
+------------------------------------------------------------
+- Phase 6-02 COMPLETE
+- Phase 6「下部工」COMPLETE
+- Completion Gate PASS
+- WP-A..K全main merge済み
+- 未認証Reactionの自動採用なし（NOT_AUTHORIZED維持）
+- DEFER資産の誤実装なし
+
+------------------------------------------------------------
+20. next-phase readiness
+------------------------------------------------------------
+- Phase 6完了により次Phase（FEM/構造解析・統合3D/CIM・成果品）への準備完了
+- 上部工（Phase 5）・下部工（Phase 6）とも正本確立・Handoff接続済み
+
+------------------------------------------------------------
+21. STOP確認
+------------------------------------------------------------
+Phase 6-02 COMPLETE。
+Phase 6「下部工」全体 COMPLETE。
+Completion Gate PASS。
+最終4系統SHA同期完了。
+次Phaseへは進まずSTOPした。
