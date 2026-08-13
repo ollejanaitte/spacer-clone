@@ -55,22 +55,29 @@
 
 ## Road/LINER統合復旧ロードマップ（推奨・Rescue Phase案）
 
+各Phaseに **移行・検証gate** を設定する。
+
 ### Phase R1: 入力導線の復旧（最優先・HIGH）
 - Road Module UIへ旧LINER editor（Horizontal/Vertical/CrossSection/Width/Crossfall/Station）を**RESTORE/ADAPT接続**。
 - 旧LINER kernelをそのまま消費（新Road計算wrapperと同一なので二重実装なし）。
 - roadInputへwidthChangePoints/crossSlopeIntervalsを追加（現在field欠落）。
+- **Gate R1**: editor実装・入力→計算→結果E2E・既存LINER tests回帰（金senitive golden parity 旧LINER vs 新Road）。
 
 ### Phase R2: 正本一意化（HIGH）
 - `modules.road.data.roadInput`（緩い型）と`project.liner.roadDesignDocument`（entity-registry）の関係を正本として確定。
 - RoadDesignDocumentを正本化し、LINER domainDraft→RoadDesignDocument→計算の経路を一本化。
+- **Gate R2**: canonical schema決定・version/migration・既存 `.spacerproj` / `project.liner` / `roadInput` の後方互換・downstream（BridgeLayout/superstructure）への影響確認・restart restore E2E。
 
 ### Phase R3: 表示/成果統合（MED）
 - 旧LINER visual（Plan/Profile/Section SVG・正式図面・DXF）をRoad ModuleへMERGE。
 - 3D（旧LinerMain3D + 新integratedSceneBuilder）を統合。
+- **Gate R3**: visual/DXF golden parity・UI E2E・feature flag/段階移行/rollback方針。
 
 ### Phase R4: backend判定（MED・後続）
 - backend/rule_engineをfrontend正本方針でどう扱うか確定（継続KEEP / REWRITE / 廃止候補）。
 - 12個のstubルール（X2-R-005/006/008/009/010/011/012/013/014/015/016/017/018）の扱いを確定。
+- **Gate R4**: 法令値・`NEEDS_RESEARCH`をproduction判定へ昇格させる承認gate・API配線方針。
 
 ### Phase R5: 成果品/Importer（LOW・DEFER）
 - 正式図面/DXF・PDF Importerは残存LINERで維持・統合は後続。
+- **Gate R5**: 受入条件（station equation・複数alignment・適用区間含む）・UI E2E。

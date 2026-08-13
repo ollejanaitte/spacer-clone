@@ -131,6 +131,11 @@
 
 ## 結論
 
-- 旧LINERは**mainに完全残存**・UIは`/pro/linear-coordinate`+`/pro/liner/*`でroute接続済み。
-- 旧LINERは「完成済み実務資産」であり、正本候補 = **現mainの frontend/src/liner（TS計算kernel+UI+164 tests）**。
-- 加えて backend/rule_engine（Python・X2-X4d）が別途存在（後述の新Road棚卸し/transitionで評価）。
+- 確認対象の**tracked LINER資産（532ファイル・164 tests）はmainに残存**し、主要route（`/pro/linear-coordinate`・`/pro/liner/*`）がApp.tsxから接続済みである。
+- これは「ファイル保存・route接続」の意味での残存であり、以下の**含意はしない**（過大解釈を避ける）:
+  - 全research branch成果の意味的supersetである（ファイル数の大小と機能完全性は別）
+  - 全機能がproduction品質である
+  - 「完成済み実務資産」である（残存LINERは実装・test済みだが、正式採用は別途判断）
+  - 現Road Moduleと完全parityである（UI面で大きく非対称）
+- 旧LINERの正本候補 = **現mainの frontend/src/liner（TS計算kernel+UI+164 tests）**。
+- backend/rule_engine（Python・X2-X4d）は別途DORMANTとして存在（新Road棚卸/transitionで評価）。
