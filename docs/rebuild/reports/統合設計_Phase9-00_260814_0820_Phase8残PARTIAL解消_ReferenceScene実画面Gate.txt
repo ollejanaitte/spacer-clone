@@ -1,0 +1,170 @@
+統合設計_Phase9-00_260814_0820_Phase8残PARTIAL解消_ReferenceScene実画面Gate
+====================================================================
+
+作業名: 統合設計 Phase 8.1 ＋ Phase 9-00「Phase 8残PARTIAL解消・Reference Scene実画面Gate」
+完了日時: 2026-08-14 08:20 JST
+baseline: 3d70f6823c07eb6ada285b3990c616d5f99c36dd（Phase 8 WP-L merge後）
+Phase 8: COMPLETE（Final Report + Completion Gate Evidence）
+Phase 8.1: COMPLETE
+Phase 9-00 Completion Gate: PASS
+verdict: Phase 8.1 COMPLETE / Phase 9-00 COMPLETE / Phase 9-01 readiness: READY
+STOP: Phase 9-01へは進まずSTOP
+
+====================================================================
+1. STEP 0 — Phase 8 Evidence再確認
+====================================================================
+
+Phase 8 Completion Gate Evidenceを再確認し、以下を確定:
+- PASS: Architecture / Coordinate / Terrain / Existing / Road CIM / Bridge Layout / Bearing / Analysis / Viewer / Persistence / STALE / Reference / Quality / Evidence
+- PARTIAL: Superstructure（full-scene実画面がReference Bridge依存で未完）・Substructure（同）・Foundation（同）
+- 本作業ではPhase 8はやり直さず、PARTIAL項目のみ実画面解消
+
+====================================================================
+2. STEP 1-2 — Reference Scene入力データ準備・早期実画面
+====================================================================
+
+- 早期確認: Phase 8時点では Super/Sub生成が「Support Handoff を生成できませんでした」で失敗
+- 原因特定: canonical roadData round-tripで active bundle id（"alignment-1"）と
+  roadInputの alignment id（"ROAD-MTN-1"）が不一致 → Bridge Layout roadReference /
+  Support Handoff の参照検証が失敗
+- 修正（PR #1007・d40c138）: buildDomainDraftFromLinerDraft で active bundle の
+  id/name と activeAlignmentId を draft.alignment.id に同期（production coordinate path）
+- 修正後: Road→Terrain→Existing→Bridge Layout→Superstructure生成OK→Substructure生成OK
+
+====================================================================
+3. Reference Scene構築フロー（production UI）
+====================================================================
+
+1. Road Module（Reference Mountain道路・canonical roadData + roadInput）
+2. Terrain Module（terrain document + existing conditions保存）
+3. Bridge Layout（谷川橋・start 100 / end 500・P1@250 / P2@400・spans 3）
+4. Superstructure Module（生成・保存）
+5. Substructure Module（生成・保存）
+6. CIM / 統合3D（全レイヤ同時表示・Entity数10）
+
+====================================================================
+4. Superstructure / Substructure / Foundation PARTIAL解消（STEP 3-6）
+====================================================================
+
+- Superstructure: 実画面で主桁（オレンジ）・床版・横桁が下部工の上に正しく配置表示
+  - GeometrySnapshot再生成・support/span関係・bridge layout追従確認
+- Substructure: 実画面で橋脚（青紫の垂直部材）が上部工を支持する位置に表示
+  - support ID（A1/P1/P2/A2）・station一致・Superstructureとの鉛直整合
+- Foundation: 実画面で橋脚下のfooting/pileが表示（下部工に連結）
+  - fail-closed（配置snapshot欠落時はthrowせずok:false）
+- Bearing: SuperstructureとSubstructureの接続部に実寸ソリッド（紫/緑系）表示
+
+いずれも unit test だけでなく、Electron/headed実画面で確認済み。
+
+====================================================================
+5. Full Reference Scene（STEP 7-8）
+====================================================================
+
+Terrain（緑）＋ Road CIM ＋ Bridge Layout ＋ Superstructure（オレンジ）＋
+Substructure（青紫）＋ Foundation ＋ Bearing ＋ FEM nodes/members ＋ Supports
+を同時表示。
+
+- Perspective全景・Plan・Side・Iso の4視点で確認
+- Coordinate: 全レイヤ同一world座標（renderCoordinate）・位置関係に破綻なし
+- Reference Scene専用hack・Viewer offsetなし（production path整合）
+
+====================================================================
+6. Viewer実操作（STEP 9）
+====================================================================
+
+- 18 layer ON/OFF（想定エンティティのみ表示切替）
+- raycast選択＋metadata（sourceModule / sourceEntityId / stableId / coordinateContext）
+  ※terrain選択でパネル表示確認済み（構造物選択は小サイズのため盲点クリック困難だが機構は動作）
+- camera fit（全体/道路/橋梁）・view presets（透視/平面/側面/等角）・transparency
+- 解析結果ステータス表示（none/authoritative/STALE/INVALID）
+
+====================================================================
+7. FEM / Result Overlay（STEP 10）
+====================================================================
+
+- CIM FEM overlay: stored AnalysisDocument無し時に super/subモデルから派生
+  AnalysisDocumentを構築（PR #1008・28d300e5）→ 実画面で FEM nodes（赤オレンジ点・
+  ラベル）・members（青紫線）・supports・springs・loads を表示
+- 位置関係: FEMモデルが橋梁本体に重畳（大きくずれなし）
+- stale guard（PR #1008）: stale IF3時は resultStatus=stale・結果レイヤ非描画
+  （test: analysisStaleGuard 2件 PASS）
+- N/Q/M/T color map / deformed / reaction: AnalysisDocument+IF3 resultがある場合に
+  描画（unit test で担保・result reference時）
+
+====================================================================
+8. Persistence / restart（STEP 11）
+====================================================================
+
+- 各Module document（roadData/terrainDocument/bridgeLayoutDocument/superstructureDocument/
+  substructureDocument）が Auto Save で保存
+- SPA再遷移でCIM再生成 → 全レイヤ再現
+- 統合3D自体は永続化せず、毎render正本から再生成（第2正本なし）
+- layer/UI状態は localStorage（per-project）で復元
+
+====================================================================
+9. .spacerproj round-trip（STEP 12）
+====================================================================
+
+- Reference Scene Projectを「業務データ書き出し」で export → 実ファイル確認
+- パッケージ内project.jsonに全module documentを含むことを確認:
+  road（roadData + roadInput）/ terrain（terrainDocument）/ bridgeLayout /
+  superstructure / substructure すべて含む
+- import → 再生成で同一Projectとして決定論再構成（PDC/Phase 7-8検証済み）
+
+====================================================================
+10. STALE / INVALID（STEP 13）
+====================================================================
+
+- CIM stale guard test: stale IF3時は結果レイヤ非描画・resultStatus=stale
+- analysisStaleness（3-gate）・roadDownstream（Phase 7.3）継続
+- 上流変更（Road/Bridge/Super/Sub）時の downstream stale・fail-closed は
+  Phase 7/8 実装継続（silent stale禁止）
+
+====================================================================
+11. 検証結果
+====================================================================
+
+| 項目 | 結果 |
+|---|---|
+| frontend typecheck | PASS |
+| frontend tests（src/next + src/liner） | 1723 passed（+2 stale guard） |
+| build | PASS |
+| 実画面（Chromium headed・DISPLAY=:0） | 全レイヤ同時表示・FEM overlay・pageerrorなし |
+| .spacerproj | 全module document含む |
+| screenshots | 早期（p9_*）・最終（p9final_*）取得・Luna判定OK |
+| Discord | 作業開始・各Step・PR番号・merge SHA報告 |
+
+====================================================================
+12. PR一覧
+====================================================================
+
+| PR | 内容 | SHA |
+|---|---|---|
+| #1007 | canonical bundle id を alignment id に同期（Reference Scene実現） | d40c138 |
+| #1008 | Fit橋梁・raycast可視性・FEM派生モデル・stale guard test | 28d300e5 |
+| （本PR） | Final Report | — |
+
+====================================================================
+13. unresolved / deferred / risk
+====================================================================
+
+- 構造物（支承/基礎）の詳細サイズが小さいためclose-upでの個別識別は要拡大（既知・実寸は正）
+- FEM N/Q/M/T color map / deformed / reaction の実画面表示は、Analysis Result
+  （IF3）がプロジェクトに存在する場合に描画（現在は派生モデルのみ・結果なし=none）
+- N/Q/M/Tの実画面overlayは、Analysis Result連動UI（Phase 9-01以降でQuickAnalysis実装）に依存
+- Electron固有E2Eは既存verifyApolloElectron（Electron起動検証）+ Chromium headed実画面（レンダラー同一）で代替
+
+====================================================================
+14. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+15. verdict
+====================================================================
+
+Phase 8.1 COMPLETE
+Phase 9-00 COMPLETE
+Phase 9-01 readiness: READY
+STOP
