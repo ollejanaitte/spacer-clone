@@ -1,8 +1,11 @@
 import type { ProjectManager } from "../../project/projectManager";
-import { readRoadInputs } from "../roadModuleAdapter";
+import { readRoadInputs, ensureRoadData } from "../roadModuleAdapter";
+import { loadRoadEditorDraft } from "../road/roadEditorDraft";
+import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
 import { buildRoadIntermediate, type RoadIntermediateResult } from "../road/intermediateResult";
 import { readTerrainDocument } from "../terrainModuleAdapter";
 import { readExistingConditions } from "../existingConditionsAdapter";
+import type { BuildIntermediateInput } from "../../../liner/core/pipeline/pipeline";
 import type { LinearAlignment } from "../../../liner/core/types";
 import type { VerticalElement } from "../../../liner/core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../../liner/schema/types";
@@ -48,7 +51,29 @@ export function readRoadAlignmentContext(
   manager: ProjectManager,
   projectId: string,
 ): RoadAlignmentContext {
+  // Canonical Road Data (Single Source of Truth) first (Phase 7.4).
+  const canonical = ensureRoadData(manager, projectId, {
+    project: manager.getProject(projectId) as never,
+  });
+  if (canonical.ok) {
+    const loaded = loadRoadEditorDraft(canonical.roadData);
+    if (loaded.ok && loaded.draft.alignment.elements.length > 0) {
+      return buildRoadAlignmentContextFromDraft(loaded.draft);
+    }
+  }
   return buildRoadAlignmentContextFromInputs(readRoadInputs(manager, projectId));
+}
+
+/** Build the alignment context from a canonical-derived editor draft. */
+export function buildRoadAlignmentContextFromDraft(
+  draft: BuildIntermediateInput,
+): RoadAlignmentContext {
+  return buildRoadAlignmentContextFromInputs({
+    label: "",
+    horizontal: draft.alignment,
+    vertical: verticalDraftAlignmentToElements(draft.verticalAlignment),
+    crossSections: draft.crossSections ?? [],
+  } as ReturnType<typeof readRoadInputs>);
 }
 
 /** RoadInputs（Road Module正本）から alignment コンテキストを組み立てる。 */

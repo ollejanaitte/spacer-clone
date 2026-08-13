@@ -11,6 +11,8 @@ import type {
   VerticalAlignmentDraft,
   CrossSectionTemplateDraft,
   CrossSlopeIntervalDraft,
+  CrossSlopeDraft,
+  StationDefinitionDraft,
   WidthChangePointDraft,
 } from "../../../liner/schema/types";
 
@@ -43,4 +45,21 @@ export function updateCrossSlopeIntervals(
   crossSlopeIntervals: CrossSlopeIntervalDraft[],
 ): BuildIntermediateInput {
   return { ...draft, crossSlopeIntervals };
+}
+
+export function updateStationDefinition(
+  draft: BuildIntermediateInput,
+  stationDefinition: StationDefinitionDraft,
+): BuildIntermediateInput {
+  return { ...draft, stationDefinition };
+}
+
+export function updateCrossSectionCrossSlope(
+  draft: BuildIntermediateInput,
+  index: number,
+  crossSlope: CrossSlopeDraft | undefined,
+): BuildIntermediateInput {
+  const crossSections = [...(draft.crossSections ?? [])];
+  crossSections[index] = { ...crossSections[index], crossSlope };
+  return { ...draft, crossSections };
 }

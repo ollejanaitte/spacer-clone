@@ -9,6 +9,7 @@ import {
   type SpacerProjPackage,
 } from "./projectPackage";
 import { computeSha256Hex } from "./packageChecksum";
+import { utf8ByteLength } from "./utf8Length";
 
 export type BuildPackageResult =
   | { ok: true; pkg: SpacerProjPackage; json: string }
@@ -22,7 +23,7 @@ export function buildProjectPackage(project: Project): BuildPackageResult {
   const projectJson = serializeProject(parsed.project);
   const fileEntry: PackageFileEntry = {
     path: PROJECT_JSON_ENTRY,
-    size: Buffer.byteLength(projectJson, "utf8"),
+    size: utf8ByteLength(projectJson),
     checksum: computeSha256Hex(projectJson),
   };
   const manifest: PackageManifest = {
@@ -52,7 +53,7 @@ export function selfCheckPackage(pkg: SpacerProjPackage): { ok: true } | { ok: f
     if (!file) {
       return { ok: false, reason: `missing-file: ${entry.path}` };
     }
-    if (Buffer.byteLength(file.content, "utf8") !== entry.size) {
+    if (utf8ByteLength(file.content) !== entry.size) {
       return { ok: false, reason: `size-mismatch: ${entry.path}` };
     }
     if (computeSha256Hex(file.content) !== entry.checksum) {

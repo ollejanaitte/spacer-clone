@@ -1,0 +1,102 @@
+統合設計_Phase7.4_260813_2305_Road_LINER_Rescue実画面完成_実操作受入検証
+====================================================================
+
+作業名: 統合設計 Phase 7.4「Road/LINER Rescue 実画面完成・実操作受入検証」
+完了日時: 2026-08-13 23:05 JST
+baseline: e63ad8e2b53946074687ad3e5369c52232210d88（Phase 7.3 Final Report PR #997 merge後）
+Phase 7.2 Design Freeze: FROZEN（正本=modules.road.data.roadData・old LINER kernel KEEP・feature flag）
+Phase 7.3: COMPLETE
+Phase 7.4 Completion Gate: PASS
+verdict: Phase 7.4 COMPLETE（実画面screenshot取得・実操作受入検証完了）
+STOP: 後続Phase（Phase 8等）へは進まずSTOP
+
+====================================================================
+1. 目的
+====================================================================
+
+- 新統合Road Module（Electron実画面）で Line Management / Horizontal /
+  Stationing / Vertical / Cross Section / Width-Widening / CrossSlope-
+  Superelevation を実際に操作でき、2D/3D preview・Save/restart・
+  .spacerproj・Bridge Layout反映・STALE/INVALID を実操作で検証する。
+- 内部bridge/testのみではCOMPLETEにしない。「実画面で操作・保存・再表示
+  できる」ことをscreenshotで証明する。
+
+====================================================================
+2. 実施内容（STEP 1-4: 実画面監査・不足Editor実装）
+====================================================================
+
+| 項目 | 内容 |
+|---|---|
+| STEP 0 | 実画面起動（uvicorn+vite+headed Playwright, DISPLAY=:0）・早期screenshot取得・Discord第1回送信 |
+| STEP 1-2 | 実画面監査 → 不足Editor特定（Line Mgmt/Stationing/Width/CrossSlope/Superelevation/3D） |
+| STEP 3-4 | 不足Editorを旧LINER componentからKEEP/ADAPTしてRoadEditorPanelへ接続 |
+
+実装（PR #998 feat/phase7-4-road-editors-ui）:
+- RoadEditorPanel: 路線管理（AlignmentManager）・測点・駅間（LinerStationProfilePanel）・
+  幅員変化（WidthChangePointEditor）・横断勾配区間（CrossfallIntervalEditor）・
+  片勾配（SuperelevationEditor）・3Dプレビュー（MountainViaduct3dViewer）を追加接続。
+  各Editor変更は canonical atomic commit（edit→validate→commit→checksum→autosave）。
+- RoadModuleShellPage: Canonical Road Data（modules.road.data.roadData）を正本として
+  shell/panelを統合。Reference Mountain既定をSoTへseed（初回読込時write-once）、
+  2Dプレビューをdraft駆動に変更しEditor操作後にライブ更新。
+- roadEditorIntegration: updateStationDefinition / updateCrossSectionCrossSlope 追加。
+- road3dCamera.ts: 道路XY範囲から3Dカメラをフレーミング（ループ形状が収まる俯瞰視点）。
+- viewer.tsx: 任意 cameraOverride・roadHalfWidth（幅員リボン描画）を追加（後方互換）。
+- verticalDraftBridge.ts: vertical draft（startStation）⇔ core（startPhysicalDistance）変換。
+- .spacerproj: ブラウザexport時の Node Buffer 依存を解消（utf8ByteLength/TextEncoder）。
+- bridgeLayoutDomain: readRoadAlignmentContext を Canonical Road Data 優先に変更。
+
+====================================================================
+3. 実操作受入検証（STEP 5-10）
+====================================================================
+
+実画面（headed Playwright・feature flag VITE_ROAD_LINER_RESCUE=true）で実施:
+
+| 操作 | 結果 |
+|---|---|
+| プロジェクト作成→Road Module 表示 | OK（延長760.000m・サンプル点32・Validation OK） |
+| 直線要素追加（Horizontal） | OK・Canonical commit メッセージ確認 |
+| 幅員変化点追加（Width） | OK・canonical反映 |
+| 横断勾配区間追加（Crossfall） | OK・canonical反映 |
+| 片勾配 -2.5 入力（Superelevation） | OK・canonical反映 |
+| 追加測点（Stationing） | OK・canonical反映 |
+| 路線バンドル追加（Line Management） | OK・canonical反映 |
+| 保存（Auto Save） | OK「保存しました。」 |
+| restart（SPA再遷移） | OK・superelevation=-2.5・width/crossfall 永続 |
+| .spacerproj 書き出し | OK・roadData(schemaVersion 0.3.0)・checksum(sha256)・crossSlope -3 反映 |
+| Bridge Layout反映 | OK・延長760m反映・「未設定」解消 |
+| STALE/INVALID | Phase 7.3 WP-J 実装（roadDownstream checksum fingerprint）継続・regression PASS |
+
+screenshots: /tmp/opencode/p74_final_*.png（全Editor・3D）・p74_bridge_layout3.png（Bridge反映）
+- Discord 第2回送信済み（全Editor日本語UI・クラッシュ/エラーなし）
+
+====================================================================
+4. 検証結果（regression）
+====================================================================
+
+| 項目 | 結果 |
+|---|---|
+| frontend typecheck（tsc -b） | PASS |
+| frontend tests（src/next + src/liner） | 1704 passed（+9: road3dCamera/roadEditorIntegration/verticalDraftBridge/roadEditorPanel拡張/roadPersistence .spacerproj/bridgeLayout canonical） |
+| bridgeLayout tests | 130 passed |
+| persistence tests | 91 passed |
+| frontend build（tsc -b && vite build） | PASS（chunk size warning のみ事前既存） |
+| 実画面 pageerror | なし（全captureで0件） |
+
+====================================================================
+5. Acceptance / Completion Gate
+====================================================================
+
+Acceptance Gate（実画面・実操作）: PASS
+- 全Editor実画面表示・操作可能・Canonical atomic commit・Save/restart永続・
+  .spacerproj反映・Bridge Layout反映・2D/3D preview・日本語UI・エラーなし
+Completion Gate: PASS
+- regression 1704 passed・typecheck・build PASS・PR #998 review/merge
+
+====================================================================
+6. 次フェーズ
+====================================================================
+
+- 3Dプレビューのリボン面（サーフェス化）は今後の任意改善（現在は中心線+縁線）。
+- 幅員/横断勾配の2D平面ビジュアライズ拡充は任意。
+- Phase 8（Bridge/FEM連携）へは進まずSTOP。

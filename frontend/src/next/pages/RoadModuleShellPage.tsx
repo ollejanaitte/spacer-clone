@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { getModuleDefinition } from "../modules/registry";
-import { readRoadInputs, writeRoadInputs } from "../modules/roadModuleAdapter";
+import {
+  readRoadInputs,
+  writeRoadInputs,
+  ensureRoadData,
+  writeRoadData,
+} from "../modules/roadModuleAdapter";
+import {
+  loadRoadEditorDraft,
+  commitRoadEditorDraft,
+} from "../modules/road/roadEditorDraft";
 import { buildRoadIntermediate } from "../modules/road/intermediateResult";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
@@ -9,10 +18,10 @@ import { RoadPlanPreview, RoadProfilePreview, RoadCrossSectionPreview } from "..
 import { RoadEditorPanel } from "../components/RoadEditorPanel";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import { createReferenceMountain } from "../modules/terrain/referenceMountain";
+import { createDefaultLinerDraft } from "../../liner/adapters/linerUiAdapter";
+import { verticalElementsToDraft, verticalDraftAlignmentToElements } from "../modules/road/verticalDraftBridge";
+import type { BuildIntermediateInput } from "../../liner/core/pipeline/pipeline";
 import type { ProjectModuleKey } from "../project/schema";
-import type { LinearAlignment } from "../../liner/core/types";
-import type { VerticalElement } from "../../liner/core/geometry/vertical";
-import type { CrossSectionTemplateDraft } from "../../liner/schema/types";
 
 /** Feature flag for the Road/LINER Rescue editors (Phase 7.2 FROZEN D-13). */
 export const ROAD_LINER_RESCUE_FLAG = "VITE_ROAD_LINER_RESCUE";
@@ -22,43 +31,70 @@ export function isRoadLinerRescueEnabled(): boolean {
 }
 
 // 新規Roadの既定データは Reference Mountain の計画道路（Terrain/Existingと同一座標系）。
-// Road Moduleページで「保存」すると roadInput としてProjectへ保存される。
+// Canonical Road Data（modules.road.data.roadData）が Single Source of Truth。
 const ROAD_DEFAULT = createReferenceMountain();
 
-const DEFAULT_HORIZONTAL: LinearAlignment = ROAD_DEFAULT.roadHorizontal;
-
-const DEFAULT_VERTICAL: VerticalElement[] = [...ROAD_DEFAULT.roadVertical];
-
-const DEFAULT_CROSS: CrossSectionTemplateDraft = ROAD_DEFAULT.roadCrossSection;
+/** Assemble a LinerDraft editor draft from the Reference Mountain defaults. */
+function buildReferenceMountainDraft(): BuildIntermediateInput {
+  const base = createDefaultLinerDraft();
+  return {
+    ...base,
+    alignment: ROAD_DEFAULT.roadHorizontal,
+    verticalAlignment: {
+      id: ROAD_DEFAULT.roadHorizontal.id,
+      elements: verticalElementsToDraft(ROAD_DEFAULT.roadVertical),
+    },
+    crossSections: [ROAD_DEFAULT.roadCrossSection],
+  };
+}
 
 export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
-  const [project] = useState(() => getProjectManager().getProject(projectId));
+  const manager = getProjectManager();
+  const [project] = useState(() => manager.getProject(projectId));
   const definition = getModuleDefinition(moduleId as ProjectModuleKey);
   const [roadLabel, setRoadLabel] = useState(() => {
-    const inputs = readRoadInputs(getProjectManager(), projectId);
+    const inputs = readRoadInputs(manager, projectId);
     return inputs.label ?? "";
   });
-  const [horizontal, setHorizontal] = useState<LinearAlignment>(() => {
-    const inputs = readRoadInputs(getProjectManager(), projectId);
-    return (inputs.horizontal as LinearAlignment | undefined) ?? DEFAULT_HORIZONTAL;
-  });
-  const [vertical, setVertical] = useState<VerticalElement[]>(() => {
-    const inputs = readRoadInputs(getProjectManager(), projectId);
-    return (inputs.vertical as VerticalElement[] | undefined) ?? DEFAULT_VERTICAL;
-  });
-  const [crossSections, setCrossSections] = useState<CrossSectionTemplateDraft[]>(() => {
-    const inputs = readRoadInputs(getProjectManager(), projectId);
-    return (inputs.crossSections as CrossSectionTemplateDraft[] | undefined) ?? [DEFAULT_CROSS];
+  const [draft, setDraft] = useState<BuildIntermediateInput>(() => {
+    const roadData = ensureRoadData(manager, projectId, {
+      project: manager.getProject(projectId) as unknown as import("../../types").ProjectModel,
+    });
+    if (roadData.ok) {
+      const loaded = loadRoadEditorDraft(roadData.roadData);
+      if (loaded.ok && (loaded.draft.alignment.elements.length > 0 || (loaded.draft.linerAlignments?.length ?? 0) > 0)) {
+        return loaded.draft;
+      }
+      // Empty default -> seed the Canonical SoT with the Reference Mountain road.
+      const seeded = buildReferenceMountainDraft();
+      const committed = commitRoadEditorDraft(seeded, {
+        source: "new",
+        migratedAt: new Date().toISOString(),
+      });
+      if (committed.ok && committed.canonical) {
+        writeRoadData(manager, projectId, committed.canonical);
+        void manager.flushPendingSaves();
+      }
+      return seeded;
+    }
+    return buildReferenceMountainDraft();
   });
   const [message, setMessage] = useState<string | null>(null);
+
+  const horizontal = draft.alignment;
+  const vertical = verticalDraftAlignmentToElements(draft.verticalAlignment);
+  const crossSections = draft.crossSections ?? [];
+  const widthChangePoints = draft.widthChangePoints ?? [];
+  const crossSlopeIntervals = draft.crossSlopeIntervals ?? [];
+  const stationDefinition = draft.stationDefinition;
 
   const intermediate = buildRoadIntermediate({
     horizontal,
     vertical,
     crossSections,
-    widthChangePoints: [],
-    crossSlopeIntervals: [],
-    stationDefinition: { originDisplayedStation: 0, equations: [] },
+    widthChangePoints,
+    crossSlopeIntervals,
+    stationDefinition,
   }, { sampleInterval: 25 });
 
   if (!project) {
@@ -79,7 +115,7 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
   const status = moduleData?.state.status ?? "notStarted";
 
   function handleSave() {
-    const result = writeRoadInputs(getProjectManager(), projectId, {
+    const result = writeRoadInputs(manager, projectId, {
       label: roadLabel,
       horizontal,
       vertical,
@@ -89,8 +125,17 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
       setMessage("保存できませんでした（validation NG）。");
       return;
     }
+    // Mirror the current editor draft into the Canonical SoT so the legacy
+    // roadInput and the canonical roadData never diverge on explicit save.
+    const committed = commitRoadEditorDraft(draft, {
+      source: "new",
+      migratedAt: new Date().toISOString(),
+    });
+    if (committed.ok && committed.canonical) {
+      writeRoadData(manager, projectId, committed.canonical);
+    }
     setMessage("保存しました。");
-    void getProjectManager().flushPendingSaves();
+    void manager.flushPendingSaves();
   }
 
   return (
@@ -151,7 +196,7 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
       <div className="next-preview-grid">
         <div>
           <h3 className="next-hint">平面線形（Plan）</h3>
-          <RoadPlanPreview horizontal={horizontal} vertical={vertical} crossSections={crossSections} widthChangePoints={[]} crossSlopeIntervals={[]} />
+          <RoadPlanPreview horizontal={horizontal} vertical={vertical} crossSections={crossSections} widthChangePoints={widthChangePoints} crossSlopeIntervals={crossSlopeIntervals} />
         </div>
         <div>
           <h3 className="next-hint">縦断（Profile）</h3>
@@ -164,7 +209,11 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
       </div>
 
       {isRoadLinerRescueEnabled() && (
-        <RoadEditorPanel projectId={projectId} />
+        <RoadEditorPanel
+          projectId={projectId}
+          draft={draft}
+          onDraftChange={setDraft}
+        />
       )}
 
       <div className="next-road-summary" data-testid="road-summary">

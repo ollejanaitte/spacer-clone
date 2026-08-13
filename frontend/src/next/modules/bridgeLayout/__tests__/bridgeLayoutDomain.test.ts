@@ -9,7 +9,9 @@ import {
   buildBridgeLayoutFromRange,
   applyBridgeRangeToDocument,
 } from "../bridgeLayoutDomain";
-import { writeRoadInputs } from "../../roadModuleAdapter";
+import { writeRoadInputs, writeRoadData } from "../../roadModuleAdapter";
+import { commitRoadEditorDraft } from "../../road/roadEditorDraft";
+import { createDefaultLinerDraft } from "../../../../liner/adapters/linerUiAdapter";
 import { writeTerrainDocument } from "../../terrainModuleAdapter";
 import { createEmptyTerrainDocument } from "../../terrainModule";
 import { writeExistingConditions } from "../../existingConditionsAdapter";
@@ -94,6 +96,28 @@ describe("readRoadAlignmentContext (Road reference)", () => {
     const context = readRoadAlignmentContext(manager, project.projectId);
     expect(context.ok).toBe(false);
     expect(context.issues.some((i) => i.message.includes("no elements"))).toBe(true);
+  });
+
+  it("resolves alignment from canonical roadData (Phase 7.4)", async () => {
+    const manager = getProjectManager();
+    manager.importProject(makeProject());
+    const project = manager.listProjects()[0];
+    const mountain = createReferenceMountain();
+    const draft = createDefaultLinerDraft();
+    draft.alignment = mountain.roadHorizontal;
+    const committed = commitRoadEditorDraft(draft, {
+      source: "new",
+      migratedAt: new Date().toISOString(),
+    });
+    expect(committed.ok).toBe(true);
+    if (!committed.ok || !committed.canonical) return;
+    expect(writeRoadData(manager, project.projectId, committed.canonical).ok).toBe(true);
+    await manager.flushPendingSaves();
+    const context = readRoadAlignmentContext(manager, project.projectId);
+    expect(context.ok).toBe(true);
+    expect(context.alignmentId).toBeTruthy();
+    expect(context.totalLength).toBeGreaterThan(700);
+    expect((context.horizontal?.elements ?? []).length).toBeGreaterThan(0);
   });
 });
 

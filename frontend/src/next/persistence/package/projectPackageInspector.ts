@@ -6,6 +6,7 @@ import {
   type SpacerProjPackage,
 } from "./projectPackage";
 import { computeSha256Hex } from "./packageChecksum";
+import { utf8ByteLength } from "./utf8Length";
 
 export type IntegrityStatus = "ok" | "ng";
 
@@ -69,7 +70,7 @@ export function inspectProjectPackage(input: InspectPackageInput): InspectPackag
       projectId: "",
       schemaVersion: "",
       packageFormatVersion: "",
-      packageSizeBytes: Buffer.byteLength(input.rawJson, "utf8"),
+      packageSizeBytes: utf8ByteLength(input.rawJson),
       fileIntegrity: "ng",
       projectSchema: "ng",
       requiredData: "ng",
@@ -109,7 +110,7 @@ export function inspectProjectPackage(input: InspectPackageInput): InspectPackag
         fileIntegrity = "ng";
         continue;
       }
-      if (Buffer.byteLength(file.content, "utf8") !== entry.size) {
+      if (utf8ByteLength(file.content) !== entry.size) {
         reasons.push(`size-mismatch: ${entry.path}`);
         fileIntegrity = "ng";
       }
@@ -166,7 +167,7 @@ export function inspectProjectPackage(input: InspectPackageInput): InspectPackag
   // capacity
   let capacity: IntegrityStatus = "ok";
   if (input.availableBytes !== undefined) {
-    const total = pkg.files.reduce((sum, f) => sum + Buffer.byteLength(f.content, "utf8"), 0);
+    const total = pkg.files.reduce((sum, f) => sum + utf8ByteLength(f.content), 0);
     if (total > input.availableBytes) {
       reasons.push("insufficient-capacity");
       capacity = "ng";
@@ -186,7 +187,7 @@ export function inspectProjectPackage(input: InspectPackageInput): InspectPackag
     projectId,
     schemaVersion,
     packageFormatVersion: String(manifest.packageFormatVersion ?? ""),
-    packageSizeBytes: Buffer.byteLength(input.rawJson, "utf8"),
+    packageSizeBytes: utf8ByteLength(input.rawJson),
     fileIntegrity,
     projectSchema,
     requiredData,
