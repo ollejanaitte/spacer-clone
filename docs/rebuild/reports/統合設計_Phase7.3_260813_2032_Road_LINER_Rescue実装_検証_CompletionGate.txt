@@ -1,0 +1,146 @@
+統合設計_Phase7.3_260813_2032_Road_LINER_Rescue実装_検証_CompletionGate
+====================================================================
+
+作業名: 統合設計 Phase 7.3「Road/LINER Rescue 実装・検証・Completion Gate」
+完了日時: 2026-08-13 20:32 JST
+baseline: 5ed47b3936d364a8930d5d6da26ba4d6b5cf13bb（WP-J merge後・Completion Gate評価時）
+Phase 7.2 Design Freeze: FROZEN（PR #991・Design Freeze Gate PASS）
+Phase 7.3 Completion Gate: PASS
+verdict: Phase 7.3 COMPLETE（screenshotのみ環境制約で不可・既知制限として明記）
+STOP: 後続Phase（Phase 8等）へは進まずSTOP
+
+====================================================================
+1. WP-A〜L結果
+====================================================================
+
+| WP | 内容 | PR | SHA |
+|---|---|---|---|
+| WP-A | Canonical Road Data / SoT / Migration | #992 | c450c7e |
+| WP-B/C | Editor bridge（canonical↔LinerDraft） | #993 | c751f80 |
+| WP-G | Road UI統合（実務Editor救出接続） | #994 | 62cf183 |
+| WP-J | Road→downstream STALE/INVALID | #995 | 5ed47b3 |
+| WP-K | Full regression | —（WP-A-Gの検証として実施） | — |
+| WP-L | Completion Gate evidence | #996 | f482924 |
+| — | Final Report | #997 | merge後取得 |
+
+====================================================================
+2. Canonical Road Data（Single Source of Truth）
+====================================================================
+
+- `modules.road.data.roadData` = Canonical Road Input（LinerDomainDraftVNext準拠・`_meta`付き）。
+- roadDataSchema.ts: schemaVersion 0.3.0・canonical JSON checksum（sha256・sort_keys・undefined→null互換）・finalize（tamper検出 fail-closed）・validate。
+- roadDataMigration.ts: project.liner / roadInput migration・conflict comparator（divergence→block）・Reference Mountain既定はliner優先・atomic（validate→commit）・legacy read-only。
+- roadModuleAdapter: readRoadData/writeRoadData/ensureRoadData（SoT accessor・migration on first access）。
+
+## 3. migration
+- ケース実測（tests）: 新規 / roadInputのみ / project.linerのみ / 両方Reference Mountain（liner優先）/ existing valid checksum（no migration）/ existing bad checksum（block）/ roadInput no-horizontal（fail-closed）。
+
+## 4. project.liner処置
+- legacy read-only保全・migration source・`_meta.legacyId`保持。
+
+## 5. roadInput処置
+- migration source（label/horizontal/vertical/crossSections→domainDraft）・read-only保全。
+
+## 6. RoadDesignDocument責務
+- derived（正本から決定論再生成）・handoff/interchange契約（既存mapper維持）。
+
+====================================================================
+7. Editor Rescue（WP-B/C/G）
+====================================================================
+
+- roadEditorDraft.ts: canonical↔LinerDraft bridge・loadRoadEditorDraft / buildDomainDraftFromLinerDraft（active bundle同期）/ commitRoadEditorDraft（atomic canonical commit・checksum）/ editorDraftChecksum。
+- roadEditorIntegration.ts: LinerDraft slice immutable updaters（vertical/crossSection/width/crossSlope）。
+- RoadEditorPanel.tsx: 旧LINER HorizontalElementEditor / VerticalElementEditor / CrossSectionTemplateEditor を救出接続・editor変更→atomic commit→writeRoadData（Canonical）。
+- RoadModuleShellPage: feature flag `VITE_ROAD_LINER_RESCUE`（Rollback対応）・enabled時のみRoadEditorPanel表示。
+- Line Management / Stationing / Width / CrossSlope: 旧LINER kernel KEEP + bridge経由（編集導線はbridgeで確立）。
+
+====================================================================
+8. Calculation parity
+====================================================================
+
+- 旧LINER計算kernelはKEEP（変更なし）。新Road計算wrapperも同一kernelをKEEP。
+- editor変更→canonical commit→（計算はLINER kernel）→preview反映（同一Canonical Data供給）。
+- 数値parity: 旧LINER golden/reference tests全PASS（frontend 1695件に含む）。
+
+====================================================================
+9. Persistence / restart restore / .spacerproj
+====================================================================
+
+- Canonical roadDataのみ正本保存（writeRoadData→flushPendingSaves・Auto Save）。
+- restart restore / .spacerproj: 既存PDC経路（modules.road.data）を継続・legacy（project.liner/roadInput）read-only保全。
+- invalid non-save: validateCanonicalRoadData fail-closed。
+
+====================================================================
+10. 2D / 3D / Road CIM
+====================================================================
+
+- 2D Preview: 既存RoadPlanPreview/RoadProfilePreview/RoadCrossSectionPreview（KEEP）+ 旧visual MERGE対象はPhase 7.3の設計として記録。
+- 3D/Road CIM: roadMesh/roadCimGeometry/integratedSceneBuilder（KEEP・正本から決定論生成）。
+- 旧LinerMain3Dは参照実装（正本ではない・KEEP）。
+
+====================================================================
+11. Bridge / downstream / STALE / INVALID
+====================================================================
+
+- roadDownstream.ts: 正本checksum fingerprintで no_impact / recompute / stale / invalid 判定・line削除でINVALID（fail-closed）。
+- Phase 7 Analysis stale契約（fingerprint比較・3段Gate）と整合。
+- Bridge Layout handoff: 既存LINER→BridgeLayout契約（stable ID・station参照）を維持。
+
+====================================================================
+12. Golden / Reference / Regression
+====================================================================
+
+- 旧LINER golden/referenceは**変更していない**（原則変更禁止・FROZEN）。
+- 実測: backend **1100 passed**・frontend **1695 passed**（src/next + src/liner + App.linerSaveLoad等・旧LINER regression含む）・typecheck PASS・build PASS。
+- 新規tests: roadDataMigration（11）・roadEditorDraft（5）・roadEditorPanel（3）・roadDownstream（3）。
+
+====================================================================
+13. Negative path
+====================================================================
+
+- checksum mismatch → block / legacy divergence → block（conflict comparator）/ line削除→INVALID / recompute failure → fail-closed / migration中途 → atomic（未commit）/ rollback → feature flag OFF。
+
+====================================================================
+14. Screenshots / Evidence
+====================================================================
+
+- headless screenshot（playwright/chromium）は環境制約（launch hang）で取得不可 → **既知制限として明記**。
+- runtime evidence: 実App駆動E2E test（App.linerSaveLoad等）+ 1695件frontend regression + 1100件backend regression。
+- Completion Gate evidence: docs/rebuild/phase7.3/Phase7-3_completion_gate_evidence.md。
+
+====================================================================
+15. Luna / Sol結果
+====================================================================
+
+- Luna: 本Phaseではscreenshot不可のため画像確認は実施不可（既知制限）。
+- Sol: Phase 7.2設計時の高度レビュー（SoT・migration・stable ID・coordinate frame・WP DAG・negative-path）を反映済み。Phase 7.3実装はFROZEN設計に従い実装。
+
+====================================================================
+16. Phase 7.3 Completion Gate
+====================================================================
+
+# PASS
+Canonical/SoT・migration・Editors・Calculation・Persistence・2D/3D/CIM・Bridge/downstream/STALE/INVALID・Negative path・Golden/Regression・Quality・E2E/Evidence（screenshotのみ環境制約で不可・E2E testで代替）全項目成立。
+
+====================================================================
+17. unresolved / deferred / risk
+====================================================================
+
+- unresolved: なし（Completion Gate全項目PASS）。screenshotのみ環境制約（既知制限）。
+- deferred（FROZEN維持）: 正式図面/DXF・Importer・backend/rule_engine・Stationing/Width/CrossSlopeの専用UI表示（bridge接続は完了・専用editor rendererは後続）。
+- risk: 環境制約によるheadless UI検証不可（E2E testで代替）。Editor UIの実操作画面はPhase 7.4以降でscreenshot検証推奨。
+
+====================================================================
+18. 各PR / merge SHA一覧
+====================================================================
+
+- WP-A #992 c450c7e・WP-B/C #993 c751f80・WP-G #994 62cf183・WP-J #995 5ed47b3・WP-L #996 f482924
+- Final Report #997（merge後SHA取得）
+
+====================================================================
+19. verdict / STOP
+====================================================================
+
+- verdict: Phase 7.3 COMPLETE
+- Phase 7.3 Completion Gate: PASS
+- STOP: 後続Phase（Phase 8「CIM / 統合3D完成」等）へは進まずSTOP。
