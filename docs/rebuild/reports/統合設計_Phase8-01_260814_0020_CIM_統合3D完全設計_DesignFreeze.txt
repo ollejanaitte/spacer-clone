@@ -1,0 +1,226 @@
+統合設計_Phase8-01_260814_0020_CIM_統合3D完全設計_DesignFreeze
+====================================================================
+
+作業名: 統合設計 Phase 8-01「CIM / 統合3D 完全設計・Design Freeze」
+完了日時: 2026-08-14 00:20 JST
+baseline: 3b5bd371ab4b28454ddc7f953edc87d4c66b5d9c（Phase 8-00監査 merge後）
+Phase 8-00: COMPLETE
+Phase 8-01 Design Freeze Gate: PASS
+verdict: Phase 8-01 FROZEN（Phase 8-02 WP実装へ）
+
+====================================================================
+1. 原則
+====================================================================
+
+- 各Module正本から統合3Dを決定論的に再生成する（統合3Dを第2の正本にしない）。
+- 座標系は単一の world coordinate（renderCoordinate）に統一する。
+- 各3D entity は sourceModule / sourceEntityId / stableId / coordinateContext /
+  metadata / stale state を追跡可能にする。
+- 既存KEEP資産（SolidGenerator・SceneBuilder・viewer・persistence）を最大活用。
+
+====================================================================
+2. Integrated 3D Scene Contract（FROZEN）
+====================================================================
+
+```ts
+// src/next/modules/cim/integrated3dScene.ts
+export type CimLayerId =
+  | "terrain" | "existing" | "roadPavement" | "bridgeLayout"
+  | "superstructure" | "substructure" | "foundation" | "bearing"
+  | "femNodes" | "femMembers" | "supports" | "springs"
+  | "loads" | "deformed" | "reaction" | "result"
+  | "labels" | "reference";
+
+export interface CimEntityMetadata {
+  readonly sourceModule: CimLayerId;
+  readonly sourceEntityId: string;   // 正本側ID（例: supportId/spanId/partId/entityId/roadElementId/fem nodeId）
+  readonly stableId: string;         // シーン内一意ID（例: sub:{supportId}-{PART}-NN）
+  readonly coordinateContext: string;// 例: "world/road:{alignmentId}" / "world"
+  readonly label?: string;
+  readonly meta?: Record<string, unknown>;
+}
+
+export interface Integrated3DScene {
+  readonly ok: boolean;
+  readonly issues: readonly { path: string; message: string }[];
+  readonly layers: { [K in CimLayerId]: THREE.Object3D | null };
+  readonly metadata: Map<string, CimEntityMetadata>;  // stableId -> metadata
+  readonly bounds: THREE.Box3;
+  readonly regeneratedFrom: { module: string; checksum?: string }[]; // 追跡
+}
+```
+
+- 生成関数 `buildIntegrated3DScene(manager, projectId)` は各正本を read して
+  レイヤーを組み立てる。タイムスタンプ・乱数・非決定的入力は geometry に
+  含めない（roadCimGeometry.generatedAt 等は metadata 側へ分離）。
+- すべての Object3D は `userData.cimMetadata: CimEntityMetadata` を保持する。
+
+====================================================================
+3. Coordinate / ID 統合（FROZEN）
+====================================================================
+
+## 3-1. World Coordinate
+- Domain座標（x=easting, y=northing, z=elevation, 単位m）を正本座標とする。
+- Three表示変換は `frontend/src/next/modules/renderCoordinate.ts` のみ:
+  `three = (x, z, -y)`, `domainVerticesToThree`, `threeToDomain`。
+- localOrigin は既定 (0,0,0)。Terrain local origin（Origin3）があれば適用。
+- 全レイヤーは同一 world 空間へ配置。別の表示変換の導入・二重適用を禁止。
+
+## 3-2. 表示変換の単一化（MERGE）
+- viewer.tsx 内インライン `[p.x,p.z,-p.y]` → `domainToThree` 委譲
+- threeFactory.swapToYUp（下部工Z-up）→ renderCoordinate 委譲（方向一致確認済み）
+- viewer/coordinateTransform.applyViewerDisplayTransform → renderCoordinate 委譲
+- これらは ADAPT として Phase 8-02 で統一する。
+
+## 3-3. stable ID / sourceEntityId（FROZEN）
+| Layer | stableId 規則 | sourceEntityId 元 |
+|---|---|---|
+| terrain | `terrain:{terrainId}` | terrainId |
+| existing | `existing:{entityId}` | entityId |
+| roadPavement | `road-surface:{alignmentId}` / `road:{alignmentId}:{elementId}` | alignment element id |
+| bridgeLayout | `bridge:{supportId}`（A1/Pn/A2）・`bridge:{spanId}`（S n） | supportId/spanId |
+| superstructure | `super:{entityId}`（superstructureSceneBuilder selectionId 拡張） | GeometrySnapshot entity |
+| substructure | `sub:{partId}`（{supportId}-{PART}-NN） | partId |
+| foundation | `foundation:{supportId}`（footing/pile は sub: 配下） | supportId |
+| bearing | `bearing:{seatId}`（BRG-{s}-{g}） | seatId |
+| fem | `fem:{entityId}`（deriveAnalysisEntityId D-11） | analysis entity id |
+| labels | `label:{stableId}` | 対象entity |
+
+====================================================================
+4. Layer 構成（FROZEN）
+====================================================================
+
+| Layer | 内容 | 正本 | 生成 |
+|---|---|---|---|
+| terrain | 地形メッシュ（Reference Mountain or imported） | TerrainDocument / referenceMountain | buildTerrainThreeScene |
+| existing | 既設構造物（tube/cylinder/point） | existingConditions | buildExistingSceneGroup |
+| roadPavement | **道路CIM面**（拡幅・左右横断勾配反映の面） | canonical roadData | roadMesh ADAPT |
+| bridgeLayout | A1/A2/P1..Pnマーカー・span・skew指示線 | BridgeLayoutDocument | bridgeLayoutScene |
+| superstructure | 主桁/横桁/床版/支承（曲線近似・実断面方針） | SuperstructureDocument | superstructureSceneBuilder ADAPT |
+| substructure | 橋台/橋脚/柱/冠 | SubstructureDocument | substructureSceneBuilder |
+| foundation | フーチング/杭 | SubstructureDocument | FoundationSolidGenerator |
+| bearing | **実寸支承ソリッド（w×d×h・向き反映）** | SuperstructureDocument BearingSeat | bearingSceneBuilder REWRITE |
+| femNodes | FEM節点マーカー | AnalysisDocument | viewer renderers |
+| femMembers | FEM部材ライン | AnalysisDocument | viewer renderers |
+| supports | 支持・基礎spring表示 | AnalysisDocument | viewer renderers |
+| springs | spring表示 | AnalysisDocument | viewer renderers |
+| loads | 荷重矢印 | AnalysisDocument | viewer renderers |
+| deformed | 変形（スケール適用） | Analysis Result | DeformedShapeRenderer |
+| reaction | 反力 | Analysis Result | ResultDiagramRenderer |
+| result | N/Q/M/T 図・色マップ | Analysis Result | ResultDiagramRenderer + memberForceColorMap |
+| labels | 測点/support/spanラベル | 各正本 | Sprite |
+| reference | Reference Bridge / 参考層 | RB-S10-001等 | 任意 |
+
+- 各layerはON/OFF切替可能（`layerState: Record<CimLayerId, boolean>`）。
+- roadPavement は「中心線＋縁線だけ」で完成扱いにしない（面として成立）。
+
+====================================================================
+5. Road CIM Surface（FROZEN）
+====================================================================
+
+- canonical roadData → loadRoadEditorDraft → buildRoadIntermediate
+  （sampleInterval 5m既定・延長/測点/azimuth/grade/leftRightWidth/leftRightSlope）
+- 各sampleで中心点 + 左端/右端（evaluateRoadWidth: widthChangePoints拡幅反映、
+  evaluateRoadCrossfall: 左右横断勾配反映）を計算し、triangle strip で面を張る。
+- roadMesh ADAPT: widthChangePoints（拡幅）反映・leftSlopePercent 反映。
+- metadata: road-surface:{alignmentId}・alignmentId・チェックサム。
+
+====================================================================
+6. Analysis Overlay（FROZEN）
+====================================================================
+
+- AnalysisDocument（正本）から nodes/members/supports/springs/loads を生成。
+- Analysis Result（IF3）から deformed/reaction/N/Q/M/T を生成。
+- STALE guard: analysisStaleness（3-gate: upstream fingerprint / modelChecksum /
+  IF3 status）。STALE時は正常結果として無警告表示しない（警告表示 + 非正本扱い）。
+- 結果表示は切替可能（N/Q/M/T/deformed/reaction 別・color map 付き）。
+
+====================================================================
+7. Viewer UI（FROZEN）
+====================================================================
+
+- 18レイヤーのON/OFF（チェックボックス or プリセット）
+- object selection（raycast）→ selected entity info パネル
+  （sourceModule / sourceEntityId / stableId / coordinateContext / label / meta）
+- camera: fit（bounds）・reset・preset（perspective/plan/side/isometric）
+- transparency（opacity制御）
+- result legend（色→値）
+- STALE表示（解析結果がstaleの場合はバッジ表示）
+- isolate/section/clipping/wireframe/measurement は DEFER（Phase 8-01明記）
+
+====================================================================
+8. Persistence / STALE（FROZEN）
+====================================================================
+
+- 統合3D自体を永続化しない（毎render正本から再生成）。
+- layer可視状態などのUI状態は localStorage（per-project key）で復元（任意・WP-J）。
+- Save → 完全終了 → restart → reopen → Integrated 3D再生成 → 整合確認。
+- .spacerproj export → import → Project復元 → Integrated 3D再生成 → 整合確認。
+- 上流変更時: Road変更→Road CIM→Bridge影響→Super/Sub→Analysis stale。
+  line/support削除でsource消失時は INVALID / fail-closed。
+
+====================================================================
+9. Export（FROZEN）
+====================================================================
+
+- Phase 8必須: STL（既存Apollo/liner reuse・統合シーン対象）・glTF（新規実装）
+- DEFER: IFC/IFC4（実装済みとしない）
+- glTF: 統合3Dシーンを GLB/glTF へシリアライズ（layer毎・metadata付き）
+
+====================================================================
+10. Reference Scene / Golden（FROZEN）
+====================================================================
+
+- 統合Reference Scene: Reference Mountain（地形+道路）＋ RB-S10-001
+  Reference Bridge（BridgeLayout+Super+Sub+Foundation+Bearing+FEM+Result）を
+  同一Project上で構築・同時表示。
+- Golden/referenceは正当な根拠なく変更しない（変更時は理由を記録）。
+
+====================================================================
+11. Performance / LOD（FROZEN）
+====================================================================
+
+- 実用規模（Reference Scene）で目標 30fps 以上。
+- terrainTiles LOD は既存をKEEP。道路CIM面は sample 5m既定・必要なら2段LOD。
+- 不要renderはdebounce・レイヤー非表示時はdraw skip。
+
+====================================================================
+12. Phase 8-02 Work Package（FROZEN）
+====================================================================
+
+| WP | scope | dependencies | evidence |
+|---|---|---|---|
+| WP-A | Integrated3D Scene Contract / Coordinate / ID / CIMページ新設（CimModuleShellPage） | — | scene単体テスト・実画面 |
+| WP-B | Terrain / Existing レイヤ配線 | WP-A | 実画面・テスト |
+| WP-C | Road CIM Surface（roadMesh拡幅/左右勾配） | WP-A | golden・実画面 |
+| WP-D | Bridge Layout レイヤ | WP-A | 実画面・テスト |
+| WP-E | Superstructure CIM（曲線近似・bearing実寸ソリッド・配線） | WP-A/D | 実画面・テスト |
+| WP-F | Substructure / Foundation レイヤ配線 | WP-A/D | 実画面・テスト |
+| WP-G | Bearing 3D（実寸・向き・metadata） | WP-E | 実画面・テスト |
+| WP-H | Analysis Overlay（FEM/Result・stale guard） | WP-A | 実画面・テスト |
+| WP-I | Viewer UI（layer/selection/camera/legend/transparency） | WP-A..H | 実画面・screenshot |
+| WP-J | Persistence / restart / .spacerproj / UI状態 / STALE整合 | WP-A..I | 実操作・テスト |
+| WP-K | glTF export / Reference Scene / performance | WP-A..J | exportテスト・実画面 |
+| WP-L | Electron E2E / Completion Gate / screenshots / Final Report | 全WP | E2E・Gate |
+
+- 各WPは feature branch → PR → GitHub main merge → 同期 → Discord報告。
+- 巨大PR一本にまとめない。
+
+====================================================================
+13. Completion Gate（FROZEN）
+====================================================================
+
+Architecture（Scene contract/coordinate/ID/metadata）・Terrain/Existing・
+Road（surface/pavement/widening/crossSlope/superelevation）・Bridge・
+Superstructure・Substructure/Foundation・Bearing・Analysis（nodes/members/
+supports/springs/loads/deformed/reaction/N/Q/M/T/color map/stale guard）・
+Viewer（layer/selection/metadata/camera/legend）・Persistence（Save/restart/
+restore/.spacerproj/deterministic）・STALE・Reference/Quality（tests/typecheck/
+lint/build/electron E2E/performance）・Evidence（screenshots/Discord/Luna/Sol/
+Completion Gate evidence）を全件PASSして初めて Phase 8 COMPLETE。
+
+====================================================================
+14. 次フェーズ
+====================================================================
+
+Phase 8-02 WP-A から着手する。
