@@ -32,6 +32,26 @@ from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGen
 from backend.engine.grillage import run_grillage_analysis, GrillageError
 from backend.engine.solver_input import run_analysis_document, SolverInputError
 from backend.engine.errors import AnalysisError
+from backend.engine.combination import synthesize_combo1_result, COMBO_1
+
+
+def synthesize_executable_combinations(analysis_document: dict[str, Any], raw_result: dict[str, Any]) -> list[dict[str, Any]]:
+    """Synthesize executable load combinations (COMBO-1) from per-case results."""
+    combinations = analysis_document.get("loadCombinations") or []
+    out: list[dict[str, Any]] = []
+    for combination in combinations:
+        if not isinstance(combination, dict):
+            continue
+        if combination.get("executable") is not True:
+            continue
+        factors = {
+            str(entry.get("caseId")): float(entry.get("factor", 0.0))
+            for entry in combination.get("factors", [])
+            if isinstance(entry, dict)
+        }
+        if combination.get("combinationId") == COMBO_1:
+            out.append(synthesize_combo1_result(raw_result, factors))
+    return out
 from backend.engine.if3_normalizer import (
     build_unsupported_result_resource,
     normalize_linear_static_result_resource,
@@ -164,6 +184,10 @@ def design_analyze_endpoint(payload: dict[str, Any]) -> JSONResponse:
                 {"error": {"code": "ANALYSIS_DOCUMENT_INVALID", "message": str(exc)}},
                 status_code=400,
             )
+        combinations = synthesize_executable_combinations(analysis_document, result)
+        if combinations:
+            result = dict(result)
+            result["combinations"] = combinations
         if3_metadata = extract_if3_metadata(payload)
         if not if3_metadata and isinstance(analysis_document, dict):
             model_checksum = analysis_document.get("modelChecksum")
