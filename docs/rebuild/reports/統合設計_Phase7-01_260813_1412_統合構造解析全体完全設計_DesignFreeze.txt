@@ -1,0 +1,264 @@
+統合設計_Phase7-01_260813_1412_統合構造解析全体完全設計_DesignFreeze
+====================================================================
+
+作業名: Phase 7-01 統合構造解析全体完全設計・Design Freeze
+完了日時: 2026-08-13 14:12 JST
+Design Freeze Gate: PASS
+Phase 7-02 readiness: READY
+verdict: COMPLETE（Phase 7-01完了・Phase 7-02へは進まずSTOP）
+
+====================================================================
+1. Baseline（GitHub正本で実確認）
+====================================================================
+
+- Phase 7-00 Final Report PR: #967（state=MERGED・merge SHA=288edc59）
+- true baseline SHA: 288edc59f4445b3337e95970a3ab50a24aff5e2c
+- local main / origin/main / GitHub main / rebuild/integrated-system: 全一致（288edc59）
+- 4系統同期: PASS
+- pre-existing dirty差分: 維持（spacer-clone: apollo evidence 3ファイルmodified+final_report.txt deleted /
+  spacer-clone-next: apollo evidence 3ファイルmodified+untracked R1-04.5報告書）
+- Baseline Gate: PASS
+
+====================================================================
+2. 各Step結果
+====================================================================
+
+Step A: Master Design + AnalysisDocument Contract（PR #968 / SHA f736d5d）
+  - D-01〜D-18 Design Decision確定・AnalysisDocument v1.0.0（spacer.contracts.analysis-document）
+  - 正本階層・IN/OUT-SCOPE・Migration Map traceability
+Step B: Super/Sub Adapter + Bearing/Support/Spring + Foundation/Release/MPC（PR #969 / SHA 9766128）
+  - buildGrillageModel再構成・支間分布載荷・fixedOrMovable→DOF拘束mapping・SOURCE_NOT_AVAILABLE閉じ
+Step C: FEM Model + Section/Material + Load/Combination + Grillage/Solver（PR #970 / SHA 3b60eb1）
+  - R1解決（envelope再設計・member毎orientation・nodalLoads転送）・R2（部材分布載荷）・R7（実断面接続）
+Step D: Result/IF3 + Persistence/stale + Viewer/UI（PR #971 / SHA 4c6df0d）
+  - R10/R11/R22・R8/R13・autosave有効化
+Step E: Reference/Golden + Test Spec + WP + Completion Gate（PR #972 / SHA e91b674）
+  - 5種golden・Testカタログ・WP-A〜L・Completion Gate
+Step F: Cross Review + Sol + Design Freeze Gate（PR #973 / SHA 0740b82）
+  - Sol 25指摘反映・Phase7-01F_design_freeze_gate（PASS）
+
+====================================================================
+3. Phase 7-00 R1〜R24対応（設計上クローズ）
+====================================================================
+
+CRITICAL:
+  R1 grillage解析実行不能 → grillage_solver_contract（envelope再設計・member毎orientation・load転送・A-SLV-001/008）
+  R2 死荷重配分/転送 → load_combination_contract（q=caseTotal/Σ延長・部材分布載荷・nodalLoads転送・COMBO-1実行）
+  R4 spring/foundation spring → bearing_support_spring・foundation_spring_release_mpc（6DOF spring・SOURCE_NOT_AVAILABLE閉じ）
+  R7 section/material未接続 → section_material_contract（実断面/実材料接続・NOT_AVAILABLE fail-closed）
+HIGH:
+  R3 Super→Analysis未接続 → superstructure_analysis_adapter（BearingSupportResolver唯一authority・配線）
+  R5 Bearing→Support mapping → bearing_support_spring（唯一mapping table・local→global変換）
+  R6 3系統generator並存 → fem_model_contract（production=Analysis Generation Layer・他はCOMPATIBILITY）
+  R8 Document変更→stale → persistence_staleness（3段ゲート・fingerprint）
+  R16 統合規模未検証 → reference_analysis_golden（独立部分モデル照合）
+  R20 bridge_fem cutover → fem_model_contract（cutover条件）
+  R21 solver fail-close → grillage_solver（HTTP status分類・UI非成功表示）
+  R22 /api/design/analyze→IF3 → grillage_solver・result_if3（新保存API・modelChecksum binding）
+  R23 release/MPC → foundation_spring_release_mpc（契約のみ・fail-closed）
+  R24 buildGrillageModel再構成 → superstructure_adapter（骨格KEEP・荷重/mesh/topology REWRITE）
+その他:
+  R9 統合golden → reference_analysis_golden（RB-S10-001昇格・SOURCE_NOT_AVAILABLE閉じ・regression）
+  R10 reaction key alias → result_if3（fz直接読取・rz→fz廃止）
+  R11 sign/unit/axis → result_if3・master_design（統一契約）
+  R12 ID契約 → analysis_document_contract（sourceEntityId+sourceKind・uuid5）
+  R13 result persistence → result_if3・persistence_staleness（IF3 sidecar・timeHistory）
+  R14 二重実装 → fem_model_contract（canonical化）
+  R18 authorization gate → completion_gate（STALE表示）
+  R19 性能 → completion_gate（CG-SLV-07）
+
+====================================================================
+4. 設計成果物（docs/rebuild/phase7/・全FROZEN）
+====================================================================
+
+Phase7-01A_master_design.md
+Phase7-01A_analysis_document_contract.md
+Phase7-01B_superstructure_analysis_adapter.md
+Phase7-01B_substructure_analysis_adapter.md
+Phase7-01B_bearing_support_spring_contract.md
+Phase7-01B_foundation_spring_release_mpc.md
+Phase7-01C_fem_model_contract.md
+Phase7-01C_section_material_contract.md
+Phase7-01C_load_combination_contract.md
+Phase7-01C_grillage_solver_contract.md
+Phase7-01D_result_if3_contract.md
+Phase7-01D_persistence_staleness.md
+Phase7-01D_analysis_viewer_ui.md
+Phase7-01E_reference_analysis_golden.md
+Phase7-01E_test_specification.md
+Phase7-01E_phase7-02_work_packages.md
+Phase7-01E_completion_gate.md
+Phase7-01F_design_freeze_gate.md
+
+====================================================================
+5. AnalysisDocument（要約）
+====================================================================
+
+- schema: spacer.contracts.analysis-document v1.0.0・documentKind analysis-document
+- 正本階層: BridgeLayout/Superstructure/Substructure（正本・複製禁止）+ AnalysisDocument（解析唯一正本・derived正本）
+- sourceReferences: bridgeLayout/superstructure/substructure + loadFingerprint/solverSettingsFingerprint
+- 全entity: sourceEntityId + sourceKind + uuid5(analysis-namespace)決定論ID
+- modelChecksum: IF3 binding正本（documentId/timestamps/status/resultReferences除外）
+- coordinateContext: 単一・x沿線/y横断/z上・right-handed・m/kN/kNm/rad
+
+====================================================================
+6. Adapter（要約）
+====================================================================
+
+- Superstructure→Analysis: buildGrillageModel再構成（骨格KEEP・荷重/mesh/topology REWRITE）
+  - node: support点/girder panel/横桁点（重複統合）
+  - member: 主桁/横桁（orientation決定論生成・横桁INVALID_ORIENTATION回避）
+  - section/material: 実断面（computeSuperstructureSectionProperties）・実材料（DERIVED既定）
+  - 横桁断面: 矩形導出（A=bh・Iy=bh³/12等）
+  - load: q=caseTotal/Σ延長の部材分布載荷（support節点のみ禁止）
+- Substructure→Analysis: support位置/bearing seat/foundation spring（source fragment）
+- BearingSupportResolver: 唯一authority・seatId join・mismatch reject
+
+====================================================================
+7. Bearing / Support / Spring / Foundation（要約）
+====================================================================
+
+- 唯一mapping table（FIXED/MOVABLE縦/縦横/UNDECIDED）・回転解放・FULL_FIXED分離
+- local→global変換（skew=0正確・skew≠0 globalAxisApproximation明示・UNSUPPORTED_SKEW fail-closed）
+- spring: 1 entity=1 DOF・springIds配列・TᵀKlocalT（軸一致時のみ対角加算）
+- foundation spring: 値が資料に無ければSOURCE_NOT_AVAILABLE・AUTHORIZED bearing拘束mapping適用
+- release/rigidLink/MPC: 契約定義のみ（solver実装DEFER・fail-closed）
+
+====================================================================
+8. Load / Combination（要約）
+====================================================================
+
+- Load Case: DL-STRUCTURAL/DL-DECK（実装）・DL-PAVEMENT/DL-APPURTENANCE/LL（入力境界）
+- 配分: 部材分布載荷（q=caseTotal/Σ延長・総量保存1e-9）
+- COMBO-1: 各case別solve + 結果線形合成（個別case表示も可）・PARTIAL/NOT_RUN扱い
+- 他組合せ: 宣言構造（DEFER）
+
+====================================================================
+9. Grillage / Solver Contract（要約・R1解決）
+====================================================================
+
+- new request envelope: {analysisDocument, solverSettings}（旧grillage形はCOMPATIBILITY）
+- backend project構造: {project:ProjectInfo, units, nodes, materials, sections, members, supports,
+  loadCases, nodalLoads, memberLoads, analysisSettings}（SCHEMA_ERROR根絶）
+- Solver Input Adapter: backend/engine/solver_input.py（新）
+- member毎orientation（localZ=+up整序）・gravity global wz<0
+- HTTP mapping: 400（validation）/422（schema）/500（unexpected）/200-failed（MODEL_UNSTABLE等）・UI非成功表示
+- IF3: modelChecksum binding・新保存API（AnalysisDocument contextから無条件sidecar/ref）
+
+====================================================================
+10. Result / IF3（要約）
+====================================================================
+
+- result kind: nodeDisplacement/supportReaction/memberForce（stress/strain/mode/envelopeはDEFER）
+- sign/unit/axis統一（反力up-positive・member force local・kN/kNm/m/rad）
+- reaction key: fz直接読取（rz→fz alias廃止）
+- IF3: FrameAnalysisResultResource v0.1.0・entitySourceId保持・1 support=1 node・supportId付与
+- member force sign: N引張+/Vy/Vz/T/My/Mz right-hand・i/j端作用方向明文化
+
+====================================================================
+11. Persistence / stale（要約）
+====================================================================
+
+- 保存: AnalysisDocument（PDC）・IF3 sidecar（results/<uuid>.if3.json）・timeHistory（既存）
+- 3段ゲート: 上流freshness → AnalysisDocument.modelChecksum → IF3 gate
+- 上流変更（bridgeLayout/superstructure/substructure/load/solverSettings）→ STALE
+- autosave: 有効化・restart restore・.spacerproj roundtrip
+
+====================================================================
+12. Viewer / UI（要約）
+====================================================================
+
+- 表示: node/member/support/spring/bearing/変形/反力/N/Q/M/T/color map/load case/combination/stale表示
+- renderCoordinate共通・viewer都合でAnalysisDocumentを変更しない
+
+====================================================================
+13. Reference Analysis / Golden（要約）
+====================================================================
+
+- 5種: simple beam（fixture実値 E=205GPa・y平面・1e-4相対）/ continuous beam・frame / spring support /
+  grillage（regression 1e-6+釣合い+独立部分モデル照合）/ RB-S10-001（regression+invariant・解析expectedは
+  SOURCE_NOT_AVAILABLEで閉じる・発明しない）
+- expected変更禁止（Design Change手続き必要）
+
+====================================================================
+14. Test Specification（要約）
+====================================================================
+
+- A-DOC〜A-REFカタログ（expected値・tolerance数値凍結）
+- PASS/FAIL基準・command（pytest/vitest/typecheck/lint/build/e2e）・evidence（phase7/evidence/）
+
+====================================================================
+15. Phase 7-02 Work Packages（要約）
+====================================================================
+
+- WP-A〜L（12WP）・file ownership一意・stacked PR（下流→上流順revert）・implementation order確定
+- 各WP: files/deps/acceptance/tests/PR/rollback/evidence
+
+====================================================================
+16. Completion Gate（要約）
+====================================================================
+
+- CG-DOC/ADP/FEM/LD/SLV/RES/PER/REF/UI/Q全項目 + R1-R24 traceability表
+
+====================================================================
+17. Sol利用結果
+====================================================================
+
+- Step B/C/D/EはLuna簡易review、Step FでSol高度cross-review（25指摘: Critical 12/High 11/Medium 2）
+- 全指摘を一件ずつ確認・修正（modelChecksum・BearingSupportResolver・唯一mapping・springIds・
+  TᵀKlocalT・AUTHORIZED bearing拘束・横桁断面・HTTP status・IF3新保存API・3段stale・golden数値凍結・
+  WP所有一意化・R1-R24 traceability）
+- Design Freeze Gate PASS
+
+====================================================================
+18. Luna利用結果
+====================================================================
+
+- 各Step docの表構造・用語統一・typo確認
+- 設計書screenshots目視（Design Freeze Gate「PASS」表示・Master Design/grillage solver正常レンダリング）
+
+====================================================================
+19. unresolved（残存なし）
+====================================================================
+
+- Design Freeze GateでTODO/TBD/undecidedの残存なしを確認
+- 未実装項目はDEFER/NOT_AVAILABLE/SOURCE_NOT_AVAILABLE/NOT_AUTHORIZEDで明示的に閉じている
+
+====================================================================
+20. Phase 7-02 readiness
+====================================================================
+
+# READY
+- 全CRITICAL（R1/R2/R4/R5/R7/R22等）を設計上クローズ
+- 全設計判断凍結・実装者はWP順に実装するのみ（追加設計判断不要）
+
+====================================================================
+21. 各branch / commit / PR / merge SHA
+====================================================================
+
+- Step A: docs/phase7-01-step-a / PR #968 / SHA f736d5d
+- Step B: docs/phase7-01-step-b / PR #969 / SHA 9766128
+- Step C: docs/phase7-01-step-c / PR #970 / SHA 3b60eb1
+- Step D: docs/phase7-01-step-d / PR #971 / SHA 4c6df0d
+- Step E: docs/phase7-01-step-e / PR #972 / SHA e91b674
+- Step F: docs/phase7-01-step-f / PR #973 / SHA 0740b82
+- Final Report: docs/phase7-01-final-report / PR #974 / SHA（merge後取得）
+
+====================================================================
+22. 最終4系統同期
+====================================================================
+
+Final Report merge後に実施（local main / origin/main / GitHub main / rebuild/integrated-system を
+同一SHAに同期・既存dirty差分は破棄せず維持）。
+
+====================================================================
+23. verdict / STOP
+====================================================================
+
+- verdict: COMPLETE（Phase 7-01全COMPLETE条件充足）
+  Baseline Gate PASS / Phase 7-00 CRITICAL・HIGH課題を設計上クローズ / 全設計書（Master・AnalysisDocument・
+  Adapter・Bearing/Support/Spring・Foundation/Release/MPC・FEM Model・Section/Material・Load/Combination・
+  Grillage/Solver・Result/IF3・Persistence/stale・Viewer/UI・Reference/Golden・Test Spec・WP・Completion Gate）
+  FROZEN / Sol cross-review完了 / Design Freeze Gate PASS / Phase 7-02 readiness READY / 各Step main merge済み /
+  Final Report merge済み / Final Report TXT Discord送信済み / 最終4系統SHA一致
+- STOP: Phase 7-02「統合構造解析一括実装・検証・Completion Gate」へは進まずSTOP。
