@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyAnalysisDocument } from "../analysisDocument";
 import type { AnalysisDocument } from "../analysisDocumentTypes";
-import type { UuidString } from "../analysisDocumentTypes";
+import { UuidString } from "../analysisDocumentTypes";
+import { deriveAnalysisEntityId } from "../analysisId";
 import { validateAnalysisDocument } from "../analysisValidation";
+
+const NODE_ID = deriveAnalysisEntityId("node", "supportPoint:AR2:AG1");
+const MAT_ID = deriveAnalysisEntityId("material", "MAT-STEEL");
+const SEC_ID = deriveAnalysisEntityId("section", "SEC-AG1");
+const MEMBER_ID = deriveAnalysisEntityId("member", "M-L-AG1-S1");
+const BEARING_ID = deriveAnalysisEntityId("bearing", "BRG-AR2-AG1");
 
 function makeDoc(): AnalysisDocument {
   return createEmptyAnalysisDocument({
@@ -38,7 +45,7 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
       ...makeDoc(),
       nodes: [
         {
-          entityId: "33333333-3333-4333-8333-333333333333" as UuidString,
+          entityId: NODE_ID,
           sourceEntityId: "supportPoint:AR2:AG1",
           sourceKind: "supportPoint" as const,
           x: 0,
@@ -55,7 +62,7 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
 
   it("rejects duplicate node entityId", () => {
     const node = {
-      entityId: "33333333-3333-4333-8333-333333333333" as UuidString,
+      entityId: NODE_ID,
       sourceEntityId: "supportPoint:AR2:AG1",
       sourceKind: "supportPoint" as const,
       x: 0,
@@ -69,9 +76,9 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
   });
 
   it("rejects zero-length member and dangling references", () => {
-    const nodeId = "33333333-3333-4333-8333-333333333333";
-    const matId = "44444444-4444-4444-8444-444444444444";
-    const secId = "55555555-5555-4555-8555-555555555555";
+    const nodeId = NODE_ID;
+    const matId = MAT_ID;
+    const secId = SEC_ID;
     const doc = {
       ...makeDoc(),
       nodes: [
@@ -121,7 +128,7 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
       ],
       members: [
         {
-          entityId: "66666666-6666-4666-8666-666666666666" as UuidString,
+          entityId: MEMBER_ID,
           sourceEntityId: "m",
           sourceKind: "mainGirder",
           elementType: "frame",
@@ -146,7 +153,7 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
       ...makeDoc(),
       sections: [
         {
-          entityId: "55555555-5555-4555-8555-555555555555" as UuidString,
+          entityId: SEC_ID,
           sourceEntityId: "sec",
           sourceKind: "NOT_AVAILABLE",
           name: null,
@@ -173,7 +180,7 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
       ...makeDoc(),
       bearings: [
         {
-          entityId: "77777777-7777-4777-8777-777777777777" as UuidString,
+          entityId: BEARING_ID,
           sourceEntityId: "BRG-AR2-AG1",
           sourceKind: "bearingSeat",
           seatId: "BRG-AR2-AG1",
@@ -194,6 +201,30 @@ describe("analysisValidation (Phase 7-01 A §5 FROZEN)", () => {
       ],
     };
     expect(validateAnalysisDocument(doc as unknown as AnalysisDocument).some((i) => i.message.includes("UNSUPPORTED"))).toBe(true);
+  });
+
+  it("rejects entityId that does not match deterministic uuid5 derivation (D-11)", () => {
+    const wrongId = deriveAnalysisEntityId("node", "supportPoint:OTHER:AG1");
+    const doc = {
+      ...makeDoc(),
+      nodes: [
+        {
+          entityId: wrongId,
+          sourceEntityId: "supportPoint:AR2:AG1",
+          sourceKind: "supportPoint",
+          x: 0,
+          y: 0,
+          z: 0,
+          stationM: null,
+          offsetM: null,
+        },
+      ],
+    };
+    expect(
+      validateAnalysisDocument(doc as unknown as AnalysisDocument).some((i) =>
+        i.message.includes("deterministic uuid5 derivation"),
+      ),
+    ).toBe(true);
   });
 
   it("rejects non-linear-static analysis", () => {

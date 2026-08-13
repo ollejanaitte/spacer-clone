@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEmptyAnalysisDocument, finalizeAnalysisDocument, regenerateAnalysisDocument } from "../analysisDocument";
+import { createEmptyAnalysisDocument, finalizeAnalysisDocument, regenerateAnalysisDocument, analysisNeedsRegeneration } from "../analysisDocument";
 import { computeAnalysisContentChecksum, computeAnalysisModelChecksum } from "../analysisChecksum";
 import type { AnalysisDocument, AnalysisSourceReferences, UuidString } from "../analysisDocumentTypes";
+import { deriveAnalysisEntityId } from "../analysisId";
 
 function emptyRefs(): AnalysisSourceReferences {
   return {
@@ -65,11 +66,12 @@ describe("analysisDocument (Phase 7-01 A FROZEN)", () => {
   it("checksum changes when the model content changes", () => {
     const doc = makeDoc();
     const base = computeAnalysisModelChecksum(doc);
+    const nodeId = deriveAnalysisEntityId("node", "supportPoint:AR2:AG1");
     const withNode = finalizeAnalysisDocument({
       ...doc,
       nodes: [
         {
-          entityId: "33333333-3333-4333-8333-333333333333" as UuidString,
+          entityId: nodeId,
           sourceEntityId: "supportPoint:AR2:AG1",
           sourceKind: "supportPoint",
           x: 0,
@@ -97,5 +99,12 @@ describe("analysisDocument (Phase 7-01 A FROZEN)", () => {
     const docA = makeDoc();
     const docB = makeDoc();
     expect(computeAnalysisModelChecksum(docA)).toBe(computeAnalysisModelChecksum(docB));
+  });
+
+  it("analysisNeedsRegeneration detects upstream fingerprint changes", () => {
+    const doc = makeDoc();
+    expect(analysisNeedsRegeneration(doc, emptyRefs())).toBe(false);
+    const changed = { ...emptyRefs(), loadFingerprint: "f-load-changed" };
+    expect(analysisNeedsRegeneration(doc, changed)).toBe(true);
   });
 });

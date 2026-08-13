@@ -18,7 +18,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** Deterministic canonical JSON (sorted keys; rejects non-finite numbers). */
+/** Deterministic canonical JSON (codepoint-sorted keys; rejects non-finite numbers). */
 export function canonicalJsonForAnalysis(value: unknown): string {
   if (value === null) {
     return "null";
@@ -39,8 +39,9 @@ export function canonicalJsonForAnalysis(value: unknown): string {
   if (!isPlainObject(value)) {
     throw new Error("canonicalJsonForAnalysis rejects non-JSON values.");
   }
+  // Codepoint (byte) order to match JSON.stringify / Python json sort_keys semantics.
   const entries = Object.keys(value)
-    .sort((left, right) => left.localeCompare(right))
+    .sort((left, right) => (left < right ? -1 : left > right ? 1 : 0))
     .map((key) => `${JSON.stringify(key)}:${canonicalJsonForAnalysis(value[key])}`);
   return `{${entries.join(",")}}`;
 }

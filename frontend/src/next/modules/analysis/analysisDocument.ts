@@ -166,4 +166,17 @@ export function regenerateAnalysisDocument(
   return finalizeAnalysisDocument(next);
 }
 
+/**
+ * Returns true when any current upstream fingerprint differs from the stored
+ * sourceReferences (FROZEN §6: "上流fingerprintが変わった場合のみ再生成").
+ * Callers must only invoke regenerateAnalysisDocument when this returns true.
+ */
+export function analysisNeedsRegeneration(
+  document: AnalysisDocument,
+  current: AnalysisSourceReferences,
+): boolean {
+  const stored = document.sourceReferences;
+  return JSON.stringify(stored) !== JSON.stringify(current);
+}
+
 export { ANALYSIS_ID_NAMESPACE };

@@ -303,6 +303,8 @@ export interface AnalysisFoundationSpring extends AnalysisSpring {
 
 export interface AnalysisRigidLink {
   readonly entityId: UuidString;
+  readonly sourceEntityId: string;
+  readonly sourceKind: "rigidLink";
   readonly masterNodeId: UuidString;
   readonly slaveNodeId: UuidString;
   readonly dofs: readonly SpringDof[];
@@ -310,6 +312,8 @@ export interface AnalysisRigidLink {
 
 export interface AnalysisMpcEntry {
   readonly entityId: UuidString;
+  readonly sourceEntityId: string;
+  readonly sourceKind: "mpc";
   readonly type: "EQUALITY" | "LINEAR_COMBINATION";
   readonly nodeIds: readonly UuidString[];
   readonly dofs: readonly SpringDof[];
@@ -349,7 +353,8 @@ export interface AnalysisMemberLoad {
   readonly loadCaseId: string;
   readonly memberId: UuidString;
   readonly type: MemberLoadType;
-  readonly direction: "local_z" | "local_y" | "local_x" | "global_x" | "global_y" | "global_z";
+  readonly direction: "z" | "y" | "x";
+  readonly coordinateSystem: "local" | "global";
   readonly magnitude: number;
   readonly positionM: number | null;
   readonly unit: "kN_per_m" | "kN";

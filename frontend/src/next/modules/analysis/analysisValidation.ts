@@ -15,8 +15,15 @@ import {
   type AnalysisNode,
   type AnalysisSupport,
 } from "./analysisDocumentTypes";
+import { deriveAnalysisEntityId } from "./analysisId";
 
 const DOF_NAMES = ["ux", "uy", "uz", "rx", "ry", "rz"] as const;
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isUuid(value: string): boolean {
+  return UUID_PATTERN.test(value);
+}
 
 function isFiniteNumber(value: unknown): boolean {
   return typeof value === "number" && Number.isFinite(value);
@@ -38,14 +45,15 @@ function sectionIdSet(document: AnalysisDocument): ReadonlySet<string> {
   return new Set(document.sections.map((section) => section.entityId));
 }
 
-/** Validates entityId + sourceEntityId + sourceKind presence (D-11). */
+/** Validates entityId + sourceEntityId + sourceKind presence (D-11) + deterministic ID. */
 function validateEntityIdentity(
   entity: { entityId: string; sourceEntityId: string; sourceKind: string },
+  kind: string,
   path: string,
   issues: AnalysisIssue[],
 ): void {
-  if (entity.entityId.trim().length === 0) {
-    issues.push({ path: `${path}.entityId`, message: "entityId must be non-empty." });
+  if (!isUuid(entity.entityId)) {
+    issues.push({ path: `${path}.entityId`, message: "entityId must be a valid UUID." });
   }
   if (entity.sourceEntityId.trim().length === 0) {
     issues.push({ path: `${path}.sourceEntityId`, message: "sourceEntityId must be non-empty." });
@@ -53,10 +61,25 @@ function validateEntityIdentity(
   if (entity.sourceKind.trim().length === 0) {
     issues.push({ path: `${path}.sourceKind`, message: "sourceKind must be non-empty." });
   }
+  // FROZEN §4: entityId must equal the deterministic derivation (D-11).
+  if (isUuid(entity.entityId)) {
+    let derived = "";
+    try {
+      derived = deriveAnalysisEntityId(kind, entity.sourceEntityId);
+    } catch {
+      derived = "";
+    }
+    if (derived !== "" && derived !== entity.entityId) {
+      issues.push({
+        path: `${path}.entityId`,
+        message: "entityId does not match the deterministic uuid5 derivation (D-11).",
+      });
+    }
+  }
 }
 
 function validateNode(node: AnalysisNode, issues: AnalysisIssue[]): void {
-  validateEntityIdentity(node, `nodes[${node.sourceEntityId}]`, issues);
+  validateEntityIdentity(node, "node", `nodes[${node.sourceEntityId}]`, issues);
   if (!isFiniteNumber(node.x) || !isFiniteNumber(node.y) || !isFiniteNumber(node.z)) {
     issues.push({
       path: `nodes[${node.sourceEntityId}].position`,
@@ -72,7 +95,7 @@ function validateMember(
   sectionIds: ReadonlySet<string>,
   issues: AnalysisIssue[],
 ): void {
-  validateEntityIdentity(member, `members[${member.sourceEntityId}]`, issues);
+  validateEntityIdentity(member, "member", `members[${member.sourceEntityId}]`, issues);
   if (member.elementType !== "frame") {
     issues.push({
       path: `members[${member.sourceEntityId}].elementType`,
@@ -117,7 +140,7 @@ function validateSupport(
   nodeIds: ReadonlySet<string>,
   issues: AnalysisIssue[],
 ): void {
-  validateEntityIdentity(support, `supports[${support.sourceEntityId}]`, issues);
+  validateEntityIdentity(support, "support", `supports[${support.sourceEntityId}]`, issues);
   if (!nodeIds.has(support.nodeId)) {
     issues.push({
       path: `supports[${support.sourceEntityId}].nodeId`,
@@ -176,7 +199,7 @@ export function validateAnalysisDocument(document: AnalysisDocument): readonly A
   }
 
   for (const material of document.materials) {
-    validateEntityIdentity(material, `materials[${material.sourceEntityId}]`, issues);
+    validateEntityIdentity(material, "material", `materials[${material.sourceEntityId}]`, issues);
     if (
       !isFiniteNumber(material.elasticModulus) ||
       material.elasticModulus <= 0 ||
@@ -197,7 +220,7 @@ export function validateAnalysisDocument(document: AnalysisDocument): readonly A
   }
 
   for (const section of document.sections) {
-    validateEntityIdentity(section, `sections[${section.sourceEntityId}]`, issues);
+    validateEntityIdentity(section, "section", `sections[${section.sourceEntityId}]`, issues);
     if (section.derivation === "NOT_AVAILABLE") {
       issues.push({
         path: `sections[${section.sourceEntityId}]`,
@@ -230,7 +253,7 @@ export function validateAnalysisDocument(document: AnalysisDocument): readonly A
   }
 
   for (const bearing of document.bearings) {
-    validateEntityIdentity(bearing, `bearings[${bearing.seatId}]`, issues);
+    validateEntityIdentity(bearing, "bearing", `bearings[${bearing.seatId}]`, issues);
     if (bearing.bearingType === "pot") {
       issues.push({
         path: `bearings[${bearing.seatId}]`,
@@ -240,7 +263,7 @@ export function validateAnalysisDocument(document: AnalysisDocument): readonly A
   }
 
   for (const spring of [...document.springs, ...document.foundationSprings]) {
-    validateEntityIdentity(spring, `springs[${spring.sourceEntityId}]`, issues);
+    validateEntityIdentity(spring, "spring", `springs[${spring.sourceEntityId}]`, issues);
     if (!nodeIds.has(spring.nodeId)) {
       issues.push({ path: `springs[${spring.sourceEntityId}].nodeId`, message: "spring node must exist." });
     }
