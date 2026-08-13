@@ -3,6 +3,16 @@ import type { RoadDesignDocument } from "../../contracts/roadDesignDocument";
 import { readModuleFromManager, writeModuleToManager } from "./adapter";
 import type { ModuleDataRecord } from "./contract";
 import { ROAD_MODULE_ID, createRoadModuleRecord, validateRoadData } from "./roadModule";
+import {
+  finalizeCanonicalRoadData,
+  validateCanonicalRoadData,
+  type CanonicalRoadData,
+} from "./road/roadDataSchema";
+import {
+  ensureCanonicalRoadData,
+  type MigrationContext,
+  type MigrationResult,
+} from "./road/roadDataMigration";
 
 export type RoadModuleAdapterResult =
   | { ok: true; roadDesignDocument: RoadDesignDocument | undefined }
@@ -49,6 +59,85 @@ export function writeRoadDesignDocument(
 export function hasRoadDesignDocument(manager: ProjectManager, projectId: string): boolean {
   return readRoadDesignDocument(manager, projectId) !== undefined;
 }
+
+// ---------------------------------------------------------------------------
+// Canonical Road Data (Single Source of Truth, Phase 7.2 FROZEN / 7.3 WP-A)
+// ---------------------------------------------------------------------------
+
+export type RoadDataAdapterResult =
+  | { ok: true; roadData: CanonicalRoadData }
+  | { ok: false; reason: "project-not-found" | "invalid-road-data" };
+
+/** Read the raw canonical roadData (without migration). */
+export function readRoadDataRaw(manager: ProjectManager, projectId: string): unknown {
+  const moduleData = readModuleFromManager(manager, projectId, ROAD_MODULE_ID);
+  return moduleData?.data?.roadData;
+}
+
+/** Read the canonical roadData (validated; undefined when absent). */
+export function readRoadData(
+  manager: ProjectManager,
+  projectId: string,
+): CanonicalRoadData | undefined {
+  const raw = readRoadDataRaw(manager, projectId);
+  if (raw === undefined) {
+    return undefined;
+  }
+  return finalizeCanonicalRoadData(raw) ?? undefined;
+}
+
+/** Write the canonical roadData (atomic: validate then commit). */
+export function writeRoadData(
+  manager: ProjectManager,
+  projectId: string,
+  roadData: CanonicalRoadData,
+): RoadDataAdapterResult {
+  const existing = readModuleFromManager(manager, projectId, ROAD_MODULE_ID);
+  if (!existing) {
+    return { ok: false, reason: "project-not-found" };
+  }
+  const issues = validateCanonicalRoadData(roadData);
+  if (issues.length > 0) {
+    return { ok: false, reason: "invalid-road-data" };
+  }
+  const nextRecord: ModuleDataRecord = {
+    ...existing,
+    data: {
+      ...existing.data,
+      roadData,
+    },
+  };
+  const result = writeModuleToManager(manager, projectId, ROAD_MODULE_ID, nextRecord);
+  if (!result.ok) {
+    return { ok: false, reason: "project-not-found" };
+  }
+  return { ok: true, roadData };
+}
+
+/**
+ * Single Source of Truth accessor. Returns the canonical roadData, migrating
+ * legacy sources on first access (non-destructive / atomic / fail-closed).
+ */
+export function ensureRoadData(
+  manager: ProjectManager,
+  projectId: string,
+  context: MigrationContext,
+): RoadDataAdapterResult {
+  const existing = readRoadDataRaw(manager, projectId);
+  const result = ensureCanonicalRoadData(existing, context);
+  if (!result.ok) {
+    return { ok: false, reason: "invalid-road-data" };
+  }
+  if (result.migrated) {
+    const write = writeRoadData(manager, projectId, result.roadData);
+    if (!write.ok) {
+      return write;
+    }
+  }
+  return { ok: true, roadData: result.roadData };
+}
+
+export type { MigrationResult };
 
 export interface RoadInputsData {
   readonly label?: string;
