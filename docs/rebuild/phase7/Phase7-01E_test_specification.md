@@ -15,9 +15,12 @@ Phase 7-02のtestsを事前Freezeする。各testは `test ID / purpose / input 
 - frontend: `frontend/src/next/modules/analysis/__tests__/*.test.ts`
 - fixtures: `examples/analysis/`・`backend/tests/fixtures/analysis/`
 - command: `python3 -m pytest backend/tests/ -q` / `npm run test` / `npm run typecheck` / `npm run lint` / `npm run build`
-- 下記3.xはtestカタログの概要表（test ID・purpose・expected基準を固定）。各testの詳細な
-  inputフィクスチャ・exact expected値・tolerance数値・command・evidenceは各WP実装時の
-  test file + `docs/rebuild/phase7/evidence/` で確定・記録する（本設計書でtoleranceは基準値を固定）。
+- 下記3.xはtestカタログ（test ID・purpose・expected基準・toleranceを固定）。**exact expected値・fixture provenanceは
+  本設計書+`Phase7-01E_reference_analysis_golden`で確定済み**（#24）。
+  - closed-form golden: expected値をPhase7-01E_reference_analysis_golden §3に**数値で凍結**（例 simple beam δ=-0.0006504065）。
+  - regression golden: tolerance 1e-6相対 + provenance（決定論出力凍結）を凍結。
+  - command・evidenceの記録場所（`docs/rebuild/phase7/evidence/`）は本設計書で固定。
+  - **実装者はexpected値・toleranceを変更できない**（Design Change手続きを要する）。
 
 ## 3. Testカタログ（Freeze）
 
@@ -82,11 +85,12 @@ Phase 7-02のtestsを事前Freezeする。各testは `test ID / purpose / input 
 |---|---|---|
 | A-SLV-001 | **grillage解析成功（R1 regression）** | status=success・非空result |
 | A-SLV-002 | 横桁member解析（INVALID_ORIENTATION回避） | success |
-| A-SLV-003 | 単純梁closed-form（δ/反力/M） | 1e-6相対 |
+| A-SLV-003 | 単純梁closed-form（δ/反力/M・**既存fixture規約・tolerance 1e-4相対**） | 1e-4相対 |
 | A-SLV-004 | 特異model→MODEL_UNSTABLE | fail-closed |
-| A-SLV-005 | solver失敗→成功表示しない（R21） | failed envelope・UI非成功 |
+| A-SLV-005 | solver失敗→成功表示しない（R21・HTTP mapping） | failed envelope・UI非成功 |
 | A-SLV-006 | 決定論（同一入力→同一結果） | checksum一致 |
 | A-SLV-007 | 性能（中規模grillage完了） | 制限時間内 |
+| A-SLV-008 | 横桁member解析（INVALID_ORIENTATION回避・R1） | success |
 
 ### 3.6 Result / IF3 / Reaction / Member Force
 

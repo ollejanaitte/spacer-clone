@@ -62,6 +62,25 @@ AnalysisDocument（現行fingerprintでVALID）
 - **古い解析結果は有効な結果として扱わない**（STALE状態でauthoritative export gateブロック・KEEP IF3）。
 - 再生成はdeterministic（同一上流→同一AnalysisDocument）。
 
+### 4.2b 評価順序（Freeze・Sol review #1/#14）
+
+結果の有効性は**3段ゲート**で判定（単独では判定しない）：
+
+```
+Gate1: 上流freshness
+  現行上流（bridgeLayout/superstructure/substructure）fingerprint == AnalysisDocument.sourceReferences ?
+  不一致 → AnalysisDocument STALE（再生成要求）→ 結果 STALE。一致 → Gate2
+Gate2: AnalysisDocument freshness
+  現行AnalysisDocument.modelChecksum == 結果bindingのsourceContentChecksum ?
+  不一致 → 結果 STALE。一致 → Gate3
+Gate3: IF3 gate（既存KEEP）
+  if3_staleness（sourceDocumentVersion/analysisSettingsChecksum/loadContext）+
+  if3_availability（resource integrity/checksum）→ VALID / STALE / INVALID / UNSUPPORTED
+```
+
+- **表示規則（唯一）**: Gate1/2/3のいずれかがSTALE/INVALID → 結果は「STALE」表示。
+  AnalysisDocument自体は `analysisStatus`（NOT_AUTHORIZED含む）を別途表示（status/analysisStatus/IF3 statusの三つを混ぜない・#14）。
+
 ### 4.3 実装（Freeze）
 
 - AnalysisDocument生成時にsourceReferences fingerprintsを記録。
@@ -86,7 +105,7 @@ AnalysisDocument（現行fingerprintでVALID）
 
 | 項目 | 挙動 |
 |---|---|
-| 上流fingerprint欠損 | 結果をVALID扱いしない（STALE or NOT_AVAILABLE） |
+| 上流fingerprint欠損 | 結果をVALID扱いしない（**STALE**・#18） |
 | AnalysisDocument checksum不一致 | tamper→再生成要求 |
 | 結果bindingと現行AnalysisDocument不一致 | STALE（authoritative gateブロック） |
 | 保存失敗 | エラー（atomic_json KEEP） |

@@ -62,10 +62,13 @@ SuperstructureDocument（正本・唯一source）
 | 横構（crossFrame） | crossFrameConfiguration | **DEFER**（配置のみ・Phase 7-02でmember化しない） |
 | 横繋ぎ・補剛 | — | **DEFER** |
 
-- **orientationVector（R1解決）**: member毎に指定。
-  - 主桁（橋軸方向）: local y = {0,1,0}（横断方向）→ member x軸（橋軸）と直交。
-  - 横桁（横断方向）: local y = {1,0,0}（橋軸方向）→ member x軸（横断）と直交。
-  - backend `build_grillage_project`はmember毎orientationを正しく転送（横桁INVALID_ORIENTATION解消）。
+- **orientationVector（R1・Sol review #16）**: member毎に**決定論生成**（global固定ではない）。
+  - `localX = unit(nodeJ − nodeI)`（member軸・node順序は解析model生成時に確定）
+  - `localZ = global up（0,0,1）をlocalX直交面へ投影・正規化`（常に上向き）
+  - `localY = localZ × localX`（右手系）
+  - `orientationVector = localY`（backend engineのorientation規約に一致）
+  - **node順序規則**: localZが常に+upになるよう nodeI/nodeJ を整序（逆向きmemberの符号反転を防止・#16）。
+  - 重力（DL）は **global `wz < 0`** で転送（local方向に依存させない）。
 - elementType: `frame`（12DOF Euler-Bernoulli・KEEP solver）。
 
 ## 6. Section / Material生成仕様（R7解決）
@@ -84,18 +87,39 @@ SuperstructureDocument（正本・唯一source）
 ## 7. Bearing → Support（R5解決・詳細はbearing_support_spring_contract）
 
 - bearing seat（`BRG-{supportId}-{girderId}`）→ 対応nodeへ support生成。
-- fixedOrMovable / bearingType → DOF拘束 mapping（Phase7-01B_bearing_support_spring_contractのtable）。
-- UNDECIDED / null → 解析model生成不可（fail-closed・NOT_AVAILABLE）ではなく、**既定全支持（uz・他は解放）** を明示し、support source=FROM_BEARING_DEFAULTと記録。
+- fixedOrMovable / bearingType → DOF拘束 mapping（**§3.3唯一mapping table・Sol review #7**）。
+- UNDECIDED / null → **§3.3の既定（F/T/T/F/F/F）** を適用し、support source=FROM_BEARING_DEFAULTと記録（#7統一）。
+
+### 7.0 Bearing/Support生成の唯一authority（Sol review #5）
+
+- **`BearingSupportResolver`（WP-B/WP-C共通・唯一）** が全bearing/support生成を所有。
+- superstructure adapterは**上部工由来のbearing seat**、substructure adapterは**下部工由来のsupport位置/高さ**を
+  **source fragmentとして返す**（互いに独立）。
+- `BearingSupportResolver` が `seatId` で両fragmentをjoinし、単一の supports/bearings を生成。
+- **不一致reject**: 同一seatIdのposition/bearingType/localFrameが上下流で食い違う場合 → `BEARING_SOURCE_MISMATCH` reject。
+- 上部工/下部工どちらかにしか存在しないseat → `SEAT_SOURCE_UNILATERAL` を明示記録（定義済みmapping既定を適用 or NOT_AVAILABLE）。
+
+### 7.1 横桁断面（Sol review #14）
+
+- 横桁のsourceは `crossBeamConfiguration.crossBeams[]` の depthM / widthM のみ。
+- **横桁断面導出規則（Freeze）**: 矩形断面として導出。
+  - A = widthM × depthM（m²）
+  - Iy = widthM × depthM³ / 12（横断方向曲げ）
+  - Iz = depthM × widthM³ / 12（橋軸方向曲げ）
+  - J = 矩形ねじり近似式（WP-Eで公式固定・例 `(b³·h³)/(3.6(b²+h²))`）
+  - material = 主桁と同一鋼材（SuperstructureDocument材料）
+  - sectionId = `X-SEC-{crossBeamId}`（sourceEntityId追跡）
+- **欠損時**: depthM/widthM のいずれかMISSING → 当該横桁は解析modelから除外し `NOT_AVAILABLE` 記録（補完禁止）。
 
 ## 8. Load生成仕様（R2解決・詳細はload_combination_contract）
 
 - source: `superstructureLoadModel.buildDeadLoads`（KEEP）の DL-STRUCTURAL（主桁+横桁+横構+支承）・DL-DECK（床版）。
-- **配分（正式仕様）**: 
-  - DL-STRUCTURAL（主桁）: **girder line沿いの部材分布載荷**（memberLoad・kN/m）。各主桁memberへ `total/(girderCount×全主桁延長)` を均等配分。
-  - DL-STRUCTURAL（横桁/横構/支承）: 横桁位置の集中node荷重（nodalLoad）or 横桁member分布。Phase 7-02既定は**主桁分布に含める**（structuralSecondaryがMISSINGのため・D-06）。
+- **配分（正式仕様・Sol review #19）**: **`q = caseTotalKN / Σ_loaded_member_length`**（一意の式）。
+  - DL-STRUCTURAL（主桁）: 各主桁memberへ均等配分（memberLoad・kN/m）。
+  - DL-STRUCTURAL（横桁/横構/支承）: structuralSecondaryがMISSINGのため主桁分布に包含（partition維持）。
   - DL-DECK: 床版自重をgirder lineへ均等配分（各girderの受持幅=deckResolvedWidth/girderCount×thickness×unitWeight → kN/m）。
 - **support節点のみへの集中載荷は正式仕様にしない**。
-- nodalLoadsはbackendへ正しく転送（R2・grillage contractで受渡し契約）。
+- nodalLoads/memberLoadsはbackendへ正しく転送（R2・grillage contractで受渡し契約）。
 - 組合せ: COMBO-1 = 1.0·DL-STRUCTURAL + 1.0·DL-DECK（実行可能）。
 
 ## 9. Adapter出力（AnalysisDocument上部工部）

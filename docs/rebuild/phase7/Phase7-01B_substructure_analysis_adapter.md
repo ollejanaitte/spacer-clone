@@ -84,8 +84,11 @@ SubstructureDocument（正本・唯一source）
 ## 7. Foundation Spring（R4解決・詳細はfoundation_spring_release_mpc）
 
 - source: `support.pier.footing/pileGroup` / `support.abutment.footing/pileGroup`。
-- spring stiffness値は**資料に存在する場合のみ**CONFIRMED。存在しない場合は `SOURCE_NOT_AVAILABLE` で閉じる（**補完禁止**・`NOT_AVAILABLE`は一般状態）。
-- Phase 7-02既定: 下部工foundation springは**契約実装のみ**（stiffness値がsourceに無いためSOURCE_NOT_AVAILABLE・解析はbool supportで実行）。
+- spring stiffness値は**資料に存在する場合のみ**CONFIRMED。存在しない場合は `SOURCE_NOT_AVAILABLE` で閉じる
+  （spring不使用・**AUTHORIZED bearing DOF拘束mapping**を適用・`springFallback="authorizedBearingConstraint"`・補完禁止）。
+- Phase 7-02既定: 下部工foundation springは**契約実装のみ**（stiffness値がsourceに無いためSOURCE_NOT_AVAILABLE・
+  解析は§3.3のAUTHORIZED bearing拘束で実行）。
+- **support位置欠損時は解析停止**（#6）。
 
 ## 8. reactionCasesの扱い
 
@@ -102,9 +105,9 @@ SubstructureDocument（正本・唯一source）
 
 | 項目 | 挙動 |
 |---|---|
-| support位置欠損 | NOT_AVAILABLE（解析不可にはせず・bool support既定で閉じる） |
+| support位置欠損 | **NOT_AVAILABLE・解析停止**（拘束対象node座標が確定できないため・Sol review #6） |
 | bearing seat dangling | reject（girder存在確認） |
-| foundation値欠損 | SOURCE_NOT_AVAILABLE（補完禁止） |
+| foundation値欠損 | SOURCE_NOT_AVAILABLE（spring不使用・AUTHORIZED bearing拘束mapping適用） |
 | skew非有限 | reject |
 
 ## 11. tests観点

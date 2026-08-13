@@ -195,9 +195,25 @@ Document / Adapter / FEM / Load / Solver / Result / Persistence / Reference / UI
 - Phase7-01E_completion_gate.md
 - Phase7-01F_design_freeze_gate.md
 
-## 11. 本設計の成立根拠（KEEP資産の最大利用）
+## 11. 本設計の成立根拠（KEEP資産の最大利用・Sol review #13）
 
-- solver.py / model.py / assembly.py / element.py / dof.py / results.py：**変更しない方針**（R1修正はgrillage経路のproject生成側で解決。engineコアはKEEP）。
-- IF3 normalizer/persistence/staleness/availability：**変更を最小化**（AnalysisDocument schemaId受入のみADAPT）。
+- solver.py / model.py / element.py / dof.py / results.py：**変更しない方針**（R1修正はgrillage経路のproject生成側で解決）。
+- **assembly.py：engine coreの一部だが、spring対角加算のため最小ADAPT（WP-D所有・回帰責任明示・#13）**。
+- IF3 normalizer/persistence/staleness/availability：**変更を最小化**（AnalysisDocument schemaId受入 + entitySourceId活用のみADAPT）。
 - viewer / results VM / IF3 binding / timeHistory UI：**KEEP**。
 - Phase 5/6のhandoff契約（SuperstructureHandoff v1.0.0・bearing/reaction）をfield-levelで再利用。
+
+## 12. Phase 7-02既定の確定（Sol review #18・代替案のDesign Change化）
+
+未決定のままFreezeしない。Phase 7-02既定を一つに固定し、代替案はDesign Change候補へ。
+
+| 論点 | **Phase 7-02既定（確定）** | 代替（Design Change候補） |
+|---|---|---|
+| pot支承 | **UNSUPPORTED（DEFER）** | movable扱い |
+| validation実装 | **既存contract validation方式（zod踏襲・Phase5/6統一）** | 別方式 |
+| Solver Input Adapter実装 | **`backend/engine/solver_input.py`（新規）** | grillage.py内再設計 |
+| spring欠損 | **AUTHORIZED bearing拘束mapping適用（`springFallback`記録）** | 解析停止 |
+| spring加算 | **WP-D所有のassembly最小ADAPT** | feature flag |
+| COMBO-1表示 | **個別case+合成の両方表示（#17）** | COMBO-1のみ表示 |
+| autosave | **有効化** | 無効維持 |
+| 斜角bearing | **globalAxisApproximation（明示記録）** | UNSUPPORTED_SKEW fail-closed（skip条件時のみ） |
