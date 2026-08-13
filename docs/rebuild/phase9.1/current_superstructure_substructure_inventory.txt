@@ -1,0 +1,100 @@
+Phase 9-01 救出監査: 現Superstructure / Substructure Module 完全棚卸し
+====================================================================
+
+baseline: 6cbc2e0b（Phase 9-00 merge後）
+
+====================================================================
+1. 現Superstructure Module（next/modules/superstructure/・18 files）
+====================================================================
+
+| file | 内容 | editable / view-only |
+|---|---|---|
+| superstructureTypes.ts | SuperstructureDocument契約（0.1.0/1.0.0） | 型のみ |
+| superstructureDocumentDomain.ts | build/document生成・handoff添付 | 型・純関数 |
+| superstructureValidation.ts | fail-closed検証 | 型・純関数 |
+| superstructureModule.ts / ModuleAdapter.ts | PDC登録・read/write | — |
+| superstructureGenerator.ts | Bridge Layout+Road→既定Document生成→Auto Save | 生成ボタン |
+| superstructureBindingNew.ts | Document+Handoff→GeometryEngineInput | 型・純関数 |
+| superstructureGeometry.ts | Road→LINER→GeometrySnapshot生成 | 型・純関数（UI未配線） |
+| superstructureComponents.ts | 断面性能/横桁/横構/支承シート | 型・純関数 |
+| superstructureFacts.ts | 共有ファクト | 型・純関数 |
+| superstructureLoadModel.ts | 死荷重partition | 型・純関数 |
+| superstructureAnalysisAdapter.ts | grillage input・defaultAnalysisRunner | 型・関数（UI未配線・テストのみ） |
+| superstructureBasicChecks.ts | 照査6種（NOT_AUTHORIZED） | 型・関数（UI未配線） |
+| superstructureDesignConditions.ts | 参照許容値 | 定数 |
+| superstructureHandoff.ts | Super→Sub Handoff（UI未配線） | 型・純関数 |
+| superstructurePersistence.ts | serialize/deserialize/derived再生成 | 型・純関数 |
+| superstructureIntegrityGate.ts | Completion Gate | 型・関数 |
+| superstructureSceneBuilder.ts | 3D（CIM層から使用） | 型・関数 |
+| SuperstructureModuleShellPage.tsx | **view-only + 生成ボタン**（input/select 0個） | view-only |
+
+====================================================================
+2. 現Substructure Module（next/modules/substructure/・17 files）
+====================================================================
+
+| file | 内容 | editable / view-only |
+|---|---|---|
+| substructureTypes.ts | SubstructureDocument契約 | 型のみ |
+| substructureDocumentDomain.ts | build/document生成 | 型・純関数 |
+| substructureValidation.ts | fail-closed検証 | 型・純関数 |
+| substructureModule.ts / ModuleAdapter.ts | PDC登録・read/write | — |
+| substructureGenerator.ts | Bridge Layout+Road→Document生成（bearingReactionReferences: null） | 生成ボタン |
+| substructurePhase4Adapter.ts | Phase4 Handoff→supports | 型・純関数 |
+| substructurePhase5Adapter.ts | Phase5 Bearing/Reaction（UI E2E未配線・テストのみ） | 型・純関数 |
+| substructurePlacement.ts | LINER配置・支承シート（UI未配線） | 型・純関数 |
+| substructureGeometry.ts | solids再使用 | 型・純関数 |
+| substructureFoundation.ts | 基礎標高/embedment/杭 | 型・純関数 |
+| substructureTerrain.ts | 地形/干渉 | 型・純関数 |
+| substructureDesign.ts | 数量/design framework（NOT_AUTHORIZED） | 型・純関数（UI未配線） |
+| substructurePersistence.ts | serialize/deserialize（restore時supportのみ再導出） | 型・純関数 |
+| substructureIntegrityGate.ts | Completion Gate | 型・関数 |
+| substructureSceneBuilder.ts | 3D（CIM層から使用） | 型・関数 |
+| SubstructureModuleShellPage.tsx | **view-only + 生成ボタン**（input/select 0個） | view-only |
+
+====================================================================
+3. editable / view-only 分離（重要）
+====================================================================
+
+- **editable（実画面で入力可能）: なし**（両ShellPageとも input/select/form が0個）
+- view-only: moduleId/status/documentId/bridge の dl + 概要 p + Integrity Gate ul
+- 生成ボタン: Super=「上部工を生成」Sub=「下部工を生成」（Auto Save）
+- Save/Load: 明示ボタンなし（PDC read + derived再生成のみ）
+- 2D/3D: ShellPage内なし（CIM / 統合3Dモジュールでのみ）
+- Analysis: なし（QuickAnalysisPage placeholder）
+- Super→Sub Handoff送信: なし（Gate「Handoff READY」表示のみ）
+
+====================================================================
+4. 「Coreは存在・実画面で設計入力できない」項目
+====================================================================
+
+Superstructure:
+- 主桁本数/間隔/断面（depth/web/flange/unitWeight/area）
+- 床版（厚/単位重量/張出/resolvedWidth）
+- 横桁（間隔/寸法）・横構（間隔/方杖/対傾構）
+- 支承（bearingType/固定可動/方向）
+- 死荷重（舗装/付属物/LL）・解析実行・design check実行
+
+Substructure:
+- 橋脚/橋台形状（column/footing/backwall寸法）
+- フーチング/基礎/杭（footingConfigurations/foundationConfigurations/pileConfigurations 全項目）
+- 支承シート個別編集・design/quantity実行
+- Phase5（支承/反力）取込み・placement適用・根入れ/干渉
+
+====================================================================
+5. 接続状態
+====================================================================
+
+- Bridge Layout Handoff: 接続済み（generator使用・layoutFingerprint保存・restore再導出）
+- Bearing-Reaction: 部分（Super reactionResults NOT_AUTHORIZED・Sub Phase5アダプタ完成だがE2E未組込・bearingReactionReferences null）
+- Analysis: 部分（grillageアダプタ/runBasicChecksはテストのみ・QuickAnalysis placeholder・Analysis moduleのbuildAnalysisModelはCIM FEM overlayで使用）
+- GeometrySnapshot: 接続済み（CIM superstructureCimLayerで毎回再生成・withGeometryReference未実行=geometryReference null）
+- CIM: 接続済み（全レイヤ3D・GLB export）
+- Persistence: 接続済み（PDC・derived transient）
+- STALE: 部分（integrity gateのderived不整合判定・自動STALE化UI配線なし）
+
+====================================================================
+6. 総括
+====================================================================
+
+- できる: 生成ボタン→Document Auto Save→Gate表示→CIM 3D表示→GLB export
+- できない: 実画面での設計数値入力・解析実行と結果表示・Super→Sub Handoff実行・2D図面

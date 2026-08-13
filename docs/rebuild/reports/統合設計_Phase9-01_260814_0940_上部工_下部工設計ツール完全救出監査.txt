@@ -1,0 +1,165 @@
+統合設計_Phase9-01_260814_0940_上部工_下部工設計ツール完全救出監査
+====================================================================
+
+作業名: 統合設計 Phase 9-01「上部工・下部工 設計ツール完全救出監査」
+完了日時: 2026-08-14 09:40 JST
+baseline: 6cbc2e0b35f0f0f9a855a874b901a031980e05d6（Phase 9-00 Final Report merge後）
+Phase 9-00: COMPLETE
+Phase 9-01 Completion Gate: PASS
+verdict: Phase 9-01 COMPLETE / Phase 9-02 readiness: READY
+STOP: Phase 9-02へは進まずSTOP
+
+====================================================================
+1. 結論
+====================================================================
+
+旧上部工ツール・旧下部工ツールは「消失」ではなく「埋没・非接続」。
+git履歴で両者とも削除・renameは0件（全資産現存）。
+旧下部工は /pro/liner/substructure にrouteが生き、実起動も成功。
+旧上部工は /pro/apollo に残存し、feature flag（VITE_APOLLO_PHASE1_ENABLED）
+でゲートされている（デフォルトOFF）。
+新システムの /app SuperstructureModuleShellPage / SubstructureModuleShellPage は
+view-only（input 0個）で、旧設計UIへの導線が無い。
+
+====================================================================
+2. 旧上部工 正本候補
+====================================================================
+
+- 契約正本: contracts/bridgeSuperstructureDesignDocument.ts（BSDD・1420行）
+  + JSON Schema 3514行
+- ジオメトリ正本: apollo/geometry/types.ts（GeometrySnapshot）+ DefaultGeometryEngine
+- 新PDC正本: next/modules/superstructure/superstructureTypes.ts（SuperstructureDocument）
+- 最有力: 新module SuperstructureDocument を正本とし、旧Apollo入力UI/計算/2D-DXFを ADAPT
+
+====================================================================
+3. 旧下部工 正本候補
+====================================================================
+
+- データ正本: substructure/model.ts（v0.2.0）
+- 配置正本: SupportPlacementEngine.ts
+- ソリッド正本: SubstructureSolidGenerator / PierSolidGenerator / FoundationSolidGenerator
+- 設計正本: design/geometricQuantity（実計算）+ designEngine（HOLD framework）
+- 新PDC正本: next/modules/substructure/substructureTypes.ts（SubstructureDocument）
+- 最有力: 新module SubstructureDocument を正本とし、旧 planning 3ペインCADを ADAPT
+
+====================================================================
+4. 現Module棚卸し（editable/view-only分離）
+====================================================================
+
+- Superstructure Module: Core/Document完全実装（18 files）・Shell UIはview-only+生成ボタン
+- Substructure Module: Core/Document完全実装（17 files）・Shell UIはview-only+生成ボタン
+- 両ShellPageとも input/select/form 0個 → 「実画面で設計入力できない」
+- できる: 生成ボタン→Auto Save→Gate表示→CIM 3D表示→GLB export
+
+====================================================================
+5. Git変更経路
+====================================================================
+
+- 上部工: Phase 3-3/3-4（81ac6da）→ Apollo STEP-2/3 → Phase 5-00 inventory →
+  Phase 5-02 新PDC（Document/Geometry/照査/荷重/Shell）。削除0件。
+  断面性能はADAPT移行済み・照査6種はREWRITE（NOT_AUTHORIZED）・Shellは新設（view-only）
+- 下部工: Phase C1（b07fda1..A-05）→ Phase 3-5 bound → Phase 6-00 inventory →
+  Phase 6-01/02 新PDC。削除0件。ソリッド/配置/基礎/数量はKEEP流用・3ペインCADは
+  DISCONNECT（残存）・Shellは新設（view-only）
+
+====================================================================
+6. 救出マトリクス（最終判定）
+====================================================================
+
+上部工:
+- RESTORE/ADAPT: 主桁入力・断面・床版・横桁・2D/DXF（GeneralArrangementPanel）・数量
+- KEEP: 断面性能（移行済み）・GeometrySnapshot・3D sceneBuilder
+- ADAPT: 荷重・照査6種・支承（自動配置）
+- DEFER: ダイヤフラム（0件・未実装）・応力度（候補値のみ）
+
+下部工:
+- RESTORE/ADAPT: 3ペインCAD・橋台入力・橋脚入力・フーチング/基礎・杭配置・座標表
+- KEEP: ソリッド・配置・数量・3D viewer・サンプル・設計計算framework（HOLD維持）
+- ADAPT: Save/Load（ブラウザJSON→PDC）・計算書CSV/JSON
+- DEFER: 照査/配筋/耐震（HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED）
+
+====================================================================
+7. 非接続原因確定
+====================================================================
+
+上部工:
+1. toolBindings: superstructure → /pro/apollo（Apollo feature flag・デフォルトOFF）
+2. 新module Shell UI が view-only（入力UI未実装）
+3. ダイヤフラム未実装・応力度/照査 NOT_AUTHORIZED
+
+下部工:
+1. 新 /app は SubstructureModuleShellPage（view-only）を使用
+2. 旧3ペインCADは /pro/liner/substructure（LINERレビュー経由のみ）に残存
+3. 旧tool は旧ProjectModel+ブラウザJSON永続化で新PDC未接続
+
+====================================================================
+8. 実起動検証（Chromium headed・DISPLAY=:0）
+====================================================================
+
+- 旧下部工 /pro/liner/substructure: 3ペインCAD起動成功・標準サンプル（A1-P1-P2-A2）
+  作成成功（座標表 A1@0/P1@30/P2@60/A2@90・OK）・設計計算結果 HOLD4
+- 旧上部工 /pro/apollo: Apollo shell起動確認（feature flag ON時）・数値ブロック
+- 現Super/Sub Module: 生成→Gate→view-only確認（CIM 3DはPhase 8/9-00で確認済み）
+
+====================================================================
+9. Solレビュー（gpt-5.6-sol）
+====================================================================
+
+- 旧Apollo上部工UI: ADAPT（controlled adapter・主障害=旧ProjectModel依存・非1:1 mapping）
+- 旧planning 3ペインCAD: RESTORE/ADAPT（placementSnapshotはDERIVED化すべき）
+- persistence: MERGE（PDC唯一正本・旧JSONは一方向legacy import・dual-write禁止）
+- ダイヤフラム/応力度/照査: DEFER（NOT_AUTHORIZED維持）
+- Phase 9-02推奨: Apollo UI→Document adapter・Host controlled化・placementSnapshot
+  再生成/stale gate・legacy JSON→PDC migration test・feature flag下で段階統合
+
+====================================================================
+10. Luna確認
+====================================================================
+
+- 旧下部工3ペインUI・サンプル・設計HOLD表・旧Apolloナビゲーションを画像判定OK
+
+====================================================================
+11. screenshots / evidence
+====================================================================
+
+- p9_old_substructure.png / p9_sub_standard_2d.png / p9_sub_standard_3d.png /
+  p9_sub_design_result.png / p9_old_apollo.png → Discord送信済み
+- docs: docs/rebuild/phase9.1/
+  old_superstructure_inventory.txt / old_substructure_inventory.txt /
+  current_superstructure_substructure_inventory.txt /
+  superstructure_substructure_git_transition_rescue_matrix.txt /
+  runtime_verification_rescue_roadmap.txt
+
+====================================================================
+12. unresolved / risk
+====================================================================
+
+- 旧下部工2D/3Dビューに構造物形状が映らない場合あり（選択/ズーム依存）→ 9-02要精査
+- 旧Apollo上部工の本格入力UIの実画面はモデル作成後（要モデル）→ 9-02/9-03
+- ダイヤフラムは全ソース0件 → DEFER
+- 応力度/照査の正式数値は NOT_AUTHORIZED → 認可方針を9-02 Design Freezeで定義
+- 旧tool persistence（JSON）とPDCの二重化 → ADAPTでPDC統合
+
+====================================================================
+13. rescue roadmap
+====================================================================
+
+1. Phase 9-02: Rescue 完全設計・Design Freeze
+   （旧UI接続契約・PDC接続・placementSnapshot DERIVED化・stale gate・スコープ凍結）
+2. Phase 9-03: Rescue実装
+   （上部工: BridgeStructureInputPanel等をSuperstructureDocumentへ接続・
+    下部工: planning 3ペインCADをSubstructureDocumentへ接続・PDC Save/Load・E2E）
+
+====================================================================
+14. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+15. verdict
+====================================================================
+
+Phase 9-01 COMPLETE
+Phase 9-02 readiness: READY
+STOP
