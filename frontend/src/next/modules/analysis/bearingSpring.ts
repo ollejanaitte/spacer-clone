@@ -184,11 +184,27 @@ export function resolveBearingSupport(input: BearingSupportResolverInput): Beari
     });
   }
 
+  // Resolve foundation spring nodeIds to the first support node of each support.
+  const foundationSprings: AnalysisFoundationSpring[] = [];
+  for (const fs of input.foundationSprings) {
+    const supportNode = input.nodes.find(
+      (n) => n.sourceKind === "supportPoint" && n.sourceEntityId.startsWith(`supportPoint:${fs.supportId}:`),
+    );
+    if (!supportNode) {
+      issues.push({
+        path: `foundationSprings[${fs.sourceEntityId}]`,
+        message: "support node missing for foundation spring.",
+      });
+      continue;
+    }
+    foundationSprings.push({ ...fs, nodeId: supportNode.entityId });
+  }
+
   return {
     supports,
     bearings,
     springs,
-    foundationSprings: input.foundationSprings,
+    foundationSprings,
     issues,
   };
 }
